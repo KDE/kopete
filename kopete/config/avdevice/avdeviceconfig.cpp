@@ -58,6 +58,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mBrightnessSlider,            SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
 	connect(mPrfsVideoDevice->mContrastSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
 	connect(mPrfsVideoDevice->mSaturationSlider,            SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
+	connect(mPrfsVideoDevice->mWhitenessSlider,             SIGNAL(valueChanged(int)), this, SLOT(slotWhitenessSliderChanged(int)));
 	connect(mPrfsVideoDevice->mHueSlider,                   SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
 	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,    SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
@@ -124,6 +125,7 @@ void AVDeviceConfig::setVideoInputParameters()
 	mPrfsVideoDevice->mBrightnessSlider->setValue((int)(mVideoDevicePool->getBrightness()*65535));
 	mPrfsVideoDevice->mContrastSlider->setValue((int)(mVideoDevicePool->getContrast()*65535));
 	mPrfsVideoDevice->mSaturationSlider->setValue((int)(mVideoDevicePool->getSaturation()*65535));
+	mPrfsVideoDevice->mWhitenessSlider->setValue((int)(mVideoDevicePool->getWhiteness()*65535));
 	mPrfsVideoDevice->mHueSlider->setValue((int)(mVideoDevicePool->getHue()*65535));
 	mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
 	mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
@@ -179,6 +181,12 @@ void AVDeviceConfig::slotContrastSliderChanged(int){
 void AVDeviceConfig::slotSaturationSliderChanged(int){
 	kdDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setSaturation( mPrfsVideoDevice->mSaturationSlider->value() / 65535.0);
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotWhitenessSliderChanged(int){
+	kdDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0 << endl;
+	mVideoDevicePool->setWhiteness( mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0);
   emit changed( true );
 }
 

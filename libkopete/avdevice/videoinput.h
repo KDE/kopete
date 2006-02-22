@@ -43,6 +43,8 @@ public:
 	float setContrast(float contrast);
 	float getSaturation();
 	float setSaturation(float saturation);
+	float getWhiteness();
+	float setWhiteness(float whiteness);
 	float getHue();
 	float setHue(float Hue);
 	bool getAutoBrightnessContrast();
@@ -54,6 +56,7 @@ protected:
 	float m_brightness;
 	float m_contrast;
 	float m_saturation;
+	float m_whiteness;
 	float m_hue;
 	bool m_autobrightnesscontrast;
 	bool m_autocolorcorrection;

@@ -91,6 +91,24 @@ float VideoInput::setSaturation(float saturation)
 	return getSaturation();
 }
 
+float VideoInput::getWhiteness()
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_whiteness;
+}
+
+float VideoInput::setWhiteness(float whiteness)
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	if ( whiteness > 1 )
+		whiteness = 1;
+	else
+	if ( whiteness < 0 )
+		whiteness = 0;
+	m_whiteness = whiteness;
+	return getWhiteness();
+}
+
 float VideoInput::getHue()
 {
 //	kdDebug() <<  k_funcinfo << " called." << endl;

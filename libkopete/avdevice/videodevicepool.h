@@ -88,6 +88,8 @@ public:
 	float setContrast(float contrast);
 	float getSaturation();
 	float setSaturation(float saturation);
+	float getWhiteness();
+	float setWhiteness(float whiteness);
 	float getHue();
 	float setHue(float hue);
 	bool getAutoBrightnessContrast();

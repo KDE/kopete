@@ -791,6 +791,7 @@ int VideoDevice::setInputParameters()
 		setBrightness( getBrightness() );
 		setContrast( getContrast() );
 		setSaturation( getSaturation() );
+		setWhiteness( getWhiteness() );
 		setHue( getHue() );
 		return EXIT_SUCCESS;
 	}
@@ -1381,6 +1382,41 @@ float VideoDevice::setSaturation(float saturation)
 			break;
 	}
 	return getSaturation();
+}
+
+float VideoDevice::getWhiteness()
+{
+	return m_input[m_current_input].getWhiteness();
+}
+
+float VideoDevice::setWhiteness(float whiteness)
+{
+	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_input[m_current_input].setWhiteness(whiteness); // Just to check bounds
+
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+				struct video_picture V4L_picture;
+				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+				V4L_picture.whiteness   = (65535*getWhiteness());
+				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting white level. Fallback to it is not yet implemented." << endl;
+			}
+		break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			break;
+	}
+	return getWhiteness();
 }
 
 float VideoDevice::getHue()
