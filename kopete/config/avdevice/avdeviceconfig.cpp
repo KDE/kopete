@@ -67,7 +67,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
-	mVideoDevicePool->scanDevices();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
 

@@ -69,7 +69,12 @@ int VideoDevicePool::open()
 
 	if(!m_videodevice.size())
 	{
-		kdDebug() <<  k_funcinfo << "open(): No devices found. Maybe should you scan for available devices first?" << m_current_device << endl;
+		kdDebug() <<  k_funcinfo << "open(): No devices found. Must scan for available devices." << m_current_device << endl;
+		scanDevices();
+	}
+	if(!m_videodevice.size())
+	{
+		kdDebug() <<  k_funcinfo << "open(): No devices found. bailing out." << m_current_device << endl;
 		return EXIT_FAILURE;
 	}
 	if(m_current_device >= m_videodevice.size())
