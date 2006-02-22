@@ -1275,12 +1275,31 @@ float VideoDevice::getBrightness()
 
 float VideoDevice::setBrightness(float brightness)
 {
-	if ( brightness > 1 )
-		brightness = 1;
-	else
-	if ( brightness < 0 )
-		brightness = 0;
-	m_input[m_current_input].setBrightness(brightness);
+	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_input[m_current_input].setBrightness(brightness); // Just to check bounds
+
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+				struct video_picture V4L_picture;
+				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+				V4L_picture.brightness   = (65535*getBrightness());
+				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image brightness. Fallback to it is not yet implemented." << endl;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			break;
+	}
 	return getBrightness();
 }
 
@@ -1291,12 +1310,31 @@ float VideoDevice::getContrast()
 
 float VideoDevice::setContrast(float contrast)
 {
-	if ( contrast > 1 )
-		contrast = 1;
-	else
-	if ( contrast < 0 )
-		contrast = 0;
-	m_input[m_current_input].setContrast(contrast);
+	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_input[m_current_input].setContrast(contrast); // Just to check bounds
+
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+				struct video_picture V4L_picture;
+				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+				V4L_picture.contrast   = (65535*getContrast());
+				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image contrast. Fallback to it is not yet implemented." << endl;
+			}
+		break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			break;
+	}
 	return getContrast();
 }
 
@@ -1307,12 +1345,31 @@ float VideoDevice::getSaturation()
 
 float VideoDevice::setSaturation(float saturation)
 {
-	if ( saturation > 1 )
-		saturation = 1;
-	else
-	if ( saturation < 0 )
-		saturation = 0;
-	m_input[m_current_input].setSaturation(saturation);
+	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_input[m_current_input].setSaturation(saturation); // Just to check bounds
+
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+				struct video_picture V4L_picture;
+				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+				V4L_picture.colour   = (65535*getSaturation());
+				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image saturation. Fallback to it is not yet implemented." << endl;
+			}
+		break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			break;
+	}
 	return getSaturation();
 }
 
@@ -1323,12 +1380,31 @@ float VideoDevice::getHue()
 
 float VideoDevice::setHue(float hue)
 {
-	if ( hue > 1 )
-		hue = 1;
-	else
-	if ( hue < 0 )
-		hue = 0;
-	m_input[m_current_input].setHue(hue);
+	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_input[m_current_input].setHue(hue); // Just to check bounds
+
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+				struct video_picture V4L_picture;
+				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+				V4L_picture.hue   = (65535*getHue());
+				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image hue. Fallback to it is not yet implemented." << endl;
+			}
+		break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			break;
+	}
 	return getHue();
 }
 

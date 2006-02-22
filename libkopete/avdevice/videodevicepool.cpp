@@ -596,7 +596,7 @@ void VideoDevicePool::loadConfig()
 	kdDebug() <<  k_funcinfo << "called" << endl;
 	if(hasDevices())
 	{
-		KConfig *config = kapp->config();
+		KConfig *config = KGlobal::config();
 		config->setGroup("Video Device Settings");
 		const QString currentdevice = config->readEntry("Current Device", QString::null);
 		kdDebug() << k_funcinfo << "Current device: " << currentdevice << endl;
@@ -665,7 +665,7 @@ void VideoDevicePool::saveConfig()
 	kdDebug() <<  k_funcinfo << "called" << endl;
 	if(hasDevices())
 	{
-		KConfig *config = kapp->config();
+		KConfig *config = KGlobal::config();
 		config->setGroup("Video Device Settings");
 
 /*		if(m_modelvector.size())
