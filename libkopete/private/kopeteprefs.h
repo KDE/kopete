@@ -129,7 +129,7 @@ public:
 	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
 
 	bool truncateContactNames() const { return mTruncateContactNames; }
-	int maxConactNameLength() const { return mMaxContactNameLength; }
+	int maxContactNameLength() const { return mMaxContactNameLength; }
 	bool emoticonsRequireSpaces() const { return mEmoticonsRequireSpaces; }
 
 	void setIconTheme(const QString &value);

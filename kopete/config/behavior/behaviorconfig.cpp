@@ -233,7 +233,7 @@ void BehaviorConfig::load()
 
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
 	mPrfsChat->truncateContactNameEnabled->setChecked(p->truncateContactNames());
-	mPrfsChat->mMaxContactNameLength->setValue(p->maxConactNameLength());
+	mPrfsChat->mMaxContactNameLength->setValue(p->maxContactNameLength());
 
 
 	mPrfsChat->viewPlugin->clear();

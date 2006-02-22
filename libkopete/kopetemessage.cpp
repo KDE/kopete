@@ -488,7 +488,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	QString contactName = contact->property(Global::Properties::self()->nickName()).value().toString();
 	if( p->truncateContactNames() )
 	{
-		contactName = KStringHandler::csqueeze( contactName, p->maxConactNameLength() );
+		contactName = KStringHandler::csqueeze( contactName, p->maxContactNameLength() );
 	}
 
 	if(contactName.isEmpty())
@@ -651,6 +651,7 @@ const QDomDocument Message::asXML()
 
 	if( const Contact *c = d->from )
 	{
+		kdDebug() << "KopeteMessage::asXML ** from " << c->contactId() << endl;
 		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
 		fromNode.appendChild( contactNode( doc, c ) );
 		messageNode.appendChild( fromNode );
