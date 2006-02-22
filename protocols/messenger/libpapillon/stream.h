@@ -58,12 +58,12 @@ public:
 	/**
 	 * Read a message received from the server
 	 */
-	virtual Transfer *read() = 0;
+	virtual Transfer read() = 0;
 
 	/**
 	 * Send a message to the server
 	 */
-	virtual void write(Transfer *request) = 0;
+	virtual void write(const Transfer &request) = 0;
 	
 
 signals:

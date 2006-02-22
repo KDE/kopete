@@ -39,7 +39,7 @@ public:
 	ByteStream *byteStream;
 	CoreProtocol protocol;
 
-	QQueue<Transfer*> transferQueue;
+	QQueue<Transfer> transferQueue;
 };
 
 NotificationStream::NotificationStream(Connector *connector, QObject *parent)
@@ -100,7 +100,7 @@ void NotificationStream::reset(bool all)
 
 void NotificationStream::slotProtocolIncomingData()
 {
-	Transfer * incoming = d->protocol.incomingTransfer();
+	Transfer incoming = d->protocol.incomingTransfer();
 	if( incoming )
 	{
 		d->transferQueue.enqueue( incoming );
@@ -152,17 +152,17 @@ bool NotificationStream::transfersAvailable() const
 	return !d->transferQueue.isEmpty();
 }
 
-Transfer *NotificationStream::read()
+Transfer NotificationStream::read()
 {
 	if( d->transferQueue.isEmpty() )
-		return 0;
+		return Transfer();
 	else
 		return d->transferQueue.dequeue();
 }
 
-void NotificationStream::write(Transfer *transfer)
+void NotificationStream::write(const Transfer &transfer)
 {
-	qDebug() << "NotificationStream::write():" << "Sending:" << transfer->toString().replace("\r\n", "");
+	qDebug() << "NotificationStream::write():" << "Sending:" << transfer.toString().replace("\r\n", "");
 
 	d->protocol.outgoingTransfer(transfer);
 }

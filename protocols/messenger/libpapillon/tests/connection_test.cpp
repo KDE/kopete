@@ -23,7 +23,7 @@
 #include "qtconnector.h"
 #include "transfer.h"
 
-#define PASSPORT_ID ""
+#define PASSPORT_ID "ewrwerdsf@hotmail.com"
 
 using namespace Papillon;
 
@@ -67,46 +67,46 @@ void Connection_Test::slotConnected()
 
 void Connection_Test::doLoginProcess()
 {
-	Transfer *usrTransfer = new Transfer(Transfer::TransactionTransfer);
-	usrTransfer->setCommand( QLatin1String("VER") );
-	usrTransfer->setTransactionId( QString::number(++d->trId) );
+	Transfer usrTransfer(Transfer::TransactionTransfer);
+	usrTransfer.setCommand( QLatin1String("VER") );
+	usrTransfer.setTransactionId( QString::number(++d->trId) );
 	QStringList arguments;
 	arguments  = QString("MSNP11 MSNP10 CVR0").split(" ");
-	usrTransfer->setArguments(arguments);
+	usrTransfer.setArguments(arguments);
 
 	d->stream->write(usrTransfer);
 }
 
 void Connection_Test::loginProcessCvr()
 {
-	Transfer *cvrTransfer = new Transfer(Transfer::TransactionTransfer);
-	cvrTransfer->setCommand( QLatin1String("CVR") );
-	cvrTransfer->setTransactionId( QString::number(++d->trId) );
+	Transfer cvrTransfer(Transfer::TransactionTransfer);
+	cvrTransfer.setCommand( QLatin1String("CVR") );
+	cvrTransfer.setTransactionId( QString::number(++d->trId) );
 	QStringList args;
 	args = QString("0x040c winnt 5.1 i386 MSNMSGR 7.0.0777 msmsgs "PASSPORT_ID).split(" ");
-	cvrTransfer->setArguments(args);
+	cvrTransfer.setArguments(args);
 
 	d->stream->write(cvrTransfer);
 }
 
 void Connection_Test::loginProcessTwnI()
 {
-	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
-	twnTransfer->setCommand("USR");
-	twnTransfer->setTransactionId( QString::number(++d->trId) );
+	Transfer twnTransfer(Transfer::TransactionTransfer);
+	twnTransfer.setCommand("USR");
+	twnTransfer.setTransactionId( QString::number(++d->trId) );
 	QStringList args = QString("TWN I "PASSPORT_ID).split(" ");
-	twnTransfer->setArguments(args);
+	twnTransfer.setArguments(args);
 
 	d->stream->write(twnTransfer);
 }
 
 void Connection_Test::loginProcessTwnS()
 {
-	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
-	twnTransfer->setCommand("USR");
-	twnTransfer->setTransactionId( QString::number(++d->trId) );
+	Transfer twnTransfer(Transfer::TransactionTransfer);
+	twnTransfer.setCommand("USR");
+	twnTransfer.setTransactionId( QString::number(++d->trId) );
 	QStringList args = QString("TWN S t=7tLSuqR92Bo*17x76PDg87IVMA5FKqxccJDUocFzfCXbipUMZuMv4HatazUwTBVqsFkTxkS0qFCSbzA9SUFjM*SHzGKIIC7kgZAEikfzfAUufs*L!3B5i0aSrNo03BAeQP&p=7nhP1TIX4BGQ*k4JKZw0JHP5rb3A9wk8fw!ZYadtXN0OFiN*yZr6UaFwBAdUOKwoQkYfK1gEzWE*Op16WDcE*9J3Hv4JWG1TF3eSoAq71CITPmkZONAReXYlGz5Rk5l7ZFwbAPq6NxxqxzK24mx74JkLst2Z7gEm*hbz9gfIUu!0M$").split(" ");
-	twnTransfer->setArguments(args);
+	twnTransfer.setArguments(args);
 
 	d->stream->write(twnTransfer);
 }
@@ -118,37 +118,37 @@ void Connection_Test::slotExit()
 
 void Connection_Test::slotReadTransfer()
 {
-	Transfer *readTransfer = d->stream->read();
+	Transfer readTransfer = d->stream->read();
 	if(readTransfer)
 	{
-		qDebug() << "Data received: " << readTransfer->toString();
-		if(readTransfer->command() == QLatin1String("VER"))
+		qDebug() << "Data received: " << readTransfer.toString();
+		if(readTransfer.command() == QLatin1String("VER"))
 		{
 			loginProcessCvr();
 		}
-		if(readTransfer->command() == QLatin1String("CVR"))
+		if(readTransfer.command() == QLatin1String("CVR"))
 		{
 			loginProcessTwnI();
 		}
-		if(readTransfer->command() == QLatin1String("XFR"))
+		if(readTransfer.command() == QLatin1String("XFR"))
 		{
-			QString server = readTransfer->arguments()[1].section(":", 0, 0);
-			QString port = readTransfer->arguments()[1].section(":", 1, 1);
+			QString server = readTransfer.arguments()[1].section(":", 0, 0);
+			QString port = readTransfer.arguments()[1].section(":", 1, 1);
 			bool dummy;
 
 			d->stream->close();
 			d->stream->connectToServer(server, port.toUInt(&dummy));
 		}
-		if(readTransfer->command() == QLatin1String("USR"))
+		if(readTransfer.command() == QLatin1String("USR"))
 		{
-			if(readTransfer->arguments()[0] == QLatin1String("TWN") && readTransfer->arguments()[1] == QLatin1String("S"))
+			if(readTransfer.arguments()[0] == QLatin1String("TWN") && readTransfer.arguments()[1] == QLatin1String("S"))
 			{
 				loginProcessTwnS();
 			}
 		}
 
 		bool isNumber;
-		int errorCode = readTransfer->command().toUInt(&isNumber);
+		int errorCode = readTransfer.command().toUInt(&isNumber);
 		if(isNumber)
 		{
 			qDebug() << "Received error code" << errorCode << ". Closing...";

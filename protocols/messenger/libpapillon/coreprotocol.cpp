@@ -41,7 +41,7 @@ public:
 	QByteArray in;
 	int error;
 	// the transfer that is being received
-	Transfer *inTransfer;
+	Transfer inTransfer;
 	// represents the protocol's overall state
 	int state;
 	// Represend the length of payload data to read.
@@ -104,7 +104,7 @@ void CoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 // 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done processing chunk" << endl;
 }
 
-Transfer *CoreProtocol::incomingTransfer()
+Transfer CoreProtocol::incomingTransfer()
 {
 	if ( d->state == Available )
 	{
@@ -114,7 +114,8 @@ Transfer *CoreProtocol::incomingTransfer()
 	else
 	{
 		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we shouldn't be here!" << kBacktrace() << endl;
-		return 0;
+		//return 0;
+		return Transfer();
 	}
 }
 
@@ -132,12 +133,12 @@ void cp_dump( const QByteArray &bytes )
 // #endif
 }
 
-void CoreProtocol::outgoingTransfer(Transfer *outgoing)
+void CoreProtocol::outgoingTransfer(const Transfer &outgoing)
 {
 	//kDebug(OSCAR_RAW_DEBUG) << "CoreProtocol::outgoingTransfer()" << endl;
 	// Convert the outgoing data into wire format
 	// pretty leet, eh?
-	emit outgoingData( outgoing->toRawCommand() );
+	emit outgoingData( outgoing.toRawCommand() );
 
 	return;
 }
@@ -204,12 +205,12 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 				arguments << commandList[i];
 			}
 			
-			Transfer *receivedTransfer = new Transfer(transferType);
-			receivedTransfer->setCommand(command);
-			receivedTransfer->setArguments(arguments);
+			Transfer receivedTransfer(transferType);
+			receivedTransfer.setCommand(command);
+			receivedTransfer.setArguments(arguments);
 			
 			if(isNumber)
-				receivedTransfer->setTransactionId( QString::number(trId) );
+				receivedTransfer.setTransactionId( QString::number(trId) );
 			
 			d->inTransfer = receivedTransfer;
 			
@@ -238,7 +239,7 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			payloadData.reserve(d->payloadLength);
 			din.readRawBytes(payloadData.data(), d->payloadLength);
 			
-			d->inTransfer->setPayloadData(payloadData);
+			d->inTransfer.setPayloadData(payloadData);
 			
 			d->state = Available;
 			emit incomingData();

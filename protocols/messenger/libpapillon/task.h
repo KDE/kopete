@@ -46,7 +46,7 @@ public:
 
 	Task *parent() const;
 //	Connection* client() const;
-	Transfer *transfer() const;
+	Transfer &transfer() const;
 
 	quint32 id() const;
 	void setId();
@@ -61,13 +61,13 @@ public:
 	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
 	 * for further processing.
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(const Transfer &transfer);
 	void safeDelete();
 
 	/**
 	 * Direct setter for Tasks which don't have any fields
 	 */
-	void setTransfer(Transfer *transfer);
+	void setTransfer(const Transfer &transfer);
 
 signals:
 	void finished();
@@ -76,7 +76,7 @@ protected:
 	virtual void onGo();
 	virtual void onDisconnect();
 	void setId( quint32 id );
-	void send(Transfer *request);
+	void send(const Transfer &request);
 	void setSuccess(int code=0, const QString &str = QLatin1String(""));
 	void setError(int code=0, const QString &str = QLatin1String(""));
 // 	void debug( const char *, ... );
@@ -86,7 +86,7 @@ protected:
 	 * Used in take() to check if the offered transfer is for this Task
 	 * @return true if this Task should take the Transfer.  Default impl always returns false.
 	 */
-	virtual bool forMe(Transfer *transfer) const;
+	virtual bool forMe(const Transfer &transfer) const;
 
 private slots:
 	void clientDisconnected();

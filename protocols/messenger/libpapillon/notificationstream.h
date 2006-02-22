@@ -44,8 +44,8 @@ public:
 
 	virtual bool transfersAvailable() const;
 
-	virtual Transfer *read();
-	virtual void write(Transfer *transfer);
+	virtual Transfer read();
+	virtual void write(const Transfer &transfer);
 
 	void reset(bool all);
 

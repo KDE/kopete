@@ -32,7 +32,7 @@ namespace Papillon
  *
  * A transfer have always a command and arguments. It can have a transaction ID, a payload length, and the payload data.
  *
- * This class was supposed to be implicit shared but QSharedDataPointer doesn't work with forward declaration.
+ * This class is implicit shared.
  * @author Michaël Larouche
  */
 class PAPILLON_EXPORT Transfer
@@ -59,6 +59,19 @@ public:
 	 */
 	Transfer(const TransferType &type = NormalTransfer);
 	~Transfer();
+	/**
+	 * Copy constructor
+	 */
+	Transfer(const Transfer &copy);
+	/**
+	 * Copy-assignment operator.
+	 */
+	Transfer &operator=(const Transfer &other);
+
+	/**
+	 * Return true if the transfer is valid.
+	 */
+	operator bool();
 
 	/**
 	 * Return the transfer type.
@@ -129,7 +142,7 @@ public:
 
 private:
 	class Private;
-	Private *d;
+	QSharedDataPointer<Private> d;
 };
 
 //Q_DECLARE_OPERATOR_FOR_FLAGS(Transfer::TransferType);
