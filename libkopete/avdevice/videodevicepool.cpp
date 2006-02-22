@@ -399,6 +399,17 @@ int VideoDevicePool::selectInput(int newinput)
 }
 
 /*!
+    \fn Kopete::AV::VideoDevicePool::setInputParameters()
+ */
+int VideoDevicePool::setInputParameters()
+{
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].setInputParameters();
+	else
+		return EXIT_FAILURE;
+}
+
+/*!
     \fn Kopete::AV::VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
  */
 int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)

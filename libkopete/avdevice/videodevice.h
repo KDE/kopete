@@ -148,6 +148,7 @@ public:
 	QString pixelFormatName(int pixelformat);
 	int currentInput();
 	int selectInput(int input);
+	int setInputParameters();
 	int startCapturing();
 	int getFrame();
 	int getFrame(imagebuffer *imgbuffer);

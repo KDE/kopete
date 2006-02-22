@@ -69,6 +69,7 @@ public:
 	int readFrame();
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
+	int setInputParameters();
 	int scanDevices();
 	bool hasDevices();
 	size_t size();

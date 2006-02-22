@@ -734,15 +734,6 @@ int VideoDevice::currentInput()
 	return 0;
 }
 
-
-
-
-
-
-
-
-
-
 /*!
     \fn Kopete::AV::VideoDevice::selectInput(int input)
  */
@@ -783,8 +774,27 @@ int VideoDevice::selectInput(int newinput)
 				break;
 		}
 		kdDebug() <<  k_funcinfo << "Selected input " << newinput << " (" << m_input[newinput].name << ")" << endl;
+		setInputParameters();
+		return EXIT_SUCCESS;
 	}
-	return EXIT_SUCCESS;
+	return EXIT_FAILURE;
+}
+
+/*!
+    \fn Kopete::AV::VideoDevice::setInputParameters()
+ */
+int VideoDevice::setInputParameters()
+{
+    /// @todo implement me
+	if( (isOpen()) && (m_current_input < inputs() ) )
+	{
+		setBrightness( getBrightness() );
+		setContrast( getContrast() );
+		setSaturation( getSaturation() );
+		setHue( getHue() );
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
 }
 
 /*!
