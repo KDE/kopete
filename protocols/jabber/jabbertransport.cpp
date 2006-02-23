@@ -51,7 +51,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 	setMyself( myContact );
 	
 	//we have to know if the account get loaded from the config, or newly created
-	bool exist=configGroup()->readBoolEntry("exist",false);
+	bool exist=configGroup()->readEntry("exist",false);
 	
 	if(!exist)
 	{

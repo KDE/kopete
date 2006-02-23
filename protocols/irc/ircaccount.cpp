@@ -135,7 +135,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	m_serverMessages = (MessageDestination)config->readEntry( "ServerMessages", ServerWindow );
 	m_informationReplies = (MessageDestination)config->readEntry( "InformationReplies", ActiveWindow );
 	m_errorMessages = (MessageDestination)config->readEntry( "ErrorMessages", ActiveWindow );
-	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
+	autoShowServerWindow = config->readEntry( "AutoShowServerWindow", false );
 
 	if( !codecMib.isEmpty() )
 	{
@@ -472,7 +472,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 			else
 			{
 				// if prefer SSL is set, sort by SSL first
-				if (configGroup()->readBoolEntry("PreferSSL"))
+				if (configGroup()->readEntry("PreferSSL"))
 				{
 					typedef Q3ValueList<IRCHost*> IRCHostList;
 					IRCHostList sslFirst;

@@ -68,7 +68,7 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 
 	KGlobal::config()->setGroup("WinPopup");
 	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	int groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
+	int groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
 
 	popupClient = new WinPopupLib(smbClientBin, groupCheckFreq);
 	QObject::connect(popupClient, SIGNAL(signalNewMessage(const QString &, const QDateTime &, const QString &)),
@@ -128,7 +128,7 @@ void WPProtocol::settingsChanged()
 
 	KGlobal::config()->setGroup("WinPopup");
 	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	int groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
+	int groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
 
 	popupClient->settingsChanged(smbClientBin, groupCheckFreq);
 }

@@ -185,7 +185,7 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 	KConfig *config = KGlobal::config();
 	config->setGroup("Latex Plugin");
 
-	if(!config->readBoolEntry("ParseOutgoing", false))
+	if(!config->readEntry("ParseOutgoing", false))
 		return;
 
 	QString messageText = msg.plainBody();

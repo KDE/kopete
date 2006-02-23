@@ -59,7 +59,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 //		mAutoConnect->setChecked(account()->excludeConnect());
 		mHostName->setReadOnly(true);
 		KGlobal::config()->setGroup("WinPopup");
-		mHostCheckFreq->setValue(KGlobal::config()->readNumEntry("HostCheckFreq", 60));
+		mHostCheckFreq->setValue(KGlobal::config()->readEntry("HostCheckFreq", 60));
 		mSmbcPath->setURL(KGlobal::config()->readEntry("SmbcPath", tmpSmbcPath));
 
 	}

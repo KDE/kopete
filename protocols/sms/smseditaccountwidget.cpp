@@ -59,7 +59,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 		//FIXME: Remove this when we can safely change the account ID (Matt)
 		preferencesDialog->accountId->setDisabled(true);
 		sName = account->configGroup()->readEntry("ServiceName", QString::null);
-		preferencesDialog->subEnable->setChecked(account->configGroup()->readBoolEntry("SubEnable", false));
+		preferencesDialog->subEnable->setChecked(account->configGroup()->readEntry("SubEnable", false));
 		preferencesDialog->subCode->setText(account->configGroup()->readEntry("SubCode", QString::null));
 		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->configGroup()->readEntry("MsgAction", 0)));
 	}

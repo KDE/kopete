@@ -264,7 +264,7 @@ void OscarAccount::processSSIList()
     }
     kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the following contacts are not on the server side list"
                              << nonServerContactList << endl;
-	bool showMissingContactsDialog = configGroup()->readBoolEntry(QString::fromLatin1("ShowMissingContactsDialog"), true);
+	bool showMissingContactsDialog = configGroup()->readEntry(QString::fromLatin1("ShowMissingContactsDialog"), true);
     if ( !nonServerContactList.isEmpty() && showMissingContactsDialog )
     {
         d->olnscDialog = new OscarListNonServerContacts( Kopete::UI::Global::mainWidget() );

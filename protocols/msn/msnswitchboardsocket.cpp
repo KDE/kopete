@@ -468,13 +468,13 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 						break;
 					}
 				}
-			if(config->readBoolEntry("SendJabber", true))
+			if(config->readEntry("SendJabber", true))
 				JabberID=config->readEntry("JabberAccount");
 
 			if(!JabberID.isEmpty())
 				JabberID="JabberID: "+JabberID +"\r\n";
 
-			if( config->readBoolEntry("SendClientInfo", true)   ||  !JabberID.isEmpty())
+			if( config->readEntry("SendClientInfo", true)   ||  !JabberID.isEmpty())
 			{
 
 				QCString message = QString( "MIME-Version: 1.0\r\n"

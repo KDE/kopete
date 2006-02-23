@@ -102,8 +102,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	if(!displayName.isEmpty())
 		_myself->setNickName(displayName);
 	
-	m_YABLastMerge = configGroup()->readNumEntry( "YABLastMerge", 0 );
-	m_YABLastRemoteRevision = configGroup()->readNumEntry( "YABLastRemoteRevision", 0 );
+	m_YABLastMerge = configGroup()->readEntry( "YABLastMerge", 0 );
+	m_YABLastRemoteRevision = configGroup()->readEntry( "YABLastRemoteRevision", 0 );
 }
 
 YahooAccount::~YahooAccount()

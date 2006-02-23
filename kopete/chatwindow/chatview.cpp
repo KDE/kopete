@@ -479,12 +479,12 @@ void ChatView::placeMembersList( K3DockWidget::DockPosition dp )
 
 		if( membersDockPosition == K3DockWidget::DockLeft )
 		{
-			dockWidth = KGlobal::config()->readNumEntry(
+			dockWidth = KGlobal::config()->readEntry(
 				QString::fromLatin1( "membersDock,viewDock:sepPos" ), 30);
 		}
 		else
 		{
-			dockWidth = KGlobal::config()->readNumEntry(
+			dockWidth = KGlobal::config()->readEntry(
 				QString::fromLatin1( "viewDock,membersDock:sepPos" ), 70);
 		}
 		// Make sure it is shown then place it wherever
@@ -852,7 +852,7 @@ void ChatView::readOptions()
 	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
 
 	membersDockPosition = static_cast<K3DockWidget::DockPosition>(
-		config->readNumEntry( QString::fromLatin1( "membersDockPosition" ), K3DockWidget::DockRight ) );
+		config->readEntry( QString::fromLatin1( "membersDockPosition" ), K3DockWidget::DockRight ) );
 
 	QString dockKey = QString::fromLatin1( "viewDock" );
 	if ( d->visibleMembers )
@@ -865,7 +865,7 @@ void ChatView::readOptions()
 
 	dockKey.append( QString::fromLatin1( ",editDock:sepPos" ) );
 	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
-	int splitterPos = config->readNumEntry( dockKey, 70 );
+	int splitterPos = config->readEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );
 	editDock->setEnableDocking( K3DockWidget::DockNone );

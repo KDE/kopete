@@ -131,14 +131,14 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 	// (ie.: send Displayed event when it is really displayed)
 	// of these events would require changes in the chatwindow API.
 	
-	if ( account()->configGroup()->readBoolEntry ("SendEvents", true) )
+	if ( account()->configGroup()->readEntry ("SendEvents", true) )
 	{
-		if ( account()->configGroup()->readBoolEntry ("SendDeliveredEvent", true) )
+		if ( account()->configGroup()->readEntry ("SendDeliveredEvent", true) )
 		{
 			sendNotification( XMPP::DeliveredEvent );
 		}
 		
-		if ( account()->configGroup()->readBoolEntry ("SendDisplayedEvent", true) )
+		if ( account()->configGroup()->readEntry ("SendDisplayedEvent", true) )
 		{
 			sendNotification( XMPP::DisplayedEvent );
 		}
@@ -184,8 +184,8 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 
 void JabberChatSession::slotSendTypingNotification ( bool typing )
 {
-	if ( !account()->configGroup()->readBoolEntry ("SendEvents", true)
-		|| !account()->configGroup()->readBoolEntry("SendComposingEvent", true) ) 
+	if ( !account()->configGroup()->readEntry ("SendEvents", true)
+		|| !account()->configGroup()->readEntry("SendComposingEvent", true) ) 
 		return;
 
 	// create JID for us as sender
