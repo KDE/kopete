@@ -21,7 +21,7 @@
 #include "task.h"
 #include "yabentry.h"
 
-struct KURL;
+struct KUrl;
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 
