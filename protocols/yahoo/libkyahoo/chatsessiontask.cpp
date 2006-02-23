@@ -26,7 +26,7 @@
 
 ChatSessionTask::ChatSessionTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 ChatSessionTask::~ChatSessionTask()
@@ -35,7 +35,7 @@ ChatSessionTask::~ChatSessionTask()
 
 void ChatSessionTask::onGo()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceChatSession );
 	t->setId( client()->sessionID() );

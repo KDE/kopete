@@ -144,7 +144,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		mVideoDevicePool->startCapturing();
 		setVideoInputParameters();
-		kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
+		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
 		emit changed( true );
 	}
 }
@@ -167,31 +167,31 @@ void AVDeviceConfig::slotStandardKComboBoxChanged(int){
 }
 
 void AVDeviceConfig::slotBrightnessSliderChanged(int){
-	kdDebug() << "kopete:config (avdevice): slotBrightnessSliderChanged(int) called. " << mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotBrightnessSliderChanged(int) called. " << mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setBrightness( mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 );
   emit changed( true );
 }
 
 void AVDeviceConfig::slotContrastSliderChanged(int){
-	kdDebug() << "kopete:config (avdevice): slotContrastSliderChanged(int) called. " << mPrfsVideoDevice->mContrastSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotContrastSliderChanged(int) called. " << mPrfsVideoDevice->mContrastSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setContrast( mPrfsVideoDevice->mContrastSlider->value() / 65535.0 );
   emit changed( true );
 }
 
 void AVDeviceConfig::slotSaturationSliderChanged(int){
-	kdDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setSaturation( mPrfsVideoDevice->mSaturationSlider->value() / 65535.0);
   emit changed( true );
 }
 
 void AVDeviceConfig::slotHueSliderChanged(int){
-	kdDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setHue( mPrfsVideoDevice->mHueSlider->value() / 65535.0 );
   emit changed( true );
 }
 
 void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setAutoBrightnessContrast(mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked());
 	emit changed( true );
 }

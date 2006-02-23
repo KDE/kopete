@@ -191,7 +191,7 @@ void WinPopupLib::slotReadProcessReady(KProcIO *r)
 		if (host.search(tmpLine) != -1) currentHosts += host.cap(1);
 		if (group.search(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
 		if (error.search(tmpLine) != -1)
-			kdDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
+			kDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
 	}
 }
 

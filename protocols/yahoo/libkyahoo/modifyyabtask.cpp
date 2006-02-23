@@ -33,7 +33,7 @@
 using namespace KNetwork;
 ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 ModifyYABTask::~ModifyYABTask()
@@ -42,7 +42,7 @@ ModifyYABTask::~ModifyYABTask()
 
 void ModifyYABTask::onGo()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KBufferedSocket* yahooSocket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
 	connect( yahooSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( yahooSocket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
@@ -89,12 +89,12 @@ void ModifyYABTask::setEntry( const YABEntry &entry )
 
 void ModifyYABTask::connectFailed( int i)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
 }
 
 void ModifyYABTask::connectSucceeded()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
 
 	QString header = QString::fromLatin1("POST /yab/us?v=XM&prog=ymsgr&.intl=us&sync=1&tags=short&noclear=1& HTTP/1.1\r\n"
@@ -113,9 +113,9 @@ void ModifyYABTask::connectSucceeded()
 	stream.writeRawBytes( m_postData.utf8(), m_postData.utf8().size() );
 	
 	if( socket->writeBlock( buffer, buffer.size() ) )
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;
 	else
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed." << endl;
 	
 	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 }
@@ -151,7 +151,7 @@ void ModifyYABTask::slotRead()
 
 	list = doc.elementsByTagName( "ct" );			// Get records
 	for( it = 0; it < list.count(); it++ )	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsing entry..." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsing entry..." << endl;
 		if( !list.item( it ).isElement() )
 			continue;
 		e = list.item( it ).toElement();

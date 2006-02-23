@@ -196,12 +196,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	{
 		if ( m_mobile ) 
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
 			setOnlineStatus( mProtocol->statusWirelessOnline );
     	}
 		else 
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
 			setOnlineStatus( mProtocol->statusOnline ); //we're online
 		}
 		removeProperty( mProtocol->awayMessage );
@@ -211,12 +211,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	{
 		if ( m_mobile ) 
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
 			setOnlineStatus( mProtocol->statusWirelessOnline );
 		}
 		else 
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
 			setOnlineStatus( mProtocol->statusAway ); //we're away
 		}
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
@@ -227,7 +227,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	}
 	else
 	{
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
 		setOnlineStatus( mProtocol->statusAway ); //we're away
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
 		{

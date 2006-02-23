@@ -213,7 +213,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			service = Yahoo::ServiceAuthorization;
 		break;
 		case (Yahoo::ServiceContactDetails) :
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceContactDetails " << servicenum << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceContactDetails " << servicenum << endl;
 			service = Yahoo::ServiceContactDetails;
 		break;
 		/*

@@ -664,7 +664,7 @@ void YahooContact::deleteContact()
 
 void YahooContact::writeYABEntry()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	// Personal
 	setProperty( YahooProtocol::protocol()->propfirstName, m_YABEntry->firstName );
@@ -723,7 +723,7 @@ void YahooContact::writeYABEntry()
 
 void YahooContact::readYABEntry()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( m_YABEntry )
 		delete m_YABEntry;
 	

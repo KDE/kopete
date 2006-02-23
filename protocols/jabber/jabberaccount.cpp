@@ -688,11 +688,11 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 
 void JabberAccount::disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status )
 {
-    kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "disconnect( reason, status ) called" << endl;
+    kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "disconnect( reason, status ) called" << endl;
     
 	if (isConnected ())
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
 		/* Tell backend class to disconnect. */
 		m_jabberClient->disconnect (status);
 	}
@@ -709,7 +709,7 @@ void JabberAccount::disconnect( Kopete::Account::DisconnectReason reason, XMPP::
 	 * Instead, the instance will lurk until the next
 	 * connection attempt.
 	 */
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 
 	Kopete::Account::disconnected ( reason );
 }

@@ -67,7 +67,7 @@ void YABEntry::fromQDomElement( const QDomElement &e )
 
 void YABEntry::fromQDomDocument( const QDomDocument &d )
 {
-	kdDebug() << d.toString() << 
+	kDebug() << d.toString() << 
 		d.elementsByTagName("yi").item(0).toElement().text();
 	yahooId = d.elementsByTagName("yi").item(0).toElement().text();
 	firstName = d.elementsByTagName("fn").item(0).toElement().text();
