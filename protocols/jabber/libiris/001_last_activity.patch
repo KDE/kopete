@@ -1,8 +1,8 @@
 Index: iris/xmpp-im/xmpp_tasks.h
 ===================================================================
---- iris/xmpp-im/xmpp_tasks.h	(revision 419672)
+--- iris/xmpp-im/xmpp_tasks.h	(revision 513088)
 +++ iris/xmpp-im/xmpp_tasks.h	(working copy)
-@@ -195,6 +195,29 @@
+@@ -197,6 +197,29 @@
  		Private *d;
  	};
  
@@ -34,9 +34,9 @@ Index: iris/xmpp-im/xmpp_tasks.h
  		Q_OBJECT
 Index: iris/xmpp-im/xmpp_tasks.cpp
 ===================================================================
---- iris/xmpp-im/xmpp_tasks.cpp	(revision 419672)
+--- iris/xmpp-im/xmpp_tasks.cpp	(revision 513088)
 +++ iris/xmpp-im/xmpp_tasks.cpp	(working copy)
-@@ -773,6 +773,74 @@
+@@ -788,6 +788,74 @@
  
  
  //----------------------------------------------------------------------------
@@ -111,3 +111,30 @@ Index: iris/xmpp-im/xmpp_tasks.cpp
  // JT_GetServices
  //----------------------------------------------------------------------------
  JT_GetServices::JT_GetServices(Task *parent)
+Index: 001_last_activity.patch
+===================================================================
+--- 001_last_activity.patch	(revision 513088)
++++ 001_last_activity.patch	(working copy)
+@@ -1,8 +1,8 @@
+ Index: iris/xmpp-im/xmpp_tasks.h
+ ===================================================================
+---- iris/xmpp-im/xmpp_tasks.h	(revision 419672)
++--- iris/xmpp-im/xmpp_tasks.h	(revision 513088)
+ +++ iris/xmpp-im/xmpp_tasks.h	(working copy)
+-@@ -195,6 +195,29 @@
++@@ -197,6 +197,29 @@
+  		Private *d;
+  	};
+  
+@@ -34,9 +34,9 @@
+  		Q_OBJECT
+ Index: iris/xmpp-im/xmpp_tasks.cpp
+ ===================================================================
+---- iris/xmpp-im/xmpp_tasks.cpp	(revision 419672)
++--- iris/xmpp-im/xmpp_tasks.cpp	(revision 513088)
+ +++ iris/xmpp-im/xmpp_tasks.cpp	(working copy)
+-@@ -773,6 +773,74 @@
++@@ -788,6 +788,74 @@
+  
+  
+  //----------------------------------------------------------------------------
