@@ -461,6 +461,27 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
+	
+	class JT_PrivateStorage : public Task
+	{
+		Q_OBJECT
+	public:
+		JT_PrivateStorage(Task *parent);
+		~JT_PrivateStorage();
+
+		void set(const QDomElement &);
+		void get(const QString &tag, const QString& xmlns);
+		
+		QDomElement element();
+
+		void onGo();
+		bool take(const QDomElement &);
+		
+	private:
+		class Private;
+		Private *d;
+	};
+	
 }
 
 #endif
