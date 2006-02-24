@@ -20,7 +20,6 @@
 #include <qobject.h>
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qtooltip.h>
 #include <qlayout.h>
 #include <qvbox.h>
 #include <kdebug.h>
@@ -106,20 +105,18 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 
 void YahooWebcamDialog::setViewer( const QStringList &viewer )
 {
-	m_Viewer->show();
-	m_Viewer->setText( i18n( "%1 viewer(s)" ).arg( viewer.size() ) );
-	if( viewer.size() > 0 )
+	QString s = i18n( "%1 viewer(s)" ).arg( viewer.size() );
+	if( viewer.size() )
 	{
-		QString tip;
-		tip = i18n("<qt>People watching your cam:<br>");
-		for ( QStringList::const_iterator it = viewer.begin(); it != viewer.end(); ++it ) {
-			tip += QString("%1<br>").arg( *it );
+		s += ": ";
+		for ( QStringList::ConstIterator it = viewer.begin(); it != viewer.end(); ++it ) {
+			if( it != viewer.begin() )
+				s += ", ";
+			s += *it;
 		}
-		tip += QString::fromLatin1( "</qt>" );
-		QToolTip::add( m_Viewer, tip );
 	}
-	else
-		QToolTip::add( m_Viewer, QString::null );
+	m_Viewer->setText( s );
+	m_Viewer->show();
 }
 
 // kate: indent-mode csands; tab-width 4;
