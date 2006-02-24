@@ -204,7 +204,8 @@ void Client::streamError( int error )
 		d->error = error;
 		d->errorString = d->stream->errorText();
 	}
-
+	
+	d->loginTask->reset();
 	d->stream->deleteLater();
 	d->stream = 0L;
 	m_connector->deleteLater();
