@@ -1075,6 +1075,7 @@ int VideoDevice::getFrame(imagebuffer *imgbuffer)
 int VideoDevice::getImage(QImage *qimage)
 {
     /// @todo implement me
+
 	qimage->create(width(), height(),32, QImage::IgnoreEndian);
 	uchar *bits=qimage->bits();
 //kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
@@ -1478,6 +1479,30 @@ bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
 	kdDebug() <<  k_funcinfo << "VideoDevice::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
 	m_input[m_current_input].setAutoColorCorrection(colorcorrection);
 	return m_input[m_current_input].getAutoColorCorrection();
+}
+
+bool VideoDevice::getImageAsMirror()
+{
+	return m_input[m_current_input].getImageAsMirror();
+}
+
+bool VideoDevice::setImageAsMirror(bool imageasmirror)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevice::setImageAsMirror(" << imageasmirror << ") called." << endl;
+	m_input[m_current_input].setImageAsMirror(imageasmirror);
+	return m_input[m_current_input].getImageAsMirror();
+}
+
+bool VideoDevice::getWorkaroundBrokenDriver()
+{
+	return m_workaroundbrokendriver;
+}
+
+bool VideoDevice::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevice::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
+	m_workaroundbrokendriver = workaroundbrokendriver;
+	return m_workaroundbrokendriver;
 }
 
 pixel_format VideoDevice::pixelFormatForPalette( int palette )

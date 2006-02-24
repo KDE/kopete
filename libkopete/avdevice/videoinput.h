@@ -51,6 +51,8 @@ public:
 	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+	bool getImageAsMirror();
+	bool setImageAsMirror(bool imageasmirror);
 
 protected:
 	float m_brightness;
@@ -60,6 +62,7 @@ protected:
 	float m_hue;
 	bool m_autobrightnesscontrast;
 	bool m_autocolorcorrection;
+	bool m_imageasmirror;
 
 
 };

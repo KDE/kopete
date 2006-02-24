@@ -96,6 +96,10 @@ public:
 	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+	bool getImageAsMirror();
+	bool setImageAsMirror(bool imageasmirror);
+	bool getWorkaroundBrokenDriver();
+	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;

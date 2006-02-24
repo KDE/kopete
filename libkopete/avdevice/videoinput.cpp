@@ -154,6 +154,19 @@ bool VideoInput::setAutoColorCorrection(bool colorcorrection)
 	return getAutoColorCorrection();
 }
 
+bool VideoInput::getImageAsMirror()
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_imageasmirror;
+}
+
+bool VideoInput::setImageAsMirror(bool imageasmirror)
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_imageasmirror = imageasmirror;
+	return getImageAsMirror();
+}
+
 }
 
 }

@@ -170,6 +170,10 @@ public:
 	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+	bool getImageAsMirror();
+	bool setImageAsMirror(bool imageasmirror);
+	bool getWorkaroundBrokenDriver();
+	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
 	bool canCapture();
 	bool canChromakey();
@@ -201,6 +205,8 @@ public:
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
+
+	bool m_workaroundbrokendriver;
 
 	QValueVector<rawbuffer> m_rawbuffers;
 	unsigned int m_streambuffers;
