@@ -441,6 +441,26 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
+
+	class JT_MucPresence : public Task
+	{
+		Q_OBJECT
+	public:
+		JT_MucPresence(Task *parent);
+		~JT_MucPresence();
+
+		void pres(const Status &);
+		void pres(const Jid &, const Status &, const QString &password);
+
+		void onGo();
+
+	private:
+		QDomElement tag;
+		int type;
+
+		class Private;
+		Private *d;
+	};
 }
 
 #endif

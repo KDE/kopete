@@ -317,6 +317,35 @@ bool Client::groupChatJoin(const QString &host, const QString &room, const QStri
 	return true;
 }
 
+bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString &password)
+{
+	Jid jid(room + "@" + host + "/" + nick);
+	for(QList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end();) {
+		GroupChat &i = *it;
+		if(i.j.compare(jid, false)) {
+			// if this room is shutting down, then free it up
+			if(i.status == GroupChat::Closing)
+				it = d->groupChatList.remove(it);
+			else
+				return false;
+		}
+		else
+			++it;
+	}
+
+	debug(QString("Client: Joined: [%1]\n").arg(jid.full()));
+	GroupChat i;
+	i.j = jid;
+	i.status = GroupChat::Connecting;
+	d->groupChatList += i;
+
+	JT_MucPresence *j = new JT_MucPresence(rootTask());
+	j->pres(jid, Status(), password);
+	j->go(true);
+
+	return true;
+}
+
 void Client::groupChatSetStatus(const QString &host, const QString &room, const Status &_s)
 {
 	Jid jid(room + "@" + host);
