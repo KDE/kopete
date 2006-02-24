@@ -36,19 +36,14 @@ void JabberBookmarks::accountConnected()
 	if(!m_account->isConnected())
 		return;
 	
-#warning Port when libiris changes will be merged
-#if 0
 	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( m_account->client()->rootTask ());
 	task->get( "storage" , "storage:bookmarks" );
 	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedBookmarks() ) );
 	task->go ( true );
-#endif
 }
 
 void JabberBookmarks::slotReceivedBookmarks( )
 {
-#warning Port when libiris changes will be merged
-#if 0
 	XMPP::JT_PrivateStorage * task = (XMPP::JT_PrivateStorage*)(sender());
 	m_storage=QDomDocument("storage");
 	m_conferencesJID.clear();
@@ -96,7 +91,6 @@ void JabberBookmarks::slotReceivedBookmarks( )
 			}
 		}
 	}
-#endif
 }
 
 
@@ -125,12 +119,9 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 	conference.appendChild(name);
 	name.appendChild(m_storage.createTextNode(jid.full()));
 
-#warning Port when libiris changes will be merged.
-#if 0
 	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( m_account->client()->rootTask ());
 	task->set( storage_e );
 	task->go ( true );
-#endif
 	
 	m_conferencesJID += jid.full();
 }

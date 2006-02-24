@@ -247,14 +247,11 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			jabberMessage.setBody ( message.plainBody ());
 			if (message.format() ==  Kopete::Message::RichText) 
 			{
-#warning Port when libiris change will be merged
-#if 0
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().canXHTML() )
 				{
 					jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );
 				}
-#endif
         	}
 		}
 

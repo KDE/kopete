@@ -344,16 +344,12 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		// retrieve and reformat body
 		QString body = message.body ();
 // see warning below
-#if 0
 		QString xHTMLBody = message.xHTMLBody ();
-#endif
 		if( !message.xencrypted().isEmpty () )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
 
-#warning Port when libiris change will be merged
-#if 0
 		// convert XMPP::Message into Kopete::Message
 		if (!xHTMLBody.isEmpty()) {
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
@@ -361,7 +357,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 											 message.subject (), Kopete::Message::Inbound,
 											 Kopete::Message::RichText, viewPlugin );
 		}
-#endif
 		if ( !body.isEmpty () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
@@ -571,21 +566,16 @@ void JabberContact::slotGetTimedLastActivity ()
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting last activity from timer for " << mRosterItem.jid().bare () << endl;
 
-#warning Port when libiris changes will be merged
-#if 0
 		XMPP::JT_GetLastActivity *task = new XMPP::JT_GetLastActivity ( account()->client()->rootTask () );
 		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotLastActivity () ) );
 		task->get ( mRosterItem.jid () );
 		task->go ( true );
-#endif
 	}
 
 }
 
 void JabberContact::slotGotLastActivity ()
 {
-#warning Port when libiris changes will be merged
-#if 0
 	XMPP::JT_GetLastActivity *task = (XMPP::JT_GetLastActivity *) sender ();
 
 	if ( task->success () )
@@ -596,7 +586,6 @@ void JabberContact::slotGotLastActivity ()
 			setProperty( protocol()->propAwayMessage, task->message() );
 		}
 	}
-#endif
 
 }
 
