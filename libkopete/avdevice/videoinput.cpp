@@ -16,7 +16,6 @@
 */
 
 #include "videoinput.h"
-#include "kdebug.h"
 
 namespace Kopete {
 
@@ -24,6 +23,7 @@ namespace AV {
 
 VideoInput::VideoInput()
 {
+	kdDebug() << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
 	m_brightness = 0.5;
 	m_contrast = 0.5;
 	m_saturation = 0.5;
@@ -91,6 +91,24 @@ float VideoInput::setSaturation(float saturation)
 	return getSaturation();
 }
 
+float VideoInput::getWhiteness()
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_whiteness;
+}
+
+float VideoInput::setWhiteness(float whiteness)
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	if ( whiteness > 1 )
+		whiteness = 1;
+	else
+	if ( whiteness < 0 )
+		whiteness = 0;
+	m_whiteness = whiteness;
+	return getWhiteness();
+}
+
 float VideoInput::getHue()
 {
 //	kdDebug() <<  k_funcinfo << " called." << endl;
@@ -134,6 +152,19 @@ bool VideoInput::setAutoColorCorrection(bool colorcorrection)
 //	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autocolorcorrection = colorcorrection;
 	return getAutoColorCorrection();
+}
+
+bool VideoInput::getImageAsMirror()
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_imageasmirror;
+}
+
+bool VideoInput::setImageAsMirror(bool imageasmirror)
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_imageasmirror = imageasmirror;
+	return getImageAsMirror();
 }
 
 }
