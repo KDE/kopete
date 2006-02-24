@@ -141,6 +141,9 @@ int VideoDevice::checkDevice()
 		m_driver=VIDEODEV_DRIVER_NONE;
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
+
+if(!getWorkaroundBrokenDriver())
+{
 		CLEAR(V4L2_capabilities);
 
 		if (-1 != xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
@@ -237,6 +240,8 @@ int VideoDevice::checkDevice()
 // it will try the V4L api even if the error code is different than expected.
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is not a V4L2 device." << endl;
 		}
+
+}
 #endif
 
 		CLEAR(V4L_capabilities);
