@@ -60,10 +60,10 @@ YahooWebcamDialog::~ YahooWebcamDialog( )
 
 }
 
-void YahooWebcamDialog::newImage( const QPixmap & image )
+void YahooWebcamDialog::newImage( const QPixmap &image )
 {
 	m_imageContainer->clear();
-	m_imageContainer->setPixmap( image );
+	bitBlt(m_imageContainer, 0, 0, &image, 0, Qt::CopyROP);
 	show();
 }
 

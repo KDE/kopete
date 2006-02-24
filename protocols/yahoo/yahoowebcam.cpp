@@ -32,14 +32,22 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 	theDialog = 0L;
 	origImg = new KTempFile();
 	convertedImg = new KTempFile();
+	m_img = new QImage();
 
-	m_timer = new QTimer();
-	connect( m_timer, SIGNAL(timeout()), this, SLOT(sendImage()) );	
+	m_sendTimer = new QTimer( this );
+	connect( m_sendTimer, SIGNAL(timeout()), this, SLOT(sendImage()) );	
 
-	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
-	videoDevice->open();
-	videoDevice->setSize(320, 240);
-	videoDevice->startCapturing();
+	m_updateTimer = new QTimer( this );
+	connect( m_updateTimer, SIGNAL(timeout()), this, SLOT(updateImage()) );	
+
+	theDialog = new YahooWebcamDialog( "YahooWebcam" );
+	connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
+
+	m_devicePool = Kopete::AV::VideoDevicePool::self();
+	m_devicePool->open();
+	m_devicePool->setSize(320, 240);
+	m_devicePool->startCapturing();
+	m_updateTimer->start( 0 );
 }
 
 YahooWebcam::~YahooWebcam()
@@ -48,50 +56,47 @@ YahooWebcam::~YahooWebcam()
 	QFile::remove( convertedImg->name() );
 	delete origImg;
 	delete convertedImg;
-	delete m_timer;
+	delete m_img;
 }
 
 void YahooWebcam::stopTransmission()
 {
-	m_timer->stop();
+	m_sendTimer->stop();
 }
 
 void YahooWebcam::startTransmission()
 {
-	m_timer->start( 1000 );
+	m_sendTimer->start( 1000 );
 }
 
 void YahooWebcam::webcamDialogClosing()
 {
-	m_timer->stop();
+	m_sendTimer->stop();
 	theDialog->delayedDestruct();
 	emit webcamClosing();
-	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self(); 
-	videoDevice->stopCapturing(); 
-	videoDevice->close();
+	m_devicePool->stopCapturing(); 
+	m_devicePool->close();
+}
+
+void YahooWebcam::updateImage()
+{
+	m_devicePool->getFrame();
+	m_devicePool->getImage(m_img);
+	theDialog->newImage( *m_img );
 }
 
 void YahooWebcam::sendImage()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
-	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
-	videoDevice->getFrame();
-	QImage img;
-	videoDevice->getImage(&img);
-	
-	if( !theDialog )
-	{
-		theDialog = new YahooWebcamDialog( "YahooWebcam" );
-		connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
-	}
+	m_devicePool->getFrame();
+	m_devicePool->getImage(m_img);
 	
 	origImg->close();
 	convertedImg->close();
 	
-	img.save( origImg->name(), "JPEG");
+	m_img->save( origImg->name(), "JPEG");
 	
-	theDialog->newImage( img );
 	KProcess p;
 	p << "jasper";
 	p << "--input" << origImg->name() << "--output" << convertedImg->name() << "--output-format" << "jpc" << "-O" << "rate=0.02" ;

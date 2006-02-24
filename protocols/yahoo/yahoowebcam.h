@@ -22,10 +22,17 @@
 class YahooAccount;
 class YahooWebcamDialog;
 class QTimer;
+class QImage;
 class KTempFile;
 
+namespace Kopete { 
+	namespace AV	{
+		class VideoDevicePool;
+	}
+}
+
 class YahooWebcam : public QObject
-{
+{	
 	Q_OBJECT
 public:
 	YahooWebcam( YahooAccount *account );
@@ -34,6 +41,7 @@ public slots:
 	void startTransmission();
 	void stopTransmission();
 	void sendImage();
+	void updateImage();
 	void webcamDialogClosing();
 	void addViewer( const QString & );
 	void removeViewer( const QString & );
@@ -42,10 +50,13 @@ signals:
 private:
 	YahooAccount *theAccount;
 	YahooWebcamDialog *theDialog;
-	QTimer *m_timer;
+	QTimer *m_sendTimer;
+	QTimer *m_updateTimer;
 	QStringList m_viewer;
+	QImage *m_img;
 	KTempFile *origImg;
 	KTempFile *convertedImg;
+	Kopete::AV::VideoDevicePool *m_devicePool;
 };
 
 #endif

@@ -34,7 +34,7 @@ public:
 	
 	void setViewer( const QStringList & );
 public slots:
-	void newImage( const QPixmap& image );
+	void newImage( const QPixmap &image );
 	void webcamClosed( int );
 	void webcamPaused();
 signals:
