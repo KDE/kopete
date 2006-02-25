@@ -136,12 +136,15 @@ void TestbedAccount::receivedMessage( const QString &message )
 	TestbedContact* messageSender;
 
 	from = message.section( ':', 0, 0 );
-	//from = QString::fromLatin1("echo");
-	messageSender = static_cast<TestbedContact *>( contacts ()[ from ] );
+	Kopete::Contact* contact = contacts()[from];
+	messageSender = dynamic_cast<TestbedContact *>( contact );
 
 	kdDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
-	messageSender->receivedMessage( message );
+	if ( messageSender )
+		messageSender->receivedMessage( message );
+	else
+		kdWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
 }
 
 void TestbedAccount::updateContactStatus()
