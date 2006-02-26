@@ -159,14 +159,6 @@ void ServerVersionsTask::handleServerVersions()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
 		"RECV SNAC 0x01, 0x18, got list of families this server understands" << endl;
-
-	Buffer* buffer = transfer()->buffer();
-	int numFamilies = m_familiesList.count();
-	for ( int srvFamCount = 0; srvFamCount < numFamilies; srvFamCount++ )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server version=" << buffer->getWord()
-			 << ", server family=" << buffer->getWord() << endl;
-	}
 	setSuccess( 0, QString::null );
 }
 
