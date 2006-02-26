@@ -589,10 +589,12 @@ const QString ChatMessagePart::styleHTML() const
 
 void ChatMessagePart::clear()
 {
-	DOM::HTMLElement body = htmlDocument().body();
-	while ( body.hasChildNodes() )
-		body.removeChild( body.childNodes().item( body.childNodes().length() - 1 ) );
+	// writeTemplate actually reset the HTML chat session from the beginning.
+	writeTemplate();
 
+	// Reset consecutive messages
+	d->latestContact = 0;
+	// Remove all stored messages.
 	d->allMessages.clear();
 }
 
