@@ -119,8 +119,8 @@ private slots:
 private:
 
 	Oscar::RateInfo m_rateInfo;
-	Q3ValueList<SnacPair> m_members;
-	Q3ValueList<Transfer*> m_packetQueue;
+	QList<SnacPair> m_members;
+	QList<Transfer*> m_packetQueue;
 	QTime m_packetTimer;
 	
 	// we are waiting for the QTimer::singleShot() to send 
