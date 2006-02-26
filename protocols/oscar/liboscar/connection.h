@@ -72,14 +72,14 @@ public:
 	 * Get the list of supported families
 	 * @return The list of families supported on this connection
 	 */
-	Q3ValueList<int> supportedFamilies() const;
+	QList<int> supportedFamilies() const;
 
 	/**
 	 * Add the SNAC families in \p familyList to the list of supported families for
 	 * this connection
 	 * \param familyList the list of families to add
 	 */
-	void addToSupportedFamilies( const Q3ValueList<int>& familyList );
+	void addToSupportedFamilies( const QList<int>& familyList );
 
 	/**
 	 * Add the SNAC family in \p family to the list of supported families for

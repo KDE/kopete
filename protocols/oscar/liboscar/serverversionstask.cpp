@@ -93,9 +93,9 @@ bool ServerVersionsTask::take( Transfer* transfer )
 	return false;
 }
 
-Q3ValueList<int> ServerVersionsTask::buildFamiliesList( Buffer* buffer )
+QList<int> ServerVersionsTask::buildFamiliesList( Buffer* buffer )
 {
-        Q3ValueList<int> familyList;
+        QList<int> familyList;
 
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
                                 << "Got the list of families server supports"
@@ -112,7 +112,7 @@ Q3ValueList<int> ServerVersionsTask::buildFamiliesList( Buffer* buffer )
 
 void ServerVersionsTask::handleFamilies()
 {
-	Q3ValueList<int> familyList = buildFamiliesList( transfer()->buffer() );
+	QList<int> familyList = buildFamiliesList( transfer()->buffer() );
 	client()->addToSupportedFamilies( familyList );
 	requestFamilyVersions(); // send back a CLI_FAMILIES packet
 }

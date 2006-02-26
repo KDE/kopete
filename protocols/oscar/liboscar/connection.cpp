@@ -41,7 +41,7 @@ public:
 	DWORD snacSequence;
 	WORD flapSequence;
 
-	Q3ValueList<int> familyList;
+	QList<int> familyList;
 	RateClassManager* rateClassManager;
 
 	ClientStream* clientStream;
@@ -99,15 +99,15 @@ void Connection::close()
 
 bool Connection::isSupported( int family ) const
 {
-	return ( d->familyList.findIndex( family ) != -1 );
+	return ( d->familyList.indexOf( family ) != -1 );
 }
 
-Q3ValueList<int> Connection::supportedFamilies() const
+QList<int> Connection::supportedFamilies() const
 {
 	return d->familyList;
 }
 
-void Connection::addToSupportedFamilies( const Q3ValueList<int>& familyList )
+void Connection::addToSupportedFamilies( const QList<int>& familyList )
 {
 	d->familyList += familyList;
 }

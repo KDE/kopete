@@ -39,7 +39,7 @@ public:
 	bool forMe(const Transfer* transfer) const;
 	bool take(Transfer* transfer);
 
-	static Q3ValueList<int> buildFamiliesList( Buffer* );
+	static QList<int> buildFamiliesList( Buffer* );
 
 private:
 
@@ -55,7 +55,7 @@ private:
 	void requestFamilyVersions();
 	
 private:
-	Q3ValueList<int> m_familiesList;
+	QList<int> m_familiesList;
 	WORD m_family;
 };
 
