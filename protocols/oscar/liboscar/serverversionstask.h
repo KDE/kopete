@@ -42,20 +42,14 @@ public:
 	static QList<int> buildFamiliesList( Buffer* );
 
 private:
-
-
 	//! Handles the families the server supports
 	void handleFamilies();
-	
-	//! Handles the version of each family the server supports
-	void handleServerVersions();
 	
 	//! Request the versions we want for each snac family the
 	//! the server supports
 	void requestFamilyVersions();
 	
 private:
-	QList<int> m_familiesList;
 	WORD m_family;
 };
 

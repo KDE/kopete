@@ -80,9 +80,9 @@ bool ServerVersionsTask::take( Transfer* transfer )
 				setTransfer( 0 );
 				return true;
 				break;
-			case 0x18:
+			case 0x18: //server versions are ignored
 				setTransfer( transfer );
-				handleServerVersions();
+				setSuccess( 0, QString::null );
 				setTransfer( 0 );
 				return true;
 				break;
@@ -120,7 +120,8 @@ void ServerVersionsTask::handleFamilies()
 void ServerVersionsTask::requestFamilyVersions()
 {
 	bool isIcq = client()->isIcq();
-	int listLength = m_familiesList.count();
+        QList<int> familiesList = client()->supportedFamilies();
+	int listLength = familiesList.count();
 
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0017, 0x0000, client()->snacSequence() };
@@ -131,12 +132,12 @@ void ServerVersionsTask::requestFamilyVersions()
 
 	for ( int i = 0; i < listLength; i++ )
 	{
-		outbuf->addWord( m_familiesList[i] );
-		if ( m_familiesList[i] == 0x0001 )
+		outbuf->addWord( familiesList[i] );
+		if ( familiesList[i] == 0x0001 )
 			val = 0x0003;
 		else
 		{
-			if ( m_familiesList[i] == 0x0013 )
+			if ( familiesList[i] == 0x0013 )
 			{
 				if ( isIcq )
 					val = 0x0004; // for ICQ2002
@@ -151,15 +152,7 @@ void ServerVersionsTask::requestFamilyVersions()
 	}
 
 	Transfer* st = createTransfer( f, s, outbuf );
-	st->toString();
 	send( st );
-}
-
-void ServerVersionsTask::handleServerVersions()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
-		"RECV SNAC 0x01, 0x18, got list of families this server understands" << endl;
-	setSuccess( 0, QString::null );
 }
 
 #include "serverversionstask.moc"
