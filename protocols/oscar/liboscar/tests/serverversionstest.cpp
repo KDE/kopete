@@ -34,6 +34,7 @@ void ServerVersionsTest::testSupportedFamilies()
     QVERIFY( families.takeFirst() == 0x0002 );
     QVERIFY( families.takeFirst() == 0x0003 );
     QVERIFY( families.takeFirst() == 0x0004 );
+    delete b;
 }
 
 
