@@ -402,32 +402,13 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 
 	QTextCodec* codec = contactCodec();
 
-	int messageChannel;
+	int messageChannel = 0x01;
 	Oscar::Message::Encoding messageEncoding;
 
-	if ( !isOnline() )
-	{
-		messageChannel = 0x01;
-		messageEncoding = Oscar::Message::UserDefined;
-	}
-	else if ( !m_details.hasCap( CAP_UTF8 ) )
-	{
-		if ( m_details.hasCap( CAP_ICQSERVERRELAY ) )
-			messageChannel = 0x02;
-		else
-			messageChannel = 0x01;
-		messageEncoding = Oscar::Message::UserDefined;
-	}
-	else if ( m_details.hasCap( CAP_ICQSERVERRELAY ) )
-	{
-		messageChannel = 0x02;
-		messageEncoding = Oscar::Message::UTF8;
-	}
-	else
-	{
-		messageChannel = 0x01;
+	if ( isOnline() && m_details.hasCap( CAP_UTF8 ) )
 		messageEncoding = Oscar::Message::UCS2;
-	}
+	else
+		messageEncoding = Oscar::Message::UserDefined;
 
 	QString msgText( msg.plainBody() );
 	// TODO: More intelligent handling of message length.
