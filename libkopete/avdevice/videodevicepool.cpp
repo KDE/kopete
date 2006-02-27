@@ -82,7 +82,6 @@ int VideoDevicePool::open()
 		kdDebug() <<  k_funcinfo << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one." << endl;
 		m_current_device = 0;
 	}
-loadConfig();
 	int isopen = m_videodevice[currentDevice()].open();
 	if ( isopen == EXIT_SUCCESS)
 	{
@@ -699,8 +698,8 @@ void VideoDevicePool::loadConfig()
 				const float brightness = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness").arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
 				const float contrast   = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
 				const float saturation = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation").arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const float whiteness  = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const float hue        = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")       .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.0 );
+				const float whiteness  = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
+				const float hue        = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")       .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
 				const bool  autobrightnesscontrast = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				const bool  autocolorcorrection    = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				const bool  imageasmirror          = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 mageAsMirror")           .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
@@ -769,7 +768,7 @@ void VideoDevicePool::saveConfig()
 				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator).m_input[input].getBrightness() << endl;
 				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Contrast  : " << (*vditerator).m_input[input].getContrast()   << endl;
 				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Saturation: " << (*vditerator).m_input[input].getSaturation() << endl;
-				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Whiteness : " << (*vditerator).m_input[input].getWhiteness() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Whiteness : " << (*vditerator).m_input[input].getWhiteness()  << endl;
 				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Hue       : " << (*vditerator).m_input[input].getHue()        << endl;
 				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic brightness / contrast: " << (*vditerator).m_input[input].getAutoBrightnessContrast() << endl;
 				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic color correction     : " << (*vditerator).m_input[input].getAutoColorCorrection() << endl;
