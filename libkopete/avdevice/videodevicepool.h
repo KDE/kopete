@@ -27,6 +27,7 @@
 #include <qstring.h>
 #include <qimage.h>
 #include <qvaluevector.h>
+#include <qmutex.h>
 #include <kcombobox.h>
 #include "videodevice.h"
 #include "kopete_export.h"
@@ -78,6 +79,7 @@ public:
 	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
+	int fillStandardKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();
 	int currentInput();
 	unsigned int inputs();
@@ -92,12 +94,16 @@ public:
 	float setWhiteness(float whiteness);
 	float getHue();
 	float setHue(float hue);
+
 	bool getAutoBrightnessContrast();
 	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
+
+	bool getDisableMMap();
+	bool setDisableMMap(bool disablemmap);
 	bool getWorkaroundBrokenDriver();
 	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
@@ -111,6 +117,9 @@ protected:
 	void guessDriver();
 	unsigned int m_current_device;
 	struct imagebuffer m_buffer; // only used when no devices were found
+
+	__u64 m_clients; // Number of instances
+	QMutex m_ready;
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;

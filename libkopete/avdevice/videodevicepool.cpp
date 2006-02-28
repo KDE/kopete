@@ -67,6 +67,7 @@ int VideoDevicePool::open()
 {
     /// @todo implement me
 
+	m_ready.lock();
 	if(!m_videodevice.size())
 	{
 		kdDebug() <<  k_funcinfo << "open(): No devices found. Must scan for available devices." << m_current_device << endl;
@@ -88,6 +89,9 @@ int VideoDevicePool::open()
 		loadConfig(); // Temporary hack. The open() seems to clean the input parameters. Need to find a way to fix it.
 		
 	}
+	m_clients++;
+	kdDebug() << k_funcinfo << "Number of clients: " << m_clients << endl;
+	m_ready.unlock();
 	return isopen;
 }
 
@@ -348,6 +352,27 @@ bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
 }
 
 /*!
+    \fn VideoDevicePool::getDisableMMap()
+ */
+bool VideoDevicePool::getDisableMMap()
+{
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].getDisableMMap();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setDisableMMap(bool disablemmap)
+ */
+bool VideoDevicePool::setDisableMMap(bool disablemmap)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called." << endl;
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].setDisableMMap(disablemmap);
+	return false;
+}
+
+/*!
     \fn VideoDevicePool::getWorkaroundBrokenDriver()
  */
 bool VideoDevicePool::getWorkaroundBrokenDriver()
@@ -472,7 +497,7 @@ int VideoDevicePool::setInputParameters()
 }
 
 /*!
-    \fn Kopete::AV::VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
+    \fn Kopete::AV::VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
  */
 int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 {
@@ -508,6 +533,67 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 			{
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kdDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;
+			}
+			combobox->setCurrentItem(currentInput());
+			return EXIT_SUCCESS;
+		}
+	}
+	return EXIT_FAILURE;
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
+ */
+int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
+{
+    /// @todo implement me
+	kdDebug() <<  k_funcinfo << "fillInputKComboBox: Called." << endl;
+	combobox->clear();
+	if(m_videodevice.size())
+	{
+		if(m_videodevice[currentDevice()].inputs()>0)
+		{
+			for (unsigned int loop=0; loop < 25; loop++)
+			{
+				if ( (m_videodevice[currentDevice()].m_input[currentInput()].m_standards) & (1 << loop) )
+					combobox->insertItem(m_videodevice[currentDevice()].signalStandardName( 1 << loop));
+/*
+				case STANDARD_PAL_B1	: return V4L2_STD_PAL_B1;	break;
+				case STANDARD_PAL_G	: return V4L2_STD_PAL_G;	break;
+				case STANDARD_PAL_H	: return V4L2_STD_PAL_H;	break;
+				case STANDARD_PAL_I	: return V4L2_STD_PAL_I;	break;
+				case STANDARD_PAL_D	: return V4L2_STD_PAL_D;	break;
+				case STANDARD_PAL_D1	: return V4L2_STD_PAL_D1;	break;
+				case STANDARD_PAL_K	: return V4L2_STD_PAL_K;	break;
+				case STANDARD_PAL_M	: return V4L2_STD_PAL_M;	break;
+				case STANDARD_PAL_N	: return V4L2_STD_PAL_N;	break;
+				case STANDARD_PAL_Nc	: return V4L2_STD_PAL_Nc;	break;
+				case STANDARD_PAL_60	: return V4L2_STD_PAL_60;	break;
+				case STANDARD_NTSC_M	: return V4L2_STD_NTSC_M;	break;
+				case STANDARD_NTSC_M_JP	: return V4L2_STD_NTSC_M_JP;	break;
+				case STANDARD_NTSC_443	: return V4L2_STD_NTSC;		break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
+				case STANDARD_SECAM_B	: return V4L2_STD_SECAM_B;	break;
+				case STANDARD_SECAM_D	: return V4L2_STD_SECAM_D;	break;
+				case STANDARD_SECAM_G	: return V4L2_STD_SECAM_G;	break;
+				case STANDARD_SECAM_H	: return V4L2_STD_SECAM_H;	break;
+				case STANDARD_SECAM_K	: return V4L2_STD_SECAM_K;	break;
+				case STANDARD_SECAM_K1	: return V4L2_STD_SECAM_K1;	break;
+				case STANDARD_SECAM_L	: return V4L2_STD_SECAM_L;	break;
+				case STANDARD_SECAM_LC	: return V4L2_STD_SECAM;	break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
+				case STANDARD_ATSC_8_VSB	: return V4L2_STD_ATSC_8_VSB;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
+				case STANDARD_ATSC_16_VSB	: return V4L2_STD_ATSC_16_VSB;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
+				case STANDARD_PAL_BG	: return V4L2_STD_PAL_BG;	break;
+				case STANDARD_PAL_DK	: return V4L2_STD_PAL_DK;	break;
+				case STANDARD_PAL	: return V4L2_STD_PAL;		break;
+				case STANDARD_NTSC	: return V4L2_STD_NTSC;		break;
+				case STANDARD_SECAM_DK	: return V4L2_STD_SECAM_DK;	break;
+				case STANDARD_SECAM	: return V4L2_STD_SECAM;	break;
+				case STANDARD_525_60	: return V4L2_STD_525_60;	break;
+				case STANDARD_625_50	: return V4L2_STD_625_50;	break;
+				case STANDARD_ALL	: return V4L2_STD_ALL;		break;
+
+				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
+				kdDebug() <<  k_funcinfo << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;*/
 			}
 			combobox->setCurrentItem(currentInput());
 			return EXIT_SUCCESS;
@@ -687,6 +773,7 @@ void VideoDevicePool::loadConfig()
 			}
 			const QString name                = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
 			const int currentinput            = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
+			const bool disablemmap            = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			const bool workaroundbrokendriver = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			kdDebug() << k_funcinfo << "Device name: " << name << endl;
 			kdDebug() << k_funcinfo << "Device current input: " << currentinput << endl;
@@ -758,9 +845,11 @@ void VideoDevicePool::saveConfig()
 // Stores current input for the given video device
 			const QString name                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
+			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			config->writeEntry( name,                   (*vditerator).m_name);
 			config->writeEntry( currentinput,           (*vditerator).currentInput());
+			config->writeEntry( disablemmap,            (*vditerator).getDisableMMap());
 			config->writeEntry( workaroundbrokendriver, (*vditerator).getWorkaroundBrokenDriver());
 
 			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)

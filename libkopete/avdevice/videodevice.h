@@ -188,15 +188,19 @@ public:
 	int minHeight();
 	int maxHeight();
 	int setSize( int newwidth, int newheight);
+
 	pixel_format setPixelFormat(pixel_format newformat);
 	int pixelFormatCode(pixel_format pixelformat);
 	pixel_format pixelFormatForPalette( int palette );
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
+
 	__u64 signalStandardCode(signal_standard standard);
 	QString signalStandardName(signal_standard standard);
 	QString signalStandardName(int standard);
+	int detectSignalStandards();
+
 	int currentInput();
 	int selectInput(int input);
 	int setInputParameters();
@@ -217,12 +221,16 @@ public:
 	float setWhiteness(float whiteness);
 	float getHue();
 	float setHue(float Hue);
+
 	bool getAutoBrightnessContrast();
 	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
+
+	bool getDisableMMap();
+	bool setDisableMMap(bool disablemmap);
 	bool getWorkaroundBrokenDriver();
 	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
@@ -248,6 +256,7 @@ public:
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
+//	struct v4l2_input m_input;
 #endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
@@ -257,6 +266,7 @@ public:
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
+	bool m_disablemmap;
 	bool m_workaroundbrokendriver;
 
 	QValueVector<rawbuffer> m_rawbuffers;

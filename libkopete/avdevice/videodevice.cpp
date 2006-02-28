@@ -217,7 +217,8 @@ if(!getWorkaroundBrokenDriver())
 				{
 					VideoInput tempinput;
 					tempinput.name = QString::fromLocal8Bit((const char*)videoinput.name);
-					tempinput.hastuner=videoinput.type & V4L2_INPUT_TYPE_TUNER;
+					tempinput.hastuner = videoinput.type & V4L2_INPUT_TYPE_TUNER;
+					tempinput.m_standards = videoinput.std;
 					m_input.push_back(tempinput);
 					kdDebug() <<  k_funcinfo << "Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
 					if((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0)
@@ -290,6 +291,7 @@ if(!getWorkaroundBrokenDriver())
 						VideoInput tempinput;
 						tempinput.name = QString::fromLocal8Bit((const char*)videoinput.name);
 						tempinput.hastuner=videoinput.flags & VIDEO_VC_TUNER;
+// TODO: The routine to detect the appropriate video standards for V4L must be placed here
 						m_input.push_back(tempinput);
 //						kdDebug() << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.flags & VIDEO_VC_TUNER) != 0) << ")" << endl;
 /*						if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
@@ -308,6 +310,8 @@ if(!getWorkaroundBrokenDriver())
 		}
 #endif
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
+// TODO: THis thing can be used to detec what pixel formats are supported in a API-independent way, but V4L2 has VIDIOC_ENUM_PIXFMT.
+// The correct thing to do is to isolate these calls and do a proper implementation for V4L and another for V4L2 when this thing will be migrated to a plugin architecture.
 		kdDebug() <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
 		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY) << endl;
@@ -338,7 +342,7 @@ if(!getWorkaroundBrokenDriver())
 		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV420P) << endl;
 
-		// Now we must execute the proper initialization according to the type of the driver.
+// TODO: Now we must execute the proper initialization according to the type of the driver.
 		kdDebug() <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
 		return EXIT_SUCCESS;
 	}
@@ -1498,6 +1502,18 @@ bool VideoDevice::setImageAsMirror(bool imageasmirror)
 	return m_input[m_current_input].getImageAsMirror();
 }
 
+bool VideoDevice::getDisableMMap()
+{
+	return m_disablemmap;
+}
+
+bool VideoDevice::setDisableMMap(bool disablemmap)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevice::setDisableMMap(" << disablemmap << ") called." << endl;
+	m_disablemmap = disablemmap;
+	return m_disablemmap;
+}
+
 bool VideoDevice::getWorkaroundBrokenDriver()
 {
 	return m_workaroundbrokendriver;
@@ -1922,6 +1938,27 @@ QString VideoDevice::signalStandardName(int standard)
 			break;
 	}
 	return returnvalue;
+}
+
+/*!
+    \fn VideoDevice::detectSignalStandards()
+ */
+int VideoDevice::detectSignalStandards()
+{
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			break;
+	}
 }
 
 /*!
