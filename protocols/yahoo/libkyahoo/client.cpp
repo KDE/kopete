@@ -120,8 +120,7 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 Client::~Client()
 {
 	close();
-	if( d->iconLoader )
-		delete d->iconLoader;
+	delete d->iconLoader;
 	delete d->root;
 	delete d;
 }
@@ -171,7 +170,12 @@ void Client::close()
 		lt->go( true );
 	}
 	if( d->tasksInitialized)
-		deleteTasks();
+		deleteTasks();	
+	d->loginTask->reset();
+	d->stream->deleteLater();
+	d->stream = 0L;
+	m_connector->deleteLater();
+	m_connector = 0L;
 }
 
 int Client::error()
@@ -191,7 +195,6 @@ void Client::streamError( int error )
 	QString msg;
 
 	d->active = false;
-	close();
 
 	// Examine error
 	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
@@ -204,13 +207,7 @@ void Client::streamError( int error )
 		d->error = error;
 		d->errorString = d->stream->errorText();
 	}
-	
-	d->loginTask->reset();
-	d->stream->deleteLater();
-	d->stream = 0L;
-	m_connector->deleteLater();
-	m_connector = 0L;
-
+	close();
 	if( status() == Yahoo::StatusConnecting )
 		emit loginFailed();
 	else
