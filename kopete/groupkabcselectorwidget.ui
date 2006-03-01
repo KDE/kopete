@@ -82,7 +82,7 @@
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kopete/ui/addressbooklinkwidget.h</includehint>
+    <includehint>addressbooklinkwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>

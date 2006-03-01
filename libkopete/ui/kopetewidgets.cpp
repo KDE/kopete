@@ -6,9 +6,9 @@
 #include <qwidgetplugin.h>
 
 #include <kinstance.h>
-#include <kopete/ui/addressbooklinkwidget.h>
-#include <kopete/ui/kopetelistview.h>
-#include <kopete/ui/kopetelistviewsearchline.h>
+#include <addressbooklinkwidget.h>
+#include <kopetelistview.h>
+#include <kopetelistviewsearchline.h>
 #ifndef EMBED_IMAGES
 #include <kstandarddirs.h>
 #endif
@@ -77,7 +77,7 @@ KopeteWidgets::KopeteWidgets()
 #else
 	widget.iconSet = QString::fromLatin1("kopete__ui__addressbooklinkwidget.png");
 #endif
-	widget.includeFile = QString::fromLatin1("kopete/ui/addressbooklinkwidget.h");
+	widget.includeFile = QString::fromLatin1("addressbooklinkwidget.h");
 	widget.toolTip = QString::fromLatin1("Address Book Link Widget (Kopete)");
 	widget.whatsThis = QString::fromLatin1("KABC::Addressee display/selector");
 	widget.isContainer = false;
@@ -89,7 +89,7 @@ KopeteWidgets::KopeteWidgets()
 #else
 	widget.iconSet = QString::fromLatin1("kopete__ui__listview__listview.png");
 #endif
-	widget.includeFile = QString::fromLatin1("kopete/ui/kopetelistview.h");
+	widget.includeFile = QString::fromLatin1("kopetelistview.h");
 	widget.toolTip = QString::fromLatin1("List View (Kopete)");
 	widget.whatsThis = QString::fromLatin1("A component capable list view widget.");
 	widget.isContainer = false;
@@ -101,7 +101,7 @@ KopeteWidgets::KopeteWidgets()
 #else
 	widget.iconSet = QString::fromLatin1("kopete__ui__listview__searchline.png");
 #endif
-	widget.includeFile = QString::fromLatin1("kopete/ui/kopetelistviewsearchline.h");
+	widget.includeFile = QString::fromLatin1("kopetelistviewsearchline.h");
 	widget.toolTip = QString::fromLatin1("List View Search Line (Kopete)");
 	widget.whatsThis = QString::fromLatin1("Search line able to use Kopete custom list View.");
 	widget.isContainer = false;

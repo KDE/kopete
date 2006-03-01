@@ -251,7 +251,7 @@ Leave it empty if you want to see the contact nickname as display name.</string>
     <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
     <includehint>klineedit.h</includehint>
-    <includehint>kopete/ui/addressbooklinkwidget.h</includehint>
+    <includehint>addressbooklinkwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
