@@ -56,11 +56,17 @@ void AddressBookLinkWidget::setMetaContact( const Kopete::MetaContact * mc )
 	mMetaContact = mc;
 }
 
+QString AddressBookLinkWidget::uid() const
+{
+	return mSelectedUid;
+}
+
 void AddressBookLinkWidget::slotClearAddressee()
 {
 	edtAddressee->clear();
 	btnClear->setEnabled( false );
 	KABC::Addressee mrEmpty;
+	mSelectedUid = QString::null;
 	emit addresseeChanged( mrEmpty );
 }
 
@@ -82,6 +88,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
 
 		edtAddressee->setText( addr.realName() );
 		btnClear->setEnabled( !addr.isEmpty() );
+		mSelectedUid = ( addr.isEmpty() ? QString::null : addr.uid() );
 		emit addresseeChanged( addr );
 	}
 }

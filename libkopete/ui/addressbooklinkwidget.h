@@ -54,6 +54,10 @@ public:
 	 * Set the current metacontact so that the selector dialog may be preselected
 	 */
 	void setMetaContact( const Kopete::MetaContact * );
+	/**
+	 * Return the selected addressbook UID.
+	 */
+	QString uid() const;
 signals:
 	/**
 	 * Emitted when the selected addressee changed.  addr is the KABC::Addressee that was selected. If addr.isEmpty() is empty, the clear button was clicked.
@@ -70,6 +74,7 @@ protected slots:
 	void slotSelectAddressee();
 private:
 	const Kopete::MetaContact * mMetaContact;
+	QString mSelectedUid;
 };
 } // end namespace UI
 } // end namespace Kopete
