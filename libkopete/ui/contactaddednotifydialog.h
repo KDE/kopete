@@ -20,6 +20,10 @@
 #include <kdialogbase.h>
 #include "kopete_export.h"
 
+namespace KABC {
+	class Addressee;
+}
+
 namespace Kopete {
 
 class Group;
@@ -155,8 +159,7 @@ signals:
 
 
 private slots:
-	void slotClearAddresseeClicked();
-	void slotSelectAddresseeClicked();
+	void slotAddresseeSelected( const KABC::Addressee &);
 	void slotInfoClicked();
 	void slotFinished();
 

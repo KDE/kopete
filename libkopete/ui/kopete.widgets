@@ -15,3 +15,10 @@ WhatsThis=Search line able to use Kopete custom list View.
 IncludeFile=kopete/ui/kopetelistviewsearchline.h
 ConstructorArgs=(parent, 0, name)
 Group=Input (Kopete)
+
+[Kopete::UI::AddressBookLinkWidget]
+ToolTip=Address Book Link Widget (Kopete)
+WhatsThis=KABC::Addressee display/selector
+IncludeFile=kopete/ui/addressbooklinkwidget.h
+ConstructorArgs=(parent, name)
+Group=Input (Kopete)

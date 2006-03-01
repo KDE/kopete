@@ -6,8 +6,9 @@
 #include <qwidgetplugin.h>
 
 #include <kinstance.h>
-#include "kopetelistview.h"
-#include "kopetelistviewsearchline.h"
+#include <kopete/ui/addressbooklinkwidget.h>
+#include <kopete/ui/kopetelistview.h>
+#include <kopete/ui/kopetelistviewsearchline.h>
 #ifndef EMBED_IMAGES
 #include <kstandarddirs.h>
 #endif
@@ -70,6 +71,18 @@ KopeteWidgets::KopeteWidgets()
 {
         WidgetInfo widget;
 
+	widget.group = QString::fromLatin1("Input (Kopete)");
+#ifdef EMBED_IMAGES
+	widget.iconSet = QPixmap(kopete__ui__addressbooklinkwidget_xpm);
+#else
+	widget.iconSet = QString::fromLatin1("kopete__ui__addressbooklinkwidget.png");
+#endif
+	widget.includeFile = QString::fromLatin1("kopete/ui/addressbooklinkwidget.h");
+	widget.toolTip = QString::fromLatin1("Address Book Link Widget (Kopete)");
+	widget.whatsThis = QString::fromLatin1("KABC::Addressee display/selector");
+	widget.isContainer = false;
+	m_widgets.insert(QString::fromLatin1("Kopete::UI::AddressBookLinkWidget"), widget);
+
 	widget.group = QString::fromLatin1("Views (Kopete)");
 #ifdef EMBED_IMAGES
 	widget.iconSet = QPixmap(kopete__ui__listview__listview_xpm);
@@ -102,6 +115,9 @@ KopeteWidgets::~KopeteWidgets()
 }
 QWidget *KopeteWidgets::create(const QString &key, QWidget *parent, const char *name)
 {
+
+         if (key == QString::fromLatin1("Kopete::UI::AddressBookLinkWidget"))
+                return new Kopete::UI::AddressBookLinkWidget(parent, name);
 
          if (key == QString::fromLatin1("Kopete::UI::ListView::ListView"))
                 return new Kopete::UI::ListView::ListView(parent, name);
