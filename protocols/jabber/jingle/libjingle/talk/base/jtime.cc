@@ -25,7 +25,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "talk/base/time.h"
+#include "talk/base/jtime.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>

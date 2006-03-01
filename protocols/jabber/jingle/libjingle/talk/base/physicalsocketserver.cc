@@ -45,7 +45,7 @@ extern "C" {
 #include "talk/base/common.h"
 #include "talk/base/logging.h"
 #include "talk/base/physicalsocketserver.h"
-#include "talk/base/time.h"
+#include "talk/base/jtime.h"
 #include "talk/base/winping.h"
 
 #ifdef __linux 
