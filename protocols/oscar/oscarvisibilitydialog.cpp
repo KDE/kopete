@@ -132,3 +132,4 @@ void OscarVisibilityDialog::slotCancel()
 	emit closing();
 }
 
+#include "oscarvisibilitydialog.moc"
