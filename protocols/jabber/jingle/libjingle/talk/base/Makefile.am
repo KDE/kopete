@@ -1,5 +1,5 @@
 libcricketbase_la_SOURCES = socketaddress.cc \
-                            time.cc \
+                            jtime.cc \
                             asyncudpsocket.cc \
                             messagequeue.cc \
                             thread.cc \
@@ -41,7 +41,7 @@ noinst_HEADERS =            asyncfile.h \
                             criticalsection.h \
 		      	    network.h \
 	      		    thread.h \
-		     	    time.h \
+		     	    jtime.h \
 			    physicalsocketserver.h \
 	     		    proxyinfo.h \
                             host.h \
@@ -53,7 +53,7 @@ noinst_HEADERS =            asyncfile.h \
 			    host.h \
 			    socketaddresspair.h
 
-AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../..
+AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../.. -I$(top_builddir) $(all_includes)
 noinst_LTLIBRARIES = libcricketbase.la
 DEFAULT_INCLUDES = -I$(srcdir)/../..
 

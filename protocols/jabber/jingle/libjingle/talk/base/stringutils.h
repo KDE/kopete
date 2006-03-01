@@ -28,9 +28,9 @@
 #ifndef __STRINGUTILS_H__
 #define __STRINGUTILS_H__
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
+#include <cctype>
+#include <cstdarg>
+#include <cstdio>
 #ifdef WIN32
 #include <wchar.h>
 #endif  // WIN32

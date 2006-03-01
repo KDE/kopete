@@ -25,8 +25,8 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __TIME_H__
-#define __TIME_H__
+#ifndef __JTIME_H__
+#define __JTIME_H__
 
 #include "talk/base/basictypes.h"
 

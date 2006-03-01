@@ -29,7 +29,7 @@
 #include "talk/base/logging.h"
 #include "talk/base/network.h"
 #include "talk/base/socket.h" // this includes something that makes windows happy
-#include "talk/base/time.h"
+#include "talk/base/jtime.h"
 #include "talk/base/basicdefs.h"
 
 #include <algorithm>

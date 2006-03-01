@@ -26,7 +26,7 @@
  */
 
 #include "talk/p2p/base/helpers.h"
-#include "talk/base/time.h"
+#include "talk/base/jtime.h"
 #include <cstdlib>
 #include <cassert>
 

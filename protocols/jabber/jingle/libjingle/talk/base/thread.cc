@@ -34,7 +34,7 @@ extern "C" {
 #include "talk/base/common.h"
 #include "talk/base/logging.h"
 #include "talk/base/thread.h"
-#include "talk/base/time.h"
+#include "talk/base/jtime.h"
 
 namespace cricket {
 
