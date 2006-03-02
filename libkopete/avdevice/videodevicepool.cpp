@@ -76,6 +76,7 @@ int VideoDevicePool::open()
 	if(!m_videodevice.size())
 	{
 		kdDebug() <<  k_funcinfo << "open(): No devices found. bailing out." << m_current_device << endl;
+		m_ready.unlock();
 		return EXIT_FAILURE;
 	}
 	if(m_current_device >= m_videodevice.size())
@@ -191,6 +192,7 @@ int VideoDevicePool::close()
  */
 int VideoDevicePool::startCapturing()
 {
+	kdDebug() <<  k_funcinfo << "startCapturing() called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].startCapturing();
 	return EXIT_FAILURE;
