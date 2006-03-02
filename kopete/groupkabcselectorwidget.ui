@@ -81,8 +81,13 @@
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
+<customwidgets>
+    <customwidget>
+      <class>Kopete::UI::AddressBookLinkWidget</class>
+      <header>addressbooklinkwidget.h</header>
+    </customwidget>
+</customwidgets>				     
 <includehints>
-    <includehint>addressbooklinkwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>

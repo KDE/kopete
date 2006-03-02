@@ -570,6 +570,12 @@
     <tabstop>icnbOffline</tabstop>
     <tabstop>icnbUnknown</tabstop>
 </tabstops>
+<customwidgets>
+    <customwidget>
+      <class>Kopete::UI::AddressBookLinkWidget</class>
+        <header>addressbooklinkwidget.h</header>
+    </customwidget>
+</customwidgets>				     
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>addressbooklinkwidget.h</includehint>

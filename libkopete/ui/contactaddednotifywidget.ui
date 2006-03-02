@@ -245,13 +245,18 @@ Leave it empty if you want to see the contact nickname as display name.</string>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<customwidgets>
+    <customwidget>
+           <class>Kopete::UI::AddressBookLinkWidget</class>
+	   <header>addressbooklinkwidget.h</header>
+    </customwidget>
+</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
     <includehint>klineedit.h</includehint>
-    <includehint>addressbooklinkwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
