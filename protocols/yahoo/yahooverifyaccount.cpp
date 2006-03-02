@@ -38,9 +38,11 @@
 #include "yahooaccount.h"
 
 YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent, const char *name)
-: KDialogBase(parent, name, true, i18n("Account Verification - Yahoo"), Cancel|Apply,
-              Apply, true )
+: KDialog(parent, i18n("Account Verification - Yahoo"), Cancel|Apply)
 {
+	setDefaultButton(KDialog::Apply);
+	enableButtonSeparator(true);
+
 	mTheAccount = account;	
 	mTheDialog = new YahooVerifyAccountBase( this );
 	mTheDialog->mPicture->hide();

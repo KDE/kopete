@@ -47,9 +47,8 @@
 #include "jabberchooseserver.h"
 #include "dlgjabberregisteraccount.h"
 
-JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, const char *name )
- : KDialogBase ( parent, name, true, i18n("Register New Jabber Account"),
- 				 KDialogBase::Ok | KDialogBase::Cancel )
+JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, const char */*name*/ )
+ : KDialog ( parent, i18n("Register New Jabber Account"), KDialog::Ok | KDialog::Cancel )
 {
 
 	mParentWidget = parent;
@@ -61,7 +60,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	// replace "Ok" button with a "Register" button
 	KGuiItem registerButton = KStdGuiItem::ok();
 	registerButton.setText ( i18n ( "Register" ) );
-	setButtonOK ( registerButton );
+	setButtonGuiItem( KDialog::Ok, registerButton );
 
 	enableButtonSeparator ( true );
 
@@ -368,7 +367,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 
 		// rewire buttons
 		enableButtonOK ( false );
-		setButtonCancel ( KStdGuiItem::close () );
+		setButtonGuiItem( KDialog::Cancel, KStdGuiItem::close () );
 		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
 	}
 	else

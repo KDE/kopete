@@ -22,13 +22,13 @@
 // QT Includes
 
 // KDE Includes
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 namespace Kopete { class Account; }
 class YahooVerifyAccountBase;
 class KTempFile;
 
-class YahooVerifyAccount : public KDialogBase
+class YahooVerifyAccount : public KDialog
 {
 	Q_OBJECT
 private:

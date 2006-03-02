@@ -31,8 +31,7 @@
 #include "jabberregisteraccount.h"
 
 JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const char *name )
- : KDialogBase ( parent, name, true, i18n("Choose Jabber Server"),
- 				 KDialogBase::Ok | KDialogBase::Cancel )
+ : KDialog ( parent, i18n("Choose Jabber Server"), KDialog::Ok | KDialog::Cancel )
 {
 
 	mParentWidget = parent;

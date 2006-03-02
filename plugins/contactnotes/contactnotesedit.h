@@ -22,7 +22,7 @@
 #include <qstring.h>
 //Added by qt3to4:
 #include <QLabel>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class QLabel;
 class Q3TextEdit;
@@ -33,7 +33,7 @@ class ContactNotesPlugin;
   *@author Olivier Goffart
   */
   
-class ContactNotesEdit : public KDialogBase  {
+class ContactNotesEdit : public KDialog  {
    Q_OBJECT
 public: 
 	ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p=0 ,const char *name=0);
@@ -47,7 +47,7 @@ private:
 	Q3TextEdit *m_linesEdit;
 	
 protected slots: // Protected slots
-	virtual void slotOk();
+	virtual void slotButtonClicked(int buttonCode);
 signals: // Signals
 	void notesChanged(const QString, Kopete::MetaContact*);
 };

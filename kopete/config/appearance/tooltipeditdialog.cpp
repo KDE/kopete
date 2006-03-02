@@ -51,9 +51,12 @@ class TooltipItem : public KListViewItem
 
 
 
-TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
-	: KDialogBase(parent, name, true, i18n("Tooltip Editor"), Ok|Cancel, Ok, true)
+TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char*/* name*/)
+	: KDialog(parent, i18n("Tooltip Editor"), Ok|Cancel)
 {
+	setDefaultButton(KDialog::Ok);
+	enableButtonSeparator(true);
+
 	mMainWidget = new TooltipEditWidget(this, "TooltipEditDialog::mMainWidget");
 	setMainWidget(mMainWidget);
 	mMainWidget->lstUsedItems->header()->hide();

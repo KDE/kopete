@@ -45,6 +45,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kapplication.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <krun.h>
 #include <kshortcut.h>
@@ -453,8 +454,11 @@ void YahooContact::stealthContact()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
-	KDialogBase *stealthSettingDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "stealthSettingDialog", "true",
-				i18n("Stealth Setting"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+	KDialog *stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget(),
+				i18n("Stealth Setting"), KDialog::Ok | KDialog::Cancel );
+	stealthSettingDialog->setDefaultButton(KDialog::Ok);
+	stealthSettingDialog->enableButtonSeparator(true);
+	
 	YahooStealthSetting *stealthWidget = new YahooStealthSetting( stealthSettingDialog, "stealthSettingWidget" );
 	stealthSettingDialog->setMainWidget( stealthWidget );
 
@@ -466,7 +470,7 @@ void YahooContact::stealthContact()
 	else
 		m_account->yahooSession()->stealthContact( m_userId, Yahoo::Stealthed );
 
-	stealthSettingDialog->delayedDestruct();
+	stealthSettingDialog->deleteLater();
 }
 
 void YahooContact::buzzContact()

@@ -37,10 +37,11 @@
 #include "gaduaway.h"
 
 GaduAway::GaduAway( GaduAccount* account, QWidget* parent, const char* name )
-: KDialogBase( parent, name, true, i18n( "Away Dialog" ),
-			 KDialogBase::Ok | KDialogBase::Cancel,
-			 KDialogBase::Ok, true ), account_( account )
+: KDialog( parent, i18n( "Away Dialog" ), KDialog::Ok | KDialog::Cancel), account_( account )
 {
+	setDefaultButton( KDialog::Ok );
+	enableButtonSeparator( true );
+
 	Kopete::OnlineStatus ks;
 	int s;
 

@@ -22,7 +22,7 @@
 #ifndef GADUREGISTERACCOUNT_H
 #define GADUREGISTERACCOUNT_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 //Added by qt3to4:
 #include <QPixmap>
 
@@ -32,7 +32,7 @@ class RegisterCommand;
 class QRegExp;
 class GaduRegisterAccountUI;
 
-class GaduRegisterAccount : public KDialogBase
+class GaduRegisterAccount : public KDialog
 {
     Q_OBJECT
 

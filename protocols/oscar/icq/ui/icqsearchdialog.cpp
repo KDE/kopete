@@ -41,7 +41,7 @@
 #include "icquserinfowidget.h"
 
 ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const char* name )
-: KDialogBase( parent, name, true, i18n( "ICQ User Search" ), 0, NoDefault )
+: KDialog( parent, i18n( "ICQ User Search" ) )
 {
 	m_account = account;
 	m_searchUI = new ICQSearchBase( this, name );

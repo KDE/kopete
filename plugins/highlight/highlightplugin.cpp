@@ -81,6 +81,7 @@ void HighlightPlugin::slotIncomingMessage( Kopete::Message& msg )
 				msg.setFg(f->FG);
 			if(f->setImportance)
 				msg.setImportance((Kopete::Message::MessageImportance)f->importance);
+#warning Port to KNotification
 			if(f->playSound)
 				KNotifyClient::userEvent (QString::null, KNotifyClient::Sound, KNotifyClient::Default, f->soundFN );
 

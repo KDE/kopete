@@ -20,7 +20,7 @@
 #ifndef JABBERCHOOSESERVER_H
 #define JABBERCHOOSESERVER_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <q3cstring.h>
 
 class JabberRegisterAccount;
@@ -35,7 +35,7 @@ namespace KIO
 /**
 @author Kopete Developers
 */
-class JabberChooseServer : public KDialogBase
+class JabberChooseServer : public KDialog
 {
 
 Q_OBJECT

@@ -343,7 +343,7 @@ void AIMContact::haveIcon( const QString& user, QByteArray icon )
 
 void AIMContact::closeUserInfoDialog()
 {
-	m_infoDialog->delayedDestruct();
+	m_infoDialog->deleteLater();
 	m_infoDialog = 0L;
 }
 

@@ -20,7 +20,7 @@
 #ifndef DLGJABBERVCARD_H
 #define DLGJABBERVCARD_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "xmpp_vcard.h"
 
 class JabberAccount;
@@ -41,7 +41,7 @@ class dlgVCard;
  * @author Till Gerken <till@tantolo.net>
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
-class dlgJabberVCard : public KDialogBase
+class dlgJabberVCard : public KDialog
 {
 	Q_OBJECT
 

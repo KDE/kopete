@@ -18,7 +18,7 @@
 #ifndef ICQAUTHREPLYDIALOG_H
 #define ICQAUTHREPLYDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class ICQAuthReplyUI;
 
@@ -26,7 +26,7 @@ class ICQAuthReplyUI;
  * A dialog to ask user what to do when a contact requests authorization
  * @author Gustavo Pichorim Boiko
  */
-class ICQAuthReplyDialog : public KDialogBase
+class ICQAuthReplyDialog : public KDialog
 {
 Q_OBJECT
 public:

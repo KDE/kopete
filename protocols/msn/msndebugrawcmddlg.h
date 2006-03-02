@@ -20,7 +20,7 @@
 #ifndef MSNDEBUGRAWCMDDLG_H
 #define MSNDEBUGRAWCMDDLG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class MSNDebugRawCommand_base;
 
@@ -29,7 +29,7 @@ class MSNDebugRawCommand_base;
  *
  * Simple debugging help
  */
-class MSNDebugRawCmdDlg : public KDialogBase
+class MSNDebugRawCmdDlg : public KDialog
 {
 	Q_OBJECT
 

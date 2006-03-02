@@ -38,7 +38,7 @@
 #include <kglobal.h>
 #include <qregexp.h>
 #include <kio/job.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
@@ -189,7 +189,8 @@ void MSNContact::slotBlockUser()
 
 void MSNContact::slotUserInfo()
 {
-	KDialogBase *infoDialog=new KDialogBase( 0l, "infoDialog", /*modal = */false, QString::null, KDialogBase::Close , KDialogBase::Close, false );
+	KDialog *infoDialog=new KDialog( 0l, QString::null, KDialog::Close );
+	infoDialog->setDefaultButton( KDialog::Close );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
 	MSNInfo *info=new MSNInfo ( infoDialog,"info");

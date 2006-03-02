@@ -337,7 +337,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
 	configGroup()->writeEntry( QString::fromLatin1("ShowMissingContactsDialog") , !showOnce);
 	configGroup()->sync();
 	
-    d->olnscDialog->delayedDestruct();
+    d->olnscDialog->deleteLater();
     d->olnscDialog = 0L;
 }
 

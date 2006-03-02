@@ -32,7 +32,7 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
@@ -185,8 +185,10 @@ public:
 	{
 		kDebug( 14010 ) << k_funcinfo << endl;
 
-		KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
-			KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+		KDialog *passwdDialog = new KDialog( Kopete::UI::Global::mainWidget(), i18n( "Password Required" ),
+			KDialog::Ok | KDialog::Cancel );
+		passwdDialog->setDefaultButton( KDialog::Ok );
+		passwdDialog->enableButtonSeparator( true );
 
 		mView = new KopetePasswordDialog( passwdDialog );
 		passwdDialog->setMainWidget( mView );

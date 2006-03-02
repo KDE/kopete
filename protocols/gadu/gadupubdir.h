@@ -26,7 +26,7 @@
 #include "gadusession.h"
 
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 //Added by qt3to4:
 #include <QPixmap>
 
@@ -38,7 +38,7 @@ class GaduPublicDirectory;
 class Q3ListViewItem;
 class GaduContact;
 
-class GaduPublicDir : public KDialogBase
+class GaduPublicDir : public KDialog
 {
 Q_OBJECT
 

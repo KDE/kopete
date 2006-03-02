@@ -29,7 +29,7 @@
 #include <QPixmap>
 
 class AddressBookExportUI;
-class KDialogBase;
+class KDialog;
 class KListBox;
 class KComboBox;
 
@@ -89,7 +89,7 @@ protected:
 	
 	// the GUI
 	QWidget *mParent;
-	KDialogBase * mDialog;
+	KDialog * mDialog;
 	QPixmap mAddrBookIcon;
 	AddressBookExportUI *mUI;
 	Kopete::MetaContact *mMetaContact;

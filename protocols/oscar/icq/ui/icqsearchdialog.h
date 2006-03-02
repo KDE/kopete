@@ -19,7 +19,7 @@
 #ifndef ICQSEARCHDIALOG_H
 #define ICQSEARCHDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "icquserinfo.h"
 
 class ICQAccount;
@@ -29,7 +29,7 @@ class ICQUserInfoWidget;
 /**
 @author Kopete Developers
 */
-class ICQSearchDialog : public KDialogBase
+class ICQSearchDialog : public KDialog
 {
 Q_OBJECT
 public:

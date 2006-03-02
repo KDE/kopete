@@ -73,8 +73,8 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 		QString authRequest = "Authorization: Passport1.4 "
 								"OrgVerb=GET,"
 								"OrgURL=http%3A%2F%2Fmessenger%2Emsn%2Ecom,"
-								"sign-in=" + KUrl::encode_string(m_accountId) +
-								",pwd=" + KUrl::encode_string( m_password ) +
+								"sign-in=" + QUrl::toPercentEncoding(m_accountId) +
+								",pwd=" + QUrl::toPercentEncoding( m_password ) +
 								"," + m_authentification + "\r\n";
 
 //   warning, this debug contains the password

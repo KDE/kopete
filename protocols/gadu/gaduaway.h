@@ -23,13 +23,13 @@
 #ifndef GADUAWAY_H
 #define GADUAWAY_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <qstring.h>
 
 class GaduAccount;
 class GaduAwayUI;
 
-class GaduAway : public KDialogBase
+class GaduAway : public KDialog
 {
 	Q_OBJECT
 

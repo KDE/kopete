@@ -28,7 +28,7 @@
 #include <kinputdialog.h>
 
 #include <kabcpersistence.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
@@ -283,8 +283,10 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 void Contact::changeMetaContact()
 {
-	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
-		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+	KDialog *moveDialog = new KDialog( Kopete::UI::Global::mainWidget(), i18n( "Move Contact" ),
+		KDialogBase::Ok | KDialogBase::Cancel);
+	moveDialog->setDefaultButton( KDialog::Ok );
+	moveDialog->enableButtonSeparator( true );
 
 	KVBox *w = new KVBox( moveDialog );
 	w->setSpacing( KDialog::spacingHint() );
@@ -662,9 +664,9 @@ QString Contact::toolTip() const
 	// Fixed part of tooltip
 
 	QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-		.arg( KUrl::encode_string( protocol()->pluginId() ),
-				KUrl::encode_string( account()->accountId() ),
-				KUrl::encode_string( contactId() ) );
+		.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
+				QString(QUrl::toPercentEncoding( account()->accountId() )),
+				QString(QUrl::toPercentEncoding( contactId() )) );
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
@@ -715,7 +717,7 @@ QString Contact::toolTip() const
 			{
 				tip += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
-						arg( KUrl::encode_string( url ), Kopete::Message::escape( Qt::escape(url) ) );
+						arg( QUrl::toPercentEncoding( url ), Kopete::Message::escape( Qt::escape(url) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )

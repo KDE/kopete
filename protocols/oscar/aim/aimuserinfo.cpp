@@ -38,12 +38,14 @@
 #include <ktextedit.h>
 #include <krun.h>
 
-AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool modal,
+AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool /*modal*/,
                                       QWidget *parent, const char* name )
-	: KDialogBase( parent, name, modal, i18n( "User Information on %1" )
+	: KDialog( parent, i18n( "User Information on %1" )
 	               .arg( c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ),
-	               Cancel | Ok | User1, Ok, true, i18n("&Update Nickname") )
+	           Cancel | Ok | User1, 0, KGuiItem(i18n("&Update Nickname")) )
 {
+	setDefaultButton(KDialog::Ok);
+	enableButtonSeparator(true);
 	kDebug(14200) << k_funcinfo << "for contact '" << c->contactId() << "'" << endl;
 
 	m_contact = c;

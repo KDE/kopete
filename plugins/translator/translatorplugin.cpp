@@ -257,7 +257,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 {
 	KUrl translatorURL ( "http://translate.google.com/translate_t");
 
-	QString body = KUrl::encode_string( msg );
+	QString body = QString(QUrl::toPercentEncoding( msg ));
 	QString lp = from + "|" + to;
 
 	QByteArray postData = QString( "text=" + body + "&langpair=" + lp ).toUtf8();
@@ -298,7 +298,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QString &from, const QString &to )
 {
-	QString body = KUrl::encode_string( msg);
+	QString body = QString(QUrl::toPercentEncoding( msg));
 	QString lp = from + "_" + to;
 	QString gurl = "http://babelfish.altavista.com/babelfish/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body + "&lp=" + lp;
 	KUrl geturl ( gurl );

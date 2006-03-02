@@ -32,7 +32,7 @@
 
 #include <kdatewidget.h>*/
 #include <q3valuelist.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 /*
 #include <klineedit.h>
 #include <kurllabel.h>
@@ -126,9 +126,8 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	}
 	else
 	{
-		KDialogBase *chooser = new KDialogBase(0, "chooser", true,
-			i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
-			KDialogBase::Ok, false);
+		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
+		chooser->setDefaultButton(KDialog::Ok);
 		AccountSelector *accSelector = new AccountSelector(proto, chooser,
 			"accSelector");
 		chooser->setMainWidget(accSelector);

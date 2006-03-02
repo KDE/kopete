@@ -43,8 +43,10 @@
 #include <klocale.h>
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char* name )
-: KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
+: KDialog( parent, QString::null, User1|User2|User3|Cancel )
 {
+	setDefaultButton( KDialog::User2 );
+
 	mAccount = account;
 	createWidget();
 	initConnections();
@@ -53,8 +55,10 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 }
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent, const char* name )
-: KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
+: KDialog( parent, QString::null, User1|User2|User3|Cancel )
 {
+	setDefaultButton( KDialog::User2 );
+
 	ResLine rs;
 
 	mAccount = account;

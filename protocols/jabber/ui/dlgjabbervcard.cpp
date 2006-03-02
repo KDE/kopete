@@ -61,9 +61,11 @@
  *  name 'name'
  *
  */
-dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent, const char *name)
-	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1 | User2, Close, false, i18n("&Save User Info"), i18n("&Fetch vCard") )
+dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent, const char */*name*/)
+	: KDialog(parent, i18n("Jabber vCard"), KDialog::Close | KDialog::User1 | KDialog::User2, 0, KGuiItem(i18n("&Save User Info")), KGuiItem(i18n("&Fetch vCard")) )
 {
+
+	setDefaultButton( KDialog::Close );
 
 	m_account = account;
 	m_contact = contact;
@@ -102,7 +104,7 @@ dlgJabberVCard::~dlgJabberVCard ()
 void dlgJabberVCard::slotClose()
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deleting dialog." << endl;
-	delayedDestruct();
+	deleteLater();
 }
 
 /*

@@ -26,8 +26,10 @@
 
 #include "cryptographyselectuserkey.h"
 
-CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete::MetaContact *mc) : KDialogBase( 0l, "CryptographySelectUserKey", /*modal = */true, i18n("Select Contact's Public Key") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok )
+CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete::MetaContact *mc) : KDialog( 0l, i18n("Select Contact's Public Key") , KDialog::Ok|KDialog::Cancel )
 {
+	setDefaultButton( KDialog::Ok );
+
 	m_metaContact=mc;
 	view = new CryptographyUserKey_ui(this,"CryptographyUserKey_ui");
 	setMainWidget(view);

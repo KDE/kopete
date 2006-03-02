@@ -27,7 +27,7 @@
 #include <kcolorbutton.h>
 #include <kpushbutton.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <klistview.h>
@@ -198,8 +198,9 @@ void KopeteAccountConfig::slotEditAccount()
 	Kopete::Account *ident = lvi->account();
 	Kopete::Protocol *proto = ident->protocol();
 
-	KDialogBase *editDialog = new KDialogBase( this, "KopeteAccountConfig::editDialog", true,
-		i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+	KDialog *editDialog = new KDialog( this, i18n( "Edit Account" ), KDialog::Ok | KDialog::Cancel );
+	editDialog->setDefaultButton(KDialog::Ok);
+	editDialog->enableButtonSeparator(true);
 
 	KopeteEditAccountWidget *m_accountWidget = proto->createEditAccountWidget( ident, editDialog );
 	if ( !m_accountWidget )

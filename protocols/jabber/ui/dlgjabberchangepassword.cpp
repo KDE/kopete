@@ -31,9 +31,11 @@
 #include "dlgchangepassword.h"
 
 DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidget *parent, const char *name )
- : KDialogBase ( parent, name, true, i18n("Change Jabber Password"),
- 				 KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true )
+ : KDialog ( parent, i18n("Change Jabber Password"), KDialog::Ok | KDialog::Cancel )
 {
+
+	setDefaultButton( KDialog::Ok );
+	enableButtonSeparator( true );
 
 	m_account = account;
 

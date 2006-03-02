@@ -23,7 +23,7 @@
 #include <QStringList>
 #include <QList>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klistview.h>
 #include <kurl.h>
 
@@ -60,7 +60,7 @@ class DMPair
  * @author Richard Stellingwerff <remenic@linuxfromscratch.org>
  * @author Stefan Gehn <metz AT gehn.net>
  */
-class HistoryDialog : public KDialogBase
+class HistoryDialog : public KDialog
 {
 	Q_OBJECT
 

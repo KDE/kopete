@@ -19,7 +19,7 @@
 #define TRANSLATORDIALOG_H
 
 #include <qwidget.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 //#include <kopetemessage.h>
 
@@ -28,7 +28,7 @@ class KTextEdit;
 /**
  * @author Olivier Goffart
  */
-class TranslatorDialog : public KDialogBase
+class TranslatorDialog : public KDialog
 {
 	Q_OBJECT
 

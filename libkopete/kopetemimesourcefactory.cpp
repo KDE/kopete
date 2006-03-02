@@ -61,7 +61,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	// extract and decode arguments
 	QStringList parts = QStringList::split( QChar(':'), abs_name );
 	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
-		*it = KUrl::decode_string( *it );
+		*it = QUrl::fromPercentEncoding( (*it).toUtf8() );
 
 	QPixmap img;
 	if ( parts[0] == QString::fromLatin1("kopete-contact-icon") )

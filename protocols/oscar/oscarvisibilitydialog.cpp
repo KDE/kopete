@@ -26,7 +26,7 @@
 
 
 OscarVisibilityDialog::OscarVisibilityDialog( Client* client, QWidget* parent )
- : KDialogBase( parent,  0, false, i18n( "Add Contacts to In/Visible List" ),
+ : KDialog( parent, i18n( "Add Contacts to In/Visible List" ),
                 Ok | Cancel ), m_client( client )
 {
 	m_visibilityUI = new OscarVisibilityBase( this );
@@ -110,25 +110,24 @@ void OscarVisibilityDialog::slotRemoveFromInvisible()
 	m_visibilityUI->invisibleContacts->removeItem( visIdx );
 }
 
-void OscarVisibilityDialog::slotOk()
+void OscarVisibilityDialog::slotButtonClicked( int buttonCode )
 {
-	ChangeMap::Iterator it, cEnd = m_visibleListChangesMap.end();
-	for ( it = m_visibleListChangesMap.begin(); it != cEnd; ++it ) {
-		m_client->setVisibleTo( it.key(), it.data() );
-	}
+	KDialog::slotButtonClicked(buttonCode);
 	
-	cEnd = m_invisibleListChangesMap.end();
-	for ( it = m_invisibleListChangesMap.begin(); it != cEnd; ++it ) {
-		m_client->setInvisibleTo( it.key(), it.data() );
+	if( buttonCode == KDialog::Ok )
+	{
+		ChangeMap::Iterator it, cEnd = m_visibleListChangesMap.end();
+		for ( it = m_visibleListChangesMap.begin(); it != cEnd; ++it ) {
+			m_client->setVisibleTo( it.key(), it.data() );
+		}
+		
+		cEnd = m_invisibleListChangesMap.end();
+		for ( it = m_invisibleListChangesMap.begin(); it != cEnd; ++it ) {
+			m_client->setInvisibleTo( it.key(), it.data() );
+		}
+
+		emit closing();
 	}
-	
-	KDialogBase::slotOk();
-	emit closing();
+	else if( buttonCode == KDialog::Cancel )
+		emit closing();
 }
-
-void OscarVisibilityDialog::slotCancel()
-{
-	KDialogBase::slotCancel();
-	emit closing();
-}
-

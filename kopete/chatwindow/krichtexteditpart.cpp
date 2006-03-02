@@ -324,6 +324,7 @@ void KopeteRichTextEditPart::readConfig()
 	action_italic->setChecked( config->readEntry( "FontItalic", false ) );
 	action_underline->setChecked( config->readEntry( "FontUnderline", false ) );
 
+#warning Find a what to port "config->readNumEntry( "EditAlignment", Qt::AlignLeft )".
 	switch( config->readNumEntry( "EditAlignment", Qt::AlignLeft ) )
 	{
 		case Qt::AlignLeft:

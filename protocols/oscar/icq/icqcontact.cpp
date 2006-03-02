@@ -29,7 +29,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
+#include <knotification.h>
 #include <kpassivepopup.h>
 #include <kinputdialog.h>
 #include <krandom.h>
@@ -286,7 +286,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 			.arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
 			.arg( reason );
 	}
-	KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "icq_authorization", message );
+	KNotification::event( QString::fromLatin1("icq_authorization"), message );
 }
 
 void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reason )
@@ -800,7 +800,7 @@ void ICQContact::changeEncodingDialogClosed( int result )
 
     if ( m_oesd )
     {
-        m_oesd->delayedDestruct();
+        m_oesd->deleteLater();
         m_oesd = 0L;
     }
 }

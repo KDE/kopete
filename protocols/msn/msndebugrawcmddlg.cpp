@@ -28,10 +28,12 @@
 #include <klocale.h>
 
 MSNDebugRawCmdDlg::MSNDebugRawCmdDlg( QWidget *parent )
-: KDialogBase( parent, 0L, true,
-	i18n( "DEBUG: Send Raw Command - MSN Plugin" ), Ok | Cancel,
-	Ok, true )
+: KDialog( parent,
+	i18n( "DEBUG: Send Raw Command - MSN Plugin" ), KDialog::Ok | KDialog::Cancel )
 {
+	setDefaultButton( KDialog::Ok );
+	enableButtonSeparator( true );
+
 	setInitialSize( QSize( 350, 200 ) );
 
 	m_main = new MSNDebugRawCommand_base( this );

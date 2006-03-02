@@ -18,7 +18,7 @@
 #ifndef CRYPTOGRAPHYSELECTUSERKEY_H
 #define CRYPTOGRAPHYSELECTUSERKEY_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 namespace Kopete { class MetaContact; }
 class CryptographyUserKey_ui;
@@ -27,7 +27,7 @@ class CryptographyUserKey_ui;
   *@author OlivierGoffart
   */
 
-class CryptographySelectUserKey : public KDialogBase {
+class CryptographySelectUserKey : public KDialog {
 	Q_OBJECT
 public:
 	CryptographySelectUserKey(const QString &key, Kopete::MetaContact *mc);

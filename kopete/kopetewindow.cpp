@@ -57,6 +57,7 @@
 #include <kurl.h>
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>
+#include <kdialog.h>
 
 #include "addcontactpage.h"
 #include "addcontactwizard.h"
@@ -73,7 +74,6 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetegroup.h"
-#include <kdialogbase.h>
 #include "kopetelistviewsearchline.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetepluginconfig.h"
@@ -845,8 +845,8 @@ void KopeteWindow::makeTrayToolTip()
 			Kopete::Contact *self = a->myself();
 			tt += i18n( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
 			            "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>" )
-				.arg( a->protocol()->displayName() ).arg( a->accountLabel(), KUrl::encode_string( a->protocol()->pluginId() ),
-				KUrl::encode_string( a->accountId() ), self->onlineStatus().description() );
+				.arg( a->protocol()->displayName() ).arg( a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
+				QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
 		}
 		tt += QString::fromLatin1("</qt>");
 		QToolTip::add(m_tray, tt);
@@ -1044,9 +1044,9 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 	
 	Kopete::Group *group = Kopete::Group::topLevel();
 
-	KDialogBase *addDialog = new KDialogBase( this, "addDialog", true,
-		i18n( "Add Contact" ), KDialogBase::Ok|KDialogBase::Cancel,
-		KDialogBase::Ok, true );
+	KDialog *addDialog = new KDialog( this, i18n( "Add Contact" ), KDialog::Ok | KDialog::Cancel );
+	addDialog->setDefaultButton( KDialog::Ok );
+	addDialog->enableButtonSeparator( true );
 
 	KVBox * mainWid = new KVBox( addDialog );
 	

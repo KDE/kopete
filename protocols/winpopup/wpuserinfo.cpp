@@ -33,9 +33,10 @@
 #include "wpcontact.h"
 
 WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *parent, const char* name )
-	: KDialogBase( parent, name, false, QString::null, Close, Close, false ), m_contact(contact),
+	: KDialog( parent, QString::null, Close ), m_contact(contact),
 	  Comment(i18n("N/A")), Workgroup(i18n("N/A")), OS(i18n("N/A")), Software(i18n("N/A"))
 {
+	setDefaultButton(KDialog::Close);
 //	kDebug( 14170 ) << k_funcinfo << endl;
 
 	setCaption( i18n( "User Info for %1" ).arg( m_contact->nickName() ) );

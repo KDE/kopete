@@ -18,7 +18,7 @@
 #ifndef AIMUSERINFO_H
 #define AIMUSERINFO_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "aiminfobase.h"
 
 namespace Kopete { class Contact; }
@@ -28,7 +28,7 @@ class AIMMyselfContact;
 class AIMAccount;
 class KHTMLPart;
 
-class AIMUserInfoDialog : public KDialogBase
+class AIMUserInfoDialog : public KDialog
 {
 	Q_OBJECT
 	public:

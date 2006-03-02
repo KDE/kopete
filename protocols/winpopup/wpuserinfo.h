@@ -22,7 +22,7 @@
 #define WPUSERINFO_H
 
 // KDE Includes
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kprocio.h>
 
 // Local Includes
@@ -31,7 +31,7 @@
 class WPAccount;
 class WPContact;
 
-class WPUserInfo : public KDialogBase
+class WPUserInfo : public KDialog
 {
 	Q_OBJECT
 

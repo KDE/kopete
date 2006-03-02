@@ -33,7 +33,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactproperty.h"
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kmessagebox.h>
 #include <kimageio.h>
 //Added by qt3to4:
@@ -160,9 +160,8 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	}
 	else
 	{
-		KDialogBase *chooser = new KDialogBase(0, "chooser", true,
-		                                       i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
-		                                       KDialogBase::Ok, false);
+		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
+		chooser->setDefaultButton(KDialog::Ok);
 		AccountSelector *accSelector = new AccountSelector(proto, chooser, "accSelector");
 		chooser->setMainWidget(accSelector);
 		

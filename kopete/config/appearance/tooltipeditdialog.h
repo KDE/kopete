@@ -18,12 +18,12 @@
 #define TOOLTIPEDITDIALOG_H
 
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <q3listview.h>
 
 class TooltipEditWidget;
 
-class TooltipEditDialog : public KDialogBase
+class TooltipEditDialog : public KDialog
 {
 	Q_OBJECT
 

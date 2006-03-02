@@ -136,9 +136,9 @@ public:
 		{
 			Contact* c = (*cit);
 			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-			.arg( KUrl::encode_string( c->protocol()->pluginId() ),
-					KUrl::encode_string( c->account()->accountId() ),
-					KUrl::encode_string( c->contactId() )
+			.arg( QString(QUrl::toPercentEncoding( c->protocol()->pluginId() )),
+					QString(QUrl::toPercentEncoding( c->account()->accountId() )),
+					QString(QUrl::toPercentEncoding( c->contactId() ) )
 				);
 
 			toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",

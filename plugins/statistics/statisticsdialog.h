@@ -17,7 +17,7 @@
 #define _STATISTICSDIALOG_H
 
 #include <qwidget.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kurl.h>
 #include "kopetemetacontact.h"
 
@@ -37,7 +37,7 @@ namespace KParts
 	class URLArgs;
 }
 
-class StatisticsDialog : public KDialogBase
+class StatisticsDialog : public KDialog
 {
 	Q_OBJECT
 	public:

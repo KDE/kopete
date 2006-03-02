@@ -119,7 +119,7 @@ void ICQAddContactPage::showSearchDialog()
 void ICQAddContactPage::searchDialogDestroyed()
 {
 	QObject::disconnect( this, 0, m_searchDialog, 0 );
-	m_searchDialog->delayedDestruct();
+	m_searchDialog->deleteLater();
 	m_searchDialog = NULL;
 }
 

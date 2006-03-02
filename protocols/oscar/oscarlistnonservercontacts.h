@@ -19,13 +19,13 @@
 #ifndef OSCARLISTNONSERVERCONTACTS_H
 #define OSCARLISTNONSERVERCONTACTS_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "kopete_export.h"
 
 class OscarListContactsBase;
 class QStringList;
 
-class KOPETE_EXPORT OscarListNonServerContacts : public KDialogBase
+class KOPETE_EXPORT OscarListNonServerContacts : public KDialog
 {
 Q_OBJECT
 public:
@@ -38,8 +38,7 @@ public:
     bool onlyShowOnce();
 
 protected:
-    virtual void slotOk();
-    virtual void slotCancel();
+    virtual void slotButtonClicked( int buttonCode );
 
 signals:
     void closing();

@@ -43,7 +43,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
+#include <knotification.h>
 #include <ktempfile.h>
 #include <kio/netaccess.h>
 
@@ -1071,8 +1071,7 @@ void
 GaduAccount::slotCommandDone( const QString& /*title*/, const QString& what )
 {
 	//FIXME: any chance to have my own title in event popup ?
-	KNotifyClient::userEvent( 0, what,
-			KNotifyClient::PassivePopup, KNotifyClient::Notification  );
+	KNotification::event( KNotification::Notification, what );
 }
 
 void

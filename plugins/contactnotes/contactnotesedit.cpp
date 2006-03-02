@@ -26,8 +26,10 @@
 #include "contactnotesplugin.h"
 #include "contactnotesedit.h"
 
-ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p,const char *name) : KDialogBase(0L, name , false, i18n("Contact Notes") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok)
+ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p,const char *name) : KDialog(0L, i18n("Contact Notes") , KDialog::Ok|KDialog::Cancel)
 {
+	setDefaultButton( KDialog::Ok );
+
 	m_plugin=p;
 	m_metaContact=m;
 
@@ -46,10 +48,11 @@ ContactNotesEdit::~ContactNotesEdit()
 {
 }
 
-void ContactNotesEdit::slotOk()
+void ContactNotesEdit::slotButtonClicked(int buttonCode)
 {
-	emit notesChanged(m_linesEdit->text(),m_metaContact) ;
-	KDialogBase::slotOk();
+	KDialog::slotButtonClicked(buttonCode);
+	if( buttonCode == KDialog::Ok )
+		emit notesChanged(m_linesEdit->text(),m_metaContact) ;
 }
 
 #include "contactnotesedit.moc"

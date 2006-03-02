@@ -20,7 +20,7 @@
 #ifndef JABBERREGISTER_H
 #define JABBERREGISTER_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <qregexp.h>
 #include <qpixmap.h>
 
@@ -32,7 +32,7 @@ class JabberEditAccountWidget;
 /**
 @author Till Gerken
 */
-class JabberRegisterAccount : public KDialogBase
+class JabberRegisterAccount : public KDialog
 {
 
 Q_OBJECT

@@ -285,7 +285,7 @@ void ICQAccount::slotSetVisiblility()
 
 void ICQAccount::slotVisibilityDialogClosed()
 {
-	m_visibilityDialog->delayedDestruct();
+	m_visibilityDialog->deleteLater();
 	m_visibilityDialog = 0L;
 }
 

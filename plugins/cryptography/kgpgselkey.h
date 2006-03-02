@@ -41,7 +41,7 @@ typedef struct gpgKey{
   QString gpgkeyalgo;
 };
 
-class KgpgSelKey : public KDialogBase
+class KgpgSelKey : public KDialog
 {
     Q_OBJECT
 

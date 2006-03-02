@@ -17,7 +17,7 @@
 #ifndef OSCARVISIBILITYDIALOG_H
 #define OSCARVISIBILITYDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "kopete_export.h"
 
 /**
@@ -27,7 +27,7 @@ class OscarVisibilityBase;
 class QStringList;
 class Client;
 
-class KOPETE_EXPORT OscarVisibilityDialog : public KDialogBase
+class KOPETE_EXPORT OscarVisibilityDialog : public KDialog
 {
 	Q_OBJECT
 public:
@@ -44,8 +44,7 @@ signals:
 	void closing();
 
 protected:
-	virtual void slotOk();
-	virtual void slotCancel();
+	virtual void slotButtonClicked( int buttonCode );
 
 protected slots:
 	void slotAddToVisible();

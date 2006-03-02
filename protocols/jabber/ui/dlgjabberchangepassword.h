@@ -20,7 +20,7 @@
 #ifndef DLGJABBERCHANGEPASSWORD_H
 #define DLGJABBERCHANGEPASSWORD_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class JabberAccount;
 class DlgChangePassword;
@@ -28,7 +28,7 @@ class DlgChangePassword;
 /**
 @author Till Gerken
 */
-class DlgJabberChangePassword : public KDialogBase
+class DlgJabberChangePassword : public KDialog
 {
 
 Q_OBJECT

@@ -25,7 +25,7 @@
 #include <klocale.h>
 
 OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int initialEncoding )
-    : KDialogBase( parent, 0, false, i18n( "Select Encoding" ), Ok | Cancel )
+    : KDialog( parent, i18n( "Select Encoding" ), KDialog::Ok | KDialog::Cancel )
 {
     int initialEncodingIndex;
 

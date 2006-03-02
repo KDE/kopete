@@ -24,7 +24,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <klistbox.h>
 #include <klocale.h>
@@ -176,10 +176,10 @@ int KopeteAddressBookExport::showDialog()
 		numHomePhones = 0;
 		numWorkPhones = 0;
 		numMobilePhones = 0;
-		mDialog = new KDialogBase( mParent, "addressbookexportdialog", true, i18n("Export to Address Book"), KDialogBase::Ok|KDialogBase::Cancel );
+		mDialog = new KDialog( mParent, i18n("Export to Address Book"), KDialog::Ok|KDialog::Cancel );
 		mUI = new AddressBookExportUI( mDialog );
 		mDialog->setMainWidget( mUI );
-		mDialog->setButtonOK( KGuiItem( i18n( "Export" ), 
+		mDialog->setButtonGuiItem( KDialog::Ok, KGuiItem( i18n( "Export" ), 
 							  QString::null, i18n( "Set address book fields using the selected data from Kopete" ) ) ); 
 
 		initLabels();

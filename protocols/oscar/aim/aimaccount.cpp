@@ -834,7 +834,7 @@ void AIMAccount::slotSetVisiblility()
 
 void AIMAccount::slotVisibilityDialogClosed()
 {
-	m_visibilityDialog->delayedDestruct();
+	m_visibilityDialog->deleteLater();
 	m_visibilityDialog = 0L;
 }
 
