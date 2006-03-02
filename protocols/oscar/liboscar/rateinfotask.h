@@ -22,6 +22,7 @@
 #include "task.h"
 #include <q3valuelist.h>
 
+class RateClass;
 using namespace Oscar;
 
 /**
@@ -34,6 +35,7 @@ public:
 	RateInfoTask( Task* parent );
 	~RateInfoTask();
 	bool take( Transfer* transfer );
+	static Q3ValueList<RateClass*> parseRateClasses(Buffer *);
 
 protected:
 

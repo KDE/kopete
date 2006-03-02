@@ -78,19 +78,18 @@ void RateInfoTask::sendRateInfoRequest()
 	send( st );
 }
 
-void RateInfoTask::handleRateInfoResponse()
+Q3ValueList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 {
 	Q3ValueList<RateClass*> rates;
 	Oscar::RateInfo ri;
 	
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "handling rate info response (SNAC 0x01, 0x07)" << endl;
-	Buffer* buffer = transfer()->buffer();
 	
 	int numClasses = buffer->getWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got " << numClasses << " rate classes" << endl;
 	for ( int i = 0; i < numClasses; i++ )
 	{
-		RateClass* newClass = new RateClass( client()->rateManager() );
+		RateClass* newClass = new RateClass();
 		//parse rate classes and put them somewhere
 		ri.classId = buffer->getWord();
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Rate class: " << ri.classId << endl;
@@ -129,7 +128,7 @@ void RateInfoTask::handleRateInfoResponse()
 			}
 		}
 			
-		m_rateGroups.append( groupNum );
+//		m_rateGroups.append( groupNum );
 		numGroupPairs = buffer->getWord();
 		for ( int j = 0; j < numGroupPairs; j++ )
 		{
@@ -138,6 +137,14 @@ void RateInfoTask::handleRateInfoResponse()
 			rc->addMember( family, subtype );
 		}
 	}
+
+	return rates;
+}
+
+void RateInfoTask::handleRateInfoResponse()
+{
+	Buffer* buffer = transfer()->buffer();
+	Q3ValueList<RateClass*> rates = parseRateClasses(buffer);
 
 	Q3ValueList<RateClass*>::iterator it = rates.begin();
 	Q3ValueList<RateClass*>::iterator rcEnd = rates.end();
