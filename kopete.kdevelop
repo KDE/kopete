@@ -15,14 +15,11 @@
     <description/>
     <ignoreparts>
       <part>kdevabbrev</part>
-      <part>kdevdebugger</part>
-      <part>kdevvalgrind</part>
-      <part>kdevctags2</part>
       <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
-      <part>kdevquickopen</part>
-      <part>kdevfileselector</part>
+      <part>kdevdebugger</part>
       <part>kdevdistpart</part>
+      <part>kdevvalgrind</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
@@ -39,7 +36,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns/>
+      <hidepatterns></hidepatterns>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -128,14 +125,14 @@
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
       </envvars>
       <abortonerror>true</abortonerror>
-      <numberofjobs>1</numberofjobs>
+      <numberofjobs>2</numberofjobs>
       <dontact>false</dontact>
-      <makebin>make</makebin>
+      <makebin>unsermake --compile-jobs=30</makebin>
       <prio>0</prio>
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>libkopete/avdevice/libkopete_videodevice.la</activetarget>
+      <activetarget>protocols/groupwise/kopete_groupwise.la</activetarget>
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>
@@ -148,9 +145,9 @@
     </run>
     <configurations>
       <default>
-        <configargs>--enable-debug=full</configargs>
-        <builddir/>
-        <topsourcedir/>
+        <configargs>--enable-debug=full --enable-libsuffix=64</configargs>
+        <builddir>/space/kde/builds/opt_3_5/kdenetwork/kopete</builddir>
+        <topsourcedir>/space/kde/sources/3_5/kdenetwork/kopete</topsourcedir>
         <cppflags/>
         <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
@@ -218,6 +215,11 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <root>/home/qt/3.3</root>
+    </qt>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>
