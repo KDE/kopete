@@ -451,7 +451,7 @@ public slots:
 	 * @brief Set if this is a temporary contact. (see @ref isTemporary)
 	 *
 	 * @param b if the contact is or not temporary
-	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
+	 * @param group if the contact was temporary and b is false, then the contact will be moved to this group.
 	 *  if group is null, it will be moved to top-level
 	 */
 	void setTemporary( bool b = true, Kopete::Group *group = 0L );
