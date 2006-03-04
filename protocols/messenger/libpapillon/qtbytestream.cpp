@@ -15,7 +15,7 @@
 #include "qtbytestream.h"
 
 // Qt includes
-#include <QTcpSocket>
+#include <QtNetwork/QTcpSocket>
 
 namespace Papillon {
 

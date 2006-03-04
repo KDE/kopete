@@ -21,7 +21,7 @@
 
 
 #include <QObject>
-#include <QHostAddress>
+#include <QtNetwork/QHostAddress>
 
 #include <papillon_macros.h>
 
