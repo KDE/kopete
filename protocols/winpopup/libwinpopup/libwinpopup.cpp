@@ -218,7 +218,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 			}
 		}
 
-		if (!currentGroup.isEmpty()) {
+		if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
 			// create a workgroup object and put the hosts in
 			WorkGroup nWG;
 			nWG.addHosts(currentHosts);
