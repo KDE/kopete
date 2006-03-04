@@ -58,6 +58,8 @@ int main(int argc, char **argv) \
 	TestObject tc; \
 	if(argv[1]) \
 		tc.setPath( argv[1] ); \
+	else \
+		tc.setPath( QDir::current().absolutePath() ); \
 	return QTest::qExec( &tc, argc, argv); \
 }
 
