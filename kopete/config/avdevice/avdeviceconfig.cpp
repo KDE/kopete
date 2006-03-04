@@ -23,7 +23,7 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qhbuttongroup.h>
+#include <qbuttongroup.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qslider.h>
@@ -206,6 +206,6 @@ void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&qimage);
-	bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
+	//bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
 // 	kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 }
