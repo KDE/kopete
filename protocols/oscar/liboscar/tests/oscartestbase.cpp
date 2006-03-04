@@ -43,16 +43,17 @@ bool OscarTestBase::loadFile(const QString& file)
 		return false;
 
 	QFile datFile(m_dataDir + QDir::separator() + file);
-	if ( m_data == NULL )
-	{
-		m_data = new Buffer(datFile.readAll());
-	}
-	else
+	if (! datFile.open(QIODevice::ReadOnly))
+		return false;
+	if ( m_data != NULL )
 	{
 		delete m_data;
 		m_data = NULL; //Safety
-		m_data = new Buffer(datFile.readAll());
 	}
+	m_data = new Buffer(datFile.readAll());
+	datFile.close();
+	if (m_data->length() == 0)
+		return false; //unless it's an empty file, we must have failed
 	return true;
 }
 

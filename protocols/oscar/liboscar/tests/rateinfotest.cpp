@@ -30,7 +30,7 @@ void RateInfoTest::testRateClasses()
 
     Q3ValueList<RateClass*> rates = RateInfoTask::parseRateClasses( m_data );
     QVERIFY( rates.isEmpty() ==  false );
-    delete m_data;
+    QVERIFY( rates.count() == 5 );
 }
 
 
