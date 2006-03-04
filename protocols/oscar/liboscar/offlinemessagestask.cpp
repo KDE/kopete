@@ -88,9 +88,10 @@ bool OfflineMessagesTask::take( Transfer* t )
 	return false;
 }
 
-void OfflineMessagesTask::handleOfflineMessage()
+Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 {
-	TLV tlv1 = transfer()->buffer()->getTLV();
+
+	TLV tlv1 = b->getTLV();
 	Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
 	
 	buffer->getLEWord(); // data chunk size
@@ -133,8 +134,13 @@ void OfflineMessagesTask::handleOfflineMessage()
 	
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received offline message '" << msg.data() << "' from " << senderUin << endl;
 	
+	return message;
+}
+
+void OfflineMessagesTask::handleOfflineMessage()
+{
+	Oscar::Message message = parseOfflineMessage(transfer()->buffer());
 	m_msgCount++;
-	
 	emit receivedOfflineMessage( message );
 }
 

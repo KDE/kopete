@@ -38,6 +38,7 @@ public:
 	virtual void onGo();
 	virtual bool forMe( const Transfer* t ) const;
 	virtual bool take( Transfer* t );
+	static Oscar::Message parseOfflineMessage(Buffer *);
 	
 signals:
 	void receivedOfflineMessage( const Oscar::Message& msg );
