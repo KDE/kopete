@@ -90,7 +90,6 @@ bool CloseConnectionTask::take( Transfer* transfer )
 	
 			Oscar::SNAC s = { 0, 0, 0, 0 };
 			client()->fatalTaskError( s, errorNum );
-			emit disconnected( errorNum, QString::null );
 			return true; //if there's an error, we'll need to disconnect anyways
 		}
 

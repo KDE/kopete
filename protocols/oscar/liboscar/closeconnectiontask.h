@@ -30,7 +30,6 @@ class QString;
 */
 class CloseConnectionTask : public Task
 {
-Q_OBJECT
 public:
 	CloseConnectionTask(Task* parent);
 	
@@ -47,10 +46,6 @@ public:
 protected:
 	virtual bool forMe(const Transfer* transfer) const;
 
-signals:
-	void disconnected( int error, const QString& reason );
-
-	
 private:
 	bool parseDisconnectCode( int error, QString& reason );
 
