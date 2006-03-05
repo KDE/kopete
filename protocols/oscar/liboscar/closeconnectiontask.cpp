@@ -133,6 +133,4 @@ bool CloseConnectionTask::forMe( const Transfer* transfer ) const
 		return false;
 }
 
-#include "closeconnectiontask.moc"
-
 //kate: tab-width 4; indent-mode csands;
