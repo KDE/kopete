@@ -256,19 +256,26 @@ void IncomingTransfer::processMessage(const Message& message)
 			{
 				// NOTE The sending client can ask for a direct connections
 				// if one was established before.
-				QFile *destionation = new QFile(m_transfer->destinationURL().path());
-				if(!destionation->open(IO_WriteOnly))
+				if(!m_file)
 				{
-					if(m_transfer){
-						m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));
-						m_transfer = 0l;
+					QFile *destionation = new QFile(m_transfer->destinationURL().path());
+					if(!destionation->open(IO_WriteOnly))
+					{
+						if(m_transfer){
+							m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));
+							m_transfer = 0l;
+						}
+						
+						error();
+						return;
 					}
-					
-					error();
-					return;
+				
+					m_file = destionation;
 				}
-			
-				m_file = destionation;
+				else
+				{
+					// TODO
+				}
 			}
 			
 			m_state = DataTransfer;
