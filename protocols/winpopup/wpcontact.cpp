@@ -141,16 +141,10 @@ void WPContact::slotCheckStatus()
 	if (acct) newIsOnline = acct->checkHost(contactId());
 
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected) {
-		Kopete::OnlineStatus tmpStatus;
-		if (myWasConnected) {
-			if (newIsOnline)
+		Kopete::OnlineStatus tmpStatus = WPProtocol::protocol()->WPOffline;
+		if (myWasConnected && newIsOnline) {
 				tmpStatus = WPProtocol::protocol()->WPOnline;
-			else
-				WPProtocol::protocol()->WPOffline;
-		} else {
-			WPProtocol::protocol()->WPOffline;
 		}
-
 		setOnlineStatus(tmpStatus);
 	}
 }
