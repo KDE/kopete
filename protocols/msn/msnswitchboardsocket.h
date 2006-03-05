@@ -2,7 +2,7 @@
     msnswitchboardsocket.h - switch board connection socket
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@ kde.org>
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
@@ -129,6 +129,11 @@ public slots:
 	void sendTypingMsg( bool isTyping );
 
 	void requestDisplayPicture();
+	
+	/** workaround Bug 113425 . see slotKeepAliveTimer() **/
+	QTimer *m_keepAlive;
+	
+
 
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
@@ -137,6 +142,9 @@ private slots:
 	void slotEmoticonReceived( KTempFile *, const QString& );
 	void slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
 	void cleanQueue();
+	
+	/** workaround Bug 113425 . see comment inside the function **/
+	void slotKeepAliveTimer();
 
 signals:
 	void msgReceived( Kopete::Message &msg );
