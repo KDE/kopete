@@ -56,6 +56,11 @@ void RateClass::setRateInfo( RateInfo newRateInfo )
 	m_rateInfo.currentState = newRateInfo.currentState;
 }
 
+Oscar::RateInfo RateClass::getRateInfo()
+{
+	return m_rateInfo;
+}
+
 void RateClass::addMember( const SNAC& s )
 {
 	addMember( s.family, s.subtype );

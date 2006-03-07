@@ -46,6 +46,9 @@ public:
 
 	/** Sets rate information */
 	void setRateInfo( Oscar::RateInfo newRateInfo );
+	
+	/** Gets rate information */
+	Oscar::RateInfo getRateInfo();
 
 	/** Add a SNAC to the rate class */
 	void addMember( const Oscar::SNAC& s );
