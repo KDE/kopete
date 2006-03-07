@@ -47,7 +47,7 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 	m_devicePool->open();
 	m_devicePool->setSize(320, 240);
 	m_devicePool->startCapturing();
-	m_updateTimer->start( 25 );
+	m_updateTimer->start( 250 );
 }
 
 YahooWebcam::~YahooWebcam()
