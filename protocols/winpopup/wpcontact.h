@@ -22,7 +22,7 @@
 #include <kaction.h>
 
 // Qt Includes
-#include <qvaluestack.h>
+//#include <qvaluestack.h>
 #include <qdatetime.h>
 #include <qptrlist.h>
 #include <qtimer.h>
@@ -73,7 +73,7 @@ private:
 	bool myWasConnected;	// true if protocol connected at last check
 
 	QTimer checkStatus;		// checks the status of this contact every second or so
-	KActionCollection *myActionCollection;
+//	KActionCollection *myActionCollection;
 							// holds all the protocol specific actions (not many!)
 	Kopete::ChatSession *m_manager;
 							// holds the two message managers - one for email and one for chat
