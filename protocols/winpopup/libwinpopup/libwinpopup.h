@@ -20,7 +20,6 @@
 
 //QT includes
 #include <qobject.h>
-#include <qmutex.h>
 #include <qmap.h>
 #include <qstringlist.h>
 #include <qtimer.h>
@@ -65,7 +64,6 @@ private:
 	QString currentGroup, currentHost;
 	QStringList todo, done, currentHosts;
 	stringMap currentGroups;
-	QMutex groupMutex;
 	QTimer updateGroupDataTimer;
 	QString smbClientBin;
 	int groupCheckFreq;

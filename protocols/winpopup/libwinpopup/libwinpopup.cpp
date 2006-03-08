@@ -63,12 +63,9 @@ void WinPopupLib::slotStartDirLister()
 const QStringList WinPopupLib::getGroups()
 {
 	QStringList ret;
-	// Do we need a mutex or semaphore here? GF
-	groupMutex.lock();
 	QMap<QString, WorkGroup>::ConstIterator end = theGroups.end();
 	for(QMap<QString, WorkGroup>::ConstIterator i = theGroups.begin(); i != end; i++)
 		ret += i.key();
-	groupMutex.unlock();
 
 	return ret;
 }
@@ -89,16 +86,13 @@ bool WinPopupLib::checkHost(const QString &Name)
 //	kdDebug() << "WP checkHost: " << Name << endl;
 	bool ret = false;
 
-	// Do we need a mutex or semaphore here? GF
-	groupMutex.lock();
 	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
 	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
 		if ((*i).Hosts().contains(Name.upper())) {
 			ret = true;
-			break; //keep the mutex locked as short as possible
+			break;
 		}
 	}
-	groupMutex.unlock();
 
 	return ret;
 }
@@ -248,9 +242,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 		currentHost = todo[0];
 		startReadProcess(currentHost);
 	} else {
-		groupMutex.lock();
 		theGroups = currentGroupsMap;
-		groupMutex.unlock();
 		updateGroupDataTimer.start(groupCheckFreq * 1000, true);
 	}
 }
