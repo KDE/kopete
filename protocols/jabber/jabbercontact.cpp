@@ -144,11 +144,11 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	removeAuthAction->setEnabled(false);
 	actionAuthorization->insert(removeAuthAction);
 
-	if( mRosterItem.subscription().type() == XMPP::Subscription::From )
+	if( mRosterItem.subscription().type() == XMPP::Subscription::To )
 	{
 		resendAuthAction->setEnabled(true);
 	}
-	else if( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None )
+	else if( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None )
 	{
 		requestAuthAction->setEnabled(true);
 	}
