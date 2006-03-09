@@ -48,7 +48,7 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
-	checkStatus.start(2000, true);
+	checkStatus.start(1000, false);
 
 	m_manager = 0;
 	m_infoDialog = 0;
@@ -146,8 +146,6 @@ void WPContact::slotCheckStatus()
 		}
 		setOnlineStatus(tmpStatus);
 	}
-
-	checkStatus.start(10000, true); /// 10s should be more than enough GF
 }
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
