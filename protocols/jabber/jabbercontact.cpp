@@ -302,7 +302,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () && message.urlList().isEmpty () )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () && message.xHTMLBody().isEmpty() && !message.xencrypted() )
 		return;
 
 	// determine message type
@@ -329,10 +329,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		// retrieve and reformat body
 		QString body = message.body ();
-		QString xHTMLBody = message.xHTMLBody ();
+		QString xHTMLBody;
 		if( !message.xencrypted().isEmpty () )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+		}
+		else
+		{
+			xHTMLBody = message.xHTMLBody ();
 		}
 
 		// convert XMPP::Message into Kopete::Message
