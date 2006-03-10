@@ -1,0 +1,43 @@
+kde4_header()
+
+include_directories( ${CMAKE_SOURCE_DIR}/src ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(smpppdcstests_SRCS main.cpp clienttest.cpp )
+
+kde4_automoc(${smpppdcstests_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(smpppdcstests ${smpppdcstests_SRCS})
+
+target_link_libraries(smpppdcstests  ${QT_AND_KDECORE_LIBS} smpppdclient kunittestgui )
+
+endif(KDE4_BUILD_TESTS)
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#INCLUDES = -I$(top_srcdir)/src $(all_includes) -I../libsmpppdclient
+#METASOURCES = AUTO
+#
+#
+#check_PROGRAMS = smpppdcstests
+#
+#smpppdcstests_SOURCES = main.cpp clienttest.cpp
+#smpppdcstests_LDFLAGS = $(KDE_RPATH) $(all_libraries)
+#smpppdcstests_LDADD = ../libsmpppdclient/libsmpppdclient.la -lkunittestgui
+#
+#noinst_HEADERS = clienttest.h
+#
+#check:
+#	kunittest ./smpppdcstests ClientTest
+#

@@ -1,0 +1,48 @@
+kde4_header()
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(call_SRCS 
+   call_main.cc 
+   callclient.cc 
+   console.cc 
+   presencepushtask.cc 
+   presenceouttask.cc )
+
+kde4_automoc(${call_SRCS})
+
+kde4_add_executable(call ${call_SRCS})
+
+target_link_libraries(call  ${QT_AND_KDECORE_LIBS} cricketexampleslogin cricketsessionphone cricketp2pclient cricketp2pbase cricketxmpp cricketxmllite cricketbase mediastreamer pthread asound )
+
+install_targets(/bin call )
+
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#bin_PROGRAMS = call 
+#call_CXXFLAGS = $(AM_CXXFLAGS)
+#call_SOURCES = call_main.cc callclient.cc console.cc presencepushtask.cc presenceouttask.cc
+#noinst_HEADERS = callclient.h  console.h  presenceouttask.h  presencepushtask.h  status.h
+#call_LDADD =  \
+#	       $(srcdir)/../../../talk/examples/login/libcricketexampleslogin.la \
+#	       $(srcdir)/../../../talk/session/phone/libcricketsessionphone.la \
+#	       $(srcdir)/../../../talk/p2p/client/libcricketp2pclient.la \
+#	       $(srcdir)/../../../talk/p2p/base/libcricketp2pbase.la \
+#	       $(srcdir)/../../../talk/xmpp/libcricketxmpp.la \
+#	       $(srcdir)/../../../talk/xmllite/libcricketxmllite.la \
+#	       $(srcdir)/../../../talk/base/libcricketbase.la \
+#	       $(srcdir)/../../../talk/third_party/mediastreamer/libmediastreamer.la \
+#	       $(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) -lasound 
+#AM_CPPFLAGS  = -DPOSIX
+#DEFAULT_INCLUDES = -I$(srcdir)/../../..

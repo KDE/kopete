@@ -1,0 +1,48 @@
+kde4_header()
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#libcricketxmpp_la_SOURCES = constants.cc \
+#			    jid.cc \
+#			    saslmechanism.cc \
+#			    xmppclient.cc \
+#			    xmppengineimpl.cc \
+#			    xmppengineimpl_iq.cc \
+#			    xmpplogintask.cc \
+#			    xmppstanzaparser.cc \
+#			    xmpptask.cc
+#
+#noinst_HEADERS = asyncsocket.h \
+#			    prexmppauth.h \
+#		    	    saslhandler.h \
+#		      	    xmpplogintask.h \
+#			    jid.h \
+#		    	    saslmechanism.h \
+#		      	    xmppclient.h \
+#		   	    xmpppassword.h \
+#                            constants.h \
+#		    	    saslplainmechanism.h \
+#			    xmppclientsettings.h \
+#			    xmppstanzaparser.h \
+#		 	    xmppengine.h \
+#		   	    xmpptask.h \
+#			    plainsaslhandler.h \
+#			    saslcookiemechanism.h \
+#		     	    xmppengineimpl.h
+#
+#
+#AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../..
+#noinst_LTLIBRARIES = libcricketxmpp.la

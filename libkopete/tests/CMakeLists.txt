@@ -1,0 +1,126 @@
+kde4_header()
+
+add_subdirectory( mock ) 
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(kopeteemoticontest_SRCS kopeteemoticontest.cpp )
+
+kde4_automoc(${kopeteemoticontest_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(kopeteemoticontest ${kopeteemoticontest_SRCS})
+
+target_link_libraries(kopeteemoticontest  ${QT_AND_KDECORE_LIBS} )
+
+endif(KDE4_BUILD_TESTS)
+
+########### next target ###############
+
+set(kopetemessage_test_SRCS kopetemessage_test.cpp )
+
+kde4_automoc(${kopetemessage_test_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(kopetemessage_test ${kopetemessage_test_SRCS})
+
+target_link_libraries(kopetemessage_test  ${QT_AND_KDECORE_LIBS} )
+
+endif(KDE4_BUILD_TESTS)
+
+########### next target ###############
+
+set(kopetetask_test_SRCS kopetetask_test.cpp )
+
+kde4_automoc(${kopetetask_test_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(kopetetask_test ${kopetetask_test_SRCS})
+
+target_link_libraries(kopetetask_test  ${QT_AND_KDECORE_LIBS} )
+
+endif(KDE4_BUILD_TESTS)
+
+########### next target ###############
+
+set(statusmessage_test_SRCS statusmessage_test.cpp )
+
+kde4_automoc(${statusmessage_test_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(statusmessage_test ${statusmessage_test_SRCS})
+
+target_link_libraries(statusmessage_test  ${QT_AND_KDECORE_LIBS} )
+
+endif(KDE4_BUILD_TESTS)
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#SUBDIRS = mock .
+#AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_ASCII_CAST -DQT_NO_COMPAT \
+#	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/tests/mock $(all_includes) -DSRCDIR=\"$(top_srcdir)/kopete/libkopete/tests\"
+#METASOURCES = AUTO
+#
+#AM_LDFLAGS = $(QT_LDFLAGS) $(X_LDFLAGS) $(KDE_RPATH)
+#LDADD = ../libkopete.la -lQtTest_debug mock/libkopete_mock.la
+#
+##check_LTLIBRARIES = kunittest_kopetemessage_test.la kunittest_kopetecontactlist_test.la
+#
+#check_PROGRAMS = kopeteemoticontest kopetemessage_test kopetetask_test statusmessage_test
+#TESTS = kopeteemoticontest kopetemessage_test kopetetask_test statusmessage_test
+#
+#kopeteemoticontest_SOURCES = kopeteemoticontest.cpp
+#
+#kopetemessage_test_SOURCES = kopetemessage_test.cpp
+#
+#kopetetask_test_SOURCES = kopetetask_test.cpp
+#
+#statusmessage_test_SOURCES = statusmessage_test.cpp
+#
+##check_PROGRAMS = kopetewallettest_program kopetepasswordtest_program
+#
+##kunittest_kopetepropertiestest_la_SOURCES = kopetepropertiestest.cpp ../kopeteproperties.cpp
+##kunittest_kopetepropertiestest_la_LIBADD = -lkunittest ../libkopete.la
+##kunittest_kopetepropertiestest_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
+#
+##kunittest_kopeteemoticontest_la_SOURCES = kopeteemoticontest.cpp
+##kunittest_kopeteemoticontest_la_LIBADD = -lkunittest ../libkopete.la
+##kunittest_kopeteemoticontest_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
+#
+##kunittest_kopetemessage_test_la_SOURCES = kopetemessage_test.cpp
+##kunittest_kopetemessage_test_la_LIBADD = -lkunittest mock/libkopete_mock.la
+##kunittest_kopetemessage_test_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
+#
+##kopetewallettest_program_SOURCES = kopetewallettest_program.cpp
+##kopetewallettest_program_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
+##kopetewallettest_program_LDADD = ../libkopete.la
+#
+##kopetepasswordtest_program_SOURCES = kopetepasswordtest_program.cpp
+##kopetepasswordtest_program_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
+##kopetepasswordtest_program_LDADD = ../libkopete.la
+#
+##kunittest_kopetecontactlist_test_la_SOURCES = kopetecontactlist_test.cpp
+##kunittest_kopetecontactlist_test_la_LIBADD = -lkunittest mock/libkopete_mock.la
+##kunittest_kopetecontactlist_test_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
+#
+##noinst_HEADERS = kopetepropertiestest.h kopeteemoticontest.h
+#
+##check-local: 
+##	kunittestmodrunner
+##guicheck:
+##	kunittestmod $(PWD)
+#

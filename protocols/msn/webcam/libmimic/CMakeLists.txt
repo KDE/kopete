@@ -1,0 +1,41 @@
+kde4_header()
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+## INCLUDES = @GLIB_CFLAGS@
+#AM_CPPFLAGS = $(all_includes) $(GLIB_CFLAGS)
+#
+## libmimicincludedir = $(includedir)
+## libmimicinclude_HEADERS = mimic.h
+#
+#noinst_LTLIBRARIES = libmimic.la
+#libmimic_la_SOURCES = \
+#	mimic.c \
+#	encode.c \
+#	decode.c \
+#	bitstring.c \
+#	vlc_common.c \
+#	vlc_encode.c \
+#	vlc_decode.c \
+#	fdct_quant.c \
+#	idct_dequant.c \
+#	colorspace.c \
+#	deblock.c \
+#	mimic-private.h
+## libmimic_la_LDFLAGS = \
+## 	-version-info $(MIMIC_CURRENT):$(MIMIC_REVISION):$(MIMIC_AGE) \
+## 	-export-symbols-regex "^[^_].*"
+#
