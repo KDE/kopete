@@ -856,7 +856,7 @@ void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthS
 		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
-	kc->setStealthed( state == Yahoo::Stealthed );
+	kc->setStealthed( state == Yahoo::StealthActive );
 }
 
 QString YahooAccount::prepareIncomingMessage( const QString &messageText )

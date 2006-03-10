@@ -36,8 +36,10 @@ public:
 
 	void setTarget( const QString &to );
 	void setState( Yahoo::StealthStatus state );
+	void setMode( Yahoo::StealthMode mode );
 private:
 	QString m_target;
+	Yahoo::StealthMode m_mode;
 	Yahoo::StealthStatus m_state;
 };
 

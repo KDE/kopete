@@ -459,13 +459,41 @@ void YahooContact::stealthContact()
 	YahooStealthSetting *stealthWidget = new YahooStealthSetting( stealthSettingDialog, "stealthSettingWidget" );
 	stealthSettingDialog->setMainWidget( stealthWidget );
 
-	if ( stealthSettingDialog->exec() == QDialog::Rejected )
-		return;
+	// Prepare dialog
+	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
+	{
+		stealthWidget->radioOffline->setEnabled( true );
+		stealthWidget->radioOffline->setChecked( true );
+	}
+	if( stealthed() )
+		stealthWidget->radioPermOffline->setChecked( true );
+		
 	
-	if ( stealthWidget->radioOnline->isChecked() )
-		m_account->yahooSession()->stealthContact( m_userId, Yahoo::NotStealthed );
-	else
-		m_account->yahooSession()->stealthContact( m_userId, Yahoo::Stealthed );
+	// Show dialog
+	if ( stealthSettingDialog->exec() == QDialog::Rejected )
+	{	
+		stealthSettingDialog->delayedDestruct();
+		return;
+	}
+	
+	// Apply permanent setting
+	if( stealthed() && !stealthWidget->radioPermOffline->isChecked() )
+		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthNotActive );
+	else if( !stealthed() && stealthWidget->radioPermOffline->isChecked() )
+		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthActive );
+	
+	// Apply temporary setting
+	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
+	{
+		if( stealthWidget->radioOnline->isChecked() )
+		{
+			m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthOnline, Yahoo::StealthActive );
+		}
+		else if( stealthWidget->radioOffline->isChecked() )
+		{
+			m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthOffline, Yahoo::StealthActive );
+		}
+	}
 
 	stealthSettingDialog->delayedDestruct();
 }
@@ -634,7 +662,7 @@ void YahooContact::closeWebcamDialog()
 	                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
 	
 	QObject::disconnect( this, SIGNAL( signalWebcamPaused() ),
-	                  m_webcamDialog, SLOT( webcamPaused( int ) ) );
+	                  m_webcamDialog, SLOT( webcamPaused( ) ) );
 	
 	QObject::disconnect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
 	                  m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );

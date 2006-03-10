@@ -106,7 +106,7 @@ void ListTask::parseStealthList( Transfer *transfer )
 	QStringList buddies = QStringList::split( ",", raw );
 	for ( QStringList::Iterator it = buddies.begin(); it != buddies.end(); ++it ) 
 	{
-		emit stealthStatusChanged( *it, Yahoo::Stealthed );
+		emit stealthStatusChanged( *it, Yahoo::StealthActive );
 	}
 }
 

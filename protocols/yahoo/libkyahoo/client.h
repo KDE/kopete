@@ -147,7 +147,7 @@ Q_OBJECT
 		/**
 		 * Change the stealth status of a buddy
 		 */
-		void stealthContact( const QString &userId, Yahoo::StealthStatus status );
+		void stealthContact( QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state );
 
 		/**
 		 * Request the buddy's picture

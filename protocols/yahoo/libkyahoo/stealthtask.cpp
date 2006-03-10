@@ -32,12 +32,29 @@ StealthTask::~StealthTask()
 
 void StealthTask::onGo()
 {
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceStealth);
+	YMSGTransfer *t = new YMSGTransfer();
+	if( m_mode == Yahoo::StealthOnline )
+	{
+		t->setService( Yahoo::ServiceStealthOnline );
+		t->setParam( 13, "1" );
+		t->setParam( 31, m_state );	
+	}
+	else if( m_mode == Yahoo::StealthOffline )
+	{
+		t->setService( Yahoo::ServiceStealthOffline );
+		t->setParam( 13, "1" );
+		t->setParam( 31, m_state );
+	}
+	else if( m_mode == Yahoo::StealthPermOffline )
+	{
+		t->setService( Yahoo::ServiceStealthOffline );
+		t->setParam( 13, "2" );
+		t->setParam( 31, m_state );
+	}
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().local8Bit());
-	t->setParam( 7, m_target.local8Bit() );
-	t->setParam( 13, "2" );
-	t->setParam( 31, m_state );	
+	if( !m_target.isEmpty() )
+		t->setParam( 7, m_target.local8Bit() );
 	send( t );
 	
 	setSuccess( true );
@@ -51,4 +68,9 @@ void StealthTask::setTarget( const QString &to )
 void StealthTask::setState( Yahoo::StealthStatus state)
 {
 	m_state = state;
+}
+
+void StealthTask::setMode( Yahoo::StealthMode mode )
+{
+	m_mode = mode;
 }

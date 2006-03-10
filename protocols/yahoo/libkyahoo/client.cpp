@@ -319,6 +319,9 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	cst->setType( type );
 	cst->go( true );
 	
+	if( status == Yahoo::StatusInvisible )
+		stealthContact( QString::null, Yahoo::StealthOnline, Yahoo::StealthClear );
+
 	setStatus( status );
 }
 
@@ -345,11 +348,12 @@ void Client::sendPing()
 
 // ***** Contactlist handling *****
 
-void Client::stealthContact(QString const &userId, Yahoo::StealthStatus state)
+void Client::stealthContact(QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state)
 {
 	StealthTask *st = new StealthTask( d->root );
 	st->setTarget( userId );
 	st->setState( state );
+	st->setMode( mode );
 	st->go( true );
 }
 
