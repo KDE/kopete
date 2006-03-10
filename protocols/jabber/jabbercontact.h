@@ -204,7 +204,7 @@ private slots:
 	 * slot received by the syncTimer.
 	 */
 	void slotDelayedSync();
-	private:
+private:
 
 	/**
 	 * Create a message manager for this contact.

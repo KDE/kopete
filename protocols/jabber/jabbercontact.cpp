@@ -131,31 +131,18 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	
 	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
 								 this, SLOT (slotSendAuth ()), actionAuthorization, "actionSendAuth");
-	resendAuthAction->setEnabled(false);
+	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	actionAuthorization->insert(resendAuthAction);
 
 	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
 								 this, SLOT (slotRequestAuth ()), actionAuthorization, "actionRequestAuth");
-	requestAuthAction->setEnabled(false);
+	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	actionAuthorization->insert(requestAuthAction);
 	
 	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
 								 this, SLOT (slotRemoveAuth ()), actionAuthorization, "actionRemoveAuth");
-	removeAuthAction->setEnabled(false);
+	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	actionAuthorization->insert(removeAuthAction);
-
-	if( mRosterItem.subscription().type() == XMPP::Subscription::To )
-	{
-		resendAuthAction->setEnabled(true);
-	}
-	else if( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None )
-	{
-		requestAuthAction->setEnabled(true);
-	}
-	else if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
-	{
-		removeAuthAction->setEnabled(true);
-	}
 
 	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", this, "jabber_online");
 
