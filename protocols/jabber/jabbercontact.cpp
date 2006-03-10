@@ -152,7 +152,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	{
 		requestAuthAction->setEnabled(true);
 	}
-	else if( mRosterItem.subscription().type() == XMPP::Subscription::Both )
+	else if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
 	{
 		removeAuthAction->setEnabled(true);
 	}
