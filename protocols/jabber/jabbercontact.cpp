@@ -438,7 +438,6 @@ void JabberContact::slotCheckLastActivity ( Kopete::Contact *, const Kopete::Onl
 
 void JabberContact::slotGetTimedLastActivity ()
 {
-
 	/*
 	 * We have been called from @ref slotCheckLastActivity.
 	 * We could have lost our connection in the meantime,
@@ -948,8 +947,37 @@ void JabberContact::deleteContact ()
 void JabberContact::sync ( unsigned int )
 {
 	// if we are offline or this is a temporary contact or we should not synch, don't bother
+	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () || metaContact() == Kopete::ContactList::self()->myself() )
+		return;
+	
+//	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () << " - " <<kdBacktrace() << endl;
+
+	if(!m_syncTimer);
+	{
+		m_syncTimer=new QTimer(this);
+		connect(m_syncTimer, SIGNAL(timeout()) , this , SLOT(slotDelayedSync()));
+	}
+	m_syncTimer->start(2*1000,true);
+	/*
+		the sync operation is delayed, because when we are doing a move to group operation,
+	     kopete first add the contact to the group, then removes it.
+		Theses two operations should anyway be done in only one pass.
+	
+		if there is two jabber contact in one metacontact, this may result in an infinite change of
+	 	groups between theses two contacts, and the server is being flooded.
+	*/
+}
+
+void JabberContact::slotDelayedSync( )
+{
+	m_syncTimer->deleteLater();
+	m_syncTimer=0L;
+	// if we are offline or this is a temporary contact or we should not synch, don't bother
 	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () )
 		return;
+	
+	bool changed=metaContact()->displayName() != mRosterItem.name();
+	
 
 	QStringList groups;
 	Kopete::GroupList groupList = metaContact ()->groups ();
@@ -961,8 +989,18 @@ void JabberContact::sync ( unsigned int )
 		if ( g->type () != Kopete::Group::TopLevel )
 			groups += g->displayName ();
 	}
-
-	mRosterItem.setGroups ( groups );
+		
+	if(mRosterItem.groups() != groups)
+	{
+		changed=true;
+		mRosterItem.setGroups ( groups );
+	}
+	
+	if(!changed)
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "contact has not changed,  abort sync"  << endl;
+		return;
+	}
 
 	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 
@@ -1193,6 +1231,8 @@ QString JabberContact::lastReceivedMessageId () const
 {
 	return mLastReceivedMessageId;
 }
+
+
 
 
 #include "jabbercontact.moc"

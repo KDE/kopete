@@ -24,6 +24,7 @@
 #include "kopetechatsession.h" // needed for silly Kopete::ContactPtrList
 
 class JabberChatSession;
+class QTimer;
 
 class JabberContact : public JabberBaseContact
 {
@@ -78,6 +79,8 @@ public slots:
 
 	/**
 	 * Sync Groups with server
+	 * 
+	 * operations are alctually performed in sloDelayedSync()
 	 */
 	void sync(unsigned int);
 
@@ -175,6 +178,12 @@ private slots:
 	 * Display a error message if the vCard sent was unsuccesful.
 	 */
 	void slotSentVCard();
+
+       /**
+        * actually perform operations of sync() with a delay.
+        * slot received by the syncTimer.
+        */
+       void slotDelayedSync();
 private:
 
 	/**
@@ -232,6 +241,7 @@ private:
 	bool mRequestDeliveredEvent;
 
 	QString mLastReceivedMessageId;
+	QTimer *m_syncTimer;
 
 };
 
