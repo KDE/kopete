@@ -498,14 +498,6 @@ void JabberAccount::slotConnected ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 	m_jabberClient->requestRoster ();
 
-	/* Since we are online now, set initial presence. Don't do this
-	 * before the roster request or we will receive presence
-	 * information before we have updated our roster with actual
-	 * contacts from the server! (Iris won't forward presence
-	 * information in that case either). */
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
-	setPresence ( m_initialPresence );
-
 }
 
 void JabberAccount::slotRosterRequestFinished ( bool success )
@@ -517,6 +509,14 @@ void JabberAccount::slotRosterRequestFinished ( bool success )
 		// all "dirty" items from the contact list
 		contactPool()->cleanUp ();
 	}
+
+	/* Since we are online now, set initial presence. Don't do this
+	* before the roster request or we will receive presence
+	* information before we have updated our roster with actual
+	* contacts from the server! (Iris won't forward presence
+	* information in that case either). */
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
+	setPresence ( m_initialPresence );
 
 }
 
