@@ -1184,7 +1184,7 @@ void JabberContact::sync ( unsigned int )
 	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () || metaContact() == Kopete::ContactList::self()->myself() )
 		return;
 	
-//	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () << " - " <<kdBacktrace() << endl;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () /*<< " - " <<kdBacktrace()*/ << endl;
 
 	if(!m_syncTimer);
 	{
@@ -1539,6 +1539,8 @@ void JabberContact::slotDiscoFinished( )
 		Kopete::MetaContact *mc=metaContact();
 		JabberAccount *parentAccount=account();
 		Kopete::OnlineStatus status=onlineStatus();
+		
+		kdDebug() << k_funcinfo << jid << " is not a contact but a gateway   - " << this << endl;
 		
 		delete this; //we are not a contact i said !
 		

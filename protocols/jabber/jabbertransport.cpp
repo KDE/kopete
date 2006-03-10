@@ -291,6 +291,7 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
+	kdDebug() << k_funcinfo << endl;
 	QDict<Kopete::Contact> cts=account()->contacts();
 	QDictIterator<Kopete::Contact> it( cts ); 
 	for( ; it.current(); ++it )
@@ -301,6 +302,7 @@ void JabberTransport::eatContacts( )
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();
 			Kopete::OnlineStatus status = contact->onlineStatus();
+			kdDebug() << k_funcinfo << item.jid().full() << " will be soon eat  - " << contact << endl;
 			delete contact;
 			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
 			if(c2)

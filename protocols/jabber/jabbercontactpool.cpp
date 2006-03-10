@@ -68,7 +68,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	JabberContactPoolItem *mContactItem = findPoolItem ( contact );
 	if ( mContactItem)
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << contact.jid().full() << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << contact.jid().full() << "   -  " <<   mContactItem->contact() << endl;
 
 		// It exists, update it.
 		mContactItem->contact()->updateContact ( contact );
