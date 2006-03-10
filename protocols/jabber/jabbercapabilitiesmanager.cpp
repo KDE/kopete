@@ -353,6 +353,10 @@ void JabberCapabilitiesManager::removeAccount(JabberAccount *account)
 
 void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const XMPP::Jid &jid, const XMPP::Status &status )
 {
+	if( !account->client() || !account->client()->rootTask() )
+		return;
+	
+	
 	// Do don't anything if the jid correspond to the account's JabberClient jid.
 	// false means that we don't check for resources.
 	if( jid.compare(account->client()->jid(), false) )
