@@ -138,6 +138,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================
+	connect( mAwayConfigUI->rememberedMessages, SIGNAL(valueChanged(int)),
+		this, SLOT(slotValueChanged(int)));
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
 	connect( mAwayConfigUI->mGoAvailable, SIGNAL(toggled(bool)),
