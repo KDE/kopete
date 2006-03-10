@@ -28,6 +28,7 @@
 #include "kopetechatsession.h" // needed for silly Kopete::ContactPtrList
 
 class JabberChatSession;
+class QTimer;
 
 class JabberContact : public JabberBaseContact
 {
@@ -82,6 +83,8 @@ public slots:
 
 	/**
 	 * Sync Groups with server
+	 * 
+	 * operations are alctually performed in sloDelayedSync()
 	 */
 	void sync(unsigned int);
 
@@ -195,7 +198,13 @@ private slots:
 	 * The service discovery on that contact is finished
 	 */
 	void slotDiscoFinished();
-private:
+	
+	/**
+	 * actually perform operations of sync() with a delay.
+	 * slot received by the syncTimer.
+	 */
+	void slotDelayedSync();
+	private:
 
 	/**
 	 * Create a message manager for this contact.
@@ -256,6 +265,7 @@ private:
 	bool mDiscoDone;
 
 	QString mLastReceivedMessageId;
+	QTimer *m_syncTimer;
 
 };
 
