@@ -610,6 +610,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	// remove all properties first
 	removeProperty ( protocol()->propFirstName );
 	removeProperty ( protocol()->propLastName );
+	removeProperty ( protocol()->propFullName );
 
 	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
 	{
@@ -627,6 +628,8 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		if ( !vCard.familyName().isEmpty () )
 			setProperty ( protocol()->propLastName, vCard.familyName () );
 	}
+	if( !vCard.fullName().isEmpty() )
+		setProperty ( protocol()->propFullName, vCard.fullName() );
 
 	/* 
 	 * Set the general information 
@@ -1016,15 +1019,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 
 void JabberContact::slotSentVCard ()
 {
-	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
 	
-	if (!vCard->success())
-	{
-		// unsuccessful, or incomplete
-		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error, i18n("Unable to store vCard for %1").arg (vCard->jid ().userHost ()));
-		return;
-	}
-
 }
 
 void JabberContact::slotChatSessionDeleted ( QObject *sender )

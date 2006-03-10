@@ -26,6 +26,7 @@
 #include <qtextedit.h>
 #include <qwidgetstack.h>
 #include <qregexp.h>
+#include <qbuffer.h>
 
 // KDE includes
 #include <kdebug.h>
@@ -290,51 +291,138 @@ void dlgJabberVCard::setEnabled(bool state)
  */
 void dlgJabberVCard::slotSaveVCard()
 {
-	// general tab
-	m_contact->setProperty(m_account->protocol()->propNickName, m_mainWidget->leNick->text());
-	m_contact->setProperty(m_account->protocol()->propFullName, m_mainWidget->leName->text());
-	m_contact->setProperty(m_account->protocol()->propJid, m_mainWidget->leJID->text());
-	m_contact->setProperty(m_account->protocol()->propBirthday, m_mainWidget->leBirthday->text());
-	m_contact->setProperty(m_account->protocol()->propTimezone, m_mainWidget->leTimezone->text());
-	m_contact->setProperty(m_account->protocol()->propHomepage, m_mainWidget->leHomepage->text());
-	m_contact->setProperty(m_account->protocol()->propPhoto, m_photoPath);
+	setEnabled(false);
+	m_mainWidget->lblStatus->setText( i18n("Saving vCard to server...") );
+
+	XMPP::VCard vCard;
+	XMPP::VCard::AddressList addressList;
+	XMPP::VCard::EmailList emailList;
+	XMPP::VCard::PhoneList phoneList;
+
+	// General information
+	vCard.setNickName( m_mainWidget->leNick->text() );
+	vCard.setFullName( m_mainWidget->leName->text() );
+	vCard.setJid( m_mainWidget->leJID->text() );
+	vCard.setBdayStr( m_mainWidget->leBirthday->text() );
+	vCard.setTimezone( m_mainWidget->leTimezone->text() );
+	vCard.setUrl( m_mainWidget->leHomepage->text() );
 
 	// home address tab
-	m_contact->setProperty(m_account->protocol()->propHomeStreet, m_mainWidget->leHomeStreet->text());
-	m_contact->setProperty(m_account->protocol()->propHomeExtAddr, m_mainWidget->leHomeExtAddr->text());
-	m_contact->setProperty(m_account->protocol()->propHomePOBox, m_mainWidget->leHomePOBox->text());
-	m_contact->setProperty(m_account->protocol()->propHomeCity, m_mainWidget->leHomeCity->text());
-	m_contact->setProperty(m_account->protocol()->propHomePostalCode, m_mainWidget->leHomePostalCode->text());
-	m_contact->setProperty(m_account->protocol()->propHomeCountry, m_mainWidget->leHomeCountry->text());
+	XMPP::VCard::Address homeAddress;
+
+	homeAddress.home = true;
+	homeAddress.street = m_mainWidget->leHomeStreet->text();
+	homeAddress.extaddr = m_mainWidget->leHomeExtAddr->text();
+	homeAddress.pobox = m_mainWidget->leHomePOBox->text();
+	homeAddress.locality = m_mainWidget->leHomeCity->text();
+	homeAddress.pcode = m_mainWidget->leHomePostalCode->text();
+	homeAddress.country = m_mainWidget->leHomeCountry->text();
 
 	// work address tab
-	m_contact->setProperty(m_account->protocol()->propWorkStreet, m_mainWidget->leWorkStreet->text());
-	m_contact->setProperty(m_account->protocol()->propWorkExtAddr, m_mainWidget->leWorkExtAddr->text());
-	m_contact->setProperty(m_account->protocol()->propWorkPOBox, m_mainWidget->leWorkPOBox->text());
-	m_contact->setProperty(m_account->protocol()->propWorkCity, m_mainWidget->leWorkCity->text());
-	m_contact->setProperty(m_account->protocol()->propWorkPostalCode, m_mainWidget->leWorkPostalCode->text());
-	m_contact->setProperty(m_account->protocol()->propWorkCountry, m_mainWidget->leWorkCountry->text());
+	XMPP::VCard::Address workAddress;
 
-	// email addresses
-	m_contact->setProperty(m_account->protocol()->propEmailAddress, m_mainWidget->leHomeEmail->text());
-	m_contact->setProperty(m_account->protocol()->propWorkEmailAddress, m_mainWidget->leWorkEmail->text());
+	workAddress.work = true;
+	workAddress.street = m_mainWidget->leWorkStreet->text();
+	workAddress.extaddr = m_mainWidget->leWorkExtAddr->text();
+	workAddress.pobox = m_mainWidget->leWorkPOBox->text();
+	workAddress.locality = m_mainWidget->leWorkCity->text();
+	workAddress.pcode = m_mainWidget->leWorkPostalCode->text();
+	workAddress.country = m_mainWidget->leWorkCountry->text();
+
+	addressList.append(homeAddress);
+	addressList.append(workAddress);
+
+	vCard.setAddressList(addressList);
+
+	// home email
+	XMPP::VCard::Email homeEmail;
+
+	homeEmail.home = true;
+	homeEmail.userid = m_mainWidget->leHomeEmail->text();
+
+	// work email
+	XMPP::VCard::Email workEmail;
+
+	workEmail.work = true;
+	workEmail.userid = m_mainWidget->leWorkEmail->text();
+
+	emailList.append(homeEmail);
+	emailList.append(workEmail);
+
+	vCard.setEmailList(emailList);
 
 	// work information tab
-	m_contact->setProperty(m_account->protocol()->propCompanyName, m_mainWidget->leCompany->text());
-	m_contact->setProperty(m_account->protocol()->propCompanyDepartement, m_mainWidget->leDepartment->text());
-	m_contact->setProperty(m_account->protocol()->propCompanyPosition, m_mainWidget->lePosition->text());
-	m_contact->setProperty(m_account->protocol()->propCompanyRole, m_mainWidget->leRole->text());
+	XMPP::VCard::Org org;
+	org.name = m_mainWidget->leCompany->text();
+	org.unit = QStringList::split(",", m_mainWidget->leDepartment->text());
+	vCard.setOrg(org);
+	vCard.setTitle( m_mainWidget->lePosition->text() );
+	vCard.setRole( m_mainWidget->leRole->text() );
 
 	// phone numbers tab
-	m_contact->setProperty(m_account->protocol()->propPrivatePhone, m_mainWidget->lePhoneHome->text());
-	m_contact->setProperty(m_account->protocol()->propWorkPhone, m_mainWidget->lePhoneWork->text());
-	m_contact->setProperty(m_account->protocol()->propPhoneFax, m_mainWidget->lePhoneFax->text());
-	m_contact->setProperty(m_account->protocol()->propPrivateMobilePhone, m_mainWidget->lePhoneCell->text());
+	XMPP::VCard::Phone phoneHome;
+	phoneHome.home = true;
+	phoneHome.number = m_mainWidget->lePhoneHome->text();
+
+	XMPP::VCard::Phone phoneWork;
+	phoneWork.work = true;
+	phoneWork.number = m_mainWidget->lePhoneWork->text();
+
+	XMPP::VCard::Phone phoneFax;
+	phoneFax.fax = true;
+	phoneFax.number = m_mainWidget->lePhoneFax->text();
+
+	XMPP::VCard::Phone phoneCell;
+	phoneCell.cell = true;
+	phoneCell.number = m_mainWidget->lePhoneCell->text();
+
+	phoneList.append(phoneHome);
+	phoneList.append(phoneWork);
+	phoneList.append(phoneFax);
+	phoneList.append(phoneCell);
+
+	vCard.setPhoneList(phoneList);
 
 	// about tab
-	m_contact->setProperty(m_account->protocol()->propAbout, m_mainWidget->teAbout->text());
+	vCard.setDesc( m_mainWidget->teAbout->text() );
 
-	emit informationChanged();
+	// Set contact photo as a binary value (if he has set a photo)
+	if( !m_photoPath.isEmpty() )
+	{
+		QString photoPath = m_photoPath;
+		QImage image( photoPath );
+		QByteArray ba;
+		QBuffer buffer( ba );
+		buffer.open( IO_WriteOnly );
+		image.save( &buffer, "PNG" );
+		vCard.setPhoto( ba );
+	}
+
+	vCard.setVersion("3.0");
+	vCard.setProdId("Kopete");
+
+	XMPP::JT_VCard *task = new XMPP::JT_VCard( m_account->client()->rootTask() );
+	// signal to ourselves when the vCard data arrived
+	QObject::connect(task, SIGNAL(finished()), this, SLOT(slotVCardSaved()));
+	task->set(vCard);
+	task->go(true);
+}
+
+void dlgJabberVCard::slotVCardSaved()
+{
+	XMPP::JT_VCard *vCard = (XMPP::JT_VCard*)sender();
+	
+	if( vCard->success() )
+	{
+		m_mainWidget->lblStatus->setText( i18n("vCard save sucessful.") );
+		m_contact->setPropertiesFromVCard( vCard->vcard() );
+	}
+	else
+	{
+		m_mainWidget->lblStatus->setText( i18n("Error: Unable to save vCard.") );
+	}
+
+	setEnabled(true);
 }
 
 void dlgJabberVCard::slotGetVCard()
@@ -366,9 +454,7 @@ void dlgJabberVCard::slotGotVCard()
 	}
 	else
 	{
-		m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly.") );
-		KMessageBox::queuedMessageBox(this, KMessageBox::Error, 
-			i18n("An error occurred while fetching vCard. Check connectivity with the Jabber server."));
+		m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly. Check connectivity with the Jabber server.") );
 	}
 }
 

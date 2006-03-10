@@ -74,10 +74,13 @@ private slots:
 	 */
 	void slotClearPhoto();
 	/**
-	 * Put back the information from the dialog into the contact properties.
-	 * After it emit the informationChanged() signal.
+	 * Send vCard to the server.
 	 */
 	void slotSaveVCard();
+	/**
+	 * Put back the information from the dialog into the contact properties
+	 */
+	void slotVCardSaved();
 	/**
 	 * Close the dialog.
 	 */
