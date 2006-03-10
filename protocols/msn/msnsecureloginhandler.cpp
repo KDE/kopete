@@ -74,7 +74,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 								"OrgVerb=GET,"
 								"OrgURL=http%3A%2F%2Fmessenger%2Emsn%2Ecom,"
 								"sign-in=" + KURL::encode_string(m_accountId) +
-								",pwd=" + KURL::encode_string( m_password ) +
+								",pwd=" + KURL::encode_string( m_password ).replace(',',"%2C") +
 								"," + m_authentification + "\r\n";
 
 //   warning, this debug contains the password
