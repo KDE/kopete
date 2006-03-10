@@ -100,10 +100,12 @@ void YahooConferenceChatSession::slotInviteOthers()
 	}
 
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
-	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QString & ) ), 
-				account(), SLOT( slotAddInviteConference( const QString &, const QStringList &, const QString & ) ) );
+	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QStringList &, const QString & ) ), 
+				account(), SLOT( slotAddInviteConference( const QString &, const QStringList &, const QStringList &, const QString & ) ) );
 	dlg->setRoom( m_yahooRoom );
 	dlg->fillFriendList( buddies );
+	for( QPtrList<Kopete::Contact>::ConstIterator it = members().begin(); it != members().end(); it++ )
+		dlg->addParticipant( (*it)->contactId() );
 	dlg->show();
 }
 

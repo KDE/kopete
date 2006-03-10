@@ -1086,16 +1086,17 @@ void YahooAccount::prepareConference( const QString &who )
 	}
 	
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
-	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QString & ) ), 
-				this, SLOT( slotInviteConference( const QString &, const QStringList &, const QString & ) ) );
+	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QStringList &, const QString & ) ), 
+			this, SLOT( slotInviteConference( const QString &, const QStringList &, const QStringList &, const QString & ) ) );
 	dlg->setRoom( room );
 	dlg->fillFriendList( buddies );
 	dlg->addInvitees( QStringList( who ) );
 	dlg->show();
 }
 
-void YahooAccount::slotInviteConference( const QString &room, const QStringList &members, const QString &msg )
+void YahooAccount::slotInviteConference( const QString &room, const QStringList &members, const QStringList &participants, const QString &msg )
 {	
+	Q_UNUSED( participants );
 kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
 	m_session->inviteConference( room, members, msg );
 	
@@ -1109,10 +1110,10 @@ kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the con
 	session->view( true )->raise( false );
 }
 
-void YahooAccount::slotAddInviteConference( const QString &room, const QStringList &members, const QString &msg )
+void YahooAccount::slotAddInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg )
 {	
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
-	m_session->addInviteConference( room, members, msg );
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << who << " to the conference " << room << ". Message: " << msg << endl;
+	m_session->addInviteConference( room, who, members, msg );
 }
 
 void YahooAccount::slotConfUserDecline( const QString &who, const QString &room, const QString &msg)

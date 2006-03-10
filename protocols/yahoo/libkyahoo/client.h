@@ -217,7 +217,7 @@ Q_OBJECT
 		/**
 		 * Invite buddies to a already existing conference
 		 */
-		void addInviteConference( const QString &room, const QStringList &members, const QString &msg );
+		void addInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
 
 		/**
 		 * Join a conference

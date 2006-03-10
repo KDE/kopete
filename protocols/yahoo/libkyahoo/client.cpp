@@ -486,9 +486,9 @@ void Client::inviteConference( const QString &room, const QStringList &members, 
 	d->conferenceTask->inviteConference( room, members, msg );
 }
 
-void Client::addInviteConference( const QString &room, const QStringList &members, const QString &msg )
+void Client::addInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg )
 {
-	d->conferenceTask->addInvite( room, members, msg );
+	d->conferenceTask->addInvite( room, who, members, msg );
 }
 
 void Client::joinConference( const QString &room, const QStringList &members )
