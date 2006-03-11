@@ -66,7 +66,7 @@
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
 	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , m_syncTimer(0L)
 {
-
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is created  - " << this << endl;
 	// this contact is able to transfer files
 	setFileCapable ( true );
 
@@ -118,6 +118,13 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
 	mDiscoDone = false;
+}
+
+
+
+JabberContact::~JabberContact()
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is destroyed  - " << this << endl;
 }
 
 QPtrList<KAction> *JabberContact::customContextMenuActions ()
@@ -1539,7 +1546,7 @@ void JabberContact::slotDiscoFinished( )
 		JabberAccount *parentAccount=account();
 		Kopete::OnlineStatus status=onlineStatus();
 		
-		kdDebug() << k_funcinfo << jid << " is not a contact but a gateway   - " << this << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << jid << " is not a contact but a gateway   - " << this << endl;
 		
 		delete this; //we are not a contact i said !
 		
