@@ -92,9 +92,8 @@ void RateInfoTest::testRateClasses()
 		else
 			QVERIFY( ri.lastTime == 0xcd );
 		QVERIFY( ri.currentState == 0 );
-			
-		//TODO:  verify the rest of RateInfo
-		//TODO: verify all the group snacs. yes, all of them.
+
+		//we won't bother verifying the rate group stuff, it's not important.
 	}
 }
 
