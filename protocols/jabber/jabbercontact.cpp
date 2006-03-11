@@ -1541,12 +1541,18 @@ void JabberContact::slotDiscoFinished( )
 	if(is_transport && !transport()) 
  	{   //ok, we are not a contact, we are a transport....
 		
-		const QString jid = rosterItem().jid().full();
+		const QString jid = rosterItem().jid().bare();
 		Kopete::MetaContact *mc=metaContact();
 		JabberAccount *parentAccount=account();
 		Kopete::OnlineStatus status=onlineStatus();
 		
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << jid << " is not a contact but a gateway   - " << this << endl;
+		
+		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , jid + "/" + account()->accountId() ) )
+		{
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport azlready exists, abort operation " <<  endl;
+			return;
+		}
 		
 		delete this; //we are not a contact i said !
 		

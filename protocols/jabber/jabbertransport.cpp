@@ -48,7 +48,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 	JabberContact *myContact = m_account->contactPool()->addContact ( XMPP::RosterItem ( myselfContactId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << " transport created:  myself: " << myContact << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
 	
 	//we have to know if the account get loaded from the config, or newly created
 	bool exist=configGroup()->readBoolEntry("exist",false);
@@ -93,6 +93,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 
 JabberTransport::~JabberTransport ()
 {
+	kdDebug( JABBER_DEBUG_GLOBAL ) << " removing transport " << kdBacktrace() <<endl;
 	m_account->removeTransport( myself()->contactId() );
 }
 
