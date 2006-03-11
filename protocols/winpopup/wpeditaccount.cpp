@@ -65,7 +65,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 	}
 	else {
 		// no QT/KDE function? GF
-		QString theHostName = QString::null;
+		QString theHostName = QString();
 		char *tmp = new char[255];
 
 		if (tmp != 0) {

@@ -65,8 +65,8 @@ public slots:
 	virtual void connect(const Kopete::OnlineStatus &);						// Connect to server
 	virtual void disconnect();					// Disconnect from server
 
-	void goAvailable() { setAway(false, QString::null); }		// Two convenience slots
-	void goAway() { setAway(true, QString::null); }			// for available and away
+	void goAvailable() { setAway(false, QString()); }		// Two convenience slots
+	void goAway() { setAway(true, QString()); }			// for available and away
 
 // Stuff used internally & by colleague classes
 public:
@@ -92,7 +92,7 @@ public slots:
 	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
 
 	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
+	void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString());
 	void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 
 protected:

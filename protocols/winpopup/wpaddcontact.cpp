@@ -106,8 +106,7 @@ bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMe
 	kDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")" << endl;
 
 	// TODO: make the nickname an option
-	theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
-	return true;
+	return theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
 }
 
 #include "wpaddcontact.moc"

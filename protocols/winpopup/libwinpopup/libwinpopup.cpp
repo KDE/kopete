@@ -66,12 +66,9 @@ void WinPopupLib::slotStartDirLister()
 const QStringList WinPopupLib::getGroups()
 {
 	QStringList ret;
-	// Do we need a mutex or semaphore here? GF
-	groupMutex.lock();
 	QMap<QString, WorkGroup>::ConstIterator end = theGroups.end();
-	for(QMap<QString, WorkGroup>::ConstIterator i = theGroups.begin(); i != end; i++)
+	for (QMap<QString, WorkGroup>::ConstIterator i = theGroups.begin(); i != end; i++)
 		ret += i.key();
-	groupMutex.unlock();
 
 	return ret;
 }
@@ -92,16 +89,13 @@ bool WinPopupLib::checkHost(const QString &Name)
 //	kDebug() << "WP checkHost: " << Name << endl;
 	bool ret = false;
 
-	// Do we need a mutex or semaphore here? GF
-	groupMutex.lock();
 	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
 	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
 		if ((*i).Hosts().contains(Name.toUpper())) {
 			ret = true;
-			break; //keep the mutex locked as short as possible
+			break;
 		}
 	}
-	groupMutex.unlock();
 
 	return ret;
 }
@@ -117,7 +111,7 @@ bool WinPopupLib::checkMessageDir()
 													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
 													   "on how to do this.\n"
 													   "Should the directory be created? (May need root password)").arg(WP_POPUP_DIR),
-												  QString::null, i18n("Create Directory"), i18n("Do Not Create"));
+												  QString(), i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -136,7 +130,7 @@ bool WinPopupLib::checkMessageDir()
 														   "You will not receive messages if you say no.\n"
 														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
 														   "Fix? (May need root password)").arg(WP_POPUP_DIR),
-													  QString::null, i18n("Fix"), i18n("Do Not Fix"));
+													  QString(), i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
 				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -155,6 +149,7 @@ bool WinPopupLib::checkMessageDir()
 void WinPopupLib::slotUpdateGroupData()
 {
 	passedInitialHost = false;
+	todo.clear();
 	currentGroupsMap.clear();
 	currentHost = "LOCALHOST";
 	startReadProcess(currentHost);
@@ -181,7 +176,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 
 void WinPopupLib::slotReadProcessReady(KProcIO *r)
 {
-	QString tmpLine = QString::null;
+	QString tmpLine = QString();
 	QRegExp group("^Workgroup\\|(.*)\\|(.*)$"), host("^Server\\|(.*)\\|(.*)$"),
 			info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
 			error("Connection.*failed");
@@ -229,9 +224,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 	} else {
 		passedInitialHost = true;
 		if (!currentGroups.isEmpty()) {
-			QMap<QString, QString>::ConstIterator end = currentGroups.end();
-			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-				QString groupMaster = i.data();
+			foreach (QString groupMaster, currentGroups) {
 				todo += groupMaster;
 			}
 		}
@@ -242,9 +235,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 		currentHost = todo[0];
 		startReadProcess(currentHost);
 	} else {
-		groupMutex.lock();
 		theGroups = currentGroupsMap;
-		groupMutex.unlock();
 		updateGroupDataTimer.start(groupCheckFreq * 1000, true);
 	}
 }
@@ -267,7 +258,7 @@ void WinPopupLib::slotNewMessages(const KFileItemList &items)
 void WinPopupLib::readMessages(const KFileItemList &items)
 {
 	KFileItem *tmpItem;
-	foreach(tmpItem, items) {
+	foreach (tmpItem, items) {
 		if (tmpItem->isFile()) {
 			QFile messageFile(tmpItem->localPath());
 
@@ -304,7 +295,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 															  i18n("A message file could not be removed; "
 																   "maybe the permissions are wrong.\n"
 																   "Fix? (May need root password)"),
-															  QString::null, i18n("Fix"), i18n("Do Not Fix"));
+															  QString(), i18n("Fix"), i18n("Do Not Fix"));
 					if (tmpYesNo == KMessageBox::Yes) {
 						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem->localPath()));
 						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {

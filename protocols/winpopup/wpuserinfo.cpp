@@ -33,7 +33,7 @@
 #include "wpcontact.h"
 
 WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *parent, const char* name )
-	: KDialog( parent, QString::null, Close ), m_contact(contact),
+	: KDialog( parent, QString(), Close ), m_contact(contact),
 	  Comment(i18n("N/A")), Workgroup(i18n("N/A")), OS(i18n("N/A")), Software(i18n("N/A"))
 {
 	setDefaultButton(KDialog::Close);
@@ -77,7 +77,7 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 
 void WPUserInfo::slotDetailsProcessReady(KProcIO *d)
 {
-	QString tmpLine = QString::null;
+	QString tmpLine = QString();
 	QRegExp info("^Domain=\\[(.*)\\]\\sOS=\\[(.*)\\]\\sServer=\\[(.*)\\]$"), host("^Server\\|(.*)\\|(.*)$");
 
 	while (d->readln(tmpLine) > -1) {

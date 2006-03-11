@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qmap.h>
+#include <QMap>
 #include <QList>
 #include <QHash>
 
@@ -153,7 +153,7 @@ void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time,
 {
 	bool foundContact = false;
 	QList<Kopete::Account*> Accounts = Kopete::AccountManager::self()->accounts(protocol());
-	Kopete::Account *theAccount;
+	Kopete::Account *theAccount = 0;
 	foreach(Kopete::Account *account, Accounts) {
 		QHash<QString, Kopete::Contact*> Contacts = account->contacts();
 		Kopete::Contact *theContact = Contacts[From];
