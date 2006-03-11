@@ -152,7 +152,7 @@ signals:
 	void msgAcknowledgement(unsigned int, bool);
 	void userJoined(const QString& handle , const QString &publicName , bool IRO);
 	void userLeft(const QString& handle , const QString &reason);
-	void nudgeReceived();
+	void nudgeReceived(const QString &handle);
 
 	void switchBoardClosed(  );
 	void invitation(const QString& handle, const QString& msg);

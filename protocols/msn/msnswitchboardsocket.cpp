@@ -264,7 +264,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			if( dataCastId == 1 )
 			{
 				kdDebug(14140) << k_funcinfo << "Received a nudge !" << endl;
-				emit nudgeReceived();
+				emit nudgeReceived(m_msgHandle);
 			}
 		}
 	}
