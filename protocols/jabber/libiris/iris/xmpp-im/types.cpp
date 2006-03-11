@@ -615,10 +615,8 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				}
 				else if(e.tagName() == "thread")
 					d->thread = e.text();
-#if 0
 			}
 			else if (e.namespaceURI() == s.xhtmlImNS()) {
-#endif
 				 if (e.tagName() == "html") {
 					QDomNodeList htmlNL= e.childNodes();
 					for (unsigned int x = 0; x < htmlNL.count(); x++) {
