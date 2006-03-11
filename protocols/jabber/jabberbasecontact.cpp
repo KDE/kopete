@@ -294,7 +294,7 @@ void JabberBaseContact::reevaluateStatus ()
 									  status.weight() ,
 									  protocol() ,
 									  status.internalStatus() | 0x0100,
-									  status.overlayIcons() + QStringList("status_unknown") , //FIXME: find better icon
+									  status.overlayIcons() + QStringList("status_unknown_overlay") , //FIXME: find better icon
 									  status.description() );
 	}
 	
