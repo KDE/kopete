@@ -1959,6 +1959,8 @@ int VideoDevice::detectSignalStandards()
 		default:
 			break;
 	}
+	//FIXME: return a real value
+	return 0;
 }
 
 /*!
