@@ -43,17 +43,7 @@ WORD RateClass::id() const
 
 void RateClass::setRateInfo( RateInfo newRateInfo )
 {
-	m_rateInfo.classId = newRateInfo.classId;
-	m_rateInfo.windowSize = newRateInfo.windowSize;
-	m_rateInfo.clearLevel = newRateInfo.clearLevel;
-	m_rateInfo.alertLevel = newRateInfo.alertLevel;
-	m_rateInfo.limitLevel = newRateInfo.limitLevel;
-	m_rateInfo.disconnectLevel = newRateInfo.disconnectLevel;
-	m_rateInfo.currentLevel = newRateInfo.currentLevel;
-	m_rateInfo.initialLevel = newRateInfo.initialLevel;
-	m_rateInfo.maxLevel = newRateInfo.maxLevel;
-	m_rateInfo.lastTime = newRateInfo.lastTime;
-	m_rateInfo.currentState = newRateInfo.currentState;
+	m_rateInfo = newRateInfo;
 }
 
 Oscar::RateInfo RateClass::getRateInfo()
