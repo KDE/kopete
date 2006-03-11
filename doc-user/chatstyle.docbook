@@ -139,7 +139,7 @@ These templates are not used in Kopete. In Adium, they are used to display histo
 		<title>-Save a sample conversation.</title>
 		<para>In Chat Window, you can <action>save</action> a conversation. This is a copy of the internal XHTML page displayed. Use it in <application>Konqueror</application> to test your <acronym>CSS</acronym> files.</para>
 	</sect4>
-	<sect4 id="chatstyle-reference-debug-save">
+	<sect4 id="chatstyle-reference-debug-disable-cache">
 		<title>-Disable style cache.</title>
 		<para>A little configuration switch exist to disable the style cache. When enabled, it reload the HTML templates each time the style is asked. Add the following lines to your <filename>kopeterc</filename>. Very useful when testing a style in &kopete;</para>
 		<programlisting>
@@ -277,7 +277,7 @@ The time when the message was received. <filename>%time%</filename> use the defa
 <varlistentry><term><filename>%messageDirection%</filename> (&kopete; Extension)</term>
 <listitem>
 <para>
-Represent the message direction, if the message must be displayed right-to-left or left-to-right. The values are either "rtl" or "ltr". Read <ulink linkend="chatstyle-guideline-direction">Message Direction guideline</ulink> to see how to use this keyword properly.
+Represent the message direction, if the message must be displayed right-to-left or left-to-right. The values are either "rtl" or "ltr". Read <link linkend="chatstyle-guideline-direction">Message Direction guideline</link> to see how to use this keyword properly.
 </para>
 </listitem>
 </varlistentry>
@@ -291,7 +291,7 @@ Represent the message direction, if the message must be displayed right-to-left 
 <para>The &kopete; Chat Window Style Guideline is a set of things that your Chat Window style must support to be compilant with Kopete.</para>
 <sect2 id="chatstyle-guideline-highlight">
 	<title>Support highlight</title>
-	<para>Your style must show hightlight. In Kopete and Adium, the <filename>%textbackgroundcolor{}%</filename> is replaced with the hightlight color. Add this style attribute: <code>background-color: %textbackgroundcolor{}%</code> to the HTML element that display the message.</para>
+	<para>Your style must show hightlight. In Kopete and Adium, the <filename>%textbackgroundcolor{}%</filename> is replaced with the hightlight color. Add this style attribute: <userinput>background-color: %textbackgroundcolor{}%</userinput> to the HTML element that display the message.</para>
 </sect2>
 <sect2 id="chatstyle-guideline-consecutive">
 	<title>Consecutive message templates are required.</title>
@@ -333,14 +333,14 @@ Represent the message direction, if the message must be displayed right-to-left 
 
 </sect2>
 
-<sect2 id="chatstyle-guideline-direction">
+<sect2 id="chatstyle-guideline-buddyicon">
 	<title>Supply <filename>buddy_icon.png</filename></title>
 	<para>You must place a file named <filename>buddy_icon.png</filename> in the <filename>Incoming</filename> and <filename>Outgoing</filename>. These images will be used when the contact have no photo.</para>
 </sect2>
 
 <sect2 id="chatstyle-guideline-direction">
 	<title>Support right-to-left languages with <filename>%messageDirection%</filename> keyword.</title>
-	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it's "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <code>direction: %messageDirection%</code>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
+	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it's "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <userinput>direction: %messageDirection%</userinput>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
 </sect2>
 </sect1>
 </appendix>
