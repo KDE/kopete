@@ -188,8 +188,8 @@ void MSNChatSession::createChat( const QString &handle,
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 	connect( m_chatService, SIGNAL( invitation( const QString&, const QString& ) ),
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
-	connect( m_chatService, SIGNAL( nudgeReceived() ),
-		this, SLOT( slotNudgeReceived() ) );
+	connect( m_chatService, SIGNAL( nudgeReceived(const QString&) ),
+		this, SLOT( slotNudgeReceived(const QString&) ) );
 	connect( m_chatService, SIGNAL( errorMessage(int, const QString& ) ), static_cast<MSNAccount *>(myself()->account()), SLOT( slotErrorMessageReceived(int, const QString& ) ) );
 	
 	if(!m_timeoutTimer)
@@ -638,16 +638,23 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 void MSNChatSession::slotSendNudge()
 {
 	if(m_chatService)
+	{
 		m_chatService->sendNudge();
+		Kopete::Message msg = Kopete::Message( myself(), members() , i18n ( "has sent a nudge" ),  Kopete::Message::Outbound, 
+											   Kopete::Message::PlainText, QString(), Kopete::Message::TypeAction );
+		appendMessage( msg );
+
+	}
 }
 
 
-void MSNChatSession::slotNudgeReceived()
+void MSNChatSession::slotNudgeReceived(const QString& handle)
 {
-	// FIXME: When nudge is the first received message, you can't see your own message you send before the others send you a message.
-	//        Ok, this is only with chat window style which use "Parse All Message" flag.
-	QString nudgeBody = i18n( "You have received a nudge." );
-	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
+	Kopete::Contact *c = account()->contacts()[ handle ] ;
+	if(!c)
+		c=members().getFirst();
+	Kopete::Message msg = Kopete::Message(c, myself(), i18n ( "has sent you a nudge" ), Kopete::Message::Inbound, 
+										  Kopete::Message::PlainText, QString(), Kopete::Message::TypeAction );
 	appendMessage( msg );
 	// Emit the nudge/buzz notification (configured by user).
 	emitNudgeNotification();
