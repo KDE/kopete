@@ -20,7 +20,7 @@
 #ifndef KOPETESTATUSGROUPVIEWITEM_H
 #define KOPETESTATUSGROUPVIEWITEM_H
 
-#include <klistview.h>
+#include <k3listview.h>
 #include "kopetemetacontact.h"
 
 /**

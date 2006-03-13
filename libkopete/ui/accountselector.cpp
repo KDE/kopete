@@ -26,16 +26,16 @@
 #include <QVBoxLayout>
 
 #include <kdebug.h>
-#include <klistview.h>
+#include <k3listview.h>
 
-class AccountListViewItem : public KListViewItem
+class AccountListViewItem : public K3ListViewItem
 {
 	private:
 		Kopete::Account *mAccount;
 
 	public:
 		AccountListViewItem(Q3ListView *parent, Kopete::Account *acc)
-			: KListViewItem(parent)
+			: K3ListViewItem(parent)
 		{
 			if (acc==0)
 				return;
@@ -59,7 +59,7 @@ class AccountListViewItem : public KListViewItem
 class AccountSelectorPrivate
 {
 	public:
-		KListView *lv;
+		K3ListView *lv;
 		Kopete::Protocol *proto;
 };
 
@@ -95,7 +95,7 @@ void AccountSelector::initUI()
 {
 	kDebug(14010) << k_funcinfo << endl;
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	d->lv = new KListView(this);
+	d->lv = new K3ListView(this);
 	d->lv->setFullWidth(true);
 	d->lv->addColumn(QString::fromLatin1(""));
 	d->lv->header()->hide();

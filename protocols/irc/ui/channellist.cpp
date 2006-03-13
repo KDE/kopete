@@ -35,26 +35,26 @@
 #include <QPixmap>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <klistview.h>
+#include <k3listview.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qtimer.h>
 #include <qspinbox.h>
 
 
-class ChannelListItem : public KListViewItem
+class ChannelListItem : public K3ListViewItem
 {
 	public:
-		ChannelListItem( KListView *parent, QString arg1, QString arg2, QString arg3 );
+		ChannelListItem( K3ListView *parent, QString arg1, QString arg2, QString arg3 );
 		virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
 		virtual void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
 
 	private:
-		KListView *parentList;
+		K3ListView *parentList;
 };
 
-ChannelListItem::ChannelListItem( KListView *parent, QString arg1, QString arg2, QString arg3 ) :
-	KListViewItem( parent, parent->lastItem() ), parentList( parent )
+ChannelListItem::ChannelListItem( K3ListView *parent, QString arg1, QString arg2, QString arg3 ) :
+	K3ListViewItem( parent, parent->lastItem() ), parentList( parent )
 {
 	setText(0, arg1);
 	setText(1, arg2);
@@ -80,15 +80,15 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 {
 	QPixmap back( width, height() );
 	QPainter paint( &back );
-	//KListViewItem::paintCell( &paint, cg, column, width, align );
+	//K3ListViewItem::paintCell( &paint, cg, column, width, align );
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
 	QColorGroup _cg = cg;
 	if (isAlternate())
 		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QColorGroup::Background, static_cast< KListView* >(listView())->alternateBackground());
+			_cg.setColor(QColorGroup::Background, static_cast< K3ListView* >(listView())->alternateBackground());
 		else
-			_cg.setColor(QColorGroup::Base, static_cast< KListView* >(listView())->alternateBackground());
+			_cg.setColor(QColorGroup::Base, static_cast< K3ListView* >(listView())->alternateBackground());
 	// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
@@ -190,7 +190,7 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	layout72_2->addWidget( mSearchButton );
 	ChannelListLayout->addLayout( layout72_2 );
 
-	mChannelList = new KListView( this );
+	mChannelList = new K3ListView( this );
 	mChannelList->setObjectName( "mChannelList" );
 	mChannelList->addColumn( i18n( "Channel" ) );
 	mChannelList->addColumn( i18n( "Users" ) );

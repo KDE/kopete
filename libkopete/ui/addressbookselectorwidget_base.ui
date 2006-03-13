@@ -71,7 +71,7 @@
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="KListView" row="2" column="0" rowspan="1" colspan="2">
+        <widget class="K3ListView" row="2" column="0" rowspan="1" colspan="2">
             <column>
                 <property name="text">
                     <string>Photo</string>
@@ -153,7 +153,7 @@
                         <cstring>kListViewSearchLine</cstring>
                     </property>
                 </widget>
-                <widget class="KListViewSearchLine">
+                <widget class="K3ListViewSearchLine">
                     <property name="name">
                         <cstring>kListViewSearchLine</cstring>
                     </property>

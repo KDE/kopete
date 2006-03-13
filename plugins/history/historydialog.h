@@ -24,7 +24,7 @@
 #include <QList>
 
 #include <kdialog.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kurl.h>
 
 #include "kopetemessage.h"
@@ -119,7 +119,7 @@ class HistoryDialog : public KDialog
 		/**
 		 * Search if @param item already has @param text child
 		 */
-		bool hasChild(KListViewItem* item, int month);
+		bool hasChild(K3ListViewItem* item, int month);
 
 		HistoryLogger *mLogger;
 

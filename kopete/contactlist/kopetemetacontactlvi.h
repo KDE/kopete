@@ -1,5 +1,5 @@
 /*
-    kopetemetacontactlvi.h - Kopete Meta Contact KListViewItem
+    kopetemetacontactlvi.h - Kopete Meta Contact K3ListViewItem
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart @ kde.org>
@@ -27,7 +27,7 @@
 #include <qpixmap.h>
 #include <q3ptrdict.h>
 
-#include <klistview.h>
+#include <k3listview.h>
 
 class QVariant;
 
@@ -115,7 +115,7 @@ public:
 	bool isGrouped() const;
 
 	/**
-	 * reimplemented from KListViewItem to take into account our alternate text storage
+	 * reimplemented from K3ListViewItem to take into account our alternate text storage
 	 */
 	virtual QString text( int column ) const;
 	virtual void setText( int column, const QString &text );

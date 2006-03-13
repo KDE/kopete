@@ -29,7 +29,7 @@
 
 class QPushButton;
 class QCheckBox;
-class KListView;
+class K3ListView;
 class Q3ButtonGroup;
 class KProcIO;
 
@@ -40,7 +40,7 @@ public:
 
         popupPublic(QWidget *parent=0, const char *name=0,QString sfile="",bool filemode=false,KShortcut goDefaultKey=QKeySequence(Qt::CTRL+Qt::Key_Home));
 	~popupPublic();
-        KListView *keysList;
+        K3ListView *keysList;
         QCheckBox *CBarmor,*CBuntrusted,*CBshred,*CBsymmetric,*CBhideid;
         bool fmode,trusted;
         QPixmap keyPair,keySingle,keyGroup;

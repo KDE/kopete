@@ -18,7 +18,7 @@
 #include <qregexp.h>
 #include <qradiobutton.h>
 
-#include <klistview.h>
+#include <k3listview.h>
 #include <klineedit.h>
 #include <knuminput.h>
 #include <kgenericfactory.h>

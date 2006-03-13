@@ -130,7 +130,7 @@ private slots:
 
 	void slotViewSelectionChanged();
 	void slotListSelectionChanged();
-	void slotContextMenu(KListView*,Q3ListViewItem *item, const QPoint &point );
+	void slotContextMenu(K3ListView*,Q3ListViewItem *item, const QPoint &point );
 	void slotExpanded( Q3ListViewItem *item );
 	void slotCollapsed( Q3ListViewItem *item );
 

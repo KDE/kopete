@@ -355,7 +355,7 @@
                 </grid>
             </widget>
         </widget>
-        <widget class="KListView" row="1" column="0" rowspan="7" colspan="1">
+        <widget class="K3ListView" row="1" column="0" rowspan="7" colspan="1">
             <column>
                 <property name="text">
                     <string>UIN</string>

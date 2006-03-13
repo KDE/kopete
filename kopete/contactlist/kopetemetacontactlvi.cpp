@@ -1,5 +1,5 @@
 /*
-    kopetemetacontactlvi.cpp - Kopete Meta Contact KListViewItem
+    kopetemetacontactlvi.cpp - Kopete Meta Contact K3ListViewItem
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2004 by Martijn Klingens       <klingens@kde.org>
@@ -179,7 +179,7 @@ public:
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
-//: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
+//: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
 	m_metaContact = contact;
 	m_isTopLevel = false;
@@ -192,7 +192,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Kopete
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
-//: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
+//: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
 	m_metaContact = contact;
 
@@ -205,7 +205,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3List
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListView *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
-//: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
+//: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
 	m_metaContact = contact;
 
@@ -289,13 +289,13 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 	// create a spacer if wanted
 	// I assume that the safety property that allows the delete in slotConfigChanged holds here - Will
 	delete d->spacerBox->component( 0 );
-	if ( KListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
+	if ( K3ListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
 	                !Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
 
-	KopeteGroupViewItem *group_item = dynamic_cast<KopeteGroupViewItem*>(KListViewItem::parent());
+	KopeteGroupViewItem *group_item = dynamic_cast<KopeteGroupViewItem*>(K3ListViewItem::parent());
 	if ( group_item )
 	{
 		m_isTopLevel = false;
@@ -604,18 +604,18 @@ void KopeteMetaContactLVI::slotRemoveFromGroup()
 
 void KopeteMetaContactLVI::startRename( int /*col*/ )
 {
-	KListViewItem::startRename( 0 );
+	K3ListViewItem::startRename( 0 );
 }
 
 void KopeteMetaContactLVI::okRename( int col )
 {
-	KListViewItem::okRename( col );
+	K3ListViewItem::okRename( col );
 	setRenameEnabled( 0, false );
 }
 
 void KopeteMetaContactLVI::cancelRename( int col )
 {
-	KListViewItem::cancelRename( col );
+	K3ListViewItem::cancelRename( col );
 	setRenameEnabled( 0, false );
 }
 
@@ -677,7 +677,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 
 	// create a spacer if wanted
 	delete d->spacerBox->component( 0 );
-	if ( KListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
+	if ( K3ListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
 	                !Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
@@ -1075,7 +1075,7 @@ QString KopeteMetaContactLVI::text( int column ) const
 	if ( column == 0 )
 		return d->nameText->text();
 	else
-		return KListViewItem::text( column );
+		return K3ListViewItem::text( column );
 }
 
 void KopeteMetaContactLVI::setText( int column, const QString &text )
@@ -1083,7 +1083,7 @@ void KopeteMetaContactLVI::setText( int column, const QString &text )
 	if ( column == 0 )
 		rename( text );
 	else
-		KListViewItem::setText( column, text );
+		K3ListViewItem::setText( column, text );
 }
 
 #include "kopetemetacontactlvi.moc"

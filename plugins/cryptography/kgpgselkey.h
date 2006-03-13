@@ -25,7 +25,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 
-class KListView;
+class K3ListView;
 class QCheckBox;
 class Q3ListViewItem;
 
@@ -47,7 +47,7 @@ class KgpgSelKey : public KDialog
 
 public:
     KgpgSelKey( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
-    KListView *keysListpr;
+    K3ListView *keysListpr;
 QPixmap keyPair;
 QCheckBox *local;
 private slots:

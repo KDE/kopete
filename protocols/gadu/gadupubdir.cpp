@@ -39,7 +39,7 @@
 #include <kcombobox.h>
 #include <krestrictedline.h>
 #include <klineedit.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char* name )

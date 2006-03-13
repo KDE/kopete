@@ -57,7 +57,7 @@
 
 #include <kpushbutton.h>
 #include <kdebug.h>
-#include <klistview.h>
+#include <k3listview.h>
 // used for its AddresseeItem class
 #include <kabc/addresseedialog.h>
 #include <kabc/addressbook.h>

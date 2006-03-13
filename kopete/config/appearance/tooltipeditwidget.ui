@@ -65,7 +65,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="KListView">
+                <widget class="K3ListView">
                     <column>
                         <property name="text">
                             <string></string>
@@ -179,7 +179,7 @@
                         </spacer>
                     </vbox>
                 </widget>
-                <widget class="KListView">
+                <widget class="K3ListView">
                     <column>
                         <property name="text">
                             <string></string>

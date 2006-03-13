@@ -29,7 +29,7 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kdebug.h>
 #include <kextsock.h>
 #include <kconfig.h>
@@ -106,11 +106,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		}
 	}
 
-	connect( commandList, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCommandContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
+	connect( commandList, SIGNAL( contextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ),
+		this, SLOT( slotCommandContextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ) );
 
-	connect( ctcpList, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCtcpContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
+	connect( ctcpList, SIGNAL( contextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ),
+		this, SLOT( slotCtcpContextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ) );
 
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
 	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
@@ -171,7 +171,7 @@ void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network 
 	);
 }
 
-void IRCEditAccountWidget::slotCommandContextMenu( KListView *, Q3ListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCommandContextMenu( K3ListView *, Q3ListViewItem *item, const QPoint &p )
 {
 	Q3PopupMenu popup;
 	popup.insertItem( i18n("Remove Command"), 1 );
@@ -179,7 +179,7 @@ void IRCEditAccountWidget::slotCommandContextMenu( KListView *, Q3ListViewItem *
 		delete item;
 }
 
-void IRCEditAccountWidget::slotCtcpContextMenu( KListView *, Q3ListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCtcpContextMenu( K3ListView *, Q3ListViewItem *item, const QPoint &p )
 {
 	Q3PopupMenu popup;
 	popup.insertItem( i18n("Remove CTCP Reply"), 1 );

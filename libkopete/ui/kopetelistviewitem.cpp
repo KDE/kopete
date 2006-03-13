@@ -968,13 +968,13 @@ bool Item::Private::fadeVisibility = true;
 bool Item::Private::foldVisibility = true;
 
 Item::Item( Q3ListViewItem *parent, QObject *owner, const char *name )
- : QObject( owner, name ), KListViewItem( parent ), d( new Private(this) )
+ : QObject( owner, name ), K3ListViewItem( parent ), d( new Private(this) )
 {
 	initLVI();
 }
 
 Item::Item( Q3ListView *parent, QObject *owner, const char *name )
- : QObject( owner, name ), KListViewItem( parent ), d( new Private(this) )
+ : QObject( owner, name ), K3ListViewItem( parent ), d( new Private(this) )
 {
 	initLVI();
 }
@@ -1157,7 +1157,7 @@ void Item::relayout()
 
 void Item::setup()
 {
-	KListViewItem::setup();
+	K3ListViewItem::setup();
 	slotLayoutItems();
 }
 
@@ -1174,7 +1174,7 @@ void Item::setHeight( int )
 		    vis = Private::visibilityFoldSteps;
 		minHeight = (minHeight * vis) / Private::visibilityFoldSteps;
 	}
-	KListViewItem::setHeight( minHeight );
+	K3ListViewItem::setHeight( minHeight );
 }
 
 int Item::width( const QFontMetrics &, const Q3ListView *lv, int c ) const
@@ -1188,15 +1188,15 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 {
 	QPixmap back( width, height() );
 	QPainter paint( &back );
-	//KListViewItem::paintCell( &paint, cg, column, width, align );
+	//K3ListViewItem::paintCell( &paint, cg, column, width, align );
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
 	QColorGroup _cg = cg;
 	if (isAlternate())
 		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QColorGroup::Background, static_cast< KListView* >(listView())->alternateBackground());
+			_cg.setColor(QColorGroup::Background, static_cast< K3ListView* >(listView())->alternateBackground());
 		else
-			_cg.setColor(QColorGroup::Base, static_cast< KListView* >(listView())->alternateBackground());
+			_cg.setColor(QColorGroup::Base, static_cast< K3ListView* >(listView())->alternateBackground());
 	// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;

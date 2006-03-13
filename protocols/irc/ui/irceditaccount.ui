@@ -757,7 +757,7 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="KListView">
+                            <widget class="K3ListView">
                                 <column>
                                     <property name="text">
                                         <string>CTCP</string>
@@ -915,7 +915,7 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="KListView" row="0" column="0">
+                            <widget class="K3ListView" row="0" column="0">
                                 <column>
                                     <property name="text">
                                         <string>Command</string>

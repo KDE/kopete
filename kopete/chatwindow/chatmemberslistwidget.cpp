@@ -41,7 +41,7 @@
 class ChatMembersListWidget::ToolTip : public QToolTip
 {
 public:
-	ToolTip( KListView *parent )
+	ToolTip( K3ListView *parent )
 		: QToolTip( parent->viewport() ), m_listView ( parent )
 	{
 	}
@@ -62,7 +62,7 @@ public:
 	}
 
 private:
-	KListView *m_listView;
+	K3ListView *m_listView;
 };
 */
 //END ChatMembersListWidget::ToolTip
@@ -71,7 +71,7 @@ private:
 //BEGIN ChatMembersListWidget::ContactItem
 
 ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, Kopete::Contact *contact )
-	: KListViewItem( parent ), m_contact( contact )
+	: K3ListViewItem( parent ), m_contact( contact )
 {
 	QString nick = m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
 	if ( nick.isEmpty() )
@@ -112,7 +112,7 @@ void ChatMembersListWidget::ContactItem::reposition()
 	int ourWeight = session->contactOnlineStatus(m_contact).weight();
 	Q3ListViewItem *after = 0;
 
-	for ( Q3ListViewItem *it = KListViewItem::listView()->firstChild(); it; it = it->nextSibling() )
+	for ( Q3ListViewItem *it = K3ListViewItem::listView()->firstChild(); it; it = it->nextSibling() )
 	{
 		ChatMembersListWidget::ContactItem *item = static_cast<ChatMembersListWidget::ContactItem*>(it);
 		int theirWeight = session->contactOnlineStatus(item->m_contact).weight();
@@ -135,7 +135,7 @@ void ChatMembersListWidget::ContactItem::reposition()
 //BEGIN ChatMembersListWidget
 
 ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent )
-	 : KListView( parent ), m_session( session )
+	 : K3ListView( parent ), m_session( session )
 {
 	// use our own custom tooltips
 //	setShowToolTips( false );
@@ -155,8 +155,8 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 	foreach ( Kopete::Contact* it ,  session->members() ) 
 		slotContactAdded( it );
 
-	connect( this, SIGNAL( contextMenu( KListView*, Q3ListViewItem *, const QPoint &) ),
-	         SLOT( slotContextMenu(KListView*, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( contextMenu( K3ListView*, Q3ListViewItem *, const QPoint &) ),
+	         SLOT( slotContextMenu(K3ListView*, Q3ListViewItem *, const QPoint & ) ) );
 	connect( this, SIGNAL( executed( Q3ListViewItem* ) ),
 	         SLOT( slotExecute( Q3ListViewItem * ) ) );
 
@@ -173,7 +173,7 @@ ChatMembersListWidget::~ChatMembersListWidget()
 	delete m_toolTip;
 }
 
-void ChatMembersListWidget::slotContextMenu( KListView*, Q3ListViewItem *item, const QPoint &point )
+void ChatMembersListWidget::slotContextMenu( K3ListView*, Q3ListViewItem *item, const QPoint &point )
 {
 	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item) )
 	{

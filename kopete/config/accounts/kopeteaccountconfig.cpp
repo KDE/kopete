@@ -30,7 +30,7 @@
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -41,10 +41,10 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 
-class KopeteAccountLVI : public KListViewItem
+class KopeteAccountLVI : public K3ListViewItem
 {
 	public:
-		KopeteAccountLVI( Kopete::Account *a, KListView *p ) : KListViewItem( p ){  m_account = a; }
+		KopeteAccountLVI( Kopete::Account *a, K3ListView *p ) : K3ListViewItem( p ){  m_account = a; }
 		Kopete::Account *account() { return m_account; }
 
 	private:

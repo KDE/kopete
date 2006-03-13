@@ -8,7 +8,7 @@
  ***************************************************************************/
 
 #include <kpushbutton.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <klineedit.h>
 #include <kglobal.h>

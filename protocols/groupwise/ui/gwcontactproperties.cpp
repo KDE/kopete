@@ -20,7 +20,7 @@
 #include <q3header.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <qmap.h>
 #include <q3popupmenu.h>
 
@@ -117,7 +117,7 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 		else
 			localised = key;
 
-		new KListViewItem( m_propsWidget->m_propsView, localised, it.data() );
+		new K3ListViewItem( m_propsWidget->m_propsView, localised, it.data() );
 	}
 }
 

@@ -143,15 +143,15 @@ public:
 };
 
 ListView::ListView( QWidget *parent )
- : KListView( parent ), d( new Private )
+ : K3ListView( parent ), d( new Private )
 {
 	connect( &d->sortTimer, SIGNAL( timeout() ), this, SLOT( slotSort() ) );
 
 	// We have our own tooltips, don't use the default QListView ones
 	setShowToolTips( false );
 
-	connect( this, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
-	         SLOT( slotContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( contextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ),
+	         SLOT( slotContextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ) );
 	connect( this, SIGNAL( doubleClicked( Q3ListViewItem * ) ),
 	         SLOT( slotDoubleClicked( Q3ListViewItem * ) ) );
 
@@ -188,7 +188,7 @@ void ListView::slotDoubleClicked( Q3ListViewItem *item )
 		setOpen( item, !isOpen( item ) );
 }
 
-void ListView::slotContextMenu( KListView * /*listview*/,
+void ListView::slotContextMenu( K3ListView * /*listview*/,
 	Q3ListViewItem *item, const QPoint &/*point*/ )
 {
 	if ( item && !item->isSelected() )
@@ -238,7 +238,7 @@ void ListView::keyPressEvent( QKeyEvent *e )
 		emitExecute( currentItem(), p, 0 );
 	}
 	else
-		KListView::keyPressEvent(e);
+		K3ListView::keyPressEvent(e);
 }
 
 void ListView::delayedSort()
@@ -689,12 +689,12 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			}
 		}
 
-		return KListView::eventFilter( o, e ); // Pass the event to KListView
+		return K3ListView::eventFilter( o, e ); // Pass the event to K3ListView
 	}
 	else
 	{
 // 		kDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
-		return KListView::eventFilter( o, e ); // Pass the event to KListView
+		return K3ListView::eventFilter( o, e ); // Pass the event to K3ListView
 	}
 
 	return false;

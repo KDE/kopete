@@ -26,20 +26,20 @@
 #include <qstringlist.h>
 
 #include <kiconloader.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 
-class TooltipItem : public KListViewItem
+class TooltipItem : public K3ListViewItem
 {
 	public:
-		TooltipItem(KListView *parent, const QString& label, const QString& propertyName)
-			: KListViewItem(parent, label),
+		TooltipItem(K3ListView *parent, const QString& label, const QString& propertyName)
+			: K3ListViewItem(parent, label),
 				mPropName(propertyName)
 		{
 		}
 
-		TooltipItem(KListView *parent, Q3ListViewItem *item, const QString& label, const QString& propertyName)
-			: KListViewItem(parent, item, label),
+		TooltipItem(K3ListView *parent, Q3ListViewItem *item, const QString& label, const QString& propertyName)
+			: K3ListViewItem(parent, item, label),
 				mPropName(propertyName)
 		{
 		}

@@ -21,7 +21,7 @@
 #include <qwidget.h>
 #include <qstring.h>
 #include <klineedit.h>
-#include <klistview.h>
+#include <k3listview.h>
 
 
 EditAliasDialog::EditAliasDialog( QWidget* parent, const char* name )

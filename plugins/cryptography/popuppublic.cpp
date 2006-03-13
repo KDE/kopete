@@ -36,12 +36,12 @@
 #include <Q3WhatsThis>
 
 #include <kdeversion.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kprocess.h>
 #include <kprocio.h>
 #include <klocale.h>
 #include <kaccel.h>
-#include <klistviewsearchline.h>
+#include <k3listviewsearchline.h>
 #include <kactivelabel.h>
 #include <kaction.h>
 #include <kdebug.h>
@@ -60,7 +60,7 @@
 
 /////////////////   klistviewitem special
 
-class UpdateViewItem2 : public KListViewItem
+class UpdateViewItem2 : public K3ListViewItem
 {
 public:
         UpdateViewItem2(Q3ListView *parent, QString name,QString mail,QString id,bool isDefault);
@@ -70,7 +70,7 @@ public:
 };
 
 UpdateViewItem2::UpdateViewItem2(Q3ListView *parent, QString name,QString mail,QString id,bool isDefault)
-                : KListViewItem(parent)
+                : K3ListViewItem(parent)
 {
 def=isDefault;
         setText(0,name);
@@ -86,7 +86,7 @@ void UpdateViewItem2::paintCell(QPainter *p, const QColorGroup &cg,int column, i
                 font.setBold(true);
                 p->setFont(font);
         }
-        KListViewItem::paintCell(p, cg, column, width, alignment);
+        K3ListViewItem::paintCell(p, cg, column, width, alignment);
 }
 
 QString UpdateViewItem2 :: key(int c,bool ) const
@@ -126,10 +126,10 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 	clearSearch->setIconSet(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
                                             : "locationbar_erase"));
 	(void) new QLabel(i18n("Search: "),hBar);
-	KListViewSearchLine* listViewSearch = new KListViewSearchLine(hBar);
+	K3ListViewSearchLine* listViewSearch = new K3ListViewSearchLine(hBar);
 	connect(clearSearch, SIGNAL(pressed()), listViewSearch, SLOT(clear()));
 	
-        keysList = new KListView( page );
+        keysList = new K3ListView( page );
 	 keysList->addColumn(i18n("Name"));
 	 keysList->addColumn(i18n("Email"));
 	 keysList->addColumn(i18n("ID"));
@@ -141,7 +141,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         keysList->setShowSortIndicator(true);
         keysList->setFullWidth(true);
 	keysList->setAllColumnsShowFocus(true);
-        keysList->setSelectionModeExt(KListView::Extended);
+        keysList->setSelectionModeExt(K3ListView::Extended);
 	keysList->setColumnWidthMode(0,Q3ListView::Manual);
 	keysList->setColumnWidthMode(1,Q3ListView::Manual);
 	keysList->setColumnWidth(0,210);
@@ -458,7 +458,7 @@ void popupPublic::slotprocread(KProcIO *p)
 				bool isDefaultKey=false;
                                 if (id.right(8)==defaultKey) isDefaultKey=true;
                                         UpdateViewItem2 *item=new UpdateViewItem2(keysList,keyname,keymail,id,isDefaultKey);
-					//KListViewItem *sub= new KListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
+					//K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
                                         //sub->setSelectable(false);
                                         if (seclist.find(tst,0,FALSE)!=-1)
                                                 item->setPixmap(0,keyPair);

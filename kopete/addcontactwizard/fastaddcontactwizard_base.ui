@@ -80,7 +80,7 @@
                             <string>&lt;p&gt;&lt;h2&gt;Select IM Accounts&lt;/h2&gt;&lt;/p&gt;</string>
                         </property>
                     </widget>
-                    <widget class="KListView">
+                    <widget class="K3ListView">
                         <column>
                             <property name="text">
                                 <string>Account</string>

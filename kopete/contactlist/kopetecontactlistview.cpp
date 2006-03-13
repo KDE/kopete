@@ -91,19 +91,19 @@ public:
 	// HACK: Used to update the KMEnu title - DarkShock
 	QMap<KMenu*, QAction*> menuTitleMap;
 
-	void updateViewStrategy( KListView *view );
+	void updateViewStrategy( K3ListView *view );
 };
 
 class ContactListViewStrategy
 {
 public:
-	ContactListViewStrategy( KListView *view )
+	ContactListViewStrategy( K3ListView *view )
 	 : _listView( view )
 	{
 		view->clear();
 	}
 	virtual ~ContactListViewStrategy() {}
-	KListView *listView() { return _listView; }
+	K3ListView *listView() { return _listView; }
 	void addCurrentItems()
 	{
 		// Add the already existing groups now
@@ -152,13 +152,13 @@ protected:
 	}
 
 private:
-	KListView *_listView;
+	K3ListView *_listView;
 };
 
 class ArrangeByGroupsViewStrategy : public ContactListViewStrategy
 {
 public:
-	ArrangeByGroupsViewStrategy( KListView *view )
+	ArrangeByGroupsViewStrategy( K3ListView *view )
 	 : ContactListViewStrategy( view )
 	{
 		addCurrentItems();
@@ -249,7 +249,7 @@ private:
 class ArrangeByPresenceViewStrategy : public ContactListViewStrategy
 {
 public:
-	ArrangeByPresenceViewStrategy( KListView *view )
+	ArrangeByPresenceViewStrategy( K3ListView *view )
 	 : ContactListViewStrategy( view )
 	 , m_onlineItem( new KopeteStatusGroupViewItem( Kopete::OnlineStatus::Online, listView() ) )
 	 , m_offlineItem( new KopeteStatusGroupViewItem( Kopete::OnlineStatus::Offline, listView() ) )
@@ -366,7 +366,7 @@ private:
 	KopeteGroupViewItem *m_temporaryItem;
 };
 
-void KopeteContactListViewPrivate::updateViewStrategy( KListView *view )
+void KopeteContactListViewPrivate::updateViewStrategy( K3ListView *view )
 {
 	// this is a bit nasty, but this function needs changing if we add
 	// more view strategies anyway, so it should be fine.
@@ -420,8 +420,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	setFullWidth( true );
 
-	connect( this, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
-	         SLOT( slotContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( contextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ),
+	         SLOT( slotContextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ) );
 	connect( this, SIGNAL( expanded( Q3ListViewItem * ) ),
 	         SLOT( slotExpanded( Q3ListViewItem * ) ) );
 	connect( this, SIGNAL( collapsed( Q3ListViewItem * ) ),
@@ -645,7 +645,7 @@ void KopeteContactListView::slotCollapsed( Q3ListViewItem *item )
 	}
 }
 
-void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
+void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 	Q3ListViewItem *item, const QPoint &point )
 {
 	// FIXME: this code should be moved to the various list view item classes.
@@ -1111,7 +1111,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	Q3ListViewItem *source=currentItem();
 	Q3ListViewItem *parent;
 	Q3ListViewItem *afterme;
-	// Due to a little design problem in KListView::findDrop() we can't
+	// Due to a little design problem in K3ListView::findDrop() we can't
 	// call it directly from a const method until KDE 4.0, but as the
 	// method is in fact const we can of course get away with a
 	// const_cast...
@@ -1247,7 +1247,7 @@ void KopeteContactListView::findDrop(const QPoint &pos, Q3ListViewItem *&parent,
 
 void KopeteContactListView::mousePressEvent( QMouseEvent *e )
 {
-	KListView::mousePressEvent( e );
+	K3ListView::mousePressEvent( e );
 	if (e->button() == Qt::LeftButton )
 	{
 		QPoint p=contentsToViewport(e->pos());

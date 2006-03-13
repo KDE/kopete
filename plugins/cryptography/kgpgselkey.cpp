@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 #include <Q3ListViewItem>
 
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <qcheckbox.h>
 #include <kprocess.h>
@@ -52,7 +52,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   keyPair=loader->loadIcon("kgpg_key2",KIcon::Small,20);
 
   setMinimumSize(300,200);
-  keysListpr = new KListView( page );
+  keysListpr = new K3ListView( page );
   keysListpr->setRootIsDecorated(true);
   keysListpr->addColumn( i18n( "Name" ) );
   keysListpr->setShowSortIndicator(true);
@@ -150,8 +150,8 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
 	  pclose(fp2);
       if (!tst.isEmpty() && (!dead))
       {
-        KListViewItem *item=new KListViewItem(keysListpr,extractKeyName(tst));
-        KListViewItem *sub= new KListViewItem(item,i18n("ID: %1, trust: %2, expiration: %3").arg(id).arg(tr).arg(val));
+        K3ListViewItem *item=new K3ListViewItem(keysListpr,extractKeyName(tst));
+        K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, expiration: %3").arg(id).arg(tr).arg(val));
         sub->setSelectable(false);
         item->setPixmap(0,keyPair);
       }

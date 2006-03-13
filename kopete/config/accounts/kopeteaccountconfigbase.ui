@@ -62,7 +62,7 @@
                 <string>Remove selected account</string>
             </property>
         </widget>
-        <widget class="KListView" row="0" column="0" rowspan="8" colspan="1">
+        <widget class="K3ListView" row="0" column="0" rowspan="8" colspan="1">
             <column>
                 <property name="text">
                     <string>Protocol</string>

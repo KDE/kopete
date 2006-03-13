@@ -19,7 +19,7 @@
 #ifndef KOPETE_LISTVIEWITEM_H
 #define KOPETE_LISTVIEWITEM_H
 
-#include <klistview.h>
+#include <k3listview.h>
 #include <kopetecontact.h>
 
 #include <utility>
@@ -395,7 +395,7 @@ public:
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class Item : public QObject, public KListViewItem, public ComponentBase
+class Item : public QObject, public K3ListViewItem, public ComponentBase
 {
 	Q_OBJECT
 public:

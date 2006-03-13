@@ -163,7 +163,7 @@
                 <string>Additional properties:</string>
             </property>
         </widget>
-        <widget class="KListView">
+        <widget class="K3ListView">
             <column>
                 <property name="text">
                     <string>Property</string>

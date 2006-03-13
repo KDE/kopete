@@ -25,7 +25,7 @@
 class AccountSelectorPrivate;
 class Q3ListViewItem;
 /**
- * \brief widget to select an account, based on KListView
+ * \brief widget to select an account, based on K3ListView
  * @author Stefan Gehn <metz AT gehn.net>
  */
 class KOPETE_EXPORT AccountSelector : public QWidget
@@ -37,7 +37,7 @@ Q_OBJECT
 		 * Constructor.
 		 *
 		 * The parameters @p parent and @p name are handled by
-		 * KListView.
+		 * K3ListView.
 		 */
 		AccountSelector(QWidget *parent=0, const char *name=0);
 
@@ -45,7 +45,7 @@ Q_OBJECT
 		 * Constructor for a list of accounts for one protocol only
 		 *
 		 * The parameters @p parent and @p name are handled by
-		 * KListView. @p proto defines the protocol whose accounts are
+		 * K3ListView. @p proto defines the protocol whose accounts are
 		 * shown in the list
 		 */
 		AccountSelector(Kopete::Protocol *proto, QWidget *parent=0, const char *name=0);

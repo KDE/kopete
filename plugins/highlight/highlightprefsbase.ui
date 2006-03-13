@@ -69,7 +69,7 @@
                         <string>Rename...</string>
                     </property>
                 </widget>
-                <widget class="KListView" row="0" column="0" rowspan="1" colspan="3">
+                <widget class="K3ListView" row="0" column="0" rowspan="1" colspan="3">
                     <column>
                         <property name="text">
                             <string>Filters</string>

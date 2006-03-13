@@ -21,12 +21,12 @@
 #ifndef FASTADDCONTACTWIZARD_H
 #define FASTADDCONTACTWIZARD_H
 #include <kdebug.h>
-#include <klistview.h>
+#include <k3listview.h>
 
 #include <qmap.h>
 
 #include <kdebug.h>
-#include <klistview.h>
+#include <k3listview.h>
 
 #include "fastaddcontactwizard_base.h"
 

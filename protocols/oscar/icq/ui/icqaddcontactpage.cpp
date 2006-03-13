@@ -31,7 +31,7 @@
 
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kmessagebox.h>

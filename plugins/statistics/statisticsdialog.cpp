@@ -359,7 +359,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		// QDateTime listViewDT1, listViewDT2;
 		// listViewDT1.setTime_t(values[i+1].toInt());
 		// listViewDT2.setTime_t(values[i+2].toInt());
-		// new KListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
+		// new K3ListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
 	}
 
 	

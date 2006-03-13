@@ -51,8 +51,8 @@
 #include <klocale.h>
 #include <krun.h>
 #include <kstandarddirs.h>
-#include <klistview.h>
-#include <klistviewsearchline.h>
+#include <k3listview.h>
+#include <k3listviewsearchline.h>
 #include <kprogressbar.h>
 #include <kiconloader.h>
 #include <kcombobox.h>
@@ -61,10 +61,10 @@
 #include <kaction.h>
 
 
-class KListViewDateItem : public KListViewItem
+class KListViewDateItem : public K3ListViewItem
 {
 public:
-    KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc);
+    KListViewDateItem(K3ListView* parent, QDate date, Kopete::MetaContact *mc);
 	QDate date() { return mDate; }
 	Kopete::MetaContact *metaContact() { return mMetaContact; }
 
@@ -77,8 +77,8 @@ private:
 
 
 
-KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc)
-		: KListViewItem(parent, date.toString(Qt::LocalDate), mc->displayName())
+KListViewDateItem::KListViewDateItem(K3ListView* parent, QDate date, Kopete::MetaContact *mc)
+		: K3ListViewItem(parent, date.toString(Qt::LocalDate), mc->displayName())
 {
 	mDate = date;
 	mMetaContact = mc;
@@ -451,7 +451,7 @@ void HistoryDialog::slotSearch()
 	* How does the search work
 	* ------------------------
 	* We do the search respecting the current metacontact filter item. So to do this, we iterate (searchFirstStep()) over
-	* the elements in the KListView (KListViewDateItems) and, for each one, we iterate over its subcontacts, retrieving the log
+	* the elements in the K3ListView (KListViewDateItems) and, for each one, we iterate over its subcontacts, retrieving the log
 	* files of each one, log files in which we do a fulltext search. If we match the keyword, we use dateSearchMap to mark which days
 	* in this file contain the keyword.
 	*

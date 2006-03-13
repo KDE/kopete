@@ -187,20 +187,20 @@ QString KopeteGroupViewItem::key( int, bool ) const
 void KopeteGroupViewItem::startRename( int /*col*/ )
 {
 	//kDebug(14000) << k_funcinfo << endl;
-	KListViewItem::startRename( 0 );
+	K3ListViewItem::startRename( 0 );
 }
 
 void KopeteGroupViewItem::okRename( int col )
 {
 	//kDebug(14000) << k_funcinfo << endl;
-	KListViewItem::okRename(col);
+	K3ListViewItem::okRename(col);
 	setRenameEnabled( 0, false );
 }
 
 void KopeteGroupViewItem::cancelRename( int col )
 {
 	//kDebug(14000) << k_funcinfo << endl;
-	KListViewItem::cancelRename(col);
+	K3ListViewItem::cancelRename(col);
 	setRenameEnabled( 0, false );
 }
 
@@ -260,7 +260,7 @@ QString KopeteGroupViewItem::text( int column ) const
 	if ( column == 0 )
 		return d->name->text();
 	else
-		return KListViewItem::text( column );
+		return K3ListViewItem::text( column );
 }
 
 void KopeteGroupViewItem::setText( int column, const QString &text )
@@ -277,7 +277,7 @@ void KopeteGroupViewItem::setText( int column, const QString &text )
 		group()->setDisplayName( text );
 	}
 	else
-		KListViewItem::setText( column, text );
+		K3ListViewItem::setText( column, text );
 }
 
 #include "kopetegroupviewitem.moc"

@@ -36,8 +36,8 @@
 #include <kpushbutton.h>
 #include <kactivelabel.h>
 #include <kdebug.h>
-#include <klistview.h>
-#include <klistviewsearchline.h>
+#include <k3listview.h>
+#include <k3listviewsearchline.h>
 
 #include "kopetelistview.h"
 #include "kopetelistviewsearchline.h"

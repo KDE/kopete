@@ -26,7 +26,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kcombobox.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kgenericfactory.h>
 #include <kcolorbutton.h>
 #include <kinputdialog.h>

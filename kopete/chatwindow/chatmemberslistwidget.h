@@ -18,7 +18,7 @@
 #ifndef CHATMEMBERSLISTWIDGET_H
 #define CHATMEMBERSLISTWIDGET_H
 
-#include <klistview.h>
+#include <k3listview.h>
 
 #include <qmap.h>
 
@@ -32,7 +32,7 @@ class OnlineStatus;
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class ChatMembersListWidget : public KListView
+class ChatMembersListWidget : public K3ListView
 {
 	Q_OBJECT
 public:
@@ -60,7 +60,7 @@ private slots:
 	/**
 	 * Show the context menu for @p item at @p point
 	 */
-	void slotContextMenu( KListView*, Q3ListViewItem *item, const QPoint &point );
+	void slotContextMenu( K3ListView*, Q3ListViewItem *item, const QPoint &point );
 
 	/**
 	 * Called when a contact is added to the chat session.
@@ -95,7 +95,7 @@ private:
 	ToolTip *m_toolTip;
 };
 
-class ChatMembersListWidget::ContactItem : public QObject, public KListViewItem
+class ChatMembersListWidget::ContactItem : public QObject, public K3ListViewItem
 {
 	Q_OBJECT
 public:

@@ -18,7 +18,7 @@
 #ifndef KOPETELISTVIEWSEARCHLINE_H
 #define KOPETELISTVIEWSEARCHLINE_H
 
-#include <klistviewsearchline.h>
+#include <k3listviewsearchline.h>
 
 namespace Kopete {
 namespace UI {
@@ -26,7 +26,7 @@ namespace ListView {
 
 class ListView;
 
-class SearchLine : public KListViewSearchLine
+class SearchLine : public K3ListViewSearchLine
 {
 	Q_OBJECT
 public:
@@ -40,7 +40,7 @@ public:
 	SearchLine( QWidget *parent, ListView *listView = 0, const char *name = 0 );
 	/**
 	 * Constructs a SearchLine without any ListView to filter. The
-	 * KListView object has to be set later with setListView().
+	 * K3ListView object has to be set later with setListView().
 	 */
 	SearchLine(QWidget *parent, const char *name);
 	/**

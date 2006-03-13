@@ -86,7 +86,7 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
                 <string>&amp;Cancel</string>
             </property>
         </widget>
-        <widget class="KListView" row="2" column="1" rowspan="1" colspan="2">
+        <widget class="K3ListView" row="2" column="1" rowspan="1" colspan="2">
             <column>
                 <property name="text">
                     <string>Protocols</string>

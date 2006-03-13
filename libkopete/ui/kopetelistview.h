@@ -19,7 +19,7 @@
 #ifndef KOPETE_LISTVIEW_H
 #define KOPETE_LISTVIEW_H
 
-#include <klistview.h>
+#include <k3listview.h>
 
 class QKeyEvent;
 class QTimerEvent;
@@ -33,7 +33,7 @@ namespace ListView {
  * @author Engin AYDOGAN <engin@bzzzt.biz>
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class ListView : public KListView
+class ListView : public K3ListView
 {
 	Q_OBJECT
 
@@ -148,7 +148,7 @@ protected:
 	virtual bool eventFilter( QObject *o, QEvent *e );
 
 private slots:
-	void slotContextMenu(KListView*,Q3ListViewItem *item, const QPoint &point );
+	void slotContextMenu(K3ListView*,Q3ListViewItem *item, const QPoint &point );
 	void slotDoubleClicked( Q3ListViewItem *item );
 	/**
 	 * To enable smooth scroll to focus on highlighted items when they are highlighted

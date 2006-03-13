@@ -66,7 +66,7 @@
                 </spacer>
             </vbox>
         </widget>
-        <widget class="KListView" row="1" column="1">
+        <widget class="K3ListView" row="1" column="1">
             <column>
                 <property name="text">
                     <string>Name</string>

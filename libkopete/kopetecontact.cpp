@@ -32,7 +32,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <klistviewsearchline.h>
+#include <k3listviewsearchline.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -54,7 +54,7 @@
 #include <qimage.h>
 #include <qmime.h>
 #include <kvbox.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <qcheckbox.h>
 
 

@@ -45,7 +45,7 @@ public:
 	virtual void startRename( int col );
 
 	/**
-	 * reimplemented from KListViewItem to take into account our alternate text storage
+	 * reimplemented from K3ListViewItem to take into account our alternate text storage
 	 */
 	virtual QString text( int column ) const;
 	virtual void setText( int column, const QString &text );

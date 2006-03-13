@@ -25,12 +25,12 @@ namespace UI {
 namespace ListView {
 
 SearchLine::SearchLine( QWidget *parent, ListView *listView, const char *name )
-	: KListViewSearchLine( parent, listView )
+	: K3ListViewSearchLine( parent, listView )
 {
 }
 
 SearchLine::SearchLine(QWidget *parent, const char *name)
-	: KListViewSearchLine( parent, 0)
+	: K3ListViewSearchLine( parent, 0)
 {
 }
 
@@ -58,9 +58,9 @@ void SearchLine::updateSearch( const QString &s )
 	
 	switch( listView()->selectionMode() )
 	{
-	case KListView::NoSelection:
+	case K3ListView::NoSelection:
 		break;
-	case KListView::Single:
+	case K3ListView::Single:
 		currentItem = listView()->selectedItem();
 		break;
 	default:

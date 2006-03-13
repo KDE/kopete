@@ -139,7 +139,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="KListViewSearchLine">
+                    <widget class="K3ListViewSearchLine">
                         <property name="name">
                             <cstring>dateSearchLine</cstring>
                         </property>
@@ -167,7 +167,7 @@
                             </size>
                         </property>
                     </widget>
-                    <widget class="KListView">
+                    <widget class="K3ListView">
                         <column>
                             <property name="text">
                                 <string>Date</string>
