@@ -30,6 +30,7 @@
 #include <QList>
 
 class JabberChatSession;
+class QTimer;
 
 class JabberContact : public JabberBaseContact
 {
@@ -40,6 +41,8 @@ public:
 
 	JabberContact (const XMPP::RosterItem &rosterItem,
 				   Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId = QString());
+	
+	~JabberContact();
 
 	/**
 	 * Create custom context menu items for the contact
@@ -84,6 +87,8 @@ public slots:
 
 	/**
 	 * Sync Groups with server
+	 * 
+	 * operations are alctually performed in sloDelayedSync()
 	 */
 	void sync(unsigned int);
 
@@ -197,6 +202,12 @@ private slots:
 	 * The service discovery on that contact is finished
 	 */
 	void slotDiscoFinished();
+	
+	/**
+	 * actually perform operations of sync() with a delay.
+	 * slot received by the syncTimer.
+	 */
+	void slotDelayedSync();
 private:
 
 	/**
@@ -258,6 +269,7 @@ private:
 	bool mDiscoDone;
 
 	QString mLastReceivedMessageId;
+	QTimer *m_syncTimer;
 
 };
 

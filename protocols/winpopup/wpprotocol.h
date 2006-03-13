@@ -80,6 +80,9 @@ public slots:
 	void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
 
 private:
+	QString smbClientBin;
+	int groupCheckFreq;
+	void readConfig();
 	WinPopupLib *popupClient;
 	static WPProtocol *sProtocol;			// Singleton
 };

@@ -154,6 +154,11 @@ private slots:
 	 * Do the actual style change.
 	 */
 	void changeStyle();
+	
+	/**
+	 * Update the display in the header template if any.
+	 */
+	void slotUpdateHeaderDisplayName();
 
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );

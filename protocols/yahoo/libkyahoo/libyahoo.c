@@ -48,6 +48,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #include "libyahoo.h"
 #include "yahoo_fn.h"

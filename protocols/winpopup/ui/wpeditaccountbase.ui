@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>524</width>
-            <height>493</height>
+            <width>398</width>
+            <height>445</height>
         </rect>
     </property>
     <property name="windowTitle">
@@ -123,11 +123,11 @@
                         <property name="title">
                             <string>Information</string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>textLabel12</cstring>
                                 </property>
@@ -140,9 +140,26 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>To receive WinPopup messages sent from other machines, the hostname above must be set to this machine's hostname.&lt;br&gt;
-&lt;br&gt;
-"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;br&gt;
+                                    <string>To receive WinPopup messages sent from other machines, the hostname above must be set to this machine's hostname.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignTop</set>
+                                </property>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>The samba server must be configured and running.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;br&gt;
 However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and add
 'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;' (substitute _PATH_TO_ by the real path) to your smb.conf [global]-section.</string>
                                 </property>
@@ -150,11 +167,11 @@ However, the recommended way is to ask your administrator to create this directo
                                     <set>WordBreak|AlignTop</set>
                                 </property>
                             </widget>
-                        </grid>
+                        </vbox>
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer30</cstring>
+                            <cstring>spacer7</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -164,8 +181,8 @@ However, the recommended way is to ask your administrator to create this directo
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
-                                <height>80</height>
+                                <width>21</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>

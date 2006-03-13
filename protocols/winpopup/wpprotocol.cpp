@@ -66,9 +66,7 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 
 	addAddressBookField( "messaging/winpopup", Kopete::Plugin::MakeIndexField );
 
-	KGlobal::config()->setGroup("WinPopup");
-	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	int groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
+	readConfig();
 
 	popupClient = new WinPopupLib(smbClientBin, groupCheckFreq);
 	QObject::connect(popupClient, SIGNAL(signalNewMessage(const QString &, const QDateTime &, const QString &)),
@@ -126,11 +124,15 @@ void WPProtocol::settingsChanged()
 {
 	kDebug(14170) <<  "WPProtocol::slotSettingsChanged()" << endl;
 
-	KGlobal::config()->setGroup("WinPopup");
-	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	int groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
-
+	readConfig();
 	popupClient->settingsChanged(smbClientBin, groupCheckFreq);
+}
+
+void WPProtocol::readConfig()
+{
+	KGlobal::config()->setGroup("WinPopup");
+	smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
+	groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
 }
 
 void WPProtocol::installSamba()

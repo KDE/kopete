@@ -55,26 +55,30 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
-	connect(mPrfsVideoDevice->mDeviceKComboBox,             SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mInputKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mStandardKComboBox,           SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mBrightnessSlider,            SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
-	connect(mPrfsVideoDevice->mContrastSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
-	connect(mPrfsVideoDevice->mSaturationSlider,            SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
-	connect(mPrfsVideoDevice->mHueSlider,                   SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
-	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
-	connect(mPrfsVideoDevice->mImageAutoColorCorrection,    SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
+	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mBrightnessSlider,             SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
+	connect(mPrfsVideoDevice->mContrastSlider,               SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
+	connect(mPrfsVideoDevice->mSaturationSlider,             SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
+	connect(mPrfsVideoDevice->mWhitenessSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotWhitenessSliderChanged(int)));
+	connect(mPrfsVideoDevice->mHueSlider,                    SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
+	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast,  SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
+	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
+	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
+	connect(mPrfsVideoDevice->mDeviceDisableMMap,            SIGNAL(toggled(bool)),     this, SLOT(slotDeviceDisableMMapChanged(bool)));
+	connect(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver, SIGNAL(toggled(bool)),     this, SLOT(slotDeviceWorkaroundBrokenDriverChanged(bool)));
 
 	// why is this here?
 	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
-	mVideoDevicePool->scanDevices();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
 
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 	setVideoInputParameters();
 
 	mVideoDevicePool->startCapturing();
@@ -124,12 +128,19 @@ void AVDeviceConfig::slotValueChanged(int){
 
 void AVDeviceConfig::setVideoInputParameters()
 {
-	mPrfsVideoDevice->mBrightnessSlider->setValue((int)(mVideoDevicePool->getBrightness()*65535));
-	mPrfsVideoDevice->mContrastSlider->setValue((int)(mVideoDevicePool->getContrast()*65535));
-	mPrfsVideoDevice->mSaturationSlider->setValue((int)(mVideoDevicePool->getSaturation()*65535));
-	mPrfsVideoDevice->mHueSlider->setValue((int)(mVideoDevicePool->getHue()*65535));
-	mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
-	mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
+	if(mVideoDevicePool->size())
+	{
+		mPrfsVideoDevice->mBrightnessSlider->setValue((int)(mVideoDevicePool->getBrightness()*65535));
+		mPrfsVideoDevice->mContrastSlider->setValue((int)(mVideoDevicePool->getContrast()*65535));
+		mPrfsVideoDevice->mSaturationSlider->setValue((int)(mVideoDevicePool->getSaturation()*65535));
+		mPrfsVideoDevice->mWhitenessSlider->setValue((int)(mVideoDevicePool->getWhiteness()*65535));
+		mPrfsVideoDevice->mHueSlider->setValue((int)(mVideoDevicePool->getHue()*65535));
+		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
+		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
+		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->getImageAsMirror());
+		mPrfsVideoDevice->mDeviceDisableMMap->setChecked(mVideoDevicePool->getDisableMMap());
+		mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->setChecked(mVideoDevicePool->getWorkaroundBrokenDriver());
+	}
 }
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
@@ -154,6 +165,7 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int){
 	if((newinput < mVideoDevicePool->inputs()) && ( newinput !=mVideoDevicePool->currentInput()))
 	{
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentItem());
+		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setVideoInputParameters();
 		emit changed( true );
 	}
@@ -184,6 +196,12 @@ void AVDeviceConfig::slotSaturationSliderChanged(int){
   emit changed( true );
 }
 
+void AVDeviceConfig::slotWhitenessSliderChanged(int){
+	kdDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0 << endl;
+	mVideoDevicePool->setWhiteness( mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0);
+  emit changed( true );
+}
+
 void AVDeviceConfig::slotHueSliderChanged(int){
 	kDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setHue( mPrfsVideoDevice->mHueSlider->value() / 65535.0 );
@@ -199,6 +217,24 @@ void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
 void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
 	kDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setAutoColorCorrection(mPrfsVideoDevice->mImageAutoColorCorrection->isChecked());
+	emit changed( true );
+}
+
+void AVDeviceConfig::slotImageAsMirrorChanged(bool){
+	kdDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. " << endl;
+	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
+	emit changed( true );
+}
+
+void AVDeviceConfig::slotDeviceWorkaroundBrokenDriverChanged(bool){
+	kdDebug() << "kopete:config (avdevice): slotDeviceWorkaroundBrokenDriverChanged(" << mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked() << ") called. " << endl;
+	mVideoDevicePool->setWorkaroundBrokenDriver(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked());
+	emit changed( true );
+}
+
+void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
+	kdDebug() << "kopete:config (avdevice): slotDeviceDisableMMapChanged(" << mPrfsVideoDevice->mDeviceDisableMMap->isChecked() << ") called. " << endl;
+	mVideoDevicePool->setDisableMMap(mPrfsVideoDevice->mDeviceDisableMMap->isChecked());
 	emit changed( true );
 }
 

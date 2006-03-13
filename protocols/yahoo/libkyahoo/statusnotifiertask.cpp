@@ -43,7 +43,7 @@ bool StatusNotifierTask::take( Transfer* transfer )
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 
-	if( t->service() == Yahoo::ServiceStealth )
+	if( t->service() == Yahoo::ServiceStealthOffline )
 		parseStealthStatus( transfer );
 	else if( t->service() == Yahoo::ServiceAuthorization )
 		parseAuthorization( transfer );
@@ -71,7 +71,7 @@ bool StatusNotifierTask::forMe( Transfer* transfer ) const
 		t->service() == Yahoo::ServiceIdAct ||
 		t->service() == Yahoo::ServiceIddeAct ||
 		t->service() == Yahoo::ServiceStatus ||
-		t->service() == Yahoo::ServiceStealth ||
+		t->service() == Yahoo::ServiceStealthOffline ||
 		t->service() == Yahoo::ServiceAuthorization
 	)
 		return true;
@@ -180,7 +180,7 @@ void StatusNotifierTask::parseStealthStatus( Transfer* transfer )
 	nick = t->firstParam( 7 );
 	state = t->firstParam( 31 ).toInt();
 
-	emit stealthStatusChanged( nick, ( state == 1 ) ? Yahoo::Stealthed : Yahoo::NotStealthed );
+	emit stealthStatusChanged( nick, ( state == 1 ) ? Yahoo::StealthActive : Yahoo::StealthNotActive );
 }
 
 #include "statusnotifiertask.moc"

@@ -86,6 +86,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 MSNContact::~MSNContact()
 {
+	kdDebug(14140) << k_funcinfo << endl;
 }
 
 bool MSNContact::isReachable()
@@ -224,28 +225,25 @@ void MSNContact::deleteContact()
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
-		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
+		if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 		{
-			if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+			// Remove from all groups he belongs (if applicable)
+			for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			{
-				kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
-				notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null );
+				kDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"" << endl;
+				notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			}
-			else
-			{
-				kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
-				deleteLater();
-			}
-			return;
+	
+			// Then trully remove it from server contact list, 
+			// because only removing the contact from his groups isn't sufficent from MSNP11.
+			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
 		}
-
-		// Remove from all groups he belongs (if applicable)
-		for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
-			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
-
-		// Then trully remove it from server contact list, 
-		// because only removing the contact from his groups isn't sufficent from MSNP11.
-		notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
+		else
+		{
+			kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+			deleteLater();
+		}
 	}
 	else
 	{

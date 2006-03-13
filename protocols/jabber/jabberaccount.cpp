@@ -593,14 +593,6 @@ void JabberAccount::slotConnected ()
 
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 	m_jabberClient->requestRoster ();
-
-	/* Since we are online now, set initial presence. Don't do this
-	 * before the roster request or we will receive presence
-	 * information before we have updated our roster with actual
-	 * contacts from the server! (Iris won't forward presence
-	 * information in that case either). */
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
-	setPresence ( m_initialPresence );
 }
 
 void JabberAccount::slotRosterRequestFinished ( bool success )
@@ -612,6 +604,14 @@ void JabberAccount::slotRosterRequestFinished ( bool success )
 		// all "dirty" items from the contact list
 		contactPool()->cleanUp ();
 	}
+
+	/* Since we are online now, set initial presence. Don't do this
+	* before the roster request or we will receive presence
+	* information before we have updated our roster with actual
+	* contacts from the server! (Iris won't forward presence
+	* information in that case either). */
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
+	setPresence ( m_initialPresence );
 
 }
 
@@ -1121,7 +1121,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 		
 		Kopete::UI::ContactAddedNotifyDialog *dialog=
-				new Kopete::UI::ContactAddedNotifyDialog( jid.full(),QString::null,this, hideFlags );
+				new Kopete::UI::ContactAddedNotifyDialog( jid.bare() ,QString::null,this, hideFlags );
 		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
 						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
 		dialog->show();
@@ -1270,7 +1270,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 	/*
 	 * See if the contact is already on our contact list
 	 */
-	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
+	Kopete::Contact *c= contactPool()->findExactMatch( item.jid().bare() );
 	
 	if( c && c == c->Kopete::Contact::account()->myself() )  //don't use JabberBaseContact::account() which return alwaus the JabberAccount, and not the transport
 	{
@@ -1329,6 +1329,8 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		Kopete::MetaContact *metaContact=c->metaContact();
 		if(metaContact->isTemporary())
 			return;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << c->contactId() << 
+				" is on the contactlist while it shouldn't.  we are removing it.  - " << c << endl;
 		delete c;
 		if(metaContact->contacts().isEmpty())
 			Kopete::ContactList::self()->removeMetaContact( metaContact );

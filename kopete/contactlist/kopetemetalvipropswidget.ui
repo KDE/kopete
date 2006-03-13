@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>528</width>
+            <width>530</width>
             <height>457</height>
         </rect>
     </property>
@@ -53,54 +53,10 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget">
+                            <widget class="Kopete::UI::AddressBookLinkWidget">
                                 <property name="name">
-                                    <cstring>layout9</cstring>
+                                    <cstring>widAddresseeLink</cstring>
                                 </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="KLineEdit">
-                                        <property name="name">
-                                            <cstring>edtAddressee</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                        <property name="readOnly">
-                                            <bool>true</bool>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The KDE Address Book entry associated with this Kopete Contact</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="KPushButton">
-                                        <property name="name">
-                                            <cstring>btnClear</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Clear</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>btnSelectAddressee</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>true</bool>
-                                        </property>
-                                        <property name="text">
-                                            <string>C&amp;hange...</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Select an address book entry</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
@@ -596,9 +552,6 @@
 </widget>
 <tabstops>
     <tabstop>tabWidget</tabstop>
-    <tabstop>edtAddressee</tabstop>
-    <tabstop>btnClear</tabstop>
-    <tabstop>btnSelectAddressee</tabstop>
     <tabstop>btnExportKABC</tabstop>
     <tabstop>btnImportKABC</tabstop>
     <tabstop>edtDisplayName</tabstop>
@@ -611,8 +564,15 @@
     <tabstop>icnbOffline</tabstop>
     <tabstop>icnbUnknown</tabstop>
 </tabstops>
+<customwidgets>
+    <customwidget>
+      <class>Kopete::UI::AddressBookLinkWidget</class>
+        <header>addressbooklinkwidget.h</header>
+    </customwidget>
+</customwidgets>				     
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>addressbooklinkwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kicondialog.h</includehint>

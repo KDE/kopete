@@ -85,8 +85,6 @@ void ModifyYABTask::setEntry( const YABEntry &entry )
 	m_postData = doc.toString();
 }
 
-
-
 void ModifyYABTask::connectFailed( int i)
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KBufferedSocket*>( sender() )->errorString() << endl;

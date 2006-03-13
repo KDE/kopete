@@ -294,7 +294,7 @@ GSMLib::~GSMLib()
 
 void GSMLib::saveConfig()
 {
-	if( m_account == NULL )
+	if( m_account != NULL )
 	{
 		KConfigGroup* c = m_account->configGroup();
 
@@ -305,7 +305,7 @@ void GSMLib::saveConfig()
 void GSMLib::loadConfig()
 {
 	m_device = "/dev/bluetooth/rfcomm0";
-	if( m_account == NULL )
+	if( m_account != NULL )
 	{
 		QString temp;
 		KConfigGroup* c = m_account->configGroup();
@@ -380,6 +380,9 @@ int GSMLib::maxSize()
 void GSMLib::customEvent(QCustomEvent* e)
 {
 	if( e->type() != QEvent::User+GSMLIB_EVENT_ID )
+		return;
+
+	if( m_account == NULL )
 		return;
 
 	GSMLibEvent* ge = (GSMLibEvent*)e;

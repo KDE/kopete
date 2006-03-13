@@ -27,7 +27,7 @@ VideoInput::VideoInput()
 	m_brightness = 0.5;
 	m_contrast = 0.5;
 	m_saturation = 0.5;
-	m_hue = 0.0;
+	m_hue = 0.5;
 	m_autobrightnesscontrast = false;
 	m_autocolorcorrection = false;
 }
@@ -91,6 +91,24 @@ float VideoInput::setSaturation(float saturation)
 	return getSaturation();
 }
 
+float VideoInput::getWhiteness()
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_whiteness;
+}
+
+float VideoInput::setWhiteness(float whiteness)
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	if ( whiteness > 1 )
+		whiteness = 1;
+	else
+	if ( whiteness < 0 )
+		whiteness = 0;
+	m_whiteness = whiteness;
+	return getWhiteness();
+}
+
 float VideoInput::getHue()
 {
 //	kDebug() <<  k_funcinfo << " called." << endl;
@@ -134,6 +152,19 @@ bool VideoInput::setAutoColorCorrection(bool colorcorrection)
 //	kDebug() <<  k_funcinfo << " called." << endl;
 	m_autocolorcorrection = colorcorrection;
 	return getAutoColorCorrection();
+}
+
+bool VideoInput::getImageAsMirror()
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_imageasmirror;
+}
+
+bool VideoInput::setImageAsMirror(bool imageasmirror)
+{
+//	kdDebug() <<  k_funcinfo << " called." << endl;
+	m_imageasmirror = imageasmirror;
+	return getImageAsMirror();
 }
 
 }

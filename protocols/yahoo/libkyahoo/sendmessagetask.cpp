@@ -40,17 +40,24 @@ void SendMessageTask::onGo()
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Text to send is empty." << endl;
 		return;
 	}	
+	uint pos=0;
+	
+	// split messages that are longer than 800 chars. they get dropped otherwise
+	while( pos < m_text.length() )
+	{
+		YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage, Yahoo::StatusOffline);
+		t->setId( client()->sessionID() );
+		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 5, m_target.local8Bit() );
+		t->setParam( 14, m_text.mid( pos, 700).utf8() );
+		t->setParam( 63, ";0" );
+		t->setParam( 64, "0"  );	
+		t->setParam( 97, 1 );	// UTF-8
+		t->setParam( 206, client()->pictureFlag() );	
+		send( t );
 
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage, Yahoo::StatusOffline);
-	t->setId( client()->sessionID() );
-	t->setParam( 1, (Q3CString)client()->userId().local8Bit() );
-	t->setParam( 5, (Q3CString)m_target.local8Bit() );
-	t->setParam( 14, (Q3CString)m_text.utf8() );
-	t->setParam( 63, ";0" );
-	t->setParam( 64, "0"  );	
-	t->setParam( 97, 1 );	// UTF-8
-	t->setParam( 206, client()->pictureFlag() );	
-	send( t );
+		pos += 700;
+	}
 	
 	setSuccess( true );
 }

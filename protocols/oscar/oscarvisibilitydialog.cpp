@@ -131,3 +131,5 @@ void OscarVisibilityDialog::slotButtonClicked( int buttonCode )
 	else if( buttonCode == KDialog::Cancel )
 		emit closing();
 }
+
+#include "oscarvisibilitydialog.moc"

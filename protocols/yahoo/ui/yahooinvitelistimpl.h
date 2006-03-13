@@ -33,10 +33,11 @@ public:
 	void addInvitees( const QStringList &buddies );
 	void removeInvitees( const QStringList &buddies );
 	void setRoom( const QString &room );
+	void addParticipant( const QString &participant );
 private:
 	
 signals:
-	void readyToInvite( const QString &room, const QStringList &buddies, const QString &msg );
+	void readyToInvite( const QString &room, const QStringList &buddies, const QStringList &participants, const QString &msg );
 protected slots:
 
 public slots:
@@ -50,6 +51,7 @@ private:
 
 	QStringList m_buddyList;
 	QStringList m_inviteeList;
+	QStringList m_participants;
 	QString m_room;
 };
 

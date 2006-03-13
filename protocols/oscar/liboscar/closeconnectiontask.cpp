@@ -90,7 +90,6 @@ bool CloseConnectionTask::take( Transfer* transfer )
 	
 			Oscar::SNAC s = { 0, 0, 0, 0 };
 			client()->fatalTaskError( s, errorNum );
-			emit disconnected( errorNum, QString::null );
 			return true; //if there's an error, we'll need to disconnect anyways
 		}
 
@@ -133,7 +132,5 @@ bool CloseConnectionTask::forMe( const Transfer* transfer ) const
 	else
 		return false;
 }
-
-#include "closeconnectiontask.moc"
 
 //kate: tab-width 4; indent-mode csands;

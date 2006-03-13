@@ -59,6 +59,8 @@
 #include <kmenu.h>
 #include <kstdaction.h>
 #include <kaction.h>
+#include <kstdaction.h>
+#include <kaction.h>
 
 
 class KListViewDateItem : public K3ListViewItem

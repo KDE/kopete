@@ -213,7 +213,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 			 this, SLOT( setStyleVariant(const QString &) ) );
 
 	// Refresh the style if the display name change.
-	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(changeStyle()) );
+	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(slotUpdateHeaderDisplayName()) );
 
 	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
 	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::URLArgs & ) ) );
@@ -595,10 +595,12 @@ const QString ChatMessagePart::styleHTML() const
 
 void ChatMessagePart::clear()
 {
-	DOM::HTMLElement body = htmlDocument().body();
-	while ( body.hasChildNodes() )
-		body.removeChild( body.childNodes().item( body.childNodes().length() - 1 ) );
+	// writeTemplate actually reset the HTML chat session from the beginning.
+	writeTemplate();
 
+	// Reset consecutive messages
+	d->latestContact = 0;
+	// Remove all stored messages.
 	d->allMessages.clear();
 }
 
@@ -981,8 +983,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		else
 			destinationName = remoteContact->nickName();
 
-		// Replace %chatName%
-		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), formatName(d->manager->displayName()) );
+		// Replace %chatName%, create a internal span to update it by DOM when asked.
+		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), QString("<span id=\"KopeteHeaderChatNameInternal\">%1</span>").arg( formatName(d->manager->displayName()) ) );
 		// Replace %sourceName%
 		resultHTML = resultHTML.replace( QString::fromUtf8("%sourceName%"), formatName(sourceName) );
 		// Replace %destinationName%
@@ -1078,6 +1080,14 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 	formattedBody += QString::fromUtf8(">%1</span>").arg(message.parsedBody());
 	
 	return formattedBody;
+}
+
+void ChatMessagePart::slotUpdateHeaderDisplayName()
+{
+	kdDebug(14000) << k_funcinfo << endl;
+	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString::fromUtf8("KopeteHeaderChatNameInternal") );
+	if( !kopeteChatNameNode.isNull() )
+		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );
 }
 
 void ChatMessagePart::changeStyle()

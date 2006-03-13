@@ -53,6 +53,9 @@ GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* accou
 	remote_port	= 0;
 	version		= 0;
 	image_size	= 0;
+	// let us not ignore the contact by default right? causes ugly bug if 
+	// setContactDetails is not run on a contact right after it is added
+	ignored_	= false;
 
 	thisContact_.append( this );
 

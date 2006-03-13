@@ -101,9 +101,24 @@ void IncomingTransfer::acknowledged()
 		case Invitation:
 				// NOTE UDI: base identifier acknowledge message, ignore.
 				//      UDI: 200 OK message should follow.
-				if(m_type == File){
+				if(m_type == File)
+				{
 					// FT: 200 OK acknowledged message.
-					// Direct connection invitation should follow.
+					// If this is the first connection between the two clients, a direct connection invitation
+					// should follow. Otherwise, the file transfer may start right away.
+					if(m_transfer)
+					{
+						QFile *destination = new QFile(m_transfer->destinationURL().path());
+						if(!destination->open(IO_WriteOnly))
+						{
+							m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));
+							m_transfer = 0l;
+							
+							error();
+							return;
+						}
+						m_file = destination;
+					}
 					m_state = Negotiation;
 				}
 			break;
@@ -251,31 +266,18 @@ void IncomingTransfer::processMessage(const Message& message)
 					"Hashed-Nonce: {00000000-0000-0000-0000-000000000000}\r\n"
 					"\r\n";
 			}
-
-			acknowledge(message);
-
-			if(m_transfer)
-			{
-				// NOTE The sending client can ask for a direct connections
-				// if one was established before.
-				QFile *destionation = new QFile(m_transfer->destinationURL().path());
-				if(!destionation->open(QIODevice::WriteOnly))
-				{
-					if(m_transfer){
-						m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));
-						m_transfer = 0l;
-					}
-					
-					error();
-					return;
-				}
-			
-				m_file = destionation;
-			}
 			
 			m_state = DataTransfer;
-			// Send 200 OK message to the sending client.
-			sendMessage(OK, content);
+			
+			if (m_type != File)
+			{
+				// NOTE For file transfers, the connection invite *must not* be acknowledged in any way
+				//      as this trips MSN 7.5
+				
+				acknowledge(message);
+				// Send 200 OK message to the sending client.
+				sendMessage(OK, content);
+			}
 		}
 		else if(body.startsWith("BYE"))
 		{

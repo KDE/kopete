@@ -8,53 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>212</width>
-            <height>61</height>
+            <width>487</width>
+            <height>80</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>GroupKABCSelectorWidget</string>
-    </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>groupLabel</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Group</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>groupCombo</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>kabcLabel</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Address book entry:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>kabcCombo</cstring>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="2" column="1">
-            <property name="name">
-                <cstring>kabcCombo</cstring>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="1" column="1">
-            <property name="name">
-                <cstring>groupCombo</cstring>
-            </property>
-        </widget>
-        <widget class="Line" row="0" column="0" rowspan="1" colspan="2">
+        <widget class="Line">
             <property name="name">
                 <cstring>line1</cstring>
             </property>
@@ -68,7 +33,59 @@
                 <enum>Horizontal</enum>
             </property>
         </widget>
-    </grid>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout13</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>kabcLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Addressbook entry:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kabcCombo</cstring>
+                    </property>
+                </widget>
+                <widget class="Kopete::UI::AddressBookLinkWidget" row="1" column="1">
+                    <property name="name">
+                        <cstring>widAddresseeLink</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>groupLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Group</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>groupCombo</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>groupCombo</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
+<customwidgets>
+    <customwidget>
+      <class>Kopete::UI::AddressBookLinkWidget</class>
+      <header>addressbooklinkwidget.h</header>
+    </customwidget>
+</customwidgets>				     
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

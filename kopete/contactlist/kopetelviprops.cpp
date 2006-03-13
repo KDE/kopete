@@ -59,6 +59,7 @@
 #include "kopetemetacontactlvi.h"
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
+#include "addressbooklinkwidget.h"
 #include "addressbookselectordialog.h"
 
 #include "customnotificationprops.h"
@@ -186,11 +187,9 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
 
-	mainWidget->btnClear->setIconSet( SmallIconSet( QApplication::isRightToLeft() ? "locationbar_erase" : "clear_left" ) );
 	mainWidget->btnClearPhoto->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
-	connect( mainWidget->btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddresseeClicked() ) );
 	connect( mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
-		
+	connect( mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
 	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
 	QString offlineName = item->metaContact()->icon( Kopete::ContactListElement::Offline );
@@ -214,6 +213,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 //	mainWidget->icnbAway->setIcon( awayName );
 //	mainWidget->icnbUnknown->setIcon( unknownName );
 
+	mainWidget->widAddresseeLink->setMetaContact( lvi->metaContact() );
+
 	mAddressBookUid = item->metaContact()->metaContactId();
 
 	mExport = 0L;
@@ -222,14 +223,12 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	{
 		KABC::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
 		KABC::Addressee a = ab->findByUid( mAddressBookUid );
+		mainWidget->widAddresseeLink->setAddressee( a );
 
 		if ( !a.isEmpty() )
 		{
-			mainWidget->edtAddressee->setText( a.realName() );
-			mainWidget->btnSelectAddressee->setEnabled( true );
 			mainWidget->btnImportKABC->setEnabled( true );
 			mainWidget->btnExportKABC->setEnabled( true );
-			mainWidget->edtAddressee->setEnabled( true );
 			mExport = new KopeteAddressBookExport( this, item->metaContact() );
 			
 			mSound = a.sound();
@@ -243,8 +242,6 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
 	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
 		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-	connect( mainWidget->btnSelectAddressee, SIGNAL( clicked() ),
-		this, SLOT( slotSelectAddresseeClicked() ) );
 	connect( mainWidget->btnImportKABC, SIGNAL( clicked() ),
 		this, SLOT( slotImportClicked() ) );
 	connect( mainWidget->btnExportKABC, SIGNAL( clicked() ),
@@ -479,30 +476,24 @@ void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
 	mainWidget->icnbUnknown->setEnabled( on );
 }
 
-void KopeteMetaLVIProps::slotClearAddresseeClicked()
+void KopeteMetaLVIProps::slotAddresseeChanged( const KABC::Addressee & a )
 {
-	mainWidget->edtAddressee->setText( QString::null );
-	mAddressBookUid = QString::null;
-	mainWidget->btnExportKABC->setEnabled( false );
-	mainWidget->btnImportKABC->setEnabled( false );
-	
-	slotEnableAndDisableWidgets();
-}
-
-void KopeteMetaLVIProps::slotSelectAddresseeClicked()
-{
-	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook Association"), i18n("Choose the person who '%1' is.").arg(item->metaContact()->displayName() ), item->metaContact()->metaContactId() , this);
-
 	if ( !a.isEmpty() )
 	{
 		mSound = a.sound();
 		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
 		mainWidget->btnExportKABC->setEnabled( true );
 		mainWidget->btnImportKABC->setEnabled( true );
-		// set the lineedit to the Addressee's name
-		mainWidget->edtAddressee->setText( a.realName() );
 		// set/update the MC's addressee uin field
 		mAddressBookUid = a.uid();
+	}
+	else
+	{
+		mainWidget->btnExportKABC->setEnabled( false );
+		mainWidget->btnImportKABC->setEnabled( false );
+		mAddressBookUid = QString::null;
+		mainWidget->radioNameContact->setChecked( true );
+		mainWidget->radioPhotoContact->setChecked( true );
 	}
 	slotEnableAndDisableWidgets();
 }

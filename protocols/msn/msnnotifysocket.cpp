@@ -310,9 +310,19 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			// Synchronize with the server.
 			QString lastSyncTime, lastChange;
 
-			// Retrieve the last synchronization timestamp, and last change timestamp.
-			lastSyncTime = m_account->configGroup()->readEntry("lastsynctime", "0");
-			lastChange = m_account->configGroup()->readEntry("lastchange", "0");
+			if(m_account->contacts().count() > 1)
+			{
+				// Retrieve the last synchronization timestamp, and last change timestamp.
+				lastSyncTime = m_account->configGroup()->readEntry("lastsynctime", "0");
+				lastChange = m_account->configGroup()->readEntry("lastchange", "0");
+			}
+			else
+			{
+				//the contactliust has maybe being removed, force to sync
+				//(the only contact is myself)
+				lastSyncTime="0";
+				lastChange="0";
+			}
 
 			sendCommand( "SYN", lastChange + " " + lastSyncTime);
 			// Get client features.

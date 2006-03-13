@@ -96,7 +96,7 @@ private slots:
 	void slotWebcamReceive();
 	void slotWebcamSend();
 
-	void slotNudgeReceived();
+	void slotNudgeReceived(const QString& handle);
 
 private:
 

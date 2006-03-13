@@ -65,9 +65,9 @@
  * JabberContact constructor
  */
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
-				: JabberBaseContact ( rosterItem, _account, mc, legacyId)
+	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , m_syncTimer(0L)
 {
-
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is created  - " << this << endl;
 	// this contact is able to transfer files
 	setFileCapable ( true );
 
@@ -121,6 +121,11 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mDiscoDone = false;
 }
 
+JabberContact::~JabberContact()
+{
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is destroyed  - " << this << endl;
+}
+
 QList<KAction*> *JabberContact::customContextMenuActions ()
 {
 
@@ -132,31 +137,18 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	
 	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
 								 this, SLOT (slotSendAuth ()), 0, "actionSendAuth");
-	resendAuthAction->setEnabled(false);
+	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	actionAuthorization->insert(resendAuthAction);
 
 	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
 								 this, SLOT (slotRequestAuth ()), 0, "actionRequestAuth");
-	requestAuthAction->setEnabled(false);
+	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	actionAuthorization->insert(requestAuthAction);
 	
 	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
 								 this, SLOT (slotRemoveAuth ()), 0, "actionRemoveAuth");
-	removeAuthAction->setEnabled(false);
+	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	actionAuthorization->insert(removeAuthAction);
-
-	if( mRosterItem.subscription().type() == XMPP::Subscription::From )
-	{
-		resendAuthAction->setEnabled(true);
-	}
-	else if( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None )
-	{
-		requestAuthAction->setEnabled(true);
-	}
-	else if( mRosterItem.subscription().type() == XMPP::Subscription::Both )
-	{
-		removeAuthAction->setEnabled(true);
-	}
 
 	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", 0, "jabber_online");
 
@@ -316,7 +308,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () && message.urlList().isEmpty () )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () && message.xHTMLBody().isEmpty() && message.xencrypted().isEmpty() )
 		return;
 
 	// determine message type
@@ -343,11 +335,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		// retrieve and reformat body
 		QString body = message.body ();
-// see warning below
-		QString xHTMLBody = message.xHTMLBody ();
-		if( !message.xencrypted().isEmpty () )
+		QString xHTMLBody;
+		if( !message.xencrypted().isEmpty() )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+		}
+		else
+		{
+			xHTMLBody = message.xHTMLBody ();
 		}
 
 		// convert XMPP::Message into Kopete::Message
@@ -546,7 +541,6 @@ void JabberContact::slotCheckLastActivity ( Kopete::Contact *, const Kopete::Onl
 
 void JabberContact::slotGetTimedLastActivity ()
 {
-
 	/*
 	 * We have been called from @ref slotCheckLastActivity.
 	 * We could have lost our connection in the meantime,
@@ -622,6 +616,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	// remove all properties first
 	removeProperty ( protocol()->propFirstName );
 	removeProperty ( protocol()->propLastName );
+	removeProperty ( protocol()->propFullName );
 
 	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
 	{
@@ -639,6 +634,8 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		if ( !vCard.familyName().isEmpty () )
 			setProperty ( protocol()->propLastName, vCard.familyName () );
 	}
+	if( !vCard.fullName().isEmpty() )
+		setProperty ( protocol()->propFullName, vCard.fullName() );
 
 	/* 
 	 * Set the general information 
@@ -1028,15 +1025,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 
 void JabberContact::slotSentVCard ()
 {
-	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
 	
-	if (!vCard->success())
-	{
-		// unsuccessful, or incomplete
-		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error, i18n("Unable to store vCard for %1").arg (vCard->jid ().userHost ()));
-		return;
-	}
-
 }
 
 void JabberContact::slotChatSessionDeleted ( QObject *sender )
@@ -1197,8 +1186,37 @@ void JabberContact::deleteContact ()
 void JabberContact::sync ( unsigned int )
 {
 	// if we are offline or this is a temporary contact or we should not synch, don't bother
+	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () || metaContact() == Kopete::ContactList::self()->myself() )
+		return;
+	
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () /*<< " - " <<kdBacktrace()*/ << endl;
+
+	if(!m_syncTimer);
+	{
+		m_syncTimer=new QTimer(this);
+		connect(m_syncTimer, SIGNAL(timeout()) , this , SLOT(slotDelayedSync()));
+	}
+	m_syncTimer->start(2*1000,true);
+	/*
+		the sync operation is delayed, because when we are doing a move to group operation,
+	     kopete first add the contact to the group, then removes it.
+		Theses two operations should anyway be done in only one pass.
+	
+		if there is two jabber contact in one metacontact, this may result in an infinite change of
+	 	groups between theses two contacts, and the server is being flooded.
+	*/
+}
+
+void JabberContact::slotDelayedSync( )
+{
+	m_syncTimer->deleteLater();
+	m_syncTimer=0L;
+	// if we are offline or this is a temporary contact or we should not synch, don't bother
 	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () )
 		return;
+	
+	bool changed=metaContact()->displayName() != mRosterItem.name();
+	
 
 	QStringList groups;
 	Kopete::GroupList groupList = metaContact ()->groups ();
@@ -1210,8 +1228,18 @@ void JabberContact::sync ( unsigned int )
 		if ( g->type () != Kopete::Group::TopLevel )
 			groups += g->displayName ();
 	}
-
-	mRosterItem.setGroups ( groups );
+		
+	if(mRosterItem.groups() != groups)
+	{
+		changed=true;
+		mRosterItem.setGroups ( groups );
+	}
+	
+	if(!changed)
+	{
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "contact has not changed,  abort sync"  << endl;
+		return;
+	}
 
 	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 
@@ -1512,10 +1540,18 @@ void JabberContact::slotDiscoFinished( )
 	if(is_transport && !transport()) 
  	{   //ok, we are not a contact, we are a transport....
 		
-		const QString jid = rosterItem().jid().full();
+		const QString jid = rosterItem().jid().bare();
 		Kopete::MetaContact *mc=metaContact();
 		JabberAccount *parentAccount=account();
 		Kopete::OnlineStatus status=onlineStatus();
+		
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << jid << " is not a contact but a gateway   - " << this << endl;
+		
+		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , jid + "/" + account()->accountId() ) )
+		{
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport azlready exists, abort operation " <<  endl;
+			return;
+		}
 		
 		delete this; //we are not a contact i said !
 		
@@ -1530,5 +1566,7 @@ void JabberContact::slotDiscoFinished( )
 		return;
 	}
 }
+
+
 
 #include "jabbercontact.moc"

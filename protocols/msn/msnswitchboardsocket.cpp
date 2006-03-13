@@ -2,7 +2,7 @@
     msnswitchboardsocket.cpp - switch board connection socket
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@ kde.org>
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
@@ -74,6 +74,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 	m_chunks=0;
 	m_clientcapsSent=false;
 	m_dispatcher = 0l;
+	m_keepAlive = 0l;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -266,7 +267,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			if( dataCastId == 1 )
 			{
 				kDebug(14140) << k_funcinfo << "Received a nudge !" << endl;
-				emit nudgeReceived();
+				emit nudgeReceived(m_msgHandle);
 			}
 		}
 	}
@@ -871,6 +872,13 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 			args = m_myHandle + " " + m_auth + " " + m_ID;
 		}
 		sendCommand( command, args );
+		
+		if(!m_keepAlive)
+		{
+			m_keepAlive=new QTimer(this);
+			QObject::connect(m_keepAlive, SIGNAL(timeout()) , this , SLOT(slotKeepAliveTimer()));
+			m_keepAlive->start(50*1000);
+		}
 	}
 }
 
@@ -1087,6 +1095,35 @@ Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 		m_dispatcher->m_pictureUrl = m_account->pictureUrl();
 	}
 	return m_dispatcher;
+}
+
+void MSNSwitchBoardSocket::slotKeepAliveTimer( )
+{
+	/*
+	This is a workaround against the bug 113425
+	The problem:  the P2P::Webcam class is parent of us, and when we get deleted, it get deleted.
+			the correct solution would be to change that.
+	The second problem: after one minute of inactivity, the official client close the chat socket.
+	the workaround: we simulate the activity by sending small packet each 50 seconds
+	the nice side effect:  the "xxx has closed the chat" is now meaningfull
+	the bad side effect:  some switchboard connection may be maintained for really long time!
+	 */
+	
+	if ( onlineStatus() != Connected || m_chatMembers.empty())
+	{
+		//we are not yet in a chat.
+		//if we send that command now, we may get disconnected.
+		return;
+	}
+
+
+	QByteArray message = QString( "MIME-Version: 1.0\r\n"
+			"Content-Type: text/x-keepalive\r\n"
+			"\r\n" ).toUtf8();
+
+	// Length is appended by sendCommand()
+	QString args = "U";
+	sendCommand( "MSG", args, true, message );
 }
 
 #include "msnswitchboardsocket.moc"

@@ -26,7 +26,7 @@
 
 #include "kdialogbase.h"
 #include "klocale.h"
-#include "klistview.h"
+#include "k3listview.h"
 #include "khtml_part.h"
 #include "kstandarddirs.h"
 #include "kdatepicker.h"

@@ -85,7 +85,8 @@ namespace Yahoo
 		ServiceChatLogout = 0xa0,
 		ServiceChatPing,
 		ServiceComment = 0xa8,
-		ServiceStealth = 0xb9,
+		ServiceStealthOffline = 0xb9,
+		ServiceStealthOnline = 0xba,
 		ServicePictureChecksum = 0xbd,
 		ServicePicture = 0xbe,
 		ServicePictureUpdate = 0xc1,
@@ -137,9 +138,16 @@ namespace Yahoo
 	LoginSock = -1
 	};
 
+	enum StealthMode {
+		StealthOnline,
+		StealthOffline,
+		StealthPermOffline
+	};
+
 	enum StealthStatus {
-		Stealthed = 1,
-		NotStealthed = 2
+		StealthActive = 1,
+		StealthNotActive = 2,
+		StealthClear = 3
 	};
 
 	enum Response {

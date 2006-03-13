@@ -172,9 +172,13 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePicture " << servicenum << endl;
 			service = Yahoo::ServicePicture;
 		break;
-		case (Yahoo::ServiceStealth) :
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceStealth " << servicenum << endl;
-			service = Yahoo::ServiceStealth;
+		case (Yahoo::ServiceStealthOnline) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceStealthOnline " << servicenum << endl;
+			service = Yahoo::ServiceStealthOnline;
+		break;
+		case (Yahoo::ServiceStealthOffline) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceStealthOffline " << servicenum << endl;
+			service = Yahoo::ServiceStealthOffline;
 		break;
 		case (Yahoo::ServicePictureUpload) :
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePictureUpload " << servicenum << endl;

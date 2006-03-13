@@ -27,6 +27,7 @@
 #include "kopetegvipropswidget.h"
 #include "kopetemetalvipropswidget.h"
 
+class AddressBookLinkWidget;
 class CustomNotificationProps;
 class KPushButton;
 class KopeteGroupViewItem;
@@ -34,6 +35,7 @@ class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
 class KUrlRequester;
 
+namespace KABC { class Addressee; }
 namespace Kopete { class Contact; }
 
 class KopeteGVIProps: public KDialog
@@ -69,6 +71,7 @@ class KopeteMetaLVIProps: public KDialog
 		CustomNotificationProps * mNotificationProps;
 		QPushButton *mFromKABC;
 		KopeteMetaLVIPropsWidget *mainWidget;
+		AddressBookLinkWidget *linkWidget;
 		KopeteMetaContactLVI *item;
 		KopeteAddressBookExport *mExport;
 		KABC::Sound mSound;
@@ -83,9 +86,8 @@ class KopeteMetaLVIProps: public KDialog
 	private slots:
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
-		void slotClearAddresseeClicked();
 		void slotClearPhotoClicked();
-		void slotSelectAddresseeClicked();
+		void slotAddresseeChanged( const KABC::Addressee & );
 		void slotExportClicked();
 		void slotImportClicked();
 		void slotFromKABCClicked();

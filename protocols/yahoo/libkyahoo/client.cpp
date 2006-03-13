@@ -122,8 +122,7 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 Client::~Client()
 {
 	close();
-	if( d->iconLoader )
-		delete d->iconLoader;
+	delete d->iconLoader;
 	delete d->root;
 	delete d;
 }
@@ -173,7 +172,12 @@ void Client::close()
 		lt->go( true );
 	}
 	if( d->tasksInitialized)
-		deleteTasks();
+		deleteTasks();	
+	d->loginTask->reset();
+	d->stream->deleteLater();
+	d->stream = 0L;
+	m_connector->deleteLater();
+	m_connector = 0L;
 }
 
 int Client::error()
@@ -193,7 +197,6 @@ void Client::streamError( int error )
 	QString msg;
 
 	d->active = false;
-	close();
 
 	// Examine error
 	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
@@ -206,12 +209,7 @@ void Client::streamError( int error )
 		d->error = error;
 		d->errorString = d->stream->errorText();
 	}
-
-	d->stream->deleteLater();
-	d->stream = 0L;
-	m_connector->deleteLater();
-	m_connector = 0L;
-
+	close();
 	if( status() == Yahoo::StatusConnecting )
 		emit loginFailed();
 	else
@@ -323,6 +321,9 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	cst->setType( type );
 	cst->go( true );
 	
+	if( status == Yahoo::StatusInvisible )
+		stealthContact( QString::null, Yahoo::StealthOnline, Yahoo::StealthClear );
+
 	setStatus( status );
 }
 
@@ -349,11 +350,12 @@ void Client::sendPing()
 
 // ***** Contactlist handling *****
 
-void Client::stealthContact(QString const &userId, Yahoo::StealthStatus state)
+void Client::stealthContact(QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state)
 {
 	StealthTask *st = new StealthTask( d->root );
 	st->setTarget( userId );
 	st->setState( state );
+	st->setMode( mode );
 	st->go( true );
 }
 
@@ -486,9 +488,9 @@ void Client::inviteConference( const QString &room, const QStringList &members, 
 	d->conferenceTask->inviteConference( room, members, msg );
 }
 
-void Client::addInviteConference( const QString &room, const QStringList &members, const QString &msg )
+void Client::addInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg )
 {
-	d->conferenceTask->addInvite( room, members, msg );
+	d->conferenceTask->addInvite( room, who, members, msg );
 }
 
 void Client::joinConference( const QString &room, const QStringList &members )

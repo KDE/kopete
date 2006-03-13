@@ -5,6 +5,7 @@
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005-2006 by Will Stephenson        <wstephenson@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -61,6 +62,7 @@
 
 #include "addcontactpage.h"
 #include "addcontactwizard.h"
+#include "addressbooklinkwidget.h"
 #include "groupkabcselectorwidget.h"
 #include "kabcexport.h"
 #include "kopeteappearancesettings.h"
@@ -1041,8 +1043,6 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 		kDebug( 14000 ) << k_funcinfo << "no account given" << endl; 
 		return;
 	}
-	
-	Kopete::Group *group = Kopete::Group::topLevel();
 
 	KDialog *addDialog = new KDialog( this, i18n( "Add Contact" ), KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
@@ -1054,6 +1054,19 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 		account->protocol()->createAddContactWidget( mainWid, account );
 
 	GroupKABCSelectorWidget * groupKABC = new GroupKABCSelectorWidget( mainWid, "groupkabcwidget" );
+
+	// Populate the groups list
+	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
+	QHash<QString, Kopete::Group*> groupItems;
+	foreach( Kopete::Group *group, groups )
+    {
+		QString groupname = group->displayName();
+		if ( !groupname.isEmpty() )
+		{
+			groupItems.insert( groupname, group );
+			groupKABC->groupCombo->insertItem( groupname );
+		}
+	}
 
 	if (!addContactPage)
 	{
@@ -1068,7 +1081,8 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 			if( addContactPage->validateData() )
 			{
 				Kopete::MetaContact * metacontact = new Kopete::MetaContact();
-				metacontact->addToGroup( group );
+				metacontact->addToGroup( groupItems[ groupKABC->groupCombo->currentText() ] );
+				metacontact->setMetaContactId( groupKABC->widAddresseeLink->uid() );
 				if (addContactPage->apply( account, metacontact ))
 				{
 					Kopete::ContactList::self()->addMetaContact( metacontact );

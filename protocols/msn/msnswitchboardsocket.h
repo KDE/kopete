@@ -2,7 +2,7 @@
     msnswitchboardsocket.h - switch board connection socket
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@ kde.org>
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
@@ -121,6 +121,9 @@ public:
 
 	P2P::Dispatcher* PeerDispatcher();
 
+    /** workaround Bug 113425 . see slotKeepAliveTimer() **/
+	QTimer *m_keepAlive;
+
 public slots:
 	void slotCloseSession();
 	void slotInviteContact(const QString &handle);
@@ -131,7 +134,7 @@ public slots:
 	void sendTypingMsg( bool isTyping );
 
 	void requestDisplayPicture();
-
+	
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );
@@ -139,6 +142,9 @@ private slots:
 	void slotEmoticonReceived( KTempFile *, const QString& );
 	void slotIncomingFileTransfer(const QString& from, const QString& fileName, qint64 fileSize);
 	void cleanQueue();
+	
+	/** workaround Bug 113425 . see comment inside the function **/
+	void slotKeepAliveTimer();
 
 signals:
 	void msgReceived( Kopete::Message &msg );
@@ -146,7 +152,7 @@ signals:
 	void msgAcknowledgement(unsigned int, bool);
 	void userJoined(const QString& handle , const QString &publicName , bool IRO);
 	void userLeft(const QString& handle , const QString &reason);
-	void nudgeReceived();
+	void nudgeReceived(const QString &handle);
 
 	void switchBoardClosed(  );
 	void invitation(const QString& handle, const QString& msg);

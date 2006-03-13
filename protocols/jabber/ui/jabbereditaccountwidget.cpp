@@ -102,7 +102,9 @@ void JabberEditAccountWidget::reopen ()
 
 	if(cbCustomServer->isChecked ())
 	{
+		labelServer->setEnabled(true);
 		mServer->setEnabled(true);
+		labelPort->setEnabled(true);
 		mPort->setEnabled(true);
 	}
 	else
@@ -218,12 +220,16 @@ void JabberEditAccountWidget::updateServerField ()
 		// check if ssl is enabled and set the port correctly
 		sslToggled(cbUseSSL->isChecked());
 		mServer->setText(newServer);
+		labelServer->setEnabled(false);
 		mServer->setEnabled(false);
+		labelPort->setEnabled(false);
 		mPort->setEnabled(false);
 	}
 	else
 	{
+		labelServer->setEnabled(true);
 		mServer->setEnabled(true);
+		labelPort->setEnabled(true);
 		mPort->setEnabled(true);
 	}
 

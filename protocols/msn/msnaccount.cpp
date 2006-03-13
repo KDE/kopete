@@ -1054,6 +1054,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		// The FL list only use the contact GUID, use the contact referenced by the GUID.
 		MSNContact *contactRemoved = findContactByGuid(contactGuid);
 		QStringList groupGuidList;
+		bool deleteContact = groupGuid.isEmpty() ? true : false; // Delete the contact when the group GUID is empty.
 		// Remove the contact from the contact list for all the group he is a member.
 		if( groupGuid.isEmpty() )
 		{
@@ -1105,6 +1106,11 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 						m_notifySocket->removeGroup( *stringIt );
 				}
 			}
+		}
+		if(deleteContact && contactRemoved)
+		{
+			kdDebug(14140) << k_funcinfo << "Deleting the MSNContact " << contactRemoved->contactId() << endl;
+			contactRemoved->deleteLater();
 		}
 	}
 }
@@ -1366,14 +1372,14 @@ void MSNAccount::addContactServerside(const QString &contactId, QList<Kopete::Gr
 
 MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << "Looking for " << contactGuid << endl;
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	QHash<QString, Kopete::Contact*>::Iterator it, itEnd = contactList.end();
 	for ( it = contactList.begin(); it != itEnd; ++it )
 	{
-		MSNContact *c = static_cast<MSNContact *>( it.value() );
+		MSNContact *c = dynamic_cast<MSNContact *>( it.value() );
 
-		if(c && c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
+		if(c && c->guid() == contactGuid )
 		{
 			kDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
 			// Found the contact GUID

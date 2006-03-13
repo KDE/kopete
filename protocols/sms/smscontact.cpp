@@ -41,7 +41,8 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 	m_msgManager = 0L;
 	m_actionPrefs = 0L;
 
-//	setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
+	if( account()->isConnected() )
+		setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
 }
 
 void SMSContact::slotSendingSuccess(const Kopete::Message &msg)

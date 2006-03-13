@@ -89,12 +89,17 @@ void YahooInviteListImpl::removeInvitees( const QStringList &invitees )
 	updateListBoxes();
 }
 
+void YahooInviteListImpl::addParticipant( const QString &p )
+{
+	m_participants.push_back( p );
+}
+
 void YahooInviteListImpl::btnInvite_clicked()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
 	if( m_inviteeList.count() )
-		emit readyToInvite( m_room, m_inviteeList, editMessage->text() );
+		emit readyToInvite( m_room, m_inviteeList,m_participants, editMessage->text() );
 	QDialog::accept();
 }
 

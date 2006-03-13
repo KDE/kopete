@@ -49,7 +49,6 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	// Initialise and start the periodical checking for contact's status
 	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 
-	//TODO: makes checking more often than hostcheck cycle sense? GF
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
 
@@ -143,16 +142,10 @@ void WPContact::slotCheckStatus()
 	if (acct) newIsOnline = acct->checkHost(contactId());
 
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected) {
-		Kopete::OnlineStatus tmpStatus;
-		if (myWasConnected) {
-			if (newIsOnline)
+		Kopete::OnlineStatus tmpStatus = WPProtocol::protocol()->WPOffline;
+		if (myWasConnected && newIsOnline) {
 				tmpStatus = WPProtocol::protocol()->WPOnline;
-			else
-				WPProtocol::protocol()->WPOffline;
-		} else {
-			WPProtocol::protocol()->WPOffline;
 		}
-
 		setOnlineStatus(tmpStatus);
 	}
 }

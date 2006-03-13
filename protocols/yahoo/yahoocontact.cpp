@@ -462,13 +462,41 @@ void YahooContact::stealthContact()
 	YahooStealthSetting *stealthWidget = new YahooStealthSetting( stealthSettingDialog, "stealthSettingWidget" );
 	stealthSettingDialog->setMainWidget( stealthWidget );
 
-	if ( stealthSettingDialog->exec() == QDialog::Rejected )
-		return;
+	// Prepare dialog
+	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
+	{
+		stealthWidget->radioOffline->setEnabled( true );
+		stealthWidget->radioOffline->setChecked( true );
+	}
+	if( stealthed() )
+		stealthWidget->radioPermOffline->setChecked( true );
+		
 	
-	if ( stealthWidget->radioOnline->isChecked() )
-		m_account->yahooSession()->stealthContact( m_userId, Yahoo::NotStealthed );
-	else
-		m_account->yahooSession()->stealthContact( m_userId, Yahoo::Stealthed );
+	// Show dialog
+	if ( stealthSettingDialog->exec() == QDialog::Rejected )
+	{	
+		stealthSettingDialog->deleteLater();
+		return;
+	}
+	
+	// Apply permanent setting
+	if( stealthed() && !stealthWidget->radioPermOffline->isChecked() )
+		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthNotActive );
+	else if( !stealthed() && stealthWidget->radioPermOffline->isChecked() )
+		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthActive );
+	
+	// Apply temporary setting
+	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
+	{
+		if( stealthWidget->radioOnline->isChecked() )
+		{
+			m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthOnline, Yahoo::StealthActive );
+		}
+		else if( stealthWidget->radioOffline->isChecked() )
+		{
+			m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthOffline, Yahoo::StealthActive );
+		}
+	}
 
 	stealthSettingDialog->deleteLater();
 }
@@ -563,6 +591,13 @@ void YahooContact::inviteConference()
 
 void YahooContact::inviteWebcam()
 {
+	if ( KStandardDirs::findExe("jasper").isEmpty() )
+	{
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
+			"\nPlease see %1 for further information.").arg("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") );
+		return;
+	}
 	m_account->yahooSession()->sendWebcamInvite( m_userId );
 }
 
@@ -613,9 +648,9 @@ void YahooContact::requestWebcam()
 {
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
-		KMessageBox::queuedMessageBox(                            		Kopete::UI::Global::mainWidget(),
-			KMessageBox::Error, i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images.\nPlease go to http://kopete.kde.org/yahoo/jasper.html for instructions.")
-                );
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
+			"\nPlease see %1 for further information.").arg("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") );
 		return;
 	}
 	
@@ -630,7 +665,7 @@ void YahooContact::closeWebcamDialog()
 	                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
 	
 	QObject::disconnect( this, SIGNAL( signalWebcamPaused() ),
-	                  m_webcamDialog, SLOT( webcamPaused( int ) ) );
+	                  m_webcamDialog, SLOT( webcamPaused( ) ) );
 	
 	QObject::disconnect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
 	                  m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );

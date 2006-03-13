@@ -468,7 +468,7 @@ void AppearanceConfig::slotChatStyleSelected()
 			d->mPrfsChatWindow->variantList->insertItem( it.key() );
 	
 			if( it.value() == Kopete::AppearanceSettings::self()->styleVariant() )
-				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex);
+				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex+1);
 	
 			currentIndex++;
 		}

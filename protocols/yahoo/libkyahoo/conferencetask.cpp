@@ -44,7 +44,8 @@ bool ConferenceTask::take( Transfer* transfer )
 	if (!t)
 		return false;
 	
- 	if( t->service() == Yahoo::ServiceConfInvite )
+ 	if( t->service() == Yahoo::ServiceConfInvite ||
+		t->service() == Yahoo::ServiceConfAddInvite)
  		parseInvitation( transfer );
 	else if( t->service() == Yahoo::ServiceConfMsg )
 		parseMessage( transfer );
@@ -100,7 +101,8 @@ void ConferenceTask::parseInvitation( Transfer *transfer )
 	QStringList members;
 	for( i = 0; i < t->paramCount( 52 ); i++ )
 		members.append( t->nthParam( 52, i ) );
-
+	for( i = 0; i < t->paramCount( 53 ); i++ )
+		members.append( t->nthParam( 53, i ) );
 	if( who == client()->userId() )
 		return;
 
@@ -197,21 +199,26 @@ void ConferenceTask::inviteConference( const QString &room, const QStringList &m
 	send( t );
 }
 
-void ConferenceTask::addInvite( const QString &room, const QStringList &members, const QString &msg )
+void ConferenceTask::addInvite( const QString &room, const QStringList &who, const QStringList &members, const QString &msg )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfInvite);
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfAddInvite);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().local8Bit() );
-	t->setParam( 51, client()->userId().local8Bit() );
+
+	QString whoList = who.first();
+	for( uint i = 1; i < who.size(); i++ )
+		whoList += QString(",%1").arg( who[i] );
+	t->setParam( 51, whoList.local8Bit() );
+
 	t->setParam( 57, room.local8Bit() );
 	t->setParam( 58, msg.local8Bit() );
 	t->setParam( 97, 1 );
 	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
 	{
 		t->setParam( 52, (*it).local8Bit() );
-		t->setParam( 53, (*it).local8Bit() );
+		t->setParam( 53, (*it).local8Bit() );	// Note: this field should only be set if the buddy has already joined the conference, but no harm is done this way
 	}
 	t->setParam( 13, "0" );
 

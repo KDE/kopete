@@ -111,7 +111,7 @@ bool WinPopupLib::checkMessageDir()
 													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
 													   "on how to do this.\n"
 													   "Should the directory be created? (May need root password)").arg(WP_POPUP_DIR),
-												  QString(), i18n("Create Directory"), i18n("Do Not Create"));
+												  QString("Winpopup"), i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -130,7 +130,7 @@ bool WinPopupLib::checkMessageDir()
 														   "You will not receive messages if you say no.\n"
 														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
 														   "Fix? (May need root password)").arg(WP_POPUP_DIR),
-													  QString(), i18n("Fix"), i18n("Do Not Fix"));
+													  QString("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
 				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -185,8 +185,10 @@ void WinPopupLib::slotReadProcessReady(KProcIO *r)
 		if (info.search(tmpLine) != -1) currentGroup = info.cap(1);
 		if (host.search(tmpLine) != -1) currentHosts += host.cap(1);
 		if (group.search(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
-		if (error.search(tmpLine) != -1)
+		if (error.search(tmpLine) != -1) {
 			kDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
+			if (currentHost == "LOCALHOST") currentHost = "failed"; // to be sure
+		}
 	}
 }
 
@@ -213,7 +215,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 			}
 		}
 
-		if (!currentGroup.isEmpty()) {
+		if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
 			// create a workgroup object and put the hosts in
 			WorkGroup nWG;
 			nWG.addHosts(currentHosts);
@@ -227,6 +229,12 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 			foreach (QString groupMaster, currentGroups) {
 				todo += groupMaster;
 			}
+		} else {
+			if (currentHost == "failed")
+				KMessageBox::error(Kopete::UI::Global::mainWidget(),
+								   i18n("Connection to localhost failed!\n"
+									    "Is your samba server running?"),
+								   QString("Winpopup"));
 		}
 	}
 
@@ -295,7 +303,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 															  i18n("A message file could not be removed; "
 																   "maybe the permissions are wrong.\n"
 																   "Fix? (May need root password)"),
-															  QString(), i18n("Fix"), i18n("Do Not Fix"));
+															  QString("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
 					if (tmpYesNo == KMessageBox::Yes) {
 						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem->localPath()));
 						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {

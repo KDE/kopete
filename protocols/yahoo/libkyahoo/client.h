@@ -150,7 +150,7 @@ Q_OBJECT
 		/**
 		 * Change the stealth status of a buddy
 		 */
-		void stealthContact( const QString &userId, Yahoo::StealthStatus status );
+		void stealthContact( QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state );
 
 		/**
 		 * Request the buddy's picture
@@ -220,7 +220,7 @@ Q_OBJECT
 		/**
 		 * Invite buddies to a already existing conference
 		 */
-		void addInviteConference( const QString &room, const QStringList &members, const QString &msg );
+		void addInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
 
 		/**
 		 * Join a conference

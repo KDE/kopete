@@ -120,6 +120,8 @@ QString Oscar::Message::text( QTextCodec *codec ) const
 	default:
 		break; // Should never happen.
 	}
+	return QString::null;
+	//FIXME: warn at least with kdWarning if an unrecognised encoding style was seen.
 }
 
 void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QString& newText, QTextCodec* codec )
