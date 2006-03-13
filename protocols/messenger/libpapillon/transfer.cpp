@@ -16,7 +16,7 @@
 
 namespace Papillon {
 
-class Transfer::Private : public QSharedData
+class Transfer::Private
 {
 public:
 	Transfer::TransferType type;
@@ -33,21 +33,8 @@ Transfer::Transfer(const TransferType &type)
 }
 
 Transfer::~Transfer()
-{}
-
-Transfer::Transfer(const Transfer &copy)
- : d(copy.d)
-{}
-
-Transfer &Transfer::operator=(const Transfer &other)
 {
-	d = other.d;
-	return *this;
-}
-
-Transfer::operator bool()
-{
-	return !d->command.isEmpty() && !d->arguments.empty();
+	delete d;
 }
 
 Transfer::TransferType Transfer::type() const

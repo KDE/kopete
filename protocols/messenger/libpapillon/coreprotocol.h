@@ -56,13 +56,13 @@ public:
 	/**
 	 * @return the incoming transfer or 0 if none is available.
 	 */
-	Transfer incomingTransfer();
+	Transfer *incomingTransfer();
 
 	/**
 	 * Convert a request into an outgoing transfer
 	 * emits @ref outgoingData() with each part of the transfer
 	 */
-	void outgoingTransfer(const Transfer &outgoing);
+	void outgoingTransfer(Transfer *outgoing);
 
 	/**
 	 * Get the state of the protocol

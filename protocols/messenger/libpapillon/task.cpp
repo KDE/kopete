@@ -39,7 +39,7 @@ public:
 	//Connection *client;
 	bool insignificant, deleteme, autoDelete;
 	bool done;
-	Transfer transfer;
+	Transfer *transfer;
 };
 
 Task::Task(Task *parent)
@@ -72,7 +72,7 @@ void Task::init()
 	d->autoDelete = false;
 	d->done = false;
 	d->id = 0;
-	d->transfer = Transfer();
+	d->transfer = 0;
 }
 
 Task *Task::parent() const
@@ -85,12 +85,12 @@ Task *Task::parent() const
 // 	return d->client;
 // }
 
-Transfer &Task::transfer() const
+Transfer *Task::transfer() const
 {
 	return d->transfer;
 }
 
-void Task::setTransfer(const Transfer &transfer)
+void Task::setTransfer(Transfer *transfer)
 {
 	d->transfer = transfer;
 }
@@ -122,7 +122,7 @@ void Task::go(bool autoDelete)
 	onGo();
 }
 
-bool Task::take(const Transfer &transfer)
+bool Task::take(Transfer *transfer)
 {
 	const QObjectList &childTaskList = children();
 
@@ -170,7 +170,7 @@ void Task::onDisconnect()
 	}
 }
 
-void Task::send(const Transfer &request)
+void Task::send(Transfer *request)
 {
 	//client()->send( request );
 }
@@ -226,7 +226,7 @@ void Task::debug(const QString &str)
 	//client()->debug(QString("%1: ").arg(className()) + str);
 }
 
-bool Task::forMe(const Transfer &transfer) const
+bool Task::forMe(Transfer *transfer) const
 {
 	Q_UNUSED( transfer );
 	return false;
