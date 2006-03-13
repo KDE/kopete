@@ -12,9 +12,6 @@
             <height>457</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>KopeteMetaLVIPropsWidget</string>
-    </property>
     <property name="toolTip" stdset="0">
         <string></string>
     </property>
@@ -109,9 +106,6 @@
                                         </property>
                                         <property name="text">
                                             <string>&amp;Import Contacts</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+I</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Import contacts from the KDE Address Book</string>
