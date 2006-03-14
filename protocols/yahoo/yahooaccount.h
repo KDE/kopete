@@ -133,7 +133,7 @@ public slots:
 	virtual void disconnect();
 
 	/** Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus&, const QString &reason = QString::null);
+	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage());
 	void setStatusMessage(const Kopete::StatusMessage&);
 signals:
 	/**

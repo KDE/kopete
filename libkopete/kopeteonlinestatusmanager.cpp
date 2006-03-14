@@ -416,7 +416,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 			if(options & OnlineStatusManager::HasStatusMessage)
 			{
 				action = new AwayAction( status, caption, status.iconFor(account), 0, account,
-						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) ),
+						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage& ) ),
 						0l, actionName );
 			}
 			else

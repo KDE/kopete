@@ -32,7 +32,6 @@
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
-#include "kopetestatusmessage.h"
 
 #include "client.h"
 #include "icquserinfo.h"
@@ -345,7 +344,7 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString 
 }
 
 
-void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
+void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
 	{
@@ -364,7 +363,7 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QStr
 	}
 	else
 	{
-		setPresenceType( ICQ::Presence::fromOnlineStatus( status ).type(), reason );
+		setPresenceType( ICQ::Presence::fromOnlineStatus( status ).type(), reason.message() );
 	}
 }
 

@@ -57,7 +57,6 @@
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "contactaddednotifydialog.h"
-#include "kopetestatusmessage.h"
 
 #include "jabberconnector.h"
 #include "jabberclient.h"
@@ -623,9 +622,9 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 }
 
-void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
+void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
-	XMPP::Status xmppStatus = m_protocol->kosToStatus( status, reason);
+	XMPP::Status xmppStatus = m_protocol->kosToStatus( status, reason.message() );
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{

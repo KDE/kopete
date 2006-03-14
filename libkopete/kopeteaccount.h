@@ -20,6 +20,7 @@
 #define KOPETEACCOUNT_H
 
 #include "kopeteonlinestatus.h"
+#include "kopetestatusmessage.h"
 
 #include "kopete_export.h"
 
@@ -473,7 +474,7 @@ public slots:
 	 * @param reason is the status message to set.
 	 * @note If needed, you need to connect.  if the offline status is given, you should disconnect
 	 */
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null ) = 0;
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() ) = 0;
 	/**
 	 * Reimplement this function to set the status message(with metadata).
 	 * You should use this method to set the status message instead of using setOnlineStatus.

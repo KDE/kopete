@@ -35,7 +35,6 @@
 #include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
-#include "kopetestatusmessage.h"
 
 #include <kpassworddialog.h>
 #include <kconfig.h>
@@ -352,10 +351,10 @@ GaduAccount::disconnect( DisconnectReason reason )
 }
 
 void
-GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason )
+GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason )
 {
 	kDebug(14100) << k_funcinfo << "Called" << endl;
-	changeStatus( status, reason);
+	changeStatus( status, reason.message() );
 }
 
 void

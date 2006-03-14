@@ -92,7 +92,7 @@ public slots:
 	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
 
 	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString());
+	void setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason = Kopete::StatusMessage());
 	void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 
 protected:

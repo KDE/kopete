@@ -52,7 +52,6 @@
 #include <kopetecontactlist.h>
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
-#include <kopetestatusmessage.h>
 #include <contactaddednotifydialog.h>
 
 // Yahoo
@@ -1623,14 +1622,14 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 	kc->webcamPaused();
 }
 
-void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
+void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason)
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && 
 	     status.status() != Kopete::OnlineStatus::Offline )
 	{
-		if( !reason.isEmpty() )
-			m_session->setStatusMessageOnConnect( reason );
+		if( !reason.message().isEmpty() )
+			m_session->setStatusMessageOnConnect( reason.message() );
 		connect( status );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
@@ -1639,18 +1638,18 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 		disconnect();
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
-	          status.internalStatus() == 2 && !reason.isEmpty())
+	          status.internalStatus() == 2 && !reason.message().isEmpty())
 	{
-		slotGoStatus( 99, reason );
+		slotGoStatus( 99, reason.message() );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
-	          status.internalStatus() == 99 && reason.isEmpty())
+	          status.internalStatus() == 99 && reason.message().isEmpty())
 	{
-		slotGoStatus( 2, reason );
+		slotGoStatus( 2, reason.message() );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline )
 	{
-		slotGoStatus( status.internalStatus(), reason );
+		slotGoStatus( status.internalStatus(), reason.message() );
 	}
 }
 

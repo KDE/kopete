@@ -81,7 +81,7 @@ public:
 public slots:
 
 	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage());
 	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 	/**
 	 * the account has been unregistered.

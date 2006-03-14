@@ -34,7 +34,6 @@
 #include "kopeteprotocol.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
-#include "kopetestatusmessage.h"
 #include <kopeteuiglobal.h>
 
 #include "aimprotocol.h"
@@ -363,13 +362,13 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 	}
 }
 
-void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
+void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
-	kDebug(14152) << k_funcinfo << "called with reason = " << reason <<" status = "<< status.status() << endl;;
+	kDebug(14152) << k_funcinfo << "called with reason = " << reason.message() <<" status = "<< status.status() << endl;;
 	if ( status.status() == Kopete::OnlineStatus::Online )
 		setAway( false );
 	if ( status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, reason );
+		setAway( true, reason.message() );
 }
 
 void AIMAccount::setStatusMessage( const Kopete::StatusMessage& statusMessage )

@@ -58,7 +58,7 @@ public:
 	virtual KActionMenu* actionMenu();
 
 	/** Reimplementation from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& );
+	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	void setStatusMessage( const Kopete::StatusMessage& );
 
 	virtual void setAway( bool away, const QString &awayReason );

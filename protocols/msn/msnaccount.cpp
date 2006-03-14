@@ -48,7 +48,6 @@
 #include "kopeteglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "contactaddednotifydialog.h"
-#include "kopetestatusmessage.h"
 
 #include "sha1.h"
 
@@ -284,14 +283,14 @@ MSNNotifySocket *MSNAccount::notifySocket()
 }
 
 
-void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason)
+void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason)
 {
 	if(status.status()== Kopete::OnlineStatus::Offline)
 		disconnect();
 	else if ( m_notifySocket )
 	{
 		m_notifySocket->setStatus( status );
-		setPersonalMessage( Kopete::StatusMessage(reason) );
+		setPersonalMessage( reason );
 	}
 	else
 	{

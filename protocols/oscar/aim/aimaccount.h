@@ -102,7 +102,7 @@ public:
 
 public slots:
 	/** Reimplementation from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );
+	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	void slotEditInfo();
 	void slotGoOnline();

@@ -28,6 +28,7 @@ namespace Kopete
 {
 
 class OnlineStatus;
+class StatusMessage;
 
 /**
  * @class Kopete::AwayAction
@@ -75,7 +76,7 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 /**
 		  * same as above, but with the saved status
 		  */
-		void awayMessageSelected( const Kopete::OnlineStatus& , const QString & );
+		void awayMessageSelected( const Kopete::OnlineStatus& , const Kopete::StatusMessage & );
 
 	private slots:
 		void slotAwayChanged();

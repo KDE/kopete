@@ -23,6 +23,7 @@
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
 #include "kopeteonlinestatus.h"
+#include "kopetestatusmessage.h"
 
 
 namespace Kopete {
@@ -59,7 +60,7 @@ AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const Q
 	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 					  this, SLOT( slotAwayChanged() ) );
 
-	QObject::connect( this, SIGNAL( awayMessageSelected( const Kopete::OnlineStatus &, const QString & ) ),
+	QObject::connect( this, SIGNAL( awayMessageSelected( const Kopete::OnlineStatus &, const Kopete::StatusMessage & ) ),
 					  receiver, slot );
 
 	QObject::connect( this, SIGNAL( activated( int ) ),
@@ -125,7 +126,7 @@ void AwayAction::slotSelectAway( int index )
 	}
 
 	emit awayMessageSelected( awayReason ) ;
-	emit awayMessageSelected( d->status, awayReason );
+	emit awayMessageSelected( d->status, Kopete::StatusMessage(awayReason) );
 }
 
 } //END namespace Kopete

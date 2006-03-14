@@ -46,7 +46,7 @@ public slots:
 	virtual void connectWithPassword(const QString &password);
 	virtual void disconnect();
 	
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage());
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 	
 protected:

@@ -58,7 +58,7 @@ public:
 	/**
 	 * Called when Kopete status is changed globally
 	 */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 	/**
 	 * 'Connect' to the testbed server.  Only sets myself() online.

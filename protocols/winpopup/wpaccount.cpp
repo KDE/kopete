@@ -29,7 +29,6 @@
 #include <kconfig.h>
 
 // Kopete Includes
-#include "kopetestatusmessage.h"
 
 // Local Includes
 #include "wpaccount.h"
@@ -190,14 +189,14 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 	mProtocol->sendMessage(Body, Destination);
 }
 
-void WPAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const QString &reason)
+void WPAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason)
 {
 	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online)
 		connect( status );
 	else if (myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline)
 		disconnect();
 	else if (myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away)
-		setAway( true, reason );
+		setAway( true, reason.message() );
 }
 
 void WPAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
