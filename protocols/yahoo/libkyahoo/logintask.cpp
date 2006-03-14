@@ -188,12 +188,10 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 		case 0:
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version pre 0x0b "<< version_s << endl;	
 		break;
-		case 1:
+		default:
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version 0x0b "<< version_s << endl;
 		sendAuthResp_0x0b(sn, seed, sessionID);
 		break;
-		default:
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Unknown quth version " << endl;
 	}	
 	mState = SentAuthResp;
 
