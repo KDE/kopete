@@ -5,7 +5,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES kopete-pluginloader.upd kopete-account-kconf_update.upd  	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd  	kopete-jabberpriorityaddition-kconf_update.upd kopete-nameTracking.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kopete-pluginloader.upd kopete-account-kconf_update.upd  	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd  	kopete-jabberpriorityaddition-kconf_update.upd kopete-nameTracking.upd )
 
 kde4_footer()
 

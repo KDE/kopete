@@ -1,6 +1,6 @@
 kde4_header()
 
-add_subdirectory( msn ) 
+#add_subdirectory( msn ) 
 add_subdirectory( oscar ) 
 add_subdirectory( yahoo ) 
 add_subdirectory( winpopup ) 
@@ -9,6 +9,7 @@ add_subdirectory( messenger )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(TESTBED)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(GADU)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JABBER)")
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: readd msn")
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
