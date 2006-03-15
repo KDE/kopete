@@ -160,7 +160,8 @@ void Task::onGo()
 
 void Task::onDisconnect()
 {
-	if(!d->done) {
+	if(!d->done) 
+	{
 		d->success = false;
 		d->statusCode = ErrDisc;
 		d->statusString = tr("Disconnected");
@@ -177,7 +178,8 @@ void Task::send(Transfer *request)
 
 void Task::setSuccess(int code, const QString &str)
 {
-	if(!d->done) {
+	if(!d->done) 
+	{
 		d->success = true;
 		d->statusCode = code;
 		d->statusString = str;
@@ -187,7 +189,8 @@ void Task::setSuccess(int code, const QString &str)
 
 void Task::setError(int code, const QString &str)
 {
-	if(!d->done) {
+	if(!d->done) 
+	{
 		d->success = false;
 		d->statusCode = code;
 		d->statusString = str;

@@ -55,7 +55,6 @@ void Connection_Test::connectToServer()
 {
 	d->stream->connectToServer("messenger.hotmail.com", 1863);
 	connect(d->stream, SIGNAL(connected()), this, SLOT(slotConnected()));
-	//connect(d->stream, SIGNAL(connectionClosed()), this, SLOT(slotExit()));
 }
 
 void Connection_Test::slotConnected()

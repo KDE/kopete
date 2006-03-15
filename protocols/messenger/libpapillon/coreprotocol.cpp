@@ -26,7 +26,6 @@
 // Papillon includes
 #include "transfer.h"
 
-
 namespace Papillon
 {
 
@@ -63,8 +62,6 @@ int CoreProtocol::state()
 
 void CoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 {
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received " << incomingBytes.count() << " bytes. " << endl;
-	
 	// store locally
 	int oldsize = d->in.size();
 	d->in.resize( oldsize + incomingBytes.size() );
@@ -78,30 +75,20 @@ void CoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 	while ( d->in.size() && ( parsedBytes = rawToTransfer( d->in ) ) )
 	{
 		transferCount++;
-		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "parsed transfer #" << transferCount << " in chunk" << endl;
 		int size =  d->in.size();
 		if ( parsedBytes < size )
 		{
-			//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "more data in chunk!" << endl;
 			// copy the unparsed bytes into a new qbytearray and replace d->in with that
 			QByteArray remainder( size - parsedBytes );
 			memcpy( remainder.data(), d->in.data() + parsedBytes, remainder.size() );
 			d->in = remainder;
 		}
 		else
+		{
 			d->in.truncate( 0 );
+		}
 	}
 
-	//if ( d->state == NeedMore )
-		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message was incomplete, waiting for more..." << endl;
-
-// 	if ( d->snacProtocol->state() == OutOfSync || d->flapProtocol->state() == OutOfSync )
-// 	{
-// 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "protocol thinks it's out of sync. "
-// 			<< "discarding the rest of the buffer and hoping the server regains sync soon..." << endl;
-// 		d->in.truncate( 0 );
-// 	}
-// 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done processing chunk" << endl;
 }
 
 Transfer *CoreProtocol::incomingTransfer()
@@ -113,47 +100,21 @@ Transfer *CoreProtocol::incomingTransfer()
 	}
 	else
 	{
-		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we shouldn't be here!" << kBacktrace() << endl;
 		return 0;
 	}
 }
 
-void cp_dump( const QByteArray &bytes )
-{
-// #ifdef OSCAR_COREPROTOCOL_DEBUG
-// 	kDebug(OSCAR_RAW_DEBUG) << "contains: " << bytes.count() << " bytes" << endl;
-// 	for ( uint i = 0; i < bytes.count(); ++i )
-// 	{
-// 		printf( "%02x ", bytes[ i ] );
-// 	}
-// 	printf( "\n" );
-// #else
-	Q_UNUSED( bytes );
-// #endif
-}
-
 void CoreProtocol::outgoingTransfer(Transfer *outgoing)
 {
-	//kDebug(OSCAR_RAW_DEBUG) << "CoreProtocol::outgoingTransfer()" << endl;
-	// Convert the outgoing data into wire format
-	// pretty leet, eh?
 	emit outgoingData( outgoing->toRawCommand() );
-
-	return;
 }
 
 int CoreProtocol::rawToTransfer(const QByteArray &raw)
 {
-	// processing incoming data and reassembling it into transfers
-
 	uint bytesParsed = 0;
 
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire) << endl;
 	if ( raw.size() < 4 )
 	{
-// 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
-// 				<< "packet not long enough! couldn't parse FLAP!" << endl;
-// 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << wire.size() << endl;
 		d->state = NeedMore;
 		return bytesParsed;
 	}	
@@ -254,17 +215,11 @@ void CoreProtocol::reset()
 	d->in.resize( 0 );
 }
 
-void CoreProtocol::slotOutgoingData(const QByteArray &out)
-{
-	//kDebug(OSCAR_RAW_DEBUG) << out.data() << endl;
-}
-
 bool CoreProtocol::okToProceed(const QDataStream &din)
 {
 	if( din.atEnd() )
 	{
 		d->state = NeedMore;
-		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Server message ended prematurely!" << endl;
 		return false;
 	}
 	else
@@ -273,7 +228,7 @@ bool CoreProtocol::okToProceed(const QDataStream &din)
 
 bool CoreProtocol::isPayloadCommand(const QString &command)
 {
-	if( command == QLatin1String("ADL") || 
+	if( command == QLatin1String("ADL") ||
 	    command == QLatin1String("MSG") ||
 	    command == QLatin1String("QRY") ||
 	    command == QLatin1String("RML") ||

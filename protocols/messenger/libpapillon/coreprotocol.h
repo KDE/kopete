@@ -60,7 +60,7 @@ public:
 
 	/**
 	 * Convert a request into an outgoing transfer
-	 * emits @ref outgoingData() with each part of the transfer
+	 * emits @ref outgoingData() with the raw transfer.
 	 */
 	void outgoingTransfer(Transfer *outgoing);
 
@@ -79,11 +79,6 @@ signals:
 	 * Emitted when there is incoming data, parsed into a Transfer
 	 */
 	void incomingData();
-protected slots:
-	/**
-	 * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
-	 */
-	void slotOutgoingData(const QByteArray &);
 
 protected:
 	/**
