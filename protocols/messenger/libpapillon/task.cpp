@@ -23,6 +23,7 @@
 #include "transfer.h"
 #include "safedelete.h"
 #include "task.h"
+#include "connection.h"
 
 namespace Papillon
 {
@@ -36,7 +37,7 @@ public:
 	bool success;
 	int statusCode;
 	QString statusString;
-	//Connection *client;
+	Connection *client;
 	bool insignificant, deleteme, autoDelete;
 	bool done;
 	Transfer *transfer;
@@ -46,17 +47,17 @@ Task::Task(Task *parent)
 :QObject(parent)
 {
 	init();
-	//	d->client = parent->client();
-	//	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
+	d->client = parent->client();
+	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
 }
 
-// Task::Task(Connection* parent, bool)
-// :QObject(0)
-// {
-// 	init();
-// 	d->client = parent;
-// 	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
-// }
+Task::Task(Connection* parent, bool)
+:QObject(0)
+{
+	init();
+	d->client = parent;
+	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
+}
 
 Task::~Task()
 {
@@ -80,10 +81,10 @@ Task *Task::parent() const
 	return (Task *)QObject::parent();
 }
 
-// Connection *Task::client() const
-// {
-// 	return d->client;
-// }
+Connection *Task::client() const
+{
+	return d->client;
+}
 
 Transfer *Task::transfer() const
 {
@@ -173,7 +174,7 @@ void Task::onDisconnect()
 
 void Task::send(Transfer *request)
 {
-	//client()->send( request );
+	client()->send( request );
 }
 
 void Task::setSuccess(int code, const QString &str)

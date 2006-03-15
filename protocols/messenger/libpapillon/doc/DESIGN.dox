@@ -19,13 +19,32 @@ type enum flags(can be OR'ed):
 Encapsulate MIME header from messages or HTTP request into a key/value system.
 Call static method MimeHeader::parse(const QString &data) to generate a MimeHeader class.
 
--Papillon::Tasks::Login class
-
 -Papillon::Message class
 Include a Papillon::MimeHeader
 Return a QByteArray for be sent as payload data.
 
 -Papillon::SlpMessage(inherits Papillon::Message)
 Special Message classes for SLP message type (P2P).
+
+-Papillon::ClientStream
+Dispatch new transfer from/in the Socket.
+
+-Papillon::SecureStream
+Secure stream on SSL/TLS using QCA::TLS. Useful for login progress and contact list webservice.
+
+-Papillon::Connection
+hold transaction ID count, root task and such.
+
+-Papillon::NotificationConnection
+Main connection to MSN server. Handle login, dispatch of Switchboard connection and such.
+
+-Papillon::SwitchboardConnection
+a switchboard connection/session.
+
+-Papillon::SwitchboardPool
+Manager switchboards connections
+
+-Papillon::ContactListManager
+Manage contact list.
 
 */

@@ -29,6 +29,7 @@ namespace Papillon
 {
 
 class Transfer;
+class Connection;
 /**
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  * @author Matt Rogers  <mattr@kde.org>
@@ -41,11 +42,11 @@ class PAPILLON_EXPORT Task : public QObject
 public:
 	enum { ErrDisc };
 	Task(Task *parent);
-//	Task(Connection*, bool isRoot);
+	Task(Connection*, bool isRoot);
 	virtual ~Task();
 
 	Task *parent() const;
-//	Connection* client() const;
+	Connection* client() const;
 	Transfer *transfer() const;
 
 	quint32 id() const;
@@ -79,7 +80,6 @@ protected:
 	void send(Transfer *request);
 	void setSuccess(int code=0, const QString &str = QLatin1String(""));
 	void setError(int code=0, const QString &str = QLatin1String(""));
-// 	void debug( const char *, ... );
 	void debug(const QString &);
 
 	/**
