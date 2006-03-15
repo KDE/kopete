@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "notificationstream.h"
+#include "papillonclientstream.h"
 
 // Qt includes
 #include <QQueue>
@@ -28,7 +28,7 @@
 namespace Papillon 
 {
 
-class NotificationStream::Private
+class ClientStream::Private
 {
 public:
 	Private()
@@ -42,7 +42,7 @@ public:
 	QQueue<Transfer*> transferQueue;
 };
 
-NotificationStream::NotificationStream(Connector *connector, QObject *parent)
+ClientStream::ClientStream(Connector *connector, QObject *parent)
  : Stream(parent), d(new Private)
 {
 	d->connector = connector;
@@ -52,25 +52,23 @@ NotificationStream::NotificationStream(Connector *connector, QObject *parent)
 }
 
 
-NotificationStream::~NotificationStream()
+ClientStream::~ClientStream()
 {
 	delete d;
 }
 
 
-void NotificationStream::connectToServer(const QString &server, quint16 port)
+void ClientStream::connectToServer(const QString &server, quint16 port)
 {
 	d->connector->connectToServer(server, port);
 }
 
-void NotificationStream::slotConnectorConnected()
+void ClientStream::slotConnectorConnected()
 {
 	d->byteStream = d->connector->stream();
 	connect(d->byteStream, SIGNAL(connectionClosed()), SLOT(slotByteStreamConnectionClosed()));
-	//connect(d->byteStream, SIGNAL(delayedCloseFinished()), SLOT(bs_delayedCloseFinished()));
 	connect(d->byteStream, SIGNAL(readyRead()), SLOT(slotByteStreamReadyRead()));
 	connect(d->byteStream, SIGNAL(bytesWritten(int)), SLOT(slotByteStreamBytesWritten(int)));
-	//connect(d->byteStream, SIGNAL(error(int)), SLOT(bs_error(int)));
 
 	QByteArray spare = d->byteStream->read();
 
@@ -81,7 +79,7 @@ void NotificationStream::slotConnectorConnected()
 		return;
 }
 
-void NotificationStream::reset(bool all)
+void ClientStream::reset(bool all)
 {
 	// reset connector
 	if(d->byteStream) 
@@ -98,7 +96,7 @@ void NotificationStream::reset(bool all)
 		d->transferQueue.clear();
 }
 
-void NotificationStream::slotProtocolIncomingData()
+void ClientStream::slotProtocolIncomingData()
 {
 	Transfer * incoming = d->protocol.incomingTransfer();
 	if( incoming )
@@ -108,17 +106,17 @@ void NotificationStream::slotProtocolIncomingData()
 	}
 }
 
-void NotificationStream::slotProtocolOutgoingData(const QByteArray &data)
+void ClientStream::slotProtocolOutgoingData(const QByteArray &data)
 {
 	d->byteStream->write(data);
 }
 
-void NotificationStream::slotByteStreamConnectionClosed()
+void ClientStream::slotByteStreamConnectionClosed()
 {
 	emit connectionClosed();
 }
 
-void NotificationStream::slotByteStreamReadyRead()
+void ClientStream::slotByteStreamReadyRead()
 {
 	QByteArray a;
 	a = d->byteStream->read();
@@ -126,33 +124,33 @@ void NotificationStream::slotByteStreamReadyRead()
 	d->protocol.addIncomingData(a);
 }
 
-void NotificationStream::slotByteStreamBytesWritten(int bytes)
+void ClientStream::slotByteStreamBytesWritten(int bytes)
 {
 	
 }
 
-void NotificationStream::close()
+void ClientStream::close()
 {
 	d->connector->done();
 }
 
-int NotificationStream::errorCondition() const
+int ClientStream::errorCondition() const
 {
 	return 0;
 }
 
-QString NotificationStream::errorText() const
+QString ClientStream::errorText() const
 {
 	return QString();
 }
 
 
-bool NotificationStream::transfersAvailable() const
+bool ClientStream::transfersAvailable() const
 {
 	return !d->transferQueue.isEmpty();
 }
 
-Transfer *NotificationStream::read()
+Transfer *ClientStream::read()
 {
 	if( d->transferQueue.isEmpty() )
 		return 0;
@@ -160,13 +158,13 @@ Transfer *NotificationStream::read()
 		return d->transferQueue.dequeue();
 }
 
-void NotificationStream::write(Transfer *transfer)
+void ClientStream::write(Transfer *transfer)
 {
-	qDebug() << "NotificationStream::write():" << "Sending:" << transfer->toString().replace("\r\n", "");
+	qDebug() << "ClientStream::write():" << "Sending:" << transfer->toString().replace("\r\n", "");
 
 	d->protocol.outgoingTransfer(transfer);
 }
 
 }
 
-#include "notificationstream.moc"
+#include "papillonclientstream.moc"

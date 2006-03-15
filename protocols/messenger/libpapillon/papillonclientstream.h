@@ -18,7 +18,7 @@
 #include <stream.h>
 #include <papillon_macros.h>
 
-namespace Papillon 
+namespace Papillon
 {
 
 class Connector;
@@ -29,12 +29,12 @@ class Transfer;
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
-class PAPILLON_EXPORT NotificationStream : public Stream
+class PAPILLON_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:
-	NotificationStream(Connector *connector, QObject *parent = 0);
-	~NotificationStream();
+	ClientStream(Connector *connector, QObject *parent = 0);
+	~ClientStream();
 
 	void connectToServer(const QString &server, quint16 port);
 
@@ -59,7 +59,6 @@ private slots:
 	void slotProtocolIncomingData();
 
 	void slotByteStreamConnectionClosed();
-	//void slotByteStreamDelayedClose();
 	void slotByteStreamReadyRead();
 	void slotByteStreamBytesWritten(int bytes);
 

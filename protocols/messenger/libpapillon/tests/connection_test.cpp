@@ -19,11 +19,11 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "notificationstream.h"
+#include "papillonclientstream.h"
 #include "qtconnector.h"
 #include "transfer.h"
 
-#define PASSPORT_ID ""
+#define PASSPORT_ID "klj345sdas765d@passport.com"
 
 using namespace Papillon;
 
@@ -33,7 +33,7 @@ public:
 	Private()
 	 : stream(0), qtConnector(0), trId(0)
 	{}
-	NotificationStream *stream;
+	ClientStream *stream;
 	QtConnector *qtConnector;
 
 	int trId;
@@ -43,7 +43,7 @@ Connection_Test::Connection_Test(QObject *parent)
  : QObject(parent), d(new Private)
 {
 	d->qtConnector = new QtConnector(this);
-	d->stream = new NotificationStream(d->qtConnector, this);
+	d->stream = new ClientStream(d->qtConnector, this);
 }
 
 Connection_Test::~Connection_Test()
@@ -120,7 +120,7 @@ void Connection_Test::slotReadTransfer()
 	Transfer *readTransfer = d->stream->read();
 	if(readTransfer)
 	{
-		qDebug() << "Data received: " << readTransfer->toString();
+		qDebug() << "Data received: " << readTransfer->toString().replace("\r\n", "");
 		if(readTransfer->command() == QLatin1String("VER"))
 		{
 			loginProcessCvr();
