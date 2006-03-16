@@ -107,6 +107,8 @@ Transfer *CoreProtocol::incomingTransfer()
 void CoreProtocol::outgoingTransfer(Transfer *outgoing)
 {
 	emit outgoingData( outgoing->toRawCommand() );
+	// Clear the transfer.
+	delete outgoing;
 }
 
 int CoreProtocol::rawToTransfer(const QByteArray &raw)
@@ -130,7 +132,7 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			QTextStream lineStream(tempRaw);
 			
 			QString parsedLine = lineStream.readLine();
-			qDebug() << "CoreProtocol::rawToTransfer()" << parsedLine;
+			qDebug() << PAPILLON_FUNCINFO << parsedLine;
 			
 			QStringList commandList = parsedLine.split(" ");
 			

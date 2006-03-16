@@ -160,7 +160,7 @@ Transfer *ClientStream::read()
 
 void ClientStream::write(Transfer *transfer)
 {
-	qDebug() << "ClientStream::write():" << "Sending:" << transfer->toString().replace("\r\n", "");
+	qDebug() << PAPILLON_FUNCINFO << "Sending:" << transfer->toString().replace("\r\n", "");
 
 	d->protocol.outgoingTransfer(transfer);
 }
