@@ -67,7 +67,9 @@ void CreateContactInstanceTask::contact( Field::SingleField * id, const QString 
 	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
 	// this is either a user Id or a DN
 	lst.append( id );
-	if ( !displayName.isEmpty() )
+	if ( displayName.isEmpty() ) // fallback so that the contact is created
+		lst.append( new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_dn ) );
+	else
 		lst.append( new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, displayName ) );
 	createTransfer( "createcontact", lst );
 }
