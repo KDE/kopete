@@ -41,6 +41,19 @@
   PAPILLON_MAKE_VERSION(PAPILLON_VERSION_MAJOR,PAPILLON_VERSION_MINOR,PAPILLON_VERSION_RELEASE)
 
 /**
+ * @brief PAPILLON_FUNCINFO macro
+ * An indicator of where you are in a source file, to be used in
+ * warnings (perhaps debug messages too).
+ *
+ * Extra pretty with GNU C.
+ */
+#ifdef __GNUC__
+#define PAPILLON_FUNCINFO "[" << __PRETTY_FUNCTION__ << "]"
+#else
+#define PAPILLON_FUNCINFO "[" << __FILE__ << ":" << __LINE__ << "]"
+#endif
+
+/**
  * @brief PAPILLON_IS_VERSION(major,minor,revision) macro
  * Simple test for current version of libpapillon.
  */
