@@ -112,25 +112,16 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 		client()->debug( " - addedContact is not the one we were trying to add, ignoring it ( Account will update it )" );
 		return;
 	}
-/*	QValueList<FolderItem>::Iterator it = m_folders.begin();
-	const QValueList<FolderItem>::Iterator end = m_folders.end();
-	while ( it != end )
-	{
-		QValueList<FolderItem>::Iterator current = it;
-		++it;
-		if ( (*current).id == addedContact.parentId )
-		{*/
-			client()->debug( QString( "CreateContactTask::slotContactAdded() - Contact Instance %1 was created on the server, with objectId %2 in folder %3" ).arg
-					( addedContact.displayName ).arg( addedContact.id ).arg( addedContact.parentId ) );
+	client()->debug( QString( "CreateContactTask::slotContactAdded() - Contact Instance %1 was created on the server, with objectId %2 in folder %3" ).arg
+			( addedContact.displayName ).arg( addedContact.id ).arg( addedContact.parentId ) );
 			
-			if ( m_dn.isEmpty() )
-				m_dn = addedContact.dn;
-				
-			m_folders.remove( /*current*/m_folders.begin() );
-/*			break;
-		}
-	}*/
-	
+	if ( m_dn.isEmpty() )
+		m_dn = addedContact.dn;
+			
+			
+	if ( !m_folders.isEmpty() )
+		m_folders.pop_back();
+
 	// clear the topLevel flag once the corresponding server side entry has been successfully created
 	if ( addedContact.parentId == 0 )
 		m_topLevel = false;

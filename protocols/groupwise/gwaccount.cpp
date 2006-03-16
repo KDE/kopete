@@ -1112,8 +1112,15 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	//
 	// Since ToMetaContact expects synchronous contact creation
 	// we have to create the contact optimistically.
-	new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
+	GroupWiseContact * gc = new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
+	ContactDetails dt = client()->userDetailsManager()->details( contactId );
+	QString displayAs;
+	if ( dt.fullName.isEmpty() )
+		displayAs = dt.givenName + " " + dt.surname;
+	else
+		displayAs = dt.fullName;
 
+	gc->setNickName( displayAs );
 	// If the CreateContactTask finishes with an error, we have to
 	// delete the contact we just created, in receiveContactCreated :/
 
@@ -1124,9 +1131,8 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	}
 	
 	// get the contact's full name to use as the display name of the created contact
-	ContactDetails dt = client()->userDetailsManager()->details( contactId );
 	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
-	cct->contactFromUserId( contactId, dt.fullName, highestFreeSequence, folders, topLevel );
+	cct->contactFromUserId( contactId, parentContact->displayName(), highestFreeSequence, folders, topLevel );
 	QObject::connect( cct, SIGNAL( finished() ), SLOT( receiveContactCreated() ) );
 	cct->go( true );
 	return true;
