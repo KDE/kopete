@@ -14,6 +14,9 @@
 */
 #include "connection.h"
 
+// Qt includes
+#include <QtDebug>
+
 // Papillon includes
 #include "task.h"
 #include "papillonclientstream.h"
@@ -30,11 +33,18 @@ public:
 	   isConnected(false)
 	{}
 
+	~Private()
+	{
+		delete rootTask;
+	}
+
 	Task *rootTask;
 	ClientStream *stream;
 
 	int transactionId;
 	bool isConnected;
+	QString server;
+	int port;
 };
 
 Connection::Connection(ClientStream *stream)
@@ -43,7 +53,9 @@ Connection::Connection(ClientStream *stream)
 	d->rootTask = new Task(this, true);
 	d->stream = stream;
 
-	connect(stream, SIGNAL(readyRead()), this, SLOT(transferReceived()));
+	connect(d->stream, SIGNAL(readyRead()), this, SLOT(transferReceived()));
+	connect(d->stream, SIGNAL(connected()), this, SLOT(slotConnected()));
+	connect(d->stream, SIGNAL(connectionClosed()), this, SLOT(slotDisconnected()));
 }
 
 Connection::~Connection()
@@ -61,6 +73,19 @@ int Connection::transactionId()
 	return ++d->transactionId;
 }
 
+bool Connection::isConnected()
+{
+	return d->isConnected;
+}
+
+void Connection::connectToServer(const QString &server, quint16 port)
+{
+	d->server = server;
+	d->port = port;
+	
+	d->stream->connectToServer(d->server, d->port);
+}
+
 void Connection::send(Transfer *transfer)
 {
 	d->stream->write(transfer);
@@ -68,17 +93,35 @@ void Connection::send(Transfer *transfer)
 
 void Connection::transferReceived()
 {
-	dispatchTransfer( d->stream->read() );
+	Transfer *readTransfer = d->stream->read();
+	if(readTransfer)
+	{
+		dispatchTransfer( d->stream->read() );
+	}
+	else
+	{
+		qDebug() << PAPILLON_FUNCINFO << "Got a null Transfer, investigate.";
+	}
 }
 
 void Connection::dispatchTransfer(Transfer *transfer)
 {
 	if( !d->rootTask->take(transfer) )
 	{
-		// TODO: Emit this error "Root task refused the transfer." and do a Transfer dump here.
+		qDebug() << PAPILLON_FUNCINFO << "Root task refused the transfer." << "Transfer was:" << transfer->toString();
 	}
 	
 	delete transfer;
+}
+
+void Connection::slotConnected()
+{
+	d->isConnected = true;
+}
+
+void Connection::slotDisconnected()
+{
+	d->isConnected = false;
 }
 
 }

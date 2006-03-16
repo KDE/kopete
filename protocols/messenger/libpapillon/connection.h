@@ -16,6 +16,7 @@
 #define PAPILLONCONNECTION_H
 
 #include <QObject>
+#include <papillon_macros.h>
 
 namespace Papillon 
 {
@@ -31,7 +32,7 @@ class Task;
  *
  * @author Michaël Larouche
 */
-class Connection : public QObject
+class PAPILLON_EXPORT Connection : public QObject
 {
 	Q_OBJECT
 public:
@@ -64,6 +65,12 @@ signals:
 
 public slots:
 	/**
+	 * Connect to the given service.
+	 * @param serer Hostname or IP address of the service
+	 * @param port TCP port of the service.
+	 */
+	void connectToServer(const QString &server, quint16 port);
+	/**
 	 * Send a transfer to the current Messenger service.
 	 */
 	void send(Transfer *transfer);
@@ -80,6 +87,17 @@ private slots:
 	 * After, the transfer gets deleted.
 	 */
 	void dispatchTransfer(Transfer *currentTransfer);
+
+	/**
+	 * @internal
+	 * Called when the connection is established to the service(server).
+	 */
+	void slotConnected();
+	/**
+	 * @internal
+	 * Called when the connection gets disconnected (duh)
+	 */
+	void slotDisconnected();
 
 private:
 	class Private;
