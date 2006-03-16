@@ -1,5 +1,5 @@
 /*
-   connection_test.cpp - Test for the connection architecture.
+   connector_test.cpp - Test for the connection architecture.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "connection_test.h"
+#include "connector_test.h"
 
 // Qt includes
 #include <QCoreApplication>
@@ -22,12 +22,13 @@
 #include "papillonclientstream.h"
 #include "qtconnector.h"
 #include "transfer.h"
+#include "papillon_macros.h"
 
 #define PASSPORT_ID "klj345sdas765d@passport.com"
 
 using namespace Papillon;
 
-class Connection_Test::Private
+class Connector_Test::Private
 {
 public:
 	Private()
@@ -39,32 +40,32 @@ public:
 	int trId;
 };
 
-Connection_Test::Connection_Test(QObject *parent)
+Connector_Test::Connector_Test(QObject *parent)
  : QObject(parent), d(new Private)
 {
 	d->qtConnector = new QtConnector(this);
 	d->stream = new ClientStream(d->qtConnector, this);
 }
 
-Connection_Test::~Connection_Test()
+Connector_Test::~Connector_Test()
 {
 	delete d;
 }
 
-void Connection_Test::connectToServer()
+void Connector_Test::connectToServer()
 {
 	d->stream->connectToServer("messenger.hotmail.com", 1863);
 	connect(d->stream, SIGNAL(connected()), this, SLOT(slotConnected()));
 }
 
-void Connection_Test::slotConnected()
+void Connector_Test::slotConnected()
 {
 	connect(d->stream, SIGNAL(readyRead()), this, SLOT(slotReadTransfer()));
 	
 	doLoginProcess();
 }
 
-void Connection_Test::doLoginProcess()
+void Connector_Test::doLoginProcess()
 {
 	Transfer *usrTransfer = new Transfer(Transfer::TransactionTransfer);
 	usrTransfer->setCommand( QLatin1String("VER") );
@@ -76,7 +77,7 @@ void Connection_Test::doLoginProcess()
 	d->stream->write(usrTransfer);
 }
 
-void Connection_Test::loginProcessCvr()
+void Connector_Test::loginProcessCvr()
 {
 	Transfer *cvrTransfer = new Transfer(Transfer::TransactionTransfer);
 	cvrTransfer->setCommand( QLatin1String("CVR") );
@@ -88,7 +89,7 @@ void Connection_Test::loginProcessCvr()
 	d->stream->write(cvrTransfer);
 }
 
-void Connection_Test::loginProcessTwnI()
+void Connector_Test::loginProcessTwnI()
 {
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
@@ -99,7 +100,7 @@ void Connection_Test::loginProcessTwnI()
 	d->stream->write(twnTransfer);
 }
 
-void Connection_Test::loginProcessTwnS()
+void Connector_Test::loginProcessTwnS()
 {
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
@@ -110,17 +111,17 @@ void Connection_Test::loginProcessTwnS()
 	d->stream->write(twnTransfer);
 }
 
-void Connection_Test::slotExit()
+void Connector_Test::slotExit()
 {
 	deleteLater();
 }
 
-void Connection_Test::slotReadTransfer()
+void Connector_Test::slotReadTransfer()
 {
 	Transfer *readTransfer = d->stream->read();
 	if(readTransfer)
 	{
-		qDebug() << "Data received: " << readTransfer->toString().replace("\r\n", "");
+		qDebug() << PAPILLON_FUNCINFO << "Data received: " << readTransfer->toString().replace("\r\n", "");
 		if(readTransfer->command() == QLatin1String("VER"))
 		{
 			loginProcessCvr();
@@ -150,7 +151,7 @@ void Connection_Test::slotReadTransfer()
 		int errorCode = readTransfer->command().toUInt(&isNumber);
 		if(isNumber)
 		{
-			qDebug() << "Received error code" << errorCode << ". Closing...";
+			qDebug() << PAPILLON_FUNCINFO << "Received error code" << errorCode << ". Closing...";
 			d->stream->close();
 			deleteLater();
 			QCoreApplication::exit(0);
@@ -158,7 +159,7 @@ void Connection_Test::slotReadTransfer()
 	}
 	else
 	{
-		qDebug() << "Error in the transfer.";
+		qDebug() << PAPILLON_FUNCINFO << "Error in the transfer.";
 	}
 }
 
@@ -167,10 +168,10 @@ int main(int argc, char **argv)
 {
 	QCoreApplication app(argc, argv);
 
-	Connection_Test *cTest = new Connection_Test();
+	Connector_Test *cTest = new Connector_Test();
 	cTest->connectToServer();
 	
 	return app.exec();
 }
 
-#include "connection_test.moc"
+#include "connector_test.moc"

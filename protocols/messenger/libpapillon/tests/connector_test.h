@@ -1,5 +1,5 @@
 /*
-   connection_test.h - Test for the connection architecture.
+   connector_test.h - Test for the connection architecture.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -12,17 +12,17 @@
    *                                                                       *
    *************************************************************************
 */
-#ifndef CONNECTION_TEST_H
-#define CONNECTION_TEST_H
+#ifndef CONNECTOR_TEST_H
+#define CONNECTOR_TEST_H
 
 #include <QObject>
 
-class Connection_Test : public QObject
+class Connector_Test : public QObject
 {
 	Q_OBJECT
 public:
-	Connection_Test(QObject *parent = 0);
-	~Connection_Test();
+	Connector_Test(QObject *parent = 0);
+	~Connector_Test();
 
 public slots:
 	void connectToServer();
