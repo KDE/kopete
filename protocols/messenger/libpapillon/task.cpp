@@ -33,7 +33,6 @@ class Task::Private
 public:
 	Private() {}
 
-	quint32 id;
 	bool success;
 	int statusCode;
 	QString statusString;
@@ -72,7 +71,6 @@ void Task::init()
 	d->deleteme = false;
 	d->autoDelete = false;
 	d->done = false;
-	d->id = 0;
 	d->transfer = 0;
 }
 
@@ -94,11 +92,6 @@ Transfer *Task::transfer() const
 void Task::setTransfer(Transfer *transfer)
 {
 	d->transfer = transfer;
-}
-
-quint32 Task::id() const
-{
-	return d->id;
 }
 
 bool Task::success() const
@@ -164,7 +157,7 @@ void Task::onDisconnect()
 	if(!d->done) 
 	{
 		d->success = false;
-		d->statusCode = ErrDisc;
+		d->statusCode = ErrorDisconnected;
 		d->statusString = tr("Disconnected");
 
 		// delay this so that tasks that react don't block the shutdown
@@ -211,7 +204,7 @@ void Task::done()
 
 	d->insignificant = true;
 	debug("emitting finished");
-	emit finished();
+	emit finished(this);
 	d->insignificant = false;
 
 	if(d->deleteme)
@@ -234,11 +227,6 @@ bool Task::forMe(Transfer *transfer) const
 {
 	Q_UNUSED( transfer );
 	return false;
-}
-
-void Task::setId( quint32 id )
-{
-	d->id = id;
 }
 
 }

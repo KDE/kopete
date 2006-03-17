@@ -31,6 +31,16 @@ namespace Papillon
 class Transfer;
 class Connection;
 /**
+ * @brief Task is the base class for all Task accros Papillon.
+ *
+ * Derived class must implement these following methods: <br>
+ * take() - Used to listen and proceed incoming Transfer. <br>
+ * onGo() - Called by go(), start the task. <br>
+ * 
+ * Devired class may implement these following methods: <br>
+ * forMe() - Used to check if the incoming Transfer is for us. <br>
+ * onDisconnect() - If you need to do something special when a Connection disconnect. <br>
+ *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  * @author Matt Rogers  <mattr@kde.org>
  * @author SuSE Linux AG <http://www.suse.com>
@@ -40,22 +50,79 @@ class PAPILLON_EXPORT Task : public QObject
 {
 	Q_OBJECT
 public:
-	enum { ErrDisc };
+	/**
+	 * Enum for status code
+	 */
+	enum StatusCode
+	{
+		/**
+		 * Task failed because it was disconnected.
+		 */
+		ErrorDisconnected
+	};
+
+	/**
+	 * Create a new task.
+	 * @param parent root Task for this Task
+	 */
 	Task(Task *parent);
-	Task(Connection*, bool isRoot);
+	/**
+	 * Create a root task
+	 * @param connection Connection pointer for this task
+	 * @param isRoot if the Task is a root one or not.
+	 */
+	Task(Connection *connection, bool isRoot);
+	/**
+	 * Task d-tor.
+	 */
 	virtual ~Task();
 
+	/**
+	 * Return the parent Task.
+	 * @return the parent Task.
+	 */
 	Task *parent() const;
+	/**
+	 * Return a reference to the connection used by this task.
+	 * @return Connection pointer.
+	 */
 	Connection* client() const;
+
+	/**
+	 * Get the current transfer if any.
+	 * Need to be set with setTransfer().
+	 * @return the current Transfer or 0 if this Task do not store any Transfer.
+	 * TODO: Remove ?
+	 */
 	Transfer *transfer() const;
+	/**
+	 * Direct setter for Tasks which don't have any fields
+	 * @param transfer Transfer to set.
+	 * TODO: Remove ?
+	 */
+	void setTransfer(Transfer *transfer);
 
-	quint32 id() const;
-	void setId();
-
+	/**
+	 * Call this the resulting slot of finished() signal.
+	 * Check if the Task was successful or not.
+	 * @return true if the Task was a success.
+	 */
 	bool success() const;
+	/**
+	 * Return the statusCode for this Task.
+	 * @return the status code.
+	 */
 	int statusCode() const;
+	/**
+	 * Get a human readable string of the current status of the Task.
+	 * @return status description.
+	 */
 	const QString &statusString() const;
 
+	/**
+	 * Start the Task.
+	 * @param autoDelete Auto-delete the Task after being complete.
+	 */
 	void go(bool autoDelete = false);
 
 	/**
@@ -63,23 +130,52 @@ public:
 	 * for further processing.
 	 */
 	virtual bool take(Transfer *transfer);
+	/**
+	 * Delete safetely this Task.
+	 */
 	void safeDelete();
 
-	/**
-	 * Direct setter for Tasks which don't have any fields
-	 */
-	void setTransfer(Transfer *transfer);
-
 signals:
-	void finished();
+	/**
+	 * Emmited when the Task has finished.
+	 * Check if the task was succesful with success().
+	 *
+	 * @param task Pointer to the current Task.
+	 */
+	void finished(Papillon::Task *task);
 
 protected:
+	/**
+	 * Derived classes should implement this method.
+	 * Implements "start" of the Task.
+	 */
 	virtual void onGo();
+	/**
+	 * Derived classes should implement this method.
+	 * Called when a disconnection occurs.
+	 */
 	virtual void onDisconnect();
-	void setId( quint32 id );
+
+	/**
+	 * Helper method for derived Task to send a Transfer through the Connection.
+	 */
 	void send(Transfer *request);
+	/**
+	 * Helper method to terminate this Task successfully.
+	 * @param code status code.
+	 * @param str status string
+	 */
 	void setSuccess(int code=0, const QString &str = QLatin1String(""));
+	/**
+	 * Helper method to terminate this Task with an error.
+	 * @param code status code.
+	 * @param str status string.
+	 */
 	void setError(int code=0, const QString &str = QLatin1String(""));
+	/**
+	 * Debug helper.
+	 * TODO: Remove ?
+	 */
 	void debug(const QString &);
 
 	/**
@@ -89,10 +185,21 @@ protected:
 	virtual bool forMe(Transfer *transfer) const;
 
 private slots:
+	/**
+	 * Called when the Connection disconnect.
+	 * Call onDisconnect().
+	 */
 	void clientDisconnected();
+	/**
+	 * Finish this Task.
+	 */
 	void done();
 
 private:
+	/**
+	 * @internal
+	 * Init the private members.
+	 */
 	void init();
 
 	class Private;

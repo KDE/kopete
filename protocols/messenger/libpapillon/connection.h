@@ -36,7 +36,14 @@ class PAPILLON_EXPORT Connection : public QObject
 {
 	Q_OBJECT
 public:
+	/**
+	 * Create a new connection
+	 * @param stream the ClientStream (socket and protocol encapsulation)
+	 */
 	Connection(ClientStream *stream);
+	/**
+	 * d-tor
+	 */
 	~Connection();
 
 	/**

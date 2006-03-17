@@ -101,7 +101,7 @@ bool LoginTask::take(Transfer *transfer)
 						proceeded = true;
 						// TODO: Get the ticket then send the ticket.
 						d->currentState = StateError;
-						setError(0, QString());
+						setError();
 					}
 				}
 				else if( transfer->command() == QLatin1String("XFR") )
@@ -125,7 +125,7 @@ bool LoginTask::take(Transfer *transfer)
 						proceeded = true;
 						d->currentState = StateFinish;
 						// End the login task.
-						setSuccess(0, QString());
+						setSuccess();
 					}
 				}
 				break;

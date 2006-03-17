@@ -29,11 +29,13 @@ class Transfer;
  * @code
  * LoginTask *login = new LoginTask( connection->rootTask() );
  * login->setUserInfo("example@passport.com", "password");
- * connect(login, SIGNAL(finished()), ...);
+ * connect(login, SIGNAL(finished(Papillon::Task*)), ...);
  * connect(login, SIGNAL(redirection(const QString &, quint16)), ...);
  * login->go();
  * @endcode
+ *
  * Use success() to check if the login was successful.
+ *
  * Use loginState() to check for the error if the login wasn't succesful.
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
@@ -84,7 +86,7 @@ public:
 	/**
 	 * d-tor (duh)
 	 */
-	~LoginTask();
+	virtual ~LoginTask();
 
 	/**
 	 * Set the user info to log with.
