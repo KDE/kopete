@@ -45,7 +45,7 @@ set(kopete_msn_shared_LIB_SRCS
    messageformatter.cpp 
    incomingtransfer.cpp 
    outgoingtransfer.cpp 
-   $(WEBCAMCPP) )
+   )
 
 kde4_automoc(${kopete_msn_shared_LIB_SRCS})
 

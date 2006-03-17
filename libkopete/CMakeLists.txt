@@ -2,14 +2,49 @@ kde4_header()
 
 add_subdirectory( private ) 
 add_subdirectory( ui ) 
-add_subdirectory( avdevice ) 
+#TODO Enable avdevice
+#add_subdirectory( avdevice ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui )
 
+#TODO Use a better method.
+if(X11_Xrender_FOUND)
+  include_directories(${X11_Xrender_INCLUDE_PATH})
+  add_definitions(-DHAVE_XRENDER)
+endif(X11_Xrender_FOUND)
 
 ########### next target ###############
 
+set(kopete_private_SRCS 
+  private/kopeteemoticons.cpp 
+  private/kopeteviewmanager.cpp 
+  private/kopeteutils_private.cpp
+)
+
+set(kopete_ui_SRCS 
+  ui/kopetecontactaction.cpp 
+  ui/addcontactpage.cpp 
+  ui/editaccountwidget.cpp 
+  ui/kopetestdaction.cpp 
+  ui/kopetefileconfirmdialog.cpp 
+  ui/kopeteview.cpp 
+  ui/kopetepasswordwidget.cpp 
+  ui/accountselector.cpp 
+  ui/kopeteviewplugin.cpp 
+  ui/addresseeitem.cpp 
+  ui/addressbookselectordialog.cpp 
+  ui/addressbookselectorwidget.cpp  
+  ui/metacontactselectorwidget.cpp 
+  ui/kopetelistview.cpp 
+  ui/kopetelistviewitem.cpp 
+  ui/kopetelistviewsearchline.cpp 
+  ui/contactaddednotifydialog.cpp 
+  ui/addressbooklinkwidget.cpp
+)
+
 set(kopete_LIB_SRCS 
+   ${kopete_private_SRCS} 
+   ${kopete_ui_SRCS} 
    connectionmanager.cpp 
    kopeteonlinestatus.cpp 
    kopeteonlinestatusmanager.cpp 
@@ -53,17 +88,22 @@ set(kopete_LIB_SRCS
    kopetepicture.cpp 
    kopetestatusmessage.cpp )
 
+kde4_add_ui3_files(kopete_LIB_SRCS ui/kopetepassworddialog.ui ui/kopeteawaydialogbase.ui ui/fileconfirmbase.ui ui/kopetepasswordwidgetbase.ui ui/addressbookselectorwidget_base.ui ui/metacontactselectorwidget_base.ui ui/contactaddednotifywidget.ui ui/addressbooklinkwidget_base.ui)
+kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+
 kde4_automoc(${kopete_LIB_SRCS})
 
 kde4_add_dcop_skels(kopete_LIB_SRCS connectionmanager.h )
 
 kde4_add_dcop_stubs(kopete_LIB_SRCS clientiface.h )
 
-kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
-
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete  ${QT_AND_KDECORE_LIBS} kabc kopeteui kio )
+target_link_libraries(kopete ${LIB_KDE3SUPPORT} kabc ${X11_Xss_LIB} )
+
+if(X11_Xrender_FOUND)
+  target_link_libraries(kopete ${X11_Xrender_LIB})
+endif(X11_Xrender_FOUND)
 
 set_target_properties(kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install_targets(${LIB_INSTALL_DIR} kopete )
