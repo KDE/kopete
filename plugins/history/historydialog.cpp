@@ -490,7 +490,7 @@ void HistoryDialog::searchFirstStep()
 
 				QFile file(mLogger->getFileName(*it, mSearch->item->date()));
 				file.open(IO_ReadOnly);
-				if (!&file)
+				if (!file.isOpen())
 				{
 					continue;
 				}
@@ -529,7 +529,7 @@ void HistoryDialog::searchFirstStep()
 			if (mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 				mSearch->item->setVisible(true);
 		}
-		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
+		while((mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling())));
 		mMainWidget->searchButton->setText(i18n("&Search"));
 
 		delete mSearch;
