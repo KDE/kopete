@@ -115,7 +115,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		
 		if ( m_bosHost.isEmpty() )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Empty host address!" << endl;
+			kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Empty host address!" << endl;
 			
 			Oscar::SNAC s = { 0, 0, 0, 0 };
 			client()->fatalTaskError( s, 0 );
