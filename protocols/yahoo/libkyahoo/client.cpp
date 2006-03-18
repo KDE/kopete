@@ -103,6 +103,7 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
+	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
 	QObject::connect( m_pingTimer, SIGNAL( timeout() ), this, SLOT( sendPing() ) );
@@ -172,9 +173,11 @@ void Client::close()
 	if( d->tasksInitialized)
 		deleteTasks();	
 	d->loginTask->reset();
-	d->stream->deleteLater();
+	if( d->stream )
+		d->stream->deleteLater();
 	d->stream = 0L;
-	m_connector->deleteLater();
+	if( m_connector )
+		m_connector->deleteLater();
 	m_connector = 0L;
 }
 
