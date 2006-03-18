@@ -89,7 +89,6 @@ public:
 	SSIAuthTask* ssiAuthTask;
 	ICQUserInfoRequestTask* icqInfoTask;
 	UserInfoTask* userInfoTask;
-	CloseConnectionTask* closeConnectionTask;
 	TypingNotifyTask * typingNotifyTask;
 	//Managers
 	SSIManager* ssiManager;
@@ -132,7 +131,6 @@ Client::Client( QObject* parent )
 	d->ssiAuthTask = 0L;
 	d->icqInfoTask = 0L;
 	d->userInfoTask = 0L;
-	d->closeConnectionTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
@@ -340,7 +338,7 @@ void Client::startStageTwo()
 {
 	//create a new connection and set it up
 	Connection* c = createConnection( d->host, QString::number( d->port ) );
-	d->closeConnectionTask = new CloseConnectionTask( c->rootTask() );
+	new CloseConnectionTask( c->rootTask() );
 
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
@@ -1090,7 +1088,6 @@ void Client::deleteStaticTasks()
 	delete d->ssiAuthTask;
 	delete d->icqInfoTask;
 	delete d->userInfoTask;
-	delete d->closeConnectionTask;
 	delete d->typingNotifyTask;
 
 	d->errorTask = 0;
@@ -1100,7 +1097,6 @@ void Client::deleteStaticTasks()
 	d->ssiAuthTask = 0;
 	d->icqInfoTask = 0;
 	d->userInfoTask = 0;
-	d->closeConnectionTask = 0;
 	d->typingNotifyTask = 0;
 }
 
