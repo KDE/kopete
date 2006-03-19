@@ -96,7 +96,7 @@ bool AimLoginTask::take( Transfer* transfer )
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
 		if (!st)
 			return false;
-		
+
 		WORD subtype = st->snacSubtype();
 		switch ( subtype )
 		{
@@ -116,7 +116,7 @@ bool AimLoginTask::take( Transfer* transfer )
 			return false;
 			break;
 		}
-		
+
 		return false;
 	}
 	return false;
@@ -124,28 +124,33 @@ bool AimLoginTask::take( Transfer* transfer )
 
 void AimLoginTask::sendAuthStringRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
 		<< "SEND CLI_AUTH_REQUEST, sending login request" << endl;
 
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0006, 0x0000, client()->snacSequence() };
-		
+
 	Buffer* outbuf = new Buffer;
 	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().toLatin1() );
 	outbuf->addDWord(0x004B0000); // empty TLV 0x004B
 	outbuf->addDWord(0x005A0000); // empty TLV 0x005A
-	
+
 	Transfer* st = createTransfer( f, s, outbuf );
 	send( st );
 }
 
+QByteArray AimLoginTask::parseAuthString( Buffer* b )
+{
+	WORD keylength = b->getWord();
+	QByteArray authString = b->getBlock( keylength );
+	return authString;
+}
+
+
 void AimLoginTask::processAuthStringReply()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got the authorization key" << endl;
-	Buffer *inbuf = transfer()->buffer();
-	WORD keylen = inbuf->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Key length is " << keylen << endl;
-	m_authKey.duplicate( inbuf->getBlock(keylen) );
+	m_authKey = parseAuthString( transfer()->buffer() );
 	emit haveAuthKey();
 }
 
@@ -249,6 +254,6 @@ void AimLoginTask::encodePassword( QByteArray& digest ) const
 	md5_finish( &state, ( md5_byte_t* ) digest.data() );
 }
 
-//kate: indent-mode csands; tab-width 4;
+//kate: indent-mode csands; tab-width 4; replace-tabs off; indent-spaces off;
 
 #include "aimlogintask.moc"

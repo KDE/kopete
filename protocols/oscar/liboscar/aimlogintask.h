@@ -31,18 +31,21 @@ public:
 	~AimLoginTask();
 	bool take( Transfer* transfer );
 	virtual void onGo();
-	
+
 	//Protocol specific stuff
 	const QByteArray& cookie() const;
 	const QString& bosHost() const;
 	const QString& bosPort() const;
+
+        static QByteArray parseAuthString( Buffer* );
+
 
 protected:
 	bool forMe( Transfer* transfer ) const;
 
 signals:
 	void haveAuthKey();
-	
+
 private:
 	//! Encodes a password using MD5
 	void encodePassword( QByteArray& digest ) const;
@@ -68,15 +71,15 @@ private:
 	//! The authorization key to use when encoding the password
 	QByteArray m_authKey;
 
-	//! The all important connection cookie	
+	//! The all important connection cookie
 	QByteArray m_cookie;
-	
+
 	//! The new BOS Host
 	QString m_bosHost;
-	
+
 	//! The new BOS Port
 	QString m_bosPort;
-	
+
 };
 
 #endif

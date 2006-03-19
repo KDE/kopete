@@ -43,7 +43,7 @@ public:
 	/**
 	 * Takes a file @p file and attempts to load the file, prepending
 	 * the path specified in the constructor as test data.
-	 * @returns bool true on success.
+	 * @returns true on success.
 	 */
 	bool loadFile(const QString& file);
 protected:
@@ -60,7 +60,7 @@ int main(int argc, char **argv) \
 		tc.setPath( argv[1] ); \
 	else \
 		tc.setPath( QDir::current().absolutePath() ); \
-	return QTest::qExec( &tc, argc, argv); \
+	return QTest::qExec( &tc, 0, 0 ); \
 }
 
 #endif
