@@ -29,7 +29,7 @@
 #include <kprocio.h>
 #include <kfileitem.h>
 
-const QString WP_POPUP_DIR = "/var/lib/winpopup";
+const QString WP_POPUP_DIR = QString::fromLatin1("/var/lib/winpopup");
 
 class KDirLister;
 
@@ -88,4 +88,5 @@ signals:
 
 #endif
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

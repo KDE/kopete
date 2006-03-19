@@ -66,7 +66,7 @@ const QStringList WPAccount::getHosts(const QString &Group)
 bool WPAccount::checkHost(const QString &Name)
 {
 //	kdDebug() << "WPAccount::checkHost: " << Name << endl;
-	if (Name.upper() == "LOCALHOST") {
+	if (Name.upper() == QString::fromLatin1("LOCALHOST")) {
 		// Assume localhost is always there, but it will not appear in the samba output.
 		// Should never happen as localhost is now forbidden as contact, just for safety. GF
 		return true;
@@ -164,10 +164,15 @@ KActionMenu* WPAccount::actionMenu()
 
 	if (mProtocol)
 	{
-		theActionMenu->insert(new KAction("Online", QIconSet(mProtocol->WPOnline.iconFor(this)), 0,
-							  this, SLOT(connect()), theActionMenu, "actionGoAvailable"));
-		theActionMenu->insert(new KAction("Away", QIconSet(mProtocol->WPAway.iconFor(this)), 0,
-							  this, SLOT(goAway()), theActionMenu, "actionGoAway"));
+		KAction *goOnline = new KAction("Online", QIconSet(mProtocol->WPOnline.iconFor(this)), 0,
+										 this, SLOT(connect()), theActionMenu, "actionGoAvailable");
+		goOnline->setEnabled(isConnected() && isAway());
+		theActionMenu->insert(goOnline);
+
+		KAction *goAway = new KAction("Away", QIconSet(mProtocol->WPAway.iconFor(this)), 0,
+									  this, SLOT(goAway()), theActionMenu, "actionGoAway");
+		goAway->setEnabled(isConnected() && !isAway());
+		theActionMenu->insert(goAway);
 
 		/// One can not really go offline manually - appears online as long as samba server is running. GF
 
