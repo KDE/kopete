@@ -45,6 +45,7 @@ WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount, const char *n
 	connect(theDialog->mHostGroup, SIGNAL(activated(const QString &)), this, SLOT(slotSelected(const QString &)));
 	connect(theDialog->mRefresh, SIGNAL(clicked()), this, SLOT(slotUpdateGroups()));
 	theDialog->show();
+
 	theAccount = newAccount;
 
 	slotUpdateGroups();
@@ -73,9 +74,10 @@ void WPAddContact::slotSelected(const QString &Group)
 
 	theDialog->mHostName->clear();
 	QStringList Hosts = theAccount->getHosts(Group);
+	QString ownHost = theAccount->myself()->contactId();
 	QStringList::ConstIterator end = Hosts.end();
 	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
-		theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
+		if (*i != ownHost) theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
 }
 
 bool WPAddContact::validateData()
@@ -91,7 +93,7 @@ bool WPAddContact::validateData()
 
 	// If our own host is not allowed as contact localhost should be forbidden as well,
 	// additionally somehow localhost as contact crashes when receiving a message from it?? GF
-	if (tmpHostName.upper() == "LOCALHOST") {
+	if (tmpHostName.upper() == QString::fromLatin1("LOCALHOST")) {
 		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as contact.</qt>"), i18n("WinPopup"));
 		return false;
 	}
