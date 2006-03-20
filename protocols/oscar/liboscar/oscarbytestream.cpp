@@ -39,10 +39,10 @@ KNetworkByteStream::KNetworkByteStream( QObject *parent, const char */*name*/ )
 
 	// connect signals and slots
 	QObject::connect( mSocket, SIGNAL ( gotError ( int ) ), this, SLOT ( slotError ( int ) ) );
-	QObject::connect( mSocket, SIGNAL ( connected ( const KResolverEntry& ) ), this, SLOT ( slotConnected () ) );
+	QObject::connect( mSocket, SIGNAL ( connected ( const KNetwork::KResolverEntry& ) ), this, SLOT ( slotConnected () ) );
 	QObject::connect( mSocket, SIGNAL ( closed () ), this, SLOT ( slotConnectionClosed () ) );
 	QObject::connect( mSocket, SIGNAL ( readyRead () ), this, SLOT ( slotReadyRead () ) );
-	QObject::connect( mSocket, SIGNAL ( bytesWritten ( int ) ), this, SLOT ( slotBytesWritten ( int ) ) );
+	QObject::connect( mSocket, SIGNAL ( bytesWritten ( qint64 ) ), this, SLOT ( slotBytesWritten ( qint64 ) ) );
 }
 
 bool KNetworkByteStream::connect( QString host, QString service )
@@ -124,7 +124,7 @@ void KNetworkByteStream::slotReadyRead()
 	emit readyRead();
 }
 
-void KNetworkByteStream::slotBytesWritten( int bytes )
+void KNetworkByteStream::slotBytesWritten( qint64 bytes )
 {
 	emit bytesWritten( bytes );
 }

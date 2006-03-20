@@ -54,7 +54,7 @@ private slots:
 	void slotConnected ();
 	void slotConnectionClosed ();
 	void slotReadyRead ();
-	void slotBytesWritten ( int );
+	void slotBytesWritten ( qint64 );
 	void slotError ( int );
 
 private:
