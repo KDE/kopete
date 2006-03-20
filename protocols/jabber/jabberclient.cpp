@@ -65,6 +65,7 @@ public:
 	JabberConnector *jabberClientConnector;
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
+	QCA::Initializer qcaInit;
 
 	// ignore TLS warnings
 	bool ignoreTLSWarnings;
