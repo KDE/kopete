@@ -943,7 +943,7 @@ void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
 		<< ", givenname" << details.givenName
 		<< ", status" << details.status
 		<< endl;
-	if ( details.cn.lower() == accountId().lower() )
+	if ( details.cn.lower() == accountId().lower().section('@', 0, 0) ) // incase user set account ID foo@novell.com
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - got our details in contact list, updating them" << endl;
 		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( myself() );
