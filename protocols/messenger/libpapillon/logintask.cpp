@@ -17,9 +17,11 @@
 // Qt includes
 #include <QLatin1String>
 #include <QStringList>
+#include <QtDebug>
 
 // Papillon includes
 #include "transfer.h"
+#include "connection.h"
 
 namespace Papillon 
 {
@@ -95,9 +97,9 @@ bool LoginTask::take(Transfer *transfer)
 			{
 				if( transfer->command() == QLatin1String("USR") )
 				{
-					if( transfer->arguments[0] == QLatin1String("TWN") && transfer->arguments[1] == QLatin1String("S") )
+					if( transfer->arguments()[0] == QLatin1String("TWN") && transfer->arguments()[1] == QLatin1String("S") )
 					{
-						d->currentState = StateTweenerConfirm;
+						d->currentState = StateTweenerConfirmed;
 						proceeded = true;
 						// TODO: Get the ticket then send the ticket.
 						d->currentState = StateError;
@@ -106,13 +108,13 @@ bool LoginTask::take(Transfer *transfer)
 				}
 				else if( transfer->command() == QLatin1String("XFR") )
 				{
-					QString newServer = readTransfer->arguments()[1].section(":", 0, 0);
-					QString tempPort = readTransfer->arguments()[1].section(":", 1, 1);
+					QString newServer = transfer->arguments()[1].section(":", 0, 0);
+					QString tempPort = transfer->arguments()[1].section(":", 1, 1);
 					bool dummy;
 					int newPort = tempPort.toUInt(&dummy);
 
 					proceeded = true;
-					emit redirection(newServer, tempPort);
+					emit redirection(newServer, newPort);
 				}
 				break;
 			}
@@ -120,13 +122,13 @@ bool LoginTask::take(Transfer *transfer)
 			{
 				if( transfer->command() == QLatin1String("USR") )
 				{
-					if( transfer->arguments[0] == QLatin1String("OK") )
+					if( transfer->arguments()[0] == QLatin1String("OK") )
 					{
 						proceeded = true;
 						d->currentState = StateFinish;
 						// End the login task.
 						setSuccess();
-					}
+						}
 				}
 				break;
 			}
@@ -142,7 +144,7 @@ bool LoginTask::take(Transfer *transfer)
 
 bool LoginTask::forMe(Transfer *transfer)
 {
-	if( transfer->type == Transfer::TransactionTransfer )
+	if( transfer->type() == Transfer::TransactionTransfer )
 	{
 		if( transfer->transactionId() == d->currentTransactionId )
 			return true;
@@ -156,11 +158,14 @@ void LoginTask::onGo()
 	Q_ASSERT(!d->passportId.isEmpty());
 	Q_ASSERT(!d->password.isEmpty());
 
+	qDebug() << PAPILLON_FUNCINFO << "Begin login process...";
+
 	sendVersionCommand();
 }
 
 void LoginTask::sendVersionCommand()
 {
+	qDebug() << PAPILLON_FUNCINFO << "Sending version command.";
 	Transfer *versionTransfer = new Transfer(Transfer::TransactionTransfer);
 	versionTransfer->setCommand( QLatin1String("VER") );
 
@@ -175,6 +180,7 @@ void LoginTask::sendVersionCommand()
 
 void LoginTask::sendCvrCommand()
 {
+	qDebug() << PAPILLON_FUNCINFO << "Sending CVR command.";
 	Transfer *cvrTransfer = new Transfer(Transfer::TransactionTransfer);
 	cvrTransfer->setCommand( QLatin1String("CVR") );
 	
@@ -190,6 +196,7 @@ void LoginTask::sendCvrCommand()
 
 void LoginTask::sendTweenerInviteCommand()
 {
+	qDebug() << PAPILLON_FUNCINFO << "Sending Tweener Invite Command";
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
 
@@ -205,6 +212,7 @@ void LoginTask::sendTweenerInviteCommand()
 
 void LoginTask::sendTweenerConfirmation()
 {
+	qDebug() << PAPILLON_FUNCINFO << "Sending Tweener confirmation command.";
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
 

@@ -86,6 +86,11 @@ void Connection::connectToServer(const QString &server, quint16 port)
 	d->stream->connectToServer(d->server, d->port);
 }
 
+void Connection::disconnectFromServer()
+{
+	d->stream->close();
+}
+
 void Connection::send(Transfer *transfer)
 {
 	d->stream->write(transfer);
@@ -96,7 +101,8 @@ void Connection::transferReceived()
 	Transfer *readTransfer = d->stream->read();
 	if(readTransfer)
 	{
-		dispatchTransfer( d->stream->read() );
+		qDebug() << PAPILLON_FUNCINFO << "Dispatch received transfer to tasks.";
+		dispatchTransfer( readTransfer );
 	}
 	else
 	{
@@ -116,12 +122,18 @@ void Connection::dispatchTransfer(Transfer *transfer)
 
 void Connection::slotConnected()
 {
+	qDebug() << PAPILLON_FUNCINFO << "We are connected to" << d->server;
+
 	d->isConnected = true;
+	emit connected();
 }
 
 void Connection::slotDisconnected()
 {
+	qDebug() << PAPILLON_FUNCINFO << "We got disconnected from" << d->server;
+
 	d->isConnected = false;
+	emit disconnected();
 }
 
 }

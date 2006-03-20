@@ -1,5 +1,5 @@
 /*
-   connector_test.cpp - Test for the connection architecture.
+   connector_test.cpp - Test for the connector and stream.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 

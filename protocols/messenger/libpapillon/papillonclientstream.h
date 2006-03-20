@@ -1,5 +1,5 @@
 /*
-   notificationstream.h - Represent a stream with the Notification server.
+   papillonclientstream.h - Represent a stream with a Messenger service.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -25,7 +25,7 @@ class Connector;
 class Transfer;
 
 /**
- * Stream for the Notification server.
+ * @brief A client stream to a Messenger service.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */

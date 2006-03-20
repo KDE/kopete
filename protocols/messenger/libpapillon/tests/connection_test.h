@@ -1,5 +1,5 @@
 /*
-   connector_test.h - Test for the connector and stream.
+   connection_test.h - Connection test
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -12,34 +12,51 @@
    *                                                                       *
    *************************************************************************
 */
-#ifndef CONNECTOR_TEST_H
-#define CONNECTOR_TEST_H
+#ifndef CONNECTIONTEST_H
+#define CONNECTIONTEST_H
 
 #include <QObject>
+#include "connection.h"
 
-class Connector_Test : public QObject
+namespace Papillon
+{
+	class ClientStream;
+	class Task;
+	class LoginTask;;
+}
+
+using namespace Papillon;
+
+class FakeConnection : public Connection
 {
 	Q_OBJECT
 public:
-	Connector_Test(QObject *parent = 0);
-	~Connector_Test();
+	FakeConnection(Papillon::ClientStream *stream);
 
 public slots:
-	void connectToServer();
+	void start();
 
 private slots:
-	void slotReadTransfer();
-	void slotConnected();
+	void redirect(const QString &newServer, quint16 newPort);
+	void loginTaskFinished(Papillon::Task *task);
 
-	void doLoginProcess();
-	void loginProcessCvr();
-	void loginProcessTwnI();
-	void loginProcessTwnS();
-	
-	void slotExit();
-
+signals:
+	void loginFinished(Papillon::LoginTask *task);
 private:
-	class Private;
-	Private *d;
+	LoginTask *m_loginTask;
 };
+
+class Connection_Test : public QObject
+{
+	Q_OBJECT
+public slots:
+	void testConnection();
+
+private slots:
+	void slotLoginFinished();
+private:
+	FakeConnection *m_connection;
+};
+
+
 #endif

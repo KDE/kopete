@@ -66,6 +66,10 @@ public:
 
 signals:
 	/**
+	 * Emiited when the connection gets opened.
+	 */
+	 void connected();
+	/**
 	 * Emitted when this connection gets disconnected.
 	 */
 	void disconnected();
@@ -77,6 +81,11 @@ public slots:
 	 * @param port TCP port of the service.
 	 */
 	void connectToServer(const QString &server, quint16 port);
+	/**
+	 * End the connection.
+	 */
+	void disconnectFromServer();
+
 	/**
 	 * Send a transfer to the current Messenger service.
 	 */

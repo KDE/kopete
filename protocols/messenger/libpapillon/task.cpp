@@ -36,7 +36,7 @@ public:
 	bool success;
 	int statusCode;
 	QString statusString;
-	Connection *client;
+	Connection *connection;
 	bool insignificant, deleteme, autoDelete;
 	bool done;
 	Transfer *transfer;
@@ -46,16 +46,16 @@ Task::Task(Task *parent)
 :QObject(parent)
 {
 	init();
-	d->client = parent->client();
-	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
+	d->connection = parent->connection();
+	connect(d->connection, SIGNAL(disconnected()), SLOT(connectionDisconnected()));
 }
 
 Task::Task(Connection* parent, bool)
 :QObject(0)
 {
 	init();
-	d->client = parent;
-	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
+	d->connection = parent;
+	connect(d->connection, SIGNAL(disconnected()), SLOT(connectionDisconnected()));
 }
 
 Task::~Task()
@@ -79,9 +79,9 @@ Task *Task::parent() const
 	return (Task *)QObject::parent();
 }
 
-Connection *Task::client() const
+Connection *Task::connection() const
 {
-	return d->client;
+	return d->connection;
 }
 
 Transfer *Task::transfer() const
@@ -167,7 +167,7 @@ void Task::onDisconnect()
 
 void Task::send(Transfer *request)
 {
-	client()->send( request );
+	connection()->send( request );
 }
 
 void Task::setSuccess(int code, const QString &str)
@@ -211,7 +211,7 @@ void Task::done()
 		SafeDelete::deleteSingle(this);
 }
 
-void Task::clientDisconnected()
+void Task::connectionDisconnected()
 {
 	onDisconnect();
 }

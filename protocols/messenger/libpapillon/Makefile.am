@@ -1,3 +1,4 @@
+SUBDIRS = tests
 noinst_LTLIBRARIES = libpapillon.la
 
 AM_CPPFLAGS = $(all_includes)

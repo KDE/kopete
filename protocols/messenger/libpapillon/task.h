@@ -86,7 +86,7 @@ public:
 	 * Return a reference to the connection used by this task.
 	 * @return Connection pointer.
 	 */
-	Connection* client() const;
+	Connection* connection() const;
 
 	/**
 	 * Get the current transfer if any.
@@ -189,7 +189,7 @@ private slots:
 	 * Called when the Connection disconnect.
 	 * Call onDisconnect().
 	 */
-	void clientDisconnected();
+	void connectionDisconnected();
 	/**
 	 * Finish this Task.
 	 */
