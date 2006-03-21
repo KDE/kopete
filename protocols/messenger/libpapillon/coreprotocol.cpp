@@ -155,9 +155,13 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			}
 			
 			// Check for a transaction ID.
-			trId = commandList[1].toUInt(&isNumber);
-			if(isNumber)
-				transferType |= Transfer::TransactionTransfer;
+			// Do not check for a transaction if the commandList size is lower than 2.
+			if( commandList.size() >= 2 )
+			{
+				trId = commandList[1].toUInt(&isNumber);
+				if(isNumber)
+					transferType |= Transfer::TransactionTransfer;
+			}
 			
 			// Begin at the third command arguments if we have a transaction ID.
 			int beginAt = isNumber ? 2 : 1;
