@@ -18,7 +18,7 @@ libkrichtexteditpart_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KPARTS) $(LI
 
 libkopetechatwindow_la_SOURCES = chatmessagepart.cpp emoticonselector.cpp kopeteemoticonaction.cpp \
 	chattexteditpart.cpp krichtexteditpart.cpp kopetechatwindowstylemanager.cpp \
-	kopetechatwindowstyle.cpp
+	kopetechatwindowstyle.cpp 
 libkopetechatwindow_la_LDFLAGS = $(all_libraries) -no-undefined
 libkopetechatwindow_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KOPETECOMPAT) $(LIB_KDEUI)
 

@@ -859,8 +859,13 @@ void AppearanceConfig::slotGetEmoticonThemes()
 	config->writeEntry( "StandardResource", "emoticons" );
 	config->writeEntry( "Uncompress", "application/x-gzip" );
 	config->sync();
-	
+
+#if ( KDE_IS_VERSION(3,3,90) )	
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
+#else
+	KNS::DownloadDialog::open( i18n( "Get New Emoticons" ) );
+#endif
+	
 	updateEmoticonlist();
 }
 

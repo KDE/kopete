@@ -1,9 +1,15 @@
+if compile_LIBKOPETE_COMPAT
+COMPAT_DIR = compat
+COMPAT_LIBS = compat/libkopetecompat.la
+endif
+
+
 include ../../admin/Doxyfile.am
 DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
 DOXYGEN_SET_PROJECT_NAME = libkopete
 
-SUBDIRS = private ui . avdevice
+SUBDIRS = $(COMPAT_DIR) private ui . avdevice
 
 METASOURCES = AUTO
 
@@ -29,7 +35,7 @@ libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatu
 	kopeteprefs.cpp kopetepicture.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
-libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS)
+libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS)
 
 kde_kcfg_DATA = kopete.kcfg
 
