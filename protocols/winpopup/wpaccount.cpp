@@ -97,11 +97,11 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 	// IPs can not be matched to an account anyway.
 	// This should happen rarely but they make kopete crash.
 	// The reason for this seems to be in ChatSessionManager? GF
-	QRegExp ip("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+	QRegExp ip("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
 
 //	kdDebug(14170) << "ip.search: " << From << " match: " << ip.search(From) << endl;
 
-	if (From == accountId() || ip.search(From) > -1) {
+	if (From == accountId() || ip.exactMatch(From)) {
 		kdDebug(14170) << "Ignoring message from own host/account or IP." << endl;
 		return;
 	}
