@@ -23,18 +23,20 @@ OSCAR_TEST_MAIN( OfflineMessagesTest )
 
 void OfflineMessagesTest::testOfflineMessages()
 {
-    if (! loadFile("snac1503.buffer")){
-	    QFAIL("couldn't load test data file");
-    }
-    //m_data should now be a buffer with our data
+	if (! loadFile("snac1503.buffer")){
+		QFAIL("couldn't load test data file");
+	}
+	//m_data should now be a buffer with our data
 
-    Oscar::Message msg = OfflineMessagesTask::parseOfflineMessage( m_data );
-    QVERIFY( msg.receiver() == "52009835" );
-    QVERIFY( msg.sender() == "33146327" );
-    QVERIFY( msg.textArray() == "This is a test" );
-    QVERIFY( msg.properties() == 0 );
-    QVERIFY( msg.type() == 1 );
-    //not verifying time yet because it's weird
+	Oscar::Message msg = OfflineMessagesTask::parseOfflineMessage( m_data );
+	QVERIFY( msg.receiver() == "52009835" );
+	QVERIFY( msg.sender() == "33146327" );
+	QVERIFY( msg.textArray() == "This is a test" );
+	QVERIFY( msg.properties() == 0 );
+	QVERIFY( msg.type() == 1 );
+	QCOMPARE( msg.timestamp().toString(), 
+			QString("Sat Mar 4 11:38:00 2006") );
+
 }
 
 
