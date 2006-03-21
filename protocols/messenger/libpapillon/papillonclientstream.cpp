@@ -1,5 +1,5 @@
 /*
-   papillonclientstream.cpp - Represent a stream with the Notification server.
+   papillonclientstream.cpp - Represent a stream with a Messenger server.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
