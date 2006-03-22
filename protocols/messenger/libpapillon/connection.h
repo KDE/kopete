@@ -25,12 +25,11 @@ class ClientStream;
 class Transfer;
 class Task;
 /**
- * Connection encapsulate a connection to a Windows Live Messenger service.
- * Don't use this class directly, use derived classes instead like NotificationConnection and SwitchboardConnection
+ * @brief Connection encapsulate a connection to a Windows Live Messenger service.
  *
  * Contains the transaction ID reference count, the root Task. Dispatch also the transfers throught the task.
  *
- * @author Michaël Larouche
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
 class PAPILLON_EXPORT Connection : public QObject
 {
@@ -38,7 +37,7 @@ class PAPILLON_EXPORT Connection : public QObject
 public:
 	/**
 	 * Create a new connection
-	 * @param stream the ClientStream (socket and protocol encapsulation)
+	 * @param stream the ClientStream (socket and core protocol encapsulation)
 	 */
 	Connection(ClientStream *stream);
 	/**

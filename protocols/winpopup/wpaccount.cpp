@@ -161,7 +161,9 @@ KActionMenu* WPAccount::actionMenu()
 
 	/// How to remove an action from Kopete::Account::actionMenu()? GF
 
-	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
+#warning Icon removed from KActionMenu here, port
+// 	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
+	KActionMenu *theActionMenu = new KActionMenu(accountId(), 0, 0);
 	theActionMenu->popupMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)").arg(accountId()));
 
 	if (mProtocol)

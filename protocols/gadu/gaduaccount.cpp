@@ -252,7 +252,9 @@ GaduAccount::actionMenu()
 {
 	kDebug(14100) << "actionMenu() " << endl;
 
-	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
+#warning Icon removed from KActionMenu, port
+// 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
+	p->actionMenu_ = new KActionMenu( accountId(), 0, 0 );
 	p->actionMenu_->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 	    arg( myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 

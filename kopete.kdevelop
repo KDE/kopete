@@ -132,7 +132,7 @@
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>libkopete/avdevice/libkopete_videodevice.la</activetarget>
+      <activetarget>protocols/messenger/libpapillon/libpapillon.la</activetarget>
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>

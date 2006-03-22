@@ -119,6 +119,8 @@ void YahooChatSession::slotDisplayPictureChanged()
 	{
 		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		{
+#warning Port or remove this KToolBar hack
+#if 0
 			int sz=22;
 			// get the size of the toolbar were the aciton is plugged.
 			//  if you know a better way to get the toolbar, let me know
@@ -148,6 +150,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 					}
 				}
 			}
+
 			QString imgURL=c->property(Kopete::Global::Properties::self()->photo()).value().toString();
 			QImage scaledImg = QPixmap( imgURL ).convertToImage().smoothScale( sz, sz );
 			if(!scaledImg.isNull())
@@ -158,6 +161,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 				//slotDisplayPictureChanged(); //don't do that or we might end in a infinite loop
 			}
 			QToolTip::add( m_image, "<qt><img src=\"" + imgURL + "\"></qt>" );
+#endif
 		}
 	}
 }

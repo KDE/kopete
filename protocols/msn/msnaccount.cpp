@@ -267,7 +267,7 @@ KActionMenu * MSNAccount::actionMenu()
 	m_actionMenu->insert( m_openInboxAction );
 
 #if !defined NDEBUG
-	KActionMenu *debugMenu = new KActionMenu( "Debug" );
+	KActionMenu *debugMenu = new KActionMenu( "Debug", 0, 0 );
 	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0,
 		this, SLOT( slotDebugRawCommand() ), 0, "m_debugRawCommand" ) );
 	m_actionMenu->popupMenu()->insertSeparator();

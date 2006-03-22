@@ -34,6 +34,7 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kaction.h>
+#include <kicon.h>
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
@@ -131,7 +132,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( i18n ("Authorization"), "connect_established", 0, "jabber_authorization");
+	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connect_established"), i18n ("Authorization"), 0, "jabber_authorization");
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
@@ -150,7 +151,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	actionAuthorization->insert(removeAuthAction);
 
-	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", 0, "jabber_online");
+	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), 0, "jabber_online");
 
 	actionSetAvailability->insert(new KAction (i18n ("Online"), protocol()->JabberKOSOnline.iconFor(this),
 								  0, this, SLOT (slotStatusOnline ()), 0, "actionOnline"));
@@ -165,7 +166,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actionSetAvailability->insert(new KAction (i18n ("Invisible"), protocol()->JabberKOSInvisible.iconFor(this),
 								  0, this, SLOT (slotStatusInvisible ()), 0, "actionInvisible"));
 
-	KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no", 0, "actionSelectResource");
+	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), 0, "actionSelectResource");
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu

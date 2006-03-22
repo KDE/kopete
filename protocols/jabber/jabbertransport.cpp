@@ -101,7 +101,9 @@ JabberTransport::~JabberTransport ()
 
 KActionMenu *JabberTransport::actionMenu ()
 {
-	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  0 );
+#warning Port to new KActionMenu
+// 	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  0 );
+	KActionMenu *menu = new KActionMenu( accountId(), 0, 0 );
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
 	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
