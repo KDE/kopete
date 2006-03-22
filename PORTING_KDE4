@@ -6,6 +6,8 @@ Libkopete changes
 -----------------
 *) Kopete::Account
    - contacts() now return a const QHash<QString,Contact*>&
+   - setOnlineStatus() reason optional parameter use Kopete::StatusMessage.
+   - NEW: setStatusMessage() which take a Kopete::StatusMessage.
 
 *) Kopete::AccountManager
    - accounts() now return a QList<Account*>.
@@ -18,6 +20,9 @@ Libkopete changes
 
 *) kopetecommandlist.h
    - CommandList is now a QMultiHash<QString, Command*>
+
+*) Kopete::Contact
+   - NEW: setStatusMessage() and statusMessage().
 
 *) kopetecontactproperty.h
    - Removed bool flags from constructor. Use ContactPropertyOption enum instead.
@@ -35,7 +40,10 @@ Libkopete changes
    - asXML() no longer exist (removed in 0.12)
 
 *) Kopete::OnlineStatusManager
-	- HasAwayMessage enum value was renamed to HasStatusMessage.
+   - HasAwayMessage enum value was renamed to HasStatusMessage.
+
+*) NEW: Kopete::StatusMessage
+   Class that encapsulate normal status message and status metadata(like Now Listening metadata)
 
 *) kopeteproperties.h
    - Replaced PortingDict, now a QMultiHash<QByteArray, PropertyData
