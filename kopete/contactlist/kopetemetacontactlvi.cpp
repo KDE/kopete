@@ -263,7 +263,7 @@ void KopeteMetaContactLVI::initLVI()
 	mIsBlinkIcon = false;
 
 	//if ( !mBlinkIcon )
-	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small ) );
+	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), K3Icon::Small ) );
 
 	slotConfigChanged();  // this calls slotIdleStateChanged(), which sets up the constituent components, spacing, fonts and indirectly, the contact icon
 	slotDisplayNameChanged();
@@ -533,7 +533,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 	{
 		m_oldStatusIcon= d->metaContactIcon->pixmap();
 		QPixmap photoPixmap;
-		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", KIcon::Desktop ) );
+		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", K3Icon::Desktop ) );
 		QImage photoImg = m_metaContact->picture().image();
 		if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
@@ -735,9 +735,9 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	d->metaContactIcon = 0L;
 	d->contactIconSize = 12;
 	if (mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed ) {
-		d->iconSize =  iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ?  KIcon::SizeMedium : KIcon::SizeLarge;
+		d->iconSize =  iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ?  K3Icon::SizeMedium : K3Icon::SizeLarge;
 	} else {
-		d->iconSize = iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ? IconSize( KIcon::Small ) :  KIcon::SizeMedium;
+		d->iconSize = iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ? IconSize( K3Icon::Small ) :  K3Icon::SizeMedium;
 	}
 	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
 
@@ -762,7 +762,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	 
 	if( mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed )
 	{
-		d->contactIconSize = IconSize( KIcon::Small );
+		d->contactIconSize = IconSize( K3Icon::Small );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new DisplayNameComponent( vbox );
 		d->extraText = new DisplayNameComponent( vbox );

@@ -135,7 +135,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 		QMenu* menu = static_cast<QMenu*>( widget );
 		int id;
 		if ( hasIcon() )
-			id = menu->insertItem( iconSet(KIcon::Small), text(), d->m_popup, -1, index );
+			id = menu->insertItem( iconSet(K3Icon::Small), text(), d->m_popup, -1, index );
 		else
 			id = menu->insertItem( text(), d->m_popup, -1, index );
 
@@ -157,10 +157,10 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 
 		int id_ = KAction::getToolButtonID();
 
-		if ( icon().isEmpty() && !iconSet(KIcon::Small).isNull() )
+		if ( icon().isEmpty() && !iconSet(K3Icon::Small).isNull() )
 		{
 			bar->insertButton(
-				iconSet(KIcon::Small).pixmap(), id_, SIGNAL(clicked()), this,
+				iconSet(K3Icon::Small).pixmap(), id_, SIGNAL(clicked()), this,
 				SLOT(slotActivated()), isEnabled(), plainText(),
 				index );
 		}

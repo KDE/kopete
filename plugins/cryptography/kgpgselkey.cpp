@@ -49,7 +49,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   QLabel *labeltxt;
   KIconLoader *loader = KGlobal::iconLoader();
 
-  keyPair=loader->loadIcon("kgpg_key2",KIcon::Small,20);
+  keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
 
   setMinimumSize(300,200);
   keysListpr = new K3ListView( page );

@@ -805,7 +805,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 #if 0
-	QMovie *mv = new QMovie(loader->loadMovie( status.overlayIcons().first(), KIcon::Small ));
+	QMovie *mv = new QMovie(loader->loadMovie( status.overlayIcons().first(), K3Icon::Small ));
 
 	if ( mv->isNull() )
 	{

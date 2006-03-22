@@ -54,7 +54,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	cRegister = new RegisterCommand( this );
 
 	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = KGlobal::iconLoader()->loadIcon ( "gadu_protocol", KIcon::Small );
+	hintPixmap = KGlobal::iconLoader()->loadIcon ( "gadu_protocol", K3Icon::Small );
 
 	connect( this, SIGNAL( user1Clicked() ), SLOT( doRegister() ) );
 	connect( this, SIGNAL( okClicked() ), SLOT( slotClose() ) );

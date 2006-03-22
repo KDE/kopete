@@ -429,7 +429,7 @@ void Kopete::Password::writeConfig()
 
 int Kopete::Password::preferredImageSize()
 {
-	return IconSize(KIcon::Toolbar);
+	return IconSize(K3Icon::Toolbar);
 }
 
 bool Kopete::Password::allowBlankPassword()

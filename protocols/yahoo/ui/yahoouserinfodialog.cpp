@@ -47,21 +47,21 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent, con
 	showButton( User2, false );
 	QFrame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General Yahoo Information" ),
-	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), KIcon::Desktop ) );
+	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), K3Icon::Desktop ) );
 	QVBoxLayout* genLayout = new QVBoxLayout( genInfo );
 	m_genInfoWidget = new YahooGeneralInfoWidget( genInfo, "Basic Information" );
 	genLayout->addWidget( m_genInfoWidget );
 	
 	QFrame* workInfo = addPage( i18n( "Work Info" ),
 	                                          i18n( "Work Information" ),
-	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), KIcon::Desktop ) );
+	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), K3Icon::Desktop ) );
 	QVBoxLayout* workLayout = new QVBoxLayout( workInfo );
 	m_workInfoWidget = new YahooWorkInfoWidget( workInfo, "Work Information" );
 	workLayout->addWidget( m_workInfoWidget );
 	
 	QFrame* otherInfo = addPage( i18n( "Other Info" ),
 	                                           i18n( "Other Yahoo Information" ),
-	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
+	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
 	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
 	m_otherInfoWidget = new YahooOtherInfoWidget( otherInfo, "Other Information"  );
 	otherLayout->addWidget( m_otherInfoWidget );

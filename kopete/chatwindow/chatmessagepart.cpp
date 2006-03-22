@@ -850,7 +850,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 			iconName = message.from()->protocol()->pluginIcon();
 		}
 
-		protocolIcon = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
+		protocolIcon = KGlobal::iconLoader()->iconPath( iconName, K3Icon::Small );
 	}
 	
 	// Replace sender (contact nick)

@@ -414,7 +414,7 @@ void KopeteChatWindow::initActions(void)
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
 #if 0
-	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), K3Icon::Toolbar);
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in

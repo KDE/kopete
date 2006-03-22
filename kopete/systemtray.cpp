@@ -139,7 +139,7 @@ void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
 
 void KopeteSystemTray::startBlink( const QString &icon )
 {
-	startBlink( KGlobal::iconLoader()->loadIcon( icon , KIcon::Panel ) );
+	startBlink( KGlobal::iconLoader()->loadIcon( icon , K3Icon::Panel ) );
 }
 
 void KopeteSystemTray::startBlink( const QPixmap &icon )
@@ -172,7 +172,7 @@ void KopeteSystemTray::startBlink( QMovie *movie )
 void KopeteSystemTray::startBlink()
 {
 	if ( !mMovie )
-		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
+		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), K3Icon::Panel );
 	// KIconLoader already checked isValid()
 	if ( !mMovie) return;
 	

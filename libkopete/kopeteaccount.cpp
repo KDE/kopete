@@ -175,7 +175,7 @@ QPixmap Account::accountIcon(const int size) const
 	
 	// FIXME: this code is duplicated with OnlineStatus, can we merge it somehow?
 	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
-		icon, KIcon::Small, size );
+		icon, K3Icon::Small, size );
 
 	if ( d->color.isValid() )
 	{
