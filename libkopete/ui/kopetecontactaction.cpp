@@ -29,7 +29,7 @@ KopeteContactAction::KopeteContactAction( Kopete::Contact *contact, const QObjec
 {
 	m_contact = contact;
 
-	connect( this, SIGNAL( activated() ), SLOT( slotContactActionActivated() ) );
+	connect( this, SIGNAL( triggered(bool) ), SLOT( slotContactActionActivated() ) );
 	connect( this, SIGNAL( activated( Kopete::Contact * ) ), receiver, slot );
 }
 

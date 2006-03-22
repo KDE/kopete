@@ -15,6 +15,7 @@
     *************************************************************************
 */
 
+#include <kdebug.h>
 #include <klocale.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -47,7 +48,7 @@ AwayAction::AwayAction(const QString &text, const QIcon &pix, const KShortcut &c
 	QObject::connect( this, SIGNAL( awayMessageSelected( const QString & ) ),
 		receiver, slot );
 
-	QObject::connect( this, SIGNAL( activated( int ) ),
+	QObject::connect( this, SIGNAL( triggered( int ) ),
 		this, SLOT( slotSelectAway( int ) ) );
 
 	slotAwayChanged();
@@ -63,7 +64,7 @@ AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const Q
 	QObject::connect( this, SIGNAL( awayMessageSelected( const Kopete::OnlineStatus &, const Kopete::StatusMessage & ) ),
 					  receiver, slot );
 
-	QObject::connect( this, SIGNAL( activated( int ) ),
+	QObject::connect( this, SIGNAL( triggered( int ) ),
 					  this, SLOT( slotSelectAway( int ) ) );
 
 	slotAwayChanged();
@@ -85,7 +86,7 @@ void AwayAction::slotAwayChanged()
 	QStringList menu;
 	menu << i18n( "No Message" );
 	menu << i18n( "New Message..." );
-	menu << QString::null ;  //separator
+	menu << QString() ;  //separator
 	menu += awayMessages ;
 	setItems( menu );
 	setCurrentItem( -1 );

@@ -352,7 +352,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 KActionMenu * Account::actionMenu()
 {
 	//default implementation
-#warning give a parent to the menu and the "properties" action
+#warning Give a KActionCollection to KAction(s)
 // 	KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), 0, 0);
 	KActionMenu *menu = new KActionMenu( accountId(), 0, 0 );
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
@@ -364,7 +364,10 @@ KActionMenu * Account::actionMenu()
 
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
 	menu->popupMenu()->insertSeparator();
-	menu->insert( new KAction ( i18n( "Properties" ),  0, this, SLOT( editAccount() ), 0l, "actionAccountProperties" ) );
+
+	KAction *propertiesAction = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
+	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
+	menu->insert( propertiesAction );
 
 	return menu;
 }

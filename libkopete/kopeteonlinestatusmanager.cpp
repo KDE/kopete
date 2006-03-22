@@ -450,8 +450,10 @@ public:
 	OnlineStatus status;
 };
 OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent, const char *name)
-	: KAction( text, pix, KShortcut() ,this, SLOT(slotActivated()), 0l, name) , d( new Private(status) )
+	: KAction( text, pix, KShortcut() , 0, 0, 0l, name) , d( new Private(status) )
 {
+	connect(this, SIGNAL(triggered(bool)), this, SLOT(slotActivated()));
+
 	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLater()));
 }
 

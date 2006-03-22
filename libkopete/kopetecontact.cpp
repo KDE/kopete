@@ -30,6 +30,7 @@
 #include <kabcpersistence.h>
 #include <kdialog.h>
 #include <klocale.h>
+#include <kicon.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
@@ -225,9 +226,10 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "add_user" ),
-		                                         KShortcut(), this, SLOT( slotAddContact() ), 0, "actionAddContact" );
-		actionAddContact->plug( menu );
+		KAction *actionAddContact = new KAction( KIcon("add_user"), i18n( "&Add to Your Contact List" ), 0, "actionAddContact" );
+		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT( slotAddContact() ) );
+
+		menu->addAction(actionAddContact);
 		menu->addSeparator();
 	}
 
@@ -237,15 +239,15 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), 0, "actionSendMessage" );
 	actionSendMessage->setEnabled( reach && !myself );
-	actionSendMessage->plug( menu );
+	menu->addAction( actionSendMessage );
 
 	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), 0, "actionChat" );
 	actionChat->setEnabled( reach && !myself );
-	actionChat->plug( menu );
+	menu->addAction( actionChat );
 
 	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), 0, "actionSendFile" );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
-	actionSendFile->plug( menu );
+	menu->addAction( actionSendFile );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function
@@ -257,7 +259,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 		menu->addSeparator();
 		QList<KAction*>::iterator it, itEnd = customActions->end();
 		for( it = customActions->begin(); it != itEnd; ++it )
-			(*it)->plug( menu );
+			menu->addAction( (*it) );
 	}
 	delete customActions;
 
@@ -266,7 +268,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	if( metaContact() && !metaContact()->isTemporary() )
 		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), 0, "actionChangeMetaContact" )->plug( menu );
 
-	KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" )->plug( menu );
+	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" ) );
 
 #if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
@@ -276,7 +278,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 #endif
 
 	if( metaContact() && !metaContact()->isTemporary() )
-		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), 0, "actionDeleteContact" )->plug( menu );
+		menu->addAction( KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), 0, "actionDeleteContact" ) );
 
 	return menu;
 }
