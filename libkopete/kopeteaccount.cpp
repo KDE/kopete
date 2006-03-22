@@ -19,6 +19,7 @@
 #include <qapplication.h>
 #include <QTimer>
 #include <QPixmap>
+#include <QIcon>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -27,6 +28,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kiconeffect.h>
+#include <kicon.h>
 #include <kaction.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
@@ -351,7 +353,9 @@ KActionMenu * Account::actionMenu()
 {
 	//default implementation
 #warning give a parent to the menu and the "properties" action
-	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  0l );
+// 	KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), 0, 0);
+	KActionMenu *menu = new KActionMenu( accountId(), 0, 0 );
+#warning No icon shown, we should go away from QPixmap genered icons with overlays.
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
 	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
