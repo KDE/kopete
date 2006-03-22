@@ -149,13 +149,13 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 		ac, "format_bgcolor" );
 
 	//Font Family
-	action_font = new KFontAction( i18n("&Font"), 0,
+	action_font = new KFontAction( i18n("&Font"), KShortcut(),
 			ac, "format_font" );
 	connect( action_font, SIGNAL( activated( const QString & ) ),
 		this, SLOT( setFont( const QString & ) ) );
 
 	//Font Size
-	action_font_size = new KFontSizeAction( i18n("Font &Size"), 0,
+	action_font_size = new KFontSizeAction( i18n("Font &Size"), KShortcut(),
 			ac, "format_font_size" );
 	connect( action_font_size, SIGNAL( fontSizeChanged(int) ),
 		this, SLOT( setFontSize(int) ) );
@@ -205,11 +205,13 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 	connect( action_align_justify, SIGNAL( toggled(bool) ),
 		this, SLOT( setAlignJustify(bool) ) );
 
+#warning Port to new KAction
+#if 0
 	action_align_left->setExclusiveGroup( "alignment" );
 	action_align_center->setExclusiveGroup( "alignment" );
 	action_align_right->setExclusiveGroup( "alignment" );
 	action_align_justify->setExclusiveGroup( "alignment" );
-
+#endif
 	connect( editor, SIGNAL( cursorPositionChanged( int,int ) ),
 		this, SLOT( updateAligment() ) );
 
@@ -328,16 +330,16 @@ void KopeteRichTextEditPart::readConfig()
 	switch( config->readNumEntry( "EditAlignment", Qt::AlignLeft ) )
 	{
 		case Qt::AlignLeft:
-			action_align_left->activate();
+			action_align_left->trigger();
 		break;
 		case Qt::AlignCenter:
-			action_align_center->activate();
+			action_align_center->trigger();
 		break;
 		case Qt::AlignRight:
-			action_align_right->activate();
+			action_align_right->trigger();
 		break;
 		case Qt::AlignJustify:
-			action_align_justify->activate();
+			action_align_justify->trigger();
 		break;
 	}
 	m_configWriteLock = false;

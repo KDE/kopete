@@ -20,13 +20,13 @@
 #define KOPETEGRLISTACT_H
 
 
-#include <kaction.h>
+#include <kactionclasses.h>
 
 
 /**
  * Action used for Copy To  and  Move To
  */
-class KopeteGroupListAction : public KListAction
+class KopeteGroupListAction : public KSelectAction
 {
 	Q_OBJECT
 

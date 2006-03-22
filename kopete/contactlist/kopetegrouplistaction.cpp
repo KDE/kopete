@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kguiitem.h>
 #include <klocale.h>
+#include <kicon.h>
 #include <kaction.h>
 #include <kwin.h>
 #include <kcmultidialog.h>
@@ -31,8 +32,12 @@
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
 	const char *slot, KActionCollection *parent, const char *name )
-: KListAction( text, pix, cut, receiver, slot, parent, name )
+: KSelectAction( KIcon(pix), text, parent, name )
 {
+	setShortcut(cut);
+	if( receiver && slot )
+		connect( this, SIGNAL( activated() ), receiver, slot );
+
 	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupRenamed(Kopete::Group*, const QString& ) ), this, SLOT( slotUpdateList() ) );

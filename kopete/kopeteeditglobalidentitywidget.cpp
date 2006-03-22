@@ -116,7 +116,7 @@ void KopeteEditGlobalIdentityWidget::iconSizeChanged()
 	if(tb)
 	{
 		// Update the picture (change the size of it)
-		d->iconSize = tb->iconSize();
+// 		d->iconSize = tb->iconSize();
 		d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
 		d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));	
 		if( !d->myself->picture().isNull() )

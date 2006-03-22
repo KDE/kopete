@@ -39,6 +39,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
@@ -214,7 +215,7 @@ void KopeteWindow::initView()
 void KopeteWindow::initActions()
 {
 	// this action menu contains one action per account and is updated when accounts are registered/unregistered
-	actionAddContact = new KActionMenu( i18n( "&Add Contact" ), "add_user",
+	actionAddContact = new KActionMenu( KIcon("add_user"), i18n( "&Add Contact" ),
 		actionCollection(), "AddContact" );
 	actionAddContact->setDelayed( false );
 	// this signal mapper is needed to call slotAddContact with the correct arguments
@@ -271,7 +272,7 @@ void KopeteWindow::initActions()
 		SLOT( slotGlobalAvailable() ), actionCollection(),
 		"SetAvailableAll" );
 
-	actionAwayMenu = new KActionMenu( i18n("&Set Status"), "kopeteavailable",
+	actionAwayMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
 							actionCollection(), "Status" );
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
@@ -311,7 +312,7 @@ void KopeteWindow::initActions()
 	searchLabel->setBuddy( searchBar );
 	KWidgetAction *quickSearch = new KWidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
 	new KWidgetAction( searchLabel, i18n( "Search:" ), 0, 0, 0, actionCollection(), "quicksearch_label" );
-	quickSearch->setAutoSized( true );
+// 	quickSearch->setAutoSized( true );
 	// quick search bar - clear button
 	KAction *resetQuickSearch = new KAction( i18n( "Reset Quick Search" ),
 		QApplication::isRightToLeft() ? "clear_left" : "locationbar_erase",
@@ -322,10 +323,10 @@ void KopeteWindow::initActions()
 	// Edit global identity widget/bar
 	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this, "editglobalBar");
 	KWidgetAction *editGlobalAction = new KWidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
-	editGlobalAction->setAutoSized( true );
+// 	editGlobalAction->setAutoSized( true );
 
 	// KActionMenu for selecting the global status message(kopeteonlinestatus_0)
-	KActionMenu * setStatusMenu = new KActionMenu( i18n( "Set Status Message" ), "kopeteeditstatusmessage", actionCollection(), "SetStatusMessage" );
+	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
 	connect( setStatusMenu->popupMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
 	connect( setStatusMenu->popupMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
@@ -419,7 +420,7 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
 
         if ( event->type() == QEvent::Hide )
         {
-            resetAction->activate();
+            resetAction->trigger();
             return true;
         }
         return KMainWindow::eventFilter( target, event );
@@ -437,7 +438,7 @@ void KopeteWindow::loadOptions()
 	toolBar("editGlobalIdentityBar")->applySettings( config, "EditGlobalIdentityBar Settings" );
 
 	// FIXME: HACK: Is there a way to do that automatic ?
-	editGlobalIdentityWidget->setIconSize(toolBar("editGlobalIdentityBar")->iconSize());
+// 	editGlobalIdentityWidget->setIconSize(toolBar("editGlobalIdentityBar")->iconSize());
 	connect(toolBar("editGlobalIdentityBar"), SIGNAL(modechange()), editGlobalIdentityWidget, SLOT(iconSizeChanged()));
 
 	applyMainWindowSettings( config, "General Options" );

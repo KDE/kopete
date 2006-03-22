@@ -44,7 +44,7 @@ class KopeteStatusGroupViewItem;
 class KRootPixmap;
 class KActionCollection;
 class KAction;
-class KListAction;
+class KSelectAction;
 class KActionMenu;
 
 class KopeteContactListViewPrivate;
@@ -198,8 +198,8 @@ private:
 	KAction *actionStartChat;
 	KAction *actionSendFile;
 	KAction *actionSendEmail;
-	KListAction *actionMove;
-	KListAction *actionCopy;
+	KSelectAction *actionMove;
+	KSelectAction *actionCopy;
 	KAction *actionRename;
 	KAction *actionRemove;
 	KAction *actionAddTemporaryContact;

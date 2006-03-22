@@ -188,7 +188,10 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 
 	d->sendInProgress = false;
 
+#warning Port to new KToolBar
+#if 0
 	toolBar()->alignItemRight( 99 );
+#endif
 
 	d->visible = false;
 	d->queuePosition = 0;

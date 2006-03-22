@@ -39,6 +39,7 @@
 #include <kmenubar.h>
 #include <kconfig.h>
 #include <kmenu.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwin.h>
@@ -353,7 +354,7 @@ void KopeteChatWindow::initActions(void)
 		this, SLOT( slotDetachChat() ), coll, "tabs_detach" );
 	tabDetach->setEnabled( false );
 
-	actionDetachMenu = new KActionMenu( i18n( "&Move Tab to Window" ), QString::fromLatin1( "tab_breakoff" ), coll, "tabs_detachmove" );
+	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll, "tabs_detachmove" );
 	actionDetachMenu->setDelayed( false );
 
 	connect ( actionDetachMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
@@ -988,8 +989,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
 		{
-			KActionMenu *moreMenu = new KActionMenu( i18n("More..."),
-				 QString::fromLatin1("folder_open") );
+			KActionMenu *moreMenu = new KActionMenu( KIcon("folder_open"), i18n("More..."), 0, 0);
 			connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
 			moreMenu->plug( contactsMenu );

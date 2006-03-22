@@ -51,6 +51,7 @@
 #include <kxmlguifactory.h>
 #include <k3multipledrag.h>
 #include <kdialog.h>
+#include <kicon.h>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -499,8 +500,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
-		QString::fromLatin1( "add_user" ), ac , "contactAddContact" );
+	actionAddContact = new KActionMenu( KIcon( QString::fromLatin1("add_user") ), i18n( "&Add Contact" ), ac, "contactAddContact" );
 	actionAddContact->popupMenu()->addTitle( i18n("Select Account") );
 
 	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "add_user", 0,

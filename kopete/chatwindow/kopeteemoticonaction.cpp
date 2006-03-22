@@ -29,6 +29,8 @@
 #include <kmenu.h>
 #include <ktoolbar.h>
 #include <kauthorized.h>
+#include <kicon.h>
+
 #include "emoticonselector.h"
 #include "kopeteemoticons.h"
 
@@ -75,9 +77,9 @@ KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const ch
 	
 	
 	if ( icon.isNull() )
-		setIcon( "emoticon" );
+		setIcon( KIcon("emoticon") );
 	else
-		setIcon( QIcon( icon ) );
+		setIcon( KIcon( icon ) );
 
 	setShortcutConfigurable( false );
 	connect( d->emoticonSelector, SIGNAL( ItemSelected( const QString & ) ),
@@ -124,6 +126,8 @@ void KopeteEmoticonAction::setStickyMenu(bool sticky)
 
 int KopeteEmoticonAction::plug( QWidget* widget, int index )
 {
+#warning Port to new KAction
+#if 0
 	if (kapp && !KAuthorized::authorizeKAction(name()))
 		return -1;
 
@@ -213,7 +217,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 
 		return containerCount() - 1;
 	}
-
+#endif
 	return -1;
 }
 
