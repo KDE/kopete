@@ -25,6 +25,7 @@
 
 #include "kopete_export.h"
 
+class KIcon;
 /**
  * @author Ryan Cumming <bodnar42@phalynx.dhs.org>
  */
@@ -93,6 +94,12 @@ public:
 	 * The object has no signal/slot, the prefs are automatically shown
 	 */
 	static KAction *preferences(KActionCollection *parent, const char *name = 0);
+private:
+	/**
+	 * @internal
+	 * Helper method to create a action
+	 */
+	static KAction *createAction(const QString &text, const KIcon &icon, const QObject *receiver, const char *slot, KActionCollection* parent, const char *name);
 };
 
 
