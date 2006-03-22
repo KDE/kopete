@@ -32,7 +32,7 @@
 class QVariant;
 
 class KAction;
-class KListAction;
+class KSelectAction;
 
 namespace Kopete
 {
