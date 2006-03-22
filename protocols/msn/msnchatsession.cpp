@@ -75,7 +75,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
 
 
-	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "kontact_contacts" );
+	m_actionInvite = new KActionMenu( i18n( "&Invite" ), "kontact_contacts", actionCollection(), "msnInvite" );
 	connect ( m_actionInvite->popupMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	#if !defined NDEBUG
@@ -84,16 +84,12 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), "bell", 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
-	m_actionNudge->setEnabled(true);
 #if MSN_WEBCAM
 	// Invite to receive webcam action
-	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
-	m_actionWebcamReceive->setEnabled(true);
+	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive()), actionCollection(), "msnWebcamReceive" ) ;
 	
 	//Send webcam action
-	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
-	m_actionWebcamSend->setEnabled(true);
-
+	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend()), actionCollection(), "msnWebcamSend" ) ;
 #endif
 	
 	
