@@ -19,7 +19,7 @@ kde4_automoc(${login_SRCS})
 
 kde4_add_executable(login ${login_SRCS})
 
-target_link_libraries(login  ${QT_AND_KDECORE_LIBS} cricketxmpp cricketxmllite cricketbase pthread )
+target_link_libraries(login  ${KDE4_KDECORE_LIBS} cricketxmpp cricketxmllite cricketbase pthread )
 
 install_targets(/bin login )
 

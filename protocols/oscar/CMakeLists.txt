@@ -24,7 +24,7 @@ kde4_add_ui_files(kopete_oscar_LIB_SRCS oscarencodingselectionbase.ui oscarlistc
 
 kde4_add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
 
-target_link_libraries(kopete_oscar  ${QT_AND_KDECORE_LIBS} kio kopete oscar )
+target_link_libraries(kopete_oscar  ${KDE4_KDECORE_LIBS} kio kopete oscar )
 
 set_target_properties(kopete_oscar PROPERTIES VERSION 2.0.0 SOVERSION 2 )
 install_targets(${LIB_INSTALL_DIR} kopete_oscar )

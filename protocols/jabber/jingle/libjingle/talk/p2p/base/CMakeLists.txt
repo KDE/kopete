@@ -11,7 +11,7 @@ kde4_automoc(${relayserver_SRCS})
 
 kde4_add_executable(relayserver ${relayserver_SRCS})
 
-target_link_libraries(relayserver  ${QT_AND_KDECORE_LIBS} cricketbase cricketp2pbase pthread )
+target_link_libraries(relayserver  ${KDE4_KDECORE_LIBS} cricketbase cricketp2pbase pthread )
 
 install_targets(/bin relayserver )
 
@@ -24,7 +24,7 @@ kde4_automoc(${stunserver_SRCS})
 
 kde4_add_executable(stunserver ${stunserver_SRCS})
 
-target_link_libraries(stunserver  ${QT_AND_KDECORE_LIBS} cricketbase cricketp2pbase pthread )
+target_link_libraries(stunserver  ${KDE4_KDECORE_LIBS} cricketbase cricketp2pbase pthread )
 
 install_targets(/bin stunserver )
 

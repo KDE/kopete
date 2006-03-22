@@ -13,7 +13,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(clientstream_test ${clientstream_test_SRCS})
 
-target_link_libraries(clientstream_test  ${QT_AND_KDECORE_LIBS} kyahoo )
+target_link_libraries(clientstream_test  ${KDE4_KDECORE_LIBS} kyahoo )
 
 endif(KDE4_BUILD_TESTS)
 

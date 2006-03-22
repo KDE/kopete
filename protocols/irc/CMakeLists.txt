@@ -30,7 +30,7 @@ kde4_add_plugin(kopete_irc ${kopete_irc_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_irc )
 
-target_link_libraries(kopete_irc  ${QT_AND_KDECORE_LIBS} kopete kopeteircui kirc kio )
+target_link_libraries(kopete_irc  ${KDE4_KDECORE_LIBS} kopete kopeteircui kirc kio )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_irc )
 

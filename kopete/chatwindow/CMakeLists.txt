@@ -13,7 +13,7 @@ kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
-target_link_libraries(krichtexteditpart  ${QT_AND_KDECORE_LIBS} kopete kparts kspell2 kdeprint )
+target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete kparts kspell2 kdeprint )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 krichtexteditpart )
 
@@ -28,7 +28,7 @@ kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
-target_link_libraries(kopete_chatwindow  ${QT_AND_KDECORE_LIBS} kopete kopetechatwindow kdeui )
+target_link_libraries(kopete_chatwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow kdeui )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_chatwindow )
 
@@ -43,7 +43,7 @@ kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
-target_link_libraries(kopete_emailwindow  ${QT_AND_KDECORE_LIBS} kopete kopetechatwindow kdeui )
+target_link_libraries(kopete_emailwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow kdeui )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_emailwindow )
 

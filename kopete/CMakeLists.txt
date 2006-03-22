@@ -31,7 +31,7 @@ kde4_add_dcop_skels(kopete_SRCS kopeteiface.h kimiface.h )
 
 kde4_add_executable(kopete ${kopete_SRCS})
 
-target_link_libraries(kopete  ${QT_AND_KDECORE_LIBS} ktexteditor knotifyconfig kopeteaddcontactwizard kopeteaddaccountwizard kopetecontactlist kopetepluginconfig kopete kopeteui )
+target_link_libraries(kopete  ${KDE4_KDECORE_LIBS} ktexteditor knotifyconfig kopeteaddcontactwizard kopeteaddaccountwizard kopetecontactlist kopetepluginconfig kopete kopeteui )
 
 install_targets(/bin kopete )
 

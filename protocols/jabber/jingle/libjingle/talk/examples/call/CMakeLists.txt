@@ -16,7 +16,7 @@ kde4_automoc(${call_SRCS})
 
 kde4_add_executable(call ${call_SRCS})
 
-target_link_libraries(call  ${QT_AND_KDECORE_LIBS} cricketexampleslogin cricketsessionphone cricketp2pclient cricketp2pbase cricketxmpp cricketxmllite cricketbase mediastreamer pthread asound )
+target_link_libraries(call  ${KDE4_KDECORE_LIBS} cricketexampleslogin cricketsessionphone cricketp2pclient cricketp2pbase cricketxmpp cricketxmllite cricketbase mediastreamer pthread asound )
 
 install_targets(/bin call )
 

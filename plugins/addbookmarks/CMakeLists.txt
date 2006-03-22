@@ -13,7 +13,7 @@ kde4_add_plugin(kopete_addbookmarks ${kopete_addbookmarks_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_addbookmarks )
 
-target_link_libraries(kopete_addbookmarks  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_addbookmarks  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_addbookmarks )
 
@@ -30,7 +30,7 @@ kde4_add_plugin(kcm_kopete_addbookmarks ${kcm_kopete_addbookmarks_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_addbookmarks )
 
-target_link_libraries(kcm_kopete_addbookmarks  ${QT_AND_KDECORE_LIBS} kopete kutils )
+target_link_libraries(kcm_kopete_addbookmarks  ${KDE4_KDECORE_LIBS} kopete kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_addbookmarks )
 

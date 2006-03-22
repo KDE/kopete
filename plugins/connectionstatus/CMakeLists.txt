@@ -13,7 +13,7 @@ kde4_add_plugin(kopete_connectionstatus ${kopete_connectionstatus_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_connectionstatus )
 
-target_link_libraries(kopete_connectionstatus  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_connectionstatus  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_connectionstatus )
 

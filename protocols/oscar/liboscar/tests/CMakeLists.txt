@@ -13,7 +13,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(buffertest ${buffertest_SRCS})
 
-target_link_libraries(buffertest  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(buffertest  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -27,7 +27,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(serverversionstest ${serverversionstest_SRCS})
 
-target_link_libraries(serverversionstest  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(serverversionstest  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -41,7 +41,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(connectiontest ${connectiontest_SRCS})
 
-target_link_libraries(connectiontest  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(connectiontest  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -55,7 +55,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(rateinfotest ${rateinfotest_SRCS})
 
-target_link_libraries(rateinfotest  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(rateinfotest  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -69,7 +69,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(offlinemessagestest ${offlinemessagestest_SRCS})
 
-target_link_libraries(offlinemessagestest  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(offlinemessagestest  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 

@@ -17,7 +17,7 @@ kde4_add_plugin(kopete_latex ${kopete_latex_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_latex )
 
-target_link_libraries(kopete_latex  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_latex  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_latex )
 
@@ -36,7 +36,7 @@ kde4_add_plugin(kcm_kopete_latex ${kcm_kopete_latex_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_latex )
 
-target_link_libraries(kcm_kopete_latex  ${QT_AND_KDECORE_LIBS} kutils )
+target_link_libraries(kcm_kopete_latex  ${KDE4_KDECORE_LIBS} kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_latex )
 

@@ -13,7 +13,7 @@ kde4_add_plugin(kio_jabberdisco ${kio_jabberdisco_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kio_jabberdisco )
 
-target_link_libraries(kio_jabberdisco  ${QT_AND_KDECORE_LIBS} jabberclient iris_local kio )
+target_link_libraries(kio_jabberdisco  ${KDE4_KDECORE_LIBS} jabberclient iris_local kio )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kio_jabberdisco )
 

@@ -13,7 +13,7 @@ kde4_add_plugin(kopete_contactnotes ${kopete_contactnotes_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_contactnotes )
 
-target_link_libraries(kopete_contactnotes  ${QT_AND_KDECORE_LIBS} kopete kio )
+target_link_libraries(kopete_contactnotes  ${KDE4_KDECORE_LIBS} kopete kio )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_contactnotes )
 

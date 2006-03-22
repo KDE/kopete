@@ -13,7 +13,7 @@ kde4_add_plugin(kopete_alias ${kopete_alias_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_alias )
 
-target_link_libraries(kopete_alias  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_alias  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_alias )
 
@@ -30,7 +30,7 @@ kde4_add_plugin(kcm_kopete_alias ${kcm_kopete_alias_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_alias )
 
-target_link_libraries(kcm_kopete_alias  ${QT_AND_KDECORE_LIBS} kutils kopete )
+target_link_libraries(kcm_kopete_alias  ${KDE4_KDECORE_LIBS} kutils kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_alias )
 

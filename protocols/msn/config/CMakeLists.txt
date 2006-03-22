@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_kopete_msn ${kcm_kopete_msn_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_msn )
 
-target_link_libraries(kcm_kopete_msn  ${QT_AND_KDECORE_LIBS} kopete kutils )
+target_link_libraries(kcm_kopete_msn  ${KDE4_KDECORE_LIBS} kopete kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_msn )
 

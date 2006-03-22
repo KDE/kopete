@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_kopete_accountconfig ${kcm_kopete_accountconfig_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_accountconfig )
 
-target_link_libraries(kcm_kopete_accountconfig  ${QT_AND_KDECORE_LIBS} kopete kopeteaddaccountwizard kutils )
+target_link_libraries(kcm_kopete_accountconfig  ${KDE4_KDECORE_LIBS} kopete kopeteaddaccountwizard kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_accountconfig )
 

@@ -18,7 +18,7 @@ kde4_add_plugin(kopete_msn ${kopete_msn_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_msn )
 
-target_link_libraries(kopete_msn  ${QT_AND_KDECORE_LIBS} kopete_msn_shared )
+target_link_libraries(kopete_msn  ${KDE4_KDECORE_LIBS} kopete_msn_shared )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_msn )
 
@@ -51,7 +51,7 @@ kde4_automoc(${kopete_msn_shared_LIB_SRCS})
 
 kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
 
-target_link_libraries(kopete_msn_shared  ${QT_AND_KDECORE_LIBS} kopetemsnui kopete kopete_videodevice kio )
+target_link_libraries(kopete_msn_shared  ${KDE4_KDECORE_LIBS} kopetemsnui kopete kopete_videodevice kio )
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION 0.0.0 SOVERSION 0 )
 install_targets(${LIB_INSTALL_DIR} kopete_msn_shared )

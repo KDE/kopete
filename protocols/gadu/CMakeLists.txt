@@ -33,7 +33,7 @@ kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_gadu )
 
-target_link_libraries(kopete_gadu  ${QT_AND_KDECORE_LIBS} gaduui kopete )
+target_link_libraries(kopete_gadu  ${KDE4_KDECORE_LIBS} gaduui kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_gadu )
 

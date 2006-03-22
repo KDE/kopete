@@ -23,7 +23,7 @@ kde4_add_plugin(kopete_meanwhile ${kopete_meanwhile_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_meanwhile )
 
-target_link_libraries(kopete_meanwhile  ${QT_AND_KDECORE_LIBS} kopete kopetemeanwhileui )
+target_link_libraries(kopete_meanwhile  ${KDE4_KDECORE_LIBS} kopete kopetemeanwhileui )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_meanwhile )
 

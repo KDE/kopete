@@ -15,7 +15,7 @@ kde4_add_plugin(kopete_texteffect ${kopete_texteffect_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_texteffect )
 
-target_link_libraries(kopete_texteffect  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_texteffect  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_texteffect )
 
@@ -32,7 +32,7 @@ kde4_add_plugin(kcm_kopete_texteffect ${kcm_kopete_texteffect_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_texteffect )
 
-target_link_libraries(kcm_kopete_texteffect  ${QT_AND_KDECORE_LIBS} kopete kutils )
+target_link_libraries(kcm_kopete_texteffect  ${KDE4_KDECORE_LIBS} kopete kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_texteffect )
 

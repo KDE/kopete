@@ -13,7 +13,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(smpppdcstests ${smpppdcstests_SRCS})
 
-target_link_libraries(smpppdcstests  ${QT_AND_KDECORE_LIBS} smpppdclient kunittestgui )
+target_link_libraries(smpppdcstests  ${KDE4_KDECORE_LIBS} smpppdclient kunittestgui )
 
 endif(KDE4_BUILD_TESTS)
 

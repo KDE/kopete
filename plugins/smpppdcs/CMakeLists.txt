@@ -29,7 +29,7 @@ kde4_add_plugin(kopete_smpppdcs ${kopete_smpppdcs_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_smpppdcs )
 
-target_link_libraries(kopete_smpppdcs  ${QT_AND_KDECORE_LIBS} smpppdclient kopete )
+target_link_libraries(kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_smpppdcs )
 
@@ -52,7 +52,7 @@ kde4_add_plugin(kcm_kopete_smpppdcs ${kcm_kopete_smpppdcs_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_smpppdcs )
 
-target_link_libraries(kcm_kopete_smpppdcs  ${QT_AND_KDECORE_LIBS} smpppdclient kopete kutils )
+target_link_libraries(kcm_kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_smpppdcs )
 

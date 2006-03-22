@@ -15,7 +15,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(kopeteemoticontest ${kopeteemoticontest_SRCS})
 
-target_link_libraries(kopeteemoticontest  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kopeteemoticontest  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -29,7 +29,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(kopetemessage_test ${kopetemessage_test_SRCS})
 
-target_link_libraries(kopetemessage_test  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kopetemessage_test  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -43,7 +43,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(kopetetask_test ${kopetetask_test_SRCS})
 
-target_link_libraries(kopetetask_test  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kopetetask_test  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 
@@ -57,7 +57,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(statusmessage_test ${statusmessage_test_SRCS})
 
-target_link_libraries(statusmessage_test  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(statusmessage_test  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 

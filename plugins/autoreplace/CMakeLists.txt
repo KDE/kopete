@@ -15,7 +15,7 @@ kde4_add_plugin(kopete_autoreplace ${kopete_autoreplace_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_autoreplace )
 
-target_link_libraries(kopete_autoreplace  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_autoreplace  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_autoreplace )
 
@@ -32,7 +32,7 @@ kde4_add_plugin(kcm_kopete_autoreplace ${kcm_kopete_autoreplace_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_autoreplace )
 
-target_link_libraries(kcm_kopete_autoreplace  ${QT_AND_KDECORE_LIBS} kopete kutils )
+target_link_libraries(kcm_kopete_autoreplace  ${KDE4_KDECORE_LIBS} kopete kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_autoreplace )
 

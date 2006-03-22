@@ -11,7 +11,7 @@ kde4_automoc(${connection_test_SRCS})
 
 kde4_add_executable(connection_test ${connection_test_SRCS})
 
-target_link_libraries(connection_test  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(connection_test  ${KDE4_KDECORE_LIBS} )
 
 
 ########### next target ###############
@@ -24,7 +24,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(transfer_test ${transfer_test_SRCS})
 
-target_link_libraries(transfer_test  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(transfer_test  ${KDE4_KDECORE_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 

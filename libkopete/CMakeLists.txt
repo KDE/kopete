@@ -99,7 +99,7 @@ kde4_add_dcop_stubs(kopete_LIB_SRCS clientiface.h )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${LIB_KDE3SUPPORT} kabc ${X11_Xss_LIB} )
+target_link_libraries(kopete ${KDE4_KDE3SUPPORT_LIBRARIES} kabc ${X11_Xss_LIB} )
 
 if(X11_Xrender_FOUND)
   target_link_libraries(kopete ${X11_Xrender_LIB})

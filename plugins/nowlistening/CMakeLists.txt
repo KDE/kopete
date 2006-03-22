@@ -23,7 +23,7 @@ kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_nowlistening )
 
-target_link_libraries(kopete_nowlistening  ${QT_AND_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_nowlistening )
 
@@ -42,7 +42,7 @@ kde4_add_plugin(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_nowlistening )
 
-target_link_libraries(kcm_kopete_nowlistening  ${QT_AND_KDECORE_LIBS} kutils )
+target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KDECORE_LIBS} kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_nowlistening )
 

@@ -38,7 +38,7 @@ kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_jabber )
 
-target_link_libraries(kopete_jabber  ${QT_AND_KDECORE_LIBS} kopete kopetejabberui cutestuff_util cutestuff_network iris iris_jabber iris_xmpp_core iris_xmpp_im jabberclient )
+target_link_libraries(kopete_jabber  ${KDE4_KDECORE_LIBS} kopete kopetejabberui cutestuff_util cutestuff_network iris iris_jabber iris_xmpp_core iris_xmpp_im jabberclient )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_jabber )
 

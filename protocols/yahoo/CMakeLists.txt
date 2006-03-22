@@ -26,7 +26,7 @@ kde4_add_plugin(kopete_yahoo ${kopete_yahoo_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_yahoo )
 
-target_link_libraries(kopete_yahoo  ${QT_AND_KDECORE_LIBS} kopete_videodevice kopete kopeteyahooui kyahoo )
+target_link_libraries(kopete_yahoo  ${KDE4_KDECORE_LIBS} kopete_videodevice kopete kopeteyahooui kyahoo )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_yahoo )
 
