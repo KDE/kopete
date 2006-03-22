@@ -643,11 +643,9 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 			using namespace XMPP;
 			QObject::connect ( d->jabberTLSHandler, SIGNAL ( tlsHandshaken() ), this, SLOT ( slotTLSHandshaken () ) );
 		}
-#warning Port to new QCA2 API
-#if 0
-		QList<QCA::Certificate> certStore;
-		d->jabberTLS->setCertificateStore ( certStore );
-#endif
+
+		if( QCA::haveSystemStore() )
+			d->jabberTLS->setTrustedCertificates( QCA::systemStore() );
 	}
 
 	/*
@@ -784,7 +782,7 @@ void JabberClient::disconnect( XMPP::Status &reason )
             reason.setIsAvailable( false );
             pres->pres( reason );
             pres->go();
-            
+
             d->jabberClientStream->close();
             d->jabberClient->close();
         }
@@ -898,10 +896,9 @@ void JabberClient::slotTLSHandshaken ()
 	emit debugMessage ( "TLS handshake done, testing certificate validity..." );
 
 	// FIXME: in the future, this should be handled by KDE, not QCA
-#warning Port to new QCA API
-	int validityResult = 0; //d->jabberTLS->certificateValidityResult ();
+	int validityResult = d->jabberTLS->peerCertificateValidity();
 
-	if ( validityResult == QCA::TLS::Valid )
+	if ( validityResult == QCA::ValidityGood  )
 	{
 		emit debugMessage ( "Certificate is valid, continuing." );
 
