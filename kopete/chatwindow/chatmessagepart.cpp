@@ -228,7 +228,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->saveAction = KStdAction::saveAs( this, SLOT(save()), actionCollection() );
 	d->printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
 	d->closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
-	d->copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), KShortcut(), this, SLOT( slotCopyURL() ), actionCollection(), "editcopy" );
+	d->copyURLAction = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), actionCollection(), "editcopy" );
+	connect( d->copyURLAction, SIGNAL( triggered(bool) ), this, SLOT( slotCopyURL() ) );
 
 	// read formatting override flags
 	readOverrides();

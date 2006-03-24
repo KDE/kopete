@@ -477,8 +477,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionRedo->setEnabled(false);
 
 
-	new KAction( i18n( "Create New Group..." ), 0, 0, this, SLOT( addGroup() ),
-		ac, "AddGroup" );
+	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac, "AddGroup" );
+	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
 
 	actionSendMessage = KopeteStdAction::sendMessage(
 		this, SLOT( slotSendMessage() ), ac, "contactSendMessage" );
@@ -492,27 +492,28 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ),
 		ac, "contactRemove" );
-	actionSendEmail = new KAction( i18n( "Send Email..." ), QString::fromLatin1( "mail_generic" ),
-		0, this, SLOT(  slotSendEmail() ), ac, "contactSendEmail" );
+	actionSendEmail = new KAction( KIcon("mail_generic"), i18n( "Send Email..." ), ac, "contactSendEmail" );
+	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
 	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
-	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0,
-		this, SLOT( slotRename() ), ac, "contactRename" );
+	actionRename = new KAction( KIcon("filesaveas"), i18n( "Rename" ), ac, "contactRename" );
+	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
 	actionAddContact = new KActionMenu( KIcon( QString::fromLatin1("add_user") ), i18n( "&Add Contact" ), ac, "contactAddContact" );
 	actionAddContact->popupMenu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "add_user", 0,
-		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
+	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac, "contactAddTemporaryContact" );
+	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( i18n( "&Properties" ), "edit_user", Qt::Key_Alt + Qt::Key_Return,
-		this, SLOT( slotProperties() ), ac, "contactProperties" );
+	actionProperties = new KAction( KIcon("edit_user"), i18n( "&Properties" ), ac, "contactProperties" );
+	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
+	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
 
 	// Update enabled/disabled actions
 	slotViewSelectionChanged();

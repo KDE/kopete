@@ -129,50 +129,45 @@ KAboutData *KopeteRichTextEditPart::createAboutData()
 
 void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 {
-	enableRichText = new KToggleAction(i18n("Enable &Rich Text"), "pencil", 0,
-				ac, "enableRichText" );
+	enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), ac, "enableRichText" );
 	enableRichText->setCheckedState(i18n("Disable &Rich Text"));
 	connect( enableRichText, SIGNAL( toggled(bool) ),
 			this, SLOT( slotSetRichTextEnabled(bool) ) );
 
-	checkSpelling = new KAction( i18n("Check &Spelling"), "spellcheck", 0,
-				editor, SLOT( checkSpelling() ), ac, "check_spelling" );
+	checkSpelling = new KAction( KIcon("spellcheck"), i18n("Check &Spelling"), ac, "check_spelling" );
+	connect( checkSpelling, SIGNAL( triggered(bool) ), editor, SLOT( checkSpelling() ) );
 
 	//Fg Color
-	actionFgColor = new KAction( i18n("Text &Color..."), "color_line", 0,
-		this, SLOT( setFgColor() ),
-		ac, "format_color" );
+	actionFgColor = new KAction( KIcon("color_line"), i18n("Text &Color..."), ac, "format_color" );
+	connect( actionFgColor, SIGNAL( triggered(bool) ), this, SLOT( setFgColor() ) );
 
 	//BG Color
-	actionBgColor = new KAction( i18n("Background Co&lor..."), "color_fill", 0,
-		this, SLOT( setBgColor() ),
-		ac, "format_bgcolor" );
+	actionBgColor = new KAction( KIcon("color_fill"), i18n("Background Co&lor..."), ac, "format_bgcolor" );
+	connect( actionBgColor, SIGNAL( triggered(bool) ), this, SLOT( setBgColor() ) );
 
 	//Font Family
-	action_font = new KFontAction( i18n("&Font"), KShortcut(),
-			ac, "format_font" );
+	action_font = new KFontAction( i18n("&Font"), ac, "format_font" );
 	connect( action_font, SIGNAL( activated( const QString & ) ),
 		this, SLOT( setFont( const QString & ) ) );
 
 	//Font Size
-	action_font_size = new KFontSizeAction( i18n("Font &Size"), KShortcut(),
-			ac, "format_font_size" );
+	action_font_size = new KFontSizeAction( i18n("Font &Size"), ac, "format_font_size" );
 	connect( action_font_size, SIGNAL( fontSizeChanged(int) ),
 		this, SLOT( setFontSize(int) ) );
 
 	//Formatting
-	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", Qt::CTRL + Qt::Key_B,
-			ac, "format_bold" );
+	action_bold = new KToggleAction( KIcon("text_bold"), i18n("&Bold"), ac, "format_bold" );
+	action_bold->setShortcut( KShortcut(Qt::CTRL + Qt::Key_B) );
 	connect( action_bold, SIGNAL( toggled(bool) ),
 		this, SLOT( setBold(bool) ) );
 
-	action_italic = new KToggleAction( i18n("&Italic"), "text_italic", Qt::CTRL + Qt::Key_I,
-			ac, "format_italic" );
+	action_italic = new KToggleAction( KIcon("text_italic"), i18n("&Italic"), ac, "format_italic" );
+	action_italic->setShortcut( KShortcut(Qt::CTRL + Qt::Key_I) );
 	connect( action_italic, SIGNAL( toggled(bool) ),
 		this, SLOT( setItalic(bool) ) );
 
-	action_underline = new KToggleAction( i18n("&Underline"), "text_under", Qt::CTRL + Qt::Key_U,
-				ac, "format_underline" );
+	action_underline = new KToggleAction( KIcon("text_under"), i18n("&Underline"), ac, "format_underline" );
+	action_underline->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
 	connect( action_underline, SIGNAL( toggled(bool) ),
 		this, SLOT( setUnderline(bool) ) );
 
@@ -185,33 +180,28 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 	updateFont();
 
 	//Alignment
-	action_align_left = new KToggleAction( i18n("Align &Left"), "text_left", 0,
-			ac, "format_align_left" );
+	action_align_left = new KToggleAction( KIcon("text_left"), i18n("Align &Left"), ac, "format_align_left" );
 	connect( action_align_left, SIGNAL( toggled(bool) ),
 		this, SLOT( setAlignLeft(bool) ) );
 
-	action_align_center = new KToggleAction( i18n("Align &Center"), "text_center", 0,
-			ac, "format_align_center" );
+	action_align_center = new KToggleAction( KIcon("text_center"), i18n("Align &Center"), ac, "format_align_center" );
 	connect( action_align_center, SIGNAL( toggled(bool) ),
 		this, SLOT( setAlignCenter(bool) ) );
 
-	action_align_right = new KToggleAction( i18n("Align &Right"), "text_right", 0,
-			ac, "format_align_right" );
+	action_align_right = new KToggleAction( KIcon("text_right"), i18n("Align &Right"), ac, "format_align_right" );
 	connect( action_align_right, SIGNAL( toggled(bool) ),
 		this, SLOT( setAlignRight(bool) ) );
 
-	action_align_justify = new KToggleAction( i18n("&Justify"), "text_block", 0,
-			ac, "format_align_justify" );
+	action_align_justify = new KToggleAction( KIcon("text_block"), i18n("&Justify"), ac, "format_align_justify" );
 	connect( action_align_justify, SIGNAL( toggled(bool) ),
 		this, SLOT( setAlignJustify(bool) ) );
 
-#warning Port to new KAction
-#if 0
-	action_align_left->setExclusiveGroup( "alignment" );
-	action_align_center->setExclusiveGroup( "alignment" );
-	action_align_right->setExclusiveGroup( "alignment" );
-	action_align_justify->setExclusiveGroup( "alignment" );
-#endif
+	QActionGroup *alignmentGroup = new QActionGroup(this);
+	alignmentGroup->addAction(action_align_left);
+	alignmentGroup->addAction(action_align_center);
+	alignmentGroup->addAction(action_align_right);
+	alignmentGroup->addAction(action_align_justify);
+
 	connect( editor, SIGNAL( cursorPositionChanged( int,int ) ),
 		this, SLOT( updateAligment() ) );
 

@@ -229,12 +229,11 @@ void KopeteWindow::initActions()
 		actionCollection(), "ConnectAll" );
 	*/
 
-	actionDisconnect = new KAction( i18n( "O&ffline" ), "connect_no",
-		0, this, SLOT( slotDisconnectAll() ),
-		actionCollection(), "DisconnectAll" );
+	actionDisconnect = new KAction( KIcon("connect_no"), i18n( "O&ffline" ), actionCollection(), "DisconnectAll" );
+	connect( actionDisconnect, SIGNAL( triggered(bool) ), this, SLOT( slotDisconnectAll() ) );
 
-	actionExportContacts = new KAction( i18n( "&Export Contacts..." ), "", 0, this,
-		SLOT( showExportDialog() ),actionCollection(), "ExportContacts" );
+	actionExportContacts = new KAction( i18n( "&Export Contacts..." ), actionCollection(), "ExportContacts" );
+	connect( actionExportContacts, SIGNAL( triggered(bool) ), this, SLOT( showExportDialog() ) );
 
 	/* the connection menu has been replaced by the set status menu
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
@@ -247,30 +246,23 @@ void KopeteWindow::initActions()
 	*/
 	actionDisconnect->setEnabled(false);
 
-	selectAway = new KAction( i18n("&Away"), SmallIcon("kopeteaway"), 0,
-		this, SLOT( slotGlobalAway() ), actionCollection(),
-		"SetAwayAll" );
+	selectAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), actionCollection(), "SetAwayAll" );
+	connect( selectAway, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAway() ) );
 
-	selectBusy = new KAction( i18n("&Busy"), SmallIcon("kopeteaway"), 0,
-					 this, SLOT( slotGlobalBusy() ), actionCollection(),
-					 "SetBusyAll" );
+	selectBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), actionCollection(), "SetBusyAll" );
+	connect( selectBusy, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalBusy() ) );
 
 
-	actionSetInvisible = new KAction( i18n( "&Invisible" ), "kopeteavailable", 0 ,
-		  this, SLOT( slotSetInvisibleAll() ), actionCollection(),
-		  "SetInvisibleAll" );
-
-
+	actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), actionCollection(), "SetInvisibleAll" );
+	connect( actionSetInvisible, SIGNAL( triggered(bool) ), this, SLOT( slotSetInvisibleAll() ) );
 
 	/*actionSetAvailable = new KAction( i18n( "&Online" ),
 		"kopeteavailable", 0 , Kopete::AccountManager::self(),
 		SLOT( setAvailableAll() ), actionCollection(),
 		"SetAvailableAll" );*/
 
-	actionSetAvailable = new KAction( i18n("&Online"),
-		SmallIcon("kopeteavailable"), 0, this,
-		SLOT( slotGlobalAvailable() ), actionCollection(),
-		"SetAvailableAll" );
+	actionSetAvailable = new KAction( KIcon("kopeteavailable"), i18n("&Online"), actionCollection(), "SetAvailableAll" );
+	connect( actionSetAvailable, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAvailable() ) );
 
 	actionAwayMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
 							actionCollection(), "Status" );
@@ -290,18 +282,24 @@ void KopeteWindow::initActions()
 	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
-	new KAction( i18n( "Configure Plugins..." ), "input_devices_settings", 0, this,
-		SLOT( slotConfigurePlugins() ), actionCollection(), "settings_plugins" );
-	new KAction( i18n( "Configure &Global Shortcuts..." ), "configure_shortcuts", 0, this,
-		SLOT( slotConfGlobalKeys() ), actionCollection(), "settings_global" );
+	KAction *configurePluginAction = new KAction( KIcon("input_devices_settings"), i18n( "Configure Plugins..." ),
+		actionCollection(), "settings_plugins" );
+	connect( configurePluginAction, SIGNAL( triggered(bool) ), this, SLOT( slotConfigurePlugins() ) );
+
+	KAction *configureGlobalShortcutsAction = new KAction( KIcon("configure_shortcuts"), i18n( "Configure &Global Shortcuts..." ),
+		actionCollection(), "settings_global" );
+	connect( configureGlobalShortcutsAction, SIGNAL( triggered(bool) ), this, SLOT( slotConfGlobalKeys() ) );
 
 	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
-	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "show_offliners", Qt::CTRL + Qt::Key_U,
-			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
-	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", Qt::CTRL + Qt::Key_G,
-			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
+	actionShowOffliners = new KToggleAction( KIcon("show_offliners"), i18n( "Show Offline &Users" ), actionCollection(), "settings_show_offliners" );
+	actionShowOffliners->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
+	connect( actionShowOffliners, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowOffliners() ) );
+
+	actionShowEmptyGroups = new KToggleAction( KIcon("folder_green"), i18n( "Show Empty &Groups" ), actionCollection(), "settings_show_empty_groups" );
+	actionShowEmptyGroups->setShortcut( KShortcut(Qt::CTRL + Qt::Key_G) );
+	connect( actionShowEmptyGroups, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowEmptyGroups() ) );
 
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
@@ -314,9 +312,9 @@ void KopeteWindow::initActions()
 	new KWidgetAction( searchLabel, i18n( "Search:" ), 0, 0, 0, actionCollection(), "quicksearch_label" );
 // 	quickSearch->setAutoSized( true );
 	// quick search bar - clear button
-	KAction *resetQuickSearch = new KAction( i18n( "Reset Quick Search" ),
-		QApplication::isRightToLeft() ? "clear_left" : "locationbar_erase",
-		0, searchBar, SLOT( clear() ), actionCollection(), "quicksearch_reset" );
+	KAction *resetQuickSearch = new KAction( QApplication::isRightToLeft() ? KIcon("clear_left") : KIcon("locationbar_erase"), i18n( "Reset Quick Search" ),
+		actionCollection(), "quicksearch_reset" );
+	connect( resetQuickSearch, SIGNAL( triggered(bool) ),  searchBar, SLOT( clear() ) );
 	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
 		"Resets the quick search so that all contacts and groups are shown again." ) );
 
