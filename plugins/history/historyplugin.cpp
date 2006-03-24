@@ -46,9 +46,9 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Plugin( HistoryPluginFactory::instance(), parent, name ), m_loggerFactory( this )
 {
-	KAction *viewMetaContactHistory = new KAction( i18n("View &History" ),
-		QString::fromLatin1( "history" ), 0, this, SLOT(slotViewHistory()),
+	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ),
 		actionCollection(), "viewMetaContactHistory" );
+	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(
 		Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 

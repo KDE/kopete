@@ -82,9 +82,12 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	
 	m_session->setUserId( accountId.lower() );
 	
-	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), 0, "m_openInboxAction" );
-	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), 0, "m_openYABAction" );
-	m_editOwnYABEntry = new KAction( i18n( "&Edit my contact details..."), "contents", 0, this, SLOT( slotEditOwnYABEntry() ), 0, "m_editOwnYABEntry" );
+	m_openInboxAction = new KAction( KIcon("mail_generic"), i18n( "Open Inbo&x..." ), 0, "m_openInboxAction" );
+	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
+	m_openYABAction = new KAction( KIcon("contents"), i18n( "Open &Addressbook..." ), 0, "m_openYABAction" );
+	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
+	m_editOwnYABEntry = new KAction( KIcon("contents"), i18n( "&Edit my contact details..."), 0, "m_editOwnYABEntry" );
+	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
 
 	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );

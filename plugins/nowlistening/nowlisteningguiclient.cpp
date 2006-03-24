@@ -34,8 +34,10 @@ NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent, NowLi
 {
 	connect(plugin, SIGNAL(readyForUnload()), SLOT(slotPluginUnloaded()));
 	m_msgManager = parent;
-	m_action = new KAction( i18n( "Send Media Info" ), 0, this,
-			SLOT( slotAdvertToCurrentChat() ), actionCollection(), "actionSendAdvert" );
+
+	m_action = new KAction( i18n( "Send Media Info" ), actionCollection(), "actionSendAdvert" );
+	connect(m_action, SIGNAL(triggered(bool)), this, SLOT(slotAdvertToCurrentChat()));
+
 	setXMLFile("nowlisteningchatui.rc");
 }
 

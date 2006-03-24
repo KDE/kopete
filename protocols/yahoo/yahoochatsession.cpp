@@ -56,10 +56,18 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	setInstance(protocol->instance());
 
 	// Add Actions
-	new KAction( i18n( "Buzz Contact" ), QIconSet(BarIcon("bell")), "Ctrl+G", this, SLOT( slotBuzzContact() ), actionCollection(), "yahooBuzz" ) ;
-	new KAction( i18n( "Show User Info" ), QIconSet(BarIcon("idea")), 0, this, SLOT( slotUserInfo() ), actionCollection(), "yahooShowInfo" ) ;
-	new KAction( i18n( "Request Webcam" ), QIconSet(BarIcon("webcamreceive")), 0, this, SLOT( slotRequestWebcam() ), actionCollection(), "yahooRequestWebcam" ) ;
-	new KAction( i18n( "Invite to view your Webcam" ), QIconSet(BarIcon("webcamsend")), 0, this, SLOT( slotInviteWebcam() ), actionCollection(), "yahooSendWebcam" ) ;
+	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), actionCollection(), "yahooBuzz" ) ;
+	buzzAction->setShortcut( KShortcut("Ctrl+G") );
+	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
+
+	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), actionCollection(), "yahooShowInfo" ) ;
+	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
+
+	KAction *receiveWebcamAction = new KAction( KIcon("webcamreceive"), i18n( "Request Webcam" ), actionCollection(), "yahooRequestWebcam" ) ;
+	connect( receiveWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( slotRequestWebcam() ) );
+
+	KAction *sendWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), actionCollection(), "yahooSendWebcam" ) ;
+	connect( sendWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( slotInviteWebcam() ) );
 
 	YahooContact *c = static_cast<YahooContact*>( others.first() );
 	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );

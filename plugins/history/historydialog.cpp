@@ -185,7 +185,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	//initActions
 	KActionCollection* ac = new KActionCollection(this);
 	mCopyAct = KStdAction::copy( this, SLOT(slotCopy()), ac );
-	mCopyURLAct = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), ac, "mCopyURLAct" );
+	mCopyURLAct = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), ac, "mCopyURLAct" );
+	connect(mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT( slotCopyURL() ) );
 
 	resize(650, 700);
 	centerOnScreen(this);

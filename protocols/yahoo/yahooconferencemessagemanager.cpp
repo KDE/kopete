@@ -47,7 +47,8 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( i18n( "&Invite others" ), "kontact_contacts", this, SLOT( slotInviteOthers() ), actionCollection(), "yahooInvite");
+	m_actionInvite = new KAction( KIcon("kontact_contacts"), i18n( "&Invite others" ), actionCollection(), "yahooInvite");
+	connect ( m_actionInvite, SIGNAL( triggered ( bool ) ), this, SLOT( slotInviteOthers() ) );
 
 	setXMLFile("yahooconferenceui.rc");
 }

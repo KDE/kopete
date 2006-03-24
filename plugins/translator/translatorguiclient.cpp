@@ -43,7 +43,9 @@ TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent, const cha
 
 	m_manager = parent;
 
-	new KAction( i18n( "Translate" ), "locale", Qt::CTRL + Qt::Key_T, this, SLOT( slotTranslateChat() ), actionCollection(), "translateCurrentMessage" );
+	KAction *translate = new KAction( KIcon("locale"), i18n( "Translate" ), actionCollection(), "translateCurrentMessage" );
+	connect( translate, SIGNAL( triggered(bool) ), this, SLOT( slotTranslateChat() ) );
+	translate->setShortcut( KShortcut(Qt::CTRL + Qt::Key_T) );
 	
 	setXMLFile( "translatorchatui.rc" );
 }

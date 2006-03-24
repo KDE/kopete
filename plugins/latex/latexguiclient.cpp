@@ -40,7 +40,9 @@ LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent, const char *name )
 
 	m_manager = parent;
 
-	new KAction( i18n( "Preview Latex Images" ), "latex", Qt::CTRL + Qt::Key_L, this, SLOT( slotPreview() ), actionCollection(), "latexPreview" );
+	KAction *previewAction = new KAction( KIcon("latex"), i18n( "Preview Latex Images" ), actionCollection(), "latexPreview" );
+	previewAction->setShortcut( KShortcut(Qt::CTRL + Qt::Key_L) );
+	connect(previewAction, SIGNAL( triggered(bool) ), this, SLOT( slotPreview() ) );
 	
 	setXMLFile( "latexchatui.rc" );
 }

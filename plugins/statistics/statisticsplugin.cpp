@@ -52,9 +52,9 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
       
 
 {
-	KAction *viewMetaContactStatistics = new KAction( i18n("View &Statistics" ),
-		QString::fromLatin1( "log" ), 0, this, SLOT(slotViewStatistics()),
+	KAction *viewMetaContactStatistics = new KAction( KIcon("log"), i18n("View &Statistics" ),
 		actionCollection(), "viewMetaContactStatistics" );
+	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));
 	viewMetaContactStatistics->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
 	connect(Kopete::ChatSessionManager::self(),SIGNAL(chatSessionCreated(Kopete::ChatSession*)),

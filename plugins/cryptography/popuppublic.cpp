@@ -150,7 +150,9 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         boutonboxoptions=new Q3ButtonGroup(5,Qt::Vertical ,page,0);
 	
 	KActionCollection *actcol=new KActionCollection(this);
-	(void) new KAction(i18n("&Go to Default Key"),goDefaultKey, this, SLOT(slotGotoDefaultKey()),actcol,"go_default_key");
+	KAction *defaultKeyAction = new KAction(i18n("&Go to Default Key"),actcol,"go_default_key");
+	defaultKeyAction->setShortcut(goDefaultKey);
+	connect( defaultKeyAction, SIGNAL(triggered(bool)), this, SLOT(slotGotoDefaultKey()) );
 	
 	
         CBarmor=new QCheckBox(i18n("ASCII armored encryption"),boutonboxoptions);

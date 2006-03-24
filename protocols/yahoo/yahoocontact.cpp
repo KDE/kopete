@@ -375,8 +375,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 	if ( !m_webcamAction )
 	{
-		m_webcamAction = new KAction( i18n( "View &Webcam" ), "webcamreceive", KShortcut(),
-		                              this, SLOT( requestWebcam() ), 0, "view_webcam" );
+		m_webcamAction = new KAction( KIcon("webcamreceive"), i18n( "View &Webcam" ), 0, "view_webcam" );
+		connect( m_webcamAction, SIGNAL( triggered(bool) ), this, SLOT( requestWebcam() ) );
 	}
 	if ( isReachable() )
 		m_webcamAction->setEnabled( true );
@@ -386,8 +386,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	
 	if( !m_inviteWebcamAction )
 	{
-		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "webcamsend", KShortcut(),
-		                                    this, SLOT( inviteWebcam() ), 0, "invite_webcam" );
+		m_inviteWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), 0, "invite_webcam" );
+		connect( m_inviteWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( inviteWebcam() ) );
 	}
 	if ( isReachable() )
 		m_inviteWebcamAction->setEnabled( true );
@@ -397,7 +397,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	
 	if ( !m_buzzAction )
 	{
-		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), "bell", KShortcut(), this, SLOT( buzzContact() ), 0, "buzz_contact");
+		m_buzzAction = new KAction( KIcon("bell"), i18n( "&Buzz Contact" ), 0, "buzz_contact");
+		connect( m_buzzAction, SIGNAL( triggered(bool) ), this, SLOT( buzzContact() ) );
 	}
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
@@ -407,7 +408,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_stealthAction )
 	{
-		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), "yahoo_stealthed", KShortcut(), this, SLOT( stealthContact() ), 0, "stealth_contact");
+		m_stealthAction = new KAction( KIcon("yahoo_stealthed"), i18n( "&Stealth Setting" ), 0, "stealth_contact");
+		connect( m_stealthAction, SIGNAL( triggered(bool) ), this, SLOT( stealthContact() ) );
 	}
 	if ( isReachable() )
 		m_stealthAction->setEnabled( true );
@@ -417,7 +419,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( i18n( "&Invite to Conference" ), "kontact_contacts", KShortcut(), this, SLOT( inviteConference() ), 0, "invite_conference");
+		m_inviteConferenceAction = new KAction( KIcon("kontact_contacts"), i18n( "&Invite to Conference" ), 0, "invite_conference");
+		connect( m_inviteConferenceAction, SIGNAL( triggered(bool) ), this, SLOT( inviteConference() ) );
 	}
 	if ( isReachable() )
 		m_inviteConferenceAction->setEnabled( true );

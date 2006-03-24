@@ -39,7 +39,8 @@ NetMeetingGUIClient::NetMeetingGUIClient( MSNChatSession *parent,  const char *n
 	setInstance(KGenericFactory<NetMeetingPlugin>::instance());
 	m_manager=parent;
 
-	new KAction( i18n( "Invite to Use NetMeeting" ), 0, this, SLOT( slotStartInvitation() ), actionCollection() , "netmeeting" ) ;
+	KAction *inviteAction = new KAction( i18n( "Invite to Use NetMeeting" ), actionCollection(), "netmeeting" );
+	connect( inviteAction, SIGNAL( triggered(bool) ), this, SLOT( slotStartInvitation() ) );
 
 	setXMLFile("netmeetingchatui.rc");
 }
