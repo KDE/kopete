@@ -74,7 +74,7 @@ private:
 
 
 KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc)
-		: KListViewItem(parent, date.toString(Qt::LocalDate), mc->displayName())
+		: KListViewItem(parent, date.toString(Qt::ISODate), mc->displayName())
 {
 	mDate = date;
 	mMetaContact = mc;
@@ -82,15 +82,14 @@ KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::Meta
 
 int KListViewDateItem::compare(QListViewItem *i, int col, bool ascending) const
 {
-	if (col) return QListViewItem::compare(i, col, ascending);
+	if (col) 
+		return QListViewItem::compare(i, col, ascending);
 
+	//compare dates - do NOT use ascending var here
 	KListViewDateItem* item = static_cast<KListViewDateItem*>(i);
-	if (item->date() > mDate)
-		return ascending ? -1 : 1;
-	else if (item->date() < mDate)
-		return ascending ? 1 : -1;
-	
-	return 0;
+	if ( mDate < item->date() )
+		return -1;
+	return ( mDate > item->date() );
 }
 
 
