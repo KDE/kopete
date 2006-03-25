@@ -111,25 +111,6 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 	
 	WORD msgLength = buffer->getLEWord();
 	QByteArray msg = buffer->getBlock( msgLength );
-	
-/*	QDate date(year, month, day);
-	QTime time(hour,minute);
-
-#ifndef HAVE_TM_GMTOFF
-	int tz = -( ::timezone ) * 360; //360 seconds/hour
-#else
-	int tz;
-	time_t now;
-	struct tm *tm;
-	now = ::time(NULL);
-	tm = ::localtime(&now);
-	// daylight = tm->tm_isdst; // another linuxism 
-	tz = tm->tm_gmtoff;
-#endif
-	//we must do this to the DateTime not the Time
-	//or we might end up on the wrong day.
-	hackyTime = hackyTime.addSecs( tz );
-	*/
 
 	QDateTime utcTime( QDate(year, month, day), QTime(hour, minute), Qt::UTC );
 
