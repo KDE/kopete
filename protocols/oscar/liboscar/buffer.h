@@ -21,6 +21,7 @@
 #define BUFFER_H
 
 #include "oscartypes.h"
+#include "oscarguid.h"
 #include <QList>
 #include <QByteArray>
 
@@ -237,6 +238,12 @@ class Buffer
 		int addBUIN(const char * s);
 		QByteArray getBUIN();
 		QString peekBUIN();
+
+		/** adds guid to the buffer */
+		int addGuid( const Guid & g );
+
+		/** gets guid from the buffer */
+		Guid getGuid();
 
 		operator QByteArray() const;
 

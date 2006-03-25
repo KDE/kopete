@@ -70,4 +70,16 @@ void BufferTest::testLength()
 	QVERIFY(b.length() == 9);
 }
 
+void BufferTest::testGuid()
+{
+	Buffer b;
+	Guid g( QByteArray( "asdfghjkqwertyui" ) );
+	b.addGuid( g );
+	QVERIFY( b.length() == 16 );
+	Guid h = b.getGuid();
+	QVERIFY( b.length() == 0 );
+	QCOMPARE( g, h );
+	
+}
+
 #include "buffertest.moc"

@@ -421,7 +421,7 @@ QByteArray Buffer::getBUIN()
 {
 	BYTE len = getByte();
 	QByteArray qba;
-	qba.duplicate( getBlock(len) );
+	qba.duplicate( getBlock(len) ); //FIXME: not in qt4. use assignment
 	return qba;
 }
 
@@ -494,6 +494,21 @@ QString Buffer::peekBUIN()
 	mReadPos = lastPos;
 	return QString( qba );
 }
+
+
+int Buffer::addGuid( const Guid & g )
+{
+	if (g.isValid())
+		return addString( g.data() );
+	return mBuffer.size();
+}
+
+
+Guid Buffer::getGuid()
+{
+	return Guid(getBBlock(16)); //block or bblock?
+}
+
 
 Buffer::operator QByteArray() const
 {

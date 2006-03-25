@@ -13,6 +13,7 @@ private slots:
 	void testGetTLV();
 	void testBytesAvailable();
 	void testLength();
+	void testGuid();
 
 };
 
