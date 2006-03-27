@@ -13,7 +13,7 @@ kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
-target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete kparts kspell2 kdeprint )
+target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete kparts kspell2 ${KDE4_KDEPRINT_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 krichtexteditpart )
 
