@@ -22,6 +22,9 @@
 // Papillon includes
 #include "transfer.h"
 #include "connection.h"
+#include "tweenerhandler.h"
+#include "qtconnector.h" // TODO: temp
+#include "securestream.h" // TODO: temp
 
 namespace Papillon 
 {
@@ -100,10 +103,14 @@ bool LoginTask::take(Transfer *transfer)
 					if( transfer->arguments()[0] == QLatin1String("TWN") && transfer->arguments()[1] == QLatin1String("S") )
 					{
 						d->currentState = StateTweenerConfirmed;
+
+						QString tweener = transfer->arguments()[2];
+						TweenerHandler *tweenerHandler = new TweenerHandler(new SecureStream(new QtConnector(this)));
+						tweenerHandler->setLoginInformation(tweener, d->passportId, d->password);
+						connect(tweenerHandler, SIGNAL(result( TweenerHandler* )), this, SLOT(ticketReceived( TweenerHandler* )));
+						tweenerHandler->start();
+
 						proceeded = true;
-						// TODO: Get the ticket then send the ticket.
-						d->currentState = StateError;
-						setError();
 					}
 				}
 				else if( transfer->command() == QLatin1String("XFR") )
@@ -128,7 +135,7 @@ bool LoginTask::take(Transfer *transfer)
 						d->currentState = StateFinish;
 						// End the login task.
 						setSuccess();
-						}
+					}
 				}
 				break;
 			}
@@ -226,6 +233,21 @@ void LoginTask::sendTweenerConfirmation()
 	send(twnTransfer);
 }
 
+void LoginTask::ticketReceived(TweenerHandler *tweenerHandler)
+{
+	if( tweenerHandler->success() )
+	{
+		d->tweenerTicket = tweenerHandler->ticket();
+		delete tweenerHandler;
+
+		sendTweenerConfirmation();
+	}
+	else
+	{
+		d->currentState = LoginTask::StateBadPassword;
+		setError();
+	}
+}
 }
 
 #include "logintask.moc"

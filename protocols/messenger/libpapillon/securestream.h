@@ -60,6 +60,10 @@ public:
 	 * No need to pass a port argument since it's always on port 443.
 	 */
 	void connectToServer(const QString &server);
+	/**
+	 * @brief Disconnect from server.
+	 */
+	void disconnectFromServer();
 
 	/**
 	 * @brief Return a error code.

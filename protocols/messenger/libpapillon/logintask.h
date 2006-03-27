@@ -22,6 +22,7 @@ namespace Papillon
 {
 
 class Transfer;
+class TweenerHandler;
 /**
  * Login on Windows Live Messenger.
  *
@@ -137,6 +138,7 @@ private slots:
 	void sendCvrCommand();
 	void sendTweenerInviteCommand();
 	void sendTweenerConfirmation();
+	void ticketReceived(TweenerHandler *tweenerHandler);
 
 private:
 	class Private;

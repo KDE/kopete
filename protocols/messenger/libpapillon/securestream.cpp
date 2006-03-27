@@ -43,6 +43,7 @@ public:
 	
 	SecureStream::ErrorCode errorCode;
 	QString errorString;
+	QCA::Initializer qcaInit; // TODO: Put that into Papillon::Client
 };
 
 SecureStream::SecureStream(Connector *connector)
@@ -71,6 +72,13 @@ void SecureStream::connectToServer(const QString &server)
 {
 	d->server = server;
 	d->connector->connectToServer(server, 443);
+}
+
+void SecureStream::disconnectFromServer()
+{
+	disconnect(d->byteStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
+	disconnect(d->byteStream, SIGNAL(connectionClosed()), this, SLOT(slotDisconnected()));
+	d->connector->done();
 }
 
 SecureStream::ErrorCode SecureStream::errorCode() const
