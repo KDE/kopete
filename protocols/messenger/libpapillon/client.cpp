@@ -15,6 +15,7 @@
 #include "client.h"
 
 // Qt includes
+#include <QtDebug>
 
 // QCA include
 #include <QtCrypto/QtCrypto>
@@ -25,6 +26,7 @@
 #include "logintask.h"
 #include "securestream.h"
 #include "papillonclientstream.h"
+#include "transfer.h"
 
 namespace Papillon
 {
@@ -47,6 +49,9 @@ public:
 	QString password;
 	// Convience object that init QCA.
 	QCA::Initializer qcaInit;
+
+	// All the tasks
+	LoginTask *loginTask;
 };
 
 Client::Client(Connector *connector, QObject *parent)
@@ -88,7 +93,7 @@ void Client::connectToServer(const QString &server, quint16 port)
 	if( !d->notificationConnection )
 	{
 		d->notificationConnection = createConnection();
-		connect(d->notificationConnection, SIGNAL(connected()), this, SLOT(notifyConnected()));
+		connect(d->notificationConnection, SIGNAL(connected()), this, SIGNAL(connected()));
 	}
 
 	d->notificationConnection->connectToServer(d->server, d->port);
@@ -102,20 +107,37 @@ void Client::setClientInfo(const QString &passportId, const QString &password)
 
 void Client::login()
 {
-	LoginTask *login = new LoginTask(d->notificationConnection->rootTask());
-	login->setUserInfo(d->passportId, d->password);
-	connect(login, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
-	login->go(true);
+	if(d->loginTask)
+	{
+		delete d->loginTask;
+		d->loginTask = 0;
+	}
+
+	d->loginTask = new LoginTask(d->notificationConnection->rootTask());
+	d->loginTask->setUserInfo(d->passportId, d->password);
+	connect(d->loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(loginRedirect( const QString&, quint16 )));
+	connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
+	d->loginTask->go(true);
 }
 
-void Client::notifyConnected()
+void Client::loginRedirect(const QString &server, quint16 port)
 {
+	qDebug() << PAPILLON_FUNCINFO << "Redirect to" << QString("%1:%2").arg(server).arg(port);
+
+	d->notificationConnection->disconnectFromServer();
+	d->notificationConnection->connectToServer(server, port);
 	
+	// Redo login process.
+	login();
 }
 
 void Client::loginResult(Papillon::Task *task)
 {
-	
+}
+
+void Client::writeCommand(Transfer *command)
+{
+	d->notificationConnection->send(command);
 }
 
 }

@@ -25,6 +25,7 @@ class Connector;
 class Connection;
 class SecureStream;
 class Task;
+class Transfer;
 
 /**
  * @brief Client to Windows Live Messenger.
@@ -77,19 +78,30 @@ public slots:
 	void connectToServer(const QString &server = QString(), quint16 port = 0);
 	void login();
 
+	
 private slots:
-	/**
-	 * Notification Connection is connected.
-	 * Do the login
-	 */
-	void notifyConnected();
 	/**
 	 * Result of Login process.
 	 * @param task the LoginTask.
 	 */
 	void loginResult(Papillon::Task *task);
-
+	/**
+	 * @internal
+	 * Redirect notification connection given by login task.
+	 * @param server new Notification server.
+	 * @param port new Notification server port.
+	 */
+	void loginRedirect(const QString &server, quint16 port);
+	
 private:
+	/**
+	 * @internal
+	 * Internal command used for debugging. (DO NOT USE THAT METHOD unless)
+	 * Write a command on Notification server. 
+	 * @param command the command.
+	 */
+	void writeCommand(Transfer *command);
+
 	class Private;
 	Private *d;
 };
