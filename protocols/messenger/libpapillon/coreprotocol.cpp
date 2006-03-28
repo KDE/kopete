@@ -152,6 +152,7 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 				// Remove the last parameter from the command list and set the payload length.
 				// So it will not be in the arguments.
 				payloadLength = commandList.takeLast().toUInt(&dummy);
+				qDebug() << PAPILLON_FUNCINFO << "Begin Payload transfer, length:" << payloadLength;
 			}
 			
 			// Check for a transaction ID.
@@ -193,20 +194,20 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			
 			bytesParsed = parsedLine.size() + 2; // 2 is to add \r\n to the size which was trimmed.
 		}
-		else if(d->state == WaitForPayload)
+		else if(d->state == WaitForPayload || d->state == NeedMore)
 		{
 			if(raw.size() < d->payloadLength)
 			{
+				qDebug() << PAPILLON_FUNCINFO << "Raw size:" << raw.size() << "Payload length:" << d->payloadLength;
 				d->state = NeedMore;
 				return bytesParsed;
 			}
 			
-			QByteArray payloadData;
-			payloadData.reserve(d->payloadLength);
-			din.readRawBytes(payloadData.data(), d->payloadLength);
+			QByteArray payloadData = QByteArray::fromRawData(raw.data(), d->payloadLength);
 			
 			d->inTransfer->setPayloadData(payloadData);
-			
+			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << payloadData.size();
+// 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from Transfer):" << d->inTransfer->payloadLength();
 			d->state = Available;
 			emit incomingData();
 			
