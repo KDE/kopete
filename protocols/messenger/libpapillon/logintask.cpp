@@ -178,7 +178,7 @@ void LoginTask::sendVersionCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	versionTransfer->setTransactionId( d->currentTransactionId );
 
-	QStringList arguments = QString("MSNP11 MSNP10 CVR0").split(" ");
+	QStringList arguments = QString("MSNP13 CVR0").split(" ");
 	versionTransfer->setArguments(arguments);
 
 	send(versionTransfer);
@@ -193,7 +193,7 @@ void LoginTask::sendCvrCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	cvrTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("0x040c winnt 5.1 i386 MSNMSGR 7.0.0777 msmsgs %1").arg(d->passportId);
+	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0566 msmsgs %1").arg(d->passportId);
 	QStringList argsList = arguments.split(" ");
 	cvrTransfer->setArguments(argsList);
 

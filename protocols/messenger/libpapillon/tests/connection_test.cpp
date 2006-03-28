@@ -68,7 +68,7 @@ void Connection_Test::testConnection()
 	Client *client = new Client(new QtConnector(this), this);
 	ClientStream *stream = new ClientStream(new QtConnector(this), this);
 	m_connection = new FakeConnection(stream);
-	m_connection->connectToServer("messenger.hotmail.com", 1863);
+	m_connection->connectToServer("muser.messenger.hotmail.com", 1863);
 	m_connection->setClient(client);
 
 	connect(m_connection, SIGNAL(connected()), m_connection, SLOT(start()));

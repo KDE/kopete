@@ -236,6 +236,7 @@ bool CoreProtocol::okToProceed(const QDataStream &din)
 bool CoreProtocol::isPayloadCommand(const QString &command)
 {
 	if( command == QLatin1String("ADL") ||
+	    command == QLatin1String("GCF") ||
 	    command == QLatin1String("MSG") ||
 	    command == QLatin1String("QRY") ||
 	    command == QLatin1String("RML") ||

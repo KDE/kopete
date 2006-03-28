@@ -34,7 +34,7 @@ class Client::Private
 public:
 	Private()
 	 : connector(0), notificationConnection(0),
-	   server( QLatin1String("messenger.hotmail.com") ), port(1863)
+	   server( QLatin1String("muser.messenger.hotmail.com") ), port(1863)
 	{}
 
 	Connector *connector;
