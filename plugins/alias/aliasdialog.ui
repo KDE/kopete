@@ -188,6 +188,6 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>klistview.h</includehint>
+    <includehint>k3listview.h</includehint>
 </includehints>
 </UI>

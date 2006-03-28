@@ -335,7 +335,7 @@
     <includehint>kprogress.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klistviewsearchline.h</includehint>
-    <includehint>klistview.h</includehint>
+    <includehint>k3listview.h</includehint>
     <includehint>kcombobox.h</includehint>
 </includehints>
 </UI>

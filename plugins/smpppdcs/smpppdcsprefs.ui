@@ -279,6 +279,6 @@
 <includehints>
     <includehint>kpushbutton.h</includehint>
     <includehint>smpppdlocationwidget.h</includehint>
-    <includehint>klistview.h</includehint>
+    <includehint>k3listview.h</includehint>
 </includehints>
 </UI>
