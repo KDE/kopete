@@ -1,5 +1,5 @@
 /*
-   transfer.h - Represent a transfer between the Messenger server.
+   connection.h - Connection with a Messenger service.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -24,6 +24,7 @@ namespace Papillon
 class ClientStream;
 class Transfer;
 class Task;
+class Client;
 /**
  * @brief Connection encapsulate a connection to a Windows Live Messenger service.
  *
@@ -39,7 +40,7 @@ public:
 	 * Create a new connection
 	 * @param stream the ClientStream (socket and core protocol encapsulation)
 	 */
-	Connection(ClientStream *stream);
+	Connection(ClientStream *stream, QObject *parent = 0);
 	/**
 	 * d-tor
 	 */
@@ -62,6 +63,17 @@ public:
 	 * @return true if the connection is active.
 	 */
 	bool isConnected();
+
+	/**
+	 * Get the Client associated with this connection.
+	 * @return the Client pointer.
+	 */
+	Client *client();
+	/**
+	 * Set the Client pointer.
+	 * @param client Client pointer.
+	 */
+	void setClient(Client *client);
 
 signals:
 	/**

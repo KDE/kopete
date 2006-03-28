@@ -1,5 +1,5 @@
 /*
-   connection.cpp - Represent a transfer between the Messenger server.
+   connection.cpp - Connection with a Messenger service.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -21,6 +21,7 @@
 #include "task.h"
 #include "papillonclientstream.h"
 #include "transfer.h"
+#include "client.h"
 
 namespace Papillon 
 {
@@ -29,17 +30,19 @@ class Connection::Private
 {
 public:
 	Private()
-	 : rootTask(0), stream(0), transactionId(0),
+	 : rootTask(0), stream(0), client(0), transactionId(0),
 	   isConnected(false)
 	{}
 
 	~Private()
 	{
 		delete rootTask;
+		delete stream;
 	}
 
 	Task *rootTask;
 	ClientStream *stream;
+	Client *client;
 
 	int transactionId;
 	bool isConnected;
@@ -47,8 +50,8 @@ public:
 	int port;
 };
 
-Connection::Connection(ClientStream *stream)
- : QObject(), d(new Private)
+Connection::Connection(ClientStream *stream, QObject *parent)
+ : QObject(parent), d(new Private)
 {
 	d->rootTask = new Task(this, true);
 	d->stream = stream;
@@ -66,6 +69,16 @@ Connection::~Connection()
 Task *Connection::rootTask()
 {
 	return d->rootTask;
+}
+
+Client *Connection::client()
+{
+	return d->client;
+}
+
+void Connection::setClient(Client *client)
+{
+	d->client = client;
 }
 
 int Connection::transactionId()

@@ -23,8 +23,7 @@
 #include "transfer.h"
 #include "connection.h"
 #include "tweenerhandler.h"
-#include "qtconnector.h" // TODO: temp
-#include "securestream.h" // TODO: temp
+#include "client.h"
 
 namespace Papillon 
 {
@@ -105,7 +104,7 @@ bool LoginTask::take(Transfer *transfer)
 						d->currentState = StateTweenerConfirmed;
 
 						QString tweener = transfer->arguments()[2];
-						TweenerHandler *tweenerHandler = new TweenerHandler(new SecureStream(new QtConnector(this)));
+						TweenerHandler *tweenerHandler = new TweenerHandler( connection()->client()->createSecureStream() );
 						tweenerHandler->setLoginInformation(tweener, d->passportId, d->password);
 						connect(tweenerHandler, SIGNAL(result( TweenerHandler* )), this, SLOT(ticketReceived( TweenerHandler* )));
 						tweenerHandler->start();
@@ -238,7 +237,7 @@ void LoginTask::ticketReceived(TweenerHandler *tweenerHandler)
 	if( tweenerHandler->success() )
 	{
 		d->tweenerTicket = tweenerHandler->ticket();
-		delete tweenerHandler;
+		tweenerHandler->deleteLater();
 
 		sendTweenerConfirmation();
 	}

@@ -18,7 +18,8 @@
 #include <QtDebug>
 #include <QLatin1String>
 
-#include <QtCrypto> // QCA, not a port of Qt
+// QCA include
+#include <QtCrypto>
 
 // Papillon includes
 #include "connector.h"
@@ -34,6 +35,11 @@ public:
 	 : connector(0), byteStream(0), tlsHandler(0)
 	{}
 
+	~Private()
+	{
+		delete tlsHandler;
+	}
+
 	Connector *connector;
 	ByteStream *byteStream;
 	QCA::TLS *tlsHandler;
@@ -43,7 +49,6 @@ public:
 	
 	SecureStream::ErrorCode errorCode;
 	QString errorString;
-	QCA::Initializer qcaInit; // TODO: Put that into Papillon::Client
 };
 
 SecureStream::SecureStream(Connector *connector)

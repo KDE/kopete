@@ -69,5 +69,9 @@ void QtConnector::slotConnected()
 	emit connected();
 }
 
+Connector *QtConnector::createNewConnector(QObject *parent)
+{
+	return new QtConnector(parent);
+}
 
 }

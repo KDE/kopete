@@ -34,6 +34,7 @@ public:
 	virtual ByteStream* stream() const;
 	virtual void connectToServer(const QString& server, quint16);
 	virtual void done();
+	virtual Connector *createNewConnector(QObject *parent = 0);
 
 private slots:
 	void slotConnected();

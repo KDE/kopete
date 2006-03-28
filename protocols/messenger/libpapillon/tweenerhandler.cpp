@@ -1,5 +1,5 @@
 /*
-   tweenerhandler.h - Negociation with Passport to get the login ticket.
+   tweenerhandler.cpp - Negociation with Passport to get the login ticket.
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -34,6 +34,11 @@ public:
 	Private()
 	 : stream(0), success(false)
 	{}
+
+	~Private()
+	{
+		delete stream;
+	}
 
 	QString tweener;
 	QString passportId;

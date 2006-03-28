@@ -40,6 +40,7 @@ public:
 	virtual void connectToServer(const QString &server, quint16 port)=0;
 	virtual ByteStream *stream() const=0;
 	virtual void done()=0;
+	virtual Connector *createNewConnector(QObject *parent = 0)=0;
 
 	bool havePeerAddress() const;
 	QHostAddress peerAddress() const;

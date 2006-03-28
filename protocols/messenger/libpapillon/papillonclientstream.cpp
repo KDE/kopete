@@ -35,6 +35,9 @@ public:
 	 : connector(0)
 	{}
 
+	~Private()
+	{}
+
 	Connector *connector;
 	ByteStream *byteStream;
 	CoreProtocol protocol;
@@ -56,7 +59,6 @@ ClientStream::~ClientStream()
 {
 	delete d;
 }
-
 
 void ClientStream::connectToServer(const QString &server, quint16 port)
 {
