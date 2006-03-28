@@ -132,6 +132,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 		mMainWidget->contactComboBox->setCurrentItem(mMetaContactList.find(mMetaContact)+1);
 
 	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
+	mMainWidget->dateListView->setSorting(0, 0); //newest-first
 
 	setMainWidget(mMainWidget);
 
