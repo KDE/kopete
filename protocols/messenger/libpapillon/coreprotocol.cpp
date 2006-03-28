@@ -18,10 +18,11 @@
 #include "coreprotocol.h"
 
 // Qt includes
-#include <QDebug>
-#include <QDataStream>
-#include <QTextStream>
-#include <QLatin1String>
+#include <QtDebug>
+#include <QtCore/QDataStream>
+#include <QtCore/QTextStream>
+#include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
 
 // Papillon includes
 #include "transfer.h"

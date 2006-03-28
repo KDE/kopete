@@ -16,11 +16,11 @@
 
 // Qt includes
 #include <QtDebug>
-#include <QRegExp>
-#include <QUrl>
-#include <QHttpHeader>
-#include <QHttpRequestHeader>
-#include <QHttpResponseHeader>
+#include <QtCore/QRegExp>
+#include <QtCore/QUrl>
+#include <QtNetwork/QHttpHeader>
+#include <QtNetwork/QHttpRequestHeader>
+#include <QtNetwork/QHttpResponseHeader>
 
 // Papillon includes
 #include "securestream.h"

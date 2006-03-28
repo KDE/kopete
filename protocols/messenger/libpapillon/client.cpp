@@ -17,7 +17,7 @@
 // Qt includes
 
 // QCA include
-#include <QtCrypto>
+#include <QtCrypto/QtCrypto>
 
 // Papillon includes
 #include "connection.h"

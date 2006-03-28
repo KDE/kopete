@@ -15,7 +15,7 @@
 #ifndef CONNECTIONTEST_H
 #define CONNECTIONTEST_H
 
-#include <QObject>
+#include <QtCore/QObject>
 #include "connection.h"
 
 namespace Papillon

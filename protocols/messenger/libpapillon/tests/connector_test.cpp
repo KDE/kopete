@@ -15,7 +15,8 @@
 #include "connector_test.h"
 
 // Qt includes
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QStringList>
 #include <QtDebug>
 
 // Papillon includes

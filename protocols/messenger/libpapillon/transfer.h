@@ -16,13 +16,13 @@
 #define PAPILLONTRANSFER_H
 
 // Qt includes
-#include <QFlags>
-#include <QSharedData>
-#include <QStringList>
-#include <QByteArray>
+#include <QtCore/QFlags>
 
 // Papillon includes
 #include <papillon_macros.h>
+
+class QStringList;
+class QByteArray;
 
 namespace Papillon 
 {

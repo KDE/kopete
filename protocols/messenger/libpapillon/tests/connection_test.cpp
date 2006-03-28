@@ -16,7 +16,7 @@
 
 // Qt includes
 #include <QtDebug>
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
 
 // Papillon includes
 #include "connection.h"

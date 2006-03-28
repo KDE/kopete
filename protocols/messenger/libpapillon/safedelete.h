@@ -20,8 +20,7 @@
 #ifndef SAFEDELETE_H
 #define SAFEDELETE_H
 
-#include<qobject.h>
-#include<qobject.h>
+#include<QObject>
 
 class SafeDelete;
 class SafeDeleteLock

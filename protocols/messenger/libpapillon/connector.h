@@ -20,7 +20,7 @@
 #define PAPILLON_CONNECTOR_H
 
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <QtNetwork/QHostAddress>
 
 #include <papillon_macros.h>

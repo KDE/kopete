@@ -15,8 +15,8 @@
 #include "logintask.h"
 
 // Qt includes
-#include <QLatin1String>
-#include <QStringList>
+#include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
 #include <QtDebug>
 
 // Papillon includes

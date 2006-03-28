@@ -15,7 +15,7 @@
 #ifndef CONNECTOR_TEST_H
 #define CONNECTOR_TEST_H
 
-#include <QObject>
+#include <QtCore/QObject>
 
 class Connector_Test : public QObject
 {

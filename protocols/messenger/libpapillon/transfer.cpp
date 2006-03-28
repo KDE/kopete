@@ -14,6 +14,10 @@
  */
 #include "transfer.h"
 
+// Qt includes
+#include <QtCore/QStringList>
+#include <QtCore/QByteArray>
+
 namespace Papillon {
 
 class Transfer::Private

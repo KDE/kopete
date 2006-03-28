@@ -19,8 +19,8 @@
 #ifndef PAPILLON_CORE_PROTOCOL_H
 #define PAPILLON_CORE_PROTOCOL_H
 
-#include <QObject>
-#include <QByteArray>
+#include <QtCore/QObject>
+#include <QtCore/QByteArray>
 
 #include <papillon_macros.h>
 

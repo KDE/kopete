@@ -18,8 +18,8 @@
 */
 
 #include "safedelete.h"
-#include <QList>
-#include <qtimer.h>
+#include <QtCore/QList>
+#include <QtCore/QTimer>
 
 //----------------------------------------------------------------------------
 // SafeDelete

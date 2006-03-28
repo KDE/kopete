@@ -15,8 +15,8 @@
 #include "papillonclientstream.h"
 
 // Qt includes
-#include <QQueue>
-#include <QPointer>
+#include <QtCore/QQueue>
+#include <QtCore/QPointer>
 #include <QtDebug>
 
 // Papillon includes.

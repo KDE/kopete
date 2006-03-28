@@ -19,7 +19,7 @@
 #ifndef PAPILLON_STREAM_H
 #define PAPILLON_STREAM_H
 
-#include <QObject>
+#include <QtCore/QObject>
 
 #include <papillon_macros.h>
 

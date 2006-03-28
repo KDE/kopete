@@ -16,7 +16,7 @@
 #define PAPILLONTWEENERHANDLER_H
 
 #include <papillon_macros.h>
-#include <QObject>
+#include <QtCore/QObject>
 
 class QHttpRequestHeader;
 namespace Papillon

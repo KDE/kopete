@@ -23,8 +23,8 @@
 
 #include <papillon_macros.h>
 
-#include <QObject>
-#include <QByteArray>
+#include <QtCore/QObject>
+#include <QtCore/QByteArray>
 
 // CS_NAMESPACE_BEGIN
 

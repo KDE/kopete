@@ -17,7 +17,7 @@
    *************************************************************************
 */
 
-#include <QTimer>
+#include <QtCore/QTimer>
 
 // Papillon includes
 #include "transfer.h"

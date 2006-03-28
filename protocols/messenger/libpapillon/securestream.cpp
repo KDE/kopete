@@ -16,10 +16,10 @@
 
 // Qt includes
 #include <QtDebug>
-#include <QLatin1String>
+#include <QtCore/QLatin1String>
 
 // QCA include
-#include <QtCrypto>
+#include <QtCrypto/QtCrypto>
 
 // Papillon includes
 #include "connector.h"

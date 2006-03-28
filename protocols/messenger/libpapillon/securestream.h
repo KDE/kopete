@@ -15,7 +15,7 @@
 #ifndef SECURESTREAM_H
 #define SECURESTREAM_H
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <papillon_macros.h>
 
 namespace Papillon

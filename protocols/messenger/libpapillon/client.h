@@ -15,7 +15,7 @@
 #ifndef PAPILLONCLIENT_H
 #define PAPILLONCLIENT_H
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <papillon_macros.h>
 
 namespace Papillon
