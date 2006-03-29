@@ -17,12 +17,14 @@
 // Qt includes
 #include <QtCore/QStringList>
 #include <QtCore/QByteArray>
+#include <QtCore/QSettings>
 #include <QtGui/QApplication>
 #include <QtGui/QLayout>
 #include <QtGui/QTextEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QLineEdit>
 #include <QtGui/QLabel>
+#include <QtGui/QInputDialog>
 
 // Papillon includes
 #include "connection.h"
@@ -50,8 +52,15 @@ class PapillonConsole::Private
 {
 public:
 	Private()
-	 : logged(false), client(0)
-	{}
+	 : logged(false), client(0), settings(0)
+	{
+		settings = new QSettings( QLatin1String("papillonconsole.ini"), QSettings::IniFormat );
+	}
+	~Private()
+	{
+		delete client;
+		delete settings;
+	}
 
 	QTextEdit *textDebugOutput;
 	QLineEdit *lineCommand;
@@ -61,6 +70,8 @@ public:
 
 	bool logged;
 	Client *client;
+
+	QSettings *settings;
 };
 
 PapillonConsole::PapillonConsole(QWidget *parent)
@@ -92,6 +103,10 @@ PapillonConsole::PapillonConsole(QWidget *parent)
 	connect(d->buttonSend, SIGNAL(clicked()), this, SLOT(buttonSendClicked()));
 	connect(d->lineCommand, SIGNAL(returnPressed()), this, SLOT(buttonSendClicked()));
 	connect(d->buttonConnect, SIGNAL(clicked()), this, SLOT(buttonConnectClicked()));
+
+	// Create the client
+	d->client = new Client(new QtConnector(this), this);
+	connect(d->client, SIGNAL(connected()), this, SLOT(clientConnected()));
 }
 
 PapillonConsole::~PapillonConsole()
@@ -159,19 +174,23 @@ void PapillonConsole::buttonSendClicked()
 
 void PapillonConsole::buttonConnectClicked()
 {
-	if(d->client)
+	QString passportId, password;
+	if( d->settings->value( QLatin1String("passportId") ).toString().isEmpty() && d->settings->value( QLatin1String("password") ).toString().isEmpty() )
 	{
-		// TODO: Read client info for a file in tests directory.
-		d->client->setClientInfo( QLatin1String("test@test.com"), QLatin1String("test") );
-		d->client->connectToServer( QLatin1String("muser.messenger.hotmail.com"), 1863 );
+		passportId = QInputDialog::getText( this, QString("Enter your Microsoft Passport account ID"), QString("Passport ID:") );
+		password = QInputDialog::getText( this, QString("Enter your Microsoft Passport password"), QString("Passport password:") );
+	
+		d->settings->setValue( QLatin1String("passportId"), passportId );
+		d->settings->setValue( QLatin1String("password"), password );
 	}
 	else
 	{
-		d->client = new Client(new QtConnector(this), this);
-		connect(d->client, SIGNAL(connected()), this, SLOT(clientConnected()));
+		passportId = d->settings->value( QLatin1String("passportId") ).toString();
+		password = d->settings->value( QLatin1String("password") ).toString();
 	}
 
-	
+	d->client->setClientInfo( passportId, password );
+	d->client->connectToServer( QLatin1String("muser.messenger.hotmail.com"), 1863 );
 }
 
 void PapillonConsole::clientConnected()

@@ -133,7 +133,6 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			QTextStream lineStream(tempRaw);
 			
 			QString parsedLine = lineStream.readLine();
-			qDebug() << PAPILLON_FUNCINFO << parsedLine;
 			
 			QStringList commandList = parsedLine.split(" ");
 			
@@ -189,6 +188,8 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			}
 			else
 			{
+				// Show parsed line here for non-payload messages.
+				qDebug() << PAPILLON_FUNCINFO << parsedLine;
 				d->state = Available;
 				emit incomingData();
 			}
@@ -209,6 +210,8 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 			d->inTransfer->setPayloadData(payloadData);
 			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << payloadData.size();
 // 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from Transfer):" << d->inTransfer->payloadLength();
+			// Show full payload command to output
+			qDebug() << PAPILLON_FUNCINFO << d->inTransfer->toRawCommand();
 			d->state = Available;
 			emit incomingData();
 			
