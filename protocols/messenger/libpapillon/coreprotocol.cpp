@@ -34,12 +34,11 @@ class CoreProtocol::Private
 {
 public:
 	Private()
-	 : inTransfer(0)
+		: inTransfer(0), state(CoreProtocol::NoData)
 	{}
 	
 	// buffer containing unprocessed bytes we received
 	QByteArray in;
-	int error;
 	// the transfer that is being received
 	Transfer *inTransfer;
 	// represents the protocol's overall state
@@ -67,7 +66,6 @@ void CoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 	int oldsize = d->in.size();
 	d->in.resize( oldsize + incomingBytes.size() );
 	memcpy( d->in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
-	d->state = Available;
 
 	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
 	int parsedBytes = 0;

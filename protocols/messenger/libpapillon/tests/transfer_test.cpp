@@ -14,8 +14,8 @@
  */
 
 #include <QtTest/QtTest>
-#include <QLatin1String>
-#include <QStringList>
+#include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
 
 #include "transfer_test.h"
 
