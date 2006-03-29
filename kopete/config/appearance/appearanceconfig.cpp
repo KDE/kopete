@@ -732,8 +732,9 @@ void AppearanceConfig::slotGetEmoticonThemes()
 	config->writeEntry( "StandardResource", "emoticons" );
 	config->writeEntry( "Uncompress", "application/x-gzip" );
 	config->sync();
-	
+
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
+	
 	updateEmoticonlist();
 }
 

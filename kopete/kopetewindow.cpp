@@ -320,6 +320,7 @@ void KopeteWindow::initActions()
 
 	// Edit global identity widget/bar
 	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this, "editglobalBar");
+	editGlobalIdentityWidget->hide();
 	KWidgetAction *editGlobalAction = new KWidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
 // 	editGlobalAction->setAutoSized( true );
 

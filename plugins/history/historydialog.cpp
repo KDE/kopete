@@ -80,7 +80,7 @@ private:
 
 
 KListViewDateItem::KListViewDateItem(K3ListView* parent, QDate date, Kopete::MetaContact *mc)
-		: K3ListViewItem(parent, date.toString(Qt::LocalDate), mc->displayName())
+		: K3ListViewItem(parent, date.toString(Qt::ISODate), mc->displayName())
 {
 	mDate = date;
 	mMetaContact = mc;
@@ -88,15 +88,14 @@ KListViewDateItem::KListViewDateItem(K3ListView* parent, QDate date, Kopete::Met
 
 int KListViewDateItem::compare(Q3ListViewItem *i, int col, bool ascending) const
 {
-	if (col) return Q3ListViewItem::compare(i, col, ascending);
+	if (col) 
+		return Q3ListViewItem::compare(i, col, ascending);
 
+	//compare dates - do NOT use ascending var here
 	KListViewDateItem* item = static_cast<KListViewDateItem*>(i);
-	if (item->date() > mDate)
-		return ascending ? -1 : 1;
-	else if (item->date() < mDate)
-		return ascending ? 1 : -1;
-	
-	return 0;
+	if ( mDate < item->date() )
+		return -1;
+	return ( mDate > item->date() );
 }
 
 
@@ -140,6 +139,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 		mMainWidget->contactComboBox->setCurrentItem(mMetaContactList.indexOf(mMetaContact)+1);
 
 	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
+	mMainWidget->dateListView->setSorting(0, 0); //newest-first
 
 	setMainWidget(mMainWidget);
 

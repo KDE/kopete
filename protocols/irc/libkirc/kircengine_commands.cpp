@@ -275,20 +275,20 @@ void Engine::privmsg(Message &msg)
 		QString user = m.arg(0);
 		QString message = m.suffix();
 		const QTextCodec *codec = codecForNick( user );
-		if (codec != defaultCodec)
-			msg.decodeAgain( codec );
-
+		if (codec != defaultCodec) {
+			m.decodeAgain( codec );
+			message = m.suffix();
+		}
 		if (Entity::isChannel(user))
-			emit incomingMessage(msg.nickFromPrefix(), Kopete::Message::unescape(msg.arg(0)), message );
+			emit incomingMessage(m.nickFromPrefix(), Kopete::Message::unescape(m.arg(0)), message );
 		else
-			emit incomingPrivMessage(msg.nickFromPrefix(), Kopete::Message::unescape(msg.arg(0)), message );
-
+			emit incomingPrivMessage(m.nickFromPrefix(), Kopete::Message::unescape(m.arg(0)), message );
 //		emit receivedMessage(PrivateMessage, msg.entityFrom(), msg.entityTo(), message);
 	}
 
-	if( msg.hasCtcpMessage() )
+	if( m.hasCtcpMessage() )
 	{
-		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
+		invokeCtcpCommandOfMessage(m_ctcpQueries, m);
 	}
 }
 

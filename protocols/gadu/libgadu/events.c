@@ -1,9 +1,10 @@
 /* $Id$ */
 
 /*
- *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
+ *  (C) Copyright 2001-2006 Wojtek Kaniewski <wojtekka@irc.pl>
  *                          Robert J. Woźny <speedy@ziew.org>
  *                          Arkadiusz Miśkiewicz <arekm@pld-linux.org>
+ *                          Adam Wysocki <gophi@ekg.apcoh.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -1092,6 +1093,12 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				port = atoi(tmp + 1);
 			}
 
+			if (!strcmp(host, "notoperating")) {
+				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() service unavailable\n", errno, strerror(errno));
+				sess->fd = -1;
+				goto fail_unavailable;
+			}
+
 			addr.s_addr = inet_addr(host);
 			sess->server_addr = addr.s_addr;
 
@@ -1485,6 +1492,10 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() login failed\n");
 				e->event.failure = GG_FAILURE_PASSWORD;
 				errno = EACCES;
+			} else if (h->type == GG_DISCONNECTING) {
+				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() too many incorrect password attempts\n");
+				e->event.failure = GG_FAILURE_INTRUDER;
+				errno = EACCES;
 			} else {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() invalid packet\n");
 				e->event.failure = GG_FAILURE_INVALID;
@@ -1545,6 +1556,12 @@ fail_connecting:
 fail_resolving:
 	e->type = GG_EVENT_CONN_FAILED;
 	e->event.failure = GG_FAILURE_RESOLVING;
+	sess->state = GG_STATE_IDLE;
+	goto done;
+
+fail_unavailable:
+	e->type = GG_EVENT_CONN_FAILED;
+	e->event.failure = GG_FAILURE_UNAVAILABLE;
 	sess->state = GG_STATE_IDLE;
 	goto done;
 }

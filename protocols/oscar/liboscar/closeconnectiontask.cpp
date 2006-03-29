@@ -112,6 +112,16 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		}
 		
 		tlvList.clear();
+		
+		if ( m_bosHost.isEmpty() )
+		{
+			kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Empty host address!" << endl;
+			
+			Oscar::SNAC s = { 0, 0, 0, 0 };
+			client()->fatalTaskError( s, 0 );
+			return true;
+		}
+		
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "We should reconnect to server '" 
 			<< m_bosHost << "' on port " << m_bosPort << endl;
 		setSuccess( errorNum, errorReason );

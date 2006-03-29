@@ -27,14 +27,15 @@ else
     # Create a unique filename
     filename="/var/lib/winpopup/`date +%s_%N`"
 
-    # Put the remote host name into the file
-    echo "$2" > $filename
+    # the time...
+    TIME=`date --iso-8601=seconds`
 
-    # And the time...
-    echo `date --iso-8601=seconds` >> $filename
+    # the message
+    MESSAGE=`cat "$1"`
 
-    # Finally the message
-    cat "$1" >> $filename
+    # Put it into the file
+    echo -e "$2\n$TIME\n$MESSAGE" > $filename
+
 
 fi
 

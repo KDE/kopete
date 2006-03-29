@@ -163,7 +163,7 @@ bool ICQEditAccountWidget::validateData()
 
 	QString userName = mAccountSettings->edtAccountId->text();
 
-	if (userName.contains(" ") || (userName.length() < 4))
+	if (userName.contains(" ")) 
 		return false;
 
 	for (unsigned int i=0; i<userName.length(); i++)

@@ -430,14 +430,16 @@ enum gg_event_t {
  */
 enum gg_failure_t {
 	GG_FAILURE_RESOLVING = 1,	/* nie znaleziono serwera */
-	GG_FAILURE_CONNECTING,		/* nie można się połączyć */
-	GG_FAILURE_INVALID,		/* serwer zwrócił nieprawidłowe dane */
-	GG_FAILURE_READING,		/* zerwano połączenie podczas odczytu */
-	GG_FAILURE_WRITING,		/* zerwano połączenie podczas zapisu */
-	GG_FAILURE_PASSWORD,		/* nieprawidłowe hasło */
-	GG_FAILURE_404, 		/* XXX nieużywane */
-	GG_FAILURE_TLS,			/* błąd negocjacji TLS */
-	GG_FAILURE_NEED_EMAIL 		/* serwer rozłączył nas z prośbą o zmianę emaila */
+	GG_FAILURE_CONNECTING,		/* nie mona si�poczy�*/
+	GG_FAILURE_INVALID,		/* serwer zwr�i nieprawidowe dane */
+	GG_FAILURE_READING,		/* zerwano poczenie podczas odczytu */
+	GG_FAILURE_WRITING,		/* zerwano poczenie podczas zapisu */
+	GG_FAILURE_PASSWORD,		/* nieprawidowe haso */
+	GG_FAILURE_404, 		/* XXX nieuywane */
+	GG_FAILURE_TLS,			/* bd negocjacji TLS */
+	GG_FAILURE_NEED_EMAIL, 		/* serwer rozczy nas z prob o zmian�emaila */
+	GG_FAILURE_INTRUDER,		/* za duo pr� poczenia si�z nieprawidowym hasem */
+	GG_FAILURE_UNAVAILABLE		/* serwery s wyczone */
 };
 
 /*

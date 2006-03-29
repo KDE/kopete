@@ -67,7 +67,7 @@ const QStringList WPAccount::getHosts(const QString &Group)
 bool WPAccount::checkHost(const QString &Name)
 {
 //	kDebug() << "WPAccount::checkHost: " << Name << endl;
-	if (Name.toUpper() == "LOCALHOST") {
+	if (Name.toUpper() == QString::fromLatin1("LOCALHOST")) {
 		// Assume localhost is always there, but it will not appear in the samba output.
 		// Should never happen as localhost is now forbidden as contact, just for safety. GF
 		return true;
@@ -98,11 +98,11 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 	// IPs can not be matched to an account anyway.
 	// This should happen rarely but they make kopete crash.
 	// The reason for this seems to be in ChatSessionManager? GF
-	QRegExp ip("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+	QRegExp ip("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
 
 //	kDebug(14170) << "ip.search: " << From << " match: " << ip.search(From) << endl;
 
-	if (From == accountId() || ip.search(From) > -1) {
+	if (From == accountId() || ip.exactMatch(From)) {
 		kDebug(14170) << "Ignoring message from own host/account or IP." << endl;
 		return;
 	}
@@ -168,10 +168,15 @@ KActionMenu* WPAccount::actionMenu()
 
 	if (mProtocol)
 	{
-		theActionMenu->insert(new KAction("Online", QIcon(mProtocol->WPOnline.iconFor(this)), 0,
-			this, SLOT(connect()), 0, "actionGoAvailable"));
-		theActionMenu->insert(new KAction("Away", QIcon(mProtocol->WPAway.iconFor(this)), 0,
-			this, SLOT(goAway()), 0, "actionGoAway"));
+		KAction *goOnline = new KAction("Online", QIcon(mProtocol->WPOnline.iconFor(this)), 0,
+										 this, SLOT(connect()), 0, "actionGoAvailable");
+		goOnline->setEnabled(isConnected() && isAway());
+		theActionMenu->insert(goOnline);
+
+		KAction *goAway = new KAction("Away", QIcon(mProtocol->WPAway.iconFor(this)), 0,
+									  this, SLOT(goAway()), 0, "actionGoAway");
+		goAway->setEnabled(isConnected() && !isAway());
+		theActionMenu->insert(goAway);
 
 		/// One can not really go offline manually - appears online as long as samba server is running. GF
 

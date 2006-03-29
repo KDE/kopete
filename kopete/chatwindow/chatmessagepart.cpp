@@ -759,16 +759,16 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	* This also copies the text as type text/html
 	* RangeImpl::toHTML  was not implemented before KDE 3.4
 	*/
-
 	QString text;
 	QString htmltext;
+	
+        htmltext = selectedTextAsHTML();
+        text = selectedText();
+        //selectedText is now sufficent
+//      text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
+        // Message::unsescape will replace image by his title attribute
+        // stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 
-	htmltext = selectedTextAsHTML();
-	text = selectedText();
-	//selectedText is now sufficent
-//	text=Kopete::Message::unescape( htmltext ).trimmed();
-	// Message::unsescape will replace image by his title attribute
-	// trimmed is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 	if(text.isEmpty()) return;
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
@@ -856,8 +856,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	
 	// Replace sender (contact nick)
 	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), nick );
-	// Replace time
-	resultHTML = resultHTML.replace( QString::fromUtf8("%time%"), KGlobal::locale()->formatDateTime(message.timestamp()) );
+	// Replace time, by default display only time and display seconds(that was true means).
+	resultHTML = resultHTML.replace( QString::fromUtf8("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
 	// Replace %screenName% (contact ID)
 	resultHTML = resultHTML.replace( QString::fromUtf8("%senderScreenName%"), contactId );
 	// Replace service name (protocol name)
@@ -990,7 +990,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		resultHTML = resultHTML.replace( QString::fromUtf8("%sourceName%"), formatName(sourceName) );
 		// Replace %destinationName%
 		resultHTML = resultHTML.replace( QString::fromUtf8("%destinationName%"), formatName(destinationName) );
-		resultHTML = resultHTML.replace( QString::fromUtf8("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
+		// For %timeOpened%, display the date and time (also the seconds).
+		resultHTML = resultHTML.replace( QString::fromUtf8("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), true, true ) );
 
 		// Look for %timeOpened{X}%
 		QRegExp timeRegExp("%timeOpened\\{([^}]*)\\}%");

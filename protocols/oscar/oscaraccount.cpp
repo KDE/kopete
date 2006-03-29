@@ -642,6 +642,9 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		                        Kopete::UI::Global::mainWidget() );
 		switch ( code )
 		{
+		case 0x0000:
+			logOff( Kopete::Account::Unknown );
+			break;
 		case 0x0004:
 		case 0x0005:
 			logOff( Kopete::Account::BadPassword );

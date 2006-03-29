@@ -22,8 +22,8 @@ public:
   static string decode(const string & data);
   static string encodeFromArray(const char * data, size_t len);
 private:
-  static const string Base64::Base64Table;
-  static const string::size_type Base64::DecodeTable[];
+  static const string Base64Table;
+  static const string::size_type DecodeTable[];
 };
 
 #endif

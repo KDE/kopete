@@ -33,7 +33,7 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	: Kopete::Contact(account, newHostName, metaContact)
 {
 //	kDebug(14170) << "WPContact::WPContact(<account>, " << newHostName << ", " << nickName << ", <parent>)" << endl;
-	kDebug(14170) << "I am " << this << "!" << endl;
+	kDebug(14170) << "WPContact::WPContact: " << this << endl;
 
 	QString theNickName = nickName;
 
@@ -46,14 +46,15 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	setNickName(theNickName);
 	myWasConnected = false;
 
+
+	m_manager = 0;
+	m_infoDialog = 0;
+
 	// Initialise and start the periodical checking for contact's status
 	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
-
-	m_manager = 0;
-	m_infoDialog = 0;
 }
 
 QList<KAction*> *WPContact::customContextMenuActions()
@@ -186,4 +187,5 @@ void WPContact::slotSendMessage( Kopete::Message& message )
 
 #include "wpcontact.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

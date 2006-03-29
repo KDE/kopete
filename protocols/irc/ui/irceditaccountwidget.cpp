@@ -51,8 +51,8 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 {
 	mProtocol = proto;
 
-	// iso latin 1
-	int currentCodec = 4;
+	// default charset/encoding for new accounts: utf-8, see http://www.iana.org/assignments/character-sets
+	int currentCodec = 106;
 
 	if( account() )
 	{
