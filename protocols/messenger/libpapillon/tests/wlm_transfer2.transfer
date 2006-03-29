@@ -1,0 +1,2 @@
+GCF 0 165
+<Policies><Policy type="SHIELDS"><config>	<shield>		<cli maj="7" min="0" minbld="0" maxbld="9999" deny=" " />	</shield>	<block>	</block></config></Policy></Policies>
