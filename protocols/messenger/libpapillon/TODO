@@ -1,6 +1,6 @@
 Libpapillon Roadmap
 -------------------
-Last Update: 29 March 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+Last Update: 30 March 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
 CHART:
 ---------
@@ -13,9 +13,9 @@ M0 Login and Basic architecture
 + Already done.
 
 M1 Contact List and Presence
--Do ChallengeTask
+#Create MimeHeader class
 -Parse initial Hotmail message
--Create MimeHeader class
+-Do ChallengeTask
 -ContactList
  -Retrieve contact list(and thus address book) using SOAP (contacts.msn.com Web service)
  -ContactListManager class
@@ -70,3 +70,4 @@ Features maybe I'll implement:
 Features that will never be implemented(NEVER):
 -Winks (annoying, use CAB and Flash)
 -Dynamic display pictures (use flash)
+-Background sharing
