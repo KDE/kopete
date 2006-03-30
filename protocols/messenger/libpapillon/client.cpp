@@ -23,11 +23,13 @@
 // Papillon includes
 #include "connection.h"
 #include "connector.h"
-#include "logintask.h"
 #include "securestream.h"
 #include "papillonclientstream.h"
 #include "transfer.h"
 
+// Papillon tasks
+#include "logintask.h"
+#include "notifymessagetask.h"
 namespace Papillon
 {
 
@@ -36,7 +38,8 @@ class Client::Private
 public:
 	Private()
 	 : connector(0), notificationConnection(0),
-	   server( QLatin1String("muser.messenger.hotmail.com") ), port(1863), loginTask(0)
+	   server( QLatin1String("muser.messenger.hotmail.com") ), port(1863),
+	   loginTask(0), notifyMessageTask(0)
 	{}
 
 	Connector *connector;
@@ -47,11 +50,13 @@ public:
 
 	QString passportId;
 	QString password;
+	QString passportAuthTicket;
 	// Convience object that init QCA.
 	QCA::Initializer qcaInit;
 
 	// All the tasks
 	LoginTask *loginTask;
+	NotifyMessageTask *notifyMessageTask;
 };
 
 Client::Client(Connector *connector, QObject *parent)
@@ -94,6 +99,7 @@ void Client::connectToServer(const QString &server, quint16 port)
 	{
 		d->notificationConnection = createConnection();
 		connect(d->notificationConnection, SIGNAL(connected()), this, SIGNAL(connected()));
+		connect(d->notificationConnection, SIGNAL(connected()), this, SLOT(initNotificationTasks()));
 	}
 
 	d->notificationConnection->connectToServer(d->server, d->port);
@@ -103,6 +109,15 @@ void Client::setClientInfo(const QString &passportId, const QString &password)
 {
 	d->passportId = passportId;
 	d->password = password;
+}
+
+void Client::initNotificationTasks()
+{
+	if( !d->notifyMessageTask )
+	{
+		d->notifyMessageTask = new NotifyMessageTask( d->notificationConnection->rootTask() );
+		connect(d->notifyMessageTask, SIGNAL(profileMessage(const QString &)), this, SLOT(gotInitalProfile( const QString& )));
+	}
 }
 
 void Client::login()
@@ -133,6 +148,19 @@ void Client::loginRedirect(const QString &server, quint16 port)
 
 void Client::loginResult(Papillon::Task *task)
 {
+
+}
+
+void Client::gotInitalProfile(const QString &authTicket)
+{
+	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << authTicket;
+
+	d->passportAuthTicket = authTicket;
+}
+
+QString Client::passportAuthTicket() const
+{
+	return d->passportAuthTicket;
 }
 
 void Client::writeCommand(Transfer *command)

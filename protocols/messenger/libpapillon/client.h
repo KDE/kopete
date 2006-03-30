@@ -70,6 +70,13 @@ public:
 	 */
 	void setClientInfo(const QString &passportId, const QString &password);
 
+	/**
+	 * @brief Get the Passport auth ticket.
+	 * This is used to identity us when doing SOAP requests.
+	 * @return the Passport auth ticket.
+	 */
+	QString passportAuthTicket() const;
+
 signals:
 	void connected();
 	void disconnected();
@@ -78,7 +85,7 @@ public slots:
 	void connectToServer(const QString &server = QString(), quint16 port = 0);
 	void login();
 
-	
+// Slots from tasks
 private slots:
 	/**
 	 * Result of Login process.
@@ -92,7 +99,22 @@ private slots:
 	 * @param port new Notification server port.
 	 */
 	void loginRedirect(const QString &server, quint16 port);
-	
+
+	/**
+	 * @internal
+	 * Set the passport auth ticket.
+	 */
+	void gotInitalProfile(const QString &authTicket);
+
+// Normal slots
+private slots:
+	/**
+	 * @internal
+	 * Init the watch tasks for Notification connection.
+	 * Called after being connected to the server.
+	 */	
+	void initNotificationTasks();
+
 private:
 	/**
 	 * @internal
