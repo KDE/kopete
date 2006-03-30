@@ -71,6 +71,17 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * is empty. This makes at least the history plugin crash.
 	 */
 	mManager->addContact ( this );
+	
+	
+	
+	/**
+	 * Let's construct the window:
+	 *  otherwise, the ref count of maznager is equal to zero. 
+	 *   and if we receive a message before the window is shown,
+	 *   it will be deleted and we will be out of the channel
+	 * In all case, there are no reason to don't show it.
+	 */
+	mManager->view( true , "kopete_chatwindow" );
 }
 
 JabberGroupContact::~JabberGroupContact ()
@@ -129,8 +140,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
-
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received a message"  << endl;
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -167,6 +178,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if ( !subContact )
 		{
+			kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
+			return;
 			/**
 			 * We couldn't find the contact for this message. That most likely means
 			 * that it originated from a history backlog or something similar and

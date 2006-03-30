@@ -94,10 +94,6 @@ void JabberGroupMemberContact::slotChatSessionDeleted ()
 
 void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &message )
 {
-#warning fixme
-	return;  //the group contact shouldn't receive message
-	
-	
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
