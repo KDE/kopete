@@ -1,0 +1,120 @@
+/*
+   mimeheader.cpp - Create/Manage a MIME header.
+
+   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+
+   *************************************************************************
+   *                                                                       *
+   * This library is free software; you can redistribute it and/or         *
+   * modify it under the terms of the GNU Lesser General Public            *
+   * License as published by the Free Software Foundation; either          *
+   * version 2 of the License, or (at your option) any later version.      *
+   *                                                                       *
+   *************************************************************************
+*/
+#include "mimeheader.h"
+
+// Qt includes
+#include <QtCore/QSharedData>
+#include <QtCore/QHash>
+#include <QtCore/QLatin1String>
+#include <QtCore/QTextStream>
+
+namespace Papillon 
+{
+
+class MimeHeader::Private : public QSharedData
+{
+public:
+	Private()
+	{}
+
+	QHash<QString, QVariant> hashMimeHeader;
+};
+
+MimeHeader::MimeHeader()
+ : d(new Private)
+{}
+
+MimeHeader::~MimeHeader()
+{}
+
+MimeHeader::MimeHeader(const MimeHeader &copy)
+ : d(copy.d)
+{}
+
+MimeHeader &MimeHeader::operator=(const MimeHeader &other)
+{
+	d = other.d;
+	return *this;
+}
+
+MimeHeader MimeHeader::parseMimeHeader(const QString &data)
+{
+	MimeHeader parsedMimeHeader;
+	QString line, temp;
+	temp = data;
+	QTextStream parser(&temp);
+	
+	line = parser.readLine();
+	// A MIME header is separated from its body with a empty field (\r\n),
+	// so stop when we found an empty line.
+	while( !line.isEmpty() )
+	{
+		int firstColonPosition = line.indexOf( QChar(':') );
+		// This is a MIME line
+		if( firstColonPosition != -1 )
+		{
+			QString key = line.left(firstColonPosition);
+			QString value = line.mid(firstColonPosition+1).trimmed(); // Skip the space
+
+			parsedMimeHeader.setValue(key, QVariant(value));
+		}
+		line = parser.readLine();
+	}
+
+	return parsedMimeHeader;
+}
+
+
+bool MimeHeader::isValid() const
+{
+	return d->hashMimeHeader.isEmpty();
+}
+
+bool MimeHeader::hasKey(const QString &key) const
+{
+	return d->hashMimeHeader.contains(key);
+}
+
+QVariant MimeHeader::value(const QString &key) const
+{
+	return d->hashMimeHeader.value(key);
+}
+
+void MimeHeader::setValue(const QString &key, const QVariant &value)
+{
+	d->hashMimeHeader.insert(key, value);
+}
+
+QString MimeHeader::contentType() const
+{
+	return value( QLatin1String("Content-Type") ).toString();
+}
+
+QString MimeHeader::toString() const
+{
+	QString result;
+	QHash<QString, QVariant>::ConstIterator it, itEnd = d->hashMimeHeader.constEnd();
+	for( it = d->hashMimeHeader.constBegin(); it != itEnd; ++it )
+	{
+		QString temp;
+		temp = QString("%1: %2\r\n").arg( it.key() ).arg( it.value().toString() );
+
+		result += temp;
+	}
+
+	return result;
+}
+
+}

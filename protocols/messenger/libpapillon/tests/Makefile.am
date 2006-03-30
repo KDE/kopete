@@ -7,12 +7,13 @@ LDADD = -lQtTest_debug ../libpapillon.la
 
 noinst_PROGRAMS = connector_test connection_test papillon_console
 
-check_PROGRAMS = transfer_test coreprotocol_test
-TESTS = transfer_test coreprotocol_test
+check_PROGRAMS = transfer_test coreprotocol_test mimeheader_test
+TESTS = transfer_test coreprotocol_test mimeheader_test
 
 # Automated tests
 transfer_test_SOURCES = transfer_test.cpp
 coreprotocol_test_SOURCES = coreprotocol_test.cpp
+mimeheader_test_SOURCES = mimeheader_test.cpp
 
 # Console test programs
 connection_test_SOURCES = connection_test.cpp
