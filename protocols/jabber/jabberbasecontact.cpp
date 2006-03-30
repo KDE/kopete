@@ -136,66 +136,69 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			break;
 	}
 
-	/*
-	 * In this method, as opposed to KC::syncGroups(),
-	 * the group list from the server is authoritative.
-	 * As such, we need to find a list of all groups
-	 * that the meta contact resides in but does not
-	 * reside in on the server anymore, as well as all
-	 * groups that the meta contact does not reside in,
-	 * but resides in on the server.
-	 * Then, we'll have to synchronize the KMC using
-	 * that information.
-	 */
-	Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
-
-	// find all groups our contact is in but that are not in the server side roster
-	for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
+	if( inherits( "JabberContact" ) )
 	{
-		if ( item.groups().find ( metaContact()->groups().at(i)->displayName () ) == item.groups().end () )
-			groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
-	}
-
-	// now find all groups that are in the server side roster but not in the local group
-	for ( unsigned i = 0; i < item.groups().count (); i++ )
-	{
-		bool found = false;
-		for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
+		/*
+		* In this method, as opposed to KC::syncGroups(),
+		* the group list from the server is authoritative.
+		* As such, we need to find a list of all groups
+		* that the meta contact resides in but does not
+		* reside in on the server anymore, as well as all
+		* groups that the meta contact does not reside in,
+		* but resides in on the server.
+		* Then, we'll have to synchronize the KMC using
+		* that information.
+		*/
+		Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
+	
+		// find all groups our contact is in but that are not in the server side roster
+		for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
 		{
-			if ( metaContact()->groups().at(j)->displayName () == *item.groups().at(i) )
+			if ( item.groups().find ( metaContact()->groups().at(i)->displayName () ) == item.groups().end () )
+				groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
+		}
+	
+		// now find all groups that are in the server side roster but not in the local group
+		for ( unsigned i = 0; i < item.groups().count (); i++ )
+		{
+			bool found = false;
+			for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
 			{
-				found = true;
-				break;
+				if ( metaContact()->groups().at(j)->displayName () == *item.groups().at(i) )
+				{
+					found = true;
+					break;
+				}
+			}
+			
+			if ( !found )
+			{
+				groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( *item.groups().at(i) ) );
 			}
 		}
-		
-		if ( !found )
+	
+		/*
+		* Special case: if we don't add the contact to any group and the
+		* list of groups to remove from contains the top level group, we
+		* risk removing the contact from the visible contact list. In this
+		* case, we need to make sure at least the top level group stays.
+		*/
+		if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( Kopete::Group::topLevel () ) ) )
 		{
-			groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( *item.groups().at(i) ) );
+			groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
 		}
-	}
-
-	/*
-	 * Special case: if we don't add the contact to any group and the
-	 * list of groups to remove from contains the top level group, we
-	 * risk removing the contact from the visible contact list. In this
-	 * case, we need to make sure at least the top level group stays.
-	 */
-	if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( Kopete::Group::topLevel () ) ) )
-	{
-		groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
-	}
-
-	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
-	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
-		metaContact()->removeFromGroup ( group );
-	}
-
-	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
-	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
-		metaContact()->addToGroup ( group );
+	
+		for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
+		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
+			metaContact()->removeFromGroup ( group );
+		}
+	
+		for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
+		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
+			metaContact()->addToGroup ( group );
+		}
 	}
 
 	/*
