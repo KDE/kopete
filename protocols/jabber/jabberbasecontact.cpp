@@ -53,11 +53,16 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete
 
 }
 
+JabberBaseContact::~JabberBaseContact( )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId() <<  kdBacktrace() << endl;
+}
+
+
 JabberProtocol *JabberBaseContact::protocol ()
 {
 
 	return static_cast<JabberProtocol *>(Kopete::Contact::protocol ());
-
 }
 
 
@@ -374,6 +379,7 @@ void JabberBaseContact::serialize (QMap < QString, QString > &serializedData, QM
 
 	serializedData["groups"] = mRosterItem.groups ().join (QString::fromLatin1 (","));
 }
+
 
 #include "jabberbasecontact.moc"
 

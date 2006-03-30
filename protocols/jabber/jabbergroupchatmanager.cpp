@@ -47,6 +47,11 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 
 }
 
+JabberGroupChatManager::~JabberGroupChatManager()
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << kdBacktrace() << endl;
+}
+
 void JabberGroupChatManager::updateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;

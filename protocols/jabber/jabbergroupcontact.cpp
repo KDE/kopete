@@ -50,12 +50,12 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * because we need to set this contact as myself() of the message
 	 * manager).
 	 */
-	JabberBaseContact *subContact = addSubContact ( rosterItem );
+	mSelfContact = addSubContact ( rosterItem );
 
 	/**
 	 * Instantiate a new message manager without members.
 	 */
-	mManager = new JabberGroupChatManager ( protocol (), subContact,
+	mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
 											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
@@ -105,17 +105,27 @@ QPtrList<KAction> *JabberGroupContact::customContextMenuActions ()
 	return actionCollection;
 }
 
-Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
+Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
+	if(!mManager && canCreate == Kopete::Contact::CanCreate)
+	{
+		kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "somehow, the chat manager was removed, and the contact is still there" << endl;
+		mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
+				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
 
+		mManager->addContact ( this );
+		
+		connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
+		
+		//if we have to recreate the manager, we probably have to connect again to the chat.
+		slotStatusChanged();
+	}
 	return mManager;
 
 }
 
 void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	if(!mManager)  //NOTE:  in theory, we should create it.
-		return; 
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
@@ -129,6 +139,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.body().isEmpty () )
 		return;
 
+	manager(CanCreate); //force to create mManager
+	
 	Kopete::ContactPtrList contactList;
 	contactList.append ( mManager->user () );
 

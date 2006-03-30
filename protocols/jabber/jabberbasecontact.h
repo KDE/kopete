@@ -44,6 +44,7 @@ public:
 	JabberBaseContact (const XMPP::RosterItem &rosterItem,
 					   Kopete::Account *account, Kopete::MetaContact * mc, 
 					   const QString &legacyId=QString());
+	~JabberBaseContact();
 
 	/********************************************************************
 	 *

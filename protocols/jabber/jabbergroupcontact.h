@@ -100,6 +100,7 @@ private:
 	QPtrList<Kopete::MetaContact> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
+	JabberBaseContact *mSelfContact;
 	QString mNick;
 };
 
