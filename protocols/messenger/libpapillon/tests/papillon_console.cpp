@@ -15,6 +15,7 @@
 #include "papillon_console.h"
 
 // Qt includes
+#include <QtDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QByteArray>
 #include <QtCore/QSettings>
@@ -32,6 +33,7 @@
 #include "logintask.h"
 #include "qtconnector.h"
 #include "transfer.h"
+#include "securestream.h"
 
 // Little hack to access writeCommand method in Client
 #define private public
@@ -52,7 +54,7 @@ class PapillonConsole::Private
 {
 public:
 	Private()
-	 : logged(false), client(0), settings(0)
+	 : logged(false), client(0), settings(0), sslStream(0)
 	{
 		settings = new QSettings( QLatin1String("papillonconsole.ini"), QSettings::IniFormat );
 	}
@@ -72,6 +74,7 @@ public:
 	Client *client;
 
 	QSettings *settings;
+	SecureStream *sslStream;
 };
 
 PapillonConsole::PapillonConsole(QWidget *parent)
@@ -80,6 +83,7 @@ PapillonConsole::PapillonConsole(QWidget *parent)
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	d->textDebugOutput = new QTextEdit(this);
+	d->textDebugOutput->setReadOnly(true);
 	layout->addWidget(d->textDebugOutput);
 	
 	d->buttonConnect = new QPushButton( QLatin1String("Connect"), this );
@@ -99,6 +103,10 @@ PapillonConsole::PapillonConsole(QWidget *parent)
 	payloadLayout->addWidget( d->linePayload );
 
 	layout->addLayout(payloadLayout);	
+
+	QPushButton *soap = new QPushButton( QLatin1String("Test SOAP"), this );
+	connect(soap, SIGNAL(clicked()), this, SLOT(buttonTestSOAP()));
+	layout->addWidget(soap);
 
 	connect(d->buttonSend, SIGNAL(clicked()), this, SLOT(buttonSendClicked()));
 	connect(d->lineCommand, SIGNAL(returnPressed()), this, SLOT(buttonSendClicked()));
@@ -191,6 +199,64 @@ void PapillonConsole::buttonConnectClicked()
 
 	d->client->setClientInfo( passportId, password );
 	d->client->connectToServer( QLatin1String("muser.messenger.hotmail.com"), 1863 );
+}
+
+void PapillonConsole::buttonTestSOAP()
+{
+	if(!d->sslStream)
+	{
+		d->sslStream = new SecureStream(new QtConnector(this));
+		connect(d->sslStream, SIGNAL(connected()), this, SLOT(streamConnected()));
+		connect(d->sslStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
+	}
+
+	d->sslStream->connectToServer( QLatin1String("contacts.msn.com") );
+}
+
+void PapillonConsole::streamConnected()
+{
+	qDebug() << "SOAP Test connected.";
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n"
+	"<soap:Header>\r\n"
+		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>\r\n"
+			"<IsMigration>false</IsMigration>\r\n"
+			"<PartnerScenario>Initial</PartnerScenario>\r\n"
+		"</ABApplicationHeader>\r\n"
+		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+			"<ManagedGroupRequest>false</ManagedGroupRequest>\r\n"
+		"</ABAuthHeader>\r\n"
+	"</soap:Header>\r\n"
+	"<soap:Body>\r\n"
+		"<ABFindAll xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+			"<abId>00000000-0000-0000-0000-000000000000</abId>\r\n"
+			"<abView>Full</abView>\r\n"
+			"<deltasOnly>false</deltasOnly>\r\n"
+			"<lastChange>0001-01-01T00:00:00.0000000-08:00</lastChange>\r\n"
+		"</ABFindAll>\r\n"
+	"</soap:Body>\r\n"
+"</soap:Envelope>").toUtf8();
+
+	QByteArray soapHeader = QString::fromUtf8("POST /abservice/abservice.asmx HTTP/1.1\r\n"
+"SOAPAction: http://www.msn.com/webservices/AddressBook/ABFindAll\r\n"
+"Content-Type: text/xml; charset=utf-8\r\n"
+"Cookie: MSPAuth=%1\r\n"
+"Host: contacts.msn.com\r\n"
+"Content-Length: %2\r\n"
+"\r\n"
+).arg( d->client->passportAuthTicket() ).arg( soapData.size() ).toUtf8();
+
+	QByteArray soapRequest;
+	soapRequest = soapHeader + soapData;
+
+	d->sslStream->write( soapRequest );
+}
+
+void PapillonConsole::streamReadyRead()
+{
+	qDebug() << "PapillonConsole::streamReadyRead()";
+	qDebug() << d->sslStream->read();
 }
 
 void PapillonConsole::clientConnected()
