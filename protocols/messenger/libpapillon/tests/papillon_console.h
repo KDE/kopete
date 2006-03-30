@@ -34,7 +34,10 @@ public:
 private slots:
 	void buttonSendClicked();
 	void buttonConnectClicked();
+	void buttonTestSOAP();
 	void clientConnected();
+	void streamConnected();
+	void streamReadyRead();
 
 private:
 	bool isPayloadCommand(const QString &command);
