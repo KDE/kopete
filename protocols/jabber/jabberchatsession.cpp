@@ -251,7 +251,11 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().canXHTML() )
 				{
-					jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );
+					jabberMessage.setXHTMLBody ( message.escapedBody().replace("\n","") , QString::null, message.getHtmlStyleAttribute() );
+					// According to JEP-0071 §8.9  it is only RECOMMANDED to replace \n with <br/>
+					//  which mean that some implementation may still think that \n are linebreak.  
+					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
+					//  see Bug 121627
 				}
         	}
 		}
