@@ -45,7 +45,6 @@
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
-#include "videodevice.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

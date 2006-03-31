@@ -1,18 +1,53 @@
 kde4_header()
 
-add_subdirectory( addaccountwizard ) 
-add_subdirectory( addcontactwizard ) 
-add_subdirectory( config ) 
-add_subdirectory( contactlist ) 
-add_subdirectory( chatwindow ) 
-add_subdirectory( kconf_update ) 
+#add_subdirectory( addaccountwizard ) 
+#add_subdirectory( addcontactwizard ) 
+#add_subdirectory( config ) RENABLE
+#add_subdirectory( contactlist ) 
+#add_subdirectory( chatwindow ) RENABLE
+#add_subdirectory( kconf_update ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard 
+${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
+${CMAKE_CURRENT_BINARY_DIR}/contactlist/ 
+${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/ 
+)
 
+link_directories( ${CMAKE_BINARY_DIR}/kopete/libkopete/ )
 
 ########### next target ###############
 
+# Add account Wizard
+set( addaccountwizard_SRCS addaccountwizard/addaccountwizard.cpp )
+kde4_add_ui3_files(addaccountwizard_SRCS addaccountwizard/addaccountwizardpage1.ui addaccountwizard/addaccountwizardpage2.ui addaccountwizard/addaccountwizardpage3.ui)
+
+# Contact List
+set(kopetecontactlist_SRCS 
+contactlist/kopetemetacontactlvi.cpp 
+contactlist/kopetestatusgroupviewitem.cpp 
+contactlist/kopetegroupviewitem.cpp 
+contactlist/kopetecontactlistview.cpp 
+contactlist/kopetelviprops.cpp 
+contactlist/kopeteaddrbookexport.cpp 
+contactlist/customnotificationprops.cpp 
+contactlist/kopetegrouplistaction.cpp 
+contactlist/kabcexport.cpp 
+)
+kde4_add_ui3_files(kopetecontactlist_SRCS contactlist/kopetegvipropswidget.ui contactlist/kopetemetalvipropswidget.ui contactlist/kopeteaddrbookexportui.ui contactlist/kabcexport_base.ui)
+
+# Configure plugins
+set(kopetepluginconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/kopetepluginconfig.cpp)
+
 set(kopete_SRCS 
+   ${addaccountwizard_SRCS}
+   ${kopetecontactlist_SRCS}
+   ${kopetepluginconfig_SRCS}
    main.cpp 
    kopeteapplication.cpp 
    kopeteiface.cpp 
@@ -25,13 +60,17 @@ set(kopete_SRCS
 
 kde4_automoc(${kopete_SRCS})
 
-kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
+kde4_add_ui3_files(kopete_SRCS groupkabcselectorwidget.ui )
 
 kde4_add_dcop_skels(kopete_SRCS kopeteiface.h kimiface.h )
 
 kde4_add_executable(kopete ${kopete_SRCS})
 
-target_link_libraries(kopete  ${KDE4_KDECORE_LIBS} ktexteditor knotifyconfig kopeteaddcontactwizard kopeteaddaccountwizard kopetecontactlist kopetepluginconfig kopete kopeteui )
+target_link_libraries(kopete ${KDE4_KDE3SUPPORT_LIBS} ktexteditor knotifyconfig kopete )
+
+if(X11_Xrender_FOUND)
+  target_link_libraries(kopete ${X11_Xrender_LIB})
+endif(X11_Xrender_FOUND)
 
 install_targets(/bin kopete )
 

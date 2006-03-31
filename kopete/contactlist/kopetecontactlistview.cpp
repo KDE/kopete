@@ -56,9 +56,7 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 
-#include "addcontactwizard.h"
 #include "addcontactpage.h"
-#include "chatmessagepart.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontactlist.h"
@@ -793,7 +791,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 
 void KopeteContactListView::slotShowAddContactDialog()
 {
-	( new AddContactWizard( Kopete::UI::Global::mainWidget() ) )->show();
+// 	( new AddContactWizard( Kopete::UI::Global::mainWidget() ) )->show();
 }
 
 void KopeteContactListView::slotSettingsChanged( void )

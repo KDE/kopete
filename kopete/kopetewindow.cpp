@@ -62,7 +62,6 @@
 #include <kdialog.h>
 
 #include "addcontactpage.h"
-#include "addcontactwizard.h"
 #include "addressbooklinkwidget.h"
 #include "groupkabcselectorwidget.h"
 #include "kabcexport.h"
