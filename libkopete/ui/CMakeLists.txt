@@ -8,7 +8,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### install files ###############
 
-install_files( /include/kopete/ui FILES accountselector.h fileconfirmbase.h kopetefileconfirmdialog.h  	kopetepasswordwidget.h kopeteview.h addcontactpage.h kopeteawaydialogbase.h   	kopetepasswordwidgetbase.h kopeteviewplugin.h  	editaccountwidget.h kopetecontactaction.h kopetepassworddialog.h kopetestdaction.h  	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h )
+install_files( /include/kopete/ui FILES accountselector.h ${CMAKE_CURRENT_BINARY_DIR}/../fileconfirmbase.h kopetefileconfirmdialog.h  	kopetepasswordwidget.h kopeteview.h addcontactpage.h ${CMAKE_CURRENT_BINARY_DIR}/../kopeteawaydialogbase.h   	 ${CMAKE_CURRENT_BINARY_DIR}/../kopetepasswordwidgetbase.h kopeteviewplugin.h  	editaccountwidget.h kopetecontactaction.h  ${CMAKE_CURRENT_BINARY_DIR}/../kopetepassworddialog.h kopetestdaction.h  	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h )
 
 kde4_footer()
 

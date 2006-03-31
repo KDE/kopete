@@ -7,10 +7,8 @@ add_subdirectory( ui )
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui )
 
-#TODO Use a better method.
 if(X11_Xrender_FOUND)
   include_directories(${X11_Xrender_INCLUDE_PATH})
-  add_definitions(-DHAVE_XRENDER)
 endif(X11_Xrender_FOUND)
 
 ########### next target ###############
