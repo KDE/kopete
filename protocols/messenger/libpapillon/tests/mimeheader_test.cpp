@@ -21,18 +21,33 @@
 // Papillon includes
 #include "mimeheader.h"
 
+using namespace Papillon;
+
 void MimeHeader_Test::testMimeParsing()
 {
-	QString sourceData = QString( QLatin1String("MSG Hotmail Hotmail 425\r\nMIME-Version: 1.0\r\nContent-Type: text/x-msmsgsprofile\r\n\r\nBlhjajskldjaksjdkjrlwer") );
-	QString expectedGeneratedMimeHeader = QString( QLatin1String("MIME-Version: 1.0\r\nContent-Type: text/x-msmsgsprofile\r\n") );
-
-	Papillon::MimeHeader test = Papillon::MimeHeader::parseMimeHeader(sourceData);
+	QString sourceData = QLatin1String("MSG Hotmail Hotmail 425\r\nMIME-Version: 1.0\r\nContent-Type: text/x-msmsgsprofile; charset=UTF-8\r\n\r\nBlhjajskldjaksjdkjrlwer");
+	
+	MimeHeader test = MimeHeader::parseMimeHeader(sourceData);
 	
 	QCOMPARE( test.value( QLatin1String("MIME-Version") ).toString(), QString("1.0") );
-	QCOMPARE( test.value( QLatin1String("Content-Type") ).toString(), QString("text/x-msmsgsprofile") );
+	QCOMPARE( test.contentType(), QString("text/x-msmsgsprofile") );
+	QCOMPARE( test.charset() , QString("UTF-8") );
+}
+
+void MimeHeader_Test::testMimeGeneration()
+{
+	QString expectedGeneratedMimeHeader = QLatin1String("MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nTest: Kopete\r\nFrom: test@papillon\r\n");
+
+	MimeHeader test;
+	test.setMimeVersion(); // Set 1.0 by default
+	test.setValue( QLatin1String("Test"), QLatin1String("Kopete") );
+	test.setContentType( QLatin1String("text/plain") );
+	test.setValue( QLatin1String("From"), QLatin1String("test@papillon") );
+	test.setCharset( QLatin1String("UTF-8") );
+
 	QCOMPARE( test.toString(), expectedGeneratedMimeHeader );
 }
 
-QTEST_MAIN(MimeHeader_Test)
+QTEST_MAIN(MimeHeader_Test);
 
 #include "mimeheader_test.moc"

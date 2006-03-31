@@ -22,6 +22,7 @@ class MimeHeader_Test : public QObject
 	Q_OBJECT
 private slots:
 	void testMimeParsing();
+	void testMimeGeneration();
 };
 
 #endif

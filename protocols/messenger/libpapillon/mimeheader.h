@@ -28,6 +28,7 @@ namespace Papillon
  * This class build a key-value associate from a MIME header.
  * Use MimeHeader::parseMimeHeader static method to get a MimeHeader instance from raw data.
  * You must set MIME-Version yourself.
+ * It doesn't support the full MIME header, only the things required for Windows Live Messenger.
  *
  * This class is implicit shared.
  * @author Michaël Larouche <michael.larouche@kdemail.net>
@@ -92,10 +93,38 @@ public:
 	void setValue(const QString &key, const QVariant &value);
 
 	/**
+	 * @brief Get the MIME version for this header.
+	 * @return the MIME version as a string.
+	 */
+	QString mimeVersion() const;
+	/**
+	 * @brief Set the MIME version for this header.
+	 * By default it set to 1.0.
+	 * @param mimeVersion MIME version as "1.0"
+	 */
+	void setMimeVersion(const QString &mimeVersion = QString("1.0"));
+
+	/**
 	 * @brief Get the content type
 	 * @return the content type if the key is present.
 	 */
-	QString contentType() const;
+	QString contentType() const; 
+	/**
+	 * @brief Set the content type for the message.
+	 * @param type Content type such as text/plain
+	 */
+	void setContentType(const QString &type);
+
+	/**
+	 * @brief Get the charset.
+	 * @return the charset as a string.
+	 */
+	QString charset() const;
+	/**
+	 * @brief Set the charset for the message.
+	 * @param charset charset as a string.
+	 */
+	void setCharset(const QString &charset);
 
 	/**
 	 * @brief Get a string represention of the MIME header.
