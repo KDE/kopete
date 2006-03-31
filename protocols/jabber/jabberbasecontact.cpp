@@ -136,7 +136,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			break;
 	}
 
-	if( inherits( "JabberContact" ) )
+	if( !metaContact()->isTemporary() )
 	{
 		/*
 		* In this method, as opposed to KC::syncGroups(),
@@ -213,7 +213,6 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 
 void JabberBaseContact::updateResourceList ()
 {
-
 	/*
 	 * Set available resources.
 	 * This is a bit more complicated: We need to generate
@@ -247,6 +246,7 @@ void JabberBaseContact::updateResourceList ()
 		}
 		
 		// Supported features
+#if 0  //disabled because it's just an ugly and long list of incomprehensible namespaces to the user
 		QStringList supportedFeatures = (*it)->features().list();
 		QStringList::ConstIterator featuresIt, featuresItEnd = supportedFeatures.constEnd();
 		if( !supportedFeatures.empty() )
@@ -263,6 +263,7 @@ void JabberBaseContact::updateResourceList ()
 		}
 		if( !supportedFeatures.empty() )
 			resourceListStr += QString( "</td></tr>" );
+#endif
 		
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
