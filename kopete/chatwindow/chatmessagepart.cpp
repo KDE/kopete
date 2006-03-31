@@ -395,14 +395,15 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
+	message.setBgOverride( d->bgOverride );
+	message.setFgOverride( d->fgOverride );
+	message.setRtfOverride( d->rtfOverride );
+	
 	// parse emoticons and URL now.
 	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
 	if( !restoring )
 		message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
 
-	message.setBgOverride( d->bgOverride );
-	message.setFgOverride( d->fgOverride );
-	message.setRtfOverride( d->rtfOverride );
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
 #endif
