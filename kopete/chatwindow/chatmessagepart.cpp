@@ -168,6 +168,9 @@ public:
 		DOM::Node node = m_chat->nodeUnderMouse();
 		Kopete::Contact *contact = m_chat->contactFromNode( node );
 		QString toolTipText;
+		
+		if(node.isNull())
+			return;
 
 		// this tooltip is attached to the viewport widget, so translate the node's rect
 		// into its coordinates.
@@ -602,7 +605,8 @@ const QString ChatMessagePart::styleHTML() const
 		"a{color:%8}a.visited{color:%9}"
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
 		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
-		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}" )
+		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}"
+		"p{margin:0;padding:0;}" /* some html messages are encapsuled into a <p> */ )
 		.arg( p->bgColor().name() )
 		.arg( p->fontFace().family() )
 		.arg( p->fontFace().pointSize() )
