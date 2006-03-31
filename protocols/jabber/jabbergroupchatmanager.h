@@ -65,6 +65,8 @@ public:
 
 private slots:
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
+	
+
 
 private:
 	XMPP::Jid mRoomJid;

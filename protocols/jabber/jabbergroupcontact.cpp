@@ -89,21 +89,24 @@ JabberGroupContact::~JabberGroupContact ()
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
-	delete mManager;
-	mManager=0l;
-
+	if(mManager) 
+	{
+		mManager->deleteLater();
+	}
+	
 	for ( Kopete::Contact *contact = mContactList.first (); contact; contact = mContactList.next () )
 	{
+		/*if(mManager)
+		mManager->removeContact( contact );*/
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
-		delete contact;
+		contact->deleteLater();
 	}
 
 	for ( Kopete::MetaContact *metaContact = mMetaContactList.first (); metaContact; metaContact = mMetaContactList.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
-		delete metaContact;
+		metaContact->deleteLater();
 	}
-
 }
 
 QPtrList<KAction> *JabberGroupContact::customContextMenuActions ()
@@ -235,6 +238,8 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 
 	// now, add the contact also to our own list
 	mContactList.append ( subContact );
+	
+	connect(subContact , SIGNAL(contactDestroyed(Kopete::Contact*)) , this , SLOT(slotSubContactDestroyed(Kopete::Contact*)));
 
 	return subContact;
 
@@ -364,6 +369,15 @@ void JabberGroupContact::slotChangeNick( )
 	
 	XMPP::Status status = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
 	account()->client()->changeGroupChatNick( rosterItem().jid().host() , rosterItem().jid().user()  , mNick , status);
+
+}
+
+void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full () << endl;
+
+	mMetaContactList.remove ( deadContact->metaContact () );
+	mContactList.remove ( deadContact );
 
 }
 

@@ -60,7 +60,7 @@ public:
 	/**
 	 * Return the account instance associated with this contact
 	 */
-	JabberAccount *account () { return m_account; };
+	JabberAccount *account () const { return m_account; };
 	
 	/**
 	 * return the transport if any, or null

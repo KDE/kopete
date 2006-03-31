@@ -50,9 +50,10 @@ JabberGroupMemberContact::JabberGroupMemberContact (const XMPP::RosterItem &rost
  */
 JabberGroupMemberContact::~JabberGroupMemberContact ()
 {
-
-	delete mManager;
-	
+	if(mManager)
+	{
+		mManager->deleteLater();
+	}
 }
 
 QPtrList<KAction> *JabberGroupMemberContact::customContextMenuActions ()

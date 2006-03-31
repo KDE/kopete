@@ -457,7 +457,10 @@ Kopete::Account *Kopete::ChatSession::account() const
 
 void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 {
-	if ( !contact || !d->mContactList.contains( contact ) )
+	if(contact == myself())
+		deleteLater();
+		
+	if( !contact || !d->mContactList.contains( contact ) )
 		return;
 
 	//This is a workaround to prevent crash if the contact get deleted.

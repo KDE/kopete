@@ -568,10 +568,11 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 			);
 		}
 	}
+#if 0  //disabled because it causes crash on exit  - Olivier 2006-03-31
 	QString nick = d->manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
-
+#endif
 	return retVal;
 }
 

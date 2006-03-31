@@ -44,7 +44,6 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
 
 	updateDisplayName ();
-
 }
 
 JabberGroupChatManager::~JabberGroupChatManager()
@@ -70,7 +69,7 @@ const JabberBaseContact *JabberGroupChatManager::user () const
 JabberAccount *JabberGroupChatManager::account () const
 {
 
-	return static_cast<JabberAccount *>(Kopete::ChatSession::account ());
+	return user()->account();
 
 }
 
@@ -158,6 +157,7 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 		account()->errorConnectFirst ();
 	}
 }
+
 
 #include "jabbergroupchatmanager.moc"
 
