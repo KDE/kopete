@@ -342,7 +342,10 @@ void ChatTextEditPart::historyUp()
 	historyPos++;
 	
 	QString newText = historyList[historyPos];
-	edit()->setText( historyList[historyPos] );
+	TextFormat format=edit()->textFormat();
+	edit()->setTextFormat(AutoText); //workaround bug 115690
+	edit()->setText( newText );
+	edit()->setTextFormat(format);
 	edit()->moveCursor( QTextEdit::MoveEnd, false );
 }
 
@@ -363,7 +366,15 @@ void ChatTextEditPart::historyDown()
 	historyPos--;
 	
 	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString::null );
+	
+	
+	TextFormat format=edit()->textFormat();
+	edit()->setTextFormat(AutoText); //workaround bug 115690
 	edit()->setText( newText );
+	edit()->setTextFormat(format);
+	
+	
+	
 	edit()->moveCursor( QTextEdit::MoveEnd, false );
 }
 
@@ -374,7 +385,7 @@ void ChatTextEditPart::addText( const QString &text )
 
 void ChatTextEditPart::setContents( const Kopete::Message &message )
 {
-	edit()->setText( message.plainBody() );
+	edit()->setText( richTextEnabled() ? message.escapedBody() : message.plainBody() );
 
 	setFont( message.font() );
 	setFgColor( message.fg() );
