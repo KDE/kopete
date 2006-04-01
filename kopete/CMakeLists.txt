@@ -1,10 +1,10 @@
 kde4_header()
 
-#add_subdirectory( addaccountwizard ) 
+add_subdirectory( addaccountwizard ) 
 #add_subdirectory( addcontactwizard ) 
-#add_subdirectory( config ) RENABLE
+add_subdirectory( config )
 #add_subdirectory( contactlist ) 
-#add_subdirectory( chatwindow ) RENABLE
+add_subdirectory( chatwindow )
 #add_subdirectory( kconf_update ) 
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
@@ -19,13 +19,12 @@ ${CMAKE_CURRENT_BINARY_DIR}/contactlist/
 ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/ 
 )
 
-link_directories( ${CMAKE_BINARY_DIR}/kopete/libkopete/ )
+link_directories( 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard 
+)
 
 ########### next target ###############
-
-# Add account Wizard
-set( addaccountwizard_SRCS addaccountwizard/addaccountwizard.cpp )
-kde4_add_ui3_files(addaccountwizard_SRCS addaccountwizard/addaccountwizardpage1.ui addaccountwizard/addaccountwizardpage2.ui addaccountwizard/addaccountwizardpage3.ui)
 
 # Contact List
 set(kopetecontactlist_SRCS 
@@ -45,7 +44,6 @@ kde4_add_ui3_files(kopetecontactlist_SRCS contactlist/kopetegvipropswidget.ui co
 set(kopetepluginconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/kopetepluginconfig.cpp)
 
 set(kopete_SRCS 
-   ${addaccountwizard_SRCS}
    ${kopetecontactlist_SRCS}
    ${kopetepluginconfig_SRCS}
    main.cpp 
@@ -67,7 +65,7 @@ kde4_add_dcop_skels(kopete_SRCS kopeteiface.h kimiface.h )
 kde4_add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
-target_link_libraries(kopete_bin ${KDE4_KDE3SUPPORT_LIBS} ktexteditor knotifyconfig kopete )
+target_link_libraries(kopete_bin ${KDE4_KDE3SUPPORT_LIBS} ktexteditor knotifyconfig kopete kopeteaddaccountwizard)
 
 if(X11_Xrender_FOUND)
   target_link_libraries(kopete_bin ${X11_Xrender_LIB})

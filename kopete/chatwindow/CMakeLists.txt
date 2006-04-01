@@ -1,7 +1,30 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+${CMAKE_CURRENT_SOURCE_DIR}/../ 
+)
 
+link_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+########### next target ###############
+
+set( kopetechatwindow_shared_SRCS 
+chatmessagepart.cpp 
+emoticonselector.cpp 
+kopeteemoticonaction.cpp 
+chattexteditpart.cpp 
+krichtexteditpart.cpp 
+kopetechatwindowstylemanager.cpp 
+kopetechatwindowstyle.cpp )
+
+kde4_automoc(${kopetechatwindow_shared_SRCS})
+kde4_add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
+target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KDEUI_LIBS} khtml)
+install_targets(${LIB_INSTALL_DIR} kopetechatwindow_shared )
 
 ########### next target ###############
 
@@ -28,7 +51,7 @@ kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
-target_link_libraries(kopete_chatwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow kdeui )
+target_link_libraries(kopete_chatwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow_shared kdeui )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_chatwindow )
 
@@ -43,7 +66,7 @@ kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
-target_link_libraries(kopete_emailwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow kdeui )
+target_link_libraries(kopete_emailwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow_shared kdeui )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_emailwindow )
 

@@ -1,17 +1,22 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
-
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+)
 
 ########### next target ###############
 
 set(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfig.cpp globalidentitiesmanager.cpp )
 
-kde4_automoc(${kcm_kopete_identityconfig_PART_SRCS})
-
-kde4_add_ui_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigbase.ui )
+kde4_add_ui3_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigbase.ui )
 
 kde4_add_kcfg_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigpreferences.kcfgc )
+
+kde4_automoc(${kcm_kopete_identityconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_identityconfig ${kcm_kopete_identityconfig_PART_SRCS})
 

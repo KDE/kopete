@@ -1,26 +1,33 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+${CMAKE_SOURCE_DIR}/kopete/kopete/chatwindow 
+)
 
 
 ########### next target ###############
 
 set(kcm_kopete_appearanceconfig_PART_SRCS appearanceconfig.cpp tooltipeditdialog.cpp )
 
-kde4_automoc(${kcm_kopete_appearanceconfig_PART_SRCS})
-
-kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS 
+kde4_add_ui3_files(kcm_kopete_appearanceconfig_PART_SRCS 
    appearanceconfig_emoticons.ui 
    appearanceconfig_colors.ui 
    appearanceconfig_chatwindow.ui 
    appearanceconfig_contactlist.ui 
    tooltipeditwidget.ui )
 
+kde4_automoc(${kcm_kopete_appearanceconfig_PART_SRCS})
+
 kde4_add_plugin(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_appearanceconfig )
 
-target_link_libraries(kcm_kopete_appearanceconfig  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow ktexteditor kutils knewstuff )
+target_link_libraries(kcm_kopete_appearanceconfig  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared ktexteditor kutils knewstuff )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_appearanceconfig )
 
