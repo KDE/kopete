@@ -317,7 +317,7 @@ Represent the message direction, if the message must be displayed right-to-left 
 	<key>CFBundleGetInfoString</key>
 	<string>$Your style full name$</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.adiumx.smooth.operator.style</string>
+	<string>$Your style ID in the form: com.adiumx.smooth.operator.style$</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>CFBundleName</key>
