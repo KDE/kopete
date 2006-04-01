@@ -1,5 +1,18 @@
 kde4_header()
 
+project(kopete)
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+set(KOPETE_INCLUDES 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
+${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
+${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+)
+
 add_subdirectory( libkopete ) 
 add_subdirectory( kopete ) 
 add_subdirectory( protocols ) 
@@ -7,10 +20,6 @@ add_subdirectory( plugins )
 add_subdirectory( icons ) 
 add_subdirectory( sounds ) 
 add_subdirectory( styles ) 
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
-
-project(kopete)
 
 ########### install files ###############
 

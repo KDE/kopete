@@ -1,11 +1,7 @@
 kde4_header()
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
-${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
-${CMAKE_BINARY_DIR}/kopete/libkopete/ 
-${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
-${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
-${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+${KOPETE_INCLUDES} 
 ${CMAKE_SOURCE_DIR}/kopete/kopete/chatwindow 
 )
 
