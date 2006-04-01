@@ -520,7 +520,7 @@ void HistoryDialog::searchFirstStep()
 
 				QFile file(mLogger->getFileName(*it, mSearch->item->date()));
 				file.open(IO_ReadOnly);
-				if (!&file)
+				if (!file.isOpen())
 				{
 					continue;
 				}
