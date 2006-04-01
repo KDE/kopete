@@ -64,15 +64,16 @@ kde4_add_ui3_files(kopete_SRCS groupkabcselectorwidget.ui )
 
 kde4_add_dcop_skels(kopete_SRCS kopeteiface.h kimiface.h )
 
-kde4_add_executable(kopete ${kopete_SRCS})
+kde4_add_executable(kopete_bin ${kopete_SRCS})
+set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
-target_link_libraries(kopete ${KDE4_KDE3SUPPORT_LIBS} ktexteditor knotifyconfig kopete )
+target_link_libraries(kopete_bin ${KDE4_KDE3SUPPORT_LIBS} ktexteditor knotifyconfig kopete )
 
 if(X11_Xrender_FOUND)
-  target_link_libraries(kopete ${X11_Xrender_LIB})
+  target_link_libraries(kopete_bin ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)
 
-install_targets(/bin kopete )
+install_targets(/bin kopete_bin )
 
 
 ########### install files ###############
