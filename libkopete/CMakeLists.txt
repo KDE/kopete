@@ -5,7 +5,7 @@ add_subdirectory( ui )
 #TODO Enable avdevice
 #add_subdirectory( avdevice ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui ${CMAKE_BINARY_DIR} )
 
 if(X11_Xrender_FOUND)
   include_directories(${X11_Xrender_INCLUDE_PATH})
