@@ -1,0 +1,132 @@
+Index: iris/include/im.h
+===================================================================
+--- iris/include/im.h	(revision 525193)
++++ iris/include/im.h	(working copy)
+@@ -49,7 +49,7 @@
+ 	typedef QValueList<Url> UrlList;
+ 	typedef QMap<QString, QString> StringMap;
+ 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
+-			ComposingEvent, CancelEvent } MsgEvent;
++			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
+                                            
+ 	class Message
+ 	{
+Index: iris/xmpp-im/types.cpp
+===================================================================
+--- iris/xmpp-im/types.cpp	(revision 525193)
++++ iris/xmpp-im/types.cpp	(working copy)
+@@ -544,28 +544,49 @@
+ 			else
+ 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
+ 		}
++		else
++			s.appendChild(  s.createElement(NS_CHATSTATES , "active" ) );
+ 
++		bool need_x_event=false;
+ 		for(QValueList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+ 			switch (*ev) {
+ 				case OfflineEvent:
+ 					x.appendChild(s.createElement("jabber:x:event", "offline"));
++					need_x_event=true;
+ 					break;
+ 				case DeliveredEvent:
+ 					x.appendChild(s.createElement("jabber:x:event", "delivered"));
++					need_x_event=true;
+ 					break;
+ 				case DisplayedEvent:
+ 					x.appendChild(s.createElement("jabber:x:event", "displayed"));
++					need_x_event=true;
+ 					break;
+ 				case ComposingEvent: 
+ 					x.appendChild(s.createElement("jabber:x:event", "composing"));
++					need_x_event=true;
++					if (d->body.isEmpty())
++						s.appendChild(  s.createElement(NS_CHATSTATES , "composing" ) ); 
+ 					break;
+ 				case CancelEvent:
+-					// Add nothing
++					need_x_event=true;
++					if (d->body.isEmpty())
++						s.appendChild(  s.createElement(NS_CHATSTATES , "paused" ) ); 
+ 					break;
++				case InactiveEvent:
++					if (d->body.isEmpty())
++						s.appendChild(  s.createElement(NS_CHATSTATES , "inactive" ) ); 
++					break;
++				case GoneEvent:
++					if (d->body.isEmpty())
++						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
++					break;
+ 			}
+ 		}
+-		s.appendChild(x);
+-	} 
++		if(need_x_event)  //we don't need to have the (empty) x:event element if this is only <gone> or <inactive>
++			s.appendChild(x);
++	}
++		
+ 
+ 	// xencrypted
+ 	if(!d->xencrypted.isEmpty())
+@@ -595,6 +616,7 @@
+ 	d->subject.clear();
+ 	d->body.clear();
+ 	d->thread = QString();
++	d->eventList.clear();
+ 
+ 	QDomElement root = s.element();
+ 
+@@ -631,6 +653,33 @@
+ 					}
+ 				}
+ 			}
++			else if (e.namespaceURI() == NS_CHATSTATES)
++			{
++				if(e.tagName() == "active")
++				{
++					//like in JEP-0022  we let the client know that we can receive ComposingEvent
++					// (we can do that according to  §4.6  of the JEP-0085)
++					d->eventList += ComposingEvent;
++					d->eventList += InactiveEvent;
++					d->eventList += GoneEvent;
++				}
++				else if (e.tagName() == "composing")
++				{
++					d->eventList += ComposingEvent;
++				}
++				else if (e.tagName() == "paused")
++				{
++					d->eventList += CancelEvent;
++				}
++				else if (e.tagName() == "inactive")
++				{
++					d->eventList += InactiveEvent;
++				}
++				else if (e.tagName() == "gone")
++				{
++					d->eventList += GoneEvent;
++				}
++			}
+ 			else {
+ 				//printf("extension element: [%s]\n", e.tagName().latin1());
+ 			}
+@@ -664,7 +713,6 @@
+ 	}
+ 	
+     // events
+-	d->eventList.clear();
+ 	nl = root.elementsByTagNameNS("jabber:x:event", "x");
+ 	if (nl.count()) {
+ 		nl = nl.item(0).childNodes();
+Index: iris/xmpp-core/protocol.h
+===================================================================
+--- iris/xmpp-core/protocol.h	(revision 525193)
++++ iris/xmpp-core/protocol.h	(working copy)
+@@ -37,6 +37,7 @@
+ #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
+ #define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
+ #define NS_XHTML "http://www.w3.org/1999/xhtml"
++#define NS_CHATSTATES "http://jabber.org/protocol/chatstates"
+ 
+ namespace XMPP
+ {
