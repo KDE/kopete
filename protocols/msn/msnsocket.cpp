@@ -780,7 +780,7 @@ QString MSNSocket::unescape( const QString &str )
 	QString str2 = KURL::decode_string( str, 106 );
 	//remove msn+ colors code
 	str2 = str2.replace( QRegExp("[\\x1-\\x8]"), "" ); // old msn+ colors
-	// added by kaoul <eric.kwolek at gmail.com>
+	// added by kaoul <erwin.kwolek at gmail.com>
 	str2 = str2.replace( QRegExp("\\xB7[&@\'#0]"),""); // dot ...
 	str2 = str2.replace( QRegExp("\\xB7\\$,?\\d{1,2}"),""); // dot dollar (comma)? 0-99
 
