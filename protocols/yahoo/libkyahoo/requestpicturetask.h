@@ -29,7 +29,7 @@ class RequestPictureTask : public Task
 Q_OBJECT
 public:
 	RequestPictureTask(Task *parent);
-	~RequestPictureTask();
+	virtual ~RequestPictureTask();
 	
 	virtual void onGo();
 	

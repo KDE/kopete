@@ -47,3 +47,5 @@ void RequestPictureTask::setTarget( const QString &target )
 {
 	m_target = target;
 }
+
+#include "requestpicturetask.moc"

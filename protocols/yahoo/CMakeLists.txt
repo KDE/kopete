@@ -1,15 +1,38 @@
 kde4_header()
 
 add_subdirectory( libkyahoo ) 
-add_subdirectory( ui ) 
+#add_subdirectory( ui ) 
 add_subdirectory( icons ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+${CMAKE_CURRENT_SOURCE_DIR}/ui 
+${CMAKE_CURRENT_SOURCE_DIR}/libkyahoo 
+)
 
+link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libkyahoo )
 
 ########### next target ###############
 
+set(kopete_yahoo_ui_SRCS 
+ui/yahooinvitelistimpl.cpp 
+ui/yahoowebcamdialog.cpp 
+ui/yahoouserinfodialog.cpp 
+)
+
+kde4_add_ui3_files(kopete_yahoo_ui_SRCS 
+ui/yahooadd.ui 
+ui/yahooeditaccountbase.ui 
+ui/yahooinvitelistbase.ui 
+ui/yahooverifyaccountbase.ui 
+ui/yahoostealthsetting.ui 
+ui/yahoogeneralinfowidget.ui 
+ui/yahooworkinfowidget.ui 
+ui/yahoootherinfowidget.ui 
+)
+
 set(kopete_yahoo_PART_SRCS 
+   ${kopete_yahoo_ui_SRCS} 
    yahooprotocol.cpp 
    yahoocontact.cpp 
    yahooaddcontact.cpp 
@@ -26,7 +49,7 @@ kde4_add_plugin(kopete_yahoo ${kopete_yahoo_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_yahoo )
 
-target_link_libraries(kopete_yahoo  ${KDE4_KDECORE_LIBS} kopete_videodevice kopete kopeteyahooui kyahoo )
+target_link_libraries(kopete_yahoo ${KDE4_KDEUI_LIBS} kopete_videodevice kopete kyahoo_kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_yahoo )
 

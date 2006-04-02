@@ -19,7 +19,7 @@
 
 #include "msndebugrawcmddlg.h"
 
-#include "ui/msndebugrawcommand_base.h"
+#include "msndebugrawcommand_base.h"
 
 #include <qcheckbox.h>
 #include <qlineedit.h>

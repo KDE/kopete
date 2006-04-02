@@ -221,3 +221,4 @@ void SendPictureTask::setUrl( const QString &url )
 	m_url = url;
 }
 
+#include "sendpicturetask.moc"

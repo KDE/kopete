@@ -39,7 +39,7 @@ public:
 	enum Type { UploadPicture, SendChecksum, SendInformation, SendStatus };
 
 	SendPictureTask(Task *parent);
-	~SendPictureTask();
+	virtual ~SendPictureTask();
 	
 	virtual void onGo();
 

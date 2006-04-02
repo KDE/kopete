@@ -1,10 +1,40 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+add_subdirectory( tests )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${QCA2_INCLUDE_DIR}
+)
 
 
 ########### next target ###############
 
+set(libpapillon_SRCS 
+bytestream.cpp 
+connector.cpp 
+coreprotocol.cpp 
+safedelete.cpp 
+stream.cpp 
+task.cpp 
+transfer.cpp 
+papillonclientstream.cpp 
+qtconnector.cpp 
+qtbytestream.cpp 
+connection.cpp 
+logintask.cpp 
+securestream.cpp 
+tweenerhandler.cpp 
+client.cpp 
+notifymessagetask.cpp 
+mimeheader.cpp 
+)
+
+kde4_automoc( ${libpapillon_SRCS} )
+
+kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
+
+target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QCA2_LIBRARIES} )
+
+install_targets( ${LIB_INSTALL_DIR} papillon_kopete )
 
 ########### install files ###############
 

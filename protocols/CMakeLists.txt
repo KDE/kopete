@@ -2,20 +2,20 @@ kde4_header()
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
-#add_subdirectory( msn ) 
-#add_subdirectory( oscar ) 
-#add_subdirectory( yahoo ) 
-#add_subdirectory( winpopup ) 
-#add_subdirectory( messenger ) 
-# TODO Add test for testbed
-add_subdirectory( testbed )
+OPTION(WITH_testbed "Enable Kopete testbed protocol" ON)
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(TESTBED)")
+add_subdirectory( msn ) 
+#add_subdirectory( oscar ) 
+add_subdirectory( yahoo ) 
+#add_subdirectory( winpopup ) 
+add_subdirectory( messenger )
+if(WITH_testbed)
+  add_subdirectory( testbed )
+endif(WITH_testbed)
+
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(GADU)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JABBER)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: readd msn")
-
-
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
 
 ########### install files ###############
 
@@ -48,6 +48,6 @@ kde4_footer()
 #
 ##SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo winpopup $(SMS) $(JABBER) $(GADU) $(MEANWHILE)
 #
-## Disabled Jabber, IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now
+## Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now
 ## I leave that to the protocol maintainer (-DarkShock)
 #SUBDIRS = $(TESTBED) msn oscar yahoo winpopup $(GADU) messenger $(JABBER)

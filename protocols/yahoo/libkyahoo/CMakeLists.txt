@@ -4,9 +4,59 @@ add_subdirectory( tests )
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
-
 ########### next target ###############
+set(libkyahoo_SRCS 
+client.cpp 
+task.cpp 
+connector.cpp 
+inputprotocolbase.cpp 
+ymsgprotocol.cpp 
+ymsgtransfer.cpp 
+transfer.cpp 
+yahoobytestream.cpp 
+bytestream.cpp 
+yahooclientstream.cpp 
+yahooconnector.cpp 
+safedelete.cpp 
+stream.cpp 
+sha1.c 
+md5.c 
+crypt.c 
+coreprotocol.cpp 
+logintask.cpp 
+libyahoo.c 
+yahoo_fn.c 
+listtask.cpp 
+statusnotifiertask.cpp 
+mailnotifiertask.cpp 
+messagereceivertask.cpp 
+sendnotifytask.cpp 
+sendmessagetask.cpp 
+logofftask.cpp 
+changestatustask.cpp 
+modifybuddytask.cpp 
+picturenotifiertask.cpp 
+requestpicturetask.cpp 
+yahoobuddyiconloader.cpp 
+stealthtask.cpp 
+sendpicturetask.cpp 
+webcamtask.cpp 
+conferencetask.cpp 
+sendauthresptask.cpp 
+pingtask.cpp 
+yabtask.cpp 
+yabentry.cpp 
+modifyyabtask.cpp 
+chatsessiontask.cpp 
+)
 
+kde4_automoc( ${libkyahoo_SRCS} )
+
+kde4_add_library( kyahoo_kopete SHARED ${libkyahoo_SRCS} )
+
+target_link_libraries( kyahoo_kopete ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
+
+install_targets( ${LIB_INSTALL_DIR} kyahoo_kopete )
 
 ########### install files ###############
 

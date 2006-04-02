@@ -114,7 +114,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	// Set the client Id for the myself contact.  It sets what MSN feature we support.
 	m_clientId = MSNProtocol::MSNC4 | MSNProtocol::InkFormatGIF | MSNProtocol::SupportMultiPacketMessaging;
 
-#if MSN_WEBCAM
+#if 0
 	Kopete::AV::VideoDevicePool::self()->scanDevices();
 	if( Kopete::AV::VideoDevicePool::self()->hasDevices() )
 	{

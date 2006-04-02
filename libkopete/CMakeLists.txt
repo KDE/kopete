@@ -2,8 +2,7 @@ kde4_header()
 
 add_subdirectory( private ) 
 add_subdirectory( ui ) 
-#TODO Enable avdevice
-#add_subdirectory( avdevice ) 
+add_subdirectory( avdevice ) 
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui ${CMAKE_BINARY_DIR} )
 
