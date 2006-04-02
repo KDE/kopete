@@ -52,11 +52,11 @@ chatsessiontask.cpp
 
 kde4_automoc( ${libkyahoo_SRCS} )
 
-kde4_add_library( kyahoo_kopete SHARED ${libkyahoo_SRCS} )
+kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 
-target_link_libraries( kyahoo_kopete ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
+target_link_libraries( kyahoo ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
 
-install_targets( ${LIB_INSTALL_DIR} kyahoo_kopete )
+install_targets( ${LIB_INSTALL_DIR} kyahoo )
 
 ########### install files ###############
 
