@@ -1,13 +1,29 @@
 kde4_header()
 
-add_subdirectory( ui ) 
+#add_subdirectory( ui ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
+${CMAKE_CURRENT_BINARY_DIR}/ui/ 
+${CMAKE_CURRENT_SOURCE_DIR}/../ 
+${CMAKE_CURRENT_SOURCE_DIR}/../liboscar/ 
+)
 
 
 ########### next target ###############
 
+set(kopete_aim_ui_SRCS ui/aimaddcontactpage.cpp ui/aimeditaccountwidget.cpp)
+
+kde4_add_ui3_files(kopete_aim_ui_SRCS 
+ui/aimaddcontactui.ui 
+ui/aimeditaccountui.ui 
+ui/aiminfobase.ui 
+ui/aimjoinchatbase.ui 
+)
+
 set(kopete_aim_PART_SRCS 
+   ${kopete_aim_ui_SRCS} 
    aimprotocol.cpp 
    aimaccount.cpp 
    aimcontact.cpp 
@@ -21,7 +37,7 @@ kde4_add_plugin(kopete_aim ${kopete_aim_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_aim )
 
-target_link_libraries(kopete_aim  ${KDE4_KDECORE_LIBS} kopete_oscar kopeteaimui kopete )
+target_link_libraries(kopete_aim  ${KDE4_KDECORE_LIBS} kopete_oscar kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_aim )
 

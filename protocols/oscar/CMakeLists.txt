@@ -5,7 +5,10 @@ add_subdirectory( aim )
 add_subdirectory( icq ) 
 add_subdirectory( icons ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+${KOPETE_INCLUDES} 
+${CMAKE_CURRENT_SOURCE_DIR}/liboscar/ 
+)
 
 
 ########### next target ###############
@@ -18,13 +21,13 @@ set(kopete_oscar_LIB_SRCS
    oscarlistnonservercontacts.cpp 
    oscarvisibilitydialog.cpp )
 
-kde4_automoc(${kopete_oscar_LIB_SRCS})
+kde4_add_ui3_files(kopete_oscar_LIB_SRCS oscarencodingselectionbase.ui oscarlistcontactsbase.ui oscarvisibilitybase.ui )
 
-kde4_add_ui_files(kopete_oscar_LIB_SRCS oscarencodingselectionbase.ui oscarlistcontactsbase.ui oscarvisibilitybase.ui )
+kde4_automoc(${kopete_oscar_LIB_SRCS})
 
 kde4_add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
 
-target_link_libraries(kopete_oscar  ${KDE4_KDECORE_LIBS} kio kopete oscar )
+target_link_libraries(kopete_oscar ${KDE4_KIO_LIBS} kopete oscar )
 
 set_target_properties(kopete_oscar PROPERTIES VERSION 2.0.0 SOVERSION 2 )
 install_targets(${LIB_INSTALL_DIR} kopete_oscar )

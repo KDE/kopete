@@ -2,11 +2,38 @@ kde4_header()
 
 add_subdirectory( tests ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+${KOPETE_INCLUDES} 
+)
 
 
 ########### next target ###############
 
+set(liboscar_SRCS 
+oscarutils.cpp client.cpp task.cpp connector.cpp 
+inputprotocolbase.cpp coreprotocol.cpp flapprotocol.cpp snacprotocol.cpp transfer.cpp rtf.cc 
+bytestream.cpp oscarclientstream.cpp safedelete.cpp stream.cpp oscarconnector.cpp 
+oscarbytestream.cpp buffer.cpp md5.c logintask.cpp aimlogintask.cpp icqlogintask.cpp 
+closeconnectiontask.cpp rateclassmanager.cpp serverversionstask.cpp rateinfotask.cpp 
+errortask.cpp locationrightstask.cpp profiletask.cpp blmlimitstask.cpp 
+servicesetuptask.cpp icbmparamstask.cpp ssimanager.cpp rateclass.cpp rateclass.h 
+prmparamstask.cpp ssiparamstask.cpp ssilisttask.cpp ssiactivatetask.cpp 
+clientreadytask.cpp senddcinfotask.cpp sendidletimetask.cpp ownuserinfotask.cpp 
+connection.cpp onlinenotifiertask.cpp userdetails.cpp ssimodifytask.cpp 
+oscartypeclasses.cpp oscarmessage.cpp messagereceivertask.cpp sendmessagetask.cpp icqtask.cpp 
+offlinemessagestask.cpp ssiauthtask.cpp userinfotask.cpp icquserinfo.cpp icquserinfotask.cpp 
+usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp 
+buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp 
+localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservicetask.cpp oscarguid.cpp 
+)
+
+kde4_automoc( ${liboscar_SRCS} )
+
+kde4_add_library( oscar SHARED ${liboscar_SRCS} )
+
+target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} )
+
+install_targets( ${LIB_INSTALL_DIR} oscar )
 
 ########### install files ###############
 

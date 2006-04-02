@@ -5,7 +5,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 OPTION(WITH_testbed "Enable Kopete testbed protocol" ON)
 
 add_subdirectory( msn ) 
-#add_subdirectory( oscar ) 
+add_subdirectory( oscar ) 
 add_subdirectory( yahoo ) 
 #add_subdirectory( winpopup ) 
 add_subdirectory( messenger )
