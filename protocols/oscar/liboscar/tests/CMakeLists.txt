@@ -20,6 +20,8 @@ kde4_add_executable(buffertest ${buffertest_SRCS})
 
 target_link_libraries(buffertest ${LIBOSCAR_TEST_LIBRARIES} )
 
+add_test(buffertest ${EXECUTABLE_OUTPUT_PATH}/buffertest)
+
 ########### next target ###############
 
 set(serverversionstest_SRCS serverversionstest.cpp oscartestbase.cpp )
@@ -29,6 +31,8 @@ kde4_automoc(${serverversionstest_SRCS})
 kde4_add_executable(serverversionstest ${serverversionstest_SRCS})
 
 target_link_libraries(serverversionstest ${LIBOSCAR_TEST_LIBRARIES} )
+
+add_test(serverversionstest ${EXECUTABLE_OUTPUT_PATH}/serverversionstest)
 
 ########### next target ###############
 
@@ -40,6 +44,8 @@ kde4_add_executable(connectiontest ${connectiontest_SRCS})
 
 target_link_libraries(connectiontest ${LIBOSCAR_TEST_LIBRARIES})
 
+add_test(connectiontest ${EXECUTABLE_OUTPUT_PATH}/connectiontest)
+
 ########### next target ###############
 
 set(rateinfotest_SRCS rateinfotest.cpp oscartestbase.cpp )
@@ -50,6 +56,8 @@ kde4_add_executable(rateinfotest ${rateinfotest_SRCS})
 
 target_link_libraries(rateinfotest ${LIBOSCAR_TEST_LIBRARIES})
 
+add_test(rateinfotest ${EXECUTABLE_OUTPUT_PATH}/rateinfotest)
+
 ########### next target ###############
 
 set(offlinemessagestest_SRCS offlinemessagestest.cpp oscartestbase.cpp )
@@ -59,6 +67,8 @@ kde4_automoc(${offlinemessagestest_SRCS})
 kde4_add_executable(offlinemessagestest ${offlinemessagestest_SRCS})
 
 target_link_libraries(offlinemessagestest ${LIBOSCAR_TEST_LIBRARIES})
+
+add_test(offlinemessagestest ${EXECUTABLE_OUTPUT_PATH}/offlinemessagestest)
 
 endif(KDE4_BUILD_TESTS)
 
