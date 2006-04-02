@@ -19,7 +19,7 @@ kopetechatwindowstyle.cpp )
 
 kde4_automoc(${kopetechatwindow_shared_SRCS})
 kde4_add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
-target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KDEUI_LIBS} khtml)
+target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KDEUI_LIBS} ${KDE4_KHTML_LIBS} )
 install_targets(${LIB_INSTALL_DIR} kopetechatwindow_shared )
 
 ########### next target ###############
@@ -32,7 +32,7 @@ kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
-target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete kparts kspell2 ${KDE4_KDEPRINT_LIBS} )
+target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KPARTS_LIBS} ${KDE4_KSPELL2_LIBS} ${KDE4_KDEPRINT_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 krichtexteditpart )
 
@@ -47,7 +47,7 @@ kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
-target_link_libraries(kopete_chatwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow_shared kdeui )
+target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_chatwindow )
 
@@ -62,7 +62,7 @@ kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
-target_link_libraries(kopete_emailwindow  ${KDE4_KDECORE_LIBS} kopete kopetechatwindow_shared kdeui )
+target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_emailwindow )
 

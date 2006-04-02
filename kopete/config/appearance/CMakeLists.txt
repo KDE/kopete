@@ -23,7 +23,7 @@ kde4_add_plugin(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_S
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_appearanceconfig )
 
-target_link_libraries(kcm_kopete_appearanceconfig  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared ktexteditor kutils knewstuff )
+target_link_libraries(kcm_kopete_appearanceconfig ${KDE4_KUTILS_LIBS} kopete kopetechatwindow_shared ${KDE4_KNEWSTUFF_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_appearanceconfig )
 

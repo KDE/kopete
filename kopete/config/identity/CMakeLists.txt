@@ -18,7 +18,7 @@ kde4_add_plugin(kcm_kopete_identityconfig ${kcm_kopete_identityconfig_PART_SRCS}
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_identityconfig )
 
-target_link_libraries(kcm_kopete_identityconfig  ${KDE4_KDECORE_LIBS} kabc kopete kutils )
+target_link_libraries(kcm_kopete_identityconfig  ${KDE4_KUTILS_LIBS} kabc kopete)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_identityconfig )
 
