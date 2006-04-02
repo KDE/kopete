@@ -772,12 +772,19 @@ QString MSNSocket::escape( const QString &str )
 	QString result = QString(new_segment, new_length);
 	delete [] new_segment;
 	return result;
+
 }
 
 QString MSNSocket::unescape( const QString &str )
 {
-	//GRRRRR F*CKING MSN PLUS USERS! They insert these stupid color codes in their nickname, and messages are not correctly shown
-	return KURL::decode_string( str, 106 ).replace( QRegExp("[\\x1-\\x8]"), "" );
+	QString str2 = KURL::decode_string( str, 106 );
+	//remove msn+ colors code
+	str2 = str2.replace( QRegExp("[\\x1-\\x8]"), "" ); // old msn+ colors
+	// added by kaoul <eric.kwolek at gmail.com>
+	str2 = str2.replace( QRegExp("\\xB7[&@\'#0]"),""); // dot ...
+	str2 = str2.replace( QRegExp("\\xB7\\$,?\\d{1,2}"),""); // dot dollar (comma)? 0-99
+
+	return str2;
 }
 
 void MSNSocket::slotConnectionSuccess()
