@@ -2,16 +2,18 @@ kde4_header()
 
 add_subdirectory( icons ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+)
 
 
 ########### next target ###############
 
 set(kopete_latex_PART_SRCS latexplugin.cpp latexguiclient.cpp )
 
-kde4_automoc(${kopete_latex_PART_SRCS})
-
 kde4_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
+
+kde4_automoc(${kopete_latex_PART_SRCS})
 
 kde4_add_plugin(kopete_latex ${kopete_latex_PART_SRCS})
 
@@ -26,17 +28,17 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kopete_latex )
 
 set(kcm_kopete_latex_PART_SRCS latexpreferences.cpp )
 
-kde4_automoc(${kcm_kopete_latex_PART_SRCS})
-
-kde4_add_ui_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
+kde4_add_ui3_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
 
 kde4_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
+
+kde4_automoc(${kcm_kopete_latex_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_latex ${kcm_kopete_latex_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_latex )
 
-target_link_libraries(kcm_kopete_latex  ${KDE4_KDECORE_LIBS} kutils )
+target_link_libraries(kcm_kopete_latex  ${KDE4_KUTILS_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_latex )
 

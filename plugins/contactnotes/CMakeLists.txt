@@ -1,6 +1,8 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+)
 
 
 ########### next target ###############
@@ -13,7 +15,7 @@ kde4_add_plugin(kopete_contactnotes ${kopete_contactnotes_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_contactnotes )
 
-target_link_libraries(kopete_contactnotes  ${KDE4_KDECORE_LIBS} kopete kio )
+target_link_libraries(kopete_contactnotes ${KDE4_KIO_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_contactnotes )
 

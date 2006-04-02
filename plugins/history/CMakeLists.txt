@@ -1,6 +1,8 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+)
 
 
 ########### next target ###############
@@ -12,17 +14,17 @@ set(kopete_history_PART_SRCS
    converter.cpp 
    historyguiclient.cpp )
 
-kde4_automoc(${kopete_history_PART_SRCS})
-
-kde4_add_ui_files(kopete_history_PART_SRCS historyviewer.ui )
+kde4_add_ui3_files(kopete_history_PART_SRCS historyviewer.ui )
 
 kde4_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
+
+kde4_automoc(${kopete_history_PART_SRCS})
 
 kde4_add_plugin(kopete_history ${kopete_history_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_history )
 
-target_link_libraries(kopete_history  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_history  ${KDE4_KDECORE_LIBS} ${KDE4_KHTML_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_history )
 
@@ -31,17 +33,17 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kopete_history )
 
 set(kcm_kopete_history_PART_SRCS historypreferences.cpp )
 
-kde4_automoc(${kcm_kopete_history_PART_SRCS})
-
-kde4_add_ui_files(kcm_kopete_history_PART_SRCS historyprefsui.ui )
+kde4_add_ui3_files(kcm_kopete_history_PART_SRCS historyprefsui.ui )
 
 kde4_add_kcfg_files(kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
+
+kde4_automoc(${kcm_kopete_history_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_history ${kcm_kopete_history_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_history )
 
-target_link_libraries(kcm_kopete_history  ${KDE4_KDECORE_LIBS} kopete kutils )
+target_link_libraries(kcm_kopete_history  ${KDE4_KUTILS_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_history )
 

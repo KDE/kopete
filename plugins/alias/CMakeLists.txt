@@ -1,6 +1,8 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+)
 
 
 ########### next target ###############
@@ -22,15 +24,15 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kopete_alias )
 
 set(kcm_kopete_alias_PART_SRCS aliaspreferences.cpp editaliasdialog.cpp )
 
-kde4_automoc(${kcm_kopete_alias_PART_SRCS})
+kde4_add_ui3_files(kcm_kopete_alias_PART_SRCS aliasdialogbase.ui aliasdialog.ui )
 
-kde4_add_ui_files(kcm_kopete_alias_PART_SRCS aliasdialogbase.ui aliasdialog.ui )
+kde4_automoc(${kcm_kopete_alias_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_alias ${kcm_kopete_alias_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_alias )
 
-target_link_libraries(kcm_kopete_alias  ${KDE4_KDECORE_LIBS} kutils kopete )
+target_link_libraries(kcm_kopete_alias  ${KDE4_KUTILS_LIBS} kopete )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_alias )
 

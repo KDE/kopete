@@ -1,6 +1,11 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_BINARY_DIR} 
+${CMAKE_CURRENT_SOURCE_DIR} 
+${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+${XMMS_INCLUDE_DIR} 
+)
 
 
 ########### next target ###############
@@ -15,15 +20,19 @@ set(kopete_nowlistening_PART_SRCS
    nlamarok.cpp 
    nlkaffeine.cpp )
 
-kde4_automoc(${kopete_nowlistening_PART_SRCS})
-
 kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
+
+kde4_automoc(${kopete_nowlistening_PART_SRCS})
 
 kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_nowlistening )
 
-target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete)
+
+if(XMMS_FOUND)
+   target_link_libraries( kopete_nowlistening ${XMMS_LIBRAIRIES} )
+endif(XMMS_FOUND)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_nowlistening )
 
@@ -32,17 +41,17 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kopete_nowlistening )
 
 set(kcm_kopete_nowlistening_PART_SRCS nowlisteningpreferences.cpp )
 
-kde4_automoc(${kcm_kopete_nowlistening_PART_SRCS})
-
-kde4_add_ui_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
+kde4_add_ui3_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
 
 kde4_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
+
+kde4_automoc(${kcm_kopete_nowlistening_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_nowlistening )
 
-target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KDECORE_LIBS} kutils )
+target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_nowlistening )
 
