@@ -74,6 +74,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 }
 
+JabberChatSession::~JabberChatSession( )
+{
+	sendNotification( XMPP::GoneEvent );
+}
+
+
 void JabberChatSession::slotUpdateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
@@ -309,6 +315,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 	}
 
 }
+
 
 #include "jabberchatsession.moc"
 
