@@ -21,6 +21,7 @@
 namespace Papillon
 {
 
+class MimeHeader;
 /**
  * @brief Notify about new messages on Notification server.
  *
@@ -47,7 +48,7 @@ signals:
 	 * @param authTicket Auth ticket.
 	 * TODO: Use MimeHeader class for the signal
 	 */
-	void profileMessage(const QString &authTicket);
+	void profileMessage(const Papillon::MimeHeader &profileMessage);
 
 private:
 	virtual bool forMe(Transfer *transfer) const;

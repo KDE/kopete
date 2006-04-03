@@ -26,6 +26,7 @@
 #include "securestream.h"
 #include "papillonclientstream.h"
 #include "transfer.h"
+#include "mimeheader.h"
 
 // Papillon tasks
 #include "logintask.h"
@@ -116,7 +117,7 @@ void Client::initNotificationTasks()
 	if( !d->notifyMessageTask )
 	{
 		d->notifyMessageTask = new NotifyMessageTask( d->notificationConnection->rootTask() );
-		connect(d->notifyMessageTask, SIGNAL(profileMessage(const QString &)), this, SLOT(gotInitalProfile( const QString& )));
+		connect(d->notifyMessageTask, SIGNAL(profileMessage(const Papillon::MimeHeader &)), this, SLOT(gotInitalProfile(const Papillon::MimeHeader& )));
 	}
 }
 
@@ -151,11 +152,11 @@ void Client::loginResult(Papillon::Task *task)
 
 }
 
-void Client::gotInitalProfile(const QString &authTicket)
+void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
 {
-	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << authTicket;
+	d->passportAuthTicket = profileMessage.value( QLatin1String("MSPAuth") ).toString();
 
-	d->passportAuthTicket = authTicket;
+	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << d->passportAuthTicket;
 }
 
 QString Client::passportAuthTicket() const

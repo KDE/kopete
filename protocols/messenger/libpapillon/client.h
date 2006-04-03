@@ -26,6 +26,7 @@ class Connection;
 class SecureStream;
 class Task;
 class Transfer;
+class MimeHeader;
 
 /**
  * @brief Client to Windows Live Messenger.
@@ -103,8 +104,9 @@ private slots:
 	/**
 	 * @internal
 	 * Set the passport auth ticket.
+	 * @param profileMessage initial profile "message"
 	 */
-	void gotInitalProfile(const QString &authTicket);
+	void gotInitalProfile(const Papillon::MimeHeader &profileMessage);
 
 // Normal slots
 private slots:

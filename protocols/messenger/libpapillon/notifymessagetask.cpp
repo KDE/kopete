@@ -21,6 +21,7 @@
 
 // Papillon includes
 #include "transfer.h"
+#include "mimeheader.h"
 
 namespace Papillon
 {
@@ -48,14 +49,9 @@ bool NotifyMessageTask::take(Transfer *transfer)
 {
 	if( forMe(transfer) )
 	{
-		// TODO: Parse MIME header and support the other things.
-		QRegExp rx( QLatin1String("MSPAuth: ([A-Za-z0-9$!*]*)") );
-		QString message = QString(transfer->payloadData());
-		rx.search(message);
+		MimeHeader notifyMessage = MimeHeader::parseMimeHeader( QString(transfer->payloadData()) );
 
-		QString mspAuth = rx.cap(1);
-
-		emit profileMessage(mspAuth);
+		emit profileMessage(notifyMessage);
 
 		return true;
 	}
