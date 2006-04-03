@@ -185,8 +185,8 @@ void PapillonConsole::buttonConnectClicked()
 	QString passportId, password;
 	if( d->settings->value( QLatin1String("passportId") ).toString().isEmpty() && d->settings->value( QLatin1String("password") ).toString().isEmpty() )
 	{
-		passportId = QInputDialog::getText( this, QString("Enter your Microsoft Passport account ID"), QString("Passport ID:") );
-		password = QInputDialog::getText( this, QString("Enter your Microsoft Passport password"), QString("Passport password:") );
+		passportId = QInputDialog::getText( this, QString("Passport ID"), QString("Enter your Microsoft Passport account ID:") );
+		password = QInputDialog::getText( this, QString("Passport password"), QString("Enter your Microsoft Passport password:"), QLineEdit::Password);
 	
 		d->settings->setValue( QLatin1String("passportId"), passportId );
 		d->settings->setValue( QLatin1String("password"), password );
