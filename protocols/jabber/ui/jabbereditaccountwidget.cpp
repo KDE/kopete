@@ -126,6 +126,7 @@ void JabberEditAccountWidget::reopen ()
 	cbSendDeliveredEvent->setChecked( account()->configGroup()->readBoolEntry("SendDeliveredEvent", true) );
 	cbSendDisplayedEvent->setChecked( account()->configGroup()->readBoolEntry("SendDisplayedEvent", true) );
 	cbSendComposingEvent->setChecked( account()->configGroup()->readBoolEntry("SendComposingEvent", true) );
+	cbSendGoneEvent->setChecked( account()->configGroup()->readBoolEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readBoolEntry("HideSystemInfo", false) );
 
@@ -188,6 +189,7 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("SendDeliveredEvent", cbSendDeliveredEvent->isChecked());
 	account()->configGroup()->writeEntry("SendDisplayedEvent", cbSendDisplayedEvent->isChecked());
 	account()->configGroup()->writeEntry("SendComposingEvent", cbSendComposingEvent->isChecked());
+	account()->configGroup()->writeEntry("SendGoneEvent", cbSendGoneEvent->isChecked());
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
 
