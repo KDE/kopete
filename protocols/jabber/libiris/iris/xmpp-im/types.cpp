@@ -544,7 +544,7 @@ Stanza Message::toStanza(Stream *stream) const
 			else
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
-		else
+		else if (d->type=="chat" || d->type=="groupchat")
 			s.appendChild(  s.createElement(NS_CHATSTATES , "active" ) );
 
 		bool need_x_event=false;
@@ -565,20 +565,20 @@ Stanza Message::toStanza(Stream *stream) const
 				case ComposingEvent: 
 					x.appendChild(s.createElement("jabber:x:event", "composing"));
 					need_x_event=true;
-					if (d->body.isEmpty())
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
 						s.appendChild(  s.createElement(NS_CHATSTATES , "composing" ) ); 
 					break;
 				case CancelEvent:
 					need_x_event=true;
-					if (d->body.isEmpty())
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
 						s.appendChild(  s.createElement(NS_CHATSTATES , "paused" ) ); 
 					break;
 				case InactiveEvent:
-					if (d->body.isEmpty())
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
 						s.appendChild(  s.createElement(NS_CHATSTATES , "inactive" ) ); 
 					break;
 				case GoneEvent:
-					if (d->body.isEmpty())
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
 						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
 					break;
 			}

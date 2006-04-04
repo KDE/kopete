@@ -76,7 +76,9 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 JabberChatSession::~JabberChatSession( )
 {
-	sendNotification( XMPP::GoneEvent );
+	if ( account()->configGroup()->readBoolEntry ("SendEvents", true) &&
+			 account()->configGroup()->readBoolEntry ("SendGoneEvent", true) )
+		sendNotification( XMPP::GoneEvent );
 }
 
 
@@ -182,6 +184,16 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 			message.setEventId ( contact->lastReceivedMessageId () );
 			// store composing event depending on state
 			message.addEvent ( event );
+			
+			if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+			{	
+				message.setType ( "normal" );
+			}
+			else
+			{	
+				message.setType ( "chat" );
+			}
+
 	
 			// send message
 			account()->client()->sendMessage ( message );
