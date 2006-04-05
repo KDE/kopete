@@ -19,6 +19,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QByteArray>
 #include <QtCore/QSettings>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 #include <QtGui/QApplication>
 #include <QtGui/QLayout>
 #include <QtGui/QTextEdit>
@@ -54,7 +56,7 @@ class PapillonConsole::Private
 {
 public:
 	Private()
-	 : logged(false), client(0), settings(0), sslStream(0)
+	 : logged(false), client(0), settings(0), sslStream(0), soapResultFile(0)
 	{
 		settings = new QSettings( QLatin1String("papillonconsole.ini"), QSettings::IniFormat );
 	}
@@ -75,6 +77,8 @@ public:
 
 	QSettings *settings;
 	SecureStream *sslStream;
+	QFile *soapResultFile;
+	QTextStream *textStream;
 };
 
 PapillonConsole::PapillonConsole(QWidget *parent)
@@ -208,41 +212,50 @@ void PapillonConsole::buttonTestSOAP()
 		d->sslStream = new SecureStream(new QtConnector(this));
 		connect(d->sslStream, SIGNAL(connected()), this, SLOT(streamConnected()));
 		connect(d->sslStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
+
+		d->soapResultFile = new QFile( QLatin1String("soapresult.txt"), this);
+		d->soapResultFile->open( QIODevice::ReadWrite | QIODevice::Truncate );
+		d->textStream = new QTextStream(d->soapResultFile);
 	}
 
-	d->sslStream->connectToServer( QLatin1String("contacts.msn.com") );
+	d->sslStream->connectToServer( QLatin1String("omega.contacts.msn.com") );
 }
 
 void PapillonConsole::streamConnected()
 {
 	qDebug() << "SOAP Test connected.";
-	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
-"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n"
-	"<soap:Header>\r\n"
-		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>\r\n"
-			"<IsMigration>false</IsMigration>\r\n"
-			"<PartnerScenario>Initial</PartnerScenario>\r\n"
-		"</ABApplicationHeader>\r\n"
-		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-			"<ManagedGroupRequest>false</ManagedGroupRequest>\r\n"
-		"</ABAuthHeader>\r\n"
-	"</soap:Header>\r\n"
-	"<soap:Body>\r\n"
-		"<ABFindAll xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-			"<abId>00000000-0000-0000-0000-000000000000</abId>\r\n"
-			"<abView>Full</abView>\r\n"
-			"<deltasOnly>false</deltasOnly>\r\n"
-			"<lastChange>0001-01-01T00:00:00.0000000-08:00</lastChange>\r\n"
-		"</ABFindAll>\r\n"
-	"</soap:Body>\r\n"
-"</soap:Envelope>").toUtf8();
+	QByteArray soapData = QString::fromUtf8("<?xml version='1.0' encoding='utf-8'?>\r\n"
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
+    "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
+        "<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+            "<ApplicationId xmlns=\"http://www.msn.com/webservices/AddressBook\">09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>\r\n"
+            "<IsMigration xmlns=\"http://www.msn.com/webservices/AddressBook\">false</IsMigration>\r\n"
+            "<PartnerScenario xmlns=\"http://www.msn.com/webservices/AddressBook\">Initial</PartnerScenario>\r\n"
+        "</ABApplicationHeader>\r\n"
+        "<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+            "<ManagedGroupRequest xmlns=\"http://www.msn.com/webservices/AddressBook\">false</ManagedGroupRequest>\r\n"
+        "</ABAuthHeader>\r\n"
+    "</soap:Header>\r\n"
+    "<soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
+        "<FindMembership xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+            "<serviceFilter xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+                "<Types xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
+                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Messenger</ServiceType>\r\n"
+                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Invitation</ServiceType>\r\n"
+                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">SocialNetwork</ServiceType>\r\n"
+                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Space</ServiceType>\r\n"
+                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Profile</ServiceType>\r\n"
+                "</Types>\r\n"
+            "</serviceFilter>\r\n"
+        "</FindMembership>\r\n"
+    "</soap:Body>\r\n"
+"</soap:Envelope>\r\n").toUtf8();
 
-	QByteArray soapHeader = QString::fromUtf8("POST /abservice/abservice.asmx HTTP/1.1\r\n"
-"SOAPAction: http://www.msn.com/webservices/AddressBook/ABFindAll\r\n"
+	QByteArray soapHeader = QString::fromUtf8("POST /abservice/SharingService.asmx HTTP/1.1\r\n"
+"SOAPAction: http://www.msn.com/webservices/AddressBook/FindMembership\r\n"
 "Content-Type: text/xml; charset=utf-8\r\n"
 "Cookie: MSPAuth=%1\r\n"
-"Host: contacts.msn.com\r\n"
+"Host: omega.contacts.msn.com\r\n"
 "Content-Length: %2\r\n"
 "\r\n"
 ).arg( d->client->passportAuthTicket() ).arg( soapData.size() ).toUtf8();
@@ -256,7 +269,15 @@ void PapillonConsole::streamConnected()
 void PapillonConsole::streamReadyRead()
 {
 	qDebug() << "PapillonConsole::streamReadyRead()";
-	qDebug() << d->sslStream->read();
+	QByteArray read = d->sslStream->read();
+	*d->textStream << read;
+	qDebug() << "PapillonConsole::streamReadyRead(): Read" << read.size();
+
+	if( QString(read).indexOf("</soap:Envelope>") != -1 )
+	{
+		qDebug() << "SOAP result end.";
+		d->soapResultFile->close();
+	}
 }
 
 void PapillonConsole::clientConnected()
