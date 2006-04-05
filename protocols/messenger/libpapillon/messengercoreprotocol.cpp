@@ -1,5 +1,5 @@
 /*
-   coreprotocol.cpp - Messenger core protocol for Papillon 
+   messengercoreprotocol.cpp - Messenger core protocol for Papillon 
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -15,7 +15,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "coreprotocol.h"
+#include "messengercoreprotocol.h"
 
 // Qt includes
 #include <QtDebug>
@@ -30,11 +30,11 @@
 namespace Papillon
 {
 
-class CoreProtocol::Private
+class MessengerCoreProtocol::Private
 {
 public:
 	Private()
-		: inTransfer(0), state(CoreProtocol::NoData)
+		: inTransfer(0), state(MessengerCoreProtocol::NoData)
 	{}
 	
 	// buffer containing unprocessed bytes we received
@@ -47,20 +47,20 @@ public:
 	int payloadLength;
 };
 
-CoreProtocol::CoreProtocol() : QObject(), d(new Private)
+MessengerCoreProtocol::MessengerCoreProtocol() : QObject(), d(new Private)
 {}
 
-CoreProtocol::~CoreProtocol()
+MessengerCoreProtocol::~MessengerCoreProtocol()
 {
 	delete d;
 }
 
-int CoreProtocol::state()
+int MessengerCoreProtocol::state()
 {
 	return d->state;
 }
 
-void CoreProtocol::addIncomingData(const QByteArray &incomingBytes )
+void MessengerCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 {
 	// store locally
 	int oldsize = d->in.size();
@@ -90,7 +90,7 @@ void CoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 
 }
 
-Transfer *CoreProtocol::incomingTransfer()
+Transfer *MessengerCoreProtocol::incomingTransfer()
 {
 	if ( d->state == Available )
 	{
@@ -103,14 +103,14 @@ Transfer *CoreProtocol::incomingTransfer()
 	}
 }
 
-void CoreProtocol::outgoingTransfer(Transfer *outgoing)
+void MessengerCoreProtocol::outgoingTransfer(Transfer *outgoing)
 {
 	emit outgoingData( outgoing->toRawCommand() );
 	// Clear the transfer.
 	delete outgoing;
 }
 
-int CoreProtocol::rawToTransfer(const QByteArray &raw)
+int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 {
 	uint bytesParsed = 0;
 
@@ -219,12 +219,12 @@ int CoreProtocol::rawToTransfer(const QByteArray &raw)
 	return bytesParsed;
 }
 
-void CoreProtocol::reset()
+void MessengerCoreProtocol::reset()
 {
 	d->in.resize( 0 );
 }
 
-bool CoreProtocol::okToProceed(const QDataStream &din)
+bool MessengerCoreProtocol::okToProceed(const QDataStream &din)
 {
 	if( din.atEnd() )
 	{
@@ -235,7 +235,7 @@ bool CoreProtocol::okToProceed(const QDataStream &din)
 		return true;
 }
 
-bool CoreProtocol::isPayloadCommand(const QString &command)
+bool MessengerCoreProtocol::isPayloadCommand(const QString &command)
 {
 	if( command == QLatin1String("ADL") ||
 	    command == QLatin1String("GCF") ||
@@ -254,5 +254,5 @@ bool CoreProtocol::isPayloadCommand(const QString &command)
 
 }
 
-#include "coreprotocol.moc"
+#include "messengercoreprotocol.moc"
 //kate: indent-mode csands; tab-width 4;

@@ -1,30 +1,52 @@
 kde4_header()
 
-add_subdirectory( tests )
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
-${QCA2_INCLUDE_DIR}
+# Propagate includes to tests subdirs
+set(PAPILLON_INCLUDES 
+${QT_INCLUDES} 
+${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/ 
+${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/base/ 
+${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/http/ 
+${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/tasks/ 
+${QCA2_INCLUDE_DIR} 
 )
+
+add_subdirectory( tests )
+
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${PAPILLON_INCLUDES})
 
 
 ########### next target ###############
 
+set(papillon_base_SRCS 
+base/bytestream.cpp 
+base/connector.cpp 
+base/safedelete.cpp 
+base/stream.cpp 
+)
+
+set(papillon_http_SRCS 
+http/securestream.cpp 
+http/tweenerhandler.cpp 
+)
+
+set(papillon_tasks_SRCS 
+tasks/logintask.cpp 
+tasks/notifymessagetask.cpp 
+)
+
 set(libpapillon_SRCS 
-bytestream.cpp 
-connector.cpp 
-coreprotocol.cpp 
-safedelete.cpp 
-stream.cpp 
+${papillon_base_SRCS} 
+${papillon_http_SRCS} 
+${papillon_tasks_SRCS} 
 task.cpp 
+messengercoreprotocol.cpp 
 transfer.cpp 
 papillonclientstream.cpp 
 qtconnector.cpp 
 qtbytestream.cpp 
 connection.cpp 
-logintask.cpp 
-securestream.cpp 
-tweenerhandler.cpp 
 client.cpp 
-notifymessagetask.cpp 
 mimeheader.cpp 
 contactlistmanager.cpp 
 contactinfo.cpp 

@@ -1,5 +1,5 @@
 /*
-   coreprotocol.h - Messenger core protocol for Papillon 
+   messengercoreprotocol.h - Messenger core protocol for Papillon 
 
    Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
@@ -31,15 +31,15 @@ namespace Papillon
 
 class Transfer;
 
-class PAPILLON_EXPORT CoreProtocol : public QObject
+class PAPILLON_EXPORT MessengerCoreProtocol : public QObject
 {
 	Q_OBJECT
 public:
 	enum State { NeedMore, Available, NoData, OutOfSync, WaitForPayload };
 
-	CoreProtocol();
+	MessengerCoreProtocol();
 
-	virtual ~CoreProtocol();
+	virtual ~MessengerCoreProtocol();
 
 	/**
 	 * Reset the protocol, clear buffers

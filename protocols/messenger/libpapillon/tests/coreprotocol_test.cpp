@@ -20,8 +20,8 @@
 #include <QtCore/QLatin1String>
 
 // Papillon includes
-#include "coreprotocol.h"
 #include "transfer.h"
+#include "messengercoreprotocol.h"
 
 using namespace Papillon;
 
@@ -39,7 +39,7 @@ QByteArray readDataFromFile(const QString &fileName)
 
 void CoreProtocol_Test::testNormalTransfer()
 {
-	CoreProtocol protocol;
+	MessengerCoreProtocol protocol;
 	QByteArray data = readDataFromFile( QLatin1String("wlm_transfer1.transfer") );
 	protocol.addIncomingData(data);
 	
@@ -56,7 +56,7 @@ void CoreProtocol_Test::testNormalTransfer()
 
 void CoreProtocol_Test::testFullPayloadTransfer()
 {
-	CoreProtocol protocol;
+	MessengerCoreProtocol protocol;
 	QByteArray data = readDataFromFile( QLatin1String("wlm_transfer2.transfer") );
 
 	protocol.addIncomingData(data);
@@ -72,7 +72,7 @@ void CoreProtocol_Test::testFullPayloadTransfer()
 
 void CoreProtocol_Test::testFragmentPayloadTransfer()
 {
-	CoreProtocol protocol;
+	MessengerCoreProtocol protocol;
 	QByteArray data1 = readDataFromFile( QLatin1String("wlm_transfer3.transfer") );
 	QByteArray data2 = readDataFromFile( QLatin1String("wlm_transfer4.transfer") );
 	

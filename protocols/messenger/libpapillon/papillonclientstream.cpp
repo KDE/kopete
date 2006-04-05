@@ -21,7 +21,7 @@
 
 // Papillon includes.
 #include "transfer.h"
-#include "coreprotocol.h"
+#include "messengercoreprotocol.h"
 #include "connector.h"
 #include "bytestream.h"
 
@@ -40,7 +40,7 @@ public:
 
 	Connector *connector;
 	ByteStream *byteStream;
-	CoreProtocol protocol;
+	MessengerCoreProtocol protocol;
 
 	QQueue<Transfer*> transferQueue;
 };

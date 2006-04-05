@@ -45,7 +45,7 @@ public:
 	 * @brief Restore Contact List from a XML cache file.
 	 * @param contatListCache Contact List cache as QDomDocument.
 	 */
-	void fromXml(const QDomElement &contactListCache);
+	void fromXml(const QDomDocument &contactListCache);
 
 	/**
 	 * @brief XML represention of the contact list ready to be saved on disk.
