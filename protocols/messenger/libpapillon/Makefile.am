@@ -8,7 +8,8 @@ METASOURCES = AUTO
 libpapillon_la_SOURCES = bytestream.cpp connector.cpp coreprotocol.cpp \
 		safedelete.cpp stream.cpp task.cpp transfer.cpp papillonclientstream.cpp \
 		qtconnector.cpp qtbytestream.cpp connection.cpp logintask.cpp securestream.cpp \
-		tweenerhandler.cpp client.cpp notifymessagetask.cpp mimeheader.cpp
+		tweenerhandler.cpp client.cpp notifymessagetask.cpp mimeheader.cpp contactlistmanager.cpp \
+		contactinfo.cpp
 libpapillon_la_LIBADD = $(LIB_QTCORE) $(LIB_QTNETWORK) $(QCA_LIBS)
 libpapillon_la_LDFLAGS = -no-undefined $(all_libraries)
 

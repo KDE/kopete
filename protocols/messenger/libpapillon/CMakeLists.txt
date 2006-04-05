@@ -26,6 +26,8 @@ tweenerhandler.cpp
 client.cpp 
 notifymessagetask.cpp 
 mimeheader.cpp 
+contactlistmanager.cpp 
+contactinfo.cpp 
 )
 
 kde4_automoc( ${libpapillon_SRCS} )
