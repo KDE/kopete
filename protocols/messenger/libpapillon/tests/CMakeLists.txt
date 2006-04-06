@@ -10,6 +10,8 @@ set( PAPILLON_TEST_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_Q
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../ )
 
+add_definitions(-DPAPILLON_TESTS_DATA="\\"${CMAKE_CURRENT_SOURCE_DIR}/\\"")
+
 ########### Tests programs ###############
 
 set(connection_test_SRCS connection_test.cpp )
@@ -53,15 +55,15 @@ add_test(transfer_test ${EXECUTABLE_OUTPUT_PATH}/transfer_test)
 #####
 
 # Give me a linking error on MessengerCoreProtocol (which exists and exported).
-# set( coreprotocol_test_SRCS coreprotocol_test.cpp )
-# 
-# kde4_automoc( ${coreprotocol_test_SRCS} )
-# 
-# kde4_add_executable(coreprotocol_test ${coreprotocol_test_SRCS})
-# 
-# target_link_libraries(coreprotocol_test ${PAPILLON_TEST_LIBRARIES})
-# 
-# add_test(coreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/coreprotocol_test)
+set( coreprotocol_test_SRCS coreprotocol_test.cpp )
+
+kde4_automoc( ${coreprotocol_test_SRCS} )
+
+kde4_add_executable(coreprotocol_test ${coreprotocol_test_SRCS})
+
+target_link_libraries(coreprotocol_test ${PAPILLON_TEST_LIBRARIES})
+
+add_test(coreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/coreprotocol_test)
 
 #####
 

@@ -23,6 +23,10 @@
 #include "transfer.h"
 #include "messengercoreprotocol.h"
 
+#ifndef PAPILLON_TESTS_DATA
+#define PAPILLON_TESTS_DATA
+#endif
+
 using namespace Papillon;
 
 QByteArray readDataFromFile(const QString &fileName)
@@ -40,7 +44,7 @@ QByteArray readDataFromFile(const QString &fileName)
 void CoreProtocol_Test::testNormalTransfer()
 {
 	MessengerCoreProtocol protocol;
-	QByteArray data = readDataFromFile( QLatin1String("wlm_transfer1.transfer") );
+	QByteArray data = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer1.transfer") );
 	protocol.addIncomingData(data);
 	
 	Transfer *transfer = protocol.incomingTransfer();
@@ -57,7 +61,7 @@ void CoreProtocol_Test::testNormalTransfer()
 void CoreProtocol_Test::testFullPayloadTransfer()
 {
 	MessengerCoreProtocol protocol;
-	QByteArray data = readDataFromFile( QLatin1String("wlm_transfer2.transfer") );
+	QByteArray data = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer2.transfer") );
 
 	protocol.addIncomingData(data);
 
@@ -73,8 +77,8 @@ void CoreProtocol_Test::testFullPayloadTransfer()
 void CoreProtocol_Test::testFragmentPayloadTransfer()
 {
 	MessengerCoreProtocol protocol;
-	QByteArray data1 = readDataFromFile( QLatin1String("wlm_transfer3.transfer") );
-	QByteArray data2 = readDataFromFile( QLatin1String("wlm_transfer4.transfer") );
+	QByteArray data1 = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer3.transfer") );
+	QByteArray data2 = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer4.transfer") );
 	
 	protocol.addIncomingData(data1);
 
