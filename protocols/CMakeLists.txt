@@ -12,6 +12,7 @@ add_subdirectory( messenger )
 if(WITH_testbed)
   add_subdirectory( testbed )
 endif(WITH_testbed)
+#add_subdirectory( jabber )
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(GADU)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JABBER)")

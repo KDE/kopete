@@ -1,19 +1,58 @@
 kde4_header()
 
-add_subdirectory( ui ) 
+#add_subdirectory( ui ) 
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JINGLE)")
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/include/
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/jabber/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-core/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-im/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/util/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/ 
+${QCA2_INCLUDE_DIR}
+)
 
+link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ )
 
 ########### next target ###############
 
+set(kopete_jabber_ui_SRCS 
+    ui/dlgjabbersendraw.cpp 
+    ui/jabberaddcontactpage.cpp 
+    ui/dlgjabbervcard.cpp 
+    ui/dlgjabberservices.cpp 
+    ui/dlgjabberregister.cpp 
+    ui/dlgjabberbrowse.cpp 
+    ui/jabbereditaccountwidget.cpp 
+    ui/jabberregisteraccount.cpp 
+    ui/jabberchooseserver.cpp 
+    ui/dlgjabberchangepassword.cpp 
+    ui/dlgjabberchatroomslist.cpp 
+    ui/dlgjabberchatjoin.cpp 
+)
 
-########### next target ###############
+kde4_add_ui3_files(kopete_jabber_ui_SRCS 
+    ui/dlgsendraw.ui 
+    ui/dlgaddcontact.ui 
+    ui/dlgvcard.ui 
+    ui/dlgregister.ui 
+    ui/dlgbrowse.ui 
+    ui/dlgjabbereditaccountwidget.ui 
+    ui/dlgjabberregisteraccount.ui 
+    ui/dlgjabberchooseserver.ui 
+    ui/dlgchangepassword.ui 
+    ui/dlgchatroomslist.ui 
+    ui/dlgchatjoin.ui 
+    ui/dlgservices.ui 
+)
 
 set(kopete_jabber_PART_SRCS 
+   ${kopete_jabber_ui_SRCS} 
    jabberprotocol.cpp 
    jabberaccount.cpp 
    jabberresource.cpp 
@@ -30,7 +69,11 @@ set(kopete_jabber_PART_SRCS
    jabberfiletransfer.cpp 
    jabbercapabilitiesmanager.cpp 
    jabbertransport.cpp 
-   jabberbookmarks.cpp )
+   jabberbookmarks.cpp 
+   jabberclient.cpp 
+   jabberconnector.cpp 
+   jabberbytestream.cpp 
+)
 
 kde4_automoc(${kopete_jabber_PART_SRCS})
 
@@ -38,9 +81,9 @@ kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_jabber )
 
-target_link_libraries(kopete_jabber  ${KDE4_KDECORE_LIBS} kopete kopetejabberui cutestuff_util cutestuff_network iris iris_jabber iris_xmpp_core iris_xmpp_im jabberclient )
+target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_jabber )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_jabber )
 
 
 ########### install files ###############
