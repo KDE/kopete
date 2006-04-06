@@ -1,15 +1,32 @@
 kde4_header()
 
-add_subdirectory( ui ) 
+#add_subdirectory( ui ) 
 add_subdirectory( icons ) 
-add_subdirectory( libwinpopup ) 
+#add_subdirectory( libwinpopup ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${KOPETE_INCLUDES} 
+${CMAKE_CURRENT_SOURCE_DIR}/libwinpopup/ 
+)
 
 
 ########### next target ###############
 
+set(kopete_wp_ui_SRCS)
+
+kde4_add_ui3_files(kopete_wp_ui_SRCS 
+ui/wpaddcontactbase.ui 
+ui/wpeditaccountbase.ui 
+ui/wpuserinfowidget.ui 
+)
+
+set(libwinpopup_SRCS 
+libwinpopup/libwinpopup.cpp 
+)
+
 set(kopete_wp_PART_SRCS 
+   ${kopete_wp_ui_SRCS} 
+   ${libwinpopup_SRCS} 
    wpprotocol.cpp 
    wpcontact.cpp 
    wpaddcontact.cpp 
@@ -23,7 +40,7 @@ kde4_add_plugin(kopete_wp ${kopete_wp_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_wp )
 
-target_link_libraries(kopete_wp  ${KDE4_KDECORE_LIBS} kopete kopetewpui winpopup kio )
+target_link_libraries(kopete_wp  ${KDE4_KIO_LIBS} kopete kio )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kopete_wp )
 
