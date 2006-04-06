@@ -78,6 +78,7 @@ public slots:
 	virtual void slotSendFile();
 	virtual void deleteContact();
 	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
+	void slotUserProfile();
 	void stealthContact();
 	void requestWebcam();
 	void inviteWebcam();
@@ -120,22 +121,17 @@ private:
 	QString m_groupName;
 	YABEntry *m_YABEntry;
 	YahooChatSession *m_manager;
+	YahooWebcamDialog* m_webcamDialog;
 	YahooAccount* m_account;
 	bool m_stealthed;
 	bool m_receivingWebcam;
 	bool m_sessionActive;
 	
-	//stealth
 	KAction* m_stealthAction;
-	
-	//webcam handling
+	KAction* m_profileAction;
 	KAction* m_webcamAction;
 	KAction* m_inviteWebcamAction;
-	YahooWebcamDialog* m_webcamDialog;
-	
-	//buzz
 	KAction* m_buzzAction;	
-
 	KAction* m_inviteConferenceAction;
 };
 

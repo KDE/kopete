@@ -86,6 +86,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_stealthAction = 0L;
 	m_inviteWebcamAction = 0L;
 	m_inviteConferenceAction = 0L;
+	m_profileAction = 0L;
 
 	m_buzzAction = 0L;
 }
@@ -425,6 +426,13 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 		m_inviteConferenceAction->setEnabled( false );
 	actionCollection->append( m_inviteConferenceAction );
 	
+	if ( !m_profileAction )
+	{
+		m_profileAction = new KAction( i18n( "&View Yahoo Profile" ), "kontact_notes", KShortcut(), this, SLOT( slotUserProfile() ), this, "profile_contact");
+	}
+	m_profileAction->setEnabled( true );
+	actionCollection->append( m_profileAction );
+	
 	return actionCollection;
 	
 	//return 0L;
@@ -443,6 +451,14 @@ void YahooContact::slotUserInfo()
 	dlg->setAccountConnected( m_account->isConnected() );
 	dlg->show();
 	QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), m_account, SLOT(slotSaveYABEntry( YABEntry & )));
+}
+
+void YahooContact::slotUserProfile()
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	
+	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + userId();
+	KRun::runURL( KURL( profileSiteString ) , "text/html" );
 }
 
 void YahooContact::slotSendFile()
