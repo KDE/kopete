@@ -31,22 +31,44 @@ namespace Papillon
 
 class Transfer;
 
+/**
+ * @brief Translate raw data into Transfer
+ * The sole purpose of this class is to parse in a low-level way the Messenger protocol.
+ * it create Transfer that Task will be able to use.
+ *
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author SuSE Linux AG
+ * @author Justin Karneges
+ */
 class PAPILLON_EXPORT MessengerCoreProtocol : public QObject
 {
 	Q_OBJECT
 public:
-	enum State { NeedMore, Available, NoData, OutOfSync, WaitForPayload };
+	/**
+	 * State is used internally to tell where we are in the parsing.
+	 * NeedMore: Need more data to proceed.
+	 * Available: Transfer is ready.
+	 * NoData: No data is currently in for proceeding.
+	 * WaitForPayload: We parsed a payload command and we are waiting for payload data.
+	 */
+	enum State { NeedMore, Available, NoData, WaitForPayload };
 
+	/**
+	 * @brief Create an new parser instance.
+	 */
 	MessengerCoreProtocol();
-
+	/**
+	 * d-tor
+	 */
 	virtual ~MessengerCoreProtocol();
 
 	/**
-	 * Reset the protocol, clear buffers
+	 * @brief Reset the protocol, clear buffers
 	 */
 	void reset();
 
 	/**
+	 * @brief Add data to be proceeded by this class.
 	 * Accept data from the network, and buffer it into a useful message
 	 * This requires parsing out each packet from the incoming data
 	 * @param incomingBytes Raw data
@@ -54,26 +76,32 @@ public:
 	void addIncomingData(const QByteArray &incomingBytes);
 
 	/**
-	 * @return the incoming transfer or 0 if none is available.
+	 * @brief Get the current Transfer available.
+	 * Use incomingData() to tell when get the incoming Transfer.
+	 * @return the incoming Transfer or 0 if none is available.
 	 */
 	Transfer *incomingTransfer();
 
 	/**
-	 * Convert a request into an outgoing transfer
-	 * emits @ref outgoingData() with the raw transfer.
+	 * @brief Convert a request into an outgoing transfer
+	 * Emit outgoingData() with the raw transfer.
+	 * @param outgoing Transfer
 	 */
 	void outgoingTransfer(Transfer *outgoing);
 
 	/**
-	 * Get the state of the protocol
+	 * @brief Get the state of the protocol
+	 * @return Current state
+	 * @see State
 	 */
 	int state();
 
 signals:
 	/**
 	 * Emitted as the core protocol converts fields to wire ready data
+	 * @param data Outgoing raw data
 	 */
-	void outgoingData(const QByteArray &);
+	void outgoingData(const QByteArray &data);
 
 	/**
 	 * Emitted when there is incoming data, parsed into a Transfer
@@ -83,16 +111,19 @@ signals:
 protected:
 	/**
 	 * Check that there is data to read, and set the protocol's state if there isn't any.
+	 * @param din Currently used QDataStream
 	 */
 	bool okToProceed(const QDataStream &din);
 	/**
 	 * Convert incoming raw data into a Transfer object and queue it
+	 * @param raw raw data
 	 * @return number of bytes from the input that were parsed into a Transfer
 	 */
 	int rawToTransfer(const QByteArray &raw);
 
 	/**
 	 * Check if the command is a payload command.
+	 * @param command command to check.
 	 */
 	bool isPayloadCommand(const QString &command);
 
