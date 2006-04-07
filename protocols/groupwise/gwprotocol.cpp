@@ -53,7 +53,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, "contact_away_overlay", 
 			i18n( "Away" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage ),
 	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, "contact_away_overlay", 
-			i18n( "Idle" ), "FIXME: Make groupwiseAwayIdle unselectable", Kopete::OnlineStatusManager::Busy,
+			i18n( "Idle" ), "FIXME: Make groupwiseAwayIdle unselectable", Kopete::OnlineStatusManager::Idle,
 			Kopete::OnlineStatusManager::HideFromMenu ),
 	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, "contact_invisible_overlay",
 	  		i18n( "Appear Offline" ), i18n( "A&ppear Offline" ), Kopete::OnlineStatusManager::Invisible ),
