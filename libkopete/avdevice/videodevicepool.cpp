@@ -43,6 +43,8 @@ VideoDevicePool* VideoDevicePool::self()
 	if (s_self == NULL)
 	{
 		s_self = new VideoDevicePool;
+		if (s_self)
+			m_clients = 0;
 	}
 //	kdDebug() << "libkopete (avdevice): self() exited successfuly" << endl;
 	return s_self;

@@ -118,11 +118,11 @@ protected:
 	unsigned int m_current_device;
 	struct imagebuffer m_buffer; // only used when no devices were found
 
-	__u64 m_clients; // Number of instances
 	QMutex m_ready;
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;
+	static __u64 m_clients; // Number of instances
 };
 
 }
