@@ -26,6 +26,7 @@
 #include <qradiobutton.h>
 #include <qcombobox.h>
 #include <qapplication.h>
+#include <qbuffer.h>
 
 // KDE includes
 #include <kcombobox.h>
@@ -41,6 +42,7 @@
 #include <kurlrequester.h>
 #include <kinputdialog.h>
 #include <kpixmapregionselectordialog.h>
+#include <kmdcodec.h>
 
 // KDE KIO includes
 #include <kio/netaccess.h>
@@ -515,8 +517,8 @@ void KopeteIdentityConfig::slotChangeAddressee()
 
 void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 {
-	QString saveLocation = locateLocal("appdata", "globalidentitiespictures/"+d->selectedIdentity.replace(" ", "-")+".png");
-
+	QString saveLocation;
+	
 	QImage photo(photoUrl);
 	// use KABC photo size 100x140
 	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
@@ -530,6 +532,17 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 			else
 				photo = photo.scaleWidth(100);
 		}
+
+		// Use MD5 hash to save the filename, so no problems will occur with the filename because of non-ASCII characters.
+		// Bug 124175: My personnal picture doesn't appear cause of l10n
+		QByteArray tempArray;
+		QBuffer tempBuffer(tempArray);
+		tempBuffer.open( IO_WriteOnly );
+		photo.save(&tempBuffer, "PNG");
+		KMD5 context(tempArray);
+		// Save the image to a file.
+		saveLocation = context.hexDigest() + ".png";
+		saveLocation = locateLocal( "appdata", QString::fromUtf8("globalidentitiespictures/%1").arg( saveLocation ) );
 
 		if(!photo.save(saveLocation, "PNG"))
 		{
