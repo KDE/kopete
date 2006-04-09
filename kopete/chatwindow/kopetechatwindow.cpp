@@ -500,14 +500,27 @@ void KopeteChatWindow::updateSpellCheckAction()
 		return;
 
 	if ( m_activeView->editPart()->richTextEnabled() )
+	{
 		toggleAutoSpellCheck->setEnabled( false );
-	else
-		toggleAutoSpellCheck->setEnabled( true );
-
-	if ( m_activeView->editPart()->autoSpellCheckEnabled() )
-		toggleAutoSpellCheck->setChecked( true );
-	else
 		toggleAutoSpellCheck->setChecked( false );
+		m_activeView->editPart()->toggleAutoSpellCheck( false );
+	}
+	else
+	{
+		toggleAutoSpellCheck->setEnabled( true );
+		if ( KopetePrefs::prefs()->spellCheck() )
+		{
+			kdDebug(14000) << k_funcinfo << "spell check enabled" << endl;
+			toggleAutoSpellCheck->setChecked( true );
+			m_activeView->editPart()->toggleAutoSpellCheck(true);
+		}
+		else
+		{
+			kdDebug(14000) << k_funcinfo << "spell check disabled" << endl;
+			toggleAutoSpellCheck->setChecked( false );
+			m_activeView->editPart()->toggleAutoSpellCheck(false);
+		}
+	}
 }
 
 void KopeteChatWindow::slotHistoryUp()
