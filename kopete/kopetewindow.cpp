@@ -38,6 +38,7 @@
 #include <kactionclasses.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kglobalaccel.h>
 #include <klocale.h>
 #include <kicon.h>
 #include <kiconloader.h>
@@ -333,21 +334,22 @@ void KopeteWindow::initActions()
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
 
-#warning Port KGlobalAccel stuff
-#if 0
-	globalAccel = new KGlobalAccel( this );
-	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_I, /*Qt::META + Qt::CTRL + Qt::Key_I,*/ Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
+	// Global actions
+	KAction *globalReadMessage = new KAction( i18n("Read Message"), actionCollection(), QLatin1String("Read Message") );
+	connect( globalReadMessage, SIGNAL( triggered(bool) ), Kopete::ChatSessionManager::self(), SLOT( slotReadMessage() ) );
+	globalReadMessage->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_I) );
+	globalReadMessage->setWhatsThis( i18n("Read the next pending message") );
 
-	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_S, /*Qt::META + Qt::CTRL + Qt::Key_S,*/ this, SLOT(slotShowHide()) );
-
-	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_W, /*Qt::META + Qt::CTRL + Qt::SHIFT + Qt::Key_W,*/ this, SLOT(slotToggleAway()) );
-
-	globalAccel->readSettings();
-	globalAccel->updateConnections();
-#endif
+	KAction *globalShowContactList = new KAction( i18n("Show/Hide Contact List"), actionCollection(), QLatin1String("Show/Hide Contact List") );
+	connect( globalShowContactList, SIGNAL( triggered(bool) ), this, SLOT( slotShowHide() ) );
+	globalShowContactList->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S) );
+	globalShowContactList->setWhatsThis( i18n("Show or hide the contact list") );
+	
+	KAction *globalSetAway = new KAction( i18n("Set Away/Back"), actionCollection(), QLatin1String("Set Away/Back") );
+	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
+	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
+	
+	KGlobalAccel::self()->readSettings();
 }
 
 void KopeteWindow::slotShowHide()

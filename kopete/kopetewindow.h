@@ -225,7 +225,6 @@ public:
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
 	KToggleAction *actionShowEmptyGroups;
-	KGlobalAccel *globalAccel;
 
 	KopeteEditGlobalIdentityWidget *editGlobalIdentityWidget;
 private:
