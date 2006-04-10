@@ -291,8 +291,8 @@ void AddContactWizard::next()
 					this, SLOT( slotDataValid( AddContactPage *, bool )));
 				addPage->show();
 
-				insertPage( addPage, i18n( "The user has to select the contact to add to the given account name", 
-					"Choose New Contact For %1 Account <b>%2</b>" ).arg( i->protocol()->displayName() ).arg( item->text(0) ), indexOf( finis ) );
+				insertPage( addPage, i18nc( "The user has to select the contact to add to the given account name", 
+					"Choose New Contact For %1 Account <b>%2</b>", i->protocol()->displayName(), item->text(0) ), indexOf( finis ) );
 				protocolPages.insert( i , addPage );
 			}
 		}

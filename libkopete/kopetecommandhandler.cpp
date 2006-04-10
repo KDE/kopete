@@ -268,7 +268,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 		if( c && !c->help().isNull() )
 			output = c->help();
 		else
-			output = i18n("There is no help available for '%1'.").arg( command );
+			output = i18n("There is no help available for '%1'.", command );
 	}
 
 	Kopete::Message msg(manager->myself(), manager->members(), output, Kopete::Message::Internal, Kopete::Message::PlainText);

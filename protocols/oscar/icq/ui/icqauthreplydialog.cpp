@@ -50,9 +50,9 @@ void ICQAuthReplyDialog::setUser( const QString & user )
 {
 	if ( m_wasRequested )
 		m_ui->lblUserReq->setText( 
-			i18n( "<b>%1</b> requested authorization to add you to his/her contact list." ).arg( user ) );
+			i18n( "<b>%1</b> requested authorization to add you to his/her contact list.", user ) );
 	else
-		m_ui->lblUserReq->setText( i18n( "Authorization reply to <b>%1</b>." ).arg( user ) );
+		m_ui->lblUserReq->setText( i18n( "Authorization reply to <b>%1</b>.", user ) );
 }
 
 void ICQAuthReplyDialog::setRequestReason( const QString & reason )

@@ -238,7 +238,7 @@ void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 	{
 		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
-			i18n("%1|Blocked").arg( status.description() ) ) );
+			i18n("%1|Blocked", status.description() ) ) );
 	}
 	else
 	{

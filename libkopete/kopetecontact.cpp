@@ -333,8 +333,8 @@ void Contact::setMetaContact( MetaContact *m )
 		else if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
 			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
-				"`%3' will be empty afterwards. Do you want to delete this contact?" )
-					.arg(contactId(), m ? m->displayName() : QString::null, old->displayName())
+				"`%3' will be empty afterwards. Do you want to delete this contact?",
+					contactId(), m ? m->displayName() : QString::null, old->displayName())
 				, i18n( "Move Contact" ), KStdGuiItem::del(), i18n( "&Keep" ) , QString::fromLatin1("delete_old_contact_when_move") );
 			if(result==KMessageBox::Cancel)
 				return;
@@ -477,8 +477,8 @@ void Contact::execute()
 void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
-		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ).
-		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
+		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" , 
+		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{
@@ -674,16 +674,16 @@ QString Contact::toolTip() const
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
-		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1" ).
-			arg( Kopete::Message::escape( onlineStatus().description() ), iconName,
+		tip = i18nc( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
+			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1",
+			Kopete::Message::escape( onlineStatus().description() ), iconName,
 				Kopete::Message::escape( d->contactId ) );
 	}
 	else
 	{
-		tip = i18n( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
-				arg( Kopete::Message::escape( onlineStatus().description() ), iconName,
+		tip = i18nc( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
+			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1",
+				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
 					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
@@ -699,8 +699,8 @@ QString Contact::toolTip() const
 			QString name = formattedName();
 			if(!name.isEmpty())
 			{
-				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
-							"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(Qt::escape(name));
+				tip += i18nc("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
+							"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
 			}
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
@@ -708,8 +708,8 @@ QString Contact::toolTip() const
 			QString time = formattedIdleTime();
 			if(!time.isEmpty())
 			{
-				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
-					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
+				tip += i18nc("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
+					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
 			}
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
@@ -717,9 +717,9 @@ QString Contact::toolTip() const
 			QString url = property(*it).value().toString();
 			if(!url.isEmpty())
 			{
-				tip += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
-					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
-						arg( QUrl::toPercentEncoding( url ), Kopete::Message::escape( Qt::escape(url) ) );
+				tip += i18nc("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
+					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
+						QUrl::toPercentEncoding( url ), Kopete::Message::escape( Qt::escape(url) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
@@ -727,8 +727,8 @@ QString Contact::toolTip() const
 			QString statusmsg = property(*it).value().toString();
 			if(!statusmsg.isEmpty())
 			{
-				tip += i18n("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
-							"<br><b>Status&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
+				tip += i18nc("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
+							"<br><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
 		else
@@ -764,9 +764,9 @@ QString Contact::toolTip() const
 						}
 				}
 
-				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
-					"<br><nobr><b>%2:</b></nobr>&nbsp;%1").
-						arg( valueText, Qt::escape(p.tmpl().label()) );
+				tip += i18nc("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
+					"<br><nobr><b>%2:</b></nobr>&nbsp;%1",
+						valueText, Qt::escape(p.tmpl().label()) );
 			}
 		}
 	}
@@ -788,9 +788,9 @@ QString Kopete::Contact::formattedName() const
 	{
 		if(!last.isNull()) // contact has both first and last name
 		{
-			ret = i18n("firstName lastName", "%2 %1")
-				.arg(last.value().toString())
-				.arg(first.value().toString());
+			ret = i18nc("firstName lastName", "%2 %1",
+				 last.value().toString(),
+				 first.value().toString());
 		}
 		else // only first name set
 		{
@@ -823,25 +823,25 @@ QString Kopete::Contact::formattedIdleTime() const
 
 		if ( days != 0 )
 		{
-			ret = i18n( "<days>d <hours>h <minutes>m <seconds>s",
-				"%4d %3h %2m %1s" )
-				.arg( secs )
-				.arg( mins )
-				.arg( hours )
-				.arg( days );
+			ret = i18nc( "<days>d <hours>h <minutes>m <seconds>s",
+				"%4d %3h %2m %1s" ,
+				  secs ,
+				  mins ,
+				  hours ,
+				  days );
 		}
 		else if ( hours != 0 )
 		{
-			ret = i18n( "<hours>h <minutes>m <seconds>s", "%3h %2m %1s" )
-				.arg( secs )
-				.arg( mins )
-				.arg( hours );
+			ret = i18nc( "<hours>h <minutes>m <seconds>s", "%3h %2m %1s" ,
+				  secs ,
+				  mins ,
+				  hours );
 		}
 		else
 		{
-			ret = i18n( "<minutes>m <seconds>s", "%2m %1s" )
-				.arg( secs )
-				.arg( mins );
+			ret = i18nc( "<minutes>m <seconds>s", "%2m %1s" ,
+				  secs ,
+				  mins );
 		}
 	}
 	return ret;

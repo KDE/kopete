@@ -141,9 +141,9 @@ public:
 					QString(QUrl::toPercentEncoding( c->contactId() ) )
 				);
 
-			toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>")
-						.arg( iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+			toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
+							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
+						iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
 		}
 
 		return toolTip + QString::fromLatin1("</table></td></tr></table></qt>");
@@ -390,8 +390,8 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		{
 			//int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>" )
-					.arg( Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
+			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
+					Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
 						  Qt::escape(c->onlineStatus().description()));
 			
 			// figure out what's happened

@@ -182,7 +182,7 @@ void SMSSend::setOptions(const QString& name)
 	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
 	if(!prefWidget) return;			// sanity check
 
-	prefWidget->providerLabel->setText(i18n("%1 Settings").arg(name));
+	prefWidget->providerLabel->setText(i18n("%1 Settings", name));
 
 	labels.setAutoDelete(true);
 	labels.clear();
@@ -238,7 +238,7 @@ int SMSSend::maxSize()
 const QString& SMSSend::description()
 {
 	QString url = "http://zekiller.skytech.org/smssend_en.php";
-	m_description = i18n("<qt>SMSSend is a program for sending SMS through gateways on the web. It can be found on <a href=\"%1\">%2</a></qt>").arg(url).arg(url);
+	m_description = i18n("<qt>SMSSend is a program for sending SMS through gateways on the web. It can be found on <a href=\"%1\">%2</a></qt>", url, url);
 	return m_description;
 }
 

@@ -255,8 +255,8 @@ GaduAccount::actionMenu()
 #warning Icon removed from KActionMenu, port
 // 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
 	p->actionMenu_ = new KActionMenu( accountId(), 0, 0 );
-	p->actionMenu_->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
-	    arg( myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
+	p->actionMenu_->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
+	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
 		p->searchAction->setEnabled( TRUE );
@@ -721,7 +721,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 			slotLogin( p->status.internalStatus() , p->lastDescription );
 	}
 	else {
-		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
+		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\").", GaduSession::failureDescription( failure ) ),
 				i18n( "Connection Error" ) );
 		p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		myself()->setOnlineStatus( p->status );
@@ -936,7 +936,7 @@ GaduAccount::slotExportContactsListToFile()
 	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
-	    i18n("Save Contacts List for Account %1 As").arg(
+	    i18n("Save Contacts List for Account %1 As", 
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
@@ -982,7 +982,7 @@ GaduAccount::slotImportContactsFromFile()
 	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
-	    i18n("Load Contacts List for Account %1 As").arg(
+	    i18n("Load Contacts List for Account %1 As", 
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {

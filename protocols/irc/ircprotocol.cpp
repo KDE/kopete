@@ -539,8 +539,8 @@ void IRCProtocol::slotJoinCommand( const QString &arg, Kopete::ChatSession *mana
 	else
 	{
 		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-			.arg(args[0]), IRCAccount::ErrorReply );
+			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.",
+			 args[0]), IRCAccount::ErrorReply );
 	}
 }
 
@@ -559,8 +559,8 @@ void IRCProtocol::slotInviteCommand( const QString &args, Kopete::ChatSession *m
 		else
 		{
 			static_cast<IRCAccount*>( manager->account() )->appendMessage(
-				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-				.arg(argsList[1]), IRCAccount::ErrorReply );
+				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.",
+				 argsList[1]), IRCAccount::ErrorReply );
 		}
 	}
 	else
@@ -603,7 +603,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 	else
 	{
 		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#','!','+', or '&'.").arg(user),
+			i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#','!','+', or '&'.", user),
 			IRCAccount::ErrorReply );
 	}
 }
@@ -918,8 +918,8 @@ void IRCProtocol::slotDeleteNetwork()
 	QString network = netConf->networkList->currentText();
 	if( KMessageBox::warningContinueCancel(
 		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
-		"Any accounts which use this network will have to be modified.</qt>")
-		.arg(network), i18n("Deleting Network"),
+		"Any accounts which use this network will have to be modified.</qt>",
+		 network), i18n("Deleting Network"),
 		KGuiItem(i18n("&Delete Network"),"editdelete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		disconnect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
@@ -944,8 +944,8 @@ void IRCProtocol::slotDeleteHost()
 {
 	QString hostName = netConf->host->text();
 	if ( KMessageBox::warningContinueCancel(
-		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
-		.arg(hostName), i18n("Deleting Host"),
+		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>",
+		 hostName), i18n("Deleting Host"),
 		KGuiItem(i18n("&Delete Host"),"editdelete"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
 	{
 		IRCHost *host = m_hosts[ hostName ];

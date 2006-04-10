@@ -44,7 +44,7 @@ JingleVoiceSessionDialog::JingleVoiceSessionDialog(const Jid &peerJid, VoiceCall
  : JingleVoiceSessionDialogBase(parent, name), m_session(caller), m_peerJid(peerJid), m_sessionState(Incoming)
 {
 	QString contactJid = m_peerJid.full();
-	setCaption( i18n("Voice session with %1").arg(contactJid) );
+	setCaption( i18n("Voice session with %1", contactJid) );
 
 	connect(buttonAccept, SIGNAL(clicked()), this, SLOT(slotAcceptClicked()));
 	connect(buttonDecline, SIGNAL(clicked()), this, SLOT(slotDeclineClicked()));

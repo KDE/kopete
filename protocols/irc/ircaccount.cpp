@@ -81,7 +81,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 		m_engine->addCustomCtcp( it.key(), it.data() );
 
-	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
+	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]", kapp->aboutData()->version());
 	m_engine->setVersionString( version  );
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
@@ -175,7 +175,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 			/* Could not find this host. Add it to the networks structure */
 
 			m_network = new IRCNetwork;
-			m_network->name = i18n("Temporary Network - %1").arg( hostName );
+			m_network->name = i18n("Temporary Network - %1", hostName );
 			m_network->description = i18n("Network imported from previous version of Kopete, or an IRC URI");
 
 			IRCHost *host = new IRCHost;
@@ -228,7 +228,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	{
 		QString newNick = KInputDialog::getText(
 				i18n("IRC Plugin"),
-				i18n("The nickname %1 is already in use. Please enter an alternate nickname:").arg(nick),
+				i18n("The nickname %1 is already in use. Please enter an alternate nickname:", nick),
 				nick);
 
 		if (newNick.isNull())
@@ -245,7 +245,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 
 void IRCAccount::slotNickInUseAlert( const QString &nick )
 {
-	KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
+	KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("The nickname %1 is already in use", nick), i18n("IRC Plugin"));
 }
 
 void IRCAccount::setAltNick( const QString &altNick )
@@ -308,8 +308,8 @@ void IRCAccount::setNetwork( const QString &network )
 		KMessageBox::queuedMessageBox(
 		Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 		i18n("<qt>The network associated with this account, <b>%1</b>, no longer exists. Please"
-		" ensure that the account has a valid network. The account will not be enabled until you do so.</qt>").arg(network),
-		i18n("Problem Loading %1").arg( accountId() ), 0 );
+		" ensure that the account has a valid network. The account will not be enabled until you do so.</qt>", network),
+		i18n("Problem Loading %1", accountId() ), 0 );
 	}
 }
 
@@ -457,14 +457,14 @@ void IRCAccount::connectWithPassword(const QString &password)
 			{
 				KMessageBox::queuedMessageBox(
 					Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(m_network->name),
+					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>", m_network->name),
 					i18n("Network is Empty"), 0 );
 			}
 			else if( currentHost == hosts.count() )
 			{
 			    KMessageBox::queuedMessageBox(
 				    Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			    i18n("<qt>Kopete could not connect to any of the servers in the network associated with this account (<b>%1</b>). Please try again later.</qt>").arg(m_network->name),
+			    i18n("<qt>Kopete could not connect to any of the servers in the network associated with this account (<b>%1</b>). Please try again later.</qt>", m_network->name),
 			    i18n("Network is Unavailable"), 0 );
 
 			    currentHost = 0;
@@ -492,7 +492,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 				}
 
 				IRCHost *host = hosts[ currentHost++ ];
-				myServer()->appendMessage( i18n("Connecting to %1...").arg( host->host ) );
+				myServer()->appendMessage( i18n("Connecting to %1...", host->host ) );
 				if( host->ssl )
 					myServer()->appendMessage( i18n("Using SSL") );
 
@@ -599,7 +599,7 @@ void IRCAccount::slotSearchChannels()
 	if( !m_channelList )
 	{
 		m_channelList = new ChannelListDialog( m_engine,
-			i18n("Channel List for %1").arg( m_engine->currentHost() ), this,
+			i18n("Channel List for %1", m_engine->currentHost() ), this,
 			SLOT( slotJoinNamedChannel( const QString & ) ) );
 	}
 	else
@@ -783,7 +783,7 @@ void IRCAccount::slotJoinChannel()
 		}
 
 		KMessageBox::error( Kopete::UI::Global::mainWidget(),
-			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.").arg(chan),
+			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.", chan),
 			i18n("IRC Plugin")
 			);
 	}
@@ -791,15 +791,15 @@ void IRCAccount::slotJoinChannel()
 
 void IRCAccount::slotNewCtcpReply(const QString &type, const QString &/*target*/, const QString &messageReceived)
 {
-	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), InfoReply );
+	appendMessage( i18n("CTCP %1 REPLY: %2", type, messageReceived), InfoReply );
 }
 
 void IRCAccount::slotNoSuchNickname( const QString &nick )
 {
 	if( KIRC::Entity::isChannel(nick) )
-		appendMessage( i18n("The channel \"%1\" does not exist").arg(nick), UnknownReply );
+		appendMessage( i18n("The channel \"%1\" does not exist", nick), UnknownReply );
 	else
-		appendMessage( i18n("The nickname \"%1\" does not exist").arg(nick), UnknownReply );
+		appendMessage( i18n("The nickname \"%1\" does not exist", nick), UnknownReply );
 }
 
 void IRCAccount::appendMessage( const QString &message, MessageType type )

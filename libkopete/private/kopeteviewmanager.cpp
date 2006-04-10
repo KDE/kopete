@@ -232,7 +232,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					msgText = msgText.left(88) + QString::fromLatin1("...");
 	
 				QString event;
-				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
+				KLocalizedString body = ki18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
 				switch( msg.importance() )
 				{
 					case Kopete::Message::Low:
@@ -240,7 +240,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 						break;
 					case Kopete::Message::Highlight:
 						event = QString::fromLatin1( "kopete_contact_highlight" );
-						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
+						body = ki18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 						break;
 					default:
 						event = QString::fromLatin1( "kopete_contact_incoming" );
@@ -256,7 +256,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					}
 				} 
                 KNotification *notify=KNotification::event( event,
-						body.arg( Qt::escape(msgFrom), Qt::escape(msgText) ),
+						body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString(),
 						QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
 
 				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );

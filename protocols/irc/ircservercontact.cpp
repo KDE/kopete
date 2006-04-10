@@ -92,7 +92,7 @@ void IRCServerContact::updateStatus()
 
 const QString IRCServerContact::caption() const
 {
-	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg(
+	return i18n("%1 @ %2", ircAccount()->mySelf()->nickName() , 
 		kircEngine()->currentHost().isEmpty() ? ircAccount()->networkName() : kircEngine()->currentHost()
 	);
 }
@@ -147,7 +147,7 @@ void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &n
 		// Prefix missing.
 		// NOTICE AUTH :*** Checking Ident
 
-		ircAccount()->appendMessage(i18n("NOTICE from %1: %2").arg(kircEngine()->currentHost(), notice),
+		ircAccount()->appendMessage(i18n("NOTICE from %1: %2", kircEngine()->currentHost(), notice),
 				IRCAccount::NoticeReply);
 
 	} else {
@@ -155,13 +155,13 @@ void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &n
 		// :somenick!~fooobar@somehostname.fi NOTICE foobar :hello
 
 		if (orig.contains('!')) {
-			ircAccount()->appendMessage(i18n("NOTICE from %1 (%2): %3").arg(
+			ircAccount()->appendMessage(i18n("NOTICE from %1 (%2): %3",
 						orig.section('!', 0, 0),
 						orig.section('!', 1, 1),
 						notice),
 					IRCAccount::NoticeReply);
 		} else {
-			ircAccount()->appendMessage(i18n("NOTICE from %1: %2").arg(
+			ircAccount()->appendMessage(i18n("NOTICE from %1: %2",
 						orig, notice), IRCAccount::NoticeReply);
 		}
 	}

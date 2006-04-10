@@ -198,7 +198,7 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
 		//emit creationFailed();
-		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1", statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -397,7 +397,7 @@ void GroupWiseChatSession::addInvitee( const Kopete::Contact * c )
 {
 	// create a placeholder contact for each invitee
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	QString pending = i18n("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
+	QString pending = i18nc("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
 	Kopete::MetaContact * inviteeMC = new Kopete::MetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
 	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
@@ -470,7 +470,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 	QString from = c->metaContact()->displayName();
 
 	Kopete::Message declined = Kopete::Message( myself(), members(), 
-				i18n("%1 has rejected an invitation to join this conversation.").arg( from ), 
+				i18n("%1 has rejected an invitation to join this conversation.", from ), 
 				Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( declined );
 }

@@ -245,7 +245,7 @@ void installEmoticonTheme(const QString &archiveName)
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,
-			i18n("Could not open \"%1\" for unpacking.").arg(archiveName));
+			i18n("Could not open \"%1\" for unpacking.", archiveName));
 		delete archive;
 		delete progressDlg;
 		return;
@@ -270,7 +270,7 @@ void installEmoticonTheme(const QString &archiveName)
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error, i18n("<qt>The file \"%1\" is not a valid" \
-				" emoticon theme archive.</qt>").arg(archiveName));
+				" emoticon theme archive.</qt>", archiveName));
 		archive->close();
 		delete archive;
 		delete progressDlg;
@@ -280,8 +280,8 @@ void installEmoticonTheme(const QString &archiveName)
 	for (QStringList::ConstIterator it = foundThemes.begin(); it != foundThemes.end(); ++it)
 	{
 		progressDlg->setLabel(
-			i18n("<qt>Installing <strong>%1</strong> emoticon theme</qt>")
-			.arg(*it));
+			i18n("<qt>Installing <strong>%1</strong> emoticon theme</qt>",
+			 *it));
 		progressDlg->resize(progressDlg->sizeHint());
 		kapp->processEvents();
 

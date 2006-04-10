@@ -298,7 +298,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 					if ( !proto )
 					{
 						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-																					 i18n( "<qt>\"%1\" is not supported by Kopete.</qt>" ).arg( protocolName ),
+																					 i18n( "<qt>\"%1\" is not supported by Kopete.</qt>", protocolName ),
 																					 i18n( "Could Not Sync with KDE Address Book" )  );
 						continue;
 					}
@@ -346,7 +346,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 							// if not, prompt to add it
 							kDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add..." << endl;
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-									 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import Address From Address Book" ), i18n("Use"), i18n("Do Not Use"), QString::fromLatin1( "ImportFromKABC" ) ) )
+									 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), i18n("Use"), i18n("Do Not Use"), QString::fromLatin1( "ImportFromKABC" ) ) )
 							{
 								// Check the accounts for this protocol are all connected
 								// Most protocols do not allow you to add contacts while offline
@@ -371,7 +371,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								if ( !allAccountsConnected )
 								{
 									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-											i18n( "<qt>One or more of your accounts using %1 are offline.  Most systems have to be connected to add contacts.  Please connect these accounts and try again.</qt>" ).arg( protocolName ),
+											i18n( "<qt>One or more of your accounts using %1 are offline.  Most systems have to be connected to add contacts.  Please connect these accounts and try again.</qt>", protocolName ),
 											i18n( "Not Connected" )  );
 									continue;
 								}
@@ -394,7 +394,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								else if ( accountcount == 0 )
 								{
 									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-											i18n( "<qt>You do not have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>" ).arg( protocolName ),
+											i18n( "<qt>You do not have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>", protocolName ),
 											i18n( "No Account Found" )  );
 									continue;
 								}

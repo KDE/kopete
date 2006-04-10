@@ -616,7 +616,7 @@ void MSNContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 				protocol() ,
 				status.internalStatus()+15 ,
 				status.overlayIcons() + QStringList("msn_blocked") ,
-				i18n("%1|Blocked").arg( status.description() ) ) );
+				i18n("%1|Blocked", status.description() ) ) );
 	}
 	else if(!isBlocked() && status.internalStatus() >= 15)
 	{	//the user is not blocked, but the status is blocked

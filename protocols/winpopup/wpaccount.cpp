@@ -164,7 +164,7 @@ KActionMenu* WPAccount::actionMenu()
 #warning Icon removed from KActionMenu here, port
 // 	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), 0, 0);
-	theActionMenu->popupMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)").arg(accountId()));
+	theActionMenu->popupMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
 
 	if (mProtocol)
 	{

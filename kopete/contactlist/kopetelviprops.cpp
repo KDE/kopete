@@ -74,7 +74,7 @@ const char MC_UNK[] = "metacontact_unknown";
 // also cmbPhotoUrl  is gone completly. Let's pray for it
 
 KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
-: KDialog(parent, i18n("Properties of Group %1").arg(gvi->group()->displayName()), Ok|Cancel)
+: KDialog(parent, i18n("Properties of Group %1", gvi->group()->displayName()), Ok|Cancel)
 {
 	mainWidget = new KopeteGVIPropsWidget(this, "mainWidget");
 	mainWidget->icnbOpen->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
@@ -154,7 +154,7 @@ void KopeteGVIProps::slotIconChanged()
 
 
 KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *parent)
-: KDialog(parent, i18n("Properties of Meta Contact %1").arg(lvi->metaContact()->displayName()), Ok|Cancel)
+: KDialog(parent, i18n("Properties of Meta Contact %1", lvi->metaContact()->displayName()), Ok|Cancel)
 {
 	m_countPhotoCapable = 0;
 	mainWidget = new KopeteMetaLVIPropsWidget( this, "mainWidget" );

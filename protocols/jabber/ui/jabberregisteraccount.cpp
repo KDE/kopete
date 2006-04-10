@@ -190,8 +190,8 @@ void JabberRegisterAccount::slotJIDInformation ()
 		 ( mMainWidget->leJID->text().section ( "@", 1 ) != mMainWidget->leServer->text () ) ) )
 	{
 		mMainWidget->lblJIDInformation->setText ( i18n ( "Unless you know what you are doing, your JID should be of the form "
-														 "\"username@server.com\".  In your case for example \"username@%1\"." ).
-													arg ( mMainWidget->leServer->text () ) );
+														 "\"username@server.com\".  In your case for example \"username@%1\"." , 
+													  mMainWidget->leServer->text () ) );
 	}
 	else
 	{
@@ -263,8 +263,8 @@ void JabberRegisterAccount::slotOk ()
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side
 			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
-								arg ( mMainWidget->leJID->text () ),
+								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.", 
+								  mMainWidget->leJID->text () ),
 								i18n ("Jabber SSL Error"));
 			break;
 	

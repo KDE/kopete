@@ -844,10 +844,10 @@ void KopeteWindow::makeTrayToolTip()
 		{
 			a = it.next();
 			Kopete::Contact *self = a->myself();
-			tt += i18n( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
-			            "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>" )
-				.arg( a->protocol()->displayName() ).arg( a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
-				QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
+			tt += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
+			             "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>",
+				     a->protocol()->displayName(), a->accountLabel(), QUrl::toPercentEncoding( a->protocol()->pluginId() ),
+				     QUrl::toPercentEncoding( a->accountId() ), self->onlineStatus().description() );
 		}
 		tt += QString::fromLatin1("</qt>");
 		QToolTip::add(m_tray, tt);

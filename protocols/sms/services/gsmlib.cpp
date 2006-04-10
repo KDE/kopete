@@ -430,7 +430,7 @@ void GSMLib::customEvent(QCustomEvent* e)
 const QString& GSMLib::description()
 {
 	QString url = "http://www.pxh.de/fs/gsmlib/";
-	m_description = i18n("<qt>GSMLib is a library (and utilities) for sending SMS via a GSM device. The program can be found on <a href=\"%1\">%1</a></qt>").arg(url).arg(url);
+	m_description = i18n("<qt>GSMLib is a library (and utilities) for sending SMS via a GSM device. The program can be found on <a href=\"%1\">%1</a></qt>", url);
 	return m_description;
 }
 

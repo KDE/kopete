@@ -354,11 +354,11 @@ void AIMContact::warnUser()
 	                        "(Warning a user on AIM will result in a \"Warning Level\"" \
 	                        " increasing for the user you warn. Once this level has reached a" \
 	                        " certain point, they will not be able to sign on. Please do not abuse" \
-	                        " this function, it is meant for legitimate practices.)</qt>" ).arg( nick );
+	                        " this function, it is meant for legitimate practices.)</qt>", nick );
 
 
 	int result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), message,
-	                                               i18n( "Warn User %1?" ).arg( nick ),
+	                                               i18n( "Warn User %1?", nick ),
 	                                               i18n( "Warn Anonymously" ), i18n( "Warn" ) );
 
 	if ( result == KMessageBox::Yes )

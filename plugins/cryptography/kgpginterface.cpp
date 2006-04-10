@@ -98,9 +98,9 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			/// pipe for passphrase
 			//userID=QString::fromUtf8(userID);
 			userID.replace('<',"&lt;");
-			QString passdlg=i18n("Enter passphrase for <b>%1</b>:").arg(userID);
+			QString passdlg=i18n("Enter passphrase for <b>%1</b>:", userID);
 			if (counter>1)
-				passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>").arg(QString::number(4-counter)));
+				passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>", 4-counter));
 	
 			/// pipe for passphrase
 			int code=KPasswordDialog::getPassword(0,password,passdlg);

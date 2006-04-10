@@ -614,11 +614,11 @@ void AppearanceConfig::createPreviewChatSession()
 
 	// Create fake meta/contacts
 	d->myselfMetaContact = new Kopete::MetaContact();
-	d->myself = new FakeContact(d->previewAccount, i18n("This is the myself preview contact id", "myself@preview"), d->myselfMetaContact);
-	d->myself->setNickName(i18n("This is the myself preview contact nickname", "Myself"));
+	d->myself = new FakeContact(d->previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), d->myselfMetaContact);
+	d->myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
 	d->jackMetaContact = new Kopete::MetaContact();
-	d->jack = new FakeContact(d->previewAccount, i18n("This is the other preview contact id", "jack@preview"), d->jackMetaContact);
-	d->jack->setNickName(i18n("This is the other preview contact nickname", "Jack"));
+	d->jack = new FakeContact(d->previewAccount, i18nc("This is the other preview contact id", "jack@preview"), d->jackMetaContact);
+	d->jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
 	d->myselfMetaContact->setDisplayName(i18n("Myself"));
 	d->myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
 	d->jackMetaContact->setDisplayName(i18n("Jack"));
@@ -648,7 +648,7 @@ void AppearanceConfig::createPreviewMessages()
 	Kopete::Message msgHigh( d->jack, d->myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
 	// This is a UTF-8 string btw.
-	Kopete::Message msgRightToLeft(d->myself, d->jack, i18n("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט"), Kopete::Message::Outbound);
+	Kopete::Message msgRightToLeft(d->myself, d->jack, i18nc("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט"), Kopete::Message::Outbound);
 	Kopete::Message msgBye ( d->myself, d->jack,   i18n( "Bye" ), Kopete::Message::Outbound );
 
 	// Add the messages to ChatMessagePart
@@ -710,8 +710,8 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 	QString question=i18n("<qt>Are you sure you want to remove the "
 			"<strong>%1</strong> emoticon theme?<br>"
 			"<br>"
-			"This will delete the files installed by this theme.</qt>").
-		arg(themeName);
+			"This will delete the files installed by this theme.</qt>", 
+		themeName);
 
         int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStdGuiItem::del());
 	if (res!=KMessageBox::Continue)

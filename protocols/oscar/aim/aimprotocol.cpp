@@ -180,7 +180,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	if ( needContactAddition || realCommand == "addbuddy" )
 	{
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-		                               i18n("Do you want to add '%1' to your contact list?").arg(command),
+		                               i18n("Do you want to add '%1' to your contact list?", command),
 		                               QString::null, i18n("Add"), i18n("Do Not Add"))
 		    != KMessageBox::Yes)
 		{
@@ -203,7 +203,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		else
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
 			                    i18n( "Unable to connect to the chat room %1 because the account"
-			                          " for %2 is not connected." ).arg( firstParam ).arg( aimAccount->accountId() ),
+			                          " for %2 is not connected.", firstParam, aimAccount->accountId() ),
 			                    QString::null );
 		
 	}

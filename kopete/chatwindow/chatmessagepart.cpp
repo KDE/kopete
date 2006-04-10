@@ -292,7 +292,7 @@ void ChatMessagePart::save()
 	if ( !KIO::NetAccess::move( KUrl( tempFile.name() ), saveURL ) )
 	{
 		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
-				i18n("<qt>Could not open <b>%1</b> for writing.</qt>").arg( saveURL.prettyURL() ), // Message
+				i18n("<qt>Could not open <b>%1</b> for writing.</qt>", saveURL.prettyURL() ), // Message
 				i18n("Error While Saving") ); //Caption
 	}
 }

@@ -37,7 +37,7 @@ ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 
 	mAccount = static_cast<ICQAccount*>(c->account());
 	mContact = c;
-	setCaption(i18n("'%2' Message for %1").arg(c->displayName()).arg(c->onlineStatus().description()));
+	setCaption(i18n("'%2' Message for %1", c->displayName(), c->onlineStatus().description()));
 
 	KVBox *mMainWidget = makeVBoxMainWidget();
 
@@ -74,12 +74,12 @@ void ICQReadAway::slotFetchAwayMessage()
 
 	mAccount->engine()->requestAwayMessage(mContact);
 
-	setCaption(i18n("Fetching '%2' Message for %1...").arg(mContact->displayName()).arg(mContact->onlineStatus().description()));
+	setCaption(i18n("Fetching '%2' Message for %1...", mContact->displayName(), mContact->onlineStatus().description()));
 } // END slotFetchAwayMessage()
 
 void ICQReadAway::slotAwayMessageChanged()
 {
-	setCaption(i18n("'%2' Message for %1").arg(mContact->displayName()).arg(mContact->onlineStatus().description()));
+	setCaption(i18n("'%2' Message for %1", mContact->displayName(), mContact->onlineStatus().description()));
 	awayMessageBrowser->setText(mContact->awayMessage());
 
 	awayMessageBrowser->setDisabled(false);

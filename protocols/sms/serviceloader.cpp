@@ -43,7 +43,7 @@ SMSService* ServiceLoader::loadService(const QString& name, Kopete::Account* acc
 #endif
 	else
 	{
-		KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Could not load service %1.").arg(name),
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Could not load service %1.", name),
 			i18n("Error Loading Service"));
 		s = 0L;
 	}

@@ -149,16 +149,16 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 			QString sorryText;
 			if ( url.isLocalFile() )
 			{
-				sorryText = i18n( "Unable to find the file %1." );
+				sorryText = i18n( "Unable to find the file %1.", url.prettyURL() );
 			}
 			else
 			{
 				sorryText = i18n( "<qt>Unable to download the requested file;<br>"
-				                  "please check that address %1 is correct.</qt>" );
+				                  "please check that address %1 is correct.</qt>",
+				                  url.prettyURL() );
 			}
 
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
-			                    sorryText.arg( url.prettyURL() ) );
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), sorryText );
 			return false;
 		}
 

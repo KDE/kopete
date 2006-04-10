@@ -30,7 +30,7 @@
 
 
 MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, const char * name )
-	: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contact ),
+	: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1", contact ),
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ ),
 	m_imageContainer( this )
 {
@@ -74,7 +74,7 @@ void MSNWebcamDialog::webcamClosed( int reason  )
 {
 	kDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason <<endl;
 	m_imageContainer.clear();
-	m_imageContainer.setText( i18n( "Webcam closed with reason %1" ).arg( QString::number( reason ) ) );
+	m_imageContainer.setText( i18n( "Webcam closed with reason %1", reason ) );
 	m_imageContainer.setAlignment( Qt::AlignCenter );
 	show();
 }

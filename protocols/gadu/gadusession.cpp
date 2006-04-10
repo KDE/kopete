@@ -619,7 +619,7 @@ GaduSession::errorDescription( int err )
 		case GG_ERROR_WRITING:
 			return i18n( "Writing error." );
 		default:
-			return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)err ) );
+			return i18n( "Unknown error number %1." , err );
 	}
 }
 
@@ -644,7 +644,7 @@ GaduSession::failureDescription( gg_failure_t f )
 		case GG_FAILURE_TLS:
 			return i18n( "Unable to connect over encrypted channel.\nTry to turn off encryption support in Gadu account settings and reconnect." );
 		default:
-			return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)f ) );
+			return i18n( "Unknown error number %1." , f );
 	}
 }
 

@@ -273,18 +273,18 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	QString message;
 	if( granted )
 	{
-		message = i18n( "User %1 has granted your authorization request.\nReason: %2" )
-			.arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
-			.arg( reason );
+		message = i18n( "User %1 has granted your authorization request.\nReason: %2" ,
+			  property( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
+			  reason );
 
 		// remove the unknown status
 		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
 	}
 	else
 	{
-		message = i18n( "User %1 has rejected the authorization request.\nReason: %2" )
-			.arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
-			.arg( reason );
+		message = i18n( "User %1 has rejected the authorization request.\nReason: %2" ,
+			  property( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
+			  reason );
 	}
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
 }
@@ -536,8 +536,8 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	{
 		if (!mInfo.clientVersion.isEmpty())
 		{
-			capList << i18n("Translators: client-name client-version",
-				"%1 %2").arg(mInfo.clientName, mInfo.clientVersion);
+			capList << i18nc("Translators: client-name client-version",
+				"%1 %2", mInfo.clientName, mInfo.clientVersion);
 		}
 		else
 		{

@@ -111,7 +111,7 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 			protocol() ,
 			status.internalStatus()+1000 ,
 			status.overlayIcons() + QStringList("yahoo_stealthed") ,
-			i18n("%1|Stealthed").arg( status.description() ) ) );
+			i18n("%1|Stealthed", status.description() ) ) );
 	}
 	else if( !m_stealthed && status.internalStatus() > 999 )// Stealthed -> Not Stealthed
 		Contact::setOnlineStatus( static_cast< YahooProtocol *>( protocol() )->statusFromYahoo( status.internalStatus() - 1000 ) );
@@ -598,7 +598,7 @@ void YahooContact::inviteWebcam()
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
 			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
-			"\nPlease see %1 for further information.").arg("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") );
+			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}
 	m_account->yahooSession()->sendWebcamInvite( m_userId );
@@ -653,7 +653,7 @@ void YahooContact::requestWebcam()
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
 			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
-			"\nPlease see %1 for further information.").arg("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") );
+			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}
 	

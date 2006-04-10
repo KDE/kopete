@@ -114,7 +114,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         keySingle=loader->loadIcon("kgpg_key1",K3Icon::Small,20);
 	keyGroup=loader->loadIcon("kgpg_key3",K3Icon::Small,20);
 
-        if (filemode) setCaption(i18n("Select Public Key for %1").arg(sfile));
+        if (filemode) setCaption(i18n("Select Public Key for %1", sfile));
         fmode=filemode;	
 	
 	Q3HButtonGroup *hBar=new Q3HButtonGroup(page);
@@ -182,7 +182,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
                         (CBshred,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
 			
 		QString shredWhatsThis = i18n( "<qt><b>Shred source file:</b><br /><p>Checking this option will shred (overwrite several times before erasing) the files you have encrypted. This way, it is almost impossible that the source file is recovered.</p><p><b>But you must be aware that this is not secure</b> on all file systems, and that parts of the file may have been saved in a temporary file or in the spooler of your printer if you previously opened it in an editor or tried to print it. Only works on files (not on folders).</p></qt>");
-		  KActiveLabel *warn= new KActiveLabel( i18n("<a href=\"whatsthis:%1\">Read this before using shredding</a>").arg(shredWhatsThis),parentBox );
+		  KActiveLabel *warn= new KActiveLabel( i18n("<a href=\"whatsthis:%1\">Read this before using shredding</a>", shredWhatsThis),parentBox );
 		  shredBox->addWidget(CBshred);
 		  shredBox->addWidget(warn);
         }

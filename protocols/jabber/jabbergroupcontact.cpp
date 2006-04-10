@@ -137,8 +137,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.type () == "error" )
 	{
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
-										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
-										arg ( message.body () ).arg ( message.error().text ),
+										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+										  message.body (), message.error().text ),
 										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewType );
 	}
 	else
@@ -331,7 +331,7 @@ void JabberGroupContact::slotChangeNick( )
 	
 	bool ok;
 	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickanme - Jabber Plugin" ),
-			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" ).arg(rosterItem().jid().userHost()),
+			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" , rosterItem().jid().userHost()),
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())
 		return;

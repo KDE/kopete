@@ -538,7 +538,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 		if(!photo.save(saveLocation, "PNG"))
 		{
 			KMessageBox::sorry(this, 
-					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
+					i18n("An error occurred when trying to save the custom photo for %1 identity.", d->selectedIdentity),
 					i18n("Identity Configuration"));
 		}
 		d->m_view->comboPhotoURL->setURL(saveLocation);
@@ -547,7 +547,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 	else
 	{
 		KMessageBox::sorry(this, 
-					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
+					i18n("An error occurred when trying to save the custom photo for %1 identity.", d->selectedIdentity),
 					i18n("Identity Configuration"));
 	}
 }

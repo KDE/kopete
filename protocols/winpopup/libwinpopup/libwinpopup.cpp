@@ -110,7 +110,7 @@ bool WinPopupLib::checkMessageDir()
 													   "If you have not configured anything yet (samba) please see\n"
 													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
 													   "on how to do this.\n"
-													   "Should the directory be created? (May need root password)").arg(WP_POPUP_DIR),
+													   "Should the directory be created? (May need root password)", WP_POPUP_DIR),
 												  QString::fromLatin1("Winpopup"), i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
@@ -129,7 +129,7 @@ bool WinPopupLib::checkMessageDir()
 														   "%1 are wrong!\n"
 														   "You will not receive messages if you say no.\n"
 														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
-														   "Fix? (May need root password)").arg(WP_POPUP_DIR),
+														   "Fix? (May need root password)", WP_POPUP_DIR),
 													  QString::fromLatin1("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));

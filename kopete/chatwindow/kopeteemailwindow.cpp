@@ -355,7 +355,7 @@ void KopeteEmailWindow::updateNextButton()
 	else
 		d->btnReadPrev->setEnabled( true );
 
-	d->btnReadNext->setText( i18n( "(%1) Next >>" ).arg( d->messageQueue.count() - d->queuePosition ) );
+	d->btnReadNext->setText( i18n( "(%1) Next >>", d->messageQueue.count() - d->queuePosition ) );
 }
 
 void KopeteEmailWindow::slotUpdateReplySend()
@@ -434,14 +434,14 @@ bool KopeteEmailWindow::closeView( bool force )
 				shortCaption = shortCaption.left( 40 ) + QString::fromLatin1("...");
 
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
-				"You will not receive future messages from this conversation.</qt>").arg(shortCaption), i18n("Closing Group Chat"),
+				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
 				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseGroupChat"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
-				"second. Are you sure you want to close this chat?</qt>").arg(d->unreadMessageFrom), i18n("Unread Message"),
+				"second. Are you sure you want to close this chat?</qt>", d->unreadMessageFrom), i18n("Unread Message"),
 				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatRecentMessage"));
 		}
 

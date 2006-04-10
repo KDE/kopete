@@ -373,9 +373,9 @@ int KSSLSocket::verifyCertificate()
 					{
 						QString msg = i18n("The IP address of the host %1 "
 								"does not match the one the "
-								"certificate was issued to.");
+								"certificate was issued to.", ourHost);
 						result = messageBox( KIO::SlaveBase::WarningYesNoCancel,
-						msg.arg(ourHost),
+						msg,
 						i18n("Server Authentication"),
 						i18n("&Details"),
 						i18n("Co&ntinue") );
@@ -383,9 +383,9 @@ int KSSLSocket::verifyCertificate()
 					else
 					{
 						QString msg = i18n("The server certificate failed the "
-							"authenticity test (%1).");
+							"authenticity test (%1).", ourHost);
 						result = messageBox( KIO::SlaveBase::WarningYesNoCancel,
-						msg.arg(ourHost),
+						msg,
 						i18n("Server Authentication"),
 						i18n("&Details"),
 						i18n("Co&ntinue") );

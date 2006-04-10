@@ -84,9 +84,9 @@ void FastAddContactWizard::next()
 		AddContactPage *addPage = m_accountItems[item]->protocol()->createAddContactWidget(this, m_accountItems[item] );
 		if (addPage)
 		{
-			QString title = i18n( "The account name is prepended here",
-								 "%1 contact information" )
-								 .arg( item->text(0) );
+			QString title = i18nc( "The account name is prepended here",
+								 "%1 contact information" ,
+								   item->text(0) );
 			addPage->show();
 			insertPage( addPage, title, indexOf( finis ) );
 			protocolPages.insert( m_accountItems[item] , addPage );

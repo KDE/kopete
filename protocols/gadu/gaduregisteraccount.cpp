@@ -161,7 +161,7 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 	ui->labelVerificationSequence->setDisabled( true );
 	ui->labelInstructions->setDisabled( true );
 	emit registeredNumber( cRegister->newUin(), ui->valuePassword->text() );
-	updateStatus( i18n( "Account created; your new UIN is %1." ).arg(QString::number( cRegister->newUin() )  ) );
+	updateStatus( i18n( "Account created; your new UIN is %1." , cRegister->newUin() ) );
 	enableButton( User1, false );
 	setButtonText( Ok, i18n( "&Close" ) );
 }
@@ -169,7 +169,7 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 void
 GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
 {
-	updateStatus( i18n( "Registration failed: %1" ).arg( what ) );
+	updateStatus( i18n( "Registration failed: %1", what ) );
 	KMessageBox::sorry( this, "Registration was unsucessful, please try again.", title );
 
 	disconnect( this, SLOT( displayToken( QPixmap, QString ) ) );

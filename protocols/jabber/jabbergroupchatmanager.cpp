@@ -143,7 +143,7 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 		jabberMessage.setFrom ( jid );
 		jabberMessage.setTo ( contactId );
 		jabberMessage.setInvite( mRoomJid.userHost() );
-		jabberMessage.setBody( i18n("You have been invited to %1").arg( mRoomJid.userHost() ) );
+		jabberMessage.setBody( i18n("You have been invited to %1", mRoomJid.userHost() ) );
 
 		// send the message
 		account()->client()->sendMessage ( jabberMessage );

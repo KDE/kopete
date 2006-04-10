@@ -120,7 +120,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 205:
 	case 208:
 	{
-		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>" ).arg( handle );
+		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>", handle );
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
@@ -133,7 +133,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			      "MSN Error: %1<br>"
 			      "please send us a detailed bug report "
 			      "at kopete-devel@kde.org containing the raw debug output on the "
-			      "console (in gzipped format, as it is probably a lot of output.)" ).arg(code);
+			      "console (in gzipped format, as it is probably a lot of output.)" , code);
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg , i18n( "MSN Internal Error" ) );
 		emit errorMessage( MSNSocket::ErrorInternal, msg );
 		break;
@@ -169,7 +169,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br>"
 			"if Kopete does not show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
-			"console (in gzipped format, as it is probably a lot of output.)</qt>" ).arg(handle);
+			"console (in gzipped format, as it is probably a lot of output.)</qt>" , handle);
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorInformation, msg );
 		break;
@@ -184,7 +184,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 219:
 	{
-		QString msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." ).arg(handle);
+		QString msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." , handle);
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
@@ -762,7 +762,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		if(unread && mailCount > 0)
 		{
 			// If there are new email message available, raise the unread email event.
-			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18n( "You have one unread message in your MSN inbox.",
+			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18np( "You have one unread message in your MSN inbox.",
 							 "You have %n unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
@@ -784,7 +784,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		mailCount++;
 
 		//TODO:  it is also possible to get the subject  (but warning about the encoding)
-		QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"),i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
+		QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"),i18n( "You have one new email from %1 in your MSN inbox." , m),
 										0 , 0 , QStringList(i18n( "Open Inbox..." )) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 	}
@@ -1019,7 +1019,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	if( type == QString::fromUtf8("Music") )
 	{
 		// the  "♫" is encoded in utf8 (and should be in utf8)
-		currentMedia = i18n("Now Listening: ♫ %1 ♫").arg(currentMedia);
+		currentMedia = i18n("Now Listening: ♫ %1 ♫", currentMedia);
 	}
 
 	kDebug(1414) << "Current Media received: " << currentMedia << endl;

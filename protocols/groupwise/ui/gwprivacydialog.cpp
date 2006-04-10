@@ -52,7 +52,7 @@ private:
 };
 
 GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
- : KDialogBase(  parent, name, false, i18n( "Account specific privacy settings", "Manage Privacy for %1" ).arg( account->accountId() ),
+ : KDialogBase(  parent, name, false, i18nc( "Account specific privacy settings", "Manage Privacy for %1", account->accountId() ),
  KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account ), m_dirty( false ), m_searchDlg(0)
 {
 	m_privacy = new GroupWisePrivacyWidget( this );
@@ -346,7 +346,7 @@ void GroupWisePrivacyDialog::commitChanges()
 void GroupWisePrivacyDialog::errorNotConnected()
 {
 	KMessageBox::queuedMessageBox( this, KMessageBox::Information,
-			i18n( "You can only change privacy settings while you are logged in to the GroupWise Messenger server." ) , i18n("'%1' Not Logged In").arg( m_account->accountId() ) );
+			i18n( "You can only change privacy settings while you are logged in to the GroupWise Messenger server." ) , i18n("'%1' Not Logged In", m_account->accountId() ) );
 }
 
 #include "gwprivacydialog.moc"

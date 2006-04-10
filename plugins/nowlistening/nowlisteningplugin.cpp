@@ -175,7 +175,7 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 		// Catch no players/no track playing message case:
 		// Since we can't stop a message send in a plugin, add some message text to
 		// prevent us sending an empty message
-		advert = i18n("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
+		advert = i18nc("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
 	}
 	
 	Kopete::Message msg( theChat->myself(),

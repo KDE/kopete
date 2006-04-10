@@ -188,7 +188,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason)
 	if( manager( Kopete::Contact::CannotCreate ) )
 	{
 		Kopete::Message msg( (Kopete::Contact*)ircAccount()->myServer(), mMyself,
-			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
+			i18n("%1 is away (%2)", m_nickName, reason ),
 			Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW );
 		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	}
@@ -219,7 +219,7 @@ void IRCUserContact::slotUserInfo()
 
 const QString IRCUserContact::caption() const
 {
-	return i18n("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
+	return i18n("%1 @ %2", m_nickName, kircEngine()->currentHost());
 }
 
 void IRCUserContact::slotOp()
@@ -435,27 +435,30 @@ void IRCUserContact::whoIsComplete()
 		commandSource == manager(Kopete::Contact::CannotCreate) )
 	{
 		//User info
-		QString msg = i18n("%1 is (%2@%3): %4<br/>")
-			.arg(m_nickName)
-			.arg(mInfo.userName)
-			.arg(mInfo.hostName)
-			.arg(mInfo.realName);
+		QString msg = i18n("%1 is (%2@%3): %4<br/>",
+			 m_nickName,
+			 mInfo.userName,
+			 mInfo.hostName,
+			 mInfo.realName);
 
 		if( mInfo.isIdentified )
-			msg += i18n("%1 is authenticated with NICKSERV<br/>").arg(m_nickName);
+			msg += i18n("%1 is authenticated with NICKSERV<br/>", m_nickName);
 
 		if( mInfo.isOperator )
-			msg += i18n("%1 is an IRC operator<br/>").arg(m_nickName);
+			msg += i18n("%1 is an IRC operator<br/>", m_nickName);
 
 		//Channels
-		msg += i18n("on channels %1<br/>").arg(mInfo.channels.join(" ; "));
+		msg += i18n("on channels %1<br/>", mInfo.channels.join(" ; "));
 
 		//Server
-		msg += i18n("on IRC via server %1 ( %2 )<br/>").arg(mInfo.serverName).arg(mInfo.serverInfo);
+		msg += i18n("on IRC via server %1 ( %2 )<br/>", mInfo.serverName, mInfo.serverInfo);
 
 		//Idle
 		QString idleTime = formattedIdleTime();
-		msg += i18n("idle: %2<br/>").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
+		if( idleTime.isEmpty() )
+			msg += i18n("idle: %1<br/>", 0);
+		else
+			msg += i18n("idle: %1<br/>", idleTime);
 
 		//End
 		ircAccount()->appendMessage(msg, IRCAccount::InfoReply );
@@ -468,13 +471,13 @@ void IRCUserContact::whoWasComplete()
 	if( isChatting() && ircAccount()->currentCommandSource() == manager() )
 	{
 		//User info
-		QString msg = i18n("%1 was (%2@%3): %4\n")
-			.arg(m_nickName)
-			.arg(mInfo.userName)
-			.arg(mInfo.hostName)
-			.arg(mInfo.realName);
+		QString msg = i18n("%1 was (%2@%3): %4\n",
+			 m_nickName,
+			 mInfo.userName,
+			 mInfo.hostName,
+			 mInfo.realName);
 
-		msg += i18n("Last Online: %1\n").arg(
+		msg += i18n("Last Online: %1\n", 
 			KGlobal::locale()->formatDateTime(
 				property( m_protocol->propLastSeen ).value().toDateTime()
 			)

@@ -130,7 +130,7 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	if(reason== OtherClient)
 	{
-		Kopete::Utils::notifyConnectionLost(this, i18n("You have been disconnected"), i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id), i18n("Most proprietary Instant Messaging services do not allow you to connect from more than one location. Check that nobody is using your account without your permission. If you need a service that supports connection from various locations at the same time, use the Jabber protocol."));
+		Kopete::Utils::notifyConnectionLost(this, i18n("You have been disconnected"), i18n( "You have connected from another client or computer to the account '%1'" , d->id), i18n("Most proprietary Instant Messaging services do not allow you to connect from more than one location. Check that nobody is using your account without your permission. If you need a service that supports connection from various locations at the same time, use the Jabber protocol."));
 	}
 }
 
@@ -246,7 +246,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 	if ( contactId == d->myself->contactId() )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.").arg(contactId,accountId()), i18n("Error Creating Contact")
+			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
 		);
 		return false;
 	}
@@ -312,7 +312,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 	if ( contactId == myself()->contactId() )
 	{
 	    	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.").arg(contactId,accountId()), i18n("Error Creating Contact")
+			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
 		);
 		return 0L;
 	}
@@ -359,7 +359,7 @@ KActionMenu * Account::actionMenu()
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
 	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? accountLabel() : i18n( "%2 <%1>" ).arg( accountLabel(), nick )
+		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 	);
 
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);

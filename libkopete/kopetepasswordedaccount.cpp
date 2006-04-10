@@ -80,9 +80,9 @@ void Kopete::PasswordedAccount::connect( const Kopete::OnlineStatus& initialStat
 QString Kopete::PasswordedAccount::passwordPrompt()
 {
 	if ( password().isWrong() )
-		return i18n( "<b>The password was wrong;</b> please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+		return i18n( "<b>The password was wrong;</b> please re-enter your password for %1 account <b>%2</b>", protocol()->displayName(), accountId() );
 	else
-		return i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+		return i18n( "Please enter your password for %1 account <b>%2</b>", protocol()->displayName(), accountId() );
 }
 
 Kopete::OnlineStatus Kopete::PasswordedAccount::initialStatus()

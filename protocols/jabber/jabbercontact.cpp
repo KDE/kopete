@@ -263,11 +263,11 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		{
 			QString room=message.invite();
 			QString originalBody=message.body().isEmpty() ? QString() :
-					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(Qt::escape(message.body()));
+					i18n( "The original message is : <i>\" %1 \"</i><br>" , Qt::escape(message.body()));
 			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br>%3<br>"
 					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br>"
-							 "If you want to decline, press cancel</qt>")
-					.arg(message.from().full(), room , originalBody);
+							 "If you want to decline, press cancel</qt>",
+					message.from().full(), room , originalBody);
 			
 			bool ok=false;
 			QString futureNewNickName = KInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
@@ -325,8 +325,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.type () == "error" )
 	{
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
-										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
-										arg ( message.body () ).arg ( message.error().text ),
+										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+										  message.body (), message.error().text ),
 										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewPlugin );
 	}
 	else
@@ -1156,8 +1156,8 @@ void JabberContact::deleteContact ()
 	if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
 	{
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
-		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" ).
-						arg ( mRosterItem.jid().bare () ), i18n ("Notification"),
+		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" , 
+						  mRosterItem.jid().bare () ), i18n ("Notification"),
 						KStdGuiItem::del (), i18n("Keep"), "JabberRemoveAuthorizationOnDelete" );
 		if(result == KMessageBox::Yes )
 			remove_from_roster = true;
@@ -1346,7 +1346,7 @@ void JabberContact::slotSelectResource ()
 										i18n ("You have preselected a resource for contact %1, "
 										"but you still have open chat windows for this contact. "
 										"The preselected resource will only apply to newly opened "
-										"chat windows.").arg ( contactId () ),
+										"chat windows.",  contactId () ),
 										i18n ("Jabber Resource Selector") );
 	}
 

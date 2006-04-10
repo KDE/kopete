@@ -354,14 +354,14 @@ bool ChatView::closeView( bool force )
 			shortCaption = KStringHandler::rsqueeze( shortCaption );
 
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
-				"You will not receive future messages from this conversation.</qt>").arg( shortCaption ), i18n( "Closing Group Chat" ),
+				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
 				i18n( "Cl&ose Chat" ), QString::fromLatin1( "AskCloseGroupChat" ) );
 		}
 
 		if ( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
-				"second. Are you sure you want to close this chat?</qt>").arg( unreadMessageFrom ), i18n( "Unread Message" ),
+				"second. Are you sure you want to close this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
 				i18n( "Cl&ose Chat" ), QString::fromLatin1("AskCloseChatRecentMessage" ) );
 		}
 
@@ -404,7 +404,7 @@ void ChatView::updateChatState( KopeteTabState newState )
 
 	if( newState != Typing )
 	{
-		setStatusText( i18n( "One other person in the chat",
+		setStatusText( i18np( "One other person in the chat",
 			       "%n other people in the chat", m_manager->members().count() ) );
 	}
 }
@@ -547,11 +547,11 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	if( !typingList.isEmpty() )
 	{
 		if ( typingList.count() == 1 )
-			setStatusText( i18n( "%1 is typing a message" ).arg( typingList.first() ) );
+			setStatusText( i18n( "%1 is typing a message", typingList.first() ) );
 		else
 		{
 			QString statusTyping = typingList.join( QString::fromLatin1( ", " ) );
-			setStatusText( i18n( "%1 is a list of names", "%1 are typing a message" ).arg( statusTyping ) );
+			setStatusText( i18nc( "%1 is a list of names", "%1 are typing a message", statusTyping ) );
 		}
 		updateChatState( Typing );
 	}
@@ -593,7 +593,7 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 
 		if(Kopete::BehaviorSettings::self()->showEvents())
 			if ( oldName != newName && !oldName.isEmpty())
-				sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldName, newName ) );
+				sendInternalMessage( i18n( "%1 is now known as %2", oldName, newName ) );
 	}
 }
 
@@ -602,7 +602,7 @@ void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &n
 	if( Kopete::BehaviorSettings::self()->showEvents() )
 	{
 		if( oldValue != newValue )
-			sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldValue, newValue ) );
+			sendInternalMessage( i18n( "%1 is now known as %2", oldValue, newValue ) );
 	}
 }
 
@@ -631,7 +631,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	}
 
 	if( !suppress && m_manager->members().count() > 1 )
-		sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
+		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
 
 	if( membersStatus == Smart && membersDock )
 	{
@@ -682,9 +682,9 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 		if ( !suppressNotification )
 		{
 			if ( reason.isEmpty() )
-				sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ), format ) ;
+				sendInternalMessage( i18n( "%1 has left the chat.", contactName ), format ) ;
 			else
-				sendInternalMessage( i18n( "%1 has left the chat (%2)." ).arg( contactName, reason ), format);
+				sendInternalMessage( i18n( "%1 has left the chat (%2).", contactName, reason ), format);
 		}
 	}
 
@@ -784,21 +784,21 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		{
 			// Separate notification for the 'self' contact
 			if ( newStatus.status() != Kopete::OnlineStatus::Connecting )
-				sendInternalMessage( i18n( "You are now marked as %1." ).arg( newStatus.description() ) );
+				sendInternalMessage( i18n( "You are now marked as %1.", newStatus.description() ) );
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
 			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
 			if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 			{
-				sendInternalMessage( i18n( "%2 is now %1." )
-					.arg( newStatus.description(), contact->metaContact()->displayName() ) );
+				sendInternalMessage( i18n( "%2 is now %1.",
+					newStatus.description(), contact->metaContact()->displayName() ) );
 			}
 			else
 			{
 				QString nick=contact->nickName();
-				sendInternalMessage( i18n( "%2 is now %1." )
-					.arg( newStatus.description(), nick ) );
+				sendInternalMessage( i18n( "%2 is now %1.",
+					newStatus.description(), nick ) );
 			}
 		}
 	}

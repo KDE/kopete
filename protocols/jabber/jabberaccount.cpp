@@ -435,8 +435,8 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side
 			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
-								arg(myself()->contactId()),
+								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.", 
+								myself()->contactId()),
 								i18n ("Jabber SSL Error"));
 			break;
 	
@@ -522,8 +522,8 @@ bool JabberAccount::handleTLSWarning ( JabberClient *jabberClient, int warning )
 #endif
 
 	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
-						  i18n("<qt><p>The certificate of server %1 could not be validated for account %2: %3</p><p>Do you want to continue?</p></qt>").
-						  arg(server, accountId, validityString),
+						  i18n("<qt><p>The certificate of server %1 could not be validated for account %2: %3</p><p>Do you want to continue?</p></qt>",
+						  server, accountId, validityString),
 						  i18n("Jabber Connection Certificate Problem"),
 						  KStdGuiItem::cont(),
 						  QString("KopeteTLSWarning") + server + code) == KMessageBox::Continue );
@@ -806,7 +806,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 
-			errorText = i18n("There was an error in the protocol stream: %1").arg(errorCondition);
+			errorText = i18n("There was an error in the protocol stream: %1", errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrConnection:
@@ -864,7 +864,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 			if(!errorCondition.isEmpty())
-				errorText = i18n("There was a connection error: %1").arg(errorCondition);
+				errorText = i18n("There was a connection error: %1", errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrNeg:
@@ -889,7 +889,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 
-			errorText = i18n("There was a negotiation error: %1").arg(errorCondition);
+			errorText = i18n("There was a negotiation error: %1", errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrTLS:
@@ -906,7 +906,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 
-			errorText = i18n("There was a Transport Layer Security (TLS) error: %1").arg(errorCondition);
+			errorText = i18n("There was a Transport Layer Security (TLS) error: %1", errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrAuth:
@@ -950,7 +950,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 
-			errorText = i18n("There was an error authenticating with the server: %1").arg(errorCondition);
+			errorText = i18n("There was an error authenticating with the server: %1", errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrSecurityLayer:
@@ -967,7 +967,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 
-			errorText = i18n("There was an error in the security layer: %1").arg(errorCondition);
+			errorText = i18n("There was an error in the security layer: %1", errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrBind:
@@ -984,7 +984,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					break;
 			}
 
-			errorText = i18n("Could not bind a resource: %1").arg(errorCondition);
+			errorText = i18n("Could not bind a resource: %1", errorCondition);
 			break;
 
 		default:
@@ -1000,7 +1000,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	if(!errorText.isEmpty())
 		KMessageBox::error (Kopete::UI::Global::mainWidget (),
 						errorText,
-						i18n("Connection problem with Jabber server %1").arg(server));
+						i18n("Connection problem with Jabber server %1", server));
 
 
 }
@@ -1138,8 +1138,8 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 								  i18n
 								  ("The Jabber user %1 removed %2's subscription to them. "
 								   "This account will no longer be able to view their online/offline status. "
-								   "Do you want to delete the contact?").
-								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification"), KStdGuiItem::del(), i18n("Keep")))
+								   "Do you want to delete the contact?",
+								    jid.userHost(), accountId()), i18n ("Notification"), KStdGuiItem::del(), i18n("Keep")))
 		{
 
 			case KMessageBox::Yes:
@@ -1529,7 +1529,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	case JabberClient::InvalidPasswordForMUC:
 		{
 			QByteArray password;
- 			int result = KPasswordDialog::getPassword(Kopete::UI::Global::mainWidget(), password, i18n("A password is required to join the room %1.").arg(jid.node()));
+ 			int result = KPasswordDialog::getPassword(Kopete::UI::Global::mainWidget(), password, i18n("A password is required to join the room %1.", jid.node()));
 			if (result == KPasswordDialog::Accepted)
 				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), password);
 		}
@@ -1538,7 +1538,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	case JabberClient::NicknameConflict:
 		{
 			bool ok;
-			QString nickname = KInputDialog::getText(i18n("Error trying to join %1 : nickname %2 is already in use").arg(jid.node(), jid.resource()),
+			QString nickname = KInputDialog::getText(i18n("Error trying to join %1 : nickname %2 is already in use", jid.node(), jid.resource()),
 									i18n("Give your nickname"),
 									QString(),
 									&ok);
@@ -1552,14 +1552,14 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	case JabberClient::BannedFromThisMUC:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can't join the room %1 because you were banned").arg(jid.node()),
+									i18n ("You can't join the room %1 because you were banned", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
 	case JabberClient::MaxUsersReachedForThisMuc:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can't join the room %1 because the maximum users has been reached").arg(jid.node()),
+									i18n ("You can't join the room %1 because the maximum users has been reached", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
@@ -1569,7 +1569,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("There was an error processing your request for group chat %1. (Reason: %2, Code %3)").arg ( jid.full (), detailedReason, QString::number ( error ) ),
+									i18n ("There was an error processing your request for group chat %1. (Reason: %2, Code %3)", jid.full (), detailedReason, error ),
 									i18n ("Jabber Group Chat") );
 		}
 	}
@@ -1704,7 +1704,7 @@ bool JabberAccount::removeAccount( )
 		int result=KMessageBox::warningYesNoCancel( Kopete::UI::Global::mainWidget () ,
 				   i18n( "Do you want to also unregister \"%1\" from the Jabber server ?\n"
 				   			    "If you unregister, all your contact list may be removed on the server,"
-							    "And you will never be able to connect to this account with any client").arg( accountLabel() ),
+							    "And you will never be able to connect to this account with any client", accountLabel() ),
 					i18n("Unregister"),
 					KGuiItem(i18n( "Remove and Unregister" ), "editdelete"),
 					KGuiItem(i18n( "Remove from kopete only"), "edittrash"),
@@ -1751,7 +1751,7 @@ void JabberAccount::slotUnregisterFinished( )
 	if ( task && ! task->success ())
 	{
 		KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
-			i18n ("An error occured when trying to remove the account:\n%1").arg(task->statusString()),
+			i18n ("An error occured when trying to remove the account:\n%1", task->statusString()),
 			i18n ("Jabber Account Unregistration"));
 		m_removing=false;
 		return;

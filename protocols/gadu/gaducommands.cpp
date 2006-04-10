@@ -206,7 +206,7 @@ void RegisterCommand::watcher()
 		}
 
 		pubDir = (struct gg_pubdir *)session_->data;
-		emit operationStatus( i18n( "Token retrieving status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
+		emit operationStatus( i18n( "Token retrieving status: %1", GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
 				kDebug( 14100 ) << "Recreating notifiers " << endl;
@@ -256,7 +256,7 @@ void RegisterCommand::watcher()
 			return;
 		}
 		pubDir = (gg_pubdir*) session_->data;
-		emit operationStatus( i18n( "Registration status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
+		emit operationStatus( i18n( "Registration status: %1", GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
 				kDebug( 14100 ) << "Recreating notifiers " << endl;

@@ -190,8 +190,8 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	{
 		if ( !m_details.clientName().isEmpty() )
 		{
-			capList << i18n( "Translators: client name and version",
-			                "%1").arg( m_details.clientName() );
+			capList << i18nc( "Translators: client name and version",
+			                "%1", m_details.clientName() );
 		}
 	}
 	

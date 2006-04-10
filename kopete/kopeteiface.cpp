@@ -155,8 +155,8 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 		// FIXME: This is completely bogus since the user may not
 		// even be at the computer. We just need to add the contact --Matt
 		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "An external application is attempting to add the "
-			" '%1' contact '%2' to your contact list. Do you want to allow this?" )
-			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ), i18n("Allow"), i18n("Reject") ) == 3 ) // Yes == 3
+			" '%1' contact '%2' to your contact list. Do you want to allow this?" ,
+			  protocolName, contactName ), i18n( "Allow Contact?" ), i18n("Allow"), i18n("Reject") ) == 3 ) // Yes == 3
 		{
 			//User said Yes
 			myAccount->addContact( contactId, contactName, realGroup, Kopete::Account::DontChangeKABC);
@@ -170,7 +170,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 		//This protocol is not loaded
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 				 i18n("An external application has attempted to add a contact using "
-				      " the %1 protocol, which either does not exist or is not loaded.").arg( protocolName ),
+				      " the %1 protocol, which either does not exist or is not loaded.", protocolName ),
 				i18n("Missing Protocol"));
 
 		return false;

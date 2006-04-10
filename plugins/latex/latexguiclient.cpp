@@ -65,7 +65,7 @@ void LatexGUIClient::slotPreview()
 	}
 
 	msg=Kopete::Message( msg.from() , msg.to() ,
-						 i18n("<b>Preview of the latex message :</b> <br />%1").arg(msg.plainBody()),
+						 i18n("<b>Preview of the latex message :</b> <br />%1", msg.plainBody()),
 						 Kopete::Message::Internal , Kopete::Message::RichText);
 	m_manager->appendMessage(msg) ;
 }

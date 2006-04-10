@@ -160,8 +160,8 @@ void KopeteGroupViewItem::refreshDisplayName()
 	}
 
 	d->name->setText( m_group->displayName() );
-	d->count->setText( i18n( "(NUMBER OF ONLINE CONTACTS/NUMBER OF CONTACTS IN GROUP)", "(%1/%2)" )
-	                  .arg( QString::number( onlineMemberCount ), QString::number( totalMemberCount ) ) );
+	d->count->setText( i18nc( "(NUMBER OF ONLINE CONTACTS/NUMBER OF CONTACTS IN GROUP)", "(%1/%2)",
+	                   onlineMemberCount, totalMemberCount ) );
 
 	updateVisibility();
 

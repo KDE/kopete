@@ -168,7 +168,7 @@ void dlgJabberServices::slotDiscoFinished( )
 	else
 	{
 		QString error = jt->statusString();
-		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("Unable to retrieve the list of services.\nReason: %1").arg(error), i18n ("Jabber Error"));
+		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("Unable to retrieve the list of services.\nReason: %1", error), i18n ("Jabber Error"));
 	}
 }
 

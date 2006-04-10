@@ -646,7 +646,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	else if(succ == Yahoo::LoginLock)
 	{
 		initConnectionSignals( DeleteConnections );
-		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.").arg(url);
+		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.", url);
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadUserName ); // FIXME: add a more appropriate disconnect reason
@@ -695,8 +695,8 @@ void YahooAccount::slotDisconnected()
 	disconnected( ConnectionReset );	// may reconnect
 	
 	QString message;
-	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" )
-		.arg( accountId() ).arg( m_session->error() ).arg( m_session->errorString() );
+	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" ,
+		  accountId(), m_session->error(), m_session->errorString() );
 	KNotification::event( "connection_lost", message, myself()->onlineStatus().protocolIcon() );
 }
 
@@ -708,8 +708,8 @@ void YahooAccount::slotLoginFailed()
 	disconnected( Manual );			// don't reconnect
 	
 	QString message;
-	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" )
-		.arg( accountId() ).arg( m_session->error() ).arg( m_session->errorString() );
+	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" ,
+		  accountId(), m_session->error(), m_session->errorString() );
 	KNotification::event( "cannot_connect", message, myself()->onlineStatus().protocolIcon() );
 }
 
@@ -731,8 +731,8 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString message;
-	message = i18n( "User %1 has granted your authorization request." )
-		.arg( who );
+	message = i18n( "User %1 has granted your authorization request." ,
+		  who );
 	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
 	
 	if( contact( who ) )
@@ -743,8 +743,8 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString message;
-	message = i18n( "User %1 has granted your authorization request.\n%2" )
-		.arg( who ).arg( msg );
+	message = i18n( "User %1 has granted your authorization request.\n%2" ,
+		  who, msg );
 	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
 }
 
@@ -989,7 +989,7 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	
 	justMe.append(myself());
 	
-	QString buzzMsgText = i18n("This string is shown when the user is buzzed by a contact", "Buzz!!");
+	QString buzzMsgText = i18nc("This string is shown when the user is buzzed by a contact", "Buzz!!");
 	
 	Kopete::Message kmsg(msgDT, contact(who), justMe, buzzMsgText,
 	                     Kopete::Message::Inbound , Kopete::Message::PlainText);
@@ -1026,8 +1026,8 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 		}
 	}
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
-				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?")
-				.arg(who).arg(m).arg(msg), QString::null, i18n("Accept"), i18n("Ignore") ) )
+				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?",
+				 who, m, msg), QString::null, i18n("Accept"), i18n("Ignore") ) )
 	{
 		m_session->joinConference( room, myMembers );
 		if( !m_conferences[room] )
@@ -1120,7 +1120,7 @@ void YahooAccount::slotConfUserDecline( const QString &who, const QString &room,
 	
 	YahooConferenceChatSession *session = m_conferences[room];
 	
-	QString body = i18n( "%1 declined to join the conference: \"%2\"" ).arg( who ).arg( msg );
+	QString body = i18n( "%1 declined to join the conference: \"%2\"", who, msg );
 	Kopete::Message message = Kopete::Message( contact( who ), myself(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 	
 	session->appendMessage( message );
@@ -1336,14 +1336,14 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
-		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have one unread message in your Yahoo inbox.",
+		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
 			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
-		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.").arg(from) 
+		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from) 
 		                                       , QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
@@ -1367,8 +1367,8 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 		return;
 	}
 	
-	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
-							.arg(who), QString::null, i18n("Accept"), i18n("Ignore") ) )	
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?",
+							 who), QString::null, i18n("Accept"), i18n("Ignore") ) )	
 		m_session->requestWebcam( who );
 }
 
@@ -1592,8 +1592,8 @@ void YahooAccount::slotWebcamViewerJoined( const QString &viewer )
 
 void YahooAccount::slotWebcamViewerRequest( const QString &viewer )
 {
-	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 wants to view your webcam. Grant access?")
-		.arg(viewer), QString::null, i18n("Accept"), i18n("Ignore") ) )	
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 wants to view your webcam. Grant access?",
+		 viewer), QString::null, i18n("Accept"), i18n("Ignore") ) )	
 		m_session->grantWebcamAccess( viewer );
 }
 

@@ -84,7 +84,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 
 		connect( account(), SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
 					SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
-		connectLabel->setText( i18n( "personal information being fetched from server",
+		connectLabel->setText( i18nc( "personal information being fetched from server",
 					"<p align=\"center\">Fetching from server</p>" ) );
 		seqNr = account_->getPersonalInformation();
 	}

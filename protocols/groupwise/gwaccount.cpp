@@ -249,8 +249,8 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	if (!sslPossible)
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-							i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
-							arg(myself()->contactId()),
+							i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.", 
+							myself()->contactId()),
 							i18n ("GroupWise SSL Error"));
 		return;
 	}
@@ -633,7 +633,7 @@ void GroupWiseAccount::slotConnError()
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-				i18n( "Error shown when connecting failed", "Kopete was not able to connect to the GroupWise Messenger server for account '%1'.\nPlease check your server and port settings and try again." ).arg( accountId() ) , i18n ("Unable to Connect '%1'").arg( accountId() ) );
+				i18nc( "Error shown when connecting failed", "Kopete was not able to connect to the GroupWise Messenger server for account '%1'.\nPlease check your server and port settings and try again.", accountId() ) , i18n ("Unable to Connect '%1'", accountId() ) );
 
 	disconnect();
 }
@@ -752,10 +752,10 @@ int GroupWiseAccount::handleTLSWarning (int warning, QString server, QString acc
 		}
 
 	return KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
-						  i18n("The certificate of server %1 could not be validated for account %2: %3").
-						  arg(server).
-						  arg(accountId).
-						  arg(validityString),
+						  i18n("The certificate of server %1 could not be validated for account %2: %3", 
+						  server, 
+						  accountId, 
+						  validityString),
 						  i18n("GroupWise Connection Certificate Problem"),
 						  KStdGuiItem::cont(),
 						  QString("KopeteTLSWarning") + server + code);
@@ -796,21 +796,21 @@ void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
 	QString messageMunged = message.message;
 	if ( message.type == ReceiveAutoReply )
 	{
-		QString prefix = i18n("Prefix used for automatically generated auto-reply"
+		QString prefix = i18nc("Prefix used for automatically generated auto-reply"
 			" messages when the contact is Away, contains contact's name",
-			"Auto reply from %1: " ).arg( sender->metaContact()->displayName() );
+			"Auto reply from %1: ", sender->metaContact()->displayName() );
 		messageMunged = prefix + message.message;
 	}
 	if ( message.type == GroupWise::ReceivedBroadcast )
 	{
-		QString prefix = i18n("Prefix used for broadcast messages",
-			"Broadcast message from %1: " ).arg( sender->metaContact()->displayName() );
+		QString prefix = i18nc("Prefix used for broadcast messages",
+			"Broadcast message from %1: ", sender->metaContact()->displayName() );
 		messageMunged = prefix + message.message;
 	}
 	if ( message.type == GroupWise::ReceivedSystemBroadcast )
 	{
-		QString prefix = i18n("Prefix used for system broadcast messages",
-			"System Broadcast message from %1: " ).arg( sender->metaContact()->displayName() );
+		QString prefix = i18nc("Prefix used for system broadcast messages",
+			"System Broadcast message from %1: ", sender->metaContact()->displayName() );
 		messageMunged = prefix + message.message;
 	}
 
@@ -1180,8 +1180,8 @@ void GroupWiseAccount::receiveContactCreated()
 		}
 
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-							i18n ("The contact %1 could not be added to the contact list, with error message: %2").
-							arg(cct->userId() ).arg( cct->statusString() ),
+							i18n ("The contact %1 could not be added to the contact list, with error message: %2", 
+							cct->userId(), cct->statusString() ),
 							i18n ("Error Adding Contact") );
 	}
 }
@@ -1227,7 +1227,7 @@ void GroupWiseAccount::receiveContactDeleted( const ContactItem & instance )
 void GroupWiseAccount::slotConnectedElsewhere()
 {
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
-				i18n( "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere" ).arg( accountId() ) , i18n ("Signed in as %1 Elsewhere").arg( accountId() ) );
+				i18nc( "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere", accountId() ) , i18n ("Signed in as %1 Elsewhere", accountId() ) );
 	disconnect();
 }
 
@@ -1335,7 +1335,7 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 			c = createTemporaryContact( event.user );
 
 		sess->addInvitee( c );
-		Kopete::Message declined = Kopete::Message( myself(), sess->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), Kopete::Message::Internal, Kopete::Message::PlainText );
+		Kopete::Message declined = Kopete::Message( myself(), sess->members(), i18n("%1 has been invited to join this conversation.", c->metaContact()->displayName() ), Kopete::Message::Internal, Kopete::Message::PlainText );
 		sess->appendMessage( declined );
 	}
 	else

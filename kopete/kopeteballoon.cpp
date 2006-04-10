@@ -98,7 +98,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	// BEGIN Layout2
 	QHBoxLayout *Layout2 = new QHBoxLayout(BalloonLayout,
 		KDialog::spacingHint(), "Layout2");
-	QPushButton *mViewButton = new QPushButton(i18n("to view", "View"), this,
+	QPushButton *mViewButton = new QPushButton(i18nc("to view", "View"), this,
 		"mViewButton");
 	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore"), this,
 		"mIgnoreButton");

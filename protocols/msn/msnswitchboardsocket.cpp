@@ -126,7 +126,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 215:
 		{
-			QString msg = i18n( "The user %1 is already in this chat." ).arg( m_msgHandle );
+			QString msg = i18n( "The user %1 is already in this chat.", m_msgHandle );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorNormal, msg );
 			//userLeftChat(m_msgHandle , i18n("user was twice in this chat") ); //(the user shouln't join there
@@ -134,7 +134,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user." ).arg( m_msgHandle );
+			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user.", m_msgHandle );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorInformation, msg );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
@@ -143,7 +143,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		case 217:
 		{
 			// TODO: we need to know the nickname instead of the handle.
-			QString msg = i18n( "The user %1 is currently not signed in.\n" "Messages will not be delivered." ).arg( m_msgHandle );
+			QString msg = i18n( "The user %1 is currently not signed in.\n" "Messages will not be delivered.", m_msgHandle );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorNormal, msg );
 			userLeftChat(m_msgHandle, i18n("user disconnected"));
@@ -151,7 +151,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 713:
 		{
-			QString msg = i18n( "You are trying to invite too many contacts to this chat at the same time" ).arg( m_msgHandle );
+			QString msg = i18n( "You are trying to invite too many contacts to this chat at the same time" );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorInformation, msg );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
@@ -777,7 +777,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
-			i18n("The message you are trying to send is too long; it will be split into %1 messages.").arg(nb) ,
+			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,
 			i18n("Message too big - MSN Plugin" ), KStdGuiItem::cont() , "SendLongMessages" )
 				== KMessageBox::Continue )
 		{
@@ -918,7 +918,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 	}
 	else if(msnObj == "inkformatgif")
 	{
-		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />" ).arg( file->name() );
+		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->name() );
 
 		kDebug(14140) << k_funcinfo << file->name()  <<endl;
 

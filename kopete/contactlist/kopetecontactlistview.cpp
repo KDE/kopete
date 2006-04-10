@@ -295,8 +295,8 @@ private:
 		updateMetaContactInner( mc );
 
 		// FIXME: these items should do this for themselves...
-		m_onlineItem->setText(0,i18n("Online contacts (%1)").arg(m_onlineItem->childCount()));
-		m_offlineItem->setText(0,i18n("Offline contacts (%1)").arg(m_offlineItem->childCount()));
+		m_onlineItem->setText(0,i18n("Online contacts (%1)", m_onlineItem->childCount()));
+		m_offlineItem->setText(0,i18n("Offline contacts (%1)", m_offlineItem->childCount()));
 	}
 	void updateMetaContactInner( Kopete::MetaContact *mc )
 	{
@@ -695,8 +695,8 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 				window->factory()->container( "contact_popup", window ) );
 			if ( popup )
 			{
-				QString title = i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
-					arg( metaLVI->metaContact()->displayName(), metaLVI->metaContact()->statusString() );
+				QString title = i18nc( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)",
+					metaLVI->metaContact()->displayName(), metaLVI->metaContact()->statusString() );
 
 				if ( title.length() > 43 )
 					title = title.left( 40 ) + QString::fromLatin1( "..." );
@@ -724,7 +724,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					KMenu *contactMenu = c->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-					QString text= nick.isEmpty() ?  c->contactId() : i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ). arg( c->contactId(), nick );
+					QString text= nick.isEmpty() ?  c->contactId() : i18nc( "Translators: format: '<displayName> (<id>)'", "%2 <%1>", c->contactId(), nick );
 					text=text.replace("&","&&"); // cf BUG 115449
 
 					if ( text.length() > 41 )
@@ -1030,8 +1030,8 @@ void KopeteContactListView::moveDraggedContactToGroup( Kopete::MetaContact *cont
 void KopeteContactListView::addDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *group )
 {
 	int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a member of <b>%2</b>?</qt>" )
-					.arg( contact->displayName(), group->displayName() ),
+					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a member of <b>%2</b>?</qt>",
+					contact->displayName(), group->displayName() ),
 					i18n( "Kopete" ), i18n("Add"), i18n("Do Not Add"),
 					"addTemporaryWhenMoving" );
 
@@ -1046,8 +1046,8 @@ void KopeteContactListView::addDraggedContactToGroup( Kopete::MetaContact *conta
 void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *contact, Kopete::MetaContact *parent )
 {
 	int r = KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a child contact of <b>%2</b>?</qt>" )
-					.arg( contact->contactId(), parent->displayName() ),
+					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a child contact of <b>%2</b>?</qt>",
+					contact->contactId(), parent->displayName() ),
 					i18n( "Kopete" ), i18n("Add"), i18n("Do Not Add"),
 					"addTemporaryWhenMoving" );
 
@@ -1097,8 +1097,8 @@ void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, 
 			else
 			{
 				KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
-					i18n("<qt>This contact is already on your contact list. It is a child contact of <b>%1</b></qt>")
-					.arg( source_contact->metaContact()->displayName() )
+					i18n("<qt>This contact is already on your contact list. It is a child contact of <b>%1</b></qt>",
+					  source_contact->metaContact()->displayName() )
 				);
 			}
 		}
@@ -1600,14 +1600,14 @@ void KopeteContactListView::slotRemove()
 		if( !contacts.isEmpty() )
 		{
 			msg = i18n( "<qt>Are you sure you want to remove the contact <b>%1</b>" \
-			            " from your contact list?</qt>" )
-			      .arg( contacts.first()->displayName() ) ;
+			            " from your contact list?</qt>" ,
+			        contacts.first()->displayName() ) ;
 		}
 		else if( !groups.isEmpty() )
 		{
 			msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> " \
-			            "and all contacts that are contained within it?</qt>" )
-			      .arg( groups.first()->displayName() );
+			            "and all contacts that are contained within it?</qt>" ,
+			        groups.first()->displayName() );
 		}
 		else
 			return; // this should never happen

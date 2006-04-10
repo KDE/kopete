@@ -184,7 +184,7 @@ void MSNSocket::slotSocketError( int error )
 
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
 	if ( error == KSocketBase::LookupFailure )
-		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->peerResolver().nodeName() );
+		errormsg += i18n( "Unable to lookup %1", m_socket->peerResolver().nodeName() );
 	else
 		errormsg +=  m_socket->errorString() ;
 
@@ -589,7 +589,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	default:
 		// FIXME: if the error causes a disconnect, it will crash, but we can't disconnect every time
 		msg = i18n( "Unhandled MSN error code %1 \n"
-			"Please fill a bug report with a detailed description and if possible the last console debug output." ).arg( code );
+			"Please fill a bug report with a detailed description and if possible the last console debug output.", code );
 			// "See http://www.hypothetic.org/docs/msn/basics.php for a description of all error codes."
 		break;
 	}

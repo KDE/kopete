@@ -107,7 +107,7 @@ KActionMenu *JabberTransport::actionMenu ()
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
 	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
-	nick.isNull() ? accountLabel() : i18n( "%2 <%1>" ).arg( accountLabel(), nick )
+	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 								  );
 	
 	QList<KAction*> *customActions = myself()->customContextMenuActions(  );

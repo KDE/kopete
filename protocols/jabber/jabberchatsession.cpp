@@ -89,8 +89,8 @@ void JabberChatSession::slotUpdateDisplayName ()
 	if ( !mResource.isEmpty () )
 		jid.setResource ( mResource );
 
-	QString statusText = i18n("a contact's online status in parenthesis.", " (%1)")
-							.arg( chatMembers.first()->onlineStatus().description() );
+	QString statusText = i18nc("a contact's online status in parenthesis.", " (%1)",
+							  chatMembers.first()->onlineStatus().description() );
 	if ( jid.resource().isEmpty () )
 		setDisplayName ( chatMembers.first()->metaContact()->displayName () + statusText );
 	else

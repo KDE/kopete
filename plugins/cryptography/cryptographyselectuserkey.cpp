@@ -37,7 +37,7 @@ CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete:
 	connect (view->m_selectKey , SIGNAL(clicked()) , this , SLOT(slotSelectPressed()));
 	connect (view->m_removeButton , SIGNAL(clicked()) , this , SLOT(slotRemovePressed()));
 
-	view->m_titleLabel->setText(i18n("Select public key for %1").arg(mc->displayName()));
+	view->m_titleLabel->setText(i18n("Select public key for %1", mc->displayName()));
 	view->m_editKey->setText(key);
 }
 CryptographySelectUserKey::~CryptographySelectUserKey()

@@ -274,12 +274,12 @@ void IRCChannelContact::channelTopic(const QString &topic)
 
 	if (mTopic.isEmpty()) {
 		Kopete::Message msg((Kopete::Contact*)this, mMyself,
-				i18n("Topic for %1 is set empty.").arg(m_nickName),
+				i18n("Topic for %1 is set empty.", m_nickName),
 				Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 		appendMessage(msg);
 	} else {
 		Kopete::Message msg((Kopete::Contact*)this, mMyself,
-				i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
+				i18n("Topic for %1 is %2", m_nickName, mTopic),
 				Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 		appendMessage(msg);
 	}
@@ -364,7 +364,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
-			i18n("You have joined channel %1").arg(m_nickName),
+			i18n("You have joined channel %1", m_nickName),
 			Kopete::Message::Internal, Kopete::Message::PlainText,
 			CHAT_VIEW);
 		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
@@ -380,7 +380,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 		contact->setOnlineStatus( m_protocol->m_UserStatusOnline );
 		manager()->addContact((Kopete::Contact *)contact, true);
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
-			i18n("User <b>%1</b> joined channel %2").arg(nickname).arg(m_nickName),
+			i18n("User <b>%1</b> joined channel %2", nickname, m_nickName),
 			Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 		manager()->appendMessage(msg);
@@ -415,9 +415,9 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 			QString r;
 
 			if ((reason != nick) && (reason != nickKicked)) {
-				r = i18n( "%1 was kicked by %2. Reason: %3" ).arg(nickKicked, nick, reason);
+				r = i18n( "%1 was kicked by %2. Reason: %3", nickKicked, nick, reason );
 			} else {
-				r = i18n( "%1 was kicked by %2." ).arg(nickKicked, nick);
+				r = i18n( "%1 was kicked by %2.", nickKicked, nick );
 			}
 
 			manager()->removeContact( c, r );
@@ -436,9 +436,9 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 		QString r;
 
 		if ((reason != nick) && (reason != nickKicked)) {
-			r = i18n( "You were kicked from %1 by %2. Reason: %3" ).arg(m_nickName, nickKicked, reason);
+			r = i18n( "You were kicked from %1 by %2. Reason: %3", m_nickName, nickKicked, reason );
 		} else {
-			r = i18n( "You were kicked from %1 by %2." ).arg(m_nickName, nickKicked);
+			r = i18n( "You were kicked from %1 by %2.", m_nickName, nickKicked );
 		}
 
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), r, i18n("IRC Plugin"));
@@ -470,7 +470,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 		else
 		{
 			Kopete::Message msg(account->myServer(), manager()->members(),
-				i18n("You must be a channel operator on %1 to do that.").arg(m_nickName),
+				i18n("You must be a channel operator on %1 to do that.", m_nickName),
 				Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 			manager()->appendMessage(msg);
 		}
@@ -485,7 +485,7 @@ void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopi
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
 	Kopete::Message msg(account->myServer(), mMyself,
-		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
+		i18n("%1 has changed the topic to: %2", nick, newtopic),
 		Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
@@ -496,7 +496,7 @@ void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 	IRCAccount *account = ircAccount();
 
 	Kopete::Message msg(account->myServer(), mMyself,
-		i18n("Topic set by %1 at %2").arg(nick).arg(
+		i18n("Topic set by %1 at %2", nick, 
 			KGlobal::locale()->formatDateTime(time, true)
 	), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
@@ -505,7 +505,7 @@ void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 
 void IRCChannelContact::incomingModeChange( const QString &nick, const QString &mode )
 {
-	Kopete::Message msg(this, mMyself, i18n("%1 sets mode %2 on %3").arg(nick).arg(mode).arg(m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
+	Kopete::Message msg(this, mMyself, i18n("%1 sets mode %2 on %3", nick, mode, m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 
@@ -566,7 +566,7 @@ void IRCChannelContact::failedChanBanned()
 {
 	manager()->deleteLater();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-		i18n("<qt>You can not join %1 because you have been banned.</qt>").arg(m_nickName),
+		i18n("<qt>You can not join %1 because you have been banned.</qt>", m_nickName),
 		i18n("IRC Plugin") );
 }
 
@@ -574,14 +574,14 @@ void IRCChannelContact::failedChanInvite()
 {
 	manager()->deleteLater();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-		i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>").arg(m_nickName), i18n("IRC Plugin") );
+		i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>", m_nickName), i18n("IRC Plugin") );
 }
 
 void IRCChannelContact::failedChanFull()
 {
 	manager()->deleteLater();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-		i18n("<qt>You can not join %1 because it has reached its user limit.</qt>").arg(m_nickName),
+		i18n("<qt>You can not join %1 because it has reached its user limit.</qt>", m_nickName),
 		i18n("IRC Plugin") );
 }
 
@@ -589,7 +589,7 @@ void IRCChannelContact::failedChankey()
 {
 	bool ok;
 	QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
-		i18n( "Please enter key for channel %1: ").arg(m_nickName),
+		i18n( "Please enter key for channel %1: ", m_nickName),
 		QString::null,
 		&ok );
 

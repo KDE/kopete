@@ -149,8 +149,8 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 		KGuiItem overwriteButton ( i18n ( "Over&write" ) );
 
 		switch ( KMessageBox::questionYesNoCancel ( Kopete::UI::Global::mainWidget (),
-													i18n ( "The file %1 already exists, do you want to resume or overwrite it?" ).arg ( fileName ),
-													i18n ( "File Exists: %1" ).arg ( fileName ),
+													i18n ( "The file %1 already exists, do you want to resume or overwrite it?", fileName ),
+													i18n ( "File Exists: %1", fileName ),
 													resumeButton, overwriteButton ) )
 		{
 			case KMessageBox::Yes:		// resume

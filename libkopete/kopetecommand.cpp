@@ -86,7 +86,7 @@ void Kopete::Command::slotAction()
 	QString args;
 	if( m_minArgs > 0 )
 	{
-		args = KInputDialog::getText( i18n("Enter Arguments"), i18n("Enter the arguments to %1:").arg(m_command) );
+		args = KInputDialog::getText( i18n("Enter Arguments"), i18n("Enter the arguments to %1:", m_command) );
 		if( args.isNull() )
 			return;
 	}
@@ -99,23 +99,23 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 	QStringList mArgs = Kopete::CommandHandler::parseArguments( args );
 	if( m_processing )
 	{
-		printError( i18n("Alias \"%1\" expands to itself.").arg( text() ), manager, gui );
+		printError( i18n("Alias \"%1\" expands to itself.", text() ), manager, gui );
 	}
 	else if( mArgs.count() < m_minArgs )
 	{
-		printError( i18n("\"%1\" requires at least %n argument.",
-			"\"%1\" requires at least %n arguments.", m_minArgs)
-			.arg( text() ), manager, gui );
+		printError( i18np("\"%1\" requires at least %n argument.",
+			"\"%1\" requires at least %n arguments.", m_minArgs,
+			  text() ), manager, gui );
 	}
 	else if( m_maxArgs > -1 && (int)mArgs.count() > m_maxArgs )
 	{
-		printError( i18n("\"%1\" has a maximum of %n argument.",
-			"\"%1\" has a maximum of %n arguments.", m_minArgs)
-			.arg( text() ), manager, gui );
+		printError( i18np("\"%1\" has a maximum of %n argument.",
+			"\"%1\" has a maximum of %n arguments.", m_minArgs,
+			  text() ), manager, gui );
 	}
 	else if( !KAuthorized::authorizeKAction( name() ) )
 	{
-		printError( i18n("You are not authorized to perform the command \"%1\".").arg(text()), manager, gui );
+		printError( i18n("You are not authorized to perform the command \"%1\".", text()), manager, gui );
 	}
 	else
 	{

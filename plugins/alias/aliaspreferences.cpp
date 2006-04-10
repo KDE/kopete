@@ -324,7 +324,7 @@ void AliasPreferences::slotAddAlias()
 		{
 			KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. An"
 					" alias name cannot contain the characters \"_\" or \"=\"."
-					"</qt>").arg(alias),i18n("Invalid Alias Name") );
+					"</qt>", alias),i18n("Invalid Alias Name") );
 		}
 		else
 		{
@@ -342,7 +342,7 @@ void AliasPreferences::slotAddAlias()
 				{
 					KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This "
 						"command is already being handled by either another alias or "
-						"Kopete itself.</qt>").arg(alias), i18n("Could Not Add Alias") );
+						"Kopete itself.</qt>", alias), i18n("Could Not Add Alias") );
 					return;
 				}
 			}
@@ -413,7 +413,7 @@ void AliasPreferences::slotEditAlias()
 			{
 				KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. An"
 						" alias name cannot contain the characters \"_\" or \"=\"."
-						"</qt>").arg(alias),i18n("Invalid Alias Name") );
+						"</qt>", alias),i18n("Invalid Alias Name") );
 			}
 			else
 			{
@@ -438,7 +438,7 @@ void AliasPreferences::slotEditAlias()
 						{
 							KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This "
 							"command is already being handled by either another alias or "
-							"Kopete itself.</qt>").arg(alias), i18n("Could Not Add Alias") );
+							"Kopete itself.</qt>", alias), i18n("Could Not Add Alias") );
 						return;
 						}
 					}

@@ -116,8 +116,8 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	if ( message.type () == "error" )
 	{
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
-										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
-										arg ( message.body () ).arg ( message.error().text ),
+										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+										  message.body (), message.error().text ),
 										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewType );
 	}
 	else

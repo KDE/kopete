@@ -397,7 +397,7 @@ void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 	if ( !ack )
 	{
 		Kopete::Message m = m_messagesSent[ id ];
-		QString body = i18n( "The following message has not been sent correctly:\n%1" ).arg( m.plainBody() );
+		QString body = i18n( "The following message has not been sent correctly:\n%1", m.plainBody() );
 		Kopete::Message msg = Kopete::Message( m.to().first(), members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 		appendMessage( msg );
 		//stop the stupid animation
@@ -455,8 +455,8 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 
 				QString body = i18n(
 					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
-					"The invitation was: %2" )
-						.arg( c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
+					"The invitation was: %2",
+						c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
 				Kopete::Message tmpMsg = Kopete::Message( c , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
 				appendMessage(tmpMsg);
 
@@ -618,7 +618,7 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 		if (  notifyNewChat  )
 		{
 			// this internal message should open the window if they not exist
-			QString body = i18n( "%1 has started a chat with you" ).arg( c->metaContact()->displayName() );
+			QString body = i18n( "%1 has started a chat with you", c->metaContact()->displayName() );
 			Kopete::Message tmpMsg = Kopete::Message( c, members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 			appendMessage( tmpMsg );
 		}
@@ -706,14 +706,14 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 		else
 			m=m_messagesSent.begin().data();
 		
-		QString body=i18n("The following message has not been sent correctly  (%1): \n%2").arg(reason, m.plainBody());
+		QString body=i18n("The following message has not been sent correctly  (%1): \n%2", reason, m.plainBody());
 		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage(msg);
 	}
 	else
 	{
 		Kopete::Message m;
-		QString body=i18n("These messages have not been sent correctly (%1): <br /><ul>").arg(reason);
+		QString body=i18n("These messages have not been sent correctly (%1): <br /><ul>", reason);
 
 		QMap<unsigned int, Kopete::Message>::Iterator mapIt;
 		for (  mapIt = m_messagesSent.begin(); mapIt!=m_messagesSent.end(); mapIt = m_messagesSent.begin() )

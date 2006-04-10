@@ -40,8 +40,8 @@
 
 AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool /*modal*/,
                                       QWidget *parent, const char* name )
-	: KDialog( parent, i18n( "User Information on %1" )
-	               .arg( c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ),
+	: KDialog( parent, i18n( "User Information on %1" ,
+	                 c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ),
 	           Cancel | Ok | User1, 0, KGuiItem(i18n("&Update Nickname")) )
 {
 	setDefaultButton(KDialog::Ok);
@@ -136,7 +136,7 @@ void AIMUserInfoDialog::slotUpdateClicked()
 	{
 		//m_contact->rename(newNick);
 		//emit updateNickname(newNick);
-		setCaption(i18n("User Information on %1").arg(newNick));
+		setCaption(i18n("User Information on %1", newNick));
 	}
 
 }
@@ -153,7 +153,7 @@ void AIMUserInfoDialog::slotSaveClicked()
 		{
 			//m_contact->rename(newNick);
 			//emit updateNickname(newNick);
-			setCaption(i18n("User Information on %1").arg(newNick));
+			setCaption(i18n("User Information on %1", newNick));
 		}
 
 		mAccount->setUserProfile(userInfoEdit->text());

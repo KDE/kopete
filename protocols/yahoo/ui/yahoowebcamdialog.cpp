@@ -29,7 +29,7 @@
 #include <klocale.h>
 
 YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contactId ),
+: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1", contactId ),
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ )
 {
 	setInitialSize( QSize(320,290) );
@@ -89,15 +89,15 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 	switch ( reason )
 	{
 	case 1:
-		closeReason = i18n( "%1 has stopped broadcasting" ).arg( contactName ); break;
+		closeReason = i18n( "%1 has stopped broadcasting", contactName ); break;
 	case 2:
-		closeReason = i18n( "%1 has cancelled viewing permission" ).arg( contactName ); break;
+		closeReason = i18n( "%1 has cancelled viewing permission", contactName ); break;
 	case 3:
-		closeReason = i18n( "%1 has declined permission to view webcam" ).arg( contactName ); break;
+		closeReason = i18n( "%1 has declined permission to view webcam", contactName ); break;
 	case 4:
-		closeReason = i18n( "%1 does not have his/her webcam online" ).arg( contactName ); break;
+		closeReason = i18n( "%1 does not have his/her webcam online", contactName ); break;
 	default:
-		closeReason = i18n( "Unable to view the webcam of %1 for an unknown reason" ).arg( contactName);
+		closeReason = i18n( "Unable to view the webcam of %1 for an unknown reason", contactName);
 	}
 	m_imageContainer->clear();
 
@@ -110,7 +110,7 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 
 void YahooWebcamDialog::setViewer( const QStringList &viewer )
 {
-	QString s = i18n( "%1 viewer(s)" ).arg( viewer.size() );
+	QString s = i18n( "%1 viewer(s)", viewer.size() );
 	if( viewer.size() )
 	{
 		s += ": ";

@@ -64,7 +64,7 @@ void AutoReplaceConfig::load()
 
 QStringList AutoReplaceConfig::defaultAutoReplaceList()
 {
-    return QStringList::split( ",", i18n( "list_of_words_to_replace",
+    return QStringList::split( ",", i18nc( "list_of_words_to_replace",
 			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ) );
 }
 

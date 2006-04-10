@@ -359,7 +359,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 		msg.setBody( translated, msg.format() );
 		break;
 	case ShowOriginal:
-		msg.setBody( i18n( "%2\nAuto Translated: %1" ).arg( translated, msg.plainBody() ), msg.format() );
+		msg.setBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ), msg.format() );
 		break;
 	case ShowDialog:
 	{

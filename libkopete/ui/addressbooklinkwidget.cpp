@@ -74,7 +74,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
 {
 	QString message;
 	if ( mMetaContact )
-		message = i18n("Choose the corresponding entry for '%1'" ).arg( mMetaContact->displayName() );
+		message = i18n("Choose the corresponding entry for '%1'", mMetaContact->displayName() );
  	else
 		message = i18n("Choose the corresponding entry in the address book" );
 

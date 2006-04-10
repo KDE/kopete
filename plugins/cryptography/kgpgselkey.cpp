@@ -151,7 +151,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
       if (!tst.isEmpty() && (!dead))
       {
         K3ListViewItem *item=new K3ListViewItem(keysListpr,extractKeyName(tst));
-        K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, expiration: %3").arg(id).arg(tr).arg(val));
+        K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, expiration: %3", id, tr, val));
         sub->setSelectable(false);
         item->setPixmap(0,keyPair);
       }
