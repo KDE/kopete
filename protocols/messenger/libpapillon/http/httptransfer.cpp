@@ -28,7 +28,7 @@ public:
 	QHttpHeader *httpHeader;
 };
 
-HttpTransfer::HttpTransfer()
+HttpTransfer::HttpTransfer(HttpTransferType type)
  : d(new Private)
 {
 }
