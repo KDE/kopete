@@ -40,7 +40,7 @@
 #include <kprocess.h>
 #include <kprocio.h>
 #include <klocale.h>
-#include <kaccel.h>
+
 #include <k3listviewsearchline.h>
 #include <kactivelabel.h>
 #include <kaction.h>

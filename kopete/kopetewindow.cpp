@@ -44,7 +44,7 @@
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
 #include <kmenu.h>
-#include <kaccel.h>
+
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
