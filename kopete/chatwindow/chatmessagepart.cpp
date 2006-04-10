@@ -145,6 +145,9 @@ public:
 		DOM::Node node = m_chat->nodeUnderMouse();
 		Kopete::Contact *contact = m_chat->contactFromNode( node );
 		QString toolTipText;
+		
+		if(node.isNull())
+			return;
 
 		// this tooltip is attached to the viewport widget, so translate the node's rect
 		// into its coordinates.
@@ -367,14 +370,15 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
+	message.setBgOverride( d->bgOverride );
+	message.setFgOverride( d->fgOverride );
+	message.setRtfOverride( d->rtfOverride );
+	
 	// parse emoticons and URL now.
 	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
 	if( !restoring )
 		message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
 
-	message.setBgOverride( d->bgOverride );
-	message.setFgOverride( d->fgOverride );
-	message.setRtfOverride( d->rtfOverride );
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
 #endif
@@ -547,10 +551,11 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 			);
 		}
 	}
+#if 0  //disabled because it causes crash on exit  - Olivier 2006-03-31
 	QString nick = d->manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
-
+#endif
 	return retVal;
 }
 
@@ -580,7 +585,8 @@ const QString ChatMessagePart::styleHTML() const
 		"a{color:%8}a.visited{color:%9}"
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
 		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
-		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}" )
+		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}"
+		"p{margin:0;padding:0;}" /* some html messages are encapsuled into a <p> */ )
 		.arg( settings->chatBackgroundColor().name() )
 		.arg( settings->chatFont().family() )
 		.arg( settings->chatFont().pointSize() )

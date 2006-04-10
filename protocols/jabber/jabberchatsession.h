@@ -40,7 +40,9 @@ public:
 	JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 						   Kopete::ContactPtrList others, const QString &resource = "",
 						   const char *name = 0 );
-
+	
+	~JabberChatSession();
+	
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()

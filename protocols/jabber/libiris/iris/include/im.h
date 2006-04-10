@@ -50,7 +50,7 @@ namespace XMPP
 	typedef QList<Url> UrlList;
 	typedef QMap<QString, QString> StringMap;
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
-			ComposingEvent, CancelEvent } MsgEvent;
+			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
                                            
 	class Message
 	{

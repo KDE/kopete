@@ -37,6 +37,8 @@ class JabberGroupChatManager : public Kopete::ChatSession
 public:
 	JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,
 							 Kopete::ContactPtrList others, XMPP::Jid roomJid, const char *name = 0 );
+	
+	~JabberGroupChatManager();
 
 	/**
 	 * @brief Get the local user in the session
@@ -63,6 +65,8 @@ public:
 
 private slots:
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
+	
+
 
 private:
 	XMPP::Jid mRoomJid;

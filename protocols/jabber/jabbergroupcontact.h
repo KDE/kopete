@@ -95,6 +95,11 @@ private slots:
 	 * ask the user to change the nick, and change it
 	 */
 	void slotChangeNick();
+	
+	/**
+	 * a subcontact has been destroyed   (may happen when closing kopete)
+	 */
+	void slotSubContactDestroyed(Kopete::Contact*);
 
 private:
 
@@ -102,6 +107,7 @@ private:
 	QList<Kopete::MetaContact*> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
+	JabberBaseContact *mSelfContact;
 	QString mNick;
 };
 

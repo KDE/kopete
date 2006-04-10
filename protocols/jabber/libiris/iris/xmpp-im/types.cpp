@@ -547,28 +547,49 @@ Stanza Message::toStanza(Stream *stream) const
 			else
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
+		else if (d->type=="chat" || d->type=="groupchat")
+			s.appendChild(  s.createElement(NS_CHATSTATES , "active" ) );
 
+		bool need_x_event=false;
 		for(QList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));
+					need_x_event=true;
 					break;
 				case DeliveredEvent:
 					x.appendChild(s.createElement("jabber:x:event", "delivered"));
+					need_x_event=true;
 					break;
 				case DisplayedEvent:
 					x.appendChild(s.createElement("jabber:x:event", "displayed"));
+					need_x_event=true;
 					break;
 				case ComposingEvent: 
 					x.appendChild(s.createElement("jabber:x:event", "composing"));
+					need_x_event=true;
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "composing" ) ); 
 					break;
 				case CancelEvent:
-					// Add nothing
+					need_x_event=true;
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "paused" ) ); 
+					break;
+				case InactiveEvent:
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "inactive" ) ); 
+					break;
+				case GoneEvent:
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
 					break;
 			}
 		}
-		s.appendChild(x);
-	} 
+		if(need_x_event)  //we don't need to have the (empty) x:event element if this is only <gone> or <inactive>
+			s.appendChild(x);
+	}
+		
 
 	// xencrypted
 	if(!d->xencrypted.isEmpty())
@@ -598,6 +619,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	d->subject.clear();
 	d->body.clear();
 	d->thread = QString();
+	d->eventList.clear();
 
 	QDomElement root = s.element();
 
@@ -634,6 +656,33 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 					}
 				}
 			}
+			else if (e.namespaceURI() == NS_CHATSTATES)
+			{
+				if(e.tagName() == "active")
+				{
+					//like in JEP-0022  we let the client know that we can receive ComposingEvent
+					// (we can do that according to  4.6  of the JEP-0085)
+					d->eventList += ComposingEvent;
+					d->eventList += InactiveEvent;
+					d->eventList += GoneEvent;
+				}
+				else if (e.tagName() == "composing")
+				{
+					d->eventList += ComposingEvent;
+				}
+				else if (e.tagName() == "paused")
+				{
+					d->eventList += CancelEvent;
+				}
+				else if (e.tagName() == "inactive")
+				{
+					d->eventList += InactiveEvent;
+				}
+				else if (e.tagName() == "gone")
+				{
+					d->eventList += GoneEvent;
+				}
+			}
 			else {
 				//printf("extension element: [%s]\n", e.tagName().latin1());
 			}
@@ -667,7 +716,6 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	}
 	
     // events
-	d->eventList.clear();
 	nl = root.elementsByTagNameNS("jabber:x:event", "x");
 	if (nl.count()) {
 		nl = nl.item(0).childNodes();

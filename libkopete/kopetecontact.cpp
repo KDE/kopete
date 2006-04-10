@@ -719,7 +719,7 @@ QString Contact::toolTip() const
 			{
 				tip += i18nc("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
-						QUrl::toPercentEncoding( url ), Kopete::Message::escape( Qt::escape(url) ) );
+						QString(QUrl::toPercentEncoding( url )), Kopete::Message::escape( Qt::escape(url) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )

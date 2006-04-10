@@ -74,6 +74,14 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 }
 
+JabberChatSession::~JabberChatSession( )
+{
+	if ( account()->configGroup()->readBoolEntry ("SendEvents", true) &&
+			 account()->configGroup()->readBoolEntry ("SendGoneEvent", true) )
+		sendNotification( XMPP::GoneEvent );
+}
+
+
 void JabberChatSession::slotUpdateDisplayName ()
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
@@ -175,6 +183,16 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 			message.setEventId ( contact->lastReceivedMessageId () );
 			// store composing event depending on state
 			message.addEvent ( event );
+			
+			if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+			{	
+				message.setType ( "normal" );
+			}
+			else
+			{	
+				message.setType ( "chat" );
+			}
+
 	
 			// send message
 			account()->client()->sendMessage ( message );
@@ -250,7 +268,18 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().canXHTML() )
 				{
-					jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );
+					QString xhtmlBody = message.escapedBody();
+					
+					// According to JEP-0071 §8.9  it is only RECOMMANDED to replace \n with <br/>
+					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
+					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
+					//  see Bug 121627
+					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
+					// linebreak that are not interpreted.  - Olivier 2006-31-03
+					xhtmlBody.replace("\n","");
+							
+					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +">"+ xhtmlBody +"</p>";
+					jabberMessage.setXHTMLBody ( xhtmlBody );
 				}
         	}
 		}
@@ -297,6 +326,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 	}
 
 }
+
 
 #include "jabberchatsession.moc"
 

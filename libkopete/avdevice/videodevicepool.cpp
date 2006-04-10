@@ -38,6 +38,7 @@ namespace Kopete {
 namespace AV {
 
 VideoDevicePool *VideoDevicePool::s_self = NULL;
+int VideoDevicePool::m_clients = 0;
 
 VideoDevicePool* VideoDevicePool::self()
 {
@@ -45,6 +46,8 @@ VideoDevicePool* VideoDevicePool::self()
 	if (s_self == NULL)
 	{
 		s_self = new VideoDevicePool;
+		if (s_self)
+			m_clients = 0;
 	}
 //	kDebug() << "libkopete (avdevice): self() exited successfuly" << endl;
 	return s_self;

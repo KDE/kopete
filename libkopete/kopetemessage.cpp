@@ -206,6 +206,10 @@ void Message::setBody( const QString &body, MessageFormat f )
 
 		theBody.remove( QString::fromLatin1("\n") );
 	}
+	/*	else if( f == ParsedHTML )
+	{
+		kdWarning( 14000 ) << k_funcinfo << "using ParsedHTML which is internal !   message: " << body << kdBacktrace() << endl;
+	}*/
 
 	d->body=theBody;
 	d->format = f;
@@ -268,10 +272,16 @@ QString Message::plainBody() const
 QString Message::escapedBody() const
 {
 	QString escapedBody=d->body;
+//	kdDebug(14000) << k_funcinfo << escapedBody << " " << d->rtfOverride << endl;
 
 	if( d->format & PlainText )
 	{
 		escapedBody=escape( escapedBody );
+	}
+	else if( d->format & RichText && d->rtfOverride)
+	{
+		//remove the rich text
+		escapedBody = escape (unescape( escapedBody ) );
 	}
 
 	return escapedBody;
@@ -289,7 +299,7 @@ QString Message::parsedBody() const
 	{
 #warning Disable Emoticon parsing for now, it make QString cause a ASSERT error. (DarkShock)
 #if 0
-		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
+		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), RichText));
 #endif
 		return d->body;
 	}

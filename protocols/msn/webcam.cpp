@@ -502,12 +502,8 @@ QString Webcam::xml(uint session , uint rid)
 		ip+=QString("<tcpipaddress%1>%2</tcpipaddress%3>").arg(ip_number).arg(*it).arg(ip_number);
 		++ip_number;
 	}
-	
-	KConfig *config = KGlobal::config();
-	config->setGroup( "MSN" );
-	QString port=config->readEntry("WebcamPort" );
-	if(port.isEmpty() || port == "0" )
-		port="6891";
+
+        QString port = QString::number(getAvailablePort());
 	
 	m_listener = new KServerSocket(port, this) ;
 	
@@ -516,6 +512,40 @@ QString Webcam::xml(uint session , uint rid)
 			"<udp><udplocalport>7786</udplocalport><udpexternalport>31863</udpexternalport><udpexternalip>"+ ip +"</udpexternalip><a1_port>31859</a1_port><b1_port>31860</b1_port><b2_port>31861</b2_port><b3_port>31862</b3_port><symmetricallocation>1</symmetricallocation><symmetricallocationincrement>1</symmetricallocationincrement><udpversion>1</udpversion><udpinternalipaddress1>127.0.0.1</udpinternalipaddress1></udp>"+
 			"<codec></codec><channelmode>1</channelmode></"+who+">\r\n\r\n";
 }
+
+int Webcam::getAvailablePort()
+{
+    KConfig *config = KGlobal::config();
+    config->setGroup( "MSN" );
+    QString basePort=config->readEntry("WebcamPort");
+    if(basePort.isEmpty() || basePort == "0" )
+		basePort="6891";
+	
+    uint firstport = basePort.toInt();
+    uint maxOffset=config->readUnsignedNumEntry("WebcamMaxPortOffset", 10);
+    uint lastport = firstport + maxOffset;
+
+	// try to find an available port
+	//
+    KServerSocket *ss = new KServerSocket();
+    ss->setFamily(KResolver::InetFamily);
+    bool found = false;
+	unsigned int port = firstport;
+    for( ; port <= lastport; ++port) {
+		ss->setAddress( QString::number( port ) );
+		bool success = ss->listen();
+		if( found = ( success && ss->error() == KSocketBase::NoError ) )
+			break;
+		ss->close();
+    }
+	delete ss;
+	
+
+    kdDebug(14140) << k_funcinfo<< "found available port : " << port << endl;
+
+	return port;
+}
+
 
 /* ---------- Now functions about the dirrect connection  --------- */
 

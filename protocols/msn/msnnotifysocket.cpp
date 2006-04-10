@@ -914,9 +914,13 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			actions.append(i18n("Manage Subscription"));
 			m_msnAlertURLs.append(subscString);
 
-			KNotification* notification = KNotification::event("msn_alert", textString, 0L, 0L, actions);
-			QObject::connect(notification, SIGNAL(activated(unsigned int)), this, SLOT(slotMSNAlertLink(unsigned int)));
-			QObject::connect(notification, SIGNAL(closed()), this, SLOT(slotMSNAlertUnwanted()));
+			// Don't do any MSN alerts notification for new blog updates
+			if( subscString != QString::fromLatin1("s.htm") && actionString != QString::fromLatin1("a.htm") )
+			{
+				KNotification* notification = KNotification::event("msn_alert", textString, 0L, 0L, actions);
+				QObject::connect(notification, SIGNAL(activated(unsigned int)), this, SLOT(slotMSNAlertLink(unsigned int)));
+				QObject::connect(notification, SIGNAL(closed()), this, SLOT(slotMSNAlertUnwanted()));
+			}
 		} // end for each MSG tag
 	}
 

@@ -333,6 +333,8 @@ void KopeteWindow::initActions()
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
 
+#warning Port KGlobalAccel stuff
+#if 0
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
 		Qt::CTRL + Qt::SHIFT + Qt::Key_I, /*Qt::META + Qt::CTRL + Qt::Key_I,*/ Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
@@ -345,6 +347,7 @@ void KopeteWindow::initActions()
 
 	globalAccel->readSettings();
 	globalAccel->updateConnections();
+#endif
 }
 
 void KopeteWindow::slotShowHide()
@@ -563,7 +566,7 @@ void KopeteWindow::slotConfigurePlugins()
 
 void KopeteWindow::slotConfGlobalKeys()
 {
-	KKeyDialog::configure( globalAccel, this ) ;
+	KKeyDialog::configure( actionCollection() );
 }
 
 void KopeteWindow::slotConfToolbar()
@@ -846,8 +849,8 @@ void KopeteWindow::makeTrayToolTip()
 			Kopete::Contact *self = a->myself();
 			tt += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
 			             "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>",
-				     a->protocol()->displayName(), a->accountLabel(), QUrl::toPercentEncoding( a->protocol()->pluginId() ),
-				     QUrl::toPercentEncoding( a->accountId() ), self->onlineStatus().description() );
+				     a->protocol()->displayName(), a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
+				     QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
 		}
 		tt += QString::fromLatin1("</qt>");
 		QToolTip::add(m_tray, tt);

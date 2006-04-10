@@ -163,6 +163,7 @@ public slots:
 	void addTransport( JabberTransport *tr ,  const QString &jid);
 	void removeTransport( const QString &jid );
 
+
 protected:
 	/**
 	 * Create a new contact in the specified metacontact

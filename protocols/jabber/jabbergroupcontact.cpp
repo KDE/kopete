@@ -51,12 +51,12 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * because we need to set this contact as myself() of the message
 	 * manager).
 	 */
-	JabberBaseContact *subContact = addSubContact ( rosterItem );
+	mSelfContact = addSubContact ( rosterItem );
 
 	/**
 	 * Instantiate a new message manager without members.
 	 */
-	mManager = new JabberGroupChatManager ( protocol (), subContact,
+	mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
 											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
@@ -72,6 +72,17 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * is empty. This makes at least the history plugin crash.
 	 */
 	mManager->addContact ( this );
+	
+	
+	
+	/**
+	 * Let's construct the window:
+	 *  otherwise, the ref count of maznager is equal to zero. 
+	 *   and if we receive a message before the window is shown,
+	 *   it will be deleted and we will be out of the channel
+	 * In all case, there are no reason to don't show it.
+	 */
+	mManager->view( true , "kopete_chatwindow" );
 }
 
 JabberGroupContact::~JabberGroupContact ()
@@ -79,21 +90,24 @@ JabberGroupContact::~JabberGroupContact ()
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
-	delete mManager;
-	mManager=0l;
-
+	if(mManager) 
+	{
+		mManager->deleteLater();
+	}
+	
 	foreach ( Kopete::Contact *contact,  mContactList )
 	{
+		/*if(mManager)
+		mManager->removeContact( contact );*/
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
-		delete contact;
+		contact->deleteLater();
 	}
 
 	foreach ( Kopete::MetaContact *metaContact, mMetaContactList )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
-		delete metaContact;
+		metaContact->deleteLater();
 	}
-
 }
 
 QList<KAction*> *JabberGroupContact::customContextMenuActions ()
@@ -106,22 +120,32 @@ QList<KAction*> *JabberGroupContact::customContextMenuActions ()
 	return actionCollection;
 }
 
-Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
+Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
+	if(!mManager && canCreate == Kopete::Contact::CanCreate)
+	{
+		kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "somehow, the chat manager was removed, and the contact is still there" << endl;
+		mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
+				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
 
+		mManager->addContact ( this );
+		
+		connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
+		
+		//if we have to recreate the manager, we probably have to connect again to the chat.
+		slotStatusChanged();
+	}
 	return mManager;
 
 }
 
 void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	if(!mManager)  //NOTE:  in theory, we should create it.
-		return; 
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
-
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received a message"  << endl;
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -130,6 +154,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.body().isEmpty () )
 		return;
 
+	manager(CanCreate); //force to create mManager
+	
 	Kopete::ContactPtrList contactList;
 	contactList.append ( const_cast<JabberBaseContact*>(mManager->user ()) );
 
@@ -156,6 +182,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if ( !subContact )
 		{
+			kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
+			return;
 			/**
 			 * We couldn't find the contact for this message. That most likely means
 			 * that it originated from a history backlog or something similar and
@@ -211,6 +239,8 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 
 	// now, add the contact also to our own list
 	mContactList.append ( subContact );
+	
+	connect(subContact , SIGNAL(contactDestroyed(Kopete::Contact*)) , this , SLOT(slotSubContactDestroyed(Kopete::Contact*)));
 
 	return subContact;
 
@@ -340,6 +370,15 @@ void JabberGroupContact::slotChangeNick( )
 	
 	XMPP::Status status = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
 	account()->client()->changeGroupChatNick( rosterItem().jid().host() , rosterItem().jid().user()  , mNick , status);
+
+}
+
+void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full () << endl;
+
+	mMetaContactList.remove ( deadContact->metaContact () );
+	mContactList.remove ( deadContact );
 
 }
 

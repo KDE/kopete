@@ -46,6 +46,7 @@ public:
 	JabberBaseContact (const XMPP::RosterItem &rosterItem,
 					   Kopete::Account *account, Kopete::MetaContact * mc, 
 					   const QString &legacyId=QString());
+	~JabberBaseContact();
 
 	/********************************************************************
 	 *
@@ -61,7 +62,7 @@ public:
 	/**
 	 * Return the account instance associated with this contact
 	 */
-	JabberAccount *account () { return m_account; };
+	JabberAccount *account () const { return m_account; };
 	
 	/**
 	 * return the transport if any, or null

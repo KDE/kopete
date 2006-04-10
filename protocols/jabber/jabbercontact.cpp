@@ -119,6 +119,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
+	mRequestGoneEvent = false;
 	mDiscoDone = false;
 }
 
@@ -294,14 +295,25 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
 			}
+			else if (message.containsEvent ( XMPP::GoneEvent ) )
+			{
+				if(mManager->view( Kopete::Contact::CannotCreate ))
+				{   //show an internal message if the user has not already closed his window
+					Kopete::Message m=Kopete::Message ( this, mManager->members(),
+						i18n("%1 has ended their participation in the chat session.").arg(metaContact()->displayName()),
+						Kopete::Message::Internal  );
+					mManager->appendMessage ( m, message.from().resource () );
+				}
+			}
 		}
 		else
 		// Then here could be event notification requests
 		{
-			mRequestComposingEvent = message.containsEvent ( XMPP::ComposingEvent ) ? true : false;
-			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent ) ? true : false;
-			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent ) ? true : false;
-			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent) ? true : false;
+			mRequestComposingEvent = message.containsEvent ( XMPP::ComposingEvent );
+			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent );
+			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
+			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
+			mRequestGoneEvent= message.containsEvent ( XMPP::GoneEvent);
 		}
 	}
 
@@ -1463,6 +1475,8 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestComposingEvent;
 	else if ( event == CancelEvent )
 		return mRequestComposingEvent;
+	else if ( event == GoneEvent )
+		return mRequestGoneEvent;
 	else
 		return false;
 }

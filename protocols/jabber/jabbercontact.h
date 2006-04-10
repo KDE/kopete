@@ -257,16 +257,17 @@ private:
 	 * Indicates whether the vCard is currently
 	 * being updated or not.
 	 */
-	bool mVCardUpdateInProgress;
+	bool mVCardUpdateInProgress :1;
 
-	bool mRequestComposingEvent;
-	bool mRequestOfflineEvent;
-	bool mRequestDisplayedEvent;
-	bool mRequestDeliveredEvent;
+	bool mRequestComposingEvent :1;
+	bool mRequestOfflineEvent :1;
+	bool mRequestDisplayedEvent :1;
+	bool mRequestDeliveredEvent :1;
+	bool mRequestGoneEvent :1;
 	/**
 	 * tell if the disco#info has been done for this contact.
 	 */
-	bool mDiscoDone;
+	bool mDiscoDone :1;
 
 	QString mLastReceivedMessageId;
 	QTimer *m_syncTimer;
