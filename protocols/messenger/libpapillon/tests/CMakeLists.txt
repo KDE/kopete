@@ -18,7 +18,7 @@ set(connection_test_SRCS connection_test.cpp )
 
 kde4_automoc(${connection_test_SRCS})
 
-kde4_add_executable(connection_test ${connection_test_SRCS})
+kde4_add_executable(connection_test RUN_UNINSTALLED ${connection_test_SRCS})
 
 target_link_libraries(connection_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -27,7 +27,7 @@ set(connector_test_SRCS connector_test.cpp)
 
 kde4_automoc(${connector_test_SRCS})
 
-kde4_add_executable(connector_test ${connector_test_SRCS})
+kde4_add_executable(connector_test RUN_UNINSTALLED ${connector_test_SRCS})
 
 target_link_libraries(connector_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -36,7 +36,7 @@ set(papillon_console_SRCS papillon_console.cpp)
 
 kde4_automoc(${papillon_console_SRCS})
 
-kde4_add_executable(papillon_console ${papillon_console_SRCS})
+kde4_add_executable(papillon_console RUN_UNINSTALLED ${papillon_console_SRCS})
 
 target_link_libraries(papillon_console ${QT_QTGUI_LIBRARY} ${PAPILLON_TEST_LIBRARIES})
 
@@ -46,7 +46,7 @@ set(transfer_test_SRCS transfer_test.cpp )
 
 kde4_automoc(${transfer_test_SRCS})
 
-kde4_add_executable(transfer_test ${transfer_test_SRCS})
+kde4_add_executable(transfer_test RUN_UNINSTALLED ${transfer_test_SRCS})
 
 target_link_libraries(transfer_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -54,12 +54,11 @@ add_test(transfer_test ${EXECUTABLE_OUTPUT_PATH}/transfer_test)
 
 #####
 
-# Give me a linking error on MessengerCoreProtocol (which exists and exported).
 set( coreprotocol_test_SRCS coreprotocol_test.cpp )
 
 kde4_automoc( ${coreprotocol_test_SRCS} )
 
-kde4_add_executable(coreprotocol_test ${coreprotocol_test_SRCS})
+kde4_add_executable(coreprotocol_test RUN_UNINSTALLED ${coreprotocol_test_SRCS})
 
 target_link_libraries(coreprotocol_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -71,7 +70,7 @@ set( mimeheader_test_SRCS mimeheader_test.cpp )
 
 kde4_automoc( ${mimeheader_test_SRCS} )
 
-kde4_add_executable(mimeheader_test ${mimeheader_test_SRCS})
+kde4_add_executable(mimeheader_test RUN_UNINSTALLED ${mimeheader_test_SRCS})
 
 target_link_libraries(mimeheader_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -80,27 +79,6 @@ add_test(mimeheader_test ${EXECUTABLE_OUTPUT_PATH}/mimeheader_test)
 ### ENDIF ###
 endif(KDE4_BUILD_TESTS)
 
-########### install files ###############
-
+#############
 
 kde4_footer()
-
-
-
-#original Makefile.am contents follow:
-
-# AM_CPPFLAGS = -DQT_NO_ASCII_CAST -DQT_NO_COMPAT $(all_includes) -I./..
-#
-#METASOURCES = AUTO
-#
-#AM_LDFLAGS = $(QT_LDFLAGS) $(X_LDFLAGS)
-#LDADD = -lQtTest_debug ../libpapillon.la 
-#
-#noinst_PROGRAMS = connection_test
-#
-#check_PROGRAMS = transfer_test
-#TESTS = transfer_test
-#
-#transfer_test_SOURCES = transfer_test.cpp
-#
-#connection_test_SOURCES = connection_test.cpp
