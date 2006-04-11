@@ -76,6 +76,19 @@ target_link_libraries(mimeheader_test ${PAPILLON_TEST_LIBRARIES})
 
 add_test(mimeheader_test ${EXECUTABLE_OUTPUT_PATH}/mimeheader_test)
 
+
+#####
+
+set( httptransfer_test_SRCS httptransfer_test.cpp )
+
+kde4_automoc( ${httptransfer_test_SRCS} )
+
+kde4_add_executable(httptransfer_test RUN_UNINSTALLED ${httptransfer_test_SRCS})
+
+target_link_libraries(httptransfer_test ${PAPILLON_TEST_LIBRARIES})
+
+add_test(httptransfer_test ${EXECUTABLE_OUTPUT_PATH}/httptransfer_test)
+
 ### ENDIF ###
 endif(KDE4_BUILD_TESTS)
 

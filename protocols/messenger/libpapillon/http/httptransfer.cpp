@@ -59,9 +59,9 @@ HttpTransfer::~HttpTransfer()
 	delete d;
 }
 
-HttpTransfer::HttpTransferType HttpTransfer::transferType() const
+HttpTransfer::HttpTransferType HttpTransfer::type() const
 {
-	return d->type;	
+	return d->type;
 }
 
 bool HttpTransfer::isValid() const
@@ -136,6 +136,20 @@ int HttpTransfer::statusCode() const
 	Q_ASSERT(d->type & HttpResponse);
 
 	return static_cast<QHttpResponseHeader*>(d->httpHeader)->statusCode();
+}
+
+QString HttpTransfer::method() const
+{
+	Q_ASSERT(d->type & HttpRequest);
+
+	return static_cast<QHttpRequestHeader*>(d->httpHeader)->method();
+}
+
+QString HttpTransfer::path() const
+{
+	Q_ASSERT(d->type & HttpRequest);
+
+	return static_cast<QHttpRequestHeader*>(d->httpHeader)->path();
 }
 
 QByteArray HttpTransfer::body() const

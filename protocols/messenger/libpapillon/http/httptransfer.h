@@ -34,6 +34,7 @@ namespace Papillon
  */
 class PAPILLON_EXPORT HttpTransfer
 {
+public:
 	/**
 	 * @brief Determine the Transfer type.
 	 * HttpRequest: a HTTP request (with method GET or POST)
@@ -45,7 +46,6 @@ class PAPILLON_EXPORT HttpTransfer
 		HttpResponse
 	};
 
-public:
 	/**
 	 * @brief Build a new HttpTransfer.
 	 * By default it is set in HTTP request mode, because this is the kind of 
@@ -62,7 +62,7 @@ public:
 	 * @brief Get the current HttpTransfer type.
 	 * @return the current HttpTransfer type
 	 */
-	HttpTransferType transferType() const;
+	HttpTransferType type() const;
 
 	/**
 	 * @brief Check if the HttpTransfer is valid
@@ -113,28 +113,33 @@ public:
 	 * @return true if the header contains "Content-Length" key.
 	 */
 	bool hasContentLength() const;
+
 	/**
 	 * @brief Check if the header contains the "Content-Type" key.
 	 * @return true if the header contains "Content-Type" key.
 	 */
 	bool hasContentType() const;
+
 	/**
 	 * @brief Check if the header has the given key.
 	 * @param key the given key.
 	 * @return true if the given key was found.
 	 */
 	bool hasKey(const QString &key) const;
+
 	/**
 	 * @brief Get the header value for the given key.
 	 * @param key given key.
 	 * @return the value for the given key.
 	 */
 	QString value(const QString &key) const;
+
 	/**
 	 * @brief Get all the key: values.
 	 * @return all the key: values
 	 */
 	QList<QPair<QString, QString> > values() const;
+
 	/**
 	 * @brief Sets the value of the entry with the key to value.
 	 * If no entry with @p key exists, a new entry with the given @p key and value is created. 
@@ -143,6 +148,7 @@ public:
 	 * @param value value
 	 */
 	void setValue(const QString &key, const QString &value);
+
 	/**
 	 * @brief Sets the header entries to be the list of key value pairs in values.
 	 * @param values the values.
@@ -156,6 +162,20 @@ public:
 	 * @return the status code.
 	 */
 	int statusCode() const;
+
+	/**
+	 * @brief Get the HTTP method for the request
+	 * Use it only in HttpRequest mode.
+	 * @return the current method
+	 */
+	QString method() const;
+
+	/**
+	 * @brief Get the path used in the request.
+	 * Use it only in HttpRequest mode.
+	 * @return the path in the request.
+	 */
+	QString path() const;
 
 	/**
 	 * @brief Get the HTTP body
