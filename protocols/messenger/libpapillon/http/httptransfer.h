@@ -17,12 +17,18 @@
 
 #include <papillon_macros.h>
 
+#include <QtCore/QList>
+#include <QtCore/QPair>
+
+class QHttpHeader;
+
 namespace Papillon
 {
 
 /**
  * @brief HttpTransfer represent a transfer between a HTTP server.
- * Contains the HTTP header plus the data.
+ * This is wrapper around QHttpHeader and a body.
+ * Based on QHttpHeader classes.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
@@ -53,6 +59,37 @@ public:
 	~HttpTransfer();
 
 	/**
+	 * @brief Get the current HttpTransfer type.
+	 * @return the current HttpTransfer type
+	 */
+	HttpTransferType transferType() const;
+
+	/**
+	 * @brief Check if the HttpTransfer is valid
+	 * @return true if the HttpTransfer is valid.
+	 */
+	bool isValid() const;
+
+	/**
+	 * @brief Get the Content-Length value.
+	 * Use value in the HTTP header.
+	 * @return the content length.
+	 */
+	uint contentLength() const;
+
+	/**
+	 * @brief Get the Content-Type for this HTTP transfer.
+	 * @return
+	 */
+	QString contentType() const;
+	/**
+	 * @brief Set the Content-Type of the HTTP body.
+	 * Example are text/html, text/xml, image/png
+	 * @param contentType Content-Type as string.
+	 */
+	void setContentType(const QString &contentType);
+
+	/**
 	 * @brief Set the request details.
 	 * Only call this method in HttpRequest method.
 	 * This is a wrapper around QHttpRequestHeader::setRequest().
@@ -64,6 +101,74 @@ public:
 	 */
 	void setRequest(const QString &method, const QString &path, int majorVer = 1, int minorVer = 1);
 
+	/**
+	 * @brief Set a complete QHttpHeader.
+	 * Replace the internal QHttpHeader. The pointer is handled by this class afterwards.
+	 * @param header QHttpHeader to replace.
+	 */
+	void setHttpHeader(QHttpHeader *header);
+
+	/**
+	 * @brief Check if the header contains the "Content-Length" key.
+	 * @return true if the header contains "Content-Length" key.
+	 */
+	bool hasContentLength() const;
+	/**
+	 * @brief Check if the header contains the "Content-Type" key.
+	 * @return true if the header contains "Content-Type" key.
+	 */
+	bool hasContentType() const;
+	/**
+	 * @brief Check if the header has the given key.
+	 * @param key the given key.
+	 * @return true if the given key was found.
+	 */
+	bool hasKey(const QString &key) const;
+	/**
+	 * @brief Get the header value for the given key.
+	 * @param key given key.
+	 * @return the value for the given key.
+	 */
+	QString value(const QString &key) const;
+	/**
+	 * @brief Get all the key: values.
+	 * @return all the key: values
+	 */
+	QList<QPair<QString, QString> > values() const;
+	/**
+	 * @brief Sets the value of the entry with the key to value.
+	 * If no entry with @p key exists, a new entry with the given @p key and value is created. 
+	 * If an entry with the @p key already exists, the first value is discarded and replaced with the given value.
+	 * @param key Key
+	 * @param value value
+	 */
+	void setValue(const QString &key, const QString &value);
+	/**
+	 * @brief Sets the header entries to be the list of key value pairs in values.
+	 * @param values the values.
+	 */
+	void setValues(const QList<QPair<QString, QString> > &values);
+
+	/**
+	 * @brief Get the status code from the HTTP Response.
+	 * Only available in HttpResponse mode.
+	 *
+	 * @return the status code.
+	 */
+	int statusCode() const;
+
+	/**
+	 * @brief Get the HTTP body
+	 * @return the HTTP body.
+	 */
+	QByteArray body() const;
+	/**
+	 * @brief Set the HTTP body
+	 * Set the Content-Length value according to the body size.
+	 * @param body body to set to the transfer.
+	 */
+	void setBody(const QByteArray &body);
+	
 	/**
 	 * @brief Return the current transfer as a raw command.
 	 * It formats the HttpTransfer to be ready to be sent on a ByteStream.
