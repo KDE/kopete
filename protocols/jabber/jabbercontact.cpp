@@ -300,7 +300,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				if(mManager->view( Kopete::Contact::CannotCreate ))
 				{   //show an internal message if the user has not already closed his window
 					Kopete::Message m=Kopete::Message ( this, mManager->members(),
-						i18n("%1 has ended their participation in the chat session.").arg(metaContact()->displayName()),
+						i18n("%1 has ended their participation in the chat session.", metaContact()->displayName()),
 						Kopete::Message::Internal  );
 					mManager->appendMessage ( m, message.from().resource () );
 				}
