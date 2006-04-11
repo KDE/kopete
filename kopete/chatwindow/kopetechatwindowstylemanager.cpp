@@ -215,6 +215,16 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 // 					kdDebug() << k_funcinfo << "Contents/Resources/Header.html found" << endl;
 					validResult += 1;
 				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Incoming/Content.html")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Incoming/Content.html found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Outgoing/Content.html")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Outgoing/Content.html found" << endl;
+					validResult += 1;
+				}
 			}
 		}
 	}
