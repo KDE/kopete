@@ -89,6 +89,18 @@ target_link_libraries(httptransfer_test ${PAPILLON_TEST_LIBRARIES})
 
 add_test(httptransfer_test ${EXECUTABLE_OUTPUT_PATH}/httptransfer_test)
 
+######
+
+set( httpcoreprotocol_test_SRCS httpcoreprotocol_test.cpp )
+
+kde4_automoc( ${httpcoreprotocol_test_SRCS} )
+
+kde4_add_executable(httpcoreprotocol_test RUN_UNINSTALLED ${httpcoreprotocol_test_SRCS})
+
+target_link_libraries(httpcoreprotocol_test ${PAPILLON_TEST_LIBRARIES})
+
+add_test(httpcoreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/httpcoreprotocol_test)
+
 ### ENDIF ###
 endif(KDE4_BUILD_TESTS)
 

@@ -29,6 +29,7 @@ set(papillon_http_SRCS
 http/securestream.cpp 
 http/tweenerhandler.cpp 
 http/httptransfer.cpp 
+http/httpcoreprotocol.cpp 
 )
 
 set(papillon_tasks_SRCS 
