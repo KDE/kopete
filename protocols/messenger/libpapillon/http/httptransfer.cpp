@@ -25,7 +25,7 @@ class HttpTransfer::Private
 {
 public:
 	Private()
-	 : httpHeader(0)
+	 : type(HttpTransfer::HttpRequest), httpHeader(0)
 	{}
 
 	~Private()
@@ -86,14 +86,27 @@ void HttpTransfer::setContentType(const QString &contentType)
 
 void HttpTransfer::setRequest(const QString &method, const QString &path, int majorVer, int minorVer)
 {
-	Q_ASSERT(d->type & HttpRequest);
+	Q_ASSERT(type() == HttpTransfer::HttpRequest);
 
 	static_cast<QHttpRequestHeader*>(d->httpHeader)->setRequest(method, path, majorVer, minorVer);
 }
 
-void HttpTransfer::setHttpHeader(QHttpHeader *header)
+void HttpTransfer::setHttpHeader(const QHttpRequestHeader &header)
 {
-	*d->httpHeader = *header;
+	Q_ASSERT(type() == HttpTransfer::HttpRequest);
+
+	// Operator= is not virtual so we need to cast to derivate here.
+	QHttpRequestHeader *requestHeader = static_cast<QHttpRequestHeader*>(d->httpHeader);
+	requestHeader->operator=(header);
+}
+
+void HttpTransfer::setHttpHeader(const QHttpResponseHeader &header)
+{
+	Q_ASSERT(type() == HttpTransfer::HttpResponse);
+
+	// Operator= is not virtual so we need to cast to derivate here.
+	QHttpResponseHeader *responseHeader = static_cast<QHttpResponseHeader*>(d->httpHeader);
+	responseHeader->operator=(header);
 }
 
 bool HttpTransfer::hasContentLength() const
@@ -133,21 +146,21 @@ void HttpTransfer::setValues(const QList<QPair<QString, QString> > &values)
 
 int HttpTransfer::statusCode() const
 {
-	Q_ASSERT(d->type & HttpResponse);
+	Q_ASSERT(d->type == HttpResponse);
 
 	return static_cast<QHttpResponseHeader*>(d->httpHeader)->statusCode();
 }
 
 QString HttpTransfer::method() const
 {
-	Q_ASSERT(d->type & HttpRequest);
+	Q_ASSERT(d->type == HttpRequest);
 
 	return static_cast<QHttpRequestHeader*>(d->httpHeader)->method();
 }
 
 QString HttpTransfer::path() const
 {
-	Q_ASSERT(d->type & HttpRequest);
+	Q_ASSERT(d->type == HttpRequest);
 
 	return static_cast<QHttpRequestHeader*>(d->httpHeader)->path();
 }
@@ -168,7 +181,6 @@ QByteArray HttpTransfer::toRawCommand()
 	QByteArray result;
 
 	result += d->httpHeader->toString().toUtf8();
-	result += QByteArray("\r\n");
 	result += d->body;
 
 	return result;

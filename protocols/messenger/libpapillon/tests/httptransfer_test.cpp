@@ -16,7 +16,9 @@
 
 // Qt includes
 #include <QtTest/QtTest>
+#include <QtDebug>
 #include <QtCore/QLatin1String>
+#include <QtNetwork/QHttpResponseHeader>
 
 // Papillon includes
 #include "httptransfer.h"
@@ -39,11 +41,25 @@ void HttpTransfer_Test::testHttpRequest()
 
 	QCOMPARE( request.contentType(), QString("text/html") );
 	QCOMPARE( request.contentLength(), (uint)testBody.size() );
+
+	qDebug() << request.toRawCommand();
 }
 
 void HttpTransfer_Test::testHttpResponse()
 {
+	HttpTransfer response(HttpTransfer::HttpResponse);
+	QHttpResponseHeader httpHeader(200, QLatin1String("Good request"));
 	
+	response.setHttpHeader(httpHeader);
+	response.setContentType( QLatin1String("text/html") );
+	response.setValue( QLatin1String("Cookie"), QLatin1String("fortune cookie") );
+	
+
+	qDebug() << response.toRawCommand();
+	QCOMPARE( (int)response.type(), (int)HttpTransfer::HttpResponse );
+	QCOMPARE( response.statusCode(), 200 );
+	QCOMPARE( response.contentType(), QString("text/html") );
+	QCOMPARE( response.value( QLatin1String("Cookie") ), QString("fortune cookie") );
 }
 
 

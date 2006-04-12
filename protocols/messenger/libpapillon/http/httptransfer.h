@@ -21,6 +21,8 @@
 #include <QtCore/QPair>
 
 class QHttpHeader;
+class QHttpRequestHeader;
+class QHttpResponseHeader;
 
 namespace Papillon
 {
@@ -102,11 +104,17 @@ public:
 	void setRequest(const QString &method, const QString &path, int majorVer = 1, int minorVer = 1);
 
 	/**
-	 * @brief Set a complete QHttpHeader.
-	 * Replace the internal QHttpHeader. The pointer is handled by this class afterwards.
-	 * @param header QHttpHeader to replace.
+	 * @brief Replace the internal HTTP header with the given HTTP header.
+	 * Replace the internal header with the given QHttpRequestHeader.
+	 * @param requestHeader QHttpRequestHeader to replace.
 	 */
-	void setHttpHeader(QHttpHeader *header);
+	void setHttpHeader(const QHttpRequestHeader &requestHeader);
+	/**
+	 * @brief Replace the internal HTTP header with the given HTTP header.
+	 * Same as above, but for QHttpResponseHeader.
+	 * @param responseHeader QHttpResponseHeader to replace.
+	 */
+	void setHttpHeader(const QHttpResponseHeader &responseHeader);
 
 	/**
 	 * @brief Check if the header contains the "Content-Length" key.
