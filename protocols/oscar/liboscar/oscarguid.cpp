@@ -15,6 +15,7 @@
 */
 
 #include "oscarguid.h"
+#include <QString>
 
 Oscar::Guid::Guid()
 {
@@ -23,6 +24,18 @@ Oscar::Guid::Guid()
 Oscar::Guid::Guid( const QByteArray& data )
 : m_data( data )
 {
+}
+
+Oscar::Guid::Guid( const QString& data )
+{
+	//get rid of the const
+	QString d(data);
+	//strip out dashes
+	d.remove( '-' );
+	//get each of the 16 2-char bytes
+	bool ok = 1;
+	for (int i=0; i<32 && ok; i+=2)
+		m_data.append( d.mid( i, 2 ).toShort( &ok, 16 ) );
 }
 
 Oscar::Guid::Guid( const Guid& other )

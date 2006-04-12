@@ -7,6 +7,7 @@ class GuidTest : public QObject
 {
 Q_OBJECT
 private slots:
+	void testConstructors();
 	void testSetData();
 	void testIsVaild();
 	void testCompare();

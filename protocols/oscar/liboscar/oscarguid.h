@@ -31,6 +31,8 @@ class Guid
 public:
 	Guid();
 	Guid( const QByteArray & data );
+	/** takes a string of hex values possibly separated by dashes */
+	Guid( const QString & data );
 	Guid( const Guid& other );
 
 	/** get the data as a bytearray for decoding */

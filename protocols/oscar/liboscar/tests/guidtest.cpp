@@ -5,6 +5,19 @@
 
 QTEST_MAIN( GuidTest )
 
+void GuidTest::testConstructors()
+{
+	QByteArray id = "0123456789abcdef";
+	Oscar::Guid g(id);
+	QVERIFY( g.isValid() );
+	QCOMPARE( g.data(), id );
+	Oscar::Guid h( QLatin1String( "0a-1b-2c" ) );
+	QVERIFY( ! h.isValid() );
+	Oscar::Guid i( QLatin1String( "30313233--3435-3637-3839-616263646566" ) );
+	QVERIFY( i.isValid() );
+	QCOMPARE( i.data(), id );
+}
+
 void GuidTest::testSetData()
 {
 	QByteArray id = "0123456789abcdef";
