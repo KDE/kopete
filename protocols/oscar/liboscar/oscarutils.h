@@ -46,20 +46,6 @@ KOPETE_EXPORT TLV findTLV( const Q3ValueList<TLV>&, int type );
 KOPETE_EXPORT bool updateTLVs( SSI& item, const Q3ValueList<TLV>& list );
 
 /**
- * Get the value of the capability that corresponds to the value
- * in the Capabilities enum
- * \return -1 if the capability isn't found
- * \return a non-negative number corresponding to the value of the 
- * capability in the Capabilities enum
- */
-int parseCap( char* cap );
-
-/**
- * Convert the capability to a string we can print
- */
-const QString capToString(char *cap);
-
-/**
  * Parse the character array for validness and a version string
  * \param buffer the buffer we'll be parsing for capabilities
  * \param versionString a QString reference that will contain the

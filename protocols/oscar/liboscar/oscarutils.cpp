@@ -80,31 +80,6 @@ bool Oscar::updateTLVs( SSI& item, const Q3ValueList<TLV>& list )
 	return changed;
 }
 
-int Oscar::parseCap( char* cap )
-{
-	int capflag = -1;
-	for (int i = 0; i < CAP_LAST; i++)
-	{
-		if (memcmp(&oscar_caps[i], cap, 16) == 0)
-		{
-			capflag = i;
-			break; // should only match once...
-		}
-	}
-	return capflag;
-}
-
-const QString Oscar::capToString( char* cap )
-{
-	QString dbg;
-
-	dbg.sprintf( "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-		cap[0], cap[1], cap[2], cap[3], cap[4], cap[5], cap[6], cap[7], cap[8], cap[9],
-		cap[10], cap[11], cap[12], cap[13], cap[14], cap[15] );
-
-	return dbg;
-}
-
 DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 {
 	//
@@ -115,28 +90,27 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 	
 	while(inbuf.length() >= 16)
 	{
-		QByteArray cap;
-		cap.duplicate( inbuf.getBlock(16) );
+		Guid cap( inbuf.getGuid() );
 		
 		for (int i=0; i < CAP_LAST; i++)
 		{
 			if (i == CAP_KOPETE)
 			{
-				if (memcmp(&oscar_caps[i], cap.data(), 12) == 0)
+				if ( oscar_caps[i].data().left(12) == cap.data().left(12) )
 				{
 					capflags |= (1 << i);
-					versionString.sprintf( "%d.%d.%d%d", cap.at(12), cap.at(13), cap.at(14), cap.at(15) );
+					versionString.sprintf( "%d.%d.%d%d", cap.data().at(12), cap.data().at(13), cap.data().at(14), cap.data().at(15) );
 					versionString.insert( 0, "Kopete " );
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Kopete version - " << versionString << endl;
 				}
 			}
 			else if (i == CAP_MICQ)
 			{
-				if (memcmp(&oscar_caps[i], cap.data(), 12) == 0)
+				if ( oscar_caps[i].data().left(12) == cap.data().left(12) )
 				{
 					kDebug(14150) << k_funcinfo << "MICQ version : <" <<
-						(int)cap[12] << ":" << (int)cap[13] << ":" <<
-						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
+						(int)cap.data()[12] << ":" << (int)cap.data()[13] << ":" <<
+						(int)cap.data()[14] << ":" << (int)cap.data()[15] << ">" << endl;
 					
 					capflags |= (1 << i);
 					
@@ -148,24 +122,24 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 			}
 			else if (i == CAP_SIMNEW)
 			{
-				if (memcmp(&oscar_caps[i], cap, 12) == 0)
+				if ( oscar_caps[i].data().left(12) == cap.data().left(12) )
 				{
 					kDebug(14150) << k_funcinfo << "SIM version : <" <<
-						(unsigned int)cap[12] << ":" << (unsigned int)cap[13] << ":" <<
-						(unsigned int)cap[14] << ":" << (unsigned int)cap[15] << ">" << endl;
+						(unsigned int)cap.data()[12] << ":" << (unsigned int)cap.data()[13] << ":" <<
+						(unsigned int)cap.data()[14] << ":" << (unsigned int)cap.data()[15] << ">" << endl;
 					capflags |= (1 << i);
 					versionString.sprintf("%d.%d.%d%d",
-					                      cap.at(12), cap.at(13), cap.at(14), cap.at(15));
+					                      cap.data().at(12), cap.data().at(13), cap.data().at(14), cap.data().at(15));
 					versionString.insert( 0, "SIM " );
 					break;
 				}
 			}
 			else if (i == CAP_SIMOLD)
 			{
-				if (memcmp(&oscar_caps[i], cap, 15) == 0)
+				if ( oscar_caps[i].data().left(15) == cap.data().left(15) )
 				{
-					int hiVersion = (cap[15] >> 6) - 1;
-					unsigned loVersion = cap[15] & 0x1F;
+					int hiVersion = (cap.data()[15] >> 6) - 1;
+					unsigned loVersion = cap.data()[15] & 0x1F;
 					kDebug(14150) << k_funcinfo << "OLD SIM version : <" <<
 						hiVersion << ":" << loVersion << endl;
 					capflags |= (1 << i);
@@ -174,7 +148,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 					break;
 				}
 			}
-			else if (memcmp(&oscar_caps[i], cap.data(), 16) == 0)
+			else if ( oscar_caps[i] == cap )
 			{
 				capflags |= (1 << i);
 				dbgCaps += capName(i);
