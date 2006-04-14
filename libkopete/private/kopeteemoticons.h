@@ -144,6 +144,19 @@ private:
 	 * an animation/pixmap has been found for it
 	 **/
 	void addIfPossible( const QString& filenameNoExt, const QStringList &emoticons );
+	
+	/**
+	 * uses the kopete's emoticons.xml  for the theme
+	 * @see initEmoticons
+	 */
+	void initEmoticon_emoticonsxml( const QString & filename);
+	
+	/**
+	 * uses the JEP-0038 xml description for the theme
+	 * @see initEmoticons
+	 */
+	void initEmoticon_JEP0038( const QString & filename);
+
 
 	struct Emoticon;
 	struct EmoticonNode;

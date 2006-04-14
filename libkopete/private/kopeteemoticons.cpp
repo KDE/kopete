@@ -2,7 +2,7 @@
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2005      by Engin AYDOGAN          <engin@bzzzt.biz>
 
    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
@@ -366,10 +366,19 @@ void Emoticons::initEmoticons( const QString &theme )
 	d->emoticonAndPicList.clear();
 	d->emoticonMap.clear();
 
-	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
+	QString filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
+	if(!filename.isEmpty())
+		return initEmoticon_emoticonsxml( filename );
+	filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/icondef.xml" ) );
+	if(!filename.isEmpty())
+		return initEmoticon_JEP0038( filename );
+	kdWarning(14010) << k_funcinfo << "emotiucon XML theme description not found" <<endl;
+}
 
-    QString filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
-
+void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
+{
+	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );	
+	
 	QFile mapFile( filename );
 	mapFile.open( IO_ReadOnly );
 	emoticonMap.setContent( &mapFile );
@@ -419,6 +428,77 @@ void Emoticons::initEmoticons( const QString &theme )
 	}
 	mapFile.close();
 }
+
+
+void Emoticons::initEmoticon_JEP0038( const QString & filename)
+{
+	QDomDocument emoticonMap( QString::fromLatin1( "icondef" ) );	
+	
+	QFile mapFile( filename );
+	mapFile.open( IO_ReadOnly );
+	emoticonMap.setContent( &mapFile );
+
+	QDomElement list = emoticonMap.documentElement();
+	QDomNode node = list.firstChild();
+	while( !node.isNull() )
+	{
+		QDomElement element = node.toElement();
+		if( !element.isNull() )
+		{
+			if( element.tagName() == QString::fromLatin1( "icon" ) )
+			{
+				QStringList items;
+				QString emoticon_file;
+
+				QDomNode emoticonNode = node.firstChild();
+				while( !emoticonNode.isNull() )
+				{
+					QDomElement emoticonElement = emoticonNode.toElement();
+					if( !emoticonElement.isNull() )
+					{
+						if( emoticonElement.tagName() == QString::fromLatin1( "text" ) )
+						{
+							//TODO xml:lang
+							items << emoticonElement.text();
+						}
+						else if( emoticonElement.tagName() == QString::fromLatin1( "object" ) )
+						{
+							QString mime= emoticonElement.attribute(
+									QString::fromLatin1( "mime" ), QString::fromLatin1("image/*") );
+							if(mime.startsWith(QString::fromLatin1("image/")) && !mime.endsWith(QString::fromLatin1("/svg+xml")))
+							{
+								emoticon_file = emoticonElement.text();
+							}
+							else
+							{
+								kdDebug(14010) << k_funcinfo <<	"Warning: Unsupported format '" << mime << endl;
+							}
+						}
+						/*else
+						{
+							kdDebug(14010) << k_funcinfo <<
+									"Warning: Unknown element '" << element.tagName() <<
+									"' in emoticon data" << endl;
+						}*/
+					}
+					emoticonNode = emoticonNode.nextSibling();
+				}
+				if( !items.isEmpty() && !emoticon_file.isEmpty() )
+					addIfPossible ( emoticon_file, items );
+			}
+			else
+			{
+				kdDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+						element.tagName() << "' in map file" << endl;
+			}
+		}
+		node = node.nextSibling();
+	}
+	mapFile.close();
+}
+
+
+
 
 
 QMap<QString, QString> Emoticons::emoticonAndPicList()
