@@ -176,13 +176,11 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint m
 			continue;
 		}
 
-		if ( mode & StrictParse )
-			//<br /> marks beginning of line
-			if ( !p.isSpace() && message.mid(pos - 6, 6) != QString::fromLatin1("<br />"))
-			{
-				p = c; 
-				continue; 
-			} /* strict requires space before the emoticon */
+		if ( (mode & StrictParse)  &&  !p.isSpace() && p != '>')
+		{  // '>' may mark the end of an html tag
+			p = c; 
+			continue; 
+		} /* strict requires space before the emoticon */
 		if ( d->emoticonMap.contains( c ) )
 		{
 			emoticonList = d->emoticonMap[ c ];
@@ -199,8 +197,7 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint m
 					/* check if the character after this match is space or end of string*/
 						n = message[ pos + needle.length() ];
 						//<br/> marks the end of a line
-						if( message.mid( pos + needle.length(), 3) != QString::fromLatin1("<br") && 
-								!n.isSpace() &&  !n.isNull() && n!= '&') 
+						if( n != '<' && !n.isSpace() &&  !n.isNull() && n!= '&') 
 							break;
 					}
 					/* Perfect match */
@@ -461,7 +458,7 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 							//TODO xml:lang
 							items << emoticonElement.text();
 						}
-						else if( emoticonElement.tagName() == QString::fromLatin1( "object" ) )
+						else if( emoticonElement.tagName() == QString::fromLatin1( "object" ) && emoticon_file.isEmpty() )
 						{
 							QString mime= emoticonElement.attribute(
 									QString::fromLatin1( "mime" ), QString::fromLatin1("image/*") );
