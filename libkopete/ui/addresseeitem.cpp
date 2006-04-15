@@ -39,7 +39,7 @@ AddresseeItem::AddresseeItem( Q3ListView *parent, const KABC::Addressee &address
     pic = mAddressee.logo();
   if(pic.isIntern())
   {
-    QPixmap qpixmap( pic.data().scaleWidth(60) ); //60 pixels seems okay.. kmail uses 60 btw
+    QPixmap qpixmap = QPixmap::fromImage( pic.data().scaledToWidth(60) ); //60 pixels seems okay.. kmail uses 60 btw
     setPixmap( Photo,qpixmap );
   }
 
@@ -52,7 +52,7 @@ QString AddresseeItem::key( int column, bool ) const
   if (column == Email) {
     QString value = text(Email);
     QRegExp emailRe(QString::fromLatin1("<\\S*>"));
-    int match = emailRe.search(value);
+    int match = emailRe.indexIn(value);
     if (match > -1)
       value = value.mid(match + 1, emailRe.matchedLength() - 2);
 

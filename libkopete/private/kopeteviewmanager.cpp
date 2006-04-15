@@ -101,7 +101,7 @@ KopeteViewManager::~KopeteViewManager()
     ManagerMap::Iterator it;
     for ( it = d->managerMap.begin(); it != d->managerMap.end(); ++it )
     {
-        it.data()->closeView( true ); //this does not clean the map, but we don't care
+        it.value()->closeView( true ); //this does not clean the map, but we don't care
     }
 
     delete d;
@@ -226,11 +226,11 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					msgFrom = msg.from()->metaContact()->displayName();
 				else
 					msgFrom = msg.from()->contactId();
-	
+
 				QString msgText = msg.plainBody();
 				if( msgText.length() > 90 )
 					msgText = msgText.left(88) + QString::fromLatin1("...");
-	
+
 				QString event;
 				KLocalizedString body = ki18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
 				switch( msg.importance() )
@@ -254,7 +254,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					{
 						contexts.append( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
 					}
-				} 
+				}
                 KNotification *notify=KNotification::event( event,
 						body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString(),
 						QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );

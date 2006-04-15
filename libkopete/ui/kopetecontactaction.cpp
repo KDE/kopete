@@ -21,33 +21,29 @@
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 
-
-KopeteContactAction::KopeteContactAction( Kopete::Contact *contact, const QObject *receiver,
-	const char *slot, KAction *parent )
-: KAction( contact->metaContact()->displayName(), QIcon( contact->onlineStatus().iconFor( contact ) ), KShortcut(),
-		   0,0,parent->parentCollection(), contact->contactId().toLatin1().data() )
+namespace Kopete
 {
-	m_contact = contact;
+namespace UI
+{
 
-	connect( this, SIGNAL( triggered(bool) ), SLOT( slotContactActionActivated() ) );
-	connect( this, SIGNAL( activated( Kopete::Contact * ) ), receiver, slot );
+ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* parent )
+: KAction( KIcon( contact->onlineStatus().iconFor( contact ) ),
+           contact->metaContact()->displayName(), parent,
+           contact->contactId() )
+{
+	setData( contact );
+	connect( this, SIGNAL( triggered( bool ) ),
+	         this, SLOT( slotTriggered( bool ) ) );
 }
 
-KopeteContactAction::~KopeteContactAction()
+void ContactAction::slotTriggered( bool checked )
 {
+	Kopete::Contact* contact = reinterpret_cast<Kopete::Contact*>(data().value<void*>());
+	emit triggered( contact, checked );
 }
 
-void KopeteContactAction::slotContactActionActivated()
-{
-	emit activated( m_contact );
 }
-
-Kopete::Contact * KopeteContactAction::contact() const
-{
-	return m_contact;
 }
-
-
 #include "kopetecontactaction.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

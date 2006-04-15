@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-//Added by qt3to4:
 #include <QCloseEvent>
 
 #include <klineedit.h>
@@ -24,6 +23,7 @@
 #include <kfiledialog.h>
 #include <kpushbutton.h>
 #include <kmessagebox.h>
+#include <kguiitem.h>
 
 //#include "kopetetransfermanager.h"
 #include "fileconfirmbase.h"
@@ -33,11 +33,14 @@
 #include "kopetecontact.h"
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo &info,const QString& description,QWidget *parent, const char *name )
-: KDialogBase( parent, name, false, i18n( "A User Would Like to Send You a File" ),
-	KDialogBase::User1 | KDialogBase::User2, KDialogBase::User1, true, i18n( "&Refuse" ), i18n( "&Accept" ) ),
+: KDialog( parent, i18n( "A User Would Like to Send You a File" ),
+	KDialog::User1 | KDialog::User2, 0, i18n( "&Refuse" ), i18n( "&Accept" ) ),
 	m_info( info )
 {
-    setAttribute( Qt::WA_DeleteOnClose );
+	setObjectName(name);
+	setEscapeButton( KDialog::User1 );
+	setDefaultButton( KDialog::User2 );
+	setAttribute( Qt::WA_DeleteOnClose );
 	m_emited=false;
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
@@ -111,7 +114,7 @@ void KopeteFileConfirmDialog::closeEvent( QCloseEvent *e)
 		m_emited=true;
 		emit refused(m_info);
 	}
-	KDialogBase::closeEvent(e);
+	KDialog::closeEvent(e);
 }
 
 #include "kopetefileconfirmdialog.moc"

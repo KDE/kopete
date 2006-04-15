@@ -21,12 +21,12 @@
 
 #include <kdemacros.h>
 #include "kopete_export.h"
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <q3listview.h>
 namespace KABC
 {
-		class AddressBook;
-		class Addressee;
+	class AddressBook;
+	class Addressee;
 }
 
 namespace Kopete
@@ -39,36 +39,38 @@ class AddressBookSelectorWidget;
 /**
  * A dialog that uses AddressBookSelectorWidget to allow the user
  * to select a KDE addressbook contact. If you want to use special features
- * you can use @see addressBookSelectorWidget() to get the pointer to the 
+ * you can use @see addressBookSelectorWidget() to get the pointer to the
  * AddressBookSelectorWidget object and set the desired options there.
  *
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
-class KOPETE_EXPORT AddressBookSelectorDialog : public KDialogBase
+class KOPETE_EXPORT AddressBookSelectorDialog : public KDialog
 {
 	Q_OBJECT
 public:
-   /**
+	/**
 	* The constructor of an empty AddressBookSelectorWidget
 	*/
-	AddressBookSelectorDialog( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent=0L, const char *name=0L, bool modal = false );
-   /**
+	AddressBookSelectorDialog( const QString &title, const QString &message,
+	                           const QString &preSelectUid, QWidget *parent = 0L,
+	                           const char *name=0L, bool modal = false );
+	/**
 	* The destructor of the dialog
 	*/
 	~AddressBookSelectorDialog();
 
-   /**
+	/**
 	* @returns the AddressBookSelectorWidget widget so that additional
 	* parameters can be set by using it.
 	*/
 	AddressBookSelectorWidget *addressBookSelectorWidget() const
 	{ return m_addressBookSelectorWidget; };
 
-   /**
+	/**
 	* Creates a modal dialog, lets the user to select a addressbook contact
 	* and returns when the dialog is closed.
 	*
-	* @returns the selected contact, or a null addressee if the user 
+	* @returns the selected contact, or a null addressee if the user
 	* pressed the Cancel button. Optionally
 	*/
 	static KABC::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = 0L );

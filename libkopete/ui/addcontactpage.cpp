@@ -17,8 +17,9 @@
 
 #include "addcontactpage.h"
 
-AddContactPage::AddContactPage(QWidget *parent, const char *name ) : QWidget(parent,name)
+AddContactPage::AddContactPage(QWidget *parent, const char *name ) : QWidget(parent)
 {
+	setObjectName( name );
 }
 
 AddContactPage::~AddContactPage()

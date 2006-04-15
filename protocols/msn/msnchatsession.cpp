@@ -85,18 +85,18 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), "bell", 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
 	// Invite to receive webcam action
 	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive()), actionCollection(), "msnWebcamReceive" ) ;
-	
+
 	//Send webcam action
 	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend()), actionCollection(), "msnWebcamSend" ) ;
-	
-	
+
+
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
 
 	if ( !c->object().isEmpty() )
 	{
-		
+
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L );
 		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
@@ -117,7 +117,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	}
 
 	setXMLFile("msnchatui.rc");
-	
+
 	setMayInvite( true );
 }
 
@@ -145,7 +145,7 @@ void MSNChatSession::createChat( const QString &handle,
 	 * and the contact take much time to type his message
 	 m_newSession= !(ID.isEmpty());
 	*/
-	
+
 	if( m_chatService )
 	{
 		kDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
@@ -180,7 +180,7 @@ void MSNChatSession::createChat( const QString &handle,
 	connect( m_chatService, SIGNAL( nudgeReceived(const QString&) ),
 		this, SLOT( slotNudgeReceived(const QString&) ) );
 	connect( m_chatService, SIGNAL( errorMessage(int, const QString& ) ), static_cast<MSNAccount *>(myself()->account()), SLOT( slotErrorMessageReceived(int, const QString& ) ) );
-	
+
 	if(!m_timeoutTimer)
 	{
 		m_timeoutTimer=new QTimer(this);
@@ -193,14 +193,14 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 {
 	delete m_timeoutTimer;
 	m_timeoutTimer=0L;
-	
+
 	if( !account()->contacts()[ handle ] )
 		account()->addContact( handle, QString::null, 0L, Kopete::Account::Temporary);
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
 	c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
-	
+
 	if(c->clientFlags() & MSNProtocol::MSNC4 )
 	{
 		m_actionNudge->setEnabled(true);
@@ -250,12 +250,12 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		}
 		else if( id== -2 ) //the message has not been sent
 		{
-			//FIXME:  tell the what window the message has been processed. but we havent't sent it 
+			//FIXME:  tell the what window the message has been processed. but we havent't sent it
 			messageSucceeded();  //that should stop the blonking icon.
 		}
 		else if( id == -3) //the message has been sent as an immge
 		{
-			appendMessage(message); 
+			appendMessage(message);
 			messageSucceeded();
 		}
 		else
@@ -293,26 +293,27 @@ void MSNChatSession::slotActionInviteAboutToShow()
 {
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
-	
+
 	qDeleteAll(m_inviteactions);
 	m_inviteactions.clear();
 
 	m_actionInvite->popupMenu()->clear();
 
-	
+
 	QHash<QString, Kopete::Contact*> contactList = account()->contacts();
 	QHash<QString, Kopete::Contact*>::Iterator it, itEnd = contactList.end();
 	for( it = contactList.begin(); it != itEnd; ++it )
 	{
 		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
 		{
-			KAction *a=new KopeteContactAction( it.value(), this,
-				SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
+			KAction *a = new Kopete::UI::ContactAction( it.value(), m_actionInvite->parentCollection() );
 			m_actionInvite->insert( a );
 			m_inviteactions.append( a ) ;
 		}
 	}
-	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ),0, "actionOther" );
+	KAction *b = new KAction( QIcon(), i18n ("Other..."), m_actionInvite->parentCollection(), "actionOther" );
+	QObject::connect( b, SIGNAL( triggered( bool ) ),
+	                  this, SLOT( slotInviteOtherContact() ) );
 	m_actionInvite->insert( b );
 	m_inviteactions.append( b ) ;
 }
@@ -401,7 +402,7 @@ void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 		Kopete::Message msg = Kopete::Message( m.to().first(), members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 		appendMessage( msg );
 		//stop the stupid animation
-		messageSucceeded();  
+		messageSucceeded();
 	}
 	else
 	{
@@ -508,7 +509,7 @@ void MSNChatSession::slotRequestPicture()
 	MSNContact *c = static_cast<MSNContact*>( mb.first() );
 	if(!c)
 	 return;
-	
+
 	if( !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 	{
 		if(m_chatService)
@@ -544,7 +545,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 			{
 				//We connected that in the constructor.  we don't need to keep this slot active.
 				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
-			
+
 
 				KAction *imgAction=actionCollection()->action("msnDisplayPicture");
 				if(imgAction)
@@ -579,7 +580,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 			QToolTip::add( m_image, "<qt><img src=\"" + imgURL + "\"></qt>" );
 #endif
 		}
-		else 
+		else
 		{
 			KConfig *config = KGlobal::config();
 			config->setGroup( "MSN" );
@@ -633,7 +634,7 @@ void MSNChatSession::slotSendNudge()
 	if(m_chatService)
 	{
 		m_chatService->sendNudge();
-		Kopete::Message msg = Kopete::Message( myself(), members() , i18n ( "has sent a nudge" ),  Kopete::Message::Outbound, 
+		Kopete::Message msg = Kopete::Message( myself(), members() , i18n ( "has sent a nudge" ),  Kopete::Message::Outbound,
 											   Kopete::Message::PlainText, QString(), Kopete::Message::TypeAction );
 		appendMessage( msg );
 
@@ -646,7 +647,7 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 	Kopete::Contact *c = account()->contacts()[ handle ] ;
 	if(!c)
 		c=members().first();
-	Kopete::Message msg = Kopete::Message(c, myself(), i18n ( "has sent you a nudge" ), Kopete::Message::Inbound, 
+	Kopete::Message msg = Kopete::Message(c, myself(), i18n ( "has sent you a nudge" ), Kopete::Message::Inbound,
 										  Kopete::Message::PlainText, QString(), Kopete::Message::TypeAction );
 	appendMessage( msg );
 	// Emit the nudge/buzz notification (configured by user).
@@ -680,7 +681,7 @@ void MSNChatSession::startChatSession()
 {
 	QList<Kopete::Contact*> mb=members();
 	static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
-	
+
 	if(!m_timeoutTimer)
 	{
 		m_timeoutTimer=new QTimer(this);
@@ -705,7 +706,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 			m=m_messagesQueue.first();
 		else
 			m=m_messagesSent.begin().data();
-		
+
 		QString body=i18n("The following message has not been sent correctly  (%1): \n%2", reason, m.plainBody());
 		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage(msg);
@@ -748,7 +749,7 @@ void MSNChatSession::slotConnectionTimeout()
 		m_chatService->deleteLater();
 		m_chatService=0L;
 	}
-	
+
 	if( m_connectionTry > 3 )
 	{
 		cleanMessageQueue( i18n("Impossible to establish the connection") );

@@ -30,14 +30,17 @@ namespace Kopete
 namespace UI
 {
 
-AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent, const char *name, bool modal ) : KDialogBase(parent, name, modal, title, Help|Ok|Cancel, Ok, true )
+AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent, const char *name, bool /*modal*/ ) : KDialog(parent, title, Help|Ok|Cancel )
 {
+	setObjectName( name );
+	setEscapeButton( KDialog::Cancel );
+	setDefaultButton( KDialog::Ok );
 	KVBox *vbox=new KVBox(this);
 	m_addressBookSelectorWidget= new AddressBookSelectorWidget(vbox);
-	m_addressBookSelectorWidget->setLabelMessage(message);	
+	m_addressBookSelectorWidget->setLabelMessage(message);
 
 	vbox->setSpacing( KDialog::spacingHint() );
-	
+
 	setMainWidget(vbox);
 	enableButtonOK(false);
 	//setHelp("linkaddressbook");

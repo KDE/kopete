@@ -3,8 +3,8 @@
 
     Copyright (c) 2005 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Based on LinkAddressBookUI whose code was shamelessly stolen from 
-    kopete's add new contact wizard, used in Konversation, and then 
+    Based on LinkAddressBookUI whose code was shamelessly stolen from
+    kopete's add new contact wizard, used in Konversation, and then
     reappropriated by Kopete.
 
     LinkAddressBookUI:
@@ -60,7 +60,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 
 	// Addressee validation connections
 	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
-	connect( addAddresseeButton, SIGNAL( clicked() ), SIGNAL( addAddresseeClicked() ) );	
+	connect( addAddresseeButton, SIGNAL( clicked() ), SIGNAL( addAddresseeClicked() ) );
 
 	connect( addresseeListView, SIGNAL( clicked(Q3ListViewItem * ) ),
 			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
@@ -68,9 +68,9 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
 	connect( addresseeListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
 			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
-	
+
 	connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
-	
+
 	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
 
 	addresseeListView->setColumnText(2, SmallIconSet(QString::fromLatin1("email")), i18n("Email"));
@@ -132,12 +132,12 @@ void AddressBookSelectorWidget::slotLoadAddressees()
 	{
 		 addr = new AddresseeItem( addresseeListView, (*it));
 	}
-	
+
 }
 
 void AddressBookSelectorWidget::setLabelMessage( const QString &msg )
 {
-	lblHeader->setText(msg);
+	lblHeader->setPlainText(msg);
 }
 
 void AddressBookSelectorWidget::slotAddAddresseeClicked()

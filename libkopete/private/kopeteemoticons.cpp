@@ -159,7 +159,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 				p = c;
 				continue;
 			}
-		
+
 			if( !inHTMLEntity )
 			{ // are we
 				if( c == '&' )
@@ -191,7 +191,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 				// If this is an HTML, then search for the HTML form of the emoticon.
 				// For instance <o) => &gt;o)
 				needle = ( mode & SkipHTML ) ? (*it).matchTextEscaped : (*it).matchText;
-				if ( ( pos == (size_t)message.find( needle, pos ) ) )
+				if ( ( pos == message.indexOf( needle, pos ) ) )
 				{
 					if( mode & StrictParse )
 					{
@@ -215,7 +215,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 			{
 				if( inHTMLEntity ){
 					// If we are in an HTML entitiy such as &gt;
-					int htmlEnd = message.find( ';', pos );
+					int htmlEnd = message.indexOf( ';', pos );
 					// Search for where it ends
 					if( htmlEnd == -1 )
 					{
@@ -225,7 +225,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 						inHTMLEntity = false;
 						pos++;
 					}
-					else 
+					else
 					{
 						pos = htmlEnd;
 						inHTMLEntity = false;
@@ -272,8 +272,9 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 	return result;
 }
 
-Emoticons::Emoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" )
+Emoticons::Emoticons( const QString &theme ) : QObject( kapp )
 {
+	setObjectName( "KopeteEmoticons" );
 //	kDebug(14010) << "KopeteEmoticons::KopeteEmoticons" << endl;
 	d=new Private;
 	if(theme.isNull())
@@ -329,10 +330,10 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 			// Unless we do so, ChatMessagePart::slotScrollView does not work properly and causing
 			// HTMLPart not to be scrolled to the very last message.
 			p.load( e.picPath );
-			result = QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
-				  e.picPath + 
+			result = QString::fromLatin1( "<img align=\"center\" src=\"" ) +
+				  e.picPath +
 				  QString::fromLatin1( "\" title=\"" ) +
-				  matchEscaped + 
+				  matchEscaped +
 				  QString::fromLatin1( "\" width=\"" ) +
 				  QString::number( p.width() ) +
 				  QString::fromLatin1( "\" height=\"" ) +

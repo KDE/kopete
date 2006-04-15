@@ -18,24 +18,23 @@
 #ifndef KOPETEFILECONFIRMDIALOG_H
 #define KOPETEFILECONFIRMDIALOG_H
 
-#include <qwidget.h>
-//Added by qt3to4:
-#include <QCloseEvent>
-#include <kdialogbase.h>
+#include <QWidget>
+#include <kdialog.h>
 #include "kopetetransfermanager.h"
 
 class FileConfirmBase;
 
 /**
-  *@author Olivier Goffart
-  */
-
-class KopeteFileConfirmDialog : public KDialogBase
+ * @author Olivier Goffart
+ */
+class KopeteFileConfirmDialog : public KDialog
 {
 Q_OBJECT
 
 public:
-	KopeteFileConfirmDialog(const Kopete::FileTransferInfo &info,const QString& description=QString::null, QWidget *parent=0, const char* name=0);
+	KopeteFileConfirmDialog( const Kopete::FileTransferInfo &info,
+	                         const QString& description = QString::null,
+	                         QWidget *parent = 0, const char* name = 0);
 	~KopeteFileConfirmDialog();
 
 private:

@@ -43,11 +43,11 @@ NotifyHelper* NotifyHelper::self()
 {
 	if (!s_self)
 		s_self = new NotifyHelper();
-	
+
 	return s_self;
 }
 
-void NotifyHelper::slotEventActivated(unsigned int action)
+void NotifyHelper::slotEventActivated(unsigned int /*action*/)
 {
 	const KNotification *n = dynamic_cast<const KNotification *>(QObject::sender());
 	if (n)
@@ -57,7 +57,7 @@ void NotifyHelper::slotEventActivated(unsigned int action)
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, info.explanation, info.caption);
 		else
 			KMessageBox::queuedDetailedError( Kopete::UI::Global::mainWidget(), info.explanation, info.debugInfo, info.caption);
-		
+
 		unregisterNotification(n);
 	}
 }
