@@ -503,6 +503,11 @@ public slots:
 
 private slots:
 	/**
+	 * Restore online status and status message on reconnect.
+	 */
+	virtual void reconnect(); 
+
+	/**
 	 * Track the deletion of a Contact and clean up
 	 */
 	void contactDestroyed( Kopete::Contact * );
@@ -511,6 +516,11 @@ private slots:
 	 * The @ref myself() contact's online status changed.
 	 */
 	void slotOnlineStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus );
+
+	/**
+	 * The @ref myself() contact's property changed.
+	 */
+	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
 
 	/**
 	 * Stop the suppression of status notification (connected to a timer)

@@ -101,6 +101,7 @@ private slots:
 private:
 	bool mWebAware;
 	bool mHideIP;
+	QString mInitialStatusMessage;
 	OscarVisibilityDialog* m_visibilityDialog;
 };
 

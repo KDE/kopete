@@ -56,6 +56,7 @@ void ICQMyselfContact::userInfoUpdated()
 	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
+	setProperty( Kopete::Global::Properties::self()->awayMessage(), static_cast<ICQAccount*>( account() )->engine()->statusMessage() );
 }
 
 void ICQMyselfContact::receivedShortInfo( const QString& contact )
@@ -87,6 +88,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 	QString nickName = configGroup()->readEntry("NickName", QString::null);
 	mWebAware = configGroup()->readBoolEntry( "WebAware", false );
 	mHideIP = configGroup()->readBoolEntry( "HideIP", true );
+	mInitialStatusMessage = QString::null;
 
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
@@ -183,10 +185,11 @@ void ICQAccount::connectWithPassword( const QString &password )
 			status |= ICQ::StatusCode::WEBAWARE;
 
 		engine()->setIsIcq( true );
-		engine()->setStatus( status );
+		engine()->setStatus( status, mInitialStatusMessage );
 		engine()->start( server, port, accountId(), password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 
+		mInitialStatusMessage = QString::null;
 	}
 }
 
@@ -308,12 +311,10 @@ void ICQAccount::setInvisible( ICQ::Presence::Visibility vis )
 
 void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &message )
 {
-	Q_UNUSED( message );
 	ICQ::Presence pres = presence();
-	kdDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << endl;
+	kdDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << ", new message=" << message << endl;
 	//setAwayMessage(awayMessage);
 	setPresenceTarget( ICQ::Presence( type, pres.visibility() ), message );
-	myself()->setProperty( Kopete::Global::Properties::self()->awayMessage(), message );
 }
 
 void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString &message )
@@ -330,9 +331,7 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString 
 	}
 	else if ( accountIsOffline )
 	{
-		// set status message if given
-		if ( ! message.isEmpty() )
-			engine()->setStatusMessage( message );
+		mInitialStatusMessage = message;
 		OscarAccount::connect( newPres.toOnlineStatus() );
 	}
 	else
