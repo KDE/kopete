@@ -53,11 +53,6 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete
 
 }
 
-JabberBaseContact::~JabberBaseContact( )
-{
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId() <<  kdBacktrace() << endl;
-}
-
 
 JabberProtocol *JabberBaseContact::protocol ()
 {
