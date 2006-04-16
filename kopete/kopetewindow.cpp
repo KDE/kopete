@@ -290,7 +290,7 @@ void KopeteWindow::initActions()
 
 	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "show_offliners", CTRL + Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
-	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
+	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder", CTRL + Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
 
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));

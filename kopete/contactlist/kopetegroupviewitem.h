@@ -21,8 +21,8 @@
 #include "kopetelistviewitem.h"
 #include <qpixmap.h>
 
-#define KOPETE_GROUP_DEFAULT_OPEN_ICON "folder_green_open"
-#define KOPETE_GROUP_DEFAULT_CLOSED_ICON "folder_green"
+#define KOPETE_GROUP_DEFAULT_OPEN_ICON "folder_open"
+#define KOPETE_GROUP_DEFAULT_CLOSED_ICON "folder"
 
 namespace Kopete
 {
