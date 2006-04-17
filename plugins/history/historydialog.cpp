@@ -156,7 +156,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	l->addWidget(mHtmlView);
 
 	QTextOStream( &fontSize ) << KopetePrefs::prefs()->fontFace().pointSize();
-	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + KopetePrefs::prefs()->fontFace().family() + "; }</style>";
+	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + KopetePrefs::prefs()->fontFace().family() + "; color: " + KopetePrefs::prefs()->textColor().name() + "; }</style>";
 
 	mHtmlPart->begin();
 	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
@@ -390,8 +390,8 @@ void HistoryDialog::setMessages(QValueList<Kopete::Message> msgs)
 		
 			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
 					+ ((*it).direction() == Kopete::Message::Outbound ?
-									"<font color=\"navy\"><b>&gt;</b></font> "
-									: "<font color=\"orange\"><b>&lt;</b></font> ")
+									"<font color=\"" + KopetePrefs::prefs()->textColor().dark().name() + "\"><b>&gt;</b></font> "
+									: "<font color=\"" + KopetePrefs::prefs()->textColor().light(200).name() + "\"><b>&lt;</b></font> ")
 					+ body + "<br/>";
 	
 			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
