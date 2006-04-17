@@ -392,7 +392,7 @@ If you do not currently have an ICQ account, please click the button to create o
                             <cstring>encodingCombo</cstring>
                         </property>
                         <property name="enabled">
-                            <bool>false</bool>
+                            <bool>true</bool>
                         </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">
@@ -400,7 +400,7 @@ If you do not currently have an ICQ account, please click the button to create o
                             <cstring>textLabel1</cstring>
                         </property>
                         <property name="enabled">
-                            <bool>false</bool>
+                            <bool>true</bool>
                         </property>
                         <property name="text">
                             <string>Default to the following &amp;encoding for messages:</string>
