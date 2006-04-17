@@ -73,7 +73,7 @@ MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *
 {
 	d->metaContact = mc;
 	d->photoSize = 60;
-	
+
 	connect( d->metaContact, SIGNAL( photoChanged() ),
 		SLOT( slotPhotoChanged() ) );
 	connect( d->metaContact, SIGNAL( displayNameChanged(const QString&, const QString&) ),
@@ -91,7 +91,7 @@ void MetaContactSelectorWidgetLVI::slotDisplayNameChanged()
 	if ( d->nameText )
 	{
 		d->nameText->setText( d->metaContact->displayName() );
-	
+
 		// delay the sort if we can
 		if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
 			lv->delayedSort();
@@ -112,11 +112,11 @@ void MetaContactSelectorWidgetLVI::slotPhotoChanged()
 	if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 	{
 		int photoSize = d->photoSize;
-		
-		photoImg = photoImg.smoothScale( photoSize, photoSize, Qt::KeepAspectRatio ) ;
-		
+
+		photoImg = photoImg.scaled( photoSize, photoSize, Qt::KeepAspectRatio ) ;
+
 		// draw a 1 pixel black border
-		photoPixmap = photoImg;
+		photoPixmap = QPixmap::fromImage( photoImg );
 		QPainter p(&photoPixmap);
 		p.setPen(Qt::black);
 		p.drawLine(0, 0, photoPixmap.width()-1, 0);
@@ -146,7 +146,7 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
-	
+
 	d->contactIconSize = IconSize( K3Icon::Small );
 	Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 	new VSpacerComponent( imageBox );
@@ -159,7 +159,7 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 
 	Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 	d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-	
+
 	slotUpdateContactBox();
 	slotDisplayNameChanged();
 	slotPhotoChanged();
@@ -185,21 +185,22 @@ public:
 
 
 MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const char *name )
-		: QWidget( parent, name ), d( new Private() )
+		: QWidget( parent ), d( new Private() )
 {
+	setObjectName( name );
 	QBoxLayout *l = new QVBoxLayout(this);
 	d->widget = new MetaContactSelectorWidget_Base(this);
 	l->addWidget(d->widget);
-	
+
 	connect( d->widget->metaContactListView, SIGNAL( clicked(Q3ListViewItem * ) ),
 			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
 	connect( d->widget->metaContactListView, SIGNAL( selectionChanged( Q3ListViewItem * ) ),
 			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
 	connect( d->widget->metaContactListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
 			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
-	
+
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
-	
+
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->metaContactListView->setFullWidth( true );
 	d->widget->metaContactListView->header()->hide();
@@ -234,7 +235,7 @@ void MetaContactSelectorWidget::selectMetaContact( Kopete::MetaContact *mc )
 		MetaContactSelectorWidgetLVI *item = (MetaContactSelectorWidgetLVI *) it.current();
 		if (!item)
 			continue;
-	
+
 		if ( mc == item->metaContact() )
 		{
 			// select the contact item
@@ -247,7 +248,7 @@ void MetaContactSelectorWidget::selectMetaContact( Kopete::MetaContact *mc )
 
 void MetaContactSelectorWidget::excludeMetaContact( Kopete::MetaContact *mc )
 {
-	if( d->excludedMetaContacts.findIndex(mc) == -1 )
+	if( d->excludedMetaContacts.indexOf(mc) == -1 )
 	{
 		d->excludedMetaContacts.append(mc);
 	}
@@ -270,7 +271,7 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 	{
 		Kopete::MetaContact *mc = it.next();
 		if( !mc->isTemporary() && mc != metaContact() )
-		if( !mc->isTemporary() && (d->excludedMetaContacts.findIndex(mc) == -1) )
+		if( !mc->isTemporary() && (d->excludedMetaContacts.indexOf(mc) == -1) )
 		{
 			new MetaContactSelectorWidgetLVI(mc, d->widget->metaContactListView);
 		}
@@ -281,7 +282,7 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 
 void MetaContactSelectorWidget::setLabelMessage( const QString &msg )
 {
-	d->widget->lblHeader->setText(msg);
+	d->widget->lblHeader->setPlainText(msg);
 }
 
 } // namespace UI

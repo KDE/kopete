@@ -48,13 +48,13 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 	if ( source && source->remembered() )
 	{
 		mRemembered->setTristate();
-		mRemembered->setNoChange();
+		mRemembered->setCheckState( Qt::Checked );
 		source->requestWithoutPrompt( this, SLOT( receivePassword( const QString & ) ) );
 	}
 	else
 	{
 		mRemembered->setTristate( false );
-		mRemembered->setChecked( false );
+		mRemembered->setCheckState( Qt::Unchecked );
 	}
 
 	if ( source )
@@ -81,7 +81,7 @@ void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
 {
 	// pwd == null could mean user declined to open wallet
 	// don't uncheck the remembered field in this case.
-	if ( !pwd.isNull() && mRemembered->state() == QCheckBox::NoChange )
+	if ( !pwd.isNull() && mRemembered->checkState() == Qt::PartiallyChecked )
 	{
 		mRemembered->setChecked( true );
 		setPassword( pwd );
@@ -90,9 +90,9 @@ void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
 
 void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 {
-	if ( !target || mRemembered->state() == QCheckBox::NoChange )
+	if ( !target || mRemembered->checkState() == Qt::PartiallyChecked )
 		return;
-	
+
 	if ( mRemembered->isChecked() )
 		target->set( password() );
 	else
@@ -113,7 +113,7 @@ QString Kopete::UI::PasswordWidget::password() const
 
 bool Kopete::UI::PasswordWidget::remember() const
 {
-	return mRemembered->state() == QCheckBox::On;
+	return mRemembered->checkState() == Qt::Checked;
 }
 
 void Kopete::UI::PasswordWidget::setPassword( const QString &pass )

@@ -61,12 +61,14 @@ class AccountSelectorPrivate
 	public:
 		K3ListView *lv;
 		Kopete::Protocol *proto;
+		QVBoxLayout* layout;
 };
 
 
 AccountSelector::AccountSelector(QWidget *parent, const char *name)
-	: QWidget(parent, name)
+	: QWidget(parent)
 {
+	setObjectName(name);
 	//kDebug(14010) << k_funcinfo << "for no special protocol" << endl;
 	d = new AccountSelectorPrivate;
 	d->proto = 0;
@@ -75,8 +77,9 @@ AccountSelector::AccountSelector(QWidget *parent, const char *name)
 
 
 AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent,
-	const char *name) : QWidget(parent, name)
+	const char *name) : QWidget(parent)
 {
+	setObjectName(name);
 	//kDebug(14010) << k_funcinfo << " for protocol " << proto->pluginId() << endl;
 	d = new AccountSelectorPrivate;
 	d->proto = proto;
@@ -94,12 +97,12 @@ AccountSelector::~AccountSelector()
 void AccountSelector::initUI()
 {
 	kDebug(14010) << k_funcinfo << endl;
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	d->layout = new QVBoxLayout();
 	d->lv = new K3ListView(this);
 	d->lv->setFullWidth(true);
 	d->lv->addColumn(QString::fromLatin1(""));
 	d->lv->header()->hide();
-
+	d->layout->addWidget(d->lv);
 	kDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
 	foreach(Kopete::Account *account , Kopete::AccountManager::self()->accounts() )
 	{
