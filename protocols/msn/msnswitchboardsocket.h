@@ -132,6 +132,7 @@ public slots:
 	
 	/** workaround Bug 113425 . see slotKeepAliveTimer() **/
 	QTimer *m_keepAlive;
+	int m_keepAliveNb;
 	
 
 
