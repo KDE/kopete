@@ -525,8 +525,9 @@ void YahooContact::buzzContact()
 	if ( view )
 	{
 		Kopete::Message msg = Kopete::Message( manager(Kopete::Contact::CannotCreate)->myself() ,
-									manager(Kopete::Contact::CannotCreate)->members(), i18n("Buzzz!!!"),
-									Kopete::Message::Internal, Kopete::Message::PlainText );
+					manager(Kopete::Contact::CannotCreate)->members(), i18n("Buzzz!!!"),
+					Kopete::Message::Outbound, Kopete::Message::PlainText,
+					QString::null , Kopete::Message::TypeAction);
 		view->appendMessage( msg );
 	}
 }
