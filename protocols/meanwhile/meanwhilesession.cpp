@@ -584,7 +584,7 @@ void MeanwhileSession::handleSessionStateChange(
 }
 
 int MeanwhileSession::handleSessionIOWrite(const guchar *buffer,
-        unsigned int count)
+        gsize count)
 {
     HERE;
 
