@@ -37,14 +37,14 @@ Oscar::TLV::TLV( quint16 newType, quint16 newLength, char* newData )
 	type = newType;
 	length = newLength;
 	data.truncate(0);
-	data.duplicate( newData, length );
+	data = QByteArray( newData, length );
 }
 
 Oscar::TLV::TLV( quint16 newType, quint16 newLength, const QByteArray& newData )
 {
 	type = newType;
 	length = newLength;
-	data.duplicate( newData );
+	data = newData;
 }
 
 Oscar::TLV::TLV( const TLV& t )
@@ -52,7 +52,7 @@ Oscar::TLV::TLV( const TLV& t )
 	type = t.type;
 	length = t.length;
 	data.truncate(0);
-	data.duplicate( t.data );
+	data = t.data;
 }
 
 Oscar::TLV::operator bool() const
@@ -212,7 +212,7 @@ void Oscar::SSI::setWaitingAuth( bool waiting )
 
 void Oscar::SSI::setIconHash( QByteArray hash )
 {
-	m_hash.duplicate( hash );
+	m_hash = hash;
 }
 
 QByteArray Oscar::SSI::iconHash( ) const

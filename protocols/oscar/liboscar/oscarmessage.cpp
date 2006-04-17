@@ -159,12 +159,12 @@ void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QStrin
 
 void Oscar::Message::setTextArray( const QByteArray& newTextArray )
 {
-	m_textArray.duplicate( newTextArray );
+	m_textArray = newTextArray;
 }
 
 void Oscar::Message::setTextArray( const Q3CString& newTextArray )
 {
-	m_textArray.duplicate( newTextArray );
+	m_textArray = newTextArray;
 	uint len = m_textArray.size();
 	if ( len > 0 )
 	{
@@ -227,7 +227,7 @@ QByteArray Oscar::Message::icbmCookie() const
 
 void Oscar::Message::setIcbmCookie( const QByteArray& cookie )
 {
-	m_icbmCookie.duplicate( cookie );
+	m_icbmCookie = cookie;
 }
 
 int Oscar::Message::protocolVersion() const

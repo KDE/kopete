@@ -247,7 +247,7 @@ void UserDetails::fill( Buffer * buffer )
 						if ( length > 0 && ( number == 0x01 || number == 0x00 ) )
 						{
 							m_iconChecksumType = number;
- 							m_md5IconHash.duplicate( b.getBlock( length ), length );
+ 							m_md5IconHash = b.getBlock( length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;

@@ -203,8 +203,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	if ( okToProceed( din ) )
 	{
 		din >> flapStart;
-		QByteArray packet;
-		packet.duplicate( wire );
+		QByteArray packet( wire );
 		if ( flapStart == 0x2A )
 		{
 			din >> flapChannel;

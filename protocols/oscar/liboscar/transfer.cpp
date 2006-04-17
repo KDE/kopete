@@ -40,9 +40,8 @@ Transfer::TransferType Transfer::type() const
 
 QByteArray Transfer::toWire()
 {
-	m_wireFormat.duplicate( m_buffer->buffer(), m_buffer->length() );
-	QByteArray wire = m_wireFormat;
-	return wire;
+	m_wireFormat = m_buffer->buffer();
+	return m_wireFormat;
 }
 
 Transfer::~Transfer()
@@ -165,8 +164,7 @@ QByteArray FlapTransfer::toWire()
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer is " << m_buffer.toString() << endl;
 
 	m_wireFormat.truncate( 0 );
-	QByteArray useBuf;
-	useBuf.duplicate( m_buffer->buffer(), m_buffer->length() );
+	QByteArray useBuf( m_buffer->buffer() );
 	m_flapLength = useBuf.size();
 	m_wireFormat.resize( 6 + m_flapLength );
 	m_wireFormat[0] = 0x2A;
@@ -277,8 +275,7 @@ QByteArray SnacTransfer::toWire()
 {
 
 	m_wireFormat.truncate( 0 );
-	QByteArray useBuf;
-	useBuf.duplicate( m_buffer->buffer(), m_buffer->length() );
+	QByteArray useBuf( m_buffer->buffer() );
 	setFlapLength( useBuf.size() + 10 );
 	m_wireFormat.resize( 16 + useBuf.size() );
 

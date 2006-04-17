@@ -87,7 +87,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 				if ( b->length() != 0 )
 				{ //buffer might be empty if flags bit 8 = 1
 					BYTE checksumLength = b->getByte();
-					qba.duplicate( b->getBlock( checksumLength ) );
+					qba = b->getBlock( checksumLength );
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Self icon checksum: " << qba << endl;
 				}
 				

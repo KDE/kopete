@@ -194,7 +194,7 @@ void StageTwoLoginTask::onGo()
 
 void StageTwoLoginTask::setCookie( const QByteArray& newCookie )
 {
-	m_cookie.duplicate( newCookie );
+	m_cookie = newCookie;
 }
 
 const QByteArray& StageTwoLoginTask::cookie()

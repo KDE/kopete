@@ -108,7 +108,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		if ( cookie )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
-			m_cookie.duplicate( cookie.data );
+			m_cookie = cookie.data;
 		}
 		
 		tlvList.clear();

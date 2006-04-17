@@ -237,7 +237,7 @@ void AimLoginTask::handleLoginResponse()
 	if ( cookie )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
-		m_cookie.duplicate( cookie.data );
+		m_cookie = cookie.data;
 		setSuccess( 0, QString::null );
 	}
 	tlvList.clear();

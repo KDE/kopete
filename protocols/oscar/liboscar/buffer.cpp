@@ -137,8 +137,7 @@ int Buffer::addString( const char* s, DWORD len )
 
 int Buffer::addString(const unsigned char* s, DWORD len)
 {
-	QByteArray qba;
-	qba.duplicate( (const char*) s, len );
+	QByteArray qba( (const char*) s, len );
 	return addString( qba );
 }
 
@@ -358,16 +357,14 @@ void Buffer::expandBuffer(unsigned int inc)
 QByteArray Buffer::getLNTS()
 {
 	WORD len = getLEWord();
-	QByteArray qcs;
-	qcs.duplicate( getBlock(len) );
+	QByteArray qcs( getBlock(len) );
 	return qcs;
 }
 
 QByteArray Buffer::getLELNTS()
 {
 	WORD len = getLEWord();
-	QByteArray qcs;
-	qcs.duplicate( getBlock(len) );
+	QByteArray qcs( getBlock(len) );
 	return qcs;
 }
 
@@ -404,8 +401,7 @@ int Buffer::addBSTR(const char * s)
 QByteArray Buffer::getBSTR()
 {
 	WORD len = getWord();
-	QByteArray qba;
-	qba.duplicate( getBlock(len) );
+	QByteArray qba( getBlock(len) );
 	return qba;
 }
 
@@ -420,8 +416,7 @@ int Buffer::addBUIN(const char * s)
 QByteArray Buffer::getBUIN()
 {
 	BYTE len = getByte();
-	QByteArray qba;
-	qba.duplicate( getBlock(len) ); //FIXME: not in qt4. use assignment
+	QByteArray qba( getBlock(len) );
 	return qba;
 }
 

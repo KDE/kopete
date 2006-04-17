@@ -184,11 +184,9 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	BYTE iconType = b->getByte();
 	Q_UNUSED( iconType );
 	BYTE hashSize = b->getByte();
-	QByteArray iconHash;
-	iconHash.duplicate( b->getBlock(hashSize) );
+	QByteArray iconHash( b->getBlock(hashSize) );
 	WORD iconSize = b->getWord();
-	QByteArray icon;
-	icon.duplicate( b->getBlock(iconSize) );
+	QByteArray icon( b->getBlock(iconSize) );
 	emit haveIcon( user, icon );
 }
 
@@ -221,8 +219,7 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	Q_UNUSED( iconType );
 	
 	BYTE hashSize = b->getByte();
-	QByteArray iconHash;
-	iconHash.duplicate( b->getBlock(hashSize) );
+	QByteArray iconHash( b->getBlock(hashSize) );
 	
 	b->skipBytes(1); //not used
 	b->skipBytes(2); //not used
@@ -230,12 +227,10 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	Q_UNUSED( iconType2 );
 	
 	BYTE hashSize2 = b->getByte();
-	QByteArray iconHash2;
-	iconHash2.duplicate( b->getBlock(hashSize2) );
+	QByteArray iconHash2( b->getBlock(hashSize2) );
 	
 	WORD iconSize = b->getWord();
-	QByteArray icon;
-	icon.duplicate( b->getBlock(iconSize) );
+	QByteArray icon( b->getBlock(iconSize) );
 	
 	emit haveIcon( user, icon );
 }
