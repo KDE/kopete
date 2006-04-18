@@ -60,7 +60,7 @@ void LocalContactListTask::onGo()
 				< PACKET_SIZE_LIMIT )
 			{
 				kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
-				buffer->addBUIN( ( *it ).name().latin1() );
+				buffer->addBUIN( ( *it ).name().toLatin1() );
 			}
 			else
 			{
@@ -70,7 +70,7 @@ void LocalContactListTask::onGo()
 
 				buffer = new Buffer();
 				kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
-				buffer->addBUIN( ( *it ).name().latin1() );
+				buffer->addBUIN( ( *it ).name().toLatin1() );
 			}
 		}
 	

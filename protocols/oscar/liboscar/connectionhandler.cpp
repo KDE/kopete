@@ -17,7 +17,7 @@
 */
 
 #include "connectionhandler.h"
-#include <q3valuelist.h>
+#include <qlist.h>
 #include <qmap.h>
 #include <kdebug.h>
 #include "connection.h"
@@ -26,7 +26,7 @@
 class ConnectionHandler::Private
 {
 public:
-	Q3ValueList<Connection*> connections;
+	QList<Connection*> connections;
 	QMap<Connection*, ConnectionRoomInfo> chatRoomConnections;
 };
 
@@ -50,7 +50,7 @@ void ConnectionHandler::remove( Connection* c )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing connection "
 		<< c << endl;
-	d->connections.remove( c );
+	d->connections.removeAll( c );
 	c->deleteLater();
 }
 
@@ -58,14 +58,14 @@ void ConnectionHandler::remove( int family )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing all connections " <<
 		"supporting family " << family << endl;
-	Q3ValueList<Connection*>::iterator it = d->connections.begin();
-	Q3ValueList<Connection*>::iterator itEnd = d->connections.end();
+	QList<Connection*>::iterator it = d->connections.begin();
+	QList<Connection*>::iterator itEnd = d->connections.end();
 	for ( ; it != itEnd; ++it )
 	{
 		if ( ( *it )->isSupported( family ) )
 		{
 			Connection* c = ( *it );
-			it = d->connections.remove( it );
+			it = d->connections.erase( it );
 			c->deleteLater();
 		}
 	}
@@ -85,8 +85,8 @@ void ConnectionHandler::clear()
 
 Connection* ConnectionHandler::connectionForFamily( int family ) const
 {
-	Q3ValueList<Connection*>::iterator it = d->connections.begin();
-	Q3ValueList<Connection*>::iterator itEnd = d->connections.end();
+	QList<Connection*>::iterator it = d->connections.begin();
+	QList<Connection*>::iterator itEnd = d->connections.end();
 	int connectionCount = 0;
 	Connection* lastConnection = 0;
 	for ( ; it != itEnd; ++it )
@@ -113,7 +113,7 @@ Connection* ConnectionHandler::defaultConnection() const
 
 void ConnectionHandler::addChatInfoForConnection( Connection* c, Oscar::WORD exchange, const QString& room )
 {
-    if ( d->connections.findIndex( c ) == -1 )
+    if ( d->connections.indexOf( c ) == -1 )
         d->connections.append( c );
 
     ConnectionRoomInfo info = qMakePair( exchange, room );
@@ -126,7 +126,7 @@ Connection* ConnectionHandler::connectionForChatRoom( Oscar::WORD exchange, cons
     QMap<Connection*, ConnectionRoomInfo>::iterator it,  itEnd = d->chatRoomConnections.end();
     for ( it = d->chatRoomConnections.begin(); it != itEnd; ++it )
     {
-        if ( it.data() == infoToFind )
+        if ( it.value() == infoToFind )
         {
             Connection* c = it.key();
             return c;
@@ -138,7 +138,7 @@ Connection* ConnectionHandler::connectionForChatRoom( Oscar::WORD exchange, cons
 
 QString ConnectionHandler::chatRoomForConnection( Connection* c )
 {
-    if ( d->connections.findIndex( c ) == -1 )
+    if ( d->connections.indexOf( c ) == -1 )
         return QString::null;
 
     QMap<Connection*, ConnectionRoomInfo>::iterator it, itEnd = d->chatRoomConnections.end();
@@ -146,7 +146,7 @@ QString ConnectionHandler::chatRoomForConnection( Connection* c )
     {
         if ( it.key() == c )
         {
-            QString room = it.data().second;
+            QString room = it.value().second;
             return room;
         }
     }
@@ -157,7 +157,7 @@ QString ConnectionHandler::chatRoomForConnection( Connection* c )
 Oscar::WORD ConnectionHandler::exchangeForConnection( Connection* c )
 {
 
-    if ( d->connections.findIndex( c ) == -1 )
+    if ( d->connections.indexOf( c ) == -1 )
         return 0xFFFF;
 
     QMap<Connection*, ConnectionRoomInfo>::iterator it, itEnd = d->chatRoomConnections.end();
@@ -165,7 +165,7 @@ Oscar::WORD ConnectionHandler::exchangeForConnection( Connection* c )
     {
         if ( it.key() == c )
         {
-            Oscar::WORD exchange = it.data().first;
+            Oscar::WORD exchange = it.value().first;
             return exchange;
         }
     }
