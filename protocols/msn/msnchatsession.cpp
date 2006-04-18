@@ -311,7 +311,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 			m_inviteactions.append( a ) ;
 		}
 	}
-	KAction *b = new KAction( QIcon(), i18n ("Other..."), m_actionInvite->parentCollection(), "actionOther" );
+	KAction *b = new KAction( i18n ("Other..."), m_actionInvite->parentCollection(), "actionOther" );
 	QObject::connect( b, SIGNAL( triggered( bool ) ),
 	                  this, SLOT( slotInviteOtherContact() ) );
 	m_actionInvite->insert( b );
