@@ -27,7 +27,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_cryptography )
 
 target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_cryptography )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_cryptography )
 
 
 ########### next target ###############
@@ -44,7 +44,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_cryptography )
 
 target_link_libraries(kcm_kopete_cryptography ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_cryptography )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_cryptography )
 
 
 ########### install files ###############

@@ -32,7 +32,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_irc )
 
 target_link_libraries(kopete_irc  ${KDE4_KDECORE_LIBS} kopete kopeteircui kirc kio )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_irc )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_irc )
 
 
 ########### install files ###############

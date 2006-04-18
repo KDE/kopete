@@ -15,7 +15,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kio_jabberdisco )
 
 target_link_libraries(kio_jabberdisco  ${KDE4_KDECORE_LIBS} jabberclient iris_local kio )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kio_jabberdisco )
+install_targets(${PLUGIN_INSTALL_DIR} kio_jabberdisco )
 
 
 ########### install files ###############

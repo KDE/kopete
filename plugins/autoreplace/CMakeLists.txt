@@ -19,7 +19,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_autoreplace )
 
 target_link_libraries(kopete_autoreplace  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_autoreplace )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_autoreplace )
 
 
 ########### next target ###############
@@ -36,7 +36,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_autoreplace )
 
 target_link_libraries(kcm_kopete_autoreplace  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_autoreplace )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_autoreplace )
 
 
 ########### install files ###############

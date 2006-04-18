@@ -34,7 +34,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
 target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KPARTS_LIBS} ${KDE4_KSPELL2_LIBS} ${KDE4_KDEPRINT_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 krichtexteditpart )
+install_targets(${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
 
 ########### next target ###############
@@ -49,7 +49,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
 target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_chatwindow )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
 
 ########### next target ###############
@@ -64,7 +64,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
 target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_emailwindow )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
 
 ########### next target ###############

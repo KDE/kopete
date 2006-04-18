@@ -26,7 +26,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_groupwise )
 
 target_link_libraries(kopete_groupwise  ${KDE4_KDECORE_LIBS} kopetegroupwiseui groupwise kopete kio )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_groupwise )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_groupwise )
 
 
 ########### install files ###############

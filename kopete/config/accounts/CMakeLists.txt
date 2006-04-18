@@ -21,7 +21,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_accountconfig )
 
 target_link_libraries(kcm_kopete_accountconfig  ${KDE4_KUTILS_LIBS} kopete kopeteaddaccountwizard )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_accountconfig )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_accountconfig )
 
 
 ########### install files ###############

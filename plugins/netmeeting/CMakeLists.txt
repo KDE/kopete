@@ -15,7 +15,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_netmeeting )
 
 target_link_libraries(kopete_netmeeting  ${KDE4_KDECORE_LIBS} kopete kopete_msn_shared )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_netmeeting )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_netmeeting )
 
 
 ########### next target ###############
@@ -32,7 +32,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_netmeeting )
 
 target_link_libraries(kcm_kopete_netmeeting  ${KDE4_KDECORE_LIBS} kutils )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_netmeeting )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_netmeeting )
 
 
 ########### install files ###############

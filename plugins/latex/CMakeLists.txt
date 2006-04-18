@@ -21,7 +21,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_latex )
 
 target_link_libraries(kopete_latex  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_latex )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_latex )
 
 
 ########### next target ###############
@@ -40,7 +40,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_latex )
 
 target_link_libraries(kcm_kopete_latex  ${KDE4_KUTILS_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_latex )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_latex )
 
 
 ########### install files ###############

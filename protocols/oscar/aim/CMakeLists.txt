@@ -39,7 +39,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_aim )
 
 target_link_libraries(kopete_aim  ${KDE4_KDECORE_LIBS} kopete_oscar kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_aim )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_aim )
 
 
 ########### install files ###############

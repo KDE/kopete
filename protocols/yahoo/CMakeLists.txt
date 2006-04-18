@@ -51,7 +51,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_yahoo )
 
 target_link_libraries(kopete_yahoo ${KDE4_KDEUI_LIBS} kopete_videodevice kopete kyahoo)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_yahoo )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_yahoo )
 
 
 ########### install files ###############

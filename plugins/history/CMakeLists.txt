@@ -26,7 +26,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_history )
 
 target_link_libraries(kopete_history  ${KDE4_KDECORE_LIBS} ${KDE4_KHTML_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_history )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_history )
 
 
 ########### next target ###############
@@ -45,7 +45,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_history )
 
 target_link_libraries(kcm_kopete_history  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_history )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_history )
 
 
 ########### install files ###############

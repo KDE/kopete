@@ -35,7 +35,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_gadu )
 
 target_link_libraries(kopete_gadu  ${KDE4_KDECORE_LIBS} gaduui kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_gadu )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_gadu )
 
 
 ########### install files ###############

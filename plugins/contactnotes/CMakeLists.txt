@@ -17,7 +17,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_contactnotes )
 
 target_link_libraries(kopete_contactnotes ${KDE4_KIO_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_contactnotes )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_contactnotes )
 
 
 ########### install files ###############

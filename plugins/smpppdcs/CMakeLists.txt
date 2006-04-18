@@ -31,7 +31,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_smpppdcs )
 
 target_link_libraries(kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_smpppdcs )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_smpppdcs )
 
 
 ########### next target ###############
@@ -54,7 +54,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_smpppdcs )
 
 target_link_libraries(kcm_kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete kutils )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_smpppdcs )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_smpppdcs )
 
 
 ########### install files ###############

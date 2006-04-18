@@ -19,7 +19,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_texteffect )
 
 target_link_libraries(kopete_texteffect  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_texteffect )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_texteffect )
 
 
 ########### next target ###############
@@ -36,7 +36,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_texteffect )
 
 target_link_libraries(kcm_kopete_texteffect  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_texteffect )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_texteffect )
 
 
 ########### install files ###############

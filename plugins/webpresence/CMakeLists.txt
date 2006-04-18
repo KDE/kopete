@@ -17,7 +17,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_webpresence )
 
 target_link_libraries(kopete_webpresence  ${KDE4_KDECORE_LIBS} kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_webpresence )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_webpresence )
 
 
 ########### next target ###############
@@ -34,7 +34,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_webpresence )
 
 target_link_libraries(kcm_kopete_webpresence  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_webpresence )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_webpresence )
 
 
 ########### install files ###############

@@ -34,7 +34,7 @@ if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LIBRAIRIES} )
 endif(XMMS_FOUND)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kopete_nowlistening )
+install_targets(${PLUGIN_INSTALL_DIR} kopete_nowlistening )
 
 
 ########### next target ###############
@@ -53,7 +53,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_nowlistening )
 
 target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kopete_nowlistening )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_nowlistening )
 
 
 ########### install files ###############
