@@ -82,13 +82,10 @@ bool Oscar::updateTLVs( SSI& item, const Q3ValueList<TLV>& list )
 
 DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 {
-	//
-	// FIXME: port capabilities array to some qt based list class, makes usage of memcmp obsolete
-	//
 	DWORD capflags = 0;
 	QString dbgCaps = "CAPS: ";
 	
-	while(inbuf.length() >= 16)
+	while(inbuf.bytesAvailable() >= 16)
 	{
 		Guid cap( inbuf.getGuid() );
 		
@@ -153,7 +150,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 				capflags |= (1 << i);
 				dbgCaps += capName(i);
 				break;
-			} // END if(memcmp...
+			} // END if...
 		} // END for...
 	}
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;

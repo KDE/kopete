@@ -84,7 +84,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 					needUpload = true;
 				
 				QByteArray qba;
-				if ( b->length() != 0 )
+				if ( b->bytesAvailable() != 0 )
 				{ //buffer might be empty if flags bit 8 = 1
 					BYTE checksumLength = b->getByte();
 					qba = b->getBlock( checksumLength );

@@ -70,7 +70,7 @@ bool ChatNavServiceTask::take( Transfer* transfer )
 
 	setTransfer( transfer );
 	Buffer* b = transfer->buffer();
-    while ( b->length() > 0 )
+    while ( b->bytesAvailable() > 0 )
     {
         TLV t = b->getTLV();
         switch ( t.type )
@@ -161,7 +161,7 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 	exchangeInfo.number = b.getWord();
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange id is: " << exchangeInfo.number << endl;
     b.getWord();
-	while ( b.length() > 0 )
+	while ( b.bytesAvailable() > 0 )
 	{
 		TLV t = b.getTLV();
         Buffer tmp = t.data;

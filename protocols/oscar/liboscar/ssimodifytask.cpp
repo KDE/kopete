@@ -213,7 +213,7 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 void SSIModifyTask::handleSSIAck()
 {
 	Buffer* b = transfer()->buffer();
-	int numItems = b->length() / 2;
+	int numItems = b->bytesAvailable() / 2;
 	for( int i = 0; i < numItems; ++i )
 	{
 		WORD ackCode = b->getWord();
@@ -369,7 +369,7 @@ void SSIModifyTask::changeGroupOnServer()
 	{
 		Buffer newTLVData;
 		Buffer tlvBuffer( oldIds.data, oldIds.length );
-		while ( tlvBuffer.length() != 0 )
+		while ( tlvBuffer.bytesAvailable() != 0 )
 		{
 			WORD id = tlvBuffer.getWord();
 			if ( id != m_oldItem.bid() )

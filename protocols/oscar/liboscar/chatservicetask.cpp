@@ -224,7 +224,7 @@ void ChatServiceTask::parseRoomInfo()
 void ChatServiceTask::parseJoinNotification()
 {
     Buffer* b = transfer()->buffer();
-    while ( b->length() > 0 )
+    while ( b->bytesAvailable() > 0 )
     {
         QString sender( b->getBUIN() );
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
@@ -255,7 +255,7 @@ void ChatServiceTask::parseJoinNotification()
 void ChatServiceTask::parseLeftNotification()
 {
     Buffer* b = transfer()->buffer();
-    while ( b->length() > 0 )
+    while ( b->bytesAvailable() > 0 )
     {
         QString sender( b->getBUIN() );
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
@@ -307,7 +307,7 @@ void ChatServiceTask::parseChatMessage()
             kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "parsing the message" << endl;
             //oooh! look! more TLVS! i love those!
             Buffer b( ( *it ).data );
-            while ( b.length() >= 4 )
+            while ( b.bytesAvailable() >= 4 )
             {
                 TLV t = b.getTLV();
                 switch( t.type )

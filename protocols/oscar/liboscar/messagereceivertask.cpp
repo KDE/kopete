@@ -213,7 +213,7 @@ void MessageReceiverTask::handleType2Message()
 	// next is capability identifier (GUID). skip for now
 	messageBuffer.skipBytes( 16 );
 
-	while( messageBuffer.length() > 0 )
+	while( messageBuffer.bytesAvailable() > 0 )
 	{
 		TLV tlv = messageBuffer.getTLV();
 		switch ( tlv.type )
@@ -409,15 +409,15 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		int fgcolor = 0x00000000;
 		int bgcolor = 0x00ffffff;
 
-		if ( b->length() >= 8 )
+		if ( b->bytesAvailable() >= 8 )
 		{
 			fgcolor = b->getLEDWord();
 			bgcolor = b->getLEDWord();
 
-			while ( b->length() >= 4 )
+			while ( b->bytesAvailable() >= 4 )
 			{
 				int capLength = b->getLEDWord();
-				if ( b->length() < capLength )
+				if ( b->bytesAvailable() < capLength )
 					break;
 
 				QByteArray cap( b->getBlock( capLength ) );

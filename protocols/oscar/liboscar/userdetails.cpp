@@ -230,7 +230,7 @@ void UserDetails::fill( Buffer * buffer )
 				if ( t.length == 0 )
 					break;
 
-				while ( b.length() > 0 )
+				while ( b.bytesAvailable() > 0 )
 				{
 #ifdef OSCAR_USERINFO_DEBUG
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
@@ -267,7 +267,7 @@ void UserDetails::fill( Buffer * buffer )
 #ifdef OSCAR_USERINFO_DEBUG
 							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
 #endif
-							if ( b.length() >= 4 && b.getWord() == 0x0001 )
+							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
 								kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR() << endl;

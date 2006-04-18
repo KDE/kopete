@@ -101,10 +101,10 @@ QList<int> ServerVersionsTask::buildFamiliesList( Buffer* buffer )
                                 << "Got the list of families server supports"
                                 << endl;
 
-        if ( buffer->length() % 2 != 0 )
+        if ( buffer->bytesAvailable() % 2 != 0 )
                 return familyList;
 
-        while ( buffer->length () != 0 )
+        while ( buffer->bytesAvailable() != 0 )
                 familyList.append( buffer->getWord() );
 
         return familyList;

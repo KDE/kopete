@@ -129,7 +129,7 @@ void SSIListTask::handleSSIListReply()
 			emit newItem( s );
 	}
 	
-	if ( buffer->length() > 0 )
+	if ( buffer->bytesAvailable() > 0 )
 	{
 		client()->ssiManager()->setLastModificationTime( buffer->getDWord() );
 		//check the snac flags for another packet

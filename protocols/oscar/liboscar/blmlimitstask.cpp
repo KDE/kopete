@@ -52,7 +52,7 @@ bool BLMLimitsTask::take(Transfer* transfer)
 	if ( forMe( transfer ) )
 	{
 		Buffer* buffer = transfer->buffer();
-		while ( buffer->length() != 0 )
+		while ( buffer->bytesAvailable() != 0 )
 		{
 			TLV t = buffer->getTLV();
 			switch ( t.type )

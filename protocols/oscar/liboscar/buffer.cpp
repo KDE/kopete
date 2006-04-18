@@ -301,7 +301,7 @@ int Buffer::addTLV8(const WORD type, const BYTE data)
 TLV Buffer::getTLV()
 {
 	TLV t;
-	if(length() >= 4)
+	if(bytesAvailable() >= 4)
 	{
 		t.type = getWord();
 		t.length = getWord();
