@@ -156,7 +156,7 @@ void TweenerHandler::slotReadyRead()
 				// Retrieve login url from resulting HTTP header.
 				QString passportUrls = httpHeader.value( QLatin1String("passporturls") );
 				QRegExp rx("DARealm=(.*),DALogin=(.*),DAReg=");
-				rx.search(passportUrls);
+				rx.indexIn(passportUrls);
 				
 				QString login = rx.cap(2);
 				QString loginServer = login.section("/", 0, 0);
@@ -174,7 +174,7 @@ void TweenerHandler::slotReadyRead()
 			{
 				QString authInfo = httpHeader.value( QLatin1String("authentication-info") );
 				QRegExp rx("from-PP='(.*)'");
-				rx.search(authInfo);
+				rx.indexIn(authInfo);
 
 				d->ticket = rx.cap(1);
 				
