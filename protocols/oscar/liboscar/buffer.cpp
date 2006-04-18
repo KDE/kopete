@@ -427,7 +427,7 @@ QByteArray Buffer::buffer() const
 
 int Buffer::length() const
 {
-	return (mBuffer.size() - mReadPos);
+	return mBuffer.size();
 }
 
 int Buffer::bytesAvailable() const

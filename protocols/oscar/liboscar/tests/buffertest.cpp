@@ -68,6 +68,9 @@ void BufferTest::testLength()
 	b.addWord(0x0809);
 
 	QVERIFY(b.length() == 9);
+
+	b.getWord();
+	QVERIFY(b.length() == 9);
 }
 
 void BufferTest::testGuid()
@@ -75,9 +78,9 @@ void BufferTest::testGuid()
 	Buffer b;
 	Guid g( QByteArray( "asdfghjkqwertyui" ) );
 	b.addGuid( g );
-	QVERIFY( b.length() == 16 );
+	QVERIFY( b.bytesAvailable() == 16 );
 	Guid h = b.getGuid();
-	QVERIFY( b.length() == 0 );
+	QVERIFY( b.bytesAvailable() == 0 );
 	QCOMPARE( g, h );
 	
 }
