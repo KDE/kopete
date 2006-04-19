@@ -1120,7 +1120,7 @@ bool
 GaduAccount::dccEnabled()
 {
 	QString s = p->config->readEntry( QString::fromAscii( "useDcc" ) );
-	kdDebug( 14100 ) << "dccEnabled: "<<s<<endl;
+	kdDebug( 14100 ) << "dccEnabled: "<< s << endl;
 	if ( s == QString::fromAscii( "enabled" ) ) {
 		return true;
 	}
@@ -1143,9 +1143,10 @@ GaduAccount::setDcc( bool d )
 
 	p->config->writeEntry( QString::fromAscii( "useDcc" ), s );
 
-	if ( p->session_->isConnected() & d ) {
+	if ( p->session_->isConnected() && d ) {
 		dccOn();
 	}
+
 	kdDebug( 14100 ) << "s: "<<s<<endl;
 
 	return f;
