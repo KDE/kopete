@@ -105,7 +105,7 @@ public:
 	QPtrList<ChatView> chatViewList;
 
 private:
-	// All KopeteChatWindows are created by the findWindow function
+	// All KopeteChatWindows are created by the window function
 	KopeteChatWindow( QWidget *parent = 0, const char* name = "KopeteChatWindow" );
 
 	/**

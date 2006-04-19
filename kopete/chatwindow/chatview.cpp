@@ -192,11 +192,6 @@ QWidget *ChatView::mainWidget()
 	return this;
 }
 
-KParts::Part *ChatView::part() const
-{
-	return editPart();
-}
-
 bool ChatView::canSend()
 {
 	return editPart()->canSend();
