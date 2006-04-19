@@ -422,7 +422,7 @@ void ICQAccount::setBuddyIcon( KUrl url )
 		if ( image.isNull() )
 			return;
 		
-		image = image.smoothScale( 52, 64, Qt::KeepAspectRatioByExpanding );
+		image = image.scaled( 52, 64, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 		if(image.width() > image.height()) {
 			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
 		}

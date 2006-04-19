@@ -246,7 +246,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	{
 		AccountMap::Iterator mayDeleteIt = it;
 		++it;
-		if( mayDeleteIt.data() == this )
+		if( mayDeleteIt.value() == this )
 			accountMap.remove( mayDeleteIt.key() );
 	}
 
@@ -254,7 +254,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	{
 		GroupMap::Iterator mayDeleteIt = it;
 		++it;
-		if( mayDeleteIt.data() == this )
+		if( mayDeleteIt.value() == this )
 			groupMap.remove( mayDeleteIt.key() );
 	}
 
@@ -262,7 +262,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	{
 		MetaContactMap::Iterator mayDeleteIt = it;
 		++it;
-		if( mayDeleteIt.data() == this )
+		if( mayDeleteIt.value() == this )
 			mcMap.remove( mayDeleteIt.key() );
 	}
 

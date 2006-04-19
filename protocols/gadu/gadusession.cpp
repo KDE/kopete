@@ -168,7 +168,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.status_descr	= (char*)desc.data();
 
 	params_.uin		= loginp->uin;
-	params_.password	= (char *)( loginp->password.ascii() );
+	params_.password	= (char *)( loginp->password.toAscii() );
 	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0 );
 	params_.async		= 1;
 	params_.tls		= loginp->useTls;
@@ -454,10 +454,10 @@ GaduSession::pubDirSearch(  ResLine& query, int ageFrom, int ageTo, bool onlyAli
 	}
 	// otherwise we are looking only for one fellow with this nice UIN
 	else{
-		gg_pubdir50_add( searchRequest, GG_PUBDIR50_UIN, QString::number( query.uin ).ascii() );
+		gg_pubdir50_add( searchRequest, GG_PUBDIR50_UIN, QString::number( query.uin ).toAscii() );
 	}
 
-	gg_pubdir50_add( searchRequest, GG_PUBDIR50_START, QString::number( searchSeqNr_ ).ascii() );
+	gg_pubdir50_add( searchRequest, GG_PUBDIR50_START, QString::number( searchSeqNr_ ).toAscii() );
 	reqNr = gg_pubdir50( session_, searchRequest );
 	gg_pubdir50_free( searchRequest );
 

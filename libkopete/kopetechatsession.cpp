@@ -64,8 +64,9 @@ public:
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	Kopete::ContactPtrList others, Kopete::Protocol *protocol, const char *name )
-: QObject( user->account(), name )
+: QObject( user->account())
 {
+	setObjectName(name);
 	int i;
 
 	d = new KMMPrivate;
@@ -276,7 +277,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 	{
 		QString nick=myself()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() &&
-			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), false ) ) )
+			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), Qt::CaseInsensitive ) ) )
 		{
 			msg.setImportance( Kopete::Message::Highlight );
 		}
@@ -318,7 +319,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			/* We have only 1 contact before, so the status of the
 			   message manager was given from that contact status */
 			Kopete::Contact *old = d->mContactList.first();
-			d->mContactList.remove( old );
+			d->mContactList.removeAll( old );
 			d->mContactList.append( (Kopete::Contact*)c );
 
 			disconnect( old, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
@@ -364,7 +365,7 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 	}
 	else
 	{
-		d->mContactList.remove( (Kopete::Contact*)c );
+		d->mContactList.removeAll( (Kopete::Contact*)c );
 
 		disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
@@ -474,7 +475,7 @@ void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 	//This is a workaround to prevent crash if the contact get deleted.
 	// in the best case, we should ask the protocol to recreate a temporary contact.
 	// (remember: the contact may be deleted when the users removes it from the contactlist, or when closing kopete )
-	d->mContactList.remove( contact );
+	d->mContactList.removeAll( contact );
 	emit contactRemoved( contact, QString::null );
 
 	if ( d->mContactList.isEmpty() )

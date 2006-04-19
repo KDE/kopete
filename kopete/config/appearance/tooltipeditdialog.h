@@ -21,9 +21,9 @@
 #include <kdialog.h>
 #include <q3listview.h>
 
-class TooltipEditWidget;
+#include "ui_tooltipeditwidget.h"
 
-class TooltipEditDialog : public KDialog
+class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 {
 	Q_OBJECT
 
@@ -43,7 +43,7 @@ class TooltipEditDialog : public KDialog
 		void changed(bool);
 
 	private:
-		TooltipEditWidget *mMainWidget;
+		QWidget *mMainWidget;
 };
 
 #endif

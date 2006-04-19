@@ -29,8 +29,12 @@ public:
 };
 
 Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, const char *name, Kopete::Password *from )
- : KopetePasswordWidgetBase( parent, name ), d( new Private )
+ : QWidget( parent ), d( new Private )
 {
+	setObjectName( name );
+
+	setupUi( this );
+
 	load( from );
 }
 

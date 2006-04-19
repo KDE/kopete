@@ -35,8 +35,9 @@ public:
 };
 
 ContactListElement::ContactListElement( QObject *parent, const char *name )
-: QObject( parent, name )
+: QObject( parent )
 {
+	setObjectName( name );
 	d = new Private;
 
 	d->useCustomIcon = false;
@@ -101,11 +102,11 @@ const QList<QDomElement> ContactListElement::toXML()
 			pluginElement.setAttribute( QString::fromLatin1( "plugin-id" ), pluginIt.key()  );
 
 			QMap<QString, QString>::ConstIterator it;
-			for ( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
+			for ( it = pluginIt.value().begin(); it != pluginIt.value().end(); ++it )
 			{
 				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1( "plugin-data-field" ) );
 				pluginDataField.setAttribute( QString::fromLatin1( "key" ), it.key()  );
-				pluginDataField.appendChild( pluginData.createTextNode(  it.data()  ) );
+				pluginDataField.appendChild( pluginData.createTextNode(  it.value()  ) );
 				pluginElement.appendChild( pluginDataField );
 			}
 
@@ -148,7 +149,7 @@ const QList<QDomElement> ContactListElement::toXML()
 				break;
 			}
 			iconElement.setAttribute( QString::fromLatin1( "state" ), stateStr );
-			iconElement.appendChild( pluginData.createTextNode( it.data() )  );
+			iconElement.appendChild( pluginData.createTextNode( it.value() )  );
 			iconsElement.appendChild( iconElement );
 		}
 		pluginData.documentElement().appendChild( iconsElement );

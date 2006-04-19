@@ -1,73 +1,87 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>AppearanceConfig_Colors</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>AppearanceConfig_Colors</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>AppearanceConfig_Colors</class>
+ <widget class="QWidget" name="AppearanceConfig_Colors" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>595</width>
-            <height>606</height>
+    <width>445</width>
+    <height>525</height>
         </rect>
     </property>
-    <property name="windowTitle">
-        <string>Colors</string>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
+  <property name="windowTitle" >
+   <string>AppearanceConfig_Colors</string>
+                    </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>5</hsizetype>
+       <vsizetype>5</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>ChatWindow</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
         </property>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox3</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>GroupBoxPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="title">
-                <string>Chat Window</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Base font:</string>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="1" colspan="3" >
+         <widget class="KFontRequester" name="kcfg_chatFont" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" >
+         <widget class="QLabel" name="textLabel2_2" >
+          <property name="text" >
+           <string>Background color:</string>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="3" column="1">
-                    <property name="name">
-                        <cstring>kcfg_highlightForegroundColor</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Highlight foreground:</string>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="textLabel3" >
+          <property name="text" >
+           <string>Base font:</string>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="2" column="1">
-                    <property name="name">
-                        <cstring>kcfg_chatLinkColor</cstring>
+        </item>
+        <item row="2" column="1" >
+         <widget class="KColorButton" name="kcfg_chatLinkColor" >
+          <property name="text" >
+           <string/>
                     </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="color">
+          <property name="color" >
                         <color>
                             <red>0</red>
                             <green>85</green>
@@ -75,38 +89,62 @@
                         </color>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="3" column="3">
-                    <property name="name">
-                        <cstring>kcfg_highlightBackgroundColor</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
+        </item>
+        <item row="3" column="1" >
+         <widget class="KColorButton" name="kcfg_highlightForegroundColor" >
+          <property name="text" >
+           <string/>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel1_2</cstring>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="textLabel1_3" >
+          <property name="text" >
+           <string>Link color:</string>
                     </property>
-                    <property name="text">
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="KColorButton" name="kcfg_chatTextColor" >
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3" >
+         <widget class="KColorButton" name="kcfg_highlightBackgroundColor" >
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="textLabel1_2" >
+          <property name="text" >
                         <string>Base font color:</string>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="1" column="1">
-                    <property name="name">
-                        <cstring>kcfg_chatTextColor</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
+        </item>
+        <item row="3" column="2" >
+         <widget class="QLabel" name="textLabel1" >
+          <property name="text" >
+           <string>Highlight background:</string>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="1" column="3">
-                    <property name="name">
-                        <cstring>kcfg_chatBackgroundColor</cstring>
+        </item>
+        <item row="3" column="0" >
+         <widget class="QLabel" name="textLabel2" >
+          <property name="text" >
+           <string>Highlight foreground:</string>
                     </property>
-                    <property name="text">
-                        <string></string>
+         </widget>
+        </item>
+        <item row="1" column="3" >
+         <widget class="KColorButton" name="kcfg_chatBackgroundColor" >
+          <property name="text" >
+           <string/>
                     </property>
-                    <property name="color">
+          <property name="color" >
                         <color>
                             <red>255</red>
                             <green>255</green>
@@ -114,282 +152,205 @@
                         </color>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="2">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Highlight background:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel1_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Link color:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="2">
-                    <property name="name">
-                        <cstring>textLabel2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Background color:</string>
-                    </property>
-                </widget>
-                <widget class="KFontRequester" row="0" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>kcfg_chatFont</cstring>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox4</cstring>
-            </property>
-            <property name="title">
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
                 <string>Formatting Overrides</string>
             </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>kcfg_chatBgOverride</cstring>
-                    </property>
-                    <property name="text">
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="kcfg_chatBgOverride" >
+        <property name="text" >
                         <string>Do not show user specified &amp;background color</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>kcfg_chatFgOverride</cstring>
-                    </property>
-                    <property name="text">
+      </item>
+      <item>
+       <widget class="QCheckBox" name="kcfg_chatFgOverride" >
+        <property name="text" >
                         <string>&amp;Do not show user specified foreground color</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>kcfg_chatRtfOverride</cstring>
-                    </property>
-                    <property name="text">
+      </item>
+      <item>
+       <widget class="QCheckBox" name="kcfg_chatRtfOverride" >
+        <property name="text" >
                         <string>Do not show user specified &amp;rich text</string>
                     </property>
                 </widget>
-            </vbox>
+      </item>
+     </layout>
         </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox3_2</cstring>
-            </property>
-            <property name="title">
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
                 <string>Contact List</string>
             </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>kcfg_contactListUseCustomFont</cstring>
-                    </property>
-                    <property name="text">
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="kcfg_contactListUseCustomFont" >
+        <property name="text" >
                         <string>U&amp;se custom fonts for contact list items</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout5</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
                         </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer13</cstring>
+        <property name="spacing" >
+         <number>6</number>
                             </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
                             </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
                             </property>
-                            <property name="sizeHint">
+          <property name="sizeHint" >
                                 <size>
                                     <width>20</width>
                                     <height>0</height>
                                 </size>
                             </property>
                         </spacer>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout4</cstring>
-                            </property>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel" row="1" column="0">
-                                    <property name="name">
-                                        <cstring>mSmallFontLabel</cstring>
-                                    </property>
-                                    <property name="enabled">
+        </item>
+        <item>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="mSmallFontLabel" >
+            <property name="enabled" >
                                         <bool>false</bool>
                                     </property>
-                                    <property name="text">
+            <property name="text" >
                                         <string>Small font:</string>
                                     </property>
                                 </widget>
-                                <widget class="KFontRequester" row="0" column="1">
-                                    <property name="name">
-                                        <cstring>kcfg_contactListNormalFont</cstring>
-                                    </property>
-                                    <property name="enabled">
+          </item>
+          <item row="0" column="1" >
+           <widget class="KFontRequester" name="kcfg_contactListNormalFont" >
+            <property name="enabled" >
                                         <bool>false</bool>
                                     </property>
                                 </widget>
-                                <widget class="QLabel" row="0" column="0">
-                                    <property name="name">
-                                        <cstring>mNormalFontLabel</cstring>
-                                    </property>
-                                    <property name="enabled">
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="mNormalFontLabel" >
+            <property name="enabled" >
                                         <bool>false</bool>
                                     </property>
-                                    <property name="text">
+            <property name="text" >
                                         <string>Normal font:</string>
                                     </property>
                                 </widget>
-                                <widget class="KFontRequester" row="1" column="1">
-                                    <property name="name">
-                                        <cstring>kcfg_contactListSmallFont</cstring>
-                                    </property>
-                                    <property name="enabled">
+          </item>
+          <item row="1" column="1" >
+           <widget class="KFontRequester" name="kcfg_contactListSmallFont" >
+            <property name="enabled" >
                                         <bool>false</bool>
                                     </property>
                                 </widget>
-                            </grid>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout6</cstring>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="KColorButton" row="1" column="1">
-                            <property name="name">
-                                <cstring>kcfg_groupNameColor</cstring>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                        </widget>
-                        <widget class="KColorButton" row="0" column="1">
-                            <property name="name">
-                                <cstring>kcfg_idleContactColor</cstring>
-                            </property>
-                            <property name="enabled">
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="1" column="1" >
+         <widget class="KColorButton" name="kcfg_groupNameColor" >
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="KColorButton" name="kcfg_idleContactColor" >
+          <property name="enabled" >
                                 <bool>false</bool>
                             </property>
-                            <property name="text">
-                                <string></string>
+          <property name="text" >
+           <string/>
                             </property>
                         </widget>
-                        <widget class="QCheckBox" row="0" column="0">
-                            <property name="name">
-                                <cstring>kcfg_greyIdleMetaContacts</cstring>
-                            </property>
-                            <property name="text">
+        </item>
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="kcfg_greyIdleMetaContacts" >
+          <property name="text" >
                                 <string>Recolor co&amp;ntacts marked as idle:</string>
                             </property>
                         </widget>
-                        <widget class="QLabel" row="1" column="0">
-                            <property name="name">
-                                <cstring>textLabel1_4</cstring>
-                            </property>
-                            <property name="text">
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="textLabel1_4" >
+          <property name="text" >
                                 <string>Group name color:</string>
                             </property>
                         </widget>
-                    </grid>
-                </widget>
-            </vbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>80</height>
-                </size>
-            </property>
-        </spacer>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>kcfg_contactListUseCustomFont</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>mNormalFontLabel</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_contactListUseCustomFont</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>kcfg_contactListNormalFont</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_contactListUseCustomFont</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>mSmallFontLabel</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_contactListUseCustomFont</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>kcfg_contactListSmallFont</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_greyIdleMetaContacts</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>kcfg_idleContactColor</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-</connections>
-<tabstops>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KFontRequester</class>
+   <extends></extends>
+   <header>kfontrequester.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KColorButton</class>
+   <extends></extends>
+   <header>kcolorbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
     <tabstop>kcfg_chatBackgroundColor</tabstop>
     <tabstop>kcfg_chatTextColor</tabstop>
     <tabstop>kcfg_chatLinkColor</tabstop>
-</tabstops>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kfontrequester.h</includehint>
-    <includehint>kfontrequester.h</includehint>
-    <includehint>kfontrequester.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-</includehints>
-</UI>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

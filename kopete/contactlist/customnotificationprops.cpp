@@ -36,8 +36,9 @@
 #include <QMetaEnum>
 
 CustomNotificationProps::CustomNotificationProps( QWidget *parent, const QPair<QString,QString> &context, const char * name )
-	: QObject( parent, name ) , m_item(context)
+	: QObject( parent ) , m_item(context)
 {
+	setObjectName( name );
 	m_notifyWidget = new KNotifyConfigWidget( parent );
 	m_notifyWidget->setApplication(QString::null , m_item.first , m_item.second);
 }

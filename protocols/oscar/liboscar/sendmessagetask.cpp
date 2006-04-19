@@ -80,7 +80,7 @@ void SendMessageTask::onGo()
 	b->addWord( m_message.type() );
 
 	b->addByte( m_message.receiver().length() );
-	b->addString( m_message.receiver().latin1(), m_message.receiver().length() );
+	b->addString( m_message.receiver().toLatin1(), m_message.receiver().length() );
 
 
 	if ( snacSubfamily == 0x0006 )

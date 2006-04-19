@@ -659,7 +659,7 @@ void Client::send( Transfer* request )
 
 void Client::debug(const QString &str)
 {
-	qDebug( "CLIENT: %s", str.ascii() );
+	qDebug( "CLIENT: %s", str.toAscii() );
 }
 
 Task * Client::rootTask()

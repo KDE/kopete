@@ -167,7 +167,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 
 	delete d->lastMimeSource;
 	if ( completed )
-		d->lastMimeSource = new Q3ImageDrag( img.convertToImage() );
+		d->lastMimeSource = new Q3ImageDrag( img.toImage() );
 	else
 		d->lastMimeSource = 0;
 	return d->lastMimeSource;

@@ -1,44 +1,43 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>KopeteMetaLVIPropsWidget</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>KopeteMetaLVIPropsWidget</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>KopeteMetaLVIPropsWidget</class>
+ <widget class="QWidget" name="KopeteMetaLVIPropsWidget" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>530</width>
-            <height>457</height>
+    <width>405</width>
+    <height>523</height>
         </rect>
     </property>
-    <property name="toolTip" stdset="0">
-        <string></string>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QTabWidget" row="0" column="0">
-            <property name="name">
-                <cstring>tabWidget</cstring>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
+  <property name="toolTip" >
+   <string/>
                 </property>
-                <attribute name="title">
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="tabWidget" >
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
                     <string>&amp;General</string>
                 </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>grpAddressbook</cstring>
-                        </property>
-                        <property name="sizePolicy">
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="Q3GroupBox" name="grpAddressbook" >
+         <property name="sizePolicy" >
                             <sizepolicy>
                                 <hsizetype>1</hsizetype>
                                 <vsizetype>1</vsizetype>
@@ -46,132 +45,127 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
-                        <property name="title">
+         <property name="title" >
                             <string>Address Book Link</string>
                         </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="Kopete::UI::AddressBookLinkWidget">
-                                <property name="name">
-                                    <cstring>widAddresseeLink</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout8</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>btnExportKABC</cstring>
-                                        </property>
-                                        <property name="enabled">
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="Kopete::UI::AddressBookLinkWidget" name="widAddresseeLink" />
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="btnExportKABC" >
+              <property name="enabled" >
                                             <bool>false</bool>
                                         </property>
-                                        <property name="text">
-                                            <string>E&amp;xport Details...</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
+              <property name="toolTip" >
                                             <string>Export contact's details to the KDE Address Book</string>
                                         </property>
+              <property name="text" >
+               <string>E&amp;xport Details...</string>
+              </property>
                                     </widget>
+            </item>
+            <item>
                                     <spacer>
-                                        <property name="name">
-                                            <cstring>spacer8_2</cstring>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>107</width>
                                                 <height>20</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>btnImportKABC</cstring>
-                                        </property>
-                                        <property name="enabled">
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnImportKABC" >
+              <property name="enabled" >
                                             <bool>false</bool>
                                         </property>
-                                        <property name="text">
-                                            <string>&amp;Import Contacts</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
+              <property name="toolTip" >
                                             <string>Import contacts from the KDE Address Book</string>
                                         </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QButtonGroup" row="1" column="0">
-                        <property name="name">
-                            <cstring>buttonGroup1</cstring>
+              <property name="text" >
+               <string>&amp;Import Contacts</string>
                         </property>
-                        <property name="title">
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="Q3ButtonGroup" name="buttonGroup1" >
+         <property name="title" >
                             <string>Display Name Source</string>
                         </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>radioNameKABC</cstring>
-                                </property>
-                                <property name="text">
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="radioNameKABC" >
+            <property name="text" >
                                     <string>Use addressbook &amp;name (needs addressbook link)</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout11</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioNameContact</cstring>
-                                        </property>
-                                        <property name="text">
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="radioNameContact" >
+              <property name="text" >
                                             <string>From contact:</string>
                                         </property>
                                     </widget>
+            </item>
+            <item>
                                     <spacer>
-                                        <property name="name">
-                                            <cstring>spacer8</cstring>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>20</width>
                                                 <height>20</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="QComboBox">
-                                        <property name="name">
-                                            <cstring>cmbAccountName</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
+            </item>
+            <item>
+             <widget class="QComboBox" name="cmbAccountName" >
+              <property name="sizePolicy" >
                                             <sizepolicy>
                                                 <hsizetype>7</hsizetype>
                                                 <vsizetype>0</vsizetype>
@@ -179,140 +173,133 @@
                                                 <verstretch>0</verstretch>
                                             </sizepolicy>
                                         </property>
-                                        <property name="toolTip" stdset="0">
+              <property name="toolTip" >
                                             <string>Contact to synchronize the displayname with.</string>
                                         </property>
                                     </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout12</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioNameCustom</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="radioNameCustom" >
+              <property name="text" >
                                             <string>Cus&amp;tom:</string>
                                         </property>
                                     </widget>
+            </item>
+            <item>
                                     <spacer>
-                                        <property name="name">
-                                            <cstring>spacer8_3</cstring>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>50</width>
                                                 <height>20</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>edtDisplayName</cstring>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QButtonGroup" row="2" column="0">
-                        <property name="name">
-                            <cstring>buttonGroup2</cstring>
-                        </property>
-                        <property name="title">
+            </item>
+            <item>
+             <widget class="QLineEdit" name="edtDisplayName" />
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="Q3ButtonGroup" name="buttonGroup2" >
+         <property name="title" >
                             <string>Photo Source</string>
                         </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="0" column="1" rowspan="3" colspan="1">
-                                <property name="name">
-                                    <cstring>photoLabel</cstring>
-                                </property>
-                                <property name="minimumSize">
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item rowspan="3" row="0" column="1" >
+           <widget class="QLabel" name="photoLabel" >
+            <property name="minimumSize" >
                                     <size>
                                         <width>64</width>
                                         <height>92</height>
                                     </size>
                                 </property>
-                                <property name="maximumSize">
+            <property name="maximumSize" >
                                     <size>
                                         <width>64</width>
                                         <height>32767</height>
                                     </size>
                                 </property>
-                                <property name="frameShape">
-                                    <enum>Box</enum>
+            <property name="frameShape" >
+             <enum>QFrame::Box</enum>
                                 </property>
-                                <property name="lineWidth">
+            <property name="lineWidth" >
                                     <number>1</number>
                                 </property>
-                                <property name="text">
+            <property name="text" >
                                     <string>Photo</string>
                                 </property>
-                                <property name="scaledContents">
+            <property name="scaledContents" >
                                     <bool>false</bool>
                                 </property>
                             </widget>
-                            <widget class="QRadioButton" row="0" column="0">
-                                <property name="name">
-                                    <cstring>radioPhotoKABC</cstring>
-                                </property>
-                                <property name="text">
+          </item>
+          <item row="0" column="0" >
+           <widget class="QRadioButton" name="radioPhotoKABC" >
+            <property name="text" >
                                     <string>U&amp;se addressbook photo (needs addressbook link)</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget" row="1" column="0">
-                                <property name="name">
-                                    <cstring>layout13</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioPhotoContact</cstring>
-                                        </property>
-                                        <property name="text">
+          </item>
+          <item row="1" column="0" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="radioPhotoContact" >
+              <property name="text" >
                                             <string>From contact:</string>
                                         </property>
                                     </widget>
+            </item>
+            <item>
                                     <spacer>
-                                        <property name="name">
-                                            <cstring>spacer9</cstring>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>20</width>
                                                 <height>20</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="QComboBox">
-                                        <property name="name">
-                                            <cstring>cmbAccountPhoto</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
+            </item>
+            <item>
+             <widget class="QComboBox" name="cmbAccountPhoto" >
+              <property name="sizePolicy" >
                                             <sizepolicy>
                                                 <hsizetype>7</hsizetype>
                                                 <vsizetype>0</vsizetype>
@@ -320,50 +307,47 @@
                                                 <verstretch>0</verstretch>
                                             </sizepolicy>
                                         </property>
-                                        <property name="toolTip" stdset="0">
+              <property name="toolTip" >
                                             <string>Contact to synchronize the displayname with.</string>
                                         </property>
                                     </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QLayoutWidget" row="2" column="0">
-                                <property name="name">
-                                    <cstring>layout7</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioPhotoCustom</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="radioPhotoCustom" >
+              <property name="text" >
                                             <string>Custom:</string>
                                         </property>
                                     </widget>
+            </item>
+            <item>
                                     <spacer>
-                                        <property name="name">
-                                            <cstring>spacer9_2</cstring>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>20</width>
                                                 <height>20</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="KUrlComboRequester">
-                                        <property name="name">
-                                            <cstring>cmbPhotoUrl</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
+            </item>
+            <item>
+             <widget class="KUrlComboRequester" name="cmbPhotoUrl" >
+              <property name="sizePolicy" >
                                             <sizepolicy>
                                                 <hsizetype>7</hsizetype>
                                                 <vsizetype>5</vsizetype>
@@ -372,185 +356,216 @@
                                             </sizepolicy>
                                         </property>
                                     </widget>
-                                    <widget class="KPushButton">
-                                        <property name="name">
-                                            <cstring>btnClearPhoto</cstring>
-                                        </property>
-                                        <property name="maximumSize">
+            </item>
+            <item>
+             <widget class="KPushButton" name="btnClearPhoto" >
+              <property name="maximumSize" >
                                             <size>
                                                 <width>32</width>
                                                 <height>32</height>
                                             </size>
                                         </property>
-                                        <property name="text">
-                                            <string></string>
+              <property name="text" >
+               <string/>
                                         </property>
                                     </widget>
-                                </hbox>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QCheckBox" row="3" column="0">
-                        <property name="name">
-                            <cstring>chkSyncPhoto</cstring>
-                        </property>
-                        <property name="text">
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QCheckBox" name="chkSyncPhoto" >
+         <property name="text" >
                             <string>S&amp;ync photo to addressbook</string>
                         </property>
                     </widget>
-                </grid>
+       </item>
+      </layout>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
                     <string>Ad&amp;vanced</string>
                 </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>grpIcons</cstring>
-                        </property>
-                        <property name="title">
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="Q3GroupBox" name="grpIcons" >
+         <property name="title" >
                             <string>Icons</string>
                         </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>lblAway</cstring>
-                                </property>
-                                <property name="text">
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="lblAway" >
+            <property name="text" >
                                     <string>Awa&amp;y:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+            <property name="buddy" >
                                     <cstring>icnbAway</cstring>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lblOnline</cstring>
-                                </property>
-                                <property name="text">
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="lblOnline" >
+            <property name="text" >
                                     <string>&amp;Online:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+            <property name="buddy" >
                                     <cstring>icnbOnline</cstring>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="5">
-                                <property name="name">
-                                    <cstring>chkUseCustomIcons</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Use custom status &amp;icons</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
+          </item>
+          <item row="0" column="0" colspan="5" >
+           <widget class="QCheckBox" name="chkUseCustomIcons" >
+            <property name="toolTip" >
                                     <string>Check to set custom icons for this contact</string>
                                 </property>
-                            </widget>
-                            <widget class="QPushButton" row="2" column="1">
-                                <property name="name">
-                                    <cstring>icnbAway</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
+            <property name="text" >
+             <string>Use custom status &amp;icons</string>
                                 </property>
                             </widget>
-                            <widget class="QPushButton" row="1" column="1">
-                                <property name="name">
-                                    <cstring>icnbOnline</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="1" column="3">
-                                <property name="name">
-                                    <cstring>icnbOffline</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="2" column="3">
-                                <property name="name">
-                                    <cstring>icnbUnknown</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="2">
-                                <property name="name">
-                                    <cstring>lblOffline</cstring>
-                                </property>
-                                <property name="text">
+          </item>
+          <item row="2" column="1" >
+           <widget class="QPushButton" name="icnbAway" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="icnbOnline" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3" >
+           <widget class="QPushButton" name="icnbOffline" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3" >
+           <widget class="QPushButton" name="icnbUnknown" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QLabel" name="lblOffline" >
+            <property name="text" >
                                     <string>O&amp;ffline:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+            <property name="buddy" >
                                     <cstring>icnbOffline</cstring>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="2" column="2">
-                                <property name="name">
-                                    <cstring>lblUnknown</cstring>
-                                </property>
-                                <property name="text">
+          </item>
+          <item row="2" column="2" >
+           <widget class="QLabel" name="lblUnknown" >
+            <property name="text" >
                                     <string>Un&amp;known:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+            <property name="buddy" >
                                     <cstring>icnbUnknown</cstring>
                                 </property>
                             </widget>
-                            <spacer row="1" column="4">
-                                <property name="name">
-                                    <cstring>spacerHorizontal1</cstring>
+          </item>
+          <item row="1" column="4" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
+            <property name="sizeHint" >
                                     <size>
                                         <width>16</width>
                                         <height>16</height>
                                     </size>
                                 </property>
                             </spacer>
-                        </grid>
+          </item>
+         </layout>
                     </widget>
+       </item>
+       <item>
                     <spacer>
-                        <property name="name">
-                            <cstring>spacer12</cstring>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
+         <property name="sizeHint" >
                             <size>
                                 <width>20</width>
                                 <height>170</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+       </item>
+      </layout>
             </widget>
         </widget>
-    </grid>
-</widget>
-<tabstops>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3GroupBox</class>
+   <extends></extends>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Kopete::UI::AddressBookLinkWidget</class>
+   <extends></extends>
+   <header>addressbooklinkwidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KUrlComboRequester</class>
+   <extends></extends>
+   <header>kurlrequester.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends></extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
     <tabstop>tabWidget</tabstop>
     <tabstop>btnExportKABC</tabstop>
     <tabstop>btnImportKABC</tabstop>
@@ -563,25 +578,7 @@
     <tabstop>icnbAway</tabstop>
     <tabstop>icnbOffline</tabstop>
     <tabstop>icnbUnknown</tabstop>
-</tabstops>
-<customwidgets>
-    <customwidget>
-      <class>Kopete::UI::AddressBookLinkWidget</class>
-        <header>addressbooklinkwidget.h</header>
-    </customwidget>
-</customwidgets>				     
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>addressbooklinkwidget.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-</includehints>
-<customwidgets>
-    <customwidget>
-       <class>KUrlComboRequester</class>
-       <header>kurlrequester.h</header>
-    </customwidget>
-</customwidgets>
-</UI>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -208,7 +208,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		// save for later use
 		QString currDisplayName = displayName();
 
-		d->contacts.remove( c );
+		d->contacts.removeAll( c );
 		
 		// if the contact was a source of property data, clean
 		if (displayNameSourceContact() == c)
@@ -738,10 +738,10 @@ QImage photoFromContact( Kopete::Contact *contact) /*const*/
 	if(photoProp.canConvert( QVariant::Image ))
 		img= photoProp.value<QImage>();
 	else if(photoProp.canConvert( QVariant::Pixmap ))
-		img=photoProp.value<QPixmap>().convertToImage();
+		img=photoProp.value<QPixmap>().toImage();
 	else if(!photoProp.asString().isEmpty())
 	{
-		img=QPixmap( photoProp.toString() ).convertToImage();
+		img=QPixmap( photoProp.toString() ).toImage();
 	}
 	return img;
 }
@@ -768,7 +768,7 @@ QImage photoFromKABC( const QString &id ) /*const*/
 			}
 			else
 			{
-				return QPixmap( pic.url() ).convertToImage();
+				return QPixmap( pic.url() ).toImage();
 			}
 		}
 	}
@@ -814,7 +814,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 			}
 			else if(photoProp.canCast( QVariant::Pixmap ))
 			{
-				d->contactPicture.setPicture( photoProp.value<QPixmap>().convertToImage() );
+				d->contactPicture.setPicture( photoProp.value<QPixmap>().toImage() );
 			}
 			else if(!photoProp.asString().isEmpty())
 			{

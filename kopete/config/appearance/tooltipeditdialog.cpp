@@ -15,7 +15,6 @@
 */
 
 #include "tooltipeditdialog.h"
-#include "tooltipeditwidget.h"
 
 #include "kopetecontactproperty.h"
 #include "kopeteglobal.h"
@@ -24,6 +23,7 @@
 #include <qapplication.h>
 #include <qtoolbutton.h>
 #include <qstringlist.h>
+#include <q3header.h>
 
 #include <kiconloader.h>
 #include <k3listview.h>
@@ -57,26 +57,29 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char*/* name*/)
 	setDefaultButton(KDialog::Ok);
 	enableButtonSeparator(true);
 
-	mMainWidget = new TooltipEditWidget(this, "TooltipEditDialog::mMainWidget");
+	mMainWidget = new QWidget(this);
+	mMainWidget->setObjectName("TooltipEditDialog::mMainWidget");
+	setupUi(mMainWidget);
+
 	setMainWidget(mMainWidget);
-	mMainWidget->lstUsedItems->header()->hide();
-	mMainWidget->lstUnusedItems->header()->hide();
-	mMainWidget->lstUsedItems->setSorting( -1 );
-	mMainWidget->lstUnusedItems->setSorting( 0 );
+	lstUsedItems->header()->hide();
+	lstUnusedItems->header()->hide();
+	lstUsedItems->setSorting( -1 );
+	lstUnusedItems->setSorting( 0 );
 
 	const Kopete::ContactPropertyTmpl::Map propmap(
 		Kopete::Global::Properties::self()->templateMap());
 	QStringList usedKeys = Kopete::AppearanceSettings::self()->toolTipContents();
 
-	connect(mMainWidget->lstUnusedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotAddButton()));
-	connect(mMainWidget->lstUsedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotRemoveButton()));
+	connect(lstUnusedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotAddButton()));
+	connect(lstUsedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotRemoveButton()));
 
 	// first fill the "used" list
 	foreach(QString usedProp, usedKeys)
 	{
 		if(propmap.contains(usedProp) && !propmap[usedProp].isPrivate())
 		{
-			new TooltipItem(mMainWidget->lstUsedItems, propmap[usedProp].label(), usedProp);
+			new TooltipItem(lstUsedItems, propmap[usedProp].label(), usedProp);
 		}
 	}
 
@@ -85,37 +88,37 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char*/* name*/)
 	Kopete::ContactPropertyTmpl::Map::ConstIterator it;
 	for(it = propmap.begin(); it != propmap.end(); ++it)
 	{
-		if((usedKeys.contains(it.key())==0) && (!it.data().isPrivate()))
-			new TooltipItem(mMainWidget->lstUnusedItems, it.data().label(), it.key());
+		if((usedKeys.contains(it.key())==0) && (!it.value().isPrivate()))
+			new TooltipItem(lstUnusedItems, it.value().label(), it.key());
 	}
 
-	connect(mMainWidget->lstUnusedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
+	connect(lstUnusedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
 		this, SLOT(slotUnusedSelected(Q3ListViewItem *)));
-	connect(mMainWidget->lstUsedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
+	connect(lstUsedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
 		this, SLOT(slotUsedSelected(Q3ListViewItem *)));
 
 	QIcon iconSet;
 	iconSet = SmallIconSet("up");
-	mMainWidget->tbUp->setIconSet(iconSet);
-	mMainWidget->tbUp->setEnabled(false);
-	mMainWidget->tbUp->setAutoRepeat(true);
-	connect(mMainWidget->tbUp, SIGNAL(clicked()), SLOT(slotUpButton()));
+	tbUp->setIconSet(iconSet);
+	tbUp->setEnabled(false);
+	tbUp->setAutoRepeat(true);
+	connect(tbUp, SIGNAL(clicked()), SLOT(slotUpButton()));
 
 	iconSet = SmallIconSet("down");
-	mMainWidget->tbDown->setIconSet(iconSet);
-	mMainWidget->tbDown->setEnabled(false);
-	mMainWidget->tbDown->setAutoRepeat(true);
-	connect(mMainWidget->tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
+	tbDown->setIconSet(iconSet);
+	tbDown->setEnabled(false);
+	tbDown->setAutoRepeat(true);
+	connect(tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
 
 	iconSet = QApplication::isRightToLeft() ? SmallIconSet("back") : SmallIconSet("forward");
-	mMainWidget->tbAdd->setIconSet(iconSet);
-	mMainWidget->tbAdd->setEnabled(false);
-	connect(mMainWidget->tbAdd, SIGNAL(clicked()), SLOT(slotAddButton()));
+	tbAdd->setIconSet(iconSet);
+	tbAdd->setEnabled(false);
+	connect(tbAdd, SIGNAL(clicked()), SLOT(slotAddButton()));
 
 	iconSet = QApplication::isRightToLeft() ? SmallIconSet("forward") : SmallIconSet("back");
-	mMainWidget->tbRemove->setIconSet(iconSet);
-	mMainWidget->tbRemove->setEnabled(false);
-	connect(mMainWidget->tbRemove, SIGNAL(clicked()), SLOT(slotRemoveButton()));
+	tbRemove->setIconSet(iconSet);
+	tbRemove->setEnabled(false);
+	connect(tbRemove, SIGNAL(clicked()), SLOT(slotRemoveButton()));
 
 	connect(this, SIGNAL(okClicked()), this, SLOT(slotOkClicked()));
 
@@ -126,7 +129,7 @@ void TooltipEditDialog::slotOkClicked()
 {
 	QStringList oldList = Kopete::AppearanceSettings::self()->toolTipContents();
 	QStringList newList;
-	Q3ListViewItemIterator it(mMainWidget->lstUsedItems);
+	Q3ListViewItemIterator it(lstUsedItems);
 	QString keyname;
 
 	while(it.current())
@@ -149,29 +152,29 @@ void TooltipEditDialog::slotOkClicked()
 
 void TooltipEditDialog::slotUnusedSelected(Q3ListViewItem *item)
 {
-	//mMainWidget->tbRemove->setEnabled(false);
-	mMainWidget->tbAdd->setEnabled(item!=0);
+	//tbRemove->setEnabled(false);
+	tbAdd->setEnabled(item!=0);
 }
 
 void TooltipEditDialog::slotUsedSelected(Q3ListViewItem *item)
 {
-	mMainWidget->tbRemove->setEnabled(item!=0);
-	//mMainWidget->tbAdd->setEnabled(false);
+	tbRemove->setEnabled(item!=0);
+	//tbAdd->setEnabled(false);
 	if (item)
 	{
-		mMainWidget->tbUp->setEnabled(item->itemAbove() != 0);
-		mMainWidget->tbDown->setEnabled(item->itemBelow() != 0);
+		tbUp->setEnabled(item->itemAbove() != 0);
+		tbDown->setEnabled(item->itemBelow() != 0);
 	}
 	else
 	{
-		mMainWidget->tbUp->setEnabled(false);
-		mMainWidget->tbDown->setEnabled(false);
+		tbUp->setEnabled(false);
+		tbDown->setEnabled(false);
 	}
 }
 
 void TooltipEditDialog::slotUpButton()
 {
-	Q3ListViewItem *item = mMainWidget->lstUsedItems->currentItem();
+	Q3ListViewItem *item = lstUsedItems->currentItem();
 	Q3ListViewItem *prev = item->itemAbove();
 	if(prev == 0) // we are first item already
 		return;
@@ -182,7 +185,7 @@ void TooltipEditDialog::slotUpButton()
 
 void TooltipEditDialog::slotDownButton()
 {
-	Q3ListViewItem *item = mMainWidget->lstUsedItems->currentItem();
+	Q3ListViewItem *item = lstUsedItems->currentItem();
 	Q3ListViewItem *next = item->itemBelow();
 	if(next == 0) // we are last item already
 		return;
@@ -193,31 +196,31 @@ void TooltipEditDialog::slotDownButton()
 
 void TooltipEditDialog::slotAddButton()
 {
-	TooltipItem *item = static_cast<TooltipItem *>(mMainWidget->lstUnusedItems->currentItem());
+	TooltipItem *item = static_cast<TooltipItem *>(lstUnusedItems->currentItem());
 	if(!item)
 		return;
 	//kDebug(14000) << k_funcinfo << endl;
 
 	// build a new one in the "used" list
-	new TooltipItem(mMainWidget->lstUsedItems, item->text(0), item->propertyName());
+	new TooltipItem(lstUsedItems, item->text(0), item->propertyName());
 
 	// remove the old one from "unused" list
-	mMainWidget->lstUnusedItems->takeItem(item);
+	lstUnusedItems->takeItem(item);
 	delete item;
 }
 
 void TooltipEditDialog::slotRemoveButton()
 {
-	TooltipItem *item = static_cast<TooltipItem *>(mMainWidget->lstUsedItems->currentItem());
+	TooltipItem *item = static_cast<TooltipItem *>(lstUsedItems->currentItem());
 	if(!item)
 		return;
 	//kDebug(14000) << k_funcinfo << endl;
 
 	// build a new one in the "unused" list
-	new TooltipItem(mMainWidget->lstUnusedItems, item->text(0), item->propertyName());
+	new TooltipItem(lstUnusedItems, item->text(0), item->propertyName());
 
 	// remove the old one from "used" list
-	mMainWidget->lstUsedItems->takeItem(item);
+	lstUsedItems->takeItem(item);
 	delete item;
 }
 

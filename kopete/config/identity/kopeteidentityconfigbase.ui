@@ -1,11 +1,10 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>KopeteIdentityConfigBase</class>
-<author>Michaël Larouche</author>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>KopeteIdentityConfigBase</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author>Michaël Larouche</author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>KopeteIdentityConfigBase</class>
+ <widget class="QWidget" name="KopeteIdentityConfigBase" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
@@ -13,42 +12,41 @@
             <height>447</height>
         </rect>
     </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>kcfg_EnableGlobalIdentity</cstring>
-            </property>
-            <property name="text">
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="kcfg_EnableGlobalIdentity" >
+     <property name="text" >
                 <string>Enable &amp;global identity</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout6</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
                     </property>
-                    <property name="text">
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="textLabel1" >
+       <property name="text" >
                         <string>Identity:</string>
                     </property>
                 </widget>
-                <widget class="KComboBox">
-                    <property name="name">
-                        <cstring>comboSelectIdentity</cstring>
-                    </property>
-                    <property name="enabled">
+     </item>
+     <item>
+      <widget class="KComboBox" name="comboSelectIdentity" >
+       <property name="enabled" >
                         <bool>false</bool>
                     </property>
-                    <property name="sizePolicy">
+       <property name="sizePolicy" >
                         <sizepolicy>
                             <hsizetype>7</hsizetype>
                             <vsizetype>0</vsizetype>
@@ -57,127 +55,110 @@
                         </sizepolicy>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout7</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
                 </property>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonNewIdentity</cstring>
+     <property name="spacing" >
+      <number>6</number>
                     </property>
-                    <property name="text">
+     <item>
+      <widget class="KPushButton" name="buttonNewIdentity" >
+       <property name="text" >
                         <string>Ne&amp;w Identity...</string>
                     </property>
                 </widget>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonCopyIdentity</cstring>
-                    </property>
-                    <property name="text">
+     </item>
+     <item>
+      <widget class="KPushButton" name="buttonCopyIdentity" >
+       <property name="text" >
                         <string>Cop&amp;y Identity...</string>
                     </property>
                 </widget>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonRenameIdentity</cstring>
-                    </property>
-                    <property name="text">
+     </item>
+     <item>
+      <widget class="KPushButton" name="buttonRenameIdentity" >
+       <property name="text" >
                         <string>Rename I&amp;dentity...</string>
                     </property>
                 </widget>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonRemoveIdentity</cstring>
-                    </property>
-                    <property name="text">
+     </item>
+     <item>
+      <widget class="KPushButton" name="buttonRemoveIdentity" >
+       <property name="text" >
                         <string>Remo&amp;ve Identity</string>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QTabWidget">
-            <property name="name">
-                <cstring>tabWidget2</cstring>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget2" >
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
                     <string>&amp;Nickname</string>
                 </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QButtonGroup">
-                        <property name="name">
-                            <cstring>nicknameButtonGroup</cstring>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
                         </property>
-                        <property name="enabled">
+       <item>
+        <widget class="Q3ButtonGroup" name="nicknameButtonGroup" >
+         <property name="enabled" >
                             <bool>false</bool>
                         </property>
-                        <property name="frameShape">
-                            <enum>NoFrame</enum>
+         <property name="title" >
+          <string/>
                         </property>
-                        <property name="lineWidth">
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
                             <number>0</number>
                         </property>
-                        <property name="title">
-                            <string></string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget" row="0" column="0">
-                                <property name="name">
-                                    <cstring>layout12</cstring>
+          <property name="spacing" >
+           <number>0</number>
                                 </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
                                     </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioNicknameCustom</cstring>
+            <property name="spacing" >
+             <number>6</number>
                                         </property>
-                                        <property name="text">
+            <item>
+             <widget class="QRadioButton" name="radioNicknameCustom" >
+              <property name="text" >
                                             <string>Cu&amp;stom:</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>lineNickname</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioNicknameKABC</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineNickname" />
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioNicknameKABC" >
+              <property name="text" >
                                             <string>Use address boo&amp;k name (need address book link)</string>
                                         </property>
                                     </widget>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioNicknameContact</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioNicknameContact" >
+              <property name="text" >
                                             <string>Use nickname from con&amp;tact for global nickname:</string>
                                         </property>
                                     </widget>
-                                    <widget class="QComboBox">
-                                        <property name="name">
-                                            <cstring>comboNameContact</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboNameContact" >
+              <property name="sizePolicy" >
                                             <sizepolicy>
                                                 <hsizetype>7</hsizetype>
                                                 <vsizetype>0</vsizetype>
@@ -185,101 +166,94 @@
                                                 <verstretch>0</verstretch>
                                             </sizepolicy>
                                         </property>
-                                        <property name="toolTip" stdset="0">
+              <property name="toolTip" >
                                             <string>Contact to synchronize the displayname with.</string>
                                         </property>
                                     </widget>
-                                </vbox>
-                            </widget>
-                        </grid>
+            </item>
+           </layout>
+          </item>
+         </layout>
                     </widget>
+       </item>
+       <item>
                     <spacer>
-                        <property name="name">
-                            <cstring>spacer7_2</cstring>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
+         <property name="sizeHint" >
                             <size>
                                 <width>20</width>
                                 <height>16</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+       </item>
+      </layout>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
                     <string>P&amp;hoto</string>
                 </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QButtonGroup">
-                        <property name="name">
-                            <cstring>photoButtonGroup</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="lineWidth">
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
                             <number>0</number>
                         </property>
-                        <property name="title">
-                            <string></string>
+       <property name="spacing" >
+        <number>6</number>
                         </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout7</cstring>
+       <item>
+        <widget class="Q3ButtonGroup" name="photoButtonGroup" >
+         <property name="enabled" >
+          <bool>false</bool>
                                 </property>
-                                <grid>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
+         <property name="title" >
+          <string/>
                                     </property>
-                                    <widget class="KUrlComboRequester" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>comboPhotoURL</cstring>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
                                         </property>
-                                    </widget>
-                                    <widget class="KPushButton" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>buttonClearPhoto</cstring>
+            <property name="spacing" >
+             <number>6</number>
                                         </property>
-                                        <property name="maximumSize">
+            <item row="1" column="0" >
+             <widget class="KUrlComboRequester" name="comboPhotoURL" />
+            </item>
+            <item row="1" column="1" >
+             <widget class="KPushButton" name="buttonClearPhoto" >
+              <property name="maximumSize" >
                                             <size>
                                                 <width>32</width>
                                                 <height>3232</height>
                                             </size>
                                         </property>
-                                        <property name="text">
-                                            <string></string>
+              <property name="text" >
+               <string/>
                                         </property>
                                     </widget>
-                                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
-                                        <property name="name">
-                                            <cstring>checkSyncPhotoKABC</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+            <item row="5" column="0" colspan="2" >
+             <widget class="QCheckBox" name="checkSyncPhotoKABC" >
+              <property name="text" >
                                             <string>S&amp;ync address book photo with global photo</string>
                                         </property>
                                     </widget>
-                                    <widget class="QComboBox" row="4" column="0" rowspan="1" colspan="2">
-                                        <property name="name">
-                                            <cstring>comboPhotoContact</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
+            </item>
+            <item row="4" column="0" colspan="2" >
+             <widget class="QComboBox" name="comboPhotoContact" >
+              <property name="sizePolicy" >
                                             <sizepolicy>
                                                 <hsizetype>7</hsizetype>
                                                 <vsizetype>0</vsizetype>
@@ -288,257 +262,247 @@
                                             </sizepolicy>
                                         </property>
                                     </widget>
-                                    <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
-                                        <property name="name">
-                                            <cstring>radioPhotoCustom</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+            <item row="0" column="0" colspan="2" >
+             <widget class="QRadioButton" name="radioPhotoCustom" >
+              <property name="text" >
                                             <string>Cus&amp;tom:</string>
                                         </property>
                                     </widget>
-                                    <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="2">
-                                        <property name="name">
-                                            <cstring>radioPhotoContact</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+            <item row="3" column="0" colspan="2" >
+             <widget class="QRadioButton" name="radioPhotoContact" >
+              <property name="text" >
                                             <string>U&amp;se photo from contact for global photo:</string>
                                         </property>
                                     </widget>
-                                    <widget class="QRadioButton" row="2" column="0" rowspan="1" colspan="2">
-                                        <property name="name">
-                                            <cstring>radioPhotoKABC</cstring>
-                                        </property>
-                                        <property name="text">
+            </item>
+            <item row="2" column="0" colspan="2" >
+             <widget class="QRadioButton" name="radioPhotoKABC" >
+              <property name="text" >
                                             <string>Use a&amp;ddress book photo (needs address book link)</string>
                                         </property>
                                     </widget>
-                                </grid>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout11</cstring>
-                                </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer6</cstring>
+            <property name="spacing" >
+             <number>6</number>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
                                         </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>20</width>
                                                 <height>36</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>labelPhoto</cstring>
-                                        </property>
-                                        <property name="minimumSize">
+            </item>
+            <item>
+             <widget class="QLabel" name="labelPhoto" >
+              <property name="minimumSize" >
                                             <size>
                                                 <width>64</width>
                                                 <height>92</height>
                                             </size>
                                         </property>
-                                        <property name="maximumSize">
+              <property name="maximumSize" >
                                             <size>
                                                 <width>64</width>
                                                 <height>32767</height>
                                             </size>
                                         </property>
-                                        <property name="frameShape">
-                                            <enum>Box</enum>
+              <property name="frameShape" >
+               <enum>QFrame::Box</enum>
                                         </property>
-                                        <property name="lineWidth">
+              <property name="lineWidth" >
                                             <number>1</number>
                                         </property>
-                                        <property name="text">
-                                            <string>&lt;center&gt;Photo&lt;/center&gt;</string>
+              <property name="text" >
+               <string>&lt;center>Photo&lt;/center></string>
                                         </property>
-                                        <property name="textFormat">
-                                            <enum>RichText</enum>
+              <property name="textFormat" >
+               <enum>Qt::RichText</enum>
                                         </property>
-                                        <property name="scaledContents">
+              <property name="scaledContents" >
                                             <bool>false</bool>
                                         </property>
                                     </widget>
+            </item>
+            <item>
                                     <spacer>
-                                        <property name="name">
-                                            <cstring>spacer7</cstring>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
+              <property name="sizeHint" >
                                             <size>
                                                 <width>20</width>
                                                 <height>40</height>
                                             </size>
                                         </property>
                                     </spacer>
-                                </vbox>
-                            </widget>
-                        </hbox>
+            </item>
+           </layout>
+          </item>
+         </layout>
                     </widget>
+       </item>
+       <item>
                     <spacer>
-                        <property name="name">
-                            <cstring>spacer5</cstring>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
+         <property name="sizeHint" >
                             <size>
                                 <width>20</width>
                                 <height>40</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+       </item>
+      </layout>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
                     <string>Address &amp;Book Link</string>
                 </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout7</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="KLineEdit">
-                                <property name="name">
-                                    <cstring>lineAddressee</cstring>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
                                 </property>
-                                <property name="readOnly">
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="KLineEdit" name="lineAddressee" >
+           <property name="readOnly" >
                                     <bool>true</bool>
                                 </property>
                             </widget>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>buttonChangeAddressee</cstring>
-                                </property>
-                                <property name="enabled">
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonChangeAddressee" >
+           <property name="enabled" >
                                     <bool>false</bool>
                                 </property>
-                                <property name="text">
+           <property name="text" >
                                     <string>C&amp;hange...</string>
                                 </property>
                             </widget>
-                        </hbox>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;b&gt;Note:&lt;/b&gt; The address book link uses KAddressBook's 
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="textLabel1_2" >
+         <property name="text" >
+          <string>&lt;b>Note:&lt;/b> The address book link uses KAddressBook's 
 current user contact.</string>
                         </property>
                     </widget>
+       </item>
+       <item>
                     <spacer>
-                        <property name="name">
-                            <cstring>spacer4_2</cstring>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
+         <property name="sizeHint" >
                             <size>
                                 <width>20</width>
                                 <height>100</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+       </item>
+      </layout>
             </widget>
         </widget>
+   </item>
+   <item>
         <spacer>
-            <property name="name">
-                <cstring>spacer4</cstring>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
+     <property name="sizeHint" >
                 <size>
-                    <width>20</width>
-                    <height>16</height>
+       <width>611</width>
+       <height>27</height>
                 </size>
             </property>
         </spacer>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>kcfg_EnableGlobalIdentity</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>nicknameButtonGroup</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_EnableGlobalIdentity</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>photoButtonGroup</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_EnableGlobalIdentity</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>comboSelectIdentity</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_EnableGlobalIdentity</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>buttonChangeAddressee</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-</connections>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
-<customwidgets>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends></extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
     <customwidget>
        <class>KUrlComboRequester</class>
+   <extends></extends>
        <header>kurlrequester.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends></extends>
+   <header>kcombobox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
     </customwidget>
-</customwidgets>
-</UI>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

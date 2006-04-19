@@ -16,7 +16,7 @@
 
 #include "kopeteuiglobal.h"
 #include "kopetepassword.h"
-#include "kopetepassworddialog.h"
+#include "ui_kopetepassworddialog.h"
 #include "kopetewalletmanager.h"
 
 #include <kwallet.h>
@@ -164,7 +164,7 @@ public:
 	}
 };
 
-class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
+class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest, private Ui::KopetePasswordDialog
 {
 public:
 	KopetePasswordGetRequestPrompt( QObject *owner, Kopete::Password &pass,  const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
@@ -190,18 +190,18 @@ public:
 		passwdDialog->setDefaultButton( KDialog::Ok );
 		passwdDialog->enableButtonSeparator( true );
 
-		mView = new KopetePasswordDialog( passwdDialog );
+		mView = new QWidget( passwdDialog );
+		setupUi( mView );
 		passwdDialog->setMainWidget( mView );
 
-		mView->m_text->setText( mPrompt );
-		mView->m_image->setPixmap( mImage );
-		/* Do not put the default password, or it will confuse those which doesn't echo anything for the password
-		mView->m_password->insert( password );
+		m_text->setText( mPrompt );
+		m_image->setPixmap( mImage );
+		/* Do not put the default password, or it will confuse those which doesn't echo anything for the password m_password->insert( password );
 		*/
 		int maxLength = mPassword.maximumLength();
 		if ( maxLength != 0 )
-			mView->m_password->setMaxLength( maxLength );
-		mView->m_password->setFocus();
+			m_password->setMaxLength( maxLength );
+		m_password->setFocus();
 
 		// FIXME: either document what these are for or remove them - lilac
 		mView->adjustSize();
@@ -215,8 +215,8 @@ public:
 
 	void slotOkPressed()
 	{
-		QString result = QString::fromLocal8Bit( mView->m_password->password() );
-		if ( mView->m_save_passwd->isChecked() )
+		QString result = QString::fromLocal8Bit( m_password->password() );
+		if ( m_save_passwd->isChecked() )
 			mPassword.set( result );
 
 		finished( result );
@@ -232,7 +232,7 @@ private:
 	QString mPrompt;
 	Kopete::Password::PasswordSource mSource;
 	unsigned int mMaxLength;
-	KopetePasswordDialog *mView;
+	QWidget *mView;
 };
 
 class KopetePasswordGetRequestNoPrompt : public KopetePasswordGetRequest
@@ -357,21 +357,24 @@ public:
 };
 
 Kopete::Password::Password( const QString &configGroup, uint maximumLength, const char *name )
- : QObject( 0, name ), d( new Private( configGroup, maximumLength, false ) )
+ : QObject( 0 ), d( new Private( configGroup, maximumLength, false ) )
 {
+	setObjectName( name );
 	readConfig();
 }
 
 Kopete::Password::Password( const QString &configGroup, uint maximumLength,
 	bool allowBlankPassword, const char *name )
- : QObject( 0, name ), d( new Private( configGroup, maximumLength, allowBlankPassword ) )
+ : QObject( 0 ), d( new Private( configGroup, maximumLength, allowBlankPassword ) )
 {
+	setObjectName( name );
 	readConfig();
 }
 
 Kopete::Password::Password( Password &other, const char *name )
- : QObject( 0, name ), d( other.d->incRef() )
+ : QObject( 0 ), d( other.d->incRef() )
 {
+	setObjectName( name );
 }
 
 Kopete::Password::~Password()

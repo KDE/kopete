@@ -33,7 +33,7 @@
 #include <kdemacros.h>
 #include "kopete_export.h"
 
-#include "addressbookselectorwidget_base.h"
+#include "ui_addressbookselectorwidget_base.h"
 
 namespace KABC {
 		class AddressBook;
@@ -45,7 +45,7 @@ namespace Kopete
 namespace UI
 {
 
-class KOPETE_EXPORT AddressBookSelectorWidget : public AddressBookSelectorWidget_Base
+class KOPETE_EXPORT AddressBookSelectorWidget : public QWidget, private Ui::AddressBookSelectorWidget_Base
 {
 	Q_OBJECT
 public:

@@ -48,8 +48,9 @@
 
 
 ClickableLabel::ClickableLabel(QWidget *parent, const char *name)
-	: QLabel(parent, name)
+	: QLabel(parent)
 {
+	setObjectName(name);
 	setCursor(QCursor(Qt::PointingHandCursor));
 }
 
@@ -79,8 +80,9 @@ public:
 };
 
 KopeteEditGlobalIdentityWidget::KopeteEditGlobalIdentityWidget(QWidget *parent, const char *name) 
-	: QWidget(parent, name)
+	: QWidget(parent)
 {
+	setObjectName(name);
 	d = new Private;
 
 	d->myself = Kopete::ContactList::self()->myself();

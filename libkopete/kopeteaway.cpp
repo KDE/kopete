@@ -89,8 +89,10 @@ struct KopeteAwayPrivate
 
 Kopete::Away *Kopete::Away::instance = 0L;
 
-Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
+Kopete::Away::Away() : QObject( kapp )
 {
+	setObjectName( "Kopete::Away" );	
+
 	int dummy = 0;
 	dummy = dummy; // shut up
 
@@ -162,7 +164,9 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	}
 
 	// init the timer
-	d->timer = new QTimer(this, "AwayTimer");
+	d->timer = new QTimer(this);
+	d->timer->setObjectName("AwayTimer");
+
 	connect(d->timer, SIGNAL(timeout()), this, SLOT(slotTimerTimeout()));
 	d->timer->start(4000);
 
@@ -407,9 +411,9 @@ void Kopete::Away::setActive()
 					getInstance()->d->awayMessage);
 				}
 
-				// remove() makes the next entry in the list the current one,
+				// removeAll() makes the next entry in the list the current one,
 				// that's why we use current() above
-				d->autoAwayAccounts.remove( i );
+				d->autoAwayAccounts.removeAll( i );
 			}
 		}
 	}

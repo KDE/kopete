@@ -20,17 +20,17 @@
 #include <qmap.h>
 #include <qcolor.h>
 
+#include "ui_kopeteaccountconfigbase.h"
+
 namespace Kopete
 {
 class Account;
 }
 
-class KopeteAccountConfigBase;
-
 /**
  * @author Olivier Goffart <ogoffart @ kde.org>
  */
-class KopeteAccountConfig : public KCModule
+class KopeteAccountConfig : public KCModule, private Ui::KopeteAccountConfigBase
 {
 	Q_OBJECT
 
@@ -42,7 +42,7 @@ public slots:
 	virtual void load();
 
 private:
-	KopeteAccountConfigBase *m_view;
+	QWidget *m_view;
 	QMap<Kopete::Account* , QColor> m_newColors;
 	bool m_protected;
 

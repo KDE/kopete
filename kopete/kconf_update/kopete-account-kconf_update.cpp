@@ -189,7 +189,7 @@ void flushData( const QString &group )
 
 	QMap<QString, QString>::ConstIterator it;
 	for ( it = pluginData.begin(); it != pluginData.end(); ++it )
-		qcout << "PluginData_" << protocol << "_" << it.key() << "=" << it.data() << endl;
+		qcout << "PluginData_" << protocol << "_" << it.key() << "=" << it.value() << endl;
 
 }
 

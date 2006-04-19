@@ -226,7 +226,7 @@ void AddContactWizard::accept()
 	// get each protocol's contact
 	QMap <Kopete::Account*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
-		ok |= it.data()->apply( it.key(), metaContact );
+		ok |= it.value()->apply( it.key(), metaContact );
 
 	if ( ok )
 	{
@@ -304,8 +304,8 @@ void AddContactWizard::next()
 			Kopete::Account *i=it.key();
 			if( !i || !usedAccounts.contains( i->protocol()->pluginId() + i->accountId() ) )
 			{
-				delete it.data();
-				protocolPages.remove(it);
+				delete it.value();
+				protocolPages.removeAll(it);
 			}
 		}
 		Q3Wizard::next();

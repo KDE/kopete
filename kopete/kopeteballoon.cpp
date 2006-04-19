@@ -85,7 +85,8 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 
 	if (!pix.isEmpty())
 	{
-		QLabel *mImage = new QLabel(this, "mImage");
+		QLabel *mImage = new QLabel(this);
+		mImage->setObjectName("mImage");
 		mImage->setScaledContents(FALSE);
 		mImage->setPixmap(locate("data", pix));
 

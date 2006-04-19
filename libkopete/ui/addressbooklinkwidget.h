@@ -26,7 +26,7 @@
 
 #include <kabc/addressee.h>
 
-#include "addressbooklinkwidget_base.h"
+#include "ui_addressbooklinkwidget_base.h"
 
 namespace Kopete {
 class MetaContact;
@@ -40,7 +40,7 @@ namespace UI {
  * Comprises a label showing the contact's name, a Clear button, and a Change
  * button that usually invokes the AddressBookSelectorWidget.
  */
-class AddressBookLinkWidget : public AddressBookLinkWidgetBase
+class AddressBookLinkWidget : public QWidget, private Ui::AddressBookLinkWidgetBase
 {
 Q_OBJECT
 public:

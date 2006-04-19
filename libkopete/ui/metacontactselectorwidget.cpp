@@ -44,8 +44,9 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
-#include "metacontactselectorwidget_base.h"
+#include "ui_addressbookselectorwidget_base.h"
 #include "metacontactselectorwidget.h"
+#include "ui_metacontactselectorwidget_base.h"
 
 using namespace Kopete::UI::ListView;
 
@@ -179,7 +180,7 @@ void MetaContactSelectorWidgetLVI::slotUpdateContactBox()
 class MetaContactSelectorWidget::Private
 {
 public:
-	MetaContactSelectorWidget_Base *widget;
+	Ui::MetaContactSelectorWidget_Base *widget;
 	QList<Kopete::MetaContact *> excludedMetaContacts;
 };
 
@@ -188,9 +189,13 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 		: QWidget( parent ), d( new Private() )
 {
 	setObjectName( name );
+
+	d->widget = new Ui::MetaContactSelectorWidget_Base;
+
 	QBoxLayout *l = new QVBoxLayout(this);
-	d->widget = new MetaContactSelectorWidget_Base(this);
-	l->addWidget(d->widget);
+	QWidget *w = new QWidget(this);
+	d->widget->setupUi(w);
+	l->addWidget(w);
 
 	connect( d->widget->metaContactListView, SIGNAL( clicked(Q3ListViewItem * ) ),
 			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );

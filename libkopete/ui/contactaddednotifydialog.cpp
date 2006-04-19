@@ -36,9 +36,7 @@
 #include "kopetemetacontact.h"
 #include "addressbooklinkwidget.h"
 #include "addressbookselectordialog.h"
-
-
-#include "contactaddednotifywidget.h"
+#include "ui_contactaddednotifywidget.h"
 
 namespace Kopete {
 
@@ -46,7 +44,7 @@ namespace UI {
 
 struct ContactAddedNotifyDialog::Private
 {
-	ContactAddedNotifyWidget *widget;
+	Ui::ContactAddedNotifyWidget *widget;
 	Account *account;
 	QString contactId;
 	QString addressbookId;
@@ -61,8 +59,10 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
     setAttribute( Qt::WA_DeleteOnClose );
 
 	d=new Private;
-	d->widget=new ContactAddedNotifyWidget(this);
-	setMainWidget(d->widget);
+	d->widget=new Ui::ContactAddedNotifyWidget;
+	QWidget* w = new QWidget(this);
+	d->widget->setupUi(w);
+	setMainWidget(w);
 
 	d->account=account;
 	d->contactId=contactId;
@@ -109,6 +109,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 
 ContactAddedNotifyDialog::~ContactAddedNotifyDialog()
 {
+	delete d->widget;
 	delete d;
 }
 

@@ -63,7 +63,8 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;
-	mBlinkTimer = new QTimer(this, "mBlinkTimer");
+	mBlinkTimer = new QTimer(this);
+	mBlinkTimer->setObjectName("mBlinkTimer");
 
 	mKopeteIcon = loadIcon("kopete");
 

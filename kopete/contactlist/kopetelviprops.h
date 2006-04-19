@@ -24,8 +24,8 @@
 
 #include "kopetemetacontact.h"
 
-#include "kopetegvipropswidget.h"
-#include "kopetemetalvipropswidget.h"
+#include "ui_kopetemetalvipropswidget.h"
+#include "ui_kopetegvipropswidget.h"
 
 class AddressBookLinkWidget;
 class CustomNotificationProps;
@@ -48,7 +48,8 @@ class KopeteGVIProps: public KDialog
 
 	private:
 		CustomNotificationProps * mNotificationProps;
-		KopeteGVIPropsWidget *mainWidget;
+		QWidget *mainWidget;
+		Ui::KopeteGVIPropsWidget *ui_mainWidget;
 		KopeteGroupViewItem *item;
 		bool m_dirty;
 
@@ -70,7 +71,8 @@ class KopeteMetaLVIProps: public KDialog
 	private:
 		CustomNotificationProps * mNotificationProps;
 		QPushButton *mFromKABC;
-		KopeteMetaLVIPropsWidget *mainWidget;
+		QWidget* mainWidget;
+		Ui::KopeteMetaLVIPropsWidget *ui_mainWidget;
 		AddressBookLinkWidget *linkWidget;
 		KopeteMetaContactLVI *item;
 		KopeteAddressBookExport *mExport;

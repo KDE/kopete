@@ -36,7 +36,6 @@
 
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
-#include "kopeteaccountconfigbase.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -60,22 +59,24 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 {
 
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	m_view = new KopeteAccountConfigBase( this, "KopeteAccountConfig::m_view" );
+	m_view = new QWidget( this );
+	setObjectName( "KopeteAccountConfig::m_view" );
+	setupUi( m_view );
 
-	m_view->mButtonUp->setIconSet( SmallIconSet( "up" ) );
-	m_view->mButtonDown->setIconSet( SmallIconSet( "down" ) );
+	mButtonUp->setIconSet( SmallIconSet( "up" ) );
+	mButtonDown->setIconSet( SmallIconSet( "down" ) );
 
-	connect( m_view->mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
-	connect( m_view->mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
-	connect( m_view->mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
-	connect( m_view->mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
-	connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
-	connect( m_view->mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
-	connect( m_view->mAccountList,  SIGNAL( doubleClicked( Q3ListViewItem * ) ), this, SLOT( slotEditAccount() ) );
-	connect( m_view->mUseColor,     SIGNAL( toggled( bool ) ), this, SLOT( slotColorChanged() ) );
-	connect( m_view->mColorButton,  SIGNAL( changed( const QColor & ) ), this, SLOT( slotColorChanged() ) );
+	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
+	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
+	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
+	connect( mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
+	connect( mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
+	connect( mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
+	connect( mAccountList,  SIGNAL( doubleClicked( Q3ListViewItem * ) ), this, SLOT( slotEditAccount() ) );
+	connect( mUseColor,     SIGNAL( toggled( bool ) ), this, SLOT( slotColorChanged() ) );
+	connect( mColorButton,  SIGNAL( changed( const QColor & ) ), this, SLOT( slotColorChanged() ) );
 
-	m_view->mAccountList->setSorting(-1);
+	mAccountList->setSorting(-1);
 
 	setButtons( Help );
 	load();
@@ -83,9 +84,9 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 
 void KopeteAccountConfig::save()
 {
-	uint priority = m_view->mAccountList->childCount();
+	uint priority = mAccountList->childCount();
 
-	KopeteAccountLVI *i = static_cast<KopeteAccountLVI*>( m_view->mAccountList->firstChild() );
+	KopeteAccountLVI *i = static_cast<KopeteAccountLVI*>( mAccountList->firstChild() );
 	while( i )
 	{
 		if(!i->account())
@@ -96,7 +97,7 @@ void KopeteAccountConfig::save()
 
 	QMap<Kopete::Account *, QColor>::Iterator it;
 	for(it=m_newColors.begin() ; it != m_newColors.end() ; ++it)
-		it.key()->setColor(it.data());
+		it.key()->setColor(it.value());
 	m_newColors.clear();
 
 	Kopete::AccountManager::self()->save();
@@ -108,7 +109,7 @@ void KopeteAccountConfig::load()
 {
 	KopeteAccountLVI *lvi = 0L;
 
-	m_view->mAccountList->clear();
+	mAccountList->clear();
 
 	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
 	Kopete::Account *i;
@@ -116,7 +117,7 @@ void KopeteAccountConfig::load()
 	{
 		i = it.next();
 		// Insert the item after the previous one
-		lvi = new KopeteAccountLVI( i, m_view->mAccountList );
+		lvi = new KopeteAccountLVI( i, mAccountList );
 		lvi->setText( 0, i->protocol()->displayName() );
 		lvi->setPixmap( 0, i->accountIcon() );
 		lvi->setText( 1, i->accountLabel() );
@@ -129,37 +130,37 @@ void KopeteAccountConfig::load()
 void KopeteAccountConfig::slotItemSelected()
 {
 	m_protected=true;
-	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
 
-	m_view->mButtonEdit->setEnabled( itemSelected );
-	m_view->mButtonRemove->setEnabled( itemSelected );
+	mButtonEdit->setEnabled( itemSelected );
+	mButtonRemove->setEnabled( itemSelected );
 
 	if ( itemSelected &&  itemSelected->account() )
 	{
-		m_view->mButtonUp->setEnabled( itemSelected->itemAbove() );
-		m_view->mButtonDown->setEnabled( itemSelected->itemBelow() );
+		mButtonUp->setEnabled( itemSelected->itemAbove() );
+		mButtonDown->setEnabled( itemSelected->itemBelow() );
 
 		Kopete::Account *account = itemSelected->account();
 		QColor color= m_newColors.contains(account) ? m_newColors[account] :  account->color();
-		m_view->mUseColor->setEnabled( true );
-		m_view->mUseColor->setChecked( color.isValid() );
-		m_view->mColorButton->setColor( color );
-		m_view->mColorButton->setEnabled( m_view->mUseColor->isChecked() );
+		mUseColor->setEnabled( true );
+		mUseColor->setChecked( color.isValid() );
+		mColorButton->setColor( color );
+		mColorButton->setEnabled( mUseColor->isChecked() );
 
 	}
 	else
 	{
-		m_view->mButtonUp->setEnabled( false );
-		m_view->mButtonDown->setEnabled( false);
-		m_view->mUseColor->setEnabled( false );
-		m_view->mColorButton->setEnabled( false );
+		mButtonUp->setEnabled( false );
+		mButtonDown->setEnabled( false);
+		mUseColor->setEnabled( false );
+		mColorButton->setEnabled( false );
 	}
 	m_protected=false;
 }
 
 void KopeteAccountConfig::slotAccountUp()
 {
-	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
 	if ( !itemSelected )
 		return;
 
@@ -172,7 +173,7 @@ void KopeteAccountConfig::slotAccountUp()
 
 void KopeteAccountConfig::slotAccountDown()
 {
-	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
 	if ( !itemSelected )
 		return;
 
@@ -191,7 +192,7 @@ void KopeteAccountConfig::slotAddAccount()
 
 void KopeteAccountConfig::slotEditAccount()
 {
-	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
 	if ( !lvi || !lvi->account() )
 		return;
 
@@ -231,7 +232,7 @@ void KopeteAccountConfig::slotEditAccount()
 
 void KopeteAccountConfig::slotRemoveAccount()
 {
-	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
 	if ( !lvi || !lvi->account() )
 		return;
 
@@ -256,30 +257,30 @@ void KopeteAccountConfig::slotColorChanged()
 	if(m_protected)  //this slot is called because we changed the button
 		return;      // color because another account has been selected
 
-	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
 	if ( !lvi || !lvi->account() )
 		return;
 	Kopete::Account *account = lvi->account();
 
-	if(!account->color().isValid() && !m_view->mUseColor->isChecked() )
+	if(!account->color().isValid() && !mUseColor->isChecked() )
 	{  //we don't use color for that account and nothing changed.
 		m_newColors.remove(account);
 		return;
 	}
-	else if(!m_view->mUseColor->isChecked())
+	else if(!mUseColor->isChecked())
 	{  //the user disabled account coloring, but it was activated before
 		m_newColors[account]=QColor();
 		emit changed(true);
 		return;
 	}
-	else if(account->color() == m_view->mColorButton->color() )
+	else if(account->color() == mColorButton->color() )
 	{   //The color has not changed.
 		m_newColors.remove(account);
 		return;
 	}
 	else
 	{
-		m_newColors[account]=m_view->mColorButton->color();
+		m_newColors[account]=mColorButton->color();
 		emit changed(true);
 	}
 }

@@ -87,8 +87,9 @@ public:
 };
 
 Account::Account( Protocol *parent, const QString &accountId, const char *name )
- : QObject( parent, name ), d( new Private( parent, accountId ) )
+ : QObject( parent ), d( new Private( parent, accountId ) )
 {
+	setObjectName( name );
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
@@ -187,7 +188,7 @@ QPixmap Account::accountIcon(const int size) const
 
 	if ( size > 0 && base.width() != size )
 	{
-		base = QPixmap( base.convertToImage().smoothScale( size, size ) );
+		base = QPixmap( base.toImage().scaled( size, size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
 	}
 
 	return base;

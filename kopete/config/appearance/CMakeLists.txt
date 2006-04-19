@@ -8,13 +8,19 @@ ${CMAKE_SOURCE_DIR}/kopete/kopete/chatwindow
 
 ########### next target ###############
 
-set(kcm_kopete_appearanceconfig_PART_SRCS appearanceconfig.cpp tooltipeditdialog.cpp )
+set(kcm_kopete_appearanceconfig_PART_SRCS
+   appearanceconfig.cpp
+   tooltipeditdialog.cpp
+   appearanceconfig_chatwindow.cpp
+   appearanceconfig_colors.cpp
+   appearanceconfig_contactlist.cpp
+   appearanceconfig_emoticons.cpp )
 
-kde4_add_ui3_files(kcm_kopete_appearanceconfig_PART_SRCS 
-   appearanceconfig_emoticons.ui 
-   appearanceconfig_colors.ui 
+kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS 
    appearanceconfig_chatwindow.ui 
+   appearanceconfig_colors.ui
    appearanceconfig_contactlist.ui 
+   appearanceconfig_emoticons.ui 
    tooltipeditwidget.ui )
 
 kde4_automoc(${kcm_kopete_appearanceconfig_PART_SRCS})

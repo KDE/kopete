@@ -1475,7 +1475,7 @@ void YahooAccount::setBuddyIcon( KUrl url )
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
-		image = image.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
+		image = image.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 		if(image.width() < image.height())
 		{
 			image = image.copy((image.width()-image.height())/2, 0, 96, 96);

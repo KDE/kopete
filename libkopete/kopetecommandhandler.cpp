@@ -208,7 +208,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 	QRegExp splitRx( QString::fromLatin1("^/([\\S]+)(.*)") );
 	QString command;
 	QString args;
-	if(splitRx.search(msg) != -1)
+	if(splitRx.indexIn(msg) != -1)
 	{
 		command = splitRx.cap(1);
 		args = splitRx.cap(2).mid(1);
@@ -386,7 +386,7 @@ QStringList Kopete::CommandHandler::parseArguments( const QString &args )
 	QRegExp quotedArgs( QString::fromLatin1("\"(.*)\"") );
 	quotedArgs.setMinimal( true );
 
-	if ( quotedArgs.search( args ) != -1 )
+	if ( quotedArgs.indexIn( args ) != -1 )
 	{
 		for( int i = 0; i< quotedArgs.numCaptures(); i++ )
 			arguments.append( quotedArgs.cap(i) );
@@ -403,7 +403,7 @@ bool Kopete::CommandHandler::commandHandled( const QString &command )
 {
 	for( PluginCommandMap::Iterator it = p->pluginCommands.begin(); it != p->pluginCommands.end(); ++it )
 	{
-		if( it.data().value( command ) )
+		if( it.value().value( command ) )
 			return true;
 	}
 
@@ -449,7 +449,7 @@ CommandList Kopete::CommandHandler::commands( Kopete::Protocol *protocol )
 	for( PluginCommandMap::Iterator it = p->pluginCommands.begin(); it != p->pluginCommands.end(); ++it )
 	{
 		if( !it.key()->inherits("Kopete::Protocol") && it.key()->inherits("Kopete::Plugin") )
-			addCommands( it.data(), commandList );
+			addCommands( it.value(), commandList );
 	}
 
 	//Add global user aliases first

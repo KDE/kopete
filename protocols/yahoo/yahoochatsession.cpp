@@ -160,7 +160,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 			}
 
 			QString imgURL=c->property(Kopete::Global::Properties::self()->photo()).value().toString();
-			QImage scaledImg = QPixmap( imgURL ).convertToImage().smoothScale( sz, sz );
+			QImage scaledImg = QPixmap( imgURL ).toImage().smoothScale( sz, sz );
 			if(!scaledImg.isNull())
 				m_image->setPixmap( QPixmap(scaledImg) );
 			else

@@ -35,8 +35,10 @@ public:
 
 
 BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent, const char *name)
- : QObject(parent, name), d( new Private )
+ : QObject(parent), d( new Private )
 {
+	setObjectName( name );
+
 	KConfig *config = KGlobal::config();
 	
 	d->owner = accountId;
@@ -98,7 +100,7 @@ void BlackLister::removeContact(const QString &contactId)
 {
 	if( isBlocked(contactId) )
 	{
-		d->blacklist.remove( contactId );
+		d->blacklist.removeAll( contactId );
 		saveToDisk();
 		emit contactRemoved( contactId );
 	}

@@ -40,8 +40,9 @@
 #include <kdebug.h>
 
 EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent, const char *name)
-	: QLabel(parent,name)
+	: QLabel(parent)
 {
+	setObjectName(name);
 	QMovie qm(pixmapPath);
 	mText = emoticonText;
 	setMovie( &qm );
@@ -66,8 +67,9 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
 }
 
 EmoticonSelector::EmoticonSelector(QWidget *parent, const char *name)
-	: QWidget(parent, name)
+	: QWidget(parent)
 {
+	setObjectName(name);
 //	kDebug(14000) << k_funcinfo << "called." << endl;
 	lay = 0L;
 }
@@ -96,7 +98,7 @@ void EmoticonSelector::prepareList(void)
 	movieList.clear();
 	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
 	{
-		QWidget *w = new EmoticonLabel(it.key(), it.data(), this);
+		QWidget *w = new EmoticonLabel(it.key(), it.value(), this);
 		movieList.push_back( ((QLabel*)w)->movie() );
 		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
 //		kDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;

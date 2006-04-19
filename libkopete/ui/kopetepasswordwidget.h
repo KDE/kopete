@@ -18,7 +18,7 @@
 #ifndef KOPETEPASSWORDWIDGET_H
 #define KOPETEPASSWORDWIDGET_H
 
-#include "kopetepasswordwidgetbase.h"
+#include "ui_kopetepasswordwidgetbase.h"
 #include "kopete_export.h"
 
 namespace Kopete
@@ -34,7 +34,7 @@ namespace UI
  * This widget displays an editable password, including the Remember password checkbox.
  * @todo This is NOT BC yet : it derives from a uic-generated class
  */
-class KOPETE_EXPORT PasswordWidget : public KopetePasswordWidgetBase
+class KOPETE_EXPORT PasswordWidget : public QWidget, public Ui::KopetePasswordWidgetBase
 {
 	Q_OBJECT
 

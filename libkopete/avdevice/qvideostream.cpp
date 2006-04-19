@@ -101,7 +101,7 @@ QVideoStreamPrivate::~QVideoStreamPrivate()
 }
 
 QVideoStream::QVideoStream(QWidget *widget, const char* name)
-    : QObject(widget, name),
+    : QObject(widget),
       d(new QVideoStreamPrivate),
       _w(widget),
       _methods(METHOD_NONE),
@@ -109,6 +109,7 @@ QVideoStream::QVideoStream(QWidget *widget, const char* name)
       _format(FORMAT_NONE),
       _init(false)
 {
+    setObjectName(name);
     int dummy;
     unsigned int dummy2;
     findDisplayProperties(_xFormat, dummy, dummy2, dummy);

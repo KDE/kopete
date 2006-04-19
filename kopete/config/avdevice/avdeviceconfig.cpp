@@ -84,7 +84,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	mVideoDevicePool->startCapturing();
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&qimage);
-	if (qpixmap.convertFromImage(qimage,0) == true)
+	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.start(0,FALSE);

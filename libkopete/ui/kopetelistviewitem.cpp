@@ -529,8 +529,8 @@ void ImageComponent::paint( QPainter *painter, const QColorGroup & )
 
 void ImageComponent::scale( int w, int h, Qt::AspectRatioMode mode )
 {
-	QImage im = d->image.convertToImage();
-	setPixmap( QPixmap( im.smoothScale( w, h, mode ) ) );
+	QImage im = d->image.toImage();
+	setPixmap( QPixmap( im.scaled( w, h, mode, Qt::SmoothTransformation) ) );
 }
 // TextComponent
 
@@ -968,14 +968,16 @@ bool Item::Private::fadeVisibility = true;
 bool Item::Private::foldVisibility = true;
 
 Item::Item( Q3ListViewItem *parent, QObject *owner, const char *name )
- : QObject( owner, name ), K3ListViewItem( parent ), d( new Private(this) )
+ : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
+	setObjectName( name );
 	initLVI();
 }
 
 Item::Item( Q3ListView *parent, QObject *owner, const char *name )
- : QObject( owner, name ), K3ListViewItem( parent ), d( new Private(this) )
+ : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
+	setObjectName( name );
 	initLVI();
 }
 

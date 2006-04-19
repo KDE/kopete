@@ -83,18 +83,18 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	QString command = url.path();
 	QString realCommand, firstParam, secondParam;
 	bool needContactAddition = false;
-	if ( command.find( "goim", 0, false ) != -1 )
+	if ( command.indexOf( "goim", 0, Qt::CaseInsensitive ) != -1 )
 	{
 		realCommand = "goim";
 		kDebug(14152) << k_funcinfo << "Handling send IM request" << endl;
 		command.remove(0,4);
-		if ( command.find( "?screenname=", 0, false ) == -1 )
+		if ( command.indexOf( "?screenname=", 0, Qt::CaseInsensitive ) == -1 )
 		{
 		kWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url() << endl;
 			return;
 		}
 		command.remove( 0, 12 );
-		int andSign = command.find( "&" );
+		int andSign = command.indexOf( "&" );
 		if ( andSign > 0 )
 			command = command.left( andSign );
 
@@ -103,19 +103,19 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		needContactAddition = true;
 	}
 	else
-		if ( command.find( "addbuddy", 0, false ) != -1 )
+		if ( command.indexOf( "addbuddy", 0, Qt::CaseInsensitive ) != -1 )
 		{
 			realCommand = "addbuddy";
 			kDebug(14152) << k_funcinfo << "Handling AIM add buddy request" << endl;
 			command.remove( 0, 8 );
-			if ( command.find( "?screenname=", 0, false ) == -1 )
+			if ( command.indexOf( "?screenname=", 0, Qt::CaseInsensitive ) == -1 )
 			{
 			kWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url() << endl;
 				return;
 			}
 			
 			command.remove(0, 12);
-			int andSign = command.find("&");
+			int andSign = command.indexOf("&");
 			if ( andSign > 0 )
 				command = command.left(andSign);
 			command.replace("+", " ");
@@ -124,13 +124,13 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			needContactAddition = true;
 		}
 	else
-	if ( command.find( "gochat", 0, false ) != -1 )
+	if ( command.indexOf( "gochat", 0, Qt::CaseInsensitive ) != -1 )
 	{
 		realCommand = "gochat";
 		kDebug(14152) << k_funcinfo << "Handling AIM chat room request" << endl;
 		command.remove( 0, 6 );
 		
-		if ( command.find( "?RoomName=", 0, false ) == -1 )
+		if ( command.indexOf( "?RoomName=", 0, Qt::CaseInsensitive ) == -1 )
 		{
 		kWarning(14152) << "Unhandled AIM URI: " << url.url() << endl;
 			return;
@@ -138,7 +138,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		
 		command.remove( 0, 10 );
 		
-		int andSign = command.find("&");
+		int andSign = command.indexOf("&");
 		if (andSign > 0) // strip off anything else for now
 		{
 			firstParam = command.left(andSign);

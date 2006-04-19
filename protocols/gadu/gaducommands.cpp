@@ -180,7 +180,7 @@ RegisterCommand::execute()
 		kDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl;
 		return;
 	}
-	session_ = gg_register3( email_.ascii(), password_.ascii(), tokenId.ascii(), tokenString.ascii(), 1 );
+	session_ = gg_register3( email_.toAscii(), password_.toAscii(), tokenId.toAscii(), tokenString.ascii(), 1 );
 	if ( !session_ ) {
 		error( i18n( "Gadu-Gadu" ), i18n( "Registration FAILED" ) );
 		return;

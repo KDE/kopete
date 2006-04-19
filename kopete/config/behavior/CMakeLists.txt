@@ -7,13 +7,18 @@ ${KOPETE_INCLUDES}
 
 ########### next target ###############
 
-set(kcm_kopete_behaviorconfig_PART_SRCS behaviorconfig.cpp )
+set(kcm_kopete_behaviorconfig_PART_SRCS
+   behaviorconfig.cpp
+   behaviorconfig_chat.cpp 
+   behaviorconfig_events.cpp
+   behaviorconfig_general.cpp
+   kopeteawayconfigbase.cpp )
 
-kde4_add_ui3_files(kcm_kopete_behaviorconfig_PART_SRCS 
-   kopeteawayconfigbase.ui 
+kde4_add_ui_files(kcm_kopete_behaviorconfig_PART_SRCS 
    behaviorconfig_chat.ui 
+   behaviorconfig_events.ui 
    behaviorconfig_general.ui 
-   behaviorconfig_events.ui )
+   kopeteawayconfigbase.ui )
 
 kde4_automoc(${kcm_kopete_behaviorconfig_PART_SRCS})
 

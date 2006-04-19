@@ -68,8 +68,9 @@ AccountManager * AccountManager::self()
 
 
 AccountManager::AccountManager()
-: QObject( qApp, "KopeteAccountManager" )
+: QObject( qApp )
 {
+	setObjectName( "KopeteAccountManager" );
 	d = new Private;
 }
 
@@ -258,7 +259,7 @@ void AccountManager::removeAccount( Account *account )
 	KConfigGroup *configgroup = account->configGroup();
 
 	// Clean up the account list
-	d->accounts.remove( account );
+	d->accounts.removeAll( account );
 
 	// Clean up configuration
 	configgroup->deleteGroup();

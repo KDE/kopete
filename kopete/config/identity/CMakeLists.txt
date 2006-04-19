@@ -8,7 +8,7 @@ ${KOPETE_INCLUDES}
 
 set(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfig.cpp globalidentitiesmanager.cpp )
 
-kde4_add_ui3_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigbase.ui )
+kde4_add_ui_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigbase.ui )
 
 kde4_add_kcfg_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigpreferences.kcfgc )
 

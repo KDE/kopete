@@ -115,7 +115,7 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 	// Create global cricket variables common to all sessions.
 	// Seed random generation with the JID of the account.
 	QString accountJid = account->client()->jid().full();
-	cricket::InitRandom( accountJid.ascii(), accountJid.length() );
+	cricket::InitRandom( accountJid.toAscii(), accountJid.length() );
 
 	// Create the libjingle NetworkManager that manager local network connections
 	d->networkManager = new cricket::NetworkManager();

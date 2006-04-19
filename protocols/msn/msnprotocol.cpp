@@ -192,7 +192,7 @@ bool MSNProtocol::validContactId(const QString& userid)
 QImage MSNProtocol::scalePicture(const QImage &picture)
 {
 	QImage img(picture);
-	img = img.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
+	img = img.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 	// crop image if not square
 	if(img.width() < img.height())
 	{

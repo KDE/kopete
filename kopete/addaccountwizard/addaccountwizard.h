@@ -23,6 +23,9 @@
 
 #include <k3wizard.h>
 
+#include "ui_addaccountwizardpage1.h"
+#include "ui_addaccountwizardpage2.h"
+
 class Q3ListViewItem;
 
 class KPluginInfo;
@@ -32,8 +35,6 @@ namespace Kopete
 class Protocol;
 }
 
-class AddAccountWizardPage1;
-class AddAccountWizardPage2;
 class KopeteEditAccountWidget;
 
 /**
@@ -45,6 +46,7 @@ class AddAccountWizard : public K3Wizard
 
 public:
 	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false, bool firstRun = false );
+	~AddAccountWizard();
 
 private slots:
 	void slotProtocolListClicked( Q3ListViewItem *item );
@@ -59,8 +61,10 @@ protected slots:
 private:
 	QMap<Q3ListViewItem *, KPluginInfo *>  m_protocolItems;
 	KopeteEditAccountWidget              *m_accountPage;
-	AddAccountWizardPage1                *m_selectService;
-	AddAccountWizardPage2                *m_finish;
+	QWidget                              *m_selectService;
+	Ui::AddAccountWizardPage1            *m_uiSelectService;
+	QWidget                              *m_finish;
+	Ui::AddAccountWizardPage2            *m_uiFinish;
 	Kopete::Protocol                     *m_proto;
 };
 

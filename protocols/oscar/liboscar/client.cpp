@@ -138,8 +138,9 @@ public:
 };
 
 Client::Client( QObject* parent )
-:QObject( parent, "oscarclient" )
+:QObject( parent )
 {
+	setObjectName( "oscarclient" );
 	m_loginTask = 0L;
 	m_loginTaskTwo = 0L;
 
@@ -589,7 +590,7 @@ void Client::setIsIcq( bool isIcq )
 void Client::debug( const QString& str )
 {
 	Q_UNUSED(str);
-//	qDebug( "CLIENT: %s", str.ascii() );
+//	qDebug( "CLIENT: %s", str.toAscii() );
 }
 
 void Client::initializeStaticTasks()

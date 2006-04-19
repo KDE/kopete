@@ -984,7 +984,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrURL(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
-		contactPhoto = contactPhoto.smoothScale( 96, 96, Qt::KeepAspectRatio );
+		contactPhoto = contactPhoto.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 		// crop image if not square
 		if(contactPhoto.width() < contactPhoto.height()) 
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, 96, 96);
@@ -1003,7 +1003,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrURL(photoPath).fileName().lower() ) );
 	
 		// Scale and crop the picture.
-		contactPhoto = contactPhoto.smoothScale( 32, 32, Qt::KeepAspectRatio );
+		contactPhoto = contactPhoto.scaled( 32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 		// crop image if not square
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, 32, 32);

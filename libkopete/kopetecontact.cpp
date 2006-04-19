@@ -384,10 +384,10 @@ void Contact::serializeProperties(QMap<QString, QString> &serializedData)
 	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
 	for (it=d->properties.begin(); it != d->properties.end(); ++it)
 	{
-		if (!it.data().tmpl().persistent())
+		if (!it.value().tmpl().persistent())
 			continue;
 
-		QVariant val = it.data().value();
+		QVariant val = it.value().value();
 		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
 
 		serializedData[key] = val.toString();
@@ -413,7 +413,7 @@ void Contact::deserializeProperties(
 		key = keyList[2]; // overwrite key var with the real key name this property has
 		QString type( keyList[1] ); // needed for QVariant casting
 
-		QVariant variant( it.data() );
+		QVariant variant( it.value() );
 		if( !variant.cast(QVariant::nameToType(type.toLatin1())) )
 		{
 			kDebug(14010) << k_funcinfo <<

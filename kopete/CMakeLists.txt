@@ -10,6 +10,7 @@ add_subdirectory( chatwindow )
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard 
+${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
 ${CMAKE_CURRENT_BINARY_DIR}/contactlist/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/ 
@@ -34,7 +35,12 @@ contactlist/customnotificationprops.cpp
 contactlist/kopetegrouplistaction.cpp 
 contactlist/kabcexport.cpp 
 )
-kde4_add_ui3_files(kopetecontactlist_SRCS contactlist/kopetegvipropswidget.ui contactlist/kopetemetalvipropswidget.ui contactlist/kopeteaddrbookexportui.ui contactlist/kabcexport_base.ui)
+
+kde4_add_ui_files(kopetecontactlist_SRCS
+    contactlist/kopetegvipropswidget.ui
+    contactlist/kopetemetalvipropswidget.ui
+    contactlist/kopeteaddrbookexportui.ui
+    contactlist/kabcexport_base.ui )
 
 # Configure plugins
 set(kopetepluginconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/kopetepluginconfig.cpp)
@@ -54,7 +60,7 @@ set(kopete_SRCS
 
 kde4_automoc(${kopete_SRCS})
 
-kde4_add_ui3_files(kopete_SRCS groupkabcselectorwidget.ui )
+kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 
 kde4_add_dcop_skels(kopete_SRCS kopeteiface.h kimiface.h )
 

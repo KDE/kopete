@@ -210,17 +210,17 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 			// as separator for the string lists, use this also for the 'normal'
 			// serialized data.
 			if( serializedData.contains( it.key() ) )
-				serializedData[ it.key() ] = serializedData[ it.key() ] + QChar( 0xE000 ) + it.data();
+				serializedData[ it.key() ] = serializedData[ it.key() ] + QChar( 0xE000 ) + it.value();
 			else
-				serializedData[ it.key() ] = it.data();
+				serializedData[ it.key() ] = it.value();
 		}
 
 		for( it = ad.begin(); it != ad.end(); ++it )
 		{
 			if( addressBookData.contains( it.key() ) )
-				addressBookData[ it.key() ] = addressBookData[ it.key() ] + QChar( 0xE000 ) + it.data();
+				addressBookData[ it.key() ] = addressBookData[ it.key() ] + QChar( 0xE000 ) + it.value();
 			else
-				addressBookData[ it.key() ] = it.data();
+				addressBookData[ it.key() ] = it.value();
 		}
 	}
 
@@ -240,11 +240,11 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		//        the API yet - Martijn
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
-			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.data() );
+			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.value() );
 //			kDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
 		}
 		else
-			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.data() );
+			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.value() );
 	}
 }
 
@@ -258,7 +258,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 	QMap<QString, QString>::ConstIterator it;
 	for( it = data.begin(); it != data.end(); ++it )
 	{
-		serializedData[ it.key() ] = QStringList::split( QChar( 0xE000 ), it.data(), true );
+		serializedData[ it.key() ] = QStringList::split( QChar( 0xE000 ), it.value(), true );
 		serializedDataIterators[ it.key() ] = serializedData[ it.key() ].begin();
 	}
 
@@ -282,7 +282,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		QMap<QString, QStringList>::Iterator serializedDataItEnd = serializedData.end();
 		for( serializedDataIt = serializedData.begin(); serializedDataIt != serializedDataItEnd; ++serializedDataIt )
 		{
-			QStringList sl=serializedDataIt.data();
+			QStringList sl=serializedDataIt.value();
 			if(sl.count()>i)
 				sd[ serializedDataIt.key() ] = sl[i];
 		}

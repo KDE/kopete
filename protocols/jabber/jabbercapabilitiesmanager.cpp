@@ -502,7 +502,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 		kDebug(JABBER_DEBUG_GLOBAL) << QString("Current client node '%1' does not match response '%2'").arg(jidCapabilities.node()).arg(node) << endl;
 
 	//for (unsigned int i = 0; i < item.features().list().count(); i++) 
-	//	printf("    Feature: %s\n",item.features().list()[i].latin1());
+	//	printf("    Feature: %s\n",item.features().list()[i].toLatin1());
 
 	// Check pending requests
 //	pending_ = (pending_ > 0 ? pending_-1 : 0);

@@ -225,12 +225,12 @@ QString Message::unescape( const QString &xml )
 	QString data = xml;
 
 	//remove linebreak and multiple spaces
-	data.replace( QRegExp( QString::fromLatin1( "\\s*[\n\r\t]+\\s*" ) , false ), QString::fromLatin1(" " )) ;
+	data.replace( QRegExp( QString::fromLatin1( "\\s*[\n\r\t]+\\s*" ), Qt::CaseInsensitive ), QString::fromLatin1(" " )) ;
 
-	data.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ) , false ), QString::fromLatin1( "\\1" ) );  //escape smeleys, return to the original code
-	data.replace( QRegExp( QString::fromLatin1( "< */ *p[^>]*>" ) , false ), QString::fromLatin1( "\n" ) );
-	data.replace( QRegExp( QString::fromLatin1( "< */ *div[^>]*>" ) , false ), QString::fromLatin1( "\n" ) );
-	data.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\\1" ) );  //escape smeleys, return to the original code
+	data.replace( QRegExp( QString::fromLatin1( "< */ *p[^>]*>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< */ *div[^>]*>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\n" ) );
 	data.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 
 	data.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
@@ -337,7 +337,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 		{
 			QString curr = *it;
 			// > in HTML means start-of-tag if and only if it's the first one after a <
-			int tagclose = curr.find( QChar('>') );
+			int tagclose = curr.indexOf( QChar('>') );
 			// no >: the HTML is broken, but we can cope
 			if ( tagclose == -1 )
 				continue;

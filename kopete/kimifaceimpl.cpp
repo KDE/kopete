@@ -169,7 +169,7 @@ QString KIMIfaceImpl::presenceString( const QString & uid )
 	{
 		Kopete::OnlineStatus status = m->status();
 			p = status.description();
-		kDebug( 14000 ) << "Got presence for " <<  uid << " : " << p.ascii() << endl;
+		kDebug( 14000 ) << "Got presence for " <<  uid << " : " << p.toAscii() << endl;
 	}
 	else
 	{

@@ -138,7 +138,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				Q_ASSERT( incomingEvent->hasMessage() );
 				event.message = incomingEvent->message();
 				client()->debug( "ReceiveAutoReply" );
-				client()->debug( QString( "message: %1" ).arg( event.message.ascii() ) );
+				client()->debug( QString( "message: %1" ).arg( event.message.toAscii() ) );
 				emit autoReply( event );
 				break;
 			case GroupWise::ReceivedBroadcast:

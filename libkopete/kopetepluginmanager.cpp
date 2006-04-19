@@ -107,13 +107,13 @@ PluginManager::~PluginManager()
 		kWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace() << endl;
 
 	// Quick cleanup of the remaining plugins, hope it helps
-	// Note that deleting it.data() causes slotPluginDestroyed to be called, which
+	// Note that deleting it.value() causes slotPluginDestroyed to be called, which
 	// removes the plugin from the list of loaded plugins.
 	while ( !d->loadedPlugins.empty() )
 	{
 		Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
-		kWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.data()->name() << "'" << endl;
-		delete it.data();
+		kWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.value()->objectName() << "'" << endl;
+		delete it.value();
 	}
 
 	delete d;
@@ -143,7 +143,7 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 	      it != d->loadedPlugins.end(); ++it )
 	{
 		if ( category.isEmpty() || it.key()->category() == category )
-			result.append( it.data() );
+			result.append( it.value() );
 	}
 	
 	return result;
@@ -155,7 +155,7 @@ KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
 	{
-		if ( it.data() == plugin )
+		if ( it.value() == plugin )
 			return it.key();
 	}
 	return 0;
@@ -195,7 +195,7 @@ void PluginManager::shutdown()
 		// FIXME: a much cleaner approach would be to just delete the plugin now. if it needs
 		//  to do some async processing, it can grab a reference to the app itself and create
 		//  another object to do it.
-		current.data()->aboutToUnload();
+		current.value()->aboutToUnload();
 	}
 	
 	// When running under valgrind, don't enable the timer because it will almost
@@ -236,7 +236,7 @@ void PluginManager::slotShutdownTimeout()
 
 	QStringList remaining;
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
-		remaining.append( it.data()->pluginId() );
+		remaining.append( it.value()->pluginId() );
 
 	kWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
 		<< "Remaining plugins: " << remaining.join( QString::fromLatin1( ", " ) ) << endl
@@ -269,9 +269,9 @@ void PluginManager::loadAllPlugins()
 			if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 			{
 				key.setLength( key.length() - 7 );
-				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value() << endl;
 	
-				if ( it.data() == QString::fromLatin1( "true" ) )
+				if ( it.value() == QString::fromLatin1( "true" ) )
 				{
 					if ( !plugin( key ) )
 						d->pluginsToLoad.push( key );
@@ -432,7 +432,7 @@ void PluginManager::slotPluginDestroyed( QObject *plugin )
 	for ( Private::InfoToPluginMap::Iterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
 	{
-		if ( it.data() == plugin )
+		if ( it.value() == plugin )
 		{
 			d->loadedPlugins.erase( it );
 			break;

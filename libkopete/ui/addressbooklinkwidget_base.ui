@@ -1,10 +1,10 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>AddressBookLinkWidgetBase</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>AddressBookLinkWidgetBase</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>AddressBookLinkWidgetBase</class>
+ <widget class="QWidget" name="AddressBookLinkWidgetBase" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
@@ -12,67 +12,79 @@
             <height>31</height>
         </rect>
     </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
             <number>0</number>
         </property>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout9</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="KLineEdit">
-                    <property name="name">
-                        <cstring>edtAddressee</cstring>
+   <property name="spacing" >
+    <number>6</number>
                     </property>
-                    <property name="text">
-                        <string></string>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
                     </property>
-                    <property name="readOnly">
-                        <bool>true</bool>
+     <property name="spacing" >
+      <number>6</number>
                     </property>
-                    <property name="toolTip" stdset="0">
+     <item>
+      <widget class="KLineEdit" name="edtAddressee" >
+       <property name="toolTip" >
                         <string>The KDE Address Book entry associated with this Kopete Contact</string>
                     </property>
-                </widget>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>btnClear</cstring>
+       <property name="text" >
+        <string/>
                     </property>
-                    <property name="text">
-                        <string></string>
+       <property name="readOnly" >
+        <bool>true</bool>
                     </property>
-                    <property name="toolTip" stdset="0">
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="btnClear" >
+       <property name="toolTip" >
                         <string>Clear</string>
                     </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>btnSelectAddressee</cstring>
+       <property name="text" >
+        <string/>
                     </property>
-                    <property name="enabled">
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSelectAddressee" >
+       <property name="enabled" >
                         <bool>true</bool>
                     </property>
-                    <property name="text">
-                        <string>C&amp;hange...</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
+       <property name="toolTip" >
                         <string>Select an address book entry</string>
                     </property>
+       <property name="text" >
+        <string>C&amp;hange...</string>
+       </property>
                 </widget>
-            </hbox>
+     </item>
+    </layout>
+   </item>
+  </layout>
         </widget>
-    </vbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
-</UI>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

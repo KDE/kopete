@@ -52,8 +52,10 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	connect( edit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 
 	// timers for typing notifications
-	m_typingRepeatTimer = new QTimer(this, "m_typingRepeatTimer");
-	m_typingStopTimer   = new QTimer(this, "m_typingStopTimer");
+	m_typingRepeatTimer = new QTimer(this);
+	m_typingRepeatTimer->setObjectName("m_typingRepeatTimer");
+	m_typingStopTimer   = new QTimer(this);
+	m_typingStopTimer->setObjectName("m_typingStopTimer");
 
 	connect( m_typingRepeatTimer, SIGNAL( timeout() ), this, SLOT( slotRepeatTypingTimer() ) );
 	connect( m_typingStopTimer,   SIGNAL( timeout() ), this, SLOT( slotStoppedTypingTimer() ) );
@@ -277,9 +279,9 @@ void ChatTextEditPart::sendMessage()
 	if ( txt.isEmpty() || txt == "\n" )
 		return;
 
-	if ( m_lastMatch.isNull() && ( txt.find( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
+	if ( m_lastMatch.isNull() && ( txt.indexOf( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
 	{ //no last match and it finds something of the form of "word:" at the start of a line
-		QString search = txt.left( txt.find(':') );
+		QString search = txt.left( txt.indexOf(':') );
 		if( !search.isEmpty() )
 		{
 			QString match = mComplete->makeCompletion( search );

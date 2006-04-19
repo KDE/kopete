@@ -64,7 +64,7 @@
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
-#include "groupkabcselectorwidget.h"
+#include "ui_groupkabcselectorwidget.h"
 #include "kabcexport.h"
 #include "kopeteappearancesettings.h"
 #include "kopeteapplication.h"
@@ -91,8 +91,10 @@
 
 //BEGIN GlobalStatusMessageIconLabel
 GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent, const char *name)
- : QLabel(parent, name)
-{}
+ : QLabel(parent)
+{
+      setObjectName( name );
+}
 
 void GlobalStatusMessageIconLabel::mouseReleaseEvent( QMouseEvent *event )
 {
@@ -370,7 +372,7 @@ void KopeteWindow::slotShowHide()
 		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
 			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
-		setActiveWindow();
+		activateWindow();
 	}
 }
 
@@ -728,7 +730,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 	// add an item for this account to the add contact actionmenu
 	QString s = "actionAdd%1Contact";
 	s.arg( account->accountId() );
-	KAction *action = new KAction( account->accountLabel(), account->accountIcon(), 0 , addContactMapper, SLOT( map() ), 0, s.latin1() );
+	KAction *action = new KAction( account->accountLabel(), account->accountIcon(), 0 , addContactMapper, SLOT( map() ), 0, s.toLatin1() );
 	addContactMapper->setMapping( action, account->protocol()->pluginId() + QChar(0xE000) + account->accountId() );
 	actionAddContact->insert( action );
 }
@@ -759,10 +761,10 @@ void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 	s.arg( account->accountId() );
 // 	KAction * action = actionCollection()->action( account->accountId() );
 	Kopete::Account * myAccount = const_cast< Kopete::Account * > ( account );
-	KAction * action = static_cast< KAction *>( myAccount->child( s.latin1() ) );
+	KAction * action = static_cast< KAction *>( myAccount->child( s.toLatin1() ) );
 	if ( action )
 	{
-		kDebug(14000) << " found KAction " << action << " with name: " << action->name() << endl;
+		kDebug(14000) << " found KAction " << action << " with name: " << action->objectName() << endl;
 		addContactMapper->removeMappings( action );
 		actionAddContact->remove( action );
 	}
@@ -1057,7 +1059,10 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 	AddContactPage *addContactPage =
 		account->protocol()->createAddContactWidget( mainWid, account );
 
-	GroupKABCSelectorWidget * groupKABC = new GroupKABCSelectorWidget( mainWid, "groupkabcwidget" );
+	QWidget* groupKABC = new QWidget( mainWid );
+	groupKABC->setObjectName( "groupkabcwidget" );
+	Ui::GroupKABCSelectorWidget ui_groupKABC;
+	ui_groupKABC.setupUi( groupKABC );
 
 	// Populate the groups list
 	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
@@ -1068,7 +1073,7 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 		if ( !groupname.isEmpty() )
 		{
 			groupItems.insert( groupname, group );
-			groupKABC->groupCombo->insertItem( groupname );
+			ui_groupKABC.groupCombo->insertItem( groupname );
 		}
 	}
 
@@ -1085,8 +1090,8 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 			if( addContactPage->validateData() )
 			{
 				Kopete::MetaContact * metacontact = new Kopete::MetaContact();
-				metacontact->addToGroup( groupItems[ groupKABC->groupCombo->currentText() ] );
-				metacontact->setMetaContactId( groupKABC->widAddresseeLink->uid() );
+				metacontact->addToGroup( groupItems[ ui_groupKABC.groupCombo->currentText() ] );
+				metacontact->setMetaContactId( ui_groupKABC.widAddresseeLink->uid() );
 				if (addContactPage->apply( account, metacontact ))
 				{
 					Kopete::ContactList::self()->addMetaContact( metacontact );

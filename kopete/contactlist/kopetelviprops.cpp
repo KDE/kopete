@@ -76,20 +76,24 @@ const char MC_UNK[] = "metacontact_unknown";
 KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
 : KDialog(parent, i18n("Properties of Group %1", gvi->group()->displayName()), Ok|Cancel)
 {
-	mainWidget = new KopeteGVIPropsWidget(this, "mainWidget");
-	mainWidget->icnbOpen->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
-	mainWidget->icnbClosed->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
+	mainWidget = new QWidget( this );
+	mainWidget->setObjectName( "mainWidget" );
+	ui_mainWidget = new Ui::KopeteGVIPropsWidget;
+	ui_mainWidget->setupUi( mainWidget );
+
+	ui_mainWidget->icnbOpen->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
+	ui_mainWidget->icnbClosed->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
 	QPair<QString,QString> context=qMakePair( QString::fromLatin1("group") , QString::number(gvi->group()->groupId() ) );
 	mNotificationProps = new CustomNotificationProps( this, context );
-	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
 
 	setMainWidget(mainWidget);
 	item = gvi;
 	m_dirty = false;
 
-	mainWidget->edtDisplayName->setText( item->group()->displayName() );
+	ui_mainWidget->edtDisplayName->setText( item->group()->displayName() );
 
-	mainWidget->chkUseCustomIcons->setChecked( item->group()->useCustomIcon() );
+	ui_mainWidget->chkUseCustomIcons->setChecked( item->group()->useCustomIcon() );
 
 	QString openName = item->group()->icon( Kopete::ContactListElement::Open );
 	if(openName.isEmpty())
@@ -97,40 +101,41 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
 	QString closeName = item->group()->icon( Kopete::ContactListElement::Closed );
 	if(closeName.isEmpty())
 		closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
-//	mainWidget->icnbOpen->setIcon( openName );
-//	mainWidget->icnbClosed->setIcon( closeName );
+//	ui_mainWidget->icnbOpen->setIcon( openName );
+//	ui_mainWidget->icnbClosed->setIcon( closeName );
 
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
-	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
+	connect( ui_mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
 		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-	connect( mainWidget->icnbOpen, SIGNAL( iconChanged( QString ) ),
+	connect( ui_mainWidget->icnbOpen, SIGNAL( iconChanged( QString ) ),
 		SLOT( slotIconChanged() ) );
-	connect( mainWidget->icnbClosed, SIGNAL( iconChanged( QString ) ),
+	connect( ui_mainWidget->icnbClosed, SIGNAL( iconChanged( QString ) ),
 		SLOT( slotIconChanged() ) );
-	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
+	slotUseCustomIconsToggled( ui_mainWidget->chkUseCustomIcons->isChecked() );
 }
 
 KopeteGVIProps::~KopeteGVIProps()
 {
+	delete ui_mainWidget;
 }
 
 void KopeteGVIProps::slotOkClicked()
 {
-	if( mainWidget->edtDisplayName->text() != item->group()->displayName() )
+	if( ui_mainWidget->edtDisplayName->text() != item->group()->displayName() )
 	{
-		item->group()->setDisplayName( mainWidget->edtDisplayName->text() );
+		item->group()->setDisplayName( ui_mainWidget->edtDisplayName->text() );
 		item->refreshDisplayName();
 	}
 
-	item->group()->setUseCustomIcon( mainWidget->chkUseCustomIcons->isChecked() );
+	item->group()->setUseCustomIcon( ui_mainWidget->chkUseCustomIcons->isChecked() );
 
 	// only call setIcon if the icon was changed
 	if( m_dirty )
 	{
-/*		item->group()->setIcon( mainWidget->icnbOpen->icon(),
+/*		item->group()->setIcon( ui_mainWidget->icnbOpen->icon(),
 			 Kopete::ContactListElement::Open );
 
-		item->group()->setIcon( mainWidget->icnbClosed->icon(),
+		item->group()->setIcon( ui_mainWidget->icnbClosed->icon(),
 			Kopete::ContactListElement::Closed );
 */	}
 	
@@ -139,10 +144,10 @@ void KopeteGVIProps::slotOkClicked()
 
 void KopeteGVIProps::slotUseCustomIconsToggled(bool on)
 {
-	mainWidget->lblOpen->setEnabled( on );
-	mainWidget->icnbOpen->setEnabled( on );
-	mainWidget->lblClosed->setEnabled( on );
-	mainWidget->icnbClosed->setEnabled( on );
+	ui_mainWidget->lblOpen->setEnabled( on );
+	ui_mainWidget->icnbOpen->setEnabled( on );
+	ui_mainWidget->lblClosed->setEnabled( on );
+	ui_mainWidget->icnbClosed->setEnabled( on );
 }
 
 void KopeteGVIProps::slotIconChanged()
@@ -157,11 +162,16 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 : KDialog(parent, i18n("Properties of Meta Contact %1", lvi->metaContact()->displayName()), Ok|Cancel)
 {
 	m_countPhotoCapable = 0;
-	mainWidget = new KopeteMetaLVIPropsWidget( this, "mainWidget" );
-	mainWidget->icnbOffline->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
-	mainWidget->icnbOnline->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
-	mainWidget->icnbAway->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
-	mainWidget->icnbUnknown->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
+
+	mainWidget = new QWidget( this );
+	mainWidget->setObjectName( "mainWidget" );
+	ui_mainWidget = new Ui::KopeteMetaLVIPropsWidget;
+	ui_mainWidget->setupUi( mainWidget );
+
+	ui_mainWidget->icnbOffline->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
+	ui_mainWidget->icnbOnline->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
+	ui_mainWidget->icnbAway->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
+	ui_mainWidget->icnbUnknown->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
 
 	QPair<QString,QString> context=qMakePair( QString::fromLatin1("contact"), lvi->metaContact()->metaContactId() );
 	mNotificationProps = new CustomNotificationProps( this, context  );
@@ -169,28 +179,31 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	// the widget's vert box layout, horiz box layout containing button, spacer, followed by a spacer
 	QBoxLayout * vb = static_cast<QVBoxLayout*>( mNotificationProps->widget()->layout() );
 
-	QHBoxLayout* hb = new QHBoxLayout( vb, -1, "soundFromKABClayout" );
+	QHBoxLayout* hb = new QHBoxLayout( vb );
+	hb->setMargin( -1 );
+	hb->setObjectName( "soundFromKABClayout" );
+
 	mFromKABC = new QPushButton( i18n( "Sync KABC..." ), mNotificationProps->widget(), "getSoundFromKABC" );
 	hb->addWidget( mFromKABC ); // [ [Button] <-xxxxx-> ]
 	hb->addStretch();
 	vb->addStretch(); // vert spacer keeps the rest snug
 	
-	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
 	setMainWidget( mainWidget );
 	item = lvi;
 
-	connect( mainWidget->radioNameKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( mainWidget->radioNameContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( mainWidget->radioNameCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( mainWidget->radioPhotoKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->radioNameKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->radioNameContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->radioNameCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->radioPhotoKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
 
-	mainWidget->btnClearPhoto->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
-	connect( mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
-	connect( mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
-	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
+	ui_mainWidget->btnClearPhoto->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
+	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
+	connect( ui_mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
+	ui_mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
 	QString offlineName = item->metaContact()->icon( Kopete::ContactListElement::Offline );
 	if(offlineName.isEmpty())
@@ -208,12 +221,12 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	if(unknownName.isEmpty())
 		unknownName = QString::fromLatin1(MC_UNK); // Default
 
-//	mainWidget->icnbOffline->setIcon( offlineName );
-//	mainWidget->icnbOnline->setIcon( onlineName );
-//	mainWidget->icnbAway->setIcon( awayName );
-//	mainWidget->icnbUnknown->setIcon( unknownName );
+//	ui_mainWidget->icnbOffline->setIcon( offlineName );
+//	ui_mainWidget->icnbOnline->setIcon( onlineName );
+//	ui_mainWidget->icnbAway->setIcon( awayName );
+//	ui_mainWidget->icnbUnknown->setIcon( unknownName );
 
-	mainWidget->widAddresseeLink->setMetaContact( lvi->metaContact() );
+	ui_mainWidget->widAddresseeLink->setMetaContact( lvi->metaContact() );
 
 	mAddressBookUid = item->metaContact()->metaContactId();
 
@@ -223,12 +236,12 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	{
 		KABC::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
 		KABC::Addressee a = ab->findByUid( mAddressBookUid );
-		mainWidget->widAddresseeLink->setAddressee( a );
+		ui_mainWidget->widAddresseeLink->setAddressee( a );
 
 		if ( !a.isEmpty() )
 		{
-			mainWidget->btnImportKABC->setEnabled( true );
-			mainWidget->btnExportKABC->setEnabled( true );
+			ui_mainWidget->btnImportKABC->setEnabled( true );
+			ui_mainWidget->btnExportKABC->setEnabled( true );
 			mExport = new KopeteAddressBookExport( this, item->metaContact() );
 			
 			mSound = a.sound();
@@ -240,21 +253,22 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	slotLoadPhotoSources();
 
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
-	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
+	connect( ui_mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
 		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-	connect( mainWidget->btnImportKABC, SIGNAL( clicked() ),
+	connect( ui_mainWidget->btnImportKABC, SIGNAL( clicked() ),
 		this, SLOT( slotImportClicked() ) );
-	connect( mainWidget->btnExportKABC, SIGNAL( clicked() ),
+	connect( ui_mainWidget->btnExportKABC, SIGNAL( clicked() ),
 					 this, SLOT( slotExportClicked() ) );
 	connect( mFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
 
-	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
+	slotUseCustomIconsToggled( ui_mainWidget->chkUseCustomIcons->isChecked() );
 	slotEnableAndDisableWidgets();
 }
 
 KopeteMetaLVIProps::~KopeteMetaLVIProps()
 {
+	delete ui_mainWidget;
 }
 
 
@@ -263,27 +277,27 @@ void KopeteMetaLVIProps::slotLoadNameSources()
 	Kopete::Contact* trackingName = item->metaContact()->displayNameSourceContact();
 	QList<Kopete::Contact*> cList = item->metaContact()->contacts();
 	QList<Kopete::Contact*>::iterator it = cList.begin();
-	mainWidget->cmbAccountName->clear();
+	ui_mainWidget->cmbAccountName->clear();
 	for( ; it != cList.end(); ++it )
 	{
 		QString acct = (*it)->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + (*it)->contactId() + ">";
 		QPixmap acctIcon = (*it)->account()->accountIcon();
-		mainWidget->cmbAccountName->insertItem( acctIcon, acct );
+		ui_mainWidget->cmbAccountName->insertItem( acctIcon, acct );
 		
 		// Select this item if it's the one we're tracking.
 		if( (*it) == trackingName )
 		{
-			mainWidget->cmbAccountName->setCurrentItem( mainWidget->cmbAccountName->count() - 1 );
+			ui_mainWidget->cmbAccountName->setCurrentIndex( ui_mainWidget->cmbAccountName->count() - 1 );
 		}
 	}
 
-	mainWidget->edtDisplayName->setText( item->metaContact()->customDisplayName() );
+	ui_mainWidget->edtDisplayName->setText( item->metaContact()->customDisplayName() );
 
 	Kopete::MetaContact::PropertySource nameSource = item->metaContact()->displayNameSource();
 	
-	mainWidget->radioNameContact->setChecked(nameSource == Kopete::MetaContact::SourceContact);
-	mainWidget->radioNameKABC->setChecked(nameSource == Kopete::MetaContact::SourceKABC);
-	mainWidget->radioNameCustom->setChecked(nameSource == Kopete::MetaContact::SourceCustom);
+	ui_mainWidget->radioNameContact->setChecked(nameSource == Kopete::MetaContact::SourceContact);
+	ui_mainWidget->radioNameKABC->setChecked(nameSource == Kopete::MetaContact::SourceKABC);
+	ui_mainWidget->radioNameCustom->setChecked(nameSource == Kopete::MetaContact::SourceCustom);
 
 }
 
@@ -293,7 +307,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 	QList<Kopete::Contact*> cList = item->metaContact()->contacts();
 	m_withPhotoContacts.clear();
 	Kopete::Contact* trackingPhoto = item->metaContact()->photoSourceContact();
-	mainWidget->cmbAccountPhoto->clear();
+	ui_mainWidget->cmbAccountPhoto->clear();
 	QList<Kopete::Contact*>::iterator itp = cList.begin();
 	for( ; itp != cList.end(); ++itp )
 	{
@@ -302,25 +316,25 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 		{
 			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + ">";
 			QPixmap acctIcon = citem->account()->accountIcon();
-			mainWidget->cmbAccountPhoto->insertItem( acctIcon, acct );
+			ui_mainWidget->cmbAccountPhoto->insertItem( acctIcon, acct );
 			
 			// Select this item if it's the one we're tracking.
 			if( citem == trackingPhoto )
 			{
-				mainWidget->cmbAccountPhoto->setCurrentItem( mainWidget->cmbAccountPhoto->count() - 1 );
+				ui_mainWidget->cmbAccountPhoto->setCurrentIndex( ui_mainWidget->cmbAccountPhoto->count() - 1 );
 			}
-			m_withPhotoContacts.insert(mainWidget->cmbAccountPhoto->count() - 1  , citem );
+			m_withPhotoContacts.insert(ui_mainWidget->cmbAccountPhoto->count() - 1  , citem );
 		}
 	}
-	mainWidget->cmbPhotoUrl->setKUrl(item->metaContact()->customPhoto().url());
+	ui_mainWidget->cmbPhotoUrl->setKUrl(item->metaContact()->customPhoto().url());
 
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
-	mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);
-	mainWidget->radioPhotoKABC->setChecked(photoSource == Kopete::MetaContact::SourceKABC);
-	mainWidget->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
+	ui_mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);
+	ui_mainWidget->radioPhotoKABC->setChecked(photoSource == Kopete::MetaContact::SourceKABC);
+	ui_mainWidget->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
 
-	mainWidget->chkSyncPhoto->setChecked(item->metaContact()->isPhotoSyncedWithKABC());
+	ui_mainWidget->chkSyncPhoto->setChecked(item->metaContact()->isPhotoSyncedWithKABC());
 }
 
 void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
@@ -329,34 +343,34 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	KABC::Addressee a = ab->findByUid( mAddressBookUid );
 	bool validLink = ! a.isEmpty();
 	// kabc source requires a kabc link
-	mainWidget->radioNameKABC->setEnabled(validLink);
+	ui_mainWidget->radioNameKABC->setEnabled(validLink);
 	// kabc source requires a kabc link
-	mainWidget->radioPhotoKABC->setEnabled(validLink);
+	ui_mainWidget->radioPhotoKABC->setEnabled(validLink);
 	// sync with kabc has no sense if we use kabc as source (sync kabc with kabc? uh?)
 	// it has also no sense if they are no kabc link
 	if( selectedPhotoSource() == Kopete::MetaContact::SourceKABC || !validLink )
 	{
-		mainWidget->chkSyncPhoto->setEnabled(false);
+		ui_mainWidget->chkSyncPhoto->setEnabled(false);
 	}
 	else
 	{
-		mainWidget->chkSyncPhoto->setEnabled(true);
+		ui_mainWidget->chkSyncPhoto->setEnabled(true);
 	}
 
-	mainWidget->radioNameContact->setEnabled(item->metaContact()->contacts().count());
-	mainWidget->radioPhotoContact->setEnabled(!m_withPhotoContacts.isEmpty());
+	ui_mainWidget->radioNameContact->setEnabled(item->metaContact()->contacts().count());
+	ui_mainWidget->radioPhotoContact->setEnabled(!m_withPhotoContacts.isEmpty());
 
-	mainWidget->cmbAccountName->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceContact);
-	mainWidget->edtDisplayName->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
+	ui_mainWidget->cmbAccountName->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceContact);
+	ui_mainWidget->edtDisplayName->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
 
-	mainWidget->cmbAccountPhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
-	mainWidget->cmbPhotoUrl->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
+	ui_mainWidget->cmbAccountPhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
+	ui_mainWidget->cmbPhotoUrl->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
 	
 	if ( m_withPhotoContacts.isEmpty() )
 	{
-		mainWidget->cmbAccountPhoto->clear();
-		mainWidget->cmbAccountPhoto->insertItem(i18n("No Contacts with Photo Support"));
-		mainWidget->cmbAccountPhoto->setEnabled(false);
+		ui_mainWidget->cmbAccountPhoto->clear();
+		ui_mainWidget->cmbAccountPhoto->insertItem(i18n("No Contacts with Photo Support"));
+		ui_mainWidget->cmbAccountPhoto->setEnabled(false);
 	}
 
 	QImage photo;
@@ -369,22 +383,22 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromContact(selectedNameSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
-		photo = QImage(mainWidget->cmbPhotoUrl->url());
+		photo = QImage(ui_mainWidget->cmbPhotoUrl->url());
 		break;
 	}
 	if( !photo.isNull() )
-		mainWidget->photoLabel->setPixmap(QPixmap(photo.scaled(64, 92)));
+		ui_mainWidget->photoLabel->setPixmap(QPixmap::fromImage(photo.scaled(64, 92)));
 	else
-		mainWidget->photoLabel->setPixmap( QPixmap() );
+		ui_mainWidget->photoLabel->setPixmap( QPixmap() );
 }
 
 Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedNameSource() const
 {
-	if ( mainWidget->radioNameKABC->isChecked() )
+	if ( ui_mainWidget->radioNameKABC->isChecked() )
 		return Kopete::MetaContact::SourceKABC;
-	if ( mainWidget->radioNameContact->isChecked() )
+	if ( ui_mainWidget->radioNameContact->isChecked() )
 		return Kopete::MetaContact::SourceContact;
-	if ( mainWidget->radioNameCustom->isChecked() )
+	if ( ui_mainWidget->radioNameCustom->isChecked() )
 		return Kopete::MetaContact::SourceCustom;
 	else
 		return Kopete::MetaContact::SourceCustom;
@@ -392,11 +406,11 @@ Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedNameSource() con
 
 Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedPhotoSource() const
 {
-	if ( mainWidget->radioPhotoKABC->isChecked() )
+	if ( ui_mainWidget->radioPhotoKABC->isChecked() )
 		return Kopete::MetaContact::SourceKABC;
-	if ( mainWidget->radioPhotoContact->isChecked() )
+	if ( ui_mainWidget->radioPhotoContact->isChecked() )
 		return Kopete::MetaContact::SourceContact;
-	if ( mainWidget->radioPhotoCustom->isChecked() )
+	if ( ui_mainWidget->radioPhotoCustom->isChecked() )
 		return Kopete::MetaContact::SourceCustom;
 	else
 		return Kopete::MetaContact::SourceCustom;
@@ -404,7 +418,7 @@ Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedPhotoSource() co
 
 Kopete::Contact* KopeteMetaLVIProps::selectedNameSourceContact() const
 {
-	Kopete::Contact *c= item->metaContact()->contacts().at( mainWidget->cmbAccountName->currentItem() );
+	Kopete::Contact *c= item->metaContact()->contacts().at( ui_mainWidget->cmbAccountName->currentIndex() );
 	return c ? c : 0L;
 }
 
@@ -412,7 +426,7 @@ Kopete::Contact* KopeteMetaLVIProps::selectedPhotoSourceContact() const
 {
 	if (m_withPhotoContacts.isEmpty())
 		return 0L;
-	Kopete::Contact *c = m_withPhotoContacts[mainWidget->cmbAccountPhoto->currentItem() ];
+	Kopete::Contact *c = m_withPhotoContacts[ui_mainWidget->cmbAccountPhoto->currentIndex() ];
 	return c ? c : 0L;
 }
 
@@ -423,8 +437,8 @@ void KopeteMetaLVIProps::slotOkClicked()
 	//this has to be done first, in the case something is synced with KABC   (see bug 109494)
 	
 	// set custom display name
-	if( mainWidget->edtDisplayName->text() != item->metaContact()->customDisplayName() )
-		item->metaContact()->setDisplayName( mainWidget->edtDisplayName->text() );
+	if( ui_mainWidget->edtDisplayName->text() != item->metaContact()->customDisplayName() )
+		item->metaContact()->setDisplayName( ui_mainWidget->edtDisplayName->text() );
 	
 	item->metaContact()->setDisplayNameSource(selectedNameSource());
 	item->metaContact()->setDisplayNameSourceContact( selectedNameSourceContact() );
@@ -432,31 +446,31 @@ void KopeteMetaLVIProps::slotOkClicked()
 	// set photo source
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
-	if ( !mainWidget->cmbPhotoUrl->url().isEmpty())
-		item->metaContact()->setPhoto(KUrl::fromPathOrURL((mainWidget->cmbPhotoUrl->url())));
-	item->metaContact()->setPhotoSyncedWithKABC( mainWidget->chkSyncPhoto->isChecked() );
+	if ( !ui_mainWidget->cmbPhotoUrl->url().isEmpty())
+		item->metaContact()->setPhoto(KUrl::fromPathOrURL((ui_mainWidget->cmbPhotoUrl->url())));
+	item->metaContact()->setPhotoSyncedWithKABC( ui_mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(
-		mainWidget->chkUseCustomIcons->isChecked() );
+		ui_mainWidget->chkUseCustomIcons->isChecked() );
 
 	// only call setIcon if any of the icons is not set to default icon
 /*
 	if(
-		mainWidget->icnbOffline->icon() != MC_OFF ||
-		mainWidget->icnbOnline->icon() != MC_ON ||
-		mainWidget->icnbAway->icon() != MC_AW ||
-		mainWidget->icnbUnknown->icon() != MC_UNK )
+		ui_mainWidget->icnbOffline->icon() != MC_OFF ||
+		ui_mainWidget->icnbOnline->icon() != MC_ON ||
+		ui_mainWidget->icnbAway->icon() != MC_AW ||
+		ui_mainWidget->icnbUnknown->icon() != MC_UNK )
 	{
-		item->metaContact()->setIcon( mainWidget->icnbOffline->icon(),
+		item->metaContact()->setIcon( ui_mainWidget->icnbOffline->icon(),
 			 Kopete::ContactListElement::Offline );
 
-		item->metaContact()->setIcon( mainWidget->icnbOnline->icon(),
+		item->metaContact()->setIcon( ui_mainWidget->icnbOnline->icon(),
 			Kopete::ContactListElement::Online );
 
-		item->metaContact()->setIcon( mainWidget->icnbAway->icon(),
+		item->metaContact()->setIcon( ui_mainWidget->icnbAway->icon(),
 			Kopete::ContactListElement::Away );
 
-		item->metaContact()->setIcon( mainWidget->icnbUnknown->icon(),
+		item->metaContact()->setIcon( ui_mainWidget->icnbUnknown->icon(),
 			Kopete::ContactListElement::Unknown );
 	}
 */
@@ -465,15 +479,15 @@ void KopeteMetaLVIProps::slotOkClicked()
 
 void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
 {
-	mainWidget->lblOffline->setEnabled( on );
-	mainWidget->lblOnline->setEnabled( on );
-	mainWidget->lblAway->setEnabled( on );
-	mainWidget->lblUnknown->setEnabled( on );
+	ui_mainWidget->lblOffline->setEnabled( on );
+	ui_mainWidget->lblOnline->setEnabled( on );
+	ui_mainWidget->lblAway->setEnabled( on );
+	ui_mainWidget->lblUnknown->setEnabled( on );
 
-	mainWidget->icnbOffline->setEnabled( on );
-	mainWidget->icnbOnline->setEnabled( on );
-	mainWidget->icnbAway->setEnabled( on );
-	mainWidget->icnbUnknown->setEnabled( on );
+	ui_mainWidget->icnbOffline->setEnabled( on );
+	ui_mainWidget->icnbOnline->setEnabled( on );
+	ui_mainWidget->icnbAway->setEnabled( on );
+	ui_mainWidget->icnbUnknown->setEnabled( on );
 }
 
 void KopeteMetaLVIProps::slotAddresseeChanged( const KABC::Addressee & a )
@@ -482,18 +496,18 @@ void KopeteMetaLVIProps::slotAddresseeChanged( const KABC::Addressee & a )
 	{
 		mSound = a.sound();
 		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
-		mainWidget->btnExportKABC->setEnabled( true );
-		mainWidget->btnImportKABC->setEnabled( true );
+		ui_mainWidget->btnExportKABC->setEnabled( true );
+		ui_mainWidget->btnImportKABC->setEnabled( true );
 		// set/update the MC's addressee uin field
 		mAddressBookUid = a.uid();
 	}
 	else
 	{
-		mainWidget->btnExportKABC->setEnabled( false );
-		mainWidget->btnImportKABC->setEnabled( false );
+		ui_mainWidget->btnExportKABC->setEnabled( false );
+		ui_mainWidget->btnImportKABC->setEnabled( false );
 		mAddressBookUid = QString::null;
-		mainWidget->radioNameContact->setChecked( true );
-		mainWidget->radioPhotoContact->setChecked( true );
+		ui_mainWidget->radioNameContact->setChecked( true );
+		ui_mainWidget->radioPhotoContact->setChecked( true );
 	}
 	slotEnableAndDisableWidgets();
 }
@@ -561,7 +575,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
-	mainWidget->cmbPhotoUrl->setKUrl( KUrl() );
+	ui_mainWidget->cmbPhotoUrl->setKUrl( KUrl() );
 	item->metaContact()->setPhoto( KUrl() );
 
 	slotEnableAndDisableWidgets();

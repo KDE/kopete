@@ -11,10 +11,10 @@ set( kopeteaddaccountwizard_SRCS
 addaccountwizard.cpp 
 )
 
-kde4_add_ui3_files( kopeteaddaccountwizard_SRCS  
-addaccountwizardpage1.ui 
-addaccountwizardpage2.ui 
-addaccountwizardpage3.ui 
+#addaccountwizardpage3.ui not needed?
+kde4_add_ui_files( kopeteaddaccountwizard_SRCS
+    addaccountwizardpage1.ui 
+    addaccountwizardpage2.ui 
 )
 
 kde4_automoc( ${kopeteaddaccountwizard_SRCS} )

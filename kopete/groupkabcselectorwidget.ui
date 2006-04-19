@@ -1,10 +1,10 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>GroupKABCSelectorWidget</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>GroupKABCSelectorWidget</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>GroupKABCSelectorWidget</class>
+ <widget class="QWidget" name="GroupKABCSelectorWidget" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
@@ -12,80 +12,75 @@
             <height>80</height>
         </rect>
     </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
             <number>0</number>
         </property>
-        <widget class="Line">
-            <property name="name">
-                <cstring>line1</cstring>
+   <property name="spacing" >
+    <number>6</number>
             </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
+   <item>
+    <widget class="Line" name="line1" >
+     <property name="frameShape" >
+      <enum>QFrame::HLine</enum>
             </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
             </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
             </property>
         </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout13</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>kabcLabel</cstring>
+   </item>
+   <item>
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>0</number>
                     </property>
-                    <property name="text">
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="kabcLabel" >
+       <property name="text" >
                         <string>Addressbook entry:</string>
                     </property>
-                    <property name="buddy" stdset="0">
+       <property name="buddy" >
                         <cstring>kabcCombo</cstring>
                     </property>
                 </widget>
-                <widget class="Kopete::UI::AddressBookLinkWidget" row="1" column="1">
-                    <property name="name">
-                        <cstring>widAddresseeLink</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>groupLabel</cstring>
-                    </property>
-                    <property name="text">
+     </item>
+     <item row="1" column="1" >
+      <widget class="Kopete::UI::AddressBookLinkWidget" name="widAddresseeLink" />
+     </item>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="groupLabel" >
+       <property name="text" >
                         <string>&amp;Group</string>
                     </property>
-                    <property name="buddy" stdset="0">
+       <property name="buddy" >
                         <cstring>groupCombo</cstring>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>groupCombo</cstring>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-    </vbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-<customwidgets>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QComboBox" name="groupCombo" />
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
     <customwidget>
       <class>Kopete::UI::AddressBookLinkWidget</class>
+   <extends></extends>
       <header>addressbooklinkwidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
     </customwidget>
-</customwidgets>				     
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
-</UI>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,18 +1,18 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>AppearanceConfig_ChatWindow</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>AppearanceConfig_ChatWindow</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>AppearanceConfig_ChatWindow</class>
+ <widget class="QWidget" name="AppearanceConfig_ChatWindow" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>462</width>
-            <height>457</height>
+    <width>237</width>
+    <height>354</height>
         </rect>
     </property>
-    <property name="sizePolicy">
+  <property name="sizePolicy" >
         <sizepolicy>
             <hsizetype>7</hsizetype>
             <vsizetype>7</vsizetype>
@@ -20,18 +20,49 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="windowTitle">
+  <property name="windowTitle" >
         <string>Chat Window Appearance</string>
     </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="1" column="0" >
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="title" >
+        <string>Display</string>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
         </property>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>stylesGroupBox</cstring>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="kcfg_groupConsecutiveMessages" >
+          <property name="text" >
+           <string>Group consecuti&amp;ve messages</string>
             </property>
-            <property name="sizePolicy">
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="0" >
+      <widget class="QGroupBox" name="stylesGroupBox" >
+       <property name="sizePolicy" >
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
                     <vsizetype>7</vsizetype>
@@ -39,157 +70,135 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="title">
+       <property name="title" >
                 <string>Styles</string>
             </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QSplitter" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>splitter1</cstring>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="1" column="0" >
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel1" >
+            <property name="text" >
+             <string>Style Variant:</string>
                     </property>
-                    <property name="sizePolicy">
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="variantList" >
+            <property name="sizePolicy" >
                         <sizepolicy>
                             <hsizetype>7</hsizetype>
-                            <vsizetype>3</vsizetype>
+              <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <widget class="KListBox">
-                        <property name="name">
-                            <cstring>styleList</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>1</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>1</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
                     </widget>
-                    <widget class="QFrame">
-                        <property name="name">
-                            <cstring>htmlFrame</cstring>
-                        </property>
-                        <property name="sizePolicy">
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QSplitter" name="splitter" >
+          <property name="sizePolicy" >
                             <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>4</horstretch>
+            <hsizetype>7</hsizetype>
+            <vsizetype>3</vsizetype>
+            <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
-                        <property name="frameShape">
-                            <enum>StyledPanel</enum>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="KListBox" name="styleList" />
+          <widget class="QFrame" name="htmlFrame" >
+           <property name="frameShape" >
+            <enum>QFrame::StyledPanel</enum>
                         </property>
-                        <property name="frameShadow">
-                            <enum>Raised</enum>
+           <property name="frameShadow" >
+            <enum>QFrame::Raised</enum>
                         </property>
                     </widget>
                 </widget>
-                <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>layout10</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
+        </item>
+        <item row="2" column="0" >
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
                         </property>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>btnGetStyles</cstring>
+          <property name="spacing" >
+           <number>6</number>
                             </property>
-                            <property name="enabled">
+          <item>
+           <widget class="KPushButton" name="btnGetStyles" >
+            <property name="enabled" >
                                 <bool>true</bool>
                             </property>
-                            <property name="text">
-                                <string>&amp;Get New...</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
+            <property name="toolTip" >
                                 <string>Get new Chat Window styles over the Internet</string>
                             </property>
-                        </widget>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>installButton</cstring>
+            <property name="text" >
+             <string>&amp;Get New...</string>
                             </property>
-                            <property name="text">
+           </widget>
+          </item>
+          <item>
+           <widget class="KPushButton" name="installButton" >
+            <property name="text" >
                                 <string>&amp;Install...</string>
                             </property>
                         </widget>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>deleteButton</cstring>
-                            </property>
-                            <property name="text">
+          </item>
+          <item>
+           <widget class="KPushButton" name="deleteButton" >
+            <property name="text" >
                                 <string>&amp;Delete</string>
                             </property>
                         </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Style Variant:</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>variantList</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>buttonGroup2</cstring>
-            </property>
-            <property name="title">
-                <string>Display</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>kcfg_groupConsecutiveMessages</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group consecuti&amp;ve messages</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-    </vbox>
-</widget>
-<tabstops>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KListBox</class>
+   <extends></extends>
+   <header>klistbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
     <tabstop>styleList</tabstop>
     <tabstop>installButton</tabstop>
     <tabstop>deleteButton</tabstop>
-</tabstops>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klistbox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
-</UI>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

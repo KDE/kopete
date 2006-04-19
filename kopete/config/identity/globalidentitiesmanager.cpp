@@ -50,8 +50,9 @@ GlobalIdentitiesManager *GlobalIdentitiesManager::self()
 }
 
 GlobalIdentitiesManager::GlobalIdentitiesManager(QObject *parent, const char *name)
-        : QObject(parent, name)
+        : QObject(parent)
 {
+	setObjectName(name);
 	d = new Private;
 }
 
@@ -204,7 +205,7 @@ const QDomDocument GlobalIdentitiesManager::toXML()
 	for(it = d->identitiesList.begin(); it != end; ++it)
 	{
 		kDebug(14000) << k_funcinfo << "Saving " << it.key() << endl;
-		QDomElement identityMetaContactElement = it.data()->toXML(true); // Save minimal information.
+		QDomElement identityMetaContactElement = it.value()->toXML(true); // Save minimal information.
 		identityMetaContactElement.setTagName(QString::fromUtf8("identity"));
 		identityMetaContactElement.setAttribute(QString::fromUtf8("name"), it.key());
 		doc.documentElement().appendChild(doc.importNode(identityMetaContactElement, true));

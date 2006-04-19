@@ -124,7 +124,7 @@ void CoreProtocol::debug( const QString &str )
 #ifdef LIBGW_USE_KDEBUG
 	kDebug( 14191 ) << "debug: " << str << endl;
 #else
-	qDebug( "GW RAW PROTO: %s\n", str.ascii() );
+	qDebug( "GW RAW PROTO: %s\n", str.toAscii() );
 #endif
 }
 
@@ -226,12 +226,12 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	if ( request->command().section( ':', 0, 0 ) == "login" )
 	{
 		command = "login";
-		host = request->command().section( ':', 1, 1 ).ascii();
-		port = request->command().section( ':', 2, 2 ).ascii();
+		host = request->command().section( ':', 1, 1 ).toAscii();
+		port = request->command().section( ':', 2, 2 ).toAscii();
 		debug( QString( "Host: %1 Port: %2" ).arg( host.data() ).arg( port.data() ) );
 	}
 	else
-		command = request->command().ascii();
+		command = request->command().toAscii();
 	
 	// add the POST
 	dout << "POST /";

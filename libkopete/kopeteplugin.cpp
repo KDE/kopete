@@ -33,8 +33,9 @@ public:
 };
 
 Plugin::Plugin( KInstance *instance, QObject *parent, const char *name )
-: QObject( parent, name ), KXMLGUIClient(), d(new Private)
+: QObject( parent ), KXMLGUIClient(), d(new Private)
 {
+	setObjectName( name );
 	setInstance( instance );
 	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
 }
@@ -46,7 +47,7 @@ Plugin::~Plugin()
 
 QString Plugin::pluginId() const
 {
-	return QString::fromLatin1( className() );
+	return QString::fromLatin1( metaObject()->className() );
 }
 
 

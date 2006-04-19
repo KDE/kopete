@@ -490,7 +490,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		if(img.width() > 96 || img.height() > 96)
 		{
 			// Scale and crop the picture.
-			img = img.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
+			img = img.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 			// crop image if not square
 			if(img.width() < img.height()) 
 				img = img.copy((img.width()-img.height())/2, 0, 96, 96);
@@ -501,7 +501,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		else if (img.width() < 32 || img.height() < 32)
 		{
 			// Scale and crop the picture.
-			img = img.smoothScale( 32, 32, Qt::KeepAspectRatioByExpanding );
+			img = img.scaled( 32, 32, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 			// crop image if not square
 			if(img.width() < img.height())
 				img = img.copy((img.width()-img.height())/2, 0, 32, 32);

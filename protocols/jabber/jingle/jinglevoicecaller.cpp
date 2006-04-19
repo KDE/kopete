@@ -126,9 +126,9 @@ void JingleClientSlots::sendStanza(cricket::SessionClient*, const buzz::XmlEleme
 	st.replace("cli:iq","iq");
 	st.replace(":cli=","=");
 	fprintf(stderr,"bling\n");
-	voiceCaller_->sendStanza(st.latin1());
+	voiceCaller_->sendStanza(st.toLatin1());
 	fprintf(stderr,"blong\n");
-	fprintf(stderr,"Sending stanza \n%s\n\n",st.latin1());
+	fprintf(stderr,"Sending stanza \n%s\n\n",st.toLatin1());
 }
 
 void JingleClientSlots::requestSignaling() 

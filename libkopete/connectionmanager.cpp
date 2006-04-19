@@ -20,8 +20,9 @@ class ConnectionManagerPrivate
 };
 
 // Connection manager itself
-ConnectionManager::ConnectionManager( QObject * parent, const char * name ) : DCOPObject( "ConnectionManager" ),QObject( parent, name )
+ConnectionManager::ConnectionManager( QObject * parent, const char * name ) : DCOPObject( "ConnectionManager" ),QObject( parent )
 {
+	setObjectName(name);
 	d = new ConnectionManagerPrivate;
 	
 	d->m_stub = new ClientIface_stub( kapp->dcopClient(), "kded", "networkstatus" );

@@ -25,10 +25,10 @@
 #include <kabc/addressee.h>
 
 #include "kopetecontactproperty.h"
+#include "ui_kopeteaddrbookexportui.h"
 //Added by qt3to4:
 #include <QPixmap>
 
-class AddressBookExportUI;
 class KDialog;
 class KListBox;
 class KComboBox;
@@ -39,7 +39,7 @@ class Contact;
 class MetaContact;
 }
 
-class KopeteAddressBookExport : public QObject
+class KopeteAddressBookExport : public QObject, private Ui::AddressBookExportUI
 {
 public:
 	KopeteAddressBookExport( QWidget *parent, Kopete::MetaContact *mc );

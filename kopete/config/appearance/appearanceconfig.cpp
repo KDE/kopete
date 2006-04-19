@@ -186,7 +186,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	d = new Private;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	d->mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
+	d->mAppearanceTabCtl = new QTabWidget(this);
+	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "ChatWindowSettings" );

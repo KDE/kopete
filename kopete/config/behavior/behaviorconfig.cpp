@@ -50,7 +50,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		KCModule( KopeteBehaviorConfigFactory::instance(), parent, args )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	mBehaviorTabCtl = new QTabWidget(this, "mBehaviorTabCtl");
+	mBehaviorTabCtl = new QTabWidget(this);
+	mBehaviorTabCtl->setObjectName("mBehaviorTabCtl");
 
 	// "General" TAB ============================================================
 	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);

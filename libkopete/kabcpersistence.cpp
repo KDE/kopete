@@ -69,8 +69,9 @@ public:
 	bool addrBookWritePending;
 };
 
-KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent, name )
+KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent)
 {
+	setObjectName( name );
 	d = new Private;
 }
 
@@ -137,7 +138,7 @@ void KABCPersistence::write( MetaContact * mc )
 			// read existing data for this key
 			QString currentCustomForProtocol = theAddressee.custom( it.key(), QString::fromLatin1( "All" ) );
 			// merge without duplicating
-			QString toWrite = unionContents( currentCustomForProtocol, it.data().join( QString( QChar( 0xE000 ) ) ) );
+			QString toWrite = unionContents( currentCustomForProtocol, it.value().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
 			kDebug( 14010 ) << k_funcinfo << "Writing: " << it.key() << ", " << "All" << ", " << toWrite << endl;
 			theAddressee.insertCustom( it.key(), QString::fromLatin1( "All" ), toWrite );
@@ -432,12 +433,12 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 // FIXME: Remove when IM address API is in KABC (KDE 4)
 void KABCPersistence::splitField( const QString &str, QString &app, QString &name, QString &value )
 {
-	int colon = str.find( ':' );
+	int colon = str.indexOf( ':' );
 	if ( colon != -1 ) {
 		QString tmp = str.left( colon );
 		value = str.mid( colon + 1 );
 
-		int dash = tmp.find( '-' );
+		int dash = tmp.indexOf( '-' );
 		if ( dash != -1 ) {
 			app = tmp.left( dash );
 			name = tmp.mid( dash + 1 );

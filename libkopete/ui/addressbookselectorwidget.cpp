@@ -54,8 +54,11 @@ namespace UI
 {
 
 AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const char *name )
-		: AddressBookSelectorWidget_Base( parent, name )
+		: QWidget(parent), Ui::AddressBookSelectorWidget_Base()
 {
+	setObjectName(name);
+	setupUi(this);
+
 	m_addressBook = Kopete::KABCPersistence::self()->addressBook();
 
 	// Addressee validation connections

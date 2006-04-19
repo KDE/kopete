@@ -217,7 +217,7 @@ void Kopete::TransferManager::slotComplete(KIO::Job *job)
 	for( QMap<unsigned, Kopete::Transfer*>::Iterator it = mTransfersMap.begin();
 	     it != mTransfersMap.end(); ++it )
 	{
-		if( it.data() == transfer )
+		if( it.value() == transfer )
 		{
 			removeTransfer(it.key());
 			break;

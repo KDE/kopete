@@ -289,7 +289,7 @@ void ListView::setSmoothScrolling( bool b )
 		// Uninstall the event interception from the scroll bar
 		verticalScrollBar()->removeEventFilter( this );
 		// Restore line/page step sizes
-		verticalScrollBar()->setLineStep( d->smoothScrollingLineStep );
+		verticalScrollBar()->setSingleStep( d->smoothScrollingLineStep );
 		// Kill the already started timer
 		killTimer( (int)d->smoothScrollingTimer );
 		d->smoothScrollingTimer = 0;
@@ -414,7 +414,7 @@ void ListView::timerEvent( QTimerEvent *e )
 			{
 				d->targetScrollBarValue -= d->smoothScrollingLineStep * acceleration; // if so start continuous scrolling
 				// Make sure the target value is not below the minimum range.
-				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double ) verticalScrollBar()->minValue() );
+				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double ) verticalScrollBar()->minimum() );
 			}
 		}
 		else if( d->pressedControl == QStyle::SC_ScrollBarAddLine )
@@ -423,7 +423,7 @@ void ListView::timerEvent( QTimerEvent *e )
 			{
 				d->targetScrollBarValue += d->smoothScrollingLineStep * acceleration; // if so start continuous scrolling
 				// Make sure the target value is not aboce the maximum range.
-				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maxValue() );
+				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );
 			}
 		}
 	}
@@ -443,7 +443,7 @@ void ListView::timerEvent( QTimerEvent *e )
 			if( d->smoothScrollContinuousCounter++ > d->continuousPagePressTimerWait ) // pressed long enough ?
 			{
 				d->targetScrollBarValue -= d->smoothScrollingPageStep + acceleration; // if so start continuous scrolling
-				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minValue() );
+				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
 			}
 		}
 		else if( d->pressedControl == QStyle::SC_ScrollBarAddPage )
@@ -451,7 +451,7 @@ void ListView::timerEvent( QTimerEvent *e )
 			if( d->smoothScrollContinuousCounter++ > d->continuousPagePressTimerWait ) // pressed long enough ?
 			{
 				d->targetScrollBarValue += d->smoothScrollingPageStep * acceleration; // if so start continuous scrolling
-				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maxValue() );
+				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );
 			}
 		}
 	}
@@ -475,8 +475,8 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			// Set new target value
 			d->targetScrollBarValue -= event->delta();
 			// Make sure it's in the boundaries of scroll bar
-			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )bar->minValue() );
-			d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )bar->maxValue() );
+			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )bar->minimum() );
+			d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )bar->maximum() );
 			return true; // Ignore the event
 		}
 		else if( e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonDblClick )
@@ -514,12 +514,12 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			// the reason is, scroll bar might not be initialized at that moment. When we are receiving
 			// MouseButtonPress or such event, we're sure that it's initialized!
 			if( d->smoothScrollingLineStep == 0 && d->smoothScrollingPageStep == 0 ){
-				d->smoothScrollingLineStep = bar->lineStep();
+				d->smoothScrollingLineStep = bar->singleStep();
 				d->smoothScrollingPageStep = bar->pageStep();
 				// Set page/line steps of the scroll bar to zero, we'll emulate them, smoothly!
 				// If we don't set this to 0, when we pass the event to the button, the scollbar
 				// will scroll the list too.
-				verticalScrollBar()->setLineStep( 0 );
+				verticalScrollBar()->setSingleStep( 0 );
 			}
 
 			// OK, now we can understand which partion of the scroll bar is clicked, and do the requested thing
@@ -534,23 +534,23 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			case QStyle::SC_ScrollBarSubLine:
 				d->targetScrollBarValue -= d->smoothScrollingLineStep;
 				// Make sure if the targetScrollBarValue is in the scroll bar values range
-				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minValue() );
+				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
 				return false; // pass the event to the scroll bar so the button gets "clicked"
 			break;
 			case QStyle::SC_ScrollBarSubPage:
 				d->targetScrollBarValue -= d->smoothScrollingPageStep;
 				// Make sure if the targetScrollBarValue is in the scroll bar values range
-				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minValue() );
+				d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
 			break;
 			case QStyle::SC_ScrollBarAddPage:
 				d->targetScrollBarValue += d->smoothScrollingPageStep;
 				// Make sure if the targetScrollBarValue is in the scroll bar values range
-				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maxValue() );
+				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );
 			break;
 			case QStyle::SC_ScrollBarAddLine:
 				d->targetScrollBarValue += d->smoothScrollingLineStep;
 				// Make sure if the targetScrollBarValue is in the scroll bar values range
-				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maxValue() );
+				d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );
 				return false; // pass the event to the scroll bar so the button gets "clicked"
 			break;
 			default:
@@ -574,7 +574,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 				QRect sliderRect = style()->subControlRect( QStyle::CC_ScrollBar, &qsos, QStyle::SC_ScrollBarSlider, 0 );
 				double scale = bar->geometry().height() - sliderRect.height() - 45;
 				// Scale it to scroll bar value
-				d->targetScrollBarValue += static_cast<int>( static_cast<double>( ( bar->maxValue() / scale ) * delta ) );
+				d->targetScrollBarValue += static_cast<int>( static_cast<double>( ( bar->maximum() / scale ) * delta ) );
 			}
 
 			if( d->scrollAutoHide ) // If auto-hide scroll bar is enabled
@@ -603,8 +603,8 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			// Mark all buttons as not pressed now
 			d->pressedControl = QStyle::SC_None;
 			// Make sure if the targetScrollBarValue is in the scroll bar values range
-			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )bar->minValue() );
-			d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )bar->maxValue() );
+			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )bar->minimum() );
+			d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )bar->maximum() );
 			return false; // Pass the release event to the scroll bar, which will put the buttons in off-state
 		}
 		else
@@ -638,8 +638,8 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 				d->targetScrollBarValue += ( event->pos().y() - visibleHeight() + d->smoothAutoScrollOffset ) * d->scrollBarAccelerationConstant / 3;
 			}
 			// Make sure if the targetScrollBarValue is in the scroll bar values range
-			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minValue() );
-			d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maxValue() );
+			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
+			d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );
 		}
 		else if( e->type() == QEvent::MouseMove ) // Activity detected ( used to aut-hide scroll bar )
 		{
@@ -655,7 +655,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			if( d->mouseNavigation )
 			{
 				const double offset = static_cast<double>(visibleHeight())/50.0 + d->mouseNavigationOffset;
-				d->targetScrollBarValue = ( event->y() - offset ) * ( static_cast<double>(verticalScrollBar()->maxValue()) /
+				d->targetScrollBarValue = ( event->y() - offset ) * ( static_cast<double>(verticalScrollBar()->maximum()) /
 										   ( static_cast<double>(visibleHeight()) - offset * 2 ) );
 			}
 		}
@@ -683,7 +683,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 				if ( toolTip.first.isEmpty() )
 					return false;
 
-				toolTip.second.moveBy( xAdjust, yAdjust );
+				toolTip.second.translate( xAdjust, yAdjust );
 	
 				QToolTip::showText( helpEvent->globalPos(), toolTip.first );
 			}
@@ -707,8 +707,8 @@ void ListView::slotCurrentChanged( Q3ListViewItem *item )
 	if( d->mousePressed ){ d->mousePressed = false; return; }
 	d->targetScrollBarValue = itemPos(item) - static_cast<double>(visibleHeight()/2.0) + item->height();
 	// Make sure it's in the boundaries of scroll bar
-	d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minValue() );
-	d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maxValue() );
+	d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
+	d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );
 }
 
 

@@ -63,7 +63,7 @@ void SearchUserTask::search( const QList<UserSearchQueryTerm> & query )
 	const QList<UserSearchQueryTerm>::ConstIterator end = query.end();
 	for ( ; it != end; ++it )
 	{
-		Field::SingleField * fld =  new Field::SingleField( (*it).field.ascii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
+		Field::SingleField * fld =  new Field::SingleField( (*it).field.toAscii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
 		lst.append( fld );
 	}
 	//lst.append( new Field::SingleField( "Given Name", 0, NMFIELD_TYPE_UTF8, [ NMFIELD_METHOD_EQUAL | NMFIELD_METHOD_MATCHBEGIN | NMFIELD_METHOD_MATCHEND | NMFIELD_METHOD_SEARCH ], searchTerm );

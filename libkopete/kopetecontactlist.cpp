@@ -81,8 +81,9 @@ ContactList *ContactList::self()
 }
 
 ContactList::ContactList()
-	: QObject( kapp, "KopeteContactList" )
+	: QObject( kapp )
 {
+	setObjectName( "KopeteContactList" );
 	d=new Private;
 
 	//the myself metacontact can't be created now, because it will use
@@ -93,7 +94,8 @@ ContactList::ContactList()
 	d->loaded=false;
 
 	// automatically save on changes to the list
-	d->saveTimer = new QTimer( this, "saveTimer" );
+	d->saveTimer = new QTimer( this );
+	d->saveTimer->setObjectName( "saveTimer" );
 	d->saveTimer->setSingleShot( true );
 	connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
 
@@ -248,7 +250,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 
 	if ( d->selectedMetaContacts.contains( m ) )
 	{
-		d->selectedMetaContacts.remove( m );
+		d->selectedMetaContacts.removeAll( m );
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
 	}
 
@@ -260,7 +262,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 		it.next()->deleteContact();
 	}
 
-	d->contacts.remove( m );
+	d->contacts.removeAll( m );
 	emit metaContactRemoved( m );
 	m->deleteLater();
 }
@@ -280,11 +282,11 @@ void ContactList::removeGroup( Group *g )
 {
 	if ( d->selectedGroups.contains( g ) )
 	{
-		d->selectedGroups.remove( g );
+		d->selectedGroups.removeAll( g );
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
 	}
 
-	d->groups.remove( g );
+	d->groups.removeAll( g );
 	emit groupRemoved( g );
 	g->deleteLater();
 }

@@ -79,8 +79,9 @@ ChatWindowStyleManager *ChatWindowStyleManager::self()
 }
 
 ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent, const char *name)
-	: QObject(parent, name), d(new Private())
+	: QObject(parent), d(new Private())
 {
+	setObjectName(name);
 	kDebug(14000) << k_funcinfo << endl;
 	loadStyles();
 }

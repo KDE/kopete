@@ -22,6 +22,7 @@
 #include <kconfigdialog.h>
 
 #include "kopetemetacontact.h"
+#include "ui_kopeteidentityconfigbase.h"
 
 namespace Kopete
 {
@@ -33,7 +34,7 @@ class KopeteIdentityConfigBase;
 /**
  * @author Michaël Larouche <shock@shockdev.ca.tc>
  */
-class KopeteIdentityConfig : public KCModule
+class KopeteIdentityConfig : public KCModule, private Ui::KopeteIdentityConfigBase
 {
 	Q_OBJECT
 public:

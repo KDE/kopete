@@ -683,7 +683,7 @@ void MSNSocket::slotReadyWrite()
 
 				// Copy the request headers into the request bytes.
 				for(uint i=0; i < length; i++)
-					bytes[i] = s.ascii()[i];
+					bytes[i] = s.toAscii()[i];
 				// Copy the request body into the request bytes.
 				for(uint i=0; i < (*it).size(); i++)
 					bytes[length + i] = (*it)[i];

@@ -96,7 +96,7 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact, QString& filePath )
 
 	if ( peerContact->contactPort() >= 10 ) {  
 		dccSock_ = gg_dcc_send_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
-		gg_dcc_fill_file_info(dccSock_,filePath.ascii());
+		gg_dcc_fill_file_info(dccSock_,filePath.toAscii());
 		transfer_ = Kopete::TransferManager::transferManager()->addTransfer ( peerContact,
 		filePath,  dccSock_->file_info.size, peerContact->metaContact()->displayName(),	Kopete::FileTransferInfo::Outgoing );
 		createNotifiers( true );
@@ -387,7 +387,7 @@ GaduDCCTransaction::watcher() {
 			    QString filePath = gaduDCC_->requests[dccSock_->peer_uin];
 			    kDebug() << "Callback request found. Sending " << filePath << endl;
 			    gaduDCC_->requests.remove(dccSock_->peer_uin);
-		    	    gg_dcc_fill_file_info(dccSock_,filePath.ascii());
+		    	    gg_dcc_fill_file_info(dccSock_,filePath.toAscii());
 			    transfer_ = Kopete::TransferManager::transferManager()->addTransfer ( contact,
 			    filePath,  dccSock_->file_info.size, contact->metaContact()->displayName(),	Kopete::FileTransferInfo::Outgoing );
 			} else {

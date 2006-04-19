@@ -1,36 +1,39 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>KabcExportWizard_Base</class>
-<widget class="QWizard">
-    <property name="name">
-        <cstring>KabcExportWizard_Base</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>KabcExportWizard_Base</class>
+ <widget class="Q3Wizard" name="KabcExportWizard_Base" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>423</width>
-            <height>398</height>
+    <width>429</width>
+    <height>294</height>
         </rect>
     </property>
-    <property name="windowTitle">
+  <property name="windowTitle" >
         <string>Export Contacts</string>
     </property>
-    <widget class="QWidget">
-        <property name="name">
-            <cstring>page</cstring>
-        </property>
-        <attribute name="title">
-            <string>Export Contacts to Address Book</string>
-        </attribute>
-        <vbox>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel1</cstring>
+  <widget class="QWidget" name="page" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>417</width>
+     <height>218</height>
+    </rect>
                 </property>
-                <property name="sizePolicy">
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="textLabel1" >
+      <property name="sizePolicy" >
                     <sizepolicy>
                         <hsizetype>1</hsizetype>
                         <vsizetype>1</vsizetype>
@@ -38,41 +41,29 @@
                         <verstretch>0</verstretch>
                     </sizepolicy>
                 </property>
-                <property name="text">
+      <property name="text" >
                     <string>This wizard helps you export instant messaging contacts to the KDE address book.</string>
                 </property>
-                <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+      <property name="alignment" >
+       <set>Qt::AlignVCenter</set>
                 </property>
             </widget>
-            <widget class="QGroupBox">
-                <property name="name">
-                    <cstring>groupBox1</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>3</hsizetype>
-                        <vsizetype>3</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="title">
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox" >
+      <property name="title" >
                     <string>&amp;Select Address Book</string>
                 </property>
-                <widget class="QListBox">
-                    <property name="name">
-                        <cstring>m_addrBooks</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>31</y>
-                            <width>230</width>
-                            <height>140</height>
-                        </rect>
-                    </property>
-                    <property name="sizePolicy">
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="Q3ListBox" name="m_addrBooks" >
+         <property name="sizePolicy" >
                         <sizepolicy>
                             <hsizetype>3</hsizetype>
                             <vsizetype>3</vsizetype>
@@ -81,25 +72,31 @@
                         </sizepolicy>
                     </property>
                 </widget>
+       </item>
+      </layout>
             </widget>
-        </vbox>
+    </item>
+   </layout>
     </widget>
-    <widget class="QWidget">
-        <property name="name">
-            <cstring>WizardPage</cstring>
-        </property>
-        <attribute name="title">
-            <string>Select Contacts to Export</string>
-        </attribute>
-        <vbox>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel3</cstring>
+  <widget class="QWidget" name="WizardPage" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>100</width>
+     <height>30</height>
+    </rect>
                 </property>
-                <property name="sizePolicy">
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="textLabel3" >
+      <property name="sizePolicy" >
                     <sizepolicy>
                         <hsizetype>1</hsizetype>
                         <vsizetype>1</vsizetype>
@@ -107,77 +104,94 @@
                         <verstretch>0</verstretch>
                     </sizepolicy>
                 </property>
-                <property name="text">
+      <property name="text" >
                     <string>Selected contacts will be added to the KDE address book.</string>
                 </property>
             </widget>
-            <widget class="QListView">
-                <column>
-                    <property name="text">
-                        <string>Contact</string>
-                    </property>
-                    <property name="clickable">
+    </item>
+    <item>
+     <widget class="Q3ListView" name="m_contactList" >
+      <property name="allColumnsShowFocus" >
                         <bool>true</bool>
                     </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <property name="name">
-                    <cstring>m_contactList</cstring>
+      <property name="resizeMode" >
+       <enum>Q3ListView::AllColumns</enum>
                 </property>
-                <property name="allColumnsShowFocus">
-                    <bool>true</bool>
+      <column>
+       <property name="text" >
+        <string>Contact</string>
                 </property>
-                <property name="resizeMode">
-                    <enum>AllColumns</enum>
-                </property>
+      </column>
             </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout3</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QPushButton">
-                        <property name="name">
-                            <cstring>m_btnSelectAll</cstring>
-                        </property>
-                        <property name="text">
+    </item>
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="m_btnSelectAll" >
+        <property name="text" >
                             <string>Select &amp;All</string>
                         </property>
                     </widget>
-                    <widget class="QPushButton">
-                        <property name="name">
-                            <cstring>m_btnDeselectAll</cstring>
-                        </property>
-                        <property name="text">
+      </item>
+      <item>
+       <widget class="QPushButton" name="m_btnDeselectAll" >
+        <property name="text" >
                             <string>&amp;Deselect All</string>
                         </property>
                     </widget>
+      </item>
+      <item>
                     <spacer>
-                        <property name="name">
-                            <cstring>spacer11</cstring>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
                         </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
+        <property name="sizeHint" >
                             <size>
                                 <width>51</width>
                                 <height>20</height>
                             </size>
                         </property>
                     </spacer>
-                </hbox>
-            </widget>
-        </vbox>
-    </widget>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3Wizard</class>
+   <extends></extends>
+   <header>q3wizard.h</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3ListBox</class>
+   <extends></extends>
+   <header>q3listbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3ListView</class>
+   <extends></extends>
+   <header>q3listview.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

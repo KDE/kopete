@@ -1,155 +1,160 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>KopeteGVIPropsWidget</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>KopeteGVIPropsWidget</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>KopeteGVIPropsWidget</class>
+ <widget class="QWidget" name="KopeteGVIPropsWidget" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>220</width>
-            <height>223</height>
+    <width>332</width>
+    <height>224</height>
         </rect>
     </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <widget class="QTabWidget">
-            <property name="name">
-                <cstring>tabWidget</cstring>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
                     <string>&amp;General</string>
                 </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout7</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>lblDisplayName</cstring>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
                                 </property>
-                                <property name="text">
+         <item>
+          <widget class="QLabel" name="lblDisplayName" >
+           <property name="text" >
                                     <string>&amp;Name:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+           <property name="buddy" >
                                     <cstring>edtDisplayName</cstring>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>edtDisplayName</cstring>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="edtDisplayName" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="grpIcons" >
+         <property name="title" >
+          <string>Icons</string>
                                 </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>grpIcons</cstring>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="3" column="1" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
                         </property>
-                        <property name="title">
-                            <string>Icons</string>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>16</height>
+             </size>
                         </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
+           </spacer>
+          </item>
+          <item row="1" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
                             </property>
-                            <widget class="QPushButton" row="1" column="1">
-                                <property name="name">
-                                    <cstring>icnbOpen</cstring>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
                                 </property>
-                                <property name="text">
-                                    <string></string>
+           </spacer>
+          </item>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QCheckBox" name="chkUseCustomIcons" >
+            <property name="text" >
+             <string>Use custom &amp;icons</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lblOpen</cstring>
-                                </property>
-                                <property name="text">
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="lblOpen" >
+            <property name="text" >
                                     <string>O&amp;pen:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+            <property name="buddy" >
                                     <cstring>icnbOpen</cstring>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>lblClosed</cstring>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="icnbOpen" >
+            <property name="text" >
+             <string/>
                                 </property>
-                                <property name="text">
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="lblClosed" >
+            <property name="text" >
                                     <string>C&amp;losed:</string>
                                 </property>
-                                <property name="buddy" stdset="0">
+            <property name="buddy" >
                                     <cstring>icnbClosed</cstring>
                                 </property>
                             </widget>
-                            <widget class="QPushButton" row="2" column="1">
-                                <property name="name">
-                                    <cstring>icnbClosed</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>chkUseCustomIcons</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Use custom &amp;icons</string>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QPushButton" name="icnbClosed" >
+            <property name="text" >
+             <string/>
                                 </property>
                             </widget>
-                            <spacer row="1" column="2">
-                                <property name="name">
-                                    <cstring>spacerHorizontal1</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>16</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </grid>
+          </item>
+         </layout>
+                            </widget>
+       </item>
+      </layout>
                     </widget>
-                </vbox>
             </widget>
+   </item>
+  </layout>
         </widget>
-    </vbox>
-</widget>
-<tabstops>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
     <tabstop>tabWidget</tabstop>
     <tabstop>edtDisplayName</tabstop>
     <tabstop>chkUseCustomIcons</tabstop>
     <tabstop>icnbOpen</tabstop>
     <tabstop>icnbClosed</tabstop>
-</tabstops>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kicondialog.h</includehint>
-</includehints>
-</UI>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -133,7 +133,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 		Private::ProtocolMap::Iterator it;
 		for ( it = protocolMap.begin(); it != protocolMap.end(); it++ )
 		{
-			unsigned int catgs=it.data().categories;
+			unsigned int catgs=it.value().categories;
 			if(catgs & (1<<(categ_nb)))
 				return it.key();
 		}
@@ -360,8 +360,8 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 				// we want to preserve the alpha channels of both basis and overlay.
 				// there's no way to do this in Qt. In fact, there's no way to do this
 				// in KDE since KImageEffect is so badly broken.
-				QImage basisImage = basis->convertToImage();
-				QImage overlayImage = overlay.convertToImage();
+				QImage basisImage = basis->toImage();
+				QImage overlayImage = overlay.toImage();
 				QPoint offset;
 				if ( (*it).endsWith( QString::fromLatin1( "_overlay" ) ) )
 				{
@@ -372,7 +372,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 					++i;
 				}
 				blendOnLower( overlayImage, basisImage, offset );
-				basis->convertFromImage( basisImage );
+				basis->fromImage( basisImage );
 			}
 		}
 	}
@@ -380,8 +380,8 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// no need to scale if the icon is already of the required size (assuming height == width!)
 	if ( basis->width() != size )
 	{
-		QImage scaledImg = basis->convertToImage().smoothScale( size, size );
-		*basis = QPixmap( scaledImg );
+		QImage scaledImg = basis->toImage().scaled( size, size , Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+		*basis = QPixmap::fromImage( scaledImg );
 	}
 
 	// if idle, apply effects
@@ -397,19 +397,19 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 	Private::ProtocolMap::Iterator it;
 	for ( it = --protocolMap.end(); it != protocolMap.end(); --it )
 	{
-		unsigned int options=it.data().options;
+		unsigned int options=it.value().options;
 		if(options & OnlineStatusManager::HideFromMenu)
 			continue;
 
 		OnlineStatus status=it.key();
-		QString caption=it.data().caption;
+		QString caption=it.value().caption;
 		KAction *action;
 
 		// Any existing actions owned by the account are reused by recovering them
 		// from the parent's child list.
 		// The description of the onlinestatus is used as the qobject name
 		// This is safe as long as OnlineStatus are immutable
-		QByteArray actionName = status.description().ascii();
+		QByteArray actionName = status.description().toAscii();
 		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
 		{
 #warning  give a parent to actions

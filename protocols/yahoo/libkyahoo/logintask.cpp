@@ -203,7 +203,7 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " with seed " << seed << endl;
 	char *resp_6 = (char *) malloc(100);
 	char *resp_96 = (char *) malloc(100);
-	authresp_0x0b(seed.latin1(), sn.latin1(), (client()->password()).latin1(), resp_6, resp_96);
+	authresp_0x0b(seed.toLatin1(), sn.toLatin1(), (client()->password()).toLatin1(), resp_6, resp_96);
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
@@ -279,16 +279,16 @@ void LoginTask::parseCookies( Transfer *transfer )
 		cookie = t->nthParam( 59, i );
         	if( cookie.startsWith( "Y" ) )
 		{
-			m_yCookie = getcookie( cookie.latin1() );
-			m_loginCookie = getlcookie( cookie.latin1() );
+			m_yCookie = getcookie( cookie.toLatin1() );
+			m_loginCookie = getlcookie( cookie.toLatin1() );
 		}
 		else if( cookie.startsWith( "T" ) )
 		{
-			m_tCookie = getcookie( cookie.latin1() );
+			m_tCookie = getcookie( cookie.toLatin1() );
 		}
 		else if( cookie.startsWith( "C" ) )
 		{
-			m_cCookie = getcookie( cookie.latin1() );
+			m_cCookie = getcookie( cookie.toLatin1() );
 		}
     	}
 	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty() &&

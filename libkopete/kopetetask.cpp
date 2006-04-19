@@ -86,7 +86,7 @@ void Task::removeSubtask( Task *task, RemoveSubtaskIfLast actionIfLast )
 	            this, SLOT( slotResult( Kopete::Task* ) ) );
 	disconnect( task, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ),
 	            this, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ) );
-	d->subtasks.remove( task );
+	d->subtasks.removeAll( task );
 	if ( d->subtasks.isEmpty() && actionIfLast == IfLastEmitResult )
 		emitResult( task->succeeded() ? ResultSucceeded : ResultFailed, task->errorString() );
 }

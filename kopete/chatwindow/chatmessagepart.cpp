@@ -1058,7 +1058,7 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	timeT = dateTime.toTime_t();
 	// Convert it to local time representation.
 	loctime = localtime (&timeT);
-	strftime (buffer, 256, timeFormat.ascii(), loctime);
+	strftime (buffer, 256, timeFormat.toAscii(), loctime);
 
 	return QString(buffer);
 }

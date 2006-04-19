@@ -21,13 +21,12 @@
 #include <QWidget>
 #include <kdialog.h>
 #include "kopetetransfermanager.h"
-
-class FileConfirmBase;
+#include "ui_fileconfirmbase.h"
 
 /**
  * @author Olivier Goffart
  */
-class KopeteFileConfirmDialog : public KDialog
+class KopeteFileConfirmDialog : public KDialog, private Ui::FileConfirmBase
 {
 Q_OBJECT
 
@@ -38,7 +37,7 @@ public:
 	~KopeteFileConfirmDialog();
 
 private:
-	FileConfirmBase* m_view;
+	QWidget* m_view;
 	Kopete::FileTransferInfo m_info;
 	bool m_emited;
 

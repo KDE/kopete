@@ -169,9 +169,9 @@ void MeanwhileSession::connect(QString host, int port,
                      SLOT(slotSocketClosed(int)));
 
     mwSession_setProperty(session, mwSession_AUTH_USER_ID,
-                    g_strdup(account.ascii()), g_free);
+                    g_strdup(account.toAscii()), g_free);
     mwSession_setProperty(session, mwSession_AUTH_PASSWORD,
-                    g_strdup(password.ascii()), g_free);
+                    g_strdup(password.toAscii()), g_free);
 
     /* go!! */
     mwSession_start(session);
@@ -219,7 +219,7 @@ void MeanwhileSession::addContacts(const QDict<Kopete::Contact>& contacts)
             malloc(sizeof(*id));
         if (id == 0L)
             continue;
-        id->user = strdup(contact->meanwhileId().ascii());
+        id->user = strdup(contact->meanwhileId().toAscii());
         id->community = 0L;
         id->type = mwAware_USER;
         buddies = g_list_append(buddies, id);
@@ -237,7 +237,7 @@ void MeanwhileSession::addContact(const Kopete::Contact *contact)
     HERE;
     struct mwAwareIdBlock id = { mwAware_USER,
         strdup(static_cast<const MeanwhileContact *>(contact)
-                ->meanwhileId().ascii()),
+                ->meanwhileId().toAscii()),
         0L };
 
     GList *buddies = g_list_prepend(0L, &id);
@@ -256,7 +256,7 @@ int MeanwhileSession::sendMessage(Kopete::Message &message)
         return 0;
     }
 
-    struct mwIdBlock target = { strdup(contact->meanwhileId().ascii()), 0L };
+    struct mwIdBlock target = { strdup(contact->meanwhileId().toAscii()), 0L };
     struct mwConversation *conv;
 
     conv = mwServiceIm_getConversation(imService, &target);
@@ -286,7 +286,7 @@ int MeanwhileSession::sendMessage(Kopete::Message &message)
         mwConversation_open(conv);
 
     } else if (!mwConversation_send(conv, mwImSend_PLAIN,
-                message.plainBody().ascii())) {
+                message.plainBody().toAscii())) {
         convdata->chat->appendMessage(message);
         convdata->chat->messageSucceeded();
     }
@@ -296,7 +296,7 @@ int MeanwhileSession::sendMessage(Kopete::Message &message)
 void MeanwhileSession::sendTyping(MeanwhileContact *contact, bool isTyping)
 {
     HERE;
-    struct mwIdBlock target = { strdup(contact->meanwhileId().ascii()), 0L };
+    struct mwIdBlock target = { strdup(contact->meanwhileId().toAscii()), 0L };
     struct mwConversation *conv;
 
     conv = mwServiceIm_getConversation(imService, &target);
@@ -324,9 +324,9 @@ void MeanwhileSession::setStatus(Kopete::OnlineStatus status,
 
     stat.status = (mwStatusType)status.internalStatus();
     if (msg.isNull() || msg.isEmpty())
-        stat.desc = strdup(status.description().ascii());
+        stat.desc = strdup(status.description().toAscii());
     else
-        stat.desc = strdup(msg.ascii());
+        stat.desc = strdup(msg.toAscii());
 
     mwSession_setUserStatus(session, &stat);
     /* will free stat.desc */
@@ -367,24 +367,24 @@ void MeanwhileSession::syncContactsToServer()
         } else  {
             /* find (or create) a matching sametime list group */
             stgroup = mwSametimeList_findGroup(list,
-                        contactgroup->displayName().ascii());
+                        contactgroup->displayName().toAscii());
             if (stgroup == 0L) {
                 stgroup = mwSametimeGroup_new(list, mwSametimeGroup_DYNAMIC,
-                        contactgroup->displayName().ascii());
+                        contactgroup->displayName().toAscii());
             }
             mwSametimeGroup_setOpen(stgroup, contactgroup->isExpanded());
             mwSametimeGroup_setAlias(stgroup,
                     contactgroup->pluginData(account->protocol(), "alias")
-                    .ascii());
+                    .toAscii());
         }
 
         /* now add the user (by IDBlock) */
         struct mwIdBlock id =
-            { (gchar*)contact->meanwhileId().ascii(), 0L };
+            { (gchar*)contact->meanwhileId().toAscii(), 0L };
         struct mwSametimeUser *stuser = mwSametimeUser_new(stgroup,
                 mwSametimeUser_NORMAL, &id);
 
-        mwSametimeUser_setAlias(stuser, contact->nickName().ascii());
+        mwSametimeUser_setAlias(stuser, contact->nickName().toAscii());
     }
 
     /* store! */
@@ -478,7 +478,7 @@ Kopete::OnlineStatus MeanwhileSession::convertStatus(int mstatus)
 void MeanwhileSession::resolveContactNickname(MeanwhileContact *contact)
 {
     /* @todo: FIXME: leak! */
-    char *id = strdup(contact->meanwhileId().ascii());
+    char *id = strdup(contact->meanwhileId().toAscii());
     GList *query = g_list_prepend(NULL, id);
     mwServiceResolve_resolve(resolveService, query, mwResolveFlag_USERS,
             _handleResolveLookupResults, contact, NULL);
@@ -743,7 +743,7 @@ void MeanwhileSession::handleImConvOpened(struct mwConversation *conv)
         for (it = convdata->queue->begin(); it != convdata->queue->end();
                 ++it) {
             mwConversation_send(conv, mwImSend_PLAIN,
-                    (*it).plainBody().ascii());
+                    (*it).plainBody().toAscii());
             convdata->chat->appendMessage(*it);
             convdata->chat->messageSucceeded();
         }

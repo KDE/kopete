@@ -4,7 +4,7 @@ add_subdirectory( private )
 add_subdirectory( ui ) 
 add_subdirectory( avdevice ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui ${CMAKE_BINARY_DIR} )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ui )
 
 if(X11_Xrender_FOUND)
   include_directories(${X11_Xrender_INCLUDE_PATH})
@@ -85,7 +85,16 @@ set(kopete_LIB_SRCS
    kopetepicture.cpp 
    kopetestatusmessage.cpp )
 
-kde4_add_ui3_files(kopete_LIB_SRCS ui/kopetepassworddialog.ui ui/kopeteawaydialogbase.ui ui/fileconfirmbase.ui ui/kopetepasswordwidgetbase.ui ui/addressbookselectorwidget_base.ui ui/metacontactselectorwidget_base.ui ui/contactaddednotifywidget.ui ui/addressbooklinkwidget_base.ui)
+kde4_add_ui_files(kopete_LIB_SRCS
+    ui/kopetepassworddialog.ui
+    ui/metacontactselectorwidget_base.ui
+    ui/fileconfirmbase.ui
+    ui/kopetepasswordwidgetbase.ui
+    ui/contactaddednotifywidget.ui 
+    ui/addressbookselectorwidget_base.ui
+    ui/addressbooklinkwidget_base.ui
+    ui/kopeteawaydialogbase.ui )
+
 kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_automoc(${kopete_LIB_SRCS})

@@ -56,8 +56,11 @@ class ContactLVI : public Q3CheckListItem
 
 // ctor populates the resource list and contact list, and enables the next button on the first page 
 KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
-	: KabcExportWizard_Base( parent, name )
+	: Q3Wizard(parent), Ui::KabcExportWizard_Base()
 {
+	setObjectName( name );
+	setupUi(this);
+
 	connect( m_addrBooks, SIGNAL( selectionChanged( Q3ListBoxItem * ) ), SLOT( slotResourceSelectionChanged( Q3ListBoxItem * ) ) );
 
 	connect( m_btnSelectAll, SIGNAL( clicked() ), SLOT( slotSelectAll() ) );

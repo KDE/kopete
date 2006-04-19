@@ -26,7 +26,6 @@
 #include <kguiitem.h>
 
 //#include "kopetetransfermanager.h"
-#include "fileconfirmbase.h"
 #include "kopetefileconfirmdialog.h"
 
 #include "kopetemetacontact.h"
@@ -43,20 +42,23 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	setAttribute( Qt::WA_DeleteOnClose );
 	m_emited=false;
 
-	m_view=new FileConfirmBase(this, "FileConfirmView");
-	m_view->m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
+	m_view=new QWidget( this );
+	m_view->setObjectName( "FileConfirmView" );
+	setupUi( m_view );
+
+	m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
 			info.contact()->contactId() + QString::fromLatin1( "> " ) );
-	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ), 0 ) );
-	m_view->m_description->setText( description );
-	m_view->m_filename->setText( info.file() );
+	m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ), 0 ) );
+	m_description->setText( description );
+	m_filename->setText( info.file() );
 
 	KGlobal::config()->setGroup("File Transfer");
 	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homePath() );
-	m_view->m_saveto->setText(defaultPath  + QString::fromLatin1( "/" ) + info.file() );
+	m_saveto->setText(defaultPath  + QString::fromLatin1( "/" ) + info.file() );
 
 	setMainWidget(m_view);
 
-	connect(m_view->cmdBrowse, SIGNAL(clicked()), this, SLOT(slotBrowsePressed()));
+	connect(cmdBrowse, SIGNAL(clicked()), this, SLOT(slotBrowsePressed()));
 }
 
 KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
@@ -65,17 +67,17 @@ KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
 
 void KopeteFileConfirmDialog::slotBrowsePressed()
 {
-	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text(), QString::fromLatin1( "*" ), 0L , i18n( "File Transfer" ) );
+	QString saveFileName = KFileDialog::getSaveFileName( m_saveto->text(), QString::fromLatin1( "*" ), 0L , i18n( "File Transfer" ) );
 	if ( !saveFileName.isNull())
 	{
-		m_view->m_saveto->setText(saveFileName);
+		m_saveto->setText(saveFileName);
 	}
 }
 
 void KopeteFileConfirmDialog::slotUser2()
 {
 	m_emited=true;
-	KUrl url = KUrl::fromPathOrURL(m_view->m_saveto->text());
+	KUrl url = KUrl::fromPathOrURL(m_saveto->text());
 	if(url.isValid() && url.isLocalFile() )
 	{
 		const QString directory=url.directory();
@@ -85,15 +87,15 @@ void KopeteFileConfirmDialog::slotUser2()
 			KGlobal::config()->writeEntry("defaultPath" , directory );
 		}
 
-		if(QFile(m_view->m_saveto->text()).exists())
+		if(QFile(m_saveto->text()).exists())
 		{
-			int ret=KMessageBox::warningContinueCancel(this, i18n("The file '%1' already exists.\nDo you want to overwrite it ?", m_view->m_saveto->text()) ,
+			int ret=KMessageBox::warningContinueCancel(this, i18n("The file '%1' already exists.\nDo you want to overwrite it ?", m_saveto->text()) ,
 					 i18n("Overwrite File") , KStdGuiItem::save());
 			if(ret==KMessageBox::Cancel)
 				return;
 		}
 
-		emit accepted(m_info,m_view->m_saveto->text());
+		emit accepted(m_info,m_saveto->text());
 		close();
 	}
 	else

@@ -1,10 +1,10 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>AddressBookExportUI</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>AddressBookExportUI</cstring>
-    </property>
-    <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>AddressBookExportUI</class>
+ <widget class="QWidget" name="AddressBookExportUI" >
+  <property name="geometry" >
         <rect>
             <x>0</x>
             <y>0</y>
@@ -12,138 +12,136 @@
             <height>651</height>
         </rect>
     </property>
-    <property name="windowTitle">
+  <property name="windowTitle" >
         <string>Merge with Address Book</string>
     </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>mLblFirstName</cstring>
-            </property>
-            <property name="text">
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="mLblFirstName" >
+     <property name="text" >
                 <string>First name:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>comboBox1</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="4" column="0">
-            <property name="name">
-                <cstring>mLblHomePhone</cstring>
-            </property>
-            <property name="text">
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="mLblHomePhone" >
+     <property name="text" >
                 <string>Home phone:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>mPhones</cstring>
             </property>
         </widget>
-        <widget class="KListBox" row="5" column="1">
-            <property name="name">
-                <cstring>mWorkPhones</cstring>
-            </property>
-            <property name="selectionMode">
-                <enum>Extended</enum>
-            </property>
-        </widget>
-        <widget class="KListBox" row="6" column="1">
-            <property name="name">
-                <cstring>mMobilePhones</cstring>
-            </property>
-            <property name="selectionMode">
-                <enum>Extended</enum>
-            </property>
-        </widget>
-        <widget class="KListBox" row="4" column="1">
-            <property name="name">
-                <cstring>mHomePhones</cstring>
-            </property>
-            <property name="selectionMode">
-                <enum>Extended</enum>
-            </property>
-        </widget>
-        <widget class="QLabel" row="5" column="0">
-            <property name="name">
-                <cstring>mLblWorkPhone</cstring>
-            </property>
-            <property name="text">
+   </item>
+   <item row="5" column="1" >
+    <widget class="KListBox" name="mWorkPhones" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" >
+    <widget class="KListBox" name="mMobilePhones" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="KListBox" name="mHomePhones" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="mLblWorkPhone" >
+     <property name="text" >
                 <string>Work phone:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>mPhones_2</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="6" column="0">
-            <property name="name">
-                <cstring>mLblMobilePhone</cstring>
-            </property>
-            <property name="text">
+   </item>
+   <item row="6" column="0" >
+    <widget class="QLabel" name="mLblMobilePhone" >
+     <property name="text" >
                 <string>Mobile phone:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>mPhones_3</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="3" column="0">
-            <property name="name">
-                <cstring>mLblUrl</cstring>
-            </property>
-            <property name="text">
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="mLblUrl" >
+     <property name="text" >
                 <string>URL:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>comboBox4</cstring>
             </property>
         </widget>
-        <widget class="QComboBox" row="3" column="1">
-            <property name="name">
-                <cstring>mUrl</cstring>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="0" column="1">
-            <property name="name">
-                <cstring>mFirstName</cstring>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="1" column="1">
-            <property name="name">
-                <cstring>mLastName</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>mLblLastName</cstring>
-            </property>
-            <property name="text">
+   </item>
+   <item row="3" column="1" >
+    <widget class="QComboBox" name="mUrl" />
+   </item>
+   <item row="0" column="1" >
+    <widget class="QComboBox" name="mFirstName" />
+   </item>
+   <item row="1" column="1" >
+    <widget class="QComboBox" name="mLastName" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="mLblLastName" >
+     <property name="text" >
                 <string>Last name:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>comboBox2</cstring>
             </property>
         </widget>
-        <widget class="KListBox" row="2" column="1">
-            <property name="name">
-                <cstring>mEmails</cstring>
-            </property>
-            <property name="selectionMode">
-                <enum>Extended</enum>
+   </item>
+   <item row="2" column="1" >
+    <widget class="KListBox" name="mEmails" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>mLblEmail</cstring>
-            </property>
-            <property name="text">
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="mLblEmail" >
+     <property name="text" >
                 <string>Email:</string>
             </property>
-            <property name="buddy" stdset="0">
+     <property name="buddy" >
                 <cstring>mEmails</cstring>
             </property>
         </widget>
-    </grid>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KListBox</class>
+   <extends></extends>
+   <header>klistbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

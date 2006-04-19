@@ -258,7 +258,9 @@ void KopeteMetaContactLVI::initLVI()
 			 SLOT( slotConfigChanged() ) );
 	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
-	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
+	mBlinkTimer = new QTimer( this );
+	mBlinkTimer->setObjectName( "mBlinkTimer" );
+
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
 	mIsBlinkIcon = false;
 
@@ -456,15 +458,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			case noChange:
 				break;
 			case signedIn:
-				connect(KNotification::event( QString("kopete_contact_online"), text, QPixmap(m_metaContact->picture().image()), 0l /*KopeteSystemTray::systemTray()*/, QStringList(i18n( "Chat" )), contexts ) ,
+				connect(KNotification::event( QString("kopete_contact_online"), text, QPixmap::fromImage(m_metaContact->picture().image()), 0l /*KopeteSystemTray::systemTray()*/, QStringList(i18n( "Chat" )), contexts ) ,
 						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
 				break;
 			case changedStatus:
-				connect(KNotification::event( QString("kopete_contact_status_change"), text, QPixmap(m_metaContact->picture().image()), 0l  /*KopeteSystemTray::systemTray() */, QStringList(i18n( "Chat" )), contexts)  ,
+				connect(KNotification::event( QString("kopete_contact_status_change"), text, QPixmap::fromImage(m_metaContact->picture().image()), 0l  /*KopeteSystemTray::systemTray() */, QStringList(i18n( "Chat" )), contexts)  ,
 						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ));
 				break;
 			case signedOut:
-				KNotification::event( QString("kopete_contact_offline"), text, QPixmap(m_metaContact->picture().image()), KopeteSystemTray::systemTray() , QStringList(), contexts);
+				KNotification::event( QString("kopete_contact_offline"), text, QPixmap::fromImage(m_metaContact->picture().image()), KopeteSystemTray::systemTray() , QStringList(), contexts);
 				break;
 			}
 		}
@@ -539,7 +541,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		{
 			int photoSize = d->iconSize;
 
-			photoImg = photoImg.smoothScale( photoSize, photoSize, Qt::KeepAspectRatio );
+			photoImg = photoImg.scaled( photoSize, photoSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 			KImageEffect *effect = 0L;
 			switch ( m_metaContact->status() )
 			{

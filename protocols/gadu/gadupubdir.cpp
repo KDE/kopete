@@ -260,7 +260,7 @@ GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 					(*r).nickname,
 					(*r).age,
 					(*r).city,
-					QString::number( (*r).uin ).ascii()
+					QString::number( (*r).uin ).toAscii()
 						);
 		sl->setPixmap( 0, iconForStatus( (*r).status ) );
 	}

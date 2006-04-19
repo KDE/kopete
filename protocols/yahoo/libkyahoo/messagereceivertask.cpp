@@ -93,7 +93,7 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 	}
 
 	if( utf8.startsWith( "1" ) )
-		msg = QString::fromUtf8( msg.latin1() );
+		msg = QString::fromUtf8( msg.toLatin1() );
 
 	if( t->service() == Yahoo::ServiceSysMessage )
 		emit systemMessage( sysmsg );

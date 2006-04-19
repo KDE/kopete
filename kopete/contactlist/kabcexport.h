@@ -18,7 +18,9 @@
 #ifndef KABCEXPORTWIZARD_H
 #define KABCEXPORTWIZARD_H
 
-#include "kabcexport_base.h"
+#include <Q3Wizard>
+
+#include "ui_kabcexport_base.h"
 
 namespace KABC {
 	class AddressBook;
@@ -33,7 +35,7 @@ namespace KRES {
 	class Resource;
 }
 
-class KabcExportWizard : public KabcExportWizard_Base
+class KabcExportWizard : public Q3Wizard, private Ui::KabcExportWizard_Base
 {
 Q_OBJECT
 	public:

@@ -46,8 +46,9 @@ ChatSessionManager* ChatSessionManager::self()
 
 ChatSessionManager::ChatSessionManager( QObject* parent,
 	const char* name )
-	: QObject( parent, name )
+	: QObject( parent )
 {
+	setObjectName( name );
 	d=new Private;
 	s_self = this;
 }
