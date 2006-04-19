@@ -576,12 +576,14 @@ void HistoryDialog::slotContactChanged(int index)
 	mMainWidget->dateListView->clear();
 	if (index == 0)
 	{
-		mMetaContact = 0;
+        setCaption(i18n("History for All Contacts"));
+        mMetaContact = 0;
 		init();
 	}
 	else
 	{
 		mMetaContact = mMetaContactList.at(index-1);
+        setCaption(i18n("History for %1").arg(mMetaContact->displayName()));
 		init();
 	}
 }
