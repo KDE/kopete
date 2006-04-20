@@ -168,7 +168,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.status_descr	= (char*)desc.data();
 
 	params_.uin		= loginp->uin;
-	params_.password	= (char *)( loginp->password.toAscii() );
+	params_.password	= (char *)( loginp->password.toAscii().data() );
 	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0 );
 	params_.async		= 1;
 	params_.tls		= loginp->useTls;

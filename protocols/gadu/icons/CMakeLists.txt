@@ -5,7 +5,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kopete/icons FILES  )
+kde4_install_icons( ${DATA_INSTALL_DIR}/kopete/icons crystalsvg )
 
 kde4_footer()
 

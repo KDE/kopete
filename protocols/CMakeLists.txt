@@ -16,9 +16,9 @@ if(WITH_testbed)
   add_subdirectory( testbed )
 endif(WITH_testbed)
 #add_subdirectory( jabber )
+add_subdirectory( gadu )
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(GADU)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JABBER)")
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Can someone fix linking problems with libiris_kopete in Jabber ? (-DarkShock)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
 
 ########### install files ###############

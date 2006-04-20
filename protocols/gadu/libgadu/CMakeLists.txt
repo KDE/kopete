@@ -4,6 +4,11 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libgadu-config.h.cmake ${CMAKE_CURREN
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
+set(libgadu_SRCS common.c dcc.c events.c http.c libgadu.c pubdir50.c pubdir.c)
+
+kde4_add_library(gadu_kopete ${libgadu_SRCS})
+
+install_targets( ${LIB_INSTALL_DIR} gadu_kopete )
 
 ########### next target ###############
 

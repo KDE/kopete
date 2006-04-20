@@ -1,15 +1,28 @@
 kde4_header()
 
-add_subdirectory( ui ) 
 add_subdirectory( icons ) 
+add_subdirectory( libgadu )
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(LIBGADU_COPY)")
-include_directories( ${KOPETE_INCLUDES} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KOPETE_INCLUDES} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+${CMAKE_CURRENT_SOURCE_DIR}/libgadu/ 
+${CMAKE_CURRENT_BINARY_DIR}/libgadu/ 
+)
 
 
 ########### next target ###############
 
+set(kopete_gaduui_SRCS)
+
+kde4_add_ui3_files(kopete_gaduui_SRCS 
+   ui/gaduadd.ui 
+   ui/gaduawayui.ui 
+   ui/gadueditaccountui.ui 
+   ui/gaduregisteraccountui.ui 
+   ui/gadusearch.ui 
+)
+
 set(kopete_gadu_PART_SRCS 
+   ${kopete_gaduui_SRCS} 
    gaduaway.cpp 
    gadueditcontact.cpp 
    gaducommands.cpp 
@@ -33,7 +46,7 @@ kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_gadu )
 
-target_link_libraries(kopete_gadu  ${KDE4_KDECORE_LIBS} gaduui kopete )
+target_link_libraries(kopete_gadu ${KDE4_KDEUI_LIBS} ${QT_QTNETWORK_LIBRARY} gadu_kopete kopete )
 
 install_targets(${PLUGIN_INSTALL_DIR} kopete_gadu )
 
