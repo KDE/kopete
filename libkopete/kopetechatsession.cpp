@@ -409,7 +409,7 @@ void Kopete::ChatSession::receivedEventNotification( const QString& notification
 void Kopete::ChatSession::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;
-	if (d->refcount < b && !d->view )
+	if (d->refcount < (b?1:0) && !d->view )
 		deleteLater();
 }
 
