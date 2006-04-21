@@ -617,7 +617,7 @@ void KopeteChatWindow::createTabBar()
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
 		m_rightWidget->setIconSet( SmallIcon( "tab_remove" ) );
 		m_rightWidget->adjustSize();
-		QToolTip::add( m_rightWidget, i18n("Close the current tab"));
+		m_rightWidget->setToolTip( i18n("Close the current tab") );
 		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRightCorner );
 
 		mainLayout->addWidget( m_tabBar );

@@ -59,7 +59,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	: KSystemTray(parent), mMovie(0)
 {
 //	kDebug(14010) << "Creating KopeteSystemTray" << endl;
-	QToolTip::add( this, kapp->aboutData()->shortDescription() );
+	setToolTip(kapp->aboutData()->shortDescription());
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;

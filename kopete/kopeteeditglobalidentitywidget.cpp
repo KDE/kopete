@@ -157,7 +157,7 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 		if( !d->myself->picture().isNull() )
 		{
 			d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-			QToolTip::add(d->labelPicture, "<qt><img src=\""+ value.toString() +"\"></qt>");
+			d->labelPicture->setToolTip("<qt><img src=\""+ value.toString() +"\"></qt>");
 		}
 	}
 	else if(key == Kopete::Global::Properties::self()->nickName().key())
