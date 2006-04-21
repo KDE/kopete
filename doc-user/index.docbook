@@ -132,7 +132,7 @@ Appendix: Obtaining and installation (1st draft, Will)
 </chapterinfo>
 -->
 <sect1 id="intro-to-kopete">
-<title>Kopete, the &kde; instant messaging client</title>
+<title>&kopete;, the &kde; instant messaging client</title>
 <sect2 id="intro-to-kopete-next">
 <title>Before starting...</title>
 <para>If you're not familiar with Instant Messaging, please read the <link linkend="getting-started">Getting Started</link> section to learn about this wonderful world before continuing.</para>
@@ -194,7 +194,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>The <interface>Contact List</interface> appears when you start &kopete;.  It's the main window where you can set your presence, start a chat, organize your contacts, configure &kopete; and quit.</para>
 <sect2 id="contact-list-layout">
 <title>Layout of the Contact List window</title>
-<sect3 id="contact-list-layout-menu"><title>Menu</title><para>You will usually find the menu bar at the top of the contact list.  If it's not there, you might have turned it off; you can re-enable it with <keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>.  Details on each menu item can be found in the <link linkend="menus">chapter on menu structure</link>.</para>
+<sect3 id="contact-list-layout-menu"><title>Menu</title><para>You will usually find the menubar at the top of the contact list.  If it's not there, you might have turned it off; you can re-enable it with <keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>.  Details on each menu item can be found in the <link linkend="menus">chapter on menu structure</link>.</para>
 </sect3>
 <sect3 id="contact-list-layout-toolbar"><title>Tool bar</title><para>The toolbar holds the most frequently used &kopete; actions.  You can customize it with <menuchoice><guimenu>Settings</guimenu> <guimenuitem>Configure Toolbars...</guimenuitem></menuchoice>.  Notice the <guibutton>Show Offline Users</guibutton> and <guibutton>Show Empty Groups</guibutton> buttons.  With these you can hide contacts and groups that are offline.</para>
 </sect3>
@@ -217,7 +217,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="contact-list-send-file">
 	<title>Send A File</title>
-	<para>You can send files from the <interface>Contact List</interface>, using the context menu on the person you want to send to.  If Kopete supports file transfer on their &im; system, there will be a <menuchoice><guimenuitem>Send File...</guimenuitem></menuchoice> item.  Alternatively, you can drag a file from anywhere else in KDE onto their name to start a file transfer.</para>
+	<para>You can send files from the <interface>Contact List</interface>, using the context menu on the person you want to send to.  If &kopete; supports file transfer on their &im; system, there will be a <menuchoice><guimenuitem>Send File...</guimenuitem></menuchoice> item.  Alternatively, you can drag a file from anywhere else in &kde; onto their name to start a file transfer.</para>
 </sect2>
 <sect2 id="organise-contacts">
 <title>Organising Contacts</title>
@@ -236,11 +236,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>The Add Contact Wizard creates a new Metacontact using one or more &im; systems, by leading you through the following pages.</para>
 
 <orderedlist>
-<listitem><para>Welcome Page.  Here you can choose whether you want to use the &kde; Address Book for this contact.  Storing &im; information in the &kde; Address Book will enable other &kde; &im; programs to share contact information with &kopete; and in future &kde; applications may use &kopete; to send information via &im;.  If you prefer to keep your &im; contacts separated, clear the checkbox here.</para></listitem>
+<listitem><para>Welcome Page.  Here you can choose whether you want to use the &kde; Address Book for this contact.  Storing &im; information in the &kde; Address Book will enable other &kde; &im; programs to share contact information with &kopete; and in future &kde; applications may use &kopete; to send information via &im;.  If you prefer to keep your &im; contacts separated, clear the check box here.</para></listitem>
 <listitem><para>Choose &kde; Address Book entry.  By choosing an entry from your &kde; Address Book, you can use its name as a Display Name in &kopete;.  You can also create a new entry here.  This page doesn't show if you chose not to use the &kde; Address Book.</para></listitem>
 <listitem><para>Select Display Name and Group.  Here you can enter a Display Name (the name used for this person inside &kopete;), and choose the <link linkend="organise-contacts-grouping">groups</link> they are a member of.</para></listitem>
 <listitem><para>Select &im; Accounts.  Here you can choose which accounts you want to use to chat to the new contact.  If you only have one &im; account, you won't see this screen.</para></listitem>
-<listitem><para>Account-specific Add Contact Pages.  For each account, you'll get one page where you can enter the <acronym>UIN</acronym>, buddy name or E-mail address, depending on the &im; system in use.</para></listitem>
+<listitem><para>Account-specific Add Contact Pages.  For each account, you'll get one page where you can enter the <acronym>UIN</acronym>, buddy name or Email address, depending on the &im; system in use.</para></listitem>
 <listitem><para>Finish Screen.  All done.  Except if the &im; system requires authorisation (such as <trademark>ICQ</trademark>) to add a contact to your list - in which case, you'll be prompted after the wizard exits.</para></listitem>
 </orderedlist>
 
@@ -440,7 +440,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect2 id="configuring-accounts">
 <title>Adding and Editing Accounts</title>
 <para>We briefly showed you how to add an account in <link linkend="getting-started">Getting Started</link>.  To change an account's settings later, open up the <guilabel>Configure &kopete;</guilabel> dialog, with <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure &kopete;</guimenuitem></menuchoice>.  Much like the &kde; Control Center, the configuration is separated into sections.  The icons on the left side of the dialog switch between sections.</para>
-<para>On the Accounts page, you can <link linkend="creating-accounts"><guibutton>Add</guibutton></link>, <guibutton>Remove</guibutton>, or <guibutton>Modify</guibutton> accounts.  Editing accounts is much the same as adding them, but note that you can't change the UIN, buddy name, or whatever account identifier your &im; system uses.  This is intrinsic to the account.  If you want to change this, you will have to add another account with the new account identifier and (optionally) remove the old account.</para>
+<para>On the Accounts page, you can <link linkend="creating-accounts"><guibutton>Add</guibutton></link>, <guibutton>Remove</guibutton>, or <guibutton>Modify</guibutton> accounts.  Editing accounts is much the same as adding them, but note that you cannot change the UIN, buddy name, or whatever account identifier your &im; system uses.  This is intrinsic to the account.  If you want to change this, you will have to add another account with the new account identifier and (optionally) remove the old account.</para>
 <para>You can quickly distinguish between multiple accounts using the same &im; system by giving a custom color to each account's status bar entry and contact icons.  To do so, select the account and click the color selector on the right side of the page. </para>
 <para>You can control the priority of accounts using the <guiicon>Up</guiicon> and <guiicon>Down</guiicon> icons on this page.  If you have more than one way to message a contact, this determines the &im; system &kopete; will use to communicate them.</para>
 </sect2>
@@ -476,7 +476,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Show a bubble on new message</guilabel></term>
 <listitem>
-<para>This option shows a <quote>speech bubble</quote>; coming from the System Tray icon when you receive a new message.  You can start a chat or ignore the message.  <acronym>URL</acronym>s are extracted from the message; if you click a link, your preferred browser will open the link and the message will be dismissed.</para>
+<para>This option shows a <quote>speech bubble</quote>; coming from the System Tray icon when you receive a new message.  You can start a chat or ignore the message.  &URL;s are extracted from the message; if you click a link, your preferred browser will open the link and the message will be dismissed.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -494,12 +494,12 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Configure Sounds &amp; Events</guilabel></term>
 <listitem>
-<para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrol; for more information.</para>
+<para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrolcenter; for more information.</para>
 <para>To add custom notifications for a contact, right click that contact in the Contact List and select Properties. This lets you start chats, play a custom sound effect, or display a message for that contact or group. Otherwise you can use the <quote>Execute a program</quote> notification to perform custom notifications.  As an example, if you have <application>XOSD</application> (X On-Screen Display) installed, you can get OSD online notifications by executing the following command when the <quote>User goes online</quote> event takes place:</para>
 <para><userinput>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput></para>
-<para>OhReally at the KDE Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
+<para>OhReally at the &kde; Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
 <para><userinput>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput></para>
-<para>The 'sed' in the middle phoneticises Kopete's output to so the synthesizer has a better Dutch pronunciation.</para>
+<para>The 'sed' in the middle phoneticises &kopete;'s output to so the synthesizer has a better Dutch pronunciation.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -579,7 +579,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Styles</title>
 <para>The style of the chat view can be altered to look like other clients, or you can invent your own style here.  Installed styles are shown in the list on the left and are previewed in the main panel.</para>
 <para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>.</para>
-<para>To modify a style, click <guibutton>Edit...</guibutton>.  &kopete; represents chats internally as XML and uses the Extensible Stylesheet Language (<acronym>XSL</acronym>) to specify how this should be transformed into HTML for display.  You need to be familiar with <acronym>HTML</acronym> and <acronym>XSL</acronym> to edit styles.</para>
+<para>To modify a style, click <guibutton>Edit...</guibutton>.  &kopete; represents chats internally as &XML; and uses the Extensible Stylesheet Language (<acronym>XSL</acronym>) to specify how this should be transformed into &HTML; for display.  You need to be familiar with &HTML; and <acronym>XSL</acronym> to edit styles.</para>
 </sect4>
 <sect4 id="configuring-appearance-chat-translucency">
 <title>Chat Window</title>
@@ -604,13 +604,13 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Contact Display Mode</guilabel></term>
 <listitem>
-	<para>There are several ways you can present the contact list here.  Of particular interest may be the <guilabel>Detailed with contact photos</guilabel> style, that shows the contact list including photos from the &im; system or the KDE Address Book</para>
+	<para>There are several ways you can present the contact list here.  Of particular interest may be the <guilabel>Detailed with contact photos</guilabel> style, that shows the contact list including photos from the &im; system or the &kde; Address Book</para>
 </listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Contact List Animations</guilabel></term>
 <listitem>
-	<para>This controls the degree of animation of the contact list.  Turning this off will make Kopete more responsive on slower machines.</para>
+	<para>This controls the degree of animation of the contact list.  Turning this off will make &kopete; more responsive on slower machines.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -672,7 +672,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-highlight">
 <title>Highlight</title>
-<para><guilabel>Highlight</guilabel> works a little like e-mail filters, in that it allows you to make things happen in response to particular messages.  As well as highlighting the text, you can play sounds.</para>
+<para><guilabel>Highlight</guilabel> works a little like email filters, in that it allows you to make things happen in response to particular messages.  As well as highlighting the text, you can play sounds.</para>
 </sect2>
 <sect2 id="plugins-history">
 <title>History</title>
@@ -775,7 +775,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-web-presence">
 <title>Web Presence</title>
-<para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an FTP server (for example), and it will upload a short piece of HTML to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
+<para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an FTP server (for example), and it will upload a short piece of &HTML; to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
 <para>Example: <userinput>sftp://username@somehost.org/path/to/homes/user/im.html</userinput> uses the <acronym>SFTP</acronym> protocol to upload your presence directly onto the webserver.</para>
 <para>See <ulink url="help:/kioslave/index.html">the KIO manuals</ulink> for tips on specific network protocols.</para>
 </sect2>
@@ -798,11 +798,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <qandaentry>
 <question><para>When I have more than one messaging service under a user's name in my contact list and I click on that user's name, it will message them on the wrong messaging service.</para>
 </question>
-<answer><para>You can change the order of accounts Kopete tries to message people with by using the Up and Down arrows in the bottom right corner of the account configuration screen. Kopete will try to connect with accounts starting from the top. However, if one service has a higher status value than the others for that user, Kopete will use that one. For example, if a person has three services and two are marked as away and the third is marked as online, Kopete will always try to message the user using the online service.</para><tip><para>If you click on the small protocol icon on the right of the menu item, instead of on the person's name, you will always try to contact the person using that service!</para></tip>
+<answer><para>You can change the order of accounts &kopete; tries to message people with by using the Up and Down arrows in the bottom right corner of the account configuration screen. &kopete; will try to connect with accounts starting from the top. However, if one service has a higher status value than the others for that user, &kopete; will use that one. For example, if a person has three services and two are marked as away and the third is marked as online, &kopete; will always try to message the user using the online service.</para><tip><para>If you click on the small protocol icon on the right of the menu item, instead of on the person's name, you will always try to contact the person using that service!</para></tip>
 </answer>
 </qandaentry>
 <qandaentry>
-<question><para>I need to connect via a SOCKS proxy, but I can't find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
+<question><para>I need to connect via a SOCKS proxy, but I cannot find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
 <listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in <application>Control Center</application>, <menuchoice><guimenu>Internet &amp; Network</guimenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
@@ -814,16 +814,16 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <answer><para>You can switch between different emoticons using the Emoticons tab of the Appearance page of the Configure &kopete; dialog.</para>
 <para>To install new emoticons, first look at <ulink url="http://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download:</para>
 
-<para>The emoticons are easy to install - you just place a directory containing
-the icon files along with an XML file describing the mapping from text to picture in
+<para>The emoticons are easy to install - you just place a folder containing
+the icon files along with an &XML; file describing the mapping from text to picture in
 $KDEDIR/share/apps/kopete/pics/emoticons (or $KDEHOME, for example, in /home/joeuser/.kde/).</para>
 
 <orderedlist>
-<listitem><para>Copy the extracted directory to $KDEDIR/share/apps/kopete/pics/emoticons or
+<listitem><para>Copy the extracted folder to $KDEDIR/share/apps/kopete/pics/emoticons or
  $HOME/.kde/share/apps/kopete/pics/emoticons (or wherever $KDEHOME is)</para></listitem>
 <listitem><para>Select Configure &kopete; from the Settings menu and click on Appearance in the left panel of the Preferences window and click on the Emoticons tab</para></listitem>
 <listitem><para>Select the emoticons set you just installed from the list</para></listitem>
-<listitem><para>Now you can use the newly installed emoticons in Kopete</para></listitem>
+<listitem><para>Now you can use the newly installed emoticons in &kopete;</para></listitem>
 </orderedlist>
 <para>To replace the protocol icons, you'll have to replace the icons in
 $KDEDIR/share/apps/kopete/icons, or provide replacements to override them in
@@ -850,7 +850,7 @@ sets that you can simply extract there.</para>
 &underGPL;
 <sect1 id="team">
 <title>Current Development Team</title>
-<!-- please keep in sync with the authors list on the webpage -->
+<!-- please keep in sync with the authors list on the web-page -->
 <itemizedlist>
 <listitem><para>Duncan Mac-Vicar Prett (duncan at kde org): Original author, developer, and project leader</para></listitem>
 <listitem><para>Till Gerken (till at tantalo net): Developer, Jabber maintainer</para></listitem>
@@ -859,9 +859,9 @@ sets that you can simply extract there.</para>
 <listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
 <listitem><para>Jason Keirstead (jason at keirstead org): Developer, IRC Plugin Maintainer, Website</para></listitem>
 <listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
-<listitem><para>Matt Rogers (mattr at kde org): Developer, Yahoo Plugin Maintainer, Oscar Plugin Maintainer</para></listitem>
+<listitem><para>&Matt.Rogers; (mattr at kde org): Developer, Yahoo Plugin Maintainer, Oscar Plugin Maintainer</para></listitem>
 <listitem><para>Richard Smith (lilachaze at hotmail com): Developer, UI maintainer</para></listitem>
-<listitem><para>Will Stephenson (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
+<listitem><para>&Will.Stephenson; (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="ex-team">
@@ -873,8 +873,8 @@ sets that you can simply extract there.</para>
 <listitem><para>Richard Stellingwerff (remenic at linuxfromscratch org): Developer</para></listitem>
 <listitem><para>Hendrik vom Lehn (hennevl at hennevl de): Developer</para></listitem>
 <listitem><para>Stefan Gehn (sgehn at gmx net): Developer</para></listitem>
-<listitem><para>Robert Gogolok (robertgogolock at gmx de): Developer</para></listitem>
-<listitem><para>Nick Betcher (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
+<listitem><para>&Robert.Gogolok; (robertgogolock at gmx de): Developer</para></listitem>
+<listitem><para>&Nick.Betcher; (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
 <listitem><para>Daniel Stone (dstone at kde org): Original Jabber plugin author</para></listitem>
 <listitem><para>James Grant (topace at lightbox org): Developer, importer Plugin author</para></listitem>
 <listitem><para>Zack Rusin (zack at kde org): Developer, old Gadu-gadu Plugin author</para></listitem>
@@ -884,7 +884,7 @@ sets that you can simply extract there.</para>
 <sect1 id="documentation">
 <title>Documentation</title>
 <para>
-Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-online co uk), copyright 2005 Matt Rogers (mattr at kde org).
+Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org).
 </para>
 </sect1>
 </chapter><!-- credits-and-licenses -->
