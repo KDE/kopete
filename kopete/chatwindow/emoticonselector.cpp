@@ -132,7 +132,7 @@ void EmoticonSelector::hideEvent( QHideEvent* )
 	MovieList::iterator it;
 	for( it = movieList.begin(); it != movieList.end(); ++it )
 	{
-		(*it)->pause();
+		(*it)->setPaused(true);
 	}
 }
 
@@ -142,7 +142,7 @@ void EmoticonSelector::showEvent( QShowEvent* )
 	MovieList::iterator it;
 	for( it = movieList.begin(); it != movieList.end(); ++it )
 	{
-		(*it)->unpause();
+		(*it)->setPaused(false);
 	}
 }
 

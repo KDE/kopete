@@ -167,7 +167,7 @@ void KopeteSystemTray::startBlink( QMovie *movie )
 {
 	//kDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
 	kDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
-	movie->unpause();
+	movie->setPaused(false);
 	setMovie( movie );
 	mIsBlinking = true;
 }
@@ -190,7 +190,7 @@ void KopeteSystemTray::stopBlink()
 		mBlinkTimer->stop();
 
 	if ( mMovie )
-		mMovie->pause();
+		mMovie->setPaused(true);
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;
