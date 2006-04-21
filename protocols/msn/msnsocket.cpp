@@ -293,13 +293,14 @@ void MSNSocket::slotDataReceived()
 
 				// At this point, we have all the bytes returned from the web request.
 				bytes = m_buffer.take(m_buffer.size());
-				delete[] buffer;
 			}
-
-			if(bytes.size() == 0) {
+			
+			if(bytes.size() == 0) 
+			{
 				// The response headers and the content came in one packet.
 				bytes.assign(buffer, avail);
 			}
+
 
 			// Create the web response object from the response bytes.
 			WebResponse response(bytes);

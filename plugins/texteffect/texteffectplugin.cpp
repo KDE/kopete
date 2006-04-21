@@ -112,49 +112,49 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 					{
 						resultat+="4";
 						break;
-					}
+					} //else, go to the default,  all other case have this check
 				case 'e':
 				case 'E':
 					if(m_config->lamer())
 					{
 						resultat+="3";
 						break;
-					}
+					}//else, go to the default,  all other case have this check
 				case 'i':
 				case 'I':
 					if(m_config->lamer())
 					{
 						resultat+="1";
 						break;
-					}
+					}//else, go to the default,  all other case have this check
 				case 'l':
 				case 'L':
 					if(m_config->lamer())
 					{
 						resultat+="|";
 						break;
-					}
+					}//else, go to the default,  all other case have this check
 				case 't':
 				case 'T':
 					if(m_config->lamer())
 					{
 						resultat+="7";
 						break;
-					}
+					}//else, go to the default,  all other case have this check
 				case 's':
 				case 'S':
 					if(m_config->lamer())
 					{
 						resultat+="5";
 						break;
-					}
+					}//else, go to the default,  all other case have this check
 				case 'o':
 				case 'O':
 					if(m_config->lamer())
 					{
 						resultat+="0";
 						break;
-					}
+					}//else, go to the default,  all other case have this check
 				default:
 					if(m_config->waves())
 					{
