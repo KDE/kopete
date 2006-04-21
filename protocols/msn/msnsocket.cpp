@@ -694,7 +694,7 @@ void MSNSocket::slotReadyWrite()
 				m_socket->write(bytes.data(), bytes.size());
 
 				// Remove the request from the request queue.
-				m_sendQueue.remove(it);
+				m_sendQueue.erase(it);
 
 				if(m_sendQueue.isEmpty())
 				{
@@ -710,7 +710,7 @@ void MSNSocket::slotReadyWrite()
 			// Otherwise, send the command normally.
 			kDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).trimmed() << endl;
 			m_socket->write( *it, ( *it ).size() );
-			m_sendQueue.remove( it );
+			m_sendQueue.erase( it );
 
 			// If the queue is empty agalin stop waiting for readyWrite signals
 			// because of the CPU usage

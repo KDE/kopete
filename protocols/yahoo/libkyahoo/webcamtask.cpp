@@ -359,7 +359,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 						snt->setTarget( *it );
 						snt->setType( SendNotifyTask::NotifyWebcamInvite );
 						snt->go( true );
-						it = pendingInvitations.remove( it );
+						it = pendingInvitations.erase( it );
 						it--;
 					}
 				break;

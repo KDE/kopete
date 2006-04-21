@@ -373,7 +373,7 @@ void MSNChatSession::sendMessageQueue()
 	{
 		//m_chatService->sendMsg( *it)  ;
 		slotMessageSent(*it , this);
-		m_messagesQueue.remove(it);
+		m_messagesQueue.erase(it);
 	}
 
 
@@ -730,7 +730,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 		{
 			m=(*messageIt);
 			body+= "<li>"+m.escapedBody()+"</li>";
-			m_messagesQueue.remove(messageIt);
+			m_messagesQueue.erase(messageIt);
 		}
 		body+="</ul>";
 		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::RichText);

@@ -232,7 +232,7 @@ void RateClass::dumpQueue()
 	while ( it != m_packetQueue.end() && m_packetQueue.count() > 0 )
 	{
 		Transfer* t = ( *it );
-		it = m_packetQueue.remove( it );
+		it = m_packetQueue.erase( it );
 		delete t;
 	}
 }

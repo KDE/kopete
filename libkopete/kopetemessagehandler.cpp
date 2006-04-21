@@ -96,7 +96,7 @@ MessageHandlerFactory::MessageHandlerFactory()
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
-	Private::factories().remove( d->iterator );
+	Private::factories().erase( d->iterator );
 	delete d;
 }
 
