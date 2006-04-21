@@ -175,7 +175,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			// append msg event to queue if chat window is active but not the chat view in it...
 			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
-			appendMessageEvent = appendMessageEvent && !d->queueOnlyMessagesOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
+			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
 		}
 		else
 		{
@@ -184,7 +184,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		}
 
 		// in group chats always append highlighted messages to queue
-		appendMessageEvent = appendMessageEvent && !d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight;
+		appendMessageEvent = appendMessageEvent && (!d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight);
 
 		if( appendMessageEvent )
 		{
