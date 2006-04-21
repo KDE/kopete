@@ -826,7 +826,7 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 			continue;
 		}
 		QTextStream stream(&file);
-		QString fullText = stream.read();
+		QString fullText = stream.readAll();
 		file.close();
 
 		int pos = 0;

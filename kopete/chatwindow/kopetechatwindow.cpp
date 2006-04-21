@@ -446,7 +446,7 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 	if ( file.open( QIODevice::ReadOnly ) )
 	{
 		QTextStream stream( &file );
-		contents = stream.read();
+		contents = stream.readAll();
 		file.close();
 	}
 
