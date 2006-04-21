@@ -59,7 +59,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	// flag used to signal something went wrong when creating a mimesource
 	bool completed = false;
 	// extract and decode arguments
-	QStringList parts = QStringList::split( QChar(':'), abs_name );
+	QStringList parts = abs_name.split( QChar(':'), QString::SkipEmptyParts );
 	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
 		*it = QUrl::fromPercentEncoding( (*it).toUtf8() );
 

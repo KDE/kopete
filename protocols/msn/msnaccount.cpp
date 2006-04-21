@@ -753,7 +753,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 
 	if ( lists & 1 )	// FL
 	{
-		QStringList contactGroups = QStringList::split( ",", groups, false );
+		QStringList contactGroups = groups.split( ",", QString::SkipEmptyParts );
 		if ( c )
 		{
 			if( !c->metaContact() )

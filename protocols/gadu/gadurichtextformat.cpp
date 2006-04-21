@@ -182,7 +182,7 @@ GaduRichTextFormat::convertToGaduMessage( const Kopete::Message& message )
 			if ( pos > -1 ) {
 				QString styleHTML = findTags.cap(1);
 				QString replacement = findTags.cap(2);
-				QStringList styleAttrs = QStringList::split( ';', styleHTML );
+				QStringList styleAttrs = styleHTML.split( ';', QString::SkipEmptyParts );
 				rtfs.font = 0;
 
 				lastpos = pos + replacement.length();

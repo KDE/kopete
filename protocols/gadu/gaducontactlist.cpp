@@ -49,7 +49,7 @@ GaduContactsList::GaduContactsList( QString sList )
 		return;
 	}
 
-	QStringList ln  = QStringList::split( QChar( '\n' ),  sList, true );
+	QStringList ln  = sList.split( QChar( '\n' ), QString::KeepEmptyParts );
 	QStringList::iterator lni = ln.begin( );
 
 	while( lni != ln.end() ) {
@@ -59,7 +59,7 @@ GaduContactsList::GaduContactsList( QString sList )
 			break;
 		}
 
-		strList  = QStringList::split( QChar( ';' ), cline, true );
+		strList  = cline.split( QChar( ';' ), QString::KeepEmptyParts );
 
 		stringIterator = strList.begin();
 		

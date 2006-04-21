@@ -406,7 +406,7 @@ void Contact::deserializeProperties(
 		if ( !key.startsWith( QString::fromLatin1("prop_") ) ) // avoid parsing other serialized data
 			continue;
 
-		QStringList keyList = QStringList::split( QChar('_'), key, false );
+		QStringList keyList = key.split( QChar('_'), QString::SkipEmptyParts );
 		if( keyList.count() < 3 ) // invalid key, not enough parts in string "prop_X_Y"
 			continue;
 

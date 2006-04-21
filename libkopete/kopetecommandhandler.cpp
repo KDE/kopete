@@ -392,7 +392,7 @@ QStringList Kopete::CommandHandler::parseArguments( const QString &args )
 			arguments.append( quotedArgs.cap(i) );
 	}
 
-	QStringList otherArgs = QStringList::split( QRegExp(QString::fromLatin1("\\s+")), args.section( quotedArgs, 0 ) );
+	QStringList otherArgs = args.section( quotedArgs, 0 ).split( QRegExp(QString::fromLatin1("\\s+")), QString::SkipEmptyParts);
 	for( QStringList::Iterator it = otherArgs.begin(); it != otherArgs.end(); ++it )
 		arguments.append( *it );
 

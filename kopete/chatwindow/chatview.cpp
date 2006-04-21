@@ -894,7 +894,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
 	if( event->provides( "kopete/x-contact" ) )
 	{
-		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );
+		QStringList lst = QString::fromUtf8(event->encodedData ( "kopete/x-contact" )).split( QChar( 0xE000 ) , QString::SkipEmptyParts );
 		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
 		{
 			QString contact=lst[2];
@@ -954,7 +954,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 
 	if( event->provides( "kopete/x-contact" ) )
 	{
-		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );
+		QStringList lst = QString::fromUtf8(event->encodedData ( "kopete/x-contact" )).split( QChar( 0xE000 ) , QString::SkipEmptyParts );
 		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
 		{
 			QString contact=lst[2];

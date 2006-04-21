@@ -891,7 +891,7 @@ GaduAccount::userlist( const QString& contactsListString )
 			metaContact = contact->metaContact();
 			metaContact->removeFromGroup( Kopete::Group::topLevel() );
 			// put him in all desired groups:
-			groups = QStringList::split( ",", contactsList[i].group );
+			groups = contactsList[i].group.split( ",", QString::SkipEmptyParts );
 			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
 				metaContact->addToGroup( Kopete::ContactList::self ()->findGroup ( *groupsIterator) );
 			}

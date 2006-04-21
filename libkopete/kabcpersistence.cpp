@@ -50,8 +50,8 @@ namespace Kopete
 static QString unionContents( QString arg1, QString arg2 )
 {
 	QChar separator( 0xE000 );
-	QStringList outList = QStringList::split( separator, arg1 );
-	QStringList arg2List = QStringList::split( separator, arg2 );
+	QStringList outList = arg1.split( separator, QString::SkipEmptyParts );
+	QStringList arg2List = arg2.split( separator, QString::SkipEmptyParts );
 	for ( QStringList::iterator it = arg2List.begin(); it != arg2List.end(); ++it )
 		if ( !outList.contains( *it ) )
 			outList.append( *it );
@@ -305,7 +305,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 					}
 
 					// See if we need to add each contact in this protocol
-					QStringList addresses = QStringList::split( QChar( 0xE000 ), value );
+					QStringList addresses = value.split( QChar( 0xE000 ), QString::SkipEmptyParts );
 					QStringList::iterator end = addresses.end();
 					for ( QStringList::iterator it = addresses.begin(); it != end; ++it )
 					{

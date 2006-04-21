@@ -569,9 +569,9 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 							// ICQ didn't store the contactId locally, only in the address
 							// book fields, so we need to be able to access it later
 							if( id == QString::fromLatin1( "messaging/icq" ) )
-								icqData = QStringList::split( QChar( 0xE000 ), val );
+								icqData = val.split( QChar( 0xE000 ), QString::SkipEmptyParts );
 							else if( id == QString::fromLatin1("messaging/gadu") )
-								gaduData = QStringList::split( QChar( 0xE000 ), val );
+								gaduData = val.split( QChar( 0xE000 ), QString::SkipEmptyParts );
 						}
 					}
 					oldContactNode = oldContactNode.nextSibling();
@@ -674,7 +674,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 								id == QString::fromLatin1( "SMSProtocol" ) || id == QString::fromLatin1( "WPProtocol" ) ||
 								id == QString::fromLatin1( "GaduProtocol" ) )
 							{
-								QStringList strList = QStringList::split( QString::fromLatin1( "||" ), data );
+								QStringList strList = data.split( QString::fromLatin1( "||" ), QString::SkipEmptyParts );
 
 								// Unescape '||'
 								for( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )

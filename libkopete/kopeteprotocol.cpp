@@ -258,7 +258,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 	QMap<QString, QString>::ConstIterator it;
 	for( it = data.begin(); it != data.end(); ++it )
 	{
-		serializedData[ it.key() ] = QStringList::split( QChar( 0xE000 ), it.value(), true );
+		serializedData[ it.key() ] = it.value().split( QChar( 0xE000 ), QString::KeepEmptyParts );
 		serializedDataIterators[ it.key() ] = serializedData[ it.key() ].begin();
 	}
 

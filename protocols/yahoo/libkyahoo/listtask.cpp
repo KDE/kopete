@@ -77,13 +77,13 @@ void ListTask::parseBuddyList( Transfer *transfer )
 		return;
 
 	QStringList groups;
-	groups = QStringList::split( "\n", raw );
+	groups = raw.split( "\n", QString::SkipEmptyParts );
 
 	for ( QStringList::Iterator groupIt = groups.begin(); groupIt != groups.end(); ++groupIt ) 
 	{
 		QString group = (*groupIt).section(":", 0, 0);
 		QStringList buddies;
-		buddies = QStringList::split( ",", (*groupIt).section(":", 1,1) );
+		buddies = (*groupIt).section(":", 1,1).split( ",", QString::SkipEmptyParts );
 		for ( QStringList::Iterator buddyIt = buddies.begin(); buddyIt != buddies.end(); ++buddyIt ) 
 		{
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsed buddy: " << *buddyIt << " in group " << group << endl;
@@ -103,7 +103,7 @@ void ListTask::parseStealthList( Transfer *transfer )
 	QString raw;
 	raw = t->firstParam( 185 );
 
-	QStringList buddies = QStringList::split( ",", raw );
+	QStringList buddies = raw.split( ",", QString::SkipEmptyParts );
 	for ( QStringList::Iterator it = buddies.begin(); it != buddies.end(); ++it ) 
 	{
 		emit stealthStatusChanged( *it, Yahoo::StealthActive );

@@ -400,7 +400,7 @@ void popupPublic::slotprocread(KProcIO *p)
 
         while (p->readln(tst)!=-1) {
                 if (tst.startsWith("pub")) {
-			QStringList keyString=QStringList::split(":",tst,true);
+			QStringList keyString=tst.split(":",QString::KeepEmptyParts);
                         dead=false;
                         const QString trust=keyString[1];
                         QString val=keyString[6];

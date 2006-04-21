@@ -315,7 +315,7 @@ void MSNSocket::slotDataReceived()
 				// Retrieve the X-MSN-Messenger header.
 				QString header = response.getHeaders()->getValue("X-MSN-Messenger");
 
-				QStringList parts = QStringList::split(";", header.replace(" ", ""));
+				QStringList parts = header.replace(" ", "").split( ";", QString::SkipEmptyParts );
 				if(!header.isNull() && (parts.count() >= 2))
 				{
 					if(parts[0].find("SessionID", 0) != -1)

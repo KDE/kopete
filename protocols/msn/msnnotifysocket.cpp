@@ -998,7 +998,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	QString application, type, format, currentMedia;
 	bool enabled=false, test;
 	// \0 is textual, it's the "array" separator.
-	QStringList argumentLists = QStringList::split(QString::fromUtf8("\\0"), mediaXmlElement, true);
+	QStringList argumentLists = mediaXmlElement.split(QString::fromUtf8("\\0"), QString::KeepEmptyParts);
 
 	// Retrive the "stable" array elements.
 	application = argumentLists[0];

@@ -322,7 +322,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 	if ( format & RichText )
 	{
 		// < in HTML *always* means start-of-tag
-		QStringList entries = QStringList::split( QChar('<'), message, true );
+		QStringList entries = message.split( QChar('<'), QString::KeepEmptyParts );
 
 		QStringList::Iterator it = entries.begin();
 
