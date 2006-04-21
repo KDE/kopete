@@ -268,7 +268,7 @@ void PluginManager::loadAllPlugins()
 			QString key = it.key();
 			if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 			{
-				key.setLength( key.length() - 7 );
+				key.resize( key.length() - 7 );
 				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value() << endl;
 	
 				if ( it.value() == QString::fromLatin1( "true" ) )

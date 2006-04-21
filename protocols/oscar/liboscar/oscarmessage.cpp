@@ -107,7 +107,7 @@ QString Oscar::Message::text( QTextCodec *codec ) const
 	{
 		uint len = m_textArray.size() / 2;
 		QString result;
-		result.setLength( len );
+		result.resize( len );
 		QByteArray::ConstIterator p = m_textArray.begin();
 		for ( uint i = 0; i < len; i++)
 		{
