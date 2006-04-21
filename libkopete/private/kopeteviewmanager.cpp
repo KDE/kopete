@@ -173,18 +173,18 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
 		{
 			// append msg event to queue if chat window is active but not the chat view in it...
-			appendMessageEvent &= !(w->isActiveWindow() && manager->view() == d->activeView);
+			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
-			appendMessageEvent &= !d->queueOnlyMessagesOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
+			appendMessageEvent = appendMessageEvent && !d->queueOnlyMessagesOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
 		}
 		else
 		{
 			// append if no chat window exists already
-			appendMessageEvent &= !view( manager )->isVisible();
+			appendMessageEvent = appendMessageEvent && !view( manager )->isVisible();
 		}
 
 		// in group chats always append highlighted messages to queue
-		appendMessageEvent &= !d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight;
+		appendMessageEvent = appendMessageEvent && !d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight;
 
 		if( appendMessageEvent )
 		{

@@ -87,12 +87,12 @@ AccountManager::~AccountManager()
 
 bool AccountManager::isAnyAccountConnected()
 {
-	bool anyConnected = false;
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
-		anyConnected |= it.current()->isConnected();
+		if(it.current()->isConnected())
+			return true;
 	}
-	return anyConnected;
+	return false;
 }
 
 void AccountManager::connectAll()

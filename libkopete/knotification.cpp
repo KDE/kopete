@@ -460,8 +460,7 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 				if ( ( pres = evt->presentation( Kopete::EventPresentation::Chat ) )
 								   && pres->enabled() )
 				{
-					if ( mc )
-						mc->execute();
+					mc->execute();
 					evt->firePresentation( Kopete::EventPresentation::Chat );
 				}
 				// fire the event
