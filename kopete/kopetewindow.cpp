@@ -621,7 +621,7 @@ bool KopeteWindow::queryClose()
 	if ( !app->sessionSaving()	// if we are just closing but not shutting down
 		&& !app->isShuttingDown()
 		&& Kopete::BehaviorSettings::self()->showSystemTray()
-		&& isShown() )
+		&& !isHidden() )
 		// I would make this a KMessageBox::queuedMessageBox but there doesn't seem to be don'tShowAgain support for those
 		KMessageBox::information( this,
 								  i18n( "<qt>Closing the main window will keep Kopete running in the "
@@ -640,7 +640,7 @@ bool KopeteWindow::queryExit()
 		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
 									KopeteApplication::commitData() called */
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
-		|| !isShown() )
+		|| isHidden() )
 	{
 		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
 		Kopete::PluginManager::self()->shutdown();

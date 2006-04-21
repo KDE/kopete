@@ -1147,7 +1147,7 @@ bool KopeteChatWindow::queryExit()
 		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
 									KopeteApplication::commitData() called */
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
-		|| !isShown() )
+		|| isHidden() )
 	{
 		Kopete::PluginManager::self()->shutdown();
 		return true;
