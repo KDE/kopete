@@ -128,7 +128,7 @@ void YahooWebcam::addViewer( const QString &viewer )
 
 void YahooWebcam::removeViewer( const QString &viewer )
 {
-	m_viewer.remove( viewer );
+	m_viewer.removeAll( viewer );
 	if( theDialog )
 		theDialog->setViewer( m_viewer );
 }

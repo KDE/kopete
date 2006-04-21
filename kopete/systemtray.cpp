@@ -249,7 +249,7 @@ void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 
 void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 {
-	mEventList.remove(event);
+	mEventList.removeAll(event);
 
 	removeBalloonEvent(event);
 
@@ -265,7 +265,7 @@ void KopeteSystemTray::slotRemoveBalloon()
 void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
 {
 	bool current= event==mBalloonEventList.first();
-	mBalloonEventList.remove(event);
+	mBalloonEventList.removeAll(event);
 
 	if(current && m_balloon)
 	{

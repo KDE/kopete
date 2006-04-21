@@ -1055,7 +1055,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	else
 		m_session->declineConference( room, myMembers, QString::null );
 	
-	m_pendingConfInvites.remove( room );
+	m_pendingConfInvites.removeAll( room );
 }
 
 void YahooAccount::prepareConference( const QString &who )

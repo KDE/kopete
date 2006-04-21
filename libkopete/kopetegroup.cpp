@@ -283,7 +283,7 @@ void Group::sendMessage( Message& msg )
 	
 	if(list.isEmpty())
 		return;
-	list.remove( msg.to().first()->metaContact() );
+	list.removeAll( msg.to().first()->metaContact() );
 	QListIterator<MetaContact *> it(list);
 	while ( it.hasNext() )
 	{

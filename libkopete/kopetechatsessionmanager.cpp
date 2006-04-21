@@ -148,7 +148,7 @@ void ChatSessionManager::registerChatSession(ChatSession * result)
 void ChatSessionManager::removeSession( ChatSession *session)
 {
 	kDebug(14010) << k_funcinfo << endl;
-	d->sessions.remove( session );
+	d->sessions.removeAll( session );
 }
 
 QList<ChatSession*> ChatSessionManager::sessions( )

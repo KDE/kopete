@@ -887,7 +887,7 @@ void MSNSwitchBoardSocket::userLeftChat(const QString& handle , const QString &r
 	emit userLeft( handle,  reason );
 
 	if( m_chatMembers.contains( handle ) )
-		m_chatMembers.remove( handle );
+		m_chatMembers.removeAll( handle );
 
 	if(m_chatMembers.isEmpty())
 		disconnect();

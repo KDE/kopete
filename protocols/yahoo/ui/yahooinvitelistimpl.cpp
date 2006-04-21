@@ -68,7 +68,7 @@ void YahooInviteListImpl::addInvitees( const QStringList &invitees )
 		if( m_inviteeList.find( *it ) == m_inviteeList.end() )
 			m_inviteeList.push_back( *it );
 		if( m_buddyList.find( *it ) != m_buddyList.end() )
-			m_buddyList.remove( *it );
+			m_buddyList.removeAll( *it );
 	}
 
 	updateListBoxes();
@@ -83,7 +83,7 @@ void YahooInviteListImpl::removeInvitees( const QStringList &invitees )
 		if( m_buddyList.find( *it ) == m_buddyList.end() )
 			m_buddyList.push_back( *it );
 		if( m_inviteeList.find( *it ) != m_inviteeList.end() )
-			m_inviteeList.remove( *it );
+			m_inviteeList.removeAll( *it );
 	}
 
 	updateListBoxes();

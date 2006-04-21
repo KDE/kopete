@@ -895,7 +895,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 
 	//kDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
 
-	d->groups.remove( from );
+	d->groups.removeAll( from );
 	d->groups.append( to );
 
 	QListIterator<Contact *> it(d->contacts);
@@ -912,7 +912,7 @@ void MetaContact::removeFromGroup( Group *group )
 		return;
 	}
 
-	d->groups.remove( group );
+	d->groups.removeAll( group );
 
 	// make sure MetaContact is at least in one group
 	if ( d->groups.isEmpty() )
@@ -938,7 +938,7 @@ void MetaContact::addToGroup( Group *to )
 
 	if ( d->groups.contains( Group::topLevel() ) )
 	{
-		d->groups.remove( Group::topLevel() );
+		d->groups.removeAll( Group::topLevel() );
 		emit removedFromGroup( this, Group::topLevel() );
 	}
 

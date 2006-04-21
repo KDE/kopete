@@ -1007,7 +1007,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	MSNContact *c=static_cast<MSNContact *>( contacts()[ handle ] );
 	if ( list == "BL" )
 	{
-		m_blockList.remove( handle );
+		m_blockList.removeAll( handle );
 		configGroup()->writeEntry( "blockList" , m_blockList ) ;
 		if ( !m_allowList.contains( handle ) )
 			notifySocket()->addContact( handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
@@ -1017,7 +1017,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	}
 	else if ( list == "AL" )
 	{
-		m_allowList.remove( handle );
+		m_allowList.removeAll( handle );
 		configGroup()->writeEntry( "allowList" , m_allowList ) ;
 		if ( !m_blockList.contains( handle ) )
 			notifySocket()->addContact( handle, MSNProtocol::BL, QString::null, QString::null, QString::null );
@@ -1027,7 +1027,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	}
 	else if ( list == "RL" )
 	{
-		m_reverseList.remove( handle );
+		m_reverseList.removeAll( handle );
 		configGroup()->writeEntry( "reverseList" , m_reverseList ) ;
 
 		if ( c )

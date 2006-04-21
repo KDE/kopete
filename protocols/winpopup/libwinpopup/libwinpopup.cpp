@@ -203,7 +203,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 	if (passedInitialHost) {
 
 		// move currentHost from todo to done
-		todo.remove(currentHost);
+		todo.removeAll(currentHost);
 		done += currentHost;
 
 		if (!currentGroups.isEmpty()) {
