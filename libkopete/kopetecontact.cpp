@@ -414,7 +414,7 @@ void Contact::deserializeProperties(
 		QString type( keyList[1] ); // needed for QVariant casting
 
 		QVariant variant( it.value() );
-		if( !variant.cast(QVariant::nameToType(type.toLatin1())) )
+		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
 		{
 			kDebug(14010) << k_funcinfo <<
 				"Casting QVariant to needed type FAILED" <<
@@ -626,7 +626,7 @@ void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 		return;
 	}
 
-	if(value.isNull() || value.canCast(QVariant::String) && value.toString().isEmpty())
+	if(value.isNull() || value.canConvert(QVariant::String) && value.toString().isEmpty())
 	{
 		removeProperty(tmpl);
 	}

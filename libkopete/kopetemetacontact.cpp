@@ -739,7 +739,7 @@ QImage photoFromContact( Kopete::Contact *contact) /*const*/
 		img= photoProp.value<QImage>();
 	else if(photoProp.canConvert( QVariant::Pixmap ))
 		img=photoProp.value<QPixmap>().toImage();
-	else if(!photoProp.asString().isEmpty())
+	else if(!photoProp.toString().isEmpty())
 	{
 		img=QPixmap( photoProp.toString() ).toImage();
 	}
@@ -808,15 +808,15 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 		{
 			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
 		
-			if(photoProp.canCast( QVariant::Image ))
+			if(photoProp.canConvert( QVariant::Image ))
 			{
 				d->contactPicture.setPicture( photoProp.value<QImage>() );
 			}
-			else if(photoProp.canCast( QVariant::Pixmap ))
+			else if(photoProp.canConvert( QVariant::Pixmap ))
 			{
 				d->contactPicture.setPicture( photoProp.value<QPixmap>().toImage() );
 			}
-			else if(!photoProp.asString().isEmpty())
+			else if(!photoProp.toString().isEmpty())
 			{
 				d->contactPicture.setPicture(photoProp.toString());
 			}
@@ -1417,9 +1417,9 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 			if ( !theAddressee.isEmpty() )
 			{
 				QImage img;
-				if(newValue.canCast( QVariant::Image ))
+				if(newValue.canConvert( QVariant::Image ))
 					img=newValue.value<QImage>();
-				else if(newValue.canCast( QVariant::Pixmap ))
+				else if(newValue.canConvert( QVariant::Pixmap ))
 					img=newValue.value<QPixmap>();
 
 				if(img.isNull())
