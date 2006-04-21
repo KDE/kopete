@@ -99,24 +99,24 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char*/* name*/)
 
 	QIcon iconSet;
 	iconSet = SmallIconSet("up");
-	tbUp->setIconSet(iconSet);
+	tbUp->setIcon(iconSet);
 	tbUp->setEnabled(false);
 	tbUp->setAutoRepeat(true);
 	connect(tbUp, SIGNAL(clicked()), SLOT(slotUpButton()));
 
 	iconSet = SmallIconSet("down");
-	tbDown->setIconSet(iconSet);
+	tbDown->setIcon(iconSet);
 	tbDown->setEnabled(false);
 	tbDown->setAutoRepeat(true);
 	connect(tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
 
 	iconSet = QApplication::isRightToLeft() ? SmallIconSet("back") : SmallIconSet("forward");
-	tbAdd->setIconSet(iconSet);
+	tbAdd->setIcon(iconSet);
 	tbAdd->setEnabled(false);
 	connect(tbAdd, SIGNAL(clicked()), SLOT(slotAddButton()));
 
 	iconSet = QApplication::isRightToLeft() ? SmallIconSet("forward") : SmallIconSet("back");
-	tbRemove->setIconSet(iconSet);
+	tbRemove->setIcon(iconSet);
 	tbRemove->setEnabled(false);
 	connect(tbRemove, SIGNAL(clicked()), SLOT(slotRemoveButton()));
 
