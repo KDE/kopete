@@ -81,12 +81,12 @@ void WPUserInfo::slotDetailsProcessReady(KProcIO *d)
 	QRegExp info("^Domain=\\[(.*)\\]\\sOS=\\[(.*)\\]\\sServer=\\[(.*)\\]$"), host("^Server\\|(.*)\\|(.*)$");
 
 	while (d->readln(tmpLine) > -1) {
-		if (info.search(tmpLine) != -1) {
+		if (info.indexIn(tmpLine) != -1) {
 			Workgroup = info.cap(1);
 			OS = info.cap(2);
 			Software = info.cap(3);
 		}
-		if (host.search(tmpLine) != -1) {
+		if (host.indexIn(tmpLine) != -1) {
 			Comment = host.cap(2);
 		}
 	}

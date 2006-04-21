@@ -161,7 +161,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
 	Kopete::Message msg;
 
-	if(subj.search(Body) == -1) {
+	if(subj.indexIn(Body) == -1) {
 		msg = Kopete::Message(this, contactList, Body, Kopete::Message::Inbound);
 	} else {
 		msg = Kopete::Message(this, contactList, subj.cap(2), subj.cap(1), Kopete::Message::Inbound);

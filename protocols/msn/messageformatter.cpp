@@ -56,7 +56,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		// Retrieve the message mime version, content type,
 		// and p2p destination.
 		QRegExp regex("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
-		regex.search(messageHeader);
+		regex.indexIn(messageHeader);
 		QString contentType = regex.cap(1);
 
 		if(contentType != "application/x-msnmsgrp2p")
@@ -65,11 +65,11 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 //		kDebug(14140) << k_funcinfo << endl;
 	
 		regex = QRegExp("MIME-Version: (\\d.\\d)");
-		regex.search(messageHeader);
+		regex.indexIn(messageHeader);
 		inbound.mimeVersion = regex.cap(1);
 		inbound.contentType = contentType;
 		regex = QRegExp("P2P-Dest: ([^\r\n]*)");
-		regex.search(messageHeader);
+		regex.indexIn(messageHeader);
 		QString destination = regex.cap(1);
 	}
 	

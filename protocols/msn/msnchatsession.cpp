@@ -421,7 +421,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 		return;
 
 	QRegExp rx("Invitation-Cookie: ([0-9]*)");
-	rx.search(msg);
+	rx.indexIn(msg);
 	long unsigned int cookie=rx.cap(1).toUInt();
 
 	if(m_invitations.contains(cookie))
@@ -452,7 +452,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 			else
 			{
 				rx=QRegExp("Application-Name: ([^\\r\\n]*)");
-				rx.search(msg);
+				rx.indexIn(msg);
 				QString inviteName = rx.cap( 1 );
 
 				QString body = i18n(

@@ -75,7 +75,7 @@ void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 		for ( it = map.begin(); it != map.end(); ++it )
 		{
 			QRegExp re( match.arg( QRegExp::escape( it.key() ) ) );
-			if( re.search( replaced_message ) != -1 )
+			if( re.indexIn( replaced_message ) != -1 )
 			{
 				QString before = re.cap(1);
 				QString after = re.cap(3);

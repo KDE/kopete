@@ -72,7 +72,7 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 	QTextCodec *codec = getPageEncoding( data );
 	QString htmlpage = codec->toUnicode( data );
 	QRegExp rx("<(?:title|TITLE)>([^<]*)</(?:title|TITLE)>");
-	int pos = rx.search( htmlpage );
+	int pos = rx.indexIn( htmlpage );
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 	KBookmarkGroup group = getKopeteFolder();
 	QString sender = m_map[(KIO::TransferJob*)transfer].sender;
@@ -100,7 +100,7 @@ KUrl::List* BookmarksPlugin::extractURLsFromString( QString text )
 	int pos=0;
 	KUrl url;
 	
-	for(; (pos=rx.search(text, pos))!=-1; pos+=rx.matchedLength()){
+	for(; (pos=rx.indexIn(text, pos))!=-1; pos+=rx.matchedLength()){
 	 //as long as there is a matching URL in text
 		url = text.mid(pos+9, rx.matchedLength()-10);
 		// assuming that in formatted messages links appear as <a href="link"
@@ -167,7 +167,7 @@ QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 {
 	QString temp = QString::fromLatin1(data);
 	QRegExp rx("<meta[^>]*(charset|CHARSET)\\s*=\\s*[^>]*>");
-	int pos = rx.search( temp );
+	int pos = rx.indexIn( temp );
 	QTextCodec *codec;
 	
 	if( pos == -1 ){

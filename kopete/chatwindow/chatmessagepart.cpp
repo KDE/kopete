@@ -874,7 +874,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	// Look for %time{X}%
 	QRegExp timeRegExp("%time\\{([^}]*)\\}%");
 	int pos=0;
-	while( (pos=timeRegExp.search(resultHTML , pos) ) != -1 )
+	while( (pos=timeRegExp.indexIn(resultHTML , pos) ) != -1 )
 	{
 		QString timeKeyword = formatTime( timeRegExp.cap(1), message.timestamp() );
 		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
@@ -892,7 +892,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 
 	QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
 	int textPos=0;
-	while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
+	while( (textPos=textBackgroundRegExp.indexIn(resultHTML, textPos) ) != -1 )
 	{
 		resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , bgColor );
 	}

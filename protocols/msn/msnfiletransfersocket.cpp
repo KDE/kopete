@@ -340,15 +340,15 @@ QString MSNFileTransferSocket::invitationHead()
 void MSNFileTransferSocket::parseInvitation(const QString& msg)
 {
 	QRegExp rx("Invitation-Command: ([A-Z]*)");
-	rx.search(msg);
+	rx.indexIn(msg);
 	QString command=rx.cap(1);
 	if( msg.contains("Invitation-Command: INVITE") )
 	{
 		rx=QRegExp("Application-File: ([^\\r\\n]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		QString filename = rx.cap(1);
 		rx=QRegExp("Application-FileSize: ([0-9]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		unsigned long int filesize= rx.cap(1).toUInt();
 
 		MSNInvitation::parseInvitation(msg); //for the cookie
@@ -364,13 +364,13 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 		if(incoming())
 		{
 			rx=QRegExp("IP-Address: ([0-9\\.]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			QString ip_address = rx.cap(1);
 			rx=QRegExp("AuthCookie: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			QString authcook = rx.cap(1);
 			rx=QRegExp("Port: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			QString port = rx.cap(1);
 
 			setAuthCookie(authcook);

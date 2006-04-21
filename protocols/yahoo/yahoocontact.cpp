@@ -227,7 +227,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)font-weight:600([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
@@ -238,7 +238,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)text-decoration:underline([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 		newMsg.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
@@ -249,7 +249,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)font-style:italic([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
@@ -260,7 +260,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
@@ -271,7 +271,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)font-family:([^;\"]*)([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
@@ -282,7 +282,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)font-size:([0-9]*)pt([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
@@ -293,7 +293,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( messageText, pos );
+		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsg.replace( regExp, QString::fromLatin1("\\2") );

@@ -311,7 +311,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				QString mediaAdvert = mediaPlayerAdvert(false);
 				if(!mediaAdvert.isEmpty())
 				{
-					if(statusSong.search(advert) != -1)
+					if(statusSong.indexIn(advert) != -1)
 					{
 						advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
 					}

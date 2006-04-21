@@ -356,7 +356,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 			QDomElement  msgElem2 = n.toElement();
 			if( !msgElem2.isNull() && msgElem2.tagName()=="msg")
 			{
-				rxTime.search(msgElem2.attribute("time"));
+				rxTime.indexIn(msgElem2.attribute("time"));
 				QDateTime dt( QDate(date.year() , date.month() , rxTime.cap(1).toUInt()), QTime( rxTime.cap(2).toUInt() , rxTime.cap(3).toUInt(), rxTime.cap(5).toUInt()  ) );
 
 				if (dt.date() != date)
@@ -490,7 +490,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 					QDomElement  msgElem2 = n.toElement();
 					if( !msgElem2.isNull() && msgElem2.tagName()=="msg")
 					{
-						rxTime.search(msgElem2.attribute("time"));
+						rxTime.indexIn(msgElem2.attribute("time"));
 						QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
 						QDateTime dt( QDate(d.year() , d.month() , rxTime.cap(1).toUInt()), QTime( rxTime.cap(2).toUInt() , rxTime.cap(3).toUInt(), rxTime.cap(5).toUInt()  ) );
 						if(!timestamp.isValid() || ((sens==Chronological )? dt < timestamp : dt > timestamp) )
@@ -587,7 +587,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 					if(!timestamp.isValid())
 					{
 						//parse timestamp only if it was not already parsed
-						rxTime.search(msgElem.attribute("time"));
+						rxTime.indexIn(msgElem.attribute("time"));
 						QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
 						timestamp=QDateTime( QDate(d.year() , d.month() , rxTime.cap(1).toUInt()), QTime( rxTime.cap(2).toUInt() , rxTime.cap(3).toUInt() , rxTime.cap(5).toUInt() ) );
 					}
@@ -634,7 +634,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 							// In case of hideoutgoing messages, it is faster to do
 							// this, so we don't parse the date if it is not needed
 							QRegExp rx("(\\d+) (\\d+):(\\d+):(\\d+)");
-							rx.search(msgElem.attribute("time"));
+							rx.indexIn(msgElem.attribute("time"));
 
 							QDate d = QDate::currentDate().addMonths(0-m_currentMonth);
 							timestamp = QDateTime(
@@ -714,7 +714,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 	{
 		if(fi.fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
 		{
-			rx.search(fi.fileName());
+			rx.indexIn(fi.fileName());
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
 
 			if(result < 0)
@@ -743,7 +743,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 	{
 		if(fi.fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
 		{
-			rx.search(fi.fileName());
+			rx.indexIn(fi.fileName());
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
 			if(result < 0)
 			{
@@ -830,7 +830,7 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 		file.close();
 
 		int pos = 0;
-		while( (pos = rxTime.search(fullText, pos)) != -1)
+		while( (pos = rxTime.indexIn(fullText, pos)) != -1)
 		{
 			pos += rxTime.matchedLength();
 			int day=rxTime.capturedTexts()[1].toInt();

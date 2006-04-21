@@ -867,7 +867,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 	regExp.setPattern( "<font([^>]*)size=\"([^>]*)\"([^>]*)>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( newMsgText, pos );
+		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 		newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
@@ -878,7 +878,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 	regExp.setPattern( "<[/]*FADE([^>]*)>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( newMsgText, pos );
+		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("" ) );
@@ -888,7 +888,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 	regExp.setPattern( "<[/]*ALT([^>]*)>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( newMsgText, pos );
+		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("" ) );
@@ -899,7 +899,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 	regExp.setPattern( "<(?!(/*(font.*|[\"fbui])>))" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( newMsgText, pos );
+		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("&lt;" ) );
@@ -908,7 +908,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 	regExp.setPattern( "([^\"bui])>" );
 	pos = 0;
 	while ( pos >= 0 ) {
-		pos = regExp.search( newMsgText, pos );
+		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("\\1&gt;" ) );

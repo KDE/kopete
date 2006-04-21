@@ -291,7 +291,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 	QRegExp re( "<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>" );
 	re.setMinimal( true );
-	re.search( data );
+	re.indexIn( data );
 
 	return re.cap( 1 );
 }
@@ -326,7 +326,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 
 	QRegExp re( "<Div style=padding:10px; lang=..>(.*)</div" );
 	re.setMinimal( true );
-	re.search( data );
+	re.indexIn( data );
 
 	return re.cap( 1 );
 }

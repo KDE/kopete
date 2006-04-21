@@ -57,7 +57,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 
 		// Get the login URL using QRegExp
 		QRegExp rx("PassportURLs: DARealm=(.*),DALogin=(.*),DAReg=");
-		rx.search(httpHeaders);
+		rx.indexIn(httpHeaders);
 
 		// Set the loginUrl and loginServer
 		QString loginUrl = rx.cap(2);
@@ -113,7 +113,7 @@ void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
 		else
 		{
 			QRegExp rx("from-PP='(.*)'");
-			rx.search(httpHeaders);
+			rx.indexIn(httpHeaders);
 			QString ticket = rx.cap(1);
 		
 	//		kDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;

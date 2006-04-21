@@ -183,10 +183,10 @@ void WinPopupLib::slotReadProcessReady(KProcIO *r)
 			error("Connection.*failed");
 
 	while (r->readln(tmpLine) > -1) {
-		if (info.search(tmpLine) != -1) currentGroup = info.cap(1);
-		if (host.search(tmpLine) != -1) currentHosts += host.cap(1);
-		if (group.search(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
-		if (error.search(tmpLine) != -1) {
+		if (info.indexIn(tmpLine) != -1) currentGroup = info.cap(1);
+		if (host.indexIn(tmpLine) != -1) currentHosts += host.cap(1);
+		if (group.indexIn(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
+		if (error.indexIn(tmpLine) != -1) {
 			kDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
 			if (currentHost == QString::fromLatin1("LOCALHOST")) currentHost = QString::fromLatin1("failed"); // to be sure
 		}

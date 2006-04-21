@@ -402,7 +402,7 @@ QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
 
 	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
 	rx.setMinimal( true );
-	if ( rx.search( msgText ) == -1 )
+	if ( rx.indexIn( msgText ) == -1 )
 	{
 		// no URLs in text, just pick the first 30 chars of
 		// the parsed text if necessary. We used parsed text

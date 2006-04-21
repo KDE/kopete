@@ -123,7 +123,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	while (pos >= 0 && (unsigned int)pos < messageText.length())
 	{
 //		kDebug() << k_funcinfo  << " searching pos: " << pos << endl;
-		pos = rg.search(messageText, pos);
+		pos = rg.indexIn(messageText, pos);
 		
 		if (pos >= 0 )
 		{

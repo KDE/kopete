@@ -197,20 +197,20 @@ void IncomingTransfer::processMessage(const Message& message)
 			// Retrieve some MSNSLP headers used when
 			// replying to this INVITE message.
 			QRegExp regex(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			m_branch = regex.cap(1);
 			// NOTE Call-ID never changes.
 			regex = QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			m_callId = regex.cap(1);
 			regex = QRegExp("Bridges: ([^\r\n]*)\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			QString bridges = regex.cap(1);
 			// The NetID field is 0 if the Conn-Type is
 			// Direct-Connect or Firewall, otherwise, it is
 			// a randomly generated number.
 			regex = QRegExp("NetID: (\\-?\\d+)\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			QString netId = regex.cap(1);
 			kDebug(14140) << "net id, " << netId << endl;
 			// Connection Types
@@ -220,7 +220,7 @@ void IncomingTransfer::processMessage(const Message& message)
 			// - Symmetric-NAT
 			// - Firewall
 			regex = QRegExp("Conn-Type: ([^\r\n]+)\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			QString connType = regex.cap(1);
 
 			bool wouldListen = false;

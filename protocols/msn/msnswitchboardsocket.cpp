@@ -231,11 +231,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	QString msg = QString::fromUtf8(bytes, bytes.size());
 
 	QRegExp rx("Content-Type: ([A-Za-z0-9/\\-]*)");
-	rx.search(msg);
+	rx.indexIn(msg);
 	QString type=rx.cap(1);
 
 	rx=QRegExp("User-Agent: ([A-Za-z0-9./\\-]*)");
-	rx.search(msg);
+	rx.indexIn(msg);
 	QString clientStr=rx.cap(1);
 
 	if( !clientStr.isNull() && !m_msgHandle.isNull())
@@ -262,7 +262,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		if(msg.contains("ID:"))
 		{
 			QRegExp rx("ID: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			uint dataCastId = rx.cap(1).toUInt();
 			if( dataCastId == 1 )
 			{
@@ -288,7 +288,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			QString color;
 
 			rx=QRegExp("X-MMS-IM-Format: ([^\r\n]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			fontInfo =rx.cap(1);
 
 			color = parseFontAttr(fontInfo, "CO");
@@ -370,10 +370,10 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		kmsg.setFont( font );
 
 		rx=QRegExp("Chunks: ([0-9]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		unsigned int chunks=rx.cap(1).toUInt();
 		rx=QRegExp("Chunk: ([0-9]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		unsigned int chunk=rx.cap(1).toUInt();
 
 		if(chunk != 0 && !m_msgQueue.isEmpty())
@@ -413,7 +413,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		{
 			QRegExp rx("([^\\s]*)[\\s]*(<msnobj [^>]*>)");
 			rx.setMinimal(true);
-			int pos = rx.search(msg);
+			int pos = rx.indexIn(msg);
 			while( pos != -1)
 			{
 				QString msnobj=rx.cap(2);
@@ -431,7 +431,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 					m_recvIcons++;
 					PeerDispatcher()->requestDisplayIcon(m_msgHandle, msnobj);
 				}
-				pos=rx.search(msg, pos+rx.matchedLength());
+				pos=rx.indexIn(msg, pos+rx.matchedLength());
 			}
 		}
 	}
@@ -443,7 +443,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	{
 		
 		rx=QRegExp("Client-Name: ([A-Za-z0-9.$!*/\\-]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		clientStr=rx.cap(1);
 
 		if( !clientStr.isNull() && !m_msgHandle.isNull())
@@ -508,13 +508,13 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	{
 		// Incoming inkformatgif.
 		QRegExp regex("Message-ID: \\{([0-9A-F\\-]*)\\}");
-		regex.search(msg);
+		regex.indexIn(msg);
 		QString messageId = regex.cap(1);
 		regex = QRegExp("Chunks: (\\d+)");
-		regex.search(msg);
+		regex.indexIn(msg);
 		QString chunks = regex.cap(1);
 		regex = QRegExp("Chunk: (\\d+)");
-		regex.search(msg);
+		regex.indexIn(msg);
 		QString chunk = regex.cap(1);
 
 		if(!messageId.isNull())
@@ -525,7 +525,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			if(valid && (numberOfChunks > 1))
 			{
 				regex = QRegExp("base64:([0-9a-zA-Z+/=]+)");
-				regex.search(msg);
+				regex.indexIn(msg);
 				// Retrieve the first chunk of the ink format gif.
 				QString base64 = regex.cap(1);
 				// More chunks are expected, buffer the chunk received.
@@ -539,7 +539,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		{
 			// There is only one chunk of data.
 			regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
-			regex.search(msg);
+			regex.indexIn(msg);
 			// Retrieve the base64 encoded ink data.
 			QString data = regex.cap(1);
 			DispatchInkMessage(data);
@@ -697,7 +697,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	if( msg.format() & Kopete::Message::RichText )
 	{
 		QRegExp regex("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
-		if(regex.search(msg.escapedBody()) != -1)
+		if(regex.indexIn(msg.escapedBody()) != -1)
 		{
 			// FIXME why are we sending the images.. the contact should request them.
 			PeerDispatcher()->sendImage(regex.cap(1), m_msgHandle);

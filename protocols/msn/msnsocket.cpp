@@ -48,7 +48,7 @@ class MimeMessage
 		QString getValue(const QString &key)
 		{
 			QRegExp rx(key+": ([^\r\n]+)");
-			rx.search(message);
+			rx.indexIn(message);
 			return rx.cap(1);
 		}
 	private:
@@ -261,7 +261,7 @@ void MSNSocket::slotDataReceived()
 				{
 					// Only the response headers data is included.
 					QRegExp re("Content-Length: ([^\r\n]+)");
-					if(re.search(rawData) != -1)
+					if(re.indexIn(rawData) != -1)
 					{
 						bool valid;
 						int l = re.cap(1).toInt(&valid);
@@ -1015,7 +1015,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 	headerEnd  = data.find("\r\n");
 	header     = data.left( (headerEnd == -1) ? 20 : headerEnd );
 
-	re.search(header);
+	re.indexIn(header);
 	m_statusCode = re.cap(1).toInt();
 	m_statusDescription = re.cap(2);
 

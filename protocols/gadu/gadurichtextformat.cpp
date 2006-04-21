@@ -157,7 +157,7 @@ GaduRichTextFormat::convertToGaduMessage( const Kopete::Message& message )
 		int lastpos = 0;
 
 		while ( pos >= 0 ){
-			pos = findTags.search( htmlString );
+			pos = findTags.indexIn( htmlString );
 			rtfs.font = 0;
 			if ( pos != lastpos ) {
 				QString tmp;

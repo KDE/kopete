@@ -343,7 +343,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		uint lists;
 
 		QRegExp regex("N=([^ ]+)(?: F=([^ ]+))?(?: C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))? (\\d+)\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
-		regex.search(data);
+		regex.indexIn(data);
 
 		// Capture passport email.
 		m_tmpLastHandle = regex.cap(1);
@@ -450,7 +450,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
 		// Thanks Gregg for that complex RegExp.
 		QRegExp regex("(?:N=([^ ]+))?(?: F=([^ ]+))?(?: C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
-		regex.search( data.section( ' ', 1 ) );
+		regex.indexIn( data.section( ' ', 1 ) );
 
 		// Capture passport email.
 		msnId = regex.cap(1);
@@ -757,7 +757,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		// O  - other mail
 		// OU - other unread.
 		QRegExp regex("<MD><E><I>(\\d+)?</I>(?:<IU>(\\d+)?</IU>)<O>(\\d+)?</O><OU>(\\d+)?</OU></E><Q>.*</Q></MD>");
-		regex.search(msg);
+		regex.indexIn(msg);
 
 		bool unread;
 		// Retrieve the number of unread email messages.
@@ -781,7 +781,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 	{
 		 //this sends the server if a new mail has arrived
 		QRegExp rx("From-Addr: ([A-Za-z0-9@._\\-]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		QString m=rx.cap(1);
 
 		mailCount++;
@@ -797,25 +797,25 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		if(msg.contains("MSPAuth:"))
 		{
 			QRegExp rx("MSPAuth: ([A-Za-z0-9$!*]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			m_MSPAuth=rx.cap(1);
 		}
 		if(msg.contains("sid:"))
 		{
 			QRegExp rx("sid: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			m_sid=rx.cap(1);
 		}
 		if(msg.contains("kv:"))
 		{
 			QRegExp rx("kv: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			m_kv=rx.cap(1);
 		}
 		if(msg.contains("LoginTime:"))
 		{
 			QRegExp rx("LoginTime: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			m_loginTime=rx.cap(1);
 		}
 			else //IN MSNP9  there are no logintime it seems, so set it manualy
@@ -827,14 +827,14 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		if(msg.contains("EmailEnabled:"))
 		{
 			QRegExp rx("EmailEnabled: ([0-9]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			m_isHotmailAccount = (rx.cap(1).toUInt() == 1);
 			emit hotmailSeted(m_isHotmailAccount);
 		}
 		if(msg.contains("ClientIP:"))
 		{
 			QRegExp rx("ClientIP: ([0-9.]*)");
-			rx.search(msg);
+			rx.indexIn(msg);
 			m_localIP = rx.cap(1);
 		}
 	}

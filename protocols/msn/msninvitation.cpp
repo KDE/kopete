@@ -71,13 +71,13 @@ QByteArray MSNInvitation::rejectMessage(const QString & rejectcode)
 void MSNInvitation::parseInvitation(const QString& msg)
 {
 	QRegExp rx("Invitation-Command: ([A-Z]*)");
-	rx.search(msg);
+	rx.indexIn(msg);
 	QString command=rx.cap(1);
 
 	if(command=="INVITE")
 	{
 		rx=QRegExp("Invitation-Cookie: ([0-9]*)");
-		rx.search(msg);
+		rx.indexIn(msg);
 		m_cookie=rx.cap(1).toUInt();
 	}
 	else if(command=="CANCEL")

@@ -216,7 +216,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 	{
 		// Retrieve the message content type.
 		QRegExp regex("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
-		regex.search(body);
+		regex.indexIn(body);
 		QString contentType = regex.cap(1);
 
 		if(contentType == "application/x-msnmsgr-sessionreqbody")
@@ -265,7 +265,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 			// Determine whether the recipient created
 			// a listening endpoint.
 			regex = QRegExp("Listening: ([^\r\n]+)\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			bool isListening = (regex.cap(1) == "true");
 
 			// Send the recipient an acknowledge message.
@@ -284,12 +284,12 @@ void OutgoingTransfer::processMessage(const Message& message)
 				m_nonce = regex.cap(1);
 				// Retrieve the listening endpoints of the receiving client.
 				regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]+)\r\n");
-				regex.search(body);
+				regex.indexIn(body);
 				m_peerEndpoints = QStringList::split(" ", regex.cap(1));
 				m_endpointIterator = m_peerEndpoints.begin();
 				// Retrieve the listening port of the receiving client.
 				regex = QRegExp("IPv4Internal-Port: ([^\r\n]+)\r\n");
-				regex.search(body);
+				regex.indexIn(body);
 				m_remotePort = regex.cap(1);
 
 				// Try to connect to the receiving client's

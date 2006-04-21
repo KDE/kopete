@@ -286,7 +286,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 		{
 			if(fi.fileName().contains(contact_in_filename))
 			{
-				rx.search(fi.fileName());
+				rx.indexIn(fi.fileName());
 
 				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
@@ -314,7 +314,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 			if(fi.fileName().contains(contact_in_filename))
 			{
 				
-				rx.search(fi.fileName());
+				rx.indexIn(fi.fileName());
 				
 				// We search for an item in the list view with the same year. If then we add the month
 				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
@@ -530,7 +530,7 @@ void HistoryDialog::searchFirstStep()
 				{
 					if (textLine.contains(mMainWidget->searchLine->text(), false))
 					{
-						rx.search(textLine);
+						rx.indexIn(textLine);
 						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())].push_back(mSearch->item->metaContact());
 					}
 				}

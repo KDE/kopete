@@ -296,7 +296,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
 		QRegExp regex("SessionID: ([0-9]*)\r\n");
-		if(regex.search(body) > 0)
+		if(regex.indexIn(body) > 0)
 		{
 			quint32 sessionId = regex.cap(1).toUInt();
 			if(m_sessions.contains(sessionId)){
@@ -318,7 +318,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// If the message handler still has not been found,
 				// try to retrieve the handler based on the call id.
 				regex = QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
-				regex.search(body);
+				regex.indexIn(body);
 				QString callId = regex.cap(1);
 
 				TransferContext *current = 0l;
@@ -368,23 +368,23 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			// These fields will be used later on in the p2p
 			// transaction.
 			QRegExp regex(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			QString branch = regex.cap(1);
 			regex = QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			QString callId = regex.cap(1);
 			regex = QRegExp("SessionID: ([0-9]*)\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			QString sessionId = regex.cap(1);
 			// Retrieve the contact that requested the session.
 			regex = QRegExp("From: <msnmsgr:([^>]*)>");
-			regex.search(body);
+			regex.indexIn(body);
 			QString from = regex.cap(1);
 			// Retrieve the application identifier which
 			// is used to determine what type of session
 			// is being requested.
 			regex = QRegExp("AppID: ([0-9]*)\r\n");
-			regex.search(body);
+			regex.indexIn(body);
 			quint32 applicationId = regex.cap(1).toUInt();
 
 			if(applicationId == 1  || applicationId == 12)
@@ -393,7 +393,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// a display icon (User Display Icon or CustomEmotion).
 
 				regex = QRegExp("Context: ([0-9a-zA-Z+/=]*)");
-				regex.search(body);
+				regex.indexIn(body);
 				QByteArray msnobj;
 
 				// Decode the msn object from base64 encoding.
@@ -453,7 +453,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				m_sessions.insert(sessionId.toUInt(), transfer);
 
 				regex = QRegExp("Context: ([0-9a-zA-Z+/=]*)");
-				regex.search(body);
+				regex.indexIn(body);
 				QByteArray context;
 
 				// Decode the file context from base64 encoding.
@@ -565,7 +565,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			}
 
 			QRegExp regex("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
-			regex.search(body);
+			regex.indexIn(body);
 			QString contentType = regex.cap(1);
 
 			if(contentType == "image/gif")
@@ -574,7 +574,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				transfer.acknowledge(message);
 
 				regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
-				regex.search(body);
+				regex.indexIn(body);
 				QString base64 = regex.cap(1);
 				QByteArray image;
 // 				Convert from base64 encoding to byte array.
