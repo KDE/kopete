@@ -361,7 +361,7 @@ void Contact::setMetaContact( MetaContact *m )
 	if( m )
 	{
 		m->addContact( this );
-		m->insertChild( this );
+		setParent( m );
 		// it is necessary to call this write here, because MetaContact::addContact() does not differentiate
 		// between adding completely new contacts (which should be written to kabc) and restoring upon restart
 		// (where no write is needed).
@@ -637,7 +637,8 @@ void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 		if(oldValue != value)
 		{
 			Kopete::ContactProperty prop(tmpl, value);
-			d->properties.insert(tmpl.key(), prop, true);
+			d->properties.remove(tmpl.key());
+			d->properties.insert(tmpl.key(), prop);
 
 			emit propertyChanged(this, tmpl.key(), oldValue, value);
 		}
