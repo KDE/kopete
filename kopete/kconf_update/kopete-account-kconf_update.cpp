@@ -195,8 +195,8 @@ void flushData( const QString &group )
 
 int main()
 {
-	qcin.setEncoding( QTextStream::UnicodeUTF8 );
-	qcout.setEncoding( QTextStream::UnicodeUTF8 );
+	qcin.setCodec(QTextCodec::codecForName("UTF-8"));
+	qcout.setCodec(QTextCodec::codecForName("UTF-8"));
 
 	QString curGroup;
 

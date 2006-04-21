@@ -175,7 +175,7 @@ void GlobalIdentitiesManager::saveXML()
 	if( globalIdentitiesListFile.status() == 0 )
 	{
 		QTextStream *stream = globalIdentitiesListFile.textStream();
-		stream->setEncoding( QTextStream::UnicodeUTF8 );
+		stream->setCodec(QTextCodec::codecForName("UTF-8"));
 		toXML().save( *stream, 4 );
 
 		if ( globalIdentitiesListFile.close() )

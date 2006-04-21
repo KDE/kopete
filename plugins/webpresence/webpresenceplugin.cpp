@@ -313,7 +313,7 @@ KTempFile* WebPresencePlugin::generateFile()
 	// write the XML to a temporary file
 	KTempFile* file = new KTempFile();
 	QTextStream *stream = file->textStream();
-	stream->setEncoding( QTextStream::UnicodeUTF8 );
+	stream->setCodec(QTextCodec::codecForName("UTF-8"));
 	doc.save( *stream, 4 );
 	file->close();
 	return file;

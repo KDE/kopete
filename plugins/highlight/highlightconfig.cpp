@@ -163,7 +163,7 @@ void HighlightConfig::save()
 	if( file.status() == 0 )
 	{
 		QTextStream *stream = file.textStream();
-		stream->setEncoding( QTextStream::UnicodeUTF8 );
+		stream->setCodec(QTextCodec::codecForName("UTF-8"));
 
 		QString xml = QString::fromLatin1(
 			"<?xml version=\"1.0\"?>\n"

@@ -853,7 +853,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 
 	contactListFile.open( QIODevice::WriteOnly );
 	QTextStream stream( &contactListFile );
-	stream.setEncoding( QTextStream::UnicodeUTF8 );
+	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 	stream << newList.toString( 2 );
 
 	contactListFile.flush();
@@ -878,7 +878,7 @@ void Kopete::ContactList::saveXML()
 	if( contactListFile.status() == 0 )
 	{
 		QTextStream *stream = contactListFile.textStream();
-		stream->setEncoding( QTextStream::UnicodeUTF8 );
+		stream->setCodec(QTextCodec::codecForName("UTF-8"));
 		toXML().save( *stream, 4 );
 
 		if ( contactListFile.close() )

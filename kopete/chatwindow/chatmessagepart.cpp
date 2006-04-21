@@ -269,7 +269,7 @@ void ChatMessagePart::save()
 	QFile* file = tempFile.file();
 
 	QTextStream stream ( file );
-	stream.setEncoding(QTextStream::UnicodeUTF8);
+	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 
 	if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
 	{

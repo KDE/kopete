@@ -124,7 +124,7 @@ int main()
 	// Save converted contactlist
 	contactListFile.open( QIODevice::WriteOnly );
 	QTextStream stream( &contactListFile );
-	stream.setEncoding( QTextStream::UnicodeUTF8 );
+	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 	stream << contactList.toString( 4 );
 	contactListFile.flush();
 	contactListFile.close();
