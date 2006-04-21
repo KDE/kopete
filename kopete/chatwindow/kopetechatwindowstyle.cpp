@@ -180,7 +180,7 @@ void ChatWindowStyle::readStyleFiles()
 	// First load header file.
 	if( QFile::exists(headerFile) )
 	{
-		fileAccess.setName(headerFile);
+		fileAccess.setFileName(headerFile);
 		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -191,7 +191,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load Footer file
 	if( QFile::exists(footerFile) )
 	{
-		fileAccess.setName(footerFile);
+		fileAccess.setFileName(footerFile);
 		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -202,7 +202,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load incoming file
 	if( QFile::exists(incomingFile) )
 	{
-		fileAccess.setName(incomingFile);
+		fileAccess.setFileName(incomingFile);
 		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -213,7 +213,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load next Incoming file
 	if( QFile::exists(nextIncomingFile) )
 	{
-		fileAccess.setName(nextIncomingFile);
+		fileAccess.setFileName(nextIncomingFile);
 		fileAccess.open(IO_ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -224,7 +224,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load outgoing file
 	if( QFile::exists(outgoingFile) )
 	{
-		fileAccess.setName(outgoingFile);
+		fileAccess.setFileName(outgoingFile);
 		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -235,7 +235,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load next outgoing file
 	if( QFile::exists(nextOutgoingFile) )
 	{
-		fileAccess.setName(nextOutgoingFile);
+		fileAccess.setFileName(nextOutgoingFile);
 		fileAccess.open(IO_ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -246,7 +246,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load status file
 	if( QFile::exists(statusFile) )
 	{
-		fileAccess.setName(statusFile);
+		fileAccess.setFileName(statusFile);
 		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -258,7 +258,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load Action Incoming file
 	if( QFile::exists(actionIncomingFile) )
 	{
-		fileAccess.setName(actionIncomingFile);
+		fileAccess.setFileName(actionIncomingFile);
 		fileAccess.open(IO_ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
@@ -269,7 +269,7 @@ void ChatWindowStyle::readStyleFiles()
 	// Load Action Outgoing file
 	if( QFile::exists(actionOutgoingFile) )
 	{
-		fileAccess.setName(actionOutgoingFile);
+		fileAccess.setFileName(actionOutgoingFile);
 		fileAccess.open(IO_ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
