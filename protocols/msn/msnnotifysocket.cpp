@@ -611,7 +611,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 		// id is the timeout in fact, and we remove 5% of it
 		if( m_keepaliveTimer )
-			m_keepaliveTimer->start( id * 950, true );
+		{
+			m_keepaliveTimer->setSingleShot( true );
+			m_keepaliveTimer->start( id * 950 );
+		}
 		kDebug( 14140 ) << k_funcinfo << "timerTimeout=" << id << "sec"<< endl;
 	}
 	else if( cmd == "URL" )

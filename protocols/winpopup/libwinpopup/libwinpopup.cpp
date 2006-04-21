@@ -41,7 +41,8 @@ WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq)
 {
 	connect(&updateGroupDataTimer, SIGNAL(timeout()), this, SLOT(slotUpdateGroupData()));
 
-	updateGroupDataTimer.start(1, true);
+	updateGroupDataTimer.setSingleShot(true);
+	updateGroupDataTimer.start(1);
 	QTimer::singleShot(1, this, SLOT(slotStartDirLister()));
 }
 
@@ -244,7 +245,8 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 		startReadProcess(currentHost);
 	} else {
 		theGroups = currentGroupsMap;
-		updateGroupDataTimer.start(groupCheckFreq * 1000, true);
+		updateGroupDataTimer.setSingleShot(true);
+		updateGroupDataTimer.start(groupCheckFreq * 1000);
 	}
 }
 

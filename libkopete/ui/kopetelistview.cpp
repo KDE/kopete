@@ -244,7 +244,10 @@ void ListView::keyPressEvent( QKeyEvent *e )
 void ListView::delayedSort()
 {
 	if ( !d->sortTimer.isActive() )
-		d->sortTimer.start( 500, true );
+	{
+		d->sortTimer.setSingleShot( true );
+		d->sortTimer.start( 500 );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -521,7 +521,8 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	{
 		m_remoteTypingMap.insert( key, new QTimer(this) );
 		connect( m_remoteTypingMap[ key ], SIGNAL( timeout() ), SLOT( slotRemoteTypingTimeout() ) );
-		m_remoteTypingMap[ key ]->start( 6000, true );
+		m_remoteTypingMap[ key ]->setSingleShot( true );
+		m_remoteTypingMap[ key ]->start( 6000 );
 	}
 
 	// Loop through the map, constructing a string of people typing

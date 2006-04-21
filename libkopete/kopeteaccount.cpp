@@ -427,7 +427,8 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		// contact list's size, the protocol you are using, your internet
 		// connection's speed and your computer's speed you *will* need it.
 		d->suppressStatusNotification = true;
-		d->suppressStatusTimer.start( 5000, true );
+		d->suppressStatusTimer.setSingleShot( true );
+		d->suppressStatusTimer.start( 5000 );
 		//the timer is also used to reset the d->connectionTry
 	}
 
@@ -441,7 +442,8 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 {
 	d->suppressStatusNotification = true;
-	d->suppressStatusTimer.start( 5000, true );
+	d->suppressStatusTimer.setSingleShot( true );
+	d->suppressStatusTimer.start( 5000 );
 
 	QHashIterator<QString, Contact*> it(d->contacts);
 	for (  ; it.hasNext(); ) {

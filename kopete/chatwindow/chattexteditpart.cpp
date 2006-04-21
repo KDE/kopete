@@ -323,12 +323,14 @@ void ChatTextEditPart::slotTextChanged()
 		// And they were previously typing
 		if( !m_typingRepeatTimer->isActive() )
 		{
-			m_typingRepeatTimer->start( 4000, false );
+			m_typingRepeatTimer->setSingleShot( false );
+			m_typingRepeatTimer->start( 4000 );
 			slotRepeatTypingTimer();
 		}
 
 		// Reset the stop timer again, regardless of status
-		m_typingStopTimer->start( 4500, true );
+		m_typingStopTimer->setSingleShot( true );
+		m_typingStopTimer->start( 4500 );
 	}
 
 	emit canSendChanged( canSend() );

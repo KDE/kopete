@@ -150,14 +150,16 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 	{
 		mIsBlinkIcon = true;
 		mIsBlinking = true;
-		mBlinkTimer->start( 1000, false );
+		mBlinkTimer->setSingleShot( false );
+		mBlinkTimer->start( 1000 );
 	}
 	else
 	{
 		mBlinkTimer->stop();
 		mIsBlinkIcon = true;
 		mIsBlinking = true;
-		mBlinkTimer->start( 1000, false );
+		mBlinkTimer->setSingleShot( false );
+		mBlinkTimer->start( 1000 );
 	}
 }
 

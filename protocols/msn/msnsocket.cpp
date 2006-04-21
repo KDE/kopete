@@ -787,7 +787,8 @@ void MSNSocket::slotConnectionSuccess()
 		m_pending  = false;
 		m_bCanPoll = false;
 		// If we are connected, start the timer.
-		m_timer->start(2000, false);
+		m_timer->setSingleShot(false);
+		m_timer->start(2000);
 	}
 
 	//kDebug( 14140 ) << k_funcinfo << endl;

@@ -298,7 +298,10 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 		connect( m_saveTimer, SIGNAL( timeout() ) , this, SLOT(saveToDisk()) );
 	}
 	if(!m_saveTimer->isActive())
-		m_saveTimer->start( m_saveTimerTime, true /*singleshot*/ );
+	{
+		m_saveTimer->setSingleShot( true );
+		m_saveTimer->start( m_saveTimerTime );
+	}
 }
 
 void HistoryLogger::saveToDisk()

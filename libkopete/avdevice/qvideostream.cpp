@@ -568,7 +568,8 @@ bool QVideoStreamGLWidget::eventFilter(QObject*, QEvent* e)
     if(e->type() == 6) {
         QKeyEvent* ke = static_cast<QKeyEvent*>(e);
         if(ke->key() == Qt::Key_Pause) {
-            _glfunTimer->start(500, true);
+            _glfunTimer->setSingleShot(true);
+            _glfunTimer->start(500);
         } else if (_glfunTimer->isActive() && (ke->key() == Qt::Key_Escape)) {
             _glfun = !_glfun;
         }

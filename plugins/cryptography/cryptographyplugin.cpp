@@ -129,7 +129,10 @@ void CryptographyPlugin::setCachedPass(const QByteArray& p)
 	if(pluginStatic_->mCacheMode==Never)
 		return;
 	if(pluginStatic_->mCacheMode==Time)
-		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->mCacheTime * 60000, false);
+	{
+		pluginStatic_->m_cachedPass_timer->setSingleShot( false );
+		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->mCacheTime * 60000);
+	}
 
 	pluginStatic_->m_cachedPass=p;
 }

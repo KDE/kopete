@@ -186,7 +186,8 @@ void MSNChatSession::createChat( const QString &handle,
 		m_timeoutTimer=new QTimer(this);
 		connect( m_timeoutTimer , SIGNAL(timeout()), this , SLOT(slotConnectionTimeout() ) );
 	}
-	m_timeoutTimer->start(20000,true);
+	m_timeoutTimer->setSingleShot(true);
+	m_timeoutTimer->start(20000);
 }
 
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
@@ -687,7 +688,8 @@ void MSNChatSession::startChatSession()
 		m_timeoutTimer=new QTimer(this);
 		connect( m_timeoutTimer , SIGNAL(timeout()), this , SLOT(slotConnectionTimeout() ) );
 	}
-	m_timeoutTimer->start(20000, true);
+	m_timeoutTimer->setSingleShot(true);
+	m_timeoutTimer->start(20000);
 }
 
 

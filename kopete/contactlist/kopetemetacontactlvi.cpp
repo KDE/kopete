@@ -475,7 +475,8 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		{
 			mIsBlinkIcon = false;
 			m_blinkLeft = 9;
-			mBlinkTimer->start( 400, false );
+			mBlinkTimer->setSingleShot( false );
+			mBlinkTimer->start( 400 );
 		}
 	}
 	else
@@ -1010,7 +1011,8 @@ void KopeteMetaContactLVI::catchEvent( Kopete::MessageEvent *event )
 
 	m_oldStatusIcon= d->metaContactIcon ? d->metaContactIcon->pixmap() : QPixmap();
 
-	mBlinkTimer->start( 400, false );
+	mBlinkTimer->setSingleShot( false );
+	mBlinkTimer->start( 400 );
 
 	//show the contact if it was hidden because offline.
 	updateVisibility();

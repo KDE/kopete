@@ -1014,7 +1014,10 @@ void Item::scheduleLayout()
 {
 	// perform a delayed layout in order to speed it all up
 	if ( ! d->layoutTimer.isActive() )
-		d->layoutTimer.start( 30, true );
+	{
+		d->layoutTimer.setSingleShot( true );
+		d->layoutTimer.start( 30 );
+	}
 }
 
 void Item::slotLayoutItems()

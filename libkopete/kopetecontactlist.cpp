@@ -899,7 +899,9 @@ void Kopete::ContactList::saveXML()
 	}
 
 	// if we got here, saving the contact list failed. retry every minute until it works.
-	d->saveTimer->start( 60000, true /* single-shot: will get restarted by us next time if it's still failing */ );
+	// single-shot: will get restarted by us next time if it's still failing
+	d->saveTimer->setSingleShot( true );
+	d->saveTimer->start( 60000 );
 }
 
 const QDomDocument ContactList::toXML()
