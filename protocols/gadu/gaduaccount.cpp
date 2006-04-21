@@ -310,15 +310,15 @@ GaduAccount::actionMenu()
 
 	p->actionMenu_->insert( p->friendsModeAction );
 
-	p->actionMenu_->popupMenu()->insertSeparator();
+	p->actionMenu_->popupMenu()->addSeparator();
 
 	p->actionMenu_->insert( p->searchAction );
 
-	p->actionMenu_->popupMenu()->insertSeparator();
+	p->actionMenu_->popupMenu()->addSeparator();
 
 	p->actionMenu_->insert( p->listputAction );
 
-	p->actionMenu_->popupMenu()->insertSeparator();
+	p->actionMenu_->popupMenu()->addSeparator();
 
 	p->actionMenu_->insert( p->listToFileAction );
 	p->actionMenu_->insert( p->listFromFileAction );

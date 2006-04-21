@@ -257,7 +257,7 @@ KActionMenu * MSNAccount::actionMenu()
 		m_changeDNAction->setEnabled( false );
 	}
 
-	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->popupMenu()->addSeparator();
 
 	m_actionMenu->insert( m_changeDNAction );
 	m_actionMenu->insert( m_startChatAction );
@@ -270,7 +270,7 @@ KActionMenu * MSNAccount::actionMenu()
 	KActionMenu *debugMenu = new KActionMenu( "Debug", 0, 0 );
 	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0,
 		this, SLOT( slotDebugRawCommand() ), 0, "m_debugRawCommand" ) );
-	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->popupMenu()->addSeparator();
 	m_actionMenu->insert( debugMenu );
 #endif
 

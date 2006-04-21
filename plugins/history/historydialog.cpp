@@ -609,7 +609,7 @@ void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 	{
 		mURL = url;
 		mCopyURLAct->plug( chatWindowPopup );
-		chatWindowPopup->insertSeparator();
+		chatWindowPopup->addSeparator();
 	}
 	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
 	mCopyAct->plug( chatWindowPopup );

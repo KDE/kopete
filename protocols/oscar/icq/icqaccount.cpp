@@ -126,7 +126,7 @@ KActionMenu* ICQAccount::actionMenu()
 {
 	KActionMenu* actionMenu = Kopete::Account::actionMenu();
 
-	actionMenu->popupMenu()->insertSeparator();
+	actionMenu->popupMenu()->addSeparator();
 
 	/*	KToggleAction* actionInvisible =
 	    new KToggleAction( i18n( "In&visible" ),

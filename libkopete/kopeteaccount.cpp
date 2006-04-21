@@ -364,7 +364,7 @@ KActionMenu * Account::actionMenu()
 	);
 
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
-	menu->popupMenu()->insertSeparator();
+	menu->popupMenu()->addSeparator();
 
 	KAction *propertiesAction = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );

@@ -673,19 +673,19 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 		{
 			chatWindowPopup->insertItem( i18n( "User Has Left" ), 1 );
 			chatWindowPopup->setItemEnabled( 1, false );
-			chatWindowPopup->insertSeparator();
+			chatWindowPopup->addSeparator();
 		}
 		else if ( d->activeElement.tagName().lower() == QString::fromLatin1( "a" ) )
 		{
 			d->copyURLAction->plug( chatWindowPopup );
-			chatWindowPopup->insertSeparator();
+			chatWindowPopup->addSeparator();
 		}
 
 		d->copyAction->setEnabled( hasSelection() );
 		d->copyAction->plug( chatWindowPopup );
 		d->saveAction->plug( chatWindowPopup );
 		d->printAction->plug( chatWindowPopup );
-		chatWindowPopup->insertSeparator();
+		chatWindowPopup->addSeparator();
 		d->closeAction->plug( chatWindowPopup );
 
 		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );

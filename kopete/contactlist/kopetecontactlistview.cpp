@@ -719,7 +719,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 				{
 					if( sep )
 					{
-						popup->insertSeparator();
+						popup->addSeparator();
 						sep = false;
 					}
 

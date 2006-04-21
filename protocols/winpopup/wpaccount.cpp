@@ -180,7 +180,7 @@ KActionMenu* WPAccount::actionMenu()
 
 		/// One can not really go offline manually - appears online as long as samba server is running. GF
 
-		theActionMenu->popupMenu()->insertSeparator();
+		theActionMenu->popupMenu()->addSeparator();
 		theActionMenu->insert(new KAction(i18n("Properties"),  0,
 							  this, SLOT(editAccount()), 0, "actionAccountProperties"));
 	}

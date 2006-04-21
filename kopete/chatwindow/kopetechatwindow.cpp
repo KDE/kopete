@@ -305,7 +305,7 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 	popup->addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
 
 	actionContactMenu->plug( popup );
-	popup->insertSeparator();
+	popup->addSeparator();
 	actionTabPlacementMenu->plug( popup );
 	tabDetach->plug( popup );
 	actionDetachMenu->plug( popup );
