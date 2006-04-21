@@ -85,11 +85,12 @@ void OutgoingTransfer::slotSendData()
 {		
 	Q_INT32 bytesRead = 0;
 	QByteArray buffer(1202);
-	if(m_file){
-		// Read a chunk from the source file.
-		bytesRead = m_file->readBlock(buffer.data(), buffer.size());
-	}
+	if(!m_file)
+		return;
 
+	// Read a chunk from the source file.
+	bytesRead = m_file->readBlock(buffer.data(), buffer.size());
+	
 	if(bytesRead < 1202){
 		buffer.resize(bytesRead);
 	}

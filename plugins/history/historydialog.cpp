@@ -467,8 +467,6 @@ void HistoryDialog::searchFirstStep()
 
 	if (!mSearch)
 	{
-		delete mSearch;
-		mSearch = 0L;
 		return;
 	}
 	

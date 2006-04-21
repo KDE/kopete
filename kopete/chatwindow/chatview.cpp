@@ -694,7 +694,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 				{
 					updateChatState( Message );
 					break;
-				}
+				} // if it's an enternal message or a outgoing, fall thought
 			default:
 				updateChatState( Changed );
 		}

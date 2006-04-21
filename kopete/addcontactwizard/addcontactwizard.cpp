@@ -217,7 +217,7 @@ void AddContactWizard::accept()
 	// get each protocol's contact
 	QMap <Kopete::Account*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
-		ok |= it.data()->apply( it.key(), metaContact );
+		ok = ok || it.data()->apply( it.key(), metaContact );
 
 	if ( ok )
 	{
