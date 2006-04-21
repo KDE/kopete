@@ -578,7 +578,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QString base64 = regex.cap(1);
 				QByteArray image;
 // 				Convert from base64 encoding to byte array.
-				KCodecs::base64Decode(base64.utf8(), image);
+				KCodecs::base64Decode(base64.toUtf8(), image);
 // 				Create a temporary file to store the image data.
 				KTempFile *ink = new KTempFile(locateLocal("tmp", "inkformatgif-" ), ".gif");
 				ink->setAutoDelete(true);

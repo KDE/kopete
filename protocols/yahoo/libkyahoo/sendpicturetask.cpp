@@ -80,11 +80,11 @@ void SendPictureTask::connectSucceeded()
 	QFile file( m_path );
 
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit());
+	t->setParam( 1, client()->userId().toLocal8Bit());
 	t->setParam( 38, 604800);
-	t->setParam( 0, client()->userId().local8Bit());
+	t->setParam( 0, client()->userId().toLocal8Bit());
 	t->setParam( 28, file.size() );	
-	t->setParam( 27, m_fileName.local8Bit() );
+	t->setParam( 27, m_fileName.toLocal8Bit() );
 	t->setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
@@ -109,7 +109,7 @@ void SendPictureTask::connectSucceeded()
 			"Host: filetransfer.msg.yahoo.com\r\n"
 			"Content-length: %4\r\n"
 			"Cache-Control: no-cache\r\n\r\n").arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()).arg(file.size()+4+paket.size());
-	stream.writeRawBytes( header.local8Bit(), header.length() );
+	stream.writeRawBytes( header.toLocal8Bit(), header.length() );
 	stream.writeRawBytes( paket.data(), paket.size() );
 	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
 	stream.writeRawBytes( file.readAll(), file.size() );
@@ -138,9 +138,9 @@ void SendPictureTask::sendChecksum()
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureChecksum);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId().local8Bit());
+	t->setParam(1, client()->userId().toLocal8Bit());
 	if( !m_target.isEmpty() )
-		t->setParam( 5, m_target.local8Bit() );
+		t->setParam( 5, m_target.toLocal8Bit() );
 	t->setParam(192, m_checksum);
 	t->setParam(212, 1);
 	send( t );
@@ -154,11 +154,11 @@ void SendPictureTask::sendInformation()
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId().local8Bit());
-	t->setParam(4, client()->userId().local8Bit());
+	t->setParam(1, client()->userId().toLocal8Bit());
+	t->setParam(4, client()->userId().toLocal8Bit());
 	t->setParam(13, 2 );
-	t->setParam(5, m_target.local8Bit() );
-	t->setParam(20, m_url.local8Bit() );
+	t->setParam(5, m_target.toLocal8Bit() );
+	t->setParam(20, m_url.toLocal8Bit() );
 	t->setParam(192, m_checksum);
 
 	send( t );
@@ -172,8 +172,8 @@ void SendPictureTask::sendStatus()
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureUpdate);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId().local8Bit());
-	t->setParam(5, m_target.local8Bit() );
+	t->setParam(1, client()->userId().toLocal8Bit());
+	t->setParam(5, m_target.toLocal8Bit() );
 	t->setParam(206, m_status );
 
 	send( t );

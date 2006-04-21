@@ -39,8 +39,8 @@ void ChatSessionTask::onGo()
 
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceChatSession );
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit() );
-	t->setParam( 5, m_target.local8Bit() );
+	t->setParam( 1, client()->userId().toLocal8Bit() );
+	t->setParam( 5, m_target.toLocal8Bit() );
 	if( m_type == RegisterSession )
 	{
 		t->setParam( 13, 1 );

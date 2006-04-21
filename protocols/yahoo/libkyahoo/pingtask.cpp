@@ -38,7 +38,7 @@ void PingTask::onGo()
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePing7);
-	t->setParam( 0, client()->userId().local8Bit() );
+	t->setParam( 0, client()->userId().toLocal8Bit() );
 	t->setId( client()->sessionID() );
 	send( t );
 	

@@ -102,13 +102,13 @@ void ModifyYABTask::connectSucceeded()
 			"Content-length: %4\r\n"
 			"Cache-Control: no-cache\r\n\r\n")
 			.arg(client()->yCookie()).arg(client()->tCookie())
-			.arg(client()->cCookie()).arg(m_postData.utf8().size());
+			.arg(client()->cCookie()).arg(m_postData.toUtf8().size());
 
 	QByteArray buffer;
 	QByteArray paket;
 	QDataStream stream( &buffer, IO_WriteOnly );
-	stream.writeRawBytes( header.local8Bit(), header.length() );
-	stream.writeRawBytes( m_postData.utf8(), m_postData.utf8().size() );
+	stream.writeRawBytes( header.toLocal8Bit(), header.length() );
+	stream.writeRawBytes( m_postData.utf8(), m_postData.toUtf8().size() );
 	
 	if( socket->writeBlock( buffer, buffer.size() ) )
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;

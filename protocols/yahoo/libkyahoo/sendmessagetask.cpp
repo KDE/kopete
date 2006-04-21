@@ -47,9 +47,9 @@ void SendMessageTask::onGo()
 	{
 		YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage, Yahoo::StatusOffline);
 		t->setId( client()->sessionID() );
-		t->setParam( 1, client()->userId().local8Bit() );
-		t->setParam( 5, m_target.local8Bit() );
-		t->setParam( 14, m_text.mid( pos, 700).utf8() );
+		t->setParam( 1, client()->userId().toLocal8Bit() );
+		t->setParam( 5, m_target.toLocal8Bit() );
+		t->setParam( 14, m_text.mid( pos, 700).toUtf8() );
 		t->setParam( 63, ";0" );
 		t->setParam( 64, "0"  );	
 		t->setParam( 97, 1 );	// UTF-8

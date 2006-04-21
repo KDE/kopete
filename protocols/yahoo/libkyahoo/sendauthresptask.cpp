@@ -36,8 +36,8 @@ void SendAuthRespTask::onGo()
 {
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthorization);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit() );
-	t->setParam( 5, m_target.local8Bit() );
+	t->setParam( 1, client()->userId().toLocal8Bit() );
+	t->setParam( 5, m_target.toLocal8Bit() );
 	if( m_granted )
 	{
 		t->setParam( 13, 1 );
@@ -46,7 +46,7 @@ void SendAuthRespTask::onGo()
 	{
 		t->setParam( 13, 2 );
 		t->setParam( 97, 1 );	// UTF
-		t->setParam( 14, m_msg.utf8() );
+		t->setParam( 14, m_msg.toUtf8() );
 		
 	}
 	send( t );

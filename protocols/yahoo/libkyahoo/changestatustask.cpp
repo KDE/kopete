@@ -48,7 +48,7 @@ void ChangeStatusTask::onGo()
 			m_status = Yahoo::StatusCustom;
 	
 		if( m_status == Yahoo::StatusCustom )
-			t->setParam( 19, (Q3CString)m_message.utf8() );
+			t->setParam( 19, (Q3CString)m_message.toUtf8() );
 		t->setParam( 10, m_status );
 		t->setParam( 47, m_type );
 			

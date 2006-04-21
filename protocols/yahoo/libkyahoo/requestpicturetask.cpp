@@ -35,8 +35,8 @@ void RequestPictureTask::onGo()
 {
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
 	t->setId( client()->sessionID() );
-	t->setParam( 4, (Q3CString)client()->userId().local8Bit());
-	t->setParam( 5, (Q3CString)m_target.local8Bit() );
+	t->setParam( 4, (Q3CString)client()->userId().toLocal8Bit());
+	t->setParam( 5, (Q3CString)m_target.toLocal8Bit() );
 	t->setParam( 13, "1" );
 	send( t );
 	

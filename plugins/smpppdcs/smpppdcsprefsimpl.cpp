@@ -124,7 +124,7 @@ void SMPPPDCSPrefs::smpppdFound(const QString& host) {
 
     // try to get the domain name
     struct in_addr addr;
-    if(inet_aton(host.ascii(), &addr)) {
+    if(inet_aton(host.toAscii(), &addr)) {
         struct hostent * hostEnt = gethostbyaddr(&addr.s_addr, sizeof(addr.s_addr), AF_INET);
         if(hostEnt) {
             myHost = hostEnt->h_name;

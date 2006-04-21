@@ -175,7 +175,7 @@ void YMSGTransfer::setParam(int index, const QByteArray &data)
 
 void YMSGTransfer::setParam( int index, int data )
 {
-	d->data.append( Param( index, QString::number( data ).local8Bit() ) );
+	d->data.append( Param( index, QString::number( data ).toLocal8Bit() ) );
 }
 
 int YMSGTransfer::length()
@@ -228,7 +228,7 @@ QByteArray YMSGTransfer::serialize()
  	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
  		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
-		stream.writeRawBytes ( QString::number( (*it).first ).local8Bit(), QString::number( (*it).first ).length() );
+		stream.writeRawBytes ( QString::number( (*it).first ).toLocal8Bit(), QString::number( (*it).first ).length() );
 		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
 		stream.writeRawBytes( (*it).second, (*it).second.length() );
 		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;

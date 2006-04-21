@@ -86,8 +86,8 @@ void WebcamTask::requestWebcam( const QString &who )
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit());
-	t->setParam( 5, who.local8Bit() );
+	t->setParam( 1, client()->userId().toLocal8Bit());
+	t->setParam( 5, who.toLocal8Bit() );
 	keyPending = who;
 
 	send( t );
@@ -156,7 +156,7 @@ void WebcamTask::slotConnectionStage1Established()
 
 	// Header: 08 00 01 00 00 00 00	
 	stream << (Q_INT8)0x08 << (Q_INT8)0x00 << (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT32)s.length();
-	stream.writeRawBytes( s.local8Bit(), s.length() );
+	stream.writeRawBytes( s.toLocal8Bit(), s.length() );
 	
 	socket->writeBlock( buffer.data(), buffer.size() );
 }
@@ -199,7 +199,7 @@ void WebcamTask::slotConnectionStage2Established()
 			<< (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
 	}
 	socket->writeBlock( buffer.data(), buffer.size() );
-	socket->writeBlock( s.local8Bit(), s.length() );
+	socket->writeBlock( s.toLocal8Bit(), s.length() );
 }
 
 void WebcamTask::slotConnectionFailed( int error )
@@ -526,7 +526,7 @@ void WebcamTask::registerWebcam()
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit());
+	t->setParam( 1, client()->userId().toLocal8Bit());
 	keyPending  = client()->userId();
 
 	send( t );
@@ -564,7 +564,7 @@ void WebcamTask::grantAccess( const QString &userId )
 	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)user.length()
 	<< (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
 	socket->writeBlock( ar.data(), ar.size() );
-	socket->writeBlock( user.local8Bit(), user.length() );
+	socket->writeBlock( user.toLocal8Bit(), user.length() );
 }
 
 void WebcamTask::closeOutgoingWebcam()

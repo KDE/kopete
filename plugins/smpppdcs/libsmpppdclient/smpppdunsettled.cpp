@@ -141,7 +141,7 @@ QString Unsettled::make_response(const QString& chex, const QString& password) c
 	MD5state_st md5;
 	MD5_Init (&md5);
 	MD5_Update (&md5, cbin.ascii (), size);
-	MD5_Update (&md5, password.ascii(), password.length ());
+	MD5_Update (&md5, password.toAscii(), password.length ());
 	MD5_Final (rbin, &md5);
 
     // convert response from bin to hex

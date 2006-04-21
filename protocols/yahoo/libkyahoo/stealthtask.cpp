@@ -52,9 +52,9 @@ void StealthTask::onGo()
 		t->setParam( 31, m_state );
 	}
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit());
+	t->setParam( 1, client()->userId().toLocal8Bit());
 	if( !m_target.isEmpty() )
-		t->setParam( 7, m_target.local8Bit() );
+		t->setParam( 7, m_target.toLocal8Bit() );
 	send( t );
 	
 	setSuccess( true );

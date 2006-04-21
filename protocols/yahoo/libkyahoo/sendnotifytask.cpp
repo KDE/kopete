@@ -36,8 +36,8 @@ void SendNotifyTask::onGo()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceNotify);
 	t->setId( client()->sessionID() );
 	t->setStatus( Yahoo::StatusNotify );
-	t->setParam( 4, (Q3CString)client()->userId().local8Bit() );
-	t->setParam( 5, (Q3CString)m_target.local8Bit() );
+	t->setParam( 4, (Q3CString)client()->userId().toLocal8Bit() );
+	t->setParam( 5, (Q3CString)m_target.toLocal8Bit() );
 	t->setParam( 14, " " );	
 	switch( m_type )
 	{
