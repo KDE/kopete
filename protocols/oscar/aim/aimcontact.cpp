@@ -331,7 +331,7 @@ void AIMContact::haveIcon( const QString& user, QByteArray icon )
 		return;
 
 	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
-	QImage buddyIcon( icon );
+	QImage buddyIcon = QImage::fromData( icon );
 	if ( buddyIcon.isNull() )
 	{
 		kWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;

@@ -202,9 +202,9 @@ static void blendOnLower( const QImage &upper_, QImage &lower, const QPoint &off
 
 	QImage upper = upper_;
 	if ( upper.depth() != 32 )
-		upper = upper.convertDepth( 32 );
+		upper = upper.convertToFormat( QImage::Format_RGB32 );
 	if ( lower.depth() != 32 )
-		lower = lower.convertDepth( 32 );
+		lower = lower.convertToFormat( QImage::Format_RGB32 );
 
 	const int cx = offset.x();
 	const int cy = offset.y();

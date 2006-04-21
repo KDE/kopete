@@ -305,13 +305,13 @@ void MSNEditAccountWidget::slotSelectImage()
 	else path = filePath.path();
 
 	QImage img( path );
-	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(img), 96, 96, this );
+	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );
 
 	if(!img.isNull()) 
 	{
 		img = MSNProtocol::protocol()->scalePicture(img);
 	
-		d->ui->m_displayPicture->setPixmap( QPixmap(img) );
+		d->ui->m_displayPicture->setPixmap( QPixmap::fromImage(img) );
 		d->pictureData = img;
 	}
 	else

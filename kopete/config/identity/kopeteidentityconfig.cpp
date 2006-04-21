@@ -525,16 +525,16 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 	
 	QImage photo(photoUrl);
 	// use KABC photo size 100x140
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 100, 140, this );
 
 	if(!photo.isNull())
 	{
 		if(photo.width() != 100 || photo.height() != 140)
 		{
 			 if (photo.height() > photo.width())
-				photo = photo.scaleHeight(140);
+				photo = photo.scaledToHeight(140);
 			else
-				photo = photo.scaleWidth(100);
+				photo = photo.scaledToWidth(100);
 		}
 
 		// Use MD5 hash to save the filename, so no problems will occur with the filename because of non-ASCII characters.

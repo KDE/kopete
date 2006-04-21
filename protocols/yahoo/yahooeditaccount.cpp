@@ -175,7 +175,7 @@ void YahooEditAccount::slotSelectPicture()
 	QImage picture(file.path());
 	if( !picture.isNull() )
 	{
-		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(picture), 96, 96, this );
+		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(picture), 96, 96, this );
 		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().lower() ) ) ;
 		file = KUrl::fromPathOrURL(newlocation);
 		if( !picture.save( newlocation, "PNG" ))

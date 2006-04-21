@@ -188,7 +188,7 @@ QPixmap Account::accountIcon(const int size) const
 
 	if ( size > 0 && base.width() != size )
 	{
-		base = QPixmap( base.toImage().scaled( size, size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
+		base = QPixmap::fromImage( base.toImage().scaled( size, size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
 	}
 
 	return base;

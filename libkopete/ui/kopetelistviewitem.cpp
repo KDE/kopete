@@ -530,7 +530,7 @@ void ImageComponent::paint( QPainter *painter, const QColorGroup & )
 void ImageComponent::scale( int w, int h, Qt::AspectRatioMode mode )
 {
 	QImage im = d->image.toImage();
-	setPixmap( QPixmap( im.scaled( w, h, mode, Qt::SmoothTransformation) ) );
+	setPixmap( QPixmap::fromImage( im.scaled( w, h, mode, Qt::SmoothTransformation) ) );
 }
 // TextComponent
 

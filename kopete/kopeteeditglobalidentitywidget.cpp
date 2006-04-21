@@ -122,7 +122,7 @@ void KopeteEditGlobalIdentityWidget::iconSizeChanged()
 		d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
 		d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));	
 		if( !d->myself->picture().isNull() )
-			d->labelPicture->setPixmap(QPixmap(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+			d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 	}
 }
 
@@ -156,7 +156,7 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 		// Update the picture and the tooltip
 		if( !d->myself->picture().isNull() )
 		{
-			d->labelPicture->setPixmap(QPixmap(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+			d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 			QToolTip::add(d->labelPicture, "<qt><img src=\""+ value.toString() +"\"></qt>");
 		}
 	}
@@ -183,16 +183,16 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 
 	QString saveLocation(locateLocal("appdata", "global-photo.png"));
 	QImage photo(photoURL.path());
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 100, 140, this );
 
 	if(!photo.isNull())
 	{
 		if(photo.width() != 100 || photo.height() != 140)
 		{
 			 if (photo.height() > photo.width())
-				photo = photo.scaleHeight(140);
+				photo = photo.scaledToHeight(140);
 			else
-				photo = photo.scaleWidth(100);
+				photo = photo.scaledToWidth(100);
 		}
 
 		if(!photo.save(saveLocation, "PNG"))
