@@ -46,6 +46,15 @@ TestbedAccount::~TestbedAccount()
 KActionMenu* TestbedAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+
+	mActionMenu->popupMenu()->insertSeparator();
+
+	KAction *action;
+	
+	action = new KAction (i18n ("Show my own video..."), "testbed_showcam", 0, this, SLOT (slotShowCam ()), this, "actionShowCam");
+	mActionMenu->insert(action);
+	action->setEnabled( isConnected() );
+
 	return mActionMenu;
 }
 

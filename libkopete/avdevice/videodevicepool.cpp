@@ -36,7 +36,7 @@ namespace Kopete {
 namespace AV {
 
 VideoDevicePool *VideoDevicePool::s_self = NULL;
-int VideoDevicePool::m_clients = 0;
+__u64 VideoDevicePool::m_clients = 0;
 
 VideoDevicePool* VideoDevicePool::self()
 {
