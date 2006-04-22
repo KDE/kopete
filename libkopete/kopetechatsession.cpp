@@ -143,21 +143,18 @@ void Kopete::ChatSession::setDisplayName( const QString &newName )
 
 void Kopete::ChatSession::slotUpdateDisplayName()
 {
-	int i;
-	
 	if( d->customDisplayName )
 		return;
 
-	Kopete::Contact *c;
 
 	//If there is no member yet, don't try to update the display name
-	if ( !c )
+	if ( d->mContactList.isEmpty() )
 		return;
 
 	d->displayName=QString::null;
-	for( i = 0; i != d->mContactList.size(); i++ )
+	for(int i = 0; i != d->mContactList.size(); i++ )
 	{
-		c = d->mContactList[i];
+		Kopete::Contact * c = d->mContactList[i];
 		if(! d->displayName.isNull() )
 			d->displayName.append( QString::fromLatin1( ", " ) ) ;
 
