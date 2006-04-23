@@ -47,8 +47,8 @@
 #include "icqcontact.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
-	Kopete::Account *account, QWidget *parent, const char *name)
-	: QWidget(parent, name), KopeteEditAccountWidget(account)
+	Kopete::Account *account, QWidget *parent)
+	: QWidget(parent), KopeteEditAccountWidget(account)
 {
 	kDebug(14153) << k_funcinfo << "Called." << endl;
 

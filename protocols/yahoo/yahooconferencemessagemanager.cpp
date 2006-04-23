@@ -35,8 +35,8 @@
 #include "yahooinvitelistimpl.h"
 
 YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user,
-	Kopete::ContactPtrList others, const char *name )
-: Kopete::ChatSession( user, others, protocol,  name )
+	Kopete::ContactPtrList others )
+: Kopete::ChatSession( user, others, protocol )
 {
 
 	Kopete::ChatSessionManager::self()->registerChatSession( this );

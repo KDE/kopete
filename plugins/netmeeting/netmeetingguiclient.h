@@ -36,7 +36,7 @@ class NetMeetingGUIClient : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	NetMeetingGUIClient( MSNChatSession *parent, const char *name=0L);
+	NetMeetingGUIClient( MSNChatSession *parent );
 	~NetMeetingGUIClient();
 
 private slots:

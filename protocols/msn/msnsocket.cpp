@@ -124,7 +124,8 @@ void MSNSocket::connect( const QString &server, uint port )
 	{
 		if(m_timer == 0L)
 		{
-			m_timer = new QTimer(this, "Http poll timer");
+			m_timer = new QTimer(this);
+			m_timer->setObjectName( QLatin1String("Http poll timer") ) ;
 			// Connect the slot HttpPoll with the timer timeout signal.
 			QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(slotHttpPoll()));
 		}

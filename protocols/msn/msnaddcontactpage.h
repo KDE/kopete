@@ -16,7 +16,7 @@ class MSNAddContactPage : public AddContactPage
 {
    Q_OBJECT
 public:
-	MSNAddContactPage(bool connected, QWidget *parent=0, const char *name=0);
+	MSNAddContactPage(bool connected, QWidget *parent=0);
 	~MSNAddContactPage();
 	msnAddUI *msndata;
 	QLabel *noaddMsg1;

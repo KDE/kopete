@@ -138,7 +138,7 @@ private:
 	 * Private constructor(it's a singleton class)
 	 * Call loadStyles() to list all avaiable styles.
 	 */
-	ChatWindowStyleManager(QObject *parent = 0, const char *name = 0);
+	ChatWindowStyleManager(QObject *parent = 0);
 
 	static ChatWindowStyleManager *s_self;
 

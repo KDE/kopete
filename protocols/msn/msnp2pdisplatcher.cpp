@@ -60,8 +60,8 @@ static QString randomid()
 
 
 
-MSNP2PDisplatcher::MSNP2PDisplatcher( QObject *parent , const char * /*name*/ )
-	: MSNP2P( parent /*, name*/ )
+MSNP2PDisplatcher::MSNP2PDisplatcher( QObject *parent )
+	: MSNP2P( parent )
 {
 }
 

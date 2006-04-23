@@ -36,7 +36,7 @@ class ContactNotesPlugin;
 class ContactNotesEdit : public KDialog  {
    Q_OBJECT
 public: 
-	ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p=0 ,const char *name=0);
+	ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p=0);
 	~ContactNotesEdit();
 
 private:

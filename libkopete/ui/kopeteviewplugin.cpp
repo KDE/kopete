@@ -16,8 +16,8 @@
 
 #include "kopeteviewplugin.h"
 
-Kopete::ViewPlugin::ViewPlugin( KInstance *instance, QObject *parent, const char *name ) :
-	Kopete::Plugin( instance, parent, name )
+Kopete::ViewPlugin::ViewPlugin( KInstance *instance, QObject *parent ) :
+	Kopete::Plugin( instance, parent )
 {
 
 }

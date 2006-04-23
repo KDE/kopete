@@ -94,7 +94,7 @@ class GaduSession : public QObject
 	Q_OBJECT
 
 public:
-	GaduSession( QObject* parent = 0, const char* name = 0 );
+	GaduSession( QObject* parent = 0 );
 	virtual ~GaduSession();
 	bool	isConnected() const;
 	int	status() const;

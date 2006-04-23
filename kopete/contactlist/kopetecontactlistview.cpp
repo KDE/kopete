@@ -397,11 +397,9 @@ static Q3ListViewItem *nextItem( Q3ListViewItem *item )
 
 
 
-KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
+KopeteContactListView::KopeteContactListView( QWidget *parent )
 	: Kopete::UI::ListView::ListView( parent )
 {
-	setObjectName( name );
-
 	d = new KopeteContactListViewPrivate;
 	m_undo=0L;
 	m_redo=0L;

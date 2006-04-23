@@ -65,7 +65,7 @@ class KopeteContactListView : public Kopete::UI::ListView::ListView
 	Q_OBJECT
 
 public:
-	KopeteContactListView( QWidget *parent = 0, const char *name = 0 );
+	KopeteContactListView( QWidget *parent = 0 );
 	~KopeteContactListView();
 
 	/**

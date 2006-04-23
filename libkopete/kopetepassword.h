@@ -55,11 +55,10 @@ public:
 	 *
 	 * @param configGroup The configuration group to save passwords in.
 	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
-	 * @param name The name for this object
 	 *
 	 * @deprecated Use the constructor that specifies if a blank password is allowed
 	 */
-	explicit Password( const QString &configGroup, uint maxLength = 0, const char *name = 0 );
+	explicit Password( const QString &configGroup, uint maxLength = 0 );
 
 	/**
 	 * Create a new Kopete::Password object.
@@ -70,12 +69,12 @@ public:
 	 * @param name The name for this object
 	 */
 	explicit Password( const QString &configGroup, uint maxLength = 0,
-		bool allowBlankPassword = false, const char *name = 0 );
+		bool allowBlankPassword = false );
 
 	/**
 	 * Create a shallow copy of this object
 	 */
-	Password( Password &other, const char *name = 0 );
+	Password( Password &other );
 	~Password();
 
 	/**

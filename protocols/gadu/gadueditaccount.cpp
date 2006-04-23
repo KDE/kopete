@@ -43,8 +43,8 @@
 
 #include "kopetepasswordwidget.h"
 
-GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, QWidget* parent, const char* name )
-: GaduAccountEditUI( parent, name ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
+GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, QWidget* parent )
+: GaduAccountEditUI( parent ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
 {
 
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
@@ -179,7 +179,8 @@ void
 GaduEditAccount::registerNewAccount()
 {
 	registerNew->setDisabled( true );
-	regDialog = new GaduRegisterAccount( NULL , "Register account dialog" );
+	regDialog = new GaduRegisterAccount( NULL );
+	regDialog->setObjectName( QLatin1String("Register account dialog") );
 	connect( regDialog, SIGNAL( registeredNumber( unsigned int, QString  ) ), SLOT( newUin( unsigned int, QString  ) ) );
 	if ( regDialog->exec() != QDialog::Accepted ) {
 		loginEdit_->setText( "" );

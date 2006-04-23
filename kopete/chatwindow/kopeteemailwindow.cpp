@@ -71,7 +71,7 @@ typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
 
 EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const char *name, const QStringList &) :
-	Kopete::ViewPlugin( EmailWindowPluginFactory::instance(), parent, name )
+	Kopete::ViewPlugin( EmailWindowPluginFactory::instance(), parent )
 {}
 
 KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
@@ -157,7 +157,9 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	QWidget *containerWidget = new QWidget( v );
 	containerWidget->setSizePolicy( QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) );
 
-	QHBoxLayout *h = new QHBoxLayout( containerWidget, 4, 4 );
+	QHBoxLayout *h = new QHBoxLayout( containerWidget );
+	h->setMargin( 4 );
+	h->setSpacing( 4 );
 	h->addStretch();
 
 	d->btnReadPrev = new KPushButton( i18n( "<< Prev" ), containerWidget );
@@ -217,10 +219,10 @@ void KopeteEmailWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-	d->chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
-		this, SLOT( slotReplySend() ), coll, "chat_send" );
+	d->chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), coll, "chat_send" );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
+	connect( d->chatSend, SIGNAL(triggered()), this, SLOT( slotReplySend()) );
 
 	KStdAction::quit ( this, SLOT( slotCloseView() ), coll );
 
@@ -228,12 +230,15 @@ void KopeteEmailWindow::initActions(void)
 	KStdAction::copy( this, SLOT(slotCopy()), coll);
 	KStdAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
 
-	new KAction( i18n( "&Set Font..." ), QString::fromLatin1( "charset" ), 0,
-	             d->editPart, SLOT( setFont() ), coll, "format_font" );
-	new KAction( i18n( "Set Text &Color..." ), QString::fromLatin1( "pencil" ), 0,
-	             d->editPart, SLOT( setFgColor() ), coll, "format_color" );
-	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
-	             d->editPart, SLOT( setBgColor() ), coll, "format_bgcolor" );
+	KAction* action;
+	action = new KAction( KIcon("charset"), i18n( "&Set Font..." ), coll, "format_font" );
+	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
+
+	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll, "format_color" );
+	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setFgColor()) );
+
+	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll, "format_bgcolor" );
+	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBgColor()) );
 
 	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	setStandardToolBarMenuEnabled( true );
@@ -253,7 +258,8 @@ void KopeteEmailWindow::initActions(void)
 //	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), K3Icon::Toolbar);
 	d->animIcon.setPaused(true);
 
-	d->anim = new QLabel( this, "kde toolbar widget" );
+	d->anim = new QLabel( this );
+	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
 	new KWidgetAction( d->anim, i18n("Toolbar Animation"), 0, 0, 0, coll, "toolbar_animation" );

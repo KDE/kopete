@@ -60,8 +60,8 @@
 #if MSN_WEBCAM
 #include "avdevice/videodevicepool.h"
 #endif
-MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
-	: Kopete::PasswordedAccount ( parent, AccountID.toLower(), 0, name )
+MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
+	: Kopete::PasswordedAccount ( parent, AccountID.toLower(), 0, false )
 {
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
@@ -79,10 +79,14 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 
-	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), 0, "m_openInboxAction" );
-	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), 0, "renameAction" );
-	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), 0, "startChatAction" );
+	m_openInboxAction = new KAction( KIcon("mail_generic"), i18n( "Open Inbo&x..." ), 0, "m_openInboxAction" );
+	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 
+	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), 0, "renameAction" );
+	QObject::connect( m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()) );
+
+	m_startChatAction = new KAction( KIcon("mail_generic"), i18n( "&Start Chat..." ), 0, "startChatAction" );
+	QObject::connect( m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()) );
 
 	KConfigGroup *config=configGroup();
 
@@ -268,8 +272,11 @@ KActionMenu * MSNAccount::actionMenu()
 
 #if !defined NDEBUG
 	KActionMenu *debugMenu = new KActionMenu( "Debug", 0, 0 );
-	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0,
-		this, SLOT( slotDebugRawCommand() ), 0, "m_debugRawCommand" ) );
+
+	KAction *rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), 0, "m_debugRawCommand" );
+	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
+	debugMenu->insert(rawCmd);
+
 	m_actionMenu->popupMenu()->addSeparator();
 	m_actionMenu->insert( debugMenu );
 #endif

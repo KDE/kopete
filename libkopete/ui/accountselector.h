@@ -36,19 +36,19 @@ Q_OBJECT
 		/**
 		 * Constructor.
 		 *
-		 * The parameters @p parent and @p name are handled by
+		 * The parameter @p parent is handled by
 		 * K3ListView.
 		 */
-		AccountSelector(QWidget *parent=0, const char *name=0);
+		AccountSelector(QWidget *parent=0);
 
 		/**
 		 * Constructor for a list of accounts for one protocol only
 		 *
-		 * The parameters @p parent and @p name are handled by
+		 * The parameters @p parent is handled by
 		 * K3ListView. @p proto defines the protocol whose accounts are
 		 * shown in the list
 		 */
-		AccountSelector(Kopete::Protocol *proto, QWidget *parent=0, const char *name=0);
+		AccountSelector(Kopete::Protocol *proto, QWidget *parent=0);
 
 		/**
 		 * Destructor.

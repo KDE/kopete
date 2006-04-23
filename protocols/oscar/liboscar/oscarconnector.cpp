@@ -24,7 +24,7 @@
 #include "oscarconnector.h"
 #include "oscarbytestream.h"
 
-KNetworkConnector::KNetworkConnector( QObject *parent, const char */*name*/ )
+KNetworkConnector::KNetworkConnector( QObject *parent )
 		: Connector( parent )
 {
 	kDebug( 14151 ) << k_funcinfo << "New KNetwork connector." << endl;

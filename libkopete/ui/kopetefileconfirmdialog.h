@@ -33,7 +33,7 @@ Q_OBJECT
 public:
 	KopeteFileConfirmDialog( const Kopete::FileTransferInfo &info,
 	                         const QString& description = QString::null,
-	                         QWidget *parent = 0, const char* name = 0);
+	                         QWidget *parent = 0 );
 	~KopeteFileConfirmDialog();
 
 private:

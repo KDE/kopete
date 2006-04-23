@@ -21,8 +21,8 @@
 #include <Q3CString>
 #include <QDataStream>
 
-InputProtocolBase::InputProtocolBase(QObject *parent, const char *name)
- : QObject(parent, name)
+InputProtocolBase::InputProtocolBase(QObject *parent)
+ : QObject(parent)
 {
 }
 

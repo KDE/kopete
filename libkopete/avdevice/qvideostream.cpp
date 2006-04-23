@@ -45,7 +45,7 @@ extern "C" {
 class QVideoStreamGLWidget : public QGLWidget
 {
 public:
-    QVideoStreamGLWidget(QWidget* parent = 0, const char* name = 0);
+    QVideoStreamGLWidget(QWidget* parent = 0);
     virtual ~QVideoStreamGLWidget();
 
     void setInputSize(const QSize& sz);
@@ -100,7 +100,7 @@ QVideoStreamPrivate::~QVideoStreamPrivate()
 	delete xvHandle;
 }
 
-QVideoStream::QVideoStream(QWidget *widget, const char* name)
+QVideoStream::QVideoStream(QWidget *widget)
     : QObject(widget),
       d(new QVideoStreamPrivate),
       _w(widget),

@@ -57,7 +57,7 @@ class GaduAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 
 public:
-	GaduAccount( Kopete::Protocol*, const QString& accountID,  const char* name = 0L );
+	GaduAccount( Kopete::Protocol*, const QString& accountID );
 	~GaduAccount();
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );

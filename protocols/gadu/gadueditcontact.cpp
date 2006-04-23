@@ -46,7 +46,7 @@
 // FIXME: this and gaduadcontactpage should have one base class, with some code duplicated in both.
 
 GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
-		    QWidget* parent, const char* name )
+		    QWidget* parent )
 : KDialog( parent,i18n( "Edit Contact's Properties" ),
 			 KDialog::Ok | KDialog::Cancel ), account_( account ), contact_( contact )
 {
@@ -66,7 +66,7 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 }
 
 GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::ContactLine* clin,
-		    QWidget* parent , const char* name  )
+		    QWidget* parent )
 : KDialog( parent, i18n( "Edit Contact's Properties" ),
 			 KDialog::Ok | KDialog::Cancel ), account_( account ), contact_( NULL )
 {

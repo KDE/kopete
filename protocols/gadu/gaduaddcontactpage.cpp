@@ -46,8 +46,8 @@
 #include <QVBoxLayout>
 #include <krestrictedline.h>
 
-GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, const char* name )
-: AddContactPage( parent, name )
+GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent )
+: AddContactPage( parent )
 {
 	account_	= owner;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );

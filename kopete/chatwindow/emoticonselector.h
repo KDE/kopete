@@ -38,7 +38,7 @@ class EmoticonLabel : public QLabel
 	Q_OBJECT
 
 public:
-	EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent=0, const char *name=0);
+	EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent=0);
 //	~EmoticonLabel();
 
 signals:
@@ -55,7 +55,7 @@ class EmoticonSelector : public QWidget
 
 public:
 
-	EmoticonSelector ( QWidget *parent = 0, const char *name = 0 );
+	EmoticonSelector ( QWidget *parent = 0 );
 //	~EmoticonSelector();
 
 	typedef QList<QMovie*> MovieList;

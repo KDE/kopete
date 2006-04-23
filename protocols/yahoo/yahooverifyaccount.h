@@ -36,7 +36,7 @@ private:
 	KTempFile *mFile;
 	YahooVerifyAccountBase *mTheDialog;
 public:
-	YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0, const char *name = 0);
+	YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0);
 	~YahooVerifyAccount();
 
 	virtual bool validateData();

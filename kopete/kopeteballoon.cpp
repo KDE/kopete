@@ -67,17 +67,23 @@ void KopeteActiveLabel::openLink( const QString& link )
 }
 
 KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
-: QWidget(0L, "KopeteBalloon", Qt::WStyle_StaysOnTop | Qt::WStyle_Customize |
-	Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WX11BypassWM)
+: QWidget(0L)
 {
+	setWindowFlags(Qt::WStyle_StaysOnTop | Qt::WStyle_Customize |
+	Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WX11BypassWM);
+	setObjectName(QLatin1String("KopeteBalloon"));
 	setCaption("");
 
-	QVBoxLayout *BalloonLayout = new QVBoxLayout(this, 22,
-		KDialog::spacingHint(), "BalloonLayout");
+	QVBoxLayout *BalloonLayout = new QVBoxLayout(this);
+	BalloonLayout->setMargin(22);
+	BalloonLayout->setSpacing(KDialog::spacingHint());
+	BalloonLayout->setObjectName(QLatin1String("BalloonLayout"));
 
 	// BEGIN Layout1
-	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout,
-		KDialog::spacingHint(), "Layout1");
+	QHBoxLayout *Layout1 = new QHBoxLayout();
+	BalloonLayout->addItem(Layout1);
+	Layout1->setSpacing(KDialog::spacingHint());
+	Layout1->setObjectName(QLatin1String("Layout1"));
 	//QLabel *mCaption = new QLabel(text, this, "mCaption");
 	KopeteActiveLabel *mCaption = new KopeteActiveLabel(text, this);
 	mCaption->setPalette(QToolTip::palette());
@@ -97,12 +103,14 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 
 
 	// BEGIN Layout2
-	QHBoxLayout *Layout2 = new QHBoxLayout(BalloonLayout,
-		KDialog::spacingHint(), "Layout2");
-	QPushButton *mViewButton = new QPushButton(i18nc("to view", "View"), this,
-		"mViewButton");
-	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore"), this,
-		"mIgnoreButton");
+	QHBoxLayout *Layout2 = new QHBoxLayout();
+	BalloonLayout->addItem(Layout2);
+	Layout2->setSpacing(KDialog::spacingHint());
+	Layout2->setObjectName(QLatin1String("Layout2"));
+	QPushButton *mViewButton = new QPushButton(i18nc("to view", "View"), this);
+	mViewButton->setObjectName(QLatin1String("mViewButton"));
+	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore"), this);
+	mIgnoreButton->setObjectName(QLatin1String("mIgnoreButton"));
 
 	Layout2->addStretch();
 	Layout2->addWidget(mViewButton);

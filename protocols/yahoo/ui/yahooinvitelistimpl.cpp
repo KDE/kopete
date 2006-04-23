@@ -22,7 +22,7 @@
 #include <q3listbox.h>
 #include <qlineedit.h>
 
-YahooInviteListImpl::YahooInviteListImpl(QWidget *parent, const char *name) : YahooInviteListBase(parent,name)
+YahooInviteListImpl::YahooInviteListImpl(QWidget *parent) : YahooInviteListBase(parent)
 {
 	listFriends->setSelectionMode( Q3ListBox::Extended );
 	listInvited->setSelectionMode( Q3ListBox::Extended );

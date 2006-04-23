@@ -30,7 +30,7 @@
  class KopeteStatusGroupViewItem : public Q3ListViewItem
 {
 public: 
-	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , Q3ListView *parent, const char *name=0);
+	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , Q3ListView *parent);
 	~KopeteStatusGroupViewItem();
 
 private:

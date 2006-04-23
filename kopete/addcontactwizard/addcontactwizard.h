@@ -49,7 +49,7 @@ class AddContactWizard : public AddContactWizard_Base
 	Q_OBJECT
 
 public:
-	AddContactWizard( QWidget *parent = 0, const char *name = 0 );
+	AddContactWizard( QWidget *parent = 0 );
 	~AddContactWizard();
 	virtual void showPage( QWidget *page );
 

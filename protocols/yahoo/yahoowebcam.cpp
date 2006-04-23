@@ -25,8 +25,9 @@
 #include "avdevice/videodevicepool.h"
 
 
-YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
+YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
+	setObjectName( QLatin1String("yahoo_webcam") );
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	theAccount = account;
 	theDialog = 0L;

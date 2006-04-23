@@ -44,7 +44,7 @@ static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0"
 K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( HistoryPluginFactory::instance(), parent, name ), m_loggerFactory( this )
+: Kopete::Plugin( HistoryPluginFactory::instance(), parent ), m_loggerFactory( this )
 {
 	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ),
 		actionCollection(), "viewMetaContactHistory" );
@@ -132,7 +132,8 @@ void HistoryPlugin::slotViewHistory()
 
 		// TODO: Keep track of open dialogs and raise instead of
 		// opening a new (duplicated) one
-		new HistoryDialog(m);
+		HistoryDialog* dialog = new HistoryDialog(m);
+		dialog->setObjectName( QLatin1String("HistoryDialog") );
 	}
 }
 

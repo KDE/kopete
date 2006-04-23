@@ -42,7 +42,7 @@ class KOPETE_EXPORT SSIManager : public QObject
 {
         Q_OBJECT
 public:
-	SSIManager( QObject* parent = 0, const char* name = 0 );
+	SSIManager( QObject* parent = 0 );
 
 	~SSIManager();
 	

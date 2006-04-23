@@ -34,7 +34,7 @@ class InputProtocolBase : public QObject
 Q_OBJECT
 public:
 	enum EventProtocolState { Success, NeedMore, OutOfSync, ProtocolError };
-	InputProtocolBase(QObject *parent = 0, const char *name = 0);
+	InputProtocolBase(QObject *parent = 0);
 	~InputProtocolBase();
 	/**
 	 * Returns a value describing the state of the object.  

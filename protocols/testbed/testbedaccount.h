@@ -39,7 +39,7 @@ class TestbedAccount : public Kopete::Account
 {
 	Q_OBJECT
 public:
-	TestbedAccount( TestbedProtocol *parent, const QString& accountID, const char *name = 0 );
+	TestbedAccount( TestbedProtocol *parent, const QString& accountID );
 	~TestbedAccount();
 	/**
 	 * Construct the context menu used for the status bar icon

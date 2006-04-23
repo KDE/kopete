@@ -25,7 +25,7 @@
 #include "yahoobytestream.h"
 #include "yahootypes.h"
 
-KNetworkConnector::KNetworkConnector( QObject *parent, const char */*name*/ )
+KNetworkConnector::KNetworkConnector( QObject *parent )
 		: Connector( parent )
 {
 	kDebug( YAHOO_RAW_DEBUG ) << k_funcinfo << "New KNetwork connector." << endl;

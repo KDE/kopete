@@ -588,7 +588,7 @@ public:
 class FakeProtocol : public Kopete::Protocol
 {
 public:
-FakeProtocol( KInstance *instance, QObject *parent, const char *name ) : Kopete::Protocol(instance, parent, name){}
+FakeProtocol( KInstance *instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
 Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
 AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
 KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
@@ -598,7 +598,7 @@ KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, 
 class FakeAccount : public Kopete::Account
 {
 public:
-FakeAccount(Kopete::Protocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name){}
+FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID){}
 ~FakeAccount()
 {}
 bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
@@ -610,8 +610,8 @@ void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
 
 void AppearanceConfig::createPreviewChatSession()
 {
-	d->previewProtocol = new FakeProtocol( new KInstance(QByteArray("kopete-preview-chatwindowstyle")), 0L, "kopete-preview-chatwindowstyle");
-	d->previewAccount = new FakeAccount(d->previewProtocol, QString("previewaccount"), 0);
+	d->previewProtocol = new FakeProtocol( new KInstance(QByteArray("kopete-preview-chatwindowstyle")), 0 ); d->previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
+	d->previewAccount = new FakeAccount(d->previewProtocol, QString("previewaccount"));
 
 	// Create fake meta/contacts
 	d->myselfMetaContact = new Kopete::MetaContact();

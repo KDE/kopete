@@ -31,8 +31,8 @@
 
 using namespace Yahoo;
 
-YMSGProtocol::YMSGProtocol(QObject *parent, const char *name)
- : InputProtocolBase(parent, name)
+YMSGProtocol::YMSGProtocol(QObject *parent)
+ : InputProtocolBase(parent)
 {
 }
 

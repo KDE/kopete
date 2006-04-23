@@ -128,8 +128,8 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	{
 		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
 		chooser->setDefaultButton(KDialog::Ok);
-		AccountSelector *accSelector = new AccountSelector(proto, chooser,
-			"accSelector");
+		AccountSelector *accSelector = new AccountSelector(proto, chooser);
+		accSelector->setObjectName( QLatin1String("accSelector") );
 		chooser->setMainWidget(accSelector);
 
 		int ret = chooser->exec();
@@ -166,7 +166,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
-: Kopete::Protocol( ICQProtocolFactory::instance(), parent, name ),
+: Kopete::Protocol( ICQProtocolFactory::instance(), parent ),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
 	awayMessage(Kopete::Global::Properties::self()->statusMessage()),

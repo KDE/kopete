@@ -271,7 +271,7 @@ class GlobalStatusMessageIconLabel : public QLabel
 {
       Q_OBJECT
 public:
-      GlobalStatusMessageIconLabel(QWidget *parent = 0, const char *name = 0);
+      GlobalStatusMessageIconLabel(QWidget *parent = 0);
 
 protected:
       void mouseReleaseEvent(QMouseEvent *event);

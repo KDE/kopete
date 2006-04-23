@@ -38,7 +38,8 @@
 
 CoreProtocol::CoreProtocol() : QObject()
 {
-	m_YMSGProtocol = new YMSGProtocol( this, "ymsgprotocol" );
+	m_YMSGProtocol = new YMSGProtocol( this );
+	m_YMSGProtocol->setObjectName( QLatin1String("ymsgprotocol") );
 }
 
 CoreProtocol::~CoreProtocol() 

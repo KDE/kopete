@@ -55,7 +55,7 @@ class WPAccount : public Kopete::Account
 
 // Kopete::Account overloading
 public:
-	WPAccount(WPProtocol *parent, const QString& accountID, const char *name = 0);
+	WPAccount(WPProtocol *parent, const QString& accountID);
 	~WPAccount();
 
 	virtual KActionMenu* actionMenu();			// Per-protocol actions for the systray and the status bar

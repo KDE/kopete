@@ -54,7 +54,7 @@ public:
 	 * @param parent The QObject parent for this class.
 	 * @param name The QObject name for this class.
 	 */
-	BlackLister( const QString &protocolId, const QString &accountId, QObject *parent = 0, const char *name = 0 );
+	BlackLister( const QString &protocolId, const QString &accountId, QObject *parent = 0 );
 	~BlackLister();
 
 	/**

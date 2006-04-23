@@ -86,10 +86,9 @@ public:
 	QString customIcon;
 };
 
-Account::Account( Protocol *parent, const QString &accountId, const char *name )
+Account::Account( Protocol *parent, const QString &accountId )
  : QObject( parent ), d( new Private( parent, accountId ) )
 {
-	setObjectName( name );
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );

@@ -54,7 +54,7 @@ static const KAboutData aboutdata("kopete_cryptography", I18N_NOOP("Cryptography
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( &aboutdata )  )
 
 CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( CryptographyPluginFactory::instance(), parent, name ),
+: Kopete::Plugin( CryptographyPluginFactory::instance(), parent ),
 		m_cachedPass()
 {
 	if( !pluginStatic_ )
@@ -70,7 +70,8 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
 
 
-	KAction *action=new KAction( i18n("&Select Cryptography Public Key..."), "encrypted", 0, this, SLOT (slotSelectContactKey()), actionCollection() , "contactSelectKey");
+	KAction *action=new KAction( KIcon("encrypted"), i18n("&Select Cryptography Public Key..."), actionCollection() , "contactSelectKey");
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSelectContactKey()) );
 	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
 	action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
 

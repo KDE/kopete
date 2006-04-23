@@ -42,9 +42,9 @@ class GaduEditContact : public KDialog
 
 public:
 	GaduEditContact( GaduAccount*, GaduContact*,
-		    QWidget* parent = 0, const char* name = 0 );
+		    QWidget* parent = 0 );
 	GaduEditContact( GaduAccount*,  GaduContactsList::ContactLine*,
-		    QWidget* parent = 0, const char* name = 0 );
+		    QWidget* parent = 0 );
 protected slots:
 	void slotApply();
 	void listClicked( Q3ListViewItem* );

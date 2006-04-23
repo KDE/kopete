@@ -36,7 +36,7 @@ class KopeteEditGlobalIdentityWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	KopeteEditGlobalIdentityWidget(QWidget *parent = 0, const char *name = 0);
+	KopeteEditGlobalIdentityWidget(QWidget *parent = 0 );
 	virtual ~KopeteEditGlobalIdentityWidget();
 
 public slots:
@@ -89,7 +89,7 @@ class ClickableLabel : public QLabel
 {
 	Q_OBJECT	
 public:
-	ClickableLabel(QWidget *parent = 0, const char *name = 0);
+	ClickableLabel(QWidget *parent = 0);
 
 signals:
 	void clicked();

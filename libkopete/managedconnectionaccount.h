@@ -42,9 +42,8 @@ class KOPETE_EXPORT ManagedConnectionAccount : public PasswordedAccount
 		* @param parent The protocol this account connects via
 		* @param acctId The ID of this account - should be unique within this protocol
 		* @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
-		* @param name The name for this QObject
 		*/
-		ManagedConnectionAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
+		ManagedConnectionAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0 );
 	public slots:
 		/**
 		 * @brief Begin the connection process, by checking if the connection is available with the ConnectionManager.

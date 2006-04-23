@@ -55,8 +55,8 @@
 #endif
 
 MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
-	Kopete::ContactPtrList others, const char *name )
-: Kopete::ChatSession( user, others, protocol,  name )
+	Kopete::ContactPtrList others )
+: Kopete::ChatSession( user, others, protocol )
 {
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	m_chatService = 0l;
@@ -79,20 +79,25 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	connect ( m_actionInvite->popupMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	#if !defined NDEBUG
-	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
+	KAction* rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), actionCollection(), "msnDebugRawCommand" ) ;
+	connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	#endif
 
-	m_actionNudge=new KAction( i18n( "Send Nudge" ), "bell", 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
+	m_actionNudge=new KAction( KIcon("bell"), i18n( "Send Nudge" ), actionCollection(), "msnSendNudge" ) ;
+	connect( m_actionNudge, SIGNAL(triggered(bool)), this, SLOT(slotSendNudge()) );
+
 	// Invite to receive webcam action
-	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive()), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive=new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), actionCollection(), "msnWebcamReceive" ) ;
+	connect( m_actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 	//Send webcam action
-	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend()), actionCollection(), "msnWebcamSend" ) ;
-
-
+	m_actionWebcamSend=new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), actionCollection(), "msnWebcamSend" ) ;
+	connect( m_actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
-	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
+	KAction* requestPicture = new KAction( KIcon("image"), i18n( "Request Display Picture" ), actionCollection(), "msnRequestDisplayPicture" );
+	requestPicture->setEnabled(!c->object().isEmpty());
+	connect( requestPicture, SIGNAL(triggered()), this, SLOT(slotRequestPicture()) );
 
 	if ( !c->object().isEmpty() )
 	{

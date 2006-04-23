@@ -181,8 +181,8 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 	return myWindow;
 }
 
-KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
-	: KMainWindow( parent, name )
+KopeteChatWindow::KopeteChatWindow( QWidget *parent )
+	: KMainWindow( parent )
 {
 	m_activeView = 0L;
 	m_popupView = 0L;
@@ -327,8 +327,8 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
-		this, SLOT( slotSendMessage() ), coll, "chat_send" );
+	chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), coll, "chat_send" );
+	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
 	//Default to 'Return' for sending messages
 	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
 	chatSend->setEnabled( false );
@@ -340,19 +340,24 @@ void KopeteChatWindow::initActions(void)
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 
-	tabRight=new KAction( i18n( "&Activate Next Tab" ), 0, KStdAccel::tabNext(),
-		this, SLOT( slotNextTab() ), coll, "tabs_right" );
-	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), 0, KStdAccel::tabPrev(),
-		this, SLOT( slotPreviousTab() ), coll, "tabs_left" );
-	tabLeft->setEnabled( false );
+	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll, "tabs_right" );
+	tabRight->setShortcut( KStdAccel::tabNext() );
 	tabRight->setEnabled( false );
+	connect( tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()) );
 
-	nickComplete = new KAction( i18n( "Nic&k Completion" ), QString::null, 0, this, SLOT( slotNickComplete() ), coll , "nick_compete");
+	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), coll, "tabs_left" );
+	tabLeft->setShortcut( KStdAccel::tabPrev() );
+	tabLeft->setEnabled( false );
+	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
+
+	//TODO Shouldn't this action be named "nick_complete" ?
+	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll, "nick_compete" );
+	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( i18n( "&Detach Chat" ), QString::fromLatin1( "tab_breakoff" ), 0,
-		this, SLOT( slotDetachChat() ), coll, "tabs_detach" );
+	tabDetach = new KAction( KIcon("tab_breakoff"), i18n( "&Detach Chat" ), coll, "tabs_detach" );
 	tabDetach->setEnabled( false );
+	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
 	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll, "tabs_detachmove" );
 	actionDetachMenu->setDelayed( false );
@@ -370,33 +375,42 @@ void KopeteChatWindow::initActions(void)
 	KStdAction::copy( this, SLOT(slotCopy()), coll);
 	KStdAction::paste( this, SLOT(slotPaste()), coll);
 
-	new KAction( i18n( "Set Default &Font..." ), QString::fromLatin1( "charset" ), 0, this, SLOT( slotSetFont() ), coll, "format_font" );
-	new KAction( i18n( "Set Default Text &Color..." ), QString::fromLatin1( "pencil" ), 0, this, SLOT( slotSetFgColor() ), coll, "format_fgcolor" );
-	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0, this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
+	KAction* action;
+	action = new KAction( KIcon("charset"), i18n( "Set Default &Font..." ), coll, "format_font" );
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	historyUp = new KAction( i18n( "Previous History" ), QString::null, 0,
-		this, SLOT( slotHistoryUp() ), coll, "history_up" );
+	action = new KAction( KIcon("pencil"), i18n( "Set Default Text &Color..." ), coll, "format_fgcolor" );
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
+
+	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll, "format_bgcolor" );
+	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
+
+	historyUp = new KAction( i18n( "Previous History" ), coll, "history_up" );
 	historyUp->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Up) );
+	connect( historyUp, SIGNAL(triggered(bool)), this, SLOT(slotHistoryUp()) );
 
-	historyDown = new KAction( i18n( "Next History" ), QString::null, 0,
-		this, SLOT( slotHistoryDown() ), coll, "history_down" );
+	historyDown = new KAction( i18n( "Next History" ), coll, "history_down" );
 	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
+	connect( historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()) );
 
 	KStdAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
 	KStdAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
 
 	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 
-	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), QString::null, 0,
-		this, SLOT( slotViewMembersLeft() ), coll, "options_membersleft" );
-	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), QString::null, 0,
-		this, SLOT( slotViewMembersRight() ), coll, "options_membersright" );
-	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
-		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
+	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll, "options_membersleft" );
+	connect( membersLeft, SLOT(toggled(bool)), this, SLOT(slotViewMembersLeft()) );
+
+	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll, "options_membersright" );
+	connect( membersRight, SLOT(toggled(bool)), this, SLOT(slotViewMembersRight()) );
+
+	toggleMembers = new KToggleAction( i18n( "Show" ), coll, "options_togglemembers" );
 	toggleMembers->setCheckedState(i18n("Hide"));
-	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), QString::null, 0,
-		this, SLOT( toggleAutoSpellChecking() ), coll, "enable_auto_spell_check" );
+	connect( toggleMembers, SLOT(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
+
+	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll, "enable_auto_spell_check" );
 	toggleAutoSpellCheck->setChecked( true );
+	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
@@ -424,7 +438,8 @@ void KopeteChatWindow::initActions(void)
 		animIcon.pause();
 #endif
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
-	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
+	anim = new QLabel( QString::null, 0L );
+	anim->setObjectName( QLatin1String("kde toolbar widget") );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
 
@@ -789,7 +804,10 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 	guiFactory()->removeClient(detachedView->msgManager());
 
 	if( newWindowIndex == -1 )
+	{
 		newWindow = new KopeteChatWindow();
+		newWindow->setObjectName( QLatin1String("KopeteChatWindow") );
+	}
 	else
 		newWindow = windows.at( newWindowIndex );
 

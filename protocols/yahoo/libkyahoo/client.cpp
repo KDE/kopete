@@ -91,8 +91,9 @@ public:
 	QString statusMessageOnConnect;
 };
 
-Client::Client(QObject *par) :QObject(par, "yahooclient" )
+Client::Client(QObject *par) :QObject(par)
 {
+	setObjectName( QLatin1String("yahooclient") );
 	d = new ClientPrivate;
 /*	d->tzoffset = 0;*/
 	d->active = false;

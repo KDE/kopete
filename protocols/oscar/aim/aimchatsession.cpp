@@ -28,8 +28,9 @@ AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtr
                                 Kopete::Protocol* protocol, Oscar::WORD exchange,
                                 const QString& room )
 
-    : Kopete::ChatSession( user, others, protocol, "AIMChatSession" )
+    : Kopete::ChatSession( user, others, protocol )
 {
+    setObjectName( QLatin1String("AIMChatSession") );
     Kopete::ChatSessionManager::self()->registerChatSession( this );
     setInstance( protocol->instance() );
     setMayInvite( false );

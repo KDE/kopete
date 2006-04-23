@@ -51,7 +51,7 @@ class TooltipItem : public K3ListViewItem
 
 
 
-TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char*/* name*/)
+TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	: KDialog(parent, i18n("Tooltip Editor"), Ok|Cancel)
 {
 	setDefaultButton(KDialog::Ok);

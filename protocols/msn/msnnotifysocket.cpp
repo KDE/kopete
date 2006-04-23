@@ -735,7 +735,8 @@ bool MSNNotifySocket::setUseHttpMethod(bool useHttp)
 	}
 	else {
 		if( !m_keepaliveTimer ) {
-			m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
+			m_keepaliveTimer = new QTimer( this );
+			m_keepaliveTimer->setObjectName( QLatin1String("m_keepaliveTimer") );
 			QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
 		}
 	}

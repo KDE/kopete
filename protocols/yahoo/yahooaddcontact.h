@@ -40,7 +40,7 @@ private:
 	YahooAddContactBase *theDialog;
 
 public:
-	YahooAddContact(YahooProtocol *owner, QWidget *parent = 0, const char *name = 0);
+	YahooAddContact(YahooProtocol *owner, QWidget *parent = 0);
 	~YahooAddContact();
 
 	virtual bool validateData();

@@ -35,8 +35,8 @@
 
 class KMenu;
 
-WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name)
-	: Kopete::Account(parent, accountID, name)
+WPAccount::WPAccount(WPProtocol *parent, const QString &accountID)
+	: Kopete::Account(parent, accountID)
 {
 //	kDebug(14170) <<  "WPAccount::WPAccount()" << endl;
 
@@ -168,21 +168,23 @@ KActionMenu* WPAccount::actionMenu()
 
 	if (mProtocol)
 	{
-		KAction *goOnline = new KAction("Online", QIcon(mProtocol->WPOnline.iconFor(this)), 0,
-										 this, SLOT(connect()), 0, "actionGoAvailable");
+		//Why aren't the action names i18n'd?
+		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), "Online", 0, "actionGoAvailable" );
+		QObject::connect( goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()) );
 		goOnline->setEnabled(isConnected() && isAway());
 		theActionMenu->insert(goOnline);
 
-		KAction *goAway = new KAction("Away", QIcon(mProtocol->WPAway.iconFor(this)), 0,
-									  this, SLOT(goAway()), 0, "actionGoAway");
+		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), "Away", 0, "actionGoAway" );
+		QObject::connect( goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()) );
 		goAway->setEnabled(isConnected() && !isAway());
 		theActionMenu->insert(goAway);
 
 		/// One can not really go offline manually - appears online as long as samba server is running. GF
 
 		theActionMenu->popupMenu()->addSeparator();
-		theActionMenu->insert(new KAction(i18n("Properties"),  0,
-							  this, SLOT(editAccount()), 0, "actionAccountProperties"));
+		KAction *properties = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
+		QObject::connect( properties, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
+		theActionMenu->insert( properties );
 	}
 
 	return theActionMenu;

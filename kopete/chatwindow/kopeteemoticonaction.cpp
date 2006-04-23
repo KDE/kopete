@@ -42,7 +42,8 @@ public:
 		m_delayed = true;
 		m_stickyMenu = true;
 		m_popup = new KMenu(0L);
-		emoticonSelector = new EmoticonSelector( m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
+		emoticonSelector = new EmoticonSelector( m_popup );
+		emoticonSelector->setObjectName( QLatin1String("KopeteEmoticonActionPrivate::emoticonSelector") );
 //FIXME do it the kde4 way
 //		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );
 		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
@@ -62,7 +63,7 @@ public:
 };
 
 KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const char* name )
-  : KAction( i18n( "Add Smiley" ), 0,  0 , 0 , parent, name )
+  : KAction( i18n( "Add Smiley" ), parent, name )
 {
 	d = new KopeteEmoticonActionPrivate;
 

@@ -42,8 +42,8 @@
 #include "icqsearchdialog.h"
 
 
-ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const char *name)
-	: AddContactPage(parent,name)
+ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
+	: AddContactPage(parent)
 {
 	kDebug(14153) << k_funcinfo << "called" << endl;
 	mAccount = owner;

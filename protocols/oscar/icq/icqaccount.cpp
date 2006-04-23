@@ -77,8 +77,8 @@ void ICQMyselfContact::fetchShortInfo()
 	static_cast<ICQAccount*>( account() )->engine()->requestShortInfo( contactId() );
 }
 
-ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *name)
-	: OscarAccount(parent, accountID, name, true)
+ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
+	: OscarAccount(parent, accountID, true)
 {
 	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	setMyself( new ICQMyselfContact( this ) );

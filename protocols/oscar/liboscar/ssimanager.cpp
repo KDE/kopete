@@ -41,8 +41,8 @@ public:
 	WORD nextGroupId;
 };
 
-SSIManager::SSIManager( QObject *parent, const char *name )
- : QObject( parent, name )
+SSIManager::SSIManager( QObject *parent )
+ : QObject(parent)
 {
 	d = new SSIManagerPrivate;
 	d->lastModTime = 0;

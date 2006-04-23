@@ -90,10 +90,9 @@
 #include "kopeteeditglobalidentitywidget.h"
 
 //BEGIN GlobalStatusMessageIconLabel
-GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent, const char *name)
+GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent)
  : QLabel(parent)
 {
-      setObjectName( name );
 }
 
 void GlobalStatusMessageIconLabel::mouseReleaseEvent( QMouseEvent *event )
@@ -147,7 +146,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
 
-	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage, "statusmsglabel" );
+	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage );
+	label->setObjectName( QLatin1String("statusmsglabel") );
 	label->setFixedSize( 16, 16 );
 	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
 	connect(label, SIGNAL(iconClicked( const QPoint& )),
@@ -307,7 +307,8 @@ void KopeteWindow::initActions()
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
 
 	// quick search bar
-	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), 0, "kde toolbar widget" );
+	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), 0 );
+	searchLabel->setObjectName( QLatin1String("kde toolbar widget") );
 	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( 0, contactlist, "quicksearch_bar" );
 	searchLabel->setBuddy( searchBar );
 	KWidgetAction *quickSearch = new KWidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
@@ -321,7 +322,8 @@ void KopeteWindow::initActions()
 		"Resets the quick search so that all contacts and groups are shown again." ) );
 
 	// Edit global identity widget/bar
-	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this, "editglobalBar");
+	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
+	editGlobalIdentityWidget->setObjectName( QLatin1String("editglobalBar") );
 	editGlobalIdentityWidget->hide();
 	KWidgetAction *editGlobalAction = new KWidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
 // 	editGlobalAction->setAutoSized( true );
@@ -730,7 +732,9 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 	// add an item for this account to the add contact actionmenu
 	QString s = "actionAdd%1Contact";
 	s.arg( account->accountId() );
-	KAction *action = new KAction( account->accountLabel(), account->accountIcon(), 0 , addContactMapper, SLOT( map() ), 0, s.toLatin1() );
+	KAction *action = new KAction( KIcon(account->accountIcon()), account->accountLabel(), 0, s.toLatin1() );
+	connect( action, SIGNAL(triggered(bool)), addContactMapper, SLOT(map()) );
+
 	addContactMapper->setMapping( action, account->protocol()->pluginId() + QChar(0xE000) + account->accountId() );
 	actionAddContact->insert( action );
 }
@@ -903,7 +907,9 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 
 void KopeteWindow::showExportDialog()
 {
-	( new KabcExportWizard( this, "export_contact_dialog" ) )->show();
+	KabcExportWizard* wizard = new KabcExportWizard( this );
+	wizard->setObjectName( QLatin1String("export_contact_dialog") );	
+	wizard->show();
 }
 
 void KopeteWindow::leaveEvent( QEvent * )

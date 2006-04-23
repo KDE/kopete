@@ -34,8 +34,8 @@ public:
 	Connection* client;
 };
 
-RateClassManager::RateClassManager( Connection* parent, const char* name )
-: QObject( parent, name )
+RateClassManager::RateClassManager( Connection* parent )
+: QObject( parent )
 {
 	d = new RateClassManagerPrivate();
 	d->client = parent;

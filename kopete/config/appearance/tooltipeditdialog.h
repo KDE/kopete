@@ -28,7 +28,7 @@ class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 	Q_OBJECT
 
 	public:
-		TooltipEditDialog(QWidget *parent=0, const char* name="ToolTipEditDialog");
+		TooltipEditDialog(QWidget *parent=0);
 
 	private slots:
 		void slotUnusedSelected(Q3ListViewItem *);

@@ -32,8 +32,8 @@
 #include "latexplugin.h"
 #include "latexguiclient.h"
 
-LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent, const char *name )
-: QObject( parent, name ), KXMLGUIClient( parent )
+LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
+: QObject( parent), KXMLGUIClient( parent )
 {
 	setInstance( LatexPlugin::plugin()->instance() );
 	connect( LatexPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );

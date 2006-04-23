@@ -24,8 +24,8 @@
 #include <k3listview.h>
 
 
-EditAliasDialog::EditAliasDialog( QWidget* parent, const char* name )
-: AliasDialog( parent, name )
+EditAliasDialog::EditAliasDialog( QWidget* parent )
+: AliasDialog( parent )
 {
 	QObject::connect( alias, SIGNAL( textChanged( const QString& ) ), this, SLOT( checkButtonsEnabled() ) );
 	QObject::connect( command, SIGNAL( textChanged( const QString& ) ), this, SLOT( checkButtonsEnabled() ) );

@@ -87,7 +87,7 @@ class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	Plugin( KInstance *instance, QObject *parent, const char *name );
+	Plugin( KInstance *instance, QObject *parent );
 	virtual ~Plugin();
 
 	/**

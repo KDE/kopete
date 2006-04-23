@@ -34,10 +34,9 @@ public:
 	bool useCustomIcon;
 };
 
-ContactListElement::ContactListElement( QObject *parent, const char *name )
+ContactListElement::ContactListElement( QObject *parent )
 : QObject( parent )
 {
-	setObjectName( name );
 	d = new Private;
 
 	d->useCustomIcon = false;

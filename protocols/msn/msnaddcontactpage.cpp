@@ -27,8 +27,8 @@
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
 
-MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char *name )
-				  : AddContactPage(parent,name)
+MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent)
+				  : AddContactPage(parent)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 /*	if ( connected )

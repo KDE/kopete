@@ -44,7 +44,7 @@ class KOPETE_EXPORT MessageEvent : public QObject
 	Q_OBJECT
 
 public:
-	MessageEvent(const Kopete::Message& , QObject* parent=0L, const char *name=0L);
+	MessageEvent(const Kopete::Message& , QObject* parent=0L );
 	~MessageEvent();
 
 	/**

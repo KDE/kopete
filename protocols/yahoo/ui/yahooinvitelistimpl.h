@@ -26,7 +26,7 @@ class YahooInviteListImpl : public YahooInviteListBase
 {
 	Q_OBJECT
 public: 
-	YahooInviteListImpl(QWidget *parent=0, const char *name=0);
+	YahooInviteListImpl(QWidget *parent=0);
 	~YahooInviteListImpl();
 	
 	void fillFriendList( const QStringList &buddies );

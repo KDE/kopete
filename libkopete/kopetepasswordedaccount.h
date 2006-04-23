@@ -49,7 +49,7 @@ public:
 	 *
 	 * @deprecated Use the constructor that specifies if a blank password is allowed
 	 */
-	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
+	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0 );
 
         /**
 	 * KopetePasswordedAccount constructor
@@ -60,8 +60,7 @@ public:
 	 *
 	 * @param name The name for this QObject
 	 */
-	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0,
-		bool allowBlankPassword = false, const char *name = 0 );
+	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0, bool allowBlankPassword = false );
 
 	virtual ~PasswordedAccount();
 

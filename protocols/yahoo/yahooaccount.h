@@ -63,7 +63,7 @@ public:
 
 	enum SignalConnectionType { MakeConnections, DeleteConnections };
 
-	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
+	YahooAccount(YahooProtocol *parent,const QString& accountID);
 	~YahooAccount();
 
 	/*

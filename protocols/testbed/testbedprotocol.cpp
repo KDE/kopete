@@ -30,7 +30,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_testbed, TestbedProtocolFactory( "kopete_test
 TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
 TestbedProtocol::TestbedProtocol( QObject* parent, const char *name, const QStringList &/*args*/ )
-	: Kopete::Protocol( TestbedProtocolFactory::instance(), parent, name ),
+	: Kopete::Protocol( TestbedProtocolFactory::instance(), parent ),
 	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString::null),  
 			  i18n( "Online" ),   i18n( "O&nline" ) ),
 	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  

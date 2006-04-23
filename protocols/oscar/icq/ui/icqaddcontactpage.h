@@ -36,7 +36,7 @@ class ICQAddContactPage : public AddContactPage
 Q_OBJECT
 
 public:
-	ICQAddContactPage(ICQAccount *owner, QWidget *parent = 0, const char *name = 0);
+	ICQAddContactPage(ICQAccount *owner, QWidget *parent = 0);
 	~ICQAddContactPage();
 	
 	virtual bool validateData();

@@ -967,17 +967,15 @@ bool Item::Private::animateChanges = true;
 bool Item::Private::fadeVisibility = true;
 bool Item::Private::foldVisibility = true;
 
-Item::Item( Q3ListViewItem *parent, QObject *owner, const char *name )
+Item::Item( Q3ListViewItem *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	setObjectName( name );
 	initLVI();
 }
 
-Item::Item( Q3ListView *parent, QObject *owner, const char *name )
+Item::Item( Q3ListView *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	setObjectName( name );
 	initLVI();
 }
 

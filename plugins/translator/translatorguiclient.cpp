@@ -35,8 +35,8 @@
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"
 
-TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent, const char *name )
-: QObject( parent, name ), KXMLGUIClient( parent )
+TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
+: QObject( parent ), KXMLGUIClient( parent )
 {
 	setInstance( TranslatorPlugin::plugin()->instance() );
 	connect( TranslatorPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );

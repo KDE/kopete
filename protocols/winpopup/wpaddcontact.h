@@ -40,7 +40,7 @@ private:
 	WPAddContactBase *theDialog;
 
 public:
-	WPAddContact(QWidget *parent, WPAccount *newAccount, const char *name = 0);
+	WPAddContact(QWidget *parent, WPAccount *newAccount);
 	~WPAddContact();
 
 	virtual bool validateData();

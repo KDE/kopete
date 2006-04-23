@@ -115,7 +115,7 @@ public:
 	 * @param accountID the unique ID of this account.
 	 * @param name the name of this QObject.
 	 */
-	Account(Protocol *parent, const QString &accountID, const char *name=0L);
+	Account(Protocol *parent, const QString &accountID);
 	~Account();
 
 	/**

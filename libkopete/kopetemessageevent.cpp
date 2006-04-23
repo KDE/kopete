@@ -37,8 +37,8 @@ public:
 	EventState state;
 };
 
-MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name )
- : QObject(parent,name), d( new Private )
+MessageEvent::MessageEvent( const Message& m, QObject *parent )
+ : QObject(parent), d( new Private )
 {
 	d->message = m;
 	d->state = Nothing;

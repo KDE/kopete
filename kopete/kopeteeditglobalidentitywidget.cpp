@@ -47,10 +47,9 @@
 #include "kopetepicture.h"
 
 
-ClickableLabel::ClickableLabel(QWidget *parent, const char *name)
+ClickableLabel::ClickableLabel(QWidget *parent)
 	: QLabel(parent)
 {
-	setObjectName(name);
 	setCursor(QCursor(Qt::PointingHandCursor));
 }
 
@@ -79,10 +78,9 @@ public:
 	QString lastNickname;
 };
 
-KopeteEditGlobalIdentityWidget::KopeteEditGlobalIdentityWidget(QWidget *parent, const char *name) 
+KopeteEditGlobalIdentityWidget::KopeteEditGlobalIdentityWidget(QWidget *parent) 
 	: QWidget(parent)
 {
-	setObjectName(name);
 	d = new Private;
 
 	d->myself = Kopete::ContactList::self()->myself();

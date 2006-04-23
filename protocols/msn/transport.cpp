@@ -34,8 +34,8 @@ using namespace KNetwork;
 
 namespace PeerToPeer {
 
-Transport::Transport(QObject* parent, const char* name)
- : QObject(parent, name)
+Transport::Transport(QObject* parent)
+ : QObject(parent)
 {
 	mFormatter = new PeerToPeer::MessageFormatter(this);
 }
@@ -103,15 +103,15 @@ void Transport::slotOnReceive(const QString& contact, const QByteArray& bytes)
 
 
 
-TransportBridge::TransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent, const char* name)
-: QObject(parent, name)
+TransportBridge::TransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent)
+: QObject(parent)
 {
 	mAddress = to;
 	mFormatter = formatter;
 }
 
-TransportBridge::TransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent, const char* name)
-: QObject(parent, name)
+TransportBridge::TransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent)
+: QObject(parent)
 {
 	mSocket = socket;
 	mAddress = mSocket->peerAddress();
@@ -166,8 +166,8 @@ void TransportBridge::slotOnSocketReceive()
 
 
 
-TcpTransportBridge::TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent, const char* name)
-: TransportBridge(to, formatter, parent, name)
+TcpTransportBridge::TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent)
+: TransportBridge(to, formatter, parent)
 {	
 	mSocket = new KStreamSocket(mAddress.ipAddress().toString(), QString::number(mAddress.port()), this);
 	mSocket->setBlocking(false);
@@ -176,8 +176,8 @@ TcpTransportBridge::TcpTransportBridge(const KNetwork::KInetSocketAddress& to, M
 	mConnected = false;
 }
 
-TcpTransportBridge::TcpTransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent, const char* name)
-: TransportBridge(socket, formatter, parent, name)
+TcpTransportBridge::TcpTransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent)
+: TransportBridge(socket, formatter, parent)
 {
 	mConnected = (mSocket->state() == KStreamSocket::Open) ? true : false;
 	mSocket->setBlocking(false);

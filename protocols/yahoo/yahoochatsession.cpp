@@ -48,8 +48,8 @@
 #include "yahooaccount.h"
 
 YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
-	Kopete::ContactPtrList others, const char *name )
-: Kopete::ChatSession( user, others, protocol,  name )
+	Kopete::ContactPtrList others )
+: Kopete::ChatSession( user, others, protocol )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
@@ -71,7 +71,8 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 
 	YahooContact *c = static_cast<YahooContact*>( others.first() );
 	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
-	m_image = new QLabel( 0L, "kde toolbar widget" );
+	m_image = new QLabel( 0L );
+	m_image->setObjectName( QLatin1String("kde toolbar widget") );
 	new KWidgetAction( m_image, i18n( "Yahoo Display Picture" ), 0, this, SLOT( slotDisplayPictureChanged() ), actionCollection(), "yahooDisplayPicture" );
 	if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 	{

@@ -39,10 +39,9 @@
 
 #include <kdebug.h>
 
-EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent, const char *name)
+EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent)
 	: QLabel(parent)
 {
-	setObjectName(name);
 	QMovie qm(pixmapPath);
 	mText = emoticonText;
 	setMovie( &qm );
@@ -66,10 +65,9 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
 	emit clicked(mText);
 }
 
-EmoticonSelector::EmoticonSelector(QWidget *parent, const char *name)
+EmoticonSelector::EmoticonSelector(QWidget *parent)
 	: QWidget(parent)
 {
-	setObjectName(name);
 //	kDebug(14000) << k_funcinfo << "called." << endl;
 	lay = 0L;
 }

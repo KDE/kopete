@@ -37,7 +37,7 @@ class GaduDCCServer;
 class GaduDCC: public QObject {
 	Q_OBJECT
 public:
-	GaduDCC(  QObject* parent, const char* name = NULL );
+	GaduDCC(  QObject* parent );
 	~GaduDCC();
 	bool unregisterAccount();
 	bool registerAccount( GaduAccount* );

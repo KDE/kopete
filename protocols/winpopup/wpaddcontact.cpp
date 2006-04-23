@@ -38,7 +38,7 @@
 #include "wpaccount.h"
 #include "wpaddcontact.h"
 
-WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount, const char *name) : AddContactPage(parent, name)
+WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactPage(parent)
 {
 //	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
 

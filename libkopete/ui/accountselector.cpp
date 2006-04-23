@@ -65,10 +65,9 @@ class AccountSelectorPrivate
 };
 
 
-AccountSelector::AccountSelector(QWidget *parent, const char *name)
+AccountSelector::AccountSelector(QWidget *parent)
 	: QWidget(parent)
 {
-	setObjectName(name);
 	//kDebug(14010) << k_funcinfo << "for no special protocol" << endl;
 	d = new AccountSelectorPrivate;
 	d->proto = 0;
@@ -76,10 +75,8 @@ AccountSelector::AccountSelector(QWidget *parent, const char *name)
 }
 
 
-AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent,
-	const char *name) : QWidget(parent)
+AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent) : QWidget(parent)
 {
-	setObjectName(name);
 	//kDebug(14010) << k_funcinfo << " for protocol " << proto->pluginId() << endl;
 	d = new AccountSelectorPrivate;
 	d->proto = proto;

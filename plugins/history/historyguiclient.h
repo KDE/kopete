@@ -30,7 +30,7 @@ class HistoryGUIClient : public QObject , public KXMLGUIClient
 {
 Q_OBJECT
 public:
-	HistoryGUIClient(Kopete::ChatSession *parent = 0, const char *name = 0);
+	HistoryGUIClient(Kopete::ChatSession *parent = 0);
 	~HistoryGUIClient();
 
 	HistoryLogger *logger() const { return m_logger; }

@@ -35,9 +35,9 @@
 #include "yahooaccount.h"
 
 // Yahoo Add Contact page
-YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)
+YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddContactPage(parent)
 {
-	kDebug(YAHOO_GEN_DEBUG) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << name << ")" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << objectName() << ")" << endl;
 
 	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	theDialog = new YahooAddContactBase(this);

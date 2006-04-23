@@ -164,7 +164,7 @@ protected:
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
-	Protocol( KInstance *instance, QObject *parent, const char *name );
+	Protocol( KInstance *instance, QObject *parent );
 
 	/**
 	 * @brief Sets the capabilities of this protcol.

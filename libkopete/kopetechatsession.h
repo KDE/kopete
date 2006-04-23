@@ -371,8 +371,7 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	ChatSession( const Contact *user, ContactPtrList others,
-		Protocol *protocol, const char *name = 0 );
+	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol );
 
 	/**
 	 * Set wether or not contact from this account may be invited in this chat.

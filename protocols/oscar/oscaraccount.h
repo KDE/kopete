@@ -44,7 +44,7 @@ class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 
 public:
-	OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name=0L, bool isICQ=false);
+	OscarAccount(Kopete::Protocol *parent, const QString &accountID, bool isICQ=false);
 	virtual ~OscarAccount();
 
 	/** Provide the derived accounts and contacts with access to the backend */

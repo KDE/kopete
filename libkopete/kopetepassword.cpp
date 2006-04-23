@@ -356,25 +356,22 @@ public:
 	}
 };
 
-Kopete::Password::Password( const QString &configGroup, uint maximumLength, const char *name )
+Kopete::Password::Password( const QString &configGroup, uint maximumLength )
  : QObject( 0 ), d( new Private( configGroup, maximumLength, false ) )
 {
-	setObjectName( name );
 	readConfig();
 }
 
 Kopete::Password::Password( const QString &configGroup, uint maximumLength,
-	bool allowBlankPassword, const char *name )
+	bool allowBlankPassword )
  : QObject( 0 ), d( new Private( configGroup, maximumLength, allowBlankPassword ) )
 {
-	setObjectName( name );
 	readConfig();
 }
 
-Kopete::Password::Password( Password &other, const char *name )
+Kopete::Password::Password( Password &other )
  : QObject( 0 ), d( other.d->incRef() )
 {
-	setObjectName( name );
 }
 
 Kopete::Password::~Password()

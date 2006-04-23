@@ -135,19 +135,24 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-		actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ), 0, "actionBlock" );
+		actionBlock = new KAction( KIcon("msn_blocked"), label, 0, "actionBlock" );
+		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT( slotBlockUser()) );
 
 		//show profile
-		actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), 0, "actionShowProfile" );
+		actionShowProfile = new KAction( i18n("Show Profile"), 0, "actionShowProfile" );
+		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ), 0, "actionSendMail" );
+		actionSendMail = new KAction( KIcon("mail_generic"), i18n("Send Email..."), 0, "actionSendMail" );
+		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
 		// Invite to receive webcam
-		actionWebcamReceive = new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive() ), 0, "msnWebcamReceive" ) ;
+		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), 0, "msnWebcamReceive" ) ;
+		connect( actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 		//Send webcam action
-		actionWebcamSend = new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend() ), 0, "msnWebcamSend" ) ;
+		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), 0, "msnWebcamSend" ) ;
+		connect( actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 	}
 	else
 		actionBlock->setText( label );

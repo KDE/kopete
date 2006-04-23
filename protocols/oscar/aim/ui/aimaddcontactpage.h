@@ -19,8 +19,7 @@ class AIMAddContactPage : public AddContactPage
 Q_OBJECT
 
 public:
-	AIMAddContactPage(bool connected, QWidget *parent=0,
-			    const char *name=0);
+	AIMAddContactPage(bool connected, QWidget *parent=0);
 	~AIMAddContactPage();
 
 	/** Validates the data entered */

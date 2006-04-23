@@ -50,9 +50,9 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 
 	setInstance( KGenericFactory<CryptographyPlugin>::instance() );
 
-
-	m_action=new KToggleAction( i18n("Encrypt Messages" ), QString::fromLatin1( "encrypted" ), 0, this, SLOT(slotToggled()), actionCollection() , "cryptographyToggle" );
+	m_action=new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), actionCollection() , "cryptographyToggle" );
 	m_action->setChecked( first->pluginData( CryptographyPlugin::plugin() , "encrypt_messages") != QString::fromLatin1("off") ) ;
+	connect( m_action, SIGNAL(triggered(bool)), this, SLOT(slotToggled()) );
 
 	setXMLFile("cryptographychatui.rc");
 }

@@ -39,7 +39,7 @@ class KOPETE_EXPORT MSNChatSession : public Kopete::ChatSession
 	Q_OBJECT
 
 public:
-	MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
+	MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~MSNChatSession();
 
 	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString::null );

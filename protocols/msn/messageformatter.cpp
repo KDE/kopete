@@ -28,7 +28,7 @@
 using P2P::MessageFormatter;
 using P2P::Message;
 
-MessageFormatter::MessageFormatter(QObject *parent, const char *name) : QObject(parent, name)
+MessageFormatter::MessageFormatter(QObject *parent) : QObject(parent)
 {}
 
 MessageFormatter::~MessageFormatter()

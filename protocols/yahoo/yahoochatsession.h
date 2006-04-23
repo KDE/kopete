@@ -33,7 +33,7 @@ class KOPETE_EXPORT YahooChatSession : public Kopete::ChatSession
 	Q_OBJECT
 
 public:
-	YahooChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
+	YahooChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~YahooChatSession();
 
 private slots:

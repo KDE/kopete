@@ -44,8 +44,8 @@
 
 #include "libgadu.h"
 
-GaduDCCTransaction::GaduDCCTransaction( GaduDCC* parent, const char* name )
-:QObject( parent, name ), gaduDCC_( parent )
+GaduDCCTransaction::GaduDCCTransaction( GaduDCC* parent )
+:QObject( parent ), gaduDCC_( parent )
 {
 	read_		= NULL;
 	write_		= NULL;

@@ -48,7 +48,7 @@ class KOPETE_EXPORT ContactListElement : public QObject  /* public KopeteNotifyD
 	Q_OBJECT
 
 protected:
-	ContactListElement( QObject *parent = 0L, const char *name = 0L );
+	ContactListElement( QObject *parent = 0L );
 	~ContactListElement();
 
 

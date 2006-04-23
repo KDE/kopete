@@ -49,10 +49,9 @@ GlobalIdentitiesManager *GlobalIdentitiesManager::self()
 	return s_self;
 }
 
-GlobalIdentitiesManager::GlobalIdentitiesManager(QObject *parent, const char *name)
+GlobalIdentitiesManager::GlobalIdentitiesManager(QObject *parent)
         : QObject(parent)
 {
-	setObjectName(name);
 	d = new Private;
 }
 

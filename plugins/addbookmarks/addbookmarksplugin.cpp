@@ -26,7 +26,7 @@
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
 
 BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &/*args*/)
- : Kopete::Plugin(BookmarksPluginFactory::instance(), parent, name)
+ : Kopete::Plugin(BookmarksPluginFactory::instance(), parent)
 {
 	//kDebug(14501) << "plugin loading" << endl;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), this, SLOT( slotBookmarkURLsInMessage( Kopete::Message & ) ) );

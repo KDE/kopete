@@ -34,7 +34,7 @@ class YahooConferenceChatSession : public Kopete::ChatSession
 	Q_OBJECT
 
 public:
-	YahooConferenceChatSession( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
+	YahooConferenceChatSession( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~YahooConferenceChatSession();
 
 	void joined( YahooContact *c );

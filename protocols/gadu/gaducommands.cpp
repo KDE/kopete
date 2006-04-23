@@ -39,8 +39,8 @@
 
 #include <errno.h>
 
-GaduCommand::GaduCommand( QObject* parent, const char* name )
-: QObject( parent, name ), read_( 0 ), write_( 0 )
+GaduCommand::GaduCommand( QObject* parent )
+: QObject( parent ), read_( 0 ), write_( 0 )
 {
 }
 
@@ -116,13 +116,13 @@ GaduCommand::forwarder()
 	emit socketReady();
 }
 
-RegisterCommand::RegisterCommand( QObject* parent, const char* name )
-:GaduCommand( parent, name ), state( RegisterStateNoToken ), session_( 0 ), uin( 0 )
+RegisterCommand::RegisterCommand( QObject* parent )
+:GaduCommand( parent ), state( RegisterStateNoToken ), session_( 0 ), uin( 0 )
 {
 }
 
-RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent, const char* name )
-:GaduCommand( parent, name ), state( RegisterStateNoToken ), email_( email ), password_( password ), session_( 0 ), uin( 0 )
+RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent )
+:GaduCommand( parent ), state( RegisterStateNoToken ), email_( email ), password_( password ), session_( 0 ), uin( 0 )
 {
 }
 
@@ -295,13 +295,13 @@ void RegisterCommand::watcher()
 	}
 }
 
-RemindPasswordCommand::RemindPasswordCommand( QObject* parent, const char* name )
-: GaduCommand( parent, name ), uin_( 0 ), session_( 0 )
+RemindPasswordCommand::RemindPasswordCommand( QObject* parent )
+: GaduCommand( parent ), uin_( 0 ), session_( 0 )
 {
 }
 
-RemindPasswordCommand::RemindPasswordCommand( uin_t uin, QObject* parent, const char* name )
-: GaduCommand( parent, name ), uin_( uin ), session_( 0 )
+RemindPasswordCommand::RemindPasswordCommand( uin_t uin, QObject* parent )
+: GaduCommand( parent ), uin_( uin ), session_( 0 )
 {
 }
 
@@ -353,8 +353,8 @@ RemindPasswordCommand::watcher()
 	enableNotifiers( session_->check );
 }
 
-ChangePasswordCommand::ChangePasswordCommand( QObject* parent, const char* name )
-: GaduCommand( parent, name ), session_( 0 )
+ChangePasswordCommand::ChangePasswordCommand( QObject* parent )
+: GaduCommand( parent ), session_( 0 )
 {
 }
 

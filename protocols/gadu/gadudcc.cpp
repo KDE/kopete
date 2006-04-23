@@ -50,8 +50,8 @@ static QMutex initmutex;
 typedef QMap< unsigned int, GaduAccount* > gaduAccounts;
 static gaduAccounts accounts;
 
-GaduDCC::GaduDCC( QObject* parent, const char* name )
-:QObject( parent, name )
+GaduDCC::GaduDCC( QObject* parent )
+:QObject( parent )
 {
 }
 

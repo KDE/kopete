@@ -39,7 +39,7 @@ class KabcExportWizard : public Q3Wizard, private Ui::KabcExportWizard_Base
 {
 Q_OBJECT
 	public:
-		KabcExportWizard( QWidget *parent = 0, const char *name = 0 );
+		KabcExportWizard( QWidget *parent = 0 );
 		~KabcExportWizard();
 	public slots:
 		void accept();

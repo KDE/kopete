@@ -37,7 +37,7 @@ class GaduRegisterAccount : public KDialog
     Q_OBJECT
 
 public:
-	GaduRegisterAccount( QWidget* , const char* );
+	GaduRegisterAccount( QWidget* );
 	~GaduRegisterAccount( );
 
 signals:

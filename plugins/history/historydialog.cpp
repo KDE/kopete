@@ -99,8 +99,7 @@ int KListViewDateItem::compare(Q3ListViewItem *i, int col, bool ascending) const
 }
 
 
-HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
-	const char* name) : KDialog(parent,
+HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog(parent,
 		i18n("History for %1", mc->displayName()))
 {
 	QString fontSize;

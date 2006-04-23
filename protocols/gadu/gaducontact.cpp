@@ -196,15 +196,13 @@ GaduContact::customContextMenuActions()
 {
 	QList<KAction*> *fakeCollection = new QList<KAction*>();
 	//show profile
-	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,
-						this, SLOT( slotShowPublicProfile() ),
-						0, "actionShowPublicProfile" );
+	KAction* actionShowProfile = new KAction( KIcon("info"), i18n("Show Profile"), 0, "actionShowPublicProfile" );
+	connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()) );
 
 	fakeCollection->append( actionShowProfile );
 
-	KAction* actionEditContact = new KAction( i18n("Edit...") , "edit", 0,
-						this, SLOT( slotEditContact() ),
-						0, "actionEditContact" );
+	KAction* actionEditContact = new KAction( KIcon("edit"), i18n("Edit..."), 0, "actionEditContact" );
+	connect( actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()) );
 
 	fakeCollection->append( actionEditContact );
 

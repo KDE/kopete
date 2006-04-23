@@ -42,7 +42,7 @@ class GaduCommand : public QObject
 	Q_OBJECT
 
 public:
-	GaduCommand( QObject* parent = 0, const char* name = 0 );
+	GaduCommand( QObject* parent = 0 );
 	virtual ~GaduCommand();
 
 	virtual void execute() = 0;
@@ -77,9 +77,9 @@ class RegisterCommand : public GaduCommand
 	Q_OBJECT
 
 public:
-	RegisterCommand( QObject* parent = 0, const char* name = 0 );
+	RegisterCommand( QObject* parent = 0 );
 	RegisterCommand( const QString& email, const QString& password ,
-					QObject* parent = 0, const char* name = 0 );
+					QObject* parent = 0 );
 	~RegisterCommand();
 
 	void setUserinfo( const QString& email, const QString& password, const QString& token );
@@ -110,8 +110,8 @@ class RemindPasswordCommand : public GaduCommand
 	Q_OBJECT
 
 public:
-	RemindPasswordCommand( uin_t uin, QObject* parent = 0, const char* name = 0 );
-	RemindPasswordCommand( QObject* parent = 0, const char* name = 0 );
+	RemindPasswordCommand( uin_t uin, QObject* parent = 0 );
+	RemindPasswordCommand( QObject* parent = 0 );
 	~RemindPasswordCommand();
 
 	void setUIN( uin_t );
@@ -130,7 +130,7 @@ class ChangePasswordCommand : public GaduCommand
 	Q_OBJECT
 
 public:
-	ChangePasswordCommand( QObject* parent = 0, const char* name = 0 );
+	ChangePasswordCommand( QObject* parent = 0 );
 	~ChangePasswordCommand();
 
 	void setInfo( uin_t uin, const QString& passwd, const QString& newpasswd,

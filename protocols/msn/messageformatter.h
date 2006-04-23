@@ -29,7 +29,7 @@ namespace P2P{
 	class MessageFormatter : public QObject
 	{	Q_OBJECT
 		public:
-			MessageFormatter(QObject *parent = 0, const char *name = 0);
+			MessageFormatter(QObject *parent = 0);
 			~MessageFormatter();
 
 			Message readMessage(const QByteArray& stream, bool compact=false);

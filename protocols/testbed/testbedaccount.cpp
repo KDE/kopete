@@ -30,8 +30,8 @@
 #include "testbedprotocol.h"
 
 
-TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountID, const char *name )
-: Kopete::Account ( parent, accountID , name )
+TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountID )
+: Kopete::Account ( parent, accountID )
 {
 	// Init the myself contact
 	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );

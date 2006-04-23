@@ -42,7 +42,7 @@
 #include <k3listview.h>
 #include <klocale.h>
 
-GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char* name )
+GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent )
 : KDialog( parent, QString::null, User1|User2|User3|Cancel )
 {
 	setDefaultButton( KDialog::User2 );
@@ -54,7 +54,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 	show();
 }
 
-GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent, const char* name )
+GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent )
 : KDialog( parent, QString::null, User1|User2|User3|Cancel )
 {
 	setDefaultButton( KDialog::User2 );
@@ -101,6 +101,7 @@ GaduPublicDir::createWidget()
 	setCaption( i18n( "Gadu-Gadu Public Directory" ) );
 
 	mMainWidget = new GaduPublicDirectory( this );
+	mMainWidget->setObjectName( QLatin1String("GaduPublicDir") );
 	setMainWidget( mMainWidget );
 
 	mMainWidget->UIN->setValidChars( "1234567890" );

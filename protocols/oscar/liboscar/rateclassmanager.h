@@ -35,7 +35,7 @@ class RateClassManager : public QObject
 {
 Q_OBJECT
 public:
-	RateClassManager( Connection* parent, const char* name = 0 );
+	RateClassManager( Connection* parent );
 	~RateClassManager();
 
 	/** Reset the rate manager */

@@ -21,7 +21,8 @@
 #include "translatordialog.h"
 
 
-TranslatorDialog::TranslatorDialog(const QString &text,QWidget *parent, const char *name ) : KDialog(parent,i18n("Translator Plugin"), Ok)
+TranslatorDialog::TranslatorDialog(const QString &text, QWidget *parent)
+	: KDialog(parent,i18n("Translator Plugin"), Ok)
 {
 	m_textEdit=new KTextEdit(this);
 	setMainWidget(m_textEdit);

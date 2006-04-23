@@ -54,8 +54,9 @@ public:
 
 
 Connection::Connection( Connector* connector, ClientStream* cs, const char* name )
-: QObject( 0, name )
+: QObject( 0 )
 {
+	setObjectName( QLatin1String(name) );
 	d = new ConnectionPrivate();
 	d->clientStream = cs;
 	d->client = 0;

@@ -22,7 +22,7 @@
 
 #include "yahoobytestream.h"
 
-KNetworkByteStream::KNetworkByteStream( QObject *parent, const char */*name*/ )
+KNetworkByteStream::KNetworkByteStream( QObject *parent )
  : ByteStream ( parent )
 {
 	kDebug( 14181 ) << k_funcinfo << "Instantiating new KNetwork byte stream." << endl;

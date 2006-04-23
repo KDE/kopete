@@ -49,7 +49,7 @@ class ICQAccount : public OscarAccount
 Q_OBJECT
 
 public:
-	ICQAccount( Kopete::Protocol *parent, QString accountID, const char *name = 0L );
+	ICQAccount( Kopete::Protocol *parent, QString accountID );
 	virtual ~ICQAccount();
 
 	ICQProtocol *protocol();

@@ -47,7 +47,7 @@ class FastAddContactWizard : public FastAddContactWizard_Base
 {
 	Q_OBJECT
 public:
-	FastAddContactWizard( QWidget *parent = 0, const char *name = 0 );
+	FastAddContactWizard( QWidget *parent = 0 );
 	~FastAddContactWizard();
 private:
 	QMap <Kopete::Account*,AddContactPage*> protocolPages;

@@ -40,7 +40,7 @@ Q_OBJECT
 
 public:
 	AIMEditAccountWidget(AIMProtocol *protocol, Kopete::Account *account,
-	                     QWidget *parent=0, const char *name=0);
+	                     QWidget *parent=0);
 	virtual ~AIMEditAccountWidget();
 	
 	virtual bool validateData();

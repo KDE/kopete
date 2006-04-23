@@ -52,7 +52,7 @@ class Transport : public QObject
 	Q_OBJECT
 public:
 	/** @brief Creates a new instance of the class Transport. */
-    Transport(QObject* parent, const char* name = 0l);
+    Transport(QObject* parent);
     ~Transport();
 	/** @brief Get a transport bridge with the specified address, port, type and identifier. */
     TransportBridge* getBridge(const QString& address, Q_UINT16 port, TransportBridgeType type, const QString& identifier);
@@ -85,9 +85,9 @@ public:
 
 protected:
 	/** @brief Creates a new instance of the class TransportBridge with the specified address and formatter. */
-	TransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent, const char* name = 0l);
+	TransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent);
 	/** @brief Creates a new instance of the class TransportBridge with the specified socket and formatter. */
-	TransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent, const char* name = 0l);
+	TransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent);
 
 public:
 	/** @brief Creates a connection between two peers. */
@@ -128,8 +128,8 @@ public:
 	virtual ~TcpTransportBridge();
 
 private:
-	TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent, const char* name = 0l);
-	TcpTransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent, const char* name = 0l);
+	TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent);
+	TcpTransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent);
 	
 protected slots:
 	virtual void slotOnConnect();

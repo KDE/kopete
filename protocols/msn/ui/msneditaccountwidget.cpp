@@ -65,7 +65,7 @@ public:
 	QImage pictureData;
 };
 
-MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent, const char * /* name */ )
+MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent )
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	d = new MSNEditAccountWidgetPrivate;

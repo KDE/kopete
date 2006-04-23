@@ -162,7 +162,8 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	{
 		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
 		chooser->setDefaultButton(KDialog::Ok);
-		AccountSelector *accSelector = new AccountSelector(proto, chooser, "accSelector");
+		AccountSelector *accSelector = new AccountSelector(proto, chooser);
+		accSelector->setObjectName( QLatin1String("accSelector") );
 		chooser->setMainWidget(accSelector);
 		
 		int ret = chooser->exec();
@@ -219,7 +220,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
-  : Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
+  : Kopete::Protocol( AIMProtocolFactory::instance(), parent ),
 	statusOnline( Kopete::OnlineStatus::Online, 2, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
 	statusOffline( Kopete::OnlineStatus::Offline, 2, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
 	statusAway( Kopete::OnlineStatus::Away, 2, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,

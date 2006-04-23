@@ -120,7 +120,7 @@ public:
 	QMap<QString, Kopete::MetaContact*> getGlobalIdentitiesList();
 
 private:
-	GlobalIdentitiesManager(QObject *parent = 0, const char *name = 0);
+	GlobalIdentitiesManager(QObject *parent = 0);
 
 	/**
 	 * @brief Return a XML representation of the global identities list.

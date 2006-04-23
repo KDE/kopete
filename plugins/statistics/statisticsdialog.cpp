@@ -40,8 +40,7 @@
 #include "statisticsplugin.h"
 #include "statisticsdb.h"
 
-StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent,
-	const char* name) : KDialog(parent,
+StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent) : KDialog(parent,
 	i18n("Statistics for %1", contact->metaContact()->displayName()), Close), m_db(db), m_contact(contact)
 {
 	setDefaultButton(KDialog::Close);

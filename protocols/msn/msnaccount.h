@@ -48,7 +48,7 @@ class MSNAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 
 public:
-	MSNAccount( MSNProtocol *parent, const QString &accountID, const char *name = 0L );
+	MSNAccount( MSNProtocol *parent, const QString &accountID );
 
 	/*
 	 * return the menu for this account

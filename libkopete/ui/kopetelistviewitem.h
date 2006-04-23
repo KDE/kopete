@@ -399,8 +399,8 @@ class Item : public QObject, public K3ListViewItem, public ComponentBase
 {
 	Q_OBJECT
 public:
-	Item( Q3ListView *parent, QObject *owner = 0, const char *name = 0 );
-	Item( Q3ListViewItem *parent, QObject *owner = 0, const char *name = 0  );
+	Item( Q3ListView *parent, QObject *owner = 0 );
+	Item( Q3ListViewItem *parent, QObject *owner = 0 );
 	~Item();
 
 	void repaint();

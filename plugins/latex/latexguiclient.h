@@ -39,7 +39,7 @@ class LatexGUIClient : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	LatexGUIClient( Kopete::ChatSession *parent, const char *name=0L);
+	LatexGUIClient( Kopete::ChatSession *parent );
 	~LatexGUIClient();
 
 private slots:

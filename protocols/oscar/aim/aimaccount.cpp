@@ -199,8 +199,8 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 }
 
 
-AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name)
-	: OscarAccount(parent, accountID, name, false)
+AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
+	: OscarAccount(parent, accountID, false)
 {
 	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	AIMMyselfContact* mc = new AIMMyselfContact( this );

@@ -28,9 +28,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent,
-					 const char *name )
-	: AddContactPage(parent,name)
+AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
+	: AddContactPage(parent)
 {
     m_gui = 0;
 	(new Q3VBoxLayout(this))->setAutoAdd(true);

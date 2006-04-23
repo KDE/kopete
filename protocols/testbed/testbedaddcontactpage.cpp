@@ -28,8 +28,8 @@
 
 #include "testbedaddui.h"
 
-TestbedAddContactPage::TestbedAddContactPage( QWidget* parent, const char* name )
-		: AddContactPage(parent, name)
+TestbedAddContactPage::TestbedAddContactPage( QWidget* parent )
+		: AddContactPage(parent)
 {
 	kDebug(14210) << k_funcinfo << endl;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );

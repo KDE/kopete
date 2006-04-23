@@ -37,7 +37,7 @@
 #include "gaduregisteraccount.h"
 #include "gaducommands.h"
 
-GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
+GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
 : KDialog( parent, i18n( "Register New Account" ), KDialog::User1 | KDialog::Ok )
 {
 	setDefaultButton( KDialog::User1 );

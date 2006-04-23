@@ -179,11 +179,13 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	// the widget's vert box layout, horiz box layout containing button, spacer, followed by a spacer
 	QBoxLayout * vb = static_cast<QVBoxLayout*>( mNotificationProps->widget()->layout() );
 
-	QHBoxLayout* hb = new QHBoxLayout( vb );
+	QHBoxLayout* hb = new QHBoxLayout();
+	vb->addItem( hb );
 	hb->setMargin( -1 );
 	hb->setObjectName( "soundFromKABClayout" );
 
-	mFromKABC = new QPushButton( i18n( "Sync KABC..." ), mNotificationProps->widget(), "getSoundFromKABC" );
+	mFromKABC = new QPushButton( i18n( "Sync KABC..." ), mNotificationProps->widget() );
+	mFromKABC->setObjectName( QLatin1String("getSoundFromKABC") );
 	hb->addWidget( mFromKABC ); // [ [Button] <-xxxxx-> ]
 	hb->addStretch();
 	vb->addStretch(); // vert spacer keeps the rest snug

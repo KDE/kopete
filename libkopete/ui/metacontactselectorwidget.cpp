@@ -70,7 +70,7 @@ public:
 };
 
 
-MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, Q3ListView *parent, QObject *owner, const char *name) : Kopete::UI::ListView::Item(parent, owner, name) , d( new Private() )
+MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, Q3ListView *parent, QObject *owner) : Kopete::UI::ListView::Item(parent, owner) , d( new Private() )
 {
 	d->metaContact = mc;
 	d->photoSize = 60;

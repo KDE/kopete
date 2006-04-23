@@ -86,7 +86,7 @@ class AIMAccount : public OscarAccount
 Q_OBJECT
 
 public:
-	AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
+	AIMAccount(Kopete::Protocol *parent, QString accountID);
 	virtual ~AIMAccount();
 
 	// Accessor method for the action menu

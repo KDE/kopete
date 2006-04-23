@@ -40,8 +40,8 @@
 #include <string.h>
 #include <netinet/in.h>
 
-GaduSession::GaduSession( QObject* parent, const char* name )
-: QObject( parent, name ), session_( 0 ), searchSeqNr_( 0 )
+GaduSession::GaduSession( QObject* parent )
+: QObject( parent ), session_( 0 ), searchSeqNr_( 0 )
 {
 	textcodec = QTextCodec::codecForName( "CP1250" );
 	rtf = new GaduRichTextFormat;

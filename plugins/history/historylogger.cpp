@@ -39,8 +39,8 @@
 #include "kopetechatsession.h"
 
 // -----------------------------------------------------------------------------
-HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent, const char *name )
- : QObject(parent, name)
+HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
+ : QObject(parent)
 {
 	m_saveTimer=0L;
 	m_saveTimerTime=0;
@@ -57,8 +57,8 @@ HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent, const ch
 }
 
 
-HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent, const char *name )
- : QObject(parent, name)
+HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent )
+ : QObject(parent)
 {
 	m_saveTimer=0L;
 	m_saveTimerTime=0;

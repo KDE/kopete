@@ -34,11 +34,9 @@ public:
 };
 
 
-BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent, const char *name)
+BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent)
  : QObject(parent), d( new Private )
 {
-	setObjectName( name );
-
 	KConfig *config = KGlobal::config();
 	
 	d->owner = accountId;

@@ -63,10 +63,9 @@ public:
 };
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
-	Kopete::ContactPtrList others, Kopete::Protocol *protocol, const char *name )
+	Kopete::ContactPtrList others, Kopete::Protocol *protocol )
 : QObject( user->account())
 {
-	setObjectName(name);
 	int i;
 
 	d = new KMMPrivate;

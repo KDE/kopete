@@ -41,7 +41,7 @@ private:
 	Kopete::UI::PasswordWidget *mPasswordWidget;
 
 public:
-	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
+	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
 
 	virtual bool validateData();
 

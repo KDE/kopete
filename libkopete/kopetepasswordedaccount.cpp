@@ -26,19 +26,19 @@
 struct Kopete::PasswordedAccount::Private
 {
 	Private( const QString &group, uint maxLen, bool allowBlankPassword ) :
-		password( group, maxLen, allowBlankPassword, "mPassword" ) {}
+		password( group, maxLen, allowBlankPassword ) {}
 	Kopete::Password password;
 	Kopete::OnlineStatus initialStatus;
 };
 
-Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, uint maxLen, const char *name )
- : Kopete::Account( parent, acctId, name ), d( new Private( QString::fromLatin1("Account_")+ parent->pluginId() + QString::fromLatin1("_") + acctId , maxLen, false ) )
+Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, uint maxLen )
+ : Kopete::Account( parent, acctId ), d( new Private( QString::fromLatin1("Account_")+ parent->pluginId() + QString::fromLatin1("_") + acctId , maxLen, false ) )
 {
 }
 
 Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, uint maxLen,
-	bool allowBlankPassword, const char *name )
- : Kopete::Account( parent, acctId, name ), d( new Private( QString::fromLatin1("Account_")+ parent->pluginId() + QString::fromLatin1("_") + acctId , maxLen, allowBlankPassword ) )
+	bool allowBlankPassword )
+ : Kopete::Account( parent, acctId ), d( new Private( QString::fromLatin1("Account_")+ parent->pluginId() + QString::fromLatin1("_") + acctId , maxLen, allowBlankPassword ) )
 {
 }
 

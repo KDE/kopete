@@ -115,8 +115,8 @@ static const char* const servers_ip[] = {
 
 #define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
 
- GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID,const char* name )
-: Kopete::PasswordedAccount( parent, accountID, 0, name )
+ GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID )
+: Kopete::PasswordedAccount( parent, accountID, 0, false )
 {
 	QHostAddress ip;
 	p = new GaduAccountPrivate;
@@ -127,7 +127,8 @@ static const char* const servers_ip[] = {
 	p->forFriends = false;
 
 	p->textcodec_ = QTextCodec::codecForName( "CP1250" );
-	p->session_ = new GaduSession( this, "GaduSession" );
+	p->session_ = new GaduSession( this );
+	p->session_->setObjectName( QLatin1String("GaduSession") );
 
 	KGlobal::config()->setGroup( "Gadu" );
 
@@ -184,17 +185,16 @@ GaduAccount::~GaduAccount()
 void
 GaduAccount::initActions()
 {
-	p->searchAction		= new KAction( i18n( "&Search for Friends" ), "", 0,
-							this, SLOT( slotSearch() ), 0, "actionSearch" );
-	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), "", 0,
-							this, SLOT( slotExportContactsList() ), 0, "actionListput" );
-	p->listToFileAction	= new KAction( i18n( "Export Contacts to File..." ), "", 0,
-							this, SLOT( slotExportContactsListToFile() ), 0, "actionListputFile" );
-	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File..." ), "", 0,
-							this, SLOT( slotImportContactsFromFile() ), 0, "actionListgetFile" );
-	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
-							this, SLOT( slotFriendsMode() ), 0,
-							"actionFriendsMode" );
+	p->searchAction		= new KAction( i18n( "&Search for Friends" ),0 , "actionSearch" );
+	QObject::connect( p->searchAction, SIGNAL(triggered(bool)), this, SLOT(search()) );
+	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), 0, "actionListput" );
+	QObject::connect( p->listputAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsList()) );
+	p->listToFileAction	= new KAction( i18n( "Export Contacts to File..." ), 0, "actionListputFile" );
+	QObject::connect( p->listToFileAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsListToFile()) );
+	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File..." ), 0, "actionListgetFile" );
+	QObject::connect( p->listFromFileAction, SIGNAL(triggered(bool)), this, SLOT(slotImportContactsFromFile()) );
+	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), 0, "actionFriendsMode" );
+	QObject::connect( p->friendsModeAction, SIGNAL(triggered(bool)), this, SLOT(slotFriendsMode()) );
 
 	static_cast<KToggleAction*>(p->friendsModeAction)->setChecked( p->forFriends );
 }
@@ -289,24 +289,34 @@ GaduAccount::actionMenu()
 	else {
 		p->listFromFileAction->setEnabled( TRUE );
 	}
-	p->actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
-				GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
-				0, this, SLOT( slotGoOnline() ), 0, "actionGaduConnect" ) );
 
-	p->actionMenu_->insert( new KAction( i18n( "Set &Busy" ),
-				GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ),
-				0, this, SLOT( slotGoBusy() ), 0, "actionGaduConnect" ) );
+	KAction* action = new KAction(
+		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ))),
+		i18n("Go O&nline"), 0, "actionGaduConnect" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
+	p->actionMenu_->insert( action );
 
-	p->actionMenu_->insert( new KAction( i18n( "Set &Invisible" ),
-				GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ),
-				0, this, SLOT( slotGoInvisible() ), 0, "actionGaduConnect" ) );
+	action = new KAction(
+		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
+		i18n( "Set &Busy" ), 0, "actionGaduConnect" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()) );
+	p->actionMenu_->insert( action );
 
-	p->actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
-				GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ),
-				0, this, SLOT( slotGoOffline() ), 0, "actionGaduConnect" ) );
+	action = new KAction(
+		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
+		i18n( "Set &Invisible" ), 0, "actionGaduConnect" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()) );
+	p->actionMenu_->insert( action );
 
-	p->actionMenu_->insert( new KAction( i18n( "Set &Description..." ), "info",
-			0, this, SLOT( slotDescription() ), 0, "actionGaduDescription" ) );
+	action = new KAction(
+		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
+		i18n( "Go &Offline" ), 0, "actionGaduConnect" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
+	p->actionMenu_->insert( action );
+
+	action = new KAction( KIcon("info"), i18n( "Set &Description..." ), 0, "actionGaduDescription" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
+	p->actionMenu_->insert( action );
 
 	p->actionMenu_->insert( p->friendsModeAction );
 
@@ -1060,7 +1070,8 @@ GaduAccount::userlist()
 void
 GaduAccount::slotSearch( int uin )
 {
-	new GaduPublicDir( this, uin );
+	GaduPublicDir* dir = new GaduPublicDir( this, uin );
+	dir->setObjectName( QLatin1String("GaduPublicDir") );
 }
 
 void

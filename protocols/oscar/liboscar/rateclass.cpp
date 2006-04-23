@@ -24,7 +24,7 @@
 using namespace Oscar;
 
 RateClass::RateClass( QObject* parent )
-: QObject( parent, 0 )
+: QObject( parent )
 {
 	m_waitingToSend = false;
 	m_packetTimer.start();

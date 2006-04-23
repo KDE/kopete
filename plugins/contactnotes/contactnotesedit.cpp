@@ -26,7 +26,7 @@
 #include "contactnotesplugin.h"
 #include "contactnotesedit.h"
 
-ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p,const char *name) : KDialog(0L, i18n("Contact Notes") , KDialog::Ok|KDialog::Cancel)
+ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p) : KDialog(0L, i18n("Contact Notes") , KDialog::Ok|KDialog::Cancel)
 {
 	setDefaultButton( KDialog::Ok );
 

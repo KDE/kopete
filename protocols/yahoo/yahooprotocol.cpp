@@ -39,7 +39,7 @@ typedef KGenericFactory<YahooProtocol> YahooProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory( "kopete_yahoo" )  )
 
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & )
-	: Kopete::Protocol( YahooProtocolFactory::instance(), parent, name ),
+	: Kopete::Protocol( YahooProtocolFactory::instance(), parent ),
 	Offline( Kopete::OnlineStatus::Offline,      0, this, 0x5a55aa56, QStringList(),  i18n( "Offline" ),       i18n( "Offline" ),     Kopete::OnlineStatusManager::Offline ),
 	Online( Kopete::OnlineStatus::Online,       25, this, 0, QStringList(),           i18n( "Online" ),        i18n( "Online" ),      Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage  ),
 	BeRightBack( Kopete::OnlineStatus::Away,    22, this, 1, QStringList(QString::fromUtf8("contact_away_overlay")),  i18n( "Be right back" ), i18n( "Be right back" ) ),

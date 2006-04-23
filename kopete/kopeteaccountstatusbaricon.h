@@ -40,8 +40,7 @@ public:
 	/**
 	 * Create a statusbar icon.
 	 */
-	KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent,
-		const char *name = 0 );
+	KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent );
 
 	~KopeteAccountStatusBarIcon();
 

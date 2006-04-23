@@ -178,9 +178,10 @@ public:
 };
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
-: ListView::Item( parent, contact, "MetaContactLVI" )
+: ListView::Item( parent, contact )
 //: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
+	setObjectName( QLatin1String("MetaContactLVI") );
 	m_metaContact = contact;
 	m_isTopLevel = false;
 	m_parentGroup = parent;
@@ -191,9 +192,10 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Kopete
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListViewItem *parent )
-: ListView::Item( parent, contact, "MetaContactLVI" )
+: ListView::Item( parent, contact )
 //: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
+	setObjectName( QLatin1String("MetaContactLVI") );
 	m_metaContact = contact;
 
 	m_isTopLevel = true;
@@ -204,9 +206,10 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3List
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListView *parent )
-: ListView::Item( parent, contact, "MetaContactLVI" )
+: ListView::Item( parent, contact )
 //: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
+	setObjectName( QLatin1String("MetaContactLVI") );
 	m_metaContact = contact;
 
 	m_isTopLevel = true;

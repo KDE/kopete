@@ -120,7 +120,9 @@ void StatisticsPlugin::slotViewStatistics()
 	
 	if (m && !m->metaContactId().isEmpty())
 	{
-		(new StatisticsDialog(statisticsContactMap[m->metaContactId()], db()))->show();
+		StatisticsDialog* dialog = new StatisticsDialog(statisticsContactMap[m->metaContactId()], db());
+		dialog->setObjectName( QLatin1String( "StatisticsDialog" ) );
+		dialog->show();
 	}
 }
 
@@ -145,7 +147,9 @@ void StatisticsPlugin::dcopStatisticsDialog(QString id)
 	
 	if (statisticsContactMap[id])
 	{
-		(new StatisticsDialog(statisticsContactMap[id], db()))->show();
+		StatisticsDialog* dialog = new StatisticsDialog(statisticsContactMap[id], db());
+		dialog->setObjectName( QLatin1String("StatisticsDialog") );
+		dialog->show();
 	}	
 }
 

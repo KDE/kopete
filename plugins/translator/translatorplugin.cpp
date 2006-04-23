@@ -49,7 +49,7 @@ static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") ,
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( TranslatorPluginFactory::instance(), parent, name )
+: Kopete::Plugin( TranslatorPluginFactory::instance(), parent )
 {
 	kDebug( 14308 ) << k_funcinfo << endl;
 
@@ -73,7 +73,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	for ( int k = 0; k <= m_languages->numLanguages(); k++ )
 		keys << m[ m_languages->languageKey( k ) ];
 
-	m_actionLanguage = new KSelectAction( i18n( "Set &Language" ), "locale", 0, actionCollection(), "contactLanguage" );
+	m_actionLanguage = new KSelectAction( KIcon("locale"), i18n( "Set &Language" ), actionCollection(), "contactLanguage" );
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );

@@ -48,8 +48,8 @@ public:
 	/**
 	 * Constructor, takes the contact, and the color of messages
 	 */
-	HistoryLogger( Kopete::MetaContact *m , QObject *parent = 0, const char *name = 0);
-	HistoryLogger( Kopete::Contact *c , QObject *parent = 0, const char *name = 0);
+	HistoryLogger( Kopete::MetaContact *m , QObject *parent = 0 );
+	HistoryLogger( Kopete::Contact *c , QObject *parent = 0 );
 
 
 	~HistoryLogger();

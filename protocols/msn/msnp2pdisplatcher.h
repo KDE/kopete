@@ -30,7 +30,7 @@ class MSNP2PDisplatcher : public MSNP2P
 	Q_OBJECT
 
 public:
-	MSNP2PDisplatcher(  QObject *parent=0L , const char *name=0L);
+	MSNP2PDisplatcher(  QObject *parent=0L );
 	~MSNP2PDisplatcher();
 
 	void finished(MSNP2P *);

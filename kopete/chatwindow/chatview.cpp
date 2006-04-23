@@ -58,7 +58,7 @@ typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
 
 ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const char *name, const QStringList &) :
-	Kopete::ViewPlugin( ChatWindowPluginFactory::instance(), parent, name )
+	Kopete::ViewPlugin( ChatWindowPluginFactory::instance(), parent )
 {}
 
 KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
@@ -310,6 +310,7 @@ void ChatView::makeVisible()
 	if ( !m_mainWindow )
 	{
 		m_mainWindow = KopeteChatWindow::window( m_manager );
+		m_mainWindow->setObjectName( QLatin1String("KopeteChatWindow") );
 // 		if ( root )
 // 			root->repaint( true );
 		emit windowCreated();

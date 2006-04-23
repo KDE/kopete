@@ -34,7 +34,7 @@ Q_OBJECT
 	
 public:
 	ICQEditAccountWidget(ICQProtocol *, Kopete::Account *,
-	                     QWidget *parent=0, const char *name=0);
+	                     QWidget *parent=0);
 	
 	virtual bool validateData();
 	virtual Kopete::Account *apply();

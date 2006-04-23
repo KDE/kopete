@@ -67,15 +67,15 @@ private:
 } // END namespace UI
 } // END namespace Kopete
 
-KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListView *parent, const char *name )
-: Kopete::UI::ListView::Item( parent, group_, name )
+KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListView *parent )
+: Kopete::UI::ListView::Item( parent, group_ )
 {
 	m_group = group_;
 	initLVI();
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListViewItem *parent, const char *name )
- : Kopete::UI::ListView::Item( parent, group_, name )
+KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListViewItem *parent )
+ : Kopete::UI::ListView::Item( parent, group_ )
 {
 	m_group = group_;
 	initLVI();

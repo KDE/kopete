@@ -15,8 +15,8 @@
 
 #include "addbookmarksprefssettings.h"
 
-BookmarksPrefsSettings::BookmarksPrefsSettings(QObject *parent, const char *name)
- : QObject(parent, name)
+BookmarksPrefsSettings::BookmarksPrefsSettings(QObject *parent)
+ : QObject(parent)
 {
 	load();
 }

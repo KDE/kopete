@@ -30,7 +30,7 @@ typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory( "kopete_contactnotes" )  )
 
 ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( ContactNotesPluginFactory::instance(), parent, name )
+: Kopete::Plugin( ContactNotesPluginFactory::instance(), parent )
 {
 	if ( pluginStatic_ )
 		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;

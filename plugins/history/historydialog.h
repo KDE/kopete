@@ -65,8 +65,7 @@ class HistoryDialog : public KDialog
 	Q_OBJECT
 
 	public:
-		HistoryDialog(Kopete::MetaContact *mc, QWidget* parent=0,
-			const char* name="HistoryDialog");
+		HistoryDialog(Kopete::MetaContact *mc, QWidget* parent=0);
 		~HistoryDialog();
 
 		/**
