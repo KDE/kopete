@@ -579,7 +579,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Styles</title>
 <para>The style of the chat view can be altered to look like other clients, or you can invent your own style here.  Installed styles are shown in the list on the left and are previewed in the main panel.</para>
 <para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>.</para>
-<para>To modify a style, click <guibutton>Edit...</guibutton>.  &kopete; represents chats internally as &XML; and uses the Extensible Stylesheet Language (<acronym>XSL</acronym>) to specify how this should be transformed into &HTML; for display.  You need to be familiar with &HTML; and <acronym>XSL</acronym> to edit styles.</para>
+<para>To modify a style, click <guibutton>Edit...</guibutton>.  &kopete; represents chats internally as &XML; and uses the Extensible Stylesheet Language (&XSL;) to specify how this should be transformed into &HTML; for display.  You need to be familiar with &HTML; and &XSL; to edit styles.</para>
 </sect4>
 <sect4 id="configuring-appearance-chat-translucency">
 <title>Chat Window</title>
@@ -775,7 +775,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-web-presence">
 <title>Web Presence</title>
-<para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an FTP server (for example), and it will upload a short piece of &HTML; to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
+<para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an &FTP; server (for example), and it will upload a short piece of &HTML; to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
 <para>Example: <userinput>sftp://username@somehost.org/path/to/homes/user/im.html</userinput> uses the <acronym>SFTP</acronym> protocol to upload your presence directly onto the webserver.</para>
 <para>See <ulink url="help:/kioslave/index.html">the KIO manuals</ulink> for tips on specific network protocols.</para>
 </sect2>
