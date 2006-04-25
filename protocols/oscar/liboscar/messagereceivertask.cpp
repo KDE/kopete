@@ -17,11 +17,8 @@
 #include "messagereceivertask.h"
 
 #include <qtextcodec.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include <QByteArray>
-//Added by qt3to4:
-#include <Q3CString>
 #include <kdebug.h>
 #include "transfer.h"
 #include "buffer.h"
@@ -128,7 +125,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 void MessageReceiverTask::handleType1Message()
 {
 	Oscar::Message msg;
-	Q3ValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
+	QList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0002 );
 	if ( !t )
 	{
@@ -136,8 +133,8 @@ void MessageReceiverTask::handleType1Message()
 		return;
 	}
 	Buffer messageBuffer( t.data );
-	Q3ValueList<TLV> innerTLVList = messageBuffer.getTLVList();
-	Q3ValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
+	QList<TLV> innerTLVList = messageBuffer.getTLVList();
+	QList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
 	for ( ; (*it); ++it )
 	{
 		switch ( ( *it ).type )
@@ -193,7 +190,7 @@ void MessageReceiverTask::handleType2Message()
 	kDebug(14151) << k_funcinfo << "Received Type 2 message. Trying to handle it..." << endl;
 
 	Oscar::Message msg;
-	Q3ValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
+	QList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0005 );
 	if ( !t )
 	{
@@ -307,7 +304,8 @@ void MessageReceiverTask::handleType4Message()
 		break;
 	};
 
-	Q3CString msgText = tlv5buffer.getLNTS();
+	QByteArray msgText = tlv5buffer.getLNTS();
+	//FIXME: can't we just use replace() ?
 	int msgLength = msgText.size();
 	if ( msgType == 0x0D || msgType == 0x0E )
 	{
@@ -404,7 +402,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
 		
-		Q3CString msgText( b->getLELNTS() );
+		QByteArray msgText( b->getLELNTS() );
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
 		int fgcolor = 0x00000000;
 		int bgcolor = 0x00ffffff;
@@ -450,7 +448,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	}
 }
 
-QTextCodec* MessageReceiverTask::guessCodec( const Q3CString& string )
+QTextCodec* MessageReceiverTask::guessCodec( const QByteArray& string )
 {
 	Q_UNUSED( string );
 	return 0;

@@ -22,15 +22,13 @@
 #include "ssimanager.h"
 #include <kdebug.h>
 #include "oscarutils.h"
-//Added by qt3to4:
-#include <Q3ValueList>
 
 // -------------------------------------------------------------------
 
 class SSIManagerPrivate
 {
 public:
-	Q3ValueList<Oscar::SSI> SSIList;
+	QList<Oscar::SSI> SSIList;
 	WORD lastModTime;
 	WORD maxContacts;
 	WORD maxGroups;
@@ -68,7 +66,7 @@ void SSIManager::clear()
 	if ( d->SSIList.count() > 0 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing the SSI list" << endl;
-		Q3ValueList<Oscar::SSI>::iterator it = d->SSIList.begin();
+		QList<Oscar::SSI>::iterator it = d->SSIList.begin();
 		
 		while ( it != d->SSIList.end() && d->SSIList.count() > 0 )
 			it = d->SSIList.remove( it );
@@ -125,7 +123,7 @@ void SSIManager::setParameters( WORD maxContacts, WORD maxGroups, WORD maxVisibl
 	d->maxIgnore = maxIgnore;
 }
 
-void SSIManager::loadFromExisting( const Q3ValueList<Oscar::SSI*>& newList )
+void SSIManager::loadFromExisting( const QList<Oscar::SSI*>& newList )
 {
 	Q_UNUSED( newList );
 	//FIXME: NOT Implemented!
@@ -133,7 +131,7 @@ void SSIManager::loadFromExisting( const Q3ValueList<Oscar::SSI*>& newList )
 
 bool SSIManager::hasItem( const Oscar::SSI& item ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 	{
@@ -147,7 +145,7 @@ bool SSIManager::hasItem( const Oscar::SSI& item ) const
 
 Oscar::SSI SSIManager::findGroup( const QString &group ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).name().toLower() == group.toLower() )
@@ -159,7 +157,7 @@ Oscar::SSI SSIManager::findGroup( const QString &group ) const
 
 Oscar::SSI SSIManager::findGroup( int groupId ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).gid() == groupId )
@@ -187,7 +185,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 			", gr->bid= " << gr.bid() <<
 			", gr->type= " << gr.type() << endl;
 	
-		Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+		QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 		
 		for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		{
@@ -211,7 +209,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 Oscar::SSI SSIManager::findContact( const QString &contact ) const
 {
 	
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact )
@@ -222,7 +220,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact ) const
 
 Oscar::SSI SSIManager::findContact( int contactId ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && ( *it ).bid() == contactId )
@@ -233,7 +231,7 @@ Oscar::SSI SSIManager::findContact( int contactId ) const
 
 Oscar::SSI SSIManager::findItemForIcon( QByteArray iconHash ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 	{
@@ -256,7 +254,7 @@ Oscar::SSI SSIManager::findItemForIcon( QByteArray iconHash ) const
 
 Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 	{
@@ -274,7 +272,7 @@ Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
 
 Oscar::SSI SSIManager::findItem( const QString &contact, int type ) const
 {
-	Q3ValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 		if ( ( *it ).type() == type && ( *it ).name() == contact )
@@ -283,11 +281,11 @@ Oscar::SSI SSIManager::findItem( const QString &contact, int type ) const
 	return m_dummyItem;
 }
 
-Q3ValueList<Oscar::SSI> SSIManager::groupList() const
+QList<Oscar::SSI> SSIManager::groupList() const
 {
-	Q3ValueList<Oscar::SSI> list;
+	QList<Oscar::SSI> list;
 	
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP  )
 			list.append( ( *it ) );
@@ -295,11 +293,11 @@ Q3ValueList<Oscar::SSI> SSIManager::groupList() const
 	return list;
 }
 
-Q3ValueList<Oscar::SSI> SSIManager::contactList() const
+QList<Oscar::SSI> SSIManager::contactList() const
 {
-	Q3ValueList<Oscar::SSI> list;
+	QList<Oscar::SSI> list;
 	
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT  )
 			list.append( ( *it ) );
@@ -307,11 +305,11 @@ Q3ValueList<Oscar::SSI> SSIManager::contactList() const
 	return list;
 }
 
-Q3ValueList<Oscar::SSI> SSIManager::visibleList() const
+QList<Oscar::SSI> SSIManager::visibleList() const
 {
-	Q3ValueList<Oscar::SSI> list;
+	QList<Oscar::SSI> list;
 	
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_VISIBLE  )
 			list.append( ( *it ) );
@@ -319,11 +317,11 @@ Q3ValueList<Oscar::SSI> SSIManager::visibleList() const
 	return list;
 }
 
-Q3ValueList<Oscar::SSI> SSIManager::invisibleList() const
+QList<Oscar::SSI> SSIManager::invisibleList() const
 {
-	Q3ValueList<Oscar::SSI> list;
+	QList<Oscar::SSI> list;
 	
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_INVISIBLE  )
 			list.append( ( *it ) );
@@ -331,14 +329,14 @@ Q3ValueList<Oscar::SSI> SSIManager::invisibleList() const
 	return list;
 }
 
-Q3ValueList<Oscar::SSI> SSIManager::contactsFromGroup( const QString &group ) const
+QList<Oscar::SSI> SSIManager::contactsFromGroup( const QString &group ) const
 {
-	Q3ValueList<Oscar::SSI> list;
+	QList<Oscar::SSI> list;
 	
 	Oscar::SSI gr = findGroup( group );
 	if ( gr.isValid() )
 	{
-		Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+		QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 		for ( it = d->SSIList.begin(); it != listEnd; ++it )
 			if ( ( *it ).type() == ROSTER_CONTACT && (*it ).gid() == gr.gid() )
 				list.append( ( *it ) );
@@ -346,11 +344,11 @@ Q3ValueList<Oscar::SSI> SSIManager::contactsFromGroup( const QString &group ) co
 	return list;
 }
 
-Q3ValueList<Oscar::SSI> SSIManager::contactsFromGroup( int groupId ) const
+QList<Oscar::SSI> SSIManager::contactsFromGroup( int groupId ) const
 {
-	Q3ValueList<Oscar::SSI> list;
+	QList<Oscar::SSI> list;
 	
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && (*it ).gid() == groupId  )
 			list.append( ( *it ) );
@@ -361,7 +359,7 @@ Q3ValueList<Oscar::SSI> SSIManager::contactsFromGroup( int groupId ) const
 Oscar::SSI SSIManager::visibilityItem() const
 {
 	Oscar::SSI item = m_dummyItem;
-	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 	{
 		if ( ( *it ).type() == 0x0004 )
@@ -385,7 +383,7 @@ bool SSIManager::listComplete() const
 bool SSIManager::newGroup( const Oscar::SSI& group )
 {
 	//trying to find the group by its ID
-	Q3ValueList<Oscar::SSI>::iterator it, listEnd = d->SSIList.end();
+	QList<Oscar::SSI>::iterator it, listEnd = d->SSIList.end();
 	if ( findGroup( group.name() ).isValid() )
 		return false;
 

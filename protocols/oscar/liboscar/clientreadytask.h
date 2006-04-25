@@ -20,7 +20,7 @@
 #include "task.h"
 
 #include "rateclass.h"
-#include "q3valuelist.h"
+#include "QList"
 
 /**
 Fire and forget task to let the server know we're ready
@@ -34,11 +34,11 @@ public:
 	~ClientReadyTask();
 	virtual void onGo();
 
-	void setFamilies( const Q3ValueList<int>& families );
+	void setFamilies( const QList<int>& families );
 
 private:
-	Q3ValueList<RateClass*> m_classList;
-	Q3ValueList<int> m_familyList;
+	QList<RateClass*> m_classList;
+	QList<int> m_familyList;
 };
 
 #endif

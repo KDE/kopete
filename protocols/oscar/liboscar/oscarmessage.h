@@ -23,7 +23,6 @@
 
 #include <qglobal.h>
 #include <qstring.h>
-#include <q3cstring.h>
 #include <qdatetime.h>
 #include "kopete_export.h"
 #include "oscartypes.h"
@@ -63,7 +62,6 @@ public:
 	Message();
 
 	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
-	Message( Encoding messageEncoding, const Q3CString& messageText, int channel, int properties, QDateTime timestamp );
 	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
 
 	/** Get the sender of the message */
@@ -89,9 +87,6 @@ public:
 
 	/** set the message text as a bytearray for decoding */
 	void setTextArray( const QByteArray& newTextArray );
-
-	/** set the mesasge text as a bytearray for decoding */
-	void setTextArray( const Q3CString& newTextArray );
 
 	/** get the message properties */
 	int properties() const;

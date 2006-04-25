@@ -21,8 +21,7 @@
 #include "client.h"
 
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include <QByteArray>
 #include <qtextcodec.h>
 
@@ -98,7 +97,7 @@ public:
 	//Protocol specific data
 	bool isIcq;
 	bool redirectRequested;
-	Q3ValueList<WORD> redirectionServices;
+	QList<WORD> redirectionServices;
     WORD currentRedirect;
 	QByteArray cookie;
 	DWORD connectAsStatus; // icq only
@@ -122,7 +121,7 @@ public:
 	UserDetails ourDetails;
 
     //Infos
-    Q3ValueList<int> exchanges;
+    QList<int> exchanges;
 
 	QString statusMessage; // for away-,DND-message etc...
 
@@ -132,7 +131,7 @@ public:
 		QString contact;
 		ICQStatus contactStatus;
 	};
-	Q3ValueList<AwayMsgRequest> awayMsgRequestQueue;
+	QList<AwayMsgRequest> awayMsgRequestQueue;
 	QTimer* awayMsgRequestTimer;
 	CodecProvider* codecProvider;
 };
@@ -806,12 +805,12 @@ ICQShortInfo Client::getShortInfo( const QString& contact )
 	return d->icqInfoTask->shortInfoFor( contact );
 }
 
-Q3ValueList<int> Client::chatExchangeList() const
+QList<int> Client::chatExchangeList() const
 {
     return d->exchanges;
 }
 
-void Client::setChatExchangeList( const Q3ValueList<int>& exchanges )
+void Client::setChatExchangeList( const QList<int>& exchanges )
 {
     d->exchanges = exchanges;
 }
@@ -878,7 +877,7 @@ void Client::removeICQAwayMessageRequest( const QString& contact )
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "removing away message request for "
 	                         << contact << " from queue" << endl;
 
-	Q3ValueList<ClientPrivate::AwayMsgRequest>::iterator it = d->awayMsgRequestQueue.begin();
+	QList<ClientPrivate::AwayMsgRequest>::iterator it = d->awayMsgRequestQueue.begin();
 	while ( it != d->awayMsgRequestQueue.end() )
 	{
 		if ( (*it).contact == contact )
@@ -997,7 +996,7 @@ void Client::setIgnore( const QString& user, bool ignore )
 	else if ( !item && ignore )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, Q3ValueList<TLV>() );
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QList<TLV>() );
 		this->modifySSIItem( Oscar::SSI(), s );
 	}
 }
@@ -1013,7 +1012,7 @@ void Client::setVisibleTo( const QString& user, bool visible )
 	else if ( !item && visible )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, Q3ValueList<TLV>() );
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QList<TLV>() );
 		this->modifySSIItem( Oscar::SSI(), s );
 	}
 }
@@ -1029,7 +1028,7 @@ void Client::setInvisibleTo( const QString& user, bool invisible )
 	else if ( !item && invisible )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, Q3ValueList<TLV>() );
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QList<TLV>() );
 		this->modifySSIItem( Oscar::SSI(), s );
 	}
 }
@@ -1198,8 +1197,8 @@ void Client::requestChatNavLimits()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting chat nav service limits" << endl;
 	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->setRequestType( ChatNavServiceTask::Limits );
-    QObject::connect( cnst, SIGNAL( haveChatExchanges( const Q3ValueList<int>& ) ),
-                      this, SLOT( setChatExchangeList( const Q3ValueList<int>& ) ) );
+    QObject::connect( cnst, SIGNAL( haveChatExchanges( const QList<int>& ) ),
+                      this, SLOT( setChatExchangeList( const QList<int>& ) ) );
 	cnst->go( true ); //autodelete
 
 }

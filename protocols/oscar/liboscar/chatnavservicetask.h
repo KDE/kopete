@@ -19,7 +19,7 @@
 
 #include "task.h"
 
-#include <q3valuelist.h>
+#include <QList>
 #include <oscartypes.h>
 
 class Transfer;
@@ -45,10 +45,10 @@ public:
 	virtual void onGo();
     void createRoom( WORD exchange, const QString& name ); //create a room. sends the packet as well
 
-    Q3ValueList<int> exchangeList() const;
+    QList<int> exchangeList() const;
 
 signals:
-    void haveChatExchanges( const Q3ValueList<int>& );
+    void haveChatExchanges( const QList<int>& );
     void connectChat( WORD, QByteArray, WORD, const QString& );
 
 private:
@@ -57,7 +57,7 @@ private:
     void handleCreateRoomInfo( const TLV& t );
 
 private:
-    Q3ValueList<int> m_exchanges;
+    QList<int> m_exchanges;
 	RequestType m_type;
 };
 

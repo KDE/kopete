@@ -20,7 +20,7 @@
 #define _OSCARUTILS_H_
 
 #include <qglobal.h>
-#include <q3valuelist.h>
+#include <QList>
 #include <qstring.h>
 #include "oscartypes.h"
 #include "buffer.h"
@@ -37,13 +37,13 @@ KOPETE_EXPORT bool operator==( TLV, TLV );
 /**
  * Find the TLV corresponding to the type in the list
  */
-KOPETE_EXPORT TLV findTLV( const Q3ValueList<TLV>&, int type );
+KOPETE_EXPORT TLV findTLV( const QList<TLV>&, int type );
 
 /**
  * Update TLVs of SSI item from TLV list if necessary
  * \return true if something was updated
  */
-KOPETE_EXPORT bool updateTLVs( SSI& item, const Q3ValueList<TLV>& list );
+KOPETE_EXPORT bool updateTLVs( SSI& item, const QList<TLV>& list );
 
 /**
  * Parse the character array for validness and a version string

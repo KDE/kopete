@@ -46,7 +46,7 @@ bool UserSearchTask::forMe( const Transfer* t ) const
 	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
 		return false;
 		
-	Buffer buf( st->buffer()->buffer(), st->buffer()->length() );
+	Buffer buf( st->buffer()->buffer() );
 	const_cast<UserSearchTask*>(this)->parseInitialData( buf );
 	
 	if ( requestType() == 0x07da && ( requestSubType() == 0x01a4 || requestSubType() == 0x01ae ) )

@@ -26,8 +26,6 @@
 #include "transfer.h"
 
 #include "md5.h"
-//Added by qt3to4:
-#include <Q3ValueList>
 
 using namespace Oscar;
 
@@ -198,7 +196,7 @@ void AimLoginTask::handleLoginResponse()
 		return;
 	}
 
-	Q3ValueList<TLV> tlvList = st->buffer()->getTLVList();
+	QList<TLV> tlvList = st->buffer()->getTLVList();
 
 	TLV uin = findTLV( tlvList, 0x0001 );
 	if ( uin )

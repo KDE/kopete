@@ -25,8 +25,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include <QByteArray>
 #include "kopete_export.h"
 #include "rtf2html.h"
@@ -240,7 +239,7 @@ public:
     /**
      * Get the list of chat room exchanges we have
      */
-    Q3ValueList<int> chatExchangeList() const;
+    QList<int> chatExchangeList() const;
 
 	/**
 	 * Request the aim profile
@@ -474,7 +473,7 @@ protected slots:
     /**
      * Set the list of chat room exchanges we have
      */
-    void setChatExchangeList( const Q3ValueList<int>& exchanges );
+    void setChatExchangeList( const QList<int>& exchanges );
     
     /**
      * set up the connection to a chat room

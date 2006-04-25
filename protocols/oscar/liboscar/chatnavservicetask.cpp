@@ -23,8 +23,7 @@
 #include "task.h"
 #include "client.h"
 #include "connection.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 
 ChatNavServiceTask::ChatNavServiceTask( Task* parent ) : Task( parent )
@@ -47,7 +46,7 @@ ChatNavServiceTask::RequestType ChatNavServiceTask::requestType()
 	return m_type;
 }
 
-Q3ValueList<int> ChatNavServiceTask::exchangeList() const
+QList<int> ChatNavServiceTask::exchangeList() const
 {
     return m_exchanges;
 }
@@ -235,8 +234,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
                              << " c: " << cookie << " i: " << instance << endl;
 
-    Q3ValueList<Oscar::TLV> tlvList = b.getTLVList();
-    Q3ValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
+    QList<Oscar::TLV> tlvList = b.getTLVList();
+    QList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
     QString roomName;
     for ( it = tlvList.begin(); it != itEnd; ++it )
     {
@@ -317,9 +316,9 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 
 	WORD numberTlvs = b.getWord();
-	Q3ValueList<Oscar::TLV> roomTLVList = b.getTLVList();
-	Q3ValueList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
-	for ( Q3ValueList<Oscar::TLV>::iterator it = roomTLVList.begin();
+	QList<Oscar::TLV> roomTLVList = b.getTLVList();
+	QList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
+	for ( QList<Oscar::TLV>::iterator it = roomTLVList.begin();
 		  it != itEnd; ++ it )
 	{
 		switch( ( *it ).type )

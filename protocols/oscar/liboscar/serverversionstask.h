@@ -20,7 +20,7 @@
 #define SERVERVERSIONSTASK_H
 
 #include "task.h"
-#include <q3valuelist.h>
+#include <QList>
 #include "oscartypes.h"
 
 class Transfer;

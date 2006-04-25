@@ -23,7 +23,6 @@
 #include <netinet/in.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <q3ptrlist.h>
 #include "oscarutils.h"
 #include "oscardebug.h"
 

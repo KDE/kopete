@@ -17,7 +17,7 @@
 
 #include "connectiontest.h"
 #include "connection.h"
-#include "q3valuelist.h"
+#include "QList"
 
 OSCAR_TEST_MAIN( ConnectionTest )
 
@@ -41,7 +41,7 @@ void ConnectionTest::checkSupportedFamiliesList()
 {
     Connection* c = new Connection( 0, 0, 0 );
     QVERIFY( c->supportedFamilies().isEmpty() );
-    Q3ValueList<int> families;
+    QList<int> families;
     families.append( 1 );
     families.append( 0x15 );
     families.append( 2 );

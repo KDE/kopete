@@ -20,7 +20,7 @@
 #define RATEINFOTASK_H
 
 #include "task.h"
-#include <q3valuelist.h>
+#include <QList>
 
 class RateClass;
 using namespace Oscar;
@@ -35,7 +35,7 @@ public:
 	RateInfoTask( Task* parent );
 	~RateInfoTask();
 	bool take( Transfer* transfer );
-	static Q3ValueList<RateClass*> parseRateClasses(Buffer *);
+	static QList<RateClass*> parseRateClasses(Buffer *);
 
 protected:
 
@@ -58,7 +58,7 @@ private slots:
 
 private:
 	bool m_needRateAck;
-	Q3ValueList<int> m_rateGroups;
+	QList<int> m_rateGroups;
 };
 
 //kate: tab-width 4; indent-mode csands;

@@ -18,7 +18,7 @@
 
 #include "task.h"
 #include <qstring.h>
-#include <q3cstring.h>
+#include <QByteArray>
 #include "oscarmessage.h"
 #include "oscartypeclasses.h"
 #include "oscarmessage.h"
@@ -61,7 +61,7 @@ private:
 	//!Parses Rendezvous data in Buffer and puts the information into Message
 	void parseRendezvousData( Buffer* b, Oscar::Message* msg );
 	
-	QTextCodec* guessCodec( const Q3CString& string );
+	QTextCodec* guessCodec( const QByteArray& string );
 
 private:
 	

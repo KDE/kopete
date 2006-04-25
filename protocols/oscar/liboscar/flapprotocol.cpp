@@ -19,7 +19,6 @@
 
 #include "flapprotocol.h"
 
-#include <q3cstring.h>
 #include <qdatastream.h>
 #include <qobject.h>
 #include <kdebug.h>

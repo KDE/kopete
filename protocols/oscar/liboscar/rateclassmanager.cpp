@@ -16,7 +16,7 @@
     *************************************************************************
 */
 
-#include <q3valuelist.h>
+#include <QList>
 #include <kdebug.h>
 
 
@@ -30,7 +30,7 @@ class RateClassManagerPrivate
 {
 public:
 	//! The list of rate classes owned by this manager
-	Q3ValueList<RateClass*> classList;
+	QList<RateClass*> classList;
 	Connection* client;
 };
 
@@ -49,7 +49,7 @@ RateClassManager::~RateClassManager()
 
 void RateClassManager::reset()
 {
-	Q3ValueList<RateClass*>::iterator it = d->classList.begin();
+	QList<RateClass*>::iterator it = d->classList.begin();
 	while ( it != d->classList.end() && d->classList.count() > 0)
 	{
 		RateClass* rc = ( *it );
@@ -110,7 +110,7 @@ void RateClassManager::queue( Transfer* t )
 		transferReady( t );
 }
 
-Q3ValueList<RateClass*> RateClassManager::classList() const
+QList<RateClass*> RateClassManager::classList() const
 {
 	return d->classList;
 }
@@ -133,8 +133,8 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 	SNAC s = st->snac();
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype << endl;
 	RateClass* rc = 0L;
-	Q3ValueList<RateClass*>::const_iterator it;
-	Q3ValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
+	QList<RateClass*>::const_iterator it;
+	QList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
 
 	for ( it = d->classList.constBegin(); it != rcEnd; ++it )
 	{
@@ -151,16 +151,16 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 
 void RateClassManager::recalcRateLevels()
 {
-	Q3ValueList<RateClass*>::iterator it;
-	Q3ValueList<RateClass*>::iterator rcEnd = d->classList.end();
+	QList<RateClass*>::iterator it;
+	QList<RateClass*>::iterator rcEnd = d->classList.end();
 	for ( it = d->classList.begin(); it != rcEnd; ++it )
 		( *it )->updateRateInfo();
 }
 
 int RateClassManager::timeToInitialLevel( SNAC s )
 {
-	Q3ValueList<RateClass*>::const_iterator it;
-	Q3ValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
+	QList<RateClass*>::const_iterator it;
+	QList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
 	
 	for ( it = d->classList.constBegin(); it != rcEnd; ++it )
 	{

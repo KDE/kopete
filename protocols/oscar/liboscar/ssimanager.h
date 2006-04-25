@@ -23,7 +23,7 @@
 #define SSIMANAGER_H
 
 #include <qobject.h>
-#include <q3valuelist.h>
+#include <QList>
 
 #include "oscartypes.h"
 #include "oscartypeclasses.h"
@@ -73,7 +73,7 @@ public:
 	 * The current SSI list will be overwritten and it's contents
 	 * replaced with the data from the new list
 	 */
-	void loadFromExisting( const Q3ValueList<Oscar::SSI*>& newList );
+	void loadFromExisting( const QList<Oscar::SSI*>& newList );
 	
 	bool hasItem( const Oscar::SSI& item ) const;
 
@@ -90,12 +90,12 @@ public:
 	
 	Oscar::SSI findItem( const QString &contact, int type ) const;
 
-	Q3ValueList<Oscar::SSI> groupList() const;
-	Q3ValueList<Oscar::SSI> contactList() const;
-	Q3ValueList<Oscar::SSI> visibleList() const;
-	Q3ValueList<Oscar::SSI> invisibleList() const;
-	Q3ValueList<Oscar::SSI> contactsFromGroup( const QString& group ) const;
-	Q3ValueList<Oscar::SSI> contactsFromGroup( int groupId ) const;
+	QList<Oscar::SSI> groupList() const;
+	QList<Oscar::SSI> contactList() const;
+	QList<Oscar::SSI> visibleList() const;
+	QList<Oscar::SSI> invisibleList() const;
+	QList<Oscar::SSI> contactsFromGroup( const QString& group ) const;
+	QList<Oscar::SSI> contactsFromGroup( int groupId ) const;
 	
 	Oscar::SSI visibilityItem() const;
 

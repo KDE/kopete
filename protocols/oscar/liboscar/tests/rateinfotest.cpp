@@ -30,14 +30,14 @@ void RateInfoTest::testRateClasses()
 	}
 	//m_data should now be a buffer with our data
 
-	Q3ValueList<RateClass*> rates = RateInfoTask::parseRateClasses( m_data );
+	QList<RateClass*> rates = RateInfoTask::parseRateClasses( m_data );
 
 	QVERIFY( rates.isEmpty() ==  false );
 	QVERIFY( rates.count() == 5 );
 
 	//verify each rate class
-	Q3ValueList<RateClass*>::iterator it = rates.begin();
-	Q3ValueList<RateClass*>::iterator rcEnd = rates.end();
+	QList<RateClass*>::iterator it = rates.begin();
+	QList<RateClass*>::iterator rcEnd = rates.end();
 	for ( int i=1; it != rcEnd; ++it, ++i )
 	{
 		RateClass *r = *it;

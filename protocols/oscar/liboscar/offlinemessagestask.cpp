@@ -62,7 +62,7 @@ bool OfflineMessagesTask::forMe( const Transfer* t ) const
 	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
 		return false;
 		
-	Buffer buf( st->buffer()->buffer(), st->buffer()->length() ); //FIXME: why not use copy ctor?
+	Buffer buf( st->buffer()->buffer() );
 	const_cast<OfflineMessagesTask*>(this)->parseInitialData( buf );
 	
 	if ( requestType() == 0x0041 || requestType() == 0x0042 )

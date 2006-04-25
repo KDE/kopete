@@ -34,8 +34,7 @@
 #include "ssimanager.h"
 #include "ssiparamstask.h"
 #include "transfer.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 ServiceSetupTask::ServiceSetupTask( Task* parent )
 	: Task( parent )
@@ -98,7 +97,7 @@ void ServiceSetupTask::childTaskFinished()
 
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending DC info and client ready" << endl;
 		SendIdleTimeTask* sitt = new SendIdleTimeTask( client()->rootTask() );
-		Q3ValueList<int> familyList;
+		QList<int> familyList;
 		familyList.append( 0x0001 );
 		familyList.append( 0x0002 );
 		familyList.append( 0x0003 );

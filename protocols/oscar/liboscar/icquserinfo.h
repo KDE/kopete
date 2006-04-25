@@ -19,8 +19,8 @@
 #ifndef _ICQUSERINFO_H_
 #define _ICQUSERINFO_H_
 
-#include <q3cstring.h>
-#include <q3valuelist.h>
+#include <QByteArray>
+#include <QList>
 #include <qdatetime.h>
 #include "kopete_export.h"
 
@@ -56,10 +56,10 @@ public:
 	
 public:
 	unsigned long uin;
-	Q3CString nickname;
-	Q3CString firstName;
-	Q3CString lastName;
-	Q3CString email;
+	QByteArray nickname;
+	QByteArray firstName;
+	QByteArray lastName;
+	QByteArray email;
 	bool needsAuth;
 	unsigned int gender; // 0=offline, 1=online, 2=not webaware
 };
@@ -73,17 +73,17 @@ public:
 	
 public:
 	unsigned long uin;
-	Q3CString nickname;
-	Q3CString firstName;
-	Q3CString lastName;
-	Q3CString email;
-	Q3CString city;
-	Q3CString state;
-	Q3CString phoneNumber;
-	Q3CString faxNumber;
-	Q3CString address;
-	Q3CString cellNumber;
-	Q3CString zip;
+	QByteArray nickname;
+	QByteArray firstName;
+	QByteArray lastName;
+	QByteArray email;
+	QByteArray city;
+	QByteArray state;
+	QByteArray phoneNumber;
+	QByteArray faxNumber;
+	QByteArray address;
+	QByteArray cellNumber;
+	QByteArray zip;
 	int country;
 	char timezone;
 	bool publishEmail;
@@ -99,18 +99,18 @@ public:
 	void fill( Buffer* buffer );
 	
 public:
-	Q3CString city;
-	Q3CString state;
-	Q3CString phone;
-	Q3CString fax;
-	Q3CString address;
-	Q3CString zip;
+	QByteArray city;
+	QByteArray state;
+	QByteArray phone;
+	QByteArray fax;
+	QByteArray address;
+	QByteArray zip;
 	int country;
-	Q3CString company;
-	Q3CString department;
-	Q3CString position;
+	QByteArray company;
+	QByteArray department;
+	QByteArray position;
 	int occupation;
-	Q3CString homepage;
+	QByteArray homepage;
 };
 
 class KOPETE_EXPORT ICQMoreUserInfo : public ICQInfoBase
@@ -123,13 +123,13 @@ public:
 public:
 	int age;
 	unsigned int gender;
-	Q3CString homepage;
+	QByteArray homepage;
 	QDate birthday;
 	unsigned int lang1;
 	unsigned int lang2;
 	unsigned int lang3;
-	Q3CString ocity;
-	Q3CString ostate;
+	QByteArray ocity;
+	QByteArray ostate;
 	int ocountry;
 	int marital;
 };
@@ -142,7 +142,7 @@ public:
 	void fill( Buffer* buffer );
 	
 public:
-	Q3ValueList<Q3CString> emailList;
+	QList<QByteArray> emailList;
 };
 
 class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
@@ -155,7 +155,7 @@ public:
 public:
 	int count;
 	int topics[4];
-	Q3CString descriptions[4];
+	QByteArray descriptions[4];
 };
 
 
@@ -165,10 +165,10 @@ public:
 	ICQSearchResult();
 	void fill( Buffer* buffer );
 	quint32 uin;
-	Q3CString firstName;
-	Q3CString lastName;
-	Q3CString nickName;
-	Q3CString email;
+	QByteArray firstName;
+	QByteArray lastName;
+	QByteArray nickName;
+	QByteArray email;
 	bool auth;
 	bool online;
 	char gender;
@@ -180,19 +180,19 @@ class KOPETE_EXPORT ICQWPSearchInfo
 public:
 	ICQWPSearchInfo();
 	
-	Q3CString firstName;
-	Q3CString lastName;
-	Q3CString nickName;
-	Q3CString email;
+	QByteArray firstName;
+	QByteArray lastName;
+	QByteArray nickName;
+	QByteArray email;
 	int age;
 	int gender;
 	int language;
-	Q3CString city;
-	Q3CString state;
+	QByteArray city;
+	QByteArray state;
 	int country;
-	Q3CString company;
-	Q3CString department;
-	Q3CString position;
+	QByteArray company;
+	QByteArray department;
+	QByteArray position;
 	int occupation;
 	bool onlineOnly;
 };

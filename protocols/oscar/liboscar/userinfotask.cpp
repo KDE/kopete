@@ -23,9 +23,6 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 #include "connection.h"
 #include "transfer.h"
 #include "userdetails.h"
-//Added by qt3to4:
-#include <Q3ValueList>
-
 
 
 UserInfoTask::UserInfoTask( Task* parent )
@@ -77,8 +74,8 @@ bool UserInfoTask::take( Transfer * transfer )
 			m_sequenceInfoMap[seq] = ud;
 			emit gotInfo( seq );
 			
-			Q3ValueList<TLV> list = b->getTLVList();
-			Q3ValueList<TLV>::iterator it = list.begin();
+			QList<TLV> list = b->getTLVList();
+			QList<TLV>::iterator it = list.begin();
 			QString profile;
 			QString away;
 			for ( ; ( *it ); ++it )

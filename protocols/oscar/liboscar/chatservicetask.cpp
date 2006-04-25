@@ -21,8 +21,6 @@
 #include "chatservicetask.h"
 
 #include <qstring.h>
-//Added by qt3to4:
-#include <Q3CString>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <qtextcodec.h>
@@ -31,8 +29,7 @@
 #include "transfer.h"
 #include "buffer.h"
 #include "oscartypes.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include <krandom.h>
 
 ChatServiceTask::ChatServiceTask( Task* parent, Oscar::WORD exchange, const QString& room )
@@ -52,7 +49,7 @@ void ChatServiceTask::setMessage( const Oscar::Message& msg )
     m_message = msg;
 }
 
-void ChatServiceTask::setEncoding( const Q3CString& enc )
+void ChatServiceTask::setEncoding( const QByteArray& enc )
 {
     m_encoding = enc;
 }
@@ -83,7 +80,7 @@ void ChatServiceTask::onGo()
 
     type3.type = 0x0003;
     type3.length = 0x0002;
-    type3.data = Q3CString( "en" ); //hardcode for right now. don't know that we can do others
+    type3.data = "en"; //hardcode for right now. don't know that we can do others
 
     type1.type = 0x0001;
     type1.length = m_message.textArray().size();
@@ -184,9 +181,9 @@ void ChatServiceTask::parseRoomInfo()
     //correctly anyways
     b->skipBytes( 2 );
 
-    Q3ValueList<Oscar::TLV> tlvList = b->getTLVList();
-    Q3ValueList<Oscar::TLV>::iterator it = tlvList.begin();
-    Q3ValueList<Oscar::TLV>::iterator itEnd = tlvList.end();
+    QList<Oscar::TLV> tlvList = b->getTLVList();
+    QList<Oscar::TLV>::iterator it = tlvList.begin();
+    QList<Oscar::TLV>::iterator itEnd = tlvList.end();
     for ( ; it != itEnd; ++it )
     {
         switch ( ( *it ).type )
@@ -290,8 +287,8 @@ void ChatServiceTask::parseChatMessage()
     QString sender;
     QByteArray icbmCookie( b->getBlock( 8 ) );
     b->skipBytes( 2 ); //message channel always 0x03
-    Q3ValueList<Oscar::TLV> chatTLVs = b->getTLVList();
-    Q3ValueList<Oscar::TLV>::iterator it,  itEnd = chatTLVs.end();
+    QList<Oscar::TLV> chatTLVs = b->getTLVList();
+    QList<Oscar::TLV>::iterator it,  itEnd = chatTLVs.end();
     for ( it = chatTLVs.begin(); it != itEnd; ++it )
     {
         switch ( ( *it ).type )

@@ -21,9 +21,7 @@
 #ifndef GW_CORE_PROTOCOL_H
 #define GW_CORE_PROTOCOL_H
 
-#include <q3cstring.h>
 #include <qobject.h>
-#include <q3ptrlist.h>
 
 class FlapProtocol;
 class SnacProtocol;

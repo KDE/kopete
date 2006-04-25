@@ -17,8 +17,7 @@
 */
 
 #include "oscartypeclasses.h"
-#include <q3deepcopy.h>
-#include <q3valuelist.h>
+#include <QList>
 #include <kdebug.h>
 #include "oscarutils.h"
 #include "buffer.h"
@@ -61,7 +60,7 @@ Oscar::SSI::SSI()
 	m_waitingAuth = false;
 }
 
-Oscar::SSI::SSI( const QString &name, int gid, int bid, int type, const Q3ValueList<TLV> &tlvlist, int tlvLength )
+Oscar::SSI::SSI( const QString &name, int gid, int bid, int type, const QList<TLV> &tlvlist, int tlvLength )
 {
 	m_name = name;
 	m_gid = gid;
@@ -118,7 +117,7 @@ quint16 Oscar::SSI::type() const
 	return m_type;
 }
 
-const Q3ValueList<TLV>& Oscar::SSI::tlvList() const
+const QList<TLV>& Oscar::SSI::tlvList() const
 {
 	return m_tlvList;
 }
@@ -133,7 +132,7 @@ quint16 Oscar::SSI::tlvListLength() const
 	return m_tlvLength;
 }
 
-void Oscar::SSI::setTLVList( Q3ValueList<TLV> list )
+void Oscar::SSI::setTLVList( QList<TLV> list )
 {
 	//deepcopy the tlvs
 	m_tlvList = list;
@@ -144,7 +143,7 @@ void Oscar::SSI::setTLVList( Q3ValueList<TLV> list )
 void Oscar::SSI::refreshTLVLength()
 {
 	m_tlvLength = 0;
-	Q3ValueList<TLV>::iterator it = m_tlvList.begin();
+	QList<TLV>::iterator it = m_tlvList.begin();
 	for( ; it != m_tlvList.end(); ++it )
 	{
 		m_tlvLength += 4;
@@ -242,7 +241,7 @@ Oscar::SSI::operator bool() const
 Oscar::SSI::operator QByteArray() const
 {
 	Buffer b;
-	Q3CString name( m_name.toUtf8() );
+	QByteArray name( m_name.toUtf8() );
 	uint namelen = name.length();
 	const char *namedata = name;
 	b.addWord( namelen );
@@ -258,7 +257,7 @@ Oscar::SSI::operator QByteArray() const
 	b.addWord( m_bid );
 	b.addWord( m_type );
 	b.addWord( m_tlvLength );
-	Q3ValueList<Oscar::TLV>::const_iterator it = m_tlvList.begin();
+	QList<Oscar::TLV>::const_iterator it = m_tlvList.begin();
 	for( ; it != m_tlvList.end(); ++it )
 	{
 		b.addWord( (*it).type );

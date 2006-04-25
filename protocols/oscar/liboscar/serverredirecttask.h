@@ -22,9 +22,6 @@
 #define SERVERREDIRECTTASK_H
 
 #include "task.h"
-
-#include <q3cstring.h>
-
 #include "oscartypes.h"
 
 class Transfer;

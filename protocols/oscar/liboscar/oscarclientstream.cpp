@@ -22,7 +22,7 @@
 
 #include <qpointer.h> 
 #include <qobject.h>
-#include <q3ptrqueue.h>
+#include <qqueue.h>
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QByteArray>
@@ -100,7 +100,7 @@ public:
 	int errCond;
 	QString errText;
 
-	Q3PtrQueue<Transfer> in;
+	QQueue<Transfer *> in;
 
 	QTimer noopTimer; // used to send icq keepalive
 	int noop_time;

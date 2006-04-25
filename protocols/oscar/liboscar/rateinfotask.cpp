@@ -18,7 +18,7 @@
 
 #include "rateinfotask.h"
 
-#include <q3valuelist.h>
+#include <QList>
 #include <kdebug.h>
 #include "rateclass.h"
 #include "rateclassmanager.h"
@@ -78,9 +78,9 @@ void RateInfoTask::sendRateInfoRequest()
 	send( st );
 }
 
-Q3ValueList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
+QList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 {
-	Q3ValueList<RateClass*> rates;
+	QList<RateClass*> rates;
 	Oscar::RateInfo ri;
 	
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "handling rate info response (SNAC 0x01, 0x07)" << endl;
@@ -118,7 +118,7 @@ Q3ValueList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding snac members to group " << groupNum << endl;
 		
 		RateClass* rc = 0L;
-		Q3ValueList<RateClass*>::iterator it = rates.begin();
+		QList<RateClass*>::iterator it = rates.begin();
 		for ( ; it != rates.end(); ++it )
 		{
 			if ( ( *it )->id() == groupNum )
@@ -144,10 +144,10 @@ Q3ValueList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 void RateInfoTask::handleRateInfoResponse()
 {
 	Buffer* buffer = transfer()->buffer();
-	Q3ValueList<RateClass*> rates = parseRateClasses(buffer);
+	QList<RateClass*> rates = parseRateClasses(buffer);
 
-	Q3ValueList<RateClass*>::iterator it = rates.begin();
-	Q3ValueList<RateClass*>::iterator rcEnd = rates.end();
+	QList<RateClass*>::iterator it = rates.begin();
+	QList<RateClass*>::iterator rcEnd = rates.end();
 	for ( ; it != rcEnd; ++it )
 		client()->rateManager()->registerClass( ( *it ) );
 	
@@ -161,8 +161,8 @@ void RateInfoTask::sendRateInfoAck()
 	SNAC s = { 0x0001, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 
-	Q3ValueListConstIterator<int> cit = m_rateGroups.begin();
-	Q3ValueListConstIterator<int> end = m_rateGroups.end();
+	QList<int>::const_iterator cit = m_rateGroups.begin();
+	QList<int>::const_iterator end = m_rateGroups.end();
 	for ( cit = m_rateGroups.begin(); cit != end; ++cit )
 	{
 		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding rate " << (*cit) << " to rate ack" << endl;

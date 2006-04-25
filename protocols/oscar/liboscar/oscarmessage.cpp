@@ -19,10 +19,8 @@
 
 #include "oscarmessage.h"
 
-#include <q3deepcopy.h>
 #include <qtextcodec.h>
-//Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 
 Oscar::Message::Message()
@@ -47,17 +45,6 @@ Oscar::Message::Message( Encoding messageEncoding, const QByteArray& messageText
 {
 }
 
-Oscar::Message::Message( Encoding messageEncoding, const Q3CString& messageText, int channel, int properties, QDateTime timestamp )
-: m_channel( channel ),
-  m_properties( properties ),
-  m_messageType( 0 ),
-  m_protocolVersion( 0 ),
-  m_channel2Counter( 0 ),
-  m_timestamp( timestamp ),
-  m_encoding( messageEncoding )
-{
-	setTextArray( messageText );
-}
 
 Oscar::Message::Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec )
 : m_channel( channel ),
@@ -160,21 +147,6 @@ void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QStrin
 void Oscar::Message::setTextArray( const QByteArray& newTextArray )
 {
 	m_textArray = newTextArray;
-}
-
-void Oscar::Message::setTextArray( const Q3CString& newTextArray )
-{
-	m_textArray = newTextArray;
-	uint len = m_textArray.size();
-	if ( len > 0 )
-	{
-		--len;
-		if ( m_textArray[len] == '\0' )
-		{
-			// Strip trailing null byte.
-			m_textArray.resize( len );
-		}
-	}
 }
 
 int Oscar::Message::properties() const

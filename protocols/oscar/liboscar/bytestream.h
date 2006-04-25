@@ -22,7 +22,6 @@
 #define CS_BYTESTREAM_H
 
 #include <qobject.h>
-#include <q3cstring.h>
 
 // CS_NAMESPACE_BEGIN
 

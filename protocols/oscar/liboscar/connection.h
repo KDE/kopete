@@ -19,7 +19,7 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 #define CONNECTION_H
 
 #include <qobject.h>
-#include <q3valuelist.h>
+#include <QList>
 #include "oscartypes.h"
 #include "rateclass.h"
 
@@ -94,7 +94,7 @@ public:
 	 * need to be filtered on
 	 * \param rateClassList the list of rate classes to add
 	 */
-	void addToRateClasses( const Q3ValueList<RateClass*> rateClassList );
+	void addToRateClasses( const QList<RateClass*> rateClassList );
 
 	/**
 	 * Add the rate class in \p rc to the list of rate classes packets
