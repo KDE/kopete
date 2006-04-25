@@ -27,31 +27,24 @@
 // using namespace Oscar;
 
 Oscar::TLV::TLV()
+:type(0), length(0)
 {
-	type = 0;
-	length = 0;
 }
 
 Oscar::TLV::TLV( quint16 newType, quint16 newLength, char* newData )
+:type( newType ), length( newLength ), data( QByteArray( newData, length ) )
 {
-	type = newType;
-	length = newLength;
-	data.truncate(0);
-	data = QByteArray( newData, length );
 }
 
 Oscar::TLV::TLV( quint16 newType, quint16 newLength, const QByteArray& newData )
+:type( newType ), length( newLength ), data( newData )
 {
-	type = newType;
-	length = newLength;
-	data = newData;
 }
 
 Oscar::TLV::TLV( const TLV& t )
 {
 	type = t.type;
 	length = t.length;
-	data.truncate(0);
 	data = t.data;
 }
 
