@@ -18,6 +18,7 @@
 #ifndef KOPETE_AVVIDEODEVICE_H
 #define KOPETE_AVVIDEODEVICE_H
 
+#include <qvaluevector.h>
 #include <iostream>
 
 
@@ -25,7 +26,7 @@
 #include "videodevicemodelpool.h"
 #include <qstring.h>
 #include <qimage.h>
-#include <q3valuevector.h>
+#include <qvaluevector.h>
 #include <qmutex.h>
 #include <kcombobox.h>
 #include "videodevice.h"
@@ -44,7 +45,7 @@ This class allows kopete to check for the existence, open, configure, test, set 
 @author Cláudio da Silveira Pinheiro
 */
 
-typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
+typedef QValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
 
 class VideoDevicePoolPrivate;
 
@@ -121,7 +122,7 @@ protected:
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;
-	static int m_clients; // Number of instances
+	static __u64 m_clients; // Number of instances
 };
 
 }

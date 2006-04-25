@@ -59,7 +59,7 @@
 #include <qstring.h>
 #include <qfile.h>
 #include <qimage.h>
-#include <q3valuevector.h>
+#include <qvaluevector.h>
 #include <kcombobox.h>
 
 #include "videoinput.h"
@@ -161,7 +161,7 @@ struct imagebuffer
 	int height;
 	int width;
 	pixel_format pixelformat;
-	QVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
+	QValueVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
 };
 struct rawbuffer // raw buffer
 {
@@ -261,7 +261,7 @@ public:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	QVector<Kopete::AV::VideoInput> m_input;
+	QValueVector<Kopete::AV::VideoInput> m_input;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
@@ -269,7 +269,7 @@ protected:
 	bool m_disablemmap;
 	bool m_workaroundbrokendriver;
 
-	QVector<rawbuffer> m_rawbuffers;
+	QValueVector<rawbuffer> m_rawbuffers;
 	unsigned int m_streambuffers;
 	imagebuffer m_currentbuffer;
 	int m_buffer_size;

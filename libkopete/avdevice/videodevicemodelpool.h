@@ -13,7 +13,7 @@
 #define KOPETE_AVVIDEODEVICEMODELPOOL_H
 
 #include <qstring.h>
-#include <qvector.h>
+#include <qvaluevector.h>
 #include <kdebug.h>
 #include "kopete_export.h"
 
@@ -31,7 +31,7 @@ class VideoDeviceModelPool{
 		QString model;
 		size_t count;
 	};
-	QVector<VideoDeviceModel> m_devicemodel;
+	QValueVector<VideoDeviceModel> m_devicemodel;
 public:
 	VideoDeviceModelPool();
 	~VideoDeviceModelPool();

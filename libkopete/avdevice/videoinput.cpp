@@ -23,7 +23,7 @@ namespace AV {
 
 VideoInput::VideoInput()
 {
-	kDebug() << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
+	kdDebug() << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
 	m_brightness = 0.5;
 	m_contrast = 0.5;
 	m_saturation = 0.5;
@@ -39,13 +39,13 @@ VideoInput::~VideoInput()
 
 float VideoInput::getBrightness()
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_brightness;
 }
 
 float VideoInput::setBrightness(float brightness)
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( brightness > 1 )
 		brightness = 1;
 	else
@@ -57,13 +57,13 @@ float VideoInput::setBrightness(float brightness)
 
 float VideoInput::getContrast()
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_contrast;
 }
 
 float VideoInput::setContrast(float contrast)
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( contrast > 1 )
 		contrast = 1;
 	else
@@ -75,13 +75,13 @@ float VideoInput::setContrast(float contrast)
 
 float VideoInput::getSaturation()
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_saturation;
 }
 
 float VideoInput::setSaturation(float saturation)
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( saturation > 1 )
 		saturation = 1;
 	else
@@ -111,13 +111,13 @@ float VideoInput::setWhiteness(float whiteness)
 
 float VideoInput::getHue()
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_hue;
 }
 
 float VideoInput::setHue(float hue)
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( hue > 1 )
 		hue = 1;
 	else
@@ -130,26 +130,26 @@ float VideoInput::setHue(float hue)
 
 bool VideoInput::getAutoBrightnessContrast()
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_autobrightnesscontrast;
 }
 
 bool VideoInput::setAutoBrightnessContrast(bool brightnesscontrast)
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autobrightnesscontrast = brightnesscontrast;
 	return getAutoBrightnessContrast();
 }
 
 bool VideoInput::getAutoColorCorrection()
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_autocolorcorrection;
 }
 
 bool VideoInput::setAutoColorCorrection(bool colorcorrection)
 {
-//	kDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autocolorcorrection = colorcorrection;
 	return getAutoColorCorrection();
 }
