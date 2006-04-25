@@ -98,6 +98,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		// Global Identity
 		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
 	}
+	else
+	{
+		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
+		                              mProtocol->encodings(),
+		                              4 );
+	}
 
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 

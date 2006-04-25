@@ -122,6 +122,7 @@ OnlineStatus::OnlineStatus( StatusType status )
 		break;
 	case Offline:
 		d->description = i18n( "Offline" );
+		break;
 	case Unknown:
 	default:
 		d->description = i18n( "Unknown" );

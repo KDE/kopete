@@ -645,7 +645,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 		// we are not connected yet, so connect now
 		m_initialPresence = xmppStatus;
-		connect ();
+		connect ( status );
 	}
 	else
 	{
@@ -671,6 +671,7 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	// make sure that the connection animation gets stopped if we're still
 	// in the process of connecting
 	setPresence ( XMPP::Status ("", "", 0, false) );
+	m_initialPresence = XMPP::Status ("", "", 5, true);
 
 	/* FIXME:
 	 * We should delete the JabberClient instance here,

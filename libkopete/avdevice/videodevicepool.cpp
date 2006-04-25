@@ -38,7 +38,7 @@ namespace Kopete {
 namespace AV {
 
 VideoDevicePool *VideoDevicePool::s_self = NULL;
-int VideoDevicePool::m_clients = 0;
+__u64 VideoDevicePool::m_clients = 0;
 
 VideoDevicePool* VideoDevicePool::self()
 {
@@ -221,7 +221,10 @@ int VideoDevicePool::stopCapturing()
  */
 float VideoDevicePool::getBrightness()
 {
+  if (currentDevice() < m_videodevice.size() )
 	return m_videodevice[currentDevice()].getBrightness();
+  else
+	return 0;
 }
 
 /*!
@@ -229,7 +232,10 @@ float VideoDevicePool::getBrightness()
  */
 float VideoDevicePool::setBrightness(float brightness)
 {
-	return m_videodevice[currentDevice()].setBrightness(brightness);
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].setBrightness(brightness);
+	else
+	  return 0;
 }
 
 /*!
@@ -237,7 +243,10 @@ float VideoDevicePool::setBrightness(float brightness)
  */
 float VideoDevicePool::getContrast()
 {
-	return m_videodevice[currentDevice()].getContrast();
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].getContrast();
+	else
+	  return 0;
 }
 
 /*!
@@ -245,7 +254,10 @@ float VideoDevicePool::getContrast()
  */
 float VideoDevicePool::setContrast(float contrast)
 {
-	return m_videodevice[currentDevice()].setContrast(contrast);
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].setContrast(contrast);
+	else
+	  return 0;
 }
 
 /*!
@@ -253,7 +265,10 @@ float VideoDevicePool::setContrast(float contrast)
  */
 float VideoDevicePool::getSaturation()
 {
-	return m_videodevice[currentDevice()].getSaturation();
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].getSaturation();
+	else
+	  return 0;
 }
 
 /*!
@@ -261,7 +276,10 @@ float VideoDevicePool::getSaturation()
  */
 float VideoDevicePool::setSaturation(float saturation)
 {
-	return m_videodevice[currentDevice()].setSaturation(saturation);
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].setSaturation(saturation);
+	else
+	  return 0;
 }
 
 /*!
@@ -269,7 +287,10 @@ float VideoDevicePool::setSaturation(float saturation)
  */
 float VideoDevicePool::getWhiteness()
 {
-	return m_videodevice[currentDevice()].getWhiteness();
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].getWhiteness();
+	else
+	  return 0;
 }
 
 /*!
@@ -277,7 +298,10 @@ float VideoDevicePool::getWhiteness()
  */
 float VideoDevicePool::setWhiteness(float whiteness)
 {
-	return m_videodevice[currentDevice()].setWhiteness(whiteness);
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].setWhiteness(whiteness);
+	else
+	  return 0;
 }
 
 /*!
@@ -285,7 +309,10 @@ float VideoDevicePool::setWhiteness(float whiteness)
  */
 float VideoDevicePool::getHue()
 {
-	return m_videodevice[currentDevice()].getHue();
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].getHue();
+	else
+	  return 0;
 }
 
 /*!
@@ -293,7 +320,10 @@ float VideoDevicePool::getHue()
  */
 float VideoDevicePool::setHue(float hue)
 {
-	return m_videodevice[currentDevice()].setHue(hue);
+    if (currentDevice() < m_videodevice.size() )
+	  return m_videodevice[currentDevice()].setHue(hue);
+	else
+	  return 0;
 }
 
 /*!

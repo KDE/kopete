@@ -875,7 +875,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	}
 
 	guiFactory()->addClient(view->msgManager());
-// 	createGUI( view->part() );
+// 	createGUI( view->editPart() );
 
 	if( m_activeView )
 		m_activeView->setActive( false );
@@ -1212,8 +1212,8 @@ void KopeteChatWindow::slotConfKeys()
 			++it;
 		}
 
-		if( m_activeView->part() )
-			dlg.insert( m_activeView->part()->actionCollection(), m_activeView->part()->name() );
+		if( m_activeView->editPart() )
+			dlg.insert( m_activeView->editPart()->actionCollection(), m_activeView->editPart()->name() );
 	}
 
 	dlg.configure();
@@ -1225,12 +1225,9 @@ void KopeteChatWindow::slotConfToolbar()
 	KEditToolbar *dlg = new KEditToolbar(factory(), this );
 	if (dlg->exec())
 	{
-		if( m_activeView )
-		{
-// 			createGUI( m_activeView->part() );
-			//guiFactory()->addClient(m_activeView->msgManager());
-		}
-		else
+// 		if( m_activeView )
+// 			createGUI( m_activeView->editPart() );
+// 		else
 // 			createGUI( 0L );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
 	}

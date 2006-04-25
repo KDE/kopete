@@ -161,12 +161,16 @@ void dlgJabberVCard::assignContactProperties ()
 	m_mainWidget->leWorkEmail->setText (workEmail);
 	m_mainWidget->urlWorkEmail->setText (workEmail);
 	m_mainWidget->urlWorkEmail->setURL ("mailto:" + workEmail);
-	m_mainWidget->urlWorkEmail->setUseCursor ( !workEmail.trimmed().isEmpty () );
+	bool enableMail=!workEmail.trimmed().isEmpty ();
+	m_mainWidget->urlWorkEmail->setUseCursor ( enableMail );
+	m_mainWidget->urlWorkEmail->setEnabled ( enableMail ); 
 		
 	m_mainWidget->leHomeEmail->setText (homeEmail);
 	m_mainWidget->urlHomeEmail->setText (homeEmail);
+	enableMail=!homeEmail.trimmed().isEmpty ();
 	m_mainWidget->urlHomeEmail->setURL ("mailto:" + homeEmail);
-	m_mainWidget->urlHomeEmail->setUseCursor ( !homeEmail.trimmed().isEmpty () );
+	m_mainWidget->urlHomeEmail->setUseCursor ( enableMail );
+	m_mainWidget->urlHomeEmail->setEnabled ( enableMail );
 
 	// work information tab
 	m_mainWidget->leCompany->setText (m_contact->property(m_account->protocol()->propCompanyName).value().toString());

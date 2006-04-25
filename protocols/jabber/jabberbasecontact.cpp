@@ -53,11 +53,6 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete
 
 }
 
-JabberBaseContact::~JabberBaseContact( )
-{
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId() <<  kdBacktrace() << endl;
-}
-
 
 JabberProtocol *JabberBaseContact::protocol ()
 {
@@ -308,6 +303,11 @@ void JabberBaseContact::reevaluateStatus ()
 	}
 	
 
+	updateResourceList ();
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
+	setOnlineStatus ( status );
+
 	/*
 	 * Set away message property.
 	 * We just need to read it from the current resource.
@@ -320,12 +320,6 @@ void JabberBaseContact::reevaluateStatus ()
 	{
 		removeProperty ( protocol()->propAwayMessage );
 	}
-
-	updateResourceList ();
-
-
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
-	setOnlineStatus ( status );
 
 }
 

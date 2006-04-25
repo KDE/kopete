@@ -123,6 +123,7 @@ public:
 
     /** workaround Bug 113425 . see slotKeepAliveTimer() **/
 	QTimer *m_keepAlive;
+	int m_keepAliveNb;
 
 public slots:
 	void slotCloseSession();
@@ -134,7 +135,7 @@ public slots:
 	void sendTypingMsg( bool isTyping );
 
 	void requestDisplayPicture();
-	
+
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );

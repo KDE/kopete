@@ -159,6 +159,10 @@ private slots:
 	 * Update the display in the header template if any.
 	 */
 	void slotUpdateHeaderDisplayName();
+	/**
+	 * Upda the photo in the header.
+	 */
+	void slotUpdateHeaderPhoto();
 
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );

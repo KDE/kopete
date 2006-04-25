@@ -17,6 +17,7 @@
 #include <qfile.h>
 //Added by qt3to4:
 #include <QList>
+#include <qtimer.h>
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
@@ -69,6 +70,13 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 
 	setXMLFile("statisticsui.rc");
 
+	/* Initialization reads the database, so it could be a bit time-consuming
+	due to disk access. This should overcome the problem and makes it non-blocking. */
+	QTimer::singleShot(0, this, SLOT(slotInitialize()));
+}	
+
+void StatisticsPlugin::slotInitialize()
+{
 	// Initializes the database
 	m_db = new StatisticsDB();
 	
@@ -77,7 +85,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 	{
 		slotMetaContactAdded(metaContact);
 	}
-}	
+}
 
 StatisticsPlugin::~StatisticsPlugin()
 {

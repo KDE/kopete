@@ -1291,7 +1291,10 @@ int VideoDevice::close()
 
 float VideoDevice::getBrightness()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getBrightness();
+  else
+	return 0;
 }
 
 float VideoDevice::setBrightness(float brightness)
@@ -1326,7 +1329,10 @@ float VideoDevice::setBrightness(float brightness)
 
 float VideoDevice::getContrast()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getContrast();
+  else
+	return 0;
 }
 
 float VideoDevice::setContrast(float contrast)
@@ -1361,7 +1367,10 @@ float VideoDevice::setContrast(float contrast)
 
 float VideoDevice::getSaturation()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getSaturation();
+  else
+	return 0;
 }
 
 float VideoDevice::setSaturation(float saturation)
@@ -1396,7 +1405,10 @@ float VideoDevice::setSaturation(float saturation)
 
 float VideoDevice::getWhiteness()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getWhiteness();
+  else
+	return 0;
 }
 
 float VideoDevice::setWhiteness(float whiteness)
@@ -1431,7 +1443,10 @@ float VideoDevice::setWhiteness(float whiteness)
 
 float VideoDevice::getHue()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getHue();
+  else
+	return 0;
 }
 
 float VideoDevice::setHue(float hue)
@@ -1467,39 +1482,63 @@ float VideoDevice::setHue(float hue)
 
 bool VideoDevice::getAutoBrightnessContrast()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getAutoBrightnessContrast();
+  else
+	return false;
 }
 
 bool VideoDevice::setAutoBrightnessContrast(bool brightnesscontrast)
 {
 	kDebug() <<  k_funcinfo << "VideoDevice::setAutoBrightnessContrast(" << brightnesscontrast << ") called." << endl;
-	m_input[m_current_input].setAutoBrightnessContrast(brightnesscontrast);
-	return m_input[m_current_input].getAutoBrightnessContrast();
-
+	if (m_current_input < m_input.size() ) 
+	  {
+		m_input[m_current_input].setAutoBrightnessContrast(brightnesscontrast);
+		return m_input[m_current_input].getAutoBrightnessContrast();
+	  }
+	else
+	  return false;
+   
 }
 
 bool VideoDevice::getAutoColorCorrection()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getAutoColorCorrection();
+  else
+	return false;
 }
 
 bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
 {
 	kDebug() <<  k_funcinfo << "VideoDevice::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
-	m_input[m_current_input].setAutoColorCorrection(colorcorrection);
-	return m_input[m_current_input].getAutoColorCorrection();
+	if (m_current_input < m_input.size() )
+	  {
+		m_input[m_current_input].setAutoColorCorrection(colorcorrection);
+		return m_input[m_current_input].getAutoColorCorrection();
+	  }
+	else
+	  return false;
 }
 
 bool VideoDevice::getImageAsMirror()
 {
+  if (m_current_input < m_input.size() )
 	return m_input[m_current_input].getImageAsMirror();
+  else
+	return false;
 }
 
 bool VideoDevice::setImageAsMirror(bool imageasmirror)
 {
 	kdDebug() <<  k_funcinfo << "VideoDevice::setImageAsMirror(" << imageasmirror << ") called." << endl;
-	m_input[m_current_input].setImageAsMirror(imageasmirror);
-	return m_input[m_current_input].getImageAsMirror();
+	if (m_current_input < m_input.size() ) 
+	  {
+		m_input[m_current_input].setImageAsMirror(imageasmirror);
+		return m_input[m_current_input].getImageAsMirror();
+	  }
+	else
+	  return false;
 }
 
 bool VideoDevice::getDisableMMap()

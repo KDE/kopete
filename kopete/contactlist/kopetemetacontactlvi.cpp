@@ -820,15 +820,43 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact */*contact*/,
+void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && d->extraText && old != newVal )
 	{
-		if ( newVal.toString().isEmpty() )
-			d->extraText->setText( QString::null );
+		bool allOffline = !m_metaContact->isOnline();
+		if ( newVal.toString().isEmpty() || ( !contact->isOnline() && !allOffline ) )
+		{
+			// try to find a more suitable away message to be displayed when: 
+			// -new away message is empty or
+			// -contact who set it is offline and there are contacts online in the metacontact
+			bool allAwayMessagesEmpty = true;
+			QList<Kopete::Contact*> contacts = m_metaContact->contacts();
+			foreach ( Kopete::Contact *c, contacts )
+			{
+//				kdDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString() << endl;
+				QString awayMessage( c->property( key ).value().toString() );
+				if ( ( allOffline || c->isOnline() ) && !awayMessage.isEmpty() )
+				{
+					// display this contact's away message when:
+					// -this contact's away message is not empty and
+					// -this contact is online or there are no contacts online at all
+					allAwayMessagesEmpty = false;
+					d->extraText->setText( awayMessage );
+					break;
+				}
+			}
+			if ( allAwayMessagesEmpty )
+				d->extraText->setText( QString::null );
+		}
 		else
+		{
+			// just use new away message when:
+			// -new away message is not empty and
+			// -contact who set it is online or there are no contacts online at all
 			d->extraText->setText( newVal.toString() );
+		}
 	} // wtf? KopeteMetaContact also connects this signals and emits photoChanged! why no connect photoChanged to slotPhotoChanged?
 	/*else if ( key == QString::fromLatin1("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
 	{

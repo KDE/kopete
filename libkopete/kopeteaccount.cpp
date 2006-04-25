@@ -84,6 +84,8 @@ public:
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
 	QString customIcon;
+	Kopete::OnlineStatus restoreStatus;
+	QString restoreMessage;
 };
 
 Account::Account( Protocol *parent, const QString &accountId )
@@ -95,6 +97,9 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->color = d->configGroup->readEntry( "Color" );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
+
+	d->restoreStatus = Kopete::OnlineStatus::Online;
+	d->restoreMessage = "";
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
@@ -116,6 +121,12 @@ Account::~Account()
 	delete d;
 }
 
+void Account::reconnect()
+{
+	kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+	setOnlineStatus( d->restoreStatus, d->restoreMessage );
+}
+
 void Account::disconnected( DisconnectReason reason )
 {
 	//reconnect if needed
@@ -126,7 +137,7 @@ void Account::disconnected( DisconnectReason reason )
 			d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
 		if(d->connectionTry < 3)
-			QTimer::singleShot( 0, this, SLOT(connect()));
+			QTimer::singleShot(10000, this, SLOT(reconnect())); // wait 10 seconds before reconnect
 	}
 	if(reason== OtherClient)
 	{
@@ -398,6 +409,8 @@ void Account::setMyself( Contact *myself )
 	{
 		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
 	}
 
 	d->myself = myself;
@@ -406,6 +419,8 @@ void Account::setMyself( Contact *myself )
 	
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
 
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();
@@ -431,6 +446,13 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		//the timer is also used to reset the d->connectionTry
 	}
 
+	if ( !isOffline )
+	{
+		d->restoreStatus = newStatus;
+		d->restoreMessage = myself()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+//		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+	}
+
 /*	kDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
@@ -449,6 +471,16 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 		it.next();
 		if ( it.value() != d->myself )
 			it.value()->setOnlineStatus( status );
+	}
+}
+
+void Account::slotContactPropertyChanged( Contact * /* contact */,
+	const QString &key, const QVariant &old, const QVariant &newVal )
+{
+	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && old != newVal && isConnected() )
+	{
+		d->restoreMessage = newVal.toString();
+//		kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreMessage " << d->restoreMessage << endl;
 	}
 }
 

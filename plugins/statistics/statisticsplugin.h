@@ -109,7 +109,10 @@ public:
 	
 	/// Method to access m_db member
 	StatisticsDB *db() { return m_db; }
-		
+private slots:
+	// Do the initializations
+	void slotInitialize();
+
 public slots:
 	
 	/** \brief This slot is called when the status of a contact changed.

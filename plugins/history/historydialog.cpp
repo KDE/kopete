@@ -162,7 +162,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 	l->addWidget(mHtmlView);
 
 	QTextOStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
-	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; }</style>";
+	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; color: " + Kopete::AppearanceSettings::self()->chatTextColor().name() + "; }</style>";
 
 	mHtmlPart->begin();
 	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
@@ -390,8 +390,8 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 		
 			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
 					+ ((*it).direction() == Kopete::Message::Outbound ?
-									"<font color=\"navy\"><b>&gt;</b></font> "
-									: "<font color=\"orange\"><b>&lt;</b></font> ")
+									"<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().dark().name() + "\"><b>&gt;</b></font> "
+									: "<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().light(200).name() + "\"><b>&lt;</b></font> ")
 					+ body + "<br/>";
 	
 			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
@@ -497,8 +497,6 @@ void HistoryDialog::searchFirstStep()
 
 	if (!mSearch)
 	{
-		delete mSearch;
-		mSearch = 0L;
 		return;
 	}
 	
@@ -575,12 +573,14 @@ void HistoryDialog::slotContactChanged(int index)
 	mMainWidget->dateListView->clear();
 	if (index == 0)
 	{
-		mMetaContact = 0;
+        setCaption(i18n("History for All Contacts"));
+        mMetaContact = 0;
 		init();
 	}
 	else
 	{
 		mMetaContact = mMetaContactList.at(index-1);
+        setCaption(i18n("History for %1").arg(mMetaContact->displayName()));
 		init();
 	}
 }

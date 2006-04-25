@@ -76,8 +76,11 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 JabberChatSession::~JabberChatSession( )
 {
-	if ( account()->configGroup()->readBoolEntry ("SendEvents", true) &&
-			 account()->configGroup()->readBoolEntry ("SendGoneEvent", true) )
+	JabberAccount * a = dynamic_cast<JabberAccount *>(Kopete::ChatSession::account ());
+	if( !a ) //When closing kopete, the account is partially destroyed already,  dynamic_cast return 0
+		return;
+	if ( a->configGroup()->readBoolEntry ("SendEvents", true) &&
+			 a->configGroup()->readBoolEntry ("SendGoneEvent", true) )
 		sendNotification( XMPP::GoneEvent );
 }
 

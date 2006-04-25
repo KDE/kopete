@@ -991,8 +991,8 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	
 	QString buzzMsgText = i18nc("This string is shown when the user is buzzed by a contact", "Buzz!!");
 	
-	Kopete::Message kmsg(msgDT, contact(who), justMe, buzzMsgText,
-	                     Kopete::Message::Inbound , Kopete::Message::PlainText);
+	Kopete::Message kmsg(msgDT, contact(who), justMe, buzzMsgText, Kopete::Message::Inbound,
+	                     Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction);
 	QColor fgColor( "gold" );
 	kmsg.setFg( fgColor );
 	

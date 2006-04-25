@@ -457,7 +457,11 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 	const Kopete::Contact *currentContact=c;
 	if(!c && m_metaContact->contacts().count()==1)
 		currentContact=m_metaContact->contacts().first();
-
+	else if(!c && m_metaContact->contacts().count()== 0)
+	{
+		return messages;
+	}
+	
 	while(messages.count() < lines)
 	{
 		timeLimit=QDateTime();
@@ -576,7 +580,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 				if( m_filter.isNull() || ( m_filterRegExp? msgElem.text().contains(QRegExp(m_filter,m_filterCaseSensitive)) : msgElem.text().contains(m_filter,m_filterCaseSensitive) ))
 				{
 					QString f=msgElem.attribute("from" );
-					const Kopete::Contact *from=f.isNull()? 0L : currentContact->account()->contacts()[f];
+					const Kopete::Contact *from=(f.isNull() || !currentContact) ? 0L : currentContact->account()->contacts()[f];
 
 					if(!from)
 						from= dir==Kopete::Message::Inbound ? currentContact : currentContact->account()->myself();

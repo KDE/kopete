@@ -4,7 +4,7 @@
     Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
-    Copyright (c) 2005      by Michaël Larouche      <michael.larouche@kdemail.net>
+    Copyright (c) 2005-2006 by Michaël Larouche      <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -217,6 +217,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(slotUpdateHeaderDisplayName()) );
+	connect( d->manager, SIGNAL(photoChanged()), this, SLOT(slotUpdateHeaderPhoto()) );
 
 	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
 	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::URLArgs & ) ) );
@@ -1096,6 +1097,13 @@ void ChatMessagePart::slotUpdateHeaderDisplayName()
 	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString::fromUtf8("KopeteHeaderChatNameInternal") );
 	if( !kopeteChatNameNode.isNull() )
 		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );
+}
+
+void ChatMessagePart::slotUpdateHeaderPhoto()
+{
+	// Do the actual style switch
+	// Wait for the event loop before switching the style
+	QTimer::singleShot( 0, this, SLOT(changeStyle()) );
 }
 
 void ChatMessagePart::changeStyle()

@@ -84,11 +84,13 @@ AccountManager::~AccountManager()
 
 bool AccountManager::isAnyAccountConnected()
 {
-	bool anyConnected = false;
 	foreach( Account *a , d->accounts )
-		anyConnected |= a->isConnected();
+	{
+		if( a->isConnected() )
+			return true;
+	}
 
-	return anyConnected;
+	return false;
 }
 
 void AccountManager::connectAll()

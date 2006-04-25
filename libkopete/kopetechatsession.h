@@ -6,7 +6,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
-    Copyright (c) 2005      by Micha� Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -247,6 +247,12 @@ signals:
 	 * The chatwindow connects to this signal to update the statusbar.
 	 */
 	void eventNotification( const QString& notificationText);
+
+	/**
+	 * @brief A contact within the chat session changed his photo.
+	 * Used to update the contacts photo in chat window.
+	 */
+	void photoChanged();
 
 public slots:
 	/**

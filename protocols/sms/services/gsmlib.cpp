@@ -106,9 +106,19 @@ void GSMLibThread::run()
 
 void GSMLibThread::send(const Kopete::Message& msg)
 {
-	m_outMessagesMutex.lock();
-	m_outMessages.push_back(msg);
-	m_outMessagesMutex.unlock();
+	if( m_MeTa )
+	{
+		m_outMessagesMutex.lock();
+		m_outMessages.push_back(msg);
+		m_outMessagesMutex.unlock();
+	}
+	else
+	{
+		GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::MSG_NOT_SENT );
+		e->Reason = QString("GSMLib: Not Connected");
+		e->Message = msg;
+		QApplication::postEvent(m_parent, e);
+	}
 }
 
 

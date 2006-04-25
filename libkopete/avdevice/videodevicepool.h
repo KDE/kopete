@@ -121,7 +121,7 @@ protected:
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;
-	static int m_clients; // Number of instances
+	static __u64 m_clients; // Number of instances
 };
 
 }

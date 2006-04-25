@@ -560,7 +560,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 
 	kDebug(14000) << k_funcinfo << "Using latin1 and cleaning string" << endl;
 	//No codec decoded. Just decode latin1, and clean out any junk.
-	QString result = testCodec->toUnicode( message );
+	QString result = QString::fromLatin1( message );
 	const uint length = message.length();
 	for( uint i = 0; i < length; ++i )
 	{

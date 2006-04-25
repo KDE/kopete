@@ -98,14 +98,13 @@ public:
 	void setCaption( const QString &text, bool modified );
 
 	/**
-	 * Changes the pointer to the chat widnow. Used to re-parent the view
+	 * Changes the pointer to the chat window. Used to re-parent the view
 	 * @param parent The new chat window
 	 */
 	void setMainWindow( KopeteChatWindow* parent );
 
 	/**
 	 * Returns the message currently in the edit area
-	 * Reimplemented from KopeteView
 	 * @return The Kopete::Message object for the message
 	 *
 	 * Reimplemented from KopeteView
@@ -172,10 +171,10 @@ public:
 
 	bool canSend();
 
-	/** Reimplimented from KopeteView **/
+	/** Reimplemented from KopeteView **/
 	virtual void registerContextMenuHandler( QObject *target, const char* slot );
 
-	/** Reimplimented from KopeteView **/
+	/** Reimplemented from KopeteView **/
 	virtual void registerTooltipHandler( QObject *target, const char* slot );
 
 public slots:
@@ -257,8 +256,6 @@ public slots:
 	virtual void messageSentSuccessfully();
 
 	virtual bool closeView( bool force = false );
-
-	KParts::Part *part() const;
 
 signals:
 	/**

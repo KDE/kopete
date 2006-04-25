@@ -772,12 +772,22 @@ void ICQContact::changeContactEncoding()
 
 void ICQContact::changeEncodingDialogClosed( int result )
 {
-    if ( result == QDialog::Accepted )
-    {
-        kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
-                                 << m_oesd->selectedEncoding() << endl;
-        setProperty( mProtocol->contactEncoding, m_oesd->selectedEncoding() );
-    }
+	if ( result == QDialog::Accepted )
+	{
+		int mib = m_oesd->selectedEncoding();
+		if ( mib != 0 )
+		{
+			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
+			                         << m_oesd->selectedEncoding() << endl;
+			setProperty( mProtocol->contactEncoding, m_oesd->selectedEncoding() );
+		}
+		else
+		{
+			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo
+			                         << "setting encoding to default" << endl;
+			removeProperty( mProtocol->contactEncoding );
+		}
+	}
 
     if ( m_oesd )
     {

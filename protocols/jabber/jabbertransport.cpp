@@ -95,7 +95,6 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 
 JabberTransport::~JabberTransport ()
 {
-	kdDebug( JABBER_DEBUG_GLOBAL ) << " removing transport " << kdBacktrace() <<endl;
 	m_account->removeTransport( myself()->contactId() );
 }
 

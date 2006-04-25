@@ -2102,8 +2102,8 @@ void KopeteContactListView::slotRedo()
 				}
 				success=true;
 			}
+			*/ //Why is this code commented ?   - Olivier 2006-04
 			break;
-			*/
 		 }
 		 case UndoItem::GroupRename:
 		 {

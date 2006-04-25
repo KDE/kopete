@@ -75,6 +75,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 	m_clientcapsSent=false;
 	m_dispatcher = 0l;
 	m_keepAlive = 0l;
+	m_keepAliveNb=0;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -833,6 +834,16 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		}
 		return -2;  //the message hasn't been sent.
 	}
+	
+	if(!m_keepAlive)
+	{
+		m_keepAliveNb=20;
+		m_keepAlive=new QTimer(this);
+		QObject::connect(m_keepAlive, SIGNAL(timeout()) , this , SLOT(slotKeepAliveTimer()));
+		m_keepAlive->start(50*1000);
+	}
+
+	
 	return sendCommand( "MSG", "A", true, (head+"\r\n"+message).toUtf8() );
 }
 
@@ -876,6 +887,7 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 		
 		if(!m_keepAlive)
 		{
+			m_keepAliveNb=20;
 			m_keepAlive=new QTimer(this);
 			QObject::connect(m_keepAlive, SIGNAL(timeout()) , this , SLOT(slotKeepAliveTimer()));
 			m_keepAlive->start(50*1000);
@@ -1125,6 +1137,13 @@ void MSNSwitchBoardSocket::slotKeepAliveTimer( )
 	// Length is appended by sendCommand()
 	QString args = "U";
 	sendCommand( "MSG", args, true, message );
+	
+	m_keepAliveNb--;
+	if(m_keepAliveNb <= 0)
+	{
+		m_keepAlive->deleteLater();
+		m_keepAlive=0L;
+	}
 }
 
 #include "msnswitchboardsocket.moc"

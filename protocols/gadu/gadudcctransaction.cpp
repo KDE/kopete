@@ -119,6 +119,7 @@ GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerCont
 	if ( !peerContact ) {
 		kDebug( 14100 ) << "setupIncoming called with peerContact == NULL " << endl;
 		return false;
+		return false;
 	}
 
 	QString aaa =  peerContact->contactIp().toString();
