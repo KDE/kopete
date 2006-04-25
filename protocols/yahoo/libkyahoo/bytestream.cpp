@@ -144,7 +144,8 @@ void ByteStream::write(const Q3CString &cs)
 {
 // 	kDebug(14181) << k_funcinfo << "[data size: " << cs.length() << "]" << endl;
 	
-	QByteArray block(cs.length());
+	QByteArray block;
+	block.reserve(cs.length());
 	memcpy(block.data(), cs.data(), block.size());
 	write(block);
 }

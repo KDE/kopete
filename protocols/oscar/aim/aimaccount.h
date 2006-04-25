@@ -20,6 +20,7 @@
 #define AIMACCOUNT_H
 
 #include <q3dict.h>
+#include <q3valuelist.h>
 #include <qstring.h>
 #include <qwidget.h>
 #include "oscartypeclasses.h"

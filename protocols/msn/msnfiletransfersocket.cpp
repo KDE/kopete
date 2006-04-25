@@ -242,7 +242,8 @@ void MSNFileTransferSocket::abort()
 	}
 	else
 	{
-		QByteArray bytes(3);
+		QByteArray bytes;
+		bytes.reserve(3);
 		bytes[0]='\1';
 		bytes[1]='\0';
 		bytes[2]='\0';
@@ -297,7 +298,8 @@ void MSNFileTransferSocket::slotSendFile()
 		char data[2046];
 		int bytesRead = m_file->read( data, 2045 );
 			
-		QByteArray block(bytesRead+3);
+		QByteArray block;
+		block.reserve(bytesRead+3);
 //		char i1= (char)fmod( bytesRead, 256 ) ;
 //		char i2= (char)floor( bytesRead / 256 ) ;
 //		kDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << (int)i1 <<" + 256* "<< (int)i2 <<" = " << bytesRead <<endl;

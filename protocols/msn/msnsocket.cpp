@@ -681,7 +681,8 @@ void MSNSocket::slotReadyWrite()
 
 				uint length = s.length();
 				// Create the web request bytes.
-				QByteArray bytes(length + (*it).size());
+				QByteArray bytes;
+				bytes.reserve(length + (*it).size());
 
 				// Copy the request headers into the request bytes.
 				for(uint i=0; i < length; i++)
@@ -945,8 +946,9 @@ QString MSNSocket::getLocalIP()
 }
 
 MSNSocket::Buffer::Buffer( unsigned int sz )
-: QByteArray( sz )
+: QByteArray( )
 {
+	reserve( sz );
 }
 
 MSNSocket::Buffer::~Buffer()
@@ -973,7 +975,8 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 		return QByteArray();
 	}
 
-	QByteArray rep( blockSize );
+	QByteArray rep;
+	rep.reserve( blockSize );	
 	for( uint i = 0; i < blockSize; i++ )
 		rep[ i ] = data()[ i ];
 
@@ -1038,7 +1041,8 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 			// copy the web response content bytes.
 			int offset = bytes.size() - length;
 
-			QByteArray content(length);
+			QByteArray content;
+			content.reserve( length );
 			for(int i=0; i < length; i++)
 				content[i] = bytes[offset + i];
 			// Create the web response stream from the response content bytes.

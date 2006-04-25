@@ -76,7 +76,8 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		{
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " more data in chunk! ( I have parsed " << parsedBytes << " and total data of " << size << ")" << endl;
 			// copy the unparsed bytes into a new qbytearray and replace m_in with that
-			QByteArray remainder( size - parsedBytes );
+			QByteArray remainder;
+			remainder.reserve( size - parsedBytes );
 			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
 			m_in = remainder;
 		}

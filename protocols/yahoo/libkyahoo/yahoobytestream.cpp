@@ -113,7 +113,8 @@ void KNetworkByteStream::slotReadyRead()
 {
 	kDebug( 14181 ) <<  endl;
 	// stuff all available data into our buffers
-	QByteArray readBuffer( socket()->bytesAvailable () );
+	QByteArray readBuffer;
+	readBuffer.reserve( socket()->bytesAvailable () );
 
 	socket()->read( readBuffer.data (), readBuffer.size () );
 

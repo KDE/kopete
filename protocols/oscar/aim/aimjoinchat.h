@@ -20,6 +20,7 @@
 #ifndef AIMJOINCHAT_H
 #define AIMJOINCHAT_H
 
+#include <q3valuelist.h>
 #include <kdialogbase.h>
 
 #include "oscartypes.h"

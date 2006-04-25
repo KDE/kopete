@@ -235,7 +235,8 @@ void WebcamTask::slotRead()
 void WebcamTask::connectStage2( KStreamSocket *socket )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	QByteArray data( socket->bytesAvailable() );
+	QByteArray data;
+	data.reserve( socket->bytesAvailable() );
 	socket->read ( data.data (), data.size () );
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Magic Byte:" << data[2] << endl;
 
@@ -275,7 +276,8 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 void WebcamTask::processData( KStreamSocket *socket )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	QByteArray data( socket->bytesAvailable() );
+	QByteArray data;
+	data.reserve( socket->bytesAvailable() );
 	
 	socket->read( data.data (), data.size () );
 	if( data.size() <= 0 )
@@ -384,7 +386,8 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		{
 			// More headers to read
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "More data to read..." << endl;
-			QByteArray newData( data.size() - headerLength );
+			QByteArray newData;
+			newData.reserve( data.size() - headerLength );
 			QDataStream stream( &newData, QIODevice::WriteOnly );
 			stream.writeRawData( data.data() + headerLength, data.size() - headerLength );
 			parseData( newData, socket );
@@ -484,7 +487,8 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	{
 		// More headers to read
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "More data to read..." << data.size() - read << endl;
-		QByteArray newData( data.size() - read );
+		QByteArray newData;
+		newData.reserve( data.size() - read );
 		QDataStream stream( &newData, QIODevice::WriteOnly );
 		stream.writeRawData( data.data() + read, data.size() - read );
 		parseData( newData, socket );

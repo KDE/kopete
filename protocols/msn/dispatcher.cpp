@@ -125,8 +125,7 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	// Create the file context data.
 	QString context;
 
-	QByteArray header(638);
-	header.fill('\0');
+	QByteArray header(638, '\0');
 	QDataStream writer( &header,QIODevice::WriteOnly);
 	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
@@ -474,7 +473,8 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				reader >> flag;
 				kDebug(14140) << flag << endl;
 				// FileName UTF16 (Unicode) [19..539]
-				QByteArray bytes(520);
+				QByteArray bytes;
+				bytes.reserve(520);
 				reader.readRawData(bytes.data(), bytes.size());
 				QTextStream ts(bytes, QIODevice::ReadOnly);
 				ts.setCodec(QTextCodec::codecForName("UTF-16"));

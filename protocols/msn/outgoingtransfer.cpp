@@ -90,7 +90,8 @@ void OutgoingTransfer::sendImage(const QByteArray& image)
 void OutgoingTransfer::slotSendData()
 {
 	qint32 bytesRead = 0;
-	QByteArray buffer(1202);
+	QByteArray buffer;
+	buffer.reserve(1202);
 
 	if(!m_file)
 		return;

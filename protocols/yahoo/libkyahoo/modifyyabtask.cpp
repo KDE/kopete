@@ -121,7 +121,8 @@ void ModifyYABTask::connectSucceeded()
 void ModifyYABTask::slotRead()
 {
 	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
-	QByteArray ar( socket->bytesAvailable() );
+	QByteArray ar;
+	ar.reserve( socket->bytesAvailable() );
 	socket->read( ar.data (), ar.size () );
 	QString data( ar );
 	data = data.right( data.length() - data.indexOf("<?xml") );

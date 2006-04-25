@@ -175,7 +175,8 @@ QByteArray SHA1::hash(const QByteArray &a)
 
 QByteArray SHA1::hashString(const QByteArray &cs)
 {
-	QByteArray a(cs.length());
+	QByteArray a;
+	a.reserve(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return SHA1::hash(a);
 }
