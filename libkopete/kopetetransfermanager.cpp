@@ -131,8 +131,8 @@ void Kopete::Transfer::slotComplete()
 
 void Kopete::Transfer::slotError( int error, const QString &errorText )
 {
-	m_error = error;
-	m_errorText = errorText;
+	setError(error);
+	setErrorText(errorText);
 
 	emitResult();
 }
@@ -228,7 +228,7 @@ void Kopete::TransferManager::slotComplete(KIO::Job *job)
 void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, unsigned long sz,
 	 bool mustBeLocal,	QObject *sendTo, const char *slot )
 {
-	KUrl url = KUrl::fromPathOrURL(file);
+	KUrl url = file;
 	QString filename;
 	unsigned int size = 0;
 

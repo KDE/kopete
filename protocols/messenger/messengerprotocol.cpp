@@ -30,7 +30,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_messenger, MessengerProtocolFactory("kopete_m
 MessengerProtocol *MessengerProtocol::s_self = 0;
 
 MessengerProtocol::MessengerProtocol(QObject *parent, const char *name, const QStringList &/*args*/)
- : Kopete::Protocol(MessengerProtocolFactory::instance(), parent, name)
+ : Kopete::Protocol(MessengerProtocolFactory::instance(), parent)
 {
 	s_self = this;
 
