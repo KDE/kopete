@@ -20,6 +20,14 @@
 #ifndef KOPETE_AVVIDEOINPUT_H
 #define KOPETE_AVVIDEOINPUT_H
 
+#ifdef __linux__
+#include <asm/types.h>
+#undef __STRICT_ANSI__
+#endif // __linux__
+#ifndef __u64 //required by videodev.h
+#define __u64 unsigned long long
+#endif // __u64*/
+
 #include <qstring.h>
 #include <kdebug.h>
 #include "kopete_export.h"
@@ -37,6 +45,7 @@ public:
 	~VideoInput();
 	QString name;
 	int  hastuner;
+	__u64 m_standards;
 	float getBrightness();
 	float setBrightness(float brightness);
 	float getContrast();
