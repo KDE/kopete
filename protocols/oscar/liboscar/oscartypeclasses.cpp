@@ -42,10 +42,8 @@ Oscar::TLV::TLV( quint16 newType, quint16 newLength, const QByteArray& newData )
 }
 
 Oscar::TLV::TLV( const TLV& t )
+:type( t.type ), length( t.length ), data( t.data )
 {
-	type = t.type;
-	length = t.length;
-	data = t.data;
 }
 
 Oscar::TLV::operator bool() const
