@@ -54,7 +54,8 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
-	checkStatus.start(1000, false);
+	checkStatus.setSingleShot(false);
+	checkStatus.start(1000);
 }
 
 QList<KAction*> *WPContact::customContextMenuActions()

@@ -151,13 +151,13 @@ void ChatWindowStyle::listVariants()
 	QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
 	QDir variantDir(variantDirPath);
 
-	QStringList variantList = variantDir.entryList("*.css");
+	QStringList variantList = variantDir.entryList( QStringList("*.css") );
 	QStringList::ConstIterator it, itEnd = variantList.constEnd();
 	for(it = variantList.constBegin(); it != itEnd; ++it)
 	{
 		QString variantName = *it, variantPath;
 		// Retrieve only the file name.
-		variantName = variantName.left(variantName.findRev("."));
+		variantName = variantName.left(variantName.lastIndexOf("."));
 		// variantPath is relative to baseHref.
 		variantPath = QString("Variants/%1").arg(*it);
 		d->variantsList.insert(variantName, variantPath);

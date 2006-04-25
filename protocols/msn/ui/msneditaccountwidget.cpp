@@ -72,7 +72,10 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 	d->protocol=proto;
 
-	( new QVBoxLayout( this, 0, 0 ) )->setAutoAdd( true );
+	QVBoxLayout* layout = new QVBoxLayout( this );
+	layout->setMargin( 0 );
+	layout->setSpacing( 0 );
+	layout->setAutoAdd( true );
 
 	d->ui = new MSNEditAccountUI( this );
 

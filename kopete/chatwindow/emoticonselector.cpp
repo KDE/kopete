@@ -56,7 +56,7 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
     // so lets limit them to a maximum size for this display panel
     //
     if (p.width() > 32 || p.height() > 32)
-        p.resize(32, 32);
+        p = QPixmap(32, 32);
 	setMinimumSize(p.size());
 }
 

@@ -42,11 +42,11 @@ public:
 
 		m = languages.languagesMap();
 		for ( i = m.begin(); i != m.end() ; ++i )
-			preferencesDialog->myLang->insertItem( i.data(), languages.languageIndex(i.key()) );
+			preferencesDialog->myLang->insertItem( i.value(), languages.languageIndex(i.key()) );
 
 		m = languages.servicesMap();
 		for ( i = m.begin(); i != m.end() ; ++i )
-			preferencesDialog->Service->insertItem( i.data(), languages.serviceIndex(i.key()) );
+			preferencesDialog->Service->insertItem( i.value(), languages.serviceIndex(i.key()) );
 
 		//setMainWidget( preferencesDialog , "Translator Plugin");
 	}

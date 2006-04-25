@@ -91,7 +91,7 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
          */
         initialEncodingIndex = 0;
     }
-    m_encodingUI->encodingCombo->setCurrentItem( initialEncodingIndex );
+    m_encodingUI->encodingCombo->setCurrentIndex( initialEncodingIndex );
     setMainWidget( m_encodingUI );
 }
 

@@ -459,17 +459,17 @@ void AppearanceConfig::slotChatStyleSelected()
 		// Add the no variant item to the list
 		// TODO: Use default name variant from Info.plist
 		// TODO: Select default variant from Info.plist
-		d->mPrfsChatWindow->variantList->insertItem( i18n("(No Variant)") );
+		d->mPrfsChatWindow->variantList->addItem( i18n("(No Variant)") );
 
 		ChatWindowStyle::StyleVariants::ConstIterator it, itEnd = d->currentVariantMap.constEnd();
 		int currentIndex = 0;
 		for(it = d->currentVariantMap.constBegin(); it != itEnd; ++it)
 		{
 			// Insert variant name into the combobox.
-			d->mPrfsChatWindow->variantList->insertItem( it.key() );
+			d->mPrfsChatWindow->variantList->addItem( it.key() );
 	
 			if( it.value() == Kopete::AppearanceSettings::self()->styleVariant() )
-				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex+1);
+				d->mPrfsChatWindow->variantList->setCurrentIndex(currentIndex+1);
 	
 			currentIndex++;
 		}

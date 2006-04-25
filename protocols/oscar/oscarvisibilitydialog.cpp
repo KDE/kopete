@@ -118,12 +118,12 @@ void OscarVisibilityDialog::slotButtonClicked( int buttonCode )
 	{
 		ChangeMap::Iterator it, cEnd = m_visibleListChangesMap.end();
 		for ( it = m_visibleListChangesMap.begin(); it != cEnd; ++it ) {
-			m_client->setVisibleTo( it.key(), it.data() );
+			m_client->setVisibleTo( it.key(), it.value() );
 		}
 		
 		cEnd = m_invisibleListChangesMap.end();
 		for ( it = m_invisibleListChangesMap.begin(); it != cEnd; ++it ) {
-			m_client->setInvisibleTo( it.key(), it.data() );
+			m_client->setInvisibleTo( it.key(), it.value() );
 		}
 
 		emit closing();

@@ -122,7 +122,7 @@ void AutoReplaceConfig::save()
 	for ( it = m_map.begin(); it != m_map.end(); ++it )
 	{
 		newWords.append( it.key() );
-		newWords.append( it.data() );
+		newWords.append( it.value() );
 	}
 
 	config->writeEntry( "WordsToReplace", newWords );

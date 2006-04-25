@@ -142,15 +142,15 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	writer << (qint32)1;
 	// Write the file name in utf-16 to the stream.
 	QTextStream ts(header, QIODevice::WriteOnly);
-	ts.setEncoding(QTextStream::RawUnicode);
-	ts.device()->at(20);
+	ts.setCodec(QTextCodec::codecForName("UTF-16"));
+	ts.device()->seek(20);
 	ts << path.section('/', -1);
 	// NOTE Background Sharing base64 [540..569]
 	// TODO add support for background sharing.
 	// Write file exchange type to the stream.
 	// NOTE File - 0xFFFFFFFF
 	// NOTE Background Sharing - 0xFFFFFFFE
-	writer.device()->at(570);
+	writer.device()->seek(570);
 	writer << (quint32)0xFFFFFFFF;
 
 	// Encode the file context header to base64 encoding.
@@ -229,8 +229,8 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 			QMap<quint32, TransferContext*>::Iterator it = m_sessions.begin();
 			for(; it != m_sessions.end(); it++)
 			{
-				if(receivedMessage.header.ackSessionIdentifier == it.data()->m_identifier){
-					current = it.data();
+				if(receivedMessage.header.ackSessionIdentifier == it.value()->m_identifier){
+					current = it.value();
 					break;
 				}
 			}
@@ -325,7 +325,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QMap<quint32, TransferContext*>::Iterator it = m_sessions.begin();
 				for(; it != m_sessions.end(); it++)
 				{
-					current = it.data();
+					current = it.value();
 					if(current->m_callId == callId){
 						messageHandler = current;
 						break;
@@ -463,7 +463,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				reader.setByteOrder(QDataStream::LittleEndian);
 				//Retrieve the file info from the context field.
 				// File Size [8..15] Int64
-				reader.device()->at(8);
+				reader.device()->seek(8);
 				qint64 fileSize;
 				reader >> fileSize;
 				// Flag [15..18] Int32
@@ -475,9 +475,9 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				kDebug(14140) << flag << endl;
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes(520);
-				reader.readRawBytes(bytes.data(), bytes.size());
+				reader.readRawData(bytes.data(), bytes.size());
 				QTextStream ts(bytes, QIODevice::ReadOnly);
-				ts.setEncoding(QTextStream::Unicode);
+				ts.setCodec(QTextCodec::codecForName("UTF-16"));
 				QString fileName;
 				fileName = ts.readLine().toUtf8();
 
@@ -600,7 +600,7 @@ void Dispatcher::messageAcknowledged(unsigned int correlationId, bool fullReceiv
 		QMap<quint32, TransferContext*>::Iterator it = m_sessions.begin();
 		for(; it != m_sessions.end(); it++)
 		{
-			current = it.data();
+			current = it.value();
 			if(current->m_transactionId == correlationId)
 			{
 				// Inform the transfer object of the acknowledge.

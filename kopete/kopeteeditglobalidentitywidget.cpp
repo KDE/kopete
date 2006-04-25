@@ -105,7 +105,7 @@ void KopeteEditGlobalIdentityWidget::setIconSize(int size)
 	d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
 	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
 	if( !d->myself->picture().isNull() )
-		d->labelPicture->setPixmap(QPixmap(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+		d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 }
 
 void KopeteEditGlobalIdentityWidget::iconSizeChanged()

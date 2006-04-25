@@ -588,7 +588,7 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 	QMap<QString,QString>::iterator it;
 	for ( it = d->contactAddQueue.begin(); it != d->contactAddQueue.end(); ++it )
 	{
-		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
+		if ( Oscar::normalize( it.value() ) == Oscar::normalize( item.name() ) )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key() << "' to group "
 				<< item.name() << endl;

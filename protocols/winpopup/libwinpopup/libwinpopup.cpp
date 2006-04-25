@@ -211,7 +211,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 			//loop through the read groups and check for new ones
 			QMap<QString, QString>::ConstIterator end = currentGroups.end();
 			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-				QString groupMaster = i.data();
+				QString groupMaster = i.value();
 				if (!done.contains(groupMaster)) todo += groupMaster;
 			}
 		}
@@ -280,7 +280,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 
 				// first line is sender, can this really be empty? GF
 				sender = stream.readLine();
-				sender = sender.upper();
+				sender = sender.toUpper();
 
 				// second line is time
 				QString tmpTime = stream.readLine();
@@ -292,7 +292,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 				}
 
 				// remove trailing CR
-				text = text.stripWhiteSpace();
+				text = text.trimmed();
 
 				messageFile.close();
 

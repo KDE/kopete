@@ -71,7 +71,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 		if (tmp != 0) {
 			gethostname(tmp, 255);
 			theHostName = tmp;
-			if (theHostName.contains('.') != 0) theHostName.remove(theHostName.find('.'), theHostName.length());
+			if (theHostName.contains('.') != 0) theHostName.remove(theHostName.indexOf('.'), theHostName.length());
 			theHostName = theHostName.toUpper();
 		}
 

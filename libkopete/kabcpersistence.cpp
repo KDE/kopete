@@ -313,7 +313,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 						// Is it in the contact list?
 						// First discard anything after an 0xE120, this is used by IRC to separate nick and server group name, but
 						// IRC doesn't support this properly yet, so the user will have to select an appropriate account manually
-						int separatorPos = (*it).find( QChar( 0xE120 ) );
+						int separatorPos = (*it).indexOf( QChar( 0xE120 ) );
 						if ( separatorPos != -1 )
 							*it = (*it).left( separatorPos );
 

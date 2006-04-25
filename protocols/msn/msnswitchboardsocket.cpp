@@ -84,7 +84,7 @@ MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
-		delete it.data().second;
+		delete it.value().second;
 	}
 	qDeleteAll(m_typewrited);
 }
@@ -95,7 +95,7 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 	m_ID = ID;
 	m_auth = auth;
 
-	QString server = address.left( address.find( ":" ) );
+	QString server = address.left( address.indexOf( ":" ) );
 	uint port = address.right( address.length() - address.lastIndexOf( ":" ) - 1 ).toUInt();
 
 	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),
@@ -347,7 +347,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 				others.append( m_account->contacts()[ *it2 ] );
 		}
 
-		QString message=msg.right( msg.length() - msg.find("\r\n\r\n") - 4 );
+		QString message=msg.right( msg.length() - msg.indexOf("\r\n\r\n") - 4 );
 
 		//Stupid MSN PLUS colors code. message with incorrect charactere are not showed correctly in the chatwindow.
 		//TODO: parse theses one to show the color too in Kopete
@@ -397,7 +397,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			{                    // the queue in 15 secondes even if we have not received emoticons
 				m_emoticonTimer=new QTimer(this);
 				QObject::connect(m_emoticonTimer , SIGNAL(timeout()) , this, SLOT(cleanQueue()));
-				m_emoticonTimer->start( 15000 , true );
+				m_emoticonTimer->setSingleShot( true );
+				m_emoticonTimer->start( 15000 );
 			}
 		}
 		else
@@ -623,7 +624,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 	const QMap<QString, QString> objectList = PeerDispatcher()->objectList;
 	for (QMap<QString,QString>::ConstIterator it = objectList.begin(); it != objectList.end(); ++it )
 	{
-		if(it.data() == filename)
+		if(it.value() == filename)
 		{
 			picObj=it.key();
 			break;
@@ -689,7 +690,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		{
 			if ( msg.plainBody().contains(itr.key()) )
 			{
-				sendCustomEmoticon(itr.key(), itr.data());
+				sendCustomEmoticon(itr.key(), itr.value());
 			}
 		}
 	}
@@ -1008,8 +1009,8 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
-		QString es=Qt::escape(it.data().first);
-		KTempFile *f=it.data().second;
+		QString es=Qt::escape(it.value().first);
+		KTempFile *f=it.value().second;
 		if(message.contains(es) && f)
 		{
 			QString imgPath = f->name();
@@ -1057,12 +1058,12 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 	QString tmp;
 	int pos1=0, pos2=0;
 
-	pos1 = str.find(attr + "=");
+	pos1 = str.indexOf(attr + "=");
 
 	if (pos1 == -1)
 		return "";
 
-	pos2 = str.find(";", pos1+3);
+	pos2 = str.indexOf(";", pos1+3);
 
 	if (pos2 == -1)
 		tmp = str.mid(pos1+3, str.length() - pos1 - 3);

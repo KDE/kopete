@@ -80,7 +80,7 @@ bool InputProtocolBase::safeReadBytes( Q3CString & data, uint & len )
 			return false;
 		// if the server splits packets here we are in trouble,
 		// as there is no way to see how much data was actually read
-		m_din->readRawBytes( temp.data(), val );
+		m_din->readRawData( temp.data(), val );
 		// the rest of the string will be filled with FF,
 		// so look for that in the last position instead of \0
 		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...

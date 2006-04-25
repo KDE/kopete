@@ -123,11 +123,11 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	d->currentIdentity = GlobalIdentitiesManager::self()->getIdentity(d->selectedIdentity);
 	
 	// Set icon for KPushButton
-	buttonNewIdentity->setIconSet(SmallIconSet("new"));
-	buttonCopyIdentity->setIconSet(SmallIconSet("editcopy"));
-	buttonRenameIdentity->setIconSet(SmallIconSet("edit"));
-	buttonRemoveIdentity->setIconSet(SmallIconSet("delete_user"));
-	buttonClearPhoto->setIconSet(  SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
+	buttonNewIdentity->setIcon(SmallIconSet("new"));
+	buttonCopyIdentity->setIcon(SmallIconSet("editcopy"));
+	buttonRenameIdentity->setIcon(SmallIconSet("edit"));
+	buttonRemoveIdentity->setIcon(SmallIconSet("delete_user"));
+	buttonClearPhoto->setIcon( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
 
 	load(); // Load Configuration
 
@@ -230,7 +230,7 @@ void KopeteIdentityConfig::loadIdentities()
 	int count=0, selectedIndex=0;
 	for(it = identitiesList.begin(); it != end; ++it)
 	{
-		comboSelectIdentity->insertItem(it.key());
+		comboSelectIdentity->addItem(it.key());
 		if(it.key() == d->selectedIdentity)
 		{
 			selectedIndex = count;
@@ -238,7 +238,7 @@ void KopeteIdentityConfig::loadIdentities()
 		count++;
 	}
 
-	comboSelectIdentity->setCurrentItem(selectedIndex);
+	comboSelectIdentity->setCurrentIndex(selectedIndex);
 	buttonRemoveIdentity->setEnabled(count == 1 ? false : true);
 }
 
@@ -279,12 +279,12 @@ void KopeteIdentityConfig::slotLoadNameSources()
 		
 		QString account = (*it)->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + (*it)->contactId() + ">";
 		QPixmap accountIcon = (*it)->account()->accountIcon();
-		comboNameContact->insertItem(accountIcon,  account);
+		comboNameContact->addItem( QIcon(accountIcon),  account);
 
 		// Select this item if it's the one we're tracking.
 		if((*it) == nameSourceContact)
 		{
-			comboNameContact->setCurrentItem(comboNameContact->count() - 1);
+			comboNameContact->setCurrentIndex(comboNameContact->count() - 1);
 		}
 	}
 
@@ -316,13 +316,13 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 			QString account = currentContact->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + currentContact->contactId() + ">";
 			QPixmap accountIcon = currentContact->account()->accountIcon();
 
-			comboPhotoContact->insertItem(accountIcon,  account);
+			comboPhotoContact->addItem( QIcon(accountIcon),  account);
 			d->contactPhotoSourceList.insert(comboPhotoContact->count() - 1, currentContact);
 
 			// Select this item if it's the one we're tracking.
 			if(currentContact == photoSourceContact)
 			{
-				comboPhotoContact->setCurrentItem(comboPhotoContact->count() - 1);
+				comboPhotoContact->setCurrentIndex(comboPhotoContact->count() - 1);
 			}
 		}
 	}
@@ -368,7 +368,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 	if(d->contactPhotoSourceList.isEmpty() )
 	{
 		comboPhotoContact->clear();
-		comboPhotoContact->insertItem(i18n("No Contacts with Photo Support"));
+		comboPhotoContact->addItem(i18n("No Contacts with Photo Support"));
 		comboPhotoContact->setEnabled(false);
 	}
 
@@ -487,7 +487,7 @@ void KopeteIdentityConfig::slotRemoveIdentity()
 	d->currentIdentity = 0;
 	
 	// Select the entry before(or after) the removed identity.
-	int currentItem = comboSelectIdentity->currentItem();
+	int currentItem = comboSelectIdentity->currentIndex();
 	// Use the next item if the removed identity is the first in the comboBox.
 	if(currentItem - 1 < 0)
 	{
@@ -602,7 +602,7 @@ Kopete::MetaContact::PropertySource KopeteIdentityConfig::selectedPhotoSource() 
 
 Kopete::Contact* KopeteIdentityConfig::selectedNameSourceContact() const
 {
-	Kopete::Contact *c = d->myself->contacts().at(comboNameContact->currentItem());
+	Kopete::Contact *c = d->myself->contacts().at(comboNameContact->currentIndex());
 	return c ? c : 0L;
 }
 
@@ -611,7 +611,7 @@ Kopete::Contact* KopeteIdentityConfig::selectedPhotoSourceContact() const
 	if (d->contactPhotoSourceList.isEmpty())
 		return 0L;
 
-	Kopete::Contact *c = d->contactPhotoSourceList[comboPhotoContact->currentItem()];
+	Kopete::Contact *c = d->contactPhotoSourceList[comboPhotoContact->currentIndex()];
 	return c ? c : 0L;
 }
 

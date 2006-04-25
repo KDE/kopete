@@ -123,7 +123,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 	
 	QToolButton *clearSearch = new QToolButton(hBar);
 	clearSearch->setTextLabel(i18n("Clear Search"), true);
-	clearSearch->setIconSet(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
+	clearSearch->setIcon(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
                                             : "locationbar_erase"));
 	(void) new QLabel(i18n("Search: "),hBar);
 	K3ListViewSearchLine* listViewSearch = new K3ListViewSearchLine(hBar);
@@ -441,9 +441,9 @@ void popupPublic::slotprocread(KProcIO *p)
 				untrustedList<<id;
                                 break;
                         }
-			if (keyString[11].find('D')!=-1) dead=true;
+			if (keyString[11].indexOf('D')!=-1) dead=true;
                         tst=keyString[9];
-			if (tst.find("<")!=-1) {
+			if (tst.indexOf("<")!=-1) {
                 keymail=tst.section('<',-1,-1);
                 keymail.truncate(keymail.length()-1);
                 keyname=tst.section('<',0,0);

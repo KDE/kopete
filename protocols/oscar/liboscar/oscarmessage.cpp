@@ -137,7 +137,7 @@ void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QStrin
 	case Oscar::Message::UTF8:
 		// Oscar::Message::setTextArray( const QCString& )
 		// strips trailing null byte automatically.
-		setTextArray( newText.utf8() );
+		setTextArray( newText.toUtf8() );
 		break;
 	case Oscar::Message::UCS2:
 	{

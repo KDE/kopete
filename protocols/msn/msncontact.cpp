@@ -526,7 +526,7 @@ void MSNContact::sync( unsigned int changed )
 			continue;
 		}
 
-		Kopete::Group *group=it.data();
+		Kopete::Group *group=it.value();
 		if(!group) //we can't trust the data of it()   see in MSNProtocol::deserializeContact why
 			group=static_cast<MSNAccount*>( account() )->m_groupList[it.key()];
 		if( !metaContact()->groups().contains(group) )

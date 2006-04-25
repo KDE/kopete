@@ -72,23 +72,23 @@ void KopeteAddressBookExport::fetchKABCData()
 		// given name
 		QString given = mAddressee.givenName();
 		if ( !given.isEmpty() )
-			mFirstName->insertItem( mAddrBookIcon, given );
+			mFirstName->addItem( QIcon(mAddrBookIcon), given );
 		else
-			mFirstName->insertItem( mAddrBookIcon, i18n("<Not Set>") );
+			mFirstName->addItem( QIcon(mAddrBookIcon), i18n("<Not Set>") );
 			
 		// family name
 		QString family = mAddressee.familyName();
 		if ( !family.isEmpty() )
-			mLastName->insertItem( mAddrBookIcon, family );
+			mLastName->addItem( QIcon(mAddrBookIcon), family );
 		else
-			mLastName->insertItem( mAddrBookIcon, i18n("<Not Set>") );
+			mLastName->addItem( QIcon(mAddrBookIcon), i18n("<Not Set>") );
 		
 		// url
 		QString url = mAddressee.url().url();
 		if ( !url.isEmpty() )
-			mUrl->insertItem( mAddrBookIcon, url );
+			mUrl->addItem( QIcon(mAddrBookIcon), url );
 		else
-			mUrl->insertItem( mAddrBookIcon, i18n("<Not Set>") );
+			mUrl->addItem( QIcon(mAddrBookIcon), i18n("<Not Set>") );
 		
 		// emails
 		QStringList emails = mAddressee.emails();
@@ -153,7 +153,7 @@ void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const 
 	Kopete::ContactProperty prop = contact->property( property );
 	if ( !prop.isNull() )
 	{
-		combo->insertItem( icon, prop.value().toString() );
+		combo->addItem( QIcon(icon), prop.value().toString() );
 	}	
 }
 
@@ -273,8 +273,8 @@ bool KopeteAddressBookExport::newValue( QComboBox *combo )
 {
 	// all data in position 0 is from KABC, so if position 0 is selected,
 	// or if the selection is the same as the data at 0, return false
-	return !( combo->currentItem() == 0 || 
-			( combo->text( combo->currentItem() ) == combo->text( 0 ) ) );
+	return !( combo->currentIndex() == 0 || 
+			( combo->itemText( combo->currentIndex() ) == combo->itemText( 0 ) ) );
 }
 
 QStringList KopeteAddressBookExport::newValues( KListBox *listBox, uint counter )

@@ -683,7 +683,7 @@ int ICQProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map)
 	QMap<int, QString>::ConstIterator it;
 	for(it = map.begin(); it != map.end(); ++it)
 	{
-		if(it.data() == curText)
+		if(it.value() == curText)
 			return it.key();
 	}
 	return 0; // unspecified is always first 0

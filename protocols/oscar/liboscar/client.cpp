@@ -1093,7 +1093,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
     ServerRedirectTask* srt = dynamic_cast<ServerRedirectTask*>( o );
 
 	//create a new connection and set it up
-	int colonPos = host.find(':');
+	int colonPos = host.indexOf(':');
 	QString realHost, realPort;
 	if ( colonPos != -1 )
 	{

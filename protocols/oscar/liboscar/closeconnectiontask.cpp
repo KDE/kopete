@@ -98,7 +98,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << QString( server.data ) << endl;
 			QString ip = server.data;
-			int index = ip.find( ':' );
+			int index = ip.indexOf( ':' );
 			m_bosHost = ip.left( index );
 			ip.remove( 0 , index+1 ); //get rid of the colon and everything before it
 			m_bosPort = ip;

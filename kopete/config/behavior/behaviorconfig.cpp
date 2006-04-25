@@ -99,7 +99,7 @@ void BehaviorConfig::save()
 	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mAwayConfigUI->mAutoAwayTimeout->value() * 60 );
 
 	// "Chat" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setViewPlugin( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
+	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()]->pluginName() );
 
 	Kopete::BehaviorSettings::self()->writeConfig();
 
@@ -121,16 +121,16 @@ void BehaviorConfig::load()
 	{
 		if( (*it)->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin() )
 			selectedIdx = i;
-		mPrfsChat->viewPlugin->insertItem( (*it)->name(), i++ );
+		mPrfsChat->viewPlugin->insertItem( i++, (*it)->name() );
 	}
 
-	mPrfsChat->viewPlugin->setCurrentItem(selectedIdx);
+	mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);
 	slotUpdatePluginLabel(selectedIdx);
 }
 
 void BehaviorConfig::slotUpdatePluginLabel(int)
 {
-	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentItem() ]->comment() );
+	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentIndex() ]->comment() );
 }
 
 void BehaviorConfig::slotSettingsChanged(bool)

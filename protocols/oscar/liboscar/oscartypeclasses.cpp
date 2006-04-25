@@ -242,7 +242,7 @@ Oscar::SSI::operator bool() const
 Oscar::SSI::operator QByteArray() const
 {
 	Buffer b;
-	Q3CString name( m_name.utf8() );
+	Q3CString name( m_name.toUtf8() );
 	uint namelen = name.length();
 	const char *namedata = name;
 	b.addWord( namelen );

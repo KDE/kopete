@@ -70,8 +70,8 @@ void AIMJoinChatUI::setExchangeList( const Q3ValueList<int>& list )
 void AIMJoinChatUI::joinChat()
 {
     m_roomName = m_joinUI->roomName->text();
-    int item = m_joinUI->exchange->currentItem();
-    m_exchange = m_joinUI->exchange->text( item );
+    int item = m_joinUI->exchange->currentIndex();
+    m_exchange = m_joinUI->exchange->itemText( item );
 
     emit closing( QDialog::Accepted );
 }

@@ -252,12 +252,12 @@ void MSNSocket::slotDataReceived()
 
 			// Check if all data has arrived.
 			rawData = QString(QByteArray(buffer, avail + 1));
-			bool headers = (rawData.find(QRegExp("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)")) != -1);
+			bool headers = (rawData.indexOf(QRegExp("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)")) != -1);
 
 			if(headers)
 			{
 				// The http header packet arrived.
-				int endOfHeaders = rawData.find("\r\n\r\n");
+				int endOfHeaders = rawData.indexOf("\r\n\r\n");
 				if((endOfHeaders + 4) == avail)
 				{
 					// Only the response headers data is included.
@@ -319,14 +319,14 @@ void MSNSocket::slotDataReceived()
 				QStringList parts = header.replace(" ", "").split( ";", QString::SkipEmptyParts );
 				if(!header.isNull() && (parts.count() >= 2))
 				{
-					if(parts[0].find("SessionID", 0) != -1)
+					if(parts[0].indexOf("SessionID", 0) != -1)
 					{
 						// Assign the session id.
 						m_sessionId = parts[0].section("=", 1, 1);
 					}else
 						error = true;
 
-					if(parts[1].find("GW-IP", 0) != -1)
+					if(parts[1].indexOf("GW-IP", 0) != -1)
 					{
 						// Assign the gateway IP address.
 						m_gwip = parts[1].section("=", 1, 1);
@@ -335,7 +335,7 @@ void MSNSocket::slotDataReceived()
 
 
 					if(parts.count() > 2)
-						if((parts[2].find("Session", 0) != -1) && (parts[2].section("=", 1, 1) == "close"))
+						if((parts[2].indexOf("Session", 0) != -1) && (parts[2].section("=", 1, 1) == "close"))
 						{
 							// The http session has been closed by the server, disconnect.
 							kDebug(14140) << k_funcinfo << "Session closed." << endl;
@@ -366,7 +366,7 @@ void MSNSocket::slotDataReceived()
 						QDataStream *stream = response.getResponseStream();
 						buffer = new char[length];
 						// Read the web response content.
-						stream->readRawBytes(buffer, length);
+						stream->readRawData(buffer, length);
 						ret = length;
 					}else
 						error = true;
@@ -1013,7 +1013,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 
 	// Parse the HTTP status header
 	QRegExp re("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)");
-	headerEnd  = data.find("\r\n");
+	headerEnd  = data.indexOf("\r\n");
 	header     = data.left( (headerEnd == -1) ? 20 : headerEnd );
 
 	re.indexIn(header);
@@ -1021,7 +1021,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 	m_statusDescription = re.cap(2);
 
 	// Remove the web response status header.
-	data = data.mid(headerEnd + 2, (data.find("\r\n\r\n") + 2) - (headerEnd + 2));
+	data = data.mid(headerEnd + 2, (data.indexOf("\r\n\r\n") + 2) - (headerEnd + 2));
 	// Create a MimeMessage, removing the HTTP status header
 	m_headers = new MimeMessage(data);
 

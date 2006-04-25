@@ -52,12 +52,12 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	userIDs=userIDs.simplified();
 	Options=Options.trimmed();
 	
-	int ct=userIDs.find(" ");
+	int ct=userIDs.indexOf(" ");
 	while (ct!=-1)  // if multiple keys...
 	{
 		dests+=" --recipient "+userIDs.section(' ',0,0);
 		userIDs.remove(0,ct+1);
-		ct=userIDs.find(" ");
+		ct=userIDs.indexOf(" ");
 	}
 	dests+=" --recipient "+userIDs;
 	
@@ -153,15 +153,15 @@ QString KgpgInterface::checkForUtf8(QString txt)
 
         for (s = txt.toAscii(); *s && !(*s & 0x80); s++)
                 ;
-        if (*s && !strchr (txt.toAscii(), 0xc3) && (txt.find("\\x")==-1))
+        if (*s && !strchr (txt.toAscii(), 0xc3) && (txt.indexOf("\\x")==-1))
                 return txt;
 
         /* The string is not in UTF-8 */
         //if (strchr (txt.toAscii(), 0xc3)) return (txt+" +++");
-        if (txt.find("\\x")==-1)
+        if (txt.indexOf("\\x")==-1)
                 return QString::fromUtf8(txt.toAscii());
         //        if (!strchr (txt.toAscii(), 0xc3) || (txt.find("\\x")!=-1)) {
-        for ( int idx = 0 ; (idx = txt.find( "\\x", idx )) >= 0 ; ++idx ) {
+        for ( int idx = 0 ; (idx = txt.indexOf( "\\x", idx )) >= 0 ; ++idx ) {
                 char str[2] = "x";
                 str[0] = (char) QString( txt.mid( idx + 2, 2 ) ).toShort( 0, 16 );
                 txt.replace( idx, 4, str );

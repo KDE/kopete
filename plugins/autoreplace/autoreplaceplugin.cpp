@@ -79,7 +79,7 @@ void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 			{
 				QString before = re.cap(1);
 				QString after = re.cap(3);
-				replaced_message.replace( re, before + map.find( it.key() ).data() + after );
+				replaced_message.replace( re, before + map.find( it.key() ).value() + after );
 				isReplaced=true;
 			}
 		}

@@ -71,7 +71,7 @@ int KNetworkByteStream::tryWrite ()
 	QByteArray writeData = takeWrite();
 	kDebug( 14181 ) << k_funcinfo << "[writeData.size() = " << writeData.size() << "]" <<   endl;
 	
-	socket()->writeBlock( writeData.data(), writeData.size () );
+	socket()->write( writeData.data(), writeData.size () );
 
 	return writeData.size();
 }
@@ -115,7 +115,7 @@ void KNetworkByteStream::slotReadyRead()
 	// stuff all available data into our buffers
 	QByteArray readBuffer( socket()->bytesAvailable () );
 
-	socket()->readBlock( readBuffer.data (), readBuffer.size () );
+	socket()->read( readBuffer.data (), readBuffer.size () );
 
 	appendRead( readBuffer );
 

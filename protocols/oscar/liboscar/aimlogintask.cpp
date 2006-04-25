@@ -225,7 +225,7 @@ void AimLoginTask::handleLoginResponse()
 	{
 		QString ip = QString( server.data );
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << ip << endl;
-		int index = ip.find( ':' );
+		int index = ip.indexOf( ':' );
 		m_bosHost = ip.left( index );
 		ip.remove( 0 , index+1 ); //get rid of the colon and everything before it
 		m_bosPort = ip.left(4); //we only need 4 bytes

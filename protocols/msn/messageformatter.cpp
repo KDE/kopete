@@ -79,7 +79,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 	reader.setByteOrder(QDataStream::LittleEndian);
 	// Seek to the start position of the message
 	// transport header.
-	reader.device()->at(index);
+	reader.device()->seek(index);
 
 	// Read the message transport headers from the stream.
 	reader >> inbound.header.sessionId;
@@ -107,7 +107,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 	// Read the message body from the stream.
 	if(inbound.header.dataSize > 0){
 		inbound.body.resize(inbound.header.dataSize);
-		reader.readRawBytes(inbound.body.data(), inbound.header.dataSize);
+		reader.readRawData(inbound.body.data(), inbound.header.dataSize);
 	}
 
 	if(compact == false)
@@ -141,7 +141,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 		// Set the capacity of the message buffer.
 		stream.resize(messageHeader.length() + 48 + message.body.size() + 4);
 		// Write the message header to the stream
-		writer.writeRawBytes(messageHeader.data(), messageHeader.length());
+		writer.writeRawData(messageHeader.data(), messageHeader.length());
 	}
 	else
 	{
@@ -177,7 +177,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 */
 	if(message.body.size() > 0){
 		// Write the messge body to the stream.
-		writer.writeRawBytes(message.body.data(), message.body.size());
+		writer.writeRawData(message.body.data(), message.body.size());
 	}
 
 	if(compact == false)

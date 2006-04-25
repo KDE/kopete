@@ -711,7 +711,7 @@ void ChatView::setCaption( const QString &text, bool modified )
 	newCaption = KStringHandler::rsqueeze( d->captionText, 20 );
 
 	//Call the original set caption
-	QWidget::setCaption( newCaption );
+	QWidget::setWindowTitle( newCaption );
 
 	emit updateChatTooltip( this, QString::fromLatin1("<qt>%1</qt>").arg( d->captionText ) );
 	emit updateChatLabel( this, newCaption );

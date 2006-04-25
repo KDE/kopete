@@ -478,7 +478,7 @@ void ICQContact::haveIcon( const QString& user, QByteArray icon )
 			return;
 		}
 		
-		iconFile.writeBlock( icon );
+		iconFile.write( icon );
 		iconFile.close();
 		
 		removeProperty( Kopete::Global::Properties::self()->photo() );

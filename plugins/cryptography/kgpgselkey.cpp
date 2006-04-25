@@ -174,13 +174,13 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
 QString KgpgSelKey::extractKeyName(QString fullName)
 {
   QString kMail;
-  if (fullName.find("<")!=-1)
+  if (fullName.indexOf("<")!=-1)
   {
     kMail=fullName.section('<',-1,-1);
     kMail.truncate(kMail.length()-1);
   }
   QString kName=fullName.section('<',0,0);
-  if (kName.find("(")!=-1) kName=kName.section('(',0,0);
+  if (kName.indexOf("(")!=-1) kName=kName.section('(',0,0);
   return QString(kMail+" ("+kName+")").trimmed();
 }
 

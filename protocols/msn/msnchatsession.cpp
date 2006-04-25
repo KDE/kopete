@@ -138,7 +138,7 @@ MSNChatSession::~MSNChatSession()
 	for( it = m_invitations.begin(); it != m_invitations.end() ; it = m_invitations.begin())
 	{
 		delete *it;
-		m_invitations.remove( it );
+		m_invitations.erase( it );
 	}
 	qDeleteAll(m_inviteactions);
 }
@@ -712,7 +712,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 		if(m_messagesQueue.count() == 1)
 			m=m_messagesQueue.first();
 		else
-			m=m_messagesSent.begin().data();
+			m=m_messagesSent.begin().value();
 
 		QString body=i18n("The following message has not been sent correctly  (%1): \n%2", reason, m.plainBody());
 		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
@@ -726,9 +726,9 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 		QMap<unsigned int, Kopete::Message>::Iterator mapIt;
 		for (  mapIt = m_messagesSent.begin(); mapIt!=m_messagesSent.end(); mapIt = m_messagesSent.begin() )
 		{
-			m=mapIt.data();
+			m=mapIt.value();
 			body+= "<li>"+m.escapedBody()+"</li>";
-			m_messagesSent.remove(mapIt);
+			m_messagesSent.erase(mapIt);
 		}
 		QList<Kopete::Message>::Iterator messageIt;
 		for ( messageIt = m_messagesQueue.begin(); messageIt!=m_messagesQueue.end(); messageIt = m_messagesQueue.begin() )

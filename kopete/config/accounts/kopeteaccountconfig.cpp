@@ -63,8 +63,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	setObjectName( "KopeteAccountConfig::m_view" );
 	setupUi( m_view );
 
-	mButtonUp->setIconSet( SmallIconSet( "up" ) );
-	mButtonDown->setIconSet( SmallIconSet( "down" ) );
+	mButtonUp->setIcon( SmallIconSet( "up" ) );
+	mButtonDown->setIcon( SmallIconSet( "down" ) );
 
 	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );

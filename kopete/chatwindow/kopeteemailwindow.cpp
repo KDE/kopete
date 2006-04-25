@@ -435,7 +435,7 @@ bool KopeteEmailWindow::closeView( bool force )
 	{
 		if( m_manager->members().count() > 1 )
 		{
-			QString shortCaption = caption();
+			QString shortCaption = windowTitle();
 			if( shortCaption.length() > 40 )
 				shortCaption = shortCaption.left( 40 ) + QString::fromLatin1("...");
 

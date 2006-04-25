@@ -242,7 +242,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 			}
 
 			m_transfer =
-				Kopete::TransferManager::transferManager()->addTransfer(contact, m_file->name(), m_file->size(), m_recipient, Kopete::FileTransferInfo::Outgoing);
+				Kopete::TransferManager::transferManager()->addTransfer(contact, m_file->fileName(), m_file->size(), m_recipient, Kopete::FileTransferInfo::Outgoing);
 
 			QObject::connect(m_transfer , SIGNAL(transferCanceled()), this, SLOT(abort()));
 
@@ -280,7 +280,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 			{
 				// Retrieve the hashed nonce for this direct connection instance.
 				regex = QRegExp("Hashed-Nonce: \\{([0-9A-F\\-]*)\\}\r\n");
-				regex.search(body);
+				regex.indexIn(body);
 				m_nonce = regex.cap(1);
 				// Retrieve the listening endpoints of the receiving client.
 				regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]+)\r\n");

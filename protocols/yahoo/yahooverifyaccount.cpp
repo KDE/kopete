@@ -70,7 +70,7 @@ void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
-	mFile->file()->writeBlock( data.data() , data.size() );
+	mFile->file()->write( data.data() , data.size() );
 }
 
 void YahooVerifyAccount::slotComplete( KIO::Job */*job*/ )
@@ -78,7 +78,7 @@ void YahooVerifyAccount::slotComplete( KIO::Job */*job*/ )
 
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	mFile->file()->close();
-	mTheDialog->mPicture->setPixmap( mFile->file()->name() );
+	mTheDialog->mPicture->setPixmap( mFile->file()->fileName() );
 	mTheDialog->mPicture->show();
 }
 

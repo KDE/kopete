@@ -138,7 +138,7 @@ void AIMContact::setAwayMessage(const QString &message)
 		QString::fromLatin1("\\1") );
 	QRegExp fontRemover( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") );
 	fontRemover.setMinimal(true);
-	while ( filteredMessage.find( fontRemover ) != -1 )
+	while ( filteredMessage.indexOf( fontRemover ) != -1 )
 		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
 	setProperty(mProtocol->awayMessage, filteredMessage);
 }

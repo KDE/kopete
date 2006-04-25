@@ -87,7 +87,7 @@ void AutoReplacePreferences::load()
 	for ( it = map.begin(); it != map.end(); ++it )
 	{
 		// notice: insertItem is called automatically by the constructor
-		new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.data() );
+		new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.value() );
 	}
 
 	m_wordListChanged = false;
@@ -197,7 +197,7 @@ void AutoReplacePreferences::defaults()
     for ( it = map.begin(); it != map.end(); ++it )
     {
         // notice: insertItem is called automatically by the constructor
-        new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.data() );
+        new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.value() );
     }
     m_wordListChanged = true;
     slotWidgetModified();

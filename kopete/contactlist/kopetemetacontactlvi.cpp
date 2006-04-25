@@ -704,7 +704,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 			if ( font.pixelSize() != -1 )
 				font.setPixelSize( (font.pixelSize() * 3) / 4 );
 			else
-				font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
+				font.setPointSizeF( font.pointSizeF() * 0.75 );
 			d->extraText->setFont( font );
 		}
 	}

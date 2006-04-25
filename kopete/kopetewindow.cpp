@@ -141,7 +141,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setObjectName( "m_statusBarWidget" );
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
-	statusBar()->addWidget(m_statusBarWidget, 0, true );
+	statusBar()->addPermanentWidget(m_statusBarWidget, 0);
 	KHBox *statusBarMessage = new KHBox(statusBar());
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
@@ -152,9 +152,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
 	connect(label, SIGNAL(iconClicked( const QPoint& )),
 		this, SLOT(slotGlobalStatusMessageIconClicked( const QPoint& )));
-	QToolTip::add( label, i18n( "Global status message" ) );
+	label->setToolTip( i18n( "Global status message" ) );
 	m_globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
-	statusBar()->addWidget(statusBarMessage, 1, false );
+	statusBar()->addWidget(statusBarMessage, 1);
 
 	m_pluginConfig = 0L;
 	m_autoHideTimer = new QTimer( this );
@@ -808,8 +808,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// Adds tooltip for each status icon,
 	// useful in case you have many accounts
 	// over one protocol
-	QToolTip::remove( i );
-	QToolTip::add( i, contact->toolTip() );
+	i->setToolTip( contact->toolTip() );
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
@@ -846,8 +845,6 @@ void KopeteWindow::makeTrayToolTip()
 	//the tool-tip of the systemtray.
 	if(m_tray)
 	{
-		QToolTip::remove(m_tray);
-
 		QString tt = QString::fromLatin1("<qt>");
 		QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
 		Kopete::Account *a;
@@ -861,7 +858,7 @@ void KopeteWindow::makeTrayToolTip()
 				     QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
 		}
 		tt += QString::fromLatin1("</qt>");
-		QToolTip::add(m_tray, tt);
+		m_tray->setToolTip(tt);
 	}
 }
 
@@ -1079,7 +1076,7 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 		if ( !groupname.isEmpty() )
 		{
 			groupItems.insert( groupname, group );
-			ui_groupKABC.groupCombo->insertItem( groupname );
+			ui_groupKABC.groupCombo->addItem( groupname );
 		}
 	}
 

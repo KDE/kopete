@@ -300,9 +300,9 @@ void ICQSearchDialog::clearFields()
 	m_searchUI->nickName->setText( QString::null );
 	m_searchUI->email->setText( QString::null );
 	m_searchUI->city->setText( QString::null );
-	m_searchUI->gender->setCurrentItem( 0 ); // Unspecified
-	m_searchUI->country->setCurrentItem( 0 );
-	m_searchUI->language->setCurrentItem( 0 );
+	m_searchUI->gender->setCurrentIndex( 0 ); // Unspecified
+	m_searchUI->country->setCurrentIndex( 0 );
+	m_searchUI->language->setCurrentIndex( 0 );
 	m_searchUI->onlyOnline->setChecked( false );
 }
 

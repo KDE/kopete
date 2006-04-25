@@ -94,7 +94,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 		QString groupname = g->displayName();
 		if ( g->type() == Group::Normal && !groupname.isEmpty() )
 		{
-			d->widget->m_groupList->insertItem(groupname);
+			d->widget->m_groupList->addItem(groupname);
 		}
 	}
 	d->widget->m_groupList->setCurrentText(QString::null); //default to top-level

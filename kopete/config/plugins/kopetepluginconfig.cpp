@@ -58,7 +58,10 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
 	setInitialSize( QSize( 640, 480 ) );
 
 	QWidget* dialogPage = plainPage();
-	( new QVBoxLayout( dialogPage, 0, 0 ) )->setAutoAdd( true );
+	QVBoxLayout *layout = new QVBoxLayout( dialogPage );
+	layout->setMargin( 0 );
+	layout->setSpacing( 0 );
+	layout->setAutoAdd( true );
 	d->pluginSelector = new KPluginSelector( plainPage() );
 	setMainWidget( d->pluginSelector );
 	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );

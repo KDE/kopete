@@ -497,7 +497,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 	QMap<QString, Kopete::Group*>::Iterator it, itEnd = m_oldGroupList.end();
 	for( it=m_oldGroupList.begin() ; it != itEnd ; ++it )
 	{
-		Kopete::Group *g=it.data();
+		Kopete::Group *g=it.value();
 		if (g && g->pluginData( protocol(), accountId() + " displayName" ) == groupName  &&
 				g->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 		{ //it has the same name! we got it.    (and it is not yet an msn group)
@@ -719,8 +719,8 @@ void MSNAccount::slotNewContactList()
 		QMap<QString, Kopete::Group*>::Iterator it, itEnd = m_oldGroupList.end();
 		for( it=m_oldGroupList.begin() ; it != itEnd ; ++it )
 		{	//they are about to be changed
-			if(it.data())
-				it.data()->setPluginData( protocol(), accountId() + " id", QString::null );
+			if(it.value())
+				it.value()->setPluginData( protocol(), accountId() + " id", QString::null );
 		}
 
 		m_allowList.clear();

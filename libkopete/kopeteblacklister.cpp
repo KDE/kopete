@@ -53,7 +53,7 @@ BlackLister::~BlackLister()
 
 bool BlackLister::isBlocked(const QString &contactId)
 {
-	return (d->blacklist.find( contactId ) != d->blacklist.end() );
+	return (d->blacklist.indexOf( contactId ) != -1 );
 }
 
 bool BlackLister::isBlocked(Contact *contact)

@@ -145,20 +145,20 @@ void WebcamTask::slotConnectionStage1Established()
 	QString s;
 	if( socketMap[socket].direction == Incoming )
 	{
-		socket->writeBlock( Q3CString("<RVWCFG>").data(), 8 );
+		socket->write( Q3CString("<RVWCFG>").data(), 8 );
 		s = QString("g=%1\r\n").arg(socketMap[socket].sender);
 	}
 	else
 	{
-		socket->writeBlock( Q3CString("<RUPCFG>").data(), 8 );
+		socket->write( Q3CString("<RUPCFG>").data(), 8 );
 		s = QString("f=1\r\n");
 	}
 
 	// Header: 08 00 01 00 00 00 00	
 	stream << (Q_INT8)0x08 << (Q_INT8)0x00 << (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT32)s.length();
-	stream.writeRawBytes( s.toLocal8Bit(), s.length() );
+	stream.writeRawData( s.toLocal8Bit(), s.length() );
 	
-	socket->writeBlock( buffer.data(), buffer.size() );
+	socket->write( buffer.data(), buffer.size() );
 }
 
 void WebcamTask::slotConnectionStage2Established()
@@ -180,7 +180,7 @@ void WebcamTask::slotConnectionStage2Established()
 	if( socketMap[socket].direction == Incoming )
 	{
 		// Send <REQIMG>-Packet
-		socket->writeBlock( Q3CString("<REQIMG>").data(), 8 );
+		socket->write( Q3CString("<REQIMG>").data(), 8 );
 		// Send request information
 		s = QString("a=2\r\nc=us\r\ne=21\r\nu=%1\r\nt=%2\r\ni=\r\ng=%3\r\no=w-2-5-1\r\np=1")
 			.arg(client()->userId()).arg(socketMap[socket].key).arg(socketMap[socket].sender);
@@ -190,7 +190,7 @@ void WebcamTask::slotConnectionStage2Established()
 	else
 	{
 		// Send <REQIMG>-Packet
-		socket->writeBlock( Q3CString("<SNDIMG>").data(), 8 );
+		socket->write( Q3CString("<SNDIMG>").data(), 8 );
 		// Send request information
 		s = QString("a=2\r\nc=us\r\nu=%1\r\nt=%2\r\ni=%3\r\no=w-2-5-1\r\np=2\r\nb=KopeteWebcam\r\nd=\r\n")
 		.arg(client()->userId()).arg(socketMap[socket].key).arg(socket->localAddress().nodeName());
@@ -198,8 +198,8 @@ void WebcamTask::slotConnectionStage2Established()
 		stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)s.length()
 			<< (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
 	}
-	socket->writeBlock( buffer.data(), buffer.size() );
-	socket->writeBlock( s.toLocal8Bit(), s.length() );
+	socket->write( buffer.data(), buffer.size() );
+	socket->write( s.toLocal8Bit(), s.length() );
 }
 
 void WebcamTask::slotConnectionFailed( int error )
@@ -236,7 +236,7 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray data( socket->bytesAvailable() );
-	socket->readBlock ( data.data (), data.size () );
+	socket->read ( data.data (), data.size () );
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Magic Byte:" << data[2] << endl;
 
 	socketMap[socket].status = ConnectedStage2;
@@ -277,7 +277,7 @@ void WebcamTask::processData( KStreamSocket *socket )
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray data( socket->bytesAvailable() );
 	
-	socket->readBlock ( data.data (), data.size () );
+	socket->read( data.data (), data.size () );
 	if( data.size() <= 0 )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "No data read." << endl;
@@ -386,7 +386,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "More data to read..." << endl;
 			QByteArray newData( data.size() - headerLength );
 			QDataStream stream( &newData, QIODevice::WriteOnly );
-			stream.writeRawBytes( data.data() + headerLength, data.size() - headerLength );
+			stream.writeRawData( data.data() + headerLength, data.size() - headerLength );
 			parseData( newData, socket );
 			return;
 		}
@@ -406,7 +406,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "data.size() " << data.size() << " headerLength " << headerLength << " buffersize " << info->buffer->size() << endl;
 	read = headerLength + info->dataLength - info->buffer->size();
-	info->buffer->writeBlock( data.data() + headerLength, data.size() - headerLength );//info->dataLength - info->buffer->size() );
+	info->buffer->write( data.data() + headerLength, data.size() - headerLength );//info->dataLength - info->buffer->size() );
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "read " << data.size() - headerLength << " Bytes, Buffer is now " << info->buffer->size() << endl;
 	if( info->buffer->size() >= static_cast<uint>(info->dataLength) )
 	{	
@@ -417,7 +417,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		case UserRequest:
 			{
 			who.append( info->buffer->buffer() );
-			who = who.mid( 2, who.find('\n') - 3);
+			who = who.mid( 2, who.indexOf('\n') - 3);
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "User wants to view webcam: " << who << " len: " << who.length() << " Index: " << accessGranted.findIndex( who ) << endl;
 			if( accessGranted.findIndex( who ) >= 0 )
 			{
@@ -437,7 +437,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			who.append( info->buffer->buffer() );
 			who = who.left( who.length() - 1 );
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "A Watcher left: " << who << " len: " << who.length() << endl;
-			accessGranted.remove( who );
+			accessGranted.removeAll( who );
 			emit viewerLeft( who );
 		break;
 		case Image:
@@ -448,7 +448,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			KTempFile jpcTmpImageFile;
 			KTempFile bmpTmpImageFile;
 			QFile *file = jpcTmpImageFile.file();
-			file->writeBlock((info->buffer->buffer()).data(), info->buffer->size());
+			file->write((info->buffer->buffer()).data(), info->buffer->size());
 			file->close();
 			
 			KProcess p;
@@ -486,7 +486,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "More data to read..." << data.size() - read << endl;
 		QByteArray newData( data.size() - read );
 		QDataStream stream( &newData, QIODevice::WriteOnly );
-		stream.writeRawBytes( data.data() + read, data.size() - read );
+		stream.writeRawData( data.data() + read, data.size() - read );
 		parseData( newData, socket );
 	}
 }
@@ -507,8 +507,8 @@ void WebcamTask::closeWebcam( const QString & who )
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << it.data().sender << " - " << who << endl;
-		if( it.data().sender == who )
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << it.value().sender << " - " << who << endl;
+		if( it.value().sender == who )
 		{
 			cleanUpConnection( it.key() );
 			return;
@@ -546,7 +546,7 @@ void WebcamTask::grantAccess( const QString &userId )
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		if( it.data().direction == Outgoing )
+		if( it.value().direction == Outgoing )
 		{
 			socket = it.key();
 			break;
@@ -563,8 +563,8 @@ void WebcamTask::grantAccess( const QString &userId )
 
 	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)user.length()
 	<< (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
-	socket->writeBlock( ar.data(), ar.size() );
-	socket->writeBlock( user.toLocal8Bit(), user.length() );
+	socket->write( ar.data(), ar.size() );
+	socket->write( user.toLocal8Bit(), user.length() );
 }
 
 void WebcamTask::closeOutgoingWebcam()
@@ -574,7 +574,7 @@ void WebcamTask::closeOutgoingWebcam()
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		if( it.data().direction == Outgoing )
+		if( it.value().direction == Outgoing )
 		{
 			socket = it.key();
 			break;
@@ -598,7 +598,7 @@ void WebcamTask::sendEmptyWebcamImage()
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		if( it.data().direction == Outgoing )
+		if( it.value().direction == Outgoing )
 		{
 			socket = it.key();
 			break;
@@ -628,7 +628,7 @@ void WebcamTask::sendWebcamImage( const QByteArray &image )
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		if( it.data().direction == Outgoing )
+		if( it.value().direction == Outgoing )
 		{
 			socket = it.key();
 			break;
@@ -654,7 +654,7 @@ void WebcamTask::transmitWebcamImage()
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		if( it.data().direction == Outgoing )
+		if( it.value().direction == Outgoing )
 		{
 			socket = it.key();
 			break;
@@ -671,9 +671,9 @@ void WebcamTask::transmitWebcamImage()
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)pictureBuffer.size()
 			<< (Q_INT8)0x02 << (Q_INT32)timestamp++;
-	socket->writeBlock( buffer.data(), buffer.size() );
+	socket->write( buffer.data(), buffer.size() );
 	if( pictureBuffer.size() )
-		socket->writeBlock( pictureBuffer.data(), pictureBuffer.size() );
+		socket->write( pictureBuffer.data(), pictureBuffer.size() );
 	
 	transmissionPending = false;
 }

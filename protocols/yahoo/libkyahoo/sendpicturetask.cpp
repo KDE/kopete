@@ -109,13 +109,13 @@ void SendPictureTask::connectSucceeded()
 			"Host: filetransfer.msg.yahoo.com\r\n"
 			"Content-length: %4\r\n"
 			"Cache-Control: no-cache\r\n\r\n").arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()).arg(file.size()+4+paket.size());
-	stream.writeRawBytes( header.toLocal8Bit(), header.length() );
-	stream.writeRawBytes( paket.data(), paket.size() );
+	stream.writeRawData( header.toLocal8Bit(), header.length() );
+	stream.writeRawData( paket.data(), paket.size() );
 	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
-	stream.writeRawBytes( file.readAll(), file.size() );
+	stream.writeRawData( file.readAll(), file.size() );
 
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;
-	if( socket->writeBlock( buffer, buffer.size() ) )
+	if( socket->write( buffer, buffer.size() ) )
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
 	else
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;

@@ -190,8 +190,8 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		{ 
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - not a valid YMSG packet. Trying to recover." << endl;
 			QTextStream s( wire, QIODevice::ReadOnly );
-			QString remaining = s.read();
-			int pos = remaining.find( "YMSG", bytesParsed );
+			QString remaining = s.readAll();
+			int pos = remaining.indexOf( "YMSG", bytesParsed );
 			if( pos >= 0 )
 			{
 				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Recover successful." << endl;

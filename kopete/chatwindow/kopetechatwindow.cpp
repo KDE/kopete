@@ -214,7 +214,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 		m_button_send->setFont( statusBar()->font() );
 		m_button_send->setFixedHeight( statusBar()->sizeHint().height() );
 		connect( m_button_send, SIGNAL( clicked() ), this, SLOT( slotSendMessage() ) );
-		statusBar()->addWidget( m_button_send, 0, true );
+		statusBar()->addPermanentWidget( m_button_send, 0 );
 	}
 	else
 		m_button_send = 0L;
@@ -969,7 +969,7 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 	{
 		KopeteChatWindow *win = windows.at( id );
 		if( win != this )
-			detachMenu->insertItem( win->caption(), id );
+			detachMenu->insertItem( win->windowTitle(), id );
 	}
 }
 

@@ -541,7 +541,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 			retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 					.arg( QRegExp::escape( parsed_nick ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
 		}
-		if ( nick.length() > 0 && ( retVal.find( nick ) > -1 ) && d->manager->protocol() )
+		if ( nick.length() > 0 && ( retVal.indexOf( nick ) > -1 ) && d->manager->protocol() )
 		{
 			retVal.replace(
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
@@ -1002,7 +1002,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		// Look for %timeOpened{X}%
 		QRegExp timeRegExp("%timeOpened\\{([^}]*)\\}%");
 		int pos=0;
-		while( (pos=timeRegExp.search(resultHTML, pos) ) != -1 )
+		while( (pos=timeRegExp.indexIn(resultHTML, pos) ) != -1 )
 		{
 			QString timeKeyword = formatTime( timeRegExp.cap(1), QDateTime::currentDateTime() );
 			resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );

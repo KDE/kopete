@@ -42,8 +42,8 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KIO::TransferJob *transfer;
 	QString Url = url.url();
-	QString ext = Url.left( Url.findRev( "?" ) );
-	ext = ext.right( ext.length() - ext.findRev( "." ) );
+	QString ext = Url.left( Url.lastIndexOf( "?" ) );
+	ext = ext.right( ext.length() - ext.lastIndexOf( "." ) );
 	//Url.mid( Url.findRev( "."), Url.findRev( "?") - Url.findRev( ".") - 1);
 	
 	transfer = KIO::get( url, false, false );
@@ -66,7 +66,7 @@ void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if( m_jobs[transfer].file )
-		m_jobs[transfer].file->file()->writeBlock( data.data() , data.size() );
+		m_jobs[transfer].file->file()->write( data.data() , data.size() );
 
 }
 

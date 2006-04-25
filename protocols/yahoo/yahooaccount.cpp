@@ -80,7 +80,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_pictureFlag = 0;
 	m_webcam = 0L;
 	
-	m_session->setUserId( accountId.lower() );
+	m_session->setUserId( accountId.toLower() );
 	
 	m_openInboxAction = new KAction( KIcon("mail_generic"), i18n( "Open Inbo&x..." ), 0, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
@@ -89,7 +89,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_editOwnYABEntry = new KAction( KIcon("contents"), i18n( "&Edit my contact details..."), 0, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
 
-	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
+	YahooContact* _myself=new YahooContact( this, accountId.toLower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
 	_myself->setOnlineStatus( parent->Offline );
 	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, configGroup()->readEntry( "iconRemoteUrl", "" ) );
@@ -181,26 +181,26 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "msg is " << msg << endl;
 	//Please note that some of the colors are hard-coded to
 	//match the yahoo colors
-	if ( msg.find("\033[38m") != -1 )
+	if ( msg.indexOf("\033[38m") != -1 )
 		return Qt::red;
-	if ( msg.find("\033[34m") != -1 )
+	if ( msg.indexOf("\033[34m") != -1 )
 		return Qt::green;
-	if ( msg.find("\033[31m") != -1 )
+	if ( msg.indexOf("\033[31m") != -1 )
 		return Qt::blue;
-	if ( msg.find("\033[39m") != -1 )
+	if ( msg.indexOf("\033[39m") != -1 )
 		return Qt::yellow;
-	if ( msg.find("\033[36m") != -1 )
+	if ( msg.indexOf("\033[36m") != -1 )
 		return Qt::darkMagenta;
-	if ( msg.find("\033[32m") != -1 )
+	if ( msg.indexOf("\033[32m") != -1 )
 		return Qt::cyan;
-	if ( msg.find("\033[37m") != -1 )
+	if ( msg.indexOf("\033[37m") != -1 )
 		return QColor("#FFAA39");
-	if ( msg.find("\033[35m") != -1 )
+	if ( msg.indexOf("\033[35m") != -1 )
 		return QColor("#FFD8D8");
-	if ( msg.find("\033[#") != -1 )
+	if ( msg.indexOf("\033[#") != -1 )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << "Custom color is " << msg.mid(msg.find("\033[#")+2,7) << endl;
-		return QColor(msg.mid(msg.find("\033[#")+2,7));
+		kDebug(YAHOO_GEN_DEBUG) << "Custom color is " << msg.mid(msg.indexOf("\033[#")+2,7) << endl;
+		return QColor(msg.mid(msg.indexOf("\033[#")+2,7));
 	}
 
 	//return a default value just in case
@@ -473,7 +473,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		<< port << ">. user <" << accountId() << ">"  << endl;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );	
 	m_session->setStatusOnConnect( Yahoo::Status( initialStatus().internalStatus() ) );
-	m_session->connect( server, port, accountId().lower(), passwd );
+	m_session->connect( server, port, accountId().toLower(), passwd );
 }
 
 void YahooAccount::disconnect()
@@ -1402,7 +1402,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
+	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
@@ -1420,7 +1420,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
+	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
@@ -1466,7 +1466,7 @@ void YahooAccount::setBuddyIcon( KUrl url )
 	else
 	{
 		QImage image( url.path() );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().lower() ) ) ;
+		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
 		QFile iconFile( newlocation );
 		QByteArray data;
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();

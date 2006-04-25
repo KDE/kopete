@@ -47,7 +47,7 @@ bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 		bool ok = false;
 		QString type;
 		QString name;
-		if ( m_testbedAddUI->m_rbEcho->isOn() )
+		if ( m_testbedAddUI->m_rbEcho->isChecked() )
 		{
 			type = m_testbedAddUI->m_uniqueName->text();
 			name = QString::fromLatin1( "Echo Contact" );

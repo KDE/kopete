@@ -72,7 +72,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	setWindowFlags(Qt::WStyle_StaysOnTop | Qt::WStyle_Customize |
 	Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WX11BypassWM);
 	setObjectName(QLatin1String("KopeteBalloon"));
-	setCaption("");
+	setWindowTitle("");
 
 	QVBoxLayout *BalloonLayout = new QVBoxLayout(this);
 	BalloonLayout->setMargin(22);

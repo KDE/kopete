@@ -107,10 +107,10 @@ void ModifyYABTask::connectSucceeded()
 	QByteArray buffer;
 	QByteArray paket;
 	QDataStream stream( &buffer, IO_WriteOnly );
-	stream.writeRawBytes( header.toLocal8Bit(), header.length() );
-	stream.writeRawBytes( m_postData.utf8(), m_postData.toUtf8().size() );
+	stream.writeRawData( header.toLocal8Bit(), header.length() );
+	stream.writeRawData( m_postData.toUtf8(), m_postData.toUtf8().size() );
 	
-	if( socket->writeBlock( buffer, buffer.size() ) )
+	if( socket->write( buffer, buffer.size() ) )
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;
 	else
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed." << endl;
@@ -122,9 +122,9 @@ void ModifyYABTask::slotRead()
 {
 	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
 	QByteArray ar( socket->bytesAvailable() );
-	socket->readBlock ( ar.data (), ar.size () );
+	socket->read( ar.data (), ar.size () );
 	QString data( ar );
-	data = data.right( data.length() - data.find("<?xml") );
+	data = data.right( data.length() - data.indexOf("<?xml") );
 
 
 	QDomDocument doc;
