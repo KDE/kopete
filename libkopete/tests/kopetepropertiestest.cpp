@@ -54,6 +54,3 @@ void KopetePropertiesTest::allTests()
 	myPropertyHost.setProperty( fooProperty, QString::fromLatin1("Foo!") );
 	CHECK( myPropertyHost.property(fooProperty), QString::fromLatin1("Foo!") );
 }
-
-	
- 
