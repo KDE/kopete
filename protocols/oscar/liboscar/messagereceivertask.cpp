@@ -305,16 +305,8 @@ void MessageReceiverTask::handleType4Message()
 	};
 
 	QByteArray msgText = tlv5buffer.getLNTS();
-	//FIXME: can't we just use replace() ?
-	int msgLength = msgText.size();
 	if ( msgType == 0x0D || msgType == 0x0E )
-	{
-		for ( int i = 0; i < msgLength; i++ )
-		{
-			if ( msgText[i] == (char)0xFE )
-				msgText[i] = 0x20;
-		}
-	}
+		msgText.replace( 0xFE, 0x20 );
 
 	switch ( msgFlags )
 	{
