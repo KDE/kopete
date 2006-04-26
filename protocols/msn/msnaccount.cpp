@@ -1115,7 +1115,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		}
 		if(deleteContact && contactRemoved)
 		{
-			kdDebug(14140) << k_funcinfo << "Deleting the MSNContact " << contactRemoved->contactId() << endl;
+			kDebug(14140) << k_funcinfo << "Deleting the MSNContact " << contactRemoved->contactId() << endl;
 			contactRemoved->deleteLater();
 		}
 	}

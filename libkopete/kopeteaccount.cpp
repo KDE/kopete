@@ -123,7 +123,7 @@ Account::~Account()
 
 void Account::reconnect()
 {
-	kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+	kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
 	setOnlineStatus( d->restoreStatus, d->restoreMessage );
 }
 
@@ -480,7 +480,7 @@ void Account::slotContactPropertyChanged( Contact * /* contact */,
 	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && old != newVal && isConnected() )
 	{
 		d->restoreMessage = newVal.toString();
-//		kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreMessage " << d->restoreMessage << endl;
+//		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreMessage " << d->restoreMessage << endl;
 	}
 }
 

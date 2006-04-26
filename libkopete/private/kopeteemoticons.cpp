@@ -370,7 +370,7 @@ void Emoticons::initEmoticons( const QString &theme )
 	filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/icondef.xml" ) );
 	if(!filename.isEmpty())
 		return initEmoticon_JEP0038( filename );
-	kdWarning(14010) << k_funcinfo << "emotiucon XML theme description not found" <<endl;
+	kWarning(14010) << k_funcinfo << "emotiucon XML theme description not found" <<endl;
 }
 
 void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
@@ -469,12 +469,12 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 							}
 							else
 							{
-								kdDebug(14010) << k_funcinfo <<	"Warning: Unsupported format '" << mime << endl;
+								kDebug(14010) << k_funcinfo <<	"Warning: Unsupported format '" << mime << endl;
 							}
 						}
 						/*else
 						{
-							kdDebug(14010) << k_funcinfo <<
+							kDebug(14010) << k_funcinfo <<
 									"Warning: Unknown element '" << element.tagName() <<
 									"' in emoticon data" << endl;
 						}*/
@@ -486,7 +486,7 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 			}
 			else
 			{
-				kdDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+				kDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
 						element.tagName() << "' in map file" << endl;
 			}
 		}

@@ -86,7 +86,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 MSNContact::~MSNContact()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 }
 
 bool MSNContact::isReachable()

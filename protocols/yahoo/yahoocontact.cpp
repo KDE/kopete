@@ -459,7 +459,7 @@ void YahooContact::slotUserInfo()
 
 void YahooContact::slotUserProfile()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + userId();
 	KRun::runURL( KUrl( profileSiteString ) , "text/html" );

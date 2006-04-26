@@ -542,13 +542,13 @@ void KopeteChatWindow::updateSpellCheckAction()
 		toggleAutoSpellCheck->setEnabled( true );
 		if ( Kopete::BehaviorSettings::self()->spellCheck() )
 		{
-			kdDebug(14000) << k_funcinfo << "spell check enabled" << endl;
+			kDebug(14000) << k_funcinfo << "spell check enabled" << endl;
 			toggleAutoSpellCheck->setChecked( true );
 			m_activeView->editPart()->toggleAutoSpellCheck(true);
 		}
 		else
 		{
-			kdDebug(14000) << k_funcinfo << "spell check disabled" << endl;
+			kDebug(14000) << k_funcinfo << "spell check disabled" << endl;
 			toggleAutoSpellCheck->setChecked( false );
 			m_activeView->editPart()->toggleAutoSpellCheck(false);
 		}

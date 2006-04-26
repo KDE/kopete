@@ -50,7 +50,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 	JabberContact *myContact = m_account->contactPool()->addContact ( XMPP::RosterItem ( myselfContactId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
 	
 	//we have to know if the account get loaded from the config, or newly created
 	bool exist=configGroup()->readEntry("exist",false);
@@ -312,7 +312,7 @@ void JabberTransport::eatContacts( )
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();
 			Kopete::OnlineStatus status = contact->onlineStatus();
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << item.jid().full() << " will be soon eat  - " << contact << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << item.jid().full() << " will be soon eat  - " << contact << endl;
 			delete contact;
 			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
 			if(c2)

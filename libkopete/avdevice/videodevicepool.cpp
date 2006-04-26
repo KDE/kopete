@@ -96,7 +96,7 @@ int VideoDevicePool::open()
 		
 	}
 	m_clients++;
-	kdDebug() << k_funcinfo << "Number of clients: " << m_clients << endl;
+	kDebug() << k_funcinfo << "Number of clients: " << m_clients << endl;
 	m_ready.unlock();
 	return isopen;
 }
@@ -198,7 +198,7 @@ int VideoDevicePool::close()
  */
 int VideoDevicePool::startCapturing()
 {
-	kdDebug() <<  k_funcinfo << "startCapturing() called." << endl;
+	kDebug() <<  k_funcinfo << "startCapturing() called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].startCapturing();
 	return EXIT_FAILURE;
@@ -383,7 +383,7 @@ bool VideoDevicePool::getImageAsMirror()
  */
 bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::setImageAsMirror(" << imageasmirror << ") called." << endl;
+	kDebug() <<  k_funcinfo << "VideoDevicePool::setImageAsMirror(" << imageasmirror << ") called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setImageAsMirror(imageasmirror);
 	return false;
@@ -404,7 +404,7 @@ bool VideoDevicePool::getDisableMMap()
  */
 bool VideoDevicePool::setDisableMMap(bool disablemmap)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called." << endl;
+	kDebug() <<  k_funcinfo << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setDisableMMap(disablemmap);
 	return false;
@@ -425,7 +425,7 @@ bool VideoDevicePool::getWorkaroundBrokenDriver()
  */
 bool VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
+	kDebug() <<  k_funcinfo << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setWorkaroundBrokenDriver(workaroundbrokendriver);
 	return false;
@@ -586,7 +586,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kdDebug() <<  k_funcinfo << "fillInputKComboBox: Called." << endl;
+	kDebug() <<  k_funcinfo << "fillInputKComboBox: Called." << endl;
 	combobox->clear();
 	if(m_videodevice.size())
 	{
@@ -632,7 +632,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 				case STANDARD_ALL	: return V4L2_STD_ALL;		break;
 
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
-				kdDebug() <<  k_funcinfo << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;*/
+				kDebug() <<  k_funcinfo << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;*/
 			}
 			combobox->setCurrentItem(currentInput());
 			return EXIT_SUCCESS;

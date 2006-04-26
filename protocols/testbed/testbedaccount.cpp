@@ -160,7 +160,7 @@ void TestbedAccount::receivedMessage( const QString &message )
 	if ( messageSender )
 		messageSender->receivedMessage( message );
 	else
-		kdWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
+		kWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
 }
 
 void TestbedAccount::updateContactStatus()

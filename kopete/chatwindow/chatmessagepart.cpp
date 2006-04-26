@@ -1093,7 +1093,7 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 
 void ChatMessagePart::slotUpdateHeaderDisplayName()
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo << endl;
 	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString::fromUtf8("KopeteHeaderChatNameInternal") );
 	if( !kopeteChatNameNode.isNull() )
 		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );

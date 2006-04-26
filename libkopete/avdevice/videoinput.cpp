@@ -93,13 +93,13 @@ float VideoInput::setSaturation(float saturation)
 
 float VideoInput::getWhiteness()
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kDebug() <<  k_funcinfo << " called." << endl;
 	return m_whiteness;
 }
 
 float VideoInput::setWhiteness(float whiteness)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kDebug() <<  k_funcinfo << " called." << endl;
 	if ( whiteness > 1 )
 		whiteness = 1;
 	else
@@ -156,13 +156,13 @@ bool VideoInput::setAutoColorCorrection(bool colorcorrection)
 
 bool VideoInput::getImageAsMirror()
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kDebug() <<  k_funcinfo << " called." << endl;
 	return m_imageasmirror;
 }
 
 bool VideoInput::setImageAsMirror(bool imageasmirror)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kDebug() <<  k_funcinfo << " called." << endl;
 	m_imageasmirror = imageasmirror;
 	return getImageAsMirror();
 }

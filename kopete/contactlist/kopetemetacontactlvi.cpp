@@ -835,7 +835,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			QList<Kopete::Contact*> contacts = m_metaContact->contacts();
 			foreach ( Kopete::Contact *c, contacts )
 			{
-//				kdDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString() << endl;
+//				kDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString() << endl;
 				QString awayMessage( c->property( key ).value().toString() );
 				if ( ( allOffline || c->isOnline() ) && !awayMessage.isEmpty() )
 				{

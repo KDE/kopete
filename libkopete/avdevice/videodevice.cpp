@@ -1299,7 +1299,7 @@ float VideoDevice::getBrightness()
 
 float VideoDevice::setBrightness(float brightness)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+	kDebug() <<  k_funcinfo << " called." << endl;
 	m_input[m_current_input].setBrightness(brightness); // Just to check bounds
 
 	switch(m_driver)
@@ -1313,10 +1313,10 @@ float VideoDevice::setBrightness(float brightness)
 			{
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 				V4L_picture.brightness   = (65535*getBrightness());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image brightness. Fallback to it is not yet implemented." << endl;
+					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image brightness. Fallback to it is not yet implemented." << endl;
 			}
 			break;
 #endif
@@ -1337,7 +1337,7 @@ float VideoDevice::getContrast()
 
 float VideoDevice::setContrast(float contrast)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+	kDebug() <<  k_funcinfo << " called." << endl;
 	m_input[m_current_input].setContrast(contrast); // Just to check bounds
 
 	switch(m_driver)
@@ -1351,10 +1351,10 @@ float VideoDevice::setContrast(float contrast)
 			{
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 				V4L_picture.contrast   = (65535*getContrast());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image contrast. Fallback to it is not yet implemented." << endl;
+					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image contrast. Fallback to it is not yet implemented." << endl;
 			}
 		break;
 #endif
@@ -1375,7 +1375,7 @@ float VideoDevice::getSaturation()
 
 float VideoDevice::setSaturation(float saturation)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+	kDebug() <<  k_funcinfo << " called." << endl;
 	m_input[m_current_input].setSaturation(saturation); // Just to check bounds
 
 	switch(m_driver)
@@ -1389,10 +1389,10 @@ float VideoDevice::setSaturation(float saturation)
 			{
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 				V4L_picture.colour   = (65535*getSaturation());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image saturation. Fallback to it is not yet implemented." << endl;
+					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image saturation. Fallback to it is not yet implemented." << endl;
 			}
 		break;
 #endif
@@ -1413,7 +1413,7 @@ float VideoDevice::getWhiteness()
 
 float VideoDevice::setWhiteness(float whiteness)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+	kDebug() <<  k_funcinfo << " called." << endl;
 	m_input[m_current_input].setWhiteness(whiteness); // Just to check bounds
 
 	switch(m_driver)
@@ -1427,10 +1427,10 @@ float VideoDevice::setWhiteness(float whiteness)
 			{
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 				V4L_picture.whiteness   = (65535*getWhiteness());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting white level. Fallback to it is not yet implemented." << endl;
+					kDebug() <<  k_funcinfo << "Card seems to not support adjusting white level. Fallback to it is not yet implemented." << endl;
 			}
 		break;
 #endif
@@ -1451,7 +1451,7 @@ float VideoDevice::getHue()
 
 float VideoDevice::setHue(float hue)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+	kDebug() <<  k_funcinfo << " called." << endl;
 	m_input[m_current_input].setHue(hue); // Just to check bounds
 
 	switch(m_driver)
@@ -1465,10 +1465,10 @@ float VideoDevice::setHue(float hue)
 			{
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-					kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
+					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 				V4L_picture.hue   = (65535*getHue());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kdDebug() <<  k_funcinfo << "Card seems to not support adjusting image hue. Fallback to it is not yet implemented." << endl;
+					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image hue. Fallback to it is not yet implemented." << endl;
 			}
 		break;
 #endif
@@ -1531,7 +1531,7 @@ bool VideoDevice::getImageAsMirror()
 
 bool VideoDevice::setImageAsMirror(bool imageasmirror)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevice::setImageAsMirror(" << imageasmirror << ") called." << endl;
+	kDebug() <<  k_funcinfo << "VideoDevice::setImageAsMirror(" << imageasmirror << ") called." << endl;
 	if (m_current_input < m_input.size() ) 
 	  {
 		m_input[m_current_input].setImageAsMirror(imageasmirror);
@@ -1548,7 +1548,7 @@ bool VideoDevice::getDisableMMap()
 
 bool VideoDevice::setDisableMMap(bool disablemmap)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevice::setDisableMMap(" << disablemmap << ") called." << endl;
+	kDebug() <<  k_funcinfo << "VideoDevice::setDisableMMap(" << disablemmap << ") called." << endl;
 	m_disablemmap = disablemmap;
 	return m_disablemmap;
 }
@@ -1560,7 +1560,7 @@ bool VideoDevice::getWorkaroundBrokenDriver()
 
 bool VideoDevice::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevice::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
+	kDebug() <<  k_funcinfo << "VideoDevice::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
 	m_workaroundbrokendriver = workaroundbrokendriver;
 	return m_workaroundbrokendriver;
 }

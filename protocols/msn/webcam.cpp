@@ -541,7 +541,7 @@ int Webcam::getAvailablePort()
 	delete ss;
 	
 
-    kdDebug(14140) << k_funcinfo<< "found available port : " << port << endl;
+    kDebug(14140) << k_funcinfo<< "found available port : " << port << endl;
 
 	return port;
 }
