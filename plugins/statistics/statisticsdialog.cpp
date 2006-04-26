@@ -515,7 +515,7 @@ QString StatisticsDialog::stringFromSeconds(const int seconds)
 	h = seconds/3600;
 	m = (seconds % 3600)/60;
 	s = (seconds % 3600) % 60;
-	return QString::number(h)+":"+QString::number(m)+":"+QString::number(s);
+	return QString::number(h)+':'+QString::number(m)+':'+QString::number(s);
 }
 
 void StatisticsDialog::slotAskButtonClicked()

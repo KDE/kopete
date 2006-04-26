@@ -282,7 +282,7 @@ void KopeteMetaLVIProps::slotLoadNameSources()
 	ui_mainWidget->cmbAccountName->clear();
 	for( ; it != cList.end(); ++it )
 	{
-		QString acct = (*it)->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + (*it)->contactId() + ">";
+		QString acct = (*it)->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + (*it)->contactId() + '>';
 		QPixmap acctIcon = (*it)->account()->accountIcon();
 		ui_mainWidget->cmbAccountName->addItem( QIcon(acctIcon), acct );
 		
@@ -316,7 +316,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 		Kopete::Contact *citem = (*itp);
 		if ( citem->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
-			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + ">";
+			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + '>';
 			QPixmap acctIcon = citem->account()->accountIcon();
 			ui_mainWidget->cmbAccountPhoto->addItem( QIcon(acctIcon), acct );
 			

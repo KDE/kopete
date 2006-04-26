@@ -238,9 +238,9 @@ QString TranslatorPlugin::translateMessage( const QString &msg, const QString &f
 	}
 
 	// We search for src_dst
-	if(! m_languages->supported( m_service ).contains( from + "_" + to ) )
+	if(! m_languages->supported( m_service ).contains( from + '_' + to ) )
 	{
-		kDebug( 14308 ) << k_funcinfo << from << "_" << to << " is not supported by service " << m_service << endl;
+		kDebug( 14308 ) << k_funcinfo << from << '_' << to << " is not supported by service " << m_service << endl;
 		return QString::null;
 	}
 		
@@ -299,7 +299,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QString &from, const QString &to )
 {
 	QString body = QString(QUrl::toPercentEncoding( msg));
-	QString lp = from + "_" + to;
+	QString lp = from + '_' + to;
 	QString gurl = "http://babelfish.altavista.com/babelfish/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body + "&lp=" + lp;
 	KUrl geturl ( gurl );
 

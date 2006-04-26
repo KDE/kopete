@@ -288,7 +288,7 @@ AppearanceConfig::~AppearanceConfig()
 void AppearanceConfig::updateEmoticonsButton(bool _b)
 {
     QString themeName = d->mPrfsEmoticons->icon_theme_list->currentText();
-    QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
+    QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
     d->mPrfsEmoticons->btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
     d->mPrfsEmoticons->btnGetThemes->setEnabled( false );
 }
@@ -413,7 +413,7 @@ void AppearanceConfig::updateEmoticonlist()
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
 	QString themeName = d->mPrfsEmoticons->icon_theme_list->currentText();
-	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
+	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
 	d->mPrfsEmoticons->btnRemoveTheme->setEnabled( fileInf.isWritable() );
 
 	Kopete::Emoticons emoticons( themeName );
@@ -718,7 +718,7 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 	if (res!=KMessageBox::Continue)
 		return;
 
-	KUrl themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
+	KUrl themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
 	KIO::NetAccess::del(themeUrl, this);
 
 	updateEmoticonlist();

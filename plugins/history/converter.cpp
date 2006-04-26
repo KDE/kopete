@@ -264,7 +264,7 @@ void HistoryPlugin::convertOldHistory()
 							msgElem.setAttribute( "in",  dir==Kopete::Message::Outbound ? "0" : "1" );
 							msgElem.setAttribute( "from", dir==Kopete::Message::Outbound ? accountId : contactId  );
 							msgElem.setAttribute( "nick",  nick ); //do we have to set this?
-							msgElem.setAttribute( "time",  QString::number(dt.date().day()) + " " +  QString::number(dt.time().hour()) + ":" + QString::number(dt.time().minute())  );
+							msgElem.setAttribute( "time",  QString::number(dt.date().day()) + ' ' +  QString::number(dt.time().hour()) + ':' + QString::number(dt.time().minute())  );
 							QDomText msgNode = doc.createTextNode( body.trimmed() );
 							docElem.appendChild( msgElem );
 							msgElem.appendChild( msgNode );

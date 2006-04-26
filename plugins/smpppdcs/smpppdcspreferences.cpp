@@ -58,11 +58,11 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
 		}
 		
 		QCheckListItem * cli = new QCheckListItem(m_ui->accountList, 
-				(*it)->accountId() + " (" + protoName + ")", QCheckListItem::CheckBox);
+				(*it)->accountId() + " (" + protoName + ')', QCheckListItem::CheckBox);
 		cli->setPixmap(0, (*it)->accountIcon());
 		
-		m_accountMapOld[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + "_" + (*it)->accountId());
-		m_accountMapCur[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + "_" + (*it)->accountId());;
+		m_accountMapOld[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + '_' + (*it)->accountId());
+		m_accountMapCur[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + '_' + (*it)->accountId());;
 		m_ui->accountList->insertItem(cli);
 	}
 

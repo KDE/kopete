@@ -146,13 +146,13 @@ void SMPPPDCSPlugin::connectAllowed()
 	{
 #ifndef NDEBUG
         if(account->inherits("Kopete::ManagedConnectionAccount")) {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" + account->accountId() << " is an managed account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' + account->accountId() << " is an managed account!" << endl;
         } else {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" +account->accountId() << " is an unmanaged account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' +account->accountId() << " is an unmanaged account!" << endl;
         }
 #endif
 
-		if(!list.contains(account->protocol()->pluginId() + "_" + account->accountId())) {
+		if(!list.contains(account->protocol()->pluginId() + '_' + account->accountId())) {
 			account->connect();
 		}
 	}
@@ -166,12 +166,12 @@ void SMPPPDCSPlugin::disconnectAllowed() {
 	{
 #ifndef NDEBUG
         if(account->inherits("Kopete::ManagedConnectionAccount")) {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" + account->accountId() << " is an managed account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' + account->accountId() << " is an managed account!" << endl;
         } else {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" +account->accountId() << " is an unmanaged account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' +account->accountId() << " is an unmanaged account!" << endl;
         }
 #endi
-		if(!list.contains(account->protocol()->pluginId() + "_" + account->accountId())) {
+		if(!list.contains(account->protocol()->pluginId() + '_' + account->accountId())) {
 			account->disconnect();
 		}
 	}

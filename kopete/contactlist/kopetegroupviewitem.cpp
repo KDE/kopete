@@ -180,8 +180,8 @@ QString KopeteGroupViewItem::key( int, bool ) const
 	//Groups are placed after topLevel contact.
 	//Exepted Temporary group which is the first group
 	if ( group()->type() != Kopete::Group::Normal )
-		return "0" + d->name->text();
-	return "M" + d->name->text();
+		return '0' + d->name->text();
+	return 'M' + d->name->text();
 }
 
 void KopeteGroupViewItem::startRename( int /*col*/ )

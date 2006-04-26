@@ -180,7 +180,7 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 	
 	Kopete::Message msg( theChat->myself(),
 			theChat->members(),
-			advert + " " + args,
+			advert + ' ' + args,
 			Kopete::Message::Outbound,
 			Kopete::Message::RichText
 	);

@@ -164,7 +164,7 @@ bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
                 emit scanProgress(i);
             }
 			
-			if(client.connect(QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)), 3185)) {
+			if(client.connect(QString(ipToks[0] + '.' + ipToks[1] + '.' + ipToks[2] + '.' + QString::number(i)), 3185)) {
 				client.disconnect();
 				emit smpppdFound(ip);
                 if(range > 1) {

@@ -181,7 +181,7 @@ QString KgpgSelKey::extractKeyName(QString fullName)
   }
   QString kName=fullName.section('<',0,0);
   if (kName.indexOf("(")!=-1) kName=kName.section('(',0,0);
-  return QString(kMail+" ("+kName+")").trimmed();
+  return QString(kMail+" ("+kName+')').trimmed();
 }
 
 void KgpgSelKey::slotpreOk()
