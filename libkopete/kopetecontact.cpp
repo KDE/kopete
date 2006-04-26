@@ -289,7 +289,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 void Contact::changeMetaContact()
 {
 	KDialog *moveDialog = new KDialog( Kopete::UI::Global::mainWidget(), i18n( "Move Contact" ),
-		KDialogBase::Ok | KDialogBase::Cancel);
+		KDialog::Ok | KDialog::Cancel);
 	moveDialog->setDefaultButton( KDialog::Ok );
 	moveDialog->enableButtonSeparator( true );
 

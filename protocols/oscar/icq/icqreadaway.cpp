@@ -30,8 +30,7 @@
 
 
 ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
-	: KDialogBase(parent, name, false, QString::null, Close | User1,
-		Close, false, i18n("&Fetch Again"))
+	: KDialog(parent, QString(), KDialog::Close | KDialog::User1, 0, KGuiItem(i18n("&Fetch Again")))
 {
 	assert(c);
 

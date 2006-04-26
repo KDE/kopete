@@ -18,7 +18,7 @@
 #ifndef KOPETEPLUGINCONFIG_H
 #define KOPETEPLUGINCONFIG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class KopetePluginConfigPrivate;
 
@@ -27,7 +27,7 @@ class KopetePluginConfigPrivate;
  *
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopetePluginConfig : public KDialogBase
+class KopetePluginConfig : public KDialog
 {
 	Q_OBJECT
 

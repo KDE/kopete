@@ -45,24 +45,25 @@ KopetePluginConfig::~KopetePluginConfig()
 }
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
-: KDialogBase( Plain, i18n( "Configure Plugins" ), /*Help |*/ Cancel | Apply | Ok | User1,
-	Ok, parent, name, false, true, KGuiItem( i18n( "&Reset" ), "undo" ) )
+: KDialog( parent, i18n( "Configure Plugins" ), KDialog::Cancel | KDialog::Apply | KDialog::Ok | KDialog::User1,
+	0, KGuiItem( i18n( "&Reset" ), "undo" ) )
 {
 	d = new KopetePluginConfigPrivate;
+	enableButtonSeparator(true);
 	showButton( User1, false );
 	setChanged( false );
 
 	// FIXME: Implement this - Martijn
-	enableButton( KDialogBase::Help, false );
+	enableButton( KDialog::Help, false );
 
 	setInitialSize( QSize( 640, 480 ) );
 
-	QWidget* dialogPage = plainPage();
+	QWidget* dialogPage = new QWidget(this);
 	QVBoxLayout *layout = new QVBoxLayout( dialogPage );
 	layout->setMargin( 0 );
 	layout->setSpacing( 0 );
 	layout->setAutoAdd( true );
-	d->pluginSelector = new KPluginSelector( plainPage() );
+	d->pluginSelector = new KPluginSelector( dialogPage );
 	setMainWidget( d->pluginSelector );
 	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );
 	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
@@ -120,7 +121,7 @@ void KopetePluginConfig::show()
 {
 	d->pluginSelector->load();
 
-	KDialogBase::show();
+	KDialog::show();
 }
 
 #include "kopetepluginconfig.moc"

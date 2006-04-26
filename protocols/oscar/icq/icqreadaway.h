@@ -18,14 +18,14 @@
 #define ICQREADAWAY_H
 
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class ICQAccount;
 class ICQContact;
 class KTextBrowser;
 class Q3VBox;
 
-class ICQReadAway : public KDialogBase
+class ICQReadAway : public KDialog
 {
 	Q_OBJECT
 

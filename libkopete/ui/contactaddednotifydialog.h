@@ -17,7 +17,7 @@
 #ifndef KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
 #define KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "kopete_export.h"
 
 namespace KABC {
@@ -67,7 +67,7 @@ namespace UI {
  * @author Olivier Goffart
  * @since 0.11
  */
-class KOPETE_EXPORT ContactAddedNotifyDialog : public KDialogBase
+class KOPETE_EXPORT ContactAddedNotifyDialog : public KDialog
 {
 Q_OBJECT
 public:
