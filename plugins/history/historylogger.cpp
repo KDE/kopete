@@ -329,7 +329,7 @@ void HistoryLogger::saveToDisk()
 		// But it may take 500 ms if the file to save becomes too big (1Mb).
 		kDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms " <<endl ;
 
-		m_toSaveFileName=QString::null;
+		m_toSaveFileName.clear();
 		m_toSaveDocument=QDomDocument();
 	}
 	else

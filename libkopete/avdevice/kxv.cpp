@@ -338,7 +338,7 @@ KXvDevice::KXvDevice()
     xv_attr = NULL;
     xv_port = -1;
     xv_encoding = -1;
-    xv_name = QString::null;
+    xv_name.clear();
     xv_type = -1;
     xv_adaptor = -1;
     _shm = false;

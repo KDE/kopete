@@ -69,7 +69,7 @@ void AddressBookLinkWidget::slotClearAddressee()
 	edtAddressee->clear();
 	btnClear->setEnabled( false );
 	KABC::Addressee mrEmpty;
-	mSelectedUid = QString::null;
+	mSelectedUid.clear();
 	emit addresseeChanged( mrEmpty );
 }
 

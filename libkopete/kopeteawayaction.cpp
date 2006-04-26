@@ -111,7 +111,7 @@ void AwayAction::slotSelectAway( int index )
 	switch(index)
 	{
 		case 0:
-			awayReason = QString::null;
+			awayReason.clear();
 			break;
 		case 1:
 			bool ok;

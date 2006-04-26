@@ -99,7 +99,7 @@ Kopete::Away::Away() : QObject( kapp )
 	d = new KopeteAwayPrivate;
 
 	// Set up the away messages
-	d->awayMessage = QString::null;
+	d->awayMessage.clear();
 	d->globalAway = false;
 	d->autoaway = false;
 	d->useAutoAway = true;

@@ -757,12 +757,12 @@ void ChatView::appendMessage(Kopete::Message &message)
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
 	else
-		unreadMessageFrom = QString::null;
+		unreadMessageFrom.clear();
 }
 
 void ChatView::slotMarkMessageRead()
 {
-	unreadMessageFrom = QString::null;
+	unreadMessageFrom.clear();
 }
 
 void ChatView::slotToggleRtfToolbar( bool enabled )

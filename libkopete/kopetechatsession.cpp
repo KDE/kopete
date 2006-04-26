@@ -153,7 +153,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 	if ( d->mContactList.isEmpty() )
 		return;
 
-	d->displayName=QString::null;
+	d->displayName.clear();
 	for(int i = 0; i != d->mContactList.size(); i++ )
 	{
 		Kopete::Contact * c = d->mContactList[i];

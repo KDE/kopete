@@ -158,7 +158,7 @@ void ChatTextEditPart::complete()
 		if ( word != m_lastMatch )
 		{
 			match = mComplete->makeCompletion( word );
-			m_lastMatch = QString::null;
+			m_lastMatch.clear();
 			parIdx -= word.length();
 		}
 		else
@@ -294,7 +294,7 @@ void ChatTextEditPart::sendMessage()
 	{
 		//FIXME: what is the next line for?
 		mComplete->addItem( m_lastMatch );
-		m_lastMatch = QString::null;
+		m_lastMatch.clear();
 	}
 
 	Kopete::Message sentMessage = contents();

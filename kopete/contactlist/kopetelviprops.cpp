@@ -507,7 +507,7 @@ void KopeteMetaLVIProps::slotAddresseeChanged( const KABC::Addressee & a )
 	{
 		ui_mainWidget->btnExportKABC->setEnabled( false );
 		ui_mainWidget->btnImportKABC->setEnabled( false );
-		mAddressBookUid = QString::null;
+		mAddressBookUid.clear();
 		ui_mainWidget->radioNameContact->setChecked( true );
 		ui_mainWidget->radioPhotoContact->setChecked( true );
 	}

@@ -146,8 +146,8 @@ bool Picture::isNull()
 void Picture::clear()
 {
 	detach();
-	d->pictureBase64 = QString::null;
-	d->picturePath = QString::null;
+	d->pictureBase64.clear();
+	d->picturePath.clear();
 	d->pictureImage = QImage();
 }
 
@@ -158,8 +158,8 @@ void Picture::setPicture(const QImage &image)
 	d->pictureImage = image;
 
 	// Clear the path and base64, it will call the update of then when "getted"
-	d->picturePath= QString::null;
-	d->pictureBase64 = QString::null;
+	d->picturePath.clear();
+	d->pictureBase64.clear();
 }
 
 void Picture::setPicture(const QString &path)
@@ -169,7 +169,7 @@ void Picture::setPicture(const QString &path)
 	
 	// Clear the image and base64, it will call the update of then when "getted"
 	d->pictureImage = QImage();
-	d->pictureBase64 = QString::null;
+	d->pictureBase64.clear();
 }
 
 void Picture::setPicture(const KABC::Picture &picture)

@@ -55,7 +55,7 @@ SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
 	}
 
     // if netstat is NOT available, disable the option and set to SMPPPD
-    if(KStandardDirs::findExe("netstat") == QString::null) {
+    if(KStandardDirs::findExe("netstat").isNull()) {
         autoCSTest->setEnabled(FALSE);
         useNetstat->setEnabled(FALSE);
         useNetstat->setChecked(FALSE);

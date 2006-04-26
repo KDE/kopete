@@ -229,7 +229,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 
         char line[200]="\0";
         FILE *fp2;
-        seclist=QString::null;
+        seclist.clear();
 
         fp2 = popen("gpg --no-secmem-warning --no-tty --with-colon --list-secret-keys ", "r");
         while ( fgets( line, sizeof(line), fp2))
@@ -450,7 +450,7 @@ void popupPublic::slotprocread(KProcIO *p)
                 //if (keyname.find("(")!=-1)
                  //       keyname=keyname.section('(',0,0);
         } else {
-                keymail=QString::null;
+                keymail.clear();
                 keyname=tst;//.section('(',0,0);
         }
 

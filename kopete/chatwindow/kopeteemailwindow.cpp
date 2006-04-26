@@ -342,7 +342,7 @@ void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 
 void KopeteEmailWindow::slotMarkMessageRead()
 {
-	d->unreadMessageFrom = QString::null;
+	d->unreadMessageFrom.clear();
 }
 
 void KopeteEmailWindow::updateNextButton()

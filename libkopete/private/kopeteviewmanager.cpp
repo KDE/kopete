@@ -221,7 +221,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 						   Kopete::BehaviorSettings::self()->showEventsIfActive() || !w->isActiveWindow())
 						   && msg.from())
 			{
-				QString msgFrom = QString::null;
+				QString msgFrom;
+				msgFrom.clear();
 				if( msg.from()->metaContact() )
 					msgFrom = msg.from()->metaContact()->displayName();
 				else

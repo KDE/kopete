@@ -237,7 +237,7 @@ void KABCPersistence::removeKABC( MetaContact *)
 		{
 			// remove the link
 			//kDebug( 14010 ) << k_funcinfo << "...not found." << endl;
-			d->metaContactId=QString::null;
+			d->metaContactId.clear();
 		}
 		else
 		{

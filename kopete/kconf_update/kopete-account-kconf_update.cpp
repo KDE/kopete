@@ -66,7 +66,7 @@ void parseGroup( const QString &group, const QString &rawLine )
 		else
 			protocol = group + "Protocol";
 
-		password = QString::null;
+		password.clear();
 		pluginData.clear();
 
 		needFlush = true;
