@@ -266,7 +266,10 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	menu->addSeparator();
 
 	if( metaContact() && !metaContact()->isTemporary() )
-		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), 0, "actionChangeMetaContact" )->plug( menu );
+	{
+		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), 0, "actionChangeMetaContact" );
+		menu->addAction( changeMetaContact );
+	}
 
 	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" ) );
 

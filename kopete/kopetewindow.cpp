@@ -269,11 +269,11 @@ void KopeteWindow::initActions()
 	actionAwayMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
 							actionCollection(), "Status" );
 	actionAwayMenu->setDelayed( false );
-	actionAwayMenu->insert(actionSetAvailable);
-	actionAwayMenu->insert(selectAway);
-	actionAwayMenu->insert(selectBusy);
-	actionAwayMenu->insert(actionSetInvisible);
-	actionAwayMenu->insert(actionDisconnect);
+	actionAwayMenu->addAction(actionSetAvailable);
+	actionAwayMenu->addAction(selectAway);
+	actionAwayMenu->addAction(selectBusy);
+	actionAwayMenu->addAction(actionSetInvisible);
+	actionAwayMenu->addAction(actionDisconnect);
 
 	actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
@@ -331,8 +331,8 @@ void KopeteWindow::initActions()
 	// KActionMenu for selecting the global status message(kopeteonlinestatus_0)
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
-	connect( setStatusMenu->popupMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
-	connect( setStatusMenu->popupMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
+	connect( setStatusMenu->kMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
+	connect( setStatusMenu->kMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
@@ -736,7 +736,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 	connect( action, SIGNAL(triggered(bool)), addContactMapper, SLOT(map()) );
 
 	addContactMapper->setMapping( action, account->protocol()->pluginId() + QChar(0xE000) + account->accountId() );
-	actionAddContact->insert( action );
+	actionAddContact->addAction( action );
 }
 
 void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
@@ -868,8 +868,8 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 	if ( !actionMenu )
 		return;
 
-	connect( actionMenu->popupMenu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
-	actionMenu->popupMenu()->popup( p );
+	connect( actionMenu->kMenu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
+	actionMenu->kMenu()->popup( p );
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )

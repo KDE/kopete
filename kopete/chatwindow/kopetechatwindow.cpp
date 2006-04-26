@@ -303,13 +303,12 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 
 	KMenu *popup = new KMenu;
 	popup->addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
-
-	actionContactMenu->plug( popup );
+	popup->addAction( actionContactMenu );
 	popup->addSeparator();
-	actionTabPlacementMenu->plug( popup );
-	tabDetach->plug( popup );
-	actionDetachMenu->plug( popup );
-	tabClose->plug( popup );
+	popup->addAction( actionTabPlacementMenu );
+	popup->addAction( tabDetach );
+	popup->addAction( actionDetachMenu );
+	popup->addAction( tabClose );
 	popup->exec( pos );
 
 	delete popup;
@@ -362,12 +361,12 @@ void KopeteChatWindow::initActions(void)
 	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll, "tabs_detachmove" );
 	actionDetachMenu->setDelayed( false );
 
-	connect ( actionDetachMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
-	connect ( actionDetachMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
+	connect ( actionDetachMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
+	connect ( actionDetachMenu->kMenu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
 
 	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll, "tabs_placement" );
-	connect ( actionTabPlacementMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
-	connect ( actionTabPlacementMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
+	connect ( actionTabPlacementMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
+	connect ( actionTabPlacementMenu->kMenu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
 
 	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
@@ -418,7 +417,7 @@ void KopeteChatWindow::initActions(void)
 
 	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll, "contacts_menu" );
 	actionContactMenu->setDelayed( false );
-	connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
+	connect ( actionContactMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
 	// add configure key bindings menu item
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
@@ -962,7 +961,7 @@ void KopeteChatWindow::slotChatClosed()
 
 void KopeteChatWindow::slotPrepareDetachMenu(void)
 {
-	QMenu *detachMenu = actionDetachMenu->popupMenu();
+	QMenu *detachMenu = actionDetachMenu->kMenu();
 	detachMenu->clear();
 
 	for ( unsigned id=0; id < windows.count(); id++ )
@@ -990,7 +989,7 @@ void KopeteChatWindow::slotSendMessage()
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
-	KMenu *contactsMenu = actionContactMenu->popupMenu();
+	KMenu *contactsMenu = actionContactMenu->kMenu();
 	contactsMenu->clear();
 
 	Kopete::Contact *contact;
@@ -1009,7 +1008,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	foreach(contact, m_them)
 	{
 		KMenu *p = contact->popupMenu();
-		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
+		connect ( actionContactMenu->kMenu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
 
 		if( contact->metaContact() )
@@ -1021,10 +1020,10 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		if( ++contactCount == 15 && contact != m_them.last() )
 		{
 			KActionMenu *moreMenu = new KActionMenu( KIcon("folder_open"), i18n("More..."), 0, 0);
-			connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
+			connect ( actionContactMenu->kMenu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
-			moreMenu->plug( contactsMenu );
-			contactsMenu = moreMenu->popupMenu();
+			contactsMenu->addAction( moreMenu );
+			contactsMenu = moreMenu->kMenu();
 			contactCount = 0;
 		}
 	}
@@ -1032,7 +1031,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 void KopeteChatWindow::slotPreparePlacementMenu()
 {
-	QMenu *placementMenu = actionTabPlacementMenu->popupMenu();
+	QMenu *placementMenu = actionTabPlacementMenu->kMenu();
 	placementMenu->clear();
 
 	placementMenu->insertItem( i18n("Top"), 0 );

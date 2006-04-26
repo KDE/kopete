@@ -48,13 +48,13 @@ KActionMenu* TestbedAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->kMenu()->insertSeparator();
 
 	KAction *action;
 	
 	action = new KAction (KIcon("testbed_showcam"), i18n ("Show my own video..."), 0, "actionShowCam");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowCam()) );
-	mActionMenu->insert(action);
+	mActionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 
 	return mActionMenu;

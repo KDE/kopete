@@ -176,7 +176,7 @@ QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 	}
 	//kDebug(14501) << temp.mid(pos, rx.matchedLength()) << endl;
 	temp = temp.mid(pos, rx.matchedLength()-1);
-	temp = temp.mid( temp.find("charset", 0, false)+7);
+	temp = temp.mid( temp.indexOf("charset", 0, Qt::CaseInsensitive)+7);
 	temp = temp.remove('=').simplified();
 	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; pos++ );
 	temp = temp.left( pos );

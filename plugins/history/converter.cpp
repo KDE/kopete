@@ -109,7 +109,7 @@ void HistoryPlugin::convertOldHistory()
 		{
 			QDir d2( fi.absoluteFilePath() );
 			d2.setFilter( QDir::Files  );
-			d2.setNameFilter("*.log");
+			d2.setNameFilters( QStringList("*.log") );
 			const QFileInfoList list = d2.entryInfoList();;
 			QFileInfo fi2;
 

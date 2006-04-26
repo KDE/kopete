@@ -421,8 +421,8 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			{
 			who.append( info->buffer->buffer() );
 			who = who.mid( 2, who.indexOf('\n') - 3);
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "User wants to view webcam: " << who << " len: " << who.length() << " Index: " << accessGranted.findIndex( who ) << endl;
-			if( accessGranted.findIndex( who ) >= 0 )
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "User wants to view webcam: " << who << " len: " << who.length() << " Index: " << accessGranted.indexOf( who ) << endl;
+			if( accessGranted.indexOf( who ) >= 0 )
 			{
 				grantAccess( who );
 			}

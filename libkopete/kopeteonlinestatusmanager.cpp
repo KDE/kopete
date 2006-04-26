@@ -434,7 +434,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 #endif
 
 		if(parent)
-			parent->insert(action);
+			parent->addAction(action);
 
 	}
 }

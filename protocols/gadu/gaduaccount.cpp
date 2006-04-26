@@ -255,7 +255,7 @@ GaduAccount::actionMenu()
 #warning Icon removed from KActionMenu, port
 // 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
 	p->actionMenu_ = new KActionMenu( accountId(), 0, 0 );
-	p->actionMenu_->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
+	p->actionMenu_->kMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
@@ -294,13 +294,13 @@ GaduAccount::actionMenu()
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ))),
 		i18n("Go O&nline"), 0, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
-	p->actionMenu_->insert( action );
+	p->actionMenu_->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
 		i18n( "Set &Busy" ), 0, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()) );
-	p->actionMenu_->insert( action );
+	p->actionMenu_->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
@@ -312,26 +312,26 @@ GaduAccount::actionMenu()
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
 		i18n( "Go &Offline" ), 0, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
-	p->actionMenu_->insert( action );
+	p->actionMenu_->addAction( action );
 
 	action = new KAction( KIcon("info"), i18n( "Set &Description..." ), 0, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
-	p->actionMenu_->insert( action );
+	p->actionMenu_->addAction( action );
 
-	p->actionMenu_->insert( p->friendsModeAction );
+	p->actionMenu_->addAction( p->friendsModeAction );
 
-	p->actionMenu_->popupMenu()->addSeparator();
+	p->actionMenu_->kMenu()->addSeparator();
 
-	p->actionMenu_->insert( p->searchAction );
+	p->actionMenu_->addAction( p->searchAction );
 
-	p->actionMenu_->popupMenu()->addSeparator();
+	p->actionMenu_->kMenu()->addSeparator();
 
-	p->actionMenu_->insert( p->listputAction );
+	p->actionMenu_->addAction( p->listputAction );
 
-	p->actionMenu_->popupMenu()->addSeparator();
+	p->actionMenu_->kMenu()->addSeparator();
 
-	p->actionMenu_->insert( p->listToFileAction );
-	p->actionMenu_->insert( p->listFromFileAction );
+	p->actionMenu_->addAction( p->listToFileAction );
+	p->actionMenu_->addAction( p->listFromFileAction );
 
 	return p->actionMenu_;
 }

@@ -47,12 +47,12 @@ YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent
 	m_imageContainer->setAlignment( Qt::AlignCenter );
 	m_imageContainer->setMinimumSize(320,240);
 	m_imageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	topLayout->add( m_imageContainer );
+	topLayout->addWidget( m_imageContainer );
 	
 	m_Viewer = new QLabel( page );
 	m_Viewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	m_Viewer->hide();
-	topLayout->add( m_Viewer );
+	topLayout->addWidget( m_Viewer );
 
 	show();
 }

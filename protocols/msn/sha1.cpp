@@ -164,7 +164,8 @@ void SHA1::final(unsigned char digest[20], SHA1_CONTEXT* context)
 QByteArray SHA1::hash(const QByteArray &a)
 {
 	SHA1_CONTEXT context;
-	QByteArray b(20);
+	QByteArray b;
+	b.reserve(20);
 
 	SHA1 s;
 	s.init(&context);

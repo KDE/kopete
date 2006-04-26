@@ -499,7 +499,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactSendFile" );
 
 	actionAddContact = new KActionMenu( KIcon( QString::fromLatin1("add_user") ), i18n( "&Add Contact" ), ac, "contactAddContact" );
-	actionAddContact->popupMenu()->addTitle( i18n("Select Account") );
+	actionAddContact->kMenu()->addTitle( i18n("Select Account") );
 
 	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac, "contactAddTemporaryContact" );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
@@ -526,7 +526,7 @@ void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* a
 {
 	KAction *action = new KAction( account->accountLabel(), QIcon(account->accountIcon()), 0, this, SLOT(slotAddContact()), 0, 0);
 	m_accountAddContactMap.insert( account, action);
-	actionAddContact->insert( action );
+	actionAddContact->addAction( action );
 }
 
 void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)

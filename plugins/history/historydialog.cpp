@@ -166,7 +166,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 
 	mHtmlPart->begin();
 	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
-	mHtmlPart->write( QString::fromLatin1( htmlCode.latin1() ) );
+	mHtmlPart->write( QString::fromLatin1( htmlCode.toLatin1() ) );
 	mHtmlPart->end();
 
 	
@@ -365,9 +365,9 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 	// Populating HTML Part with messages
 	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
-		if ( mMainWidget->messageFilterBox->currentItem() == 0
-			|| ( mMainWidget->messageFilterBox->currentItem() == 1 && (*it).direction() == Kopete::Message::Inbound )
-			|| ( mMainWidget->messageFilterBox->currentItem() == 2 && (*it).direction() == Kopete::Message::Outbound ) )
+		if ( mMainWidget->messageFilterBox->currentIndex() == 0
+			|| ( mMainWidget->messageFilterBox->currentIndex() == 1 && (*it).direction() == Kopete::Message::Inbound )
+			|| ( mMainWidget->messageFilterBox->currentIndex() == 2 && (*it).direction() == Kopete::Message::Outbound ) )
 		{
 			resultHTML = "";
 	
@@ -502,8 +502,8 @@ void HistoryDialog::searchFirstStep()
 	
 	if (!mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 	{
-		if (mMainWidget->contactComboBox->currentItem() == 0
-				|| mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact())
+		if (mMainWidget->contactComboBox->currentIndex() == 0
+				|| mMetaContactList.at(mMainWidget->contactComboBox->currentIndex()-1) == mSearch->item->metaContact())
 		{
 			mLogger = new HistoryLogger(mSearch->item->metaContact(), this);
 	
@@ -607,11 +607,11 @@ void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 	if ( !url.isEmpty() )
 	{
 		mURL = url;
-		mCopyURLAct->plug( chatWindowPopup );
+		chatWindowPopup->addAction( mCopyURLAct );
 		chatWindowPopup->addSeparator();
 	}
 	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
-	mCopyAct->plug( chatWindowPopup );
+	chatWindowPopup->addAction( mCopyAct );
 	
 	connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
 	chatWindowPopup->popup(point);

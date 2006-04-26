@@ -678,16 +678,16 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 		}
 		else if ( d->activeElement.tagName().lower() == QString::fromLatin1( "a" ) )
 		{
-			d->copyURLAction->plug( chatWindowPopup );
+			chatWindowPopup->addAction( d->copyURLAction );
 			chatWindowPopup->addSeparator();
 		}
 
 		d->copyAction->setEnabled( hasSelection() );
-		d->copyAction->plug( chatWindowPopup );
-		d->saveAction->plug( chatWindowPopup );
-		d->printAction->plug( chatWindowPopup );
+		chatWindowPopup->addAction( d->copyAction );
+		chatWindowPopup->addAction( d->saveAction );
+		chatWindowPopup->addAction( d->printAction );
 		chatWindowPopup->addSeparator();
-		d->closeAction->plug( chatWindowPopup );
+		chatWindowPopup->addAction( d->closeAction );
 
 		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
 		chatWindowPopup->popup( point );

@@ -164,7 +164,7 @@ KActionMenu* WPAccount::actionMenu()
 #warning Icon removed from KActionMenu here, port
 // 	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), 0, 0);
-	theActionMenu->popupMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
+	theActionMenu->kMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
 
 	if (mProtocol)
 	{
@@ -172,19 +172,19 @@ KActionMenu* WPAccount::actionMenu()
 		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), "Online", 0, "actionGoAvailable" );
 		QObject::connect( goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()) );
 		goOnline->setEnabled(isConnected() && isAway());
-		theActionMenu->insert(goOnline);
+		theActionMenu->addAction(goOnline);
 
 		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), "Away", 0, "actionGoAway" );
 		QObject::connect( goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()) );
 		goAway->setEnabled(isConnected() && !isAway());
-		theActionMenu->insert(goAway);
+		theActionMenu->addAction(goAway);
 
 		/// One can not really go offline manually - appears online as long as samba server is running. GF
 
-		theActionMenu->popupMenu()->addSeparator();
+		theActionMenu->kMenu()->addSeparator();
 		KAction *properties = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
 		QObject::connect( properties, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
-		theActionMenu->insert( properties );
+		theActionMenu->addAction( properties );
 	}
 
 	return theActionMenu;

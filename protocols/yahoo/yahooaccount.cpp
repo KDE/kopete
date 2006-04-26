@@ -553,7 +553,7 @@ KActionMenu *YahooAccount::actionMenu()
 	
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
-	theActionMenu->popupMenu()->addSeparator();
+	theActionMenu->kMenu()->addSeparator();
 	theActionMenu->insert( m_editOwnYABEntry );
 	theActionMenu->insert( m_openInboxAction );
 	theActionMenu->insert( m_openYABAction );

@@ -644,7 +644,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			"<body onload=\"document.pform.submit(); \">\n"
 				"<form name=\"pform\" action=\"" + from_action_url  + "\" method=\"POST\">\n"
 					"<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
-					"<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.find('@') ) + "\">\n"
+					"<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.indexOf('@') ) + "\">\n"
 					"<input type=\"hidden\" name=\"username\" value=\"" + UserID + "\">\n"
 					"<input type=\"hidden\" name=\"sid\" value=\"" + m_sid + "\">\n"
 					"<input type=\"hidden\" name=\"kv\" value=\"" + m_kv + "\">\n"
@@ -775,8 +775,8 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 	{
 		 //this sends the server if mails are deleted
 		 QString m = msg.right(msg.length() - msg.find("Message-Delta:") );
-		 m = m.left(msg.find("\r\n"));
-		 mailCount = mailCount - m.right(m.length() -m.find(" ")-1).toUInt();
+		 m = m.left(msg.indexOf("\r\n"));
+		 mailCount = mailCount - m.right(m.length() -m.indexOf(" ")-1).toUInt();
 	}
 	else if(msg.contains("text/x-msmsgsemailnotification"))
 	{

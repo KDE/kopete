@@ -202,7 +202,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( ui_mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
 
-	ui_mainWidget->btnClearPhoto->setIcon( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
+	ui_mainWidget->btnClearPhoto->setIcon( SmallIconSet( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
 	connect( ui_mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
 	ui_mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );

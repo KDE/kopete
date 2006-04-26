@@ -127,7 +127,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	buttonCopyIdentity->setIcon(SmallIconSet("editcopy"));
 	buttonRenameIdentity->setIcon(SmallIconSet("edit"));
 	buttonRemoveIdentity->setIcon(SmallIconSet("delete_user"));
-	buttonClearPhoto->setIcon( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
+	buttonClearPhoto->setIcon( SmallIconSet( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
 
 	load(); // Load Configuration
 
@@ -497,7 +497,7 @@ void KopeteIdentityConfig::slotRemoveIdentity()
 	{
 		currentItem--;
 	}
-	comboSelectIdentity->setCurrentItem(currentItem);
+	comboSelectIdentity->setCurrentIndex(currentItem);
 
 	slotUpdateCurrentIdentity(comboSelectIdentity->currentText());
 	loadIdentities();

@@ -232,7 +232,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( Kopete::Transfer* transfer, c
 	}
 
 	transfer_ = transfer;
-	localFile_.setName( fileName );
+	localFile_.setFileName( fileName );
 
 	if ( localFile_.exists() ) {
 		KGuiItem resumeButton( i18n ( "&Resume" ) );

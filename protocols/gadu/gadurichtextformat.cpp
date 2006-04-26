@@ -150,7 +150,7 @@ GaduRichTextFormat::convertToGaduMessage( const Kopete::Message& message )
 	output->rtf.resize(0);
 
 	// test first if there is any HTML formating in it
-	if( htmlString.find( QString::fromLatin1("</span") ) > -1 ) {
+	if( htmlString.indexOf( QString::fromLatin1("</span") ) > -1 ) {
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 		findTags.setMinimal( true );
 		int pos = 0;

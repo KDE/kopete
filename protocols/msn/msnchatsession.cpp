@@ -76,7 +76,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 
 	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), actionCollection(), "msnInvite" );
-	connect ( m_actionInvite->popupMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect ( m_actionInvite->kMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	#if !defined NDEBUG
 	KAction* rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), actionCollection(), "msnDebugRawCommand" ) ;
@@ -303,7 +303,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteactions);
 	m_inviteactions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->kMenu()->clear();
 
 
 	QHash<QString, Kopete::Contact*> contactList = account()->contacts();
@@ -313,14 +313,14 @@ void MSNChatSession::slotActionInviteAboutToShow()
 		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
 		{
 			KAction *a = new Kopete::UI::ContactAction( it.value(), m_actionInvite->parentCollection() );
-			m_actionInvite->insert( a );
+			m_actionInvite->addAction( a );
 			m_inviteactions.append( a ) ;
 		}
 	}
 	KAction *b = new KAction( i18n ("Other..."), m_actionInvite->parentCollection(), "actionOther" );
 	QObject::connect( b, SIGNAL( triggered( bool ) ),
 	                  this, SLOT( slotInviteOtherContact() ) );
-	m_actionInvite->insert( b );
+	m_actionInvite->addAction( b );
 	m_inviteactions.append( b ) ;
 }
 
