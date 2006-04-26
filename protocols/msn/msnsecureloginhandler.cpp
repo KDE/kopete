@@ -48,8 +48,9 @@ void MSNSecureLoginHandler::login()
 	connect(getLoginServer, SIGNAL(result(KJob *)), this, SLOT(slotLoginServerReceived(KJob* )));
 }
 
-void MSNSecureLoginHandler::slotLoginServerReceived(KJob *loginJob)
+void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 {
+	KIO::Job *loginJob = static_cast<KIO::Job*>(job);
 	if(!loginJob->error())
 	{
 		// Retrive the HTTP header
@@ -96,8 +97,9 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *loginJob)
 	}	
 }
 
-void MSNSecureLoginHandler::slotTweenerReceived(KJob *authJob)
+void MSNSecureLoginHandler::slotTweenerReceived(KJob *job)
 {
+	KIO::Job *authJob = static_cast<KIO::Job*>(job);
 	if(!authJob->error())
 	{
 		QString httpHeaders = authJob->queryMetaData("HTTP-Headers");

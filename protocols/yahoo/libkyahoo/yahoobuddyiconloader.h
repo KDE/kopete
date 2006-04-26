@@ -25,6 +25,7 @@
 #include <kurl.h>
 
 class KTempFile;
+class KJob;
 namespace KIO {
 	class Job;
 	class TransferJob;

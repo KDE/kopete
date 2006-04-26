@@ -22,6 +22,7 @@
 #include "yabentry.h"
 
 class KUrl;
+class KJob;
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 

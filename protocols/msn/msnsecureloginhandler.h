@@ -19,6 +19,7 @@
 
 #include <qobject.h>
 
+class KJob;
 namespace KIO
 {
 	class Job;

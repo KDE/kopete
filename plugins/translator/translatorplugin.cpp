@@ -383,9 +383,10 @@ void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data 
 
 void TranslatorPlugin::slotJobDone ( KJob *job )
 {
-	m_completed[ job ] = true;
-	QObject::disconnect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
-	QObject::disconnect( job, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
+	KIO::Job *kioJob = static_cast<KIO::Job*>(job);
+	m_completed[ kioJob ] = true;
+	QObject::disconnect( kioJob, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
+	QObject::disconnect( kioJob, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
 }
 
 void TranslatorPlugin::slotSetLanguage()
