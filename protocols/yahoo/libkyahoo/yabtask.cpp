@@ -110,7 +110,7 @@ void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 	m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2; C=%3;")
 				.arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()) );
 	connect( m_transferJob, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
-	connect( m_transferJob, SIGNAL( result( KIO::Job *) ), this, SLOT( slotResult( KIO::Job* ) ) );
+	connect( m_transferJob, SIGNAL( result( KJob *) ), this, SLOT( slotResult( KJob* ) ) );
 }
 
 void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
@@ -119,7 +119,7 @@ void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
 	m_data += info;
 }
 
-void YABTask::slotResult( KIO::Job* job )
+void YABTask::slotResult( KJob* job )
 {
 	if( job->error () || m_transferJob->isErrorPage () )
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Could not retrieve server side addressbook for user info." << endl;

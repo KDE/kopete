@@ -65,7 +65,7 @@ signals:
 
 private slots:
 		void slotData( KIO::Job *job, const QByteArray &data );
-		void slotComplete( KIO::Job *job );
+		void slotComplete( KJob *job );
 
 private:
 		typedef QMap< KIO::TransferJob *, IconLoadJob > TransferJobMap;

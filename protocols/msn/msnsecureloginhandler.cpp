@@ -45,10 +45,10 @@ void MSNSecureLoginHandler::login()
 	getLoginServer->addMetaData("cache", "reload");
 	getLoginServer->addMetaData("PropagateHttpHeader", "true");
 
-	connect(getLoginServer, SIGNAL(result(KIO::Job *)), this, SLOT(slotLoginServerReceived(KIO::Job* )));
+	connect(getLoginServer, SIGNAL(result(KJob *)), this, SLOT(slotLoginServerReceived(KJob* )));
 }
 
-void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
+void MSNSecureLoginHandler::slotLoginServerReceived(KJob *loginJob)
 {
 	if(!loginJob->error())
 	{
@@ -86,7 +86,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 		authJob->addMetaData("cookies", "manual");
 		authJob->addMetaData("cache", "reload");
 		
-		connect(authJob, SIGNAL(result(KIO::Job *)), this, SLOT(slotTweenerReceived(KIO::Job* )));
+		connect(authJob, SIGNAL(result(KJob *)), this, SLOT(slotTweenerReceived(KJob* )));
 	}
 	else
 	{
@@ -96,7 +96,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 	}	
 }
 
-void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
+void MSNSecureLoginHandler::slotTweenerReceived(KJob *authJob)
 {
 	if(!authJob->error())
 	{

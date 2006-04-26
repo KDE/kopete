@@ -49,7 +49,7 @@ private slots:
 	void slotOk ();
 	void slotCancel ();
 	void slotTransferData ( KIO::Job *job, const QByteArray &data );
-	void slotTransferResult ( KIO::Job *job );
+	void slotTransferResult ( KJob *job );
 	void slotSetSelection ( int row );
 
 private:

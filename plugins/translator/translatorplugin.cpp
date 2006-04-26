@@ -273,7 +273,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	//job->addMetaData( "referrer", "http://www.google.com" );
 
 	QObject::connect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
-	QObject::connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotJobDone( KIO::Job * ) ) );
+	QObject::connect( job, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
 
 	// KIO is async and we use a sync API, so use the processEvents hack to work around that
 	// FIXME: We need to make the libkopete API async to get rid of this processEvents.
@@ -308,7 +308,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 	KIO::TransferJob *job = KIO::get( geturl, false, true );
 
 	QObject::connect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
-	QObject::connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotJobDone( KIO::Job * ) ) );
+	QObject::connect( job, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
 
 	// KIO is async and we use a sync API, so use the processEvents hack to work around that
 	// FIXME: We need to make the libkopete API async to get rid of this processEvents.
@@ -381,11 +381,11 @@ void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data 
 	m_data[ job ] += QByteArray( data, data.size() + 1 );
 }
 
-void TranslatorPlugin::slotJobDone ( KIO::Job *job )
+void TranslatorPlugin::slotJobDone ( KJob *job )
 {
 	m_completed[ job ] = true;
 	QObject::disconnect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
-	QObject::disconnect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotJobDone( KIO::Job * ) ) );
+	QObject::disconnect( job, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
 }
 
 void TranslatorPlugin::slotSetLanguage()

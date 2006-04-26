@@ -138,14 +138,14 @@ void IRCTransferHandler::connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Trans
 //		connect(kt,  SIGNAL(destroyed()),
 //			t, SLOT(slotKopeteTransferDestroyed()));
 
-		connect(kt, SIGNAL(result(KIO::Job *)),
-			this , SLOT(kioresult(KIO::Job *)));
+		connect(kt, SIGNAL(result(KJob *)),
+			this , SLOT(kioresult(KJob *)));
 
 		t->initiate();
 	}
 }
 
-void IRCTransferHandler::kioresult(KIO::Job *job)
+void IRCTransferHandler::kioresult(KJob *job)
 {
 	Kopete::Transfer *kt= (Kopete::Transfer *)job; // FIXME: move to *_cast
 	if(!kt)

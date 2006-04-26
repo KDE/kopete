@@ -79,7 +79,7 @@ protected slots:
 	/**
 	 * Called when an upload finished, displays error if needed
 	 */
-	 void slotUploadJobResult( KIO::Job * );
+	 void slotUploadJobResult( KJob * );
 	/**
 	 * Called to schedule a write, after waiting to see if more changes
 	 * occur (accounts tend to change status together)

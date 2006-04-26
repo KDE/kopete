@@ -198,11 +198,11 @@ void WebPresencePlugin::slotWriteFile()
 	// upload it to the specified URL
 	KUrl src = KUrl::fromPathOrURL( m_output->name() );
 	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
-	connect( job, SIGNAL( result( KIO::Job * ) ),
-			SLOT(  slotUploadJobResult( KIO::Job * ) ) );
+	connect( job, SIGNAL( result( KJob * ) ),
+			SLOT(  slotUploadJobResult( KJob * ) ) );
 }
 
-void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
+void WebPresencePlugin::slotUploadJobResult( KJob *job )
 {
 	if ( job->error() ) {
 		kDebug(14309) << "Error uploading presence info." << endl;

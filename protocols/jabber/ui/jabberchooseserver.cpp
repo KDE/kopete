@@ -47,7 +47,7 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const ch
 	// retrieve server list
 	mTransferJob = KIO::get ( KUrl("http://www.jabber.org/servers.xml") );
 
-	connect ( mTransferJob, SIGNAL ( result ( KIO::Job* ) ), this, SLOT ( slotTransferResult ( KIO::Job* ) ) );
+	connect ( mTransferJob, SIGNAL ( result ( KJob* ) ), this, SLOT ( slotTransferResult ( KJob* ) ) );
 	connect ( mTransferJob, SIGNAL ( data ( KIO::Job*, const QByteArray& ) ), this, SLOT ( slotTransferData ( KIO::Job*, const QByteArray& ) ) );
 
 	connect ( mMainWidget->listServers, SIGNAL ( pressed ( int, int, int, const QPoint & ) ), this, SLOT ( slotSetSelection ( int ) ) );
@@ -102,7 +102,7 @@ void JabberChooseServer::slotTransferData ( KIO::Job */*job*/, const QByteArray 
 
 }
 
-void JabberChooseServer::slotTransferResult ( KIO::Job *job )
+void JabberChooseServer::slotTransferResult ( KJob *job )
 {
 
 	if ( job->error () || mTransferJob->isErrorPage () )

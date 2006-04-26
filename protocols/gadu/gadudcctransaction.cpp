@@ -281,7 +281,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( Kopete::Transfer* transfer, c
 		dccSock_->file_fd = localFile_.handle();
 	}
 
-	connect ( transfer, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotTransferResult() ) );
+	connect ( transfer, SIGNAL( result( KJob * ) ), this, SLOT( slotTransferResult() ) );
 
 	// reenable notifiers
 	enableNotifiers( dccSock_->check );

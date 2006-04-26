@@ -686,7 +686,7 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 	delete f;
 
 	//let the time to KIO to copy the file
-	connect(j, SIGNAL(result(KIO::Job *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
+	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
 }
 
 void MSNContact::slotEmitDisplayPictureChanged()

@@ -73,7 +73,7 @@ private slots:
 	void slotIncomingMessage( Kopete::Message& msg );
 	void slotOutgoingMessage( Kopete::Message& msg );
 	void slotDataReceived ( KIO::Job *, const QByteArray &data);
-	void slotJobDone ( KIO::Job *);
+	void slotJobDone ( KJob *);
 	void slotSetLanguage();
 	void slotSelectionChanged(bool);
 	void slotNewKMM(Kopete::ChatSession *);

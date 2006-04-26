@@ -50,11 +50,11 @@ signals:
 	void loginFailed();
 
 private slots:
-	void slotLoginServerReceived(KIO::Job *);
+	void slotLoginServerReceived(KJob *);
 	/**
 	 * We have received our ticket to login.
 	 */
-	void slotTweenerReceived(KIO::Job *);
+	void slotTweenerReceived(KJob *);
 
 private:
 	/**

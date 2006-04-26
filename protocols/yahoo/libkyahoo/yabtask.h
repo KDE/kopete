@@ -50,7 +50,7 @@ protected:
 	void parseContactDetails( Transfer* transfer );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );
-	void slotResult( KIO::Job* );
+	void slotResult( KJob* );
 private:
 	KIO::TransferJob *m_transferJob;
 	QString m_data;

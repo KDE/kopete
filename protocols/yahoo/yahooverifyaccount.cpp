@@ -61,7 +61,7 @@ void YahooVerifyAccount::setUrl( KUrl url )
 	mFile = new KTempFile( locateLocal( "tmp", url.fileName() ) );
 	mFile->setAutoDelete( true );
 	KIO::TransferJob *transfer = KIO::get( url, false, false );
-	connect( transfer, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );
+	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
 }
 
@@ -73,7 +73,7 @@ void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 	mFile->file()->write( data.data() , data.size() );
 }
 
-void YahooVerifyAccount::slotComplete( KIO::Job */*job*/ )
+void YahooVerifyAccount::slotComplete( KJob */*job*/ )
 {
 
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;

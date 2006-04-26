@@ -48,7 +48,7 @@ protected slots:
 	virtual void slotApply();
 public slots:
 	void slotData( KIO::Job *job, const QByteArray& data );
-	void slotComplete( KIO::Job *job );
+	void slotComplete( KJob *job );
 };
 
 #endif

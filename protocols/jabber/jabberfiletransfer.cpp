@@ -90,7 +90,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 																			  contact->contactId (),
 																			  Kopete::FileTransferInfo::Outgoing );
 
- 	connect ( mKopeteTransfer, SIGNAL ( result ( KIO::Job * ) ), this, SLOT ( slotTransferResult () ) );
+ 	connect ( mKopeteTransfer, SIGNAL ( result ( KJob * ) ), this, SLOT ( slotTransferResult () ) );
 
 	mXMPPTransfer = mAccount->client()->fileTransferManager()->createTransfer ();
 
@@ -188,7 +188,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 	}
 	else
 	{
-		connect ( mKopeteTransfer, SIGNAL ( result ( KIO::Job * ) ), this, SLOT ( slotTransferResult () ) );
+		connect ( mKopeteTransfer, SIGNAL ( result ( KJob * ) ), this, SLOT ( slotTransferResult () ) );
 		connect ( mXMPPTransfer, SIGNAL ( readyRead ( const QByteArray& ) ), this, SLOT ( slotIncomingDataReady ( const QByteArray & ) ) );
 		connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
 		mXMPPTransfer->accept ( offset, length );
