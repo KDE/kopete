@@ -125,7 +125,7 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 
 	setFileCapable( newstatus->fileCap );
 
-	kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.ip4Addr() << " image size: " << image_size << "  version: "  << version  << endl;
+	kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.toIPv4Address() << " image size: " << image_size << "  version: "  << version  << endl;
 
 }
 

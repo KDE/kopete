@@ -368,7 +368,7 @@ static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, 
 	a[at++] = 0x00; // reserved
 	if(addr.isIp4Addr()) {
 		a[at++] = 0x01; // address type = ipv4
-		Q_UINT32 ip4 = htonl(addr.ip4Addr());
+		Q_UINT32 ip4 = htonl(addr.toIPv4Address());
 		a.resize(at+4);
 		memcpy(a.data() + at, &ip4, 4);
 		at += 4;

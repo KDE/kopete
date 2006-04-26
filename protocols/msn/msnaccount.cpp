@@ -275,7 +275,7 @@ KActionMenu * MSNAccount::actionMenu()
 
 	KAction *rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), 0, "m_debugRawCommand" );
 	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
-	debugMenu->insert(rawCmd);
+	debugMenu->addAction(rawCmd);
 
 	m_actionMenu->kMenu()->addSeparator();
 	m_actionMenu->addAction( debugMenu );

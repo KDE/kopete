@@ -1361,7 +1361,7 @@ void Task::debug(const char *fmt, ...)
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QString("%1: ").arg(className()) + str);
+	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
 }
 
 bool Task::iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns)

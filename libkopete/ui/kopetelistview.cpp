@@ -696,7 +696,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 	}
 	else
 	{
-// 		kDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
+// 		kDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->metaObject()->className() << "][" << e->type() << "]" << endl;
 		return K3ListView::eventFilter( o, e ); // Pass the event to K3ListView
 	}
 

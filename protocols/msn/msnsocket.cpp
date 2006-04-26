@@ -863,7 +863,7 @@ bool MSNSocket::setUseHttpMethod( bool useHttp )
 		return true;
 
 	if( useHttp ) {
-		QString s = QString( this->className() ).toLower();
+		QString s = QString( this->metaObject()->className() ).toLower();
 		if( s == "msnnotifysocket" )
 			m_type = "NS";
 		else if( s == "msnswitchboardsocket" )

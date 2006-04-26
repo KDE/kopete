@@ -524,7 +524,8 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* account)
 {
-	KAction *action = new KAction( account->accountLabel(), QIcon(account->accountIcon()), 0, this, SLOT(slotAddContact()), 0, 0);
+	KAction *action = new KAction( KIcon(QIcon(account->accountIcon())), account->accountLabel(), 0, 0 );
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotAddContact()) );
 	m_accountAddContactMap.insert( account, action);
 	actionAddContact->addAction( action );
 }
@@ -536,7 +537,7 @@ void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::
 	{
 		KAction *action = m_accountAddContactMap[account];
 		m_accountAddContactMap.remove( account );
-		actionAddContact->remove( action );
+		actionAddContact->removeAction( action );
 	}
 }
 

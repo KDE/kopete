@@ -115,7 +115,7 @@ public:
 
 	/**
 	 * @brief Get the plugin id
-	 * @return the plugin's id which is gotten by calling QObject::className().
+	 * @return the plugin's id which is gotten by calling QObject::metaObject()->className().
 	 */
 	QString pluginId() const;
 

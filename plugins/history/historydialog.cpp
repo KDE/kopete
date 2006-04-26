@@ -123,19 +123,19 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 	mMainWidget->searchLine->setFocus(); 
 	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
-	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
+	mMainWidget->searchErase->setIcon( QIcon(BarIcon("locationbar_erase")) );
 
-	mMainWidget->contactComboBox->insertItem(i18n("All"));
+	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
 	
 	foreach(Kopete::MetaContact *metaContact, mMetaContactList)
 	{
-		mMainWidget->contactComboBox->insertItem(metaContact->displayName());
+		mMainWidget->contactComboBox->addItem(metaContact->displayName());
 	}
 
 
 	if (mMetaContact)
-		mMainWidget->contactComboBox->setCurrentItem(mMetaContactList.indexOf(mMetaContact)+1);
+		mMainWidget->contactComboBox->setCurrentIndex(mMetaContactList.indexOf(mMetaContact)+1);
 
 	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
 	mMainWidget->dateListView->setSorting(0, 0); //newest-first
@@ -385,7 +385,7 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 			if (!mMainWidget->searchLine->text().isEmpty())
 			// If there is a search, then we hightlight the keywords
 			{
-				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
+				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
 			}
 		
 			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "

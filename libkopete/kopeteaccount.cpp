@@ -378,7 +378,7 @@ KActionMenu * Account::actionMenu()
 
 	KAction *propertiesAction = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
-	menu->insert( propertiesAction );
+	menu->addAction( propertiesAction );
 
 	return menu;
 }

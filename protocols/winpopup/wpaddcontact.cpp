@@ -66,7 +66,7 @@ void WPAddContact::slotUpdateGroups()
 	QStringList Groups = theAccount->getGroups();
 	QStringList::ConstIterator end = Groups.end();
 	for (QStringList::ConstIterator i = Groups.begin(); i != end; i++)
-		theDialog->mHostGroup->insertItem(SmallIcon("network"), *i);
+		theDialog->mHostGroup->addItem( QIcon(SmallIcon("network")), *i);
 	slotSelected(theDialog->mHostGroup->currentText());
 }
 
@@ -79,7 +79,7 @@ void WPAddContact::slotSelected(const QString &Group)
 	QString ownHost = theAccount->myself()->contactId();
 	QStringList::ConstIterator end = Hosts.end();
 	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
-		if (*i != ownHost) theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
+		if (*i != ownHost) theDialog->mHostName->addItem( QIcon(SmallIcon("personal")), *i);
 }
 
 bool WPAddContact::validateData()

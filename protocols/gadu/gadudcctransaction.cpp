@@ -95,7 +95,7 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact, QString& filePath )
 	kDebug( 14100 ) << "File path is " << filePath << endl;
 
 	if ( peerContact->contactPort() >= 10 ) {  
-		dccSock_ = gg_dcc_send_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
+		dccSock_ = gg_dcc_send_file( htonl( peerContact->contactIp().toIPv4Address() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
 		gg_dcc_fill_file_info(dccSock_,filePath.toAscii());
 		transfer_ = Kopete::TransferManager::transferManager()->addTransfer ( peerContact,
 		filePath,  dccSock_->file_info.size, peerContact->metaContact()->displayName(),	Kopete::FileTransferInfo::Outgoing );
@@ -126,7 +126,7 @@ GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerCont
 	kDebug( 14100 ) << "setupIncoming for UIN: " << uin << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
 
 	peer = peerContact->uin();
-	dccSock_ = gg_dcc_get_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), uin, peer );
+	dccSock_ = gg_dcc_get_file( htonl( peerContact->contactIp().toIPv4Address() ), peerContact->contactPort(), uin, peer );
 
 	contact = peerContact;
 	return setupIncoming( dccSock_ );

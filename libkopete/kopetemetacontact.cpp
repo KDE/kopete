@@ -276,7 +276,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		}
 
 		// Reparent the contact
-		removeChild( c );
+		c->setParent( 0 );
 
 		emit contactRemoved( c );
 	}

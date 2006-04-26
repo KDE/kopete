@@ -774,7 +774,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
 		 //this sends the server if mails are deleted
-		 QString m = msg.right(msg.length() - msg.find("Message-Delta:") );
+		 QString m = msg.right(msg.length() - msg.indexOf("Message-Delta:") );
 		 m = m.left(msg.indexOf("\r\n"));
 		 mailCount = mailCount - m.right(m.length() -m.indexOf(" ")-1).toUInt();
 	}

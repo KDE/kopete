@@ -296,7 +296,7 @@ void NDns::stop()
 //! \sa resultsReady()
 uint NDns::result() const
 {
-	return addr.ip4Addr();
+	return addr.toIPv4Address();
 }
 
 //!

@@ -56,7 +56,7 @@ GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 		gg_dcc_ip = 0xffffffff; // 255.255.255.255
 	}
 	else {
-		gg_dcc_ip = htonl( dccIp->ip4Addr() );
+		gg_dcc_ip = htonl( dccIp->toIPv4Address() );
 	}
 	gg_dcc_port = dccSock->port;
 

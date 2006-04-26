@@ -221,7 +221,8 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 			WorkGroup nWG;
 			nWG.addHosts(currentHosts);
 
-			currentGroupsMap.insert(currentGroup, nWG, true);
+			currentGroupsMap.remove(currentGroup);
+			currentGroupsMap.insert(currentGroup, nWG);
 		}
 
 	} else {
