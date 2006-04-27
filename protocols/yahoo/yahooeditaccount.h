@@ -28,11 +28,11 @@
 #include "kopetepasswordwidget.h"
 
 // Local Includes
-#include "yahooeditaccountbase.h"
+#include "ui_yahooeditaccountbase.h"
 
 namespace Kopete { class Account; }
 
-class YahooEditAccount: public YahooEditAccountBase, public KopeteEditAccountWidget
+class YahooEditAccount: public QWidget, private Ui::YahooEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

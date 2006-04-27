@@ -50,8 +50,9 @@
 #include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
-YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
+YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent): QWidget(parent), KopeteEditAccountWidget(theAccount)
 {
+	setupUi(this);
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	theProtocol = protocol;
