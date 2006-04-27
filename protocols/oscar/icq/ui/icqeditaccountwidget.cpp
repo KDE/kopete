@@ -15,7 +15,7 @@
 */
 
 #include "icqeditaccountwidget.h"
-#include "icqeditaccountui.h"
+#include "ui_icqeditaccountui.h"
 
 #include <qlayout.h>
 #include <qcheckbox.h>
@@ -56,7 +56,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mProtocol=protocol;
 
 	(new Q3VBoxLayout(this))->setAutoAdd(true);
-	mAccountSettings = new ICQEditAccountUI( this );
+	mAccountSettings = new Ui::ICQEditAccountUI();
+	mAccountSettings->setupUi( this );
 
     mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );
 

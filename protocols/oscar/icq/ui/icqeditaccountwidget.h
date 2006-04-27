@@ -26,7 +26,9 @@ namespace Kopete { class Account; }
 
 class ICQAccount;
 class ICQProtocol;
+namespace Ui {
 class ICQEditAccountUI;
+}
 
 class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
@@ -45,7 +47,7 @@ private slots:
 protected:
 	ICQAccount *mAccount;
 	ICQProtocol *mProtocol;
-	ICQEditAccountUI *mAccountSettings;
+	Ui::ICQEditAccountUI *mAccountSettings;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
