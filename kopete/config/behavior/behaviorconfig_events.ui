@@ -5,16 +5,16 @@
  <class>BehaviorConfig_Events</class>
  <widget class="QWidget" name="BehaviorConfig_Events" >
   <property name="geometry" >
-        <rect>
-            <x>0</x>
-            <y>0</y>
+   <rect>
+    <x>0</x>
+    <y>0</y>
     <width>368</width>
     <height>310</height>
-        </rect>
-    </property>
+   </rect>
+  </property>
   <property name="windowTitle" >
-        <string>Events</string>
-    </property>
+   <string>Events</string>
+  </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
     <number>9</number>
@@ -25,8 +25,8 @@
    <item>
     <widget class="QGroupBox" name="notifyGroupBox" >
      <property name="title" >
-                <string>Tray Flash &amp;&amp; Bubble</string>
-            </property>
+      <string>Tray Flash &amp;&amp; Bubble</string>
+     </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
        <number>9</number>
@@ -37,54 +37,54 @@
       <item>
        <widget class="QCheckBox" name="kcfg_trayflashNotify" >
         <property name="toolTip" >
-                        <string>Flash the system tray icon on an incoming message</string>
-                    </property>
+         <string>Flash the system tray icon on an incoming message</string>
+        </property>
         <property name="whatsThis" >
-                        <string>Flash the system tray icon whenever a message comes in.</string>
-                    </property>
+         <string>Flash the system tray icon whenever a message comes in.</string>
+        </property>
         <property name="text" >
          <string>Flash s&amp;ystem tray</string>
         </property>
-                </widget>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" >
         <property name="margin" >
          <number>0</number>
-                        </property>
+        </property>
         <property name="spacing" >
          <number>6</number>
-                            </property>
+        </property>
         <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
-                            </property>
+          </property>
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
-                            </property>
+          </property>
           <property name="sizeHint" >
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QCheckBox" name="kcfg_trayflashNotifyLeftClickOpensMessage" >
           <property name="enabled" >
-                                <bool>false</bool>
-                            </property>
+           <bool>false</bool>
+          </property>
           <property name="toolTip" >
-                                <string>Left mouse click on flashing system tray opens message instead of restoring/minimizing contact list</string>
-                            </property>
+           <string>Left mouse click on flashing system tray opens message instead of restoring/minimizing contact list</string>
+          </property>
           <property name="whatsThis" >
-                                <string>A left mouse click on the flashing system tray icon opens the incoming message instead of restoring/minimizing the contact list (e.g. to check who is sending messages). A middle click always opens this message.</string>
-                            </property>
+           <string>A left mouse click on the flashing system tray icon opens the incoming message instead of restoring/minimizing the contact list (e.g. to check who is sending messages). A middle click always opens this message.</string>
+          </property>
           <property name="text" >
            <string>&amp;Left mouse click opens message</string>
-                    </property>
+          </property>
          </widget>
         </item>
        </layout>
@@ -92,55 +92,55 @@
       <item>
        <widget class="QCheckBox" name="kcfg_balloonNotify" >
         <property name="toolTip" >
-                        <string>Show a bubble on an incoming message</string>
-                    </property>
+         <string>Show a bubble on an incoming message</string>
+        </property>
         <property name="whatsThis" >
-                        <string>Show a bubble whenever a message comes in.</string>
-                    </property>
+         <string>Show a bubble whenever a message comes in.</string>
+        </property>
         <property name="text" >
          <string>Sho&amp;w bubble</string>
         </property>
-                </widget>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" >
         <property name="margin" >
          <number>0</number>
-                        </property>
+        </property>
         <property name="spacing" >
          <number>6</number>
-                            </property>
+        </property>
         <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
-                            </property>
+          </property>
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
-                            </property>
+          </property>
           <property name="sizeHint" >
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QCheckBox" name="kcfg_balloonNotifyIgnoreClosesChatView" >
           <property name="enabled" >
-                                <bool>false</bool>
-                            </property>
+           <bool>false</bool>
+          </property>
           <property name="toolTip" >
-                                <string>The "Ignore" button of the bubble closes the chat window for the sender</string>
-                            </property>
+           <string>The "Ignore" button of the bubble closes the chat window for the sender</string>
+          </property>
           <property name="whatsThis" >
-                                <string>If there is already a chat window opened for the sender of the message displayed in the bubble the "Ignore" button will close this chat window.</string>
-                            </property>
+           <string>If there is already a chat window opened for the sender of the message displayed in the bubble the "Ignore" button will close this chat window.</string>
+          </property>
           <property name="text" >
            <string>Button "I&amp;gnore" closes chat</string>
           </property>
-                        </widget>
+         </widget>
         </item>
        </layout>
       </item>
@@ -148,43 +148,43 @@
        <layout class="QHBoxLayout" >
         <property name="margin" >
          <number>0</number>
-                        </property>
+        </property>
         <property name="spacing" >
          <number>6</number>
-                            </property>
+        </property>
         <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
-                            </property>
+          </property>
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
-                            </property>
+          </property>
           <property name="sizeHint" >
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QCheckBox" name="kcfg_balloonClose" >
           <property name="enabled" >
-                                <bool>false</bool>
-                            </property>
+           <bool>false</bool>
+          </property>
           <property name="toolTip" >
-                                <string>Automatically close bubble after fixed amount of time</string>
-                            </property>
+           <string>Automatically close bubble after fixed amount of time</string>
+          </property>
           <property name="whatsThis" >
-                                <string>Bubbles will automatically be closed after a fixed amount of time. A closed one will be replaced by a new one if another message is waiting.</string>
-                            </property>
+           <string>Bubbles will automatically be closed after a fixed amount of time. A closed one will be replaced by a new one if another message is waiting.</string>
+          </property>
           <property name="text" >
            <string>Close &amp;bubble automatically after</string>
-                            </property>
+          </property>
           <property name="checked" >
-                                <bool>false</bool>
-                            </property>
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -193,71 +193,71 @@
            <bool>false</bool>
           </property>
           <property name="suffix" >
-                                <string> Sec</string>
-                            </property>
+           <string> Sec</string>
+          </property>
           <property name="maximum" >
-                                <number>120</number>
-                            </property>
+           <number>120</number>
+          </property>
           <property name="minimum" >
-                                <number>1</number>
-                            </property>
+           <number>1</number>
+          </property>
           <property name="value" >
-                                <number>30</number>
-                            </property>
-                        </widget>
+           <number>30</number>
+          </property>
+         </widget>
         </item>
         <item>
-                        <spacer>
+         <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
-                            </property>
+          </property>
           <property name="sizeType" >
            <enum>QSizePolicy::Expanding</enum>
-                            </property>
+          </property>
           <property name="sizeHint" >
-                                <size>
-                                    <width>70</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
+           <size>
+            <width>70</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_queueOnlyHighlightedMessagesInGroupChats" >
         <property name="toolTip" >
-                        <string>Notify only highlighted messages in group chats</string>
-                    </property>
+         <string>Notify only highlighted messages in group chats</string>
+        </property>
         <property name="whatsThis" >
-                        <string>In very active group chats important messages can be singled out by excluding non-highlighted messages from notification.</string>
-                    </property>
+         <string>In very active group chats important messages can be singled out by excluding non-highlighted messages from notification.</string>
+        </property>
         <property name="text" >
          <string>Exclude non-&amp;highlighted messages in group chats</string>
-                    </property>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_queueOnlyMessagesOnAnotherDesktop" >
         <property name="toolTip" >
-                        <string>Do not display notification for messages in chat windows on current desktop</string>
-                    </property>
+         <string>Do not display notification for messages in chat windows on current desktop</string>
+        </property>
         <property name="whatsThis" >
-                        <string>This option allows you to turn off the notification of events for chat windows that are on the current desktop. If this option is turned on, then only chat windows on different desktops than the current one will notify you that an event has occured. Otherwise, all chat windows will notify you that an event has occured.</string>
-                    </property>
+         <string>This option allows you to turn off the notification of events for chat windows that are on the current desktop. If this option is turned on, then only chat windows on different desktops than the current one will notify you that an event has occured. Otherwise, all chat windows will notify you that an event has occured.</string>
+        </property>
         <property name="text" >
          <string>Exclude messages in chats on current des&amp;ktop</string>
         </property>
-                </widget>
+       </widget>
       </item>
      </layout>
-        </widget>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-                <string>Miscellaneous</string>
-            </property>
+      <string>Miscellaneous</string>
+     </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
        <number>9</number>
@@ -268,88 +268,153 @@
       <item>
        <widget class="QCheckBox" name="kcfg_enableEventsWhileAway" >
         <property name="toolTip" >
-                        <string>Enable events if your account status is "Away"</string>
-                    </property>
+         <string>Enable events if your account status is "Away"</string>
+        </property>
         <property name="whatsThis" >
-                        <string>Enable notification events even if your account status is "Away" or less available, e.g. "Not Available" or "Do not Disturb". Note: This does not affect the flashing of the system tray icon.</string>
-                    </property>
+         <string>Enable notification events even if your account status is "Away" or less available, e.g. "Not Available" or "Do not Disturb". Note: This does not affect the flashing of the system tray icon.</string>
+        </property>
         <property name="text" >
          <string>E&amp;nable events while away</string>
-                    </property>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_showEventsIfActive" >
         <property name="toolTip" >
-                        <string>Enable events for incoming messages if the chat window is active</string>
-                    </property>
+         <string>Enable events for incoming messages if the chat window is active</string>
+        </property>
         <property name="whatsThis" >
-                        <string>Enable notification events for incoming messages even if the receiving chat window is active. Note: Neither the system tray icon flashes nor the bubble is shown.</string>
-                    </property>
+         <string>Enable notification events for incoming messages even if the receiving chat window is active. Note: Neither the system tray icon flashes nor the bubble is shown.</string>
+        </property>
         <property name="text" >
          <string>Enable events for acti&amp;ve chat windows</string>
-                    </property>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_trayflashNotifySetCurrentDesktopToChatView" >
         <property name="toolTip" >
-                        <string>Switch to the desktop which contains the chat window for the sender when opening his/her message</string>
-                    </property>
+         <string>Switch to the desktop which contains the chat window for the sender when opening his/her message</string>
+        </property>
         <property name="whatsThis" >
-                        <string>If there is already a chat window open for the sender of the message, opening his/her message will cause a switch to the desktop which contains this chat window.</string>
-                    </property>
+         <string>If there is already a chat window open for the sender of the message, opening his/her message will cause a switch to the desktop which contains this chat window.</string>
+        </property>
         <property name="text" >
          <string>Switch &amp;to desktop containing chat on opening message</string>
-                    </property>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_raiseMessageWindow" >
         <property name="toolTip" >
-                        <string>Raise the chat window/tab on an incoming message</string>
-                    </property>
+         <string>Raise the chat window/tab on an incoming message</string>
+        </property>
         <property name="whatsThis" >
-                        <string>If there is already a chat window opened for the sender of an incoming message this window will be put on the current desktop and in front of all other windows.</string>
-                    </property>
+         <string>If there is already a chat window opened for the sender of an incoming message this window will be put on the current desktop and in front of all other windows.</string>
+        </property>
         <property name="text" >
          <string>&amp;Raise window on incoming message</string>
         </property>
-                </widget>
+       </widget>
       </item>
      </layout>
-        </widget>
+    </widget>
    </item>
    <item>
-        <spacer>
+    <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
-            </property>
+     </property>
      <property name="sizeType" >
       <enum>QSizePolicy::Expanding</enum>
-            </property>
+     </property>
      <property name="sizeHint" >
-                <size>
-                    <width>20</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
+      <size>
+       <width>20</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
-    <tabstop>kcfg_trayflashNotify</tabstop>
-    <tabstop>kcfg_balloonNotify</tabstop>
-    <tabstop>kcfg_queueOnlyHighlightedMessagesInGroupChats</tabstop>
-    <tabstop>kcfg_queueOnlyMessagesOnAnotherDesktop</tabstop>
-    <tabstop>kcfg_enableEventsWhileAway</tabstop>
-    <tabstop>kcfg_showEventsIfActive</tabstop>
-    <tabstop>kcfg_trayflashNotifySetCurrentDesktopToChatView</tabstop>
-    <tabstop>kcfg_raiseMessageWindow</tabstop>
+  <tabstop>kcfg_trayflashNotify</tabstop>
+  <tabstop>kcfg_balloonNotify</tabstop>
+  <tabstop>kcfg_queueOnlyHighlightedMessagesInGroupChats</tabstop>
+  <tabstop>kcfg_queueOnlyMessagesOnAnotherDesktop</tabstop>
+  <tabstop>kcfg_enableEventsWhileAway</tabstop>
+  <tabstop>kcfg_showEventsIfActive</tabstop>
+  <tabstop>kcfg_trayflashNotifySetCurrentDesktopToChatView</tabstop>
+  <tabstop>kcfg_raiseMessageWindow</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_trayflashNotify</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_trayflashNotifyLeftClickOpensMessage</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>126</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>129</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_balloonNotify</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_balloonNotifyIgnoreClosesChatView</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>56</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>88</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_balloonNotify</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_balloonClose</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>174</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>181</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_balloonClose</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_balloonCloseDelay</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>58</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>252</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

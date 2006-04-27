@@ -5,28 +5,148 @@
  <class>KopeteAwayConfigBaseUI</class>
  <widget class="QWidget" name="KopeteAwayConfigBaseUI" >
   <property name="geometry" >
-        <rect>
-            <x>0</x>
-            <y>0</y>
-    <width>340</width>
-            <height>266</height>
-        </rect>
-    </property>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>451</width>
+    <height>266</height>
+   </rect>
+  </property>
   <property name="windowTitle" >
-        <string>Away Configuration</string>
-    </property>
-  <layout class="QVBoxLayout" >
+   <string>Away Configuration</string>
+  </property>
+  <layout class="QGridLayout" >
    <property name="margin" >
     <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Auto Away</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="1" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>16</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1" >
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item rowspan="2" row="0" column="0" >
+         <widget class="QLabel" name="TextLabel2" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Become away after</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="3" >
+         <widget class="QCheckBox" name="kcfg_autoAwayGoAvailable" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Become available when detecting activity again</string>
+          </property>
+         </widget>
+        </item>
+        <item rowspan="2" row="0" column="2" colspan="2" >
+         <widget class="QLabel" name="TextLabel3" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>minutes of user inactivity</string>
+          </property>
+         </widget>
+        </item>
+        <item rowspan="2" row="0" column="1" >
+         <widget class="QSpinBox" name="mAutoAwayTimeout" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="maximum" >
+           <number>999</number>
+          </property>
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_useAutoAway" >
+        <property name="text" >
+         <string>Use auto awa&amp;y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>70</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0" >
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-                <string>General</string>
-            </property>
+      <string>General</string>
+     </property>
      <layout class="QHBoxLayout" >
       <property name="margin" >
        <number>9</number>
@@ -41,153 +161,121 @@
         </property>
         <property name="whatsThis" >
          <string>Kopete will remember this many away messages for use at a later date; if this limit is exceeded, the least-used message will be removed.</string>
-                    </property>
+        </property>
         <property name="text" >
-                        <string>Number of away messages to remember:</string>
-                    </property>
+         <string>Number of away messages to remember:</string>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="kcfg_awayMessageRemembered" >
         <property name="toolTip" >
-                        <string>Kopete will remember this many away messages for use at a later date; if this limit is exceeded, the least-used message will be removed.</string>
-                    </property>
+         <string>Kopete will remember this many away messages for use at a later date; if this limit is exceeded, the least-used message will be removed.</string>
+        </property>
         <property name="whatsThis" >
-                        <string>Kopete will remember this many away messages for use at a later date; if this limit is exceeded, the least-used message will be removed.</string>
-                    </property>
+         <string>Kopete will remember this many away messages for use at a later date; if this limit is exceeded, the least-used message will be removed.</string>
+        </property>
         <property name="minimum" >
-                        <number>1</number>
-                    </property>
+         <number>1</number>
+        </property>
         <property name="value" >
-                        <number>5</number>
-                    </property>
-                </widget>
+         <number>5</number>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
-                    </property>
+        </property>
         <property name="sizeType" >
          <enum>QSizePolicy::Expanding</enum>
-                    </property>
-        <property name="sizeHint" >
-                        <size>
-          <width>16</width>
-          <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-      </item>
-     </layout>
-        </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-                <string>Auto Away</string>
-            </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="kcfg_useAutoAway" >
-        <property name="text" >
-                        <string>Use auto awa&amp;y</string>
-                    </property>
-                </widget>
-      </item>
-      <item row="2" column="0" colspan="3" >
-       <widget class="QCheckBox" name="kcfg_autoAwayGoAvailable" >
-        <property name="enabled" >
-                        <bool>false</bool>
-                    </property>
-        <property name="text" >
-         <string>&amp;Become available when detecting activity again</string>
-                    </property>
-                </widget>
-      </item>
-      <item row="1" column="3" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-                    </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-                    </property>
+        </property>
         <property name="sizeHint" >
          <size>
           <width>16</width>
-          <height>21</height>
+          <height>16</height>
          </size>
-                    </property>
+        </property>
        </spacer>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="TextLabel2" >
-        <property name="enabled" >
-                        <bool>false</bool>
-                    </property>
-        <property name="text" >
-         <string>Become away after</string>
-                    </property>
-                </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QSpinBox" name="mAutoAwayTimeout" >
-        <property name="enabled" >
-         <bool>false</bool>
-                    </property>
-        <property name="maximum" >
-         <number>999</number>
-                    </property>
-        <property name="minimum" >
-         <number>1</number>
-                    </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="TextLabel3" >
-        <property name="enabled" >
-                        <bool>false</bool>
-                    </property>
-        <property name="text" >
-         <string>minutes of user inactivity</string>
-                    </property>
-                </widget>
-      </item>
      </layout>
-        </widget>
-   </item>
-   <item>
-        <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-            </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-            </property>
-     <property name="sizeHint" >
-                <size>
-                    <width>20</width>
-                    <height>70</height>
-                </size>
-            </property>
-        </spacer>
+    </widget>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
-    <tabstop>kcfg_useAutoAway</tabstop>
-    <tabstop>mAutoAwayTimeout</tabstop>
-    <tabstop>kcfg_autoAwayGoAvailable</tabstop>
+  <tabstop>kcfg_useAutoAway</tabstop>
+  <tabstop>mAutoAwayTimeout</tabstop>
+  <tabstop>kcfg_autoAwayGoAvailable</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TextLabel2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>94</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>91</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mAutoAwayTimeout</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>64</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>154</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TextLabel3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>44</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>236</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_autoAwayGoAvailable</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>105</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>103</x>
+     <y>157</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
