@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>479</height>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -88,6 +88,9 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="Kopete::UI::PasswordWidget" name="mPasswordWidget" />
           </item>
           <item>
            <widget class="QCheckBox" name="mAutoConnect" >
@@ -502,6 +505,15 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Kopete::UI::PasswordWidget</class>
+   <extends></extends>
+   <header>kopetepasswordwidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>tabWidget11</tabstop>
   <tabstop>mScreenName</tabstop>

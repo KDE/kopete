@@ -35,6 +35,9 @@ kde4_add_ui3_files(kopete_msn_ui_SRCS
 ui/msnadd.ui 
 ui/msndebugrawcommand_base.ui 
 ui/msninfo.ui 
+)
+
+kde4_add_ui_files(kopete_msn_ui_SRCS
 ui/msneditaccountui.ui
 )
 

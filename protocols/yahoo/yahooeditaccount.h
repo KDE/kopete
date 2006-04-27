@@ -38,7 +38,6 @@ class YahooEditAccount: public QWidget, private Ui::YahooEditAccountBase, public
 
 private:
 	YahooProtocol *theProtocol;
-	Kopete::UI::PasswordWidget *mPasswordWidget;
 
 public:
 	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);

@@ -50,7 +50,7 @@
 
 #include "msnaccount.h"
 #include "msncontact.h"
-#include "msneditaccountui.h"
+#include "ui_msneditaccountui.h"
 #include "msnnotifysocket.h"
 #include "msnprotocol.h"
 
@@ -59,7 +59,7 @@ class MSNEditAccountWidgetPrivate
 {
 public:
 	MSNProtocol *protocol;
-	MSNEditAccountUI *ui;
+	Ui::MSNEditAccountUI *ui;
 
 	QString pictureUrl;
 	QImage pictureData;
@@ -77,7 +77,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 	layout->setSpacing( 0 );
 	layout->setAutoAdd( true );
 
-	d->ui = new MSNEditAccountUI( this );
+	d->ui = new Ui::MSNEditAccountUI();
+	d->ui->setupUi( this );
 
 	// FIXME: actually, I don't know how to set fonts for qlistboxitem - Olivier
 	d->ui->label_font->hide();
