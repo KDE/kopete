@@ -61,7 +61,7 @@ void dlgJabberChatJoin::slotBowse()
 		return;
 	}
 
-	dlgJabberChatRoomsList *crl = new dlgJabberChatRoomsList(*m_account, m_chatroomsServer);
+	dlgJabberChatRoomsList *crl = new dlgJabberChatRoomsList(m_account, leServer->text() , leNick->text());
 	crl->show();
 	accept();
 }
@@ -88,6 +88,11 @@ void dlgJabberChatJoin::slotQueryFinished()
 	XMPP::JT_GetServices *task = (XMPP::JT_GetServices*)sender();
 	if (!task->success ())
 		return;
+	
+	if(!leServer->text().isEmpty())
+	{  //the user already started to type the server manyally. abort auto-detect
+		return;
+	}
 
 	for (XMPP::AgentList::const_iterator it = task->agents().begin(); it != task->agents().end(); ++it)
 	{
@@ -105,11 +110,16 @@ void dlgJabberChatJoin::slotDiscoFinished()
 
 	if (!task->success())
 		return;
+	
+	if(!leServer->text().isEmpty())
+	{  //the user already started to type the server manyally. abort auto-detect
+		return;
+	}
+
 
 	if (task->item().features().canGroupchat() && !task->item().features().isGateway())
 	{
-		m_chatroomsServer = task->item().jid().full();
-		leServer->setText(m_chatroomsServer);
+		leServer->setText(task->item().jid().full());
 	}
 }
 

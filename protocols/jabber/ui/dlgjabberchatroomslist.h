@@ -23,7 +23,7 @@ class dlgJabberChatRoomsList : public dlgChatRoomsList
   Q_OBJECT
 
 public:
-  dlgJabberChatRoomsList(JabberAccount& account, const QString& server = QString::null, QWidget* parent = 0, const char* name = 0);
+	dlgJabberChatRoomsList(JabberAccount* account, const QString& server = QString::null, const QString& nick = QString::null, QWidget* parent = 0, const char* name = 0);
   ~dlgJabberChatRoomsList();
   /*$PUBLIC_FUNCTIONS$*/
 
@@ -44,9 +44,10 @@ protected slots:
 
 private:
 
-	JabberAccount& m_account;
+	JabberAccount *m_account;
 	int m_selectedRow;
 	QString m_chatServer;
+	QString m_nick;
 };
 
 #endif

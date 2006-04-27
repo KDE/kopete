@@ -21,14 +21,14 @@
 #include "dlgjabberchatroomslist.h"
 #include "jabberprotocol.h"
 
-dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount& account, const QString& server, QWidget *parent, const char *name) :
+dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount* account, const QString& server, const QString &nick,  QWidget *parent, const char *name) :
 dlgChatRoomsList(parent, name),
-m_account(account)
+	m_account(account) , m_selectedRow(-1) ,  m_nick(nick)
 {
 	if (!server.isNull())
 		leServer->setText(server);
-	else if(m_account.isConnected())
-		leServer->setText(m_account.server());
+	else if(m_account->isConnected())
+		leServer->setText(m_account->server());
 
 	m_chatServer = leServer->text();
 
@@ -38,8 +38,6 @@ m_account(account)
 	tblChatRoomsList->setLeftMargin (0);
 	tblChatRoomsList->setColumnStretchable(0, true);
 	tblChatRoomsList->setColumnStretchable(1, true);
-
-	m_selectedRow = -1;
 
 	if (!server.isNull())
 		slotQuery();
@@ -52,30 +50,30 @@ dlgJabberChatRoomsList::~dlgJabberChatRoomsList()
 /*$SPECIALIZATION$*/
 void dlgJabberChatRoomsList::slotJoin()
 {
-	if(!m_account.isConnected())
+	if(!m_account->isConnected())
 	{
-		m_account.errorConnectFirst();
+		m_account->errorConnectFirst();
 		return;
 	}
 
 	if (m_selectedRow >= 0)
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account.client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer << endl;
-		m_account.client()->joinGroupChat(m_chatServer, tblChatRoomsList->text(m_selectedRow, 0), m_account.client()->client()->user());
+		kdDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer << endl;
+		m_account->client()->joinGroupChat(m_chatServer, tblChatRoomsList->text(m_selectedRow, 0), m_nick);
 	}
 }
 
 void dlgJabberChatRoomsList::slotQuery()
 {
-	if(!m_account.isConnected())
+	if(!m_account->isConnected())
 	{
-		m_account.errorConnectFirst();
+		m_account->errorConnectFirst();
 		return;
 	}
 
 	tblChatRoomsList->setNumRows(0);
 
-	XMPP::JT_DiscoItems *discoTask = new XMPP::JT_DiscoItems(m_account.client()->rootTask());
+	XMPP::JT_DiscoItems *discoTask = new XMPP::JT_DiscoItems(m_account->client()->rootTask());
 	connect (discoTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
 
 	m_chatServer = leServer->text();
@@ -104,13 +102,13 @@ void dlgJabberChatRoomsList::slotQueryFinished()
 	}
 }
 
-void dlgJabberChatRoomsList::slotDoubleClick(int row, int col, int button, const QPoint& mousePos)
+void dlgJabberChatRoomsList::slotDoubleClick(int row, int /*col*/, int /*button*/, const QPoint& /*mousePos*/)
 {
 	m_selectedRow = row;
 	slotJoin();
 }
 
-void dlgJabberChatRoomsList::slotClick(int row, int col, int button, const QPoint& mousePos)
+void dlgJabberChatRoomsList::slotClick(int row, int /*col*/, int /*button*/, const QPoint& /*mousePos*/)
 {
 	m_selectedRow = row;
 }

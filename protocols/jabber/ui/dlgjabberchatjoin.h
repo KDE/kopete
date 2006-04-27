@@ -46,7 +46,6 @@ private:
 	
 
 	JabberAccount *m_account;
-	QString m_chatroomsServer;
 
 	/*
 		TODO : Used to look for the default chat server,
