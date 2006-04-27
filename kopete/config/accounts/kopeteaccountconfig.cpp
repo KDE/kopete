@@ -78,7 +78,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	connect( mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
 	connect( mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
-	connect( mAccountList,  SIGNAL( itemDoubleClicked( QTreeWidgetItem * ) ), this, SLOT( slotEditAccount() ) );
+	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEditAccount() ) );
 	connect( mUseColor,     SIGNAL( toggled( bool ) ), this, SLOT( slotColorChanged() ) );
 	connect( mUseColor,     SIGNAL( toggled( bool ) ), mColorButton, SLOT(setEnabled(bool)) );
 	connect( mColorButton,  SIGNAL( changed( const QColor & ) ), this, SLOT( slotColorChanged() ) );
@@ -90,9 +90,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 KopeteAccountLVI* KopeteAccountConfig::selectedAccount()
 {
 	QList<QTreeWidgetItem*> selectedItems = mAccountList->selectedItems();
-	KopeteAccountLVI *itemSelected = 0;
 	if(!selectedItems.empty())
- 		return itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItems().first() );
+ 		return static_cast<KopeteAccountLVI*>( selectedItems.first() );
 	return 0;
 }
 
