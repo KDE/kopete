@@ -32,7 +32,7 @@ class Account;
 
 class AIMAccount;
 class AIMProtocol;
-class aimEditAccountUI;
+namespace Ui { class aimEditAccountUI; }
 
 class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
@@ -52,7 +52,7 @@ private slots:
 protected:
 	AIMAccount *mAccount;
 	AIMProtocol *mProtocol;
-	aimEditAccountUI *mGui;
+	Ui::aimEditAccountUI *mGui;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

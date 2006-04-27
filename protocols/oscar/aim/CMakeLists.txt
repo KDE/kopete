@@ -17,9 +17,12 @@ set(kopete_aim_ui_SRCS ui/aimaddcontactpage.cpp ui/aimeditaccountwidget.cpp)
 
 kde4_add_ui3_files(kopete_aim_ui_SRCS 
 ui/aimaddcontactui.ui 
-ui/aimeditaccountui.ui 
 ui/aiminfobase.ui 
 ui/aimjoinchatbase.ui 
+)
+
+kde4_add_ui_files(kopete_aim_ui_SRCS
+ui/aimeditaccountui.ui 
 )
 
 set(kopete_aim_PART_SRCS 

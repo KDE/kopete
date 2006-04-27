@@ -1,5 +1,5 @@
 #include "aimeditaccountwidget.h"
-#include "aimeditaccountui.h"
+#include "ui_aimeditaccountui.h"
 
 #include <qlayout.h>
 #include <qcheckbox.h>
@@ -33,7 +33,8 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 
 	// create the gui (generated from a .ui file)
 	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-	mGui = new aimEditAccountUI( this, "AIMEditAccountWidget::mGui" );
+	mGui = new Ui::aimEditAccountUI();
+	mGui->setupUi( this );
 
 	// Read in the settings from the account if it exists
 	if ( mAccount )
