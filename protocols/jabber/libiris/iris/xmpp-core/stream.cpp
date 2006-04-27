@@ -1765,3 +1765,5 @@ void TD::incomingXml(const QDomElement &e)
 		debug_ptr->incomingXml(e);
 }
 #endif
+
+#include "stream.moc"

@@ -38,8 +38,7 @@ class JabberChatSession : public Kopete::ChatSession
 
 public:
 	JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
-						   Kopete::ContactPtrList others, const QString &resource = "",
-						   const char *name = 0 );
+						   Kopete::ContactPtrList others, const QString &resource = "" );
 	
 	~JabberChatSession();
 	

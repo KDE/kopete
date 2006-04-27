@@ -377,3 +377,5 @@ void NDnsWorker::run()
 }
 
 // CS_NAMESPACE_END
+
+#include "ndns.moc"

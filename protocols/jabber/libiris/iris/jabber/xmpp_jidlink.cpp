@@ -318,3 +318,5 @@ void JidLinkManager::insertStream(ByteStream *bs)
 	if(j->setStream(bs))
 		d->incomingList.append(j);
 }
+
+#include "xmpp_jidlink.moc"

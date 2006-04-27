@@ -409,3 +409,5 @@ bool Jid::validResource(const QString &s, QString *norm)
 	return true;*/
 	return StringPrepCache::resourceprep(s, 1024, norm);
 }
+
+#include "jid.moc"

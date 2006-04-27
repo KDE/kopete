@@ -719,3 +719,5 @@ void AdvancedConnector::http_syncFinished()
 {
 	httpSyncFinished();
 }
+
+#include "connector.moc"

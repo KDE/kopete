@@ -26,6 +26,7 @@
 class JabberRegisterAccount;
 class DlgJabberChooseServer;
 
+class KJob;
 namespace KIO
 {
 	class Job;

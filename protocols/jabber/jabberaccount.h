@@ -65,7 +65,7 @@ class JabberAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 
 public:
-	JabberAccount (JabberProtocol * parent, const QString & accountID, const char *name = 0L);
+	JabberAccount (JabberProtocol * parent, const QString & accountID);
 	 ~JabberAccount ();
 
 	/* Returns the action menu for this account. */

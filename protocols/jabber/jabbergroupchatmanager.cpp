@@ -28,8 +28,8 @@
 #include "jabbercontact.h"
 
 JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,
-											 Kopete::ContactPtrList others, XMPP::Jid roomJid, const char *name )
-											 : Kopete::ChatSession ( user, others, protocol,  name )
+											 Kopete::ContactPtrList others, XMPP::Jid roomJid )
+											 : Kopete::ChatSession ( user, others, protocol )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 

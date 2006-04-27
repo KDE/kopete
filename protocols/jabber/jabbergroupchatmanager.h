@@ -36,7 +36,7 @@ class JabberGroupChatManager : public Kopete::ChatSession
 
 public:
 	JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,
-							 Kopete::ContactPtrList others, XMPP::Jid roomJid, const char *name = 0 );
+							 Kopete::ContactPtrList others, XMPP::Jid roomJid );
 	
 	~JabberGroupChatManager();
 

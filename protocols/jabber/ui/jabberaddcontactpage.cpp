@@ -37,7 +37,8 @@
 #include "jabberclient.h"
 #include "xmpp_tasks.h"
 
-JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * parent, const char *name):AddContactPage (parent, name)
+JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * parent)
+ : AddContactPage (parent)
 {
 	(new Q3VBoxLayout (this))->setAutoAdd (true);
 	

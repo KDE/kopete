@@ -109,3 +109,5 @@ void SafeDeleteLater::explode()
 {
 	delete this;
 }
+
+#include "safedelete.moc"

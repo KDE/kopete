@@ -137,3 +137,5 @@ void QCATLSHandler::tls_error()
 	d->state = 0;
 	fail();
 }
+
+#include "tlshandler.moc"

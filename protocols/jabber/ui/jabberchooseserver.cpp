@@ -102,9 +102,10 @@ void JabberChooseServer::slotTransferData ( KIO::Job */*job*/, const QByteArray 
 
 }
 
-void JabberChooseServer::slotTransferResult ( KJob *job )
+void JabberChooseServer::slotTransferResult ( KJob *kJob )
 {
 
+	KIO::Job *job = static_cast<KIO::Job*>(kJob);
 	if ( job->error () || mTransferJob->isErrorPage () )
 	{
 		mMainWidget->lblStatus->setText ( i18n ( "Could not retrieve server list." ) );
