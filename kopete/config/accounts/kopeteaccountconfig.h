@@ -27,6 +27,8 @@ namespace Kopete
 class Account;
 }
 
+class KopeteAccountLVI;
+
 /**
  * @author Olivier Goffart <ogoffart @ kde.org>
  */
@@ -42,6 +44,8 @@ public slots:
 	virtual void load();
 
 private:
+	KopeteAccountLVI* selectedAccount();
+
 	QWidget *m_view;
 	QMap<Kopete::Account* , QColor> m_newColors;
 	bool m_protected;

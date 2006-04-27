@@ -5,118 +5,57 @@
  <class>KopeteAccountConfigBase</class>
  <widget class="QWidget" name="KopeteAccountConfigBase" >
   <property name="geometry" >
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>477</width>
-            <height>316</height>
-        </rect>
-    </property>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>401</width>
+    <height>314</height>
+   </rect>
+  </property>
   <property name="windowTitle" >
-        <string>Manage Accounts</string>
-    </property>
+   <string>Manage Accounts</string>
+  </property>
   <layout class="QGridLayout" >
    <property name="margin" >
-            <number>0</number>
-        </property>
+    <number>9</number>
+   </property>
    <property name="spacing" >
     <number>6</number>
-            </property>
-   <item row="0" column="1" colspan="2" >
-    <widget class="QPushButton" name="mButtonNew" >
-     <property name="toolTip" >
-                <string>Add new account</string>
-            </property>
-     <property name="text" >
-      <string>&amp;New...</string>
-            </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2" >
-    <widget class="QPushButton" name="mButtonEdit" >
-     <property name="toolTip" >
-                <string>Modify selected account</string>
-            </property>
-     <property name="whatsThis" >
-                <string>Let you edit the account's properties.</string>
-            </property>
-     <property name="text" >
-      <string>&amp;Modify...</string>
-            </property>
-    </widget>
-   </item>
-   <item row="2" column="1" colspan="2" >
-    <widget class="QPushButton" name="mButtonRemove" >
-     <property name="toolTip" >
-                <string>Remove selected account</string>
-            </property>
-     <property name="whatsThis" >
-                <string>Remove selected account</string>
-            </property>
-     <property name="text" >
-      <string>&amp;Remove</string>
-                </property>
-    </widget>
-   </item>
+   </property>
    <item rowspan="8" row="0" column="0" >
-    <widget class="K3ListView" name="mAccountList" >
-     <property name="allColumnsShowFocus" >
-                    <bool>true</bool>
-                </property>
-     <column>
-      <property name="text" >
-       <string>Protocol</string>
-                </property>
-            </column>
-            <column>
-      <property name="text" >
-                    <string>Account</string>
-                </property>
-            </column>
-        </widget>
+    <widget class="QTreeWidget" name="mAccountList" />
    </item>
-   <item row="4" column="1" colspan="2" >
-    <widget class="QCheckBox" name="mUseColor" >
-     <property name="toolTip" >
-                <string>Use custom color for account</string>
-            </property>
-     <property name="whatsThis" >
-                <string>Allows you to set a custom color for this account</string>
-            </property>
-     <property name="text" >
-      <string>Use &amp;custom color</string>
-            </property>
-    </widget>
-   </item>
-   <item row="5" column="2" >
-    <widget class="KColorButton" name="mColorButton" >
-     <property name="toolTip" >
-                <string>Account custom color selector</string>
-            </property>
-     <property name="whatsThis" >
-                <string>Allows you to set a custom color for this account.
-The icon of every contact of this account will be coloured with this color. Useful if you have several accounts of the same protocol</string>
-            </property>
-     <property name="text" >
-      <string/>
-            </property>
-    </widget>
-   </item>
-   <item row="5" column="1" >
+   <item row="3" column="2" >
     <spacer>
      <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-            </property>
+      <enum>Qt::Vertical</enum>
+     </property>
      <property name="sizeType" >
-      <enum>QSizePolicy::Minimum</enum>
-            </property>
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
      <property name="sizeHint" >
-                <size>
-                    <width>16</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
+      <size>
+       <width>70</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>70</width>
+       <height>50</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item row="7" column="1" colspan="2" >
     <layout class="QGridLayout" >
@@ -125,96 +64,134 @@ The icon of every contact of this account will be coloured with this color. Usef
      </property>
      <property name="spacing" >
       <number>6</number>
-                    </property>
+     </property>
      <item row="0" column="0" >
       <widget class="KPushButton" name="mButtonUp" >
        <property name="minimumSize" >
-                        <size>
-                            <width>60</width>
-                            <height>10</height>
-                        </size>
-                    </property>
+        <size>
+         <width>60</width>
+         <height>10</height>
+        </size>
+       </property>
        <property name="toolTip" >
-                        <string>Increase the priority</string>
-                    </property>
+        <string>Increase the priority</string>
+       </property>
        <property name="whatsThis" >
-                        <string>Uses these buttons to increase or decrease the priority.
+        <string>Uses these buttons to increase or decrease the priority.
 The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
-                    </property>
-       <property name="text" >
-        <string/>
-                    </property>
+       </property>
       </widget>
      </item>
      <item rowspan="2" row="0" column="1" >
       <spacer>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
-                    </property>
+       </property>
        <property name="sizeType" >
         <enum>QSizePolicy::Expanding</enum>
-                    </property>
+       </property>
        <property name="sizeHint" >
-                        <size>
-                            <width>20</width>
-                            <height>40</height>
-                        </size>
-                    </property>
-                </spacer>
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item row="1" column="0" >
       <widget class="KPushButton" name="mButtonDown" >
        <property name="minimumSize" >
-                        <size>
-                            <width>60</width>
-                            <height>10</height>
-                        </size>
-                    </property>
+        <size>
+         <width>60</width>
+         <height>10</height>
+        </size>
+       </property>
        <property name="toolTip" >
-                        <string>Decrease the priority</string>
-                    </property>
+        <string>Decrease the priority</string>
+       </property>
        <property name="whatsThis" >
-                        <string>Uses these buttons to increase or decrease the priority.
+        <string>Uses these buttons to increase or decrease the priority.
 The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
-                    </property>
-       <property name="text" >
-        <string/>
-            </property>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="6" column="1" colspan="2" >
+   <item row="5" column="1" >
     <spacer>
      <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-            </property>
+      <enum>Qt::Horizontal</enum>
+     </property>
      <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-            </property>
+      <enum>QSizePolicy::Minimum</enum>
+     </property>
      <property name="sizeHint" >
-                <size>
-                    <width>70</width>
-                    <height>50</height>
-                </size>
-            </property>
-        </spacer>
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
    </item>
-   <item row="3" column="1" colspan="2" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-            </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Fixed</enum>
-            </property>
-     <property name="sizeHint" >
-                <size>
-                    <width>70</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
+   <item row="5" column="2" >
+    <widget class="KColorButton" name="mColorButton" >
+     <property name="toolTip" >
+      <string>Account custom color selector</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Allows you to set a custom color for this account.
+The icon of every contact of this account will be coloured with this color. Useful if you have several accounts of the same protocol</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="2" >
+    <widget class="QCheckBox" name="mUseColor" >
+     <property name="toolTip" >
+      <string>Use custom color for account</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Allows you to set a custom color for this account</string>
+     </property>
+     <property name="text" >
+      <string>Use &amp;custom color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2" >
+    <widget class="QPushButton" name="mButtonRemove" >
+     <property name="toolTip" >
+      <string>Remove selected account</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Remove selected account</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Remove</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2" >
+    <widget class="QPushButton" name="mButtonEdit" >
+     <property name="toolTip" >
+      <string>Modify selected account</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Let you edit the account's properties.</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Modify...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2" >
+    <widget class="QPushButton" name="mButtonNew" >
+     <property name="toolTip" >
+      <string>Add new account</string>
+     </property>
+     <property name="text" >
+      <string>&amp;New...</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -235,19 +212,11 @@ The priority is used to determine which contact to use when you click on a metac
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
-  <customwidget>
-   <class>K3ListView</class>
-   <extends></extends>
-   <header>k3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
  </customwidgets>
  <tabstops>
-    <tabstop>mAccountList</tabstop>
-    <tabstop>mButtonNew</tabstop>
-    <tabstop>mButtonEdit</tabstop>
-    <tabstop>mButtonRemove</tabstop>
+  <tabstop>mButtonNew</tabstop>
+  <tabstop>mButtonEdit</tabstop>
+  <tabstop>mButtonRemove</tabstop>
  </tabstops>
  <resources/>
  <connections/>

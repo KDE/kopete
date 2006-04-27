@@ -30,7 +30,6 @@
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
-#include <k3listview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -40,10 +39,13 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 
-class KopeteAccountLVI : public K3ListViewItem
+//FIXME Crashes on "Apply" (thorbenk)
+
+class KopeteAccountLVI : public QTreeWidgetItem
 {
 	public:
-		KopeteAccountLVI( Kopete::Account *a, K3ListView *p ) : K3ListViewItem( p ){  m_account = a; }
+		KopeteAccountLVI( Kopete::Account *a, QTreeWidget* parent) : QTreeWidgetItem(parent) { 
+		m_account = a; }
 		Kopete::Account *account() { return m_account; }
 
 	private:
@@ -57,11 +59,15 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory
 KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name */, const QStringList &args )
 : KCModule( KopeteAccountConfigFactory::instance(), parent, args )
 {
-
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
+
 	m_view = new QWidget( this );
-	setObjectName( "KopeteAccountConfig::m_view" );
 	setupUi( m_view );
+
+	mAccountList->setColumnCount(2);
+	QStringList header;
+	header << i18n("Protocol") << i18n("Account");
+	mAccountList->setHeaderLabels( header );
 
 	mButtonUp->setIcon( SmallIconSet( "up" ) );
 	mButtonDown->setIcon( SmallIconSet( "down" ) );
@@ -71,28 +77,36 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
 	connect( mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
 	connect( mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
-	connect( mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
-	connect( mAccountList,  SIGNAL( doubleClicked( Q3ListViewItem * ) ), this, SLOT( slotEditAccount() ) );
+	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
+	connect( mAccountList,  SIGNAL( itemDoubleClicked( QTreeWidgetItem * ) ), this, SLOT( slotEditAccount() ) );
 	connect( mUseColor,     SIGNAL( toggled( bool ) ), this, SLOT( slotColorChanged() ) );
+	connect( mUseColor,     SIGNAL( toggled( bool ) ), mColorButton, SLOT(setEnabled(bool)) );
 	connect( mColorButton,  SIGNAL( changed( const QColor & ) ), this, SLOT( slotColorChanged() ) );
-
-	mAccountList->setSorting(-1);
 
 	setButtons( Help );
 	load();
 }
 
+KopeteAccountLVI* KopeteAccountConfig::selectedAccount()
+{
+	QList<QTreeWidgetItem*> selectedItems = mAccountList->selectedItems();
+	KopeteAccountLVI *itemSelected = 0;
+	if(!selectedItems.empty())
+ 		return itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItems().first() );
+	return 0;
+}
+
 void KopeteAccountConfig::save()
 {
-	uint priority = mAccountList->childCount();
-
-	KopeteAccountLVI *i = static_cast<KopeteAccountLVI*>( mAccountList->firstChild() );
-	while( i )
+	uint priority = mAccountList->topLevelItemCount();
+	
+	KopeteAccountLVI *i;
+	for( int j=0; j<mAccountList->topLevelItemCount(); ++j )
 	{
+		i = static_cast<KopeteAccountLVI*>( mAccountList->topLevelItem( j ) );
 		if(!i->account())
 			continue;
 		i->account()->setPriority( priority-- );
-		i = static_cast<KopeteAccountLVI*>( i->nextSibling() );
 	}
 
 	QMap<Kopete::Account *, QColor>::Iterator it;
@@ -117,9 +131,10 @@ void KopeteAccountConfig::load()
 	{
 		i = it.next();
 		// Insert the item after the previous one
+
 		lvi = new KopeteAccountLVI( i, mAccountList );
 		lvi->setText( 0, i->protocol()->displayName() );
-		lvi->setPixmap( 0, i->accountIcon() );
+		lvi->setIcon( 0, QIcon(i->accountIcon()) );
 		lvi->setText( 1, i->accountLabel() );
 	}
 
@@ -130,15 +145,16 @@ void KopeteAccountConfig::load()
 void KopeteAccountConfig::slotItemSelected()
 {
 	m_protected=true;
-	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
+
+	KopeteAccountLVI *itemSelected = selectedAccount();
 
 	mButtonEdit->setEnabled( itemSelected );
 	mButtonRemove->setEnabled( itemSelected );
 
 	if ( itemSelected &&  itemSelected->account() )
 	{
-		mButtonUp->setEnabled( itemSelected->itemAbove() );
-		mButtonDown->setEnabled( itemSelected->itemBelow() );
+		mButtonUp->setEnabled( mAccountList->indexOfTopLevelItem(itemSelected) > 0 );
+		mButtonDown->setEnabled( mAccountList->topLevelItemCount()-1 > mAccountList->indexOfTopLevelItem(itemSelected) );
 
 		Kopete::Account *account = itemSelected->account();
 		QColor color= m_newColors.contains(account) ? m_newColors[account] :  account->color();
@@ -160,12 +176,16 @@ void KopeteAccountConfig::slotItemSelected()
 
 void KopeteAccountConfig::slotAccountUp()
 {
-	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
+	KopeteAccountLVI *itemSelected = selectedAccount();
+	
 	if ( !itemSelected )
 		return;
 
-	if ( itemSelected->itemAbove() )
-		itemSelected->itemAbove()->moveItem( itemSelected );
+	int index = mAccountList->indexOfTopLevelItem(itemSelected);
+
+	KopeteAccountLVI* l = static_cast<KopeteAccountLVI*>( mAccountList->takeTopLevelItem( index ) );
+	mAccountList->insertTopLevelItem( index-1, l );
+	mAccountList->setItemSelected( l, true );
 
 	slotItemSelected();
 	emit changed( true );
@@ -173,11 +193,16 @@ void KopeteAccountConfig::slotAccountUp()
 
 void KopeteAccountConfig::slotAccountDown()
 {
-	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
+	KopeteAccountLVI *itemSelected = selectedAccount();
+	
 	if ( !itemSelected )
 		return;
 
-	itemSelected->moveItem( itemSelected->itemBelow() );
+	int index = mAccountList->indexOfTopLevelItem(itemSelected);
+
+	KopeteAccountLVI* l = static_cast<KopeteAccountLVI*>( mAccountList->takeTopLevelItem( index ) );
+	mAccountList->insertTopLevelItem( index+1, l );
+	mAccountList->setItemSelected( l, true );
 
 	slotItemSelected();
 	emit changed( true );
@@ -192,7 +217,8 @@ void KopeteAccountConfig::slotAddAccount()
 
 void KopeteAccountConfig::slotEditAccount()
 {
-	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
+	KopeteAccountLVI *lvi = selectedAccount();
+	
 	if ( !lvi || !lvi->account() )
 		return;
 
@@ -232,7 +258,8 @@ void KopeteAccountConfig::slotEditAccount()
 
 void KopeteAccountConfig::slotRemoveAccount()
 {
-	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
+	KopeteAccountLVI *lvi = selectedAccount();
+	
 	if ( !lvi || !lvi->account() )
 		return;
 
@@ -257,9 +284,16 @@ void KopeteAccountConfig::slotColorChanged()
 	if(m_protected)  //this slot is called because we changed the button
 		return;      // color because another account has been selected
 
-	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItem() );
+	QList<QTreeWidgetItem*> selectedItems = mAccountList->selectedItems();
+	KopeteAccountLVI *lvi = 0;
+	if(!selectedItems.empty())
+	{
+ 		lvi = static_cast<KopeteAccountLVI*>( mAccountList->selectedItems().first() );
+	}
+
 	if ( !lvi || !lvi->account() )
 		return;
+
 	Kopete::Account *account = lvi->account();
 
 	if(!account->color().isValid() && !mUseColor->isChecked() )
