@@ -18,11 +18,10 @@
 
 #include "kopeteaccountconfig.h"
 
-#include <qcheckbox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <QBoxLayout>
-#include <qpointer.h>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLayout>
+#include <QtGui/QBoxLayout>
+#include <QtCore/QPointer>
 
 #include <kcolorbutton.h>
 #include <kpushbutton.h>
@@ -32,6 +31,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kicon.h>
 
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
@@ -69,8 +69,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	header << i18n("Protocol") << i18n("Account");
 	mAccountList->setHeaderLabels( header );
 
-	mButtonUp->setIcon( SmallIconSet( "up" ) );
-	mButtonDown->setIcon( SmallIconSet( "down" ) );
+	mButtonUp->setIcon( KIcon( "up" ) );
+	mButtonDown->setIcon( KIcon( "down" ) );
 
 	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
