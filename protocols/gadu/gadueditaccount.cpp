@@ -44,8 +44,9 @@
 #include "kopetepasswordwidget.h"
 
 GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, QWidget* parent )
-: GaduAccountEditUI( parent ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
+: KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 ), QWidget( parent )
 {
+	setupUi(this);
 
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
 	isSsl = true;

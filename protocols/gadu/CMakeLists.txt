@@ -16,9 +16,12 @@ set(kopete_gaduui_SRCS)
 kde4_add_ui3_files(kopete_gaduui_SRCS 
    ui/gaduadd.ui 
    ui/gaduawayui.ui 
-   ui/gadueditaccountui.ui 
    ui/gaduregisteraccountui.ui 
    ui/gadusearch.ui 
+)
+
+kde4_add_ui_files(kopete_gaduui_SRCS
+   ui/gadueditaccountui.ui 
 )
 
 set(kopete_gadu_PART_SRCS 

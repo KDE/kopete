@@ -22,7 +22,7 @@
 #ifndef GADUEDITACCOUNT_H
 #define GADUEDITACCOUNT_H
 
-#include "gadueditaccountui.h"
+#include "ui_gadueditaccountui.h"
 #include "editaccountwidget.h"
 #include "gaduregisteraccount.h"
 #include "gadusession.h"
@@ -32,7 +32,7 @@ class GaduProtocol;
 
 namespace Kopete { class Account; }
 
-class GaduEditAccount : public GaduAccountEditUI, public KopeteEditAccountWidget
+class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI, public KopeteEditAccountWidget
 {
     Q_OBJECT
 

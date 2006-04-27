@@ -23,7 +23,7 @@
 #include <kdebug.h>
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
-#include "testbedaccountpreferences.h"
+#include "ui_testbedaccountpreferences.h"
 #include "testbedaccount.h"
 #include "testbedprotocol.h"
 
@@ -32,11 +32,13 @@ TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, Kopete::Acc
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 				kDebug(14210) << k_funcinfo << endl;
-	m_preferencesWidget = new TestbedAccountPreferences( this );
+	m_preferencesWidget = new Ui::TestbedAccountPreferences();
+	m_preferencesWidget->setupUi( this );
 }
 
 TestbedEditAccountWidget::~TestbedEditAccountWidget()
 {
+	delete m_preferencesWidget;
 }
 
 Kopete::Account* TestbedEditAccountWidget::apply()

@@ -46,8 +46,9 @@
 #include "wpprotocol.h"
 
 WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
-	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
+	: QWidget(parent), KopeteEditAccountWidget(theAccount)
 {
+	setupUi(this);
 	kDebug(14170) << "WPEditAccount::WPEditAccount(<parent>, <theAccount>)";
 
 	mProtocol = WPProtocol::protocol();

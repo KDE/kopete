@@ -20,7 +20,13 @@ set(kopete_testbed_PART_SRCS
 
 kde4_automoc(${kopete_testbed_PART_SRCS})
 
-kde4_add_ui3_files(kopete_testbed_PART_SRCS testbedaddui.ui testbedaccountpreferences.ui )
+kde4_add_ui3_files(kopete_testbed_PART_SRCS
+testbedaddui.ui
+)
+
+kde4_add_ui_files(kopete_testbed_PART_SRCS
+testbedaccountpreferences.ui
+)
 
 kde4_add_plugin(kopete_testbed ${kopete_testbed_PART_SRCS})
 

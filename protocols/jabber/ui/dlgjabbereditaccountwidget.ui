@@ -1,1005 +1,1131 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>DlgJabberEditAccountWidget</class>
-<author>Daniel Stone</author>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>DlgJabberEditAccountWidget</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>706</width>
-            <height>455</height>
-        </rect>
-    </property>
-    <property name="windowTitle">
-        <string>Account Preferences - Jabber</string>
-    </property>
-    <property name="toolTip" stdset="0">
-        <string></string>
-    </property>
-    <property name="whatsThis" stdset="0">
-        <string></string>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QTabWidget" row="0" column="0">
-            <property name="name">
-                <cstring>tabWidget10</cstring>
+<ui version="4.0" >
+ <author>Daniel Stone</author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>DlgJabberEditAccountWidget</class>
+ <widget class="QWidget" name="DlgJabberEditAccountWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>706</width>
+    <height>823</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Account Preferences - Jabber</string>
+  </property>
+  <property name="toolTip" >
+   <string/>
+  </property>
+  <property name="whatsThis" >
+   <string/>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget10" >
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;Basic Setup</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Account Information</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <property name="spacing" >
+             <number>6</number>
             </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>&amp;Basic Setup</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox65</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Account Information</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout61</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>TextLabel1_3</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Jabber ID:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>mID</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>mID</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (for example, joe@jabber.org), as there are many Jabber servers.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="Kopete::UI::PasswordWidget">
-                                <property name="name">
-                                    <cstring>mPass</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbAutoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>E&amp;xclude from connect all</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbGlobalIdentity</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Exclu&amp;de from Global Identity</string>
-                                </property>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox5</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>1</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="title">
-                            <string>Registration</string>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>lblRegistration</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>To connect to the Jabber network, you will need an account on a Jabber server.  If you do not yet have an account, please click the button to create one.</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>btnRegister</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Re&amp;gister New Account</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Register a new account on this network.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Register a new account on this network.</string>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox8_2</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>1</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="title">
-                            <string>Change Password</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QPushButton" row="0" column="1">
-                                <property name="name">
-                                    <cstring>btnChangePassword</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Change &amp;Your Password</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>tlChangePwSuccess</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>If you have an existing Jabber account and would like to change its password, you can use this button to enter a new password.</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer8</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Maximum</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Co&amp;nnection</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox66</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Connection Preferences</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbUseSSL</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Use protocol encr&amp;yption (SSL)</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check this box to enable SSL encrypted communication with the server.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbAllowPlainTextPassword</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Allow plain-te&amp;xt password authentication</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbCustomServer</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Override default server information</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>false</bool>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout66</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>labelServer</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>5</hsizetype>
-                                                <vsizetype>0</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>Ser&amp;ver:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>mServer</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The IP address or hostname of the server you would like to connect to.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>mServer</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The IP address or hostname of the server you would like to connect to.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>labelPort</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>5</hsizetype>
-                                                <vsizetype>0</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>Po&amp;rt:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>mPort</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The port on the server that you would like to connect to.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The port on the server that you would like to connect to (default is 5222).</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QSpinBox">
-                                        <property name="name">
-                                            <cstring>mPort</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>0</hsizetype>
-                                                <vsizetype>0</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="buttonSymbols">
-                                            <enum>UpDownArrows</enum>
-                                        </property>
-                                        <property name="maximum">
-                                            <number>65535</number>
-                                        </property>
-                                        <property name="minimum">
-                                            <number>1</number>
-                                        </property>
-                                        <property name="value">
-                                            <number>5222</number>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The port on the server that you would like to connect to.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The port on the server that you would like to connect to (default is 5222).</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox8</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Location Settings</string>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>TextLabel3_3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>R&amp;esource:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>mResource</cstring>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The resource name you would like to use on the Jabber network.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>The resource name you would like to use on the Jabber network.  Jabber allows you to sign on with the same account from multiple locations with different resource names, so you may wish to enter 'Home' or 'Work' here, for example.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>mResource</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>0</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>100</width>
-                                        <height>32767</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Kopete</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The resource name you would like to use on the Jabber network.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>The resource name you would like to use on the Jabber network.  Jabber allows you to sign on with the same account from multiple locations with different resource names, so you may wish to enter 'Home' or 'Work' here, for example.</string>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer28</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>31</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>TextLabel3_3_2</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>P&amp;riority:</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>Qt::AlignVCenter</set>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>mResource</cstring>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The resource name you would like to use on the Jabber network.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>The resource name you would like to use on the Jabber network.  Jabber allows you to sign on with the same account from multiple locations with different resource names, so you may wish to enter 'Home' or 'Work' here, for example.</string>
-                                </property>
-                            </widget>
-                            <widget class="QSpinBox">
-                                <property name="name">
-                                    <cstring>mPriority</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>0</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>100</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>100</width>
-                                        <height>32767</height>
-                                    </size>
-                                </property>
-                                <property name="value">
-                                    <number>5</number>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>&lt;qt&gt;Each resource can have different &lt;b&gt;priority &lt;/b&gt; levels. The messages will be sent to the resource which has the highest priority level.
-
-If two resources have the same priority, the messages will be sent to the one connected the latest.&lt;/qt&gt;</string>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer43</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>200</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Fi&amp;le Transfer</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox4</cstring>
-                        </property>
-                        <property name="title">
-                            <string>File Transfer Settings</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout70</cstring>
-                                </property>
-                                <grid>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLineEdit" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>leProxyJID</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel5</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Pro&amp;xy JID:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>leProxyJID</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLayoutWidget" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>layout68</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>leLocalIP</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel4</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Por&amp;t:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>sbLocalPort</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QSpinBox">
-                                                <property name="name">
-                                                    <cstring>sbLocalPort</cstring>
-                                                </property>
-                                                <property name="maximum">
-                                                    <number>65535</number>
-                                                </property>
-                                                <property name="value">
-                                                    <number>8010</number>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QLabel" row="0" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel2</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Public &amp;IP address:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>leLocalIP</cstring>
-                                        </property>
-                                    </widget>
-                                </grid>
-                            </widget>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&lt;i&gt;&lt;ul&gt;&lt;li&gt;The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li&gt;
-&lt;li&gt;You can leave the "public IP address" empty if you do not use NAT.&lt;/li&gt;
-&lt;li&gt;A hostname is also valid.&lt;/li&gt;
-&lt;li&gt;Changes to these fields will only take effect the next time you start Kopete.&lt;/li&gt;
-&lt;li&gt;The "Proxy JID" can be configured per account.&lt;/li&gt;&lt;/ul&gt;&lt;/i&gt;</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
-                                </property>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer29</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>241</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Pri&amp;vacy</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox7</cstring>
-                        </property>
-                        <property name="title">
-                            <string>General Privacy</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <spacer row="0" column="1">
-                                <property name="name">
-                                    <cstring>spacer9</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QCheckBox" row="0" column="0">
-                                <property name="name">
-                                    <cstring>cbHideSystemInfo</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Hide system and client info</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>By default, Kopete gives the other users some info about your system and the client. You can check this box in order to  hide those infos.</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox6</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Notifications</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbSendEvents</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="text">
-                                    <string>Always send not&amp;ifications</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check this box if you want to always send notifications to your contacts.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout10</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer6</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>30</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout9</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QCheckBox">
-                                                <property name="name">
-                                                    <cstring>cbSendDeliveredEvent</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Alwa&amp;ys send delivered notifications</string>
-                                                </property>
-                                                <property name="accel">
-                                                    <string>Alt+Y</string>
-                                                </property>
-                                                <property name="checked">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>&lt;qt&gt;Check this box to send the &lt;b&gt;Delivered notification&lt;/b&gt; to your contacts : when a message is delivered to Kopete, Kopete can notify your contact that it has received the message.&lt;/qt&gt;</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QCheckBox">
-                                                <property name="name">
-                                                    <cstring>cbSendDisplayedEvent</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Al&amp;ways send displayed notifications</string>
-                                                </property>
-                                                <property name="accel">
-                                                    <string>Alt+W</string>
-                                                </property>
-                                                <property name="checked">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>&lt;qt&gt;Check this box to send the &lt;b&gt;Displayed notification&lt;/b&gt; to your contacts : when a message is displayed in Kopete, Kopete can notify your contact that it has displayed the message.&lt;/qt&gt;</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QCheckBox">
-                                                <property name="name">
-                                                    <cstring>cbSendComposingEvent</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Always send &amp;typing notifications</string>
-                                                </property>
-                                                <property name="accel">
-                                                    <string>Alt+T</string>
-                                                </property>
-                                                <property name="checked">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>&lt;qt&gt;Check this box to send the &lt;b&gt;Typing notification&lt;/b&gt; to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt&gt;</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QCheckBox">
-                                                <property name="name">
-                                                    <cstring>cbSendGoneEvent</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Always send &amp;gone notifications (closing the window)</string>
-                                                </property>
-                                                <property name="accel">
-                                                    <string>Alt+G</string>
-                                                </property>
-                                                <property name="checked">
-                                                    <bool>true</bool>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer5</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>21</width>
-                                <height>110</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
+            <item>
+             <widget class="QLabel" name="TextLabel1_3" >
+              <property name="toolTip" >
+               <string>The Jabber ID for the account you would like to use.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+              </property>
+              <property name="text" >
+               <string>&amp;Jabber ID:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>mID</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="mID" >
+              <property name="toolTip" >
+               <string>The Jabber ID for the account you would like to use.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (for example, joe@jabber.org), as there are many Jabber servers.</string>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Kopete::UI::PasswordWidget" name="mPass" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>1</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbAutoConnect" >
+            <property name="whatsThis" >
+             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+            </property>
+            <property name="text" >
+             <string>E&amp;xclude from connect all</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbGlobalIdentity" >
+            <property name="text" >
+             <string>Exclu&amp;de from Global Identity</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
-    </grid>
-</widget>
-<customwidgets>
-    <customwidget>
-        <class>Kopete::UI::PasswordWidget</class>
-        <header location="local">kopetepasswordwidget.h</header>
-        <sizehint>
-            <width>50</width>
-            <height>50</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>1</hordata>
-            <verdata>0</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-        <signal>changed()</signal>
-    </customwidget>
-</customwidgets>
-<images>
-    <image name="image0">
-        <data format="PNG" length="868">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000032b49444154388db59531681b6714c77f32373c8186ef0305eea0050932f8201d944d493bc4d0a1a21e4427bb533a74299dbc25905288a7d0b9836932d58116eac1411932388ba421a5a7a17005174e83e00e2cb80f6ab83708d2e18bec8ada26d0f4c1c1ddbbf7fdeeff3efeefbbda70346419b76fdd7ecd3b88e16858ab2dc183c3c1ebee7a97a99b521515d969f65610e71cd971c6f8d7312ccef3c152e9b39f9e11351d36164acdb819d4a9b4c4362ce5a2c48a45162588253ff5cfe5a2c406862405d9138e5eea2a18609a4fb12d212d7ea42c334089ac92e6423113cab902826d4227568a002480a942780dead16a2767e0ca55949a81668023b2c2e8952139748c270e58aa115aebc2675b86b80b6143710aa1b9049ccd336e064a5979e8e039ec7f5f78544368af1b24807ca64cff50befba6a0b765d8be2b67f00bc1562c95e6441646afe40d54b9f36948af2fb4df078722440c0e2af6f70a064f0be2568beea6c5885b01af2d6f4a2db10dc8ff128e0edc19f4f32f8576dbe1707022fcf2b4647babce175f8780f0c31307a7e0162bdc55c5e52247e742fabbc31843af2f9886c32d40d4b0fb4849278ef20476ee59c62f7ced3831848d55f0aa62816ca6de11ad37ed2fa10f1ce9c4619ac2c647824a45dc1100f2a9e2542e067b9f82155f108adf539c61f781924efc0745c0be57273240b08409e62ac508d0f085c94c112c83e778a54608434331733cbc9f331a5bf2636f85a855bfda15f9694e27565ad785e99fcae0a062fb6e4479a2f43e16eacd3a0fef433175ec7e95a1aa98a6d0e95454f355f2bff65803e8f5bddbf7f70a0687393bf72ced2e74ba253bdfb631a1c139872e948d7e487c83ab15979a2301dcba033a373c7e52f0f851c1f885d0ed080ec88f7374ae672b7f3b72249b115143389fce7f4e5e91d11398cefd986e6c099816839fbd1bd2c9b91ad3147afd16a32387534580ac58957c0e3ece485230d77c5ba6a1f4fa42ef9398719253153e1f5f8f687f9013df80f16684c1e0161969b20aae0d47437fc007d0f950882210c19fad81bf24f04e399701a04820380769a2e485e28a0b14b380e4a5927059e85be67cac5dfae63fc61af87fd4ff027ed7f0e16858fb1ba5cd86c64770b2e90000000049454e44ae426082</data>
-    </image>
-</images>
-<connections>
-    <connection>
-        <sender>cbSendEvents</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>cbSendDisplayedEvent</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbSendEvents</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>cbSendComposingEvent</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbSendEvents</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>cbSendDeliveredEvent</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>tabWidget10</tabstop>
-    <tabstop>mID</tabstop>
-    <tabstop>mPass</tabstop>
-    <tabstop>cbAutoConnect</tabstop>
-    <tabstop>btnRegister</tabstop>
-    <tabstop>btnChangePassword</tabstop>
-    <tabstop>cbUseSSL</tabstop>
-    <tabstop>cbAllowPlainTextPassword</tabstop>
-    <tabstop>cbCustomServer</tabstop>
-    <tabstop>mServer</tabstop>
-    <tabstop>mPort</tabstop>
-    <tabstop>mResource</tabstop>
-    <tabstop>mPriority</tabstop>
-    <tabstop>leLocalIP</tabstop>
-    <tabstop>sbLocalPort</tabstop>
-    <tabstop>leProxyJID</tabstop>
-    <tabstop>cbHideSystemInfo</tabstop>
-    <tabstop>cbSendEvents</tabstop>
-    <tabstop>cbSendDeliveredEvent</tabstop>
-    <tabstop>cbSendDisplayedEvent</tabstop>
-    <tabstop>cbSendComposingEvent</tabstop>
-</tabstops>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kopetepasswordwidget.h</includehint>
-</includehints>
-</UI>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Registration</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="btnRegister" >
+            <property name="toolTip" >
+             <string>Register a new account on this network.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>Register a new account on this network.</string>
+            </property>
+            <property name="text" >
+             <string>Re&amp;gister New Account</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3" >
+           <widget class="QLabel" name="lblRegistration" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>3</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string>To connect to the Jabber network, you will need an account on a Jabber server.  If you do not yet have an account, please click the button to create one.</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3" >
+         <property name="title" >
+          <string>Change Password</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="btnChangePassword" >
+            <property name="text" >
+             <string>Change &amp;Your Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3" >
+           <widget class="QLabel" name="tlChangePwSuccess" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>3</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>If you have an existing Jabber account and would like to change its password, you can use this button to enter a new password.</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>Co&amp;nnection</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="title" >
+          <string>Connection Preferences</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="cbUseSSL" >
+            <property name="toolTip" >
+             <string>Check this box to enable SSL encrypted communication with the server.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
+            </property>
+            <property name="text" >
+             <string>Use protocol encr&amp;yption (SSL)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbAllowPlainTextPassword" >
+            <property name="text" >
+             <string>Allow plain-te&amp;xt password authentication</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbCustomServer" >
+            <property name="text" >
+             <string>&amp;Override default server information</string>
+            </property>
+            <property name="checked" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelServer" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>5</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string>The IP address or hostname of the server you would like to connect to.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
+              </property>
+              <property name="text" >
+               <string>Ser&amp;ver:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>mServer</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="mServer" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="toolTip" >
+               <string>The IP address or hostname of the server you would like to connect to.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelPort" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>5</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string>The port on the server that you would like to connect to.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The port on the server that you would like to connect to (default is 5222).</string>
+              </property>
+              <property name="text" >
+               <string>Po&amp;rt:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>mPort</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="mPort" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>0</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string>The port on the server that you would like to connect to.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The port on the server that you would like to connect to (default is 5222).</string>
+              </property>
+              <property name="buttonSymbols" >
+               <enum>QAbstractSpinBox::UpDownArrows</enum>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="value" >
+               <number>5222</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5" >
+         <property name="title" >
+          <string>Location Settings</string>
+         </property>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="TextLabel3_3" >
+            <property name="toolTip" >
+             <string>The resource name you would like to use on the Jabber network.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The resource name you would like to use on the Jabber network.  Jabber allows you to sign on with the same account from multiple locations with different resource names, so you may wish to enter 'Home' or 'Work' here, for example.</string>
+            </property>
+            <property name="text" >
+             <string>R&amp;esource:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>mResource</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="mResource" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
+            </property>
+            <property name="toolTip" >
+             <string>The resource name you would like to use on the Jabber network.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The resource name you would like to use on the Jabber network.  Jabber allows you to sign on with the same account from multiple locations with different resource names, so you may wish to enter 'Home' or 'Work' here, for example.</string>
+            </property>
+            <property name="text" >
+             <string>Kopete</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>31</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="TextLabel3_3_2" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>5</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip" >
+             <string>The resource name you would like to use on the Jabber network.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The resource name you would like to use on the Jabber network.  Jabber allows you to sign on with the same account from multiple locations with different resource names, so you may wish to enter 'Home' or 'Work' here, for example.</string>
+            </property>
+            <property name="text" >
+             <string>P&amp;riority:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>mResource</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="mPriority" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
+            </property>
+            <property name="whatsThis" >
+             <string>&lt;qt>Each resource can have different &lt;b>priority &lt;/b> levels. The messages will be sent to the resource which has the highest priority level.
+
+If two resources have the same priority, the messages will be sent to the one connected the latest.&lt;/qt></string>
+            </property>
+            <property name="value" >
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>200</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>Fi&amp;le Transfer</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6" >
+         <property name="title" >
+          <string>File Transfer Settings</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="leProxyJID" />
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="textLabel5" >
+              <property name="text" >
+               <string>Pro&amp;xy JID:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>leProxyJID</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLineEdit" name="leLocalIP" />
+              </item>
+              <item>
+               <widget class="QLabel" name="textLabel4" >
+                <property name="text" >
+                 <string>Por&amp;t:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>sbLocalPort</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="sbLocalPort" >
+                <property name="maximum" >
+                 <number>65535</number>
+                </property>
+                <property name="value" >
+                 <number>8010</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="textLabel2" >
+              <property name="text" >
+               <string>Public &amp;IP address:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>leLocalIP</cstring>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="textLabel3" >
+            <property name="text" >
+             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li>
+&lt;li>You can leave the "public IP address" empty if you do not use NAT.&lt;/li>
+&lt;li>A hostname is also valid.&lt;/li>
+&lt;li>Changes to these fields will only take effect the next time you start Kopete.&lt;/li>
+&lt;li>The "Proxy JID" can be configured per account.&lt;/li>&lt;/ul>&lt;/i></string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>241</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>Pri&amp;vacy</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7" >
+         <property name="title" >
+          <string>General Privacy</string>
+         </property>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="cbHideSystemInfo" >
+            <property name="whatsThis" >
+             <string>By default, Kopete gives the other users some info about your system and the client. You can check this box in order to  hide those infos.</string>
+            </property>
+            <property name="text" >
+             <string>&amp;Hide system and client info</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_8" >
+         <property name="title" >
+          <string>Notifications</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="cbSendEvents" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="whatsThis" >
+             <string>Check this box if you want to always send notifications to your contacts.</string>
+            </property>
+            <property name="text" >
+             <string>Always send not&amp;ifications</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="cbSendDeliveredEvent" >
+                <property name="enabled" >
+                 <bool>true</bool>
+                </property>
+                <property name="whatsThis" >
+                 <string>&lt;qt>Check this box to send the &lt;b>Delivered notification&lt;/b> to your contacts : when a message is delivered to Kopete, Kopete can notify your contact that it has received the message.&lt;/qt></string>
+                </property>
+                <property name="text" >
+                 <string>Alwa&amp;ys send delivered notifications</string>
+                </property>
+                <property name="shortcut" >
+                 <string>Alt+Y</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSendDisplayedEvent" >
+                <property name="enabled" >
+                 <bool>true</bool>
+                </property>
+                <property name="whatsThis" >
+                 <string>&lt;qt>Check this box to send the &lt;b>Displayed notification&lt;/b> to your contacts : when a message is displayed in Kopete, Kopete can notify your contact that it has displayed the message.&lt;/qt></string>
+                </property>
+                <property name="text" >
+                 <string>Al&amp;ways send displayed notifications</string>
+                </property>
+                <property name="shortcut" >
+                 <string>Alt+W</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSendComposingEvent" >
+                <property name="enabled" >
+                 <bool>true</bool>
+                </property>
+                <property name="whatsThis" >
+                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt></string>
+                </property>
+                <property name="text" >
+                 <string>Always send &amp;typing notifications</string>
+                </property>
+                <property name="shortcut" >
+                 <string>Alt+T</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSendGoneEvent" >
+                <property name="text" >
+                 <string>Always send &amp;gone notifications (closing the window)</string>
+                </property>
+                <property name="shortcut" >
+                 <string>Alt+G</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>21</width>
+           <height>110</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Kopete::UI::PasswordWidget</class>
+   <extends></extends>
+   <header>kopetepasswordwidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget10</tabstop>
+  <tabstop>mID</tabstop>
+  <tabstop>mPass</tabstop>
+  <tabstop>cbAutoConnect</tabstop>
+  <tabstop>btnRegister</tabstop>
+  <tabstop>btnChangePassword</tabstop>
+  <tabstop>cbUseSSL</tabstop>
+  <tabstop>cbAllowPlainTextPassword</tabstop>
+  <tabstop>cbCustomServer</tabstop>
+  <tabstop>mServer</tabstop>
+  <tabstop>mPort</tabstop>
+  <tabstop>mResource</tabstop>
+  <tabstop>mPriority</tabstop>
+  <tabstop>leLocalIP</tabstop>
+  <tabstop>sbLocalPort</tabstop>
+  <tabstop>leProxyJID</tabstop>
+  <tabstop>cbHideSystemInfo</tabstop>
+  <tabstop>cbSendEvents</tabstop>
+  <tabstop>cbSendDeliveredEvent</tabstop>
+  <tabstop>cbSendDisplayedEvent</tabstop>
+  <tabstop>cbSendComposingEvent</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelServer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>70</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>71</x>
+     <y>146</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mServer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>204</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>202</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>575</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>596</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>603</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>636</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbSendEvents</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbSendDeliveredEvent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>108</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>96</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbSendEvents</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbSendDisplayedEvent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>178</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>169</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbSendEvents</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbSendComposingEvent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>338</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>346</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbSendEvents</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbSendGoneEvent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>534</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>535</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -28,11 +28,11 @@
 // Local Includes
 #include "wpprotocol.h"
 #include "wpaccount.h"
-#include "wpeditaccountbase.h"
+#include "ui_wpeditaccountbase.h"
 
 namespace Kopete { class Account; }
 
-class WPEditAccount: public WPEditAccountBase, public KopeteEditAccountWidget
+class WPEditAccount: public QWidget, private Ui::WPEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

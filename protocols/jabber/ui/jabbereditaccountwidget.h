@@ -24,14 +24,14 @@
 #include <kprogressbar.h>
 #include "editaccountwidget.h"
 #include "jabberaccount.h"
-#include "dlgjabbereditaccountwidget.h"
+#include "ui_dlgjabbereditaccountwidget.h"
 #include "jabberprotocol.h"
 
 /**
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberEditAccountWidget:public DlgJabberEditAccountWidget, public KopeteEditAccountWidget
+class JabberEditAccountWidget: public QWidget, private Ui::DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
 
 Q_OBJECT

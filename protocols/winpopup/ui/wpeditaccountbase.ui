@@ -1,364 +1,376 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>WPEditAccountBase</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>WPEditAccountBase</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>398</width>
-            <height>445</height>
-        </rect>
-    </property>
-    <property name="windowTitle">
-        <string>Account Preferences - WinPopup</string>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>0</number>
-        </property>
-        <widget class="QLabel" row="0" column="1">
-            <property name="name">
-                <cstring>labelStatusMessage</cstring>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>WPEditAccountBase</class>
+ <widget class="QWidget" name="WPEditAccountBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>633</width>
+    <height>531</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Account Preferences - WinPopup</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget10" >
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Basi&amp;c Setup</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Account Information</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
             </property>
-            <property name="text">
-                <string></string>
+            <property name="spacing" >
+             <number>6</number>
             </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
+            <item>
+             <widget class="QLabel" name="label1" >
+              <property name="toolTip" >
+               <string>The hostname you would like to use to send WinPopup messages as.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
+              </property>
+              <property name="text" >
+               <string>Hos&amp;tname:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>mHostName</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="mHostName" >
+              <property name="toolTip" >
+               <string>The hostname you would like to use to send WinPopup messages as.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KPushButton" name="doInstallSamba" >
+              <property name="toolTip" >
+               <string>Install support into Samba to enable this service.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>Install support into Samba to enable this service.</string>
+              </property>
+              <property name="text" >
+               <string>I&amp;nstall Into Samba</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
-        <widget class="QTabWidget" row="0" column="0">
-            <property name="name">
-                <cstring>tabWidget10</cstring>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Information</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel12" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Basi&amp;c Setup</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox51</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Account Information</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout40</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>label1</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Hos&amp;tname:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>mHostName</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The hostname you would like to use to send WinPopup messages as.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>mHostName</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The hostname you would like to use to send WinPopup messages as.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="KPushButton">
-                                        <property name="name">
-                                            <cstring>doInstallSamba</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>I&amp;nstall Into Samba</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Install support into Samba to enable this service.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>Install support into Samba to enable this service.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox22</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Information</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel12</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>To receive WinPopup messages sent from other machines, the hostname above must be set to this machine's hostname.</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>WordBreak|AlignTop</set>
-                                </property>
-                            </widget>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel1_3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>The samba server must be configured and running.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel1_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;br&gt;
-However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and add
-'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;' (substitute _PATH_TO_ by the real path) to your smb.conf [global]-section.</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>WordBreak|AlignTop</set>
-                                </property>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer7</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>21</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>S&amp;ystem</string>
-                </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <spacer row="2" column="0">
-                        <property name="name">
-                            <cstring>spacer4</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>135</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QGroupBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>groupBox5</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Information</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>textLabel2_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&lt;i&gt;These options apply to all WinPopup accounts.&lt;/i&gt;</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QGroupBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>groupBox4</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Protocol Preferences</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel4</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Host check frequency:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Path to 'smbclient' executable:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="0" column="1" rowspan="2" colspan="1">
-                                <property name="name">
-                                    <cstring>layout6</cstring>
-                                </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout5</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="KIntSpinBox">
-                                                <property name="name">
-                                                    <cstring>mHostCheckFreq</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>7</hsizetype>
-                                                        <vsizetype>0</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="maximum">
-                                                    <number>3600</number>
-                                                </property>
-                                                <property name="minimum">
-                                                    <number>1</number>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel6</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>3</hsizetype>
-                                                        <vsizetype>5</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="text">
-                                                    <string>second(s)</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="KUrlRequester">
-                                        <property name="name">
-                                            <cstring>mSmbcPath</cstring>
-                                        </property>
-                                    </widget>
-                                </vbox>
-                            </widget>
-                        </grid>
-                    </widget>
-                </grid>
-            </widget>
+            <property name="text" >
+             <string>To receive WinPopup messages sent from other machines, the hostname above must be set to this machine's hostname.</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignTop</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="textLabel1_3" >
+            <property name="text" >
+             <string>The samba server must be configured and running.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="textBrowser" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="frameShape" >
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow" >
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="html" >
+             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;/head>&lt;body style=" white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;/p>&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and add 'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;amp;' (substitute _PATH_TO_ by the real path) to your smb.conf [global]-section.&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
-    </grid>
-</widget>
-<connections>
-    <connection>
-        <sender>doInstallSamba</sender>
-        <signal>clicked()</signal>
-        <receiver>WPEditAccountBase</receiver>
-        <slot>installSamba()</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>tabWidget10</tabstop>
-    <tabstop>mHostName</tabstop>
-    <tabstop>doInstallSamba</tabstop>
-</tabstops>
-<slots>
-    <slot>installSamba()</slot>
-</slots>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
-<customwidgets>
- <customwidget>
-       <class>KIntSpinBox</class>
-       <header>knuminput.h</header>
- </customwidget>
-</customwidgets>
-</UI>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>21</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>S&amp;ystem</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3" >
+         <property name="title" >
+          <string>Protocol Preferences</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="1" >
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="KIntSpinBox" name="mHostCheckFreq" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>5</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximum" >
+                 <number>3600</number>
+                </property>
+                <property name="minimum" >
+                 <number>1</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="textLabel6" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>3</hsizetype>
+                  <vsizetype>5</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text" >
+                 <string>second(s)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="textLabel4" >
+              <property name="text" >
+               <string>Host check frequency:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="KUrlRequester" name="mSmbcPath" />
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="textLabel1" >
+              <property name="text" >
+               <string>Path to 'smbclient' executable:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="title" >
+          <string>Information</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel2_2" >
+            <property name="text" >
+             <string>&lt;i>These options apply to all WinPopup accounts.&lt;/i></string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>135</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelStatusMessage" >
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends></extends>
+   <header>knuminput.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends></extends>
+   <header>kurlrequester.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget10</tabstop>
+  <tabstop>mHostName</tabstop>
+  <tabstop>doInstallSamba</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

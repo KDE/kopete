@@ -16,8 +16,11 @@ set(kopete_wp_ui_SRCS)
 
 kde4_add_ui3_files(kopete_wp_ui_SRCS 
 ui/wpaddcontactbase.ui 
-ui/wpeditaccountbase.ui 
 ui/wpuserinfowidget.ui 
+)
+
+kde4_add_ui_files(kopete_wp_ui_SRCS
+ui/wpeditaccountbase.ui 
 )
 
 set(libwinpopup_SRCS 
