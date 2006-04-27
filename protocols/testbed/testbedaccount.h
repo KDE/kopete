@@ -94,6 +94,10 @@ protected slots:
 	 * Change the account's status.  Called by KActions and internally.
 	 */
 	void slotGoOffline();
+	/**
+	 * Show webcam.  Called by KActions and internally.
+	 */
+	void slotShowVideo();
 
 };
 

@@ -51,7 +51,7 @@ KActionMenu* TestbedAccount::actionMenu()
 
 	KAction *action;
 	
-	action = new KAction (i18n ("Show my own video..."), "testbed_showcam", 0, this, SLOT (slotShowCam ()), this, "actionShowCam");
+	action = new KAction (i18n ("Show my own video..."), "testbed_showvideo", 0, this, SLOT (slotShowVideo ()), this, "actionShowVideo");
 	mActionMenu->insert(action);
 	action->setEnabled( isConnected() );
 
@@ -130,6 +130,15 @@ void TestbedAccount::slotGoAway ()
 
 
 void TestbedAccount::slotGoOffline ()
+{
+	kdDebug ( 14210 ) << k_funcinfo << endl;
+
+	if (isConnected ())
+		disconnect ();
+	updateContactStatus();
+}
+
+void TestbedAccount::slotShowVideo ()
 {
 	kdDebug ( 14210 ) << k_funcinfo << endl;
 
