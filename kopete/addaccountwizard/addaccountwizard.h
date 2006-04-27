@@ -26,7 +26,7 @@
 #include "ui_addaccountwizardpage1.h"
 #include "ui_addaccountwizardpage2.h"
 
-class Q3ListViewItem;
+class QTreeWidgetItem;
 
 class KPluginInfo;
 
@@ -49,8 +49,8 @@ public:
 	~AddAccountWizard();
 
 private slots:
-	void slotProtocolListClicked( Q3ListViewItem *item );
-	void slotProtocolListDoubleClicked( Q3ListViewItem *lvi );
+	void slotProtocolListClicked();
+	void slotProtocolListDoubleClicked();
 
 protected slots:
 	virtual void back();
@@ -59,7 +59,9 @@ protected slots:
 	virtual void reject();
 
 private:
-	QMap<Q3ListViewItem *, KPluginInfo *>  m_protocolItems;
+	QTreeWidgetItem* selectedProtocol();
+
+	QMap<QTreeWidgetItem *, KPluginInfo *>  m_protocolItems;
 	KopeteEditAccountWidget              *m_accountPage;
 	QWidget                              *m_selectService;
 	Ui::AddAccountWizardPage1            *m_uiSelectService;

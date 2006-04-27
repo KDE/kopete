@@ -42,16 +42,21 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	m_proto(0)
 {
 	// setup the select service page
-	QWidget *m_selectService = new QWidget(this);
+	m_selectService = new QWidget(this);
+	
 	m_uiSelectService = new Ui::AddAccountWizardPage1;
 	m_uiSelectService->setupUi(m_selectService);
+	m_uiSelectService->protocolListView->setColumnCount( 2 );
+	QStringList header;
+	header << i18n("Name") << i18n("Description");
+	m_uiSelectService->protocolListView->setHeaderLabels( header );
   if ( firstRun )
 		m_uiSelectService->m_header->setText( i18nc( "1st message shown to users on first run of Kopete. Please keep the formatting.", "<h2>Welcome to Kopete</h2><p>Which messaging service do you want to connect to?</p>") );
 	addPage(m_selectService, m_selectService->windowTitle());
 	setNextEnabled(m_selectService, false);
 
 	// setup the final page
-	QWidget *m_finish = new QWidget(this);
+	m_finish = new QWidget(this);
 	m_uiFinish = new Ui::AddAccountWizardPage2;
 	m_uiFinish->setupUi(m_finish);
   if ( firstRun )
@@ -63,8 +68,8 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
 	for (QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
-		Q3ListViewItem *pluginItem = new Q3ListViewItem(m_uiSelectService->protocolListView);
-		pluginItem->setPixmap(0, SmallIcon((*it)->icon()));
+		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(m_uiSelectService->protocolListView);
+		pluginItem->setIcon(0, QIcon(SmallIcon((*it)->icon())));
 		pluginItem->setText(0, (*it)->name());
 		pluginItem->setText(1, (*it)->comment());
 
@@ -72,29 +77,37 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	}
 
 	// focus the ListView and select the first item
-	Q3ListView &protocol_list = *m_uiSelectService->protocolListView;
+	QTreeWidget &protocol_list = *m_uiSelectService->protocolListView;
 	protocol_list.setFocus();
-	if (protocol_list.childCount() > 0)
+	if (protocol_list.topLevelItemCount() > 0)
 	{
-		protocol_list.setSelected(protocol_list.firstChild(), true);
+		protocol_list.setItemSelected( protocol_list.topLevelItem(0), true );
 	}
  
 	// hook up the user input
-	connect(m_uiSelectService->protocolListView, SIGNAL(clicked(Q3ListViewItem *)),
-		this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
-	connect(m_uiSelectService->protocolListView, SIGNAL(selectionChanged(Q3ListViewItem *)),
-		this, SLOT( slotProtocolListClicked(Q3ListViewItem *)));
-	connect(m_uiSelectService->protocolListView, SIGNAL(doubleClicked(Q3ListViewItem *)),
-		this, SLOT(slotProtocolListDoubleClicked(Q3ListViewItem *)));
+	connect(m_uiSelectService->protocolListView, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+		this, SLOT(slotProtocolListClicked()));
+	connect(m_uiSelectService->protocolListView, SIGNAL(itemSelectionChanged()),
+		this, SLOT( slotProtocolListClicked()));
+	connect(m_uiSelectService->protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
+		this, SLOT(slotProtocolListDoubleClicked()));
 }
 
-void AddAccountWizard::slotProtocolListClicked( Q3ListViewItem * )
+QTreeWidgetItem* AddAccountWizard::selectedProtocol()
+{
+	QList<QTreeWidgetItem*> selectedItems = m_uiSelectService->protocolListView->selectedItems();
+	if(!selectedItems.empty())
+ 		return selectedItems.first();
+	return 0;
+}
+
+void AddAccountWizard::slotProtocolListClicked()
 {
 	// Make sure a protocol is selected before allowing the user to continue
-	setNextEnabled(m_selectService, m_uiSelectService->protocolListView->selectedItem() != 0);
+	setNextEnabled(m_selectService, selectedProtocol() != 0);
 }
 
-void AddAccountWizard::slotProtocolListDoubleClicked( Q3ListViewItem *lvi )
+void AddAccountWizard::slotProtocolListDoubleClicked()
 {
 	// proceed to the next wizard page if we double click a protocol
 	next();
@@ -102,7 +115,7 @@ void AddAccountWizard::slotProtocolListDoubleClicked( Q3ListViewItem *lvi )
 
 void AddAccountWizard::back()
 {
-	if (currentPage() == dynamic_cast<QWidget *>(m_accountPage))
+	if (currentPage() == dynamic_cast<QWidget*>(m_accountPage))
 	{
 		// Deletes the accountPage, K3Wizard does not like deleting pages
 		// using different pointers, it only seems to watch its own pointer
@@ -123,7 +136,7 @@ void AddAccountWizard::next()
 {
 	if (currentPage() == m_selectService)
 	{
-		Q3ListViewItem *lvi = m_uiSelectService->protocolListView->selectedItem();
+		QTreeWidgetItem *lvi = selectedProtocol();
 		if(!m_protocolItems[lvi])
 		{ //no item selected
 			return;
@@ -146,10 +159,10 @@ void AddAccountWizard::next()
 			return;
 		}
 	
-		insertPage(dynamic_cast<QWidget *>(m_accountPage), i18n("Step Two: Account Information"), indexOf(m_finish));
+		insertPage(dynamic_cast<QWidget*>(m_accountPage), i18n("Step Two: Account Information"), indexOf(m_finish));
 		K3Wizard::next();
 	}
-	else if (currentPage() == dynamic_cast<QWidget *>(m_accountPage))
+	else if (currentPage() == dynamic_cast<QWidget*>(m_accountPage))
 	{
 		// check the data of the page is valid
 		if (!m_accountPage->validateData())
