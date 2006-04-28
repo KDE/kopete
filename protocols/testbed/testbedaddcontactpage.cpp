@@ -25,19 +25,22 @@
 
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
-
-#include "testbedaddui.h"
+#include "ui_testbedaddui.h"
 
 TestbedAddContactPage::TestbedAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
 	kDebug(14210) << k_funcinfo << endl;
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	m_testbedAddUI = new TestbedAddUI( this );
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget();
+	m_testbedAddUI = new Ui::TestbedAddUI;
+	m_testbedAddUI->setupUi( w );
+	l->addWidget( w );
 }
 
 TestbedAddContactPage::~TestbedAddContactPage()
 {
+	delete m_testbedAddUI;
 }
 
 bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )

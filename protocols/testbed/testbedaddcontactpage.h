@@ -21,7 +21,7 @@
 
 namespace Kopete { class Account; }
 namespace Kopete { class MetaContact; }
-class TestbedAddUI;
+namespace Ui { class TestbedAddUI; }
 
 /**
  * A page in the Add Contact Wizard
@@ -44,7 +44,7 @@ public:
     virtual bool validateData();
 
 protected:
-	TestbedAddUI *m_testbedAddUI;
+	Ui::TestbedAddUI *m_testbedAddUI;
 };
 
 #endif
