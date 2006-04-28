@@ -22,7 +22,7 @@ ui/icqaddcontactpage.cpp
 ui/icqsearchdialog.cpp
 )
 
-kde4_add_ui3_files(kopete_icq_ui_SRCS 
+kde4_add_ui_files(kopete_icq_ui_SRCS 
 ui/icqadd.ui 
 ui/icqgeneralinfo.ui 
 ui/icqotherinfowidget.ui 
@@ -30,9 +30,6 @@ ui/icqworkinfowidget.ui
 ui/icqinterestinfowidget.ui 
 ui/icqauthreplyui.ui 
 ui/icqsearchbase.ui 
-)
-
-kde4_add_ui_files(kopete_icq_ui_SRCS 
 ui/icqeditaccountui.ui 
 )
 

@@ -23,9 +23,13 @@
 #include "icquserinfo.h"
 
 class ICQAccount;
-class ICQSearchBase;
 class ICQContact;
 class ICQUserInfoWidget;
+namespace Ui
+{
+	class ICQUserInfoWidget;
+	class ICQSearchBase;
+}
 /**
 @author Kopete Developers
 */
@@ -57,7 +61,7 @@ private slots:
 
 private:
 	ICQAccount* m_account;
-	ICQSearchBase* m_searchUI;
+	Ui::ICQSearchBase* m_searchUI;
 	ICQContact* m_contact;
 	ICQUserInfoWidget* m_infoWidget;
 	

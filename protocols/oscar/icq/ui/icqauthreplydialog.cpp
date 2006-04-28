@@ -16,7 +16,7 @@
    *************************************************************************
 */
 #include "icqauthreplydialog.h"
-#include "icqauthreplyui.h"
+#include "ui_icqauthreplyui.h"
 
 #include <klocale.h>
 
@@ -27,8 +27,10 @@
 ICQAuthReplyDialog::ICQAuthReplyDialog( QWidget *parent, const char */*name*/, bool wasRequested )
  : KDialog( parent, i18n( "Authorization Reply" ), KDialog::Ok | KDialog::Cancel )
 {
-	m_ui = new ICQAuthReplyUI( this );
-	setMainWidget( m_ui );
+	m_ui = new Ui::ICQAuthReplyUI();
+	QWidget *w = new QWidget( this );
+	m_ui->setupUi( w );
+	setMainWidget( w );
 	m_wasRequested = wasRequested;
 	
 	if ( !m_wasRequested )
@@ -44,6 +46,7 @@ ICQAuthReplyDialog::ICQAuthReplyDialog( QWidget *parent, const char */*name*/, b
 
 ICQAuthReplyDialog::~ICQAuthReplyDialog()
 {
+	delete m_ui;
 }
 
 void ICQAuthReplyDialog::setUser( const QString & user )

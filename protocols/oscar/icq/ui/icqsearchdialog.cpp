@@ -35,7 +35,7 @@
 #include "icqaccount.h"
 #include "icqaddcontactpage.h"
 #include "icqprotocol.h"
-#include "icqsearchbase.h"
+#include "ui_icqsearchbase.h"
 #include "oscartypes.h"
 #include "icqcontact.h"
 #include "icquserinfowidget.h"
@@ -44,8 +44,10 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const ch
 : KDialog( parent, i18n( "ICQ User Search" ) )
 {
 	m_account = account;
-	m_searchUI = new ICQSearchBase( this, name );
-	setMainWidget( m_searchUI );
+	QWidget* w = new QWidget( this );
+	m_searchUI = new Ui::ICQSearchBase();
+	m_searchUI->setupUi( w );
+	setMainWidget( w );
 	connect( m_searchUI->searchButton, SIGNAL( clicked() ), this, SLOT( startSearch() ) );
 	connect( m_searchUI->searchResults, SIGNAL( selectionChanged() ), this, SLOT( resultSelectionChanged() ) );
 	connect( m_searchUI->addButton, SIGNAL( clicked() ), this, SLOT( addContact() ) );
@@ -70,6 +72,7 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const ch
 
 ICQSearchDialog::~ICQSearchDialog()
 {
+	delete m_searchUI;
 }
 
 void ICQSearchDialog::startSearch()
@@ -199,7 +202,7 @@ void ICQSearchDialog::userInfo()
 									m_searchUI->searchResults->selectedItem()->text( 0 ),
 									NULL);
 	
-		m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), "icq info" );
+		m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
 		QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
 	
 		m_infoWidget->setContact( m_contact );

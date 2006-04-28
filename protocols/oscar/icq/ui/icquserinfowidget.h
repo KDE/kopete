@@ -23,10 +23,13 @@
 #include <icquserinfo.h>
 
 class KJanusWidget;
-class ICQGeneralInfoWidget;
-class ICQWorkInfoWidget;
-class ICQOtherInfoWidget;
-class ICQInterestInfoWidget;
+namespace Ui
+{
+	class ICQGeneralInfoWidget;
+	class ICQWorkInfoWidget;
+	class ICQOtherInfoWidget;
+	class ICQInterestInfoWidget;
+}
 class ICQContact;
 
 class ICQUserInfoWidget : public KDialogBase
@@ -34,6 +37,7 @@ class ICQUserInfoWidget : public KDialogBase
 Q_OBJECT
 public:
 	ICQUserInfoWidget( QWidget* parent = 0, const char* name = 0 );
+	~ICQUserInfoWidget();
 	void setContact( ICQContact* contact );
 	
 public slots:
@@ -44,13 +48,12 @@ public slots:
 	void fillInterestInfo( const ICQInterestInfo& );
 
 private:
-	ICQGeneralInfoWidget* m_genInfoWidget;
-	ICQWorkInfoWidget* m_workInfoWidget;
-	ICQOtherInfoWidget* m_otherInfoWidget;
-	ICQInterestInfoWidget * m_interestInfoWidget;
+	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
+	Ui::ICQWorkInfoWidget* m_workInfoWidget;
+	Ui::ICQOtherInfoWidget* m_otherInfoWidget;
+	Ui::ICQInterestInfoWidget * m_interestInfoWidget;
 	KJanusWidget* m_janusWidget;
 	ICQContact* m_contact;
-	
 };
 
 #endif

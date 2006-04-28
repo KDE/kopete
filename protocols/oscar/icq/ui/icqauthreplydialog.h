@@ -20,7 +20,7 @@
 
 #include <kdialog.h>
 
-class ICQAuthReplyUI;
+namespace Ui { class ICQAuthReplyUI; }
 
 /**
  * A dialog to ask user what to do when a contact requests authorization
@@ -39,7 +39,7 @@ public:
 	bool grantAuth();
 private:
 	bool m_wasRequested;
-	ICQAuthReplyUI *m_ui;
+	Ui::ICQAuthReplyUI *m_ui;
 };
 
 #endif

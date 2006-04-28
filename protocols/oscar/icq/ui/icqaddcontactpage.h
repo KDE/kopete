@@ -27,7 +27,7 @@
   *@author Matt Rogers
   *@author Stefan Gehn
   */
-class icqAddUI;
+namespace Ui { class icqAddUI; }
 class ICQAccount;
 class ICQSearchDialog;
 
@@ -53,7 +53,7 @@ private slots:
 private:
 	
 	ICQAccount *mAccount;
-	icqAddUI *addUI;
+	Ui::icqAddUI *addUI;
 	ICQSearchDialog* m_searchDialog;
 };
 

@@ -36,7 +36,7 @@
 #include <kpushbutton.h>
 #include <kmessagebox.h>
 
-#include "icqadd.h"
+#include "ui_icqadd.h"
 #include "icqaccount.h"
 #include "icqprotocol.h"
 #include "icqsearchdialog.h"
@@ -50,12 +50,14 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 	m_searchDialog = 0L;
 
 	(new Q3VBoxLayout(this))->setAutoAdd(true);
-	addUI = new icqAddUI(this);
+	addUI = new Ui::icqAddUI();
+	addUI->setupUi(this);
 	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
 }
 
 ICQAddContactPage::~ICQAddContactPage()
 {
+	delete addUI;
 }
 
 void ICQAddContactPage::setUINFromSearch( const QString& uin )

@@ -24,7 +24,6 @@
 #include <q3combobox.h>
 #include <qobject.h>
 //Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <Q3Frame>
 #include <qtextcodec.h>
 
@@ -35,12 +34,12 @@
 #include <kjanuswidget.h>
 #include <klocale.h>
 
-#include "icqgeneralinfo.h"
+#include "ui_icqgeneralinfo.h"
 #include "icqcontact.h"
 #include "icqprotocol.h"
-#include "icqworkinfowidget.h"
-#include "icqotherinfowidget.h"
-#include "icqinterestinfowidget.h"
+#include "ui_icqworkinfowidget.h"
+#include "ui_icqotherinfowidget.h"
+#include "ui_icqinterestinfowidget.h"
 
 
 ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
@@ -51,31 +50,34 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
 	QFrame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General ICQ Information" ),
 	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), K3Icon::Desktop ) );
-	Q3VBoxLayout* genLayout = new Q3VBoxLayout( genInfo );
-	m_genInfoWidget = new ICQGeneralInfoWidget( genInfo, "Basic Information" );
-	genLayout->addWidget( m_genInfoWidget );
+	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;
+	m_genInfoWidget->setupUi( genInfo );
 	
 	QFrame* workInfo = addPage( i18n( "Work Info" ),
 	                                          i18n( "Work Information" ),
 	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), K3Icon::Desktop ) );
-	Q3VBoxLayout* workLayout = new Q3VBoxLayout( workInfo );
-	m_workInfoWidget = new ICQWorkInfoWidget( workInfo, "Work Information" );
-	workLayout->addWidget( m_workInfoWidget );
+	m_workInfoWidget = new Ui::ICQWorkInfoWidget;
+	m_workInfoWidget->setupUi( workInfo );
 	
 	QFrame* otherInfo = addPage( i18n( "Other Info" ),
 	                                           i18n( "Other ICQ Information" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
-	Q3VBoxLayout* otherLayout = new Q3VBoxLayout( otherInfo );
-	m_otherInfoWidget = new ICQOtherInfoWidget( otherInfo, "Other Information"  );
-	otherLayout->addWidget( m_otherInfoWidget );
+	m_otherInfoWidget = new Ui::ICQOtherInfoWidget();
+	m_otherInfoWidget->setupUi( otherInfo );
 	
 	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
 	                                           i18n( "Interest" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
-	Q3VBoxLayout* interestLayout = new Q3VBoxLayout( interestInfo );
-	m_interestInfoWidget = new ICQInterestInfoWidget( interestInfo, "Other Information"  );
-	interestLayout->addWidget( m_interestInfoWidget );
+	m_interestInfoWidget = new Ui::ICQInterestInfoWidget();
+	m_interestInfoWidget->setupUi( interestInfo );
+}
 
+ICQUserInfoWidget::~ ICQUserInfoWidget()
+{
+	delete m_genInfoWidget;
+	delete m_workInfoWidget;
+	delete m_otherInfoWidget;
+	delete m_interestInfoWidget;
 }
 
 void ICQUserInfoWidget::setContact( ICQContact* contact )
