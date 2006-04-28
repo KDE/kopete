@@ -29,7 +29,7 @@
 
 #include "kopetemessage.h"
 
-class HistoryViewer;
+namespace Ui { class HistoryViewer; }
 
 //class HistoryWidget;
 namespace Kopete { class MetaContact; }
@@ -132,7 +132,7 @@ class HistoryDialog : public KDialog
 		// History View
 		KHTMLView *mHtmlView;
 		KHTMLPart *mHtmlPart;
-		HistoryViewer *mMainWidget;
+		Ui::HistoryViewer *mMainWidget;
 		Kopete::XSLT *mXsltParser;
 
 		struct Init

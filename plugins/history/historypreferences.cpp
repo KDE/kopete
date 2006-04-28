@@ -17,7 +17,7 @@
 
 #include "historypreferences.h"
 #include "historyconfig.h"
-#include "historyprefsui.h"
+#include "ui_historyprefsui.h"
 
 #include <kgenericfactory.h>
 
@@ -36,8 +36,10 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const char*/*name*/, con
 	: KCModule(HistoryConfigFactory::instance(), parent, args)
 {
 	kDebug(14310) << k_funcinfo << "called." << endl;
-	(new QVBoxLayout(this))->setAutoAdd(true);
-	p = new HistoryPrefsUI(this);
+	
+	QWidget* w = new QWidget( this );
+	p = new Ui::HistoryPrefsUI();
+	p->setupUi( w );
 
 	connect(p->chkShowPrevious, SIGNAL(toggled(bool)), this, SLOT(slotShowPreviousChanged(bool)));
 	connect(p->Number_Auto_chatwindow, SIGNAL(valueChanged(int)),
@@ -52,6 +54,7 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const char*/*name*/, con
 HistoryPreferences::~HistoryPreferences()
 {
 	kDebug(14310) << k_funcinfo << "called." << endl;
+	delete p;
 }
 
 void HistoryPreferences::load()

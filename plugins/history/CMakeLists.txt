@@ -14,7 +14,7 @@ set(kopete_history_PART_SRCS
    converter.cpp 
    historyguiclient.cpp )
 
-kde4_add_ui3_files(kopete_history_PART_SRCS historyviewer.ui )
+kde4_add_ui_files(kopete_history_PART_SRCS historyviewer.ui )
 
 kde4_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
 
@@ -33,7 +33,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_history )
 
 set(kcm_kopete_history_PART_SRCS historypreferences.cpp )
 
-kde4_add_ui3_files(kcm_kopete_history_PART_SRCS historyprefsui.ui )
+kde4_add_ui_files(kcm_kopete_history_PART_SRCS historyprefsui.ui )
 
 kde4_add_kcfg_files(kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
 

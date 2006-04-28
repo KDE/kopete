@@ -18,7 +18,7 @@
 
 #include "historydialog.h"
 #include "historylogger.h"
-#include "historyviewer.h"
+#include "ui_historyviewer.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -119,7 +119,9 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 	
 
 	// Widgets initializations
-	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
+	QWidget* w = new QWidget( this );
+	mMainWidget = new Ui::HistoryViewer();
+	mMainWidget->setupUi( w );
 	mMainWidget->searchLine->setFocus(); 
 	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
@@ -140,7 +142,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
 	mMainWidget->dateListView->setSorting(0, 0); //newest-first
 
-	setMainWidget(mMainWidget);
+	setMainWidget( w );
 
 	// Initializing HTML Part
 	mMainWidget->htmlFrame->setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
@@ -199,6 +201,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 
 HistoryDialog::~HistoryDialog()
 {
+	delete mMainWidget;
 	delete mSearch;
 }
 

@@ -21,7 +21,7 @@
 #include <kcmodule.h>
 #include <qstring.h>
 
-class HistoryPrefsUI;
+namespace Ui { class HistoryPrefsUI; }
 
 /**
  * @author Stefan Gehn
@@ -42,7 +42,7 @@ class HistoryPreferences : public KCModule
 		void slotShowPreviousChanged(bool);
 
 	private:
-		HistoryPrefsUI *p;
+		Ui::HistoryPrefsUI *p;
 };
 
 #endif
