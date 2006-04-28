@@ -29,7 +29,7 @@
 #include <kgenericfactory.h>
 
 #include "config.h" // for HAVE_XMMS
-#include "nowlisteningprefs.h"
+#include "ui_nowlisteningprefs.h"
 #include "nowlisteningconfig.h"
 #include "nowlisteningpreferences.h"
 #include "nowlisteningpreferences.moc"
@@ -41,10 +41,12 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFact
 NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 	: KCModule( NowListeningPreferencesFactory::instance(), parent, args )
 {
-	(  new QVBoxLayout(  this ) )->setAutoAdd(  true );
-	preferencesDialog = new NowListeningPrefsUI( this );
+	QWidget* w = new QWidget( this );
+	preferencesDialog = new Ui::NowListeningPrefsUI();
+	preferencesDialog->setupUi( w );
 
-	addConfig( NowListeningConfig::self(), preferencesDialog );
+	//Is this correct?
+	addConfig( NowListeningConfig::self(), w );
 
 	// Fill the media player listbox.
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kscd"));

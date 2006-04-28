@@ -41,7 +41,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_nowlistening )
 
 set(kcm_kopete_nowlistening_PART_SRCS nowlisteningpreferences.cpp )
 
-kde4_add_ui3_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
+kde4_add_ui_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
 
 kde4_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 

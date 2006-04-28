@@ -22,7 +22,7 @@
 
 #include <kcmodule.h>
 
-class NowListeningPrefsUI;
+namespace Ui { class NowListeningPrefsUI; }
 class NowListeningConfig;
 
 /**
@@ -43,7 +43,7 @@ private slots:
 	void slotSettingsChanged();
 
 private:
-	NowListeningPrefsUI *preferencesDialog;
+	Ui::NowListeningPrefsUI *preferencesDialog;
 
 };
 
