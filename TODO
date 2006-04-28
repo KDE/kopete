@@ -88,3 +88,21 @@ OSCAR ICQ/AIM TODO ITEMS
 	- Search for an MSN User (not for Kopete 1.0)
 
 ================================================================================
+
+
+PORTING TO QT4 / KDE4
+
+	User Interface =========================================================
+	- Check that Ui::{DesignerWidget} variables allocated on the heap are 
+	  always deleted in the destructor.
+	- Go through all the ui4 files and set the tab order
+
+	General ================================================================
+	- K Replacement for QTreeWidget, QTreeWidgetItem?
+	- Remove const char* argument from plugin constructors
+	  (needs changed KParts::ComponentsFactory)
+	- Go through the debug ouput and look for failed QObject::connect()
+	- Eliminate as many setObjectName() calls as necessary
+
+
+=================================================================================
