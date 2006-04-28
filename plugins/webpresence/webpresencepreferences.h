@@ -20,7 +20,7 @@
 
 #include "kcmodule.h"
 
-class WebPresencePrefsUI;
+namespace Ui { class WebPresencePrefsUI; }
 //class KAutoConfig;
 
 //TODO: Port to KConfigXT
@@ -33,12 +33,13 @@ class WebPresencePreferences : public KCModule  {
 
 public:
 	WebPresencePreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+	~WebPresencePreferences();
 
 	virtual void save();
 	virtual void defaults();
 
 private:
-	WebPresencePrefsUI *preferencesDialog;
+	Ui::WebPresencePrefsUI *preferencesDialog;
 	//KAutoConfig *kautoconfig;
 
 private slots: // Public slots

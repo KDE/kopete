@@ -24,7 +24,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_webpresence )
 
 set(kcm_kopete_webpresence_PART_SRCS webpresencepreferences.cpp )
 
-kde4_add_ui3_files(kcm_kopete_webpresence_PART_SRCS webpresenceprefs.ui )
+kde4_add_ui_files(kcm_kopete_webpresence_PART_SRCS webpresenceprefs.ui )
 
 kde4_automoc(${kcm_kopete_webpresence_PART_SRCS})
 

@@ -22,7 +22,7 @@
 #include <kgenericfactory.h>
 #include <kurlrequester.h>
 
-#include "webpresenceprefs.h"
+#include "ui_webpresenceprefs.h"
 #include "webpresencepreferences.h"
 
 //TODO: Port to KConfigXT
@@ -34,8 +34,9 @@ WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*na
 		: KCModule(WebPresencePreferencesFactory::instance(), parent, args)
 {
 	// Add actuall widget generated from ui file.
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new WebPresencePrefsUI(this);
+	QWidget* w = new QWidget(this);
+	preferencesDialog = new Ui::WebPresencePrefsUI();
+	preferencesDialog->setupUi( w );
 	preferencesDialog->uploadURL->setMode( KFile::File );
 	preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
 
@@ -45,6 +46,11 @@ WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*na
 // 	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
 // 	kautoconfig->addWidget(preferencesDialog, "Web Presence Plugin");
 // 	kautoconfig->retrieveSettings(true);
+}
+
+WebPresencePreferences::~WebPresencePreferences()
+{
+	delete preferencesDialog;
 }
 
 void WebPresencePreferences::widgetModified()
