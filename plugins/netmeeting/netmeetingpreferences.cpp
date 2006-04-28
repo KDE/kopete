@@ -35,7 +35,7 @@
 #include <kdebug.h>
 
 #include "netmeetingplugin.h"
-#include "netmeetingprefs_ui.h"
+#include "ui_netmeetingprefs_ui.h"
 #include "netmeetingpreferences.h"
 
 typedef KGenericFactory<NetmeetingPreferences> NetmeetingPreferencesFactory;
@@ -44,8 +44,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_netmeeting, NetmeetingPreferencesFactory(
 NetmeetingPreferences::NetmeetingPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(NetmeetingPreferencesFactory::instance(), parent, args)
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new NetmeetingPrefsUI(this);
+	QVBoxLayout* l = new QVBoxLayout(this);
+	QWidget* w = new QWidget;
+	preferencesDialog = new Ui::NetmeetingPrefsUI(this);
+	preferencesDialog->setupUi(w);
+	l->addWidget(w);
 
 	connect(preferencesDialog->m_app , SIGNAL(textChanged(const QString &)) , this , SLOT(slotChanged()));
 
@@ -54,6 +57,7 @@ NetmeetingPreferences::NetmeetingPreferences(QWidget *parent, const char* /*name
 
 NetmeetingPreferences::~NetmeetingPreferences()
 {
+	delete preferencesDialog;
 }
 
 void NetmeetingPreferences::load()

@@ -24,7 +24,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_alias )
 
 set(kcm_kopete_alias_PART_SRCS aliaspreferences.cpp editaliasdialog.cpp )
 
-kde4_add_ui3_files(kcm_kopete_alias_PART_SRCS aliasdialogbase.ui aliasdialog.ui )
+kde4_add_ui_files(kcm_kopete_alias_PART_SRCS aliasdialogbase.ui aliasdialog.ui )
 
 kde4_automoc(${kcm_kopete_alias_PART_SRCS})
 

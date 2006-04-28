@@ -19,7 +19,7 @@
 #include "smpppdlocationwidget.h"
 
 SMPPPDLocationWidget::SMPPPDLocationWidget(QWidget* parent, const char* name, WFlags fl)
- : SMPPPDLocationWidgetBase(parent, name, fl) {}
+ : QWidget(parent, name, fl) {}
 
 SMPPPDLocationWidget::~SMPPPDLocationWidget() {}
 

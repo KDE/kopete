@@ -20,7 +20,7 @@
 #include <klineedit.h>
 #include <kgenericfactory.h>
 
-#include "cryptographyprefsbase.h"
+#include "ui_cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
 #include "kgpgselkey.h"
 
@@ -33,9 +33,17 @@ CryptographyPreferences::CryptographyPreferences(QWidget *parent, const char* /*
 							: KCModule(CryptographyPreferencesFactory::instance(), parent, args)
 {
 	// Add actuall widget generated from ui file.
-	preferencesDialog = new CryptographyPrefsUI(this);
+	QWidget* w = new QWidget(this);
+	preferencesDialog = new Ui::CryptographyPrefsUI;
+	preferencesDialog->setupUi(this);
+
 	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
 	//setMainWidget( preferencesDialog ,"Cryptography Plugin");
+}
+
+CryptographyPreferences::~CryptographyPreferences()
+{
+	delete preferencesDialog;
 }
 
 void CryptographyPreferences::slotSelectPressed()

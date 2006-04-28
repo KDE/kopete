@@ -20,7 +20,7 @@
 
 #include "kcmodule.h"
 
-class AutoReplacePrefsUI;
+namespace Ui { class AutoReplacePrefsUI; }
 class AutoReplaceConfig;
 
 	// TODO
@@ -35,11 +35,11 @@ class AutoReplacePreferences : public KCModule
 
 public:
 	AutoReplacePreferences( QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList() );
-	~AutoReplacePreferences();
+	virtual~AutoReplacePreferences();
 
 	virtual void save();
 	virtual void load();
-    virtual void defaults();
+	virtual void defaults();
 
 private slots:
 	//void slotSettingsDirty();
@@ -52,7 +52,7 @@ private slots:
 protected slots:
 	virtual void slotWidgetModified();
 private:
-	AutoReplacePrefsUI * preferencesDialog;
+	Ui::AutoReplacePrefsUI * preferencesDialog;
 	AutoReplaceConfig *m_config;
 
 	bool m_wordListChanged;

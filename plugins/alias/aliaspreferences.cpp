@@ -31,7 +31,7 @@
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 
-#include "aliasdialogbase.h"
+#include "ui_aliasdialogbase.h"
 #include "editaliasdialog.h"
 #include "aliaspreferences.h"
 
@@ -126,8 +126,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_alias, AliasPreferencesFactory( "kcm_kope
 AliasPreferences::AliasPreferences( QWidget *parent, const char *, const QStringList &args )
 	: KCModule( AliasPreferencesFactory::instance(), parent, args )
 {
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new AliasDialogBase( this );
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	preferencesDialog = new Ui::AliasDialogBase;
+	preferencesDialog->setupUi( w );
+	l->addWidget( w );
 
 	connect( preferencesDialog->addButton, SIGNAL(clicked()), this, SLOT( slotAddAlias() ) );
 	connect( preferencesDialog->editButton, SIGNAL(clicked()), this, SLOT( slotEditAlias() ) );
@@ -157,6 +160,7 @@ AliasPreferences::~AliasPreferences()
 
 		myChild = myChild->nextSibling();
 	}
+	delete preferencesDialog;
 }
 
 // reload configuration reading it from kopeterc
@@ -390,6 +394,7 @@ void AliasPreferences::loadProtocols( EditAliasDialog *dialog )
 void AliasPreferences::slotEditAlias()
 {
 	EditAliasDialog editDialog;
+
 	loadProtocols( &editDialog );
 
 	Q3ListViewItem *item = preferencesDialog->aliasList->selectedItems().first();

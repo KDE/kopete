@@ -29,7 +29,7 @@
 
 #include <kdeversion.h>
 
-#include "texteffectprefs.h"
+#include "ui_texteffectprefs.h"
 #include "texteffectpreferences.h"
 #include "texteffectconfig.h"
 
@@ -41,11 +41,12 @@ TextEffectPreferences::TextEffectPreferences(QWidget *parent,
                                              const QStringList &args)
 	: KCModule(TextEffectPreferencesFactory::instance(), parent, args)
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget *w = new QWidget;
 	kDebug( 14310 ) << "Creating preferences dialog" << endl;
-
-	preferencesDialog = new TextEffectPrefs(this);
+	preferencesDialog = new Ui::TextEffectPrefs;
+	preferencesDialog->setupUi( w );
+	l->addWidget( w );
 
 	kDebug( 14310 ) << "Creating config object" << endl;
 

@@ -26,7 +26,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_highlight )
 
 set(kcm_kopete_highlight_PART_SRCS highlightpreferences.cpp filter.cpp highlightconfig.cpp )
 
-kde4_add_ui3_files(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
+kde4_add_ui_files(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
 
 kde4_automoc(${kcm_kopete_highlight_PART_SRCS})
 

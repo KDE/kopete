@@ -28,7 +28,7 @@
 #include <kglobal.h>
 #include <kgenericfactory.h>
 
-#include "autoreplaceprefs.h"
+#include "ui_autoreplaceprefs.h"
 #include "autoreplacepreferences.h"
 #include "autoreplaceconfig.h"
 
@@ -40,8 +40,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactor
 AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /* name */, const QStringList &args )
 : KCModule( AutoReplacePreferencesFactory::instance(), parent, args )
 {
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new AutoReplacePrefsUI( this );
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	preferencesDialog = new Ui::AutoReplacePrefsUI;
+	preferencesDialog->setupUi( w );
+	l->addWidget( w );
 
 	// creates table columns (avoids new columns every time)
 	preferencesDialog->m_list->addColumn( i18n("Text" ) );
@@ -71,6 +74,7 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 AutoReplacePreferences::~AutoReplacePreferences()
 {
 	delete m_config;
+	delete preferencesDialog;
 }
 
 // reload configuration reading it from kopeterc

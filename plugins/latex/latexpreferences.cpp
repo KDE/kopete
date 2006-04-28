@@ -26,7 +26,7 @@
 
 #include "latexplugin.h"
 #include "latexconfig.h"
-#include "latexprefsbase.h"
+#include "ui_latexprefsbase.h"
 #include "latexpreferences.h"
 
 typedef KGenericFactory<LatexPreferences> LatexPreferencesFactory;
@@ -35,9 +35,12 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_latex, LatexPreferencesFactory( "kcm_kope
 LatexPreferences::LatexPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(LatexPreferencesFactory::instance(), parent, args)
 {
-	QWidget* w = new QWidget( this );
-	m_preferencesDialog = new Ui::LatexPrefsUI();
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	m_preferencesDialog = new Ui::LatexPrefsUI;
 	m_preferencesDialog->setupUi( w );
+	l->addWidget( w );
+
 	// connect widget signals here
 	m_preferencesDialog->horizontalDPI->setMinimum(1);
 	m_preferencesDialog->verticalDPI->setMinimum(1);

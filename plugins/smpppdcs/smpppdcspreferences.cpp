@@ -39,8 +39,12 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
  : KCModule(SMPPPDCSPreferencesFactory::instance(), parent, args), m_ui(NULL) {
 
  	Kopete::AccountManager * manager = Kopete::AccountManager::self(); 
-	(new QVBoxLayout(this))->setAutoAdd(true);
-	m_ui = new SMPPPDCSPrefs(this);
+
+	QVBoxLayout* l = new QVBoxLayout(this);
+	QWidget* w = new QWidget;
+	m_ui = new Ui::SMPPPDCSPrefs;
+	m_ui->setupUi(w);
+	l->addWidget(w);
 
 	for(QPtrListIterator<Kopete::Account> it(manager->accounts()); it.current(); ++it)
 	{

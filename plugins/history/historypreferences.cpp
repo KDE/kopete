@@ -37,9 +37,11 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const char*/*name*/, con
 {
 	kDebug(14310) << k_funcinfo << "called." << endl;
 	
-	QWidget* w = new QWidget( this );
-	p = new Ui::HistoryPrefsUI();
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	p = new Ui::HistoryPrefsUI;
 	p->setupUi( w );
+	l->addWidget( w );
 
 	connect(p->chkShowPrevious, SIGNAL(toggled(bool)), this, SLOT(slotShowPreviousChanged(bool)));
 	connect(p->Number_Auto_chatwindow, SIGNAL(valueChanged(int)),

@@ -21,7 +21,7 @@
 #include <kdialog.h>
 
 namespace Kopete { class MetaContact; }
-class CryptographyUserKey_ui;
+namespace Ui { class CryptographyUserKey_ui; }
 
 /**
   *@author OlivierGoffart
@@ -43,7 +43,7 @@ private slots:
   void slotRemovePressed();
 
 private:
-	CryptographyUserKey_ui *view;
+	Ui::CryptographyUserKey_ui *view;
 	Kopete::MetaContact *m_metaContact;
 
 };

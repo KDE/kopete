@@ -26,7 +26,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_autoreplace )
 
 set(kcm_kopete_autoreplace_PART_SRCS autoreplacepreferences.cpp autoreplaceconfig.cpp )
 
-kde4_add_ui3_files(kcm_kopete_autoreplace_PART_SRCS autoreplaceprefs.ui )
+kde4_add_ui_files(kcm_kopete_autoreplace_PART_SRCS autoreplaceprefs.ui )
 
 kde4_automoc(${kcm_kopete_autoreplace_PART_SRCS})
 

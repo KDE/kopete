@@ -20,7 +20,7 @@
 #include <kcmodule.h>
 #include <qstring.h>
 
-class NetmeetingPrefsUI;
+namespace Ui { class NetmeetingPrefsUI; }
 
 /**
   *@author Olivier Goffart
@@ -37,7 +37,7 @@ public:
 	virtual void load();
 
 private:
-	NetmeetingPrefsUI *preferencesDialog;
+	Ui::NetmeetingPrefsUI *preferencesDialog;
 	
 private slots:
 	void slotChanged();

@@ -21,7 +21,7 @@
 
 #include <kprogress.h>
 
-#include "smpppdcsprefs.h"
+#include "ui_smpppdcsprefs.h"
 
 class SMPPPDCSPlugin;
 class SMPPPDSearcher;

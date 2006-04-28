@@ -36,7 +36,7 @@
 #include "filter.h"
 #include "highlightplugin.h"
 #include "highlightconfig.h"
-#include "highlightprefsbase.h"
+#include "ui_highlightprefsbase.h"
 #include "highlightpreferences.h"
 
 typedef KGenericFactory<HighlightPreferences> HighlightPreferencesFactory;
@@ -46,8 +46,13 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/
 							: KCModule(HighlightPreferencesFactory::instance(), parent, args)
 {
 	donttouch=true;
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new HighlightPrefsUI(this);
+
+	QVBoxLayout* l = new QVBoxLayout(this);
+	QWidget *w = new QWidget;
+	preferencesDialog = new Ui::HighlightPrefsUI;
+	preferencesDialog->setupUi(w);
+	l->addWidget(w);
+
 	m_config = new HighlightConfig;
 
 	connect(preferencesDialog->m_list , SIGNAL(selectionChanged()) , this , SLOT(slotCurrentFilterChanged()));
@@ -79,6 +84,7 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/
 HighlightPreferences::~HighlightPreferences()
 {
 	delete m_config;
+	delete preferencesDialog;
 }
 
 void HighlightPreferences::load()

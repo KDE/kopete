@@ -41,9 +41,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFact
 NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 	: KCModule( NowListeningPreferencesFactory::instance(), parent, args )
 {
-	QWidget* w = new QWidget( this );
-	preferencesDialog = new Ui::NowListeningPrefsUI();
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	preferencesDialog = new Ui::NowListeningPrefsUI;
 	preferencesDialog->setupUi( w );
+	l->addWidget( w );
 
 	//Is this correct?
 	addConfig( NowListeningConfig::self(), w );

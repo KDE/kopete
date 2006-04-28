@@ -10,7 +10,7 @@
 //
 //
 #include "addbookmarkspreferences.h"
-#include "addbookmarksprefsui.h"
+#include "ui_addbookmarksprefsui.h"
 #include "addbookmarksplugin.h"
 #include <kgenericfactory.h>
 #include <kopetepluginmanager.h>
@@ -31,8 +31,12 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, co
  : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
 {
 	Q_UNUSED( name );
-	( new Q3VBoxLayout (this) )->setAutoAdd( true );
-	p_dialog = new BookmarksPrefsUI( this );
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget();
+	p_dialog = new Ui::BookmarksPrefsUI();
+	p_dialog->setupUi( w );
+	l->addWidget( w );
+
 	load();
 	connect( p_dialog->yesButton, SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->noButton, SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
@@ -45,6 +49,7 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, co
 
 BookmarksPreferences::~BookmarksPreferences()
 {
+	delete p_dialog;
 }
 
 void BookmarksPreferences::save()

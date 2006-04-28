@@ -14,7 +14,8 @@
 
 #include <kcmodule.h>
 #include "addbookmarksprefssettings.h"
-#include "addbookmarksprefsui.h"
+
+namespace Ui { class BookmarksPrefsUI; }
 
 /**
 @author Roie Kerstein <sf_kersteinroie@bezeqint.net>
@@ -34,7 +35,7 @@ signals:
     void PreferencesChanged();
     
 private:
-    BookmarksPrefsUI *p_dialog;
+    Ui::BookmarksPrefsUI *p_dialog;
     BookmarksPrefsSettings m_settings;
 
 private slots:

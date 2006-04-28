@@ -25,8 +25,10 @@
 
 
 EditAliasDialog::EditAliasDialog( QWidget* parent )
-: AliasDialog( parent )
+: QDialog( parent )
 {
+	setupUi( this );
+	
 	QObject::connect( alias, SIGNAL( textChanged( const QString& ) ), this, SLOT( checkButtonsEnabled() ) );
 	QObject::connect( command, SIGNAL( textChanged( const QString& ) ), this, SLOT( checkButtonsEnabled() ) );
 	QObject::connect( protocolList, SIGNAL( selectionChanged() ), this, SLOT( checkButtonsEnabled() ) );

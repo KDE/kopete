@@ -23,7 +23,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_addbookmarks )
 
 set(kcm_kopete_addbookmarks_PART_SRCS addbookmarkspreferences.cpp addbookmarksprefssettings.cpp )
 
-kde4_add_ui3_files(kcm_kopete_addbookmarks_PART_SRCS addbookmarksprefsui.ui )
+kde4_add_ui_files(kcm_kopete_addbookmarks_PART_SRCS addbookmarksprefsui.ui )
 
 kde4_automoc(${kcm_kopete_addbookmarks_PART_SRCS})
 

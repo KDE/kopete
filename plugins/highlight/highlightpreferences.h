@@ -21,7 +21,7 @@
 #include <kcmodule.h>
 #include <qstring.h>
 
-class HighlightPrefsUI;
+namespace Ui { class HighlightPrefsUI; }
 class Filter;
 class Q3ListViewItem;
 
@@ -40,7 +40,7 @@ public:
 	virtual void load();
 
 private:
-	HighlightPrefsUI *preferencesDialog;
+	Ui::HighlightPrefsUI *preferencesDialog;
 	HighlightConfig *m_config;
 	QMap <Q3ListViewItem*,Filter*> m_filterItems;
 

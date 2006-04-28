@@ -16,7 +16,7 @@
 
 typedef Q3ValueList<Kopete::Protocol*> ProtocolList;
 
-class AliasDialogBase;
+namespace Ui { class AliasDialogBase; }
 namespace Kopete { class Protocol; }
 class ProtocolItem;
 class AliasItem;
@@ -43,7 +43,7 @@ class AliasPreferences : public KCModule
 		void slotPluginLoaded( Kopete::Plugin * );
 
 	private:
-		AliasDialogBase * preferencesDialog;
+		Ui::AliasDialogBase * preferencesDialog;
 		void addAlias( QString &alias, QString &command, const ProtocolList &p, uint id = 0 );
 		void loadProtocols( EditAliasDialog *dialog );
 		const ProtocolList selectedProtocols( EditAliasDialog *dialog );

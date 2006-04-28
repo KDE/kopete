@@ -33,10 +33,12 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPresencePreferencesFactor
 WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 		: KCModule(WebPresencePreferencesFactory::instance(), parent, args)
 {
-	// Add actuall widget generated from ui file.
-	QWidget* w = new QWidget(this);
-	preferencesDialog = new Ui::WebPresencePrefsUI();
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	preferencesDialog = new Ui::WebPresencePrefsUI;
 	preferencesDialog->setupUi( w );
+	l->addWidget( w );
+
 	preferencesDialog->uploadURL->setMode( KFile::File );
 	preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
 

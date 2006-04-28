@@ -18,11 +18,13 @@
 #ifndef _EDITALIASDIALOG_H_
 #define _EDITALIASDIALOG_H_
 
-#include "aliasdialog.h"
+#include "ui_aliasdialog.h"
+
+#include <QDialog>
 
 class QWidget;
 
-class EditAliasDialog : public AliasDialog
+class EditAliasDialog : public QDialog, public Ui::AliasDialog
 {
 	Q_OBJECT
 public:

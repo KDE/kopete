@@ -1,231 +1,223 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>TextEffectPrefs</class>
-<author>Olivier Goffart</author>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>TextEffectPrefs</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>630</width>
-            <height>529</height>
-        </rect>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>5</number>
-        </property>
-        <property name="spacing">
-            <number>0</number>
-        </property>
-        <widget class="QTabWidget" row="0" column="0">
-            <property name="name">
-                <cstring>TabWidget3</cstring>
+<ui version="4.0" >
+ <author>Olivier Goffart</author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>TextEffectPrefs</class>
+ <widget class="QWidget" name="TextEffectPrefs" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>630</width>
+    <height>529</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="TabWidget3" >
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;Colors</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="Q3GroupBox" name="groupBox1" >
+         <property name="title" >
+          <string>Colors</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>11</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item rowspan="5" row="0" column="0" >
+           <widget class="KListBox" name="mColorsListBox" />
+          </item>
+          <item row="0" column="1" >
+           <widget class="QPushButton" name="mColorsAdd" >
+            <property name="text" >
+             <string>&amp;Add...</string>
             </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>&amp;Colors</string>
-                </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>groupBox1</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Colors</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="KListBox" row="0" column="0" rowspan="5" colspan="1">
-                                <property name="name">
-                                    <cstring>mColorsListBox</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="0" column="1">
-                                <property name="name">
-                                    <cstring>mColorsAdd</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Add...</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="1" column="1">
-                                <property name="name">
-                                    <cstring>mColorsRemove</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Remove</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="2" column="1">
-                                <property name="name">
-                                    <cstring>mColorsUp</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Move &amp;Up</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="3" column="1">
-                                <property name="name">
-                                    <cstring>mColorsDown</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Move &amp;Down</string>
-                                </property>
-                            </widget>
-                            <spacer row="4" column="1">
-                                <property name="name">
-                                    <cstring>spacer2</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>21</width>
-                                        <height>81</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </grid>
-                    </widget>
-                    <widget class="QCheckBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>m_colorRandom</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Random order</string>
-                        </property>
-                    </widget>
-                    <widget class="Line" row="2" column="0">
-                        <property name="name">
-                            <cstring>Line1</cstring>
-                        </property>
-                        <property name="frameShape">
-                            <enum>HLine</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="3" column="0">
-                        <property name="name">
-                            <cstring>m_fg</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change global text foreground color</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="4" column="0">
-                        <property name="name">
-                            <cstring>m_char</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change color every letter</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="5" column="0">
-                        <property name="name">
-                            <cstring>m_words</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change color every word</string>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Effects</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>m_lamer</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>L4m3r t4lk</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>m_casewaves</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>CasE wAVes</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer5_2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>279</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="mColorsRemove" >
+            <property name="text" >
+             <string>&amp;Remove</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QPushButton" name="mColorsUp" >
+            <property name="text" >
+             <string>Move &amp;Up</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QPushButton" name="mColorsDown" >
+            <property name="text" >
+             <string>Move &amp;Down</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>21</width>
+              <height>81</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
-    </grid>
-</widget>
-<tabstops>
-    <tabstop>TabWidget3</tabstop>
-</tabstops>
-<includes>
-    <include location="global" impldecl="in implementation">knuminput.h</include>
-</includes>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klistbox.h</includehint>
-</includehints>
-</UI>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QCheckBox" name="m_colorRandom" >
+         <property name="text" >
+          <string>Random order</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="Line" name="Line1" >
+         <property name="frameShape" >
+          <enum>QFrame::HLine</enum>
+         </property>
+         <property name="frameShadow" >
+          <enum>QFrame::Sunken</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QCheckBox" name="m_fg" >
+         <property name="text" >
+          <string>Change global text foreground color</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="QCheckBox" name="m_char" >
+         <property name="text" >
+          <string>Change color every letter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" >
+        <widget class="QCheckBox" name="m_words" >
+         <property name="text" >
+          <string>Change color every word</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Effects</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="m_lamer" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>L4m3r t4lk</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="m_casewaves" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>CasE wAVes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>279</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3GroupBox</class>
+   <extends></extends>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KListBox</class>
+   <extends></extends>
+   <header>klistbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>TabWidget3</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

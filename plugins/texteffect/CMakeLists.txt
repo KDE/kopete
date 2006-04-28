@@ -26,7 +26,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_texteffect )
 
 set(kcm_kopete_texteffect_PART_SRCS texteffectconfig.cpp texteffectpreferences.cpp )
 
-kde4_add_ui3_files(kcm_kopete_texteffect_PART_SRCS texteffectprefs.ui )
+kde4_add_ui_files(kcm_kopete_texteffect_PART_SRCS texteffectprefs.ui )
 
 kde4_automoc(${kcm_kopete_texteffect_PART_SRCS})
 

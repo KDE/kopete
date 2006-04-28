@@ -20,7 +20,7 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 
-#include "cryptographyuserkey_ui.h"
+#include "ui_cryptographyuserkey_ui.h"
 #include "kopetemetacontact.h"
 #include "popuppublic.h"
 
@@ -31,8 +31,11 @@ CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete:
 	setDefaultButton( KDialog::Ok );
 
 	m_metaContact=mc;
-	view = new CryptographyUserKey_ui(this,"CryptographyUserKey_ui");
-	setMainWidget(view);
+	
+	QWidget *w = new QWidget(this);
+	view = new Ui::CryptographyUserKey_ui();
+	view->setupUi(w);
+	setMainWidget(w);
 
 	connect (view->m_selectKey , SIGNAL(clicked()) , this , SLOT(slotSelectPressed()));
 	connect (view->m_removeButton , SIGNAL(clicked()) , this , SLOT(slotRemovePressed()));
@@ -40,8 +43,10 @@ CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete:
 	view->m_titleLabel->setText(i18n("Select public key for %1", mc->displayName()));
 	view->m_editKey->setText(key);
 }
+
 CryptographySelectUserKey::~CryptographySelectUserKey()
 {
+	delete view;
 }
 
 void CryptographySelectUserKey::slotSelectPressed()

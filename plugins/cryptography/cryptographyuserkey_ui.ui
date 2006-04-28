@@ -1,79 +1,88 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>CryptographyUserKey_ui</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>CryptographyUserKey_ui</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>442</width>
-            <height>232</height>
-        </rect>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>TextLabel3</cstring>
-            </property>
-            <property name="text">
-                <string>PGP key:</string>
-            </property>
-        </widget>
-        <widget class="KLineEdit" row="1" column="1">
-            <property name="name">
-                <cstring>m_editKey</cstring>
-            </property>
-            <property name="readOnly">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="1" column="2">
-            <property name="name">
-                <cstring>m_selectKey</cstring>
-            </property>
-            <property name="text">
-                <string>Select...</string>
-            </property>
-        </widget>
-        <spacer row="2" column="1">
-            <property name="name">
-                <cstring>Spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="1" column="3">
-            <property name="name">
-                <cstring>m_removeButton</cstring>
-            </property>
-            <property name="text">
-                <string>Remove</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>m_titleLabel</cstring>
-            </property>
-            <property name="text">
-                <string>TextLabel2</string>
-            </property>
-        </widget>
-    </grid>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>CryptographyUserKey_ui</class>
+ <widget class="QWidget" name="CryptographyUserKey_ui" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>442</width>
+    <height>232</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="TextLabel3" >
+     <property name="text" >
+      <string>PGP key:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="KLineEdit" name="m_editKey" >
+     <property name="readOnly" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="m_selectKey" >
+     <property name="text" >
+      <string>Select...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="3" >
+    <widget class="QPushButton" name="m_removeButton" >
+     <property name="text" >
+      <string>Remove</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="4" >
+    <widget class="QLabel" name="m_titleLabel" >
+     <property name="text" >
+      <string>TextLabel2</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

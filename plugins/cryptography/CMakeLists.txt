@@ -17,7 +17,7 @@ set(kopete_cryptography_PART_SRCS
    popuppublic.cpp 
    kgpgselkey.cpp )
 
-kde4_add_ui3_files(kopete_cryptography_PART_SRCS cryptographyuserkey_ui.ui )
+kde4_add_ui_files(kopete_cryptography_PART_SRCS cryptographyuserkey_ui.ui )
 
 kde4_automoc(${kopete_cryptography_PART_SRCS})
 
@@ -34,7 +34,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_cryptography )
 
 set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp kgpgselkey.cpp )
 
-kde4_add_ui3_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
+kde4_add_ui_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
 
 kde4_automoc(${kcm_kopete_cryptography_PART_SRCS})
 

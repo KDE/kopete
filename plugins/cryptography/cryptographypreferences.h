@@ -20,7 +20,7 @@
 
 #include "kcmodule.h"
 
-class CryptographyPrefsUI;
+namespace Ui { class CryptographyPrefsUI; }
 
 // TODO: Port to KConfigXT
 /**
@@ -31,8 +31,9 @@ class CryptographyPreferences : public KCModule  {
    Q_OBJECT
 public:
 	CryptographyPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+	~CryptographyPreferences();
 private:
-	CryptographyPrefsUI *preferencesDialog;
+	Ui::CryptographyPrefsUI *preferencesDialog;
 private slots: // Public slots
 	void slotSelectPressed();
 };

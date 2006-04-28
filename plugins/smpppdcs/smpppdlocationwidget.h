@@ -17,12 +17,12 @@
 #ifndef SMPPPDLOCATIONWIDGET_H
 #define SMPPPDLOCATIONWIDGET_H
 
-#include "smpppdlocationui.h"
+#include "ui_smpppdlocationui.h"
 
 /**
 	@author Heiko Sch&auml;fer <heiko@rangun.de>
 */
-class SMPPPDLocationWidget : public SMPPPDLocationWidgetBase
+class SMPPPDLocationWidget : private Ui::SMPPPDLocationWidgetBase, public QWidget
 {
 	Q_OBJECT
 

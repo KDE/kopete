@@ -20,7 +20,7 @@
 
 #include <kcmodule.h>
 
-class TextEffectPrefs;
+namespace Ui { class TextEffectPrefs; }
 class TextEffectConfig;
 class QStringList;
 
@@ -42,7 +42,7 @@ public:
 
 private:
 	QStringList colors();
-	TextEffectPrefs *preferencesDialog;
+	Ui::TextEffectPrefs *preferencesDialog;
 	TextEffectConfig *config;
 
 private slots: // Public slots
