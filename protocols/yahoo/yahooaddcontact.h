@@ -28,7 +28,7 @@
 // KDE Includes
 
 class YahooProtocol;
-class YahooAddContactBase;
+namespace Ui { class YahooAddContactBase; }
 namespace Kopete { class MetaContact; }
 
 class YahooAddContact: public AddContactPage
@@ -37,7 +37,7 @@ class YahooAddContact: public AddContactPage
 
 private:
 	YahooProtocol *theProtocol;
-	YahooAddContactBase *theDialog;
+	Ui::YahooAddContactBase *theDialog;
 
 public:
 	YahooAddContact(YahooProtocol *owner, QWidget *parent = 0);

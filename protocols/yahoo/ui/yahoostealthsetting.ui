@@ -1,108 +1,94 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>YahooStealthSetting</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>YahooStealthSetting</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>195</width>
-            <height>114</height>
-        </rect>
-    </property>
-    <property name="minimumSize">
-        <size>
-            <width>195</width>
-            <height>75</height>
-        </size>
-    </property>
-    <property name="caption">
-        <string>YahooStealthSetting</string>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>YahooStealthSetting</class>
+ <widget class="QWidget" name="YahooStealthSetting" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>195</width>
+    <height>103</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>195</width>
+    <height>75</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>YahooStealthSetting</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Show Me As</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QRadioButton" name="radioOnline" >
+        <property name="text" >
+         <string>&amp;Online</string>
         </property>
-        <widget class="QButtonGroup" row="0" column="0">
-            <property name="name">
-                <cstring>buttonGroup1</cstring>
-            </property>
-            <property name="title">
-                <string>Show Me As</string>
-            </property>
-            <widget class="QRadioButton">
-                <property name="name">
-                    <cstring>radioPermOffline</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>60</y>
-                        <width>151</width>
-                        <height>17</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Perma&amp;nently offline</string>
-                </property>
-                <property name="accel">
-                    <string>Alt+N</string>
-                </property>
-            </widget>
-            <widget class="QRadioButton">
-                <property name="name">
-                    <cstring>radioOnline</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>20</y>
-                        <width>151</width>
-                        <height>17</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&amp;Online</string>
-                </property>
-                <property name="accel">
-                    <string>Alt+O</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QRadioButton">
-                <property name="name">
-                    <cstring>radioOffline</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>false</bool>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>40</y>
-                        <width>151</width>
-                        <height>17</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Off&amp;line</string>
-                </property>
-                <property name="accel">
-                    <string>Alt+L</string>
-                </property>
-                <property name="checked">
-                    <bool>false</bool>
-                </property>
-            </widget>
-        </widget>
-    </grid>
-</widget>
-<tabstops>
-    <tabstop>radioOnline</tabstop>
-</tabstops>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+        <property name="shortcut" >
+         <string>Alt+O</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioOffline" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Off&amp;line</string>
+        </property>
+        <property name="shortcut" >
+         <string>Alt+L</string>
+        </property>
+        <property name="checked" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioPermOffline" >
+        <property name="text" >
+         <string>Perma&amp;nently offline</string>
+        </property>
+        <property name="shortcut" >
+         <string>Alt+N</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>radioOnline</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -30,7 +30,7 @@
 #include <kopeteaccount.h>
 
 // Local Includes
-#include "yahooadd.h"
+#include "ui_yahooadd.h"
 #include "yahooaddcontact.h"
 #include "yahooaccount.h"
 
@@ -40,8 +40,9 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddCont
 	kDebug(YAHOO_GEN_DEBUG) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << objectName() << ")" << endl;
 
 	(new Q3VBoxLayout(this))->setAutoAdd(true);
-	theDialog = new YahooAddContactBase(this);
-	theDialog->show();
+	QWidget* w = new QWidget( this );
+	theDialog = new Ui::YahooAddContactBase;
+	theDialog->setupUi( w );
 	theProtocol = owner;
 }
 
@@ -49,6 +50,7 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddCont
 YahooAddContact::~YahooAddContact()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	delete theDialog;
 }
 
 bool YahooAddContact::validateData()

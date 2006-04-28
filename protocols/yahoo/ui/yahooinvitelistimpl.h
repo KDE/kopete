@@ -20,9 +20,11 @@
 
 #include <qwidget.h>
 
-#include "yahooinvitelistbase.h"
+#include "ui_yahooinvitelistbase.h"
 
-class YahooInviteListImpl : public YahooInviteListBase
+class KDialog;
+
+class YahooInviteListImpl : public QWidget, public Ui::YahooInviteListBase
 {
 	Q_OBJECT
 public: 
@@ -53,6 +55,8 @@ private:
 	QStringList m_inviteeList;
 	QStringList m_participants;
 	QString m_room;
+
+	KDialog* m_dialog;
 };
 
 #endif

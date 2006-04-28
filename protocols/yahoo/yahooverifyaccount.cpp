@@ -29,11 +29,10 @@
 #include <kstandarddirs.h>
 
 // Kopete Includes
-#include <yahooverifyaccountbase.h>
 #include <kopeteaccount.h>
 
 // Local Includes
-#include "yahooverifyaccountbase.h"
+#include "ui_yahooverifyaccountbase.h"
 #include "yahooverifyaccount.h"
 #include "yahooaccount.h"
 
@@ -44,9 +43,11 @@ YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent
 	enableButtonSeparator(true);
 
 	mTheAccount = account;	
-	mTheDialog = new YahooVerifyAccountBase( this );
+	QWidget* w = new QWidget( this );
+	mTheDialog = new Ui::YahooVerifyAccountBase;
+	mTheDialog->setupUi( w );
 	mTheDialog->mPicture->hide();
-	setMainWidget( mTheDialog );
+	setMainWidget( w );
 	setEscapeButton( Cancel );
 }
 
@@ -54,6 +55,7 @@ YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent
 YahooVerifyAccount::~YahooVerifyAccount()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	delete mTheDialog;
 }
 
 void YahooVerifyAccount::setUrl( KUrl url )

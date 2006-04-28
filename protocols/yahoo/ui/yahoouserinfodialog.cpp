@@ -34,9 +34,9 @@
 #include <kjanuswidget.h>
 #include <klocale.h>
 
-#include "yahooworkinfowidget.h"
-#include "yahoogeneralinfowidget.h"
-#include "yahoootherinfowidget.h"
+#include "ui_yahooworkinfowidget.h"
+#include "ui_yahoogeneralinfowidget.h"
+#include "ui_yahoootherinfowidget.h"
 #include "yahoocontact.h"
 
 YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent, const char * name )
@@ -48,25 +48,29 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent, con
 	QFrame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General Yahoo Information" ),
 	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), K3Icon::Desktop ) );
-	QVBoxLayout* genLayout = new QVBoxLayout( genInfo );
-	m_genInfoWidget = new YahooGeneralInfoWidget( genInfo, "Basic Information" );
-	genLayout->addWidget( m_genInfoWidget );
+	m_genInfoWidget = new Ui::YahooGeneralInfoWidget;
+	m_genInfoWidget->setupUi( genInfo );
 	
 	QFrame* workInfo = addPage( i18n( "Work Info" ),
 	                                          i18n( "Work Information" ),
 	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), K3Icon::Desktop ) );
-	QVBoxLayout* workLayout = new QVBoxLayout( workInfo );
-	m_workInfoWidget = new YahooWorkInfoWidget( workInfo, "Work Information" );
-	workLayout->addWidget( m_workInfoWidget );
+	m_workInfoWidget = new Ui::YahooWorkInfoWidget;
+	m_workInfoWidget->setupUi( workInfo );
 	
 	QFrame* otherInfo = addPage( i18n( "Other Info" ),
 	                                           i18n( "Other Yahoo Information" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
-	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
-	m_otherInfoWidget = new YahooOtherInfoWidget( otherInfo, "Other Information"  );
-	otherLayout->addWidget( m_otherInfoWidget );
+	m_otherInfoWidget = new Ui::YahooOtherInfoWidget;
+	m_otherInfoWidget->setupUi( otherInfo );
 	
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveAndCloseClicked()));
+}
+
+YahooUserInfoDialog::~YahooUserInfoDialog()
+{
+	delete m_genInfoWidget;
+	delete m_workInfoWidget;
+	delete m_otherInfoWidget;
 }
 
 void YahooUserInfoDialog::setAccountConnected( bool isOnline )

@@ -20,7 +20,7 @@ ui/yahoowebcamdialog.cpp
 ui/yahoouserinfodialog.cpp 
 )
 
-kde4_add_ui3_files(kopete_yahoo_ui_SRCS 
+kde4_add_ui_files(kopete_yahoo_ui_SRCS 
 ui/yahooadd.ui 
 ui/yahooinvitelistbase.ui 
 ui/yahooverifyaccountbase.ui 
@@ -28,9 +28,6 @@ ui/yahoostealthsetting.ui
 ui/yahoogeneralinfowidget.ui 
 ui/yahooworkinfowidget.ui 
 ui/yahoootherinfowidget.ui 
-)
-
-kde4_add_ui_files(kopete_yahoo_ui_SRCS 
 ui/yahooeditaccountbase.ui
 )
 

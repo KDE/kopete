@@ -25,7 +25,7 @@
 #include <kdialog.h>
 
 namespace Kopete { class Account; }
-class YahooVerifyAccountBase;
+namespace Ui { class YahooVerifyAccountBase; }
 class KTempFile;
 
 class YahooVerifyAccount : public KDialog
@@ -34,7 +34,7 @@ class YahooVerifyAccount : public KDialog
 private:
 	Kopete::Account *mTheAccount;
 	KTempFile *mFile;
-	YahooVerifyAccountBase *mTheDialog;
+	Ui::YahooVerifyAccountBase *mTheDialog;
 public:
 	YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0);
 	~YahooVerifyAccount();

@@ -22,8 +22,10 @@
 #include <q3listbox.h>
 #include <qlineedit.h>
 
-YahooInviteListImpl::YahooInviteListImpl(QWidget *parent) : YahooInviteListBase(parent)
+YahooInviteListImpl::YahooInviteListImpl(QWidget *parent) : QWidget(parent)
 {
+	m_dialog = new KDialog( this );
+	setupUi( m_dialog );
 	listFriends->setSelectionMode( Q3ListBox::Extended );
 	listInvited->setSelectionMode( Q3ListBox::Extended );
 }
@@ -100,7 +102,7 @@ void YahooInviteListImpl::btnInvite_clicked()
 
 	if( m_inviteeList.count() )
 		emit readyToInvite( m_room, m_inviteeList,m_participants, editMessage->text() );
-	QDialog::accept();
+	m_dialog->accept();
 }
 
 
@@ -108,7 +110,7 @@ void YahooInviteListImpl::btnCancel_clicked()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
-	QDialog::reject();
+	m_dialog->reject();
 }
 
 

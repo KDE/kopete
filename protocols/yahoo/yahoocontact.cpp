@@ -31,7 +31,7 @@
 #include "yahooaccount.h"
 #include "client.h"
 #include "yahoowebcamdialog.h"
-#include "yahoostealthsetting.h"
+#include "ui_yahoostealthsetting.h"
 #include "yahoochatsession.h"
 #include "yabentry.h"
 #include "yahoouserinfodialog.h"
@@ -479,17 +479,19 @@ void YahooContact::stealthContact()
 	stealthSettingDialog->setDefaultButton(KDialog::Ok);
 	stealthSettingDialog->enableButtonSeparator(true);
 	
-	YahooStealthSetting *stealthWidget = new YahooStealthSetting( stealthSettingDialog, "stealthSettingWidget" );
-	stealthSettingDialog->setMainWidget( stealthWidget );
+	QWidget* w = new QWidget( stealthSettingDialog );
+	Ui::YahooStealthSetting stealthWidget = Ui::YahooStealthSetting();
+	stealthWidget.setupUi( w );
+	stealthSettingDialog->setMainWidget( w );
 
 	// Prepare dialog
 	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
 	{
-		stealthWidget->radioOffline->setEnabled( true );
-		stealthWidget->radioOffline->setChecked( true );
+		stealthWidget.radioOffline->setEnabled( true );
+		stealthWidget.radioOffline->setChecked( true );
 	}
 	if( stealthed() )
-		stealthWidget->radioPermOffline->setChecked( true );
+		stealthWidget.radioPermOffline->setChecked( true );
 		
 	
 	// Show dialog
@@ -497,22 +499,22 @@ void YahooContact::stealthContact()
 	{	
 		stealthSettingDialog->deleteLater();
 		return;
-	}
+	}	
 	
 	// Apply permanent setting
-	if( stealthed() && !stealthWidget->radioPermOffline->isChecked() )
+	if( stealthed() && !stealthWidget.radioPermOffline->isChecked() )
 		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthNotActive );
-	else if( !stealthed() && stealthWidget->radioPermOffline->isChecked() )
+	else if( !stealthed() && stealthWidget.radioPermOffline->isChecked() )
 		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthActive );
 	
 	// Apply temporary setting
 	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
 	{
-		if( stealthWidget->radioOnline->isChecked() )
+		if( stealthWidget.radioOnline->isChecked() )
 		{
 			m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthOnline, Yahoo::StealthActive );
 		}
-		else if( stealthWidget->radioOffline->isChecked() )
+		else if( stealthWidget.radioOffline->isChecked() )
 		{
 			m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthOffline, Yahoo::StealthActive );
 		}
