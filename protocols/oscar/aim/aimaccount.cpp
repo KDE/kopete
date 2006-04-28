@@ -296,51 +296,42 @@ QString AIMAccount::sanitizedMessage( const QString& message )
 
 KActionMenu* AIMAccount::actionMenu()
 {
-//	kDebug(14152) << k_funcinfo << accountId() << ": Called." << endl;
-	// mActionMenu is managed by Kopete::Account.  It is deleted when
-	// it is no longer shown, so we can (safely) just make a new one here.
+	//TODO Check if this is correct (thorbenk)
 	
-	return 0; //whatever, just compile
-	/*
-	KActionMenu *mActionMenu = new KActionMenu(accountId(),
-		myself()->onlineStatus().iconFor( this ), this, "AIMAccount::mActionMenu");
+	KActionMenu *mActionMenu = new KActionMenu( KIcon(QIcon(myself()->onlineStatus().iconFor( this ))), accountId(), 0, "AIMAccount::mActionMenu");
 
 	AIMProtocol *p = AIMProtocol::protocol();
 
 	QString accountNick = myself()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	mActionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
-			i18n( "%2 <%1>" ).arg( accountId(), accountNick ));
-
-	mActionMenu->insert( new KAction( i18n("Online"), p->statusOnline.iconFor( this ), 0, this,
-	             SLOT( slotGoOnline() ), mActionMenu, "AIMAccount::mActionOnline") );
-
-	KAction* mActionAway = new Kopete::AwayAction(i18n("Away"), p->statusAway.iconFor( this ), 0, this,
-	             SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" );
-	mActionAway->setEnabled( isConnected() );
-	mActionMenu->insert( mActionAway );
+	mActionMenu->kMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor( myself() )), i18n( "%2 <%1>" ).arg( accountId(), accountNick ) );
 	
-	KAction* mActionOffline = new KAction( i18n("Offline"), p->statusOffline.iconFor(this), 0, this,
-	             SLOT( slotGoOffline() ), mActionMenu, "AIMAccount::mActionOffline");
+	KAction* actionOnline = new KAction( KIcon(QIcon(p->statusOnline.iconFor(this))), i18n("Online"), 0, "AIMAccount::mActionOnline");
+	QObject::connect( actionOnline, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()) );
+	mActionMenu->addAction( actionOnline );
+	
+	KAction* mActionAway = new Kopete::AwayAction(i18n("Away"), QIcon(p->statusAway.iconFor( this )), 0, 0, SLOT(slotGoAway( const QString & )), 0, "AIMAccount::mActionNA" );
+	mActionAway->setEnabled( isConnected() );
+	mActionMenu->addAction( mActionAway );
+	
+	KAction* mActionOffline = new KAction( KIcon(QIcon(p->statusOffline.iconFor(this))), i18n("Offline"), 0, "AIMAccount::mActionOffline");
+	QObject::connect( mActionOffline, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
+	mActionMenu->addAction( mActionOffline );
+	
+	mActionMenu->kMenu()->addSeparator();
+	
+	KAction* actionVisibility = new KToggleAction( i18n( "Set Visibility..." ), 0, "AIMAccount::mActionSetVisibility" );
+	QObject::connect( actionVisibility, SIGNAL(triggered(bool)), this, SLOT(slotSetVisiblility()) );
+	mActionMenu->addAction( actionVisibility );
 
-	mActionMenu->insert( mActionOffline );
-	mActionMenu->popupMenu()->insertSeparator();
+	KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), 0, "join_a_chat" );
+	QObject::connect( m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
+	mActionMenu->addAction( m_joinChatAction );
 
-    KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), QString::null,  0,  this,
-                                             SLOT( slotJoinChat() ), mActionMenu, "join_a_chat" );
-
-	mActionMenu->insert( new KToggleAction( i18n( "Set Visibility..." ), 0, 0,
-	                                       this, SLOT( slotSetVisiblility() ), this,
-	                                       "AIMAccount::mActionSetVisibility") );
-
-    mActionMenu->insert( m_joinChatAction );
-    
-    KAction* m_editInfoAction = new KAction( i18n( "Edit User Info..." ), "identity", 0,
-                                             this, SLOT( slotEditInfo() ), mActionMenu, "actionEditInfo");
-    
-    mActionMenu->insert( m_editInfoAction );
+	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), 0, "actionEditInfo" );
+	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
+	mActionMenu->addAction( m_editInfoAction );
 
 	return mActionMenu;
-	*/
 }
 
 void AIMAccount::setAway(bool away, const QString &awayReason)

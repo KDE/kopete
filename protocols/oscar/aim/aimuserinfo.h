@@ -19,9 +19,10 @@
 #define AIMUSERINFO_H
 
 #include <kdialog.h>
-#include "aiminfobase.h"
 
 namespace Kopete { class Contact; }
+namespace Ui { class AIMUserInfoWidget; }
+class KTextBrowser;
 class KTextEdit;
 class OscarAccount;
 class AIMMyselfContact;
@@ -39,7 +40,7 @@ class AIMUserInfoDialog : public KDialog
 	private:
 		AIMAccount *mAccount;
 		Kopete::Contact* m_contact;
-		AIMUserInfoWidget *mMainWidget;
+		Ui::AIMUserInfoWidget *mMainWidget;
 		KTextBrowser *userInfoView;
 		KTextEdit *userInfoEdit;
 

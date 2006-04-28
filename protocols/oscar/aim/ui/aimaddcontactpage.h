@@ -6,7 +6,7 @@
 #include <qlabel.h>
 #include "addcontactpage.h"
 
-class aimAddContactUI;
+namespace Ui { class aimAddContactUI; }
 class AIMAccount;
 namespace Kopete
 {
@@ -29,7 +29,7 @@ public:
 
 protected:
 	/** The actual GUI */
-	aimAddContactUI *m_gui;
+	Ui::aimAddContactUI *m_gui;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;

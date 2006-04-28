@@ -15,13 +15,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../liboscar/
 
 set(kopete_aim_ui_SRCS ui/aimaddcontactpage.cpp ui/aimeditaccountwidget.cpp)
 
-kde4_add_ui3_files(kopete_aim_ui_SRCS 
+kde4_add_ui_files(kopete_aim_ui_SRCS 
 ui/aimaddcontactui.ui 
 ui/aiminfobase.ui 
-ui/aimjoinchatbase.ui 
-)
-
-kde4_add_ui_files(kopete_aim_ui_SRCS
+ui/aimjoinchatbase.ui
 ui/aimeditaccountui.ui 
 )
 

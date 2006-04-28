@@ -26,7 +26,7 @@
 #include "oscartypes.h"
 
 class AIMAccount;
-class AIMJoinChatBase;
+namespace Ui { class AIMJoinChatBase; }
 
 class AIMJoinChatUI : public KDialogBase
 {
@@ -51,7 +51,7 @@ signals:
 	void closing( int );
 
 private:
-	AIMJoinChatBase* m_joinUI;
+	Ui::AIMJoinChatBase* m_joinUI;
 	AIMAccount* m_account;
     Q3ValueList<int> m_exchanges;
     QString m_roomName;

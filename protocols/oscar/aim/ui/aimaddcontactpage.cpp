@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "aimaddcontactui.h"
+#include "ui_aimaddcontactui.h"
 #include "aimaddcontactpage.h"
 
 #include "kopeteaccount.h"
@@ -36,7 +36,8 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 
 	if(connected)
 	{
-		m_gui = new aimAddContactUI(this);
+		QWidget* w = new QWidget( this );
+		m_gui = new Ui::aimAddContactUI();
 		canadd = true;
 	}
 	else
@@ -50,6 +51,7 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 
 AIMAddContactPage::~AIMAddContactPage()
 {
+	delete m_gui;
 }
 
 bool AIMAddContactPage::validateData()

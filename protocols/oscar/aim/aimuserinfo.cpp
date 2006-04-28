@@ -16,10 +16,10 @@
   */
 
 #include "aimuserinfo.h"
-
 #include "aimaccount.h"
 #include "aimcontact.h"
 #include "aimprotocol.h"
+#include "ui_aiminfobase.h"
 
 #include <qlineedit.h>
 #include <qlabel.h>
@@ -51,8 +51,10 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 	m_contact = c;
 	mAccount = acc;
 
-	mMainWidget = new AIMUserInfoWidget(this, "aimuserinfowidget");
-	setMainWidget(mMainWidget);
+	QWidget* w = new QWidget( this );
+	mMainWidget = new Ui::AIMUserInfoWidget();
+	mMainWidget->setupUi( w );
+	setMainWidget( w );
 
 	QObject::connect(this, SIGNAL(okClicked()), this, SLOT(slotSaveClicked()));
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUpdateClicked()));
@@ -124,6 +126,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 
 AIMUserInfoDialog::~AIMUserInfoDialog()
 {
+	delete mMainWidget;
 	kDebug(14200) << k_funcinfo << "Called." << endl;
 }
 

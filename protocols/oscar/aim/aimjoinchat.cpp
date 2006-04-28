@@ -25,7 +25,7 @@
 #include <Q3ValueList>
 #include <klocale.h>
 
-#include "aimjoinchatbase.h"
+#include "ui_aimjoinchatbase.h"
 #include "aimaccount.h"
 
 AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
@@ -39,9 +39,11 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
 
     m_account = account;
 
-    m_joinUI = new AIMJoinChatBase( this, "aimjoinchatbase" );
+    QWidget* w = new QWidget( this );
+    m_joinUI = new Ui::AIMJoinChatBase();
+    m_joinUI->setupUi( w );
 
-    setMainWidget( m_joinUI  );
+    setMainWidget( w  );
 
     QObject::connect( this, SIGNAL( user1Clicked() ), this, SLOT( joinChat() ) );
     QObject::connect( this, SIGNAL( cancelClicked() ), this, SLOT( closeClicked() ) );
@@ -50,6 +52,7 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
 AIMJoinChatUI::~AIMJoinChatUI()
 {
     m_exchanges.clear();
+    delete m_joinUI;
 }
 
 void AIMJoinChatUI::setExchangeList( const Q3ValueList<int>& list )
