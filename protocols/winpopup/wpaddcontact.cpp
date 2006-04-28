@@ -34,7 +34,7 @@
 #include <addcontactpage.h>
 
 // Local Includes
-#include "wpaddcontactbase.h"
+#include "ui_wpaddcontactbase.h"
 #include "wpaccount.h"
 #include "wpaddcontact.h"
 
@@ -42,11 +42,13 @@ WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactP
 {
 //	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
-	theDialog = new WPAddContactBase(this);
+	QWidget* w = new QWidget( this );
+	theDialog = new Ui::WPAddContactBase();
+	theDialog->setupUi( w );
+
 	connect(theDialog->mHostGroup, SIGNAL(activated(const QString &)), this, SLOT(slotSelected(const QString &)));
 	connect(theDialog->mRefresh, SIGNAL(clicked()), this, SLOT(slotUpdateGroups()));
-	theDialog->show();
+	w->show();
 
 	theAccount = newAccount;
 
@@ -56,6 +58,7 @@ WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactP
 
 WPAddContact::~WPAddContact()
 {
+	delete theDialog;
 }
 
 void WPAddContact::slotUpdateGroups()

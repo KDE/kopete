@@ -26,10 +26,10 @@
 #include <kprocio.h>
 
 // Local Includes
-#include "wpuserinfowidget.h"
 
 class WPAccount;
 class WPContact;
+namespace Ui { class WPUserInfoWidget; }
 
 class WPUserInfo : public KDialog
 {
@@ -37,6 +37,7 @@ class WPUserInfo : public KDialog
 
 	public:
 		WPUserInfo( WPContact *, WPAccount *, QWidget *parent = 0, const char* name = "WPUserInfo" );
+		~WPUserInfo();
 
 		void startDetailsProcess(const QString &host);
 
@@ -50,7 +51,7 @@ class WPUserInfo : public KDialog
 
 	private:
 		WPContact *m_contact;
-		WPUserInfoWidget *m_mainWidget;
+		Ui::WPUserInfoWidget *m_mainWidget;
 
 		QString Comment, Workgroup, OS, Software;
 };

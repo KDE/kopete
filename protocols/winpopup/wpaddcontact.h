@@ -28,7 +28,7 @@
 // Local Includes
 
 class WPAccount;
-class WPAddContactBase;
+namespace Ui { class WPAddContactBase; }
 namespace Kopete { class MetaContact; }
 
 class WPAddContact: public AddContactPage
@@ -37,7 +37,7 @@ class WPAddContact: public AddContactPage
 
 private:
 	WPAccount *theAccount;
-	WPAddContactBase *theDialog;
+	Ui::WPAddContactBase *theDialog;
 
 public:
 	WPAddContact(QWidget *parent, WPAccount *newAccount);

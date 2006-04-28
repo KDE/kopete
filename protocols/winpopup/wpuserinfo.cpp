@@ -31,6 +31,7 @@
 #include "wpuserinfo.h"
 #include "wpaccount.h"
 #include "wpcontact.h"
+#include "ui_wpuserinfowidget.h"
 
 WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *parent, const char* name )
 	: KDialog( parent, QString(), Close ), m_contact(contact),
@@ -41,8 +42,9 @@ WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *par
 
 	setCaption( i18n( "User Info for %1", m_contact->nickName() ) );
 
-	m_mainWidget = new WPUserInfoWidget( this, "WPUserInfo::m_mainWidget" );
-	setMainWidget( m_mainWidget );
+	QWidget* w = new QWidget( this );
+	m_mainWidget = new Ui::WPUserInfoWidget();
+	setMainWidget( w );
 
 	m_mainWidget->sComputerName->setText( m_contact->contactId() );
 
@@ -54,6 +56,11 @@ WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *par
 	connect( this, SIGNAL( closeClicked() ), this, SLOT( slotCloseClicked() ) );
 
 	startDetailsProcess(m_contact->contactId());
+}
+
+WPUserInfo::~WPUserInfo()
+{
+	delete m_mainWidget;
 }
 
 // I decided to do this direct here to avoid "Handstände" with signals and stuff
