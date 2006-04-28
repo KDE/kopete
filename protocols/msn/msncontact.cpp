@@ -47,7 +47,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
-#include "msninfo.h"
+#include "ui_msninfo.h"
 #include "msnchatsession.h"
 #include "msnnotifysocket.h"
 #include "msnaccount.h"
@@ -199,7 +199,9 @@ void MSNContact::slotUserInfo()
 	infoDialog->setDefaultButton( KDialog::Close );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
-	MSNInfo *info=new MSNInfo ( infoDialog,"info");
+	QWidget* w=new QWidget( infoDialog );
+	Ui::MSNInfo *info=new Ui::MSNInfo();
+	info->setupUi( w );
 	info->m_id->setText( contactId() );
 	info->m_displayName->setText(nick);
 	info->m_personalMessage->setText(personalMessage);
@@ -210,7 +212,7 @@ void MSNContact::slotUserInfo()
 
 	connect( info->m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
 
-	infoDialog->setMainWidget(info);
+	infoDialog->setMainWidget(w);
 	infoDialog->setCaption(nick);
 	infoDialog->show();
 }

@@ -31,14 +31,11 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_msn )
 
 set(kopete_msn_ui_SRCS ui/msneditaccountwidget.cpp)
 
-kde4_add_ui3_files(kopete_msn_ui_SRCS 
-ui/msnadd.ui 
-ui/msndebugrawcommand_base.ui 
-ui/msninfo.ui 
-)
-
-kde4_add_ui_files(kopete_msn_ui_SRCS
-ui/msneditaccountui.ui
+kde4_add_ui_files(kopete_msn_ui_SRCS 
+   ui/msnadd.ui 
+   ui/msndebugrawcommand_base.ui 
+   ui/msninfo.ui 
+   ui/msneditaccountui.ui
 )
 
 set(kopete_msn_shared_LIB_SRCS 

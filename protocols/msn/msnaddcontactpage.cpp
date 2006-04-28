@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "msnadd.h"
+#include "ui_msnadd.h"
 #include "msnaddcontactpage.h"
 #include "msnprotocol.h"
 #include "kopeteaccount.h"
@@ -33,7 +33,9 @@ MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent)
 	(new QVBoxLayout(this))->setAutoAdd(true);
 /*	if ( connected )
 	{*/
-			msndata = new msnAddUI(this);
+			QWidget* w = new QWidget( this );
+			msndata = new Ui::msnAddUI();
+			msndata->setupUi( w );
 			/*
 			msndata->cmbGroup->insertStringList(owner->getGroups());
 			msndata->cmbGroup->setCurrentItem(0);
@@ -51,6 +53,7 @@ MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent)
 }
 MSNAddContactPage::~MSNAddContactPage()
 {
+	delete msndata;
 }
 
 bool MSNAddContactPage::apply( Kopete::Account* i, Kopete::MetaContact*m )

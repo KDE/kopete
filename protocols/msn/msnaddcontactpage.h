@@ -9,7 +9,7 @@
 /**
   *@author duncan
   */
-class msnAddUI;
+namespace Ui { class msnAddUI; }
 class MSNProtocol;
 
 class MSNAddContactPage : public AddContactPage
@@ -18,7 +18,7 @@ class MSNAddContactPage : public AddContactPage
 public:
 	MSNAddContactPage(bool connected, QWidget *parent=0);
 	~MSNAddContactPage();
-	msnAddUI *msndata;
+	Ui::msnAddUI *msndata;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;

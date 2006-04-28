@@ -1,97 +1,93 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>msnAddUI</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>msnAddUI</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>397</width>
-            <height>347</height>
-        </rect>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout21</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;MSN Passport ID:</string>
-                    </property>
-                    <property name="alignment">
-                        <set>AlignTop</set>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>addID</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The user ID of the MSN contact you would like to add.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>addID</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The user ID of the MSN contact you would like to add.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;i&gt;(for example: joe@hotmail.com)&lt;/i&gt;</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer13</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>160</height>
-                </size>
-            </property>
-        </spacer>
-    </vbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>msnAddUI</class>
+ <widget class="QWidget" name="msnAddUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>397</width>
+    <height>347</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="TextLabel1" >
+       <property name="toolTip" >
+        <string>The user ID of the MSN contact you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;MSN Passport ID:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignTop</set>
+       </property>
+       <property name="buddy" >
+        <cstring>addID</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="addID" >
+       <property name="toolTip" >
+        <string>The user ID of the MSN contact you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="textLabel2" >
+     <property name="text" >
+      <string>&lt;i>(for example: joe@hotmail.com)&lt;/i></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>160</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>

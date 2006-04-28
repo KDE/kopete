@@ -19,7 +19,7 @@
 
 #include "msndebugrawcmddlg.h"
 
-#include "msndebugrawcommand_base.h"
+#include "ui_msndebugrawcommand_base.h"
 
 #include <qcheckbox.h>
 #include <qlineedit.h>
@@ -36,12 +36,15 @@ MSNDebugRawCmdDlg::MSNDebugRawCmdDlg( QWidget *parent )
 
 	setInitialSize( QSize( 350, 200 ) );
 
-	m_main = new MSNDebugRawCommand_base( this );
-	setMainWidget( m_main );
+	QWidget* w = new QWidget( this );
+	m_main = new Ui::MSNDebugRawCommand_base();
+	m_main->setupUi( w );
+	setMainWidget( w );
 }
 
 MSNDebugRawCmdDlg::~MSNDebugRawCmdDlg()
 {
+	m_main;
 }
 
 QString MSNDebugRawCmdDlg::command()

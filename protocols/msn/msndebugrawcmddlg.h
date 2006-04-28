@@ -22,7 +22,7 @@
 
 #include <kdialog.h>
 
-class MSNDebugRawCommand_base;
+namespace Ui { class MSNDebugRawCommand_base; }
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -44,7 +44,7 @@ public:
 	QString msg();
 
 private:
-	MSNDebugRawCommand_base *m_main;
+	Ui::MSNDebugRawCommand_base *m_main;
 };
 
 #endif
