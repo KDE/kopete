@@ -35,8 +35,9 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_latex, LatexPreferencesFactory( "kcm_kope
 LatexPreferences::LatexPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(LatexPreferencesFactory::instance(), parent, args)
 {
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-	m_preferencesDialog = new LatexPrefsUI(this);
+	QWidget* w = new QWidget( this );
+	m_preferencesDialog = new Ui::LatexPrefsUI();
+	m_preferencesDialog->setupUi( w );
 	// connect widget signals here
 	m_preferencesDialog->horizontalDPI->setMinimum(1);
 	m_preferencesDialog->verticalDPI->setMinimum(1);
@@ -49,6 +50,7 @@ LatexPreferences::LatexPreferences(QWidget *parent, const char* /*name*/, const 
 
 LatexPreferences::~LatexPreferences()
 {
+	delete m_preferencesDialog;
 }
 
 void LatexPreferences::load()

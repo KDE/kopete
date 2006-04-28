@@ -28,7 +28,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_latex )
 
 set(kcm_kopete_latex_PART_SRCS latexpreferences.cpp )
 
-kde4_add_ui3_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
+kde4_add_ui_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
 
 kde4_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
 

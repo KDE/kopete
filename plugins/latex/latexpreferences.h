@@ -21,7 +21,7 @@
 #include <kcmodule.h>
 #include <qstring.h>
 
-class LatexPrefsUI;
+namespace Ui { class LatexPrefsUI; }
 class Q3ListViewItem;
 
 /**
@@ -40,7 +40,7 @@ public:
 	virtual void load();
 
 private:
-	LatexPrefsUI *m_preferencesDialog;
+	Ui::LatexPrefsUI *m_preferencesDialog;
 private slots:
 	void slotModified();
 };
