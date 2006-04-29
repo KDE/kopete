@@ -583,7 +583,7 @@ void HistoryDialog::slotContactChanged(int index)
 	else
 	{
 		mMetaContact = mMetaContactList.at(index-1);
-        setCaption(i18n("History for %1").arg(mMetaContact->displayName()));
+        setCaption(i18n("History for %1", mMetaContact->displayName()));
 		init();
 	}
 }
