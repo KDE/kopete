@@ -21,7 +21,7 @@
 
 #include <klocale.h>
 
-#include "oscarvisibilitybase.h"
+#include "ui_oscarvisibilitybase.h"
 #include "client.h"
 
 
@@ -29,8 +29,10 @@ OscarVisibilityDialog::OscarVisibilityDialog( Client* client, QWidget* parent )
  : KDialog( parent, i18n( "Add Contacts to In/Visible List" ),
                 Ok | Cancel ), m_client( client )
 {
-	m_visibilityUI = new OscarVisibilityBase( this );
-	setMainWidget( m_visibilityUI );
+	QWidget* w = new QWidget( this );
+	m_visibilityUI = new Ui::OscarVisibilityBase;
+	m_visibilityUI->setupUi( w );
+	setMainWidget( w );
 	
 	QObject::connect(m_visibilityUI->visibleAdd, SIGNAL(clicked()),
 	                 this, SLOT(slotAddToVisible()));
@@ -40,6 +42,11 @@ OscarVisibilityDialog::OscarVisibilityDialog( Client* client, QWidget* parent )
 	                 this, SLOT(slotAddToInvisible()));
 	QObject::connect(m_visibilityUI->invisibleRemove, SIGNAL(clicked()),
 	                 this, SLOT(slotRemoveFromInvisible()));
+}
+
+OscarVisibilityDialog::~OscarVisibilityDialog()
+{
+	delete m_visibilityUI;
 }
 
 void OscarVisibilityDialog::addContacts( const ContactMap& contacts )

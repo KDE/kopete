@@ -22,7 +22,7 @@
 #include <kdialog.h>
 #include "kopete_export.h"
 
-class OscarEncodingBaseUI;
+namespace Ui { class OscarEncodingBaseUI; }
 
 class KOPETE_EXPORT OscarEncodingSelectionDialog : public KDialog
 {
@@ -41,7 +41,7 @@ protected slots:
     void slotCancel();
 
 private:
-    OscarEncodingBaseUI* m_encodingUI;
+    Ui::OscarEncodingBaseUI* m_encodingUI;
     QMap<int, QString> m_encodings;
 };
 

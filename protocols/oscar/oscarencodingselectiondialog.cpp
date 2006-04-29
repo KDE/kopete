@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-#include "oscarencodingselectionbase.h"
+#include "ui_oscarencodingselectionbase.h"
 #include "oscarencodingselectiondialog.h"
 
 #include <kdebug.h>
@@ -30,7 +30,11 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
     int initialEncodingIndex;
 
     setAttribute( Qt::WA_DeleteOnClose, false );
-    m_encodingUI = new OscarEncodingBaseUI( this );
+
+	QWidget* w = new QWidget( this );
+	m_encodingUI = new Ui::OscarEncodingBaseUI;
+	m_encodingUI->setupUi( w );
+
     //fill the encoding combo boxes
   	m_encodings.insert(0, i18n("Default"));
   	m_encodings.insert(2026, i18n("Big5"));
@@ -93,7 +97,7 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
         initialEncodingIndex = 0;
     }
     m_encodingUI->encodingCombo->setCurrentIndex( initialEncodingIndex );
-    setMainWidget( m_encodingUI );
+    setMainWidget( w );
 }
 
 

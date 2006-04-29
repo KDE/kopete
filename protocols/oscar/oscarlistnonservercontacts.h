@@ -22,7 +22,7 @@
 #include <kdialog.h>
 #include "kopete_export.h"
 
-class OscarListContactsBase;
+namespace Ui { class OscarListContactsBase; }
 class QStringList;
 
 class KOPETE_EXPORT OscarListNonServerContacts : public KDialog
@@ -44,7 +44,7 @@ signals:
     void closing();
 
 private:
-    OscarListContactsBase* m_contactsList;
+    Ui::OscarListContactsBase* m_contactsList;
     QStringList m_nonServerContacts;
 
 };

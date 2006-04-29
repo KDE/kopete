@@ -23,7 +23,7 @@
 /**
 	@author Roman Jarosz <kedgedev@centrum.cz>
 */
-class OscarVisibilityBase;
+namespace Ui { class OscarVisibilityBase; }
 class QStringList;
 class Client;
 
@@ -34,7 +34,7 @@ public:
 	typedef QMap<QString, QString> ContactMap;
 
 	OscarVisibilityDialog( Client* client, QWidget* parent );
-	~OscarVisibilityDialog() {}
+	~OscarVisibilityDialog();
 
 	void addContacts( const ContactMap& contacts );
 	void addVisibleContacts( const QStringList& contactList );
@@ -62,7 +62,7 @@ private:
 	
 	ContactMap m_contactMap;
 	
-	OscarVisibilityBase* m_visibilityUI;
+	Ui::OscarVisibilityBase* m_visibilityUI;
 	Client* m_client;
 };
 

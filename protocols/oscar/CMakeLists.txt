@@ -21,7 +21,11 @@ set(kopete_oscar_LIB_SRCS
    oscarlistnonservercontacts.cpp 
    oscarvisibilitydialog.cpp )
 
-kde4_add_ui3_files(kopete_oscar_LIB_SRCS oscarencodingselectionbase.ui oscarlistcontactsbase.ui oscarvisibilitybase.ui )
+kde4_add_ui_files(kopete_oscar_LIB_SRCS
+   oscarencodingselectionbase.ui
+   oscarlistcontactsbase.ui
+   oscarvisibilitybase.ui
+)
 
 kde4_automoc(${kopete_oscar_LIB_SRCS})
 

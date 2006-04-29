@@ -19,7 +19,7 @@
 
 
 #include "oscarlistnonservercontacts.h"
-#include "oscarlistcontactsbase.h"
+#include "ui_oscarlistcontactsbase.h"
 #include <qstringlist.h>
 #include <qcheckbox.h>
 #include <klocale.h>
@@ -28,8 +28,11 @@ OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
     : KDialog( parent, i18n( "Add Contacts to Server List" ),
                    KDialog::Ok | KDialog::Cancel )
 {
-    m_contactsList = new OscarListContactsBase( this );
-    setMainWidget( m_contactsList );
+    QWidget* w = new QWidget( this );
+    m_contactsList = new Ui::OscarListContactsBase;
+    m_contactsList->setupUi( w );
+    setMainWidget( w );
+
     setButtonText( Ok, i18n( "&Add" ) );
     setButtonText( Cancel, i18n( "Do &Not Add" ) );
 }
