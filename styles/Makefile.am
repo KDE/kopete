@@ -1,2 +1,2 @@
-SUBDIRS = Kopete Hacker Clean Clear Konqi Retropete Gaim
+SUBDIRS = Kopete Hacker Clean Clear Konqi Retropete Gaim Blog
 
