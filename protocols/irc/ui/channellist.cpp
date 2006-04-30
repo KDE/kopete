@@ -86,9 +86,9 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 	QColorGroup _cg = cg;
 	if (isAlternate())
 		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QColorGroup::Background, static_cast< K3ListView* >(listView())->alternateBackground());
+			_cg.setColor(QPalette::Background, static_cast< K3ListView* >(listView())->alternateBackground());
 		else
-			_cg.setColor(QColorGroup::Base, static_cast< K3ListView* >(listView())->alternateBackground());
+			_cg.setColor(QPalette::Base, static_cast< K3ListView* >(listView())->alternateBackground());
 	// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
@@ -108,7 +108,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 	//	const QPixmap * icon = pixmap( column );
 
 		const BackgroundMode bgmode = lv->viewport()->backgroundMode();
-		const QColorGroup::ColorRole crole = QPalette::backgroundRoleFromMode( bgmode );
+		const QPalette::ColorRole crole = QPalette::backgroundRoleFromMode( bgmode );
 
 		if ( _cg.brush( crole ) != lv->colorGroup().brush( crole ) )
 			p->fillRect( 0, 0, width, height(), _cg.brush( crole ) );
@@ -133,7 +133,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 		if ( isSelected() &&
 		(column == 0 || lv->allColumnsShowFocus()) ) {
 			p->fillRect( r - marg, 0, width - r + marg, height(),
-					_cg.brush( QColorGroup::Highlight ) );
+					_cg.brush( QPalette::Highlight ) );
 	// removed text pen setting code from Qt
 		}
 
@@ -160,7 +160,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 
 	//do you see a better way to tell the TextComponent we are selected ?  - Olivier 2004-09-02
 	if ( isSelected() )
-		_cg.setColor(QColorGroup::Text , _cg.highlightedText() );
+		_cg.setColor(QPalette::Text , _cg.highlightedText() );
 
 	Q3SimpleRichText myrichtext( text(column), paint.font() );
 	myrichtext.draw(  &paint, 0, 0, paint.window(), _cg );

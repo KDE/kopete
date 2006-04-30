@@ -375,8 +375,8 @@ void KopeteRichTextEditPart::setFgColor( const QColor &newColor )
 	if( !(m_capabilities & Kopete::Protocol::RichColor) )
 	{
 		QPalette pal = editor->palette();
-		pal.setColor(QPalette::Active, QColorGroup::Text, mFgColor );
-		pal.setColor(QPalette::Inactive, QColorGroup::Text, mFgColor );
+		pal.setColor(QPalette::Active, QPalette::Text, mFgColor );
+		pal.setColor(QPalette::Inactive, QPalette::Text, mFgColor );
 
 		if ( pal == QApplication::palette( editor ) )
 			editor->unsetPalette();
@@ -424,9 +424,9 @@ void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
 	mBgColor = newColor;
 
 	QPalette pal = editor->palette();
-	pal.setColor(QPalette::Active, QColorGroup::Base, mBgColor );
-	pal.setColor(QPalette::Inactive, QColorGroup::Base, mBgColor );
-	pal.setColor(QPalette::Disabled, QColorGroup::Base, mBgColor );
+	pal.setColor(QPalette::Active, QPalette::Base, mBgColor );
+	pal.setColor(QPalette::Inactive, QPalette::Base, mBgColor );
+	pal.setColor(QPalette::Disabled, QPalette::Base, mBgColor );
 
 	if ( pal == QApplication::palette( editor ) )
 		editor->unsetPalette();

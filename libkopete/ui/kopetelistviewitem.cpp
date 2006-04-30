@@ -1197,9 +1197,9 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	QColorGroup _cg = cg;
 	if (isAlternate())
 		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QColorGroup::Background, static_cast< K3ListView* >(listView())->alternateBackground());
+			_cg.setColor(QPalette::Background, static_cast< K3ListView* >(listView())->alternateBackground());
 		else
-			_cg.setColor(QColorGroup::Base, static_cast< K3ListView* >(listView())->alternateBackground());
+			_cg.setColor(QPalette::Base, static_cast< K3ListView* >(listView())->alternateBackground());
 	// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
@@ -1245,7 +1245,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		if ( isSelected() &&
 		(column == 0 || lv->allColumnsShowFocus()) ) {
 			p->fillRect( r - marg, 0, width - r + marg, height(),
-					_cg.brush( QColorGroup::Highlight ) );
+					_cg.brush( QPalette::Highlight ) );
 	// removed text pen setting code from Qt
 		}
 
@@ -1273,7 +1273,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 
 	//do you see a better way to tell the TextComponent we are selected ?  - Olivier 2004-09-02
 	if ( isSelected() )
-		_cg.setColor(QColorGroup::Text , _cg.highlightedText() );
+		_cg.setColor(QPalette::Text , _cg.highlightedText() );
 
 	if ( Component *comp = component( column ) )
 		comp->paint( &paint, _cg );

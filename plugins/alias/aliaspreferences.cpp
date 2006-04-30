@@ -81,7 +81,7 @@ class AliasItem : public Q3ListViewItem
 				{
 					p->fillRect( qMax( cellWidth, r - marg ), 0,
 						width - cellWidth - r + marg, height(),
-						cg.brush( QColorGroup::Highlight ) );
+						cg.brush( QPalette::Highlight ) );
 					if ( isEnabled() || !lv )
 						p->setPen( cg.highlightedText() );
 					else if ( !isEnabled() && lv )
