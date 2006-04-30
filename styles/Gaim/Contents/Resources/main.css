@@ -27,3 +27,24 @@ a:active { text-decoration: none; }
 	margin-bottom: -8px;
 	overflow: auto;
 }
+
+.inContentTime, .inMetacontact {
+	color: #a82f2f;
+}
+
+.outContentTime, .outMetacontact {
+	color: #16569e;
+}
+
+.inActionTime, .inActionMetacontact, .inActionMessage {
+	color: green;
+}
+
+.outActionTime, .outActionMetacontact, .outActionMessage {
+	color: green;
+}
+
+.InternalTime, .InternalDelim, .InternalMessage {
+	color: #9400d3;
+}
+

@@ -1,13 +1,9 @@
 @import url(../main.css);
 
-.inActionTime, .inActionMetacontact, .inActionMessage {
-	color: green;
+.inContentTime, .inMetacontact {
+	color: #000000;
 }
 
-.outActionTime, .outActionMetacontact, .outActionMessage {
-	color: green;
-}
-
-.InternalTime, .InternalDelim, .InternalMessage {
-	color: #9400d3;
+.outContentTime, .outMetacontact {
+	color: #000000;
 }
