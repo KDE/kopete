@@ -5,16 +5,16 @@
  <class>AppearanceConfig_Colors</class>
  <widget class="QWidget" name="AppearanceConfig_Colors" >
   <property name="geometry" >
-        <rect>
-            <x>0</x>
-            <y>0</y>
+   <rect>
+    <x>0</x>
+    <y>0</y>
     <width>445</width>
     <height>525</height>
-        </rect>
-    </property>
+   </rect>
+  </property>
   <property name="windowTitle" >
    <string>AppearanceConfig_Colors</string>
-                    </property>
+  </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
     <number>9</number>
@@ -66,42 +66,42 @@
          <widget class="QLabel" name="textLabel2_2" >
           <property name="text" >
            <string>Background color:</string>
-                    </property>
-                </widget>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0" >
          <widget class="QLabel" name="textLabel3" >
           <property name="text" >
            <string>Base font:</string>
-                    </property>
-                </widget>
+          </property>
+         </widget>
         </item>
         <item row="2" column="1" >
          <widget class="KColorButton" name="kcfg_chatLinkColor" >
           <property name="text" >
            <string/>
-                    </property>
+          </property>
           <property name="color" >
-                        <color>
-                            <red>0</red>
-                            <green>85</green>
-                            <blue>255</blue>
-                        </color>
-                    </property>
-                </widget>
+           <color>
+            <red>0</red>
+            <green>85</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
         </item>
         <item row="3" column="1" >
          <widget class="KColorButton" name="kcfg_highlightForegroundColor" >
           <property name="text" >
            <string/>
-                    </property>
-                </widget>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0" >
          <widget class="QLabel" name="textLabel1_3" >
           <property name="text" >
            <string>Link color:</string>
-                    </property>
+          </property>
          </widget>
         </item>
         <item row="1" column="1" >
@@ -121,37 +121,37 @@
         <item row="1" column="0" >
          <widget class="QLabel" name="textLabel1_2" >
           <property name="text" >
-                        <string>Base font color:</string>
-                    </property>
-                </widget>
+           <string>Base font color:</string>
+          </property>
+         </widget>
         </item>
         <item row="3" column="2" >
          <widget class="QLabel" name="textLabel1" >
           <property name="text" >
            <string>Highlight background:</string>
-                    </property>
-                </widget>
+          </property>
+         </widget>
         </item>
         <item row="3" column="0" >
          <widget class="QLabel" name="textLabel2" >
           <property name="text" >
            <string>Highlight foreground:</string>
-                    </property>
+          </property>
          </widget>
         </item>
         <item row="1" column="3" >
          <widget class="KColorButton" name="kcfg_chatBackgroundColor" >
           <property name="text" >
            <string/>
-                    </property>
+          </property>
           <property name="color" >
-                        <color>
-                            <red>255</red>
-                            <green>255</green>
-                            <blue>255</blue>
-                        </color>
-                    </property>
-                </widget>
+           <color>
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -161,8 +161,8 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-                <string>Formatting Overrides</string>
-            </property>
+      <string>Formatting Overrides</string>
+     </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
        <number>9</number>
@@ -173,32 +173,32 @@
       <item>
        <widget class="QCheckBox" name="kcfg_chatBgOverride" >
         <property name="text" >
-                        <string>Do not show user specified &amp;background color</string>
-                    </property>
-                </widget>
+         <string>Do not show user specified &amp;background color</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_chatFgOverride" >
         <property name="text" >
-                        <string>&amp;Do not show user specified foreground color</string>
-                    </property>
-                </widget>
+         <string>&amp;Do not show user specified foreground color</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_chatRtfOverride" >
         <property name="text" >
-                        <string>Do not show user specified &amp;rich text</string>
-                    </property>
-                </widget>
+         <string>Do not show user specified &amp;rich text</string>
+        </property>
+       </widget>
       </item>
      </layout>
-        </widget>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_3" >
      <property name="title" >
-                <string>Contact List</string>
-            </property>
+      <string>Contact List</string>
+     </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
        <number>9</number>
@@ -209,33 +209,33 @@
       <item>
        <widget class="QCheckBox" name="kcfg_contactListUseCustomFont" >
         <property name="text" >
-                        <string>U&amp;se custom fonts for contact list items</string>
-                    </property>
-                </widget>
+         <string>U&amp;se custom fonts for contact list items</string>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" >
         <property name="margin" >
          <number>0</number>
-                        </property>
+        </property>
         <property name="spacing" >
          <number>6</number>
-                            </property>
+        </property>
         <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
-                            </property>
+          </property>
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
-                            </property>
+          </property>
           <property name="sizeHint" >
-                                <size>
-                                    <width>20</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                        </spacer>
+           <size>
+            <width>20</width>
+            <height>92</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <layout class="QGridLayout" >
@@ -248,36 +248,36 @@
           <item row="1" column="0" >
            <widget class="QLabel" name="mSmallFontLabel" >
             <property name="enabled" >
-                                        <bool>false</bool>
-                                    </property>
+             <bool>false</bool>
+            </property>
             <property name="text" >
-                                        <string>Small font:</string>
-                                    </property>
-                                </widget>
+             <string>Small font:</string>
+            </property>
+           </widget>
           </item>
           <item row="0" column="1" >
            <widget class="KFontRequester" name="kcfg_contactListNormalFont" >
             <property name="enabled" >
-                                        <bool>false</bool>
-                                    </property>
-                                </widget>
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="0" column="0" >
            <widget class="QLabel" name="mNormalFontLabel" >
             <property name="enabled" >
-                                        <bool>false</bool>
-                                    </property>
+             <bool>false</bool>
+            </property>
             <property name="text" >
-                                        <string>Normal font:</string>
-                                    </property>
-                                </widget>
+             <string>Normal font:</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="1" >
            <widget class="KFontRequester" name="kcfg_contactListSmallFont" >
             <property name="enabled" >
-                                        <bool>false</bool>
-                                    </property>
-                                </widget>
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -301,26 +301,26 @@
         <item row="0" column="1" >
          <widget class="KColorButton" name="kcfg_idleContactColor" >
           <property name="enabled" >
-                                <bool>false</bool>
-                            </property>
+           <bool>false</bool>
+          </property>
           <property name="text" >
            <string/>
-                            </property>
-                        </widget>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0" >
          <widget class="QCheckBox" name="kcfg_greyIdleMetaContacts" >
           <property name="text" >
-                                <string>Recolor co&amp;ntacts marked as idle:</string>
-                            </property>
-                        </widget>
+           <string>Recolor co&amp;ntacts marked as idle:</string>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="textLabel1_4" >
           <property name="text" >
-                                <string>Group name color:</string>
-                            </property>
-                        </widget>
+           <string>Group name color:</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -347,10 +347,91 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-    <tabstop>kcfg_chatBackgroundColor</tabstop>
-    <tabstop>kcfg_chatTextColor</tabstop>
-    <tabstop>kcfg_chatLinkColor</tabstop>
+  <tabstop>kcfg_chatBackgroundColor</tabstop>
+  <tabstop>kcfg_chatTextColor</tabstop>
+  <tabstop>kcfg_chatLinkColor</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_contactListUseCustomFont</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mNormalFontLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>94</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>86</x>
+     <y>364</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_contactListUseCustomFont</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_contactListNormalFont</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>294</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>294</x>
+     <y>355</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_contactListUseCustomFont</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mSmallFontLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>60</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>60</x>
+     <y>431</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_contactListUseCustomFont</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_contactListSmallFont</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>234</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>234</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_greyIdleMetaContacts</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_idleContactColor</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>108</x>
+     <y>455</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>273</x>
+     <y>458</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
