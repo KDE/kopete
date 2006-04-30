@@ -25,6 +25,7 @@
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
+#include <qradiobutton.h>
 
 #include <kdebug.h>
 #include <kplugininfo.h>
@@ -33,11 +34,13 @@
 #include <kgenericfactory.h>
 #include <ktrader.h>
 #include <kconfig.h>
+#include <klineedit.h>
 
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigbase.h"
 #include "kopetepluginmanager.h"
+#include "kopeteaway.h"
 
 #include <qtabwidget.h>
 
@@ -146,6 +149,12 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mAwayConfigUI->mUseAutoAway, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+	connect( mAwayConfigUI->mDisplayLastAwayMessage, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mAwayConfigUI->mDisplayCustomAwayMessage, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mAwayConfigUI->mAutoAwayMessageEdit, SIGNAL(textChanged(const QString&)),
+		this, SLOT(slotTextChanged(const QString&)));
 }
 
 void BehaviorConfig::save()
@@ -186,7 +195,14 @@ void BehaviorConfig::save()
 	config->writeEntry("Timeout", mAwayConfigUI->mAutoAwayTimeout->value() * 60);
 	config->writeEntry("GoAvailable", mAwayConfigUI->mGoAvailable->isChecked());
 	config->writeEntry("UseAutoAway", mAwayConfigUI->mUseAutoAway->isChecked() );
+	config->writeEntry("UseAutoAwayMessage", mAwayConfigUI->mDisplayCustomAwayMessage->isChecked() );
 	config->sync();
+	
+	// Save the auto away message, if defined
+	if( mAwayConfigUI->mDisplayCustomAwayMessage->isChecked() )
+	{
+		awayInstance->setAutoAwayMessage( mAwayConfigUI->mAutoAwayMessageEdit->text() );
+	}
 
 	// "Chat" TAB ===============================================================
 	p->setShowEvents(mPrfsChat->cb_ShowEventsChk->isChecked());
@@ -208,6 +224,7 @@ void BehaviorConfig::load()
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 	KConfig *config = KGlobal::config();
+	awayInstance = Kopete::Away::getInstance();
 
 	// "General" TAB ============================================================
 	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
@@ -239,6 +256,10 @@ void BehaviorConfig::load()
 	mAwayConfigUI->mGoAvailable->setChecked(config->readBoolEntry("GoAvailable", true));
 	mAwayConfigUI->mUseAutoAway->setChecked(config->readBoolEntry("UseAutoAway", true));
 	mAwayConfigUI->rememberedMessages->setValue( p->rememberedMessages() );
+	mAwayConfigUI->mAutoAwayMessageEdit->setText( awayInstance->autoAwayMessage() );
+
+	// Always display the last away message by default
+	mAwayConfigUI->mDisplayCustomAwayMessage->setChecked(config->readBoolEntry("UseAutoAwayMessage", false));
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat->cb_ShowEventsChk->setChecked(p->showEvents());
@@ -275,6 +296,11 @@ void BehaviorConfig::slotSettingsChanged(bool)
 }
 
 void BehaviorConfig::slotValueChanged(int)
+{
+	emit changed( true );
+}
+
+void BehaviorConfig::slotTextChanged(const QString&)
 {
 	emit changed( true );
 }

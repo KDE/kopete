@@ -75,12 +75,26 @@ public:
 	static QString message();
 
 	/**
+	 * @brief Gets the current global auto away message
+	 * @return The global auto away message
+	 */
+	static QString autoAwayMessage();
+
+	/**
 	 * This method sets the global away message,
 	 * it does not set you away, just sets the message.
 	 * @brief Sets the global away message
 	 * @param message The message you want to set
 	 */
 	void setGlobalAwayMessage(const QString &message);
+
+	/**
+	 * This method sets the global auto away message,
+	 * it does not set you away, just sets the message.
+	 * @brief Sets the global auto away message
+	 * @param message The message you want to set
+	 */
+	void setAutoAwayMessage(const QString &message);
 
 	/**
 	 * @brief Sets global away for all protocols
