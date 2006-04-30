@@ -30,7 +30,7 @@ class QString;
 class QPixmap;
 class RegisterCommand;
 class QRegExp;
-class GaduRegisterAccountUI;
+namespace Ui { class GaduRegisterAccountUI; }
 
 class GaduRegisterAccount : public KDialog
 {
@@ -55,7 +55,7 @@ protected slots:
 private:
 	void validateInput();
 
-	GaduRegisterAccountUI*	ui;
+	Ui::GaduRegisterAccountUI*	ui;
 	RegisterCommand*	cRegister;
 	QRegExp*		emailRegexp; 
 	QPixmap			hintPixmap;

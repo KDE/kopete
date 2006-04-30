@@ -29,7 +29,7 @@
 #include <QShowEvent>
 
 class GaduAccount;
-class GaduAddUI;
+namespace Ui { class GaduAddUI; }
 class QLabel;
 namespace Kopete { class MetaContact; }
 class QString;
@@ -56,7 +56,7 @@ public slots:
 private:
 	void fillGroups();
 	GaduAccount*	account_;
-	GaduAddUI*	addUI_;
+	Ui::GaduAddUI*	addUI_;
 	QLabel*		noaddMsg1_;
 	QLabel*		noaddMsg2_;
 };

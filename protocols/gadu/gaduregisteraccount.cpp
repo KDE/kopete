@@ -33,7 +33,7 @@
 #include <kiconloader.h>
 #include <kglobal.h>
 
-#include "gaduregisteraccountui.h"
+#include "ui_gaduregisteraccountui.h"
 #include "gaduregisteraccount.h"
 #include "gaducommands.h"
 
@@ -43,8 +43,10 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
 	setDefaultButton( KDialog::User1 );
 	enableButtonSeparator( true );
 
-	ui = new GaduRegisterAccountUI( this );
-	setMainWidget( ui );
+	QWidget* w = new QWidget( this );
+	ui = new Ui::GaduRegisterAccountUI;
+	ui->setupUi( w );
+	setMainWidget( w );
 
 	ui->valueVerificationSequence->setDisabled( true );
 	setButtonText( User1, i18n( "&Register" ) );
@@ -212,6 +214,7 @@ GaduRegisterAccount::slotClose()
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
 	kDebug( 14100 ) << " register Cancel " << endl;
+	delete ui;
 }
 
 #include "gaduregisteraccount.moc"

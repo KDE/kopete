@@ -25,7 +25,7 @@
 #include "kopeteonlinestatus.h"
 
 #include "gaducontactlist.h"
-#include "gaduadd.h"
+#include "ui_gaduadd.h"
 
 #include <ktextedit.h>
 #include <klocale.h>
@@ -83,6 +83,11 @@ GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::Conta
 	fillIn();
 }
 
+GaduEditContact::~GaduEditContact()
+{
+	delete ui_;
+}
+
 void
 GaduEditContact::fillGroups()
 {
@@ -115,8 +120,10 @@ GaduEditContact::fillGroups()
 void
 GaduEditContact::init()
 {
-	ui_ = new GaduAddUI( this );
-	setMainWidget( ui_ );
+	QWidget* w = new QWidget( this );
+	ui_ = new Ui::GaduAddUI;
+	ui_->setupUi( w );
+	setMainWidget( w );
 	ui_->addEdit_->setValidChars( "1234567890" );
 
 	// fill values from cl into proper fields on widget

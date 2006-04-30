@@ -27,7 +27,7 @@
 #include <qstring.h>
 
 class GaduAccount;
-class GaduAwayUI;
+namespace Ui { class GaduAwayUI; }
 
 class GaduAway : public KDialog
 {
@@ -43,7 +43,7 @@ protected slots:
 
 private:
 	GaduAccount*	account_;
-	GaduAwayUI*	ui_;
+	Ui::GaduAwayUI*	ui_;
 };
 
 #endif

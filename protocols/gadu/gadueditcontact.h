@@ -28,7 +28,7 @@
 #include <QLabel>
 
 class GaduAccount;
-class GaduAddUI;
+namespace Ui { class GaduAddUI; }
 class QLabel;
 class QString;
 class QWidget;
@@ -45,6 +45,7 @@ public:
 		    QWidget* parent = 0 );
 	GaduEditContact( GaduAccount*,  GaduContactsList::ContactLine*,
 		    QWidget* parent = 0 );
+	~GaduEditContact();
 protected slots:
 	void slotApply();
 	void listClicked( Q3ListViewItem* );
@@ -55,7 +56,7 @@ private:
 	void fillGroups();
 	GaduAccount*	account_;
 	GaduContact*	contact_;
-	GaduAddUI*	ui_;
+	Ui::GaduAddUI*	ui_;
 	GaduContactsList::ContactLine* cl_;
 };
 

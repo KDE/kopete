@@ -33,7 +33,7 @@
 #include <qradiobutton.h>
 #include <qlineedit.h>
 
-#include "gaduawayui.h"
+#include "ui_gaduawayui.h"
 #include "gaduaway.h"
 
 GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
@@ -45,8 +45,10 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 	Kopete::OnlineStatus ks;
 	int s;
 
-	ui_ = new GaduAwayUI( this );
-	setMainWidget( ui_ );
+	QWidget* w = new QWidget( this );
+	ui_ = new Ui::GaduAwayUI;
+	ui_->setupUi( w );
+	setMainWidget( w );
 
 	ks = account->myself()->onlineStatus();
 	s  = GaduProtocol::protocol()->statusToWithDescription( ks );

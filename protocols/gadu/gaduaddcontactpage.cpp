@@ -22,7 +22,7 @@
 
 #include "kopetemetacontact.h"
 
-#include "gaduadd.h"
+#include "ui_gaduadd.h"
 #include "gaduprotocol.h"
 #include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
@@ -50,8 +50,13 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent )
 : AddContactPage( parent )
 {
 	account_	= owner;
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	addUI_	= new GaduAddUI( this );
+
+	QVBoxLayout* l = new QVBoxLayout( this );
+	QWidget* w = new QWidget;
+	addUI_	= new Ui::GaduAddUI;
+	addUI_->setupUi( w );
+	l->addWidget( w );
+
 	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( slotUinChanged( const QString & ) ) );
 	addUI_->addEdit_->setValidChars( "1234567890" );
 	addUI_->addEdit_->setText( "" );
