@@ -267,6 +267,11 @@ void JabberBaseContact::reevaluateStatus ()
 
 	status = protocol()->resourceToKOS ( resource );
 
+	updateResourceList ();
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
+	setOnlineStatus ( status );
+
 	/*
 	 * Set away message property.
 	 * We just need to read it from the current resource.
@@ -279,11 +284,6 @@ void JabberBaseContact::reevaluateStatus ()
 	{
 		removeProperty ( protocol()->propAwayMessage );
 	}
-
-	updateResourceList ();
-
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
-	setOnlineStatus ( status );
 
 }
 
