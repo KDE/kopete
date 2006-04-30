@@ -115,7 +115,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
-          <string>GroupBox</string>
+          <string>Registration</string>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
