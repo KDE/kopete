@@ -41,6 +41,9 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopetecontact.h"
 
+//Included here so the file is generated at all, it will be installed
+#include "ui_kopeteawaydialogbase.h"
+
 #ifdef Q_WS_X11
 
 #include <X11/Xlib.h>

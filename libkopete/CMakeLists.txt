@@ -92,9 +92,8 @@ kde4_add_ui_files(kopete_LIB_SRCS
     ui/kopetepasswordwidgetbase.ui
     ui/contactaddednotifywidget.ui 
     ui/addressbookselectorwidget_base.ui
-    ui/addressbooklinkwidget_base.ui )
-
-kde4_add_ui3_files(kopete_LIB_SRCS ui/kopeteawaydialogbase.ui)
+    ui/addressbooklinkwidget_base.ui
+    ui/kopeteawaydialogbase.ui )
 
 kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
