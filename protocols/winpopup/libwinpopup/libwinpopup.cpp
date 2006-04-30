@@ -16,10 +16,9 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qdir.h>
-#include <qfileinfo.h>
-#include <qregexp.h>
-//Added by qt3to4:
+#include <QDir>
+#include <QFileInfo>
+#include <QRegExp>
 #include <QTextStream>
 
 // KDE Includes
@@ -36,7 +35,7 @@
 // Local Includes
 #include "libwinpopup.h"
 
-WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq)
+WinPopupLib::WinPopupLib(const QString &smbClient, int groupFreq)
 	: smbClientBin(smbClient), groupCheckFreq(groupFreq)
 {
 	connect(&updateGroupDataTimer, SIGNAL(timeout()), this, SLOT(slotUpdateGroupData()));
@@ -57,7 +56,7 @@ void WinPopupLib::slotStartDirLister()
 		dirLister->setAutoUpdate(true);
 		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
-		dirLister->openURL(KUrl::fromPathOrURL(WP_POPUP_DIR));
+		dirLister->openURL(KUrl::fromPath(WP_POPUP_DIR));
 	}
 }
 
@@ -118,7 +117,7 @@ bool WinPopupLib::checkMessageDir()
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
-		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, WP_POPUP_DIR);
+		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, KUrl::fromPath(WP_POPUP_DIR));
 		mode_t tmpPerms = tmpFileItem.permissions();
 
 		if (tmpPerms != 0777) {
@@ -356,7 +355,7 @@ void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)
 	smbClientBin = smbClient;
 	groupCheckFreq = groupFreq;
 
-	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.changeInterval(groupCheckFreq * 1000);
+	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.setInterval(groupCheckFreq * 1000);
 }
 
 #include "libwinpopup.moc"

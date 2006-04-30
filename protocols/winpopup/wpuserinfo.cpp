@@ -33,7 +33,7 @@
 #include "wpcontact.h"
 #include "ui_wpuserinfowidget.h"
 
-WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *parent, const char* name )
+WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
 	: KDialog( parent, QString(), Close ), m_contact(contact),
 	  Comment(i18n("N/A")), Workgroup(i18n("N/A")), OS(i18n("N/A")), Software(i18n("N/A"))
 {
@@ -44,14 +44,15 @@ WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *par
 
 	QWidget* w = new QWidget( this );
 	m_mainWidget = new Ui::WPUserInfoWidget();
+	m_mainWidget->setupUi( w );
 	setMainWidget( w );
 
 	m_mainWidget->sComputerName->setText( m_contact->contactId() );
 
-	m_mainWidget->sComment->setText(i18n("Looking"));
-	m_mainWidget->sWorkgroup->setText(i18n("Looking"));
-	m_mainWidget->sOS->setText(i18n("Looking"));
-	m_mainWidget->sServer->setText(i18n("Looking"));
+//	m_mainWidget->sComment->setText(i18n("Looking"));
+//	m_mainWidget->sWorkgroup->setText(i18n("Looking"));
+//	m_mainWidget->sOS->setText(i18n("Looking"));
+//	m_mainWidget->sServer->setText(i18n("Looking"));
 
 	connect( this, SIGNAL( closeClicked() ), this, SLOT( slotCloseClicked() ) );
 

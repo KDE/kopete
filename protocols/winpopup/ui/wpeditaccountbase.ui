@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>531</height>
+    <width>623</width>
+    <height>484</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -24,6 +24,14 @@
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget10" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>1</hsizetype>
+       <vsizetype>1</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>Basi&amp;c Setup</string>
@@ -89,9 +97,6 @@
               <property name="whatsThis" >
                <string>Install support into Samba to enable this service.</string>
               </property>
-              <property name="text" >
-               <string>I&amp;nstall Into Samba</string>
-              </property>
              </widget>
             </item>
            </layout>
@@ -101,6 +106,14 @@
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_2" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>1</hsizetype>
+           <vsizetype>1</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string>Information</string>
          </property>
@@ -124,36 +137,61 @@
             <property name="text" >
              <string>To receive WinPopup messages sent from other machines, the hostname above must be set to this machine's hostname.</string>
             </property>
+            <property name="textFormat" >
+             <enum>Qt::PlainText</enum>
+            </property>
             <property name="alignment" >
-             <set>Qt::AlignTop</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="textLabel1_3" >
-            <property name="text" >
-             <string>The samba server must be configured and running.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextBrowser" name="textBrowser" >
             <property name="sizePolicy" >
              <sizepolicy>
-              <hsizetype>7</hsizetype>
+              <hsizetype>5</hsizetype>
               <vsizetype>1</vsizetype>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="frameShape" >
-             <enum>QFrame::NoFrame</enum>
+            <property name="text" >
+             <string>The samba server must be configured and running.</string>
             </property>
-            <property name="frameShadow" >
-             <enum>QFrame::Plain</enum>
+            <property name="textFormat" >
+             <enum>Qt::PlainText</enum>
             </property>
-            <property name="html" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;/head>&lt;body style=" white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;/p>&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and add 'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;amp;' (substitute _PATH_TO_ by the real path) to your smb.conf [global]-section.&lt;/p>&lt;/body>&lt;/html></string>
+            <property name="alignment" >
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;br>
+However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and add
+'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;' (substitute _PATH_TO_ by the real path) to your smb.conf [global]-section.</string>
+            </property>
+            <property name="textFormat" >
+             <enum>Qt::RichText</enum>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -170,8 +208,8 @@
          </property>
          <property name="sizeHint" >
           <size>
-           <width>21</width>
-           <height>16</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -226,12 +264,6 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="maximum" >
-                 <number>3600</number>
-                </property>
-                <property name="minimum" >
-                 <number>1</number>
                 </property>
                </widget>
               </item>
@@ -304,6 +336,9 @@
             <property name="text" >
              <string>&lt;i>These options apply to all WinPopup accounts.&lt;/i></string>
             </property>
+            <property name="textFormat" >
+             <enum>Qt::RichText</enum>
+            </property>
            </widget>
           </item>
          </layout>
@@ -315,7 +350,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" >
           <size>

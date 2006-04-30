@@ -36,7 +36,7 @@ class WPUserInfo : public KDialog
 	Q_OBJECT
 
 	public:
-		WPUserInfo( WPContact *, WPAccount *, QWidget *parent = 0, const char* name = "WPUserInfo" );
+		WPUserInfo( WPContact *, QWidget *parent = 0 );
 		~WPUserInfo();
 
 		void startDetailsProcess(const QString &host);

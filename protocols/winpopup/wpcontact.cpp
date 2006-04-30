@@ -112,7 +112,7 @@ void WPContact::slotUserInfo()
 	kDebug( 14170 ) << k_funcinfo << endl;
 
 	if (!m_infoDialog) {
-		m_infoDialog = new WPUserInfo( this, static_cast<WPAccount*>( account() ) );
+		m_infoDialog = new WPUserInfo( this );
 		if (!m_infoDialog) return;
 		connect( m_infoDialog, SIGNAL( closing() ), this, SLOT( slotCloseUserInfoDialog() ) );
 		m_infoDialog->show();

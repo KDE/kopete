@@ -169,12 +169,12 @@ KActionMenu* WPAccount::actionMenu()
 	if (mProtocol)
 	{
 		//Why aren't the action names i18n'd?
-		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), "Online", 0, "actionGoAvailable" );
+		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), i18n("Online"), 0, "actionGoAvailable" );
 		QObject::connect( goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()) );
 		goOnline->setEnabled(isConnected() && isAway());
 		theActionMenu->addAction(goOnline);
 
-		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), "Away", 0, "actionGoAway" );
+		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), 0, "actionGoAway" );
 		QObject::connect( goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()) );
 		goAway->setEnabled(isConnected() && !isAway());
 		theActionMenu->addAction(goAway);
