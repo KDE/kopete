@@ -13,15 +13,12 @@ ${CMAKE_CURRENT_BINARY_DIR}/libgadu/
 
 set(kopete_gaduui_SRCS)
 
-kde4_add_ui3_files(kopete_gaduui_SRCS 
-   ui/gadusearch.ui 
-)
-
 kde4_add_ui_files(kopete_gaduui_SRCS
    ui/gadueditaccountui.ui
    ui/gaduadd.ui 
    ui/gaduawayui.ui 
    ui/gaduregisteraccountui.ui 
+   ui/gadusearch.ui 
 )
 
 set(kopete_gadu_PART_SRCS 

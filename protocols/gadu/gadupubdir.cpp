@@ -95,14 +95,20 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 
 }
 
+GaduPublicDir::~GaduPublicDir()
+{
+	delete mMainWidget;
+}
+
 void
 GaduPublicDir::createWidget()
 {
 	setCaption( i18n( "Gadu-Gadu Public Directory" ) );
 
-	mMainWidget = new GaduPublicDirectory( this );
-	mMainWidget->setObjectName( QLatin1String("GaduPublicDir") );
-	setMainWidget( mMainWidget );
+	QWidget* w = new QWidget( this );
+	mMainWidget = new Ui::GaduPublicDirectory;
+	mMainWidget->setupUi( this );
+	setMainWidget( w );
 
 	mMainWidget->UIN->setValidChars( "1234567890" );
 

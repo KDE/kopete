@@ -22,7 +22,7 @@
 #ifndef GADUPUBDIR_H
 #define GADUPUBDIR_H
 
-#include "gadusearch.h"
+#include "ui_gadusearch.h"
 #include "gadusession.h"
 
 #include <kdebug.h>
@@ -34,7 +34,7 @@ class GaduAccount;
 class GaduProtocol;
 class GaduContact;
 class GaduAccount;
-class GaduPublicDirectory;
+namespace Ui { class GaduPublicDirectory; }
 class Q3ListViewItem;
 class GaduContact;
 
@@ -45,6 +45,7 @@ Q_OBJECT
 public:
 	GaduPublicDir( GaduAccount* , QWidget *parent = 0 );
 	GaduPublicDir( GaduAccount* , int searchFor, QWidget* parent = 0 );
+	~GaduPublicDir();
 	QPixmap iconForStatus( uint status );
 
 private slots:
@@ -66,7 +67,7 @@ private:
 	GaduProtocol*		p;
 	GaduAccount*		mAccount;
 	GaduContact*		mContact;
-	GaduPublicDirectory*	mMainWidget;
+	Ui::GaduPublicDirectory*	mMainWidget;
 
 // form data
 	QString	fName;
