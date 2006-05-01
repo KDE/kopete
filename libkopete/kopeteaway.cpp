@@ -239,8 +239,13 @@ QStringList Kopete::Away::getMessages()
 
 QString Kopete::Away::getMessage( uint messageNumber )
 {
-    if ( messageNumber > 0 && messageNumber < (unsigned int)d->awayMessageList.size() )
-        return d->awayMessageList.takeAt( messageNumber );
+	if ( messageNumber >= 0 && messageNumber < (unsigned int)d->awayMessageList.size() )
+	{
+		QString msg = d->awayMessageList.takeAt( messageNumber );
+		d->awayMessageList.prepend( msg );
+		save();
+		return msg;
+	}
 	else
 		return QString::null;
 }

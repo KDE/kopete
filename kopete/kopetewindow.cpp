@@ -205,7 +205,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
     //install an event filter for the quick search toolbar so we can
     //catch the hide events
     toolBar( "quickSearchBar" )->installEventFilter( this );
-
 }
 
 void KopeteWindow::initView()
@@ -332,7 +331,6 @@ void KopeteWindow::initActions()
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
 	connect( setStatusMenu->kMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
-	connect( setStatusMenu->kMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
@@ -960,14 +958,17 @@ void KopeteWindow::setStatusMessage( const QString & message )
 
 void KopeteWindow::slotBuildStatusMessageMenu()
 {
-	
-#ifdef __GNUC__
-#warning Status message box popup needs porting
-#endif
-#if 0
+	//There are two ways for the menu to be avtivated:
+	//Via the menu or the 'Global Status Message' button
+	//Find out which menu asked us to be built
 	QObject * senderObj = const_cast<QObject *>( sender() );
 	m_globalStatusMessageMenu = static_cast<KMenu *>( senderObj );
 	m_globalStatusMessageMenu->clear();
+
+	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ),
+		SLOT( slotStatusMessageSelected( int ) ) );
+
+	#if 0
 // pop up a menu containing the away messages, and a lineedit
 // see kopeteaway
 	//messageMenu = new KPopupMenu( this );
@@ -989,6 +990,11 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	connect( m_newMessageEdit, SIGNAL( returnPressed() ), SLOT( slotNewStatusMessageEntered() ) );
 
 	m_globalStatusMessageMenu->insertItem( newMessageBox );
+	#endif 
+
+	KAction* newMsg = new KAction( KIcon("edit"), i18n("New Message..."), 0, "new_message" );
+	m_globalStatusMessageMenu->addAction(newMsg);
+	connect( newMsg, SIGNAL(triggered()), this, SLOT(slotEnterStatusMessage()) );
 
 	int i = 0;
 	
@@ -1000,42 +1006,50 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	{
 		m_globalStatusMessageMenu->insertItem( KStringHandler::rsqueeze( *it ), i );
 	}
-//	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ), SLOT( slotStatusMessageSelected( int ) ) );
-//	connect( messageMenu, SIGNAL( aboutToHide() ), messageMenu, SLOT( deleteLater() ) );
+	//connect( m_globalStatusMessageMenu, SIGNAL( aboutToHide() ), m_globalStatusMessageMenu, SLOT( deleteLater() ) );
 
-	m_newMessageEdit->setFocus();
+	//m_newMessageEdit->setFocus();
 
 	//messageMenu->popup( e->globalPos(), 1 );
-#endif
 }
 
 void KopeteWindow::slotStatusMessageSelected( int i )
 {
-	Kopete::Away *away = Kopete::Away::getInstance();
 	if ( 0 == i )
 		setStatusMessage( "" );
-	else
-		setStatusMessage( away->getMessage( i - 1 ) );
+	else if( i > 0 )
+		setStatusMessage(  Kopete::Away::getInstance()->getMessage( i - 1 ) );
 }
 
 void KopeteWindow::slotNewStatusMessageEntered()
 {
+	#if 0
 	m_globalStatusMessageMenu->close();
 	QString newMessage = m_newMessageEdit->text();
 	if ( !newMessage.isEmpty() )
 		Kopete::Away::getInstance()->addMessage( newMessage );
 	setStatusMessage( m_newMessageEdit->text() );
+	#endif
 }
 
 void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
 {
 	KMenu *statusMessageIconMenu = new KMenu(this);
+
 	connect(statusMessageIconMenu, SIGNAL( aboutToShow() ),
 		this, SLOT(slotBuildStatusMessageMenu()));
-	connect( statusMessageIconMenu, SIGNAL( activated( int ) ),
-				SLOT( slotStatusMessageSelected( int ) ) );
 
 	statusMessageIconMenu->popup(position);
+}
+
+void KopeteWindow::slotEnterStatusMessage()
+{
+	QString msg = KInputDialog::getText( i18n("New Status Message"), i18n("Enter your new status message:") );
+	if(!msg.isEmpty())
+	{
+		Kopete::Away::getInstance()->addMessage( msg );
+		setStatusMessage( msg );
+	}
 }
 
 void KopeteWindow::slotAddContactDialogInternal( const QString & accountIdentifier )

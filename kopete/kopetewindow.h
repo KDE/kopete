@@ -184,6 +184,7 @@ private slots:
 	 */
 	void slotBuildStatusMessageMenu();
 	void slotStatusMessageSelected( int i );
+	void slotEnterStatusMessage();
 	void slotNewStatusMessageEntered();
 
         /**
