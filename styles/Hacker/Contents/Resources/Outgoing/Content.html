@@ -1,14 +1,6 @@
-<div class="container">
-<table border=0 colspan=0>
-  <tr valign=top>
-    <td>
-	<div class="messageTime">%time{%H:%M}%</div>
-    </td><td nowrap>
-	<div class="user"> &lt; %sender% &gt; </div>
-    </td><td>
-	<div class="Message"> %message% </div>
-    </td>
-  </tr>
-</table>
-<div id="insert"></div>
+<div class="container" style="direction: %messageDirection%;">
+	<span class="messageTime">%time{%H:%M:%S}%</span>
+	<span class="user"> &lt;&nbsp;%sender%&nbsp;&gt; </span>
+	<span class="Message"> %message% </span>
 </div>
+<div id="insert"></div>
