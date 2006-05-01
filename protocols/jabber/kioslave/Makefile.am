@@ -21,5 +21,3 @@ noinst_HEADERS = jabberdisco.h
 protocol_DATA = jabberdisco.protocol
 protocoldir = $(kde_servicesdir)
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kio_jabberdisco.pot
