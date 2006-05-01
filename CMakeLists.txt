@@ -24,8 +24,6 @@ add_subdirectory( styles )
 ########### install files ###############
 
 
-kde4_create_doxygen_docs(  )
-
 kde4_footer()
 
 
