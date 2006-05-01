@@ -21,7 +21,7 @@
 #include "detectornetstat.h"
 
 DetectorNetstat::DetectorNetstat(IConnector* connector)
-        : Detector(connector), m_process(NULL) {}
+        : Detector(connector), m_buffer(QString::null), m_process(NULL) {}
 
 DetectorNetstat::~DetectorNetstat() {
     delete m_process;
@@ -36,6 +36,8 @@ void DetectorNetstat::checkStatus() {
 
         return;
     }
+
+    m_buffer = QString::null;
 
     // Use KProcess to run netstat -r. We'll then parse the output of
     // netstat -r in slotProcessStdout() to see if it mentions the
@@ -57,13 +59,14 @@ void DetectorNetstat::checkStatus() {
 void DetectorNetstat::slotProcessStdout(KProcess *, char *buffer, int buflen) {
     // Look for a default gateway
     kdDebug(14312) << k_funcinfo << endl;
-    QString qsBuffer = QString::fromLatin1(buffer, buflen);
-    kdDebug(14312) << qsBuffer << endl;
-    m_connector->setConnectedStatus(qsBuffer.contains("default"));
+    m_buffer += QString::fromLatin1(buffer, buflen);
+    kdDebug(14312) << m_buffer << endl;
 }
 
 void DetectorNetstat::slotProcessExited(KProcess *process) {
     if(process == m_process) {
+	m_connector->setConnectedStatus(m_buffer.contains("default"));
+	m_buffer = QString::null;
         delete m_process;
         m_process = 0L;
     }

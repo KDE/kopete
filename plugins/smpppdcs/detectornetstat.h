@@ -49,6 +49,7 @@ private slots:
     void slotProcessExited(KProcess *process);
 
 private:
+    QString m_buffer;
     KProcess * m_process;
 };
 
