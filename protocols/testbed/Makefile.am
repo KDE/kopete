@@ -1,8 +1,8 @@
 METASOURCES = AUTO
 
-SUBDIRS = . icons
+SUBDIRS = . icons ui
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(srcdir)/ui -Iui $(all_includes)
 
 noinst_HEADERS = testbedprotocol.h testbedcontact.h testbedaccount.h testbedaddcontactpage.h testbededitaccountwidget.h testbedfakeserver.h testbedincomingmessage.h
 kde_module_LTLIBRARIES =  kopete_testbed.la
