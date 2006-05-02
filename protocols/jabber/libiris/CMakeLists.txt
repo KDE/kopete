@@ -78,32 +78,14 @@ qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-im/types.cpp ${CMAKE_CUR
 qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/im.h ${CMAKE_CURRENT_BINARY_DIR}/im.cpp )
 qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/xmpp.h ${CMAKE_CURRENT_BINARY_DIR}/xmpp.cpp )
 
-# BEGIN moc special case
-# Those are special cases, both header and implementation contains a Q_OBJECT macro
-# What we do is generate a moc file for both header and implementation and with CMake FILE command, create the final .moc
-qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/securestream.h ${CMAKE_CURRENT_BINARY_DIR}/securestream_h.moc )
-qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/securestream.cpp ${CMAKE_CURRENT_BINARY_DIR}/securestream_cpp.moc )
-qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.cpp ${CMAKE_CURRENT_BINARY_DIR}/s5b_cpp.moc )
-qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.h ${CMAKE_CURRENT_BINARY_DIR}/s5b_h.moc )
-
-set(securestream_h_MOC)
-set(securestream_cpp_MOC)
-set(s5b_h_MOC)
-set(s5b_cpp_MOC)
-
-# Create securestream.moc
-file(READ ${CMAKE_CURRENT_BINARY_DIR}/securestream_h.moc securestream_h_MOC)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/securestream.moc ${securestream_h_MOC})
-file(READ ${CMAKE_CURRENT_BINARY_DIR}/securestream_cpp.moc securestream_cpp_MOC)
-file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/securestream.moc ${securestream_cpp_MOC})
-
-# Create s5b.moc
-file(READ ${CMAKE_CURRENT_BINARY_DIR}/s5b_h.moc s5b_h_MOC)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/s5b.moc ${s5b_h_MOC})
-file(READ ${CMAKE_CURRENT_BINARY_DIR}/s5b_cpp.moc s5b_cpp_MOC)
-file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/s5b.moc ${s5b_cpp_MOC})
-
-# END moc special case
+# Ok special case here
+# Both securestream and s5b have Q_OBJECT macro in header and implementation.
+# qt4_generate_moc create the .moc file for implementation and
+# qt4_wrap_cpp create the moc_object.cxx file for the header and gets compiled and linked to libiris_kopete
+qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/securestream.cpp ${CMAKE_CURRENT_BINARY_DIR}/securestream.moc )
+qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.cpp ${CMAKE_CURRENT_BINARY_DIR}/s5b.moc )
+qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/securestream.h )
+qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.h )
 
 kde4_automoc( ${libiris_needmoc_SRCS} )
 

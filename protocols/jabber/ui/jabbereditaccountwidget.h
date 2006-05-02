@@ -31,7 +31,7 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberEditAccountWidget: public QWidget, private Ui::DlgJabberEditAccountWidget, public KopeteEditAccountWidget
+class JabberEditAccountWidget: public QWidget, public Ui::DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
 
 Q_OBJECT

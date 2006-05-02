@@ -37,18 +37,21 @@ set(kopete_jabber_ui_SRCS
 )
 
 kde4_add_ui3_files(kopete_jabber_ui_SRCS 
-    ui/dlgsendraw.ui 
-    ui/dlgaddcontact.ui 
-    ui/dlgvcard.ui 
-    ui/dlgregister.ui 
-    ui/dlgbrowse.ui 
+   ui/dlgsendraw.ui 
+   ui/dlgchatjoin.ui 
+   ui/dlgchatroomslist.ui 
+   ui/dlgjabberregisteraccount.ui 
+   ui/dlgjabberchooseserver.ui 
+   ui/dlgvcard.ui 
+   ui/dlgservices.ui 
+   ui/dlgaddcontact.ui 
+   ui/dlgregister.ui 
+   ui/dlgbrowse.ui 
+   ui/dlgchangepassword.ui 
+)
+
+kde4_add_ui_files(kopete_jabber_ui_SRCS 
     ui/dlgjabbereditaccountwidget.ui 
-    ui/dlgjabberregisteraccount.ui 
-    ui/dlgjabberchooseserver.ui 
-    ui/dlgchangepassword.ui 
-    ui/dlgchatroomslist.ui 
-    ui/dlgchatjoin.ui 
-    ui/dlgservices.ui 
 )
 
 set(kopete_jabber_PART_SRCS 
