@@ -67,7 +67,7 @@ void JabberResourcePool::slotResourceDestroyed (QObject *sender)
 	JabberResource *oldResource = static_cast<JabberResource *>(sender);
 
 	// remove this resource from the lock list if it existed
-	d->lockList.remove ( oldResource );
+	d->lockList.removeAll ( oldResource );
 }
 
 void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
@@ -243,7 +243,7 @@ void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 	{
 		if ( (mResource->jid().userHost().toLower() == jid.userHost().toLower()) )
 		{
-			d->lockList.remove (mResource);
+			d->lockList.removeAll (mResource);
 		}
 	}
 

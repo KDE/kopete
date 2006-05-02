@@ -105,17 +105,17 @@ KActionMenu *JabberTransport::actionMenu ()
 	KActionMenu *menu = new KActionMenu( accountId(), 0, 0 );
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
-	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+	menu->kMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 								  );
 	
 	QList<KAction*> *customActions = myself()->customContextMenuActions(  );
 	if( customActions && !customActions->isEmpty() )
 	{
-		menu->popupMenu()->insertSeparator();
+		menu->kMenu()->addSeparator();
 
 		foreach( KAction *a, *customActions )
-			a->plug( menu->popupMenu() );
+			a->plug( menu->kMenu() );
 	}
 	delete customActions;
 

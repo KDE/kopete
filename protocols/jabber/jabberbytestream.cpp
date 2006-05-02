@@ -128,7 +128,8 @@ void JabberByteStream::slotReadyRead ()
 {
 
 	// stuff all available data into our buffers
-	QByteArray readBuffer ( socket()->bytesAvailable () );
+	QByteArray readBuffer;
+	readBuffer.reserve( socket()->bytesAvailable () );
 
 	socket()->read ( readBuffer.data (), readBuffer.size () );
 

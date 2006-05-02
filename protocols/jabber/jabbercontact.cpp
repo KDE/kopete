@@ -1000,7 +1000,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() < 32 || contactPhoto.height() < 32)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrURL(photoPath).fileName().lower() ) );
+		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrURL(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1019,7 +1019,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() != contactPhoto.height())
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrURL(photoPath).fileName().lower() ) );
+		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrURL(photoPath).fileName().toLower() ) );
 
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
@@ -1209,7 +1209,8 @@ void JabberContact::sync ( unsigned int )
 		m_syncTimer=new QTimer(this);
 		connect(m_syncTimer, SIGNAL(timeout()) , this , SLOT(slotDelayedSync()));
 	}
-	m_syncTimer->start(2*1000,true);
+	m_syncTimer->setSingleShot(true);
+	m_syncTimer->start(2*1000);
 	/*
 		the sync operation is delayed, because when we are doing a move to group operation,
 	     kopete first add the contact to the group, then removes it.

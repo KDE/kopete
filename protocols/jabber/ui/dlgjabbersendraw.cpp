@@ -52,7 +52,7 @@ void dlgJabberSendRaw::slotCancel ()
 
 void dlgJabberSendRaw::slotClear ()
 {
-	inputWidget->setCurrentItem(0);
+	inputWidget->setCurrentIndex(0);
 	tePacket->clear();
 }
 
@@ -101,7 +101,7 @@ void dlgJabberSendRaw::slotSend()
 	m_client->send (tePacket->text ());
 
 	// set temlapte combobox to "User Defined" and clear content
-	inputWidget->setCurrentItem(0);
+	inputWidget->setCurrentIndex(0);
 	tePacket->clear();
 }
 

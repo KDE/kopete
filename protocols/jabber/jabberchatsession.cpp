@@ -240,7 +240,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
-		if ( message.plainBody().find ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
+		if ( message.plainBody().indexOf ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
 		{
 			/*
 			 * This message is encrypted, so we need to set
@@ -257,7 +257,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 			// remove PGP header and footer from message
 			encryptedBody.truncate ( encryptedBody.length () - QString("-----END PGP MESSAGE-----").length () - 2 );
-			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.find ( "\n\n" ) - 2 );
+			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( "\n\n" ) - 2 );
 
 			// assign payload to message
 			jabberMessage.setXEncrypted ( encryptedBody );

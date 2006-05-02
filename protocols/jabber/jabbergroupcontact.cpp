@@ -124,7 +124,7 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 {
 	if(!mManager && canCreate == Kopete::Contact::CanCreate)
 	{
-		kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "somehow, the chat manager was removed, and the contact is still there" << endl;
+		kWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "somehow, the chat manager was removed, and the contact is still there" << endl;
 		mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
 				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
 
@@ -145,7 +145,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
 	
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received a message"  << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received a message"  << endl;
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -182,7 +182,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if ( !subContact )
 		{
-			kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
+			kWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
 			return;
 			/**
 			 * We couldn't find the contact for this message. That most likely means
@@ -279,10 +279,10 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 		mManager->removeContact ( subContact );
 
 	// remove the contact's meta contact from our internal list
-	mMetaContactList.remove ( subContact->metaContact () );
+	mMetaContactList.removeAll ( subContact->metaContact () );
 
 	// remove the contact from our internal list
-	mContactList.remove ( subContact );
+	mContactList.removeAll ( subContact );
 
 	// delete the meta contact first
 	delete subContact->metaContact ();
@@ -375,10 +375,10 @@ void JabberGroupContact::slotChangeNick( )
 
 void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full () << endl;
 
-	mMetaContactList.remove ( deadContact->metaContact () );
-	mContactList.remove ( deadContact );
+	mMetaContactList.removeAll ( deadContact->metaContact () );
+	mContactList.removeAll ( deadContact );
 
 }
 

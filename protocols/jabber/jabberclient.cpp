@@ -290,7 +290,7 @@ void JabberClient::removeS5BServerAddress ( const QString &address )
 	QStringList::iterator it = d->s5bAddressList.find ( address );
 	if ( it != d->s5bAddressList.end () )
 	{
-		d->s5bAddressList.remove ( it );
+		d->s5bAddressList.erase ( it );
 	}
 
 	if ( d->s5bAddressList.isEmpty () )

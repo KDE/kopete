@@ -81,11 +81,11 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "New outgoing transfer for " << contact->contactId() << ": " << file << endl;
 
 	mAccount = account;
-	mLocalFile.setName ( file );
+	mLocalFile.setFileName ( file );
 	mLocalFile.open ( QIODevice::ReadOnly );
 
 	mKopeteTransfer = Kopete::TransferManager::transferManager()->addTransfer ( contact,
-																			  mLocalFile.name (),
+																			  mLocalFile.fileName (),
 																			  mLocalFile.size (),
 																			  contact->contactId (),
 																			  Kopete::FileTransferInfo::Outgoing );
@@ -134,7 +134,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Accepting transfer for " << mXMPPTransfer->peer().full () << endl;
 
 	mKopeteTransfer = transfer;
-	mLocalFile.setName ( fileName );
+	mLocalFile.setFileName ( fileName );
 
 	bool couldOpen = false;
 	qlonglong offset = 0;

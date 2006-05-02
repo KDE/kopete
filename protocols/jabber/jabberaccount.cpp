@@ -129,7 +129,7 @@ JabberAccount::~JabberAccount ()
 	QMap<QString,JabberTransport*> tranposrts_copy=m_transports;
 	QMap<QString,JabberTransport*>::Iterator it;
 	for ( it = tranposrts_copy.begin(); it != tranposrts_copy.end(); ++it ) 
-		delete it.data();
+		delete it.value();
 }
 
 void JabberAccount::cleanup ()
@@ -176,35 +176,38 @@ KActionMenu *JabberAccount::actionMenu ()
 {
 	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
 
-	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->kMenu()->addSeparator();
 
 	KAction *action;
 	
 	action = new KAction (i18n ("Join Groupchat..."), "jabber_group", 0, this, SLOT (slotJoinNewChat ()), 0, "actionJoinChat");
-	m_actionMenu->insert(action);
+	m_actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 	
 	action = m_bookmarks->bookmarksAction( m_bookmarks );
-	m_actionMenu->insert(action);
+	m_actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 
 
-	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->kMenu()->addSeparator();
 	
-	action =  new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
-							this, SLOT ( slotGetServices () ), 0, "actionJabberServices");
+	action = new KAction( KIcon("jabber_serv_on"), i18n ("Services..."), 
+	                      0, 	"actionJabberServices" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGetServices()) );
 	action->setEnabled( isConnected() );
-	m_actionMenu->insert ( action );
+	m_actionMenu->addAction( action );
 
-	action = new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
-										 this, SLOT ( slotSendRaw () ), 0, "actionJabberSendRaw") ;
+	action = new KAction ( KIcon("mail_new"), i18n ("Send Raw Packet to Server..."),
+	                       0, "actionJabberSendRaw" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSendRaw()) );
 	action->setEnabled( isConnected() );
-	m_actionMenu->insert ( action );
+	m_actionMenu->addAction( action );
 
-	action = new KAction ( i18n ("Edit User Info..."), "identity", 0,
-										 this, SLOT ( slotEditVCard () ), 0, "actionEditVCard") ;
+	action = new KAction ( KIcon("identity"), i18n ("Edit User Info..."),
+	                       0, "actionEditVCard" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
 	action->setEnabled( isConnected() );
-	m_actionMenu->insert ( action );
+	m_actionMenu->addAction( action );
 
 
 	return m_actionMenu;
@@ -609,7 +612,7 @@ void JabberAccount::slotRosterRequestFinished ( bool success )
 	* information before we have updated our roster with actual
 	* contacts from the server! (Iris won't forward presence
 	* information in that case either). */
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
 	setPresence ( m_initialPresence );
 
 }
@@ -1329,7 +1332,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		Kopete::MetaContact *metaContact=c->metaContact();
 		if(metaContact->isTemporary())
 			return;
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << c->contactId() << 
+		kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << c->contactId() << 
 				" is on the contactlist while it shouldn't.  we are removing it.  - " << c << endl;
 		delete c;
 		if(metaContact->contacts().isEmpty())

@@ -180,18 +180,18 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		*/
 		if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( Kopete::Group::topLevel () ) ) )
 		{
-			groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
+			groupsToRemoveFrom.removeAll ( Kopete::Group::topLevel () );
 		}
 	
 		foreach ( Kopete::Group *group, groupsToRemoveFrom )
 		{
-			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
+			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
 			metaContact()->removeFromGroup ( group );
 		}
 	
 		foreach ( Kopete::Group *group, groupsToAddTo )
 		{
-			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
+			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
 			metaContact()->addToGroup ( group );
 		}
 	}
@@ -305,7 +305,7 @@ void JabberBaseContact::reevaluateStatus ()
 
 	updateResourceList ();
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );
 
 	/*

@@ -489,7 +489,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		path = filePath.path();
 
 	QImage img( path );
-	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(img), 96, 96, this );
+	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );
 
 	if( !img.isNull() ) 
 	{
@@ -523,10 +523,10 @@ void dlgJabberVCard::slotSelectPhoto()
 				img = img.copy(0, (img.height()-img.width())/2, img.height(), img.height());
 		}
 
-		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().lower().replace(QRegExp("[./~]"),"-")  +".png");
+		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().toLower().replace(QRegExp("[./~]"),"-")  +".png");
 		if( img.save(m_photoPath, "PNG") )
 		{
-			m_mainWidget->lblPhoto->setPixmap( QPixmap(img) );
+			m_mainWidget->lblPhoto->setPixmap( QPixmap::fromImage(img) );
 		}
 		else
 		{

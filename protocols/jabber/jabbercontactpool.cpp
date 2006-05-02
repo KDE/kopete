@@ -50,7 +50,7 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 	// see if the contact already exists
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().full().lower() == contact.jid().full().lower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().toLower() == contact.jid().full().toLower() )
 		{
 			return mContactItem;
 		}
@@ -153,7 +153,7 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().full().lower() == jid.full().lower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().toLower() == jid.full().toLower() )
 		{
 			/*
 			 * The following deletion will cause slotContactDestroyed()
@@ -221,7 +221,7 @@ void JabberContactPool::setDirty ( const XMPP::Jid &jid, bool dirty )
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().full().lower() == jid.full().lower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().toLower() == jid.full().toLower() )
 		{
 			mContactItem->setDirty ( dirty );
 			return;
@@ -257,7 +257,7 @@ JabberBaseContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().full().lower () == jid.full().lower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().toLower () == jid.full().toLower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -272,7 +272,7 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &j
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().full().lower () == jid.userHost().lower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().toLower () == jid.userHost().toLower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -288,7 +288,7 @@ QList<JabberBaseContact*> JabberContactPool::findRelevantSources ( const XMPP::J
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().userHost().lower () == jid.userHost().lower () )
+		if ( mContactItem->contact()->rosterItem().jid().userHost().toLower () == jid.userHost().toLower () )
 		{
 			list.append ( mContactItem->contact () );
 		}
