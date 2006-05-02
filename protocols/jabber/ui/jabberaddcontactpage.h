@@ -27,7 +27,7 @@
 /**
   *@author Daniel Stone
   */
-class dlgAddContact;
+namespace Ui { class dlgAddContact; }
 class JabberAccount;
 class QLabel;
 
@@ -40,7 +40,7 @@ public:
 	 ~JabberAddContactPage ();
 	virtual bool validateData ();
 	virtual bool apply (Kopete::Account *, Kopete::MetaContact *);
-	dlgAddContact *jabData;
+	Ui::dlgAddContact *jabData;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;

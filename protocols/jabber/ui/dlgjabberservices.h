@@ -24,14 +24,14 @@
 #include "jabberaccount.h"
 #include "xmpp_tasks.h"
 
-#include "dlgservices.h"
+#include "ui_dlgservices.h"
 #include <q3listview.h>
 
 /**
   *@author Till Gerken <till@tantalo.net>
   */
 
-class dlgJabberServices:public dlgServices
+class dlgJabberServices : public QDialog, private Ui::dlgServices
 {
 	Q_OBJECT
 

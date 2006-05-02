@@ -28,7 +28,7 @@
 #include "jabberclient.h"
 #include "dlgjabberregister.h"
 
-dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)
+dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name) : QWidget (parent)
 {
 	m_account = account;
 

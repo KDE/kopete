@@ -20,7 +20,8 @@
 #define DLGJABBERSENDRAW_H
 
 #include <qwidget.h>
-#include "dlgsendraw.h"
+#include <qdialog.h>
+#include "ui_dlgsendraw.h"
 
 class JabberClient;
 
@@ -33,7 +34,7 @@ class JabberClient;
  * @author Till Gerken <till@tantalo.net>
  * @author Chris TenHarmsel <tenharmsel@users.sf.net>
  */
-class dlgJabberSendRaw:public DlgSendRaw
+class dlgJabberSendRaw : public QDialog, Ui::DlgSendRaw
 {
 Q_OBJECT
 

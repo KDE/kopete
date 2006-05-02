@@ -25,8 +25,10 @@
 #include "jabberclient.h"
 
 dlgJabberSendRaw::dlgJabberSendRaw ( JabberClient *client, QWidget *parent, const char *name )
-	: DlgSendRaw (parent, name)
+	: QDialog (parent), Ui::DlgSendRaw()
 {
+	setupUi(this);
+	
 	// Connect the GUI elements to things that do stuff
 	connect (btnSend, SIGNAL (clicked ()), this, SLOT (slotSend ()));
 	connect (btnClose, SIGNAL (clicked ()), this, SLOT (slotCancel ()));

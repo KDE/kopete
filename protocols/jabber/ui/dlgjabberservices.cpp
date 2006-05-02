@@ -34,8 +34,10 @@
 
 #include "dlgjabberservices.moc"
 
-dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, const char *name):dlgServices (parent, name)
+dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, const char *name) : QDialog(parent)
 {
+	setupUi(this);
+
 	m_account = account;
 
 	if(m_account->isConnected())

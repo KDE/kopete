@@ -28,7 +28,7 @@
 #include <kopetepassword.h>
 #include <xmpp_tasks.h>
 #include "jabberaccount.h"
-#include "dlgchangepassword.h"
+#include "ui_dlgchangepassword.h"
 
 DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidget *parent, const char *name )
  : KDialog ( parent, i18n("Change Jabber Password"), KDialog::Ok | KDialog::Cancel )
@@ -39,13 +39,16 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
 
 	m_account = account;
 
-	m_mainWidget = new DlgChangePassword ( this );
-	setMainWidget ( m_mainWidget );
+	QWidget* w = new QWidget( this );
+	m_mainWidget = new Ui::DlgChangePassword;
+	m_mainWidget->setupUi( w );
+	setMainWidget ( w );
 
 }
 
 DlgJabberChangePassword::~DlgJabberChangePassword()
 {
+	delete m_mainWidget;
 }
 
 void DlgJabberChangePassword::slotOk ()

@@ -55,7 +55,7 @@
 #include "jabbercontactpool.h"
 #include "jabberbasecontact.h"
 #include "jabberclient.h"
-#include "dlgvcard.h"
+#include "ui_dlgvcard.h"
 
 /*
  *  Constructs a dlgJabberVCard which is a child of 'parent', with the
@@ -71,8 +71,10 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, 
 	m_account = account;
 	m_contact = contact;
 
-	m_mainWidget = new dlgVCard(this);
-	setMainWidget(m_mainWidget);
+	QWidget* w = new QWidget(this);
+	m_mainWidget = new Ui::dlgVCard;
+	m_mainWidget->setupUi(w);
+	setMainWidget(w);
 
 	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
 	connect (this, SIGNAL( user2Clicked()), this, SLOT (slotGetVCard ()));

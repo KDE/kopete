@@ -26,7 +26,7 @@
 class JabberAccount;
 class JabberContact;
 class QString;
-class dlgVCard;
+namespace Ui { class dlgVCard; }
 
 /**
  * @brief Show the information of a Jabber contact.
@@ -103,7 +103,7 @@ private slots:
 private:
 	JabberAccount *m_account;
 	JabberContact *m_contact;
-	dlgVCard *m_mainWidget;
+	Ui::dlgVCard *m_mainWidget;
 	QString m_photoPath;
 
 	void assignContactProperties();

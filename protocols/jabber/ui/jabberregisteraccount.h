@@ -24,7 +24,7 @@
 #include <qregexp.h>
 #include <qpixmap.h>
 
-class DlgJabberRegisterAccount;
+namespace Ui { class DlgJabberRegisterAccount; }
 class JabberProtocol;
 class JabberClient;
 class JabberEditAccountWidget;
@@ -61,7 +61,7 @@ private slots:
 	void disconnect ();
 
 private:
-	DlgJabberRegisterAccount *mMainWidget;
+	Ui::DlgJabberRegisterAccount *mMainWidget;
 	JabberEditAccountWidget *mParentWidget;
 
 	QRegExp jidRegExp;

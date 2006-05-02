@@ -96,6 +96,8 @@ PORTING TO QT4 / KDE4
 	- Check that Ui::{DesignerWidget} variables allocated on the heap are 
 	  always deleted in the destructor.
 	- Go through all the ui4 files and set the tab order
+        - Some Ui files contained icon data, which is no longer embedded in
+          designer4 file. Use kde icons or Qt's resource system instead.
 
 	General ================================================================
 	- K Replacement for QTreeWidget, QTreeWidgetItem?

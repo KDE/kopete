@@ -31,15 +31,13 @@ set(kopete_jabber_ui_SRCS
     ui/jabbereditaccountwidget.cpp 
     ui/jabberregisteraccount.cpp 
     ui/jabberchooseserver.cpp 
-    ui/dlgjabberchangepassword.cpp 
-    ui/dlgjabberchatroomslist.cpp 
+    ui/dlgjabberchangepassword.cpp
+    ui/dlgjabberchatroomslist.cpp
     ui/dlgjabberchatjoin.cpp 
 )
 
-kde4_add_ui3_files(kopete_jabber_ui_SRCS 
-   ui/dlgsendraw.ui 
-   ui/dlgchatjoin.ui 
-   ui/dlgchatroomslist.ui 
+kde4_add_ui_files(kopete_jabber_ui_SRCS 
+   ui/dlgsendraw.ui  
    ui/dlgjabberregisteraccount.ui 
    ui/dlgjabberchooseserver.ui 
    ui/dlgvcard.ui 
@@ -48,10 +46,12 @@ kde4_add_ui3_files(kopete_jabber_ui_SRCS
    ui/dlgregister.ui 
    ui/dlgbrowse.ui 
    ui/dlgchangepassword.ui 
+   ui/dlgjabbereditaccountwidget.ui 
 )
 
-kde4_add_ui_files(kopete_jabber_ui_SRCS 
-    ui/dlgjabbereditaccountwidget.ui 
+kde4_add_ui3_files(kopete_jabber_ui_SRCS
+   ui/dlgchatroomslist.ui
+   ui/dlgchatjoin.ui 
 )
 
 set(kopete_jabber_PART_SRCS 

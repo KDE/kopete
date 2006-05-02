@@ -24,7 +24,7 @@
 #include <q3cstring.h>
 
 class JabberRegisterAccount;
-class DlgJabberChooseServer;
+namespace Ui { class DlgJabberChooseServer; }
 
 class KJob;
 namespace KIO
@@ -54,7 +54,7 @@ private slots:
 	void slotSetSelection ( int row );
 
 private:
-	DlgJabberChooseServer *mMainWidget;
+	Ui::DlgJabberChooseServer *mMainWidget;
 	JabberRegisterAccount *mParentWidget;
 	KIO::TransferJob *mTransferJob;
 	QByteArray xmlServerList;

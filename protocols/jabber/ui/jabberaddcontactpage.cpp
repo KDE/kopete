@@ -30,7 +30,7 @@
 #include <kopetegroup.h>
 #include <kopetemetacontact.h>
 
-#include "dlgaddcontact.h"
+#include "ui_dlgaddcontact.h"
 #include "jabberaccount.h"
 #include "jabbertransport.h"
 #include "kopetecontact.h"
@@ -38,7 +38,8 @@
 #include "xmpp_tasks.h"
 
 JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * parent)
- : AddContactPage (parent)
+ : AddContactPage (parent),
+   jabData( 0 )
 {
 	(new Q3VBoxLayout (this))->setAutoAdd (true);
 	
@@ -47,8 +48,10 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 	
 	if (jaccount->isConnected ())
 	{
-		jabData = new dlgAddContact (this);
-		jabData->show ();
+		QWidget*w = new QWidget( this );
+		jabData = new Ui::dlgAddContact;
+		jabData->setupUi( w );
+		w->show ();
 		
 		if(transport)
 		{
@@ -71,6 +74,7 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 
 JabberAddContactPage::~JabberAddContactPage ()
 {
+	delete jabData;
 }
 
 bool JabberAddContactPage::validateData ()

@@ -45,7 +45,7 @@
 #include "jabberconnector.h"
 #include "jabbereditaccountwidget.h"
 #include "jabberchooseserver.h"
-#include "dlgjabberregisteraccount.h"
+#include "ui_dlgjabberregisteraccount.h"
 
 JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, const char */*name*/ )
  : KDialog ( parent, i18n("Register New Jabber Account"), KDialog::Ok | KDialog::Cancel )
@@ -54,8 +54,10 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	mParentWidget = parent;
 
 	// setup main dialog
-	mMainWidget = new DlgJabberRegisterAccount ( this );
-	setMainWidget ( mMainWidget );
+	QWidget* w = new QWidget( this );
+	mMainWidget = new Ui::DlgJabberRegisterAccount;
+	mMainWidget->setupUi( w );
+	setMainWidget ( w );
 
 	// replace "Ok" button with a "Register" button
 	KGuiItem registerButton = KStdGuiItem::ok();
@@ -106,6 +108,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 
 JabberRegisterAccount::~JabberRegisterAccount()
 {
+	delete mMainWidget;
 	delete jabberClient;
 }
 

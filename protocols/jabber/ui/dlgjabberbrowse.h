@@ -25,13 +25,13 @@
 
 #include "jabberaccount.h"
 #include "jabberformtranslator.h"
-#include "dlgbrowse.h"
+#include "ui_dlgbrowse.h"
 
 /**
   *@author Till Gerken <till@tantalo.net>
   */
 
-class dlgJabberBrowse:public dlgBrowse
+class dlgJabberBrowse : public QDialog, private Ui::dlgBrowse
 {
 
 	Q_OBJECT

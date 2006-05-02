@@ -23,7 +23,7 @@
 #include <kdialog.h>
 
 class JabberAccount;
-class DlgChangePassword;
+namespace  Ui { class DlgChangePassword; }
 
 /**
 @author Till Gerken
@@ -44,7 +44,7 @@ private slots:
 	void slotChangePasswordDone ();
 
 private:
-	DlgChangePassword *m_mainWidget;
+	Ui::DlgChangePassword *m_mainWidget;
 	JabberAccount *m_account;
 };
 

@@ -27,7 +27,7 @@
 #include <q3table.h>
 #include <qlabel.h>
 #include "jabberprotocol.h"
-#include "dlgjabberchooseserver.h"
+#include "ui_dlgjabberchooseserver.h"
 #include "jabberregisteraccount.h"
 
 JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const char *name )
@@ -37,8 +37,10 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const ch
 	mParentWidget = parent;
 	mSelectedRow = -1;
 
-	mMainWidget = new DlgJabberChooseServer ( this );
-	setMainWidget ( mMainWidget );
+	QWidget* w = new QWidget( this );
+	mMainWidget = new Ui::DlgJabberChooseServer;
+	mMainWidget->setupUi( w );
+	setMainWidget ( w );
 
 	mMainWidget->lblStatus->setText ( i18n ( "Retrieving server list...") );
 
@@ -59,6 +61,7 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const ch
 
 JabberChooseServer::~JabberChooseServer()
 {
+	delete mMainWidget;
 }
 
 void JabberChooseServer::slotOk ()

@@ -28,14 +28,14 @@
 #include "xmpp.h"
 
 #include "jabberaccount.h"
-#include "dlgregister.h"
+#include "ui_dlgregister.h"
 #include "jabberformtranslator.h"
 
 /**
   *@author Till Gerken <till@tantalo.net>
   */
 
-class dlgJabberRegister:public dlgRegister
+class dlgJabberRegister : public QWidget, private Ui::dlgRegister
 {
 
 	Q_OBJECT

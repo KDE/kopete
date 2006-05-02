@@ -32,8 +32,10 @@
 #include "jabberformtranslator.h"
 #include "dlgjabberbrowse.h"
 
-dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name):dlgBrowse (parent, name)
+dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name) : QDialog (parent)
 {
+	setupUi (this);
+
 	m_account = account;
 
 	// disable the left margin
