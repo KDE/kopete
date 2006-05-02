@@ -21,8 +21,8 @@
 
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
-#include "gaduawayui.h"
 #include "gaduaway.h"
+#include "ui_gaduawayui.h"
 
 #include "kopeteonlinestatus.h"
 
@@ -32,9 +32,6 @@
 #include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qlineedit.h>
-
-#include "ui_gaduawayui.h"
-#include "gaduaway.h"
 
 GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 : KDialog( parent, i18n( "Away Dialog" ), KDialog::Ok | KDialog::Cancel), account_( account )
