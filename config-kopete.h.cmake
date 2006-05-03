@@ -23,4 +23,15 @@
 /* Define to 1 if you want IDN support. */
 #define LIBIDN 1
 
+/* Speex codec is enabled */
+#define HAVE_SPEEX 1
+
+/* Define to 1 if you have the <speex.h> header file. */
+#cmakedefine HAVE_SPEEX_H 1
+
+/* Define to 1 if you have the <speex/speex.h> header file. */
+#cmakedefine HAVE_SPEEX_SPEEX_H 1
+
+/* Defines the executable of xmllint */
+#define XMLLINT "/usr/bin/xmllint"
 
