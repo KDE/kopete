@@ -20,6 +20,7 @@
 #include "msnaccount.h"
 
 #include <config.h>
+#include <config-kopete.h>
 
 #include <kaction.h>
 #include <kconfig.h>

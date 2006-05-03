@@ -21,7 +21,7 @@
     *************************************************************************
 */
 #include "config.h"
-
+#include "config-kopete.h"
 #ifdef HAVE_XMMS
 
 #include <kdebug.h>

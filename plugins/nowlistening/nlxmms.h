@@ -21,7 +21,7 @@
     *************************************************************************
 */
 #include "config.h"
-
+#include "config-kopete.h"
 #ifndef NLXMMS_H
 #define NLXMMS_H
 
