@@ -18,7 +18,7 @@
 */
 
 #include "config.h"
-#include "kopete-config.h"
+#include "config-kopete.h"
 
 #include "kopetepluginmanager.h"
 
