@@ -16,6 +16,8 @@ void GuidTest::testConstructors()
 	Oscar::Guid i( QLatin1String( "30313233--3435-3637-3839-616263646566" ) );
 	QVERIFY( i.isValid() );
 	QCOMPARE( i.data(), id );
+	Oscar::Guid j( QByteArray::fromRawData( "Kopete ICQ \0\xc\0\0", 16 ) );
+	QVERIFY( j.isValid() );
 }
 
 void GuidTest::testSetData()
