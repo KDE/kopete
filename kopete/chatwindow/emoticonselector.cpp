@@ -92,7 +92,10 @@ void EmoticonSelector::prepareList(void)
 		delete lay;
 */	}
 
-	lay = new QGridLayout(this, 0, 0, 4, 4, "emoticonLayout");
+	lay = new QGridLayout(this);
+	lay->setObjectName("emoticonLayout");
+	lay->setSpacing(4);
+	lay->setMargin(4);
 	movieList.clear();
 	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
 	{

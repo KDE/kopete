@@ -41,7 +41,8 @@
 SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent, const char */*name*/)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	QVBoxLayout *l = new QVBoxLayout(this, QBoxLayout::Down);
+	QVBoxLayout *l = new QVBoxLayout(this);
+	l->setSpacing(QBoxLayout::Down);
 	preferencesDialog = new smsActPrefsUI(this);
 	l->addWidget(preferencesDialog);
 
@@ -124,7 +125,10 @@ void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 	connect (this, SIGNAL(saved()), service, SLOT(savePreferences()));
 
 	delete middleFrameLayout;
-	middleFrameLayout = new QGridLayout(preferencesDialog->middleFrame, 1, 2, 0, 6, "middleFrameLayout");
+	middleFrameLayout = new QGridLayout(preferencesDialog->middleFrame);
+	middleFrameLayout->setObjectName("middleFrameLayout");
+	middleFrameLayout->setSpacing(6);
+	middleFrameLayout->setMargin(0);
 	service->setWidgetContainer(preferencesDialog->middleFrame, middleFrameLayout);
 }
 

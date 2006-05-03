@@ -172,7 +172,10 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
     : QWidget( parent ), m_engine( engine )
 {
-	ChannelListLayout = new QVBoxLayout( this, 11, 6, "ChannelListLayout");
+	ChannelListLayout = new QVBoxLayout( this );
+	ChannelListLayout->setObjectName( "ChannelListLayout" );
+	ChannelListLayout->setSpacing( 6 );
+	ChannelListLayout->setMargin( 11 );
 
 	layout72_2 = new QHBoxLayout( 0, 0, 6, "layout72_2");
 

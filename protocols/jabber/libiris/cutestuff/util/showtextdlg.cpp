@@ -43,7 +43,8 @@ ShowTextDlg::ShowTextDlg(const QString &fname, bool rich, QWidget *parent, const
 		f.close();
 	}
 
-	QVBoxLayout *vb1 = new QVBoxLayout(this, 8);
+	QVBoxLayout *vb1 = new QVBoxLayout(this);
+	vb1->setSpacing(8);
 	Q3TextEdit *te = new Q3TextEdit(this);
 	te->setReadOnly(TRUE);
 	te->setTextFormat(rich ? Q3TextEdit::RichText : Q3TextEdit::PlainText);

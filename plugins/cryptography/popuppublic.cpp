@@ -100,7 +100,9 @@ popupPublic::popupPublic(QWidget *parent, const char *name,QString sfile,bool fi
 KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent, name,true)
 {
 	QWidget *page = plainPage();
-	QVBoxLayout *vbox=new QVBoxLayout(page,0,spacingHint());
+	QVBoxLayout *vbox=new QVBoxLayout(page);
+	vbox->setSpacing(spacingHint());
+	vbox->setMargin(0);
 	vbox->setAutoAdd(true);
 
 	setButtonText(KDialogBase::Details,i18n("Options"));
@@ -174,7 +176,8 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 
         if (filemode) {
 		QWidget *parentBox=new QWidget(boutonboxoptions);
-		QHBoxLayout *shredBox=new QHBoxLayout(parentBox,0);
+		QHBoxLayout *shredBox=new QHBoxLayout(parentBox);
+		shredBox->setSpacing(0);
 		//shredBox->setFrameStyle(QFrame::NoFrame);
 		//shredBox->setMargin(0);
 	       CBshred=new QCheckBox(i18n("Shred source file"),parentBox);

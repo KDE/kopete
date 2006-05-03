@@ -59,7 +59,8 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   keysListpr->setFullWidth(true);
 
   labeltxt=new QLabel(i18n("Choose secret key:"),page);
-  QVBoxLayout *vbox=new QVBoxLayout(page,3);
+  QVBoxLayout *vbox=new QVBoxLayout(page);
+  vbox->setSpacing(3);
 
   vbox->addWidget(labeltxt);
   vbox->addWidget(keysListpr);
