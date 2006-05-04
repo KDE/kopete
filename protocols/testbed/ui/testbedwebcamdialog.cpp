@@ -27,8 +27,8 @@
 #include <klocale.h>
 
 TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contactId ),
-                   KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ )
+: KDialogBase( KDialogBase::Plain, Qt::WDestructiveClose, parent, name, false, i18n( "Webcam for %1" ).arg( contactId ),
+                   KDialogBase::Close, KDialogBase::Close, true /*seperator*/ )
 {
 	setInitialSize( QSize(320,290), false );
 	
@@ -62,6 +62,8 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
 {
+	kdDebug(14210) << k_funcinfo << endl;
+
 	m_videoDevicePool->stopCapturing(); 
 	m_videoDevicePool->close();
 }
