@@ -15,6 +15,7 @@
 */
 
 #include "testbedwebcamdialog.h"
+#include "avdevice/videodevicepool.h"
 
 #include <qframe.h>
 #include <qobject.h>
@@ -52,11 +53,17 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	topLayout->add( m_Viewer );
 
 	show();
+	
+	m_videoDevicePool = Kopete::AV::VideoDevicePool::self();
+	m_videoDevicePool->open();
+	m_videoDevicePool->setSize(320, 240);
+	m_videoDevicePool->startCapturing();
 }
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
 {
-
+	m_videoDevicePool->stopCapturing(); 
+	m_videoDevicePool->close();
 }
 
 void TestbedWebcamDialog::newImage( const QPixmap &image )
@@ -66,59 +73,5 @@ void TestbedWebcamDialog::newImage( const QPixmap &image )
 	show();
 }
 
-void TestbedWebcamDialog::webcamPaused()
-{
-	m_imageContainer->clear();
-	
-	m_imageContainer->setText( QString::fromLatin1("*** Webcam paused ***") );
-	m_imageContainer->adjustSize();
-	m_imageContainer->setAlignment( Qt::AlignCenter );
-	adjustSize();
-	show();
-}
-
-void TestbedWebcamDialog::webcamClosed( int reason  )
-{
-	kdDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason <<endl;
-	QString closeReason;
-	switch ( reason )
-	{
-	case 1:
-		closeReason = i18n( "%1 has stopped broadcasting" ).arg( contactName ); break;
-	case 2:
-		closeReason = i18n( "%1 has cancelled viewing permission" ).arg( contactName ); break;
-	case 3:
-		closeReason = i18n( "%1 has declined permission to view webcam" ).arg( contactName ); break;
-	case 4:
-		closeReason = i18n( "%1 does not have his/her webcam online" ).arg( contactName ); break;
-	default:
-		closeReason = i18n( "Unable to view the webcam of %1 for an unknown reason" ).arg( contactName);
-	}
-	m_imageContainer->clear();
-
-	m_imageContainer->setText( closeReason );
-	m_imageContainer->adjustSize();
-	m_imageContainer->setAlignment( Qt::AlignCenter );
-	adjustSize();
-	show();
-}
-
-void TestbedWebcamDialog::setViewer( const QStringList &viewer )
-{
-	QString s = i18n( "%1 viewer(s)" ).arg( viewer.size() );
-	if( viewer.size() )
-	{
-		s += ": ";
-		for ( QStringList::ConstIterator it = viewer.begin(); it != viewer.end(); ++it ) {
-			if( it != viewer.begin() )
-				s += ", ";
-			s += *it;
-		}
-	}
-	m_Viewer->setText( s );
-	m_Viewer->show();
-}
-
-// kate: indent-mode csands; tab-width 4;
 
 #include "testbedwebcamdialog.moc"

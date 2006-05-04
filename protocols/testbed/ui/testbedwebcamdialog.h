@@ -27,6 +27,12 @@ class QPixmap;
 class QWidget;
 class TestbedContact;
 
+namespace Kopete { 
+	namespace AV	{
+		class VideoDevicePool;
+	}
+}
+
 class TestbedWebcamDialog : public KDialogBase
 {
 Q_OBJECT
@@ -34,11 +40,8 @@ public:
 	TestbedWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
 	~TestbedWebcamDialog();
 	
-	void setViewer( const QStringList & );
 public slots:
 	void newImage( const QPixmap &image );
-	void webcamClosed( int );
-	void webcamPaused();
 signals:
 	void closingWebcamDialog();
 	
@@ -46,7 +49,7 @@ private:
 	QLabel *m_imageContainer;
 	QLabel *m_Viewer;
 	QString contactName;
-	
+	Kopete::AV::VideoDevicePool *m_videoDevicePool;
 };
 
 #endif

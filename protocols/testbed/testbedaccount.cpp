@@ -143,7 +143,7 @@ void TestbedAccount::slotShowVideo ()
 	kdDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
-		disconnect ();
+		m_testbedWebcamDialog = new TestbedWebcamDialog( NULL, NULL, "Testbed video window" );
 	updateContactStatus();
 }
 

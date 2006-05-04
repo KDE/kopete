@@ -18,6 +18,7 @@
 #define TESTBEDACCOUNT_H
 
 #include <kopeteaccount.h>
+#include "testbedwebcamdialog.h"
 
 class KActionMenu;
 namespace Kopete { class Contact; }
@@ -80,6 +81,7 @@ protected:
 	 */
 	void updateContactStatus();
 	TestbedFakeServer* m_server;
+	TestbedWebcamDialog* m_testbedWebcamDialog;
 
 protected slots:
 	/**

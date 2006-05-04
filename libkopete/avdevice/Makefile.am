@@ -8,7 +8,7 @@ noinst_LTLIBRARIES = libkvideoio.la
 libkopete_videodevice_la_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 
 noinst_HEADERS = videodevice.h videoinput.h kxv.h qvideo.h qvideostream.h \
-		videodevicepool.h videodevicemodelpool.h
+	videodevicepool.h videodevicemodelpool.h
 libkopete_videodevice_la_SOURCES = videodevice.cpp videoinput.cpp \
 		videodevicepool.cpp videodevicemodelpool.cpp
 libkvideoio_la_LDFLAGS = -no-undefined $(all_libraries) -version-info 1:0:0
