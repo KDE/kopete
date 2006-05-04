@@ -2,14 +2,6 @@
 # include_jabber_TRUE = #
 # the following test will then issue a warning at the end of configure output
 # so users see it more easily
-if test -n "$include_jabber_TRUE"; then
-  echo ""
-  echo "You're missing libidn(-dev). The Kopete Jabber plugin has been"
-  echo "excluded from compilation."
-  echo ""
-  all_tests=bad
-fi
-
 if test "$have_glib" = no; then
   echo ""
   echo "You're missing glib >= 2.0 and its development files. Kopete's MSN"
