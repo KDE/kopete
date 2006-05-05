@@ -129,7 +129,7 @@ bool Task::take( Transfer * transfer)
 	// pass along the transfer to our children
 	Task *t;
 	foreach( QObject* o, p) {
-		if( qobject_cast<Task*>( o ) )
+		if(! qobject_cast<Task*>( o ) )
 			continue;
 
 		t = static_cast<Task*>( o );
