@@ -79,10 +79,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	load();
 
 	// "Chat" TAB ===============================================================
-	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
-		 this, SLOT(slotValueChanged(int)));
-	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
-		 this, SLOT(slotUpdatePluginLabel(int)));
+// 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
+// 		 this, SLOT(slotValueChanged(int)));
+// 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
+// 		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
@@ -99,7 +99,7 @@ void BehaviorConfig::save()
 	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mAwayConfigUI->mAutoAwayTimeout->value() * 60 );
 
 	// "Chat" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()]->pluginName() );
+// 	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()]->pluginName() );
 
 	Kopete::BehaviorSettings::self()->writeConfig();
 
@@ -115,22 +115,22 @@ void BehaviorConfig::load()
 	mAwayConfigUI->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
 
 	// "Chat" TAB ===============================================================
-	mPrfsChat->viewPlugin->clear();
+// 	mPrfsChat->viewPlugin->clear();
 	int selectedIdx = 0, i = 0;
 	for(  QList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
 	{
 		if( (*it)->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin() )
 			selectedIdx = i;
-		mPrfsChat->viewPlugin->insertItem( i++, (*it)->name() );
+// 		mPrfsChat->viewPlugin->insertItem( i++, (*it)->name() );
 	}
 
-	mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);
+// 	mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);
 	slotUpdatePluginLabel(selectedIdx);
 }
 
 void BehaviorConfig::slotUpdatePluginLabel(int)
 {
-	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentIndex() ]->comment() );
+// 	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentIndex() ]->comment() );
 }
 
 void BehaviorConfig::slotSettingsChanged(bool)
