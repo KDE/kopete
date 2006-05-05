@@ -43,9 +43,9 @@ class BehaviorConfig : public KCModule
 
 	private:
 		QTabWidget* mBehaviorTabCtl;
-		QWidget *mPrfsGeneral;
-		QWidget *mPrfsEvents;
-		QWidget *mPrfsChat;
+		BehaviorConfig_General *mPrfsGeneral;
+		BehaviorConfig_Events *mPrfsEvents;
+		BehaviorConfig_Chat *mPrfsChat;
 		KopeteAwayConfigBaseUI *mAwayConfigUI;
 		QList<KPluginInfo*> viewPlugins;
 };
