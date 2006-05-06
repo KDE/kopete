@@ -608,7 +608,7 @@ void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &n
 
 void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
-	QString contactName; 
+	QString contactName;
 	// Myself metacontact is not a reliable source.
 	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{
@@ -838,7 +838,42 @@ void ChatView::saveOptions()
 	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
 	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
 	config->writeEntry( QString::fromLatin1( "membersDockPosition" ), membersDockPosition );
+	saveChatSettings();
 	config->sync();
+}
+
+void ChatView::saveChatSettings()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() > 1 )
+		return; //can't save with more than one person in chatview
+
+	KConfig* config = KGlobal::config();
+	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	                           contacts.first()->metaContact()->metaContactId();
+
+	config->setGroup( contactListGroup );
+	config->writeEntry( "EnableRichText", editPart()->richTextEnabled() );
+	config->writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
+	config->sync();
+}
+
+void ChatView::loadChatSettings()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() > 1 )
+		return; //can't load with more than one other person in the chat
+
+	//read settings for metacontact
+	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	                           contacts.first()->metaContact()->metaContactId();
+	KConfig* config = KGlobal::config();
+	config->setGroup( contactListGroup );
+	bool enableRichText = config->readBoolEntry( "EnableRichText", true );
+	editPart()->slotSetRichTextEnabled( enableRichText );
+	emit rtfEnabled( this, enableRichText );
+	bool enableAutoSpell = config->readBoolEntry( "EnableAutoSpellCheck", false );
+	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 
 void ChatView::readOptions()

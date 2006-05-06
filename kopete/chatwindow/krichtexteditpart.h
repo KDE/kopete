@@ -79,6 +79,7 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 
 		void checkToolbarEnabled();
 		void reloadConfig();
+		void slotSetRichTextEnabled( bool enable );
 
 	signals:
 		void toggleToolbar( bool enabled );
@@ -100,8 +101,6 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void updateFont();
 		void updateCharFmt();
 		void updateAligment();
-
-		void slotSetRichTextEnabled( bool enable );
 
 	private:
 		void readConfig();

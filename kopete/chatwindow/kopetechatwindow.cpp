@@ -381,7 +381,7 @@ void KopeteChatWindow::initActions(void)
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), QString::null, 0,
 		this, SLOT( toggleAutoSpellChecking() ), coll, "enable_auto_spell_check" );
 	toggleAutoSpellCheck->setChecked( true );
-	
+
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
@@ -702,8 +702,12 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(rtfEnabled( ChatView*, bool ) ), this, SLOT( slotRTFEnabled( ChatView*, bool ) ) );
 	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
 	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+
 	updateSpellCheckAction();
 	checkDetachEnable();
+	newView->loadChatSettings();
+	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
+	         this, SLOT( toggleAutoSpellCheckEnabled( ChatView*, bool ) ) );
 }
 
 void KopeteChatWindow::checkDetachEnable()
@@ -889,6 +893,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
 	m_activeView->editPart()->reloadConfig();
+	m_activeView->loadChatSettings();
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
@@ -903,7 +908,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	
+
 	if ( view == m_activeView )
  	{
 		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) :
@@ -1039,6 +1044,9 @@ void KopeteChatWindow::saveOptions()
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), m_tabBar->tabPosition() );
 
+	if ( m_activeView )
+		m_activeView->saveChatSettings();
+
 	config->sync();
 }
 
@@ -1095,6 +1103,16 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	updateSpellCheckAction();
 }
 
+void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled )
+{
+	if ( view != m_activeView )
+		return;
+
+	toggleAutoSpellCheck->setEnabled( isEnabled );
+	toggleAutoSpellCheck->setChecked( isEnabled );
+	m_activeView->editPart()->toggleAutoSpellCheck( isEnabled );
+}
+
 bool KopeteChatWindow::queryClose()
 {
 	bool canClose = true;
@@ -1135,7 +1153,7 @@ bool KopeteChatWindow::queryExit()
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
-	else 
+	else
 		return false;
 }
 
@@ -1150,7 +1168,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
-	
+
 		if ( queryClose() ) {
 			e->accept();
 		}
