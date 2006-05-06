@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 
-SUBDIRS = . ui icons
+SUBDIRS = ui . icons
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(srcdir)/ui -Iui $(all_includes)
 
