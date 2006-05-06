@@ -1,5 +1,7 @@
 kde4_header()
 
+OPTION(WITH_smpppd "enable support for the SuSE Meta PPP Daemon (smpppd)" OFF)
+
 add_subdirectory( latex ) 
 add_subdirectory( autoreplace ) 
 add_subdirectory( history ) 
@@ -16,12 +18,13 @@ add_subdirectory( addbookmarks )
 if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
+if(WITH_smpppd)
+	add_subdirectory(smpppdcs)
+endif(WITH_smpppd)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir statistics (should be removed or rewritten -DarkShock)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir netmeeting (should be removed -DarkShock)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(MOTIONAUTOAWAY_SUBDIR)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(SMPPPDCS_SUBDIR)")
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### install files ###############
