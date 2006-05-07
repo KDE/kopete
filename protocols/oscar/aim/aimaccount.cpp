@@ -303,7 +303,7 @@ KActionMenu* AIMAccount::actionMenu()
 	AIMProtocol *p = AIMProtocol::protocol();
 
 	QString accountNick = myself()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	mActionMenu->kMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor( myself() )), i18n( "%2 <%1>" ).arg( accountId(), accountNick ) );
+	mActionMenu->kMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor( myself() )), i18n( "%2 <%1>", accountId(), accountNick ) );
 	
 	KAction* actionOnline = new KAction( KIcon(QIcon(p->statusOnline.iconFor(this))), i18n("Online"), 0, "AIMAccount::mActionOnline");
 	QObject::connect( actionOnline, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()) );
