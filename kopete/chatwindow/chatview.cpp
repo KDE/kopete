@@ -877,7 +877,7 @@ void ChatView::loadChatSettings()
 	config->setGroup( contactListGroup );
 	bool enableRichText = config->readBoolEntry( "EnableRichText", true );
 	editPart()->slotSetRichTextEnabled( enableRichText );
-	emit rtfEnabled( this, enableRichText );
+	emit rtfEnabled( this, editPart()->richTextEnabled() );
 	bool enableAutoSpell = config->readBoolEntry( "EnableAutoSpellCheck", false );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
