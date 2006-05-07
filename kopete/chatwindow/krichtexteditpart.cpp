@@ -93,7 +93,7 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 
 	//Enable / disable buttons
 	updateActions();
-	enableRichText->setChecked( !m_richTextAvailable );
+	enableRichText->setChecked( m_richTextEnabled );
 }
 
 void KopeteRichTextEditPart::checkToolbarEnabled()
