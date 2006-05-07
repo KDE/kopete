@@ -101,6 +101,7 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 	int flags;		/* key = 13  */
 	int away;		/* key = 47  */
 	int idle;		/* key = 137 */
+	bool utf;		/* key = 97 */
 
 	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
@@ -113,9 +114,13 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 		nick = t->nthParam( 7, i );
 		state = t->nthParamSeparated( 10, i, 7 ).toInt();
 		flags = t->nthParamSeparated( 13, i, 7 ).toInt();
-		message = t->nthParamSeparated( 19, i, 7 );
 		away = t->nthParamSeparated( 47, i, 7 ).toInt();
 		idle = t->nthParamSeparated( 137, i, 7 ).toInt();
+		utf = t->nthParamSeparated( 97, i, 7 ).toInt() == 1;
+		if( utf )
+			message = QString::fromUtf8( t->nthParamSeparated( 19, i, 7 ) );
+		else
+			message = t->nthParamSeparated( 19, i, 7 );
 
 		if( t->service() == Yahoo::ServiceLogoff || ( state != 0 && flags == 0 ) )
 			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0, 0 );
