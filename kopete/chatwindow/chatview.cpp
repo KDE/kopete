@@ -845,12 +845,18 @@ void ChatView::saveOptions()
 void ChatView::saveChatSettings()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
+	Kopete::MetaContact* mc = contacts.first()->metaContact();
+	
 	if ( contacts.count() > 1 )
 		return; //can't save with more than one person in chatview
 
+	if ( !mc )
+		return;
+
 	KConfig* config = KGlobal::config();
+	
 	QString contactListGroup = QString::fromLatin1("chatwindow_") +
-	                           contacts.first()->metaContact()->metaContactId();
+	                           mc->metaContactId();
 
 	config->setGroup( contactListGroup );
 	config->writeEntry( "EnableRichText", editPart()->richTextEnabled() );
