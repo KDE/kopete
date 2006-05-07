@@ -51,6 +51,7 @@ void ChangeStatusTask::onGo()
 			t->setParam( 19, m_message.utf8() );
 		t->setParam( 10, m_status );
 		t->setParam( 47, m_type );
+		t->setParam( 97, 1 );	// it's utf8
 			
 		send( t );
 
