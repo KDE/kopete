@@ -74,7 +74,9 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 
 void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 {
-	if( enable )
+	m_richTextEnabled = enable && m_richTextAvailable;
+
+	if( m_richTextEnabled )
 	{
 		editor->setTextFormat( Qt::RichText );
 	}
@@ -83,17 +85,16 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 		editor->setTextFormat( Qt::PlainText );
 	}
 
-	m_richTextEnabled = enable;
 	emit toggleToolbar( buttonsEnabled() );
 
 	// Spellchecking disabled when using rich text because the
 	// text we were getting from widget was coloured HTML!
-	editor->setCheckSpellingEnabled( !richTextEnabled() );
-	checkSpelling->setEnabled( !richTextEnabled() );
+	editor->setCheckSpellingEnabled( !m_richTextEnabled );
+	checkSpelling->setEnabled( !m_richTextEnabled );
 
 	//Enable / disable buttons
 	updateActions();
-	enableRichText->setChecked( richTextEnabled() );
+	enableRichText->setChecked( m_richTextEnabled );
 }
 
 void KopeteRichTextEditPart::checkToolbarEnabled()
