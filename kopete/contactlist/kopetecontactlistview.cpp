@@ -52,6 +52,7 @@
 #include <k3multipledrag.h>
 #include <kdialog.h>
 #include <kicon.h>
+#include <kstdaction.h>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
