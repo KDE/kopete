@@ -22,29 +22,7 @@ if(WITH_smpppd)
 	add_subdirectory(smpppdcs)
 endif(WITH_smpppd)
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir statistics (should be removed or rewritten -DarkShock)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir netmeeting (should be removed -DarkShock)")
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir statistics (will be rewritten)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(MOTIONAUTOAWAY_SUBDIR)")
 
-
-########### install files ###############
-
-
 kde4_footer()
-
-
-
-#original Makefile.am contents follow:
-
-#if include_motionautoaway
-#MOTIONAUTOAWAY_SUBDIR=motionautoaway
-#endif
-#
-#if include_smpppdcs
-#SMPPPDCS_SUBDIR=smpppdcs
-#endif
-#
-#SUBDIRS = latex autoreplace history contactnotes cryptography\
-#	connectionstatus translator nowlistening webpresence texteffect\
-#	highlight alias $(MOTIONAUTOAWAY_SUBDIR) netmeeting addbookmarks\
-#	statistics $(SMPPPDCS_SUBDIR)
