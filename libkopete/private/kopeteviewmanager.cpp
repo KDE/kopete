@@ -246,21 +246,21 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						event = QString::fromLatin1( "kopete_contact_incoming" );
 				}
-				KNotification::ContextList contexts;
+				KNotification *notify=new KNotification(event, w);
+				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString());
+				notify->setActions(QStringList( i18n( "View" ) ));
+				
 				Kopete::MetaContact *mc= msg.from()->metaContact();
 				if(mc)
 				{
-					contexts.append( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
+					notify->addContext( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
 					foreach( Kopete::Group *g , mc->groups() )
 					{
-						contexts.append( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
+						notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
 					}
 				}
-                KNotification *notify=KNotification::event( event,
-						body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString(),
-						QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
-
 				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );
+				notify->sendEvent();
 			}
 		}
 	}
