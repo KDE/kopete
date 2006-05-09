@@ -53,11 +53,14 @@ namespace Utils
 
 void notify( QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo)
 {
-		QString action;
+	QStringList actions;
 		if ( !explanation.isEmpty() )
-			action = i18n( "More Information..." );
+			actions  << i18n( "More Information..." );
 		kDebug( 14010 ) << k_funcinfo <<  endl;
-		KNotification *n = KNotification::event( eventid, message, pic , 0L , QStringList( action ) );
+		KNotification *n = new KNotification( eventid , 0l );
+		n->setActions( actions );
+		n->setText( message );
+		n->setPixmap( pic );
 		ErrorNotificationInfo info;
 		info.explanation = explanation;
 		info.debugInfo = debugInfo;
@@ -65,6 +68,8 @@ void notify( QPixmap pic, const QString &eventid, const QString &caption, const 
 		NotifyHelper::self()->registerNotification(n, info);
 		QObject::connect( n, SIGNAL(activated(unsigned int )) , NotifyHelper::self() , SLOT( slotEventActivated(unsigned int) ) );
 		QObject::connect( n, SIGNAL(closed()) , NotifyHelper::self() , SLOT( slotEventClosed() ) );
+		
+		n->sendEvent();
 }
 
 void notifyConnectionLost( const Account *account, const QString caption, const QString message, const QString explanation, const QString debugInfo)
