@@ -18,6 +18,9 @@
 #define TESTBEDWEBCAMDIALOG_H
 
 #include <qstring.h>
+#include <qimage.h>
+#include <qtimer.h>
+#include <qpixmap.h>
 #include <kdialogbase.h>
 
 /**
@@ -41,15 +44,17 @@ public:
 	~TestbedWebcamDialog();
 	
 public slots:
-	void newImage( const QPixmap &image );
-signals:
-	void closingWebcamDialog();
+	void slotUpdateImage();
+//signals:
+//	void closingWebcamDialog();
 	
 private:
-	QLabel *m_imageContainer;
-	QLabel *m_Viewer;
-	QString contactName;
-	Kopete::AV::VideoDevicePool *m_videoDevicePool;
+	QLabel *mImageContainer;
+	QLabel *mViewer;
+	QImage mImage;
+	QTimer qtimer;
+	QPixmap mPixmap;
+	Kopete::AV::VideoDevicePool *mVideoDevicePool;
 };
 
 #endif

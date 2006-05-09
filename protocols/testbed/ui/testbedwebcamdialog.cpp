@@ -33,46 +33,64 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	setInitialSize( QSize(320,290), false );
 	
 	setEscapeButton( KDialogBase::Close );
-	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
+//	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
 
-	contactName = contactId;
 	QWidget *page = plainPage();
 	setMainWidget(page);
 
 	QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );	
-	m_imageContainer = new QLabel( page );
-	m_imageContainer->setText( i18n( "No webcam image received" ) );
-	m_imageContainer->setAlignment( Qt::AlignCenter );
-	m_imageContainer->setMinimumSize(320,240);
-	m_imageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	topLayout->add( m_imageContainer );
+	mImageContainer = new QLabel( page );
+	mImageContainer->setText( i18n( "No webcam image received" ) );
+	mImageContainer->setAlignment( Qt::AlignCenter );
+	mImageContainer->setMinimumSize(320,240);
+	mImageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	topLayout->add( mImageContainer );
 	
-	m_Viewer = new QLabel( page );
-	m_Viewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	m_Viewer->hide();
-	topLayout->add( m_Viewer );
+	mViewer = new QLabel( page );
+	mViewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	mViewer->hide();
+	topLayout->add( mViewer );
 
 	show();
 	
-	m_videoDevicePool = Kopete::AV::VideoDevicePool::self();
-	m_videoDevicePool->open();
-	m_videoDevicePool->setSize(320, 240);
-	m_videoDevicePool->startCapturing();
+	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
+	mVideoDevicePool->open();
+	mVideoDevicePool->setSize(320, 240);
+	mVideoDevicePool->startCapturing();
+	mVideoDevicePool->getFrame();
+	mVideoDevicePool->getImage(&mImage);
+kdDebug() << "Just captured 1st frame" << endl;
+
+	mPixmap=QPixmap(320,240,-1, QPixmap::DefaultOptim);
+	if (mPixmap.convertFromImage(mImage,0) == true)
+		mImageContainer->setPixmap(mPixmap);
+	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+	qtimer.start(10000,FALSE);
 }
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
 {
-	kdDebug(14210) << k_funcinfo << endl;
-
-	m_videoDevicePool->stopCapturing(); 
-	m_videoDevicePool->close();
+	mVideoDevicePool->stopCapturing();
+	mVideoDevicePool->close();
 }
 
-void TestbedWebcamDialog::newImage( const QPixmap &image )
+void TestbedWebcamDialog::slotUpdateImage()
 {
-	m_imageContainer->clear();
-	bitBlt(m_imageContainer, 0, 0, &image, 0, Qt::CopyROP);
+	mVideoDevicePool->getFrame();
+kdDebug() << "Getting image" << endl;
+	mVideoDevicePool->getImage(&mImage);
+kdDebug() << "BitBlitting image" << endl;
+	mImageContainer->clear();
+	bitBlt(mImageContainer, 0, 0, &mImage, 0, Qt::CopyROP);
+kdDebug() << "Showing image" << endl;
+
+	mImageContainer->clear();
+//	bitBlt(m_imageContainer, 0, 0, &image, 0, Qt::CopyROP);
 	show();
+/* QPixmap pm;
+ // grab the image here into pm
+ newImage( pm );*/
+// QTimer::singleShot( 0, this, SLOT(generateNewImage()) );
 }
 
 

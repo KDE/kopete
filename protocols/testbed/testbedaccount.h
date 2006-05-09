@@ -81,7 +81,6 @@ protected:
 	 */
 	void updateContactStatus();
 	TestbedFakeServer* m_server;
-	TestbedWebcamDialog* m_testbedWebcamDialog;
 
 protected slots:
 	/**
