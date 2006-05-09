@@ -367,7 +367,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 
 	int error = 0;
 	Plugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<Plugin>( QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
+		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QStringList(), &error );
 
 	if ( plugin )
 	{

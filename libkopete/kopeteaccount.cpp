@@ -35,6 +35,7 @@
 #include <knotifyclient.h>
 #include <kinstance.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 
 #include "kopeteaccount.h"
 #include "kabcpersistence.h"

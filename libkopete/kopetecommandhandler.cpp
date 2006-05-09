@@ -26,6 +26,7 @@
 #include <kaction.h>
 #include <qdom.h>
 #include <kauthorized.h>
+#include <kactioncollection.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
