@@ -395,10 +395,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		{
 			//int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
-					Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
-						  Qt::escape(c->onlineStatus().description()));
-			
+
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
@@ -445,32 +442,43 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				// if none of the above were true, t will still be noChange
 			}
 			
-			KNotification::ContextList contexts;
-			if(t!=noEvent && t!=noChange)
-			{
-				contexts.append( qMakePair( QString::fromLatin1("metacontact") , m_metaContact->metaContactId()) );
-				foreach( Kopete::Group *g , m_metaContact->groups() )
-				{
-					contexts.append( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
-				} 
-			}
 			// now issue the appropriate notification
+			KNotification *notify=0;
 			switch ( t )
 			{
-			case noEvent:
-			case noChange:
-				break;
-			case signedIn:
-				connect(KNotification::event( QString("kopete_contact_online"), text, QPixmap::fromImage(m_metaContact->picture().image()), 0l /*KopeteSystemTray::systemTray()*/, QStringList(i18n( "Chat" )), contexts ) ,
-						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
-				break;
-			case changedStatus:
-				connect(KNotification::event( QString("kopete_contact_status_change"), text, QPixmap::fromImage(m_metaContact->picture().image()), 0l  /*KopeteSystemTray::systemTray() */, QStringList(i18n( "Chat" )), contexts)  ,
-						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ));
-				break;
-			case signedOut:
-				KNotification::event( QString("kopete_contact_offline"), text, QPixmap::fromImage(m_metaContact->picture().image()), KopeteSystemTray::systemTray() , QStringList(), contexts);
-				break;
+				case noEvent:
+				case noChange:
+					break;
+				case signedIn:
+					notify=new KNotification( QString("kopete_contact_online") , 0l /*KopeteSystemTray::systemTray()*/ );
+					notify->setActions(QStringList(i18n( "Chat" )));
+					break;
+				case changedStatus:
+					notify=new KNotification( QString("kopete_contact_status_change") , 0l /*KopeteSystemTray::systemTray()*/ );
+					notify->setActions(QStringList(i18n( "Chat" )));
+					break;
+				case signedOut:
+					notify=new KNotification( QString("kopete_contact_offline") , 0l /*KopeteSystemTray::systemTray()*/ );
+					//notify->setActions(QStringList(i18n( "Chat" )));
+					break;
+			}
+			
+			if(notify)
+			{
+				QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
+									 Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
+									 Qt::escape(c->onlineStatus().description()));
+
+				notify->setText(text);
+				notify->setPixmap(QPixmap::fromImage(m_metaContact->picture().image()));
+				connect(notify, SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
+				
+				notify->addContext( qMakePair( QString::fromLatin1("metacontact") , m_metaContact->metaContactId()) );
+				foreach( Kopete::Group *g , m_metaContact->groups() )
+				{
+					notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
+				} 
+				notify->sendEvent();
 			}
 		}
 		//blink if the metacontact icon has changed.
