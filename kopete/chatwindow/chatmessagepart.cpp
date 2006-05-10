@@ -61,6 +61,7 @@
 #include <ktempfile.h>
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
+#include <kstdaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
 #include <k3multipledrag.h>

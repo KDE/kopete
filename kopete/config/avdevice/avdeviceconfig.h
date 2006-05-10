@@ -40,7 +40,7 @@ class AVDeviceConfig : public KCModule
 {
 Q_OBJECT
 public:
-	AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args);
+	AVDeviceConfig(QWidget *parent, const QStringList &args);
 
 	~AVDeviceConfig();
 	virtual void save();

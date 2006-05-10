@@ -32,7 +32,7 @@ using namespace Oscar;
 /**
  * @brief A data buffer
  */
-class Buffer
+class Q_DECL_EXPORT Buffer
 {
 	public:
 		/** Default constructor */

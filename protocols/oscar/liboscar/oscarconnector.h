@@ -33,7 +33,7 @@ class KResolverEntry;
 @author Till Gerken
 @author Matt Rogers
 */
-class KNetworkConnector : public Connector
+class Q_DECL_EXPORT KNetworkConnector : public Connector
 {
 
 Q_OBJECT

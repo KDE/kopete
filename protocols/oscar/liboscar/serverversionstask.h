@@ -28,7 +28,7 @@ class Transfer;
 /**
 @author Matt Rogers
 */
-class ServerVersionsTask : public Task
+class Q_DECL_EXPORT ServerVersionsTask : public Task
 {
 Q_OBJECT
 public:

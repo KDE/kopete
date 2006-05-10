@@ -21,6 +21,8 @@
 #include "krichtexteditpart.h"
 #include <qstringlist.h>
 
+#include <kopete_export.h>
+
 class QTimer;
 
 class KCompletion;
@@ -43,7 +45,7 @@ class ChatSession;
  * 
  * @author Richard Smith
  */
-class ChatTextEditPart : public KopeteRichTextEditPart
+class KOPETE_EXPORT ChatTextEditPart : public KopeteRichTextEditPart
 {
 	Q_OBJECT
 public:

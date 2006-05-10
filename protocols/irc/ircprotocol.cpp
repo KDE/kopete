@@ -108,7 +108,7 @@ void IRCProtocolHandler::handleURL( const KUrl &url ) const
 	newAccount->connect();
 }
 
-IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
+IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
 : Kopete::Protocol( IRCProtocolFactory::instance(), parent, name ),
 
 	m_ServerStatusOnline(Kopete::OnlineStatus::Online,

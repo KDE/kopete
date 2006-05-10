@@ -45,7 +45,7 @@ class Settings;
  * connection to an OSCAR server
  * @author Matt Rogers
  */
-class Connection : public QObject
+class Q_DECL_EXPORT Connection : public QObject
 {
 Q_OBJECT
 public:

@@ -165,7 +165,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
-ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
+ICQProtocol::ICQProtocol(QObject *parent, const QStringList&)
 : Kopete::Protocol( ICQProtocolFactory::instance(), parent ),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),

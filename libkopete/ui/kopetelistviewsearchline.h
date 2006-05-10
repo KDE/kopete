@@ -19,6 +19,7 @@
 #define KOPETELISTVIEWSEARCHLINE_H
 
 #include <k3listviewsearchline.h>
+#include <kopete_export.h>
 
 namespace Kopete {
 namespace UI {
@@ -26,7 +27,7 @@ namespace ListView {
 
 class ListView;
 
-class SearchLine : public K3ListViewSearchLine
+class KOPETE_EXPORT SearchLine : public K3ListViewSearchLine
 {
 	Q_OBJECT
 public:

@@ -29,6 +29,8 @@
 #include <QPair>
 #include <QList>
 
+#include <kdemacros.h>
+
 class YMSGTransferPrivate;
 class QString;
 
@@ -38,7 +40,7 @@ typedef QList< Param > ParamList;
 /**
 @author Duncan Mac-Vicar Prett
 */
-class YMSGTransfer : public Transfer
+class KDE_EXPORT YMSGTransfer : public Transfer
 {
 public:
 	YMSGTransfer(Yahoo::Service service);

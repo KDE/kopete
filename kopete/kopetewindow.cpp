@@ -35,7 +35,9 @@
 #include <khbox.h>
 
 #include <kaction.h>
-#include <kactionclasses.h>
+#include <kactioncollection.h>
+#include <kstdaction.h>
+#include <k3widgetaction.h>
 #include <kactioncollection.h>
 #include <k3widgetaction.h>
 #include <kconfig.h>
@@ -186,7 +188,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	connect( m_autoHideTimer, SIGNAL( timeout() ), this, SLOT( slotAutoHide() ) );
 	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 		this, SLOT( slotContactListAppearanceChanged() ) );
-	createGUI ( "kopeteui.rc" );
+	createGUI ( QLatin1String("kopeteui.rc") );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
 	loadOptions();

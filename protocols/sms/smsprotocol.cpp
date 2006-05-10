@@ -32,7 +32,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  )
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
 
-SMSProtocol::SMSProtocol(QObject *parent, const char *name, const QStringList &/*args*/)
+SMSProtocol::SMSProtocol(QObject *parent, const QStringList &/*args*/)
 : Kopete::Protocol( SMSProtocolFactory::instance(), parent, name ),
 	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null,   i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
 	SMSConnecting( Kopete::OnlineStatus::Connecting,2, this, 3, QString::null,    i18n( "Connecting" ) ),

@@ -24,6 +24,7 @@
 
 #include <kmenu.h>
 
+#include <kopete_export.h>
 
 namespace Kopete
 { 
@@ -37,7 +38,7 @@ class ChatWindowStyle;
 /**
  * @author Richard Smith
  */
-class ChatMessagePart : public KHTMLPart
+class KOPETE_EXPORT ChatMessagePart : public KHTMLPart
 {
 	Q_OBJECT
 public:

@@ -56,7 +56,7 @@ class KopeteAccountLVI : public QTreeWidgetItem
 typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) )
 
-KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name */, const QStringList &args )
+KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &args )
 : KCModule( KopeteAccountConfigFactory::instance(), parent, args )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );

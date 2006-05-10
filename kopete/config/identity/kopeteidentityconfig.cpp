@@ -86,7 +86,8 @@ public:
 typedef KGenericFactory<KopeteIdentityConfig, QWidget> KopeteIdentityConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_identityconfig, KopeteIdentityConfigFactory( "kcm_kopete_identityconfig" ) )
 
-KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &args) : KCModule( KopeteIdentityConfigFactory::instance(), parent, args)
+KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &args)
+: KCModule( KopeteIdentityConfigFactory::instance(), parent, args)
 {
 	d = new Private;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );

@@ -8,6 +8,8 @@
 #include <qfont.h>
 #include <qcolor.h>
 
+#include <kopete_export.h>
+
 class KAboutData;
 class KTextEdit;
 class KFontAction;
@@ -21,7 +23,7 @@ class KopeteTextEdit;
  * Originally by Richard Moore, rich@kde.org
  * forked by Jason Keirstead
  */
-class KopeteRichTextEditPart : public KParts::ReadOnlyPart
+class KOPETE_EXPORT KopeteRichTextEditPart : public KParts::ReadOnlyPart
 {
 	Q_OBJECT
 

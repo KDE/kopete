@@ -20,7 +20,7 @@
 #define KOPETEGRLISTACT_H
 
 
-#include <kactionclasses.h>
+#include <kselectaction.h>
 
 
 /**

@@ -34,7 +34,7 @@ struct SnacPair
 
 class Transfer;
 
-class RateClass : public QObject
+class Q_DECL_EXPORT RateClass : public QObject
 {
 	Q_OBJECT
 public:

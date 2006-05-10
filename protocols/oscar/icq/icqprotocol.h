@@ -41,7 +41,7 @@ class ICQProtocol : public Kopete::Protocol
 Q_OBJECT
 
 public:
-	ICQProtocol(QObject *parent, const char *name, const QStringList &args);
+	ICQProtocol(QObject *parent, const QStringList &args);
 	virtual ~ICQProtocol();
 
 	/**

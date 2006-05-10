@@ -22,6 +22,7 @@
 #define YAHOOCONNECTOR_H
 
 #include "connector.h"
+#include <kdemacros.h>
 
 class ByteStream;
 class KNetworkByteStream;
@@ -31,7 +32,7 @@ class KResolverEntry;
 @author Till Gerken
 @author Matt Rogers
 */
-class KNetworkConnector : public Connector
+class KDE_EXPORT KNetworkConnector : public Connector
 {
 
 Q_OBJECT

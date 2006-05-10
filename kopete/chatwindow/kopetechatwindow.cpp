@@ -58,6 +58,10 @@
 #include <khbox.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
+#include <kstdaction.h>
+#include <ktoggleaction.h>
+#include <kactionmenu.h>
+#include <k3widgetaction.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -75,7 +79,6 @@
 #include "kopeteviewmanager.h"
 
 #include <qtoolbutton.h>
-#include <kactionclasses.h>
 #include <kxmlguifactory.h>
 
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
@@ -443,7 +446,7 @@ void KopeteChatWindow::initActions(void)
 	anim->setPixmap( normalIcon );
 
 
-	new KWidgetAction( anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
+	new K3WidgetAction( anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
 
 	//toolBar()->insertWidget( 99, anim->width(), anim );
 	//toolBar()->alignItemRight( 99 );

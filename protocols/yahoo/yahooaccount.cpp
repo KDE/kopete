@@ -35,6 +35,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
@@ -1336,15 +1337,21 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
+#warning Fix KNotification here
+#if 0
 		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
 			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+#endif
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
+#warning Fix KNotification here
+#if 0
 		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from) 
 		                                       , QPixmap() , 0 ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+#endif
 		m_currentMailCount = cnt;
 	}
 }

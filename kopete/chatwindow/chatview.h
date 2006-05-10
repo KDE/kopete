@@ -28,6 +28,8 @@
 #include <QDropEvent>
 #include <kvbox.h>
 
+#include <kopete_export.h>
+
 class QTimer;
 
 class ChatTextEditPart;
@@ -403,7 +405,7 @@ private:
 class ChatWindowPlugin : public Kopete::ViewPlugin
 {
 	public:
-		ChatWindowPlugin(QObject *parent, const char *name, const QStringList &args);
+		ChatWindowPlugin(QObject *parent, const QStringList &args);
 		KopeteView* createView( Kopete::ChatSession *manager );
 };
 

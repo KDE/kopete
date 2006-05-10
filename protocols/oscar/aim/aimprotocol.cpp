@@ -219,7 +219,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 
 
-AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
+AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
   : Kopete::Protocol( AIMProtocolFactory::instance(), parent ),
 	statusOnline( Kopete::OnlineStatus::Online, 2, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
 	statusOffline( Kopete::OnlineStatus::Offline, 2, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),

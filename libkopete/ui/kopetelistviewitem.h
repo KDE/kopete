@@ -21,6 +21,7 @@
 
 #include <k3listview.h>
 #include <kopetecontact.h>
+#include <kopete_export.h>
 
 #include <utility>
 #include <qimage.h>
@@ -35,7 +36,7 @@ namespace ListView {
 
 class Component;
 
-class ComponentBase
+class KOPETE_EXPORT ComponentBase
 {
 public:
 	ComponentBase();
@@ -82,7 +83,7 @@ private:
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class ToolTipSource
+class KOPETE_EXPORT ToolTipSource
 {
 public:
 	virtual ~ToolTipSource(){}
@@ -102,7 +103,7 @@ public:
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class Component : public ComponentBase
+class KOPETE_EXPORT Component : public ComponentBase
 {
 protected:
 	Component( ComponentBase *parent );
@@ -232,7 +233,7 @@ private:
 	Private *d;
 };
 
-class BoxComponent : public Component
+class KOPETE_EXPORT BoxComponent : public Component
 {
 public:
 	enum Direction { Horizontal, Vertical };
@@ -259,7 +260,7 @@ private:
 	Private *d;
 };
 
-class TextComponent : public Component
+class KOPETE_EXPORT TextComponent : public Component
 {
 public:
 	TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );
@@ -289,7 +290,7 @@ private:
 	Private *d;
 };
 
-class ImageComponent : public Component
+class KOPETE_EXPORT ImageComponent : public Component
 {
 public:
 	ImageComponent( ComponentBase *parent );
@@ -312,7 +313,7 @@ private:
 /**
  * ContactComponent
  */
-class ContactComponent : public ImageComponent
+class KOPETE_EXPORT ContactComponent : public ImageComponent
 {
 public:
 	ContactComponent( ComponentBase *parent, Kopete::Contact *contact, int iconSize);
@@ -328,7 +329,7 @@ protected:
 /**
  * SpacerComponent
  */
-class SpacerComponent : public Component
+class KOPETE_EXPORT SpacerComponent : public Component
 {
 public:
 	SpacerComponent( ComponentBase *parent, int w, int h );
@@ -338,7 +339,7 @@ public:
  * DisplayNameComponent
  */
 
-class DisplayNameComponent : public BoxComponent
+class KOPETE_EXPORT DisplayNameComponent : public BoxComponent
 {
 public:
 	/**
@@ -369,7 +370,7 @@ private:
 	Private *d;
 };
 
-class HSpacerComponent : public Component
+class KOPETE_EXPORT HSpacerComponent : public Component
 {
 public:
 	HSpacerComponent( ComponentBase *parent );
@@ -379,7 +380,7 @@ public:
 	virtual int rtti() const { return RTTI; }
 };
 
-class VSpacerComponent : public Component
+class KOPETE_EXPORT VSpacerComponent : public Component
 {
 public:
 	VSpacerComponent( ComponentBase *parent );
@@ -395,7 +396,7 @@ public:
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class Item : public QObject, public K3ListViewItem, public ComponentBase
+class KOPETE_EXPORT Item : public QObject, public K3ListViewItem, public ComponentBase
 {
 	Q_OBJECT
 public:

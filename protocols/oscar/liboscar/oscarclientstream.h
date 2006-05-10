@@ -31,7 +31,7 @@ class Connection;
 class Transfer;
 class QHostAddress;
 
-class ClientStream : public Stream
+class Q_DECL_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:

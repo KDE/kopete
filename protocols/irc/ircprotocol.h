@@ -83,7 +83,7 @@ public:
 		OnlineServer   = 32768              //! This server is online.
 	};
 
-	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
+	IRCProtocol( QObject *parent, const QStringList &args );
 	~IRCProtocol();
 
 	/** Kopete::Protocol reimplementation */

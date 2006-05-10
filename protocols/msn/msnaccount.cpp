@@ -23,6 +23,7 @@
 #include <config-kopete.h>
 
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>

@@ -34,7 +34,7 @@ class KopeteEditAccountWidget;
 class KOPETE_EXPORT MessengerProtocol : public Kopete::Protocol
 {
 public:
-	MessengerProtocol(QObject *parent, const char *name, const QStringList &args);
+	MessengerProtocol(QObject *parent, const QStringList &args);
 	
 	virtual Kopete::Account *createNewAccount(const QString &accountId);
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);

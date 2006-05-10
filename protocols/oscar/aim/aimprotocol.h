@@ -42,7 +42,7 @@ class AIMProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	AIMProtocol( QObject *parent, const char *name, const QStringList &args );
+	AIMProtocol( QObject *parent, const QStringList &args );
 	virtual ~AIMProtocol();
 	/**
 	 * Return the active instance of the protocol

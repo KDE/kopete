@@ -32,6 +32,8 @@
 #include "kopetecontact.h"
 #include "kdeversion.h"
 
+#include <kopete_export.h>
+
 class KAction;
 class KToggleAction;
 class KActionMenu;

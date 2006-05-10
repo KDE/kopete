@@ -27,7 +27,7 @@ ICQ Offline messages handling
 
 @author Gustavo Pichorim Boiko
 */
-class OfflineMessagesTask : public ICQTask
+class Q_DECL_EXPORT OfflineMessagesTask : public ICQTask
 {
 Q_OBJECT
 public:

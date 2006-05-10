@@ -32,7 +32,7 @@ class AppearanceConfig : public KCModule
 friend class KopeteStyleNewStuff;
 
 public:
-	AppearanceConfig( QWidget *parent, const char *name, const QStringList &args );
+	AppearanceConfig( QWidget *parent, const QStringList &args );
 	~AppearanceConfig();
 
 	virtual void save();

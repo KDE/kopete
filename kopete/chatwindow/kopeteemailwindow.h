@@ -96,7 +96,7 @@ private:
 class EmailWindowPlugin : public Kopete::ViewPlugin
 {
     public:
-	EmailWindowPlugin(QObject *parent, const char *name, const QStringList &args);
+	EmailWindowPlugin(QObject *parent, const QStringList &args);
 	KopeteView* createView( Kopete::ChatSession *manager );
 };
 

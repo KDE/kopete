@@ -31,6 +31,8 @@
 #include "kopeteviewmanager.h"
 
 #include <kaction.h>
+#include <kstdaction.h>
+#include <k3widgetaction.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -70,7 +72,7 @@
 typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
 
-EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const char *name, const QStringList &) :
+EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QStringList &) :
 	Kopete::ViewPlugin( EmailWindowPluginFactory::instance(), parent )
 {}
 
@@ -262,7 +264,7 @@ void KopeteEmailWindow::initActions(void)
 	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
-	new KWidgetAction( d->anim, i18n("Toolbar Animation"), 0, 0, 0, coll, "toolbar_animation" );
+	new K3WidgetAction( d->anim, i18n("Toolbar Animation"), 0, 0, 0, coll, "toolbar_animation" );
 
 	setXMLFile( QString::fromLatin1( "kopeteemailwindow.rc" ) );
 	createGUI( d->editPart );

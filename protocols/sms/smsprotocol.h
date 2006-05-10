@@ -42,7 +42,7 @@ class SMSProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	SMSProtocol(QObject *parent, const char *name, const QStringList &args);
+	SMSProtocol(QObject *parent, const QStringList &args);
 	~SMSProtocol();
 
 	static SMSProtocol *protocol();

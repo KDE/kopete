@@ -37,7 +37,7 @@ class KopeteAccountConfig : public KCModule, private Ui::KopeteAccountConfigBase
 	Q_OBJECT
 
 public:
-	KopeteAccountConfig(QWidget *parent, const char *name, const QStringList &args );
+	KopeteAccountConfig(QWidget *parent, const QStringList &args );
 
 public slots:
 	virtual void save();

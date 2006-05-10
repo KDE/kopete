@@ -20,12 +20,14 @@
 #include <QString>
 #include <QHash>
 
+#include <kopete_export.h>
+
 /**
  * This class represent a single chat window style.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
-class ChatWindowStyle
+class KOPETE_EXPORT ChatWindowStyle
 {
 public:
 	/**

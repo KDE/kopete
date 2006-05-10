@@ -28,7 +28,7 @@ using namespace Oscar;
 /**
 @author Matt Rogers
 */
-class RateInfoTask : public Task
+class Q_DECL_EXPORT RateInfoTask : public Task
 {
 Q_OBJECT
 public:

@@ -26,7 +26,7 @@ namespace Oscar
  * This class is just a simple little GUID, 16 bytes of data
  */
 
-class Guid
+class Q_DECL_EXPORT Guid
 {
 public:
 	Guid();

@@ -17,6 +17,8 @@
 
 #include <connector.h>
 
+#include <papillon_macros.h>
+
 namespace Papillon 
 {
 
@@ -25,7 +27,7 @@ namespace Papillon
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
-class QtConnector : public Connector
+class PAPILLON_EXPORT QtConnector : public Connector
 {
 public:
 	QtConnector(QObject *parent);

@@ -43,6 +43,7 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
+#include <kstdaction.h>
 //#include <ksyntaxhighlighter.h>
 
 
@@ -57,7 +58,7 @@
 typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
 
-ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const char *name, const QStringList &) :
+ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QStringList &) :
 	Kopete::ViewPlugin( ChatWindowPluginFactory::instance(), parent )
 {}
 

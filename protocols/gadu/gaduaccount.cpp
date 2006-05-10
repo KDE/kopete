@@ -46,6 +46,8 @@
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kio/netaccess.h>
+#include <kactionmenu.h>
+#include <ktoggleaction.h>
 
 #include <qapplication.h>
 #include <qdialog.h>

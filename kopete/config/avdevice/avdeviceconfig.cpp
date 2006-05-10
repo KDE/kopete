@@ -46,7 +46,7 @@
 typedef KGenericFactory<AVDeviceConfig, QWidget> KopeteAVDeviceConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_avdeviceconfig, KopeteAVDeviceConfigFactory( "kcm_kopete_avdeviceconfig" ) )
 
-AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args)
+AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
  : KCModule( KopeteAVDeviceConfigFactory::instance(), parent, args )
 {
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::instance() called. " << endl;

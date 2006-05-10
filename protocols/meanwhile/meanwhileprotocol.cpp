@@ -29,9 +29,8 @@ typedef KGenericFactory<MeanwhileProtocol> MeanwhileProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_meanwhile,
     MeanwhileProtocolFactory("kopete_meanwhile"))
 
-MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const char *name,
-        const QStringList &/*args*/)
-: Kopete::Protocol(MeanwhileProtocolFactory::instance(), parent, name),
+MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QStringList &/*args*/)
+: Kopete::Protocol(MeanwhileProtocolFactory::instance(), parent),
 
     statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QString::null,
             i18n("Offline"), i18n("Offline"),

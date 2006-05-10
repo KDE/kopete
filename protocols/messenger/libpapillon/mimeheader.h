@@ -33,7 +33,7 @@ namespace Papillon
  * This class is implicit shared.
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
-class MimeHeader
+class PAPILLON_EXPORT MimeHeader
 {
 public:
 	/**

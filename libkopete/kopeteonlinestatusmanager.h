@@ -22,6 +22,7 @@
 #include <QFlags>
 
 #include "kaction.h"
+#include "kactionmenu.h"
 
 class QString;
 class QPixmap;

@@ -23,9 +23,11 @@
 
 #include <kaction.h>
 
+#include <kopete_export.h>
+
 class KMenu;
 
-class KopeteEmoticonAction : public KAction
+class KOPETE_EXPORT KopeteEmoticonAction : public KAction
 {
 	Q_OBJECT
 

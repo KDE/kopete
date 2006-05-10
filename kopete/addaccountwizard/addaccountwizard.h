@@ -23,6 +23,8 @@
 
 #include <k3wizard.h>
 
+#include <kopete_export.h>
+
 #include "ui_addaccountwizardpage1.h"
 #include "ui_addaccountwizardpage2.h"
 
@@ -40,7 +42,7 @@ class KopeteEditAccountWidget;
 /**
  * @author  Olivier Goffart <ogoffart @ kde.org>
  */
-class AddAccountWizard : public K3Wizard
+class KOPETE_EXPORT AddAccountWizard : public K3Wizard
 {
 	Q_OBJECT
 

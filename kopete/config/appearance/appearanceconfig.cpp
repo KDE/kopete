@@ -180,7 +180,7 @@ public:
 	}
 };
 
-AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
+AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 : KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
 {
 	d = new Private;

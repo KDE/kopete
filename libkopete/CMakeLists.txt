@@ -95,9 +95,9 @@ kde4_add_ui_files(kopete_LIB_SRCS
     ui/addressbooklinkwidget_base.ui
     ui/kopeteawaydialogbase.ui )
 
-kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
-
 kde4_automoc(${kopete_LIB_SRCS})
+
+kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_add_dcop_skels(kopete_LIB_SRCS connectionmanager.h )
 

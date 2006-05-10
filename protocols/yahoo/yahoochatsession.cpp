@@ -24,6 +24,7 @@
 #include <QPixmap>
 #include <QList>
 
+#include <k3widgetaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
@@ -73,7 +74,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 	m_image = new QLabel( 0L );
 	m_image->setObjectName( QLatin1String("kde toolbar widget") );
-	//new KWidgetAction( m_image, i18n( "Yahoo Display Picture" ), 0, this, SLOT( slotDisplayPictureChanged() ), actionCollection(), "yahooDisplayPicture" );
+	new K3WidgetAction( m_image, i18n( "Yahoo Display Picture" ), 0, this, SLOT( slotDisplayPictureChanged() ), actionCollection(), "yahooDisplayPicture" );
 	if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 	{
 		connect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );

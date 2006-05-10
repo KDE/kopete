@@ -1,5 +1,9 @@
 #include <ktextedit.h>
 #include <kaction.h>
+#include <kstdaction.h>
+#include <ktoggleaction.h>
+#include <kfontaction.h>
+#include <kfontsizeaction.h>
 #include <kcolordialog.h>
 #include <kglobalsettings.h>
 #include <kfontdialog.h>
