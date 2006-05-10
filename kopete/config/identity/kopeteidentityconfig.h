@@ -38,7 +38,7 @@ class KopeteIdentityConfig : public KCModule, private Ui::KopeteIdentityConfigBa
 {
 	Q_OBJECT
 public:
-	KopeteIdentityConfig(QWidget *parent, const char *name, const QStringList &args );
+	KopeteIdentityConfig(QWidget *parent, const QStringList &args );
 	~KopeteIdentityConfig();
 
 public slots:

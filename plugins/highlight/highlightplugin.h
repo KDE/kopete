@@ -47,7 +47,7 @@ class HighlightPlugin : public Kopete::Plugin
 public:
 	static HighlightPlugin  *plugin();
 
-	HighlightPlugin( QObject *parent, const char *name, const QStringList &args );
+	HighlightPlugin( QObject *parent, const QStringList &args );
 	~HighlightPlugin();
 
 public slots:

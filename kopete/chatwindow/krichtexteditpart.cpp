@@ -10,6 +10,10 @@
 #include <qclipboard.h>
 #include <qevent.h>
 #include <kparts/genericfactory.h>
+#include <kaction.h>
+#include <ktoggleaction.h>
+#include <kfontsizeaction.h>
+#include <kactionmenu.h>
 //#include <private/q3richtext_p.h>
 //#include <Q3RichText>
 #include <QTextCursor>
@@ -40,13 +44,13 @@ public:
 
 
 
-KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& )
+KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const QStringList& )
 	: KParts::ReadOnlyPart( wparent )
 {
 	KopeteRichTextEditPart::KopeteRichTextEditPart( wparent, wname, false );
 }
 
-KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *name, int capabilities )
+KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char* wname, int capabilities )
   : KParts::ReadOnlyPart( parent),
 	m_capabilities( capabilities ),
 	m_richTextEnabled( true )

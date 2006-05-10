@@ -123,7 +123,7 @@ class ProtocolItem : public Q3ListViewItem
 
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_alias, AliasPreferencesFactory( "kcm_kopete_alias" ) )
 
-AliasPreferences::AliasPreferences( QWidget *parent, const char *, const QStringList &args )
+AliasPreferences::AliasPreferences( QWidget *parent, const QStringList &args )
 	: KCModule( AliasPreferencesFactory::instance(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );

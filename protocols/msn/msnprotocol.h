@@ -58,7 +58,7 @@ class KOPETE_EXPORT MSNProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	MSNProtocol( QObject *parent, const char *name, const QStringList &args );
+	MSNProtocol( QObject *parent, const QStringList &args );
 
 	/**
 	 * SyncMode indicates whether settings differing between client and

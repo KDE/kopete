@@ -31,6 +31,7 @@
 #include <kstandarddirs.h>
 #include <kcodecs.h>
 #include <klocale.h>
+#include <kactionmenu.h>
 
 #include <QFile>
 #include <QRegExp>

@@ -58,7 +58,7 @@ public:
 			SkipHTML = 0x2				/** Skip emoticons within HTML */
 		 };
 
-	Q_DECLARE_FLAGS(ParseMode, ParseModeEnum);
+	Q_DECLARE_FLAGS(ParseMode, ParseModeEnum)
 
 	/**
 	 * Use it to parse emoticons in a text.

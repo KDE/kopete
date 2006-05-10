@@ -46,7 +46,7 @@ typedef KGenericFactory<BehaviorConfig, QWidget> KopeteBehaviorConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFactory( "kcm_kopete_behaviorconfig" ) )
 
 
-BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const QStringList &args) :
+BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 		KCModule( KopeteBehaviorConfigFactory::instance(), parent, args )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);

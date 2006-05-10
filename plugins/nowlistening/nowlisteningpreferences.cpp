@@ -39,7 +39,7 @@ typedef KGenericFactory<NowListeningPreferences> NowListeningPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFactory( "kcm_kopete_nowlistening" )  )
 
 
-NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
+NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QStringList &args)
 	: KCModule( NowListeningPreferencesFactory::instance(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );

@@ -61,6 +61,7 @@
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>
 #include <kdialog.h>
+#include <kstdaction.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -183,7 +184,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	connect( m_autoHideTimer, SIGNAL( timeout() ), this, SLOT( slotAutoHide() ) );
 	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 		this, SLOT( slotContactListAppearanceChanged() ) );
-	createGUI ( "kopeteui.rc", false );
+	createGUI ( "kopeteui.rc" );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
 	loadOptions();

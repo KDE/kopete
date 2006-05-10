@@ -23,6 +23,8 @@
 
 #include <kaction.h>
 
+class KMenu;
+
 class KopeteEmoticonAction : public KAction
 {
 	Q_OBJECT

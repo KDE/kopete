@@ -142,7 +142,7 @@ public:
 
 		CanSendOffline = 0x10000 ///< If it's possible to send  offline messages
 	};
-	Q_DECLARE_FLAGS(Capabilities, Capability);
+	Q_DECLARE_FLAGS(Capabilities, Capability)
 
 	/**
 	 * @brief a bitmask of the capabilities of this protocol
@@ -264,7 +264,7 @@ private:
 	Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Protocol::Capabilities);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Protocol::Capabilities)
 
 } //END namespace kopete
 

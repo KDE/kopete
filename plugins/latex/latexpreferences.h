@@ -33,7 +33,7 @@ class LatexPreferences : public KCModule
 	Q_OBJECT
 public:
 
-	LatexPreferences(QWidget *parent = 0, const char* name = 0, const QStringList &args = QStringList());
+	LatexPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
 	~LatexPreferences();
 
 	virtual void save();

@@ -52,7 +52,7 @@ public:
 		RemoteConnectionFailed,     // unable to connect to a required remote resource
 		SeeOtherHost,               // a 'redirect', see errorText() for other host
 		UnsupportedVersion          // unsupported XMPP version
-	};
+	}
 ;
 	enum AuthCond {
 		GenericAuthError,           // all-purpose "can't login" error

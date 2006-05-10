@@ -627,17 +627,17 @@ int Client::pictureFlag()
 QString Client::yCookie()
 {
 	return d->yCookie;
-};
+}
 
 QString Client::tCookie()
 {
 	return d->tCookie;
-};
+}
 
 QString Client::cCookie()
 {
 	return d->cCookie;
-};
+}
 
 void Client::distribute( Transfer * transfer )
 {
@@ -660,7 +660,7 @@ void Client::send( Transfer* request )
 
 void Client::debug(const QString &str)
 {
-	qDebug( "CLIENT: %s", str.toAscii() );
+	qDebug( "CLIENT: %s", qPrintable(str) );
 }
 
 Task * Client::rootTask()

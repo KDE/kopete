@@ -68,7 +68,7 @@ public:
 						Online=1<<1,
 		Offline=1
 	};
-	Q_DECLARE_FLAGS(Categories, Category);
+	Q_DECLARE_FLAGS(Categories, Category)
 	
 
 	/**
@@ -86,7 +86,7 @@ public:
 		///  without letting the user set itself that status  
 		HideFromMenu = 0x04
 	};
-	Q_DECLARE_FLAGS(Options, Option);
+	Q_DECLARE_FLAGS(Options, Option)
 	
 	/**
 	 * You need to register each status an account can be.
@@ -146,8 +146,8 @@ private:
 	Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Categories);
-Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Options);
+Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Categories)
+Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Options)
 
 /**
  * @internal

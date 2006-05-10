@@ -26,7 +26,7 @@ class QFile;
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 
-};
+}
 
 
 /**
