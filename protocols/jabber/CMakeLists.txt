@@ -14,6 +14,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-core/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-im/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/util/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/ 
 ${QCA2_INCLUDE_DIR}
 )
 

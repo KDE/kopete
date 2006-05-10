@@ -43,7 +43,7 @@
 typedef KGenericFactory<LatexPlugin> LatexPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  )
 
-LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
+LatexPlugin::LatexPlugin( QObject *parent, const QStringList &/*args*/ )
 : Kopete::Plugin( LatexPluginFactory::instance(), parent )
 {
 //	kDebug() << k_funcinfo << endl;

@@ -57,7 +57,7 @@ public:
 	static bool passphraseHandling();
 	static const QRegExp isHTML;
 
-	CryptographyPlugin( QObject *parent, const char *name, const QStringList &args );
+	CryptographyPlugin( QObject *parent, const QStringList &args );
 	~CryptographyPlugin();
 
 public slots:

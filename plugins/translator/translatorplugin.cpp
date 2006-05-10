@@ -33,6 +33,7 @@
 #include <kconfig.h>
 #include <kdeversion.h>
 #include <kaboutdata.h>
+#include <kselectaction.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -48,7 +49,7 @@ typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
 static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
 
-TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
+TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args */ )
 : Kopete::Plugin( TranslatorPluginFactory::instance(), parent )
 {
 	kDebug( 14308 ) << k_funcinfo << endl;

@@ -30,7 +30,6 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory
 BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QStringList &args)
  : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
 {
-	Q_UNUSED( name );
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
 	p_dialog = new Ui::BookmarksPrefsUI();

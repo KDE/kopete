@@ -21,6 +21,7 @@
 
 #include <kdebug.h>
 #include <kaction.h>
+#include <kselectaction.h>
 #include <klocale.h>
 
 #include "xmpp_tasks.h"

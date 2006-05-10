@@ -22,6 +22,7 @@
 #include "kopeteview.h"
 
 #include <kaction.h>
+#include <kstdaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 

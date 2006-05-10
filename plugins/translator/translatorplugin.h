@@ -58,7 +58,7 @@ friend class TranslatorGUIClient;
 public:
 	static  TranslatorPlugin  *plugin();
 
-	TranslatorPlugin( QObject *parent, const char *name, const QStringList &args );
+	TranslatorPlugin( QObject *parent, const QStringList &args );
 	~TranslatorPlugin();
 
 	enum TranslateMode

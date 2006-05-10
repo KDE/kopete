@@ -300,7 +300,7 @@ void JabberGroupContact::sendFile ( const KUrl &sourceURL, const QString &/*file
 	if ( !sourceURL.isValid () )
 		filePath = KFileDialog::getOpenFileName( QString::null , "*", 0L, i18n ( "Kopete File Transfer" ) );
 	else
-		filePath = sourceURL.path(-1);
+		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
 	QFile file ( filePath );
 

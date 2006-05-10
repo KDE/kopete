@@ -59,9 +59,7 @@
 #include <kmenu.h>
 #include <kstdaction.h>
 #include <kaction.h>
-#include <kstdaction.h>
-#include <kaction.h>
-
+#include <kactioncollection.h>
 
 class KListViewDateItem : public K3ListViewItem
 {
@@ -147,7 +145,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) : KDialog
 	// Initializing HTML Part
 	mMainWidget->htmlFrame->setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
-	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame, "htmlHistoryView");
+	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame);
 
 	//Security settings, we don't need this stuff
 	mHtmlPart->setJScriptEnabled(false);

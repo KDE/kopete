@@ -29,6 +29,8 @@
 #include <xmpp.h>
 #include <s5b.h>
 
+#include <kopete_export.h>
+
 using namespace XMPP;
 
 class JabberConnector;
@@ -54,7 +56,7 @@ class JabberConnector;
  * @brief Provides a Jabber client
  * @author Till Gerken
  */
-class JabberClient : public QObject
+class KOPETE_EXPORT JabberClient : public QObject
 {
 
 Q_OBJECT

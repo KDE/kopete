@@ -32,7 +32,7 @@
 typedef KGenericFactory<HistoryPreferences> HistoryConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) )
 
-HistoryPreferences::HistoryPreferences(QWidget *parent, const char*/*name*/, const QStringList &args)
+HistoryPreferences::HistoryPreferences(QWidget *parent, const QStringList &args)
 	: KCModule(HistoryConfigFactory::instance(), parent, args)
 {
 	kDebug(14310) << k_funcinfo << "called." << endl;

@@ -22,12 +22,13 @@
 
 #include <bytestream.h>
 #include <kbufferedsocket.h>
+#include <kopete_export.h>
 
 
 /**
 @author Kopete Developers
 */
-class JabberByteStream : public ByteStream
+class KOPETE_EXPORT JabberByteStream : public ByteStream
 {
 
 Q_OBJECT

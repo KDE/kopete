@@ -32,7 +32,7 @@ class WebPresencePreferences : public KCModule  {
    Q_OBJECT
 
 public:
-	WebPresencePreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+	WebPresencePreferences(QWidget *parent = 0, const QStringList &args = QStringList());
 	~WebPresencePreferences();
 
 	virtual void save();

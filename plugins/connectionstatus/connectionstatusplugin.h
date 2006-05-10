@@ -31,7 +31,7 @@ class ConnectionStatusPlugin : public Kopete::Plugin
 	Q_OBJECT
 
 public:
-	ConnectionStatusPlugin( QObject *parent, const char *name, const QStringList &args );
+	ConnectionStatusPlugin( QObject *parent, const QStringList &args );
 	~ConnectionStatusPlugin();
 
 private slots:

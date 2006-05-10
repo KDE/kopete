@@ -23,13 +23,15 @@
 #include <xmpp.h>
 #include "jabberbytestream.h"
 
+#include <kopete_export.h>
+
 class ByteStream;
 class KResolverEntry;
 
 /**
 @author Till Gerken
 */
-class JabberConnector : public XMPP::Connector
+class KOPETE_EXPORT JabberConnector : public XMPP::Connector
 {
 
 Q_OBJECT

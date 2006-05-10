@@ -21,6 +21,7 @@
 #include "kopetechatsession.h"
 
 #include <kaction.h>
+#include <ktoggleaction.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
