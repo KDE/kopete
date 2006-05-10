@@ -36,6 +36,8 @@
 
 #include <kaction.h>
 #include <kactionclasses.h>
+#include <kactioncollection.h>
+#include <k3widgetaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobalaccel.h>
@@ -311,8 +313,8 @@ void KopeteWindow::initActions()
 	searchLabel->setObjectName( QLatin1String("kde toolbar widget") );
 	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( 0, contactlist, "quicksearch_bar" );
 	searchLabel->setBuddy( searchBar );
-	KWidgetAction *quickSearch = new KWidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
-	new KWidgetAction( searchLabel, i18n( "Search:" ), 0, 0, 0, actionCollection(), "quicksearch_label" );
+	K3WidgetAction *quickSearch = new K3WidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
+	new K3WidgetAction( searchLabel, i18n( "Search:" ), 0, 0, 0, actionCollection(), "quicksearch_label" );
 // 	quickSearch->setAutoSized( true );
 	// quick search bar - clear button
 	KAction *resetQuickSearch = new KAction( QApplication::isRightToLeft() ? KIcon("clear_left") : KIcon("locationbar_erase"), i18n( "Reset Quick Search" ),
@@ -325,7 +327,7 @@ void KopeteWindow::initActions()
 	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
 	editGlobalIdentityWidget->setObjectName( QLatin1String("editglobalBar") );
 	editGlobalIdentityWidget->hide();
-	KWidgetAction *editGlobalAction = new KWidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
+	K3WidgetAction *editGlobalAction = new K3WidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
 // 	editGlobalAction->setAutoSized( true );
 
 	// KActionMenu for selecting the global status message(kopeteonlinestatus_0)
