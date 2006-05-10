@@ -843,6 +843,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	{
 		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
+		m_activeView->saveChatSettings();
 	}
 
 	guiFactory()->addClient(view->msgManager());
