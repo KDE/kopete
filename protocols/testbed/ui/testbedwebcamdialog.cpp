@@ -15,6 +15,7 @@
 */
 
 #include "testbedwebcamdialog.h"
+#include "testbedwebcamwidget.h"
 #include "avdevice/videodevicepool.h"
 
 #include <qframe.h>
@@ -39,18 +40,11 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	setMainWidget(page);
 
 	QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );	
-	mImageContainer = new QLabel( page );
-	mImageContainer->setText( i18n( "No webcam image received" ) );
-	mImageContainer->setAlignment( Qt::AlignCenter );
+	mImageContainer = new TestbedWebcamWidget( page );
 	mImageContainer->setMinimumSize(320,240);
 	mImageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	topLayout->add( mImageContainer );
 	
-	mViewer = new QLabel( page );
-	mViewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	mViewer->hide();
-	topLayout->add( mViewer );
-
 	show();
 	
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
@@ -63,7 +57,7 @@ kdDebug() << "Just captured 1st frame" << endl;
 
 	mPixmap=QPixmap(320,240,-1, QPixmap::DefaultOptim);
 	if (mPixmap.convertFromImage(mImage,0) == true)
-		mImageContainer->setPixmap(mPixmap);
+		mImageContainer->updatePixmap(mPixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.start(10000,FALSE);
 }
@@ -80,17 +74,7 @@ void TestbedWebcamDialog::slotUpdateImage()
 kdDebug() << "Getting image" << endl;
 	mVideoDevicePool->getImage(&mImage);
 kdDebug() << "BitBlitting image" << endl;
-	mImageContainer->clear();
-	bitBlt(mImageContainer, 0, 0, &mImage, 0, Qt::CopyROP);
-kdDebug() << "Showing image" << endl;
-
-	mImageContainer->clear();
-//	bitBlt(m_imageContainer, 0, 0, &image, 0, Qt::CopyROP);
-	show();
-/* QPixmap pm;
- // grab the image here into pm
- newImage( pm );*/
-// QTimer::singleShot( 0, this, SLOT(generateNewImage()) );
+	mImageContainer->updatePixmap( QPixmap( mImage ) );
 }
 
 
