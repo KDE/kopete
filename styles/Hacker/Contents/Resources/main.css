@@ -1,6 +1,6 @@
 body  { font-size: 12px; font-family: "DejaVu Sans Mono", monospace; font-style: normal; font-weight: normal; margin: 0; color: #5099ff; background: black; background-color: black }
 
-#Chat  { padding-top: 50px; margin: 4px; overflow: hidden }
+#Chat  { padding-top: 80px; margin: 4px; overflow: hidden }
 
 #Header { background: url("images/background.png") repeat-x right top; position: fixed; z-index: 100; top: 0; right: 0; left: 0; height: 80px; border-bottom: 0 none }
 
