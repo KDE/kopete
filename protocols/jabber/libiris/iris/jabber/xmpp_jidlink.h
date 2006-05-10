@@ -35,7 +35,7 @@ namespace XMPP
 {
 	class Client;
 
-	class JidLink : public QObject
+	class IRIS_EXPORT JidLink : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -94,7 +94,7 @@ namespace XMPP
 	};
 
 	// the job of JidLinkManager is to keep track of streams and properly shut them down
-	class JidLinkManager : public QObject
+	class IRIS_EXPORT JidLinkManager : public QObject
 	{
 		Q_OBJECT
 	public:

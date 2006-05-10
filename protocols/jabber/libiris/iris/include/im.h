@@ -26,9 +26,11 @@
 #include <QList>
 #include "xmpp.h"
 
+#include <iris_export.h>
+
 namespace XMPP
 {
-	class Url
+	class IRIS_EXPORT Url
 	{
 	public:
 		Url(const QString &url="", const QString &desc="");
@@ -52,7 +54,7 @@ namespace XMPP
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
 			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
                                            
-	class Message
+	class IRIS_EXPORT Message
 	{
 	public:
 		Message(const Jid &to="");
@@ -121,7 +123,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Subscription
+	class IRIS_EXPORT Subscription
 	{
 	public:
 		enum SubType { None, To, From, Both, Remove };
@@ -137,7 +139,7 @@ namespace XMPP
 		SubType value;
 	};
 
-	class Status
+	class IRIS_EXPORT Status
 	{
 	public:
 		Status(const QString &show="", const QString &status="", int priority=0, bool available=true);
@@ -192,7 +194,7 @@ namespace XMPP
 		QString estr;
 	};
 
-	class Resource
+	class IRIS_EXPORT Resource
 	{
 	public:
 		Resource(const QString &name="", const Status &s=Status());
@@ -210,7 +212,7 @@ namespace XMPP
 		Status v_status;
 	};
 
-	class ResourceList : public QList<Resource>
+	class IRIS_EXPORT ResourceList : public QList<Resource>
 	{
 	public:
 		ResourceList();
@@ -223,7 +225,7 @@ namespace XMPP
 		ResourceList::ConstIterator priority() const;
 	};
 
-	class RosterItem
+	class IRIS_EXPORT RosterItem
 	{
 	public:
 		RosterItem(const Jid &jid="");
@@ -258,7 +260,7 @@ namespace XMPP
 		bool v_push;
 	};
 
-	class Roster : public QList<RosterItem>
+	class IRIS_EXPORT Roster : public QList<RosterItem>
 	{
 	public:
 		Roster();
@@ -271,7 +273,7 @@ namespace XMPP
 		class RosterPrivate *d;
 	};
 
-        class Features
+        class IRIS_EXPORT Features
 	{
 	public:
 		Features();
@@ -323,7 +325,7 @@ namespace XMPP
 		QStringList _list;
 	};
 
-	class AgentItem
+	class IRIS_EXPORT AgentItem
 	{
 	public:
 		AgentItem() { }
@@ -348,7 +350,7 @@ namespace XMPP
 
 	typedef QList<AgentItem> AgentList;
 
-	class DiscoItem
+	class IRIS_EXPORT DiscoItem
 	{
 	public:
 		DiscoItem();
@@ -404,7 +406,7 @@ namespace XMPP
 
 	typedef QList<DiscoItem> DiscoList;
 
-	class FormField
+	class IRIS_EXPORT FormField
 	{
 	public:
 		enum { username, nick, password, name, first, last, email, address, city, state, zip, phone, url, date, misc };
@@ -431,7 +433,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Form : public QList<FormField>
+	class IRIS_EXPORT Form : public QList<FormField>
 	{
 	public:
 		Form(const Jid &j="");
@@ -452,7 +454,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class SearchResult
+	class IRIS_EXPORT SearchResult
 	{
 	public:
 		SearchResult(const Jid &jid="");
@@ -483,7 +485,7 @@ namespace XMPP
 	class JidLinkManager;
 	class FileTransferManager;
 
-	class Task : public QObject
+	class IRIS_EXPORT Task : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -530,7 +532,7 @@ namespace XMPP
 		TaskPrivate *d;
 	};
 
-	class Client : public QObject
+	class IRIS_EXPORT Client : public QObject
 	{
 		Q_OBJECT
 
@@ -662,7 +664,7 @@ namespace XMPP
 		ClientPrivate *d;
 	};
 
-	class LiveRosterItem : public RosterItem
+	class IRIS_EXPORT LiveRosterItem : public RosterItem
 	{
 	public:
 		LiveRosterItem(const Jid &j="");
@@ -690,7 +692,7 @@ namespace XMPP
 		bool v_flagForDelete;
 	};
 
-	class LiveRoster : public QList<LiveRosterItem>
+	class IRIS_EXPORT LiveRoster : public QList<LiveRosterItem>
 	{
 	public:
 		LiveRoster();

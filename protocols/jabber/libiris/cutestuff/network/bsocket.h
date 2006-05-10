@@ -25,9 +25,10 @@
 #include <qhostaddress.h>
 #include "bytestream.h"
 
+#include <cutestuff_export.h>
 // CS_NAMESPACE_BEGIN
 
-class BSocket : public ByteStream
+class CUTESTUFF_EXPORT BSocket : public ByteStream
 {
 	Q_OBJECT
 public:

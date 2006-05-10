@@ -24,8 +24,9 @@
 #include <q3serversocket.h>
 
 // CS_NAMESPACE_BEGIN
+#include <cutestuff_export.h>
 
-class ServSock : public QObject
+class CUTESTUFF_EXPORT ServSock : public QObject
 {
 	Q_OBJECT
 public:
@@ -49,7 +50,7 @@ private:
 	Private *d;
 };
 
-class ServSockSignal : public Q3ServerSocket
+class CUTESTUFF_EXPORT ServSockSignal : public Q3ServerSocket
 {
 	Q_OBJECT
 public:

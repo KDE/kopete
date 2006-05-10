@@ -29,6 +29,8 @@
 #include <qxml.h>
 #include <qdom.h>
 
+#include <iris_export.h>
+
 namespace QCA
 {
 	class TLS;
@@ -60,7 +62,7 @@ namespace XMPP
 
 	void setDebug(Debug *);
 
-	class Connector : public QObject
+	class IRIS_EXPORT Connector : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -92,7 +94,7 @@ namespace XMPP
 		Q_UINT16 port;
 	};
 
-	class AdvancedConnector : public Connector
+	class IRIS_EXPORT AdvancedConnector : public Connector
 	{
 		Q_OBJECT
 	public:
@@ -166,7 +168,7 @@ namespace XMPP
 		void tryNextSrv();
 	};
 
-	class TLSHandler : public QObject
+	class IRIS_EXPORT TLSHandler : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -186,7 +188,7 @@ namespace XMPP
 		void readyReadOutgoing(const QByteArray &a, int plainBytes);
 	};
 
-	class QCATLSHandler : public TLSHandler
+	class IRIS_EXPORT QCATLSHandler : public TLSHandler
 	{
 		Q_OBJECT
 	public:
@@ -219,7 +221,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Jid
+	class IRIS_EXPORT Jid
 	{
 	public:
 		Jid();
@@ -268,7 +270,7 @@ namespace XMPP
 	};
 
 	class Stream;
-	class Stanza
+	class IRIS_EXPORT Stanza
 	{
 	public:
 		enum Kind { Message, Presence, IQ };
@@ -353,7 +355,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Stream : public QObject
+	class IRIS_EXPORT Stream : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -401,7 +403,7 @@ namespace XMPP
 		void error(int);
 	};
 
-	class ClientStream : public Stream
+	class IRIS_EXPORT ClientStream : public Stream
 	{
 		Q_OBJECT
 	public:

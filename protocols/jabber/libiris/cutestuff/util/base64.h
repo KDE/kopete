@@ -24,8 +24,9 @@
 #include<qstring.h>
 
 // CS_NAMESPACE_BEGIN
+#include <cutestuff_export.h>
 
-class Base64
+class CUTESTUFF_EXPORT Base64
 {
 public:
 	static QByteArray encode(const QByteArray &);

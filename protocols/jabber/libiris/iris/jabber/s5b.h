@@ -42,7 +42,7 @@ namespace XMPP
 	typedef Q3PtrList<S5BConnection> S5BConnectionList;
 	typedef Q3PtrListIterator<S5BConnection> S5BConnectionListIt;
 
-	class S5BDatagram
+	class IRIS_EXPORT S5BDatagram
 	{
 	public:
 		S5BDatagram();
@@ -57,7 +57,7 @@ namespace XMPP
 		QByteArray _buf;
 	};
 
-	class S5BConnection : public ByteStream
+	class IRIS_EXPORT S5BConnection : public ByteStream
 	{
 		Q_OBJECT
 	public:
@@ -127,7 +127,7 @@ namespace XMPP
 		S5BConnection(S5BManager *, QObject *parent=0);
 	};
 
-	class S5BManager : public QObject
+	class IRIS_EXPORT S5BManager : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -196,7 +196,7 @@ namespace XMPP
 		void doActivate(const Jid &peer, const QString &sid, const Jid &streamHost);
 	};
 
-	class S5BConnector : public QObject
+	class IRIS_EXPORT S5BConnector : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -227,7 +227,7 @@ namespace XMPP
 	};
 
 	// listens on a port for serving
-	class S5BServer : public QObject
+	class IRIS_EXPORT S5BServer : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -260,7 +260,7 @@ namespace XMPP
 		void writeUDP(const QHostAddress &addr, int port, const QByteArray &data);
 	};
 
-	class JT_S5B : public Task
+	class IRIS_EXPORT JT_S5B : public Task
 	{
 		Q_OBJECT
 	public:
@@ -286,7 +286,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	struct S5BRequest
+	struct IRIS_EXPORT S5BRequest
 	{
 		Jid from;
 		QString id, sid;
@@ -294,7 +294,7 @@ namespace XMPP
 		bool fast;
 		bool udp;
 	};
-	class JT_PushS5B : public Task
+	class IRIS_EXPORT JT_PushS5B : public Task
 	{
 		Q_OBJECT
 	public:
@@ -316,7 +316,7 @@ namespace XMPP
 		void incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);
 	};
 
-	class StreamHost
+	class IRIS_EXPORT StreamHost
 	{
 	public:
 		StreamHost();

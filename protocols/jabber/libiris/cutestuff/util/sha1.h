@@ -25,9 +25,11 @@
 //Added by qt3to4:
 #include <QByteArray>
 
+#include <cutestuff_export.h>
+
 // CS_NAMESPACE_BEGIN
 
-class SHA1
+class CUTESTUFF_EXPORT SHA1
 {
 public:
 	static QByteArray hash(const QByteArray &);

@@ -28,11 +28,13 @@
 #include <QList>
 #include <qdom.h>
 
+#include <iris_export.h>
+
 class QDate;
 
 namespace XMPP
 {
-	class VCard
+	class IRIS_EXPORT VCard
 	{
 	public:
 		VCard();
@@ -85,7 +87,7 @@ namespace XMPP
 		void setBdayStr(const QString &);
 
 
-		class Address {
+		class IRIS_EXPORT Address {
 		public:
 			Address();
 
@@ -111,7 +113,7 @@ namespace XMPP
 		const AddressList &addressList() const;
 		void setAddressList(const AddressList &);
 
-		class Label {
+		class IRIS_EXPORT Label {
 		public:
 			Label();
 
@@ -132,7 +134,7 @@ namespace XMPP
 		void setLabelList(const LabelList &);
 
 
-		class Phone {
+		class IRIS_EXPORT Phone {
 		public:
 			Phone();
 
@@ -157,7 +159,7 @@ namespace XMPP
 		void setPhoneList(const PhoneList &);
 
 
-		class Email {
+		class IRIS_EXPORT Email {
 		public:
 			Email();
 
@@ -183,7 +185,7 @@ namespace XMPP
 		void setTimezone(const QString &);
 
 
-		class Geo {
+		class IRIS_EXPORT Geo {
 		public:
 			Geo();
 
@@ -215,7 +217,7 @@ namespace XMPP
 		void setAgentURI(const QString &);
 
 
-		class Org {
+		class IRIS_EXPORT Org {
 		public:
 			Org();
 

@@ -25,8 +25,9 @@
 #include <q3dns.h>
 
 // CS_NAMESPACE_BEGIN
+#include <cutestuff_export.h>
 
-class SrvResolver : public QObject
+class CUTESTUFF_EXPORT SrvResolver : public QObject
 {
 	Q_OBJECT
 public:

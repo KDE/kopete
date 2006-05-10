@@ -28,7 +28,7 @@ namespace XMPP
 	class S5BConnection;
 	struct FTRequest;
 
-	class FileTransfer : public QObject
+	class IRIS_EXPORT FileTransfer : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -85,7 +85,7 @@ namespace XMPP
 		void takeConnection(S5BConnection *c);
 	};
 
-	class FileTransferManager : public QObject
+	class IRIS_EXPORT FileTransferManager : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -116,7 +116,7 @@ namespace XMPP
 		void unlink(FileTransfer *);
 	};
 
-	class JT_FT : public Task
+	class IRIS_EXPORT JT_FT : public Task
 	{
 		Q_OBJECT
 	public:

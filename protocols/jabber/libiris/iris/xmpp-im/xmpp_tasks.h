@@ -34,7 +34,7 @@ namespace XMPP
 	class Roster;
 	class Status;
 
-	class JT_Register : public Task
+	class IRIS_EXPORT JT_Register : public Task
 	{
 		Q_OBJECT
 	public:
@@ -60,7 +60,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_UnRegister : public Task
+	class IRIS_EXPORT JT_UnRegister : public Task
 	{
 		Q_OBJECT
 	public:
@@ -80,7 +80,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_Roster : public Task
+	class IRIS_EXPORT JT_Roster : public Task
 	{
 		Q_OBJECT
 	public:
@@ -108,7 +108,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_PushRoster : public Task
+	class IRIS_EXPORT JT_PushRoster : public Task
 	{
 		Q_OBJECT
 	public:
@@ -125,7 +125,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_Presence : public Task
+	class IRIS_EXPORT JT_Presence : public Task
 	{
 		Q_OBJECT
 	public:
@@ -146,7 +146,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_PushPresence : public Task
+	class IRIS_EXPORT JT_PushPresence : public Task
 	{
 		Q_OBJECT
 	public:
@@ -164,7 +164,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_Message : public Task
+	class IRIS_EXPORT JT_Message : public Task
 	{
 		Q_OBJECT
 	public:
@@ -180,7 +180,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_PushMessage : public Task
+	class IRIS_EXPORT JT_PushMessage : public Task
 	{
 		Q_OBJECT
 	public:
@@ -197,7 +197,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_GetLastActivity : public Task
+	class IRIS_EXPORT JT_GetLastActivity : public Task
 	{
 		Q_OBJECT
 	public:
@@ -220,7 +220,7 @@ namespace XMPP
 		Jid jid;
 	};
 
-	class JT_GetServices : public Task
+	class IRIS_EXPORT JT_GetServices : public Task
 	{
 		Q_OBJECT
 	public:
@@ -242,7 +242,7 @@ namespace XMPP
 		AgentList agentList;
 	};
 
-	class JT_VCard : public Task
+	class IRIS_EXPORT JT_VCard : public Task
 	{
 		Q_OBJECT
 	public:
@@ -265,7 +265,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_Search : public Task
+	class IRIS_EXPORT JT_Search : public Task
 	{
 		Q_OBJECT
 	public:
@@ -289,7 +289,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_ClientVersion : public Task
+	class IRIS_EXPORT JT_ClientVersion : public Task
 	{
 		Q_OBJECT
 	public:
@@ -328,7 +328,7 @@ namespace XMPP
 		QDomElement iq;
 	};
 */
-	class JT_ServInfo : public Task
+	class IRIS_EXPORT JT_ServInfo : public Task
 	{
 		Q_OBJECT
 	public:
@@ -338,7 +338,7 @@ namespace XMPP
 		bool take(const QDomElement &);
 	};
 
-	class JT_Gateway : public Task
+	class IRIS_EXPORT JT_Gateway : public Task
 	{
 		Q_OBJECT
 	public:
@@ -361,7 +361,7 @@ namespace XMPP
 		QString v_prompt, v_desc;
 	};
 
-	class JT_Browse : public Task
+	class IRIS_EXPORT JT_Browse : public Task
 	{
 		Q_OBJECT
 	public:
@@ -383,7 +383,7 @@ namespace XMPP
 		AgentItem browseHelper (const QDomElement &i);
 	};
 
-	class JT_DiscoItems : public Task
+	class IRIS_EXPORT JT_DiscoItems : public Task
 	{
 		Q_OBJECT
 	public:
@@ -403,7 +403,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_DiscoInfo : public Task
+	class IRIS_EXPORT JT_DiscoInfo : public Task
 	{
 		Q_OBJECT
 	public:
@@ -425,7 +425,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_DiscoPublish : public Task
+	class IRIS_EXPORT JT_DiscoPublish : public Task
 	{
 		Q_OBJECT
 	public:
@@ -442,7 +442,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_MucPresence : public Task
+	class IRIS_EXPORT JT_MucPresence : public Task
 	{
 		Q_OBJECT
 	public:
@@ -462,7 +462,7 @@ namespace XMPP
 		Private *d;
 	};
 	
-	class JT_PrivateStorage : public Task
+	class IRIS_EXPORT JT_PrivateStorage : public Task
 	{
 		Q_OBJECT
 	public:
