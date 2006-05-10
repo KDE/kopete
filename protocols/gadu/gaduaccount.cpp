@@ -43,6 +43,8 @@
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <ktempfile.h>
+#include <kactionmenu.h>
+#include <ktoggleaction.h>
 #include <kio/netaccess.h>
 
 #include <qapplication.h>

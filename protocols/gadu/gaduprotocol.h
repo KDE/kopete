@@ -53,7 +53,7 @@ class GaduProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	GaduProtocol( QObject* parent, const char* name, const QStringList& str);
+	GaduProtocol( QObject* parent, const QStringList& str);
 	~GaduProtocol();
 
 	static GaduProtocol *protocol();

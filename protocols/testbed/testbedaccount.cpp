@@ -20,6 +20,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kactionmenu.h>
 #include <kmenu.h>
 
 #include "kopetemetacontact.h"

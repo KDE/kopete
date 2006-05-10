@@ -26,8 +26,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 	Q_OBJECT
 
 	public:
-		KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& );
-		KopeteRichTextEditPart( QWidget *wparent, const char *wname, int capabilities );
+		KopeteRichTextEditPart( QWidget *wparent, QObject*, const QStringList& );
+		KopeteRichTextEditPart( QWidget *wparent, int capabilities );
 
 		/**
 		* Returns the current editor widget.

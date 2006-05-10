@@ -55,7 +55,7 @@
 typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  )
 
-WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
+WebPresencePlugin::WebPresencePlugin( QObject *parent, const QStringList& /*args*/ )
 	: Kopete::Plugin( WebPresencePluginFactory::instance(), parent ),
 	shuttingDown( false ), resultFormatting( WEB_HTML )
 {

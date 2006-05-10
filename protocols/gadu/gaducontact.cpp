@@ -98,7 +98,7 @@ GaduContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint 
 	if( !sourceURL.isValid() )
 		filePath = KFileDialog::getOpenFileName(QString::null, "*", 0l  , i18n("Kopete File Transfer"));
 	else
-		filePath = sourceURL.path(-1);
+		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
 	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
 

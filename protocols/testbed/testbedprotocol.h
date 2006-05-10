@@ -28,7 +28,7 @@ class TestbedProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	TestbedProtocol(QObject *parent, const char *name, const QStringList &args);
+	TestbedProtocol(QObject *parent, const QStringList &args);
     ~TestbedProtocol();
 	/**
 	 * Convert the serialised data back into a TestbedContact and add this

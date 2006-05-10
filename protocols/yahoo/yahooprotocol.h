@@ -43,7 +43,7 @@ class YahooProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
+	YahooProtocol( QObject *parent, const QStringList &args );
 	~YahooProtocol();
 
 	//Online Statuses

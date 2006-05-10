@@ -64,7 +64,7 @@ private:
 	QString resultURL;
 
 public:
-	WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
+	WebPresencePlugin( QObject *parent, const QStringList &args );
 	virtual ~WebPresencePlugin();
 
 	virtual void aboutToUnload();

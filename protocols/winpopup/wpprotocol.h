@@ -50,7 +50,7 @@ class WPProtocol : public Kopete::Protocol
 
 // Kopete::Protocol overloading
 public:
-	WPProtocol( QObject *parent, const char *, const QStringList & );
+	WPProtocol( QObject *parent, const QStringList & );
 	~WPProtocol();
 
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount);

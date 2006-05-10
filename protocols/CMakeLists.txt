@@ -3,6 +3,8 @@ kde4_header()
 OPTION(WITH_testbed "Enable Kopete testbed protocol" ON)
 OPTION(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
 
+include_directories(${KOPETE_INCLUDES})
+
 add_subdirectory( msn ) 
 add_subdirectory( oscar ) 
 add_subdirectory( yahoo ) 
@@ -18,6 +20,8 @@ endif(QCA2_FOUND)
 if(WITH_testbed)
   add_subdirectory( testbed )
 endif(WITH_testbed)
+
+
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
 

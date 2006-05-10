@@ -28,7 +28,7 @@ class BookmarksPlugin : public Kopete::Plugin
 {
 Q_OBJECT
 public:
-    BookmarksPlugin(QObject *parent, const char *name, const QStringList &args);
+    BookmarksPlugin(QObject *parent, const QStringList &args);
 
     ~BookmarksPlugin();
     

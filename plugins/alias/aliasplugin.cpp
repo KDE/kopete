@@ -17,7 +17,7 @@ typedef KGenericFactory<AliasPlugin> AliasPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_alias, AliasPluginFactory( "kopete_alias" )  )
 AliasPlugin * AliasPlugin::pluginStatic_ = 0L;
 
-AliasPlugin::AliasPlugin( QObject *parent, const char * name, const QStringList & )
+AliasPlugin::AliasPlugin( QObject *parent, const QStringList & )
 	: Kopete::Plugin( AliasPluginFactory::instance(), parent )
 {
 	if( !pluginStatic_ )

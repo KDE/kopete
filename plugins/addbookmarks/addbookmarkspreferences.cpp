@@ -27,7 +27,7 @@
 typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory("kcm_kopete_addbookmarks") )
 
-BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, const QStringList &args)
+BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QStringList &args)
  : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
 {
 	Q_UNUSED( name );

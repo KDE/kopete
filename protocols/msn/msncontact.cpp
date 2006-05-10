@@ -600,7 +600,7 @@ void MSNContact::sendFile( const KUrl &sourceURL, const QString &altFileName, ui
 	if( !sourceURL.isValid() )
 		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
 	else
-		filePath = sourceURL.path(-1);
+		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
 	//kDebug(14140) << "MSNContact::sendFile: File chosen to send:" << fileName << endl;
 

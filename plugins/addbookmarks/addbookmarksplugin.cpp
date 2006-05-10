@@ -25,7 +25,7 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
 
-BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &/*args*/)
+BookmarksPlugin::BookmarksPlugin(QObject *parent, const QStringList &/*args*/)
  : Kopete::Plugin(BookmarksPluginFactory::instance(), parent)
 {
 	//kDebug(14501) << "plugin loading" << endl;

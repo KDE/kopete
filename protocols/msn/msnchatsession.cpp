@@ -104,7 +104,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L );
-		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
+		//(void) new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
 		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 		{
 			//if the view doesn't exist yet, we will be unable to get the size of the toolbar

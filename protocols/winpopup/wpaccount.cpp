@@ -27,6 +27,7 @@
 #include <kmenu.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kactionmenu.h>
 
 // Kopete Includes
 

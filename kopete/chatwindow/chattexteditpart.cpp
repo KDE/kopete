@@ -31,7 +31,7 @@
 #include <qregexp.h>
 
 ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent )
-	: KopeteRichTextEditPart( parent, 0, session->protocol()->capabilities() ), m_session(session)
+	: KopeteRichTextEditPart( parent, session->protocol()->capabilities() ), m_session(session)
 {
 	m_autoSpellCheckEnabled = true;
 	historyPos = -1;

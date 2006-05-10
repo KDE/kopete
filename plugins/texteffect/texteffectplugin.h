@@ -45,7 +45,7 @@ class TextEffectPlugin : public Kopete::Plugin
 public:
 	static TextEffectPlugin  *plugin();
 
-	TextEffectPlugin( QObject *parent, const char *name, const QStringList &args );
+	TextEffectPlugin( QObject *parent, const QStringList &args );
 	~TextEffectPlugin();
 
 public slots:

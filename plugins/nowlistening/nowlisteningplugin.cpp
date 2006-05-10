@@ -85,7 +85,7 @@ public:
 typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory( "kopete_nowlistening" )  )
 
-NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const QStringList& /*args*/ )
+NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*args*/ )
 : Kopete::Plugin( NowListeningPluginFactory::instance(), parent )
 {
 	if ( pluginStatic_ )

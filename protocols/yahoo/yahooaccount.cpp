@@ -40,7 +40,7 @@
 #include <kapplication.h>
 #include <krun.h>
 #include <kstandarddirs.h>
-#include <kstandarddirs.h>
+#include <kactionmenu.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -1337,14 +1337,14 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
 		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
-			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ),
+			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
 		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from) 
-		                                       , QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+		                                       , QPixmap() , 0 ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 }

@@ -767,7 +767,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		{
 			// If there are new email message available, raise the unread email event.
 			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18np( "You have one unread message in your MSN inbox.",
-							 "You have %n unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ),
+							 "You have %n unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
@@ -789,7 +789,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 
 		//TODO:  it is also possible to get the subject  (but warning about the encoding)
 		QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"),i18n( "You have one new email from %1 in your MSN inbox." , m),
-										0 , 0 , QStringList(i18n( "Open Inbox..." )) ),
+										0 , 0 ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
@@ -921,7 +921,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			// Don't do any MSN alerts notification for new blog updates
 			if( subscString != QString::fromLatin1("s.htm") && actionString != QString::fromLatin1("a.htm") )
 			{
-				KNotification* notification = KNotification::event("msn_alert", textString, 0L, 0L, actions);
+				KNotification* notification = KNotification::event("msn_alert", textString, 0L, 0L);
 				QObject::connect(notification, SIGNAL(activated(unsigned int)), this, SLOT(slotMSNAlertLink(unsigned int)));
 				QObject::connect(notification, SIGNAL(closed()), this, SLOT(slotMSNAlertUnwanted()));
 			}

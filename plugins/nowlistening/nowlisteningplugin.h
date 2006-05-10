@@ -40,7 +40,7 @@ class NowListeningPlugin : public Kopete::Plugin
 friend class NowListeningGUIClient;
 
 	public:
-		NowListeningPlugin(  QObject *parent, const char *name, const QStringList &args );
+		NowListeningPlugin(  QObject *parent, const QStringList &args );
 		virtual ~NowListeningPlugin();
 		static NowListeningPlugin* plugin();
 
