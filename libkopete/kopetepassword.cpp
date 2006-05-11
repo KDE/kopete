@@ -184,12 +184,12 @@ public:
 	{
 		QString result = grabPassword();
 		if ( mSource == Kopete::Password::FromUser || result.isNull() )
-			doPasswordDialog( result );
+			doPasswordDialog();
 		else
 			finished( result );
 	}
 
-	void doPasswordDialog( const QString &password )
+	void doPasswordDialog()
 	{
 		kdDebug( 14010 ) << k_funcinfo << endl;
 
