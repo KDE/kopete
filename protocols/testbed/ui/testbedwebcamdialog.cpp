@@ -59,7 +59,7 @@ kdDebug() << "Just captured 1st frame" << endl;
 	if (mPixmap.convertFromImage(mImage,0) == true)
 		mImageContainer->updatePixmap(mPixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(10000,FALSE);
+	qtimer.start(0,FALSE);
 }
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
