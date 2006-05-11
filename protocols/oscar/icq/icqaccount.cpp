@@ -184,7 +184,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= ICQ::StatusCode::WEBAWARE;
 
-		engine()->setIsIcq( true );
 		engine()->setStatus( status, mInitialStatusMessage );
 		engine()->start( server, port, accountId(), password );
 		engine()->connectToServer( c, server, true /* doAuth */ );

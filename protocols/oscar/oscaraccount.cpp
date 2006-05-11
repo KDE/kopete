@@ -94,6 +94,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 
 	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
+	d->engine->setIsIcq( isICQ );
 	d->engine->setCodecProvider( d );
     d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
