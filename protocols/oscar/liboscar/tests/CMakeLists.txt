@@ -2,7 +2,7 @@ kde4_header()
 
 if(KDE4_BUILD_TESTS)
 
-include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KOPETE_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar ${KOPETE_INCLUDES} )
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 

@@ -1,7 +1,7 @@
 kde4_header()
 
-OPTION(WITH_testbed "Enable Kopete testbed protocol" ON)
-OPTION(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
+option(WITH_testbed "Enable Kopete testbed protocol" ON)
+option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
 
 include_directories(${KOPETE_INCLUDES})
 
@@ -10,6 +10,7 @@ add_subdirectory( oscar )
 add_subdirectory( yahoo ) 
 add_subdirectory( winpopup )
 add_subdirectory( gadu )
+
 if(QCA2_FOUND)
   if(WITH_messenger)
     add_subdirectory( messenger )

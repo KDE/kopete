@@ -1,19 +1,12 @@
 kde4_header()
 
 # Propagate includes to tests subdirs
-set(PAPILLON_INCLUDES 
-${QT_INCLUDES} 
-${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/ 
-${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/base/ 
-${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/http/ 
-${CMAKE_SOURCE_DIR}/kopete/protocols/messenger/libpapillon/tasks/ 
-${QCA2_INCLUDE_DIR} 
-)
+set(PAPILLON_INCLUDES base/ http/  tasks/ ${QCA2_INCLUDE_DIR} )
 
 add_subdirectory( tests )
 
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${PAPILLON_INCLUDES})
+include_directories(${PAPILLON_INCLUDES})
 
 
 ########### next target ###############

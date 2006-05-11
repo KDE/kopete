@@ -3,7 +3,7 @@ kde4_header()
 #add_subdirectory( cutestuff ) 
 #add_subdirectory( iris ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+include_directories( 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/util/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/network/ 

@@ -15,12 +15,14 @@ add_subdirectory( highlight )
 add_subdirectory( alias ) 
 add_subdirectory( addbookmarks ) 
 #add_subdirectory( statistics ) 
+
 if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
-if(WITH_smpppd)
-	add_subdirectory(smpppdcs)
-endif(WITH_smpppd)
+
+if (WITH_smpppd)
+   add_subdirectory(smpppdcs)
+endif (WITH_smpppd)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir statistics (will be rewritten)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(MOTIONAUTOAWAY_SUBDIR)")

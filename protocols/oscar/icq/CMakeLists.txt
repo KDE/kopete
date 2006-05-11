@@ -2,7 +2,7 @@ kde4_header()
 
 #add_subdirectory( ui ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
 ${CMAKE_CURRENT_BINARY_DIR}/ui/ 
