@@ -845,6 +845,10 @@ void ChatView::saveOptions()
 void ChatView::saveChatSettings()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
+
+	if ( contacts.count() == 0 )
+		return;
+
 	Kopete::MetaContact* mc = contacts.first()->metaContact();
 	
 	if ( contacts.count() > 1 )
