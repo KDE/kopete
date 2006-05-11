@@ -21,13 +21,14 @@
 
 #include "icqtask.h"
 #include "oscarmessage.h"
+#include "liboscar_export.h"
 
 /**
 ICQ Offline messages handling
 
 @author Gustavo Pichorim Boiko
 */
-class Q_DECL_EXPORT OfflineMessagesTask : public ICQTask
+class LIBOSCAR_EXPORT  OfflineMessagesTask : public ICQTask
 {
 Q_OBJECT
 public:

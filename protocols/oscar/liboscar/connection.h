@@ -22,6 +22,7 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 #include <QList>
 #include "oscartypes.h"
 #include "rateclass.h"
+#include "liboscar_export.h"
 
 class ConnectionPrivate;
 class Client;
@@ -45,7 +46,7 @@ class Settings;
  * connection to an OSCAR server
  * @author Matt Rogers
  */
-class Q_DECL_EXPORT Connection : public QObject
+class LIBOSCAR_EXPORT Connection : public QObject
 {
 Q_OBJECT
 public:

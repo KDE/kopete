@@ -21,6 +21,7 @@
 
 #include "task.h"
 #include <QList>
+#include "liboscar_export.h"
 
 class RateClass;
 using namespace Oscar;
@@ -28,7 +29,7 @@ using namespace Oscar;
 /**
 @author Matt Rogers
 */
-class Q_DECL_EXPORT RateInfoTask : public Task
+class LIBOSCAR_EXPORT RateInfoTask : public Task
 {
 Q_OBJECT
 public:

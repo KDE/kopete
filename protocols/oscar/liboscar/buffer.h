@@ -24,7 +24,7 @@
 #include "oscarguid.h"
 #include <QList>
 #include <QByteArray>
-
+#include "liboscar_export.h"
 class QString;
 
 using namespace Oscar;
@@ -32,7 +32,7 @@ using namespace Oscar;
 /**
  * @brief A data buffer
  */
-class Q_DECL_EXPORT Buffer
+class LIBOSCAR_EXPORT Buffer
 {
 	public:
 		/** Default constructor */

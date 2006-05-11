@@ -22,8 +22,8 @@
 #define OSCARCONNECTOR_H
 
 #include "oscarbytestream.h"
-
 #include "connector.h"
+#include "liboscar_export.h"
 
 class ByteStream;
 class KNetworkByteStream;
@@ -33,7 +33,7 @@ class KResolverEntry;
 @author Till Gerken
 @author Matt Rogers
 */
-class Q_DECL_EXPORT KNetworkConnector : public Connector
+class LIBOSCAR_EXPORT KNetworkConnector : public Connector
 {
 
 Q_OBJECT

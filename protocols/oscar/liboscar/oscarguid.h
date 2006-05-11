@@ -18,6 +18,7 @@
 #define _OSCARGUID_H_
 
 #include <QByteArray>
+#include "liboscar_export.h"
 
 namespace Oscar
 {
@@ -26,7 +27,7 @@ namespace Oscar
  * This class is just a simple little GUID, 16 bytes of data
  */
 
-class Q_DECL_EXPORT Guid
+class LIBOSCAR_EXPORT Guid
 {
 public:
 	Guid();

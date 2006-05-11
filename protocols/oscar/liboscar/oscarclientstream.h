@@ -22,6 +22,7 @@
 #define OSCAR_CLIENTSTREAM_H
 
 #include "stream.h"
+#include "liboscar_export.h"
 
 // forward defines
 class ByteStream;
@@ -31,7 +32,7 @@ class Connection;
 class Transfer;
 class QHostAddress;
 
-class Q_DECL_EXPORT ClientStream : public Stream
+class LIBOSCAR_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:

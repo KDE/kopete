@@ -22,13 +22,14 @@
 #include "task.h"
 #include <QList>
 #include "oscartypes.h"
+#include "liboscar_export.h"
 
 class Transfer;
 
 /**
 @author Matt Rogers
 */
-class Q_DECL_EXPORT ServerVersionsTask : public Task
+class LIBOSCAR_EXPORT ServerVersionsTask : public Task
 {
 Q_OBJECT
 public:

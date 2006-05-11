@@ -23,6 +23,7 @@
 #include <QList>
 #include <qdatetime.h>
 #include <qpair.h>
+#include "liboscar_export.h"
 
 const int RATE_SAFETY_TIME = 50;
 
@@ -34,7 +35,7 @@ struct SnacPair
 
 class Transfer;
 
-class Q_DECL_EXPORT RateClass : public QObject
+class LIBOSCAR_EXPORT RateClass : public QObject
 {
 	Q_OBJECT
 public:
