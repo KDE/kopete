@@ -15,7 +15,7 @@
 */
 
 #include "testbedwebcamdialog.h"
-#include "testbedwebcamwidget.h"
+#include <webcamwidget.h>
 #include "avdevice/videodevicepool.h"
 
 #include <qframe.h>
@@ -40,8 +40,9 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	setMainWidget(page);
 
 	QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );	
-	mImageContainer = new TestbedWebcamWidget( page );
+	mImageContainer = new Kopete::WebcamWidget( page );
 	mImageContainer->setMinimumSize(320,240);
+	mImageContainer->setText( i18n( "No webcam image received" ) );
 	mImageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	topLayout->add( mImageContainer );
 	

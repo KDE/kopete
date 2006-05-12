@@ -29,12 +29,12 @@
 class QPixmap;
 class QWidget;
 class TestbedContact;
-class TestbedWebcamWidget;
 
 namespace Kopete { 
 	namespace AV	{
 		class VideoDevicePool;
 	}
+	class WebcamWidget;
 }
 
 class TestbedWebcamDialog : public KDialogBase
@@ -50,7 +50,7 @@ public slots:
 //	void closingWebcamDialog();
 	
 private:
-	TestbedWebcamWidget *mImageContainer;
+	Kopete::WebcamWidget *mImageContainer;
 	QImage mImage;
 	QTimer qtimer;
 	QPixmap mPixmap;

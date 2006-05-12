@@ -25,6 +25,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#include <webcamwidget.h>
+
 YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
 : KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contactId ),
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ )
@@ -39,9 +41,8 @@ YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent
 	setMainWidget(page);
 
 	QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );	
-	m_imageContainer = new QLabel( page );
+	m_imageContainer = new Kopete::WebcamWidget( page );
 	m_imageContainer->setText( i18n( "No webcam image received" ) );
-	m_imageContainer->setAlignment( Qt::AlignCenter );
 	m_imageContainer->setMinimumSize(320,240);
 	m_imageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	topLayout->add( m_imageContainer );
@@ -61,20 +62,12 @@ YahooWebcamDialog::~ YahooWebcamDialog( )
 
 void YahooWebcamDialog::newImage( const QPixmap &image )
 {
-	m_imageContainer->clear();
-	bitBlt(m_imageContainer, 0, 0, &image, 0, Qt::CopyROP);
-	show();
+	m_imageContainer->updatePixmap( image );
 }
 
 void YahooWebcamDialog::webcamPaused()
 {
-	m_imageContainer->clear();
-	
 	m_imageContainer->setText( QString::fromLatin1("*** Webcam paused ***") );
-	m_imageContainer->adjustSize();
-	m_imageContainer->setAlignment( Qt::AlignCenter );
-	adjustSize();
-	show();
 }
 
 void YahooWebcamDialog::webcamClosed( int reason  )
@@ -97,10 +90,6 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 	m_imageContainer->clear();
 
 	m_imageContainer->setText( closeReason );
-	m_imageContainer->adjustSize();
-	m_imageContainer->setAlignment( Qt::AlignCenter );
-	adjustSize();
-	show();
 }
 
 void YahooWebcamDialog::setViewer( const QStringList &viewer )
