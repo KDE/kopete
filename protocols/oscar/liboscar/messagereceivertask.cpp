@@ -69,7 +69,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 		if ( !st )
 			return false;
 		m_currentSnacSubtype = st->snacSubtype();
-		
+
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icbm cookie is " << m_icbmCookie << endl;
@@ -81,7 +81,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 			UserDetails ud;
 			ud.fill( b );
 			m_fromUser = ud.userId();
-			
+
 			switch( m_channel )
 			{
 			case 0x0001:
@@ -135,7 +135,7 @@ void MessageReceiverTask::handleType1Message()
 	Buffer messageBuffer( t.data );
 	QList<TLV> innerTLVList = messageBuffer.getTLVList();
 	QList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
-	for ( ; (*it); ++it )
+	for ( ; it != listEnd; ++it )
 	{
 		switch ( ( *it ).type )
 		{
@@ -254,7 +254,7 @@ void MessageReceiverTask::handleType2Message()
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received unknown request type: " << requestType << endl;
 				break;
 			}
-			
+
 			break;
 		} //end case
 		default:
@@ -333,7 +333,7 @@ void MessageReceiverTask::handleType4Message()
 void MessageReceiverTask::handleAutoResponse()
 {
 	kDebug(14151) << k_funcinfo << "Received auto response. Trying to handle it..." << endl;
-	
+
 	Oscar::Message msg;
 	msg.addProperty( Oscar::Message::AutoResponse );
 	Buffer* b = transfer()->buffer();
@@ -341,7 +341,7 @@ void MessageReceiverTask::handleAutoResponse()
 	// reason code
 	int reasonCode = b->getWord();
 	kDebug(14151) << k_funcinfo << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode << endl;
-	
+
 	parseRendezvousData( b, &msg );
 	emit receivedMessage( msg );
 }
@@ -354,9 +354,9 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!" << endl;
 		return;
 	}
-	
+
 	int protocolVersion = b->getLEWord(); // the extended data protocol version, there are quite a few...
-	
+
 	// plugin (for file transfer & stuff, all zeros for regular message
 	b->skipBytes( 16 );
 	// unknown
@@ -365,14 +365,14 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	b->skipBytes( 4 );
 	// unknown
 	b->skipBytes( 1 );
-	
+
 	// (down)counter: basically just some number, ICQ counts down, miranda up, doesnt matter.
 	// BUT: when sending auto response on channel 2, like with the icbm cookie, we need to send the same value!
 	int channel2Counter = b->getLEWord();
-	
+
 	// the next one is length (of a counter + following all-zero field), but also seems to indicate what type of message this is
 	int length2 = b->getLEWord();
-	
+
 	// the only length usable ATM is 0x000E, which is a message
 	switch( length2 )
 	{
@@ -384,16 +384,16 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		// TODO if type is PLAIN, there is (might be?) an additional TLV with color and font information at the end...
 
 		uint messageType = b->getByte();
-		
+
 		/*
 		int flags = b->getByte();
 		int status = b->getLEWord(); 	// don't know what status this is or what to use it for
 		int priority = b->getLEWord(); 	// don't know what that's good for either
 		*/
 		b->skipBytes(5); //same as above
-		
+
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
-		
+
 		QByteArray msgText( b->getLELNTS() );
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
 		int fgcolor = 0x00000000;
@@ -418,12 +418,12 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 
 		msg->setEncoding( encoding );
 		msg->setTextArray( msgText );
-		
+
 		if ( ( messageType & 0xF0 ) == 0xE0 ) // check higher byte for value E -> status message request
 			msg->addProperty( Oscar::Message::StatusMessageRequest );
 		else
 			msg->addProperty( Oscar::Message::Request );
-		
+
 		msg->setSender( m_fromUser );
 		msg->setReceiver( client()->userId() );
 		msg->setTimestamp( QDateTime::currentDateTime() );
@@ -432,7 +432,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		msg->setProtocolVersion( protocolVersion );
 		msg->setChannel2Counter( channel2Counter );
 		msg->setMessageType( messageType );
-		
+
 		break;
 	}
 	default:

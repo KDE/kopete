@@ -40,7 +40,7 @@ bool UserInfoTask::forMe( const Transfer * transfer ) const
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )
 		return false;
-	
+
 	if ( st->snacService() == 0x0002 && st->snacSubtype() == 0x0006 )
 	{
 		if ( m_contactSequenceMap.find( st->snacRequest() ) == m_contactSequenceMap.end() )
@@ -64,7 +64,7 @@ bool UserInfoTask::take( Transfer * transfer )
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
 		if ( st )
 			seq = st->snacRequest();
-		
+
 		if ( seq != 0 )
 		{
 			//AFAIK location info packets always have user info
@@ -73,12 +73,12 @@ bool UserInfoTask::take( Transfer * transfer )
 			ud.fill( b );
 			m_sequenceInfoMap[seq] = ud;
 			emit gotInfo( seq );
-			
+
 			QList<TLV> list = b->getTLVList();
-			QList<TLV>::iterator it = list.begin();
+			QList<TLV>::iterator it = list.begin(), itEnd = list.end();
 			QString profile;
 			QString away;
-			for ( ; ( *it ); ++it )
+			for ( ; it != itEnd; ++it )
 			{
 				switch( ( *it ).type )
 				{
@@ -120,14 +120,14 @@ void UserInfoTask::onGo()
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Info requested for empty contact!" << endl;
 		return;
 	}
-	
+
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0005, 0, m_seq };
 	Buffer* buffer = new Buffer();
-	
+
 	buffer->addWord( m_typesSequenceMap[m_seq] );
 	buffer->addBUIN( m_contactSequenceMap[m_seq].toLocal8Bit() );
-	
+
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
 }
