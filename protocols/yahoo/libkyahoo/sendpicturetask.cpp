@@ -69,6 +69,7 @@ void SendPictureTask::initiateUpload()
 void SendPictureTask::connectFailed( int i)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KStreamSocket*>( sender() )->errorString() << endl;
+	setSuccess( false );
 }
 
 void SendPictureTask::connectSucceeded()
@@ -116,20 +117,16 @@ void SendPictureTask::connectSucceeded()
 
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;
 	if( socket->writeBlock( buffer, buffer.size() ) )
+	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
-	else
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
-	socket->close();
-
-}
-
-void SendPictureTask::slotUploadFinished( KIO::Job *job )
-{
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	if ( job->error() )
-		setSuccess( false );
-	else
 		setSuccess( true );
+	}
+	else
+	{
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
+		setSuccess( false );
+	}
+	socket->close();
 }
 
 void SendPictureTask::sendChecksum()
@@ -221,3 +218,4 @@ void SendPictureTask::setUrl( const QString &url )
 	m_url = url;
 }
 
+#include "sendpicturetask.moc"

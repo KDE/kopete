@@ -59,7 +59,6 @@ private:
 private slots:
 	void connectSucceeded();
 	void connectFailed( int );
-	void slotUploadFinished( KIO::Job* );
 private:
 	Type m_type;
 	QString m_target;
@@ -72,7 +71,6 @@ private:
 	int m_transmitted;
 	QFile *m_file;
 	KBufferedSocket *m_socket;
-	
 };
 
 #endif
