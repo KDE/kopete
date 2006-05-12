@@ -27,7 +27,7 @@
 #include <Q3CString>
 #include <kurl.h>
 
-#include <kopete_export.h>
+#include "libkyahoo_export.h"
 
 #include "transfer.h"
 #include "yahootypes.h"
@@ -42,7 +42,7 @@ class Task;
 class KTempFile;
 class YABEntry;
 
-class KOPETE_KYAHOO_EXPORT Client : public QObject
+class LIBKYAHOO_EXPORT Client : public QObject
 {
 Q_OBJECT
 

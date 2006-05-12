@@ -21,6 +21,5 @@
 #include <kdemacros.h>
 
 #define KOPETE_EXPORT KDE_EXPORT
-#define KOPETE_KYAHOO_EXPORT KDE_EXPORT
 
 #endif

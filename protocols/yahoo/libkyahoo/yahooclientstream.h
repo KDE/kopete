@@ -23,7 +23,7 @@
 
 #include "stream.h"
 
-#include <kdemacros.h>
+#include "libkyahoo_export.h"
 
 class QHostAddress;
 
@@ -32,7 +32,7 @@ class ByteStream;
 class Connector;
 class Transfer;
 
-class KDE_EXPORT ClientStream : public Stream
+class LIBKYAHOO_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:
