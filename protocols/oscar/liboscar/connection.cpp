@@ -73,7 +73,8 @@ Connection::~Connection()
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d->connector;
-	delete d->root;
+	d->root->deleteLater();
+	d->root = 0;
 	delete d;
 }
 
