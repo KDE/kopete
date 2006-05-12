@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES}
@@ -76,7 +75,6 @@ install_files( ${DATA_INSTALL_DIR}/kopeterichtexteditpart FILES kopeterichtexted
 install_files( ${SERVICES_INSTALL_DIR} FILES chatwindow.desktop emailwindow.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete FILES kopetechatwindow.rc kopeteemailwindow.rc )
 
-kde4_footer()
 
 
 

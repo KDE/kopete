@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 add_subdirectory( libsmpppdclient ) 
@@ -63,7 +62,6 @@ install_files( ${KCFG_INSTALL_DIR} FILES smpppdcs.kcfg )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_smpppdcs.desktop )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_smpppdcs_config.desktop )
 
-kde4_footer()
 
 
 

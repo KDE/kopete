@@ -1,4 +1,3 @@
-kde4_header()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libgadu-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/libgadu-config.h )
 
@@ -18,7 +17,6 @@ install_targets( ${LIB_INSTALL_DIR} gadu_kopete )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

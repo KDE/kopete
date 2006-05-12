@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( ui ) 
 add_subdirectory( icons ) 
@@ -96,7 +95,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_jabber )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_jabber.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_jabber FILES jabberchatui.rc )
 
-kde4_footer()
 
 
 

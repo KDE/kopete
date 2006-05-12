@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -25,7 +24,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_contactnotes )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_contactnotes.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_contactnotes FILES contactnotesui.rc )
 
-kde4_footer()
 
 
 

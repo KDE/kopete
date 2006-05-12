@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -7,7 +6,6 @@ kde4_header()
 
 install_files( ${SOUND_INSTALL_DIR} FILES Kopete_Event.ogg Kopete_Received.ogg Kopete_Sent.ogg Kopete_User_is_Online.ogg )
 
-kde4_footer()
 
 
 

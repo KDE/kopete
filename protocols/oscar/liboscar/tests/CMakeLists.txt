@@ -1,4 +1,3 @@
-kde4_header()
 
 if(KDE4_BUILD_TESTS)
 
@@ -72,7 +71,6 @@ add_test(offlinemessagestest ${EXECUTABLE_OUTPUT_PATH}/offlinemessagestest)
 
 endif(KDE4_BUILD_TESTS)
 
-kde4_footer()
 
 
 

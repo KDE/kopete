@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( ui ) 
 add_subdirectory( services ) 
@@ -34,7 +33,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_sms )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_sms.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( sqlite ) 
 
@@ -34,7 +33,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_statistics.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_statistics FILES statisticsui.rc )
 install_files( ${DATA_INSTALL_DIR}/kopete/pics/statistics FILES images/blue.png images/navy.png images/black.png images/gray.png )
 
-kde4_footer()
 
 
 

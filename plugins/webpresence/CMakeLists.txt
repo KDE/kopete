@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} ${LIBXML2_INCLUDE_DIR} ${LIBXSLT_INCLUDE_DIR}
@@ -43,7 +42,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_webpresence.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete/webpresence FILES webpresence_html.xsl 	      webpresence_html_images.xsl 	      webpresence_xhtml.xsl 	      webpresence_xhtml_images.xsl )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_webpresence_config.desktop )
 
-kde4_footer()
 
 
 

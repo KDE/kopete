@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 add_subdirectory( libgroupwise ) 
@@ -34,7 +33,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_groupwise )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_groupwise.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_groupwise FILES gwchatui.rc )
 
-kde4_footer()
 
 
 

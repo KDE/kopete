@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( libjingle ) 
 
@@ -11,7 +10,6 @@ add_subdirectory( libjingle )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

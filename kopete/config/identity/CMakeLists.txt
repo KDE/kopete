@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -28,7 +27,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_identityconfig )
 install_files( ${KCFG_INSTALL_DIR} FILES kopeteidentityconfigpreferences.kcfg )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_identityconfig.desktop )
 
-kde4_footer()
 
 
 

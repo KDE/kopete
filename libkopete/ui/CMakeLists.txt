@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${CMAKE_BINARY_DIR} )
 
@@ -15,7 +14,6 @@ ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopeteawaydialogbase.h
 ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepasswordwidgetbase.h kopeteviewplugin.h
 editaccountwidget.h kopetecontactaction.h  ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepassworddialog.h kopetestdaction.h  	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h )
 
-kde4_footer()
 
 
 

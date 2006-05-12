@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 
@@ -53,7 +52,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_cryptography.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_cryptography FILES cryptographyui.rc cryptographychatui.rc )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_cryptography_config.desktop )
 
-kde4_footer()
 
 
 

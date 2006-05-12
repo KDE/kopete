@@ -1,4 +1,3 @@
-kde4_header()
 
 # Propagate includes to tests subdirs
 set(PAPILLON_INCLUDES 
@@ -60,4 +59,3 @@ target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRA
 
 install_targets( ${LIB_INSTALL_DIR} papillon_kopete )
 
-kde4_footer()

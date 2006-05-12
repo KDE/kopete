@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 
@@ -41,7 +40,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_testbed )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_testbed.desktop )
 
-kde4_footer()
 
 
 

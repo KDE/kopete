@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( libkyahoo ) 
 #add_subdirectory( ui ) 
@@ -59,7 +58,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_yahoo )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_yahoo.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_yahoo FILES yahooconferenceui.rc yahoochatui.rc )
 
-kde4_footer()
 
 
 

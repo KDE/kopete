@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( mediastreamer ) 
 
@@ -8,7 +7,6 @@ add_subdirectory( mediastreamer )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

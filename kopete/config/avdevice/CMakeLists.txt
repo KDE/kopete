@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -25,7 +24,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_avdeviceconfig )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_avdeviceconfig.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete/icons FILES  )
 
-kde4_footer()
 
 
 

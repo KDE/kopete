@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -55,7 +54,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_history.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_history FILES historyui.rc  historychatui.rc )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_history_config.desktop )
 
-kde4_footer()
 
 
 

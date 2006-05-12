@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( qca ) 
 add_subdirectory( tasks ) 
@@ -15,7 +14,6 @@ include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

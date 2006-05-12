@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -7,7 +6,6 @@ kde4_header()
 
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kopete-pluginloader.upd kopete-account-kconf_update.upd  	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd  	kopete-jabberpriorityaddition-kconf_update.upd kopete-nameTracking.upd )
 
-kde4_footer()
 
 
 

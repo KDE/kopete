@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( ui ) 
 
@@ -46,7 +45,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_aim )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_aim.desktop aim.protocol )
 
-kde4_footer()
 
 
 

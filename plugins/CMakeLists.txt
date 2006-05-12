@@ -1,4 +1,3 @@
-kde4_header()
 
 OPTION(WITH_smpppd "enable support for the SuSE Meta PPP Daemon (smpppd)" OFF)
 
@@ -27,4 +26,3 @@ endif (WITH_smpppd)
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir statistics (will be rewritten)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(MOTIONAUTOAWAY_SUBDIR)")
 
-kde4_footer()

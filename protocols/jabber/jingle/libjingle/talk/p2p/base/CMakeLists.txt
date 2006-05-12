@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -35,7 +34,6 @@ install_targets(/bin stunserver )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( include ) 
 add_subdirectory( jabber ) 
@@ -11,7 +10,6 @@ add_subdirectory( xmpp-im )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

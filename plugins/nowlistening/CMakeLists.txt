@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${KOPETE_INCLUDES} ${XMMS_INCLUDE_DIR} )
 
@@ -58,7 +57,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_nowlistening.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete FILES nowlisteningui.rc nowlisteningchatui.rc )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_nowlistening_config.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 
@@ -44,7 +43,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_autoreplace )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_autoreplace.desktop )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_autoreplace_config.desktop )
 
-kde4_footer()
 
 
 

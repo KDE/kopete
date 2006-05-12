@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -45,7 +44,6 @@ install_files( ${KCFG_INSTALL_DIR} FILES motionawayconfig.kcfg )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_motionaway.desktop )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_motionaway_config.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( Resources ) 
 
@@ -6,4 +5,3 @@ add_subdirectory( Resources )
 
 install_files( ${DATA_INSTALL_DIR}/kopete/styles/Hacker/Contents FILES Info.plist )
 
-kde4_footer()

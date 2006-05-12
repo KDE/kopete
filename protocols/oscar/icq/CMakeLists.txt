@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( ui ) 
 
@@ -56,7 +55,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_icq )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_icq.desktop )
 install_files( ${MIME_INSTALL_DIR}/application FILES x-icq.desktop )
 
-kde4_footer()
 
 
 

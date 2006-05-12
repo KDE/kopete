@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( addaccountwizard ) 
 #add_subdirectory( addcontactwizard ) 
@@ -84,7 +83,6 @@ install_files( ${MIME_INSTALL_DIR}/application FILES x-kopete-emoticons.desktop 
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
 
-kde4_footer()
 
 
 

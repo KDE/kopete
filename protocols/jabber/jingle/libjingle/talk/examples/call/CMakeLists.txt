@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -24,7 +23,6 @@ install_targets(/bin call )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

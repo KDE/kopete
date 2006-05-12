@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 add_subdirectory( libkirc ) 
@@ -41,7 +40,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_irc.desktop irc.protocol )
 install_files( ${DATA_INSTALL_DIR}/kopete FILES ircchatui.rc )
 install_files( ${DATA_INSTALL_DIR}/kopete FILES ircnetworks.xml )
 
-kde4_footer()
 
 
 

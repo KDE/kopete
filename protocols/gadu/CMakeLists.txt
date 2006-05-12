@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 add_subdirectory( libgadu )
@@ -55,7 +54,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_gadu )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_gadu.desktop )
 
-kde4_footer()
 
 
 

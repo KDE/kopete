@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( libpapillon ) 
 
@@ -26,7 +25,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_messenger )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_messenger.desktop )
 
-kde4_footer()
 
 
 

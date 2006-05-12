@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( ui ) 
 add_subdirectory( icons ) 
@@ -76,7 +75,6 @@ install_targets(${LIB_INSTALL_DIR} kopete_msn_shared )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_msn.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_msn FILES msnchatui.rc )
 
-kde4_footer()
 
 
 

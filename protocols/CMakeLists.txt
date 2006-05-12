@@ -1,4 +1,3 @@
-kde4_header()
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
@@ -26,7 +25,6 @@ endif(WITH_testbed)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
 
-kde4_footer()
 
 #original Makefile.am contents follow:
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( plugins ) 
 add_subdirectory( accounts ) 
@@ -14,7 +13,6 @@ add_subdirectory( identity )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kopete)
 
@@ -26,7 +25,6 @@ add_subdirectory( styles )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

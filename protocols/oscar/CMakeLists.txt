@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( liboscar ) 
 add_subdirectory( aim ) 
@@ -40,7 +39,6 @@ install_targets(${LIB_INSTALL_DIR} kopete_oscar )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

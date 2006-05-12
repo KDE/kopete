@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -42,7 +41,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_alias )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_alias.desktop )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_alias_config.desktop )
 
-kde4_footer()
 
 
 

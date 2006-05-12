@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -25,7 +24,6 @@ install_targets( ${LIB_INSTALL_DIR} kopeteaddaccountwizard )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

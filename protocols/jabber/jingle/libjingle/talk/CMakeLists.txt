@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( base ) 
 add_subdirectory( p2p ) 
@@ -13,7 +12,6 @@ add_subdirectory( third_party )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

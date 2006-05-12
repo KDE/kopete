@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -22,7 +21,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kio_jabberdisco )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES jabberdisco.protocol )
 
-kde4_footer()
 
 
 

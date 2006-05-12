@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -24,7 +23,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_connectionstatus )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_connectionstatus.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 #add_subdirectory( cutestuff ) 
 #add_subdirectory( iris ) 
@@ -100,7 +99,6 @@ install_targets( ${LIB_INSTALL_DIR} iris_kopete )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

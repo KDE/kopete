@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -24,7 +23,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_msn )
 
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_msn_config.desktop )
 
-kde4_footer()
 
 
 

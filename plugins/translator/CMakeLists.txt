@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -47,7 +46,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_translator.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_translator FILES translatorui.rc translatorchatui.rc )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_translator_config.desktop )
 
-kde4_footer()
 
 
 

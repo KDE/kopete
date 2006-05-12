@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -38,7 +37,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_appearanceconfig )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_appearanceconfig.desktop )
 
-kde4_footer()
 
 
 

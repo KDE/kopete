@@ -1,4 +1,3 @@
-kde4_header()
 
 if(KDE4_BUILD_TESTS)
 
@@ -18,7 +17,6 @@ target_link_libraries(clientstream_test  ${KDE4_KDECORE_LIBS} kyahoo )
 
 endif(KDE4_BUILD_TESTS)
 
-kde4_footer()
 
 
 

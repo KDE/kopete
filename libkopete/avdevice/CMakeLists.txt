@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( 
 ${KOPETE_INCLUDES} 
@@ -29,7 +28,6 @@ install_targets(${LIB_INSTALL_DIR} kopete_videodevice )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

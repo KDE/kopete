@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 
@@ -50,7 +49,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kopete_latex.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_latex FILES latexchatui.rc )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_latex_config.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( icons ) 
 
@@ -44,7 +43,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_highlight )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_highlight.desktop )
 install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_highlight_config.desktop )
 
-kde4_footer()
 
 
 

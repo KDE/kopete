@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( login ) 
 add_subdirectory( call ) 
@@ -9,7 +8,6 @@ add_subdirectory( call )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

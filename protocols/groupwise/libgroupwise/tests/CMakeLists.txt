@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise/qca/src ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise  )
 
@@ -50,7 +49,6 @@ target_link_libraries(client_test  ${KDE4_KDECORE_LIBS} gwtest qt-mt )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

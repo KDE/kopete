@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( private ) 
 add_subdirectory( ui ) 
@@ -122,7 +121,6 @@ install_files( ${KCFG_INSTALL_DIR} FILES kopetegeneralsettings.kcfg kopeteappear
 install_files( ${DATA_INSTALL_DIR}/kopete FILES kopetecommandui.rc )
 install_files( ${SERVICETYPES_INSTALL_DIR} FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop )
 
-kde4_footer()
 
 
 
