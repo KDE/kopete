@@ -32,7 +32,7 @@ class KResolverEntry;
 @author Till Gerken
 @author Matt Rogers
 */
-class LIBKYAHOO_EXPORT KNetworkConnector : public Connector
+class KNetworkConnector : public Connector
 {
 
 Q_OBJECT

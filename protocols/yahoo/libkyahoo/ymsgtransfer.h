@@ -29,8 +29,6 @@
 #include <QPair>
 #include <QList>
 
-#include "libkyahoo_export.h"
-
 class YMSGTransferPrivate;
 class QString;
 
@@ -40,7 +38,7 @@ typedef QList< Param > ParamList;
 /**
 @author Duncan Mac-Vicar Prett
 */
-class LIBKYAHOO_EXPORT YMSGTransfer : public Transfer
+class YMSGTransfer : public Transfer
 {
 public:
 	YMSGTransfer(Yahoo::Service service);
