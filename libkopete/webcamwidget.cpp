@@ -103,3 +103,5 @@ void WebcamWidget::paintEvent( QPaintEvent* event )
 }
 
 } // end namespace Kopete
+
+#include "webcamwidget.moc"
