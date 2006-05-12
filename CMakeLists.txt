@@ -4,7 +4,8 @@ project(kopete)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
 
-
+# For config-kopete.h
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 set(KOPETE_INCLUDES 
 ${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
