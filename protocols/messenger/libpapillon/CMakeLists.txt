@@ -1,10 +1,15 @@
 kde4_header()
 
 # Propagate includes to tests subdirs
-set(PAPILLON_INCLUDES base/ http/  tasks/ ${QCA2_INCLUDE_DIR} )
+set(PAPILLON_INCLUDES 
+${CMAKE_CURRENT_SOURCE_DIR}/base/ 
+${CMAKE_CURRENT_SOURCE_DIR}/http/ 
+${CMAKE_CURRENT_SOURCE_DIR}/tasks/ 
+${QCA2_INCLUDE_DIR} 
+${CMAKE_CURRENT_SOURCE_DIR} 
+${CMAKE_CURRENT_BINARY_DIR} )
 
 add_subdirectory( tests )
-
 
 include_directories(${PAPILLON_INCLUDES})
 
