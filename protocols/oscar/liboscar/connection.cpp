@@ -69,12 +69,9 @@ Connection::Connection( Connector* connector, ClientStream* cs, const char* name
 
 Connection::~Connection()
 {
-
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d->connector;
-	d->root->deleteLater();
-	d->root = 0;
 	delete d;
 }
 
