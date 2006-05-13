@@ -124,23 +124,13 @@ void Task::go(bool autoDelete)
 
 bool Task::take( Transfer * transfer)
 {
-	const QList<QObject*> p = children();
+	const QList<Task*> p = findChildren<Task*>();
 
 	// pass along the transfer to our children
-	Task *t;
-	foreach( QObject* o, p) {
-		if(! qobject_cast<Task*>( o ) )
-			continue;
-
-		t = static_cast<Task*>( o );
-
-		if(t->take( transfer ))
-		{
-			//qDebug( "Transfer ACCEPTED by: %s", t->className() );
+	foreach( Task* t, p)
+	{
+		if ( t->take( transfer ) )
 			return true;
-		}
-		//else
-			//qDebug( "Transfer refused by: %s", t->className() );
 	}
 
 	return false;
