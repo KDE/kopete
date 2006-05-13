@@ -23,6 +23,8 @@
 
 #include "stream.h"
 
+#include "libkyahoo_export.h"
+
 class QHostAddress;
 
 // forward defines
@@ -30,7 +32,7 @@ class ByteStream;
 class Connector;
 class Transfer;
 
-class ClientStream : public Stream
+class LIBKYAHOO_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:
