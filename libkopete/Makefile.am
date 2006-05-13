@@ -35,7 +35,7 @@ libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatu
 	kopeteprefs.cpp kopetepicture.cpp webcamwidget.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
-libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS)
+libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS) $(LIB_XRENDER)
 
 kde_kcfg_DATA = kopete.kcfg
 
