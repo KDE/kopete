@@ -1211,8 +1211,11 @@ void Client::determineDisconnection( int code, const QString& string )
     if ( !c )
         return;
 
-    if ( c->isSupported( 0x0002 ) )
-        emit socketError( code, string );
+	if ( c->isSupported( 0x0002 ) ||
+	     c->supportedFamilies().count() == 0 ) //emit on login
+	{
+		emit socketError( code, string );
+	}
 
     //connection is deleted. deleteLater() is used
     d->connections.remove( c );
