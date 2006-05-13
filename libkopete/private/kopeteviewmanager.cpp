@@ -201,7 +201,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			readMessages( manager, outgoingMessage );
 		}
 
-		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
+		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+				&& msg.direction() != Kopete::Message::Internal )
 		{
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			KConfig *config = KGlobal::config();
