@@ -118,20 +118,13 @@ void Task::go(bool autoDelete)
 
 bool Task::take(Transfer *transfer)
 {
-	const QObjectList &childTaskList = children();
+	const QList<Task*> taskList = findChildren<Task*>();
 
 	// pass along the transfer to our children
-	Task *t;
-	foreach(QObject *obj, childTaskList)
+	foreach( Task* task, taskList)
 	{
-		t = qobject_cast<Task*>(obj);
-		if(!t)
-			continue;
-		
-		if(t->take( transfer ))
-		{
+		if ( task->take( transfer ) )
 			return true;
-		}
 	}
 
 	return false;
