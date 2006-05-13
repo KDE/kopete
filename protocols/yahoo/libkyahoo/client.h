@@ -37,6 +37,7 @@ class Task;
 class KURL;
 class KTempFile;
 class YABEntry;
+class SendFileTask;
 
 class Client : public QObject
 {
@@ -263,6 +264,11 @@ Q_OBJECT
 		 * Deletes a YAB entry
 		 */
 		void deleteYABEntry( YABEntry &entry );
+
+		/**
+		 * Send a file to a buddy
+		 */
+		SendFileTask *sendFile( const QString &userId, const QString &msg, KURL url );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/

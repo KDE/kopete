@@ -25,6 +25,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 #include "kopeteview.h"
+#include "kopetetransfermanager.h"
 
 // Local Includes
 #include "yahoocontact.h"
@@ -35,6 +36,7 @@
 #include "yahoochatsession.h"
 #include "yabentry.h"
 #include "yahoouserinfodialog.h"
+#include "sendfiletask.h"
 
 // QT Includes
 #include <qregexp.h>
@@ -76,7 +78,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	// Update ContactList
 	setNickName( fullName );
 	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
-// 	setFileCapable( true );
+	setFileCapable( true );
 	
 	if ( m_account->haveContactList() )
 		syncToServer();
@@ -336,23 +338,10 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
-void YahooContact::sendFile( const KURL &sourceURL, const QString &/*fileName*/, uint fileSize )
+void YahooContact::sendFile( const KURL &sourceURL, const QString &fileName, uint fileSize )
 {
-	QString file;
-	if( sourceURL.isValid() )
-		file = sourceURL.path();
-	else
-	{
-		file = KFileDialog::getOpenFileName( QString::null, "*", 0, i18n("Kopete File Transfer") );
-		if( !file.isEmpty() )
-		{
-			fileSize = QFile( file ).size();
-		}
-		else
-			return;
-	}
-	
-	//m_account->yahooSession()->sendFile( m_userId, QString(), file, fileSize );
+	Kopete::TransferManager::transferManager()->sendFile( sourceURL, fileName, fileSize, 
+			false, this, SLOT(slotSendFile( const KURL & )) );
 }
 
 void YahooContact::slotTyping(bool isTyping_ )
@@ -461,9 +450,17 @@ void YahooContact::slotUserProfile()
 	KRun::runURL( KURL( profileSiteString ) , "text/html" );
 }
 
-void YahooContact::slotSendFile()
+void YahooContact::slotSendFile( const KURL &url)
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	QFile file( url.path() );
+	
+	Kopete::Transfer *transfer = Kopete::TransferManager::transferManager()->addTransfer ( this,
+		url.fileName(), file.size(), contactId(), Kopete::FileTransferInfo::Outgoing );
+	SendFileTask *sft = m_account->yahooSession()->sendFile( m_userId, QString(), url );
+	connect( sft, SIGNAL(bytesProcessed( unsigned int )), transfer, SLOT(slotProcessed(unsigned int)) );
+	connect( sft, SIGNAL(complete()), transfer, SLOT(slotComplete()) );
+	connect( sft, SIGNAL(error( int, const QString &)), transfer, SLOT(slotError(int, const QString &)) );
 }
 
 void YahooContact::stealthContact()

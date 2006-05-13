@@ -48,6 +48,7 @@
 #include "yabtask.h"
 #include "modifyyabtask.h"
 #include "chatsessiontask.h"
+#include "sendfiletask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -309,6 +310,16 @@ void Client::sendBuzz( const QString &to )
 	smt->setText( QString::fromLatin1( "<ding>" ) );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
+}
+
+SendFileTask *Client::sendFile( const QString &to, const QString &msg, KURL url )
+{
+	SendFileTask *sft = new SendFileTask( d->root );
+	sft->setTarget( to );
+	sft->setMessage( msg );
+	sft->setFileUrl( url );
+	sft->go( true );
+	return sft;
 }
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )

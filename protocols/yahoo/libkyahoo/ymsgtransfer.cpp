@@ -217,7 +217,8 @@ QByteArray YMSGTransfer::serialize()
 	else
 		stream << (Q_INT16)0x000e;
 	stream << (Q_INT16)0x0000;
-	if( d->service == Yahoo::ServicePictureUpload )
+	if( d->service == Yahoo::ServicePictureUpload ||
+		d->service == Yahoo::ServiceFileTransfer )
 		stream << (Q_INT16)(length()+4);
 	else
 		stream << (Q_INT16)length();
