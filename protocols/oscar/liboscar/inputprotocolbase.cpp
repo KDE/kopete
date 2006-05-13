@@ -74,7 +74,8 @@ bool InputProtocolBase::safeReadBytes( QByteArray& data, uint & len )
 	if ( val > 1024 )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
-	QByteArray temp( val );
+	QByteArray temp;
+	temp.reserve( val );
 	if ( val != 0 )
 	{
 		if ( !okToProceed() )

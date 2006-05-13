@@ -161,7 +161,8 @@ void AimLoginTask::sendLoginRequest()
 	Buffer *outbuf = new Buffer;
 	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().toLatin1());
 
-	QByteArray digest( 17 ); //apparently MD5 digests are 16 bytes long
+	QByteArray digest;
+	digest.reserve( 17 ); //apparently MD5 digests are 16 bytes long
 	encodePassword( digest );
 	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
 

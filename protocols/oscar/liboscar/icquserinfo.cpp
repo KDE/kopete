@@ -1,11 +1,11 @@
 /*
 	Kopete Oscar Protocol
 	icquserinfo.h - ICQ User Info Data Types
-	
+
 	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
-	
+
 	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
-	
+
 	*************************************************************************
 	*                                                                       *
 	* This library is free software; you can redistribute it and/or         *
@@ -129,13 +129,13 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		WORD year = buffer->getLEWord();
 		BYTE month = buffer->getByte();
 		BYTE day = buffer->getByte();
-		
+
 		// set birthday to NULL if at least one of the values in the buffer is 0
 		if ( year == 0 || month == 0 || day == 0 )
 			birthday = QDate();
 		else
 			birthday = QDate( year, month, day );
-		
+
 		lang1 = buffer->getByte();
 		lang2 = buffer->getByte();
 		lang3 = buffer->getByte();
@@ -210,26 +210,26 @@ ICQSearchResult::ICQSearchResult()
 
 void ICQSearchResult::fill( Buffer* buffer )
 {
-	WORD datalength = buffer->getLEWord(); // data length
+	buffer->getLEWord(); // data length ( eat it )
 	WORD len = 0;
 	uin = buffer->getLEDWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
 	len = buffer->getLEWord();
 	if ( len > 0 )
 		nickName = buffer->getBlock( len );
-	
+
 	len = buffer->getLEWord();
 	if ( len > 0 )
 		firstName = buffer->getBlock( len );
-	
+
 	len = buffer->getLEWord();
 	if ( len > 0 )
 		lastName = buffer->getBlock( len );
-	
+
 	len = buffer->getLEWord();
 	if ( len > 0 )
 		email = buffer->getBlock( len );
-	
+
 	auth = ( buffer->getByte() != 0x01 );
 	online = ( buffer->getLEWord() == 0x0001 );
 	switch ( buffer->getByte() )
@@ -257,6 +257,6 @@ ICQWPSearchInfo::ICQWPSearchInfo()
 	onlineOnly = false;
 }
 
-	
+
 
 //kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

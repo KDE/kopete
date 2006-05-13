@@ -519,7 +519,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
 		if ( !c )
 			return;
-		
+
 		Oscar::Message response ( msg );
 		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		{
@@ -867,7 +867,7 @@ void Client::addICQAwayMessageRequest( const QString& contact, ICQStatus contact
 
 	ClientPrivate::AwayMsgRequest amr = { contact, contactStatus };
 	d->awayMsgRequestQueue.prepend( amr );
-	
+
 	if ( !d->awayMsgRequestTimer->isActive() )
 		d->awayMsgRequestTimer->start( 1000 );
 }
@@ -890,7 +890,7 @@ void Client::removeICQAwayMessageRequest( const QString& contact )
 void Client::nextICQAwayMessageRequest()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "request queue count " << d->awayMsgRequestQueue.count() << endl;
-	
+
 	if ( d->awayMsgRequestQueue.empty() )
 	{
 		d->awayMsgRequestTimer->stop();
@@ -901,7 +901,7 @@ void Client::nextICQAwayMessageRequest()
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
 		if ( !c )
 			return;
-		
+
 		SNAC s = { 0x0004, 0x0006, 0x0000, 0x00000000 };
 		//get time needed to restore level to initial
 		//for some reason when we are long under initial level
@@ -1062,7 +1062,7 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
 	if ( !c )
 		return;
 
-    if ( d->redirectionServices.findIndex( family ) == -1 )
+    if ( d->redirectionServices.indexOf( family ) == -1 )
         d->redirectionServices.append( family ); //don't add families twice
 
     if ( d->currentRedirect != 0 )
@@ -1178,7 +1178,7 @@ void Client::serverRedirectFinished()
 void Client::checkRedirectionQueue( WORD family )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checking redirection queue" << endl;
-	d->redirectionServices.remove( family );
+	d->redirectionServices.removeAll( family );
     d->currentRedirect = 0;
 	if ( !d->redirectionServices.isEmpty() )
 	{

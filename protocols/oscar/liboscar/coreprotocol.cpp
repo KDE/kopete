@@ -116,7 +116,8 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		{
 			//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "more data in chunk!" << endl;
 			// copy the unparsed bytes into a new qbytearray and replace m_in with that
-			QByteArray remainder( size - parsedBytes );
+			QByteArray remainder;
+			remainder.reserve( size - parsedBytes );
 			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
 			m_in = remainder;
 		}
@@ -194,11 +195,11 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << wire.size() << endl;
 		m_state = NeedMore;
 		return bytesParsed;
-	}	
-	
+	}
+
 	QByteArray tempWire = wire;
 	QDataStream din( &tempWire, IO_ReadOnly );
-	
+
 	// look at first four bytes and decide what to do with the chunk
 	if ( okToProceed( din ) )
 	{

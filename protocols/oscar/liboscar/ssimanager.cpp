@@ -67,9 +67,9 @@ void SSIManager::clear()
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing the SSI list" << endl;
 		QList<Oscar::SSI>::iterator it = d->SSIList.begin();
-		
+
 		while ( it != d->SSIList.end() && d->SSIList.count() > 0 )
-			it = d->SSIList.remove( it );
+			it = d->SSIList.erase( it );
 	};
 }
 
@@ -115,7 +115,7 @@ void SSIManager::setParameters( WORD maxContacts, WORD maxGroups, WORD maxVisibl
 		<< maxInvisible << endl;
 	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on ignore list: "
 		<< maxIgnore << endl;
-	
+
 	d->maxContacts = maxContacts;
 	d->maxGroups = maxGroups;
 	d->maxInvisible = maxInvisible;
@@ -132,51 +132,51 @@ void SSIManager::loadFromExisting( const QList<Oscar::SSI*>& newList )
 bool SSIManager::hasItem( const Oscar::SSI& item ) const
 {
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 	{
 		Oscar::SSI s = ( *it );
 		if ( s == item )
 			return true;
 	}
-	
+
 	return false;
 }
 
 Oscar::SSI SSIManager::findGroup( const QString &group ) const
 {
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).name().toLower() == group.toLower() )
 			return ( *it );
-	
-	
+
+
 	return m_dummyItem;
 }
 
 Oscar::SSI SSIManager::findGroup( int groupId ) const
 {
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).gid() == groupId )
 			return ( *it );
-	
+
 	return m_dummyItem;
 }
 
 Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group ) const
 {
-	
+
 	if ( contact.isNull() || group.isNull() )
 	{
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo <<
 			"Passed NULL name or group string, aborting!" << endl;
-		
+
 		return m_dummyItem;
 	}
-	
+
 	Oscar::SSI gr = findGroup( group ); // find the parent group
 	if ( gr.isValid() )
 	{
@@ -184,9 +184,9 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 			", gr->gid= " << gr.gid() <<
 			", gr->bid= " << gr.bid() <<
 			", gr->type= " << gr.type() << endl;
-	
+
 		QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
-		
+
 		for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		{
 			if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact && (*it ).gid() == gr.gid() )
@@ -208,31 +208,31 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 
 Oscar::SSI SSIManager::findContact( const QString &contact ) const
 {
-	
+
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact )
 			return ( *it );
-	
+
 	return m_dummyItem;
 }
 
 Oscar::SSI SSIManager::findContact( int contactId ) const
 {
 	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && ( *it ).bid() == contactId )
 			return ( *it );
-	
+
 	return m_dummyItem;
 }
 
 Oscar::SSI SSIManager::findItemForIcon( QByteArray iconHash ) const
 {
 	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 	{
 		if ( ( *it ).type() == ROSTER_BUDDYICONS )
@@ -255,7 +255,7 @@ Oscar::SSI SSIManager::findItemForIcon( QByteArray iconHash ) const
 Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
 {
 	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 	{
 		if ( ( *it ).type() == ROSTER_BUDDYICONS )
@@ -267,72 +267,72 @@ Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
 			}
 		}
 	}
-	return m_dummyItem;	
+	return m_dummyItem;
 }
 
 Oscar::SSI SSIManager::findItem( const QString &contact, int type ) const
 {
 	QList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
-	
+
 	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
 		if ( ( *it ).type() == type && ( *it ).name() == contact )
 			return ( *it );
-	
+
 	return m_dummyItem;
 }
 
 QList<Oscar::SSI> SSIManager::groupList() const
 {
 	QList<Oscar::SSI> list;
-	
+
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP  )
 			list.append( ( *it ) );
-	
+
 	return list;
 }
 
 QList<Oscar::SSI> SSIManager::contactList() const
 {
 	QList<Oscar::SSI> list;
-	
+
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT  )
 			list.append( ( *it ) );
-	
+
 	return list;
 }
 
 QList<Oscar::SSI> SSIManager::visibleList() const
 {
 	QList<Oscar::SSI> list;
-	
+
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_VISIBLE  )
 			list.append( ( *it ) );
-	
+
 	return list;
 }
 
 QList<Oscar::SSI> SSIManager::invisibleList() const
 {
 	QList<Oscar::SSI> list;
-	
+
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_INVISIBLE  )
 			list.append( ( *it ) );
-	
+
 	return list;
 }
 
 QList<Oscar::SSI> SSIManager::contactsFromGroup( const QString &group ) const
 {
 	QList<Oscar::SSI> list;
-	
+
 	Oscar::SSI gr = findGroup( group );
 	if ( gr.isValid() )
 	{
@@ -347,12 +347,12 @@ QList<Oscar::SSI> SSIManager::contactsFromGroup( const QString &group ) const
 QList<Oscar::SSI> SSIManager::contactsFromGroup( int groupId ) const
 {
 	QList<Oscar::SSI> list;
-	
+
 	QList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && (*it ).gid() == groupId  )
 			list.append( ( *it ) );
-	
+
 	return list;
 }
 
@@ -369,7 +369,7 @@ Oscar::SSI SSIManager::visibilityItem() const
 			return item;
 		}
 	}
-	
+
 	return item;
 }
 
@@ -377,7 +377,7 @@ bool SSIManager::listComplete() const
 {
 	//if last modification time is zero, we're not done
 	//getting the list
-	return d->lastModTime != 0; 
+	return d->lastModTime != 0;
 }
 
 bool SSIManager::newGroup( const Oscar::SSI& group )
@@ -392,7 +392,7 @@ bool SSIManager::newGroup( const Oscar::SSI& group )
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group '" << group.name() << "' to SSI list" << endl;
 		if ( group.gid() > d->nextGroupId )
 			d->nextGroupId = group.gid();
-		
+
 		d->SSIList.append( group );
 		emit groupAdded( group );
 		return true;
@@ -404,13 +404,13 @@ bool SSIManager::removeGroup( const Oscar::SSI& group )
 {
 	QString groupName = group.name();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name() << endl;
-	int remcount = d->SSIList.remove( group );
+	int remcount = d->SSIList.removeAll( group );
 	if ( remcount == 0 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No groups removed" << endl;
 		return false;
 	}
-	
+
 	emit groupRemoved( groupName );
 	return true;
 }
@@ -418,7 +418,7 @@ bool SSIManager::removeGroup( const Oscar::SSI& group )
 bool SSIManager::removeGroup( const QString &group )
 {
 	Oscar::SSI gr = findGroup( group );
-	
+
 	if ( gr.isValid() && removeGroup( gr )  )
 	{
 		return true;
@@ -437,8 +437,8 @@ bool SSIManager::newContact( const Oscar::SSI& contact )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << contact.bid() << endl;
 		d->nextContactId = contact.bid();
 	}
-	
-	if ( d->SSIList.findIndex( contact ) == -1 )
+
+	if ( d->SSIList.indexOf( contact ) == -1 )
 	{
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact '" << contact.name() << "' to SSI list" << endl;
 		d->SSIList.append( contact );
@@ -452,14 +452,14 @@ bool SSIManager::newContact( const Oscar::SSI& contact )
 bool SSIManager::removeContact( const Oscar::SSI& contact )
 {
 	QString contactName = contact.name();
-	int remcount = d->SSIList.remove( contact );
-	
+	int remcount = d->SSIList.removeAll( contact );
+
 	if ( remcount == 0 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed." << endl;
 		return false;
 	}
-	
+
 	emit contactRemoved( contactName );
 	return true;
 }
@@ -467,12 +467,12 @@ bool SSIManager::removeContact( const Oscar::SSI& contact )
 bool SSIManager::removeContact( const QString &contact )
 {
 	Oscar::SSI ct = findContact( contact );
-	
+
 	if ( ct.isValid() && removeContact( ct ) )
 		return true;
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact " << contact << " not found." << endl;
-	
+
 	return false;
 }
 
@@ -483,7 +483,7 @@ bool SSIManager::newItem( const Oscar::SSI& item )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << item.bid() << endl;
 		d->nextContactId = item.bid();
 	}
-	
+
 	//no error checking for now
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
 	d->SSIList.append( item );
@@ -492,7 +492,7 @@ bool SSIManager::newItem( const Oscar::SSI& item )
 
 bool SSIManager::removeItem( const Oscar::SSI& item )
 {
-	d->SSIList.remove( item );
+	d->SSIList.removeAll( item );
 	return true;
 }
 

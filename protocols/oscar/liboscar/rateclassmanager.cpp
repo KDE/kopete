@@ -53,7 +53,7 @@ void RateClassManager::reset()
 	while ( it != d->classList.end() && d->classList.count() > 0)
 	{
 		RateClass* rc = ( *it );
-		it = d->classList.remove( it );
+		it = d->classList.erase( it );
 		delete rc;
 	}
 }
@@ -75,7 +75,7 @@ bool RateClassManager::canSend( Transfer* t ) const
 
 	RateClass* rc = findRateClass( st );
 	if ( rc )
-	{ 
+	{
 		if ( rc->timeToNextSend() == 0 )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's okay to send" << endl;
@@ -120,10 +120,10 @@ void RateClassManager::transferReady( Transfer* t )
 	//tell the client to send it again. We should be
 	//able to send it now
 	FlapTransfer* ft = dynamic_cast<FlapTransfer*>( t );
-	
+
 	if ( ft )
 		ft->setFlapSequence( d->client->flapSequence() );
-	
+
 	d->client->forcedSend( t );
 }
 
@@ -161,7 +161,7 @@ int RateClassManager::timeToInitialLevel( SNAC s )
 {
 	QList<RateClass*>::const_iterator it;
 	QList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
-	
+
 	for ( it = d->classList.constBegin(); it != rcEnd; ++it )
 	{
 		if ( ( *it )->isMember( s.family, s.subtype ) )

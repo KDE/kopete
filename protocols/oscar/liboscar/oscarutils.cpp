@@ -27,7 +27,7 @@ using namespace Oscar;
 QString Oscar::normalize( const QString& contact )
 {
 	QString normal = contact.toLower();
-	normal.remove( ' ' );
+	normal.remove( QChar( ' ' ) );
 	return normal;
 }
 
@@ -66,7 +66,7 @@ bool Oscar::updateTLVs( SSI& item, const QList<TLV>& list )
 			continue;
 
 		if ( t )
-			tList.remove( t );
+			tList.removeAll( t );
 
 		tList.append( *it );
 		changed = true;
@@ -82,11 +82,11 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 {
 	DWORD capflags = 0;
 	QString dbgCaps = "CAPS: ";
-	
+
 	while(inbuf.bytesAvailable() >= 16)
 	{
 		Guid cap( inbuf.getGuid() );
-		
+
 		for (int i=0; i < CAP_LAST; i++)
 		{
 			if (i == CAP_KOPETE)
@@ -106,9 +106,9 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 					kDebug(14150) << k_funcinfo << "MICQ version : <" <<
 						(int)cap.data()[12] << ":" << (int)cap.data()[13] << ":" <<
 						(int)cap.data()[14] << ":" << (int)cap.data()[15] << ">" << endl;
-					
+
 					capflags |= (1 << i);
-					
+
 						// FIXME: how to decode this micq version mess? [mETz - 08.06.2004]
 						/*versionString.sprintf("%d.%d.%d%d",
 							cap[12], cap[13], cap[14], cap[15]);*/
@@ -266,6 +266,6 @@ QString Oscar::getDottedDecimal( DWORD address )
 	return addr.toString();
 }
 
-	
+
 
 //kate: tab-width 4; indent-mode csands;
