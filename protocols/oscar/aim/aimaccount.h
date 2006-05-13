@@ -105,10 +105,10 @@ public slots:
 	void slotEditInfo();
 	void slotGoOnline();
 
-	void globalIdentityChanged( const QString&, const QVariant& );
-	void sendBuddyIcon();
-    void slotJoinChat();
+	void slotGlobalIdentityChanged( const QString&, const QVariant& );
+	void slotBuddyIconChanged();
 
+	void slotJoinChat();
 
 protected slots:
 	void slotGoAway(const QString&);
