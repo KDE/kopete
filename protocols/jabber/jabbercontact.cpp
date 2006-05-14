@@ -1555,16 +1555,16 @@ void JabberContact::slotDiscoFinished( )
 	if(is_transport && !transport()) 
  	{   //ok, we are not a contact, we are a transport....
 		
-		const QString jid = rosterItem().jid().bare();
+		XMPP::RosterItem ri = rosterItem();
 		Kopete::MetaContact *mc=metaContact();
 		JabberAccount *parentAccount=account();
 		Kopete::OnlineStatus status=onlineStatus();
 		
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << jid << " is not a contact but a gateway   - " << this << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << ri.jid().full() << " is not a contact but a gateway   - " << this << endl;
 		
-		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , jid + "/" + account()->accountId() ) )
+		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , account()->accountId() + "/" + ri.jid().bare() ) )
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport azlready exists, abort operation " <<  endl;
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport already exists, abort operation " <<  endl;
 			return;
 		}
 		
@@ -1574,7 +1574,7 @@ void JabberContact::slotDiscoFinished( )
 			Kopete::ContactList::self()->removeMetaContact( mc );
 		
 		//we need to create the transport when 'this' is already deleted, so transport->myself() will not conflict with it
-		JabberTransport *transport = new JabberTransport( parentAccount , jid , tr_type );
+		JabberTransport *transport = new JabberTransport( parentAccount , ri , tr_type );
 		if(!Kopete::AccountManager::self()->registerAccount( transport ))
 			return;
 		transport->myself()->setOnlineStatus( status ); //push back the online status

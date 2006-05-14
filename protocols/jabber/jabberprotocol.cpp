@@ -188,8 +188,7 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 	int slash=accountId.find('/');
 	if(slash>=0)
 	{
-		QString realAccountId=accountId.mid(slash+1);
-		QString myselfId=accountId.left(slash);
+		QString realAccountId=accountId.left(slash);
 		JabberAccount *realAccount=dynamic_cast<JabberAccount*>(Kopete::AccountManager::self()->findAccount( pluginId() , realAccountId ));
 		if(!realAccount) //if it doesn't exist yet, create it
 		{
@@ -199,7 +198,7 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 		}
 		if(!realAccount)
 			return 0L;
-		return new JabberTransport( realAccount , myselfId );
+		return new JabberTransport( realAccount , accountId );
 	}
 	else
 	{

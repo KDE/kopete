@@ -38,58 +38,83 @@
 
 #include "xmpp_tasks.h"
 
-JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString & myselfContactId, const QString& gateway_type)
-	:Kopete::Account ( parentAccount->protocol(), myselfContactId+"/"+parentAccount->accountId())
+JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::RosterItem & item, const QString& gateway_type)
+	: Kopete::Account ( parentAccount->protocol(), parentAccount->accountId()+"/"+ item.jid().bare() )
 {
 	m_status=Creating;
 	m_account = parentAccount;
-	m_account->addTransport( this, myselfContactId );
+	m_account->addTransport( this,item.jid().bare() );
 	
-	JabberContact *myContact = m_account->contactPool()->addContact ( XMPP::RosterItem ( myselfContactId ), Kopete::ContactList::self()->myself(), false );
+	JabberContact *myContact = m_account->contactPool()->addContact ( item , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
 	
-	//we have to know if the account get loaded from the config, or newly created
-	bool exist=configGroup()->readBoolEntry("exist",false);
-	
-	if(!exist)
-	{
-		setColor( account()->color() );
-#if KOPETE_IS_VERSION(0,11,51)
-		QString cIcon;
-		if(gateway_type=="msn")
-			cIcon="jabber_gateway_msn";
-		else if(gateway_type=="icq")
-			cIcon="jabber_gateway_icq";
-		else if(gateway_type=="aim")
-			cIcon="jabber_gateway_aim";
-		else if(gateway_type=="yahoo")
-			cIcon="jabber_gateway_yahoo";
-		else if(gateway_type=="sms")
-			cIcon="jabber_gateway_sms";
-		else if(gateway_type=="gadu-gadu")
-			cIcon="jabber_gateway_gadu";
-		else if(gateway_type=="smtp")
-			cIcon="jabber_gateway_smtp";
-		else if(gateway_type=="http-ws") 
-			cIcon="jabber_gateway_http-ws";
-		else if(gateway_type=="qq")
-			cIcon="jabber_gateway_qq";
-		else if(gateway_type=="tlen")
-			cIcon="jabber_gateway_tlen";
-		else if(gateway_type=="irc")  //NOTE: this is not official 
-			cIcon="irc_protocol";
+	setColor( account()->color() );
 
-		if( !cIcon.isEmpty() )
-			setCustomIcon( cIcon );
-#endif
-		configGroup()->writeEntry("exist",true);
-		QTimer::singleShot(0, this, SLOT(eatContacts()));
-	}
+#if KOPETE_IS_VERSION(0,11,51)  //setCustomIcon is new in kopete 0.12
+	QString cIcon;
+	if(gateway_type=="msn")
+		cIcon="jabber_gateway_msn";
+	else if(gateway_type=="icq")
+		cIcon="jabber_gateway_icq";
+	else if(gateway_type=="aim")
+		cIcon="jabber_gateway_aim";
+	else if(gateway_type=="yahoo")
+		cIcon="jabber_gateway_yahoo";
+	else if(gateway_type=="sms")
+		cIcon="jabber_gateway_sms";
+	else if(gateway_type=="gadu-gadu")
+		cIcon="jabber_gateway_gadu";
+	else if(gateway_type=="smtp")
+		cIcon="jabber_gateway_smtp";
+	else if(gateway_type=="http-ws") 
+		cIcon="jabber_gateway_http-ws";
+	else if(gateway_type=="qq")
+		cIcon="jabber_gateway_qq";
+	else if(gateway_type=="tlen")
+		cIcon="jabber_gateway_tlen";
+	else if(gateway_type=="irc")  //NOTE: this is not official 
+		cIcon="irc_protocol";
+
+	if( !cIcon.isEmpty() )
+		setCustomIcon( cIcon );
+#endif		
+
+	configGroup()->writeEntry("GatewayJID" , item.jid().full() );
+
+	QTimer::singleShot(0, this, SLOT(eatContacts()));
 	
 	m_status=Normal;
 }
+
+JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString & _accountId )
+	: Kopete::Account ( parentAccount->protocol(), _accountId )
+{
+	m_status=Creating;
+	m_account = parentAccount;
+	
+	const QString contactJID_s = configGroup()->readEntry("GatewayJID");
+	
+	if(contactJID_s.isEmpty())
+	{
+		kdError(JABBER_DEBUG_GLOBAL) << k_funcinfo << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
+	}
+	
+	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
+	
+	m_account->addTransport( this, contactJID.bare() );
+	
+	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
+	setMyself( myContact );
+	
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	
+	m_status=Normal;
+}
+
+
+
 
 JabberTransport::~JabberTransport ()
 {

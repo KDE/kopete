@@ -26,7 +26,10 @@
 #include <kopeteaccount.h>
 
 
-namespace XMPP { class Jid; }
+namespace XMPP { 
+	class Jid;
+	class RosterItem;
+}
 class JabberAccount;
 class JabberProtocol;
 
@@ -40,13 +43,21 @@ class JabberTransport : public Kopete::Account
 
 public:
 	/**
-	 * constructor
+	 * constructor called when the transport is created by info from server  (i.e not when loading kopete)
 	 * @param parentAccount is the parent jabber account.
-	 * @param accountId is in the form    LegacyUserAddress@gateway.example.com
+	 * @param item is the roster item of the gateway
 	 * @param gateway_type eg: "msn" or "icq"  only used when the account is not loaded from config file for determining the icon
 	 */
-	JabberTransport (JabberAccount * parentAccount, const QString & accountId, const QString& gateway_type=QString());
-	 ~JabberTransport ();
+	JabberTransport (JabberAccount * parentAccount, const XMPP::RosterItem &item, const QString& gateway_type=QString());
+	
+	/**
+	 * constructor called when the transport is loaded from config
+	 * @param parentAccount is the parent jabber account.
+	 * @param accountId is the accountId
+	 */
+	JabberTransport (JabberAccount * parentAccount, const QString &accountId );
+
+	~JabberTransport ();
 
 	/** Returns the action menu for this account. */
 	virtual KActionMenu *actionMenu ();
