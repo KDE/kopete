@@ -27,7 +27,7 @@
 #include <qlabel.h>
 //Added by qt3to4:
 #include <QShowEvent>
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -49,7 +49,6 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 	mAccount = owner;
 	m_searchDialog = 0L;
 
-	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	addUI = new Ui::icqAddUI();
 	addUI->setupUi(this);
 	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
@@ -91,7 +90,7 @@ bool ICQAddContactPage::validateData()
 		KMessageBox::sorry( this, i18n("You must be online to add a contact."), i18n("ICQ Plugin") );
 		return false;
 	}
-	
+
 	Q_ULONG uin = addUI->uinEdit->text().toULong();
 	if ( uin < 1000 )
 	{

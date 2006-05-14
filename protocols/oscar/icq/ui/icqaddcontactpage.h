@@ -30,6 +30,7 @@
 namespace Ui { class icqAddUI; }
 class ICQAccount;
 class ICQSearchDialog;
+class QVBoxLayout;
 
 class ICQAddContactPage : public AddContactPage
 {
@@ -38,20 +39,19 @@ Q_OBJECT
 public:
 	ICQAddContactPage(ICQAccount *owner, QWidget *parent = 0);
 	~ICQAddContactPage();
-	
+
 	virtual bool validateData();
 	virtual bool apply(Kopete::Account* , Kopete::MetaContact *parentContact);
-	
+
 	void setUINFromSearch( const QString& );
-	
+
 protected:
 	void showEvent(QShowEvent *e);
-	
+
 private slots:
 	void showSearchDialog();
 	void searchDialogDestroyed();
 private:
-	
 	ICQAccount *mAccount;
 	Ui::icqAddUI *addUI;
 	ICQSearchDialog* m_searchDialog;

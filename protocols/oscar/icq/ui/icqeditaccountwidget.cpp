@@ -24,8 +24,6 @@
 #include <q3textedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <QLatin1String>
 
 #include <kconfig.h>
@@ -55,11 +53,10 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
 
-	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	mAccountSettings = new Ui::ICQEditAccountUI();
 	mAccountSettings->setupUi( this );
 
-    mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );
+	mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );
 
 	// Read in the settings from the account if it exists
 	if(mAccount)
@@ -157,7 +154,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 		mAccount->setServerAddress("login.oscar.aol.com");
 		mAccount->setServerPort(5190);
 	}
-	
+
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );
 
@@ -170,7 +167,7 @@ bool ICQEditAccountWidget::validateData()
 
 	QString userName = mAccountSettings->edtAccountId->text();
 
-	if (userName.contains(" ")) 
+	if (userName.contains(" "))
 		return false;
 
 	for (unsigned int i=0; i<userName.length(); i++)
