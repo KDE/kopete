@@ -1,3 +1,4 @@
+macro_optional_find_package(OpenSSL)
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
@@ -8,7 +9,9 @@ add_subdirectory( msn )
 add_subdirectory( oscar ) 
 add_subdirectory( yahoo ) 
 add_subdirectory( winpopup )
-add_subdirectory( gadu )
+if(OPENSSL_FOUND)
+	add_subdirectory( gadu )
+endif(OPENSSL_FOUND)
 
 if(QCA2_FOUND)
   if(WITH_messenger)
