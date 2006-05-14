@@ -32,7 +32,6 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 	mProtocol = protocol;
 
 	// create the gui (generated from a .ui file)
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	mGui = new Ui::aimEditAccountUI();
 	mGui->setupUi( this );
 

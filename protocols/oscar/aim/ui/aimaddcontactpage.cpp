@@ -32,8 +32,6 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 	: AddContactPage(parent)
 {
     m_gui = 0;
-	(new Q3VBoxLayout(this))->setAutoAdd(true);
-
 	if(connected)
 	{
 		QWidget* w = new QWidget( this );

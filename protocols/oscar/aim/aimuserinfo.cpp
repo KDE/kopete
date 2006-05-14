@@ -25,7 +25,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 #include <Q3Frame>
 #include <qtimer.h>
 
@@ -82,16 +82,16 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 
 		userInfoView=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
-		Q3VBoxLayout *l = new Q3VBoxLayout(mMainWidget->userInfoFrame);
+		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoEdit = new KTextEdit(QString(), mMainWidget->userInfoFrame);
 		userInfoEdit->setTextFormat(Qt::PlainText);
-		
+
 		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
 		if ( aimmc )
 			userInfoEdit->setText( aimmc->userProfile() );
 		else
 			userInfoEdit->setText( QString::null );
-		
+
 		setButtonText(Ok, i18n("&Save Profile"));
 		showButton(User1, false);
 		l->addWidget(userInfoEdit);
@@ -100,7 +100,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 	{
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
-		Q3VBoxLayout *l = new Q3VBoxLayout(mMainWidget->userInfoFrame);
+		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
 		userInfoView->setTextFormat(Qt::AutoText);
 		userInfoView->setNotifyClick(true);
@@ -177,7 +177,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
 	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setText( awayMessage );
-	
+
 	if ( awayMessage.isNull() )
 	{
 		mMainWidget->txtAwayMessage->hide();
@@ -188,22 +188,22 @@ void AIMUserInfoDialog::slotUpdateProfile()
 		mMainWidget->txtAwayMessage->show();
 		mMainWidget->lblAwayMessage->show();
 	}
-	
+
 	QString onlineSince =  m_contact->property("onlineSince").value().toString();
 	//QString onlineSince = m_details.onlineSinceTime().toString();
 	mMainWidget->txtOnlineSince->setText( onlineSince );
-	
+
 	AIMContact* c = static_cast<AIMContact*>( m_contact );
 	mMainWidget->txtIdleTime->setText(c->formattedIdleTime());
-	mMainWidget->txtWarnLevel->setText(QString::number(c->warningLevel())); 
-	
+	mMainWidget->txtWarnLevel->setText(QString::number(c->warningLevel()));
+
 	QString contactProfile = m_contact->property( p->clientProfile ).value().toString();
 	if ( contactProfile.isNull() )
 	{
 		contactProfile =
 			i18n("<html><body><I>No user information provided</I></body></html>");
 	}
-	
+
 	if(userInfoEdit)
 	{
 		userInfoEdit->setText(contactProfile);
@@ -212,7 +212,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	{
 		userInfoView->setText(contactProfile);
 	}
-	
+
 }
 
 //KRun changed, so comment it so it compiles FIXME
