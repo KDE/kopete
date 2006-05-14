@@ -27,6 +27,8 @@
 #include <config.h>
 #endif
 
+#include <config-kopete.h>
+
 // we need these for type reasons
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>

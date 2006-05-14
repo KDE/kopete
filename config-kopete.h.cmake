@@ -35,3 +35,8 @@
 /* Defines the executable of xmllint */
 #define XMLLINT "/usr/bin/xmllint"
 
+/* Jingle support is enabled */
+/* #undef SUPPORT_JINGLE */
+
+/* enable support for the smpppd */
+/* #undef USE_SMPPPD */

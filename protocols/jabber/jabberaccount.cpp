@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <config-kopete.h>
 #include "im.h"
 #include "filetransfer.h"
 #include "xmpp.h"
