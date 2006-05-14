@@ -40,3 +40,7 @@
 
 /* enable support for the smpppd */
 /* #undef USE_SMPPPD */
+
+/* Define if you have a tm_gmtoff member in struct tm */
+#define HAVE_TM_GMTOFF 1
+
