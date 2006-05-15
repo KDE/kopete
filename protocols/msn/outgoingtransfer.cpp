@@ -98,27 +98,33 @@ void OutgoingTransfer::slotSendData()
 
 	// Read a chunk from the source file.
 	bytesRead = m_file->read(buffer.data(), buffer.size());
-	
-	if(bytesRead < 1202){
-		buffer.resize(bytesRead);
-	}
 
-	kDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
+        if (bytesRead < 0) {
+                m_file->close();
+		// ### error handling
+        }
+	else {
+		if(bytesRead < 1202){
+			buffer.resize(bytesRead);
+		}
 
-	if((m_offset + bytesRead) < m_file->size())
-	{
-		sendData(buffer);
-		m_offset += bytesRead;
-	}
-	else
-	{
-		m_isComplete = true;
-		// Send the last chunk of the file.
-		sendData(buffer);
-		m_offset += buffer.size();
-		// Close the file.
-		m_file->close();
-	}
+		kDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
+
+		if((m_offset + bytesRead) < m_file->size())
+		{
+			sendData(buffer);
+			m_offset += bytesRead;
+		}
+		else
+		{
+			m_isComplete = true;
+			// Send the last chunk of the file.
+			sendData(buffer);
+			m_offset += buffer.size();
+			// Close the file.
+			m_file->close();
+		}
+ 	}
 
 	if(m_transfer){
 		m_transfer->slotProcessed(m_offset);
