@@ -40,8 +40,7 @@ bool StatusNotifierTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 	
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 
 	if( t->service() == Yahoo::ServiceStealthOffline )
 		parseStealthStatus( transfer );
