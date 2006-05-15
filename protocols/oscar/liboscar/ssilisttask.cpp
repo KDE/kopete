@@ -61,7 +61,7 @@ bool SSIListTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		SnacTransfer * st = dynamic_cast<SnacTransfer*>( transfer );
+		SnacTransfer * st = static_cast<SnacTransfer*>( transfer );
 		if ( st->snacSubtype() == 0x0006 )
 		{
 			setTransfer( transfer );
