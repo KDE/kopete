@@ -874,7 +874,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 
 				if (!(h->voice_buf = malloc(h->chunk_size))) {
 					gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() out of memory for voice frame\n");
-					return NULL;
+					return e;
 				}
 
 				h->state = GG_STATE_READING_VOICE_DATA;
