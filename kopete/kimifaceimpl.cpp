@@ -232,6 +232,7 @@ Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & conta
 			}
 		}
 	}
+	return 0;
 }
 
 QPixmap KIMIfaceImpl::icon( const QString & uid )
