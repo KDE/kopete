@@ -351,12 +351,12 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
 			t->setParam(QString(key).toInt(), value);
 			free(value);
-			free(key);
 		}
 		else
 		{
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " key not accepted" << endl;
 		}
+		free(key);
 	}
 
 	// Packets consisting of several YMSG-packets sometimes contain padding chars (0x00) -> filter out
