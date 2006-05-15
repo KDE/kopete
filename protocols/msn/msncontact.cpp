@@ -373,16 +373,13 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 {
 	// Contact id and display name are already set for us, only add the rest
 	QString groups;
-	bool firstEntry = true;
 	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 	{
-		if( !firstEntry )
-		{
-			groups += ",";
-			firstEntry = true;
-		}
 		groups += it.key();
+		groups += ",";
 	}
+    if(groups.length() > 0)
+        groups.truncate(groups.length()-1);
 
 	QString lists="C";
 	if(m_blocked)
