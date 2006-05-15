@@ -1121,7 +1121,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 void Client::serverRedirectFinished()
 {
-	if ( m_loginTaskTwo->statusCode() == 0 )
+	if ( m_loginTaskTwo &&  m_loginTaskTwo->statusCode() == 0 )
 	{ //stage two was successful
 		Connection* c = d->connections.connectionForFamily( d->currentRedirect );
 		if ( !c )
