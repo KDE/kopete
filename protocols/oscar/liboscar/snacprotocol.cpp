@@ -46,16 +46,16 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	FLAP f;
 	SNAC s;
 	SnacTransfer *st;
-	QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
+	QDataStream din( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
 
 	//flap parsing
-	*m_din >> b; //this should be the start byte
+	din >> b; //this should be the start byte
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "start byte is " << b << endl;
-	*m_din >> b;
+	din >> b;
 	f.channel = b;
-	*m_din >> w;
+	din >> w;
 	f.sequence = w;
-	*m_din >> w;
+	din >> w;
 	f.length = w;
 
 	if ( ( f.length + 6 ) > packet.size() )
@@ -66,13 +66,13 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 		return 0;
 	}
 	//snac parsing
-	*m_din >> w;
+	din >> w;
 	s.family = w;
-	*m_din >> w;
+	din >> w;
 	s.subtype = w;
-	*m_din >> w;
+	din >> w;
 	s.flags = w;
-	*m_din >> dw;
+	din >> dw;
 	s.id = dw;
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "family: " << s.family
@@ -99,8 +99,6 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	Buffer *snacBuffer = new Buffer( snacData, f.length - snacOffset  );
 	st = new SnacTransfer( f, s, snacBuffer );
 	bytes = f.length + 6;
-	delete m_din;
-	m_din = 0;
 	return st;
 }
 
