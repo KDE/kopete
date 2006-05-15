@@ -93,7 +93,7 @@ void ModifyYABTask::connectFailed( int i)
 void ModifyYABTask::connectSucceeded()
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
+	KBufferedSocket* socket = const_cast<KBufferedSocket*>( static_cast<const KBufferedSocket*>( sender() ) );
 
 	QString header = QString::fromLatin1("POST /yab/us?v=XM&prog=ymsgr&.intl=us&sync=1&tags=short&noclear=1& HTTP/1.1\r\n"
 			"Cookie: Y=%1; T=%2; C=%3 ;B=fckeert1kk1nl&b=2\r\n"
