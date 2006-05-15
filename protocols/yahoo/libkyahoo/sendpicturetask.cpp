@@ -76,17 +76,17 @@ void SendPictureTask::connectSucceeded()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KStreamSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureUpload);
+	YMSGTransfer t(Yahoo::ServicePictureUpload);
 
 	QFile file( m_path );
 
-	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().local8Bit());
-	t->setParam( 38, 604800);
-	t->setParam( 0, client()->userId().local8Bit());
-	t->setParam( 28, file.size() );	
-	t->setParam( 27, m_fileName.local8Bit() );
-	t->setParam( 14, "" );
+	t.setId( client()->sessionID() );
+	t.setParam( 1, client()->userId().local8Bit());
+	t.setParam( 38, 604800);
+	t.setParam( 0, client()->userId().local8Bit());
+	t.setParam( 28, file.size() );	
+	t.setParam( 27, m_fileName.local8Bit() );
+	t.setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
 	QDataStream stream( buffer, IO_WriteOnly );
@@ -101,7 +101,7 @@ void SendPictureTask::connectSucceeded()
 		return;
 	}
 
-	paket = t->serialize();
+	paket = t.serialize();
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_path << "): " << file.size() << " - paket: " << paket.size() << endl;
 	QString header = QString::fromLatin1("POST /notifyft HTTP/1.1\r\n"
 			"Referer: blubb-dwsgqbxiu\r\n"
