@@ -63,7 +63,7 @@ bool SSIAuthTask::take( Transfer* t )
 	if ( forMe( t ) )
 	{
 		setTransfer( t );
-		SnacTransfer* st = dynamic_cast<SnacTransfer*> ( t );
+		SnacTransfer* st = static_cast<SnacTransfer*> ( t );
 		
 		switch ( st->snacSubtype() )
 		{
