@@ -35,15 +35,15 @@ void ChangeStatusTask::onGo()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceStatus );
-	t->setId( client()->sessionID() );
-
 	if( m_status == Yahoo::StatusInvisible )			// status --> Invisible
 	{
 		sendVisibility( Invisible );
 	}
 	else
 	{
+		YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceStatus );
+		t->setId( client()->sessionID() );
+
 		if( !m_message.isEmpty() )
 			m_status = Yahoo::StatusCustom;
 	
