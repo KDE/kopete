@@ -217,12 +217,12 @@ void PluginManager::slotPluginReadyForUnload()
 	// FIXME: I don't buy the above argument. Add a Kopete::Plugin::emitReadyForUnload(void),
 	//        and make readyForUnload be passed a plugin. - Richard
 	Plugin *plugin = dynamic_cast<Plugin *>( const_cast<QObject *>( sender() ) );
-	kDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload" << endl;
 	if ( !plugin )
 	{
 		kWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!" << endl;
 		return;
 	}
+	kDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload" << endl;
 	
 	plugin->deleteLater();
 }
