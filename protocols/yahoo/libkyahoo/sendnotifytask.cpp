@@ -52,6 +52,7 @@ void SendNotifyTask::onGo()
 	case NotifyGame:
 	default:
 		setSuccess( false );
+		delete t;
 		return;
 	break;
 	}
