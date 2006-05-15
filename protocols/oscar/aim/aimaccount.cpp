@@ -640,7 +640,7 @@ void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
     kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
     Kopete::ContactPtrList emptyList;
     AIMMyselfContact* me = static_cast<AIMMyselfContact*>( myself() );
-    AIMChatSession* session = dynamic_cast<AIMChatSession*>( me->manager( Kopete::Contact::CanCreate,
+    AIMChatSession* session = static_cast<AIMChatSession*>( me->manager( Kopete::Contact::CanCreate,
                                                                           exchange, room ) );
     session->setDisplayName( room );
     if ( session->view( true ) )
