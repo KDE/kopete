@@ -438,6 +438,8 @@ GaduDCCTransaction::watcher() {
 			}
 			closeDCC();
 			deleteLater();
+			if ( dccEvent )
+				gg_free_event( dccEvent );
 			return;
 
 		default:
