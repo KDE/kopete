@@ -308,6 +308,7 @@ void MSNSocket::slotDataReceived()
 			WebResponse response(bytes);
 
 			if(response.getStatusCode() == 100) {
+			    delete[] buffer;
 				return;
 			}
 
