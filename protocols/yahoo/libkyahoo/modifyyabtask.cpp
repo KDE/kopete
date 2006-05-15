@@ -120,7 +120,7 @@ void ModifyYABTask::connectSucceeded()
 
 void ModifyYABTask::slotRead()
 {
-	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
+	KBufferedSocket* socket = const_cast<KBufferedSocket*>( static_cast<const KBufferedSocket*>( sender() ) );
 	QByteArray ar;
 	ar.reserve( socket->bytesAvailable() );
 	socket->read( ar.data (), ar.size () );
