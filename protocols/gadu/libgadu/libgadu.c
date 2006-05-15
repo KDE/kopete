@@ -556,6 +556,7 @@ void *gg_recv_packet(struct gg_session *sess)
 		if (!ret) {
 			gg_debug(GG_DEBUG_MISC, "// gg_recv_packet() body recv() failed: connection broken\n");
 			errno = ECONNRESET;
+			free(buf);
 			return NULL;
 		}
 		if (ret > -1 && ret <= size) {
