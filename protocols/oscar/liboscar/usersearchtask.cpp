@@ -67,14 +67,14 @@ bool UserSearchTask::take( Transfer* t )
 			seq = st->snacRequest();
 		
 		TLV tlv1 = transfer()->buffer()->getTLV();
-		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
 		
 		if ( seq == 0 )
 		{
 			setTransfer( 0 );
 			return false;
 		}
-			
+
+		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
 		ICQSearchResult result;
 		buffer->getLEWord(); // data chunk size
 		/*DWORD receiverUin =*/ buffer->getLEDWord(); // target uin
