@@ -181,7 +181,7 @@ ChatView::~ChatView()
 
 KTextEdit *ChatView::editWidget()
 {
-	return editPart()->widget();
+	return editPart()->editorWidget();
 }
 
 QWidget *ChatView::mainWidget()

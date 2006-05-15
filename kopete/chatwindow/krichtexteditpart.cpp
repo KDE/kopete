@@ -55,6 +55,11 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, QObject*, cons
 	KopeteRichTextEditPart::KopeteRichTextEditPart( wparent, false );
 }
 
+KTextEdit* KopeteRichTextEditPart::editorWidget()
+{
+	return editor;
+}
+
 KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, int capabilities )
   : KParts::ReadOnlyPart( parent),
 	m_capabilities( capabilities ),

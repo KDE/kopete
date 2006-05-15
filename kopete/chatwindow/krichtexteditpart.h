@@ -34,7 +34,7 @@ class KOPETE_EXPORT KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		/**
 		* Returns the current editor widget.
 		*/
-		KTextEdit *widget() const { return (KTextEdit*)editor; }
+		KTextEdit *editorWidget();
 
 		QString text( Qt::TextFormat = Qt::AutoText ) const;
 
