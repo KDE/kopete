@@ -62,7 +62,7 @@ void OutgoingTransfer::sendImage(const QByteArray& image)
 // 		"base64:" +
 //
 // 	Message outbound;
-/ 	outbound.header.sessionId  = m_sessionId;
+// 	outbound.header.sessionId  = m_sessionId;
 // 	outbound.header.identifier = m_baseIdentifier;
 // 	outbound.header.dataOffset = 0;
 // 	outbound.header.totalDataSize = 4;
