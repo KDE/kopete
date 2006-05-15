@@ -191,7 +191,7 @@ ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
 
 ContactProperty::~ContactProperty()
 {
-	//kDebug(14000) << k_funcinfo << "this = " << (void *)this << endl;
+	delete d;
 }
 
 const QVariant &ContactProperty::value() const
