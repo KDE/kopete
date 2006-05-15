@@ -64,8 +64,8 @@ GaduSession::isConnected() const
 int
 GaduSession::status() const
 {
-	kDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
 	if ( session_ ) {
+		kDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
 		return session_->status & ( ~GG_STATUS_FRIENDS_MASK );
 	}
 	return GG_STATUS_NOT_AVAIL;
