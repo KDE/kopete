@@ -62,7 +62,7 @@ void OutgoingTransfer::sendImage(const QByteArray& image)
 // 		"base64:" +
 //
 // 	Message outbound;
-// 	outbound.header.sessionId  = m_sessionId;
+/ 	outbound.header.sessionId  = m_sessionId;
 // 	outbound.header.identifier = m_baseIdentifier;
 // 	outbound.header.dataOffset = 0;
 // 	outbound.header.totalDataSize = 4;
@@ -91,25 +91,32 @@ void OutgoingTransfer::slotSendData()
 	// Read a chunk from the source file.
 	bytesRead = m_file->readBlock(buffer.data(), buffer.size());
 	
-	if(bytesRead < 1202){
-		buffer.resize(bytesRead);
-	}
-
-	kdDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
-
-	if((m_offset + bytesRead) < m_file->size())
-	{
-		sendData(buffer);
-		m_offset += bytesRead;
-	}
-	else
-	{
-		m_isComplete = true;
-		// Send the last chunk of the file.
-		sendData(buffer);
-		m_offset += buffer.size();
-		// Close the file.
+	if (bytesRead < 0) {
 		m_file->close();
+                // ### error handling
+        }
+	else {
+
+		if(bytesRead < 1202){
+			buffer.resize(bytesRead);
+		}
+
+		kdDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
+
+		if((m_offset + bytesRead) < m_file->size())
+		{
+			sendData(buffer);
+			m_offset += bytesRead;
+		}
+		else
+		{
+			m_isComplete = true;
+			// Send the last chunk of the file.
+			sendData(buffer);
+			m_offset += buffer.size();
+			// Close the file.
+			m_file->close();
+		}
 	}
 
 	if(m_transfer){
