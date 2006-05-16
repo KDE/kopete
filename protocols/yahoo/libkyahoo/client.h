@@ -1,7 +1,7 @@
 /*
     Kopete Yahoo Protocol
     
-    Copyright (c) 2005-2006 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
@@ -84,12 +84,18 @@ Q_OBJECT
 		QString errorString();
 
 		/**
-		 * Specifies the status we connect with.
+		 * Specifies the status we connect with. 
+		 * The Yahoo protocol supports connecting into Online and Invisible state.
+		 * If @param status is any other status the Client connects into Online state and changes into the specified state after the login. 
+		 * @param status the status to connect with
 		 */
 		void setStatusOnConnect( Yahoo::Status status );
 
 		/**
 		 * Specifies the status message we connect with.
+		 * The Yahoo protocol does not support connecting with a status message. If msg is not empty the Client
+		 * will change the status message after the login.
+		 * @param msg the status message to connect with
 		 */
 		void setStatusMessageOnConnect( const QString &msg );
 
@@ -101,32 +107,43 @@ Q_OBJECT
 
 		/**
 		 * Send a Typing notification
+		 * @param to the buddy that should be notified
+		 * @param typing true if there is typing activity, false if not
 		 */
 		void sendTyping( const QString &to, bool typing );
 		
 		/**
 		 * Send a Message
+		 * @param to the buddy that should receive the message
+		 * @param msg the message
 		 */
 		void sendMessage( const QString &to, const QString &msg );
 
 		/**
 		 * Register / Unregister a chatsession
+		 * @param to the buddy, the chatsession belongs to 
+		 * @param close if true, the chatsession will be closed, if false, it will be opened
 		 */
 		void setChatSessionState( const QString &to, bool close );
 
 		/**
 		 * Send a Buzz
+		 * @param to the buddy that should receive the buzz
 		 */
 		void sendBuzz( const QString &to );
 
 		/**
 		 * Change our status
+		 * @param status the status that will be set
+		 * @param message the status message that will be set
+		 * @param type Yahoo::StatusTypeAvailable means that the user is available, Yahoo::StatusTypeAway means that the user is away from the keyboard
 		 */	
 		void changeStatus(Yahoo::Status status, const QString &message, Yahoo::StatusType type);
 
 		/**
 		 * Set the verification word that is needed for a account verification after
 		 * too many wrong login attempts.
+		 * @param word the verification word
 		 */
 		void setVerificationWord( const QString &word );
 

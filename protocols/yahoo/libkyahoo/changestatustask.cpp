@@ -45,10 +45,10 @@ void ChangeStatusTask::onGo()
 		t->setId( client()->sessionID() );
 
 		if( !m_message.isEmpty() )
+		{
 			m_status = Yahoo::StatusCustom;
-	
-		if( m_status == Yahoo::StatusCustom )
 			t->setParam( 19, m_message.utf8() );
+		}
 		t->setParam( 10, m_status );
 		t->setParam( 47, m_type );
 		t->setParam( 97, 1 );	// it's utf8

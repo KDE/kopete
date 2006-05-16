@@ -20,6 +20,7 @@
 #include "task.h"
 
 class QString;
+class YMSGTransfer;
 
 /**
 @author André Duffeck
@@ -35,7 +36,7 @@ public:
 
 protected:
 	bool forMe( Transfer *transfer ) const;
-	void parseMail( Transfer *transfer );
+	void parseMail( YMSGTransfer *transfer );
 signals:
 	void mailNotify(const QString&, const QString&, int);
 };

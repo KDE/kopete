@@ -21,6 +21,7 @@
 #include "yahootypes.h"
 
 class QString;
+class YMSGTransfer;
 
 /**
 @author André Duffeck
@@ -36,11 +37,12 @@ public:
 
 protected:
 	bool forMe( Transfer *transfer ) const;
-	void parseFileTransfer( Transfer *transfer );
-	void declineP2P( Transfer *transfer );
 signals:
-	void incomingFileTransfer( const QString &who, const QString &url, long /* expires */, const QString &msg ,
+	void incomingFileTransfer( const QString &who, const QString &url, long expires, const QString &msg ,
 	const QString &fname, unsigned long size );
+private:
+	void parseFileTransfer( YMSGTransfer *transfer );
+	void declineP2P( YMSGTransfer *YMSGtransfer );
 };
 
 #endif

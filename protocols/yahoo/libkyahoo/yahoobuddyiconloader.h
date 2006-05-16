@@ -1,7 +1,7 @@
 /*
     yahoobuddyiconloader.h - Fetches YahooBuddyIcons
 
-    Copyright (c) 2005 by André Duffeck <andre@duffeck.de>
+    Copyright (c) 2005 by AndrÃ© Duffeck <andre@duffeck.de>
 
     *************************************************************************
     *                                                                       *
@@ -38,7 +38,7 @@ struct IconLoadJob {
 };
 
 /**
- * @author André Duffeck
+ * @author AndrÃ© Duffeck
  *
  * This class handles the download of a Buddy icon.
  * If the download was succesfull it emits a signal with a pointer

@@ -49,13 +49,10 @@ bool WebcamTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return false;
+	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 	
  	if( t->service() == Yahoo::ServiceWebcam )
- 		parseWebcamInformation( transfer );
+ 		parseWebcamInformation( t );
 // 	else
 // 		parseMessage( transfer );
 
@@ -90,13 +87,9 @@ void WebcamTask::requestWebcam( const QString &who )
 	send( t );
 }
 
-void WebcamTask::parseWebcamInformation( Transfer *transfer )
+void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	YahooWebcamInformation info;
 	info.sender = keyPending;

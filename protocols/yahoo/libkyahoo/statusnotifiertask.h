@@ -21,6 +21,7 @@
 #include "yahootypes.h"
 
 class QString;
+class YMSGTransfer;
 
 /**
 @author André Duffeck
@@ -36,9 +37,9 @@ public:
 
 protected:
 	bool forMe( Transfer *transfer ) const;
-	void parseStatus( Transfer *transfer );
-	void parseStealthStatus( Transfer *transfer );
-	void parseAuthorization( Transfer *transfer );
+	void parseStatus( YMSGTransfer *transfer );
+	void parseStealthStatus( YMSGTransfer *transfer );
+	void parseAuthorization( YMSGTransfer *transfer );
 signals:
 	void statusChanged( const QString&, int, const QString&, int, int );
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );

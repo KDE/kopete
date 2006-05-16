@@ -21,6 +21,7 @@
 #include "task.h"
 #include "yabentry.h"
 
+class YMSGTransfer;
 struct KURL;
 namespace KIO	{ 
 	class Job;
@@ -47,7 +48,7 @@ signals:
 	void gotEntry( YABEntry * );
 	void gotRevision( long rev, bool merged );
 protected:
-	void parseContactDetails( Transfer* transfer );
+	void parseContactDetails( YMSGTransfer* t );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );
 	void slotResult( KIO::Job* );

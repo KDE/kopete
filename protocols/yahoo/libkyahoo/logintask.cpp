@@ -4,7 +4,7 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -62,35 +62,35 @@ bool LoginTask::take(Transfer* transfer)
 	  4.- SentAuthResp
 	*/
 	
-	if ( forMe( transfer ) )
-	{
-		switch (mState)
-		{
-			case (InitialState):
-				kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
-				return false;
-			break;
-			case (SentVerify):
-				sendAuth( transfer );
-				return true;
-			break;
-			case (SentAuth):
-				sendAuthResp( transfer );
-				return true;
-			break;
-			case (SentAuthResp):
-				parseCookies( transfer );
-				handleAuthResp( transfer );
-				// Throw transfer to the next task as it contains further data
-				return false;
-			break;
-			default:
-			return false;
-			break;
-		}
-	}
-	else
+	if ( !forMe( transfer ) )
 		return false;
+
+	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
+
+	switch (mState)
+	{
+		case (InitialState):
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
+			return false;
+		break;
+		case (SentVerify):
+			sendAuth( t );
+			return true;
+		break;
+		case (SentAuth):
+			sendAuthResp( t );
+			return true;
+		break;
+		case (SentAuthResp):
+			parseCookies( t );
+			handleAuthResp( t );
+			// Throw transfer to the next task as it contains further data
+			return false;
+		break;
+		default:
+		return false;
+		break;
+	}
 }
 
 bool LoginTask::forMe(Transfer* transfer) const
@@ -152,7 +152,7 @@ void LoginTask::sendVerify()
 	mState = SentVerify;	
 }
 
-void LoginTask::sendAuth(Transfer* transfer)
+void LoginTask::sendAuth(YMSGTransfer* transfer)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	// transfer is the verify ack transfer, no useful data in it.
@@ -166,16 +166,9 @@ void LoginTask::sendAuth(Transfer* transfer)
 	mState = SentAuth;
 }
 
-void LoginTask::sendAuthResp(Transfer* transfer)
+void LoginTask::sendAuthResp(YMSGTransfer* t)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-	{
-		setSuccess(false);
-		return;
-	}
 	
 	QString sn = t->firstParam( 1 );
 	QString seed = t->firstParam( 94 );
@@ -233,16 +226,9 @@ void LoginTask::sendAuthResp_pre_0x0b(const QString &/*sn*/, const QString &/*se
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
-void LoginTask::handleAuthResp(Transfer *transfer)
+void LoginTask::handleAuthResp(YMSGTransfer *t)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-	{
-		setSuccess(false);
-		return;
-	}
 
 	switch( t->service() )
 	{
@@ -265,13 +251,9 @@ void LoginTask::setStateOnConnect( Yahoo::Status status )
 	m_stateOnConnect = status;
 }
 
-void LoginTask::parseCookies( Transfer *transfer )
+void LoginTask::parseCookies( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	for( int i = 0; i < t->paramCount( 59 ); ++i)
 	{	

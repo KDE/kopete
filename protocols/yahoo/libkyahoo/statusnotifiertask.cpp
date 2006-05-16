@@ -40,15 +40,14 @@ bool StatusNotifierTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 	
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 
 	if( t->service() == Yahoo::ServiceStealthOffline )
-		parseStealthStatus( transfer );
+		parseStealthStatus( t );
 	else if( t->service() == Yahoo::ServiceAuthorization )
-		parseAuthorization( transfer );
+		parseAuthorization( t );
 	else
-		parseStatus( transfer );	
+		parseStatus( t );	
 
 	return true;
 }
@@ -79,13 +78,9 @@ bool StatusNotifierTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void StatusNotifierTask::parseStatus( Transfer* transfer )
+void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	if( t->status() == Yahoo::StatusDisconnected && 
 		t->service() == Yahoo::ServiceLogoff )
@@ -129,13 +124,9 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 	}
 }
 
-void StatusNotifierTask::parseAuthorization( Transfer* transfer )
+void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString nick;		/* key = 4  */	
 	QString msg;		/* key = 14  */
@@ -171,13 +162,9 @@ void StatusNotifierTask::parseAuthorization( Transfer* transfer )
 	}
 }
 
-void StatusNotifierTask::parseStealthStatus( Transfer* transfer )
+void StatusNotifierTask::parseStealthStatus( YMSGTransfer* t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString nick;		/* key = 7  */
 	int state;		/* key = 31  */

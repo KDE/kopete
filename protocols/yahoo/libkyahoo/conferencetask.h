@@ -19,6 +19,8 @@
 
 #include "task.h"
 
+class YMSGTransfer;
+
 /**
 @author André Duffeck
 */
@@ -44,13 +46,12 @@ signals:
 	void userJoined( const QString &who, const QString &room );
 	void userLeft( const QString &who, const QString &room );
 	void userDeclined( const QString &who, const QString &room, const QString &msg );
-private slots:
 private:
-	void parseInvitation( Transfer *transfer );
-	void parseMessage( Transfer *transfer );
-	void parseUserJoined( Transfer *transfer );
-	void parseUserLeft( Transfer *transfer );
-	void parseUserDeclined( Transfer *transfer );
+	void parseInvitation( YMSGTransfer *transfer );
+	void parseMessage( YMSGTransfer *transfer );
+	void parseUserJoined( YMSGTransfer *transfer );
+	void parseUserLeft( YMSGTransfer *transfer );
+	void parseUserDeclined( YMSGTransfer *transfer );
 };
 
 #endif

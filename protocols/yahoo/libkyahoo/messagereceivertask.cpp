@@ -46,9 +46,9 @@ bool MessageReceiverTask::take( Transfer* transfer )
 		return false;
 	
 	if( t->service() == Yahoo::ServiceNotify )
-		parseNotify( transfer );
+		parseNotify( t );
 	else
-		parseMessage( transfer );
+		parseMessage( t );
 
 	return true;
 }
@@ -71,13 +71,9 @@ bool MessageReceiverTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void MessageReceiverTask::parseMessage( Transfer *transfer )
+void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString to = t->firstParam( 5 );
 	QString timestamp = t->firstParam( 15 );
@@ -106,13 +102,9 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 	}
 }
 
-void MessageReceiverTask::parseNotify( Transfer *transfer )
+void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString from = t->firstParam( 4 );
 	//QString to = t->firstParam( 5 );

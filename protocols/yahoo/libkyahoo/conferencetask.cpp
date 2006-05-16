@@ -40,21 +40,19 @@ bool ConferenceTask::take( Transfer* transfer )
 		return false;
 
 	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return false;
+	t = static_cast<YMSGTransfer*>(transfer);
 	
  	if( t->service() == Yahoo::ServiceConfInvite ||
 		t->service() == Yahoo::ServiceConfAddInvite)
- 		parseInvitation( transfer );
+ 		parseInvitation( t );
 	else if( t->service() == Yahoo::ServiceConfMsg )
-		parseMessage( transfer );
+		parseMessage( t );
 	else if( t->service() == Yahoo::ServiceConfLogon )
-		parseUserJoined( transfer );
+		parseUserJoined( t );
 	else if( t->service() == Yahoo::ServiceConfLogoff )
-		parseUserLeft( transfer );
+		parseUserLeft( t );
 	else if( t->service() == Yahoo::ServiceConfDecline )
-		parseUserDeclined( transfer );
+		parseUserDeclined( t );
 
 	return true;
 }
@@ -79,14 +77,9 @@ bool ConferenceTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void ConferenceTask::parseInvitation( Transfer *transfer )
+void ConferenceTask::parseInvitation( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 	
 	int i = 0;
 	QString who = t->firstParam( 50 );
@@ -110,15 +103,10 @@ void ConferenceTask::parseInvitation( Transfer *transfer )
 		emit gotInvite( who, room, msg, members );
 }
 
-void ConferenceTask::parseMessage( Transfer *transfer )
+void ConferenceTask::parseMessage( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-	
 	QString room = t->firstParam( 57 );
 	QString from = t->firstParam( 3 );
 	bool utf = QString( t->firstParam( 97 ) ).toInt() == 1;
@@ -132,15 +120,10 @@ void ConferenceTask::parseMessage( Transfer *transfer )
 		emit gotMessage( from, room, msg ); 
 }
 
-void ConferenceTask::parseUserJoined( Transfer *transfer )
+void ConferenceTask::parseUserJoined( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-	
 	QString room = t->firstParam( 57 );
 	QString who = t->firstParam( 53 );
 
@@ -148,15 +131,10 @@ void ConferenceTask::parseUserJoined( Transfer *transfer )
 		emit userJoined( who, room );
 }
 
-void ConferenceTask::parseUserLeft( Transfer *transfer )
+void ConferenceTask::parseUserLeft( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-	
 	QString room = t->firstParam( 57 );
 	QString who = t->firstParam( 56 );
 
@@ -164,15 +142,10 @@ void ConferenceTask::parseUserLeft( Transfer *transfer )
 		emit userLeft( who, room );
 }
 
-void ConferenceTask::parseUserDeclined( Transfer *transfer )
+void ConferenceTask::parseUserDeclined( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-	
 	QString room = t->firstParam( 57 );
 	QString who = t->firstParam( 54 );
 	QString msg = t->firstParam( 14 );

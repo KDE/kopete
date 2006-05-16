@@ -20,7 +20,6 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
-#include <qstringlist.h>
 #include <kdebug.h>
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
@@ -40,14 +39,13 @@ bool FileTransferNotifierTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 	
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 
 	if( t->service() == Yahoo::ServiceP2PFileXfer ||
 		t->service() == Yahoo::ServicePeerToPeer )
-		declineP2P( transfer );	
+		declineP2P( t );	
 	else if( t->service() ==  Yahoo::ServiceFileTransfer )
-		parseFileTransfer( transfer );
+		parseFileTransfer( t );
 
 	return true;
 }
@@ -70,15 +68,10 @@ bool FileTransferNotifierTask::forMe( Transfer *transfer ) const
 		return false;
 }
 
-void FileTransferNotifierTask::parseFileTransfer( Transfer *transfer )
+void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = 0;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-	
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
 	QString url;		/* key = 20  */
@@ -106,15 +99,10 @@ void FileTransferNotifierTask::parseFileTransfer( Transfer *transfer )
 	emit incomingFileTransfer( from, url, expires, msg, filename, size );
 }
 
-void FileTransferNotifierTask::declineP2P( Transfer *transfer )
+void FileTransferNotifierTask::declineP2P( YMSGTransfer *t )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-
-	YMSGTransfer *t = 0;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-
+	Q_UNUSED( t );
 }
 
 #include "filetransfernotifiertask.moc"

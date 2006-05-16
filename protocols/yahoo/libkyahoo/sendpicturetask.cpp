@@ -68,14 +68,14 @@ void SendPictureTask::initiateUpload()
 
 void SendPictureTask::connectFailed( int i)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KStreamSocket*>( sender() )->errorString() << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
 	setSuccess( false );
 }
 
 void SendPictureTask::connectSucceeded()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KStreamSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
+	KStreamSocket* socket = const_cast<KBufferedSocket*>( static_cast<const KBufferedSocket*>( sender() ) );
 	YMSGTransfer t(Yahoo::ServicePictureUpload);
 
 	QFile file( m_path );

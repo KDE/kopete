@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Receive a file
 
-    Copyright (c) 2006 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
 
     *************************************************************************
     *                                                                       *
@@ -29,7 +29,7 @@ namespace KIO {
 }
 
 /**
-@author Andre Duffeck
+@author André Duffeck
 */
 class ReceiveFileTask : public Task
 {
