@@ -14,6 +14,7 @@ X-Kopete-Version=1000900
 
 Name=SUSE SMPPPD Connection Status
 Name[bn]=SUSE SMPPPD সংযোগ অবস্থা
+Name[bs]=SUSE SMPPPD status veze
 Name[ca]=Estatus de la connexió SUSE SMPPPD 
 Name[cs]=Stav spojení SUSE SMPPPD
 Name[da]=SUSE SMPPD Forbindelsesstatus
@@ -51,6 +52,7 @@ Name[zh_HK]=SUSE SMPPPD 連線狀態
 Comment=SMPPPDCS Plugin
 Comment[bn]=SMPPPDCS প্লাগিন
 Comment[br]=Lugant SMPPPDCS
+Comment[bs]=SMPPPDCS dodatak
 Comment[ca]=Connector SMPPPDCS
 Comment[cs]=SMPPPDCS modul
 Comment[da]=SMPPPDCS-Plugin
