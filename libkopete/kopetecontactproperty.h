@@ -162,8 +162,15 @@ class KOPETE_EXPORT ContactProperty
 		 **/
 		ContactProperty(const ContactPropertyTmpl &tmpl, const QVariant &value);
 
+		/**
+		 * Copy constructor
+		 **/
+		ContactProperty(const ContactProperty &other);
+
 		/** Destructor **/
 		~ContactProperty();
+
+		ContactProperty &operator=(const ContactProperty &other);
 
 		/**
 		 * Getter for this properties template

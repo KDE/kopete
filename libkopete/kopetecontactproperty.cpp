@@ -79,6 +79,16 @@ ContactPropertyTmpl::ContactPropertyTmpl(const ContactPropertyTmpl &other)
 ContactPropertyTmpl &ContactPropertyTmpl::operator=(
 	const ContactPropertyTmpl &other)
 {
+	if (this == &other)
+	{
+		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
+		return *this;
+	}
+	if( d == other.d )
+	{
+		kDebug(14000) << k_funcinfo << "trying to assign d to itself!" << endl;
+		return *this;
+	}
 	d->refCount--;
 	if(d->refCount == 0)
 	{
@@ -189,8 +199,30 @@ ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
 	d->value = val;
 }
 
+ContactProperty::ContactProperty(const ContactProperty& other)
+ : d(new Private)
+{
+	d->propertyTemplate = other.d->propertyTemplate;
+	d->value = other.d->value;
+}
+
 ContactProperty::~ContactProperty()
 {
+	delete d;
+}
+
+ContactProperty& ContactProperty::operator=(const ContactProperty& other)
+{
+	if (this == &other)
+	{
+		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
+		return *this;
+	}
+
+	d->propertyTemplate = other.d->propertyTemplate;
+	d->value = other.d->value;
+
+	return *this;
 }
 
 const QVariant &ContactProperty::value() const
