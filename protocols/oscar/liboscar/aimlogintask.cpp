@@ -140,6 +140,7 @@ void AimLoginTask::sendAuthStringRequest()
 QByteArray AimLoginTask::parseAuthString( Buffer* b )
 {
 	WORD keylength = b->getWord();
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Key length is " << keylength << endl;
 	QByteArray authString = b->getBlock( keylength );
 	return authString;
 }

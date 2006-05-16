@@ -106,7 +106,6 @@ public slots:
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	void slotEditInfo();
-	void slotGoOnline();
 
 	void globalIdentityChanged( const QString&, const QVariant& );
 	void sendBuddyIcon();
@@ -114,7 +113,6 @@ public slots:
 
 
 protected slots:
-	void slotGoAway(const QString&);
     void joinChatDialogClosed( int );
 
 	virtual void loginActions();

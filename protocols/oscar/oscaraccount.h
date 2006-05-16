@@ -94,11 +94,6 @@ public:
 	 * if contact has no encoding
 	 */
 	QTextCodec* contactCodec( const QString& contactName ) const;
-	
-public slots:
-	void slotGoOffline();
-
-	void slotGoOnline();
 
 protected:
 	/**

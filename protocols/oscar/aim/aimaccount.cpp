@@ -296,27 +296,8 @@ QString AIMAccount::sanitizedMessage( const QString& message )
 
 KActionMenu* AIMAccount::actionMenu()
 {
-	//TODO Check if this is correct (thorbenk)
-	
-	KActionMenu *mActionMenu = new KActionMenu( KIcon(QIcon(myself()->onlineStatus().iconFor( this ))), accountId(), 0, "AIMAccount::mActionMenu");
+	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	AIMProtocol *p = AIMProtocol::protocol();
-
-	QString accountNick = myself()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	mActionMenu->kMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor( myself() )), i18n( "%2 <%1>", accountId(), accountNick ) );
-	
-	KAction* actionOnline = new KAction( KIcon(QIcon(p->statusOnline.iconFor(this))), i18n("Online"), 0, "AIMAccount::mActionOnline");
-	QObject::connect( actionOnline, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()) );
-	mActionMenu->addAction( actionOnline );
-	
-	KAction* mActionAway = new Kopete::AwayAction(i18n("Away"), QIcon(p->statusAway.iconFor( this )), 0, 0, SLOT(slotGoAway( const QString & )), 0, "AIMAccount::mActionNA" );
-	mActionAway->setEnabled( isConnected() );
-	mActionMenu->addAction( mActionAway );
-	
-	KAction* mActionOffline = new KAction( KIcon(QIcon(p->statusOffline.iconFor(this))), i18n("Offline"), 0, "AIMAccount::mActionOffline");
-	QObject::connect( mActionOffline, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
-	mActionMenu->addAction( mActionOffline );
-	
 	mActionMenu->kMenu()->addSeparator();
 	
 	KAction* actionVisibility = new KToggleAction( i18n( "Set Visibility..." ), 0, "AIMAccount::mActionSetVisibility" );
@@ -356,10 +337,22 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
 	kDebug(14152) << k_funcinfo << "called with reason = " << reason.message() <<" status = "<< status.status() << endl;;
-	if ( status.status() == Kopete::OnlineStatus::Online )
-		setAway( false );
-	if ( status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, reason.message() );
+	if ( status.status() == Kopete::OnlineStatus::Offline )
+		disconnect();
+	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
+	{ //account isn't online, so we'll need to connect. 
+	//FIXME: what if we're in the middle of connecting?
+		kDebug(14152) << k_funcinfo << accountId() << " was offline. time to connect" << endl;
+		//ah, but is there a to set away as well? TODO
+		OscarAccount::connect();
+	}
+	else
+	{ //we're just changing our away-ness and possibly a message.
+		if ( status.status() == Kopete::OnlineStatus::Away )
+			setAway( true, reason.message() );
+		else
+			setAway( false );
+	}
 }
 
 void AIMAccount::setStatusMessage( const Kopete::StatusMessage& statusMessage )
@@ -509,31 +502,6 @@ void AIMAccount::slotJoinChat()
         m_joinChatDialog->raise();
 }
 
-void AIMAccount::slotGoOnline()
-{
-	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
-	{
-		kDebug(14152) << k_funcinfo << accountId() << " was away. welcome back." << endl;
-		engine()->setStatus( Client::Online );
-		myself()->removeProperty( Kopete::Global::Properties::self()->statusMessage() );
-	}
-	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
-	{
-		kDebug(14152) << k_funcinfo << accountId() << " was offline. time to connect" << endl;
-		OscarAccount::connect();
-	}
-	else
-	{
-		kDebug(14152) << k_funcinfo << accountId() << " is already online, doing nothing" << endl;
-	}
-}
-
-void AIMAccount::slotGoAway(const QString &message)
-{
-	kDebug(14152) << k_funcinfo << message << endl;
-	setAway(true, message);
-}
-
 void AIMAccount::joinChatDialogClosed( int code )
 {
     if ( code == QDialog::Accepted )
@@ -601,8 +569,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
             aimSender->sendAutoResponse( chatMessage );
         }
     }
-
-    if ( message.type() == 0x0003 )
+    else
     {
         kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "have chat message" << endl;
         //handle chat room messages seperately

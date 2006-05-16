@@ -80,8 +80,9 @@ bool ServerVersionsTask::take( Transfer* transfer )
 				setTransfer( 0 );
 				return true;
 				break;
-			case 0x18: //server versions are ignored
+			case 0x18:
 				setTransfer( transfer );
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring server versions" << endl;
 				setSuccess( 0, QString::null );
 				setTransfer( 0 );
 				return true;

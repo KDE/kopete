@@ -341,16 +341,6 @@ void OscarAccount::nonServerAddContactDialogClosed()
     d->olnscDialog = 0L;
 }
 
-void OscarAccount::slotGoOffline()
-{
-	OscarAccount::disconnect();
-}
-
-void OscarAccount::slotGoOnline()
-{
-	//do nothing
-}
-
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )
 {
 	if ( isConnected() )
