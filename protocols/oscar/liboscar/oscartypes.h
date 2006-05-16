@@ -111,7 +111,7 @@ const Guid oscar_caps[] =
 	// second number,  minor version
 	// third number, point version 100+
 	// fourth number,  point version 0-99
-	Guid( QByteArray::fromRawData( "Kopete ICQ \0\xc\0\0", 16 ) ),
+	Guid( QByteArray::fromRawData( "Kopete ICQ  \0\xc\0\0", 16 ) ),
 
 	// CAP_MICQ
 	// last 4 bytes determine version
