@@ -39,8 +39,6 @@ ReceiveFileTask::~ReceiveFileTask()
 {
 	delete m_file;
 	m_file = 0;
-	m_transferJob->deleteLater();
-	m_transferJob = 0;
 }
 
 void ReceiveFileTask::onGo()
