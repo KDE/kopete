@@ -191,7 +191,6 @@ ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
 
 ContactProperty::~ContactProperty()
 {
-	delete d;
 }
 
 const QVariant &ContactProperty::value() const
