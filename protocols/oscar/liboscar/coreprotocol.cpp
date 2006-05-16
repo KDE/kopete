@@ -110,19 +110,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
 	{
 		transferCount++;
-		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "parsed transfer #" << transferCount << " in chunk" << endl;
-		int size =  m_in.size();
-		if ( parsedBytes < size )
-		{
-			//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "more data in chunk!" << endl;
-			// copy the unparsed bytes into a new qbytearray and replace m_in with that
-			QByteArray remainder;
-			remainder.reserve( size - parsedBytes );
-			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
-			m_in = remainder;
-		}
-		else
-			m_in.truncate( 0 );
+		m_in.remove(0, parsedBytes);
 	}
 
 	if ( m_state == NeedMore )
@@ -134,7 +122,6 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 			<< "discarding the rest of the buffer and hoping the server regains sync soon..." << endl;
 		m_in.truncate( 0 );
 	}
-// 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done processing chunk" << endl;
 }
 
 Transfer* CoreProtocol::incomingTransfer()
