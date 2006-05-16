@@ -206,36 +206,26 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 				return bytesParsed;
 			}
 
-			if ( flapChannel != 2 )
-			{
-				Transfer *t = m_flapProtocol->parse( packet, bytesParsed );
-				if ( t )
-				{
-					m_inTransfer = t;
-					m_state = Available;
-					emit incomingData();
-				}
-				else
-					bytesParsed = 0;
-			}
-
+			Transfer *t;
 			if ( flapChannel == 2 )
 			{
 				din >> s1;
 				din >> s2;
+				t = m_snacProtocol->parse( packet, bytesParsed );
+			}
+			else
+				t = m_flapProtocol->parse( packet, bytesParsed );
 
-				Transfer * t = m_snacProtocol->parse( packet, bytesParsed );
-				if ( t )
-				{
-					m_inTransfer = t;
-					m_state = Available;
-					emit incomingData();
-				}
-				else
-				{
-					bytesParsed = 0;
-					m_state = NeedMore;
-				}
+			if ( t )
+			{
+				m_inTransfer = t;
+				m_state = Available;
+				emit incomingData();
+			}
+			else
+			{
+				bytesParsed = 0;
+				m_state = NeedMore;
 			}
 		}
 		else
