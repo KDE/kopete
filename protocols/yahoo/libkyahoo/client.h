@@ -268,7 +268,13 @@ Q_OBJECT
 		/**
 		 * Send a file to a buddy
 		 */
-		SendFileTask *sendFile( const QString &userId, const QString &msg, KURL url );
+		void sendFile( unsigned int transferId, const QString &userId, const QString &msg, KURL url );
+
+		/**
+		 * Receive a file from a buddy
+		 */
+		void receiveFile( unsigned int transferId, KURL remoteURL, KURL localURL );
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -498,6 +504,23 @@ Q_OBJECT
 		 * An error occured while saving a Yahoo Addressbook entry
 		 */
 		void modifyYABEntryError( YABEntry *, const QString & );
+		/**
+		 * number of Bytes transferred for FileTransfer id
+		 */
+		void fileTransferBytesProcessed( unsigned int, unsigned int );
+		/**
+		 * filetransfer completed
+		 */
+		void fileTransferComplete( unsigned int );
+		/**
+		 * An error occured during the filetransfer
+		 */
+		void fileTransferError( unsigned int, int, const QString & );
+		/**
+		 * A buddy is trying to send us a file
+		 */
+		void incomingFileTransfer( const QString &, const QString &, long, const QString &,
+			const QString &, unsigned long );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

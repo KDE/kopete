@@ -126,6 +126,7 @@ public:
 
 	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
 	void prepareConference( const QString &who );
+	void sendFile( YahooContact *to, const KURL &url );
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -228,6 +229,9 @@ protected slots:
 	void slotModifyYABEntryError( YABEntry *entry, const QString & );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
+	void slotFileTransferComplete( unsigned int id );
+	void slotFileTransferError( unsigned int id, int error, const QString &desc );
+	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );
 
 private slots:
 	/**
@@ -254,6 +258,8 @@ private:
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
 	QStringList m_pendingConfInvites;
+
+	QMap<unsigned int, Kopete::Transfer *> m_fileTransfers;
 
 	void setPictureFlag( int flag );
 

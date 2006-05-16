@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Send a file
+    Notifies about incoming filetransfers
 
     Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,54 +14,33 @@
     *************************************************************************
 */
 
-#ifndef SENDFILETASK_H
-#define SENDFILETASK_H
+#ifndef FILETRANSFERNOTIFIERTASK_H
+#define FILETRANSFERNOTIFIERTASK_H
 
 #include "task.h"
-#include <kurl.h>
-#include <qfile.h>
+#include "yahootypes.h"
 
 class QString;
-namespace KNetwork{
-	class KStreamSocket;
-}
 
 /**
 @author André Duffeck
 */
-class SendFileTask : public Task
+class FileTransferNotifierTask : public Task
 {
-	Q_OBJECT
+Q_OBJECT
 public:
-	SendFileTask(Task *parent);
-	~SendFileTask();
+	FileTransferNotifierTask(Task *parent);
+	~FileTransferNotifierTask();
 	
-	virtual void onGo();
-	
-	void setTarget( const QString &to );
-	void setMessage( const QString &msg );
-	void setFileUrl( KURL url );
-	void setTransferId( unsigned int transferId );
+	bool take(Transfer *transfer);
 
+protected:
+	bool forMe( Transfer *transfer ) const;
+	void parseFileTransfer( Transfer *transfer );
+	void declineP2P( Transfer *transfer );
 signals:
-	void bytesProcessed( unsigned int, unsigned int );
-	void complete( unsigned int );
-	void error( unsigned int, int, const QString & );
-
-private slots:
-	void initiateUpload();
-	void connectSucceeded();
-	void connectFailed( int );
-	void transmitData();
-
-private:
-	QString m_msg;
-	QString m_target;
-	KURL m_url;
-	QFile m_file;
-	int m_transferId;
-	unsigned int m_transmitted;
-	KNetwork::KStreamSocket *m_socket;
+	void incomingFileTransfer( const QString &who, const QString &url, long /* expires */, const QString &msg ,
+	const QString &fname, unsigned long size );
 };
 
 #endif

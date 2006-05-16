@@ -1,8 +1,8 @@
 /*
     Kopete Yahoo Protocol
-    Send a file
+    Receive a file
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 Andre Duffeck <andre.duffeck@kdemail.net>
 
     *************************************************************************
     *                                                                       *
@@ -14,33 +14,35 @@
     *************************************************************************
 */
 
-#ifndef SENDFILETASK_H
-#define SENDFILETASK_H
+#ifndef RECEIVEFILETASK_H
+#define RECEIVEFILETASK_H
 
 #include "task.h"
-#include <kurl.h>
 #include <qfile.h>
+#include <kurl.h>
 
 class QString;
-namespace KNetwork{
-	class KStreamSocket;
+class QFile;
+namespace KIO { 
+	class Job;
+	class TransferJob; 
 }
 
 /**
-@author André Duffeck
+@author Andre Duffeck
 */
-class SendFileTask : public Task
+class ReceiveFileTask : public Task
 {
 	Q_OBJECT
 public:
-	SendFileTask(Task *parent);
-	~SendFileTask();
+	ReceiveFileTask(Task *parent);
+	~ReceiveFileTask();
 	
 	virtual void onGo();
 	
-	void setTarget( const QString &to );
-	void setMessage( const QString &msg );
-	void setFileUrl( KURL url );
+	void setRemoteUrl( KURL url );
+	void setLocalUrl( KURL url );
+	void setFileName( const QString &filename );
 	void setTransferId( unsigned int transferId );
 
 signals:
@@ -49,19 +51,17 @@ signals:
 	void error( unsigned int, int, const QString & );
 
 private slots:
-	void initiateUpload();
-	void connectSucceeded();
-	void connectFailed( int );
-	void transmitData();
+	void slotData( KIO::Job *job, const QByteArray &data );
+	void slotComplete( KIO::Job *job );
 
 private:
-	QString m_msg;
-	QString m_target;
-	KURL m_url;
-	QFile m_file;
+	KURL m_remoteUrl;
+	KURL m_localUrl;
+	QString m_fileName;
+	QFile *m_file;
+	KIO::TransferJob *m_transferJob;
 	int m_transferId;
 	unsigned int m_transmitted;
-	KNetwork::KStreamSocket *m_socket;
 };
 
 #endif

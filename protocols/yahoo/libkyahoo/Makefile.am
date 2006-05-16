@@ -13,7 +13,8 @@ libkyahoo_la_SOURCES = client.cpp task.cpp connector.cpp inputprotocolbase.cpp \
 		logofftask.cpp changestatustask.cpp modifybuddytask.cpp picturenotifiertask.cpp \
 		requestpicturetask.cpp yahoobuddyiconloader.cpp stealthtask.cpp sendpicturetask.cpp \
 		webcamtask.cpp conferencetask.cpp sendauthresptask.cpp pingtask.cpp yabtask.cpp \
-		yabentry.cpp modifyyabtask.cpp chatsessiontask.cpp sendfiletask.cpp
+		yabentry.cpp modifyyabtask.cpp chatsessiontask.cpp sendfiletask.cpp filetransfernotifiertask.cpp \
+		receivefiletask.cpp
 libkyahoo_la_LDFLAGS = -no-undefined $(all_libraries)
 libkyahoo_la_LIBADD = $(LIB_QT)
 

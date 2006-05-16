@@ -22,7 +22,9 @@
 #include <qstring.h>
 #include <qtimer.h>
 #include <kdebug.h>
-#include <kbufferedsocket.h>
+#include <klocale.h>
+#include <kstreamsocket.h>
+#include <kio/global.h>
 
 using namespace KNetwork;
 
@@ -49,7 +51,8 @@ void SendFileTask::onGo()
 void SendFileTask::initiateUpload()
 {	
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	m_socket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
+	m_socket = new KStreamSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
+	m_socket->setBlocking( true );
 	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
@@ -60,23 +63,23 @@ void SendFileTask::connectFailed( int i )
 {
 	QString err = m_socket->errorString();
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << err << endl;
-	emit error( i, err );
+	emit error( m_transferId, i, err );
 	setSuccess( false );
 }
 
 void SendFileTask::connectSucceeded()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceFileTransfer );
+	YMSGTransfer t( Yahoo::ServiceFileTransfer );
 
 	m_file.setName( m_url.path() );
 
-	t->setId( client()->sessionID() );
-	t->setParam( 0, client()->userId().local8Bit());
-	t->setParam( 5, m_target.local8Bit());
-	t->setParam( 28, m_file.size() );	
-	t->setParam( 27, m_url.fileName().local8Bit() );
-	t->setParam( 14, "" );
+	t.setId( client()->sessionID() );
+	t.setParam( 0, client()->userId().local8Bit());
+	t.setParam( 5, m_target.local8Bit());
+	t.setParam( 28, m_file.size() );	
+	t.setParam( 27, m_url.fileName().local8Bit() );
+	t.setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
 	QDataStream stream( buffer, IO_WriteOnly );
@@ -91,7 +94,7 @@ void SendFileTask::connectSucceeded()
 		return;
 	}
 
-	paket = t->serialize();
+	paket = t.serialize();
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_url << "): " << m_file.size() << " - paket: " << paket.size() << endl;
 	QString header = QString::fromLatin1("POST http://filetransfer.msg.yahoo.com:80/notifyft HTTP/1.1\r\n"
 			"Cookie: Y=%1; T=%2; C=%3 ;B=fckeert1kk1nl&b=2\r\n"
@@ -102,9 +105,10 @@ void SendFileTask::connectSucceeded()
 	stream.writeRawBytes( header.local8Bit(), header.length() );
 	stream.writeRawBytes( paket.data(), paket.size() );
 	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
+
 	if( !m_socket->writeBlock( buffer, buffer.size() ) )
 	{
-		emit error( m_socket->error(), m_socket->errorString() );
+		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		m_socket->close();
 	}
 	else
@@ -119,25 +123,26 @@ void SendFileTask::transmitData()
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	int read = 0;
 	int written = 0;	
-	char buf[2048];
+	char buf[1024];
 
 	m_socket->enableWrite( false );
-	read = m_file.readBlock( buf, 2048 );
+	read = m_file.readBlock( buf, 1024 );
 	written = m_socket->writeBlock( buf, read );
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "read:" << read << " written: " << written << endl;
 
-	m_transmitted += written;
-	emit bytesProcessed( m_transmitted );
+	m_transmitted += read;
+	emit bytesProcessed( m_transferId, m_transmitted );
 
 	if( written != read )
 	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
-		emit error( m_socket->error(), m_socket->errorString() );
+		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		setSuccess( false );
 	}
 	if( m_transmitted == m_file.size() )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
-		emit complete();
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful: " << m_transmitted << endl;
+		emit complete( m_transferId );
 		setSuccess( true );
 		m_socket->close();
 	}
@@ -146,7 +151,6 @@ void SendFileTask::transmitData()
 		m_socket->enableWrite( true );
 	}
 }
-
 void SendFileTask::setTarget( const QString &to )
 {
 	m_target = to;
@@ -161,6 +165,11 @@ void SendFileTask::setFileUrl( KURL url )
 {
 	m_url = url;
 
+}
+
+void SendFileTask::setTransferId( unsigned int transferId )
+{
+	m_transferId = transferId;
 }
 
 #include "sendfiletask.moc"

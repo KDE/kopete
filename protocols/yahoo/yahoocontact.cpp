@@ -453,14 +453,7 @@ void YahooContact::slotUserProfile()
 void YahooContact::slotSendFile( const KURL &url)
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QFile file( url.path() );
-	
-	Kopete::Transfer *transfer = Kopete::TransferManager::transferManager()->addTransfer ( this,
-		url.fileName(), file.size(), contactId(), Kopete::FileTransferInfo::Outgoing );
-	SendFileTask *sft = m_account->yahooSession()->sendFile( m_userId, QString(), url );
-	connect( sft, SIGNAL(bytesProcessed( unsigned int )), transfer, SLOT(slotProcessed(unsigned int)) );
-	connect( sft, SIGNAL(complete()), transfer, SLOT(slotComplete()) );
-	connect( sft, SIGNAL(error( int, const QString &)), transfer, SLOT(slotError(int, const QString &)) );
+	m_account->sendFile( this, url );
 }
 
 void YahooContact::stealthContact()

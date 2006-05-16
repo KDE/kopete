@@ -49,6 +49,8 @@
 #include "modifyyabtask.h"
 #include "chatsessiontask.h"
 #include "sendfiletask.h"
+#include "filetransfernotifiertask.h"
+#include "receivefiletask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -79,6 +81,7 @@ public:
 	WebcamTask *webcamTask;
 	ConferenceTask *conferenceTask;
 	YABTask *yabTask;
+	FileTransferNotifierTask *fileTransferTask;
 
 	// Connection data
 	uint sessionID;
@@ -312,14 +315,33 @@ void Client::sendBuzz( const QString &to )
 	smt->go( true );
 }
 
-SendFileTask *Client::sendFile( const QString &to, const QString &msg, KURL url )
+void Client::sendFile( unsigned int transferId, const QString &to, const QString &msg, KURL url )
 {
 	SendFileTask *sft = new SendFileTask( d->root );
+
+	QObject::connect( sft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
+	QObject::connect( sft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
+	QObject::connect( sft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+
 	sft->setTarget( to );
 	sft->setMessage( msg );
 	sft->setFileUrl( url );
+	sft->setTransferId( transferId );
 	sft->go( true );
-	return sft;
+}
+
+void Client::receiveFile( unsigned int transferId, KURL remoteURL, KURL localURL )
+{
+	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
+
+	QObject::connect( rft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
+	QObject::connect( rft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
+	QObject::connect( rft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+
+	rft->setRemoteUrl( remoteURL );
+	rft->setLocalUrl( localURL );
+	rft->setTransferId( transferId );
+	rft->go( true );
 }
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )
@@ -652,6 +674,7 @@ void Client::distribute( Transfer * transfer )
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	if( !rootTask()->take( transfer ) )
 		kdDebug(YAHOO_RAW_DEBUG) << "CLIENT: root task refused transfer" << endl;
+	delete transfer;
 }
 
 void Client::send( Transfer* request )
@@ -760,6 +783,12 @@ void Client::initTasks()
 				SIGNAL( gotYABEntry( YABEntry * ) ) );
 	QObject::connect( d->yabTask, SIGNAL( gotRevision( long, bool ) ),
 				SIGNAL( gotYABRevision( long, bool ) ) );
+
+	d->fileTransferTask = new FileTransferNotifierTask( d->root );
+	QObject::connect( d->fileTransferTask, SIGNAL(incomingFileTransfer( const QString &, const QString &, 
+					long, const QString &, const QString &, unsigned long )),
+				SIGNAL(incomingFileTransfer( const QString &, const QString &, 
+					long, const QString &, const QString &, unsigned long )) );
 }
 
 void Client::deleteTasks()
@@ -779,6 +808,8 @@ void Client::deleteTasks()
 	d->conferenceTask = 0L;
 	d->yabTask->deleteLater();
 	d->yabTask = 0L;
+	d->fileTransferTask->deleteLater();
+	d->fileTransferTask = 0;
 }
 
 #include "client.moc"
