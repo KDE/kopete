@@ -237,7 +237,7 @@ Kopete::OnlineStatus OnlineStatusManager::waitingForAuth()
 
 Presence Presence::fromOnlineStatus( const Kopete::OnlineStatus &status )
 {
-	if ( status != Kopete::OnlineStatus() )
+	if ( status.protocol() == ICQProtocol::protocol() )
 	{
 		OnlineStatusManager *store = ICQProtocol::protocol()->statusManager();
 		return store->presenceOf( status.internalStatus() );
