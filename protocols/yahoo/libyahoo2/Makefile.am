@@ -6,6 +6,6 @@ EXTRA_DIST = yahoo2.h yahoo2_types.h md5.h yahoo2_callbacks.h yahoo_connections.
 libyahoo2_la_SOURCES = libyahoo2.c crypt.c md5.c \
         yahoo_httplib.c yahoo_util.c yahoo_list.c sha1.c yahoo_fn.c
 
-libyahoo2_la_LDFLAGS = -module
+libyahoo2_la_LDFLAGS = -module $(GLIB_LIBS)
 
-libyahoo2_la_CFLAGS = -fno-inline
+libyahoo2_la_CFLAGS = -fno-inline $(GLIB_CFLAGS)
