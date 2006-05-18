@@ -72,9 +72,7 @@ TestbedWebcamDialog::~ TestbedWebcamDialog( )
 void TestbedWebcamDialog::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
-kdDebug() << "Getting image" << endl;
 	mVideoDevicePool->getImage(&mImage);
-kdDebug() << "BitBlitting image" << endl;
 	mImageContainer->updatePixmap( QPixmap( mImage ) );
 }
 
