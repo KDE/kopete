@@ -1,7 +1,7 @@
 /*
     videodevice.cpp  -  Kopete Video Device Low-level Support
 
-    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -40,14 +40,14 @@ __u64 VideoDevicePool::m_clients = 0;
 
 VideoDevicePool* VideoDevicePool::self()
 {
-//	kdDebug() << "libkopete (avdevice): self() called" << endl;
+	kdDebug() << "libkopete (avdevice): self() called" << endl;
 	if (s_self == NULL)
 	{
 		s_self = new VideoDevicePool;
 		if (s_self)
 			m_clients = 0;
 	}
-//	kdDebug() << "libkopete (avdevice): self() exited successfuly" << endl;
+	kdDebug() << "libkopete (avdevice): self() exited successfuly. m_clients = " << m_clients << endl;
 	return s_self;
 }
 
@@ -184,9 +184,14 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 int VideoDevicePool::close()
 {
     /// @todo implement me
-	if(currentDevice() < m_videodevice.size())
+	if(m_clients)
+		m_clients--;
+	if((currentDevice() < m_videodevice.size())&&(!m_clients))
 		return m_videodevice[currentDevice()].close();
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::close() Current device out of range." << endl;
+	if(m_clients)
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::close() The video device is still in use." << endl;
+	if(currentDevice() >= m_videodevice.size())
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::close() Current device out of range." << endl;
 	return EXIT_FAILURE;
 }
 
@@ -788,7 +793,7 @@ void VideoDevicePool::loadConfig()
 {
     /// @todo implement me
 	kdDebug() <<  k_funcinfo << "called" << endl;
-	if(hasDevices())
+	if((hasDevices())&&(m_clients==0))
 	{
 		KConfig *config = KGlobal::config();
 		config->setGroup("Video Device Settings");
