@@ -45,6 +45,7 @@ struct KURL;
 namespace Kopete{
 class Transfer;
 class ChatSession;
+class FileTransferInfo;
 }
 class Client;
 class YABEntry;
@@ -229,6 +230,7 @@ protected slots:
 	void slotModifyYABEntryError( YABEntry *entry, const QString & );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
+	void slotReceiveFileRefused( const Kopete::FileTransferInfo& info );
 	void slotFileTransferComplete( unsigned int id );
 	void slotFileTransferError( unsigned int id, int error, const QString &desc );
 	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );

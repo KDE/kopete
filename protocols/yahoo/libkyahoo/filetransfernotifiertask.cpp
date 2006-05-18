@@ -41,11 +41,13 @@ bool FileTransferNotifierTask::take( Transfer* transfer )
 	
 	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 
-	if( t->service() == Yahoo::ServiceP2PFileXfer ||
-		t->service() == Yahoo::ServicePeerToPeer )
-		declineP2P( t );	
-	else if( t->service() ==  Yahoo::ServiceFileTransfer )
+	if( t->service() == Yahoo::ServiceFileTransfer )
 		parseFileTransfer( t );
+	else if( t->service() == Yahoo::ServiceFileTransfer7 )
+		parseFileTransfer7( t );
+	else if( t->service() == Yahoo::ServicePeerToPeer )
+		acceptFileTransfer( t );
+		
 
 	return true;
 }
@@ -61,7 +63,8 @@ bool FileTransferNotifierTask::forMe( Transfer *transfer ) const
 
 	if( t->service() == Yahoo::ServiceP2PFileXfer ||
 		t->service() == Yahoo::ServicePeerToPeer ||
-		t->service() == Yahoo::ServiceFileTransfer
+		t->service() == Yahoo::ServiceFileTransfer ||
+		t->service() == Yahoo::ServiceFileTransfer7
 	)
 		return true;
 	else
@@ -99,10 +102,42 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	emit incomingFileTransfer( from, url, expires, msg, filename, size );
 }
 
-void FileTransferNotifierTask::declineP2P( YMSGTransfer *t )
+void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
+{ 
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	QString from;		/* key = 4  */
+	QString to;		/* key = 5  */
+	QString url;		/* key = 20  */
+	long expires;		/* key = 38  */
+	QString msg;		/* key = 14  */
+	QString filename;	/* key = 27  */
+	unsigned long size;	/* key = 28  */
+	
+	if( t->firstParam( 222 ).toInt() == 2 )
+		return;					// user cancelled the file transfer
+
+	from = t->firstParam( 4 );
+	to = t->firstParam( 5 );
+	url = t->firstParam( 265 );
+	msg = t->firstParam( 14 );
+	filename = t->firstParam( 27 );
+	size = t->firstParam( 28 ).toULong();
+
+	emit incomingFileTransfer( from, url, expires, msg, filename, size );
+}
+
+void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	Q_UNUSED( t );
+	
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePeerToPeer);
+	t->setId( client()->sessionID() );
+	t->setParam( 4, client()->userId().local8Bit() );
+	t->setParam( 5, transfer->firstParam( 4 ) );
+	t->setParam( 11, transfer->firstParam( 11 ) );
+
+	send( t );
 }
 
 #include "filetransfernotifiertask.moc"

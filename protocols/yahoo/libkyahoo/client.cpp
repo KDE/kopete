@@ -330,7 +330,7 @@ void Client::sendFile( unsigned int transferId, const QString &to, const QString
 	sft->go( true );
 }
 
-void Client::receiveFile( unsigned int transferId, KURL remoteURL, KURL localURL )
+void Client::receiveFile( unsigned int transferId, const QString &userId, KURL remoteURL, KURL localURL )
 {
 	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
 
@@ -341,6 +341,21 @@ void Client::receiveFile( unsigned int transferId, KURL remoteURL, KURL localURL
 	rft->setRemoteUrl( remoteURL );
 	rft->setLocalUrl( localURL );
 	rft->setTransferId( transferId );
+	rft->setUserId( userId );
+	if( remoteURL.url().startsWith( "http://" ) )
+		rft->setType( ReceiveFileTask::FileTransferAccept );
+	else
+		rft->setType( ReceiveFileTask::FileTransfer7Accept );
+	rft->go( true );
+}
+
+void Client::rejectFile( const QString &userId, KURL remoteURL )
+{
+	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
+
+	rft->setRemoteUrl( remoteURL );
+	rft->setUserId( userId );
+	rft->setType( ReceiveFileTask::FileTransfer7Reject );
 	rft->go( true );
 }
 

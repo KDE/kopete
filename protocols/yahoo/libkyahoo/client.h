@@ -86,7 +86,7 @@ Q_OBJECT
 		/**
 		 * Specifies the status we connect with. 
 		 * The Yahoo protocol supports connecting into Online and Invisible state.
-		 * If @param status is any other status the Client connects into Online state and changes into the specified state after the login. 
+		 * If status is any other status the Client connects into Online state and changes into the specified state after the login. 
 		 * @param status the status to connect with
 		 */
 		void setStatusOnConnect( Yahoo::Status status );
@@ -149,6 +149,9 @@ Q_OBJECT
 
 		/**
 		 * Add a buddy to the contact list
+		 * @param userId the yahoo ID of the buddy that should be added
+		 * @param group the group where the buddy will be placed
+		 * @param message the message that will be sent to the buddy along the authorization request
 		 */
 		void addBuddy( const QString &userId, const QString &group, const QString &message = QString::fromLatin1("Please add me")  );
 
@@ -290,7 +293,12 @@ Q_OBJECT
 		/**
 		 * Receive a file from a buddy
 		 */
-		void receiveFile( unsigned int transferId, KURL remoteURL, KURL localURL );
+		void receiveFile( unsigned int transferId, const QString &userId, KURL remoteURL, KURL localURL );
+
+		/**
+		 * Reject a file offered by a buddy
+		 */
+		void rejectFile( const QString &userId, KURL remoteURL );		
 
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 

@@ -1338,15 +1338,28 @@ void YahooAccount::slotGotFile( const QString &  who, const QString &  url , lon
 	Kopete::TransferManager::transferManager()->askIncomingTransfer( contact( who ) , fname, fesize, msg, url );	
 	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
 					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
+	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
 }
 
 void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QString& fileName)
 {	
-	m_session->receiveFile( transfer->info().transferId(), transfer->info().internalId(), fileName );
+	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );
 	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
-					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	                     this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
+	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
 	
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
+}
+
+void YahooAccount::slotReceiveFileRefused( const Kopete::FileTransferInfo& info )
+{	
+	m_session->rejectFile( info.contact()->contactId(), info.internalId() );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
+	                     this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
+	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
 }
 
 void YahooAccount::slotFileTransferBytesProcessed( unsigned int transferId, unsigned int bytes )

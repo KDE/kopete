@@ -44,16 +44,70 @@ ReceiveFileTask::~ReceiveFileTask()
 void ReceiveFileTask::onGo()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	m_file = new QFile( m_localUrl.path() );
-	if( !m_file->open( IO_WriteOnly ) )
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7);
+	switch( m_type )
 	{
-		emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
-		setSuccess( false );
-		return;
+	case FileTransferAccept:
+		m_file = new QFile( m_localUrl.path() );
+		if( !m_file->open( IO_WriteOnly ) )
+		{
+			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
+			setSuccess( false );
+			return;
+		}
+		m_transferJob = KIO::get( m_remoteUrl, false, false );
+		QObject::connect( m_transferJob, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );
+		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
+		delete t;
+		break;
+	case FileTransfer7Accept:
+		t->setId( client()->sessionID() );
+		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 5, m_userId.local8Bit() );
+		t->setParam( 265, m_remoteUrl.url().local8Bit() );
+		t->setParam( 222, 3 );
+	
+		send( t );
+		break;
+	case FileTransfer7Reject:
+		t->setId( client()->sessionID() );
+		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 5, m_userId.local8Bit() );
+		t->setParam( 265, m_remoteUrl.url().local8Bit() );
+		t->setParam( 222, 4 );
+	
+		send( t );
+		break;
 	}
-	m_transferJob = KIO::get( m_remoteUrl, false, false );
-	QObject::connect( m_transferJob, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );
-	QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
+}
+
+bool ReceiveFileTask::take( Transfer* transfer )
+{
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	
+	if ( !forMe( transfer ) )
+		return false;
+	
+	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
+
+	parseFileTransfer7Info( t );
+	
+	return true;
+}
+
+bool ReceiveFileTask::forMe( Transfer *transfer ) const
+{
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return false;
+
+
+	if( t->service() == Yahoo::ServiceFileTransfer7Info )
+		return true;
+	else
+		return false;
 }
 
 void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
@@ -73,14 +127,71 @@ void ReceiveFileTask::slotComplete( KIO::Job *job )
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
-	m_file->close();
+	if( m_file )
+		m_file->close();
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		emit error( m_transferId, KIO::ERR_ABORTED, i18n("An error occured while uploading the file.") );
+		emit error( m_transferId, KIO::ERR_ABORTED, i18n("An error occured while downloading the file.") );
+		setSuccess( false );
 	}
 	else
 	{
 		emit complete( m_transferId );
+		setSuccess( true );
+	}
+}
+
+void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
+{	
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	if( transfer->firstParam( 249 ).toInt() == 1 )
+	{
+		// Reject P2P Transfer offer
+		YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7Accept);
+		t->setId( client()->sessionID() );
+		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 5, transfer->firstParam( 4 ) );
+		t->setParam( 265, transfer->firstParam( 265 ) );
+		t->setParam( 66, -3 );
+	
+		send( t );
+	}
+	else if( transfer->firstParam( 249 ).toInt() == 3 )
+	{
+		m_file = new QFile( m_localUrl.path() );
+		if( !m_file->open( IO_WriteOnly ) )
+		{
+			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
+			setSuccess( false );
+			return;
+		}
+
+		YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7Accept);
+		t->setId( client()->sessionID() );
+		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 5, transfer->firstParam( 4 ) );
+		t->setParam( 265, transfer->firstParam( 265 ) );
+		t->setParam( 27, transfer->firstParam( 27 ) );
+		t->setParam( 249, 3 );			// Use Reflection server
+		t->setParam( 251, transfer->firstParam( 251 ) );
+	
+		send( t );
+		// The server expects a HTTP HEAD command prior to the GET
+		m_mimetypeJob = KIO::mimetype(QString::fromLatin1("http://%1/relay?token=%2&sender=%3&recver=%4")
+				.arg(transfer->firstParam( 250 )).arg(transfer->firstParam( 251 )).arg(m_userId).arg(client()->userId()), false);
+		m_mimetypeJob->addMetaData("cookies", "manual");
+		m_mimetypeJob->addMetaData("setcookies", QString::fromLatin1("Cookie: T=%1; path=/; domain=.yahoo.com; Y=%2; C=%3;")
+				.arg(client()->tCookie()).arg(client()->yCookie()).arg(client()->cCookie()) );
+
+
+		m_transferJob = KIO::get( QString::fromLatin1("http://%1/relay?token=%2&sender=%3&recver=%4")
+				.arg(transfer->firstParam( 250 )).arg(transfer->firstParam( 251 )).arg(m_userId).arg(client()->userId()), false, false );
+		QObject::connect( m_transferJob, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );
+		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
+		m_transferJob->addMetaData("cookies", "manual");
+		m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: T=%1; path=/; domain=.yahoo.com; Y=%2; C=%3;")
+				.arg(client()->tCookie()).arg(client()->yCookie()).arg(client()->cCookie()) );
 	}
 }
 
@@ -97,6 +208,16 @@ void ReceiveFileTask::setLocalUrl( KURL url )
 void ReceiveFileTask::setTransferId( unsigned int transferId )
 {
 	m_transferId = transferId;
+}
+
+void ReceiveFileTask::setType( Type type )
+{
+	m_type = type;
+}
+
+void ReceiveFileTask::setUserId( const QString &userId )
+{
+	m_userId = userId;
 }
 
 #include "receivefiletask.moc"

@@ -42,7 +42,9 @@ signals:
 	const QString &fname, unsigned long size );
 private:
 	void parseFileTransfer( YMSGTransfer *transfer );
-	void declineP2P( YMSGTransfer *YMSGtransfer );
+	void parseFileTransfer7( YMSGTransfer *transfer );
+	void acceptFileTransfer( YMSGTransfer *t );
+	void parseFileTransfer7Info( YMSGTransfer *YMSGtransfer );
 };
 
 #endif
