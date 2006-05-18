@@ -526,16 +526,38 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 	
 	QImage photo(photoUrl);
 	// use KABC photo size 100x140
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 100, 140, this );
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
 
 	if(!photo.isNull())
 	{
-		if(photo.width() != 100 || photo.height() != 140)
+		if(photo.width() > 96 || photo.height() > 96)
 		{
-			 if (photo.height() > photo.width())
-				photo = photo.scaledToHeight(140);
-			else
-				photo = photo.scaledToWidth(100);
+			// Scale and crop the picture.
+			photo = photo.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+			// crop image if not square
+			if(photo.width() < photo.height()) 
+				photo = photo.copy((photo.width()-photo.height())/2, 0, 96, 96);
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, 96, 96);
+
+		}
+		else if (photo.width() < 32 || photo.height() < 32)
+		{
+			// Scale and crop the picture.
+			photo = photo.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+			// crop image if not square
+			if(photo.width() < photo.height())
+				photo = photo.copy((photo.width()-photo.height())/2, 0, 32, 32);
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, 32, 32);
+	
+		}
+		else if (photo.width() != photo.height())
+		{
+			if(photo.width() < photo.height())
+				photo = photo.copy((photo.width()-photo.height())/2, 0, photo.height(), photo.height());
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, photo.height(), photo.height());
 		}
 
 		// Use MD5 hash to save the filename, so no problems will occur with the filename because of non-ASCII characters.

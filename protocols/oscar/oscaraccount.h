@@ -95,6 +95,11 @@ public:
 	 */
 	QTextCodec* contactCodec( const QString& contactName ) const;
 
+	/**
+	 * Sets buddy icon
+	 */
+	void setBuddyIcon( KUrl url );
+
 protected:
 	/**
 	 * Setup a connection for a derived account based on the host and port
@@ -148,6 +153,8 @@ signals:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
 
+	void buddyIconChanged();
+
 private:
 	QString getFLAPErrorMessage( int code );
 
@@ -157,6 +164,9 @@ private slots:
 
 	/** Handle task errors from the client */
 	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
+
+	/** Sends buddy icon to server */
+	void slotSendBuddyIcon();
 
 private:
 	OscarAccountPrivate *d;

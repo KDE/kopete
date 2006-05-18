@@ -53,8 +53,8 @@ KActionMenu* TestbedAccount::actionMenu()
 
 	KAction *action;
 	
-	action = new KAction (KIcon("testbed_showcam"), i18n ("Show my own video..."), 0, "actionShowCam");
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowCam()) );
+	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), 0, "actionShowVideo");
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	mActionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 
@@ -143,6 +143,15 @@ void TestbedAccount::slotGoOffline ()
 
 	if (isConnected ())
 		disconnect ();
+	updateContactStatus();
+}
+
+void TestbedAccount::slotShowVideo ()
+{
+	kdDebug ( 14210 ) << k_funcinfo << endl;
+
+	if (isConnected ())
+		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0, "Testbed video window");
 	updateContactStatus();
 }
 

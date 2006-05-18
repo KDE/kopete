@@ -22,6 +22,7 @@
 #include <kurl.h>
 
 class QString;
+class YMSGTransfer;
 /**
 @author André Duffeck
 */
@@ -36,10 +37,10 @@ public:
 
 protected:
 	bool forMe( Transfer *transfer ) const;
-	void parsePictureChecksum( Transfer *transfer );
-	void parsePictureStatus( Transfer *transfer );
-	void parsePicture( Transfer *transfer );
-	void parsePictureUploadResponse( Transfer *transfer );
+	void parsePictureChecksum( YMSGTransfer *transfer );
+	void parsePictureStatus( YMSGTransfer *transfer );
+	void parsePicture( YMSGTransfer *transfer );
+	void parsePictureUploadResponse( YMSGTransfer *transfer );
 signals:
 	void pictureStatusNotify( const QString &, int );
 	void pictureChecksumNotify( const QString &, int );

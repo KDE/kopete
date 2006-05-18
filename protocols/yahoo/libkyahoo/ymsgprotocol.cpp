@@ -220,6 +220,22 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceContactDetails " << servicenum << endl;
 			service = Yahoo::ServiceContactDetails;
 		break;
+		case (Yahoo::ServiceFileTransfer) :
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceFileTransfer " << servicenum << endl;
+			service = Yahoo::ServiceFileTransfer;
+		break;
+		case (Yahoo::ServiceFileTransfer7) :
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceFileTransfer7 " << servicenum << endl;
+			service = Yahoo::ServiceFileTransfer7;
+		break;
+		case (Yahoo::ServiceFileTransfer7Info) :
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceFileTransfer7Info " << servicenum << endl;
+			service = Yahoo::ServiceFileTransfer7Info;
+		break;
+		case (Yahoo::ServicePeerToPeer) :
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePeerToPeer " << servicenum << endl;
+			service = Yahoo::ServicePeerToPeer;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -241,7 +257,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceVoiceChat = 0x4A,
 		ServiceVerify = 76,
 		ServiceP2PFileXfer,
-		ServicePeerToPeer = 0x4F,	// Checks if P2P possible 
 		ServiceRemBuddy,
 		ServiceIgnoreContact,	// > 1, 7, 13 < 1, 66, 13, 0
 		ServiceRejectContact,

@@ -49,16 +49,16 @@ bool PictureNotifierTask::take( Transfer* transfer )
 	switch( t->service() )
 	{	
 		case Yahoo::ServicePictureStatus:
-			parsePictureStatus( transfer );
+			parsePictureStatus( t );
 		break;
 		case Yahoo::ServicePictureChecksum:
-			parsePictureChecksum( transfer );
+			parsePictureChecksum( t );
 		break;
 		case Yahoo::ServicePicture:
-			parsePicture( transfer );
+			parsePicture( t );
 		break;
 		case Yahoo::ServicePictureUpload:
-			parsePictureUploadResponse( transfer );
+			parsePictureUploadResponse( t );
 		break;
 		default:
 		break;
@@ -86,13 +86,9 @@ bool PictureNotifierTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void PictureNotifierTask::parsePictureStatus( Transfer *transfer )
+void PictureNotifierTask::parsePictureStatus( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString	nick;		/* key = 4 */
 	int state;		/* key = 213  */
@@ -103,13 +99,9 @@ void PictureNotifierTask::parsePictureStatus( Transfer *transfer )
 	emit pictureStatusNotify( nick, state );
 }
 
-void PictureNotifierTask::parsePictureChecksum( Transfer *transfer )
+void PictureNotifierTask::parsePictureChecksum( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString	nick;		/* key = 4 */
 	int checksum;		/* key = 192  */
@@ -121,13 +113,9 @@ void PictureNotifierTask::parsePictureChecksum( Transfer *transfer )
 		emit pictureChecksumNotify( nick, checksum );
 }
 
-void PictureNotifierTask::parsePicture( Transfer *transfer )
+void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString	nick;		/* key = 4 */
 	int type;		/* key = 13: 1 = request, 2 = notification */
@@ -145,13 +133,9 @@ void PictureNotifierTask::parsePicture( Transfer *transfer )
 		emit pictureInfoNotify( nick, KUrl::fromPathOrURL( url ), checksum );
 }
 
-void PictureNotifierTask::parsePictureUploadResponse( Transfer *transfer )
+void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString url;
 	QString error;

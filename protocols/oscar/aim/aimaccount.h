@@ -107,10 +107,10 @@ public slots:
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	void slotEditInfo();
 
-	void globalIdentityChanged( const QString&, const QVariant& );
-	void sendBuddyIcon();
-    void slotJoinChat();
+	void slotGlobalIdentityChanged( const QString&, const QVariant& );
+	void slotBuddyIconChanged();
 
+	void slotJoinChat();
 
 protected slots:
     void joinChatDialogClosed( int );

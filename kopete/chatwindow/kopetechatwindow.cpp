@@ -734,8 +734,12 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(rtfEnabled( ChatView*, bool ) ), this, SLOT( slotRTFEnabled( ChatView*, bool ) ) );
 	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
 	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+
 	updateSpellCheckAction();
 	checkDetachEnable();
+	newView->loadChatSettings();
+	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
+	         this, SLOT( toggleAutoSpellCheckEnabled( ChatView*, bool ) ) );
 }
 
 void KopeteChatWindow::checkDetachEnable()
@@ -874,6 +878,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	{
 		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
+		m_activeView->saveChatSettings();
 	}
 
 	guiFactory()->addClient(view->msgManager());
@@ -925,6 +930,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
 	m_activeView->editPart()->reloadConfig();
+	m_activeView->loadChatSettings();
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
@@ -1076,6 +1082,9 @@ void KopeteChatWindow::saveOptions()
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), (int)m_tabBar->tabPosition() );
 
+	if ( m_activeView )
+		m_activeView->saveChatSettings();
+
 	config->sync();
 }
 
@@ -1130,6 +1139,16 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	else
 		toolBar( "formatToolBar" )->hide();
 	updateSpellCheckAction();
+}
+
+void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled )
+{
+	if ( view != m_activeView )
+		return;
+
+	toggleAutoSpellCheck->setEnabled( isEnabled );
+	toggleAutoSpellCheck->setChecked( isEnabled );
+	m_activeView->editPart()->toggleAutoSpellCheck( isEnabled );
 }
 
 bool KopeteChatWindow::queryClose()

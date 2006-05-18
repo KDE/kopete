@@ -9,4 +9,4 @@ NameSpace=Kopete
 SetUserTexts=false
 Singleton=true
 Visibility=KOPETE_EXPORT
-IncludeFiles=kopete_export.h
+IncludeFiles=kopete_export.h,klocale.h

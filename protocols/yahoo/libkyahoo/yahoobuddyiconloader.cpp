@@ -1,7 +1,7 @@
 /*
     yahoobuddyiconloader.cpp - Fetches YahooBuddyIcons
 
-    Copyright (c) 2005 by Andr�Duffeck <andre@duffeck.de>
+    Copyright (c) 2005 by André Duffeck <andre@duffeck.de>
 
     *************************************************************************
     *                                                                       *

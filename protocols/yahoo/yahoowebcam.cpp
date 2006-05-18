@@ -100,7 +100,8 @@ void YahooWebcam::sendImage()
 	
 	KProcess p;
 	p << "jasper";
-	p << "--input" << origImg->name() << "--output" << convertedImg->name() << "--output-format" << "jpc" << "-O" << "rate=0.02" ;
+	p << "--input" << origImg->name() << "--output" << convertedImg->name() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
+	
 	
 	p.start( KProcess::Block );
 	if( p.exitStatus() != 0 )

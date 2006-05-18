@@ -146,15 +146,15 @@ protected:
 	template<typename GroupViewItem>
 	void removeMetaContactFromGroupInner( Kopete::MetaContact *mc, GroupViewItem *gpi )
 	{
-	    Q3ListViewItem* item = gpi->firstChild();
-        while( item )
-        {
-	        KopeteMetaContactLVI* mci = dynamic_cast<KopeteMetaContactLVI*> (item);
-            item = item->nextSibling();
+	    KopeteMetaContactLVI* mci;
+        Q3ListViewItem* item = gpi->firstChild();
+        while(item) {
+            mci = dynamic_cast<KopeteMetaContactLVI*>(item);
+	        item = item->nextSibling();
 
-            if (mci && mci->metaContact() == mc)
-                delete mci;
-        }
+			if ( mci && mci->metaContact() == mc )
+			    delete mci;
+	    }
 	}
 
 private:

@@ -47,6 +47,9 @@ yabtask.cpp
 yabentry.cpp 
 modifyyabtask.cpp 
 chatsessiontask.cpp 
+filetransfernotifiertask.cpp 
+sendfiletask.cpp 
+receivefiletask.cpp 
 )
 
 kde4_automoc( ${libkyahoo_SRCS} )

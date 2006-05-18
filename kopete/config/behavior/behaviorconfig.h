@@ -18,6 +18,11 @@
 
 #include "kcmodule.h"
 
+namespace Kopete
+{
+class Away;
+}
+
 class QTabWidget;
 
 class BehaviorConfig_General;
@@ -40,6 +45,7 @@ class BehaviorConfig : public KCModule
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);
 		void slotUpdatePluginLabel(int);
+		void slotTextChanged(const QString&);
 
 	private:
 		QTabWidget* mBehaviorTabCtl;
@@ -48,6 +54,7 @@ class BehaviorConfig : public KCModule
 		BehaviorConfig_Chat *mPrfsChat;
 		KopeteAwayConfigBaseUI *mAwayConfigUI;
 		QList<KPluginInfo*> viewPlugins;
+		Kopete::Away* awayInstance;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

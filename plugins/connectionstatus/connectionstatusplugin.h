@@ -49,6 +49,7 @@ private:
 	bool m_pluginConnected;
 	KProcess *m_process;
 	QTimer *m_timer;
+	QString m_buffer;
 };
 
 #endif

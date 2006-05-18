@@ -67,6 +67,8 @@
 struct KopeteAwayPrivate
 {
 	QString awayMessage;
+	QString autoAwayMessage;
+	bool useAutoAwayMessage;
 	bool globalAway;
 	QStringList awayMessageList;
 	QTime idleTime;
@@ -103,6 +105,8 @@ Kopete::Away::Away() : QObject( kapp )
 
 	// Set up the away messages
 	d->awayMessage.clear();
+	d->autoAwayMessage = QString::null;
+	d->useAutoAwayMessage = false;
 	d->globalAway = false;
 	d->autoaway = false;
 	d->useAutoAway = true;
@@ -153,6 +157,7 @@ Kopete::Away::Away() : QObject( kapp )
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 
+	// Away Messages
 	if(config->hasKey("Messages"))
 	{
 		d->awayMessageList = config->readEntry("Messages", QStringList());
@@ -166,6 +171,8 @@ Kopete::Away::Away() : QObject( kapp )
 		save();
 	}
 
+	d->autoAwayMessage = Kopete::BehaviorSettings::self()->autoAwayCustomMessage();
+	
 	// init the timer
 	d->timer = new QTimer(this);
 	d->timer->setObjectName("AwayTimer");
@@ -187,6 +194,11 @@ QString Kopete::Away::message()
 	return getInstance()->d->awayMessage;
 }
 
+QString Kopete::Away::autoAwayMessage()
+{
+	return getInstance()->d->autoAwayMessage;
+}
+
 void Kopete::Away::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
@@ -194,6 +206,19 @@ void Kopete::Away::setGlobalAwayMessage(const QString &message)
 		kDebug(14010) << k_funcinfo <<
 			"Setting global away message: " << message << endl;
 		d->awayMessage = message;
+	}
+}
+
+void Kopete::Away::setAutoAwayMessage(const QString &message)
+{
+	if( !message.isEmpty() )
+	{
+		kdDebug(14010) << k_funcinfo <<
+			"Setting auto away message: " << message << endl;
+		d->autoAwayMessage = message;
+		
+		// Save the new auto away message to disk
+		save();
 	}
 }
 
@@ -220,6 +245,7 @@ void Kopete::Away::save()
 	/* Set the away message settings in the Away Messages config group */
 	config->setGroup("Away Messages");
 	config->writeEntry("Messages", d->awayMessageList);
+	Kopete::BehaviorSettings::self()->setAutoAwayCustomMessage( d->autoAwayMessage );
 	config->sync();
 
 	emit( messagesChanged() );
@@ -230,6 +256,7 @@ void Kopete::Away::load()
 	d->awayTimeout=Kopete::BehaviorSettings::self()->autoAwayTimeout();
 	d->goAvailable=Kopete::BehaviorSettings::self()->autoAwayGoAvailable();
 	d->useAutoAway=Kopete::BehaviorSettings::self()->useAutoAway();
+	d->useAutoAwayMessage=Kopete::BehaviorSettings::self()->useCustomAwayMessage();
 }
 
 QStringList Kopete::Away::getMessages()
@@ -415,8 +442,7 @@ void Kopete::Away::setActive()
 				if(i->isConnected() && i->isAway())
 				{
 					i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
-										Kopete::OnlineStatusManager::Online ) ,
-					getInstance()->d->awayMessage);
+										Kopete::OnlineStatusManager::Online ) );
 				}
 
 				// removeAll() makes the next entry in the list the current one,
@@ -448,9 +474,21 @@ void Kopete::Away::setAutoAway()
 		if(i->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		{
 			d->autoAwayAccounts.append(i);
+			
+			if(d->useAutoAwayMessage)
+			{
+			// Display a specific away message
 			i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
-													Kopete::OnlineStatusManager::Idle ) ,
+				Kopete::OnlineStatusManager::Idle ) ,
+								getInstance()->d->autoAwayMessage);
+			}
+			else
+			{
+			// Display the last away message used
+			i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
+				Kopete::OnlineStatusManager::Idle ) ,
 								getInstance()->d->awayMessage);
+			}
 		}
 	}
 }

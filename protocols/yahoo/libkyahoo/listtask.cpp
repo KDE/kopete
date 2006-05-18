@@ -41,8 +41,10 @@ bool ListTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 	
-	parseBuddyList( transfer );
-	parseStealthList( transfer );
+	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
+
+	parseBuddyList( t );
+	parseStealthList( t );
 
 	return true;
 }
@@ -62,13 +64,9 @@ bool ListTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void ListTask::parseBuddyList( Transfer *transfer )
+void ListTask::parseBuddyList( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString raw;
 	raw = t->firstParam( 87 );
@@ -92,13 +90,9 @@ void ListTask::parseBuddyList( Transfer *transfer )
 	}
 }
 
-void ListTask::parseStealthList( Transfer *transfer )
+void ListTask::parseStealthList( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString raw;
 	raw = t->firstParam( 185 );

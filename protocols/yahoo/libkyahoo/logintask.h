@@ -4,7 +4,7 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -25,6 +25,7 @@
 #include "yahootypes.h"
 
 class QString;
+class YMSGTransfer;
 
 /**
 @author Duncan Mac-Vicar
@@ -51,12 +52,12 @@ protected:
 	bool forMe( Transfer* transfer ) const;
 	enum State { InitialState, SentVerify, GotVerifyACK, SentAuth, GotAuthACK, SentAuthResp };
 	void sendVerify();
-	void sendAuth(Transfer* transfer);
-	void sendAuthResp(Transfer* transfer);
+	void sendAuth(YMSGTransfer* transfer);
+	void sendAuthResp(YMSGTransfer* transfer);
 	void sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID);
 	void sendAuthResp_pre_0x0b(const QString &sn, const QString &seed);
-	void handleAuthResp(Transfer *transfer);
-	void parseCookies( Transfer *transfer );
+	void handleAuthResp(YMSGTransfer *transfer);
+	void parseCookies( YMSGTransfer *transfer );
 signals:
 	void haveSessionID( uint );
 	void haveCookies();

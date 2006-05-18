@@ -85,7 +85,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 		SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
 	if( user->metaContact() )
-		connect( user, SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+		connect( user->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 
 	slotUpdateDisplayName();
 }

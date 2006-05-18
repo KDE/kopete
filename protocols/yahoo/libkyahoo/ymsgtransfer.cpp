@@ -4,7 +4,7 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -218,7 +218,8 @@ QByteArray YMSGTransfer::serialize()
 	else
 		stream << (Q_INT16)0x000e;
 	stream << (Q_INT16)0x0000;
-	if( d->service == Yahoo::ServicePictureUpload )
+	if( d->service == Yahoo::ServicePictureUpload ||
+		d->service == Yahoo::ServiceFileTransfer )
 		stream << (Q_INT16)(length()+4);
 	else
 		stream << (Q_INT16)length();

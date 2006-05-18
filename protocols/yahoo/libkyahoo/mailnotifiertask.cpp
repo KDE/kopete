@@ -41,7 +41,9 @@ bool MailNotifierTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 
-	parseMail( transfer );
+	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
+
+	parseMail( t );
 
 	return true;
 }
@@ -60,13 +62,9 @@ bool MailNotifierTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void MailNotifierTask::parseMail( Transfer *transfer )
+void MailNotifierTask::parseMail( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString count = t->firstParam( 9 );
 	QString mail = t->firstParam( 42 );

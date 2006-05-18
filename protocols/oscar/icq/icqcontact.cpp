@@ -119,6 +119,10 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
 		return;
 
+	// invalidate old away message if user was offline
+	if ( !isOnline() )
+		removeProperty( mProtocol->awayMessage );
+
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );

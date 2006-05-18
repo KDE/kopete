@@ -21,7 +21,8 @@
 #ifndef YAHOOWEBCAMDIALOG_H_
 #define YAHOOWEBCAMDIALOG_H_
 
-#include <qlabel.h>
+//#include <qlabel.h>
+#include <webcamwidget.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <kdialogbase.h>
@@ -47,7 +48,7 @@ signals:
 	void closingWebcamDialog();
 	
 private:
-	QLabel m_imageContainer;
+	Kopete::WebcamWidget m_imageContainer;
 	
 };
 

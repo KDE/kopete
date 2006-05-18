@@ -1,7 +1,7 @@
 /*
     Kopete Yahoo Protocol
     
-    Copyright (c) 2005-2006 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
@@ -50,6 +50,9 @@
 #include "yabtask.h"
 #include "modifyyabtask.h"
 #include "chatsessiontask.h"
+#include "sendfiletask.h"
+#include "filetransfernotifiertask.h"
+#include "receivefiletask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -80,6 +83,7 @@ public:
 	WebcamTask *webcamTask;
 	ConferenceTask *conferenceTask;
 	YABTask *yabTask;
+	FileTransferNotifierTask *fileTransferTask;
 
 	// Connection data
 	uint sessionID;
@@ -312,6 +316,50 @@ void Client::sendBuzz( const QString &to )
 	smt->setText( QString::fromLatin1( "<ding>" ) );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
+}
+
+void Client::sendFile( unsigned int transferId, const QString &to, const QString &msg, KUrl url )
+{
+	SendFileTask *sft = new SendFileTask( d->root );
+
+	QObject::connect( sft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
+	QObject::connect( sft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
+	QObject::connect( sft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+
+	sft->setTarget( to );
+	sft->setMessage( msg );
+	sft->setFileUrl( url );
+	sft->setTransferId( transferId );
+	sft->go( true );
+}
+
+void Client::receiveFile( unsigned int transferId, const QString &userId, KUrl remoteURL, KUrl localURL )
+{
+	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
+
+	QObject::connect( rft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
+	QObject::connect( rft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
+	QObject::connect( rft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+
+	rft->setRemoteUrl( remoteURL );
+	rft->setLocalUrl( localURL );
+	rft->setTransferId( transferId );
+	rft->setUserId( userId );
+	if( remoteURL.url().startsWith( "http://" ) )
+		rft->setType( ReceiveFileTask::FileTransferAccept );
+	else
+		rft->setType( ReceiveFileTask::FileTransfer7Accept );
+	rft->go( true );
+}
+
+void Client::rejectFile( const QString &userId, KUrl remoteURL )
+{
+	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
+
+	rft->setRemoteUrl( remoteURL );
+	rft->setUserId( userId );
+	rft->setType( ReceiveFileTask::FileTransfer7Reject );
+	rft->go( true );
 }
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )
@@ -644,6 +692,7 @@ void Client::distribute( Transfer * transfer )
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	if( !rootTask()->take( transfer ) )
 		kDebug(YAHOO_RAW_DEBUG) << "CLIENT: root task refused transfer" << endl;
+	delete transfer;
 }
 
 void Client::send( Transfer* request )
@@ -752,6 +801,12 @@ void Client::initTasks()
 				SIGNAL( gotYABEntry( YABEntry * ) ) );
 	QObject::connect( d->yabTask, SIGNAL( gotRevision( long, bool ) ),
 				SIGNAL( gotYABRevision( long, bool ) ) );
+
+	d->fileTransferTask = new FileTransferNotifierTask( d->root );
+	QObject::connect( d->fileTransferTask, SIGNAL(incomingFileTransfer( const QString &, const QString &, 
+					long, const QString &, const QString &, unsigned long )),
+				SIGNAL(incomingFileTransfer( const QString &, const QString &, 
+					long, const QString &, const QString &, unsigned long )) );
 }
 
 void Client::deleteTasks()
@@ -771,6 +826,8 @@ void Client::deleteTasks()
 	d->conferenceTask = 0L;
 	d->yabTask->deleteLater();
 	d->yabTask = 0L;
+	d->fileTransferTask->deleteLater();
+	d->fileTransferTask = 0;
 }
 
 #include "client.moc"

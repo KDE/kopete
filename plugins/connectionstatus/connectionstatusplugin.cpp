@@ -60,6 +60,8 @@ void ConnectionStatusPlugin::slotCheckStatus()
 
 		return;
 	}
+
+	m_buffer = QString::null;
 	
 	// Use KProcess to run netstat -rn. We'll then parse the output of
 	// netstat -rn in slotProcessStdout() to see if it mentions the
@@ -81,8 +83,12 @@ void ConnectionStatusPlugin::slotCheckStatus()
 
 void ConnectionStatusPlugin::slotProcessExited( KProcess *process )
 {
+	kdDebug( 14301 ) << m_buffer << endl;
+
 	if ( process == m_process )
 	{
+		setConnectedStatus( m_buffer.contains( "default" ) );
+		m_buffer = QString::null;
 		delete m_process;
 		m_process = 0L;
 	}
@@ -92,9 +98,8 @@ void ConnectionStatusPlugin::slotProcessStdout( KProcess *, char *buffer, int bu
 {
 	// Look for a default gateway
 	//kDebug( 14301 ) << k_funcinfo << endl;
-	QString qsBuffer = QString::fromLatin1( buffer, buflen );
+	m_buffer += QString::fromLatin1( buffer, buflen );
 	//kDebug( 14301 ) << qsBuffer << endl;
-	setConnectedStatus( qsBuffer.contains( "default" ) );
 }
 
 void ConnectionStatusPlugin::setConnectedStatus( bool connected )

@@ -16,7 +16,6 @@
 */
 
 #include <qfile.h>
-#include <qimage.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
@@ -25,7 +24,6 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kcodecs.h>
-#include <kstandarddirs.h>
 #include <kmessagebox.h>
 
 #include "kopeteawayaction.h"
@@ -94,8 +92,8 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
-	
-	QObject::connect( engine(), SIGNAL( iconNeedsUploading() ), this, SLOT( slotSendBuddyIcon() ) );
+
+	QObject::connect( this, SIGNAL( buddyIconChanged() ), this, SLOT( slotBuddyIconChanged() ) );
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
@@ -186,7 +184,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= ICQ::StatusCode::WEBAWARE;
 
-		engine()->setIsIcq( true );
 		engine()->setStatus( status, mInitialStatusMessage );
 		engine()->start( server, port, accountId(), password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
@@ -409,38 +406,6 @@ void ICQAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& 
 	}
 }
 
-void ICQAccount::setBuddyIcon( KUrl url )
-{	
-	if ( url.path().isEmpty() )
-	{
-		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
-	}
-	else
-	{
-		QImage image( url.path() );
-		if ( image.isNull() )
-			return;
-		
-		image = image.scaled( 52, 64, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-		if(image.width() > image.height()) {
-			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
-		}
-		else if(image.height() > image.width()) {
-			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
-		}
-		
-		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
-		
-		kDebug(14153) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
-		if ( !image.save( newlocation, "JPEG" ) )
-			return;
-		
-		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
-	}
-	
-	slotBuddyIconChanged();
-}
-
 void ICQAccount::slotBuddyIconChanged()
 {
 	// need to disconnect because we could end up with many connections
@@ -550,32 +515,6 @@ void ICQAccount::slotBuddyIconChanged()
 		iconFile.close();
 	}
 }
-
-void ICQAccount::slotSendBuddyIcon()
-{
-	//need to disconnect because we could end up with many connections
-	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
-	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-	if ( photoPath.isEmpty() )
-		return;
-	
-	kDebug(14153) << k_funcinfo << photoPath << endl;
-	QFile iconFile( photoPath );
-	
-	if ( iconFile.open( QIODevice::ReadOnly ) )
-	{
-		if ( !engine()->hasIconConnection() )
-		{
-			//will send icon when we connect to icon server
-			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
-			                  this, SLOT( slotSendBuddyIcon() ) );
-			return;
-		}
-		QByteArray imageData = iconFile.readAll();
-		engine()->sendBuddyIcon( imageData );
-	}
-}
-
 
 #include "icqaccount.moc"
 

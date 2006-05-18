@@ -104,8 +104,8 @@ public:
 	void updateMembersActions();
 	void setStatus( const QString & );
 
-	/** 
-	 * Reimplemented from KMainWindow - asks each ChatView in the window if it is ok to close the window 
+	/**
+	 * Reimplemented from KMainWindow - asks each ChatView in the window if it is ok to close the window
 	 * @return true if no ChatView objects to closing.
 	 */
 	virtual bool queryClose();
@@ -221,6 +221,7 @@ private slots:
 
 	void toggleAutoSpellChecking();
 	void slotRTFEnabled( ChatView*, bool );
+	void slotAutoSpellCheckEnabled( ChatView*, bool );
 
 	void slotSetCaption( bool );
 	void slotUpdateCaptionIcons( ChatView * );

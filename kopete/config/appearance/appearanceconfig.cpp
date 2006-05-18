@@ -201,9 +201,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 	connect(d->mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
 		this, SLOT(installEmoticonTheme()));
 
-	// Since KNewStuff is incomplete and buggy we'll disable it by default.
-	d->m_allowDownloadTheme = config->readEntry( "ForceNewStuff", false );
-	d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
 	connect(d->mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
 		this, SLOT(slotGetEmoticonThemes()));
 	connect(d->mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
@@ -228,9 +225,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
-
-	// Since KNewStuff is incomplete and buggy we'll disable it by default.
-	d->mPrfsChatWindow->btnGetStyles->setEnabled( config->readEntry( "ForceNewStuff", false ) );
 
 	d->mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session

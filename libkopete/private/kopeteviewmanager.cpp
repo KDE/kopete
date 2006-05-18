@@ -214,7 +214,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
             readMessages( manager, outgoingMessage );
         }
 
-		if ( !outgoingMessage && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() ) )
+		if ( !outgoingMessage && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
+				&& msg.direction() != Kopete::Message::Internal )
 		{
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			if( (!manager->view(false) || !w || manager->view() != d->activeView ||

@@ -23,6 +23,7 @@
 #include <qstringlist.h>
 
 class QString;
+class YMSGTransfer;
 class QBuffer;
 namespace KNetwork {
 	class KStreamSocket;
@@ -91,7 +92,7 @@ private slots:
 	void sendEmptyWebcamImage();
 	void transmitWebcamImage();
 private:
-	void parseWebcamInformation( Transfer *transfer );
+	void parseWebcamInformation( YMSGTransfer *transfer );
 	void parseData( QByteArray &data, KStreamSocket *socket );
 
 	void connectStage2( KStreamSocket *socket );

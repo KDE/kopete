@@ -155,6 +155,18 @@
 			<label>Go available after detecting an activity.</label>
 			<default>true</default>
 		</entry>
+		<entry key="useLastAwayMessage" type="Bool">
+			<label>When seting the auto away message, use the latest away message.</label>
+			<default>true</default>
+		</entry>
+		<entry key="useCustomAwayMessage" type="Bool">
+			<label>When seting the auto away message, use the custom away message.</label>
+			<default>false</default>
+		</entry>
+		<entry key="autoAwayCustomMessage" type="String">
+			<label>The custom auto away message.</label>
+			<default code="true">i18n("I am gone right now, but I will be back later")</default>
+		</entry>
 	</group>
 
 	<group name="ContactList">

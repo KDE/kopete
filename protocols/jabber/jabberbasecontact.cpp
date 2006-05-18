@@ -292,7 +292,7 @@ void JabberBaseContact::reevaluateStatus ()
 	
 	/* Add some icon to show the subscription */ 
 	if( ( mRosterItem.subscription().type() == XMPP::Subscription::None || mRosterItem.subscription().type() == XMPP::Subscription::From)
-			 && inherits ( "JabberContact" ) && account()->myself() != this && account()->isConnected() )
+			 && inherits ( "JabberContact" ) && metaContact() != Kopete::ContactList::self()->myself() && account()->isConnected() )
 	{
 		status = Kopete::OnlineStatus(status.status() ,
 									  status.weight() ,

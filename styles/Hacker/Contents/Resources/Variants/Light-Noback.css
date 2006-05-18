@@ -3,7 +3,7 @@ body	{
 	background: white; background-color: white
 	}
 
-#Chat  { padding-top: 50px; margin: 4px; overflow: hidden }
+#Chat  { padding-top: 80px; margin: 4px; overflow: hidden }
 
 #Header { background: url("../images/background2.png") repeat-x right top; position: fixed; z-index: 100; top: 0; right: 0; left: 0; height: 80px; border-bottom: 0 none }
 
@@ -13,7 +13,7 @@ body	{
 
 .headerContainer  { padding: 1px 1px; position: relative; border-style: dotted none; border-width: 2px medium; border-color: #666 black }
 
-.container  { margin-bottom: 2px }
+.container  { margin-bottom: 2px;  overflow: auto; }
 
 a:link  { color: #5099ff }
 a:visited  { color: #5099ff }
@@ -23,7 +23,7 @@ a:hover  { color: #82b6ff }
 
 .Message  { color: black; font-style: normal; font-weight: normal; position: relative; margin-left: 2px; margin-right: 5px }
 
-.pastMessage  { color: #a0a3a6; font-style: normal; font-weight: normal; overflow: hidden }
+.pastMessage  { color: #a0a3a6; font-style: normal; font-weight: normal }
 
 .statusContainer  { margin-bottom: 2px }
 
@@ -35,6 +35,6 @@ a:hover  { color: #82b6ff }
 
 .user  { color: gray; font-weight: bold; text-align: left; display: block; position: relative; margin-left: 2px }
 
-.pastBuddy  { color: #7ab382; font-size: 11px; font-weight: bold; text-align: left; display: block; position: relative }
+.pastBuddy  { color: #7ab382; font-size: 11px; font-weight: bold; text-align: left; position: relative }
 
-.pastUser  { color: #7b95b4; font-size: 11px; font-weight: bold; text-align: left; display: block; position: relative }
+.pastUser  { color: #7b95b4; font-size: 11px; font-weight: bold; text-align: left; position: relative }

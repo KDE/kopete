@@ -1,0 +1,50 @@
+/* textonly by Mark Fickett, 2004. Poke/edit/maul, but leave credit - think GPL */
+/* Generally: naib.webhop.org Adium-related: naib.webhop.org/~markfickett/adium */
+
+body {
+	background: #ffffff;
+}
+
+div {
+	overflow: auto;
+}
+
+a:link { text-decoration: none; }
+a:visited { text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:active { text-decoration: none; }
+
+.KopeteMessage {
+	text-indent: -10px;
+	padding-left: 10px;
+}
+
+.inMetacontact, .outMetacontact, .inActionMetacontact, .outActionMetacontact, .InternalDelim {
+	font-weight: bold;
+}
+
+#Chat {
+	margin-bottom: -8px;
+	overflow: auto;
+}
+
+.inContentTime, .inMetacontact {
+	color: #a82f2f;
+}
+
+.outContentTime, .outMetacontact {
+	color: #16569e;
+}
+
+.inActionTime, .inActionMetacontact, .inActionMessage {
+	color: green;
+}
+
+.outActionTime, .outActionMetacontact, .outActionMessage {
+	color: green;
+}
+
+.InternalTime, .InternalDelim, .InternalMessage {
+	color: #9400d3;
+}
+

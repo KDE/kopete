@@ -42,8 +42,7 @@ bool YABTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 	
 	if( t->service() == Yahoo::ServiceContactDetails )
 		parseContactDetails( t );
@@ -66,13 +65,9 @@ bool YABTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void YABTask::parseContactDetails( Transfer* transfer )
+void YABTask::parseContactDetails( YMSGTransfer* t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
 
 	QString from;		/* key = 7  */
 	int count;

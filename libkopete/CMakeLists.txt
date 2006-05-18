@@ -82,7 +82,9 @@ set(kopete_LIB_SRCS
    networkstatuscommon.h 
    kopeteutils.cpp 
    kopetepicture.cpp 
-   kopetestatusmessage.cpp )
+   kopetestatusmessage.cpp 
+   webcamwidget.cpp 
+)
 
 kde4_add_ui_files(kopete_LIB_SRCS
     ui/kopetepassworddialog.ui

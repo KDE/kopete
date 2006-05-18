@@ -1,7 +1,7 @@
 /*
     Kopete Yahoo Protocol
     
-    Copyright (c) 2005-2006 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
@@ -41,6 +41,7 @@ class KNetworkConnector;
 class Task;
 class KTempFile;
 class YABEntry;
+class SendFileTask;
 
 class LIBKYAHOO_EXPORT Client : public QObject
 {
@@ -87,12 +88,18 @@ Q_OBJECT
 		QString errorString();
 
 		/**
-		 * Specifies the status we connect with.
+		 * Specifies the status we connect with. 
+		 * The Yahoo protocol supports connecting into Online and Invisible state.
+		 * If status is any other status the Client connects into Online state and changes into the specified state after the login. 
+		 * @param status the status to connect with
 		 */
 		void setStatusOnConnect( Yahoo::Status status );
 
 		/**
 		 * Specifies the status message we connect with.
+		 * The Yahoo protocol does not support connecting with a status message. If msg is not empty the Client
+		 * will change the status message after the login.
+		 * @param msg the status message to connect with
 		 */
 		void setStatusMessageOnConnect( const QString &msg );
 
@@ -104,37 +111,51 @@ Q_OBJECT
 
 		/**
 		 * Send a Typing notification
+		 * @param to the buddy that should be notified
+		 * @param typing true if there is typing activity, false if not
 		 */
 		void sendTyping( const QString &to, bool typing );
 		
 		/**
 		 * Send a Message
+		 * @param to the buddy that should receive the message
+		 * @param msg the message
 		 */
 		void sendMessage( const QString &to, const QString &msg );
 
 		/**
 		 * Register / Unregister a chatsession
+		 * @param to the buddy, the chatsession belongs to 
+		 * @param close if true, the chatsession will be closed, if false, it will be opened
 		 */
 		void setChatSessionState( const QString &to, bool close );
 
 		/**
 		 * Send a Buzz
+		 * @param to the buddy that should receive the buzz
 		 */
 		void sendBuzz( const QString &to );
 
 		/**
 		 * Change our status
+		 * @param status the status that will be set
+		 * @param message the status message that will be set
+		 * @param type Yahoo::StatusTypeAvailable means that the user is available, Yahoo::StatusTypeAway means that the user is away from the keyboard
 		 */	
 		void changeStatus(Yahoo::Status status, const QString &message, Yahoo::StatusType type);
 
 		/**
 		 * Set the verification word that is needed for a account verification after
 		 * too many wrong login attempts.
+		 * @param word the verification word
 		 */
 		void setVerificationWord( const QString &word );
 
 		/**
 		 * Add a buddy to the contact list
+		 * @param userId the yahoo ID of the buddy that should be added
+		 * @param group the group where the buddy will be placed
+		 * @param message the message that will be sent to the buddy along the authorization request
 		 */
 		void addBuddy( const QString &userId, const QString &group, const QString &message = QString::fromLatin1("Please add me")  );
 
@@ -267,6 +288,22 @@ Q_OBJECT
 		 * Deletes a YAB entry
 		 */
 		void deleteYABEntry( YABEntry &entry );
+
+		/**
+		 * Send a file to a buddy
+		 */
+		void sendFile( unsigned int transferId, const QString &userId, const QString &msg, KUrl url );
+
+		/**
+		 * Receive a file from a buddy
+		 */
+		void receiveFile( unsigned int transferId, const QString &userId, KUrl remoteURL, KUrl localURL );
+
+		/**
+		 * Reject a file offered by a buddy
+		 */
+		void rejectFile( const QString &userId, KUrl remoteURL );		
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -496,6 +533,23 @@ Q_OBJECT
 		 * An error occured while saving a Yahoo Addressbook entry
 		 */
 		void modifyYABEntryError( YABEntry *, const QString & );
+		/**
+		 * number of Bytes transferred for FileTransfer id
+		 */
+		void fileTransferBytesProcessed( unsigned int, unsigned int );
+		/**
+		 * filetransfer completed
+		 */
+		void fileTransferComplete( unsigned int );
+		/**
+		 * An error occured during the filetransfer
+		 */
+		void fileTransferError( unsigned int, int, const QString & );
+		/**
+		 * A buddy is trying to send us a file
+		 */
+		void incomingFileTransfer( const QString &, const QString &, long, const QString &,
+			const QString &, unsigned long );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

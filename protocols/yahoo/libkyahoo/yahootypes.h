@@ -97,6 +97,9 @@ namespace Yahoo
 		ServiceContactDetails = 0xd3,	/* YMSG13 */
 		ServiceChatSession = 0xd4,	
 		ServiceAuthorization = 0xd6,	/* YMSG13 */
+		ServiceFileTransfer7 = 0xdc,	/* YMSG13 */
+		ServiceFileTransfer7Info,	/* YMSG13 */
+		ServiceFileTransfer7Accept,	/* YMSG13 */
 		ServiceBuddyChangeGroup = 0xe7	/* YMSG13 */
 	};
 	

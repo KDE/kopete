@@ -68,13 +68,14 @@ void SendPictureTask::initiateUpload()
 
 void SendPictureTask::connectFailed( int i)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KStreamSocket*>( sender() )->errorString() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
+	setSuccess( false );
 }
 
 void SendPictureTask::connectSucceeded()
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KStreamSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
+	KStreamSocket* socket = const_cast<KBufferedSocket*>( static_cast<const KBufferedSocket*>( sender() ) );
 	YMSGTransfer t(Yahoo::ServicePictureUpload);
 
 	QFile file( m_path );
@@ -116,20 +117,16 @@ void SendPictureTask::connectSucceeded()
 
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;
 	if( socket->write( buffer, buffer.size() ) )
+	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
-	else
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
-	socket->close();
-
-}
-
-void SendPictureTask::slotUploadFinished( KIO::Job *job )
-{
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	if ( job->error() )
-		setSuccess( false );
-	else
 		setSuccess( true );
+	}
+	else
+	{
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
+		setSuccess( false );
+	}
+	socket->close();
 }
 
 void SendPictureTask::sendChecksum()

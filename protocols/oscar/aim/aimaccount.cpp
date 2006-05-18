@@ -15,8 +15,8 @@
 
 #include <qdom.h>
 #include <qfile.h>
-//Added by qt3to4:
 #include <Q3ValueList>
+
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
@@ -215,11 +215,8 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	QObject::connect( Kopete::ContactList::self(),
 	                  SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this,
-	                  SLOT( globalIdentityChanged( const QString&, const QVariant& ) ) );
+	                  SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
 	
-	QObject::connect( engine(), SIGNAL( iconNeedsUploading() ), this,
-	                  SLOT( sendBuddyIcon() ) );
-
     QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
                       this, SLOT( connectedToChatRoom( WORD, const QString& ) ) );
 
@@ -228,6 +225,8 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 
     QObject::connect( engine(), SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
                       this, SLOT( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+
+	QObject::connect( this, SIGNAL( buddyIconChanged() ), this, SLOT( slotBuddyIconChanged() ) );
 
 }
 
@@ -382,7 +381,7 @@ void AIMAccount::slotEditInfo()
 	myInfo->exec(); // This is a modal dialog
 }
 
-void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& value )
+void AIMAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
 {
 	//do something with the photo
 	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
@@ -398,81 +397,100 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 	
 		if ( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			//yay for brain damage. since i have no way to access the global
-			//properties outside of this slot, i've got to set them somewhere
-			//else so i can get at them later.
-			myself()->setProperty( Kopete::Global::Properties::self()->photo(), value.toString() );
-	
-			//generate a new icon hash
-			//photo is a url, gotta load it first.
-			QFile iconFile( value.toString() );
-			iconFile.open( IO_ReadOnly );
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
-			KMD5 iconHash;
-			iconHash.update( iconFile );
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
-			//find old item, create updated item
-			if ( engine()->isActive() )
-			{
-				SSIManager* ssi = engine()->ssiManager();
-				Oscar::SSI item = ssi->findItemForIconByRef( 1 );
-	
-				if ( !item )
-				{
-					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new"
-						<< endl;
-					TLV t;
-					t.type = 0x00D5;
-					t.data.resize( 18 );
-					t.data[0] = 0x00;
-					t.data[1] = 0x10;
-					memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-					t.length = t.data.size();
-	
-					Q3ValueList<Oscar::TLV> list;
-					list.append( t );
-	
-					Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
-	
-					//item is a non-valid ssi item, so the function will add an item
-					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
-					engine()->modifySSIItem( item, s );
-				}
-				else
-				{ //found an item
-					Oscar::SSI s(item);
-					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi."
-						<< endl;
-					Q3ValueList<TLV> tList( item.tlvList() );
-					TLV t = Oscar::findTLV( tList, 0x00D5 );
-					if ( !t )
-						return;
-					tList.remove( t );
-					t.data.resize( 18 );
-					t.data[0] = 0x00;
-					t.data[1] = 0x10;
-					memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-					t.length = t.data.size();
-					tList.append( t );
-					item.setTLVList( tList );
-					//s is old, item is new. modification will occur
-					engine()->modifySSIItem( s, item );
-				}
-			}
-			iconFile.close();
+			setBuddyIcon( value.toString() );
 		}
 	}
 }
 
-
-void AIMAccount::sendBuddyIcon()
+void AIMAccount::slotBuddyIconChanged()
 {
+	// need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
+	if ( !engine()->isActive() )
+	{
+		QObject::connect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
+		return;
+	}
+	
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << photoPath << endl;
-	QFile iconFile( photoPath );
-	iconFile.open( QIODevice::ReadOnly );
-	QByteArray imageData = iconFile.readAll();
-	engine()->sendBuddyIcon( imageData );
+	
+	SSIManager* ssi = engine()->ssiManager();
+	Oscar::SSI item = ssi->findItemForIconByRef( 1 );
+	
+	if ( photoPath.isEmpty() )
+	{
+		if ( item )
+		{
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Removing icon hash item from ssi" << endl;
+			Oscar::SSI s(item);
+			
+			//remove hash and alias
+			QList<TLV> tList( item.tlvList() );
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.remove( t );
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifySSIItem( s, item );
+		}
+	}
+	else
+	{
+		QFile iconFile( photoPath );
+		iconFile.open( IO_ReadOnly );
+		
+		KMD5 iconHash;
+		iconHash.update( iconFile );
+		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+			
+		//find old item, create updated item
+		if ( !item )
+		{
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
+			
+			TLV t;
+			t.type = 0x00D5;
+			t.data.resize( 18 );
+			t.data[0] = 0x00;
+			t.data[1] = 0x10;
+			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+			t.length = t.data.size();
+			
+			QList<Oscar::TLV> list;
+			list.append( t );
+			
+			Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
+			
+			//item is a non-valid ssi item, so the function will add an item
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
+			engine()->modifySSIItem( item, s );
+		}
+		else
+		{ //found an item
+			Oscar::SSI s(item);
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi." << endl;
+			QList<TLV> tList( item.tlvList() );
+			
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.remove( t );
+			else
+				t.type = 0x00D5;
+				
+			t.data.resize( 18 );
+			t.data[0] = 0x00;
+			t.data[1] = 0x10;
+			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+			t.length = t.data.size();
+			tList.append( t );
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifySSIItem( s, item );
+		}
+		iconFile.close();
+	}
 }
 
 void AIMAccount::slotJoinChat()

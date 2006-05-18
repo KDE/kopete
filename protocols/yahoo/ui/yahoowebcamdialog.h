@@ -28,6 +28,11 @@ class QPixmap;
 class QWidget;
 class YahooContact;
 
+namespace Kopete
+{
+	class WebcamWidget;
+}
+
 class YahooWebcamDialog : public KDialogBase
 {
 Q_OBJECT
@@ -44,7 +49,7 @@ signals:
 	void closingWebcamDialog();
 	
 private:
-	QLabel *m_imageContainer;
+	Kopete::WebcamWidget *m_imageContainer;
 	QLabel *m_Viewer;
 	QString contactName;
 	

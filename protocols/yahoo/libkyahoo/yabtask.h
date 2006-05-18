@@ -23,6 +23,8 @@
 
 class KUrl;
 class KJob;
+class YMSGTransfer;
+
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 
@@ -48,7 +50,7 @@ signals:
 	void gotEntry( YABEntry * );
 	void gotRevision( long rev, bool merged );
 protected:
-	void parseContactDetails( Transfer* transfer );
+	void parseContactDetails( YMSGTransfer* t );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );
 	void slotResult( KJob* );

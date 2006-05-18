@@ -149,7 +149,14 @@ OnlineStatus::OnlineStatus( const OnlineStatus &other )
 
 bool OnlineStatus::operator==( const OnlineStatus &other ) const
 {
-	return d->internalStatus == other.d->internalStatus && d->protocol == other.d->protocol;
+	if ( d->internalStatus == other.d->internalStatus && d->protocol == other.d->protocol &&
+	     d->weight == other.d->weight && d->overlayIcons == other.d->overlayIcons &&
+	     d->description == other.d->description )
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool OnlineStatus::operator!=( const OnlineStatus &other ) const

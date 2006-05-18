@@ -88,6 +88,16 @@ public:
 	void setActive( bool value );
 
 	/**
+	 * save the chat settings (rich text, auto spelling)
+	 */
+	void saveChatSettings();
+
+	/**
+	 * read the chat settings (rich text, auto spelling)
+	 */
+	void loadChatSettings();
+
+	/**
 	 * Clears the chat buffer
 	 *
 	 * Reimplemented from KopeteView
@@ -304,6 +314,8 @@ signals:
 	 * Emitted when the state of RTF has changed
 	 */
 	void rtfEnabled( ChatView*, bool );
+
+	void autoSpellCheckEnabled( ChatView*, bool );
 
 private slots:
 	void slotRemoteTypingTimeout();

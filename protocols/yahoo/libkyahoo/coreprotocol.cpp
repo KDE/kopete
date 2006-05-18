@@ -145,8 +145,8 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 		emit outgoingData( bytesOut );
 		// now convert 
 		//fieldsToWire( fields );
-		return;
 	}
+	delete outgoing;
 }
 
 

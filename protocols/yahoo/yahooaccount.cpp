@@ -267,10 +267,19 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
 		                 SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
 		
-// 		QObject::connect(m_session,
-// 		                 SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
-// 		                 this,
-// 		                 SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
+		QObject::connect(m_session,
+		                 SIGNAL(incomingFileTransfer(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
+		                 this,
+		                 SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
+		
+		QObject::connect(m_session, SIGNAL(fileTransferComplete(unsigned int)), this,
+		                 SLOT(slotFileTransferComplete(unsigned int)) );
+		
+		QObject::connect(m_session, SIGNAL(fileTransferBytesProcessed(unsigned int,unsigned int)), this,
+		                 SLOT(slotFileTransferBytesProcessed(unsigned int,unsigned int)) );
+		
+		QObject::connect(m_session, SIGNAL(fileTransferError(unsigned int,int,const QString &)), this,
+		                 SLOT(slotFileTransferError(unsigned int,int,const QString &)) );
 		
 		QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
 		                 SLOT(slotTypingNotify(const QString &, int)));
@@ -380,12 +389,21 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
 		                    SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
 		
-// 		QObject::disconnect(m_session,
-// 		                    SIGNAL(gotFile(const QString &, const QString &,
-// 		                                   long, const QString &, const QString &, unsigned long)),
-// 		                    this,
-// 		                    SLOT(slotGotFile(const QString&, const QString&,
-// 		                                     long, const QString&, const QString&, unsigned long)));
+		QObject::disconnect(m_session,
+		                    SIGNAL(incomingFileTransfer(const QString &, const QString &,
+		                                   long, const QString &, const QString &, unsigned long)),
+		                    this,
+		                    SLOT(slotGotFile(const QString&, const QString&,
+		                                     long, const QString&, const QString&, unsigned long)));
+		
+		QObject::disconnect(m_session, SIGNAL(fileTransferComplete(unsigned int)), this,
+		                 SLOT(slotFileTransferComplete(unsigned int)) );
+		
+		QObject::disconnect(m_session, SIGNAL(fileTransferBytesProcessed(unsigned int,unsigned int)), this,
+		                 SLOT(slotFileTransferBytesProcessed(unsigned int,unsigned int)) );
+		
+		QObject::disconnect(m_session, SIGNAL(fileTransferError(unsigned int,int,const QString &)), this,
+		                 SLOT(slotFileTransferError(unsigned int,int,const QString &)) );
 		
 		QObject::disconnect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
 		                    SLOT(slotTypingNotify(const QString &, int)));
@@ -607,6 +625,17 @@ void YahooAccount::setPictureFlag( int flag )
 int YahooAccount::pictureFlag()
 {
 	return m_pictureFlag;
+}
+
+void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
+{	
+	QFile file( url.path() );
+	
+	Kopete::Transfer *transfer = Kopete::TransferManager::transferManager()->addTransfer ( to,
+		url.fileName(), file.size(), to->userId(), Kopete::FileTransferInfo::Outgoing );
+	m_session->sendFile( transfer->info().transferId(), to->userId(), QString(), url );
+	
+	m_fileTransfers.insert( transfer->info().transferId(), transfer );	
 }
 
 /***************************************************************************
@@ -1302,13 +1331,59 @@ void YahooAccount::slotGotFile( const QString &  who, const QString &  url , lon
 	Kopete::TransferManager::transferManager()->askIncomingTransfer( contact( who ) , fname, fesize, msg, url );	
 	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
 					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
+	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
 }
 
-void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer */*trans*/, const QString& /*fileName*/)
+void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QString& fileName)
 {	
-	/*m_session->getUrlHandle( trans );
+	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );
 	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
-					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );*/
+	                     this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
+	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
+	
+	m_fileTransfers.insert( transfer->info().transferId(), transfer );
+}
+
+void YahooAccount::slotReceiveFileRefused( const Kopete::FileTransferInfo& info )
+{	
+	m_session->rejectFile( info.contact()->contactId(), info.internalId() );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
+	                     this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
+	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
+}
+
+void YahooAccount::slotFileTransferBytesProcessed( unsigned int transferId, unsigned int bytes )
+{
+	Kopete::Transfer *t = m_fileTransfers[transferId];
+	if( !t )
+		return;
+	
+	t->slotProcessed( bytes );
+}
+
+void YahooAccount::slotFileTransferComplete( unsigned int transferId )
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	Kopete::Transfer *t = m_fileTransfers[transferId];
+	if( !t )
+		return;
+	
+	t->slotComplete();
+	m_fileTransfers.remove( transferId );
+}
+
+void YahooAccount::slotFileTransferError( unsigned int transferId, int error, const QString &desc )
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	Kopete::Transfer *t = m_fileTransfers[transferId];
+	if( !t )
+		return;
+	
+	t->slotError( error, desc );
+	m_fileTransfers.remove( transferId );
 }
 
 void YahooAccount::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )

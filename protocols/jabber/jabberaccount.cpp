@@ -1125,7 +1125,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 		
 		Kopete::UI::ContactAddedNotifyDialog *dialog=
-				new Kopete::UI::ContactAddedNotifyDialog( jid.bare() ,QString::null,this, hideFlags );
+				new Kopete::UI::ContactAddedNotifyDialog( jid.full() ,QString::null,this, hideFlags );
 		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
 						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
 		dialog->show();
@@ -1135,7 +1135,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		/*
 		 * Someone else removed our authorization to see them.
 		 */
-		kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.userHost () << " revoked our presence authorization" << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full() << " revoked our presence authorization" << endl;
 
 		XMPP::JT_Roster *task;
 
@@ -1144,7 +1144,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 								  ("The Jabber user %1 removed %2's subscription to them. "
 								   "This account will no longer be able to view their online/offline status. "
 								   "Do you want to delete the contact?",
-								    jid.userHost(), accountId()), i18n ("Notification"), KStdGuiItem::del(), i18n("Keep")))
+								    jid.full(), accountId()), i18n ("Notification"), KStdGuiItem::del(), i18n("Keep")))
 		{
 
 			case KMessageBox::Yes:
@@ -1274,7 +1274,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 	/*
 	 * See if the contact is already on our contact list
 	 */
-	Kopete::Contact *c= contactPool()->findExactMatch( item.jid().bare() );
+	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
 	
 	if( c && c == c->Kopete::Contact::account()->myself() )  //don't use JabberBaseContact::account() which return alwaus the JabberAccount, and not the transport
 	{
@@ -1583,7 +1583,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New resource available for " << jid.userHost () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New resource available for " << jid.full() << endl;
 
 	resourcePool()->addResource ( jid, resource );
 
@@ -1592,7 +1592,7 @@ void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Re
 void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Resource now unavailable for " << jid.userHost () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Resource now unavailable for " << jid.full () << endl;
 
 	resourcePool()->removeResource ( jid, resource );
 

@@ -78,7 +78,7 @@ public:
 
 public slots:
 	virtual void slotUserInfo();
-	virtual void slotSendFile();
+	virtual void slotSendFile( const KUrl &file );
 	virtual void deleteContact();
 	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString::null, uint fileSize = 0L );
 	void slotUserProfile();

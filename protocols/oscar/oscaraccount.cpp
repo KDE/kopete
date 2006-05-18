@@ -38,12 +38,15 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <qtextcodec.h>
+#include <qimage.h>
+#include <qfile.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
+#include <kstandarddirs.h>
 
 #include "client.h"
 #include "connection.h"
@@ -94,6 +97,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 
 	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
+	d->engine->setIsIcq( isICQ );
 	d->engine->setCodecProvider( d );
     d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
@@ -107,6 +111,8 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( userStartedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
+	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
+	                  this, SLOT( slotSendBuddyIcon() ) );
 }
 
 OscarAccount::~OscarAccount()
@@ -137,6 +143,7 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
 
+#warning Maybe this foreach is not needed anymore (-DarkShock)
 	foreach ( Kopete::Contact* c, contacts() )
 	{
 		c->setOnlineStatus(Kopete::OnlineStatus::Offline);
@@ -451,6 +458,39 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 	return contactCodec( contact );
 }
 
+void OscarAccount::setBuddyIcon( KUrl url )
+{
+	if ( url.path().isEmpty() )
+	{
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
+	else
+	{
+		QImage image( url.path() );
+		if ( image.isNull() )
+			return;
+		
+		const QSize size = ( d->engine->isIcq() ) ? QSize( 52, 64 ) : QSize( 48, 48 );
+		
+		image = image.scaled( size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		if( image.width() > size.width())
+			image = image.copy( ( image.width() - size.width() ) / 2, 0, size.width(), image.height() );
+		
+		if( image.height() > size.height())
+			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
+		
+		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
+		
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
+		if ( !image.save( newlocation, "JPEG" ) )
+			return;
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	}
+	
+	emit buddyIconChanged();
+}
+
 Connection* OscarAccount::setupConnection( const QString& server, uint port )
 {
 	//set up the connector
@@ -661,6 +701,31 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		logOff( Kopete::Account::ConnectionReset );
 }
 
+void OscarAccount::slotSendBuddyIcon()
+{
+	//need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	if ( photoPath.isEmpty() )
+		return;
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
+	QFile iconFile( photoPath );
+	
+	if ( iconFile.open( IO_ReadOnly ) )
+	{
+		if ( !engine()->hasIconConnection() )
+		{
+			//will send icon when we connect to icon server
+			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
+			                  this, SLOT( slotSendBuddyIcon() ) );
+			return;
+		}
+		QByteArray imageData = iconFile.readAll();
+		engine()->sendBuddyIcon( imageData );
+	}
+}
+
 QString OscarAccount::getFLAPErrorMessage( int code )
 {
 	bool isICQ = d->engine->isIcq();
@@ -756,5 +821,6 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 	}
 	return reason;
 }
+
 #include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode csands;

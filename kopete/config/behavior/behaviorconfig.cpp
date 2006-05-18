@@ -24,7 +24,6 @@
 #include <qlabel.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
-//Added by qt3to4:
 #include <QVBoxLayout>
 
 #include <kdebug.h>
@@ -34,11 +33,13 @@
 #include <kgenericfactory.h>
 #include <ktrader.h>
 #include <kconfig.h>
+#include <klineedit.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigbase.h"
 #include "kopetepluginmanager.h"
+#include "kopeteaway.h"
 
 #include <qtabwidget.h>
 
@@ -86,7 +87,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 
 	// "Away" TAB ===============================================================
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
-		this, SLOT(slotValueChanged(int)));
+		this, SLOT(slotValueChanged(int)));;
 }
 
 void BehaviorConfig::save()
@@ -109,6 +110,7 @@ void BehaviorConfig::save()
 void BehaviorConfig::load()
 {
 //	kDebug(14000) << k_funcinfo << "called" << endl;
+	awayInstance = Kopete::Away::getInstance();
 
 	KCModule::load();
 	// "Away" TAB ===============================================================
@@ -139,6 +141,11 @@ void BehaviorConfig::slotSettingsChanged(bool)
 }
 
 void BehaviorConfig::slotValueChanged(int)
+{
+	emit changed( true );
+}
+
+void BehaviorConfig::slotTextChanged(const QString&)
 {
 	emit changed( true );
 }
