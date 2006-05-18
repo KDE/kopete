@@ -833,7 +833,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		// Downalod photo from URI.
 		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
 		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed." ) );
 			return;
 		}
 

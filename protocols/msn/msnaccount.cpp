@@ -1047,10 +1047,10 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 			c->setReversed( false );
 		/*
 			InfoWidget *info = new InfoWidget( 0 );
-			info->title->setText( "<b>" + i18n( "Contact removed!" ) +"</b>" );
+			info->title->setText( "<b>" + i18n( "Contact removed" ) +"</b>" );
 			QString dummy;
 			dummy = "<center><b>" + imContact->getPublicName() + "( " +imContact->getHandle()  +" )</b></center><br>";
-			dummy += i18n( "has removed you from his contact list!" ) + "<br>";
+			dummy += i18n( "has removed you from his contact list" ) + "<br>";
 			dummy += i18n( "This contact is now removed from your contact list" );
 			info->infoText->setText( dummy );
 			info->setCaption( "KMerlin - Info" );

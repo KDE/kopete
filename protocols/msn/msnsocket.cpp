@@ -547,7 +547,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		msg = i18n ( "Fully Qualified domain name missing.\n" );
 		break;
 	case 207:
-		msg = i18n ( "You are already logged in!\n" );
+		msg = i18n ( "You are already logged in.\n" );
 		break;
 	case 208:
 		msg = i18n ( "You specified an invalid username.\nPlease correct it, and try to reconnect.\n");

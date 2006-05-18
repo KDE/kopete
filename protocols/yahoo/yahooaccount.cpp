@@ -990,7 +990,7 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	
 	justMe.append(myself());
 	
-	QString buzzMsgText = i18nc("This string is shown when the user is buzzed by a contact", "Buzz!!");
+	QString buzzMsgText = i18nc("This string is shown when the user is buzzed by a contact", "Buzz");
 	
 	Kopete::Message kmsg(msgDT, contact(who), justMe, buzzMsgText, Kopete::Message::Inbound,
 	                     Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction);

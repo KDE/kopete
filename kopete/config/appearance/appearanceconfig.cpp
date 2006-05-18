@@ -150,7 +150,7 @@ public:
 		{
 			case ChatWindowStyleManager::StyleInstallOk:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was succesfully installed !"), i18n("Install succesful") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was succesfully installed."), i18n("Install succesful") );
 				return true;
 			}
 			case ChatWindowStyleManager::StyleCannotOpen:

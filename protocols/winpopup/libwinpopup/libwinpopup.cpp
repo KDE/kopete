@@ -233,7 +233,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 		} else {
 			if (currentHost == QString::fromLatin1("failed"))
 				KMessageBox::error(Kopete::UI::Global::mainWidget(),
-								   i18n("Connection to localhost failed!\n"
+								   i18n("Connection to localhost failed.\n"
 									    "Is your samba server running?"),
 								   QString::fromLatin1("Winpopup"));
 		}
