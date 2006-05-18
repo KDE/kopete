@@ -18,6 +18,7 @@
 #include <qstylesheet.h>
 #include <qtimer.h>
 #include <qregexp.h>
+#include <qcolor.h>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -32,6 +33,7 @@
 #include "kopetesimplemessagehandler.h"
 #include "kopeteuiglobal.h"
 #include "kopetecontact.h"
+#include "kopeteview.h"
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
@@ -108,6 +110,12 @@ void CryptographyPlugin::loadSettings()
 	  mCachePassPhrase = Never;
 	mCacheTime = config->readNumEntry("Cache_Time", 15);
 	mAskPassPhrase = config->readBoolEntry("No_Passphrase_Handling", false);
+	mAppendNotice = config->readBoolEntry("Append_Notice", false);
+	mChangeBg = config->readBoolEntry("Change_BG", false);
+	mBgColor = config->readColorEntry("BG_Color", &Qt::blue);
+	mChangeFg = config->readBoolEntry("Change_FG", false);
+	mFgColor = config->readColorEntry("FG_Color", &Qt::white);
+	mShowNotice = config->readBoolEntry("Show_Notice", true);
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()
@@ -154,9 +162,45 @@ bool CryptographyPlugin::passphraseHandling()
 void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 {
  	QString body = msg.plainBody();
+ 	bool isEncrypted = true;
 	if( !body.startsWith( QString::fromLatin1("-----BEGIN PGP MESSAGE----") )
 		 || !body.contains( QString::fromLatin1("-----END PGP MESSAGE----") ) )
-		return;
+			isEncrypted = false;
+	
+	if ( mShowNotice ) {
+		Kopete::ChatSession *manager = msg.manager();
+		if ( !manager )
+			return;
+		KopeteView *view = manager->view();
+		
+		if ( m_lastSeenEncrypted[manager] && !isEncrypted ) {
+			Kopete::Message m( NULL, QPtrList<Kopete::Contact>(), 
+					   i18n("Leaving encrypted mode"),
+					   Kopete::Message::Internal );
+			view->appendMessage( m );
+			m_lastSeenEncrypted[manager] = false;
+		} else if ( !m_lastSeenEncrypted[manager] && isEncrypted ) {
+			Kopete::Message m( NULL, QPtrList<Kopete::Contact>(), 
+					   i18n("Entering encrypted mode"),
+					   Kopete::Message::Internal );
+			view->appendMessage( m );
+			m_lastSeenEncrypted[manager] = true;
+		}
+        }
+        if ( !isEncrypted )
+        	return;
+
+	QString styleAttribute = "";
+	if ( mChangeBg ) {
+		msg.setBg( mBgColor );
+		msg.setBgOverride( false );
+		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(mBgColor.name());
+	}
+	if ( mChangeFg ) {
+		msg.setFg( mFgColor );
+		msg.setFgOverride( false );
+		styleAttribute += QString::fromUtf8("color: %1; ").arg(mFgColor.name());
+	}
 
 	if( msg.direction() != Kopete::Message::Inbound )
 	{
@@ -173,23 +217,27 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 
 		if( !plainBody.isEmpty() )
 		{
-			//Check if this is a RTF message before escaping it
-			if( !isHTML.exactMatch( plainBody ) )
-			{
-				plainBody = QStyleSheet::escape( plainBody );
-
-				//this is the same algoritm as in Kopete::Message::escapedBody();
-				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
-					.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
-					.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+			if ( !mAppendNotice )
+				msg.setBody( plainBody );
+			else {
+				//Check if this is a RTF message before escaping it
+				if( !isHTML.exactMatch( plainBody ) )
+				{
+					plainBody = QStyleSheet::escape( plainBody );
+	
+					//this is the same algoritm as in Kopete::Message::escapedBody();
+					plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
+						.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
+						.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+				}
+				
+				msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td style=\"%1\"><font size=\"-1\"><b>").arg(styleAttribute)
+					+ i18n("Outgoing Encrypted Message: ")
+					+ QString::fromLatin1("</b></font></td></tr><tr><td style=\"%1\">").arg(styleAttribute)
+					+ plainBody
+					+ QString::fromLatin1(" </td></tr></table>")
+					, Kopete::Message::RichText );
 			}
-
-			msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
-				+ i18n("Outgoing Encrypted Message: ")
-				+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
-				+ plainBody
-				+ QString::fromLatin1(" </td></tr></table>")
-				, Kopete::Message::RichText );
 		}
 
 		//if there are too messages in cache, clear the cache
@@ -209,18 +257,22 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 
 	if( !body.isEmpty() )
 	{
-		//Check if this is a RTF message before escaping it
-		if( !isHTML.exactMatch( body ) )
-		{
-			body = Kopete::Message::escape( body );
+		if ( !mAppendNotice )
+			msg.setBody( body );
+		else {
+			//Check if this is a RTF message before escaping it
+			if( !isHTML.exactMatch( body ) )
+			{
+				body = Kopete::Message::escape( body );
+			}
+	
+			msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td style=\"%1\"><font size=\"-1\"><b>").arg(styleAttribute)
+				+ i18n("Incoming Encrypted Message: ")
+				+ QString::fromLatin1("</b></font></td></tr><tr><td style=\"%1\">").arg(styleAttribute)
+				+ body
+				+ QString::fromLatin1(" </td></tr></table>")
+				, Kopete::Message::RichText );
 		}
-
-		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
-			+ i18n("Incoming Encrypted Message: ")
-			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
-			+ body
-			+ QString::fromLatin1(" </td></tr></table>")
-			, Kopete::Message::RichText );
 	}
 
 }

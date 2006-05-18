@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>CryptographyPrefsUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -9,39 +9,52 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>403</width>
-            <height>287</height>
+            <width>484</width>
+            <height>527</height>
         </rect>
     </property>
-    <grid>
+    <property name="caption">
+        <string>CryptographyPrefsUI</string>
+    </property>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>TextLabel1</cstring>
+                <cstring>layout3</cstring>
             </property>
-            <property name="text">
-                <string>Your private PGP key:</string>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Your private PGP key:</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit">
+                    <property name="name">
+                        <cstring>PGP_private_key</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>m_selectOwnKey</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Select...</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
-        <widget class="QPushButton" row="0" column="2">
-            <property name="name">
-                <cstring>m_selectOwnKey</cstring>
-            </property>
-            <property name="text">
-                <string>Select...</string>
-            </property>
-        </widget>
-        <widget class="KLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>PGP_private_key</cstring>
-            </property>
-            <property name="readOnly">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+        <widget class="QCheckBox">
             <property name="name">
                 <cstring>Also_my_key</cstring>
             </property>
@@ -53,24 +66,15 @@
 &lt;b&gt;Warning:&lt;/b&gt; This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
             </property>
         </widget>
-        <spacer row="5" column="1">
+        <widget class="QCheckBox">
             <property name="name">
-                <cstring>spacer3</cstring>
+                <cstring>No_Passphrase_Handling</cstring>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
+            <property name="text">
+                <string>Do not ask for the passphrase</string>
             </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>21</width>
-                    <height>50</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="3">
+        </widget>
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>m_cache</cstring>
             </property>
@@ -156,22 +160,184 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+        <widget class="QButtonGroup">
             <property name="name">
-                <cstring>No_Passphrase_Handling</cstring>
+                <cstring>m_appearance</cstring>
             </property>
-            <property name="text">
-                <string>Do not ask for the passphrase</string>
+            <property name="title">
+                <string>Appearance</string>
             </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>Append_Notice</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Append a notice to every encrypted message</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;Check this box if you want "encrypted incoming message:"/"encrypted outgoing message:" notice (visible only to you) appended before every such a message.&lt;br&gt;
+&lt;b&gt;Warning:&lt;/b&gt; These notices will also be saved in the message history.</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout13</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>Change_BG</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Change the background color to:</string>
+                            </property>
+                        </widget>
+                        <widget class="KColorButton">
+                            <property name="name">
+                                <cstring>BG_Color</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer3_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>97</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout14</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>Change_FG</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Change the foreground color to:</string>
+                            </property>
+                        </widget>
+                        <widget class="KColorButton">
+                            <property name="name">
+                                <cstring>FG_Color</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer8</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>41</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>Show_Notice</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show a notice when entering or leaving encrypted mode</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;Check this box to have a notice shown between every encrypted/not encrypted message pair, for example:&lt;br&gt;
+[Entering encrypted mode]&lt;br&gt;
+&amp;lt;Alice&amp;gt; encrypted message&lt;br&gt;
+&amp;lt;Bob&amp;gt; encrypted message&lt;br&gt;
+[Leaving encrypted mode]&lt;br&gt;
+&amp;lt;Bob&amp;gt; not encrypted message&lt;br&gt;
+&amp;lt;Alice&amp;gt; not encrypted message&lt;br&gt;
+[Entering encrypted mode]&lt;br&gt;
+&amp;lt;Alice&amp;gt; encrypted message</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
-    </grid>
+        <spacer>
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>No_Passphrase_Handling</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_cache</receiver>
         <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>Change_BG</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>BG_Color</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>Change_FG</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>FG_Color</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
@@ -192,5 +358,7 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
 </includehints>
 </UI>

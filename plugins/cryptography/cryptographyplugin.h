@@ -24,6 +24,7 @@
 class QStringList;
 class QString;
 class QTimer;
+class QColor;
 
 namespace Kopete
 {
@@ -76,6 +77,7 @@ private:
 	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
 	QCString m_cachedPass;
 	QTimer *m_cachedPass_timer;
+	QMap<Kopete::ChatSession *, bool> m_lastSeenEncrypted;
 
 	//cache messages for showing
 	QMap<QString, QString> m_cachedMessages;
@@ -87,6 +89,12 @@ private:
 	bool mAlsoMyKey;
 	bool mAskPassPhrase;
 	bool mCachePassPhrase;
+	bool mAppendNotice;
+	bool mChangeBg;
+	QColor mBgColor;
+	bool mChangeFg;
+	QColor mFgColor;
+	bool mShowNotice;
 };
 
 #endif
