@@ -6,6 +6,7 @@
 			<Action name="yahooSendWebcam" />	
 			<Action name="yahooBuzz" />
 			<Action name="yahooShowInfo" />
+			<Action name="yahooSendFile" />
 		</Menu>
 	</MenuBar>
 
@@ -15,7 +16,8 @@
 		<Action name="yahooRequestWebcam" />	
 		<Action name="yahooSendWebcam" />		
 		<Action name="yahooBuzz" />
-		<Action name="yahooShowInfo" />		
+		<Action name="yahooShowInfo" />	
+		<Action name="yahooSendFile" />
 	
 	</ToolBar>
 

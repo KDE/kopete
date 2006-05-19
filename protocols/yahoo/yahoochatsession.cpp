@@ -57,6 +57,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	new KAction( i18n( "Show User Info" ), QIconSet(BarIcon("idea")), 0, this, SLOT( slotUserInfo() ), actionCollection(), "yahooShowInfo" ) ;
 	new KAction( i18n( "Request Webcam" ), QIconSet(BarIcon("webcamreceive")), 0, this, SLOT( slotRequestWebcam() ), actionCollection(), "yahooRequestWebcam" ) ;
 	new KAction( i18n( "Invite to view your Webcam" ), QIconSet(BarIcon("webcamsend")), 0, this, SLOT( slotInviteWebcam() ), actionCollection(), "yahooSendWebcam" ) ;
+	new KAction( i18n( "Send File" ), QIconSet(BarIcon("attach")), 0, this, SLOT( slotSendFile() ), actionCollection(), "yahooSendFile" );
 
 	YahooContact *c = static_cast<YahooContact*>( others.first() );
 	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
@@ -105,6 +106,13 @@ void YahooChatSession::slotInviteWebcam()
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QPtrList<Kopete::Contact>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->inviteWebcam();
+}
+
+void YahooChatSession::slotSendFile()
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	QPtrList<Kopete::Contact>contacts = members();
+	static_cast<YahooContact *>(contacts.first())->sendFile();
 }
 
 void YahooChatSession::slotDisplayPictureChanged()
