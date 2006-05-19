@@ -357,6 +357,9 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KURL r
 
 void Client::rejectFile( const QString &userId, KURL remoteURL )
 {
+	if( remoteURL.url().startsWith( "http://" ) )
+		return;
+
 	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
 
 	rft->setRemoteUrl( remoteURL );
