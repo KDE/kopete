@@ -605,7 +605,7 @@ void Client::deleteYABEntry(  YABEntry &entry )
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following Error occured: %1\n    Reason: %2\n    LogLevel: %4")
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following error occured: %1\n    Reason: %2\n    LogLevel: %3")
 		.arg(info).arg(errorString).arg(level) << endl;
 	d->errorString = errorString;
 	d->errorInformation = info;
