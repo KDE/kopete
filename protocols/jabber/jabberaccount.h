@@ -107,9 +107,6 @@ public:
 	 * an answer of him. */
 	void errorConnectionLost ();
 
-	/* Tells the user that a connection attempt is already in progress */
-	void errorConnectionInProgress ();
-
 	/*
 	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
 	 * Parameters: Warning code from QCA::TLS

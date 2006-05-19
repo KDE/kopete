@@ -265,18 +265,6 @@ void JabberAccount::errorConnectionLost ()
 	disconnected( Kopete::Account::ConnectionReset );
 }
 
-void JabberAccount::errorConnectionInProgress ()
-{
-
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Information,
-									i18n ("A connection attempt is already in progress. "
-									"Please wait until the previous attempt finished or "
-									"disconnect to start over."),
-									i18n ("Connection Attempt Already in Progress") );
-
-}
-
 bool JabberAccount::isConnecting ()
 {
 
@@ -633,7 +621,6 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 
 	if( isConnecting () )
 	{
-		errorConnectionInProgress ();
 		return;
 	}
 	
