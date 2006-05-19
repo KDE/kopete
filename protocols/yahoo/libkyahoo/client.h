@@ -48,6 +48,8 @@ Q_OBJECT
 		/*************
 		  EXTERNAL API 
 		 *************/
+
+		enum LogLevel { Debug, Info, Notice, Warning, Error, Critical }; 
 		  
 		Client(QObject *parent=0);
 		~Client();
@@ -82,6 +84,11 @@ Q_OBJECT
 		 * Returns a description of the error
 		 */
 		QString errorString();
+
+		/**
+		 * Returns information about what went wrong
+		 */
+		QString errorInformation();
 
 		/**
 		 * Specifies the status we connect with. 
@@ -364,7 +371,7 @@ Q_OBJECT
 		/**
 		 * Error
 		 */
-		void notifyError( const QString & );
+		void notifyError( const QString &info, const QString &errorString, LogLevel level );
 	signals:
 		/** CONNECTION EVENTS */
 		/**
@@ -389,6 +396,8 @@ Q_OBJECT
 		 * We were disconnected because we connected elsewhere
 		 */
 		void connectedElsewhere();
+
+		void error( int level );
 		/**
 		 * Notifies about our buddies and groups
 		 */

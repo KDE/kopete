@@ -69,6 +69,7 @@ public:
 	YahooBuddyIconLoader *iconLoader;
 	int error;
 	QString errorString;
+	QString errorInformation;
 	
 	// tasks
 	bool tasksInitialized;
@@ -193,6 +194,11 @@ int Client::error()
 QString Client::errorString()
 {
 	return d->errorString;
+}
+
+QString Client::errorInformation()
+{
+	return d->errorInformation;
 }
 
 // SLOTS //
@@ -450,7 +456,7 @@ void Client::downloadPicture(  const QString &userId, KURL url, int checksum )
 {
 	if( !d->iconLoader )
 	{
-		d->iconLoader = new YahooBuddyIconLoader();
+		d->iconLoader = new YahooBuddyIconLoader( this );
 		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )),
 				SIGNAL(pictureDownloaded(const QString&, KTempFile*,  int ) ) );
 	}
@@ -597,9 +603,13 @@ void Client::deleteYABEntry(  YABEntry &entry )
 }
 
 // ***** other *****
-void Client::notifyError( const QString & error )
+void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "The Server returned the following error: " << error << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following Error occured: %1\n    Reason: %2\n    LogLevel: %4")
+		.arg(info).arg(errorString).arg(level) << endl;
+	d->errorString = errorString;
+	d->errorInformation = info;
+	emit error( level );
 }
 
 QString Client::userId()

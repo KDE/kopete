@@ -28,6 +28,7 @@
 #include <kio/jobclasses.h>
 #include <kbufferedsocket.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {
@@ -69,6 +70,7 @@ void SendPictureTask::initiateUpload()
 void SendPictureTask::connectFailed( int i)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
+	client()->notifyError(i18n("The picture was not successfully uploaded"), QString("%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 	setSuccess( false );
 }
 
@@ -98,6 +100,7 @@ void SendPictureTask::connectSucceeded()
 	else
 	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << file.errorString() << endl;
+		client()->notifyError(i18n("Error opening file: %1").arg(m_path), file.errorString(), Client::Error );
 		return;
 	}
 

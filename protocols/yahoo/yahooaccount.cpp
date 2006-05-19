@@ -233,6 +233,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(loginFailed()),
 		                 this, SLOT(slotLoginFailed()) );
 		
+		QObject::connect(m_session, SIGNAL(error(int)),
+		                 this, SLOT(slotError(int)));
+		
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
@@ -351,7 +354,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                    this, SLOT(slotDisconnected()) );
 		
 		QObject::disconnect(m_session, SIGNAL(loginFailed()),
-		                 this, SLOT(slotLoginFailed()) );
+		                    this, SLOT(slotLoginFailed()) );
+		
+		QObject::disconnect(m_session, SIGNAL(error(int)),
+		                 this, SLOT(slotError(int)));
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
@@ -748,6 +754,19 @@ void YahooAccount::slotLoginFailed()
 	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" )
 		.arg( accountId() ).arg( m_session->error() ).arg( m_session->errorString() );
 	KNotification::event( "cannot_connect", message, myself()->onlineStatus().protocolIcon() );
+}
+
+void YahooAccount::slotError( int level )
+{
+	// enum LogLevel { Debug, Info, Notice, Warning, Error, Critical }; 
+	if( level <= Client::Notice )
+		return;
+	else if( level <= Client::Warning )
+		KMessageBox::information( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3" ).arg(m_session->errorInformation())
+		                          .arg(m_session->error()).arg(m_session->errorString()), i18n( "Yahoo Plugin" ) );
+	else 
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3" ).arg(m_session->errorInformation())
+		                    .arg(m_session->error()).arg(m_session->errorString()), i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )

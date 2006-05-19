@@ -25,6 +25,7 @@
 #include <kurl.h>
 
 class KTempFile;
+class Client;
 namespace KIO {
 	class Job;
 	class TransferJob;
@@ -48,7 +49,7 @@ class YahooBuddyIconLoader : public QObject
 {
 	Q_OBJECT
 public:
-	YahooBuddyIconLoader();
+	YahooBuddyIconLoader( Client *c );
 	~YahooBuddyIconLoader();
 
 	/**
@@ -61,15 +62,16 @@ signals:
 	 * 	The account can connect to this signal and append the icon
 	 * 	stored in 'file' to the apropriate contact
 	 */
-		void fetchedBuddyIcon( const QString &who, KTempFile *file, int checksum );
+	void fetchedBuddyIcon( const QString &who, KTempFile *file, int checksum );
 
 private slots:
-		void slotData( KIO::Job *job, const QByteArray &data );
-		void slotComplete( KIO::Job *job );
+	void slotData( KIO::Job *job, const QByteArray &data );
+	void slotComplete( KIO::Job *job );
 
 private:
-		typedef QMap< KIO::TransferJob *, IconLoadJob > TransferJobMap;
-		TransferJobMap m_jobs;
+	typedef QMap< KIO::TransferJob *, IconLoadJob > TransferJobMap;
+	TransferJobMap m_jobs;
+	Client *m_client;
 };
 
 #endif

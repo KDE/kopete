@@ -26,10 +26,13 @@
 #include <kio/jobclasses.h>
 #include <kurl.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 #include "yahootypes.h"
+#include "client.h"
 
-YahooBuddyIconLoader::YahooBuddyIconLoader()
+YahooBuddyIconLoader::YahooBuddyIconLoader( Client *c )
+: m_client( c )
 {
 }
 
@@ -78,7 +81,9 @@ void YahooBuddyIconLoader::slotComplete( KIO::Job *job )
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon!" << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon." << endl;
+		if( m_client )
+			m_client->notifyError( i18n( "An error occured while downloading buddy icon (%1)" ).arg(m_jobs[transfer].url.url()), job->errorString(), Client::Info );
 	}
 	else
 	{

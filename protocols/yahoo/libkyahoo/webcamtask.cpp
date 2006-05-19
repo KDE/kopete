@@ -28,6 +28,8 @@
 #include <kprocess.h>
 #include <kstreamsocket.h>
 #include <kdebug.h>
+#include <klocale.h>
+
 using namespace KNetwork;
 
 WebcamTask::WebcamTask(Task* parent) : Task(parent)
@@ -195,7 +197,8 @@ void WebcamTask::slotConnectionStage2Established()
 void WebcamTask::slotConnectionFailed( int error )
 {
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString() << endl;
+	client()->notifyError( i18n("Webcam connection to the user %1 could not be established.\n\nPlease relogin and try again.")
+			.arg(socketMap[socket].sender), QString("%1 - %2").arg(error).arg( socket->errorString()), Client::Error );
 	socketMap.remove( socket );
 }
 
