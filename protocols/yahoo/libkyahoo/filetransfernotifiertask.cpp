@@ -96,6 +96,7 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	if( from.startsWith( "FILE_TRANSFER_SYSTEM" ) )
 	{
 		client()->notifyError( "Fileupload result received.", msg, Client::Notice );
+		return;
 	}	
 	
 	if( url.isEmpty() )
