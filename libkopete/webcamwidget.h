@@ -59,7 +59,7 @@ public:
 protected slots:
 	void paintEvent( QPaintEvent* event );
 
-protected:
+private:
 	QPixmap mPixmap;
 	QString mText;
 };

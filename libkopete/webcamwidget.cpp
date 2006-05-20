@@ -16,8 +16,8 @@
 
 #include "webcamwidget.h"
 
-#include <qcolor.h>
-#include <qpainter.h>
+#include <QColor>
+#include <QPainter>
 #include <QPaintEvent>
 
 #include <kdebug.h>
@@ -25,7 +25,7 @@ namespace Kopete
 {
 
 WebcamWidget::WebcamWidget( QWidget* parent, const char* name )
-: QWidget( parent, name )
+: QWidget( parent )
 {
 	clear();
 }
@@ -68,15 +68,14 @@ void WebcamWidget::setText(const QString& text)
 
 void WebcamWidget::paintEvent( QPaintEvent* event )
 {
-#warning Port to Qt4 (-DarkShock)
-#if 0
-	QMemArray<QRect> rects = event->region().rects();
+	QVector<QRect> rects = event->region().rects();
 
+	QPainter p(this);
 	if (!mPixmap.isNull())
 	{
 		for (unsigned int i = 0; i < rects.count(); ++i)
 		{
-			bitBlt(this, rects[i].topLeft(), &mPixmap, rects[i], Qt::CopyROP, true);
+			p.drawPixmap(rects[i], mPixmap, rects[i]);
 		}
 	}
 	else
@@ -90,20 +89,19 @@ void WebcamWidget::paintEvent( QPaintEvent* event )
 	}
 
 	// TODO: draw the text
-	QPainter p(this);
 	QRect r = p.boundingRect(rect(), Qt::AlignCenter | Qt::WordBreak, mText );
 	if ( !mText.isEmpty() && event->rect().intersects(r))
 	{
 		p.setPen(Qt::black);
 		QRect rec = rect();
 		rec.moveTopLeft(QPoint(1,1));
-		p.drawText(rec, Qt::AlignCenter | Qt::WordBreak, mText, -1); 
+		p.drawText(rec, Qt::AlignCenter | Qt::WordBreak, mText); 
 
 		rec.moveTopLeft(QPoint(-1,-1));
 		p.setPen(Qt::white);
-		p.drawText(rec, Qt::AlignCenter | Qt::WordBreak, mText, -1); 
+		p.drawText(rec, Qt::AlignCenter | Qt::WordBreak, mText); 
 	}
-#endif
+	p.end();
 }
 
 } // end namespace Kopete
