@@ -92,8 +92,15 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	size = t->firstParam( 28 ).toULong();
 
 
+
+	if( from.startsWith( "FILE_TRANSFER_SYSTEM" ) )
+	{
+		client()->notifyError( "Fileupload result received.", msg, Client::Notice );
+	}	
+	
 	if( url.isEmpty() )
 		return;
+	
 
 	unsigned int left = url.findRev( '/' ) + 1;
 	unsigned int right = url.findRev( '?' );
