@@ -24,8 +24,8 @@
 namespace Kopete
 {
 
-WebcamWidget::WebcamWidget( QWidget* parent, const char* name )
-: QWidget( parent )
+WebcamWidget::WebcamWidget(QWidget* parent)
+: QWidget(parent)
 {
 	clear();
 }
@@ -40,20 +40,16 @@ void WebcamWidget::updatePixmap(const QPixmap& pixmap)
 	mPixmap = pixmap;
 	mText = "";
 
-	QPaintEvent *ev = new QPaintEvent( rect() );
-	paintEvent( ev );
-	delete ev;
+	update();
 }
 
 void WebcamWidget::clear()
 {
 	mText = "";
 	if (!mPixmap.isNull())
-		mPixmap.resize(0,0);
+		mPixmap = QPixmap(0,0);
 	
-	QPaintEvent *ev = new QPaintEvent( rect() );
-	paintEvent( ev );
-	delete ev;
+	update();
 }
 
 void WebcamWidget::setText(const QString& text)
@@ -61,9 +57,7 @@ void WebcamWidget::setText(const QString& text)
 	mText = text;
 
 	// for now redraw everything
-	QPaintEvent *ev = new QPaintEvent( rect() );
-        paintEvent( ev );
-        delete ev;
+	update();
 }
 
 void WebcamWidget::paintEvent( QPaintEvent* event )
@@ -73,17 +67,16 @@ void WebcamWidget::paintEvent( QPaintEvent* event )
 	QPainter p(this);
 	if (!mPixmap.isNull())
 	{
-		for (unsigned int i = 0; i < rects.count(); ++i)
+		for (int i = 0; i < rects.count(); ++i)
 		{
 			p.drawPixmap(rects[i], mPixmap, rects[i]);
 		}
 	}
 	else
 	{
-		for (unsigned int i = 0; i < rects.count(); ++i)
+		for (int i = 0; i < rects.count(); ++i)
 		{
-			QColor bgColor = paletteBackgroundColor();
-			QPainter p(this);
+			QColor bgColor = palette().color(QPalette::Background);
 			p.fillRect(rects[i], bgColor);
 		}
 	}

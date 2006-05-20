@@ -35,9 +35,8 @@ public:
 	/**
 	* @brief WebcamWidget constructor.
 	* @param parent The parent widget of this widget
-	* @param name The name for this QObject
 	*/
-	WebcamWidget( QWidget* parent = 0, const char* name = 0 );
+	WebcamWidget(QWidget* parent = 0);
 	~WebcamWidget();
 
 	/**
@@ -57,7 +56,7 @@ public:
 	 */
 	void setText(const QString& text);
 protected slots:
-	void paintEvent( QPaintEvent* event );
+	void paintEvent(QPaintEvent* event);
 
 private:
 	QPixmap mPixmap;

@@ -36,6 +36,7 @@ set(kopete_ui_SRCS
   ui/kopetelistviewsearchline.cpp 
   ui/contactaddednotifydialog.cpp 
   ui/addressbooklinkwidget.cpp
+  ui/webcamwidget.cpp 
 )
 
 set(kopete_LIB_SRCS 
@@ -83,7 +84,6 @@ set(kopete_LIB_SRCS
    kopeteutils.cpp 
    kopetepicture.cpp 
    kopetestatusmessage.cpp 
-   webcamwidget.cpp 
 )
 
 kde4_add_ui_files(kopete_LIB_SRCS
