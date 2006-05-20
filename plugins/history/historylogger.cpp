@@ -579,8 +579,9 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 
 				if( m_filter.isNull() || ( m_filterRegExp? msgElem.text().contains(QRegExp(m_filter,m_filterCaseSensitive)) : msgElem.text().contains(m_filter,m_filterCaseSensitive) ))
 				{
+					Q_ASSERT(currentContact);
 					QString f=msgElem.attribute("from" );
-					const Kopete::Contact *from=(f.isNull() || !currentContact) ? 0L : currentContact->account()->contacts()[f];
+					const Kopete::Contact *from=f.isNull() ? 0L : currentContact->account()->contacts()[f];
 
 					if(!from)
 						from= dir==Kopete::Message::Inbound ? currentContact : currentContact->account()->myself();
