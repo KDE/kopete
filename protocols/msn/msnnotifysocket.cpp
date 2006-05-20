@@ -67,6 +67,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),
 		this, SLOT( slotReadMessage( const QByteArray & ) ) );
 	m_keepaliveTimer = 0L;
+	m_isLogged = false;
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -86,6 +87,7 @@ void MSNNotifySocket::doneConnect()
 
 void MSNNotifySocket::disconnect()
 {
+	m_isLogged = false;
 	if(	m_disconnectReason==Kopete::Account::Unknown )
 		m_disconnectReason=Kopete::Account::Manual;
 	if( onlineStatus() == Connected )
@@ -831,6 +833,9 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			rx.search(msg);
 			m_localIP = rx.cap(1);
 		}
+
+		// We are logged when we receive the initial profile from Hotmail.
+		m_isLogged = true;
 	}
 	else if (msg.contains("NOTIFICATION"))
 	{

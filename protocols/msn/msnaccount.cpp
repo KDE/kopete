@@ -283,29 +283,44 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason)
 {
-	// Only update the personal/status message, don't change the online status
-	// since it's the same.
-	if( reason.contains("[Music]") )
-	{
-		QString personalMessage = reason.section("[Music]", 1);
-		setPersonalMessage( MSNProtocol::PersonalMessageMusic, personalMessage );
-	}
-	else
-	{
-		setPersonalMessage( MSNProtocol::PersonalMessageNormal, reason );
+	kdDebug( 14140 ) << k_funcinfo << status.description() << endl;
 
-		if(status.status()== Kopete::OnlineStatus::Offline)
-			disconnect();
-		else if ( m_notifySocket )
+	// HACK: When changing song, do don't anything while connected
+	if( reason.contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
+		return;
+
+	// Only send personal message when logged.
+	if( m_notifySocket && m_notifySocket->isLogged() )
+	{
+		// Only update the personal/status message, don't change the online status
+		// since it's the same.
+		if( reason.contains("[Music]") )
 		{
-			m_notifySocket->setStatus( status );
+			QString personalMessage = reason.section("[Music]", 1);
+			setPersonalMessage( MSNProtocol::PersonalMessageMusic, personalMessage );
+
+			// Don't send un-needed status change.
+			return;
 		}
 		else
 		{
-			m_connectstatus = status;
-			connect();
+			setPersonalMessage( MSNProtocol::PersonalMessageNormal, reason );
 		}
 	}
+
+	if(status.status()== Kopete::OnlineStatus::Offline)
+		disconnect();
+	else if ( m_notifySocket )
+	{
+		m_notifySocket->setStatus( status );
+	}
+	else
+	{
+		m_connectstatus = status;
+		connect();
+	}
+
+	
 }
 
 void MSNAccount::slotStartChat()
