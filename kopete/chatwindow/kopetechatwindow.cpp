@@ -707,7 +707,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	checkDetachEnable();
 	newView->loadChatSettings();
 	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
-	         this, SLOT( toggleAutoSpellCheckEnabled( ChatView*, bool ) ) );
+	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
 }
 
 void KopeteChatWindow::checkDetachEnable()
