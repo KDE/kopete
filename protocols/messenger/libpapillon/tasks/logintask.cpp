@@ -193,7 +193,7 @@ void LoginTask::sendCvrCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	cvrTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0566 msmsgs %1").arg(d->passportId);
+	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %1").arg(d->passportId);
 	QStringList argsList = arguments.split(" ");
 	cvrTransfer->setArguments(argsList);
 
