@@ -18,6 +18,8 @@
 */
 
 #include <qtimer.h>
+#include <qstring.h>
+#include <kdebug.h>
 
 #include "connection.h"
 #include "transfer.h"
@@ -190,7 +192,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	debug("Task::done()");
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -199,7 +201,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	debug("emitting finished");
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitting finished" << endl;
 	finished();
 	d->insignificant = false;
 
@@ -225,39 +227,6 @@ Transfer* Task::createTransfer( struct FLAP f, Buffer* buffer )
 Transfer* Task::createTransfer( Buffer* buffer )
 {
 	return new Transfer( buffer );
-}
-
-
-// void Task::debug(const char *fmt, ...)
-// {
-// 	char *buf;
-// 	QString str;
-// 	int size = 1024;
-// 	int r;
-//
-// 	do {
-// 		buf = new char[size];
-// 		va_list ap;
-// 		va_start(ap, fmt);
-// 		r = vsnprintf(buf, size, fmt, ap);
-// 		va_end(ap);
-//
-// 		if(r != -1)
-// 			str = QString(buf);
-//
-// 		delete [] buf;
-//
-// 		size *= 2;
-// 	} while(r == -1);
-//
-// 	debug(str);
-// }
-
-void Task::debug(const QString &str)
-{
-	//black hole
-	Q_UNUSED( str );
-	//client()->debug(QString("%1: ").arg(className()) + str);
 }
 
 bool Task::forMe( const Transfer * transfer ) const

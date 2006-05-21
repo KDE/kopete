@@ -78,8 +78,6 @@ protected:
 	void send( Transfer * request );
 	void setSuccess( int code=0, const QString &str="" );
 	void setError( int code=0, const QString &str="" );
-// 	void debug( const char *, ... );
-	void debug( const QString & );
 
 	/**
 	 * Used in take() to check if the offered transfer is for this Task
