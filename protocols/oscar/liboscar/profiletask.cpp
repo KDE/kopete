@@ -74,46 +74,42 @@ void ProfileTask::sendProfileUpdate()
 	Buffer *buffer = new Buffer();
 	Buffer capBuf;
 
-	if ( !m_profileText.isNull() && !client()->isIcq() )
-	{
-		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-		buffer->addTLV(0x0001, defencoding.length(), defencoding.toLatin1());
-		buffer->addTLV(0x0002, m_profileText.length(), m_profileText.toLocal8Bit());
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
-	}
-
-	if ( !m_awayMessage.isNull() && !client()->isIcq() )
-	{
-		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-		buffer->addTLV(0x0003, defencoding.length(), defencoding.toLatin1());
-		buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.toLocal8Bit());
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
-	}
 
 	if ( client()->isIcq() )
 	{
 		capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
-		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
 		capBuf.addGuid( oscar_caps[CAP_ISICQ] ); // I think this is an icq client, but maybe I'm wrong
-		capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
 		//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
-		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
-		capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 	}
 	else
 	{
-		capBuf.addGuid( oscar_caps[CAP_UTF8] ); //we can send/receive UTF encoded messages
-		capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
-		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
-        	capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
-	}
+		if ( !m_profileText.isNull() )
+		{
+			static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+			buffer->addTLV(0x0001, defencoding.length(), defencoding.toLatin1());
+			buffer->addTLV(0x0002, m_profileText.length(), m_profileText.toLocal8Bit());
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
+		}
 
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
+		if ( !m_awayMessage.isNull() )
+		{
+			static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+			buffer->addTLV(0x0003, defencoding.length(), defencoding.toLatin1());
+			buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.toLocal8Bit());
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
+		}
+	}
+	capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
+	capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
+	capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
+	capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
 	buffer->addTLV(0x0005, capBuf.length(), capBuf.buffer());
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );
 	setSuccess( 0, QString::null );
-
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done." << endl;
 }
 
 //kate: tab-width 4; indent-mode csands;
