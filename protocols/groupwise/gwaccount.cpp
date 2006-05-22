@@ -522,6 +522,21 @@ void GroupWiseAccount::reconcileOfflineChanges()
 			}
 			if ( !found )
 			{
+// sync debugging output
+#if 0
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact ' " << c->dn() << " 'with instances: " << endl;
+				for ( instIt = instances.begin(); instIt != instances.end(); ++instIt )
+				{
+					kdDebug() << "  id: " << (*instIt )->id << " parent: " << ::qt_cast<GWFolder*>( ( *instIt )->parent() )->id <<  endl;
+				}
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " in MC groups: " << endl;
+				QPtrListIterator<Kopete::Group> grpIt( groups );
+				while ( *grpIt )
+				{
+					kdDebug() << "  display name: " << (*grpIt)->displayName() << " id: " <<  (*grpIt)->pluginData(  protocol(), accountId() + " objectId" ) << endl;
+					++grpIt;
+				}
+#endif
 				if ( c->metaContact()->contacts().count() == 1 )
 				{
 					if ( c->metaContact()->groups().count() == 1 )
@@ -1072,7 +1087,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	Kopete::GroupList groupList = parentContact->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
-		if ( group->type() == Kopete::Group::TopLevel ) // no need to create it on the server
+		if ( group->type() == Kopete::Group::TopLevel || group->displayName() == i18n("Top Level") ) // no need to create it on the server
 		{
 			topLevel = true;
 			continue;
