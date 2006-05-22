@@ -41,6 +41,7 @@
 #include <qstringlist.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <QLatin1String>
 
 class QRegExp;
 
@@ -163,8 +164,11 @@ public:
 	void setSourceString(const QString &sourceString);
 	void connectToServer(const QString &host, quint16 port, const QString &nickname, bool useSSL = false);
 
+#warning Port to KNetwork
+#if 0
 	KExtendedSocket *socket()
 		{ return m_sock; };
+#endif
 
 	inline KIRC::Engine::Status status() const
 		{ return m_status; }
@@ -176,7 +180,7 @@ public:
 		{ return m_status == Connected; }
 
 	inline void setCodec( const QString &nick, const QTextCodec *codec )
-		{ codecs.replace( nick, codec ); }
+		{ /*codecs.replace( nick, codec );*/ }
 
 	/* Custom CTCP replies handling */
 	inline QString &customCtcp( const QString &s )
@@ -193,59 +197,60 @@ public slots:
 
 	void writeMessage(const QString &message, const QTextCodec *codec = 0 );
 	void writeMessage(const QString &command, const QStringList &args,
-		const QString &suffix = QString::null, const QTextCodec *codec = 0);
+		const QString &suffix = QString(), const QTextCodec *codec = 0);
 
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage);
 
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
+		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString(),
 		bool emitRepliedCtcp = true);
 
 	inline void writeCtcpQueryMessage(const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString(),
 		bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+		{ return writeCtcpMessage(QLatin1String("PRIVMSG"), to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
 	inline void writeCtcpReplyMessage(const QString &to, const QString &ctcpMessage)
-		{ writeCtcpMessage("NOTICE", to, ctcpMessage); }
+		{ writeCtcpMessage(QLatin1String("NOTICE"), to, ctcpMessage); }
 
 	inline void writeCtcpReplyMessage(const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString(),
 		bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+		{ return writeCtcpMessage(QLatin1String("NOTICE"), to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
 	inline void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg,
 		bool emitRepliedCtcp=true)
-		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
+		{}
+// 		{ return writeCtcpReplyMessage(to, QString(), QLatin1String("ERRMSG"), ctcpLine, errorMsg, emitRepliedCtcp); }
 
 	bool bind(const QString &command, QObject *object, const char *member,
 		  int minArgs = KIRC::MessageRedirector::Unknown,
 		  int maxArgs = KIRC::MessageRedirector::Unknown,
-		  const QString &helpMessage = QString::null);
+		  const QString &helpMessage = QString());
 
 	bool bind(int id, QObject *object, const char *member,
 		  int minArgs = KIRC::MessageRedirector::Unknown,
 		  int maxArgs = KIRC::MessageRedirector::Unknown,
-		  const QString &helpMessage = QString::null);
+		  const QString &helpMessage = QString());
 
 	bool bindCtcpQuery(const QString &command, QObject *object, const char *member,
 			   int minArgs = KIRC::MessageRedirector::Unknown,
 			   int maxArgs = KIRC::MessageRedirector::Unknown,
-			   const QString &helpMessage = QString::null);
+			   const QString &helpMessage = QString());
 
 	bool bindCtcpReply(const QString &command, QObject *object, const char *member,
 			   int minArgs = KIRC::MessageRedirector::Unknown,
 			   int maxArgs = KIRC::MessageRedirector::Unknown,
-			   const QString &helpMessage = QString::null);
+			   const QString &helpMessage = QString());
 
 
-	void away(bool isAway, const QString &awayMessage = QString::null);
+	void away(bool isAway, const QString &awayMessage = QString());
 	void ison(const QStringList &nickList);
 	void join(const QString &name, const QString &key);
 	void kick(const QString &user, const QString &channel, const QString &reason);
 	void list();
 	void mode(const QString &target, const QString &mode);
-	void motd(const QString &server = QString::null);
+	void motd(const QString &server = QString());
 	void nick(const QString &newNickname);
 	void notice(const QString &target, const QString &message);
 	void part(const QString &name, const QString &reason);
@@ -523,10 +528,14 @@ private:
 	Q3Dict<KIRC::MessageRedirector> m_ctcpReplies;
 
 	QMap<QString, QString> customCtcpMap;
+#if 0
 	Q3Dict<QTextCodec> codecs;
+#endif
 	QTextCodec *defaultCodec;
 
+#if 0
 	KExtendedSocket *m_sock;
+#endif
 };
 
 }

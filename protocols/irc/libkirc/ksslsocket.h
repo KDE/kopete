@@ -25,7 +25,8 @@
 #include <kio/slavebase.h>
 
 class KSSLSocketPrivate;
-
+#warning Port to KNetwork classes
+#if 0
 class KSSLSocket : public KExtendedSocket
 {
 	Q_OBJECT
@@ -64,5 +65,6 @@ class KSSLSocket : public KExtendedSocket
 
 		KSSLSocketPrivate *d;
 };
+#endif
 
 #endif

@@ -22,11 +22,10 @@
 #endif
 
 #include "kircengine.h"
-#include "ksslsocket.h"
+// #include "ksslsocket.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kextsock.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 
@@ -61,10 +60,10 @@ Engine::Engine(QObject *parent, const char *name)
 	  m_commands(101, false),
 //	  m_numericCommands(101),
 	  m_ctcpQueries(17, false),
-	  m_ctcpReplies(17, false),
-	  codecs(577,false)
+	  m_ctcpReplies(17, false)/*,
+	  codecs(577,false)*/
 {
-	setUserName(QString::null);
+	setUserName(QString());
 
 	m_commands.setAutoDelete(true);
 	m_ctcpQueries.setAutoDelete(true);
@@ -81,21 +80,27 @@ Engine::Engine(QObject *parent, const char *name)
 	defaultCodec = QTextCodec::codecForMib(106); // UTF8 mib is 106
 	kDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 
+#warning Port to KNetwork
+#if 0
 	m_sock = 0L;
+#endif
 }
 
 Engine::~Engine()
 {
 	kDebug(14120) << k_funcinfo << m_Host << endl;
 	quit("KIRC Deleted", true);
+#if 0
 	if( m_sock )
 		delete m_sock;
+#endif
 }
 
 void Engine::setUseSSL( bool useSSL )
 {
 	kDebug(14120) << k_funcinfo << useSSL << endl;
 
+#if 0
 	if( !m_sock || useSSL != m_useSSL )
 	{
 		if( m_sock )
@@ -131,6 +136,7 @@ void Engine::setUseSSL( bool useSSL )
 		connect(m_sock, SIGNAL(closed(int)), SLOT(slotConnectionClosed()));
 		connect(m_sock, SIGNAL(readyRead()), SLOT(slotReadyRead()));
 	}
+#endif
 }
 
 void Engine::setStatus(Engine::Status status)
@@ -153,7 +159,9 @@ void Engine::setStatus(Engine::Status status)
 		// Do nothing.
 		break;
 	case Authentifying:
+#if 0
 		m_sock->enableRead(true);
+#endif
 
 		// If password is given for this server, send it now, and don't expect a reply
 		if (!(password()).isEmpty())
@@ -167,8 +175,10 @@ void Engine::setStatus(Engine::Status status)
 		// Do nothing.
 		break;
 	case Closing:
+#if 0
 		m_sock->close();
 		m_sock->reset();
+#endif
 		setStatus(Idle);
 		break;
 	case AuthentifyingFailed:
@@ -192,7 +202,9 @@ void Engine::connectToServer(const QString &host, quint16 port, const QString &n
 	m_Port = port;
 
 	kDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
+#if 0
 	kDebug(14120) << "Sock status: " << m_sock->socketStatus() << endl;
+
 
 	if( !m_sock->setAddress(m_Host, m_Port) )
 		kDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock->socketStatus() << endl;
@@ -207,6 +219,7 @@ void Engine::connectToServer(const QString &host, quint16 port, const QString &n
 		kDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Disconnected);
 	}
+#endif
 }
 
 void Engine::slotConnected()
@@ -221,12 +234,14 @@ void Engine::slotConnectionClosed()
 
 void Engine::error(int errCode)
 {
+#if 0
 	kDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
 	if (m_sock->socketStatus () != KExtendedSocket::connecting)
 	{
 		// Connection in progress.. This is a signal fired wrong
 		setStatus(Disconnected);
 	}
+#endif
 }
 
 void Engine::setVersionString(const QString &newString)
@@ -350,6 +365,7 @@ void Engine::slotReadyRead()
 	// close the socket unexpectedly
 	bool parseSuccess;
 
+#if 0
 	if (m_sock->socketStatus() == KExtendedSocket::connected && m_sock->canReadLine())
 	{
 		Message msg = Message::parse(this, defaultCodec, &parseSuccess);
@@ -398,28 +414,34 @@ void Engine::slotReadyRead()
 
 	if(m_sock->socketStatus() != KExtendedSocket::connected)
 		error();
+#endif
 }
 
 const QTextCodec *Engine::codecForNick( const QString &nick ) const
 {
 	if( nick.isEmpty() )
 		return defaultCodec;
-
+#if 0
 	QTextCodec *codec = codecs[ nick ];
 	kDebug(14120) << nick << " has codec " << codec << endl;
 
 	if( !codec )
+#endif
 		return defaultCodec;
+#if 0
 	else
 		return codec;
+#endif
 }
 
 void Engine::showInfoDialog()
 {
+#if 0
 	if( m_useSSL )
 	{
 		static_cast<KSSLSocket*>( m_sock )->showInfoDialog();
 	}
+#endif
 }
 
 /*

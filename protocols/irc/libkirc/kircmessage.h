@@ -20,7 +20,10 @@
 
 #include "kircentity.h"
 
+#warning Port to new classes
+#if 0
 #include <kbufferedio.h>
+#endif
 
 #include <q3dict.h>
 #include <qstring.h>
