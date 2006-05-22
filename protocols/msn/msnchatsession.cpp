@@ -530,7 +530,7 @@ void MSNChatSession::slotRequestPicture()
 	}
 	else
 	{ //we already have the picture, just show it.
-		KRun::runURL( KUrl::fromPathOrUrl( c->property(Kopete::Global::Properties::self()->photo()).value().toString() ), "image/png" );
+		KRun::runUrl( KUrl( c->property(Kopete::Global::Properties::self()->photo()).value().toString() ), "image/png" , 0l );
 	}
 
 }

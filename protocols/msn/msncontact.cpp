@@ -32,7 +32,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-#include <krun.h>
+#include <ktoolinvocation.h>
 #include <ktempfile.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -582,7 +582,7 @@ void MSNContact::rename( const QString &newName )
 
 void MSNContact::slotShowProfile()
 {
-	KRun::runURL( KUrl( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId())  , "text/html" );
+	KToolInvocation::invokeBrowser( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId()) ;
 }
 
 

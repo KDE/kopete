@@ -39,7 +39,7 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kdebug.h>
-#include <krun.h>
+#include <ktoolinvocation.h>
 #include <kconfig.h>
 #include <kpixmapregionselectordialog.h>
 
@@ -328,7 +328,7 @@ void MSNEditAccountWidget::slotSelectImage()
 
 void MSNEditAccountWidget::slotOpenRegister()
 {
-	KRun::runURL( KUrl("http://register.passport.net/"), QLatin1String("text/html") );
+	KToolInvocation::invokeBrowser( "http://register.passport.net/"  );
 }
 
 #include "msneditaccountwidget.moc"
