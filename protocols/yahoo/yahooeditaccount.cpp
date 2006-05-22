@@ -43,6 +43,7 @@
 
 // Kopete Includes
 #include <addcontactpage.h>
+#include <kopeteuiglobal.h>
 
 // Local Includes
 #include "yahooaccount.h"
@@ -160,7 +161,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 void YahooEditAccount::slotOpenRegister()
 {
-    KRun::runURL( KUrl("http://edit.yahoo.com/config/eval_register?new=1"), QLatin1String("text/html") );
+    KRun::runUrl( KUrl("http://edit.yahoo.com/config/eval_register?new=1"), QLatin1String("text/html"), Kopete::UI::Global::mainWidget() );
 }
 
 void YahooEditAccount::slotSelectPicture()

@@ -451,7 +451,7 @@ void YahooContact::slotUserProfile()
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + userId();
-	KRun::runURL( KUrl( profileSiteString ) , "text/html" );
+	KRun::runUrl( KUrl( profileSiteString ) , QString::fromLatin1( "text/html" ), Kopete::UI::Global::mainWidget() );
 }
 
 void YahooContact::slotSendFile( const KUrl &url)

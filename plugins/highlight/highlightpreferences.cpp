@@ -170,7 +170,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_FG->setColor(current->FG);
 	preferencesDialog->m_setFG->setChecked(current->setFG);
 	preferencesDialog->m_FG->setEnabled(current->setFG);
-	preferencesDialog->m_soundFN->setURL(current->soundFN);
+	preferencesDialog->m_soundFN->setUrl(current->soundFN);
 	preferencesDialog->m_sound->setChecked(current->playSound);
 	preferencesDialog->m_raise->setChecked(current->raiseView);
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);

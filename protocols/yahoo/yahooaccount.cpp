@@ -1748,12 +1748,12 @@ void YahooAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 
 void YahooAccount::slotOpenInbox()
 {
-	KRun::runURL( KUrl( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html" );
+	KRun::runUrl( KUrl( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html", Kopete::UI::Global::mainWidget() );
 }
 
 void YahooAccount::slotOpenYAB()
 {
-	KRun::runURL( KUrl( QString::fromLatin1("http://address.yahoo.com/") ) , "text/html" );
+	KRun::runUrl( KUrl( QString::fromLatin1("http://address.yahoo.com/") ) , QString::fromLatin1( "text/html" ), Kopete::UI::Global::mainWidget() );
 }
 
 void YahooAccount::slotEditOwnYABEntry()
