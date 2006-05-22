@@ -662,7 +662,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		*textStream << hotmailRequest;
 		tmpMailFile.file()->flush();
 
-		KRun::runURL( KUrl::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
+		KRun::runURL( KUrl::fromPathOrUrl( tmpMailFile.name() ), "text/html" , true );
 
 	}
 	else if ( cmd == "NOT" )

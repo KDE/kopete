@@ -681,7 +681,7 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 KUrl MetaContact::customPhoto() const
 {
-	return KUrl::fromPathOrURL(d->customPicture.path());
+	return KUrl::fromPathOrUrl(d->customPicture.path());
 }
 
 void MetaContact::setPhoto( const KUrl &url )
@@ -975,7 +975,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 	QDomElement photo = metaContact.createElement( QString::fromUtf8("photo" ) );
-	KUrl photoUrl = KUrl::fromPathOrURL(d->customPicture.path());
+	KUrl photoUrl = KUrl::fromPathOrUrl(d->customPicture.path());
 	photo.appendChild( metaContact.createTextNode( photoUrl.url() ) );
 	metaContact.documentElement().appendChild( photo );
 
@@ -1091,7 +1091,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 		else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
 		{
 			// custom photo, used for custom photo source
-			setPhoto( KUrl::fromPathOrURL(contactElement.text()) );
+			setPhoto( KUrl::fromPathOrUrl(contactElement.text()) );
 
 			d->photoSyncedWithKABC = (contactElement.attribute(QString::fromUtf8("syncWithKABC")) == QString::fromUtf8("1")) || (contactElement.attribute(QString::fromUtf8("syncWithKABC")) == QString::fromUtf8("true"));
 

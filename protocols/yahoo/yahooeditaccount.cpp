@@ -80,7 +80,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
     connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
 		editPictureUrl->setText( iconUrl );
 		if( !iconUrl.isEmpty() )
-			m_Picture->setPixmap( KUrl::fromPathOrURL( iconUrl ).path() );
+			m_Picture->setPixmap( KUrl::fromPathOrUrl( iconUrl ).path() );
 		editPictureUrl->setEnabled( sendPicture );
 
 		// Global Identity
@@ -175,7 +175,7 @@ void YahooEditAccount::slotSelectPicture()
 	{
 		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(picture), 96, 96, this );
 		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().toLower() ) ) ;
-		file = KUrl::fromPathOrURL(newlocation);
+		file = KUrl::fromPathOrUrl(newlocation);
 		if( !picture.save( newlocation, "PNG" ))
 		{
 			KMessageBox::sorry( this, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );

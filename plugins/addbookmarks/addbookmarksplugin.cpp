@@ -81,7 +81,7 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 		group = getFolder( group, sender );
 
 	if( pos == -1 ){
-		group.addBookmark( mgr, m_map[(KIO::TransferJob*)transfer].url.prettyURL(), m_map[(KIO::TransferJob*)transfer].url.url() );
+		group.addBookmark( mgr, m_map[(KIO::TransferJob*)transfer].url.prettyUrl(), m_map[(KIO::TransferJob*)transfer].url.url() );
 		kDebug( 14501 ) << "failed to extract title from first data chunk" << endl;
 	}else {
 		group.addBookmark( mgr, rx.cap( 1 ).simplified(),

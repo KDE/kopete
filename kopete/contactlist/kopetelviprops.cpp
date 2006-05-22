@@ -449,7 +449,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
 	if ( !ui_mainWidget->cmbPhotoUrl->url().isEmpty())
-		item->metaContact()->setPhoto(KUrl::fromPathOrURL((ui_mainWidget->cmbPhotoUrl->url())));
+		item->metaContact()->setPhoto(KUrl::fromPathOrUrl((ui_mainWidget->cmbPhotoUrl->url())));
 	item->metaContact()->setPhotoSyncedWithKABC( ui_mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(

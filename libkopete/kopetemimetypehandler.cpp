@@ -133,7 +133,7 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 		}
 		else
 		{
-			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyURL() << endl;
+			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyUrl() << endl;
 			return false;
 		}
 	}
@@ -149,13 +149,13 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 			QString sorryText;
 			if ( url.isLocalFile() )
 			{
-				sorryText = i18n( "Unable to find the file %1.", url.prettyURL() );
+				sorryText = i18n( "Unable to find the file %1.", url.prettyUrl() );
 			}
 			else
 			{
 				sorryText = i18n( "<qt>Unable to download the requested file;<br>"
 				                  "please check that address %1 is correct.</qt>",
-				                  url.prettyURL() );
+				                  url.prettyUrl() );
 			}
 
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), sorryText );

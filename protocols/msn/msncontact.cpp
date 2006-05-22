@@ -679,7 +679,7 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
 	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 
-	KIO::Job *j=KIO::file_move( KUrl::fromPathOrURL( f->name() ) , KUrl::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl::fromPathOrUrl( f->name() ) , KUrl::fromPathOrUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
 	f->setAutoDelete(false);
 	delete f;
