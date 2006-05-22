@@ -67,7 +67,9 @@ GroupWiseContact::~GroupWiseContact()
 	// would not fetch details for this contact if they contact you
 	// again from off-contact-list.
 	if ( metaContact()->isTemporary() )
-		account()->client()->userDetailsManager()->removeContact( contactId() );
+		if ( Client * c = account()->client() )
+			if ( UserDetailsManager * udm = c->userDetailsManager() )
+				account()->client()->userDetailsManager()->removeContact( contactId() );
 }
 
 QString GroupWiseContact::dn() const
