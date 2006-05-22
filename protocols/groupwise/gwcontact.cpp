@@ -69,7 +69,7 @@ GroupWiseContact::~GroupWiseContact()
 	if ( metaContact()->isTemporary() )
 		if ( Client * c = account()->client() )
 			if ( UserDetailsManager * udm = c->userDetailsManager() )
-				account()->client()->userDetailsManager()->removeContact( contactId() );
+				udm->removeContact( contactId() );
 }
 
 QString GroupWiseContact::dn() const
