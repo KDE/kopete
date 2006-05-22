@@ -31,7 +31,6 @@
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kgenericfactory.h>
-#include <ktrader.h>
 #include <kconfig.h>
 #include <klineedit.h>
 
