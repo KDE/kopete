@@ -34,7 +34,7 @@
 #include <kjanuswidget.h>
 #include <kurllabel.h>
 #include <kdatewidget.h>
-#include <krun.h>
+#include <ktoolinvocation.h>
 #include <kpassworddialog.h>
 
 #include "kopetepassword.h"
@@ -189,7 +189,7 @@ bool ICQEditAccountWidget::validateData()
 
 void ICQEditAccountWidget::slotOpenRegister()
 {
-	KRun::runURL( KUrl("http://go.icq.com/register/"), QLatin1String("text/html") );
+	KToolInvocation::invokeBrowser( QLatin1String("http://go.icq.com/register/") );
 }
 
 #include "icqeditaccountwidget.moc"

@@ -12,7 +12,7 @@
 #include <QLatin1String>
 
 #include <kdebug.h>
-#include <krun.h>
+#include <ktoolinvocation.h>
 #include <kpassworddialog.h>
 #include <kconfig.h>
 
@@ -168,7 +168,7 @@ bool AIMEditAccountWidget::validateData()
 
 void AIMEditAccountWidget::slotOpenRegister()
 {
-	KRun::runURL( KUrl("http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1"), QLatin1String("text/html") );
+	KToolInvocation::invokeBrowser( QString::fromLatin1("http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1") );
 }
 
 #include "aimeditaccountwidget.moc"

@@ -24,8 +24,6 @@ if(WITH_testbed)
   add_subdirectory( testbed )
 endif(WITH_testbed)
 
-
-
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
 
 
