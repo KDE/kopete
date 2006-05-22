@@ -34,7 +34,6 @@
 #include <QTimer>
 #include <QStack>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
 #include <kplugininfo.h>
@@ -42,6 +41,7 @@
 #include <kstandarddirs.h>
 #include <kstaticdeleter.h>
 #include <kurl.h>
+#include <kservicetypetrader.h>
 
 #include "kopeteplugin.h"
 #include "kopetecontactlist.h"
@@ -92,14 +92,14 @@ PluginManager* PluginManager::self()
 
 PluginManager::PluginManager() : QObject( qApp ), d( new Private )
 {
-	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
+	d->plugins = KPluginInfo::fromServices( KServiceTypeTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
 		QString::fromLatin1( "[X-Kopete-Version] == 1000900" ) ) );
 
 	// We want to add a reference to the application's event loop so we
 	// can remain in control when all windows are removed.
 	// This way we can unload plugins asynchronously, which is more
 	// robust if they are still doing processing.
-	kapp->ref();
+	KGlobal::ref();
 }
 
 PluginManager::~PluginManager()
@@ -252,7 +252,7 @@ void PluginManager::slotShutdownDone()
 
 	d->shutdownMode = Private::DoneShutdown;
 
-	kapp->deref();
+	KGlobal::deref();
 }
 
 void PluginManager::loadAllPlugins()
