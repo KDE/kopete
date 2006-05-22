@@ -29,7 +29,6 @@
 #include <QPixmap>
 
 #include <kactivelabel.h>
-#include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
@@ -260,13 +259,11 @@ public:
 	KopetePasswordSetRequest( Kopete::Password &pass, const QString &newPass )
 	 : KopetePasswordRequest( 0, pass ), mNewPass( newPass )
 	{
-		if ( KApplication *app = KApplication::kApplication() )
-			app->ref();
+		KGlobal::ref();
 	}
 	~KopetePasswordSetRequest()
 	{
-		if ( KApplication *app = KApplication::kApplication() )
-			app->deref();
+		KGlobal::deref();
 		kDebug( 14010 ) << k_funcinfo << "job complete" << endl;
 	}
 	void processRequest()
@@ -324,13 +321,11 @@ public:
 	KopetePasswordClearRequest( Kopete::Password &pass )
 	 : KopetePasswordRequest( 0, pass )
 	{
-		if ( KApplication *app = KApplication::kApplication() )
-			app->ref();
+		KGlobal::ref();
 	}
 	~KopetePasswordClearRequest()
 	{
-		if ( KApplication *app = KApplication::kApplication() )
-			app->deref();
+		KGlobal::deref();
 		kDebug( 14010 ) << k_funcinfo << "job complete" << endl;
 	}
 	void processRequest()
