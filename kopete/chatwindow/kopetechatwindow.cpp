@@ -236,7 +236,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	m_alwaysShowTabs = KGlobal::config()->readEntry( QString::fromLatin1("AlwaysShowTabs"), false );
 //	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
-	kapp->ref();
+	KGlobal::ref();
 }
 
 KopeteChatWindow::~KopeteChatWindow()
@@ -284,7 +284,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	}
 
 	delete anim;
-	kapp->deref();
+	KGlobal::deref();
 }
 
 void KopeteChatWindow::windowListChanged()

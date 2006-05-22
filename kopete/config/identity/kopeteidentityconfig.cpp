@@ -328,7 +328,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		}
 	}
 
-	comboPhotoURL->setURL(d->currentIdentity->customPhoto().url());
+	comboPhotoURL->setUrl(d->currentIdentity->customPhoto().url());
 	Kopete::MetaContact::PropertySource photoSource = d->currentIdentity->photoSource();
 
 	radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
@@ -577,7 +577,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 					i18n("An error occurred when trying to save the custom photo for %1 identity.", d->selectedIdentity),
 					i18n("Identity Configuration"));
 		}
-		comboPhotoURL->setURL(saveLocation);
+		comboPhotoURL->setUrl(saveLocation);
 		slotEnableAndDisableWidgets();
 	}
 	else
@@ -590,7 +590,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 
 void KopeteIdentityConfig::slotClearPhoto()
 {
-	comboPhotoURL->setKUrl( KUrl() );
+	comboPhotoURL->setUrl( KUrl() );
 	slotEnableAndDisableWidgets();
 }
 
