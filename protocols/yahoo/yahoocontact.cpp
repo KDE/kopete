@@ -59,6 +59,7 @@
 #include <kimageio.h>
 #include <kstandarddirs.h>
 #include <kfiledialog.h>
+#include <ktoolinvocation.h>
 
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
@@ -451,7 +452,7 @@ void YahooContact::slotUserProfile()
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + userId();
-	KRun::runUrl( KUrl( profileSiteString ) , QString::fromLatin1( "text/html" ), Kopete::UI::Global::mainWidget() );
+	KToolInvocation::invokeBrowser(  profileSiteString );
 }
 
 void YahooContact::slotSendFile( const KUrl &url)

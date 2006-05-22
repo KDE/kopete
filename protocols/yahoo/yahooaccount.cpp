@@ -42,6 +42,7 @@
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <kactionmenu.h>
+#include <ktoolinvocation.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -1748,12 +1749,12 @@ void YahooAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 
 void YahooAccount::slotOpenInbox()
 {
-	KRun::runUrl( KUrl( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html", Kopete::UI::Global::mainWidget() );
+	KToolInvocation::invokeBrowser( QString::fromLatin1( "http://mail.yahoo.com/") );
 }
 
 void YahooAccount::slotOpenYAB()
 {
-	KRun::runUrl( KUrl( QString::fromLatin1("http://address.yahoo.com/") ) , QString::fromLatin1( "text/html" ), Kopete::UI::Global::mainWidget() );
+	KToolInvocation::invokeBrowser( QString::fromLatin1( "http://address.yahoo.com/") );
 }
 
 void YahooAccount::slotEditOwnYABEntry()

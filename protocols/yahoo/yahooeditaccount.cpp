@@ -40,6 +40,7 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kpixmapregionselectordialog.h>
+#include <ktoolinvocation.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -161,7 +162,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 void YahooEditAccount::slotOpenRegister()
 {
-    KRun::runUrl( KUrl("http://edit.yahoo.com/config/eval_register?new=1"), QLatin1String("text/html"), Kopete::UI::Global::mainWidget() );
+	KToolInvocation::invokeBrowser( QString::fromLatin1("http://edit.yahoo.com/config/eval_register?new=1") );
 }
 
 void YahooEditAccount::slotSelectPicture()
