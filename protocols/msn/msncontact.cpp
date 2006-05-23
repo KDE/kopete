@@ -200,17 +200,17 @@ void MSNContact::slotUserInfo()
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
 	QWidget* w=new QWidget( infoDialog );
-	Ui::MSNInfo *info=new Ui::MSNInfo();
-	info->setupUi( w );
-	info->m_id->setText( contactId() );
-	info->m_displayName->setText(nick);
-	info->m_personalMessage->setText(personalMessage);
-	info->m_phh->setText(m_phoneHome);
-	info->m_phw->setText(m_phoneWork);
-	info->m_phm->setText(m_phoneMobile);
-	info->m_reversed->setChecked(m_reversed);
+	Ui::MSNInfo info;
+	info.setupUi( w );
+	info.m_id->setText( contactId() );
+	info.m_displayName->setText(nick);
+	info.m_personalMessage->setText(personalMessage);
+	info.m_phh->setText(m_phoneHome);
+	info.m_phw->setText(m_phoneWork);
+	info.m_phm->setText(m_phoneMobile);
+	info.m_reversed->setChecked(m_reversed);
 
-	connect( info->m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
+	connect( info.m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
 
 	infoDialog->setMainWidget(w);
 	infoDialog->setCaption(nick);
