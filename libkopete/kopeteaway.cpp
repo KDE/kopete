@@ -213,7 +213,7 @@ void Kopete::Away::setAutoAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
-		kdDebug(14010) << k_funcinfo <<
+		kDebug(14010) << k_funcinfo <<
 			"Setting auto away message: " << message << endl;
 		d->autoAwayMessage = message;
 		
