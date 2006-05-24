@@ -34,14 +34,13 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
     m_gui = 0;
 	if(connected)
 	{
-		QWidget* w = new QWidget( this );
 		m_gui = new Ui::aimAddContactUI();
+		m_gui->setupUi(this);
 		canadd = true;
 	}
 	else
 	{
-		noaddMsg1 = new QLabel(i18n("You need to be connected to be able to add contacts."), this);
-		noaddMsg2 = new QLabel(i18n("Connect to the AIM network and try again."), this);
+		new QLabel(i18n("You need to be connected to be able to add contacts.\nConnect to the AIM network and try again."), this);
 		canadd = false;
 	}
 }

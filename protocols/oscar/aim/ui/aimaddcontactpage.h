@@ -30,8 +30,6 @@ public:
 protected:
 	/** The actual GUI */
 	Ui::aimAddContactUI *m_gui;
-	QLabel *noaddMsg1;
-	QLabel *noaddMsg2;
 	bool canadd;
 };
 #endif
