@@ -1,0 +1,10 @@
+
+@import url(../main.css);
+
+.inContentTime, .inMetacontact {
+	color: inherit;
+}
+
+.outContentTime, .outMetacontact {
+	color: inherit;
+}
