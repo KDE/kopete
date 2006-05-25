@@ -43,6 +43,7 @@ class KOPETE_EXPORT KopeteView
 		 * constructor
 		 */
 		KopeteView( Kopete::ChatSession *manager, Kopete::ViewPlugin *parent );
+		virtual ~KopeteView();
 
 		/**
 		 * @brief Returns the message currently in the edit area
