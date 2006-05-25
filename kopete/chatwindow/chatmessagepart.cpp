@@ -608,7 +608,7 @@ const QString ChatMessagePart::styleHTML() const
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
 		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
 		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}"
-		"p{margin:0;padding:0;}" /* some html messages are encapsuled into a <p> */ )
+		".KopeteMessageBody > p:first-child{margin:0;padding:0;display:inline;}" /* some html messages are encapsuled into a <p> */ )
 		.arg( p->bgColor().name() )
 		.arg( p->fontFace().family() )
 		.arg( p->fontFace().pointSize() )
@@ -1215,7 +1215,7 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 	formattedBody += message.getHtmlStyleAttribute();
 
 	// Affect the parsed body.
-	formattedBody += QString::fromUtf8(">%1</span>").arg(message.parsedBody());
+	formattedBody += QString::fromUtf8("class=\"KopeteMessageBody\">%1</span>").arg(message.parsedBody());
 	
 	return formattedBody;
 }
