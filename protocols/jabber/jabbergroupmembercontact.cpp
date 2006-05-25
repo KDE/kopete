@@ -108,8 +108,10 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	if ( message.body().isEmpty () )
 		return;
 
-	Kopete::ContactPtrList contactList;
-	contactList.append ( manager( Kopete::Contact::CanCreate )->myself() );
+	Kopete::ChatSession *kmm = manager( Kopete::Contact::CanCreate );
+	if(!kmm)
+		return;
+	Kopete::ContactPtrList contactList = kmm->members();
 
 	// check for errors
 	if ( message.type () == "error" )
@@ -136,7 +138,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	}
 
 	// append message to manager
-	manager( Kopete::Contact::CanCreate )->appendMessage ( *newMessage );
+	kmm->appendMessage ( *newMessage );
 
 	delete newMessage;
 
