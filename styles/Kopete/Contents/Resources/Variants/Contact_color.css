@@ -1,0 +1,8 @@
+ @import url(../main.css);
+
+.IncomingMessageHeader /*, .OutgoingMessageHeader, .IncomingAction, .OutgoingAction*/
+{
+	background-color:inherit;
+	border-color:inherit;
+	border-width:1px;
+}
