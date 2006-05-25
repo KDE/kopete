@@ -1078,7 +1078,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	// colors both visible on light and dark background.
 	static const char* const nameColors[] =
 	{
-		"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
+		"red", "blue" , "gray", "magenta", "violet", /*"olive"*/ "#808000", "yellowgreen",
 		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
 		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "slateblue",
 		"slategray", "goldenrod", "orangered", "tomato", /*"dogderblue"*/ "#1E90FF", "steelblue",
@@ -1090,14 +1090,20 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	int hash = 0;
 	for( uint f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].unicode() * f;
-
 	QColor color = QColor( nameColors[ hash % nameColorsLen ] ).name();
-	
-	//kdDebug(14000) << k_funcinfo << "color for hash " << hash << " : " << nameColors[ hash % nameColorsLen ] << endl;
-	
-	resultHTML = resultHTML.replace( QString::fromUtf8("%senderColor%"), color.name());
-	resultHTML = resultHTML.replace( QString::fromUtf8("%senderColorLight%"), color.light(160).name());
-	resultHTML = resultHTML.replace( QString::fromUtf8("%senderColorDark%"), color.dark().name());
+	kdDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
+	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
+	textPos=0;
+	while( (textPos=senderColorRegExp.search(resultHTML, textPos) ) != -1 )
+	{
+		int light=100;
+		bool doLight=false;
+		if(senderColorRegExp.numCaptures()>=1)
+		{
+			light=senderColorRegExp.cap(1).toUInt(&doLight);
+		}
+		resultHTML = resultHTML.replace( textPos , senderColorRegExp.cap(0).length() , doLight ? color.light(light).name() : color.name() );
+	}
 
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
 	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), formatMessageBody(message) );
