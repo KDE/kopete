@@ -1045,9 +1045,6 @@ void KopeteChatWindow::saveOptions()
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), m_tabBar->tabPosition() );
 
-	if ( m_activeView )
-		m_activeView->saveChatSettings();
-
 	config->sync();
 }
 
