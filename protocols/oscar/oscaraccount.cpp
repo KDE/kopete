@@ -90,7 +90,7 @@ public:
 };
 
 OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, bool isICQ)
-: Kopete::PasswordedAccount( parent, accountID, isICQ ? 8 : 16, false )
+: Kopete::PasswordedAccount( parent, accountID, false )
 {
 	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;

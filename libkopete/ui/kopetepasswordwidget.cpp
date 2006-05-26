@@ -22,14 +22,9 @@
 
 #include <qcheckbox.h>
 
-class Kopete::UI::PasswordWidget::Private
-{
-public:
-	int maxLength;
-};
 
 Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, const char *name, Kopete::Password *from )
- : QWidget( parent ), d( new Private )
+	: QWidget( parent )//, d( new Private )
 {
 	setObjectName( name );
 
@@ -40,7 +35,7 @@ Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, const char *name, K
 
 Kopete::UI::PasswordWidget::~PasswordWidget()
 {
-	delete d;
+//	delete d;
 }
 
 void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
@@ -61,10 +56,6 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 		mRemembered->setCheckState( Qt::Unchecked );
 	}
 
-	if ( source )
-		d->maxLength = source->maximumLength();
-	else
-		d->maxLength = 0;
 
 	mPassword->setEnabled( false );
 
@@ -105,9 +96,8 @@ void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 
 bool Kopete::UI::PasswordWidget::validate()
 {
-	if ( !mRemembered->isChecked() ) return true;
-	if ( d->maxLength == 0 ) return true;
-	return password().length() <= d->maxLength;
+#warning  TODO do something interesting or remove the function
+	return true;
 }
 
 QString Kopete::UI::PasswordWidget::password() const

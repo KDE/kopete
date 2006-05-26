@@ -185,7 +185,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 			status |= ICQ::StatusCode::WEBAWARE;
 
 		engine()->setStatus( status, mInitialStatusMessage );
-		engine()->start( server, port, accountId(), password );
+		engine()->start( server, port, accountId(), password.left(8) );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 
 		mInitialStatusMessage = QString::null;

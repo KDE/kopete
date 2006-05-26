@@ -24,8 +24,8 @@
 namespace Kopete
 {
 	
-ManagedConnectionAccount::ManagedConnectionAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength  )
-	: PasswordedAccount( parent, acctId, maxPasswordLength, false ), m_waitingForConnection( false )
+ManagedConnectionAccount::ManagedConnectionAccount( Protocol *parent, const QString &acctId  )
+	: PasswordedAccount( parent, acctId ), m_waitingForConnection( false )
 {
 	QObject::connect( ConnectionManager::self(), SIGNAL(statusChanged(const QString&, NetworkStatus::EnumStatus ) ),
 										SLOT(slotConnectionStatusChanged(const QString&, NetworkStatus::EnumStatus ) ) );

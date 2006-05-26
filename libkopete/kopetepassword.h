@@ -54,22 +54,10 @@ public:
 	 * Create a new Kopete::Password object.
 	 *
 	 * @param configGroup The configuration group to save passwords in.
-	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
-	 *
-	 * @deprecated Use the constructor that specifies if a blank password is allowed
-	 */
-	explicit Password( const QString &configGroup, uint maxLength = 0 );
-
-	/**
-	 * Create a new Kopete::Password object.
-	 *
-	 * @param configGroup The configuration group to save passwords in.
-	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
 	 * @param allowBlankPassword If this password is allowed to be blank
 	 * @param name The name for this object
 	 */
-	explicit Password( const QString &configGroup, uint maxLength = 0,
-		bool allowBlankPassword = false );
+	explicit Password( const QString &configGroup, bool allowBlankPassword = false );
 
 	/**
 	 * Create a shallow copy of this object
@@ -86,16 +74,6 @@ public:
 	 * Returns the preferred size for images passed to the retrieve and request functions.
 	 */
 	static int preferredImageSize();
-
-	/**
-	 * @brief Returns the maximum allowed length of the password, or 0 if there is no maximum.
-	 */
-	uint maximumLength();
-	/**
-	 * Sets the maximum allowed length of the password.
-	 * @param max The new maximum allowed length, or 0 if there is no maximum.
-	 */
-	void setMaximumLength( uint max );
 
 	/**
 	 * @brief Returns whether the password currently stored by this object is known to be incorrect.

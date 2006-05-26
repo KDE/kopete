@@ -119,7 +119,7 @@ static const char* const servers_ip[] = {
 #define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
 
  GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID )
-: Kopete::PasswordedAccount( parent, accountID, 0, false )
+: Kopete::PasswordedAccount( parent, accountID, false )
 {
 	QHostAddress ip;
 	p = new GaduAccountPrivate;

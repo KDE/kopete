@@ -64,7 +64,7 @@
 #include "avdevice/videodevicepool.h"
 #endif
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
-	: Kopete::PasswordedAccount ( parent, AccountID.toLower(), 0, false )
+	: Kopete::PasswordedAccount ( parent, AccountID.toLower() , false )
 {
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;

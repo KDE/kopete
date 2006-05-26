@@ -91,7 +91,7 @@
 
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId)
-			  :Kopete::PasswordedAccount ( parent, accountId, 0, false )
+			  :Kopete::PasswordedAccount ( parent, accountId, false )
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId << endl;
 

@@ -70,7 +70,7 @@
 #include "yahoouserinfodialog.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
- : Kopete::PasswordedAccount(parent, accountId, 0, false)
+ : Kopete::PasswordedAccount(parent, accountId, false)
 {
 
 	// first things first - initialise internals

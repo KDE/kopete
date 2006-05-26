@@ -32,7 +32,7 @@
 #include "messengercontact.h"
 
 MessengerAccount::MessengerAccount(MessengerProtocol *protocol, const QString &accountId)
- : Kopete::PasswordedAccount(protocol, accountId.toLower(), 0, "")
+ : Kopete::PasswordedAccount(protocol, accountId.toLower(), false)
 {
 	setMyself( new MessengerContact(this, accountId, Kopete::ContactList::self()->myself()) );
 }
