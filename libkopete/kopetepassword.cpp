@@ -92,13 +92,8 @@ public:
 	 */
 	void begin()
 	{
-#warning disable kwallet for now, it does not work
-#if 0
 		kDebug( 14010 ) << k_funcinfo << endl;
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
-#else 
-		processRequest();
-#endif
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
