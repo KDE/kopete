@@ -1,5 +1,5 @@
 /*
-    testbededitaccountwidget.h - Kopete Testbed Protocol
+    qqaddcontactpage.h - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -14,41 +14,37 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDEDITACCOUNTWIDGET_H
-#define TESTBEDEDITACCOUNTWIDGET_H
+#ifndef TESTBEDADDCONTACTPAGE_H
+#define TESTBEDADDCONTACTPAGE_H
 
-#include <qwidget.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <editaccountwidget.h>
+#include <addcontactpage.h>
 
-class QVBoxLayout;
 namespace Kopete { class Account; }
-namespace Ui { class TestbedAccountPreferences; }
+namespace Kopete { class MetaContact; }
+namespace Ui { class QQAddUI; }
 
 /**
- * A widget for editing this protocol's accounts
+ * A page in the Add Contact Wizard
  * @author Will Stephenson
 */
-class TestbedEditAccountWidget : public QWidget, public KopeteEditAccountWidget
+class QQAddContactPage : public AddContactPage
 {
-Q_OBJECT
+	Q_OBJECT
 public:
-    TestbedEditAccountWidget( QWidget* parent, Kopete::Account* account);
-
-    ~TestbedEditAccountWidget();
-
-	/**
-	 * Make an account out of the entered data
+    QQAddContactPage( QWidget* parent = 0 );
+    ~QQAddContactPage();
+	
+    /**
+	 * Make a contact out of the entered data
 	 */
-	virtual Kopete::Account* apply();
+	virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
 	/**
 	 * Is the data correct?
 	 */
-	virtual bool validateData();
+    virtual bool validateData();
+
 protected:
-	Kopete::Account *m_account;
-	Ui::TestbedAccountPreferences *m_preferencesWidget;
+	Ui::QQAddUI *m_qqAddUI;
 };
 
 #endif

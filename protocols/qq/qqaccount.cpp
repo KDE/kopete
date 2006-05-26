@@ -1,5 +1,5 @@
 /*
-    testbedaccount.cpp - Kopete Testbed Protocol
+    qqaccount.cpp - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -15,7 +15,7 @@
 */
 
 
-#include "testbedaccount.h"
+#include "qqaccount.h"
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -26,26 +26,26 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 
-#include "testbedcontact.h"
-#include "testbedfakeserver.h"
-#include "testbedprotocol.h"
+#include "qqcontact.h"
+#include "qqfakeserver.h"
+#include "qqprotocol.h"
 
 
-TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountID )
+QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 : Kopete::Account ( parent, accountID )
 {
 	// Init the myself contact
-	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
-	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
-	m_server = new TestbedFakeServer();;
+	setMyself( new QQContact( this, accountId(), QQContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
+	myself()->setOnlineStatus( QQProtocol::protocol()->qqOffline );
+	m_server = new QQFakeServer();;
 }
 
-TestbedAccount::~TestbedAccount()
+QQAccount::~QQAccount()
 {
 	delete m_server;
 }
 
-KActionMenu* TestbedAccount::actionMenu()
+KActionMenu* QQAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
@@ -53,7 +53,7 @@ KActionMenu* TestbedAccount::actionMenu()
 
 	KAction *action;
 	
-	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), 0, "actionShowVideo");
+	action = new KAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), 0, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	mActionMenu->addAction(action);
 	action->setEnabled( isConnected() );
@@ -61,13 +61,13 @@ KActionMenu* TestbedAccount::actionMenu()
 	return mActionMenu;
 }
 
-bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
+bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, parentContact->displayName(), parentContact );
+	QQContact* newContact = new QQContact( this, contactId, QQContact::Echo, parentContact->displayName(), parentContact );
 	return newContact != 0L;
 }
 
-void TestbedAccount::setAway( bool away, const QString & /* reason */ )
+void QQAccount::setAway( bool away, const QString & /* reason */ )
 {
 	if ( away )
 		slotGoAway();
@@ -75,7 +75,7 @@ void TestbedAccount::setAway( bool away, const QString & /* reason */ )
 		slotGoOnline();
 }
 
-void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
+void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
 	if ( status.status() == Kopete::OnlineStatus::Online &&
 			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
@@ -89,55 +89,55 @@ void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 		slotGoAway( /* reason */ );
 }
 
-void TestbedAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
+void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
-	/* Not used in testbed */
+	/* Not used in qq */
 }
 
-void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
+void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
-	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
+	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
 	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
 			this, SLOT ( receivedMessage( const QString & ) ) );
 }
 
-void TestbedAccount::disconnect()
+void QQAccount::disconnect()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
-	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
+	myself()->setOnlineStatus( QQProtocol::protocol()->qqOffline );
 	QObject::disconnect ( m_server, 0, 0, 0 );
 }
 
-TestbedFakeServer * TestbedAccount::server()
+QQFakeServer * QQAccount::server()
 {
 	return m_server;
 }
 
-void TestbedAccount::slotGoOnline ()
+void QQAccount::slotGoOnline ()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect ();
 	else
-		myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
+		myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
 	updateContactStatus();
 }
 
-void TestbedAccount::slotGoAway ()
+void QQAccount::slotGoAway ()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect();
 
-	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedAway );
+	myself()->setOnlineStatus( QQProtocol::protocol()->qqAway );
 	updateContactStatus();
 }
 
 
-void TestbedAccount::slotGoOffline ()
+void QQAccount::slotGoOffline ()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
 
@@ -146,24 +146,24 @@ void TestbedAccount::slotGoOffline ()
 	updateContactStatus();
 }
 
-void TestbedAccount::slotShowVideo ()
+void QQAccount::slotShowVideo ()
 {
 	kdDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
-		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0, "Testbed video window");
+		QQWebcamDialog *qqWebcamDialog = new QQWebcamDialog(0, 0, "QQ video window");
 	updateContactStatus();
 }
 
-void TestbedAccount::receivedMessage( const QString &message )
+void QQAccount::receivedMessage( const QString &message )
 {
 	// Look up the contact the message is from
 	QString from;
-	TestbedContact* messageSender;
+	QQContact* messageSender;
 
 	from = message.section( ':', 0, 0 );
 	Kopete::Contact* contact = contacts()[from];
-	messageSender = dynamic_cast<TestbedContact *>( contact );
+	messageSender = dynamic_cast<QQContact *>( contact );
 
 	kDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
@@ -173,7 +173,7 @@ void TestbedAccount::receivedMessage( const QString &message )
 		kWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
 }
 
-void TestbedAccount::updateContactStatus()
+void QQAccount::updateContactStatus()
 {
 	QHashIterator<QString, Kopete::Contact*>itr( contacts() );
 	for ( ; itr.hasNext(); ) {
@@ -183,4 +183,4 @@ void TestbedAccount::updateContactStatus()
 }
 
 
-#include "testbedaccount.moc"
+#include "qqaccount.moc"

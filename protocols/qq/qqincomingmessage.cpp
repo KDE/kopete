@@ -1,5 +1,5 @@
 /*
-    testbedaddcontactpage.h - Kopete Testbed Protocol
+    qqincomingmessage.cpp - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -14,37 +14,23 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDADDCONTACTPAGE_H
-#define TESTBEDADDCONTACTPAGE_H
+#include "qqincomingmessage.h"
 
-#include <addcontactpage.h>
-
-namespace Kopete { class Account; }
-namespace Kopete { class MetaContact; }
-namespace Ui { class TestbedAddUI; }
-
-/**
- * A page in the Add Contact Wizard
- * @author Will Stephenson
-*/
-class TestbedAddContactPage : public AddContactPage
+QQIncomingMessage::QQIncomingMessage( QQFakeServer* const server , QString message )
 {
-	Q_OBJECT
-public:
-    TestbedAddContactPage( QWidget* parent = 0 );
-    ~TestbedAddContactPage();
-	
-    /**
-	 * Make a contact out of the entered data
-	 */
-	virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
-	/**
-	 * Is the data correct?
-	 */
-    virtual bool validateData();
+	m_server = server; 
+	m_message = message; 
+	m_delivered = false; 
+}
 
-protected:
-	Ui::TestbedAddUI *m_testbedAddUI;
-};
+QQIncomingMessage::~QQIncomingMessage()
+{
+}
 
-#endif
+void QQIncomingMessage::deliver() 
+{ 
+	m_server->incomingMessage( m_message ); 
+	m_delivered = true; 
+}
+
+#include "qqincomingmessage.moc"

@@ -1,5 +1,5 @@
 /*
-    testbedprotocol.cpp - Kopete Testbed Protocol
+    qqprotocol.cpp - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.u>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -18,24 +18,24 @@
 #include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
-#include "testbedaccount.h"
-#include "testbedcontact.h"
-#include "testbedprotocol.h"
-#include "testbedaddcontactpage.h"
-#include "testbededitaccountwidget.h"
+#include "qqaccount.h"
+#include "qqcontact.h"
+#include "qqprotocol.h"
+#include "qqaddcontactpage.h"
+#include "qqeditaccountwidget.h"
 
-typedef KGenericFactory<TestbedProtocol> TestbedProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_testbed, TestbedProtocolFactory( "kopete_testbed" )  )
+typedef KGenericFactory<QQProtocol> QQProtocolFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_qq, QQProtocolFactory( "kopete_qq" )  )
 
-TestbedProtocol *TestbedProtocol::s_protocol = 0L;
+QQProtocol *QQProtocol::s_protocol = 0L;
 
-TestbedProtocol::TestbedProtocol( QObject* parent, const QStringList &/*args*/ )
-	: Kopete::Protocol( TestbedProtocolFactory::instance(), parent ),
-	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString::null),  
+QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
+	: Kopete::Protocol( QQProtocolFactory::instance(), parent ),
+	  qqOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString::null),  
 			  i18n( "Online" ),   i18n( "O&nline" ) ),
-	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
+	  qqAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
 			  i18n( "Away" ),   i18n( "&Away" ) ),
-	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString::null), 
+	  qqOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString::null), 
 			  i18n( "Offline" ),   i18n( "O&ffline" ) )
 
 {
@@ -44,11 +44,11 @@ TestbedProtocol::TestbedProtocol( QObject* parent, const QStringList &/*args*/ )
 	s_protocol = this;
 }
 
-TestbedProtocol::~TestbedProtocol()
+QQProtocol::~QQProtocol()
 {
 }
 
-Kopete::Contact *TestbedProtocol::deserializeContact(
+Kopete::Contact *QQProtocol::deserializeContact(
 	Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
@@ -57,13 +57,13 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	QString displayName = serializedData[ "displayName" ];
 	QString type = serializedData[ "contactType" ];
 
-	TestbedContact::TestbedContactType tbcType;
+	QQContact::QQContactType tbcType;
 	if ( type == QString::fromLatin1( "echo" ) )
-		tbcType = TestbedContact::Echo;
+		tbcType = QQContact::Echo;
 	if ( type == QString::fromLatin1( "null" ) )
-		tbcType = TestbedContact::Null;
+		tbcType = QQContact::Null;
 	else
-		tbcType = TestbedContact::Null;
+		tbcType = QQContact::Null;
 
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 	Kopete::Account* account = 0;
@@ -79,31 +79,31 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 		return 0;
 	}
 
-	return new TestbedContact(account, contactId, tbcType, displayName, metaContact);
+	return new QQContact(account, contactId, tbcType, displayName, metaContact);
 }
 
-AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
+AddContactPage * QQProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
 {
 	kDebug( 14210 ) << "Creating Add Contact Page" << endl;
-	return new TestbedAddContactPage( parent );
+	return new QQAddContactPage( parent );
 }
 
-KopeteEditAccountWidget * TestbedProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
+KopeteEditAccountWidget * QQProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
 	kDebug(14210) << "Creating Edit Account Page" << endl;
-	return new TestbedEditAccountWidget( parent, account );
+	return new QQEditAccountWidget( parent, account );
 }
 
-Kopete::Account *TestbedProtocol::createNewAccount( const QString &accountId )
+Kopete::Account *QQProtocol::createNewAccount( const QString &accountId )
 {
-	return new TestbedAccount( this, accountId );
+	return new QQAccount( this, accountId );
 }
 
-TestbedProtocol *TestbedProtocol::protocol()
+QQProtocol *QQProtocol::protocol()
 {
 	return s_protocol;
 }
 
 
 
-#include "testbedprotocol.moc"
+#include "qqprotocol.moc"

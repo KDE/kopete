@@ -1,5 +1,5 @@
 /*
-    Kopete Testbed Protocol
+    Kopete QQ Protocol
 
     Copyright (c) 2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
     Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
@@ -28,7 +28,7 @@
 */
 class QPixmap;
 class QWidget;
-class TestbedContact;
+class QQContact;
 
 namespace Kopete { 
 	namespace AV	{
@@ -37,12 +37,12 @@ namespace Kopete {
 	class WebcamWidget;
 }
 
-class TestbedWebcamDialog : public KDialogBase
+class QQWebcamDialog : public KDialogBase
 {
 Q_OBJECT
 public:
-	TestbedWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
-	~TestbedWebcamDialog();
+	QQWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
+	~QQWebcamDialog();
 	
 public slots:
 	void slotUpdateImage();

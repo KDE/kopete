@@ -1,5 +1,5 @@
 /*
-    testbededitaccountwidget.h - Kopete Testbed Protocol
+    qqeditaccountwidget.h - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include "testbededitaccountwidget.h"
+#include "qqeditaccountwidget.h"
 
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -23,29 +23,29 @@
 #include <kdebug.h>
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
-#include "ui_testbedaccountpreferences.h"
-#include "testbedaccount.h"
-#include "testbedprotocol.h"
+#include "ui_qqaccountpreferences.h"
+#include "qqaccount.h"
+#include "qqprotocol.h"
 
-TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, Kopete::Account* account)
+QQEditAccountWidget::QQEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 				kDebug(14210) << k_funcinfo << endl;
-	m_preferencesWidget = new Ui::TestbedAccountPreferences();
+	m_preferencesWidget = new Ui::QQAccountPreferences();
 	m_preferencesWidget->setupUi( this );
 }
 
-TestbedEditAccountWidget::~TestbedEditAccountWidget()
+QQEditAccountWidget::~QQEditAccountWidget()
 {
 	delete m_preferencesWidget;
 }
 
-Kopete::Account* TestbedEditAccountWidget::apply()
+Kopete::Account* QQEditAccountWidget::apply()
 {
 	QString accountName;
 	if ( m_preferencesWidget->m_acctName->text().isEmpty() )
-		accountName = "Testbed Account";
+		accountName = "QQ Account";
 	else
 		accountName = m_preferencesWidget->m_acctName->text();
 	
@@ -53,15 +53,15 @@ Kopete::Account* TestbedEditAccountWidget::apply()
 		// FIXME: ? account()->setAccountLabel(accountName);
 		account()->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), accountName );
 	else
-		setAccount( new TestbedAccount( TestbedProtocol::protocol(), accountName ) );
+		setAccount( new QQAccount( QQProtocol::protocol(), accountName ) );
 
 	return account();
 }
 
-bool TestbedEditAccountWidget::validateData()
+bool QQEditAccountWidget::validateData()
 {
     //return !( m_preferencesWidget->m_acctName->text().isEmpty() );
 	return true;
 }
 
-#include "testbededitaccountwidget.moc"
+#include "qqeditaccountwidget.moc"

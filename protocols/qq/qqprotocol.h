@@ -1,5 +1,5 @@
 /*
-    testbedprotocol.h - Kopete Testbed Protocol
+    qqprotocol.h - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -24,14 +24,14 @@
  * Encapsulates the generic actions associated with this protocol
  * @author Will Stephenson
  */
-class TestbedProtocol : public Kopete::Protocol
+class QQProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	TestbedProtocol(QObject *parent, const QStringList &args);
-    ~TestbedProtocol();
+	QQProtocol(QObject *parent, const QStringList &args);
+    ~QQProtocol();
 	/**
-	 * Convert the serialised data back into a TestbedContact and add this
+	 * Convert the serialised data back into a QQContact and add this
 	 * to its Kopete::MetaContact
 	 */
 	virtual Kopete::Contact *deserializeContact(
@@ -40,7 +40,7 @@ public:
 			const QMap< QString, QString > & addressBookData
 		);
 	/**
-	 * Generate the widget needed to add TestbedContacts
+	 * Generate the widget needed to add QQContacts
 	 */
 	virtual AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account );
 	/**
@@ -48,27 +48,27 @@ public:
 	 */
 	virtual KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent );
 	/**
-	 * Generate a TestbedAccount
+	 * Generate a QQAccount
 	 */
 	virtual Kopete::Account * createNewAccount( const QString &accountId );
 	/**
 	 * Access the instance of this protocol
 	 */
-	static TestbedProtocol *protocol();
+	static QQProtocol *protocol();
 	/**
 	 * Represents contacts that are Online
 	 */
-	const Kopete::OnlineStatus testbedOnline;
+	const Kopete::OnlineStatus qqOnline;
 	/**
 	 * Represents contacts that are Away
 	 */
-	const Kopete::OnlineStatus testbedAway;
+	const Kopete::OnlineStatus qqAway;
 	/**
 	 * Represents contacts that are Offline
 	 */
-	const Kopete::OnlineStatus testbedOffline;
+	const Kopete::OnlineStatus qqOffline;
 protected:
-	static TestbedProtocol *s_protocol;
+	static QQProtocol *s_protocol;
 };
 
 #endif

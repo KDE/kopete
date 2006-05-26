@@ -1,5 +1,5 @@
 /*
-    Kopete Testbed Protocol
+    Kopete QQ Protocol
 
     Copyright (c) 2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
     Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include "testbedwebcamdialog.h"
+#include "qqwebcamdialog.h"
 #include <webcamwidget.h>
 #include "avdevice/videodevicepool.h"
 
@@ -30,7 +30,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
+QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
 : KDialogBase( KDialogBase::Plain, Qt::WDestructiveClose, parent, name, false, i18n( "Webcam for %1" ).arg( contactId ),
                    KDialogBase::Close, KDialogBase::Close, true /*seperator*/ )
 {
@@ -66,13 +66,13 @@ kdDebug() << "Just captured 1st frame" << endl;
 	qtimer.start(0,FALSE);
 }
 
-TestbedWebcamDialog::~ TestbedWebcamDialog( )
+QQWebcamDialog::~ QQWebcamDialog( )
 {
 	mVideoDevicePool->stopCapturing();
 	mVideoDevicePool->close();
 }
 
-void TestbedWebcamDialog::slotUpdateImage()
+void QQWebcamDialog::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
 kdDebug() << "Getting image" << endl;
@@ -82,4 +82,4 @@ kdDebug() << "BitBlitting image" << endl;
 }
 
 
-#include "testbedwebcamdialog.moc"
+#include "qqwebcamdialog.moc"

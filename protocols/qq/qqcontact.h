@@ -1,5 +1,5 @@
 /*
-    testbedcontact.h - Kopete Testbed Protocol
+    qqcontact.h - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -32,20 +32,20 @@ namespace Kopete { class MetaContact; }
 /**
 @author Will Stephenson
 */
-class TestbedContact : public Kopete::Contact
+class QQContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
 	/**
 	 * The range of possible contact types
 	 */
-	enum TestbedContactType { Null, Echo };
+	enum QQContactType { Null, Echo };
 
-	TestbedContact( Kopete::Account* _account, const QString &uniqueName, 
-			const TestbedContact::TestbedContactType type, const QString &displayName, 
+	QQContact( Kopete::Account* _account, const QString &uniqueName, 
+			const QQContact::QQContactType type, const QString &displayName, 
 			Kopete::MetaContact *parent );
 
-    ~TestbedContact();
+    ~QQContact();
 
     virtual bool isReachable();
 	/**
@@ -90,7 +90,7 @@ protected slots:
 protected:
 	Kopete::ChatSession* m_msgManager;
 	KActionCollection* m_actionCollection;
-	TestbedContactType m_type;
+	QQContactType m_type;
 	KAction* m_actionPrefs;
 };
 

@@ -1,5 +1,5 @@
 /*
-    testbedcontact.cpp - Kopete Testbed Protocol
+    qqcontact.cpp - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include "testbedcontact.h"
+#include "qqcontact.h"
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -24,14 +24,14 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 
-#include "testbedaccount.h"
-#include "testbedfakeserver.h"
-#include "testbedprotocol.h"
+#include "qqaccount.h"
+#include "qqfakeserver.h"
+#include "qqprotocol.h"
 //Added by qt3to4:
 #include <QList>
 
-TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
-		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )
+QQContact::QQContact( Kopete::Account* _account, const QString &uniqueName,
+		const QQContactType type, const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, uniqueName, parent )
 {
 	kDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
@@ -39,19 +39,19 @@ TestbedContact::TestbedContact( Kopete::Account* _account, const QString &unique
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
 
-	setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
+	setOnlineStatus( QQProtocol::protocol()->qqOffline );
 }
 
-TestbedContact::~TestbedContact()
+QQContact::~QQContact()
 {
 }
 
-bool TestbedContact::isReachable()
+bool QQContact::isReachable()
 {
     return true;
 }
 
-void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
+void QQContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
     QString value;
 	switch ( m_type )
@@ -64,7 +64,7 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 	serializedData[ "contactType" ] = value;
 }
 
-Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
+Kopete::ChatSession* QQContact::manager( CanCreateFlags )
 {
 	kDebug( 14210 ) << k_funcinfo << endl;
 	if ( m_msgManager )
@@ -84,7 +84,7 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 }
 
 
-QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
+QList<KAction *> *QQContact::customContextMenuActions() //OBSOLETE
 {
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );
@@ -95,19 +95,19 @@ QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
 	return 0L;
 }
 
-void TestbedContact::showContactSettings()
+void QQContact::showContactSettings()
 {
-	//TestbedContactSettings* p = new TestbedContactSettings( this );
+	//QQContactSettings* p = new QQContactSettings( this );
 	//p->show();
 }
 
-void TestbedContact::sendMessage( Kopete::Message &message )
+void QQContact::sendMessage( Kopete::Message &message )
 {
 	kDebug( 14210 ) << k_funcinfo << endl;
 	// convert to the what the server wants
 	// For this 'protocol', there's nothing to do
 	// send it
-	static_cast<TestbedAccount *>( account() )->server()->sendMessage(
+	static_cast<QQAccount *>( account() )->server()->sendMessage(
 			message.to().first()->contactId(),
 			message.plainBody() );
 	// give it back to the manager to display
@@ -116,7 +116,7 @@ void TestbedContact::sendMessage( Kopete::Message &message )
 	manager()->messageSucceeded();
 }
 
-void TestbedContact::receivedMessage( const QString &message )
+void QQContact::receivedMessage( const QString &message )
 {
 	// Create a Kopete::Message
 	Kopete::Message *newMessage;
@@ -131,13 +131,13 @@ void TestbedContact::receivedMessage( const QString &message )
 	delete newMessage;
 }
 
-void TestbedContact::slotChatSessionDestroyed()
+void QQContact::slotChatSessionDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
 	m_msgManager = 0L;
 }
 
-#include "testbedcontact.moc"
+#include "qqcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -1,5 +1,5 @@
 /*
-    testbedfakeserver.h - Kopete Testbed Protocol
+    qqfakeserver.h - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -20,18 +20,18 @@
 #include "qobject.h"
 #include <q3ptrlist.h>
 
-class TestbedIncomingMessage;
+class QQIncomingMessage;
 
 /**
  * This is a interface to a dummy IM server
  * @author Will Stephenson
  */
-class TestbedFakeServer : public QObject
+class QQFakeServer : public QObject
 {
 	Q_OBJECT
 public:
-	TestbedFakeServer();
-    ~TestbedFakeServer();
+	QQFakeServer();
+    ~QQFakeServer();
 	/**
 	 * Called to simulate sending a message to a remote contact
 	 */
@@ -60,7 +60,7 @@ protected:
 	/**
 	 * List of incoming messages
 	 */
-	Q3PtrList<TestbedIncomingMessage> m_incomingMessages;
+	Q3PtrList<QQIncomingMessage> m_incomingMessages;
 };
 
 #endif

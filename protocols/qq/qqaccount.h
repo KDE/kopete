@@ -1,5 +1,5 @@
 /*
-    testbedaccount.h - Kopete Testbed Protocol
+    qqaccount.h - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -18,7 +18,7 @@
 #define TESTBEDACCOUNT_H
 
 #include <kopeteaccount.h>
-#include "testbedwebcamdialog.h"
+#include "qqwebcamdialog.h"
 
 class KActionMenu;
 namespace Kopete 
@@ -28,20 +28,20 @@ namespace Kopete
 	class StatusMessage;
 }
 
-class TestbedContact;
-class TestbedProtocol;
-class TestbedFakeServer;
+class QQContact;
+class QQProtocol;
+class QQFakeServer;
 
 /**
- * This represents an account connected to the testbed
+ * This represents an account connected to the qq
  * @author Will Stephenson
 */
-class TestbedAccount : public Kopete::Account
+class QQAccount : public Kopete::Account
 {
 	Q_OBJECT
 public:
-	TestbedAccount( TestbedProtocol *parent, const QString& accountID );
-	~TestbedAccount();
+	QQAccount( QQProtocol *parent, const QString& accountID );
+	~QQAccount();
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
@@ -62,7 +62,7 @@ public:
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 	/**
-	 * 'Connect' to the testbed server.  Only sets myself() online.
+	 * 'Connect' to the qq server.  Only sets myself() online.
 	 */
 	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
 	/**
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Return a reference to the server stub
 	 */
-	TestbedFakeServer* server();
+	QQFakeServer* server();
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
@@ -85,7 +85,7 @@ protected:
 	 * This simulates contacts going on and offline in sync with the account's status changes
 	 */
 	void updateContactStatus();
-	TestbedFakeServer* m_server;
+	QQFakeServer* m_server;
 
 protected slots:
 	/**

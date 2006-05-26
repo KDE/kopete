@@ -1,5 +1,5 @@
 /*
-    testbedfakeserver.cpp - Kopete Testbed Protocol
+    qqfakeserver.cpp - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -14,22 +14,22 @@
     *************************************************************************
 */
 
-#include "testbedfakeserver.h"
+#include "qqfakeserver.h"
 #include <qtimer.h>
 #include <kdebug.h>
-#include "testbedincomingmessage.h"
+#include "qqincomingmessage.h"
 
 
-TestbedFakeServer::TestbedFakeServer()
+QQFakeServer::QQFakeServer()
 {
 	m_incomingMessages.setAutoDelete( true );
 }
 
-TestbedFakeServer::~TestbedFakeServer()
+QQFakeServer::~QQFakeServer()
 {
 }
 
-void TestbedFakeServer::sendMessage( QString contactId, QString message )
+void QQFakeServer::sendMessage( QString contactId, QString message )
 {
 	// see what contact the message is for
 	// if it's for Echo, respond immediately
@@ -38,7 +38,7 @@ void TestbedFakeServer::sendMessage( QString contactId, QString message )
 	// put the message in a map and start a timer to tell it to deliver itself.
 	//emit messageReceived( QString::fromLatin1( "echo: " ) + message );
 	QString messageId = contactId + QString::fromLatin1(": ");
-	TestbedIncomingMessage* msg = new TestbedIncomingMessage( this, messageId + message );
+	QQIncomingMessage* msg = new QQIncomingMessage( this, messageId + message );
 	m_incomingMessages.append( msg );
 	QTimer::singleShot( 1000, msg, SLOT( deliver() ) );
 	
@@ -46,14 +46,14 @@ void TestbedFakeServer::sendMessage( QString contactId, QString message )
 	purgeMessages();
 }
 
-void TestbedFakeServer::incomingMessage( QString message )
+void QQFakeServer::incomingMessage( QString message )
 {
 	emit messageReceived( message );
 }
 
-void TestbedFakeServer::purgeMessages()
+void QQFakeServer::purgeMessages()
 {
-	TestbedIncomingMessage* msg;
+	QQIncomingMessage* msg;
 	for ( msg = m_incomingMessages.first(); msg; msg = m_incomingMessages.next() )
 	{
 		if ( msg->delivered() )
@@ -61,4 +61,4 @@ void TestbedFakeServer::purgeMessages()
 	}
 }
 
-#include "testbedfakeserver.moc"
+#include "qqfakeserver.moc"

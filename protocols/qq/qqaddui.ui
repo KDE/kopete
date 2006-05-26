@@ -2,8 +2,8 @@
  <author></author>
  <comment></comment>
  <exportmacro></exportmacro>
- <class>TestbedAddUI</class>
- <widget class="QWidget" name="TestbedAddUI" >
+ <class>QQAddUI</class>
+ <widget class="QWidget" name="QQAddUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>

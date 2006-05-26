@@ -1,5 +1,5 @@
 /*
-    testbedaddcontactpage.cpp - Kopete Testbed Protocol
+    qqaddcontactpage.cpp - Kopete QQ Protocol
 
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include "testbedaddcontactpage.h"
+#include "qqaddcontactpage.h"
 
 #include <qlayout.h>
 #include <qradiobutton.h>
@@ -25,34 +25,34 @@
 
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
-#include "ui_testbedaddui.h"
+#include "ui_qqaddui.h"
 
-TestbedAddContactPage::TestbedAddContactPage( QWidget* parent )
+QQAddContactPage::QQAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
 	kDebug(14210) << k_funcinfo << endl;
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
-	m_testbedAddUI = new Ui::TestbedAddUI;
-	m_testbedAddUI->setupUi( w );
+	m_qqAddUI = new Ui::QQAddUI;
+	m_qqAddUI->setupUi( w );
 	l->addWidget( w );
 }
 
-TestbedAddContactPage::~TestbedAddContactPage()
+QQAddContactPage::~QQAddContactPage()
 {
-	delete m_testbedAddUI;
+	delete m_qqAddUI;
 }
 
-bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
+bool QQAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 {
     if ( validateData() )
 	{
 		bool ok = false;
 		QString type;
 		QString name;
-		if ( m_testbedAddUI->m_rbEcho->isChecked() )
+		if ( m_qqAddUI->m_rbEcho->isChecked() )
 		{
-			type = m_testbedAddUI->m_uniqueName->text();
+			type = m_qqAddUI->m_uniqueName->text();
 			name = QString::fromLatin1( "Echo Contact" );
 			ok = true;
 		}
@@ -64,10 +64,10 @@ bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 	return false;
 }
 
-bool TestbedAddContactPage::validateData()
+bool QQAddContactPage::validateData()
 {
     return true;
 }
 
 
-#include "testbedaddcontactpage.moc"
+#include "qqaddcontactpage.moc"

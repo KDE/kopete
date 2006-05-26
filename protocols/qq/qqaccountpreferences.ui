@@ -2,8 +2,8 @@
  <author></author>
  <comment></comment>
  <exportmacro></exportmacro>
- <class>TestbedAccountPreferences</class>
- <widget class="QWidget" name="TestbedAccountPreferences" >
+ <class>QQAccountPreferences</class>
+ <widget class="QWidget" name="QQAccountPreferences" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Account Preferences - Testbed</string>
+   <string>Account Preferences - QQ</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -109,7 +109,7 @@
              </sizepolicy>
             </property>
             <property name="text" >
-             <string>To use the testbed protocol, just make up an account name.  This protocol has no real networking capability.</string>
+             <string>To use the qq protocol, just make up an account name.  This protocol has no real networking capability.</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignTop</set>
