@@ -477,10 +477,10 @@ void JabberCapabilitiesManager::discoRequestFinished()
 			
 			// Notify affected jids.
 			QStringList jids = d->capabilitiesInformationMap[capabilities].jids();
-			QStringList::ConstIterator jidsIt = jids.constBegin(), jidsItEnd = jids.constEnd();
-			for( ; jidsIt != jidsItEnd; ++jidsItEnd ) 
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "notify affected jids" << endl;
+			foreach( QString jid  , jids ) 
 			{
-				emit capabilitiesChanged(*jidsIt);
+				emit capabilitiesChanged(jid);
 			}
 		}
 		else 

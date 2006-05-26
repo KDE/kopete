@@ -126,14 +126,8 @@ void JabberByteStream::slotConnectionClosed ()
 
 void JabberByteStream::slotReadyRead ()
 {
-
-	// stuff all available data into our buffers
-	QByteArray readBuffer;
-	readBuffer.reserve( socket()->bytesAvailable () );
-
-	socket()->read ( readBuffer.data (), readBuffer.size () );
-
-	appendRead ( readBuffer );
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "called:  available: " << socket()->bytesAvailable () << endl;
+	appendRead ( socket()->readAll() );
 
 	emit readyRead ();
 
@@ -148,10 +142,8 @@ void JabberByteStream::slotBytesWritten ( qint64 bytes )
 
 void JabberByteStream::slotError ( int code )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error " << code << endl;
-
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error '" <<  mSocket->errorString() <<  "' - Code : " << code <<  endl;
 	emit error ( code );
-
 }
 
 #include "jabberbytestream.moc"
