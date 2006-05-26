@@ -28,6 +28,7 @@
 #include <kmessagebox.h>
 
 #include <kdeversion.h>
+#include <kfiledialog.h>
 
 #include "kopeteaccount.h"
 #include "kopetechatsessionmanager.h"
@@ -248,11 +249,21 @@ QTextCodec* OscarContact::contactCodec() const
 		return mAccount->defaultCodec();
 }
 
-//TODO
+//here's where a filetransfer usually begins
+//could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
 	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "we're supposed to send a file: '" << sourceURL 
 		<< "' '" << altFileName << "' size " << fileSize << endl;
+	QString filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
+	else
+		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+	kDebug(OSCAR_GEN_DEBUG) << "filePath: '" << filePath << "' being totally ignored :)" << endl;
+	//TODO: hand off to some filetransfer class
 }
 
 #include "oscarcontact.moc"
