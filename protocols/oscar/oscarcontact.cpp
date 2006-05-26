@@ -53,6 +53,7 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	mMsgManager = 0L;
 	m_ssiItem = ssiItem;
 	connect( this, SIGNAL( updatedSSI() ), this, SLOT( updateSSIItem() ) );
+	setFileCapable( true );
 }
 
 OscarContact::~OscarContact()
@@ -245,6 +246,13 @@ QTextCodec* OscarContact::contactCodec() const
 		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
 	else
 		return mAccount->defaultCodec();
+}
+
+//TODO
+void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
+{
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "we're supposed to send a file: '" << sourceURL 
+		<< "' '" << altFileName << "' size " << fileSize << endl;
 }
 
 #include "oscarcontact.moc"
