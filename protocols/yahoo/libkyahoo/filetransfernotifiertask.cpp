@@ -121,6 +121,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	to = t->firstParam( 5 );
 	url = t->firstParam( 265 );
 	msg = t->firstParam( 14 );
+	expires = t->firstParam( 38 ).toLong();
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
 
