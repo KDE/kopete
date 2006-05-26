@@ -236,7 +236,9 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	m_alwaysShowTabs = KGlobal::config()->readEntry( QString::fromLatin1("AlwaysShowTabs"), false );
 //	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
-	KGlobal::ref();
+	
+	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
+
 }
 
 KopeteChatWindow::~KopeteChatWindow()
@@ -284,7 +286,6 @@ KopeteChatWindow::~KopeteChatWindow()
 	}
 
 	delete anim;
-	KGlobal::deref();
 }
 
 void KopeteChatWindow::windowListChanged()
@@ -422,10 +423,6 @@ void KopeteChatWindow::initActions(void)
 	actionContactMenu->setDelayed( false );
 	connect ( actionContactMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
-	// add configure key bindings menu item
-	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
-
-	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 
 	//The Sending movie
@@ -450,10 +447,6 @@ void KopeteChatWindow::initActions(void)
 
 	//toolBar()->insertWidget( 99, anim->width(), anim );
 	//toolBar()->alignItemRight( 99 );
-	setStandardToolBarMenuEnabled( true );
-
-	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
-	createGUI(  );
 }
 
 const QString KopeteChatWindow::fileContents( const QString &path ) const
@@ -1216,44 +1209,6 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		KMainWindow::closeEvent( e );
 }
 
-void KopeteChatWindow::slotConfKeys()
-{
-	KKeyDialog dlg( KKeyChooser::AllActions, KKeyChooser::LetterShortcutsAllowed, this );
-	dlg.insert( actionCollection() );
-	if( m_activeView )
-	{
-		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin Actions") );
-        QList<KXMLGUIClient*> xmlGuis = m_activeView->msgManager()->childClients();
-		QList<KXMLGUIClient*>::iterator it, itEnd = xmlGuis.end();
-		KXMLGUIClient *c = 0;
-		for ( it = xmlGuis.begin(); it != itEnd; ++it )
-		{
-            c = ( *it );
-			dlg.insert( c->actionCollection() /*, i18n("Plugin Actions")*/ );
-			++it;
-		}
-
-		if( m_activeView->editPart() )
-			dlg.insert( m_activeView->editPart()->actionCollection(), m_activeView->editPart()->name() );
-	}
-
-	dlg.configure();
-}
-
-void KopeteChatWindow::slotConfToolbar()
-{
-	saveMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
-	KEditToolbar *dlg = new KEditToolbar(factory(), this );
-	if (dlg->exec())
-	{
-// 		if( m_activeView )
-// 			createGUI( m_activeView->editPart() );
-// 		else
-// 			createGUI( 0L );
-		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
-	}
-	delete dlg;
-}
 
 void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 {

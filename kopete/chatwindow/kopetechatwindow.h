@@ -211,9 +211,6 @@ private slots:
 	void slotViewMenuBar();
 	void slotToggleStatusBar();
 
-	void slotConfKeys();
-	void slotConfToolbar();
-
 	void slotViewMembersLeft();
 	void slotViewMembersRight();
 	void slotToggleViewMembers();
