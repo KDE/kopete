@@ -42,7 +42,6 @@ public:
 	~YABTask();
 	
 	bool take(Transfer *transfer);
-	bool forMe( Transfer* transfer ) const;
 
 	void getAllEntries( long lastMerge, long lastRemoteRevision );
 	void saveEntry( const YABEntry & );
@@ -50,6 +49,7 @@ signals:
 	void gotEntry( YABEntry * );
 	void gotRevision( long rev, bool merged );
 protected:
+	virtual bool forMe( const Transfer* transfer ) const;
 	void parseContactDetails( YMSGTransfer* t );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );

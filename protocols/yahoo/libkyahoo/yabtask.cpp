@@ -50,12 +50,12 @@ bool YABTask::take( Transfer* transfer )
 	return true;
 }
 
-bool YABTask::forMe( Transfer* transfer ) const
+bool YABTask::forMe( const Transfer* transfer ) const
 {
 // 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
