@@ -245,10 +245,27 @@ Display the status icon of the contact associated with the message. It's a file 
 </listitem>
 </varlistentry>
 
-<varlistentry><term><filename>%senderColor%</filename> (&kopete; extension)</term>
+<varlistentry><term><filename>%senderColor%</filename>  <term><filename>%senderColor{N}%</filename></term>  (&kopete; extension)</term> 
 <listitem>
 <para>
 Generate a color from the sender contact id. Can be used to display a different color for contact nickname.
+</para>
+<para>
+<filename>%senderColor{N}%</filename> where N is a positive number. If N is greater than 100, it represent a lighter color than the contact's color.
+If N equal 150 it is a color which is 50% brighter. If N is less than 100 then it is a darker color.  Usefull for having a background coloured differently for each contact.
+</para>
+<para>
+If you want to use theses colors in a variant, but not in the main style, you have to workaround.
+<programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"><p class="message">...</p></div>
+]]>
+</programlisting>
+you can apply color ro the p.message element in your <filename>main.css</filename> file, and in your varient put something like
+<programlisting>
+	p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
 </para>
 </listitem>
 </varlistentry>
