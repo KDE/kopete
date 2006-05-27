@@ -343,6 +343,7 @@ void MSNSocket::slotDataReceived()
 							kDebug(14140) << k_funcinfo << "Session closed." << endl;
 							m_bCanPoll = false;
 							disconnect();
+						    delete [] buffer;
 							return;
 						}
 				}else
