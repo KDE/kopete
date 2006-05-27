@@ -76,9 +76,11 @@ class ProcessMessageTask : public Task
 public:
 	MessageEvent *event();
 	
-private slots:
-	void slotStart();
+public slots:
+	void start();
 	void slotDone();
+	void kill( bool );
+	
 	
 private:
 	ProcessMessageTask(MessageHandlerChain::Ptr, MessageEvent *event);
