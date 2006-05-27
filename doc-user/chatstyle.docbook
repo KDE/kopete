@@ -245,7 +245,7 @@ Display the status icon of the contact associated with the message. It's a file 
 </listitem>
 </varlistentry>
 
-<varlistentry><term><filename>%senderColor%</filename>  <term><filename>%senderColor{N}%</filename></term>  (&kopete; extension)</term> 
+<varlistentry><term><filename>%senderColor%</filename></term>  <term><filename>%senderColor{N}%</filename>  (&kopete; extension)</term>
 <listitem>
 <para>
 Generate a color from the sender contact id. Can be used to display a different color for contact nickname.
