@@ -49,7 +49,7 @@ public:
 	const QString &tCookie();
 	const QString &loginCookie();
 protected:
-	bool forMe( Transfer* transfer ) const;
+	virtual bool forMe( const Transfer* transfer ) const;
 	enum State { InitialState, SentVerify, GotVerifyACK, SentAuth, GotAuthACK, SentAuthResp };
 	void sendVerify();
 	void sendAuth(YMSGTransfer* transfer);
