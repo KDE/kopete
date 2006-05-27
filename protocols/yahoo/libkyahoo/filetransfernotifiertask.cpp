@@ -24,7 +24,7 @@
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 FileTransferNotifierTask::~FileTransferNotifierTask()
@@ -34,7 +34,7 @@ FileTransferNotifierTask::~FileTransferNotifierTask()
 
 bool FileTransferNotifierTask::take( Transfer* transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -54,7 +54,7 @@ bool FileTransferNotifierTask::take( Transfer* transfer )
 
 bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
@@ -73,7 +73,7 @@ bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 
 void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -104,7 +104,7 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 
 void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 { 
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -130,7 +130,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 
 void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePeerToPeer);
 	t->setId( client()->sessionID() );
