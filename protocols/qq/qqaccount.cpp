@@ -148,7 +148,7 @@ void QQAccount::slotGoOffline ()
 
 void QQAccount::slotShowVideo ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
 		QQWebcamDialog *qqWebcamDialog = new QQWebcamDialog(0, 0, "QQ video window");

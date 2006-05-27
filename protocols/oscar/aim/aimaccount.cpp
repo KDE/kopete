@@ -442,12 +442,12 @@ void AIMAccount::slotBuddyIconChanged()
 
 		KMD5 iconHash;
 		iconHash.update( iconFile );
-		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
 
 		//find old item, create updated item
 		if ( !item )
 		{
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
 
 			TLV t;
 			t.type = 0x00D5;
@@ -463,13 +463,13 @@ void AIMAccount::slotBuddyIconChanged()
 			Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
 
 			//item is a non-valid ssi item, so the function will add an item
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
 			engine()->modifySSIItem( item, s );
 		}
 		else
 		{ //found an item
 			Oscar::SSI s(item);
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi." << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi." << endl;
 			QList<TLV> tList( item.tlvList() );
 
 			TLV t = Oscar::findTLV( tList, 0x00D5 );

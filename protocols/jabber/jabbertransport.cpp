@@ -108,7 +108,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
 	
 	m_status=Normal;
 }

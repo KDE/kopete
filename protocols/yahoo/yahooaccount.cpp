@@ -1367,7 +1367,7 @@ void YahooAccount::slotFileTransferBytesProcessed( unsigned int transferId, unsi
 
 void YahooAccount::slotFileTransferComplete( unsigned int transferId )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::Transfer *t = m_fileTransfers[transferId];
 	if( !t )
 		return;
@@ -1378,7 +1378,7 @@ void YahooAccount::slotFileTransferComplete( unsigned int transferId )
 
 void YahooAccount::slotFileTransferError( unsigned int transferId, int error, const QString &desc )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::Transfer *t = m_fileTransfers[transferId];
 	if( !t )
 		return;

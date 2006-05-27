@@ -83,7 +83,7 @@ void ConnectionStatusPlugin::slotCheckStatus()
 
 void ConnectionStatusPlugin::slotProcessExited( KProcess *process )
 {
-	kdDebug( 14301 ) << m_buffer << endl;
+	kDebug( 14301 ) << m_buffer << endl;
 
 	if ( process == m_process )
 	{

@@ -481,7 +481,7 @@ void OscarAccount::setBuddyIcon( KUrl url )
 		
 		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
 		
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
 		if ( !image.save( newlocation, "JPEG" ) )
 			return;
 		
@@ -709,7 +709,7 @@ void OscarAccount::slotSendBuddyIcon()
 	if ( photoPath.isEmpty() )
 		return;
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
 	QFile iconFile( photoPath );
 	
 	if ( iconFile.open( IO_ReadOnly ) )
