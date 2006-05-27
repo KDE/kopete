@@ -78,6 +78,8 @@ void ReceiveFileTask::onGo()
 	
 		send( t );
 		break;
+	default:
+		delete t;
 	}
 }
 
