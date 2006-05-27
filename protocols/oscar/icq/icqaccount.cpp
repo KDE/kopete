@@ -195,6 +195,20 @@ void ICQAccount::disconnected( DisconnectReason reason )
 	kdDebug(14153) << k_funcinfo << "Attempting to set status offline" << endl;
 	ICQ::Presence presOffline = ICQ::Presence( ICQ::Presence::Offline, presence().visibility() );
 	myself()->setOnlineStatus( presOffline.toOnlineStatus() );
+
+	QDictIterator<Kopete::Contact> it( contacts() );
+	for( ; it.current(); ++it )
+	{
+		OscarContact* oc = dynamic_cast<OscarContact*>( it.current() );
+		if ( oc )
+		{
+			if ( oc->ssiItem().waitingAuth() )
+				oc->setOnlineStatus( protocol()->statusManager()->waitingForAuth() );
+			else
+				oc->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+		}
+	}
+
 	OscarAccount::disconnected( reason );
 }
 
