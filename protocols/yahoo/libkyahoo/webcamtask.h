@@ -62,7 +62,6 @@ public:
 	~WebcamTask();
 	
 	bool take(Transfer *transfer);
-	bool forMe( Transfer* transfer ) const;
 
 	bool transmitting() { return transmittingData; }
 	
@@ -91,6 +90,8 @@ private slots:
 	void slotRead();
 	void sendEmptyWebcamImage();
 	void transmitWebcamImage();
+protected:
+	virtual bool forMe( const Transfer* transfer ) const;
 private:
 	void parseWebcamInformation( YMSGTransfer *transfer );
 	void parseData( QByteArray &data, KStreamSocket *socket );
