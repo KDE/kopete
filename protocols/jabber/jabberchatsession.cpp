@@ -68,9 +68,13 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	setInstance(protocol->instance());
 	jabber_voicecall->setEnabled(true);
-	setXMLFile("jabberchatui.rc");
+
 
 #endif
+
+ new KAction( i18n( "Send File" ), "attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "jabberSendFile" );
+
+	setXMLFile("jabberchatui.rc");
 
 }
 
@@ -274,7 +278,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				{
 					QString xhtmlBody = message.escapedBody();
 					
-					// According to JEP-0071 §8.9  it is only RECOMMANDED to replace \n with <br/>
+					// According to JEP-0071 8.9  it is only RECOMMANDED to replace \n with <br/>
 					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
 					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
 					//  see Bug 121627
@@ -331,6 +335,11 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 }
 
+ void JabberChatSession::slotSendFile()
+      {
+              QPtrList<Kopete::Contact>contacts = members();
+              static_cast<JabberContact *>(contacts.first())->sendFile();
+      }
 
 #include "jabberchatsession.moc"
 
