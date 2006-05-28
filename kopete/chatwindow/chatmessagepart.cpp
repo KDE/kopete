@@ -1079,8 +1079,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	static const char* const nameColors[] =
 	{
 		"red", "blue" , "gray", "magenta", "violet", /*"olive"*/ "#808000", "yellowgreen",
-		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
-		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "slateblue",
+		"darkred", "darkgreen", "darksalmon", "darkcyan", /*"darkyellow"*/   "#B07D2B",
+		"mediumpurple", "peru", "olivedrab", /*"royalred"*/ "#B01712", "darkorange", "slateblue",
 		"slategray", "goldenrod", "orangered", "tomato", /*"dogderblue"*/ "#1E90FF", "steelblue",
 		"deeppink", "saddlebrown", "coral", "royalblue"
 	};
