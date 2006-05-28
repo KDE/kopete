@@ -31,7 +31,7 @@
 #include <klocale.h>
 
 TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::Plain, Qt::WDestructiveClose, parent, name, false, i18n( "Webcam for %1" ).arg( contactId ),
+: KDialogBase( KDialogBase::Plain, Qt::WDestructiveClose, parent, name, false, i18n( "Webcam for %1", contactId ),
                    KDialogBase::Close, KDialogBase::Close, true /*seperator*/ )
 {
 	setInitialSize( QSize(320,290) );
