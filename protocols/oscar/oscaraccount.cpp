@@ -75,6 +75,7 @@ public:
 
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
+	QMap<QString, QString> contactChangeQueue;
 
     OscarListNonServerContacts* olnscDialog;
 
@@ -139,9 +140,16 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const Oscar::SSI& ) ),
+	                     this, SLOT( ssiGroupUpdated( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const Oscar::SSI& ) ),
+	                     this, SLOT( ssiContactUpdated( const Oscar::SSI& ) ) );
 
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
+
+	d->contactAddQueue.clear();
+	d->contactChangeQueue.clear();
 
 	disconnected( reason );
 }
@@ -154,19 +162,6 @@ void OscarAccount::disconnect()
 bool OscarAccount::passwordWasWrong()
 {
 	return password().isWrong();
-}
-
-void OscarAccount::updateContact( Oscar::SSI item )
-{
-	Kopete::Contact* contact = contacts()[item.name()];
-	if ( !contact )
-		return;
-	else
-	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
-		OscarContact* oc = static_cast<OscarContact*>( contact );
-		oc->setSSIItem( item );
-	}
 }
 
 void OscarAccount::loginActions()
@@ -249,6 +244,10 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( groupUpdated( const Oscar::SSI& ) ),
+	                  this, SLOT( ssiGroupUpdated( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( contactUpdated( const Oscar::SSI& ) ),
+	                  this, SLOT( ssiContactUpdated( const Oscar::SSI& ) ) );
 
     //TODO: check the kopete contact list and handle non server side contacts appropriately.
     QDict<Kopete::Contact> nonServerContacts = contacts();
@@ -316,18 +315,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
                 continue;
             }
 
-            SSIManager* listManager = d->engine->ssiManager();
-            if ( !listManager->findGroup( group->displayName() ) )
-            {
-                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
-                                         << group->displayName() << endl;
-                d->contactAddQueue[Oscar::normalize( ( *it ) )] = group->displayName();
-                d->engine->addGroup( group->displayName() );
-            }
-            else
-            {
-                d->engine->addContact( ( *it ), group->displayName() );
-            }
+	        addContactToSSI( ( *it ), group->displayName(), true );
         }
 
 
@@ -494,6 +482,50 @@ void OscarAccount::setBuddyIcon( KURL url )
 	emit buddyIconChanged();
 }
 
+bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
+{
+	SSIManager* listManager = d->engine->ssiManager();
+	if ( !listManager->findGroup( groupName ) )
+	{
+		if ( !autoAddGroup )
+			return false;
+
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
+			<< groupName << endl;
+
+		d->contactAddQueue[Oscar::normalize( contactName )] = groupName;
+		d->engine->addGroup( groupName );
+	}
+	else
+	{
+		d->engine->addContact( contactName, groupName );
+	}
+
+	return true;
+}
+
+bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup )
+{
+	SSIManager* listManager = d->engine->ssiManager();
+	if ( !listManager->findGroup( newGroupName ) )
+	{
+		if ( !autoAddGroup )
+			return false;
+		
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group " 
+				<< newGroupName << endl;
+			
+		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
+		d->engine->addGroup( newGroupName );
+	}
+	else
+	{
+		d->engine->changeContactGroup( contact, newGroupName );
+	}
+	
+	return true;
+}
+
 Connection* OscarAccount::setupConnection( const QString& server, uint port )
 {
 	//set up the connector
@@ -587,16 +619,8 @@ bool OscarAccount::createContact(const QString &contactId,
 			return false;
 		}
 
-		if ( !d->engine->ssiManager()->findGroup( groupName ) )
-		{ //group isn't on SSI
-			d->contactAddQueue[Oscar::normalize( contactId )] = groupName;
-			d->addContactMap[Oscar::normalize( contactId )] = parentContact;
-			d->engine->addGroup( groupName );
-			return true;
-		}
-
 		d->addContactMap[Oscar::normalize( contactId )] = parentContact;
-		d->engine->addContact( Oscar::normalize( contactId ), groupName );
+		addContactToSSI( Oscar::normalize( contactId ), groupName, true );
 		return true;
 	}
 }
@@ -608,6 +632,12 @@ void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
 		createNewContact( item.name(), d->addContactMap[Oscar::normalize( item.name() )], item );
+	}
+	else if ( contacts()[item.name()] )
+	{
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. modifying " << item.name() << endl;
+		OscarContact* oc = static_cast<OscarContact*>( contacts()[item.name()] );
+		oc->setSSIItem( item );
 	}
 	else
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Got addition for contact we weren't waiting on" << endl;
@@ -623,10 +653,37 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 	{
 		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
 		{
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key() << "' to group "
-				<< item.name() << endl;
-			d->engine->addContact( Oscar::normalize( it.key() ), item.name() ); //already in the map
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key()
+				<< "' to group " << item.name() << endl;
+			
+			d->engine->addContact( Oscar::normalize( it.key() ), item.name() );
+			d->contactAddQueue.remove( it );
 		}
+	}
+	
+	for ( it = d->contactChangeQueue.begin(); it != d->contactChangeQueue.end(); ++it )
+	{
+		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
+		{
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed change of contact '" << it.key()
+				<< "' to group " << item.name() << endl;
+			
+			d->engine->changeContactGroup( it.key(),  item.name() );
+			d->contactChangeQueue.remove( it );
+		}
+	}
+}
+
+void OscarAccount::ssiContactUpdated( const Oscar::SSI& item )
+{
+	Kopete::Contact* contact = contacts()[item.name()];
+	if ( !contact )
+		return;
+	else
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
+		OscarContact* oc = static_cast<OscarContact*>( contact );
+		oc->setSSIItem( item );
 	}
 }
 

@@ -100,6 +100,24 @@ public:
 	 */
 	void setBuddyIcon( KURL url );
 
+	/**
+	 * Add a contact to the server site list
+	 * \param contactName the screen name of the new contact to add
+	 * \param groupName the group of the new contact
+	 * \param autoAddGroup if the group doesn't exist add that group
+	 * \return true if the contact will be added
+	 */
+	bool addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup );
+
+	/**
+	 * Change a contact's group on the server
+	 * \param contact the contact to change
+	 * \param newGroup the new group to move the contact to
+	 * \param autoAddGroup if the new group doesn't exist add that group
+	 * \return true if the contact will be added
+	 */
+	bool changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup );
+
 public slots:
 	void slotGoOffline();
 
@@ -141,11 +159,11 @@ protected slots:
 
 	virtual void messageReceived( const Oscar::Message& message );
 
-	void updateContact( Oscar::SSI );
-
 	void ssiGroupAdded( const Oscar::SSI& );
+	void ssiGroupUpdated( const Oscar::SSI& ) {}
 	void ssiGroupRemoved( const Oscar::SSI& ) {}
 	void ssiContactAdded( const Oscar::SSI& );
+	void ssiContactUpdated( const Oscar::SSI& );
 	void ssiContactRemoved( const Oscar::SSI& ) {}
 
 	/* slots for receiving typing notifications, and notify the appropriate OscarContact */

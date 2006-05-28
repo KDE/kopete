@@ -414,13 +414,20 @@ void SSIModifyTask::changeGroupOnServer()
 void SSIModifyTask::updateSSIManager()
 {
 	if ( m_oldItem.isValid() && m_newItem.isValid() )
-	{ //changing groups on the server, or renaming. the group item will have already been updated
+	{
 		if ( m_opSubject == Contact )
 		{
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << endl;
 			m_ssiManager->removeContact( m_oldItem.name() );
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to SSI manager" << endl;
 			m_ssiManager->newContact( m_newItem );
+		}
+		else if ( m_opSubject == Group )
+		{
+			if ( m_opType == Rename )
+				m_ssiManager->updateGroup( m_oldItem, m_newItem );
+			else if ( m_opType == Change )
+				m_ssiManager->updateContact( m_oldItem, m_newItem );
 		}
 		else if ( m_opSubject == NoSubject )
 		{
