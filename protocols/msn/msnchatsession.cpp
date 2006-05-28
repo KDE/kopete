@@ -92,7 +92,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend()), actionCollection(), "msnWebcamSend" ) ;
 #endif
 	
-	
+	new KAction( i18n( "Send File" ),"attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "msnSendFile" );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
@@ -678,6 +678,12 @@ void MSNChatSession::slotWebcamSend()
 #endif
 }
 
+
+void MSNChatSession::slotSendFile()
+      {
+              QPtrList<Kopete::Contact>contacts = members();
+              static_cast<MSNContact *>(contacts.first())->sendFile();
+      }
 
 void MSNChatSession::startChatSession()
 {
