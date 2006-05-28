@@ -262,8 +262,9 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
-	kDebug(OSCAR_GEN_DEBUG) << "filePath: '" << filePath << "' being totally ignored :)" << endl;
-	//TODO: hand off to some filetransfer class
+	kDebug(OSCAR_GEN_DEBUG) << "filePath: '" << filePath << "' " << endl;
+
+	mAccount->engine()->sendFile( mName, filePath );
 }
 
 #include "oscarcontact.moc"

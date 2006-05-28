@@ -313,6 +313,9 @@ public:
 	/** Set codec provider */
 	void setCodecProvider( CodecProvider* codecProvider );
 
+	/** start a filetransfer task */
+	void sendFile( const QString& contact, const QString& filePath );
+
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
 	 *************/

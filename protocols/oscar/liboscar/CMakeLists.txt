@@ -22,7 +22,7 @@ connection.cpp onlinenotifiertask.cpp userdetails.cpp ssimodifytask.cpp
 oscartypeclasses.cpp oscarmessage.cpp messagereceivertask.cpp sendmessagetask.cpp icqtask.cpp 
 offlinemessagestask.cpp ssiauthtask.cpp userinfotask.cpp icquserinfo.cpp icquserinfotask.cpp 
 usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp 
-buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp 
+buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp filetransfertask.cpp
 localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservicetask.cpp oscarguid.cpp 
 )
 

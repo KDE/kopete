@@ -28,6 +28,7 @@
 #include <kdebug.h> //for kDebug()
 #include <klocale.h>
 
+#include "filetransfertask.h"
 #include "buddyicontask.h"
 #include "clientreadytask.h"
 #include "connectionhandler.h"
@@ -1307,6 +1308,15 @@ bool Client::hasIconConnection( ) const
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	return c;
+}
+
+void Client::sendFile( const QString& contact, const QString& filePath )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( !c )
+		return;
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, filePath );
+	ft->go( true );
 }
 
 #include "client.moc"
