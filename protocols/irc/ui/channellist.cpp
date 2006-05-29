@@ -197,7 +197,7 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	mChannelList->setObjectName( "mChannelList" );
 	mChannelList->addColumn( i18n( "Channel" ) );
 	mChannelList->addColumn( i18n( "Users" ) );
-	mChannelList->header()->setResizeEnabled( FALSE, mChannelList->header()->count() - 1 );
+	mChannelList->header()->setResizeEnabled( false, mChannelList->header()->count() - 1 );
 	mChannelList->addColumn( i18n( "Topic" ) );
 	mChannelList->setAllColumnsShowFocus( TRUE );
 	mChannelList->setShowSortIndicator( TRUE );

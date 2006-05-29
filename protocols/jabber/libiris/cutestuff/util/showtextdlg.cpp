@@ -31,7 +31,7 @@
 
 
 ShowTextDlg::ShowTextDlg(const QString &fname, bool rich, QWidget *parent, const char *name)
-:QDialog(parent, name, FALSE, Qt::WDestructiveClose)
+:QDialog(parent, name, false, Qt::WDestructiveClose)
 {
 	QString text;
 
@@ -46,7 +46,7 @@ ShowTextDlg::ShowTextDlg(const QString &fname, bool rich, QWidget *parent, const
 	QVBoxLayout *vb1 = new QVBoxLayout(this);
 	vb1->setSpacing(8);
 	Q3TextEdit *te = new Q3TextEdit(this);
-	te->setReadOnly(TRUE);
+	te->setReadOnly(true);
 	te->setTextFormat(rich ? Q3TextEdit::RichText : Q3TextEdit::PlainText);
 	te->setText(text);
 

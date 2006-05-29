@@ -144,7 +144,7 @@ protected:
 	
 	/**
 	 * To make smooth scrolling work well, we need extensive event intercepting.
-	 * This event filter is suppposed to achive that.
+	 * This event filter is suppposed to achieve that.
 	 */
 	virtual bool eventFilter( QObject *o, QEvent *e );
 

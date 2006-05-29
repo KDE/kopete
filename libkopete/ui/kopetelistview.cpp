@@ -81,16 +81,16 @@ public:
 	//! The last pressed control of one of the scrollbars 
 	//! (next page, previous line)
 	QStyle::SubControl pressedControl;
-	//! Counter we'll use when waiting.This amount of timeouts is required before beginning to emulate continous
+	//! Counter we'll use when waiting.This amount of timeouts is required before beginning to emulate continuous
 	//! scrollbar button presses
 	int smoothScrollContinuousCounter;
-	//! The timer which will simulate continous button press for line step buttons in scrollview
+	//! The timer which will simulate continuous button press for line step buttons in scrollview
 	int continuousLinePressTimer;
 	//! How many timeouts should we wait before beginning continuous line step simulates
 	int continuousLinePressTimerWait;
 	//! Continuous press timer interval for next line buttton
 	int continuousLinePressTimerInterval;
-	//! The timer which will simulate continous page step in scrollview
+	//! The timer which will simulate continuous page step in scrollview
 	int continuousPagePressTimer;
 	//! How many timeouts should we wait before beginning continuous page step simulates
 	int continuousPagePressTimerWait;
@@ -486,7 +486,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 		{
 			QMouseEvent* event = static_cast<QMouseEvent*>(e);
 			// We are intercepting all clicks and double clicks on the scrollbar. Unless we do so
-			// scroll bar immediatly goes to the point wherever user's click requests it to.
+			// scroll bar immediately goes to the point wherever user's click requests it to.
 			// Then smooth scroll begins, and animates the scrolling, but since the scrollbar
 			// goes to the destionation point for a very small amount of time at the very beginning of
 			// the click, this causes flickering. So we intercept each click, and make the scroll bar

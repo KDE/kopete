@@ -150,7 +150,7 @@ public:
 		{
 			case ChatWindowStyleManager::StyleInstallOk:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was succesfully installed."), i18n("Install succesful") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was successfully installed."), i18n("Install successful") );
 				return true;
 			}
 			case ChatWindowStyleManager::StyleCannotOpen:
@@ -354,7 +354,7 @@ void AppearanceConfig::slotLoadChatStyles()
 	{
 		// Insert style name into the listbox
 		d->mPrfsChatWindow->styleList->insertItem( it.key(), 0 );
-		// Insert the style class into the internal map for futher acces.
+		// Insert the style class into the internal map for futher access.
 		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.value() );
 
 		if( it.value() == Kopete::AppearanceSettings::self()->stylePath() )
@@ -517,7 +517,7 @@ void AppearanceConfig::slotInstallChatStyle()
 					break;
 				case ChatWindowStyleManager::StyleInstallOk:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was succesfully installed !"), i18n("Install succesful") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed !"), i18n("Install successful") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleUnknow:
@@ -540,7 +540,7 @@ void AppearanceConfig::slotDeleteChatStyle()
 //	QString stylePathToDelete = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
 //	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
 //	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleName));
+//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was successfully deleted.").arg(styleName));
 //		
 		// Get the first item in the stye List.
 //		QString stylePath = (*d->styleItemMap.begin());
@@ -549,7 +549,7 @@ void AppearanceConfig::slotDeleteChatStyle()
 //	}
 //	else
 //	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occured while trying to delete %1 style.").arg(styleName));
+//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occurred while trying to delete %1 style.").arg(styleName));
 //	}
 	emitChanged();
 }

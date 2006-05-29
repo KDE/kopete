@@ -71,7 +71,7 @@ const char MC_UNK[] = "metacontact_unknown";
 
 // KDE4 port notes:
 // setIcon has changed, so it has been commented out. 
-// also cmbPhotoUrl  is gone completly. Let's pray for it
+// also cmbPhotoUrl  is gone completely. Let's pray for it
 
 KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
 : KDialog(parent, i18n("Properties of Group %1", gvi->group()->displayName()), Ok|Cancel)

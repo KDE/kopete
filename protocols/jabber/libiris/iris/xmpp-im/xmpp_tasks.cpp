@@ -1276,7 +1276,7 @@ void JT_ClientTime::go()
 bool JT_ClientTime::take(const QDomElement &x)
 {
 	if(x.attribute("id") != id())
-		return FALSE;
+		return false;
 
 	if(x.attribute("type") == "result") {
 		bool found;
@@ -1292,14 +1292,14 @@ bool JT_ClientTime::take(const QDomElement &x)
 		if(found)
 			display = tagContent(tag);
 
-		setSuccess(TRUE);
+		setSuccess(true);
 	}
 	else {
 		setError(getErrorString(x));
-		setSuccess(FALSE);
+		setSuccess(false);
 	}
 
-	return TRUE;
+	return true;
 }
 */
 

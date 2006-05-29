@@ -43,7 +43,7 @@ static QDomElement textTag(QDomDocument *doc, const QString &name, const QString
 static QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 {
 	if(found)
-		*found = FALSE;
+		*found = false;
 
 	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
 		QDomElement i = n.toElement();
@@ -51,7 +51,7 @@ static QDomElement findSubTag(const QDomElement &e, const QString &name, bool *f
 			continue;
 		if(i.tagName().upper() == name.upper()) { // mblsha: ignore case when searching
 			if(found)
-				*found = TRUE;
+				*found = true;
 			return i;
 		}
 	}

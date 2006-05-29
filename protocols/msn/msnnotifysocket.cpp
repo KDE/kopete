@@ -230,7 +230,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		QString msg = i18n( "Your email address has not been verified with the MSN server.\n"
 			"You should have received a mail with a link to confirm your email address.\n"
 			"Some functions will be restricted if you do not confirm your email address." );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );//TODO don't show again
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) ); //TODO do not show again
 		*/
 		break;
 	}

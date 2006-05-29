@@ -30,7 +30,7 @@ k_dcop:
 	 */
 	virtual void relinquish( const QString & host ) = 0;
 	/**
-	 * Indicate that a communication failure has occured for a given host
+	 * Indicate that a communication failure has occurred for a given host
 	 * @param host The hostname for which the failure occurred.
 	 * @return True indicates the caller should try again to lookup the host, as the daemon has another IP address available.
 	 */

@@ -139,7 +139,7 @@ k_dcop:
 	 */
 	void setAvailable();
 	/**
-	 * set all account away using the auto away funciton.
+	 * set all account away using the auto away function.
 	 * accounts will return online if activity is detected again
 	 */
 	void setAutoAway();

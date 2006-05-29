@@ -772,7 +772,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	
         htmltext = selectedTextAsHTML();
         text = selectedText();
-        //selectedText is now sufficent
+        //selectedText is now sufficient
 //      text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
         // Message::unsescape will replace image by his title attribute
         // stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML

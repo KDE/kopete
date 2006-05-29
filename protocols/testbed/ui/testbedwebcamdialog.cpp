@@ -63,7 +63,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	if (mPixmap.convertFromImage(mImage,0) == true)
 		mImageContainer->updatePixmap(mPixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(0,FALSE);
+	qtimer.start(0,false);
 }
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )

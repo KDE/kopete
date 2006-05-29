@@ -267,14 +267,14 @@ GaduAccount::actionMenu()
 		p->friendsModeAction->setEnabled( TRUE );
 	}
 	else {
-		p->searchAction->setEnabled( FALSE );
-		p->listputAction->setEnabled( FALSE );
-		p->friendsModeAction->setEnabled( FALSE );
+		p->searchAction->setEnabled( false );
+		p->listputAction->setEnabled( false );
+		p->friendsModeAction->setEnabled( false );
 	}
 
 	if ( contacts().count() > 1 ) {
 		if ( p->saveListDialog ) {
-			p->listToFileAction->setEnabled( FALSE );
+			p->listToFileAction->setEnabled( false );
 		}
 		else {
 			p->listToFileAction->setEnabled( TRUE );
@@ -283,11 +283,11 @@ GaduAccount::actionMenu()
 		p->listToFileAction->setEnabled( TRUE );
 	}
 	else {
-		p->listToFileAction->setEnabled( FALSE );
+		p->listToFileAction->setEnabled( false );
 	}
 
 	if ( p->loadListDialog ) {
-		p->listFromFileAction->setEnabled( FALSE );
+		p->listFromFileAction->setEnabled( false );
 	}
 	else {
 		p->listFromFileAction->setEnabled( TRUE );

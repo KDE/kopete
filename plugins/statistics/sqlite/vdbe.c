@@ -762,7 +762,7 @@ case OP_Blob: {
 **
 ** Push the value of variable P1 onto the stack.  A variable is
 ** an unknown in the original SQL string as handed to sqlite3_compile().
-** Any occurance of the '?' character in the original SQL is considered
+** Any occurrence of the '?' character in the original SQL is considered
 ** a variable.  Variables in the SQL string are number from left to
 ** right beginning with 1.  The values of variables are set using the
 ** sqlite3_bind() API.
@@ -1153,7 +1153,7 @@ case OP_Function: {
   if( sqlite3_malloc_failed ) goto no_mem;
   popStack(&pTos, n);
 
-  /* If any auxilary data functions have been called by this user function,
+  /* If any auxiliary data functions have been called by this user function,
   ** immediately call the destructor for any non-static values.
   */
   if( ctx.pVdbeFunc ){
@@ -1993,7 +1993,7 @@ case OP_MakeRecord: {
 
   /* If we have to append a varint rowid to this record, set 'rowid'
   ** to the value of the rowid and increase nByte by the amount of space
-  ** required to store it and the 0x00 seperator byte.
+  ** required to store it and the 0x00 separator byte.
   */
   if( addRowid ){
     pRowid = &pTos[0-nField];
@@ -2357,7 +2357,7 @@ case OP_OpenWrite: {
   pCur->nullRow = 1;
   if( pX==0 ) break;
   /* We always provide a key comparison function.  If the table being
-  ** opened is of type INTKEY, the comparision function will be ignored. */
+  ** opened is of type INTKEY, the comparison function will be ignored. */
   rc = sqlite3BtreeCursor(pX, p2, wrFlag,
            sqlite3VdbeRecordCompare, pOp->p3,
            &pCur->pCursor);
@@ -2845,7 +2845,7 @@ case OP_NewRecno: {
     ** random number generator based on the RC4 algorithm.
     **
     ** To promote locality of reference for repetitive inserts, the
-    ** first few attempts at chosing a random rowid pick values just a little
+    ** first few attempts at choosing a random rowid pick values just a little
     ** larger than the previous rowid.  This has been shown experimentally
     ** to double the speed of the COPY operation.
     */

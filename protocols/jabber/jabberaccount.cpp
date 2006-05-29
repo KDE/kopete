@@ -1557,14 +1557,14 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	case JabberClient::BannedFromThisMUC:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can't join the room %1 because you were banned", jid.node()),
+									i18n ("You can not join the room %1 because you were banned", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
 	case JabberClient::MaxUsersReachedForThisMuc:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can't join the room %1 because the maximum users has been reached", jid.node()),
+									i18n ("You can not join the room %1 because the maximum users has been reached", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 

@@ -259,7 +259,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	KUrl translatorURL ( "http://translate.google.com/translate_t");
 
 	QString body = QString(QUrl::toPercentEncoding( msg ));
-	QString lp = from + "|" + to;
+	QString lp = from + '|' + to;
 
 	QByteArray postData = QString( "text=" + body + "&langpair=" + lp ).toUtf8();
 

@@ -98,7 +98,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			);
 			mMagickNotFoundShown = true;
 		}
-		// dont try to parse if convert is not installed
+		// don't try to parse if convert is not installed
 		return;
 	}
 	

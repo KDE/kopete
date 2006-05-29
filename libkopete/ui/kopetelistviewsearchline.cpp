@@ -45,7 +45,7 @@ void SearchLine::updateSearch( const QString &s )
 {
 	// we copy a huge chunk of code here simply in order to override
 	// the way items are shown/hidden. KSearchLine rudely
-	// calls setVisible() on items with no way to customise this behaviour.
+	// calls setVisible() on items with no way to customize this behaviour.
 	
 	//BEGIN code from KSearchLine::updateSearch
 		if( !listView() )

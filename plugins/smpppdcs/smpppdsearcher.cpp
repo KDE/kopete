@@ -174,7 +174,7 @@ bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
 			} 
 #ifndef NDEBUG
 			else {
-				kDebug(14312) << k_funcinfo << "No smpppd found at " << QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)) << endl;
+				kDebug(14312) << k_funcinfo << "No smpppd found at " << QString(ipToks[0] + '.' + ipToks[1] + '.' + ipToks[2] + '.' + QString::number(i)) << endl;
 			}
 #endif
         }
