@@ -65,10 +65,10 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 	setFileCapable( true );
 
-	// When we are not connected, it's because we are loading the contactlist.
+	// When we are not connected, it's because we are loading the contact list.
 	// so we set the initial status to offline.
 	// We set offline directly because modifying the status after is too slow.
-	// (notification, contactlist updating,....)
+	// (notification, contact list updating,....)
 	//
 	// FIXME: Hacks like these shouldn't happen in the protocols, but should be
 	//        covered properly at the libkopete level instead - Martijn
@@ -104,7 +104,7 @@ bool MSNContact::isReachable()
 		return false;
 		
 	//if the contact is offline, it is impossible to send it a message.  but it is impossible
-	//to be sure the contact is realy offline. For example, if the contact is not on the contactlist for
+	//to be sure the contact is really offline. For example, if the contact is not on the contact list for
 	//some reason.
 	if( onlineStatus() == MSNProtocol::protocol()->FLN && ( isAllowed() || isBlocked() ) && !serverGroups().isEmpty() )
 		return false;
@@ -242,7 +242,7 @@ void MSNContact::deleteContact()
 			}
 	
 			// Then trully remove it from server contact list, 
-			// because only removing the contact from his groups isn't sufficent from MSNP11.
+			// because only removing the contact from his groups isn't sufficient from MSNP11.
 			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
 			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
 		}
@@ -430,7 +430,7 @@ void MSNContact::sync( unsigned int changed )
 		// because m_serverGroups will be only updated with the reply of the server
 		// and then, the same command can be sent twice.
 		// FIXME: if this method is called a seconds times, that mean change can be
-		//        done in the contactlist. we should found a way to recall this
+		//        done in the contact list. we should found a way to recall this
 		//        method later. (a QTimer?)
 		kDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
 		return;
@@ -440,7 +440,7 @@ void MSNContact::sync( unsigned int changed )
 	if( !notify )
 	{
 		//We are not connected, we will doing it next connection.
-		//Force to reload the whole contactlist from server to suync groups when connecting
+		//Force to reload the whole contact list from server to suync groups when connecting
 		account()->configGroup()->writeEntry("serial", 0 );
 		return;
 	}
@@ -464,7 +464,7 @@ void MSNContact::sync( unsigned int changed )
 		{
 			QString Gid=group->pluginData( protocol(), account()->accountId() + " id" );
 			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) ) 
-			{ // ohoh!   something is corrupted on the contactlist.xml
+			{ // ohoh!   something is corrupted on the contact list.xml
 			  // anyway, we never should add a contact to an unexisting group on the server.
 			  //     This shouln't be possible anymore  2004-06-10 -Olivier
 
@@ -512,7 +512,7 @@ void MSNContact::sync( unsigned int changed )
 	for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
 		if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(it.key()) )
-		{ // ohoh!   something is corrupted on the contactlist.xml
+		{ // ohoh!   something is corrupted on the contact list.xml
 		  // anyway, we never should add a contact to an unexisting group on the server.
 
 			//repair the problem ...     //contactRemovedFromGroup( it.key() );

@@ -303,7 +303,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			rx.search( dataMessage );
 			QString context=rx.cap(1);
 
-			//Context is a base64 encoded dump of the internal memory of MSN messanger.
+			//Context is a base64 encoded dump of the internal memory of MSN messenger.
 			// the filesize is contained in the bytes 8..11
 			// the filename is from the byte 19
 			// I don't know what other fields are.

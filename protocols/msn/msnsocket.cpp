@@ -387,6 +387,7 @@ void MSNSocket::slotDataReceived()
 				m_bCanPoll = false;
 				// Disconnect from the service.
 				disconnect();
+		        delete [] buffer;
 				return;
 			}
 		}

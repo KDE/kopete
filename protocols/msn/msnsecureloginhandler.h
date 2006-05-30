@@ -67,7 +67,7 @@ private:
 	 */
 	QString m_accountId;
 	/**
-	 * Store the authentification parameters
+	 * Store the authentication parameters
 	 */
 	QString m_authentification;
 

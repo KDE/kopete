@@ -108,7 +108,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	static_cast<MSNContact *>( myself() )->setInfo( "MFN", config->readEntry("MFN") );
 
 	//construct the group list
-	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contactlist, but it's not possible anymore
+	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contact list, but it's not possible anymore
 	QList<Kopete::Group*> groupList = Kopete::ContactList::self()->groups();
 	Kopete::Group *g;
 	foreach(g, groupList)
@@ -178,7 +178,7 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 
 	if ( contacts().count() <= 1 )
 	{
-		// Maybe the contactlist.xml has been removed, and the serial number not updated
+		// Maybe the contact list.xml has been removed, and the serial number not updated
 		// ( the 1 is for the myself contact )
 		configGroup()->writeEntry( "serial", 0 );
 	}
@@ -584,7 +584,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 			else
 			{
 				// If we get to here, we're currently adding a new contact, add the groupGUID to the groupList
-				// to add when contact will be added to contactlist.
+				// to add when contact will be added to contact list.
 				if( tmp_addNewContactToGroup.contains( contactId ) )
 					tmp_addNewContactToGroup[contactId].append(groupGuid);
 				else
@@ -657,8 +657,8 @@ void MSNAccount::slotKopeteGroupRenamed( Kopete::Group *g )
 
 void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 {
-	//The old gorup list is only used whe syncing the contactlist.
-	//We can assume the contactlist is already fully synced at this time.
+	//The old gorup list is only used whe syncing the contact list.
+	//We can assume the contact list is already fully synced at this time.
 	//The group g is maybe in the oldGroupList.  We remove everithing since
 	//we don't need it anymore, no need to search it
 	m_oldGroupList.clear();
@@ -1164,7 +1164,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		manager->createChat( handle, address, auth, ID );
 
 		/**
-		 *  This code should open a chatwindow when a socket is open
+		 *  This code should open a chat window when a socket is open
 		 * It has been disabled because gaim open switchboeard too often
 		 *
 		 * the solution is to open the window only when the contact start typing
@@ -1343,7 +1343,7 @@ void MSNAccount::addContactServerside(const QString &contactId, QList<Kopete::Gr
 		// If the groupId is empty, that's mean the Kopete group is not on the MSN server.
 		if( !groupId.isEmpty() )
 		{
-			// Something got corrupted on contactlist.xml
+			// Something got corrupted on contact list.xml
 			if( !m_groupList.contains(groupId) )
 			{
 				// Clear the group plugin data.

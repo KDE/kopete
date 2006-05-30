@@ -93,7 +93,7 @@ public:
 	 * the footer
 	 * default: 0
 	 * we're transfered a file or a picture : \1
-	 * we're transfering an image: \3
+	 * we're transferring an image: \3
 	 */
 	char m_footer;
 

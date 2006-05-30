@@ -139,7 +139,7 @@ signals:
 	void socketClosed();
 
 	/**
-	 * A error has occured. Handle the display of the message.
+	 * A error has occurred. Handle the display of the message.
 	 */
 	void errorMessage( int type, const QString &msg );
 
@@ -320,7 +320,7 @@ private:
 	bool m_pending; 			// Indicates whether a http response is pending.
 	int m_remaining;			// Indicates how many bytes of content data remain
 						// to be received if the content bytes are sent in
-						// a seperate packet(s).
+						// a separate packet(s).
 
 	/**
 	 * Provides access to information returned from a URI request.

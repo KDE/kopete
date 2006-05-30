@@ -176,7 +176,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 216:
 	{
-		//This might happen is you rename an user if he is not in the contactlist
+		//This might happen is you rename an user if he is not in the contact list
 		//currently, we just iniore;
 		//TODO: try to don't rename user not in the list
 		//actualy, the bug is in MSNChatSession::slotUserJoined()
@@ -564,7 +564,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		{
 			// If the server timestamp and the local timestamp are different,
 			// prepare to receive the contact list.
-			emit newContactList();  // remove all contacts datas, msn sends a new contact list
+			emit newContactList();  // remove all contacts data, msn sends a new contact list
 			m_account->configGroup()->writeEntry( "lastsynctime" , lastSyncTime);
 			m_account->configGroup()->writeEntry( "lastchange", lastChange);
 		}else
@@ -667,7 +667,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if ( cmd == "NOT" )
 	{
-		kDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
+		kDebug( 14140 ) << k_funcinfo << "Received NOT command, issuing read block for '" << id << " more bytes" << endl;
 		read( id );		
 	}	
 	else
@@ -980,7 +980,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 {
 	/*
 		The value of the CurrentMedia tag you can think of like an array
-		seperated by "\0" characters (literal backslash followed by zero, not NULL).
+		separated by "\0" characters (literal backslash followed by zero, not NULL).
 
 		The elements of this "array" are as follows:
 
@@ -1138,7 +1138,7 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	QString tempPublicName = publicName;
 
 	//The maximum length is 387.  but with utf8 or encodage, each character may be triple
-	//  387/3 = 129   so we make sure the lenght is not logner than 129 char,  even if
+	//  387/3 = 129   so we make sure the length is not logner than 129 char,  even if
 	// it's possible to have longer nicks.
 	if( escape(publicName).length() > 129 )
 	{

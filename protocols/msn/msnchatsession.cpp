@@ -148,7 +148,7 @@ MSNChatSession::~MSNChatSession()
 void MSNChatSession::createChat( const QString &handle,
 	const QString &address, const QString &auth, const QString &ID )
 {
-	/* disabled because i don't want to reopen a chatwindow if we just closed it
+	/* disabled because i don't want to reopen a chat window if we just closed it
 	 * and the contact take much time to type his message
 	 m_newSession= !(ID.isEmpty());
 	*/

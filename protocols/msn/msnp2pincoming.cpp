@@ -252,7 +252,7 @@ void MSNP2PIncoming::abortCurrentTransfer()
 		m_offset=0;
 		m_footer='\0';
 
-		//FIXME: i'm not sure it's like that i should abort the transfer.
+		//FIXME: I'm not sure it's like that i should abort the transfer.
 		makeMSNSLPMessage(BYE, "\r\n\r\n" );
 	}
 	m_parent->finished(this);

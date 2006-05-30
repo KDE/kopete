@@ -137,7 +137,7 @@ public slots:
 						   const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
-	 * Every time the kopete's contactlist is modified, we sync the serverlist with it
+	 * Every time the kopete's contact list is modified, we sync the serverlist with it
 	 */
 	virtual void sync( unsigned int cvhanged= 0xff);
 
