@@ -20,7 +20,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
+#include <config-kopete.h>
 #include "ms.h"
 #include "sndcard.h"
 #include "mscodec.h"

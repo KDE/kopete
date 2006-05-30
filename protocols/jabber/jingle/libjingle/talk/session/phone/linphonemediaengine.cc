@@ -18,6 +18,7 @@
  */
 
 // LinphoneMediaEngine is a Linphone implementation of MediaEngine
+#include <config-kopete.h>
 extern "C" {
 #include "talk/third_party/mediastreamer/mediastream.h"
 #ifdef HAVE_ILBC
