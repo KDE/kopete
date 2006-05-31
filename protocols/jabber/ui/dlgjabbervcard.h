@@ -95,7 +95,7 @@ private slots:
 	 */
 	void slotGetVCard();
 	/**
-	 * vCard was succesfully fetched, update contact properties
+	 * vCard was successfully fetched, update contact properties
 	 * and enable display.
 	 */
 	void slotGotVCard();

@@ -311,7 +311,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		
 		
 		if (dateTime1.time().hour() != dateTime2.time().hour())
-		// We dont want to count this if the hour from dateTime2 is the same than the one from dateTime1
+		// We don't want to count this if the hour from dateTime2 is the same than the one from dateTime1
 		// since it as already been taken in account in the (*) instruction
 		{
 			tempHour = dateTime2.time().minute()*60 +dateTime2.time().second();

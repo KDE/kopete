@@ -375,13 +375,13 @@ public:  /* static helpers */
 
 
 	/**
-	 * Helper function to decode a string. Whatever returned here is *nearly guarenteed* to
+	 * Helper function to decode a string. Whatever returned here is *nearly guaranteed* to
 	 * be parseable by the XML engine.
 	 *
 	 * @param message The string you are trying to decode
 	 * @param providedCodec A codec you want to try to decode with
 	 * @param success Optional pointer to a bool you want updated on success. "Success"
-	 *	is defined as a successfull decoding using either UTF8 or the codec you
+	 *	is defined as a successful decoding using either UTF8 or the codec you
 	 *	provided. If a guess has to be taken, success will be false.
 	 */
 	static QString decodeString( const QByteArray &message,

@@ -1645,7 +1645,7 @@ void sqlite3DropTable(Parse *pParse, SrcList *pName, int isView){
     /* Drop all SQLITE_MASTER table and index entries that refer to the
     ** table. The program name loops through the master table and deletes
     ** every row that refers to a table of the same name as the one being
-    ** dropped. Triggers are handled seperately because a trigger can be
+    ** dropped. Triggers are handled separately because a trigger can be
     ** created in the temp database that refers to a table in another
     ** database.
     */

@@ -117,7 +117,7 @@ MetaContact::MetaContact()
 
 	// make sure MetaContact is at least in one group
 	addToGroup( Group::topLevel() );
-			 //i'm not sure this is correct -Olivier
+			 // I'm not sure this is correct -Olivier
 			 // we probably should do the check in groups() instead
 }
 
@@ -380,7 +380,7 @@ Contact *MetaContact::preferredContact()
 	/*
 		This function will determine what contact will be used to reach the contact.
 
-		The prefered contact is choose with the following criterias:  (in that order)
+		The preferred contact is choose with the following criterias:  (in that order)
 		1) If a contact was an open chatwindow already, we will use that one.
 		2) The contact with the better online status is used. But if that
 		    contact is not reachable, we prefer return no contact.

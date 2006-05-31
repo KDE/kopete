@@ -35,7 +35,7 @@ namespace Kopete
  * @author Richard Smith   <richard@metafoo.co.uk>
  *
  * Kopete::MessageEvent is used when a new messages arrives, it is
- * caught by the UI. It contains just informations about
+ * caught by the UI. It contains just information about
  * the message, and a signal when it is terminated (i.e.
  * the message is read
  **/

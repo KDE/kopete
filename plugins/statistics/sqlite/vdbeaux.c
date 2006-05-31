@@ -1071,7 +1071,7 @@ static int vdbeCommit(sqlite3 *db){
     ** then there is a chance that the master journal file will be
     ** orphaned. But we cannot delete it, in case the master journal
     ** file name was written into the journal file before the failure
-    ** occured.
+    ** occurred.
     */
     for(i=0; i<db->nDb; i++){ 
       Btree *pBt = db->aDb[i].pBt;
@@ -1457,7 +1457,7 @@ int sqlite3VdbeCursorMoveto(Cursor *p){
 ** the blob of data that it corresponds to. In a table record, all serial
 ** types are stored at the start of the record, and the blobs of data at
 ** the end. Hence these functions allow the caller to handle the
-** serial-type and data blob seperately.
+** serial-type and data blob separately.
 **
 ** The following table describes the various storage classes for data:
 **

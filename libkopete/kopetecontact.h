@@ -341,7 +341,7 @@ public:
 	QStringList properties() const;
 
 	/**
-	 * Check for existance of a certain property stored
+	 * Check for existence of a certain property stored
 	 * using "key".
 	 * \param key the property to check for
 	 **/
@@ -462,7 +462,7 @@ public slots:
 	 *
 	 * default implementation does nothing
 	 *
-	 * @param changed is a bitmask of the @ref Changed enum which say why the call to this funtion is done.
+	 * @param changed is a bitmask of the @ref Changed enum which say why the call to this function is done.
 	 */
 	virtual void sync(unsigned int changed = 0xFF);
 
