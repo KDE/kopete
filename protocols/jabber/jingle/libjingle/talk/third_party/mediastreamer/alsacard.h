@@ -19,7 +19,7 @@
 */
 
 #include <config.h>
-
+#include <config-kopete.h>
 #ifdef HAVE_ALSA_ASOUNDLIB_H
 
 #include "sndcard.h"

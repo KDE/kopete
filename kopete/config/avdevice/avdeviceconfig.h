@@ -23,7 +23,7 @@
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
-
+#include <config-kopete.h>
 #ifdef HAVE_GL
 # include <qgl.h>
 #endif

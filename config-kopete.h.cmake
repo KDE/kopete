@@ -47,3 +47,9 @@
 /* Defined when we have ilbc codec lib */
 #define HAVE_ILBC 1
 
+/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
+#cmakedefine HAVE_ALSA_ASOUNDLIB_H 1
+
+/* Defines if you have GL (Mesa, OpenGL, ...) */
+#define HAVE_GL 1
+
