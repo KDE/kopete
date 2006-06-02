@@ -15,7 +15,9 @@
   *************************************************************************
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include "config-kopete.h"
+#endif
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
