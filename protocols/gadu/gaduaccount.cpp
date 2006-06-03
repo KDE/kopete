@@ -99,7 +99,7 @@ public:
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 static const char* const servers_ip[] = {
-	"217.17.41.144",
+	"217.17.41.82",
 	"217.17.41.83",
 	"217.17.41.84",
 	"217.17.41.85",
@@ -110,7 +110,7 @@ static const char* const servers_ip[] = {
 	"217.17.41.93",
 	"217.17.45.133",
 	"217.17.45.143",
-	"217.17.45.82"
+	"217.17.45.144"
 };
 
 #define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
@@ -594,7 +594,6 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	QPtrList<Kopete::Contact> contactsListTmp;
 
 	// FIXME:check for ignored users list
-	// FIXME:anonymous (those not on the list) users should be ignored, as an option
 
 	if ( gaduMessage->sender_id == 0 ) {
 		//system message, display them or not?
