@@ -46,12 +46,26 @@ class PAPILLON_EXPORT MessengerCoreProtocol : public QObject
 public:
 	/**
 	 * State is used internally to tell where we are in the parsing.
-	 * NeedMore: Need more data to proceed.
-	 * Available: Transfer is ready.
-	 * NoData: No data is currently in for proceeding.
-	 * WaitForPayload: We parsed a payload command and we are waiting for payload data.
 	 */
-	enum State { NeedMore, Available, NoData, WaitForPayload };
+	enum State 
+	{
+		/**
+		 * Need more data to proceed.
+		 */
+		NeedMore,
+		/**
+		 * Transfer is ready.
+		 */
+		Available,
+		/**
+		 * No data is currently in for proceeding.
+		 */
+		NoData,
+		/**
+		 * We parsed a payload command and we are waiting for payload data.
+		 */
+		WaitForPayload
+	};
 
 	/**
 	 * @brief Create an new parser instance.

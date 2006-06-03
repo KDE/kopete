@@ -25,26 +25,53 @@ class Connector;
 
 /**
  * @brief Secure stream using TLS/SSL (Transport Layer Security/Secure Socket Layer)
- *
  * This is used in Messenger context to retrieve MS Passport ticket for login, and retrieve Contact List from a Web Service.
  *
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
 class PAPILLON_EXPORT SecureStream : public QObject
 {
 	Q_OBJECT
 public:
 	/**
-	 * Enum used to identity the current error.
-	 * ErrorNone: nothing is wrong.
-	 * ErrorHandshakeFailed: TLS/SSL Handshake failed.
-	 * ErrorValidCert: We have a valid certificate.
-	 * ErrorWrongCert: We have a wrong certificate (host doesn't match).
-	 * ErrorInvalidCert: Invalid certificate
-	 * ErrorNoCert: We don't have any certificate.
-	 * ErrorDisconnect: We got disconnected.
-	 * ErrorUnknow: Unknow error.
+	 * Enum used to identity the current error that occured.
 	 */
-	enum ErrorCode { ErrorNone, ErrorHandshakeFailed, ErrorValidCert, ErrorWrongCert, ErrorInvalidCert, ErrorNoCert, ErrorDisconnected, ErrorUnknow };
+	enum ErrorCode 
+	{
+		/**
+		 * Nothing is wrong. (so all is correct)
+		 */
+		ErrorNone,
+		/**
+		 * TLS/SSL Handshake failed.
+		 */
+		ErrorHandshakeFailed,
+		/**
+		 * We have a valid certificate.
+		 */
+		ErrorValidCertificate,
+		/**
+		 * We have a wrong certificate (host doesn't match).
+		 */
+		ErrorWrongCertificate,
+		/**
+		 * Invalid certificate
+		 */
+		ErrorInvalidCertificate,
+		/**
+		 *  We don't have any certificate.
+		 */
+		ErrorNoCertificate,
+		/**
+		 * We got disconnected.
+		 */
+		ErrorDisconnected,
+		/**
+		 * Unknow error.
+		 */
+		ErrorUnknown 
+	};
+
 	/**
 	 * @brief Construct a new Secure stream.
 	 * @param connector the Connector to use

@@ -28,8 +28,14 @@ class Task;
 class Transfer;
 class MimeHeader;
 
+// TODO APIDOX, add a reference about connector model.
 /**
  * @brief Client to Windows Live Messenger.
+ * This is the main interface between the client application (ex: Kopete, papillon-telepathy, etc...) and
+ * the Windows Live Messenger service.
+ *
+ * Papillon::Client need a valid Papillon::Connector objet to be used.
+ * Set the client info with setClientInfo() before attempt to connect to Windows Live Messenger service.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
@@ -79,14 +85,33 @@ public:
 	QString passportAuthTicket() const;
 
 signals:
+	/**
+	 * Emitted when Client is connected, but not logged, to Windows Live Messenger's service.
+	 */
 	void connected();
+	/**
+	 * Emitted when Client got disconnected from Windows Live Messenger's service.
+	 */
 	void disconnected();
 
 public slots:
+	/**
+	 * @brief Connect to Windows Live Messenger
+	 * If no arguments are passed, it use the default server and port used by
+	 * Windows Live Messenger official client.
+	 * Note that it doesn't login to the server. it just connects.
+	 * @param server The Windows Live Messenger server, if you want to override it.
+	 * @param port the Windows Live Messenger server port, if you want to override it.
+	 */
 	void connectToServer(const QString &server = QString(), quint16 port = 0);
+	/**
+	 * @brief Start the login process.
+	 * Make sure that you setup client information with setClientInfo()
+	 */
 	void login();
 
 // Slots from tasks
+//BEGIN Private Task slots
 private slots:
 	/**
 	 * Result of Login process.
@@ -107,8 +132,9 @@ private slots:
 	 * @param profileMessage initial profile "message"
 	 */
 	void gotInitalProfile(const Papillon::MimeHeader &profileMessage);
+//END Private Task slots
 
-// Normal slots
+//BEGIN Private Normal slots
 private slots:
 	/**
 	 * @internal
@@ -116,6 +142,7 @@ private slots:
 	 * Called after being connected to the server.
 	 */	
 	void initNotificationTasks();
+//END Private Normal slots
 
 private:
 	/**

@@ -46,12 +46,26 @@ class PAPILLON_EXPORT HttpCoreProtocol : public QObject
 public:
 	/**
 	 * State is used internally to tell where we are in the parsing.
-	 * NeedMore: Need more data to proceed.
-	 * Available: Transfer is ready.
-	 * NoData: No data is currently in for proceeding.
-	 * WaitForContent: Wait for content to proceed.
 	 */
-	enum State { NeedMore, Available, NoData, WaitForContent };
+	enum State
+	{
+		/**
+		 * Need more data to proceed.
+		 */
+		NeedMore,
+		/**
+		 * Transfer is ready.
+		 */
+		Available,
+		/**
+		 * No data is currently in for proceeding.
+		 */
+		NoData,
+		/**
+		 * Wait for content to proceed.
+		 */
+		WaitForContent
+	};
 
 	/**
 	 * @brief Create an new parser instance.
