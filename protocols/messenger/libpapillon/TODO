@@ -1,6 +1,6 @@
 Libpapillon Roadmap
 -------------------
-Last Update: 30 March 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+Last Update: 3 June 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
 CHART:
 ---------
@@ -20,7 +20,7 @@ M1 Contact List and Presence
  -Retrieve contact list(and thus address book) using SOAP (contacts.msn.com Web service)
  -ContactListManager class
  -Add/Remove/Block contacts
- -Modify address book (maybe I'll postpone that)
+ -Modify address book
  -Add/Remove groups
  -Move contacts between groups
 -Presence
@@ -54,10 +54,12 @@ M3 P2P
 
 After this milestone, basic P2P framework will be complete. Futher P2P features will come after.
 
-M4 Webcam and Direct Transfers
+M4 Webcam, Direct Transfers, HTTP and Proxy
 -Implement Webcam P2P context
 -Use reflection server for NAT
 -Implement direct transfers for all P2P context
+-Implement proxy support
+-Implement MSNP over HTTP.
 
 After this milestone, libpapillon will be equal to old Kopete MSN implementation(and more of course).
 
