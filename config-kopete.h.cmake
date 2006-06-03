@@ -53,3 +53,6 @@
 /* Defines if you have GL (Mesa, OpenGL, ...) */
 #define HAVE_GL 1
 
+/* Glib is required for oRTP code and libmimic code */
+#define HAVE_GLIB 1
+
