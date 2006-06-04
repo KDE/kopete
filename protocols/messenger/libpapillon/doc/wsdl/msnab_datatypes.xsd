@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Reverse engineered MSN AddressBook XML Schema
+   by Michaël Larouche <michael.larouche@kdemail.net>
+   Latest update: 4 June 2006
+-->
+<xsd:schema
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns="http://www.msn.com/webservices/AddressBook"
+ xmlns:msnab="http://www.msn.com/webservices/AddressBook"
+ targetNamespace="http://www.msn.com/webservices/AddressBook"
+ version="1.0"
+ elementFormDefault="qualified" >
+	<xsd:annotation>
+		<xsd:documentation>
+			Copyright (c) 2006 Michaël Larouche &lt;michael.larouche@kdemail.net&gt;
+			
+			Permission to use, copy, modify and distribute this XML Schema
+			and its accompanying documentation for any purpose and without fee
+			is hereby granted in perpetuity, provided that the above copyright
+			notice and this paragraph appear in all copies.  The copyright
+			holders make no representation about the suitability of the XML Schema for
+			any purpose. It is provided "as is" without expressed or implied
+			warranty.
+			
+			This a reverse engineered XML Schema done for interopability purpose.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+			This XML Schema expose the data types of the MSN AddressBook Web service
+			used by Windows Live Messenger. Microsoft did not disclose the description of
+			the web service so we are stuck reverse engineering it. This XML Schema along with the WSDL
+			description will automate the generation of a WDSL binding to MSN AddressBook Web service.
+		</xsd:documentation>
+    </xsd:annotation>
+	
+	<xsd:complexType name="FindMembershipResult">
+		<xsd:annotation>
+			<xsd:documentation>
+				FindMembershipResult contains a list of Service and the "myself" information.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="Services">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Service" type="msnab:Service" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="OwnerNamespace">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Info">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Handle">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="Id" type="xsd:string" />
+												<xsd:element name="IsPassportNameHidden" type="xsd:boolean" />
+												<xsd:element name="CID" type="xsd:integer" />
+											</xsd:seqence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="CreatorPuid" type="xsd:integer" />
+									<xsd:element name="CreatorCID" type="xsd:integer" />
+									<xsd:element name="CreatorPassportName" type="xsd:string" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="Changes" />
+						<xsd:element name="CreateDate" type="xsd:dateTime" />
+						<xsd:element name="LastCHange" type="xsd:dateTime" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Service">
+		<xsd:annotation>
+			<xsd:documentation>
+				Service list differents services which contain one or more Membership.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="Memberships">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Membership" type="msnab:Membership" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Info">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Handle">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Id" type="xsd:integer" />
+									<xsd:element name="Type" type="xsd:string" />
+									<xsd:element name="ForeignId" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="DisplayName" minOccurs="0" type="xsd:string" />
+						<xsd:element name="InverseRequired" type="xsd:boolean" />
+						<xsd:element name="AuthorizationCriteria" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Changes" />
+			<xsd:element name="LastChange" type="xsd:dateTime" />
+			<xsd:element name="Deleted" type="xsd:boolean" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Membership">
+		<xsd:annotation>
+			<xsd:documentation>
+				Membership is a list of members with a given role.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="MemberRole" type="msnab:MemberRole" />>
+			<xsd:element name="Members">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Member" type="msnab:BaseMember" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- BaseMember(<Member>) Related to FindMembership SOAP method -->
+	<xsd:complexType name="BaseMember">
+		<xsd:annotation>
+			<xsd:documentation>
+				BaseMember is all the common fields between all types of Member.
+				
+				MembershipId: Unique Identifier for the member
+				Type: Member type, see MemberType
+				DisplayName: A friendly display name of the current member
+				State: Current state of the member, see MemberState
+				Deleted: If the member is deleted or not
+				LastChanged: DateTime timestamp of the last change.
+				Changes: unknown
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="MembershipId" type="xsd:PositiveInteger" />
+			<xsd:element name="Type" type="msnab:MemberType" />
+			<xsd:element name="DisplayName" type="xsd:string" minOccurs="0" />
+			<xsd:element name="State" type="msnab:MemberState" />
+			<xsd:element name="Deleted" type="xsd:boolean" />
+			<xsd:element name="LastChanged" type="xsd:dateTime" />
+			<xsd:element name="Changes" minOccurs="0" />
+		</xsd:sequece>
+	</xsd:complexType>
+	
+	<!-- PassportMember : BaseMember, Related to FindMembemship SOAP method -->
+	<xsd:complexType name="PassportMember">
+		<xsd:annotation>
+			<xsd:documentation>
+				PassportMember is the main Member type you encounter in FindMembershipResult message.
+				It contain details for a passport member, which correspond to the old details in
+				MSN's Allow, Block, Reverse and Pending list.
+				
+				PassportName: Passport username (example@passport.com)
+				IsPassportNameHidden: Tell if PassportName should be hidden
+				PassportId: Integer Passport identifier (need more info)
+				CID: unknown
+				PassportChanges: unknown
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:complexContent>
+			<xsd:extension base="msnab:BaseMember">
+				<xsd:sequence>
+					<xsd:element name="PassportName" type="xsd:string" />
+					<xsd:element name="IsPassportNameHidden" type="xsd:boolean" />
+					<xsd:element name="PassportId" type="xsd:integer" />
+					<xsd:element name="CID" type="xsd:integer" />
+					<xsd:element name="PassportChanges" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<!-- RoleMember : BaseMember, Related to FindMembership SOAP method -->
+	<xsd:complexType name="RoleMember">
+		<xsd:annotation>
+			<xsd:documentation>
+				RoleMember's role is unknown for the moment.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:complexContent>
+			<xsd:extension base="msnab:BaseMember">
+				<xsd:sequence>
+					<xsd:element name="Id" type="xsd:string" />
+					<xsd:complexType name="DefiningService">
+						<xsd:sequence>
+							<xsd:element name="Id" type="xsd:integer" />
+							<xsd:element name="Type" type="xsd:string" />
+							<xsd:element name="ForeignId" />
+						</xsd:sequence>
+					</xsd:complexType>
+					<xsd:element name="MaxRoleRecursionDepth" type="xsd:integer" />
+					<xsd:element name="MaxDegreesSeparation" type="xsd:integer" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- EveryoneMember : BaseMember, Related to FindMembership SOAP method -->
+	<xsd:complexType name="EveryoneMember">
+		<xsd:annotation>
+			<xsd:documentation>
+				EveryoneMember's role is unknown for the moment
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:complexContent>
+			<xsd:extension name="msnab:BaseMember">
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+		 
+	<xsd:simpleType name="MemberRole">
+		<xsd:annotation>
+			<xsd:documentation>
+				MemberRole determine the type(or the nature) of a membership.
+				
+				Allow: Equivalent to the old MSN Allow list
+				Block: Equivalent to the old MSN Block list
+				Reverse: Equivalent to the old MSN Reverse list
+				Pending: Equivalent to the old MSN Pending list
+				Contributor: Unknown
+				ProfileGeneral: Unknown
+				ProfilePersonalContact: Unknown
+				ProfileProfessionalContact: Unknown
+				ProfileSocial: Unknown
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Allow" />
+			<xsd:enumeration value="Block" />
+			<xsd:enumeration value="Reverse" />
+			<xsd:enumeration value="Pending" />
+			<xsd:enumeration value="Contributor" />
+			<xsd:enumeration value="ProfileGeneral" />
+			<xsd:enumeration value="ProfilePersonalContact" />
+			<xsd:enumeration value="ProfileProfessionalContact" />
+			<xsd:enumeration value="ProfileSocial" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="MemberType">
+		<xsd:annotation>
+			<xsd:documentation>
+				MemberType is a sibling of Member to determine the member type, even if xsi:type is used.
+				It put a restriction of the value you put into it.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Passport" />
+			<xsd:enumeration value="Role" />
+			<xsd:enumeration value="Everyone" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="MemberState">
+		<xsd:annotation>
+			<xsd:documentation>
+				MemberState is the current state of a Member.
+				
+				Accepted: member is accepted, obviously.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Accepted" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+</xsd:schema>
