@@ -183,7 +183,7 @@ void ChatWindowStyleRendering_Test::allTests()
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
 
-	KApplication::disableAutoDcopRegistration();
+	//KApplication::disableAutoDcopRegistration();
 	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
 	KApplication app;
 
