@@ -27,8 +27,6 @@
 
 #include <kapplication.h>
 #include <klocale.h>
-#include <dcopclient.h>
-#include <kdatastream.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 
@@ -82,6 +80,9 @@ void notifyConnectionLost( const Account *account, const QString caption, const 
 
 bool isHostReachable(const QString &host)
 {
+#warning TODO
+#if 0
+
 	const int NetWorkStatusUnknown = 1;
 	const int NetWorkStatusOnline = 8;
 	DCOPCString replyType;
@@ -99,6 +100,8 @@ bool isHostReachable(const QString &host)
 		return (result != NetWorkStatusUnknown) && (result != NetWorkStatusOnline);
 	}
 	return false; // On error, assume we are online
+#endif
+	return true;
 }
 
 void notifyCannotConnect( const Account *account, const QString explanation, const QString debugInfo)

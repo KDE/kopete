@@ -366,7 +366,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		return d->loadedPlugins[ info ];
 
 	int error = 0;
-	Plugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<Plugin>( QString::fromLatin1( "Kopete/Plugin" ),
+	Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QString::fromLatin1( "Kopete/Plugin" ),
 		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QStringList(), &error );
 
 	if ( plugin )
@@ -385,24 +385,24 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 	{
 		switch( error )
 		{
-		case KParts::ComponentFactory::ErrNoServiceFound:
+		case KLibLoader::ErrNoServiceFound:
 			kDebug( 14010 ) << k_funcinfo << "No service implementing the given mimetype "
 				<< "and fullfilling the given constraint expression can be found." << endl;
 			break;
 
-		case KParts::ComponentFactory::ErrServiceProvidesNoLibrary:
+		case KLibLoader::ErrServiceProvidesNoLibrary:
 			kDebug( 14010 ) << "the specified service provides no shared library." << endl;
 			break;
 
-		case KParts::ComponentFactory::ErrNoLibrary:
+		case KLibLoader::ErrNoLibrary:
 			kDebug( 14010 ) << "the specified library could not be loaded." << endl;
 			break;
 
-		case KParts::ComponentFactory::ErrNoFactory:
+		case KLibLoader::ErrNoFactory:
 			kDebug( 14010 ) << "the library does not export a factory for creating components." << endl;
 			break;
 
-		case KParts::ComponentFactory::ErrNoComponent:
+		case KLibLoader::ErrNoComponent:
 			kDebug( 14010 ) << "the factory does not support creating components of the specified type." << endl;
 			break;
 		}
