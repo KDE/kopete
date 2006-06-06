@@ -26,10 +26,13 @@
 #include <kio/jobclasses.h>
 #include <kurl.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 #include "yahootypes.h"
+#include "client.h"
 
-YahooBuddyIconLoader::YahooBuddyIconLoader()
+YahooBuddyIconLoader::YahooBuddyIconLoader( Client *c )
+: m_client( c )
 {
 }
 
@@ -44,7 +47,6 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 	QString Url = url.url();
 	QString ext = Url.left( Url.lastIndexOf( "?" ) );
 	ext = ext.right( ext.length() - ext.lastIndexOf( "." ) );
-	//Url.mid( Url.findRev( "."), Url.findRev( "?") - Url.findRev( ".") - 1);
 	
 	transfer = KIO::get( url, false, false );
 	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
@@ -78,7 +80,9 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon!" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon." << endl;
+		if( m_client )
+			m_client->notifyError( i18n( "An error occured while downloading buddy icon (%1)" ).arg(m_jobs[transfer].url.url()), job->errorString(), Client::Info );
 	}
 	else
 	{
@@ -90,6 +94,8 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 		else
 		{
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Fatal Error! IconLoadJob has an empty KTempFile pointer." << endl;
+			if( m_client )
+				m_client->notifyError( i18n( "Fatal Error occured while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTempFile pointer." ), Client::Info );
 		}
 	}
 

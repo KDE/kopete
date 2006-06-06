@@ -84,6 +84,8 @@ private slots:
 	 */
 	void slotUpdateDisplayName ();
 
+	void slotSendFile();
+
 private:
 	/**
 	 * Send a notification (XMPP::MsgEvent) to the members of the chatsession.

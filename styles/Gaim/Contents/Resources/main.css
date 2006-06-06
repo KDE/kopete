@@ -14,18 +14,8 @@ a:visited { text-decoration: none; }
 a:hover { text-decoration: underline; }
 a:active { text-decoration: none; }
 
-.KopeteMessage {
-	text-indent: -10px;
-	padding-left: 10px;
-}
-
 .inMetacontact, .outMetacontact, .inActionMetacontact, .outActionMetacontact, .InternalDelim {
 	font-weight: bold;
-}
-
-#Chat {
-	margin-bottom: -8px;
-	overflow: auto;
 }
 
 .inContentTime, .inMetacontact {

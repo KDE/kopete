@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
@@ -100,7 +101,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 
 	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
-		emit error( customError );
+		client()->notifyError( i18n("An unknown error has occured."), customError, Client::Warning );
 
 	myNick = t->firstParam( 1 );
 	

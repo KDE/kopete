@@ -43,7 +43,6 @@ protected:
 signals:
 	void statusChanged( const QString&, int, const QString&, int, int );
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
-	void error( const QString& );
 	void loginResponse( int, const QString& );
 	void authorizationAccepted( const QString & );
 	void authorizationRejected( const QString &, const QString & );

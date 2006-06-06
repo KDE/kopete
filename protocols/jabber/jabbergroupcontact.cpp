@@ -156,8 +156,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 	manager(CanCreate); //force to create mManager
 	
-	Kopete::ContactPtrList contactList;
-	contactList.append ( const_cast<JabberBaseContact*>(mManager->user ()) );
+	Kopete::ContactPtrList contactList = manager()->members();
 
 	// check for errors
 	if ( message.type () == "error" )

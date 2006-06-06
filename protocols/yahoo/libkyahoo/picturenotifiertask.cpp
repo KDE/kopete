@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 
 PictureNotifierTask::PictureNotifierTask(Task* parent) : Task(parent)
@@ -144,7 +145,7 @@ void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )
 	error = t->firstParam( 16 );
 	
 	if( !error.isEmpty() )
-		client()->notifyError( error );
+		client()->notifyError(i18n("The picture was not successfully uploaded"), error, Client::Error );
 
 	if( !url.isEmpty() )
 	{

@@ -49,3 +49,4 @@ void RequestPictureTask::setTarget( const QString &target )
 }
 
 #include "requestpicturetask.moc"
+

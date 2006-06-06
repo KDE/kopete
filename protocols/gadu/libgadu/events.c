@@ -1211,7 +1211,8 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				 * write() zawiedzie, stało się coś złego. */
 				if (write(sess->fd, buf, strlen(buf)) < (signed)strlen(buf)) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() can't send proxy request\n");
-					free(auth);
+					if (auth)
+						free(auth);
 					goto fail_connecting;
 				}
 

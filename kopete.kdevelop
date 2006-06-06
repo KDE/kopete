@@ -4,7 +4,7 @@
     <author>Kopete Developers</author>
     <email>kopete-devel@kde.org</email>
     <version>$VERSION$</version>
-    <projectmanagement>KDevKDEAutoProject</projectmanagement>
+    <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <keywords>
       <keyword>Qt</keyword>
@@ -244,4 +244,9 @@
     <customArguments/>
     <customTagfilePath/>
   </ctagspart>
+  <kdevcustomproject>
+    <run>
+      <directoryradio>executable</directoryradio>
+    </run>
+  </kdevcustomproject>
 </kdevelop>

@@ -547,6 +547,15 @@ void AIMAccount::disconnected( DisconnectReason reason )
 {
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
 	myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
+
+	QDictIterator<Kopete::Contact> it( contacts() );
+	for( ; it.current(); ++it )
+	{
+		OscarContact* oc = dynamic_cast<OscarContact*>( it.current() );
+		if ( oc )
+			oc->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
+	}
+
 	OscarAccount::disconnected( reason );
 }
 

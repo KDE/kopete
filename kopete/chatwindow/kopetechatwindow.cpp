@@ -732,7 +732,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	checkDetachEnable();
 	newView->loadChatSettings();
 	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
-	         this, SLOT( toggleAutoSpellCheckEnabled( ChatView*, bool ) ) );
+	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
 }
 
 void KopeteChatWindow::checkDetachEnable()
@@ -1074,9 +1074,6 @@ void KopeteChatWindow::saveOptions()
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), (int)m_tabBar->tabPosition() );
-
-	if ( m_activeView )
-		m_activeView->saveChatSettings();
 
 	config->sync();
 }

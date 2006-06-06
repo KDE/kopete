@@ -362,10 +362,13 @@ void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *manager )
 {
     // kDebug( 14000 ) << k_funcinfo << endl;
 
-    if( d->managerMap.contains( manager ) )
-    {
-        d->managerMap[ manager ]->closeView( true );
-    }
+	if( d->managerMap.contains( manager ) )
+	{
+		KopeteView *v=d->managerMap[ manager ];
+		v->closeView( true );
+		delete v;   //closeView call deleteLater,  but in this case this is not enough, because some signal are called that case crash
+		d->managerMap.remove( manager );
+	}
 }
 
 KopeteView* KopeteViewManager::activeView() const

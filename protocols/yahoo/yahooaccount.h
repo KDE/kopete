@@ -229,6 +229,7 @@ protected slots:
 	void slotFileTransferComplete( unsigned int id );
 	void slotFileTransferError( unsigned int id, int error, const QString &desc );
 	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );
+	void slotError( int level );
 
 private slots:
 	/**

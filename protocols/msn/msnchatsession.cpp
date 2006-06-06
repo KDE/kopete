@@ -685,6 +685,12 @@ void MSNChatSession::slotWebcamSend()
 }
 
 
+void MSNChatSession::slotSendFile()
+      {
+              QPtrList<Kopete::Contact>contacts = members();
+              static_cast<MSNContact *>(contacts.first())->sendFile();
+      }
+
 void MSNChatSession::startChatSession()
 {
 	QList<Kopete::Contact*> mb=members();

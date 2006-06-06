@@ -77,7 +77,6 @@ void TestbedWebcamDialog::slotUpdateImage()
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image" << endl;
 	mVideoDevicePool->getImage(&mImage);
-	kDebug() << "BitBlitting image" << endl;
 	mImageContainer->updatePixmap( QPixmap( mImage ) );
 }
 
