@@ -98,6 +98,7 @@ void ProfileTask::sendProfileUpdate()
 			buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.toLocal8Bit());
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
 		}
+		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
 	}
 	capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
 	capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
