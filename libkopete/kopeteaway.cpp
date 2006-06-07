@@ -198,6 +198,8 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 
 Kopete::Away::~Away()
 {
+	if(this == instance)
+		instance = 0L;	
 	delete d;
 }
 
@@ -324,9 +326,18 @@ void Kopete::Away::slotTimerTimeout()
 	// isn't blanked/locked, because activity while blanked is impossible and
 	// activity while locked never matters (if there is any, it's probably just
 	// the cleaner wiping the keyboard :).
-
+	
+	
+	/* we should be able to respond to KDesktop queries to avoid a deadlock, so we allow the event loop to be called */
+	static bool rentrency_protection=false;
+	if(rentrency_protection)
+		return;
+	rentrency_protection=true;
 	DCOPRef screenSaver("kdesktop", "KScreensaverIface");
-	DCOPReply isBlanked = screenSaver.call("isBlanked");
+	DCOPReply isBlanked = screenSaver.callExt("isBlanked" ,  DCOPRef::UseEventLoop, 10);
+	rentrency_protection=false;
+	if(!instance) //this may have been deleted in the event loop
+		return;
 	if (!(isBlanked.isValid() && isBlanked.type == "bool" && ((bool)isBlanked)))
 	{
 		// DCOP failed, or returned something odd, or the screensaver is
