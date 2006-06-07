@@ -100,7 +100,7 @@ void SendPictureTask::connectSucceeded()
 	else
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << file.errorString() << endl;
-		client()->notifyError(i18n("Error opening file: %1").arg(m_path), file.errorString(), Client::Error );
+		client()->notifyError(i18n("Error opening file: %1", m_path), file.errorString(), Client::Error );
 		return;
 	}
 

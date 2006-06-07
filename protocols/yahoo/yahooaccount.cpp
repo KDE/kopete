@@ -756,11 +756,9 @@ void YahooAccount::slotError( int level )
 	if( level <= Client::Notice )
 		return;
 	else if( level <= Client::Warning )
-		KMessageBox::information( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3" ).arg(m_session->errorInformation())
-		                          .arg(m_session->error()).arg(m_session->errorString()), i18n( "Yahoo Plugin" ) );
+		KMessageBox::information( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3", m_session->errorInformation(), m_session->error(), m_session->errorString() ), i18n( "Yahoo Plugin" ) );
 	else 
-		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3" ).arg(m_session->errorInformation())
-		                    .arg(m_session->error()).arg(m_session->errorString()), i18n( "Yahoo Plugin" ) );
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3", m_session->errorInformation(), m_session->error(), m_session->errorString() ), i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )

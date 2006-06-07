@@ -82,7 +82,7 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon." << endl;
 		if( m_client )
-			m_client->notifyError( i18n( "An error occured while downloading buddy icon (%1)" ).arg(m_jobs[transfer].url.url()), job->errorString(), Client::Info );
+			m_client->notifyError( i18n( "An error occured while downloading buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
 	}
 	else
 	{
