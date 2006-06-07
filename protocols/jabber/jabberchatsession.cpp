@@ -67,8 +67,20 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().getFirst(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
 
 	setInstance(protocol->instance());
-	jabber_voicecall->setEnabled(true);
+	jabber_voicecall->setEnabled( false );
 
+	
+	Kopete::ContactPtrList chatMembers = members ();
+	if ( chatMembers.first () )
+	{
+		// Check if the current contact support Voice calls, also honour lock by default.
+		// FIXME: we should use the active ressource
+		JabberResource *bestResource = account()->resourcePool()->  bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		if( bestResource && bestResource->features().canVoice() )
+		{
+			jabber_voicecall->setEnabled( true );
+		}
+	}
 
 #endif
 
