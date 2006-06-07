@@ -38,7 +38,7 @@
     </xsd:annotation>
 	
 	<!-- Include MSN AddressBook data types -->
-	<xsd:include schemaLocation="msnab_datatypes.xsd">
+	<xsd:include schemaLocation="msnab_datatypes.xsd" />
 	
 	<xsd:complexType name="ABHeaderType">
 		<xsd:annotation>
@@ -60,7 +60,7 @@
 			<xsd:element name="ABAuthHeader">
 				<xsd:complexType>
 					<xsd:element name="ManagedGroupRequest" type="xsd:boolean" />
-				</xsd:complexTYpe>
+				</xsd:complexType>
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
@@ -141,7 +141,7 @@
 															<xsd:element name="Id" type="xsd:string" />
 															<xsd:element name="IsPassportNameHidden" type="xsd:boolean" />
 															<xsd:element name="CID" type="xsd:integer" />
-														</xsd:seqence>
+														</xsd:sequence>
 													</xsd:complexType>
 												</xsd:element>
 												<xsd:element name="CreatorPuid" type="xsd:integer" />

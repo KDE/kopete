@@ -5,15 +5,15 @@
 	by Michaël Larouche <michael.larouche@kdemail.net>
 	Latest update: 6 June 2006
 -->
-<definitions targetNamespace="http://www.msn.com/webservices/AddressBook/"
-			 xmlns:msnab="http://www.msn.com/webservices/AddressBook/"
-			 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-			 xmlns="http://schemas.xmlsoap.org/wsdl/">
+<definitions targetNamespace="http://www.msn.com/webservices/AddressBook"
+			xmlns:msnab="http://www.msn.com/webservices/AddressBook"
+			xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+			xmlns="http://schemas.xmlsoap.org/wsdl/">
 	
 	<types>
 		<schema xmlns="http://www.w3.org/2001/XMLSchema">
-			<import namespace="http://www.msn.com/webservices/AddressBook/"   schemaLocation="msnab_datatypes.xsd" />
-			<import namespace="http://www.msn.com/webservices/AddressBook/" schemaLocation="msnab_servicetypes.xsd" />
+			<import namespace="http://www.msn.com/webservices/AddressBook"   schemaLocation="msnab_datatypes.xsd" />
+			<import namespace="http://www.msn.com/webservices/AddressBook" schemaLocation="msnab_servicetypes.xsd" />
 		</schema>
 	</types>
 	
@@ -38,20 +38,21 @@
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<operation name="FindMembership">
 			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/FindMembership" />
-			<input message="msnab:FindMembership">
-				<soap:header message="msnab:FindMembership" part="ABHeader" use="literal"/>
+			<input message="FindMembership">
+				<soap:header message="FindMembership" part="ABHeader" use="literal"/>
 				<soap:body parts="body" use="literal"/>
 			</input>
-			<output message="msnab:FindMembershipResponse">
-				<soap:header message="msnab:FindMembershipResponse" part="ServiceHeader" use="literal" />
+			<output message="FindMembershipResponse">
+				<soap:header message="FindMembershipResponse" part="ServiceHeader" use="literal" />
 				<soap:body parts="body" use="literal" />
 			</output>
 		</operation>
 	</binding>
 	
 	<service name="SharingService">
-		<port name="FindMembershipPort" binding="msnab:FindMembershipSoap">
+		<port name="FindMembershipPort" binding="FindMembershipSoap">
 			<soap:address location="https://omega.contacts.msn.com/abservice/SharingService.asmx" />
 		</port>
 	</service>
+	
 </definitions>
