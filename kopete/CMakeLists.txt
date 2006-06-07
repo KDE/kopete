@@ -49,19 +49,18 @@ set(kopete_SRCS
    ${kopetepluginconfig_SRCS}
    main.cpp 
    kopeteapplication.cpp 
-   kopeteiface.cpp 
    systemtray.cpp 
    kopeteballoon.cpp 
    kopetewindow.cpp 
    kopeteaccountstatusbaricon.cpp 
-   kimifaceimpl.cpp 
+#   kopeteiface.cpp 
+#   kimifaceimpl.cpp 
    kopeteeditglobalidentitywidget.cpp )
 
 kde4_automoc(${kopete_SRCS})
 
 kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 
-kde4_add_dcop_skels(kopete_SRCS kopeteiface.h kimiface.h )
 
 kde4_add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)

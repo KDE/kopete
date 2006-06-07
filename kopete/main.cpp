@@ -21,9 +21,6 @@
 #include <kaboutdata.h>
 #include "kopeteapplication.h"
 #include <klocale.h>
-#include <dcopclient.h>
-#include "kopeteiface.h"
-#include "kimifaceimpl.h"
 #include "kopeteversion.h"
 
 static const char description[] =
@@ -100,9 +97,9 @@ int main( int argc, char *argv[] )
 	KUniqueApplication::addCmdLineOptions();
 
 	KopeteApplication kopete;
-	new KIMIfaceImpl();
-	kapp->dcopClient()->registerAs( "kopete", false );
-	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
+//	new KIMIfaceImpl();
+//	kapp->dcopClient()->registerAs( "kopete", false );
+//	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
 
 	kopete.exec();
 }
