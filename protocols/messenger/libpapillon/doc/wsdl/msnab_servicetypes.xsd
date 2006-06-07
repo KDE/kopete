@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Reverse engineered MSN AddressBook webservice XML Schema
+   Part: Service types. (Convience types to use with the web service binding)
+
+   by Michaël Larouche <michael.larouche@kdemail.net>
+   Latest update: 6 June 2006
+-->
+<xsd:schema
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns="http://www.msn.com/webservices/AddressBook"
+ xmlns:msnab="http://www.msn.com/webservices/AddressBook"
+ targetNamespace="http://www.msn.com/webservices/AddressBook"
+ version="1.0"
+ elementFormDefault="qualified" >
+	<xsd:annotation>
+		<xsd:documentation>
+			Copyright (c) 2006 Michaël Larouche &lt;michael.larouche@kdemail.net&gt;
+			
+			Permission to use, copy, modify and distribute this XML Schema
+			and its accompanying documentation for any purpose and without fee
+			is hereby granted in perpetuity, provided that the above copyright
+			notice and this paragraph appear in all copies.  The copyright
+			holders make no representation about the suitability of the XML Schema for
+			any purpose. It is provided "as is" without expressed or implied
+			warranty.
+			
+			This a reverse engineered XML Schema done for interopability purpose.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+			This XML Schema expose the service types(Convience types to use with the web service binding) of the MSN AddressBook Web service
+			used by Windows Live Messenger. Microsoft did not disclose the description of
+			the web service so we are stuck reverse engineering it. This XML Schema along with the WSDL
+			description will automate the generation of a WDSL binding to MSN AddressBook Web service.
+		</xsd:documentation>
+    </xsd:annotation>
+	
+	<!-- Include MSN AddressBook data types -->
+	<xsd:include schemaLocation="msnab_datatypes.xsd">
+	
+	<xsd:complexType name="ABHeaderType">
+		<xsd:annotation>
+			<xsd:documentation>
+				ABHeaderType is the SOAP header used by all MSN AddressBook SOAP operations.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="ABApplicationHeader">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ApplicationId" type="msnab:Guid" fixed="09607671-1C32-421F-A6A6-CBFAA51AB5F4" />
+						<xsd:element name="IsMigration" type="xsd:boolean" />
+						<xsd:element name="ParnerScenario" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ABAuthHeader">
+				<xsd:complexType>
+					<xsd:element name="ManagedGroupRequest" type="xsd:boolean" />
+				</xsd:complexTYpe>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ServiceHeaderType">
+		<xsd:annotation>
+			<xsd:documentation>
+				ServiceHeaderType is the SOAP Header received in a MSN AddressBook webservice response.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="ServiceHeader">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Version" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FindMembershipRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the FindMembership SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="serviceFilter">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Types">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="ServiceType" type="xsd:string" maxOccurs="unbounded" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="View" type="xsd:string" minOccurs="0" />
+			<xsd:element name="deltasOnly" type="xsd:boolean" minOccurs="0" />
+			<xsd:element name="lastChange" type="xsd:dateTime" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FindMembershipResultType">
+		<xsd:annotation>
+			<xsd:documentation>
+				FindMembershipResult contains a list of Service and the "myself" information.
+			</xsd:documentation>
+		</xsd:annotation>
+		
+		<xsd:sequence>
+			<xsd:element name="FindMembershipResult">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Services">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Service" type="msnab:Service" minOccurs="0" maxOccurs="unbounded" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="OwnerNamespace">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Info">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="Handle">
+													<xsd:complexType>
+														<xsd:sequence>
+															<xsd:element name="Id" type="xsd:string" />
+															<xsd:element name="IsPassportNameHidden" type="xsd:boolean" />
+															<xsd:element name="CID" type="xsd:integer" />
+														</xsd:seqence>
+													</xsd:complexType>
+												</xsd:element>
+												<xsd:element name="CreatorPuid" type="xsd:integer" />
+												<xsd:element name="CreatorCID" type="xsd:integer" />
+												<xsd:element name="CreatorPassportName" type="xsd:string" />
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="Changes" />
+									<xsd:element name="CreateDate" type="xsd:dateTime" />
+									<xsd:element name="LastCHange" type="xsd:dateTime" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+</xsd:schema>

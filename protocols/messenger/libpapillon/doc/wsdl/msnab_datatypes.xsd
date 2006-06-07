@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Reverse engineered MSN AddressBook XML Schema
+   Reverse engineered MSN AddressBook webservice XML Schema
+   Part: Data types (Pure data types)
+
    by Michaël Larouche <michael.larouche@kdemail.net>
-   Latest update: 4 June 2006
+   Latest update: 6 June 2006
 -->
 <xsd:schema
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -34,51 +36,6 @@
 			description will automate the generation of a WDSL binding to MSN AddressBook Web service.
 		</xsd:documentation>
     </xsd:annotation>
-	
-	<xsd:complexType name="FindMembershipResult">
-		<xsd:annotation>
-			<xsd:documentation>
-				FindMembershipResult contains a list of Service and the "myself" information.
-			</xsd:documentation>
-		</xsd:annotation>
-		
-		<xsd:sequence>
-			<xsd:element name="Services">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="Service" type="msnab:Service" minOccurs="0" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="OwnerNamespace">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="Info">
-							<xsd:complexType>
-								<xsd:sequence>
-									<xsd:element name="Handle">
-										<xsd:complexType>
-											<xsd:sequence>
-												<xsd:element name="Id" type="xsd:string" />
-												<xsd:element name="IsPassportNameHidden" type="xsd:boolean" />
-												<xsd:element name="CID" type="xsd:integer" />
-											</xsd:seqence>
-										</xsd:complexType>
-									</xsd:element>
-									<xsd:element name="CreatorPuid" type="xsd:integer" />
-									<xsd:element name="CreatorCID" type="xsd:integer" />
-									<xsd:element name="CreatorPassportName" type="xsd:string" />
-								</xsd:sequence>
-							</xsd:complexType>
-						</xsd:element>
-						<xsd:element name="Changes" />
-						<xsd:element name="CreateDate" type="xsd:dateTime" />
-						<xsd:element name="LastCHange" type="xsd:dateTime" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
 	
 	<xsd:complexType name="Service">
 		<xsd:annotation>
@@ -233,7 +190,18 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-		 
+	
+	<xsd:simpleType name="Guid">
+		<xsd:annotation>
+			<xsd:documentation>
+				Guid is a string that reprensent a global unique identifier. Used by Microsoft to identify unique items.
+			</xsd:annotation>
+			
+			<xsd:restriction base="xsd:string">
+				<xsd:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+			</xsd:restriction>
+	</xsd:simpleType>
+	
 	<xsd:simpleType name="MemberRole">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -292,5 +260,5 @@
 			<xsd:enumeration value="Accepted" />
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 </xsd:schema>
