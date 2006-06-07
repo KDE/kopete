@@ -19,6 +19,7 @@
 
 #include "filetransfertask.h"
 
+#include <krandom.h>
 #include <qstring.h>
 #include <kdebug.h>
 #include "buffer.h"
@@ -110,18 +111,71 @@ bool FileTransferTask::take( Transfer* transfer )
 
 void FileTransferTask::sendFile()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "pretend we sent a file :)" << endl;
-	//TODO
-/*	kDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	//TODO: listen for connections
+
+	//set up transfer
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
-	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
+	SNAC s = { 0x0004, 0x0006, 0x0000, m_seq };
+	//this part prolly needs more organisation
 	Buffer* b = new Buffer;
-	b->addWord( 1 ); //gaim hard codes it, so will we
-	b->addWord( m_iconLength );
-	b->addString( m_icon );
+	//we get to make up an icbm cookie!
+	DWORD cookie1 = KRandom::random();
+	DWORD cookie2 = KRandom::random();
+	b->addDWord( cookie1 );
+	b->addDWord( cookie2 );
+	//save the cookie for later
+	QByteArray cookie = b->buffer(); //FIXME: safe without write?
+	//channel id
+	b->addWord( 2 );
+	//buddy info
+	b->addByte( m_contact.length() );
+	b->addString( m_contact.toLatin1() );
+
+	//now create the rendezvous tlv
+	b->addTLV( makeRendezvousRequest( cookie ) );
+
+	//we're done, send it off!
 	Transfer* t = createTransfer( f, s, b );
-	send( t );*/
+	send( t );
+}
+
+//TODO: test this
+TLV FileTransferTask::makeRendezvousRequest( QByteArray cookie )
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie size: " << cookie.size() << endl;
+	Buffer rbuf;
+	rbuf.addWord(0); //request type
+	//copy the cookie
+	rbuf.addString( cookie );
+
+	rbuf.addGuid( oscar_caps[CAP_SENDFILE] );
+	//now begins a bunch of tlvs
+	char v1[] = { 0, 1 };
+	rbuf.addTLV( 0xa, 2, v1 ); //request #
+	rbuf.addTLV( 0xf, 0, 0 ); //unknown
+	//rbuf.addTLV( 0xe, 2, "en" ); //language
+	char v2[] = { 127, 0, 0, 1 };
+	rbuf.addTLV( 0x2, 4, v2 ); //our ip FIXME
+	char v3[] = { 0x80, 0xff, 0xff, 0xfe };
+	rbuf.addTLV( 0x16, 4, v3 ); //ip check
+	rbuf.addTLV( 0x3, 4, v2 ); //our ip FIXME
+	char v4[] = { 0x14, 0x46 };
+	rbuf.addTLV( 0x5, 2, v4 ); //port FIXME: guessed 5190, is that always true?
+	char v5[] = { 0xeb, 0xb9 };
+	rbuf.addTLV( 0x17, 2, v5 ); //port check
+
+	Buffer fbuf; 
+	fbuf.addWord( 1 ); //multiple file flag (we only support 1 right now)
+	fbuf.addWord( 1 ); //file count
+	fbuf.addDWord( m_localFile.size() ); //file count (FIXME: are we sure it's nonzero?)
+	fbuf.addString( m_localFile.fileName().toLatin1() ); //name
+	fbuf.addByte( 0 ); //make sure the name's null-terminated
+
+	rbuf.addTLV( 0x2711, fbuf.length(), fbuf.buffer() );
+
+	return TLV( 0x5, rbuf.length(), rbuf );
 }
 
 #include "filetransfertask.moc"

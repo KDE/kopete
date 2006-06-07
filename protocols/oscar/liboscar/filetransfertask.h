@@ -40,10 +40,12 @@ public:
 
 private:
 	void sendFile();
+	TLV makeRendezvousRequest( QByteArray cookie );
 	enum Action { Send, Receive };
 	Action m_action;
 	QFile m_localFile;
 	QString m_contact;
+	DWORD m_seq;
 };
 
 #endif
