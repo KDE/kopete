@@ -50,7 +50,7 @@
 #include "sendmessagetask.h"
 #include "serverredirecttask.h"
 #include "servicesetuptask.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "ssimodifytask.h"
 #include "ssiauthtask.h"
 #include "offlinemessagestask.h"
@@ -114,7 +114,7 @@ public:
 	UserInfoTask* userInfoTask;
 	TypingNotifyTask * typingNotifyTask;
 	//Managers
-	SSIManager* ssiManager;
+	ContactManager* ssiManager;
 	ConnectionHandler connections;
 
 	//Our Userinfo
@@ -150,7 +150,7 @@ Client::Client( QObject* parent )
 	d->redirectRequested = false;
     d->currentRedirect = 0;
 	d->connectAsStatus = 0x0; // default to online
-	d->ssiManager = new SSIManager( this );
+	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
 	d->errorTask = 0L;
 	d->onlineNotifier = 0L;
@@ -309,7 +309,7 @@ int Client::port()
 	return d->port;
 }
 
-SSIManager* Client::ssiManager() const
+ContactManager* Client::ssiManager() const
 {
 	return d->ssiManager;
 }
@@ -405,7 +405,7 @@ void Client::serviceSetupFinished()
 		offlineMsgTask->go( true );
 	}
 
-	emit haveSSIList();
+	emit haveContactList();
 	emit loggedIn();
 }
 
@@ -643,7 +643,7 @@ void Client::removeGroup( const QString& groupName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing group " << groupName << " from SSI" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing group " << groupName << " from Contact" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
 		ssimt->go( true );
@@ -655,7 +655,7 @@ void Client::addGroup( const QString& groupName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group " << groupName << " to SSI" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group " << groupName << " to Contact" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
 		ssimt->go( true );
@@ -667,7 +667,7 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact " << contactName << " to SSI in group " << groupName << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact " << contactName << " to ssi in group " << groupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
 		ssimt->go( true );
@@ -680,7 +680,7 @@ void Client::removeContact( const QString& contactName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from SSI" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from ssi" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
 		ssimt->go( true );
@@ -698,7 +698,7 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 		ssimt->go( true );
 }
 
-void Client::modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem )
+void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem )
 {
 	int action = 0; //0 modify, 1 add, 2 remove TODO cleanup!
 	Connection* c = d->connections.connectionForFamily( 0x0013 );
@@ -987,49 +987,49 @@ void Client::connectToIconServer()
 
 void Client::setIgnore( const QString& user, bool ignore )
 {
-	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_IGNORE );
+	OContact item = ssiManager()->findItem( user,  ROSTER_IGNORE );
 	if ( item && !ignore )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from ignore list" << endl;
-		this->modifySSIItem( item, Oscar::SSI() );
+		this->modifyContactItem( item, OContact() );
 	}
 	else if ( !item && ignore )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QList<TLV>() );
-		this->modifySSIItem( Oscar::SSI(), s );
+		OContact s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QList<TLV>() );
+		this->modifyContactItem( OContact(), s );
 	}
 }
 
 void Client::setVisibleTo( const QString& user, bool visible )
 {
-	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_VISIBLE );
+	OContact item = ssiManager()->findItem( user,  ROSTER_VISIBLE );
 	if ( item && !visible )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from visible list" << endl;
-		this->modifySSIItem( item, Oscar::SSI() );
+		this->modifyContactItem( item, OContact() );
 	}
 	else if ( !item && visible )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QList<TLV>() );
-		this->modifySSIItem( Oscar::SSI(), s );
+		OContact s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QList<TLV>() );
+		this->modifyContactItem( OContact(), s );
 	}
 }
 
 void Client::setInvisibleTo( const QString& user, bool invisible )
 {
-	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_INVISIBLE );
+	OContact item = ssiManager()->findItem( user,  ROSTER_INVISIBLE );
 	if ( item && !invisible )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from invisible list" << endl;
-		this->modifySSIItem( item, Oscar::SSI() );
+		this->modifyContactItem( item, OContact() );
 	}
 	else if ( !item && invisible )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QList<TLV>() );
-		this->modifySSIItem( Oscar::SSI(), s );
+		OContact s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QList<TLV>() );
+		this->modifyContactItem( OContact(), s );
 	}
 }
 

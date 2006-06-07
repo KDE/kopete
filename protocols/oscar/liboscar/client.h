@@ -34,11 +34,12 @@
 #include "userdetails.h"
 #include "oscartypeclasses.h"
 #include "oscarmessage.h"
+#include "contact.h"
 
 class Connection;
 class StageOneLoginTask;
 class StageTwoLoginTask;
-class SSIManager;
+class ContactManager;
 class UserDetails;
 class QString;
 class Task;
@@ -147,10 +148,10 @@ public:
 	void renameGroup( const QString& oldGroupName, const QString& newGroupName );
 
 	/**
-	 * Modify an SSI item on the SSI list
+	 * Modify an Contact item on the Contact list
 	 * \param item the item to send to the server
 	 */
-	void modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem );
+	void modifyContactItem( const OContact& oldItem, const OContact& newItem );
 
 	/**
 	 * Change a contact's group on the server
@@ -324,8 +325,8 @@ public:
 	/** Have we logged in yet? */
 	bool isActive() const;
 
-	/** Accessor for the SSI Manager */
-	SSIManager* ssiManager() const;
+	/** Accessor for the Contact Manager */
+	ContactManager* ssiManager() const;
 
 	/** The current user's user ID */
 	QString userId() const;
@@ -370,8 +371,8 @@ signals:
 	/** We have our own user info */
 	void haveOwnInfo();
 
-	/** We have our SSI list */
-	void haveSSIList();
+	/** We have our Contact list */
+	void haveContactList();
 
 	/** a user is online. */
 	void userIsOnline( const QString& );

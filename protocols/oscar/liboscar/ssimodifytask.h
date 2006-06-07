@@ -23,7 +23,8 @@
 
 #include "task.h"
 #include "oscartypes.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
+#include "contact.h"
 
 
 class Buffer;
@@ -90,33 +91,33 @@ public:
 	//! Add an item to the SSI list
 	//! Should be used for other items we don't have explicit functions for
 	//! like icon hashs, privacy settings, non-icq contacts, etc.
-	bool addItem( const SSI& item );
+	bool addItem( const OContact& item );
 	
 	//! Remove an item from the SSI list
 	//! Should be used for other items we don't have explicit functions for
 	//! like icon hashs, privacy settings, non-icq contacts, etc.
-	bool removeItem( const SSI& item );
+	bool removeItem( const OContact& item );
 	
 	//! Modify an item on the SSI list
 	//! Should be used for other items we don't have explicit functions for
 	//! like icon hashs, privacy settings, non-icq contacts, etc.
-	bool modifyItem( const SSI& oldItem, const SSI& newItem );
+	bool modifyItem( const OContact& oldItem, const OContact& newItem );
 	
 protected:
 	virtual bool forMe( const Transfer* transfer ) const;
 
 private:
 	//! Handle the acknowledgement from the server
-	void handleSSIAck();
+	void handleContactAck();
 	
 	//! Construct and send the packet to send to the server
-	void sendSSIUpdate();
+	void sendContactUpdate();
 	
 	//! Helper function to change the group on the server
 	void changeGroupOnServer();
 	
-	//! Update the SSI Manager with the new data
-	void updateSSIManager();
+	//! Update the Contact Manager with the new data
+	void updateContactManager();
 	
 	//! Send the SSI edit start packet
 	void sendEditStart();
@@ -124,16 +125,16 @@ private:
 	//! Send the SSI edit end packet
 	void sendEditEnd();
 	
-	void addItemToBuffer( Oscar::SSI item, Buffer* buffer );
+	void addItemToBuffer( OContact item, Buffer* buffer );
 	
 private:
-	SSI m_oldItem;
-	SSI m_newItem;
-	SSI m_groupItem;
+	OContact m_oldItem;
+	OContact m_newItem;
+	OContact m_groupItem;
 	OperationType m_opType;
 	OperationSubject m_opSubject;
 	WORD m_id;
-	SSIManager* m_ssiManager;
+	ContactManager* m_ssiManager;
 	
 };
 

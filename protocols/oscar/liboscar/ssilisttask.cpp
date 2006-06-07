@@ -20,16 +20,16 @@
 #include <kdebug.h>
 #include "connection.h"
 #include "oscarutils.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "transfer.h"
 #include <QList>
 
 SSIListTask::SSIListTask( Task* parent ) : Task( parent )
 {
 	m_ssiManager = client()->ssiManager();
-	QObject::connect( this, SIGNAL( newContact( const Oscar::SSI& ) ), m_ssiManager, SLOT( newContact( const Oscar::SSI& ) ) );
-	QObject::connect( this, SIGNAL( newGroup( const Oscar::SSI& ) ), m_ssiManager, SLOT( newGroup( const Oscar::SSI& ) ) );
-	QObject::connect( this, SIGNAL( newItem( const Oscar::SSI& ) ), m_ssiManager, SLOT( newItem( const Oscar::SSI& ) ) );
+	QObject::connect( this, SIGNAL( newContact( const OContact& ) ), m_ssiManager, SLOT( newContact( const OContact& ) ) );
+	QObject::connect( this, SIGNAL( newGroup( const OContact& ) ), m_ssiManager, SLOT( newGroup( const OContact& ) ) );
+	QObject::connect( this, SIGNAL( newItem( const OContact& ) ), m_ssiManager, SLOT( newItem( const OContact& ) ) );
 }
 
 
@@ -65,14 +65,14 @@ bool SSIListTask::take( Transfer* transfer )
 		if ( st->snacSubtype() == 0x0006 )
 		{
 			setTransfer( transfer );
-			handleSSIListReply();
+			handleContactListReply();
 			setTransfer( 0 );
 			return true;
 		}
 		else
 		{
 			//this should be subtype F for which we do nothing
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring SNAC 0x13, 0x0F - Our SSI List is up to date" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring SNAC 0x13, 0x0F - Our Contact List is up to date" << endl;
 			setSuccess( 0, QString::null );
 			return true;
 		}
@@ -83,10 +83,10 @@ bool SSIListTask::take( Transfer* transfer )
 
 void SSIListTask::onGo()
 {
-	checkSSITimestamp();
+	checkContactTimestamp();
 }
 
-void SSIListTask::handleSSIListReply()
+void SSIListTask::handleContactListReply()
 {
 	QList<TLV> tlvList;
 
@@ -115,7 +115,7 @@ void SSIListTask::handleSSIListReply()
 		if ( itemType == ROSTER_CONTACT )
 			itemName = Oscar::normalize( itemName );
 		
-		Oscar::SSI s( itemName, groupId, itemId, itemType, tlvList );
+		OContact s( itemName, groupId, itemId, itemType, tlvList );
 		
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got SSI Item: " << s.toString() << endl;
 		if ( s.type() == ROSTER_GROUP )
@@ -144,7 +144,7 @@ void SSIListTask::handleSSIListReply()
 
 }
 
-void SSIListTask::checkSSITimestamp()
+void SSIListTask::checkContactTimestamp()
 {
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Checking the timestamp of the SSI list" << endl;
 	FLAP f = { 0x02, 0, 0 };

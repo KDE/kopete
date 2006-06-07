@@ -23,7 +23,7 @@
 #include "oscarutils.h"
 #include "transfer.h"
 #include "userdetails.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 
 
 using namespace Oscar;

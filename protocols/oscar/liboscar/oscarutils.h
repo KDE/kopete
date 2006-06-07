@@ -24,6 +24,7 @@
 #include <qstring.h>
 #include "oscartypes.h"
 #include "buffer.h"
+#include "contact.h"
 
 namespace Oscar
 {
@@ -43,7 +44,7 @@ KOPETE_EXPORT TLV findTLV( const QList<TLV>&, int type );
  * Update TLVs of SSI item from TLV list if necessary
  * \return true if something was updated
  */
-KOPETE_EXPORT bool updateTLVs( SSI& item, const QList<TLV>& list );
+KOPETE_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
 
 /**
  * Parse the character array for validness and a version string

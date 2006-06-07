@@ -1,6 +1,5 @@
 /*
 	Kopete Oscar Protocol
-	ssimanager.h - SSI management
 
 	Copyright ( c ) 2004 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 	Copyright ( c ) 2004 Matt Rogers <mattr@kde.org>
@@ -19,43 +18,44 @@
 	*************************************************************************
 */
 
-#ifndef SSIMANAGER_H
-#define SSIMANAGER_H
+#ifndef CONTACTMANAGER_H
+#define CONTACTMANAGER_H
 
 #include <qobject.h>
 #include <QList>
 
 #include "oscartypes.h"
 #include "oscartypeclasses.h"
+#include "contact.h"
 
 using namespace Oscar;
 
-class SSIManagerPrivate;
+class ContactManagerPrivate;
 
 /**
-SSI management
+Contact management
 
 @author Gustavo Pichorim Boiko
 @author Matt Rogers
 */
-class KOPETE_EXPORT SSIManager : public QObject
+class KOPETE_EXPORT ContactManager : public QObject
 {
         Q_OBJECT
 public:
-	SSIManager( QObject* parent = 0 );
+	ContactManager( QObject* parent = 0 );
 
-	~SSIManager();
+	~ContactManager();
 	
-	/** Clear the internal SSI list */
+	/** Clear the internal Contact list */
 	void clear();
 	
-	/** Get the next buddy id for an SSI item */
+	/** Get the next buddy id for an Contact item */
 	WORD nextContactId();
 	
-	/** Get the next group id for an SSI item */
+	/** Get the next group id for an Contact item */
 	WORD nextGroupId();
 
-	/** Get the number of items in the SSI list. */
+	/** Get the number of items in the Contact list. */
 	WORD numberOfItems() const;
 
 	/** Get the timestamp the list was last modified */
@@ -64,73 +64,73 @@ public:
 	/** Set the timestamp of the last modification time */
 	void setLastModificationTime( DWORD lastTime );
 
-	/** Set the parameters we should use for SSI */
+	/** Set the parameters we should use for Contact */
 	void setParameters( WORD maxContacts, WORD maxGroups, WORD maxVisible,
 	                    WORD maxInvisible, WORD maxIgnore );
 
 	/**
-	 * Load an existing list from SSI objects.
-	 * The current SSI list will be overwritten and it's contents
+	 * Load an existing list from Contact objects.
+	 * The current Contact list will be overwritten and it's contents
 	 * replaced with the data from the new list
 	 */
-	void loadFromExisting( const QList<Oscar::SSI*>& newList );
+	void loadFromExisting( const QList<OContact*>& newList );
 	
-	bool hasItem( const Oscar::SSI& item ) const;
+	bool hasItem( const OContact& item ) const;
 
-	Oscar::SSI findGroup( const QString& group ) const;
-	Oscar::SSI findGroup( int groupId ) const;
+	OContact findGroup( const QString& group ) const;
+	OContact findGroup( int groupId ) const;
 	
 
-	Oscar::SSI findContact( const QString& contact, const QString& group ) const;
-	Oscar::SSI findContact( const QString& contact ) const;
-	Oscar::SSI findContact( int contactId ) const;
+	OContact findContact( const QString& contact, const QString& group ) const;
+	OContact findContact( const QString& contact ) const;
+	OContact findContact( int contactId ) const;
 	
-	Oscar::SSI findItemForIcon( QByteArray iconHash ) const;
-	Oscar::SSI findItemForIconByRef( int ) const;
+	OContact findItemForIcon( QByteArray iconHash ) const;
+	OContact findItemForIconByRef( int ) const;
 	
-	Oscar::SSI findItem( const QString &contact, int type ) const;
+	OContact findItem( const QString &contact, int type ) const;
 
-	QList<Oscar::SSI> groupList() const;
-	QList<Oscar::SSI> contactList() const;
-	QList<Oscar::SSI> visibleList() const;
-	QList<Oscar::SSI> invisibleList() const;
-	QList<Oscar::SSI> contactsFromGroup( const QString& group ) const;
-	QList<Oscar::SSI> contactsFromGroup( int groupId ) const;
+	QList<OContact> groupList() const;
+	QList<OContact> contactList() const;
+	QList<OContact> visibleList() const;
+	QList<OContact> invisibleList() const;
+	QList<OContact> contactsFromGroup( const QString& group ) const;
+	QList<OContact> contactsFromGroup( int groupId ) const;
 	
-	Oscar::SSI visibilityItem() const;
+	OContact visibilityItem() const;
 
 	bool listComplete() const;
 
 public slots:
-	bool newGroup( const Oscar::SSI& group );
-	bool updateGroup( const Oscar::SSI& oldGroup, const Oscar::SSI& newGroup );
-	bool removeGroup( const Oscar::SSI& group );
+	bool newGroup( const OContact& group );
+	bool updateGroup( const OContact& oldGroup, const OContact& newGroup );
+	bool removeGroup( const OContact& group );
 	bool removeGroup( const QString& group );
 
-	bool newContact( const Oscar::SSI& contact );
-	bool updateContact( const Oscar::SSI& oldContact, const Oscar::SSI& newContact );
-	bool removeContact( const Oscar::SSI& contact );
+	bool newContact( const OContact& contact );
+	bool updateContact( const OContact& oldContact, const OContact& newContact );
+	bool removeContact( const OContact& contact );
 	bool removeContact( const QString& contact );
 	
-	bool newItem( const Oscar::SSI& item );
-	bool removeItem( const Oscar::SSI& item );
+	bool newItem( const OContact& item );
+	bool removeItem( const OContact& item );
 
 signals:
 	
 	//! Emitted when we've added a new contact to the list
-	void contactAdded( const Oscar::SSI& );
+	void contactAdded( const OContact& );
 	
 	//! Emitted when we've updated a contact in the list
-	void contactUpdated( const Oscar::SSI& );
+	void contactUpdated( const OContact& );
 	
 	//! Emitted when we've removed a contact from the list
 	void contactRemoved( const QString& contactName );
 	
 	//! Emitted when we've added a new group to the list
-	void groupAdded( const Oscar::SSI& );
+	void groupAdded( const OContact& );
 	
 	//! Emitted when we've updated a group in the list
-	void groupUpdated( const Oscar::SSI& );
+	void groupUpdated( const OContact& );
 	
 	//! Emitted when we've removed a group from the ssi list
 	void groupRemoved( const QString& groupName );
@@ -138,8 +138,8 @@ signals:
 	void modifyError( const QString& error );
 	
 private:
-	SSIManagerPrivate* d;
-	Oscar::SSI m_dummyItem;
+	ContactManagerPrivate* d;
+	OContact m_dummyItem;
 };
 
 #endif

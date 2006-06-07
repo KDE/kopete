@@ -17,7 +17,7 @@
 */
 
 #include "ssiauthtask.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "transfer.h"
 #include "buffer.h"
 #include "connection.h"
@@ -113,7 +113,7 @@ void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 	Transfer* t = createTransfer( f, s, buf );
 	send( t );
 	
-	Oscar::SSI contact = m_manager->findContact( uin );
+	OContact contact = m_manager->findContact( uin );
 	if ( contact )
 		contact.setWaitingAuth( true );
 }
@@ -176,7 +176,7 @@ void SSIAuthTask::handleAuthReplied()
 		
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
 	
-	Oscar::SSI sender = m_manager->findContact( uin );
+	OContact sender = m_manager->findContact( uin );
 	if ( sender )
 		sender.setWaitingAuth( false );
 		

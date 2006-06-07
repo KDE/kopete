@@ -15,7 +15,7 @@ bytestream.cpp oscarclientstream.cpp safedelete.cpp stream.cpp oscarconnector.cp
 oscarbytestream.cpp buffer.cpp md5.c logintask.cpp aimlogintask.cpp icqlogintask.cpp 
 closeconnectiontask.cpp rateclassmanager.cpp serverversionstask.cpp rateinfotask.cpp 
 errortask.cpp locationrightstask.cpp profiletask.cpp blmlimitstask.cpp 
-servicesetuptask.cpp icbmparamstask.cpp ssimanager.cpp rateclass.cpp rateclass.h 
+servicesetuptask.cpp icbmparamstask.cpp contactmanager.cpp contact.cpp rateclass.cpp rateclass.h 
 prmparamstask.cpp ssiparamstask.cpp ssilisttask.cpp ssiactivatetask.cpp 
 clientreadytask.cpp senddcinfotask.cpp sendidletimetask.cpp ownuserinfotask.cpp 
 connection.cpp onlinenotifiertask.cpp userdetails.cpp ssimodifytask.cpp 

@@ -21,7 +21,7 @@
 
 #include <task.h>
 
-class SSIManager;
+class ContactManager;
 
 /**
 @author Kopete Developers
@@ -52,7 +52,7 @@ private:
 	void handleAddedMessage();
 	
 private:
-	SSIManager* m_manager;
+	ContactManager* m_manager;
 };
 
 #endif

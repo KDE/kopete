@@ -21,7 +21,7 @@
 #include "task.h"
 
 /**
-A fire and forget task to send the activation SNAC for the SSI list to the server.
+A fire and forget task to send the activation SNAC for the Contact list to the server.
  
 @author Matt Rogers
 */

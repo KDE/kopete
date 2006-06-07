@@ -38,7 +38,7 @@ SSIActivateTask::~SSIActivateTask()
 
 void SSIActivateTask::onGo()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending SSI activate" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending Contact activate" << endl;
 	FLAP f = { 0x02, 0, 0 } ;
 	SNAC s = { 0x0013, 0x0007, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
