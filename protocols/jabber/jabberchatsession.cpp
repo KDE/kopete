@@ -336,7 +336,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
  void JabberChatSession::slotSendFile()
       {
-              QPtrList<Kopete::Contact>contacts = members();
+              QList<Kopete::Contact*>contacts = members();
               static_cast<JabberContact *>(contacts.first())->sendFile();
       }
 

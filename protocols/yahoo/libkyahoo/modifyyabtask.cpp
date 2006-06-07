@@ -89,6 +89,7 @@ void ModifyYABTask::connectFailed( int i)
 {
 	client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), 
 			QString( "%1 - %2").arg(i).arg(dynamic_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
+}
 
 void ModifyYABTask::connectSucceeded()
 {
