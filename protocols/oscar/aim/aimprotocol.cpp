@@ -39,6 +39,8 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 
+#include "contact.h"
+
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
 K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim" ) )
@@ -285,7 +287,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 		ssiType = serializedData["ssi_type"].toUInt();
 	}
 
-	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 
 	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );

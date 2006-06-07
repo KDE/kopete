@@ -24,6 +24,8 @@
 //Added by qt3to4:
 #include <QList>
 
+class OContact;
+
 class OscarEncodingSelectionDialog;
 class KAction;
 class KToggleAction;
@@ -54,7 +56,7 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString::null, const Oscar::SSI& ssiItem = Oscar::SSI()  );
+	            const QString& icon = QString::null, const OContact& ssiItem = OContact()  );
 	virtual ~ICQContact();
 
 	/**

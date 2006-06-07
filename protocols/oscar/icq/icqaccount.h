@@ -68,7 +68,7 @@ public:
 	void setUserProfile( const QString &profile );
 
 protected:
-	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
+	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
 	virtual QString sanitizedMessage( const QString& message );
 

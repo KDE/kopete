@@ -25,7 +25,7 @@
 #include "kopetepasswordedaccount.h"
 #include "oscartypeclasses.h"
 #include "oscarcontact.h"
-
+#include "contact.h"
 
 namespace Kopete
 {
@@ -38,6 +38,7 @@ class Connection;
 class OscarContact;
 class OscarAccountPrivate;
 class QTextCodec;
+class OContact;
 
 class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
 {
@@ -142,7 +143,7 @@ protected:
 	 * @param parentContact the parent metacontact
 	 * @return whether the creation succeeded or not
 	 */
-	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem ) = 0;
+	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) = 0;
 
 	virtual QString sanitizedMessage( const QString& message ) = 0;
 
@@ -159,12 +160,12 @@ protected slots:
 
 	virtual void messageReceived( const Oscar::Message& message );
 
-	void ssiGroupAdded( const Oscar::SSI& );
-	void ssiGroupUpdated( const Oscar::SSI& ) {}
-	void ssiGroupRemoved( const Oscar::SSI& ) {}
-	void ssiContactAdded( const Oscar::SSI& );
-	void ssiContactUpdated( const Oscar::SSI& );
-	void ssiContactRemoved( const Oscar::SSI& ) {}
+	void ssiGroupAdded( const OContact& );
+	void ssiGroupUpdated( const OContact& ) {}
+	void ssiGroupRemoved( const OContact& ) {}
+	void ssiContactAdded( const OContact& );
+	void ssiContactUpdated( const OContact& );
+	void ssiContactRemoved( const OContact& ) {}
 
 	/* slots for receiving typing notifications, and notify the appropriate OscarContact */
 	void userStartedTyping( const QString & contact );

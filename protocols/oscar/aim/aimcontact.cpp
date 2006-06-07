@@ -39,7 +39,7 @@
 #include "client.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 
 #include "aimprotocol.h"
 #include "aimuserinfo.h"
@@ -47,7 +47,7 @@
 #include "aimaccount.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
-                        const QString& icon, const Oscar::SSI& ssiItem )
+                        const QString& icon, const OContact& ssiItem )
 : OscarContact(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());

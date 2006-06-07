@@ -47,7 +47,7 @@
 
 #include "oscarutils.h"
 #include "client.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 
 
 const DWORD AIM_ONLINE = 0x0;
@@ -234,7 +234,7 @@ AIMAccount::~AIMAccount()
 {
 }
 
-OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem )
+OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
 {
 	AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
 	if ( !ssiItem.alias().isEmpty() )
@@ -414,15 +414,15 @@ void AIMAccount::slotBuddyIconChanged()
 
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 
-	SSIManager* ssi = engine()->ssiManager();
-	Oscar::SSI item = ssi->findItemForIconByRef( 1 );
+	ContactManager* ssi = engine()->ssiManager();
+	OContact item = ssi->findItemForIconByRef( 1 );
 
 	if ( photoPath.isEmpty() )
 	{
 		if ( item )
 		{
 			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Removing icon hash item from ssi" << endl;
-			Oscar::SSI s(item);
+			OContact s(item);
 
 			//remove hash and alias
 			QList<TLV> tList( item.tlvList() );
@@ -432,7 +432,7 @@ void AIMAccount::slotBuddyIconChanged()
 
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
-			engine()->modifySSIItem( s, item );
+			engine()->modifyContactItem( s, item );
 		}
 	}
 	else
@@ -460,15 +460,15 @@ void AIMAccount::slotBuddyIconChanged()
 			QList<Oscar::TLV> list;
 			list.append( t );
 
-			Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
+			OContact s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
 
 			//item is a non-valid ssi item, so the function will add an item
 			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
-			engine()->modifySSIItem( item, s );
+			engine()->modifyContactItem( item, s );
 		}
 		else
 		{ //found an item
-			Oscar::SSI s(item);
+			OContact s(item);
 			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi." << endl;
 			QList<TLV> tList( item.tlvList() );
 
@@ -487,7 +487,7 @@ void AIMAccount::slotBuddyIconChanged()
 
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
-			engine()->modifySSIItem( s, item );
+			engine()->modifyContactItem( s, item );
 		}
 		iconFile.close();
 	}
@@ -548,14 +548,14 @@ void AIMAccount::disconnected( DisconnectReason reason )
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
 	myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
 
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for( ; it.current(); ++it )
+	QHash<QString, Kopete::Contact*> contactList = contacts();
+	foreach( Kopete::Contact* c, contactList.values() )
 	{
-		OscarContact* oc = dynamic_cast<OscarContact*>( it.current() );
+		OscarContact* oc = static_cast<OscarContact*>( c );
 		if ( oc )
 			oc->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
 	}
-
+	
 	OscarAccount::disconnected( reason );
 }
 
@@ -764,8 +764,8 @@ void AIMAccount::slotSetVisiblility()
 		OscarVisibilityDialog::ContactMap contactMap;
 		QMap<QString, QString> revContactMap;
 
-		Q3ValueList<Oscar::SSI> contactList = engine()->ssiManager()->contactList();
-		Q3ValueList<Oscar::SSI>::const_iterator it, cEnd = contactList.constEnd();
+		QList<OContact> contactList = engine()->ssiManager()->contactList();
+		QList<OContact>::const_iterator it, cEnd = contactList.constEnd();
 
 		for ( it = contactList.constBegin(); it != cEnd; ++it )
 		{
@@ -857,8 +857,8 @@ void AIMAccount::setPrivacySettings( int privacy )
 
 void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
 {
-	SSIManager* ssi = engine()->ssiManager();
-	Oscar::SSI item = ssi->findItem( QString::null, ROSTER_VISIBILITY );
+	ContactManager* ssi = engine()->ssiManager();
+	OContact item = ssi->findItem( QString::null, ROSTER_VISIBILITY );
 
 	Q3ValueList<Oscar::TLV> tList;
 
@@ -868,17 +868,17 @@ void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
 	if ( !item )
 	{
 		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Adding new privacy TLV item" << endl;
-		Oscar::SSI s( QString::null, 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
-		engine()->modifySSIItem( item, s );
+		OContact s( QString::null, 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
+		engine()->modifyContactItem( item, s );
 	}
 	else
 	{ //found an item
-		Oscar::SSI s(item);
+		OContact s(item);
 
 		if ( Oscar::updateTLVs( s, tList ) == true )
 		{
 			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating privacy TLV item" << endl;
-			engine()->modifySSIItem( item, s );
+			engine()->modifyContactItem( item, s );
 		}
 	}
 }

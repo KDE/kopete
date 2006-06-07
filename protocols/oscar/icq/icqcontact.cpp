@@ -51,10 +51,11 @@
 #include "client.h"
 #include "oscarutils.h"
 #include "oscarencodingselectiondialog.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
+#include "contact.h"
 
 ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const Oscar::SSI& ssiItem )
+						const QString& icon, const OContact& ssiItem )
 : OscarContact( account, name, parent, icon, ssiItem )
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());

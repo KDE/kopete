@@ -35,7 +35,7 @@
 #include "icquserinfo.h"
 #include "oscarsettings.h"
 #include "oscarutils.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 
 #include "icqcontact.h"
 #include "icqprotocol.h"
@@ -198,10 +198,10 @@ void ICQAccount::disconnected( DisconnectReason reason )
 	ICQ::Presence presOffline = ICQ::Presence( ICQ::Presence::Offline, presence().visibility() );
 	myself()->setOnlineStatus( presOffline.toOnlineStatus() );
 
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for( ; it.current(); ++it )
+	QHash<QString, Kopete::Contact*> contactList = contacts();
+	foreach( Kopete::Contact* c, contactList )
 	{
-		OscarContact* oc = dynamic_cast<OscarContact*>( it.current() );
+		OscarContact* oc = static_cast<OscarContact*>( c );
 		if ( oc )
 		{
 			if ( oc->ssiItem().waitingAuth() )
@@ -242,8 +242,8 @@ void ICQAccount::slotSetVisiblility()
 		//temporary map for faster lookup of contactId
 		QMap<QString, QString> revContactMap;
 		
-		Q3ValueList<Oscar::SSI> contactList = engine()->ssiManager()->contactList();
-		Q3ValueList<Oscar::SSI>::const_iterator it, cEnd = contactList.constEnd();
+		QList<OContact> contactList = engine()->ssiManager()->contactList();
+		QList<OContact>::const_iterator it, cEnd = contactList.constEnd();
 		
 		for ( it = contactList.constBegin(); it != cEnd; ++it )
 		{
@@ -381,7 +381,7 @@ void ICQAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 }
 
-OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem )
+OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
 {
 	ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
 	if ( !ssiItem.alias().isEmpty() )
@@ -432,15 +432,15 @@ void ICQAccount::slotBuddyIconChanged()
 	
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	
-	SSIManager* ssi = engine()->ssiManager();
-	Oscar::SSI item = ssi->findItemForIconByRef( 1 );
+	ContactManager* ssi = engine()->ssiManager();
+	OContact item = ssi->findItemForIconByRef( 1 );
 	
 	if ( photoPath.isEmpty() )
 	{
 		if ( item )
 		{
 			kDebug(14153) << k_funcinfo << "Removing icon hash item from ssi" << endl;
-			Oscar::SSI s(item);
+			OContact s(item);
 			
 			//remove hash and alias
 			Q3ValueList<TLV> tList( item.tlvList() );
@@ -454,7 +454,7 @@ void ICQAccount::slotBuddyIconChanged()
 			
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
-			engine()->modifySSIItem( s, item );
+			engine()->modifyContactItem( s, item );
 		}
 	}
 	else
@@ -488,15 +488,15 @@ void ICQAccount::slotBuddyIconChanged()
 			list.append( t );
 			list.append( t2 );
 			
-			Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
+			OContact s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
 			
 			//item is a non-valid ssi item, so the function will add an item
 			kDebug(14153) << k_funcinfo << "setting new icon item" << endl;
-			engine()->modifySSIItem( item, s );
+			engine()->modifyContactItem( item, s );
 		}
 		else
 		{ //found an item
-			Oscar::SSI s(item);
+			OContact s(item);
 			kDebug(14153) << k_funcinfo << "modifying old item in ssi." << endl;
 			Q3ValueList<TLV> tList( item.tlvList() );
 			
@@ -524,7 +524,7 @@ void ICQAccount::slotBuddyIconChanged()
 			
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
-			engine()->modifySSIItem( s, item );
+			engine()->modifyContactItem( s, item );
 		}
 		iconFile.close();
 	}

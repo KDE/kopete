@@ -52,6 +52,7 @@
 #include "kopetecontactproperty.h"
 
 #include "oscartypeclasses.h"
+#include "contact.h"
 
 #include "icqaccount.h"
 #include "icqcontact.h"
@@ -777,7 +778,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
     if ( serializedData.contains( "ssi_type" ) )
 	ssiType = serializedData["ssi_type"].toUInt();
 
-	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	ICQContact *c = new ICQContact( static_cast<ICQAccount*>(account), contactId, metaContact, QString::null, item );
 	return c;

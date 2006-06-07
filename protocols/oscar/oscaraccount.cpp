@@ -55,7 +55,7 @@
 #include "oscarutils.h"
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "oscarlistnonservercontacts.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
@@ -136,14 +136,14 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const Oscar::SSI& ) ),
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const OContact& ) ),
 	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
-	                     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const Oscar::SSI& ) ),
-	                     this, SLOT( ssiGroupUpdated( const Oscar::SSI& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const Oscar::SSI& ) ),
-	                     this, SLOT( ssiContactUpdated( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const OContact& ) ),
+	                     this, SLOT( ssiGroupAdded( const OContact& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const OContact& ) ),
+	                     this, SLOT( ssiGroupUpdated( const OContactI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const OContact& ) ),
+	                     this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
@@ -193,12 +193,12 @@ void OscarAccount::processSSIList()
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 
-	SSIManager* listManager = d->engine->ssiManager();
+	ContactManager* listManager = d->engine->ssiManager();
 
     //first add groups
-	Q3ValueList<SSI> groupList = listManager->groupList();
-	Q3ValueList<SSI>::const_iterator git = groupList.constBegin();
-	Q3ValueList<SSI>::const_iterator listEnd = groupList.constEnd();
+	QList<OContact> groupList = listManager->groupList();
+	QList<OContact>::const_iterator git = groupList.constBegin();
+	QList<OContact>::const_iterator listEnd = groupList.constEnd();
 	//the protocol dictates that there is at least one group that has contacts
 	//so i don't have to check for an empty group list
 
@@ -211,13 +211,13 @@ void OscarAccount::processSSIList()
 	}
 
 	//then add contacts
-	Q3ValueList<SSI> contactList = listManager->contactList();
-	Q3ValueList<SSI>::const_iterator bit = contactList.constBegin();
-	Q3ValueList<SSI>::const_iterator blistEnd = contactList.constEnd();
+	QList<OContact> contactList = listManager->contactList();
+	QList<OContact>::const_iterator bit = contactList.constBegin();
+	QList<OContact>::const_iterator blistEnd = contactList.constEnd();
 	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Adding " << contactList.count() << " contacts to contact list" << endl;
 	for ( ; bit != blistEnd; ++bit )
 	{
-		SSI groupForAdd = listManager->findGroup( ( *bit ).gid() );
+		OContact groupForAdd = listManager->findGroup( ( *bit ).gid() );
 		Kopete::Group* group;
 		if ( groupForAdd.isValid() )
 			group = kcl->findGroup( groupForAdd.name() ); //add if not present
@@ -229,7 +229,7 @@ void OscarAccount::processSSIList()
 		OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *bit ).name()] );
 		if ( oc )
 		{
-			Oscar::SSI item = ( *bit );
+			OContact item = ( *bit );
 			oc->setSSIItem( item );
 		}
 		else
@@ -240,14 +240,14 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                  this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::connect( listManager, SIGNAL( contactAdded( const Oscar::SSI& ) ),
-	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
-	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
-	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
-	QObject::connect( listManager, SIGNAL( groupUpdated( const Oscar::SSI& ) ),
-	                  this, SLOT( ssiGroupUpdated( const Oscar::SSI& ) ) );
-	QObject::connect( listManager, SIGNAL( contactUpdated( const Oscar::SSI& ) ),
-	                  this, SLOT( ssiContactUpdated( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( contactAdded( const OContact& ) ),
+	                  this, SLOT( ssiContactAdded( const OContact& ) ) );
+	QObject::connect( listManager, SIGNAL( groupAdded( const OContact& ) ),
+	                  this, SLOT( ssiGroupAdded( const OContact& ) ) );
+	QObject::connect( listManager, SIGNAL( groupUpdated( const OContact& ) ),
+	                  this, SLOT( ssiGroupUpdated( const OContact& ) ) );
+	QObject::connect( listManager, SIGNAL( contactUpdated( const OContact& ) ),
+	                  this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
 	/** Commented for compilation purposes. 
     Q3Dict<Kopete::Contact> nonServerContacts = contacts();
@@ -475,7 +475,7 @@ void OscarAccount::setBuddyIcon( KUrl url )
 
 bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
 {
-	SSIManager* listManager = d->engine->ssiManager();
+	ContactManager* listManager = d->engine->ssiManager();
 	if ( !listManager->findGroup( groupName ) )
 	{
 		if ( !autoAddGroup )
@@ -497,7 +497,7 @@ bool OscarAccount::addContactToSSI( const QString& contactName, const QString& g
 
 bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup )
 {
-	SSIManager* listManager = d->engine->ssiManager();
+	ContactManager* listManager = d->engine->ssiManager();
 	if ( !listManager->findGroup( newGroupName ) )
 	{
 		if ( !autoAddGroup )
@@ -558,11 +558,11 @@ bool OscarAccount::createContact(const QString &contactId,
 	Q3ValueList<TLV> dummyList;
 	if ( parentContact->isTemporary() )
 	{
-		SSI tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );
+		OContact tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );
 		return createNewContact( contactId, parentContact, tempItem );
 	}
 
-	SSI ssiItem = d->engine->ssiManager()->findContact( contactId );
+	OContact ssiItem = d->engine->ssiManager()->findContact( contactId );
 	if ( ssiItem )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Have new SSI entry. Finding contact" << endl;
@@ -616,7 +616,7 @@ bool OscarAccount::createContact(const QString &contactId,
 	}
 }
 
-void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
+void OscarAccount::ssiContactAdded( const OContact& item )
 {
 	if ( d->addContactMap.contains( Oscar::normalize( item.name() ) ) )
 	{
@@ -634,7 +634,7 @@ void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Got addition for contact we weren't waiting on" << endl;
 }
 
-void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
+void OscarAccount::ssiGroupAdded( const OContact& item )
 {
 	//check the contact add queue for any contacts matching the
 	//group name we just added
@@ -665,7 +665,7 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 	}
 }
 
-void OscarAccount::ssiContactUpdated( const Oscar::SSI& item )
+void OscarAccount::ssiContactUpdated( const OContact& item )
 {
 	Kopete::Contact* contact = contacts()[item.name()];
 	if ( !contact )
@@ -775,6 +775,14 @@ void OscarAccount::slotSendBuddyIcon()
 		QByteArray imageData = iconFile.readAll();
 		engine()->sendBuddyIcon( imageData );
 	}
+}
+
+void OscarAccount::slotGoOffline()
+{
+}
+
+void OscarAccount::slotGoOnline()
+{
 }
 
 QString OscarAccount::getFLAPErrorMessage( int code )

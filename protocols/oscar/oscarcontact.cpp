@@ -39,13 +39,14 @@
 
 #include "oscaraccount.h"
 #include "client.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
+#include "contact.h"
 #include "oscarutils.h"
 
 #include <assert.h>
 
 OscarContact::OscarContact( Kopete::Account* account, const QString& name,
-                            Kopete::MetaContact* parent, const QString& icon, const SSI& ssiItem )
+                            Kopete::MetaContact* parent, const QString& icon, const OContact& ssiItem )
 : Kopete::Contact( account, name, parent, icon )
 {
 	mAccount = static_cast<OscarAccount*>(account);
@@ -72,19 +73,19 @@ void OscarContact::serialize(QMap<QString, QString> &serializedData,
 
 bool OscarContact::isOnServer() const
 {
-    SSIManager* serverList = mAccount->engine()->ssiManager();
-    SSI ssi = serverList->findContact( Oscar::normalize( contactId() ) );
+    ContactManager* serverList = mAccount->engine()->ssiManager();
+	OContact ssi = serverList->findContact( Oscar::normalize( contactId() ) );
 
 	return ( ssi && ssi.type() != 0xFFFF );
 }
 
-void OscarContact::setSSIItem( const Oscar::SSI& ssiItem )
+void OscarContact::setSSIItem( const OContact& ssiItem )
 {
 	m_ssiItem = ssiItem;
 	emit updatedSSI();
 }
 
-Oscar::SSI OscarContact::ssiItem() const
+OContact OscarContact::ssiItem() const
 {
 	return m_ssiItem;
 }
@@ -142,9 +143,9 @@ void OscarContact::sync(unsigned int flags)
 	if ( flags & Kopete::Contact::MovedBetweenGroup == Kopete::Contact::MovedBetweenGroup )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
-		SSIManager* ssiManager = mAccount->engine()->ssiManager();
+		ContactManager* ssiManager = mAccount->engine()->ssiManager();
 		
-		SSI oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
+		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
 		Kopete::Group* newGroup = metaContact()->groups().first();
 		if ( newGroup->displayName() == oldGroup.name() )
 			return; //we didn't really move
