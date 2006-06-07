@@ -1,7 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
-    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
     Copyright (C) 2002      by James Grant
     Copyright (c) 2002      by Stefan Gehn           <metz AT gehn.net>
@@ -311,10 +311,8 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
+	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), QKeySequence(Key_Return) ,
 		this, SLOT( slotSendMessage() ), coll, "chat_send" );
-	//Default to 'Return' for sending messages
-	chatSend->setShortcut( QKeySequence(Key_Return) );
 	chatSend->setEnabled( false );
 
  	KStdAction::save ( this, SLOT(slotChatSave()), coll );
