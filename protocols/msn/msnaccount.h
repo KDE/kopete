@@ -60,7 +60,6 @@ public:
 	 * change the publicName to this new name
 	 */
 	void setPublicName( const QString &name );
-	void setPersonalMessage(const Kopete::StatusMessage &message );
 
 	/**
 	 * Returns the address of the MSN server

@@ -297,28 +297,17 @@ MSNNotifySocket *MSNAccount::notifySocket()
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason)
 {
 	kdDebug( 14140 ) << k_funcinfo << status.description() << endl;
-
-	// HACK: When changing song, do don't anything while connected
-	if( reason.contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
-		return;
+	
+	// FIXME: When changing song, do don't anything while connected
+	//if( reason.  contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
+	//	return;
 
 	// Only send personal message when logged.
 	if( m_notifySocket && m_notifySocket->isLogged() )
 	{
 		// Only update the personal/status message, don't change the online status
 		// since it's the same.
-		if( reason.contains("[Music]") )
-		{
-			QString personalMessage = reason.section("[Music]", 1);
-			setPersonalMessage( MSNProtocol::PersonalMessageMusic, personalMessage );
-
-			// Don't send un-needed status change.
-			return;
-		}
-		else
-		{
-			setPersonalMessage( MSNProtocol::PersonalMessageNormal, reason );
-		}
+		setStatusMessage( reason );
 	}
 
 	if(status.status()== Kopete::OnlineStatus::Offline)
@@ -338,7 +327,16 @@ void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kop
 
 void MSNAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
-	setPersonalMessage( statusMessage );
+	if ( m_notifySocket )
+	{
+		myself()->setStatusMessage( statusMessage );
+		m_notifySocket->changePersonalMessage( statusMessage );
+	}
+	/*  Eh,  if we can't change the display name, don't let make the user think it has changed
+	else if(type == MSNProtocol::PersonalMessageNormal) // Normal personalMessage, not a dynamic one that need formatting.
+	{
+		slotPersonalMessageChanged( personalMessage );
+	}*/
 }
 
 void MSNAccount::slotStartChat()
@@ -493,20 +491,6 @@ void MSNAccount::setPublicName( const QString &publicName )
 	{
 		m_notifySocket->changePublicName( publicName, QString::null );
 	}
-}
-
-void MSNAccount::setPersonalMessage( const Kopete::StatusMessage &statusMessage )
-{
-	if ( m_notifySocket )
-	{
-		myself()->setStatusMessage( statusMessage );
-		m_notifySocket->changePersonalMessage( statusMessage );
-	}
-	/*  Eh,  if we can't change the display name, don't let make the user think it has changed
-	else if(type == MSNProtocol::PersonalMessageNormal) // Normal personalMessage, not a dynamic one that need formatting.
-	{
-		slotPersonalMessageChanged( personalMessage );
-	}*/
 }
 
 void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupGuid )
