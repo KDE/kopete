@@ -648,6 +648,8 @@ void YahooAccount::sendFile( YahooContact *to, const KURL &url )
 		url.fileName(), file.size(), to->userId(), Kopete::FileTransferInfo::Outgoing );
 	m_session->sendFile( transfer->info().transferId(), to->userId(), QString(), url );
 	
+	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
+	
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );	
 }
 
@@ -1370,6 +1372,7 @@ void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QSt
 	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
 	
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
+	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
 }
 
 void YahooAccount::slotReceiveFileRefused( const Kopete::FileTransferInfo& info )
@@ -1410,6 +1413,21 @@ void YahooAccount::slotFileTransferError( unsigned int transferId, int error, co
 	
 	t->slotError( error, desc );
 	m_fileTransfers.remove( transferId );
+}
+
+void YahooAccount::slotFileTransferResult( KIO::Job *job )
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	const Kopete::Transfer *t = dynamic_cast< const Kopete::Transfer * >( job );
+	
+	if( !t )
+		return;
+	
+	if( t->error() == KIO::ERR_USER_CANCELED )
+	{
+		m_session->cancelFileTransfer( t->info().transferId() );
+		m_fileTransfers.remove( t->info().transferId() );
+	}
 }
 
 void YahooAccount::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )

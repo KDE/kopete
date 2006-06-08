@@ -305,7 +305,12 @@ Q_OBJECT
 		/**
 		 * Reject a file offered by a buddy
 		 */
-		void rejectFile( const QString &userId, KURL remoteURL );		
+		void rejectFile( const QString &userId, KURL remoteURL );
+
+		/**
+		 * The user canceled the filetransfer
+		 */
+		void cancelFileTransfer( unsigned int transferId );	
 
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
@@ -550,6 +555,10 @@ Q_OBJECT
 		 * An error occured during the filetransfer
 		 */
 		void fileTransferError( unsigned int, int, const QString & );
+		/**
+		 * filetransfer canceled
+		 */
+		void fileTransferCanceled( unsigned int );
 		/**
 		 * A buddy is trying to send us a file
 		 */

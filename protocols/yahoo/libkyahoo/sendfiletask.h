@@ -53,13 +53,14 @@ private slots:
 	void connectSucceeded();
 	void connectFailed( int );
 	void transmitData();
+	void canceled( unsigned int );
 
 private:
 	QString m_msg;
 	QString m_target;
 	KURL m_url;
 	QFile m_file;
-	int m_transferId;
+	unsigned int m_transferId;
 	unsigned int m_transmitted;
 	KNetwork::KStreamSocket *m_socket;
 };

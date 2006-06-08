@@ -329,6 +329,8 @@ void Client::sendFile( unsigned int transferId, const QString &to, const QString
 	QObject::connect( sft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
 	QObject::connect( sft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
 
+	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), sft, SLOT(canceled( unsigned int )) );
+
 	sft->setTarget( to );
 	sft->setMessage( msg );
 	sft->setFileUrl( url );
@@ -343,6 +345,7 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KURL r
 	QObject::connect( rft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
 	QObject::connect( rft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
 	QObject::connect( rft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), rft, SLOT(canceled( unsigned int )) );
 
 	rft->setRemoteUrl( remoteURL );
 	rft->setLocalUrl( localURL );
@@ -366,6 +369,11 @@ void Client::rejectFile( const QString &userId, KURL remoteURL )
 	rft->setUserId( userId );
 	rft->setType( ReceiveFileTask::FileTransfer7Reject );
 	rft->go( true );
+}
+
+void Client::cancelFileTransfer( unsigned int transferId )
+{
+	emit fileTransferCanceled( transferId );
 }
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )

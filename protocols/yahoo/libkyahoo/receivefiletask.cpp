@@ -78,6 +78,8 @@ void ReceiveFileTask::onGo()
 	
 		send( t );
 		break;
+	default:
+		delete t;
 	}
 }
 
@@ -218,6 +220,17 @@ void ReceiveFileTask::setType( Type type )
 void ReceiveFileTask::setUserId( const QString &userId )
 {
 	m_userId = userId;
+}
+
+void ReceiveFileTask::canceled( unsigned int id )
+{
+	if( m_transferId != id )
+		return;
+	
+	if( m_transferJob )
+		m_transferJob->kill();
+	
+	setSuccess( false );
 }
 
 #include "receivefiletask.moc"
