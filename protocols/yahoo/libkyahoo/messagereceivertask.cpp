@@ -82,6 +82,12 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 	QString msg = t->firstParam( 14 );
 	QString sysmsg = t->firstParam( 16 );
 
+	if( !sysmsg.isEmpty() )
+	{
+		client()->notifyError( "Server message received: ", sysmsg, Client::Error );
+		return;
+	}
+
 	if( msg.isEmpty() )
 	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a empty message. Dropped." << endl;
