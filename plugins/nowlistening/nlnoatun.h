@@ -24,17 +24,19 @@
 #ifndef NLNOATUN_H
 #define NLNOATUN_H
 
-#include <dcopclient.h>
+class QDBusInterface;
+struct QDBusInterfacePtr;
 
 class NLNoatun : public NLMediaPlayer
 {
 	public:
-		NLNoatun( DCOPClient *client );
+		NLNoatun();
 		virtual void update();
- 	protected:
-		DCOPCString find() const;
-		QString currentProperty( DCOPCString appname, QString property ) const;
-		DCOPClient *m_client;
+ 	private:
+		QString currentProperty(const QString &property);
+		QDBusInterface *client();
+
+		QDBusInterfacePtr *m_client;
 };
 
 #endif

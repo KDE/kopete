@@ -24,14 +24,21 @@
 #include <kdebug.h>
 #include <QString>
 
+#include <dbus/qdbus.h>
+
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
 
-NLamaroK::NLamaroK( DCOPClient *client ) : NLMediaPlayer()
+NLamaroK::NLamaroK() : NLMediaPlayer()
 {
-	m_client = client;
 	m_type = Audio;
 	m_name = "amaroK";
+	m_client = new QDBusInterfacePtr("org.kde.amaroK", "/player");
+}
+
+QDBusInterface *NLamaroK::client()
+{
+	return m_client->interface();
 }
 
 void NLamaroK::update()
@@ -39,64 +46,27 @@ void NLamaroK::update()
 	m_playing = false;
 	m_newTrack = false;
 	QString newTrack;
-	QByteArray data, replyData;
-	DCOPCString replyType;
 	QString result;
 
-	// see if amaroK is  registered with DCOP
-	if ( !m_client->isApplicationRegistered( DCOPCString("amarok") ) )
-	{
-		kDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
+	// TODO: Port to amarok 2.0 D-BUS interface
+	if( !client()->isValid() )
 		return;
-	}
 
-	// see if it's playing
-	// use status() call first, if not supported (amaroK 1.0 or earlier), use isPlaying
-	
-	if ( !m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("status()"), data,
-	      replyType, replyData ) )
+	// See if amaroK is currently playing.
+	QDBusReply<int> statusReply = client()->call("status");
+	if( statusReply.isSuccess() )
 	{
-		kDebug( 14307 ) << k_funcinfo << " DCOP status() returned error, falling back to isPlaying()." << endl;
-		if ( !m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("isPlaying()"), data,
-					replyType, replyData ) )
-		{
-			kDebug( 14307 ) << k_funcinfo << " DCOP error on Amarok." << endl;
-		}
-		else
-		{
-			QDataStream reply( &replyData,QIODevice::ReadOnly );
-			reply.setVersion(QDataStream::Qt_3_1);
-			if ( replyType == "bool" ) {
-				reply >> m_playing;
-			}
-		}
-	}
-	else
-	{
-		int status = 0;
-
-		QDataStream reply( &replyData,QIODevice::ReadOnly );
-		reply.setVersion(QDataStream::Qt_3_1);
-		if ( replyType == "int" ) {
-			reply >> status;
-			kDebug( 14307 ) << k_funcinfo << "Amarok status()=" << status << endl;
-		}
-
-		if ( status ) 
+		if( statusReply.value() )
 		{
 			m_playing = true;
 		}
 	}
 
-	if ( m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("title()"), data,
-				replyType, replyData ) )
+	// Fetch title
+	QDBusReply<QString> newTrackReply = client()->call("title");
+	if( newTrackReply.isSuccess() )
 	{
-		QDataStream reply( &replyData,QIODevice::ReadOnly );
-		reply.setVersion(QDataStream::Qt_3_1);
-
-		if ( replyType == "QString" ) {
-			reply >> newTrack;
-		}
+		newTrack = newTrackReply.value();
 	}
 
 	if ( newTrack != m_track )
@@ -105,26 +75,18 @@ void NLamaroK::update()
 		m_track = newTrack;
 	}
 
-	if ( m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("album()"), data,
-				replyType, replyData ) )
+	// Fetch album
+	QDBusReply<QString> albumReply = client()->call("album");
+	if( albumReply.isSuccess() )
 	{
-		QDataStream reply( &replyData,QIODevice::ReadOnly );
-		reply.setVersion(QDataStream::Qt_3_1);
-
-		if ( replyType == "QString" ) {
-			reply >> m_album;
-		}
+		m_album = albumReply.value();
 	}
 
-	if ( m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("artist()"), data,
-				replyType, replyData ) )
+	// Fetch artist
+	QDBusReply<QString> artistReply = client()->call("artist");
+	if( artistReply.isSuccess() )
 	{
-		QDataStream reply( &replyData,QIODevice::ReadOnly );
-		reply.setVersion(QDataStream::Qt_3_1);
-
-		if ( replyType == "QString" ) {
-			reply >> m_artist;
-		}
+		m_artist = artistReply.value();
 	}
 }
 

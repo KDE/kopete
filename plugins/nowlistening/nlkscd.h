@@ -24,15 +24,18 @@
 #ifndef NLKSCD_H
 #define NLKSCD_H
 
-#include <dcopclient.h>
+struct QDBusInterfacePtr;
+class QDBusInterface;
 
 class NLKscd : public NLMediaPlayer
 {
 	public:
-		NLKscd( DCOPClient *client );
+		NLKscd();
 		virtual void update();
-	protected:
-		DCOPClient *m_client;
+	private:
+		QDBusInterface *client();
+
+		QDBusInterfacePtr *m_client;
 	
 };
 

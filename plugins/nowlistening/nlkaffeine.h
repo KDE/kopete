@@ -25,15 +25,18 @@
 #ifndef NLKAFFEINE_H
 #define NLKAFFEINE_H
 
-#include <dcopclient.h>
+struct QDBusInterfacePtr;
+class QDBusInterface;
 
 class NLKaffeine : public NLMediaPlayer
 {
 	public:
-		NLKaffeine( DCOPClient *client );
+		NLKaffeine();
 		virtual void update();
-	protected:
-		DCOPClient *m_client;
+	private:
+		QDBusInterface *client();
+
+		QDBusInterfacePtr *m_client;
 };
 
 #endif

@@ -26,15 +26,19 @@
 #ifndef NLJUK_H
 #define NLJUK_H
 
-#include <dcopclient.h>
+struct QDBusInterfacePtr;
+class QDBusInterface;
 
 class NLJuk : public NLMediaPlayer
 {
 	public:
-		NLJuk( DCOPClient *client );
+		NLJuk();
 		virtual void update();
-	protected:
-		DCOPClient *m_client;
+
+	private:
+		QDBusInterface *client();
+
+		QDBusInterfacePtr *m_client;
 };
 
 #endif
