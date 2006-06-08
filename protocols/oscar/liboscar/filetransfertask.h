@@ -35,8 +35,8 @@ public:
 
 	//! Task implementation
 	void onGo();
-	bool forMe( const Transfer* transfer );
 	bool take( Transfer* transfer );
+	bool take( int type, QByteArray cookie );
 
 private:
 	void sendFile();
@@ -45,7 +45,7 @@ private:
 	Action m_action;
 	QFile m_localFile;
 	QString m_contact;
-	DWORD m_seq;
+	QByteArray m_cookie;
 };
 
 #endif

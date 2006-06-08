@@ -1315,7 +1315,9 @@ void Client::sendFile( const QString& contact, const QString& filePath )
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
 		return;
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, filePath );
+	//it may seem odd that I'm not making it a child of root, but there's a reason.
+	//messagereceiver needs easy access to filetransfers.
+	FileTransferTask *ft = new FileTransferTask( d->messageReceiverTask, contact, filePath );
 	ft->go( true );
 }
 

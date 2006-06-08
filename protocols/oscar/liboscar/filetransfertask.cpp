@@ -55,58 +55,33 @@ void FileTransferTask::onGo()
 	sendFile();
 }
 
-bool FileTransferTask::forMe( const Transfer* transfer )
+bool FileTransferTask::take( Transfer* transfer )
 {
-	//TODO
-/*	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
-	if ( !st )
-		return false;
-
-	if ( st->snacRequest() != m_seq )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sequences don't match" << endl;
-		return false;
-	}
-
-	if ( st->snacService() == 0x0010 )
-	{
-		switch( st->snacSubtype() )
-		{
-		case 0x0003:
-		case 0x0005:
-		case 0x0007:
-			return true;
-			break;
-		default:
-			return false;
-			break;
-		}
-	}*/
-
+	Q_UNUSED(transfer);
 	return false;
 }
 
-bool FileTransferTask::take( Transfer* transfer )
+bool FileTransferTask::take( int type, QByteArray cookie )
 {
-	if ( !forMe( transfer ) )
+	if ( cookie != m_cookie )
 		return false;
 
-	//TODO
-/*	SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
-	if ( !st )
-		return false;
-
-	setTransfer( transfer );
-	if ( st->snacSubtype() == 0x0003 )
-		handleUploadResponse();
-	else if ( st->snacSubtype() == 0x0005 )
-		handleAIMBuddyIconResponse();
-	else
-		handleICQBuddyIconResponse();
-
-	setSuccess( 0, QString::null );
-	setTransfer( 0 );*/
-	return true; //can't happen
+	//ooh, ooh, something happened!
+	switch( type )
+	{
+	 case 0: //TODO: direct transfer ain't good enough
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we don't handle requests yet!" << endl;
+		break;
+	 case 1: //TODO: delete self
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we don't handle cancels yet!" << endl;
+		break;
+	 case 2: //TODO: tell user
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we don't handle accepts yet!" << endl;
+		break;
+	 default:
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "bad request type: " << type << endl;
+	}
+	return true;
 }
 
 void FileTransferTask::sendFile()
@@ -116,8 +91,7 @@ void FileTransferTask::sendFile()
 
 	//set up transfer
 	FLAP f = { 0x02, 0, 0 };
-	m_seq = client()->snacSequence();
-	SNAC s = { 0x0004, 0x0006, 0x0000, m_seq };
+	SNAC s = { 0x0004, 0x0006, 0x0000, client()->snacSequence() };
 	//this part prolly needs more organisation
 	Buffer* b = new Buffer;
 	//we get to make up an icbm cookie!
@@ -126,7 +100,7 @@ void FileTransferTask::sendFile()
 	b->addDWord( cookie1 );
 	b->addDWord( cookie2 );
 	//save the cookie for later
-	QByteArray cookie = b->buffer(); //FIXME: safe without write?
+	m_cookie = b->buffer();
 	//channel id
 	b->addWord( 2 );
 	//buddy info
@@ -134,7 +108,7 @@ void FileTransferTask::sendFile()
 	b->addString( m_contact.toLatin1() );
 
 	//now create the rendezvous tlv
-	b->addTLV( makeRendezvousRequest( cookie ) );
+	b->addTLV( makeRendezvousRequest( m_cookie ) );
 
 	//we're done, send it off!
 	Transfer* t = createTransfer( f, s, b );
