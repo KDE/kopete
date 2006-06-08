@@ -23,12 +23,13 @@ set(kopete_qq_PART_SRCS
 kde4_automoc(${kopete_qq_PART_SRCS})
 
 kde4_add_ui_files(kopete_qq_PART_SRCS
-qqaddui.ui
+qqeditaccountui.ui
 )
 
 kde4_add_ui_files(kopete_qq_PART_SRCS
-qqaccountpreferences.ui
+qqaddui.ui
 )
+
 
 kde4_add_plugin(kopete_qq ${kopete_qq_PART_SRCS})
 
@@ -42,3 +43,4 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_qq )
 ########### install files ###############
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_qq.desktop )
+

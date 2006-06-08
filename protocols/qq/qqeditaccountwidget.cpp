@@ -23,7 +23,7 @@
 #include <kdebug.h>
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
-#include "ui_qqaccountpreferences.h"
+#include "ui_qqeditaccountui.h"
 #include "qqaccount.h"
 #include "qqprotocol.h"
 
@@ -32,8 +32,11 @@ QQEditAccountWidget::QQEditAccountWidget( QWidget* parent, Kopete::Account* acco
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 				kDebug(14210) << k_funcinfo << endl;
-	m_preferencesWidget = new Ui::QQAccountPreferences();
+	m_preferencesWidget = new Ui::QQEditAccountUI();
 	m_preferencesWidget->setupUi( this );
+
+	/* TODO: load the default value from configuration */
+
 }
 
 QQEditAccountWidget::~QQEditAccountWidget()
@@ -44,10 +47,10 @@ QQEditAccountWidget::~QQEditAccountWidget()
 Kopete::Account* QQEditAccountWidget::apply()
 {
 	QString accountName;
-	if ( m_preferencesWidget->m_acctName->text().isEmpty() )
+	if ( m_preferencesWidget->m_login->text().isEmpty() )
 		accountName = "QQ Account";
 	else
-		accountName = m_preferencesWidget->m_acctName->text();
+		accountName = m_preferencesWidget->m_login->text();
 	
 	if ( account() )
 		// FIXME: ? account()->setAccountLabel(accountName);
@@ -55,6 +58,7 @@ Kopete::Account* QQEditAccountWidget::apply()
 	else
 		setAccount( new QQAccount( QQProtocol::protocol(), accountName ) );
 
+	kDebug(14141) << k_funcinfo << accountName << endl;
 	return account();
 }
 

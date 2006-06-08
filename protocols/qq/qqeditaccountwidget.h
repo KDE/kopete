@@ -24,7 +24,7 @@
 
 class QVBoxLayout;
 namespace Kopete { class Account; }
-namespace Ui { class QQAccountPreferences; }
+namespace Ui { class QQEditAccountUI; }
 
 /**
  * A widget for editing this protocol's accounts
@@ -48,7 +48,7 @@ public:
 	virtual bool validateData();
 protected:
 	Kopete::Account *m_account;
-	Ui::QQAccountPreferences *m_preferencesWidget;
+	Ui::QQEditAccountUI *m_preferencesWidget;
 };
 
 #endif
