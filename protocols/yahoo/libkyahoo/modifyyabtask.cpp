@@ -34,20 +34,22 @@ using namespace KNetwork;
 ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	m_socket = 0;
 }
 
 ModifyYABTask::~ModifyYABTask()
 {
+	delete m_socket;
 }
 
 void ModifyYABTask::onGo()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KBufferedSocket* yahooSocket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
-	connect( yahooSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
-	connect( yahooSocket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
+	m_socket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
+	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
-	yahooSocket->connect();
+	m_socket->connect();
 }
 
 void ModifyYABTask::setAction( Action action )
@@ -87,14 +89,14 @@ void ModifyYABTask::setEntry( const YABEntry &entry )
 
 void ModifyYABTask::connectFailed( int i)
 {
+	m_socket->close();
 	client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), 
-			QString( "%1 - %2").arg(i).arg(dynamic_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
+			QString( "%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 }
 
 void ModifyYABTask::connectSucceeded()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
 
 	QString header = QString::fromLatin1("POST /yab/us?v=XM&prog=ymsgr&.intl=us&sync=1&tags=short&noclear=1& HTTP/1.1\r\n"
 			"Cookie: Y=%1; T=%2; C=%3 ;B=fckeert1kk1nl&b=2\r\n"
@@ -111,33 +113,38 @@ void ModifyYABTask::connectSucceeded()
 	stream.writeRawBytes( header.local8Bit(), header.length() );
 	stream.writeRawBytes( m_postData.utf8(), m_postData.utf8().size() );
 	
-	if( socket->writeBlock( buffer, buffer.size() ) )
+	if( m_socket->writeBlock( buffer, buffer.size() ) )
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;
 	else
 	{
-		client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), socket->errorString(), Client::Error );
+		client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
 		setSuccess( false );
 		return;
 	}
 	
-	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
+	connect( m_socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 }
 
 void ModifyYABTask::slotRead()
 {
-	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
-	QByteArray ar( socket->bytesAvailable() );
-	socket->readBlock ( ar.data (), ar.size () );
-	QString data( ar );
-	data = data.right( data.length() - data.find("<?xml") );
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	QByteArray ar( m_socket->bytesAvailable() );
+	m_socket->readBlock ( ar.data (), ar.size () );
+	QString buf( ar );
+	m_data += buf.right( buf.length() - buf.find("<?xml") );
 
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_data.find("</ab>") << endl;
+	if( m_data.find("</ab>") < 0 )
+		return;						// Need more data
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_data.find("</ab>") << endl;
 
+	m_socket->close();
 	QDomDocument doc;
 	QDomNodeList list;
 	QDomElement e;
 	uint it = 0;
 	
-	doc.setContent( data );
+	doc.setContent( m_data );
 
 	list = doc.elementsByTagName( "ab" );			// Get the Addressbook
 	for( it = 0; it < list.count(); it++ )	{
@@ -192,7 +199,7 @@ void ModifyYABTask::slotRead()
 		emit gotEntry( entry );
 	}
 
-
+	
 	setSuccess( true );
 }
 #include "modifyyabtask.moc"

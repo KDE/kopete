@@ -24,7 +24,10 @@
 struct KURL;
 namespace KIO	{ 
 	class Job;
-	class TransferJob; 
+	class TransferJob;
+}
+namespace KNetwork	{ 
+	class KBufferedSocket;
 }
 class QDomElement;
 
@@ -52,7 +55,9 @@ private slots:
 	void slotRead();
 private:
 	KIO::TransferJob *m_transferJob;
+	KNetwork::KBufferedSocket *m_socket;
 	QString m_postData;
+	QString m_data;
 	Action m_action;
 };
 
