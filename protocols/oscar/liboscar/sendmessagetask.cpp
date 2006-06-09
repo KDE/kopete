@@ -88,13 +88,13 @@ void SendMessageTask::onGo()
 		/* send a regular message */
 		switch ( m_message.type() )
 		{
-		case 1:
+		case 1: //plaintext
 			addChannel1Data( b );
 			break;
-		case 2:
+		case 2: //chatreq
 			addChannel2Data( b );
 			break;
-		case 4:
+		case 4: //url
 			addChannel4Data( b );
 			break;
 		}

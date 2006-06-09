@@ -23,29 +23,45 @@
 #include <qfile.h>
 #include "task.h"
 
+namespace KNetwork
+{
+	class KServerSocket;
+	class KBufferedSocket;
+}
+typedef KNetwork::KServerSocket KServerSocket;
+typedef KNetwork::KBufferedSocket KBufferedSocket;
 class Transfer;
 
 class FileTransferTask : public Task
 {
 Q_OBJECT
 public:
-	FileTransferTask( Task* parent );
+	/** create an incoming filetransfer */
+	FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b );
 	/** create an outgoing filetransfer */
 	FileTransferTask( Task* parent, const QString& contact, const QString &fileName );
+	~FileTransferTask();
 
 	//! Task implementation
 	void onGo();
 	bool take( Transfer* transfer );
 	bool take( int type, QByteArray cookie );
 
+public slots:
+	void slotReadyAccept(); //direct connection worked
+	void slotSocketError( int );
+
 private:
 	void sendFile();
 	TLV makeRendezvousRequest( QByteArray cookie );
+	void oftPrompt();
 	enum Action { Send, Receive };
 	Action m_action;
 	QFile m_localFile;
 	QString m_contact;
-	QByteArray m_cookie;
+	QByteArray m_cookie; //icbm cookie for this transfer
+	KServerSocket *m_ss; //listens for direct connections
+	KBufferedSocket *m_connection; //where we actually send file data
 };
 
 #endif
