@@ -71,6 +71,8 @@ void SendMessageTask::onGo()
 		
 		b->addDWord( cookie1 );
 		b->addDWord( cookie2 );
+
+		m_message.setIcbmCookie( b->buffer() ); //in case we need it later
 	}
 	else
 	{ //file msgs and automated responses already have a cookie
@@ -176,46 +178,22 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	}
 	tlv2buffer.addString( m_message.textArray() );
 
-	TLV tlv2( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
-	b->addTLV( tlv2 );
+	b->addTLV( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
 }
 
 void SendMessageTask::addChannel2Data( Buffer* b )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send type 2 message!" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send channel 2 message!" << endl;
 
 	Buffer tlv5buffer;
 	
 	tlv5buffer.addWord( 0 ); // 0 = request; other possibilities: 1 = cancel; 2 = accept;
-	//TODO: i hardcoded it for now, don't yet what to use the other stuff for
+	//TODO: if filetransfer message, find out what sort
 
-	// message id cookie. needs to be the same one as above, thus copy first eight bytes of buffer
-	Buffer* tmp = new Buffer(b->buffer(), 8);
-	tlv5buffer.addString( tmp->buffer(), 8 );
-	delete tmp;
+	// message id cookie. needs to be the same one as above
+	tlv5buffer.addString( m_message.icbmCookie() );
 	
-	/* send our client capability. oscardocs say this one means we support type 2 messages,
-	   ethereal say it means we support server relay. however, it's what most clients send,
-	   even official ones...
-	*/
-
-	// too lazy to think about byte order :)
-	tlv5buffer.addByte( 0x09 );
-	tlv5buffer.addByte( 0x46 );
-	tlv5buffer.addByte( 0x13 );
-	tlv5buffer.addByte( 0x49 );
-	tlv5buffer.addByte( 0x4C );
-	tlv5buffer.addByte( 0x7F );
-	tlv5buffer.addByte( 0x11 );
-	tlv5buffer.addByte( 0xD1 );
-	tlv5buffer.addByte( 0x82 );
-	tlv5buffer.addByte( 0x22 );
-	tlv5buffer.addByte( 0x44 );
-	tlv5buffer.addByte( 0x45 );
-	tlv5buffer.addByte( 0x53 );
-	tlv5buffer.addByte( 0x54 );
-	tlv5buffer.addByte( 0x00 );
-	tlv5buffer.addByte( 0x00 );
+	tlv5buffer.addGuid( oscar_caps[ m_message.messageType() == 3 ? CAP_SENDFILE : CAP_ICQSERVERRELAY ] );
 	
 	// These are optional, would probably be a god ide to start using them, though
 
@@ -229,32 +207,30 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 // 	tlv5buffer.addWord( 0x0002 ); // TLV Length
 // 	tlv5buffer.addWord( 0x0000 ); // TLV Data: listening port
 
-	// add TLV 0A: acktype (1 = normal message)
+	// add TLV 0A: request #
 	tlv5buffer.addWord( 0x000A ); // TLV Type
 	tlv5buffer.addWord( 0x0002 ); // TLV Length
-	tlv5buffer.addWord( 0x0001 ); // TLV Data: unknown, usually 1
+	tlv5buffer.addWord( 0x0001 ); // TLV Data
+
+	// add TLV 0F: unknown but always there
+	tlv5buffer.addWord( 0x000F );
+	tlv5buffer.addWord( 0x0000 );
 
 	// add TLV 0B: unknown
 // 	tlv5buffer.addWord( 0x000B ); // TLV Type
 // 	tlv5buffer.addWord( 0x0002 ); // TLV Length
 // 	tlv5buffer.addWord( 0x0000 ); // TLV Data: unknown
-
-	// add TLV 0F: unknown
-	tlv5buffer.addWord( 0x000F ); // TLV Type
-	tlv5buffer.addWord( 0x0000 ); // TLV Length
-	// TLV Data: empty
 	
+	//TODO: ft needs at least int. ip, port, and port check
 		
 	
 	/* now comes the important TLV 0x2711 */
-	
+	//TODO: add ft version of this
 	Buffer tlv2711buffer;
 	addRendezvousMessageData( &tlv2711buffer );
-	TLV tlv2711( 0x2711, tlv2711buffer.length(), tlv2711buffer.buffer() );
-	tlv5buffer.addTLV( tlv2711 );
+	tlv5buffer.addTLV( 0x2711, tlv2711buffer.length(), tlv2711buffer.buffer() );
 
-	TLV tlv5( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
-	b->addTLV( tlv5 );
+	b->addTLV( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
 }
 
 void SendMessageTask::addChannel4Data( Buffer* b )
@@ -284,7 +260,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	b->addByte( 0x0000 ); // unknown
 
 	// channel 2 counter: in auto response, use original message value. s/t else otherwise (most anythig will work)
-	int channel2Counter = 0xBEEF; // just some number for now
+	int channel2Counter;
 	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		channel2Counter = m_message.channel2Counter();
 	else
