@@ -135,7 +135,7 @@ void Client::login()
 	d->loginTask->setUserInfo(d->passportId, d->password);
 	connect(d->loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(loginRedirect( const QString&, quint16 )));
 	connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
-	d->loginTask->go(true);
+	d->loginTask->go(Task::AutoDelete);
 }
 
 void Client::setInitialOnlineStatus(Papillon::OnlineStatus::Status status)
@@ -151,7 +151,7 @@ void Client::changeOnlineStatus(Papillon::OnlineStatus::Status status)
 	// TODO: Set client features
 	// TODO: Do something about MsnObject
 	
-	presenceTask->go(true);
+	presenceTask->go(Task::AutoDelete);
 }
 
 void Client::loginRedirect(const QString &server, quint16 port)

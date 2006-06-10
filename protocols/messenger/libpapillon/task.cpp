@@ -19,6 +19,8 @@
 
 #include <QtCore/QTimer>
 
+#include <QtDebug>
+
 // Papillon includes
 #include "transfer.h"
 #include "safedelete.h"
@@ -109,9 +111,9 @@ const QString &Task::statusString() const
 	return d->statusString;
 }
 
-void Task::go(bool autoDelete)
+void Task::go(GoParameters args)
 {
-	d->autoDelete = autoDelete;
+	d->autoDelete = (args & AutoDelete);
 
 	onGo();
 }
@@ -142,7 +144,7 @@ void Task::safeDelete()
 
 void Task::onGo()
 {
-	qDebug( "ERROR: calling default NULL onGo() for this task, you should reimplement this!");
+	qDebug() << PAPILLON_FUNCINFO << "ERROR: calling default NULL onGo() for this task, you should reimplement this!";
 }
 
 void Task::onDisconnect()
@@ -187,7 +189,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	debug("Task::done()");
+	qDebug() << PAPILLON_FUNCINFO;
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -196,7 +198,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	debug("emitting finished");
+	qDebug() << PAPILLON_FUNCINFO << "emitting finished";
 	emit finished(this);
 	d->insignificant = false;
 
