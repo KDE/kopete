@@ -84,7 +84,7 @@
 		</xsd:annotation>
 		
 		<xsd:sequence>
-			<xsd:element name="MemberRole" type="msnab:MemberRole" />>
+			<xsd:element name="MemberRole" type="msnab:MemberRole" />
 			<xsd:element name="Members">
 				<xsd:complexType>
 					<xsd:sequence>
@@ -163,13 +163,15 @@
 			<xsd:extension base="msnab:BaseMember">
 				<xsd:sequence>
 					<xsd:element name="Id" type="xsd:string" />
-					<xsd:complexType name="DefiningService">
-						<xsd:sequence>
-							<xsd:element name="Id" type="xsd:integer" />
-							<xsd:element name="Type" type="xsd:string" />
-							<xsd:element name="ForeignId" />
-						</xsd:sequence>
-					</xsd:complexType>
+					<xsd:element name="DefiningService">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="Id" type="xsd:integer" />
+								<xsd:element name="Type" type="xsd:string" />
+								<xsd:element name="ForeignId" />
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
 					<xsd:element name="MaxRoleRecursionDepth" type="xsd:integer" />
 					<xsd:element name="MaxDegreesSeparation" type="xsd:integer" />
 				</xsd:sequence>
@@ -186,7 +188,7 @@
 		</xsd:annotation>
 		
 		<xsd:complexContent>
-			<xsd:extension name="msnab:BaseMember">
+			<xsd:extension base="msnab:BaseMember">
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

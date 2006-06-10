@@ -12,14 +12,14 @@
 	
 	<types>
 		<schema xmlns="http://www.w3.org/2001/XMLSchema">
-			<import namespace="http://www.msn.com/webservices/AddressBook"   schemaLocation="msnab_datatypes.xsd" />
+			<import namespace="http://www.msn.com/webservices/AddressBook" schemaLocation="msnab_datatypes.xsd" />
 			<import namespace="http://www.msn.com/webservices/AddressBook" schemaLocation="msnab_servicetypes.xsd" />
 		</schema>
 	</types>
 	
 	<message name="FindMembership">
-		<part name="ABHeader" element="msnab:ABHeaderType"/>
-		<part name="body" element="msnb:FindMembershipRequestType"/>
+		<part name="ABHeader" element="msnab:ABHeaderType" />
+		<part name="body" element="msnab:FindMembershipRequestType" />
 	</message>
 	
 	<message name="FindMembershipResponse">

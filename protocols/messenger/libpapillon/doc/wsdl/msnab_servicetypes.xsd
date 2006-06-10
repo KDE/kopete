@@ -59,7 +59,9 @@
 			</xsd:element>
 			<xsd:element name="ABAuthHeader">
 				<xsd:complexType>
-					<xsd:element name="ManagedGroupRequest" type="xsd:boolean" />
+					<xsd:sequence>
+						<xsd:element name="ManagedGroupRequest" type="xsd:boolean" />
+					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:sequence>
