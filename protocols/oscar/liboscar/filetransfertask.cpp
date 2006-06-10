@@ -31,13 +31,13 @@
 #include <typeinfo>
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0)
+:Task( parent ), m_action( Receive ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this )
 {
 	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "uh, we don't actually support receiving yet" << endl;
 }
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName )
-:Task( parent ), m_action( Send ), m_localFile( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0)
+:Task( parent ), m_action( Send ), m_localFile( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this )
 {
 }
 
@@ -54,11 +54,12 @@ FileTransferTask::~FileTransferTask()
 
 void FileTransferTask::onGo()
 {
+	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+	m_timer.start( 30 * 1000 );
 	if ( m_action == Receive )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "not implemented!" << endl;
-		//TODO: send cancel, at least
-		setSuccess( false );
+		doCancel();
 		return;
 	}
 	if ( ( ! m_localFile.exists() ) || m_contact.isEmpty() )
@@ -82,6 +83,7 @@ bool FileTransferTask::take( int type, QByteArray cookie )
 		return false;
 
 	//ooh, ooh, something happened!
+	m_timer.start();
 	switch( type )
 	{
 	 case 0: //TODO: direct transfer ain't good enough
@@ -103,6 +105,7 @@ bool FileTransferTask::take( int type, QByteArray cookie )
 void FileTransferTask::slotReadyAccept()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "**************************************" << endl;
+	m_timer.start();
 	m_connection = dynamic_cast<KBufferedSocket*>( m_ss->accept() );
 	delete m_ss; //free up the port so others can listen
 	m_ss = 0;
@@ -126,7 +129,7 @@ void FileTransferTask::slotSocketError( int e )
 void FileTransferTask::oftPrompt()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "not implemented yet! " << endl;
-	setSuccess( true );
+	doCancel();
 }
 
 void FileTransferTask::doCancel()
@@ -135,16 +138,27 @@ void FileTransferTask::doCancel()
 	makeFTMsg( msg );
 	msg.setReqType( 1 );
 
+	emit sendMessage( msg );
 	setSuccess( true );
 }
 
 void FileTransferTask::doAccept()
 {
+	m_timer.start();
 	Oscar::Message msg;
 	makeFTMsg( msg );
 	msg.setReqType( 2 );
+	emit sendMessage( msg );
 
 	//FIXME: uh, should probably connect or something.
+}
+
+void FileTransferTask::timeout()
+{
+	//nothing's happened for ages - assume we're dead.
+	//so tell the user, send off a cancel, and die
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	doCancel();
 }
 
 void FileTransferTask::sendFile()
@@ -162,6 +176,8 @@ void FileTransferTask::sendFile()
 		setSuccess(false);
 		return;
 	}
+	//reset our timeout in case getting the socket took a while
+	m_timer.start();
 
 	Buffer b;
 	//we get to make up an icbm cookie!

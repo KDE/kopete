@@ -21,6 +21,7 @@
 #define FILETRANSFERTASK_H
 
 #include <qfile.h>
+#include <qtimer.h>
 #include "task.h"
 #include "oscarmessage.h"
 
@@ -53,6 +54,7 @@ public slots:
 	void slotSocketError( int );
 	void doCancel();
 	void doAccept();
+	void timeout();
 
 signals:
 	void sendMessage( const Oscar::Message &msg );
@@ -68,6 +70,7 @@ private:
 	QByteArray m_cookie; //icbm cookie for this transfer
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
+	QTimer m_timer; //if we're idle too long, then give up
 };
 
 #endif
