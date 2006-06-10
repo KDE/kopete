@@ -17,7 +17,7 @@
 #ifndef TESTBEDACCOUNT_H
 #define TESTBEDACCOUNT_H
 
-#include <kopeteaccount.h>
+#include "kopetepasswordedaccount.h"
 #include "qqwebcamdialog.h"
 
 class KActionMenu;
@@ -34,9 +34,9 @@ class QQFakeServer;
 
 /**
  * This represents an account connected to the qq
- * @author Will Stephenson
+ * @author Hui Jin
 */
-class QQAccount : public Kopete::Account
+class QQAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 public:
@@ -64,7 +64,7 @@ public:
 	/**
 	 * 'Connect' to the qq server.  Only sets myself() online.
 	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
+	virtual void connectWithPassword( const QString &password );
 	/**
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */

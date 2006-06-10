@@ -58,7 +58,7 @@ Kopete::Account* QQEditAccountWidget::apply()
 	else
 		setAccount( new QQAccount( QQProtocol::protocol(), accountName ) );
 
-	kDebug(14141) << k_funcinfo << accountName << endl;
+	kDebug(14210) << k_funcinfo << accountName << endl;
 	return account();
 }
 

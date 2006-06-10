@@ -32,7 +32,7 @@
 
 
 QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
-: Kopete::Account ( parent, accountID )
+: Kopete::PasswordedAccount ( parent, accountID )
 {
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), QQContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
@@ -94,7 +94,7 @@ void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 	/* Not used in qq */
 }
 
-void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
+void QQAccount::connectWithPassword( const QString &password )
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
