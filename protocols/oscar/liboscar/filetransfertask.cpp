@@ -131,12 +131,24 @@ void FileTransferTask::oftPrompt()
 
 void FileTransferTask::doCancel()
 {
-	//TODO: send rendezvous cancel
+	Oscar::Message msg;
+	makeFTMsg( msg );
+	msg.setReqType( 1 );
+
+	setSuccess( true );
+}
+
+void FileTransferTask::doAccept()
+{
+	Oscar::Message msg;
+	makeFTMsg( msg );
+	msg.setReqType( 2 );
+
+	//FIXME: uh, should probably connect or something.
 }
 
 void FileTransferTask::sendFile()
 {
-	//FIXME: make totally sure this isn't called twice
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//listen for connections
 	m_ss = new KServerSocket( "5190", this ); //FIXME: don't hardcode port
@@ -151,68 +163,35 @@ void FileTransferTask::sendFile()
 		return;
 	}
 
-	//set up transfer
-	FLAP f = { 0x02, 0, 0 };
-	SNAC s = { 0x0004, 0x0006, 0x0000, client()->snacSequence() };
-	//this part prolly needs more organisation
-	Buffer* b = new Buffer;
+	Buffer b;
 	//we get to make up an icbm cookie!
 	DWORD cookie1 = KRandom::random();
 	DWORD cookie2 = KRandom::random();
-	b->addDWord( cookie1 );
-	b->addDWord( cookie2 );
+	b.addDWord( cookie1 );
+	b.addDWord( cookie2 );
 	//save the cookie for later
-	m_cookie = b->buffer();
-	//channel id
-	b->addWord( 2 );
-	//buddy info
-	b->addByte( m_contact.length() );
-	b->addString( m_contact.toLatin1() );
+	m_cookie = b.buffer();
 
-	//now create the rendezvous tlv
-	b->addTLV( makeRendezvousRequest( m_cookie ) );
+	//set up a message for sendmessagetask
+	Oscar::Message msg;
+	makeFTMsg( msg );
+
+	//now set the rendezvous info
+	msg.setReqType( 0 );
+	msg.setPort( 5190 ); //FIXME: hardcoding bad!
+	msg.setFile( m_localFile.size(), m_localFile.fileName() );
+	//FIXME: validate size, strip path from name
 
 	//we're done, send it off!
-	Transfer* t = createTransfer( f, s, b );
-	send( t );
+	emit sendMessage( msg );
 }
 
-//TODO: test this
-TLV FileTransferTask::makeRendezvousRequest( QByteArray cookie )
+void FileTransferTask::makeFTMsg( Oscar::Message &msg )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie size: " << cookie.size() << endl;
-	Buffer rbuf;
-	rbuf.addWord(0); //request type
-	//copy the cookie
-	rbuf.addString( cookie );
-
-	rbuf.addGuid( oscar_caps[CAP_SENDFILE] );
-	//now begins a bunch of tlvs
-	char v1[] = { 0, 1 };
-	rbuf.addTLV( 0xa, 2, v1 ); //request #
-	rbuf.addTLV( 0xf, 0, 0 ); //unknown
-	//rbuf.addTLV( 0xe, 2, "en" ); //language
-	//hardcoding my own ip is bad, bad, BAD!
-	char v2[] = { 70, 68, 183, 66 };
-	rbuf.addTLV( 0x2, 4, v2 ); //our ip FIXME
-	char v3[] = { ~ v2[0], ~ v2[1], ~ v2[2], ~ v2[3] };
-	rbuf.addTLV( 0x16, 4, v3 ); //ip check
-	rbuf.addTLV( 0x3, 4, v2 ); //our ip FIXME
-	char v4[] = { 0x14, 0x46 };
-	rbuf.addTLV( 0x5, 2, v4 ); //port FIXME: guessed 5190, is that always true?
-	char v5[] = { 0xeb, 0xb9 };
-	rbuf.addTLV( 0x17, 2, v5 ); //port check
-
-	Buffer fbuf; 
-	fbuf.addWord( 1 ); //multiple file flag (we only support 1 right now)
-	fbuf.addWord( 1 ); //file count
-	fbuf.addDWord( m_localFile.size() ); //file count (FIXME: are we sure it's nonzero?)
-	fbuf.addString( m_localFile.fileName().toLatin1() ); //FIXME: omit path
-	fbuf.addByte( 0 ); //make sure the name's null-terminated
-
-	rbuf.addTLV( 0x2711, fbuf.length(), fbuf.buffer() );
-
-	return TLV( 0x5, rbuf.length(), rbuf );
+	msg.setMessageType( 3 );
+	msg.setChannel( 2 );
+	msg.setIcbmCookie( m_cookie );
+	msg.setReceiver( m_contact );
 }
 
 #include "filetransfertask.moc"

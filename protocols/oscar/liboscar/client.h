@@ -466,6 +466,9 @@ protected slots:
 	/** received a message of some kind */
 	void receivedMessage( const Oscar::Message& msg );
 
+	/** filetransfer message needs sending */
+	void fileMessage( const Oscar::Message& msg );
+
 	void offlineUser( const QString&, const UserDetails& );
 
 	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );

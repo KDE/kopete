@@ -22,6 +22,7 @@
 
 #include <qfile.h>
 #include "task.h"
+#include "oscarmessage.h"
 
 namespace KNetwork
 {
@@ -51,10 +52,14 @@ public slots:
 	void slotReadyAccept(); //direct connection worked
 	void slotSocketError( int );
 	void doCancel();
+	void doAccept();
+
+signals:
+	void sendMessage( const Oscar::Message &msg );
 
 private:
 	void sendFile();
-	TLV makeRendezvousRequest( QByteArray cookie );
+	void makeFTMsg( Oscar::Message &msg ); //add required data to msg
 	void oftPrompt();
 	enum Action { Send, Receive };
 	Action m_action;

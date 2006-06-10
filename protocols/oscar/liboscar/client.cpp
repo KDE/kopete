@@ -556,6 +556,11 @@ void Client::receivedMessage( const Oscar::Message& msg )
 	}
 }
 
+void Client::fileMessage( const Oscar::Message& msg )
+{
+	sendMessage( msg );
+}
+
 void Client::requestAuth( const QString& contactid, const QString& reason )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0013 );
@@ -1318,6 +1323,8 @@ void Client::sendFile( const QString& contact, const QString& filePath )
 	//it may seem odd that I'm not making it a child of root, but there's a reason.
 	//messagereceiver needs easy access to filetransfers.
 	FileTransferTask *ft = new FileTransferTask( d->messageReceiverTask, contact, filePath );
+	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
+	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
 	ft->go( true );
 }
 
