@@ -50,6 +50,7 @@ public:
 public slots:
 	void slotReadyAccept(); //direct connection worked
 	void slotSocketError( int );
+	void doCancel();
 
 private:
 	void sendFile();

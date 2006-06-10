@@ -115,7 +115,7 @@ void FileTransferTask::slotReadyAccept()
 	}
 	//ok, so we have a direct connection. for filetransfers. cool.
 	//now we can finally send the first OFT packet.
-	void oftPrompt();
+	oftPrompt();
 }
 
 void FileTransferTask::slotSocketError( int e )
@@ -129,6 +129,10 @@ void FileTransferTask::oftPrompt()
 	setSuccess( true );
 }
 
+void FileTransferTask::doCancel()
+{
+	//TODO: send rendezvous cancel
+}
 
 void FileTransferTask::sendFile()
 {
@@ -188,9 +192,10 @@ TLV FileTransferTask::makeRendezvousRequest( QByteArray cookie )
 	rbuf.addTLV( 0xa, 2, v1 ); //request #
 	rbuf.addTLV( 0xf, 0, 0 ); //unknown
 	//rbuf.addTLV( 0xe, 2, "en" ); //language
-	char v2[] = { 127, 0, 0, 1 };
+	//hardcoding my own ip is bad, bad, BAD!
+	char v2[] = { 70, 68, 183, 66 };
 	rbuf.addTLV( 0x2, 4, v2 ); //our ip FIXME
-	char v3[] = { 0x80, 0xff, 0xff, 0xfe };
+	char v3[] = { ~ v2[0], ~ v2[1], ~ v2[2], ~ v2[3] };
 	rbuf.addTLV( 0x16, 4, v3 ); //ip check
 	rbuf.addTLV( 0x3, 4, v2 ); //our ip FIXME
 	char v4[] = { 0x14, 0x46 };
@@ -202,7 +207,7 @@ TLV FileTransferTask::makeRendezvousRequest( QByteArray cookie )
 	fbuf.addWord( 1 ); //multiple file flag (we only support 1 right now)
 	fbuf.addWord( 1 ); //file count
 	fbuf.addDWord( m_localFile.size() ); //file count (FIXME: are we sure it's nonzero?)
-	fbuf.addString( m_localFile.fileName().toLatin1() ); //name
+	fbuf.addString( m_localFile.fileName().toLatin1() ); //FIXME: omit path
 	fbuf.addByte( 0 ); //make sure the name's null-terminated
 
 	rbuf.addTLV( 0x2711, fbuf.length(), fbuf.buffer() );

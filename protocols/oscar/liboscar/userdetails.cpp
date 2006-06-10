@@ -26,6 +26,8 @@
 #include "oscarutils.h"
 #include "oscardebug.h"
 
+#define OSCAR_USERINFO_DEBUG
+
 using namespace Oscar;
 
 UserDetails::UserDetails()
