@@ -34,6 +34,7 @@
 QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 : Kopete::PasswordedAccount ( parent, accountID )
 {
+	m_notifySocket = 0L;
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), QQContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( QQProtocol::protocol()->qqOffline );
@@ -70,13 +71,19 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 
 void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
-	if ( status.status() == Kopete::OnlineStatus::Online &&
-			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
-		kDebug( 14210 ) << k_funcinfo << " go online " << endl;
-	else if ( status.status() == Kopete::OnlineStatus::Offline )
-		kDebug( 14210 ) << k_funcinfo << " go offline" << endl;
-	else if ( status.status() == Kopete::OnlineStatus::Away )
-		kDebug( 14210 ) << k_funcinfo << " go away" << endl;
+	if(status.status()== Kopete::OnlineStatus::Offline)
+		disconnect();
+	else if ( m_notifySocket )
+	{
+		// m_notifySocket->setStatus( status );
+		//setPersonalMessage( reason );
+	}
+	else
+	{
+		m_connectstatus = status;
+		/* TODO: use connect() later */
+		connect( status );
+	}
 }
 
 void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
@@ -86,7 +93,7 @@ void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 
 void QQAccount::connectWithPassword( const QString &password )
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << "connect with pass" << endl;
 	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
 	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
 			this, SLOT ( receivedMessage( const QString & ) ) );
@@ -141,5 +148,10 @@ void QQAccount::updateContactStatus()
 	}
 }
 
+void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
+{
+	kDebug ( 14210 ) << k_funcinfo << " connect now"  << endl;
+	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
+}
 
 #include "qqaccount.moc"

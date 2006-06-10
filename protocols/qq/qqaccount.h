@@ -47,6 +47,11 @@ public:
 	 */
 	virtual KActionMenu* actionMenu();
 
+	/** TODO: connect is used only for testing, once the kwalletd fixed.
+	 * all the code is going to move to connectWithPassword
+	 */
+	virtual void connect( const Kopete::OnlineStatus& /* initialStatus */ );
+
 	/**
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
 	 * Kopete::MetaContact
@@ -88,6 +93,13 @@ protected slots:
 	 * Show webcam.  Called by KActions and internally.
 	 */
 	void slotShowVideo();
+
+private:
+	int *m_notifySocket; // stub now.
+	// status which will be using for connecting
+	Kopete::OnlineStatus m_connectstatus;
+
+
 
 };
 
