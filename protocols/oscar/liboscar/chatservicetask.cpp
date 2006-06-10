@@ -345,7 +345,7 @@ void ChatServiceTask::parseChatMessage()
     omessage.setSender( sender );
     omessage.setTimestamp( QDateTime::currentDateTime() );
     omessage.setText( Oscar::Message::UTF8, msgText );
-    omessage.setType( 0x03 );
+    omessage.setChannel( 0x03 );
     omessage.setExchange( m_exchange );
     omessage.setChatRoom( m_room );
     emit newChatMessage( omessage );

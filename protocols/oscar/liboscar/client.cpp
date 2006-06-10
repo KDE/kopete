@@ -487,7 +487,7 @@ void Client::notifySocketError( int errCode, const QString& msg )
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
     Connection* c = 0L;
-    if ( msg.type() == 0x0003 )
+    if ( msg.channel() == 0x0003 )
     {
         c = d->connections.connectionForChatRoom( msg.exchange(), msg.chatRoom() );
         if ( !c )
@@ -514,9 +514,9 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 
 void Client::receivedMessage( const Oscar::Message& msg )
 {
-	if ( msg.type() == 2 && !msg.hasProperty( Oscar::Message::AutoResponse ) )
+	if ( msg.channel() == 2 && !msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
-		// type 2 message needs an autoresponse, regardless of type
+		// channel 2 message needs an autoresponse, regardless of type
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
 		if ( !c )
 			return;
@@ -830,7 +830,7 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting away message for " << contact << endl;
 	Oscar::Message msg;
-	msg.setType( 2 );
+	msg.setChannel( 2 );
 	msg.setReceiver( contact );
 	msg.addProperty( Oscar::Message::StatusMessageRequest );
 	switch ( contactStatus )

@@ -47,16 +47,16 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 
 void SendMessageTask::onGo()
 {
-	if ( m_message.textArray().isEmpty() && m_message.type() == 1 ) // at least channel 2 needs to send empty messages
-	{
+	if ( m_message.textArray().isEmpty() && m_message.channel() == 1 )
+	{ //channel 1 shouldn't be sending blanks
 		setError(-1, "No message to send");
 		return;
 	}
 
 	// Check Message to see what SNAC to use
 	int snacSubfamily = 0x0006;
-	if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
-	{ // an auto response is send for ack of channel 2 messages
+	if ( ( m_message.messageType() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	{ // an auto response is send for ack of chat messages
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
 		snacSubfamily = 0x000B;
 	}
@@ -64,7 +64,7 @@ void SendMessageTask::onGo()
 	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 
-	if ( snacSubfamily == 0x0006 )
+	if ( snacSubfamily == 0x0006 && m_message.messageType() != 3 )
 	{
 		DWORD cookie1 = KRandom::random();
 		DWORD cookie2 = KRandom::random();
@@ -73,11 +73,11 @@ void SendMessageTask::onGo()
 		b->addDWord( cookie2 );
 	}
 	else
-	{
-		b->addString( m_message.icbmCookie() ); // in automated response, we need the same cookie as in the request
+	{ //file msgs and automated responses already have a cookie
+		b->addString( m_message.icbmCookie() );
 	}
 
-	b->addWord( m_message.type() );
+	b->addWord( m_message.channel() );
 
 	b->addByte( m_message.receiver().length() );
 	b->addString( m_message.receiver().toLatin1(), m_message.receiver().length() );
@@ -86,12 +86,12 @@ void SendMessageTask::onGo()
 	if ( snacSubfamily == 0x0006 )
 	{
 		/* send a regular message */
-		switch ( m_message.type() )
+		switch ( m_message.channel() )
 		{
 		case 1: //plaintext
 			addChannel1Data( b );
 			break;
-		case 2: //chatreq
+		case 2: //chatreq or filereq
 			addChannel2Data( b );
 			break;
 		case 4: //url
@@ -113,7 +113,7 @@ void SendMessageTask::onGo()
 			b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 		}
 
-		if ( client()->isIcq() && m_message.type() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+		if ( client()->isIcq() && m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 			b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 	}
 	else

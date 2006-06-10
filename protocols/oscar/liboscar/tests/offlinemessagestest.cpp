@@ -33,7 +33,7 @@ void OfflineMessagesTest::testOfflineMessages()
 	QVERIFY( msg.sender() == "33146327" );
 	QVERIFY( msg.textArray() == "This is a test" );
 	QVERIFY( msg.properties() == 0 );
-	QVERIFY( msg.type() == 1 );
+	QVERIFY( msg.channel() == 1 );
 	QCOMPARE( msg.timestamp().toString(), 
 			QString("Sat Mar 4 11:38:00 2006") );
 

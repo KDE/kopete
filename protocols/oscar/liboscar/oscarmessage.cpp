@@ -172,14 +172,14 @@ bool Oscar::Message::hasProperty( int prop ) const
 		return true;
 }
 
-int Oscar::Message::type() const
+int Oscar::Message::channel() const
 {
 	return m_channel;
 }
 
-void Oscar::Message::setType( int newType )
+void Oscar::Message::setChannel( int newChannel )
 {
-	m_channel = newType;
+	m_channel = newChannel;
 }
 
 QDateTime Oscar::Message::timestamp() const

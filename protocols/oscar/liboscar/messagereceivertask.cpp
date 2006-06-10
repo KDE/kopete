@@ -181,7 +181,7 @@ void MessageReceiverTask::handleType1Message()
 	msg.setSender( m_fromUser );
 	msg.setReceiver( client()->userId() );
 	msg.setTimestamp( QDateTime::currentDateTime() );
-	msg.setType( 0x01 );
+	msg.setChannel( 0x01 );
 
 	emit receivedMessage( msg );
 }
@@ -345,7 +345,7 @@ void MessageReceiverTask::handleType4Message()
 		break;
 	}
 
-	msg.setType( 0x04 );
+	msg.setChannel( 0x04 );
 	msg.setTimestamp( QDateTime::currentDateTime() );
 	msg.setSender( msgSender );
 	msg.setReceiver( client()->userId() );
@@ -451,7 +451,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		msg->setSender( m_fromUser );
 		msg->setReceiver( client()->userId() );
 		msg->setTimestamp( QDateTime::currentDateTime() );
-		msg->setType( 0x02 );
+		msg->setChannel( 0x02 );
 		msg->setIcbmCookie( m_icbmCookie );
 		msg->setProtocolVersion( protocolVersion );
 		msg->setChannel2Counter( channel2Counter );

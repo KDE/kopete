@@ -97,11 +97,11 @@ public:
 	/** add a property to the message */
 	void addProperty( int prop );
 
-	/** get the channel ( type ) of the message */
-	int type() const;
+	/** get the channel ( NOT type ) of the message */
+	int channel() const;
 
-	/** set the channel ( type ) of the message */
-	void setType( int newType );
+	/** set the channel ( NOT type ) of the message */
+	void setChannel( int newChannel );
 
 	/** get the timestamp of the message */
 	QDateTime timestamp() const;
