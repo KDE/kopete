@@ -180,7 +180,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 	msg.setSender( contactId() );
 	msg.setText( Oscar::Message::UserDefined, s, m_acct->defaultCodec() );
 	msg.setTimestamp(message.timestamp());
-	msg.setType(0x03);
+	msg.setChannel(0x03);
 	msg.addProperty( Oscar::Message::ChatRoom );
 
 	AIMChatSession* aimSession = dynamic_cast<AIMChatSession*>( session );
@@ -554,7 +554,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 {
 	kDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
 	// Want to call the parent to do everything else
-	if ( message.type() != 0x0003 )
+	if ( message.channel() != 0x0003 )
 	{
 		OscarAccount::messageReceived(message);
 
