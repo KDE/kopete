@@ -133,6 +133,27 @@ public:
 	/** set the message (content) type */
 	void setMessageType( int type );
 
+	/** get the request type (req/cancel/accept) */
+	int reqType() const;
+
+	/** set the request type (req/cancel/accept) */
+	void setReqType( int type );
+
+	/** get the port */
+	int port() const;
+
+	/** set the port (for transfer requests) */
+	void setPort( int port );
+
+	/** get the file name */
+	QString fileName() const;
+
+	/** get the file size */
+	DWORD fileSize() const;
+
+	/** set the file (for transfer requests) */
+	void setFile( DWORD size, QString name );
+
     /** get the exchange for the chat room this message is for */
     Oscar::WORD exchange() const;
 
@@ -160,6 +181,8 @@ private:
 	int m_channel;
 	int m_properties;
 	int m_messageType;
+	int m_requestType;
+	int m_port;
 	int m_protocolVersion;
 	int m_channel2Counter;
 	QByteArray m_icbmCookie;
@@ -168,6 +191,8 @@ private:
 	Oscar::WORD m_exchange;
 	QString m_chatRoom;
 	Encoding m_encoding;
+	QString m_fileName;
+	DWORD m_fileSize;
 };
 
 }

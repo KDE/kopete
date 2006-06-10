@@ -187,48 +187,59 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 
 	Buffer tlv5buffer;
 	
-	tlv5buffer.addWord( 0 ); // 0 = request; other possibilities: 1 = cancel; 2 = accept;
-	//TODO: if filetransfer message, find out what sort
+	tlv5buffer.addWord( m_message.reqType() ); // 0 = request; 1 = cancel; 2 = accept
 
 	// message id cookie. needs to be the same one as above
 	tlv5buffer.addString( m_message.icbmCookie() );
 	
+	//cap used to identify the message type
 	tlv5buffer.addGuid( oscar_caps[ m_message.messageType() == 3 ? CAP_SENDFILE : CAP_ICQSERVERRELAY ] );
-	
-	// These are optional, would probably be a god ide to start using them, though
 
-	// add TLV 03: internal ip
-// 	tlv5buffer.addWord( 0x0003 ); // TLV Type
-// 	tlv5buffer.addWord( 0x0004 ); // TLV Length
-// 	tlv5buffer.addDWord( 0x00000000 ); // TLV Data: Internal IP
+	if( m_message.reqType() == 0 )
+	{ //requests need more data
 
-	// add TLV 05: listening port
-// 	tlv5buffer.addWord( 0x0005 ); // TLV Type
-// 	tlv5buffer.addWord( 0x0002 ); // TLV Length
-// 	tlv5buffer.addWord( 0x0000 ); // TLV Data: listening port
+		// add TLV 0A: request # TODO: might be >1 if not direct
+		tlv5buffer.addWord( 0x000A ); // TLV Type
+		tlv5buffer.addWord( 0x0002 ); // TLV Length
+		tlv5buffer.addWord( 0x0001 ); // TLV Data
 
-	// add TLV 0A: request #
-	tlv5buffer.addWord( 0x000A ); // TLV Type
-	tlv5buffer.addWord( 0x0002 ); // TLV Length
-	tlv5buffer.addWord( 0x0001 ); // TLV Data
+		// add TLV 0F: unknown but always there
+		tlv5buffer.addWord( 0x000F );
+		tlv5buffer.addWord( 0x0000 );
 
-	// add TLV 0F: unknown but always there
-	tlv5buffer.addWord( 0x000F );
-	tlv5buffer.addWord( 0x0000 );
+		//ft needs at least internal-ip, port, and port check
+		//might need proxy-ip later.
+		if ( int p = m_message.port() )
+		{
+			//hardcoding my own ip is bad, bad, BAD!
+			char v2[] = { 70, 68, 183, 66 };
+			tlv5buffer.addTLV( 0x3, 4, v2 ); //our ip FIXME
+			//our port
+			tlv5buffer.addWord( 5 );
+			tlv5buffer.addWord( 2 );
+			tlv5buffer.addWord( p ); //FIXME: check endianness
+			//port check
+			tlv5buffer.addWord( 0x17 );
+			tlv5buffer.addWord( 2 );
+			tlv5buffer.addWord( ~ p ); //FIXME: check endianness
 
-	// add TLV 0B: unknown
-// 	tlv5buffer.addWord( 0x000B ); // TLV Type
-// 	tlv5buffer.addWord( 0x0002 ); // TLV Length
-// 	tlv5buffer.addWord( 0x0000 ); // TLV Data: unknown
-	
-	//TODO: ft needs at least int. ip, port, and port check
-		
-	
-	/* now comes the important TLV 0x2711 */
-	//TODO: add ft version of this
-	Buffer tlv2711buffer;
-	addRendezvousMessageData( &tlv2711buffer );
-	tlv5buffer.addTLV( 0x2711, tlv2711buffer.length(), tlv2711buffer.buffer() );
+		}
+
+
+		/* now comes the important TLV 0x2711 */
+		Buffer tlv2711;
+		if ( m_message.messageType() == 3 ) //TODO: reduce the amount of magic #s
+		{ //filetransfer
+			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
+			tlv2711.addWord( 1 ); //file count
+			tlv2711.addDWord( m_message.fileSize() ); //FIXME: verify that it's nonzero
+			tlv2711.addString( m_message.fileName().toLatin1() );
+			tlv2711.addByte( 0 ); //make sure the name's null-terminated
+		}
+		else //chat
+			addRendezvousMessageData( &tlv2711 );
+		tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+	}
 
 	b->addTLV( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
 }
