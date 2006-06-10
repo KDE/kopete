@@ -53,10 +53,6 @@ public:
 	 */
 	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
 	/**
-	 * Called when Kopete is set globally away
-	 */
-	virtual void setAway(bool away, const QString& reason);
-	/**
 	 * Called when Kopete status is changed globally
 	 */
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
@@ -88,18 +84,6 @@ protected:
 	QQFakeServer* m_server;
 
 protected slots:
-	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
-	void slotGoOnline();
-	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
-	void slotGoAway();
-	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
-	void slotGoOffline();
 	/**
 	 * Show webcam.  Called by KActions and internally.
 	 */

@@ -67,26 +67,16 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 	return newContact != 0L;
 }
 
-void QQAccount::setAway( bool away, const QString & /* reason */ )
-{
-	if ( away )
-		slotGoAway();
-	else
-		slotGoOnline();
-}
 
 void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
 	if ( status.status() == Kopete::OnlineStatus::Online &&
 			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
-		slotGoOnline();
-	else if (status.status() == Kopete::OnlineStatus::Online &&
-			myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
-		setAway( false, reason.message() );
+		kDebug( 14210 ) << k_funcinfo << " go online " << endl;
 	else if ( status.status() == Kopete::OnlineStatus::Offline )
-		slotGoOffline();
+		kDebug( 14210 ) << k_funcinfo << " go offline" << endl;
 	else if ( status.status() == Kopete::OnlineStatus::Away )
-		slotGoAway( /* reason */ );
+		kDebug( 14210 ) << k_funcinfo << " go away" << endl;
 }
 
 void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
@@ -114,37 +104,6 @@ QQFakeServer * QQAccount::server()
 	return m_server;
 }
 
-void QQAccount::slotGoOnline ()
-{
-	kDebug ( 14210 ) << k_funcinfo << endl;
-
-	if (!isConnected ())
-		connect ();
-	else
-		myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
-	updateContactStatus();
-}
-
-void QQAccount::slotGoAway ()
-{
-	kDebug ( 14210 ) << k_funcinfo << endl;
-
-	if (!isConnected ())
-		connect();
-
-	myself()->setOnlineStatus( QQProtocol::protocol()->qqAway );
-	updateContactStatus();
-}
-
-
-void QQAccount::slotGoOffline ()
-{
-	kDebug ( 14210 ) << k_funcinfo << endl;
-
-	if (isConnected ())
-		disconnect ();
-	updateContactStatus();
-}
 
 void QQAccount::slotShowVideo ()
 {
