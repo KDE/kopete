@@ -89,11 +89,11 @@ public:
 	/**
 	 * @brief Get client features for this contact.
 	 */
-	ClientInfo::ClientFeatures clientFeatures() const;
+	ClientInfo::Features clientFeatures() const;
 	/**
 	 * @brief Set clients feautres for this contact
 	 */
-	void setClientFeatures(const ClientInfo::ClientFeatures &featuers);
+	void setClientFeatures(const ClientInfo::Features &featuers);
 
 	/**
 	 * @brief Get the lists which the contact is member of.

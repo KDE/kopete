@@ -17,6 +17,7 @@
 
 #include <QtCore/QObject>
 #include <papillon_macros.h>
+#include <papillon_enums.h>
 
 namespace Papillon
 {
@@ -109,6 +110,20 @@ public slots:
 	 * Make sure that you setup client information with setClientInfo()
 	 */
 	void login();
+
+	/**
+	 * @brief Set the initial online status.
+	 * This is the first online status that will be set on server.
+	 *
+	 * @param status the initial online status
+	 */
+	void setInitialOnlineStatus(Papillon::OnlineStatus::Status status);
+	
+	/**
+	 * @brief Change our current online status
+	 * @param status Given online status
+	 */
+	void changeOnlineStatus(Papillon::OnlineStatus::Status status);
 
 // Slots from tasks
 //BEGIN Private Task slots

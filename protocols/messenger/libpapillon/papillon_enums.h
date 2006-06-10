@@ -20,73 +20,79 @@
 namespace Papillon
 {
 	/**
-	 * @brief Enum for Contact List flags.
-	 * ForwardList: Contacts that you want to see their presence.
-	 * AllowList: Contacts allowed to see your presence.
-	 * BlockList: Contacts not allowed to see your presence.
-	 * ReverseList: Contacts that have you on their Forward List.
-	 * PendingList: Contacts pending to be added.
+	 * @brief Enums related to Contact list
 	 */
 	struct ContactList
 	{
-		enum ContactListType
+		/**
+		 * @brief Flags for the different contact list type.
+		 */
+		enum Type
 		{
-			ForwardList = 1,
-			AllowList = 2,
-			BlockList = 4,
-			ReverseList = 8,
-			PendingList = 16
+			ForwardList = 1, ///<Contacts that you want to see their presence.
+			AllowList = 2, ///<Contacts allowed to see your presence.
+			BlockList = 4, ///<Contacts not allowed to see your presence.
+			ReverseList = 8, ///<Contacts that have you on their Forward List.
+			PendingList = 16 ///<Contacts pending to be added.
 		};
-		Q_DECLARE_FLAGS(ContactListFlags, ContactListType);
+		Q_DECLARE_FLAGS(ContactListFlags, Type);
 	};
 	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactList::ContactListFlags )
 
 	/**
-	 * @brief Enum for features supported by the client.
-	 * WindowsMobile: This is a Windows Mobile client.
-	 * MsnMobileDevice: Client is running on a MSN Mobile device.
-	 * MsnDirectDevice: Client is running on a MSN Direct device.
-	 * WebMessenger: Client is using MSN Web Messenger.
-	 * InkFormatGif: Support Ink messages in GIF format.
-	 * InkFormatIsf: Support Ink messages in ISF format.
-	 * SupportWebcam: Support Webcam.
-	 * SupportMultiPacketMessaging: Support messages over multiple packets.
-	 * SupportDirectIM: Support direct P2P connections instead of using Switchboard.
-	 * SupportVoiceClips: Support Voice clips (introduced in MSN Messenger 7.5)
-	 * SupportWinks: Client can receive Winks.
-	 * SupportMsnSearch: Client supports MSN Search.
-	 * MSNC1: MSNC(Mobile Status Notification Client) Version 1 (with MSN Messenger 6.0)
-	 * MSNC2: MSNC Version 2 (with MSN Messenger 6.1)
-	 * MSNC3: MSNC Version 3 (with MSN Messenger 6.2)
-	 * MSNC4: MSNC Version 4 (with MSN Messenger 7.0)
-	 * MSNC5: MSNC Version 5 (with MSN Messenger 7.5)
+	 * @brief Enums related to ClientInfo
 	 */
 	struct ClientInfo
 	{
-		enum ClientFeature
+		/**
+		 * @brief Enum for features supported by the client.
+		*/
+		enum Feature
 		{
-			WindowsMobile = 0x1,
-			MsnMobileDevice = 0x40,
-			MsnDirectDevice = 0x80,
-			WebMessenger = 0x100,
-			InkFormatGif = 0x04,
-			InkFormatIsf = 0x08,
-			SupportWebcam = 0x10,
-			SupportMultiPacketMessaging = 0x20,
-			SupportDirectIM =  0x4000,
-			SupportVoiceClips = 0x40000,
-			SupportWinks = 0x8000,
-			SupportMsnSearch = 0x10000,
-			MSNC1 = 0x10000000,
-			MSNC2 = 0x20000000,
-			MSNC3 = 0x30000000,
-			MSNC4 = 0x40000000,
-			MSNC5 = 0x50000000
+			WindowsMobile = 0x1,  ///<This is a Windows Mobile client.
+			MsnMobileDevice = 0x40, ///<Client is running on a MSN Mobile device.
+			MsnDirectDevice = 0x80, ///<Client is running on a MSN Direct device.
+			WebMessenger = 0x100, ///<Client is using MSN Web Messenger.
+			InkFormatGif = 0x04, ///<Support Ink messages in GIF format.
+			InkFormatIsf = 0x08, ///<Support Ink messages in ISF format.
+			SupportWebcam = 0x10, ///<Support Webcam. 
+			SupportMultiPacketMessaging = 0x20, ///<Support messages over multiple packets.
+			SupportDirectIM =  0x4000, ///<Support direct P2P connections instead of using Switchboard.
+			SupportVoiceClips = 0x40000, ///<Support Voice clips (introduced in MSN Messenger 7.5)
+			SupportWinks = 0x8000, ///<Client can receive Winks.
+			SupportMsnSearch = 0x10000, ///<Client supports MSN Search.
+			MSNC1 = 0x10000000, ///<MSNC(Mobile Status Notification Client) Version 1 (with MSN Messenger 6.0)
+			MSNC2 = 0x20000000, ///<MSNC Version 2 (with MSN Messenger 6.1)
+			MSNC3 = 0x30000000, ///<MSNC Version 3 (with MSN Messenger 6.2)
+			MSNC4 = 0x40000000, ///<MSNC Version 4 (with MSN Messenger 7.0)
+			MSNC5 = 0x50000000, ///<MSNC Version 5 (with MSN Messenger 7.5)
+			MSNC6 = 0x60000000 ///<MSNC Version 6 (with Windows Live Messenger 8)
 		};
-		Q_DECLARE_FLAGS(ClientFeatures, ClientFeature);
+		Q_DECLARE_FLAGS(Features, Feature);
 	};
-	Q_DECLARE_OPERATORS_FOR_FLAGS( Papillon::ClientInfo::ClientFeatures )
+	Q_DECLARE_OPERATORS_FOR_FLAGS( Papillon::ClientInfo::Features )
 
+	/**
+	 * @brief Enums related to OnlineStatus
+	 */
+	struct OnlineStatus
+	{
+		/**
+		 * Types of online status.
+	 	 */
+		enum Status
+		{
+			Away, ///<Correspond to AWY
+			BeRightBack, ///<Correspond to BRB
+			Busy, ///<Correspond to BSY
+			Idle, ///<Correspond to IDL
+			Invisible, ///<Correspond to HDN
+			Offline, ///<Correspond to FLN
+			Online, ///<Correspond to NLN
+			OnThePhone, ///<Correspond to PHN
+			OutToLunch ///<Correspond to LUN
+		};
+	};
 }
 
 #endif

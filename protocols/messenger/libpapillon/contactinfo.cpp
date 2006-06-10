@@ -33,7 +33,7 @@ public:
 	QString passportId;
 	
 	QStringList groups;
-	Papillon::ClientInfo::ClientFeatures clientFeatures;
+	Papillon::ClientInfo::Features clientFeatures;
 	Papillon::ContactList::ContactListFlags lists;
 	
 	QString displayName;
@@ -83,12 +83,12 @@ void ContactInfo::setPassportId(const QString &passportId)
 	d->passportId = passportId;
 }
 
-ClientInfo::ClientFeatures ContactInfo::clientFeatures() const
+ClientInfo::Features ContactInfo::clientFeatures() const
 {
 	return d->clientFeatures;
 }
 
-void ContactInfo::setClientFeatures(const ClientInfo::ClientFeatures &features)
+void ContactInfo::setClientFeatures(const ClientInfo::Features &features)
 {
 	d->clientFeatures = features;
 }

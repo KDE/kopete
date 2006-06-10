@@ -31,6 +31,8 @@
 // Papillon tasks
 #include "logintask.h"
 #include "notifymessagetask.h"
+#include "setpresencetask.h"
+
 namespace Papillon
 {
 
@@ -134,6 +136,22 @@ void Client::login()
 	connect(d->loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(loginRedirect( const QString&, quint16 )));
 	connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
 	d->loginTask->go(true);
+}
+
+void Client::setInitialOnlineStatus(Papillon::OnlineStatus::Status status)
+{
+	// TODO:
+	Q_UNUSED(status);
+}
+
+void Client::changeOnlineStatus(Papillon::OnlineStatus::Status status)
+{
+	SetPresenceTask *presenceTask = new SetPresenceTask(d->notificationConnection->rootTask());
+	presenceTask->setOnlineStatus( status );
+	// TODO: Set client features
+	// TODO: Do something about MsnObject
+	
+	presenceTask->go(true);
 }
 
 void Client::loginRedirect(const QString &server, quint16 port)

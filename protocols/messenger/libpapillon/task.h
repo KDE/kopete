@@ -123,6 +123,7 @@ public:
 	 * Start the Task.
 	 * @param autoDelete Auto-delete the Task after being complete.
 	 */
+	// TODO: remove the bool
 	void go(bool autoDelete = false);
 
 	/**
