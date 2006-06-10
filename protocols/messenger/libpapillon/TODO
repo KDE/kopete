@@ -26,8 +26,8 @@ M1 Contact List and Presence
 -Presence
  #Set our own presence
  -Set our own information (nickname, personal message, etc.)
- -Get the initial presence of contacts
- -Get modification of presence from others
+ #Get the initial presence of contacts
+ #Get modification of presence from others
  -Get information change from contacts (nickname, personal message, etc..)
 
 After this milestone, all(or mostly all) contactlist and presence manipulation will be in and we should be able to start the Kopete plugin.

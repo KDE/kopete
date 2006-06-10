@@ -32,6 +32,7 @@ http/httpcoreprotocol.cpp
 set(papillon_tasks_SRCS 
 tasks/logintask.cpp 
 tasks/notifymessagetask.cpp 
+tasks/notifypresencetask.cpp 
 tasks/setpresencetask.cpp 
 )
 

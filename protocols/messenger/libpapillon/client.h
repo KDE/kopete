@@ -95,6 +95,13 @@ signals:
 	 */
 	void disconnected();
 
+	/**
+	 * Emitted when a contact change his status
+	 * @param contactId Contact ID
+	 * @param status Contact's new online status.
+	 */
+	void contactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+
 public slots:
 	/**
 	 * @brief Connect to Windows Live Messenger
@@ -147,6 +154,14 @@ private slots:
 	 * @param profileMessage initial profile "message"
 	 */
 	void gotInitalProfile(const Papillon::MimeHeader &profileMessage);
+
+	/**
+	 * @internal
+	 * A contact status changed.
+	 * @param contactId His contact ID
+	 * @param status His new online status.
+	 */
+	void slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
 //END Private Task slots
 
 //BEGIN Private Normal slots

@@ -31,6 +31,7 @@
 // Papillon tasks
 #include "logintask.h"
 #include "notifymessagetask.h"
+#include "notifypresencetask.h"
 #include "setpresencetask.h"
 
 namespace Papillon
@@ -42,7 +43,7 @@ public:
 	Private()
 	 : connector(0), notificationConnection(0),
 	   server( QLatin1String("muser.messenger.hotmail.com") ), port(1863),
-	   loginTask(0), notifyMessageTask(0)
+	   loginTask(0), notifyMessageTask(0), notifyPresenceTask(0)
 	{}
 
 	Connector *connector;
@@ -60,6 +61,7 @@ public:
 	// All the tasks
 	LoginTask *loginTask;
 	NotifyMessageTask *notifyMessageTask;
+	NotifyPresenceTask *notifyPresenceTask;
 };
 
 Client::Client(Connector *connector, QObject *parent)
@@ -121,6 +123,12 @@ void Client::initNotificationTasks()
 		d->notifyMessageTask = new NotifyMessageTask( d->notificationConnection->rootTask() );
 		connect(d->notifyMessageTask, SIGNAL(profileMessage(const Papillon::MimeHeader &)), this, SLOT(gotInitalProfile(const Papillon::MimeHeader& )));
 	}
+
+	if( !d->notifyPresenceTask )
+	{
+		d->notifyPresenceTask = new NotifyPresenceTask( d->notificationConnection->rootTask() );
+		connect(d->notifyPresenceTask, SIGNAL(contactStatusChanged( const QString&, Papillon::OnlineStatus::Status )), this, SLOT(slotContactStatusChanged( const QString&, Papillon::OnlineStatus::Status )));
+	}
 }
 
 void Client::login()
@@ -175,6 +183,11 @@ void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
 	d->passportAuthTicket = profileMessage.value( QLatin1String("MSPAuth") ).toString();
 
 	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << d->passportAuthTicket;
+}
+
+void Client::slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status)
+{
+	emit contactStatusChanged(contactId, status);
 }
 
 QString Client::passportAuthTicket() const
