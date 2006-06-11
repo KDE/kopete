@@ -30,6 +30,22 @@ class QQProtocol : public Kopete::Protocol
 public:
 	QQProtocol(QObject *parent, const QStringList &args);
     ~QQProtocol();
+
+	/**
+	 * The possible MSN online statuses
+	 */
+	const Kopete::OnlineStatus NLN;  //online
+	const Kopete::OnlineStatus BSY;  //busy
+	const Kopete::OnlineStatus BRB;  //be right back
+	const Kopete::OnlineStatus AWY;  //away
+	const Kopete::OnlineStatus PHN;  //on the phone
+	const Kopete::OnlineStatus LUN;  //out to lunch
+	const Kopete::OnlineStatus FLN;  //offline
+	const Kopete::OnlineStatus HDN;  //invisible
+	const Kopete::OnlineStatus IDL;  //idle
+	const Kopete::OnlineStatus UNK;  //inknown (internal)
+	const Kopete::OnlineStatus CNT;  //connecting (internal)
+
 	/**
 	 * Convert the serialised data back into a QQContact and add this
 	 * to its Kopete::MetaContact

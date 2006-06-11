@@ -30,6 +30,7 @@ namespace Kopete
 
 class QQContact;
 class QQProtocol;
+class QQNotifySocket;
 class QQFakeServer;
 
 /**
@@ -74,6 +75,17 @@ public:
 	 * Return a reference to the server stub
 	 */
 	QQFakeServer* server();
+
+	/**
+	 * Returns the address of the MSN server
+	 */
+	QString serverName();
+
+	/**
+	 * Returns the address of the MSN server port
+	 */
+	uint serverPort();
+
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
@@ -94,11 +106,15 @@ protected slots:
 	 */
 	void slotShowVideo();
 
+private slots:
+	void createNotificationServer( const QString &host, uint port );
+
+
 private:
-	int *m_notifySocket; // stub now.
+	QQNotifySocket *m_notifySocket; // stub now.
 	// status which will be using for connecting
 	Kopete::OnlineStatus m_connectstatus;
-
+	QString m_password;
 
 
 };

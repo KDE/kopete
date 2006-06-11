@@ -15,6 +15,8 @@ set(kopete_qq_PART_SRCS
    qqaccount.cpp 
    qqaddcontactpage.cpp 
    qqeditaccountwidget.cpp 
+   qqsocket.cpp
+   qqnotifysocket.cpp
    qqfakeserver.cpp 
    qqincomingmessage.cpp 
    ui/qqwebcamdialog.cpp 

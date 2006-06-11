@@ -27,6 +27,7 @@
 #include "kopetecontactlist.h"
 
 #include "qqcontact.h"
+#include "qqnotifysocket.h"
 #include "qqfakeserver.h"
 #include "qqprotocol.h"
 
@@ -150,8 +151,89 @@ void QQAccount::updateContactStatus()
 
 void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	kDebug ( 14210 ) << k_funcinfo << " connect now"  << endl;
-	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
+	kDebug ( 14210 ) << k_funcinfo << endl;
+
+	if ( isConnected() )
+	{
+		kDebug( 14210 ) << k_funcinfo <<"Ignoring Connect request "
+			<< "(Already Connected)" << endl;
+		return;
+	}
+
+	if ( m_notifySocket )
+	{
+		kDebug( 14210 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
+		return;
+	}
+	/* Hard-coded password for debug only */
+	m_password = "hello";
+
+	createNotificationServer(serverName(), serverPort());
 }
+
+
+void QQAccount::createNotificationServer( const QString &host, uint port )
+{
+	if(m_notifySocket) //we are switching from one to another notifysocket.
+	{
+		//remove every slots to that socket, so we won't delete receive signals
+		// from the old socket thinking they are from the new one
+		QObject::disconnect( m_notifySocket , 0, this, 0 );
+		m_notifySocket->deleteLater(); //be sure it will be deleted
+		m_notifySocket=0L;
+	}
+
+
+	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
+
+
+	m_notifySocket = new QQNotifySocket( this, accountId() , m_password);
+/*
+	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, const QString& ) ),
+		SLOT( slotGroupAdded( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( const QString&, const QString& ) ),
+		SLOT( slotGroupRenamed( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupListed( const QString&, const QString& ) ),
+		SLOT( slotGroupAdded( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupRemoved( const QString& ) ),
+		SLOT( slotGroupRemoved( const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactList(const QString&, const QString&, const QString&, uint, const QString& ) ),
+		SLOT( slotContactListed(const QString&, const QString&, const QString&, uint, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL(contactAdded(const QString&, const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotContactAdded(const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactRemoved(const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotContactRemoved(const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
+		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotCreateChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( startChat( const QString&, const QString& ) ),
+		SLOT( slotCreateChat( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( socketClosed() ),
+		SLOT( slotNotifySocketClosed() ) );
+	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
+		SLOT( slotNewContactList() ) );
+	QObject::connect( m_notifySocket, SIGNAL( receivedNotificationServer(const QString&, uint )  ),
+		SLOT(createNotificationServer(const QString&, uint ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
+		m_openInboxAction, SLOT( setEnabled( bool ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( errorMessage(int, const QString& ) ), 
+		SLOT( slotErrorMessageReceived(int, const QString& ) ) );
+*/
+	m_notifySocket->setStatus( m_connectstatus );
+	m_notifySocket->connect(host, port);
+}
+
+QString QQAccount::serverName()
+{
+	return configGroup()->readEntry(  "serverName" , "messenger.hotmail.com" );
+}
+
+uint QQAccount::serverPort()
+{
+	return configGroup()->readEntry(  "serverPort" , 1863 );
+}
+
+
 
 #include "qqaccount.moc"
