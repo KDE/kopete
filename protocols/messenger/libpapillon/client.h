@@ -132,6 +132,13 @@ public slots:
 	 */
 	void changeOnlineStatus(Papillon::OnlineStatus::Status status);
 
+	/**
+	 * @brief Set the personal information to be updated on server.
+	 * @param type The type of the personal information it need to update on server.
+	 * @param value New value for the given personal information. Set an empty string to reset the value.
+	 */
+	void setPersonalInformation(Papillon::ClientInfo::PersonalInformation type, const QString &value);
+
 // Slots from tasks
 //BEGIN Private Task slots
 private slots:

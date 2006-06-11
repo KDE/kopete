@@ -34,6 +34,7 @@ tasks/logintask.cpp
 tasks/notifymessagetask.cpp 
 tasks/notifypresencetask.cpp 
 tasks/setpresencetask.cpp 
+tasks/setpersonalinformationtask.cpp 
 )
 
 set(libpapillon_SRCS 

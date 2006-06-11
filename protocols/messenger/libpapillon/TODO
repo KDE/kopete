@@ -25,7 +25,7 @@ M1 Contact List and Presence
  -Move contacts between groups
 -Presence
  #Set our own presence
- -Set our own information (nickname, personal message, etc.)
+ #Set our own information (nickname, personal message, etc.)
  #Get the initial presence of contacts
  #Get modification of presence from others
  -Get information change from contacts (nickname, personal message, etc..)

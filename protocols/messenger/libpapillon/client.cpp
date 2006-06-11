@@ -33,6 +33,7 @@
 #include "notifymessagetask.h"
 #include "notifypresencetask.h"
 #include "setpresencetask.h"
+#include "setpersonalinformationtask.h"
 
 namespace Papillon
 {
@@ -160,6 +161,14 @@ void Client::changeOnlineStatus(Papillon::OnlineStatus::Status status)
 	// TODO: Do something about MsnObject
 	
 	presenceTask->go(Task::AutoDelete);
+}
+
+void Client::setPersonalInformation(Papillon::ClientInfo::PersonalInformation type, const QString &value)
+{
+	SetPersonalInformationTask *setInfo = new SetPersonalInformationTask( d->notificationConnection->rootTask() );
+	setInfo->setPersonalInformation(type, value);
+
+	setInfo->go(Task::AutoDelete);
 }
 
 void Client::loginRedirect(const QString &server, quint16 port)
