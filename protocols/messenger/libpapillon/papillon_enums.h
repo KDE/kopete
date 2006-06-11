@@ -49,6 +49,7 @@ namespace Papillon
 		*/
 		enum Feature
 		{
+			FeatureNone = 0x0, ///<Internal default
 			WindowsMobile = 0x1,  ///<This is a Windows Mobile client.
 			MsnMobileDevice = 0x40, ///<Client is running on a MSN Mobile device.
 			MsnDirectDevice = 0x80, ///<Client is running on a MSN Direct device.
@@ -75,7 +76,7 @@ namespace Papillon
 		 */
 		enum PersonalInformation
 		{
-			PersonalInfoNone, ///<Internal default
+			PersonalInfoNone = 0, ///<Internal default
 			Nickname, ///<Setting the nickname
 			PhoneHome, ///<Setting the home phone number
 			PhoneWork, ///<Setting the work phone number
@@ -105,6 +106,14 @@ namespace Papillon
 			Online, ///<Correspond to NLN
 			OnThePhone, ///<Correspond to PHN
 			OutToLunch ///<Correspond to LUN
+		};
+
+		enum MediaType
+		{
+			MediaNone = 0, ///<Internal default
+			MediaMusic, ///<Current music played.
+			MediaGames, ///<Current game played.
+			MediaOffice ///<Current office task done.
 		};
 	};
 }

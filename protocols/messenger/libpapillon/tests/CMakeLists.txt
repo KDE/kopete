@@ -100,6 +100,18 @@ target_link_libraries(httpcoreprotocol_test ${PAPILLON_TEST_LIBRARIES})
 
 add_test(httpcoreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/httpcoreprotocol_test)
 
+######
+
+set( statusmessage_test_SRCS statusmessage_test.cpp )
+
+kde4_automoc( ${statusmessage_test_SRCS} )
+
+kde4_add_executable(statusmessage_test RUN_UNINSTALLED ${statusmessage_test_SRCS})
+
+target_link_libraries(statusmessage_test ${PAPILLON_TEST_LIBRARIES})
+
+add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
+
 ### ENDIF ###
 endif(KDE4_BUILD_TESTS)
 

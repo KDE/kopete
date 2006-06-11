@@ -53,6 +53,7 @@ mimeheader.cpp
 contactlistmanager.cpp 
 contactinfo.cpp 
 papillonglobal.cpp 
+papillonstatusmessage.cpp 
 )
 
 kde4_automoc( ${libpapillon_SRCS} )
