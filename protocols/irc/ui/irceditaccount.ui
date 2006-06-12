@@ -92,7 +92,10 @@
                             <string>&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; Most IRC servers do not require a password, and only a nickname is required to connect&lt;/p&gt;</string>
                         </property>
                         <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
+                            <set>AlignTop</set>
+                        </property>
+                        <property name="wordWrap">
+                            <bool>true</bool>
                         </property>
                     </widget>
                     <widget class="QGroupBox" row="0" column="0">
