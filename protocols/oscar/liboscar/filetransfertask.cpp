@@ -57,18 +57,40 @@ void FileTransferTask::onGo()
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 	m_timer.start( 30 * 1000 );
 	if ( m_action == Receive )
-	{
+	{ //TODO: Kopete::TransferManager::askIncomingTransfer
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "not implemented!" << endl;
 		doCancel();
 		return;
 	}
-	if ( ( ! m_localFile.exists() ) || m_contact.isEmpty() )
+	if ( m_contact.isEmpty() || (! validFile() ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "invalid vars" << endl;
-	return;
+		setSuccess( 0 );
+		return;
 	}
 
 	sendFile();
+}
+
+bool FileTransferTask::validFile()
+{
+	//TODO: tell hte user if any of this fails
+	if ( ! m_localFile.exists() )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file doesn't exist" << endl;
+		return 0;
+	}
+	if ( m_localFile.size() == 0 )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file is empty" << endl;
+		return 0;
+	}
+	if ( ! m_localFile.open( QIODevice::ReadOnly ) )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
+		return 0;
+	}
+	m_localFile.close();
+	return true;
 }
 
 bool FileTransferTask::take( Transfer* transfer )
@@ -89,12 +111,14 @@ bool FileTransferTask::take( int type, QByteArray cookie )
 	 case 0: //TODO: direct transfer ain't good enough
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we don't handle requests yet!" << endl;
 		break;
-	 case 1: //TODO: tell user
+	 case 1:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user cancelled filetransfer :(" << endl;
+		emit gotCancel();
 		setSuccess( true );
 		break;
-	 case 2: //TODO: tell user
+	 case 2:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user acceptetd filetransfer :)" << endl;
+		emit gotAccept();
 		break;
 	 default:
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "bad request type: " << type << endl;
@@ -104,7 +128,7 @@ bool FileTransferTask::take( int type, QByteArray cookie )
 
 void FileTransferTask::slotReadyAccept()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "**************************************" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
 	m_timer.start();
 	m_connection = dynamic_cast<KBufferedSocket*>( m_ss->accept() );
 	delete m_ss; //free up the port so others can listen
@@ -113,7 +137,7 @@ void FileTransferTask::slotReadyAccept()
 	{ //waah. FIXME: deal with this properly
 		//either it wasn't buffered, or it did something weird
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection failed somehow." << endl;
-		setSuccess( false );
+		doCancel();
 		return;
 	}
 	//ok, so we have a direct connection. for filetransfers. cool.
@@ -196,7 +220,7 @@ void FileTransferTask::sendFile()
 	msg.setReqType( 0 );
 	msg.setPort( 5190 ); //FIXME: hardcoding bad!
 	msg.setFile( m_localFile.size(), m_localFile.fileName() );
-	//FIXME: validate size, strip path from name
+	//FIXME: strip path from name
 
 	//we're done, send it off!
 	emit sendMessage( msg );

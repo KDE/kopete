@@ -217,11 +217,11 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 			//our port
 			tlv5buffer.addWord( 5 );
 			tlv5buffer.addWord( 2 );
-			tlv5buffer.addWord( p ); //FIXME: check endianness
+			tlv5buffer.addWord( p );
 			//port check
 			tlv5buffer.addWord( 0x17 );
 			tlv5buffer.addWord( 2 );
-			tlv5buffer.addWord( ~ p ); //FIXME: check endianness
+			tlv5buffer.addWord( ~ p );
 
 		}
 
@@ -232,7 +232,7 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 		{ //filetransfer
 			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
 			tlv2711.addWord( 1 ); //file count
-			tlv2711.addDWord( m_message.fileSize() ); //FIXME: verify that it's nonzero
+			tlv2711.addDWord( m_message.fileSize() );
 			tlv2711.addString( m_message.fileName().toLatin1() );
 			tlv2711.addByte( 0 ); //make sure the name's null-terminated
 		}

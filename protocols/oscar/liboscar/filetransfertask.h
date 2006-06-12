@@ -53,15 +53,18 @@ public slots:
 	void slotReadyAccept(); //direct connection worked
 	void slotSocketError( int );
 	void doCancel();
-	void doAccept();
+	void doAccept( /*Kopete::Transfer*, const QString &fileName*/ );
 	void timeout();
 
 signals:
 	void sendMessage( const Oscar::Message &msg );
+	void gotAccept();
+	void gotCancel();
 
 private:
 	void sendFile();
 	void makeFTMsg( Oscar::Message &msg ); //add required data to msg
+	bool validFile();
 	void oftPrompt();
 	enum Action { Send, Receive };
 	Action m_action;
