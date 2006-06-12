@@ -131,7 +131,7 @@ private:
 	Private *d;
 };
 
-//Q_DECLARE_OPERATOR_FOR_FLAGS(Transfer::TransferType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Transfer::TransferType);
 
 }
 

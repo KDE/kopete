@@ -29,6 +29,7 @@ M1 Contact List and Presence
  #Get the initial presence of contacts
  #Get modification of presence from others
  -Get information change from contacts (nickname, personal message, etc..)
+-Prefix filename of common classes with papillon (like Task and Client)
 
 After this milestone, all(or mostly all) contactlist and presence manipulation will be in and we should be able to start the Kopete plugin.
 
