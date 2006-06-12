@@ -186,7 +186,10 @@
                     <enum>AutoText</enum>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+                    <set>AlignVCenter</set>
+                </property>
+                <property name="wordWrap">
+                    <bool>true</bool>
                 </property>
             </widget>
             <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
@@ -247,7 +250,10 @@
                     <string>Select the contact list &amp;group(s) that this contact should belong to :</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+                    <set>AlignVCenter</set>
+                </property>
+                <property name="wordWrap">
+                    <bool>true</bool>
                 </property>
                 <property name="buddy" stdset="0">
                     <cstring>groupList</cstring>
@@ -324,7 +330,10 @@
                     <string>&lt;p&gt;&lt;h2&gt;Select Instant Messaging Accounts&lt;/h2&gt;&lt;/p&gt;</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+                    <set>AlignVCenter</set>
+                </property>
+                <property name="wordWrap">
+                    <bool>true</bool>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -446,7 +455,10 @@
 &lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If adding this contact requires authorization from one or more of the messaging services, Kopete may prompt you for further information after this screen.&lt;/p&gt;</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
+                    <set>AlignVCenter</set>
+                </property>
+                <property name="wordWrap">
+                    <bool>true</bool>
                 </property>
             </widget>
             <spacer row="1" column="0">
