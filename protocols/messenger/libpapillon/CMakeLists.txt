@@ -33,6 +33,7 @@ set(papillon_tasks_SRCS
 tasks/logintask.cpp 
 tasks/notifymessagetask.cpp 
 tasks/notifypresencetask.cpp 
+tasks/notifystatusmessagetask.cpp 
 tasks/setpresencetask.cpp 
 tasks/setpersonalinformationtask.cpp 
 tasks/setstatusmessagetask.cpp 

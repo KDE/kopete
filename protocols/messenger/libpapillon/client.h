@@ -28,6 +28,7 @@ class SecureStream;
 class Task;
 class Transfer;
 class MimeHeader;
+class StatusMessage;
 
 // TODO APIDOX, add a reference about connector model.
 /**
@@ -102,6 +103,13 @@ signals:
 	 */
 	void contactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
 
+	/**
+	 * Emitted when a contact has updated his status message.
+	 * @param contactId Contact ID
+	 * @param statusMessage Updated status message.
+	 */
+	void contactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
+
 public slots:
 	/**
 	 * @brief Connect to Windows Live Messenger
@@ -169,6 +177,14 @@ private slots:
 	 * @param status His new online status.
 	 */
 	void slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+
+	/**
+	 * @internal
+	 * A contact status message changed.
+	 * @param contactId His contact ID
+	 * @param newStatusMessage His new status message.
+	 */
+	void slotContactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
 //END Private Task slots
 
 //BEGIN Private Normal slots
