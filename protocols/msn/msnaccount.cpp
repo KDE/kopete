@@ -1187,7 +1187,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		if ( !ID.isEmpty() && notifyNewChat )
 		{
 			// this temporary message should open the window if they not exist
-			QString body = i18n( "%1 has started a chat with you" ).arg( c->metaContact()->displayName() );
+			QString body = i18n( "%1 has started a chat with you" ,c->metaContact()->displayName() );
 			Kopete::Message tmpMsg = Kopete::Message( c, manager->members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 			manager->appendMessage( tmpMsg );
 		}
