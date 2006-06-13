@@ -64,7 +64,7 @@
  * JabberContact constructor
  */
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
-	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , m_syncTimer(0L)
+	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is created  - " << this << endl;
 	// this contact is able to transfer files
@@ -118,7 +118,6 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
 	mRequestGoneEvent = false;
-	mDiscoDone = false;
 }
 
 
