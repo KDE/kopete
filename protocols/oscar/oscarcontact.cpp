@@ -40,7 +40,6 @@
 #include "oscaraccount.h"
 #include "client.h"
 #include "contactmanager.h"
-#include "contact.h"
 #include "oscarutils.h"
 
 #include <assert.h>

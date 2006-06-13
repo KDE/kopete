@@ -52,7 +52,6 @@
 #include "oscarutils.h"
 #include "oscarencodingselectiondialog.h"
 #include "contactmanager.h"
-#include "contact.h"
 
 ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon, const OContact& ssiItem )
