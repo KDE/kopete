@@ -30,13 +30,17 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+using namespace KNetwork;
+
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	m_socket = 0;
 }
 
 SendPictureTask::~SendPictureTask()
 {
+	delete m_socket;
 }
 
 void SendPictureTask::onGo()
@@ -60,15 +64,16 @@ void SendPictureTask::onGo()
 void SendPictureTask::initiateUpload()
 {	
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KBufferedSocket* yahooSocket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
-	connect( yahooSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
-	connect( yahooSocket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
+	m_socket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
+	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
-	yahooSocket->connect();
+	m_socket->connect();
 }
 
 void SendPictureTask::connectFailed( int i)
 {
+	m_socket->close();
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
 	client()->notifyError(i18n("The picture was not successfully uploaded"), QString("%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 	setSuccess( false );
@@ -77,7 +82,6 @@ void SendPictureTask::connectFailed( int i)
 void SendPictureTask::connectSucceeded()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KStreamSocket* socket = const_cast<KBufferedSocket*>( static_cast<const KBufferedSocket*>( sender() ) );
 	YMSGTransfer t(Yahoo::ServicePictureUpload);
 
 	QFile file( m_path );
@@ -107,8 +111,7 @@ void SendPictureTask::connectSucceeded()
 	paket = t.serialize();
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_path << "): " << file.size() << " - paket: " << paket.size() << endl;
 	QString header = QString::fromLatin1("POST /notifyft HTTP/1.1\r\n"
-			"Referer: blubb-dwsgqbxiu\r\n"
-			"Cookie: Y=%1; T=%2; C=%3 ;B=fckeert1kk1nl&b=2\r\n"
+			"Cookie: Y=%1; T=%2; C=%3 ;\r\n"
 			"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 			"Host: filetransfer.msg.yahoo.com\r\n"
 			"Content-length: %4\r\n"
@@ -119,17 +122,37 @@ void SendPictureTask::connectSucceeded()
 	stream.writeRawBytes( file.readAll(), file.size() );
 
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;
-	if( socket->writeBlock( buffer, buffer.size() ) )
+	if( m_socket->writeBlock( buffer, buffer.size() ) )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
-		setSuccess( true );
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful." << endl;
+		connect( m_socket, SIGNAL( readyRead() ), this, SLOT( readResult() ) );
 	}
 	else
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed." << endl;
+		m_socket->close();
 		setSuccess( false );
 	}
-	socket->close();
+}
+
+void SendPictureTask::readResult()
+{
+	QByteArray ar( m_socket->bytesAvailable() );
+	m_socket->readBlock ( ar.data (), ar.size () );
+	QString buf( ar );
+
+	m_socket->close();
+	if( buf.find( "error", 0, false ) >= 0 )
+	{
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed" << endl;
+		setSuccess( false );
+	}
+	else
+	{
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload acknowledged." << endl;
+		setSuccess( true );
+	}
+
 }
 
 void SendPictureTask::sendChecksum()
