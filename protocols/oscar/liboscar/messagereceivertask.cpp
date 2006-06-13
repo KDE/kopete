@@ -213,25 +213,7 @@ void MessageReceiverTask::handleType2Message()
 	if ( g == oscar_caps[CAP_SENDFILE] )
 	{
 		kDebug(14151) << k_funcinfo << "**************this is a filetransfer message************" << endl;
-		//pass the message to the matching task if we can
-		const QList<FileTransferTask*> p = findChildren<FileTransferTask*>();
-		foreach( FileTransferTask *t, p)
-		{
-			if ( t->take( requestType, m_icbmCookie ) )
-			{
-				return;
-			}
-		}
-		//maybe it's a new request!
-		if ( requestType == 0 )
-		{
-			kDebug(14151) << k_funcinfo << "new request :)" << endl;
-			FileTransferTask *ft = new FileTransferTask( this, m_fromUser, m_icbmCookie, messageBuffer );
-			ft->go( true );
-			return;
-		}
-
-		kDebug(14151) << k_funcinfo << "nobody wants it :(" << endl;
+		emit fileMessage( requestType, m_fromUser, m_icbmCookie, messageBuffer);
 	}
 
 	while( messageBuffer.bytesAvailable() > 0 )

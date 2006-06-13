@@ -43,6 +43,11 @@ class UserDetails;
 class QString;
 class Task;
 class QTextCodec;
+namespace Kopete
+{
+	class Transfer;
+	class TransferManager;
+}
 
 namespace Oscar
 {
@@ -314,7 +319,7 @@ public:
 	void setCodecProvider( CodecProvider* codecProvider );
 
 	/** start a filetransfer task */
-	void sendFile( const QString& contact, const QString& filePath );
+	void sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
@@ -434,6 +439,10 @@ signals:
 	/* service redirection */
 	void redirectionFinished( WORD );
 
+	/** incoming filetransfer */
+	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
+
+	void getTransferManager( Kopete::TransferManager ** );
 
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
@@ -468,6 +477,9 @@ protected slots:
 
 	/** filetransfer message needs sending */
 	void fileMessage( const Oscar::Message& msg );
+
+	/** rendezvous message for a filetransfer task */
+	void gotFileMessage( int, const QString, const QByteArray, Buffer );
 
 	void offlineUser( const QString&, const UserDetails& );
 

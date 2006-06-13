@@ -37,6 +37,7 @@
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include <kopeteglobal.h>
+#include "kopetetransfermanager.h"
 
 #include "oscaraccount.h"
 #include "client.h"
@@ -253,7 +254,7 @@ QTextCodec* OscarContact::contactCodec() const
 //could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "we're supposed to send a file: '" << sourceURL 
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "file: '" << sourceURL 
 		<< "' '" << altFileName << "' size " << fileSize << endl;
 	QString filePath;
 
@@ -264,7 +265,8 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 	kDebug(OSCAR_GEN_DEBUG) << "filePath: '" << filePath << "' " << endl;
 
-	mAccount->engine()->sendFile( mName, filePath );
+	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, filePath, QFile( filePath ).size(), mName, Kopete::FileTransferInfo::Outgoing);
+	mAccount->engine()->sendFile( mName, filePath, t );
 }
 
 #include "oscarcontact.moc"

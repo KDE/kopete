@@ -33,6 +33,12 @@ namespace KNetwork
 typedef KNetwork::KServerSocket KServerSocket;
 typedef KNetwork::KBufferedSocket KBufferedSocket;
 class Transfer;
+namespace Kopete
+{
+	class Transfer;
+	class FileTransferInfo;
+	class TransferManager;
+}
 
 class FileTransferTask : public Task
 {
@@ -41,7 +47,7 @@ public:
 	/** create an incoming filetransfer */
 	FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b );
 	/** create an outgoing filetransfer */
-	FileTransferTask( Task* parent, const QString& contact, const QString &fileName );
+	FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer );
 	~FileTransferTask();
 
 	//! Task implementation
@@ -53,19 +59,24 @@ public slots:
 	void slotReadyAccept(); //direct connection worked
 	void slotSocketError( int );
 	void doCancel();
-	void doAccept( /*Kopete::Transfer*, const QString &fileName*/ );
+	void doCancel( const Kopete::FileTransferInfo &info );
+	void doAccept( Kopete::Transfer*, const QString & );
 	void timeout();
 
 signals:
 	void sendMessage( const Oscar::Message &msg );
 	void gotAccept();
 	void gotCancel();
+	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
+	void getTransferManager( Kopete::TransferManager ** );
 
 private:
 	void sendFile();
 	void makeFTMsg( Oscar::Message &msg ); //add required data to msg
 	bool validFile();
 	void oftPrompt();
+	void parseReq( Buffer b );
+
 	enum Action { Send, Receive };
 	Action m_action;
 	QFile m_localFile;
@@ -74,6 +85,7 @@ private:
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
+	DWORD m_size; //incoming filesize
 };
 
 #endif

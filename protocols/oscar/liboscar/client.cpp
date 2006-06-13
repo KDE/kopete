@@ -624,6 +624,8 @@ void Client::initializeStaticTasks()
 
 	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
 	         this, SLOT( receivedMessage( const Oscar::Message& ) ) );
+	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
+	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
 
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
@@ -1315,17 +1317,45 @@ bool Client::hasIconConnection( ) const
 	return c;
 }
 
-void Client::sendFile( const QString& contact, const QString& filePath )
+void Client::sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
 		return;
-	//it may seem odd that I'm not making it a child of root, but there's a reason.
-	//messagereceiver needs easy access to filetransfers.
-	FileTransferTask *ft = new FileTransferTask( d->messageReceiverTask, contact, filePath );
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, filePath, t );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
 	ft->go( true );
+}
+
+void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)
+{
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( !c )
+		return;
+	//pass the message to the matching task if we can
+	const QList<FileTransferTask*> p = findChildren<FileTransferTask*>();
+	foreach( FileTransferTask *t, p)
+	{
+		if ( t->take( type, cookie ) )
+		{
+			return;
+		}
+	}
+	//maybe it's a new request!
+	if ( type == 0 )
+	{
+		kDebug(14151) << k_funcinfo << "new request :)" << endl;
+		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, cookie, buf );
+		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
+				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
+		connect( ft, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),
+				SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ) );
+		ft->go( true );
+		return;
+	}
+
+	kDebug(14151) << k_funcinfo << "nobody wants it :(" << endl;
 }
 
 #include "client.moc"

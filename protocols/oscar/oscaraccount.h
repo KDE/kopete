@@ -149,6 +149,10 @@ protected slots:
 
     void nonServerAddContactDialogClosed();
 
+	/** incoming filetransfer */
+	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
+	void getTransferManager( Kopete::TransferManager ** );
+
 signals:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );

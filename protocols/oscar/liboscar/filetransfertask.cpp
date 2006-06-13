@@ -29,16 +29,21 @@
 #include "transfer.h"
 #include "oscarutils.h"
 #include <typeinfo>
+#include "kopetetransfermanager.h"
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this )
+:Task( parent ), m_action( Receive ), m_localFile( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 )
 {
 	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "uh, we don't actually support receiving yet" << endl;
+	parseReq( b );
+	
 }
 
-FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName )
+FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
 :Task( parent ), m_action( Send ), m_localFile( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this )
 {
+	QObject::connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
+	//TODO: hook up our accept & cancel signals
 }
 
 FileTransferTask::~FileTransferTask()
@@ -57,11 +62,18 @@ void FileTransferTask::onGo()
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 	m_timer.start( 30 * 1000 );
 	if ( m_action == Receive )
-	{ //TODO: Kopete::TransferManager::askIncomingTransfer
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "not implemented!" << endl;
-		doCancel();
+	{
+		//we have to send a signal because liboscar isn't supposed to know about OscarContact.
+		Kopete::TransferManager *tm = 0;
+		emit getTransferManager( &tm );
+		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
+		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
+
+		emit askIncoming( m_contact, m_localFile.fileName(), m_size, QString::null, m_cookie );
+		//TODO: support icq descriptions
 		return;
-	}
+	} 
+	//else, send
 	if ( m_contact.isEmpty() || (! validFile() ) )
 	{
 		setSuccess( 0 );
@@ -69,6 +81,29 @@ void FileTransferTask::onGo()
 	}
 
 	sendFile();
+}
+
+void FileTransferTask::parseReq( Buffer b )
+{
+	//TODO: get the ip, port, etc.
+	while( b.bytesAvailable() )
+	{
+		TLV tlv = b.getTLV();
+		switch( tlv.type )
+		{
+		 case 0x2711: //file-specific stuff
+		 {
+		 	Buffer b2( tlv.data );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
+			m_size = b2.getDWord();
+			m_localFile.setFileName( b2.buffer() );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_localFile.fileName() << endl;
+			break;
+		 }
+		 default:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ignoring tlv type " << tlv.type << endl;
+		}
+	}
 }
 
 bool FileTransferTask::validFile()
@@ -166,9 +201,22 @@ void FileTransferTask::doCancel()
 	setSuccess( true );
 }
 
-void FileTransferTask::doAccept()
+
+void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
+	//check that it's really for us
+	if ( info.internalId() == m_cookie )
+		doCancel();
+}
+
+void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & )
+{
+	//check that it's really for us
+	if ( t->info().internalId() != m_cookie )
+		return;
 	m_timer.start();
+	//we should unhook the old signals now; we don't need them
+	//then hook up the ones for the transfer
 	Oscar::Message msg;
 	makeFTMsg( msg );
 	msg.setReqType( 2 );
