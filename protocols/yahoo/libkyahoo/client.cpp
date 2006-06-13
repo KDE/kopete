@@ -23,6 +23,7 @@
 
 #include <kdebug.h>
 #include <kurl.h>
+#include <ksocketbase.h>
 
 #include "yahooclientstream.h"
 #include "yahooconnector.h"
@@ -54,6 +55,8 @@
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
+
+using namespace KNetwork;
 
 class Client::ClientPrivate
 {
@@ -92,6 +95,7 @@ public:
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
 	QString statusMessageOnConnect;
+	int pictureFlag;
 };
 
 Client::Client(QObject *par) :QObject(par, "yahooclient" )
@@ -108,6 +112,7 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
+	d->pictureFlag = 0;
 	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
@@ -213,7 +218,7 @@ void Client::streamError( int error )
 	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
 	{
 		d->error = m_connector->errorCode();
-		d->errorString = KSocketBase::errorString( (KNetwork::KSocketBase::SocketError)d->error );
+		d->errorString = KSocketBase::errorString( (KSocketBase::SocketError)d->error );
 	}
 	else
 	{
@@ -485,6 +490,7 @@ void Client::uploadPicture( KURL url )
 		spt->setPath( url.path() );
 	else
 		spt->setPath( url.url() );
+	d->pictureFlag = 2;
 	spt->go( true );
 }
 
@@ -687,7 +693,7 @@ uint Client::sessionID()
 
 int Client::pictureFlag()
 {
-	return 0;
+	return d->pictureFlag;
 }
 
 QString Client::yCookie()
