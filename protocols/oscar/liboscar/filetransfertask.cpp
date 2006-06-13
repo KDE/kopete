@@ -96,7 +96,7 @@ void FileTransferTask::parseReq( Buffer b )
 		 	Buffer b2( tlv.data );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
 			m_size = b2.getDWord();
-			m_localFile.setFileName( b2.buffer() );
+			m_localFile.setFileName( b2.getBlock( b2.bytesAvailable() ) );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_localFile.fileName() << endl;
 			break;
 		 }
@@ -267,8 +267,10 @@ void FileTransferTask::sendFile()
 	//now set the rendezvous info
 	msg.setReqType( 0 );
 	msg.setPort( 5190 ); //FIXME: hardcoding bad!
-	msg.setFile( m_localFile.size(), m_localFile.fileName() );
-	//FIXME: strip path from name
+	QString name =  m_localFile.fileName();
+	//strip path from name
+	name = name.mid( name.lastIndexOf('/') + 1 );
+	msg.setFile( m_localFile.size(), name );
 
 	//we're done, send it off!
 	emit sendMessage( msg );
