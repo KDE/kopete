@@ -41,16 +41,16 @@ public:
 
 private slots:
 	void slotSetSelection (QListViewItem *);
-	void slotQuery ();
-	void slotQueryFinished ();
+	void slotService ();
+	void slotServiceFinished ();
 	void slotRegister ();
 	void slotBrowse ();
 	
+	void slotDisco();
 	void slotDiscoFinished();
 
 private:
 	JabberAccount *m_account;
-	XMPP::JT_GetServices * serviceTask;
 	XMPP::Jid current_jid;
 
 };
