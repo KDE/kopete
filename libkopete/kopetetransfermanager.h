@@ -187,6 +187,11 @@ public slots:
 	 */
 	void slotError( int error, const QString &errorText );
 
+	/** transfer was cancelled (but not by our user) */
+	void slotCancelled();
+	/** transfer was accepted by the other user */
+	void slotAccepted();
+
 signals:
 	/**
 	 * @deprecated Use result() and check error() for ERR_USER_CANCELED

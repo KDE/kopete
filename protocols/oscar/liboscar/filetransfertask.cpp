@@ -42,8 +42,10 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteA
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
 :Task( parent ), m_action( Send ), m_localFile( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this )
 {
-	QObject::connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
-	//TODO: hook up our accept & cancel signals
+	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
+	//hook up our accept & cancel signals
+	connect( this , SIGNAL( gotCancel() ), transfer, SLOT( slotCancelled() ) );
+	connect( this , SIGNAL( gotAccept() ), transfer, SLOT( slotAccepted() ) );
 }
 
 FileTransferTask::~FileTransferTask()
@@ -230,6 +232,7 @@ void FileTransferTask::timeout()
 	//nothing's happened for ages - assume we're dead.
 	//so tell the user, send off a cancel, and die
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	emit gotCancel();
 	doCancel();
 }
 
