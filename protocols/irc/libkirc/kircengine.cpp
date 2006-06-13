@@ -448,7 +448,9 @@ bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Mes
 		else
 		{
 			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw() << endl;
-			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
+			// Don't send error message on unknown CTCP command
+			// None of the client send it, and it makes the client as infected by virus for IRC network scanners
+			// writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
 
 			emit incomingUnknownCtcp(msg.ctcpRaw());
 		}
