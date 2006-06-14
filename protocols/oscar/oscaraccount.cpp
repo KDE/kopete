@@ -355,8 +355,13 @@ void OscarAccount::nonServerAddContactDialogClosed()
 
 void OscarAccount::askIncoming( QString c, QString f, DWORD s, QString d, QString i )
 {
-	Kopete::Contact * ct = contacts()[ Oscar::normalize( c ) ];
-	//FIXME: what if ct is null?
+	QString sender = Oscar::normalize( c );
+	if ( !contacts()[sender] )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact" << endl;
+		addContact( sender, QString::null, 0,  Kopete::Account::Temporary );
+	}
+	Kopete::Contact * ct = contacts()[ sender ];
 	Kopete::TransferManager::transferManager()->askIncomingTransfer( ct, f, s, d, i);
 }
 
