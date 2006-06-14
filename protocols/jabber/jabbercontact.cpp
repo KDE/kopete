@@ -1548,6 +1548,16 @@ void JabberContact::slotDiscoFinished( )
 				
 				break;  //(we currently only support gateway)
 			}
+			else if (ident.category == "service")
+			{
+				//The ApaSMSAgent is reporting itself as service (instead of gateway) which is broken.
+				//we anyway support it.  See bug  127811
+				if(ident.type == "sms")
+				{
+					is_transport=true;
+					tr_type=ident.type;
+				}
+			}
 		}
  	}
 
