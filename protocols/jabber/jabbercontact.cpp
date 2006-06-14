@@ -1390,7 +1390,8 @@ void JabberContact::sendPresence ( const XMPP::Status status )
 	XMPP::Status newStatus = status;
 
 	// honour our priority
-	newStatus.setPriority ( account()->configGroup()->readNumEntry ( "Priority", 5 ) );
+	if(newStatus.isAvailable())
+		newStatus.setPriority ( account()->configGroup()->readNumEntry ( "Priority", 5 ) );
 
 	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
 
@@ -1455,8 +1456,7 @@ void JabberContact::slotStatusInvisible ()
 {
 
 	XMPP::Status status;
-	status.setShow ("away");
-	status.setIsInvisible ( true );
+	status.setIsAvailable( false );
 
 	sendPresence ( status );
 
