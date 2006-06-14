@@ -1,0 +1,29 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.kopete.Client">
+    <method name="networks">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="status">
+      <arg name="host" type="s" direction="in"/>
+      <arg type="i" direction="out"/>
+    </method>
+    <method name="request">
+      <arg name="host" type="s" direction="in"/>
+      <arg name="userInitiated" type="b" direction="in"/>
+      <arg type="i" direction="out"/>
+    </method>
+    <method name="reportFailure">
+      <arg name="host" type="s" direction="in"/>
+      <arg type="b" direction="out"/>
+    </method>
+    <signal name="statusChange">
+    <arg type="s"/>
+    <arg type="i"/>
+    </signal>
+    <signal name="shutdownRequested">
+    <arg type="s"/>
+    </signal>
+  </interface>
+</node>
