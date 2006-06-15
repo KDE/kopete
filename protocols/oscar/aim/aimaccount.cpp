@@ -19,7 +19,7 @@
 
 #include <kdebug.h>
 #include <kconfig.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
@@ -377,7 +377,7 @@ void AIMAccount::slotEditInfo()
 				i18n( "Unable to edit user info" ) );
 		return;
 	}
-	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this, true, 0L, "myInfo");
+	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this);
 	myInfo->exec(); // This is a modal dialog
 }
 
@@ -509,7 +509,7 @@ void AIMAccount::slotJoinChat()
 	//join the chat room
 	if ( !m_joinChatDialog )
 	{
-		m_joinChatDialog = new AIMJoinChatUI( this, false, Kopete::UI::Global::mainWidget() );
+		m_joinChatDialog = new AIMJoinChatUI( this, Kopete::UI::Global::mainWidget() );
 		QObject::connect( m_joinChatDialog, SIGNAL( closing( int ) ),
 				this, SLOT( joinChatDialogClosed( int ) ) );
 		Q3ValueList<int> list = engine()->chatExchangeList();

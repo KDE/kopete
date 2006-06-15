@@ -34,7 +34,7 @@ class DlgJabberChangePassword : public KDialog
 Q_OBJECT
 
 public:
-	DlgJabberChangePassword ( JabberAccount *account, QWidget *parent = 0, const char *name = 0);
+	DlgJabberChangePassword ( JabberAccount *account, QWidget *parent = 0 );
 	~DlgJabberChangePassword();
 
 private slots:

@@ -20,9 +20,7 @@
 #ifndef LISTKEYS_H
 #define LISTKEYS_H
 
-
-#include <kdialogbase.h>
-//Added by qt3to4:
+#include <kdialog.h>
 #include <QPixmap>
 
 class K3ListView;

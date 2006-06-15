@@ -1072,7 +1072,9 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 		return;
 	}
 
-	KDialog *addDialog = new KDialog( this, i18n( "Add Contact" ), KDialog::Ok | KDialog::Cancel );
+	KDialog *addDialog = new KDialog( this );
+	addDialog->setCaption( i18n( "Add Contact" ) );
+	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
 	addDialog->enableButtonSeparator( true );
 

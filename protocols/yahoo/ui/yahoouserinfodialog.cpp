@@ -30,8 +30,7 @@
 #include <kdatewidget.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kiconloader.h>
-#include <kjanuswidget.h>
+#include <kicon.h>
 #include <klocale.h>
 
 #include "ui_yahooworkinfowidget.h"
@@ -39,31 +38,42 @@
 #include "ui_yahoootherinfowidget.h"
 #include "yahoocontact.h"
 
-YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::IconList, 0,  parent, name, false, i18n( "Yahoo User Information" ), User2|User1|Cancel, Cancel, false, i18n("Save and Close"), i18n("Merge with existing entry") )
+YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
+: KPageDialog( parent ), m_contact(c)
 {
+	setFaceType( KPageDialog::List );
+	setCaption( i18n( "Yahoo User Information" ) );
+	setButtons( KDialog::User2 | KDialog::User1 | KDialog::Cancel );
+	setDefaultButton( KDialog::Cancel );
+	setButtonGuiItem( KDialog::User1, i18n("Save and Close") );
+	setButtonGuiItem( KDialog::User2, i18n("Merge with existing entry") );
+	showButton( KDialog::User2, false );
+
 	kDebug(14180) << k_funcinfo << "Creating new yahoo user info widget" << endl;
-	m_contact = c;
-	showButton( User2, false );
-	QFrame* genInfo = addPage( i18n( "General Info" ),
-	                                         i18n( "General Yahoo Information" ),
-	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), K3Icon::Desktop ) );
+	
+	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::YahooGeneralInfoWidget;
 	m_genInfoWidget->setupUi( genInfo );
+	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
+	genInfoItem->setHeader(  i18n( "General Yahoo Information" ) );
+	genInfoItem->setIcon( KIcon("identity") );
 	
-	QFrame* workInfo = addPage( i18n( "Work Info" ),
-	                                          i18n( "Work Information" ),
-	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), K3Icon::Desktop ) );
+	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::YahooWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
+	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
+	workInfoItem->setHeader( i18n( "Work Information" ) );
+	workInfoItem->setIcon( KIcon("attach") );
 	
-	QFrame* otherInfo = addPage( i18n( "Other Info" ),
-	                                           i18n( "Other Yahoo Information" ),
-	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
+	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::YahooOtherInfoWidget;
 	m_otherInfoWidget->setupUi( otherInfo );
+	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
+	otherInfoItem->setHeader( i18n( "Other Yahoo Information" ) );
+	otherInfoItem->setIcon( KIcon("email") );
 	
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveAndCloseClicked()));
+	QObject::connect(this, SIGNAL(user2Clicked()), this, SLOT(slotUser2()));
 }
 
 YahooUserInfoDialog::~YahooUserInfoDialog()

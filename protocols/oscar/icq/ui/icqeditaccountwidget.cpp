@@ -31,7 +31,6 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kjanuswidget.h>
 #include <kurllabel.h>
 #include <kdatewidget.h>
 #include <ktoolinvocation.h>

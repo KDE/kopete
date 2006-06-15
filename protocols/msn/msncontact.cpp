@@ -195,7 +195,8 @@ void MSNContact::slotBlockUser()
 
 void MSNContact::slotUserInfo()
 {
-	KDialog *infoDialog=new KDialog( 0l, QString::null, KDialog::Close );
+	KDialog *infoDialog=new KDialog;
+	infoDialog->setButtons( KDialog::Close );
 	infoDialog->setDefaultButton( KDialog::Close );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();

@@ -47,10 +47,12 @@
 #include "jabberchooseserver.h"
 #include "ui_dlgjabberregisteraccount.h"
 
-JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, const char */*name*/ )
- : KDialog ( parent, i18n("Register New Jabber Account"), KDialog::Ok | KDialog::Cancel )
+JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
+ : KDialog ( parent )
 {
 
+	setCaption( i18n("Register New Jabber Account") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	mParentWidget = parent;
 
 	// setup main dialog

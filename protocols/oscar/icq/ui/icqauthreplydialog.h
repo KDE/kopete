@@ -30,7 +30,7 @@ class ICQAuthReplyDialog : public KDialog
 {
 Q_OBJECT
 public:
-	ICQAuthReplyDialog(QWidget *parent = 0, const char *name = 0, bool wasRequested = true);
+	ICQAuthReplyDialog(QWidget *parent = 0, bool wasRequested = true);
 	~ICQAuthReplyDialog();
 	
 	void setUser( const QString& user );

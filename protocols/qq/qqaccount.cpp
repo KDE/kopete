@@ -118,7 +118,7 @@ void QQAccount::slotShowVideo ()
 	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
-		QQWebcamDialog *qqWebcamDialog = new QQWebcamDialog(0, 0, "QQ video window");
+		QQWebcamDialog *qqWebcamDialog = new QQWebcamDialog(0, 0);
 	updateContactStatus();
 }
 

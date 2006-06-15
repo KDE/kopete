@@ -97,16 +97,20 @@ QString UpdateViewItem2 :: key(int c,bool ) const
 
 ///////////////  main view
 
-popupPublic::popupPublic(QWidget *parent, const char *name,QString sfile,bool filemode,KShortcut goDefaultKey):
-KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent, name,true)
+popupPublic::popupPublic(QWidget *parent, const char */*name*/,QString sfile,bool filemode,KShortcut goDefaultKey)
+ : KDialog( parent )
 {
-	QWidget *page = plainPage();
+	setCaption( i18n("Select Public Key") );
+	setButtons( KDialog::Details | KDialog::Ok | KDialog::Cancel );
+	setDefaultButton( KDialog::Ok );
+	
+	QWidget *page = new QWidget(this);
 	QVBoxLayout *vbox=new QVBoxLayout(page);
 	vbox->setSpacing(spacingHint());
 	vbox->setMargin(0);
 	vbox->setAutoAdd(true);
 
-	setButtonText(KDialogBase::Details,i18n("Options"));
+	setButtonText(KDialog::Details,i18n("Options"));
 
 /*        if (KGpgSettings::allowCustomEncryptionOptions())
                 customOptions=KGpgSettings::customEncryptionOptions();*/

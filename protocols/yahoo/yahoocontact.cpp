@@ -440,7 +440,7 @@ void YahooContact::slotUserInfo()
 		readYABEntry();	// No YABEntry was set, so read the one from contactlist.xml
 	}
 	
-	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( this, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( this, Kopete::UI::Global::mainWidget() );
 	dlg->setData( *m_YABEntry );
 	dlg->setAccountConnected( m_account->isConnected() );
 	dlg->show();
@@ -465,8 +465,9 @@ void YahooContact::stealthContact()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
-	KDialog *stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget(),
-				i18n("Stealth Setting"), KDialog::Ok | KDialog::Cancel );
+	KDialog *stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	stealthSettingDialog->setCaption( i18n("Stealth Setting") );
+	stealthSettingDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	stealthSettingDialog->setDefaultButton(KDialog::Ok);
 	stealthSettingDialog->enableButtonSeparator(true);
 	

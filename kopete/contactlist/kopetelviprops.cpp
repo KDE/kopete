@@ -38,7 +38,6 @@
 #include <QBoxLayout>
 #include <QSize>
 
-#include <kdialogbase.h>
 #include <kfiledialog.h>
 #include <kicondialog.h>
 #include <kiconloader.h>
@@ -74,8 +73,11 @@ const char MC_UNK[] = "metacontact_unknown";
 // also cmbPhotoUrl  is gone completely. Let's pray for it
 
 KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
-: KDialog(parent, i18n("Properties of Group %1", gvi->group()->displayName()), Ok|Cancel)
+: KDialog(parent)
 {
+	setCaption( i18n("Properties of Group %1", gvi->group()->displayName()) );
+	setButtons( Ok | Cancel );
+
 	mainWidget = new QWidget( this );
 	mainWidget->setObjectName( "mainWidget" );
 	ui_mainWidget = new Ui::KopeteGVIPropsWidget;
@@ -159,8 +161,10 @@ void KopeteGVIProps::slotIconChanged()
 
 
 KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *parent)
-: KDialog(parent, i18n("Properties of Meta Contact %1", lvi->metaContact()->displayName()), Ok|Cancel)
+: KDialog(parent)
 {
+	setCaption( i18n("Properties of Meta Contact %1", lvi->metaContact()->displayName()) );
+	setButtons( Ok | Cancel );
 	m_countPhotoCapable = 0;
 
 	mainWidget = new QWidget( this );

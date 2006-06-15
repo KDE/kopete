@@ -27,13 +27,23 @@
 
 #include "dlgjabberchatjoin.h"
 
-dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent, const char* name) :
-dlgChatJoin(parent, name),
-m_account(account)
+dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent) 
+: KDialog(parent), m_account(account)
 {
-	setCaption(i18n("Join Jabber Groupchat"));
-	leNick->setText(m_account->client()->client()->user());
+	setCaption( i18n("Join Jabber Groupchat") );
+	setButtons( KDialog::User1 | KDialog::User2 );
+	setButtonGuiItem( KDialog::User1, i18n("Join") );
+	setButtonGuiItem( KDialog::User2, i18n("Browser") );
+	
+	QWidget *mainWidget = new QWidget(this);
+	m_ui.setupUi(mainWidget);
+	setMainWidget(mainWidget);
+	
+	m_ui.leNick->setText(m_account->client()->client()->user());
 	checkDefaultChatroomServer();
+
+	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotJoin()));
+	connect(this, SIGNAL(user2Clicked()), this, SLOT(slotBowse()));
 }
 
 dlgJabberChatJoin::~dlgJabberChatJoin()
@@ -49,7 +59,7 @@ void dlgJabberChatJoin::slotJoin()
 		return;
 	}
 
-	m_account->client()->joinGroupChat(leServer->text(), leRoom->text(), leNick->text());
+	m_account->client()->joinGroupChat(m_ui.leServer->text(), m_ui.leRoom->text(), m_ui.leNick->text());
 	accept();
 }
 
@@ -61,7 +71,7 @@ void dlgJabberChatJoin::slotBowse()
 		return;
 	}
 
-	dlgJabberChatRoomsList *crl = new dlgJabberChatRoomsList(m_account, leServer->text() , leNick->text());
+	dlgJabberChatRoomsList *crl = new dlgJabberChatRoomsList(m_account, m_ui.leServer->text() , m_ui.leNick->text());
 	crl->show();
 	accept();
 }
@@ -89,7 +99,7 @@ void dlgJabberChatJoin::slotQueryFinished()
 	if (!task->success ())
 		return;
 	
-	if(!leServer->text().isEmpty())
+	if(!m_ui.leServer->text().isEmpty())
 	{  //the user already started to type the server manyally. abort auto-detect
 		return;
 	}
@@ -111,7 +121,7 @@ void dlgJabberChatJoin::slotDiscoFinished()
 	if (!task->success())
 		return;
 	
-	if(!leServer->text().isEmpty())
+	if(!m_ui.leServer->text().isEmpty())
 	{  //the user already started to type the server manyally. abort auto-detect
 		return;
 	}
@@ -119,7 +129,7 @@ void dlgJabberChatJoin::slotDiscoFinished()
 
 	if (task->item().features().canGroupchat() && !task->item().features().isGateway())
 	{
-		leServer->setText(task->item().jid().full());
+		m_ui.leServer->setText(task->item().jid().full());
 	}
 }
 

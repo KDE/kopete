@@ -806,7 +806,7 @@ void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QStri
 	if(kc)
 		metaContact=kc->metaContact();
 	
-	int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+	Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
 	if( metaContact && !metaContact->isTemporary() )
 		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 	
@@ -1313,7 +1313,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 		else if( entry->source == YABEntry::SourceContact )
 		{
 			entry->YABId = kc->yabEntry()->YABId;
-			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget() );
 			dlg->setData( *entry );
 			dlg->setAccountConnected( isConnected() );
 			dlg->show();

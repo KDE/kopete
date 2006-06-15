@@ -34,8 +34,10 @@
 #include <qlineedit.h>
 
 GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
-: KDialog( parent, i18n( "Away Dialog" ), KDialog::Ok | KDialog::Cancel), account_( account )
+: KDialog( parent ), account_( account )
 {
+	setCaption(  i18n( "Away Dialog" ) );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
 	enableButtonSeparator( true );
 

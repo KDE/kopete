@@ -37,8 +37,10 @@
 #include "yahooaccount.h"
 
 YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent)
-: KDialog(parent, i18n("Account Verification - Yahoo"), Cancel|Apply)
+: KDialog(parent)
 {
+	setCaption( i18n("Account Verification - Yahoo") );
+	setButtons( KDialog::Cancel | KDialog::Apply );
 	setDefaultButton(KDialog::Apply);
 	enableButtonSeparator(true);
 

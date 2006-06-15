@@ -25,9 +25,11 @@
 #include <klocale.h>
 
 OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
-    : KDialog( parent, i18n( "Add Contacts to Server List" ),
-                   KDialog::Ok | KDialog::Cancel )
+    : KDialog( parent )
 {
+    setCaption( i18n( "Add Contacts to Server List" ) );
+    setButtons( KDialog::Ok | KDialog::Cancel );
+
     QWidget* w = new QWidget( this );
     m_contactsList = new Ui::OscarListContactsBase;
     m_contactsList->setupUi( w );

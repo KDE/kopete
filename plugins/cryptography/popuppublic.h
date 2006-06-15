@@ -19,7 +19,7 @@
 #ifndef POPUPPUBLIC_H
 #define POPUPPUBLIC_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 //#include <kiconloader.h>
 #include <kshortcut.h>
@@ -33,7 +33,7 @@ class K3ListView;
 class Q3ButtonGroup;
 class KProcIO;
 
-class popupPublic : public KDialogBase //QDialog
+class popupPublic : public KDialog
 {
         Q_OBJECT
 public:

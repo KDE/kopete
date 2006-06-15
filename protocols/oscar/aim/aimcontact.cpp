@@ -162,7 +162,7 @@ void AIMContact::slotUserInfo()
 {
 	if ( !m_infoDialog)
 	{
-		m_infoDialog = new AIMUserInfoDialog( this, static_cast<AIMAccount*>( account() ), false, Kopete::UI::Global::mainWidget(), 0 );
+		m_infoDialog = new AIMUserInfoDialog( this, static_cast<AIMAccount*>( account() ), Kopete::UI::Global::mainWidget() );
 		if( !m_infoDialog )
 			return;
 		connect( m_infoDialog, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );

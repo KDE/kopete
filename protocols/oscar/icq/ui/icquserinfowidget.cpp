@@ -23,15 +23,12 @@
 #include <qspinbox.h>
 #include <q3combobox.h>
 #include <qobject.h>
-//Added by qt3to4:
-#include <Q3Frame>
 #include <qtextcodec.h>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kiconloader.h>
-#include <kjanuswidget.h>
+#include <kicon.h>
 #include <klocale.h>
 
 #include "ui_icqgeneralinfo.h"
@@ -42,34 +39,43 @@
 #include "ui_icqinterestinfowidget.h"
 
 
-ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::IconList, 0,  parent, name, false, i18n( "ICQ User Information" ), Ok )
+ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
+: KPageDialog( parent )
 {
+	setFaceType( KPageDialog::List );
+	setModal( false );
+	setCaption( i18n( "ICQ User Information" ) );
+	setDefaultButton( KDialog::Ok );
+	
 	kDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
 	
-	QFrame* genInfo = addPage( i18n( "General Info" ),
-	                                         i18n( "General ICQ Information" ),
-	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), K3Icon::Desktop ) );
+	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;
 	m_genInfoWidget->setupUi( genInfo );
+	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
+	genInfoItem->setHeader( i18n("General ICQ Information") );
+	genInfoItem->setIcon( KIcon("identity") );
 	
-	QFrame* workInfo = addPage( i18n( "Work Info" ),
-	                                          i18n( "Work Information" ),
-	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), K3Icon::Desktop ) );
+	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::ICQWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
+	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
+	workInfoItem->setHeader( i18n( "Work Information" ) );
+	workInfoItem->setIcon( KIcon("attach") );
 	
-	QFrame* otherInfo = addPage( i18n( "Other Info" ),
-	                                           i18n( "Other ICQ Information" ),
-	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
+	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::ICQOtherInfoWidget();
 	m_otherInfoWidget->setupUi( otherInfo );
+	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
+	otherInfoItem->setHeader( i18n( "Other ICQ Information" ) );
+	otherInfoItem->setIcon( KIcon("email") );
 	
-	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
-	                                           i18n( "Interest" ),
-	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), K3Icon::Desktop ) );
+	QWidget *interestInfo = new QWidget(this);
 	m_interestInfoWidget = new Ui::ICQInterestInfoWidget();
 	m_interestInfoWidget->setupUi( interestInfo );
+	KPageWidgetItem *interestInfoItem = addPage( interestInfo, i18n("Interest Info") );
+	interestInfoItem->setHeader( i18n( "Interest" ) );
+	interestInfoItem->setIcon( KIcon("email") );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()

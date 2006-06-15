@@ -1107,7 +1107,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		if(contact)
 			metaContact=contact->metaContact();
 		
-		int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+		Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
 		if( metaContact && !metaContact->isTemporary() )
 			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 		

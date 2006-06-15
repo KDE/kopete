@@ -30,16 +30,21 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::Plain, Qt::WDestructiveClose, parent, name, false, i18n( "Webcam for %1", contactId ),
-                   KDialogBase::Close, KDialogBase::Close, true /*seperator*/ )
+TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent )
+: KDialog( parent )
 {
+	setCaption( i18n( "Webcam for %1", contactId ) );
+	setButtons( KDialog::Close );
+	setDefaultButton( KDialog::Close );
+	enableButtonSeparator( true );
+	setWindowFlags( Qt::WDestructiveClose );
+
 	setInitialSize( QSize(320,290) );
 	
-	setEscapeButton( KDialogBase::Close );
+	setEscapeButton( KDialog::Close );
 //	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
 
-	QWidget *page = plainPage();
+	QWidget *page = new QWidget(this);
 	setMainWidget(page);
 
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	

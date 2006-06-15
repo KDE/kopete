@@ -38,7 +38,7 @@ class JabberRegisterAccount : public KDialog
 Q_OBJECT
 
 public:
-	JabberRegisterAccount ( JabberEditAccountWidget *parent = 0, const char *name = 0 );
+	JabberRegisterAccount ( JabberEditAccountWidget *parent = 0 );
 
 	~JabberRegisterAccount ();
 

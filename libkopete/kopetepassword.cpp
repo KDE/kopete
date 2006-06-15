@@ -177,8 +177,9 @@ public:
 	{
 		kDebug( 14010 ) << k_funcinfo << endl;
 
-		KDialog *passwdDialog = new KDialog( Kopete::UI::Global::mainWidget(), i18n( "Password Required" ),
-			KDialog::Ok | KDialog::Cancel );
+		KDialog *passwdDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+		passwdDialog->setCaption( i18n( "Password Required" ) );
+		passwdDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 		passwdDialog->setDefaultButton( KDialog::Ok );
 		passwdDialog->enableButtonSeparator( true );
 

@@ -162,7 +162,9 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	}
 	else
 	{
-		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
+		KDialog *chooser = new KDialog;
+		chooser->setCaption( i18n("Choose Account") );
+		chooser->setButtons( KDialog::Ok | KDialog::Cancel );
 		chooser->setDefaultButton(KDialog::Ok);
 		AccountSelector *accSelector = new AccountSelector(proto, chooser);
 		accSelector->setObjectName( QLatin1String("accSelector") );

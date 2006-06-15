@@ -21,19 +21,18 @@
 #define AIMJOINCHAT_H
 
 #include <q3valuelist.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "oscartypes.h"
 
 class AIMAccount;
 namespace Ui { class AIMJoinChatBase; }
 
-class AIMJoinChatUI : public KDialogBase
+class AIMJoinChatUI : public KDialog
 {
 Q_OBJECT
 public:
-	AIMJoinChatUI( AIMAccount*,  bool modal, QWidget* parent = 0,
-	               const char* name = 0 );
+	AIMJoinChatUI( AIMAccount*, QWidget* parent = 0 );
 	~AIMJoinChatUI();
 
     void setExchangeList( const Q3ValueList<int>& );

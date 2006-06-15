@@ -42,7 +42,7 @@ class JabberChooseServer : public KDialog
 Q_OBJECT
 
 public:
-	JabberChooseServer ( JabberRegisterAccount *parent = 0, const char *name = 0);
+	JabberChooseServer ( JabberRegisterAccount *parent = 0 );
 
 	~JabberChooseServer();
 

@@ -30,9 +30,11 @@
 #include "ui_dlgjabberchooseserver.h"
 #include "jabberregisteraccount.h"
 
-JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const char *name )
- : KDialog ( parent, i18n("Choose Jabber Server"), KDialog::Ok | KDialog::Cancel )
+JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
+ : KDialog ( parent )
 {
+	setCaption( i18n("Choose Jabber Server") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 
 	mParentWidget = parent;
 	mSelectedRow = -1;

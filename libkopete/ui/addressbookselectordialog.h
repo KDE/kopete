@@ -52,8 +52,8 @@ public:
 	* The constructor of an empty AddressBookSelectorWidget
 	*/
 	AddressBookSelectorDialog( const QString &title, const QString &message,
-	                           const QString &preSelectUid, QWidget *parent = 0L,
-	                           const char *name=0L, bool modal = false );
+	                           const QString &preSelectUid, QWidget *parent = 0L
+	                          );
 	/**
 	* The destructor of the dialog
 	*/

@@ -21,7 +21,7 @@
 #include <qimage.h>
 #include <qtimer.h>
 #include <qpixmap.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 /**
 	@author Kopete Developers <kopete-devel@kde.org>
@@ -37,11 +37,11 @@ namespace Kopete {
 	class WebcamWidget;
 }
 
-class QQWebcamDialog : public KDialogBase
+class QQWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	QQWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
+	QQWebcamDialog( const QString &, QWidget* parent = 0 );
 	~QQWebcamDialog();
 	
 public slots:

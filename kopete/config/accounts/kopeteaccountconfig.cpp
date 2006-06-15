@@ -224,7 +224,9 @@ void KopeteAccountConfig::slotEditAccount()
 	Kopete::Account *ident = lvi->account();
 	Kopete::Protocol *proto = ident->protocol();
 
-	KDialog *editDialog = new KDialog( this, i18n( "Edit Account" ), KDialog::Ok | KDialog::Cancel );
+	KDialog *editDialog = new KDialog( this );
+	editDialog->setCaption( i18n("Edit Account" ) );
+	editDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	editDialog->setDefaultButton(KDialog::Ok);
 	editDialog->enableButtonSeparator(true);
 

@@ -23,8 +23,8 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kdialog.h>
 #include <kdeversion.h>
-#include <kdialogbase.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kiconeffect.h>
@@ -526,7 +526,9 @@ bool Account::isBlocked( const QString &contactId )
 
 void Account::editAccount(QWidget *parent)
 {
-	KDialog *editDialog = new KDialog( parent, i18n( "Edit Account" ), KDialog::Ok | KDialog::Apply | KDialog::Cancel );
+	KDialog *editDialog = new KDialog( parent );
+	editDialog->setCaption( i18n( "Edit Account" ) );
+	editDialog->setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
 
 	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
 	if ( !m_accountWidget )

@@ -175,7 +175,9 @@ int KopeteAddressBookExport::showDialog()
 		numHomePhones = 0;
 		numWorkPhones = 0;
 		numMobilePhones = 0;
-		mDialog = new KDialog( mParent, i18n("Export to Address Book"), KDialog::Ok|KDialog::Cancel );
+		mDialog = new KDialog( mParent );
+		mDialog->setCaption( i18n("Export to Address Book") );
+		mDialog->setButtons( KDialog::Ok|KDialog::Cancel );
 		
 		QWidget* w = new QWidget( mDialog );
 		setupUi( w );

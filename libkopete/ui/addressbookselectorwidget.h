@@ -27,7 +27,6 @@
 #ifndef AddressBookSelectorWidget_H
 #define AddressBookSelectorWidget_H
 
-#include <kdialogbase.h>
 #include <kabc/addressbook.h>
 
 #include <kdemacros.h>

@@ -24,9 +24,12 @@
 #include <qradiobutton.h>
 #include <qlineedit.h>
 
-ICQAuthReplyDialog::ICQAuthReplyDialog( QWidget *parent, const char */*name*/, bool wasRequested )
- : KDialog( parent, i18n( "Authorization Reply" ), KDialog::Ok | KDialog::Cancel )
+ICQAuthReplyDialog::ICQAuthReplyDialog( QWidget *parent, bool wasRequested )
+ : KDialog( parent )
 {
+	setCaption( i18n( "Authorization Reply" ) );
+	setButtons( KDialog::Ok | KDialog::Cancel );
+
 	m_ui = new Ui::ICQAuthReplyUI();
 	QWidget *w = new QWidget( this );
 	m_ui->setupUi( w );

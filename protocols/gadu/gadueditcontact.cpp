@@ -47,9 +47,10 @@
 
 GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 		    QWidget* parent )
-: KDialog( parent,i18n( "Edit Contact's Properties" ),
-			 KDialog::Ok | KDialog::Cancel ), account_( account ), contact_( contact )
+: KDialog( parent ), account_( account ), contact_( contact )
 {
+	setCaption( i18n( "Edit Contact's Properties" ) );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
 	enableButtonSeparator( true );
 
@@ -67,10 +68,10 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 
 GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::ContactLine* clin,
 		    QWidget* parent )
-: KDialog( parent, i18n( "Edit Contact's Properties" ),
-			 KDialog::Ok | KDialog::Cancel ), account_( account ), contact_( NULL )
+: KDialog( parent ), account_( account ), contact_( NULL )
 {
-
+	setCaption( i18n( "Edit Contact's Properties" ) );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
 	enableButtonSeparator( true );
 
