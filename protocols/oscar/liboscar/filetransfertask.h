@@ -56,8 +56,6 @@ public:
 	bool take( int type, QByteArray cookie );
 
 public slots:
-	void slotReadyAccept(); //direct connection worked
-	void slotSocketError( int );
 	void doCancel();
 	void doCancel( const Kopete::FileTransferInfo &info );
 	void doAccept( Kopete::Transfer*, const QString & );
@@ -67,8 +65,15 @@ signals:
 	void sendMessage( const Oscar::Message &msg );
 	void gotAccept();
 	void gotCancel();
+	void error( int, const QString & );
 	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
+
+private slots:
+	void readyAccept(); //serversocket got connection
+	void socketError( int );
+	void socketRead();
+	void socketClosed();
 
 private:
 	void sendFile();
@@ -79,13 +84,14 @@ private:
 
 	enum Action { Send, Receive };
 	Action m_action;
-	QFile m_localFile;
+	QFile m_file;
 	QString m_contact;
 	QByteArray m_cookie; //icbm cookie for this transfer
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
 	DWORD m_size; //incoming filesize
+	QString m_name; //sender's filename without path
 };
 
 #endif

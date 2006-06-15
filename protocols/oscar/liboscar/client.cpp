@@ -1334,7 +1334,7 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	if ( !c )
 		return;
 	//pass the message to the matching task if we can
-	const QList<FileTransferTask*> p = findChildren<FileTransferTask*>();
+	const QList<FileTransferTask*> p = c->rootTask()->findChildren<FileTransferTask*>();
 	foreach( FileTransferTask *t, p)
 	{
 		if ( t->take( type, cookie ) )

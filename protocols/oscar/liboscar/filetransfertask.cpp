@@ -30,9 +30,10 @@
 #include "oscarutils.h"
 #include <typeinfo>
 #include "kopetetransfermanager.h"
+#include <qfileinfo.h>
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_localFile( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 )
 {
 	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "uh, we don't actually support receiving yet" << endl;
 	parseReq( b );
@@ -40,17 +41,20 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteA
 }
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_localFile( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this )
 {
+	//get filename without path
+	m_name = QFileInfo( fileName ).fileName();
+	//hook up ui cancel
 	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
-	//hook up our accept & cancel signals
+	//hook up our ui signals
 	connect( this , SIGNAL( gotCancel() ), transfer, SLOT( slotCancelled() ) );
 	connect( this , SIGNAL( gotAccept() ), transfer, SLOT( slotAccepted() ) );
+	connect( this , SIGNAL( error( int, const QString & ) ), transfer, SLOT( slotError( int, const QString & ) ) );
 }
 
 FileTransferTask::~FileTransferTask()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	if( m_connection )
 	{
 		delete m_connection;
@@ -71,7 +75,7 @@ void FileTransferTask::onGo()
 		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
 		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
 
-		emit askIncoming( m_contact, m_localFile.fileName(), m_size, QString::null, m_cookie );
+		emit askIncoming( m_contact, m_name, m_size, QString::null, m_cookie );
 		//TODO: support icq descriptions
 		return;
 	} 
@@ -98,8 +102,8 @@ void FileTransferTask::parseReq( Buffer b )
 		 	Buffer b2( tlv.data );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
 			m_size = b2.getDWord();
-			m_localFile.setFileName( b2.getBlock( b2.bytesAvailable() ) );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_localFile.fileName() << endl;
+			m_name = b2.getBlock( b2.bytesAvailable() );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_name << endl;
 			break;
 		 }
 		 default:
@@ -111,22 +115,22 @@ void FileTransferTask::parseReq( Buffer b )
 bool FileTransferTask::validFile()
 {
 	//TODO: tell hte user if any of this fails
-	if ( ! m_localFile.exists() )
+	if ( ! m_file.exists() )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file doesn't exist" << endl;
 		return 0;
 	}
-	if ( m_localFile.size() == 0 )
+	if ( m_file.size() == 0 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file is empty" << endl;
 		return 0;
 	}
-	if ( ! m_localFile.open( QIODevice::ReadOnly ) )
+	if ( ! m_file.open( QIODevice::ReadOnly ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
 		return 0;
 	}
-	m_localFile.close();
+	m_file.close();
 	return true;
 }
 
@@ -138,6 +142,7 @@ bool FileTransferTask::take( Transfer* transfer )
 
 bool FileTransferTask::take( int type, QByteArray cookie )
 {
+	kDebug(14151) << k_funcinfo << "comparing to " << m_cookie << endl;
 	if ( cookie != m_cookie )
 		return false;
 
@@ -163,7 +168,7 @@ bool FileTransferTask::take( int type, QByteArray cookie )
 	return true;
 }
 
-void FileTransferTask::slotReadyAccept()
+void FileTransferTask::readyAccept()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
 	m_timer.start();
@@ -178,19 +183,93 @@ void FileTransferTask::slotReadyAccept()
 		return;
 	}
 	//ok, so we have a direct connection. for filetransfers. cool.
+	//might be a good idea to hook up some signals&slots.
+	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
+	connect( m_connection, SIGNAL( closed() ), this, SLOT( socketClosed() ) );
+	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
 	//now we can finally send the first OFT packet.
 	oftPrompt();
 }
 
-void FileTransferTask::slotSocketError( int e )
+void FileTransferTask::socketError( int e )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << ": " << m_ss->errorString() << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << endl;
+}
+
+void FileTransferTask::socketRead()
+{ //TODO: actually read the data
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	m_timer.start();
+}
+
+void FileTransferTask::socketClosed()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unexpected close?" << endl;
 }
 
 void FileTransferTask::oftPrompt()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "not implemented yet! " << endl;
-	doCancel();
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	//let's start with a rough ugly attempt at getting the data into a buffer
+	Buffer b;
+	b.addString( "OFT2" ); //protocol version
+	if ( m_name.length() > 63 )
+		b.addWord( m_name.length() - 63 + 256 );
+	else
+		b.addWord( 256 ); //minimum length
+	b.addWord( 0x0101 ); //type = prompt
+	b.addString( m_cookie );
+	b.addDWord( 0 ); //no encryption, no compression
+	b.addWord( 1 ); //total files
+	b.addWord( 1 ); //files left
+	b.addWord( 1 ); //total parts (macs might have 2)
+	b.addWord( 1 ); //parts left
+	b.addDWord( m_file.size() ); //total bytes
+	b.addDWord( m_file.size() ); // size or 'bytes sent' XXX - documentation must be wrong. I'm guessing this is the size of the current file, usually same as total bytes
+	b.addDWord( QFileInfo( m_file ).lastModified().toTime_t() );
+	b.addDWord( 0xFFFF0000 ); //file checksum - FIXME
+	b.addDWord( 0xFFFF0000 ); //recv'd resource fork checksum (mac thing)
+	b.addDWord( 0 ); //resource fork size
+	b.addDWord( 0 ); //creation time ( or 0 )
+	b.addDWord( 0xFFFF0000 ); //resource fork checksum (mac thing)
+	b.addDWord( 0 ); //bytes transmitted
+	b.addDWord( 0xFFFF0000 ); //checksum of transmitted bytes - FIXME
+	//'idstring'
+	b.addString( "Cool FileXfer" );
+	QByteArray zeros;
+	zeros.fill( 0, 19 ); //32 - 13 = 19
+	b.addString( zeros ); //pad to 32 bytes
+
+	b.addByte( 0x20 ); //flags; 0x20=not done, 1=done
+	b.addByte( 0x1c ); //'name offset'
+	b.addByte( 0x11 ); //'size offset'
+	zeros.fill( 0, 69 );
+	b.addString( zeros ); //dummy block
+	zeros.resize( 16 );
+	b.addString( zeros ); //mac file info
+	b.addWord( 0 ); //encoding 0=ascii, 2=UTF-16BE or UCS-2BE, 3= ISO-8859-1
+	b.addWord( 0 ); //encoding subcode
+	//sender filename
+	b.addString( m_name.toAscii() );
+	if ( m_name.size() < 63 )
+	{ //minimum length 64
+		zeros.fill( 0, 64 - m_name.size() );
+		b.addString( zeros );
+	}
+	else
+		b.addByte( 0 ); //always null-terminated string
+
+	//yay! the big bloated header is done. so send it
+	int written = m_connection->write( b.buffer() );
+
+	if( written == -1 ) //FIXME: handle this properly
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
+	else if( written < b.length() )
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "only " << written << " bytes written :(" << endl;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
+	//now we wait for the other side to ack
+	m_timer.start();
 }
 
 void FileTransferTask::doCancel()
@@ -217,14 +296,18 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & )
 	if ( t->info().internalId() != m_cookie )
 		return;
 	m_timer.start();
+	//TODO:
 	//we should unhook the old signals now; we don't need them
 	//then hook up the ones for the transfer
+	//and get the chosen filename from the transfer
+	//but first the damn gui needs fixing.
+	//oh, and, uh, should probably connect or something.
+
+	//send an accept message
 	Oscar::Message msg;
 	makeFTMsg( msg );
 	msg.setReqType( 2 );
 	emit sendMessage( msg );
-
-	//FIXME: uh, should probably connect or something.
 }
 
 void FileTransferTask::timeout()
@@ -232,7 +315,8 @@ void FileTransferTask::timeout()
 	//nothing's happened for ages - assume we're dead.
 	//so tell the user, send off a cancel, and die
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	emit gotCancel();
+	m_timer.stop();
+	emit error( KIO::ERR_ABORTED, "Timeout" );
 	doCancel();
 }
 
@@ -241,8 +325,8 @@ void FileTransferTask::sendFile()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//listen for connections
 	m_ss = new KServerSocket( "5190", this ); //FIXME: don't hardcode port
-	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(slotReadyAccept()) );
-	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)) );
+	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(readyAccept()) );
+	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(socketError(int)) );
 	bool success = m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError;
 	if (! success )
 	{ //uhoh... what do we do? FIXME: at least tell the user!
@@ -270,10 +354,7 @@ void FileTransferTask::sendFile()
 	//now set the rendezvous info
 	msg.setReqType( 0 );
 	msg.setPort( 5190 ); //FIXME: hardcoding bad!
-	QString name =  m_localFile.fileName();
-	//strip path from name
-	name = name.mid( name.lastIndexOf('/') + 1 );
-	msg.setFile( m_localFile.size(), name );
+	msg.setFile( m_file.size(), m_name );
 
 	//we're done, send it off!
 	emit sendMessage( msg );
