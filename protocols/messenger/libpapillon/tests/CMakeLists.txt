@@ -112,6 +112,18 @@ target_link_libraries(statusmessage_test ${PAPILLON_TEST_LIBRARIES})
 
 add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 
+######
+
+set( challenge_test_SRCS challengetest.cpp )
+
+kde4_automoc( ${challenge_test_SRCS} )
+
+kde4_add_executable(challenge_test RUN_UNINSTALLED ${challenge_test_SRCS})
+
+target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES} ${QCA2_LIBRARIES})
+
+add_test(challenge_test ${EXECUTABLE_OUTPUT_PATH}/challenge_test)
+
 ### ENDIF ###
 endif(KDE4_BUILD_TESTS)
 

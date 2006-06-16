@@ -15,7 +15,7 @@ M0 Login and Basic architecture
 M1 Contact List and Presence
 +Create MimeHeader class
 #Parse initial Hotmail message
--Do ChallengeTask
++Do ChallengeTask
 -ContactList
  -Retrieve contact list(and thus address book) using SOAP (contacts.msn.com Web service)
  -ContactListManager class
