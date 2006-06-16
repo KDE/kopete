@@ -246,7 +246,6 @@ public:
 	 : ContactListViewStrategy( view )
 	 , m_onlineItem( new KopeteStatusGroupViewItem( Kopete::OnlineStatus::Online, listView() ) )
 	 , m_offlineItem( new KopeteStatusGroupViewItem( Kopete::OnlineStatus::Offline, listView() ) )
-	 , m_temporaryItem( 0 )
 	{
 		m_onlineItem->setOpen( true );
 		m_offlineItem->setOpen( true );
@@ -259,7 +258,7 @@ public:
 		removeMetaContactFromGroupInner( mc, m_onlineItem );
 		removeMetaContactFromGroupInner( mc, m_offlineItem );
 		if ( m_temporaryItem )
-			removeMetaContactFromGroupInner( mc, m_temporaryItem );
+			removeMetaContactFromGroupInner( mc, (KopeteGroupViewItem*)m_temporaryItem );
 	}
 
 	void addMetaContact( Kopete::MetaContact *mc )
@@ -311,20 +310,19 @@ private:
 				m_temporaryItem->setOpen( true );
 			}
 
-			addMetaContactToGroupInner( mc, m_temporaryItem );
+			addMetaContactToGroupInner( mc, (KopeteGroupViewItem*)m_temporaryItem );
 			return;
 		}
 
 		// if it's not temporary, it should not be in the temporary group
 		if ( m_temporaryItem )
 		{
-			removeMetaContactFromGroupInner( mc, m_temporaryItem );
+			removeMetaContactFromGroupInner( mc, (KopeteGroupViewItem*)m_temporaryItem );
 
 			// remove temporary item if empty
 			if ( m_temporaryItem && m_temporaryItem->childCount() == 0 )
 			{
-				delete m_temporaryItem;
-				m_temporaryItem = 0;
+				delete (KopeteGroupViewItem*)m_temporaryItem;
 			}
 		}
 
@@ -356,7 +354,7 @@ private:
 	}
 
 	KopeteStatusGroupViewItem *m_onlineItem, *m_offlineItem;
-	KopeteGroupViewItem *m_temporaryItem;
+	QGuardedPtr<KopeteGroupViewItem> m_temporaryItem;
 };
 
 void KopeteContactListViewPrivate::updateViewStrategy( KListView *view )
