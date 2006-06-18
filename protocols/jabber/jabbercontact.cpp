@@ -423,6 +423,8 @@ void JabberContact::slotCheckVCard ()
 	{
 		if(transport()) //no need to disco if this is a legacy contact
 			mDiscoDone = true;
+		else if(!rosterItem().jid().node().isEmpty())
+			mDiscoDone = true; //contact with an @ are not transport for sure
 		else
 		{
 			mDiscoDone = true; //or it will happen twice, we don't want that.
@@ -470,6 +472,8 @@ void JabberContact::slotGetTimedVCard ()
 	{
 		if(transport()) //no need to disco if this is a legacy contact
 			mDiscoDone = true;
+		else if(!rosterItem().jid().node().isEmpty())
+			mDiscoDone = true; //contact with an @ are not transport for sure
 		else
 		{
 			//disco to see if it's not a transport
