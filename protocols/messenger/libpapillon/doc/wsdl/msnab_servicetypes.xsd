@@ -152,7 +152,7 @@
 											</xsd:sequence>
 										</xsd:complexType>
 									</xsd:element>
-									<xsd:element name="Changes" />
+									<xsd:element name="Changes" type="xsd:string" /> <!-- Temp -->
 									<xsd:element name="CreateDate" type="xsd:dateTime" />
 									<xsd:element name="LastCHange" type="xsd:dateTime" />
 								</xsd:sequence>

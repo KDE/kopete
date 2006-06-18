@@ -60,7 +60,7 @@
 								<xsd:sequence>
 									<xsd:element name="Id" type="xsd:integer" />
 									<xsd:element name="Type" type="xsd:string" />
-									<xsd:element name="ForeignId" />
+									<xsd:element name="ForeignId" type="xsd:string" /> <!-- Temp, find out the real type -->
 								</xsd:sequence>
 							</xsd:complexType>
 						</xsd:element>
@@ -70,7 +70,7 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
-			<xsd:element name="Changes" />
+			<xsd:element name="Changes" type="xsd:string" /> <!-- Temp -->
 			<xsd:element name="LastChange" type="xsd:dateTime" />
 			<xsd:element name="Deleted" type="xsd:boolean" />
 		</xsd:sequence>
@@ -112,13 +112,13 @@
 		</xsd:annotation>
 		
 		<xsd:sequence>
-			<xsd:element name="MembershipId" type="xsd:PositiveInteger" />
+			<xsd:element name="MembershipId" type="xsd:positiveInteger" />
 			<xsd:element name="Type" type="msnab:MemberType" />
 			<xsd:element name="DisplayName" type="xsd:string" minOccurs="0" />
 			<xsd:element name="State" type="msnab:MemberState" />
 			<xsd:element name="Deleted" type="xsd:boolean" />
 			<xsd:element name="LastChanged" type="xsd:dateTime" />
-			<xsd:element name="Changes" minOccurs="0" />
+			<xsd:element name="Changes" minOccurs="0" type="xsd:string" /> <!-- Temp -->
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -145,7 +145,7 @@
 					<xsd:element name="IsPassportNameHidden" type="xsd:boolean" />
 					<xsd:element name="PassportId" type="xsd:integer" />
 					<xsd:element name="CID" type="xsd:integer" />
-					<xsd:element name="PassportChanges" />
+					<xsd:element name="PassportChanges" type="xsd:string" /> <!--  Temp -->
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
@@ -168,7 +168,7 @@
 							<xsd:sequence>
 								<xsd:element name="Id" type="xsd:integer" />
 								<xsd:element name="Type" type="xsd:string" />
-								<xsd:element name="ForeignId" />
+								<xsd:element name="ForeignId" type="xsd:string" />
 							</xsd:sequence>
 						</xsd:complexType>
 					</xsd:element>

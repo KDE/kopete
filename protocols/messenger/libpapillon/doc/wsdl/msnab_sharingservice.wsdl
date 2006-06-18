@@ -18,39 +18,39 @@
 	</types>
 	
 	<message name="FindMembership">
-		<part name="ABHeader" element="msnab:ABHeaderType" />
-		<part name="body" element="msnab:FindMembershipRequestType" />
+		<part name="ABHeader" type="msnab:ABHeaderType" />
+		<part name="body" type="msnab:FindMembershipRequestType" />
 	</message>
 	
 	<message name="FindMembershipResponse">
-		<part name="ServiceHeader" element="msnab:ServiceHeaderType" />
-		<part name="body" element="msnab:FindMembershipResultType" />
+		<part name="ServiceHeader" type="msnab:ServiceHeaderType" />
+		<part name="FindMembershipResult" type="msnab:FindMembershipResultType" />
 	</message>
 	
-	<portType name="FindMembershipPortType">
+	<portType name="FindMembershipPort">
 		<operation name="FindMembership">
 			<input message="msnab:FindMembership" />
 			<output message="msnab:FindMembershipResponse" />
 		</operation>
 	</portType>
 	
-	<binding name="FindMembershipSoap" type="FindMembershipPortType">
+	<binding name="FindMembershipSoap" type="msnab:FindMembershipPort">
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<operation name="FindMembership">
 			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/FindMembership" />
-			<input message="FindMembership">
-				<soap:header message="FindMembership" part="ABHeader" use="literal"/>
-				<soap:body parts="body" use="literal"/>
+			<input message="msnab:FindMembership">
+				<soap:header message="msnab:FindMembership" part="ABHeader" use="encoded"/>
+				<soap:body parts="body" use="encoded" />
 			</input>
-			<output message="FindMembershipResponse">
-				<soap:header message="FindMembershipResponse" part="ServiceHeader" use="literal" />
-				<soap:body parts="body" use="literal" />
+			<output message="msnab:FindMembershipResponse">
+				<soap:header message="msnab:FindMembershipResponse" part="ServiceHeader" use="encoded" />
+				<soap:body parts="FindMembershipResult" use="encoded" />
 			</output>
 		</operation>
 	</binding>
 	
 	<service name="SharingService">
-		<port name="FindMembershipPort" binding="FindMembershipSoap">
+		<port name="FindMembershipPort" binding="msnab:FindMembershipSoap">
 			<soap:address location="https://omega.contacts.msn.com/abservice/SharingService.asmx" />
 		</port>
 	</service>
