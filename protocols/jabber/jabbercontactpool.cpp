@@ -182,7 +182,15 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 			 * The following deletion will cause slotContactDestroyed()
 			 * to be called, which will clean the up the list.
 			 */
-			delete mContactItem->contact ();
+			if(mContactItem->contact())
+			{
+				Kopete::MetaContact *mc=mContactItem->contact()->metaContact();
+				delete mContactItem->contact ();
+				if(mc && mc->contacts().isEmpty())
+				{
+					Kopete::ContactList::self()->removeMetaContact(mc) ;
+				}
+			}
 			return;
 		}
 	}
