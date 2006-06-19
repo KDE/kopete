@@ -63,6 +63,7 @@ Name[uz]=Таржимон
 Name[wa]=Ratournaedje
 Name[zh_CN]=翻译家
 Name[zh_HK]=翻譯者
+Name[zh_TW]=翻譯器
 Comment=Translates messages from your native language to another language
 Comment[ar]=يترجم رسائل من لغتك اﻷم إلى لغة أخرى
 Comment[bg]=Приставка за превод от един език на друг в реално време
@@ -111,5 +112,6 @@ Comment[tr]=Diğer dillerden ana dilinize çevrilen mesajlar
 Comment[uk]=Перекладає повідомлення Вашою рідною мовою на якусь іншу мову
 Comment[zh_CN]=将消息从您的母语翻译成其它语言
 Comment[zh_HK]=將您母語的訊息翻譯為另一種語言
+Comment[zh_TW]=將訊息從您的母語翻成其他語言
 
 

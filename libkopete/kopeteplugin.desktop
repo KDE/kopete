@@ -56,6 +56,7 @@ Comment[uz]=Kopete плагини
 Comment[wa]=Tchôke-divins po Kopete
 Comment[zh_CN]=Kopete 插件
 Comment[zh_HK]=Kopete 插件
+Comment[zh_TW]=Kopete 外掛程式
 
 # The Kopete version for which the plugin is written
 [PropertyDef::X-Kopete-Version]

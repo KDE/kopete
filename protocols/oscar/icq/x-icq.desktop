@@ -49,6 +49,7 @@ Comment[tr]=ICQ Bağlantısı
 Comment[uk]=Контакт ICQ
 Comment[zh_CN]=ICQ 联系人
 Comment[zh_HK]=ICQ 聯絡人
+Comment[zh_TW]=ICQ 聯絡人
 Type=MimeType
 MimeType=application/x-icq
 Patterns=*.uin;*.icq

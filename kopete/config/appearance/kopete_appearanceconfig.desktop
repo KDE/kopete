@@ -63,6 +63,7 @@ Name[uz]=Кўриниши
 Name[wa]=Rivnance
 Name[zh_CN]=外观
 Name[zh_HK]=外觀
+Name[zh_TW]=外觀
 Comment=Here You Can Alter Kopete's Look And Feel
 Comment[ar]=يمكنك تغيير مظهر Kopete
 Comment[bg]=Настройки на външния вид на програмата
@@ -111,6 +112,7 @@ Comment[uk]=Тут можна наладнати зовнішній вигляд
 Comment[uz]=Бу ерда Kopete кўринишини мослаш мумкин
 Comment[zh_CN]=您可在此更改 Kopete 的观感
 Comment[zh_HK]=在此您可改動 Kopete 的外觀
+Comment[zh_TW]=您可以在此改變 Kopete 的外觀與感覺
 DocPath=kopete/configure-dialog.html#configuring-appearance
 
 

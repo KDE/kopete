@@ -64,6 +64,7 @@ Name[uz]=Хусусиятлар
 Name[wa]=Dujhance
 Name[zh_CN]=行为
 Name[zh_HK]=行為
+Name[zh_TW]=行為
 Comment=Here You Can Personalize Kopete
 Comment[ar]=هنا يمكنك تخصيص Kopete
 Comment[bg]=Настройки на поведението на програмата
@@ -115,6 +116,7 @@ Comment[uz]=Бу ерда турли хусусиятларни мослаш м�
 Comment[wa]=Chal vos ploz apontyî Kopete a vosse mode
 Comment[zh_CN]=您可在此个性化 Kopete
 Comment[zh_HK]=在此您可設定 Kopete 的個人化資料
+Comment[zh_TW]=您已經在此將 Kopete 個人化
 DocPath=kopete/configure-dialog.html#configuring-behavior
 
 

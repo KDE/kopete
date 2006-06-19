@@ -46,6 +46,7 @@ Name[tr]=Takma İsim
 Name[uk]=Псевдонім
 Name[zh_CN]=别名
 Name[zh_HK]=別名
+Name[zh_TW]=別名
 Comment=Adds custom aliases for commands
 Comment[ar]=يضيف أسماء مستعارة للأوامر
 Comment[bg]=Приставка за добавяне на запазени думи, при въвеждането на които ще се изпълняват зададени команди
@@ -93,4 +94,5 @@ Comment[tr]=Komutlar için özel takma isimler ekler
 Comment[uk]=Додає псевдоніми для команд
 Comment[zh_CN]=添加命令的自定义别名
 Comment[zh_HK]=為命令加上自訂別名
+Comment[zh_TW]=新增命令的別名
 
