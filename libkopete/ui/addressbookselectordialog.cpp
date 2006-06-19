@@ -43,7 +43,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	vbox->setSpacing( KDialog::spacingHint() );
 
 	setMainWidget(vbox);
-	enableButtonOK(false);
+	enableButtonOk(false);
 	//setHelp("linkaddressbook");
 
 	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked( Q3ListViewItem * )), SLOT(slotWidgetAddresseeListClicked( Q3ListViewItem * )));
@@ -71,7 +71,7 @@ KABC::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, c
 void AddressBookSelectorDialog::slotWidgetAddresseeListClicked( Q3ListViewItem *addressee )
 {
 	// enable ok if a valid addressee is selected
-	enableButtonOK( addressee ? addressee->isSelected() : false);
+	enableButtonOk( addressee ? addressee->isSelected() : false);
 }
 
 void AddressBookSelectorDialog::accept()

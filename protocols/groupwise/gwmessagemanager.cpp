@@ -367,8 +367,8 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for Contact to Invite" ), KDialogBase::Ok|KDialogBase::Cancel );
 		m_search = new GroupWiseContactSearch( account(), Q3ListView::Single, true, m_searchDlg, "invitesearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
-		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
-		m_searchDlg->enableButtonOK( false );
+		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
+		m_searchDlg->enableButtonOk( false );
 	}
 	m_searchDlg->show();
 }

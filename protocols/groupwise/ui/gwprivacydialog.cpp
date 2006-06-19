@@ -185,8 +185,8 @@ void GroupWisePrivacyDialog::slotAddClicked()
 		m_search = new GroupWiseContactSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
-		m_searchDlg->enableButtonOK( false );
+		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
+		m_searchDlg->enableButtonOk( false );
 	}
 	m_searchDlg->show();
 }
