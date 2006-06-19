@@ -67,7 +67,7 @@ FileTransferTask::~FileTransferTask()
 void FileTransferTask::onGo()
 {
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-	m_timer.start( 30 * 1000 );
+	m_timer.start( 60 * 1000 );
 	if ( m_action == Receive )
 	{
 		//we have to send a signal because liboscar isn't supposed to know about OscarContact.
@@ -215,11 +215,19 @@ void FileTransferTask::socketRead()
 		break;
 	 case 0x202:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ack" << endl;
-		//TODO: send data
+		//time to send real data
+		//TODO: validate file again, just to be sure
+		m_file.open( QIODevice::ReadOnly );
+		//switch the timer over to the other function
+		m_timer.disconnect();
+		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
+		m_timer.start(0);
 		break;
 	 case 0x204:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
-		//TODO: cleanup
+		//TODO: do we need to emit a signal for the ui?
+		m_timer.stop();
+		setSuccess( true );
 		break;
 	 case 0x205: //not supported yet
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl;
@@ -241,6 +249,31 @@ void FileTransferTask::socketRead()
 void FileTransferTask::socketClosed()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unexpected close?" << endl;
+	setSuccess( true );
+}
+
+void FileTransferTask::write()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending data" << endl;
+	//an arbitrary amount to send each time.
+	int max = 256;
+	QByteArray data = m_file.read( max );
+	//TODO: if it's empty are we done?
+	//if m_bytes==filesize then we mustbe
+
+	int written = m_connection->write( data );
+	if( written == -1 )
+	{ //FIXME: handle this properly
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
+		return;
+	}
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
+	m_bytes += written;
+	if ( written != data.size() ) //FIXME: handle this properly
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
+	//TODO: tell the ui
+
 }
 
 void FileTransferTask::oftPrompt()

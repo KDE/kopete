@@ -74,6 +74,7 @@ private slots:
 	void socketError( int );
 	void socketRead();
 	void socketClosed();
+	void write();
 
 private:
 	void sendFile();
@@ -92,6 +93,7 @@ private:
 	QTimer m_timer; //if we're idle too long, then give up
 	DWORD m_size; //incoming filesize
 	QString m_name; //sender's filename without path
+	DWORD m_bytes; //file bytes sent/received
 };
 
 #endif
