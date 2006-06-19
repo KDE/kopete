@@ -203,6 +203,19 @@ struct ChatRoomInfo
 	QString name;
 };
 
+struct OFT
+{
+	WORD type;
+	QByteArray cookie;
+	DWORD fileSize;
+	DWORD modTime;
+	DWORD checksum;
+	DWORD bytesSent;
+	DWORD sentChecksum;
+	BYTE flags;
+	QString fileName;
+};
+
 	/* ICQ Version Characteristics */
 	const unsigned char ICQ_TCP_VERSION 	= 0x0008;
 	const char ICQ_CLIENTSTRING[] 		= "ICQBasic";

@@ -10,7 +10,7 @@ ${KOPETE_INCLUDES}
 
 set(liboscar_SRCS 
 oscarutils.cpp client.cpp task.cpp connector.cpp 
-inputprotocolbase.cpp coreprotocol.cpp flapprotocol.cpp snacprotocol.cpp transfer.cpp rtf.cc 
+inputprotocolbase.cpp coreprotocol.cpp flapprotocol.cpp snacprotocol.cpp oftprotocol.cpp ofttransfer.cpp transfer.cpp rtf.cc 
 bytestream.cpp oscarclientstream.cpp safedelete.cpp stream.cpp oscarconnector.cpp 
 oscarbytestream.cpp buffer.cpp md5.c logintask.cpp aimlogintask.cpp icqlogintask.cpp 
 closeconnectiontask.cpp rateclassmanager.cpp serverversionstask.cpp rateinfotask.cpp 
