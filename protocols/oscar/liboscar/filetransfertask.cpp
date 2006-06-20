@@ -52,6 +52,8 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const 
 	connect( this , SIGNAL( gotCancel() ), transfer, SLOT( slotCancelled() ) );
 	connect( this , SIGNAL( gotAccept() ), transfer, SLOT( slotAccepted() ) );
 	connect( this , SIGNAL( error( int, const QString & ) ), transfer, SLOT( slotError( int, const QString & ) ) );
+	connect( this , SIGNAL( processed( unsigned int ) ), transfer, SLOT( slotProcessed( unsigned int ) ) );
+	connect( this , SIGNAL( fileComplete() ), transfer, SLOT( slotComplete() ) );
 }
 
 FileTransferTask::~FileTransferTask()
@@ -258,9 +260,7 @@ void FileTransferTask::write()
 	//an arbitrary amount to send each time.
 	int max = 256;
 	QByteArray data = m_file.read( max );
-	//TODO: if it's empty are we done?
-	//if m_bytes==filesize then we mustbe
-
+	//TODO: what if it's empty? (probably means error)
 	int written = m_connection->write( data );
 	if( written == -1 )
 	{ //FIXME: handle this properly
@@ -272,8 +272,19 @@ void FileTransferTask::write()
 	m_bytes += written;
 	if ( written != data.size() ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
-	//TODO: tell the ui
-
+	//tell the ui
+	emit processed( m_bytes );
+	if ( m_bytes >= m_file.size() )
+	{
+		emit fileComplete();
+		//switch the timer over to the other function
+		//we should always get OFT Done before this times out
+		//or we could just finish now without waiting
+		//but I want to do it this way for now
+		m_timer.disconnect();
+		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+		m_timer.start( 10 * 1000 );
+	}
 }
 
 void FileTransferTask::oftPrompt()

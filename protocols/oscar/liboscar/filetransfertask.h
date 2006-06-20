@@ -68,6 +68,8 @@ signals:
 	void error( int, const QString & );
 	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
+	void processed( unsigned int );
+	void fileComplete();
 
 private slots:
 	void readyAccept(); //serversocket got connection
