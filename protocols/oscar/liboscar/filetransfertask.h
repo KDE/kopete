@@ -76,6 +76,7 @@ private slots:
 	void socketError( int );
 	void socketRead();
 	void socketClosed();
+	void socketConnected();
 	void write();
 
 private:
@@ -96,6 +97,8 @@ private:
 	DWORD m_size; //incoming filesize
 	QString m_name; //sender's filename without path
 	DWORD m_bytes; //file bytes sent/received
+	WORD m_port; //to connect to
+	QByteArray m_ip; //to connect to
 };
 
 #endif

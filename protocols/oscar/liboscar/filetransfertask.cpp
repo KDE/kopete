@@ -34,7 +34,7 @@
 #include <qfileinfo.h>
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 )
 {
 	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "uh, we don't actually support receiving yet" << endl;
 	parseReq( b );
@@ -42,7 +42,7 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteA
 }
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 )
 {
 	//get filename without path
 	m_name = QFileInfo( fileName ).fileName();
@@ -94,44 +94,84 @@ void FileTransferTask::onGo()
 
 void FileTransferTask::parseReq( Buffer b )
 {
-	//TODO: get the ip, port, etc.
+	DWORD proxy_ip = 0;
+	DWORD client_ip = 0;
+	QByteArray verified_ip;
+	bool proxy = false;
 	while( b.bytesAvailable() )
 	{
 		TLV tlv = b.getTLV();
+		Buffer b2( tlv.data );
 		switch( tlv.type )
 		{
 		 case 0x2711: //file-specific stuff
-		 {
-		 	Buffer b2( tlv.data );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
 			m_size = b2.getDWord();
 			m_name = b2.getBlock( b2.bytesAvailable() );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_name << endl;
 			break;
-		 }
+		 case 2:
+		 	proxy_ip = b2.getDWord();
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip << endl;
+			break;
+		 case 3:
+		 	client_ip = b2.getDWord();
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << client_ip << endl;
+			break;
+		 case 4:
+		 	verified_ip = tlv.data;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "verified ip " << verified_ip << endl;
+			break;
+		 case 5:
+		 	m_port = b2.getWord();
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "port " << m_port << endl;
+			break;
+		 case 0x10:
+		 	proxy = true;
+			break;
 		 default:
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ignoring tlv type " << tlv.type << endl;
 		}
 	}
+
+	if( proxy )
+	{ //uhoh, not supported yet. TODO
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy unsupported" << endl;
+	}
+
+	//for now, only try the verified ip. FIXME
+	m_ip = verified_ip;
+
 }
 
 bool FileTransferTask::validFile()
 {
 	//TODO: tell hte user if any of this fails
-	if ( ! m_file.exists() )
+	if ( m_action == Send )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file doesn't exist" << endl;
-		return 0;
+		if ( ! m_file.exists() )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file doesn't exist" << endl;
+			return 0;
+		}
+		if ( m_file.size() == 0 )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file is empty" << endl;
+			return 0;
+		}
+		if ( ! m_file.open( QIODevice::ReadOnly ) )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
+			return 0;
+		}
 	}
-	if ( m_file.size() == 0 )
+	else //receive
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file is empty" << endl;
-		return 0;
-	}
-	if ( ! m_file.open( QIODevice::ReadOnly ) )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
-		return 0;
+		if ( ! m_file.open( QIODevice::WriteOnly ) )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
+			return 0;
+		}
 	}
 	m_file.close();
 	return true;
@@ -227,7 +267,7 @@ void FileTransferTask::socketRead()
 		break;
 	 case 0x204:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
-		//TODO: do we need to emit a signal for the ui?
+		emit fileComplete();
 		m_timer.stop();
 		setSuccess( true );
 		break;
@@ -249,7 +289,9 @@ void FileTransferTask::socketRead()
 }
 
 void FileTransferTask::socketClosed()
-{
+{ //TODO: find out whether it was expected, and tell the user if it wasn't
+	//possible cause might be the other end going offline
+	//perhaps consider it an abrupt cancel
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unexpected close?" << endl;
 	setSuccess( true );
 }
@@ -275,7 +317,6 @@ void FileTransferTask::write()
 	emit processed( m_bytes );
 	if ( m_bytes >= m_file.size() )
 	{
-		emit fileComplete();
 		//switch the timer over to the other function
 		//we should always get OFT Done before this times out
 		//or we could just finish now without waiting
@@ -349,13 +390,45 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 	connect( this , SIGNAL( fileComplete() ), t, SLOT( slotComplete() ) );
 	//and save the chosen filename
 	m_file.setFileName( localName );
-	//TODO oh, and, uh, should probably connect or something.
+	if( ! validFile() )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "invalid file" << endl;
+		doCancel();
+		return;
+	}
+	//oh, and, uh, should probably connect or something.
+	if ( m_ip.length() != 4 || ! m_port )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "nobody to connect to!" << endl;
+		doCancel();
+		return;
+	}
+	//ugly because ksockets demand a qstring
+	QString ip = QString::number( m_ip.at(0) ) + '.' +
+		QString::number( m_ip.at(1) ) + '.' +
+		QString::number( m_ip.at(2) ) + '.' +
+		QString::number( m_ip.at(3) );
 
-	//send an accept message
+	m_connection = new KBufferedSocket( ip, QString::number( m_port ) );
+	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
+	connect( m_connection, SIGNAL( closed() ), this, SLOT( socketClosed() ) );
+	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
+	connect( m_connection, SIGNAL( connected(const KNetwork::KResolverEntry&)), this, SLOT(socketConnected()));
+
+	//try the direct connect
+	m_connection->connect();
+}
+
+void FileTransferTask::socketConnected()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	m_timer.start();
+	//yay! send an accept message
 	Oscar::Message msg;
 	makeFTMsg( msg );
 	msg.setReqType( 2 );
 	emit sendMessage( msg );
+	//next we should get a prompt from the sender.
 }
 
 void FileTransferTask::timeout()
