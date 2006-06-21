@@ -1,9 +1,4 @@
 
-add_subdirectory( libjingle ) 
-
-
-
-
 ########### next target ###############
 
 
