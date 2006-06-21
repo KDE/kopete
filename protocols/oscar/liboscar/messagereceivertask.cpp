@@ -214,6 +214,7 @@ void MessageReceiverTask::handleType2Message()
 	{
 		kDebug(14151) << k_funcinfo << "**************this is a filetransfer message************" << endl;
 		emit fileMessage( requestType, m_fromUser, m_icbmCookie, messageBuffer);
+		return;
 	}
 
 	while( messageBuffer.bytesAvailable() > 0 )
