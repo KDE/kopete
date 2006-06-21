@@ -34,7 +34,7 @@
 #include <qfileinfo.h>
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 )
 {
 	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "uh, we don't actually support receiving yet" << endl;
 	parseReq( b );
@@ -42,7 +42,7 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteA
 }
 
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 )
 {
 	//get filename without path
 	m_name = QFileInfo( fileName ).fileName();
@@ -195,8 +195,8 @@ void FileTransferTask::readyAccept()
 }
 
 void FileTransferTask::socketError( int e )
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << endl;
+{ //FIXME: handle this properly
+	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << endl;
 }
 
 void FileTransferTask::socketRead()
@@ -256,7 +256,6 @@ void FileTransferTask::socketClosed()
 
 void FileTransferTask::write()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending data" << endl;
 	//an arbitrary amount to send each time.
 	int max = 256;
 	QByteArray data = m_file.read( max );
@@ -264,12 +263,12 @@ void FileTransferTask::write()
 	int written = m_connection->write( data );
 	if( written == -1 )
 	{ //FIXME: handle this properly
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
 		return;
 	}
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
 	m_bytes += written;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes, total " << m_bytes << endl;
 	if ( written != data.size() ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
@@ -327,23 +326,30 @@ void FileTransferTask::doCancel()
 
 void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//check that it's really for us
 	if ( info.internalId() == m_cookie )
 		doCancel();
 }
 
-void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & )
+void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName )
 {
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//check that it's really for us
 	if ( t->info().internalId() != m_cookie )
 		return;
 	m_timer.start();
-	//TODO:
-	//we should unhook the old signals now; we don't need them
-	//then hook up the ones for the transfer
-	//and get the chosen filename from the transfer
-	//but first the damn gui needs fixing.
-	//oh, and, uh, should probably connect or something.
+
+	//TODO: we should unhook the old transfermanager signals now
+
+	//hook up the ones for the transfer
+	connect( this , SIGNAL( gotCancel() ), t, SLOT( slotCancelled() ) );
+	connect( this , SIGNAL( error( int, const QString & ) ), t, SLOT( slotError( int, const QString & ) ) );
+	connect( this , SIGNAL( processed( unsigned int ) ), t, SLOT( slotProcessed( unsigned int ) ) );
+	connect( this , SIGNAL( fileComplete() ), t, SLOT( slotComplete() ) );
+	//and save the chosen filename
+	m_file.setFileName( localName );
+	//TODO oh, and, uh, should probably connect or something.
 
 	//send an accept message
 	Oscar::Message msg;
