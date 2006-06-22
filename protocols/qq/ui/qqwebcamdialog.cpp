@@ -34,7 +34,7 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 : KDialog( parent )
 {
 	setCaption( i18n( "Webcam for %1", contactId ) );
-	setButtons( KDialog::Close );
+	//setButtons( KDialog::Close );
 	setDefaultButton( KDialog::Close );
 	enableButtonSeparator( true );
 	setWindowFlags( Qt::WDestructiveClose );

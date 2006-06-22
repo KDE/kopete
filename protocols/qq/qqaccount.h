@@ -31,7 +31,6 @@ namespace Kopete
 class QQContact;
 class QQProtocol;
 class QQNotifySocket;
-class QQFakeServer;
 
 /**
  * This represents an account connected to the qq
@@ -42,13 +41,13 @@ class QQAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 public:
 	QQAccount( QQProtocol *parent, const QString& accountID );
-	~QQAccount();
+
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
 	virtual KActionMenu* actionMenu();
 
-	/** TODO: connect is used only for testing, once the kwalletd fixed.
+	/** FIXME: connect is used only for testing, once the kwalletd fixed.
 	 * all the code is going to move to connectWithPassword
 	 */
 	virtual void connect( const Kopete::OnlineStatus& /* initialStatus */ );
@@ -58,33 +57,30 @@ public:
 	 * Kopete::MetaContact
 	 */
 	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
+
 	/**
 	 * Called when Kopete status is changed globally
 	 */
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
-	/**
-	 * 'Connect' to the qq server.  Only sets myself() online.
-	 */
-	virtual void connectWithPassword( const QString &password );
-	/**
-	 * Disconnect from the server.  Only sets myself() offline.
-	 */
-	virtual void disconnect();
-	/**
-	 * Return a reference to the server stub
-	 */
-	QQFakeServer* server();
 
 	/**
-	 * Returns the address of the MSN server
+	 * Connect/Disconnect 
+	 */
+	virtual void connectWithPassword( const QString &password );
+	virtual void disconnect();
+
+	/**
+	 * Returns the address of the QQ server
 	 */
 	QString serverName();
 
 	/**
-	 * Returns the address of the MSN server port
+	 * Returns the address of the QQ server port
 	 */
 	uint serverPort();
+
+	QQNotifySocket* notifySocket();
 
 public slots:
 	/**
@@ -98,7 +94,6 @@ protected:
 	 * This simulates contacts going on and offline in sync with the account's status changes
 	 */
 	void updateContactStatus();
-	QQFakeServer* m_server;
 
 protected slots:
 	/**
@@ -106,7 +101,7 @@ protected slots:
 	 */
 	void slotShowVideo();
 
-private slots:
+private:
 	void createNotificationServer( const QString &host, uint port );
 
 

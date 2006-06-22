@@ -107,9 +107,9 @@ void QQContact::sendMessage( Kopete::Message &message )
 	// convert to the what the server wants
 	// For this 'protocol', there's nothing to do
 	// send it
-	static_cast<QQAccount *>( account() )->server()->sendMessage(
-			message.to().first()->contactId(),
-			message.plainBody() );
+	//static_cast<QQAccount *>( account() )->server()->sendMessage(
+	//		message.to().first()->contactId(),
+	//		message.plainBody() );
 	// give it back to the manager to display
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully

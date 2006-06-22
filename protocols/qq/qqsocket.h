@@ -1,15 +1,7 @@
 /*
     qqsocket.h - Base class for the sockets used in QQ
-	forked from msnsocket.h
 
 	Copyright (c) 2006         Hui Jin				  <blueangel.jin@gmail.com>
-    Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
-    Copyright (c) 2005		by Gregg Edghill 		  <gregg.edghill@gmail.com>
-    Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
-
-    Portions of this code are taken from KMerlin,
-              (c) 2001 by Olaf Lueg              <olueg@olsd.de>
 
     *************************************************************************
     *                                                                       *
@@ -25,26 +17,22 @@
 #define QQSOCKET_H
 
 #include <qobject.h>
-#include <qdatastream.h>
-#include <qstringlist.h>
-#include <qtimer.h>
 #include <QList>
+#include <kopeteprotocol.h>
 
 #include "kopete_export.h"
 
 namespace KNetwork {
-  class KBufferedSocket;
-  class KServerSocket;
+    class KDatagramSocket;
 }
 
-class MimeMessage;
 
 /**
- * @author Martijn Klingens <klingens@kde.org>
+ * @author Hui Jin <blueangle.jin@gmail.com>
  *
- * QQSocket encapsulates the common functionality shared by the Dispatch
- * Server, the Notification Server and the Switchboard Server. It is
- * inherited by the various specialized classes.
+ * QQSocket encapsulates the common functionality, this is a preliminary 
+ * implementation, only targets to UDP communication only.
+ * The notification sever is inherited from this class.
  */
 class KOPETE_EXPORT QQSocket : public QObject
 {
@@ -55,80 +43,34 @@ public:
 	~QQSocket();
 
 	/**
-	 * Asynchronously read a block of data of the specified size. When the
-	 * data is available, the blockRead() signal will be emitted with the
-	 * data as parameter.
-	 *
-	 * NOTE: As the block queue takes precedence over the line-based
-	 *       command-processing this method can effectively block all
-	 *       communications when passed a wrong length!
+	 * Synchronous read/write 
 	 */
-	void read( uint len );
+	const QByteArray& read();
+	qint64 write( const QByteArray& packet );
 
-	/**
-	 * OnlineStatus encapsulates the 4 states a connection can be in,
-	 * Connecting, Connected, Disconnecting, Disconnected. Connecting
-	 * and Disconnecting are in the default implementation not used,
-	 * because the socket connect is an atomic operation and not yet
-	 * performed asynchronously.
-	 * In derived classes, like the Notification Server, this state is
-	 * actively used, because merely having a socket connection established
-	 * by no means indicates we're actually online - the rest of the
-	 * handshake likely has to follow first.
-	 */
-	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
+	/* To make things more managable, only UDP is supported in this version */
+	enum OnlineStatus { Offline, LoginToken, Login, Online };
 	enum LookupStatus { Processing, Success, Failed };
 	enum Transport { TcpTransport, HttpTransport };
 	enum ErrorType { ErrorNormal, ErrorInternal, ErrorInformation, ErrorSorry };
+	
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
 	/*
 	 * return the local ip.
-	 * Used for filetransfer
 	 */
 	QString getLocalIP();
-
-	//BEGIN Http
-
-	virtual bool setUseHttpMethod( bool useHttp );
-	bool useHttpMethod() const;
-
-	//END
 
 public slots:
 	void connect( const QString &server, uint port );
 	virtual void disconnect();
 
-
-	/**
-	 * Send an QQ command to the socket
-	 *
-	 * For debugging it's convenient to have this method public, but using
-	 * it outside this class is deprecated for any other use!
-	 *
-	 * The size of the body (if any) is automatically added to the argument
-	 * list and shouldn't be explicitly specified! This size is in bytes
-	 * instead of characters to reflect what actually goes over the wire.
-	 *
-	 * if the param binary is set to true, then, the body is send as a binary message
-	 *
-	 * return the id
-	 */
-	int sendCommand( const QString &cmd, const QString &args = QString::null,
-		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
-
 signals:
-	/**
-	 * A block read is ready.
-	 * After this the normal line-based reads go on again
-	 */
-	void blockRead( const QByteArray &block );
-
 	/**
 	 * The online status has changed
 	 */
-	void onlineStatusChanged( QQSocket::OnlineStatus status );
+	void onlineStatusChanged( Kopete::OnlineStatus status );
 
 	/**
 	 * The connection failed
@@ -146,17 +88,6 @@ signals:
 	void errorMessage( int type, const QString &msg );
 
 protected:
-	/**
-	 * Convenience method: escape spaces with '%20' for use in the protocol.
-	 * Doesn't escape any other sequence.
-	 */
-	QString escape( const QString &str );
-
-	/**
-	 * And the other way round...
-	 */
-	QString unescape( const QString &str );
-
 	/**
 	 * Set the online status. Emits onlineStatusChanged.
 	 */
@@ -195,23 +126,10 @@ protected:
 	 * This method is pure virtual and *must* be overridden in derived
 	 * classes.
 	 */
-	virtual void parseCommand( const QString &cmd, uint id,
-		const QString &data ) = 0;
-
-	/**
-	 * Used in QQFileTransferSocket
-	 */
-	virtual void bytesReceived( const QByteArray & );
-	bool accept( KNetwork::KServerSocket * );
-	void sendBytes( const QByteArray &data );
+	virtual void parsePacket( const QByteArray& data ) = 0;
 
 	const QString &server() { return m_server; }
 	uint port() { return m_port; }
-
-	/**
-	 * The last confirmed ID by the server
-	 */
-	//uint m_lastId;
 
 private slots:
 	void slotDataReceived();
@@ -234,32 +152,12 @@ private slots:
 	/**
 	 * Check if new lines of data are available and process the first line
 	 */
-	void slotReadLine();
-
 	void slotSocketClosed();
-
-	//BEGIN Http
-
-	/**
-	 * Sends a poll request to the msn gateway when using HttpTransport.
-	 * equivalent to sending a PNG command over TcpTransport.
-	 */
-	void slotHttpPoll();
-
-	//END
 
 protected slots:
 	virtual void slotReadyWrite();
 
 private:
-	/**
-	 * Check if we're waiting for a block of raw data. Emits blockRead()
-	 * when the data is available.
-	 * Returns true when still waiting and false when there is no pending
-	 * read, or when the read is successfully handled.
-	 */
-	bool pollReadBlock();
-
 	/**
 	 * The id of the message sent to the QQ server. This ID will increment
 	 * for each subsequent message sent.
@@ -271,93 +169,14 @@ private:
 	 * send more than one command to the server)
 	 */
 	QList<QByteArray> m_sendQueue;
+	QList<QByteArray> m_buffer;
 
-	/**
-	 * Parse a single line of data.
-	 * Will call either parseCommand or handleError depending on the type of
-	 * data received.
-	 */
-	void parseLine( const QString &str );
-
-	KNetwork::KBufferedSocket *m_socket;
+	KNetwork::KDatagramSocket *m_socket;
 	OnlineStatus m_onlineStatus;
 
 	QString m_server;
 	uint m_port;
 
-	/**
-	 * The size of the requested block for block-based reads
-	 */
-	uint m_waitBlockSize;
-
-	class Buffer : public QByteArray
-	{
-	public:
-		Buffer( unsigned size = 0 );
-		~Buffer();
-		void add( char *str, unsigned size );
-		QByteArray take( unsigned size );
-	};
-
-	Buffer m_buffer;
-
-	//BEGIN Http
-
-	/**
-	 * Makes a http request headers string using the specified, host, query, and content length.
-	 * return: The string containing the http request headers.
-	 */
-	QString makeHttpRequestString(const QString& host, const QString& query, uint contentLength);
-
-	bool m_useHttp; 			// Indicates whether to use the msn http gateway to connect to the msn service.
-	bool m_bCanPoll; 			// Indicates whether polling of the http server is allowed.
-	bool m_bIsFirstInTransaction; 		// Indicates whether pending message to be sent is the first in the transaction.
-						// If so, the gateway is used.
-						// Use the gateway only for initial connected state; Otherwise, use the host.
-	QString m_gateway;			// Msn http gateway domain name.
-	QString m_gwip;				// The ip address of the msn gateway.
-	QString m_sessionId; 			// session id.
-	QTimer *m_timer; 			// Msn http poll timer.
-	QString m_type;				// Indicates the type of socket being used.  NS or SB
-	bool m_pending; 			// Indicates whether a http response is pending.
-	int m_remaining;			// Indicates how many bytes of content data remain
-						// to be received if the content bytes are sent in
-						// a separate packet(s).
-
-	/**
-	 * Provides access to information returned from a URI request.
-	 */
-	class WebResponse
-	{
-	public:
-		 WebResponse(const QByteArray& bytes);
-		~WebResponse();
-
-		/**
-		 * Gets the headers associated with this response from the server.
-		 */
-		MimeMessage* getHeaders();
-		/**
-		 * Gets the data stream used to read the body of the response from the server.
-		 */
-		QDataStream* getResponseStream();
-		/**
-		 * Gets the status code of the response.
-		 */
-		int getStatusCode();
-		/**
-		 * Gets the status description returned with the response.
-		 */
-		QString getStatusDescription();
-
-	private:
-		MimeMessage *m_headers;
-		QDataStream *m_stream;
-		int m_statusCode;
-		QString m_statusDescription;
-	};
-
-	//END
 };
 
 #endif
