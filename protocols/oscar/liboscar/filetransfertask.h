@@ -83,8 +83,14 @@ private:
 	void sendFile();
 	void makeFTMsg( Oscar::Message &msg ); //add required data to msg
 	bool validFile();
+	OFT makeOft();
+	void sendOft( OFT );
 	void oftPrompt();
+	void oftAck();
+	void oftDone();
 	void parseReq( Buffer b );
+	void saveData(); //save incoming data to disk
+
 
 	enum Action { Send, Receive };
 	Action m_action;
@@ -99,6 +105,7 @@ private:
 	DWORD m_bytes; //file bytes sent/received
 	WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
+	int m_state; //for now: 1=receiving data 0=any other state
 };
 
 #endif

@@ -33,19 +33,22 @@
 #include "kopetetransfermanager.h"
 #include <qfileinfo.h>
 
+//receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 ), m_state( 0 )
 {
-	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "uh, we don't actually support receiving yet" << endl;
 	parseReq( b );
 	
 }
 
+//send
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 ), m_state( 0 )
 {
 	//get filename without path
 	m_name = QFileInfo( fileName ).fileName();
+	//copy size for convenience
+	m_size = m_file.size();
 	//hook up ui cancel
 	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
 	//hook up our ui signals
@@ -94,8 +97,8 @@ void FileTransferTask::onGo()
 
 void FileTransferTask::parseReq( Buffer b )
 {
-	DWORD proxy_ip = 0;
-	DWORD client_ip = 0;
+	//DWORD proxy_ip = 0;
+	//DWORD client_ip = 0;
 	QByteArray verified_ip;
 	bool proxy = false;
 	while( b.bytesAvailable() )
@@ -111,12 +114,12 @@ void FileTransferTask::parseReq( Buffer b )
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_name << endl;
 			break;
 		 case 2:
-		 	proxy_ip = b2.getDWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip << endl;
+		 	//proxy_ip = b2.getDWord();
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << tlv.data << endl;
 			break;
 		 case 3:
-		 	client_ip = b2.getDWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << client_ip << endl;
+		 	//client_ip = b2.getDWord();
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << tlv.data << endl;
 			break;
 		 case 4:
 		 	verified_ip = tlv.data;
@@ -236,12 +239,24 @@ void FileTransferTask::readyAccept()
 
 void FileTransferTask::socketError( int e )
 { //FIXME: handle this properly
-	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << endl;
+	QString desc;
+	if ( m_ss )
+		desc = m_ss->errorString();
+	else if ( m_connection )
+		desc = m_connection->errorString();
+	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << " : " << desc << endl;
 }
 
 void FileTransferTask::socketRead()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+
+	if( m_state == 1 )
+	{ //we're expecting raw file data, not OFT
+		saveData();
+		return;
+	}
+
 	m_timer.start();
 	QByteArray raw = m_connection->readAll(); //is this safe?
 	OftProtocol p;
@@ -253,7 +268,11 @@ void FileTransferTask::socketRead()
 	{
 	 case 0x101:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl;
-		//TODO: ack
+		//do we care about anything *in* the prompt? no?
+		//maybe the checksum later
+		m_file.open( QIODevice::WriteOnly );
+		//TODO what if open failed?
+		oftAck();
 		break;
 	 case 0x202:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ack" << endl;
@@ -315,7 +334,7 @@ void FileTransferTask::write()
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
 	emit processed( m_bytes );
-	if ( m_bytes >= m_file.size() )
+	if ( m_bytes >= m_size )
 	{
 		//switch the timer over to the other function
 		//we should always get OFT Done before this times out
@@ -327,21 +346,53 @@ void FileTransferTask::write()
 	}
 }
 
-void FileTransferTask::oftPrompt()
+void FileTransferTask::saveData()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	QByteArray raw = m_connection->readAll(); //is this safe?
+	int written = m_file.write( raw );
+	if( written == -1 )
+	{ //FIXME: handle this properly
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
+		return;
+	}
+	m_bytes += written;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully saved " << written << " bytes, total " << m_bytes << endl;
+	if ( written != raw.size() ) //FIXME: handle this properly
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
+	//tell the ui
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitting" << endl;
+	emit processed( m_bytes );
+	if ( m_bytes >= m_size )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "closing" << endl;
+		m_file.close();
+		oftDone();
+		//TODO: checksum?
+		emit fileComplete();
+		setSuccess( true );
+	}
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
+
+}
+
+OFT FileTransferTask::makeOft()
+{
 	//fill an OFT with data
 	OFT data;
-	data.type = 0x0101; //type = prompt
+	data.type = 0; //invalid
 	data.cookie = m_cookie;
-	data.fileSize = m_file.size();
+	data.fileSize = m_size;
 	data.modTime = QFileInfo( m_file ).lastModified().toTime_t();
 	data.checksum = 0xFFFF0000; //file checksum - FIXME
 	data.bytesSent = 0;
 	data.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
 	data.flags = 0x20; //flags; 0x20=not done, 1=done
 	data.fileName = m_name;
+	return data;
+}
 
+void FileTransferTask::sendOft( OFT data )
+{
 	//now make a transfer out of it
 	OftTransfer t( data );
 	int written = m_connection->write( t.toWire() );
@@ -350,8 +401,36 @@ void FileTransferTask::oftPrompt()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
+}
+
+void FileTransferTask::oftPrompt()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	OFT data = makeOft();
+	data.type = 0x0101; //type = prompt
+	sendOft( data );
 	//now we wait for the other side to ack
 	m_timer.start();
+}
+
+void FileTransferTask::oftAck()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	OFT data = makeOft();
+	data.type = 0x0202; //type = ack
+	m_state = 1;
+	sendOft( data );
+	//no need for this any more
+	m_timer.stop();
+}
+
+void FileTransferTask::oftDone()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	OFT data = makeOft();
+	data.type = 0x0204; //type = done
+	data.flags = 1;
+	sendOft( data );
 }
 
 void FileTransferTask::doCancel()
@@ -404,10 +483,11 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 		return;
 	}
 	//ugly because ksockets demand a qstring
-	QString ip = QString::number( m_ip.at(0) ) + '.' +
-		QString::number( m_ip.at(1) ) + '.' +
-		QString::number( m_ip.at(2) ) + '.' +
-		QString::number( m_ip.at(3) );
+	QString ip = QString::number( static_cast<unsigned char>( m_ip.at(0) ) )
+		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(1) ) )
+		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(2) ) )
+		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(3) ) );
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << ip << endl;
 
 	m_connection = new KBufferedSocket( ip, QString::number( m_port ) );
 	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
