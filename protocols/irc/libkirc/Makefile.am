@@ -1,0 +1,31 @@
+KDE_OPTIONS = nofinal
+noinst_LTLIBRARIES = libkirc.la
+
+#	kircengine_commands.cpp \
+#	kircengine_ctcp.cpp \
+#	kircengine_numericreplies.cpp \
+
+libkirc_la_SOURCES = \
+	kircclient.cpp \
+	kircclientcommandhandler.cpp \
+	kircclientcommands.cpp \
+	kirccommand.cpp \
+	kirccommandhandler.cpp \
+	kircconst.cpp \
+	kircentity.cpp \
+	kircentitymanager.cpp \
+	kircevent.cpp \
+	kircmessage.cpp \
+	kircmessageutil.cpp \
+	kircsocket.cpp \
+	kircstdcommands.cpp
+#	kirctransfer.cpp \
+#	kirctransferhandler.cpp \
+#	kirctransferserver.cpp
+ 
+libkirc_la_LDFLAGS = -no-undefined $(KDE_PLUGIN) $(all_libraries)
+libkirc_la_LIBADD = $(LIB_KIO)
+
+# Temporary add KIRC_STRICT here
+AM_CPPFLAGS = -DKIRC_STRICT -I$(top_srcdir)/kopete/protocols/irc $(KOPETE_INCLUDES) $(all_includes)
+METASOURCES = AUTO
