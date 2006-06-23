@@ -317,6 +317,8 @@ void FileTransferTask::socketClosed()
 
 void FileTransferTask::write()
 {
+	if ( m_connection->bytesToWrite() )
+		return; //give hte socket time to catch up
 	//an arbitrary amount to send each time.
 	int max = 256;
 	char data[256];
@@ -327,6 +329,7 @@ void FileTransferTask::write()
 		return;
 	}
 
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "buffer " << m_connection->bytesToWrite() << endl;
 	int written = m_connection->write( data, read );
 	if( written == -1 )
 	{ //FIXME: handle this properly
@@ -336,6 +339,7 @@ void FileTransferTask::write()
 
 	m_bytes += written;
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes, total " << m_bytes << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "buffer " << m_connection->bytesToWrite() << endl;
 	if ( written != read ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
