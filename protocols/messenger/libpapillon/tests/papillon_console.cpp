@@ -202,7 +202,7 @@ void PapillonConsole::buttonConnectClicked()
 	}
 
 	d->client->setClientInfo( passportId, password );
-	d->client->connectToServer( QLatin1String("muser.messenger.hotmail.com"), 1863 );
+	d->client->connectToServer( QLatin1String("messenger.hotmail.com"), 1863 );
 }
 
 void PapillonConsole::buttonTestSOAP()
