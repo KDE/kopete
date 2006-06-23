@@ -319,9 +319,15 @@ void FileTransferTask::write()
 {
 	//an arbitrary amount to send each time.
 	int max = 256;
-	QByteArray data = m_file.read( max );
-	//TODO: what if it's empty? (probably means error)
-	int written = m_connection->write( data );
+	char data[256];
+	int read = m_file.read( data, max );
+	if( read == -1 )
+	{ //FIXME: handle this properly
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to read :(" << endl;
+		return;
+	}
+
+	int written = m_connection->write( data, read );
 	if( written == -1 )
 	{ //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
@@ -330,19 +336,23 @@ void FileTransferTask::write()
 
 	m_bytes += written;
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes, total " << m_bytes << endl;
-	if ( written != data.size() ) //FIXME: handle this properly
+	if ( written != read ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
 	emit processed( m_bytes );
 	if ( m_bytes >= m_size )
 	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "closing" << endl;
+		m_file.close();
 		//switch the timer over to the other function
 		//we should always get OFT Done before this times out
 		//or we could just finish now without waiting
 		//but I want to do it this way for now
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "changing timer" << endl;
 		m_timer.disconnect();
 		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 		m_timer.start( 10 * 1000 );
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "changed" << endl;
 	}
 }
 
