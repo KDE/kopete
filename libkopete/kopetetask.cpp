@@ -54,7 +54,7 @@ void Task::abort( int flags )
 		( *it )->abort( childFlags );
 
 	if ( flags & AbortEmitResult )
-		emitResult( ResultFailed, i18n( "Aborted" ) );
+		emitTaskResult( ResultFailed, i18n( "Aborted" ) );
 	else
 		delete this;
 }
@@ -76,7 +76,7 @@ void Task::removeSubtask( Task *task, RemoveSubtaskIfLast actionIfLast )
 	            this, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ) );
 	d->subtasks.removeAll( task );
 	if ( d->subtasks.isEmpty() && actionIfLast == IfLastEmitResult )
-		emitResult( task->succeeded() ? ResultSucceeded : ResultFailed, task->errorString() );
+		emitTaskResult( task->succeeded() ? ResultSucceeded : ResultFailed, task->errorString() );
 }
 
 void Task::setResult( Result res )
@@ -84,7 +84,7 @@ void Task::setResult( Result res )
 	setError(res);
 }
 
-void Task::emitResult( Result res, const QString &errorMessage )
+void Task::emitTaskResult( Result res, const QString &errorMessage )
 {
 	setResult( res );
 	setErrorText(errorMessage);

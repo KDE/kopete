@@ -118,7 +118,9 @@ protected:
 	 * Sets the stored result and error message to @p result and @p errorMessage.
 	 * You should call this instead of emitting the result() signal yourself.
 	 */
-	void emitResult( Result result = ResultSucceeded, const QString &errorMessage = QString::null );
+	// NOTE: Named emitTaskResult to not conflit with KJob::emitResult
+	//       and not cause a infinite loop (-DarkShock)
+	void emitTaskResult( Result result = ResultSucceeded, const QString &errorMessage = QString::null );
 
 	/**
 	 * Utility function for inherited tasks.
