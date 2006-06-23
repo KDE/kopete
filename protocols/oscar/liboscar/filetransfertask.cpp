@@ -149,22 +149,21 @@ void FileTransferTask::parseReq( Buffer b )
 
 bool FileTransferTask::validFile()
 {
-	//TODO: tell hte user if any of this fails
 	if ( m_action == Send )
 	{
 		if ( ! m_file.exists() )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file doesn't exist" << endl;
+			emit error( KIO::ERR_DOES_NOT_EXIST, m_file.fileName() );
 			return 0;
 		}
 		if ( m_file.size() == 0 )
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file is empty" << endl;
+		{ //FIXME: string thingummy
+			emit error( KIO::ERR_COULD_NOT_READ, "file is empty: " + m_file.fileName() );
 			return 0;
 		}
 		if ( ! m_file.open( QIODevice::ReadOnly ) )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
+			emit error( KIO::ERR_CANNOT_OPEN_FOR_READING, m_file.fileName() );
 			return 0;
 		}
 	}
@@ -172,7 +171,7 @@ bool FileTransferTask::validFile()
 	{
 		if ( ! m_file.open( QIODevice::WriteOnly ) )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "could not open file" << endl;
+			emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
 			return 0;
 		}
 	}
@@ -222,9 +221,9 @@ void FileTransferTask::readyAccept()
 	delete m_ss; //free up the port so others can listen
 	m_ss = 0;
 	if (! m_connection )
-	{ //waah. FIXME: deal with this properly
-		//either it wasn't buffered, or it did something weird
+	{ //either it wasn't buffered, or it did something weird
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection failed somehow." << endl;
+		emit error( KIO::ERR_COULD_NOT_ACCEPT, QString::null );
 		doCancel();
 		return;
 	}
@@ -479,14 +478,13 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 	m_file.setFileName( localName );
 	if( ! validFile() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "invalid file" << endl;
 		doCancel();
 		return;
 	}
 	//oh, and, uh, should probably connect or something.
 	if ( m_ip.length() != 4 || ! m_port )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "nobody to connect to!" << endl;
+		emit error( KIO::ERR_COULD_NOT_CONNECT, "missing ip or port" ); //FIXME: string
 		doCancel();
 		return;
 	}
@@ -538,9 +536,10 @@ void FileTransferTask::sendFile()
 	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(socketError(int)) );
 	bool success = m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError;
 	if (! success )
-	{ //uhoh... what do we do? FIXME: at least tell the user!
+	{ //uhoh... what do we do?
 		//TODO: try incrementing the port#?
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning" << endl;
+		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::null );
 		setSuccess(false);
 		return;
 	}
