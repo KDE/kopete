@@ -52,9 +52,13 @@ private:
 };
 
 GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
- : KDialogBase(  parent, name, false, i18nc( "Account specific privacy settings", "Manage Privacy for %1", account->accountId() ),
- KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account ), m_dirty( false ), m_searchDlg(0)
+ : KDialog(  parent)
+ , m_account( account ), m_dirty( false ), m_searchDlg(0)
 {
+	setCaption(i18nc( "Account specific privacy settings", "Manage Privacy for %1", account->accountId() ));
+	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
+	setDefaultButton(Ok);
+	setModal(false);
 	m_privacy = new GroupWisePrivacyWidget( this );
 	setMainWidget( m_privacy );
 	PrivacyManager * mgr = m_account->client()->privacyManager();
@@ -179,9 +183,11 @@ void GroupWisePrivacyDialog::slotAddClicked()
 {
 	if ( !m_searchDlg )
 	{
-		m_searchDlg = new KDialogBase( this, "privacysearchdialog", false, 
-				i18n( "Search for Contact to Block" ),
-				KDialogBase::Ok|KDialogBase::Cancel );
+		m_searchDlg = new KDialog( this);
+		m_searchDlg->setCaption(i18n( "Search for Contact to Block" ));
+		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
+		m_searchDlg->setDefaultButton(KDialog::Ok);
+		m_searchDlg->setModal(false);
 		m_search = new GroupWiseContactSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
@@ -294,7 +300,7 @@ void GroupWisePrivacyDialog::slotOk()
 {
 	if ( m_dirty )
 		commitChanges();
-	KDialogBase::slotOk();
+	KDialog::accept();
 }
 
 void GroupWisePrivacyDialog::slotApply()
@@ -305,7 +311,8 @@ void GroupWisePrivacyDialog::slotApply()
 		m_dirty = false;
 		updateButtonState();
 	}
-	KDialogBase::slotApply();
+#warning "kde4: port it"
+	//KDialogBase::slotApply();
 }
 
 void GroupWisePrivacyDialog::commitChanges()

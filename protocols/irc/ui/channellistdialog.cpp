@@ -25,9 +25,13 @@
 #include "qlayout.h"
 
 ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)
-	: KDialogBase(Kopete::UI::Global::mainWidget(), "channel_list_widget", false, caption, Close)
+	: KDialog(Kopete::UI::Global::mainWidget())
 {
 	m_engine = engine;
+	setCaption(caption);
+	setButtons(Close);
+	setDefaultButton(Close);
+	setModal(false);
 	m_list = new ChannelList( this, engine );
 
 	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),

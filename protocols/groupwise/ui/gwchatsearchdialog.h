@@ -24,9 +24,9 @@ class GroupWiseChatSearchWidget;
 
 #include "gwchatrooms.h"
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
-class GroupWiseChatSearchDialog : public KDialogBase
+class GroupWiseChatSearchDialog : public KDialog
 {
 	Q_OBJECT
 	public:

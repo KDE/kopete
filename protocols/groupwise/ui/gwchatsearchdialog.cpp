@@ -35,10 +35,14 @@
 #include "gwchatsearchdialog.h"
 
 GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
-	: KDialogBase(  parent, name, false, i18n( "Search Chatrooms" ),
-					KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account )
+	: KDialog(  parent),
+					m_account( account )
 {
 	m_widget = new GroupWiseChatSearchWidget( this );
+	setCaption(i18n( "Search Chatrooms" ));
+	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
+	setDefaultButton(Ok);
+	enableButtonSeparator(true);
 //	m_widget->m_searchLineWidget->createSearchLine( m_widget->m_chatrooms );
 	setMainWidget( m_widget );
 

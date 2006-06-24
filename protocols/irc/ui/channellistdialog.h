@@ -20,10 +20,10 @@
 
 #include "channellist.h"
 
-#include "kdialogbase.h"
+#include "kdialog.h"
 
 class ChannelListDialog
-	: public KDialogBase
+	: public KDialog
 {
 	Q_OBJECT
 

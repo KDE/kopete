@@ -30,17 +30,26 @@
 #include "gwchatpropsdialog.h"
 
 GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent, const char * name )
- : KDialogBase( parent, name, false, i18n( "Chatroom properties" ),
-				KDialogBase::Ok|KDialogBase::Cancel, Ok, true ), m_dirty( false )
+ : KDialog( parent ), m_dirty( false )
 {
+	setCaption(i18n( "Chatroom properties" ));
+	setButtons(KDialog::Ok|KDialog::Cancel);
+	setDefaultButton(Ok);
+	setModal(false);
+	enableButtonSeparator(true);
 	initialise();
 }
 
 GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( const GroupWise::Chatroom & room, bool readOnly,
 							   QWidget * parent, const char * name )
-	: KDialogBase( parent, name, false, i18n( "Chatroom properties" ),
-				   KDialogBase::Ok|KDialogBase::Cancel, Ok, true ), m_dirty( false )
+	: KDialog( parent)
+				   , m_dirty( false )
 {
+	setCaption(i18n( "Chatroom properties" ));
+	setButtons(KDialog::Ok|KDialog::Cancel);
+	setDefaultButton(Ok);
+	setModal(false);
+	enableButtonSeparator(true);
 	initialise();
 	m_widget->m_description->setText( room.description );
 	m_widget->m_displayName->setText( room.displayName );

@@ -25,7 +25,7 @@
 class QLabel;
 class KAction;
 class KActionMenu;
-class KDialogBase;
+class KDialog;
 class GroupWiseAccount;
 class GroupWiseContact;
 class GroupWiseContactSearch;
@@ -163,7 +163,7 @@ private:
 	KAction *m_logging;
 	// search widget and dialog used for inviting contacts
 	GroupWiseContactSearch * m_search;
-	KDialogBase * m_searchDlg;
+	KDialog * m_searchDlg;
 	// contacts who have been invited to join but have not yet joined the chat
 	Kopete::ContactPtrList m_invitees;
 	// track the number of members actually in the chat
