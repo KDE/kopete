@@ -4,7 +4,7 @@
    Part: Data types (Pure data types)
 
    by Michaël Larouche <michael.larouche@kdemail.net>
-   Latest update: 6 June 2006
+   Latest update: 25 June 2006
 -->
 <xsd:schema
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -37,7 +37,7 @@
 		</xsd:documentation>
     </xsd:annotation>
 	
-	<xsd:complexType name="Service">
+	<xsd:complexType name="ServiceType">
 		<xsd:annotation>
 			<xsd:documentation>
 				Service list differents services which contain one or more Membership.

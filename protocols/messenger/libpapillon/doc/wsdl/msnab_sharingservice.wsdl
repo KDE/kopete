@@ -3,7 +3,7 @@
 	Reverse engineered MSN AddressBook webservice WSDL definition
 	
 	by Michaël Larouche <michael.larouche@kdemail.net>
-	Latest update: 6 June 2006
+	Latest update: 25 June 2006
 -->
 <definitions targetNamespace="http://www.msn.com/webservices/AddressBook"
 			xmlns:msnab="http://www.msn.com/webservices/AddressBook"
@@ -12,47 +12,53 @@
 	
 	<types>
 		<schema xmlns="http://www.w3.org/2001/XMLSchema">
-			<import namespace="http://www.msn.com/webservices/AddressBook" schemaLocation="msnab_datatypes.xsd" />
 			<import namespace="http://www.msn.com/webservices/AddressBook" schemaLocation="msnab_servicetypes.xsd" />
 		</schema>
 	</types>
 	
-	<message name="FindMembership">
-		<part name="ABHeader" type="msnab:ABHeaderType" />
-		<part name="body" type="msnab:FindMembershipRequestType" />
+	<message name="ABHeader">
+		<part name="ApplicationHeader" element="msnab:ABApplicationHeader" />
+		<part name="AuthHeader" element="msnab:ABAuthHeader" />
 	</message>
 	
-	<message name="FindMembershipResponse">
-		<part name="ServiceHeader" type="msnab:ServiceHeaderType" />
-		<part name="FindMembershipResult" type="msnab:FindMembershipResultType" />
+	<message name="FindMembershipMessage">
+		<part name="FindMembershipRequest" element="msnab:FindMembership" />
 	</message>
 	
-	<portType name="FindMembershipPort">
+	<message name="ServiceHeader">
+		<part name="serviceHeader" element="msnab:ServiceHeader" />
+	</message>
+	
+	<message name="FindMembershipResponseMessage">
+		<part name="FindMembershipResponse" element="msnab:FindMembershipResponse" />
+	</message>
+	
+	<portType name="SharingServicePortType">
 		<operation name="FindMembership">
-			<input message="msnab:FindMembership" />
-			<output message="msnab:FindMembershipResponse" />
+			<input message="msnab:FindMembershipMessage" />
+			<output message="msnab:FindMembershipResponseMessage" />
 		</operation>
 	</portType>
 	
-	<binding name="FindMembershipSoap" type="msnab:FindMembershipPort">
+	<binding name="SharingServiceBinding" type="msnab:SharingServicePortType">
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<operation name="FindMembership">
-			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/FindMembership" />
-			<input message="msnab:FindMembership">
-				<soap:header message="msnab:FindMembership" part="ABHeader" use="encoded"/>
-				<soap:body parts="body" use="encoded" />
+			<soap:operation soapAction="FindMembership" style="document" />
+			<input>
+				<soap:header message="msnab:ABHeader" part="ApplicationHeader" use="literal"/>
+				<soap:header message="msnab:ABHeader" part="AuthHeader" use="literal" />
+				<soap:body use="literal" />
 			</input>
-			<output message="msnab:FindMembershipResponse">
-				<soap:header message="msnab:FindMembershipResponse" part="ServiceHeader" use="encoded" />
-				<soap:body parts="FindMembershipResult" use="encoded" />
+			<output>
+				<soap:header message="msnab:ServiceHeader" part="serviceHeader" use="literal" />
+				<soap:body use="literal" />
 			</output>
 		</operation>
 	</binding>
 	
 	<service name="SharingService">
-		<port name="FindMembershipPort" binding="msnab:FindMembershipSoap">
+		<port name="FindMembershipPort" binding="msnab:SharingServiceBinding">
 			<soap:address location="https://omega.contacts.msn.com/abservice/SharingService.asmx" />
 		</port>
 	</service>
-	
 </definitions>
