@@ -998,7 +998,7 @@ void JabberAccount::slotCSError ( int error )
 	}
 	else
 	{
-		Kopete::Account::DisconnectReason errorClass;
+		Kopete::Account::DisconnectReason errorClass =  Kopete::Account::Unknown;
 
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
@@ -1007,7 +1007,9 @@ void JabberAccount::slotCSError ( int error )
 			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
 
 		disconnect ( errorClass );
-
+		
+		/*	slotCSDisconnected  will not be called*/
+		resourcePool()->clear();
 	}
 
 }
