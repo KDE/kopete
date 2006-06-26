@@ -164,9 +164,5 @@ void JabberGroupMemberContact::sendFile ( const KURL &sourceURL, const QString &
 
 }
 
-void JabberGroupMemberContact::slotUserInfo ()
-{
-
-}
 
 #include "jabbergroupmembercontact.moc"

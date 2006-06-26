@@ -66,11 +66,6 @@ public slots:
 	virtual void sendFile( const KURL &sourceURL = KURL(),
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
-	/**
-	 * Retrieve a vCard for the contact
-	 */
-	void slotUserInfo ();
-
 private slots:
 	/**
 	 * Catch a dying message manager

@@ -29,6 +29,7 @@ class JabberAccount;
 class JabberResource;
 class JabberTransport;
 namespace Kopete { class MetaContact; }
+namespace XMPP { class VCard; }
 
 class JabberBaseContact : public Kopete::Contact
 {
@@ -135,13 +136,20 @@ public:
 	 * to get the jid, use  rosterItem().jid().full()  don't use contactId as it is not the same with transport
 	 */
 	XMPP::RosterItem rosterItem() const { return mRosterItem; }
+	
+	/**
+	 * Reads a vCard object and updates the contact's
+	 * properties accordingly.
+	 */
+	void setPropertiesFromVCard ( const XMPP::VCard &vCard );
+
 
 public slots:
 
 	/**
 	 * Retrieve a vCard for the contact
 	 */
-	virtual void slotUserInfo () = 0;
+	virtual void slotUserInfo ();
 	
 	
 	/**

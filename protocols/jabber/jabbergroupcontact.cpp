@@ -310,11 +310,6 @@ void JabberGroupContact::sendFile ( const KURL &sourceURL, const QString &/*file
 
 }
 
-void JabberGroupContact::slotUserInfo ()
-{
-
-}
-
 void JabberGroupContact::slotChatSessionDeleted ()
 {
 

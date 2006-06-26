@@ -60,7 +60,7 @@
  *  name 'name'
  *
  */
-dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent, const char *name)
+dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberBaseContact *contact, QWidget * parent, const char *name)
 	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1 | User2, Close, false, i18n("&Save User Info"), i18n("&Fetch vCard") )
 {
 
