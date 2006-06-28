@@ -57,6 +57,7 @@ QQSocket::~QQSocket()
 
 void QQSocket::connect( const QString &server, uint port )
 {
+	kDebug(14140) << k_funcinfo << endl;
 	if ( m_onlineStatus != Offline )
 	{
 		kWarning( 14140 ) << k_funcinfo << "Already connected or connecting! Not connecting again." << endl;
@@ -111,6 +112,7 @@ void QQSocket::doneDisconnect()
 
 void QQSocket::sendPacket( QByteArray& data )
 {
+	kDebug(14140) << k_funcinfo << endl;
 	m_sendQueue.append( data );
 }
 
@@ -121,6 +123,8 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 
 	m_onlineStatus = status;
 	// translate to high-level online status
+	// the newstatus makes a lot trouble. just comment it.
+	/*
 	Kopete::OnlineStatus newstatus;
 	switch( status )
 	{
@@ -136,6 +140,7 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 		return;
 	}
 	emit onlineStatusChanged( newstatus );
+	*/
 }
 
 void QQSocket::slotSocketError( int error )
@@ -243,6 +248,7 @@ void QQSocket::handleError( uint code, uint /* id */ )
 
 void QQSocket::slotReadyWrite()
 {
+	kDebug(14140) << k_funcinfo << endl;
 	if ( !m_sendQueue.isEmpty() )
 	{
 		// If the command queue is not empty, retrieve the first command.

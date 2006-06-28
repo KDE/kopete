@@ -15,8 +15,8 @@ namespace Eva {
 	/** 
 	 * Header section for QQ packet
 	 */
-	QByteArray& header( short const command, short const sequence );
-	QByteArray& loginToken( int id, short const sequence );
+	QByteArray header( short const command, short const sequence );
+	QByteArray loginToken( int id, short const sequence );
 };
 
 

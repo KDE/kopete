@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 
 namespace Eva {
-	QByteArray& header( int id, short const command, short const sequence )
+	QByteArray header( int id, short const command, short const sequence )
 	{
 		QByteArray data;
 		data += '0x0';
@@ -17,7 +17,7 @@ namespace Eva {
 		return data;
 	}
 
-	QByteArray& loginToken( int id, short const sequence )
+	QByteArray loginToken( int id, short const sequence )
 	{
 		QByteArray data = header( id, RequestLoginToken, sequence );
 		// No need to encrypt

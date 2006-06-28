@@ -45,6 +45,7 @@ public:
 	QQNotifySocket( QQAccount* account, const QString &password );
 	~QQNotifySocket();
 
+	void connect( const QString &server, uint port );
 	virtual void disconnect();
 
 	void setStatus( const Kopete::OnlineStatus &status );

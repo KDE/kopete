@@ -92,7 +92,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 		m_notifySocket=0L;
 	}
 
-	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
+	//myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
 	m_notifySocket = new QQNotifySocket( this, m_password );
 	m_notifySocket->connect(host, port);
 }

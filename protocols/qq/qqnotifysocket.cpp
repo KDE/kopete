@@ -66,10 +66,19 @@ QQNotifySocket::~QQNotifySocket()
 	kDebug(14140) << k_funcinfo << endl;
 }
 
+void QQNotifySocket::connect( const QString &server, uint port )
+{
+	QQSocket::connect( server, port );
+	kDebug(14140) << k_funcinfo << endl;
+	sendLoginTokenRequest();
+}
+
+
 void QQNotifySocket::doneConnect()
 {
+	// Looks like we could not reach here.
 	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
-	sendLoginTokenRequest();
+	// sendLoginTokenRequest();
 }
 
 
@@ -109,9 +118,10 @@ void QQNotifySocket::parsePacket( const QByteArray& data )
 
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	QByteArray& packet = Eva::loginToken(m_qqId, m_id++);
+	QByteArray packet = Eva::loginToken(m_qqId, m_id++);
+	kDebug(14140) << k_funcinfo << endl;
 	sendPacket( packet );
-	setOnlineStatus( LoginToken );
+	// setOnlineStatus( LoginToken );
 
 }
 
