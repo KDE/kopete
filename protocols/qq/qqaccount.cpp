@@ -77,7 +77,7 @@ void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 		return;
 	}
 	/* Hard-coded password for debug only */
-	m_password = "goodbye";
+	m_password = "qqsucks";
 	createNotificationServer(serverName(), serverPort());
 }
 
@@ -93,8 +93,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 	}
 
 	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
-	m_notifySocket = new QQNotifySocket( this, accountId() , m_password );
-	// m_notifySocket->setStatus( m_connectstatus );
+	m_notifySocket = new QQNotifySocket( this, m_password );
 	m_notifySocket->connect(host, port);
 }
 
@@ -138,6 +137,7 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 	}
 	else
 	{
+		kDebug( 14140 ) << "start connecting !!" << endl;
 		m_connectstatus = status;
 		/* TODO: use connect() later */
 		connect( status );

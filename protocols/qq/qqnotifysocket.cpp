@@ -49,15 +49,16 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopetestatusmessage.h"
+#include "libeva.h"
 
-#include <ctime>
 
-
-QQNotifySocket::QQNotifySocket( QQAccount *account, const QString& /*qqId*/, const QString &password )
+QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
 {
 	m_account = account;
 	m_password=password;
+	// FIXME: more error-checking.
+	m_qqId = account->accountId().toInt();
 }
 
 QQNotifySocket::~QQNotifySocket()
@@ -102,8 +103,17 @@ void QQNotifySocket::handleError( uint code, uint id )
 void QQNotifySocket::parsePacket( const QByteArray& data )
 {
 	// TODO: develop me!
+	// dump the data:
+	kDebug( 14140 ) << data << endl;
 }
 
+void QQNotifySocket::sendLoginTokenRequest()
+{
+	QByteArray& packet = Eva::loginToken(m_qqId, m_id++);
+	sendPacket( packet );
+	setOnlineStatus( LoginToken );
+
+}
 
 #include "qqnotifysocket.moc"
 

@@ -42,11 +42,7 @@ public:
 	QQSocket(QObject* parent=0l);
 	~QQSocket();
 
-	/**
-	 * Synchronous read/write 
-	 */
-	const QByteArray& read();
-	qint64 write( const QByteArray& packet );
+	void sendPacket( QByteArray& data );
 
 	/* To make things more managable, only UDP is supported in this version */
 	enum OnlineStatus { Offline, LoginToken, Login, Online };
@@ -157,13 +153,14 @@ private slots:
 protected slots:
 	virtual void slotReadyWrite();
 
-private:
+protected:
 	/**
 	 * The id of the message sent to the QQ server. This ID will increment
 	 * for each subsequent message sent.
 	 */
 	uint m_id;
 
+private:
 	/**
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)

@@ -84,9 +84,6 @@ void QQSocket::connect( const QString &server, uint port )
 
 	// start the asynchronous connection
 	m_socket->connect();
-
-	//TODO: Send the LoginTokenRequest
-	setOnlineStatus( LoginToken );
 }
 
 void QQSocket::disconnect()
@@ -110,6 +107,11 @@ void QQSocket::doneConnect()
 void QQSocket::doneDisconnect()
 {
 	setOnlineStatus( Offline );
+}
+
+void QQSocket::sendPacket( QByteArray& data )
+{
+	m_sendQueue.append( data );
 }
 
 void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
@@ -263,6 +265,7 @@ void QQSocket::slotReadyWrite()
 
 void QQSocket::slotConnectionSuccess()
 {
+	kDebug ( 14140 ) << "slotConnectionSuccess: calling doneConnect()" << endl;
 	doneConnect();
 }
 

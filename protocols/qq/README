@@ -1,0 +1,31 @@
+Network setting:
+
+sever:
+
+UDP
+-------------------------------
+URL: sz.tencent.com
+URL:sz2.tencent.com
+URL:sz3.tencent.com
+URL:sz4.tencent.com
+URL:sz5.tencent.com
+URL:sz6.tencent.com
+URL:sz7.tencent.com
+URL:sz8.tencent.com
+URL:sz9.tencent.com
+IP: 202.96.170.164
+
+
+TCP
+--------------------------------
+URL: tcpconn.tencent.com
+URL:tcpconn2.tencent.com
+URL:tcpconn3.tencent.com
+URL:tcpconn4.tencent.com
+URL:tcpconn5.tencent.com
+URL:tcpconn6.tencent.com
+
+port:
+UDP: 8000
+TCP: 80
+HTTP: 443

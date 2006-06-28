@@ -42,7 +42,7 @@ class QQNotifySocket : public QQSocket
 	Q_OBJECT
 
 public:
-	QQNotifySocket( QQAccount* account, const QString &qqId, const QString &password );
+	QQNotifySocket( QQAccount* account, const QString &password );
 	~QQNotifySocket();
 
 	virtual void disconnect();
@@ -79,12 +79,13 @@ protected:
 	virtual void doneConnect();
 
 	// QQ operations
-	void sendLoginTokenRequest() { return; }
+	void sendLoginTokenRequest(); 
 	void sendGoodbye() { return; }
 
 private:
 
 	QQAccount *m_account;
+	uint m_qqId;
 	QString m_password;
 
 	int m_disconnectReason;
