@@ -162,6 +162,7 @@ void QQSocket::slotSocketError( int error )
 
 void QQSocket::slotDataReceived()
 {
+	kDebug(14140) << k_funcinfo << "DATA RECEIVED! " << endl;
 	int avail = m_socket->bytesAvailable();
 	if ( avail < 0 )
 	{

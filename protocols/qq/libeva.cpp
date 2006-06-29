@@ -1,5 +1,6 @@
 #include "libeva.h"
-#include "qbytearray.h"
+#include <qbytearray.h>
+#include <kdebug.h>
 #include <arpa/inet.h>
 
 namespace Eva {
@@ -13,6 +14,8 @@ namespace Eva {
 		data += htons(command);
 		data += htons(sequence);
 		data += htonl(id);
+
+		kDebug( 14140 ) << "head = " << data << endl;
 
 		return data;
 	}
