@@ -53,7 +53,7 @@ public:
 	//! Task implementation
 	void onGo();
 	bool take( Transfer* transfer );
-	bool take( int type, QByteArray cookie );
+	bool take( int type, QByteArray cookie, Buffer b );
 
 public slots:
 	void doCancel();
@@ -80,9 +80,9 @@ private slots:
 	void write();
 
 private:
-	void sendFile();
-	void makeFTMsg( Oscar::Message &msg ); //add required data to msg
+	void sendReq();
 	bool validFile();
+	Oscar::Message makeFTMsg();
 	OFT makeOft();
 	void sendOft( OFT );
 	void oftPrompt();
@@ -90,6 +90,7 @@ private:
 	void oftDone();
 	void parseReq( Buffer b );
 	void saveData(); //save incoming data to disk
+	void doConnect(); //attempt connection to other user (direct or redirect)
 
 
 	enum Action { Send, Receive };
@@ -105,7 +106,8 @@ private:
 	DWORD m_bytes; //file bytes sent/received
 	WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
-	int m_state; //for now: 1=receiving data 0=any other state
+	enum State { Default, Connecting, Receiving };
+	State m_state;
 };
 
 #endif

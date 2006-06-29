@@ -1337,7 +1337,7 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	const QList<FileTransferTask*> p = c->rootTask()->findChildren<FileTransferTask*>();
 	foreach( FileTransferTask *t, p)
 	{
-		if ( t->take( type, cookie ) )
+		if ( t->take( type, cookie, buf ) )
 		{
 			return;
 		}
@@ -1351,6 +1351,8 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
 		connect( ft, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),
 				SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ) );
+		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
+				this, SLOT( fileMessage( const Oscar::Message& ) ) );
 		ft->go( true );
 		return;
 	}

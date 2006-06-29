@@ -198,10 +198,10 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 	if( m_message.reqType() == 0 )
 	{ //requests need more data
 
-		// add TLV 0A: request # TODO: might be >1 if not direct
+		// add TLV 0A: request # (usually 1)
 		tlv5buffer.addWord( 0x000A ); // TLV Type
 		tlv5buffer.addWord( 0x0002 ); // TLV Length
-		tlv5buffer.addWord( 0x0001 ); // TLV Data
+		tlv5buffer.addWord( m_message.reqNum() ); // TLV Data
 
 		// add TLV 0F: unknown but always there
 		tlv5buffer.addWord( 0x000F );

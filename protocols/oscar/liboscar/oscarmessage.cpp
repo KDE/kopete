@@ -29,6 +29,7 @@ Oscar::Message::Message()
   m_messageType( 0 ),
   m_requestType( 0 ),
   m_port( 0 ),
+  m_reqNum( 1 ),
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
   m_encoding( UserDefined ),
@@ -42,6 +43,7 @@ Oscar::Message::Message( Encoding messageEncoding, const QByteArray& messageText
   m_messageType( 0 ),
   m_requestType( 0 ),
   m_port( 0 ),
+  m_reqNum( 1 ),
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
   m_textArray( messageText ),
@@ -58,6 +60,7 @@ Oscar::Message::Message( Encoding messageEncoding, const QString& messageText, i
   m_messageType( 0 ),
   m_requestType( 0 ),
   m_port( 0 ),
+  m_reqNum( 1 ),
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
   m_timestamp( timestamp ),
@@ -259,6 +262,16 @@ int Oscar::Message::port() const
 void Oscar::Message::setPort( int port )
 {
 	m_port = port;
+}
+
+int Oscar::Message::reqNum() const
+{
+	return m_reqNum;
+}
+
+void Oscar::Message::setReqNum( int n )
+{
+	m_reqNum = n;
 }
 
 QString Oscar::Message::fileName() const

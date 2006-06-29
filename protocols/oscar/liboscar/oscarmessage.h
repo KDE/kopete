@@ -145,6 +145,12 @@ public:
 	/** set the port (for transfer requests) */
 	void setPort( int port );
 
+	/** get the request # */
+	int reqNum() const;
+
+	/** set the request # (for transfer requests) */
+	void setReqNum( int n );
+
 	/** get the file name */
 	QString fileName() const;
 
@@ -183,6 +189,7 @@ private:
 	int m_messageType;
 	int m_requestType;
 	int m_port;
+	int m_reqNum;
 	int m_protocolVersion;
 	int m_channel2Counter;
 	QByteArray m_icbmCookie;
