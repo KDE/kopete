@@ -62,7 +62,7 @@ void QQAccount::connectWithPassword( const QString &password )
 /* FIXME: move all things to connectWithPassword */
 void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	kDebug ( 14210 ) << k_funcinfo << "We are connecting... ..." << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if ( isConnected() )
 	{
@@ -92,7 +92,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 		m_notifySocket=0L;
 	}
 
-	//myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
+	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
 	m_notifySocket = new QQNotifySocket( this, m_password );
 	m_notifySocket->connect(host, port);
 }
@@ -137,7 +137,7 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 	}
 	else
 	{
-		kDebug( 14140 ) << "start connecting !!" << endl;
+		kDebug( 14140 ) << k_funcinfo << "start connecting !!" << endl;
 		m_connectstatus = status;
 		/* TODO: use connect() later */
 		connect( status );

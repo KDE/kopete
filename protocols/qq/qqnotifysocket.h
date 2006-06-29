@@ -36,6 +36,9 @@ class KTempFile;
 
 /**
  * @author Hui Jin
+ * 
+ * QQNotifySocket is inspried by MSNNotifySocket, the QQ incoming packets are
+ * parsed here.
  */
 class QQNotifySocket : public QQSocket
 {
@@ -45,7 +48,6 @@ public:
 	QQNotifySocket( QQAccount* account, const QString &password );
 	~QQNotifySocket();
 
-	void connect( const QString &server, uint port );
 	virtual void disconnect();
 
 	void setStatus( const Kopete::OnlineStatus &status );

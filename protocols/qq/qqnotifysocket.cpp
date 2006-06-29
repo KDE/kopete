@@ -66,19 +66,11 @@ QQNotifySocket::~QQNotifySocket()
 	kDebug(14140) << k_funcinfo << endl;
 }
 
-void QQNotifySocket::connect( const QString &server, uint port )
-{
-	QQSocket::connect( server, port );
-	kDebug(14140) << k_funcinfo << endl;
-	sendLoginTokenRequest();
-}
-
 
 void QQNotifySocket::doneConnect()
 {
-	// Looks like we could not reach here.
 	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
-	// sendLoginTokenRequest();
+	sendLoginTokenRequest();
 }
 
 
@@ -87,13 +79,15 @@ void QQNotifySocket::disconnect()
 	// FIXME: double check the logic, please.
 	if(	m_disconnectReason==Kopete::Account::Unknown )
 		m_disconnectReason=Kopete::Account::Manual;
-	if( onlineStatus() != Offline )
-	{
+	// sendGoodbye, shall we setup the status as well ?
+	if( onlineStatus() == Connected )
 		sendGoodbye();
-		QQSocket::disconnect();
-	}
-	else
+
+	// the socket is not connected yet, so I should force the signals
+	if ( onlineStatus() == Disconnected || onlineStatus() == Connecting )
 		emit socketClosed();
+	else
+		QQSocket::disconnect();
 }
 
 void QQNotifySocket::handleError( uint code, uint id )
