@@ -1,28 +1,26 @@
 #include "libeva.h"
-#include <qbytearray.h>
-#include <kdebug.h>
 #include <arpa/inet.h>
 
 namespace Eva {
-	QByteArray header( int id, short const command, short const sequence )
+
+	ByteArray header( int id, short const command, short const sequence )
 	{
-		QByteArray data;
-		data += '0x0';
-		data += '0x0';
+		// FIXME: add resize support in the ByteArray !
+		ByteArray data(32);
+		data += '\0';
+		data += '\0';
 		data += Head;
 		data += Version;
 		data += htons(command);
 		data += htons(sequence);
 		data += htonl(id);
 
-		kDebug( 14140 ) << "head = " << data << endl;
-
 		return data;
 	}
 
-	QByteArray loginToken( int id, short const sequence )
+	ByteArray loginToken( int id, short const sequence )
 	{
-		QByteArray data = header( id, RequestLoginToken, sequence );
+		ByteArray data = header( id, RequestLoginToken, sequence );
 		// No need to encrypt
 		data += '0x0';
 		data += Tail;

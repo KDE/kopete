@@ -112,8 +112,9 @@ void QQNotifySocket::parsePacket( const QByteArray& data )
 
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	QByteArray packet = Eva::loginToken(m_qqId, m_id++);
-	kDebug(14140) << k_funcinfo << endl;
+	Eva::ByteArray b = Eva::loginToken(m_qqId, m_id++);
+	QByteArray packet( b.data(), b.size() );
+	kDebug(14140) << k_funcinfo << packet << endl;
 	sendPacket( packet );
 	// setOnlineStatus( LoginToken );
 
