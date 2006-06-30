@@ -45,7 +45,7 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 // The default implementation is TCP
 QString QQAccount::serverName()
 {
-	return configGroup()->readEntry(  "serverName" , "tcpconn.tencent.com" );
+	return configGroup()->readEntry(  "serverName" , "tcpconn3.tencent.com" );
 }
 
 uint QQAccount::serverPort()

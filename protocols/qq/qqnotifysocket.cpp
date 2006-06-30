@@ -114,7 +114,6 @@ void QQNotifySocket::sendLoginTokenRequest()
 {
 	Eva::ByteArray b = Eva::loginToken(m_qqId, m_id++);
 	QByteArray packet( b.data(), b.size() );
-	kDebug(14140) << k_funcinfo << packet << endl;
 	sendPacket( packet );
 	// setOnlineStatus( LoginToken );
 

@@ -8,12 +8,11 @@ using namespace std;
 
 namespace Eva {
 	short const Version = 0x0F15;
-
 	char const Head = 0x02;
 	char const Tail = 0x03;
-	int const MaxPacketSize = 65536;
-
 	short const RequestLoginToken = 0x0062;
+
+	int const MaxPacketSize = 65536;
 
 	class Exception {};
 	
@@ -27,7 +26,11 @@ namespace Eva {
             m_size = 0;
             m_data = (char*) malloc(capacity);
 			if(! m_data )
+			{
 				m_data = NULL;
+				m_capacity = 0;
+			}
+			// FIXME: throw the exception if possible.
 				//throw Exception();
 		}
 
@@ -42,29 +45,27 @@ namespace Eva {
         {
             if( m_size >= m_capacity )
 				return;
-				//throw Exception();
+				//FIXME: throw Exception();
             m_data[m_size] = c;
             m_size++;
         }
 
-        template<class T>void operator += (T s) { this->append<T>(s); }
+        template<class T>void operator += (T d) 
+		{
+			char* p = (char*) &d;
+			int len = sizeof(d);
+            if( m_size+len >= m_capacity )
+				return; // FIXME: throw later
+			memcpy( m_data+m_size, p, len );
+			m_size += len;
+		}
                 
         int capacity() { return m_capacity; }
         int size() { return m_size; }
         char* data() { return m_data; }
-		private:
-        
-        template< class T> void append( T d )
-        {
-			for( int i = 0; i< sizeof(d); i++ )
-            {
-				char c = d & 0xFF;
-                (*this) += c;
-                d >>= 8;
-            }
-        }
 
-        int m_capacity;
+	private:
+		int m_capacity;
         int m_size;
         char* m_data;
 	};

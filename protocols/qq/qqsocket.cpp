@@ -71,7 +71,7 @@ void QQSocket::connect( const QString &server, uint port )
 		delete m_socket;
 	}
 	setOnlineStatus( Connecting );
-	m_id = 0;
+	m_id = 5; // FIXME:Don't use the magic #, use random number instead.
 	m_server = server;
 	m_port = port;
 	m_socket = new KBufferedSocket( server, QString::number(port) );
@@ -129,8 +129,9 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 
 void QQSocket::sendPacket( QByteArray& data )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << data <<  endl;
 	m_sendQueue.append( data );
+	m_socket->enableWrite(true);
 }
 
 void QQSocket::slotSocketError( int error )
