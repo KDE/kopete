@@ -23,6 +23,7 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qtextcodec.h>
+#include <qtabwidget.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klistview.h>
@@ -95,9 +96,11 @@ void ICQSearchDialog::startSearch()
 		connect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
 				this, SLOT( searchFinished( int ) ) );
 
-		if ( !m_searchUI->uin->text().isEmpty() )
+		const QWidget* currentPage = m_searchUI->tabWidget3->currentPage();
+
+		if ( currentPage == m_searchUI->tab )
 		{
-			if(m_searchUI->uin->text().toULong() == 0)
+			if( m_searchUI->uin->text().isEmpty() || m_searchUI->uin->text().toULong() == 0 )
 			{
 				// Invalid UIN
 				stopSearch();
@@ -111,7 +114,7 @@ void ICQSearchDialog::startSearch()
 				m_account->engine()->uinSearch( m_searchUI->uin->text() );
 			}
 		}
-		else
+		else if ( currentPage == m_searchUI->tab_2 )
 		{
 			//create a ICQWPSearchInfo struct and send it
 			ICQProtocol* p = ICQProtocol::protocol();
