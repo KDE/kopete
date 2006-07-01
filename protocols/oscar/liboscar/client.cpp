@@ -508,6 +508,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         // Set whether or not the message is an automated response
         sendMsgTask->setAutoResponse( isAuto );
         sendMsgTask->setMessage( msg );
+        sendMsgTask->setIp( ourInfo().dcExternalIp().IPv4Addr() ); //TODO: switch to internal
         sendMsgTask->go( true );
     }
 }
@@ -558,6 +559,9 @@ void Client::receivedMessage( const Oscar::Message& msg )
 
 void Client::fileMessage( const Oscar::Message& msg )
 {
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "internal ip: " << ourInfo().dcInternalIp().toString() << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "external ip: " << ourInfo().dcExternalIp().toString() << endl;
+
 	sendMessage( msg );
 }
 

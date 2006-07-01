@@ -45,6 +45,11 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 	m_autoResponse = autoResponse;
 }
 
+void SendMessageTask::setIp( const DWORD ip )
+{
+	m_ip = ip;
+}
+
 void SendMessageTask::onGo()
 {
 	if ( m_message.textArray().isEmpty() && m_message.channel() == 1 )
@@ -211,9 +216,10 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 		//might need proxy-ip later.
 		if ( int p = m_message.port() )
 		{
-			//hardcoding my own ip is bad, bad, BAD!
-			char v2[] = { 70, 68, 183, 66 };
-			tlv5buffer.addTLV( 0x3, 4, v2 ); //our ip FIXME
+			//our ip
+			tlv5buffer.addWord( 3 );
+			tlv5buffer.addWord( 4 );
+			tlv5buffer.addDWord( m_ip );
 			//our port
 			tlv5buffer.addWord( 5 );
 			tlv5buffer.addWord( 2 );
