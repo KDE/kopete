@@ -568,15 +568,21 @@ void FileTransferTask::sendReq()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//listen for connections
-	m_ss = new KServerSocket( "5190", this ); //FIXME: don't hardcode port
+	m_ss = new KServerSocket( this );
 	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(readyAccept()) );
 	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(socketError(int)) );
-	bool success = m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError;
+	bool success = false;
+	for ( m_port = 5190; m_port < 5200; ++m_port )
+	{ //try up to ten ports starting with 5190 - FIXME: allow user to choose it
+		m_ss->setAddress( QString::number( m_port ) );
+		if( success = ( m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError ) )
+			break;
+		m_ss->close();
+	}
 	if (! success )
 	{ //uhoh... what do we do?
-		//TODO: try incrementing the port#?
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning" << endl;
-		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::null );
+		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( m_port ) );
 		setSuccess(false);
 		return;
 	}
@@ -601,7 +607,7 @@ void FileTransferTask::sendReq()
 
 	//now set the rendezvous info
 	msg.setReqType( 0 );
-	msg.setPort( 5190 ); //FIXME: hardcoding bad!
+	msg.setPort( m_port );
 	msg.setFile( m_size, m_name );
 	if ( m_action == Receive )
 		msg.setReqNum( 2 );
