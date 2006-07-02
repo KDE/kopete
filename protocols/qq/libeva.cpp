@@ -25,7 +25,7 @@ namespace Eva {
 	ByteArray requestLoginToken( int id, short const sequence )
 	{
 		ByteArray data(16);
-		data.append( header(id, RequestLoginToken, sequence) );
+		data += header(id, RequestLoginToken, sequence);
 		data += '\0';
 		data += Tail;
 		setLength( data );

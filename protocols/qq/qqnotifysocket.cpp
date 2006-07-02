@@ -125,13 +125,12 @@ void QQNotifySocket::parsePacket( const QByteArray& data )
 
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	Eva::requestLoginToken(m_qqId, m_id++);
-	//Eva::ByteArray b = Eva::header(m_qqId, 0x2345, m_id++);
-	//QByteArray packet( b.data(), b.size() );
+	Eva::ByteArray b = Eva::requestLoginToken(m_qqId, m_id++);
+	QByteArray packet( b.data(), b.size() );
 	kDebug( 14140 ) << k_funcinfo << endl;
-	//sendPacket( packet );
+	sendPacket( packet );
 
-	// setStatus( QQProtocol::protocol()->LOG );
+	setStatus( QQProtocol::protocol()->LOG );
 }
 
 #include "qqnotifysocket.moc"

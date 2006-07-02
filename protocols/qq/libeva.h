@@ -23,22 +23,14 @@ namespace Eva {
     public:
         ByteArray( int capacity=0 ) : m_itsOwn(true), m_capacity(capacity), 
                                        m_size(0), m_data((char*) malloc(capacity))
-		{
-			fprintf( stderr, "m_itsOwn = %d, m_capacity = %d, m_size = %d, m_data = %x\n", 
-					m_itsOwn, m_capacity, m_size, m_data );
-		}
+		{ }
         
-        ~ByteArray() { 
-			fprintf( stderr, "~ m_itsOwn = %d, m_capacity = %d, m_size = %d, m_data = %x\n", 
-					m_itsOwn, m_capacity, m_size, m_data );
-			if( m_itsOwn ) 
-				free(m_data);
-		}
+        ~ByteArray() { if( m_itsOwn ) free(m_data); }
         
-        ByteArray( const ByteArray& r ) : m_itsOwn(r.m_itsOwn), m_capacity(r.capacity()), m_size(r.size()), m_data(r.release()) {
-			fprintf( stderr, "m_itsOwn = %d, m_capacity = %d, m_size = %d, m_data = %x\n", 
-					m_itsOwn, m_capacity, m_size, m_data );
-		}
+        ByteArray( const ByteArray& r ) : m_itsOwn(r.m_itsOwn), m_capacity(r.capacity()), 
+										  m_size(r.size()), m_data(r.release()) 
+		{ }
+
         ByteArray& operator= ( const ByteArray& r )
         {
             if( &r != this )
@@ -85,7 +77,7 @@ namespace Eva {
             copyAt<T>(m_size, d );
         }
 
-        void append(const ByteArray& d)
+        void operator+=(const ByteArray& d)
         {
 			fprintf(stderr, "!2!" );
             copyAt(m_size, d.data(), d.size());
