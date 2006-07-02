@@ -174,6 +174,13 @@ int Buffer::addTLV(WORD type, WORD len, const char *data)
 	return addString(data,len);
 }
 
+int Buffer::addLETLV(WORD type, WORD len, const char *data)
+{
+	addLEWord( type );
+	addLEWord( len );
+	return addString( data, len );
+}
+
 BYTE Buffer::getByte()
 {
 	BYTE thebyte = 0x00;
@@ -295,11 +302,25 @@ int Buffer::addTLV16(const WORD type, const WORD data)
 	return addWord(data);
 }
 
+int Buffer::addLETLV16(const WORD type, const WORD data)
+{
+	addLEWord(type);
+	addLEWord(0x0002); //2 bytes long
+	return addLEWord(data);
+}
+
 int Buffer::addTLV8(const WORD type, const BYTE data)
 {
 	addWord(type);
 	addWord(0x0001); //1 byte long
 	return addByte(data);
+}
+
+int Buffer::addLETLV8(const WORD type, const BYTE data)
+{
+	addLEWord(type);
+	addLEWord(0x0001); //1 byte long
+	return addLEByte(data);
 }
 
 TLV Buffer::getTLV()
