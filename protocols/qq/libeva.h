@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 namespace Eva {
 	short const Version = 0x0F15;
@@ -21,7 +22,7 @@ namespace Eva {
     {
     public:
         ByteArray( int capacity=0 ) : m_itsOwn(true), m_capacity(capacity), 
-                                       m_size(0), m_data(new char(capacity))
+                                       m_size(0), m_data((char*) malloc(capacity))
 		{
 			fprintf( stderr, "m_itsOwn = %d, m_capacity = %d, m_size = %d, m_data = %x\n", 
 					m_itsOwn, m_capacity, m_size, m_data );
@@ -31,7 +32,7 @@ namespace Eva {
 			fprintf( stderr, "~ m_itsOwn = %d, m_capacity = %d, m_size = %d, m_data = %x\n", 
 					m_itsOwn, m_capacity, m_size, m_data );
 			if( m_itsOwn ) 
-				delete[] m_data; 
+				;// free(m_data);
 		}
         
         ByteArray( const ByteArray& r ) : m_itsOwn(r.m_itsOwn), m_capacity(r.capacity()), m_size(r.size()), m_data(r.release()) {
@@ -45,7 +46,7 @@ namespace Eva {
                 if( m_data != r.m_data )
                 {
                     if( m_itsOwn )
-                        delete []m_data;
+                        free(m_data);
                     m_itsOwn = r.m_itsOwn;
                 }
                 else
