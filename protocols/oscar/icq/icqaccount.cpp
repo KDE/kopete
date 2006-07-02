@@ -201,7 +201,7 @@ void ICQAccount::disconnected( DisconnectReason reason )
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	foreach( Kopete::Contact* c, contactList )
 	{
-		OscarContact* oc = static_cast<OscarContact*>( c );
+		OscarContact* oc = dynamic_cast<OscarContact*>( c );
 		if ( oc )
 		{
 			if ( oc->ssiItem().waitingAuth() )
