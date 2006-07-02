@@ -56,7 +56,7 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
 {
 	m_account = account;
-	m_password=password;
+	m_password = password;
 	// FIXME: more error-checking.
 	m_qqId = account->accountId().toInt();
 }
@@ -103,20 +103,35 @@ void QQNotifySocket::handleError( uint code, uint id )
 	}
 }
 
+void QQNotifySocket::setStatus( const Kopete::OnlineStatus &status )
+{
+	m_newstatus = status;
+	emit statusChanged( status );
+}
+
+// Core functions
 void QQNotifySocket::parsePacket( const QByteArray& data )
 {
-	// TODO: develop me!
-	// dump the data:
-	kDebug( 14140 ) << data << endl;
+	kDebug( 14140 ) << k_funcinfo << data << endl;
+
+	if( m_newstatus == QQProtocol::protocol()->LOG )
+	{
+		m_token = Eva::loginToken( data.data() );
+			// Eva::ByteArray b = Eva::login();
+			// sendPacket( QByteArray(b.data(), b.size()) );
+	}
 }
+
 
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	Eva::ByteArray b = Eva::loginToken(m_qqId, m_id++);
-	QByteArray packet( b.data(), b.size() );
-	sendPacket( packet );
-	// setOnlineStatus( LoginToken );
+	Eva::requestLoginToken(m_qqId, m_id++);
+	//Eva::ByteArray b = Eva::header(m_qqId, 0x2345, m_id++);
+	//QByteArray packet( b.data(), b.size() );
+	kDebug( 14140 ) << k_funcinfo << endl;
+	//sendPacket( packet );
 
+	// setStatus( QQProtocol::protocol()->LOG );
 }
 
 #include "qqnotifysocket.moc"

@@ -55,7 +55,7 @@ uint QQAccount::serverPort()
 
 void QQAccount::connectWithPassword( const QString &password )
 {
-	kDebug ( 14210 ) << k_funcinfo << "connect with pass" << endl;
+	kDebug ( 14210 ) << k_funcinfo << "connect with password" << password << endl;
 	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
 }
 

@@ -3,8 +3,9 @@
 
 namespace Eva {
 
-	ByteArray& setHeader( ByteArray& data, int id, short const command, short const sequence )
+	ByteArray header( int id, short const command, short const sequence )
 	{
+		ByteArray data(13);
 		data += '\0';
 		data += '\0';
 		data += Head;
@@ -16,29 +17,31 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray& setLength( ByteArray& data )
+	void setLength( ByteArray& data )
 	{
-		char hi, lo;
-		lo = data.size() & 0xFF;
-		hi = (data.size() >> 8 ) & 0xFF;
-
-		// override [] operator ?
-		// Add copyAt() ?
-		data.data()[0] = hi;
-		data.data()[1] = lo;
-
-		return data;
+		data.copyAt(0, htons(data.size()) );
 	}
 
-	ByteArray loginToken( int id, short const sequence )
+	ByteArray requestLoginToken( int id, short const sequence )
 	{
-		ByteArray data(15);
-		setHeader( data, id, RequestLoginToken, sequence );
-		// No need to encrypt
+		ByteArray data(16);
+		data.append( header(id, RequestLoginToken, sequence) );
 		data += '\0';
 		data += Tail;
 		setLength( data );
 
+		return data;
+	}
+
+	ByteArray loginToken( char const* buffer ) 
+	{
+		int length = buffer[1];
+		length -= 3; // length - 1(head) - 1(length) - 1(tail) 
+		ByteArray data(length);
+
+		if( buffer[0] != LoginTokenOK )
+			return data;
+		// data.append( buffer+2, length );
 		return data;
 	}
 }

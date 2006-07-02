@@ -43,8 +43,9 @@ public:
 	const Kopete::OnlineStatus FLN;  //offline
 	const Kopete::OnlineStatus HDN;  //invisible
 	const Kopete::OnlineStatus IDL;  //idle
-	const Kopete::OnlineStatus UNK;  //inknown (internal)
+	const Kopete::OnlineStatus UNK;  //unknown (internal)
 	const Kopete::OnlineStatus CNT;  //connecting (internal)
+	const Kopete::OnlineStatus LOG;  //logging (internal)
 
 	/**
 	 * Convert the serialised data back into a QQContact and add this

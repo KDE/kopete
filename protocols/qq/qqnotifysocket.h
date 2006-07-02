@@ -29,10 +29,12 @@
 
 #include "qqsocket.h"
 #include "qqprotocol.h"
+#include "libeva.h"
 
 
 class QQAccount;
 class KTempFile;
+
 
 /**
  * @author Hui Jin
@@ -89,7 +91,9 @@ private:
 
 	QQAccount *m_account;
 	uint m_qqId;
+	Eva::ByteArray m_token;
 	QString m_password;
+	Kopete::OnlineStatus m_newstatus;
 
 	int m_disconnectReason;
 
