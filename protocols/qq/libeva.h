@@ -32,7 +32,7 @@ namespace Eva {
 			fprintf( stderr, "~ m_itsOwn = %d, m_capacity = %d, m_size = %d, m_data = %x\n", 
 					m_itsOwn, m_capacity, m_size, m_data );
 			if( m_itsOwn ) 
-				;// free(m_data);
+				free(m_data);
 		}
         
         ByteArray( const ByteArray& r ) : m_itsOwn(r.m_itsOwn), m_capacity(r.capacity()), m_size(r.size()), m_data(r.release()) {
