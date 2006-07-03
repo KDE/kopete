@@ -241,7 +241,7 @@ void ICQSearchDialog::closeDialog()
 	clearResults();
 	clearFields();
 
-	closeClicked();
+	slotClose();
 }
 
 void ICQSearchDialog::resultSelectionChanged()
