@@ -1,5 +1,6 @@
 #include "libeva.h"
 #include "md5.h"
+#include "crypt.h"
 #include <arpa/inet.h>
 
 namespace Eva {
@@ -22,6 +23,11 @@ namespace Eva {
 	{
 		data.copyAt(0, htons(data.size()) );
 	}
+
+	int rand(void)
+	{
+		return 0xdead;
+	}
 	
 	ByteArray doMd5( const ByteArray& text )
 	{
@@ -33,6 +39,25 @@ namespace Eva {
 		code.setSize( Md5KeyLength ); 
 		return code;
 	}
+
+	inline void encrypt64( unsigned char* plain, unsigned char* plain_pre, 
+			unsigned char* key, unsigned char* crypted, unsigned char* crypted_pre, 
+			bool& isHeader )
+	{
+		int i;
+		for( i = 0; i< 8; i++ )
+			plain[i] ^= isHeader ? plain_pre[i] : crypted_pre[i];
+
+		TEA::encipher( (unsigned int*) plain, (unsigned int*) key, 
+				(unsigned int*) crypted );
+
+		for( i = 0; i< 8; i++ )
+			crypted[i] ^= plain_pre[i];
+
+		memcpy( plain_pre, plain, 8 );
+		isHeader = false;
+	}
+
 	
 	// Interface for application
 	// Utilities
@@ -51,6 +76,61 @@ namespace Eva {
 	ByteArray QQHash( const ByteArray& text )
 	{
 		return doMd5( doMd5( text ) );
+	}
+
+	ByteArray encrypt( const ByteArray& text, const ByteArray& key )
+	{
+
+		unsigned char 
+			plain[8],         /* plain text buffer*/
+			plain_pre[8],   /* plain text buffer, previous 8 bytes*/
+			crypted[8],        /* crypted text*/
+			crypted_pre[8];  /* crypted test, previous 8 bytes*/
+	
+		int pos, len, i;
+		bool isHeader = true;      /* header is one byte*/
+		ByteArray encoded( text.size() + 32 );
+		
+		pos = ( text.size() + 10 ) % 8;
+		if( pos )
+			pos = 8 - pos;
+
+		// Prepare the first 8 bytes:
+		plain[0] = ( rand() & 0xf8 ) | pos;
+		memset( plain_pre, 0, 8 );
+		memset( plain+1, rand()& 0xff, pos++ );
+
+		// pad at most 2 bytes
+		len = min( 8-pos, 2 );
+		for( i = 0; i< len; i++ )
+			plain[ pos++ ] = rand() & 0xff;
+
+		for( i = 0; i< text.size(); i++ )
+		{
+			if( pos == 8 )
+			{
+				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
+				pos = 0;
+				encoded.append( (char*)crypted, 8 );
+				memcpy( crypted_pre, crypted, 8 );
+			}
+			else
+				plain[pos++] = text.data()[i];
+		}
+
+		for( i = 0; i< 7; i++ )
+		{
+			if( pos == 8 )
+			{
+				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
+				encoded.append( (char*)crypted, 8 );
+				break;
+			}
+			else
+				plain[pos++] = 0;
+		}
+
+		return encoded;
 	}
 
 	// Core functions
