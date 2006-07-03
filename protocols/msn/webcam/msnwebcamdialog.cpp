@@ -38,7 +38,7 @@ MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, cons
 	setButtons(KDialog::Close);
 	setDefaultButton(KDialog::Close);
 	setEscapeButton( KDialog::Close );
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	setModal(false);
 	/*
 	QObject::connect( contact, SIGNAL( signalReceivedWebcamImage( const QPixmap&  ) ),

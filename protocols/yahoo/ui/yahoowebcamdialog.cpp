@@ -36,7 +36,7 @@ YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent
 	setCaption( i18n( "Webcam for %1", contactId ) );
 	setButtons( KDialog::Close );
 	setDefaultButton( KDialog::Close );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 	
 	setInitialSize( QSize(320,290) );
 	

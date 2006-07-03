@@ -36,7 +36,7 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
 	setCaption( i18n("Change Jabber Password") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 
 	m_account = account;
 

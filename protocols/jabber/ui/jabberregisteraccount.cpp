@@ -66,7 +66,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	registerButton.setText ( i18n ( "Register" ) );
 	setButtonGuiItem( KDialog::Ok, registerButton );
 
-	enableButtonSeparator ( true );
+	showButtonSeparator ( true );
 
 	// clear variables
 	jabberClient = new JabberClient ();

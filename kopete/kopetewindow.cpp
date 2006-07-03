@@ -1076,7 +1076,7 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 	addDialog->setCaption( i18n( "Add Contact" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
-	addDialog->enableButtonSeparator( true );
+	addDialog->showButtonSeparator( true );
 
 	KVBox * mainWid = new KVBox( addDialog );
 	

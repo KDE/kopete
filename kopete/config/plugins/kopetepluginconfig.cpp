@@ -52,7 +52,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent )
 	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("&Reset"), "undo" ) );
 
 	d = new KopetePluginConfigPrivate;
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	showButton( User1, false );
 	setChanged( false );
 

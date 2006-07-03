@@ -36,7 +36,7 @@ GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent, const char
 	setButtons(KDialog::Ok|KDialog::Cancel);
 	setDefaultButton(Ok);
 	setModal(false);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	initialise();
 }
 
@@ -49,7 +49,7 @@ GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( const GroupWise::Chatroom & 
 	setButtons(KDialog::Ok|KDialog::Cancel);
 	setDefaultButton(Ok);
 	setModal(false);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	initialise();
 	m_widget->m_description->setText( room.description );
 	m_widget->m_displayName->setText( room.displayName );

@@ -46,7 +46,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	setButtons( KDialog::Cancel | KDialog::Ok );
 	
 	setDefaultButton(KDialog::Ok);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	kDebug(14200) << k_funcinfo << "for contact '" << c->contactId() << "'" << endl;
 
 	m_contact = c;

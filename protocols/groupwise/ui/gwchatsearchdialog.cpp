@@ -42,7 +42,7 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 	setCaption(i18n( "Search Chatrooms" ));
 	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
 	setDefaultButton(Ok);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 //	m_widget->m_searchLineWidget->createSearchLine( m_widget->m_chatrooms );
 	setMainWidget( m_widget );
 

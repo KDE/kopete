@@ -292,7 +292,7 @@ void Contact::changeMetaContact()
 	moveDialog->setCaption( i18n( "Move Contact" ) );
 	moveDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	moveDialog->setDefaultButton( KDialog::Ok );
-	moveDialog->enableButtonSeparator( true );
+	moveDialog->showButtonSeparator( true );
 
 	KVBox *w = new KVBox( moveDialog );
 	w->setSpacing( KDialog::spacingHint() );

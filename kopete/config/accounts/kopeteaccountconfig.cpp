@@ -228,7 +228,7 @@ void KopeteAccountConfig::slotEditAccount()
 	editDialog->setCaption( i18n("Edit Account" ) );
 	editDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	editDialog->setDefaultButton(KDialog::Ok);
-	editDialog->enableButtonSeparator(true);
+	editDialog->showButtonSeparator(true);
 
 	KopeteEditAccountWidget *m_accountWidget = proto->createEditAccountWidget( ident, editDialog );
 	if ( !m_accountWidget )

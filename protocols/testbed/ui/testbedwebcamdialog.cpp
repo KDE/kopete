@@ -36,7 +36,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	setCaption( i18n( "Webcam for %1", contactId ) );
 	setButtons( KDialog::Close );
 	setDefaultButton( KDialog::Close );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 	setWindowFlags( Qt::WDestructiveClose );
 
 	setInitialSize( QSize(320,290) );

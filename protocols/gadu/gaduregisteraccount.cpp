@@ -43,7 +43,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
 	setCaption( i18n( "Register New Account" ) );
 	setButtons( KDialog::User1 | KDialog::Ok );
 	setDefaultButton( KDialog::User1 );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 
 	QWidget* w = new QWidget( this );
 	ui = new Ui::GaduRegisterAccountUI;

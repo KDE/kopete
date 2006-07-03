@@ -469,7 +469,7 @@ void YahooContact::stealthContact()
 	stealthSettingDialog->setCaption( i18n("Stealth Setting") );
 	stealthSettingDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	stealthSettingDialog->setDefaultButton(KDialog::Ok);
-	stealthSettingDialog->enableButtonSeparator(true);
+	stealthSettingDialog->showButtonSeparator(true);
 	
 	QWidget* w = new QWidget( stealthSettingDialog );
 	Ui::YahooStealthSetting stealthWidget = Ui::YahooStealthSetting();

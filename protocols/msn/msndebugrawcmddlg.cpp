@@ -33,7 +33,7 @@ MSNDebugRawCmdDlg::MSNDebugRawCmdDlg( QWidget *parent )
 	setCaption( i18n( "DEBUG: Send Raw Command - MSN Plugin" ) );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 
 	setInitialSize( QSize( 350, 200 ) );
 

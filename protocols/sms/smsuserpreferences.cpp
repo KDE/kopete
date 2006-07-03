@@ -31,7 +31,7 @@ SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 	setButtons(Ok|Cancel);
 	setDefaultButton(Ok);
 	setModal(true);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	topWidget = new KVBox(this);
 	setMainWidget(topWidget);
 	userPrefs = new SMSUserPrefsUI( topWidget );

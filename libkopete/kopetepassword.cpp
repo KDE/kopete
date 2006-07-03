@@ -181,7 +181,7 @@ public:
 		passwdDialog->setCaption( i18n( "Password Required" ) );
 		passwdDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 		passwdDialog->setDefaultButton( KDialog::Ok );
-		passwdDialog->enableButtonSeparator( true );
+		passwdDialog->showButtonSeparator( true );
 
 		mView = new QWidget( passwdDialog );
 		setupUi( mView );

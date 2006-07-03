@@ -52,7 +52,7 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 	setCaption( i18n( "Edit Contact's Properties" ) );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 
 	if ( contact && account ) {
 		cl_ = contact->contactDetails();
@@ -73,7 +73,7 @@ GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::Conta
 	setCaption( i18n( "Edit Contact's Properties" ) );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 
 	if ( !account ) {
 		return;
