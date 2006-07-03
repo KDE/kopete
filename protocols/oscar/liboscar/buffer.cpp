@@ -252,7 +252,9 @@ void Buffer::setBuf(char *b, const WORD len)
 
 QByteArray Buffer::getBlock(WORD len)
 {
-	QByteArray ch( len );
+	QByteArray ch;
+	ch.resize( len );
+
 	for ( int i = 0; i < len; i++ )
 	{
 		ch[i] = getByte();

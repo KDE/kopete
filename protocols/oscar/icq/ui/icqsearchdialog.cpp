@@ -18,15 +18,15 @@
 
 #include "icqsearchdialog.h"
 
+#include <QStandardItemModel>
+
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <q3combobox.h>
 #include <qlayout.h>
 #include <qtextcodec.h>
 #include <QTabWidget>
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <k3listview.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kmessagebox.h>
@@ -51,8 +51,19 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_searchUI = new Ui::ICQSearchBase();
 	m_searchUI->setupUi( w );
 	setMainWidget( w );
+	
+	m_searchResultsModel = new QStandardItemModel( 0, 6 );
+	m_searchResultsModel->setHeaderData( 0, Qt::Horizontal, i18n( "UIN" ) );
+	m_searchResultsModel->setHeaderData( 1, Qt::Horizontal, i18n( "Nickname" ) );
+	m_searchResultsModel->setHeaderData( 2, Qt::Horizontal, i18n( "First Name" ) );
+	m_searchResultsModel->setHeaderData( 3, Qt::Horizontal, i18n( "Last Name" ) );
+	m_searchResultsModel->setHeaderData( 4, Qt::Horizontal, i18n( "Email" ) );
+	m_searchResultsModel->setHeaderData( 5, Qt::Horizontal, i18n( "Requires Authorization" ) );
+	m_searchUI->searchResults->setModel( m_searchResultsModel );
+	
 	connect( m_searchUI->searchButton, SIGNAL( clicked() ), this, SLOT( startSearch() ) );
-	connect( m_searchUI->searchResults, SIGNAL( selectionChanged() ), this, SLOT( resultSelectionChanged() ) );
+	connect( m_searchUI->searchResults->selectionModel(), SIGNAL( currentRowChanged( const QModelIndex&, const QModelIndex& ) ),
+	         this, SLOT( resultRowChanged( const QModelIndex& ) ) );
 	connect( m_searchUI->addButton, SIGNAL( clicked() ), this, SLOT( addContact() ) );
 	connect( m_searchUI->clearButton, SIGNAL( clicked() ), this, SLOT( clearResults() ) );
 	connect( m_searchUI->stopButton, SIGNAL( clicked() ), this, SLOT( stopSearch() ) );
@@ -183,12 +194,19 @@ void ICQSearchDialog::addContact()
 	}
 	else
 	{
-		QString uin = m_searchUI->searchResults->selectedItem()->text( 0 );
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
-		iacp->setUINFromSearch( uin );
-		
-		// Closing the dialog
-		closeDialog();
+		QModelIndexList indexList = m_searchUI->searchResults->selectionModel()->selectedIndexes();
+		if ( indexList.count() > 0 )
+		{
+			const QAbstractItemModel *model = m_searchUI->searchResults->selectionModel()->model();
+			QModelIndex index = model->index( indexList.at( 0 ).row(), 0, QModelIndex() );
+			QString uin = model->data( index ).toString();
+			
+			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
+			iacp->setUINFromSearch( uin );
+			
+			// Closing the dialog
+			closeDialog();
+		}
 	}
 }
 
@@ -203,19 +221,25 @@ void ICQSearchDialog::userInfo()
 	else
 	{
 		// Account currently online
-		m_contact = new ICQContact( m_account,
-									m_searchUI->searchResults->selectedItem()->text( 0 ),
-									NULL);
-	
-		m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
-		QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
-	
-		m_infoWidget->setContact( m_contact );
-		m_infoWidget->setModal(true);
-		m_infoWidget->show();
-			if ( m_contact->account()->isConnected() )
-			m_account->engine()->requestFullInfo( m_contact->contactId() );
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+		QModelIndexList indexList = m_searchUI->searchResults->selectionModel()->selectedIndexes();
+		if ( indexList.count() > 0 )
+		{
+			const QAbstractItemModel *model = m_searchUI->searchResults->selectionModel()->model();
+			QModelIndex index = model->index( indexList.at( 0 ).row(), 0, QModelIndex() );
+			QString uin = model->data( index ).toString();
+			
+			m_contact = new ICQContact( m_account, uin, NULL );
+			
+			m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+			QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
+		
+			m_infoWidget->setContact( m_contact );
+			m_infoWidget->setModal(true);
+			m_infoWidget->show();
+				if ( m_contact->account()->isConnected() )
+				m_account->engine()->requestFullInfo( m_contact->contactId() );
+			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+		}
 	}
 }
 
@@ -234,7 +258,7 @@ void ICQSearchDialog::closeUserInfo()
 void ICQSearchDialog::clearResults()
 {
 	stopSearch();
-	m_searchUI->searchResults->clear();
+	m_searchResultsModel->removeRows( 0, m_searchResultsModel->rowCount() );
 	m_searchUI->addButton->setEnabled( false );
 	m_searchUI->userInfoButton->setEnabled( false );
 	m_searchUI->searchButton->setEnabled( true );
@@ -249,9 +273,9 @@ void ICQSearchDialog::closeDialog()
 	closeClicked();
 }
 
-void ICQSearchDialog::resultSelectionChanged()
+void ICQSearchDialog::resultRowChanged( const QModelIndex & current )
 {
-	if ( !m_searchUI->searchResults->selectedItem() )
+	if ( !current.isValid() )
 	{
 		m_searchUI->addButton->setEnabled( false );
 		m_searchUI->userInfoButton->setEnabled( false );
@@ -273,21 +297,33 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 
 	QTextCodec* codec = m_account->defaultCodec();
 
-	Q3ListViewItem *item = new Q3ListViewItem( m_searchUI->searchResults, QString::number( info.uin ),
-	                                         codec->toUnicode( info.nickName ),
-	                                         codec->toUnicode( info.firstName ),
-	                                         codec->toUnicode( info.lastName ),
-	                                         codec->toUnicode( info.email ),
-	                                         info.auth ? i18n( "Yes" ) : i18n( "No" ) );
-
-	if ( !item )
-		return;
+	const int row = m_searchResultsModel->rowCount( QModelIndex() );
+	m_searchResultsModel->insertRows( row, 1, QModelIndex());
+	
+	QModelIndex index;
+	
+	index = m_searchResultsModel->index( row, 0, QModelIndex());
+	m_searchResultsModel->setData( index, QString::number( info.uin ) );
 	
 	if ( info.online )
-		item->setPixmap( 0, SmallIcon( "icq_online" ) );
+		m_searchResultsModel->setData( index, SmallIcon( "icq_online" ), Qt::DecorationRole );
 	else
-		item->setPixmap( 0, SmallIcon( "icq_offline" ) );
-
+		m_searchResultsModel->setData( index, SmallIcon( "icq_offline" ), Qt::DecorationRole );
+	
+	index = m_searchResultsModel->index( row, 1, QModelIndex());
+	m_searchResultsModel->setData( index, codec->toUnicode( info.nickName ) );
+	
+	index = m_searchResultsModel->index( row, 2, QModelIndex());
+	m_searchResultsModel->setData( index, codec->toUnicode( info.firstName ) );
+	
+	index = m_searchResultsModel->index( row, 3, QModelIndex());
+	m_searchResultsModel->setData( index, codec->toUnicode( info.lastName ) );
+	
+	index = m_searchResultsModel->index( row, 4, QModelIndex());
+	m_searchResultsModel->setData( index, codec->toUnicode( info.email ) );
+	
+	index = m_searchResultsModel->index( row, 5, QModelIndex());
+	m_searchResultsModel->setData( index, info.auth ? i18n( "Yes" ) : i18n( "No" ) );
 }
 
 void ICQSearchDialog::searchFinished( int numLeft )

@@ -19,7 +19,6 @@
 #define ICQADDCONTACTPAGE_H
 
 #include <qwidget.h>
-//Added by qt3to4:
 #include <QShowEvent>
 #include <addcontactpage.h>
 

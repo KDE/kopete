@@ -33,7 +33,6 @@
 #include <qtextedit.h>
 
 #include <kdatewidget.h>*/
-#include <q3valuelist.h>
 #include <kdialog.h>
 /*
 #include <klineedit.h>
@@ -780,7 +779,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
     if ( serializedData.contains( "ssi_type" ) )
 	ssiType = serializedData["ssi_type"].toUInt();
 
-	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, QList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	ICQContact *c = new ICQContact( static_cast<ICQAccount*>(account), contactId, metaContact, QString::null, item );
 	return c;

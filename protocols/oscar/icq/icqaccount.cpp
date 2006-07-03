@@ -16,8 +16,6 @@
 */
 
 #include <qfile.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -443,14 +441,14 @@ void ICQAccount::slotBuddyIconChanged()
 			OContact s(item);
 			
 			//remove hash and alias
-			Q3ValueList<TLV> tList( item.tlvList() );
+			QList<TLV> tList( item.tlvList() );
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )
-				tList.remove( t );
+				tList.removeAll( t );
 			
 			t = Oscar::findTLV( tList, 0x0131 );
 			if ( t )
-				tList.remove( t );
+				tList.removeAll( t );
 			
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
@@ -484,7 +482,7 @@ void ICQAccount::slotBuddyIconChanged()
 			t2.type = 0x0131;
 			t2.length = 0;
 			
-			Q3ValueList<Oscar::TLV> list;
+			QList<Oscar::TLV> list;
 			list.append( t );
 			list.append( t2 );
 			
@@ -498,11 +496,11 @@ void ICQAccount::slotBuddyIconChanged()
 		{ //found an item
 			OContact s(item);
 			kDebug(14153) << k_funcinfo << "modifying old item in ssi." << endl;
-			Q3ValueList<TLV> tList( item.tlvList() );
+			QList<TLV> tList( item.tlvList() );
 			
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )
-				tList.remove( t );
+				tList.removeAll( t );
 			else
 				t.type = 0x00D5;
 			

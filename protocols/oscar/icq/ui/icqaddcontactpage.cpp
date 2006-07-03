@@ -20,18 +20,15 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3combobox.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qtabwidget.h>
 #include <qlabel.h>
-//Added by qt3to4:
 #include <QShowEvent>
 #include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <k3listview.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kmessagebox.h>
@@ -91,7 +88,7 @@ bool ICQAddContactPage::validateData()
 		return false;
 	}
 
-	Q_ULONG uin = addUI->uinEdit->text().toULong();
+	ulong uin = addUI->uinEdit->text().toULong();
 	if ( uin < 1000 )
 	{
 		// Invalid (or missing) UIN

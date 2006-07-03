@@ -19,8 +19,6 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 #include <qtextcodec.h>
 
 #include <kapplication.h>

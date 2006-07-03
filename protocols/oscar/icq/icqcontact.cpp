@@ -18,7 +18,6 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
-#include <Q3PtrList>
 #include <qimage.h>
 #include <qfile.h>
 
@@ -475,7 +474,7 @@ void ICQContact::haveIcon( const QString& user, QByteArray icon )
 		QString iconLocation( locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
 		
 		QFile iconFile( iconLocation );
-		if ( !iconFile.open( IO_WriteOnly ) )
+		if ( !iconFile.open( QIODevice::WriteOnly ) )
 		{
 			kDebug(14153) << k_funcinfo << "Cannot open file"
 			               << iconLocation << " for writing!" << endl;
@@ -501,7 +500,7 @@ bool ICQContact::cachedBuddyIcon( QByteArray hash )
 	QString iconLocation( locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
 	
 	QFile iconFile( iconLocation );
-	if ( !iconFile.open( IO_ReadOnly ) )
+	if ( !iconFile.open( QIODevice::ReadOnly ) )
 		return false;
 	
 	KMD5 buddyIconHash;

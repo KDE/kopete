@@ -36,8 +36,6 @@
 #include <kdialog.h>
 #include <kmessagebox.h>
 #include <kimageio.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include "contact.h"
 
@@ -289,7 +287,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 		ssiType = serializedData["ssi_type"].toUInt();
 	}
 
-	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, QList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 
 	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );

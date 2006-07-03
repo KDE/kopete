@@ -19,9 +19,7 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <q3combobox.h>
 #include <qlineedit.h>
-#include <q3textedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
 #include <QLatin1String>

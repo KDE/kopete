@@ -15,7 +15,6 @@
 
 #include <qdom.h>
 #include <qfile.h>
-#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -105,7 +104,7 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
 
 void AIMMyselfContact::chatSessionDestroyed( Kopete::ChatSession* session )
 {
-	m_chatRoomSessions.remove( session );
+	m_chatRoomSessions.removeAll( session );
 }
 
 void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSession* session )
@@ -428,7 +427,7 @@ void AIMAccount::slotBuddyIconChanged()
 			QList<TLV> tList( item.tlvList() );
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )
-				tList.remove( t );
+				tList.removeAll( t );
 
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
@@ -438,7 +437,7 @@ void AIMAccount::slotBuddyIconChanged()
 	else
 	{
 		QFile iconFile( photoPath );
-		iconFile.open( IO_ReadOnly );
+		iconFile.open( QIODevice::ReadOnly );
 
 		KMD5 iconHash;
 		iconHash.update( iconFile );
@@ -474,7 +473,7 @@ void AIMAccount::slotBuddyIconChanged()
 
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )
-				tList.remove( t );
+				tList.removeAll( t );
 			else
 				t.type = 0x00D5;
 
@@ -512,7 +511,7 @@ void AIMAccount::slotJoinChat()
 		m_joinChatDialog = new AIMJoinChatUI( this, Kopete::UI::Global::mainWidget() );
 		QObject::connect( m_joinChatDialog, SIGNAL( closing( int ) ),
 				this, SLOT( joinChatDialogClosed( int ) ) );
-		Q3ValueList<int> list = engine()->chatExchangeList();
+		QList<int> list = engine()->chatExchangeList();
 		m_joinChatDialog->setExchangeList( list );
 		m_joinChatDialog->show();
 	}
@@ -600,8 +599,8 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 	{
 		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "have chat message" << endl;
 		//handle chat room messages seperately
-		Q3ValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
-		Q3ValueList<Kopete::ChatSession*>::iterator it,  itEnd = chats.end();
+		QList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
+		QList<Kopete::ChatSession*>::iterator it,  itEnd = chats.end();
 		for ( it = chats.begin(); it != itEnd; ++it )
 		{
 			Kopete::ChatSession* kcs = ( *it );
@@ -647,8 +646,8 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
 		return;
 
 	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "user " << contact << " has joined the chat" << endl;
-	Q3ValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
-	Q3ValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
+	QList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
+	QList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
 	for ( it = chats.begin(); it != itEnd; ++it )
 	{
 		Kopete::ChatSession* kcs = ( *it );
@@ -686,8 +685,8 @@ void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString
 	if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
 		return;
 
-	Q3ValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
-	Q3ValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
+	QList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
+	QList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
 	for ( it = chats.begin(); it != itEnd; ++it )
 	{
 		Kopete::ChatSession* kcs = ( *it );
@@ -860,7 +859,7 @@ void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItem( QString::null, ROSTER_VISIBILITY );
 
-	Q3ValueList<Oscar::TLV> tList;
+	QList<Oscar::TLV> tList;
 
 	tList.append( TLV( 0x00CA, 1, (char *)&privacy ) );
 	tList.append( TLV( 0x00CB, sizeof(userClasses), (char *)&userClasses ) );

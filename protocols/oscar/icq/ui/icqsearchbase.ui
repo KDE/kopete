@@ -321,43 +321,16 @@
     </widget>
    </item>
    <item rowspan="7" row="1" column="0" >
-    <widget class="K3ListView" name="searchResults" >
+    <widget class="QTreeView" name="searchResults" >
      <property name="whatsThis" >
-      <string>This is where the results from your search are displayed. If you double-click a result, the search window will close and pass the UIN of the contact you wish to add back to the Add Contact Wizard. You can only add one contact at a time.</string>
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;/head>&lt;body style=" white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This is where the results from your search are displayed. If you double-click a result, the search window will close and pass the UIN of the contact you wish to add back to the Add Contact Wizard. You can only add one contact at a time.&lt;/p>&lt;/body>&lt;/html></string>
      </property>
-     <property name="allColumnsShowFocus" >
+     <property name="alternatingRowColors" >
       <bool>true</bool>
      </property>
-     <column>
-      <property name="text" >
-       <string>UIN</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Nickname</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>First Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Last Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Email</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Requires Authorization?</string>
-      </property>
-     </column>
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item row="1" column="1" >
@@ -392,13 +365,6 @@
    <class>KPushButton</class>
    <extends></extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>K3ListView</class>
-   <extends></extends>
-   <header>k3listview.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

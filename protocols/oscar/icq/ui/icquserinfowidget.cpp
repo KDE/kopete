@@ -21,7 +21,6 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-#include <q3combobox.h>
 #include <qobject.h>
 #include <qtextcodec.h>
 

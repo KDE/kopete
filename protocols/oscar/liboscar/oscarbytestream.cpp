@@ -115,9 +115,7 @@ void KNetworkByteStream::slotConnectionClosed()
 void KNetworkByteStream::slotReadyRead()
 {
 	// stuff all available data into our buffers
-	QByteArray readBuffer( socket()->bytesAvailable () );
-
-	socket()->read( readBuffer.data (), readBuffer.size () );
+	QByteArray readBuffer = socket()->readAll();
 
 	appendRead( readBuffer );
 

@@ -26,7 +26,6 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <QVBoxLayout>
-#include <Q3Frame>
 #include <qtimer.h>
 
 #include <klocale.h>
@@ -85,13 +84,12 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoEdit = new KTextEdit(QString(), mMainWidget->userInfoFrame);
-		userInfoEdit->setTextFormat(Qt::PlainText);
 
 		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
 		if ( aimmc )
-			userInfoEdit->setText( aimmc->userProfile() );
+			userInfoEdit->setPlainText( aimmc->userProfile() );
 		else
-			userInfoEdit->setText( QString::null );
+			userInfoEdit->setPlainText( QString::null );
 
 		setButtonText(Ok, i18n("&Save Profile"));
 		showButton(User1, false);
@@ -103,7 +101,6 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
-		userInfoView->setTextFormat(Qt::AutoText);
 		userInfoView->setNotifyClick(true);
 		QObject::connect(
 			userInfoView, SIGNAL(urlClick(const QString&)),
@@ -119,7 +116,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		if(m_contact->isOnline())
 		{
 			// Update the user view to indicate that we're requesting the user's profile
-			userInfoView->setText(i18n("Requesting User Profile, please wait..."));
+			userInfoView->setPlainText(i18n("Requesting User Profile, please wait..."));
 		}
 		QTimer::singleShot(0, this, SLOT(slotUpdateProfile()));
 	}
@@ -160,7 +157,7 @@ void AIMUserInfoDialog::slotSaveClicked()
 			setCaption(i18n("User Information on %1", newNick));
 		}
 
-		mAccount->setUserProfile(userInfoEdit->text());
+		mAccount->setUserProfile(userInfoEdit->toPlainText());
 	}
 
 	emit closing();
@@ -177,7 +174,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	kDebug(14152) << k_funcinfo << "Got User Profile." << endl;
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
 	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
-	mMainWidget->txtAwayMessage->setText( awayMessage );
+	mMainWidget->txtAwayMessage->setHtml( awayMessage );
 
 	if ( awayMessage.isNull() )
 	{
@@ -207,11 +204,11 @@ void AIMUserInfoDialog::slotUpdateProfile()
 
 	if(userInfoEdit)
 	{
-		userInfoEdit->setText(contactProfile);
+		userInfoEdit->setPlainText(contactProfile);
 	}
 	else if(userInfoView)
 	{
-		userInfoView->setText(contactProfile);
+		userInfoView->setHtml(contactProfile);
 	}
 
 }

@@ -20,9 +20,6 @@
 #include "aimjoinchat.h"
 
 #include <qlineedit.h>
-#include <q3combobox.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 #include <klocale.h>
 
 #include "ui_aimjoinchatbase.h"
@@ -59,11 +56,11 @@ AIMJoinChatUI::~AIMJoinChatUI()
     delete m_joinUI;
 }
 
-void AIMJoinChatUI::setExchangeList( const Q3ValueList<int>& list )
+void AIMJoinChatUI::setExchangeList( const QList<int>& list )
 {
     m_exchanges = list;
     QStringList exchangeList;
-    Q3ValueList<int>::const_iterator it = list.begin();
+    QList<int>::const_iterator it = list.begin();
     while ( it != list.end() )
     {
         exchangeList.append( QString::number( ( *it ) ) );
@@ -71,7 +68,7 @@ void AIMJoinChatUI::setExchangeList( const Q3ValueList<int>& list )
     }
 
 
-    m_joinUI->exchange->insertStringList( exchangeList );
+    m_joinUI->exchange->insertItems( 0, exchangeList );
 }
 
 void AIMJoinChatUI::joinChat()
