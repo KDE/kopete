@@ -877,13 +877,7 @@ QString Kopete::Contact::nickName() const
 	return contactId();
 }
 
-void Contact::virtual_hook( uint , void * )
-{ }
-
-
 } //END namespace Kopete
 
-
 #include "kopetecontact.moc"
-
 

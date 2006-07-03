@@ -96,15 +96,9 @@ QStringList Kopete::Plugin::addressBookFields() const
 QString Kopete::Plugin::addressBookIndexField() const
 {
 	return d->indexField;
-	
 }
-
-
-void Plugin::virtual_hook( uint, void * ) { }
 
 } //END namespace Kopete
 
-
 #include "kopeteplugin.moc"
-
 

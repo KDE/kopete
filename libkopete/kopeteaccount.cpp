@@ -569,14 +569,7 @@ QString Account::customIcon()  const
 	return d->customIcon;
 }
 
-void Account::virtual_hook( uint /*id*/, void* /*data*/)
-{
-}
-
-
-
-}
-
- //END namespace Kopete
+} // END namespace Kopete
 
 #include "kopeteaccount.moc"
+
