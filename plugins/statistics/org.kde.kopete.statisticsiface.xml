@@ -1,0 +1,53 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.kopete.StatisticsIface">
+    <method name="dcopStatisticsDialog">
+      <arg name="contactId" type="s" direction="in"/>
+    </method>
+    <method name="dcopWasOnline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dcopWasOnline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="datetime" type="s" direction="in"/>
+    </method>
+    <method name="dcopWasAway">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dcopWasAway">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="datetime" type="s" direction="in"/>
+    </method>
+    <method name="dcopWasOffline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dcopWasOffline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="datetime" type="s" direction="in"/>
+    </method>
+    <method name="dcopStatus">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="datetime" type="s" direction="in"/>
+    </method>
+    <method name="dcopStatus">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dcopMainStatus">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+  </interface>
+</node>

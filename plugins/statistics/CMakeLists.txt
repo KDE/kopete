@@ -1,8 +1,4 @@
-
 add_subdirectory( sqlite ) 
-
-
-
 
 ########### next target ###############
 
@@ -16,7 +12,7 @@ kde4_automoc(${kopete_statistics_PART_SRCS})
 
 kde4_add_ui_files(kopete_statistics_PART_SRCS statisticswidget.ui )
 
-kde4_add_dcop_skels(kopete_statistics_PART_SRCS statisticsdcopiface.h )
+qt_add_dbus_interfaces(kopete_statistics_PART_SRCS org.kde.kopete.statisticsiface.xml)
 
 kde4_add_plugin(kopete_statistics ${kopete_statistics_PART_SRCS})
 
@@ -32,30 +28,3 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_statistics )
 install_files( ${SERVICES_INSTALL_DIR} FILES kopete_statistics.desktop )
 install_files( ${DATA_INSTALL_DIR}/kopete_statistics FILES statisticsui.rc )
 install_files( ${DATA_INSTALL_DIR}/kopete/pics/statistics FILES images/blue.png images/navy.png images/black.png images/gray.png )
-
-
-
-
-#original Makefile.am contents follow:
-
-#METASOURCES = AUTO
-#
-#INCLUDES = $(KOPETE_INCLUDES) $(all_includes)
-#
-#SUBDIRS = sqlite
-#
-#kde_module_LTLIBRARIES = kopete_statistics.la
-#
-#kopete_statistics_la_SOURCES = statisticsplugin.cpp statisticsdb.cpp statisticsdialog.cpp statisticswidget.ui statisticscontact.cpp statisticsdcopiface.skel
-#
-#kopete_statistics_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-#kopete_statistics_la_LIBADD      = ../../libkopete/libkopete.la sqlite/libsqlite.la
-#
-#service_DATA = kopete_statistics.desktop
-#servicedir = $(kde_servicesdir)
-#
-#mydatadir = $(kde_datadir)/kopete_statistics
-#mydata_DATA = statisticsui.rc
-#
-#mydatadirimagesdir = $(kde_datadir)/kopete/pics/statistics
-#mydatadirimages_DATA = images/blue.png images/navy.png images/black.png images/gray.png
