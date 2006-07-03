@@ -92,6 +92,7 @@ private:
 	QQAccount *m_account;
 	uint m_qqId;
 	Eva::ByteArray m_token;
+	Eva::ByteArray m_passwordKey;
 	QString m_password;
 	Kopete::OnlineStatus m_newstatus;
 

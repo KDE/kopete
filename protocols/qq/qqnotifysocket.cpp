@@ -56,7 +56,17 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
 {
 	m_account = account;
+	// FIXME: Do we really need password ?
 	m_password = password;
+	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
+	m_passwordKey = Eva::QQHash(pwd);
+	pwd.release(); // the data is handled in QT
+
+	// DELME: dump the result
+	QByteArray tmp( m_passwordKey.data(), m_passwordKey.size() );
+	kDebug(14140) << endl << endl << "!!!!" << k_funcinfo << "passwordKey = " << tmp << m_passwordKey.size() << endl;
+
+
 	// FIXME: more error-checking.
 	m_qqId = account->accountId().toInt();
 }

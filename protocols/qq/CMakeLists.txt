@@ -21,6 +21,7 @@ set(kopete_qq_PART_SRCS
    qqincomingmessage.cpp 
    ui/qqwebcamdialog.cpp 
    libeva.cpp
+   md5.c
 )
 
 kde4_automoc(${kopete_qq_PART_SRCS})

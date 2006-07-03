@@ -9,10 +9,17 @@ namespace Eva {
 	short const Version = 0x0F15;
 	char const Head = 0x02;
 	char const Tail = 0x03;
+
 	short const RequestLoginToken = 0x0062;
 	char const LoginTokenOK = 0x00;
 
-	int const MaxPacketSize = 65536;
+	short const Login = 0x0022;
+	char const LoginOK = 0x00;
+
+	int const MaxPacketLength = 65535;
+	int const HeaderLength = 13;
+	int const KeyLength = 16;
+	int const Md5KeyLength = 16;
 
 	// Customized max to get rid of stl dependence
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
@@ -23,6 +30,9 @@ namespace Eva {
     public:
         ByteArray( int capacity=0 ) : m_itsOwn(true), m_capacity(capacity), 
                                        m_size(0), m_data((char*) malloc(capacity))
+		{ }
+        ByteArray( char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+                                       m_size(size), m_data(p)
 		{ }
         
         ~ByteArray() { if( m_itsOwn ) free(m_data); }
@@ -83,7 +93,13 @@ namespace Eva {
             copyAt(m_size, d.data(), d.size());
         }
 
+		void append( const char* d, int s )
+		{
+			copyAt( m_size, d, s );
+		}
+
         int size() const { return m_size; }
+		void setSize( int size ) { if( size<= m_capacity ) m_size = size; }
         int capacity() const { return m_capacity; }
         char* data() const { return m_data; }
 
@@ -108,7 +124,7 @@ namespace Eva {
 	 */
 	ByteArray requestLoginToken( int id, short const sequence );
 	ByteArray loginToken( char const* buffer );
-	ByteArray header( int id, short const command, short const sequence );
+	ByteArray QQHash( const ByteArray& text );
 };
 
 
