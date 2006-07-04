@@ -141,6 +141,7 @@ void ClientStream::reset(bool all)
 		if ( d->bs )
 		{
 			d->bs->close();
+			disconnect( d->bs, 0, this, 0 );
 			d->bs = 0;
 		}
 		if ( d->conn )
