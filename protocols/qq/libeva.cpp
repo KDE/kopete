@@ -193,8 +193,10 @@ namespace Eva {
 		memset( login.data()+login.size(), 0, login.capacity()-login.size() );
 
 		data += header( id, Login, sequence );
-		data += key;
+		data += initKey;
 		data += encrypt( login, initKey );
+		data += Tail;
+		setLength( data );
 
 		initKey.release(); // static data, no need to free
 
