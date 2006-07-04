@@ -58,7 +58,7 @@ kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 
 target_link_libraries( kyahoo ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
 
-install_targets( ${LIB_INSTALL_DIR} kyahoo )
+install(TARGETS kyahoo  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 

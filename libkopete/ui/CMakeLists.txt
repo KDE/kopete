@@ -7,12 +7,13 @@ include_directories( ${CMAKE_BINARY_DIR} )
 
 ########### install files ###############
 
-install_files( /include/kopete/ui FILES accountselector.h
+install(FILES accountselector.h
 ${CMAKE_CURRENT_BINARY_DIR}/../ui_fileconfirmbase.h kopetefileconfirmdialog.h
 kopetepasswordwidget.h kopeteview.h addcontactpage.h
 ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopeteawaydialogbase.h
 ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepasswordwidgetbase.h kopeteviewplugin.h
-editaccountwidget.h kopetecontactaction.h  ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepassworddialog.h kopetestdaction.h  	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h )
+editaccountwidget.h kopetecontactaction.h  ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepassworddialog.h kopetestdaction.h  	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h 
+DESTINATION ${INSTALL_INCLUDE_DIR}/kopete/ui  )
 
 
 

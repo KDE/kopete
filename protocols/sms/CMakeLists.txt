@@ -26,12 +26,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_sms )
 
 target_link_libraries(kopete_sms  ${KDE4_KDECORE_LIBS} kopetesmsui kopetesmsservices kopete kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_sms )
+install(TARGETS kopete_sms  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_sms.desktop )
+install( FILES kopete_sms.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

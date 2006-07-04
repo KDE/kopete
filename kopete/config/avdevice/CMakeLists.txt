@@ -16,13 +16,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_avdeviceconfig )
 
 target_link_libraries(kcm_kopete_avdeviceconfig  ${KDE4_KDECORE_LIBS} kopete kopete_videodevice kutils )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_avdeviceconfig )
+install(TARGETS kcm_kopete_avdeviceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_avdeviceconfig.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete/icons FILES  )
+install( FILES kopete_avdeviceconfig.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES   DESTINATION ${DATA_INSTALL_DIR}/kopete/icons)
 
 
 

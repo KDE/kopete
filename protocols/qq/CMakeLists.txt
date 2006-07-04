@@ -42,10 +42,10 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_qq)
 
 target_link_libraries(kopete_qq ${KDE4_KIO_LIBS} kopete kopete_videodevice )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_qq )
+install(TARGETS kopete_qq  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_qq.desktop )
+install( FILES kopete_qq.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 

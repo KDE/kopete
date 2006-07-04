@@ -16,12 +16,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_msn )
 
 target_link_libraries(kcm_kopete_msn  ${KDE4_KDECORE_LIBS} kopete kutils )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_msn )
+install(TARGETS kcm_kopete_msn  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_msn_config.desktop )
+install( FILES kopete_msn_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

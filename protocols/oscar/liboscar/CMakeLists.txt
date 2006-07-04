@@ -32,7 +32,7 @@ kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 
 target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} )
 
-install_targets( ${LIB_INSTALL_DIR} oscar )
+install(TARGETS oscar  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 

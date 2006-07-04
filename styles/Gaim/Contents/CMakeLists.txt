@@ -1,3 +1,3 @@
 add_subdirectory(Resources)
 
-install_files( ${DATA_INSTALL_DIR}/kopete/styles/Gaim/Contents/ FILES Info.plist)
+install( FILES Info.plist DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Gaim/Contents/)

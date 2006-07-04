@@ -71,14 +71,14 @@ if(X11_Xrender_FOUND)
   target_link_libraries(kopete_bin ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)
 
-install_targets(/bin kopete_bin )
+install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kopete.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete FILES kopeteui.rc kopete.notifyrc )
-install_files( ${MIME_INSTALL_DIR}/application FILES x-kopete-emoticons.desktop )
+install( FILES kopete.desktop  DESTINATION ${XDG_APPS_DIR})
+install( FILES kopeteui.rc kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES x-kopete-emoticons.desktop  DESTINATION ${MIME_INSTALL_DIR}/application)
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
 

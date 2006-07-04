@@ -24,12 +24,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_meanwhile )
 
 target_link_libraries(kopete_meanwhile  ${KDE4_KDECORE_LIBS} kopete kopetemeanwhileui )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_meanwhile )
+install(TARGETS kopete_meanwhile  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_meanwhile.desktop )
+install( FILES kopete_meanwhile.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

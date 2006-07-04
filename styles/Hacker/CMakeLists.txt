@@ -3,5 +3,5 @@ add_subdirectory( Contents )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kopete/styles/Hacker FILES COPYRIGHT README gpl.txt )
+install( FILES COPYRIGHT README gpl.txt  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Hacker)
 

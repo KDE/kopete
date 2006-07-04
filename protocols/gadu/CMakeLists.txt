@@ -47,12 +47,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_gadu )
 
 target_link_libraries(kopete_gadu ${KDE4_KDEUI_LIBS} ${QT_QTNETWORK_LIBRARY} gadu_kopete kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_gadu )
+install(TARGETS kopete_gadu  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_gadu.desktop )
+install( FILES kopete_gadu.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

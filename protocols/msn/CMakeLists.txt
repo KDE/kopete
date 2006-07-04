@@ -24,7 +24,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_msn )
 
 target_link_libraries(kopete_msn  ${KDE4_KDECORE_LIBS} kopete_msn_shared )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_msn )
+install(TARGETS kopete_msn  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -68,13 +68,13 @@ kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
 target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice)
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION 0.0.0 SOVERSION 0 )
-install_targets(${LIB_INSTALL_DIR} kopete_msn_shared )
+install(TARGETS kopete_msn_shared  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_msn.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_msn FILES msnchatui.rc )
+install( FILES kopete_msn.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES msnchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_msn)
 
 
 

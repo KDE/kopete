@@ -50,13 +50,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_yahoo )
 
 target_link_libraries(kopete_yahoo ${KDE4_KDEUI_LIBS} kopete_videodevice kopete kyahoo)
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_yahoo )
+install(TARGETS kopete_yahoo  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_yahoo.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_yahoo FILES yahooconferenceui.rc yahoochatui.rc )
+install( FILES kopete_yahoo.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES yahooconferenceui.rc yahoochatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_yahoo)
 
 
 

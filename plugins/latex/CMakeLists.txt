@@ -20,7 +20,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_latex )
 
 target_link_libraries(kopete_latex  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_latex )
+install(TARGETS kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -39,15 +39,15 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_latex )
 
 target_link_libraries(kcm_kopete_latex  ${KDE4_KUTILS_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_latex )
+install(TARGETS kcm_kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES latexconfig.kcfg )
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_latex.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_latex FILES latexchatui.rc )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_latex_config.desktop )
+install( FILES latexconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
+install( FILES kopete_latex.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES latexchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_latex)
+install( FILES kopete_latex_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

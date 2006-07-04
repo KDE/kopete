@@ -36,9 +36,9 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_testbed )
 
 target_link_libraries(kopete_testbed  ${KDE4_KIO_LIBS} kopete kopete_videodevice )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_testbed )
+install(TARGETS kopete_testbed  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_testbed.desktop )
+install( FILES kopete_testbed.desktop  DESTINATION ${SERVICES_INSTALL_DIR})

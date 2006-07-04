@@ -5,5 +5,5 @@ add_subdirectory( Outgoing )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kopete/styles/Clean/Contents/Resources FILES main.css Footer.html Header.html Status.html )
+install( FILES main.css Footer.html Header.html Status.html  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Clean/Contents/Resources)
 

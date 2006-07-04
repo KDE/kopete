@@ -30,7 +30,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_smpppdcs )
 
 target_link_libraries(kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_smpppdcs )
+install(TARGETS kopete_smpppdcs  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -53,14 +53,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_smpppdcs )
 
 target_link_libraries(kcm_kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete kutils )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_smpppdcs )
+install(TARGETS kcm_kopete_smpppdcs  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES smpppdcs.kcfg )
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_smpppdcs.desktop )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_smpppdcs_config.desktop )
+install( FILES smpppdcs.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
+install( FILES kopete_smpppdcs.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_smpppdcs_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

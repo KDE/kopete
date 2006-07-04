@@ -2,4 +2,4 @@ add_subdirectory(Incoming)
 add_subdirectory(Outgoing)
 add_subdirectory(Variants)
 
-install_files( ${DATA_INSTALL_DIR}/kopete/styles/Gaim/Contents/Resources FILES main.css Footer.html Header.html Status.html )
+install( FILES main.css Footer.html Header.html Status.html  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Gaim/Contents/Resources)

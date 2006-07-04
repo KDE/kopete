@@ -42,10 +42,10 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_irc )
 
 target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} kopete kirc )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_irc )
+install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_irc.desktop irc.protocol )
-install_files( ${DATA_INSTALL_DIR}/kopete_irc FILES ircchatui.rc )
-install_files( ${DATA_INSTALL_DIR}/kopete ircnetworks.xml )
+install( FILES kopete_irc.desktop irc.protocol  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES ircchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_irc)
+install( ircnetworks.xml  DESTINATION ${DATA_INSTALL_DIR}/kopete)
