@@ -88,6 +88,24 @@ namespace Eva {
 		isHeader = false;
 	}
 
+	inline void decrypt64( unsigned char* crypt, unsigned char* crypt_pre, 
+			unsigned char* key, unsigned char* decrypted, int len)
+	{
+		bool isWrapped = false;
+		for( int i = 0; i< 8; i++ )
+		{
+			if( i >= len )
+			{
+				isWrapped = true;
+				break;
+			}
+			decrypted[i] ^= crypt[i];
+		}
+		if( !isWrapped )
+			TEA::decipher( (unsigned int*) decrypted, 
+					(unsigned int*) key, (unsigned int*) decrypted );
+	}
+
 	
 	// Interface for application
 	// Utilities
@@ -162,6 +180,81 @@ namespace Eva {
 
 		return encoded;
 	}
+
+	ByteArray decrypt( const ByteArray& code, const ByteArray& key )
+	{
+		unsigned char
+			decrypted[8], m[8],
+			*crypt_pre, *crypt;
+		char* outp;
+		
+		int pos, len, i;
+
+		if( code.size() < 16 || code.size() % 8 )
+			return ByteArray(0);
+
+		TEA::decipher( (unsigned int*) code.data(), 
+				(unsigned int*) key.data(), (unsigned int*) decrypted );
+		pos = decrypted[0] & 0x7;
+		len = code.size() - pos - 10;
+		if( len < 0 )
+			return ByteArray(0);
+
+		ByteArray text(len);
+		memset( m, 0, 8 );
+		crypt_pre = m;
+		crypt = (unsigned char*)code.data() + 8;
+		pos ++;
+
+		for( i = 0; i< 2; i++ )
+		{
+			if( pos < 8 )
+				pos ++;
+			if( pos == 8 )
+			{
+				crypt_pre = (unsigned char*)code.data();
+				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), 
+						decrypted, code.size() - 8 );
+				break;
+			}
+		}
+		outp = text.data();
+		while( len > 0 )
+		{
+			if( pos < 8 )
+			{
+				*outp = crypt_pre[pos] ^ decrypted[pos];
+				outp ++;
+				pos ++;
+				len --;
+			}
+			else
+			{
+				crypt_pre = crypt - 8;
+				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted, len );
+			}
+		}
+		
+		for( i = 0; i< 7; i++ )
+		{
+			if( pos == 8 )
+			{
+				crypt_pre = crypt;
+				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted, len );
+				break;
+			}
+			else
+			{
+				if( crypt[pos] ^ decrypted[pos] )
+					return ByteArray(0);
+				pos ++;
+			}
+				
+		}
+
+		return text;
+	}
+
 
 	// Core functions
 	ByteArray requestLoginToken( int id, short const sequence )
