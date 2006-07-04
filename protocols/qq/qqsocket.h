@@ -42,7 +42,7 @@ public:
 	QQSocket(QObject* parent=0l);
 	~QQSocket();
 
-	void sendPacket( QByteArray& data );
+	void sendPacket( const QByteArray& data );
 
 	/* To make things more managable, only UDP is supported in this version */
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };

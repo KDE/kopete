@@ -2,7 +2,6 @@
 #define __LIB_EVA_H__
 
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 namespace Eva {
@@ -20,6 +19,11 @@ namespace Eva {
 	int const HeaderLength = 13;
 	int const KeyLength = 16;
 	int const Md5KeyLength = 16;
+	int const LoginLength = 416;
+
+	const char NormalLogin = 0x0A;
+	const char InvisibleLogin = 0x28;
+
 
 	// Customized max to get rid of stl dependence
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
@@ -29,7 +33,7 @@ namespace Eva {
     class ByteArray
     {
     public:
-        ByteArray( int capacity=0 ) : m_itsOwn(true), m_capacity(capacity), 
+        ByteArray( int capacity=0 ) : m_itsOwn(capacity>0), m_capacity(capacity), 
                                        m_size(0), m_data((char*) malloc(capacity))
 		{ }
         ByteArray( char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
@@ -84,13 +88,11 @@ namespace Eva {
 
         template<class T> void operator+= (T d)
         {
-			fprintf(stderr, "!1!" );
             copyAt<T>(m_size, d );
         }
 
         void operator+=(const ByteArray& d)
         {
-			fprintf(stderr, "!2!" );
             copyAt(m_size, d.data(), d.size());
         }
 
@@ -123,9 +125,17 @@ namespace Eva {
 	/** 
 	 * Header section for QQ packet
 	 */
+
+	// Packet operation
 	ByteArray requestLoginToken( int id, short const sequence );
+	ByteArray login( int id, short const sequence, const ByteArray& key, 
+			const ByteArray& token, char const loginMode );
+
+	// Misc.
 	ByteArray loginToken( char const* buffer );
 	ByteArray QQHash( const ByteArray& text );
+
+
 };
 
 

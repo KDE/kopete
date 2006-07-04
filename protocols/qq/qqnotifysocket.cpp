@@ -61,6 +61,8 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
 	m_passwordKey = Eva::QQHash(pwd);
 	pwd.release(); // the data is handled in QT
+	m_lastCmd = NA;
+	m_loginMode = Eva::NormalLogin;
 
 	// DELME: dump the result
 	QByteArray tmp( m_passwordKey.data(), m_passwordKey.size() );
@@ -115,7 +117,6 @@ void QQNotifySocket::handleError( uint code, uint id )
 
 void QQNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 {
-	m_newstatus = status;
 	emit statusChanged( status );
 }
 
@@ -124,24 +125,31 @@ void QQNotifySocket::parsePacket( const QByteArray& data )
 {
 	kDebug( 14140 ) << k_funcinfo << data << endl;
 
-	if( m_newstatus == QQProtocol::protocol()->LOG )
+	if( m_lastCmd == LoginTokenRequest )
 	{
 		m_token = Eva::loginToken( data.data() );
-			// Eva::ByteArray b = Eva::login();
-			// sendPacket( QByteArray(b.data(), b.size()) );
+		sendLogin();
 	}
 }
 
 
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	Eva::ByteArray b = Eva::requestLoginToken(m_qqId, m_id++);
-	QByteArray packet( b.data(), b.size() );
 	kDebug( 14140 ) << k_funcinfo << endl;
-	sendPacket( packet );
-
-	setStatus( QQProtocol::protocol()->LOG );
+	Eva::ByteArray data = Eva::requestLoginToken(m_qqId, m_id++);
+	m_lastCmd = LoginTokenRequest;
+	sendPacket( QByteArray( data.data(), data.size()) );
 }
+
+void QQNotifySocket::sendLogin()
+{
+	Eva::ByteArray data = Eva::login( m_qqId, m_id++, m_passwordKey, 
+				m_token, m_loginMode );
+	m_lastCmd = Login;
+	sendPacket( QByteArray( data.data(), data.size()) );
+}
+
+
 
 #include "qqnotifysocket.moc"
 

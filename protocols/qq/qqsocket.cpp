@@ -127,7 +127,7 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 }
 
 
-void QQSocket::sendPacket( QByteArray& data )
+void QQSocket::sendPacket( const QByteArray& data )
 {
 	kDebug(14140) << k_funcinfo << data <<  endl;
 	m_sendQueue.append( data );

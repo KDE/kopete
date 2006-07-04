@@ -52,7 +52,13 @@ public:
 
 	virtual void disconnect();
 
+	/**
+	 * emit the status change
+	 */
 	void setStatus( const Kopete::OnlineStatus &status );
+
+	enum Command { NA, LoginTokenRequest, Login };
+
 
 	/**
 	 * this should return a  Kopete::Account::DisconnectReason value
@@ -85,16 +91,27 @@ protected:
 
 	// QQ operations
 	void sendLoginTokenRequest(); 
+	void sendLogin(); 
 	void sendGoodbye() { return; }
 
 private:
-
 	QQAccount *m_account;
+
+	
 	uint m_qqId;
+	/** 
+	 * stores the token requested from the server
+	 */
 	Eva::ByteArray m_token;
+	/**
+	 * Twice Md5 hashed password
+	 */
 	Eva::ByteArray m_passwordKey;
+	char m_loginMode;
+	// FIXME: Do we need this ?
 	QString m_password;
-	Kopete::OnlineStatus m_newstatus;
+
+	Command m_lastCmd;
 
 	int m_disconnectReason;
 
