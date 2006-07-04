@@ -1326,7 +1326,7 @@ void Client::sendFile( const QString& contact, const QString& filePath, Kopete::
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
 		return;
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, filePath, t );
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), filePath, t );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
 	ft->go( true );
@@ -1350,7 +1350,7 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	if ( type == 0 )
 	{
 		kDebug(14151) << k_funcinfo << "new request :)" << endl;
-		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, cookie, buf );
+		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
 		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
 				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
 		connect( ft, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),

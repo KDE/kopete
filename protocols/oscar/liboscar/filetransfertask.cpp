@@ -33,17 +33,19 @@
 #include "kopetetransfermanager.h"
 #include <qfileinfo.h>
 
+//TODO: don't have such ugly constructors
+
 //receive
-FileTransferTask::FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contact( contact ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 ), m_state( Default )
+FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b  )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contactName( contact ), m_selfName( self ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_state( Default )
 {
 	parseReq( b );
 	
 }
 
 //send
-FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contact( contact ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 ), m_state( Default )
+FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, const QString &fileName, Kopete::Transfer *transfer )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_state( Default )
 {
 	//get filename without path
 	m_name = QFileInfo( fileName ).fileName();
@@ -79,26 +81,26 @@ void FileTransferTask::onGo()
 		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
 		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
 
-		emit askIncoming( m_contact, m_name, m_size, QString::null, m_cookie );
+		emit askIncoming( m_contactName, m_name, m_size, QString::null, m_cookie );
 		//TODO: support icq descriptions
 		return;
 	} 
 	//else, send
-	if ( m_contact.isEmpty() || (! validFile() ) )
+	if ( m_contactName.isEmpty() || (! validFile() ) )
 	{
 		setSuccess( 0 );
 		return;
 	}
 
+	//TODO proxy stage 1
 	sendReq();
 }
 
 void FileTransferTask::parseReq( Buffer b )
 {
-	//DWORD proxy_ip = 0;
+	QByteArray proxy_ip;
 	//DWORD client_ip = 0;
 	QByteArray verified_ip;
-	bool proxy = false;
 	while( b.bytesAvailable() )
 	{
 		TLV tlv = b.getTLV();
@@ -114,8 +116,8 @@ void FileTransferTask::parseReq( Buffer b )
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_name << endl;
 			break;
 		 case 2:
-		 	//proxy_ip = b2.getDWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << tlv.data << endl;
+		 	proxy_ip = tlv.data;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip << endl;
 			break;
 		 case 3:
 		 	//client_ip = b2.getDWord();
@@ -130,20 +132,23 @@ void FileTransferTask::parseReq( Buffer b )
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "port " << m_port << endl;
 			break;
 		 case 0x10:
-		 	proxy = true;
+		 	m_proxy = true;
 			break;
 		 default:
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ignoring tlv type " << tlv.type << endl;
 		}
 	}
 
-	if( proxy )
-	{ //uhoh, not supported yet. TODO
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy unsupported" << endl;
+	if( m_proxy )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy requested" << endl;
+		m_ip = proxy_ip;
 	}
-
-	//for now, only try the verified ip. FIXME
-	m_ip = verified_ip;
+	else
+	{
+		//for now, only try the verified ip. FIXME
+		m_ip = verified_ip;
+	}
 
 }
 
@@ -249,7 +254,12 @@ void FileTransferTask::socketError( int e )
 	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << " : " << desc << endl;
 	if ( m_state == Connecting )
 	{ //connection failed, try another way
-		if ( m_action == Receive )
+		if ( m_proxy )
+		{ //fuck, we failed at a proxy! just give up
+			emit error( KIO::ERR_COULD_NOT_CONNECT, desc );
+			doCancel();
+		}
+		else if ( m_action == Receive )
 		{ //try redirect
 			delete m_connection;
 			m_connection = 0;
@@ -258,7 +268,7 @@ void FileTransferTask::socketError( int e )
 			sendReq();
 		}
 		else
-		{ //stage 3 proxy. TODO
+		{ //try stage 3 proxy. TODO
 		}
 	}
 }
@@ -267,12 +277,69 @@ void FileTransferTask::socketRead()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 
-	if( m_state == Receiving )
-	{ //we're expecting raw file data, not OFT
-		saveData();
-		return;
+	switch( m_state )
+	{
+		case Receiving: //raw file data
+			saveData();
+			break;
+		case ProxySetup: //proxy command
+			proxyRead();
+			break;
+		default: //oft packet
+			oftRead();
 	}
+}
 
+void FileTransferTask::proxyRead()
+{
+	QByteArray raw = m_connection->readAll(); //is this safe?
+	Buffer b( raw );
+	WORD length = b.getWord();
+	if ( b.bytesAvailable() != length )
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "length is " << length << " but we have " << b.bytesAvailable() << "bytes!" << endl;
+	b.skipBytes( 2 ); //protocol version
+	WORD command = b.getWord();
+	b.skipBytes( 6 ); //4 unknown, 2 flags
+
+	switch( command )
+	{
+		case 1: //error
+		{
+			WORD err = b.getWord();
+			QString errMsg;
+			//FIXME: strings
+			switch( err )
+			{
+				case 0x0d: //we did something wrong
+					errMsg = "Bad Request";
+					break;
+				case 0x10: //we did something else wrong
+					errMsg = "Request Timed Out";
+					break;
+				case 0x1a: //other side was too slow
+					errMsg = "Accept Period Timed Out";
+					break;
+				default:
+					errMsg = "Unknown Error";
+			}
+
+			emit error( KIO::ERR_ABORTED, errMsg );
+			doCancel();
+			break;
+		}
+		case 3: //ack
+			m_port = b.getWord();
+			m_ip = b.getBlock( 4 );
+			//now we send a proxy request to the other side
+			//TODO
+			break;
+		case 5: //ready
+			doneConnect();
+	}
+}
+
+void FileTransferTask::oftRead()
+{
 	QByteArray raw = m_connection->readAll(); //is this safe?
 	OftProtocol p;
 	uint b=0;
@@ -479,6 +546,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 		return;
 
 	//TODO: we should unhook the old transfermanager signals now
+	//TODO: proxy stage 2?
 
 	//hook up the ones for the transfer
 	connect( this , SIGNAL( gotCancel() ), t, SLOT( slotCancelled() ) );
@@ -504,6 +572,7 @@ void FileTransferTask::doConnect()
 		doCancel();
 		return;
 	}
+
 	//ugly because ksockets demand a qstring
 	QString ip = QString::number( static_cast<unsigned char>( m_ip.at(0) ) )
 		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(1) ) )
@@ -511,7 +580,8 @@ void FileTransferTask::doConnect()
 		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(3) ) );
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << ip << endl;
 
-	m_connection = new KBufferedSocket( ip, QString::number( m_port ) );
+	//proxies *always* use port 5190; the "port" value is some retarded check
+	m_connection = new KBufferedSocket( ip, QString::number( m_proxy ? 5190 : m_port ) );
 	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
 	connect( m_connection, SIGNAL( closed() ), this, SLOT( socketClosed() ) );
 	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
@@ -529,7 +599,17 @@ void FileTransferTask::socketConnected()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_timer.stop();
+	if( m_proxy )
+	//we need to send an init recv first
+		proxyInit();
+	else
+		doneConnect();
+}
+
+void FileTransferTask::doneConnect()
+{
 	m_state = Default;
+	//TODO: proxy requester doesn't send accept
 	//yay! send an accept message
 	Oscar::Message msg = makeFTMsg();
 	msg.setReqType( 2 );
@@ -539,13 +619,54 @@ void FileTransferTask::socketConnected()
 		oftPrompt();
 }
 
+void FileTransferTask::proxyInit()
+{
+	m_state = ProxySetup;
+	//init "send" is sent by whoever requested the proxy.
+	//init "recv" is sent by the other side
+	//because the second person has to include the port check
+	//for now I'm only doing 'recv'. FIXME
+	
+	Buffer data;
+	data.addByte( m_selfName.length() );
+	data.addString( m_selfName.toLatin1() );
+	if ( 1 ) //if 'recv'. TODO
+		data.addWord( m_port );
+	data.addString( m_cookie );
+	//cap tlv
+	data.addDWord( 0x00010010 );
+	data.addGuid( oscar_caps[ CAP_SENDFILE ] );
+
+	Buffer header;
+	header.addWord( 10 + data.length() ); //length
+	header.addWord( 0x044a ); //packet version
+	header.addWord( 4 ); //command: 2='send' 4='recv' TODO
+	header.addDWord( 0 ); //unknown
+	header.addWord( 0 ); //flags
+
+	header.addString( data );
+	//send it to the proxy server
+	int written = m_connection->write( header.buffer() );
+
+	if( written == -1 ) //FIXME: handle this properly
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
+	else
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
+	
+}
+
 void FileTransferTask::timeout()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_timer.stop();
 	if ( m_state == Connecting )
 	{ //kbufferedsocket took too damn long
-		if ( m_action == Receive )
+		if ( m_proxy )
+		{ //fuck, we failed at a proxy! just give up
+			emit error( KIO::ERR_COULD_NOT_CONNECT, "Timeout" ); //FIXME: string
+			doCancel();
+		}
+		else if ( m_action == Receive )
 		{ //try redirect
 			delete m_connection;
 			m_connection = 0;
@@ -622,7 +743,7 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	msg.setMessageType( 3 ); //filetransfer
 	msg.setChannel( 2 ); //rendezvous
 	msg.setIcbmCookie( m_cookie );
-	msg.setReceiver( m_contact );
+	msg.setReceiver( m_contactName );
 	return msg;
 }
 

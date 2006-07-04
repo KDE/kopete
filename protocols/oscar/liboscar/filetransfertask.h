@@ -45,9 +45,9 @@ class FileTransferTask : public Task
 Q_OBJECT
 public:
 	/** create an incoming filetransfer */
-	FileTransferTask( Task* parent, const QString& contact, QByteArray cookie, Buffer b );
+	FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b );
 	/** create an outgoing filetransfer */
-	FileTransferTask( Task* parent, const QString& contact, const QString &fileName, Kopete::Transfer *transfer );
+	FileTransferTask( Task* parent, const QString& contact, const QString& self, const QString &fileName, Kopete::Transfer *transfer );
 	~FileTransferTask();
 
 	//! Task implementation
@@ -91,12 +91,17 @@ private:
 	void parseReq( Buffer b );
 	void saveData(); //save incoming data to disk
 	void doConnect(); //attempt connection to other user (direct or redirect)
+	void proxyInit(); //send init command to proxy server
+	void doneConnect();
+	void oftRead(); //handle incoming oft packet
+	void proxyRead(); //handle incoming proxy packet
 
 
 	enum Action { Send, Receive };
 	Action m_action;
 	QFile m_file;
-	QString m_contact;
+	QString m_contactName; //other person's username
+	QString m_selfName; //my username
 	QByteArray m_cookie; //icbm cookie for this transfer
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
@@ -106,7 +111,8 @@ private:
 	DWORD m_bytes; //file bytes sent/received
 	WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
-	enum State { Default, Connecting, Receiving };
+	bool m_proxy; //are we using a proxy?
+	enum State { Default, Connecting, ProxySetup, Receiving };
 	State m_state;
 };
 
