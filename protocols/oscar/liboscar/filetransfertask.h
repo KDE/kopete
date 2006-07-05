@@ -81,6 +81,7 @@ private slots:
 
 private:
 	void sendReq();
+	bool listen();
 	bool validFile();
 	Oscar::Message makeFTMsg();
 	OFT makeOft();
@@ -95,6 +96,7 @@ private:
 	void doneConnect();
 	void oftRead(); //handle incoming oft packet
 	void proxyRead(); //handle incoming proxy packet
+	void connectFailed(); //tries another method of connecting
 
 
 	enum Action { Send, Receive };
@@ -112,6 +114,7 @@ private:
 	WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
 	bool m_proxy; //are we using a proxy?
+	bool m_proxyRequester; //did we choose to request the proxy?
 	enum State { Default, Connecting, ProxySetup, Receiving };
 	State m_state;
 };

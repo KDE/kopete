@@ -229,6 +229,23 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 			tlv5buffer.addWord( 2 );
 			tlv5buffer.addWord( ~ p );
 
+			QByteArray proxy = m_message.proxy();
+			if( proxy.length() == 4 )
+			{ //add proxy ip, check, & flag
+				//proxy flag
+				tlv5buffer.addWord( 0x10 );
+				tlv5buffer.addWord( 0 );
+				//proxy ip
+				tlv5buffer.addWord( 2 );
+				tlv5buffer.addWord( 4 );
+				tlv5buffer.addString( proxy );
+				//proxy ip check
+				for( int i=0; i<4; ++i)
+					proxy[i] = ~ proxy[i];
+				tlv5buffer.addWord( 0x16 );
+				tlv5buffer.addWord( 4 );
+				tlv5buffer.addString( proxy );
+			}
 		}
 
 

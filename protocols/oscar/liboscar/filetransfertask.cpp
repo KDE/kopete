@@ -37,7 +37,7 @@
 
 //receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contactName( contact ), m_selfName( self ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_state( Default )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contactName( contact ), m_selfName( self ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
 {
 	parseReq( b );
 	
@@ -45,12 +45,20 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const 
 
 //send
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_state( Default )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
 {
 	//get filename without path
 	m_name = QFileInfo( fileName ).fileName();
 	//copy size for convenience
 	m_size = m_file.size();
+	//we get to make up an icbm cookie!
+	Buffer b;
+	DWORD cookie = KRandom::random();
+	b.addDWord( cookie );
+	cookie = KRandom::random();
+	b.addDWord( cookie );
+	m_cookie = b.buffer();
+
 	//hook up ui cancel
 	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
 	//hook up our ui signals
@@ -92,8 +100,14 @@ void FileTransferTask::onGo()
 		return;
 	}
 
-	//TODO proxy stage 1
-	sendReq();
+	if ( 0 ) //FIXME: get value from settings XXX
+	{ //proxy stage 1
+		m_proxy = 1;
+		m_proxyRequester = 1;
+		doConnect();
+	}
+	else
+		sendReq();
 }
 
 void FileTransferTask::parseReq( Buffer b )
@@ -259,16 +273,10 @@ void FileTransferTask::socketError( int e )
 			emit error( KIO::ERR_COULD_NOT_CONNECT, desc );
 			doCancel();
 		}
-		else if ( m_action == Receive )
-		{ //try redirect
-			delete m_connection;
-			m_connection = 0;
-			m_state = Default;
-			m_timer.stop();
-			sendReq();
-		}
 		else
-		{ //try stage 3 proxy. TODO
+		{
+			m_timer.stop();
+			connectFailed();
 		}
 	}
 }
@@ -310,7 +318,8 @@ void FileTransferTask::proxyRead()
 			//FIXME: strings
 			switch( err )
 			{
-				case 0x0d: //we did something wrong
+				case 0x0d: //we did something wrong (eg. wrong username)
+				case 0x0e: //we did something wronger (eg. no cookie)
 					errMsg = "Bad Request";
 					break;
 				case 0x10: //we did something else wrong
@@ -320,10 +329,10 @@ void FileTransferTask::proxyRead()
 					errMsg = "Accept Period Timed Out";
 					break;
 				default:
-					errMsg = "Unknown Error";
+					errMsg = "Unknown Error: " + QString::number( err );
 			}
 
-			emit error( KIO::ERR_ABORTED, errMsg );
+			emit error( KIO::ERR_COULD_NOT_LOGIN, errMsg );
 			doCancel();
 			break;
 		}
@@ -331,7 +340,7 @@ void FileTransferTask::proxyRead()
 			m_port = b.getWord();
 			m_ip = b.getBlock( 4 );
 			//now we send a proxy request to the other side
-			//TODO
+			sendReq();
 			break;
 		case 5: //ready
 			doneConnect();
@@ -546,7 +555,6 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 		return;
 
 	//TODO: we should unhook the old transfermanager signals now
-	//TODO: proxy stage 2?
 
 	//hook up the ones for the transfer
 	connect( this , SIGNAL( gotCancel() ), t, SLOT( slotCancelled() ) );
@@ -566,22 +574,29 @@ void FileTransferTask::doConnect()
 		doCancel();
 		return;
 	}
-	if ( m_ip.length() != 4 || ! m_port )
+
+	QString host;
+	if ( m_proxyRequester )
+		host = "ars.oscar.aol.com";
+	else
 	{
-		emit error( KIO::ERR_COULD_NOT_CONNECT, "missing ip or port" ); //FIXME: string
-		doCancel();
-		return;
+		if ( m_ip.length() != 4 || ! m_port )
+		{
+			emit error( KIO::ERR_COULD_NOT_CONNECT, "missing ip or port" ); //FIXME: string
+			doCancel();
+			return;
+		}
+
+		//ugly because ksockets demand a qstring
+		QString host = QString::number( static_cast<unsigned char>( m_ip.at(0) ) )
+			+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(1) ) )
+			+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(2) ) )
+			+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(3) ) );
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << host << endl;
 	}
 
-	//ugly because ksockets demand a qstring
-	QString ip = QString::number( static_cast<unsigned char>( m_ip.at(0) ) )
-		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(1) ) )
-		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(2) ) )
-		+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(3) ) );
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << ip << endl;
-
 	//proxies *always* use port 5190; the "port" value is some retarded check
-	m_connection = new KBufferedSocket( ip, QString::number( m_proxy ? 5190 : m_port ) );
+	m_connection = new KBufferedSocket( host, QString::number( m_proxy ? 5190 : m_port ) );
 	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
 	connect( m_connection, SIGNAL( closed() ), this, SLOT( socketClosed() ) );
 	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
@@ -625,12 +640,11 @@ void FileTransferTask::proxyInit()
 	//init "send" is sent by whoever requested the proxy.
 	//init "recv" is sent by the other side
 	//because the second person has to include the port check
-	//for now I'm only doing 'recv'. FIXME
 	
 	Buffer data;
 	data.addByte( m_selfName.length() );
 	data.addString( m_selfName.toLatin1() );
-	if ( 1 ) //if 'recv'. TODO
+	if (! m_proxyRequester ) //if 'recv'
 		data.addWord( m_port );
 	data.addString( m_cookie );
 	//cap tlv
@@ -640,7 +654,7 @@ void FileTransferTask::proxyInit()
 	Buffer header;
 	header.addWord( 10 + data.length() ); //length
 	header.addWord( 0x044a ); //packet version
-	header.addWord( 4 ); //command: 2='send' 4='recv' TODO
+	header.addWord( m_proxyRequester ? 2 : 4 ); //command: 2='send' 4='recv'
 	header.addDWord( 0 ); //unknown
 	header.addWord( 0 ); //flags
 
@@ -666,16 +680,8 @@ void FileTransferTask::timeout()
 			emit error( KIO::ERR_COULD_NOT_CONNECT, "Timeout" ); //FIXME: string
 			doCancel();
 		}
-		else if ( m_action == Receive )
-		{ //try redirect
-			delete m_connection;
-			m_connection = 0;
-			m_state = Default;
-			sendReq();
-		}
 		else
-		{ //stage 3 proxy. TODO
-		}
+			connectFailed();
 		return;
 	}
 
@@ -685,7 +691,25 @@ void FileTransferTask::timeout()
 	doCancel();
 }
 
-void FileTransferTask::sendReq()
+void FileTransferTask::connectFailed()
+{
+	delete m_connection;
+	m_connection = 0;
+	bool proxy = 0; //FIXME: get proxy var from settings XXX
+	if ( m_action == Receive && (! proxy ) )
+	{ //try redirect
+		m_state = Default;
+		sendReq();
+	}
+	else
+	{ //proxy stage 2 or 3
+		m_proxy = 1;
+		m_proxyRequester = 1;
+		doConnect();
+	}
+}
+
+bool FileTransferTask::listen()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//listen for connections
@@ -705,33 +729,35 @@ void FileTransferTask::sendReq()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning" << endl;
 		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( m_port ) );
 		setSuccess(false);
-		return;
+		return false;
 	}
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections..." << endl;
+	return true;
+
+}
+
+void FileTransferTask::sendReq()
+{
+	//if we're not using a proxy we need a working serversocket
+	if (!( m_proxy || listen() ))
+		return;
 
 	Buffer b;
-	if ( m_cookie.isEmpty() )
-	{
-		//we get to make up an icbm cookie!
-		DWORD cookie1 = KRandom::random();
-		DWORD cookie2 = KRandom::random();
-		b.addDWord( cookie1 );
-		b.addDWord( cookie2 );
-		//save the cookie for later
-		m_cookie = b.buffer();
-	}
-	else
-		b.addString( m_cookie );
+	b.addString( m_cookie );
 
 	//set up a message for sendmessagetask
 	Oscar::Message msg = makeFTMsg();
 
 	//now set the rendezvous info
 	msg.setReqType( 0 );
-	msg.setPort( m_port );
+	msg.setPort( m_port ); //XXX
 	msg.setFile( m_size, m_name );
+	if ( m_proxy )
+		msg.setProxy( m_ip );
+
 	if ( m_action == Receive )
 		msg.setReqNum( 2 );
+	//TODO: could be 3
 
 	//we're done, send it off!
 	emit sendMessage( msg );

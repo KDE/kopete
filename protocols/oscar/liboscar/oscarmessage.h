@@ -145,6 +145,12 @@ public:
 	/** set the port (for transfer requests) */
 	void setPort( int port );
 
+	/** get the proxy ip*/
+	QByteArray proxy() const;
+
+	/** set the proxy ip (for transfer requests) */
+	void setProxy( QByteArray proxy );
+
 	/** get the request # */
 	int reqNum() const;
 
@@ -193,6 +199,7 @@ private:
 	int m_protocolVersion;
 	int m_channel2Counter;
 	QByteArray m_icbmCookie;
+	QByteArray m_proxy;
 	QByteArray m_textArray;
 	QDateTime m_timestamp;
 	Oscar::WORD m_exchange;

@@ -264,6 +264,16 @@ void Oscar::Message::setPort( int port )
 	m_port = port;
 }
 
+QByteArray Oscar::Message::proxy() const
+{
+	return m_proxy;
+}
+
+void Oscar::Message::setProxy( QByteArray proxy )
+{
+	m_proxy = proxy;
+}
+
 int Oscar::Message::reqNum() const
 {
 	return m_reqNum;
