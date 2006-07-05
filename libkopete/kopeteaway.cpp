@@ -27,7 +27,7 @@
 
 #include <kconfig.h>
 #include <kapplication.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -308,9 +308,9 @@ void Kopete::Away::slotTimerTimeout()
 	// the cleaner wiping the keyboard :).
 
 #warning verify dcop call
-	QDBusInterfacePtr caller("org.kde.kdesktop", "/modules/KScreensaverIface", "org.kde.KScreensaverIfaceModule");
-	QDBusReply<bool> reply = caller->call("isBlanked");
-	if (reply.isError() ||  !reply.value())
+	QDBusInterface caller("org.kde.kdesktop", "/modules/KScreensaverIface", "org.kde.KScreensaverIfaceModule");
+	QDBusReply<bool> reply = caller.call("isBlanked");
+	if ( !reply.isValid() || !reply.value())
 	{
 		// DCOP failed, or returned something odd, or the screensaver is
 		// inactive, so check for activity the X11 way.  It's only worth

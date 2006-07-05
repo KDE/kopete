@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <QString>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
@@ -33,12 +33,12 @@ NLamaroK::NLamaroK() : NLMediaPlayer()
 {
 	m_type = Audio;
 	m_name = "amaroK";
-	m_client = new QDBusInterfacePtr("org.kde.amaroK", "/player");
+	m_client = new QDBusInterface("org.kde.amaroK", "/player");
 }
 
-QDBusInterface *NLamaroK::client()
+NLamaroK::~NLamaroK()
 {
-	return m_client->interface();
+	delete m_client;
 }
 
 void NLamaroK::update()
@@ -49,12 +49,12 @@ void NLamaroK::update()
 	QString result;
 
 	// TODO: Port to amarok 2.0 D-BUS interface
-	if( !client()->isValid() )
+	if( !m_client->isValid() )
 		return;
 
 	// See if amaroK is currently playing.
-	QDBusReply<int> statusReply = client()->call("status");
-	if( statusReply.isSuccess() )
+	QDBusReply<int> statusReply = m_client->call("status");
+	if( statusReply.isValid() )
 	{
 		if( statusReply.value() )
 		{
@@ -63,8 +63,8 @@ void NLamaroK::update()
 	}
 
 	// Fetch title
-	QDBusReply<QString> newTrackReply = client()->call("title");
-	if( newTrackReply.isSuccess() )
+	QDBusReply<QString> newTrackReply = m_client->call("title");
+	if( newTrackReply.isValid() )
 	{
 		newTrack = newTrackReply.value();
 	}
@@ -76,15 +76,15 @@ void NLamaroK::update()
 	}
 
 	// Fetch album
-	QDBusReply<QString> albumReply = client()->call("album");
-	if( albumReply.isSuccess() )
+	QDBusReply<QString> albumReply = m_client->call("album");
+	if( albumReply.isValid() )
 	{
 		m_album = albumReply.value();
 	}
 
 	// Fetch artist
-	QDBusReply<QString> artistReply = client()->call("artist");
-	if( artistReply.isSuccess() )
+	QDBusReply<QString> artistReply = m_client->call("artist");
+	if( artistReply.isValid() )
 	{
 		m_artist = artistReply.value();
 	}

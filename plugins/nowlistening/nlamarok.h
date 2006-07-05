@@ -25,18 +25,16 @@
 #ifndef NLAMAROK_H
 #define NLAMAROK_H
 
-struct QDBusInterfacePtr;
 class QDBusInterface;
 
 class NLamaroK : public NLMediaPlayer
 {
 	public:
 		NLamaroK();
+		virtual ~NLamaroK();
 		virtual void update();
 	private:
-		QDBusInterface *client();
-
-		QDBusInterfacePtr *m_client;
+		QDBusInterface *m_client;
 };
 
 #endif

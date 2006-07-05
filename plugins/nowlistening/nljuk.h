@@ -26,19 +26,17 @@
 #ifndef NLJUK_H
 #define NLJUK_H
 
-struct QDBusInterfacePtr;
 class QDBusInterface;
 
 class NLJuk : public NLMediaPlayer
 {
 	public:
 		NLJuk();
+		virtual ~NLJuk();
 		virtual void update();
 
 	private:
-		QDBusInterface *client();
-
-		QDBusInterfacePtr *m_client;
+		QDBusInterface *m_client;
 };
 
 #endif

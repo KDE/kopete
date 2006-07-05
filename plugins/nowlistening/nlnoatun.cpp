@@ -28,19 +28,19 @@
 #include "nlmediaplayer.h"
 #include "nlnoatun.h"
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 NLNoatun::NLNoatun() : NLMediaPlayer()
 {
-	m_client = new QDBusInterfacePtr("org.kde.noatun", "/Noatun");
+	m_client = new QDBusInterface("org.kde.noatun", "/Noatun");
 	m_name = "noatun";
 	// FIXME - detect current media type in update()
 	m_type = Audio;
 }
 
-QDBusInterface *NLNoatun::client()
+NLNoatun::~NLNoatun()
 {
-	return m_client->interface();
+	delete m_client;
 }
 
 void NLNoatun::update()
@@ -50,11 +50,11 @@ void NLNoatun::update()
 	QString newTrack;
 
 	// TODO: Port to Noatun D-BUS Interface
-	if ( client()->isValid() )
+	if ( m_client->isValid() )
 	{
 		// see if it's playing
-		QDBusReply<int> stateReply = client()->call("state");
-		if( stateReply.isSuccess() )
+		QDBusReply<int> stateReply = m_client->call("state");
+		if( stateReply.isValid() )
 		{
 			m_playing = ( stateReply.value() == 2 );
 		}
@@ -69,8 +69,8 @@ void NLNoatun::update()
 			newTrack = title;
 		else
 		{
-			QDBusReply<QString> titleReply = client()->call("title");
-			if( titleReply.isSuccess() )
+			QDBusReply<QString> titleReply = m_client->call("title");
+			if( titleReply.isValid() )
 			{
 				newTrack = titleReply.value();
 			}
@@ -97,9 +97,9 @@ QString NLNoatun::currentProperty(const QString &property)
 {
 	QString result;
 
-	QDBusReply<QString> propertyReply = client()->call("currentProperty", property);
+	QDBusReply<QString> propertyReply = m_client->call("currentProperty", property);
 	
-	if( propertyReply.isSuccess() )
+	if( propertyReply.isValid() )
 	{
 		result = propertyReply.value();
 	}
