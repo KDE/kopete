@@ -26,7 +26,7 @@ static QTextStream qcerr( stderr, QIODevice::WriteOnly );
 int main()
 {
 	KInstance* inst = new KInstance( "Update script" );
-	QString filename = locateLocal( "data", QString::fromLatin1( "kopete/contactlist.xml" ) );
+	QString filename = KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/contactlist.xml" ) );
 	
 	// Load contact list & save backup.
 	QFile contactListFile( filename );

@@ -118,7 +118,7 @@ ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
 
 int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
-	QString localStyleDir( locateLocal( "appdata", QString::fromUtf8("styles/") ) );
+	QString localStyleDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("styles/") ) );
 	
 	KArchiveEntry *currentEntry = 0L;
 	KArchiveDirectory* currentDir = 0L;

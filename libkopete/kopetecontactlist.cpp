@@ -389,7 +389,7 @@ void ContactList::loadXML()
 	// don't save when we're in the middle of this...
 	d->loaded = false;
 
-	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
+	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( filename.isEmpty() )
 	{
 		d->loaded=true;
@@ -873,7 +873,7 @@ void Kopete::ContactList::saveXML()
 		return;
 	}
 
-	QString contactListFileName = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
+	QString contactListFileName = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	KSaveFile contactListFile( contactListFileName );
 	if( contactListFile.status() == 0 )
 	{

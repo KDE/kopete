@@ -368,7 +368,7 @@ QWidget* GSMLib::configureWidget(QWidget* parent)
 		prefWidget = new GSMLibPrefsUI(parent);
 
 	loadConfig();
-	prefWidget->device->setURL(m_device);
+	prefWidget->device->setUrl(m_device);
 
 	return prefWidget;
 }

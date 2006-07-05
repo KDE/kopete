@@ -569,7 +569,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 		KMD5 context(tempArray);
 		// Save the image to a file.
 		saveLocation = context.hexDigest() + ".png";
-		saveLocation = locateLocal( "appdata", QString::fromUtf8("globalidentitiespictures/%1").arg( saveLocation ) );
+		saveLocation = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("globalidentitiespictures/%1").arg( saveLocation ) );
 
 		if(!photo.save(saveLocation, "PNG"))
 		{

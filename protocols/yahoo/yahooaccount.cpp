@@ -1502,7 +1502,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
+	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
@@ -1520,7 +1520,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
+	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
@@ -1566,7 +1566,7 @@ void YahooAccount::setBuddyIcon( KUrl url )
 	else
 	{
 		QImage image( url.path() );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
 		QFile iconFile( newlocation );
 		QByteArray data;
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();

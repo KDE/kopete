@@ -218,7 +218,7 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 
 QString LatexPlugin::handleLatex(const QString &latexFormula)
 {
-	KTempFile *tempFile=new KTempFile( locateLocal( "tmp", "kopetelatex-" ), ".png" );
+	KTempFile *tempFile=new KTempFile( KStandardDirs::locateLocal( "tmp", "kopetelatex-" ), ".png" );
 	tempFile->setAutoDelete(true);
 	m_tempFiles.append(tempFile);
 	m_tempFiles.setAutoDelete(true);

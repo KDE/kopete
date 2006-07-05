@@ -335,16 +335,16 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		return false;
 	case WEB_HTML:
 		if ( useImagesInHTML ) {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
 		} else {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_html.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html.xsl" ) );
 		}
 		break;
 	case WEB_XHTML:
 		if ( useImagesInHTML ) {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
 		} else {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
 		}
 		break;
 	case WEB_CUSTOM:

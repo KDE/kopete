@@ -112,7 +112,7 @@ void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 	QObject::connect (prefWidget->program, SIGNAL(textChanged(const QString &)),
 		this, SLOT(loadProviders(const QString&)));
 
-	prefWidget->program->setURL(prefix);
+	prefWidget->program->setUrl(prefix);
 
 	QObject::connect(prefWidget->provider, SIGNAL(activated(const QString &)),
 		this, SLOT(setOptions(const QString &)));

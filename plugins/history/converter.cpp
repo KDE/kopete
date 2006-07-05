@@ -47,7 +47,7 @@ void HistoryPlugin::convertOldHistory()
 	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
 
 
-	QString kopetedir=locateLocal( "data", QString::fromLatin1( "kopete"));
+	QString kopetedir=KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete"));
 	QDir d( kopetedir ); //d should point to ~/.kde/share/apps/kopete/
 
 	d.setFilter( QDir::Dirs  );
@@ -220,7 +220,8 @@ void HistoryPlugin::convertOldHistory()
 											QString::fromLatin1( "/" ) +
 											contactId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 											date.toString(".yyyyMM");
-									KSaveFile file(  locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) )  );
+									KSaveFile file(  KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name +
+									                                             QString::fromLatin1( ".xml" ) )  );
 									if( file.status() == 0 )
 									{
 										QTextStream *stream = file.textStream();
@@ -282,7 +283,8 @@ void HistoryPlugin::convertOldHistory()
 								QString::fromLatin1( "/" ) +
 								contactId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 								date.toString(".yyyyMM");
-						KSaveFile file(  locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) )  );
+						KSaveFile file( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name +
+						                                            QString::fromLatin1( ".xml" ) )  );
 						if( file.status() == 0 )
 						{
 							QTextStream *stream = file.textStream();
@@ -311,12 +313,12 @@ bool HistoryPlugin::detectOldHistory()
 		return false;
 
 
-	QDir d( locateLocal( "data", QString::fromLatin1( "kopete/logs")) );
+	QDir d( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs")) );
 	d.setFilter( QDir::Dirs  );
 	if(d.count() >= 3)  // '.' and '..' are included
 		return false;  //the new history already exists
 
-	QDir d2( locateLocal( "data", QString::fromLatin1( "kopete")) );
+	QDir d2( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete")) );
 	d2.setFilter( QDir::Dirs  );
 	const QFileInfoList list = d2.entryInfoList();
 	QFileInfo fi;

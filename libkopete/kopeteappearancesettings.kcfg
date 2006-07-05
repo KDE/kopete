@@ -51,7 +51,7 @@
 		<!-- Chat Window Style preferences -->
 		<entry key="stylePath" type="String">
 			<label>Absolute path to a directory containing a Adium/Kopete chat window style.</label>
-			<default code="true">locate("appdata", QString("styles/%1/Kopete"))</default>
+			<default code="true">KStandardDirs::locate("appdata", QString("styles/%1/Kopete"))</default>
 		</entry>
 		<entry key="styleVariant" type="String">
 			<label>Relative path to a CSS variant for the current style.</label>

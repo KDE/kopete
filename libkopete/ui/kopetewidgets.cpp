@@ -37,7 +37,7 @@ public:
 #ifdef EMBED_IMAGES
 		QPixmap pix(m_widgets[key].iconSet);
 #else
-		QPixmap pix(locate( "data", 
+		QPixmap pix(KStandardDirs::locate( "data", 
 			QString::fromLatin1("kopetewidgets/pics/") + m_widgets[key].iconSet));
 #endif
 		return QIcon(pix);

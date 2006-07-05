@@ -148,7 +148,7 @@ bool Networks::slotSaveNetworkConfig() const
 	}
 
 //	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
-	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
+	QFile xmlFile( KStandardDirs::locateLocal( "appdata", "ircnetworks.xml" ) );
 
 	if (xmlFile.open(IO_WriteOnly))
 	{

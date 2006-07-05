@@ -515,7 +515,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 void JabberCapabilitiesManager::loadCachedInformation()
 {
 	QString capsFileName;
-	capsFileName = locateLocal("appdata", QString::fromUtf8("jabber-capabilities-cache.xml"));
+	capsFileName = KStandardDirs::locateLocal("appdata", QString::fromUtf8("jabber-capabilities-cache.xml"));
 
 	// Load settings
 	QDomDocument doc;
@@ -623,7 +623,7 @@ QString JabberCapabilitiesManager::clientVersion(const Jid& jid) const
 void JabberCapabilitiesManager::saveInformation()
 {
 	QString capsFileName;
-	capsFileName = locateLocal("appdata", QString::fromUtf8("jabber-capabilities-cache.xml"));
+	capsFileName = KStandardDirs::locateLocal("appdata", QString::fromUtf8("jabber-capabilities-cache.xml"));
 
 	// Generate XML
 	QDomDocument doc;

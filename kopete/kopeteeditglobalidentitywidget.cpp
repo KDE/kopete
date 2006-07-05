@@ -168,7 +168,7 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 
 void KopeteEditGlobalIdentityWidget::photoClicked()
 {
-	KUrl photoURL = KFileDialog::getImageOpenURL(QString::null, this, i18n("Global Photo"));
+	KUrl photoURL = KFileDialog::getImageOpenUrl( KUrl(), this, i18n("Global Photo"));
 	if(photoURL.isEmpty())
 		return;
 
@@ -179,7 +179,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 		return;
 	}
 
-	QString saveLocation(locateLocal("appdata", "global-photo.png"));
+	QString saveLocation(KStandardDirs::locateLocal("appdata", "global-photo.png"));
 	QImage photo(photoURL.path());
 	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
 

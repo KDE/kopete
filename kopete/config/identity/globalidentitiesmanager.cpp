@@ -124,7 +124,7 @@ void GlobalIdentitiesManager::loadXML()
 {
 	kDebug() << k_funcinfo << "Loading global identities list from XML." << endl;
 
-	QString filename = locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
+	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	if( filename.isEmpty() )
 	{
 		return;
@@ -169,7 +169,7 @@ void GlobalIdentitiesManager::saveXML()
 {
 	kDebug() << k_funcinfo << "Saving global identities list to XML." << endl;
 
-	QString globalIdentitiesListFileName = locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
+	QString globalIdentitiesListFileName = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	KSaveFile globalIdentitiesListFile(globalIdentitiesListFileName);
 	if( globalIdentitiesListFile.status() == 0 )
 	{

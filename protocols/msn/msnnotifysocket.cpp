@@ -659,7 +659,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 					"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
 				"</form></body>\n</html>\n";
 
-		KTempFile tmpMailFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
+		KTempFile tmpMailFile( KStandardDirs::locateLocal( "tmp", "kopetehotmail-" ), ".html" );
 		QTextStream *textStream = tmpMailFile.textStream();
 		*textStream << hotmailRequest;
 		tmpMailFile.file()->flush();

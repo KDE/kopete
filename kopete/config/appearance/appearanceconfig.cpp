@@ -388,7 +388,7 @@ void AppearanceConfig::updateEmoticonlist()
 			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
 			{
 				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
-				QPixmap previewPixmap = QPixmap(locate("emoticons", themeQDir[y]+"/smile.png"));
+				QPixmap previewPixmap = QPixmap(KStandardDirs::locate("emoticons", themeQDir[y]+"/smile.png"));
 				d->mPrfsEmoticons->icon_theme_list->insertItem(previewPixmap,themeQDir[y]);
 			}
 		}
@@ -491,7 +491,7 @@ void AppearanceConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void AppearanceConfig::slotInstallChatStyle()
 {
-	KUrl styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
+	KUrl styleToInstall = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
 
 	if( !styleToInstall.isEmpty() )
 	{

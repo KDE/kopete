@@ -102,7 +102,7 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 		configDir = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), QString::null);
 	if (configDir.isNull())
 		configDir = "/etc/sms";
-	prefWidget->configDir->setURL(configDir);
+	prefWidget->configDir->setUrl(configDir);
 
 	QString programName;
 	if (m_account)
@@ -110,7 +110,7 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 		                                                  QString::null);
 	if (programName.isNull())
 		programName = "/usr/bin/sms_client";
-	prefWidget->program->setURL(programName);
+	prefWidget->program->setUrl(programName);
 
 	prefWidget->provider->insertStringList(providers());
 

@@ -167,7 +167,7 @@ void YahooEditAccount::slotOpenRegister()
 
 void YahooEditAccount::slotSelectPicture()
 {
-	KUrl file = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Yahoo Buddy Icon" ) );
+	KUrl file = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "Yahoo Buddy Icon" ) );
 
 	if ( file.isEmpty() )
 		return;
@@ -176,7 +176,7 @@ void YahooEditAccount::slotSelectPicture()
 	if( !picture.isNull() )
 	{
 		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(picture), 96, 96, this );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().toLower() ) ) ;
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ file.fileName().toLower() ) ) ;
 		file = KUrl::fromPathOrUrl(newlocation);
 		if( !picture.save( newlocation, "PNG" ))
 		{

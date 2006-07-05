@@ -459,7 +459,7 @@ void OscarAccount::setBuddyIcon( KUrl url )
 		if( image.height() > size.height())
 			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
 		
-		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
 		
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
 		if ( !image.save( newlocation, "JPEG" ) )

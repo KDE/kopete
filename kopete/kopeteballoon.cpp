@@ -94,7 +94,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 		QLabel *mImage = new QLabel(this);
 		mImage->setObjectName("mImage");
 		mImage->setScaledContents(FALSE);
-		mImage->setPixmap(locate("data", pix));
+		mImage->setPixmap(KStandardDirs::locate("data", pix));
 
 		Layout1->addWidget(mImage);
 	}

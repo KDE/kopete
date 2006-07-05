@@ -81,7 +81,7 @@ void HighlightConfig::load()
 {
 	m_filters.clear(); //clear filters
 
-	QString filename = locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
+	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
 	if( filename.isEmpty() )
 		return ;
 
@@ -157,7 +157,7 @@ void HighlightConfig::load()
 void HighlightConfig::save()
 {
 
-	QString fileName = locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
+	QString fileName = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
 
 	KSaveFile file( fileName );
 	if( file.status() == 0 )

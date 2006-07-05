@@ -258,14 +258,14 @@ void ChatMessagePart::slotScrollingTo( int /*x*/, int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( QString::null, QLatin1String( "text/html text/plain" ), view() );
+	KFileDialog dlg( KUrl(), QLatin1String( "text/html text/plain" ), view() );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
 	if ( dlg.exec() != QDialog::Accepted )
 		return;
 
-	KUrl saveURL = dlg.selectedURL();
+	KUrl saveURL = dlg.selectedUrl();
 	KTempFile tempFile;
 	tempFile.setAutoDelete( true );
 	QFile* file = tempFile.file();

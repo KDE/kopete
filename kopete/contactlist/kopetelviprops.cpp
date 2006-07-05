@@ -539,7 +539,7 @@ void KopeteMetaLVIProps::slotImportClicked()
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {
 #if 0 
-	mNotificationProps->widget()->customSound->setURL( mSound.url() );
+	mNotificationProps->widget()->customSound->setUrl( mSound.url() );
 #endif
 }
 
@@ -571,7 +571,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 			dir = *it;
 			if ( dir.isReadable() && dir.count() > 2 ) {
 				soundURL.setPath( *it );
-				fileDialog->setURL( soundURL );
+				fileDialog->setUrl( soundURL );
 				break;
 			}
 			++it;

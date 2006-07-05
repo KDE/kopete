@@ -134,7 +134,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
-		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
+		d->pictureUrl = KStandardDirs::locateLocal( "appdata", "msnpicture-" +
 			account->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
 		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
@@ -193,7 +193,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	// Save the avatar image
 	if( d->ui->m_useDisplayPicture->isChecked() && !d->pictureData.isNull() )
 	{
-		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
+		d->pictureUrl = KStandardDirs::locateLocal( "appdata", "msnpicture-" +
 				account()->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
 		if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
 		{
@@ -294,7 +294,7 @@ void MSNEditAccountWidget::slotSelectImage()
 {
 	QString path = 0;
 	bool remoteFile = false;
-	KUrl filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "MSN Display Picture" ) );
+	KUrl filePath = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "MSN Display Picture" ) );
 	if( filePath.isEmpty() )
 		return;
 

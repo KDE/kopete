@@ -968,7 +968,7 @@ GaduAccount::slotExportContactsListToFile()
 
 			bool res = KIO::NetAccess::upload(
 								tempFile.name() ,
-								p->saveListDialog->selectedURL() ,
+								p->saveListDialog->selectedUrl() ,
 								Kopete::UI::Global::mainWidget()
 								);
 			if ( !res ) {
@@ -1001,7 +1001,7 @@ GaduAccount::slotImportContactsFromFile()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
-		url = p->loadListDialog->selectedURL();
+		url = p->loadListDialog->selectedUrl();
 		kDebug(14100) << "a:" << url << "\nb:" << oname << endl;
 		if ( KIO::NetAccess::download( url, oname, Kopete::UI::Global::mainWidget() ) ) {
 			QFile tempFile( oname );

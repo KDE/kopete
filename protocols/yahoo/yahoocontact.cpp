@@ -558,7 +558,7 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 	if( !f )
 		return;
 	// stolen from msncontact.cpp ;)
-	QString newlocation=locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 	
 	KIO::Job *j=KIO::file_move( KUrl::fromPathOrUrl( f->name() ) , KUrl::fromPathOrUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
@@ -593,7 +593,7 @@ const YABEntry *YahooContact::yabEntry()
 void YahooContact::slotEmitDisplayPictureChanged()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QString newlocation=locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( Kopete::Global::Properties::self()->photo(), QString() );
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();

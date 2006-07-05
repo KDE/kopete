@@ -815,7 +815,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 	QImage contactPhoto;
 	QString fullJid =  mRosterItem.jid().full();
-	QString finalPhotoPath = locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
+	QString finalPhotoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
 	
 	// photo() is a QByteArray
 	if ( !vCard.photo().isEmpty() )
@@ -982,7 +982,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	if(contactPhoto.width() > 96 || contactPhoto.height() > 96)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1001,7 +1001,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() < 32 || contactPhoto.height() < 32)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1020,7 +1020,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() != contactPhoto.height())
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
 
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
@@ -1269,7 +1269,7 @@ void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( QString::null , "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( KUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 

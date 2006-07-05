@@ -99,7 +99,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	m_reverseList = config->readEntry(  "reverseList", QStringList()  ) ;
 
 	// Load the avatar
-	m_pictureFilename = locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
+	m_pictureFilename = KStandardDirs::locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
 	resetPictureObject(true);
 
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
@@ -1457,7 +1457,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			if(picture.width() != 96 || picture.height() != 96)
 			{
 				// Save to a new location in msnpictures.
-				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KUrl::fromPathOrUrl(m_pictureFilename).fileName().toLower() ) );
+				QString newLocation( KStandardDirs::locateLocal( "appdata", "msnpictures/"+ KUrl::fromPathOrUrl(m_pictureFilename).fileName().toLower() ) );
 	
 				// Scale and crop the picture.
 				picture = MSNProtocol::protocol()->scalePicture(picture);
