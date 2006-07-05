@@ -13,7 +13,7 @@ kopetepasswordwidget.h kopeteview.h addcontactpage.h
 ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopeteawaydialogbase.h
 ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepasswordwidgetbase.h kopeteviewplugin.h
 editaccountwidget.h kopetecontactaction.h  ${CMAKE_CURRENT_BINARY_DIR}/../ui_kopetepassworddialog.h kopetestdaction.h  	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h 
-DESTINATION ${INSTALL_INCLUDE_DIR}/kopete/ui  )
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui  )
 
 
 
