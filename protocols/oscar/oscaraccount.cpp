@@ -135,11 +135,11 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const OContact& ) ),
-	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
+	                     this, SLOT( ssiContactAdded( const OContact& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const OContact& ) ),
 	                     this, SLOT( ssiGroupAdded( const OContact& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const OContact& ) ),
-	                     this, SLOT( ssiGroupUpdated( const OContactI& ) ) );
+	                     this, SLOT( ssiGroupUpdated( const OContact& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const OContact& ) ),
 	                     this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
