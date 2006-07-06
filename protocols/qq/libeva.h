@@ -107,6 +107,7 @@ namespace Eva {
 			if( m_itsOwn )
 				free( m_data );
 			m_data = (char*)malloc(s);
+			memcpy( m_data, d, s );
 			m_size = m_capacity = s;
 			m_itsOwn = true;
 		}

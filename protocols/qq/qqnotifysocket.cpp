@@ -130,7 +130,10 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 	{
 		case Eva::RequestLoginToken:
 			m_token = Eva::loginToken( packet.body() );
-			kDebug( 14140 ) << packet.command() << ": token = " << QByteArray( m_token.data(), m_token.size() ) << endl;
+
+			QByteArray tmp( m_token.data(), m_token.size() );
+			kDebug( 14140 ) << packet.command() << ": token = " << tmp << endl;
+			
 			sendLogin();
 			break;
 	}
