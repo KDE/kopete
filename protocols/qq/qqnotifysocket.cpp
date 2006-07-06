@@ -124,11 +124,17 @@ void QQNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 void QQNotifySocket::parsePacket( const QByteArray& data )
 {
 	kDebug( 14140 ) << k_funcinfo << data << endl;
+	Eva::ByteArray buf( (char*)data.data(), data.size() );
+	buf.release(); // data is handled by QT
 
-	if( m_lastCmd == LoginTokenRequest )
+	Eva::Packet packet( buf );
+	switch( packet.command() )
 	{
-		m_token = Eva::loginToken( data.data() );
-		sendLogin();
+		case Eva::RequestLoginToken:
+			m_token = Eva::loginToken( packet.body() );
+			kDebug( 14140 ) << packet.command() << ": token = " << QByteArray( m_token.data(), m_token.size() ) << endl;
+			sendLogin();
+			break;
 	}
 }
 

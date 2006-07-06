@@ -109,15 +109,16 @@ namespace Eva {
 	
 	// Interface for application
 	// Utilities
-	ByteArray loginToken( char const* buffer ) 
+	ByteArray loginToken( const ByteArray& packet ) 
 	{
-		int length = buffer[1];
-		length -= 3; // length - 1(head) - 1(length) - 1(tail) 
+		char reply = packet.data()[0];
+		char length = packet.data()[1];
 		ByteArray data(length);
 
-		if( buffer[0] != LoginTokenOK )
+		if( reply != LoginTokenOK )
 			return data;
-		data.append( buffer+2, length );
+
+		data.append( packet.data()+2, length );
 		return data;
 	}
 

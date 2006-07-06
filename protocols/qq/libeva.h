@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <arpa/inet.h>
 
 namespace Eva {
 	short const Version = 0x0F15;
@@ -101,6 +102,15 @@ namespace Eva {
 			copyAt( m_size, d, s );
 		}
 
+		void duplicate( const char* d, int s )
+		{
+			if( m_itsOwn )
+				free( m_data );
+			m_data = (char*)malloc(s);
+			m_size = m_capacity = s;
+			m_itsOwn = true;
+		}
+
         int size() const { return m_size; }
 		void setSize( int size ) { if( size<= m_capacity ) m_size = size; }
         int capacity() const { return m_capacity; }
@@ -123,16 +133,49 @@ namespace Eva {
     }
 
 	/** 
-	 * Header section for QQ packet
+	 * normalized QQ packet
 	 */
+	class Packet
+	{
+	public:
+		Packet( const ByteArray& raw )
+		{
+			// FIXME: TCP packet.
+			// FIXME: Add error handling
+			int pos = 3;
+			char* index = raw.data();
+			m_version = ntohs( *((short*)(index+pos)) );
+			pos += 2;
 
+			m_command = ntohs( *((short*)(index+pos)) );
+			pos += 2;
+
+			m_sequence = ntohs( *((short*)(index+pos)) );
+			pos += 2;
+
+			int len = raw.size() - pos - 1; // 1 is tail
+			m_body.duplicate( raw.data()+pos, len );
+		}
+
+		short version() const { return m_version; }
+		short command() const { return m_command; }
+		short sequence() const { return m_sequence; }
+		ByteArray& body() { return m_body; }
+
+	private:
+		short m_version;
+		short m_command;
+		short m_sequence;
+		ByteArray m_body;
+	};
+	
 	// Packet operation
 	ByteArray requestLoginToken( int id, short const sequence );
 	ByteArray login( int id, short const sequence, const ByteArray& key, 
 			const ByteArray& token, char const loginMode );
 
 	// Misc.
-	ByteArray loginToken( char const* buffer );
+	ByteArray loginToken( const ByteArray& buffer );
 	ByteArray QQHash( const ByteArray& text );
 
 
