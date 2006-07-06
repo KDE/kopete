@@ -121,13 +121,11 @@ void QQNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 }
 
 // Core functions
-void QQNotifySocket::parsePacket( const QByteArray& data )
+void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 {
-	kDebug( 14140 ) << k_funcinfo << data << endl;
-	Eva::ByteArray buf( (char*)data.data(), data.size() );
-	buf.release(); // data is handled by QT
+	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
+	Eva::Packet packet( rawdata.data(), rawdata.size() );
 
-	Eva::Packet packet( buf );
 	switch( packet.command() )
 	{
 		case Eva::RequestLoginToken:

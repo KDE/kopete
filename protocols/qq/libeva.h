@@ -138,23 +138,22 @@ namespace Eva {
 	class Packet
 	{
 	public:
-		Packet( const ByteArray& raw )
+		Packet( const char* buffer, int size )
 		{
 			// FIXME: TCP packet.
 			// FIXME: Add error handling
 			int pos = 3;
-			char* index = raw.data();
-			m_version = ntohs( *((short*)(index+pos)) );
+			m_version = ntohs( *((short*)(buffer+pos)) );
 			pos += 2;
 
-			m_command = ntohs( *((short*)(index+pos)) );
+			m_command = ntohs( *((short*)(buffer+pos)) );
 			pos += 2;
 
-			m_sequence = ntohs( *((short*)(index+pos)) );
+			m_sequence = ntohs( *((short*)(buffer+pos)) );
 			pos += 2;
 
-			int len = raw.size() - pos - 1; // 1 is tail
-			m_body.duplicate( raw.data()+pos, len );
+			int len = size - pos - 1; // 1 is tail
+			m_body.duplicate( buffer+pos, len );
 		}
 
 		short version() const { return m_version; }
