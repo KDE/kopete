@@ -3,6 +3,9 @@
 #include "crypt.h"
 #include <arpa/inet.h>
 
+// FIXME: remove me after debug.
+#include <stdio.h>
+
 namespace Eva {
 	static const char login_16_51 [] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -285,6 +288,11 @@ namespace Eva {
 		login += token;
 		login.append( login_94_193, 100 );
 		memset( login.data()+login.size(), 0, login.capacity()-login.size() );
+
+		// dump the login
+		for( int i = 0; i< login.capacity(); i++ )
+			fprintf( stderr, "%x ", ((unsigned char*)login.data())[i] );
+		fprintf( stderr, "\n" );
 
 		data += header( id, Login, sequence );
 		data += initKey;
