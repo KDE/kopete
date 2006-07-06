@@ -88,6 +88,7 @@ namespace Eva {
 			crypted[i] ^= plain_pre[i];
 
 		memcpy( plain_pre, plain, 8 );
+		memcpy( crypted_pre, crypted, 8 );
 		isHeader = false;
 	}
 
@@ -152,34 +153,44 @@ namespace Eva {
 		memset( plain_pre, 0, 8 );
 		memset( plain+1, rand()& 0xff, pos++ );
 
-		// pad at most 2 bytes
-		len = min( 8-pos, 2 );
-		for( i = 0; i< len; i++ )
-			plain[ pos++ ] = rand() & 0xff;
-
-		for( i = 0; i< text.size(); i++ )
+		// pad 2 bytes
+		for( i = 0; i< 2; i++ )
 		{
+			if( pos < 8 )
+				plain[pos++] = rand() & 0xff;
+
 			if( pos == 8 )
 			{
 				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
 				pos = 0;
 				encoded.append( (char*)crypted, 8 );
-				memcpy( crypted_pre, crypted, 8 );
 			}
-			else
+		}
+
+		for( i = 0; i< text.size(); i++ )
+		{
+			if( pos < 8 )
 				plain[pos++] = text.data()[i];
+
+			if( pos == 8 )
+			{
+				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
+				pos = 0;
+				encoded.append( (char*)crypted, 8 );
+			}
 		}
 
 		for( i = 0; i< 7; i++ )
 		{
+			if( pos < 8 )
+				plain[pos++] = 0;
+
 			if( pos == 8 )
 			{
 				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
 				encoded.append( (char*)crypted, 8 );
 				break;
 			}
-			else
-				plain[pos++] = 0;
 		}
 
 		return encoded;
