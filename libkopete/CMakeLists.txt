@@ -129,8 +129,8 @@ install( FILES
   kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h 
   kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h kopetepassword.h 
   kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h kopetetransfermanager.h 
-  kopeteuiglobal.h kabcpersistence.h kopeteversion.h kopetepicture.h kopeteappearancesettings.h 
-  kopetebehaviorsettings.h kopetegeneralsettings.h kopetestatusmessage.h 
+  kopeteuiglobal.h kabcpersistence.h kopeteversion.h kopetepicture.h ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h 
+  ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h kopetestatusmessage.h 
   DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
 
