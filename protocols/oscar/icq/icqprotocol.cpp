@@ -667,7 +667,7 @@ void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &ma
 //	kDebug(14153) << k_funcinfo << "Called." << endl;
 	QMap<int, QString>::ConstIterator it;
 	it = map.find(value);
-	if ( it = map.end() )
+	if ( it == map.end() )
 		return;
 
 	for(int i=0; i<box->count(); i++)
