@@ -328,9 +328,8 @@ void KopeteWindow::initActions()
 	// Edit global identity widget/bar
 	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
 	editGlobalIdentityWidget->setObjectName( QLatin1String("editglobalBar") );
-	editGlobalIdentityWidget->hide();
-	K3WidgetAction *editGlobalAction = new K3WidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
-// 	editGlobalAction->setAutoSized( true );
+	KAction *editGlobalAction = new KAction( i18n("Edit Global Identity Widget"), actionCollection(), "editglobal_widget");
+	editGlobalAction->setDefaultWidget(editGlobalIdentityWidget);
 
 	// KActionMenu for selecting the global status message(kopeteonlinestatus_0)
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), actionCollection(), "SetStatusMessage" );
@@ -448,8 +447,8 @@ void KopeteWindow::loadOptions()
 	toolBar("editGlobalIdentityBar")->applySettings( config, "EditGlobalIdentityBar Settings" );
 
 	// FIXME: HACK: Is there a way to do that automatic ?
-// 	editGlobalIdentityWidget->setIconSize(toolBar("editGlobalIdentityBar")->iconSize());
-	connect(toolBar("editGlobalIdentityBar"), SIGNAL(modechange()), editGlobalIdentityWidget, SLOT(iconSizeChanged()));
+	editGlobalIdentityWidget->setIconSize(toolBar("editGlobalIdentityBar")->iconSize());
+	connect(toolBar("editGlobalIdentityBar"), SIGNAL(iconSizeChanged(const QSize &)), editGlobalIdentityWidget, SLOT(setIconSize(const QSize &)));
 
 	applyMainWindowSettings( config, "General Options" );
 	config->setGroup("General Options");
