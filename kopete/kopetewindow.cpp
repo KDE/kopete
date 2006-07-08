@@ -331,7 +331,7 @@ void KopeteWindow::initActions()
 	KAction *editGlobalAction = new KAction( i18n("Edit Global Identity Widget"), actionCollection(), "editglobal_widget");
 	editGlobalAction->setDefaultWidget(editGlobalIdentityWidget);
 
-	// KActionMenu for selecting the global status message(kopeteonlinestatus_0)
+	// KActionMenu for selecting the global status message
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
 	connect( setStatusMenu->kMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
@@ -972,33 +972,28 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ),
 		SLOT( slotStatusMessageSelected( int ) ) );
 
-	#if 0
-// pop up a menu containing the away messages, and a lineedit
-// see kopeteaway
-	//messageMenu = new KPopupMenu( this );
-//	messageMenu->insertTitle( i18n( "Status Message" ) );
+	m_globalStatusMessageMenu->addTitle( i18n("Status Message") );
+	//BEGIN: Add new message widget to the Set Status Message Menu.
 	KHBox * newMessageBox = new KHBox( 0 );
 	newMessageBox->setMargin( 1 );
 	QLabel * newMessagePix = new QLabel( newMessageBox );
 	newMessagePix->setPixmap( SmallIcon( "edit" ) );
-/*	QLabel * newMessageLabel = new QLabel( i18n( "Add " ), newMessageBox );*/
+	QLabel * newMessageLabel = new QLabel( i18n( "Add " ), newMessageBox );
 	m_newMessageEdit = new QLineEdit( newMessageBox, "newmessage" );
-	
 	newMessageBox->setFocusProxy( m_newMessageEdit );
 	newMessageBox->setFocusPolicy( Qt::ClickFocus );
-/*	newMessageLabel->setFocusProxy( newMessageEdit );
-	newMessageLabel->setBuddy( newMessageEdit );
-	newMessageLabel->setFocusPolicy( QWidget::ClickFocus );*/
+	newMessageLabel->setFocusProxy( m_newMessageEdit );
+	newMessageLabel->setBuddy( m_newMessageEdit );
+	newMessageLabel->setFocusPolicy( Qt::ClickFocus );
 	newMessagePix->setFocusProxy( m_newMessageEdit );
 	newMessagePix->setFocusPolicy( Qt::ClickFocus );
 	connect( m_newMessageEdit, SIGNAL( returnPressed() ), SLOT( slotNewStatusMessageEntered() ) );
 
-	m_globalStatusMessageMenu->insertItem( newMessageBox );
-	#endif 
+	KAction *newMessageAction = new KAction( KIcon("edit"), i18n("New Message..."), 0, "new_message" );
+	newMessageAction->setDefaultWidget( newMessageBox );
 
-	KAction* newMsg = new KAction( KIcon("edit"), i18n("New Message..."), 0, "new_message" );
-	m_globalStatusMessageMenu->addAction(newMsg);
-	connect( newMsg, SIGNAL(triggered()), this, SLOT(slotEnterStatusMessage()) );
+	m_globalStatusMessageMenu->addAction( newMessageAction );
+	//END
 
 	int i = 0;
 	
@@ -1027,13 +1022,11 @@ void KopeteWindow::slotStatusMessageSelected( int i )
 
 void KopeteWindow::slotNewStatusMessageEntered()
 {
-	#if 0
 	m_globalStatusMessageMenu->close();
 	QString newMessage = m_newMessageEdit->text();
 	if ( !newMessage.isEmpty() )
 		Kopete::Away::getInstance()->addMessage( newMessage );
 	setStatusMessage( m_newMessageEdit->text() );
-	#endif
 }
 
 void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
