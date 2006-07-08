@@ -24,6 +24,8 @@
 #include <mw_srvc_aware.h>
 #include <mw_srvc_im.h>
 #include <mw_srvc_resolve.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 /**
  * A class to handle libmeanwhile session management.
@@ -77,7 +79,7 @@ public:
      * Add a list of contacts to be registered for status updates
      * @param contact The list of contacts to register
      */
-    void addContacts(const QDict<Kopete::Contact>& contacts);
+    void addContacts(const Q3Dict<Kopete::Contact>& contacts);
 
     /**
      * Send a message (with recipient specified).
@@ -165,7 +167,7 @@ private:
     struct ConversationData {
         MeanwhileContact *contact;
         Kopete::ChatSession *chat;
-        QValueList<Kopete::Message> *queue;
+        Q3ValueList<Kopete::Message> *queue;
     };
 
     /** (To be) stored in the mwConference struct */

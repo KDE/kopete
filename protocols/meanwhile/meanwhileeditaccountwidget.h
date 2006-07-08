@@ -19,11 +19,11 @@
 
 #include <qwidget.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <editaccountwidget.h>
 #include "meanwhileeditaccountbase.h"
 
-class QVBoxLayout;
+class Q3VBoxLayout;
 namespace Kopete { class Account; }
 
 class MeanwhileEditAccountWidget : 
