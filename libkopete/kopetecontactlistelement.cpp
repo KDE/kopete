@@ -38,7 +38,7 @@ ContactListElement::ContactListElement( QObject *parent )
 : QObject( parent )
 {
 	d = new Private;
-0
+
 	d->useCustomIcon = false;
 #if 0  //TODO
 	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
