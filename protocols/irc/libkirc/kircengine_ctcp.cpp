@@ -163,7 +163,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 			QString ip = m_sock->localAddress()->nodeName();
 			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
 
-			kdDebug(14120) << "Starting DCC file outgoing transfer." << endl;
+			kDebug(14120) << "Starting DCC file outgoing transfer." << endl;
 
 			writeCtcpQueryMessage(nickname, QString::null,
 				QString::fromLatin1("DCC"),
@@ -201,7 +201,7 @@ void Engine::CtcpQuery_dcc(Message &msg)
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
-			kdDebug(14120) << "Starting DCC chat window." << endl;
+			kDebug(14120) << "Starting DCC chat window." << endl;
 			TransferHandler::self()->createClient(
 				this, msg.prefix(),
 				address, port,
@@ -226,7 +226,7 @@ void Engine::CtcpQuery_dcc(Message &msg)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
 			TransferHandler::self()->createClient(
 				this, msg.prefix(),
 				address, port,
@@ -257,7 +257,7 @@ void Engine::CtcpQuery_finger( Message &)
 
 void Engine::CtcpRequest_ping(const QString &target)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 /*
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)

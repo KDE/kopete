@@ -54,6 +54,8 @@
 #include <qregexp.h>
 #include <qspinbox.h>
 #include <qvalidator.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <dom/html_element.h>
 #include <unistd.h>
@@ -63,16 +65,16 @@ using namespace Kopete;
 class IRCNetworkConfigWidget::Private
 {
 public:
-	QValueList<IRCNetwork> m_networks;
+	Q3ValueList<IRCNetwork> m_networks;
 
 	QString m_uiCurrentNetworkSelection;
 	QString m_uiCurrentHostSelection;
 };
 
-IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, WFlags flags)
+IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WFlags flags)
 	: NetworkConfig(parent, "network_config", flags)
 {
-//	kdDebug(14120) << k_funcinfo << endl;
+//	kDebug(14120) << k_funcinfo << endl;
 
 	m_networks = IRCNetworkList::self()->networks();
 
@@ -124,7 +126,7 @@ void IRCNetworkConfigWidget::editNetworks(const QString &networkName)
 
 	networkList->clear();
 
-	for(QValueList<IRCNetwork>::ConstIterator it = m_networks.begin(); it != m_networks.end(); ++it)
+	for(Q3ValueList<IRCNetwork>::ConstIterator it = m_networks.begin(); it != m_networks.end(); ++it)
 	{
 		networkList->insertItem( (*it).name );
 	}
@@ -195,7 +197,7 @@ void IRCNetworkConfigWidget::storeCurrentNetwork()
 			net->description = description->text(); // crash on 2nd dialog show here!
 		}
 		else
-			kdDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
+			kDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
 	}
 */
 }
@@ -448,7 +450,7 @@ void IRCNetworkConfigWidget::slotMoveServerUp()
 	if( currentPos > 0 )
 	{
 		hostList->removeItem( currentPos );
-		kdDebug(14121) << k_funcinfo << selectedHost->host << endl;
+		kDebug(14121) << k_funcinfo << selectedHost->host << endl;
 		hostList->insertItem( selectedHost->host, --currentPos );
 		hostList->setSelected( currentPos, true );
 	}

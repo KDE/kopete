@@ -63,7 +63,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity, Met
 	: Contact(account, entity->name(), metac, icon),
 	  d (new IRCContact::Private)
 {
-	kdDebug(14120) << k_funcinfo << entity->name() << endl;
+	kDebug(14120) << k_funcinfo << entity->name() << endl;
 
 	d->entity = entity;
 
@@ -91,7 +91,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity, Met
 
 IRCContact::~IRCContact()
 {
-//	kdDebug(14120) << k_funcinfo << entity->name() << endl;
+//	kDebug(14120) << k_funcinfo << entity->name() << endl;
 //	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 //		metaContact()->deleteLater();
 
@@ -344,7 +344,7 @@ QString IRCContact::sendMessage(const QString &msg)
 	if( trueLength > 512 )
 	{
 		//TODO: tell them it is truncated
-		kdWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters" << endl;
+		kWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters" << endl;
 		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
 	}
 

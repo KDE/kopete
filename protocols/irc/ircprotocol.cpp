@@ -77,9 +77,9 @@ IRCProtocolHandler::IRCProtocolHandler()
 	registerAsProtocolHandler(QString::fromLatin1("irc"));
 }
 
-void IRCProtocolHandler::handleURL(const KURL &url) const
+void IRCProtocolHandler::handleURL(const KUrl &url) const
 {
-	kdDebug(14120) << url << endl;
+	kDebug(14120) << url << endl;
 	if (!url.isValid())
 		return;
 
@@ -98,7 +98,7 @@ void IRCProtocolHandler::handleURL(const KURL &url) const
 		QString::number(port)
 	);
 
-	kdDebug(14120) << accountId << endl;
+	kDebug(14120) << accountId << endl;
 
 	IRCAccount *newAccount = new IRCAccount( accountId, chan );
 	newAccount->setNickName( user.loginName() );
@@ -110,7 +110,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	: Protocol(IRCProtocolFactory::instance(), parent, name)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
-//	kdDebug(14120) << k_funcinfo << endl;
+//	kDebug(14120) << k_funcinfo << endl;
 
 	s_protocol = this;
 
@@ -360,7 +360,7 @@ OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::Entity::Ptr &entity, unsig
 	OnlineStatus ret = m_statusMap[status];
 	if (ret.status() == OnlineStatus::Unknown)
 	{
-		kdDebug(14120) << k_funcinfo << "New online status." << endl;
+		kDebug(14120) << k_funcinfo << "New online status." << endl;
 
 		OnlineStatus::StatusType statusType;
 		unsigned weight = 0;
@@ -484,7 +484,7 @@ Account *IRCProtocol::createNewAccount(const QString &accountId)
 Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
@@ -502,11 +502,11 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 			return a->contacts()[contactId];
 		}
 		else
-			kdDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
+			kDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
 				" but we don't have it in the accounts list" << endl;
 	}
 	else
-		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+		kDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
 
 	return 0;
 }

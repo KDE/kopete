@@ -156,7 +156,7 @@ void IRCChannelContact::slotAddNicknames()
 
 		if ( nickToAdd.lower() != account->mySelf()->nickName().lower() )
 		{
-			//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
+			//kDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 			user = account->contactManager()->findUser(nickToAdd);
 			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
 		}
@@ -196,7 +196,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 
 void IRCChannelContact::channelHomePage(const QString &url)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	setProperty( m_protocol->propHomepage, url );
 }
 
@@ -205,10 +205,10 @@ void IRCChannelContact::join()
 	if (!manager(Kopete::Contact::CannotCreate) &&
 		onlineStatus().status() == Kopete::OnlineStatus::Online)
 	{
-		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
 		if( manager(Kopete::Contact::CannotCreate) )
-			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
+			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 		startChat();
 	}
 }
@@ -251,11 +251,11 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 
 	if (nickname.lower() == account->mySelf()->nickName().lower())
 	{
-		kdDebug() << k_funcinfo << "Me:" << this << endl;
-		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+		kDebug() << k_funcinfo << "Me:" << this << endl;
+		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
 		if (manager(Kopete::Contact::CannotCreate))
-			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
+			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),
@@ -586,7 +586,7 @@ void IRCChannelContact::slotHomepage()
 	QString homePage = property(m_protocol->propHomepage).value().toString();
 	if( !homePage.isEmpty() )
 	{
-	       new KRun( KURL( homePage ), 0, false);
+	       new KRun( KUrl( homePage ), 0, false);
 	}
 }
 */

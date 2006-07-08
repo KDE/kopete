@@ -348,7 +348,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 			QString ip = m_sock->localAddress()->nodeName();
 			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
 
-			kdDebug(14120) << "Starting DCC file outgoing transfer." << endl;
+			kDebug(14120) << "Starting DCC file outgoing transfer." << endl;
 
 			writeCtcpQueryMessage(nickname, QString::null,
 				QString::fromLatin1("DCC"),
@@ -367,7 +367,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 
 void StdCommands::CtcpRequest_ping(const QString &target)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)

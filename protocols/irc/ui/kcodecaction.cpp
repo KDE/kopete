@@ -44,7 +44,7 @@ void KCodecAction::slotActivated(int index)
 
 void KCodecAction::setCodec(QTextCodec *codec)
 {
-	for(QIntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it)
+	for(Q3IntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it)
 	{
 		if(it.current() == codec)
 			setCurrentItem(it.currentKey());

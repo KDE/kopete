@@ -84,18 +84,18 @@ void ClientCommandHandler::handleMessage(Message msg)
 	}
 	else if (msg.isNumeric())
 	{
-		//kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+		//kWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
 		//emit incomingUnknown(msg.raw());
 	}
 	else
 	{
-		//kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
+		//kWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
 		//emit internalError(UnknownCommand, msg);
 	}
 
 	if (!errors.isEmpty())
 	{
-		//kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
+		//kDebug(14120) << "Method error for line:" << msg.raw() << endl;
 		//emit internalError(MethodFailed, msg);
 	}
 */
@@ -123,13 +123,13 @@ bool Client::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *>
 			if (errors.isEmpty())
 				return true;
 
-//			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
+//			kDebug(14120) << "Method error for line:" << ctcpMsg.raw();
 //			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
 //				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
 		}
 		else
 		{
-//			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
+//			kDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
 //			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
 
 //			emit incomingUnknownCtcp(msg.ctcpRaw());
@@ -137,7 +137,7 @@ bool Client::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *>
 	}
 	else
 	{
-//		kdDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
+//		kDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
 	}
 	return false;
 }

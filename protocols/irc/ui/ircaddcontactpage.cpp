@@ -25,8 +25,10 @@
 
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qframe.h>
+#include <q3frame.h>
 #include <qtabwidget.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -41,7 +43,7 @@ public:
 
 IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddContactPage(parent, 0)
 {
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	(new Q3VBoxLayout(this))->setAutoAdd(true);
 //	ircdata = new Ui::ircAddUI(this);
 //	d->search = new ChannelList( (QWidget*)ircdata->hbox, a->engine() );
 	d->account = a;

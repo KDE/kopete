@@ -29,33 +29,37 @@
 #include <qstyle.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <klistview.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <QPixmap>
+#include <Q3VBoxLayout>
+#include <k3listview.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qtimer.h>
 #include <qspinbox.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 
-class ChannelListItem : public KListViewItem
+class ChannelListItem : public K3ListViewItem
 {
 	public:
-		ChannelListItem( KListView *parent, QString arg1, QString arg2, QString arg3 );
-		virtual int compare( QListViewItem *i, int col, bool ascending ) const;
+		ChannelListItem( K3ListView *parent, QString arg1, QString arg2, QString arg3 );
+		virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
 		virtual void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
 
 	private:
-		KListView *parentList;
+		K3ListView *parentList;
 };
 
-ChannelListItem::ChannelListItem( KListView *parent, QString arg1, QString arg2, QString arg3 ) :
-	KListViewItem( parent, parent->lastItem() ), parentList( parent )
+ChannelListItem::ChannelListItem( K3ListView *parent, QString arg1, QString arg2, QString arg3 ) :
+	K3ListViewItem( parent, parent->lastItem() ), parentList( parent )
 {
 	setText(0, arg1);
 	setText(1, arg2);
 	setText(2, arg3);
 }
 
-int ChannelListItem::compare( QListViewItem *i, int col, bool ascending ) const
+int ChannelListItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
 {
 	if( col == 1 )
 	{
@@ -67,27 +71,27 @@ int ChannelListItem::compare( QListViewItem *i, int col, bool ascending ) const
 			return 1;
 	}
 	else
-		return QListViewItem::compare( i, col, ascending );
+		return Q3ListViewItem::compare( i, col, ascending );
 }
 
 void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
 {
 	QPixmap back( width, height() );
 	QPainter paint( &back );
-	//KListViewItem::paintCell( &paint, cg, column, width, align );
+	//K3ListViewItem::paintCell( &paint, cg, column, width, align );
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
 	QColorGroup _cg = cg;
 	if (isAlternate())
 		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QColorGroup::Background, static_cast< KListView* >(listView())->alternateBackground());
+			_cg.setColor(QColorGroup::Background, static_cast< K3ListView* >(listView())->alternateBackground());
 		else
-			_cg.setColor(QColorGroup::Base, static_cast< KListView* >(listView())->alternateBackground());
+			_cg.setColor(QColorGroup::Base, static_cast< K3ListView* >(listView())->alternateBackground());
 	// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
 
-		QListView *lv = listView();
+		Q3ListView *lv = listView();
 		if ( !lv )
 			return;
 		QFontMetrics fm( p->fontMetrics() );
@@ -136,7 +140,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 		// draw the tree gubbins
 		if ( multiLinesEnabled() && column == 0 && isOpen() && childCount() ) {
 			int textheight = fm.size( align, t ).height() + 2 * lv->itemMargin();
-			textheight = QMAX( textheight, QApplication::globalStrut().height() );
+			textheight = qMax( textheight, QApplication::globalStrut().height() );
 			if ( textheight % 2 > 0 )
 				textheight++;
 			if ( textheight < height() ) {
@@ -156,7 +160,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 	if ( isSelected() )
 		_cg.setColor(QColorGroup::Text , _cg.highlightedText() );
 
-	QSimpleRichText myrichtext( text(column), paint.font() );
+	Q3SimpleRichText myrichtext( text(column), paint.font() );
 	myrichtext.draw(  &paint, 0, 0, paint.window(), _cg );
 
 	paint.end();
@@ -166,9 +170,9 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
     : QWidget( parent ), m_engine( engine )
 {
-	ChannelListLayout = new QVBoxLayout( this, 11, 6, "ChannelListLayout");
+	ChannelListLayout = new Q3VBoxLayout( this, 11, 6, "ChannelListLayout");
 
-	layout72_2 = new QHBoxLayout( 0, 0, 6, "layout72_2");
+	layout72_2 = new Q3HBoxLayout( 0, 0, 6, "layout72_2");
 
 	textLabel1_2 = new QLabel( this, "textLabel1_2" );
 	layout72_2->addWidget( textLabel1_2 );
@@ -184,7 +188,7 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	layout72_2->addWidget( mSearchButton );
 	ChannelListLayout->addLayout( layout72_2 );
 
-	mChannelList = new KListView( this, "mChannelList" );
+	mChannelList = new K3ListView( this, "mChannelList" );
 	mChannelList->addColumn( i18n( "Channel" ) );
 	mChannelList->addColumn( i18n( "Users" ) );
 	mChannelList->header()->setResizeEnabled( FALSE, mChannelList->header()->count() - 1 );
@@ -198,26 +202,26 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	textLabel1_2->setText( i18n( "Search for:" ) );
 	QToolTip::add( textLabel1_2, i18n( "You may search for channels on the IRC server for a text string entered here." ) );
 	QToolTip::add( numUsers, i18n( "Channels returned must have at least this many members." ) );
-	QWhatsThis::add( numUsers, i18n( "Channels returned must have at least this many members." ) );
-	QWhatsThis::add( textLabel1_2, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
+	Q3WhatsThis::add( numUsers, i18n( "Channels returned must have at least this many members." ) );
+	Q3WhatsThis::add( textLabel1_2, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
 	QToolTip::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here." ) );
-	QWhatsThis::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
+	Q3WhatsThis::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
 	mSearchButton->setText( i18n( "S&earch" ) );
 	QToolTip::add( mSearchButton, i18n( "Perform a channel search." ) );
-	QWhatsThis::add( mSearchButton, i18n( "Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server." ) );
+	Q3WhatsThis::add( mSearchButton, i18n( "Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server." ) );
 	QToolTip::add( mChannelList, i18n( "Double click on a channel to select it." ) );
 	mChannelList->header()->setLabel( 0, i18n( "Channel" ) );
 	mChannelList->header()->setLabel( 1, i18n( "Users" ) );
 	mChannelList->header()->setLabel( 2, i18n( "Topic" ) );
 
 	// signals and slots connections
-	connect( mChannelList, SIGNAL( doubleClicked(QListViewItem*) ),
-		this, SLOT( slotItemDoubleClicked(QListViewItem*) ) );
+	connect( mChannelList, SIGNAL( doubleClicked(Q3ListViewItem*) ),
+		this, SLOT( slotItemDoubleClicked(Q3ListViewItem*) ) );
 
 	connect( mSearchButton, SIGNAL( clicked() ), this, SLOT( search() ) );
 
-	connect( mChannelList, SIGNAL( selectionChanged( QListViewItem*) ), this,
-		SLOT( slotItemSelected( QListViewItem *) ) );
+	connect( mChannelList, SIGNAL( selectionChanged( Q3ListViewItem*) ), this,
+		SLOT( slotItemSelected( Q3ListViewItem *) ) );
 
 	connect( m_engine, SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ),
 		this, SLOT( slotChannelListed( const QString &, uint, const QString & ) ) );
@@ -230,12 +234,12 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	show();
 }
 
-void ChannelList::slotItemDoubleClicked( QListViewItem *i )
+void ChannelList::slotItemDoubleClicked( Q3ListViewItem *i )
 {
 	emit channelDoubleClicked( i->text(0) );
 }
 
-void ChannelList::slotItemSelected( QListViewItem *i )
+void ChannelList::slotItemSelected( Q3ListViewItem *i )
 {
 	emit channelSelected( i->text(0) );
 }

@@ -33,7 +33,7 @@ TransferServer::TransferServer( QObject *parent, const char *name )
 {
 }
 */
-TransferServer::TransferServer(Q_UINT16 port, int backlog, QObject *parent, const char *name)
+TransferServer::TransferServer(quint16 port, int backlog, QObject *parent, const char *name)
 	: QObject( parent, name ),
 	  m_socket( 0 ),
 	  m_port( port ),
@@ -43,7 +43,7 @@ TransferServer::TransferServer(Q_UINT16 port, int backlog, QObject *parent, cons
 
 TransferServer::TransferServer(Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize,
+			QString fileName, quint32 fileSize,
 			QObject *parent, const char *name)
 	: QObject( parent, name ),
 	  m_socket(0),
@@ -75,13 +75,13 @@ bool TransferServer::initServer()
 
 //		m_socket->setHost(m_socket->localAddress()->nodeName());
 		if (!m_socket->setPort(m_port))
-			kdDebug(14120) << k_funcinfo << "Failed to set port to" << m_port << endl;
+			kDebug(14120) << k_funcinfo << "Failed to set port to" << m_port << endl;
 		m_socket->setSocketFlags(KExtendedSocket::noResolve
 					|KExtendedSocket::passiveSocket
 					|KExtendedSocket::inetSocket );
 
 		if (!m_socket->setTimeout(2*60)) // FIXME: allow configuration of this.
-			kdDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
+			kDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
 
 		QObject::connect(m_socket, SIGNAL(readyAccept()),
 				this, SLOT(readyAccept()));
@@ -94,7 +94,7 @@ bool TransferServer::initServer()
 		const KInetSocketAddress *localAddress = static_cast<const KInetSocketAddress *>(m_socket->localAddress());
 		if (!localAddress)
 		{
-			kdDebug(14120) << k_funcinfo << "Not a KInetSocketAddress." << endl;
+			kDebug(14120) << k_funcinfo << "Not a KInetSocketAddress." << endl;
 			deleteLater();
 			return false;
 		}
@@ -104,7 +104,7 @@ bool TransferServer::initServer()
 	return (m_socket->socketStatus() != KExtendedSocket::error);
 }
 
-bool TransferServer::initServer( Q_UINT16 port, int backlog )
+bool TransferServer::initServer( quint16 port, int backlog )
 {
 	if (m_socket)
 	{
@@ -128,7 +128,7 @@ void TransferServer::connectionFailed(int error)
 {
 	if (error!=0)
 	{
-		kdDebug(14120) << k_funcinfo << "Connection failed with " << m_nick << endl;
+		kDebug(14120) << k_funcinfo << "Connection failed with " << m_nick << endl;
 		deleteLater();
 	}
 }

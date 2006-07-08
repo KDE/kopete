@@ -355,7 +355,7 @@ void Engine::privmsg(Message &msg)
 
 void Engine::quit(const QString &reason, bool /*now*/)
 {
-	kdDebug(14120) << k_funcinfo << reason << endl;
+	kDebug(14120) << k_funcinfo << reason << endl;
 
 //	if (isDisconnected())
 //		return;
@@ -431,7 +431,7 @@ void Engine::user(const QString &newUserName, const QString &hostname, const QSt
  * 0x04 request +w
  * 0x08 request +i
  */
-void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRealName)
+void Engine::user(const QString &newUserName, quint8 mode, const QString &newRealName)
 {
 	m_Username = newUserName;
 	m_realName = newRealName;

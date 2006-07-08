@@ -122,7 +122,8 @@ private slots:
 	void numericReply_474(KIRC::Message msg);
 	void numericReply_475(KIRC::Message msg);
 
-#ifndef KIRC_STRICT
+//#ifndef KIRC_STRICT
+#if 0
 	void CtcpQuery_action(KIRC::Message msg);
 	void CtcpQuery_clientinfo(KIRC::Message msg);
 	void CtcpQuery_finger(KIRC::Message msg);

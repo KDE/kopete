@@ -103,7 +103,7 @@ void Engine::bindNumericReplies()
  */
 void Engine::numericReply_001(Message &msg)
 {
-	kdDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) << k_funcinfo << endl;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -242,7 +242,7 @@ void Engine::numericReply_303(Message &msg)
 	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
-		if (!(*it).stripWhiteSpace().isEmpty())
+		if (!(*it).trimmed().isEmpty())
 			emit incomingUserOnline(*it);
 	}
 */

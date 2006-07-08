@@ -22,8 +22,8 @@
 #include "irceditaccount.h"
 
 class IRCAccount;
-class KListView;
-class QListViewItem;
+class K3ListView;
+class Q3ListViewItem;
 
 class IRCEditAccountWidget : public Ui::IRCEditAccountBase, public KopeteEditAccountWidget
 {
@@ -38,8 +38,8 @@ public:
 	virtual Kopete::Account *apply();
 
 private slots:
-	void slotCommandContextMenu( KListView*, QListViewItem*, const QPoint & );
-	void slotCtcpContextMenu( KListView*, QListViewItem*, const QPoint & );
+	void slotCommandContextMenu( K3ListView*, Q3ListViewItem*, const QPoint & );
+	void slotCtcpContextMenu( K3ListView*, Q3ListViewItem*, const QPoint & );
 	void slotAddCommand();
 	void slotAddCtcp();
 	void slotEditNetworks();

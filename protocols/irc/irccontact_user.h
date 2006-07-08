@@ -22,6 +22,8 @@
 #include "kopetechatsessionmanager.h"
 #include "irccontact.h"
 #include "kopeteonlinestatus.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class QTimer;
 
@@ -64,7 +66,7 @@ public:
 	IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
 
 	// Kopete::Contact stuff
-	virtual QPtrList<KAction> *customContextMenuActions( Kopete::ChatSession *manager );
+	virtual Q3PtrList<KAction> *customContextMenuActions( Kopete::ChatSession *manager );
 	virtual const QString caption() const;
 
 	void setAway(bool isAway);
@@ -89,7 +91,7 @@ public:
 public slots:
 	virtual void updateStatus();
 
-	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
+	virtual void sendFile(const KUrl &sourceURL, const QString&, unsigned int);
 
 protected slots:
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);

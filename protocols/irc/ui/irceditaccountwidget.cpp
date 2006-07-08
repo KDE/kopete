@@ -28,7 +28,7 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -96,11 +96,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 		}
 	}
 /*
-	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCommandContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+	connect( commandList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
+		this, SLOT( slotCommandContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );
 
-	connect( ctcpList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCtcpContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+	connect( ctcpList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
+		this, SLOT( slotCtcpContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );
 
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
 	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
@@ -165,7 +165,7 @@ void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network 
 //	);
 }
 
-void IRCEditAccountWidget::slotCommandContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCommandContextMenu( K3ListView *, Q3ListViewItem *item, const QPoint &p )
 {
 /*
 	QPopupMenu popup;
@@ -175,7 +175,7 @@ void IRCEditAccountWidget::slotCommandContextMenu( KListView *, QListViewItem *i
 */
 }
 
-void IRCEditAccountWidget::slotCtcpContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCtcpContextMenu( K3ListView *, Q3ListViewItem *item, const QPoint &p )
 {
 /*
 	QPopupMenu popup;
@@ -218,7 +218,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 	{
 		nextId = QString::fromLatin1("%1_%2").arg( network ).arg( ++accountNumber );
 	}
-	kdDebug( 14120 ) << k_funcinfo << " ID IS: " << nextId << endl;
+	kDebug( 14120 ) << k_funcinfo << " ID IS: " << nextId << endl;
 	return nextId;
 }
 

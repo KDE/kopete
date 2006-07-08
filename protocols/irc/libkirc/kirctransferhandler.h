@@ -40,17 +40,17 @@ public:
 	static TransferHandler *self();
 
 	TransferServer *server();
-	TransferServer *server( Q_UINT16 port, int backlog  = 1 );
+	TransferServer *server( quint16 port, int backlog  = 1 );
 
 	TransferServer *createServer(KIRC::Engine *engine, QString m_userName,
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize);
+			QString fileName, quint32 fileSize);
 
 	Transfer *createClient(
 		KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
-		QHostAddress peer_address, Q_UINT16 peer_port,
+		QHostAddress peer_address, quint16 peer_port,
 		Transfer::Type type,
-		QString file = QString::null, Q_UINT32 fileSize = 0 );
+		QString file = QString::null, quint32 fileSize = 0 );
 
 //	void registerServer( DCCServer * );
 //	QPtrList<DCCServer> getRegisteredServers();

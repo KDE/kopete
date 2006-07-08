@@ -45,7 +45,7 @@ public:
 	{ }
 
 	KNetwork::KBufferedSocket *socket;
-	KURL url;
+	KUrl url;
 	bool useSSL;
 	KIRC::Socket::ConnectionState state;
 
@@ -60,14 +60,14 @@ Socket::Socket(QObject *parent)
 	: QObject(parent),
 	  d( new Private )
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	d->defaultCodec = UTF8;
 }
 
 Socket::~Socket()
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -121,12 +121,12 @@ void Socket::setOwner(const Entity::Ptr &newOwner)
 	d->owner = newOwner;
 }
 
-const KURL &Socket::url() const
+const KUrl &Socket::url() const
 {
 	return d->url;
 }
 
-bool Socket::connectToServer(const KURL &url)
+bool Socket::connectToServer(const KUrl &url)
 {
 	close();
 /*
@@ -165,7 +165,7 @@ bool Socket::connectToServer(const KURL &url)
 	}
 	else
 #else
-		kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
+		kWarning(14120) << "You tried to use SSL, but this version of Kopete was"
 			" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
 	}
 #endif
@@ -208,7 +208,7 @@ void Socket::writeMessage(const QByteArray &msg)
 /*
 	QByteArray buffer = msg + QByteArray("\n\r");
 	int wrote = d->socket->writeBlock(buffer.data(), buffer.length());
-//	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
+//	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
 */
 }
 
@@ -243,7 +243,7 @@ void Socket::setConnectionState(ConnectionState newstate)
 {
 	if (d->state != newstate)
 	{
-		kdDebug(14121) << k_funcinfo << d->state << "->" << newstate << endl;
+		kDebug(14121) << k_funcinfo << d->state << "->" << newstate << endl;
 		d->state = newstate;
 		emit connectionStateChanged(newstate);
 	}
@@ -261,7 +261,7 @@ void Socket::onReadyRead()
 	if (d->socket && d->socket->canReadLine())
 	{
 		QByteArray rawMsg = d->socket->readLine();
-//		kdDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
+//		kDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
 
 		Message msg(rawMsg, Message::InGoing);
 
@@ -320,7 +320,7 @@ void Socket::socketGotError(int errCode)
 		return;
 
 	QString errStr = d->socket->errorString();
-	kdDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
+	kDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
 	postErrorEvent(errStr);
 
 	// ignore non-fatal error

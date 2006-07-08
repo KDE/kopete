@@ -26,7 +26,7 @@
 #include <kbufferedsocket.h>
 #include <kresolver.h>
 
-class KURL;
+class KUrl;
 
 class QTextCodec;
 
@@ -79,7 +79,7 @@ public:
 	/**
 	 * The connection url.
 	 */
-	const KURL &url() const;
+	const KUrl &url() const;
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
@@ -91,7 +91,7 @@ public slots:
 	/**
 	 * @return true if the socket is got no error trying to establish the connection.
 	 */
-	bool connectToServer(const KURL &url);
+	bool connectToServer(const KUrl &url);
 //	void bind();
 	void close();
 

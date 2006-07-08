@@ -23,6 +23,8 @@
 #include "kopeteuiglobal.h"
 
 #include "qlayout.h"
+//Added by qt3to4:
+#include <Q3HBoxLayout>
 
 ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)
 	: KDialog(Kopete::UI::Global::mainWidget())
@@ -40,7 +42,7 @@ ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &captio
 	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
 		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
 
-	new QHBoxLayout( m_list, 0, spacingHint() );
+	new Q3HBoxLayout( m_list, 0, spacingHint() );
 
 	setInitialSize( QSize( 500, 400 ) );
 	setMainWidget( m_list );

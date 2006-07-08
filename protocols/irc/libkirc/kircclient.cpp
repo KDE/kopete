@@ -70,7 +70,7 @@ Client::Client(QObject *parent)
 
 Client::~Client()
 {
-//	kdDebug(14120) << k_funcinfo << d->Host << endl;
+//	kDebug(14120) << k_funcinfo << d->Host << endl;
 	StdCommands::quit(this, QString::fromLatin1("KIRC Deleted"));
 
 	delete d;
@@ -89,7 +89,7 @@ bool Client::isConnected() const
 void Client::authentify()
 {
 	// If password is given for this server, send it now, and don't expect a reply
-	const KURL &url = this->url();
+	const KUrl &url = this->url();
 
 	if (url.hasPass())
 		StdCommands::pass(this, url.pass());

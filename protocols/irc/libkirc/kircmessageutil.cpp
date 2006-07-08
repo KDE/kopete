@@ -50,7 +50,7 @@ QByteArray MessageUtil::format(
 	// FIXME: use a while loop instead and quote the arguments
 	// FIXME: make the empty arguments a "*" as mostly used in the IRC convention.
 //	if (!args.isEmpty())
-//		msg += QChar(' ') + args.join(QChar(' ')).stripWhiteSpace(); // some extra check should be done here
+//		msg += QChar(' ') + args.join(QChar(' ')).trimmed(); // some extra check should be done here
 
 //	if (!suffix.isNull())
 //		msg += QByteArray::fromLatin1(" :") + suffix;

@@ -113,7 +113,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	QString accountId = this->accountId();
 	if (networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch(accountId))
 	{
-		kdDebug(14120) << "Creating account from " << accountId << endl;
+		kDebug(14120) << "Creating account from " << accountId << endl;
 
 //		mNickName = accountId.section('@',0,0);
 		QString serverInfo = accountId.section('@',1);
@@ -164,7 +164,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	}
 	else
 	{
-		kdError() << "No network name defined, and could not import network information from ID" << endl;
+		kError() << "No network name defined, and could not import network information from ID" << endl;
 	}
 */
 
@@ -191,7 +191,7 @@ void IRCAccount::clientSetup()
 	d->client->setDefaultCodec(codec());
 
 	// Build the URL instead
-	KURL url;
+	KUrl url;
 	url.setUser(userName());
 //	url.setPass(password());
 
@@ -462,7 +462,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 
 void IRCAccount::clientConnectionStateChanged(KIRC::Socket::ConnectionState newstate)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	mySelf()->updateStatus();
 
@@ -502,7 +502,7 @@ void IRCAccount::clientConnectionStateChanged(KIRC::Socket::ConnectionState news
 //		break;
 */
 	default:
-		kdDebug(14120) << k_funcinfo << "Doing nothing on state" << newstate << endl;
+		kDebug(14120) << k_funcinfo << "Doing nothing on state" << newstate << endl;
 	}
 }
 /*
@@ -530,14 +530,14 @@ void IRCAccount::slotPerformOnConnectCommands()
 
 void IRCAccount::quit( const QString &quitMessage )
 {
-	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
+	kDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
 	KIRC::StdCommands::quit(d->client, quitMessage.isEmpty() ? defaultQuitMessage() : quitMessage);
 }
 
 void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
-	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
+	kDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
 	KIRC::StdCommands::away(d->client, awayMessage);
 }
 
@@ -553,7 +553,7 @@ bool IRCAccount::isConnected()
 
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &reason)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	d->expectedOnlineStatus = status;
 	d->expectedReason = reason;
 
@@ -562,7 +562,7 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 
 	if ( expected != OnlineStatus::Offline && current == OnlineStatus::Offline )
 	{
-		kdDebug(14120) << k_funcinfo << "Connecting." << endl;
+		kDebug(14120) << k_funcinfo << "Connecting." << endl;
 		clientSetup();
 //		clientConnect();
 		connect();
@@ -570,7 +570,7 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 
 	if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
 	{
-		kdDebug(14120) << k_funcinfo << "Disconnecting." << endl;
+		kDebug(14120) << k_funcinfo << "Disconnecting." << endl;
 		quit(reason);
 	}
 }
@@ -623,7 +623,7 @@ IRCContact *IRCAccount::mySelf() const
 
 IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 {
-	kdDebug(14120) << k_funcinfo << name << endl;
+	kDebug(14120) << k_funcinfo << name << endl;
 	return getContact(d->client->entityManager()->entityByName(name), metac);
 }
 
@@ -714,7 +714,7 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)
 {
-//	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
+//	kDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
 //	mNickName = newnick;
 //	mySelf()->setNickName( mNickName );
 //	d->contactManager->removeFromNotifyList( oldnick );

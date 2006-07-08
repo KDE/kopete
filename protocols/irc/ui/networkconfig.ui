@@ -1,3 +1,5 @@
+//Added by qt3to4:
+#include <q3mimefactory.h>
 <ui version="4.0" >
  <author></author>
  <comment></comment>

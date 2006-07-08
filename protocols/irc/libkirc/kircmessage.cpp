@@ -57,7 +57,7 @@ public:
 	{ }
 
 	QPointer<KIRC::Socket> socket;
-	KIRC::Message::Direction direction;
+	KIRC::Message::Directions direction;
 
 	QByteArray line;
 	QByteArray prefix;
@@ -76,7 +76,7 @@ Message::Message()
 {
 }
 
-Message::Message(const QByteArray &rawLine, Direction direction)
+Message::Message(const QByteArray &rawLine, KIRC::Message::Directions direction)
 	: d(new Private())
 {
 	setLine(rawLine);
@@ -109,12 +109,12 @@ Message &Message::setSocket(Socket *socket)
 	return *this;
 }
 
-Message::Direction Message::direction() const
+Message::Directions Message::direction() const
 {
 	return d->direction;
 }
 
-Message &Message::setDirection(Message::Direction direction)
+Message &Message::setDirection(Message::Directions direction)
 {
 	d->direction = direction;
 	return *this;
@@ -305,7 +305,7 @@ bool Message::isNumeric() const
 
 void Message::dump() const
 {
-	kdDebug(14120)	<< "Line:" << d->line << endl
+	kDebug(14120)	<< "Line:" << d->line << endl
 			<< "Prefix:" << d->prefix << endl
 			<< "Command:" << d->command << endl
 			<< "Args:" << d->args << endl
@@ -313,7 +313,7 @@ void Message::dump() const
 /*
 	if (d->ctcpMessage)
 	{
-		kdDebug(14120) << "Contains CTCP Message:" << endl;
+		kDebug(14120) << "Contains CTCP Message:" << endl;
 		d->ctcpMessage->dump();
 	}
 */

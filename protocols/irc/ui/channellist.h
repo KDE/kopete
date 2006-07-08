@@ -21,21 +21,26 @@
 #include <qwidget.h>
 #include <qmap.h>
 #include <qpair.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
+#include <Q3GridLayout>
+#include <Q3HBoxLayout>
+#include <QLabel>
 
 namespace KIRC
 {
 class Engine;
 }
 
-class QVBoxLayout;
-class QHBoxLayout;
-class QGridLayout;
+class Q3VBoxLayout;
+class Q3HBoxLayout;
+class Q3GridLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class KListView;
+class K3ListView;
 class QSpinBox;
-class QListViewItem;
+class Q3ListViewItem;
 
 class ChannelList
 	: public QWidget
@@ -55,8 +60,8 @@ signals:
 	void channelSelected( const QString &channel );
 
 private slots:
-	void slotItemDoubleClicked( QListViewItem * i );
-	void slotItemSelected( QListViewItem * i );
+	void slotItemDoubleClicked( Q3ListViewItem * i );
+	void slotItemSelected( Q3ListViewItem * i );
 	void slotChannelListed( const QString & channel, uint users, const QString & topic );
 	void slotListEnd();
 	void slotDisconnected();
@@ -69,9 +74,9 @@ private:
 	QLineEdit* channelSearch;
 	QSpinBox* numUsers;
 	QPushButton* mSearchButton;
-	KListView* mChannelList;
-	QVBoxLayout* ChannelListLayout;
-	QHBoxLayout* layout72_2;
+	K3ListView* mChannelList;
+	Q3VBoxLayout* ChannelListLayout;
+	Q3HBoxLayout* layout72_2;
 	KIRC::Engine *m_engine;
 	bool mSearching;
 	QString mSearch;

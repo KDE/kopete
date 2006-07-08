@@ -43,12 +43,12 @@ public:
 		Unknown  = 0,
 		OutGoing = 1<<1, // From the client to the network
 		InGoing	 = 1<<2 // From the network to the client
-	} Direction;
-	Q_DECLARE_FLAGS(Directions, Direction)
+	} Orientation;
+	Q_DECLARE_FLAGS(Directions, Orientation)
 
 public:
 	Message();
-	Message(const QByteArray &rawLine, Direction direction);
+	Message(const QByteArray &rawLine, KIRC::Message::Directions direction);
 	Message(const KIRC::Message &o);
 	~Message();
 
@@ -58,8 +58,8 @@ public:
 	KIRC::Socket *socket() const;
 	KIRC::Message &setSocket(Socket *);
 
-	Direction direction() const;
-	KIRC::Message &setDirection(KIRC::Message::Direction direction);
+	Directions direction() const;
+	KIRC::Message &setDirection(KIRC::Message::Directions direction);
 
 	QByteArray rawLine() const;
 	KIRC::Message &setLine(const QByteArray &);

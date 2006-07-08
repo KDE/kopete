@@ -392,7 +392,7 @@ void ClientCommands::bindNumericReplies()
  */
 void ClientCommands::numericReply_001(Message msg)
 {
-	kdDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) << k_funcinfo << endl;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -458,7 +458,7 @@ void ClientCommands::numericReply_251(Message msg)
  */
 void ClientCommands::numericReply_252(Message msg)
 {
-	postInfoEvent(msg, i18n("There is 1 operator online.", "There are %s operators online.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There is 1 operator online.", "There are %s operators online.", msg.arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -466,7 +466,7 @@ void ClientCommands::numericReply_252(Message msg)
  */
 void ClientCommands::numericReply_253(Message msg)
 {
-	postInfoEvent(msg, i18n("There is 1 unknown connection.", "There are %s unknown connections.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There is 1 unknown connection.", "There are %s unknown connections.", msg.arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
@@ -474,7 +474,7 @@ void ClientCommands::numericReply_253(Message msg)
  *  */
 void ClientCommands::numericReply_254(Message msg)
 {
-	postInfoEvent(msg, i18n("There is 1 channel formed.", "There are %s channel formed.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There is 1 channel formed.", "There are %s channel formed.", msg.arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -490,7 +490,7 @@ void ClientCommands::numericReply_255(Message msg)
  */
 void ClientCommands::numericReply_263(Message msg)
 {
-	receivedServerMessage(msg, i18n("Server was too busy to execute %1.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
@@ -531,7 +531,7 @@ void ClientCommands::numericReply_303(Message msg)
 	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
-		if (!(*it).stripWhiteSpace().isEmpty())
+		if (!(*it).trimmed().isEmpty())
 			emit incomingUserOnline(*it);
 	}
 */
@@ -938,7 +938,8 @@ void ClientCommands::numericReply_475(Message msg)
 /* 502: ":Cannot change mode for other users"
  */
 
-#ifndef KIRC_STRICT
+#if 0
+//#ifndef KIRC_STRICT
 
 /*
 void ClientCommands::bindCtcp()
@@ -1021,7 +1022,7 @@ void ClientCommands::CtcpQuery_dcc(Message msg)
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
-			kdDebug(14120) << "Starting DCC chat window." << endl;
+			kDebug(14120) << "Starting DCC chat window." << endl;
 //			TransferHandler::self()->createClient(
 //				this, msg.prefix(),
 //				address, port,
@@ -1046,7 +1047,7 @@ void ClientCommands::CtcpQuery_dcc(Message msg)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
 //			TransferHandler::self()->createClient(
 //				this, msg.prefix(),
 //				address, port,

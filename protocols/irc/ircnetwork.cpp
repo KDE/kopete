@@ -59,7 +59,7 @@ bool Networks::slotReadNetworks()
 	d->networks.clear();
 
 	QFile xmlFile( locate( "appdata", "ircnetworks.xml" ) );
-	xmlFile.open( IO_ReadOnly );
+	xmlFile.open( QIODevice::ReadOnly );
 
 	QDomDocument doc;
 	doc.setContent( &xmlFile );
@@ -115,7 +115,7 @@ bool Networks::slotSaveNetworkConfig() const
 /*
 	// store any changes in the UI
 	storeCurrentNetwork();
-	kdDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
+	kDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
 	storeCurrentHost();
 
 	QDomDocument doc("irc-networks");
@@ -147,10 +147,10 @@ bool Networks::slotSaveNetworkConfig() const
 		}
 	}
 
-//	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
+//	kDebug(14121) << k_funcinfo << doc.toString(4) << endl;
 	QFile xmlFile( KStandardDirs::locateLocal( "appdata", "ircnetworks.xml" ) );
 
-	if (xmlFile.open(IO_WriteOnly))
+	if (xmlFile.open(QIODevice::WriteOnly))
 	{
 		QTextStream stream( &xmlFile );
 		stream << doc.toString(4);
@@ -158,7 +158,7 @@ bool Networks::slotSaveNetworkConfig() const
 		return true;
 	}
 */
-	kdDebug(14121) << k_funcinfo << "Failed to save the Networks definition file" << endl;
+	kDebug(14121) << k_funcinfo << "Failed to save the Networks definition file" << endl;
 	return false;
 }
 /*
