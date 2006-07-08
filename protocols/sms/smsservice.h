@@ -21,13 +21,13 @@
 #include <qwidget.h>
 #include <qobject.h>
 //Added by qt3to4:
-#include <QGridLayout>
+#include <Q3GridLayout>
 
 #include "kopetemessage.h"
 
 class SMSContact;
 namespace Kopete { class Account; }
-class QGridLayout;
+class Q3GridLayout;
 class QWidget;
 
 class SMSService : public QObject
@@ -50,7 +50,7 @@ public:
 	 * settings widget's parent and @param layout is the 2xn grid layout it may
 	 * use.
 	 */
-	virtual void setWidgetContainer(QWidget* parent, QGridLayout* layout) = 0;
+	virtual void setWidgetContainer(QWidget* parent, Q3GridLayout* layout) = 0;
 
 	virtual void send(const Kopete::Message& msg) = 0;
 	virtual int maxSize() = 0;
@@ -69,7 +69,7 @@ signals:
 
 protected:
 	Kopete::Account* m_account;
-	QGridLayout* m_layout;
+	Q3GridLayout* m_layout;
 	QWidget* m_parent;
 };
 

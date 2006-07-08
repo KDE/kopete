@@ -22,6 +22,9 @@
 #include <qmutex.h>
 #include <qthread.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QCustomEvent>
+#include <Q3GridLayout>
 
 #include <klocale.h>
 #include <kurlrequester.h>
@@ -348,7 +351,7 @@ void GSMLib::disconnect()
 
 }
 
-void GSMLib::setWidgetContainer(QWidget* parent, QGridLayout* layout)
+void GSMLib::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
 {
 	m_parent = parent;
 	m_layout = layout;

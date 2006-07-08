@@ -17,7 +17,7 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 //Added by qt3to4:
-#include <QGridLayout>
+#include <Q3GridLayout>
 
 #include <klocale.h>
 #include <kurlrequester.h>
@@ -43,7 +43,7 @@ SMSClient::~SMSClient()
 {
 }
 
-void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
+void SMSClient::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
 {
 	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;

@@ -24,7 +24,7 @@
                 <cstring>spacer14</cstring>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
@@ -60,7 +60,7 @@
                 <enum>Sunken</enum>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
         </widget>
         <widget class="QLayoutWidget">
@@ -134,7 +134,7 @@
                 <cstring>spacer15</cstring>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
@@ -170,7 +170,7 @@
                 <enum>Sunken</enum>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
         </widget>
     </vbox>

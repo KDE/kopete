@@ -19,7 +19,7 @@
 #include <qlabel.h>
 #include <qtooltip.h>
 //Added by qt3to4:
-#include <QGridLayout>
+#include <Q3GridLayout>
 
 #include <kconfigbase.h>
 #include <klineedit.h>
@@ -74,7 +74,7 @@ void SMSSend::send(const Kopete::Message& msg)
 	m_provider->send(msg);
 }
 
-void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
+void SMSSend::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
 {
 	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;

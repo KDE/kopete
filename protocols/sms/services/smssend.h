@@ -21,7 +21,7 @@
 #include <qmap.h>
 #include <qlabel.h>
 //Added by qt3to4:
-#include <QGridLayout>
+#include <Q3GridLayout>
 #include <Q3PtrList>
 
 #include <klineedit.h>
@@ -31,7 +31,7 @@
 class SMSSendProvider;
 class SMSSendPrefsUI;
 class Q3ListViewItem;
-class QGridLayout;
+class Q3GridLayout;
 
 class SMSSend : public SMSService
 {
@@ -43,7 +43,7 @@ public:
 	virtual void setAccount(Kopete::Account* account);
 
 	void send(const Kopete::Message& msg);
-	void setWidgetContainer(QWidget* parent, QGridLayout* container);
+	void setWidgetContainer(QWidget* parent, Q3GridLayout* container);
 
 	int maxSize();
 	const QString& description();
@@ -58,7 +58,7 @@ private slots:
 //	void messageSent(const Kopete::Message&);
 
 private:
-	QGridLayout *settingsBoxLayout;
+	Q3GridLayout *settingsBoxLayout;
 	SMSSendProvider* m_provider;
 	SMSSendPrefsUI* prefWidget;
 	Q3PtrList<KLineEdit> args;

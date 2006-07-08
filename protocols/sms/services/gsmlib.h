@@ -17,6 +17,9 @@
 #define GSMLIB_H_039562406
 
 #include "config.h"
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <QCustomEvent>
 #ifdef INCLUDE_SMSGSM
 
 #include <unistd.h>
@@ -34,12 +37,12 @@
 #include <qevent.h>
 #include <qthread.h>
 #include <qmutex.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qstringlist.h>
 
 class GSMLibPrefsUI;
 class SMSContact;
-class QListViewItem;
+class Q3ListViewItem;
 class KProcess;
 class GSMLibThread;
 
@@ -51,7 +54,7 @@ public:
     ~GSMLib();
 
     void send(const Kopete::Message& msg);
-    void setWidgetContainer(QWidget* parent, QGridLayout* container);
+    void setWidgetContainer(QWidget* parent, Q3GridLayout* container);
 
     int maxSize();
     const QString& description();
@@ -139,10 +142,10 @@ protected:
         {}
     };
 
-    typedef QValueList<IncomingMessage> MessageList;
+    typedef Q3ValueList<IncomingMessage> MessageList;
     MessageList m_newMessages;
 
-	typedef QValueList<Kopete::Message> KopeteMessageList;
+	typedef Q3ValueList<Kopete::Message> KopeteMessageList;
 	KopeteMessageList m_outMessages;
 	QMutex m_outMessagesMutex;
 };

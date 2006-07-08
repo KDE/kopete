@@ -20,14 +20,14 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 
 
 SMSAddContactPage::SMSAddContactPage(QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
 {
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	smsdata = new smsAddUI(this);
 }
 

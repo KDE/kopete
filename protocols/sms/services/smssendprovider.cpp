@@ -18,7 +18,7 @@
 #include <qlabel.h>
 #include <qfile.h>
 //Added by qt3to4:
-#include <QTextStream>
+#include <Q3TextStream>
 #include <Q3PtrList>
 
 #include <kconfigbase.h>
@@ -51,7 +51,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 	QFile f(file);
 	if (f.open(QIODevice::ReadOnly))
 	{
-		QTextStream t(&f);
+		Q3TextStream t(&f);
 		QString group = QString("SMSSend-%1").arg(provider);
 		bool exactNumberMatch = false;
 		QStringList numberWords;

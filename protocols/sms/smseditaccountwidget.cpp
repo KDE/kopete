@@ -21,9 +21,9 @@
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
-#include <QGridLayout>
-#include <QBoxLayout>
+#include <Q3VBoxLayout>
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <kconfigbase.h>
 #include <klocale.h>
@@ -41,8 +41,8 @@
 SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent, const char */*name*/)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	QVBoxLayout *l = new QVBoxLayout(this);
-	l->setSpacing(QBoxLayout::Down);
+	Q3VBoxLayout *l = new Q3VBoxLayout(this);
+	l->setSpacing(Q3BoxLayout::Down);
 	preferencesDialog = new smsActPrefsUI(this);
 	l->addWidget(preferencesDialog);
 
@@ -125,7 +125,7 @@ void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 	connect (this, SIGNAL(saved()), service, SLOT(savePreferences()));
 
 	delete middleFrameLayout;
-	middleFrameLayout = new QGridLayout(preferencesDialog->middleFrame);
+	middleFrameLayout = new Q3GridLayout(preferencesDialog->middleFrame);
 	middleFrameLayout->setObjectName("middleFrameLayout");
 	middleFrameLayout->setSpacing(6);
 	middleFrameLayout->setMargin(0);
