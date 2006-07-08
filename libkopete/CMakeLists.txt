@@ -39,9 +39,14 @@ set(kopete_ui_SRCS
   ui/webcamwidget.cpp 
 )
 
+set(kopete_contactliststorage_SRCS
+  contactliststorage/xmlcontactstorage.cpp 
+)
+
 set(kopete_LIB_SRCS 
    ${kopete_private_SRCS} 
    ${kopete_ui_SRCS} 
+   ${kopete_contactliststorage_SRCS}
    kopeteonlinestatus.cpp 
    kopeteonlinestatusmanager.cpp 
    kopeteprotocol.cpp 
@@ -52,6 +57,7 @@ set(kopete_LIB_SRCS
    kopetechatsession.cpp 
    kopetechatsessionmanager.cpp 
    kopetecontactlist.cpp 
+   kopetecontactliststorage.cpp 
    kopetemetacontact.cpp 
    kopetetransfermanager.cpp 
    kopetegroup.cpp 
