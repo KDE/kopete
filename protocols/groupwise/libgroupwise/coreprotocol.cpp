@@ -26,7 +26,7 @@
 
 #include <qdatastream.h>
 #include <qdatetime.h>
-#include <qtextstream.h>
+#include <q3textstream.h>
 //Added by qt3to4:
 #include <QByteArray>
 
@@ -217,8 +217,8 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	
 	// convert to QByteArray
 	QByteArray bytesOut;
-	QTextStream dout( bytesOut, QIODevice::WriteOnly );
-	dout.setEncoding( QTextStream::Latin1 );
+	Q3TextStream dout( bytesOut, QIODevice::WriteOnly );
+	dout.setEncoding( Q3TextStream::Latin1 );
 	//dout.setByteOrder( QDataStream::LittleEndian );
 
 	// strip out any embedded host and port in the command string 

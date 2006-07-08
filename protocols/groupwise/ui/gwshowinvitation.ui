@@ -83,7 +83,7 @@
                 <string>INVITE_MESSAGE</string>
             </property>
             <property name="alignment">
-                <set>AlignVCenter</set>
+                <set>Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
                 <bool>true</bool>
@@ -110,7 +110,7 @@
                         <cstring>spacer8</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>

@@ -17,7 +17,7 @@
 */
 
 #include <qmap.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kdebug.h>
 
@@ -68,9 +68,9 @@ void ChatroomManager::slotGotChatroomList()
 		if ( m_replace )
 			m_rooms.clear();
 		
-		QValueList<ChatroomSearchResult> roomsFound = sct->results();
-		QValueList<ChatroomSearchResult>::Iterator it = roomsFound.begin();
-		const QValueList<ChatroomSearchResult>::Iterator end = roomsFound.end();
+		Q3ValueList<ChatroomSearchResult> roomsFound = sct->results();
+		Q3ValueList<ChatroomSearchResult>::Iterator it = roomsFound.begin();
+		const Q3ValueList<ChatroomSearchResult>::Iterator end = roomsFound.end();
 		for ( ; it != end; ++it )
 		{
 			GroupWise::Chatroom c( *it );

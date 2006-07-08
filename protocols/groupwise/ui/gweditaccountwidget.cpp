@@ -24,7 +24,7 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -47,7 +47,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 : QWidget( parent ), KopeteEditAccountWidget( theAccount )
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	m_layout = new QVBoxLayout( this );
+	m_layout = new Q3VBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );
 	connect( m_preferencesDialog->m_password, SIGNAL( changed() ), this, SLOT( configChanged() ) );

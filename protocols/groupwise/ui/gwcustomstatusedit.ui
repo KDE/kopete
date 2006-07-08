@@ -32,7 +32,7 @@
                         <cstring>m_name</cstring>
                     </property>
                     <property name="frameShape">
-                        <enum>LineEditPanel</enum>
+                        <enum>QFrame::StyledPanel</enum>
                     </property>
                     <property name="frameShadow">
                         <enum>Sunken</enum>
