@@ -15,18 +15,55 @@
 */
 #include "kopetecontactliststorage.h"
 
-namespace Kopete {
+// Qt includes
+
+// KDE includes
+
+// Kopete includes
+namespace Kopete
+{
+
+class ContactListStorage::Private
+{
+public:
+    Private()
+    {}
+
+    Group::List groupList;
+    MetaContact::List metaContactList;
+};
 
 ContactListStorage::ContactListStorage()
+ : d(new Private)
 {
 }
 
 
 ContactListStorage::~ContactListStorage()
 {
+    delete d;
 }
 
+Group::List ContactListStorage::groups() const
+{
+    return d->groupList;
+}
+
+MetaContact::List ContactListStorage::contacts() const
+{
+    return d->metaContactList;
+}
+
+void ContactListStorage::addMetaContact(Kopete::MetaContact *contact)
+{
+    d->metaContactList.append( contact );
+}
+
+void ContactListStorage::addGroup(Kopete::Group *group)
+{
+    d->groupList.append( group );
+}
 
 }
 
-//kate: indent-mode cstyle; indent-spaces on; indent-width 4; auto-insert-doxygen on;
+//kate: indent-mode cstyle; indent-spaces on; indent-width 4; auto-insert-doxygen on; replace-tabs on

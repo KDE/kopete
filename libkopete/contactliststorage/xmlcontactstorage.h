@@ -34,8 +34,17 @@ class XmlContactStorage : public ContactListStorage
 {
 public:
     XmlContactStorage();
+    /**
+     * @brief Create a new XML storage using the given filename.
+     *
+     * This contructor mostly used for unittests.
+     * @param fileName XML filename to load.
+     */
+    XmlContactStorage(const QString &fileName);
     ~XmlContactStorage();
 
+    virtual bool isValid() const;
+    virtual QString errorMessage() const;
     virtual void load();
     virtual void save();
 
@@ -48,4 +57,4 @@ private:
 
 #endif
 
-//kate: indent-mode cstyle; indent-width 4; indent-spaces on;
+//kate: indent-mode cstyle; indent-width 4; indent-spaces on; replace-tabs on;

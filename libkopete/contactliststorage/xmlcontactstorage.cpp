@@ -26,6 +26,7 @@
 // KDE includes
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 // Kopete includes
 #include "kopetemetacontact.h"
@@ -38,16 +39,30 @@ namespace Kopete
 class XmlContactStorage::Private
 {
 public:
-	bool loaded;
+    Private()
+    : loaded(false), isValid(false)
+    {}
+
+    bool loaded;
+    bool isValid;
+    QString xmlFilename;
+    QString errorMessage;
+
+    bool parseMetaContact(Kopete::MetaContact *metaContact, const QDomElement &element);
+    bool parseGroup(Kopete::Group *group, const QDomElement &element);
 };
 
 
 XmlContactStorage::XmlContactStorage()
         : ContactListStorage(), d(new Private)
 {
-    d->loaded = false;
 }
 
+XmlContactStorage::XmlContactStorage(const QString &fileName)
+    : ContactListStorage(), d(new Private)
+{
+    d->xmlFilename = fileName;
+}
 
 XmlContactStorage::~XmlContactStorage()
 {
@@ -55,16 +70,37 @@ XmlContactStorage::~XmlContactStorage()
 }
 
 
+bool XmlContactStorage::isValid() const
+{
+    return d->isValid;
+}
+
+QString XmlContactStorage::errorMessage() const
+{
+    return d->errorMessage;
+}
+
 void XmlContactStorage::load()
 {
     // don't save when we're in the middle of this...
     d->loaded = false;
 
-    QString filename = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlist.xml" ) );
+    QString filename;
+    if( !d->xmlFilename.isEmpty() )
+    {
+        filename = d->xmlFilename;
+    }
+    else
+    {
+        filename = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlist.xml" ) );
+    }
+
     if( filename.isEmpty() )
     {
         d->loaded=true;
-        return ;
+        d->isValid = false;
+        d->errorMessage = i18n("Could not find contactlist.xml in Kopete application data.");
+        return;
     }
 
     QDomDocument contactList( QString::fromLatin1( "kopete-contact-list" ) );
@@ -74,7 +110,7 @@ void XmlContactStorage::load()
     contactList.setContent( &contactListFile );
 
     QDomElement list = contactList.documentElement();
-    //TODO: Check if we remove versioning from XML file.
+    //TODO: Check if we remove versioning support from XML file.
 #if 0
     QString versionString = list.attribute( QString::fromLatin1( "version" ), QString::null );
     uint version = 0;
@@ -92,14 +128,12 @@ void XmlContactStorage::load()
         contactListFile.close();
 
         convertContactList( filename, version,  Private::ContactListVersion );
-#endif
         contactList = QDomDocument ( QLatin1String( "kopete-contact-list" ) );
 
         contactListFile.open( QIODevice::ReadOnly );
         contactList.setContent( &contactListFile );
 
         list = contactList.documentElement();
-#if 0
     }
 #endif
  //TODO: Add to internal contactlist item list.
@@ -146,35 +180,47 @@ void XmlContactStorage::load()
             }
         }
         // Only load myself metacontact information when Global Identity is enabled.
+#if 0
         else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
         {
              //TODO: Add to internal contactlist item list.
-#if 0
+
             if( !myself()->fromXML( element ) )
             {
                 delete d->myself;
                 d->myself = 0;
             }
-#endif
+
         }
+#endif
         else
         {
-            kWarning(14010) << "Kopete::ContactList::loadXML: "
+            kWarning(14010) << k_funcinfo
                     << "Unknown element '" << element.tagName()
-                    << "' in contact list!" << endl;
+                    << "' in XML contact list storage!" << endl;
         }
         element = element.nextSibling().toElement();
     }
     contactListFile.close();
+    d->isValid = true;
     d->loaded=true;
 }
 
 void XmlContactStorage::save()
 {
+    // TODO:
+}
 
+bool XmlContactStorage::Private::parseMetaContact(Kopete::MetaContact *metaContact, const QDomElement &element)
+{
+    return false;
+}
+
+bool XmlContactStorage::Private::parseGroup(Kopete::Group *group, const QDomElement &element)
+{
+    return false;
 }
 
 }
 
 //kate: indent-mode cstyle; indent-width 4; indent-spaces on; replace-tabs on;
-

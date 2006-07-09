@@ -1,0 +1,80 @@
+<kopete-contact-list version="1.0" >
+    <kopete-group view="expanded" type="standard" groupId="1" >
+        <display-name>Kopete Developers</display-name>
+    </kopete-group>
+    <kopete-group view="expanded" type="standard" groupId="2" >
+        <display-name>Kontact Developers</display-name>
+    </kopete-group>
+    <kopete-group view="expanded" type="standard" groupId="3" >
+        <display-name>Users</display-name>
+    </kopete-group>
+    <kopete-group view="expanded" type="standard" groupId="4" >
+        <display-name>Friends &amp; Family</display-name>
+    </kopete-group>
+    <meta-contact contactId="Test1" >
+        <display-name>Duncan Mac-Vicar Prett</display-name>
+        <photo syncWithKABC="false" ></photo>
+        <property-sources>
+            <name source="custom" />
+            <photo source="custom" />
+        </property-sources>
+        <groups>
+            <group id="1" />
+        </groups>
+    </meta-contact>
+    <meta-contact contactId="Test2" >
+        <display-name>Olivier Goffart</display-name>
+        <photo syncWithKABC="false" ></photo>
+        <property-sources>
+            <name source="custom" />
+            <photo source="custom" />
+        </property-sources>
+        <groups>
+            <group id="1" />
+        </groups>
+    </meta-contact>
+    <meta-contact contactId="Test3" >
+        <display-name>Matt Rogers</display-name>
+        <photo syncWithKABC="false" ></photo>
+        <property-sources>
+            <name source="custom" />
+            <photo source="custom" />
+        </property-sources>
+        <groups>
+            <group id="1" />
+        </groups>
+    </meta-contact>
+    <meta-contact contactId="Test4" >
+        <display-name>Will Stephenson</display-name>
+        <photo syncWithKABC="false" ></photo>
+        <property-sources>
+            <name source="custom" />
+            <photo source="custom" />
+        </property-sources>
+        <groups>
+            <group id="1" />
+        </groups>
+    </meta-contact>
+    <meta-contact contactId="Test5" >
+        <display-name>Michaël Larouche</display-name>
+        <photo syncWithKABC="false" ></photo>
+        <property-sources>
+            <name source="custom" />
+            <photo source="custom" />
+        </property-sources>
+        <groups>
+            <group id="1" />
+        </groups>
+    </meta-contact>
+    <meta-contact contactId="Test6" >
+        <display-name>André Duffeck</display-name>
+        <photo syncWithKABC="false" ></photo>
+        <property-sources>
+            <name source="custom" />
+            <photo source="custom" />
+        </property-sources>
+        <groups>
+            <group id="1" />
+        </groups>
+    </meta-contact>
+</kopete-contact-list>
