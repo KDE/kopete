@@ -29,8 +29,8 @@ using namespace Kopete;
 
 namespace IRC {
 
-const QString Version = i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]")
-				.arg(kapp->aboutData()->version());
+const QString Version = i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]",
+			     kapp->aboutData()->version());
 
 namespace Config {
 

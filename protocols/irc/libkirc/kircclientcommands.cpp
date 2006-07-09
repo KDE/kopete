@@ -564,7 +564,7 @@ void ClientCommands::numericReply_306(Message msg)
  */
 void ClientCommands::numericReply_307(Message msg)
 {
-	postErrorEvent(msg, i18n("%1 is a registered nick.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("%1 is a registered nick.", msg.arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
@@ -588,7 +588,7 @@ void ClientCommands::numericReply_312(Message msg)
  */
 void ClientCommands::numericReply_313(Message msg)
 {
-	postInfoEvent(msg, i18n("%1 is an IRC operator.").arg(msg.arg(1)));
+	postInfoEvent(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
@@ -801,7 +801,7 @@ void ClientCommands::numericReply_401(Message msg)
  */
 void ClientCommands::numericReply_404(Message msg)
 {
-	postErrorEvent(msg, i18n("You cannot send message to channel %1.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("You cannot send message to channel %1.", msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"
@@ -842,14 +842,14 @@ void ClientCommands::numericReply_433(Message msg)
 		// but it's already in use
 //		emit incomingNickInUse(msg.arg(1));
 //	}
-	postErrorEvent(msg, i18n("Nickname %1 is already in use.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("Nickname %1 is already in use.", msg.arg(1)));
 }
 
 /* 442: "<channel> :You're not on that channel"
  */
 void ClientCommands::numericReply_442(Message msg)
 {
-	postErrorEvent(msg, i18n("You are not on channel %1.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("You are not on channel %1.", msg.arg(1)));
 }
 
 /* 464: ":Password Incorrect"
@@ -870,7 +870,7 @@ void ClientCommands::numericReply_464(Message msg)
  */
 void ClientCommands::numericReply_471(Message msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, channel is full.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)) );
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -881,7 +881,7 @@ void ClientCommands::numericReply_471(Message msg)
  */
 void ClientCommands::numericReply_473(Message msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, channel is invite only.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)) );
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
@@ -889,7 +889,7 @@ void ClientCommands::numericReply_473(Message msg)
  */
 void ClientCommands::numericReply_474(Message msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, you are banned from that channel.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)) );
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
@@ -897,7 +897,7 @@ void ClientCommands::numericReply_474(Message msg)
  */
 void ClientCommands::numericReply_475(Message msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, wrong channel key was given.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)) );
 }
 
 /* 476: "<channel> :Bad Channel Mask"

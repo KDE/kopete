@@ -202,7 +202,7 @@ void Socket::writeMessage(const QByteArray &msg)
 {
 	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
 	{
-		postErrorEvent(i18n("Attempting to send while not connected: %1").arg(msg.data()));
+		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
 		return;
 	}
 /*
@@ -306,7 +306,7 @@ void Socket::socketStateChanged(int newstate)
 		setConnectionState(Closing);
 		break;
 	default:
-		postErrorEvent(i18n("Unknown SocketState value:%1").arg(newstate));
+		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
 		close();
 	}
 }

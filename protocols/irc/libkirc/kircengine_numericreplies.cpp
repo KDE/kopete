@@ -169,7 +169,7 @@ void Engine::numericReply_251(Message &msg)
  */
 void Engine::numericReply_252(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 operators online.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 operators online.", msg.arg(1)));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -177,7 +177,7 @@ void Engine::numericReply_252(Message &msg)
  */
 void Engine::numericReply_253(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 unknown connections.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 unknown connections.", msg.arg(1)));
 }
 
 /* 254: "<integer> :channels formed"
@@ -185,7 +185,7 @@ void Engine::numericReply_253(Message &msg)
  *  */
 void Engine::numericReply_254(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 channel formed.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 channel formed.", msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -201,7 +201,7 @@ void Engine::numericReply_255(Message &msg)
  */
 void Engine::numericReply_263(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Server was too busy to execute %1.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
@@ -275,7 +275,7 @@ void Engine::numericReply_306(Message &msg)
  */
 void Engine::numericReply_307(Message &msg)
 {
-	receivedServerMessage(msg, i18n("%1 is a registered nick.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("%1 is a registered nick.", msg.arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
@@ -299,7 +299,7 @@ void Engine::numericReply_312(Message &msg)
  */
 void Engine::numericReply_313(Message &msg)
 {
-	receivedServerMessage(msg, i18n("%1 is an IRC operator.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
@@ -508,7 +508,7 @@ void Engine::numericReply_401(Message &msg)
  */
 void Engine::numericReply_404(Message &msg)
 {
-	receivedServerMessage(msg, i18n("You cannot send message to channel %2.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("You cannot send message to channel %2.", msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"
@@ -555,7 +555,7 @@ void Engine::numericReply_433(Message &msg)
  */
 void Engine::numericReply_442(Message &msg)
 {
-	receivedServerMessage(msg, i18n("You are not on channel %1.").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("You are not on channel %1.", msg.arg(1)));
 }
 
 /* 464: ":Password Incorrect"
@@ -575,7 +575,7 @@ void Engine::numericReply_464(Message &/*msg*/)
  */
 void Engine::numericReply_471(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, channel is full.").arg(msg.arg(1)) );
+	receivedServerMessage(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)) );
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -586,7 +586,7 @@ void Engine::numericReply_471(Message &msg)
  */
 void Engine::numericReply_473(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, channel is invite only.").arg(msg.arg(1)) );
+	receivedServerMessage(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)) );
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
@@ -594,7 +594,7 @@ void Engine::numericReply_473(Message &msg)
  */
 void Engine::numericReply_474(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, you are banned from that channel.").arg(msg.arg(1)) );
+	receivedServerMessage(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)) );
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
@@ -602,7 +602,7 @@ void Engine::numericReply_474(Message &msg)
  */
 void Engine::numericReply_475(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, wrong channel key was given.").arg(msg.arg(1)) );
+	receivedServerMessage(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)) );
 }
 
 /* 476: "<channel> :Bad Channel Mask"

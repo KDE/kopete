@@ -22,7 +22,7 @@ void IRCAccount::setNetwork( const QString &network )
 
 void IRCAccount::slotNickInUseAlert(const QString &nick)
 {
-	KMessageBox::error(UI::Global::mainWidget(), i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
+	KMessageBox::error(UI::Global::mainWidget(), i18n("The nickname %1 is already in use", nick), i18n("IRC Plugin"));
 }
 
 void IRCAccount::slotNickInUse( const QString &nick )
@@ -32,7 +32,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	{
 		QString newNick = KInputDialog::getText(
 				i18n("IRC Plugin"),
-				i18n("The nickname %1 is already in use. Please enter an alternate nickname:").arg(nick),
+				i18n("The nickname %1 is already in use. Please enter an alternate nickname:", nick),
 				nick);
 
 		if (newNick.isNull())
@@ -89,7 +89,7 @@ void IRCAccount::slotJoinChannel()
 		}
 
 		KMessageBox::error( UI::Global::mainWidget(),
-			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.").arg(chan),
+			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.", chan),
 			i18n("IRC Plugin")
 			);
 	}
@@ -100,7 +100,7 @@ void IRCAccount::slotSearchChannels()
 	if( !m_channelList )
 	{
 		m_channelList = new ChannelListDialog( m_engine,
-			i18n("Channel List for %1").arg( m_engine->currentHost() ), this,
+			i18n( "Channel List for %1", m_engine->currentHost() ), this,
 			SLOT( slotJoinNamedChannel( const QString & ) ) );
 	}
 	else
