@@ -125,8 +125,6 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 {
 	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
 	Eva::Packet packet( rawdata.data(), rawdata.size() );
-	char eva_token[24] = {
-		0xc6, 0x9c, 0x6a, 0x7, 0x81, 0x4a, 0xaf, 0x17, 0xd9, 0x5, 0x5a, 0x45, 0xdf, 0xd7, 0xcd, 0x98, 0x7, 0xae, 0x9e, 0x83, 0x97, 0x57, 0x9, 0x7e };
 
 	switch( packet.command() )
 	{
@@ -136,15 +134,11 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			QByteArray tmp( m_token.data(), m_token.size() );
 			kDebug( 14140 ) << packet.command() << ": token = " << tmp << endl;
 
-			for( int i = 0; i< 24; i++ )
-				m_token.data()[i] = eva_token[i];
-
-			QByteArray tmp2( m_token.data(), m_token.size() );
-			kDebug( 14140 ) << packet.command() << ": token = " << tmp2 << endl;
-
-			
 			sendLogin();
 			break;
+
+		case Eva::Login :
+
 	}
 }
 
