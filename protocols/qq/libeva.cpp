@@ -78,8 +78,28 @@ namespace Eva {
 			bool& isHeader )
 	{
 		int i;
+		fprintf( stderr, "plain dumping: " );
+		for( i = 0; i< 8; i++ )
+			fprintf( stderr, "%x ", plain[i] );
+		fprintf( stderr, "\n");
+
+		fprintf( stderr, "plain_pre dumping: " );
+		for( i = 0; i< 8; i++ )
+			fprintf( stderr, "%x ", plain_pre[i] );
+		fprintf( stderr, "\n");
+
+		fprintf( stderr, "crypted_pre dumping: " );
+		for( i = 0; i< 8; i++ )
+			fprintf( stderr, "%x ", crypted_pre[i] );
+		fprintf( stderr, "\n");
+
 		for( i = 0; i< 8; i++ )
 			plain[i] ^= isHeader ? plain_pre[i] : crypted_pre[i];
+
+		fprintf( stderr, "plain dumping: " );
+		for( i = 0; i< 8; i++ )
+			fprintf( stderr, "%x ", plain[i] );
+		fprintf( stderr, "\n");
 
 		TEA::encipher( (unsigned int*) plain, (unsigned int*) key, 
 				(unsigned int*) crypted );
@@ -89,6 +109,11 @@ namespace Eva {
 
 		memcpy( plain_pre, plain, 8 );
 		memcpy( crypted_pre, crypted, 8 );
+		fprintf( stderr, "encrypt64 dumping: " );
+		for( i = 0; i< 8; i++ )
+			fprintf( stderr, "%x ", crypted[i] );
+		fprintf( stderr, "\n");
+			
 		isHeader = false;
 	}
 
@@ -151,6 +176,7 @@ namespace Eva {
 		// Prepare the first 8 bytes:
 		plain[0] = ( rand() & 0xf8 ) | pos;
 		memset( plain_pre, 0, 8 );
+		memset( crypted_pre, 0, 8 );
 		memset( plain+1, rand()& 0xff, pos++ );
 
 		// pad 2 bytes
@@ -289,6 +315,11 @@ namespace Eva {
 		ByteArray login(LoginLength);
 		ByteArray data(MaxPacketLength);
 		ByteArray initKey( (char*)init_key, 16 );
+		// dump initKey 
+		fprintf( stderr, "dump initKey : " );
+		for( int i = 0; i< initKey.size(); i++ )
+			fprintf( stderr, "%x ", initKey.data()[i] );
+		fprintf( stderr, "\n");
 
 		ByteArray nil(0);
 		login += encrypt( nil, key );
@@ -299,6 +330,7 @@ namespace Eva {
 		login += token;
 		login.append( login_94_193, 100 );
 		memset( login.data()+login.size(), 0, login.capacity()-login.size() );
+		login.setSize( login.capacity() );
 
 		// dump the login
 		for( int i = 0; i< login.capacity(); i++ )
