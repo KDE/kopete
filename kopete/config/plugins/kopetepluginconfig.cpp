@@ -19,11 +19,7 @@
 
 #include <qlayout.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
 #include <QByteArray>
-#include <QFrame>
-#include <QWidget>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -61,12 +57,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent )
 
 	setInitialSize( QSize( 640, 480 ) );
 
-	QWidget* dialogPage = new QWidget(this);
-	QVBoxLayout *layout = new QVBoxLayout( dialogPage );
-	layout->setMargin( 0 );
-	layout->setSpacing( 0 );
-	layout->setAutoAdd( true );
-	d->pluginSelector = new KPluginSelector( dialogPage );
+	d->pluginSelector = new KPluginSelector( this );
 	setMainWidget( d->pluginSelector );
 	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );
 	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
