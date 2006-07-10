@@ -49,9 +49,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFacto
 BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 		KCModule( KopeteBehaviorConfigFactory::instance(), parent, args )
 {
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	
 	mBehaviorTabCtl = new QTabWidget(this);
 	mBehaviorTabCtl->setObjectName("mBehaviorTabCtl");
+	layout->addWidget( mBehaviorTabCtl );
 
 	// "General" TAB ============================================================
 	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);

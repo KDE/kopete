@@ -50,8 +50,10 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
  : KCModule( KopeteAVDeviceConfigFactory::instance(), parent, args )
 {
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::instance() called. " << endl;
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	QVBoxLayout *layout = new QVBoxLayout(this);
+
 	mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
+	layout->addWidget( mAVDeviceTabCtl );
 
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);

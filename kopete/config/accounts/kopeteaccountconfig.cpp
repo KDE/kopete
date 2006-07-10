@@ -59,10 +59,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory
 KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &args )
 : KCModule( KopeteAccountConfigFactory::instance(), parent, args )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-
-	m_view = new QWidget( this );
-	setupUi( m_view );
+	setupUi( this );
 
 	mAccountList->setColumnCount(2);
 	QStringList header;

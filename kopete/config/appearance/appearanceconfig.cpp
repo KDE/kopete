@@ -185,9 +185,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 {
 	d = new Private;
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	QVBoxLayout *layout = new QVBoxLayout(this);
+
 	d->mAppearanceTabCtl = new QTabWidget(this);
 	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
+	layout->addWidget( d->mAppearanceTabCtl );
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "ChatWindowSettings" );
@@ -376,7 +378,7 @@ void AppearanceConfig::updateEmoticonlist()
 	// Get a list of directories in our icon theme dir
 	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
 	// loop adding themes from all dirs into theme-list
-	for(unsigned int x = 0;x < themeDirs.count();x++)
+	for( int x = 0;x < themeDirs.count();x++)
 	{
 		QDir themeQDir(themeDirs[x]);
 		themeQDir.setFilter( QDir::Dirs ); // only scan for subdirs
@@ -418,7 +420,7 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
 
 	newContentText += QString::fromLatin1("</qt>");
-	d->mPrfsEmoticons->icon_theme_preview->setText(newContentText);
+	d->mPrfsEmoticons->icon_theme_preview->setHtml(newContentText);
 	emitChanged();
 }
 
@@ -560,7 +562,7 @@ void AppearanceConfig::slotGetChatStyles()
 	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
 	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
 	KNS::DownloadDialog *downloadDialog = new KNS::DownloadDialog( engine, this );
-	downloadDialog->setType( "kopete/chatstyle" );
+	downloadDialog->setCategory( "kopete/chatstyle" );
 	// you have to do this by hand when providing your own Engine
 	KNS::ProviderLoader *provider = new KNS::ProviderLoader( this );
 	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );

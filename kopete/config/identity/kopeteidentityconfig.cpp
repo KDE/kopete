@@ -72,10 +72,9 @@
 class KopeteIdentityConfig::Private
 {
 public:
-	Private() : m_view(0L), myself(0L), currentIdentity(0L), selectedIdentity("")
+	Private() : myself(0L), currentIdentity(0L), selectedIdentity("")
 	{}
 
-	QWidget *m_view;
 	Kopete::MetaContact *myself;
 	Kopete::MetaContact *currentIdentity;
 	
@@ -90,13 +89,10 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 : KCModule( KopeteIdentityConfigFactory::instance(), parent, args)
 {
 	d = new Private;
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	d->m_view = new QWidget( this );
-	d->m_view->setObjectName( "KopeteIdentityConfig::m_view" );
-	setupUi(d->m_view);
-	
+	setupUi( this );
+
 	// Setup KConfigXT link with GUI.
-	addConfig( Kopete::GeneralSettings::self(), d->m_view );
+	addConfig( Kopete::GeneralSettings::self(), this );
 
 	// Load config
 	KopeteIdentityConfigPreferences::self()->readConfig();
@@ -383,7 +379,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 			photo = Kopete::photoFromContact(selectedNameSourceContact());
 			break;
 		case Kopete::MetaContact::SourceCustom:
-			photo = QImage(comboPhotoURL->url());
+			photo = QImage(comboPhotoURL->url().toString());
 			break;
 	}
 
