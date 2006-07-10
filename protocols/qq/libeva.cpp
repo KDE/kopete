@@ -3,9 +3,6 @@
 #include "crypt.h"
 #include <arpa/inet.h>
 
-// FIXME: remove me after debug.
-#include <stdio.h>
-
 namespace Eva {
 	static const char login_16_51 [] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -97,31 +94,11 @@ namespace Eva {
 	inline void decrypt64( unsigned char* crypt, unsigned char* crypt_pre, 
 			unsigned char* key, unsigned char* decrypted)
 	{
-		fprintf( stderr, "decrypt64 entry \n" );
-		fprintf( stderr, "crypt = :" );
-		for( int i = 0; i< 8; i++ )
-			fprintf( stderr, "%x ", crypt[i] );
-		fprintf( stderr, "\n" );
-
-		fprintf( stderr, "crypt_pre = :" );
-		for( int i = 0; i< 8; i++ )
-			fprintf( stderr, "%x ", crypt_pre[i] );
-		fprintf( stderr, "\n" );
-
-		fprintf( stderr, "decrypted = :" );
-		for( int i = 0; i< 8; i++ )
-			fprintf( stderr, "%x ", decrypted[i] );
-		fprintf( stderr, "\n" );
-
 		for( int i = 0; i< 8; i++ )
 			decrypted[i] ^= crypt[i];
 
 		TEA::decipher( (unsigned int*) decrypted,
 				(unsigned int*) key, (unsigned int*) decrypted );
-		fprintf( stderr, "END decrypted = :" );
-		for( int i = 0; i< 8; i++ )
-			fprintf( stderr, "%x ", decrypted[i] );
-		fprintf( stderr, "\n" );
 	}
 
 	
@@ -227,12 +204,10 @@ namespace Eva {
 				(unsigned int*) key.data(), (unsigned int*) decrypted );
 		pos = decrypted[0] & 0x7;
 		len = code.size() - pos - 10;
-		fprintf( stderr, "pos = %d, len = %d\n", pos, len );
 		if( len < 0 )
 			return ByteArray(0);
 
 		ByteArray text(len);
-		text.setSize(len);
 		memset( m, 0, 8 );
 		crypt_pre = m;
 		crypt = (unsigned char*)code.data() + 8;
@@ -252,15 +227,12 @@ namespace Eva {
 				break;
 			}
 		}
-		outp = text.data();
-		while( len > 0 )
+		for( i = 0; i< len; i++ )
 		{
 			if( pos < 8 )
 			{
-				*outp = crypt_pre[pos] ^ decrypted[pos];
-				outp ++;
+				text += crypt_pre[pos] ^ decrypted[pos];
 				pos ++;
-				len --;
 			}
 			if( pos == 8 )
 			{
@@ -310,11 +282,6 @@ namespace Eva {
 		ByteArray login(LoginLength);
 		ByteArray data(MaxPacketLength);
 		ByteArray initKey( (char*)init_key, 16 );
-		// dump initKey 
-		fprintf( stderr, "dump initKey : " );
-		for( int i = 0; i< initKey.size(); i++ )
-			fprintf( stderr, "%x ", initKey.data()[i] );
-		fprintf( stderr, "\n");
 
 		ByteArray nil(0);
 		login += encrypt( nil, key );

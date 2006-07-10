@@ -159,7 +159,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			// text = Eva::decrypt( packet.body(), m_passwordKey );
 			text = Eva::decrypt( test, m_passwordKey );
 			
-			kDebug( 14140 ) << "text = " <<
+			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
 				QByteArray( text.data(), text.size() ) << endl;
 			break;
 
