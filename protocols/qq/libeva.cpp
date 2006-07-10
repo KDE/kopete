@@ -219,30 +219,33 @@ namespace Eva {
 
 		ByteArray text(len);
 		memset( m, 0, 8 );
-		crypt_pre = m;
 		crypt = (unsigned char*)code.data() + 8;
+		crypt_pre = m;
 		pos ++;
 
-		for( i = 0; i< 2; i++ )
+		for( i = 0; i< 2; )
 		{
 			if( pos < 8 )
+			{
 				pos ++;
+				i++;
+			}
 			if( pos == 8 )
 			{
-				crypt_pre = crypt - 8;
+				crypt_pre = (unsigned char*) code.data();
 				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), 
 						decrypted ); 
 				crypt += 8;
 				pos = 0;
-				break;
 			}
 		}
-		for( i = 0; i< len; i++ )
+		for( i = 0; i< len;  )
 		{
 			if( pos < 8 )
 			{
-				text += crypt_pre[pos] ^ decrypted[pos];
+				text += (char) (crypt_pre[pos] ^ decrypted[pos]);
 				pos ++;
+				i ++;
 			}
 			if( pos == 8 )
 			{
@@ -255,20 +258,17 @@ namespace Eva {
 		
 		for( i = 0; i< 7; i++ )
 		{
+			if( pos < 8 )
+			{
+				if( crypt_pre[pos] ^ decrypted[pos] )
+					return ByteArray(0);
+				pos ++;
+			}
 			if( pos == 8 )
 			{
 				crypt_pre = crypt;
 				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted );
 				break;
-			}
-			else
-			{
-				if( crypt[pos] ^ decrypted[pos] )
-				{
-					fprintf( stderr, "!!!!!decrypt fail, return 0 \n" );
-					return ByteArray(0);
-				}
-				pos ++;
 			}
 				
 		}
