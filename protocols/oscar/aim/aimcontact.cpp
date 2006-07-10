@@ -22,7 +22,7 @@
 #include <qtextcodec.h>
 
 #include <kapplication.h>
-#include <kactionclasses.h>
+
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>

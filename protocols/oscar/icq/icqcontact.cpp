@@ -22,7 +22,7 @@
 #include <qfile.h>
 
 #include <kaction.h>
-#include <kactionclasses.h>
+
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
