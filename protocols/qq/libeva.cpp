@@ -3,6 +3,8 @@
 #include "crypt.h"
 #include <arpa/inet.h>
 
+#include <stdio.h>
+
 namespace Eva {
 	static const char login_16_51 [] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -28,10 +30,14 @@ namespace Eva {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00 };
-	static const char init_key[] = {
+	const char init_key[] = {
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
 
+	const char* getInitKey() 
+	{
+		return init_key;
+	}
 
 
 	ByteArray header( int id, short const command, short const sequence )
@@ -99,6 +105,10 @@ namespace Eva {
 
 		TEA::decipher( (unsigned int*) decrypted,
 				(unsigned int*) key, (unsigned int*) decrypted );
+		fprintf( stderr, "decrypt64 : " );
+		for( int i = 0; i< 8; i++ )
+			fprintf( stderr, "%x ", decrypted[i] );
+		fprintf( stderr, "\n" );
 	}
 
 	
@@ -254,7 +264,10 @@ namespace Eva {
 			else
 			{
 				if( crypt[pos] ^ decrypted[pos] )
+				{
+					fprintf( stderr, "!!!!!decrypt fail, return 0 \n" );
 					return ByteArray(0);
+				}
 				pos ++;
 			}
 				

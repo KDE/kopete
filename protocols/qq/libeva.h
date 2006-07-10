@@ -210,6 +210,7 @@ namespace Eva {
 	ByteArray loginToken( const ByteArray& buffer );
 	ByteArray QQHash( const ByteArray& text );
 	ByteArray decrypt( const ByteArray& code, const ByteArray& key );
+	const char* getInitKey();
 
 
 };

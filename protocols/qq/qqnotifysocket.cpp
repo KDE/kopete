@@ -132,6 +132,9 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 	Eva::ByteArray test( login_test, 24);
 	test.release();
 
+	Eva::ByteArray initKey((char*) Eva::getInitKey(), 16 );
+	initKey.release();
+
 	switch( packet.command() )
 	{
 		case Eva::Logout :
@@ -158,6 +161,11 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 				QByteArray( test.data(), test.size() ) << endl;
 			// text = Eva::decrypt( packet.body(), m_passwordKey );
 			text = Eva::decrypt( test, m_passwordKey );
+			if ( text.size() == 0 )
+			{
+			kDebug( 14140 ) << "initKey size = " << initKey.size() << ", data =" << QByteArray( initKey.data(), initKey.size() ) << endl;
+				text = Eva::decrypt( test, initKey );
+			}
 			
 			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
 				QByteArray( text.data(), text.size() ) << endl;
