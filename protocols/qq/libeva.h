@@ -6,14 +6,46 @@
 #include <arpa/inet.h>
 
 namespace Eva {
+	// magic number used in the packet
 	short const Version = 0x0F15;
 	char const Head = 0x02;
 	char const Tail = 0x03;
 
-	short const RequestLoginToken = 0x0062;
-	char const LoginTokenOK = 0x00;
-
+	// command
+	short const Logout = 0x0001;
+	short const KeepAlive = 0x0002;
+	short const UpdateInfo = 0x0004;
+	short const Search = 0x0005;
+	short const UserInfo = 0x0006;
+	short const AddFriend = 0x0009;
+	short const RemoveFriend = 0x000A;
+	short const AuthInvite = 0x000B;
+	short const ChangeStatus = 0x000D;
+	short const AckSysMsg = 0x0012;
+	short const SendMsg = 0x0016;
+	short const ReceiveMsg = 0x0017;
+	short const RemoveMe = 0x001C;
+	short const RequestKey = 0x001D;
+	short const GetCell = 0x0021;
 	short const Login = 0x0022;
+	short const BuddyList = 0x0026;
+	short const BuddyOnline = 0x0027;
+	short const GetCell2 = 0x0029;
+	short const SIP = 0x0030; // Special Interest Group == Qun( in Chinese )
+	short const Test = 0x0031;
+	short const UpdateGroup = 0x003C;
+	short const UploadGroup = 0x003D;
+	short const Memo = 0x003E;
+	short const DownloadGroup = 0x0058;
+	short const GetLevel = 0x005C;
+	short const RequestLoginToken = 0x0062;
+	short const ExtraInfo = 0x0065;
+	short const Signature = 0x0067;
+	short const ReceiveSysMsg = 0x0080;
+	short const FriendStausChange = 0x0081;
+
+	// reply
+	char const LoginTokenOK = 0x00;
 	char const LoginOK = 0x00;
 
 	int const MaxPacketLength = 65535;
@@ -177,6 +209,7 @@ namespace Eva {
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
 	ByteArray QQHash( const ByteArray& text );
+	ByteArray decrypt( const ByteArray& code, const ByteArray& key );
 
 
 };

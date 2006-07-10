@@ -125,19 +125,70 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 {
 	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
 	Eva::Packet packet( rawdata.data(), rawdata.size() );
+	Eva::ByteArray text;
+	
+	char login_test[] = {0x24, 0xbb, 0x20, 0xd0, 0x79, 0x35, 0x30, 0xeb, 0xa0, 0x11, 0x8e, 0xda, 0xe6, 0x55, 0x1, 0x0, 0xc5, 0xc5, 0x9c, 0x60, 0xd3, 0xa4, 0xd9, 0x5a };
+		
+	Eva::ByteArray test( login_test, 24);
+	test.release();
 
 	switch( packet.command() )
 	{
-		case Eva::RequestLoginToken:
-			m_token = Eva::loginToken( packet.body() );
+		case Eva::Logout :
+		case Eva::KeepAlive :
+		case Eva::UpdateInfo :
+		case Eva::Search :
+		case Eva::UserInfo :
+		case Eva::AddFriend :
+		case Eva::RemoveFriend :
+		case Eva::AuthInvite :
+		case Eva::ChangeStatus :
+		case Eva::AckSysMsg :
+		case Eva::SendMsg :
+		case Eva::ReceiveMsg :
+		case Eva::RemoveMe :
+		case Eva::RequestKey :
+		case Eva::GetCell :
+		case Eva::Login :
+			//kDebug( 14140 ) << packet.command() << ": crypted body = " <<
+			//	QByteArray( packet.body().data(), packet.body().size() ) << endl;
+			// insert the testing:
 
-			QByteArray tmp( m_token.data(), m_token.size() );
-			kDebug( 14140 ) << packet.command() << ": token = " << tmp << endl;
+			kDebug( 14140 ) << packet.command() << ": crypted body = " <<
+				QByteArray( test.data(), test.size() ) << endl;
+			// text = Eva::decrypt( packet.body(), m_passwordKey );
+			text = Eva::decrypt( test, m_passwordKey );
+			
+			kDebug( 14140 ) << "text = " <<
+				QByteArray( text.data(), text.size() ) << endl;
+			break;
+
+		case Eva::BuddyList :
+		case Eva::BuddyOnline :
+		case Eva::GetCell2 :
+		case Eva::SIP :
+		case Eva::Test :
+		case Eva::UpdateGroup :
+		case Eva::UploadGroup :
+		case Eva::Memo :
+		case Eva::DownloadGroup :
+		case Eva::GetLevel :
+		case Eva::RequestLoginToken :
+			m_token = Eva::loginToken( packet.body() );
+			
+			kDebug( 14140 ) << packet.command() << ": token = " << 
+				QByteArray ( m_token.data(), m_token.size() ) << endl;
 
 			sendLogin();
 			break;
 
-		case Eva::Login :
+		case Eva::ExtraInfo :
+		case Eva::Signature :
+		case Eva::ReceiveSysMsg :
+		case Eva::FriendStausChange :
+
+		default:
+			break;
 
 	}
 }
