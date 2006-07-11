@@ -771,9 +771,14 @@
         <description>The Open and Free Technology Community</description>
         <servers>
             <server>
-                <host>irc.debian.org</host>
+                <host>irc.oftc.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>ircs.oftc.org</host>
+                <port>9999</port>
+                <useSSL>true</useSSL>
             </server>
         </servers>
     </network>
