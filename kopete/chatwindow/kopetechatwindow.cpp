@@ -61,7 +61,7 @@
 #include <kstdaction.h>
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
-#include <k3widgetaction.h>
+// #include <k3widgetaction.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -442,8 +442,8 @@ void KopeteChatWindow::initActions(void)
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
 
-
-	new K3WidgetAction( anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
+	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll, "toolbar_animation" );
+	animAction->setDefaultWidget( anim );
 
 	//toolBar()->insertWidget( 99, anim->width(), anim );
 	//toolBar()->alignItemRight( 99 );

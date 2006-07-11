@@ -20,7 +20,7 @@
 
 #include <kdeversion.h>
 
-#include <kaction.h>
+#include <kselectaction.h>
 
 #include "kopete_export.h"
 

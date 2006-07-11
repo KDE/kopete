@@ -34,6 +34,7 @@
 #include <krandom.h>
 #include <kcodecs.h>
 #include <kstandarddirs.h>
+#include <ktoggleaction.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"

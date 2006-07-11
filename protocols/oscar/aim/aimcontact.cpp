@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <krandom.h>
+#include <ktoggleaction.h>
 
 #include "kopeteaway.h"
 #include "kopetechatsession.h"

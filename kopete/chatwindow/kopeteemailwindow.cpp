@@ -32,7 +32,6 @@
 
 #include <kaction.h>
 #include <kstdaction.h>
-#include <k3widgetaction.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -264,7 +263,9 @@ void KopeteEmailWindow::initActions(void)
 	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
-	new K3WidgetAction( d->anim, i18n("Toolbar Animation"), 0, 0, 0, coll, "toolbar_animation" );
+	
+	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll, "toolbar_animation" );
+	animAction->setDefaultWidget( d->anim );
 
 	setXMLFile( QString::fromLatin1( "kopeteemailwindow.rc" ) );
 	createGUI( d->editPart );

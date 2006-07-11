@@ -25,7 +25,6 @@
 #include <QPixmap>
 
 #include <kaction.h>
-#include <k3widgetaction.h>
 #include <kstdaction.h>
 #include <kactionmenu.h>
 #include <kconfig.h>
@@ -106,7 +105,10 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L );
-		new K3WidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
+		KAction *imageAction = new KAction( i18n( "MSN Display Picture" ), actionCollection(), "msnDisplayPicture" );
+		imageAction->setDefaultWidget( m_image );
+		connect( imageAction, SIGNAL( triggered() ), this, SLOT( slotRequestPicture() ) );
+
 		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 		{
 			//if the view doesn't exist yet, we will be unable to get the size of the toolbar

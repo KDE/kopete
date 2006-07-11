@@ -22,6 +22,7 @@
 #include <kfileitem.h>
 #include <kmessagebox.h>
 #include <kio/observer.h>
+#include <kio/jobuidelegate.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -74,7 +75,7 @@ void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 
 	connect( this, SIGNAL( result( KJob* ) ), SLOT( slotResultEmitted() ) );
 
-	setAutoErrorHandlingEnabled( true, 0 );
+	ui()->setAutoErrorHandlingEnabled( true );
 }
 
 Kopete::Transfer::~Transfer()

@@ -38,7 +38,7 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kstdaction.h>
-#include <k3widgetaction.h>
+#include <ktoggleaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobalaccel.h>

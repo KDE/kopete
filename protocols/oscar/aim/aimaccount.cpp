@@ -23,6 +23,7 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <kcodecs.h>
+#include <ktoggleaction.h>
 
 #include "kopeteawayaction.h"
 #include "kopetepassword.h"
