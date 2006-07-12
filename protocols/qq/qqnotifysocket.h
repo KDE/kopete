@@ -92,6 +92,7 @@ protected:
 	// QQ operations
 	void sendLoginTokenRequest(); 
 	void sendLogin(); 
+	void sendBuddyList();
 	void sendGoodbye() { return; }
 
 private:

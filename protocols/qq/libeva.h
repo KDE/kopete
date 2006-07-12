@@ -51,14 +51,18 @@ namespace Eva {
 	char const LoginWrongPassword = 0x05;
 	char const LoginMiscError = 0x06;
 
+	// Lengths
 	int const MaxPacketLength = 65535;
 	int const HeaderLength = 13;
 	int const KeyLength = 16;
 	int const Md5KeyLength = 16;
 	int const LoginLength = 416;
 
+	// Options
 	const char NormalLogin = 0x0A;
 	const char InvisibleLogin = 0x28;
+	const char BuddyListSorted = 0x01;
+	const char BuddyListUnsorted = 0x00;
 
 
 	// Customized max to get rid of stl dependence
@@ -242,6 +246,7 @@ namespace Eva {
 	ByteArray requestLoginToken( int id, short const sequence );
 	ByteArray login( int id, short const sequence, const ByteArray& key, 
 			const ByteArray& token, char const loginMode );
+	ByteArray buddyList( int id, short const sequence, const ByteArray& sessionKey, short pos = 0);
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );

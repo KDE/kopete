@@ -187,6 +187,8 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
 					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
 					// TODO: set the client status to connected.
+					sendBuddyList();
+
 					
 					break;
 
@@ -212,6 +214,18 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 
 		case Eva::BuddyList :
+			text = Eva::decrypt( packet.body(), m_sessionKey );
+			if ( text.size() == 0 )
+				text = Eva::decrypt( packet.body(), m_passwordKey );
+			
+			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
+				QByteArray( text.data(), text.size() ) << endl;
+			kDebug( 14140 ) << "pos = " << ntohs( Eva::type_cast<short> (text.data() )) << endl;
+			kDebug( 14140 ) << "qqId = " << ntohs( Eva::type_cast<int> (text.data()+2 )) << endl;
+			break;
+
+
+
 		case Eva::BuddyOnline :
 		case Eva::GetCell2 :
 		case Eva::SIP :
@@ -220,7 +234,10 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::UploadGroup :
 		case Eva::Memo :
 		case Eva::DownloadGroup :
+			break;
 		case Eva::GetLevel :
+			break;
+
 		case Eva::RequestLoginToken :
 			m_token = Eva::loginToken( packet.body() );
 			
@@ -241,7 +258,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 	}
 }
 
-
+// FIXME: Refactor us !!
 void QQNotifySocket::sendLoginTokenRequest()
 {
 	kDebug( 14140 ) << k_funcinfo << endl;
@@ -256,6 +273,12 @@ void QQNotifySocket::sendLogin()
 				m_token, m_loginMode );
 	m_lastCmd = Login;
 	sendPacket( QByteArray( data.data(), data.size()) );
+}
+
+void QQNotifySocket::sendBuddyList()
+{
+	Eva::ByteArray packet = Eva::buddyList( m_qqId, m_id++, m_sessionKey );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
 
 

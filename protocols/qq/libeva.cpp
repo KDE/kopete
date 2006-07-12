@@ -318,6 +318,30 @@ namespace Eva {
 		return data;
 	}
 
+	ByteArray buddyList( int id, short const sequence, const ByteArray& sessionKey, short pos )
+	{
+		ByteArray text(5);
+		ByteArray packet(MaxPacketLength);
+
+		text += pos;
+		// FIXME: DO not use hardcoded sort/unsorted.
+		text += BuddyListSorted;
+		text += '\0';
+		text += '\1';
+
+		// FIXME: need to refactor here ?
+		packet += header( id, BuddyList, sequence );
+		packet += encrypt( text, sessionKey );
+		packet += Tail;
+		setLength( packet );
+
+		return packet;
+	}
+
+
+
+
+
 		
 		
 }
