@@ -137,14 +137,11 @@ namespace Eva {
 			copyAt( m_size, d, s );
 		}
 
-		void duplicate( const char* d, int s )
+		static ByteArray duplicate( const char* d, int s )
 		{
-			if( m_itsOwn )
-				free( m_data );
-			m_data = (char*)malloc(s);
-			memcpy( m_data, d, s );
-			m_size = m_capacity = s;
-			m_itsOwn = true;
+			ByteArray x(s);
+			x.append( d, s );
+			return x;
 		}
 
         int size() const { return m_size; }
@@ -194,7 +191,7 @@ namespace Eva {
 			pos += 2;
 
 			int len = size - pos - 1; // 1 is tail
-			m_body.duplicate( buffer+pos, len );
+			m_body = ByteArray::duplicate( buffer+pos, len );
 		}
 
 		short version() const { return m_version; }
@@ -203,9 +200,36 @@ namespace Eva {
 		ByteArray& body() { return m_body; }
 
 		static inline char replyCode( ByteArray& data ) { return data.data()[0]; }
-		static inline int redirectedIP( ByteArray& data ) { return ntohl( type_cast<int> (data.data()+5) ); }
-		static inline int redirectedPort( ByteArray& data ) { return ntohs( type_cast<short> (data.data()+9) ); }
 
+		static inline int redirectedIP( ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+5) ); }
+
+		static inline int redirectedPort( ByteArray& data ) 
+		{ return ntohs( type_cast<short> (data.data()+9) ); }
+
+		static inline ByteArray sessionKey( ByteArray& data ) 
+		{ return ByteArray::duplicate( data.data()+1, KeyLength ); }
+
+		static inline int remoteIP( ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+27) ); }
+
+		static inline int remotePort( ByteArray& data ) 
+		{ return ntohs( type_cast<short> (data.data()+31) ); }
+
+		static inline int localIP( ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+21) ); }
+
+		static inline int localPort( ByteArray& data ) 
+		{ return ntohs( type_cast<short> (data.data()+25) ); }
+
+		static inline int loginTime( ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+33) ); }
+
+		static inline int lastLoginFrom( ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+123) ); }
+
+		static inline int lastLoginTime( ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+127) ); }
 
 	private:
 		short m_version;

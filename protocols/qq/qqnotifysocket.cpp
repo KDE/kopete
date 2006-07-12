@@ -135,18 +135,13 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
 	Eva::Packet packet( rawdata.data(), rawdata.size() );
 	Eva::ByteArray text;
-	
-	char login_test[] = {
-		0x1, 0xdf, 0x25, 0xd2, 0x9e, 0xdb, 0x9, 0xef, 0xd4, 0xf1, 0x12, 0x8f, 0x61, 0x21, 0x63, 0x68, 0x37, 0xed, 0x88, 0x36, 0x3, 0xb2, 0x6c, 0x44 };
-		
-	Eva::ByteArray test( login_test, 24);
-	test.release();
 
 	Eva::ByteArray initKey((char*) Eva::getInitKey(), 16 );
 	initKey.release();
 
 	switch( packet.command() )
 	{
+		// FIXME: use table-driven pattern ?
 		case Eva::Logout :
 		case Eva::KeepAlive :
 		case Eva::UpdateInfo :
@@ -162,19 +157,14 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::RemoveMe :
 		case Eva::RequestKey :
 		case Eva::GetCell :
-		case Eva::Login :
-			//kDebug( 14140 ) << packet.command() << ": crypted body = " <<
-			//	QByteArray( packet.body().data(), packet.body().size() ) << endl;
-			// insert the testing:
+			break;
 
-			kDebug( 14140 ) << packet.command() << ": crypted body = " <<
-				QByteArray( test.data(), test.size() ) << endl;
-			// text = Eva::decrypt( packet.body(), m_passwordKey );
-			text = Eva::decrypt( test, m_passwordKey );
+		case Eva::Login :
+			text = Eva::decrypt( packet.body(), m_passwordKey );
 			if ( text.size() == 0 )
 			{
 			kDebug( 14140 ) << "initKey size = " << initKey.size() << ", data =" << QByteArray( initKey.data(), initKey.size() ) << endl;
-				text = Eva::decrypt( test, initKey );
+				text = Eva::decrypt( packet.body(), initKey );
 			}
 			
 			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
@@ -183,10 +173,24 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			switch( Eva::Packet::replyCode(text)  )
 			{
 				case Eva::LoginOK:
+					kDebug( 14140 ) << "Bingo! QQ:#" << m_qqId << " logged in!" << endl;
+					// show off some meta data :
+					m_sessionKey = Eva::Packet::sessionKey(text);
+					kDebug( 14140 ) << "sessionKey = " << 
+						QByteArray( m_sessionKey.data(), m_sessionKey.size() ) << endl;
+
+					kDebug( 14140 )  << "remote IP: " << QHostAddress( Eva::Packet::remoteIP(text) ).toString() << endl;
+					kDebug( 14140 )  << "remote port: " << Eva::Packet::remotePort(text) << endl;
+					kDebug( 14140 )  << "local IP: " << QHostAddress( Eva::Packet::localIP(text) ).toString() << endl;
+					kDebug( 14140 )  << "local port: " << Eva::Packet::localPort(text) << endl;
+					kDebug( 14140 )  << "login time: " << Eva::Packet::loginTime(text) << endl;
+					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
+					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
+					// TODO: set the client status to connected.
+					
 					break;
 
 				case Eva::LoginRedirect :
-					// TODO: do we need to call htonl ?
 					kDebug( 14140 ) << "Redirect to " 
 						<< QHostAddress(Eva::Packet::redirectedIP(text)).toString()
 						<< " : " << Eva::Packet::redirectedPort(text) << endl;

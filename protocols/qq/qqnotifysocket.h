@@ -107,6 +107,7 @@ private:
 	 * Twice Md5 hashed password
 	 */
 	Eva::ByteArray m_passwordKey;
+	Eva::ByteArray m_sessionKey;
 	char m_loginMode;
 	// FIXME: Do we need this ?
 	QString m_password;
