@@ -96,10 +96,15 @@ void QQSocket::connect( const QString &server, uint port )
 
 void QQSocket::disconnect()
 {
+	kDebug(14140) << k_funcinfo << endl;
 	if ( m_socket )
-		m_socket->close();
+	{
+		m_socket->closeNow();
+		setOnlineStatus( Disconnecting );
+	}
 	else
 		slotSocketClosed();
+
 }
 
 void QQSocket::aboutToConnect()

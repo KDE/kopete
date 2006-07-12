@@ -47,6 +47,9 @@ namespace Eva {
 	// reply
 	char const LoginTokenOK = 0x00;
 	char const LoginOK = 0x00;
+	char const LoginRedirect = 0x01;
+	char const LoginWrongPassword = 0x05;
+	char const LoginMiscError = 0x06;
 
 	int const MaxPacketLength = 65535;
 	int const HeaderLength = 13;
@@ -164,6 +167,11 @@ namespace Eva {
         sum += r;
         return sum;
     }
+   
+	template<class T> inline T type_cast(char* buffer)
+	{
+		return (* (T*) buffer );
+	}
 
 	/** 
 	 * normalized QQ packet
@@ -193,6 +201,11 @@ namespace Eva {
 		short command() const { return m_command; }
 		short sequence() const { return m_sequence; }
 		ByteArray& body() { return m_body; }
+
+		static inline char replyCode( ByteArray& data ) { return data.data()[0]; }
+		static inline int redirectedIP( ByteArray& data ) { return ntohl( type_cast<int> (data.data()+5) ); }
+		static inline int redirectedPort( ByteArray& data ) { return ntohs( type_cast<short> (data.data()+9) ); }
+
 
 	private:
 		short m_version;

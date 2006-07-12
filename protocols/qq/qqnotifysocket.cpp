@@ -45,6 +45,7 @@
 #include <qfile.h>
 #include <kconfig.h>
 #include <knotification.h>
+#include <QHostAddress>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
@@ -81,13 +82,21 @@ QQNotifySocket::~QQNotifySocket()
 
 void QQNotifySocket::doneConnect()
 {
+	// setup the status first
+	QQSocket::doneConnect();
+
 	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
-	sendLoginTokenRequest();
+	if( m_token.size() )
+		sendLogin();
+	else
+		sendLoginTokenRequest();
 }
 
 
 void QQNotifySocket::disconnect()
 {
+	kDebug(14140) << k_funcinfo << "online status =" <<
+		onlineStatus() << endl;
 	// FIXME: double check the logic, please.
 	if(	m_disconnectReason==Kopete::Account::Unknown )
 		m_disconnectReason=Kopete::Account::Manual;
@@ -170,6 +179,32 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			
 			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
 				QByteArray( text.data(), text.size() ) << endl;
+
+			switch( Eva::Packet::replyCode(text)  )
+			{
+				case Eva::LoginOK:
+					break;
+
+				case Eva::LoginRedirect :
+					// TODO: do we need to call htonl ?
+					kDebug( 14140 ) << "Redirect to " 
+						<< QHostAddress(Eva::Packet::redirectedIP(text)).toString()
+						<< " : " << Eva::Packet::redirectedPort(text) << endl;
+					disconnect();
+					connect( QHostAddress( Eva::Packet::redirectedIP(text) ).toString(), Eva::Packet::redirectedPort(text) );
+					break;
+
+				case Eva::LoginWrongPassword :
+					break;
+
+				case Eva::LoginMiscError :
+					break;
+
+				default:
+					kDebug( 14140 ) << "Bad, we are not supposed to be here !" << endl;
+					break;
+			}
+
 			break;
 
 		case Eva::BuddyList :
