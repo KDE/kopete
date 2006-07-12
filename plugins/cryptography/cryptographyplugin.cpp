@@ -169,26 +169,27 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 	
 	if ( mShowNotice ) {
 		Kopete::ChatSession *manager = msg.manager();
-		if ( !manager )
-			return;
-		KopeteView *view = manager->view();
-		
-		if ( m_lastSeenEncrypted[manager] && !isEncrypted ) {
-			Kopete::Message m( NULL, QPtrList<Kopete::Contact>(), 
-					   i18n("Leaving encrypted mode"),
-					   Kopete::Message::Internal );
-			view->appendMessage( m );
-			m_lastSeenEncrypted[manager] = false;
-		} else if ( !m_lastSeenEncrypted[manager] && isEncrypted ) {
-			Kopete::Message m( NULL, QPtrList<Kopete::Contact>(), 
-					   i18n("Entering encrypted mode"),
-					   Kopete::Message::Internal );
-			view->appendMessage( m );
-			m_lastSeenEncrypted[manager] = true;
+		if ( manager ) {
+			KopeteView *view = manager->view();
+			if ( view ) {
+				if ( m_lastSeenEncrypted[manager] && !isEncrypted ) {
+					Kopete::Message m( manager->myself(), QPtrList<Kopete::Contact>(), 
+							   i18n("Leaving encrypted mode"),
+							   Kopete::Message::Internal );
+					view->appendMessage( m );
+					m_lastSeenEncrypted[manager] = false;
+				} else if ( !m_lastSeenEncrypted[manager] && isEncrypted ) {
+					Kopete::Message m( manager->myself(), QPtrList<Kopete::Contact>(), 
+							   i18n("Entering encrypted mode"),
+							   Kopete::Message::Internal );
+					view->appendMessage( m );
+					m_lastSeenEncrypted[manager] = true;
+				}
+			}
 		}
-        }
-        if ( !isEncrypted )
-        	return;
+	}
+	if ( !isEncrypted )
+		return;
 
 	QString styleAttribute = "";
 	if ( mChangeBg ) {
