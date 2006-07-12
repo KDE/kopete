@@ -110,7 +110,7 @@ void ICQAddContactPage::showSearchDialog()
 	{
 		m_searchDialog = new ICQSearchDialog( mAccount, this );
 		m_searchDialog->show();
-		connect( m_searchDialog, SIGNAL( closeClicked() ), this, SLOT( searchDialogDestroyed() ) );
+		connect( m_searchDialog, SIGNAL( finished() ), this, SLOT( searchDialogDestroyed() ) );
 	}
 }
 

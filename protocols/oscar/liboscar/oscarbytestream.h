@@ -24,6 +24,7 @@
 #include <kbufferedsocket.h>
 
 #include "bytestream.h"
+#include <QTcpSocket>
 
 
 /**
@@ -45,7 +46,7 @@ public:
 	virtual bool isOpen () const;
 	virtual void close ();
 
-	KNetwork::KBufferedSocket *socket () const;
+	QTcpSocket *socket () const;
 
 signals:
 	void connected ();
@@ -58,10 +59,10 @@ private slots:
 	void slotConnectionClosed ();
 	void slotReadyRead ();
 	void slotBytesWritten ( qint64 );
-	void slotError ( int );
+	void slotError ( QAbstractSocket::SocketError );
 
 private:
-	KNetwork::KBufferedSocket *mSocket;
+	QTcpSocket *mSocket;
 	bool mClosing;
 
 };

@@ -270,7 +270,7 @@ void ICQSearchDialog::closeDialog()
 	clearResults();
 	clearFields();
 
-	closeClicked();
+	slotButtonClicked(KDialog::Close);
 }
 
 void ICQSearchDialog::resultRowChanged( const QModelIndex & current )
