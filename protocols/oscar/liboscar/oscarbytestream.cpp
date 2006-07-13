@@ -32,15 +32,15 @@ KNetworkByteStream::KNetworkByteStream( QObject *parent )
 	// reset close tracking flag
 	mClosing = false;
 
-	mSocket = new QTcpSocket(); //KNetwork::KBufferedSocket;
+	mSocket = new KNetwork::KBufferedSocket;
 
 	// make sure we get a signal whenever there's data to be read
-// 	mSocket->enableRead( true );
+	mSocket->enableRead( true );
 
 	// connect signals and slots
-	QObject::connect( mSocket, SIGNAL ( error ( QAbstractSocket::SocketError) ), this, SLOT ( slotError ( QAbstractSocket::SocketError ) ) );
-	QObject::connect( mSocket, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
-	QObject::connect( mSocket, SIGNAL ( disconnected () ), this, SLOT ( slotConnectionClosed () ) );
+	QObject::connect( mSocket, SIGNAL ( gotError ( int ) ), this, SLOT ( slotError ( int ) ) );
+	QObject::connect( mSocket, SIGNAL ( connected ( const KNetwork::KResolverEntry& ) ), this, SLOT ( slotConnected () ) );
+	QObject::connect( mSocket, SIGNAL ( closed () ), this, SLOT ( slotConnectionClosed () ) );
 	QObject::connect( mSocket, SIGNAL ( readyRead () ), this, SLOT ( slotReadyRead () ) );
 	QObject::connect( mSocket, SIGNAL ( bytesWritten ( qint64 ) ), this, SLOT ( slotBytesWritten ( qint64 ) ) );
 }
@@ -49,8 +49,7 @@ bool KNetworkByteStream::connect( QString host, QString service )
 {
 	kDebug( 14151 ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
 
-	socket()->connectToHost( host, service.toInt( 0, 10) );
-	return true;
+	return socket()->connect( host, service );
 }
 
 bool KNetworkByteStream::isOpen() const
@@ -80,7 +79,7 @@ int KNetworkByteStream::tryWrite ()
 	return writeData.size();
 }
 
-QTcpSocket *KNetworkByteStream::socket() const
+KNetwork::KBufferedSocket *KNetworkByteStream::socket() const
 {
 	return mSocket;
 }
@@ -128,11 +127,11 @@ void KNetworkByteStream::slotBytesWritten( qint64 bytes )
 	emit bytesWritten( bytes );
 }
 
-void KNetworkByteStream::slotError( QAbstractSocket::SocketError code )
+void KNetworkByteStream::slotError( int code )
 {
 	kDebug( 14151 ) << k_funcinfo << "Socket error " << code << endl;
 
-	emit error( (int)code );
+	emit error( code );
 }
 
 #include "oscarbytestream.moc"
