@@ -131,7 +131,8 @@ void KNetworkByteStream::slotError( int code )
 {
 	kDebug( 14151 ) << k_funcinfo << "Socket error " << code << endl;
 
-	emit error( code );
+	if( KNetwork::KSocketBase::isFatalError( code ) )
+		emit error ( code );
 }
 
 #include "oscarbytestream.moc"
