@@ -92,8 +92,8 @@ PluginManager* PluginManager::self()
 
 PluginManager::PluginManager() : QObject( qApp ), d( new Private )
 {
-	d->plugins = KPluginInfo::fromServices( KServiceTypeTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-Kopete-Version] == 1000900" ) ) );
+	d->plugins = KPluginInfo::fromServices( KServiceTypeTrader::self()->query( QLatin1String( "Kopete/Plugin" ),
+		QLatin1String( "[X-Kopete-Version] == 1000900" ) ) );
 
 	// We want to add a reference to the application's event loop so we
 	// can remain in control when all windows are removed.
@@ -240,7 +240,7 @@ void PluginManager::slotShutdownTimeout()
 		remaining.append( it.value()->pluginId() );
 
 	kWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
-		<< "Remaining plugins: " << remaining.join( QString::fromLatin1( ", " ) ) << endl
+		<< "Remaining plugins: " << remaining.join( QLatin1String( ", " ) ) << endl
 		<< "Forcing Kopete shutdown now." << endl;
 
 	slotShutdownDone();
@@ -260,19 +260,19 @@ void PluginManager::loadAllPlugins()
 	// FIXME: We need session management here - Martijn
 
 	KConfig *config = KGlobal::config();
-	if ( config->hasGroup( QString::fromLatin1( "Plugins" ) ) )
+	if ( config->hasGroup( QLatin1String( "Plugins" ) ) )
 	{
-		QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
+		QMap<QString, QString> entries = config->entryMap( QLatin1String( "Plugins" ) );
 		QMap<QString, QString>::Iterator it;
 		for ( it = entries.begin(); it != entries.end(); ++it )
 		{
 			QString key = it.key();
-			if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
+			if ( key.endsWith( QLatin1String( "Enabled" ) ) )
 			{
 				key.resize( key.length() - 7 );
 				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value() << endl;
 	
-				if ( it.value() == QString::fromLatin1( "true" ) )
+				if ( it.value() == QLatin1String( "true" ) )
 				{
 					if ( !plugin( key ) )
 						d->pluginsToLoad.push( key );
@@ -333,10 +333,10 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 
 	// Try to find legacy code
 	// FIXME: Find any cases causing this, remove them, and remove this too - Richard
-	if ( pluginId.endsWith( QString::fromLatin1( ".desktop" ) ) )
+	if ( pluginId.endsWith( QLatin1String( ".desktop" ) ) )
 	{
 		kWarning( 14010 ) << "Trying to use old-style API!" << endl << kBacktrace() << endl;
-		pluginId = pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
+		pluginId = pluginId.remove( QRegExp( QLatin1String( ".desktop$" ) ) );
 	}
 
 	if ( mode == LoadSync )
@@ -366,7 +366,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		return d->loadedPlugins[ info ];
 
 	int error = 0;
-	Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QString::fromLatin1( "Kopete/Plugin" ),
+	Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QLatin1String( "Kopete/Plugin" ),
 		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QStringList(), &error );
 
 	if ( plugin )
@@ -461,8 +461,8 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 	// FIXME: In the future we'll need to change this nevertheless to unify
 	//        the handling - Martijn
 	QString pluginId = _pluginId;
-	if ( pluginId.endsWith( QString::fromLatin1( "Protocol" ) ) )
-		pluginId = QString::fromLatin1( "kopete_" ) + _pluginId.toLower().remove( QString::fromLatin1( "protocol" ) );
+	if ( pluginId.endsWith( QLatin1String( "Protocol" ) ) )
+		pluginId = QLatin1String( "kopete_" ) + _pluginId.toLower().remove( QString::fromLatin1( "protocol" ) );
 	// End hack
 
 	KPluginInfo *info = infoForPluginId( pluginId );
@@ -496,13 +496,13 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 	config->setGroup( "Plugins" );
 
 	// FIXME: What is this for? This sort of thing is kconf_update's job - Richard
-	if ( !pluginId.startsWith( QString::fromLatin1( "kopete_" ) ) )
-		pluginId.prepend( QString::fromLatin1( "kopete_" ) );
+	if ( !pluginId.startsWith( QLatin1String( "kopete_" ) ) )
+		pluginId.prepend( QLatin1String( "kopete_" ) );
 
 	if ( !infoForPluginId( pluginId ) )
 		return false;
 
-	config->writeEntry( pluginId + QString::fromLatin1( "Enabled" ), enabled );
+	config->writeEntry( pluginId + QLatin1String( "Enabled" ), enabled );
 	config->sync();
 
 	return true;

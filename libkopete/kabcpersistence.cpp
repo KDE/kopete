@@ -136,13 +136,13 @@ void KABCPersistence::write( MetaContact * mc )
 		for ( ; it != addressMap.end(); ++it )
 		{
 			// read existing data for this key
-			QString currentCustomForProtocol = theAddressee.custom( it.key(), QString::fromLatin1( "All" ) );
+			QString currentCustomForProtocol = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 			// merge without duplicating
 			QString toWrite = unionContents( currentCustomForProtocol, it.value().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
 			kDebug( 14010 ) << k_funcinfo << "Writing: " << it.key() << ", " << "All" << ", " << toWrite << endl;
-			theAddressee.insertCustom( it.key(), QString::fromLatin1( "All" ), toWrite );
-			QString check = theAddressee.custom( it.key(), QString::fromLatin1( "All" ) );
+			theAddressee.insertCustom( it.key(), QLatin1String( "All" ), toWrite );
+			QString check = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 		}
 		ab->insertAddressee( theAddressee );
 		//kDebug( 14010 ) << k_funcinfo << "dumping addressbook before write " << endl;
@@ -282,20 +282,20 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 			splitField( *it, app, name, value );
 			kDebug( 14010 ) << "app=" << app << " name=" << name << " value=" << value << endl;
 
-			if ( app.startsWith( QString::fromLatin1( "messaging/" ) ) )
+			if ( app.startsWith( QLatin1String( "messaging/" ) ) )
 			{
-				if ( name == QString::fromLatin1( "All" ) )
+				if ( name == QLatin1String( "All" ) )
 				{
 					kDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contactlist " << endl;
 					// Get the protocol name from the custom field
 					// by chopping the 'messaging/' prefix from the custom field app name
 					QString protocolName = app.right( app.length() - 10 );
 					// munge Jabber hack
-					if ( protocolName == QString::fromLatin1( "xmpp" ) )
-						protocolName = QString::fromLatin1( "jabber" );
+					if ( protocolName == QLatin1String( "xmpp" ) )
+						protocolName = QLatin1String( "jabber" );
 
 					// Check Kopete supports it
-					Protocol * proto = dynamic_cast<Protocol*>( PluginManager::self()->loadPlugin( QString::fromLatin1( "kopete_" ) + protocolName ) );
+					Protocol * proto = dynamic_cast<Protocol*>( PluginManager::self()->loadPlugin( QLatin1String( "kopete_" ) + protocolName ) );
 					if ( !proto )
 					{
 						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
@@ -347,7 +347,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 							// if not, prompt to add it
 							kDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add..." << endl;
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-									 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), i18n("Use"), i18n("Do Not Use"), QString::fromLatin1( "ImportFromKABC" ) ) )
+									 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), i18n("Use"), i18n("Do Not Use"), QLatin1String( "ImportFromKABC" ) ) )
 							{
 								// Check the accounts for this protocol are all connected
 								// Most protocols do not allow you to add contacts while offline

@@ -90,21 +90,21 @@ const QList<QDomElement> ContactListElement::toXML()
 {
 	QDomDocument pluginData;
 	QList<QDomElement> pluginNodes;
-	pluginData.appendChild( pluginData.createElement( QString::fromLatin1( "plugin-data" ) ) );
+	pluginData.appendChild( pluginData.createElement( QLatin1String( "plugin-data" ) ) );
 
 	if ( !d->pluginData.isEmpty() )
 	{
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
 		for ( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
 		{
-			QDomElement pluginElement = pluginData.createElement( QString::fromLatin1( "plugin-data" ) );
-			pluginElement.setAttribute( QString::fromLatin1( "plugin-id" ), pluginIt.key()  );
+			QDomElement pluginElement = pluginData.createElement( QLatin1String( "plugin-data" ) );
+			pluginElement.setAttribute( QLatin1String( "plugin-id" ), pluginIt.key()  );
 
 			QMap<QString, QString>::ConstIterator it;
 			for ( it = pluginIt.value().begin(); it != pluginIt.value().end(); ++it )
 			{
-				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1( "plugin-data-field" ) );
-				pluginDataField.setAttribute( QString::fromLatin1( "key" ), it.key()  );
+				QDomElement pluginDataField = pluginData.createElement( QLatin1String( "plugin-data-field" ) );
+				pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
 				pluginDataField.appendChild( pluginData.createTextNode(  it.value()  ) );
 				pluginElement.appendChild( pluginDataField );
 			}
@@ -115,39 +115,39 @@ const QList<QDomElement> ContactListElement::toXML()
 	}
 	if ( !d->icons.isEmpty() )
 	{
-		QDomElement iconsElement = pluginData.createElement( QString::fromLatin1( "custom-icons" ) );
-		iconsElement.setAttribute( QString::fromLatin1( "use" ), d->useCustomIcon ?  QString::fromLatin1( "1" ) : QString::fromLatin1( "0" ) );
+		QDomElement iconsElement = pluginData.createElement( QLatin1String( "custom-icons" ) );
+		iconsElement.setAttribute( QLatin1String( "use" ), d->useCustomIcon ?  QLatin1String( "1" ) : QLatin1String( "0" ) );
 
 		for ( QMap<IconState, QString >::ConstIterator it = d->icons.begin(); it != d->icons.end(); ++it )
 		{
-			QDomElement iconElement = pluginData.createElement( QString::fromLatin1( "icon" ) );
+			QDomElement iconElement = pluginData.createElement( QLatin1String( "icon" ) );
 			QString stateStr;
 			switch ( it.key() )
 			{
 			case Open:
-				stateStr = QString::fromLatin1( "open" );
+				stateStr = QLatin1String( "open" );
 				break;
 			case Closed:
-				stateStr = QString::fromLatin1( "closed" );
+				stateStr = QLatin1String( "closed" );
 				break;
 			case Online:
-				stateStr = QString::fromLatin1( "online" );
+				stateStr = QLatin1String( "online" );
 				break;
 			case Away:
-				stateStr = QString::fromLatin1( "away" );
+				stateStr = QLatin1String( "away" );
 				break;
 			case Offline:
-				stateStr = QString::fromLatin1( "offline" );
+				stateStr = QLatin1String( "offline" );
 				break;
 			case Unknown:
-				stateStr = QString::fromLatin1( "unknown" );
+				stateStr = QLatin1String( "unknown" );
 				break;
 			case None:
 			default:
-				stateStr = QString::fromLatin1( "none" );
+				stateStr = QLatin1String( "none" );
 				break;
 			}
-			iconElement.setAttribute( QString::fromLatin1( "state" ), stateStr );
+			iconElement.setAttribute( QLatin1String( "state" ), stateStr );
 			iconElement.appendChild( pluginData.createTextNode( it.value() )  );
 			iconsElement.appendChild( iconElement );
 		}
@@ -159,52 +159,52 @@ const QList<QDomElement> ContactListElement::toXML()
 
 bool ContactListElement::fromXML( const QDomElement& element )
 {
-	if ( element.tagName() == QString::fromLatin1( "plugin-data" ) )
+	if ( element.tagName() == QLatin1String( "plugin-data" ) )
 	{
 		QMap<QString, QString> pluginData;
-		QString pluginId = element.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
+		QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString::null );
 
 		//in kopete 0.6 the AIM protocol was called OSCAR
-		if ( pluginId == QString::fromLatin1( "OscarProtocol" ) )
-			pluginId = QString::fromLatin1( "AIMProtocol" );
+		if ( pluginId == QLatin1String( "OscarProtocol" ) )
+			pluginId = QLatin1String( "AIMProtocol" );
 
 		QDomNode field = element.firstChild();
 		while( !field.isNull() )
 		{
 			QDomElement fieldElement = field.toElement();
-			if ( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
+			if ( fieldElement.tagName() == QLatin1String( "plugin-data-field" ) )
 			{
-				pluginData.insert( fieldElement.attribute( QString::fromLatin1( "key" ),
-					QString::fromLatin1( "undefined-key" ) ), fieldElement.text() );
+				pluginData.insert( fieldElement.attribute( QLatin1String( "key" ),
+					QLatin1String( "undefined-key" ) ), fieldElement.text() );
 			}
 			field = field.nextSibling();
 		}
 		d->pluginData.insert( pluginId, pluginData );
 	}
-	else if ( element.tagName() == QString::fromLatin1( "custom-icons" ) )
+	else if ( element.tagName() == QLatin1String( "custom-icons" ) )
 	{
-		d->useCustomIcon= element.attribute( QString::fromLatin1( "use" ), QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" );
+		d->useCustomIcon= element.attribute( QLatin1String( "use" ), QLatin1String( "1" ) ) == QLatin1String( "1" );
 		QDomNode ic = element.firstChild();
 		while( !ic.isNull() )
 		{
 			QDomElement iconElement = ic.toElement();
-			if ( iconElement.tagName() == QString::fromLatin1( "icon" ) )
+			if ( iconElement.tagName() == QLatin1String( "icon" ) )
 			{
-				QString stateStr = iconElement.attribute( QString::fromLatin1( "state" ), QString::null );
+				QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString::null );
 				QString icon = iconElement.text();
 				IconState state = None;
 
-				if ( stateStr == QString::fromLatin1( "open" ) )
+				if ( stateStr == QLatin1String( "open" ) )
 					state = Open;
-				if ( stateStr == QString::fromLatin1( "closed" ) )
+				if ( stateStr == QLatin1String( "closed" ) )
 					state = Closed;
-				if ( stateStr == QString::fromLatin1( "online" ) )
+				if ( stateStr == QLatin1String( "online" ) )
 					state = Online;
-				if ( stateStr == QString::fromLatin1( "offline" ) )
+				if ( stateStr == QLatin1String( "offline" ) )
 					state = Offline;
-				if ( stateStr == QString::fromLatin1( "away" ) )
+				if ( stateStr == QLatin1String( "away" ) )
 					state = Away;
-				if ( stateStr == QString::fromLatin1( "unknown" ) )
+				if ( stateStr == QLatin1String( "unknown" ) )
 					state = Unknown;
 
 				d->icons[ state ] = icon;

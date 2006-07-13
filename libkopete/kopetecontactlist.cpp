@@ -389,14 +389,14 @@ void ContactList::loadXML()
 	// don't save when we're in the middle of this...
 	d->loaded = false;
 
-	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
+	QString filename = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlist.xml" ) );
 	if( filename.isEmpty() )
 	{
 		d->loaded=true;
 		return ;
 	}
 
-	QDomDocument contactList( QString::fromLatin1( "kopete-contact-list" ) );
+	QDomDocument contactList( QLatin1String( "kopete-contact-list" ) );
 
 	QFile contactListFile( filename );
 	contactListFile.open( QIODevice::ReadOnly );
@@ -404,10 +404,10 @@ void ContactList::loadXML()
 
 	QDomElement list = contactList.documentElement();
 
-	QString versionString = list.attribute( QString::fromLatin1( "version" ), QString::null );
+	QString versionString = list.attribute( QLatin1String( "version" ), QString::null );
 	uint version = 0;
-	if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-		version = versionString.replace( QString::fromLatin1( "." ), QString::null ).toUInt();
+	if( QRegExp( QLatin1String( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
+		version = versionString.replace( QLatin1String( "." ), QString::null ).toUInt();
 
 	if( version < Private::ContactListVersion )
 	{
@@ -421,7 +421,7 @@ void ContactList::loadXML()
 
 		convertContactList( filename, version,  Private::ContactListVersion );
 
-		contactList = QDomDocument ( QString::fromLatin1( "kopete-contact-list" ) );
+		contactList = QDomDocument ( QLatin1String( "kopete-contact-list" ) );
 
 		contactListFile.open( QIODevice::ReadOnly );
 		contactList.setContent( &contactListFile );
@@ -434,7 +434,7 @@ void ContactList::loadXML()
 	QDomElement element = list.firstChild().toElement();
 	while( !element.isNull() )
 	{
-		if( element.tagName() == QString::fromLatin1("meta-contact") )
+		if( element.tagName() == QLatin1String("meta-contact") )
 		{
 			//TODO: id isn't used
 			//QString id = element.attribute( "id", QString::null );
@@ -450,7 +450,7 @@ void ContactList::loadXML()
 					metaContact );
 			}
 		}
-		else if( element.tagName() == QString::fromLatin1("kopete-group") )
+		else if( element.tagName() == QLatin1String("kopete-group") )
 		{
 			Kopete::Group *group = new Kopete::Group();
 			if( !group->fromXML( element ) )
@@ -464,7 +464,7 @@ void ContactList::loadXML()
 			}
 		}
 		// Only load myself metacontact information when Global Identity is enabled.
-		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
+		else if( element.tagName() == QLatin1String("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
 		{
 			if( !myself()->fromXML( element ) )
 			{
@@ -490,19 +490,19 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 	// changes to allow incremental (multi-pass) conversion so we don't have
 	// to rewrite the whole conversion code for each change.
 
-	QDomDocument contactList( QString::fromLatin1( "messaging-contact-list" ) );
+	QDomDocument contactList( QLatin1String( "messaging-contact-list" ) );
 	QFile contactListFile( fileName );
 	contactListFile.open( QIODevice::ReadOnly );
 	contactList.setContent( &contactListFile );
 
 	QDomElement oldList = contactList.documentElement();
 
-	QDomDocument newList( QString::fromLatin1( "kopete-contact-list" ) );
-	newList.appendChild( newList.createProcessingInstruction( QString::fromLatin1( "xml" ), QString::fromLatin1( "version=\"1.0\"" ) ) );
+	QDomDocument newList( QLatin1String( "kopete-contact-list" ) );
+	newList.appendChild( newList.createProcessingInstruction( QLatin1String( "xml" ), QLatin1String( "version=\"1.0\"" ) ) );
 
-	QDomElement newRoot = newList.createElement( QString::fromLatin1( "kopete-contact-list" ) );
+	QDomElement newRoot = newList.createElement( QLatin1String( "kopete-contact-list" ) );
 	newList.appendChild( newRoot );
-	newRoot.setAttribute( QString::fromLatin1( "version" ), QString::fromLatin1( "1.0" ) );
+	newRoot.setAttribute( QLatin1String( "version" ), QLatin1String( "1.0" ) );
 
 	QDomNode oldNode = oldList.firstChild();
 	while( !oldNode.isNull() )
@@ -510,10 +510,10 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 		QDomElement oldElement = oldNode.toElement();
 		if( !oldElement.isNull() )
 		{
-			if( oldElement.tagName() == QString::fromLatin1("meta-contact") )
+			if( oldElement.tagName() == QLatin1String("meta-contact") )
 			{
 				// Ignore ID, it is not used in the current list anyway
-				QDomElement newMetaContact = newList.createElement( QString::fromLatin1( "meta-contact" ) );
+				QDomElement newMetaContact = newList.createElement( QLatin1String( "meta-contact" ) );
 				newRoot.appendChild( newMetaContact );
 
 				// Plugin data is stored completely different, and requires
@@ -529,48 +529,48 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 				while( !oldContactNode.isNull() )
 				{
 					QDomElement oldContactElement = oldContactNode.toElement();
-					if( !oldContactElement.isNull() && oldContactElement.tagName() == QString::fromLatin1("address-book-field") )
+					if( !oldContactElement.isNull() && oldContactElement.tagName() == QLatin1String("address-book-field") )
 					{
 						// Convert address book fields.
 						// Jabber will be called "xmpp", Aim/Toc and Aim/Oscar both will
 						// be called "aim". MSN, AIM, IRC, Oscar and SMS don't use address
 						// book fields yet; Gadu and ICQ can be converted as-is.
 						// As Yahoo is unfinished we won't try to convert at all.
-						QString id   = oldContactElement.attribute( QString::fromLatin1( "id" ), QString::null );
+						QString id   = oldContactElement.attribute( QLatin1String( "id" ), QString::null );
 						QString data = oldContactElement.text();
 
 						QString app, key, val;
-						QString separator = QString::fromLatin1( "," );
-						if( id == QString::fromLatin1( "messaging/gadu" ) )
-							separator = QString::fromLatin1( "\n" );
-						else if( id == QString::fromLatin1( "messaging/icq" ) )
-							separator = QString::fromLatin1( ";" );
-						else if( id == QString::fromLatin1( "messaging/jabber" ) )
-							id = QString::fromLatin1( "messaging/xmpp" );
+						QString separator = QLatin1String( "," );
+						if( id == QLatin1String( "messaging/gadu" ) )
+							separator = QLatin1String( "\n" );
+						else if( id == QLatin1String( "messaging/icq" ) )
+							separator = QLatin1String( ";" );
+						else if( id == QLatin1String( "messaging/jabber" ) )
+							id = QLatin1String( "messaging/xmpp" );
 
-						if( id == QString::fromLatin1( "messaging/gadu" ) || id == QString::fromLatin1( "messaging/icq" ) ||
-							id == QString::fromLatin1( "messaging/winpopup" ) || id == QString::fromLatin1( "messaging/xmpp" ) )
+						if( id == QLatin1String( "messaging/gadu" ) || id == QLatin1String( "messaging/icq" ) ||
+							id == QLatin1String( "messaging/winpopup" ) || id == QLatin1String( "messaging/xmpp" ) )
 						{
 							app = id;
-							key = QString::fromLatin1( "All" );
+							key = QLatin1String( "All" );
 							val = data.replace( separator, QString( QChar( 0xE000 ) ) );
 						}
 
 						if( !app.isEmpty() )
 						{
-							QDomElement addressBookField = newList.createElement( QString::fromLatin1( "address-book-field" ) );
+							QDomElement addressBookField = newList.createElement( QLatin1String( "address-book-field" ) );
 							newMetaContact.appendChild( addressBookField );
 
-							addressBookField.setAttribute( QString::fromLatin1( "app" ), app );
-							addressBookField.setAttribute( QString::fromLatin1( "key" ), key );
+							addressBookField.setAttribute( QLatin1String( "app" ), app );
+							addressBookField.setAttribute( QLatin1String( "key" ), key );
 
 							addressBookField.appendChild( newList.createTextNode( val ) );
 
 							// ICQ didn't store the contactId locally, only in the address
 							// book fields, so we need to be able to access it later
-							if( id == QString::fromLatin1( "messaging/icq" ) )
+							if( id == QLatin1String( "messaging/icq" ) )
 								icqData = val.split( QChar( 0xE000 ), QString::SkipEmptyParts );
-							else if( id == QString::fromLatin1("messaging/gadu") )
+							else if( id == QLatin1String("messaging/gadu") )
 								gaduData = val.split( QChar( 0xE000 ), QString::SkipEmptyParts );
 						}
 					}
@@ -584,103 +584,103 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 					QDomElement oldContactElement = oldContactNode.toElement();
 					if( !oldContactElement.isNull() )
 					{
-						if( oldContactElement.tagName() == QString::fromLatin1("display-name") )
+						if( oldContactElement.tagName() == QLatin1String("display-name") )
 						{
-							QDomElement displayName = newList.createElement( QString::fromLatin1( "display-name" ) );
+							QDomElement displayName = newList.createElement( QLatin1String( "display-name" ) );
 							displayName.appendChild( newList.createTextNode( oldContactElement.text() ) );
 							newMetaContact.appendChild( displayName );
 						}
-						else if( oldContactElement.tagName() == QString::fromLatin1("groups") )
+						else if( oldContactElement.tagName() == QLatin1String("groups") )
 						{
-							QDomElement groups = newList.createElement( QString::fromLatin1( "groups" ) );
+							QDomElement groups = newList.createElement( QLatin1String( "groups" ) );
 							newMetaContact.appendChild( groups );
 
 							QDomNode oldGroup = oldContactElement.firstChild();
 							while( !oldGroup.isNull() )
 							{
 								QDomElement oldGroupElement = oldGroup.toElement();
-								if ( oldGroupElement.tagName() == QString::fromLatin1("group") )
+								if ( oldGroupElement.tagName() == QLatin1String("group") )
 								{
-									QDomElement group = newList.createElement( QString::fromLatin1( "group" ) );
+									QDomElement group = newList.createElement( QLatin1String( "group" ) );
 									group.appendChild( newList.createTextNode( oldGroupElement.text() ) );
 									groups.appendChild( group );
 								}
-								else if ( oldGroupElement.tagName() == QString::fromLatin1("top-level") )
+								else if ( oldGroupElement.tagName() == QLatin1String("top-level") )
 								{
-									QDomElement group = newList.createElement( QString::fromLatin1( "top-level" ) );
+									QDomElement group = newList.createElement( QLatin1String( "top-level" ) );
 									groups.appendChild( group );
 								}
 
 								oldGroup = oldGroup.nextSibling();
 							}
 						}
-						else if( oldContactElement.tagName() == QString::fromLatin1( "plugin-data" ) )
+						else if( oldContactElement.tagName() == QLatin1String( "plugin-data" ) )
 						{
 							// Convert the plugin data
-							QString id   = oldContactElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
+							QString id   = oldContactElement.attribute( QLatin1String( "plugin-id" ), QString::null );
 							QString data = oldContactElement.text();
 
 							bool convertOldAim = false;
 							uint fieldCount = 1;
 							QString addressBookLabel;
-							if( id == QString::fromLatin1("MSNProtocol") )
+							if( id == QLatin1String("MSNProtocol") )
 							{
 								fieldCount = 3;
-								addressBookLabel = QString::fromLatin1("msn");
+								addressBookLabel = QLatin1String("msn");
 							}
-							else if( id == QString::fromLatin1("IRCProtocol") )
+							else if( id == QLatin1String("IRCProtocol") )
 							{
 								fieldCount = 3;
-								addressBookLabel = QString::fromLatin1("irc");
+								addressBookLabel = QLatin1String("irc");
 							}
-							else if( id == QString::fromLatin1("OscarProtocol") )
+							else if( id == QLatin1String("OscarProtocol") )
 							{
 								fieldCount = 2;
-								addressBookLabel = QString::fromLatin1("aim");
+								addressBookLabel = QLatin1String("aim");
 							}
-							else if( id == QString::fromLatin1("AIMProtocol") )
+							else if( id == QLatin1String("AIMProtocol") )
 							{
-								id = QString::fromLatin1("OscarProtocol");
+								id = QLatin1String("OscarProtocol");
 								convertOldAim = true;
-								addressBookLabel = QString::fromLatin1("aim");
+								addressBookLabel = QLatin1String("aim");
 							}
-							else if( id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("WPProtocol") || id == QString::fromLatin1("GaduProtocol") )
+							else if( id == QLatin1String("ICQProtocol") || id == QLatin1String("WPProtocol") || id == QLatin1String("GaduProtocol") )
 							{
 								fieldCount = 1;
 							}
-							else if( id == QString::fromLatin1("JabberProtocol") )
+							else if( id == QLatin1String("JabberProtocol") )
 							{
 								fieldCount = 4;
 							}
-							else if( id == QString::fromLatin1("SMSProtocol") )
+							else if( id == QLatin1String("SMSProtocol") )
 							{
 								// SMS used a variable serializing using a dot as delimiter.
 								// The minimal count is three though (id, name, delimiter).
 								fieldCount = 2;
-								addressBookLabel = QString::fromLatin1("sms");
+								addressBookLabel = QLatin1String("sms");
 							}
 
 							if( pluginData[ id ].isNull() )
 							{
-								pluginData[ id ] = newList.createElement( QString::fromLatin1( "plugin-data" ) );
-								pluginData[ id ].setAttribute( QString::fromLatin1( "plugin-id" ), id );
+								pluginData[ id ] = newList.createElement( QLatin1String( "plugin-data" ) );
+								pluginData[ id ].setAttribute( QLatin1String( "plugin-id" ), id );
 								newMetaContact.appendChild( pluginData[ id ] );
 							}
 
 							// Do the actual conversion
-							if( id == QString::fromLatin1( "MSNProtocol" ) || id == QString::fromLatin1( "OscarProtocol" ) ||
-								id == QString::fromLatin1( "AIMProtocol" ) || id == QString::fromLatin1( "IRCProtocol" ) ||
-								id == QString::fromLatin1( "ICQProtocol" ) || id == QString::fromLatin1( "JabberProtocol" ) ||
-								id == QString::fromLatin1( "SMSProtocol" ) || id == QString::fromLatin1( "WPProtocol" ) ||
-								id == QString::fromLatin1( "GaduProtocol" ) )
+							if( id == QLatin1String( "MSNProtocol" ) || id == QLatin1String( "OscarProtocol" ) ||
+								id == QLatin1String( "AIMProtocol" ) || id == QLatin1String( "IRCProtocol" ) ||
+								id == QLatin1String( "ICQProtocol" ) || id == QLatin1String( "JabberProtocol" ) ||
+								id == QLatin1String( "SMSProtocol" ) || id == QLatin1String( "WPProtocol" ) ||
+								id == QLatin1String( "GaduProtocol" ) )
 							{
-								QStringList strList = data.split( QString::fromLatin1( "||" ), QString::SkipEmptyParts );
+								QStringList strList = data.split( QLatin1String( "||" ), QString::SkipEmptyParts );
 
 								// Unescape '||'
 								for( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
 								{
-									( *it ).replace( QString::fromLatin1( "\\|;" ), QString::fromLatin1( "|" ) ).
-									replace( QString::fromLatin1( "\\\\" ), QString::fromLatin1( "\\" ) );
+									( *it ).replace( QLatin1String( "\\|;" ), QLatin1String( "|" ) ).
+									replace( QLatin1String( "\\\\" ), QLatin1String( "\\" ) );
 								}
 
 								uint idx = 0;
@@ -688,65 +688,65 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 								{
 									QDomElement dataField;
 
-									dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+									dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 									pluginData[ id ].appendChild( dataField );
-									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "contactId" ) );
-									if( id == QString::fromLatin1("ICQProtocol") )
+									dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "contactId" ) );
+									if( id == QLatin1String("ICQProtocol") )
 										dataField.appendChild( newList.createTextNode( icqData[ idx ] ) );
-									else if( id == QString::fromLatin1("GaduProtocol") )
+									else if( id == QLatin1String("GaduProtocol") )
 										dataField.appendChild( newList.createTextNode( gaduData[ idx ] ) );
-									else if( id == QString::fromLatin1("JabberProtocol") )
+									else if( id == QLatin1String("JabberProtocol") )
 										dataField.appendChild( newList.createTextNode( strList[ idx + 1 ] ) );
 									else
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
 
-									dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+									dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 									pluginData[ id ].appendChild( dataField );
-									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "displayName" ) );
-									if( convertOldAim || id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("WPProtocol") || id == QString::fromLatin1("GaduProtocol") )
+									dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "displayName" ) );
+									if( convertOldAim || id == QLatin1String("ICQProtocol") || id == QLatin1String("WPProtocol") || id == QLatin1String("GaduProtocol") )
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
-									else if( id == QString::fromLatin1("JabberProtocol") )
+									else if( id == QLatin1String("JabberProtocol") )
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 									else
 										dataField.appendChild( newList.createTextNode( strList[ idx + 1 ] ) );
 
-									if( id == QString::fromLatin1("MSNProtocol") )
+									if( id == QLatin1String("MSNProtocol") )
 									{
-										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+										dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "groups" ) );
+										dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "groups" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 									}
-									else if( id == QString::fromLatin1("IRCProtocol") )
+									else if( id == QLatin1String("IRCProtocol") )
 									{
-										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+										dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "serverName" ) );
+										dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "serverName" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 									}
-									else if( id == QString::fromLatin1("JabberProtocol") )
+									else if( id == QLatin1String("JabberProtocol") )
 									{
-										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+										dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "accountId" ) );
+										dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "accountId" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
 
-										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+										dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "groups" ) );
+										dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "groups" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
 									}
-									else if( id == QString::fromLatin1( "SMSProtocol" ) &&
-										( idx + 2 < (uint)strList.size() ) && strList[ idx + 2 ] != QString::fromLatin1( "." ) )
+									else if( id == QLatin1String( "SMSProtocol" ) &&
+										( idx + 2 < (uint)strList.size() ) && strList[ idx + 2 ] != QLatin1String( "." ) )
 									{
-										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+										dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "serviceName" ) );
+										dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "serviceName" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 
-										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+										dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "servicePrefs" ) );
+										dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "servicePrefs" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
 
 										// Add extra fields
@@ -755,30 +755,30 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 
 									// MSN, AIM, IRC, Oscar and SMS didn't store address book fields up
 									// to now, so create one
-									if( id != QString::fromLatin1("ICQProtocol") && id != QString::fromLatin1("JabberProtocol") && id != QString::fromLatin1("WPProtocol") && id != QString::fromLatin1("GaduProtocol") )
+									if( id != QLatin1String("ICQProtocol") && id != QLatin1String("JabberProtocol") && id != QLatin1String("WPProtocol") && id != QLatin1String("GaduProtocol") )
 									{
-										QDomElement addressBookField = newList.createElement( QString::fromLatin1( "address-book-field" ) );
+										QDomElement addressBookField = newList.createElement( QLatin1String( "address-book-field" ) );
 										newMetaContact.appendChild( addressBookField );
 
-										addressBookField.setAttribute( QString::fromLatin1( "app" ),
-											QString::fromLatin1( "messaging/" ) + addressBookLabel );
-										addressBookField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "All" ) );
+										addressBookField.setAttribute( QLatin1String( "app" ),
+											QLatin1String( "messaging/" ) + addressBookLabel );
+										addressBookField.setAttribute( QLatin1String( "key" ), QLatin1String( "All" ) );
 										addressBookField.appendChild( newList.createTextNode( strList[ idx ] ) );
 									}
 
 									idx += fieldCount;
 								}
 							}
-							else if( id == QString::fromLatin1("ContactNotesPlugin") || id == QString::fromLatin1("CryptographyPlugin") || id == QString::fromLatin1("TranslatorPlugin") )
+							else if( id == QLatin1String("ContactNotesPlugin") || id == QLatin1String("CryptographyPlugin") || id == QLatin1String("TranslatorPlugin") )
 							{
-								QDomElement dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
+								QDomElement dataField = newList.createElement( QLatin1String( "plugin-data-field" ) );
 								pluginData[ id ].appendChild( dataField );
-								if( id == QString::fromLatin1("ContactNotesPlugin") )
-									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "notes" ) );
-								else if( id == QString::fromLatin1("CryptographyPlugin") )
-									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "gpgKey" ) );
-								else if( id == QString::fromLatin1("TranslatorPlugin") )
-									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "languageKey" ) );
+								if( id == QLatin1String("ContactNotesPlugin") )
+									dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "notes" ) );
+								else if( id == QLatin1String("CryptographyPlugin") )
+									dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "gpgKey" ) );
+								else if( id == QLatin1String("TranslatorPlugin") )
+									dataField.setAttribute( QLatin1String( "key" ), QLatin1String( "languageKey" ) );
 
 								dataField.appendChild( newList.createTextNode( data ) );
 							}
@@ -787,9 +787,9 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 					oldContactNode = oldContactNode.nextSibling();
 				}
 			}
-			else if( oldElement.tagName() == QString::fromLatin1("kopete-group") )
+			else if( oldElement.tagName() == QLatin1String("kopete-group") )
 			{
-				QDomElement newGroup = newList.createElement( QString::fromLatin1( "kopete-group" ) );
+				QDomElement newGroup = newList.createElement( QLatin1String( "kopete-group" ) );
 				newRoot.appendChild( newGroup );
 
 				QDomNode oldGroupNode = oldNode.firstChild();
@@ -797,38 +797,38 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 				{
 					QDomElement oldGroupElement = oldGroupNode.toElement();
 
-					if( oldGroupElement.tagName() == QString::fromLatin1("display-name") )
+					if( oldGroupElement.tagName() == QLatin1String("display-name") )
 					{
-						QDomElement displayName = newList.createElement( QString::fromLatin1( "display-name" ) );
+						QDomElement displayName = newList.createElement( QLatin1String( "display-name" ) );
 						displayName.appendChild( newList.createTextNode( oldGroupElement.text() ) );
 						newGroup.appendChild( displayName );
 					}
-					if( oldGroupElement.tagName() == QString::fromLatin1("type") )
+					if( oldGroupElement.tagName() == QLatin1String("type") )
 					{
-						if( oldGroupElement.text() == QString::fromLatin1("Temporary") )
-							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "temporary" ) );
-						else if( oldGroupElement.text() == QString::fromLatin1( "TopLevel" ) )
-							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "top-level" ) );
+						if( oldGroupElement.text() == QLatin1String("Temporary") )
+							newGroup.setAttribute( QLatin1String( "type" ), QLatin1String( "temporary" ) );
+						else if( oldGroupElement.text() == QLatin1String( "TopLevel" ) )
+							newGroup.setAttribute( QLatin1String( "type" ), QLatin1String( "top-level" ) );
 						else
-							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
+							newGroup.setAttribute( QLatin1String( "type" ), QLatin1String( "standard" ) );
 					}
-					if( oldGroupElement.tagName() == QString::fromLatin1("view") )
+					if( oldGroupElement.tagName() == QLatin1String("view") )
 					{
-						if( oldGroupElement.text() == QString::fromLatin1("collapsed") )
-							newGroup.setAttribute( QString::fromLatin1( "view" ), QString::fromLatin1( "collapsed" ) );
+						if( oldGroupElement.text() == QLatin1String("collapsed") )
+							newGroup.setAttribute( QLatin1String( "view" ), QLatin1String( "collapsed" ) );
 						else
-							newGroup.setAttribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
+							newGroup.setAttribute( QLatin1String( "view" ), QLatin1String( "expanded" ) );
 					}
-					else if( oldGroupElement.tagName() == QString::fromLatin1("plugin-data") )
+					else if( oldGroupElement.tagName() == QLatin1String("plugin-data") )
 					{
 						// Per-group plugin data
 						// FIXME: This needs updating too, ideally, convert this in a later
 						//        contactlist.xml version
-						QDomElement groupPluginData = newList.createElement( QString::fromLatin1( "plugin-data" ) );
+						QDomElement groupPluginData = newList.createElement( QLatin1String( "plugin-data" ) );
 						newGroup.appendChild( groupPluginData );
 
-						groupPluginData.setAttribute( QString::fromLatin1( "plugin-id" ),
-							oldGroupElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null ) );
+						groupPluginData.setAttribute( QLatin1String( "plugin-id" ),
+							oldGroupElement.attribute( QLatin1String( "plugin-id" ), QString::null ) );
 						groupPluginData.appendChild( newList.createTextNode( oldGroupElement.text() ) );
 					}
 
@@ -847,7 +847,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 	// Close the file, and save the new file
 	contactListFile.close();
 
-	QDir().rename( fileName, fileName + QString::fromLatin1( ".bak" ) );
+	QDir().rename( fileName, fileName + QLatin1String( ".bak" ) );
 
 	// kDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
@@ -873,7 +873,7 @@ void Kopete::ContactList::saveXML()
 		return;
 	}
 
-	QString contactListFileName = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
+	QString contactListFileName = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlist.xml" ) );
 	KSaveFile contactListFile( contactListFileName );
 	if( contactListFile.status() == 0 )
 	{
@@ -907,8 +907,8 @@ void Kopete::ContactList::saveXML()
 const QDomDocument ContactList::toXML()
 {
 	QDomDocument doc;
-	doc.appendChild( doc.createElement( QString::fromLatin1("kopete-contact-list") ) );
-	doc.documentElement().setAttribute( QString::fromLatin1("version"), QString::fromLatin1("1.0"));
+	doc.appendChild( doc.createElement( QLatin1String("kopete-contact-list") ) );
+	doc.documentElement().setAttribute( QLatin1String("version"), QLatin1String("1.0"));
 
 	// Save group information. ie: Open/Closed, pehaps later icons? Who knows.
 	QListIterator<Group *> it(d->groups);
@@ -927,7 +927,7 @@ const QDomDocument ContactList::toXML()
 	if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
 	{
 		QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
-		myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
+		myselfElement.setTagName( QLatin1String("myself-meta-contact") );
 		doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
 	}
 
