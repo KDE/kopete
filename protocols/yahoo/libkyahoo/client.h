@@ -63,9 +63,10 @@ Q_OBJECT
 		 * Start a connection to the server using the supplied @ref ClientStream.
 		 * This is only a transport layer connection.
 		 * Needed for protocol action P1.
-		 * @param s initialised client stream to use for the connection.
-		 * @param server the server to connect to - but this is also set on the connector used to construct the clientstream??
-		 * @param auth indicate whether we're connecting to the authorizer or the bos server
+		 * @param host The server to connect to.
+		 * @param port The port to be used. The Yahoo server allows connection on arbitrary ports.
+		 * @param userId The yahoo ID that will be connected.
+		 * @param pass The password.
 		 */
 		void connect( const QString &host, const uint port, const QString &userId, const QString &pass );
 
