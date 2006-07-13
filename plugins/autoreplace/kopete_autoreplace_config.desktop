@@ -4,9 +4,8 @@ Icon=color
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-ModuleType=Library
 X-KDE-Library=kopete_autoreplace
-X-KDE-FactoryName=AutoReplaceConfigFactory
+X-KDE-FactoryName=kcm_kopete_autoreplace
 X-KDE-ParentApp=kopete_autoreplace
 X-KDE-ParentComponents=kopete_autoreplace
 

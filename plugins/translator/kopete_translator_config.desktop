@@ -4,9 +4,8 @@ Icon=locale
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-ModuleType=Library
 X-KDE-Library=kopete_translator
-X-KDE-FactoryName=TranslatorConfigFactory
+X-KDE-FactoryName=kcm_kopete_translator
 X-KDE-ParentApp=kopete_translator
 X-KDE-ParentComponents=kopete_translator
 
