@@ -143,7 +143,8 @@ void JabberByteStream::slotBytesWritten ( qint64 bytes )
 void JabberByteStream::slotError ( int code )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error '" <<  mSocket->errorString() <<  "' - Code : " << code <<  endl;
-	emit error ( code );
+	if(KNetwork::KSocketBase::isFatalError( code ))
+		emit error ( code );
 }
 
 #include "jabberbytestream.moc"
