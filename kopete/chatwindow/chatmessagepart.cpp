@@ -963,7 +963,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	for( uint f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].unicode() * f;
 	QColor color = QColor( nameColors[ hash % nameColorsLen ] ).name();
-	kdDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
+	kDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
 	while( (textPos=senderColorRegExp.search(resultHTML, textPos) ) != -1 )
