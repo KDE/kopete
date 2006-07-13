@@ -324,7 +324,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	kDebug( 14010) << k_funcinfo << "overlarIcons size: " << statusFor.overlayIcons().count() <<endl;
+	kDebug( 14010) << k_funcinfo << "overlayIcons size: " << statusFor.overlayIcons().count() <<endl;
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
