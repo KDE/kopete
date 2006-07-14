@@ -561,7 +561,7 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 	
-	KIO::Job *j=KIO::file_move( KUrl::fromPathOrUrl( f->name() ) , KUrl::fromPathOrUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl( f->name() ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
 	f->setAutoDelete(false);
 	delete f;

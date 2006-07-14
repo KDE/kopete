@@ -131,7 +131,7 @@ void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 	if( type == 1 )
 		emit pictureRequest( nick );
 	else if( type == 2 )
-		emit pictureInfoNotify( nick, KUrl::fromPathOrUrl( url ), checksum );
+		emit pictureInfoNotify( nick, KUrl( url ), checksum );
 }
 
 void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )

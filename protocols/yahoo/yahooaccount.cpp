@@ -20,15 +20,13 @@
 #include <stdlib.h>
 
 //QT
-#include <qfont.h>
-#include <qdatetime.h>
-#include <qcolor.h>
-#include <qregexp.h>
-#include <qimage.h>
-#include <qfile.h>
-//Added by qt3to4:
+#include <QFont>
+#include <QDateTime>
+#include <QColor>
+#include <QRegExp>
+#include <QImage>
+#include <QFile>
 #include <QPixmap>
-#include <Q3ValueList>
 
 // KDE
 #include <klocale.h>
@@ -618,7 +616,7 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	{
 		if ( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			setBuddyIcon( KUrl::fromPathOrUrl( value.toString() ) );
+			setBuddyIcon( KUrl( value.toString() ) );
 		}
 	}
 }
@@ -712,7 +710,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		initConnectionSignals( DeleteConnections );
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		YahooVerifyAccount *verifyDialog = new YahooVerifyAccount( this );
-		verifyDialog->setUrl( KUrl::fromPathOrUrl(url) );
+		verifyDialog->setUrl( KUrl(url) );
 		verifyDialog->show();
 		return;
 	}
@@ -995,10 +993,11 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << msg << "'" << endl;
 	//kDebug(YAHOO_GEN_DEBUG) << "Message color is " << getMsgColor(msg) << endl;
 	QColor fgColor = getMsgColor( msg );
+	
 	if (tm == 0)
-		msgDT.setTime_t(time(0L));
+		msgDT = QDateTime( QDate::currentDate(), QTime::currentTime(), Qt::LocalTime );
 	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
+		msgDT = QDateTime::fromTime_t(tm);
 	
 	QString newMsgText = prepareIncomingMessage( msg );
 	
@@ -1031,9 +1030,9 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	}
 	
 	if (tm == 0)
-		msgDT.setTime_t(time(0L));
+		msgDT = QDateTime( QDate::currentDate(), QTime::currentTime(), Qt::LocalTime );
 	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
+		msgDT = QDateTime::fromTime_t(tm);
 	
 	justMe.append(myself());
 	
@@ -1550,7 +1549,7 @@ void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 							myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 }
 
-void YahooAccount::setBuddyIcon( KUrl url )
+void YahooAccount::setBuddyIcon( const KUrl &url )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Url: " << url.path() << endl;
 	QString s = url.path();

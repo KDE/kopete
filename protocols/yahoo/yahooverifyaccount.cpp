@@ -60,7 +60,7 @@ YahooVerifyAccount::~YahooVerifyAccount()
 	delete mTheDialog;
 }
 
-void YahooVerifyAccount::setUrl( KUrl url )
+void YahooVerifyAccount::setUrl( const KUrl &url )
 {
 	mFile = new KTempFile( KStandardDirs::locateLocal( "tmp", url.fileName() ) );
 	mFile->setAutoDelete( true );
