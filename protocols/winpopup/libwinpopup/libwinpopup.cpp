@@ -56,7 +56,7 @@ void WinPopupLib::slotStartDirLister()
 		dirLister->setAutoUpdate(true);
 		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
-		dirLister->openURL(KUrl::fromPathOrUrl(WP_POPUP_DIR));
+		dirLister->openURL(KUrl(WP_POPUP_DIR));
 	}
 }
 
@@ -117,7 +117,7 @@ bool WinPopupLib::checkMessageDir()
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
-		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, KUrl::fromPathOrUrl(WP_POPUP_DIR));
+		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, KUrl(WP_POPUP_DIR));
 		mode_t tmpPerms = tmpFileItem.permissions();
 
 		if (tmpPerms != 0777) {

@@ -100,7 +100,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	connect ( mXMPPTransfer, SIGNAL ( bytesWritten ( int ) ), this, SLOT ( slotOutgoingBytesWritten ( int ) ) );
 	connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
 
-	mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl::fromPathOrUrl(file).fileName (), mLocalFile.size (), "" );
+	mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "" );
 
 }
 

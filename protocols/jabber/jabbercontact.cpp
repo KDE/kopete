@@ -982,7 +982,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	if(contactPhoto.width() > 96 || contactPhoto.height() > 96)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1001,7 +1001,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() < 32 || contactPhoto.height() < 32)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1020,7 +1020,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() != contactPhoto.height())
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
 
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
