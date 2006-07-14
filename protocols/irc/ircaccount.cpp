@@ -91,7 +91,7 @@ public:
 };
 
 IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
-	: PasswordedAccount(IRCProtocol::self(), accountId, 0, true),
+	: PasswordedAccount(IRCProtocol::self(), accountId, true),
 	  d( new Private )
 {
 	d->client = new KIRC::Client(this);
@@ -295,7 +295,7 @@ void IRCAccount::setCodec( QTextCodec *codec )
 
 const QString IRCAccount::networkName() const
 {
-	return configGroup()->readEntry(Config::NETWORKNAME);
+	return configGroup()->readEntry(Config::NETWORKNAME, QString());
 }
 
 void IRCAccount::setNetworkByName(const QString &networkName)
@@ -311,7 +311,7 @@ IRCNetwork network() const
 */
 const QString IRCAccount::userName() const
 {
-	return configGroup()->readEntry(Config::USERNAME);
+	return configGroup()->readEntry(Config::USERNAME, QString());
 }
 
 void IRCAccount::setUserName(const QString &userName)
@@ -321,7 +321,7 @@ void IRCAccount::setUserName(const QString &userName)
 
 const QString IRCAccount::realName() const
 {
-	return configGroup()->readEntry(Config::REALNAME);
+	return configGroup()->readEntry(Config::REALNAME, QString());
 }
 
 void IRCAccount::setRealName( const QString &userName )
@@ -331,7 +331,7 @@ void IRCAccount::setRealName( const QString &userName )
 
 const QString IRCAccount::nickName() const
 {
-	return configGroup()->readEntry(Config::NICKNAME);
+	return configGroup()->readEntry(Config::NICKNAME, QString());
 }
 
 void IRCAccount::setNickName(const QString &nickName)
@@ -352,7 +352,7 @@ void IRCAccount::setAltNick( const QString &altNick )
 */
 const QString IRCAccount::defaultPartMessage() const
 {
-	QString partMsg = configGroup()->readEntry(QString::fromLatin1("defaultPart"));
+	QString partMsg = configGroup()->readEntry(QString::fromLatin1("defaultPart"), QString());
 	if( partMsg.isEmpty() )
 		return IRC::Version;
 	return partMsg;
@@ -365,7 +365,7 @@ void IRCAccount::setDefaultPartMessage( const QString &defaultPart )
 
 const QString IRCAccount::defaultQuitMessage() const
 {
-	QString quitMsg = configGroup()->readEntry(QString::fromLatin1("defaultQuit"));
+	QString quitMsg = configGroup()->readEntry(QString::fromLatin1("defaultQuit"), QString());
 	if( quitMsg.isEmpty() )
 		return IRC::Version;
 	return quitMsg;
@@ -551,9 +551,9 @@ bool IRCAccount::isConnected()
 	return d->client->isConnected();
 }
 
-void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &reason)
+void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
 {
-	kDebug(14120) << k_funcinfo << endl;
+/*	kDebug(14120) << k_funcinfo << endl;
 	d->expectedOnlineStatus = status;
 	d->expectedReason = reason;
 
@@ -572,7 +572,11 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 	{
 		kDebug(14120) << k_funcinfo << "Disconnecting." << endl;
 		quit(reason);
-	}
+	}*/
+}
+
+void IRCAccount::setStatusMessage(const StatusMessage &messageStatus)
+{
 }
 
 bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
@@ -624,7 +628,8 @@ IRCContact *IRCAccount::mySelf() const
 IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 {
 	kDebug(14120) << k_funcinfo << name << endl;
-	return getContact(d->client->entityManager()->entityByName(name), metac);
+//	return getContact(d->client->entityManager()->entityByName(name), metac);
+	return 0;
 }
 
 IRCContact *IRCAccount::getContact(const KIRC::Entity::Ptr &entity, MetaContact *metac)

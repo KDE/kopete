@@ -58,7 +58,7 @@ bool Networks::slotReadNetworks()
 {
 	d->networks.clear();
 
-	QFile xmlFile( locate( "appdata", "ircnetworks.xml" ) );
+	QFile xmlFile( KStandardDirs::locate( "appdata", "ircnetworks.xml" ) );
 	xmlFile.open( QIODevice::ReadOnly );
 
 	QDomDocument doc;

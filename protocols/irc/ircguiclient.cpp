@@ -18,7 +18,6 @@
 #include "ircguiclient.h"
 #include "ircaccount.h"
 #include "irccontact.h"
-#include "kcodecaction.h"
 
 #include "kopetechatsession.h"
 

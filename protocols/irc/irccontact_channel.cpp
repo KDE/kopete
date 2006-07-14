@@ -21,7 +21,6 @@
 
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
-#include "kcodecaction.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "kopetechatsessionmanager.h"

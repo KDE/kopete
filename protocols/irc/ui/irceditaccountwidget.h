@@ -19,18 +19,19 @@
 #define IRCEDITACCOUNTWIDEGET_H
 
 #include "editaccountwidget.h"
-#include "irceditaccount.h"
+#include "ui_irceditaccount.h"
 
 class IRCAccount;
 class K3ListView;
 class Q3ListViewItem;
 
-class IRCEditAccountWidget : public Ui::IRCEditAccountBase, public KopeteEditAccountWidget
+class IRCEditAccountWidget 
+	: public QWidget, public Ui::IRCEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 
 public:
-	IRCEditAccountWidget(IRCAccount *, QWidget *parent=0);
+	IRCEditAccountWidget(IRCAccount *account, QWidget *parent=0);
 	~IRCEditAccountWidget();
 
 	IRCAccount *account();

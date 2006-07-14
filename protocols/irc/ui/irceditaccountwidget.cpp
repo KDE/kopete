@@ -22,7 +22,7 @@
 #include "irccontact.h"
 #include "ircprotocol.h"
 
-#include "kircengine.h"
+#include "kircclient.h"
 
 #include "kopetepasswordwidget.h"
 
@@ -43,8 +43,10 @@
 #include <qtextcodec.h>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
-	: IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
+	: QWidget(parent), KopeteEditAccountWidget(ident)
 {
+	setupUi(this);
+
 	int currentCodec = 4;
 
 	if( account() )
@@ -62,7 +64,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 		if( account()->codec() )
 			currentCodec = account()->codec()->mibEnum();
 
-		mPasswordWidget->load ( &account()->password() );
+//		mPasswordWidget->load ( &account()->password() );
 
 		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
 		autoShowServerWindow->setChecked( account()->configGroup()->readBoolEntry("AutoShowServerWindow") );
@@ -126,11 +128,12 @@ IRCAccount *IRCEditAccountWidget::account ()
 
 void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 {
-	network->clear();
-
+/*
 	uint i = 0;
 	QStringList keys;
-/*
+
+	network->clear();
+
 	IRCNetworkList networks = IRCNetworkList::self()->networks();
 
 	for(QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it )
@@ -155,7 +158,7 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 void IRCEditAccountWidget::slotEditNetworks()
 {
-	IRCProtocol::self()->editNetworks(network->currentText());
+//	IRCProtocol::self()->editNetworks(network->currentText());
 }
 
 void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )
@@ -224,6 +227,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 
 Kopete::Account *IRCEditAccountWidget::apply()
 {
+/*
 	QString nickName = mNickName->text();
 	QString networkName = network->currentText();
 

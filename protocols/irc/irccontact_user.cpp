@@ -18,7 +18,6 @@
 #include "ircaccount.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
-#include "kcodecaction.h"
 
 #include "kopetemetacontact.h"
 #include "kopeteview.h"

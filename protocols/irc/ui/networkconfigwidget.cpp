@@ -72,7 +72,7 @@ public:
 };
 
 IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WFlags flags)
-	: NetworkConfig(parent, "network_config", flags)
+	: QWidget(parent, flags)
 {
 //	kDebug(14120) << k_funcinfo << endl;
 

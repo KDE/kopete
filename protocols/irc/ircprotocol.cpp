@@ -25,9 +25,9 @@
 
 //#include "networkconfigwidget.h"
 //#include "channellist.h"
-//#include "ircaddcontactpage.h"
+#include "ircaddcontactpage.h"
 //#include "ircguiclient.h"
-//#include "irceditaccountwidget.h"
+#include "irceditaccountwidget.h"
 
 #include "kircclient.h"
 
@@ -106,8 +106,8 @@ void IRCProtocolHandler::handleURL(const KUrl &url) const
 	newAccount->connect();
 }
 
-IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-	: Protocol(IRCProtocolFactory::instance(), parent, name)
+IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
+	: Protocol(IRCProtocolFactory::instance(), parent)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
 //	kDebug(14120) << k_funcinfo << endl;
@@ -119,7 +119,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	//m_status = m_unknownStatus = m_Unknown;
 
 	addAddressBookField("messaging/irc", Plugin::MakeIndexField);
-
+/*
 	CommandHandler *commandHandler = CommandHandler::self();
 
 	// Statically implemented commands
@@ -150,7 +150,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (requires operator status)."),
 		CommandHandler::SystemAlias, 1, 1);
 */
-	commandHandler->registerAlias(this, QString::fromLatin1("bannick"),
+/*	commandHandler->registerAlias(this, QString::fromLatin1("bannick"),
 		QString::fromLatin1("ban %1!*@*"),
 		i18n("USAGE: /bannick <nickname> - Add someone to this channel's ban list. Uses the hostmask nickname!*@* (requires operator status)."),
 		CommandHandler::SystemAlias, 1, 1);
@@ -219,17 +219,17 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	commandHandler->registerAlias(this, QString::fromLatin1("ping"),
 		QString::fromLatin1( "ctcp %1 PING" ),
 		i18n("USAGE: /ping <nickname> - Alias for /CTCP <nickname> PING."),
-		CommandHandler::SystemAlias, 1, 1);
+		CommandHandler::SystemAlias, 1, 1);*/
 /*
 	commandHandler->registerCommand(this, QString::fromLatin1("query"),
 		SLOT(slotQueryCommand(const QString &, Kopete::ChatSession*)),
 		i18n("USAGE: /query <nickname> [<message>] - Open a private chat with this user."),
 		CommandHandler::SystemAlias, 1);
 */
-	commandHandler->registerAlias(this, QString::fromLatin1("quit"),
+/*	commandHandler->registerAlias(this, QString::fromLatin1("quit"),
 		QString::fromLatin1("raw quit :%s"),
 		i18n("USAGE: /quit [<reason>] - Disconnect from IRC, optionally leaving a message."),
-		CommandHandler::SystemAlias);
+		CommandHandler::SystemAlias);*/
 /*
 	commandHandler->registerAlias(this, QString::fromLatin1("topic"),
 		QString::fromLatin1("raw TOPIC :%s"),
@@ -241,7 +241,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		i18n("USAGE: /voice <nickname> [<nickname 2> <...>] - Give channel voice status to someone (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 */
-	commandHandler->registerAlias( this, QString::fromLatin1("who"),
+/*	commandHandler->registerAlias( this, QString::fromLatin1("who"),
 		QString::fromLatin1( "raw WHO %1" ),
 		i18n("USAGE: /who <nickname|channel> - Display who info on this user/channel."),
 		CommandHandler::SystemAlias, 1, 1 );
@@ -445,10 +445,9 @@ void IRCProtocol::slotMessageFilter(Message &msg)
 		msg.setBody( messageText, Message::RichText );
 	}
 }
-
+/*
 QList<KAction *> *IRCProtocol::customChatWindowPopupActions(const Message &m, DOM::Node &n)
 {
-/*
 	DOM::HTMLElement e = n;
 
 	//isNull checks that the cast was successful
@@ -460,20 +459,17 @@ QList<KAction *> *IRCProtocol::customChatWindowPopupActions(const Message &m, DO
 //			return activeAccount->contactManager()->findChannel(
 //				e.innerText().string() )->customContextMenuActions();
 	}
-*/
 	return 0;
 }
-
+*/
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, Account *account)
 {
-//	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));
-	return 0;
+	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));
 }
 
 KopeteEditAccountWidget *IRCProtocol::createEditAccountWidget(Account *account, QWidget *parent)
 {
-//	return new IRCEditAccountWidget(static_cast<IRCAccount*>(account), parent);
-	return 0;
+	return new IRCEditAccountWidget(qobject_cast<IRCAccount*>(account), parent);
 }
 
 Account *IRCProtocol::createNewAccount(const QString &accountId)
@@ -492,10 +488,10 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 	if( displayName.isEmpty() )
 		displayName = contactId;
 
-	Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
+	QList<Account*> accounts = AccountManager::self()->accounts( this );
 	if( !accounts.isEmpty() )
 	{
-		Account *a = accounts[ serializedData[ "accountId" ] ];
+/*		Account *a = accounts[ serializedData[ "accountId" ] ];
 		if( a )
 		{
 			a->addContact( contactId, metaContact );
@@ -503,7 +499,7 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 		}
 		else
 			kDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
-				" but we don't have it in the accounts list" << endl;
+				" but we don't have it in the accounts list" << endl; */
 	}
 	else
 		kDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;

@@ -145,7 +145,9 @@ public:
 	virtual KActionMenu *actionMenu();
 
 	/** Reimplemented from Kopete::Account */
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage);
+
+	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 
 	// Returns the Kopete::Contact of the user
 	IRCContact *mySelf() const;

@@ -34,29 +34,29 @@ const QString Version = i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]",
 
 namespace Config {
 
-//const QString AUTOSHOWSERVERWINDOW = QString::fromLatin1("AutoShowServerWindow");
-const QString CODECMIB = QString::fromLatin1("Codec");
-const QString NETWORKNAME = QString::fromLatin1("NetworkName");
-const QString NICKNAME = QString::fromLatin1("NickName");
-const QString USERNAME = QString::fromLatin1("UserName");
-const QString REALNAME = QString::fromLatin1("RealName");
+//const QLatin1String AUTOSHOWSERVERWINDOW("AutoShowServerWindow");
+const QLatin1String CODECMIB("Codec");
+const QLatin1String NETWORKNAME("NetworkName");
+const QLatin1String NICKNAME("NickName");
+const QLatin1String USERNAME("UserName");
+const QLatin1String REALNAME("RealName");
 
 } // IRC::Config
 
 namespace Properties {
-
-const ContactPropertyTmpl ChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic"), QString::null, false, true );
-const ContactPropertyTmpl ChannelMembers(QString::fromLatin1("channelMembers"), i18n("Members"));
-const ContactPropertyTmpl ChannelHomepage(QString::fromLatin1("homePage"), i18n("Home Page"));
+/*
+const ContactPropertyTmpl ChannelTopic(QLatin1String("channelTopic"), i18n("Topic"), QString::null, false, true );
+const ContactPropertyTmpl ChannelMembers(QLatin1String("channelMembers"), i18n("Members"));
+const ContactPropertyTmpl ChannelHomepage(QLatin1String("homePage"), i18n("Home Page"));
 
 //const ContactPropertyTmpl LastSeen(Kopete::Global::IRC::Properties::self()->lastSeen());
-const ContactPropertyTmpl UserInfo(QString::fromLatin1("userInfo"), i18n("IRC User"));
-const ContactPropertyTmpl Server(QString::fromLatin1("ircServer"), i18n("IRC Server"));
-const ContactPropertyTmpl Channels( QString::fromLatin1("ircChannels"), i18n("IRC Channels"));
-const ContactPropertyTmpl Hops(QString::fromLatin1("ircHops"), i18n("IRC Hops"));
-const ContactPropertyTmpl FullName(QString::fromLatin1("FormattedName"), i18n("Full Name"));
-const ContactPropertyTmpl IsIdentified(QString::fromLatin1("identifiedUser"), i18n("User Is Authenticated"));
-
+const ContactPropertyTmpl UserInfo(QLatin1String("userInfo"), i18n("IRC User"));
+const ContactPropertyTmpl Server(QLatin1String("ircServer"), i18n("IRC Server"));
+const ContactPropertyTmpl Channels( QLatin1String("ircChannels"), i18n("IRC Channels"));
+const ContactPropertyTmpl Hops(QLatin1String("ircHops"), i18n("IRC Hops"));
+const ContactPropertyTmpl FullName(QLatin1String("FormattedName"), i18n("Full Name"));
+const ContactPropertyTmpl IsIdentified(QLatin1String("identifiedUser"), i18n("User Is Authenticated"));
+*/
 } // IRC::Properties
 
 } // IRC

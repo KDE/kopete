@@ -1,16 +1,22 @@
 add_subdirectory( icons )
 add_subdirectory( libkirc )
 
-include_directories( ${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/libkirc/ ${CMAKE_CURRENT_BINARY_DIR}/libkirc/ )
+include_directories(
+  ${KOPETE_INCLUDES}
+  ${CMAKE_CURRENT_SOURCE_DIR}/libkirc/
+  ${CMAKE_CURRENT_BINARY_DIR}/libkirc/
+  ${CMAKE_CURRENT_SOURCE_DIR}/ui/
+  ${CMAKE_CURRENT_BINARY_DIR}/ui/
+)
 
 set(kopeteirc_ui_SRCS 
-  ui/channellist.cpp 
-  ui/channellistdialog.cpp 
+#  ui/channellist.cpp 
+#  ui/channellistdialog.cpp 
   ui/ircaddcontactpage.cpp 
-  ui/ircdialogs.cpp 
+#  ui/ircdialogs.cpp 
   ui/irceditaccountwidget.cpp 
-  ui/kcodecaction.cpp 
-  ui/networkconfigwidget.cpp 
+#  ui/kcodecaction.cpp 
+#  ui/networkconfigwidget.cpp 
 )
 
 kde4_add_ui_files(kopeteirc_ui_SRCS 

@@ -20,6 +20,7 @@
 
 #include "kircentity.h"
 
+#include "kopetemessage.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopetemimetypehandler.h"
@@ -65,7 +66,7 @@ class IRCProtocol
 public:
 	static IRCProtocol *self();
 
-	IRCProtocol(QObject *parent, const char *name, const QStringList &args);
+	IRCProtocol(QObject *parent, const QStringList &args);
 	~IRCProtocol();
 
 	/**
@@ -83,7 +84,7 @@ public:
 
 	virtual Kopete::Account* createNewAccount(const QString &accountId);
 
-	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
+//	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
 	Kopete::OnlineStatus onlineStatusFor(const KIRC::Entity::Ptr &entity);
 

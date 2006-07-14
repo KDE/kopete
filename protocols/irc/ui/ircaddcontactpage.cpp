@@ -15,11 +15,11 @@
     *************************************************************************
 */
 
-#include "ircadd.h"
+//#include "ircadd.h"
 #include "ircaddcontactpage.h"
 #include "channellist.h"
 
-#include "kircengine.h"
+//#include "kircengine.h"
 
 #include "ircaccount.h"
 
@@ -41,7 +41,8 @@ public:
 	IRCAccount *account;
 };
 
-IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddContactPage(parent, 0)
+IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
+	: AddContactPage(parent)
 {
 	(new Q3VBoxLayout(this))->setAutoAdd(true);
 //	ircdata = new Ui::ircAddUI(this);

@@ -24,7 +24,7 @@
 #include "ircnetwork.h"
 
 class IRCNetworkConfigWidget
-	: public NetworkConfig
+	: public QWidget, public NetworkConfig
 {
 	Q_OBJECT
 

@@ -33,12 +33,12 @@ extern const QString Version;
 
 namespace Config {
 
-//extern const QString AUTOSHOWSERVERWINDOW;
-extern const QString CODECMIB;
-extern const QString NETWORKNAME;
-extern const QString NICKNAME;
-extern const QString USERNAME;
-extern const QString REALNAME;
+//extern const QLatin1String AUTOSHOWSERVERWINDOW;
+extern const QLatin1String CODECMIB;
+extern const QLatin1String NETWORKNAME;
+extern const QLatin1String NICKNAME;
+extern const QLatin1String USERNAME;
+extern const QLatin1String REALNAME;
 
 } // namespace IRC::Config
 
