@@ -296,7 +296,7 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason)
 {
-	kdDebug( 14140 ) << k_funcinfo << status.description() << endl;
+	kDebug( 14140 ) << k_funcinfo << status.description() << endl;
 	
 	// FIXME: When changing song, do don't anything while connected
 	//if( reason.  contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
