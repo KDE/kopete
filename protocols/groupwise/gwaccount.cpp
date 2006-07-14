@@ -458,11 +458,15 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 void GroupWiseAccount::slotLoggedIn()
 {
 	reconcileOfflineChanges();
-	
+	// set local status display
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
-	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) )
+	// set status on server
+	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) &&
+		( ( GroupWise::Status )initialStatus().internalStatus() != GroupWise::Unknown ) )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Initial status is not online, setting status to " << initialStatus().internalStatus() << endl;
 		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply" ) );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status was " << initialStatus().description() << ", initial reason was " << m_initialReason << endl;
+	}
 }
 
 void GroupWiseAccount::reconcileOfflineChanges()
