@@ -125,7 +125,7 @@ void YahooChatSession::slotInviteWebcam()
 
 void YahooChatSession::slotSendFile()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->sendFile();
 }
