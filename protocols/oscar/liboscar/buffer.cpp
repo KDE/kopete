@@ -379,15 +379,17 @@ void Buffer::expandBuffer(unsigned int inc)
 
 QByteArray Buffer::getLNTS()
 {
-	WORD len = getLEWord();
+	WORD len = getWord() - 1;
 	QByteArray qcs( getBlock(len) );
+	skipBytes( 1 );
 	return qcs;
 }
 
 QByteArray Buffer::getLELNTS()
 {
-	WORD len = getLEWord();
+	WORD len = getLEWord() - 1;
 	QByteArray qcs( getBlock(len) );
+	skipBytes( 1 );
 	return qcs;
 }
 

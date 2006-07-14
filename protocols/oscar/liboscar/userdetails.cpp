@@ -128,8 +128,7 @@ QString UserDetails::clientName() const
 
 void UserDetails::fill( Buffer * buffer )
 {
-	BYTE snLen = buffer->getByte();
-	QString user = QString( buffer->getBlock( snLen ) );
+	QString user = QString( buffer->getBUIN() );
 	if ( !user.isEmpty() )
 		m_userId = user;
 	m_warningLevel = buffer->getWord();
