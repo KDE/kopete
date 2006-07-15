@@ -17,6 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301  USA
 
+#include "oscarsettings.h"
 #include "filetransfertask.h"
 
 #include <kserversocket.h>
@@ -100,7 +101,7 @@ void FileTransferTask::onGo()
 		return;
 	}
 
-	if ( 0 ) //FIXME: get value from settings XXX
+	if ( client()->settings()->fileProxy() )
 	{ //proxy stage 1
 		m_proxy = 1;
 		m_proxyRequester = 1;
@@ -695,7 +696,7 @@ void FileTransferTask::connectFailed()
 {
 	delete m_connection;
 	m_connection = 0;
-	bool proxy = 0; //FIXME: get proxy var from settings XXX
+	bool proxy = client()->settings()->fileProxy();
 	if ( m_action == Receive && (! proxy ) )
 	{ //try redirect
 		m_state = Default;

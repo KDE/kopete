@@ -80,6 +80,11 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 				mGui->rbAllowAll->setChecked( true );
 		}
 
+		//set filetransfer stuff
+		bool configValue = mAccount->configGroup()->readEntry( "FileProxy", false );
+		mGui->chkFileProxy->setChecked( configValue );
+
+
 		// Global Identity
 		mGui->mGlobalIdentity->setChecked( account->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
     }
@@ -138,6 +143,10 @@ Kopete::Account *AIMEditAccountWidget::apply()
 
 	mAccount->configGroup()->writeEntry( "PrivacySetting", privacySetting );
 	mAccount->setPrivacySettings( privacySetting );
+
+	//set filetransfer stuff
+	bool configValue = mGui->chkFileProxy->isChecked();
+	mAccount->configGroup()->writeEntry( "FileProxy", configValue );
 
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );

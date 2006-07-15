@@ -49,12 +49,17 @@ public:
 	void setHideIP( bool hide );
 	bool hideIP() const;
 	
+	/* proxy Settings */
+	void setFileProxy( bool proxy );
+	bool fileProxy() const;
+	
 private:
 	
 	bool m_webAware;
 	bool m_requireAuth;
 	bool m_respectRequireAuth;
 	bool m_hideIP;
+	bool m_fileProxy;
 };
 
 }

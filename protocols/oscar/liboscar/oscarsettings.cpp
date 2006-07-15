@@ -20,6 +20,7 @@
 namespace Oscar
 {
 
+//FIXME: variables are not initialised. imho this is asking for trouble.
 Settings::Settings()
 {
 }
@@ -67,6 +68,16 @@ void Settings::setHideIP( bool hide )
 bool Settings::hideIP() const
 {
 	return m_hideIP;
+}
+
+void Settings::setFileProxy( bool proxy )
+{
+	m_fileProxy = proxy;
+}
+
+bool Settings::fileProxy() const
+{
+	return m_fileProxy;
 }
 
 
