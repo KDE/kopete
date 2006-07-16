@@ -61,6 +61,7 @@ public:
 
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
+	void newContactList();
 
 protected:
 	/**
@@ -90,7 +91,11 @@ protected:
 
 private:
 	QQAccount *m_account;
-
+	/**
+	 * stores the expected status
+	 * would synchronize when ChangeStatus packet recieved.
+	 */
+	Kopete::OnlineStatus m_newstatus; 
 	
 	uint m_qqId;
 	/** 

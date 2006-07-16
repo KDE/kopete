@@ -57,6 +57,7 @@ namespace Eva {
 	char const LoginRedirect = 0x01;
 	char const LoginWrongPassword = 0x05;
 	char const LoginMiscError = 0x06;
+	char const ChangeStatusOK= 0x30;
 
 	// Lengths
 	int const MaxPacketLength = 65535;

@@ -59,6 +59,7 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 	m_account = account;
 	// FIXME: Do we really need password ?
 	m_password = password;
+	m_newstatus = QQProtocol::protocol()->Offline;
 	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
 	m_passwordKey = Eva::QQHash(pwd);
 	pwd.release(); // the data is handled in QT
@@ -162,7 +163,14 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::AddFriend :
 		case Eva::RemoveFriend :
 		case Eva::AuthInvite :
+			break;
 		case Eva::ChangeStatus :
+			if( Eva::Packet::replyCode(text) == Eva::ChangeStatusOK )
+				emit statusChanged( m_newstatus );
+			else // TODO: Debug me.
+				disconnect();
+			break;
+
 		case Eva::AckSysMsg :
 		case Eva::SendMsg :
 		case Eva::ReceiveMsg :
@@ -189,9 +197,12 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
 					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
 
+					emit newContactList();
+					// FIXME: We might login in as invisible as well.
+					m_newstatus = QQProtocol::protocol()->Online;
 					sendChangeStatus( Eva::Online );
+					// TODO: sendRequestKey() for the file transfer function.
 
-					emit statusChanged( QQProtocol::protocol()->Online );
 					break;
 
 				case Eva::LoginRedirect :

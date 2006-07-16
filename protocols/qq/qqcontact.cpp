@@ -1,13 +1,18 @@
 /*
-    qqcontact.cpp - Kopete QQ Protocol
+    qqcontact.cpp - QQ Contact
 
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU General Public                   *
+    * modify it under the terms of the GNU Lesser General Public            *
     * License as published by the Free Software Foundation; either          *
     * version 2 of the License, or (at your option) any later version.      *
     *                                                                       *
@@ -16,125 +21,567 @@
 
 #include "qqcontact.h"
 
-#include <kaction.h>
-#include <kdebug.h>
-#include <klocale.h>
-
-#include "kopeteaccount.h"
-#include "kopetechatsessionmanager.h"
-#include "kopetemetacontact.h"
-
-#include "qqaccount.h"
-#include "qqfakeserver.h"
-#include "qqprotocol.h"
-//Added by qt3to4:
+#include <qcheckbox.h>
 #include <QList>
 
-QQContact::QQContact( Kopete::Account* _account, const QString &uniqueName,
-		const QQContactType type, const QString &displayName, Kopete::MetaContact *parent )
-: Kopete::Contact( _account, uniqueName, parent )
-{
-	kDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
-	m_type = type;
-	// FIXME: ? setDisplayName( displayName );
-	m_msgManager = 0L;
+#undef KDE_NO_COMPAT
+#include <kaction.h>
+#include <kdebug.h>
+#include <kfiledialog.h>
+#include <klineedit.h>
+#include <klocale.h>
+#include <kstandarddirs.h>
+#include <kmessagebox.h>
+#include <ktoolinvocation.h>
+#include <ktempfile.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <qregexp.h>
+#include <kio/job.h>
+#include <kdialog.h>
 
-	setOnlineStatus( QQProtocol::protocol()->qqOffline );
+#include "kopetecontactlist.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetemetacontact.h"
+#include "kopetegroup.h"
+#include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
+
+#include "qqnotifysocket.h"
+#include "qqaccount.h"
+
+QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )
+: Kopete::Contact( account, id, parent )
+{
+	m_deleted = false;
+	m_allowed = false;
+	m_blocked = false;
+	m_reversed = false;
+	m_moving = false;
+	
+	m_clientFlags=0;
+
+	setFileCapable( true );
+
+	// When we are not connected, it's because we are loading the contact list.
+	// so we set the initial status to offline.
+	// We set offline directly because modifying the status after is too slow.
+	// (notification, contact list updating,....)
+	//
+	// FIXME: Hacks like these shouldn't happen in the protocols, but should be
+	//        covered properly at the libkopete level instead - Martijn
+	//
+	// When we are connected, it can be because the user added a contact with the
+	// wizard, and it can be because we are creating a temporary contact.
+	// if it's added by the wizard, the status will be set immediately after.
+	// if it's a temporary contact, better to set the unknown status.
+	setOnlineStatus( ( parent && parent->isTemporary() ) ? QQProtocol::protocol()->UNK : QQProtocol::protocol()->Offline );
+
+	actionBlock = 0L;
 }
 
 QQContact::~QQContact()
 {
+	kDebug(14140) << k_funcinfo << endl;
 }
 
 bool QQContact::isReachable()
 {
-    return true;
+	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != QQProtocol::protocol()->HDN )
+		return true;
+/*
+	QQChatSession *kmm=dynamic_cast<QQChatSession*>(manager(Kopete::Contact::CannotCreate));
+	if( kmm && kmm->service() )  //the chat socket is open.  than mean message will be sent
+		return true;
+*/
+	// When we are invisible we can't start a chat with others, make isReachable return false
+	// (This is an QQ limitation, not a problem in Kopete)
+	if ( !account()->isConnected() || account()->myself()->onlineStatus() == QQProtocol::protocol()->HDN )
+		return false;
+		
+	//if the contact is offline, it is impossible to send it a message.  but it is impossible
+	//to be sure the contact is really offline. For example, if the contact is not on the contact list for
+	//some reason.
+	if( onlineStatus() == QQProtocol::protocol()->Offline && ( isAllowed() || isBlocked() ) && !serverGroups().isEmpty() )
+		return false;
+		
+	return true;
 }
 
-void QQContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
+Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-    QString value;
-	switch ( m_type )
+	Kopete::ContactPtrList chatmembers;
+	chatmembers.append(this);
+
+	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession(  account()->myself(), chatmembers, protocol() );
+	/*
+	QQChatSession *manager = dynamic_cast<QQChatSession*>( _manager );
+	if(!manager &&  canCreate==Kopete::Contact::CanCreate)
 	{
-	case Null:
-		value = "null";
-	case Echo:
-		value = "echo";
+		manager = new QQChatSession( protocol(), account()->myself(), chatmembers  );
+		static_cast<QQAccount*>( account() )->slotStartChatSession( contactId() );
 	}
-	serializedData[ "contactType" ] = value;
+	return manager; */
+	return _manager;
 }
 
-Kopete::ChatSession* QQContact::manager( CanCreateFlags )
+QList<KAction*> *QQContact::customContextMenuActions()
 {
-	kDebug( 14210 ) << k_funcinfo << endl;
-	if ( m_msgManager )
+	QList<KAction*> *m_actionCollection = new QList<KAction*>;
+
+	// Block/unblock Contact
+	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
+	if( !actionBlock )
 	{
-		return m_msgManager;
+		actionBlock = new KAction( KIcon("qq_blocked"), label, 0, "actionBlock" );
+		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT( slotBlockUser()) );
+
+		//show profile
+		actionShowProfile = new KAction( i18n("Show Profile"), 0, "actionShowProfile" );
+		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
+
+		// Send mail (only available if it is an hotmail account)
+		actionSendMail = new KAction( KIcon("mail_generic"), i18n("Send Email..."), 0, "actionSendMail" );
+		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
+
+		// Invite to receive webcam
+		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), 0, "qqWebcamReceive" ) ;
+		connect( actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
+
+		//Send webcam action
+		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), 0, "qqWebcamSend" ) ;
+		connect( actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
+	}
+	else
+		actionBlock->setText( label );
+
+	m_actionCollection->append( actionBlock );
+	m_actionCollection->append( actionShowProfile );
+	m_actionCollection->append( actionSendMail );
+	m_actionCollection->append( actionWebcamReceive );
+	m_actionCollection->append( actionWebcamSend );
+
+
+	return m_actionCollection;
+}
+
+void QQContact::slotBlockUser()
+{
+	QQNotifySocket *notify = static_cast<QQAccount*>( account() )->notifySocket();
+	if( !notify )
+	{
+		KMessageBox::error( Kopete::UI::Global::mainWidget(),
+			i18n( "<qt>Please go online to block or unblock a contact.</qt>" ),
+			i18n( "QQ Plugin" ));
+		return;
+	}
+
+	if( m_blocked )
+	{
+		// notify->removeContact( contactId(), QQProtocol::BL, QString::null, QString::null );
 	}
 	else
 	{
-		QList<Kopete::Contact*> contacts;
-		contacts.append(this);
-		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
-				this, SLOT( sendMessage( Kopete::Message& ) ) );
-		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
-		return m_msgManager;
+		/*
+		if(m_allowed)
+			notify->removeContact( contactId(), QQProtocol::AL, QString::null, QString::null );
+		else
+			notify->addContact( contactId(), QQProtocol::BL, QString::null, QString::null, QString::null );
+			*/
+	}
+}
+
+void QQContact::slotUserInfo()
+{
+	KDialog *infoDialog=new KDialog;
+	infoDialog->setButtons( KDialog::Close );
+	infoDialog->setDefaultButton( KDialog::Close );
+	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	// QString personalMessage=property( QQProtocol::protocol()->propPersonalMessage).value().toString();
+	QWidget* w=new QWidget( infoDialog );
+	/*
+	Ui::QQInfo info;
+	info.setupUi( w );
+	info.m_id->setText( contactId() );
+	info.m_displayName->setText(nick);
+	info.m_personalMessage->setText(personalMessage);
+	info.m_phh->setText(m_phoneHome);
+	info.m_phw->setText(m_phoneWork);
+	info.m_phm->setText(m_phoneMobile);
+	info.m_reversed->setChecked(m_reversed);
+
+	connect( info.m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
+
+	infoDialog->setMainWidget(w);
+	infoDialog->setCaption(nick);
+	infoDialog->show();
+	*/
+}
+
+void QQContact::slotUserInfoDialogReversedToggled()
+{
+	//workaround to make this checkboxe readonly
+	const QCheckBox *cb=dynamic_cast<const QCheckBox*>(sender());
+	if(cb && cb->isChecked()!=m_reversed)
+		const_cast<QCheckBox*>(cb)->setChecked(m_reversed);
+}
+
+void QQContact::deleteContact()
+{
+	kDebug( 14140 ) << k_funcinfo << endl;
+
+	QQNotifySocket *notify = static_cast<QQAccount*>( account() )->notifySocket();
+	if( notify )
+	{
+		/*
+		if( hasProperty(QQProtocol::protocol()->propGuid.key()) )
+		{
+			// Remove from all groups he belongs (if applicable)
+			for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+			{
+				kDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"" << endl;
+				notify->removeContact( contactId(), QQProtocol::FL, guid(), it.key() );
+			}
+	
+			// Then trully remove it from server contact list, 
+			// because only removing the contact from his groups isn't sufficient from QQP11.
+			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+			notify->removeContact( contactId(), QQProtocol::FL, guid(), QString::null);
+		}
+		else
+		{
+			kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+			deleteLater();
+		} */
+	}
+	else
+	{
+		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
+		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "QQ Plugin" ));
+	}
+}
+
+bool QQContact::isBlocked() const
+{
+	return m_blocked;
+}
+
+void QQContact::setBlocked( bool blocked )
+{
+	if( m_blocked != blocked )
+	{
+		m_blocked = blocked;
+		//update the status
+		setOnlineStatus(m_currentStatus);
+		//m_currentStatus is used here.  previously it was  onlineStatus()  but this may cause problem when
+		// the account is offline because of the  Kopete::Contact::OnlineStatus()  account offline hack.
+	}
+}
+
+bool QQContact::isAllowed() const
+{
+	return m_allowed;
+}
+
+void QQContact::setAllowed( bool allowed )
+{
+	m_allowed = allowed;
+}
+
+bool QQContact::isReversed() const
+{
+	return m_reversed;
+}
+
+void QQContact::setReversed( bool reversed )
+{
+	m_reversed= reversed;
+}
+
+bool QQContact::isDeleted() const
+{
+	return m_deleted;
+}
+
+void QQContact::setDeleted( bool deleted )
+{
+	m_deleted= deleted;
+}
+
+uint QQContact::clientFlags() const
+{
+	return m_clientFlags;
+}
+
+void QQContact::setClientFlags( uint flags )
+{
+	if(m_clientFlags != flags) 
+	{
+		/*
+		if(hasProperty( QQProtocol::protocol()->propClient.key() ))
+		{
+			if( flags & QQProtocol::WebMessenger)
+				setProperty(  QQProtocol::protocol()->propClient , i18n("Web Messenger") );
+			else if( flags & QQProtocol::WindowsMobile)
+				setProperty(  QQProtocol::protocol()->propClient , i18n("Windows Mobile") );
+			else if( flags & QQProtocol::QQMobileDevice)
+				setProperty(  QQProtocol::protocol()->propClient , i18n("QQ Mobile") );
+			else if( m_obj.contains("kopete")  )
+				setProperty(  QQProtocol::protocol()->propClient , i18n("Kopete") );
+		}
+		*/
+
+	}
+	m_clientFlags=flags;
+}
+
+void QQContact::setInfo(const  QString &type,const QString &data )
+{
+	if( type == "PHH" )
+	{
+		m_phoneHome = data;
+		//setProperty(QQProtocol::protocol()->propPhoneHome, data);
+	}
+	else if( type == "PHW" )
+	{
+		m_phoneWork=data;
+		// setProperty(QQProtocol::protocol()->propPhoneWork, data);
+	}
+	else if( type == "PHM" )
+	{
+		m_phoneMobile = data;
+		// setProperty(QQProtocol::protocol()->propPhoneMobile, data);
+	}
+	else if( type == "MOB" )
+	{
+		if( data == "Y" )
+			m_phone_mob = true;
+		else if( data == "N" )
+			m_phone_mob = false;
+		else
+			kDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
+	}
+	else if( type == "MFN" )
+	{
+		setProperty(Kopete::Global::Properties::self()->nickName(), data );
+	}
+	else
+	{
+		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
 	}
 }
 
 
-QList<KAction *> *QQContact::customContextMenuActions() //OBSOLETE
+void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> & /* addressBookData */ )
 {
-	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
-	/*m_actionCollection = new KActionCollection( this, "userColl" );
-	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this,
-			SLOT( showContactSettings( )), m_actionCollection, "contactSettings" );
+	// Contact id and display name are already set for us, only add the rest
+	QString groups;
+	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+	{
+		groups += it.key();
+		groups += ",";
+	}
+    if(groups.length() > 0)
+        groups.truncate(groups.length()-1);
 
-	return m_actionCollection;*/
-	return 0L;
+	QString lists="C";
+	if(m_blocked)
+		lists +="B";
+	if(m_allowed)
+		lists +="A";
+	if(m_reversed)
+		lists +="R";
+
+	serializedData[ "groups" ]  = groups;
+	serializedData[ "PHH" ]  = m_phoneHome;
+	serializedData[ "PHW" ]  = m_phoneWork;
+	serializedData[ "PHM" ]  = m_phoneMobile;
+	serializedData[ "lists" ] = lists;
+	serializedData[ "obj" ] = m_obj;
+	serializedData[ "contactGuid" ] = guid();
 }
 
-void QQContact::showContactSettings()
+
+QString QQContact::guid(){ return 0; }//property(QQProtocol::protocol()->propGuid).value().toString(); }
+
+QString QQContact::phoneHome(){ return m_phoneHome ;}
+QString QQContact::phoneWork(){ return m_phoneWork ;}
+QString QQContact::phoneMobile(){ return m_phoneMobile ;}
+
+
+const QMap<QString, Kopete::Group*>  QQContact::serverGroups() const
 {
-	//QQContactSettings* p = new QQContactSettings( this );
-	//p->show();
+	return m_serverGroups;
+}
+void QQContact::clearServerGroups() 
+{
+	m_serverGroups.clear();
 }
 
-void QQContact::sendMessage( Kopete::Message &message )
+
+void QQContact::sync( unsigned int changed )
 {
-	kDebug( 14210 ) << k_funcinfo << endl;
-	// convert to the what the server wants
-	// For this 'protocol', there's nothing to do
-	// send it
-	//static_cast<QQAccount *>( account() )->server()->sendMessage(
-	//		message.to().first()->contactId(),
-	//		message.plainBody() );
-	// give it back to the manager to display
-	manager()->appendMessage( message );
-	// tell the manager it was sent successfully
-	manager()->messageSucceeded();
+	return;
 }
 
-void QQContact::receivedMessage( const QString &message )
+void QQContact::contactAddedToGroup( const QString& groupId, Kopete::Group *group )
 {
-	// Create a Kopete::Message
-	Kopete::Message *newMessage;
-	Kopete::ContactPtrList contactList;
-	account();
-	contactList.append( account()->myself() );
-	newMessage = new Kopete::Message( this, contactList, message, Kopete::Message::Inbound );
-
-	// Add it to the manager
-	manager()->appendMessage (*newMessage);
-
-	delete newMessage;
+	m_serverGroups.insert( groupId, group );
+	m_moving=false;
 }
 
-void QQContact::slotChatSessionDestroyed()
+void QQContact::contactRemovedFromGroup( const QString& groupId )
 {
-	//FIXME: the chat window was closed?  Take appropriate steps.
-	m_msgManager = 0L;
+	m_serverGroups.remove( groupId );
+	if(m_serverGroups.isEmpty() && !m_moving)
+	{
+		deleteLater();
+	}
+	m_moving=false;
+}
+
+
+void QQContact::rename( const QString &newName )
+{
+	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
+
+/*	if( newName == displayName() )
+		return;*/
+
+	// FIXME: This should be called anymore.
+	QQNotifySocket *notify = static_cast<QQAccount*>( account() )->notifySocket();
+	if( notify )
+	{
+		// notify->changePublicName( newName, contactId() );
+	}
+}
+
+void QQContact::slotShowProfile()
+{
+	KToolInvocation::invokeBrowser( QString::fromLatin1("http://members.qq.com/default.qqw?mem=") + contactId()) ;
+}
+
+
+/**
+ * FIXME: Make this a standard KMM API call
+ */
+void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint /*fileSize*/ )
+{
+	QString filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
+	else
+		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+
+	//kDebug(14140) << "QQContact::sendFile: File chosen to send:" << fileName << endl;
+
+	if ( !filePath.isEmpty() )
+	{
+		quint32 fileSize = QFileInfo(filePath).size();
+		//Send the file
+		// static_cast<QQChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
+
+	}
+}
+
+void QQContact::setOnlineStatus(const Kopete::OnlineStatus& status)
+{
+	if(isBlocked() && status.internalStatus() < 15)
+	{
+		Kopete::Contact::setOnlineStatus(
+				Kopete::OnlineStatus(status.status() ,
+				(status.weight()==0) ? 0 : (status.weight() -1)  ,
+				protocol() ,
+				status.internalStatus()+15 ,
+				status.overlayIcons() + QStringList("qq_blocked") ,
+				i18n("%1|Blocked", status.description() ) ) );
+	}
+	else if(!isBlocked() && status.internalStatus() >= 15)
+	{	//the user is not blocked, but the status is blocked
+		switch(status.internalStatus()-15)
+		{
+			case 1:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->Online);
+				break;
+			case 2:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->BSY);
+				break;
+			case 3:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->BRB);
+				break;
+			case 4:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->AWY);
+				break;
+			case 5:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->PHN);
+				break;
+			case 6:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->LUN);
+				break;
+			case 7:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->Offline);
+				break;
+			case 8:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->HDN);
+				break;
+			case 9:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->IDL);
+				break;
+			default:
+				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->UNK);
+				break;
+		}
+	}
+	else
+		Kopete::Contact::setOnlineStatus(status);
+	m_currentStatus=status;
+}
+
+void QQContact::slotSendMail()
+{
+}
+
+void QQContact::setDisplayPicture(KTempFile *f)
+{
+	//copy the temp file somewere else.
+	// in a better world, the file could be dirrectly wrote at the correct location.
+	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
+	QString newlocation=locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+
+	KIO::Job *j=KIO::file_move( KUrl( f->name() ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	
+	f->setAutoDelete(false);
+	delete f;
+
+	//let the time to KIO to copy the file
+	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
+}
+
+void QQContact::slotEmitDisplayPictureChanged()
+{
+	QString newlocation=locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	emit displayPictureChanged();
+}
+
+void QQContact::setObject(const QString &obj)
+{
+	if(m_obj==obj && (obj.isEmpty() || hasProperty(Kopete::Global::Properties::self()->photo().key())))
+		return;
+
+	m_obj=obj;
+
+	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
+	emit displayPictureChanged();
+
+	KConfig *config = KGlobal::config();
+	config->setGroup( "QQ" );
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() 
+			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
+		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
 
 #include "qqcontact.moc"
