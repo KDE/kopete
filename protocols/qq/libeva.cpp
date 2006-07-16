@@ -276,7 +276,6 @@ namespace Eva {
 		return text;
 	}
 
-
 	// Core functions
 	ByteArray requestLoginToken( int id, short const sequence )
 	{

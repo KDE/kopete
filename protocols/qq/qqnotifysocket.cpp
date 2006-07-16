@@ -141,6 +141,24 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 
 	switch( packet.command() )
 	{
+		case Eva::RequestLoginToken :
+			text = Eva::loginToken( packet.body() );
+			break;
+
+		case Eva::Login :
+			text = Eva::decrypt( packet.body(), m_passwordKey );
+			if( text.size() == 0 )
+				text = Eva::decrypt( packet.body(), initKey );
+			break;
+
+		default:
+			text = Eva::decrypt( packet.body(), m_sessionKey );
+			if ( text.size() == 0 )
+				text = Eva::decrypt( packet.body(), m_passwordKey );
+	}
+	
+	switch( packet.command() )
+	{
 		// FIXME: use table-driven pattern ?
 		case Eva::Logout :
 		case Eva::KeepAlive :
@@ -160,16 +178,6 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 
 		case Eva::Login :
-			text = Eva::decrypt( packet.body(), m_passwordKey );
-			if ( text.size() == 0 )
-			{
-			kDebug( 14140 ) << "initKey size = " << initKey.size() << ", data =" << QByteArray( initKey.data(), initKey.size() ) << endl;
-				text = Eva::decrypt( packet.body(), initKey );
-			}
-			
-			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
-				QByteArray( text.data(), text.size() ) << endl;
-
 			switch( Eva::Packet::replyCode(text)  )
 			{
 				case Eva::LoginOK:
@@ -188,8 +196,6 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
 					// TODO: set the client status to connected.
 					sendBuddyList();
-
-					
 					break;
 
 				case Eva::LoginRedirect :
@@ -214,12 +220,6 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 
 		case Eva::BuddyList :
-			text = Eva::decrypt( packet.body(), m_sessionKey );
-			if ( text.size() == 0 )
-				text = Eva::decrypt( packet.body(), m_passwordKey );
-			
-			kDebug( 14140 ) << "text size = " << text.size() << ", data =" <<
-				QByteArray( text.data(), text.size() ) << endl;
 			kDebug( 14140 ) << "pos = " << ntohs( Eva::type_cast<short> (text.data() )) << endl;
 			kDebug( 14140 ) << "qqId = " << ntohs( Eva::type_cast<int> (text.data()+2 )) << endl;
 			break;
@@ -239,8 +239,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 
 		case Eva::RequestLoginToken :
-			m_token = Eva::loginToken( packet.body() );
-			
+			m_token = text;
 			kDebug( 14140 ) << packet.command() << ": token = " << 
 				QByteArray ( m_token.data(), m_token.size() ) << endl;
 
