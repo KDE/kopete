@@ -53,6 +53,12 @@ public:
 	void setFileProxy( bool proxy );
 	bool fileProxy() const;
 	
+	/* port range settings */
+	void setFirstPort( int port );
+	int firstPort() const;
+	void setLastPort( int port );
+	int lastPort() const;
+	
 private:
 	
 	bool m_webAware;
@@ -60,6 +66,8 @@ private:
 	bool m_respectRequireAuth;
 	bool m_hideIP;
 	bool m_fileProxy;
+	int  m_firstPort;
+	int  m_lastPort;
 };
 
 }

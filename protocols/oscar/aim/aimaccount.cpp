@@ -734,6 +734,9 @@ void AIMAccount::connectWithPassword( const QString & )
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
 		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
+		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
+
 		engine()->start( server, port, accountId(), _password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );

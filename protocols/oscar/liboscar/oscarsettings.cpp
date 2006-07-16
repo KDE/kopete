@@ -80,7 +80,25 @@ bool Settings::fileProxy() const
 	return m_fileProxy;
 }
 
+void Settings::setFirstPort( int port )
+{
+	m_firstPort = port;
+}
 
+int Settings::firstPort() const
+{
+	return m_firstPort;
+}
+
+void Settings::setLastPort( int port )
+{
+	m_lastPort = port;
+}
+
+int Settings::lastPort() const
+{
+	return m_lastPort;
+}
 	
 
 

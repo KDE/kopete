@@ -718,21 +718,26 @@ bool FileTransferTask::listen()
 	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(readyAccept()) );
 	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(socketError(int)) );
 	bool success = false;
-	for ( m_port = 5190; m_port < 5200; ++m_port )
-	{ //try up to ten ports starting with 5190 - FIXME: allow user to choose it
+	int first = client()->settings()->firstPort();
+	int last = client()->settings()->lastPort();
+	//I don't trust the settings to be sane
+	if ( last < first )
+		last = first;
+	for ( m_port = first; m_port <= last; ++m_port )
+	{ //try ports in the range (default 5190-5199)
 		m_ss->setAddress( QString::number( m_port ) );
 		if( success = ( m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError ) )
 			break;
 		m_ss->close();
 	}
 	if (! success )
-	{ //uhoh... what do we do?
+	{ //uhoh... what do we do? FIXME: maybe tell the user too many filetransfers
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning" << endl;
 		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( m_port ) );
 		setSuccess(false);
 		return false;
 	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections..." << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections on port " << m_port << endl;
 	return true;
 
 }
@@ -751,7 +756,7 @@ void FileTransferTask::sendReq()
 
 	//now set the rendezvous info
 	msg.setReqType( 0 );
-	msg.setPort( m_port ); //XXX
+	msg.setPort( m_port );
 	msg.setFile( m_size, m_name );
 	if ( m_proxy )
 		msg.setProxy( m_ip );
