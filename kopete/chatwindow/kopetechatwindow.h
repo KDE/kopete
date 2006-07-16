@@ -40,6 +40,7 @@ class KActionMenu;
 class KTempFile;
 class QPixmap;
 class QTabWidget;
+class QDockWidget;
 class KSqueezedTextLabel;
 class KPushButton;
 class KVBox;
@@ -133,6 +134,8 @@ private:
 	void addTab( ChatView* );
 	void setPrimaryChatView( ChatView* );
 	const QString fileContents( const QString &file ) const;
+
+	QDockWidget *m_sideBar;
 
 	ChatView *m_activeView;
 	ChatView *m_popupView;

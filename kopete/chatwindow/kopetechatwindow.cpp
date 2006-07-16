@@ -23,6 +23,8 @@
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qfileinfo.h>
+#include <QDockWidget>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
@@ -194,6 +196,10 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	m_tabBar = 0L;
 
 	initActions();
+
+	m_sideBar = new QDockWidget(i18n("Kopete SideBar"), this);
+	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
 
 	KVBox *vBox = new KVBox( this );
 	vBox->setLineWidth( 0 );

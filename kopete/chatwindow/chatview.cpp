@@ -48,6 +48,8 @@
 
 
 #include <qtimer.h>
+#include <QSplitter>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QDropEvent>
@@ -98,11 +100,16 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
 
+	QSplitter *splitter = new QSplitter( Qt::Vertical, vbox );
+
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)	
 	m_messagePart = new ChatMessagePart( mgr, membersDock );
 
 	//Create the bottom dock widget, with the edit area, statusbar and send button
 	m_editPart = new ChatTextEditPart( mgr, vbox );
+
+	splitter->addWidget(m_messagePart->view());
+	splitter->addWidget(m_editPart->widget());
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
