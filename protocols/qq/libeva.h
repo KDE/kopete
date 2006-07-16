@@ -44,6 +44,13 @@ namespace Eva {
 	short const ReceiveSysMsg = 0x0080;
 	short const FriendStausChange = 0x0081;
 
+	// status
+	char const Online = 10;
+	char const Offline = 20;
+	char const Away = 30;
+	char const Invisible = 40;
+
+
 	// reply
 	char const LoginTokenOK = 0x00;
 	char const LoginOK = 0x00;
@@ -246,13 +253,15 @@ namespace Eva {
 	ByteArray requestLoginToken( int id, short const sequence );
 	ByteArray login( int id, short const sequence, const ByteArray& key, 
 			const ByteArray& token, char const loginMode );
-	ByteArray buddyList( int id, short const sequence, const ByteArray& sessionKey, short pos = 0);
+	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status );
+	ByteArray buddyList( int id, short const sequence, const ByteArray& key, short pos = 0);
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
 	ByteArray QQHash( const ByteArray& text );
 	ByteArray decrypt( const ByteArray& code, const ByteArray& key );
 	const char* getInitKey();
+	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
 
 
 };

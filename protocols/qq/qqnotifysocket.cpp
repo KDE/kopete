@@ -62,7 +62,6 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
 	m_passwordKey = Eva::QQHash(pwd);
 	pwd.release(); // the data is handled in QT
-	m_lastCmd = NA;
 	m_loginMode = Eva::NormalLogin;
 
 	// DELME: dump the result
@@ -122,11 +121,6 @@ void QQNotifySocket::handleError( uint code, uint id )
 		QQSocket::handleError( code, id );
 		break;
 	}
-}
-
-void QQNotifySocket::setStatus( const Kopete::OnlineStatus &status )
-{
-	emit statusChanged( status );
 }
 
 // Core functions
@@ -194,8 +188,10 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					kDebug( 14140 )  << "login time: " << Eva::Packet::loginTime(text) << endl;
 					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
 					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
-					// TODO: set the client status to connected.
-					sendBuddyList();
+
+					sendChangeStatus( Eva::Online );
+
+					emit statusChanged( QQProtocol::protocol()->Online );
 					break;
 
 				case Eva::LoginRedirect :
@@ -260,9 +256,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 // FIXME: Refactor us !!
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	kDebug( 14140 ) << k_funcinfo << endl;
 	Eva::ByteArray data = Eva::requestLoginToken(m_qqId, m_id++);
-	m_lastCmd = LoginTokenRequest;
 	sendPacket( QByteArray( data.data(), data.size()) );
 }
 
@@ -270,8 +264,13 @@ void QQNotifySocket::sendLogin()
 {
 	Eva::ByteArray data = Eva::login( m_qqId, m_id++, m_passwordKey, 
 				m_token, m_loginMode );
-	m_lastCmd = Login;
 	sendPacket( QByteArray( data.data(), data.size()) );
+}
+
+void QQNotifySocket::sendChangeStatus( char status )
+{
+	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
 
 void QQNotifySocket::sendBuddyList()

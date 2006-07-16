@@ -53,14 +53,6 @@ public:
 	virtual void disconnect();
 
 	/**
-	 * emit the status change
-	 */
-	void setStatus( const Kopete::OnlineStatus &status );
-
-	enum Command { NA, LoginTokenRequest, Login };
-
-
-	/**
 	 * this should return a  Kopete::Account::DisconnectReason value
 	 */
 	int  disconnectReason() { return m_disconnectReason; }
@@ -93,6 +85,7 @@ protected:
 	void sendLoginTokenRequest(); 
 	void sendLogin(); 
 	void sendBuddyList();
+	void sendChangeStatus( char status );
 	void sendGoodbye() { return; }
 
 private:
@@ -112,8 +105,6 @@ private:
 	char m_loginMode;
 	// FIXME: Do we need this ?
 	QString m_password;
-
-	Command m_lastCmd;
 
 	int m_disconnectReason;
 

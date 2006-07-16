@@ -88,6 +88,7 @@ public slots:
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
 	 */
 	void receivedMessage( const QString &message );
+	void slotStatusChanged( const Kopete::OnlineStatus &status );
 
 protected:
 	/**

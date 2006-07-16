@@ -36,10 +36,14 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 : Kopete::PasswordedAccount ( parent, accountID )
 {
 	m_notifySocket = 0L;
-	m_connectstatus = QQProtocol::protocol()->NLN;
+	m_connectstatus = QQProtocol::protocol()->Offline;
  
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), QQContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
+
+	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
+		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
+
 }
 
 // The default implementation is TCP
@@ -139,10 +143,10 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 	{
 		kDebug( 14140 ) << k_funcinfo << "start connecting !!" << endl;
 		m_connectstatus = status;
-		/* TODO: use connect() later */
 		connect( status );
 	}
 }
+
 
 void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
@@ -156,6 +160,12 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 	return newContact != 0L;
 }
 
+void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
+{
+	if(status.status()== Kopete::OnlineStatus::Online)
+		;
+	return ;
+}
 
 void QQAccount::slotShowVideo ()
 {
