@@ -128,7 +128,7 @@ void YABTask::slotResult( KJob* job )
 		QDomDocument doc;
 		QDomNodeList list;
 		QDomElement e;
-		uint it = 0;
+		int it = 0;
 
 		kDebug(YAHOO_RAW_DEBUG) << m_data << endl;
 		doc.setContent( m_data );

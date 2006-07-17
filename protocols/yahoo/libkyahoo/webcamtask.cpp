@@ -288,8 +288,8 @@ void WebcamTask::processData( KStreamSocket *socket )
 void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.size() << " bytes " << endl;
-	uint headerLength = 0;
-	uint read = 0;
+	int headerLength = 0;
+	int read = 0;
 	YahooWebcamInformation *info = &socketMap[socket];
 	if( !info->headerRead )
 	{

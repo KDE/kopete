@@ -181,7 +181,7 @@ void ConferenceTask::addInvite( const QString &room, const QStringList &who, con
 	t->setParam( 1, client()->userId().toLocal8Bit() );
 
 	QString whoList = who.first();
-	for( uint i = 1; i < who.size(); i++ )
+	for( int i = 1; i < who.size(); i++ )
 		whoList += QString(",%1").arg( who[i] );
 	t->setParam( 51, whoList.toLocal8Bit() );
 
