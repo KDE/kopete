@@ -373,7 +373,7 @@ void KopeteWindow::initActions()
 	// KActionMenu for selecting the global status message
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
-	connect( setStatusMenu->kMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
+	connect( setStatusMenu->menu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
@@ -881,7 +881,7 @@ void KopeteWindow::makeTrayToolTip()
 	//the tool-tip of the systemtray.
 	if(d->tray)
 	{
-		QString tt = QString::fromLatin1("<qt>");
+		QString tt = QLatin1String("<qt>");
 		QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 		foreach(Kopete::Account *a, accountList)
 		{
@@ -891,7 +891,7 @@ void KopeteWindow::makeTrayToolTip()
 				     a->protocol()->displayName(), a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
 				     QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
 		}
-		tt += QString::fromLatin1("</qt>");
+		tt += QLatin1String("</qt>");
 		d->tray->setToolTip(tt);
 	}
 }
@@ -902,8 +902,8 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 	if ( !actionMenu )
 		return;
 
-	connect( actionMenu->kMenu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
-	actionMenu->kMenu()->popup( p );
+	connect( actionMenu->menu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
+	actionMenu->menu()->popup( p );
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
