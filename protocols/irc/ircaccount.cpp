@@ -439,9 +439,9 @@ KActionMenu *IRCAccount::actionMenu()
 	d->joinChannelAction->setEnabled( isConnected() );
 	d->searchChannelAction->setEnabled( isConnected() );
 
-	mActionMenu->popupMenu()->insertSeparator();
-	mActionMenu->insert(d->joinChannelAction);
-	mActionMenu->insert(d->searchChannelAction);
+	mActionMenu->addSeparator();
+	mActionMenu->addAction(d->joinChannelAction);
+	mActionMenu->addAction(d->searchChannelAction);
 /*
 	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString::null, 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 

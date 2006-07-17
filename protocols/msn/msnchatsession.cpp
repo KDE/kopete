@@ -77,7 +77,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 
 	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), actionCollection(), "msnInvite" );
-	connect ( m_actionInvite->kMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect ( m_actionInvite->menu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	#if !defined NDEBUG
 	KAction* rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), actionCollection(), "msnDebugRawCommand" ) ;
@@ -307,7 +307,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteactions);
 	m_inviteactions.clear();
 
-	m_actionInvite->kMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 
 	QHash<QString, Kopete::Contact*> contactList = account()->contacts();

@@ -108,7 +108,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	QString contactId   = serializedData[ "contactId" ] ;
 	QString accountId   = serializedData[ "accountId" ] ;
 	QString lists = serializedData[ "lists" ];
-	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
+	QStringList groups  = serializedData[ "groups" ].split(',');
 	QString contactGuid = serializedData[ "contactGuid" ] ;
 
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );

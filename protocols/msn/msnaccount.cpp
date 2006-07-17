@@ -265,12 +265,12 @@ KActionMenu * MSNAccount::actionMenu()
 		m_changeDNAction->setEnabled( false );
 	}
 
-	m_actionMenu->kMenu()->addSeparator();
+	m_actionMenu->addSeparator();
 
 	m_actionMenu->addAction( m_changeDNAction );
 	m_actionMenu->addAction( m_startChatAction );
 
-//	m_actionMenu->kMenu()->insertSeparator();
+//	m_actionMenu->menu()->insertSeparator();
 
 	m_actionMenu->addAction( m_openInboxAction );
 
@@ -281,7 +281,7 @@ KActionMenu * MSNAccount::actionMenu()
 	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	debugMenu->addAction(rawCmd);
 
-	m_actionMenu->kMenu()->addSeparator();
+	m_actionMenu->addSeparator();
 	m_actionMenu->addAction( debugMenu );
 #endif
 

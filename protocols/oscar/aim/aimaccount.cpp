@@ -297,7 +297,7 @@ KActionMenu* AIMAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	mActionMenu->kMenu()->addSeparator();
+	mActionMenu->addSeparator();
 
 	KAction* actionVisibility = new KToggleAction( i18n( "Set Visibility..." ), 0, "AIMAccount::mActionSetVisibility" );
 	QObject::connect( actionVisibility, SIGNAL(triggered(bool)), this, SLOT(slotSetVisiblility()) );
