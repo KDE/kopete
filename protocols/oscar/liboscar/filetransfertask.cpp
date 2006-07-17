@@ -252,7 +252,6 @@ void FileTransferTask::readyAccept()
 	//ok, so we have a direct connection. for filetransfers. cool.
 	//might be a good idea to hook up some signals&slots.
 	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
-	connect( m_connection, SIGNAL( closed() ), this, SLOT( socketClosed() ) );
 	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
 	//now we can finally send the first OFT packet.
 	if ( m_action == Send )
@@ -397,14 +396,6 @@ void FileTransferTask::oftRead()
 	}
 
 	delete t;
-}
-
-void FileTransferTask::socketClosed()
-{ //TODO: find out whether it was expected, and tell the user if it wasn't
-	//possible cause might be the other end going offline
-	//perhaps consider it an abrupt cancel
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unexpected close?" << endl;
-	//setSuccess( true );
 }
 
 void FileTransferTask::write()
@@ -599,7 +590,6 @@ void FileTransferTask::doConnect()
 	//proxies *always* use port 5190; the "port" value is some retarded check
 	m_connection = new KBufferedSocket( host, QString::number( m_proxy ? 5190 : m_port ) );
 	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
-	connect( m_connection, SIGNAL( closed() ), this, SLOT( socketClosed() ) );
 	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
 	connect( m_connection, SIGNAL( connected(const KNetwork::KResolverEntry&)), this, SLOT(socketConnected()));
 

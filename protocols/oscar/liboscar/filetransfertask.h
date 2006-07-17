@@ -75,7 +75,6 @@ private slots:
 	void readyAccept(); //serversocket got connection
 	void socketError( int );
 	void socketRead();
-	void socketClosed();
 	void socketConnected();
 	void write();
 
