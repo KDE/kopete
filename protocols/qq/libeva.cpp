@@ -105,10 +105,12 @@ namespace Eva {
 
 		TEA::decipher( (unsigned int*) decrypted,
 				(unsigned int*) key, (unsigned int*) decrypted );
+		/*
 		fprintf( stderr, "decrypt64 : " );
 		for( int i = 0; i< 8; i++ )
 			fprintf( stderr, "%x ", decrypted[i] );
 		fprintf( stderr, "\n" );
+		*/
 	}
 
 	
@@ -276,6 +278,46 @@ namespace Eva {
 		return text;
 	}
 
+	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text )
+	{
+		ByteArray packet(MaxPacketLength);
+		packet += header( id, command, sequence );
+		packet += encrypt( text, key );
+		packet += Tail;
+		setLength( packet );
+		return packet;
+	}
+
+	ContactInfo contactInfo( char* buffer, int& len )
+	{
+		ContactInfo ci;
+		buffer += len;
+		ci.id = ntohl( Eva::type_cast<int> (buffer) );
+		ci.face = ntohs( Eva::type_cast<short> (buffer+4) ); 
+		ci.age = buffer[6];
+		ci.gender = buffer[7];
+		int nl = (int) buffer[8];
+		ci.nick = ByteArray( buffer+9, nl );
+		// 2 bytes are unknown.
+		// 2 bytes are extFlag, commonFlag, ignored here.
+		len += 9+nl+4;
+		return ci;
+	}
+
+	std::list< std::string > groupNames(const ByteArray& text )
+	{
+		// starts from 7, and each field is 17 bytes long.
+		std::list< std::string > list;
+		int offset = 7;
+		while( offset < text.size() )
+		{
+			std::string name( text.data() + offset );
+			list.push_back( name );
+			offset += 17;
+		}
+		return list;
+	}
+
 	// Core functions
 	ByteArray requestLoginToken( int id, short const sequence )
 	{
@@ -317,16 +359,16 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray buddyList( int id, short const sequence, const ByteArray& key, short pos )
+	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos )
 	{
 		ByteArray text(5);
 		text += pos;
 		// FIXME: DO not use hardcoded sort/unsorted.
-		text += BuddyListSorted;
+		text += ContactListSorted;
 		text += '\0';
 		text += '\1';
 
-		return buildPacket(id, BuddyList, sequence, key, text );
+		return buildPacket(id, ContactList, sequence, key, text );
 	}
 
 	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status )
@@ -336,16 +378,15 @@ namespace Eva {
 		text += (int) 0;
 		return buildPacket(id, ChangeStatus, sequence, key, text );
 	}
-		
-	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text )
-	{
-		ByteArray packet(MaxPacketLength);
-		packet += header( id, command, sequence );
-		packet += encrypt( text, key );
-		packet += Tail;
-		setLength( packet );
-		return packet;
-	}
 
+	ByteArray dlGroupNames( int id, short const sequence, ByteArray& key )
+	{
+		ByteArray text(6);
+		text += DownloadGroupNames;
+		text += '\2' ;
+		text += (int) 0;
+
+		return buildPacket(id, GroupNames, sequence, key, text );
+	}
 
 }

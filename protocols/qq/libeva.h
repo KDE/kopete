@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 
+#include <string>
+#include <list>
+
 namespace Eva {
 	// magic number used in the packet
 	short const Version = 0x0F15;
@@ -28,13 +31,13 @@ namespace Eva {
 	short const RequestKey = 0x001D;
 	short const GetCell = 0x0021;
 	short const Login = 0x0022;
-	short const BuddyList = 0x0026;
-	short const BuddyOnline = 0x0027;
+	short const ContactList = 0x0026;
+	short const ContactsOnline = 0x0027;
 	short const GetCell2 = 0x0029;
 	short const SIP = 0x0030; // Special Interest Group == Qun( in Chinese )
 	short const Test = 0x0031;
-	short const UpdateGroup = 0x003C;
-	short const UploadGroup = 0x003D;
+	short const GroupNames = 0x003C;
+	short const UploadGroups = 0x003D;
 	short const Memo = 0x003E;
 	short const DownloadGroup = 0x0058;
 	short const GetLevel = 0x005C;
@@ -69,9 +72,11 @@ namespace Eva {
 	// Options
 	const char NormalLogin = 0x0A;
 	const char InvisibleLogin = 0x28;
-	const char BuddyListSorted = 0x01;
-	const char BuddyListUnsorted = 0x00;
-
+	const char ContactListSorted = 0x01;
+	const char ContactListUnsorted = 0x00;
+	const char ContactListEnd = 0xff;
+	const char UploadGroupNames = 0x2;
+	const char DownloadGroupNames = 0x1;
 
 	// Customized max to get rid of stl dependence
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
@@ -249,13 +254,24 @@ namespace Eva {
 		short m_sequence;
 		ByteArray m_body;
 	};
+
+	struct ContactInfo {
+		int id;
+		short face;
+		char age;
+		char gender;
+		ByteArray nick;
+	};
+
+
 	
 	// Packet operation
 	ByteArray requestLoginToken( int id, short const sequence );
 	ByteArray login( int id, short const sequence, const ByteArray& key, 
 			const ByteArray& token, char const loginMode );
 	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status );
-	ByteArray buddyList( int id, short const sequence, const ByteArray& key, short pos = 0);
+	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos = 0);
+	ByteArray dlGroupNames( int id, short const sequence, ByteArray& key );
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
@@ -264,8 +280,11 @@ namespace Eva {
 	const char* getInitKey();
 	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
 
+	// FIXME: should we move this to Packet ?
+	std::list< std::string > groupNames(const ByteArray& text );
+	ContactInfo contactInfo( char* buffer, int& len );
+	std::list< std::string > groupNames(const ByteArray& text );
+
 
 };
-
-
 #endif

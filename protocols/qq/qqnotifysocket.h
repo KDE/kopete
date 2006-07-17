@@ -62,6 +62,8 @@ public:
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 	void newContactList();
+	void contactList( const Eva::ContactInfo& ci );
+	void groupList( const QStringList& ql );
 
 protected:
 	/**
@@ -85,9 +87,15 @@ protected:
 	// QQ operations
 	void sendLoginTokenRequest(); 
 	void sendLogin(); 
-	void sendBuddyList();
+	void sendContactList( short pos );
 	void sendChangeStatus( char status );
 	void sendGoodbye() { return; }
+
+public:
+	void sendDLGroupNames();
+
+private:
+	void doGroupList( const Eva::ByteArray& text );
 
 private:
 	QQAccount *m_account;

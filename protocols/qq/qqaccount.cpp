@@ -43,11 +43,6 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
 
-	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
-		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
-		SLOT( slotNewContactList() ) );
-
 }
 
 // The default implementation is TCP
@@ -104,6 +99,16 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 
 	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
 	m_notifySocket = new QQNotifySocket( this, m_password );
+
+	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
+		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
+		SLOT( slotNewContactList() ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactList(const Eva::ContactInfo &) ),
+		SLOT( slotContactListed(const Eva::ContactInfo &) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupList(const QStringList& )),
+		SLOT( slotGroupListed(const QStringList& ) ) );
+
 	m_notifySocket->connect(host, port);
 }
 
@@ -168,37 +173,27 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 
 void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 {
-//	kDebug( 14140 ) << k_funcinfo  << status.internalStatus() <<  endl;
 	myself()->setOnlineStatus( status );
 
 	if(m_newContactList)
 	{
-		m_newContactList=false;
+		// m_newContactList = false;
+		// Fetch the group names 
+		m_notifySocket->sendDLGroupNames();
 
-		QHash<QString,Kopete::Contact*> contactList = contacts();
-		QHash<QString,Kopete::Contact*>::Iterator it, itEnd = contactList.end();
-		for ( it = contactList.begin(); it != itEnd; ++it )
-		{
-			QQContact *c = static_cast<QQContact *>( *it );
-			if(c && c->isDeleted() && c->metaContact() && !c->metaContact()->isTemporary() && c!=myself())
-			{
-				if(c->serverGroups().isEmpty())
-				{ //the contact is new, add it on the server
-					c->setOnlineStatus( QQProtocol::protocol()->Offline );
-					// addContactServerside( c->contactId() , c->metaContact()->groups() );
-				}
-				else //the contact had been deleted, give him the unknown status
-				{
-					c->clearServerGroups();
-					c->setOnlineStatus( QQProtocol::protocol()->UNK );
-				}
-			}
-		}
+		// Fetch the ContactList from the server.
+		// m_notifySocket->sendContactList();
+		// Fetch the relation of contact <--> group
+
+	
 	}
 }
 
-
-
+void QQAccount::slotGroupListed(const QStringList& ql )
+{
+	kDebug ( 14210 ) << k_funcinfo << ql << endl;
+	m_groupNames = ql;
+}
 void QQAccount::slotShowVideo ()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
@@ -211,23 +206,11 @@ void QQAccount::slotShowVideo ()
 
 void QQAccount::slotNewContactList()
 {
-		m_oldGroupList=m_groupList;
-		QMap<QString, Kopete::Group*>::Iterator it, itEnd = m_oldGroupList.end();
-		for( it=m_oldGroupList.begin() ; it != itEnd ; ++it )
-		{	//they are about to be changed
-			if(it.value())
-				;
-				// it.value()->setPluginData( protocol(), accountId() + " id", QString::null );
-		}
-
-		m_allowList.clear();
-		m_blockList.clear();
-		m_reverseList.clear();
-		m_groupList.clear();
-		KConfigGroup *config=configGroup();
-		config->writeEntry( "blockList" , QString() ) ;
-		config->writeEntry( "allowList" , QString() );
-		config->writeEntry( "reverseList" , QString() );
+	kDebug ( 14210 ) << k_funcinfo << endl;
+	// remove the allow list.
+	// TODO: cleanup QQAccount variables.
+	KConfigGroup *config=configGroup();
+	// config->writeEntry( "allowList" , QString() );
 
 		// clear all date information which will be received.
 		// if the information is not anymore on the server, it will not be received
@@ -246,14 +229,33 @@ void QQAccount::slotNewContactList()
 		m_newContactList=true;
 }
 
-void QQAccount::slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups )
+void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 {
-	// On empty lists handle might be empty, ignore that
 	// ignore also the myself contact.
-	if ( handle.isEmpty() || handle==accountId())
+	QString id = QString::number( ci.id );
+	QString publicName = QString( QByteArray( ci.nick.data(), ci.nick.size() ) );
+
+	if ( id == accountId() )
 		return;
 
-	QQContact *c = static_cast<QQContact *>( contacts()[ handle ] );
+	QQContact *c = static_cast<QQContact *>( contacts()[ id ] );
+	if( c )
+		; // exited contact.
+	else
+	{
+		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
+			
+		c = new QQContact( this, id, metaContact );
+		c->setOnlineStatus( QQProtocol::protocol()->Offline );
+			
+		if(!publicName.isEmpty() )
+			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+		else
+			c->removeProperty( Kopete::Global::Properties::self()->nickName() );
+			
+		Kopete::ContactList::self()->addMetaContact( metaContact );
+	}
+
 	return ;
 }
 

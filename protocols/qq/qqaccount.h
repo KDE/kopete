@@ -28,6 +28,10 @@ namespace Kopete
 	class StatusMessage;
 }
 
+namespace Eva {
+	struct ContactInfo;
+}
+
 class QQContact;
 class QQProtocol;
 class QQNotifySocket;
@@ -90,7 +94,8 @@ public slots:
 	void receivedMessage( const QString &message );
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNewContactList();
-	void slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups );
+	void slotContactListed( const Eva::ContactInfo& ci );
+	void slotGroupListed(const QStringList& ql );
 
 protected:
 	/**
@@ -116,9 +121,7 @@ private:
 	QString m_password;
 
 	// server data
-	QStringList m_allowList;
-	QStringList m_blockList;
-	QStringList m_reverseList;
+	QStringList m_groupNames;
 
 	bool m_newContactList;
 
