@@ -177,8 +177,8 @@ bool FileTransferTask::validFile()
 			return 0;
 		}
 		if ( m_file.size() == 0 )
-		{ //FIXME: string thingummy
-			emit error( KIO::ERR_COULD_NOT_READ, "file is empty: " + m_file.fileName() );
+		{
+			emit error( KIO::ERR_COULD_NOT_READ, i18n("file is empty: ") + m_file.fileName() );
 			return 0;
 		}
 		if ( ! m_file.open( QIODevice::ReadOnly ) )
@@ -315,21 +315,20 @@ void FileTransferTask::proxyRead()
 		{
 			WORD err = b.getWord();
 			QString errMsg;
-			//FIXME: strings
 			switch( err )
 			{
 				case 0x0d: //we did something wrong (eg. wrong username)
 				case 0x0e: //we did something wronger (eg. no cookie)
-					errMsg = "Bad Request";
+					errMsg = i18n("Bad Request");
 					break;
 				case 0x10: //we did something else wrong
-					errMsg = "Request Timed Out";
+					errMsg = i18n("Request Timed Out");
 					break;
 				case 0x1a: //other side was too slow
-					errMsg = "Accept Period Timed Out";
+					errMsg = i18n("Accept Period Timed Out");
 					break;
 				default:
-					errMsg = "Unknown Error: " + QString::number( err );
+					errMsg = i18n("Unknown Error: ") + QString::number( err );
 			}
 
 			emit error( KIO::ERR_COULD_NOT_LOGIN, errMsg );
@@ -574,7 +573,7 @@ void FileTransferTask::doConnect()
 	{
 		if ( m_ip.length() != 4 || ! m_port )
 		{
-			emit error( KIO::ERR_COULD_NOT_CONNECT, "missing ip or port" ); //FIXME: string
+			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("missing ip or port") ); 
 			doCancel();
 			return;
 		}
@@ -668,7 +667,7 @@ void FileTransferTask::timeout()
 	{ //kbufferedsocket took too damn long
 		if ( m_proxy )
 		{ //fuck, we failed at a proxy! just give up
-			emit error( KIO::ERR_COULD_NOT_CONNECT, "Timeout" ); //FIXME: string
+			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("Timeout") );
 			doCancel();
 		}
 		else
@@ -678,7 +677,7 @@ void FileTransferTask::timeout()
 
 	//nothing's happened for ages - assume we're dead.
 	//so tell the user, send off a cancel, and die
-	emit error( KIO::ERR_ABORTED, "Timeout" );
+	emit error( KIO::ERR_ABORTED, i18n("Timeout") );
 	doCancel();
 }
 
