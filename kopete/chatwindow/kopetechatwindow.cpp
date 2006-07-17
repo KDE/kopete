@@ -239,8 +239,8 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	windows.append( this );
 	windowListChanged();
 
-	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
-	m_alwaysShowTabs = KGlobal::config()->readEntry( QString::fromLatin1("AlwaysShowTabs"), false );
+	KGlobal::config()->setGroup( QLatin1String("ChatWindowSettings") );
+	m_alwaysShowTabs = KGlobal::config()->readEntry( QLatin1String("AlwaysShowTabs"), false );
 //	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 	
 	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
@@ -371,12 +371,12 @@ void KopeteChatWindow::initActions(void)
 	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll, "tabs_detachmove" );
 	actionDetachMenu->setDelayed( false );
 
-	connect ( actionDetachMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
-	connect ( actionDetachMenu->kMenu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
+	connect ( actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
+	connect ( actionDetachMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
 
 	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll, "tabs_placement" );
-	connect ( actionTabPlacementMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
-	connect ( actionTabPlacementMenu->kMenu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
+	connect ( actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
+	connect ( actionTabPlacementMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
 
 	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
@@ -427,14 +427,14 @@ void KopeteChatWindow::initActions(void)
 
 	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll, "contacts_menu" );
 	actionContactMenu->setDelayed( false );
-	connect ( actionContactMenu->kMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
+	connect ( actionContactMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 
 	//The Sending movie
-	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
+	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
 #if 0
-	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), K3Icon::Toolbar);
+	animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Toolbar);
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
@@ -620,11 +620,11 @@ void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
 	{
-		KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
+		KGlobal::config()->setGroup( QLatin1String("ChatWindowSettings") );
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-		m_tabBar->setHoverCloseButton(KGlobal::config()->readEntry( QString::fromLatin1("HoverClose"), false ));
+		m_tabBar->setHoverCloseButton(KGlobal::config()->readEntry( QLatin1String("HoverClose"), false ));
 		m_tabBar->setTabReorderingEnabled(true);
 		m_tabBar->setAutomaticResizeTabs(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
@@ -649,7 +649,7 @@ void KopeteChatWindow::createTabBar()
 		else
 			setActiveView( chatViewList.first() );
 
-		int tabPosition = KGlobal::config()->readEntry( QString::fromLatin1("Tab Placement") , 0 );
+		int tabPosition = KGlobal::config()->readEntry( QLatin1String("Tab Placement") , 0 );
 		slotPlaceTabs( tabPosition );
 	}
 }
@@ -860,7 +860,7 @@ void KopeteChatWindow::updateBackground( const QPixmap &pm )
 			backgroundFile->unlink();
 		}
 
-		backgroundFile = new KTempFile( QString::null, QString::fromLatin1( ".bmp" ) );
+		backgroundFile = new KTempFile( QString::null, QLatin1String( ".bmp" ) );
 		pm.save( backgroundFile->name(), "BMP" );
 		QTimer::singleShot( 100, this, SLOT( slotEnableUpdateBg() ) );
 	}
@@ -969,7 +969,7 @@ void KopeteChatWindow::slotChatClosed()
 
 void KopeteChatWindow::slotPrepareDetachMenu(void)
 {
-	QMenu *detachMenu = actionDetachMenu->kMenu();
+	QMenu *detachMenu = actionDetachMenu->menu();
 	detachMenu->clear();
 
 	for ( unsigned id=0; id < windows.count(); id++ )
@@ -997,7 +997,7 @@ void KopeteChatWindow::slotSendMessage()
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
-	KMenu *contactsMenu = actionContactMenu->kMenu();
+	KMenu *contactsMenu = actionContactMenu->menu();
 	contactsMenu->clear();
 
 	Kopete::Contact *contact;
@@ -1016,7 +1016,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	foreach(contact, m_them)
 	{
 		KMenu *p = contact->popupMenu();
-		connect ( actionContactMenu->kMenu(), SIGNAL(aboutToHide()),
+		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
 
 		if( contact->metaContact() )
@@ -1028,10 +1028,10 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		if( ++contactCount == 15 && contact != m_them.last() )
 		{
 			KActionMenu *moreMenu = new KActionMenu( KIcon("folder_open"), i18n("More..."), 0, 0);
-			connect ( actionContactMenu->kMenu(), SIGNAL(aboutToHide()),
+			connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
 			contactsMenu->addAction( moreMenu );
-			contactsMenu = moreMenu->kMenu();
+			contactsMenu = moreMenu->menu();
 			contactCount = 0;
 		}
 	}
@@ -1039,7 +1039,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 void KopeteChatWindow::slotPreparePlacementMenu()
 {
-	QMenu *placementMenu = actionTabPlacementMenu->kMenu();
+	QMenu *placementMenu = actionTabPlacementMenu->menu();
 	placementMenu->clear();
 
 	placementMenu->insertItem( i18n("Top"), 0 );
@@ -1065,8 +1065,8 @@ void KopeteChatWindow::readOptions()
 	// load and apply config file settings affecting the appearance of the UI
 //	kDebug(14010) << k_funcinfo << endl;
 	KConfig *config = KGlobal::config();
-	applyMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
-	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
+	applyMainWindowSettings( config, QLatin1String( "KopeteChatWindow" ) );
+	config->setGroup( QLatin1String("ChatWindowSettings") );
 }
 
 void KopeteChatWindow::saveOptions()
@@ -1076,10 +1076,10 @@ void KopeteChatWindow::saveOptions()
 	KConfig *config = KGlobal::config();
 
 	// saves menubar,toolbar and statusbar setting
-	saveMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
-	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
+	saveMainWindowSettings( config, QLatin1String( "KopeteChatWindow" ) );
+	config->setGroup( QLatin1String("ChatWindowSettings") );
 	if( m_tabBar )
-		config->writeEntry ( QString::fromLatin1("Tab Placement"), (int)m_tabBar->tabPosition() );
+		config->writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
 
 	config->sync();
 }
