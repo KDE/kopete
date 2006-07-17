@@ -177,7 +177,7 @@ KActionMenu *JabberAccount::actionMenu ()
 {
 	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
 
-	m_actionMenu->kMenu()->addSeparator();
+	m_actionMenu->addSeparator();
 
 	KAction *action;
 	
@@ -190,7 +190,7 @@ KActionMenu *JabberAccount::actionMenu ()
 	action->setEnabled( isConnected() );
 
 
-	m_actionMenu->kMenu()->addSeparator();
+	m_actionMenu->addSeparator();
 	
 	action = new KAction( KIcon("jabber_serv_on"), i18n ("Services..."), 
 	                      0, 	"actionJabberServices" );

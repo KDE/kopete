@@ -261,7 +261,7 @@ GaduAccount::actionMenu()
 #warning Icon removed from KActionMenu, port
 // 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
 	p->actionMenu_ = new KActionMenu( accountId(), 0, 0 );
-	p->actionMenu_->kMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
+	p->actionMenu_->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
@@ -326,15 +326,15 @@ GaduAccount::actionMenu()
 
 	p->actionMenu_->addAction( p->friendsModeAction );
 
-	p->actionMenu_->kMenu()->addSeparator();
+	p->actionMenu_->addSeparator();
 
 	p->actionMenu_->addAction( p->searchAction );
 
-	p->actionMenu_->kMenu()->addSeparator();
+	p->actionMenu_->addSeparator();
 
 	p->actionMenu_->addAction( p->listputAction );
 
-	p->actionMenu_->kMenu()->addSeparator();
+	p->actionMenu_->addSeparator();
 
 	p->actionMenu_->addAction( p->listToFileAction );
 	p->actionMenu_->addAction( p->listFromFileAction );
