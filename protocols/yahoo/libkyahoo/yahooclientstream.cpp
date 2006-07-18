@@ -20,11 +20,11 @@
 
 
 
-#include <qapplication.h>  // for qdebug
-#include <qpointer.h> 
-#include <qobject.h>
-#include <q3ptrqueue.h>
-#include <qtimer.h>
+#include <QApplication>  // for qdebug
+#include <QPointer> 
+#include <QObject>
+#include <QTimer>
+#include <QQueue>
 
 #include <kdebug.h>
 
@@ -96,7 +96,7 @@ public:
 	int errCond;
 	QString errText;
 
-	Q3PtrQueue<Transfer> in;
+	QQueue<Transfer *> in;
 
 	QTimer noopTimer; // used to send icq keepalive
 	int noop_time;
