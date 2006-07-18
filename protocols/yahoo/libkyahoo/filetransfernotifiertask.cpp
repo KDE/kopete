@@ -142,7 +142,7 @@ void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePeerToPeer);
 	t->setId( client()->sessionID() );
-	t->setParam( 4, client()->userId().local8Bit() );
+	t->setParam( 4, client()->userId().toLocal8Bit() );
 	t->setParam( 5, transfer->firstParam( 4 ) );
 	t->setParam( 11, transfer->firstParam( 11 ) );
 

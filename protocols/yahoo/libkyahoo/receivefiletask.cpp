@@ -63,18 +63,18 @@ void ReceiveFileTask::onGo()
 		break;
 	case FileTransfer7Accept:
 		t->setId( client()->sessionID() );
-		t->setParam( 1, client()->userId().local8Bit() );
-		t->setParam( 5, m_userId.local8Bit() );
-		t->setParam( 265, m_remoteUrl.url().local8Bit() );
+		t->setParam( 1, client()->userId().toLocal8Bit() );
+		t->setParam( 5, m_userId.toLocal8Bit() );
+		t->setParam( 265, m_remoteUrl.url().toLocal8Bit() );
 		t->setParam( 222, 3 );
 	
 		send( t );
 		break;
 	case FileTransfer7Reject:
 		t->setId( client()->sessionID() );
-		t->setParam( 1, client()->userId().local8Bit() );
-		t->setParam( 5, m_userId.local8Bit() );
-		t->setParam( 265, m_remoteUrl.url().local8Bit() );
+		t->setParam( 1, client()->userId().toLocal8Bit() );
+		t->setParam( 5, m_userId.toLocal8Bit() );
+		t->setParam( 265, m_remoteUrl.url().toLocal8Bit() );
 		t->setParam( 222, 4 );
 	
 		send( t );
@@ -153,7 +153,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 		// Reject P2P Transfer offer
 		YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7Accept);
 		t->setId( client()->sessionID() );
-		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 1, client()->userId().toLocal8Bit() );
 		t->setParam( 5, transfer->firstParam( 4 ) );
 		t->setParam( 265, transfer->firstParam( 265 ) );
 		t->setParam( 66, -3 );
@@ -172,7 +172,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 
 		YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7Accept);
 		t->setId( client()->sessionID() );
-		t->setParam( 1, client()->userId().local8Bit() );
+		t->setParam( 1, client()->userId().toLocal8Bit() );
 		t->setParam( 5, transfer->firstParam( 4 ) );
 		t->setParam( 265, transfer->firstParam( 265 ) );
 		t->setParam( 27, transfer->firstParam( 27 ) );

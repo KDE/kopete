@@ -75,10 +75,10 @@ void SendFileTask::connectSucceeded()
 	m_file.setName( m_url.path() );
 
 	t.setId( client()->sessionID() );
-	t.setParam( 0, client()->userId().local8Bit());
-	t.setParam( 5, m_target.local8Bit());
+	t.setParam( 0, client()->userId().toLocal8Bit());
+	t.setParam( 5, m_target.toLocal8Bit());
 	t.setParam( 28, m_file.size() );	
-	t.setParam( 27, m_url.fileName().local8Bit() );
+	t.setParam( 27, m_url.fileName().toLocal8Bit() );
 	t.setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
@@ -103,7 +103,7 @@ void SendFileTask::connectSucceeded()
 			"Host: filetransfer.msg.yahoo.com:80\r\n"
 			"Content-length: %4\r\n"
 			"Cache-Control: no-cache\r\n\r\n").arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()).arg(m_file.size()+4+paket.size());
-	stream.writeRawBytes( header.local8Bit(), header.length() );
+	stream.writeRawBytes( header.toLocal8Bit(), header.length() );
 	stream.writeRawBytes( paket.data(), paket.size() );
 	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
 
