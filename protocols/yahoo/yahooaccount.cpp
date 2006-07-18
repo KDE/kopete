@@ -1627,7 +1627,6 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 void YahooAccount::slotBuddyIconChanged( const QString &url )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	//	Q3DictIterator<Kopete::Contact> it( contacts() );
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
 	if ( url.isEmpty() )	// remove pictures from buddie's clients
@@ -1643,13 +1642,15 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 		m_session->sendPictureChecksum( checksum, QString::null );
 	}
 	
-// 	for ( ; it.current(); ++it )
-// 	{
-// 		if ( it.current() == myself() || !it.current()->isReachable() )
-// 			continue;
-// 		static_cast< YahooContact* >( it.current() )->sendBuddyIconChecksum( checksum );
-// 		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( pictureFlag() );
-// 	}
+	QHash<QString,Kopete::Contact*>::const_iterator it;
+	QHash<QString,Kopete::Contact*>::const_iterator end = contacts().constEnd();
+	for ( it = contacts().constBegin(); it != end; ++it )
+	{
+		if ( it.value() == myself() || !it.value()->isReachable() )
+			continue;
+		static_cast< YahooContact* >( it.value() )->sendBuddyIconChecksum( checksum );
+		static_cast< YahooContact* >( it.value() )->sendBuddyIconUpdate( pictureFlag() );
+	}
 }
 
 void YahooAccount::slotWebcamReadyForTransmission()
