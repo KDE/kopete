@@ -4,9 +4,9 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
 
-    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,7 +18,7 @@
     *************************************************************************
 */
 
-#include <qstring.h>
+#include <QString>
 
 #include "logintask.h"
 #include "transfer.h"
@@ -159,7 +159,7 @@ void LoginTask::sendAuth(YMSGTransfer* transfer)
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceAuth );
-	t->setParam( 1 , (Q3CString)client()->userId().toLocal8Bit() );
+	t->setParam( 1 , client()->userId().toLocal8Bit() );
 	send(t);
 	mState = SentAuth;
 }
@@ -198,18 +198,18 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
-	t->setParam( 0 , (Q3CString)sn.toLocal8Bit());
+	t->setParam( 0 , sn.toLocal8Bit());
 	t->setParam( 6 , resp_6);
 	t->setParam( 96 , resp_96);
-	t->setParam( 59 , "B\\tfckeert1kk1nl&b=2" );	// ???
+// 	t->setParam( 59 , "B\\tfckeert1kk1nl&b=2" );	// ???
 	t->setParam( 135 , "7,0,0,437" );	// Client version
 	t->setParam( 148 , -60 );
 	t->setParam( 244 , 524223 );
-	t->setParam( 1 , (Q3CString)sn.toLocal8Bit());
+	t->setParam( 1 , sn.toLocal8Bit());
 
 	if( !m_verificationWord.isEmpty() )
 	{
-		t->setParam( 227 , (Q3CString)m_verificationWord.toLocal8Bit() );
+		t->setParam( 227 , m_verificationWord.toLocal8Bit() );
 		m_verificationWord = QString::null;
 	}
 

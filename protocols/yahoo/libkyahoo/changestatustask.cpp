@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Change our Status
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
 
     *************************************************************************
     *                                                                       *
@@ -19,7 +19,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
+#include <QString>
 #include <kdebug.h>
 
 ChangeStatusTask::ChangeStatusTask(Task* parent) : Task(parent)
@@ -47,7 +47,7 @@ void ChangeStatusTask::onGo()
 		if( !m_message.isEmpty() )
 		{
 			m_status = Yahoo::StatusCustom;
-			t->setParam( 19, (Q3CString)m_message.toUtf8() );
+			t->setParam( 19, m_message.toUtf8() );
 		}
 		t->setParam( 10, m_status );
 		t->setParam( 47, m_type );

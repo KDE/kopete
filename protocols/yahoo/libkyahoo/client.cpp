@@ -19,10 +19,8 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-//Added by qt3to4:
+#include <QTimer>
 #include <QPixmap>
-#include <Q3CString>
 
 #include <kdebug.h>
 
@@ -657,12 +655,6 @@ void Client::setVerificationWord( const QString &word )
 QString Client::password()
 {
 	return d->pass;
-}
-
-Q3CString Client::ipAddress()
-{
-	//TODO determine ip address
-	return "127.0.0.1";
 }
 
 QString Client::host()

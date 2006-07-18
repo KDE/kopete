@@ -42,7 +42,7 @@ void SendMessageTask::onGo()
 		client()->notifyError( i18n( "An error occured sending the message" ), i18n( "The message is empty." ), Client::Debug );
 		return;
 	}	
-	uint pos=0;
+	int pos=0;
 	
 	// split messages that are longer than 800 chars. they get dropped otherwise
 	while( pos < m_text.length() )

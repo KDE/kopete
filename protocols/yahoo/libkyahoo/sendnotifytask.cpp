@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Send a notification
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
 
     *************************************************************************
     *                                                                       *
@@ -19,7 +19,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
+#include <QString>
 #include <kdebug.h>
 
 SendNotifyTask::SendNotifyTask(Task* parent) : Task(parent)
@@ -36,8 +36,8 @@ void SendNotifyTask::onGo()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceNotify);
 	t->setId( client()->sessionID() );
 	t->setStatus( Yahoo::StatusNotify );
-	t->setParam( 4, (Q3CString)client()->userId().toLocal8Bit() );
-	t->setParam( 5, (Q3CString)m_target.toLocal8Bit() );
+	t->setParam( 4, client()->userId().toLocal8Bit() );
+	t->setParam( 5, m_target.toLocal8Bit() );
 	t->setParam( 14, " " );	
 	switch( m_type )
 	{

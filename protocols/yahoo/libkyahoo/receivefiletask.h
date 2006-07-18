@@ -18,7 +18,6 @@
 #define RECEIVEFILETASK_H
 
 #include "task.h"
-#include <qfile.h>
 #include <kurl.h>
 
 class QString;

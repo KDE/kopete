@@ -7,7 +7,7 @@
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
     Copyright (C) 2003  Justin Karneges
     
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -23,8 +23,6 @@
 #define LIBYAHOO_CLIENT_H
 
 #include <qobject.h>
-#include <QPixmap>
-#include <Q3CString>
 #include <kurl.h>
 
 #include "libkyahoo_export.h"
@@ -36,6 +34,7 @@
 
 class QString;
 class QTimer;
+class QPixmap;
 class ClientStream;
 class KNetworkConnector;
 class Task;
@@ -334,11 +333,6 @@ Q_OBJECT
 		 * The current user's password
 		 */
 		QString password();
-		
-		/**
-		 * Host's IP address
-		 */
-		Q3CString ipAddress();
 		
 		/**
 		 * current Session ID
