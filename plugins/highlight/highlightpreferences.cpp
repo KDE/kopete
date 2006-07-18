@@ -161,7 +161,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_case->setChecked(current->caseSensitive);
 	preferencesDialog->m_regexp->setChecked(current->isRegExp);
 	preferencesDialog->m_editregexp->setEnabled(current->isRegExp);
-	preferencesDialog->m_importance->setCurrentItem(current->importance);
+	preferencesDialog->m_importance->setCurrentIndex(current->importance);
 	preferencesDialog->m_setImportance->setChecked(current->setImportance);
 	preferencesDialog->m_importance->setEnabled(current->setImportance);
 	preferencesDialog->m_BG->setColor(current->BG);
