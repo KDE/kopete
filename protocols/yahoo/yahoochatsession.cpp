@@ -59,7 +59,9 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), actionCollection(), "yahooBuzz" ) ;
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
 	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
-	new KAction( i18n( "Send File" ), QIconSet(BarIcon("attach")), 0, this, SLOT( slotSendFile() ), actionCollection(), "yahooSendFile" );
+
+	KAction *sendFileAction = new KAction( KIcon("attach"), i18n( "Send File" ), actionCollection(), "yahooSendFile" );
+	connect( sendFileAction, SIGNAL( triggered() ), this, SLOT( slotSendFile() ) );
 
 	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), actionCollection(), "yahooShowInfo" ) ;
 	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
