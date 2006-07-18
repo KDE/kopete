@@ -22,11 +22,10 @@
 #include <string.h>
 #include <iostream>
 
-#include <qdatastream.h>
-#include <qdatetime.h>
-#include <qtextstream.h>
-//Added by qt3to4:
-#include <Q3CString>
+#include <QDataStream>
+#include <QDateTime>
+#include <QTextStream>
+#include <QByteArray>
 
 
 #include <kdebug.h>
@@ -213,7 +212,7 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-void CoreProtocol::slotOutgoingData( const Q3CString &out )
+void CoreProtocol::slotOutgoingData( const QByteArray &out )
 {
 	qDebug( "%s", out.data() );
 }

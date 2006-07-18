@@ -20,13 +20,11 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
-#include <qbuffer.h>
-#include <qfile.h>
-#include <qtimer.h>
-//Added by qt3to4:
+#include <QString>
+#include <QBuffer>
+#include <QFile>
+#include <QTimer>
 #include <QPixmap>
-#include <Q3CString>
 #include <ktempfile.h>
 #include <kprocess.h>
 #include <kstreamsocket.h>
@@ -140,12 +138,12 @@ void WebcamTask::slotConnectionStage1Established()
 	QString s;
 	if( socketMap[socket].direction == Incoming )
 	{
-		socket->write( Q3CString("<RVWCFG>").data(), 8 );
+		socket->write( QByteArray("<RVWCFG>") );
 		s = QString("g=%1\r\n").arg(socketMap[socket].sender);
 	}
 	else
 	{
-		socket->write( Q3CString("<RUPCFG>").data(), 8 );
+		socket->write( QByteArray("<RUPCFG>") );
 		s = QString("f=1\r\n");
 	}
 
@@ -175,7 +173,7 @@ void WebcamTask::slotConnectionStage2Established()
 	if( socketMap[socket].direction == Incoming )
 	{
 		// Send <REQIMG>-Packet
-		socket->write( Q3CString("<REQIMG>").data(), 8 );
+		socket->write( QByteArray("<REQIMG>") );
 		// Send request information
 		s = QString("a=2\r\nc=us\r\ne=21\r\nu=%1\r\nt=%2\r\ni=\r\ng=%3\r\no=w-2-5-1\r\np=1")
 			.arg(client()->userId()).arg(socketMap[socket].key).arg(socketMap[socket].sender);
@@ -185,7 +183,7 @@ void WebcamTask::slotConnectionStage2Established()
 	else
 	{
 		// Send <REQIMG>-Packet
-		socket->write( Q3CString("<SNDIMG>").data(), 8 );
+		socket->write( QByteArray("<SNDIMG>") );
 		// Send request information
 		s = QString("a=2\r\nc=us\r\nu=%1\r\nt=%2\r\ni=%3\r\no=w-2-5-1\r\np=2\r\nb=KopeteWebcam\r\nd=\r\n")
 		.arg(client()->userId()).arg(socketMap[socket].key).arg(socket->localAddress().nodeName());
