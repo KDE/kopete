@@ -20,9 +20,9 @@
 #define INPUTPROTOCOLBASE_H
 
 #include <QObject>
-#include <Q3CString>
 
 class QDataStream;
+class QByteArray;
 class Transfer;
 /**
 Defines a basic interface for protocols dealing with input from the GroupWise server.
@@ -63,7 +63,7 @@ protected:
 	 * updates the bytes parsed counter
 	 * @return false if the string was broken or there was no data available at all
 	 */
-	bool safeReadBytes( Q3CString & data, uint & len );
+	bool safeReadBytes( QByteArray & data, uint & len );
 	
 protected:
 	uint m_state;
