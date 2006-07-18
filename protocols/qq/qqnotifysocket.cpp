@@ -235,15 +235,16 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 
 		case Eva::ContactList :
-			len = 2;
-			while( len < text.size() )
-				emit contactList( Eva::contactInfo( text.data(), len ) );
-			short pos = ntohs( Eva::type_cast<short> (text.data()) );
+			{
+				len = 2;
+				while( len < text.size() )
+					emit contactList( Eva::contactInfo( text.data(), len ) );
+				short pos = ntohs( Eva::type_cast<short> (text.data()) );
 
-			if( pos != Eva::ContactListEnd )
-				sendContactList(pos);
+				if( pos != Eva::ContactListEnd )
+					sendContactList(pos);
+			}
 			break;
-
 		case Eva::ContactsOnline :
 		case Eva::GetCell2 :
 		case Eva::SIP :
