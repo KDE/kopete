@@ -348,21 +348,21 @@ bool ChatView::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
-				i18n( "Cl&ose Chat" ), QString::fromLatin1( "AskCloseGroupChat" ) );
+				i18n( "Cl&ose Chat" ), QLatin1String( "AskCloseGroupChat" ) );
 		}
 
 		if ( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
-				i18n( "Cl&ose Chat" ), QString::fromLatin1("AskCloseChatRecentMessage" ) );
+				i18n( "Cl&ose Chat" ), QLatin1String("AskCloseChatRecentMessage" ) );
 		}
 
 		if ( d->sendInProgress && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n( "You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?" ), i18n( "Message in Transit" ),
-				i18n( "Cl&ose Chat" ), QString::fromLatin1( "AskCloseChatMessageInProgress" ) );
+				i18n( "Cl&ose Chat" ), QLatin1String( "AskCloseChatMessageInProgress" ) );
 		}
 	}
 
@@ -450,7 +450,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 			setStatusText( i18n( "%1 is typing a message", typingList.first() ) );
 		else
 		{
-			QString statusTyping = typingList.join( QString::fromLatin1( ", " ) );
+			QString statusTyping = typingList.join( QLatin1String( ", " ) );
 			setStatusText( i18nc( "%1 is a list of names", "%1 are typing a message", statusTyping ) );
 		}
 		updateChatState( Typing );
@@ -725,7 +725,7 @@ void ChatView::saveOptions()
 {
 	KConfig *config = KGlobal::config();
 
-//	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
+//	writeDockConfig ( config, QLatin1String( "ChatViewDock" ) );
 	saveChatSettings();
 	config->sync();
 }
@@ -747,7 +747,7 @@ void ChatView::saveChatSettings()
 
 	KConfig* config = KGlobal::config();
 	
-	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           mc->metaContactId();
 
 	config->setGroup( contactListGroup );
@@ -763,7 +763,7 @@ void ChatView::loadChatSettings()
 		return; //can't load with more than one other person in the chat
 
 	//read settings for metacontact
-	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           contacts.first()->metaContact()->metaContactId();
 	KConfig* config = KGlobal::config();
 	config->setGroup( contactListGroup );
@@ -779,24 +779,24 @@ void ChatView::readOptions()
 	KConfig *config = KGlobal::config();
 
 	/** THIS IS BROKEN !!! */
-	//dockManager->readConfig ( config, QString::fromLatin1("ChatViewDock") );
+	//dockManager->readConfig ( config, QLatin1String("ChatViewDock") );
 #if 0
 	//Work-around to restore dock widget positions
-	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
+	config->setGroup( QLatin1String( "ChatViewDock" ) );
 
 	membersDockPosition = static_cast<K3DockWidget::DockPosition>(
-		config->readEntry( QString::fromLatin1( "membersDockPosition" ), K3DockWidget::DockRight ) );
+		config->readEntry( QLatin1String( "membersDockPosition" ), K3DockWidget::DockRight ) );
 
-	QString dockKey = QString::fromLatin1( "viewDock" );
+	QString dockKey = QLatin1String( "viewDock" );
 	if ( d->visibleMembers )
 	{
 		if( membersDockPosition == K3DockWidget::DockLeft )
-			dockKey.prepend( QString::fromLatin1( "membersDock," ) );
+			dockKey.prepend( QLatin1String( "membersDock," ) );
 		else if( membersDockPosition == K3DockWidget::DockRight )
-			dockKey.append( QString::fromLatin1( ",membersDock" ) );
+			dockKey.append( QLatin1String( ",membersDock" ) );
 	}
 
-	dockKey.append( QString::fromLatin1( ",editDock:sepPos" ) );
+	dockKey.append( QLatin1String( ",editDock:sepPos" ) );
 	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
 	int splitterPos = config->readEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );

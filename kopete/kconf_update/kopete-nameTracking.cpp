@@ -26,7 +26,7 @@ static QTextStream qcerr( stderr, QIODevice::WriteOnly );
 int main()
 {
 	KInstance* inst = new KInstance( "Update script" );
-	QString filename = KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/contactlist.xml" ) );
+	QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/contactlist.xml" ) );
 	
 	// Load contact list & save backup.
 	QFile contactListFile( filename );
@@ -34,7 +34,7 @@ int main()
 	QDomDocument contactList;
 	contactList.setContent( &contactListFile );
 	contactListFile.close();
-	QDir().rename( filename, filename + QString::fromLatin1( ".bak" ) );
+	QDir().rename( filename, filename + QLatin1String( ".bak" ) );
 	
 	// parse the XML file
 	QDomElement list = contactList.documentElement();
@@ -44,7 +44,7 @@ int main()
 	{
 		
 		// update all the MetaContacts
-		if( mcElement.tagName() == QString::fromLatin1("meta-contact") )
+		if( mcElement.tagName() == QLatin1String("meta-contact") )
 		{
 			QDomElement displayName;
 			QDomElement subcontact;
@@ -52,13 +52,13 @@ int main()
 			QDomElement elem = mcElement.firstChild().toElement();
 			while( !elem.isNull() )
 			{
-				if( elem.tagName() == QString::fromLatin1( "display-name" ) )
+				if( elem.tagName() == QLatin1String( "display-name" ) )
 					displayName = elem;
-				if( elem.tagName() == QString::fromLatin1( "plugin-data" ) )
+				if( elem.tagName() == QLatin1String( "plugin-data" ) )
 				{
 					// check if it's a contact by checking for "protocol" substring in the tag,
 					// and the presence of a contactId child element.
-					QString pluginId = elem.attribute( QString::fromLatin1( "plugin-id" ) );
+					QString pluginId = elem.attribute( QLatin1String( "plugin-id" ) );
 					bool isProtocol = ( pluginId.contains( "protocol", false ) > 0 ); // case-insensitive search
 					bool hasContactId = false;
 					QDomNode field = elem.firstChild();
@@ -67,8 +67,8 @@ int main()
 						QDomElement fieldElem = field.toElement();
 						
 						if( !fieldElem.isNull() &&
-							fieldElem.tagName() == QString::fromLatin1( "plugin-data-field" ) && 
-							fieldElem.attribute( QString::fromLatin1( "key" ) ) == QString::fromLatin1( "contactId" ) )
+							fieldElem.tagName() == QLatin1String( "plugin-data-field" ) && 
+							fieldElem.attribute( QLatin1String( "key" ) ) == QLatin1String( "contactId" ) )
 						{
 							hasContactId = true;
 							break;
@@ -86,8 +86,8 @@ int main()
 			// check if we're even tracking the subcontact's name
 			// if displayName.isNull(), it simply won't find the attribute; no harm done
 			bool tracking = 
-				( displayName.attribute( QString::fromLatin1( "trackChildNameChanges" ),
-				QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+				( displayName.attribute( QLatin1String( "trackChildNameChanges" ),
+				QLatin1String( "0" ) ) == QLatin1String( "1" ) );
 			if( !displayName.isNull() && !subcontact.isNull() && tracking )
 			{
 				// collect info
@@ -95,26 +95,26 @@ int main()
 				QString nsPID;
 				QString nsAID;
 
-				nsPID = subcontact.attribute( QString::fromLatin1( "plugin-id" ) );
+				nsPID = subcontact.attribute( QLatin1String( "plugin-id" ) );
 				QDomNode field = subcontact.firstChild();
 				while( !field.isNull() )
 				{
 					QDomElement fieldElem = field.toElement();
 						
-					if( !fieldElem.isNull() && fieldElem.tagName() == QString::fromLatin1( "plugin-data-field" ) )
+					if( !fieldElem.isNull() && fieldElem.tagName() == QLatin1String( "plugin-data-field" ) )
 					{
-						 if( fieldElem.attribute( QString::fromLatin1( "key" ) ) == QString::fromLatin1( "contactId" ) )
+						 if( fieldElem.attribute( QLatin1String( "key" ) ) == QLatin1String( "contactId" ) )
 							 nsCID = fieldElem.text();
-						 if( fieldElem.attribute( QString::fromLatin1( "key" ) ) == QString::fromLatin1( "accountId" ) )
+						 if( fieldElem.attribute( QLatin1String( "key" ) ) == QLatin1String( "accountId" ) )
 							 nsAID = fieldElem.text();
 					}
 					field = field.nextSibling();
 				}
 				
 				// create the tracking info
-				displayName.setAttribute( QString::fromLatin1( "nameSourceContactId" ), nsCID );
-				displayName.setAttribute( QString::fromLatin1( "nameSourcePluginId" ), nsPID );
-				displayName.setAttribute( QString::fromLatin1( "nameSourceAccountId" ), nsAID );
+				displayName.setAttribute( QLatin1String( "nameSourceContactId" ), nsCID );
+				displayName.setAttribute( QLatin1String( "nameSourcePluginId" ), nsPID );
+				displayName.setAttribute( QLatin1String( "nameSourceAccountId" ), nsAID );
 			}
 		}	
 		

@@ -419,7 +419,7 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
 		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
 
-	newContentText += QString::fromLatin1("</qt>");
+	newContentText += QLatin1String("</qt>");
 	d->mPrfsEmoticons->icon_theme_preview->setHtml(newContentText);
 	emitChanged();
 }

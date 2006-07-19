@@ -40,7 +40,7 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new Q3ListViewItem( protocolListView, i->accountLabel() );
-		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
+		accountLVI->setText(1,i->protocol()->displayName() + QChar(' ') );
 		accountLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
 		m_accountItems.insert(accountLVI,i);
 	}
