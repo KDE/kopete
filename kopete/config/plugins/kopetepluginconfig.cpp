@@ -3,7 +3,7 @@
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2001-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -63,13 +63,14 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent )
 	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
 		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QByteArray & ) ) );
 
-	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ), i18n( "General Plugins" ), "Plugins" );
-}
+	connect( this, SIGNAL( defaultClicked() ), this, SLOT( slotDefault() ) );
+	connect( this, SIGNAL( user1Clicked() ), this, SLOT( slotReset() ) );
+	connect( this, SIGNAL( applyClicked() ), this, SLOT( slotApply() ) );
+	connect( this, SIGNAL( helpClicked() ), this, SLOT( slotHelp() ) );
 
-void KopetePluginConfig::setChanged( bool c )
-{
-	d->isChanged = c;
-	enableButton( Apply, c );
+	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
+	                               i18n( "General Plugins" ), "Plugins" );
+	d->pluginSelector->load();
 }
 
 void KopetePluginConfig::slotDefault()
@@ -78,13 +79,13 @@ void KopetePluginConfig::slotDefault()
 	setChanged( false );
 }
 
-void KopetePluginConfig::slotUser1()
+void KopetePluginConfig::slotReset()
 {
 	d->pluginSelector->load();
 	setChanged( false );
 }
 
-void KopetePluginConfig::apply()
+void KopetePluginConfig::slotApply()
 {
 	if( d->isChanged )
 	{
@@ -94,28 +95,22 @@ void KopetePluginConfig::apply()
 	}
 }
 
-void KopetePluginConfig::slotApply()
-{
-	apply();
-}
-
-void KopetePluginConfig::slotOk()
-{
-	emit okClicked();
-	apply();
-	accept();
-}
-
 void KopetePluginConfig::slotHelp()
 {
 	kWarning() << k_funcinfo << "FIXME: Implement!" << endl;
 }
 
-void KopetePluginConfig::show()
+void KopetePluginConfig::accept()
 {
-	d->pluginSelector->load();
+	slotApply();
 
-	KDialog::show();
+	KDialog::accept();
+}
+
+void KopetePluginConfig::setChanged( bool c )
+{
+	d->isChanged = c;
+	enableButton( Apply, c );
 }
 
 #include "kopetepluginconfig.moc"
