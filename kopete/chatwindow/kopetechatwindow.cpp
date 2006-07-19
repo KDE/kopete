@@ -79,6 +79,7 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
+#include "sidebarwidget.h"
 
 #include <qtoolbutton.h>
 #include <kxmlguifactory.h>
@@ -197,8 +198,9 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	initActions();
 
-	m_sideBar = new QDockWidget(i18n("Kopete SideBar"), this);
+	m_sideBar = new SidebarWidget(this);
 	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+
 	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
 
 	KVBox *vBox = new KVBox( this );
@@ -483,38 +485,6 @@ void KopeteChatWindow::slotUpdateSendEnabled()
 	chatSend->setEnabled( enabled );
 	if(m_button_send)
 		m_button_send->setEnabled( enabled );
-}
-
-void KopeteChatWindow::updateMembersActions()
-{
-	if( m_activeView )
-	{
-		const K3DockWidget::DockPosition pos = m_activeView->membersListPosition();
-		bool visibleMembers = m_activeView->visibleMembersList();
-		membersLeft->setChecked( pos == K3DockWidget::DockLeft  );
-		membersLeft->setEnabled( visibleMembers );
-		membersRight->setChecked( pos == K3DockWidget::DockRight );
-		membersRight->setEnabled( visibleMembers );
-		toggleMembers->setChecked( visibleMembers );
-	}
-}
-
-void KopeteChatWindow::slotViewMembersLeft()
-{
-	m_activeView->placeMembersList( K3DockWidget::DockLeft );
-	updateMembersActions();
-}
-
-void KopeteChatWindow::slotViewMembersRight()
-{
-	m_activeView->placeMembersList( K3DockWidget::DockRight );
-	updateMembersActions();
-}
-
-void KopeteChatWindow::slotToggleViewMembers()
-{
-	m_activeView->toggleMembersVisibility();
-	updateMembersActions();
 }
 
 void KopeteChatWindow::toggleAutoSpellChecking()
@@ -899,9 +869,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	//Update icons to match
 	slotUpdateCaptionIcons( m_activeView );
 
-	//Update chat members actions
-	updateMembersActions();
-
 #if 0
 	if ( m_activeView->sendInProgress() && !animIcon.isNull() )
 	{
@@ -930,6 +897,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	slotUpdateSendEnabled();
 	m_activeView->editPart()->reloadConfig();
 	m_activeView->loadChatSettings();
+
+	emit chatSessionChanged(m_activeView->msgManager());
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )

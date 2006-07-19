@@ -33,7 +33,6 @@
 class QTimer;
 
 class ChatTextEditPart;
-class ChatMembersListWidget;
 class ChatMessagePart;
 
 class KopeteChatWindow;
@@ -67,7 +66,6 @@ public:
 	/** the state of our chat */
 	enum KopeteTabState { Normal, Highlighted, Changed, Typing, Message, Undefined };
 
-	ChatMembersListWidget *membersList() const { return m_membersList; }
 	ChatMessagePart *messagePart() const { return m_messagePart; }
 	ChatTextEditPart *editPart() const { return m_editPart; }
 
@@ -132,34 +130,10 @@ public:
 	virtual void setCurrentMessage( const Kopete::Message &newMessage );
 
 	/**
-	 * Sets the placement of the chat members list.
-	 * DockLeft, DockRight, or DockNone.
-	 * @param dp The dock position of the list
-	 */
-	void placeMembersList( K3DockWidget::DockPosition dp = K3DockWidget::DockRight );
-
-	/**
-	 * Shows or hides the chat members list
-	 */
-	void toggleMembersVisibility();
-
-	/**
 	 * Returns the chat window this view is in
 	 * @return The chat window
 	 */
 	KopeteChatWindow *mainWindow() const { return m_mainWindow; }
-
-	/**
-	 * Returns the current position of the chat member slist
-	 * @return The position of the chat members list
-	 */
-	const K3DockWidget::DockPosition membersListPosition()  { return membersDockPosition; }
-
-	/**
-	 * Returns whether or not the chat member list is visible
-	 * @return Is the chat member list visible?
-	 */
-	bool visibleMembersList();
 
 	const QString &statusText();
 
@@ -376,18 +350,10 @@ private:
 //	K3DockWidget *viewDock;
 	ChatMessagePart *m_messagePart;
 
-	KHBox *membersDock;
-	ChatMembersListWidget *m_membersList;
-
 //	K3DockWidget *editDock;
 	ChatTextEditPart *m_editPart;
 
 	KopeteTabState m_tabState;
-
-	// position and visibility of the chat member list
-	K3DockWidget::DockPosition membersDockPosition;
-	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
-	MembersListPolicy membersStatus;
 
 	// miscellany
 	Q3PtrDict<QTimer> m_remoteTypingMap;
@@ -395,11 +361,6 @@ private:
 	QString m_status;
 
 	void updateChatState( KopeteTabState state = Undefined );
-
-	/**
-	 * Creates the members list widget
-	 */
-	void createMembersList();
 
 	/**
 	 * Read in saved options, such as splitter positions

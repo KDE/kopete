@@ -38,7 +38,7 @@ install(TARGETS krichtexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistwidget.cpp )
+set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistwidget.cpp sidebarwidget.cpp)
 
 kde4_automoc(${kopete_chatwindow_PART_SRCS})
 

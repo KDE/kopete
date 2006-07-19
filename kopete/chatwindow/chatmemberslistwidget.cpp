@@ -134,7 +134,7 @@ void ChatMembersListWidget::ContactItem::reposition()
 
 //BEGIN ChatMembersListWidget
 
-ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent )
+ChatMembersListWidget::ChatMembersListWidget( QWidget *parent, Kopete::ChatSession *session )
 	 : K3ListView( parent ), m_session( session )
 {
 	// use our own custom tooltips
@@ -150,27 +150,12 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 	// list is sorted by us, not by Qt
 	setSorting( -1 );
 
-	// add chat members
-	slotContactAdded( session->myself() );
-	foreach ( Kopete::Contact* it ,  session->members() ) 
-		slotContactAdded( it );
-
-	connect( this, SIGNAL( contextMenu( K3ListView*, Q3ListViewItem *, const QPoint &) ),
-	         SLOT( slotContextMenu(K3ListView*, Q3ListViewItem *, const QPoint & ) ) );
-	connect( this, SIGNAL( executed( Q3ListViewItem* ) ),
-	         SLOT( slotExecute( Q3ListViewItem * ) ) );
-
-	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
-	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
-	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ),
-	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
-	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
-	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ) );
+	if ( session )
+		setChatSession( session );
 }
 
 ChatMembersListWidget::~ChatMembersListWidget()
 {
-	delete m_toolTip;
 }
 
 void ChatMembersListWidget::slotContextMenu( K3ListView*, Q3ListViewItem *item, const QPoint &point )
@@ -257,7 +242,39 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 	return 0l;
 }
 
+void ChatMembersListWidget::setChatSession(Kopete::ChatSession *session)
+{
+	if (m_session)
+	{
+		// Work on the old session
+		// clear the list (foreach is delete-safe as it works on a copy of the container).
+		foreach ( Kopete::Contact *it, m_session->members() )
+		{
+			slotContactRemoved( it );
+		}
+	}
 
+	// Now work on the new session
+	m_session = session;
+	
+	// add chat members
+	slotContactAdded( session->myself() );
+	foreach ( Kopete::Contact* it ,  session->members() ) 
+		slotContactAdded( it );
+
+
+	connect( this, SIGNAL( contextMenu( K3ListView*, Q3ListViewItem *, const QPoint &) ),
+	         SLOT( slotContextMenu(K3ListView*, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( executed( Q3ListViewItem* ) ),
+	         SLOT( slotExecute( Q3ListViewItem * ) ) );
+
+	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
+	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
+	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ),
+	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
+	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
+	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ) );
+}
 //END ChatMembersListWidget
 
 #include "chatmemberslistwidget.moc"

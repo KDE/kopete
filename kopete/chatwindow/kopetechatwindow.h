@@ -52,6 +52,7 @@ class KopeteEmoticonAction;
 class KopeteView;
 class KSelectAction;
 class ChatView;
+class SidebarWidget;
 
 namespace Kopete
 {
@@ -102,7 +103,6 @@ public:
 	 */
 	ChatView *activeView();
 
-	void updateMembersActions();
 	void setStatus( const QString & );
 
 	/**
@@ -135,8 +135,11 @@ private:
 	void setPrimaryChatView( ChatView* );
 	const QString fileContents( const QString &file ) const;
 
-	QDockWidget *m_sideBar;
+	// Sidebar
+	SidebarWidget *m_sideBar;
+	QTabWidget *m_sideBarTabWidget;
 
+	//
 	ChatView *m_activeView;
 	ChatView *m_popupView;
 	bool m_alwaysShowTabs;
@@ -176,6 +179,7 @@ private:
 
 signals:
 	void closing( KopeteChatWindow* );
+	void chatSessionChanged( Kopete::ChatSession *newSession);
 
 public slots:
 	void slotSmileyActivated( const QString & );
@@ -214,9 +218,6 @@ private slots:
 	void slotViewMenuBar();
 	void slotToggleStatusBar();
 
-	void slotViewMembersLeft();
-	void slotViewMembersRight();
-	void slotToggleViewMembers();
 	void slotEnableUpdateBg() { updateBg = true; }
 
 	void toggleAutoSpellChecking();
