@@ -437,18 +437,9 @@ void KopeteWindow::initSystray()
 {
 	d->tray = KopeteSystemTray::systemTray( this );
 	Kopete::UI::Global::setSysTrayWId( d->tray->winId() );
-	KMenu *tm = d->tray->contextMenu();
-
-	// NOTE: This is in reverse order because we insert
-	// at the top of the menu, not at bottom!
-	tm->addAction( d->actionAddContact );
-	tm->addAction( d->actionPrefs );
-	tm->addSeparator();
-	tm->addAction( d->actionAwayMenu );
-	tm->addSeparator();
 
 	QObject::connect( d->tray, SIGNAL( aboutToShowMenu( KMenu * ) ),
-		this, SLOT( slotTrayAboutToShowMenu( KMenu * ) ) );
+	                  this, SLOT( slotTrayAboutToShowMenu( KMenu * ) ) );
 	QObject::connect( d->tray, SIGNAL( quitSelected() ), this, SLOT( slotQuit() ) );
 }
 
@@ -908,17 +899,32 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 
 void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 {
+	popup->clear();
+	popup->addTitle( qApp->windowIcon(), KInstance::caption() );
+
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 	foreach(Kopete::Account *a, accountList)
 	{
 		KActionMenu *menu = a->actionMenu();
 		if( menu )
-			//menu->addMenu(popup, 1 );
 			popup->addAction( menu );
 
 		connect(popup , SIGNAL(aboutToHide()) , menu , SLOT(deleteLater()));
 	}
 
+	popup->addSeparator();
+	popup->addAction( d->actionAwayMenu );
+	popup->addSeparator();
+	popup->addAction( d->actionPrefs );
+	popup->addAction( d->actionAddContact );
+	popup->addSeparator();
+
+	KAction *action = 0;
+	action = d->tray->actionCollection()->action( "minimizeRestore" );
+	popup->addAction( action );
+
+	action = d->tray->actionCollection()->action( KStdAction::name( KStdAction::Quit ) );
+	popup->addAction( action );
 }
 
 void KopeteWindow::showExportDialog()
