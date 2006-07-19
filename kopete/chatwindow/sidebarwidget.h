@@ -28,7 +28,7 @@ class ChatSession;
 class QTabWidget;
 class KopeteChatWindow;
 class ChatMembersListWidget;
-class KHTMLPart;
+class QLabel;
 
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
@@ -40,11 +40,26 @@ public:
 	SidebarWidget( KopeteChatWindow *parent );
 	virtual ~SidebarWidget();
 
+	/**
+	 * Returns the \class Kopete::ChatSession currently linked to the sidebar
+	 * The sidebar is indeed linked to one \class Kopete::Chatsession (the one visible
+	 * in the \class Kopete::ChatWindow
+	 */
 	Kopete::ChatSession *session() { return m_session; }
 	
+	/**
+	 * Adds a page to the QTabWidget
+	 */
+	void addPage( QWidget *widget, QString& name );
+
 private slots:
 	void setChatSession( Kopete::ChatSession *session );
 private:
+	/**
+	 * Generate the HTML page with contact informations
+	 */
+	void generateContactDetails();
+
 	// Stores the current session the sidebar is using
 	Kopete::ChatSession *m_session;
 	KopeteChatWindow *m_chatWindow;
@@ -53,7 +68,7 @@ private:
 	// UI
 	QTabWidget *m_tabWidget;
 	// TabWidget pages :
-	KHTMLPart *m_htmlInfoZone;
+	QLabel *m_infoZone;
 	ChatMembersListWidget *m_memberslist;
 };
 

@@ -17,16 +17,22 @@
 
 #include <QLayout>
 #include <QTabWidget>
-
-#include "khtml_part.h"
-#include "khtmlview.h"
+#include <QList>
+#include <QTextDocument>
+#include <QLabel>
 
 #include "klocale.h"
+#include "kurl.h"
 
 #include "sidebarwidget.h"
 #include "kopetechatsession.h"
 #include "chatmemberslistwidget.h"
 #include "kopetechatwindow.h"
+#include "kopeteemoticons.h"
+#include "kopetemetacontact.h"
+#include "kopetepicture.h"
+
+
 
 SidebarWidget::SidebarWidget( KopeteChatWindow *parent )
 	 : m_chatWindow(parent), QDockWidget( parent )
@@ -38,8 +44,9 @@ SidebarWidget::SidebarWidget( KopeteChatWindow *parent )
 	// Here we add the first default page.
 	QWidget *pageInfoZone = new QWidget(this);
 	QVBoxLayout *l = new QVBoxLayout(pageInfoZone);
-	m_htmlInfoZone = new KHTMLPart(pageInfoZone);
-	l->addWidget(m_htmlInfoZone->view());
+	//m_htmlInfoZone = new KHTMLPart(pageInfoZone);
+	m_infoZone = new QLabel(pageInfoZone);
+	l->addWidget(m_infoZone);
 	
 	m_tabWidget->addTab(pageInfoZone, i18n("Informations"));
 
@@ -50,11 +57,65 @@ SidebarWidget::SidebarWidget( KopeteChatWindow *parent )
 	connect(m_chatWindow, SIGNAL(chatSessionChanged(Kopete::ChatSession *)), this, SLOT(setChatSession(Kopete::ChatSession *)));
 	connect(m_chatWindow, SIGNAL(chatSessionChanged(Kopete::ChatSession *)), m_membersList, SLOT(setChatSession(Kopete::ChatSession *)));
 
+	/* Be careful to not initialize here bad things. They generally go in
+	   setChatSession
+	*/
+}
+void SidebarWidget::generateContactDetails()
+{
+	Kopete::ContactPtrList members = m_session->members();
+	Kopete::Contact *contact = members.first();
+	Kopete::MetaContact* metaContact = contact->metaContact();
+
+	QString content = QString::fromLatin1("<html><head></head><body><div style=\"margin-left:10px;margin-right:10px;\"><br>");
+
+	int w = 120;
+
+	if ( ! metaContact->picture().image().isNull() )
+        {
+		QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
+		content += QString::fromLatin1("<img src=\"%1\" style=\"margin-bottom:10px;\"><br>").arg( photoName );
+		 w = ( metaContact->picture().image().width() > 100 ) ? metaContact->picture().image().width() + 20 : 120;
+        }
+
+	QString displayName;
+	Kopete::Emoticons *e = Kopete::Emoticons::self();
+	QList<Kopete::Emoticons::Token> t = e->tokenize( metaContact->displayName());
+	QList<Kopete::Emoticons::Token>::iterator it;
+	for( it = t.begin(); it != t.end(); ++it )
+	{
+		if( (*it).type == Kopete::Emoticons::Image )
+		{
+			displayName += (*it).picHTMLCode;
+		} else if( (*it).type == Kopete::Emoticons::Text )
+		{
+			displayName += Qt::escape( (*it).text );
+		}
+	}
+
+	content += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br>").arg( displayName );
+	content += contact->toolTip() + QString::fromLatin1("</div></body><html>");
+
+	// adjust formatting for the rather narrow sidebar
+	content = content.replace( "</b>", "</b><br>&nbsp;" );
+	content = content.replace( "<nobr>", "" );
+	content = content.replace( "</nobr>", "" );
+
+	m_infoZone->setText( content );
+	
+
+
+}
+
+void SidebarWidget::addPage( QWidget *widget, QString& name )
+{
+	m_tabWidget->addTab(widget, name);
 }
 
 void SidebarWidget::setChatSession( Kopete::ChatSession *session )
 {
 	m_session = session;
+	generateContactDetails();
 }
 
 SidebarWidget::~SidebarWidget()
