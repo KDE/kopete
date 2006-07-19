@@ -22,7 +22,6 @@
 #include <qstring.h>
 
 namespace Ui { class LatexPrefsUI; }
-class Q3ListViewItem;
 
 /**
   *@author Duncan Mac-Vicar Prett

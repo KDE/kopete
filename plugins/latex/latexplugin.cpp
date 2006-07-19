@@ -19,10 +19,8 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qbuffer.h>
-#include <q3cstring.h>
 #include <QTextDocument>
-//Added by qt3to4:
-#include <Q3ValueList>
+
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -61,13 +59,14 @@ LatexPlugin::LatexPlugin( QObject *parent, const QStringList &/*args*/ )
 	slotSettingsChanged();
 
 		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
-		slotNewChatSession( *it );
+	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	foreach( Kopete::ChatSession* cs, sessions )
+		slotNewChatSession( cs );
 }
 
 LatexPlugin::~LatexPlugin()
 {
+	qDeleteAll( m_tempFiles );
 	s_pluginStatic = 0L;
 }
 
@@ -120,7 +119,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	int pos = 0;
 	
 	QMap<QString, QString> replaceMap;
-	while (pos >= 0 && (unsigned int)pos < messageText.length())
+	while (pos >= 0 && pos < messageText.length())
 	{
 //		kDebug() << k_funcinfo  << " searching pos: " << pos << endl;
 		pos = rg.indexIn(messageText, pos);
@@ -221,7 +220,6 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	KTempFile *tempFile=new KTempFile( KStandardDirs::locateLocal( "tmp", "kopetelatex-" ), ".png" );
 	tempFile->setAutoDelete(true);
 	m_tempFiles.append(tempFile);
-	m_tempFiles.setAutoDelete(true);
 	QString fileName = tempFile->name();
 
 	KProcess p;
