@@ -60,6 +60,7 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_searchResultsModel->setHeaderData( 4, Qt::Horizontal, i18n( "Email" ) );
 	m_searchResultsModel->setHeaderData( 5, Qt::Horizontal, i18n( "Requires Authorization" ) );
 	m_searchUI->searchResults->setModel( m_searchResultsModel );
+	m_searchUI->searchResults->setEditTriggers( QAbstractItemView::NoEditTriggers );
 	
 	connect( m_searchUI->searchButton, SIGNAL( clicked() ), this, SLOT( startSearch() ) );
 	connect( m_searchUI->searchResults->selectionModel(), SIGNAL( currentRowChanged( const QModelIndex&, const QModelIndex& ) ),
