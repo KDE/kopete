@@ -621,7 +621,7 @@ void WebcamTask::sendEmptyWebcamImage()
 void WebcamTask::sendWebcamImage( const QByteArray &image )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	pictureBuffer.duplicate( image );
+	pictureBuffer = image;
 	transmissionPending = true;
 	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
