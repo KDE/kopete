@@ -615,7 +615,7 @@ void KopeteChatWindow::createTabBar()
 			addTab( view );
 
 		if( m_activeView )
-			m_tabBar->showPage( m_activeView );
+			m_tabBar->setCurrentWidget( m_activeView );
 		else
 			setActiveView( chatViewList.first() );
 
@@ -735,22 +735,22 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 
 	if( m_tabBar )
 	{
-		int curPage = m_tabBar->currentPageIndex();
-		QWidget *page = m_tabBar->page( curPage );
+		int curPage = m_tabBar->currentIndex();
+		QWidget *page = m_tabBar->currentWidget();
 
 		// if the current view is to be detached, switch to a different one
 		if( page == view )
 		{
 			if( curPage > 0 )
-				m_tabBar->setCurrentPage( curPage - 1 );
+				m_tabBar->setCurrentIndex( curPage - 1 );
 			else
-				m_tabBar->setCurrentPage( curPage + 1 );
+				m_tabBar->setCurrentIndex( curPage + 1 );
 		}
 
 		m_tabBar->removePage( view );
 
-		if( m_tabBar->currentPage() )
-			setActiveView( static_cast<ChatView*>(m_tabBar->currentPage()) );
+		if( m_tabBar->currentWidget() )
+			setActiveView( static_cast<ChatView*>(m_tabBar->currentWidget()) );
 	}
 
 	if( chatViewList.isEmpty() )
@@ -795,20 +795,20 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 
 void KopeteChatWindow::slotPreviousTab()
 {
-	int curPage = m_tabBar->currentPageIndex();
+	int curPage = m_tabBar->currentIndex();
 	if( curPage > 0 )
-		m_tabBar->setCurrentPage( curPage - 1 );
+		m_tabBar->setCurrentIndex( curPage - 1 );
 	else
-		m_tabBar->setCurrentPage( m_tabBar->count() - 1 );
+		m_tabBar->setCurrentIndex( m_tabBar->count() - 1 );
 }
 
 void KopeteChatWindow::slotNextTab()
 {
-	int curPage = m_tabBar->currentPageIndex();
+	int curPage = m_tabBar->currentIndex();
 	if( curPage == ( m_tabBar->count() - 1 ) )
-		m_tabBar->setCurrentPage( 0 );
+		m_tabBar->setCurrentIndex( 0 );
 	else
-		m_tabBar->setCurrentPage( curPage + 1 );
+		m_tabBar->setCurrentIndex( curPage + 1 );
 }
 
 void KopeteChatWindow::slotSetCaption( bool active )
@@ -887,7 +887,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		if( !m_tabBar )
 			createTabBar();
 
-		m_tabBar->showPage( m_activeView );
+		m_tabBar->setCurrentWidget( m_activeView );
 	}
 
 	setCaption( m_activeView->caption() );
@@ -1223,8 +1223,8 @@ void KopeteChatWindow::updateChatLabel()
 	ChatView* chat  = const_cast<ChatView*>( cv );
 	if ( m_tabBar )
 	{
-		m_tabBar->setTabLabel( chat, chat->caption() );
-		if ( m_tabBar->count() < 2 || m_tabBar->currentPage() == static_cast<const QWidget *>(cv) )
+		m_tabBar->setTabText( m_tabBar->indexOf( chat ), chat->caption() );
+		if ( m_tabBar->count() < 2 || m_tabBar->currentWidget() == static_cast<const QWidget *>(cv) )
 			setCaption( chat->caption() );
 	}
 }
