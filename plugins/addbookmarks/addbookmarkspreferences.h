@@ -15,6 +15,9 @@
 #include <kcmodule.h>
 #include "addbookmarksprefssettings.h"
 
+class QButtonGroup;
+class QStringListModel;
+
 namespace Ui { class BookmarksPrefsUI; }
 
 /**
@@ -36,6 +39,8 @@ signals:
     
 private:
     Ui::BookmarksPrefsUI *p_dialog;
+    QButtonGroup* p_buttonGroup;
+    QStringListModel *p_contactsListModel;
     BookmarksPrefsSettings m_settings;
 
 private slots:

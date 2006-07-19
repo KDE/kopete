@@ -68,9 +68,9 @@ bool BookmarksPrefsSettings::useSubfolderForContact( QString nickname )
 		case Always:
 			return true;
 		case SelectedContacts:
-			return ( m_contactslist.find( nickname ) != m_contactslist.end() );
+			return ( m_contactslist.indexOf( nickname ) != -1 );
 		case UnselectedContacts:
-			return ( m_contactslist.find( nickname ) == m_contactslist.end() );
+			return ( m_contactslist.indexOf( nickname ) == -1 );
 		}
 	}
 	return false;
