@@ -628,7 +628,9 @@ void TextComponent::paint( QPainter *painter, const QColorGroup &cg )
 		painter->setPen( d->color );
 	else
 		painter->setPen( cg.text() );
-	QString dispStr = KStringHandler::rPixelSqueeze( d->text, QFontMetrics( font() ), rect().width() );
+
+	QFontMetrics metrics( font() );
+	QString dispStr = metrics.elidedText( d->text, Qt::ElideRight, rect().width() );
 	painter->setFont( font() );
 	painter->drawText( rect(), Qt::TextSingleLine, dispStr );
 }

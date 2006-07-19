@@ -410,7 +410,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		// The description of the onlinestatus is used as the qobject name
 		// This is safe as long as OnlineStatus are immutable
 		QByteArray actionName = status.description().toAscii();
-		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
+		if ( !( action = account->findChild<KAction*>( actionName ) ) )
 		{
 #warning  give a parent to actions
 			if(options & OnlineStatusManager::HasStatusMessage)

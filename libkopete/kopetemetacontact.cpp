@@ -1420,7 +1420,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 				if(newValue.canConvert( QVariant::Image ))
 					img=newValue.value<QImage>();
 				else if(newValue.canConvert( QVariant::Pixmap ))
-					img=newValue.value<QPixmap>();
+					img=newValue.value<QPixmap>().toImage();
 
 				if(img.isNull())
 				{
