@@ -17,6 +17,7 @@
 */
 
 #include "kopetegroup.h"
+#include "kopetegroup_p.h"
 
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -26,18 +27,6 @@
 #include <klocale.h>
 
 namespace Kopete {
-
-class Group::Private
-{
-public:
-	QString displayName;
-	Group::GroupType type;
-	bool expanded;
-	uint groupId;
-
-	//Unique contact id per metacontact
-	static uint uniqueGroupId;
-};
 
 Group *Group::s_topLevel  = 0L;
 Group *Group::s_temporary = 0L;
