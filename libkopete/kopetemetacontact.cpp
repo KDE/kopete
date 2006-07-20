@@ -6,7 +6,7 @@
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +19,7 @@
 */
 
 #include "kopetemetacontact.h"
+#include "kopetemetacontact_p.h"
 
 #include <kapplication.h>
 
@@ -40,9 +41,6 @@
 #include "kopetegroup.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
-#include "kopetepicture.h"
-
-#include "kopetepicture.h"
 
 namespace Kopete {
 
@@ -53,49 +51,6 @@ const QString NSAID_ELEM = QString::fromUtf8( "nameSourceAccountId" );
 const QString PSCID_ELEM = QString::fromUtf8( "photoSourceContactId" );
 const QString PSPID_ELEM = QString::fromUtf8( "photoSourcePluginId" );
 const QString PSAID_ELEM = QString::fromUtf8( "photoSourceAccountId" );
-
-class  MetaContact::Private
-{ public:
-	Private() :
-		photoSource(MetaContact::SourceCustom), displayNameSource(MetaContact::SourceCustom),
-		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false),
-		onlineStatus(Kopete::OnlineStatus::Offline), photoSyncedWithKABC(false)
-	{}
-
-	QList<Contact *> contacts;
-	~Private()
-	{}
-
-
-	// property sources
-	PropertySource photoSource;
-	PropertySource displayNameSource;
-
-	// when source is contact
-	Contact *displayNameSourceContact;
-	Contact *photoSourceContact;
-
-	// used when source is kabc
-	QString metaContactId;
-
-	// used when source is custom
-	QString displayName;
-	KUrl photoUrl;
-
-	QList<Group *> groups;
-	QMap<QString, QMap<QString, QString> > addressBook;
-	bool temporary;
-
-	OnlineStatus::StatusType onlineStatus;
-	bool photoSyncedWithKABC;
-
-	// Used to set contact source at load.
-	QString nameSourcePID, nameSourceAID, nameSourceCID;
-	QString photoSourcePID, photoSourceAID, photoSourceCID;
-
-	// The photo cache. Reduce disk access and CPU usage.
-	Picture customPicture, contactPicture, kabcPicture;
-};
 
 MetaContact::MetaContact()
 	: ContactListElement( ContactList::self() )
