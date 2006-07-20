@@ -496,7 +496,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 {
 	/*
 	Note to everyone. This function is not the most efficient, that is for sure.
-	However, it *is* the only way we can be guarenteed that a given string is
+	However, it *is* the only way we can be guaranteed that a given string is
 	decoded properly.
 	*/
 

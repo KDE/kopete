@@ -508,7 +508,7 @@ void S5BConnection::su_packetReady(const QByteArray &buf)
 
 void S5BConnection::handleUDP(const QByteArray &buf)
 {
-	// must be at least 4 bytes, to accomodate virtual ports
+	// must be at least 4 bytes, to accommodate virtual ports
 	if(buf.size() < 4)
 		return; // drop
 

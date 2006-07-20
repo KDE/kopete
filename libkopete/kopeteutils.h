@@ -34,7 +34,7 @@ namespace Utils
 {
 
 /**
- * Checks if host is accesible. Useful for plugins to check for disconnected events.
+ * Checks if host is accessible. Useful for plugins to check for disconnected events.
  *
  * @param host The host to be cheked
  */
@@ -46,7 +46,7 @@ bool isHostReachable( const QString &host );
  * @param account The account that lost the connection and wants to notify the user.
  * @param caption A brief subject line, used where possible if the presentation allows it.
  * @param message A short description of the error.
- * @param explanation A long description on how the error occured and what the user can do about it.
+ * @param explanation A long description on how the error occurred and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
  * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
@@ -63,7 +63,7 @@ void KOPETE_EXPORT notifyConnectionLost( const Account *account,
  * Notifies the user the server is not reachable without coupling plugins with GUI code.
  *
  * @param account The account that cannot establish a connection and want to notify the user about that.
- * @param explanation A long description on how the error occured and what the user can do about it.
+ * @param explanation A long description on how the error occurred and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
  * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or

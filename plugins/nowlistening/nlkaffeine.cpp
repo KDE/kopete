@@ -24,14 +24,21 @@
 #include <kdebug.h>
 #include <QString>
 
+#include <dbus/qdbus.h>
+
 #include "nlmediaplayer.h"
 #include "nlkaffeine.h"
 
-NLKaffeine::NLKaffeine( DCOPClient *client ) : NLMediaPlayer()
+NLKaffeine::NLKaffeine() : NLMediaPlayer()
 {
-	m_client = client;
+	m_client = new QDBusInterfacePtr("org.kde.Kaffeine", "/KaffeineIface");
 	m_type = Video;
 	m_name = "Kaffeine";
+}
+
+QDBusInterface *NLKaffeine::client()
+{
+	return m_client->interface();
 }
 
 void NLKaffeine::update()
@@ -39,58 +46,24 @@ void NLKaffeine::update()
 	m_playing = false;
 	m_newTrack = false;
 	QString newTrack;
-	bool error = true; // Asume we have a error first. 
-	DCOPCString kaffeineIface("Kaffeine"), kaffeineGetTrack("getTitle()");
 
-	// see if kaffeine is  registered with DCOP
-	if ( m_client->isApplicationRegistered( DCOPCString("kaffeine") ) )
+	// TODO: Port to Kaffeine D-BUS Interface
+	// see if kaffeine is  registered with D-BUS
+	if ( client()->isValid() )
 	{
-		// see if it's playing
-		QByteArray data, replyData;
-		DCOPCString replyType;
-		QString result;
-		if ( !m_client->call( DCOPCString("kaffeine"), kaffeineIface, DCOPCString("isPlaying()"), data,
-					replyType, replyData ) )
+
+		QDBusReply<bool> isPlayingReply = client()->call("isPlaying");
+		if( isPlayingReply.isSuccess() )
 		{
-			kDebug ( 14307 ) << k_funcinfo << " Trying DCOP interface of Kaffeine >= 0.5" << endl;
-			// Trying with the new Kaffeine DCOP interface (>=0.5)
-			kaffeineIface = "KaffeineIface";
-			kaffeineGetTrack = "title()";
-			if( !m_client->call( DCOPCString("kaffeine"), kaffeineIface, DCOPCString("isPlaying()"), data, replyType, replyData ) )
-			{
-				kDebug( 14307 ) << k_funcinfo << " DCOP error on Kaffeine." << endl;
-			}
-			else
-			{
-				error = false;
-			}
-		}
-		else
-		{
-			error = false;
-		}
-			
-		// If we didn't get any DCOP error, check if Kaffeine is playing.
-		if(!error)
-		{
-			QDataStream reply( &replyData,QIODevice::ReadOnly );
-			reply.setVersion(QDataStream::Qt_3_1);
-			if ( replyType == "bool" ) {
-					reply >> m_playing;
-					kDebug( 14307 ) << "checked if Kaffeine is playing!" << endl;
-			}
+			m_playing = isPlayingReply.value();
 		}
 
-		if ( m_client->call( DCOPCString("kaffeine"), kaffeineIface, kaffeineGetTrack, data,
-					replyType, replyData ) )
+		QDBusReply<QString> getTrackReply = client()->call("getTrack");
+		if( getTrackReply.isSuccess() )
 		{
-			QDataStream reply( &replyData,QIODevice::ReadOnly );
-			reply.setVersion(QDataStream::Qt_3_1);
-
-			if ( replyType == "QString" ) {
-				reply >> newTrack;
-			}
+			newTrack = getTrackReply.value();
 		}
+
 		if( newTrack != m_track )
 		{
 			m_newTrack = true;

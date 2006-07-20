@@ -381,8 +381,10 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								// Do we need to choose an account
 								if ( accountcount > 1 )
 								{	// if we have >1 account in this protocol, prompt for the protocol.
-									KDialog *chooser = new KDialog(0, i18n("Choose Account"), 
-									                               KDialog::Ok | KDialog::Cancel);
+									KDialog *chooser = new KDialog(0);
+									chooser->setCaption( i18n("Choose Account") );
+									chooser->setButtons( KDialog::Ok | KDialog::Cancel );
+
 									AccountSelector *accSelector = new AccountSelector(proto, chooser);
 									accSelector->setObjectName( QLatin1String("accSelector") );
 									chooser->setMainWidget(accSelector);

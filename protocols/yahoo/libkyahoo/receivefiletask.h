@@ -53,7 +53,7 @@ public:
 	bool take(Transfer *transfer);
 
 protected:
-	bool forMe( Transfer *transfer ) const;
+	virtual bool forMe( const Transfer *transfer ) const;
 
 signals:
 	void bytesProcessed( unsigned int, unsigned int );

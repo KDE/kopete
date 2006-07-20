@@ -24,7 +24,7 @@
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 FileTransferNotifierTask::~FileTransferNotifierTask()
@@ -34,7 +34,7 @@ FileTransferNotifierTask::~FileTransferNotifierTask()
 
 bool FileTransferNotifierTask::take( Transfer* transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -52,11 +52,11 @@ bool FileTransferNotifierTask::take( Transfer* transfer )
 	return true;
 }
 
-bool FileTransferNotifierTask::forMe( Transfer *transfer ) const
+bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
@@ -73,7 +73,7 @@ bool FileTransferNotifierTask::forMe( Transfer *transfer ) const
 
 void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -92,8 +92,16 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	size = t->firstParam( 28 ).toULong();
 
 
+
+	if( from.startsWith( "FILE_TRANSFER_SYSTEM" ) )
+	{
+		client()->notifyError( "Fileupload result received.", msg, Client::Notice );
+		return;
+	}	
+	
 	if( url.isEmpty() )
 		return;
+	
 
 	unsigned int left = url.findRev( '/' ) + 1;
 	unsigned int right = url.findRev( '?' );
@@ -104,7 +112,7 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 
 void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 { 
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -121,6 +129,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	to = t->firstParam( 5 );
 	url = t->firstParam( 265 );
 	msg = t->firstParam( 14 );
+	expires = t->firstParam( 38 ).toLong();
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
 
@@ -129,7 +138,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 
 void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePeerToPeer);
 	t->setId( client()->sessionID() );

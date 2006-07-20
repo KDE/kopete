@@ -43,8 +43,9 @@
 #include <klocale.h>
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent )
-: KDialog( parent, QString::null, User1|User2|User3|Cancel )
+: KDialog( parent )
 {
+	setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Cancel );
 	setDefaultButton( KDialog::User2 );
 
 	mAccount = account;
@@ -55,8 +56,9 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent )
 }
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent )
-: KDialog( parent, QString::null, User1|User2|User3|Cancel )
+: KDialog( parent )
 {
+	setButtons( KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Cancel );
 	setDefaultButton( KDialog::User2 );
 
 	ResLine rs;
@@ -77,11 +79,11 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	mMainWidget->pubsearch->raiseWidget( 1 );
 	mMainWidget->radioByUin->setChecked( true );
 
-	setButtonText( User2, i18n( "Search &More..." ) );
-	showButton( User3, true );
-	showButton( User1, true );
-	enableButton( User3, false );
-	enableButton( User2, false );
+	setButtonGuiItem( KDialog::User2, i18n( "Search &More..." ) );
+	showButton( KDialog::User3, true );
+	showButton( KDialog::User1, true );
+	enableButton( KDialog::User3, false );
+	enableButton( KDialog::User2, false );
 
 	// now it is time to switch to Right Page(tm)
 	rs.uin = searchFor;
@@ -112,14 +114,14 @@ GaduPublicDir::createWidget()
 
 	mMainWidget->UIN->setValidChars( "1234567890" );
 
-	setButtonText( User1, i18n( "&New Search" ) );
-	setButtonText( User2, i18n( "S&earch" ) );
-	setButtonText( User3, i18n( "&Add User..." ) );
-	setButtonText( Cancel, i18n( "&Close" ) );
+	setButtonGuiItem( KDialog::User1, i18n( "&New Search" ) );
+	setButtonGuiItem( KDialog::User2, i18n( "S&earch" ) );
+	setButtonGuiItem( KDialog::User3, i18n( "&Add User..." ) );
+	setButtonGuiItem( KDialog::Cancel, i18n( "&Close" ) );
 
-	showButton( User1, false );
-	showButton( User3, false );
-	enableButton( User2, false );
+	showButton( KDialog::User1, false );
+	showButton( KDialog::User3, false );
+	enableButton( KDialog::User2, false );
 
 	mMainWidget->radioByData->setChecked( true );
 
@@ -149,10 +151,10 @@ GaduPublicDir::slotListSelected(  )
 {
 	Q3ListViewItem* item = mMainWidget->listFound->currentItem();
 	if ( item ) {
-		enableButton( User3, true );
+		enableButton( KDialog::User3, true );
 	}
 	else {
-		enableButton( User3, false );
+		enableButton( KDialog::User3, false );
 	}
 }
 
@@ -276,11 +278,11 @@ GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 	// if we are looking just for one UIN, don't allow search more - it is pointless
 
 	if ( result.count() && fUin==0 ) {
-		enableButton( User2, true );
+		enableButton( KDialog:: User2, true );
 	}
 
-	enableButton( User1, true );
-	enableButton( User3, false );
+	enableButton( KDialog::User1, true );
+	enableButton( KDialog::User3, false );
 	mMainWidget->pubsearch->setDisabled( false );
 
 }
@@ -290,12 +292,12 @@ GaduPublicDir::slotNewSearch()
 {
 	mMainWidget->pubsearch->raiseWidget( 0 );
 
-	setButtonText( User2, i18n( "S&earch" ) );
+	setButtonGuiItem( KDialog::User2, i18n( "S&earch" ) );
 
-	showButton( User1, false );
-	showButton( User3, false );
-	enableButton( User2, false );
- 	inputChanged( QString::null );
+	showButton( KDialog::User1, false );
+	showButton( KDialog::User3, false );
+	enableButton( KDialog::User2, false );
+ 	inputChanged( QString() );
  	mAccount->pubDirSearchClose();
 }
 
@@ -325,11 +327,11 @@ GaduPublicDir::slotSearch()
 		// Search for more
 	}
 	mMainWidget->pubsearch->setDisabled( true );
-	setButtonText( User2, i18n( "Search &More..." ) );
-	showButton( User3, true );
-	showButton( User1, true );
-	enableButton( User3, false );
-	enableButton( User2, false );
+	setButtonGuiItem( KDialog::User2, i18n( "Search &More..." ) );
+	showButton( KDialog::User3, true );
+	showButton( KDialog::User1, true );
+	enableButton( KDialog::User3, false );
+	enableButton( KDialog::User2, false );
 
 	ResLine rs;
 	rs.firstname	= fName;

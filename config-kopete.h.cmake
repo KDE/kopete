@@ -44,3 +44,24 @@
 /* Define if you have a tm_gmtoff member in struct tm */
 #define HAVE_TM_GMTOFF 1
 
+/* Defined when we have ilbc codec lib */
+#define HAVE_ILBC 1
+
+/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
+#cmakedefine HAVE_ALSA_ASOUNDLIB_H 1
+
+/* Defines if you have GL (Mesa, OpenGL, ...) */
+#define HAVE_GL 1
+
+/* Glib is required for oRTP code and libmimic code */
+#define HAVE_GLIB 1
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <strings.h> header file. */
+#cmakedefine HAVE_STRINGS_H 1
+

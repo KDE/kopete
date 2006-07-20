@@ -30,7 +30,7 @@ using namespace KNetwork;
 
 SendFileTask::SendFileTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	m_transmitted = 0;
 	m_socket = 0;
 }
@@ -43,14 +43,14 @@ SendFileTask::~SendFileTask()
 
 void SendFileTask::onGo()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	QTimer::singleShot( 0, this, SLOT(initiateUpload()) );
 }
 
 void SendFileTask::initiateUpload()
 {	
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	m_socket = new KStreamSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
 	m_socket->setBlocking( true );
 	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
@@ -62,14 +62,14 @@ void SendFileTask::initiateUpload()
 void SendFileTask::connectFailed( int i )
 {
 	QString err = m_socket->errorString();
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << err << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << err << endl;
 	emit error( m_transferId, i, err );
 	setSuccess( false );
 }
 
 void SendFileTask::connectSucceeded()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer t( Yahoo::ServiceFileTransfer );
 
 	m_file.setName( m_url.path() );
@@ -86,16 +86,17 @@ void SendFileTask::connectSucceeded()
 
 	if ( m_file.open(IO_ReadOnly ) )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading..." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading..." << endl;
 	}
 	else
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << m_file.errorString() << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << m_file.errorString() << endl;
+		client()->notifyError( i18n( "An error occured sending the file." ), m_file.errorString(), Client::Error );
 		return;
 	}
 
 	paket = t.serialize();
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_url << "): " << m_file.size() << " - paket: " << paket.size() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_url << "): " << m_file.size() << " - paket: " << paket.size() << endl;
 	QString header = QString::fromLatin1("POST http://filetransfer.msg.yahoo.com:80/notifyft HTTP/1.1\r\n"
 			"Cookie: Y=%1; T=%2; C=%3 ;B=fckeert1kk1nl&b=2\r\n"
 			"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
@@ -120,7 +121,7 @@ void SendFileTask::connectSucceeded()
 
 void SendFileTask::transmitData()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	int read = 0;
 	int written = 0;	
 	char buf[1024];
@@ -128,20 +129,20 @@ void SendFileTask::transmitData()
 	m_socket->enableWrite( false );
 	read = m_file.readBlock( buf, 1024 );
 	written = m_socket->writeBlock( buf, read );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "read:" << read << " written: " << written << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "read:" << read << " written: " << written << endl;
 
 	m_transmitted += read;
 	emit bytesProcessed( m_transferId, m_transmitted );
 
 	if( written != read )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
 		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		setSuccess( false );
 	}
 	if( m_transmitted == m_file.size() )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful: " << m_transmitted << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful: " << m_transmitted << endl;
 		emit complete( m_transferId );
 		setSuccess( true );
 		m_socket->close();

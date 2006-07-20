@@ -1743,8 +1743,9 @@ void KopeteContactListView::slotAddContact()
 
 	if( account && ( metacontact || group) )
 	{
-		KDialog *addDialog = new KDialog( this, 
-			i18n( "Add Contact" ), KDialog::Ok|KDialog::Cancel );
+		KDialog *addDialog = new KDialog( this );
+		addDialog->setCaption( i18n( "Add Contact" ) );
+		addDialog->setButtons( KDialog::Ok|KDialog::Cancel );
 
 		AddContactPage *addContactPage =
 			account->protocol()->createAddContactWidget( addDialog, account );

@@ -165,7 +165,7 @@ Task* Connection::rootTask() const
 	return d->root;
 }
 
-SSIManager* Connection::ssiManager() const
+ContactManager* Connection::ssiManager() const
 {
 	return d->client->ssiManager();
 }

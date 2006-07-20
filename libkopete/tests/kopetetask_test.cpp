@@ -59,7 +59,7 @@ void ParseEmoticonTask::parseEmoticon(const QString &value)
 void KopeteTaskTest::testEmoticonTask()
 {
 	ParseEmoticonTask *task = new ParseEmoticonTask(sampleString);
-	QSignalSpy spy(task, SIGNAL(result( Kopete::Task*)));
+	QSignalSpy spy(task, SIGNAL(result(KJob*)));
 
 	// For the task to execute, we must manually call the event loop.
 	kapp->processEvents();

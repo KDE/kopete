@@ -30,17 +30,21 @@
 
 #include <webcamwidget.h>
 
-YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1", contactId ),
-                   KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ )
+YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent )
+: KDialog( parent )
 {
+	setCaption( i18n( "Webcam for %1", contactId ) );
+	setButtons( KDialog::Close );
+	setDefaultButton( KDialog::Close );
+	enableButtonSeparator( true );
+	
 	setInitialSize( QSize(320,290) );
 	
-	setEscapeButton( KDialogBase::Close );
+	setEscapeButton( KDialog::Close );
 	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
 
 	contactName = contactId;
-	QWidget *page = plainPage();
+	QWidget *page = new QWidget(this);
 	setMainWidget(page);
 
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	

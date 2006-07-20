@@ -51,10 +51,10 @@
 #include "client.h"
 #include "oscarutils.h"
 #include "oscarencodingselectiondialog.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 
 ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const Oscar::SSI& ssiItem )
+						const QString& icon, const OContact& ssiItem )
 : OscarContact( account, name, parent, icon, ssiItem )
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
@@ -261,7 +261,7 @@ void ICQContact::slotRequestAuth()
 void ICQContact::slotSendAuth()
 {
 	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply" << endl;
-	ICQAuthReplyDialog replyDialog( 0, "replyDialog", false );
+	ICQAuthReplyDialog replyDialog( 0, false );
 
 	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	if ( replyDialog.exec() )
@@ -748,7 +748,7 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 
 void ICQContact::slotUserInfo()
 {
-	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), "icq info" );
+	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
 	QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
 	m_infoWidget->setContact( this );
 	m_infoWidget->show();

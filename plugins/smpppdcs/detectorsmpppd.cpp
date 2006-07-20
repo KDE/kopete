@@ -38,7 +38,7 @@ void DetectorSMPPPD::checkStatus() const {
 
 #ifndef NOKINTERNETDCOP
     m_kinternetApp = getKInternetDCOP();
-    if(kapp->dcopClient() && m_kinternetApp != "") {
+    if(kapp->dcopClient() && !m_kinternetApp.isEmpty()) {
         switch(getConnectionStatusDCOP()) {
         case CONNECTED:
             m_connector->setConnectedStatus(true);

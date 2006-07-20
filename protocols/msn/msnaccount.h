@@ -60,7 +60,6 @@ public:
 	 * change the publicName to this new name
 	 */
 	void setPublicName( const QString &name );
-	void setPersonalMessage(const Kopete::StatusMessage &message );
 
 	/**
 	 * Returns the address of the MSN server
@@ -159,7 +158,7 @@ private slots:
 	 */
 	void slotGroupRenamed(const QString &groupGuid, const QString& groupName );
 	/**
-	 * A new group was created on the server (or received durring an LSG command)
+	 * A new group was created on the server (or received during an LSG command)
 	 */
 	void slotGroupAdded( const QString& groupName, const QString &groupGuid );
 	/**
@@ -257,7 +256,7 @@ private:
 	/**
 	 * I need the password in createNotificationServer.
 	 * but i can't ask it there with password() because a nested loop will provoque crash
-	 * at this place.   so i'm forced to keep it here.
+	 * at this place.   so I'm forced to keep it here.
 	 * I would like an API to request the password WITHOUT askling it.
 	 */
 	QString m_password;

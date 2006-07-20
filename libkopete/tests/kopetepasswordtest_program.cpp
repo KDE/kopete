@@ -102,7 +102,7 @@ int main( int argc, char *argv[] )
 		if ( newPwd.isEmpty() )
 		{
 			_out << "Clearing password" << endl;
-			newPwd = QString::null;
+			newPwd.clear();
 		}
 		else
 		{

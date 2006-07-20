@@ -44,10 +44,13 @@ KopetePluginConfig::~KopetePluginConfig()
 	delete d;
 }
 
-KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
-: KDialog( parent, i18n( "Configure Plugins" ), KDialog::Cancel | KDialog::Apply | KDialog::Ok | KDialog::User1,
-	0, KGuiItem( i18n( "&Reset" ), "undo" ) )
+KopetePluginConfig::KopetePluginConfig( QWidget *parent )
+: KDialog( parent )
 {
+	setCaption( i18n( "Configure Plugins" ) );
+	setButtons( KDialog::Cancel | KDialog::Apply | KDialog::Ok | KDialog::User1 );
+	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("&Reset"), "undo" ) );
+
 	d = new KopetePluginConfigPrivate;
 	enableButtonSeparator(true);
 	showButton( User1, false );

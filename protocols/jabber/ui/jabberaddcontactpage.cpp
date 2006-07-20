@@ -154,7 +154,7 @@ void JabberAddContactPage::slotPromtReceived( )
 	}
 	else
 	{
-		jabData->textLabel1->setText( i18n("An error occured while loading instructions from gateway.") );
+		jabData->textLabel1->setText( i18n("An error occurred while loading instructions from gateway.") );
 	}
 }
 

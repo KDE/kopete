@@ -35,7 +35,7 @@ public:
 	bool take(Transfer *transfer);
 
 protected:
-	bool forMe( Transfer *transfer ) const;
+	virtual bool forMe( const Transfer *transfer ) const;
 	void parseBuddyList( YMSGTransfer *transfer );
 	void parseStealthList( YMSGTransfer *transfer );	
 signals:

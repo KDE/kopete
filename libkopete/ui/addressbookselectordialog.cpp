@@ -18,7 +18,6 @@
 
 #include "addressbookselectordialog.h"
 #include "addressbookselectorwidget.h"
-#include <kdialogbase.h>
 #include <qdialog.h>
 #include <q3listview.h>
 #include <kvbox.h>
@@ -30,9 +29,11 @@ namespace Kopete
 namespace UI
 {
 
-AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent, const char *name, bool /*modal*/ ) : KDialog(parent, title, Help|Ok|Cancel )
+AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent ) 
+ : KDialog( parent )
 {
-	setObjectName( name );
+	setCaption( title );
+	setButtons( Help | Ok | Cancel );
 	setEscapeButton( KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
 	KVBox *vbox=new KVBox(this);
@@ -42,7 +43,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	vbox->setSpacing( KDialog::spacingHint() );
 
 	setMainWidget(vbox);
-	enableButtonOK(false);
+	enableButtonOk(false);
 	//setHelp("linkaddressbook");
 
 	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked( Q3ListViewItem * )), SLOT(slotWidgetAddresseeListClicked( Q3ListViewItem * )));
@@ -70,7 +71,7 @@ KABC::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, c
 void AddressBookSelectorDialog::slotWidgetAddresseeListClicked( Q3ListViewItem *addressee )
 {
 	// enable ok if a valid addressee is selected
-	enableButtonOK( addressee ? addressee->isSelected() : false);
+	enableButtonOk( addressee ? addressee->isSelected() : false);
 }
 
 void AddressBookSelectorDialog::accept()

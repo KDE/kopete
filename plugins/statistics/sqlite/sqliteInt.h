@@ -374,7 +374,7 @@ struct sqlite3 {
   int nDb;                      /* Number of backends currently in use */
   Db *aDb;                      /* All backends */
   Db aDbStatic[2];              /* Static space for the 2 default backends */
-  int flags;                    /* Miscellanous flags. See below */
+  int flags;                    /* Miscellaneous flags. See below */
   u8 file_format;               /* What file format version is this database? */
   u8 temp_store;                /* 1: file 2: memory 0: default */
   int nTable;                   /* Number of tables in the database */
@@ -491,7 +491,7 @@ struct Column {
 ** structure. Conceptually, a collating sequence consists of a name and
 ** a comparison routine that defines the order of that sequence.
 **
-** There may two seperate implementations of the collation function, one
+** There may two separate implementations of the collation function, one
 ** that processes text in UTF-8 encoding (CollSeq.xCmp) and another that
 ** processes text encoded in UTF-16 (CollSeq.xCmp16), using the machine
 ** native byte order. When a collation sequence is invoked, SQLite selects
@@ -594,7 +594,7 @@ struct Table {
 **
 ** Each REFERENCES clause generates an instance of the following structure
 ** which is attached to the from-table.  The to-table need not exist when
-** the from-table is created.  The existance of the to-table is not checked
+** the from-table is created.  The existence of the to-table is not checked
 ** until an attempt is made to insert data into the from-table.
 **
 ** The sqlite.aFKey hash table stores pointers to this structure

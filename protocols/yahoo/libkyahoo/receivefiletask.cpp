@@ -29,7 +29,7 @@
 
 ReceiveFileTask::ReceiveFileTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	m_transmitted = 0;
 	m_file = 0;
 	m_transferJob = 0;
@@ -43,7 +43,7 @@ ReceiveFileTask::~ReceiveFileTask()
 
 void ReceiveFileTask::onGo()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7);
 	switch( m_type )
 	{
@@ -78,12 +78,14 @@ void ReceiveFileTask::onGo()
 	
 		send( t );
 		break;
+	default:
+		delete t;
 	}
 }
 
 bool ReceiveFileTask::take( Transfer* transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -95,11 +97,11 @@ bool ReceiveFileTask::take( Transfer* transfer )
 	return true;
 }
 
-bool ReceiveFileTask::forMe( Transfer *transfer ) const
+bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
@@ -113,7 +115,7 @@ bool ReceiveFileTask::forMe( Transfer *transfer ) const
 void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 {
 	Q_UNUSED( job );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	m_transmitted += data.size();
 	emit bytesProcessed( m_transferId, m_transmitted );
@@ -123,7 +125,7 @@ void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 
 void ReceiveFileTask::slotComplete( KIO::Job *job )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
@@ -143,7 +145,7 @@ void ReceiveFileTask::slotComplete( KIO::Job *job )
 
 void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 {	
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	if( transfer->firstParam( 249 ).toInt() == 1 )
 	{

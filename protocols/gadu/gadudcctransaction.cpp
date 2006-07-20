@@ -271,7 +271,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( Kopete::Transfer* transfer, c
 	}
 	else {
 		// overwrite by default
-		if ( localFile_.open( QIODevice::ReadWrite ) == FALSE ) {
+		if ( localFile_.open( QIODevice::ReadWrite ) == false ) {
 			transfer->slotError ( KIO::ERR_COULD_NOT_WRITE, fileName );
 			closeDCC();
 			deleteLater ();

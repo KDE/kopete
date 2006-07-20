@@ -27,7 +27,7 @@
 
 //uncomment to get excessive amounts of debug info from
 //various places in the code
-//#define OSCAR_EXCESSIVE_DEBUG
+//#define OSCAR_EXCEContactVE_DEBUG
 
 //uncomment to get packet dumps in the debug output
 //#define OSCAR_PACKET_PARSING_DEBUG

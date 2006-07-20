@@ -37,7 +37,7 @@ void DetectorNetstat::checkStatus() const {
         return;
     }
 
-    m_buffer = QString::null;
+    m_buffer.clear();
 
     // Use KProcess to run netstat -r. We'll then parse the output of
     // netstat -r in slotProcessStdout() to see if it mentions the
@@ -67,7 +67,7 @@ void DetectorNetstat::slotProcessExited(KProcess *process) {
     kDebug(14312) << k_funcinfo << m_buffer << endl;
     if(process == m_process) {
         m_connector->setConnectedStatus(m_buffer.contains("default"));
-        m_buffer = QString::null;
+        m_buffer.clear();
         delete m_process;
         m_process = 0L;
     }

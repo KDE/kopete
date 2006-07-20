@@ -331,7 +331,7 @@ void sqlite3_free_table(char **result);
 /*
 ** The following routines are variants of the "sprintf()" from the
 ** standard C library.  The resulting string is written into memory
-** obtained from malloc() so that there is never a possiblity of buffer
+** obtained from malloc() so that there is never a possibility of buffer
 ** overflow.  These routines also implement some additional formatting
 ** options that are useful for constructing SQL statements.
 **
@@ -858,7 +858,7 @@ int sqlite3_column_type(sqlite3_stmt*, int iCol);
 ** virtual machine.  If the virtual machine has not completed execution
 ** when this routine is called, that is like encountering an error or
 ** an interrupt.  (See sqlite3_interrupt().)  Incomplete updates may be
-** rolled back and transactions cancelled,  depending on the circumstances,
+** rolled back and transactions canceled,  depending on the circumstances,
 ** and the result code returned will be SQLITE_ABORT.
 */
 int sqlite3_finalize(sqlite3_stmt *pStmt);

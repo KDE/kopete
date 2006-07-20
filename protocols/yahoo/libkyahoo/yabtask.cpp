@@ -25,6 +25,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
+#include <klocale.h>
 
 YABTask::YABTask(Task* parent) : Task(parent)
 {
@@ -50,12 +51,12 @@ bool YABTask::take( Transfer* transfer )
 	return true;
 }
 
-bool YABTask::forMe( Transfer* transfer ) const
+bool YABTask::forMe( const Transfer* transfer ) const
 {
 // 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
@@ -117,7 +118,10 @@ void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
 void YABTask::slotResult( KJob* job )
 {
 	if( job->error () || m_transferJob->isErrorPage () )
+	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Could not retrieve server side addressbook for user info." << endl;
+		client()->notifyError( i18n( "Could not retrieve server side addressbook for user info." ), job->errorString(), Client::Info );
+	}
 	else 
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Server side addressbook retrieved." << endl;

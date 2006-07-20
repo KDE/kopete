@@ -301,7 +301,7 @@ public:
  */
 
 /**
- * Explicitly specialised for all types QVariant supports
+ * Explicitly specialized for all types QVariant supports
  */
 template<class T> T variantTo(QVariant);
 

@@ -19,15 +19,17 @@
 #ifndef DLGJABBERCHATJOIN_H
 #define DLGJABBERCHATJOIN_H
 
-#include "dlgchatjoin.h"
+#include <kdialog.h>
+#include "ui_dlgchatjoin.h"
+
 #include "jabberaccount.h"
 
-class dlgJabberChatJoin : public dlgChatJoin
+class dlgJabberChatJoin : public KDialog
 {
   Q_OBJECT
 
 public:
-  dlgJabberChatJoin(JabberAccount *account, QWidget* parent = 0, const char* name = 0);
+  dlgJabberChatJoin(JabberAccount *account, QWidget* parent = 0);
   ~dlgJabberChatJoin();
   /*$PUBLIC_FUNCTIONS$*/
 
@@ -43,10 +45,8 @@ protected slots:
   /*$PROTECTED_SLOTS$*/
 
 private:
-	
-
 	JabberAccount *m_account;
-
+	Ui::dlgChatJoin m_ui;
 	/*
 		TODO : Used to look for the default chat server,
 		this is duplicate with dlgjabberservices.h

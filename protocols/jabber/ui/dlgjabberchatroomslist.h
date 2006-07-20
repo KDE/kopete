@@ -13,26 +13,28 @@
 #ifndef DLGJABBERCHATROOMSLIST_H
 #define DLGJABBERCHATROOMSLIST_H
 
+#include <kdialog.h>
 #include "jabberaccount.h"
 #include "xmpp_tasks.h"
 
-#include "dlgchatroomslist.h"
+#include "ui_dlgchatroomslist.h"
 
-class dlgJabberChatRoomsList : public dlgChatRoomsList
+class QTableWidgetItem;
+class dlgJabberChatRoomsList : public KDialog
 {
   Q_OBJECT
 
 public:
-	dlgJabberChatRoomsList(JabberAccount* account, const QString& server = QString::null, const QString& nick = QString::null, QWidget* parent = 0, const char* name = 0);
-  ~dlgJabberChatRoomsList();
+	dlgJabberChatRoomsList(JabberAccount* account, const QString& server = QString(), const QString& nick = QString(), QWidget* parent = 0);
+	~dlgJabberChatRoomsList();
   /*$PUBLIC_FUNCTIONS$*/
 
 public slots:
   /*$PUBLIC_SLOTS$*/
   virtual void slotJoin();
   virtual void slotQuery();
-  virtual void slotDoubleClick(int row, int col, int button, const QPoint& mousePos);
-  virtual void slotClick(int row, int col, int button, const QPoint& mousePos);
+  virtual void slotDoubleClick(QTableWidgetItem *item);
+  virtual void slotClick(QTableWidgetItem *item);
 
 protected:
   /*$PROTECTED_FUNCTIONS$*/
@@ -43,11 +45,12 @@ protected slots:
 	void slotQueryFinished();
 
 private:
-
 	JabberAccount *m_account;
-	int m_selectedRow;
+	QTableWidgetItem *m_selectedItem;
 	QString m_chatServer;
 	QString m_nick;
+
+	Ui::dlgChatRoomsList m_ui;
 };
 
 #endif

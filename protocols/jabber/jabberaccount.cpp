@@ -91,7 +91,7 @@
 
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId)
-			  :Kopete::PasswordedAccount ( parent, accountId, 0, false )
+			  :Kopete::PasswordedAccount ( parent, accountId, false )
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId << endl;
 
@@ -269,18 +269,6 @@ void JabberAccount::errorConnectFirst ()
 void JabberAccount::errorConnectionLost ()
 {
 	disconnected( Kopete::Account::ConnectionReset );
-}
-
-void JabberAccount::errorConnectionInProgress ()
-{
-
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Information,
-									i18n ("A connection attempt is already in progress. "
-									"Please wait until the previous attempt finished or "
-									"disconnect to start over."),
-									i18n ("Connection Attempt Already in Progress") );
-
 }
 
 bool JabberAccount::isConnecting ()
@@ -640,7 +628,6 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 
 	if( isConnecting () )
 	{
-		errorConnectionInProgress ();
 		return;
 	}
 	
@@ -1120,7 +1107,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		if(contact)
 			metaContact=contact->metaContact();
 		
-		int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+		Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
 		if( metaContact && !metaContact->isTemporary() )
 			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 		
@@ -1557,14 +1544,14 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	case JabberClient::BannedFromThisMUC:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can't join the room %1 because you were banned", jid.node()),
+									i18n ("You can not join the room %1 because you were banned", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
 	case JabberClient::MaxUsersReachedForThisMuc:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can't join the room %1 because the maximum users has been reached", jid.node()),
+									i18n ("You can not join the room %1 because the maximum users has been reached", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 

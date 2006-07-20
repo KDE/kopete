@@ -20,7 +20,8 @@
 #ifndef PAPILLON_TASK_H
 #define PAPILLON_TASK_H
 
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtCore/QFlags>
 #include <papillon_macros.h>
 
 class QString;
@@ -60,6 +61,16 @@ public:
 		 */
 		ErrorDisconnected
 	};
+	
+	/**
+	 * @brief This enum is the parameters that the go() method accepts.
+	 */
+	enum GoParameter
+	{
+		GoNothing, ///<Do nothing
+		AutoDelete ///<Auto delete the task after completion.
+	};
+	Q_DECLARE_FLAGS(GoParameters, GoParameter);
 
 	/**
 	 * Create a new task.
@@ -121,9 +132,9 @@ public:
 
 	/**
 	 * Start the Task.
-	 * @param autoDelete Auto-delete the Task after being complete.
+	 * @param args See GoParameters for details
 	 */
-	void go(bool autoDelete = false);
+	void go(GoParameters args = GoNothing);
 
 	/**
 	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
@@ -205,6 +216,8 @@ private:
 	class Private;
 	Private *d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( Task::GoParameters );
 
 }
 #endif

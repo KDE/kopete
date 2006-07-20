@@ -30,8 +30,14 @@ http/httpcoreprotocol.cpp
 )
 
 set(papillon_tasks_SRCS 
+tasks/challengetask.cpp 
 tasks/logintask.cpp 
 tasks/notifymessagetask.cpp 
+tasks/notifypresencetask.cpp 
+tasks/notifystatusmessagetask.cpp 
+tasks/setpresencetask.cpp 
+tasks/setpersonalinformationtask.cpp 
+tasks/setstatusmessagetask.cpp 
 )
 
 set(libpapillon_SRCS 
@@ -49,6 +55,8 @@ client.cpp
 mimeheader.cpp 
 contactlistmanager.cpp 
 contactinfo.cpp 
+papillonglobal.cpp 
+papillonstatusmessage.cpp 
 )
 
 kde4_automoc( ${libpapillon_SRCS} )

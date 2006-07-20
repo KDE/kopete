@@ -41,13 +41,13 @@
 
 #include "oscaraccount.h"
 #include "client.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "oscarutils.h"
 
 #include <assert.h>
 
 OscarContact::OscarContact( Kopete::Account* account, const QString& name,
-                            Kopete::MetaContact* parent, const QString& icon, const SSI& ssiItem )
+                            Kopete::MetaContact* parent, const QString& icon, const OContact& ssiItem )
 : Kopete::Contact( account, name, parent, icon )
 {
 	mAccount = static_cast<OscarAccount*>(account);
@@ -75,19 +75,19 @@ void OscarContact::serialize(QMap<QString, QString> &serializedData,
 
 bool OscarContact::isOnServer() const
 {
-    SSIManager* serverList = mAccount->engine()->ssiManager();
-    SSI ssi = serverList->findContact( Oscar::normalize( contactId() ) );
+    ContactManager* serverList = mAccount->engine()->ssiManager();
+	OContact ssi = serverList->findContact( Oscar::normalize( contactId() ) );
 
 	return ( ssi && ssi.type() != 0xFFFF );
 }
 
-void OscarContact::setSSIItem( const Oscar::SSI& ssiItem )
+void OscarContact::setSSIItem( const OContact& ssiItem )
 {
 	m_ssiItem = ssiItem;
 	emit updatedSSI();
 }
 
-Oscar::SSI OscarContact::ssiItem() const
+OContact OscarContact::ssiItem() const
 {
 	return m_ssiItem;
 }
@@ -133,46 +133,29 @@ void OscarContact::chatSessionDestroyed()
 void OscarContact::sync(unsigned int flags)
 {
 	/* 
-	 * If the contact is waiting for auth, we do nothing
 	 * If the contact has changed groups, then we update the server
 	 *   adding the group if it doesn't exist, changing the ssi item
 	 *   contained in the client and updating the contact's ssi item
 	 * Otherwise, we don't do much
 	 */
+	
+	if( !metaContact() || metaContact()->isTemporary() )
+		return;
+	
 	if ( flags & Kopete::Contact::MovedBetweenGroup == Kopete::Contact::MovedBetweenGroup )
 	{
-
-		if ( m_ssiItem.waitingAuth() )
-		{
-			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact still requires auth. Doing nothing" << endl;
-			return;
-		}
-		
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
-		SSIManager* ssiManager = mAccount->engine()->ssiManager();
-		SSI oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
+		ContactManager* ssiManager = mAccount->engine()->ssiManager();
+		
+		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
 		Kopete::Group* newGroup = metaContact()->groups().first();
 		if ( newGroup->displayName() == oldGroup.name() )
 			return; //we didn't really move
 		
-		if ( !ssiManager->findGroup( newGroup->displayName() ) )
-		{ //we don't have the group on the server
-			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the group '" << newGroup->displayName() << "' is not on the server"
-				<< "adding it" << endl;
-			mAccount->engine()->addGroup( newGroup->displayName() );
-		}
-		
-		SSI newSSIGroup = ssiManager->findGroup( newGroup->displayName() );
-		if ( !newSSIGroup )
-		{
-			kWarning(OSCAR_GEN_DEBUG) << k_funcinfo << newSSIGroup.name() << " not found on SSI list after addition!" << endl;
-			return;
-		}
-		
-		mAccount->engine()->changeContactGroup( contactId(), newGroup->displayName() );
-		SSI newItem( m_ssiItem.name(), newSSIGroup.gid(), m_ssiItem.bid(), m_ssiItem.type(),
-		             m_ssiItem.tlvList(), m_ssiItem.tlvListLength() );
-		setSSIItem( newItem );
+		if ( m_ssiItem.isValid() )
+			mAccount->changeContactGroupInSSI( contactId(), newGroup->displayName(), true );
+		else
+			mAccount->addContactToSSI( contactId(), newGroup->displayName(), true );
 	}
 	return;
 }

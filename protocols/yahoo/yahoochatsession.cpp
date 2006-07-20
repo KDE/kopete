@@ -60,6 +60,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), actionCollection(), "yahooBuzz" ) ;
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
 	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
+	new KAction( i18n( "Send File" ), QIconSet(BarIcon("attach")), 0, this, SLOT( slotSendFile() ), actionCollection(), "yahooSendFile" );
 
 	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), actionCollection(), "yahooShowInfo" ) ;
 	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
@@ -118,6 +119,13 @@ void YahooChatSession::slotInviteWebcam()
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->inviteWebcam();
+}
+
+void YahooChatSession::slotSendFile()
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	QList<Kopete::Contact*>contacts = members();
+	static_cast<YahooContact *>(contacts.first())->sendFile();
 }
 
 void YahooChatSession::slotDisplayPictureChanged()

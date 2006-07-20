@@ -45,7 +45,21 @@ class PAPILLON_EXPORT TweenerHandler : public QObject
 {
 	Q_OBJECT
 public:
-	enum TweenerState { TwnGetServer, TwnAuth };
+	/**
+	 * TweenerState is using to switch the current state of the process.
+	 */
+	enum TweenerState 
+	{
+		/**
+		 * We are getting the name of the Passport login server.
+		 */
+		TwnGetServer,
+		/**
+		 * Sending authentification to the Passport login server.
+		 */
+		TwnAuth 
+	};
+
 	/**
 	 * Build a new TweenerHandler
 	 * @param steam SecureStream instance.

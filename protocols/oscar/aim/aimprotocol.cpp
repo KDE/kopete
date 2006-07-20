@@ -39,6 +39,8 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 
+#include "contact.h"
+
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
 K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim" ) )
@@ -113,13 +115,13 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			kWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url() << endl;
 				return;
 			}
-			
+
 			command.remove(0, 12);
 			int andSign = command.indexOf("&");
 			if ( andSign > 0 )
 				command = command.left(andSign);
 			command.replace("+", " ");
-			
+
 			firstParam = command;
 			needContactAddition = true;
 		}
@@ -129,15 +131,15 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		realCommand = "gochat";
 		kDebug(14152) << k_funcinfo << "Handling AIM chat room request" << endl;
 		command.remove( 0, 6 );
-		
+
 		if ( command.indexOf( "?RoomName=", 0, Qt::CaseInsensitive ) == -1 )
 		{
 		kWarning(14152) << "Unhandled AIM URI: " << url.url() << endl;
 			return;
 		}
-		
+
 		command.remove( 0, 10 );
-		
+
 		int andSign = command.indexOf("&");
 		if (andSign > 0) // strip off anything else for now
 		{
@@ -150,25 +152,27 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		kDebug(14152) << k_funcinfo << firstParam << " " << secondParam << endl;
 		firstParam.replace("+", " ");
 	}
-	
+
 	Kopete::Account *account = 0;
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts();
-	
+
 	if (accounts.count() == 1)
 	{
-		account = accounts.first();		
+		account = accounts.first();
 	}
 	else
 	{
-		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
+		KDialog *chooser = new KDialog;
+		chooser->setCaption( i18n("Choose Account") );
+		chooser->setButtons( KDialog::Ok | KDialog::Cancel );
 		chooser->setDefaultButton(KDialog::Ok);
 		AccountSelector *accSelector = new AccountSelector(proto, chooser);
 		accSelector->setObjectName( QLatin1String("accSelector") );
 		chooser->setMainWidget(accSelector);
-		
+
 		int ret = chooser->exec();
 		Kopete::Account *account = accSelector->selectedItem();
-		
+
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
 		{
@@ -176,7 +180,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			return;
 		}
 	}
-	
+
 	Kopete::MetaContact* mc = 0;
 	if ( needContactAddition || realCommand == "addbuddy" )
 	{
@@ -188,7 +192,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			kDebug(14152) << k_funcinfo << "Cancelled" << endl;
 			return;
 		}
-		
+
 		kDebug(14152) << k_funcinfo <<
 			"Adding Contact; screenname = " << firstParam << endl;
 		mc = account->addContact(firstParam, command, 0L, Kopete::Account::Temporary);
@@ -206,14 +210,14 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			                    i18n( "Unable to connect to the chat room %1 because the account"
 			                          " for %2 is not connected.", firstParam, aimAccount->accountId() ),
 			                    QString::null );
-		
+
 	}
 
 	if ( realCommand == "goim" )
 	{
 		mc->execute();
 	}
-	
+
 }
 
 
@@ -241,9 +245,9 @@ AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 		protocolStatic_ = this;
 
 	setCapabilities( Kopete::Protocol::FullRTF ); // setting capabilities
-	kDebug(14152) << k_funcinfo << "capabilities set to 0x1FFF" << endl;
+	kDebug(14152) << k_funcinfo << "capabilities set to FullRTF" << endl;
 	addAddressBookField("messaging/aim", Kopete::Plugin::MakeIndexField);
-	
+
 }
 
 AIMProtocol::~AIMProtocol()
@@ -267,7 +271,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 
 	// Get the account it belongs to
 	Kopete::Account* account = Kopete::AccountManager::self()->findAccount( QString("AIMProtocol"), accountId );
-	
+
 	if ( !account ) //no account
 		return 0;
 
@@ -285,7 +289,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 		ssiType = serializedData["ssi_type"].toUInt();
 	}
 
-	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 
 	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );

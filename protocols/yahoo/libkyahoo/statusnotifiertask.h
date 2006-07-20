@@ -36,14 +36,13 @@ public:
 	bool take(Transfer *transfer);
 
 protected:
-	bool forMe( Transfer *transfer ) const;
+	virtual bool forMe( const Transfer *transfer ) const;
 	void parseStatus( YMSGTransfer *transfer );
 	void parseStealthStatus( YMSGTransfer *transfer );
 	void parseAuthorization( YMSGTransfer *transfer );
 signals:
 	void statusChanged( const QString&, int, const QString&, int, int );
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
-	void error( const QString& );
 	void loginResponse( int, const QString& );
 	void authorizationAccepted( const QString & );
 	void authorizationRejected( const QString &, const QString & );

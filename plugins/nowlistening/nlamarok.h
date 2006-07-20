@@ -25,15 +25,18 @@
 #ifndef NLAMAROK_H
 #define NLAMAROK_H
 
-#include <dcopclient.h>
+struct QDBusInterfacePtr;
+class QDBusInterface;
 
 class NLamaroK : public NLMediaPlayer
 {
 	public:
-		NLamaroK( DCOPClient *client );
+		NLamaroK();
 		virtual void update();
-	protected:
-		DCOPClient *m_client;
+	private:
+		QDBusInterface *client();
+
+		QDBusInterfacePtr *m_client;
 };
 
 #endif

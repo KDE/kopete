@@ -28,11 +28,15 @@
 #include "ui_aimjoinchatbase.h"
 #include "aimaccount.h"
 
-AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
-                              QWidget* parent, const char* name )
-    : KDialogBase( parent, name, modal, i18n( "Join AIM Chat Room" ),
-                   Cancel | User1, User1, true, i18n( "Join" ) )
+AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account, QWidget* parent )
+    : KDialog( parent )
 {
+
+    setCaption(  i18n( "Join AIM Chat Room" ) );
+    setButtons( KDialog::Cancel | KDialog::User1 );
+    setDefaultButton( KDialog::User1 );
+    setButtonGuiItem( KDialog::User1, i18n("Join") );
+    enableButtonSeparator( true );
 
     kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Account " << account->accountId()
                    << " joining a chat room" << endl;

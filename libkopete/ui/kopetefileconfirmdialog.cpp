@@ -32,10 +32,13 @@
 #include "kopetecontact.h"
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo &info,const QString& description,QWidget *parent )
-: KDialog( parent, i18n( "A User Would Like to Send You a File" ),
-	KDialog::User1 | KDialog::User2, 0, i18n( "&Refuse" ), i18n( "&Accept" ) ),
-	m_info( info )
+: KDialog( parent ), m_info( info )
 {
+	setCaption( i18n( "A User Would Like to Send You a File" ) );
+	setButtons( KDialog::User1 | KDialog::User2 );
+	setButtonGuiItem( KDialog::User1, i18n("&Refuse") );
+	setButtonGuiItem( KDialog::User2, i18n("&Accept") );	
+
 	setEscapeButton( KDialog::User1 );
 	setDefaultButton( KDialog::User2 );
 	setAttribute( Qt::WA_DeleteOnClose );
@@ -78,7 +81,7 @@ void KopeteFileConfirmDialog::slotBrowsePressed()
 void KopeteFileConfirmDialog::slotUser2()
 {
 	m_emited=true;
-	KUrl url = KUrl::fromPathOrUrl(m_saveto->text());
+	KUrl url = KUrl(m_saveto->text());
 	if(url.isValid() && url.isLocalFile() )
 	{
 		const QString directory=url.directory();

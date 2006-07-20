@@ -1,5 +1,6 @@
 <div class="KopeteMessage">
-	<div class="IncomingMessageHeader">
+	<div style="padding:0;margin:0;border:none;border-color:%senderColor{180}% %senderColor{140}% %senderColor{140}% %senderColor{180}%;background-color:%senderColor{155}%">
+		<div class="IncomingMessageHeader">
 		<!-- Contact photo -->
 		<img class="inUserPicture" src="%userIconPath%" />
 		<!-- Protocol Icon -->
@@ -9,7 +10,8 @@
 		<!-- MetaContact display -->
 		<div class="inMetacontact">%sender% &#160;</div>
 	</div>
-	<ul class="IncommingList" style="direction: %messageDirection%;">
+	</div>
+	<ul class="IncomingList" style="direction: %messageDirection%;">
 		<li class="IncomingMessage" style="direction: %messageDirection%;">%message%</li>
 		<!-- For support of consecutive messages -->
 		<div id="insert" />

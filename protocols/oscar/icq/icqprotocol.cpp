@@ -15,7 +15,9 @@
   *************************************************************************
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include "config-kopete.h"
+#endif
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -50,6 +52,7 @@
 #include "kopetecontactproperty.h"
 
 #include "oscartypeclasses.h"
+#include "contact.h"
 
 #include "icqaccount.h"
 #include "icqcontact.h"
@@ -126,7 +129,9 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	}
 	else
 	{
-		KDialog *chooser = new KDialog(0, i18n("Choose Account"), KDialog::Ok|KDialog::Cancel);
+		KDialog *chooser = new KDialog;
+		chooser->setCaption( i18n("Choose Account") );
+		chooser->setButtons( KDialog::Ok|KDialog::Cancel );
 		chooser->setDefaultButton(KDialog::Ok);
 		AccountSelector *accSelector = new AccountSelector(proto, chooser);
 		accSelector->setObjectName( QLatin1String("accSelector") );
@@ -775,7 +780,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
     if ( serializedData.contains( "ssi_type" ) )
 	ssiType = serializedData["ssi_type"].toUInt();
 
-	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	ICQContact *c = new ICQContact( static_cast<ICQAccount*>(account), contactId, metaContact, QString::null, item );
 	return c;

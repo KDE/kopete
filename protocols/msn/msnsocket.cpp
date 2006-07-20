@@ -343,6 +343,7 @@ void MSNSocket::slotDataReceived()
 							kDebug(14140) << k_funcinfo << "Session closed." << endl;
 							m_bCanPoll = false;
 							disconnect();
+						    delete [] buffer;
 							return;
 						}
 				}else
@@ -386,6 +387,7 @@ void MSNSocket::slotDataReceived()
 				m_bCanPoll = false;
 				// Disconnect from the service.
 				disconnect();
+		        delete [] buffer;
 				return;
 			}
 		}

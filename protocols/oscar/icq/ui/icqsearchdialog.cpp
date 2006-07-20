@@ -40,9 +40,11 @@
 #include "icqcontact.h"
 #include "icquserinfowidget.h"
 
-ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const char* name )
-: KDialog( parent, i18n( "ICQ User Search" ) )
+ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
+: KDialog( parent )
 {
+	setCaption( i18n( "ICQ User Search" ) );
+	
 	m_account = account;
 	QWidget* w = new QWidget( this );
 	m_searchUI = new Ui::ICQSearchBase();

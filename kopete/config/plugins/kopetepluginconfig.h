@@ -32,7 +32,7 @@ class KopetePluginConfig : public KDialog
 	Q_OBJECT
 
 public:
-	KopetePluginConfig( QWidget *parent, const char *name = 0L );
+	KopetePluginConfig( QWidget *parent );
 	~KopetePluginConfig();
 	void apply();
 

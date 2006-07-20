@@ -24,6 +24,7 @@
 #ifndef _QVIDEOSTREAM_H
 #define _QVIDEOSTREAM_H
 
+#include <config-kopete.h>
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

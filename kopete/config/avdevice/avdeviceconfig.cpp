@@ -197,7 +197,7 @@ void AVDeviceConfig::slotSaturationSliderChanged(int){
 }
 
 void AVDeviceConfig::slotWhitenessSliderChanged(int){
-	kdDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0 << endl;
 	mVideoDevicePool->setWhiteness( mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0);
   emit changed( true );
 }
@@ -221,19 +221,19 @@ void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
 }
 
 void AVDeviceConfig::slotImageAsMirrorChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
 	emit changed( true );
 }
 
 void AVDeviceConfig::slotDeviceWorkaroundBrokenDriverChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotDeviceWorkaroundBrokenDriverChanged(" << mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceWorkaroundBrokenDriverChanged(" << mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setWorkaroundBrokenDriver(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked());
 	emit changed( true );
 }
 
 void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotDeviceDisableMMapChanged(" << mPrfsVideoDevice->mDeviceDisableMMap->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceDisableMMapChanged(" << mPrfsVideoDevice->mDeviceDisableMMap->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setDisableMMap(mPrfsVideoDevice->mDeviceDisableMMap->isChecked());
 	emit changed( true );
 }

@@ -369,7 +369,7 @@ void ContactList::slotPhotoChanged()
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
 	mutex=false;
-	/* The mutex is usefull to don't have such as stack overflow 
+	/* The mutex is useful to don't have such as stack overflow 
 	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
 	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
 	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 

@@ -31,7 +31,7 @@ class Connector;
 class ByteStream;
 class Transfer;
 class RateClassManager;
-class SSIManager;
+class ContactManager;
 class Task;
 
 
@@ -144,7 +144,7 @@ public:
 	QString userId() const;
 	QString password() const;
 	bool isIcq() const;
-	SSIManager* ssiManager() const;
+	ContactManager* ssiManager() const;
 	RateClassManager* rateManager() const;
 	bool isLoggedIn() const;
 

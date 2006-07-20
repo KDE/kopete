@@ -52,7 +52,7 @@ TLV Oscar::findTLV( const QList<TLV>& list, int type )
 	return t;
 }
 
-bool Oscar::updateTLVs( SSI& item, const QList<TLV>& list )
+bool Oscar::updateTLVs( OContact& item, const QList<TLV>& list )
 {
 	bool changed = false;
 	QList<TLV> tList( item.tlvList() );

@@ -52,8 +52,10 @@ class TooltipItem : public K3ListViewItem
 
 
 TooltipEditDialog::TooltipEditDialog(QWidget *parent)
-	: KDialog(parent, i18n("Tooltip Editor"), Ok|Cancel)
+	: KDialog(parent)
 {
+	setCaption( i18n("Tooltip Editor") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton(KDialog::Ok);
 	enableButtonSeparator(true);
 

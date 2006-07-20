@@ -21,26 +21,31 @@
 #include "dlgjabberchatroomslist.h"
 #include "jabberprotocol.h"
 
-dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount* account, const QString& server, const QString &nick,  QWidget *parent, const char *name) :
-dlgChatRoomsList(parent, name),
-	m_account(account) , m_selectedRow(-1) ,  m_nick(nick)
+dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount* account, const QString& server, const QString &nick, QWidget *parent) 
+: KDialog(parent), m_account(account) , m_selectedItem(0) ,  m_nick(nick)
 {
-	if (!server.isNull())
-		leServer->setText(server);
-	else if(m_account->isConnected())
-		leServer->setText(m_account->server());
-
-	m_chatServer = leServer->text();
-
-	// locales
 	setCaption(i18n("List Chatrooms"));
+	setButtons( KDialog::User1 | KDialog::Close );
+	setButtonGuiItem( KDialog::User1, i18n("Join") );
 
-	tblChatRoomsList->setLeftMargin (0);
-	tblChatRoomsList->setColumnStretchable(0, true);
-	tblChatRoomsList->setColumnStretchable(1, true);
+	QWidget *mainWidget = new QWidget(this);
+	m_ui.setupUi(mainWidget);
+	setMainWidget(mainWidget);
+
+	if (!server.isNull())
+		m_ui.leServer->setText(server);
+	else if(m_account->isConnected())
+		m_ui.leServer->setText(m_account->server());
+
+	m_chatServer = m_ui.leServer->text();
 
 	if (!server.isNull())
 		slotQuery();
+
+	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotJoin()));
+	connect(m_ui.pbQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
+	connect(m_ui.tblChatRoomsList, SIGNAL(itemClicked(QTableWidgetItem *)), this, SLOT(slotClick(QTableWidgetItem *)));
+	connect(m_ui.tblChatRoomsList, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotDoubleClick(QTableWidgetItem *)));
 }
 
 dlgJabberChatRoomsList::~dlgJabberChatRoomsList()
@@ -56,10 +61,10 @@ void dlgJabberChatRoomsList::slotJoin()
 		return;
 	}
 
-	if (m_selectedRow >= 0)
+	if( m_selectedItem )
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer << endl;
-		m_account->client()->joinGroupChat(m_chatServer, tblChatRoomsList->text(m_selectedRow, 0), m_nick);
+		kDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << m_selectedItem->text() << " on " << m_chatServer << endl;
+		m_account->client()->joinGroupChat(m_chatServer, m_selectedItem->text(), m_nick);
 	}
 }
 
@@ -71,13 +76,13 @@ void dlgJabberChatRoomsList::slotQuery()
 		return;
 	}
 
-	tblChatRoomsList->setNumRows(0);
+	m_ui.tblChatRoomsList->clear();
 
 	XMPP::JT_DiscoItems *discoTask = new XMPP::JT_DiscoItems(m_account->client()->rootTask());
 	connect (discoTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
 
-	m_chatServer = leServer->text();
-	discoTask->get(leServer->text());
+	m_chatServer = m_ui.leServer->text();
+	discoTask->get(m_ui.leServer->text());
 	discoTask->go(true);
 }
 
@@ -91,26 +96,28 @@ void dlgJabberChatRoomsList::slotQueryFinished()
 	}
 
 	const XMPP::DiscoList& items = task->items();
-	tblChatRoomsList->setNumRows(items.count());
+	m_ui.tblChatRoomsList->setRowCount(items.count());
 
 	int row = 0;
 	for (XMPP::DiscoList::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
-		tblChatRoomsList->setText(row, 0, (*it).jid().user());
-		tblChatRoomsList->setText(row, 1, (*it).name());
+		QTableWidgetItem *row0 = new QTableWidgetItem( (*it).jid().user() );
+		QTableWidgetItem *row1 = new QTableWidgetItem( (*it).name() );
+		m_ui.tblChatRoomsList->setItem(row, 0, row0);
+		m_ui.tblChatRoomsList->setItem(row, 1, row1);
 		++row;
 	}
 }
 
-void dlgJabberChatRoomsList::slotDoubleClick(int row, int /*col*/, int /*button*/, const QPoint& /*mousePos*/)
+void dlgJabberChatRoomsList::slotDoubleClick(QTableWidgetItem *item)
 {
-	m_selectedRow = row;
+	m_selectedItem = item;
 	slotJoin();
 }
 
-void dlgJabberChatRoomsList::slotClick(int row, int /*col*/, int /*button*/, const QPoint& /*mousePos*/)
+void dlgJabberChatRoomsList::slotClick(QTableWidgetItem *item)
 {
-	m_selectedRow = row;
+	m_selectedItem = item;
 }
 
 #include "dlgjabberchatroomslist.moc"

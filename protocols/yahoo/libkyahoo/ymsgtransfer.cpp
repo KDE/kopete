@@ -86,7 +86,7 @@ bool YMSGTransfer::isValid()
 	return d->valid;
 }
 
-Yahoo::Service YMSGTransfer::service()
+Yahoo::Service YMSGTransfer::service() const
 {
 	return d->service;
 }

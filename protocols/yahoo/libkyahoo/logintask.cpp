@@ -71,6 +71,7 @@ bool LoginTask::take(Transfer* transfer)
 	{
 		case (InitialState):
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
+			client()->notifyError( "Error in login procedure.", "take called while in initial state", Client::Debug );
 			return false;
 		break;
 		case (SentVerify):
@@ -93,11 +94,11 @@ bool LoginTask::take(Transfer* transfer)
 	}
 }
 
-bool LoginTask::forMe(Transfer* transfer) const
+bool LoginTask::forMe(const Transfer* transfer) const
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
@@ -135,6 +136,7 @@ void LoginTask::onGo()
 	else
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - ERROR - OnGo called and not initial state" << endl;
 	//emit finished();
+		client()->notifyError( "Error in login procedure.", "take called while not in initial state", Client::Debug );
 }
 
 void LoginTask::reset()
@@ -147,7 +149,6 @@ void LoginTask::sendVerify()
 	/* send a ServiceVerify */
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceVerify);
-	//t->setParam("1", client()->userId());
 	send( t );
 	mState = SentVerify;	
 }

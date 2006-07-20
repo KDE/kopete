@@ -17,6 +17,7 @@
 
 #include <QtCore/QObject>
 #include <papillon_macros.h>
+#include <papillon_enums.h>
 
 namespace Papillon
 {
@@ -27,9 +28,16 @@ class SecureStream;
 class Task;
 class Transfer;
 class MimeHeader;
+class StatusMessage;
 
+// TODO APIDOX, add a reference about connector model.
 /**
  * @brief Client to Windows Live Messenger.
+ * This is the main interface between the client application (ex: Kopete, papillon-telepathy, etc...) and
+ * the Windows Live Messenger service.
+ *
+ * Papillon::Client need a valid Papillon::Connector objet to be used.
+ * Set the client info with setClientInfo() before attempt to connect to Windows Live Messenger service.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
@@ -79,14 +87,68 @@ public:
 	QString passportAuthTicket() const;
 
 signals:
+	/**
+	 * Emitted when Client is connected, but not logged, to Windows Live Messenger's service.
+	 */
 	void connected();
+	/**
+	 * Emitted when Client got disconnected from Windows Live Messenger's service.
+	 */
 	void disconnected();
 
+	/**
+	 * Emitted when a contact change his status
+	 * @param contactId Contact ID
+	 * @param status Contact's new online status.
+	 */
+	void contactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+
+	/**
+	 * Emitted when a contact has updated his status message.
+	 * @param contactId Contact ID
+	 * @param statusMessage Updated status message.
+	 */
+	void contactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
+
 public slots:
+	/**
+	 * @brief Connect to Windows Live Messenger
+	 * If no arguments are passed, it use the default server and port used by
+	 * Windows Live Messenger official client.
+	 * Note that it doesn't login to the server. it just connects.
+	 * @param server The Windows Live Messenger server, if you want to override it.
+	 * @param port the Windows Live Messenger server port, if you want to override it.
+	 */
 	void connectToServer(const QString &server = QString(), quint16 port = 0);
+	/**
+	 * @brief Start the login process.
+	 * Make sure that you setup client information with setClientInfo()
+	 */
 	void login();
 
+	/**
+	 * @brief Set the initial online status.
+	 * This is the first online status that will be set on server.
+	 *
+	 * @param status the initial online status
+	 */
+	void setInitialOnlineStatus(Papillon::OnlineStatus::Status status);
+	
+	/**
+	 * @brief Change our current online status
+	 * @param status Given online status
+	 */
+	void changeOnlineStatus(Papillon::OnlineStatus::Status status);
+
+	/**
+	 * @brief Set the personal information to be updated on server.
+	 * @param type The type of the personal information it need to update on server.
+	 * @param value New value for the given personal information. Set an empty string to reset the value.
+	 */
+	void setPersonalInformation(Papillon::ClientInfo::PersonalInformation type, const QString &value);
+
 // Slots from tasks
+//BEGIN Private Task slots
 private slots:
 	/**
 	 * Result of Login process.
@@ -108,7 +170,24 @@ private slots:
 	 */
 	void gotInitalProfile(const Papillon::MimeHeader &profileMessage);
 
-// Normal slots
+	/**
+	 * @internal
+	 * A contact status changed.
+	 * @param contactId His contact ID
+	 * @param status His new online status.
+	 */
+	void slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+
+	/**
+	 * @internal
+	 * A contact status message changed.
+	 * @param contactId His contact ID
+	 * @param newStatusMessage His new status message.
+	 */
+	void slotContactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
+//END Private Task slots
+
+//BEGIN Private Normal slots
 private slots:
 	/**
 	 * @internal
@@ -116,6 +195,7 @@ private slots:
 	 * Called after being connected to the server.
 	 */	
 	void initNotificationTasks();
+//END Private Normal slots
 
 private:
 	/**

@@ -41,8 +41,8 @@
 class Kopete::Password::Private
 {
 public:
-	Private( const QString &group, uint maxLen, bool blanksAllowed )
-	 : refCount( 1 ), configGroup( group ), remembered( false ), maximumLength( maxLen ),
+	Private( const QString &group, bool blanksAllowed )
+	 : refCount( 1 ), configGroup( group ), remembered( false ),
 	 isWrong( false ), allowBlankPassword( blanksAllowed )
 	{
 	}
@@ -64,8 +64,6 @@ public:
 	bool remembered;
 	/** The current password in the KConfig file, or QString::null if no password there */
 	QString passwordFromKConfig;
-	/** The maximum length allowed for this password, or -1 if there is no limit */
-	uint maximumLength;
 	/** Is the current password known to be wrong? */
 	bool isWrong;
 	/** Are we allowed to have blank passwords? */
@@ -92,13 +90,8 @@ public:
 	 */
 	void begin()
 	{
-#warning disable kwallet for now, it does not work
-#if 0
 		kDebug( 14010 ) << k_funcinfo << endl;
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
-#else 
-		processRequest();
-#endif
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
@@ -184,8 +177,9 @@ public:
 	{
 		kDebug( 14010 ) << k_funcinfo << endl;
 
-		KDialog *passwdDialog = new KDialog( Kopete::UI::Global::mainWidget(), i18n( "Password Required" ),
-			KDialog::Ok | KDialog::Cancel );
+		KDialog *passwdDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+		passwdDialog->setCaption( i18n( "Password Required" ) );
+		passwdDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 		passwdDialog->setDefaultButton( KDialog::Ok );
 		passwdDialog->enableButtonSeparator( true );
 
@@ -197,9 +191,6 @@ public:
 		m_image->setPixmap( mImage );
 		/* Do not put the default password, or it will confuse those which doesn't echo anything for the password m_password->insert( password );
 		*/
-		int maxLength = mPassword.maximumLength();
-		if ( maxLength != 0 )
-			m_password->setMaxLength( maxLength );
 		m_password->setFocus();
 
 		// FIXME: either document what these are for or remove them - lilac
@@ -230,7 +221,6 @@ private:
 	QPixmap mImage;
 	QString mPrompt;
 	Kopete::Password::PasswordSource mSource;
-	unsigned int mMaxLength;
 	QWidget *mView;
 };
 
@@ -351,15 +341,9 @@ public:
 	}
 };
 
-Kopete::Password::Password( const QString &configGroup, uint maximumLength )
- : QObject( 0 ), d( new Private( configGroup, maximumLength, false ) )
-{
-	readConfig();
-}
 
-Kopete::Password::Password( const QString &configGroup, uint maximumLength,
-	bool allowBlankPassword )
- : QObject( 0 ), d( new Private( configGroup, maximumLength, allowBlankPassword ) )
+Kopete::Password::Password( const QString &configGroup, bool allowBlankPassword )
+ : QObject( 0 ), d( new Private( configGroup, allowBlankPassword ) )
 {
 	readConfig();
 }
@@ -430,16 +414,6 @@ int Kopete::Password::preferredImageSize()
 bool Kopete::Password::allowBlankPassword()
 {
 	return d->allowBlankPassword;
-}
-
-uint Kopete::Password::maximumLength()
-{
-	return d->maximumLength;
-}
-
-void Kopete::Password::setMaximumLength( uint max )
-{
-	d->maximumLength = max;
 }
 
 bool Kopete::Password::isWrong()

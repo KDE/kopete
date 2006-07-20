@@ -54,7 +54,7 @@ void Transfer_Test::testTransactionTransfer()
 
 void Transfer_Test::testPayloadTransfer()
 {
-	Transfer payTransfer((Transfer::TransferType)Transfer::PayloadTransfer | Transfer::TransactionTransfer);
+	Transfer payTransfer(Transfer::PayloadTransfer | Transfer::TransactionTransfer);
 
 	payTransfer.setCommand("UUX");
 	payTransfer.setTransactionId("10");

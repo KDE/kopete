@@ -19,10 +19,9 @@
 #ifndef _ICQUSERINFOWIDGET_H_
 #define _ICQUSERINFOWIDGET_H_
 
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 #include <icquserinfo.h>
 
-class KJanusWidget;
 namespace Ui
 {
 	class ICQGeneralInfoWidget;
@@ -32,11 +31,11 @@ namespace Ui
 }
 class ICQContact;
 
-class ICQUserInfoWidget : public KDialogBase
+class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	ICQUserInfoWidget( QWidget* parent = 0, const char* name = 0 );
+	ICQUserInfoWidget( QWidget* parent = 0 );
 	~ICQUserInfoWidget();
 	void setContact( ICQContact* contact );
 	
@@ -52,7 +51,6 @@ private:
 	Ui::ICQWorkInfoWidget* m_workInfoWidget;
 	Ui::ICQOtherInfoWidget* m_otherInfoWidget;
 	Ui::ICQInterestInfoWidget * m_interestInfoWidget;
-	KJanusWidget* m_janusWidget;
 	ICQContact* m_contact;
 };
 

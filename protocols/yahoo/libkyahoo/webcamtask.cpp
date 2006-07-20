@@ -31,6 +31,8 @@
 #include <kprocess.h>
 #include <kstreamsocket.h>
 #include <kdebug.h>
+#include <klocale.h>
+
 using namespace KNetwork;
 
 WebcamTask::WebcamTask(Task* parent) : Task(parent)
@@ -62,12 +64,12 @@ bool WebcamTask::take( Transfer* transfer )
 	return true;
 }
 
-bool WebcamTask::forMe( Transfer* transfer ) const
+bool WebcamTask::forMe( const Transfer* transfer ) const
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
@@ -199,6 +201,7 @@ void WebcamTask::slotConnectionFailed( int error )
 {
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString() << endl;
+	client()->notifyError( i18n("Webcam connection to the user %1 could not be established.\n\nPlease relogin and try again.", socketMap[socket].sender), QString("%1 - %2").arg(error).arg( socket->errorString()), Client::Error );
 	socketMap.remove( socket );
 }
 
@@ -512,6 +515,7 @@ void WebcamTask::closeWebcam( const QString & who )
 		}
 	}
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error. You tried to close a connection that didn't exist." << endl;
+	client()->notifyError( i18n( "An error occured closing the webcam session. " ), i18n( "You tried to close a connection that didn't exist." ), Client::Debug );
 }
 
 

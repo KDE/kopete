@@ -138,7 +138,7 @@
 ** shared locks begins at SHARED_FIRST. 
 **
 ** These #defines are available in os.h so that Unix can use the same
-** byte ranges for locking.  This leaves open the possiblity of having
+** byte ranges for locking.  This leaves open the possibility of having
 ** clients on win95, winNT, and unix all talking to the same shared file
 ** and all locking correctly.  To do so would require that samba (or whatever
 ** tool is being used for file sharing) implements locks correctly between

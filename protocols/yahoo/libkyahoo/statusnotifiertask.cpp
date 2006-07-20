@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
@@ -52,11 +53,11 @@ bool StatusNotifierTask::take( Transfer* transfer )
 	return true;
 }
 
-bool StatusNotifierTask::forMe( Transfer* transfer ) const
+bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
 
@@ -100,7 +101,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 
 	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
-		emit error( customError );
+		client()->notifyError( i18n("An unknown error has occured."), customError, Client::Warning );
 
 	myNick = t->firstParam( 1 );
 	

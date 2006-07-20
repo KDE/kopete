@@ -34,9 +34,10 @@
 #include "ui_wpuserinfowidget.h"
 
 WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
-	: KDialog( parent, QString(), Close ), m_contact(contact),
+	: KDialog( parent ), m_contact(contact),
 	  Comment(i18n("N/A")), Workgroup(i18n("N/A")), OS(i18n("N/A")), Software(i18n("N/A"))
 {
+	setButtons( KDialog::Close );
 	setDefaultButton(KDialog::Close);
 //	kDebug( 14170 ) << k_funcinfo << endl;
 

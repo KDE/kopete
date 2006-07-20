@@ -25,7 +25,7 @@
 #include "kopetepasswordedaccount.h"
 #include "oscartypeclasses.h"
 #include "oscarcontact.h"
-
+#include "contact.h"
 
 namespace Kopete
 {
@@ -38,6 +38,7 @@ class Connection;
 class OscarContact;
 class OscarAccountPrivate;
 class QTextCodec;
+class OContact;
 
 class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
 {
@@ -100,6 +101,29 @@ public:
 	 */
 	void setBuddyIcon( KUrl url );
 
+	/**
+	 * Add a contact to the server site list
+	 * \param contactName the screen name of the new contact to add
+	 * \param groupName the group of the new contact
+	 * \param autoAddGroup if the group doesn't exist add that group
+	 * \return true if the contact will be added
+	 */
+	bool addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup );
+
+	/**
+	 * Change a contact's group on the server
+	 * \param contact the contact to change
+	 * \param newGroup the new group to move the contact to
+	 * \param autoAddGroup if the new group doesn't exist add that group
+	 * \return true if the contact will be added
+	 */
+	bool changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup );
+
+public slots:
+	void slotGoOffline();
+
+	void slotGoOnline();
+
 protected:
 	/**
 	 * Setup a connection for a derived account based on the host and port
@@ -119,7 +143,7 @@ protected:
 	 * @param parentContact the parent metacontact
 	 * @return whether the creation succeeded or not
 	 */
-	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem ) = 0;
+	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) = 0;
 
 	virtual QString sanitizedMessage( const QString& message ) = 0;
 
@@ -136,12 +160,12 @@ protected slots:
 
 	virtual void messageReceived( const Oscar::Message& message );
 
-	void updateContact( Oscar::SSI );
-
-	void ssiGroupAdded( const Oscar::SSI& );
-	void ssiGroupRemoved( const Oscar::SSI& ) {}
-	void ssiContactAdded( const Oscar::SSI& );
-	void ssiContactRemoved( const Oscar::SSI& ) {}
+	void ssiGroupAdded( const OContact& );
+	void ssiGroupUpdated( const OContact& ) {}
+	void ssiGroupRemoved( const OContact& ) {}
+	void ssiContactAdded( const OContact& );
+	void ssiContactUpdated( const OContact& );
+	void ssiContactRemoved( const OContact& ) {}
 
 	/* slots for receiving typing notifications, and notify the appropriate OscarContact */
 	void userStartedTyping( const QString & contact );

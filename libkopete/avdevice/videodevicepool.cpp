@@ -187,9 +187,14 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 int VideoDevicePool::close()
 {
     /// @todo implement me
-	if(currentDevice() < m_videodevice.size())
+	if(m_clients)
+		m_clients--;
+	if((currentDevice() < m_videodevice.size())&&(!m_clients))
 		return m_videodevice[currentDevice()].close();
-	kDebug() <<  k_funcinfo << "VideoDevicePool::close() Current device out of range." << endl;
+	if(m_clients)
+		kDebug() <<  k_funcinfo << "VideoDevicePool::close() The video device is still in use." << endl;
+	if(currentDevice() >= m_videodevice.size())
+		kDebug() <<  k_funcinfo << "VideoDevicePool::close() Current device out of range." << endl;
 	return EXIT_FAILURE;
 }
 
@@ -789,7 +794,7 @@ void VideoDevicePool::loadConfig()
 {
     /// @todo implement me
 	kDebug() <<  k_funcinfo << "called" << endl;
-	if(hasDevices())
+	if((hasDevices())&&(m_clients==0))
 	{
 		KConfig *config = KGlobal::config();
 		config->setGroup("Video Device Settings");

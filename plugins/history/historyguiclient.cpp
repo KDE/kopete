@@ -50,7 +50,7 @@ HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent)
 	actionPrev = KStdAction::back( this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
 	actionNext = KStdAction::forward( this, SLOT(slotNext()), actionCollection() , "historyNext" );
 
-	// we are generally at last when begining
+	// we are generally at last when beginning
 	actionPrev->setEnabled(true);
 	actionNext->setEnabled(false);
 	actionLast->setEnabled(false);

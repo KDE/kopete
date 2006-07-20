@@ -350,7 +350,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 		QString message=msg.right( msg.length() - msg.indexOf("\r\n\r\n") - 4 );
 
-		//Stupid MSN PLUS colors code. message with incorrect charactere are not showed correctly in the chatwindow.
+		//Stupid MSN PLUS colors code. message with incorrect charactere are not showed correctly in the chat window.
 		//TODO: parse theses one to show the color too in Kopete
 		message.replace("\3","").replace("\4","").replace("\2","").replace("\5","").replace("\6","").replace("\7","");
 
@@ -854,7 +854,7 @@ void MSNSwitchBoardSocket::slotSocketClosed( )
 		emit userLeft( (*it), i18n("connection closed"));
 	}
 
-	// we have lost the connection, send a message to chatwindow (this will not displayed)
+	// we have lost the connection, send a message to chat window (this will not displayed)
 //	emit switchBoardIsActive(false);
 	emit switchBoardClosed( );
 }
@@ -1034,7 +1034,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
 								QString::fromLatin1("\\1<img align=\"center\" width=\"") +
 			#endif
-			//match any occurence which is not in a html tag.
+			//match any occurrence which is not in a html tag.
 			message.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
 						QString::fromLatin1("<img align=\"center\" width=\"") +
 						QString::number(iconImage.width()) +

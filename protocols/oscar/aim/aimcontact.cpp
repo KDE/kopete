@@ -39,7 +39,7 @@
 #include "client.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 
 #include "aimprotocol.h"
 #include "aimuserinfo.h"
@@ -47,7 +47,7 @@
 #include "aimaccount.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
-                        const QString& icon, const Oscar::SSI& ssiItem )
+                        const QString& icon, const OContact& ssiItem )
 : OscarContact(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
@@ -162,7 +162,7 @@ void AIMContact::slotUserInfo()
 {
 	if ( !m_infoDialog)
 	{
-		m_infoDialog = new AIMUserInfoDialog( this, static_cast<AIMAccount*>( account() ), false, Kopete::UI::Global::mainWidget(), 0 );
+		m_infoDialog = new AIMUserInfoDialog( this, static_cast<AIMAccount*>( account() ), Kopete::UI::Global::mainWidget() );
 		if( !m_infoDialog )
 			return;
 		connect( m_infoDialog, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );

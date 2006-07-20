@@ -24,14 +24,21 @@
 #include <kdebug.h>
 #include <QString>
 
+#include <dbus/qdbus.h>
+
 #include "nlmediaplayer.h"
 #include "nljuk.h"
 
-NLJuk::NLJuk( DCOPClient *client ) : NLMediaPlayer()
+NLJuk::NLJuk() : NLMediaPlayer()
 {
-	m_client = client;
 	m_type = Audio;
 	m_name = "JuK";
+	m_client = new QDBusInterfacePtr("org.kde.JuK", "/Player");
+}
+
+QDBusInterface *NLJuk::client()
+{
+	return m_client->interface();
 }
 
 void NLJuk::update()
@@ -39,72 +46,38 @@ void NLJuk::update()
 	m_playing = false;
 	QString newTrack;
 
+	// TODO: Port to JuK D-BUS interface
+
 	// see if JuK is  registered with DCOP
-	if (  m_client->isApplicationRegistered( "juk" ) )
+	if( client()->isValid() )
 	{
 		// see if it's playing
-		QByteArray data, replyData;
-		DCOPCString replyType;
-		QString result;
 
-		if ( m_client->call( DCOPCString("juk"), DCOPCString("Player"), DCOPCString("playing()"), data, 
-					replyType, replyData ) )
+		QDBusReply<bool> playingReply = client()->call("playing");
+		if( playingReply.isSuccess() )
 		{
-			QDataStream reply( &replyData,QIODevice::ReadOnly );
-			reply.setVersion(QDataStream::Qt_3_1);
-			if ( replyType == "bool" ) {
-				reply >> m_playing;
-			}
-		}
-		
-		{
-			QDataStream arg( &data,QIODevice::WriteOnly );
-			arg.setVersion(QDataStream::Qt_3_1);
-			arg << QString::fromLatin1("Album");
-			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
-						replyType, replyData ) )
-			{
-				QDataStream reply( &replyData,QIODevice::ReadOnly );
-				reply.setVersion(QDataStream::Qt_3_1);
-	
-				if ( replyType == "QString" ) {
-					reply >> m_album;
-				}
-			}
-		}
-		
-		{
-			QDataStream arg( &data,QIODevice::WriteOnly );
-			arg.setVersion(QDataStream::Qt_3_1);
-			arg << QString::fromLatin1("Artist");
-			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
-						replyType, replyData ) )
-			{
-				QDataStream reply( &replyData,QIODevice::ReadOnly );
-				reply.setVersion(QDataStream::Qt_3_1);
-	
-				if ( replyType == "QString" ) {
-					reply >> m_artist;
-				}
-			}
+			m_playing = playingReply.value();
 		}
 
-		{
-			QDataStream arg( &data,QIODevice::WriteOnly );
-			arg.setVersion(QDataStream::Qt_3_1);
-			arg << QString::fromLatin1("Title");
-			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
-						replyType, replyData ) )
-			{
-				QDataStream reply( &replyData,QIODevice::ReadOnly );
-				reply.setVersion(QDataStream::Qt_3_1);
 	
-				if ( replyType == "QString" ) {
-					reply >> newTrack;
-				}
-			}
+		QDBusReply<QString> albumReply = client()->call( "trackProperty", QString("Album") );
+		if( albumReply.isSuccess() )
+		{
+			m_album = albumReply.value();
 		}
-		
+
+		QDBusReply<QString> artistReply = client()->call( "trackProperty", QString("Artist") );
+		if( artistReply.isSuccess() )
+		{
+			m_artist = artistReply.value();
+		}
+
+		QDBusReply<QString> titleReply = client()->call( "trackProperty", QString("Title") );
+		if( titleReply.isSuccess() )
+		{
+			newTrack = titleReply.value();
+		}
+
 		if ( newTrack != m_track )
 		{
 			m_newTrack = true;

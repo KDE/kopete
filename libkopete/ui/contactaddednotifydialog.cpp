@@ -52,9 +52,11 @@ struct ContactAddedNotifyDialog::Private
 
 
 ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
-		const QString& contactNick, Kopete::Account *account, uint hide)
-	: KDialog( Global::mainWidget(), i18n("Someone Has Added You"), KDialog::Ok|KDialog::Cancel )
+		const QString& contactNick, Kopete::Account *account, const HideWidgetOptions &hide)
+	: KDialog( Global::mainWidget() )
 {
+	setCaption( i18n("Someone Has Added You") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
     setAttribute( Qt::WA_DeleteOnClose );
 
 	d=new Private;

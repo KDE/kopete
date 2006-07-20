@@ -124,7 +124,6 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 			"Content-Type: "+ contentType +"\r\n"
 			"Content-Length: "+ QString::number(content.length()+1)+"\r\n"
 			"\r\n" + content ).toUtf8(); //\0
-	//the data message must be end by \0,  bye chance, QCString automaticaly appends \0 at the end of the QByteArray
 
 	kDebug(14141) << k_funcinfo << dataMessage << endl;
 

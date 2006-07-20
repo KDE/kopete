@@ -69,6 +69,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),
 		this, SLOT( slotReadMessage( const QByteArray & ) ) );
 	m_keepaliveTimer = 0L;
+	m_isLogged = false;
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -88,6 +89,7 @@ void MSNNotifySocket::doneConnect()
 
 void MSNNotifySocket::disconnect()
 {
+	m_isLogged = false;
 	if(	m_disconnectReason==Kopete::Account::Unknown )
 		m_disconnectReason=Kopete::Account::Manual;
 	if( onlineStatus() == Connected )
@@ -176,7 +178,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 216:
 	{
-		//This might happen is you rename an user if he is not in the contactlist
+		//This might happen is you rename an user if he is not in the contact list
 		//currently, we just iniore;
 		//TODO: try to don't rename user not in the list
 		//actualy, the bug is in MSNChatSession::slotUserJoined()
@@ -230,7 +232,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		QString msg = i18n( "Your email address has not been verified with the MSN server.\n"
 			"You should have received a mail with a link to confirm your email address.\n"
 			"Some functions will be restricted if you do not confirm your email address." );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );//TODO don't show again
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) ); //TODO do not show again
 		*/
 		break;
 	}
@@ -564,7 +566,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		{
 			// If the server timestamp and the local timestamp are different,
 			// prepare to receive the contact list.
-			emit newContactList();  // remove all contacts datas, msn sends a new contact list
+			emit newContactList();  // remove all contacts data, msn sends a new contact list
 			m_account->configGroup()->writeEntry( "lastsynctime" , lastSyncTime);
 			m_account->configGroup()->writeEntry( "lastchange", lastChange);
 		}else
@@ -667,7 +669,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if ( cmd == "NOT" )
 	{
-		kDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
+		kDebug( 14140 ) << k_funcinfo << "Received NOT command, issuing read block for '" << id << " more bytes" << endl;
 		read( id );		
 	}	
 	else
@@ -843,6 +845,9 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			rx.indexIn(msg);
 			m_localIP = rx.cap(1);
 		}
+
+		// We are logged when we receive the initial profile from Hotmail.
+		m_isLogged = true;
 	}
 	else if (msg.contains("NOTIFICATION"))
 	{
@@ -980,7 +985,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 {
 	/*
 		The value of the CurrentMedia tag you can think of like an array
-		seperated by "\0" characters (literal backslash followed by zero, not NULL).
+		separated by "\0" characters (literal backslash followed by zero, not NULL).
 
 		The elements of this "array" are as follows:
 
@@ -1138,7 +1143,7 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	QString tempPublicName = publicName;
 
 	//The maximum length is 387.  but with utf8 or encodage, each character may be triple
-	//  387/3 = 129   so we make sure the lenght is not logner than 129 char,  even if
+	//  387/3 = 129   so we make sure the length is not logner than 129 char,  even if
 	// it's possible to have longer nicks.
 	if( escape(publicName).length() > 129 )
 	{

@@ -31,7 +31,7 @@
 #include "sendidletimetask.h"
 #include "ssiactivatetask.h"
 #include "ssilisttask.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "ssiparamstask.h"
 #include "transfer.h"
 #include <QList>

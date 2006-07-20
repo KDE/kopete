@@ -62,10 +62,14 @@
  *  name 'name'
  *
  */
-dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent, const char */*name*/)
-	: KDialog(parent, i18n("Jabber vCard"), KDialog::Close | KDialog::User1 | KDialog::User2, 0, KGuiItem(i18n("&Save User Info")), KGuiItem(i18n("&Fetch vCard")) )
+dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent)
+	: KDialog(parent)
 {
 
+	setCaption( i18n("Jabber vCard") );
+	setButtons( KDialog::Close | KDialog::User1 | KDialog::User2 );
+	setButtonGuiItem( KDialog::User1, i18n("&Save User Info") );
+	setButtonGuiItem( KDialog::User2, i18n("Fetch vCard") );
 	setDefaultButton( KDialog::Close );
 
 	m_account = account;

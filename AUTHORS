@@ -7,9 +7,6 @@ Core Developers
 Duncan Mac-Vicar Prett <duncan@kde.org> (irc: duncanmv)
 - Original author, main app work & design, original MSN Plugin, hacks in all plugins
 
-Jason Keirstead <jason@keirstead.org> (irc: brunes)
-- Kopete API developer, co-maintainer of the IRC plugin, website
-
 Martijn Klingens <klingens@kde.org> (irc: spaze)
 - Kopete API and main application core developer, co-maintainer of the MSN plugin,
   misc changes and fixes in the other plugins
@@ -47,7 +44,7 @@ Grzegorz Jaskiewicz <gj@pointblue.com.pl> (irc: gregj)
 - Gadu-Gadu maintainer
 
 Michel Hermier <michel.hermier@wanadoo.fr> (irc: slayer)
-- IRC plugin co-maintainer
+- IRC plugin maintainer
 
 Till Gerken <till@tantalo.net> (irc: tigloo)
 - Jabber maintainer

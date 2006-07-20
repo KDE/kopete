@@ -55,7 +55,7 @@
 #include "oscarutils.h"
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "oscarlistnonservercontacts.h"
 #include "kopetetransfermanager.h"
 
@@ -76,6 +76,7 @@ public:
 
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
+	QMap<QString, QString> contactChangeQueue;
 
     OscarListNonServerContacts* olnscDialog;
 
@@ -91,7 +92,7 @@ public:
 };
 
 OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, bool isICQ)
-: Kopete::PasswordedAccount( parent, accountID, isICQ ? 8 : 16, false )
+: Kopete::PasswordedAccount( parent, accountID, false )
 {
 	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;
@@ -140,19 +141,20 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const Oscar::SSI& ) ),
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const OContact& ) ),
 	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
-	                     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const OContact& ) ),
+	                     this, SLOT( ssiGroupAdded( const OContact& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const OContact& ) ),
+	                     this, SLOT( ssiGroupUpdated( const OContactI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const OContact& ) ),
+	                     this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
 
-#warning Maybe this foreach is not needed anymore (-DarkShock)
-	foreach ( Kopete::Contact* c, contacts() )
-	{
-		c->setOnlineStatus(Kopete::OnlineStatus::Offline);
-	}
+	d->contactAddQueue.clear();
+	d->contactChangeQueue.clear();
 
 	disconnected( reason );
 }
@@ -165,19 +167,6 @@ void OscarAccount::disconnect()
 bool OscarAccount::passwordWasWrong()
 {
 	return password().isWrong();
-}
-
-void OscarAccount::updateContact( Oscar::SSI item )
-{
-	Kopete::Contact* contact = contacts()[item.name()];
-	if ( !contact )
-		return;
-	else
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
-		OscarContact* oc = static_cast<OscarContact*>( contact );
-		oc->setSSIItem( item );
-	}
 }
 
 void OscarAccount::loginActions()
@@ -209,12 +198,12 @@ void OscarAccount::processSSIList()
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 
-	SSIManager* listManager = d->engine->ssiManager();
+	ContactManager* listManager = d->engine->ssiManager();
 
     //first add groups
-	Q3ValueList<SSI> groupList = listManager->groupList();
-	Q3ValueList<SSI>::const_iterator git = groupList.constBegin();
-	Q3ValueList<SSI>::const_iterator listEnd = groupList.constEnd();
+	QList<OContact> groupList = listManager->groupList();
+	QList<OContact>::const_iterator git = groupList.constBegin();
+	QList<OContact>::const_iterator listEnd = groupList.constEnd();
 	//the protocol dictates that there is at least one group that has contacts
 	//so i don't have to check for an empty group list
 
@@ -227,13 +216,13 @@ void OscarAccount::processSSIList()
 	}
 
 	//then add contacts
-	Q3ValueList<SSI> contactList = listManager->contactList();
-	Q3ValueList<SSI>::const_iterator bit = contactList.constBegin();
-	Q3ValueList<SSI>::const_iterator blistEnd = contactList.constEnd();
+	QList<OContact> contactList = listManager->contactList();
+	QList<OContact>::const_iterator bit = contactList.constBegin();
+	QList<OContact>::const_iterator blistEnd = contactList.constEnd();
 	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Adding " << contactList.count() << " contacts to contact list" << endl;
 	for ( ; bit != blistEnd; ++bit )
 	{
-		SSI groupForAdd = listManager->findGroup( ( *bit ).gid() );
+		OContact groupForAdd = listManager->findGroup( ( *bit ).gid() );
 		Kopete::Group* group;
 		if ( groupForAdd.isValid() )
 			group = kcl->findGroup( groupForAdd.name() ); //add if not present
@@ -245,7 +234,7 @@ void OscarAccount::processSSIList()
 		OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *bit ).name()] );
 		if ( oc )
 		{
-			Oscar::SSI item = ( *bit );
+			OContact item = ( *bit );
 			oc->setSSIItem( item );
 		}
 		else
@@ -256,10 +245,14 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                  this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::connect( listManager, SIGNAL( contactAdded( const Oscar::SSI& ) ),
-	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
-	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
-	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( contactAdded( const OContact& ) ),
+	                  this, SLOT( ssiContactAdded( const OContact& ) ) );
+	QObject::connect( listManager, SIGNAL( groupAdded( const OContact& ) ),
+	                  this, SLOT( ssiGroupAdded( const OContact& ) ) );
+	QObject::connect( listManager, SIGNAL( groupUpdated( const OContact& ) ),
+	                  this, SLOT( ssiGroupUpdated( const OContact& ) ) );
+	QObject::connect( listManager, SIGNAL( contactUpdated( const OContact& ) ),
+	                  this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
 	/** Commented for compilation purposes. 
     Q3Dict<Kopete::Contact> nonServerContacts = contacts();
@@ -328,18 +321,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
                 continue;
             }
 
-            SSIManager* listManager = d->engine->ssiManager();
-            if ( !listManager->findGroup( group->displayName() ) )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
-                                         << group->displayName() << endl;
-                d->contactAddQueue[Oscar::normalize( ( *it ) )] = group->displayName();
-                d->engine->addGroup( group->displayName() );
-            }
-            else
-            {
-                d->engine->addContact( ( *it ), group->displayName() );
-            }
+	    addContactToSSI( ( *it ), group->displayName(), true );
         }
 
 
@@ -504,7 +486,7 @@ void OscarAccount::setBuddyIcon( KUrl url )
 		
 		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
 		
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
 		if ( !image.save( newlocation, "JPEG" ) )
 			return;
 		
@@ -512,6 +494,50 @@ void OscarAccount::setBuddyIcon( KUrl url )
 	}
 	
 	emit buddyIconChanged();
+}
+
+bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
+{
+	ContactManager* listManager = d->engine->ssiManager();
+	if ( !listManager->findGroup( groupName ) )
+	{
+		if ( !autoAddGroup )
+			return false;
+
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
+			<< groupName << endl;
+
+		d->contactAddQueue[Oscar::normalize( contactName )] = groupName;
+		d->engine->addGroup( groupName );
+	}
+	else
+	{
+		d->engine->addContact( contactName, groupName );
+	}
+
+	return true;
+}
+
+bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup )
+{
+	ContactManager* listManager = d->engine->ssiManager();
+	if ( !listManager->findGroup( newGroupName ) )
+	{
+		if ( !autoAddGroup )
+			return false;
+		
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group " 
+				<< newGroupName << endl;
+			
+		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
+		d->engine->addGroup( newGroupName );
+	}
+	else
+	{
+		d->engine->changeContactGroup( contact, newGroupName );
+	}
+	
+	return true;
 }
 
 Connection* OscarAccount::setupConnection( const QString& server, uint port )
@@ -555,11 +581,11 @@ bool OscarAccount::createContact(const QString &contactId,
 	Q3ValueList<TLV> dummyList;
 	if ( parentContact->isTemporary() )
 	{
-		SSI tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );
+		OContact tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );
 		return createNewContact( contactId, parentContact, tempItem );
 	}
 
-	SSI ssiItem = d->engine->ssiManager()->findContact( contactId );
+	OContact ssiItem = d->engine->ssiManager()->findContact( contactId );
 	if ( ssiItem )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Have new SSI entry. Finding contact" << endl;
@@ -607,21 +633,13 @@ bool OscarAccount::createContact(const QString &contactId,
 			return false;
 		}
 
-		if ( !d->engine->ssiManager()->findGroup( groupName ) )
-		{ //group isn't on SSI
-			d->contactAddQueue[Oscar::normalize( contactId )] = groupName;
-			d->addContactMap[Oscar::normalize( contactId )] = parentContact;
-			d->engine->addGroup( groupName );
-			return true;
-		}
-
 		d->addContactMap[Oscar::normalize( contactId )] = parentContact;
-		d->engine->addContact( Oscar::normalize( contactId ), groupName );
+		addContactToSSI( Oscar::normalize( contactId ), groupName, true );
 		return true;
 	}
 }
 
-void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
+void OscarAccount::ssiContactAdded( const OContact& item )
 {
 	if ( d->addContactMap.contains( Oscar::normalize( item.name() ) ) )
 	{
@@ -629,11 +647,17 @@ void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
 			<< " to the contact list" << endl;
 		createNewContact( item.name(), d->addContactMap[Oscar::normalize( item.name() )], item );
 	}
+	else if ( contacts()[item.name()] )
+	{
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. modifying " << item.name() << endl;
+		OscarContact* oc = static_cast<OscarContact*>( contacts()[item.name()] );
+		oc->setSSIItem( item );
+	}
 	else
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Got addition for contact we weren't waiting on" << endl;
 }
 
-void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
+void OscarAccount::ssiGroupAdded( const OContact& item )
 {
 	//check the contact add queue for any contacts matching the
 	//group name we just added
@@ -643,10 +667,37 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 	{
 		if ( Oscar::normalize( it.value() ) == Oscar::normalize( item.name() ) )
 		{
-			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key() << "' to group "
-				<< item.name() << endl;
-			d->engine->addContact( Oscar::normalize( it.key() ), item.name() ); //already in the map
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key()
+				<< "' to group " << item.name() << endl;
+			
+			d->engine->addContact( Oscar::normalize( it.key() ), item.name() );
+			d->contactAddQueue.remove( it );
 		}
+	}
+	
+	for ( it = d->contactChangeQueue.begin(); it != d->contactChangeQueue.end(); ++it )
+	{
+		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
+		{
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed change of contact '" << it.key()
+				<< "' to group " << item.name() << endl;
+			
+			d->engine->changeContactGroup( it.key(),  item.name() );
+			d->contactChangeQueue.remove( it );
+		}
+	}
+}
+
+void OscarAccount::ssiContactUpdated( const OContact& item )
+{
+	Kopete::Contact* contact = contacts()[item.name()];
+	if ( !contact )
+		return;
+	else
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
+		OscarContact* oc = static_cast<OscarContact*>( contact );
+		oc->setSSIItem( item );
 	}
 }
 
@@ -732,7 +783,7 @@ void OscarAccount::slotSendBuddyIcon()
 	if ( photoPath.isEmpty() )
 		return;
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
 	QFile iconFile( photoPath );
 	
 	if ( iconFile.open( IO_ReadOnly ) )
@@ -747,6 +798,14 @@ void OscarAccount::slotSendBuddyIcon()
 		QByteArray imageData = iconFile.readAll();
 		engine()->sendBuddyIcon( imageData );
 	}
+}
+
+void OscarAccount::slotGoOffline()
+{
+}
+
+void OscarAccount::slotGoOnline()
+{
 }
 
 QString OscarAccount::getFLAPErrorMessage( int code )

@@ -170,7 +170,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 			}
 		}
 
-		if ( inHTMLLink ) // i can't think of any situation where a link adress might need emoticons
+		if ( inHTMLLink ) // i can't think of any situation where a link address might need emoticons
 		{
 			p = c;
 			continue;

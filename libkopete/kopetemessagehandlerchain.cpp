@@ -151,7 +151,7 @@ public:
 ProcessMessageTask::ProcessMessageTask( MessageHandlerChain::Ptr chain, MessageEvent *event )
  : d( new Private(chain, event) )
 {
-	QTimer::singleShot( 0, this, SLOT( slotStart() ) );
+	QTimer::singleShot( 0, this, SLOT( start() ) );
 	connect( event, SIGNAL( done( Kopete::MessageEvent* ) ), this, SLOT( slotDone() ) );
 	event->message().manager()->ref();
 }
@@ -161,7 +161,7 @@ ProcessMessageTask::~ProcessMessageTask()
 	delete d;
 }
 
-void ProcessMessageTask::slotStart()
+void ProcessMessageTask::start()
 {
 	d->chain->d->first->handleMessageInternal( d->event );
 }
@@ -171,6 +171,12 @@ void ProcessMessageTask::slotDone()
 	d->event->message().manager()->deref();
 	emitResult();
 }
+
+void ProcessMessageTask::kill(bool quite)
+{
+	
+}
+
 
 MessageEvent *ProcessMessageTask::event()
 {

@@ -47,12 +47,9 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/dlgregister.ui 
    ui/dlgbrowse.ui 
    ui/dlgchangepassword.ui 
-   ui/dlgjabbereditaccountwidget.ui 
-)
-
-kde4_add_ui3_files(kopete_jabber_ui_SRCS
-   ui/dlgchatroomslist.ui
+   ui/dlgjabbereditaccountwidget.ui
    ui/dlgchatjoin.ui 
+   ui/dlgchatroomslist.ui 
 )
 
 set(kopete_jabber_PART_SRCS 

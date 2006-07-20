@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include "buffer.h"
 #include "connection.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "oscarsettings.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
@@ -49,9 +49,9 @@ void FakeLocalContactListTask::onGo()
 		Buffer* buffer = new Buffer();
 		
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
-		QList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
-		QList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
-		for ( QList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
+		QList<Contact> contactList = client()->ssiManager()->contactList();
+		QList<Contact>::const_iterator cEnd = contactList.constEnd();
+		for ( QList<Contact>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{
 			kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
 			buffer->addBUIN( ( *it ).name().toLatin1() );

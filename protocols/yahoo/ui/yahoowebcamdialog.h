@@ -21,7 +21,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 
 class QPixmap;
@@ -33,11 +33,11 @@ namespace Kopete
 	class WebcamWidget;
 }
 
-class YahooWebcamDialog : public KDialogBase
+class YahooWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	YahooWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
+	YahooWebcamDialog( const QString &, QWidget* parent = 0 );
 	~YahooWebcamDialog();
 	
 	void setViewer( const QStringList & );

@@ -188,7 +188,10 @@
                                     <string>To use SMS, you will need an account with a delivery service.</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>WordBreak|AlignTop</set>
+                                    <set>AlignTop</set>
+                                </property>
+                                <property name="wordWrap">
+                                    <bool>true</bool>
                                 </property>
                             </widget>
                         </vbox>

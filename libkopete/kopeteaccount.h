@@ -203,7 +203,7 @@ public:
 	/**
 	 * \brief return the icon base
 	 * This is the custom account icon set with setIcon.   if this icon is null, then the protocol icon is used
-	 * don't use this funciton to get the icon that need to be displayed, use accountIcon
+	 * don't use this function to get the icon that need to be displayed, use accountIcon
 	 */
 	QString customIcon() const;
 	

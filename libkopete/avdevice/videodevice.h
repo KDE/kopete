@@ -21,7 +21,7 @@
 #define KOPETE_AVVIDEODEVICELISTITEM_H
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <config-kopete.h>
 #endif
 
 #include <sys/time.h>

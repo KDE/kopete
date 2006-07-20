@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include "buffer.h"
 #include "connection.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "oscarsettings.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
@@ -51,9 +51,9 @@ void LocalContactListTask::onGo()
 		Buffer* buffer = new Buffer();
 		
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
-		QList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
-		QList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
-		for ( QList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
+		QList<OContact> contactList = client()->ssiManager()->contactList();
+		QList<OContact>::const_iterator cEnd = contactList.constEnd();
+		for ( QList<OContact>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{
 			if ( ( buffer->length() + ( *it ).name().length() ) 
 				< PACKET_SIZE_LIMIT )

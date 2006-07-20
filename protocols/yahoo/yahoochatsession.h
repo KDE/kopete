@@ -43,6 +43,7 @@ private slots:
 	void slotUserInfo();
 	void slotRequestWebcam();
 	void slotInviteWebcam();
+	void slotSendFile();
 
 private:
 	QLabel *m_image;

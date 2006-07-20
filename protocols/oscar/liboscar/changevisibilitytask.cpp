@@ -26,7 +26,7 @@
 #include "oscartypeclasses.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
-#include "ssimanager.h"
+#include "contactmanager.h"
 #include "transfer.h"
 
 
@@ -77,9 +77,9 @@ bool ChangeVisibilityTask::take(Transfer* transfer)
 
 void ChangeVisibilityTask::onGo()
 {
-	SSIManager* manager = client()->ssiManager();
-	Oscar::SSI item = manager->visibilityItem();
-	Oscar::SSI newSSI;
+	ContactManager* manager = client()->ssiManager();
+	OContact item = manager->visibilityItem();
+	OContact newContact;
 	if ( !item )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Didn't find a visibility item" << endl;
@@ -90,7 +90,7 @@ void ChangeVisibilityTask::onGo()
 	//change in visibility.
 	manager->removeItem( item );
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found visibility item. changing setting" << endl;
-	newSSI = Oscar::SSI( item.name(), item.gid(), item.bid(), item.type(), QList<TLV>(), 0 );
+	newContact = OContact( item.name(), item.gid(), item.bid(), item.type(), QList<TLV>(), 0 );
 	QList<TLV> newList;
 	QList<TLV>::const_iterator it = item.tlvList().begin(), listEnd = item.tlvList().end();
 	for ( ; it != listEnd; ++it )
@@ -110,8 +110,8 @@ void ChangeVisibilityTask::onGo()
 	TLV c8( 0x00CA, c8tlv.length(), c8tlv.buffer() );
 	
 	newList.append( c8 );
-	newSSI.setTLVList( newList );
-	manager->newItem( newSSI );
+	newContact.setTLVList( newList );
+	manager->newItem( newContact );
 	sendEditStart();
 	
 	Buffer* b = new Buffer();
@@ -119,13 +119,13 @@ void ChangeVisibilityTask::onGo()
 	SNAC s = { 0x0013, 0x0009, 0x0000, client()->snacSequence() };
 	m_sequence = s.id;
 	b->addWord( 0 );
-	b->addWord( newSSI.gid() );
-	b->addWord( newSSI.bid() );
-	b->addWord( newSSI.type() );
-	b->addWord( newSSI.tlvListLength() );
+	b->addWord( newContact.gid() );
+	b->addWord( newContact.bid() );
+	b->addWord( newContact.type() );
+	b->addWord( newContact.tlvListLength() );
 	
-	QList<TLV>::const_iterator it2 =  newSSI.tlvList().begin();
-	QList<TLV>::const_iterator listEnd2 = newSSI.tlvList().end();
+	QList<TLV>::const_iterator it2 =  newContact.tlvList().begin();
+	QList<TLV>::const_iterator listEnd2 = newContact.tlvList().end();
 	for( ; it2 != listEnd2; ++it2 )
 		b->addTLV( ( *it2 ) );
 	

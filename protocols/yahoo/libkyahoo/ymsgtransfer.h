@@ -53,7 +53,7 @@ public:
 
 	//! Get the validity of the transfer object
 	bool isValid();
-	Yahoo::Service service();
+	Yahoo::Service service() const;
 	void setService(Yahoo::Service service);
 	Yahoo::Status status();
 	void setStatus(Yahoo::Status status);

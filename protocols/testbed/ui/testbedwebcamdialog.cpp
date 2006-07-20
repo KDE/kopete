@@ -30,16 +30,21 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
-: KDialogBase( KDialogBase::Plain, Qt::WDestructiveClose, parent, name, false, i18n( "Webcam for %1" ).arg( contactId ),
-                   KDialogBase::Close, KDialogBase::Close, true /*seperator*/ )
+TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent )
+: KDialog( parent )
 {
+	setCaption( i18n( "Webcam for %1", contactId ) );
+	setButtons( KDialog::Close );
+	setDefaultButton( KDialog::Close );
+	enableButtonSeparator( true );
+	setWindowFlags( Qt::WDestructiveClose );
+
 	setInitialSize( QSize(320,290) );
 	
-	setEscapeButton( KDialogBase::Close );
+	setEscapeButton( KDialog::Close );
 //	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
 
-	QWidget *page = plainPage();
+	QWidget *page = new QWidget(this);
 	setMainWidget(page);
 
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	
@@ -57,13 +62,13 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	mVideoDevicePool->startCapturing();
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&mImage);
-kdDebug() << "Just captured 1st frame" << endl;
+	kDebug() << "Just captured 1st frame" << endl;
 
 	mPixmap=QPixmap(320,240);
 	if (mPixmap.convertFromImage(mImage,0) == true)
 		mImageContainer->updatePixmap(mPixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(0,FALSE);
+	qtimer.start(0,false);
 }
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
@@ -75,9 +80,8 @@ TestbedWebcamDialog::~ TestbedWebcamDialog( )
 void TestbedWebcamDialog::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
-kdDebug() << "Getting image" << endl;
+	kDebug() << "Getting image" << endl;
 	mVideoDevicePool->getImage(&mImage);
-kdDebug() << "BitBlitting image" << endl;
 	mImageContainer->updatePixmap( QPixmap( mImage ) );
 }
 

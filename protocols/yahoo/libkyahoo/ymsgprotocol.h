@@ -36,7 +36,7 @@ public:
 	 * The exact state of the parse attempt can be read using @ref state. 
 	 * @param rawData The unparsed data.
 	 * @param bytes An integer used to return the number of bytes read.
-	 * @return A pointer to an EventTransfer object if successfull, otherwise 0.  The caller is responsible for deleting this object.
+	 * @return A pointer to an EventTransfer object if successful, otherwise 0.  The caller is responsible for deleting this object.
 	 */
 	Transfer * parse( const QByteArray &, uint & bytes );
 };

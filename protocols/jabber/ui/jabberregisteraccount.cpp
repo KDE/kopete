@@ -47,10 +47,12 @@
 #include "jabberchooseserver.h"
 #include "ui_dlgjabberregisteraccount.h"
 
-JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, const char */*name*/ )
- : KDialog ( parent, i18n("Register New Jabber Account"), KDialog::Ok | KDialog::Cancel )
+JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
+ : KDialog ( parent )
 {
 
+	setCaption( i18n("Register New Jabber Account") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	mParentWidget = parent;
 
 	// setup main dialog
@@ -181,7 +183,7 @@ void JabberRegisterAccount::validateData ()
 		mMainWidget->lblStatusMessage->setText ( "" );
 	}
 
-	enableButtonOK ( valid );
+	enableButtonOk ( valid );
 
 }
 
@@ -245,7 +247,7 @@ void JabberRegisterAccount::slotOk ()
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Registering a new Jabber account." << endl;
 
-	enableButtonOK ( false );
+	enableButtonOk ( false );
 
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Connecting to server..." ) );
 
@@ -286,7 +288,7 @@ void JabberRegisterAccount::disconnect ()
 		jabberClient->disconnect ();
 
 	if ( !mSuccess )
-		enableButtonOK ( true );
+		enableButtonOk ( true );
 
 }
 
@@ -369,7 +371,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mSuccess = true;
 
 		// rewire buttons
-		enableButtonOK ( false );
+		enableButtonOk ( false );
 		setButtonGuiItem( KDialog::Cancel, KStdGuiItem::close () );
 		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
 	}

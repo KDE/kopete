@@ -68,9 +68,13 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	setInstance(protocol->instance());
 	jabber_voicecall->setEnabled(true);
-	setXMLFile("jabberchatui.rc");
+
 
 #endif
+
+ new KAction( i18n( "Send File" ), "attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "jabberSendFile" );
+
+	setXMLFile("jabberchatui.rc");
 
 }
 
@@ -330,6 +334,11 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 }
 
+ void JabberChatSession::slotSendFile()
+      {
+              QList<Kopete::Contact*>contacts = members();
+              static_cast<JabberContact *>(contacts.first())->sendFile();
+      }
 
 #include "jabberchatsession.moc"
 

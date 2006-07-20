@@ -76,11 +76,13 @@ public:
 	 */
 	enum HideWidget
 	{
+		DefaultHide = 0x00, ///< Internal default.
 		InfoButton = 0x01, /**< the button which ask for more info about the contact */
 		AuthorizeCheckBox = 0x02, /**< the checkbox which ask for authorize the contact */
 		AddCheckBox = 0x04, /**< the checkbox which ask if the contact should be added */
 		AddGroupBox = 0x08 /**< all the widget about metacontact properties */
 	};
+	Q_DECLARE_FLAGS(HideWidgetOptions, HideWidget);
 
 	/**
 	 * @brief Constructor
@@ -94,7 +96,7 @@ public:
 	 *
 	 */
 	ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,
-				Kopete::Account *account=0L, uint hide=0x00);
+				Kopete::Account *account=0L, const HideWidgetOptions &hide=DefaultHide);
 
 	/**
 	 * @brief Destructor
@@ -168,7 +170,7 @@ private:
 	Private *d;
 };
 
-
+Q_DECLARE_OPERATORS_FOR_FLAGS( ContactAddedNotifyDialog::HideWidgetOptions );
 
 } // namespace UI
 } // namespace Kopete

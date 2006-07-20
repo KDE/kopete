@@ -148,10 +148,10 @@ void TestbedAccount::slotGoOffline ()
 
 void TestbedAccount::slotShowVideo ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
-		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0, "Testbed video window");
+		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0);
 	updateContactStatus();
 }
 

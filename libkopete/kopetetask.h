@@ -21,6 +21,7 @@
 #include <qobject.h>
 #include <kdemacros.h>
 #include <kopete_export.h>
+#include <kjob.h>
 
 namespace Kopete
 {
@@ -31,8 +32,8 @@ namespace Kopete
  *
  * \code
  *   Kopete::Task *task = someobject->someoperation( some parameters );
- *   connect( task, SIGNAL( result( Kopete::Task * ) ),
- *            this, SLOT( slotResult( Kopete::Task * ) ) );
+ *   connect( task, SIGNAL( result( KJob* ) ),
+ *            this, SLOT( slotResult( KJob* ) ) );
  * \endcode
  *   (other connects, specific to the job)
  *
@@ -47,14 +48,14 @@ namespace Kopete
  * class come from KIO::Job.
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT Task : public QObject
+class KOPETE_EXPORT Task : public KJob
 {
 	Q_OBJECT
 
 protected:
 	Task();
 public:
-	~Task();
+	virtual ~Task();
 
 	/**
 	 * Returns whether the task completed successfully.
@@ -62,20 +63,6 @@ public:
 	 * @return if the task succeeded, returns true, otherwise returns false.
 	 */
 	bool succeeded() const;
-	/**
-	 * Converts an error code and a non-i18n error message into an
-	 * error message in the current language. The low level (non-i18n)
-	 * error message (usually a url) is put into the translated error
-	 * message using %%1.
-	 *
-	 * Use this to display the error yourself, but for a dialog box
-	 * use Kopete::UI::Global::showTaskError. Do not call it if succeeded()
-	 * returns true.
-	 * @return the error message and if there is no error, a message
-	 *         telling the user that the app is broken, so check with
-	 *         succeeded() whether there is an error.
-	 */
-	const QString &errorString() const;
 
 	/** Flags for the abort() function */
 	enum AbortFlags { AbortNormal = 0, AbortEmitResult = 1 };
@@ -91,12 +78,6 @@ public slots:
 	virtual void abort( int flags = AbortNormal );
 
 signals:
-	/**
-	 * Emitted when the task is finished, in any case (completed, canceled,
-	 * failed...). Use error() to find the result.
-	 * @param task the task that emitted this signal
-	 */
-	void result( Kopete::Task *task );
 	/**
 	 * Emitted to display status information about this task.
 	 * Examples of messages are:
@@ -131,13 +112,15 @@ protected:
 	 */
 	virtual void removeSubtask( Task *task, RemoveSubtaskIfLast actionIfLast = IfLastEmitResult );
 
-	enum Result { ResultFailed = 0, ResultSucceeded = 1 };
+	enum Result { ResultFailed = 1, ResultSucceeded = 0 };
 	/**
 	 * Utility function to emit the result signal, and suicide this job.
 	 * Sets the stored result and error message to @p result and @p errorMessage.
 	 * You should call this instead of emitting the result() signal yourself.
 	 */
-	void emitResult( Result result = ResultSucceeded, const QString &errorMessage = QString::null );
+	// NOTE: Named emitTaskResult to not conflit with KJob::emitResult
+	//       and not cause a infinite loop (-DarkShock)
+	void emitTaskResult( Result result = ResultSucceeded, const QString &errorMessage = QString::null );
 
 	/**
 	 * Utility function for inherited tasks.
@@ -145,13 +128,6 @@ protected:
 	 * @param result the task result.
 	 */
 	void setResult( Result result );
-
-	/**
-	 * Utility function for inherited tasks.
-	 * Set the error message. You should call emitResult instead.
-	 * @param message Error message for the task.
-	 */
-	void setErrorMessage( const QString &message );
 
 protected slots:
 	/**
@@ -163,8 +139,9 @@ protected slots:
 	 * to a subtask finishing
 	 * @param task the subtask that finished
 	 * @see result()
+	 * @note should probably be private
 	 */
-	virtual void slotResult( Kopete::Task *task );
+	virtual void slotResult( KJob *task );
 
 private:
 	class Private;

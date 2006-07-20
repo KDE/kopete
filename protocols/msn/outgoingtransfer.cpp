@@ -227,10 +227,10 @@ void OutgoingTransfer::processMessage(const Message& message)
 		acknowledge(message);
 		if(!m_isComplete)
 		{
-			// The peer cancelled the transfer.
+			// The peer canceled the transfer.
 			if(m_transfer)
 			{
-				// Inform the user of the file transfer cancelation.
+				// Inform the user of the file transfer cancellation.
 				m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
 			}
 		}
@@ -332,12 +332,12 @@ void OutgoingTransfer::processMessage(const Message& message)
 	}
 	else if(body.startsWith("MSNSLP/1.0 603 Decline"))
 	{
-		// File transfer has been cancelled remotely.
+		// File transfer has been canceled remotely.
 		// Send an acknowledge message
 		acknowledge(message);
 		if(m_transfer)
 		{
-			// Inform the user of the file transfer cancelation.
+			// Inform the user of the file transfer cancellation.
 			m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
 		}
 

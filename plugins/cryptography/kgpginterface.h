@@ -44,7 +44,7 @@ class KgpgInterface : public QObject {
 	 * @param text QString text to be encrypted.
 	 * @param userIDs the recipients key id's.
 	 * @param Options String with the wanted gpg options. ex: "--armor"
-	 * returns the encrypted text or empty string if encyption failed
+	 * returns the encrypted text or empty string if encryption failed
 	 */
 	 static QString KgpgEncryptText(QString text,QString userIDs, QString Options="");
 	

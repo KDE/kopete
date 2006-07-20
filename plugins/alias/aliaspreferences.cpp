@@ -367,7 +367,7 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 		if( item->isSelected() )
 		{
 
-			// If you dont have the selected protocol enabled, Kopete::PluginManager::self()->plugin
+			// If you don't have the selected protocol enabled, Kopete::PluginManager::self()->plugin
 			// will return NULL, check for that
 
 			if(Kopete::PluginManager::self()->plugin( static_cast<ProtocolItem*>(item)->id) )

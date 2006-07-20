@@ -36,7 +36,7 @@ public:
 	bool take(Transfer *transfer);
 
 protected:
-	bool forMe( Transfer *transfer ) const;
+	virtual bool forMe( const Transfer *transfer ) const;
 signals:
 	void incomingFileTransfer( const QString &who, const QString &url, long expires, const QString &msg ,
 	const QString &fname, unsigned long size );

@@ -30,10 +30,11 @@
 #include "jabberaccount.h"
 #include "ui_dlgchangepassword.h"
 
-DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidget *parent, const char *name )
- : KDialog ( parent, i18n("Change Jabber Password"), KDialog::Ok | KDialog::Cancel )
+DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidget *parent )
+ : KDialog ( parent )
 {
-
+	setCaption( i18n("Change Jabber Password") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
 	enableButtonSeparator( true );
 

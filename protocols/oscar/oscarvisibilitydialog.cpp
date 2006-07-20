@@ -26,9 +26,11 @@
 
 
 OscarVisibilityDialog::OscarVisibilityDialog( Client* client, QWidget* parent )
- : KDialog( parent, i18n( "Add Contacts to In/Visible List" ),
-                Ok | Cancel ), m_client( client )
+ : KDialog( parent ), m_client( client )
 {
+	setCaption( i18n( "Add Contacts to In/Visible List" ) );
+	setButtons( KDialog::Ok | KDialog::Cancel );
+
 	QWidget* w = new QWidget( this );
 	m_visibilityUI = new Ui::OscarVisibilityBase;
 	m_visibilityUI->setupUi( w );

@@ -20,7 +20,7 @@
 #ifndef YAHOOUSERINFODIALOG_H_
 #define YAHOOUSERINFODIALOG_H_
 
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 #include "../libkyahoo/yabentry.h"
 
 class KJanusWidget;
@@ -32,11 +32,11 @@ namespace Ui
 }
 class YahooContact;
 
-class YahooUserInfoDialog : public KDialogBase
+class YahooUserInfoDialog : public KPageDialog
 {
 Q_OBJECT
 public:
-	YahooUserInfoDialog( YahooContact *c, QWidget* parent = 0, const char* name = 0 );
+	YahooUserInfoDialog( YahooContact *c, QWidget* parent = 0 );
 	~YahooUserInfoDialog();
 	void setAccountConnected( bool isOnline );
 signals:

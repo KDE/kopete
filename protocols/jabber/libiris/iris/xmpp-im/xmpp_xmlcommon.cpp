@@ -264,7 +264,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 /*QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 {
 	if(found)
-		*found = FALSE;
+		*found = false;
 
 	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
 		QDomElement i = n.toElement();
@@ -272,7 +272,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 			continue;
 		if(i.tagName() == name) {
 			if(found)
-				*found = TRUE;
+				*found = true;
 			return i;
 		}
 	}
@@ -283,7 +283,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 
 void readEntry(const QDomElement &e, const QString &name, QString *v)
 {
-	bool found = FALSE;
+	bool found = false;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -292,7 +292,7 @@ void readEntry(const QDomElement &e, const QString &name, QString *v)
 
 void readNumEntry(const QDomElement &e, const QString &name, int *v)
 {
-	bool found = FALSE;
+	bool found = false;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -301,16 +301,16 @@ void readNumEntry(const QDomElement &e, const QString &name, int *v)
 
 void readBoolEntry(const QDomElement &e, const QString &name, bool *v)
 {
-	bool found = FALSE;
+	bool found = false;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
-	*v = (tagContent(tag) == "true") ? TRUE: FALSE;
+	*v = (tagContent(tag) == "true");
 }
 
 void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
 {
-	bool found = FALSE;
+	bool found = false;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -325,7 +325,7 @@ void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
 
 void readRectEntry(const QDomElement &e, const QString &name, QRect *v)
 {
-	bool found = FALSE;
+	bool found = false;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -342,7 +342,7 @@ void readRectEntry(const QDomElement &e, const QString &name, QRect *v)
 
 void readColorEntry(const QDomElement &e, const QString &name, QColor *v)
 {
-	bool found = FALSE;
+	bool found = false;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -378,7 +378,7 @@ void readBoolAttribute(QDomElement e, const QString &name, bool *v)
 {
 	if(e.hasAttribute(name)) {
 		QString s = e.attribute(name);
-		*v = (s == "true") ? TRUE: FALSE;
+		*v = (s == "true");
 	}
 }
 

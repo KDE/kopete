@@ -30,9 +30,11 @@
 #include "ui_dlgjabberchooseserver.h"
 #include "jabberregisteraccount.h"
 
-JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const char *name )
- : KDialog ( parent, i18n("Choose Jabber Server"), KDialog::Ok | KDialog::Cancel )
+JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
+ : KDialog ( parent )
 {
+	setCaption( i18n("Choose Jabber Server") );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 
 	mParentWidget = parent;
 	mSelectedRow = -1;
@@ -55,7 +57,7 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const ch
 	connect ( mMainWidget->listServers, SIGNAL ( pressed ( int, int, int, const QPoint & ) ), this, SLOT ( slotSetSelection ( int ) ) );
 	connect ( mMainWidget->listServers, SIGNAL ( doubleClicked ( int, int, int, const QPoint & ) ), this, SLOT ( slotOk () ) );
 
-	enableButtonOK ( false );
+	enableButtonOk ( false );
 
 }
 
@@ -88,7 +90,7 @@ void JabberChooseServer::slotSetSelection ( int row )
 
 	mSelectedRow = row;
 	mMainWidget->listServers->selectRow ( row );
-	enableButtonOK ( true );
+	enableButtonOk ( true );
 
 }
 

@@ -25,8 +25,6 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kapplication.h>
-#include <dcopclient.h>
 #include <kaction.h>
 
 #include "config.h"
@@ -57,7 +55,7 @@
 class NowListeningPlugin::Private
 {
 public:
-	Private() : m_currentMediaPlayer(0L), m_client(0L), m_currentChatSession(0L), m_currentMetaContact(0L), 
+	Private() : m_currentMediaPlayer(0L), m_currentChatSession(0L), m_currentMetaContact(0L), 
 				advertTimer(0L)
 	{}
 	~Private()
@@ -69,8 +67,6 @@ public:
 	QList<NLMediaPlayer*> m_mediaPlayerList;
 	NLMediaPlayer *m_currentMediaPlayer;
 
-	// Needed for DCOP interprocess communication
-	DCOPClient *m_client;
 	Kopete::ChatSession *m_currentChatSession;
 	Kopete::MetaContact *m_currentMetaContact;
 
@@ -112,15 +108,12 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*ar
 	for (QList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
 	  slotNewKMM( *it );
 
-	// get a pointer to the dcop client
-	d->m_client = kapp->dcopClient(); //new DCOPClient();
-
 	// set up known media players
-	d->m_mediaPlayerList.append( new NLKscd( d->m_client ) );
-	d->m_mediaPlayerList.append( new NLNoatun( d->m_client ) );
-	d->m_mediaPlayerList.append( new NLJuk( d->m_client ) );
-	d->m_mediaPlayerList.append( new NLamaroK( d->m_client ) );
-	d->m_mediaPlayerList.append( new NLKaffeine( d->m_client ) );
+	d->m_mediaPlayerList.append( new NLKscd() );
+	d->m_mediaPlayerList.append( new NLNoatun() );
+	d->m_mediaPlayerList.append( new NLJuk() );
+	d->m_mediaPlayerList.append( new NLamaroK() );
+	d->m_mediaPlayerList.append( new NLKaffeine() );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	d->m_mediaPlayerList.append( new NLXmms() );

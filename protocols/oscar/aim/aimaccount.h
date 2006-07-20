@@ -132,7 +132,7 @@ protected:
 	* Implement virtual method from OscarAccount
 	* This allows OscarAccount to take care of adding new contacts
 	*/
-	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
+	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
 	QString sanitizedMessage( const QString& message );
 

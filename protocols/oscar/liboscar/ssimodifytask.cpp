@@ -43,7 +43,7 @@ SSIModifyTask::~SSIModifyTask()
 
 void SSIModifyTask::onGo()
 {
-	sendSSIUpdate();
+	sendContactUpdate();
 }
 
 bool SSIModifyTask::take( Transfer* transfer )
@@ -51,7 +51,7 @@ bool SSIModifyTask::take( Transfer* transfer )
 	if ( forMe( transfer ) )
 	{
 		setTransfer( transfer );
-		handleSSIAck();
+		handleContactAck();
 		setTransfer( 0 );
 		return true;
 	}
@@ -66,8 +66,8 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 
 	QString newContact = Oscar::normalize( contact );
 
-	Oscar::SSI oldItem = m_ssiManager->findContact( newContact );
-	Oscar::SSI groupItem = m_ssiManager->findGroup( group );
+	OContact oldItem = m_ssiManager->findContact( newContact );
+	OContact groupItem = m_ssiManager->findGroup( group );
 
 	if ( !groupItem )
 	{
@@ -75,7 +75,7 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 		return false;
 	}
 
-	//create new SSI item and populate the TLV list
+	//create new Contact item and populate the TLV list
 	QList<TLV> tlvList;
 	if ( requiresAuth )
 	{
@@ -85,7 +85,7 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 	}
 
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "creating new SSI item for " << contact << " in group " << group << endl;
-	Oscar::SSI newItem( newContact, groupItem.gid(), m_ssiManager->nextContactId(), ROSTER_CONTACT, tlvList );
+	OContact newItem( newContact, groupItem.gid(), m_ssiManager->nextContactId(), ROSTER_CONTACT, tlvList );
 	m_newItem = newItem;
 	return true;
 }
@@ -104,7 +104,7 @@ bool SSIModifyTask::changeGroup( const QString& contact, const QString& newGroup
 	m_opType = Change;
 	m_opSubject = Group;
 	m_oldItem = m_ssiManager->findContact( Oscar::normalize( contact ) );
-	Oscar::SSI oldGroupItem;
+	OContact oldGroupItem;
 	if ( m_oldItem.isValid() )
 		oldGroupItem = m_ssiManager->findGroup( newGroup );
 	else
@@ -123,8 +123,8 @@ bool SSIModifyTask::changeGroup( const QString& contact, const QString& newGroup
 		return false;
 	}
 
-	//create a new SSI item for the buddy in the new group
-	Oscar::SSI newItem( m_oldItem.name(), m_groupItem.gid(), m_oldItem.bid(), ROSTER_CONTACT, m_oldItem.tlvList() );
+	//create a new Contact item for the buddy in the new group
+	OContact newItem( m_oldItem.name(), m_groupItem.gid(), m_oldItem.bid(), ROSTER_CONTACT, m_oldItem.tlvList() );
 	m_newItem = newItem;
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Moving '" << m_oldItem.name() << "' to group " << m_groupItem.name() << endl;
 	return true;
@@ -136,7 +136,7 @@ bool SSIModifyTask::addGroup( const QString& groupName )
 	m_opSubject = Group;
 	m_newItem = m_ssiManager->findGroup( groupName );
 	QList<TLV> dummy;
-	Oscar::SSI newItem( groupName, m_ssiManager->nextGroupId(), 0, ROSTER_GROUP, dummy );
+	OContact newItem( groupName, m_ssiManager->nextGroupId(), 0, ROSTER_GROUP, dummy );
 	m_newItem = newItem;
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding group '" << m_newItem.name() << "' to SSI" << endl;
 	return true;
@@ -147,7 +147,7 @@ bool SSIModifyTask::removeGroup( const QString& groupName )
 	m_opType = Remove;
 	m_opSubject = Group;
 	m_oldItem = m_ssiManager->findGroup( groupName );
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Scheduling group '" << m_oldItem.name() << "' for removal. " << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Scheduling group '" << m_oldItem.name() << "' for SSI. " << endl;
 	return true;
 }
 
@@ -159,12 +159,12 @@ bool SSIModifyTask::renameGroup( const QString& oldName, const QString & newName
 		return false;
 
 	m_oldItem = m_ssiManager->findGroup( oldName );
-	Oscar::SSI newItem( newName, m_oldItem.gid(), m_oldItem.bid(), ROSTER_GROUP, m_oldItem.tlvList() );
+	OContact newItem( newName, m_oldItem.gid(), m_oldItem.bid(), ROSTER_GROUP, m_oldItem.tlvList() );
 	m_newItem = newItem;
 	return true;
 }
 
-bool SSIModifyTask::addItem( const Oscar::SSI& item )
+bool SSIModifyTask::addItem( const OContact& item )
 {
 	m_opType = Add;
 	m_opSubject = NoSubject;
@@ -172,7 +172,7 @@ bool SSIModifyTask::addItem( const Oscar::SSI& item )
 	return true;
 }
 
-bool SSIModifyTask::removeItem( const Oscar::SSI& item )
+bool SSIModifyTask::removeItem( const OContact& item )
 {
 	m_opType = Remove;
 	m_opSubject = NoSubject;
@@ -180,7 +180,7 @@ bool SSIModifyTask::removeItem( const Oscar::SSI& item )
 	return true;
 }
 
-bool SSIModifyTask::modifyItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem )
+bool SSIModifyTask::modifyItem( const OContact& oldItem, const OContact& newItem )
 {
 	if ( !m_ssiManager->hasItem( oldItem ) )
 		return false;
@@ -208,7 +208,7 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 		return false;
 }
 
-void SSIModifyTask::handleSSIAck()
+void SSIModifyTask::handleContactAck()
 {
 	Buffer* b = transfer()->buffer();
 	int numItems = b->bytesAvailable() / 2;
@@ -220,7 +220,7 @@ void SSIModifyTask::handleSSIAck()
 		{
 		case 0x0000:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "SSI Update successful" << endl;
-			updateSSIManager();
+			updateContactManager();
 			break;
 		case 0x0002:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Item to modify not found in list" << endl;
@@ -245,7 +245,7 @@ void SSIModifyTask::handleSSIAck()
 		case 0x000E:
 			{
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Can't add item because contact requires authorization" << endl;
-			Oscar::SSI groupItem = m_ssiManager->findGroup( m_newItem.gid() );
+			OContact groupItem = m_ssiManager->findGroup( m_newItem.gid() );
 			QString groupName = groupItem.name();
 			addContact( m_newItem.name(), groupName, true );
 			go();
@@ -261,7 +261,7 @@ void SSIModifyTask::handleSSIAck()
 
 }
 
-void SSIModifyTask::sendSSIUpdate()
+void SSIModifyTask::sendContactUpdate()
 {
 	//what type of update are we sending?
 	if ( m_opSubject == Group && m_opType == Change )
@@ -355,7 +355,7 @@ void SSIModifyTask::changeGroupOnServer()
 
 	//find the old group so we can change it's list of buddy ids
 	//what a kludge
-	Oscar::SSI oldGroupItem = m_ssiManager->findGroup( m_oldItem.gid() );
+	OContact oldGroupItem = m_ssiManager->findGroup( m_oldItem.gid() );
 	/* not checking the existance of oldGroupItem because if we got here
 	   it has to exist */
 
@@ -411,22 +411,29 @@ void SSIModifyTask::changeGroupOnServer()
 	sendEditEnd();
 }
 
-void SSIModifyTask::updateSSIManager()
+void SSIModifyTask::updateContactManager()
 {
 	if ( m_oldItem.isValid() && m_newItem.isValid() )
-	{ //changing groups on the server, or renaming. the group item will have already been updated
+	{
 		if ( m_opSubject == Contact )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << endl;
 			m_ssiManager->removeContact( m_oldItem.name() );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to SSI manager" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to contact manager" << endl;
 			m_ssiManager->newContact( m_newItem );
+		}
+		else if ( m_opSubject == Group )
+		{
+			if ( m_opType == Rename )
+				m_ssiManager->updateGroup( m_oldItem, m_newItem );
+			else if ( m_opType == Change )
+				m_ssiManager->updateContact( m_oldItem, m_newItem );
 		}
 		else if ( m_opSubject == NoSubject )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << endl;
 			m_ssiManager->removeItem( m_oldItem );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to SSI manager" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to contact manager" << endl;
 			m_ssiManager->newItem( m_newItem );
 		}
 		setSuccess( 0, QString::null );
@@ -435,7 +442,7 @@ void SSIModifyTask::updateSSIManager()
 
 	if ( m_oldItem.isValid() && !m_newItem )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from SSI manager" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from contact manager" << endl;
 		if ( m_opSubject == Group )
 			m_ssiManager->removeGroup( m_oldItem.name() );
 		else if ( m_opSubject == Contact )
@@ -448,7 +455,7 @@ void SSIModifyTask::updateSSIManager()
 
 	if ( m_newItem.isValid() && !m_oldItem )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << m_newItem.name() << " to SSI manager" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << m_newItem.name() << " to contact manager" << endl;
 		if ( m_opSubject == Group )
 			m_ssiManager->newGroup( m_newItem );
 		else if ( m_opSubject == Contact )
@@ -480,7 +487,7 @@ void SSIModifyTask::sendEditEnd()
 	send( t5 );
 }
 
-void SSIModifyTask::addItemToBuffer( Oscar::SSI item, Buffer* buffer )
+void SSIModifyTask::addItemToBuffer( OContact item, Buffer* buffer )
 {
 	buffer->addBSTR( item.name().toLatin1() );
 	buffer->addWord( item.gid() );

@@ -38,8 +38,10 @@
 #include "gaducommands.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
-: KDialog( parent, i18n( "Register New Account" ), KDialog::User1 | KDialog::Ok )
+: KDialog( parent )
 {
+	setCaption( i18n( "Register New Account" ) );
+	setButtons( KDialog::User1 | KDialog::Ok );
 	setDefaultButton( KDialog::User1 );
 	enableButtonSeparator( true );
 

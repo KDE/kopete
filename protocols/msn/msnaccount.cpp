@@ -19,8 +19,9 @@
 
 #include "msnaccount.h"
 
-#include <config.h>
+#ifdef HAVE_CONFIG_H
 #include <config-kopete.h>
+#endif
 
 #include <kaction.h>
 #include <kactionmenu.h>
@@ -64,7 +65,7 @@
 #include "avdevice/videodevicepool.h"
 #endif
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
-	: Kopete::PasswordedAccount ( parent, AccountID.toLower(), 0, false )
+	: Kopete::PasswordedAccount ( parent, AccountID.toLower() , false )
 {
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
@@ -108,7 +109,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	static_cast<MSNContact *>( myself() )->setInfo( "MFN", config->readEntry("MFN") );
 
 	//construct the group list
-	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contactlist, but it's not possible anymore
+	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contact list, but it's not possible anymore
 	QList<Kopete::Group*> groupList = Kopete::ContactList::self()->groups();
 	Kopete::Group *g;
 	foreach(g, groupList)
@@ -178,7 +179,7 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 
 	if ( contacts().count() <= 1 )
 	{
-		// Maybe the contactlist.xml has been removed, and the serial number not updated
+		// Maybe the contact list.xml has been removed, and the serial number not updated
 		// ( the 1 is for the myself contact )
 		configGroup()->writeEntry( "serial", 0 );
 	}
@@ -295,23 +296,47 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason)
 {
+	kdDebug( 14140 ) << k_funcinfo << status.description() << endl;
+	
+	// FIXME: When changing song, do don't anything while connected
+	//if( reason.  contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
+	//	return;
+
+	// Only send personal message when logged.
+	if( m_notifySocket && m_notifySocket->isLogged() )
+	{
+		// Only update the personal/status message, don't change the online status
+		// since it's the same.
+		setStatusMessage( reason );
+	}
+
 	if(status.status()== Kopete::OnlineStatus::Offline)
 		disconnect();
 	else if ( m_notifySocket )
 	{
 		m_notifySocket->setStatus( status );
-		setPersonalMessage( reason );
 	}
 	else
 	{
 		m_connectstatus = status;
 		connect();
 	}
+
+	
 }
 
 void MSNAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
-	setPersonalMessage( statusMessage );
+	if ( m_notifySocket )
+	{
+		myself()->setStatusMessage( statusMessage );
+		m_notifySocket->changePersonalMessage( statusMessage );
+	}
+	/*  Eh,  if we can't change the display name, don't let make the user think it has changed
+	else if(type == MSNProtocol::PersonalMessageNormal) // Normal personalMessage, not a dynamic one that need formatting.
+	{
+		slotPersonalMessageChanged( personalMessage );
+	}*/
 }
 
 void MSNAccount::slotStartChat()
@@ -468,20 +493,6 @@ void MSNAccount::setPublicName( const QString &publicName )
 	}
 }
 
-void MSNAccount::setPersonalMessage( const Kopete::StatusMessage &statusMessage )
-{
-	if ( m_notifySocket )
-	{
-		myself()->setStatusMessage( statusMessage );
-		m_notifySocket->changePersonalMessage( statusMessage );
-	}
-	/*  Eh,  if we can't change the display name, don't let make the user think it has changed
-	else if(type == MSNProtocol::PersonalMessageNormal) // Normal personalMessage, not a dynamic one that need formatting.
-	{
-		slotPersonalMessageChanged( personalMessage );
-	}*/
-}
-
 void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupGuid )
 {
 	if ( m_groupList.contains( groupGuid ) )
@@ -584,7 +595,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 			else
 			{
 				// If we get to here, we're currently adding a new contact, add the groupGUID to the groupList
-				// to add when contact will be added to contactlist.
+				// to add when contact will be added to contact list.
 				if( tmp_addNewContactToGroup.contains( contactId ) )
 					tmp_addNewContactToGroup[contactId].append(groupGuid);
 				else
@@ -657,8 +668,8 @@ void MSNAccount::slotKopeteGroupRenamed( Kopete::Group *g )
 
 void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 {
-	//The old gorup list is only used whe syncing the contactlist.
-	//We can assume the contactlist is already fully synced at this time.
+	//The old gorup list is only used whe syncing the contact list.
+	//We can assume the contact list is already fully synced at this time.
 	//The group g is maybe in the oldGroupList.  We remove everithing since
 	//we don't need it anymore, no need to search it
 	m_oldGroupList.clear();
@@ -1164,7 +1175,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		manager->createChat( handle, address, auth, ID );
 
 		/**
-		 *  This code should open a chatwindow when a socket is open
+		 *  This code should open a chat window when a socket is open
 		 * It has been disabled because gaim open switchboeard too often
 		 *
 		 * the solution is to open the window only when the contact start typing
@@ -1176,7 +1187,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		if ( !ID.isEmpty() && notifyNewChat )
 		{
 			// this temporary message should open the window if they not exist
-			QString body = i18n( "%1 has started a chat with you" ).arg( c->metaContact()->displayName() );
+			QString body = i18n( "%1 has started a chat with you" ,c->metaContact()->displayName() );
 			Kopete::Message tmpMsg = Kopete::Message( c, manager->members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 			manager->appendMessage( tmpMsg );
 		}
@@ -1343,7 +1354,7 @@ void MSNAccount::addContactServerside(const QString &contactId, QList<Kopete::Gr
 		// If the groupId is empty, that's mean the Kopete group is not on the MSN server.
 		if( !groupId.isEmpty() )
 		{
-			// Something got corrupted on contactlist.xml
+			// Something got corrupted on contact list.xml
 			if( !m_groupList.contains(groupId) )
 			{
 				// Clear the group plugin data.

@@ -21,7 +21,6 @@
 #ifndef NOWLISTENINGPLUGIN_H
 #define NOWLISTENINGPLUGIN_H
 
-
 #include "kopeteplugin.h"
 
 namespace Kopete { class ChatSession; class Message; }

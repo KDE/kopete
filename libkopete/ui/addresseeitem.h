@@ -23,7 +23,6 @@
 
 #include <q3dict.h>
 
-#include <kdialogbase.h>
 #include <klineedit.h>
 #include <k3listview.h>
 

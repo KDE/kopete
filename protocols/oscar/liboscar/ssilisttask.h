@@ -1,6 +1,6 @@
 /*
   Kopete Oscar Protocol
-  ssilisttask.h - handles all operations dealing with the whole SSI list
+  ssilisttask.h - handles all operations dealing with the whole Contact list
 
   Copyright (c) 2004 Matt Rogers <mattr@kde.org>
 
@@ -20,11 +20,11 @@
 
 #include <task.h>
 
-class SSI;
-class SSIManager;
+class OContact;
+class ContactManager;
 
 /**
- * This task handles all the operations dealing with the whole SSI list
+ * This task handles all the operations dealing with the whole Contact list
  * All SNACs handled by this task are in family 13. Subtypes 5, 6, and 7
  * are handled by individual functions. Subtype F is handled in the take()
  * function. We don't use subtype 4 because the same thing can be accomplished
@@ -46,30 +46,30 @@ protected:
 	virtual void onGo();
 
 signals:
-	/** We've got the timestamp, the SSI list is done */
+	/** We've got the timestamp, the Contact list is done */
 	void listComplete();
 
 	/** We have a new group */
-	void newGroup( const Oscar::SSI& );
+	void newGroup( const OContact& );
 
 	/** We have a new contact */
-	void newContact( const Oscar::SSI& );
+	void newContact( const OContact& );
 	
 	/**
 	 * We have a new contact and they're on the visible list
 	 */
-	void newVisibleItem( const Oscar::SSI& );
+	void newVisibleItem( const OContact& );
 	
 	/**
 	 * We have a new contact and they're on the invisible list
 	 */
-	void newInvisibleItem( const Oscar::SSI& );
+	void newInvisibleItem( const OContact& );
 	
 	/**
 	 * We have a new item 
 	 * Used for items we don't explicitly handle yet
 	 */
-	void newItem( const Oscar::SSI& );
+	void newItem( const OContact& );
 
 private:
 
@@ -77,18 +77,18 @@ private:
 	 * Handle the list we get from the server
 	 * This is SNAC( 0x13, 0x06 )
 	 */
-	void handleSSIListReply();
+	void handleContactListReply();
 
 	/**
-	 * Check the timestamp of the local SSI copy
+	 * Check the timestamp of the local Contact copy
 	 * If it's up to date, we'll get SNAC( 13, 06 )
 	 * If it's out of date, we'll get SNAC( 13, 0F )
 	 * This is SNAC( 0x13, 0x05 )
 	 */
-	void checkSSITimestamp();
+	void checkContactTimestamp();
 
 	/**
-	 * The timestamp of the SSI is up to date
+	 * The timestamp of the Contact is up to date
 	 * This is SNAC( 0x13, 0x0F )
 	 */
 	void ssiUpToDate();
@@ -96,11 +96,11 @@ private:
 	
 private:
 	/**
-	 * Pointer to the SSI manager so we don't have to keep
+	 * Pointer to the Contact manager so we don't have to keep
 	 * calling client()->ssiManager(). It's guaranteed to
 	 * exist.
 	 */
-	SSIManager* m_ssiManager;
+	ContactManager* m_ssiManager;
 
 };
 

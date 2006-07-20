@@ -27,14 +27,7 @@ namespace Kopete
 class Task::Private
 {
 public:
-	Private()
-	 : result( ResultFailed )
-	{
-		errorMessage = i18n( "The operation has not finished yet" );
-	}
 
-	Task::Result result;
-	QString errorMessage;
 	QList<Task*> subtasks;
 };
 
@@ -50,12 +43,7 @@ Task::~Task()
 
 bool Task::succeeded() const
 {
-	return d->result == ResultSucceeded;
-}
-
-const QString &Task::errorString() const
-{
-	return d->errorMessage;
+	return error()==0;
 }
 
 void Task::abort( int flags )
@@ -66,7 +54,7 @@ void Task::abort( int flags )
 		( *it )->abort( childFlags );
 
 	if ( flags & AbortEmitResult )
-		emitResult( ResultFailed, i18n( "Aborted" ) );
+		emitTaskResult( ResultFailed, i18n( "Aborted" ) );
 	else
 		delete this;
 }
@@ -74,44 +62,38 @@ void Task::abort( int flags )
 void Task::addSubtask( Task *task )
 {
 	d->subtasks.append( task );
-	connect( task, SIGNAL( result( Kopete::Task* ) ),
-	         this, SLOT( slotResult( Kopete::Task* ) ) );
+	connect( task, SIGNAL( result( KJob* ) ),
+	         this, SLOT( slotResult( KJob* ) ) );
 	connect( task, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ),
 	         this, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ) );
 }
 
 void Task::removeSubtask( Task *task, RemoveSubtaskIfLast actionIfLast )
 {
-	disconnect( task, SIGNAL( result( Kopete::Task* ) ),
-	            this, SLOT( slotResult( Kopete::Task* ) ) );
+	disconnect( task, SIGNAL( result( KJob* ) ),
+	            this, SLOT( slotResult( KJob* ) ) );
 	disconnect( task, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ),
 	            this, SIGNAL( statusMessage( Kopete::Task*, const QString & ) ) );
 	d->subtasks.removeAll( task );
 	if ( d->subtasks.isEmpty() && actionIfLast == IfLastEmitResult )
-		emitResult( task->succeeded() ? ResultSucceeded : ResultFailed, task->errorString() );
+		emitTaskResult( task->succeeded() ? ResultSucceeded : ResultFailed, task->errorString() );
 }
 
 void Task::setResult( Result res )
 {
-	d->result = res;
+	setError(res);
 }
 
-void Task::setErrorMessage( const QString &errorMessage )
+void Task::emitTaskResult( Result res, const QString &errorMessage )
 {
-	d->errorMessage = errorMessage;
+	setResult( res );
+	setErrorText(errorMessage);
+	emitResult();
 }
 
-void Task::emitResult( Result res, const QString &errorMessage )
+void Task::slotResult( KJob *task )
 {
-	d->result = res;
-	d->errorMessage = errorMessage;
-	emit result( this );
-	deleteLater();
-}
-
-void Task::slotResult( Kopete::Task *task )
-{
-	removeSubtask( task );
+	removeSubtask( static_cast<Task*>(task) );
 }
 
 }

@@ -46,7 +46,7 @@ BookmarksPlugin::~BookmarksPlugin()
  */
 void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 {
-	//kDebug(14501) << "recieved message:" << endl << msg.parsedBody() << endl;
+	//kDebug(14501) << "received message:" << endl << msg.parsedBody() << endl;
 	if(msg.direction() != Kopete::Message::Inbound)
 		return;
 	KUrl::List *URLsList;

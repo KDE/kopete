@@ -147,19 +147,19 @@ void SecureStream::tlsHandshaken()
 	{
 		case QCA::TLS::Valid:
 			errorString = QLatin1String("Certificate Valid.");
-			errorCode = SecureStream::ErrorValidCert;
+			errorCode = SecureStream::ErrorValidCertificate;
 			break;
 		case QCA::TLS::HostMismatch:
 			errorString = QLatin1String("Error: Wrong Certificate");
-			errorCode = SecureStream::ErrorWrongCert;
+			errorCode = SecureStream::ErrorWrongCertificate;
 			break;
 		case QCA::TLS::InvalidCertificate:
 			errorString = QLatin1String("Error: Invalid certificate.");
-			errorCode = SecureStream::ErrorInvalidCert;
+			errorCode = SecureStream::ErrorInvalidCertificate;
 			break;
 		default:
 			errorString = QLatin1String("Error: No certificate");
-			errorCode = SecureStream::ErrorNoCert;
+			errorCode = SecureStream::ErrorNoCertificate;
 			break;
 	}
 	qDebug() << PAPILLON_FUNCINFO << errorString;
@@ -192,8 +192,8 @@ void SecureStream::tlsError()
 	}
 	else
 	{
-		d->errorCode = SecureStream::ErrorUnknow;
-		d->errorString = QLatin1String("Unknow TLS error.");
+		d->errorCode = SecureStream::ErrorUnknown;
+		d->errorString = QLatin1String("Unknown TLS error.");
 	}
 
 	emit error();

@@ -54,7 +54,7 @@ public:
 	 * @param widget Parent widget.
 	 * @param name widget name.
 	 */
-	dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent = 0, const char *name = 0);
+	dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent = 0);
 	~dlgJabberVCard ();
 
 signals:
@@ -95,7 +95,7 @@ private slots:
 	 */
 	void slotGetVCard();
 	/**
-	 * vCard was succesfully fetched, update contact properties
+	 * vCard was successfully fetched, update contact properties
 	 * and enable display.
 	 */
 	void slotGotVCard();

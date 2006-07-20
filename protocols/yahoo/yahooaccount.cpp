@@ -70,7 +70,7 @@
 #include "yahoouserinfodialog.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
- : Kopete::PasswordedAccount(parent, accountId, 0, false)
+ : Kopete::PasswordedAccount(parent, accountId, false)
 {
 
 	// first things first - initialise internals
@@ -225,6 +225,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(loginFailed()),
 		                 this, SLOT(slotLoginFailed()) );
 		
+		QObject::connect(m_session, SIGNAL(error(int)),
+		                 this, SLOT(slotError(int)));
+		
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
@@ -343,7 +346,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                    this, SLOT(slotDisconnected()) );
 		
 		QObject::disconnect(m_session, SIGNAL(loginFailed()),
-		                 this, SLOT(slotLoginFailed()) );
+		                    this, SLOT(slotLoginFailed()) );
+		
+		QObject::disconnect(m_session, SIGNAL(error(int)),
+		                 this, SLOT(slotError(int)));
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
@@ -744,6 +750,17 @@ void YahooAccount::slotLoginFailed()
 	KNotification::event( "cannot_connect", message, myself()->onlineStatus().protocolIcon() );
 }
 
+void YahooAccount::slotError( int level )
+{
+	// enum LogLevel { Debug, Info, Notice, Warning, Error, Critical }; 
+	if( level <= Client::Notice )
+		return;
+	else if( level <= Client::Warning )
+		KMessageBox::information( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3", m_session->errorInformation(), m_session->error(), m_session->errorString() ), i18n( "Yahoo Plugin" ) );
+	else 
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "%1\n\nReason: %2 - %3", m_session->errorInformation(), m_session->error(), m_session->errorString() ), i18n( "Yahoo Plugin" ) );
+}
+
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
@@ -789,7 +806,7 @@ void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QStri
 	if(kc)
 		metaContact=kc->metaContact();
 	
-	int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+	Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
 	if( metaContact && !metaContact->isTemporary() )
 		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 	
@@ -1296,7 +1313,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 		else if( entry->source == YABEntry::SourceContact )
 		{
 			entry->YABId = kc->yabEntry()->YABId;
-			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget() );
 			dlg->setData( *entry );
 			dlg->setAccountConnected( isConnected() );
 			dlg->show();
@@ -1367,7 +1384,7 @@ void YahooAccount::slotFileTransferBytesProcessed( unsigned int transferId, unsi
 
 void YahooAccount::slotFileTransferComplete( unsigned int transferId )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::Transfer *t = m_fileTransfers[transferId];
 	if( !t )
 		return;
@@ -1378,7 +1395,7 @@ void YahooAccount::slotFileTransferComplete( unsigned int transferId )
 
 void YahooAccount::slotFileTransferError( unsigned int transferId, int error, const QString &desc )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::Transfer *t = m_fileTransfers[transferId];
 	if( !t )
 		return;

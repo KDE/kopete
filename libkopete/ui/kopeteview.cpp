@@ -47,3 +47,6 @@ Kopete::ViewPlugin *KopeteView::plugin()
 	return m_plugin;
 }
 
+KopeteView::~KopeteView( )
+{
+}

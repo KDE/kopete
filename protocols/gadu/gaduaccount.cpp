@@ -105,21 +105,24 @@ public:
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 static const char* const servers_ip[] = {
+	"217.17.41.82",
+	"217.17.41.83",
+	"217.17.41.84",
+	"217.17.41.85",
+	"217.17.41.86",
+	"217.17.41.87",
 	"217.17.41.88",
 	"217.17.41.92",
 	"217.17.41.93",
- 	"217.17.41.85",
-	"217.17.41.87",
-	"217.17.41.86",
-	"217.17.41.84",
-	"217.17.41.83",
-	"217.17.41.82"
+	"217.17.45.133",
+	"217.17.45.143",
+	"217.17.45.144"
 };
 
 #define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
 
  GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID )
-: Kopete::PasswordedAccount( parent, accountID, 0, false )
+: Kopete::PasswordedAccount( parent, accountID, false )
 {
 	QHostAddress ip;
 	p = new GaduAccountPrivate;
@@ -267,14 +270,14 @@ GaduAccount::actionMenu()
 		p->friendsModeAction->setEnabled( TRUE );
 	}
 	else {
-		p->searchAction->setEnabled( FALSE );
-		p->listputAction->setEnabled( FALSE );
-		p->friendsModeAction->setEnabled( FALSE );
+		p->searchAction->setEnabled( false );
+		p->listputAction->setEnabled( false );
+		p->friendsModeAction->setEnabled( false );
 	}
 
 	if ( contacts().count() > 1 ) {
 		if ( p->saveListDialog ) {
-			p->listToFileAction->setEnabled( FALSE );
+			p->listToFileAction->setEnabled( false );
 		}
 		else {
 			p->listToFileAction->setEnabled( TRUE );
@@ -283,11 +286,11 @@ GaduAccount::actionMenu()
 		p->listToFileAction->setEnabled( TRUE );
 	}
 	else {
-		p->listToFileAction->setEnabled( FALSE );
+		p->listToFileAction->setEnabled( false );
 	}
 
 	if ( p->loadListDialog ) {
-		p->listFromFileAction->setEnabled( FALSE );
+		p->listFromFileAction->setEnabled( false );
 	}
 	else {
 		p->listFromFileAction->setEnabled( TRUE );
@@ -615,7 +618,6 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	QList<Kopete::Contact*> contactsListTmp;
 
 	// FIXME:check for ignored users list
-	// FIXME:anonymous (those not on the list) users should be ignored, as an option
 
 	if ( gaduMessage->sender_id == 0 ) {
 		//system message, display them or not?

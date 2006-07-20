@@ -26,6 +26,7 @@
 #include "userdetails.h"
 #include "client.h"
 #include "oscartypeclasses.h"
+#include "contact.h"
 
 namespace Kopete
 {
@@ -37,7 +38,6 @@ class OscarAccount;
 class QTimer;
 class QTextCodec;
 class KToggleAction;
-
 /**
  * Contact for oscar protocol
  * @author Matt Rogers
@@ -64,7 +64,7 @@ Q_OBJECT
 
 public:
 	OscarContact( Kopete::Account* account, const QString& name,
-	              Kopete::MetaContact* parent, const QString& icon = QString::null, const Oscar::SSI& ssiItem = Oscar::SSI() );
+	              Kopete::MetaContact* parent, const QString& icon = QString::null, const OContact& ssiItem = OContact() );
 	
 	virtual ~OscarContact();
 	
@@ -77,8 +77,8 @@ public:
 	
 	bool isOnServer() const;
 	
-	void setSSIItem( const Oscar::SSI& item );
-	Oscar::SSI ssiItem() const;
+	void setSSIItem( const OContact& item );
+	OContact ssiItem() const;
 	
 	/** we received a typing notification from this contact, tell any message manager */
 	void startedTyping();
@@ -125,7 +125,7 @@ protected:
 	QString mName;
 	Kopete::ChatSession *mMsgManager;
 	UserDetails m_details;
-	SSI m_ssiItem;
+	OContact m_ssiItem;
 	int m_warningLevel;
 	QString m_clientFeatures;
 	

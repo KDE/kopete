@@ -37,7 +37,7 @@ class ICQSearchDialog : public KDialog
 {
 Q_OBJECT
 public:
-	ICQSearchDialog( ICQAccount* account, QWidget* parent = 0, const char* name = 0 );
+	ICQSearchDialog( ICQAccount* account, QWidget* parent = 0 );
 	~ICQSearchDialog();
 
 private slots:

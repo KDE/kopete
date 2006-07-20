@@ -22,8 +22,11 @@
 
 
 TranslatorDialog::TranslatorDialog(const QString &text, QWidget *parent)
-	: KDialog(parent,i18n("Translator Plugin"), Ok)
+	: KDialog(parent)
 {
+	setCaption( i18n("Translator Plugin") );
+	setButtons( KDialog::Ok );
+
 	m_textEdit=new KTextEdit(this);
 	setMainWidget(m_textEdit);
 	m_textEdit->setText(text);

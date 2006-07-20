@@ -182,7 +182,7 @@ public slots:
 	/**
 	 * Use this method if you want to go in the autoaway mode.
 	 * This will go autoaway even if the idle time is not yet reached. (and even if the user
-	 * did not selected to go autoaway automaticaly)
+	 * did not selected to go autoaway automatically)
 	 * But that will go unaway again when activity will be detected
 	 */
 	void setAutoAway();

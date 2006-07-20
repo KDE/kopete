@@ -83,7 +83,7 @@ void IncomingTransfer::slotTransferRefused(const Kopete::FileTransferInfo& info)
 		return;
 	
 	QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
-	// Send the sending client a cancelation message.
+	// Send the sending client a cancellation message.
 	sendMessage(DECLINE, content);
 	m_state=Finished;
 	
@@ -142,7 +142,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	if(m_file && (message.header.flag == 0x20 || message.header.flag == 0x01000030))
 	{
 		// UserDisplayIcon data or File data is in this message.
-		// Write the recieved data to the file.
+		// Write the received data to the file.
 		kDebug(14140) << k_funcinfo << QString("Received, %1 bytes").arg(message.header.dataSize) << endl;
 		
 		m_file->write(message.body.data(), message.header.dataSize);
@@ -295,7 +295,7 @@ void IncomingTransfer::processMessage(const Message& message)
 				{
 					// The transfer has been canceled remotely.
 					if(m_transfer){
-						// Inform the user of the file transfer cancelation.
+						// Inform the user of the file transfer cancellation.
 						m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
 					}
 					// Remove the partially received file.

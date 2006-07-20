@@ -238,7 +238,6 @@ Kopete::Account * MSNEditAccountWidget::apply()
 bool MSNEditAccountWidget::validateData()
 {
 	QString userid = d->ui->m_login->text();
-	KMessageBox::information(this, userid, "Debug");
 	if ( MSNProtocol::validContactId( userid ) )
 		return true;
 

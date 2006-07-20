@@ -49,7 +49,7 @@ public:
 	~OnlineStatusManager();
 
 	/**
-	 * Kopete will uses categories to have a more general system than siply globaly away.
+	 * Kopete will uses categories to have a more general system than simply globally away.
 	 * 
 	 * Idealy, in each protocol, there should be one status per categories (status may be in several or in none categories
 	 *
@@ -81,7 +81,7 @@ public:
 		HasStatusMessage = 0x01,  
 		/// The action of the status will be disabled if the account is offline.
 		/// use it if your protocol doesn't support connecting with the status as initial status.
-		/// You praticaly shouldn't abuse of that, and automaticaly set status after connecting if possible
+		/// You praticaly shouldn't abuse of that, and automatically set status after connecting if possible
 		DisabledIfOffline = 0x02,
 		///  The status will not appears in the action menu. Used if you want to register the status for e.g. autoaway,
 		///  without letting the user set itself that status  
@@ -94,7 +94,7 @@ public:
 	 * Registered statuses will appear in the account menu.
 	 * 
 	 * The Protocol constructor is a good place to call this function.
-	 * But if you want, you may use a special OnlineStatus constructor that call this function automaticaly
+	 * But if you want, you may use a special OnlineStatus constructor that call this function automatically
 	 *
 	 * You can set the status to be in the predefined categories.
 	 * Ideally, each category should own one status.
