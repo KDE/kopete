@@ -242,7 +242,7 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
+		filePath = KFileDialog::getOpenFileName( KUrl() ,"*", 0l  , i18n( "Kopete File Transfer" ));
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 

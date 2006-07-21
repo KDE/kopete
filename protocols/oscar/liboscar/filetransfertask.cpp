@@ -33,6 +33,7 @@
 #include <typeinfo>
 #include "kopetetransfermanager.h"
 #include <qfileinfo.h>
+#include <klocale.h>
 
 //TODO: don't have such ugly constructors
 
