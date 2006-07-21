@@ -18,19 +18,18 @@
 #ifndef KOPETEEDITGLOBALIDENTITYWIDGET_H
 #define KOPETEEDITGLOBALIDENTITYWIDGET_H
 
-#include <qwidget.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <QMouseEvent>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
 
+class QSize;
 /**
- * This is a simple widget added to a toolbar in KopeteWindow.
+ * @brief This is a simple widget added to a toolbar in KopeteWindow.
  *
  * It can edit the global photo and the global nickname. 
  * When either the photo or the nickname change, it's set the source to Custom.
  * When well connected(signal/slot), it react to the toolbar icon size change.
  *
- * @author Michaël Larouche
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
 class KopeteEditGlobalIdentityWidget : public QWidget
 {
@@ -41,13 +40,11 @@ public:
 
 public slots:
 	/**
-	 * This slot is called when the "parent" toolbar change its icon size.
+	 * @brief Change the icon size for the global identity picture.
+	 *
+	 * @param size New icon size.
 	 */
-	void iconSizeChanged();
-	/**
-	 * This slot is called to first set the icon size.
-	 */
-	void setIconSize(int size);
+	void setIconSize(const QSize &size);
 
 private:
 	/**

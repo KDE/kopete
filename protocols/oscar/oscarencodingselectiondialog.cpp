@@ -21,7 +21,6 @@
 #include "oscarencodingselectiondialog.h"
 
 #include <kdebug.h>
-#include <q3combobox.h>
 #include <klocale.h>
 
 OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int initialEncoding )
@@ -86,8 +85,8 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
 	m_encodings.insert(106, i18n("UTF-8 Unicode"));
 	m_encodings.insert(1015, i18n("UTF-16 Unicode"));
 
-    m_encodingUI->encodingCombo->insertStringList( m_encodings.values() );
-    if( (initialEncodingIndex = m_encodings.keys().findIndex(initialEncoding)) == -1 )
+	m_encodingUI->encodingCombo->insertItems( 0, m_encodings.values() );
+	if( (initialEncodingIndex = m_encodings.keys().indexOf(initialEncoding)) == -1 )
     {
         kWarning() << k_funcinfo << "Requested encoding mib " << initialEncoding
                 << " not in encoding list - defaulting to first encoding item"
@@ -106,7 +105,7 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
 int OscarEncodingSelectionDialog::selectedEncoding() const
 {
     QString encoding = m_encodingUI->encodingCombo->currentText();
-    int mib = m_encodings.keys()[ m_encodings.values().findIndex(encoding) ];
+	int mib = m_encodings.keys()[ m_encodings.values().indexOf(encoding) ];
     
     if( mib == -1 )
         return 0;

@@ -20,45 +20,23 @@
 #ifndef KOPETEWINDOW_H
 #define KOPETEWINDOW_H
 
-#include <q3ptrdict.h>
-//Added by qt3to4:
-#include <QShowEvent>
-#include <QEvent>
-#include <QCloseEvent>
+// Qt includes
+#include <QtGui/QLabel>
 
+// KDE includes
 #include <kmainwindow.h>
-#include <qlabel.h>
 
+class QCloseEvent;
+class QEvent;
+class QShowEvent;
 
-class KHBox;
-class QTimer;
-class QLineEdit;
-class QSignalMapper;
-
-class QMouseEvent;
-class QPoint;
-
-class KAction;
-class KActionMenu;
-
-class KGlobalAccel;
-class KSelectAction;
-class KSqueezedTextLabel;
-class KToggleAction;
-
-class KopeteAccountStatusBarIcon;
-class KopeteContactListView;
-class KopetePluginConfig;
-class KopeteSystemTray;
-class KopeteEditGlobalIdentityWidget;
+class KMenu;
 
 namespace Kopete
 {
-class AwayAction;
-class Account;
-class Contact;
-class Plugin;
-class Protocol;
+	class Account;
+	class Contact;
+	class Plugin;
 }
 
 /**
@@ -93,8 +71,7 @@ private slots:
 	void slotShowHide();
 	void slotToggleAway();
 
-	/* show the global status message selector menu
-	 */
+
 	void setStatusMessage( const QString & );
 	
 	/**
@@ -150,11 +127,6 @@ private slots:
 	void slotAccountStatusIconChanged();
 
 	/**
-	 * Show a context menu for a protocol
-	 */
-//	void slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, const QPoint &p );
-
-	/**
 	 * Show a context menu for an account
 	 */
 	void slotAccountStatusIconRightClicked( Kopete::Account *a,
@@ -184,13 +156,12 @@ private slots:
 	 */
 	void slotBuildStatusMessageMenu();
 	void slotStatusMessageSelected( int i );
-	void slotEnterStatusMessage();
 	void slotNewStatusMessageEntered();
 
-        /**
-         * Show the set global status message menu when clicking on the icon in the status bar.
-         */
-        void slotGlobalStatusMessageIconClicked( const QPoint &position );
+	/**
+	 * Show the set global status message menu when clicking on the icon in the status bar.
+	 */
+	void slotGlobalStatusMessageIconClicked( const QPoint &position );
 
 	/**
 	 * Extracts protocolId and accountId from the single QString argument signalled by a QSignalMapper,
@@ -200,34 +171,6 @@ private slots:
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
 	
-public:
-	KopeteContactListView *contactlist;
-
-	// Some Actions
-	KActionMenu* actionAddContact;
-
-	//KActionMenu* actionConnectionMenu;
-	//KAction* actionConnect;
-	KAction* actionDisconnect;
-	KAction* actionExportContacts;
-
-	KActionMenu* actionAwayMenu;
-	KActionMenu* actionDockMenu;
-	KAction* selectAway;
-	KAction* selectBusy;
-	KAction* actionSetAvailable;
-	KAction* actionSetInvisible;
-
-
-	KAction* actionPrefs;
-	KAction* actionQuit;
-	KAction* actionSave;
-	KToggleAction *menubarAction;
-	KToggleAction *statusbarAction;
-	KToggleAction *actionShowOffliners;
-	KToggleAction *actionShowEmptyGroups;
-
-	KopeteEditGlobalIdentityWidget *editGlobalIdentityWidget;
 private:
 	void initView();
 	void initActions();
@@ -240,31 +183,10 @@ private:
 
 	virtual bool queryClose();
 	virtual bool queryExit();
+
 private:
-	int docked;
-	bool hidden;
-	int deskRight;
-	QPoint position;
-	KHBox *m_statusBarWidget;
-	KopeteSystemTray *m_tray;
-	bool m_autoHide;
-	unsigned int m_autoHideTimeout;
-	QTimer* m_autoHideTimer;
-	QSignalMapper* addContactMapper;
-
-	KopetePluginConfig *m_pluginConfig;
-
-	/**
-	 * This is really a dictionary of KopeteAccountStatusBarIcon objects, but
-	 * QPtrDict requires a full class definition to be known to make
-	 * that work. And since I don't want to include that whole file here,
-	 * use QObject instead.
-	 */
-	Q3PtrDict<QObject> m_accountStatusBarIcons;
-	KSqueezedTextLabel * m_globalStatusMessage;
-	KMenu * m_globalStatusMessageMenu;
-	QLineEdit * m_newMessageEdit;
-	QString m_globalStatusMessageStored;
+	class Private;
+	Private *d;
 };
 
 

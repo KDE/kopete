@@ -6,7 +6,7 @@
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +19,7 @@
 */
 
 #include "kopetemetacontact.h"
+#include "kopetemetacontact_p.h"
 
 #include <kapplication.h>
 
@@ -40,9 +41,6 @@
 #include "kopetegroup.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
-#include "kopetepicture.h"
-
-#include "kopetepicture.h"
 
 namespace Kopete {
 
@@ -53,49 +51,6 @@ const QString NSAID_ELEM = QString::fromUtf8( "nameSourceAccountId" );
 const QString PSCID_ELEM = QString::fromUtf8( "photoSourceContactId" );
 const QString PSPID_ELEM = QString::fromUtf8( "photoSourcePluginId" );
 const QString PSAID_ELEM = QString::fromUtf8( "photoSourceAccountId" );
-
-class  MetaContact::Private
-{ public:
-	Private() :
-		photoSource(MetaContact::SourceCustom), displayNameSource(MetaContact::SourceCustom),
-		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false),
-		onlineStatus(Kopete::OnlineStatus::Offline), photoSyncedWithKABC(false)
-	{}
-
-	QList<Contact *> contacts;
-	~Private()
-	{}
-
-
-	// property sources
-	PropertySource photoSource;
-	PropertySource displayNameSource;
-
-	// when source is contact
-	Contact *displayNameSourceContact;
-	Contact *photoSourceContact;
-
-	// used when source is kabc
-	QString metaContactId;
-
-	// used when source is custom
-	QString displayName;
-	KUrl photoUrl;
-
-	QList<Group *> groups;
-	QMap<QString, QMap<QString, QString> > addressBook;
-	bool temporary;
-
-	OnlineStatus::StatusType onlineStatus;
-	bool photoSyncedWithKABC;
-
-	// Used to set contact source at load.
-	QString nameSourcePID, nameSourceAID, nameSourceCID;
-	QString photoSourcePID, photoSourceAID, photoSourceCID;
-
-	// The photo cache. Reduce disk access and CPU usage.
-	Picture customPicture, contactPicture, kabcPicture;
-};
 
 MetaContact::MetaContact()
 	: ContactListElement( ContactList::self() )
@@ -681,7 +636,7 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 KUrl MetaContact::customPhoto() const
 {
-	return KUrl::fromPathOrUrl(d->customPicture.path());
+	return KUrl(d->customPicture.path());
 }
 
 void MetaContact::setPhoto( const KUrl &url )
@@ -975,7 +930,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 	QDomElement photo = metaContact.createElement( QString::fromUtf8("photo" ) );
-	KUrl photoUrl = KUrl::fromPathOrUrl(d->customPicture.path());
+	KUrl photoUrl = KUrl(d->customPicture.path());
 	photo.appendChild( metaContact.createTextNode( photoUrl.url() ) );
 	metaContact.documentElement().appendChild( photo );
 
@@ -1091,7 +1046,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 		else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
 		{
 			// custom photo, used for custom photo source
-			setPhoto( KUrl::fromPathOrUrl(contactElement.text()) );
+			setPhoto( KUrl(contactElement.text()) );
 
 			d->photoSyncedWithKABC = (contactElement.attribute(QString::fromUtf8("syncWithKABC")) == QString::fromUtf8("1")) || (contactElement.attribute(QString::fromUtf8("syncWithKABC")) == QString::fromUtf8("true"));
 
@@ -1420,7 +1375,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 				if(newValue.canConvert( QVariant::Image ))
 					img=newValue.value<QImage>();
 				else if(newValue.canConvert( QVariant::Pixmap ))
-					img=newValue.value<QPixmap>();
+					img=newValue.value<QPixmap>().toImage();
 
 				if(img.isNull())
 				{

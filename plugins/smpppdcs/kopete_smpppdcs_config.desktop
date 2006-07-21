@@ -4,9 +4,8 @@ Icon=smpppdcs
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-ModuleType=Library
 X-KDE-Library=kopete_smpppdcs
-X-KDE-FactoryName=SMPPPDCSConfigFactory
+X-KDE-FactoryName=kcm_kopete_smpppdcs
 X-KDE-ParentApp=kopete_smpppdcs
 X-KDE-ParentComponents=kopete_smpppdcs
 

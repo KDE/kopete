@@ -17,14 +17,14 @@
 #ifndef SMSUSERPREFERENCES_H
 #define SMSUSERPREFERENCES_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kvbox.h>
 
 class SMSPreferencesBase;
 class SMSUserPrefsUI;
 class SMSContact;
 
-class SMSUserPreferences : public KDialogBase
+class SMSUserPreferences : public KDialog
 {
 	Q_OBJECT
 public:

@@ -98,8 +98,7 @@ void SSIListTask::handleContactListReply()
 	for ( parsedItems = 1; parsedItems <= ssiItems; ++parsedItems )
 	{
 		tlvList.clear();
-		WORD strlength = buffer->getWord();
-		QString itemName = QString::fromUtf8( buffer->getBlock( strlength ), strlength );
+		QString itemName = QString::fromUtf8( buffer->getBSTR() );
 		WORD groupId = buffer->getWord();
 		WORD itemId = buffer->getWord();
 		WORD itemType = buffer->getWord();

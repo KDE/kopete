@@ -188,7 +188,7 @@
                                     <string>To use SMS, you will need an account with a delivery service.</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>AlignTop</set>
+                                    <set>Qt::AlignTop</set>
                                 </property>
                                 <property name="wordWrap">
                                     <bool>true</bool>
@@ -201,7 +201,7 @@
                             <cstring>spacer25</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -377,7 +377,7 @@
                             <cstring>spacer27</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -400,7 +400,7 @@
                 <string></string>
             </property>
             <property name="alignment">
-                <set>AlignCenter</set>
+                <set>Qt::AlignCenter</set>
             </property>
         </widget>
     </vbox>

@@ -534,10 +534,6 @@ private slots:
 private:
 	class Private;
 	Private *d;
-
-protected:
-	virtual void virtual_hook( uint id, void* data);
-
 };
 
 } //END namespace Kopete

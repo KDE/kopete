@@ -133,7 +133,7 @@ void dlgJabberVCard::assignContactProperties ()
 	QString homepage = m_contact->property(m_account->protocol()->propHomepage).value().toString();
 	m_mainWidget->leHomepage->setText (homepage);
 	m_mainWidget->urlHomepage->setText (homepage);
-	m_mainWidget->urlHomepage->setURL (homepage);
+	m_mainWidget->urlHomepage->setUrl (homepage);
 	m_mainWidget->urlHomepage->setUseCursor ( !homepage.isEmpty () );
 
 	// Set photo
@@ -166,7 +166,7 @@ void dlgJabberVCard::assignContactProperties ()
 	QString homeEmail = m_contact->property(m_account->protocol()->propEmailAddress).value().toString();
 	m_mainWidget->leWorkEmail->setText (workEmail);
 	m_mainWidget->urlWorkEmail->setText (workEmail);
-	m_mainWidget->urlWorkEmail->setURL ("mailto:" + workEmail);
+	m_mainWidget->urlWorkEmail->setUrl ("mailto:" + workEmail);
 	bool enableMail=!workEmail.trimmed().isEmpty ();
 	m_mainWidget->urlWorkEmail->setUseCursor ( enableMail );
 	m_mainWidget->urlWorkEmail->setEnabled ( enableMail ); 
@@ -174,7 +174,7 @@ void dlgJabberVCard::assignContactProperties ()
 	m_mainWidget->leHomeEmail->setText (homeEmail);
 	m_mainWidget->urlHomeEmail->setText (homeEmail);
 	enableMail=!homeEmail.trimmed().isEmpty ();
-	m_mainWidget->urlHomeEmail->setURL ("mailto:" + homeEmail);
+	m_mainWidget->urlHomeEmail->setUrl ("mailto:" + homeEmail);
 	m_mainWidget->urlHomeEmail->setUseCursor ( enableMail );
 	m_mainWidget->urlHomeEmail->setEnabled ( enableMail );
 
@@ -476,7 +476,7 @@ void dlgJabberVCard::slotSelectPhoto()
 {
 	QString path;
 	bool remoteFile = false;
-	KUrl filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Jabber Photo" ) );
+	KUrl filePath = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "Jabber Photo" ) );
 	if( filePath.isEmpty() )
 		return;
 
@@ -527,7 +527,7 @@ void dlgJabberVCard::slotSelectPhoto()
 				img = img.copy(0, (img.height()-img.width())/2, img.height(), img.height());
 		}
 
-		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().toLower().replace(QRegExp("[./~]"),"-")  +".png");
+		m_photoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().toLower().replace(QRegExp("[./~]"),"-")  +".png");
 		if( img.save(m_photoPath, "PNG") )
 		{
 			m_mainWidget->lblPhoto->setPixmap( QPixmap::fromImage(img) );

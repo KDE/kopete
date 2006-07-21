@@ -59,7 +59,7 @@ public:
 	int m_status;
 };
 
-GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
+GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
  : GroupWiseContactSearchWidget(parent, name), m_account( account ), m_onlineOnly( onlineOnly )
 {
 	m_results->setSelectionMode( mode );

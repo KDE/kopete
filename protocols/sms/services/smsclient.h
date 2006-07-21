@@ -23,7 +23,7 @@
 #include <qobject.h>
 #include <qstringlist.h>
 //Added by qt3to4:
-#include <QGridLayout>
+#include <Q3GridLayout>
 
 class SMSClientPrefsUI;
 class SMSContact;
@@ -38,7 +38,7 @@ public:
 	~SMSClient();
 
 	void send(const Kopete::Message& msg);
-	void setWidgetContainer(QWidget* parent, QGridLayout* container);
+	void setWidgetContainer(QWidget* parent, Q3GridLayout* container);
 
 	int maxSize();
 	const QString& description();

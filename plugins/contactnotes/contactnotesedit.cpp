@@ -44,7 +44,7 @@ ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p)
 
 	m_linesEdit->setText(p->notes(m));
 
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	setMainWidget(w);
 }
 

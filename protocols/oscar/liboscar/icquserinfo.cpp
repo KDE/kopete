@@ -211,24 +211,14 @@ ICQSearchResult::ICQSearchResult()
 void ICQSearchResult::fill( Buffer* buffer )
 {
 	buffer->getLEWord(); // data length ( eat it )
-	WORD len = 0;
+
 	uin = buffer->getLEDWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
-	len = buffer->getLEWord();
-	if ( len > 0 )
-		nickName = buffer->getBlock( len );
-
-	len = buffer->getLEWord();
-	if ( len > 0 )
-		firstName = buffer->getBlock( len );
-
-	len = buffer->getLEWord();
-	if ( len > 0 )
-		lastName = buffer->getBlock( len );
-
-	len = buffer->getLEWord();
-	if ( len > 0 )
-		email = buffer->getBlock( len );
+	
+	nickName = buffer->getLELNTS();
+	firstName = buffer->getLELNTS();
+	lastName = buffer->getLELNTS();
+	email = buffer->getLELNTS();
 
 	auth = ( buffer->getByte() != 0x01 );
 	online = ( buffer->getLEWord() == 0x0001 );

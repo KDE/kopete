@@ -33,7 +33,6 @@
 #include <qtextedit.h>
 
 #include <kdatewidget.h>*/
-#include <q3valuelist.h>
 #include <kdialog.h>
 /*
 #include <klineedit.h>
@@ -273,7 +272,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(385, kl->twoAlphaToCountryName("hr"));
 	mCountries.insert(53, kl->twoAlphaToCountryName("cu"));
 	mCountries.insert(357, kl->twoAlphaToCountryName("cy"));
-	mCountries.insert(420, kl->twoAlphaToCountryName("cz"));
+	mCountries.insert(42, kl->twoAlphaToCountryName("cz"));
 	mCountries.insert(45, kl->twoAlphaToCountryName("dk"));
 	mCountries.insert(246, i18n("Diego Garcia"));
 	mCountries.insert(253, kl->twoAlphaToCountryName("dj"));
@@ -410,7 +409,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(248, kl->twoAlphaToCountryName("sc"));
 	mCountries.insert(232, kl->twoAlphaToCountryName("sl"));
 	mCountries.insert(65, kl->twoAlphaToCountryName("sg"));
-	mCountries.insert(421, kl->twoAlphaToCountryName("sk"));
+	mCountries.insert(4201, kl->twoAlphaToCountryName("sk"));
 	mCountries.insert(386, kl->twoAlphaToCountryName("si"));
 	mCountries.insert(677, kl->twoAlphaToCountryName("sb"));
 	mCountries.insert(252, kl->twoAlphaToCountryName("so"));
@@ -668,7 +667,7 @@ void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &ma
 //	kDebug(14153) << k_funcinfo << "Called." << endl;
 	QMap<int, QString>::ConstIterator it;
 	it = map.find(value);
-	if ( it = map.end() )
+	if ( it == map.end() )
 		return;
 
 	for(int i=0; i<box->count(); i++)
@@ -780,7 +779,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
     if ( serializedData.contains( "ssi_type" ) )
 	ssiType = serializedData["ssi_type"].toUInt();
 
-	OContact item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
+	OContact item( ssiName, ssiGid, ssiBid, ssiType, QList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	ICQContact *c = new ICQContact( static_cast<ICQAccount*>(account), contactId, metaContact, QString::null, item );
 	return c;

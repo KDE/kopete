@@ -299,14 +299,14 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 	QString pic;
 
 	//maybe an extension was given, so try to find the exact file
-	pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt );
+	pic = dir->findResource( "emoticons", d->theme + QLatin1String( "/" ) + filenameNoExt );
 
 	if( pic.isNull() )
-		pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".mng" ) );
+		pic = dir->findResource( "emoticons", d->theme + QLatin1String( "/" ) + filenameNoExt + QLatin1String( ".mng" ) );
 	if ( pic.isNull() )
-		pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".png" ) );
+		pic = dir->findResource( "emoticons", d->theme + QLatin1String( "/" ) + filenameNoExt + QLatin1String( ".png" ) );
 	if ( pic.isNull() )
-		pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".gif" ) );
+		pic = dir->findResource( "emoticons", d->theme + QLatin1String( "/" ) + filenameNoExt + QLatin1String( ".gif" ) );
 
 	if( !pic.isNull() ) // only add if we found one file
 	{
@@ -327,15 +327,15 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 			// Unless we do so, ChatMessagePart::slotScrollView does not work properly and causing
 			// HTMLPart not to be scrolled to the very last message.
 			p.load( e.picPath );
-			result = QString::fromLatin1( "<img align=\"center\" src=\"" ) +
+			result = QLatin1String( "<img align=\"center\" src=\"" ) +
 				  e.picPath +
-				  QString::fromLatin1( "\" title=\"" ) +
+				  QLatin1String( "\" title=\"" ) +
 				  matchEscaped +
-				  QString::fromLatin1( "\" width=\"" ) +
+				  QLatin1String( "\" width=\"" ) +
 				  QString::number( p.width() ) +
-				  QString::fromLatin1( "\" height=\"" ) +
+				  QLatin1String( "\" height=\"" ) +
 				  QString::number( p.height() ) +
-				  QString::fromLatin1( "\" />" );
+				  QLatin1String( "\" />" );
 
 			e.picHTMLCode = result;
 			e.matchTextEscaped = matchEscaped;
@@ -364,10 +364,10 @@ void Emoticons::initEmoticons( const QString &theme )
 	d->emoticonAndPicList.clear();
 	d->emoticonMap.clear();
 
-	QString filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
+	QString filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QLatin1String( "/emoticons.xml" ) );
 	if(!filename.isEmpty())
 		return initEmoticon_emoticonsxml( filename );
-	filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/icondef.xml" ) );
+	filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QLatin1String( "/icondef.xml" ) );
 	if(!filename.isEmpty())
 		return initEmoticon_JEP0038( filename );
 	kWarning(14010) << k_funcinfo << "emotiucon XML theme description not found" <<endl;
@@ -375,7 +375,7 @@ void Emoticons::initEmoticons( const QString &theme )
 
 void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 {
-	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );	
+	QDomDocument emoticonMap( QLatin1String( "messaging-emoticon-map" ) );	
 	
 	QFile mapFile( filename );
 	mapFile.open( QIODevice::ReadOnly );
@@ -388,10 +388,10 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 		QDomElement element = node.toElement();
 		if( !element.isNull() )
 		{
-			if( element.tagName() == QString::fromLatin1( "emoticon" ) )
+			if( element.tagName() == QLatin1String( "emoticon" ) )
 			{
 				QString emoticon_file = element.attribute(
-						QString::fromLatin1( "file" ), QString::null );
+						QLatin1String( "file" ), QString::null );
 				QStringList items;
 
 				QDomNode emoticonNode = node.firstChild();
@@ -400,7 +400,7 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 					QDomElement emoticonElement = emoticonNode.toElement();
 					if( !emoticonElement.isNull() )
 					{
-						if( emoticonElement.tagName() == QString::fromLatin1( "string" ) )
+						if( emoticonElement.tagName() == QLatin1String( "string" ) )
 						{
 							items << emoticonElement.text();
 						}
@@ -430,7 +430,7 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 
 void Emoticons::initEmoticon_JEP0038( const QString & filename)
 {
-	QDomDocument emoticonMap( QString::fromLatin1( "icondef" ) );	
+	QDomDocument emoticonMap( QLatin1String( "icondef" ) );	
 	
 	QFile mapFile( filename );
 	mapFile.open( IO_ReadOnly );
@@ -443,7 +443,7 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 		QDomElement element = node.toElement();
 		if( !element.isNull() )
 		{
-			if( element.tagName() == QString::fromLatin1( "icon" ) )
+			if( element.tagName() == QLatin1String( "icon" ) )
 			{
 				QStringList items;
 				QString emoticon_file;
@@ -454,16 +454,16 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 					QDomElement emoticonElement = emoticonNode.toElement();
 					if( !emoticonElement.isNull() )
 					{
-						if( emoticonElement.tagName() == QString::fromLatin1( "text" ) )
+						if( emoticonElement.tagName() == QLatin1String( "text" ) )
 						{
 							//TODO xml:lang
 							items << emoticonElement.text();
 						}
-						else if( emoticonElement.tagName() == QString::fromLatin1( "object" ) && emoticon_file.isEmpty() )
+						else if( emoticonElement.tagName() == QLatin1String( "object" ) && emoticon_file.isEmpty() )
 						{
 							QString mime= emoticonElement.attribute(
-									QString::fromLatin1( "mime" ), QString::fromLatin1("image/*") );
-							if(mime.startsWith(QString::fromLatin1("image/")) && !mime.endsWith(QString::fromLatin1("/svg+xml")))
+									QLatin1String( "mime" ), QLatin1String("image/*") );
+							if(mime.startsWith(QLatin1String("image/")) && !mime.endsWith(QLatin1String("/svg+xml")))
 							{
 								emoticon_file = emoticonElement.text();
 							}

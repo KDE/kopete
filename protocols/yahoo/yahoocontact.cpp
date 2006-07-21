@@ -469,7 +469,7 @@ void YahooContact::stealthContact()
 	stealthSettingDialog->setCaption( i18n("Stealth Setting") );
 	stealthSettingDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	stealthSettingDialog->setDefaultButton(KDialog::Ok);
-	stealthSettingDialog->enableButtonSeparator(true);
+	stealthSettingDialog->showButtonSeparator(true);
 	
 	QWidget* w = new QWidget( stealthSettingDialog );
 	Ui::YahooStealthSetting stealthWidget = Ui::YahooStealthSetting();
@@ -558,10 +558,10 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 	if( !f )
 		return;
 	// stolen from msncontact.cpp ;)
-	QString newlocation=locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 	
-	KIO::Job *j=KIO::file_move( KUrl::fromPathOrUrl( f->name() ) , KUrl::fromPathOrUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl( f->name() ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
 	f->setAutoDelete(false);
 	delete f;
@@ -593,7 +593,7 @@ const YABEntry *YahooContact::yabEntry()
 void YahooContact::slotEmitDisplayPictureChanged()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QString newlocation=locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( Kopete::Global::Properties::self()->photo(), QString() );
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();

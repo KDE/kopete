@@ -101,6 +101,6 @@ int main( int argc, char *argv[] )
 //	kapp->dcopClient()->registerAs( "kopete", false );
 //	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
 
-	kopete.exec();
+	return kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:

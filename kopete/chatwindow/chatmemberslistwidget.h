@@ -36,7 +36,7 @@ class ChatMembersListWidget : public K3ListView
 {
 	Q_OBJECT
 public:
-	ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent);
+	ChatMembersListWidget( QWidget *parent, Kopete::ChatSession *session = 0);
 	virtual ~ChatMembersListWidget();
 
 	Kopete::ChatSession *session() { return m_session; }
@@ -88,6 +88,11 @@ private slots:
 	 * @param item The list view item representing the clicked contact
 	 */
 	void slotExecute( Q3ListViewItem *contact );
+	
+	/**
+	 * Called when the ChatSession change for this list (eg. when the tab in the KopeteChatWindow is changing)
+	 */
+	void setChatSession(Kopete::ChatSession *session);
 
 private:
 	Kopete::ChatSession *m_session;

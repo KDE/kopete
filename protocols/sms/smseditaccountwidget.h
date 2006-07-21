@@ -19,14 +19,14 @@
 
 #include <qwidget.h>
 //Added by qt3to4:
-#include <QGridLayout>
+#include <Q3GridLayout>
 #include "editaccountwidget.h"
 
 class SMSProtocol;
 class SMSService;
 class smsActPrefsUI;
 namespace Kopete { class Account; }
-class QGridLayout;
+class Q3GridLayout;
 
 class SMSEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
@@ -45,7 +45,7 @@ protected:
 	QWidget *configWidget;
 	SMSService *service;
 	SMSProtocol *m_protocol;
-	QGridLayout *middleFrameLayout;
+	Q3GridLayout *middleFrameLayout;
 
 signals:
 	void saved();

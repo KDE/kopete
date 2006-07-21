@@ -112,85 +112,85 @@ bool Properties::isRegistered(const QString &key)
 
 const ContactPropertyTmpl &Properties::fullName() const
 {
-	return createProp(QString::fromLatin1("FormattedName"),
+	return createProp(QLatin1String("FormattedName"),
 		i18n("Full Name"));
 }
 
 const ContactPropertyTmpl &Properties::idleTime() const
 {
-	return createProp(QString::fromLatin1("idleTime"),
+	return createProp(QLatin1String("idleTime"),
 		i18n("Idle Time"));
 }
 
 const ContactPropertyTmpl &Properties::onlineSince() const
 {
-	return createProp(QString::fromLatin1("onlineSince"),
+	return createProp(QLatin1String("onlineSince"),
 		i18n("Online Since"));
 }
 
 const ContactPropertyTmpl &Properties::lastSeen() const
 {
-	return createProp(QString::fromLatin1("lastSeen"),
+	return createProp(QLatin1String("lastSeen"),
 		i18n("Last Seen"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::statusMessage() const
 {
-	return createProp(QString::fromLatin1("statusMessage"),
+	return createProp(QLatin1String("statusMessage"),
 		i18n("Status Message"));
 }
 
 const ContactPropertyTmpl &Properties::firstName() const
 {
-	return createProp(QString::fromLatin1("firstName"),
+	return createProp(QLatin1String("firstName"),
 		i18n("First Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::lastName() const
 {
-	return createProp(QString::fromLatin1("lastName"),
+	return createProp(QLatin1String("lastName"),
 		i18n("Last Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::privatePhone() const
 {
-	return createProp(QString::fromLatin1("privatePhoneNumber"),
+	return createProp(QLatin1String("privatePhoneNumber"),
 		i18n("Private Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::privateMobilePhone() const
 {
-	return createProp(QString::fromLatin1("privateMobilePhoneNumber"),
+	return createProp(QLatin1String("privateMobilePhoneNumber"),
 		i18n("Private Mobile Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::workPhone() const
 {
-	return createProp(QString::fromLatin1("workPhoneNumber"),
+	return createProp(QLatin1String("workPhoneNumber"),
 		i18n("Work Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::workMobilePhone() const
 {
-	return createProp(QString::fromLatin1("workMobilePhoneNumber"),
+	return createProp(QLatin1String("workMobilePhoneNumber"),
 		i18n("Work Mobile Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::emailAddress() const
 {
-	return createProp(QString::fromLatin1("emailAddress"),
-		i18n("Email Address"), QString::fromLatin1("mail_generic"), true);
+	return createProp(QLatin1String("emailAddress"),
+		i18n("Email Address"), QLatin1String("mail_generic"), true);
 }
 
 const ContactPropertyTmpl &Properties::nickName() const
 {
-	return createProp(QString::fromLatin1("nickName"),
+	return createProp(QLatin1String("nickName"),
 		i18n("Nick Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::photo() const
 {
-	return createProp(QString::fromLatin1("photo"),
+	return createProp(QLatin1String("photo"),
 					  i18n("Photo"), QString::null, true);
 }
 
@@ -228,7 +228,7 @@ void installEmoticonTheme(const QString &archiveName)
 	KProgressDialog *progressDlg = 0L;
 	KArchive *archive = 0L;
 
-	QString localThemesDir(locateLocal("emoticons", QString::null) );
+	QString localThemesDir(KStandardDirs::locateLocal("emoticons", QString::null) );
 
 	if(localThemesDir.isEmpty())
 	{
@@ -277,8 +277,8 @@ void installEmoticonTheme(const QString &archiveName)
 		if (currentEntry->isDirectory())
 		{
 			currentDir = dynamic_cast<KArchiveDirectory*>( currentEntry );
-			if (currentDir && ( currentDir->entry(QString::fromLatin1("emoticons.xml")) != NULL ||
-						 		currentDir->entry(QString::fromLatin1("icondef.xml")) != NULL ) )
+			if (currentDir && ( currentDir->entry(QLatin1String("emoticons.xml")) != NULL ||
+						 		currentDir->entry(QLatin1String("icondef.xml")) != NULL ) )
 				foundThemes.append(currentDir->name());
 		}
 	}

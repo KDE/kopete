@@ -1649,7 +1649,7 @@ QString RTF2HTML::quoteString(const QString &_str, quoteMode mode)
     int len;
     int pos = 0;
 
-    while ((pos = re.search(str, pos)) != -1) {
+	while ((pos = re.indexIn(str, pos)) != -1) {
         len = re.matchedLength();
 
         if (len == 1)

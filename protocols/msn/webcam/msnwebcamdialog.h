@@ -25,7 +25,7 @@
 #include <webcamwidget.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "kopete_export.h"
 
@@ -33,7 +33,7 @@ class QPixmap;
 class QWidget;
 class MSNContact;
 
-class MSNWebcamDialog : public KDialogBase
+class MSNWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:

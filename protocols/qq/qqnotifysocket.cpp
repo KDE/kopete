@@ -45,19 +45,33 @@
 #include <qfile.h>
 #include <kconfig.h>
 #include <knotification.h>
+#include <QHostAddress>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopetestatusmessage.h"
+#include "libeva.h"
 
-#include <ctime>
 
-
-QQNotifySocket::QQNotifySocket( QQAccount *account, const QString& /*qqId*/, const QString &password )
+QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
 {
 	m_account = account;
-	m_password=password;
+	// FIXME: Do we really need password ?
+	m_password = password;
+	m_newstatus = Kopete::OnlineStatus::Offline;
+	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
+	m_passwordKey = Eva::QQHash(pwd);
+	pwd.release(); // the data is handled in QT
+	m_loginMode = Eva::NormalLogin;
+
+	// DELME: dump the result
+	QByteArray tmp( m_passwordKey.data(), m_passwordKey.size() );
+	kDebug(14140) << endl << endl << "!!!!" << k_funcinfo << "passwordKey = " << tmp << m_passwordKey.size() << endl;
+
+
+	// FIXME: more error-checking.
+	m_qqId = account->accountId().toInt();
 }
 
 QQNotifySocket::~QQNotifySocket()
@@ -65,25 +79,36 @@ QQNotifySocket::~QQNotifySocket()
 	kDebug(14140) << k_funcinfo << endl;
 }
 
+
 void QQNotifySocket::doneConnect()
 {
+	// setup the status first
+	QQSocket::doneConnect();
+
 	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
-	sendLoginTokenRequest();
+	if( m_token.size() )
+		sendLogin();
+	else
+		sendLoginTokenRequest();
 }
 
 
 void QQNotifySocket::disconnect()
 {
+	kDebug(14140) << k_funcinfo << "online status =" <<
+		onlineStatus() << endl;
 	// FIXME: double check the logic, please.
 	if(	m_disconnectReason==Kopete::Account::Unknown )
 		m_disconnectReason=Kopete::Account::Manual;
-	if( onlineStatus() != Offline )
-	{
+	// sendGoodbye, shall we setup the status as well ?
+	if( onlineStatus() == Connected )
 		sendGoodbye();
-		QQSocket::disconnect();
-	}
-	else
+
+	// the socket is not connected yet, so I should force the signals
+	if ( onlineStatus() == Disconnected || onlineStatus() == Connecting )
 		emit socketClosed();
+	else
+		QQSocket::disconnect();
 }
 
 void QQNotifySocket::handleError( uint code, uint id )
@@ -99,13 +124,205 @@ void QQNotifySocket::handleError( uint code, uint id )
 	}
 }
 
-void QQNotifySocket::parsePacket( const QByteArray& data )
+// Core functions
+void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 {
-	// TODO: develop me!
+	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
+	Eva::Packet packet( rawdata.data(), rawdata.size() );
+	Eva::ByteArray text;
+	int len;
+
+	Eva::ByteArray initKey((char*) Eva::getInitKey(), 16 );
+	initKey.release();
+
+	kDebug( 14140 ) << "command = " << packet.command() << endl;
+	switch( packet.command() )
+	{
+		case Eva::RequestLoginToken :
+			text = Eva::loginToken( packet.body() );
+			break;
+
+		case Eva::Login :
+			text = Eva::decrypt( packet.body(), m_passwordKey );
+			if( text.size() == 0 )
+				text = Eva::decrypt( packet.body(), initKey );
+			break;
+
+		default:
+			text = Eva::decrypt( packet.body(), m_sessionKey );
+			if ( text.size() == 0 )
+				text = Eva::decrypt( packet.body(), m_passwordKey );
+	}
+			
+	kDebug( 14140 ) << "text = " << QByteArray( text.data(), text.size() ) << endl;
+
+	
+	switch( packet.command() )
+	{
+		// FIXME: use table-driven pattern ?
+		case Eva::Logout :
+		case Eva::KeepAlive :
+		case Eva::UpdateInfo :
+		case Eva::Search :
+		case Eva::UserInfo :
+		case Eva::AddFriend :
+		case Eva::RemoveFriend :
+		case Eva::AuthInvite :
+			break;
+		case Eva::ChangeStatus :
+			if( Eva::Packet::replyCode(text) == Eva::ChangeStatusOK )
+			{
+				kDebug( 14140 ) << "ChangeStatus ok" << endl;
+				emit statusChanged( m_newstatus );
+			}
+			else // TODO: Debug me.
+				disconnect();
+			break;
+
+		case Eva::AckSysMsg :
+		case Eva::SendMsg :
+		case Eva::ReceiveMsg :
+		case Eva::RemoveMe :
+		case Eva::RequestKey :
+		case Eva::GetCell :
+			break;
+
+		case Eva::Login :
+			switch( Eva::Packet::replyCode(text)  )
+			{
+				case Eva::LoginOK:
+					kDebug( 14140 ) << "Bingo! QQ:#" << m_qqId << " logged in!" << endl;
+					// show off some meta data :
+					m_sessionKey = Eva::Packet::sessionKey(text);
+					kDebug( 14140 ) << "sessionKey = " << 
+						QByteArray( m_sessionKey.data(), m_sessionKey.size() ) << endl;
+
+					kDebug( 14140 )  << "remote IP: " << QHostAddress( Eva::Packet::remoteIP(text) ).toString() << endl;
+					kDebug( 14140 )  << "remote port: " << Eva::Packet::remotePort(text) << endl;
+					kDebug( 14140 )  << "local IP: " << QHostAddress( Eva::Packet::localIP(text) ).toString() << endl;
+					kDebug( 14140 )  << "local port: " << Eva::Packet::localPort(text) << endl;
+					kDebug( 14140 )  << "login time: " << Eva::Packet::loginTime(text) << endl;
+					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
+					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
+
+					emit newContactList();
+					// FIXME: We might login in as invisible as well.
+					m_newstatus = Kopete::OnlineStatus::Online;
+					sendChangeStatus( Eva::Online );
+					// TODO: sendRequestKey() for the file transfer function.
+
+					break;
+
+				case Eva::LoginRedirect :
+					kDebug( 14140 ) << "Redirect to " 
+						<< QHostAddress(Eva::Packet::redirectedIP(text)).toString()
+						<< " : " << Eva::Packet::redirectedPort(text) << endl;
+					disconnect();
+					connect( QHostAddress( Eva::Packet::redirectedIP(text) ).toString(), Eva::Packet::redirectedPort(text) );
+					break;
+
+				case Eva::LoginWrongPassword :
+					break;
+
+				case Eva::LoginMiscError :
+					break;
+
+				default:
+					kDebug( 14140 ) << "Bad, we are not supposed to be here !" << endl;
+					break;
+			}
+
+			break;
+
+		case Eva::ContactList :
+			{
+				len = 2;
+				while( len < text.size() )
+					emit contactList( Eva::contactInfo( text.data(), len ) );
+				short pos = ntohs( Eva::type_cast<short> (text.data()) );
+
+				if( pos != Eva::ContactListEnd )
+					sendContactList(pos);
+			}
+			break;
+		case Eva::ContactsOnline :
+		case Eva::GetCell2 :
+		case Eva::SIP :
+		case Eva::Test :
+			break;
+		case Eva::GroupNames :
+			doGroupList( text );
+			break;
+
+		case Eva::UploadGroups :
+		case Eva::Memo :
+		case Eva::DownloadGroup :
+			break;
+		case Eva::GetLevel :
+			break;
+
+		case Eva::RequestLoginToken :
+			m_token = text;
+			kDebug( 14140 ) << packet.command() << ": token = " << 
+				QByteArray ( m_token.data(), m_token.size() ) << endl;
+
+			sendLogin();
+			break;
+
+		case Eva::ExtraInfo :
+		case Eva::Signature :
+		case Eva::ReceiveSysMsg :
+		case Eva::FriendStausChange :
+
+		default:
+			break;
+
+	}
 }
 
+// FIXME: Refactor us !!
+void QQNotifySocket::sendLoginTokenRequest()
+{
+	Eva::ByteArray data = Eva::requestLoginToken(m_qqId, m_id++);
+	sendPacket( QByteArray( data.data(), data.size()) );
+}
+
+void QQNotifySocket::sendLogin()
+{
+	Eva::ByteArray data = Eva::login( m_qqId, m_id++, m_passwordKey, 
+				m_token, m_loginMode );
+	sendPacket( QByteArray( data.data(), data.size()) );
+}
+
+void QQNotifySocket::sendChangeStatus( char status )
+{
+	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+
+void QQNotifySocket::sendContactList( short pos )
+{
+	Eva::ByteArray packet = Eva::contactList( m_qqId, m_id++, m_sessionKey, pos );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+
+void QQNotifySocket::sendDLGroupNames()
+{
+	Eva::ByteArray packet = Eva::dlGroupNames( m_qqId, m_id++, m_sessionKey );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+
+void QQNotifySocket::doGroupList( const Eva::ByteArray& text )
+{
+	QStringList ql;
+	std::list< std::string > l = Eva::groupNames( text );
+	for( std::list<std::string>::const_iterator it = l.begin(); it != l.end(); it++ )
+		ql.append( QString( (*it).c_str() ) );
+
+	kDebug(14140) << k_funcinfo << endl;
+	// FIXME: a better name for the signal ?
+	emit groupList( ql );
+}
 
 #include "qqnotifysocket.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

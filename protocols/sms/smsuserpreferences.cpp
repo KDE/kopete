@@ -24,10 +24,16 @@
 #include "smscontact.h"
 
 SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
-	: KDialogBase( 0L, "userPrefs", true, i18n("User Preferences"), Ok|Cancel, Ok, true )
+	: KDialog( 0L)
 {
 	m_contact = contact;
-	topWidget = makeVBoxMainWidget();
+	setCaption(i18n("User Preferences"));
+	setButtons(Ok|Cancel);
+	setDefaultButton(Ok);
+	setModal(true);
+	showButtonSeparator(true);
+	topWidget = new KVBox(this);
+	setMainWidget(topWidget);
 	userPrefs = new SMSUserPrefsUI( topWidget );
 
 	userPrefs->telNumber->setText(m_contact->phoneNumber());

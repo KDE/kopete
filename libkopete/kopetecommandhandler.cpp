@@ -182,7 +182,7 @@ void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &co
 
 void Kopete::CommandHandler::unregisterCommand( QObject *parent, const QString &command )
 {
-	if( p->pluginCommands[ parent ].find(command) )
+	if( p->pluginCommands[ parent ].contains(command) )
 		p->pluginCommands[ parent ].remove( command );
 }
 
@@ -198,7 +198,7 @@ void Kopete::CommandHandler::registerAlias( QObject *parent, const QString &alia
 
 void Kopete::CommandHandler::unregisterAlias( QObject *parent, const QString &alias )
 {
-	if( p->pluginCommands[ parent ].find(alias) )
+	if( p->pluginCommands[ parent ].contains(alias) )
 		p->pluginCommands[ parent ].remove( alias );
 }
 

@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_webpresence )
 
 target_link_libraries(kopete_webpresence  ${KDE4_KDECORE_LIBS} kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_webpresence )
+install(TARGETS kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -33,14 +33,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_webpresence )
 
 target_link_libraries(kcm_kopete_webpresence  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_webpresence )
+install(TARGETS kcm_kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_webpresence.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete/webpresence FILES webpresence_html.xsl 	      webpresence_html_images.xsl 	      webpresence_xhtml.xsl 	      webpresence_xhtml_images.xsl )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_webpresence_config.desktop )
+install( FILES kopete_webpresence.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES webpresence_html.xsl 	      webpresence_html_images.xsl 	      webpresence_xhtml.xsl 	      webpresence_xhtml_images.xsl  DESTINATION ${DATA_INSTALL_DIR}/kopete/webpresence)
+install( FILES kopete_webpresence_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

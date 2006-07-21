@@ -19,7 +19,7 @@ kopetechatwindowstyle.cpp )
 kde4_automoc(${kopetechatwindow_shared_SRCS})
 kde4_add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
 target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KDEUI_LIBS} ${KDE4_KHTML_LIBS} )
-install_targets(${LIB_INSTALL_DIR} kopetechatwindow_shared )
+install(TARGETS kopetechatwindow_shared  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 
@@ -33,12 +33,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
 target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KPARTS_LIBS} ${KDE4_KSPELL2_LIBS} ${KDE4_KDEPRINT_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} krichtexteditpart )
+install(TARGETS krichtexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
 
-set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistwidget.cpp )
+set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistwidget.cpp sidebarwidget.cpp)
 
 kde4_automoc(${kopete_chatwindow_PART_SRCS})
 
@@ -48,7 +48,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
 target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_chatwindow )
+install(TARGETS kopete_chatwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -63,7 +63,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
 target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_emailwindow )
+install(TARGETS kopete_emailwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -71,9 +71,9 @@ install_targets(${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kopeterichtexteditpart FILES kopeterichtexteditpartfull.rc )
-install_files( ${SERVICES_INSTALL_DIR} FILES chatwindow.desktop emailwindow.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete FILES kopetechatwindow.rc kopeteemailwindow.rc )
+install( FILES kopeterichtexteditpartfull.rc  DESTINATION ${DATA_INSTALL_DIR}/kopeterichtexteditpart)
+install( FILES chatwindow.desktop emailwindow.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopetechatwindow.rc kopeteemailwindow.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
 
 
 

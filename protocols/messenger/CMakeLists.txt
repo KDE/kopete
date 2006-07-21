@@ -18,12 +18,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_messenger )
 
 target_link_libraries(kopete_messenger  ${KDE4_KIO_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_messenger )
+install(TARGETS kopete_messenger  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_messenger.desktop )
+install( FILES kopete_messenger.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

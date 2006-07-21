@@ -20,7 +20,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_translator )
 
 target_link_libraries(kopete_translator  ${KDE4_KDECORE_LIBS} kopete kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_translator )
+install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -37,14 +37,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_translator )
 
 target_link_libraries(kcm_kopete_translator  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_translator )
+install(TARGETS kcm_kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_translator.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_translator FILES translatorui.rc translatorchatui.rc )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_translator_config.desktop )
+install( FILES kopete_translator.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES translatorui.rc translatorchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_translator)
+install( FILES kopete_translator_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

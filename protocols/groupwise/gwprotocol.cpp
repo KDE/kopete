@@ -22,7 +22,7 @@
 #include <qregexp.h>
 #include <qstringlist.h>
 //Added by qt3to4:
-#include <QTextStream>
+#include <Q3TextStream>
 #include <QByteArray>
 
 #include <kgenericfactory.h>
@@ -251,7 +251,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "bogus utf-8 lead byte: 0x" << QTextStream::hex << current << endl;
+				kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current << endl;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}

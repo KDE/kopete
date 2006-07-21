@@ -22,6 +22,7 @@
 #include <kfileitem.h>
 #include <kmessagebox.h>
 #include <kio/observer.h>
+#include <kio/jobuidelegate.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -74,7 +75,7 @@ void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 
 	connect( this, SIGNAL( result( KJob* ) ), SLOT( slotResultEmitted() ) );
 
-	setAutoErrorHandlingEnabled( true, 0 );
+	ui()->setAutoErrorHandlingEnabled( true );
 }
 
 Kopete::Transfer::~Transfer()
@@ -244,7 +245,7 @@ void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, 
 
 	//If the file location is null, then get it from a file open dialog
 	if( !url.isValid() )
-		url = KFileDialog::getOpenURL( QString::null, QString::fromLatin1("*"), 0l, i18n( "Kopete File Transfer" ));
+		url = KFileDialog::getOpenUrl( KUrl(), QString::fromLatin1("*"), 0l, i18n( "Kopete File Transfer" ));
 	else
 	{
 		filename = fname;

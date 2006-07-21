@@ -292,7 +292,7 @@ void Contact::changeMetaContact()
 	moveDialog->setCaption( i18n( "Move Contact" ) );
 	moveDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	moveDialog->setDefaultButton( KDialog::Ok );
-	moveDialog->enableButtonSeparator( true );
+	moveDialog->showButtonSeparator( true );
 
 	KVBox *w = new KVBox( moveDialog );
 	w->setSpacing( KDialog::spacingHint() );
@@ -877,13 +877,7 @@ QString Kopete::Contact::nickName() const
 	return contactId();
 }
 
-void Contact::virtual_hook( uint , void * )
-{ }
-
-
 } //END namespace Kopete
 
-
 #include "kopetecontact.moc"
-
 

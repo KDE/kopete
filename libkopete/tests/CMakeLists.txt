@@ -1,62 +1,63 @@
 
-add_subdirectory( mock ) 
+if(KDE4_BUILD_TESTS)
 
+#add_subdirectory( mock )
 
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/mock/ ${KOPETE_INCLUDES} )
 
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
-########### next target ###############
+add_definitions( -DSRCDIR="\\"${CMAKE_CURRENT_SOURCE_DIR}/\\"" )
+
+set( KOPETE_TEST_LIBRARIES ${QT_QTTEST_LIBRARY} ${KDE4_KIO_LIBS} kopete )
+
+########### Automated tests ###############
 
 set(kopeteemoticontest_SRCS kopeteemoticontest.cpp )
 
 kde4_automoc(${kopeteemoticontest_SRCS})
 
-if(KDE4_BUILD_TESTS)
-
 kde4_add_executable(kopeteemoticontest ${kopeteemoticontest_SRCS})
 
 target_link_libraries(kopeteemoticontest  ${KDE4_KDECORE_LIBS} )
 
-endif(KDE4_BUILD_TESTS)
+add_test(kopeteemoticontest ${EXECUTABLE_OUTPUT_PATH}/kopeteemoticontest)
 
-########### next target ###############
+####
 
 set(kopetemessage_test_SRCS kopetemessage_test.cpp )
 
 kde4_automoc(${kopetemessage_test_SRCS})
 
-if(KDE4_BUILD_TESTS)
-
 kde4_add_executable(kopetemessage_test ${kopetemessage_test_SRCS})
 
 target_link_libraries(kopetemessage_test  ${KDE4_KDECORE_LIBS} )
 
-endif(KDE4_BUILD_TESTS)
+add_test(kopetemessage_test ${EXECUTABLE_OUTPUT_PATH}/kopetemessage_test)
 
-########### next target ###############
+####
 
 set(kopetetask_test_SRCS kopetetask_test.cpp )
 
 kde4_automoc(${kopetetask_test_SRCS})
 
-if(KDE4_BUILD_TESTS)
-
 kde4_add_executable(kopetetask_test ${kopetetask_test_SRCS})
 
 target_link_libraries(kopetetask_test  ${KDE4_KDECORE_LIBS} )
 
-endif(KDE4_BUILD_TESTS)
+add_test(kopetetask_test ${EXECUTABLE_OUTPUT_PATH}/kopetetask_test)
 
-########### next target ###############
+####
 
 set(statusmessage_test_SRCS statusmessage_test.cpp )
 
 kde4_automoc(${statusmessage_test_SRCS})
 
-if(KDE4_BUILD_TESTS)
-
 kde4_add_executable(statusmessage_test ${statusmessage_test_SRCS})
 
 target_link_libraries(statusmessage_test  ${KDE4_KDECORE_LIBS} )
+
+add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 
 endif(KDE4_BUILD_TESTS)
 

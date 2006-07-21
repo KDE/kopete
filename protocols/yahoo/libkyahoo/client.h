@@ -7,7 +7,7 @@
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
     Copyright (C) 2003  Justin Karneges
     
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -23,8 +23,6 @@
 #define LIBYAHOO_CLIENT_H
 
 #include <qobject.h>
-#include <QPixmap>
-#include <Q3CString>
 #include <kurl.h>
 
 #include "libkyahoo_export.h"
@@ -36,6 +34,7 @@
 
 class QString;
 class QTimer;
+class QPixmap;
 class ClientStream;
 class KNetworkConnector;
 class Task;
@@ -63,9 +62,10 @@ Q_OBJECT
 		 * Start a connection to the server using the supplied @ref ClientStream.
 		 * This is only a transport layer connection.
 		 * Needed for protocol action P1.
-		 * @param s initialised client stream to use for the connection.
-		 * @param server the server to connect to - but this is also set on the connector used to construct the clientstream??
-		 * @param auth indicate whether we're connecting to the authorizer or the bos server
+		 * @param host The server to connect to.
+		 * @param port The port to be used. The Yahoo server allows connection on arbitrary ports.
+		 * @param userId The yahoo ID that will be connected.
+		 * @param pass The password.
 		 */
 		void connect( const QString &host, const uint port, const QString &userId, const QString &pass );
 
@@ -333,11 +333,6 @@ Q_OBJECT
 		 * The current user's password
 		 */
 		QString password();
-		
-		/**
-		 * Host's IP address
-		 */
-		Q3CString ipAddress();
 		
 		/**
 		 * current Session ID

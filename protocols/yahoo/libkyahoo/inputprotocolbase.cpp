@@ -18,7 +18,7 @@
 
 #include "inputprotocolbase.h"
 
-#include <Q3CString>
+#include <QByteArray>
 #include <QDataStream>
 
 InputProtocolBase::InputProtocolBase(QObject *parent)
@@ -39,7 +39,7 @@ uint InputProtocolBase::state() const
 bool InputProtocolBase::readString( QString &message )
 {
 	uint len;
-	Q3CString rawData;
+	QByteArray rawData;
 	if ( !safeReadBytes( rawData, len ) )
 		return false;
 	message = QString::fromUtf8( rawData.data(), len - 1 );
@@ -62,7 +62,7 @@ bool InputProtocolBase::okToProceed()
 	return false;
 }
 
-bool InputProtocolBase::safeReadBytes( Q3CString & data, uint & len )
+bool InputProtocolBase::safeReadBytes( QByteArray & data, uint & len )
 {
 	// read the length of the bytes
 	Q_UINT32 val;
@@ -73,7 +73,7 @@ bool InputProtocolBase::safeReadBytes( Q3CString & data, uint & len )
 	if ( val > 1024 )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
-	Q3CString temp( val );
+	QByteArray temp;
 	if ( val != 0 )
 	{
 		if ( !okToProceed() )
@@ -85,7 +85,7 @@ bool InputProtocolBase::safeReadBytes( Q3CString & data, uint & len )
 		// so look for that in the last position instead of \0
 		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...
 		// if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
-		if ( temp.length() < ( val - 1 ) )
+		if ( temp.length() < static_cast<int>( val - 1 ) )
 		{
 			qDebug( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %i bytes out of %i",  temp.length(), val );
 			m_state = NeedMore;

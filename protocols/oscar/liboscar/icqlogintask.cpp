@@ -81,7 +81,9 @@ QString IcqLoginTask::encodePassword( const QString& loginPassword )
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Called." << endl;
 
 	// TODO: check if latin1 is the right conversion
-	const char *password = loginPassword.toLatin1();
+	QByteArray password = loginPassword.toLatin1();
+
+	const uint MAX_PASSWORD_SIZE = 8;
 	unsigned int i = 0;
 	QString encodedPassword = QString::null;
 
@@ -94,12 +96,9 @@ QString IcqLoginTask::encodePassword( const QString& loginPassword )
 		0x53, 0x7a, 0x95, 0x7c
 	};
 	
-	for (i = 0; i < 8; i++)
-	{
-		if(password[i] == 0)
-			break; //found a null in the password. don't encode it
-		encodedPassword.append( password[i] ^ encoding_table[i] );
-	}
+	const uint size = qMin( (uint)password.size(), MAX_PASSWORD_SIZE );
+	for (i = 0; i < size; i++)
+		encodedPassword.append( password.at(i) ^ encoding_table[i] );
 
 #ifdef OSCAR_PWDEBUG
 	kDebug(OSCAR_RAW_DEBUG) << " plaintext pw='" << loginPassword << "', length=" <<

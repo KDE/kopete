@@ -25,18 +25,17 @@
 #define NLNOATUN_H
 
 class QDBusInterface;
-struct QDBusInterfacePtr;
 
 class NLNoatun : public NLMediaPlayer
 {
 	public:
 		NLNoatun();
+		virtual ~NLNoatun();
 		virtual void update();
  	private:
 		QString currentProperty(const QString &property);
-		QDBusInterface *client();
 
-		QDBusInterfacePtr *m_client;
+		QDBusInterface *m_client;
 };
 
 #endif

@@ -29,25 +29,28 @@
 
 #include "qqsocket.h"
 #include "qqprotocol.h"
+#include "libeva.h"
 
 
 class QQAccount;
 class KTempFile;
 
+
 /**
  * @author Hui Jin
+ * 
+ * QQNotifySocket is inspried by MSNNotifySocket, the QQ incoming packets are
+ * parsed here.
  */
 class QQNotifySocket : public QQSocket
 {
 	Q_OBJECT
 
 public:
-	QQNotifySocket( QQAccount* account, const QString &qqId, const QString &password );
+	QQNotifySocket( QQAccount* account, const QString &password );
 	~QQNotifySocket();
 
 	virtual void disconnect();
-
-	void setStatus( const Kopete::OnlineStatus &status );
 
 	/**
 	 * this should return a  Kopete::Account::DisconnectReason value
@@ -58,6 +61,9 @@ public:
 
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
+	void newContactList();
+	void contactList( const Eva::ContactInfo& ci );
+	void groupList( const QStringList& ql );
 
 protected:
 	/**
@@ -79,12 +85,38 @@ protected:
 	virtual void doneConnect();
 
 	// QQ operations
-	void sendLoginTokenRequest() { return; }
+	void sendLoginTokenRequest(); 
+	void sendLogin(); 
+	void sendContactList( short pos );
+	void sendChangeStatus( char status );
 	void sendGoodbye() { return; }
 
-private:
+public:
+	void sendDLGroupNames();
 
+private:
+	void doGroupList( const Eva::ByteArray& text );
+
+private:
 	QQAccount *m_account;
+	/**
+	 * stores the expected status
+	 * would synchronize when ChangeStatus packet recieved.
+	 */
+	Kopete::OnlineStatus m_newstatus; 
+	
+	uint m_qqId;
+	/** 
+	 * stores the token requested from the server
+	 */
+	Eva::ByteArray m_token;
+	/**
+	 * Twice Md5 hashed password
+	 */
+	Eva::ByteArray m_passwordKey;
+	Eva::ByteArray m_sessionKey;
+	char m_loginMode;
+	// FIXME: Do we need this ?
 	QString m_password;
 
 	int m_disconnectReason;

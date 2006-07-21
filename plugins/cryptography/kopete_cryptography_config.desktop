@@ -4,9 +4,8 @@ Icon=encrypted
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-ModuleType=Library
 X-KDE-Library=kopete_cryptography
-X-KDE-FactoryName=CryptographyConfigFactory
+X-KDE-FactoryName=kcm_kopete_cryptography
 X-KDE-ParentApp=kopete_cryptography
 X-KDE-ParentComponents=kopete_cryptography
 

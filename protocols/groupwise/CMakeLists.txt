@@ -25,13 +25,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_groupwise )
 
 target_link_libraries(kopete_groupwise  ${KDE4_KDECORE_LIBS} kopetegroupwiseui groupwise kopete kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_groupwise )
+install(TARGETS kopete_groupwise  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_groupwise.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_groupwise FILES gwchatui.rc )
+install( FILES kopete_groupwise.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES gwchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_groupwise)
 
 
 

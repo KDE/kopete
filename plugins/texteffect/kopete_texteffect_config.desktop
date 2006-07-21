@@ -4,9 +4,8 @@ Icon=texteffect
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-ModuleType=Library
 X-KDE-Library=kopete_texteffect
-X-KDE-FactoryName=TextEffectConfigFactory
+X-KDE-FactoryName=kcm_kopete_texteffect
 X-KDE-ParentApp=kopete_texteffect
 X-KDE-ParentComponents=kopete_texteffect
 

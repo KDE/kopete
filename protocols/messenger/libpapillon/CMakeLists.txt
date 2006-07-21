@@ -65,5 +65,5 @@ kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
 
 target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QCA2_LIBRARIES} )
 
-install_targets( ${LIB_INSTALL_DIR} papillon_kopete )
+install(TARGETS papillon_kopete  DESTINATION ${LIB_INSTALL_DIR})
 

@@ -141,32 +141,32 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
 								 this, SLOT (slotSendAuth ()), 0, "actionSendAuth");
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
-	actionAuthorization->insert(resendAuthAction);
+	actionAuthorization->addAction(resendAuthAction);
 
 	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
 								 this, SLOT (slotRequestAuth ()), 0, "actionRequestAuth");
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
-	actionAuthorization->insert(requestAuthAction);
+	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
 								 this, SLOT (slotRemoveAuth ()), 0, "actionRemoveAuth");
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
-	actionAuthorization->insert(removeAuthAction);
+	actionAuthorization->addAction(removeAuthAction);
 
 	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), 0, "jabber_online");
 
-	actionSetAvailability->insert(new KAction (i18n ("Online"), protocol()->JabberKOSOnline.iconFor(this),
-								  0, this, SLOT (slotStatusOnline ()), 0, "actionOnline"));
-	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"), protocol()->JabberKOSChatty.iconFor(this),
-								  0, this, SLOT (slotStatusChatty ()), 0, "actionChatty"));
-	actionSetAvailability->insert(new KAction (i18n ("Away"), protocol()->JabberKOSAway.iconFor(this),
-								  0, this, SLOT (slotStatusAway ()), 0, "actionAway"));
-	actionSetAvailability->insert(new KAction (i18n ("Extended Away"), protocol()->JabberKOSXA.iconFor(this),
-								  0, this, SLOT (slotStatusXA ()), 0, "actionXA"));
-	actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"), protocol()->JabberKOSDND.iconFor(this),
-								  0, this, SLOT (slotStatusDND ()), 0, "actionDND"));
-	actionSetAvailability->insert(new KAction (i18n ("Invisible"), protocol()->JabberKOSInvisible.iconFor(this),
-								  0, this, SLOT (slotStatusInvisible ()), 0, "actionInvisible"));
+	actionSetAvailability->addAction(new KAction (i18n ("Online"), protocol()->JabberKOSOnline.iconFor(this),
+									 0, this, SLOT (slotStatusOnline ()), 0, "actionOnline"));
+	actionSetAvailability->addAction(new KAction (i18n ("Free to Chat"), protocol()->JabberKOSChatty.iconFor(this),
+									 0, this, SLOT (slotStatusChatty ()), 0, "actionChatty"));
+	actionSetAvailability->addAction(new KAction (i18n ("Away"), protocol()->JabberKOSAway.iconFor(this),
+									 0, this, SLOT (slotStatusAway ()), 0, "actionAway"));
+	actionSetAvailability->addAction(new KAction (i18n ("Extended Away"), protocol()->JabberKOSXA.iconFor(this),
+									 0, this, SLOT (slotStatusXA ()), 0, "actionXA"));
+	actionSetAvailability->addAction(new KAction (i18n ("Do Not Disturb"), protocol()->JabberKOSDND.iconFor(this),
+									 0, this, SLOT (slotStatusDND ()), 0, "actionDND"));
+	actionSetAvailability->addAction(new KAction (i18n ("Invisible"), protocol()->JabberKOSInvisible.iconFor(this),
+									 0, this, SLOT (slotStatusInvisible ()), 0, "actionInvisible"));
 
 	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), 0, "actionSelectResource");
 
@@ -205,8 +205,8 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 		{
 			if( i == activeItem )
 			{
-				actionSelectResource->insert ( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
-											   0, QString::number( i ).toLatin1() ) );
+				actionSelectResource->addAction ( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
+												  0, QString::number( i ).toLatin1() ) );
 			}
 			else
 			{
@@ -217,8 +217,8 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 				QIcon iconSet ( !i ?
 					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
 
-				actionSelectResource->insert ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
-											   0, QString::number( i ).toLatin1() ) );
+				actionSelectResource->addAction ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
+												  0, QString::number( i ).toLatin1() ) );
 			}
 
 			i++;
@@ -815,7 +815,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 	QImage contactPhoto;
 	QString fullJid =  mRosterItem.jid().full();
-	QString finalPhotoPath = locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
+	QString finalPhotoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
 	
 	// photo() is a QByteArray
 	if ( !vCard.photo().isEmpty() )
@@ -982,7 +982,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	if(contactPhoto.width() > 96 || contactPhoto.height() > 96)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1001,7 +1001,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() < 32 || contactPhoto.height() < 32)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -1020,7 +1020,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() != contactPhoto.height())
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KUrl::fromPathOrUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
 
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
@@ -1269,7 +1269,7 @@ void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( QString::null , "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( KUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 

@@ -552,9 +552,6 @@ signals:
 	void propertyChanged( Kopete::Contact *contact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue );
 
-protected:
-	virtual void virtual_hook(uint id, void *data);
-
 private:
 	class Private;
 	Private *d;

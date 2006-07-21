@@ -173,6 +173,13 @@ int Buffer::addTLV(WORD type, WORD len, const char *data)
 	return addString(data,len);
 }
 
+int Buffer::addLETLV(WORD type, WORD len, const char *data)
+{
+	addLEWord( type );
+	addLEWord( len );
+	return addString( data, len );
+}
+
 BYTE Buffer::getByte()
 {
 	BYTE thebyte = 0x00;
@@ -245,7 +252,9 @@ void Buffer::setBuf(char *b, const WORD len)
 
 QByteArray Buffer::getBlock(WORD len)
 {
-	QByteArray ch( len );
+	QByteArray ch;
+	ch.resize( len );
+
 	for ( int i = 0; i < len; i++ )
 	{
 		ch[i] = getByte();
@@ -291,11 +300,25 @@ int Buffer::addTLV16(const WORD type, const WORD data)
 	return addWord(data);
 }
 
+int Buffer::addLETLV16(const WORD type, const WORD data)
+{
+	addLEWord(type);
+	addLEWord(0x0002); //2 bytes long
+	return addLEWord(data);
+}
+
 int Buffer::addTLV8(const WORD type, const BYTE data)
 {
 	addWord(type);
 	addWord(0x0001); //1 byte long
 	return addByte(data);
+}
+
+int Buffer::addLETLV8(const WORD type, const BYTE data)
+{
+	addLEWord(type);
+	addLEWord(0x0001); //1 byte long
+	return addLEByte(data);
 }
 
 TLV Buffer::getTLV()
@@ -356,15 +379,17 @@ void Buffer::expandBuffer(unsigned int inc)
 
 QByteArray Buffer::getLNTS()
 {
-	WORD len = getLEWord();
+	WORD len = getWord() - 1;
 	QByteArray qcs( getBlock(len) );
+	skipBytes( 1 );
 	return qcs;
 }
 
 QByteArray Buffer::getLELNTS()
 {
-	WORD len = getLEWord();
+	WORD len = getLEWord() - 1;
 	QByteArray qcs( getBlock(len) );
+	skipBytes( 1 );
 	return qcs;
 }
 

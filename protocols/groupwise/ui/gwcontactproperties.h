@@ -23,7 +23,7 @@
 #include <qobject.h>
 
 class GroupWiseContactPropsWidget;
-class KDialogBase;
+class KDialog;
 class Q3ListViewItem;
 class KAction;
 
@@ -54,7 +54,7 @@ protected slots:
 private:
 	GroupWiseContactPropsWidget * m_propsWidget;
 	KAction * m_copyAction;
-	KDialogBase * m_dialog;
+	KDialog * m_dialog;
 };
 
 #endif

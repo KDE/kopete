@@ -370,12 +370,12 @@ KActionMenu * Account::actionMenu()
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
-	menu->kMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 	);
 
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
-	menu->kMenu()->addSeparator();
+	menu->menu()->addSeparator();
 
 	KAction *propertiesAction = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
@@ -569,14 +569,7 @@ QString Account::customIcon()  const
 	return d->customIcon;
 }
 
-void Account::virtual_hook( uint /*id*/, void* /*data*/)
-{
-}
-
-
-
-}
-
- //END namespace Kopete
+} // END namespace Kopete
 
 #include "kopeteaccount.moc"
+

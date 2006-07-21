@@ -9,7 +9,7 @@ kde4_add_library(gadu_kopete SHARED ${libgadu_SRCS})
 
 target_link_libraries(gadu_kopete pthread ${OPENSSL_LIBRARIES} )
 
-install_targets( ${LIB_INSTALL_DIR} gadu_kopete )
+install(TARGETS gadu_kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 

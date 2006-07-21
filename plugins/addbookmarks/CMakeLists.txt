@@ -15,7 +15,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_addbookmarks )
 
 target_link_libraries(kopete_addbookmarks  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_addbookmarks )
+install(TARGETS kopete_addbookmarks  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -32,13 +32,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_addbookmarks )
 
 target_link_libraries(kcm_kopete_addbookmarks kopete ${KDE4_KUTILS_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_addbookmarks )
+install(TARGETS kcm_kopete_addbookmarks  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_addbookmarks.desktop )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_addbookmarks_config.desktop )
+install( FILES kopete_addbookmarks.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_addbookmarks_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

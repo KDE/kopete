@@ -39,7 +39,7 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 	setCaption(  i18n( "Away Dialog" ) );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
-	enableButtonSeparator( true );
+	showButtonSeparator( true );
 
 	Kopete::OnlineStatus ks;
 	int s;

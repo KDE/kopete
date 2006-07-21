@@ -20,8 +20,7 @@
 
 #include <kdebug.h>
 #include"bytestream.h"
-//Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 // CS_NAMESPACE_BEGIN
 
@@ -136,18 +135,6 @@ int ByteStream::bytesToWrite() const
 {
 // 	kDebug(14181) << k_funcinfo << "[bytes left: " <<  d->writeBuf.size() << " ]" << endl;
 	return d->writeBuf.size();
-}
-
-//!
-//! Writes string \a cs to the stream.
-void ByteStream::write(const Q3CString &cs)
-{
-// 	kDebug(14181) << k_funcinfo << "[data size: " << cs.length() << "]" << endl;
-	
-	QByteArray block;
-	block.reserve(cs.length());
-	memcpy(block.data(), cs.data(), block.size());
-	write(block);
 }
 
 //!

@@ -5,5 +5,5 @@ add_subdirectory( Variants )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kopete/styles/Konqi/Contents/Resources FILES main.css Footer.html Header.html Status.html puce.png )
+install( FILES main.css Footer.html Header.html Status.html puce.png  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Konqi/Contents/Resources)
 

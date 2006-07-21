@@ -59,10 +59,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory
 KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &args )
 : KCModule( KopeteAccountConfigFactory::instance(), parent, args )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-
-	m_view = new QWidget( this );
-	setupUi( m_view );
+	setupUi( this );
 
 	mAccountList->setColumnCount(2);
 	QStringList header;
@@ -228,7 +225,7 @@ void KopeteAccountConfig::slotEditAccount()
 	editDialog->setCaption( i18n("Edit Account" ) );
 	editDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	editDialog->setDefaultButton(KDialog::Ok);
-	editDialog->enableButtonSeparator(true);
+	editDialog->showButtonSeparator(true);
 
 	KopeteEditAccountWidget *m_accountWidget = proto->createEditAccountWidget( ident, editDialog );
 	if ( !m_accountWidget )

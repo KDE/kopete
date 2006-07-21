@@ -179,7 +179,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	else if(message.header.dataSize == 4 && message.applicationIdentifier == 1)
 	{
 		// Data preparation message.
-		m_tempFile = new KTempFile(locateLocal("tmp", "msnpicture--"), ".png");
+		m_tempFile = new KTempFile(KStandardDirs::locateLocal("tmp", "msnpicture--"), ".png");
 		m_tempFile->setAutoDelete(true);
 		m_file = m_tempFile->file();
 		m_state = DataTransfer;

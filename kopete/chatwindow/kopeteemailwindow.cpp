@@ -32,7 +32,6 @@
 
 #include <kaction.h>
 #include <kstdaction.h>
-#include <k3widgetaction.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -188,7 +187,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 		toggleMode( Send );
 
 	KConfig *config = KGlobal::config();
-	applyMainWindowSettings( config, QString::fromLatin1( "KopeteEmailWindow" )  );
+	applyMainWindowSettings( config, QLatin1String( "KopeteEmailWindow" )  );
 
 	d->sendInProgress = false;
 
@@ -211,7 +210,7 @@ KopeteEmailWindow::~KopeteEmailWindow()
 
 	// saves menubar, toolbar and statusbar setting
 	KConfig *config = KGlobal::config();
-	saveMainWindowSettings( config, QString::fromLatin1( "KopeteEmailWindow" ) );
+	saveMainWindowSettings( config, QLatin1String( "KopeteEmailWindow" ) );
 	config->sync();
 
 	delete d;
@@ -256,19 +255,21 @@ void KopeteEmailWindow::initActions(void)
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 
 	// The animated toolbarbutton
-	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-//	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), K3Icon::Toolbar);
+	d->normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
+//	d->animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Toolbar);
 	d->animIcon.setPaused(true);
 
 	d->anim = new QLabel( this );
 	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
-	new K3WidgetAction( d->anim, i18n("Toolbar Animation"), 0, 0, 0, coll, "toolbar_animation" );
+	
+	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll, "toolbar_animation" );
+	animAction->setDefaultWidget( d->anim );
 
-	setXMLFile( QString::fromLatin1( "kopeteemailwindow.rc" ) );
+	setXMLFile( QLatin1String( "kopeteemailwindow.rc" ) );
 	createGUI( d->editPart );
-	//createGUI( QString::fromLatin1( "kopeteemailwindow.rc" ) );
+	//createGUI( QLatin1String( "kopeteemailwindow.rc" ) );
 	guiFactory()->addClient(m_manager);
 }
 
@@ -299,12 +300,12 @@ void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 
 void KopeteEmailWindow::slotConfToolbar()
 {
-	saveMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteEmailWindow" ));
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QString::fromLatin1("kopeteemailwindow.rc") );
+	saveMainWindowSettings(KGlobal::config(), QLatin1String( "KopeteEmailWindow" ));
+	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QLatin1String("kopeteemailwindow.rc") );
 	if (dlg->exec())
 	{
 		createGUI( d->editPart );
-		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteEmailWindow" ));
+		applyMainWindowSettings(KGlobal::config(), QLatin1String( "KopeteEmailWindow" ));
 	}
 	delete dlg;
 }
@@ -439,25 +440,25 @@ bool KopeteEmailWindow::closeView( bool force )
 		{
 			QString shortCaption = windowTitle();
 			if( shortCaption.length() > 40 )
-				shortCaption = shortCaption.left( 40 ) + QString::fromLatin1("...");
+				shortCaption = shortCaption.left( 40 ) + QLatin1String("...");
 
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
-				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseGroupChat"));
+				i18n("Cl&ose Chat"), QLatin1String("AskCloseGroupChat"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", d->unreadMessageFrom), i18n("Unread Message"),
-				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatRecentMessage"));
+				i18n("Cl&ose Chat"), QLatin1String("AskCloseChatRecentMessage"));
 		}
 
 		if( d->sendInProgress  && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
-				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatMessageInProgress") );
+				i18n("Cl&ose Chat"), QLatin1String("AskCloseChatMessageInProgress") );
 		}
 	}
 

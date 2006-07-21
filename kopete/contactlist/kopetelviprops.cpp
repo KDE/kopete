@@ -63,10 +63,10 @@
 
 #include "customnotificationprops.h"
 
-const char MC_OFF[] = "metacontact_offline";
-const char MC_ON[] = "metacontact_online";
-const char MC_AW[] = "metacontact_away";
-const char MC_UNK[] = "metacontact_unknown";
+const QLatin1String MC_OFF( "metacontact_offline" );
+const QLatin1String MC_ON( "metacontact_online" );
+const QLatin1String MC_AW( "metacontact_away" );
+const QLatin1String MC_UNK( "metacontact_unknown" );
 
 // KDE4 port notes:
 // setIcon has changed, so it has been commented out. 
@@ -213,19 +213,19 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	QString offlineName = item->metaContact()->icon( Kopete::ContactListElement::Offline );
 	if(offlineName.isEmpty())
-		offlineName = QString::fromLatin1(MC_OFF); // Default
+		offlineName = MC_OFF; // Default
 
 	QString onlineName = item->metaContact()->icon( Kopete::ContactListElement::Online );
 	if(onlineName.isEmpty())
-		onlineName = QString::fromLatin1(MC_ON); // Default
+		onlineName = MC_ON; // Default
 
 	QString awayName = item->metaContact()->icon( Kopete::ContactListElement::Away );
 	if(awayName.isEmpty())
-		awayName = QString::fromLatin1(MC_AW); // Default
+		awayName = MC_AW; // Default
 
 	QString unknownName = item->metaContact()->icon( Kopete::ContactListElement::Unknown );
 	if(unknownName.isEmpty())
-		unknownName = QString::fromLatin1(MC_UNK); // Default
+		unknownName = MC_UNK; // Default
 
 //	ui_mainWidget->icnbOffline->setIcon( offlineName );
 //	ui_mainWidget->icnbOnline->setIcon( onlineName );
@@ -453,7 +453,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
 	if ( !ui_mainWidget->cmbPhotoUrl->url().isEmpty())
-		item->metaContact()->setPhoto(KUrl::fromPathOrUrl((ui_mainWidget->cmbPhotoUrl->url())));
+		item->metaContact()->setPhoto(KUrl(ui_mainWidget->cmbPhotoUrl->url()));
 	item->metaContact()->setPhotoSyncedWithKABC( ui_mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(
@@ -539,7 +539,7 @@ void KopeteMetaLVIProps::slotImportClicked()
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {
 #if 0 
-	mNotificationProps->widget()->customSound->setURL( mSound.url() );
+	mNotificationProps->widget()->customSound->setUrl( mSound.url() );
 #endif
 }
 
@@ -571,7 +571,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 			dir = *it;
 			if ( dir.isReadable() && dir.count() > 2 ) {
 				soundURL.setPath( *it );
-				fileDialog->setURL( soundURL );
+				fileDialog->setUrl( soundURL );
 				break;
 			}
 			++it;

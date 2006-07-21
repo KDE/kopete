@@ -116,7 +116,7 @@
                                     <enum>Sunken</enum>
                                 </property>
                                 <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                    <enum>Qt::Horizontal</enum>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -264,7 +264,7 @@
                             <cstring>spacer7</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -287,7 +287,7 @@
                 <string></string>
             </property>
             <property name="alignment">
-                <set>AlignCenter</set>
+                <set>Qt::AlignCenter</set>
             </property>
         </widget>
     </vbox>

@@ -19,16 +19,15 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 #include <qtextcodec.h>
 
 #include <kapplication.h>
-#include <kactionclasses.h>
+
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <krandom.h>
+#include <ktoggleaction.h>
 
 #include "kopeteaway.h"
 #include "kopetechatsession.h"

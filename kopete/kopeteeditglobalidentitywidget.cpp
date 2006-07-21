@@ -65,8 +65,7 @@ void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
 class KopeteEditGlobalIdentityWidget::Private
 {
 public:
-	Private() : myself(0L), labelPicture(0L), lineNickname(0L), lineStatusMessage(0L), mainLayout(0L), iconSize(22),
-				lastNickname("")
+	Private() : myself(0L), labelPicture(0L), lineNickname(0L), lineStatusMessage(0L), mainLayout(0L), iconSize(22, 22)
 	{}
 		
 	Kopete::MetaContact *myself;
@@ -74,7 +73,7 @@ public:
 	KLineEdit *lineNickname;
 	KLineEdit *lineStatusMessage;
 	QHBoxLayout *mainLayout;
-	int iconSize;
+	QSize iconSize;
 	QString lastNickname;
 };
 
@@ -96,32 +95,16 @@ KopeteEditGlobalIdentityWidget::~KopeteEditGlobalIdentityWidget()
 	delete d;
 }
 
-void KopeteEditGlobalIdentityWidget::setIconSize(int size)
+void KopeteEditGlobalIdentityWidget::setIconSize(const QSize &size)
 {
 	kDebug(14000) << k_funcinfo << "Manually changing the icon size." << endl;
 
 	// Update the picture (change the size of it)
 	d->iconSize = size;
-	d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
-	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
+	d->labelPicture->setMinimumSize(d->iconSize);
+	d->labelPicture->setMaximumSize(d->iconSize);
 	if( !d->myself->picture().isNull() )
-		d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-}
-
-void KopeteEditGlobalIdentityWidget::iconSizeChanged()
-{
-	kDebug(14000) << k_funcinfo << "Changing icon size (i.e the picture size)" << endl;
-
-	KToolBar *tb = (KToolBar*)sender();
-	if(tb)
-	{
-		// Update the picture (change the size of it)
-// 		d->iconSize = tb->iconSize();
-		d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
-		d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));	
-		if( !d->myself->picture().isNull() )
-			d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-	}
+		d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 }
 
 void KopeteEditGlobalIdentityWidget::createGUI()
@@ -130,8 +113,8 @@ void KopeteEditGlobalIdentityWidget::createGUI()
 	
 	// The picture label
 	d->labelPicture = new ClickableLabel(this);
-	d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
-	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
+	d->labelPicture->setMinimumSize(d->iconSize);
+	d->labelPicture->setMaximumSize(d->iconSize);
 	d->labelPicture->setFrameShape(QFrame::Box);
 	d->mainLayout->addWidget(d->labelPicture);
 	connect(d->labelPicture, SIGNAL(clicked()), this, SLOT(photoClicked()));
@@ -154,8 +137,10 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 		// Update the picture and the tooltip
 		if( !d->myself->picture().isNull() )
 		{
-			d->labelPicture->setPixmap(QPixmap::fromImage(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-			d->labelPicture->setToolTip("<qt><img src=\""+ value.toString() +"\"></qt>");
+			QImage myselfImage = d->myself->picture().image();
+			d->labelPicture->setPixmap(QPixmap::fromImage(myselfImage.scaled(d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+			
+			d->labelPicture->setToolTip( QString::fromUtf8("<qt><img src=\"%1\" width=\"%2\" height=\"%3\"></qt>").arg(value.toString()).arg(myselfImage.width()).arg(myselfImage.height()) );
 		}
 	}
 	else if(key == Kopete::Global::Properties::self()->nickName().key())
@@ -168,7 +153,7 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 
 void KopeteEditGlobalIdentityWidget::photoClicked()
 {
-	KUrl photoURL = KFileDialog::getImageOpenURL(QString::null, this, i18n("Global Photo"));
+	KUrl photoURL = KFileDialog::getImageOpenUrl( KUrl(), this, i18n("Global Photo"));
 	if(photoURL.isEmpty())
 		return;
 
@@ -179,7 +164,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 		return;
 	}
 
-	QString saveLocation(locateLocal("appdata", "global-photo.png"));
+	QString saveLocation(KStandardDirs::locateLocal("appdata", "global-photo.png"));
 	QImage photo(photoURL.path());
 	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
 
@@ -224,7 +209,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 	}
 
 	d->myself->setPhotoSource(Kopete::MetaContact::SourceCustom);
-	d->myself->setPhoto(KUrl::fromPathOrUrl(saveLocation));
+	d->myself->setPhoto(KUrl(saveLocation));
 }
 
 void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text)
@@ -232,12 +217,14 @@ void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text
 	// Display the nickname in red if they are any change. 
 	if(text != d->lastNickname)
 	{
-		d->lineNickname->setPaletteForegroundColor(Qt::red);
+		QPalette palette;
+    	palette.setColor(d->lineNickname->foregroundRole(), Qt::red);
+		d->lineNickname->setPalette(palette);
 	}
 	// The nickname re-become like it was before, reset the palette.
 	else
 	{
-		d->lineNickname->unsetPalette();
+		d->lineNickname->setPalette(QPalette());
 	}
 }
 
@@ -248,7 +235,7 @@ void KopeteEditGlobalIdentityWidget::changeNickname()
 		kDebug(14000) << k_funcinfo << "Updating global nickname..." << endl;
 
 		// Reset the text color since the nickname is now updated.
-		d->lineNickname->unsetPalette();
+		d->lineNickname->setPalette(QPalette());
 
 		// Set the new nickname and set the DisplayName source Custom.
 		d->lastNickname = d->lineNickname->text();

@@ -95,7 +95,7 @@
                                     <cstring>m_userId</cstring>
                                 </property>
                                 <property name="focusPolicy">
-                                    <enum>StrongFocus</enum>
+                                    <enum>Qt::StrongFocus</enum>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>A correct User ID</string>

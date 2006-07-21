@@ -39,9 +39,14 @@ set(kopete_ui_SRCS
   ui/webcamwidget.cpp 
 )
 
+set(kopete_contactliststorage_SRCS
+  contactliststorage/xmlcontactstorage.cpp 
+)
+
 set(kopete_LIB_SRCS 
    ${kopete_private_SRCS} 
    ${kopete_ui_SRCS} 
+   ${kopete_contactliststorage_SRCS}
    kopeteonlinestatus.cpp 
    kopeteonlinestatusmanager.cpp 
    kopeteprotocol.cpp 
@@ -52,6 +57,7 @@ set(kopete_LIB_SRCS
    kopetechatsession.cpp 
    kopetechatsessionmanager.cpp 
    kopetecontactlist.cpp 
+   kopetecontactliststorage.cpp 
    kopetemetacontact.cpp 
    kopetetransfermanager.cpp 
    kopetegroup.cpp 
@@ -102,7 +108,7 @@ kde4_add_ui_files(kopete_LIB_SRCS
 
 kde4_automoc(${kopete_LIB_SRCS})
 
-kde4_add_kcfg_files(kopete_LIB_SRCS kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
@@ -113,17 +119,25 @@ if(X11_Xrender_FOUND)
 endif(X11_Xrender_FOUND)
 
 set_target_properties(kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} kopete )
+install(TARGETS kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( /include/kopete FILES kopeteaccount.h kopeteaccountmanager.h  	kopeteawayaction.h kopeteaway.h 	kopeteblacklister.h kopetecommand.h  	kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h  		kopetecontactproperty.h kopete_export.h kopeteglobal.h kopetegroup.h 	kopetemessageevent.h  	kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h 	kopetechatsession.h  	kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h 	kopeteonlinestatus.h  	kopeteonlinestatusmanager.h kopetepasswordedaccount.h 	kopetepassword.h kopeteplugin.h  	kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h 	kopetetransfermanager.h  	kopeteuiglobal.h kabcpersistence.h  kopeteversion.h  	kopetepicture.h kopeteappearancesettings.h kopetebehaviorsettings.h  	kopetegeneralsettings.h kopetestatusmessage.h 
-# managedconnectionaccount.h 
-)
-install_files( ${KCFG_INSTALL_DIR} FILES kopetegeneralsettings.kcfg kopeteappearancesettings.kcfg kopetebehaviorsettings.kcfg )
-install_files( ${DATA_INSTALL_DIR}/kopete FILES kopetecommandui.rc )
-install_files( ${SERVICETYPES_INSTALL_DIR} FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop )
+install( FILES kopetegeneralsettings.kcfg kopeteappearancesettings.kcfg kopetebehaviorsettings.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
+install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
+install( FILES 
+  kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.h kopeteaway.h kopeteblacklister.h 
+  kopetecommand.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h 
+  kopetecontactlist.h kopetecontactproperty.h kopete_export.h kopeteglobal.h kopetegroup.h 
+  kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h 
+  kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h 
+  kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h kopetepassword.h 
+  kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h kopetetransfermanager.h 
+  kopeteuiglobal.h kabcpersistence.h kopeteversion.h kopetepicture.h ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h 
+  ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h kopetestatusmessage.h 
+  DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
 
 

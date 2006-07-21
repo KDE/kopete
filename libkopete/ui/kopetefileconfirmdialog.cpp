@@ -48,15 +48,15 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	m_view->setObjectName( "FileConfirmView" );
 	setupUi( m_view );
 
-	m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
-			info.contact()->contactId() + QString::fromLatin1( "> " ) );
+	m_from->setText( info.contact()->metaContact()->displayName() + QLatin1String( " <" ) +
+			info.contact()->contactId() + QLatin1String( "> " ) );
 	m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ), 0 ) );
 	m_description->setText( description );
 	m_filename->setText( info.file() );
 
 	KGlobal::config()->setGroup("File Transfer");
 	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homePath() );
-	m_saveto->setText(defaultPath  + QString::fromLatin1( "/" ) + info.file() );
+	m_saveto->setText(defaultPath  + QLatin1String( "/" ) + info.file() );
 
 	setMainWidget(m_view);
 
@@ -71,7 +71,7 @@ KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
 
 void KopeteFileConfirmDialog::slotBrowsePressed()
 {
-	QString saveFileName = KFileDialog::getSaveFileName( m_saveto->text(), QString::fromLatin1( "*" ), 0L , i18n( "File Transfer" ) );
+	QString saveFileName = KFileDialog::getSaveFileName( m_saveto->text(), QLatin1String( "*" ), 0L , i18n( "File Transfer" ) );
 	if ( !saveFileName.isNull())
 	{
 		m_saveto->setText(saveFileName);

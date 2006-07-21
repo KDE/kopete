@@ -145,8 +145,8 @@ void ChatTextEditPart::complete()
 
 	if ( parIdx > 0 )
 	{
-		int firstSpace = txt.lastIndexOf( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
-		int lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\:]") ), firstSpace );
+		int firstSpace = txt.lastIndexOf( QRegExp( QLatin1String("\\s\\S+") ), parIdx - 1 ) + 1;
+		int lastSpace = txt.find( QRegExp( QLatin1String("[\\s\\:]") ), firstSpace );
 		if( lastSpace == -1 )
 			lastSpace = txt.length();
 
@@ -173,7 +173,7 @@ void ChatTextEditPart::complete()
 
 			if ( para == 0 && firstSpace == 0 && rightText[0] != QChar(':') )
 			{
-				rightText = match + QString::fromLatin1(": ") + rightText;
+				rightText = match + QLatin1String(": ") + rightText;
 				parIdx += 2;
 			}
 			else
@@ -279,7 +279,7 @@ void ChatTextEditPart::sendMessage()
 	if ( txt.isEmpty() || txt == "\n" )
 		return;
 
-	if ( m_lastMatch.isNull() && ( txt.indexOf( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
+	if ( m_lastMatch.isNull() && ( txt.indexOf( QRegExp( QLatin1String("^\\w+:\\s") ) ) > -1 ) )
 	{ //no last match and it finds something of the form of "word:" at the start of a line
 		QString search = txt.left( txt.indexOf(':') );
 		if( !search.isEmpty() )

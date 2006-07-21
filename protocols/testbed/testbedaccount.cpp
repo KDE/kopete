@@ -49,7 +49,7 @@ KActionMenu* TestbedAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	mActionMenu->kMenu()->insertSeparator();
+	mActionMenu->addSeparator();
 
 	KAction *action;
 	

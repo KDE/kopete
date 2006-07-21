@@ -25,6 +25,7 @@
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetegroup.h"
 
 #include "qqcontact.h"
 #include "qqnotifysocket.h"
@@ -36,16 +37,18 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 : Kopete::PasswordedAccount ( parent, accountID )
 {
 	m_notifySocket = 0L;
-	m_connectstatus = QQProtocol::protocol()->NLN;
+	m_connectstatus = QQProtocol::protocol()->Offline;
+	m_newContactList=false;
  
 	// Init the myself contact
-	setMyself( new QQContact( this, accountId(), QQContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
+	setMyself( new QQContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
+
 }
 
 // The default implementation is TCP
 QString QQAccount::serverName()
 {
-	return configGroup()->readEntry(  "serverName" , "tcpconn.tencent.com" );
+	return configGroup()->readEntry(  "serverName" , "tcpconn3.tencent.com" );
 }
 
 uint QQAccount::serverPort()
@@ -55,14 +58,16 @@ uint QQAccount::serverPort()
 
 void QQAccount::connectWithPassword( const QString &password )
 {
-	kDebug ( 14210 ) << k_funcinfo << "connect with pass" << endl;
+	kDebug ( 14210 ) << k_funcinfo << "connect with password" << password << endl;
 	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
 }
 
 /* FIXME: move all things to connectWithPassword */
 void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	kDebug ( 14210 ) << k_funcinfo << "We are connecting... ..." << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
+
+	// FIXME: add invisible here!
 
 	if ( isConnected() )
 	{
@@ -77,7 +82,7 @@ void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 		return;
 	}
 	/* Hard-coded password for debug only */
-	m_password = "goodbye";
+	m_password = "qqsucks";
 	createNotificationServer(serverName(), serverPort());
 }
 
@@ -93,8 +98,17 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 	}
 
 	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
-	m_notifySocket = new QQNotifySocket( this, accountId() , m_password );
-	// m_notifySocket->setStatus( m_connectstatus );
+	m_notifySocket = new QQNotifySocket( this, m_password );
+
+	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
+		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
+		SLOT( slotNewContactList() ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactList(const Eva::ContactInfo &) ),
+		SLOT( slotContactListed(const Eva::ContactInfo &) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupList(const QStringList& )),
+		SLOT( slotGroupListed(const QStringList& ) ) );
+
 	m_notifySocket->connect(host, port);
 }
 
@@ -108,7 +122,7 @@ KActionMenu* QQAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	mActionMenu->kMenu()->insertSeparator();
+	mActionMenu->addSeparator();
 
 	KAction *action;
 	
@@ -138,11 +152,12 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 	}
 	else
 	{
+		kDebug( 14140 ) << k_funcinfo << "start connecting !!" << endl;
 		m_connectstatus = status;
-		/* TODO: use connect() later */
 		connect( status );
 	}
 }
+
 
 void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
@@ -152,11 +167,33 @@ void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 
 bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	QQContact* newContact = new QQContact( this, contactId, QQContact::Echo, parentContact->displayName(), parentContact );
+	QQContact* newContact = new QQContact( this, contactId, parentContact );
 	return newContact != 0L;
 }
 
+void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
+{
+	myself()->setOnlineStatus( status );
 
+	if(m_newContactList)
+	{
+		// m_newContactList = false;
+		// Fetch the group names 
+		m_notifySocket->sendDLGroupNames();
+
+		// Fetch the ContactList from the server.
+		// m_notifySocket->sendContactList();
+		// Fetch the relation of contact <--> group
+
+	
+	}
+}
+
+void QQAccount::slotGroupListed(const QStringList& ql )
+{
+	kDebug ( 14210 ) << k_funcinfo << ql << endl;
+	m_groupNames = ql;
+}
 void QQAccount::slotShowVideo ()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;
@@ -165,6 +202,63 @@ void QQAccount::slotShowVideo ()
 		QQWebcamDialog *qqWebcamDialog = new QQWebcamDialog(0, 0);
 	updateContactStatus();
 }
+
+
+void QQAccount::slotNewContactList()
+{
+	kDebug ( 14210 ) << k_funcinfo << endl;
+	// remove the allow list.
+	// TODO: cleanup QQAccount variables.
+	KConfigGroup *config=configGroup();
+	// config->writeEntry( "allowList" , QString() );
+
+		// clear all date information which will be received.
+		// if the information is not anymore on the server, it will not be received
+		foreach ( Kopete::Contact *kc , contacts() )
+		{
+			QQContact *c = static_cast<QQContact *>( kc );
+			c->setBlocked( false );
+			c->setAllowed( false );
+			c->setReversed( false );
+			c->setDeleted( true );
+			c->setInfo( "PHH", QString::null );
+			c->setInfo( "PHW", QString::null );
+			c->setInfo( "PHM", QString::null );
+			// c->removeProperty( QQProtocol::protocol()->propGuid );
+		}
+		m_newContactList=true;
+}
+
+void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
+{
+	// ignore also the myself contact.
+	QString id = QString::number( ci.id );
+	QString publicName = QString( QByteArray( ci.nick.data(), ci.nick.size() ) );
+
+	if ( id == accountId() )
+		return;
+
+	QQContact *c = static_cast<QQContact *>( contacts()[ id ] );
+	if( c )
+		; // exited contact.
+	else
+	{
+		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
+			
+		c = new QQContact( this, id, metaContact );
+		c->setOnlineStatus( QQProtocol::protocol()->Offline );
+			
+		if(!publicName.isEmpty() )
+			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+		else
+			c->removeProperty( Kopete::Global::Properties::self()->nickName() );
+			
+		Kopete::ContactList::self()->addMetaContact( metaContact );
+	}
+
+	return ;
+}
+
 
 void QQAccount::updateContactStatus()
 {
@@ -188,7 +282,8 @@ void QQAccount::receivedMessage( const QString &message )
 	kDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
 	if ( messageSender )
-		messageSender->receivedMessage( message );
+		;
+		// messageSender->receivedMessage( message );
 	else
 		kWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
 }

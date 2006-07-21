@@ -1,6 +1,6 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kopete/styles/Konqi/Contents/Resources/Outgoing FILES buddy_icon.png Content.html NextContent.html )
+install( FILES buddy_icon.png Content.html NextContent.html  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Konqi/Contents/Resources/Outgoing)
 
 

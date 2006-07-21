@@ -28,7 +28,7 @@ if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LIBRAIRIES} )
 endif(XMMS_FOUND)
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_nowlistening )
+install(TARGETS kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -47,15 +47,15 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_nowlistening )
 
 target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_nowlistening )
+install(TARGETS kcm_kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES nowlisteningconfig.kcfg )
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_nowlistening.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete FILES nowlisteningui.rc nowlisteningchatui.rc )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_nowlistening_config.desktop )
+install( FILES nowlisteningconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
+install( FILES kopete_nowlistening.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES nowlisteningui.rc nowlisteningchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES kopete_nowlistening_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

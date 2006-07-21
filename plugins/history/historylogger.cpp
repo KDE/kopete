@@ -676,7 +676,7 @@ QString HistoryLogger::getFileName(const Kopete::Contact* c, QDate date)
 	c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 		date.toString(".yyyyMM");
 
-	QString filename=locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
+	QString filename=KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
 
 	//Check if there is a kopete 0.7.x file
 	QFileInfo fi(filename);
@@ -687,7 +687,7 @@ QString HistoryLogger::getFileName(const Kopete::Contact* c, QDate date)
 			c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 			date.toString(".yyyyMM");
 
-		QString filename2=locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
+		QString filename2=KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
 
 		QFileInfo fi2(filename2);
 		if(fi2.exists())
@@ -707,7 +707,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 	QFileInfo fi;
 
 	// BEGIN check if there are Kopete 0.7.x
-	QDir d1(locateLocal("data",QString("kopete/logs/")+
+	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
 		c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))
 		));
 	d1.setFilter( QDir::Files | QDir::NoSymLinks );
@@ -733,7 +733,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 	// END of kopete 0.7.x check
 
 
-	QDir d(locateLocal("data",QString("kopete/logs/")+
+	QDir d(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
 		c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
 		QString::fromLatin1( "/" ) +
 		c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )

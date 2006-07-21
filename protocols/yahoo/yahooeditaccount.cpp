@@ -78,11 +78,11 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		QString iconUrl = account()->configGroup()->readEntry("pictureUrl", "");
 		bool sendPicture = account()->configGroup()->readEntry("sendPicture", false);
 		optionSendBuddyIcon->setChecked( sendPicture );
-    buttonSelectPicture->setEnabled( sendPicture );  
-    connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
+		buttonSelectPicture->setEnabled( sendPicture );  
+		connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
 		editPictureUrl->setText( iconUrl );
 		if( !iconUrl.isEmpty() )
-			m_Picture->setPixmap( KUrl::fromPathOrUrl( iconUrl ).path() );
+			m_Picture->setPixmap( KUrl( iconUrl ).path() );
 		editPictureUrl->setEnabled( sendPicture );
 
 		// Global Identity
@@ -167,7 +167,7 @@ void YahooEditAccount::slotOpenRegister()
 
 void YahooEditAccount::slotSelectPicture()
 {
-	KUrl file = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Yahoo Buddy Icon" ) );
+	KUrl file = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "Yahoo Buddy Icon" ) );
 
 	if ( file.isEmpty() )
 		return;
@@ -176,8 +176,8 @@ void YahooEditAccount::slotSelectPicture()
 	if( !picture.isNull() )
 	{
 		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(picture), 96, 96, this );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().toLower() ) ) ;
-		file = KUrl::fromPathOrUrl(newlocation);
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ file.fileName().toLower() ) ) ;
+		file = KUrl(newlocation);
 		if( !picture.save( newlocation, "PNG" ))
 		{
 			KMessageBox::sorry( this, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );

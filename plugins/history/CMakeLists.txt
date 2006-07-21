@@ -25,7 +25,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_history )
 
 target_link_libraries(kopete_history  ${KDE4_KDECORE_LIBS} ${KDE4_KHTML_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_history )
+install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -44,15 +44,15 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_history )
 
 target_link_libraries(kcm_kopete_history  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_history )
+install(TARGETS kcm_kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES historyconfig.kcfg )
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_history.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_history FILES historyui.rc  historychatui.rc )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_history_config.desktop )
+install( FILES historyconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
+install( FILES kopete_history.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES historyui.rc  historychatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_history)
+install( FILES kopete_history_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

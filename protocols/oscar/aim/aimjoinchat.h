@@ -20,7 +20,6 @@
 #ifndef AIMJOINCHAT_H
 #define AIMJOINCHAT_H
 
-#include <q3valuelist.h>
 #include <kdialog.h>
 
 #include "oscartypes.h"
@@ -35,8 +34,8 @@ public:
 	AIMJoinChatUI( AIMAccount*, QWidget* parent = 0 );
 	~AIMJoinChatUI();
 
-    void setExchangeList( const Q3ValueList<int>& );
-    Q3ValueList<int> exchangeList() const;
+    void setExchangeList( const QList<int>& );
+    QList<int> exchangeList() const;
 
     QString roomName() const;
     QString exchange() const;
@@ -52,7 +51,7 @@ signals:
 private:
 	Ui::AIMJoinChatBase* m_joinUI;
 	AIMAccount* m_account;
-    Q3ValueList<int> m_exchanges;
+    QList<int> m_exchanges;
     QString m_roomName;
     QString m_exchange;
 

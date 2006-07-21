@@ -31,12 +31,6 @@
 		<Menu name="settings">
 			<text>&amp;Settings</text>
 			<Merge name="StandardToolBarMenuHandler" />
-			<Menu append="show_merge" name="options_chatmembers">
-				<text>&amp;Chat Members List</text>
-				<Action name="options_membersleft" />
-				<Action name="options_membersright" />
-				<Action name="options_togglemembers" />
-			</Menu>
 			<Action name="enable_auto_spell_check" />
 			<Action append="show_merge" name="options_styles"/>
 			<Action append="configure_merge" name="settings_prefs" />

@@ -274,7 +274,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	
 
 	// BEGIN check if there are Kopete 0.7.x
-	QDir d1(locateLocal("data",QString("kopete/logs/")+
+	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))
 					   ));
 	d1.setFilter( QDir::Files | QDir::NoSymLinks );
@@ -299,7 +299,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	}
 	// END of kopete 0.7.x check
 
-	QString logDir = locateLocal("data",QString("kopete/logs/")+
+	QString logDir = KStandardDirs::locateLocal("data",QString("kopete/logs/")+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
 					QString::fromLatin1( "/" ) +
 					c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )

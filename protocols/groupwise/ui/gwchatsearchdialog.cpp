@@ -35,10 +35,14 @@
 #include "gwchatsearchdialog.h"
 
 GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
-	: KDialogBase(  parent, name, false, i18n( "Search Chatrooms" ),
-					KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account )
+	: KDialog(  parent),
+					m_account( account )
 {
 	m_widget = new GroupWiseChatSearchWidget( this );
+	setCaption(i18n( "Search Chatrooms" ));
+	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
+	setDefaultButton(Ok);
+	showButtonSeparator(true);
 //	m_widget->m_searchLineWidget->createSearchLine( m_widget->m_chatrooms );
 	setMainWidget( m_widget );
 
@@ -62,12 +66,12 @@ GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 void GroupWiseChatSearchDialog::slotUpdateClicked()
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "updating chatroom list " << endl;
-	QListViewItem * first = m_widget->m_chatrooms->firstChild();
+	Q3ListViewItem * first = m_widget->m_chatrooms->firstChild();
 	QString updateMessage = i18n("Updating chatroom list..." );
 	if ( first )
-		new QListViewItem( first, updateMessage );
+		new Q3ListViewItem( first, updateMessage );
 	else
-		new QListViewItem( m_widget->m_chatrooms, updateMessage );
+		new Q3ListViewItem( m_widget->m_chatrooms, updateMessage );
 	m_manager->update();
 
 }
@@ -80,7 +84,7 @@ void GroupWiseChatSearchDialog::slotManagerUpdated()
 	const ChatroomMap::iterator end = rooms.end();
 	while ( it != end )
 	{
-		new QListViewItem( m_widget->m_chatrooms,
+		new Q3ListViewItem( m_widget->m_chatrooms,
 						   it.data().displayName,
 						   m_account->protocol()->dnToDotted( it.data().ownerDN ),
 						   QString::number( it.data().participantsCount ) );
@@ -90,7 +94,7 @@ void GroupWiseChatSearchDialog::slotManagerUpdated()
 
 void GroupWiseChatSearchDialog::slotPropertiesClicked()
 {
-	QListViewItem * selected  = m_widget->m_chatrooms->selectedItem();
+	Q3ListViewItem * selected  = m_widget->m_chatrooms->selectedItem();
 	if ( selected )
 	{
 		m_manager->requestProperties( selected->text( 0 ) );

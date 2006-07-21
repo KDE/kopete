@@ -555,7 +555,7 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 			combobox->insertItem(m_videodevice[loop].m_name);
 			kDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name << endl;
 		}
-		combobox->setCurrentItem(currentDevice());
+		combobox->setCurrentIndex(currentDevice());
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -578,7 +578,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;
 			}
-			combobox->setCurrentItem(currentInput());
+			combobox->setCurrentIndex(currentInput());
 			return EXIT_SUCCESS;
 		}
 	}
@@ -639,7 +639,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kDebug() <<  k_funcinfo << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;*/
 			}
-			combobox->setCurrentItem(currentInput());
+			combobox->setCurrentIndex(currentInput());
 			return EXIT_SUCCESS;
 		}
 	}

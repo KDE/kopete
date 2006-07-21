@@ -83,18 +83,18 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		this->body.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
+		this->body.replace( QRegExp( QLatin1String(".*<body.*>\\s+(.*)\\s+</body>.*") ), QLatin1String("\\1") );
 
 		//Strip <p> tags
-		this->body.replace( QString::fromLatin1("<p>"), QString::null );
+		this->body.replace( QLatin1String("<p>"), QString::null );
 
 		//Replace </p> with a <br/>
-		this->body.replace( QString::fromLatin1("</p>") , QString::fromLatin1("<br/>") );
+		this->body.replace( QLatin1String("</p>") , QLatin1String("<br/>") );
 
 		//Remove trailing <br/>
-		if ( this->body.endsWith( QString::fromLatin1("<br/>") ) )
+		if ( this->body.endsWith( QLatin1String("<br/>") ) )
 			this->body.truncate( this->body.length() - 5 );
-		this->body.remove(  QString::fromLatin1("\n") );
+		this->body.remove(  QLatin1String("\n") );
 	}
 }
 
@@ -192,19 +192,19 @@ void Message::setBody( const QString &body, MessageFormat f )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
+		theBody.replace( QRegExp( QLatin1String(".*<body.*>\\s+(.*)\\s+</body>.*") ), QLatin1String("\\1") );
 
 		//Strip <p> tags
-		theBody.replace( QString::fromLatin1("<p>"), QString::null );
+		theBody.replace( QLatin1String("<p>"), QString::null );
 
 		//Replace </p> with a <br/>
-		theBody.replace( QString::fromLatin1("</p>"), QString::fromLatin1("<br/>") );
+		theBody.replace( QLatin1String("</p>"), QLatin1String("<br/>") );
 
 		//Remove trailing </br>
-		if ( theBody.endsWith( QString::fromLatin1("<br/>") ) )
+		if ( theBody.endsWith( QLatin1String("<br/>") ) )
 			theBody.truncate( theBody.length() - 5 );
 
-		theBody.remove( QString::fromLatin1("\n") );
+		theBody.remove( QLatin1String("\n") );
 	}
 	/*	else if( f == ParsedHTML )
 	{
@@ -225,19 +225,19 @@ QString Message::unescape( const QString &xml )
 	QString data = xml;
 
 	//remove linebreak and multiple spaces
-	data.replace( QRegExp( QString::fromLatin1( "\\s*[\n\r\t]+\\s*" ), Qt::CaseInsensitive ), QString::fromLatin1(" " )) ;
+	data.replace( QRegExp( QLatin1String( "\\s*[\n\r\t]+\\s*" ), Qt::CaseInsensitive ), QLatin1String(" " )) ;
 
-	data.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\\1" ) );  //escape smeleys, return to the original code
-	data.replace( QRegExp( QString::fromLatin1( "< */ *p[^>]*>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\n" ) );
-	data.replace( QRegExp( QString::fromLatin1( "< */ *div[^>]*>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\n" ) );
-	data.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ), Qt::CaseInsensitive ), QString::fromLatin1( "\n" ) );
-	data.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+	data.replace( QRegExp( QLatin1String( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ), Qt::CaseInsensitive ), QLatin1String( "\\1" ) );  //escape smeleys, return to the original code
+	data.replace( QRegExp( QLatin1String( "< */ *p[^>]*>" ), Qt::CaseInsensitive ), QLatin1String( "\n" ) );
+	data.replace( QRegExp( QLatin1String( "< */ *div[^>]*>" ), Qt::CaseInsensitive ), QLatin1String( "\n" ) );
+	data.replace( QRegExp( QLatin1String( "< *br */? *>" ), Qt::CaseInsensitive ), QLatin1String( "\n" ) );
+	data.replace( QRegExp( QLatin1String( "<[^>]*>" ) ), QString::null );
 
-	data.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
-	data.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
-	data.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
-	data.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
-	data.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	data.replace( QLatin1String( "&gt;" ), QLatin1String( ">" ) );
+	data.replace( QLatin1String( "&lt;" ), QLatin1String( "<" ) );
+	data.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
+	data.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
+	data.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
 
 	return data;
 }
@@ -246,13 +246,13 @@ QString Message::escape( const QString &text )
 {
 	QString html = Qt::escape( text );
  	//Replace carriage returns inside the text
-	html.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
+	html.replace( QLatin1String( "\n" ), QLatin1String( "<br />" ) );
 	//Replace a tab with 4 spaces
-	html.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+	html.replace( QLatin1String( "\t" ), QLatin1String( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
 	//Replace multiple spaces with &nbsp;
 	//do not replace every space so we break the linebreak
-	html.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+	html.replace( QRegExp( QLatin1String( "\\s\\s" ) ), QLatin1String( "&nbsp; " ) );
 
 	return html;
 }
@@ -307,11 +307,11 @@ QString Message::parsedBody() const
 
 static QString makeRegExp( const char *pattern )
 {
-	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
 	const QString boundaryStart = QString::fromLatin1( "(^|[^%1])(" ).arg( urlChar );
 	const QString boundaryEnd = QString::fromLatin1( ")([^%1]|$)" ).arg( urlChar );
 
-	return boundaryStart + QString::fromLatin1(pattern) + boundaryEnd;
+	return boundaryStart + QLatin1String(pattern) + boundaryEnd;
 }
 
 QString Message::parseLinks( const QString &message, MessageFormat format )
@@ -345,38 +345,38 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 			QString body = curr.mid( tagclose + 1 );
 			*it = tag + parseLinks( body, PlainText );
 		}
-		return entries.join(QString::fromLatin1("<"));
+		return entries.join(QLatin1String("<"));
 	}
 
 	QString result = message;
 
 	// common subpatterns - may not contain matching parens!
-	const QString name = QString::fromLatin1( "[\\w\\+\\-=_\\.]+" );
+	const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
 	const QString userAndPassword = QString::fromLatin1( "(?:%1(?::%1)?\\@)" ).arg( name );
-	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
 	const QString urlSection = QString::fromLatin1( "[%1]+" ).arg( urlChar );
-	const QString domain = QString::fromLatin1( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
+	const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
 
 	//Replace http/https/ftp links:
 	// Replace (stuff)://[user:password@](linkstuff) with a link
 	result.replace(
 		QRegExp( makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection ) ),
-		QString::fromLatin1("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3" ) );
+		QLatin1String("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3" ) );
 
 	// Replace www.X.Y(linkstuff) with a http: link
 	result.replace(
 		QRegExp( makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection ) ),
-		QString::fromLatin1("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3" ) );
+		QLatin1String("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3" ) );
 
 	//Replace Email Links
 	// Replace user@domain with a mailto: link
 	result.replace(
 		QRegExp( makeRegExp("%1@%2").arg( name, domain ) ),
-		QString::fromLatin1("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
+		QLatin1String("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
 
 	//Workaround for Bug 85061: Highlighted URLs adds a ' ' after the URL itself
 	// the trailing  &nbsp; is included in the url.
-	result.replace( QRegExp( QString::fromLatin1("(<a href=\"[^\"]+)(&nbsp;)(\")")  ) , QString::fromLatin1("\\1\\3") );
+	result.replace( QRegExp( QLatin1String("(<a href=\"[^\"]+)(&nbsp;)(\")")  ) , QLatin1String("\\1\\3") );
 
 	return result;
 }
@@ -474,15 +474,15 @@ QString Message::getHtmlStyleAttribute() const
 	{
 		QString fontstr;
 		if(!d->font.family().isNull())
-			fontstr+=QString::fromLatin1("font-family: ")+d->font.family()+QString::fromLatin1("; ");
+			fontstr+=QLatin1String("font-family: ")+d->font.family()+QLatin1String("; ");
 		if(d->font.italic())
-			fontstr+=QString::fromLatin1("font-style: italic; ");
+			fontstr+=QLatin1String("font-style: italic; ");
 		if(d->font.strikeOut())
-			fontstr+=QString::fromLatin1("text-decoration: line-through; ");
+			fontstr+=QLatin1String("text-decoration: line-through; ");
 		if(d->font.underline())
-			fontstr+=QString::fromLatin1("text-decoration: underline; ");
+			fontstr+=QLatin1String("text-decoration: underline; ");
 		if(d->font.bold())
-			fontstr+=QString::fromLatin1("font-weight: bold;");
+			fontstr+=QLatin1String("font-weight: bold;");
 
 		styleAttribute += fontstr;
 	}
@@ -560,7 +560,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 
 	kDebug(14000) << k_funcinfo << "Using latin1 and cleaning string" << endl;
 	//No codec decoded. Just decode latin1, and clean out any junk.
-	QString result = QString::fromLatin1( message );
+	QString result = QLatin1String( message );
 	const uint length = message.length();
 	for( uint i = 0; i < length; ++i )
 	{

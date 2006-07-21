@@ -31,7 +31,7 @@
 #include <qtabwidget.h>
 #include <q3valuelist.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -52,7 +52,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	if (owner->isConnected ())
 	{
 		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,

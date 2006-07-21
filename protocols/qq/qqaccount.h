@@ -28,6 +28,10 @@ namespace Kopete
 	class StatusMessage;
 }
 
+namespace Eva {
+	struct ContactInfo;
+}
+
 class QQContact;
 class QQProtocol;
 class QQNotifySocket;
@@ -88,6 +92,10 @@ public slots:
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
 	 */
 	void receivedMessage( const QString &message );
+	void slotStatusChanged( const Kopete::OnlineStatus &status );
+	void slotNewContactList();
+	void slotContactListed( const Eva::ContactInfo& ci );
+	void slotGroupListed(const QStringList& ql );
 
 protected:
 	/**
@@ -106,12 +114,32 @@ private:
 
 
 private:
-	QQNotifySocket *m_notifySocket; // stub now.
+	QQNotifySocket *m_notifySocket;
+
 	// status which will be using for connecting
 	Kopete::OnlineStatus m_connectstatus;
 	QString m_password;
 
+	// server data
+	QStringList m_groupNames;
 
+	bool m_newContactList;
+
+	Kopete::MetaContact *m_addWizard_metaContact;
+	QMap< QString, QStringList > tmp_addToNewGroup;
+	QMap< QString, QStringList > tmp_addNewContactToGroup;
+
+	QString m_pictureObj; //a cache of the <msnobj>
+	QString m_pictureFilename; // the picture filename.
+
+	//this is the translation between old to new groups id when syncing from server.
+	QMap<QString, Kopete::Group*> m_oldGroupList;
+	QMap<QString, Kopete::Group*> m_groupList;
+
+	/**
+	 * Cliend ID is a bitfield that contains supported features for a MSN contact.
+	 */
+	uint m_clientId;
 };
 
 #endif

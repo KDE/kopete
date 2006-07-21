@@ -33,7 +33,7 @@ kde4_add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
 target_link_libraries(kopete_oscar ${KDE4_KIO_LIBS} kopete oscar )
 
 set_target_properties(kopete_oscar PROPERTIES VERSION 2.0.0 SOVERSION 2 )
-install_targets(${LIB_INSTALL_DIR} kopete_oscar )
+install(TARGETS kopete_oscar  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############

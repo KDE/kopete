@@ -20,15 +20,13 @@
 #include <stdlib.h>
 
 //QT
-#include <qfont.h>
-#include <qdatetime.h>
-#include <qcolor.h>
-#include <qregexp.h>
-#include <qimage.h>
-#include <qfile.h>
-//Added by qt3to4:
+#include <QFont>
+#include <QDateTime>
+#include <QColor>
+#include <QRegExp>
+#include <QImage>
+#include <QFile>
 #include <QPixmap>
-#include <Q3ValueList>
 
 // KDE
 #include <klocale.h>
@@ -579,7 +577,7 @@ KActionMenu *YahooAccount::actionMenu()
 	
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
-	theActionMenu->kMenu()->addSeparator();
+	theActionMenu->addSeparator();
 	theActionMenu->addAction( m_editOwnYABEntry );
 	theActionMenu->addAction( m_openInboxAction );
 	theActionMenu->addAction( m_openYABAction );
@@ -618,7 +616,7 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	{
 		if ( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			setBuddyIcon( KUrl::fromPathOrUrl( value.toString() ) );
+			setBuddyIcon( KUrl( value.toString() ) );
 		}
 	}
 }
@@ -712,7 +710,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		initConnectionSignals( DeleteConnections );
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		YahooVerifyAccount *verifyDialog = new YahooVerifyAccount( this );
-		verifyDialog->setUrl( KUrl::fromPathOrUrl(url) );
+		verifyDialog->setUrl( KUrl(url) );
 		verifyDialog->show();
 		return;
 	}
@@ -995,10 +993,11 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << msg << "'" << endl;
 	//kDebug(YAHOO_GEN_DEBUG) << "Message color is " << getMsgColor(msg) << endl;
 	QColor fgColor = getMsgColor( msg );
+	
 	if (tm == 0)
-		msgDT.setTime_t(time(0L));
+		msgDT = QDateTime( QDate::currentDate(), QTime::currentTime(), Qt::LocalTime );
 	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
+		msgDT = QDateTime::fromTime_t(tm);
 	
 	QString newMsgText = prepareIncomingMessage( msg );
 	
@@ -1031,9 +1030,9 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	}
 	
 	if (tm == 0)
-		msgDT.setTime_t(time(0L));
+		msgDT = QDateTime( QDate::currentDate(), QTime::currentTime(), Qt::LocalTime );
 	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
+		msgDT = QDateTime::fromTime_t(tm);
 	
 	justMe.append(myself());
 	
@@ -1502,7 +1501,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
+	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
@@ -1520,7 +1519,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
+	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
@@ -1550,7 +1549,7 @@ void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 							myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 }
 
-void YahooAccount::setBuddyIcon( KUrl url )
+void YahooAccount::setBuddyIcon( const KUrl &url )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Url: " << url.path() << endl;
 	QString s = url.path();
@@ -1566,7 +1565,7 @@ void YahooAccount::setBuddyIcon( KUrl url )
 	else
 	{
 		QImage image( url.path() );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
 		QFile iconFile( newlocation );
 		QByteArray data;
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
@@ -1628,7 +1627,6 @@ void YahooAccount::setBuddyIcon( KUrl url )
 void YahooAccount::slotBuddyIconChanged( const QString &url )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	//	Q3DictIterator<Kopete::Contact> it( contacts() );
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
 	if ( url.isEmpty() )	// remove pictures from buddie's clients
@@ -1644,13 +1642,15 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 		m_session->sendPictureChecksum( checksum, QString::null );
 	}
 	
-// 	for ( ; it.current(); ++it )
-// 	{
-// 		if ( it.current() == myself() || !it.current()->isReachable() )
-// 			continue;
-// 		static_cast< YahooContact* >( it.current() )->sendBuddyIconChecksum( checksum );
-// 		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( pictureFlag() );
-// 	}
+	QHash<QString,Kopete::Contact*>::const_iterator it;
+	QHash<QString,Kopete::Contact*>::const_iterator end = contacts().constEnd();
+	for ( it = contacts().constBegin(); it != end; ++it )
+	{
+		if ( it.value() == myself() || !it.value()->isReachable() )
+			continue;
+		static_cast< YahooContact* >( it.value() )->sendBuddyIconChecksum( checksum );
+		static_cast< YahooContact* >( it.value() )->sendBuddyIconUpdate( pictureFlag() );
+	}
 }
 
 void YahooAccount::slotWebcamReadyForTransmission()

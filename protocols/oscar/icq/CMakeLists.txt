@@ -47,13 +47,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_icq )
 
 target_link_libraries(kopete_icq ${KDE4_KDECORE_LIBS} kopete_oscar kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_icq )
+install(TARGETS kopete_icq  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_icq.desktop )
-install_files( ${MIME_INSTALL_DIR}/application FILES x-icq.desktop )
+install( FILES kopete_icq.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES x-icq.desktop  DESTINATION ${MIME_INSTALL_DIR}/application)
 
 
 

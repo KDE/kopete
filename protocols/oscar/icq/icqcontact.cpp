@@ -18,12 +18,11 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
-#include <Q3PtrList>
 #include <qimage.h>
 #include <qfile.h>
 
 #include <kaction.h>
-#include <kactionclasses.h>
+
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -35,6 +34,7 @@
 #include <krandom.h>
 #include <kcodecs.h>
 #include <kstandarddirs.h>
+#include <ktoggleaction.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
@@ -472,10 +472,10 @@ void ICQContact::haveIcon( const QString& user, QByteArray icon )
 	KMD5 buddyIconHash( icon );
 	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
 	{
-		QString iconLocation( locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
+		QString iconLocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
 		
 		QFile iconFile( iconLocation );
-		if ( !iconFile.open( IO_WriteOnly ) )
+		if ( !iconFile.open( QIODevice::WriteOnly ) )
 		{
 			kDebug(14153) << k_funcinfo << "Cannot open file"
 			               << iconLocation << " for writing!" << endl;
@@ -498,10 +498,10 @@ void ICQContact::haveIcon( const QString& user, QByteArray icon )
 
 bool ICQContact::cachedBuddyIcon( QByteArray hash )
 {
-	QString iconLocation( locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
+	QString iconLocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
 	
 	QFile iconFile( iconLocation );
-	if ( !iconFile.open( IO_ReadOnly ) )
+	if ( !iconFile.open( QIODevice::ReadOnly ) )
 		return false;
 	
 	KMD5 buddyIconHash;

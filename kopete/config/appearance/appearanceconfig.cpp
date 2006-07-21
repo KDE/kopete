@@ -185,9 +185,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 {
 	d = new Private;
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	QVBoxLayout *layout = new QVBoxLayout(this);
+
 	d->mAppearanceTabCtl = new QTabWidget(this);
 	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
+	layout->addWidget( d->mAppearanceTabCtl );
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "ChatWindowSettings" );
@@ -376,7 +378,7 @@ void AppearanceConfig::updateEmoticonlist()
 	// Get a list of directories in our icon theme dir
 	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
 	// loop adding themes from all dirs into theme-list
-	for(unsigned int x = 0;x < themeDirs.count();x++)
+	for( int x = 0;x < themeDirs.count();x++)
 	{
 		QDir themeQDir(themeDirs[x]);
 		themeQDir.setFilter( QDir::Dirs ); // only scan for subdirs
@@ -388,7 +390,7 @@ void AppearanceConfig::updateEmoticonlist()
 			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
 			{
 				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
-				QPixmap previewPixmap = QPixmap(locate("emoticons", themeQDir[y]+"/smile.png"));
+				QPixmap previewPixmap = QPixmap(KStandardDirs::locate("emoticons", themeQDir[y]+"/smile.png"));
 				d->mPrfsEmoticons->icon_theme_list->insertItem(previewPixmap,themeQDir[y]);
 			}
 		}
@@ -417,8 +419,8 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
 		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
 
-	newContentText += QString::fromLatin1("</qt>");
-	d->mPrfsEmoticons->icon_theme_preview->setText(newContentText);
+	newContentText += QLatin1String("</qt>");
+	d->mPrfsEmoticons->icon_theme_preview->setHtml(newContentText);
 	emitChanged();
 }
 
@@ -491,7 +493,7 @@ void AppearanceConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void AppearanceConfig::slotInstallChatStyle()
 {
-	KUrl styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
+	KUrl styleToInstall = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
 
 	if( !styleToInstall.isEmpty() )
 	{
@@ -560,7 +562,7 @@ void AppearanceConfig::slotGetChatStyles()
 	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
 	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
 	KNS::DownloadDialog *downloadDialog = new KNS::DownloadDialog( engine, this );
-	downloadDialog->setType( "kopete/chatstyle" );
+	downloadDialog->setCategory( "kopete/chatstyle" );
 	// you have to do this by hand when providing your own Engine
 	KNS::ProviderLoader *provider = new KNS::ProviderLoader( this );
 	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );

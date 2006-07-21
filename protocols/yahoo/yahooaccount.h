@@ -111,7 +111,7 @@ public:
 	/**
 	 * Set Buddy Icon
 	 */
-	void setBuddyIcon( KUrl url );
+	void setBuddyIcon( const KUrl &url );
 
 	/**
 	 * Return flag describing wether or not we send a buddy icon

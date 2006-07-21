@@ -22,12 +22,12 @@
 #ifndef YAHOO_CORE_PROTOCOL_H
 #define YAHOO_CORE_PROTOCOL_H
 
-#include <q3cstring.h>
-#include <qobject.h>
+#include <QObject>
 #include <q3ptrlist.h>
 
 class Transfer;
 class YMSGProtocol;
+class QByteArray;
 
 class CoreProtocol : public QObject
 {
@@ -81,7 +81,7 @@ protected slots:
 	/**
 	 * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
 	 */
-	void slotOutgoingData( const Q3CString & );
+	void slotOutgoingData( const QByteArray & );
 	
 protected:
 	/**

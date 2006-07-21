@@ -57,7 +57,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	setCaption( i18n("Tooltip Editor") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton(KDialog::Ok);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 
 	mMainWidget = new QWidget(this);
 	mMainWidget->setObjectName("TooltipEditDialog::mMainWidget");

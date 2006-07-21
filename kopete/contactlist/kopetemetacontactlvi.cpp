@@ -87,22 +87,22 @@ public:
 	{
 
 		// We begin with the meta contact display name at the top of the tooltip
-		QString toolTip = QString::fromLatin1("<qt><table cellpadding=\"0\" cellspacing=\"1\">");
+		QString toolTip = QLatin1String("<qt><table cellpadding=\"0\" cellspacing=\"1\">");
 
-        toolTip += QString::fromLatin1("<tr><td>");
+        toolTip += QLatin1String("<tr><td>");
 
 // 		if ( ! metaContact->picture().isNull() )
         {
 #warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
 #if 0
-			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
+			QString photoName = QLatin1String("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
 #endif
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( metaContact->picture().path() );
         }
 
-		toolTip += QString::fromLatin1("</td><td>");
+		toolTip += QLatin1String("</td><td>");
 
 		QString displayName;
 		Kopete::Emoticons *e = Kopete::Emoticons::self();
@@ -124,10 +124,10 @@ public:
 		QList<Contact*> contacts = metaContact->contacts();
 		if ( contacts.count() == 1 )
 		{
-			return toolTip + contacts.first()->toolTip() + QString::fromLatin1("</td></tr></table></qt>");
+			return toolTip + contacts.first()->toolTip() + QLatin1String("</td></tr></table></qt>");
 		}
 
-		toolTip += QString::fromLatin1("<table>");
+		toolTip += QLatin1String("<table>");
 
         // We are over a metacontact with > 1 child contacts, and not over a specific contact
         // Iterate through children and display a summary tooltip
@@ -146,7 +146,7 @@ public:
 						iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
 		}
 
-		return toolTip + QString::fromLatin1("</table></td></tr></table></qt>");
+		return toolTip + QLatin1String("</table></td></tr></table></qt>");
 	}
 private:
 	MetaContact *metaContact;
@@ -268,7 +268,7 @@ void KopeteMetaContactLVI::initLVI()
 	mIsBlinkIcon = false;
 
 	//if ( !mBlinkIcon )
-	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), K3Icon::Small ) );
+	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QLatin1String( "newmsg" ), K3Icon::Small ) );
 
 	slotConfigChanged();  // this calls slotIdleStateChanged(), which sets up the constituent components, spacing, fonts and indirectly, the contact icon
 	slotDisplayNameChanged();
@@ -866,7 +866,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			d->extraText->setText( newVal.toString() );
 		}
 	} // wtf? KopeteMetaContact also connects this signals and emits photoChanged! why no connect photoChanged to slotPhotoChanged?
-	/*else if ( key == QString::fromLatin1("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
+	/*else if ( key == QLatin1String("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
 	{
 		slotPhotoChanged();
 	}*/
@@ -882,8 +882,8 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 
 	updateContactIcon( c );
 
-	slotContactPropertyChanged( c, QString::fromLatin1("awayMessage"),
-		QVariant(), c->property( QString::fromLatin1("awayMessage") ).value() );
+	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
+		QVariant(), c->property( QLatin1String("awayMessage") ).value() );
 }
 
 void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
@@ -897,8 +897,8 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 	if ( ListView::Component *comp = contactComponent( c ) )
 		delete comp;
 
-	slotContactPropertyChanged( c, QString::fromLatin1("awayMessage"),
-		c->property( QString::fromLatin1("awayMessage") ).value(), QVariant() );
+	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
+		c->property( QLatin1String("awayMessage") ).value(), QVariant() );
 }
 
 void KopeteMetaContactLVI::updateContactIcons()

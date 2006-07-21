@@ -25,6 +25,9 @@
 class ICQAccount;
 class ICQContact;
 class ICQUserInfoWidget;
+class QStandardItemModel;
+class QModelIndex;
+
 namespace Ui
 {
 	class ICQUserInfoWidget;
@@ -51,7 +54,7 @@ private slots:
 	void newSearch();
 
 	/// Enable/disable buttons when the selection changes
-	void resultSelectionChanged();
+	void resultRowChanged( const QModelIndex& current );
 	
 	/// Add a search result to the listview
 	void newResult( const ICQSearchResult& info );
@@ -64,6 +67,7 @@ private:
 	Ui::ICQSearchBase* m_searchUI;
 	ICQContact* m_contact;
 	ICQUserInfoWidget* m_infoWidget;
+	QStandardItemModel* m_searchResultsModel;
 	
 	void clearFields();
 };

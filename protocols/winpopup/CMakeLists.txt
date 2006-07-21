@@ -41,12 +41,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_wp )
 
 target_link_libraries(kopete_wp  ${KDE4_KIO_LIBS} kopete kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_wp )
+install(TARGETS kopete_wp  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_wp.desktop )
+install( FILES kopete_wp.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

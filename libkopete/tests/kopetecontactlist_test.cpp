@@ -36,7 +36,7 @@ void KopeteContactList_Test::testSomething()
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
-	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
+	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( ! filename.isEmpty() )
 	{
 		// previous test run, delete the previous contact list

@@ -55,7 +55,7 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 	m_jobs[transfer].url = url;
 	m_jobs[transfer].who = who;
 	m_jobs[transfer].checksum = checksum;
-	m_jobs[transfer].file = new KTempFile( locateLocal( "tmp", "yahoobuddyicon-" ), ext );
+	m_jobs[transfer].file = new KTempFile( KStandardDirs::locateLocal( "tmp", "yahoobuddyicon-" ), ext );
 	m_jobs[transfer].file->setAutoDelete( true );
 
 }

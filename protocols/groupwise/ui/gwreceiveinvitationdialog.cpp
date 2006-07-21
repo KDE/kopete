@@ -34,8 +34,12 @@
 #include "gwreceiveinvitationdialog.h"
 
 ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, const ConferenceEvent & event, QWidget *parent, const char *name)
- : KDialogBase( i18n("Invitation to Conversation"), KDialogBase::Yes|KDialogBase::No, KDialogBase::Yes, KDialogBase::No, parent, name, false )
+ : KDialog(  parent )
 {
+	setCaption(i18n("Invitation to Conversation"));
+	setButtons(KDialog::Yes|KDialog::No, KDialog::Yes);
+	setDefaultButton(KDialog::No);
+	setModal(false);
 	m_account = account;
 	m_guid = event.guid;	
 	connect( this, SIGNAL( yesClicked() ), SLOT( slotYesClicked() ) );

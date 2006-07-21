@@ -78,7 +78,11 @@ GroupWiseContactProperties::~GroupWiseContactProperties()
 
 void GroupWiseContactProperties::init()
 {
-	m_dialog = new KDialogBase( ::qt_cast<QWidget*>( parent() ), "gwcontactpropsdialog", false, i18n( "Contact Properties" ), KDialogBase::Ok );
+	m_dialog = new KDialog( ::qt_cast<QWidget*>( parent() ));
+	m_dialog->setCaption(i18n( "Contact Properties" ));
+	m_dialog->setButtons(KDialog::Ok);
+	m_dialog->setDefaultButton(KDialog::Ok);
+	m_dialog->setModal(false);
 	m_propsWidget = new GroupWiseContactPropsWidget( m_dialog );
 	// set up the context menu and copy action
 	m_copyAction = KStdAction::copy( this, SLOT( slotCopy() ), 0 );

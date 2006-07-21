@@ -19,8 +19,8 @@
 #define KOPETEAWAYACTION_H
 
 #include <kdeversion.h>
-#include <kactionclasses.h>
-#include <kaction.h>
+
+#include <kselectaction.h>
 
 #include "kopete_export.h"
 

@@ -158,7 +158,7 @@ void WebPresencePlugin::slotWriteFile()
 	m_writeScheduler->stop();
 
 	// generate the (temporary) XML file representing the current contactlist
-	KUrl dest = KUrl::fromPathOrUrl( resultURL );
+	KUrl dest( resultURL );
 	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
 		kDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
@@ -197,7 +197,7 @@ void WebPresencePlugin::slotWriteFile()
 	}
 
 	// upload it to the specified URL
-	KUrl src = KUrl::fromPathOrUrl( m_output->name() );
+	KUrl src( m_output->name() );
 	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
 	connect( job, SIGNAL( result( KJob * ) ),
 			SLOT(  slotUploadJobResult( KJob * ) ) );
@@ -335,16 +335,16 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		return false;
 	case WEB_HTML:
 		if ( useImagesInHTML ) {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
 		} else {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_html.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html.xsl" ) );
 		}
 		break;
 	case WEB_XHTML:
 		if ( useImagesInHTML ) {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
 		} else {
-			sheet.setName( locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
+			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
 		}
 		break;
 	case WEB_CUSTOM:

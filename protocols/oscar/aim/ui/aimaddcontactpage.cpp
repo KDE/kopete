@@ -24,7 +24,6 @@
 #include <qlineedit.h>
 //Added by qt3to4:
 #include <QLabel>
-#include <Q3VBoxLayout>
 #include <klocale.h>
 #include <kmessagebox.h>
 

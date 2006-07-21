@@ -258,14 +258,14 @@ void ChatMessagePart::slotScrollingTo( int /*x*/, int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( QString::null, QLatin1String( "text/html text/plain" ), view() );
+	KFileDialog dlg( KUrl(), QLatin1String( "text/html text/plain" ), view() );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
 	if ( dlg.exec() != QDialog::Accepted )
 		return;
 
-	KUrl saveURL = dlg.selectedURL();
+	KUrl saveURL = dlg.selectedUrl();
 	KTempFile tempFile;
 	tempFile.setAutoDelete( true );
 	QFile* file = tempFile.file();
@@ -273,7 +273,7 @@ void ChatMessagePart::save()
 	QTextStream stream ( file );
 	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 
-	if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
+	if ( dlg.currentFilter() == QLatin1String( "text/plain" ) )
 	{
 		QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
 		for(it = d->allMessages.constBegin(); it != itEnd; ++it)
@@ -315,7 +315,7 @@ void ChatMessagePart::pageDown()
 void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
 {
 	kDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
-	if ( url.protocol() == QString::fromLatin1("kopetemessage") )
+	if ( url.protocol() == QLatin1String("kopetemessage") )
 	{
 		Kopete::Contact *contact = d->manager->account()->contacts()[ url.host() ];
 		if ( contact )
@@ -555,8 +555,8 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	}
 #if 0  //disabled because it causes crash on exit  - Olivier 2006-03-31
 	QString nick = d->manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
-	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
-			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
+	retVal.replace( QRegExp( QLatin1String("([\\s&;>])%1([\\s&;<:])")
+			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QLatin1String("\\1%1\\2").arg( nick ) );
 #endif
 	return retVal;
 }
@@ -671,13 +671,13 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	{
 		chatWindowPopup = new KMenu();
 
-		if ( d->activeElement.className() == "KopeteDisplayName" )
+		if ( d->activeElement.className() == QLatin1String("KopeteDisplayName") )
 		{
 			chatWindowPopup->insertItem( i18n( "User Has Left" ), 1 );
 			chatWindowPopup->setItemEnabled( 1, false );
 			chatWindowPopup->addSeparator();
 		}
-		else if ( d->activeElement.tagName().lower() == QString::fromLatin1( "a" ) )
+		else if ( d->activeElement.tagName().lower() == QLatin1String( "a" ) )
 		{
 			chatWindowPopup->addAction( d->copyURLAction );
 			chatWindowPopup->addSeparator();
@@ -963,7 +963,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	for( uint f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].unicode() * f;
 	QColor color = QColor( nameColors[ hash % nameColorsLen ] ).name();
-	kdDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
+	kDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
 	while( (textPos=senderColorRegExp.search(resultHTML, textPos) ) != -1 )

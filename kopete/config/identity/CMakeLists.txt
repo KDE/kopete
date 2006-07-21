@@ -19,13 +19,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_identityconfig )
 
 target_link_libraries(kcm_kopete_identityconfig  ${KDE4_KUTILS_LIBS} kabc kopete)
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_identityconfig )
+install(TARGETS kcm_kopete_identityconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES kopeteidentityconfigpreferences.kcfg )
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_identityconfig.desktop )
+install( FILES kopeteidentityconfigpreferences.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
+install( FILES kopete_identityconfig.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

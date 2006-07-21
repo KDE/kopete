@@ -115,9 +115,7 @@ void KNetworkByteStream::slotConnectionClosed()
 void KNetworkByteStream::slotReadyRead()
 {
 	// stuff all available data into our buffers
-	QByteArray readBuffer( socket()->bytesAvailable () );
-
-	socket()->read( readBuffer.data (), readBuffer.size () );
+	QByteArray readBuffer = socket()->readAll();
 
 	appendRead( readBuffer );
 
@@ -133,7 +131,8 @@ void KNetworkByteStream::slotError( int code )
 {
 	kDebug( 14151 ) << k_funcinfo << "Socket error " << code << endl;
 
-	emit error( code );
+	if( KNetwork::KSocketBase::isFatalError( code ) )
+		emit error ( code );
 }
 
 #include "oscarbytestream.moc"

@@ -23,7 +23,7 @@
 #include "kopete_export.h"
 
 namespace KNetwork {
-    class KDatagramSocket;
+    class KBufferedSocket;
 }
 
 
@@ -42,14 +42,10 @@ public:
 	QQSocket(QObject* parent=0l);
 	~QQSocket();
 
-	/**
-	 * Synchronous read/write 
-	 */
-	const QByteArray& read();
-	qint64 write( const QByteArray& packet );
+	void sendPacket( const QByteArray& data );
 
 	/* To make things more managable, only UDP is supported in this version */
-	enum OnlineStatus { Offline, LoginToken, Login, Online };
+	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
 	enum LookupStatus { Processing, Success, Failed };
 	enum Transport { TcpTransport, HttpTransport };
 	enum ErrorType { ErrorNormal, ErrorInternal, ErrorInformation, ErrorSorry };
@@ -70,7 +66,7 @@ signals:
 	/**
 	 * The online status has changed
 	 */
-	void onlineStatusChanged( Kopete::OnlineStatus status );
+	void onlineStatusChanged( QQSocket::OnlineStatus status );
 
 	/**
 	 * The connection failed
@@ -157,13 +153,14 @@ private slots:
 protected slots:
 	virtual void slotReadyWrite();
 
-private:
+protected:
 	/**
 	 * The id of the message sent to the QQ server. This ID will increment
 	 * for each subsequent message sent.
 	 */
 	uint m_id;
 
+private:
 	/**
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)
@@ -171,7 +168,7 @@ private:
 	QList<QByteArray> m_sendQueue;
 	QList<QByteArray> m_buffer;
 
-	KNetwork::KDatagramSocket *m_socket;
+	KNetwork::KBufferedSocket *m_socket;
 	OnlineStatus m_onlineStatus;
 
 	QString m_server;

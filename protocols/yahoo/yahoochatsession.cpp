@@ -24,7 +24,6 @@
 #include <QPixmap>
 #include <QList>
 
-#include <k3widgetaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
@@ -60,7 +59,9 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), actionCollection(), "yahooBuzz" ) ;
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
 	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
-	new KAction( i18n( "Send File" ), QIconSet(BarIcon("attach")), 0, this, SLOT( slotSendFile() ), actionCollection(), "yahooSendFile" );
+
+	KAction *sendFileAction = new KAction( KIcon("attach"), i18n( "Send File" ), actionCollection(), "yahooSendFile" );
+	connect( sendFileAction, SIGNAL( triggered() ), this, SLOT( slotSendFile() ) );
 
 	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), actionCollection(), "yahooShowInfo" ) ;
 	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
@@ -75,7 +76,10 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 	m_image = new QLabel( 0L );
 	m_image->setObjectName( QLatin1String("kde toolbar widget") );
-	new K3WidgetAction( m_image, i18n( "Yahoo Display Picture" ), 0, this, SLOT( slotDisplayPictureChanged() ), actionCollection(), "yahooDisplayPicture" );
+	KAction *imageAction = new KAction( i18n( "Yahoo Display Picture" ), actionCollection(), "yahooDisplayPicture" );
+	imageAction->setDefaultWidget( m_image );
+	connect( imageAction, SIGNAL( triggered() ), this, SLOT( slotDisplayPictureChanged() ) );
+
 	if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 	{
 		connect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
@@ -123,7 +127,7 @@ void YahooChatSession::slotInviteWebcam()
 
 void YahooChatSession::slotSendFile()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->sendFile();
 }

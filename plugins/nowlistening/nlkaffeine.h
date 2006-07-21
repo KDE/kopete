@@ -25,18 +25,16 @@
 #ifndef NLKAFFEINE_H
 #define NLKAFFEINE_H
 
-struct QDBusInterfacePtr;
 class QDBusInterface;
 
 class NLKaffeine : public NLMediaPlayer
 {
 	public:
 		NLKaffeine();
+		virtual ~NLKaffeine();
 		virtual void update();
 	private:
-		QDBusInterface *client();
-
-		QDBusInterfacePtr *m_client;
+		QDBusInterface *m_client;
 };
 
 #endif

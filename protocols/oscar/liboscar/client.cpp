@@ -1227,7 +1227,7 @@ void Client::determineDisconnection( int code, const QString& string )
         return;
 
 	if ( c->isSupported( 0x0002 ) ||
-	     c->supportedFamilies().count() == 0 ) //emit on login
+	     d->stage == ClientPrivate::StageOne ) //emit on login
 	{
 		emit socketError( code, string );
 	}

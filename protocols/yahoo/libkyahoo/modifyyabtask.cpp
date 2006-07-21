@@ -136,7 +136,7 @@ void ModifyYABTask::slotRead()
 	QDomDocument doc;
 	QDomNodeList list;
 	QDomElement e;
-	uint it = 0;
+	int it = 0;
 	
 	doc.setContent( data );
 

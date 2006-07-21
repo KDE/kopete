@@ -132,13 +132,13 @@ namespace Yahoo
 	};
 
 	enum LoginStatus {
-	LoginOk = 0,
-	LoginUname = 3,
-	LoginPasswd = 13,
-	LoginLock = 14,
-	LoginVerify = 29,	// FIXME: Find the reason for this response
-	LoginDupl = 99,
-	LoginSock = -1
+		LoginOk = 0,
+		LoginUname = 3,
+		LoginPasswd = 13,
+		LoginLock = 14,
+		LoginVerify = 29,	// FIXME: Find the reason for this response
+		LoginDupl = 99,
+		LoginSock = -1
 	};
 
 	enum StealthMode {

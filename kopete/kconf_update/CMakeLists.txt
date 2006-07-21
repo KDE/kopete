@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kopete-pluginloader.upd kopete-account-kconf_update.upd  	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd  	kopete-jabberpriorityaddition-kconf_update.upd kopete-nameTracking.upd )
+install( FILES kopete-pluginloader.upd kopete-account-kconf_update.upd  	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd  	kopete-jabberpriorityaddition-kconf_update.upd kopete-nameTracking.upd  DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
 
 
 

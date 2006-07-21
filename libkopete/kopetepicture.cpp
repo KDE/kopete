@@ -121,7 +121,7 @@ QString Picture::path()
 		KMD5 context(tempArray);
 		// Save the image to a file.
 		localPhotoPath = context.hexDigest() + ".png";
-		localPhotoPath = locateLocal( "appdata", QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) );
+		localPhotoPath = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) );
 		if( image().save(localPhotoPath, "PNG") )
 		{
 			d->picturePath = localPhotoPath;

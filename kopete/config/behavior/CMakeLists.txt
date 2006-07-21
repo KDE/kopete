@@ -26,12 +26,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_behaviorconfig )
 
 target_link_libraries(kcm_kopete_behaviorconfig  ${KDE4_KUTILS_LIBS} kopete)
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_behaviorconfig )
+install(TARGETS kcm_kopete_behaviorconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_behaviorconfig.desktop )
+install( FILES kopete_behaviorconfig.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

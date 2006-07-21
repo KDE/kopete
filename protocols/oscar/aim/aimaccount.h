@@ -19,8 +19,6 @@
 #ifndef AIMACCOUNT_H
 #define AIMACCOUNT_H
 
-#include <q3dict.h>
-#include <q3valuelist.h>
 #include <qstring.h>
 #include <qwidget.h>
 #include "oscartypeclasses.h"
@@ -77,7 +75,7 @@ private:
 	 * There has GOT to be a better way to get this away message
 	 */
 	QString m_lastAwayMessage;
-    Q3ValueList<Kopete::ChatSession*> m_chatRoomSessions;
+    QList<Kopete::ChatSession*> m_chatRoomSessions;
 
 
 };

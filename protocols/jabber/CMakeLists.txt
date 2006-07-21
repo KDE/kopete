@@ -84,13 +84,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_jabber )
 
 target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_jabber )
+install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_jabber.desktop )
-install_files( ${DATA_INSTALL_DIR}/kopete_jabber FILES jabberchatui.rc )
+install( FILES kopete_jabber.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES jabberchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_jabber)
 
 
 

@@ -109,8 +109,7 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 	BYTE type = buffer->getByte(); // msg type
 	BYTE flags = buffer->getByte(); // msg flags
 	
-	WORD msgLength = buffer->getLEWord();
-	QByteArray msg = buffer->getBlock( msgLength );
+	QByteArray msg = buffer->getLELNTS();
 
 	QDateTime utcTime( QDate(year, month, day), QTime(hour, minute), Qt::UTC );
 

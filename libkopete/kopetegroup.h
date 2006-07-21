@@ -19,6 +19,8 @@
 #ifndef KOPETEGROUP_H
 #define KOPETEGROUP_H
 
+#include <QtCore/QList>
+
 #include "kopetecontactlistelement.h"
 
 #include "kopete_export.h"
@@ -50,6 +52,8 @@ class KOPETE_EXPORT Group : public ContactListElement
 	Q_OBJECT
 
 public:
+	typedef QList<Group*> List;
+
 	/** Kinds of groups. */
 	enum GroupType { Normal=0, Temporary, TopLevel };
 

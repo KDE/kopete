@@ -175,7 +175,7 @@ void KopeteSystemTray::startBlink( QMovie *movie )
 void KopeteSystemTray::startBlink()
 {
 	if ( !mMovie )
-		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), K3Icon::Panel );
+		mMovie = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Panel );
 	// KIconLoader already checked isValid()
 	if ( !mMovie) return;
 	
@@ -410,7 +410,7 @@ QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
 		//  Escape it after snipping it to not snip entities
 		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
-			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
+			msgText = msgText.left( 30 ) + QLatin1String( " ..." );
 		msgText=Kopete::Message::escape(msgText);
 	}
 	else
@@ -424,17 +424,17 @@ QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
 			{
 				QString urlWithoutProtocol = rx.cap( 4 );
 				shorterUrl = urlWithoutProtocol.left( 27 )
-						+ QString::fromLatin1( "... " );
+						+ QLatin1String( "... " );
 			}
 			else
 			{
 				shorterUrl = fullUrl.left( 27 )
-						+ QString::fromLatin1( "... " );
+						+ QLatin1String( "... " );
 			}
 			// remove message text
-			msgText = QString::fromLatin1( "... " ) +
+			msgText = QLatin1String( "... " ) +
 					rx.cap( 1 ) +
-					QString::fromLatin1( " ..." );
+					QLatin1String( " ..." );
 			// find last occurrence of URL (the one inside the <a> tag)
 			int revUrlOffset = msgText.lastIndexOf( fullUrl );
 			msgText.replace( revUrlOffset,

@@ -18,7 +18,6 @@
 
 #include "chatview.h"
 
-#include "chatmemberslistwidget.h"
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
 #include "kopetechatwindow.h"
@@ -48,6 +47,8 @@
 
 
 #include <qtimer.h>
+#include <QSplitter>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QDropEvent>
@@ -90,19 +91,22 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	KVBox *vbox=this;
 
 	m_mainWindow = 0L;
-	membersDock = new KHBox(vbox);
-	membersStatus = Smart;
 	m_tabState = Normal;
 
 
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
 
+	QSplitter *splitter = new QSplitter( Qt::Vertical, vbox );
+
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)	
-	m_messagePart = new ChatMessagePart( mgr, membersDock );
+	m_messagePart = new ChatMessagePart( mgr , this );
 
 	//Create the bottom dock widget, with the edit area, statusbar and send button
 	m_editPart = new ChatTextEditPart( mgr, vbox );
+
+	splitter->addWidget(m_messagePart->view());
+	splitter->addWidget(m_editPart->widget());
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -165,9 +169,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	// restore docking positions
 	readOptions();
-
-	// maybe show chat members
-	createMembersList();
 }
 
 ChatView::~ChatView()
@@ -329,11 +330,6 @@ bool ChatView::isVisible()
 	return ( m_mainWindow && m_mainWindow->isVisible() );
 }
 
-bool ChatView::visibleMembersList()
-{
-	return d->visibleMembers;
-}
-
 bool ChatView::sendInProgress()
 {
 	return d->sendInProgress;
@@ -352,21 +348,21 @@ bool ChatView::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
-				i18n( "Cl&ose Chat" ), QString::fromLatin1( "AskCloseGroupChat" ) );
+				i18n( "Cl&ose Chat" ), QLatin1String( "AskCloseGroupChat" ) );
 		}
 
 		if ( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
-				i18n( "Cl&ose Chat" ), QString::fromLatin1("AskCloseChatRecentMessage" ) );
+				i18n( "Cl&ose Chat" ), QLatin1String("AskCloseChatRecentMessage" ) );
 		}
 
 		if ( d->sendInProgress && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n( "You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?" ), i18n( "Message in Transit" ),
-				i18n( "Cl&ose Chat" ), QString::fromLatin1( "AskCloseChatMessageInProgress" ) );
+				i18n( "Cl&ose Chat" ), QLatin1String( "AskCloseChatMessageInProgress" ) );
 		}
 	}
 
@@ -409,100 +405,6 @@ void ChatView::updateChatState( KopeteTabState newState )
 void ChatView::setMainWindow( KopeteChatWindow* parent )
 {
 	m_mainWindow = parent;
-}
-
-void ChatView::createMembersList()
-{
-	if ( !membersDock )
-	{
-		//Create the chat members list
-		m_membersList = new ChatMembersListWidget( m_manager, membersDock );
-
-		Kopete::ContactPtrList members = m_manager->members();
-
-		if ( members.first() && members.first()->metaContact() != 0 )
-		{
-			membersStatus = static_cast<MembersListPolicy>
-			(
-				members.first()->metaContact()->pluginData
-				( m_manager->protocol(), QString::fromLatin1( "MembersListPolicy" ) ).toInt()
-			);
-		}
-		else
-		{
-			membersStatus = Smart;
-		}
-
-		if( membersStatus == Smart )
-			d->visibleMembers = ( m_manager->members().count() > 1 );
-		else
-			d->visibleMembers = ( membersStatus == Visible );
-
-		placeMembersList( membersDockPosition );
-	}
-}
-
-void ChatView::toggleMembersVisibility()
-{
-	if( membersDock )
-	{
-		d->visibleMembers = !d->visibleMembers;
-		membersStatus = d->visibleMembers ? Visible : Hidden;
-		placeMembersList( membersDockPosition );
-		Kopete::ContactPtrList members = m_manager->members();
-		if ( members.first()->metaContact() )
-		{
-			members.first()->metaContact()->setPluginData( m_manager->protocol(),
-				QString::fromLatin1( "MembersListPolicy" ), QString::number(membersStatus) );
-		}
-		//refreshView();
-	}
-}
-
-void ChatView::placeMembersList( K3DockWidget::DockPosition dp )
-{
-// 	kDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
-// 			", visible " << d->visibleMembers << endl;
-
-	
-#if 0
-	if ( d->visibleMembers )
-	{
-		membersDockPosition = dp;
-
-		// look up the dock width
-		int dockWidth;
-		KGlobal::config()->setGroup( QString::fromLatin1( "ChatViewDock" ) );
-
-		if( membersDockPosition == K3DockWidget::DockLeft )
-		{
-			dockWidth = KGlobal::config()->readEntry(
-				QString::fromLatin1( "membersDock,viewDock:sepPos" ), 30);
-		}
-		else
-		{
-			dockWidth = KGlobal::config()->readEntry(
-				QString::fromLatin1( "viewDock,membersDock:sepPos" ), 70);
-		}
-		// Make sure it is shown then place it wherever
-		membersDock->setEnableDocking( K3DockWidget::DockLeft | K3DockWidget::DockRight );
-		membersDock->manualDock( viewDock, membersDockPosition, dockWidth );
-		membersDock->show();
-		membersDock->setEnableDocking( K3DockWidget::DockNone );
-	}
-	else
-	{
-		// Dock it to the desktop then hide it
-		membersDock->undock();
-		membersDock->hide();
-	}
-
-#endif
-
-	if( d->isActive )
-		m_mainWindow->updateMembersActions();
-
-	//refreshView();
 }
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
@@ -548,7 +450,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 			setStatusText( i18n( "%1 is typing a message", typingList.first() ) );
 		else
 		{
-			QString statusTyping = typingList.join( QString::fromLatin1( ", " ) );
+			QString statusTyping = typingList.join( QLatin1String( ", " ) );
 			setStatusText( i18nc( "%1 is a list of names", "%1 are typing a message", statusTyping ) );
 		}
 		updateChatState( Typing );
@@ -630,16 +532,6 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
-
-	if( membersStatus == Smart && membersDock )
-	{
-		bool shouldShowMembers = ( m_manager->members().count() > 1);
-		if( shouldShowMembers != d->visibleMembers )
-		{
-			d->visibleMembers = shouldShowMembers;
-			placeMembersList( membersDockPosition );
-		}
-	}
 
 	updateChatState();
 	emit updateStatusIcon( this );
@@ -833,9 +725,7 @@ void ChatView::saveOptions()
 {
 	KConfig *config = KGlobal::config();
 
-//	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
-	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
-	config->writeEntry( QString::fromLatin1( "membersDockPosition" ), (int)membersDockPosition );
+//	writeDockConfig ( config, QLatin1String( "ChatViewDock" ) );
 	saveChatSettings();
 	config->sync();
 }
@@ -857,7 +747,7 @@ void ChatView::saveChatSettings()
 
 	KConfig* config = KGlobal::config();
 	
-	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           mc->metaContactId();
 
 	config->setGroup( contactListGroup );
@@ -873,7 +763,7 @@ void ChatView::loadChatSettings()
 		return; //can't load with more than one other person in the chat
 
 	//read settings for metacontact
-	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           contacts.first()->metaContact()->metaContactId();
 	KConfig* config = KGlobal::config();
 	config->setGroup( contactListGroup );
@@ -889,24 +779,24 @@ void ChatView::readOptions()
 	KConfig *config = KGlobal::config();
 
 	/** THIS IS BROKEN !!! */
-	//dockManager->readConfig ( config, QString::fromLatin1("ChatViewDock") );
+	//dockManager->readConfig ( config, QLatin1String("ChatViewDock") );
 #if 0
 	//Work-around to restore dock widget positions
-	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
+	config->setGroup( QLatin1String( "ChatViewDock" ) );
 
 	membersDockPosition = static_cast<K3DockWidget::DockPosition>(
-		config->readEntry( QString::fromLatin1( "membersDockPosition" ), K3DockWidget::DockRight ) );
+		config->readEntry( QLatin1String( "membersDockPosition" ), K3DockWidget::DockRight ) );
 
-	QString dockKey = QString::fromLatin1( "viewDock" );
+	QString dockKey = QLatin1String( "viewDock" );
 	if ( d->visibleMembers )
 	{
 		if( membersDockPosition == K3DockWidget::DockLeft )
-			dockKey.prepend( QString::fromLatin1( "membersDock," ) );
+			dockKey.prepend( QLatin1String( "membersDock," ) );
 		else if( membersDockPosition == K3DockWidget::DockRight )
-			dockKey.append( QString::fromLatin1( ",membersDock" ) );
+			dockKey.append( QLatin1String( ",membersDock" ) );
 	}
 
-	dockKey.append( QString::fromLatin1( ",editDock:sepPos" ) );
+	dockKey.append( QLatin1String( ",editDock:sepPos" ) );
 	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
 	int splitterPos = config->readEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );

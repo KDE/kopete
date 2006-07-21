@@ -34,9 +34,7 @@
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qtimer.h>
-#include <q3ptrlist.h>
 //Added by qt3to4:
-#include <Q3ValueList>
 #include <qtextcodec.h>
 #include <qimage.h>
 #include <qfile.h>
@@ -142,11 +140,11 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const OContact& ) ),
-	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
+	                     this, SLOT( ssiContactAdded( const OContact& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const OContact& ) ),
 	                     this, SLOT( ssiGroupAdded( const OContact& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const OContact& ) ),
-	                     this, SLOT( ssiGroupUpdated( const OContactI& ) ) );
+	                     this, SLOT( ssiGroupUpdated( const OContact& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const OContact& ) ),
 	                     this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
@@ -484,7 +482,7 @@ void OscarAccount::setBuddyIcon( KUrl url )
 		if( image.height() > size.height())
 			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
 		
-		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
 		
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
 		if ( !image.save( newlocation, "JPEG" ) )
@@ -504,7 +502,7 @@ bool OscarAccount::addContactToSSI( const QString& contactName, const QString& g
 		if ( !autoAddGroup )
 			return false;
 
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
 			<< groupName << endl;
 
 		d->contactAddQueue[Oscar::normalize( contactName )] = groupName;
@@ -526,7 +524,7 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 		if ( !autoAddGroup )
 			return false;
 		
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group " 
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group " 
 				<< newGroupName << endl;
 			
 		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
@@ -578,7 +576,7 @@ bool OscarAccount::createContact(const QString &contactId,
 		2.c. create kopete contact
 	 */
 
-	Q3ValueList<TLV> dummyList;
+	QList<TLV> dummyList;
 	if ( parentContact->isTemporary() )
 	{
 		OContact tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );
@@ -649,7 +647,7 @@ void OscarAccount::ssiContactAdded( const OContact& item )
 	}
 	else if ( contacts()[item.name()] )
 	{
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. modifying " << item.name() << endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. modifying " << item.name() << endl;
 		OscarContact* oc = static_cast<OscarContact*>( contacts()[item.name()] );
 		oc->setSSIItem( item );
 	}
@@ -667,23 +665,23 @@ void OscarAccount::ssiGroupAdded( const OContact& item )
 	{
 		if ( Oscar::normalize( it.value() ) == Oscar::normalize( item.name() ) )
 		{
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key()
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key()
 				<< "' to group " << item.name() << endl;
 			
 			d->engine->addContact( Oscar::normalize( it.key() ), item.name() );
-			d->contactAddQueue.remove( it );
+			d->contactAddQueue.erase( it );
 		}
 	}
 	
 	for ( it = d->contactChangeQueue.begin(); it != d->contactChangeQueue.end(); ++it )
 	{
-		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
+		if ( Oscar::normalize( it.value() ) == Oscar::normalize( item.name() ) )
 		{
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed change of contact '" << it.key()
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed change of contact '" << it.key()
 				<< "' to group " << item.name() << endl;
 			
 			d->engine->changeContactGroup( it.key(),  item.name() );
-			d->contactChangeQueue.remove( it );
+			d->contactChangeQueue.erase( it );
 		}
 	}
 }
@@ -695,7 +693,7 @@ void OscarAccount::ssiContactUpdated( const OContact& item )
 		return;
 	else
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
 		OscarContact* oc = static_cast<OscarContact*>( contact );
 		oc->setSSIItem( item );
 	}
@@ -786,7 +784,7 @@ void OscarAccount::slotSendBuddyIcon()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
 	QFile iconFile( photoPath );
 	
-	if ( iconFile.open( IO_ReadOnly ) )
+	if ( iconFile.open( QIODevice::ReadOnly ) )
 	{
 		if ( !engine()->hasIconConnection() )
 		{

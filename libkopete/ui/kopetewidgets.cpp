@@ -37,8 +37,8 @@ public:
 #ifdef EMBED_IMAGES
 		QPixmap pix(m_widgets[key].iconSet);
 #else
-		QPixmap pix(locate( "data", 
-			QString::fromLatin1("kopetewidgets/pics/") + m_widgets[key].iconSet));
+		QPixmap pix(KStandardDirs::locate( "data", 
+			QLatin1String("kopetewidgets/pics/") + m_widgets[key].iconSet));
 #endif
 		return QIcon(pix);
 	}
@@ -73,41 +73,41 @@ KopeteWidgets::KopeteWidgets()
 {
         WidgetInfo widget;
 
-	widget.group = QString::fromLatin1("Input (Kopete)");
+	widget.group = QLatin1String("Input (Kopete)");
 #ifdef EMBED_IMAGES
 	widget.iconSet = QPixmap(kopete__ui__addressbooklinkwidget_xpm);
 #else
-	widget.iconSet = QString::fromLatin1("kopete__ui__addressbooklinkwidget.png");
+	widget.iconSet = QLatin1String("kopete__ui__addressbooklinkwidget.png");
 #endif
-	widget.includeFile = QString::fromLatin1("addressbooklinkwidget.h");
-	widget.toolTip = QString::fromLatin1("Address Book Link Widget (Kopete)");
-	widget.whatsThis = QString::fromLatin1("KABC::Addressee display/selector");
+	widget.includeFile = QLatin1String("addressbooklinkwidget.h");
+	widget.toolTip = QLatin1String("Address Book Link Widget (Kopete)");
+	widget.whatsThis = QLatin1String("KABC::Addressee display/selector");
 	widget.isContainer = false;
-	m_widgets.insert(QString::fromLatin1("Kopete::UI::AddressBookLinkWidget"), widget);
+	m_widgets.insert(QLatin1String("Kopete::UI::AddressBookLinkWidget"), widget);
 
-	widget.group = QString::fromLatin1("Views (Kopete)");
+	widget.group = QLatin1String("Views (Kopete)");
 #ifdef EMBED_IMAGES
 	widget.iconSet = QPixmap(kopete__ui__listview__listview_xpm);
 #else
-	widget.iconSet = QString::fromLatin1("kopete__ui__listview__listview.png");
+	widget.iconSet = QLatin1String("kopete__ui__listview__listview.png");
 #endif
-	widget.includeFile = QString::fromLatin1("kopetelistview.h");
-	widget.toolTip = QString::fromLatin1("List View (Kopete)");
-	widget.whatsThis = QString::fromLatin1("A component capable list view widget.");
+	widget.includeFile = QLatin1String("kopetelistview.h");
+	widget.toolTip = QLatin1String("List View (Kopete)");
+	widget.whatsThis = QLatin1String("A component capable list view widget.");
 	widget.isContainer = false;
-	m_widgets.insert(QString::fromLatin1("Kopete::UI::ListView::ListView"), widget);
+	m_widgets.insert(QLatin1String("Kopete::UI::ListView::ListView"), widget);
 
-	widget.group = QString::fromLatin1("Input (Kopete)");
+	widget.group = QLatin1String("Input (Kopete)");
 #ifdef EMBED_IMAGES
 	widget.iconSet = QPixmap(kopete__ui__listview__searchline_xpm);
 #else
-	widget.iconSet = QString::fromLatin1("kopete__ui__listview__searchline.png");
+	widget.iconSet = QLatin1String("kopete__ui__listview__searchline.png");
 #endif
-	widget.includeFile = QString::fromLatin1("kopetelistviewsearchline.h");
-	widget.toolTip = QString::fromLatin1("List View Search Line (Kopete)");
-	widget.whatsThis = QString::fromLatin1("Search line able to use Kopete custom list View.");
+	widget.includeFile = QLatin1String("kopetelistviewsearchline.h");
+	widget.toolTip = QLatin1String("List View Search Line (Kopete)");
+	widget.whatsThis = QLatin1String("Search line able to use Kopete custom list View.");
 	widget.isContainer = false;
-	m_widgets.insert(QString::fromLatin1("Kopete::UI::ListView::SearchLine"), widget);
+	m_widgets.insert(QLatin1String("Kopete::UI::ListView::SearchLine"), widget);
 
 	new KInstance("kopetewidgets");
 }
@@ -118,13 +118,13 @@ KopeteWidgets::~KopeteWidgets()
 QWidget *KopeteWidgets::create(const QString &key, QWidget *parent, const char *name)
 {
 
-         if (key == QString::fromLatin1("Kopete::UI::AddressBookLinkWidget"))
+         if (key == QLatin1String("Kopete::UI::AddressBookLinkWidget"))
                 return new Kopete::UI::AddressBookLinkWidget(parent, name);
 
-         if (key == QString::fromLatin1("Kopete::UI::ListView::ListView"))
+         if (key == QLatin1String("Kopete::UI::ListView::ListView"))
                 return new Kopete::UI::ListView::ListView(parent, name);
 
-         if (key == QString::fromLatin1("Kopete::UI::ListView::SearchLine"))
+         if (key == QLatin1String("Kopete::UI::ListView::SearchLine"))
                 return new Kopete::UI::ListView::SearchLine(parent, 0, name);
 
 	return 0;

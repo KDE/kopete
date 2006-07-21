@@ -19,7 +19,7 @@
 #ifndef GWRECEIVEINVITATIONDIALOG_H
 #define GWRECEIVEINVITATIONDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class ShowInvitationWidget;
 
@@ -28,7 +28,7 @@ This is the dialog that is shown when you receive an invitation to chat.
 
 @author SUSE AG
 */
-class ReceiveInvitationDialog : public KDialogBase
+class ReceiveInvitationDialog : public KDialog
 {
 Q_OBJECT
 public:

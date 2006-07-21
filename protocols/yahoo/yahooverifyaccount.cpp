@@ -42,7 +42,7 @@ YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent
 	setCaption( i18n("Account Verification - Yahoo") );
 	setButtons( KDialog::Cancel | KDialog::Apply );
 	setDefaultButton(KDialog::Apply);
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 
 	mTheAccount = account;	
 	QWidget* w = new QWidget( this );
@@ -60,9 +60,9 @@ YahooVerifyAccount::~YahooVerifyAccount()
 	delete mTheDialog;
 }
 
-void YahooVerifyAccount::setUrl( KUrl url )
+void YahooVerifyAccount::setUrl( const KUrl &url )
 {
-	mFile = new KTempFile( locateLocal( "tmp", url.fileName() ) );
+	mFile = new KTempFile( KStandardDirs::locateLocal( "tmp", url.fileName() ) );
 	mFile->setAutoDelete( true );
 	KIO::TransferJob *transfer = KIO::get( url, false, false );
 	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );

@@ -19,7 +19,7 @@
 #ifndef GWPRIVACYDIALOG_H
 #define GWPRIVACYDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class GroupWiseAccount;
 class GroupWisePrivacyWidget;
@@ -31,7 +31,7 @@ Logic for the UI part managing the allow and deny lists, and the default privacy
 
 @author Kopete Developers
 */
-class GroupWisePrivacyDialog : public KDialogBase
+class GroupWisePrivacyDialog : public KDialog
 {
 Q_OBJECT
 public:
@@ -61,7 +61,7 @@ private:
 	GroupWiseContactSearch * m_search;
 	Q3ListBoxItem * m_defaultPolicy;
 	bool m_dirty;
-	KDialogBase * m_searchDlg;
+	KDialog * m_searchDlg;
 };
 
 #endif

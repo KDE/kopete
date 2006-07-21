@@ -18,7 +18,7 @@
 #include <qpushbutton.h>
 #include <qlayout.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <kopeteaccount.h>
 #include <kopetemetacontact.h>
 #include <qlineedit.h>
@@ -33,7 +33,7 @@ MeanwhileAddContactPage::MeanwhileAddContactPage(
         : AddContactPage(parent, 0L), theAccount(_account),
             theParent(parent)
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
     theDialog = new MeanwhileAddContactBase(this);
     MeanwhileAccount *account = 
         static_cast<MeanwhileAccount *>(_account);

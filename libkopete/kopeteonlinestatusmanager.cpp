@@ -324,7 +324,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	kDebug( 14010) << k_funcinfo << "overlarIcons size: " << statusFor.overlayIcons().count() <<endl;
+	kDebug( 14010) << k_funcinfo << "overlayIcons size: " << statusFor.overlayIcons().count() <<endl;
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
@@ -410,7 +410,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		// The description of the onlinestatus is used as the qobject name
 		// This is safe as long as OnlineStatus are immutable
 		QByteArray actionName = status.description().toAscii();
-		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
+		if ( !( action = account->findChild<KAction*>( actionName ) ) )
 		{
 #warning  give a parent to actions
 			if(options & OnlineStatusManager::HasStatusMessage)

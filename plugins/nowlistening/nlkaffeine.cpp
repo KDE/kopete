@@ -24,21 +24,21 @@
 #include <kdebug.h>
 #include <QString>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
 #include "nlkaffeine.h"
 
 NLKaffeine::NLKaffeine() : NLMediaPlayer()
 {
-	m_client = new QDBusInterfacePtr("org.kde.Kaffeine", "/KaffeineIface");
+	m_client = new QDBusInterface("org.kde.Kaffeine", "/KaffeineIface");
 	m_type = Video;
 	m_name = "Kaffeine";
 }
 
-QDBusInterface *NLKaffeine::client()
+NLKaffeine::~NLKaffeine()
 {
-	return m_client->interface();
+	delete m_client;
 }
 
 void NLKaffeine::update()
@@ -49,17 +49,17 @@ void NLKaffeine::update()
 
 	// TODO: Port to Kaffeine D-BUS Interface
 	// see if kaffeine is  registered with D-BUS
-	if ( client()->isValid() )
+	if ( m_client->isValid() )
 	{
 
-		QDBusReply<bool> isPlayingReply = client()->call("isPlaying");
-		if( isPlayingReply.isSuccess() )
+		QDBusReply<bool> isPlayingReply = m_client->call("isPlaying");
+		if( isPlayingReply.isValid() )
 		{
 			m_playing = isPlayingReply.value();
 		}
 
-		QDBusReply<QString> getTrackReply = client()->call("getTrack");
-		if( getTrackReply.isSuccess() )
+		QDBusReply<QString> getTrackReply = m_client->call("getTrack");
+		if( getTrackReply.isValid() )
 		{
 			newTrack = getTrackReply.value();
 		}

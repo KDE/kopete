@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_alias )
 
 target_link_libraries(kopete_alias  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_alias )
+install(TARGETS kopete_alias  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -33,13 +33,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_alias )
 
 target_link_libraries(kcm_kopete_alias  ${KDE4_KUTILS_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kopete_alias )
+install(TARGETS kcm_kopete_alias  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_alias.desktop )
-install_files( ${SERVICES_INSTALL_DIR}/kconfiguredialog FILES kopete_alias_config.desktop )
+install( FILES kopete_alias.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_alias_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 

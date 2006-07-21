@@ -19,7 +19,7 @@
 #ifndef GWCHATPROPSDIALOG_H
 #define GWCHATPROPSDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "gwchatrooms.h"
 
@@ -38,7 +38,7 @@ class GroupWiseChatPropsWidget;
  2) Add readonly mode.
  3) Track which things changed?  Easier to get the changed Chatroom back and diff in the manager, simpler api connecting 
  */
-class GroupWiseChatPropsDialog : public KDialogBase
+class GroupWiseChatPropsDialog : public KDialog
 {
 	Q_OBJECT
 	public:

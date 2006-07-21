@@ -196,10 +196,6 @@ public slots:
 	 */
 	virtual void deserialize( MetaContact *metaContact, const QMap<QString, QString> &data );
 
-
-protected:
-	virtual void virtual_hook( uint id, void *data );
-
 private:
 	class Private;
 	Private *d;

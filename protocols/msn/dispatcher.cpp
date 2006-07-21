@@ -580,7 +580,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 // 				Convert from base64 encoding to byte array.
 				KCodecs::base64Decode(base64.toUtf8(), image);
 // 				Create a temporary file to store the image data.
-				KTempFile *ink = new KTempFile(locateLocal("tmp", "inkformatgif-" ), ".gif");
+				KTempFile *ink = new KTempFile(KStandardDirs::locateLocal("tmp", "inkformatgif-" ), ".gif");
 				ink->setAutoDelete(true);
 // 				Save the image data to disk.
 				ink->file()->write(image);

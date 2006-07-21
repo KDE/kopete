@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <QString>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
 #include "nljuk.h"
@@ -33,12 +33,12 @@ NLJuk::NLJuk() : NLMediaPlayer()
 {
 	m_type = Audio;
 	m_name = "JuK";
-	m_client = new QDBusInterfacePtr("org.kde.JuK", "/Player");
+	m_client = new QDBusInterface("org.kde.JuK", "/Player");
 }
 
-QDBusInterface *NLJuk::client()
+NLJuk::~NLJuk()
 {
-	return m_client->interface();
+	delete m_client;
 }
 
 void NLJuk::update()
@@ -49,31 +49,31 @@ void NLJuk::update()
 	// TODO: Port to JuK D-BUS interface
 
 	// see if JuK is  registered with DCOP
-	if( client()->isValid() )
+	if( m_client->isValid() )
 	{
 		// see if it's playing
 
-		QDBusReply<bool> playingReply = client()->call("playing");
-		if( playingReply.isSuccess() )
+		QDBusReply<bool> playingReply = m_client->call("playing");
+		if( playingReply.isValid() )
 		{
 			m_playing = playingReply.value();
 		}
 
 	
-		QDBusReply<QString> albumReply = client()->call( "trackProperty", QString("Album") );
-		if( albumReply.isSuccess() )
+		QDBusReply<QString> albumReply = m_client->call( "trackProperty", QString("Album") );
+		if( albumReply.isValid() )
 		{
 			m_album = albumReply.value();
 		}
 
-		QDBusReply<QString> artistReply = client()->call( "trackProperty", QString("Artist") );
-		if( artistReply.isSuccess() )
+		QDBusReply<QString> artistReply = m_client->call( "trackProperty", QString("Artist") );
+		if( artistReply.isValid() )
 		{
 			m_artist = artistReply.value();
 		}
 
-		QDBusReply<QString> titleReply = client()->call( "trackProperty", QString("Title") );
-		if( titleReply.isSuccess() )
+		QDBusReply<QString> titleReply = m_client->call( "trackProperty", QString("Title") );
+		if( titleReply.isValid() )
 		{
 			newTrack = titleReply.value();
 		}

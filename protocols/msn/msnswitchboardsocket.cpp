@@ -576,7 +576,7 @@ void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
 	QByteArray image;
 	// Convert from base64 encoded string to byte array.
 	KCodecs::base64Decode(base64String.toUtf8() , image);
-	KTempFile *inkImage = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
+	KTempFile *inkImage = new KTempFile(KStandardDirs::locateLocal( "tmp", "inkformatgif-" ), ".gif");
 	inkImage->setAutoDelete(true);
 	inkImage->file()->write(image.data(), image.size());
 	inkImage->file()->close();

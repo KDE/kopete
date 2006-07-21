@@ -23,10 +23,6 @@
 
 #include <qobject.h>
 #include <qstring.h>
-//Added by qt3to4:
-#include <Q3PtrList>
-
-#include <ktempfile.h>
 
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
@@ -34,6 +30,7 @@
 class QStringList;
 class QString;
 
+class KTempFile;
 
 namespace Kopete { class Message; class ChatSession; }
 
@@ -73,7 +70,7 @@ private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
 	bool mMagickNotFoundShown;
-	Q3PtrList<KTempFile> m_tempFiles;
+	QList<KTempFile *> m_tempFiles;
 };
 
 #endif

@@ -94,7 +94,7 @@ kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 
 target_link_libraries(iris_kopete ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} idn ${QCA2_LIBRARIES})
 
-install_targets( ${LIB_INSTALL_DIR} iris_kopete )
+install(TARGETS iris_kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 

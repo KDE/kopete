@@ -3,7 +3,7 @@
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2001-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -34,17 +34,17 @@ class KopetePluginConfig : public KDialog
 public:
 	KopetePluginConfig( QWidget *parent );
 	~KopetePluginConfig();
-	void apply();
 
 public slots:
-	void setChanged( bool c );
+	void slotDefault();
+	void slotReset();
+	void slotApply();
+	void slotHelp();
 
-	virtual void slotDefault();
-	virtual void slotUser1();
-	virtual void slotApply();
-	virtual void slotOk();
-	virtual void slotHelp();
-	virtual void show();
+	virtual void accept();
+
+private slots:
+	void setChanged( bool c );
 
 private:
 	KopetePluginConfigPrivate *d;

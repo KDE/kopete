@@ -24,10 +24,10 @@
 
 #include <qwidget.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <editaccountwidget.h>
 
-class QVBoxLayout;
+class Q3VBoxLayout;
 namespace Kopete { class Account; }
 class GroupWiseAccountPreferences;
 
@@ -59,7 +59,7 @@ protected:
 	void reOpen();
 	void writeConfig();
 	Kopete::Account *m_account;
-	QVBoxLayout *m_layout;
+	Q3VBoxLayout *m_layout;
 	GroupWiseAccountPreferences *m_preferencesDialog;
 };
 

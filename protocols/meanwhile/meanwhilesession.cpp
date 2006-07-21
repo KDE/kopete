@@ -39,6 +39,8 @@
 #include <mw_srvc_store.h>
 #include <mw_cipher.h>
 #include <mw_st_list.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #define set_session_handler(a,b) sessionHandler.a = _handleSession ## b
 #define set_aware_handler(a,b)   awareHandler.a = _handleAware ## b
@@ -205,10 +207,10 @@ static void free_id_block(void *data, void *p)
     free(id);
 }
 
-void MeanwhileSession::addContacts(const QDict<Kopete::Contact>& contacts)
+void MeanwhileSession::addContacts(const Q3Dict<Kopete::Contact>& contacts)
 {
     HERE;
-    QDictIterator<Kopete::Contact> it(contacts);
+    Q3DictIterator<Kopete::Contact> it(contacts);
     GList *buddies = 0L;
 
     /** Convert our QDict of kopete contact to a GList of meanwhile buddies */
@@ -343,7 +345,7 @@ void MeanwhileSession::syncContactsToServer()
             mwSametimeGroup_DYNAMIC, "People");
     mwSametimeGroup_setOpen(topstgroup, true);
 
-    QDictIterator<Kopete::Contact> it(account->contacts());
+    Q3DictIterator<Kopete::Contact> it(account->contacts());
     for( ; it.current(); ++it ) {
         MeanwhileContact *contact =
             static_cast<MeanwhileContact *>(it.current());
@@ -714,7 +716,7 @@ struct MeanwhileSession::ConversationData
     cd->chat    = contact->manager(Kopete::Contact::CanCreate);
     cd->chat->ref();
     if (createQueue)
-        cd->queue = new QValueList<Kopete::Message>();
+        cd->queue = new Q3ValueList<Kopete::Message>();
 
     mwConversation_setClientData(conv, cd, 0L);
 
@@ -739,7 +741,7 @@ void MeanwhileSession::handleImConvOpened(struct mwConversation *conv)
 
     } else if (convdata->queue && !convdata->queue->isEmpty()) {
         /* send any messages that were waiting for the conversation to open */
-        QValueList<Kopete::Message>::iterator it;
+        Q3ValueList<Kopete::Message>::iterator it;
         for (it = convdata->queue->begin(); it != convdata->queue->end();
                 ++it) {
             mwConversation_send(conv, mwImSend_PLAIN,

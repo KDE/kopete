@@ -30,13 +30,16 @@
 
 
 MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, const char * name )
-	: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1", contact ),
-                   KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ ),
+	: KDialog( parent),
 	m_imageContainer( this )
 {
 	setInitialSize( QSize(320,290) );
-	
-	setEscapeButton( KDialogBase::Close );
+    setCaption(i18n( "Webcam for %1", contact ));
+	setButtons(KDialog::Close);
+	setDefaultButton(KDialog::Close);
+	setEscapeButton( KDialog::Close );
+	showButtonSeparator(true);
+	setModal(false);
 	/*
 	QObject::connect( contact, SIGNAL( signalReceivedWebcamImage( const QPixmap&  ) ),
 	                  this, SLOT( newImage( const QPixmap& ) ) );
@@ -45,7 +48,8 @@ MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, cons
 	/*
 	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
 	*/
-	QFrame* page = plainPage();
+	QFrame* page = new Frame(this);
+	setMainWidget(page);
 	if ( page )
 	{
 		kDebug(14180) << k_funcinfo << "Adding webcam image container" << endl;

@@ -111,8 +111,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 		}
 		else
 		{
-			int screenNameLength = b->getByte();
-			m_fromUser = QString( b->getBlock( screenNameLength ) );
+			m_fromUser = QString( b->getBUIN() );
 			setTransfer( transfer );
 			handleAutoResponse();
 			setTransfer( 0 );
@@ -311,7 +310,7 @@ void MessageReceiverTask::handleType4Message()
 		break;
 	};
 
-	QByteArray msgText = tlv5buffer.getLNTS();
+	QByteArray msgText = tlv5buffer.getLELNTS();
 	if ( msgType == 0x0D || msgType == 0x0E )
 		msgText.replace( 0xFE, 0x20 );
 

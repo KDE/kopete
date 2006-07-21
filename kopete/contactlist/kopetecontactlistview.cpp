@@ -490,9 +490,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ),
 		ac, "contactStartChat" );
 
-	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QString::fromLatin1( "editcut" ),
+	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "editcut" ),
 														  0, this, SLOT( slotMoveToGroup() ), ac, "contactMove" );
-	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QString::fromLatin1( "editcopy" ), 0,
+	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "editcopy" ), 0,
 														 this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ),
@@ -505,8 +505,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( KIcon( QString::fromLatin1("add_user") ), i18n( "&Add Contact" ), ac, "contactAddContact" );
-	actionAddContact->kMenu()->addTitle( i18n("Select Account") );
+	actionAddContact = new KActionMenu( KIcon( QLatin1String("add_user") ), i18n( "&Add Contact" ), ac, "contactAddContact" );
+	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
 	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac, "contactAddTemporaryContact" );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
@@ -707,7 +707,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					metaLVI->metaContact()->displayName(), metaLVI->metaContact()->statusString() );
 
 				if ( title.length() > 43 )
-					title = title.left( 40 ) + QString::fromLatin1( "..." );
+					title = title.left( 40 ) + QLatin1String( "..." );
 
 				// HACK: Used to update the KMenu title -DarkShock
 				if( !d->menuTitleMap.contains(popup) )
@@ -736,7 +736,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					text=text.replace("&","&&"); // cf BUG 115449
 
 					if ( text.length() > 41 )
-						text = text.left( 38 ) + QString::fromLatin1( "..." );
+						text = text.left( 38 ) + QLatin1String( "..." );
 
 					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
 				}
@@ -753,7 +753,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 		{
 			QString title = groupvi->group()->displayName();
 			if ( title.length() > 32 )
-				title = title.left( 30 ) + QString::fromLatin1( "..." );
+				title = title.left( 30 ) + QLatin1String( "..." );
 
 			// HACK: Used to update the KMenu title -DarkShock
  			if( !d->menuTitleMap.contains(popup) )
@@ -979,7 +979,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 		for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
 			KUrl url = (*it);
-			if( url.protocol() == QString::fromLatin1("kopetemessage") )
+			if( url.protocol() == QLatin1String("kopetemessage") )
 			{
 				//Add a contact
 				addDraggedContactByInfo( url.queryItem("protocolId"),
@@ -1219,7 +1219,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 			for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 			{
-				if( (*it).protocol() != QString::fromLatin1("kopetemessage") && (*it).isLocalFile() )
+				if( (*it).protocol() != QLatin1String("kopetemessage") && (*it).isLocalFile() )
 					return false; //we can't send links if a locale file is in link
 			}
 

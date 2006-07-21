@@ -68,6 +68,7 @@ class KOPETE_EXPORT MetaContact : public ContactListElement
 	Q_PROPERTY( bool photoSyncedWithKABC READ isPhotoSyncedWithKABC WRITE setPhotoSyncedWithKABC )
 
 public:
+	typedef QList<MetaContact *> List;
 	/** 
 	 * Enumeration of possible sources for a property (which may be
 	 * photos, see setPhotoSource() for instance).

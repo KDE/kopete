@@ -601,8 +601,6 @@ kDebug() << k_funcinfo << "VIDIOC_S_FMT worked (" << errno << ").Returned width:
 				{
 					struct video_window V4L_videowindow;
 
-kDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------" << endl;
-
 				if (xioctl (VIDIOCGWIN, &V4L_videowindow)== -1)
 				{
 					perror ("ioctl VIDIOCGWIN");

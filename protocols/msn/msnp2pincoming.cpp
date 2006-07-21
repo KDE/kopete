@@ -102,7 +102,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 	}
 	else if(msgStr.message.data()[48] == '\0' && msgStr.dataMessageSize==4)
 	{  //This can be only the data preparaion message.   prepare to download
-		m_file=new KTempFile( locateLocal( "tmp", "msnpicture-" ), ".png" );
+		m_file=new KTempFile( KStandardDirs::locateLocal( "tmp", "msnpicture-" ), ".png" );
 		m_file->setAutoDelete(true);
 		m_Rfile=m_file->file();
 
@@ -225,7 +225,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 					QByteArray image;
 					KCodecs::base64Decode( base64.toUtf8() , image );
 
-					KTempFile *imageFile=new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ext );
+					KTempFile *imageFile=new KTempFile( KStandardDirs::locateLocal( "tmp", "msntypewrite-" ), ext );
 					imageFile->setAutoDelete(true);
 					imageFile->file()->write( image.data() , image.size() );
 					imageFile->file()->close();

@@ -20,6 +20,9 @@ set(kopete_qq_PART_SRCS
    qqfakeserver.cpp 
    qqincomingmessage.cpp 
    ui/qqwebcamdialog.cpp 
+   libeva.cpp
+   md5.c
+   crypt.cpp
 )
 
 kde4_automoc(${kopete_qq_PART_SRCS})
@@ -37,7 +40,7 @@ kde4_add_plugin(kopete_qq ${kopete_qq_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_qq)
 
-target_link_libraries(kopete_qq ${KDE4_KIO_LIBS} kopete kopete_videodevice )
+target_link_libraries(kopete_qq ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} kopete kopete_videodevice )
 
 install_targets(${PLUGIN_INSTALL_DIR} kopete_qq )
 

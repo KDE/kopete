@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <QStringList>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
 
@@ -32,14 +32,14 @@
 
 NLKscd::NLKscd() : NLMediaPlayer()
 {
-	m_client = new QDBusInterfacePtr("org.kde.kscd", "/CDPlayer");
+	m_client = new QDBusInterface("org.kde.kscd", "/CDPlayer");
 	m_type = Audio;
 	m_name = "KsCD";
 }
 
-QDBusInterface *NLKscd::client()
+NLKscd::~NLKscd()
 {
-	return m_client->interface();
+	delete m_client;
 }
 
 void NLKscd::update()
@@ -50,32 +50,32 @@ void NLKscd::update()
 	//TODO: Port to KSCD D-BUS Interface
 
 	// see if it's registered with DCOP
-	if ( client()->isValid() )
+	if ( m_client->isValid() )
 	{
 		// see if it's playing
-		QDBusReply<bool> playingReply = client()->call("playing");
-		if( playingReply.isSuccess() )
+		QDBusReply<bool> playingReply = m_client->call("playing");
+		if( playingReply.isValid() )
 		{
 			m_playing = playingReply.value();
 		}
 
 		// poll it for its current artist 
-		QDBusReply<QString> artistReply = client()->call("currentArtist");
-		if( artistReply.isSuccess() )
+		QDBusReply<QString> artistReply = m_client->call("currentArtist");
+		if( artistReply.isValid() )
 		{
 			m_artist = artistReply.value();
 		}
 
 		//album
-		QDBusReply<QString> albumReply = client()->call("currentAlbum");
-		if( albumReply.isSuccess() )
+		QDBusReply<QString> albumReply = m_client->call("currentAlbum");
+		if( albumReply.isValid() )
 		{
 			m_album = albumReply.value();
 		}
 
 		// Get the current track title
-		QDBusReply<QString> trackReply = client()->call("currentTrackTitle");
-		if( trackReply.isSuccess() )
+		QDBusReply<QString> trackReply = m_client->call("currentTrackTitle");
+		if( trackReply.isValid() )
 		{
 			newTrack = trackReply.value();
 		}

@@ -99,7 +99,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	m_reverseList = config->readEntry(  "reverseList", QStringList()  ) ;
 
 	// Load the avatar
-	m_pictureFilename = locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
+	m_pictureFilename = KStandardDirs::locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
 	resetPictureObject(true);
 
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
@@ -265,12 +265,12 @@ KActionMenu * MSNAccount::actionMenu()
 		m_changeDNAction->setEnabled( false );
 	}
 
-	m_actionMenu->kMenu()->addSeparator();
+	m_actionMenu->addSeparator();
 
 	m_actionMenu->addAction( m_changeDNAction );
 	m_actionMenu->addAction( m_startChatAction );
 
-//	m_actionMenu->kMenu()->insertSeparator();
+//	m_actionMenu->menu()->insertSeparator();
 
 	m_actionMenu->addAction( m_openInboxAction );
 
@@ -281,7 +281,7 @@ KActionMenu * MSNAccount::actionMenu()
 	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	debugMenu->addAction(rawCmd);
 
-	m_actionMenu->kMenu()->addSeparator();
+	m_actionMenu->addSeparator();
 	m_actionMenu->addAction( debugMenu );
 #endif
 
@@ -296,7 +296,7 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason)
 {
-	kdDebug( 14140 ) << k_funcinfo << status.description() << endl;
+	kDebug( 14140 ) << k_funcinfo << status.description() << endl;
 	
 	// FIXME: When changing song, do don't anything while connected
 	//if( reason.  contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
@@ -1457,7 +1457,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			if(picture.width() != 96 || picture.height() != 96)
 			{
 				// Save to a new location in msnpictures.
-				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KUrl::fromPathOrUrl(m_pictureFilename).fileName().toLower() ) );
+				QString newLocation( KStandardDirs::locateLocal( "appdata", "msnpictures/"+ KUrl(m_pictureFilename).fileName().toLower() ) );
 	
 				// Scale and crop the picture.
 				picture = MSNProtocol::protocol()->scalePicture(picture);

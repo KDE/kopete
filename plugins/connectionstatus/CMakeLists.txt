@@ -16,12 +16,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_connectionstatus )
 
 target_link_libraries(kopete_connectionstatus  ${KDE4_KDECORE_LIBS} kopete )
 
-install_targets(${PLUGIN_INSTALL_DIR} kopete_connectionstatus )
+install(TARGETS kopete_connectionstatus  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES kopete_connectionstatus.desktop )
+install( FILES kopete_connectionstatus.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

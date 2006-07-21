@@ -3,7 +3,7 @@
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2001-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,11 +19,7 @@
 
 #include <qlayout.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
 #include <QByteArray>
-#include <QFrame>
-#include <QWidget>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -52,7 +48,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent )
 	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("&Reset"), "undo" ) );
 
 	d = new KopetePluginConfigPrivate;
-	enableButtonSeparator(true);
+	showButtonSeparator(true);
 	showButton( User1, false );
 	setChanged( false );
 
@@ -61,24 +57,20 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent )
 
 	setInitialSize( QSize( 640, 480 ) );
 
-	QWidget* dialogPage = new QWidget(this);
-	QVBoxLayout *layout = new QVBoxLayout( dialogPage );
-	layout->setMargin( 0 );
-	layout->setSpacing( 0 );
-	layout->setAutoAdd( true );
-	d->pluginSelector = new KPluginSelector( dialogPage );
+	d->pluginSelector = new KPluginSelector( this );
 	setMainWidget( d->pluginSelector );
 	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );
 	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
 		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QByteArray & ) ) );
 
-	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ), i18n( "General Plugins" ), "Plugins" );
-}
+	connect( this, SIGNAL( defaultClicked() ), this, SLOT( slotDefault() ) );
+	connect( this, SIGNAL( user1Clicked() ), this, SLOT( slotReset() ) );
+	connect( this, SIGNAL( applyClicked() ), this, SLOT( slotApply() ) );
+	connect( this, SIGNAL( helpClicked() ), this, SLOT( slotHelp() ) );
 
-void KopetePluginConfig::setChanged( bool c )
-{
-	d->isChanged = c;
-	enableButton( Apply, c );
+	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
+	                               i18n( "General Plugins" ), "Plugins" );
+	d->pluginSelector->load();
 }
 
 void KopetePluginConfig::slotDefault()
@@ -87,13 +79,13 @@ void KopetePluginConfig::slotDefault()
 	setChanged( false );
 }
 
-void KopetePluginConfig::slotUser1()
+void KopetePluginConfig::slotReset()
 {
 	d->pluginSelector->load();
 	setChanged( false );
 }
 
-void KopetePluginConfig::apply()
+void KopetePluginConfig::slotApply()
 {
 	if( d->isChanged )
 	{
@@ -103,28 +95,22 @@ void KopetePluginConfig::apply()
 	}
 }
 
-void KopetePluginConfig::slotApply()
-{
-	apply();
-}
-
-void KopetePluginConfig::slotOk()
-{
-	emit okClicked();
-	apply();
-	accept();
-}
-
 void KopetePluginConfig::slotHelp()
 {
 	kWarning() << k_funcinfo << "FIXME: Implement!" << endl;
 }
 
-void KopetePluginConfig::show()
+void KopetePluginConfig::accept()
 {
-	d->pluginSelector->load();
+	slotApply();
 
-	KDialog::show();
+	KDialog::accept();
+}
+
+void KopetePluginConfig::setChanged( bool c )
+{
+	d->isChanged = c;
+	enableButton( Apply, c );
 }
 
 #include "kopetepluginconfig.moc"

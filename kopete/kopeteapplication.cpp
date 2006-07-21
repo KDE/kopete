@@ -147,11 +147,10 @@ void KopeteApplication::slotLoadPlugins()
 	*/
 
 	// Prevent plugins from loading? (--disable=foo,bar)
-	QStringList disableArgs = QStringList::split( ',', args->getOption( "disable" ) );
-	for ( QStringList::ConstIterator it = disableArgs.begin(); it != disableArgs.end(); ++it )
+	foreach ( const QString &disableArg, args->getOption( "disable" ).split( ',' ))
 	{
 		showConfigDialog = false;
-		Kopete::PluginManager::self()->setPluginEnabled( *it, false );
+		Kopete::PluginManager::self()->setPluginEnabled( disableArg, false );
 	}
 
 	// Load some plugins exclusively? (--load-plugins=foo,bar)
@@ -159,9 +158,8 @@ void KopeteApplication::slotLoadPlugins()
 	{
 		config->deleteGroup( "Plugins", KConfigBase::Global );
 		showConfigDialog = false;
-		QStringList plugins = QStringList::split( ',', args->getOption( "load-plugins" ) );
-		for ( QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it )
-			Kopete::PluginManager::self()->setPluginEnabled( *it, true );
+		foreach ( const QString &plugin, args->getOption( "load-plugins" ).split( ',' ))
+			Kopete::PluginManager::self()->setPluginEnabled( plugin, true );
 	}
 
 	config->sync();
@@ -216,17 +214,13 @@ void KopeteApplication::slotAllPluginsLoaded()
 	QByteArrayList connectArgs = args->getOptionList( "autoconnect" );
 	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
-		QStringList split = QStringList::split( ',', QString::fromLatin1( *i ) );
-
-		for ( QStringList::ConstIterator it2 = split.begin(); it2 != split.end(); ++it2 )
-		{
-			connectArgs.append( (*it2).toLocal8Bit() );
-		}
+		foreach ( const QString connectArg, QString::fromLocal8Bit(*i).split(','))
+			connectArgs.append( connectArg.toLocal8Bit() );
 	}
 	
 	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
-		QRegExp rx( QString::fromLatin1( "([^\\|]*)\\|\\|(.*)" ) );
+		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );
 		rx.indexIn( *i );
 		QString protocolId = rx.cap( 1 );
 		QString accountId = rx.cap( 2 );
@@ -264,25 +258,9 @@ int KopeteApplication::newInstance()
 //	kDebug(14000) << k_funcinfo << endl;
 	handleURLArgs();
 
-	/**
-	 * The following three lines work around a problem that
-	 * Kopete has since it has multiple main windows so
-	 * qapp->mainWidget() returns 0, which breaks the normal
-	 * KUniqueApplication::newInstance() behavior that raises
-	 * the window when we run a new instance.
-	 *
-	 * 1. Set the main widget to the contact list window
-	 * 2. Call KUniqueApplication::newInstance()
-	 * 3. Set the main widget back to 0
-	 *
-	 * This little workaround fixes the problem. -Matt
-	 */
-
 	setMainWidget( m_mainWindow );
-	int kUniqAppReturnCode = KUniqueApplication::newInstance();
-	setMainWidget( 0L );
 
-	return kUniqAppReturnCode;
+	return KUniqueApplication::newInstance();
 }
 
 void KopeteApplication::handleURLArgs()

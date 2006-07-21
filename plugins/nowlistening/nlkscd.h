@@ -24,18 +24,16 @@
 #ifndef NLKSCD_H
 #define NLKSCD_H
 
-struct QDBusInterfacePtr;
 class QDBusInterface;
 
 class NLKscd : public NLMediaPlayer
 {
 	public:
 		NLKscd();
+		virtual ~NLKscd();
 		virtual void update();
 	private:
-		QDBusInterface *client();
-
-		QDBusInterfacePtr *m_client;
+		QDBusInterface *m_client;
 	
 };
 

@@ -19,7 +19,6 @@
 #include <time.h>
 
 #include <qapplication.h>
-#include <Q3PtrList>
 #include <qtextcodec.h>
 
 #include <kaction.h>

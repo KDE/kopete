@@ -31,7 +31,7 @@
 
 #include <kdebug.h>
 #include <kconfig.h>
-#include <kdatagramsocket.h>
+#include <kbufferedsocket.h>
 #include <kserversocket.h>
 #include <kresolver.h>
 #include <klocale.h>
@@ -44,7 +44,7 @@ using namespace KNetwork;
 
 QQSocket::QQSocket(QObject* parent)  : QObject (parent)
 {
-	m_onlineStatus = Offline;
+	m_onlineStatus = Disconnected;
 	m_socket = 0L;
 }
 
@@ -57,16 +57,24 @@ QQSocket::~QQSocket()
 
 void QQSocket::connect( const QString &server, uint port )
 {
-	if ( m_onlineStatus != Offline )
+	if ( m_onlineStatus == Connected || m_onlineStatus == Connecting )
 	{
 		kWarning( 14140 ) << k_funcinfo << "Already connected or connecting! Not connecting again." << endl;
 		return;
 	}
 
-	m_id = 0;
+	if( m_onlineStatus == Disconnecting )
+	{
+		// Cleanup first.
+		// FIXME: More generic!!!
+		kWarning( 14140 ) << k_funcinfo << "We're still disconnecting! Deleting socket the hard way first." << endl;
+		delete m_socket;
+	}
+	setOnlineStatus( Connecting );
+	m_id = 5; // FIXME:Don't use the magic #, use random number instead.
 	m_server = server;
 	m_port = port;
-	m_socket = new KDatagramSocket();
+	m_socket = new KBufferedSocket( server, QString::number(port) );
 	m_socket->enableRead( true );
 
 	// enableWrite eats the CPU, and we only need it when the queue is
@@ -84,17 +92,19 @@ void QQSocket::connect( const QString &server, uint port )
 
 	// start the asynchronous connection
 	m_socket->connect();
-
-	//TODO: Send the LoginTokenRequest
-	setOnlineStatus( LoginToken );
 }
 
 void QQSocket::disconnect()
 {
+	kDebug(14140) << k_funcinfo << endl;
 	if ( m_socket )
-		m_socket->close();
+	{
+		m_socket->closeNow();
+		setOnlineStatus( Disconnecting );
+	}
 	else
 		slotSocketClosed();
+
 }
 
 void QQSocket::aboutToConnect()
@@ -104,12 +114,12 @@ void QQSocket::aboutToConnect()
 
 void QQSocket::doneConnect()
 {
-	/* Empty default implementation */
+	setOnlineStatus( Connected );
 }
 
 void QQSocket::doneDisconnect()
 {
-	setOnlineStatus( Offline );
+	setOnlineStatus( Disconnected );
 }
 
 void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
@@ -118,22 +128,15 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 		return;
 
 	m_onlineStatus = status;
-	// translate to high-level online status
-	Kopete::OnlineStatus newstatus;
-	switch( status )
-	{
-	    case Online: 
-		newstatus = QQProtocol::protocol()->NLN;
-		break;
+	emit onlineStatusChanged( status );
+}
 
-	    case Offline:
-		newstatus = QQProtocol::protocol()->FLN;
-		break;
 
-	    default:
-		return;
-	}
-	emit onlineStatusChanged( newstatus );
+void QQSocket::sendPacket( const QByteArray& data )
+{
+	kDebug(14140) << k_funcinfo << data <<  endl;
+	m_sendQueue.append( data );
+	m_socket->enableWrite(true);
 }
 
 void QQSocket::slotSocketError( int error )
@@ -154,7 +157,7 @@ void QQSocket::slotSocketError( int error )
 	m_socket->deleteLater();
 	m_socket = 0L;
 
-	setOnlineStatus( Offline );
+	setOnlineStatus( Disconnected );
 	emit connectionFailed();
 	//like if the socket is closed
 	emit socketClosed();
@@ -165,6 +168,7 @@ void QQSocket::slotSocketError( int error )
 
 void QQSocket::slotDataReceived()
 {
+	kDebug(14140) << k_funcinfo << "DATA RECEIVED! " << endl;
 	int avail = m_socket->bytesAvailable();
 	if ( avail < 0 )
 	{
@@ -175,8 +179,6 @@ void QQSocket::slotDataReceived()
 		return;
 	}
 
-	// incoming data, plus an extra char where we pretend a NUL is so the conversion
-	// to QCString doesn't go over the end of the allocated memory.
 	char *buffer = new char[ avail + 1 ];
 	int ret = m_socket->read( buffer, avail );
 
@@ -202,11 +204,11 @@ void QQSocket::slotDataReceived()
 		{
 			kDebug( 14140 ) << k_funcinfo << "Read " << ret << " bytes into 4kb block." << endl;
 		}
-
-		// fill the buffer with the received data
-		// FIXME: memory overhead
-		QByteArray buf;
-		buf.duplicate( buffer, ret );
+		
+		// FIXME: Here we assume that the packet is fetched in one shot, 
+		// and no producer/consumer race condition, is this true ?
+		// TODO: memory overhead, use a smart pointer here later.
+		QByteArray buf(buffer, ret );
 
 		// FIXME: do we need a incoming message pool right now ?
 
@@ -241,6 +243,7 @@ void QQSocket::handleError( uint code, uint /* id */ )
 
 void QQSocket::slotReadyWrite()
 {
+	kDebug(14140) << k_funcinfo << endl;
 	if ( !m_sendQueue.isEmpty() )
 	{
 		// If the command queue is not empty, retrieve the first command.
@@ -263,6 +266,7 @@ void QQSocket::slotReadyWrite()
 
 void QQSocket::slotConnectionSuccess()
 {
+	kDebug ( 14140 ) << "slotConnectionSuccess: calling doneConnect()" << endl;
 	doneConnect();
 }
 
@@ -275,7 +279,7 @@ void QQSocket::slotSocketClosed()
 {
     kDebug( 14140 ) << k_funcinfo << "Socket closed. " << endl;
 
-	if ( !m_socket ||  m_onlineStatus == Offline )
+	if ( !m_socket ||  m_onlineStatus == Disconnected )
 	{
 		kDebug( 14140 ) << k_funcinfo << "Socket already deleted or already disconnected" << endl;
 		return;
