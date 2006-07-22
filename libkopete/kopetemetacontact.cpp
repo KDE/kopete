@@ -569,13 +569,20 @@ void MetaContact::setDisplayName( const QString &name )
 	if( name == d->displayName )
 		return;
 
-	const QString old = d->displayName;
-	d->displayName = name;
+	if ( loading() )
+	{
+		d->displayName = name;
+	}
+	else
+	{
+		const QString old = d->displayName;
+		d->displayName = name;
 
-	emit displayNameChanged( old , name );
-	QListIterator<Kopete::Contact *> it( d->contacts );
-	while (  it.hasNext() )
-		( it.next() )->sync(Contact::DisplayNameChanged);
+		emit displayNameChanged( old , name );
+		QListIterator<Kopete::Contact *> it( d->contacts );
+		while (  it.hasNext() )
+			( it.next() )->sync(Contact::DisplayNameChanged);
+	}
 
 }
 

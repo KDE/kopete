@@ -242,7 +242,6 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
             //  return false;
 
             //the replace is there to workaround the Bug 95444
-            //TODO check this, setDisplayName do more than just assignment
             metaContact->setDisplayName( contactElement.text().replace('\n',QString::fromUtf8("")) );
 
             if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
