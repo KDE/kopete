@@ -17,6 +17,7 @@
 #include "xmlcontactstorage_test.h"
 
 // Qt includes
+#include <QtCore/QStringList>
 
 // KDE includes
 #include <qtest_kde.h>
@@ -37,6 +38,8 @@ QStringList expectedGroupList()
 	groupList << QString("Kontact Developers");
 	groupList << QString("Users");
 	groupList << QString("Friends & Family");
+
+	return groupList;
 }
 
 QStringList expectedContactList()
@@ -44,11 +47,14 @@ QStringList expectedContactList()
 	QStringList contactList;
 
 	contactList << QString("Duncan Mac-Vicar Prett");
-	contactList << QString("Oliver Goffart");
+	contactList << QString("Olivier Goffart");
 	contactList << QString("Matt Rogers");
 	contactList << QString("Will Stephenson");
-	contactList << QString("Michaël Larouche");
-	contactList << QString("André Duffeck");
+	// NOTE: We need ::fromUtf8 so those string will be really read as UTF8, otherwise test fail.
+	contactList << QString::fromUtf8("Michaël Larouche");
+	contactList << QString::fromUtf8("André Duffeck");
+
+	return contactList;
 }
 
 void XmlContactStorage_Test::testLoad()
@@ -70,7 +76,7 @@ void XmlContactStorage_Test::testLoad()
 	QStringList groupNameList = expectedGroupList();
 	QStringList::ConstIterator expectedIt, expectedItEnd = groupNameList.constEnd();
 
-	int groupId = 1;
+	uint groupId = 1;
 	Kopete::Group::List loadGroupList = storage->groups();
 	Kopete::Group::List::ConstIterator it, itEnd = loadGroupList.constEnd();
 	for(it = loadGroupList.constBegin(), expectedIt = groupNameList.constBegin();
@@ -86,10 +92,10 @@ void XmlContactStorage_Test::testLoad()
 
 	// Verify that we parsed the correct contacts.
 	QStringList contactList = expectedContactList();
-	QStringList contactIt, contactItEnd = contactList.constEnd();
+	QStringList::ConstIterator contactIt, contactItEnd = contactList.constEnd();
 	
 	Kopete::MetaContact::List loadContactList = storage->contacts();
-	Kopete::MetaContact::List::ConstIterator loadContactIt, loadContactItEmd = loadContactList.constEnd();
+	Kopete::MetaContact::List::ConstIterator loadContactIt, loadContactItEnd = loadContactList.constEnd();
 	for(loadContactIt = loadContactList.constBegin(), contactIt = contactList.constBegin();
 		loadContactIt != loadContactItEnd, contactIt != contactItEnd;
 		++loadContactIt, ++contactIt)

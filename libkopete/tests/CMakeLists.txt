@@ -67,6 +67,18 @@ target_link_libraries(statusmessage_test  ${KOPETE_TEST_LIBRARIES} )
 
 add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 
+####
+
+set(xmlcontactstorage_test_SRCS xmlcontactstorage_test.cpp)
+
+kde4_automoc(${xmlcontactstorage_test_SRCS})
+
+kde4_add_executable(xmlcontactstorage_test ${xmlcontactstorage_test_SRCS})
+
+target_link_libraries(xmlcontactstorage_test ${KOPETE_TEST_LIBRARIES})
+
+add_test(xmlcontactstorage_test ${EXECUTABLE_OUTPUT_PATH}/xmlcontactstorage_test)
+
 endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############

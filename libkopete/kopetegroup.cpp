@@ -207,7 +207,9 @@ void Group::setDisplayName( const QString &s )
 	{
 		QString oldname = d->displayName;
 		d->displayName = s;
-		emit displayNameChanged( this, oldname );
+		// Don't emit the signal in loading state
+		if( !loading() )
+			emit displayNameChanged( this, oldname );
 	}
 }
 
@@ -244,6 +246,20 @@ uint Group::groupId() const
 	return d->groupId;
 }
 
+void Group::setGroupId(uint groupId)
+{
+	d->groupId = groupId;
+}
+
+uint Group::uniqueGroupId() const
+{
+	return d->uniqueGroupId;
+}
+
+void Group::setUniqueGroupId(uint uniqueGroupId)
+{
+	d->uniqueGroupId = uniqueGroupId;
+}
 
 void Group::sendMessage()
 {

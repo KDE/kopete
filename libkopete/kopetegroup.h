@@ -132,24 +132,32 @@ public:
 	 */
 	static Group *temporary();
 	
-
-	
 	/**
 	 * @internal
 	 * Outputs the group data in XML
 	 */
 	const QDomElement toXML();
 
-	
 	/**
 	 * @internal
 	 * Loads the group data from XML
 	 */
 	 bool fromXML( const QDomElement &data );
 
-	 
-	 
-	 	
+	/**
+	 * @internal
+	 */
+	void setGroupId( uint groupId );
+
+	/**
+	 * @internal
+	 */
+	uint uniqueGroupId() const;
+	/**
+	 * @internal
+	 */
+	void setUniqueGroupId( uint uniqueGroupId );
+
 public slots:
 	/**
 	 * Send a message to all contacts in the group
