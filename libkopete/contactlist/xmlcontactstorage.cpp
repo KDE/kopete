@@ -3,6 +3,7 @@
 
     Copyright  2006      by Matt Rogers <mattr@kde.org>
     Copyright  2006      by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright  2006      by Roman Jarosz <kedgedev@centrum.cz>
 
     Kopete     2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -33,6 +34,9 @@
 // Kopete includes
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
+#include "kopetecontact.h"
+#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
 #include "kopetegeneralsettings.h"
 #include "kopetepluginmanager.h"
 
@@ -567,6 +571,163 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
     }
 
     return true;
+}
+
+const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *metaContact, bool minimal ) const
+{
+    // This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
+    metaContact->emitAboutToSave();
+
+    QDomDocument metaContactDoc;
+    metaContactDoc.appendChild( metaContactDoc.createElement( QString::fromUtf8( "meta-contact" ) ) );
+    metaContactDoc.documentElement().setAttribute( QString::fromUtf8( "contactId" ), metaContact->metaContactId() );
+
+    // the custom display name, used for the custom name source
+    QDomElement displayName = metaContactDoc.createElement( QString::fromUtf8("display-name" ) );
+    displayName.appendChild( metaContactDoc.createTextNode( metaContact->customDisplayName() ) );
+    metaContactDoc.documentElement().appendChild( displayName );
+
+    QDomElement photo = metaContactDoc.createElement( QString::fromUtf8("photo" ) );
+    photo.appendChild( metaContactDoc.createTextNode( metaContact->customPhoto().url() ) );
+    metaContactDoc.documentElement().appendChild( photo );
+
+    // Property sources
+    QDomElement propertySources = metaContactDoc.createElement( QString::fromUtf8("property-sources" ) );
+    QDomElement _nameSource = metaContactDoc.createElement( QString::fromUtf8("name") );
+    QDomElement _photoSource = metaContactDoc.createElement( QString::fromUtf8("photo") );
+
+    // set the contact source for display name
+    _nameSource.setAttribute( QString::fromUtf8("source"), sourceToString( metaContact->displayNameSource() ) );
+
+    // set contact source metadata
+    if( metaContact->displayNameSourceContact() )
+    {
+        QDomElement contactNameSource = metaContactDoc.createElement( QString::fromUtf8("contact-source") );
+        contactNameSource.setAttribute( NSCID_ELEM, metaContact->displayNameSourceContact()->contactId() );
+        contactNameSource.setAttribute( NSPID_ELEM, metaContact->displayNameSourceContact()->protocol()->pluginId() );
+        contactNameSource.setAttribute( NSAID_ELEM, metaContact->displayNameSourceContact()->account()->accountId() );
+        _nameSource.appendChild( contactNameSource );
+    }
+
+    // set the contact source for photo
+    _photoSource.setAttribute( QString::fromUtf8("source"), sourceToString( metaContact->photoSource() ) );
+
+    if( !metaContact->metaContactId().isEmpty()  )
+        photo.setAttribute( QString::fromUtf8("syncWithKABC") , QString::fromUtf8( metaContact->isPhotoSyncedWithKABC() ? "true" : "false" ) );
+
+    if( metaContact->photoSourceContact() )
+    {
+        //kDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
+        // set contact source metadata for photo
+        QDomElement contactPhotoSource = metaContactDoc.createElement( QString::fromUtf8("contact-source") );
+        contactPhotoSource.setAttribute( NSCID_ELEM, metaContact->photoSourceContact()->contactId() );
+        contactPhotoSource.setAttribute( NSPID_ELEM, metaContact->photoSourceContact()->protocol()->pluginId() );
+        contactPhotoSource.setAttribute( NSAID_ELEM, metaContact->photoSourceContact()->account()->accountId() );
+        _photoSource.appendChild( contactPhotoSource );
+    }
+    // apend name and photo sources to property sources
+    propertySources.appendChild( _nameSource );
+    propertySources.appendChild( _photoSource );
+
+    metaContactDoc.documentElement().appendChild( propertySources );
+
+    // Don't store these information in minimal mode.
+    if(!minimal)
+    {
+        // Store groups
+        if ( !metaContact->groups().isEmpty() )
+        {
+            QDomElement groups = metaContactDoc.createElement( QString::fromUtf8("groups") );
+            foreach( Group *g, metaContact->groups() )
+            {
+                QDomElement group = metaContactDoc.createElement( QString::fromUtf8("group") );
+                group.setAttribute( QString::fromUtf8("id"), g->groupId() );
+                groups.appendChild( group );
+            }
+            metaContactDoc.documentElement().appendChild( groups );
+        }
+
+        // Store other plugin data
+        const QList<QDomElement> pluginNodes = storeContactListElement( metaContact );
+        foreach ( QDomElement it , pluginNodes )
+            metaContactDoc.documentElement().appendChild( metaContactDoc.importNode( it, true ) );
+    }
+    return metaContactDoc.documentElement();
+}
+
+const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::ContactListElement *contactListElement ) const
+{
+    QDomDocument pluginData;
+    QList<QDomElement> pluginNodes;
+    pluginData.appendChild( pluginData.createElement( QLatin1String( "plugin-data" ) ) );
+
+    const Kopete::ContactListElement::PluginDataMap plugins = contactListElement->pluginData();
+    if ( !plugins.isEmpty() )
+    {
+        Kopete::ContactListElement::PluginDataMap::ConstIterator pluginIt, pluginItEnd = plugins.end();
+        for ( pluginIt = plugins.begin(); pluginIt != pluginItEnd; ++pluginIt )
+        {
+            QDomElement pluginElement = pluginData.createElement( QLatin1String( "plugin-data" ) );
+            pluginElement.setAttribute( QLatin1String( "plugin-id" ), pluginIt.key()  );
+
+            QMap<QString, QString>::ConstIterator it;
+            for ( it = pluginIt.value().begin(); it != pluginIt.value().end(); ++it )
+            {
+                QDomElement pluginDataField = pluginData.createElement( QLatin1String( "plugin-data-field" ) );
+                pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
+                pluginDataField.appendChild( pluginData.createTextNode(  it.value()  ) );
+                pluginElement.appendChild( pluginDataField );
+            }
+
+            pluginData.documentElement().appendChild( pluginElement );
+            pluginNodes.append( pluginElement );
+        }
+    }
+
+    const Kopete::ContactListElement::IconMap icons = contactListElement->icons();
+    if ( !icons.isEmpty() )
+    {
+        QDomElement iconsElement = pluginData.createElement( QLatin1String( "custom-icons" ) );
+        iconsElement.setAttribute( QLatin1String( "use" ), contactListElement->useCustomIcon() ?  QLatin1String( "1" ) : QLatin1String( "0" ) );
+
+        Kopete::ContactListElement::IconMap::ConstIterator it, itEnd = icons.end();
+        for ( it = icons.begin(); it != itEnd; ++it )
+        {
+            QDomElement iconElement = pluginData.createElement( QLatin1String( "icon" ) );
+            QString stateStr;
+            switch ( it.key() )
+            {
+                case ContactListElement::Open:
+                    stateStr = QLatin1String( "open" );
+                    break;
+                case ContactListElement::Closed:
+                    stateStr = QLatin1String( "closed" );
+                    break;
+                case ContactListElement::Online:
+                    stateStr = QLatin1String( "online" );
+                    break;
+                case ContactListElement::Away:
+                    stateStr = QLatin1String( "away" );
+                    break;
+                case ContactListElement::Offline:
+                    stateStr = QLatin1String( "offline" );
+                    break;
+                case ContactListElement::Unknown:
+                    stateStr = QLatin1String( "unknown" );
+                    break;
+                case ContactListElement::None:
+                default:
+                    stateStr = QLatin1String( "none" );
+                    break;
+            }
+            iconElement.setAttribute( QLatin1String( "state" ), stateStr );
+            iconElement.appendChild( pluginData.createTextNode( it.value() )  );
+            iconsElement.appendChild( iconElement );
+        }
+        pluginData.documentElement().appendChild( iconsElement );
+        pluginNodes.append( iconsElement );
+    }
+    return pluginNodes;
 }
 
 QString XmlContactStorage::sourceToString( Kopete::MetaContact::PropertySource source ) const

@@ -108,6 +108,13 @@ public:
 	 * constructors).
 	 */
 	QString pluginData( Plugin *plugin, const QString &key ) const;
+	
+	typedef QMap<QString, QMap<QString, QString> > PluginDataMap;
+	
+	/**
+	 * return plugin-specific data for all plugins
+	 */
+	const PluginDataMap pluginData() const;
 
 	/**
 	 * The various icon states. Some state are reserved for Groups,
@@ -115,6 +122,12 @@ public:
 	 * 'None' is the default icon.
 	 */
 	enum IconState { None, Open, Closed, Online, Away, Offline, Unknown };
+	typedef QMap<IconState, QString> IconMap;
+	
+	/**
+	 * return all registered icons
+	 */
+	const IconMap icons() const;
 
 	/**
 	 * return the icon for this object, in the given state.

@@ -553,6 +553,10 @@ void MetaContact::sendFile( const KUrl &sourceURL, const QString &altFileName, u
 	contact->sendFile( sourceURL, altFileName, fileSize );
 }
 
+void MetaContact::emitAboutToSave()
+{
+	emit aboutToSave( this );
+}
 
 void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &status, const OnlineStatus &/*oldstatus*/  )
 {

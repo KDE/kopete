@@ -29,8 +29,8 @@ namespace Kopete {
 class ContactListElement::Private
 {
 public:
-	QMap<QString, QMap<QString, QString> > pluginData;
-	QMap<ContactListElement::IconState, QString> icons;
+	ContactListElement::PluginDataMap pluginData;
+	ContactListElement::IconMap icons;
 	bool useCustomIcon;
 	bool loading;
 };
@@ -101,6 +101,11 @@ QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) con
 		return QString::null;
 
 	return d->pluginData[ plugin->pluginId() ][ key ];
+}
+
+const ContactListElement::PluginDataMap ContactListElement::pluginData() const
+{
+	return d->pluginData;
 }
 
 const QList<QDomElement> ContactListElement::toXML()
@@ -235,6 +240,11 @@ bool ContactListElement::fromXML( const QDomElement& element )
 	}
 
 	return true;
+}
+
+const ContactListElement::IconMap ContactListElement::icons() const
+{
+	return d->icons;
 }
 
 QString ContactListElement::icon( ContactListElement::IconState state ) const

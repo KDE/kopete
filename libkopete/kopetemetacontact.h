@@ -420,6 +420,12 @@ public slots:
 	 */
 	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString::null,
 		unsigned long fileSize = 0L );
+
+	/**
+	 * Emit aboutToSave signal to notify plugins that this metaContact is going to be saved
+	 */
+	void emitAboutToSave();
+
 signals:
 	/**
 	 * This metaContact is going to be saved to the contactlist. Plugins should

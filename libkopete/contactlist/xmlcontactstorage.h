@@ -3,6 +3,7 @@
 
     Copyright  2006      by Matt Rogers <mattr@kde.org>
     Copyright  2006      by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright  2006      by Roman Jarosz <kedgedev@centrum.cz>
 
     Kopete     2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -54,7 +55,10 @@ public:
 protected:
     bool parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element );
     bool parseGroup( Kopete::Group *group, const QDomElement &element );
-    bool parseContactListElement( Kopete::ContactListElement *metaContact, const QDomElement &element );
+    bool parseContactListElement( Kopete::ContactListElement *contactListElement, const QDomElement &element );
+
+    const QDomElement storeMetaContact( Kopete::MetaContact *metaContact, bool minimal = false ) const;
+    const QList<QDomElement> storeContactListElement( Kopete::ContactListElement *contactListElement ) const;
 
 private:
     QString sourceToString( Kopete::MetaContact::PropertySource source)  const;
