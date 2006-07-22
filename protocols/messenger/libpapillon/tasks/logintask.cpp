@@ -159,6 +159,7 @@ bool LoginTask::forMe(Transfer *transfer)
 	return false;
 }
 
+// TODO: Send VER, CVR, USR I at the same time
 void LoginTask::onGo()
 {
 	Q_ASSERT(!d->passportId.isEmpty());
