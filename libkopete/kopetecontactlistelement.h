@@ -55,6 +55,18 @@ protected:
 public:
 
 	/**
+	 * @brief Set if we are in loading stage.
+	 */
+	void setLoading( bool value );
+
+	/**
+	 * @brief Check if we are in loading stage.
+	 *
+	 * @return true if we are in loading stage.
+	 */
+	bool loading() const;
+
+	/**
 	 * Set the plugin-specific data.
 	 * The data in the provided QMap is a set of key/value pairs.
 	 * Note that protocol plugins usually shouldn't use this method, but
@@ -66,6 +78,8 @@ public:
 	 *          that takes a single field as parameter.
 	 */
 	void setPluginData( Plugin *plugin, const QMap<QString, QString> &value );
+	
+	void setPluginData( const QString &pluginId, const QMap<QString, QString> &pluginData );
 
 	/**
 	 * Convenience method to store or change only a single field of the

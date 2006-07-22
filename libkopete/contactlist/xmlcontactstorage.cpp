@@ -32,9 +32,18 @@
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetegeneralsettings.h"
+#include "kopetepluginmanager.h"
 
 namespace Kopete
 {
+
+    // this is just to save typing
+    const QString NSCID_ELEM = QString::fromUtf8( "nameSourceContactId" );
+    const QString NSPID_ELEM = QString::fromUtf8( "nameSourcePluginId" );
+    const QString NSAID_ELEM = QString::fromUtf8( "nameSourceAccountId" );
+    const QString PSCID_ELEM = QString::fromUtf8( "photoSourceContactId" );
+    const QString PSPID_ELEM = QString::fromUtf8( "photoSourcePluginId" );
+    const QString PSAID_ELEM = QString::fromUtf8( "photoSourceAccountId" );
 
 class XmlContactStorage::Private
 {
@@ -48,8 +57,6 @@ public:
     QString xmlFilename;
     QString errorMessage;
 
-    bool parseMetaContact(Kopete::MetaContact *metaContact, const QDomElement &element);
-    bool parseGroup(Kopete::Group *group, const QDomElement &element);
 };
 
 
@@ -136,7 +143,7 @@ void XmlContactStorage::load()
         list = contactList.documentElement();
     }
 #endif
- //TODO: Add to internal contactlist item list.
+//TODO: Add to internal contactlist item list.
 #if 0
     addGroup( Kopete::Group::topLevel() );
 #endif
@@ -149,18 +156,14 @@ void XmlContactStorage::load()
             //TODO: id isn't used
             //QString id = element.attribute( "id", QString::null );
             Kopete::MetaContact *metaContact = new Kopete::MetaContact();
-            if ( !metaContact->fromXML( element ) )
+            if ( !parseMetaContact( metaContact, element ) )
             {
                 delete metaContact;
                 metaContact = 0;
             }
             else
             {
-                 //TODO: Add to internal contactlist item list.
-#if 0
-                Kopete::ContactList::self()->addMetaContact(
-                        metaContact );
-#endif
+                addMetaContact( metaContact );
             }
         }
         else if( element.tagName() == QString::fromLatin1("kopete-group") )
@@ -183,7 +186,7 @@ void XmlContactStorage::load()
 #if 0
         else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
         {
-             //TODO: Add to internal contactlist item list.
+            //TODO: Add to internal contactlist item list.
 
             if( !myself()->fromXML( element ) )
             {
@@ -211,14 +214,312 @@ void XmlContactStorage::save()
     // TODO:
 }
 
-bool XmlContactStorage::Private::parseMetaContact(Kopete::MetaContact *metaContact, const QDomElement &element)
+bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element )
 {
+    if( !element.hasChildNodes() )
+        return false;
+
+    bool oldPhotoTracking = false;
+    bool oldNameTracking = false;
+    QString nameSourcePID, nameSourceAID, nameSourceCID;
+    QString photoSourcePID, photoSourceAID, photoSourceCID;
+
+    metaContact->setLoading( true );
+
+    QString strContactId = element.attribute( QString::fromUtf8("contactId") );
+    if( !strContactId.isEmpty() )
+    {
+        metaContact->setMetaContactId( strContactId );
+        // Set the KABC Picture
+        //metaContact->slotUpdateAddressBookPicture(); moved to MetaContact::setMetaContactId
+    }
+
+    QDomElement contactElement = element.firstChild().toElement();
+    while( !contactElement.isNull() )
+    {
+
+        if( contactElement.tagName() == QString::fromUtf8( "display-name" ) )
+        { // custom display name, used for the custom name source
+
+            // WTF, why were we not loading the metacontact if nickname was empty.
+            //if ( contactElement.text().isEmpty() )
+            //  return false;
+
+            //the replace is there to workaround the Bug 95444
+            //TODO check this, setDisplayName do more than just assignment
+            metaContact->setDisplayName( contactElement.text().replace('\n',QString::fromUtf8("")) );
+
+            if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
+            {
+                oldNameTracking = true;
+                //kDebug(14010) << k_funcinfo << "old name tracking" << endl;
+                // retrieve deprecated data (now stored in property-sources)
+                // save temporarely, we will find a Contact* with this later
+                nameSourceCID = contactElement.attribute( NSCID_ELEM );
+                nameSourcePID = contactElement.attribute( NSPID_ELEM );
+                nameSourceAID = contactElement.attribute( NSAID_ELEM );
+            }
+//          else
+//              kDebug(14010) << k_funcinfo << "no old name tracking" << endl;
+        }
+        else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
+        {
+            // custom photo, used for custom photo source
+            metaContact->setPhoto( KUrl(contactElement.text()) );
+
+            bool photoSyncedWithKABC = (contactElement.attribute(QString::fromUtf8("syncWithKABC")) == QString::fromUtf8("1")) || (contactElement.attribute(QString::fromUtf8("syncWithKABC")) == QString::fromUtf8("true"));
+            metaContact->setPhotoSyncedWithKABC( photoSyncedWithKABC );
+
+            // retrieve deprecated data (now stored in property-sources)
+            // save temporarely, we will find a Contact* with this later
+            if ( contactElement.hasAttribute(PSCID_ELEM) && contactElement.hasAttribute(PSPID_ELEM) && contactElement.hasAttribute(PSAID_ELEM))
+            {
+                oldPhotoTracking = true;
+//              kDebug(14010) << k_funcinfo << "old photo tracking" << endl;
+                photoSourceCID = contactElement.attribute( PSCID_ELEM );
+                photoSourcePID = contactElement.attribute( PSPID_ELEM );
+                photoSourceAID = contactElement.attribute( PSAID_ELEM );
+            }
+//          else
+//              kDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
+        }
+        else if( contactElement.tagName() == QString::fromUtf8( "property-sources" ) )
+        {
+            QDomNode property = contactElement.firstChild();
+            while( !property.isNull() )
+            {
+                QDomElement propertyElement = property.toElement();
+
+                if( propertyElement.tagName() == QString::fromUtf8( "name" ) )
+                {
+                    QString source = propertyElement.attribute( QString::fromUtf8("source") );
+                    metaContact->setDisplayNameSource(stringToSource(source));
+                    // find contact sources now.
+                    QDomNode propertyParam = propertyElement.firstChild();
+                    while( !propertyParam.isNull() )
+                    {
+                        QDomElement propertyParamElement = propertyParam.toElement();
+                        if( propertyParamElement.tagName() == QString::fromUtf8( "contact-source" ) )
+                        {
+                            nameSourceCID = propertyParamElement.attribute( NSCID_ELEM );
+                            nameSourcePID = propertyParamElement.attribute( NSPID_ELEM );
+                            nameSourceAID = propertyParamElement.attribute( NSAID_ELEM );
+                        }
+                        propertyParam = propertyParam.nextSibling();
+                    }
+                }
+                if( propertyElement.tagName() == QString::fromUtf8( "photo" ) )
+                {
+                    QString source = propertyElement.attribute( QString::fromUtf8("source") );
+                    metaContact->setPhotoSource(stringToSource(source));
+                    // find contact sources now.
+                    QDomNode propertyParam = propertyElement.firstChild();
+                    while( !propertyParam.isNull() )
+                    {
+                        QDomElement propertyParamElement = propertyParam.toElement();
+                        if( propertyParamElement.tagName() == QString::fromUtf8( "contact-source" ) )
+                        {
+                            photoSourceCID = propertyParamElement.attribute( NSCID_ELEM );
+                            photoSourcePID = propertyParamElement.attribute( NSPID_ELEM );
+                            photoSourceAID = propertyParamElement.attribute( NSAID_ELEM );
+                        }
+                        propertyParam = propertyParam.nextSibling();
+                    }
+                }
+                property = property.nextSibling();
+            }
+        }
+        else if( contactElement.tagName() == QString::fromUtf8( "groups" ) )
+        {
+            QDomNode group = contactElement.firstChild();
+            while( !group.isNull() )
+            {
+                QDomElement groupElement = group.toElement();
+
+                if( groupElement.tagName() == QString::fromUtf8( "group" ) )
+                {
+                    QString strGroupId = groupElement.attribute( QString::fromUtf8("id") );
+                    if( !strGroupId.isEmpty() )
+                        metaContact->addToGroup( this->group( strGroupId.toUInt() ) );
+                    else //kopete 0.6 contactlist
+                        metaContact->addToGroup( this->findGroup( groupElement.text() ) );
+                }
+                else if( groupElement.tagName() == QString::fromUtf8( "top-level" ) ) //kopete 0.6 contactlist
+                    metaContact->addToGroup( Kopete::Group::topLevel() );
+
+                group = group.nextSibling();
+            }
+        }
+        else if( contactElement.tagName() == QString::fromUtf8( "address-book-field" ) )
+        {
+            QString app = contactElement.attribute( QString::fromUtf8( "app" ), QString::null );
+            QString key = contactElement.attribute( QString::fromUtf8( "key" ), QString::null );
+            QString val = contactElement.text();
+            metaContact->setAddressBookField( 0, app, key , val );
+        }
+        else //if( groupElement.tagName() == QString::fromUtf8( "plugin-data" ) || groupElement.tagName() == QString::fromUtf8("custom-icons" ))
+        {
+            parseContactListElement( metaContact, contactElement );
+        }
+        contactElement = contactElement.nextSibling().toElement();
+    }
+
+    if( oldNameTracking )
+    {
+        /* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
+        if ( !nameSourceCID.isEmpty() )
+        {
+//          kDebug(14010) << k_funcinfo << "Converting old name source" << endl;
+            // even if the old tracking attributes exists, they could have been null, that means custom
+            metaContact->setDisplayNameSource( Kopete::MetaContact::SourceContact );
+        }
+        else
+        {
+            // lets do the best conversion for the old name tracking
+            // if the custom display name is the same as kabc name, set the source to kabc
+            if ( !metaContact->metaContactId().isEmpty() && ( metaContact->customDisplayName() == nameFromKABC( metaContact->metaContactId() )) )
+                metaContact->setDisplayNameSource( Kopete::MetaContact::SourceKABC );
+            else
+                metaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
+        }
+    }
+
+    if ( oldPhotoTracking )
+    {
+//      kDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
+        if ( !photoSourceCID.isEmpty() )
+        {
+            metaContact->setPhotoSource( Kopete::MetaContact::SourceContact );
+        }
+        else
+        {
+            if ( !metaContact->metaContactId().isEmpty() && !photoFromKABC( metaContact->metaContactId() ).isNull() )
+                metaContact->setPhotoSource( Kopete::MetaContact::SourceKABC );
+            else
+                metaContact->setPhotoSource( Kopete::MetaContact::SourceCustom );
+        }
+    }
+
+    //FIXME if we ensure that XmlContactStorage is still in memory when signal allPluginsLoaded is emited than
+    // slotAllPluginsLoaded can be in this object with helper QStrings from MetaConctact ( nameSourcePID, nameSourceAID, nameSourceCID,
+    // photoSourcePID, photoSourceAID, photoSourceCID ).
+    metaContact->setPhotoSource( photoSourcePID, photoSourceAID, photoSourceCID );
+    metaContact->setDisplayNameSource( nameSourcePID, nameSourceAID, nameSourceCID );
+
+    // If a plugin is loaded, load data cached
+    QObject::connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
+                      metaContact, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
+
+    // All plugins are already loaded, call manually the contact setting slot.
+    if( Kopete::PluginManager::self()->isAllPluginsLoaded() )
+        metaContact->slotAllPluginsLoaded();
+    else
+        // When all plugins are loaded, set the source contact.
+        QObject::connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
+                          metaContact, SLOT( slotAllPluginsLoaded() ) );
+
+// track changes only works if ONE Contact is inside the MetaContact
+//  if (d->contacts.count() > 1) // Does NOT work as intended
+//      d->trackChildNameChanges=false;
+
+//  kDebug(14010) << k_funcinfo << "END" << endl;
+    metaContact->setLoading( false );
+    return true;
+}
+
+bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &element)
+{
+    group->setLoading( true );
+
+    group->setLoading( false );
     return false;
 }
 
-bool XmlContactStorage::Private::parseGroup(Kopete::Group *group, const QDomElement &element)
+bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *contactListElement, const QDomElement &element )
 {
-    return false;
+    if ( element.tagName() == QLatin1String( "plugin-data" ) )
+    {
+        QMap<QString, QString> pluginData;
+        QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString::null );
+
+        //in kopete 0.6 the AIM protocol was called OSCAR
+        if ( pluginId == QLatin1String( "OscarProtocol" ) )
+            pluginId = QLatin1String( "AIMProtocol" );
+
+        QDomNode field = element.firstChild();
+        while( !field.isNull() )
+        {
+            QDomElement fieldElement = field.toElement();
+            if ( fieldElement.tagName() == QLatin1String( "plugin-data-field" ) )
+            {
+                pluginData.insert( fieldElement.attribute( QLatin1String( "key" ),
+                                   QLatin1String( "undefined-key" ) ), fieldElement.text() );
+            }
+            field = field.nextSibling();
+        }
+        contactListElement->setPluginData( pluginId, pluginData );
+    }
+    else if ( element.tagName() == QLatin1String( "custom-icons" ) )
+    {
+        contactListElement->setUseCustomIcon( element.attribute( QLatin1String( "use" ), QLatin1String( "1" ) ) == QLatin1String( "1" ) );
+        QDomNode ic = element.firstChild();
+        while( !ic.isNull() )
+        {
+            QDomElement iconElement = ic.toElement();
+            if ( iconElement.tagName() == QLatin1String( "icon" ) )
+            {
+                QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString::null );
+                QString icon = iconElement.text();
+                ContactListElement::IconState state = ContactListElement::None;
+
+                if ( stateStr == QLatin1String( "open" ) )
+                    state = ContactListElement::Open;
+                if ( stateStr == QLatin1String( "closed" ) )
+                    state = ContactListElement::Closed;
+                if ( stateStr == QLatin1String( "online" ) )
+                    state = ContactListElement::Online;
+                if ( stateStr == QLatin1String( "offline" ) )
+                    state = ContactListElement::Offline;
+                if ( stateStr == QLatin1String( "away" ) )
+                    state = ContactListElement::Away;
+                if ( stateStr == QLatin1String( "unknown" ) )
+                    state = ContactListElement::Unknown;
+
+                contactListElement->setIcon( icon, state );
+            }
+            ic = ic.nextSibling();
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+    return true;
+}
+
+QString XmlContactStorage::sourceToString( Kopete::MetaContact::PropertySource source ) const
+{
+    if ( source == Kopete::MetaContact::SourceCustom )
+        return QString::fromUtf8("custom");
+    else if ( source == Kopete::MetaContact::SourceKABC )
+        return QString::fromUtf8("addressbook");
+    else if ( source == Kopete::MetaContact::SourceContact )
+        return QString::fromUtf8("contact");
+    else // recovery
+        return sourceToString( Kopete::MetaContact::SourceCustom );
+}
+
+Kopete::MetaContact::PropertySource XmlContactStorage::stringToSource( const QString &name ) const
+{
+    if ( name == QString::fromUtf8("custom") )
+        return Kopete::MetaContact::SourceCustom;
+    else if ( name == QString::fromUtf8("addressbook") )
+        return Kopete::MetaContact::SourceKABC;
+    else if ( name == QString::fromUtf8("contact") )
+        return Kopete::MetaContact::SourceContact;
+    else // recovery
+        return Kopete::MetaContact::SourceCustom;
 }
 
 }

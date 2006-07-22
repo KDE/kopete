@@ -47,8 +47,15 @@ public:
     virtual QString errorMessage() const;
     virtual void load();
     virtual void save();
+protected:
+    bool parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element );
+    bool parseGroup( Kopete::Group *group, const QDomElement &element );
+    bool parseContactListElement( Kopete::ContactListElement *metaContact, const QDomElement &element );
 
 private:
+    QString sourceToString( Kopete::MetaContact::PropertySource source)  const;
+    Kopete::MetaContact::PropertySource stringToSource( const QString &name ) const;
+
     class Private;
     Private* d;
 };

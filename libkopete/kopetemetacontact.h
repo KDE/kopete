@@ -129,6 +129,8 @@ public:
 	 */
 	void setDisplayNameSource(PropertySource source);
 
+	void setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID );
+
 	/**
 	 * @brief get the source of metacontact display name
 	 *
@@ -148,6 +150,8 @@ public:
 	 * @see PropertySource
 	 */
 	void setPhotoSource(PropertySource source);
+
+	void setPhotoSource( const QString &photoSourcePID, const QString &photoSourceAID, const QString &photoSourceCID );
 
 	/**
 	 * @brief get the source of metacontact photo
@@ -489,6 +493,16 @@ public slots:
 	 */
 	Contact *startChat();
 
+	/**
+	 * When all the plugins are loaded, set the Contact Source.
+	 */
+	void slotAllPluginsLoaded();
+
+	/**
+	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
+	 */
+	void slotPluginLoaded( Kopete::Plugin *plugin );
+
 signals:
 	/**
 	 *  @brief The MetaContact online status changed
@@ -570,16 +584,6 @@ private slots:
 	 * there
 	 */
 	void slotContactDestroyed( Kopete::Contact* );
-
-	/**
-	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
-	 */
-	void slotPluginLoaded( Kopete::Plugin *plugin );
-
-	/**
-	 * When all the plugins are loaded, set the Contact Source.
-	 */
-	void slotAllPluginsLoaded();
 
 	/**
 	 * Update the KABC Picture when the addressbook is changed.

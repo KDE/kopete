@@ -273,6 +273,13 @@ void MetaContact::setDisplayNameSource(PropertySource source)
 		emit displayNameChanged( oldName, newName );
 }
 
+void MetaContact::setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID )
+{
+	d->nameSourcePID = nameSourcePID;
+	d->nameSourceAID = nameSourceAID;
+	d->nameSourceCID = nameSourceCID;
+}
+
 MetaContact::PropertySource MetaContact::displayNameSource() const
 {
 	return d->displayNameSource;
@@ -286,6 +293,13 @@ void MetaContact::setPhotoSource(PropertySource source)
 	{
 		emit photoChanged();
 	}
+}
+
+void MetaContact::setPhotoSource( const QString &photoSourcePID, const QString &photoSourceAID, const QString &photoSourceCID )
+{
+	d->photoSourcePID = photoSourcePID;
+	d->photoSourceAID = photoSourceAID;
+	d->photoSourceCID = photoSourceCID;
 }
 
 MetaContact::PropertySource MetaContact::photoSource() const
@@ -1328,9 +1342,16 @@ void MetaContact::setMetaContactId( const QString& newMetaContactId )
 	// Don't remove IM addresses from kabc if we are changing contacts;
 	// other programs may have written that data and depend on it
 	d->metaContactId = newMetaContactId;
-	KABCPersistence::self()->write( this );
-	emit onlineStatusChanged( this, d->onlineStatus );
-	emit persistentDataChanged();
+	if ( loading() )
+	{
+		slotUpdateAddressBookPicture();
+	}
+	else
+	{
+		KABCPersistence::self()->write( this );
+		emit onlineStatusChanged( this, d->onlineStatus );
+		emit persistentDataChanged();
+	}
 }
 
 bool MetaContact::isPhotoSyncedWithKABC() const
@@ -1341,7 +1362,7 @@ bool MetaContact::isPhotoSyncedWithKABC() const
 void MetaContact::setPhotoSyncedWithKABC(bool b)
 {
 	d->photoSyncedWithKABC=b;
-	if(b)
+	if( b && !loading() )
 	{
 		QVariant newValue;
 

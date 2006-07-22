@@ -109,8 +109,9 @@ protected:
      * @param metaContact MetaContact to add.
      */
     void addMetaContact(Kopete::MetaContact *metaContact);
+
     /**
-     * @brief Add a Group to internal listé
+     * @brief Add a Group to internal list
      * 
      * Derived ContactListStorage use this method to add new
      * Group.
@@ -118,6 +119,25 @@ protected:
      * @param group Group to add.
      */
     void addGroup(Kopete::Group *group);
+
+    /**
+     * @brief Get the Group with the given id for this storage.
+     *
+     * @param groupId The unique id to search.
+     * @return Group or 0L if nothing is found.
+     */
+    Kopete::Group * group( unsigned int groupId ) const;
+
+    /**
+     * @brief Find a group with his displayName
+     *
+     * If a group already exists with the given name and the given type, the existing group will be returned.
+     * Otherwise, a new group will be created.
+     * @param displayName is the display name to search
+     * @param type is the Group::GroupType to search, the default value is Group::Normal
+     * @return always a valid Group
+     */
+    Kopete::Group * findGroup( const QString &displayName, int type = Kopete::Group::Normal );
 
 private:
     class Private;

@@ -32,6 +32,7 @@ public:
 	QMap<QString, QMap<QString, QString> > pluginData;
 	QMap<ContactListElement::IconState, QString> icons;
 	bool useCustomIcon;
+	bool loading;
 };
 
 ContactListElement::ContactListElement( QObject *parent )
@@ -40,6 +41,7 @@ ContactListElement::ContactListElement( QObject *parent )
 	d = new Private;
 
 	d->useCustomIcon = false;
+	d->loading = false;
 #if 0  //TODO
 	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
 #endif
@@ -50,16 +52,31 @@ ContactListElement::~ContactListElement()
 	delete d;
 }
 
+void ContactListElement::setLoading( bool value )
+{
+	d->loading = value;
+}
+
+bool ContactListElement::loading() const
+{
+	return d->loading;
+}
+
 void ContactListElement::setPluginData( Plugin *plugin, const QMap<QString, QString> &pluginData )
+{
+	setPluginData( plugin->pluginId(), pluginData );
+}
+
+void ContactListElement::setPluginData( const QString &pluginId, const QMap<QString, QString> &pluginData )
 {
 	if ( pluginData.isEmpty() )
 	{
-		d->pluginData.remove( plugin->pluginId() );
+		d->pluginData.remove( pluginId );
 		return;
 	}
-
-	d->pluginData[ plugin->pluginId() ] = pluginData;
-
+	
+	d->pluginData[ pluginId ] = pluginData;
+	
 	emit pluginDataChanged();
 }
 

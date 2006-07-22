@@ -64,6 +64,32 @@ void ContactListStorage::addGroup(Kopete::Group *group)
     d->groupList.append( group );
 }
 
+Kopete::Group * ContactListStorage::group( unsigned int groupId ) const
+{
+    foreach( Kopete::Group * group, d->groupList )
+    {
+        if( group->groupId() == groupId )
+            return group;
+    }
+    return 0L;
+}
+
+Kopete::Group * ContactListStorage::findGroup( const QString& displayName, int type )
+{
+    if( type == Kopete::Group::Temporary )
+        return Kopete::Group::temporary();
+
+    foreach( Kopete::Group * group, d->groupList )
+    {
+        if( group->type() == type && group->displayName() == displayName )
+            return group;
+    }
+
+    Kopete::Group *newGroup = new Kopete::Group( displayName, (Kopete::Group::GroupType)type );
+    addGroup( newGroup );
+    return  newGroup;
+}
+
 }
 
 //kate: indent-mode cstyle; indent-spaces on; indent-width 4; auto-insert-doxygen on; replace-tabs on
