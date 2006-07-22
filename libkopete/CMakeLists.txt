@@ -3,7 +3,7 @@ add_subdirectory( private )
 add_subdirectory( ui ) 
 add_subdirectory( avdevice ) 
 
-include_directories( ${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/private ${CMAKE_CURRENT_SOURCE_DIR}/ui ${CMAKE_CURRENT_BINARY_DIR}/ui )
+include_directories( ${KOPETE_INCLUDES} )
 
 if(X11_Xrender_FOUND)
   include_directories(${X11_Xrender_INCLUDE_PATH})
@@ -39,14 +39,15 @@ set(kopete_ui_SRCS
   ui/webcamwidget.cpp 
 )
 
-set(kopete_contactliststorage_SRCS
-  contactliststorage/xmlcontactstorage.cpp 
+set(kopete_contactlist_SRCS
+  contactlist/kopetecontactliststorage.cpp
+  contactlist/xmlcontactstorage.cpp 
 )
 
 set(kopete_LIB_SRCS 
    ${kopete_private_SRCS} 
    ${kopete_ui_SRCS} 
-   ${kopete_contactliststorage_SRCS}
+   ${kopete_contactlist_SRCS}
    kopeteonlinestatus.cpp 
    kopeteonlinestatusmanager.cpp 
    kopeteprotocol.cpp 
@@ -56,8 +57,7 @@ set(kopete_LIB_SRCS
    kopetemessage.cpp 
    kopetechatsession.cpp 
    kopetechatsessionmanager.cpp 
-   kopetecontactlist.cpp 
-   kopetecontactliststorage.cpp 
+   kopetecontactlist.cpp  
    kopetemetacontact.cpp 
    kopetetransfermanager.cpp 
    kopetegroup.cpp 

@@ -13,6 +13,7 @@ set(KOPETE_INCLUDES
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
 	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/ 
 )
 
 add_subdirectory( libkopete ) 
