@@ -36,10 +36,10 @@ const QString sampleString = QString("Sample string :) :D ;)");
 ParseEmoticonTask::ParseEmoticonTask(const QString &sourceString)
  : Kopete::Task(), m_source(sourceString)
 {
-	QTimer::singleShot(0, this, SLOT(slotStart()));
+	QTimer::singleShot(0, this, SLOT(start()));
 }
 
-void ParseEmoticonTask::slotStart()
+void ParseEmoticonTask::start()
 {
 	parseEmoticon(m_source);
 }
@@ -53,7 +53,7 @@ void ParseEmoticonTask::parseEmoticon(const QString &value)
 	if(m_parsed.isEmpty())
 		jobResult = Kopete::Task::ResultFailed;
 
-	emitResult(jobResult);
+	emitResult();
 }
 
 void KopeteTaskTest::testEmoticonTask()

@@ -1,6 +1,14 @@
 
 if(KDE4_BUILD_TESTS)
 
+set(kopete_test_mock_SRCS
+mock/kopeteaccount_mock.cpp
+mock/kopetecontact_mock.cpp
+mock/kopetemessage_mock.cpp
+mock/kopetemetacontact_mock.cpp
+mock/kopeteprotocol_mock.cpp
+)
+
 #add_subdirectory( mock )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/mock/ ${KOPETE_INCLUDES} )
@@ -19,19 +27,19 @@ kde4_automoc(${kopeteemoticontest_SRCS})
 
 kde4_add_executable(kopeteemoticontest ${kopeteemoticontest_SRCS})
 
-target_link_libraries(kopeteemoticontest  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kopeteemoticontest  ${KOPETE_TEST_LIBRARIES} )
 
 add_test(kopeteemoticontest ${EXECUTABLE_OUTPUT_PATH}/kopeteemoticontest)
 
 ####
 
-set(kopetemessage_test_SRCS kopetemessage_test.cpp )
+set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})
 
 kde4_automoc(${kopetemessage_test_SRCS})
 
 kde4_add_executable(kopetemessage_test ${kopetemessage_test_SRCS})
 
-target_link_libraries(kopetemessage_test  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kopetemessage_test  ${KOPETE_TEST_LIBRARIES} )
 
 add_test(kopetemessage_test ${EXECUTABLE_OUTPUT_PATH}/kopetemessage_test)
 
@@ -43,7 +51,7 @@ kde4_automoc(${kopetetask_test_SRCS})
 
 kde4_add_executable(kopetetask_test ${kopetetask_test_SRCS})
 
-target_link_libraries(kopetetask_test  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kopetetask_test  ${KOPETE_TEST_LIBRARIES} )
 
 add_test(kopetetask_test ${EXECUTABLE_OUTPUT_PATH}/kopetetask_test)
 
@@ -55,7 +63,7 @@ kde4_automoc(${statusmessage_test_SRCS})
 
 kde4_add_executable(statusmessage_test ${statusmessage_test_SRCS})
 
-target_link_libraries(statusmessage_test  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(statusmessage_test  ${KOPETE_TEST_LIBRARIES} )
 
 add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 

@@ -2,6 +2,7 @@
 add_subdirectory( private ) 
 add_subdirectory( ui ) 
 add_subdirectory( avdevice ) 
+add_subdirectory( tests )
 
 include_directories( ${KOPETE_INCLUDES} )
 

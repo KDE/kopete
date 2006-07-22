@@ -37,13 +37,13 @@ namespace Mock
 class Account : public Kopete::Account
 {
 public:
-	Account(Kopete::Protocol *parent, const QString &accountID, const char *name=0L);
+	Account(Kopete::Protocol *parent, const QString &accountID);
 	~Account();
 	// pure virtual functions implementation
 	virtual bool createContact( const QString &contactId, MetaContact *parentContact );
 	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() );
 	virtual void disconnect();
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null );
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage() );
 	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 };
 
