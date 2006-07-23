@@ -46,7 +46,7 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 	mText = emoticonText;
 	setMovie( &qm );
 	setAlignment(Qt::AlignCenter);
-//	QToolTip::add(this,emoticonText);
+//	this->setToolTip(emoticonText);
 	// Somehow QLabel doesn't tell a reasonable size when you use setMovie
 	// although it does it correctly for setPixmap. Therefore here is a little workaround
 	// to tell our minimum size.
