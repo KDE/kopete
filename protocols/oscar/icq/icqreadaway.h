@@ -19,11 +19,12 @@
 
 #include <kdebug.h>
 #include <kdialog.h>
+#include <kvbox.h>
 
 class ICQAccount;
 class ICQContact;
 class KTextBrowser;
-class Q3VBox;
+class KVBox;
 
 class ICQReadAway : public KDialog
 {
@@ -45,7 +46,7 @@ class ICQReadAway : public KDialog
 	private:
 		ICQAccount *mAccount;
 		ICQContact *mContact;
-		Q3VBox *mMainWidget;
+		KVBox *mMainWidget;
 		KTextBrowser *awayMessageBrowser;
 };
 #endif
