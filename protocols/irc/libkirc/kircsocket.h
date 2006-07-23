@@ -1,9 +1,10 @@
 /*
     kircsocket.h - IRC socket.
 
+    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,6 +26,8 @@
 
 #include <kbufferedsocket.h>
 #include <kresolver.h>
+
+#include <QTcpSocket>
 
 class KUrl;
 
@@ -68,7 +71,7 @@ public: // READ properties accessors.
 	ConnectionState connectionState() const;
 
 public:
-	KNetwork::KStreamSocket *socket();
+	QTcpSocket *socket();
 
 	QTextCodec *defaultCodec() const;
 
@@ -88,14 +91,10 @@ public slots:
 	void setEntityManager(KIRC::EntityManager *newEntityManager);
 	void setOwner(const KIRC::Entity::Ptr &newOwner);
 
-	/**
-	 * @return true if the socket is got no error trying to establish the connection.
-	 */
-	bool connectToServer(const KUrl &url);
-//	void bind();
+	void connectToServer(const KUrl &url);
 	void close();
 
-	void writeMessage(const QByteArray &message);
+	void writeMessage(QByteArray message);
 	void writeMessage(const QString &message, QTextCodec *codec = 0);
 	void writeMessage(const KIRC::Message &message);
 
@@ -133,9 +132,8 @@ protected:
 private slots:
 	void onReadyRead();
 
-	void socketStateChanged(int newstate);
-
-	void socketGotError(int code);
+	void socketStateChanged(QAbstractSocket::SocketState);
+	void socketGotError(QAbstractSocket::SocketError);
 
 private:
 	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;

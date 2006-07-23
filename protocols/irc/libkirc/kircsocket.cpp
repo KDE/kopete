@@ -1,10 +1,11 @@
 /*
     kircsocket.cpp - IRC socket.
 
+    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -31,8 +32,9 @@
 #include <qtextcodec.h>
 #include <qtimer.h>
 
+#include <QTcpSocket>
+
 using namespace KIRC;
-using namespace KNetwork;
 
 class KIRC::Socket::Private
 {
@@ -44,7 +46,7 @@ public:
 		  defaultCodec(0)
 	{ }
 
-	KNetwork::KBufferedSocket *socket;
+	QTcpSocket *socket;
 	KUrl url;
 	bool useSSL;
 	KIRC::Socket::ConnectionState state;
@@ -60,29 +62,32 @@ Socket::Socket(QObject *parent)
 	: QObject(parent),
 	  d( new Private )
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14121) << k_funcinfo << endl;
 
 	d->defaultCodec = UTF8;
 }
 
 Socket::~Socket()
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14121) << k_funcinfo << endl;
 	delete d;
 }
 
 Socket::ConnectionState Socket::connectionState() const
 {
+	kDebug(14121) << k_funcinfo << endl;
 	return d->state;
 }
 
-KNetwork::KStreamSocket *Socket::socket()
+QTcpSocket *Socket::socket()
 {
+	kDebug(14121) << k_funcinfo << endl;
 	return d->socket;
 }
 
 QTextCodec *Socket::defaultCodec() const
 {
+	kDebug(14121) << k_funcinfo << endl;
 	return d->defaultCodec;
 }
 
@@ -113,107 +118,110 @@ void Socket::setEntityManager(EntityManager *entityManager)
 
 Entity::Ptr Socket::owner() const
 {
+	kDebug(14121) << k_funcinfo << endl;
 	return d->owner;
 }
 
 void Socket::setOwner(const Entity::Ptr &newOwner)
 {
+	kDebug(14121) << k_funcinfo << endl;
 	d->owner = newOwner;
 }
 
 const KUrl &Socket::url() const
 {
+	kDebug(14121) << k_funcinfo << endl;
 	return d->url;
 }
 
-bool Socket::connectToServer(const KUrl &url)
+void Socket::connectToServer(const KUrl &url)
 {
+	kDebug(14121) << k_funcinfo << endl;
+
 	close();
-/*
 	d->url = "";
 
 	bool useSSL = false;
-	if (url.schema() == "irc")
+	if (url.scheme() == "irc")
 		useSSL = false;
-	if (url.schema() == "ircs")
+	else if (url.scheme() == "ircs")
 		useSSL = true;
 	else
 	{
 //		#warning FIXME: send an event here to reflect the error
-		return false;
+		return;
 	}
 
 	QString host = url.host();
 	if(host.isEmpty())
 		host = "localhost";
 
-	QString port = url.port();
-	if(port.isEmpty())
+	int port = url.port();
+
+	if (port == -1)
 	{
 		// Make the port beeing guessed by the socket (look into /etc/services) 
-		port = url.schema();
+		//port = url.scheme();
+		;
 	}
 
 //	the given url is now validated
 	d->url = url;
 
-	if( d->useSSL )
-	{
 #ifdef KIRC_SSL_SUPPORT
+	if( d->useSSL ) {
 		d->socket = new KSSLSocket(this);
 		d->socket->setSocketFlags( KExtendedSocket::inetSocket );
 	}
-	else
 #else
-		kWarning(14120) << "You tried to use SSL, but this version of Kopete was"
+	if( d->useSSL ) {
+		kWarning(14121) << "You tried to use SSL, but this version of Kopete was"
 			" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
 	}
 #endif
-	{
-		d->socket = new KBufferedSocket(QString::null, QString::null, this);
+	if (!d->socket) {
+		d->socket = new QTcpSocket(this);
 //		d->socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
 	}
 
-	connect(d->socket, SIGNAL(closed(int)),
-		this, SLOT(slotConnectionClosed()));
-	connect(d->socket, SIGNAL(readyRead()),
-		this, SLOT(onReadyRead()));
-	connect(d->socket, SIGNAL(connectionSuccess()),
-		this, SLOT(slotConnected()));
-	connect(d->socket, SIGNAL(connectionFailed(int)),
-		this, SLOT(error(int)));
+	connect(d->socket, SIGNAL(readyRead()), SLOT(onReadyRead()));
+	connect(d->socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+	                   SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+	connect(d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
+	                   SLOT(socketGotError(QAbstractSocket::SocketError)));
 
 	#warning FIXME: send an event here to reflect connection state
-	return d->socket->connect(host, QString::number(port));
-*/
+
+	kDebug(14121) << k_funcinfo << "connecting: (" << host << ", " << port << ")" << endl;
+	d->socket->connectToHost(host, port);
 }
 
 void Socket::close()
 {
-	if (d->socket)
-	{
-		d->socket->close();
-		delete d->socket;
-		d->socket = 0;
-	}
+	kDebug(14121) << k_funcinfo << endl;
+
+	delete d->socket;
+	d->socket = 0;
 }
 
-void Socket::writeMessage(const QByteArray &msg)
+void Socket::writeMessage(QByteArray msg)
 {
-	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
+	kDebug(14121) << k_funcinfo << "msg=" << msg << endl;
+	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
 	{
 		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
 		return;
 	}
-/*
-	QByteArray buffer = msg + QByteArray("\n\r");
-	int wrote = d->socket->writeBlock(buffer.data(), buffer.length());
+
+	msg += "\n\r";
+	int wrote = d->socket->writeBlock(msg.data(), msg.length());
+
 //	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
-*/
 }
 
 void Socket::writeMessage(const QString &msg, QTextCodec *codec)
 {
+	kDebug(14121) << k_funcinfo << "msg=" << msg << endl;
 	bool encodeSuccess = false;
 	writeMessage(encode(msg, &encodeSuccess, codec));
 }
@@ -221,11 +229,20 @@ void Socket::writeMessage(const QString &msg, QTextCodec *codec)
 void Socket::writeMessage(const Message &msg)
 {
 	#warning Check message validity before sending it
-	writeMessage(msg.rawLine());
+
+	QByteArray arr = msg.rawPrefix() + " " + msg.rawCommand();
+	foreach(QByteArray arg, msg.rawArgs())
+		(arr += " ") += arg;
+
+	(arr += " ") += msg.rawSuffix();
+
+	//writeMessage(msg.rawLine());
+	writeMessage(arr.trimmed());
 }
 
 void Socket::showInfoDialog()
 {
+	kDebug(14121) << k_funcinfo << endl;
 /*
 	if( d->useSSL )
 	{
@@ -256,19 +273,23 @@ void Socket::authentify()
 
 void Socket::onReadyRead()
 {
+	kDebug(14121) << k_funcinfo << endl;
+
 	// The caller can also be self so lets check the socket still exist
 
 	if (d->socket && d->socket->canReadLine())
 	{
 		QByteArray rawMsg = d->socket->readLine();
-//		kDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
+
+		kDebug(14121) << rawMsg.data() << endl;
 
 		Message msg(rawMsg, Message::InGoing);
 
 		if (msg.isValid())
 			emit receivedMessage(msg);
-//		else
-//			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
+		else
+			kDebug(14121) << k_funcinfo << "msg not valid!" << endl;
+			//postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
 		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
 	}
@@ -277,32 +298,25 @@ void Socket::onReadyRead()
 //		error();
 }
 
-void Socket::socketStateChanged(int newstate)
+void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)
 {
-	switch ((KBufferedSocket::SocketState)newstate)
-	{
-	case KBufferedSocket::Idle:
+	kDebug(14121) << k_funcinfo << "newstate=" << newstate << endl;
+
+	switch (newstate) {
+	case QAbstractSocket::UnconnectedState:
 		setConnectionState(Idle);
 		break;
-	case KBufferedSocket::HostLookup:
+	case QAbstractSocket::HostLookupState:
 		setConnectionState(HostLookup);
 		break;
-	case KBufferedSocket::HostFound:
-		setConnectionState(HostFound);
-		break;
-//	case KBufferedSocket::Bound: // Should never be Bound, unless writing a server
-//		setConnectionState(Bound)
-//		break;
-	case KBufferedSocket::Connecting:
+	case QAbstractSocket::ConnectingState:
 		setConnectionState(Connecting);
 		break;
-	case KBufferedSocket::Open:
-//		d->socket->enableRead(true);
-//		d->socket->enableWrite(true); // Should not be needed
+	case QAbstractSocket::ConnectedState:
 		setConnectionState(Authentifying);
 		authentify();
 		break;
-	case KBufferedSocket::Closing:
+	case QAbstractSocket::ClosingState:
 		setConnectionState(Closing);
 		break;
 	default:
@@ -311,8 +325,10 @@ void Socket::socketStateChanged(int newstate)
 	}
 }
 
-void Socket::socketGotError(int errCode)
+void Socket::socketGotError(QAbstractSocket::SocketError)
 {
+	kDebug(14121) << k_funcinfo << endl;
+	/*
 	KBufferedSocket::SocketError err = d->socket->error();
 
 	// Ignore spurious error
@@ -320,7 +336,7 @@ void Socket::socketGotError(int errCode)
 		return;
 
 	QString errStr = d->socket->errorString();
-	kDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
+	kDebug(14121) << k_funcinfo << "Socket error: " << errStr << endl;
 	postErrorEvent(errStr);
 
 	// ignore non-fatal error
@@ -328,10 +344,12 @@ void Socket::socketGotError(int errCode)
 		return;
 
 	close();
+	*/
 }
 
 QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
 {
+	kDebug(14121) << k_funcinfo << endl;
 	*success = false;
 
 	if (!codec || !codec->canEncode(str))
