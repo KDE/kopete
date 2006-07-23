@@ -655,6 +655,43 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
     return metaContactDoc.documentElement();
 }
 
+const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
+{
+    QDomDocument groupDoc;
+    groupDoc.appendChild( groupDoc.createElement( QLatin1String( "kopete-group" ) ) );
+    groupDoc.documentElement().setAttribute( QLatin1String( "groupId" ), QString::number( group->groupId() ) );
+
+    QString type;
+    switch ( group->type() )
+    {
+        case Kopete::Group::Temporary:
+            type = QLatin1String( "temporary" );
+            break;
+        case Kopete::Group::TopLevel:
+            type = QLatin1String( "top-level" );
+            break;
+        default:
+            type = QLatin1String( "standard" ); // == Normal
+            break;
+    }
+
+    groupDoc.documentElement().setAttribute( QLatin1String( "type" ), type );
+    groupDoc.documentElement().setAttribute( QLatin1String( "view" ), QLatin1String( group->isExpanded() ? "expanded" : "collapsed" )  );
+
+    QDomElement displayName = groupDoc.createElement( QLatin1String( "display-name" ) );
+    displayName.appendChild( groupDoc.createTextNode( group->displayName() ) );
+    groupDoc.documentElement().appendChild( displayName );
+
+    // Store other plugin data
+    const QList<QDomElement> pluginNodes = storeContactListElement( group );
+    foreach ( QDomElement it , pluginNodes )
+        groupDoc.documentElement().appendChild( groupDoc.importNode( it, true ) );
+
+
+    return groupDoc.documentElement();
+
+}
+
 const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::ContactListElement *contactListElement ) const
 {
     QDomDocument pluginData;

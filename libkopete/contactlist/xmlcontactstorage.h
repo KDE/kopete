@@ -58,6 +58,7 @@ protected:
     bool parseContactListElement( Kopete::ContactListElement *contactListElement, const QDomElement &element );
 
     const QDomElement storeMetaContact( Kopete::MetaContact *metaContact, bool minimal = false ) const;
+    const QDomElement storeGroup( Kopete::Group *group ) const;
     const QList<QDomElement> storeContactListElement( Kopete::ContactListElement *contactListElement ) const;
 
 private:
