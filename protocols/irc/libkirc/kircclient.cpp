@@ -46,6 +46,8 @@ Client::Client(QObject *parent)
 	: KIRC::Socket(parent),
 	  d( new Private )
 {
+	kDebug(14120) << k_funcinfo << endl;
+
 /*
 	  d->FailedNickOnLogin(false),
 	  d->useSSL(false),
@@ -70,7 +72,7 @@ Client::Client(QObject *parent)
 
 Client::~Client()
 {
-//	kDebug(14120) << k_funcinfo << d->Host << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	StdCommands::quit(this, QString::fromLatin1("KIRC Deleted"));
 
 	delete d;
@@ -97,6 +99,8 @@ void Client::authentify()
 	#warning make the following string arguments static const
 	StdCommands::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
 	StdCommands::nick(this, url.queryItem(URL_NICKNAME));
+
+	KIRC::Socket::authentify();
 }
 
 Entity::Ptr Client::server()
