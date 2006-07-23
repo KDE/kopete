@@ -29,6 +29,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kuser.h>
 
 #include <QDateTime>
 #include <qfileinfo.h>
@@ -41,20 +42,11 @@
 #include <arpa/inet.h>
 
 using namespace KIRC;
-#warning make usage of KUser and make more usefull using some default strings.
-/*
-static QString getUsername()
-{
-	return QString::fromLatin1(getpwuid(getuid())->pw_name);
-}
+#warning make usage of KUser (done!) and make more usefull using some default strings (todo!)
 
-static QString getRealname()
-{
-	return QString::fromLatin1(getpwuid(getuid())->pw_gecos);
-}
-*/
 void StdCommands::away(KIRC::Socket *socket, QString awayMessage)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -66,6 +58,7 @@ void StdCommands::away(KIRC::Socket *socket, QString awayMessage)
 
 void StdCommands::ison(KIRC::Socket *socket, QStringList nickList)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	#warning FIXME bogus length check
@@ -90,6 +83,7 @@ void StdCommands::ison(KIRC::Socket *socket, QStringList nickList)
 
 void StdCommands::join(KIRC::Socket *socket, QString name, QString key)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -104,6 +98,7 @@ void StdCommands::join(KIRC::Socket *socket, QString name, QString key)
 
 void StdCommands::kick(KIRC::Socket *socket, QString user, QString channel, QString reason)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -116,6 +111,7 @@ void StdCommands::kick(KIRC::Socket *socket, QString user, QString channel, QStr
 
 void StdCommands::list(KIRC::Socket *socket)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	socket->writeMessage(LIST);
@@ -123,6 +119,7 @@ void StdCommands::list(KIRC::Socket *socket)
 
 void StdCommands::mode(KIRC::Socket *socket, QString target, QString mode)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -134,6 +131,7 @@ void StdCommands::mode(KIRC::Socket *socket, QString target, QString mode)
 
 void StdCommands::motd(KIRC::Socket *socket, QString server)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -143,20 +141,25 @@ void StdCommands::motd(KIRC::Socket *socket, QString server)
 	socket->writeMessage(msg);
 }
 
-void StdCommands::nick(KIRC::Socket *socket, QString newNickname)
+void StdCommands::nick(KIRC::Socket *socket, QString newNickName)
 {
+	kDebug(14120) << k_funcinfo << "newNickName=" << newNickName << endl;
+
 	Q_ASSERT(socket);
+
+	if (newNickName.isEmpty()) newNickName = KUser().loginName();
 
 //	m_PendingNick = newNickname;
 	Message msg;
 	msg.setCommand(NICK);
-	msg.setArgs(newNickname);
+	msg.setArgs(newNickName);
 
 	socket->writeMessage(msg);
 }
 
 void StdCommands::notice(KIRC::Socket *socket, QString target, QString content)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -171,6 +174,7 @@ void StdCommands::notice(KIRC::Socket *socket, QString target, QString content)
  */
 void StdCommands::part(KIRC::Socket *socket, QString channel, QString reason)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -183,6 +187,7 @@ void StdCommands::part(KIRC::Socket *socket, QString channel, QString reason)
 
 void StdCommands::pass(KIRC::Socket *socket, QString password)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -194,6 +199,7 @@ void StdCommands::pass(KIRC::Socket *socket, QString password)
 
 void StdCommands::privmsg(KIRC::Socket *socket, QString contact, QString content)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -206,6 +212,7 @@ void StdCommands::privmsg(KIRC::Socket *socket, QString contact, QString content
 
 void StdCommands::quit(KIRC::Socket *socket, QString reason)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 //	if (isDisconnected())
@@ -221,6 +228,7 @@ void StdCommands::quit(KIRC::Socket *socket, QString reason)
 
 void StdCommands::topic(KIRC::Socket *socket, QString channel, QString topic)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Q_ASSERT(socket);
 
 	Message msg;
@@ -238,11 +246,12 @@ void StdCommands::topic(KIRC::Socket *socket, QString channel, QString topic)
  */
 void StdCommands::user(KIRC::Socket *socket, QString newUserName, QString hostName, QString newRealName)
 {
+	kDebug(14120) << k_funcinfo << "newUserName=" << newUserName
+		<< ", hostName=" << hostName << ", newRealName=" << newRealName << endl;
 	Q_ASSERT(socket);
 
-//	m_Username = newUserName;
-//	m_realName = newRealName;
-//	Use KUser here
+	if (newUserName.isEmpty()) newUserName = KUser().loginName();
+	if (newRealName.isEmpty()) newRealName = KUser().fullName();
 
 	Message msg;
 	msg.setCommand(USER);
@@ -260,9 +269,12 @@ void StdCommands::user(KIRC::Socket *socket, QString newUserName, QString hostNa
  */
 void StdCommands::user(KIRC::Socket *socket, QString newUserName, Modes modes, QString newRealName)
 {
+	kDebug(14120) << k_funcinfo << "newUserName=" << newUserName
+		<< ", modes=" << modes << ", newRealName=" << newRealName << endl;
 	Q_ASSERT(socket);
 
-	#warning Use KUser here to get default values if null
+	if (newUserName.isEmpty()) newUserName = KUser().loginName();
+	if (newRealName.isEmpty()) newRealName = KUser().fullName();
 
 	Message msg;
 	msg.setCommand(USER);
@@ -274,6 +286,7 @@ void StdCommands::user(KIRC::Socket *socket, QString newUserName, Modes modes, Q
 
 void StdCommands::whois(KIRC::Socket *socket, QString user)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	Message msg;
 	msg.setCommand(WHOIS);
 //	msg.setArgs(user);
