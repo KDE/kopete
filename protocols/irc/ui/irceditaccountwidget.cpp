@@ -66,8 +66,8 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 
 //		mPasswordWidget->load ( &account()->password() );
 
-		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
-		autoShowServerWindow->setChecked( account()->configGroup()->readBoolEntry("AutoShowServerWindow") );
+		preferSSL->setChecked(account()->configGroup()->readEntry("PreferSSL",false));
+		autoShowServerWindow->setChecked( account()->configGroup()->readEntry("AutoShowServerWindow") );
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
 		KConfigGroup *config = account()->configGroup();

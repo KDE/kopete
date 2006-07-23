@@ -127,7 +127,7 @@ void JabberEditAccountWidget::reopen ()
 	cbSendDeliveredEvent->setChecked( account()->configGroup()->readEntry("SendDeliveredEvent", true) );
 	cbSendDisplayedEvent->setChecked( account()->configGroup()->readEntry("SendDisplayedEvent", true) );
 	cbSendComposingEvent->setChecked( account()->configGroup()->readEntry("SendComposingEvent", true) );
-	cbSendGoneEvent->setChecked( account()->configGroup()->readBoolEntry("SendGoneEvent", true) );
+	cbSendGoneEvent->setChecked( account()->configGroup()->readEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
 

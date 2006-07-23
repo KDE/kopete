@@ -207,7 +207,7 @@ void IRCAccount::clientSetup()
 //	d->network = IRCNetworkList::self()->network(networkName());
 /*
 	// if prefer SSL is set, sort by SSL first
-	if (configGroup()->readBoolEntry("PreferSSL"))
+	if (configGroup()->readEntry("PreferSSL",false))
 	{
 		IRCHostList sslFirst;
 
@@ -378,7 +378,7 @@ void IRCAccount::setDefaultQuitMessage( const QString &defaultQuit )
 
 bool IRCAccount::autoShowServerWindow() const
 {
-	return configGroup()->readBoolEntry(QString::fromLatin1("AutoShowServerWindow"));
+	return configGroup()->readEntry(QString::fromLatin1("AutoShowServerWindow"));
 }
 
 void IRCAccount::setAutoShowServerWindow(bool autoShow)
