@@ -23,6 +23,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
 #include <QtCore/QLatin1String>
+#include <QtCore/QTextStream>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
 
@@ -30,6 +31,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <ksavefile.h>
 
 // Kopete includes
 #include "kopetemetacontact.h"
@@ -55,10 +57,10 @@ class XmlContactStorage::Private
 {
 public:
     Private()
-    : loaded(false), isValid(false)
+    : isBusy(false), isValid(false)
     {}
 
-    bool loaded;
+    bool isBusy;
     bool isValid;
     QString xmlFilename;
     QString errorMessage;
@@ -91,10 +93,17 @@ QString XmlContactStorage::errorMessage() const
     return d->errorMessage;
 }
 
+bool XmlContactStorage::isBusy() const
+{
+    return d->isBusy;
+}
+
 void XmlContactStorage::load()
 {
-    // don't save when we're in the middle of this...
-    d->loaded = false;
+    if ( isBusy() )
+        return;
+
+    d->isBusy = true;
 
     QString filename;
     if( !d->xmlFilename.isEmpty() )
@@ -108,9 +117,9 @@ void XmlContactStorage::load()
 
     if( filename.isEmpty() )
     {
-        d->loaded=true;
         d->isValid = false;
         d->errorMessage = i18n("Could not find contactlist.xml in Kopete application data.");
+        d->isBusy = false;
         return;
     }
 
@@ -207,12 +216,80 @@ void XmlContactStorage::load()
     }
     contactListFile.close();
     d->isValid = true;
-    d->loaded=true;
+    d->isBusy = false;
 }
 
 void XmlContactStorage::save()
 {
-    // TODO:
+    if ( isBusy() )
+        return;
+
+    d->isBusy = true;
+
+    QString filename;
+    if( !d->xmlFilename.isEmpty() )
+    {
+        filename = d->xmlFilename;
+    }
+    else
+    {
+        filename = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlist.xml" ) );
+    }
+
+    KSaveFile contactListFile( filename );
+    if( contactListFile.status() != 0 )
+    {
+        d->isValid = false;
+        d->errorMessage = i18n( "Couldn't open contact list file." );
+        d->isBusy = false;
+        return;
+    }
+
+    QDomDocument doc;
+    doc.appendChild( doc.createElement( QLatin1String("kopete-contact-list") ) );
+    doc.documentElement().setAttribute( QLatin1String("version"), QLatin1String("1.0"));
+
+    // Save group information. ie: Open/Closed, pehaps later icons? Who knows.
+    foreach( Kopete::Group *group, groups() )
+    {
+        QDomNode node = doc.importNode( storeGroup( group ), true );
+        doc.documentElement().appendChild( node );
+    }
+
+    // Save metacontact information.
+    foreach( Kopete::MetaContact *metaContact, contacts() )
+    {
+        if( !metaContact->isTemporary() )
+        {
+            QDomNode node = doc.importNode( storeMetaContact( metaContact ), true );
+            doc.documentElement().appendChild( node );
+        }
+    }
+
+    // Save myself metacontact information
+#if 0
+    if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
+    {
+        QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
+        myselfElement.setTagName( QLatin1String("myself-meta-contact") );
+        doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
+    }
+#endif
+
+    QTextStream *stream = contactListFile.textStream();
+    stream->setCodec(QTextCodec::codecForName("UTF-8"));
+    doc.save( *stream, 4 );
+
+    if ( !contactListFile.close() )
+    {
+        d->isValid = false;
+        d->errorMessage = i18n( "Couldn't write contact list to a file." );
+        d->isBusy = false;
+        return;
+    }
+
+    d->isValid = true;
+    d->isBusy = false;
 }
 
 bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element )

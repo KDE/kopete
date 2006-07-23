@@ -86,6 +86,15 @@ public:
     virtual QString errorMessage() const = 0;
 
     /**
+     * @brief Check if the current ContactListStorage is busy.
+     *
+     * Derived ContactListStorage must implement this method.
+     *
+     * @return true if this ContactListStorage is busy.
+     */
+    virtual bool isBusy() const = 0;
+
+    /**
      * @brief Load the contact list
      * 
      * Derived ContactListStorage must implement this method.

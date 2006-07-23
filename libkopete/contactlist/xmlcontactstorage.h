@@ -49,6 +49,7 @@ public:
 
     virtual bool isValid() const;
     virtual QString errorMessage() const;
+    virtual bool isBusy() const;
     virtual void load();
     virtual void save();
 
