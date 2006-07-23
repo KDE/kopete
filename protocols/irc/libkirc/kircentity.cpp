@@ -60,7 +60,7 @@ class KIRC::Entity::Private
 {
 public:
 	Private()
-		: codec(0)
+		: manager(0), type(Unknown), codec(0)
 	{ }
 
 	EntityManager *manager;
@@ -101,8 +101,7 @@ Entity::Entity(EntityManager *entityManager)
 
 Entity::~Entity()
 {
-	d->manager->remove(this);
-
+	if (d->manager) d->manager->remove(this);
 	delete d;
 }
 
