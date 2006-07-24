@@ -549,7 +549,7 @@ void QQContact::setDisplayPicture(KTempFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 
 	KIO::Job *j=KIO::file_move( KUrl( f->name() ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
@@ -562,7 +562,7 @@ void QQContact::setDisplayPicture(KTempFile *f)
 
 void QQContact::slotEmitDisplayPictureChanged()
 {
-	QString newlocation=locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }
