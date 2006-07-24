@@ -213,8 +213,10 @@ void Socket::writeMessage(QByteArray msg)
 		return;
 	}
 
-	msg += "\n\r";
-	int wrote = d->socket->writeBlock(msg.data(), msg.length());
+	qint64 wrote = d->socket->write(msg + "\n\r");
+
+	if (wrote == -1)
+		kDebug(14121) << k_funcinfo << "Socket write failed!" << endl;
 
 //	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
 }
