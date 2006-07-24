@@ -935,8 +935,6 @@ void IRCProtocol::slotDeleteHost()
 
 void IRCProtocol::slotNewNetwork()
 {
-	// create a new network struct
-	IRCNetwork *net = new IRCNetwork;
 	// give it the name of 'New Network' (incrementing number if needed)
 	QString netName = QString::fromLatin1( "New Network" );
 	if ( m_networks.find( netName ) )
@@ -949,6 +947,8 @@ void IRCProtocol::slotNewNetwork()
 		if ( newIdx == 100 ) // pathological case
 			return;
 	}
+	// create a new network struct
+	IRCNetwork *net = new IRCNetwork;
 	net->name = netName;
 	// and add it to the networks dict and list
 	m_networks.insert( net->name, net );
@@ -960,8 +960,6 @@ void IRCProtocol::slotNewNetwork()
 
 void IRCProtocol::slotNewHost()
 {
-	// create a new host
-	IRCHost *host = new IRCHost;
 	// prompt for a name
 	bool ok;
 	QString name = KInputDialog::getText(
@@ -976,6 +974,8 @@ void IRCProtocol::slotNewHost()
 			KMessageBox::sorry(netConf, i18n( "A host already exists with that name" ) );
 			return;
 		}
+		// create a new host
+		IRCHost *host = new IRCHost;
 		// set defaults on others
 		host->host = name;
 		host->port = 6667;
