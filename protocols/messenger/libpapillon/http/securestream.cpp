@@ -19,7 +19,7 @@
 #include <QtCore/QLatin1String>
 
 // QCA include
-#include <QtCrypto/QtCrypto>
+#include <QtCrypto>
 
 // Papillon includes
 #include "connector.h"

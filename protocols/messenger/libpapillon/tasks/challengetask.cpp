@@ -26,7 +26,7 @@
 #include <QtDebug>
 
 // QCA includes
-#include <QtCrypto/QtCrypto>
+#include <QtCrypto>
 
 // Papillon includes
 #include "transfer.h"
