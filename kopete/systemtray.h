@@ -20,8 +20,8 @@
 #ifndef SYSTEMTRAY_H
 #define SYSTEMTRAY_H
 
-#include <qpixmap.h>
-#include <qmovie.h>
+#include <QtGui/QIcon>
+#include <QtGui/QMovie>
 
 #include <ksystemtrayicon.h>
 
@@ -53,13 +53,12 @@ public:
 
 	// One method, multiple interfaces :-)
 	void startBlink( const QString &icon );
-	void startBlink( const QPixmap &icon );
+	void startBlink( const QIcon &icon );
 	void startBlink( QMovie *movie );
 	void startBlink();
 
 	void stopBlink();
 	bool isBlinking() const { return mIsBlinking; };
-	KMenu *contextMenu() const { return KSystemTrayIcon::contextMenu(); };
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *e );
@@ -84,8 +83,8 @@ private:
 	void removeBalloonEvent(Kopete::MessageEvent *);
 
 	QTimer *mBlinkTimer;
-	QPixmap mKopeteIcon;
-	QPixmap mBlinkIcon;
+	QIcon mKopeteIcon;
+	QIcon mBlinkIcon;
 	QMovie *mMovie;
 
 	bool mIsBlinkIcon;

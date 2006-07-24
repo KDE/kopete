@@ -107,6 +107,8 @@ KopeteSystemTray::~KopeteSystemTray()
 
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
+#warning PORT ME
+#if 0
 	if (
 		(me->button() == Qt::MidButton ||
 			(me->button() == Qt::LeftButton && Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage())) &&
@@ -117,10 +119,13 @@ void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 	}
 
 	KSystemTray::mousePressEvent( me );
+#endif
 }
 
 void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 {
+#warning PORT ME
+#if 0
 	if ( !mIsBlinking )
 	{
 		KSystemTray::mousePressEvent( me );
@@ -130,6 +135,7 @@ void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 		if(!mEventList.isEmpty())
 			mEventList.first()->apply();
 	}
+#endif
 }
 
 void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
@@ -140,10 +146,10 @@ void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
 
 void KopeteSystemTray::startBlink( const QString &icon )
 {
-	startBlink( KGlobal::iconLoader()->loadIcon( icon , K3Icon::Panel ) );
+	startBlink( loadIcon( icon ) );
 }
 
-void KopeteSystemTray::startBlink( const QPixmap &icon )
+void KopeteSystemTray::startBlink( const QIcon &icon )
 {
 	mBlinkIcon = icon;
 	if ( mBlinkTimer->isActive() == false )
@@ -165,11 +171,14 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 
 void KopeteSystemTray::startBlink( QMovie *movie )
 {
+#warning PORT ME
+#if 0
 	//kDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
 	kDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
 	movie->setPaused(false);
 	setMovie( movie );
 	mIsBlinking = true;
+#endif
 }
 
 void KopeteSystemTray::startBlink()
@@ -184,7 +193,7 @@ void KopeteSystemTray::startBlink()
 
 void KopeteSystemTray::stopBlink()
 {
-	if ( movie() )
+	if ( mMovie )
 		kDebug( 14010 ) << k_funcinfo << "stopping movie." << endl;
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
@@ -200,7 +209,7 @@ void KopeteSystemTray::stopBlink()
 
 void KopeteSystemTray::slotBlink()
 {
-	setPixmap( mIsBlinkIcon ? mKopeteIcon : mBlinkIcon );
+	setIcon( mIsBlinkIcon ? mKopeteIcon : mBlinkIcon );
 
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
@@ -264,6 +273,8 @@ void KopeteSystemTray::slotRemoveBalloon()
 
 void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
 {
+#warning PORT ME
+#if 0
 	bool current= event==mBalloonEventList.first();
 	mBalloonEventList.removeAll(event);
 
@@ -283,10 +294,13 @@ void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
 				startBlink();
 		}
 	}
+#endif
 }
 
 void KopeteSystemTray::addBalloon()
 {
+#warning PORT ME
+#if 0
 	/*kDebug(14010) << k_funcinfo <<
 		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
 		":" << KopetePrefs::prefs()->balloonNotify()
@@ -324,6 +338,7 @@ void KopeteSystemTray::addBalloon()
 			KWin::setOnAllDesktops(m_balloon->winId(), true);
 		}
 	}
+#endif
 }
 
 void KopeteSystemTray::slotConfigChanged()
@@ -377,21 +392,21 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	if (bAway)
 	{
 		if (!bOnline && !bOffline) // none online and none offline -> all away
-			setPixmap(loadIcon("kopete_all_away"));
+			setIcon(loadIcon("kopete_all_away"));
 		else
-			setPixmap(loadIcon("kopete_some_away"));
+			setIcon(loadIcon("kopete_some_away"));
 	}
 	else if(bOnline)
 	{
 		/*if(bOffline) // at least one offline and at least one online -> some accounts online
-			setPixmap(loadIcon("kopete_some_online"));
+			setIcon(loadIcon("kopete_some_online"));
 		else*/ // none offline and none away -> all online
-			setPixmap(mKopeteIcon);
+			setIcon(mKopeteIcon);
 	}
 	else // none away and none online -> all offline
 	{
 		//kDebug(14010) << k_funcinfo << "All Accounts offline!" << endl;
-		setPixmap(loadIcon("kopete_offline"));
+		setIcon(loadIcon("kopete_offline"));
 	}
 }
 
