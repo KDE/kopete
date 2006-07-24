@@ -59,7 +59,7 @@ public:
 
 	void stopBlink();
 	bool isBlinking() const { return mIsBlinking; };
-	KMenu *contextMenu() const { return KSystemTray::contextMenu(); };
+	KPopupMenu *contextMenu() const { return KSystemTray::contextMenu(); };
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *e );
