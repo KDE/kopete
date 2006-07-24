@@ -39,7 +39,7 @@ namespace Eva {
 	short const GroupNames = 0x003C;
 	short const UploadGroups = 0x003D;
 	short const Memo = 0x003E;
-	short const DownloadGroup = 0x0058;
+	short const DownloadGroups = 0x0058;
 	short const GetLevel = 0x005C;
 	short const RequestLoginToken = 0x0062;
 	short const ExtraInfo = 0x0065;
@@ -77,6 +77,24 @@ namespace Eva {
 	const char ContactListEnd = 0xff;
 	const char UploadGroupNames = 0x2;
 	const char DownloadGroupNames = 0x1;
+
+	// POD storage
+	struct ContactInfo {
+		int id;
+		short face;
+		char age;
+		char gender;
+		std::string nick;
+	};
+
+	// Contact-Group-Trio
+	struct CGT { 
+		int qqId;
+		char type;
+		char groupId;
+
+		CGT( int q, char t, char g ) : qqId(q), type (t), groupId(g) {};
+	};
 
 	// Customized max to get rid of stl dependence
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
@@ -184,9 +202,9 @@ namespace Eva {
    
 	template<class T> inline T type_cast(char* buffer)
 	{
-		return (* (T*) buffer );
+		return (* ((T*) buffer) );
 	}
-
+	
 	/** 
 	 * normalized QQ packet
 	 */
@@ -216,6 +234,7 @@ namespace Eva {
 		short sequence() const { return m_sequence; }
 		ByteArray& body() { return m_body; }
 
+		// FIXME: Add const to data.
 		static inline char replyCode( ByteArray& data ) { return data.data()[0]; }
 
 		static inline int redirectedIP( ByteArray& data ) 
@@ -248,21 +267,20 @@ namespace Eva {
 		static inline int lastLoginTime( ByteArray& data ) 
 		{ return ntohl( type_cast<int> (data.data()+127) ); }
 
+		static inline int nextGroupId( const ByteArray& data ) 
+		{ return ntohl( type_cast<int> (data.data()+6) ); }
+
+		static std::list< std::string > groupNames(const ByteArray& text );
+		// FIXME: use list as others
+		ContactInfo contactInfo( char* buffer, int& len );
+		static std::list< CGT > cgts( const ByteArray& text );
+
 	private:
 		short m_version;
 		short m_command;
 		short m_sequence;
 		ByteArray m_body;
 	};
-
-	struct ContactInfo {
-		int id;
-		short face;
-		char age;
-		char gender;
-		ByteArray nick;
-	};
-
 
 	
 	// Packet operation
@@ -271,7 +289,8 @@ namespace Eva {
 			const ByteArray& token, char const loginMode );
 	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status );
 	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos = 0);
-	ByteArray dlGroupNames( int id, short const sequence, ByteArray& key );
+	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );
+	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos );
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
@@ -280,10 +299,7 @@ namespace Eva {
 	const char* getInitKey();
 	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
 
-	// FIXME: should we move this to Packet ?
-	std::list< std::string > groupNames(const ByteArray& text );
-	ContactInfo contactInfo( char* buffer, int& len );
-	std::list< std::string > groupNames(const ByteArray& text );
+	// FIXME: move me to the Packet
 
 
 };

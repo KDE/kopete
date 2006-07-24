@@ -95,7 +95,7 @@ public slots:
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNewContactList();
 	void slotContactListed( const Eva::ContactInfo& ci );
-	void slotGroupListed(const QStringList& ql );
+	void slotGroupNamesListed(const QStringList& ql );
 
 protected:
 	/**

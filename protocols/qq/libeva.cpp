@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 
 #include <stdio.h>
+#include <string.h>
 
 namespace Eva {
 	static const char login_16_51 [] = {
@@ -288,7 +289,7 @@ namespace Eva {
 		return packet;
 	}
 
-	ContactInfo contactInfo( char* buffer, int& len )
+	ContactInfo Packet::contactInfo( char* buffer, int& len )
 	{
 		ContactInfo ci;
 		buffer += len;
@@ -297,14 +298,14 @@ namespace Eva {
 		ci.age = buffer[6];
 		ci.gender = buffer[7];
 		int nl = (int) buffer[8];
-		ci.nick = ByteArray( buffer+9, nl );
+		ci.nick = std::string( strndup( buffer+9, nl) );
 		// 2 bytes are unknown.
 		// 2 bytes are extFlag, commonFlag, ignored here.
 		len += 9+nl+4;
 		return ci;
 	}
 
-	std::list< std::string > groupNames(const ByteArray& text )
+	std::list< std::string > Packet::groupNames(const ByteArray& text )
 	{
 		// starts from 7, and each field is 17 bytes long.
 		std::list< std::string > list;
@@ -317,6 +318,22 @@ namespace Eva {
 		}
 		return list;
 	}
+
+	std::list< CGT > Packet::cgts( const ByteArray& text )
+	{
+		int offset = 10;
+		std::list< CGT > list;
+		while( offset < text.size() )
+		{
+			list.push_back( 
+				CGT( ntohl( type_cast<int>( text.data()+offset ) ), 
+				type_cast<char>(text.data()+offset+4), ( type_cast<short>(text.data()+5) >> 2) & 0x3f ) );
+			offset += 6;
+		}
+		return list;
+	}
+					
+			
 
 	// Core functions
 	ByteArray requestLoginToken( int id, short const sequence )
@@ -379,7 +396,7 @@ namespace Eva {
 		return buildPacket(id, ChangeStatus, sequence, key, text );
 	}
 
-	ByteArray dlGroupNames( int id, short const sequence, ByteArray& key )
+	ByteArray getGroupNames( int id, short const sequence, ByteArray& key )
 	{
 		ByteArray text(6);
 		text += DownloadGroupNames;
@@ -387,6 +404,17 @@ namespace Eva {
 		text += (int) 0;
 
 		return buildPacket(id, GroupNames, sequence, key, text );
+	}
+
+	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos )
+	{
+		ByteArray text(10);
+		text += '\1';
+		text += '\2' ;
+		text += (int) 0;
+		text += htonl(pos);
+
+		return buildPacket(id, DownloadGroups, sequence, key, text );
 	}
 
 }

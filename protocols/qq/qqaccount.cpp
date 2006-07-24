@@ -42,7 +42,15 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
  
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
-
+	QList<Kopete::Group*> groupList = Kopete::ContactList::self()->groups();
+	Kopete::Group *g;
+	foreach(g, groupList)
+	{
+		QString groupGuid=g->pluginData( protocol(), accountId() + " id" );
+kDebug ( 14210 ) << k_funcinfo << "groupGuid = " << groupGuid << endl;
+		if ( !groupGuid.isEmpty() )
+			m_groupList.insert( groupGuid , g );
+	}
 }
 
 // The default implementation is TCP
@@ -106,8 +114,8 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 		SLOT( slotNewContactList() ) );
 	QObject::connect( m_notifySocket, SIGNAL( contactList(const Eva::ContactInfo &) ),
 		SLOT( slotContactListed(const Eva::ContactInfo &) ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupList(const QStringList& )),
-		SLOT( slotGroupListed(const QStringList& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupNames(const QStringList& )),
+		SLOT( slotGroupNamesListed(const QStringList& ) ) );
 
 	m_notifySocket->connect(host, port);
 }
@@ -167,6 +175,7 @@ void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 
 bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
+	kDebug( 14140 ) << k_funcinfo << endl;
 	QQContact* newContact = new QQContact( this, contactId, parentContact );
 	return newContact != 0L;
 }
@@ -178,8 +187,9 @@ void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 	if(m_newContactList)
 	{
 		// m_newContactList = false;
-		// Fetch the group names 
-		m_notifySocket->sendDLGroupNames();
+		// Fetch the group names, later
+		// m_notifySocket->sendGetGroupNames();
+		m_notifySocket->sendDownloadGroups();
 
 		// Fetch the ContactList from the server.
 		// m_notifySocket->sendContactList();
@@ -189,11 +199,27 @@ void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 	}
 }
 
-void QQAccount::slotGroupListed(const QStringList& ql )
+void QQAccount::slotGroupNamesListed(const QStringList& ql )
 {
 	kDebug ( 14210 ) << k_funcinfo << ql << endl;
+	// Create the groups if necessary:
+	QList<Kopete::Group*> groupList = Kopete::ContactList::self()->groups();
+	Kopete::Group *g;
+/*
+	for( QStringList::Iterator it = ql.begin(); it != ql.end(); it++ )
+	{
+		foreach(g, groupList)
+		{
+			if 
+	{
+		QString groupGuid=g->pluginData( protocol(), accountId() + " id" );
+kDebug ( 14210 ) << k_funcinfo << "groupGuid = " << groupGuid << endl;
+		if ( !groupGuid.isEmpty() )
+*/
+
 	m_groupNames = ql;
 }
+
 void QQAccount::slotShowVideo ()
 {
 	kDebug ( 14210 ) << k_funcinfo << endl;

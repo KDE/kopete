@@ -235,6 +235,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 
 		case Eva::ContactList :
+			/*
 			{
 				len = 2;
 				while( len < text.size() )
@@ -244,6 +245,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 				if( pos != Eva::ContactListEnd )
 					sendContactList(pos);
 			}
+			*/
 			break;
 		case Eva::ContactsOnline :
 		case Eva::GetCell2 :
@@ -251,13 +253,16 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::Test :
 			break;
 		case Eva::GroupNames :
-			doGroupList( text );
+			doGetGroupNames( text );
 			break;
 
 		case Eva::UploadGroups :
 		case Eva::Memo :
-		case Eva::DownloadGroup :
 			break;
+		case Eva::DownloadGroups :
+			doGetCGTs( text );
+			break;
+
 		case Eva::GetLevel :
 			break;
 
@@ -306,22 +311,45 @@ void QQNotifySocket::sendContactList( short pos )
 	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
 
-void QQNotifySocket::sendDLGroupNames()
+void QQNotifySocket::sendGetGroupNames()
 {
-	Eva::ByteArray packet = Eva::dlGroupNames( m_qqId, m_id++, m_sessionKey );
+	Eva::ByteArray packet = Eva::getGroupNames( m_qqId, m_id++, m_sessionKey );
 	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
 
-void QQNotifySocket::doGroupList( const Eva::ByteArray& text )
+void QQNotifySocket::sendDownloadGroups( int pos )
+{
+	Eva::ByteArray packet = Eva::downloadGroups( m_qqId, m_id++, m_sessionKey, pos );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+
+
+void QQNotifySocket::doGetGroupNames( const Eva::ByteArray& text )
 {
 	QStringList ql;
-	std::list< std::string > l = Eva::groupNames( text );
+	std::list< std::string > l = Eva::Packet::groupNames( text );
 	for( std::list<std::string>::const_iterator it = l.begin(); it != l.end(); it++ )
 		ql.append( QString( (*it).c_str() ) );
 
 	kDebug(14140) << k_funcinfo << endl;
-	// FIXME: a better name for the signal ?
-	emit groupList( ql );
+	emit groupNames( ql );
+}
+
+void QQNotifySocket::doGetCGTs( const Eva::ByteArray& text )
+{
+	kDebug(14140) << k_funcinfo << endl;
+	std::list< Eva::CGT > cgts = Eva::Packet::cgts( text );
+	// TODO: send it one by one.
+	for( std::list< Eva::CGT >::const_iterator it = cgts.begin();
+		it != cgts.end(); it++ )
+	{
+		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " type = " << (*it).type 
+			<< " groupId = " << (*it).groupId << endl;
+	}
+
+	int next = Eva::Packet::nextGroupId( text );
+	if( next )
+		sendDownloadGroups( next );
 }
 
 #include "qqnotifysocket.moc"
