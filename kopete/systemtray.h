@@ -23,7 +23,7 @@
 #include <qpixmap.h>
 #include <qmovie.h>
 
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 
 #include "kopetemessageevent.h"
 
@@ -39,7 +39,7 @@ class KopeteBalloon;
  * NOTE: This class is for use ONLY in libkopete! It is not public API, and
  *       is NOT supposed to remain binary compatible in the future!
  */
-class KopeteSystemTray : public KSystemTray
+class KopeteSystemTray : public KSystemTrayIcon
 {
 	Q_OBJECT
 
@@ -59,7 +59,7 @@ public:
 
 	void stopBlink();
 	bool isBlinking() const { return mIsBlinking; };
-	KPopupMenu *contextMenu() const { return KSystemTray::contextMenu(); };
+	KMenu *contextMenu() const { return KSystemTrayIcon::contextMenu(); };
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *e );
