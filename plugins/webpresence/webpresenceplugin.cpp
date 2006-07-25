@@ -3,10 +3,10 @@
 
    Kopete Web Presence plugin
 
-   Copyright (c) 2005      by Tommi Rantala   <tommi.rantala@cs.helsinki.fi>
+   Copyright     2005-2006 by Tommi Rantala   <tommi.rantala@cs.helsinki.fi>
    Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
 
-   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+   Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                    	 *
@@ -335,20 +335,20 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		return false;
 	case WEB_HTML:
 		if ( useImagesInHTML ) {
-			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
 		} else {
-			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html.xsl" ) );
 		}
 		break;
 	case WEB_XHTML:
 		if ( useImagesInHTML ) {
-			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
 		} else {
-			sheet.setName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
 		}
 		break;
 	case WEB_CUSTOM:
-		sheet.setName( userStyleSheet );
+		sheet.setFileName( userStyleSheet );
 		break;
 	default:
 		// Shouldn't ever reach here.
@@ -367,7 +367,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 	}
 
 	// is the cast safe?
-	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().latin1() );
+	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.fileName().toLatin1().data() );
 	if ( !cur ) {
 		kDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
 		retval = false;
