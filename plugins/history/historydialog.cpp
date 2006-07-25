@@ -38,7 +38,6 @@
 #include <QLayout>
 #include <QDir>
 #include <QDateTime>
-#include <Q3Header>
 #include <QLabel>
 #include <QClipboard>
 #include <QTextStream>
@@ -241,10 +240,10 @@ void HistoryDialog::slotLoadDays()
 		mInit.dateMCList.pop_front();
 		mLogger= new HistoryLogger(pair.metaContact(), this);
 		QList<int> dayList = mLogger->getDaysForMonth(pair.date());
-		for (unsigned int i=0; i<dayList.count(); i++)
+		for (int i=0; i<dayList.count(); i++)
 		{
 				QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
-				if (mInit.dateMCList.find(pair) == mInit.dateMCList.end())
+				if (mInit.dateMCList.indexOf(pair) == -1)
 						new KListViewDateItem(mMainWidget->dateListView, c2Date, pair.metaContact());
 		}
 		delete mLogger;
@@ -354,35 +353,33 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 	QString dir = (QApplication::isRightToLeft() ? QString::fromLatin1("rtl") :
 		QString::fromLatin1("ltr"));
 
-	QList<Kopete::Message>::iterator it = msgs.begin();
-
-
 	QString accountLabel;
-	QString resultHTML = "<b><font color=\"red\">" + (*it).timestamp().date().toString() + "</font></b><br/>";
+	QString resultHTML = "<b><font color=\"red\">" + msgs.front().timestamp().date().toString() + "</font></b><br/>";
+
 	DOM::HTMLElement newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
 	newNode.setAttribute(QString::fromLatin1("dir"), dir);
 	newNode.setInnerHTML(resultHTML);
 	mHtmlPart->htmlDocument().body().appendChild(newNode);
 
 	// Populating HTML Part with messages
-	for ( it = msgs.begin(); it != msgs.end(); ++it )
+	foreach(const Kopete::Message& msg, msgs)
 	{
 		if ( mMainWidget->messageFilterBox->currentIndex() == 0
-			|| ( mMainWidget->messageFilterBox->currentIndex() == 1 && (*it).direction() == Kopete::Message::Inbound )
-			|| ( mMainWidget->messageFilterBox->currentIndex() == 2 && (*it).direction() == Kopete::Message::Outbound ) )
+			|| ( mMainWidget->messageFilterBox->currentIndex() == 1 && msg.direction() == Kopete::Message::Inbound )
+			|| ( mMainWidget->messageFilterBox->currentIndex() == 2 && msg.direction() == Kopete::Message::Outbound ) )
 		{
-			resultHTML = "";
+			resultHTML.clear();
 	
-			if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
+			if (accountLabel.isEmpty() || accountLabel != msg.from()->account()->accountLabel())
 			// If the message's account is new, just specify it to the user
 			{
 				if (!accountLabel.isEmpty())
 					resultHTML += "<br/><br/><br/>";
-				resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
+				resultHTML += "<b><font color=\"blue\">" + msg.from()->account()->accountLabel() + "</font></b><br/>";
 			}
-			accountLabel = (*it).from()->account()->accountLabel();
+			accountLabel = msg.from()->account()->accountLabel();
 	
-			QString body = (*it).parsedBody();
+			QString body = msg.parsedBody();
 	
 			if (!mMainWidget->searchLine->text().isEmpty())
 			// If there is a search, then we hightlight the keywords
@@ -390,22 +387,22 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
 			}
 		
-			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
-					+ ((*it).direction() == Kopete::Message::Outbound ?
-									"<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().dark().name() + "\"><b>&gt;</b></font> "
-									: "<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().light(200).name() + "\"><b>&lt;</b></font> ")
-					+ body + "<br/>";
-	
+			resultHTML += "(<b>" + msg.timestamp().time().toString() + "</b>) "
+				+ (msg.direction() == Kopete::Message::Outbound ?
+				"<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().dark().name() + "\"><b>&gt;</b></font> "
+				: "<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().light(200).name() + "\"><b>&lt;</b></font> ")
+				+ body + "<br/>";
+
 			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
 			newNode.setAttribute(QString::fromLatin1("dir"), dir);
 			newNode.setInnerHTML(resultHTML);
-	
+
 			mHtmlPart->htmlDocument().body().appendChild(newNode);
 		}
 	}
 }
 
-void HistoryDialog::slotFilterChanged(int index)
+void HistoryDialog::slotFilterChanged(int /*index*/)
 {
 	dateSelected(mMainWidget->dateListView->currentItem());
 }
@@ -527,7 +524,7 @@ void HistoryDialog::searchFirstStep()
 				QString textLine;
 				while((textLine = stream.readLine()) != QString::null)
 				{
-					if (textLine.contains(mMainWidget->searchLine->text(), false))
+					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
 					{
 						rx.indexIn(textLine);
 						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())].push_back(mSearch->item->metaContact());
