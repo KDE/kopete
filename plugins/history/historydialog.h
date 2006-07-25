@@ -34,7 +34,6 @@ namespace Ui { class HistoryViewer; }
 //class HistoryWidget;
 namespace Kopete { class MetaContact; }
 namespace Kopete { class XSLT; }
-class HistoryLogger;
 class KHTMLView;
 class KHTMLPart;
 
@@ -119,8 +118,6 @@ class HistoryDialog : public KDialog
 		 * Search if @param item already has @param text child
 		 */
 		bool hasChild(K3ListViewItem* item, int month);
-
-		HistoryLogger *mLogger;
 
 		/**
 		 * We show history dialog to look at the log for a metacontact. Here is this metacontact.

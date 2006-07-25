@@ -109,7 +109,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 
 	// Class member initializations
 	mSearch = 0L;
-	mLogger = 0L;
 
 	// FIXME: Allow to show this dialog for only one contact
 	mMetaContact = mc;
@@ -207,18 +206,13 @@ void HistoryDialog::init()
 {
 	if(mMetaContact)
 	{
-		delete mLogger;
-		mLogger= new HistoryLogger(mMetaContact, this);
 		init(mMetaContact);
 	}
 	else
 	{
 		foreach(Kopete::MetaContact *metaContact, mMetaContactList)
 		{
-			mLogger= new HistoryLogger(metaContact, this);
 			init(metaContact);
-			delete mLogger;
-			mLogger = 0;
 		}
 	}
 
@@ -228,30 +222,29 @@ void HistoryDialog::init()
 
 void HistoryDialog::slotLoadDays()
 {
-		if(mInit.dateMCList.isEmpty())
-		{
-				if (!mMainWidget->searchLine->text().isEmpty())
-					QTimer::singleShot(0, this, SLOT(slotSearch()));
-				doneProgressBar();
-				return;
-		}
-		
-		DMPair pair(mInit.dateMCList.first());
-		mInit.dateMCList.pop_front();
-		mLogger= new HistoryLogger(pair.metaContact(), this);
-		QList<int> dayList = mLogger->getDaysForMonth(pair.date());
-		for (int i=0; i<dayList.count(); i++)
-		{
-				QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
-				if (mInit.dateMCList.indexOf(pair) == -1)
-						new KListViewDateItem(mMainWidget->dateListView, c2Date, pair.metaContact());
-		}
-		delete mLogger;
-		mLogger = 0;
-		mMainWidget->searchProgress->advance(1);
-		QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+	if(mInit.dateMCList.isEmpty())
+	{
+		if (!mMainWidget->searchLine->text().isEmpty())
+			QTimer::singleShot(0, this, SLOT(slotSearch()));
+		doneProgressBar();
+		return;
+	}
 
+	DMPair pair(mInit.dateMCList.first());
+	mInit.dateMCList.pop_front();
 
+	HistoryLogger hlog(pair.metaContact());
+
+	QList<int> dayList = hlog.getDaysForMonth(pair.date());
+	for (int i=0; i<dayList.count(); i++)
+	{
+		QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
+		if (mInit.dateMCList.indexOf(pair) == -1)
+			new KListViewDateItem(mMainWidget->dateListView, c2Date, pair.metaContact());
+	}
+
+	mMainWidget->searchProgress->advance(1);
+	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
 
 void HistoryDialog::init(Kopete::MetaContact *mc)
@@ -270,7 +263,6 @@ void HistoryDialog::init(Kopete::Contact *c)
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
 	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
 	QFileInfo fi;
-	
 
 	// BEGIN check if there are Kopete 0.7.x
 	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
@@ -328,22 +320,21 @@ void HistoryDialog::init(Kopete::Contact *c)
 
 void HistoryDialog::dateSelected(Q3ListViewItem* it)
 {
+	kDebug(14310) << k_funcinfo << endl;
+
 	KListViewDateItem *item = static_cast<KListViewDateItem*>(it);
 
 	if (!item) return;
 
 	QDate chosenDate = item->date();
 
-	mLogger= new HistoryLogger(item->metaContact(), this);
-	QList<Kopete::Message> msgs=mLogger->readMessages(chosenDate);
-	delete mLogger;
-	mLogger = 0;
-
-	setMessages(msgs);
+	setMessages(HistoryLogger(item->metaContact()).readMessages(chosenDate));
 }
 
 void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 {
+	kDebug(14310) << k_funcinfo << endl;
+
 	// Clear View
 	DOM::HTMLElement htmlBody = mHtmlPart->htmlDocument().body();
 	while(htmlBody.hasChildNodes())
@@ -504,7 +495,7 @@ void HistoryDialog::searchFirstStep()
 		if (mMainWidget->contactComboBox->currentIndex() == 0
 				|| mMetaContactList.at(mMainWidget->contactComboBox->currentIndex()-1) == mSearch->item->metaContact())
 		{
-			mLogger = new HistoryLogger(mSearch->item->metaContact(), this);
+			HistoryLogger hlog(mSearch->item->metaContact());
 	
 			QList<Kopete::Contact*> contacts=mSearch->item->metaContact()->contacts();
 	
@@ -514,7 +505,7 @@ void HistoryDialog::searchFirstStep()
 	
 				QString fullText;
 
-				QFile file(mLogger->getFileName(contact, mSearch->item->date()));
+				QFile file(hlog.getFileName(contact, mSearch->item->date()));
 				file.open(QIODevice::ReadOnly);
 				if (!file.isOpen())
 				{
@@ -533,8 +524,6 @@ void HistoryDialog::searchFirstStep()
 				
 				file.close();
 			}
-			delete mLogger;
-			mLogger = 0L;
 		}
 	}
 
