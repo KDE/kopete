@@ -536,16 +536,23 @@ void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//check that it's really for us
-	if ( info.internalId() == m_cookie )
+	if ( info.internalId() == QString( m_cookie ) )
 		doCancel();
+	else
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
 }
 
 void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//check that it's really for us
-	if ( t->info().internalId() != m_cookie )
+	//XXX because qt is retarded, I can't simply compare a qstring and bytearray any more.
+	//if there are 0's in hte cookie then the qstring will only contain part of it - but it should at least be consistent about that. it just slightly increases the tiny chance of a conflict
+	if ( t->info().internalId() != QString( m_cookie ) )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
 		return;
+	}
 
 	//TODO: we should unhook the old transfermanager signals now
 
@@ -562,6 +569,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 
 void FileTransferTask::doConnect()
 {
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	if( ! validFile() )
 	{
 		doCancel();
