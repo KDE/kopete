@@ -97,6 +97,8 @@ void Kopete::WalletManager::openWalletInner()
 		else
 		{
 			kDebug(14010) << k_funcinfo << " still waiting for earlier request" << endl;
+			//XXX this is a horrid hack because kwallet is broken. FIXME!!
+			QTimer::singleShot( 0, this, SLOT( slotWalletChangedStatus() ) );
 		}
 		return;
 	}
