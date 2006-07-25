@@ -241,7 +241,8 @@ void FileTransferTask::readyAccept()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
 	m_connection = dynamic_cast<KBufferedSocket*>( m_ss->accept() );
-	delete m_ss; //free up the port so others can listen
+	m_ss->close(); //free up the port so others can listen
+	m_ss->deleteLater();
 	m_ss = 0;
 	if (! m_connection )
 	{ //either it wasn't buffered, or it did something weird
