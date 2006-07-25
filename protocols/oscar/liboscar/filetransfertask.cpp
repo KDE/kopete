@@ -20,6 +20,7 @@
 #include "oscarsettings.h"
 #include "filetransfertask.h"
 
+#include <ksocketaddress.h>
 #include <kserversocket.h>
 #include <kbufferedsocket.h>
 #include <krandom.h>
@@ -588,11 +589,8 @@ void FileTransferTask::doConnect()
 			return;
 		}
 
-		//ugly because ksockets demand a qstring
-		QString host = QString::number( static_cast<unsigned char>( m_ip.at(0) ) )
-			+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(1) ) )
-			+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(2) ) )
-			+ '.' +	QString::number( static_cast<unsigned char>( m_ip.at(3) ) );
+		//ksockets demand a qstring
+		host = KNetwork::KIpAddress( m_ip.constData(), 4 ).toString();
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << host << endl;
 	}
 
