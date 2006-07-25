@@ -250,7 +250,7 @@ void Client::slotLoginResponse( int response, const QString &msg )
 				d->statusOnConnect == Yahoo::StatusInvisible) ||
 				!d->statusMessageOnConnect.isEmpty() )
 			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
-		d->statusMessageOnConnect = QString::null;
+		d->statusMessageOnConnect.clear();
 		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();

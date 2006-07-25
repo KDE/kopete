@@ -210,7 +210,7 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	if( !m_verificationWord.isEmpty() )
 	{
 		t->setParam( 227 , m_verificationWord.toLocal8Bit() );
-		m_verificationWord = QString::null;
+		m_verificationWord.clear();
 	}
 
 	free(resp_6);
