@@ -603,7 +603,7 @@ void FileTransferTask::doConnect()
 	m_state = Connecting;
 	//socket doesn't seem to have its own timeout, so here's mine
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-	m_timer.start( 60 * 1000 );
+	m_timer.start( 10 * 1000 ); //TODO: maybe let the user set timeout
 	//try it
 	m_connection->connect();
 }
