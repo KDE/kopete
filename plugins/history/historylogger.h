@@ -93,9 +93,8 @@ public:
 	 * Same as the following, but for one date. I did'nt reuse the above function
 	 * because its structure is really different.
 	 * Read all the messages for the given @param date
-     */
+	 */
 	QList<Kopete::Message> readMessages(QDate date);
-
 
 	/**
 	 * The pausition is set to the last message
@@ -113,8 +112,9 @@ public:
 	void setCurrentMonth(int month);
 
 	/**
-     * @return The list of the days for which there is a log for m_metaContact for month of *  @param date (don't care of the day)
-     */
+	 * @return The list of the days for which there is a log for m_metaContact for month of
+	 * @param date (don't care of the day)
+	 */
 	QList<int> getDaysForMonth(QDate date);
 
 	/**
