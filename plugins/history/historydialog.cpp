@@ -41,7 +41,7 @@
 #include <QLabel>
 #include <QClipboard>
 #include <QTextStream>
-#include <Q3Frame>
+#include <QFrame>
 #include <QVBoxLayout>
 
 #include <kapplication.h>
@@ -142,7 +142,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	setMainWidget( w );
 
 	// Initializing HTML Part
-	mMainWidget->htmlFrame->setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
+	mMainWidget->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
 	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame);
 
