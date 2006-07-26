@@ -96,6 +96,7 @@ public slots:
 	void slotNewContactList();
 	void slotContactListed( const Eva::ContactInfo& ci );
 	void slotGroupNamesListed(const QStringList& ql );
+	void slotContactInGroup(const int qqId, const char type, const int groupId );
 
 protected:
 	/**
@@ -134,7 +135,7 @@ private:
 
 	//this is the translation between old to new groups id when syncing from server.
 	QMap<QString, Kopete::Group*> m_oldGroupList;
-	QMap<QString, Kopete::Group*> m_groupList;
+	QList<Kopete::Group*> m_groupList;
 
 	/**
 	 * Cliend ID is a bitfield that contains supported features for a MSN contact.

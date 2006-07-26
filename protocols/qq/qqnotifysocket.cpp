@@ -345,6 +345,7 @@ void QQNotifySocket::doGetCGTs( const Eva::ByteArray& text )
 	{
 		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " type = " << (*it).type 
 			<< " groupId = " << (*it).groupId << endl;
+			emit contactInGroup( (*it).qqId, (*it).type, (*it).groupId );
 	}
 
 	int next = Eva::Packet::nextGroupId( text );
