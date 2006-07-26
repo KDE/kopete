@@ -40,27 +40,29 @@
 
 //receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contactName( contact ), m_selfName( self ), m_cookie( cookie ), m_ss(0), m_connection(0), m_timer( this ), m_size( 0 ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
+:Task( parent ), m_action( Receive ), m_file( this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
 {
+	initOft();
+	m_oft.cookie = cookie;
 	parseReq( b );
-	
 }
 
 //send
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_bytes( 0 ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
+:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
 {
+	initOft();
 	//get filename without path
-	m_name = QFileInfo( fileName ).fileName();
+	m_oft.fileName = QFileInfo( fileName ).fileName();
 	//copy size for convenience
-	m_size = m_file.size();
+	m_oft.fileSize = m_file.size();
 	//we get to make up an icbm cookie!
 	Buffer b;
 	DWORD cookie = KRandom::random();
 	b.addDWord( cookie );
 	cookie = KRandom::random();
 	b.addDWord( cookie );
-	m_cookie = b.buffer();
+	m_oft.cookie = b.buffer();
 
 	//hook up ui cancel
 	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
@@ -92,7 +94,7 @@ void FileTransferTask::onGo()
 		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
 		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
 
-		emit askIncoming( m_contactName, m_name, m_size, QString::null, m_cookie );
+		emit askIncoming( m_contactName, m_oft.fileName, m_oft.fileSize, QString::null, m_oft.cookie );
 		//TODO: support icq descriptions
 		return;
 	} 
@@ -128,9 +130,9 @@ void FileTransferTask::parseReq( Buffer b )
 			if ( m_action == Send ) //then we don't care
 				break;
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
-			m_size = b2.getDWord();
-			m_name = b2.getBlock( b2.bytesAvailable() );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_size << " file: " << m_name << endl;
+			m_oft.fileSize = b2.getDWord();
+			m_oft.fileName = b2.getBlock( b2.bytesAvailable() );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_oft.fileSize << " file: " << m_oft.fileName << endl;
 			break;
 		 case 2:
 		 	proxy_ip = tlv.data;
@@ -209,8 +211,8 @@ bool FileTransferTask::take( Transfer* transfer )
 
 bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 {
-	kDebug(14151) << k_funcinfo << "comparing to " << m_cookie << endl;
-	if ( cookie != m_cookie )
+	kDebug(14151) << k_funcinfo << "comparing to " << m_oft.cookie << endl;
+	if ( cookie != m_oft.cookie )
 		return false;
 
 	//ooh, ooh, something happened!
@@ -365,7 +367,8 @@ void FileTransferTask::oftRead()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl;
 		//do we care about anything *in* the prompt?
 		//just the checksum.
-		m_checksum = data.checksum;
+		m_oft.checksum = data.checksum;
+		m_oft.modTime = data.modTime;
 		m_file.open( QIODevice::WriteOnly );
 		//TODO what if open failed?
 		oftAck();
@@ -426,12 +429,12 @@ void FileTransferTask::write()
 		return;
 	}
 
-	m_bytes += written;
+	m_oft.bytesSent += written;
 	if ( written != read ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
-	emit processed( m_bytes );
-	if ( m_bytes >= m_size )
+	emit processed( m_oft.bytesSent );
+	if ( m_oft.bytesSent >= m_oft.fileSize )
 	{
 		m_file.close();
 		//switch the timer over to the other function
@@ -453,12 +456,12 @@ void FileTransferTask::saveData()
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
 		return;
 	}
-	m_bytes += written;
+	m_oft.bytesSent += written;
 	if ( written != raw.size() ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
-	emit processed( m_bytes );
-	if ( m_bytes >= m_size )
+	emit processed( m_oft.bytesSent );
+	if ( m_oft.bytesSent >= m_oft.fileSize )
 	{
 		m_file.close();
 		oftDone();
@@ -468,26 +471,24 @@ void FileTransferTask::saveData()
 
 }
 
-OFT FileTransferTask::makeOft()
+void FileTransferTask::initOft()
 {
-	//fill an OFT with data
-	OFT data;
-	data.type = 0; //invalid
-	data.cookie = m_cookie;
-	data.fileSize = m_size;
-	data.modTime = QFileInfo( m_file ).lastModified().toTime_t();
-	data.checksum = 0xFFFF0000; //file checksum
-	data.bytesSent = 0;
-	data.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
-	data.flags = 0x20; //flags; 0x20=not done, 1=done
-	data.fileName = m_name;
-	return data;
+	//set up the default values for the oft
+	m_oft.type = 0; //invalid
+	m_oft.cookie = 0;
+	m_oft.fileSize = 0;
+	m_oft.modTime = 0;
+	m_oft.checksum = 0xFFFF0000; //file checksum
+	m_oft.bytesSent = 0;
+	m_oft.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
+	m_oft.flags = 0x20; //flags; 0x20=not done, 1=done
+	m_oft.fileName = QString::null;
 }
 
-void FileTransferTask::sendOft( OFT data )
+void FileTransferTask::sendOft()
 {
 	//now make a transfer out of it
-	OftTransfer t( data );
+	OftTransfer t( m_oft );
 	int written = m_connection->write( t.toWire() );
 
 	if( written == -1 ) //FIXME: handle this properly
@@ -497,32 +498,30 @@ void FileTransferTask::sendOft( OFT data )
 void FileTransferTask::oftPrompt()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	OFT data = makeOft();
-	data.type = 0x0101; //type = prompt
-	data.checksum = checksum();
-	sendOft( data );
+	m_oft.type = 0x0101; //type = prompt
+	m_oft.modTime = QFileInfo( m_file ).lastModified().toTime_t();
+	m_oft.checksum = checksum();
+	sendOft();
 	//now we wait for the other side to ack
 }
 
 void FileTransferTask::oftAck()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	OFT data = makeOft();
-	data.type = 0x0202; //type = ack
-	sendOft( data );
+	m_oft.type = 0x0202; //type = ack
+	sendOft();
 	m_state = Receiving;
 }
 
 void FileTransferTask::oftDone()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	OFT data = makeOft();
-	data.type = 0x0204; //type = done
-	data.sentChecksum = checksum();
-	if ( data.sentChecksum != m_checksum )
+	m_oft.type = 0x0204; //type = done
+	m_oft.sentChecksum = checksum();
+	if ( m_oft.sentChecksum != m_oft.checksum )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
-	data.flags = 1;
-	sendOft( data );
+	m_oft.flags = 1;
+	sendOft();
 }
 
 void FileTransferTask::doCancel()
@@ -539,7 +538,7 @@ void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//check that it's really for us
-	if ( info.internalId() == QString( m_cookie ) )
+	if ( info.internalId() == QString( m_oft.cookie ) )
 		doCancel();
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
@@ -551,7 +550,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 	//check that it's really for us
 	//XXX because qt is retarded, I can't simply compare a qstring and bytearray any more.
 	//if there are 0's in hte cookie then the qstring will only contain part of it - but it should at least be consistent about that. it just slightly increases the tiny chance of a conflict
-	if ( t->info().internalId() != QString( m_cookie ) )
+	if ( t->info().internalId() != QString( m_oft.cookie ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
 		return;
@@ -646,7 +645,7 @@ void FileTransferTask::proxyInit()
 	data.addString( m_selfName.toLatin1() );
 	if (! m_proxyRequester ) //if 'recv'
 		data.addWord( m_port );
-	data.addString( m_cookie );
+	data.addString( m_oft.cookie );
 	//cap tlv
 	data.addDWord( 0x00010010 );
 	data.addGuid( oscar_caps[ CAP_SENDFILE ] );
@@ -746,7 +745,7 @@ void FileTransferTask::sendReq()
 		return;
 
 	Buffer b;
-	b.addString( m_cookie );
+	b.addString( m_oft.cookie );
 
 	//set up a message for sendmessagetask
 	Oscar::Message msg = makeFTMsg();
@@ -754,7 +753,7 @@ void FileTransferTask::sendReq()
 	//now set the rendezvous info
 	msg.setReqType( 0 );
 	msg.setPort( m_port );
-	msg.setFile( m_size, m_name );
+	msg.setFile( m_oft.fileSize, m_oft.fileName );
 	if ( m_proxy )
 		msg.setProxy( m_ip );
 
@@ -771,7 +770,7 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	Oscar::Message msg;
 	msg.setMessageType( 3 ); //filetransfer
 	msg.setChannel( 2 ); //rendezvous
-	msg.setIcbmCookie( m_cookie );
+	msg.setIcbmCookie( m_oft.cookie );
 	msg.setReceiver( m_contactName );
 	return msg;
 }

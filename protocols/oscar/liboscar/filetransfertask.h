@@ -83,8 +83,8 @@ private:
 	bool listen();
 	bool validFile();
 	Oscar::Message makeFTMsg();
-	OFT makeOft();
-	void sendOft( OFT );
+	void initOft();
+	void sendOft();
 	void oftPrompt();
 	void oftAck();
 	void oftDone();
@@ -98,26 +98,21 @@ private:
 	void connectFailed(); //tries another method of connecting
 	DWORD checksum(); //return checksum of our file
 
-
+	OFT m_oft;
 	enum Action { Send, Receive };
 	Action m_action;
 	QFile m_file;
 	QString m_contactName; //other person's username
 	QString m_selfName; //my username
-	QByteArray m_cookie; //icbm cookie for this transfer
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
-	DWORD m_size; //incoming filesize
-	QString m_name; //sender's filename without path
-	DWORD m_bytes; //file bytes sent/received
 	WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
 	enum State { Default, Connecting, ProxySetup, Receiving };
 	State m_state;
-	DWORD m_checksum; //incoming file's checksum
 };
 
 #endif
