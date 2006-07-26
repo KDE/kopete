@@ -459,6 +459,9 @@ void dlgJabberVCard::slotGotVCard()
 	else
 	{
 		m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly. Check connectivity with the Jabber server.") );
+		//it is maybe possible to anyway edit our own vCard (if it is new
+		if(m_account->myself() == m_contact)
+			setEnabled( true );
 	}
 }
 
