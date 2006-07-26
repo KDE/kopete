@@ -124,12 +124,15 @@ void Account::reconnect()
 
 void Account::disconnected( DisconnectReason reason )
 {
+	kdDebug( 14010 ) << k_funcinfo << reason << endl;
 	//reconnect if needed
-	if ( ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual ) ||
-	     reason == BadPassword )
+	if(reason == BadPassword )
 	{
-		if(reason != BadPassword) 
-			d->connectionTry++;
+		QTimer::singleShot(0, this, SLOT(reconnect()));
+	}
+	else if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual )
+	{
+		d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
 		if(d->connectionTry < 3)
 			QTimer::singleShot(10000, this, SLOT(reconnect())); // wait 10 seconds before reconnect
