@@ -24,9 +24,6 @@
 #include "kircevent.h"
 #include "kircmessage.h"
 
-#include <kbufferedsocket.h>
-#include <kresolver.h>
-
 #include <QTcpSocket>
 
 class KUrl;
