@@ -42,6 +42,8 @@
 #include <qlineedit.h>
 #include <qtextcodec.h>
 
+#include <algorithm>
+
 IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(ident)
 {
@@ -67,7 +69,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 //		mPasswordWidget->load ( &account()->password() );
 
 		preferSSL->setChecked(account()->configGroup()->readEntry("PreferSSL",false));
-		autoShowServerWindow->setChecked( account()->configGroup()->readEntry("AutoShowServerWindow") );
+		autoShowServerWindow->setChecked( account()->configGroup()->readEntry("AutoShowServerWindow", false) );
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
 		KConfigGroup *config = account()->configGroup();
@@ -126,34 +128,30 @@ IRCAccount *IRCEditAccountWidget::account ()
 	return dynamic_cast<IRCAccount *>(KopeteEditAccountWidget::account () );
 }
 
+struct NetNameComparator {
+	bool operator()(const IRC::Network& a, const IRC::Network& b) const {
+		return a.name < b.name;
+	}
+};
+
 void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 {
-/*
-	uint i = 0;
-	QStringList keys;
-
 	network->clear();
 
-	IRCNetworkList networks = IRCNetworkList::self()->networks();
+	IRC::NetworkList networks = IRC::Networks::self()->networks();
+	std::sort(networks.begin(), networks.end(), NetNameComparator());
 
-	for(QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it )
-		keys.append((*it).name);
+	uint i = 0;
+	foreach(const IRC::Network& net, networks) {
+		network->addItem(net.name);
 
-	keys.sort();
-
-	QStringList::Iterator end = keys.end();
-	for( QStringList::Iterator it = keys.begin(); it != end; ++it )
-	{
-		IRCNetwork * current = IRCProtocol::self()->networks()[*it];
-		network->insertItem( current->name );
-		if ( ( account() && account()->networkName() == current->name ) || current->name == selectedNetwork )
+		if ((account() && account()->networkName() == net.name)
+				|| net.name == selectedNetwork)
 		{
-			network->setCurrentItem( i );
-			description->setText( current->description );
+			network->setCurrentIndex( i );
 		}
 		++i;
 	}
-*/
 }
 
 void IRCEditAccountWidget::slotEditNetworks()
@@ -253,7 +251,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setExcludeConnect( autoConnect->isChecked() );
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
-/*
+
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );

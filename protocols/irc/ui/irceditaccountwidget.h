@@ -13,8 +13,6 @@
     *************************************************************************
 */
 
-
-
 #ifndef IRCEDITACCOUNTWIDEGET_H
 #define IRCEDITACCOUNTWIDEGET_H
 
@@ -53,4 +51,3 @@ private:
 };
 
 #endif
-
