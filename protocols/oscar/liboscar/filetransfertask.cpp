@@ -357,12 +357,15 @@ void FileTransferTask::oftRead()
 	//remember we're responsible for freeing this!
 	OftTransfer *t = static_cast<OftTransfer*>( p.parse( raw, b ) );
 	OFT data = t->data();
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum: " << data.checksum << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sentChecksum: " << data.sentChecksum << endl;
 	switch( data.type )
 	{
 	 case 0x101:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl;
-		//do we care about anything *in* the prompt? no?
-		//maybe the checksum later
+		//do we care about anything *in* the prompt?
+		//just the checksum.
+		m_checksum = data.checksum;
 		m_file.open( QIODevice::WriteOnly );
 		//TODO what if open failed?
 		oftAck();
@@ -381,6 +384,8 @@ void FileTransferTask::oftRead()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
 		emit fileComplete();
 		m_timer.stop();
+		if ( data.sentChecksum != checksum() )
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
 		setSuccess( true );
 		break;
 	 case 0x205: //not supported yet
@@ -460,7 +465,6 @@ void FileTransferTask::saveData()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "closing" << endl;
 		m_file.close();
 		oftDone();
-		//TODO: checksum?
 		emit fileComplete();
 		setSuccess( true );
 	}
@@ -476,7 +480,7 @@ OFT FileTransferTask::makeOft()
 	data.cookie = m_cookie;
 	data.fileSize = m_size;
 	data.modTime = QFileInfo( m_file ).lastModified().toTime_t();
-	data.checksum = 0xFFFF0000; //file checksum - FIXME
+	data.checksum = 0xFFFF0000; //file checksum
 	data.bytesSent = 0;
 	data.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
 	data.flags = 0x20; //flags; 0x20=not done, 1=done
@@ -501,6 +505,7 @@ void FileTransferTask::oftPrompt()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	OFT data = makeOft();
 	data.type = 0x0101; //type = prompt
+	data.checksum = checksum();
 	sendOft( data );
 	//now we wait for the other side to ack
 }
@@ -519,6 +524,9 @@ void FileTransferTask::oftDone()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	OFT data = makeOft();
 	data.type = 0x0204; //type = done
+	data.sentChecksum = checksum();
+	if ( data.sentChecksum != m_checksum )
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
 	data.flags = 1;
 	sendOft( data );
 }
@@ -774,6 +782,36 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	msg.setIcbmCookie( m_cookie );
 	msg.setReceiver( m_contactName );
 	return msg;
+}
+
+DWORD FileTransferTask::checksum()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	//code adapted from joscar's FileTransferChecksum
+	DWORD check = 0x0000ffff;
+	m_file.open( QIODevice::ReadOnly );
+
+	char b;
+	while( m_file.getChar( &b ) ) {
+		DWORD oldcheck = check;
+
+		int val = ( b & 0xff ) << 8;
+		if ( m_file.getChar( &b ) )
+			val += ( b & 0xff );
+
+		check -= val;
+
+		if (check > oldcheck)
+			check--;
+	}
+	m_file.close();
+
+	check = ((check & 0x0000ffff) + (check >> 16));
+	check = ((check & 0x0000ffff) + (check >> 16));
+	check = check << 16;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << check << endl;
+	return check;
 }
 
 #include "filetransfertask.moc"

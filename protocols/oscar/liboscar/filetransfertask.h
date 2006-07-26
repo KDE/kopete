@@ -96,6 +96,7 @@ private:
 	void oftRead(); //handle incoming oft packet
 	void proxyRead(); //handle incoming proxy packet
 	void connectFailed(); //tries another method of connecting
+	DWORD checksum(); //return checksum of our file
 
 
 	enum Action { Send, Receive };
@@ -116,6 +117,7 @@ private:
 	bool m_proxyRequester; //did we choose to request the proxy?
 	enum State { Default, Connecting, ProxySetup, Receiving };
 	State m_state;
+	DWORD m_checksum; //incoming file's checksum
 };
 
 #endif
