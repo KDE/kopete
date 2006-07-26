@@ -454,21 +454,17 @@ void FileTransferTask::saveData()
 		return;
 	}
 	m_bytes += written;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully saved " << written << " bytes, total " << m_bytes << endl;
 	if ( written != raw.size() ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitting" << endl;
 	emit processed( m_bytes );
 	if ( m_bytes >= m_size )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "closing" << endl;
 		m_file.close();
 		oftDone();
 		emit fileComplete();
 		setSuccess( true );
 	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
 
 }
 
@@ -496,8 +492,6 @@ void FileTransferTask::sendOft( OFT data )
 
 	if( written == -1 ) //FIXME: handle this properly
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
-	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
 }
 
 void FileTransferTask::oftPrompt()
@@ -670,8 +664,6 @@ void FileTransferTask::proxyInit()
 
 	if( written == -1 ) //FIXME: handle this properly
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
-	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "successfully sent " << written << " bytes :)" << endl;
 	
 }
 
