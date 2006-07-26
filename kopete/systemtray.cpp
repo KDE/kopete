@@ -22,7 +22,6 @@
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qregexp.h>
-//Added by qt3to4:
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QEvent>
@@ -31,6 +30,7 @@
 #include <kaboutdata.h>
 #include <kactioncollection.h>
 #include <kaction.h>
+#include <kmenu.h>
 #include <klocale.h>	
 #include <kapplication.h>
 #include <kdebug.h>
@@ -45,20 +45,22 @@
 #include "kopetecontact.h"
 #include "kopetewindow.h"
 
-KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
+KopeteSystemTray* KopeteSystemTray::s_systemTray = 0;
 
 KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 {
 	if( !s_systemTray )
-		s_systemTray = new KopeteSystemTray( parent  );
+		s_systemTray = new KopeteSystemTray( parent );
 
 	return s_systemTray;
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KSystemTrayIcon(parent), mMovie(0)
+	: KSystemTrayIcon(parent)
+	, mMovie(0)
+	, m_balloon(0)
 {
-//	kDebug(14010) << "Creating KopeteSystemTray" << endl;
+	kDebug(14010) <<  k_funcinfo << endl;
 	setToolTip(kapp->aboutData()->shortDescription());
 
 	mIsBlinkIcon = false;
@@ -67,6 +69,9 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	mBlinkTimer->setObjectName("mBlinkTimer");
 
 	mKopeteIcon = loadIcon("kopete");
+
+	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(onActivation(QSystemTrayIcon::ActivationReason)));
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(Kopete::ChatSessionManager::self() , SIGNAL(newEvent(Kopete::MessageEvent*)),
@@ -88,23 +93,35 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	KAction *quit = actionCollection()->action( "file_quit" );
 	quit->disconnect();
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
-    connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
+	connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
 
 	//setPixmap(mKopeteIcon);
 	slotReevaluateAccountStates();
 	slotConfigChanged();
-
-	m_balloon=0l;
 }
 
 KopeteSystemTray::~KopeteSystemTray()
 {
-//	kDebug(14010) << "[KopeteSystemTray] ~KopeteSystemTray" << endl;
+	kDebug(14010) <<  k_funcinfo << endl;
 //	delete mBlinkTimer;
 	Kopete::UI::Global::setSysTrayWId( 0 );
 	delete mMovie;
 }
 
+void KopeteSystemTray::onActivation(QSystemTrayIcon::ActivationReason reason)
+{
+	kDebug(14010) << k_funcinfo << reason << endl;
+
+	switch(reason)
+	{
+	case Context:
+		emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
+		break;
+	default:
+		kDebug(14010) << k_funcinfo << "Not handled" << endl;
+	}
+}
+/*
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
 #warning PORT ME
@@ -143,7 +160,7 @@ void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
 	//kDebug(14010) << k_funcinfo << "Called." << endl;
 	emit aboutToShowMenu( me );
 }
-
+*/
 void KopeteSystemTray::startBlink( const QString &icon )
 {
 	startBlink( loadIcon( icon ) );

@@ -60,15 +60,12 @@ public:
 	void stopBlink();
 	bool isBlinking() const { return mIsBlinking; };
 
-protected:
-	virtual void mousePressEvent( QMouseEvent *e );
-	virtual void mouseDoubleClickEvent( QMouseEvent *me );
-	virtual void contextMenuAboutToShow( KMenu * );
-
-signals:
+Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);
 
-private slots:
+private Q_SLOTS:
+	void onActivation(QSystemTrayIcon::ActivationReason reason);
+
 	void slotBlink();
 	void slotNewEvent(Kopete::MessageEvent*);
 	void slotEventDone(Kopete::MessageEvent *);
