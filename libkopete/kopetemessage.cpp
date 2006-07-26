@@ -29,6 +29,7 @@
 #include <kiconloader.h>
 #include <kstringhandler.h>
 #include <kmdcodec.h>
+#include <qguardedptr.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -49,7 +50,7 @@ public:
 	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
 	         const QString &requestedPlugin, MessageType type );
 
-	const Contact *from;
+	QGuardedPtr<const Contact> from;
 	ContactPtrList to;
 	ChatSession *manager;
 
