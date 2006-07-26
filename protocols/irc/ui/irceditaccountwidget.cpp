@@ -72,7 +72,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 		autoShowServerWindow->setChecked( account()->configGroup()->readEntry("AutoShowServerWindow", false) );
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
-		KConfigGroup *config = account()->configGroup();
+		//KConfigGroup *config = account()->configGroup();
 /*
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
@@ -89,13 +89,13 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 //	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
 	KCharsets *c = KGlobal::charsets();
-	charset->insertStringList( c->availableEncodingNames() );
+	charset->addItems( c->availableEncodingNames() );
 
 	for( int i = 0; i < charset->count(); ++i )
 	{
-		if( c->codecForName( charset->text(i) )->mibEnum() == currentCodec )
+		if( c->codecForName( charset->itemText(i) )->mibEnum() == currentCodec )
 		{
-			charset->setCurrentItem( i );
+			charset->setCurrentIndex( i );
 			break;
 		}
 	}
