@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ircAddUI</class>
  <widget class="QWidget" name="ircAddUI" >
   <property name="geometry" >
@@ -117,14 +114,12 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3HBox</class>
    <extends>QWidget</extends>
    <header>q3hbox.h</header>
    <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
