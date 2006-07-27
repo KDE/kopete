@@ -19,7 +19,11 @@
 */
 
 #include "contactmanager.h"
+
+#include <QtCore/QSet>
+
 #include <kdebug.h>
+
 #include "oscarutils.h"
 
 // -------------------------------------------------------------------
@@ -28,6 +32,8 @@ class ContactManagerPrivate
 {
 public:
 	QList<OContact> contactList;
+	QSet<WORD> itemIdSet;
+	QSet<WORD> groupIdSet;
 	WORD lastModTime;
 	WORD maxContacts;
 	WORD maxGroups;
@@ -70,18 +76,43 @@ void ContactManager::clear()
 		while ( it != d->contactList.end() && d->contactList.count() > 0 )
 			it = d->contactList.erase( it );
 	};
+
+	d->itemIdSet.clear();
+	d->groupIdSet.clear();
+	d->nextContactId = 0;
+	d->nextGroupId = 0;
 }
 
 WORD ContactManager::nextContactId()
 {
-	d->nextContactId++;
-	return d->nextContactId;
+	if ( d->nextContactId == 0 )
+		d->nextContactId++;
+
+	d->nextContactId = findFreeId( d->itemIdSet, d->nextContactId );
+	if ( d->nextContactId == 0xFFFF )
+	{
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free id!" << endl;
+		return 0xFFFF;
+	}
+
+	d->itemIdSet.insert( d->nextContactId );
+	return d->nextContactId++;
 }
 
 WORD ContactManager::nextGroupId()
 {
-	d->nextGroupId++;
-	return d->nextGroupId;
+	if ( d->nextGroupId == 0 )
+		d->nextGroupId++;
+
+	d->nextGroupId = findFreeId( d->groupIdSet, d->nextGroupId );
+	if ( d->nextGroupId == 0xFFFF )
+	{
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free group id!" << endl;
+		return 0xFFFF;
+	}
+
+	d->groupIdSet.insert( d->nextGroupId );
+	return d->nextGroupId++;
 }
 
 WORD ContactManager::numberOfItems() const
@@ -389,9 +420,8 @@ bool ContactManager::newGroup( const OContact& group )
 	if ( !group.name().isEmpty() ) //avoid the group with gid 0 and bid 0
 	{	// the group is really new
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group '" << group.name() << "' to SSI list" << endl;
-		if ( group.gid() > d->nextGroupId )
-			d->nextGroupId = group.gid();
 
+		addID( group );
 		d->contactList.append( group );
 		emit groupAdded( group );
 		return true;
@@ -401,6 +431,7 @@ bool ContactManager::newGroup( const OContact& group )
 
 bool ContactManager::updateGroup( const OContact& oldGroup, const OContact& newGroup )
 {
+	removeID( oldGroup );
 	if ( d->contactList.removeAll( oldGroup ) == 0 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No group were removed." << endl;
@@ -414,6 +445,7 @@ bool ContactManager::updateGroup( const OContact& oldGroup, const OContact& newG
 	}
 	
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating group '" << newGroup.name() << "' in SSI list" << endl;
+	addID( newGroup );
 	d->contactList.append( newGroup );
 	emit groupUpdated( newGroup );
 	
@@ -424,6 +456,7 @@ bool ContactManager::removeGroup( const OContact& group )
 {
 	QString groupName = group.name();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name() << endl;
+	removeID( group );
 	int remcount = d->contactList.removeAll( group );
 	if ( remcount == 0 )
 	{
@@ -451,13 +484,6 @@ bool ContactManager::removeGroup( const QString &group )
 
 bool ContactManager::newContact( const OContact& contact )
 {
-	//what to validate?
-	if ( contact.bid() > d->nextContactId )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << contact.bid() << endl;
-		d->nextContactId = contact.bid();
-	}
-
 	if ( d->contactList.contains( contact ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New contact is already in list." << endl;
@@ -465,6 +491,7 @@ bool ContactManager::newContact( const OContact& contact )
 	}
 		
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact '" << contact.name() << "' to SSI list" << endl;
+	addID( contact );
 	d->contactList.append( contact );
 	emit contactAdded( contact );
 	return true;
@@ -472,6 +499,7 @@ bool ContactManager::newContact( const OContact& contact )
 
 bool ContactManager::updateContact( const OContact& oldContact, const OContact& newContact )
 {
+	removeID( oldContact );
 	if ( d->contactList.removeAll( oldContact ) == 0 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed." << endl;
@@ -485,6 +513,7 @@ bool ContactManager::updateContact( const OContact& oldContact, const OContact& 
 	}
 	
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating contact '" << newContact.name() << "' in SSI list" << endl;
+	addID( newContact );
 	d->contactList.append( newContact );
 	emit contactUpdated( newContact );
 	
@@ -494,6 +523,7 @@ bool ContactManager::updateContact( const OContact& oldContact, const OContact& 
 bool ContactManager::removeContact( const OContact& contact )
 {
 	QString contactName = contact.name();
+	removeID( contact );
 	int remcount = d->contactList.removeAll( contact );
 
 	if ( remcount == 0 )
@@ -520,22 +550,55 @@ bool ContactManager::removeContact( const QString &contact )
 
 bool ContactManager::newItem( const OContact& item )
 {
-	if ( item.bid() > d->nextContactId )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << item.bid() << endl;
-		d->nextContactId = item.bid();
-	}
-
 	//no error checking for now
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
+	addID( item );
 	d->contactList.append( item );
 	return true;
 }
 
 bool ContactManager::removeItem( const OContact& item )
 {
+	removeID( item );
 	d->contactList.removeAll( item );
 	return true;
+}
+
+void ContactManager::addID( const OContact& item )
+{
+	if ( item.type() == ROSTER_GROUP )
+		d->groupIdSet.insert( item.gid() );
+	else
+		d->itemIdSet.insert( item.bid() );
+}
+
+void ContactManager::removeID( const OContact& item )
+{
+	if ( item.type() == ROSTER_GROUP )
+	{
+		d->groupIdSet.remove( item.gid() );
+
+		if ( d->nextGroupId > item.gid() )
+			d->nextGroupId = item.gid();
+	}
+	else
+	{
+		d->itemIdSet.remove( item.bid() );
+
+		if ( d->nextContactId > item.bid() )
+			d->nextContactId = item.bid();
+	}
+}
+
+WORD ContactManager::findFreeId( const QSet<WORD>& idSet, WORD fromId ) const
+{
+	for ( WORD id = fromId; id < 0x8000; id++ )
+	{
+		if ( !idSet.contains( id ) )
+			return id;
+	}
+
+	return 0xFFFF;
 }
 
 #include "contactmanager.moc"

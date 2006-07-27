@@ -119,6 +119,9 @@ private:
 	//! Update the Contact Manager with the new data
 	void updateContactManager();
 	
+	//! Helper function to free id on error
+	void freeIdOnError();
+		
 	//! Send the SSI edit start packet
 	void sendEditStart();
 	

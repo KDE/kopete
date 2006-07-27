@@ -115,6 +115,9 @@ public slots:
 	bool newItem( const OContact& item );
 	bool removeItem( const OContact& item );
 
+	void addID( const OContact& item );
+	void removeID( const OContact& item );
+
 signals:
 	
 	//! Emitted when we've added a new contact to the list
@@ -138,6 +141,8 @@ signals:
 	void modifyError( const QString& error );
 	
 private:
+	WORD findFreeId( const QSet<WORD>& idSet, WORD fromId ) const;
+	
 	ContactManagerPrivate* d;
 	OContact m_dummyItem;
 };
