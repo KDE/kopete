@@ -111,6 +111,9 @@ public slots:
 	bool newItem( const Oscar::SSI& item );
 	bool removeItem( const Oscar::SSI& item );
 
+	void addID( const Oscar::SSI& item );
+	void removeID( const Oscar::SSI& item );
+
 signals:
 	
 	//! Emitted when we've added a new contact to the list
@@ -128,6 +131,8 @@ signals:
 	void modifyError( const QString& error );
 	
 private:
+	WORD findFreeId( const QValueList<WORD>& idList, WORD fromId ) const;
+		
 	SSIManagerPrivate* d;
 	Oscar::SSI m_dummyItem;
 };

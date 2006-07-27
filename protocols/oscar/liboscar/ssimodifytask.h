@@ -118,6 +118,9 @@ private:
 	//! Update the SSI Manager with the new data
 	void updateSSIManager();
 	
+	//! Helper function to free id on error
+	void freeIdOnError();
+		
 	//! Send the SSI edit start packet
 	void sendEditStart();
 	

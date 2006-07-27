@@ -29,6 +29,8 @@ class SSIManagerPrivate
 {
 public:
 	QValueList<Oscar::SSI> SSIList;
+	QValueList<WORD> groupIdList;
+	QValueList<WORD> itemIdList;
 	WORD lastModTime;
 	WORD maxContacts;
 	WORD maxGroups;
@@ -72,6 +74,8 @@ void SSIManager::clear()
 			it = d->SSIList.remove( it );
 	};
 	
+	d->itemIdList.clear();
+	d->groupIdList.clear();
 	d->nextContactId = 0;
 	d->nextGroupId = 0;
 }
@@ -81,27 +85,17 @@ WORD SSIManager::nextContactId()
 	if ( d->nextContactId == 0 )
 		d->nextContactId++;
 	
-	QValueList<Oscar::SSI>::const_iterator it, listEnd;
-	
-	for ( ; d->nextContactId < 0x8000; d->nextContactId++ )
+	d->nextContactId = findFreeId( d->itemIdList, d->nextContactId );
+	if ( d->nextContactId == 0xFFFF )
 	{
-		bool freeId = true;
-		listEnd = d->SSIList.end();
-		for ( it = d->SSIList.begin(); it != listEnd; ++it )
-		{
-			if ( ( *it ).bid() == d->nextContactId )
-			{
-				freeId = false;
-				break;
-			}
-		}
-	
-		if ( freeId )
-			return d->nextContactId;
+		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free id!" << endl;
+		return 0xFFFF;
 	}
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No free id!" << endl;
-	return 0xFFFF;
+	if ( d->itemIdList.contains( d->nextContactId ) == 0 )
+		d->itemIdList.append( d->nextContactId );
+		
+	return d->nextContactId++;
 }
 
 WORD SSIManager::nextGroupId()
@@ -109,27 +103,17 @@ WORD SSIManager::nextGroupId()
 	if ( d->nextGroupId == 0 )
 		d->nextGroupId++;
 	
-	QValueList<Oscar::SSI>::const_iterator it, listEnd;
-	
-	for ( ; d->nextGroupId < 0x8000; d->nextGroupId++ )
+	d->nextGroupId = findFreeId( d->groupIdList, d->nextGroupId );
+	if ( d->nextGroupId == 0xFFFF )
 	{
-		bool freeId = true;
-		listEnd = d->SSIList.end();
-		for ( it = d->SSIList.begin(); it != listEnd; ++it )
-		{
-			if ( ( *it ).type() == ROSTER_GROUP && ( *it ).gid() == d->nextGroupId )
-			{
-				freeId = false;
-				break;
-			}
-		}
-		
-		if ( freeId )
-			return d->nextGroupId;
+		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free group id!" << endl;
+		return 0xFFFF;
 	}
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No free group id!" << endl;
-	return 0xFFFF;
+	if ( d->groupIdList.contains( d->nextGroupId ) == 0 )
+		d->groupIdList.append( d->nextGroupId );
+	
+	return d->nextGroupId++;
 }
 
 WORD SSIManager::numberOfItems() const
@@ -428,6 +412,7 @@ bool SSIManager::newGroup( const Oscar::SSI& group )
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group '" << group.name() << "' to SSI list" << endl;
 		
 		d->SSIList.append( group );
+		addID( group );
 		emit groupAdded( group );
 		return true;
 	}
@@ -439,9 +424,7 @@ bool SSIManager::removeGroup( const Oscar::SSI& group )
 	QString groupName = group.name();
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name() << endl;
 	int remcount = d->SSIList.remove( group );
-	
-	if ( d->nextGroupId > group.gid() )
-		d->nextGroupId = group.gid();
+	removeID( group );
 	
 	if ( remcount == 0 )
 	{
@@ -472,6 +455,7 @@ bool SSIManager::newContact( const Oscar::SSI& contact )
 	if ( d->SSIList.findIndex( contact ) == -1 )
 	{
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact '" << contact.name() << "' to SSI list" << endl;
+		addID( contact );
 		d->SSIList.append( contact );
 		emit contactAdded( contact );
 	}
@@ -484,9 +468,7 @@ bool SSIManager::removeContact( const Oscar::SSI& contact )
 {
 	QString contactName = contact.name();
 	int remcount = d->SSIList.remove( contact );
-	
-	if ( d->nextContactId > contact.bid() )
-		d->nextContactId = contact.bid();
+	removeID( contact );
 	
 	if ( remcount == 0 )
 	{
@@ -515,17 +497,59 @@ bool SSIManager::newItem( const Oscar::SSI& item )
 	//no error checking for now
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
 	d->SSIList.append( item );
+	addID( item );
 	return true;
 }
 
 bool SSIManager::removeItem( const Oscar::SSI& item )
 {
 	d->SSIList.remove( item );
-	
-	if ( d->nextContactId > item.bid() )
-		d->nextContactId = item.bid();
+	removeID( item );
 	
 	return true;
+}
+
+void SSIManager::addID( const Oscar::SSI& item )
+{
+	if ( item.type() == ROSTER_GROUP )
+	{
+		if ( d->groupIdList.contains( item.gid() ) == 0 )
+			d->groupIdList.append( item.gid() );
+	}
+	else
+	{
+		if ( d->itemIdList.contains( item.bid() ) == 0 )
+			d->itemIdList.append( item.bid() );
+	}
+}
+
+void SSIManager::removeID( const Oscar::SSI& item )
+{
+	if ( item.type() == ROSTER_GROUP )
+	{
+		d->groupIdList.remove( item.gid() );
+	
+		if ( d->nextGroupId > item.gid() )
+			d->nextGroupId = item.gid();
+	}
+	else
+	{
+		d->itemIdList.remove( item.bid() );
+		
+		if ( d->nextContactId > item.bid() )
+			d->nextContactId = item.bid();
+	}
+}
+
+WORD SSIManager::findFreeId( const QValueList<WORD>& idList, WORD fromId ) const
+{
+	for ( WORD id = fromId; id < 0x8000; id++ )
+	{
+		if ( idList.contains( id ) == 0 )
+			return id;
+	}
+	
+	return 0xFFFF;
 }
 
 #include "ssimanager.moc"
