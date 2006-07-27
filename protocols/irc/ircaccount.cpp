@@ -72,7 +72,7 @@ public:
 
 	KIRC::Client *client;
 	IRC::Network network;
-	uint currentHost;
+	int currentHost;
 
 	QList<IRCContact *> contacts;
 	IRCContact *server;
@@ -179,6 +179,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 
 IRCAccount::~IRCAccount()
 {
+	kDebug(14120) << k_funcinfo << endl;
 	KIRC::StdCommands::quit(d->client, i18n("Plugin Unloaded"));
 
 	delete d;
@@ -231,62 +232,78 @@ void IRCAccount::clientSetup()
 
 void IRCAccount::clientConnect()
 {
-/*
+	kDebug(14120) << k_funcinfo << endl;
+
 	if (d->network.name.isEmpty())
 	{
 		KMessageBox::queuedMessageBox(
 			UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(d->network->name),
+			i18n("<qt>The network associated with this account has no valid hosts. "
+				"Please ensure that the account has a valid network.</qt>"),
 			i18n("Network is Empty"), 0 );
 	}
-
-	QValueList<IRCHost> &hosts = d->network->hosts;
-	if( hosts.count() == 0 )
+	else if (d->network.hosts.isEmpty())
 	{
 		KMessageBox::queuedMessageBox(
 			UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(d->network->name),
+			i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. "
+				"Please ensure that the account has a valid network.</qt>", d->network.name),
 			i18n("Network is Empty"), 0 );
 	}
-	else if( currentHost == hosts.count() )
+	else if( d->currentHost == d->network.hosts.count() )
 	{
 		KMessageBox::queuedMessageBox(
 			UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("<qt>Kopete could not connect to any of the servers in the network associated with this account (<b>%1</b>). Please try again later.</qt>").arg(d->network->name),
+			i18n("<qt>Kopete could not connect to any of the servers in the network "
+				"associated with this account (<b>%1</b>). Please try again later.</qt>",
+				d->network.name),
 			i18n("Network is Unavailable"), 0 );
 
-			currentHost = 0;
+			d->currentHost = 0;
 	}
 	else
 	{
+		const IRC::Host& host = d->network.hosts[ d->currentHost++ ];
+		//appendInternalMessage( i18n("Connecting to %1...").arg( host.host ) );
 
-		IRCHost *host = hosts[ currentHost++ ];
-		appendInternalMessage( i18n("Connecting to %1...").arg( host->host ) );
-		if( host->ssl )
-			appendInternalMessage( i18n("Using SSL") );
-//		d->client->connectToServer( host->host, host->port, mNickName, host->ssl );
+		QString url;
+
+		if (host.ssl) {
+			//appendInternalMessage( i18n("Using SSL") );
+			url = "ircs://";
+		} else {
+			url = "irc://";
+		}
+
+		url += nickName() + "@" + host.host + ":" + host.port;
+
+		//d->client->connectToServer( host->host, host->port, mNickName, host->ssl );
+		d->client->connectToServer(KUrl(url));
 	}
-*/
 }
 
 int IRCAccount::codecMib() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readNumEntry(Config::CODECMIB);
 }
 
 void IRCAccount::setCodecFromMib(int mib)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::CODECMIB, mib);
 	d->client->setDefaultCodec(QTextCodec::codecForMib(mib));
 }
 
 QTextCodec *IRCAccount::codec() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return QTextCodec::codecForMib(codecMib());
 }
 
 void IRCAccount::setCodec( QTextCodec *codec )
 {
+	kDebug(14120) << k_funcinfo << endl;
 	if (codec)
 		setCodecFromMib(codec->mibEnum());
 	else
@@ -295,11 +312,13 @@ void IRCAccount::setCodec( QTextCodec *codec )
 
 const QString IRCAccount::networkName() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::NETWORKNAME, QString());
 }
 
 void IRCAccount::setNetworkByName(const QString &networkName)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::NETWORKNAME, networkName);
 //	setAccountLabel(network.name);
 }
@@ -311,31 +330,37 @@ IRCNetwork network() const
 */
 const QString IRCAccount::userName() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::USERNAME, QString());
 }
 
 void IRCAccount::setUserName(const QString &userName)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::USERNAME, userName);
 }
 
 const QString IRCAccount::realName() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::REALNAME, QString());
 }
 
 void IRCAccount::setRealName( const QString &userName )
 {
+	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::REALNAME, userName);
 }
 
 const QString IRCAccount::nickName() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::NICKNAME, QString());
 }
 
 void IRCAccount::setNickName(const QString &nickName)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::NICKNAME, nickName);
 //	d->self->setNickName(nickName);
 }
@@ -378,7 +403,7 @@ void IRCAccount::setDefaultQuitMessage( const QString &defaultQuit )
 
 bool IRCAccount::autoShowServerWindow() const
 {
-	return configGroup()->readEntry(QString::fromLatin1("AutoShowServerWindow"));
+	return configGroup()->readEntry(QString::fromLatin1("AutoShowServerWindow"), false);
 }
 
 void IRCAccount::setAutoShowServerWindow(bool autoShow)
@@ -388,6 +413,7 @@ void IRCAccount::setAutoShowServerWindow(bool autoShow)
 
 KIRC::Client *IRCAccount::client() const
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return d->client;
 }
 
@@ -407,17 +433,17 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 
 const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 {
-/*
+	kDebug(14120) << k_funcinfo << endl;
 	QMap< QString, QString > replies;
+/*
 	QStringList replyList;
 
 	replyList = configGroup()->readListEntry( "CustomCtcp" );
 
 	for( QStringList::Iterator it = replyList.begin(); it != replyList.end(); ++it )
 		replies[ (*it).section('=', 0, 0 ) ] = (*it).section('=', 1 );
-
-	return replies;
 */
+	return replies;
 }
 
 void IRCAccount::setConnectCommands( const QStringList &commands ) const
@@ -432,6 +458,7 @@ const QStringList IRCAccount::connectCommands() const
 
 KActionMenu *IRCAccount::actionMenu()
 {
+	kDebug(14120) << k_funcinfo << endl;
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( myself()->onlineStatus().description() );
 
 	KActionMenu *mActionMenu = Account::actionMenu();
@@ -456,6 +483,7 @@ KActionMenu *IRCAccount::actionMenu()
 
 void IRCAccount::connectWithPassword(const QString &password)
 {
+	kDebug(14120) << k_funcinfo << endl;
 //	d->client->setPassword(password);
 	clientConnect();
 }
@@ -516,6 +544,7 @@ void IRCAccount::slotFailedServerPassword()
 */
 void IRCAccount::slotPerformOnConnectCommands()
 {
+	kDebug(14120) << k_funcinfo << endl;
 	ChatSession *manager = myServer()->manager(Contact::CanCreate);
 	if (!manager)
 		return;
@@ -548,19 +577,20 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return d->client->isConnected();
 }
 
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
 {
-/*	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	d->expectedOnlineStatus = status;
-	d->expectedReason = reason;
+	//d->expectedReason = reason;
 
 	OnlineStatus::StatusType current = myself()->onlineStatus().status();
 	OnlineStatus::StatusType expected = d->expectedOnlineStatus.status();
 
-	if ( expected != OnlineStatus::Offline && current == OnlineStatus::Offline )
+	if ( expected != OnlineStatus::Offline && (current == OnlineStatus::Offline || current == OnlineStatus::Unknown) )
 	{
 		kDebug(14120) << k_funcinfo << "Connecting." << endl;
 		clientSetup();
@@ -571,16 +601,18 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessag
 	if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
 	{
 		kDebug(14120) << k_funcinfo << "Disconnecting." << endl;
-		quit(reason);
-	}*/
+		//quit(reason);
+	}
 }
 
 void IRCAccount::setStatusMessage(const StatusMessage &messageStatus)
 {
+	kDebug(14120) << k_funcinfo << endl;
 }
 
 bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 {
+	kDebug(14120) << k_funcinfo << endl;
 /*	if (contactId == mNickName)
 	{
 		KMessageBox::error( UI::Global::mainWidget(),
@@ -607,11 +639,13 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 
 void IRCAccount::setCurrentCommandSource( ChatSession *session )
 {
+	kDebug(14120) << k_funcinfo << endl;
 	d->commandSource = session;
 }
 
 ChatSession *IRCAccount::currentCommandSource()
 {
+	kDebug(14120) << k_funcinfo << endl;
 	return d->commandSource;
 }
 
@@ -651,6 +685,7 @@ IRCContact *IRCAccount::getContact(const KIRC::Entity::Ptr &entity, MetaContact 
 
 void IRCAccount::destroyed(IRCContact *contact)
 {
+	kDebug(14120) << k_funcinfo << endl;
 	d->contacts.remove(contact);
 }
 
