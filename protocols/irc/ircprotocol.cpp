@@ -110,7 +110,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
 	: Protocol(IRCProtocolFactory::instance(), parent)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
-//	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	s_protocol = this;
 
@@ -344,6 +344,7 @@ void IRCProtocol::initOnlineStatus()
 OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::Entity::Ptr &entity)
 {
 //	return onlineStatusFor(entity, 0);
+	return OnlineStatus::Unknown;
 }
 /*
 OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::Entity::Ptr &entity, unsigned categories)
