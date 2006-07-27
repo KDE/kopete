@@ -216,6 +216,10 @@ void SSIModifyTask::handleSSIAck()
 	{
 		WORD ackCode = b->getWord();
 		kdDebug(OSCAR_RAW_DEBUG) << "Acknowledgement code is " << ackCode << endl;
+		
+		if ( ackCode != 0x0000 )
+			freeIdOnError();
+		
 		switch( ackCode )
 		{
 		case 0x0000:
@@ -467,6 +471,31 @@ void SSIModifyTask::updateSSIManager()
 	}
 	
 	setSuccess( 0, QString::null );
+}
+
+void SSIModifyTask::freeIdOnError()
+{
+	if ( m_oldItem.isValid() && m_newItem.isValid() )
+	{
+		if ( m_opSubject == Contact || m_opSubject == NoSubject )
+		{
+			if ( m_oldItem.bid() != m_newItem.bid() )
+				m_ssiManager->removeID( m_newItem );
+		}
+		else if ( m_opSubject == Group )
+		{
+			if ( m_oldItem.gid() != m_newItem.gid() )
+				m_ssiManager->removeID( m_newItem );
+		}
+	}
+	else if ( m_newItem.isValid() && !m_oldItem )
+	{
+		if ( m_opSubject == Group || m_opSubject == Contact ||
+		     m_opSubject == NoSubject )
+		{
+			m_ssiManager->removeID( m_newItem );
+		}
+	}
 }
 
 void SSIModifyTask::sendEditStart()
