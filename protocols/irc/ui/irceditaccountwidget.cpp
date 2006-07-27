@@ -225,22 +225,20 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 
 Kopete::Account *IRCEditAccountWidget::apply()
 {
-/*
 	QString nickName = mNickName->text();
 	QString networkName = network->currentText();
 
 	if( !account() )
 	{
 		setAccount( new IRCAccount( generateAccountId(networkName), QString::null, networkName, nickName ) );
-
 	}
 	else
 	{
 		account()->setNickName( nickName );
-//		account()->setNetwork( networkName );
+		account()->setNetworkByName( networkName );
 	}
 
-	mPasswordWidget->save( &account()->password() );
+	//mPasswordWidget->save( &account()->password() );
 
 //	account()->setAltNick( mAltNickname->text() );
 	account()->setUserName( mUserName->text() );
@@ -252,6 +250,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 
+	/*
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
@@ -262,13 +261,13 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	account()->setCustomCtcpReplies( replies );
 	account()->setConnectCommands( cmds );
-*/
+	*/
+
 	KCharsets *c = KGlobal::charsets();
 	account()->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
 
 	return account();
 }
-
 
 bool IRCEditAccountWidget::validateData()
 {
