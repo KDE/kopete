@@ -83,7 +83,11 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		this->body.replace( QRegExp( QLatin1String(".*<body.*>\\s+(.*)\\s+</body>.*") ), QLatin1String("\\1") );
+		if (this->body.contains(QLatin1String("<body"))) {
+			QRegExp rx( QLatin1String("<body[^>]*>\\s+(.*)\\s+</body>") );
+			if (rx.indexIn(this->body) != -1)
+				this->body = rx.cap(1);
+		}
 
 		//Strip <p> tags
 		this->body.replace( QLatin1String("<p>"), QString::null );
@@ -192,7 +196,11 @@ void Message::setBody( const QString &body, MessageFormat f )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		theBody.replace( QRegExp( QLatin1String(".*<body.*>\\s+(.*)\\s+</body>.*") ), QLatin1String("\\1") );
+		if (theBody.contains(QLatin1String("<body"))) {
+			QRegExp rx( QLatin1String("<body[^>]*>\\s+(.*)\\s+</body>") );
+			if (rx.indexIn(theBody) != -1)
+				theBody = rx.cap(1);
+		}
 
 		//Strip <p> tags
 		theBody.replace( QLatin1String("<p>"), QString::null );
