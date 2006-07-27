@@ -10,7 +10,7 @@ include_directories(
 )
 
 set(kopeteirc_ui_SRCS 
-#  ui/channellist.cpp 
+  ui/channellist.cpp 
 #  ui/channellistdialog.cpp 
   ui/ircaddcontactpage.cpp 
 #  ui/ircdialogs.cpp 
