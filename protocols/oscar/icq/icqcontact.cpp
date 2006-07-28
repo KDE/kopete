@@ -232,7 +232,7 @@ void ICQContact::loggedIn()
 	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
 	         && nickName() == contactId() )
 	     || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) ) &&
-	     !m_requestingNickname )
+	     !m_requestingNickname && m_ssiItem.alias().isEmpty() )
 	{
 		m_requestingNickname = true;
 		int time = ( KApplication::random() % 20 ) * 1000;
@@ -328,7 +328,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
 
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
-	if ( !genInfo.nickname.isEmpty() )
+	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickname.isEmpty() )
 		setNickName( codec->toUnicode( genInfo.nickname ) );
 	emit haveBasicInfo( genInfo );
 
@@ -363,7 +363,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 	else
 		removeProperty(mProtocol->lastName);
 	*/
-	if ( !shortInfo.nickname.isEmpty() )
+	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
 	{
 		kdDebug(14153) << k_funcinfo <<
 			"setting new displayname for former UIN-only Contact" << endl;
