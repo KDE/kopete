@@ -38,17 +38,16 @@ class Socket;
 class Message
 {
 public:
-	typedef enum
+	enum Direction
 	{
 		Unknown  = 0,
-		OutGoing = 1<<1, // From the client to the network
-		InGoing	 = 1<<2 // From the network to the client
-	} Orientation;
-	Q_DECLARE_FLAGS(Directions, Orientation)
+		OutGoing = 1, // From the client to the network
+		InGoing	 = 1  // From the network to the client
+	};
 
 public:
 	Message();
-	Message(const QByteArray &rawLine, KIRC::Message::Directions direction);
+	Message(const QByteArray &rawLine, KIRC::Message::Direction direction);
 	Message(const KIRC::Message &o);
 	~Message();
 
@@ -56,42 +55,45 @@ public:
 
 public:
 	KIRC::Socket *socket() const;
-	KIRC::Message &setSocket(Socket *);
+	void setSocket(Socket *);
 
-	Directions direction() const;
-	KIRC::Message &setDirection(KIRC::Message::Directions direction);
+	Direction direction() const;
+	void setDirection(KIRC::Message::Direction direction);
+
+	QTextCodec *codec() const;
+	void setCodec(QTextCodec *codec);
 
 	QByteArray rawLine() const;
-	KIRC::Message &setLine(const QByteArray &);
+	void setLine(const QByteArray &);
 
 	QByteArray rawPrefix() const;
-	KIRC::Message &setPrefix(const QByteArray &);
+	void setPrefix(const QByteArray &);
 
 	QByteArray rawCommand() const;
-	KIRC::Message &setCommand(const QByteArray &);
+	void setCommand(const QByteArray &);
 
 	QByteArrayList rawArgs() const;
-	KIRC::Message &setArgs(const QByteArrayList &);
+	void setArgs(const QByteArrayList &);
 
 	QByteArray rawSuffix() const;
-	KIRC::Message &setSuffix(const QByteArray &);
+	void setSuffix(const QByteArray &);
 
 //	QString line(QTextCodec *codec = 0) const;
-//	KIRC::Message &setLine(const QString &, QTextCodec *codec = 0);
+//	void setLine(const QString &, QTextCodec *codec = 0);
 
 	QString prefix(QTextCodec *codec = 0) const;
-	KIRC::Message &setPrefix(const QString &, QTextCodec *codec = 0);
+	void setPrefix(const QString &, QTextCodec *codec = 0);
 
 	QString command(QTextCodec *codec = 0) const;
-	KIRC::Message &setCommand(const QString &, QTextCodec *codec = 0);
+	void setCommand(const QString &, QTextCodec *codec = 0);
 
 	QStringList args(QTextCodec *codec = 0) const;
-	KIRC::Message &setArgs(const QStringList &, QTextCodec *codec = 0);
-	inline KIRC::Message &setArgs(const QString &arg, QTextCodec *codec = 0)
-	{ return setArgs(QStringList(arg), codec);}
+	void setArgs(const QStringList &, QTextCodec *codec = 0);
+	inline void setArgs(const QString &arg, QTextCodec *codec = 0)
+	{ setArgs(QStringList(arg), codec);}
 
 	QString suffix(QTextCodec *codec = 0) const;
-	KIRC::Message &setSuffix(const QString &, QTextCodec *codec = 0);
+	void setSuffix(const QString &, QTextCodec *codec = 0);
 
 #ifndef KIRC_STRICT
 	bool hasCtcpMessage() const;
@@ -131,7 +133,5 @@ private:
 };
 
 }
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(KIRC::Message::Directions)
 
 #endif // KIRCMESSAGE_H

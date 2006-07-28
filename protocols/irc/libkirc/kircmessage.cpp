@@ -52,13 +52,15 @@ class KIRC::Message::Private
 {
 public:
 	Private()
-		: valid(false),
-		  dirty(false)
+		: codec(0)
+		, valid(false)
+		, dirty(false)
 	{ }
 
 	QPointer<KIRC::Socket> socket;
-	KIRC::Message::Directions direction;
+	KIRC::Message::Direction direction;
 
+	QTextCodec *codec;	
 	QByteArray line;
 	QByteArray prefix;
 	QByteArray command;
@@ -76,7 +78,7 @@ Message::Message()
 {
 }
 
-Message::Message(const QByteArray &rawLine, KIRC::Message::Directions direction)
+Message::Message(const QByteArray &rawLine, KIRC::Message::Direction direction)
 	: d(new Private())
 {
 	setLine(rawLine);
@@ -103,21 +105,29 @@ Socket *Message::socket() const
 	return d->socket;
 }
 
-Message &Message::setSocket(Socket *socket)
+void Message::setSocket(Socket *socket)
 {
 	d->socket = socket;
-	return *this;
 }
 
-Message::Directions Message::direction() const
+Message::Direction Message::direction() const
 {
 	return d->direction;
 }
 
-Message &Message::setDirection(Message::Directions direction)
+void Message::setDirection(Message::Direction direction)
 {
 	d->direction = direction;
-	return *this;
+}
+
+QTextCodec *Message::codec() const
+{
+	return d->codec;
+}
+
+void Message::setCodec(QTextCodec *codec)
+{
+	d->codec = codec;
 }
 
 QByteArray Message::rawLine() const
@@ -125,7 +135,7 @@ QByteArray Message::rawLine() const
 	return d->line;
 }
 
-Message &Message::setLine(const QByteArray &line)
+void Message::setLine(const QByteArray &line)
 {
 	d->line = line;
 	d->valid = false;
@@ -161,7 +171,6 @@ Message &Message::setLine(const QByteArray &line)
 		d->valid = true;
 	}
 */
-	return *this;
 }
 
 QByteArray Message::rawPrefix() const
@@ -169,14 +178,13 @@ QByteArray Message::rawPrefix() const
 	return d->prefix;
 }
 
-Message &Message::setPrefix(const QByteArray &prefix)
+void Message::setPrefix(const QByteArray &prefix)
 {
 	if (d->prefix != prefix)
 	{
 		d->dirty = true;
 		d->prefix = prefix;
 	}
-	return *this;
 }
 
 QByteArray Message::rawCommand() const
@@ -184,14 +192,13 @@ QByteArray Message::rawCommand() const
 	return d->command;
 }
 
-Message &Message::setCommand(const QByteArray &command)
+void Message::setCommand(const QByteArray &command)
 {
 	if (d->command != command)
 	{
 		d->dirty = true;
 		d->command = command;
 	}
-	return *this;
 }
 
 QByteArrayList Message::rawArgs() const
@@ -199,14 +206,13 @@ QByteArrayList Message::rawArgs() const
 	return d->args;
 }
 
-Message &Message::setArgs(const QByteArrayList &args)
+void Message::setArgs(const QByteArrayList &args)
 {
 	if (d->args != args)
 	{
 		d->dirty = true;
 		d->args = args;
 	}
-	return *this;
 }
 
 QByteArray Message::rawArg(size_t i) const
@@ -219,14 +225,13 @@ QByteArray Message::rawSuffix() const
 	return d->suffix;
 }
 
-Message &Message::setSuffix(const QByteArray &suffix)
+void Message::setSuffix(const QByteArray &suffix)
 {
 	if (d->suffix != suffix)
 	{
 		d->dirty = true;
 		d->suffix = suffix;
 	}
-	return *this;
 }
 
 QString Message::prefix(QTextCodec *codec) const
@@ -234,9 +239,9 @@ QString Message::prefix(QTextCodec *codec) const
 	return checkCodec(codec)->toUnicode(d->prefix);
 }
 
-Message &Message::setPrefix(const QString &prefix, QTextCodec *codec)
+void Message::setPrefix(const QString &prefix, QTextCodec *codec)
 {
-	return setPrefix(checkCodec(codec)->fromUnicode(prefix));
+	setPrefix(checkCodec(codec)->fromUnicode(prefix));
 }
 
 QString Message::command(QTextCodec *codec) const
@@ -244,9 +249,9 @@ QString Message::command(QTextCodec *codec) const
 	return checkCodec(codec)->toUnicode(d->command);
 }
 
-Message &Message::setCommand(const QString &command, QTextCodec *codec)
+void Message::setCommand(const QString &command, QTextCodec *codec)
 {
-	return setCommand(checkCodec(codec)->fromUnicode(command));
+	setCommand(checkCodec(codec)->fromUnicode(command));
 }
 
 QStringList Message::args(QTextCodec *codec) const
@@ -260,7 +265,7 @@ QStringList Message::args(QTextCodec *codec) const
 	return args;
 }
 
-Message &Message::setArgs(const QStringList &args, QTextCodec *codec)
+void Message::setArgs(const QStringList &args, QTextCodec *codec)
 {
 	QByteArrayList arrayList;
 	codec = checkCodec(codec);
@@ -268,7 +273,7 @@ Message &Message::setArgs(const QStringList &args, QTextCodec *codec)
 	foreach (const QString &arg, args)
 		arrayList.append(codec->fromUnicode(arg));
 
-	return setArgs(arrayList);
+	setArgs(arrayList);
 }
 
 QString Message::arg(size_t i, QTextCodec *codec) const
@@ -276,9 +281,9 @@ QString Message::arg(size_t i, QTextCodec *codec) const
 	return checkCodec(codec)->toUnicode(d->args[i]);
 }
 /*
-Message &Message::setArgs(size_t i, QString arg, QTextCodec *codec)
+void Message::setArgs(size_t i, QString arg, QTextCodec *codec)
 {
-	return setArg(i, checkCodec(codec)->fromUnicode(arg));
+	setArg(i, checkCodec(codec)->fromUnicode(arg));
 }
 */
 QString Message::suffix(QTextCodec *codec) const
@@ -286,9 +291,9 @@ QString Message::suffix(QTextCodec *codec) const
 	return checkCodec(codec)->toUnicode(d->suffix);
 }
 
-Message &Message::setSuffix(const QString &suffix, QTextCodec *codec)
+void Message::setSuffix(const QString &suffix, QTextCodec *codec)
 {
-	return setSuffix(checkCodec(codec)->fromUnicode(suffix));
+	setSuffix(checkCodec(codec)->fromUnicode(suffix));
 }
 
 bool Message::isValid() const
@@ -341,6 +346,9 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
 {
 	if (codec)
 		return codec;
+
+	if (d->codec)
+		return d->codec;
 
 //	if (d->engine)
 //	return entityFromPrefix()->codec();
