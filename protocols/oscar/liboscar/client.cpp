@@ -210,6 +210,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 void Client::close()
 {
 	d->active = false;
+	d->awayMsgRequestTimer->stop();
+	d->awayMsgRequestQueue.clear();
 	d->connections.clear();
 	deleteStaticTasks();
 
