@@ -39,7 +39,7 @@ kde4_add_plugin(kopete_wp ${kopete_wp_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_wp )
 
-target_link_libraries(kopete_wp  ${KDE4_KIO_LIBS} kopete kio )
+target_link_libraries(kopete_wp  ${KDE4_KIO_LIBS} kopete )
 
 install(TARGETS kopete_wp  DESTINATION ${PLUGIN_INSTALL_DIR})
 

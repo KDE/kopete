@@ -18,7 +18,7 @@ kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_translator )
 
-target_link_libraries(kopete_translator  ${KDE4_KDECORE_LIBS} kopete kio )
+target_link_libraries(kopete_translator  ${KDE4_KIO_LIBS} kopete )
 
 install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 
