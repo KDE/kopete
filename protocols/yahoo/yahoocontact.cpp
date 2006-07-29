@@ -233,7 +233,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
+		newMsg.replace( regExp, QLatin1String("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
 		}
 	}
 	
@@ -244,7 +244,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		newMsg.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
+		newMsg.replace( regExp, QLatin1String("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
 		}
 	}
 	
@@ -255,7 +255,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+		newMsg.replace( regExp, QLatin1String("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
 		}
 	}
 	
@@ -266,7 +266,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
+			newMsg.replace( regExp, QLatin1String("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
 		}
 	}
 	
@@ -277,7 +277,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QLatin1String("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -288,7 +288,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QLatin1String("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -299,17 +299,17 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QString::fromLatin1("\\2") );
+			newMsg.replace( regExp, QLatin1String("\\2") );
 		}
 	}
 	
 	// convert escaped chars
-	newMsg.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
-	newMsg.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
-	newMsg.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
-	newMsg.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
-	newMsg.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
-	newMsg.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
+	newMsg.replace( QLatin1String( "&gt;" ), QLatin1String( ">" ) );
+	newMsg.replace( QLatin1String( "&lt;" ), QLatin1String( "<" ) );
+	newMsg.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
+	newMsg.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
+	newMsg.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
+	newMsg.replace( QLatin1String( "<br/>" ), QLatin1String( "\r" ) );
 	
 	return newMsg;
 }
@@ -451,7 +451,7 @@ void YahooContact::slotUserProfile()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
-	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + userId();
+	QString profileSiteString = QLatin1String("http://profiles.yahoo.com/") + userId();
 	KToolInvocation::invokeBrowser(  profileSiteString );
 }
 

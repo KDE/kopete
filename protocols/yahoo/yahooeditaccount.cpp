@@ -162,7 +162,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 void YahooEditAccount::slotOpenRegister()
 {
-	KToolInvocation::invokeBrowser( QString::fromLatin1("http://edit.yahoo.com/config/eval_register?new=1") );
+	KToolInvocation::invokeBrowser( QLatin1String("http://edit.yahoo.com/config/eval_register?new=1") );
 }
 
 void YahooEditAccount::slotSelectPicture()

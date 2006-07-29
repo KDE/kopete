@@ -100,7 +100,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 // 	initConnectionSignals( MakeConnections );
 	
-	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"), QString());
+	QString displayName = configGroup()->readEntry(QLatin1String("displayName"), QString());
 	if(!displayName.isEmpty())
 		_myself->setNickName(displayName);
 	
@@ -114,12 +114,12 @@ YahooAccount::~YahooAccount()
 
 void YahooAccount::setServer( const QString &server )
 {
-	configGroup()->writeEntry( QString::fromLatin1( "Server" ), server );	
+	configGroup()->writeEntry( QLatin1String( "Server" ), server );	
 }
 
 void YahooAccount::setPort( int port )
 {
-	configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );	
+	configGroup()->writeEntry( QLatin1String( "Port" ), port );	
 }
 
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
@@ -779,7 +779,7 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 	QString message;
 	message = i18n( "User %1 has granted your authorization request." ,
 		  who );
-	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
+	KNotification::event( QLatin1String("kopete_authorization"), message );
 	
 	if( contact( who ) )
 		contact( who )->setOnlineStatus( m_protocol->Online );
@@ -791,7 +791,7 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 	QString message;
 	message = i18n( "User %1 has granted your authorization request.\n%2" ,
 		  who, msg );
-	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
+	KNotification::event( QLatin1String("kopete_authorization"), message );
 }
 
 void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
@@ -906,7 +906,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 	
 	kDebug(YAHOO_GEN_DEBUG) << "Message after stripping color codes '" << newMsgText << "'" << endl;
 	
-	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
+	newMsgText.replace( QLatin1String( "&" ), QString::fromLatin1( "&amp;" ) );
 	
 	// Replace Font tags
 	regExp.setMinimal( true );
@@ -916,7 +916,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
+		newMsgText.replace( regExp, QLatin1String("<font\\1style=\"font-size:\\2pt\">" ) );
 		}
 	}
 	
@@ -927,7 +927,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+			newMsgText.replace( regExp, QLatin1String("" ) );
 		
 		}
 	}
@@ -937,7 +937,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+			newMsgText.replace( regExp, QLatin1String("" ) );
 		}
 	}
 	
@@ -948,7 +948,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QString::fromLatin1("&lt;" ) );
+			newMsgText.replace( regExp, QLatin1String("&lt;" ) );
 		}
 	}
 	regExp.setPattern( "([^\"bui])>" );
@@ -957,22 +957,22 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QString::fromLatin1("\\1&gt;" ) );
+			newMsgText.replace( regExp, QLatin1String("\\1&gt;" ) );
 		}
 	}
 	
 	// add closing tags when needed
 	regExp.setMinimal( false );
 	regExp.setPattern( "(<b>.*)(?!</b>)" );
-	newMsgText.replace( regExp, QString::fromLatin1("\\1</b>" ) );
+	newMsgText.replace( regExp, QLatin1String("\\1</b>" ) );
 	regExp.setPattern( "(<i>.*)(?!</i>)" );
-	newMsgText.replace( regExp, QString::fromLatin1("\\1</i>" ) );
+	newMsgText.replace( regExp, QLatin1String("\\1</i>" ) );
 	regExp.setPattern( "(<u>.*)(?!</u>)" );
-	newMsgText.replace( regExp, QString::fromLatin1("\\1</u>" ) );
+	newMsgText.replace( regExp, QLatin1String("\\1</u>" ) );
 	regExp.setPattern( "(<font.*)(?!</font>)" );
-	newMsgText.replace( regExp, QString::fromLatin1("\\1</font>" ) );
+	newMsgText.replace( regExp, QLatin1String("\\1</font>" ) );
 	
-	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
+	newMsgText.replace( QLatin1String( "\r" ), QLatin1String( "<br/>" ) );
 	
 	return newMsgText;
 }
@@ -1431,7 +1431,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 	{
 #warning Fix KNotification here
 #if 0
-		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
+		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
 			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 #endif
@@ -1441,7 +1441,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 	{	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
 #warning Fix KNotification here
 #if 0
-		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from) 
+		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from) 
 		                                       , QPixmap() , 0 ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 #endif
 		m_currentMailCount = cnt;
@@ -1766,12 +1766,12 @@ void YahooAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 
 void YahooAccount::slotOpenInbox()
 {
-	KToolInvocation::invokeBrowser( QString::fromLatin1( "http://mail.yahoo.com/") );
+KToolInvocation::invokeBrowser( QLatin1String( "http://mail.yahoo.com/") );
 }
 
 void YahooAccount::slotOpenYAB()
 {
-	KToolInvocation::invokeBrowser( QString::fromLatin1( "http://address.yahoo.com/") );
+KToolInvocation::invokeBrowser( QLatin1String( "http://address.yahoo.com/") );
 }
 
 void YahooAccount::slotEditOwnYABEntry()

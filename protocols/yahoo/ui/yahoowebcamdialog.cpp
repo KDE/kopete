@@ -74,7 +74,7 @@ void YahooWebcamDialog::newImage( const QPixmap &image )
 
 void YahooWebcamDialog::webcamPaused()
 {
-	m_imageContainer->setText( QString::fromLatin1("*** Webcam paused ***") );
+	m_imageContainer->setText( QLatin1String("*** Webcam paused ***") );
 }
 
 void YahooWebcamDialog::webcamClosed( int reason  )
