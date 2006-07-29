@@ -21,7 +21,6 @@
 #include "client.h"
 #include <qstring.h>
 #include <qfile.h>
-#include <q3cstring.h>
 #include <qdatastream.h>
 #include <kio/global.h>
 #include <kio/job.h>
