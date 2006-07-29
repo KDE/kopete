@@ -46,7 +46,7 @@ LoginTest::~LoginTest()
 
 void LoginTest::slotDoTest()
 {
-	QString server = QString::fromLatin1("scs.msg.yahoo.com");
+	QLatin1String server("scs.msg.yahoo.com");
 	// connect to server
 	kDebug(14180) << k_funcinfo << " connecting to server" << endl;
 	

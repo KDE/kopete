@@ -317,7 +317,7 @@ void Client::sendBuzz( const QString &to )
 {
 	SendMessageTask *smt = new SendMessageTask( d->root );
 	smt->setTarget( to );
-	smt->setText( QString::fromLatin1( "<ding>" ) );
+	smt->setText( QLatin1String( "<ding>" ) );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
 }
