@@ -116,6 +116,16 @@ void YMSGTransfer::setId(unsigned int id)
 	d->id = id;
 }
 
+int YMSGTransfer::packetLength()
+{
+	return d->packetLength;
+}
+
+void YMSGTransfer::setPacketLength(int len)
+{
+	d->packetLength = len;
+}
+
 ParamList YMSGTransfer::paramList()
 {
 	return d->data;

@@ -59,6 +59,9 @@ public:
 	void setStatus(Yahoo::Status status);
 	unsigned int id();
 	void setId(unsigned int id);
+	int packetLength();
+	void setPacketLength(int len);
+	
 
 	ParamList paramList();
 	QByteArray firstParam( int index );

@@ -173,10 +173,16 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		if ( (wire[0] == 'Y') && (wire[1] == 'M') && (wire[2] == 'S') && (wire[3] == 'G'))
 		{
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
-			Transfer *t = m_YMSGProtocol->parse( wire, bytesParsed );
+			YMSGTransfer *t = static_cast<YMSGTransfer *>(m_YMSGProtocol->parse( wire, bytesParsed ));
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
 			if ( t )
 			{
+				if( wire.size() < t->packetLength() )
+				{
+					m_state = NeedMore;
+					delete t;
+					return 0;
+				}
 				m_inTransfer = t;
 				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a valid packet " << endl;
 				

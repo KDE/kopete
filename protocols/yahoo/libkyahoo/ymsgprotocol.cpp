@@ -321,6 +321,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	t->setService(service);
 	t->setId(sessionid);
 	t->setStatus(status);
+	t->setPacketLength(len);
 	
 	// taken almost as is from libyahoo ;-)
 	
