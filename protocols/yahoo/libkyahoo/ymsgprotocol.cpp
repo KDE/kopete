@@ -18,7 +18,6 @@
 
 #include <stdlib.h>
 
-#include <q3cstring.h>
 #include <qdatastream.h>
 #include <qmap.h>
 #include <qobject.h>
