@@ -19,8 +19,12 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
+#include <QString>
+#include <QFile>
 #include <kdebug.h>
+#include <kcodecs.h>
+#include <kstandarddirs.h>
+#include <ktempfile.h>
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
@@ -121,6 +125,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	QString msg;		/* key = 14  */
 	QString filename;	/* key = 27  */
 	unsigned long size;	/* key = 28  */
+	QByteArray preview;	/* key = 267 */
 	
 	if( t->firstParam( 222 ).toInt() == 2 )
 		return;					// user cancelled the file transfer
@@ -132,6 +137,14 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	expires = t->firstParam( 38 ).toLong();
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
+	preview = KCodecs::base64Decode( t->firstParam( 267 ) );
+
+	if( preview.size() > 0 )
+	{
+		KTempFile file( KStandardDirs::locateLocal( "tmp", "yahooftpreview-" ), ".jpeg" );
+		file.file()->write( preview );
+		file.file()->close();
+	}
 
 	emit incomingFileTransfer( from, url, expires, msg, filename, size );
 }
