@@ -495,6 +495,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "editcopy" ), 0,
 														 this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
 
+	actionMakeMetaContact = new KAction(KIcon("move"), i18n("Make Meta Contact"), ac, "makeMetaContact");
+    connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
+
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ),
 		ac, "contactRemove" );
 	actionSendEmail = new KAction( KIcon("mail_generic"), i18n( "Send Email..." ), ac, "contactSendEmail" );
@@ -1449,6 +1452,9 @@ void KopeteContactListView::updateActionsForSelection(
 		actionRename->setEnabled(false);
 		actionRemove->setEnabled(contacts.count()+groups.count());
 		actionAddContact->setEnabled(false);
+
+		actionMakeMetaContact->setText(i18n("Make Meta Contact"));
+		actionMakeMetaContact->setEnabled(contacts.count()); // Specifically for multiple contacts, not groups.
 	}
 
 	actionMove->setCurrentItem( -1 );
@@ -1878,7 +1884,6 @@ void KopeteContactListView::insertUndoItem( KopeteContactListView::UndoItem *u)
 	undoTimer.start(10*60*1000);
 }
 
-
 void KopeteContactListView::slotUndo()
 {
 	bool step = false;
@@ -2185,6 +2190,33 @@ void KopeteContactListView::slotTimeout()
 		m_redo=i;
 	}
 	actionRedo->setEnabled(false);
+}
+
+void KopeteContactListView::slotMakeMetaContact()
+{
+    QList<Kopete::MetaContact*> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+    QList<Kopete::MetaContact*>::iterator cit, citEnd = contacts.end();
+    Kopete::MetaContact * first = (Kopete::MetaContact *) NULL;
+
+    // Iterate through the selected contacts.
+    for( cit = contacts.begin(); cit != citEnd; ++cit ) {
+        Kopete::MetaContact* mc = static_cast<Kopete::MetaContact*>(*cit);
+
+        if (!first) {
+            // Grab the first one.
+            first = mc;
+        } else {
+            QList<Kopete::Contact*> foreignList = mc->contacts();
+            QList<Kopete::Contact *>::iterator theContact, stopit = foreignList.end();
+            // Have the first of all in the selected contacts steal the contacts from all the others.
+            for (theContact = foreignList.begin(); theContact != stopit; ++theContact) {
+                Kopete::Contact *one = static_cast<Kopete::Contact*>(*theContact);
+                one->setMetaContact(first);
+            }
+        }
+    }
+
+    return;
 }
 
 #include "kopetecontactlistview.moc"
