@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+/*#include <Q3Dict>*/
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kconfig.h>
@@ -32,11 +33,11 @@ K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  )
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
 
-SMSProtocol::SMSProtocol(QObject *parent, const QStringList &/*args*/)
-: Kopete::Protocol( SMSProtocolFactory::instance(), parent, name ),
-	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null,   i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
-	SMSConnecting( Kopete::OnlineStatus::Connecting,2, this, 3, QString::null,    i18n( "Connecting" ) ),
-	SMSOffline( Kopete::OnlineStatus::Offline, 0, this, 2,  QString::null,   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline )
+SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
+: Kopete::Protocol( SMSProtocolFactory::instance(), parent ),
+	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(),   i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
+	SMSConnecting( Kopete::OnlineStatus::Connecting,2, this, 3, QStringList(),    i18n( "Connecting" ) ),
+	SMSOffline( Kopete::OnlineStatus::Offline, 0, this, 2,  QStringList(),   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline )
 {
 	if (s_protocol)
 		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
@@ -74,9 +75,19 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	QString accountId = serializedData["accountId"];
 	QString displayName = serializedData["displayName"];
 
-	Q3Dict<Kopete::Account> accounts=Kopete::AccountManager::self()->accounts(this);
+	QList<Kopete::Account*> accounts=Kopete::AccountManager::self()->accounts(this);
 
-	Kopete::Account *account = accounts[accountId];
+   QList<Kopete::Account*>::iterator curacct, lastacct = accounts.end();
+	Kopete::Account *account = (Kopete::Account*) NULL;
+
+   for (curacct = accounts.begin(); curacct != lastacct; curacct++) {
+      Kopete::Account *one = static_cast<Kopete::Account*>(*curacct);
+      if (one->accountId() == accountId) {
+         account = one;
+         break;
+      }
+   }
+
 	if (!account)
 	{
 		kDebug(14160) << "Account doesn't exist, skipping" << endl;
