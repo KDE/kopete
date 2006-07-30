@@ -1407,7 +1407,7 @@ void YahooAccount::slotFileTransferError( unsigned int transferId, int error, co
 
 void YahooAccount::slotFileTransferResult( KIO::Job *job )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	const Kopete::Transfer *t = dynamic_cast< const Kopete::Transfer * >( job );
 	
 	if( !t )

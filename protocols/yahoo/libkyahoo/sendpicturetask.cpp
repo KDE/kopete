@@ -142,12 +142,12 @@ void SendPictureTask::readResult()
 	m_socket->close();
 	if( buf.find( "error", 0, false ) >= 0 )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed" << endl;
 		setSuccess( false );
 	}
 	else
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload acknowledged." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload acknowledged." << endl;
 		setSuccess( true );
 	}
 
