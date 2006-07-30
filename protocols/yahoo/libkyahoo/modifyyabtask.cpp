@@ -135,10 +135,8 @@ void ModifyYABTask::slotRead()
 	QString data( ar );
 	data = data.right( data.length() - data.indexOf("<?xml") );
 
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_data.find("</ab>") << endl;
 	if( m_data.find("</ab>") < 0 )
 		return;						// Need more data
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_data.find("</ab>") << endl;
 
 	m_socket->close();
 	QDomDocument doc;
