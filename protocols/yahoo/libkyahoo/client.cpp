@@ -823,9 +823,9 @@ void Client::initTasks()
 
 	d->fileTransferTask = new FileTransferNotifierTask( d->root );
 	QObject::connect( d->fileTransferTask, SIGNAL(incomingFileTransfer( const QString &, const QString &, 
-					long, const QString &, const QString &, unsigned long )),
+					long, const QString &, const QString &, unsigned long, const QPixmap & )),
 				SIGNAL(incomingFileTransfer( const QString &, const QString &, 
-					long, const QString &, const QString &, unsigned long )) );
+					long, const QString &, const QString &, unsigned long, const QPixmap & )) );
 }
 
 void Client::deleteTasks()

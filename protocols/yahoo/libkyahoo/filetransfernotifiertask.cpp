@@ -21,10 +21,9 @@
 #include "client.h"
 #include <QString>
 #include <QFile>
+#include <QPixmap>
 #include <kdebug.h>
 #include <kcodecs.h>
-#include <kstandarddirs.h>
-#include <ktempfile.h>
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
@@ -111,7 +110,7 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	unsigned int right = url.findRev( '?' );
 	filename = url.mid( left, right - left );
 
-	emit incomingFileTransfer( from, url, expires, msg, filename, size );
+	emit incomingFileTransfer( from, url, expires, msg, filename, size, QPixmap() );
 }
 
 void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
@@ -126,6 +125,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	QString filename;	/* key = 27  */
 	unsigned long size;	/* key = 28  */
 	QByteArray preview;	/* key = 267 */
+	QPixmap previewPixmap;
 	
 	if( t->firstParam( 222 ).toInt() == 2 )
 		return;					// user cancelled the file transfer
@@ -141,12 +141,10 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 
 	if( preview.size() > 0 )
 	{
-		KTempFile file( KStandardDirs::locateLocal( "tmp", "yahooftpreview-" ), ".jpeg" );
-		file.file()->write( preview );
-		file.file()->close();
+		previewPixmap.loadFromData( preview );
 	}
 
-	emit incomingFileTransfer( from, url, expires, msg, filename, size );
+	emit incomingFileTransfer( from, url, expires, msg, filename, size, previewPixmap );
 }
 
 void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )

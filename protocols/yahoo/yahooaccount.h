@@ -196,7 +196,7 @@ protected slots:
 	void slotConfLeave( YahooConferenceChatSession *s );
 	void slotInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
 	void slotAddInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
-	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
+	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize, const QPixmap &);
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
 	void slotTypingNotify(const QString &, int );

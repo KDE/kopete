@@ -562,7 +562,7 @@ Q_OBJECT
 		 * A buddy is trying to send us a file
 		 */
 		void incomingFileTransfer( const QString &, const QString &, long, const QString &,
-			const QString &, unsigned long );
+			const QString &, unsigned long, const QPixmap & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
