@@ -135,7 +135,7 @@ void ModifyYABTask::slotRead()
 	QString data( ar );
 	data = data.right( data.length() - data.indexOf("<?xml") );
 
-	if( m_data.find("</ab>") < 0 )
+	if( m_data.indexOf("</ab>") < 0 )
 		return;						// Need more data
 
 	m_socket->close();

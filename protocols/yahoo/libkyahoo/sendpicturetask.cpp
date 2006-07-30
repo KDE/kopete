@@ -140,7 +140,7 @@ void SendPictureTask::readResult()
 	QString buf( ar );
 
 	m_socket->close();
-	if( buf.find( "error", 0, false ) >= 0 )
+	if( buf.indexOf( "error", 0, Qt::CaseInsensitive ) >= 0 )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed" << endl;
 		setSuccess( false );
