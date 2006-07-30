@@ -53,6 +53,10 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ), 0 ) );
 	m_description->setText( description );
 	m_filename->setText( info.file() );
+	if( !info.preview().isNull() )
+		m_preview->setPixmap( info.preview() );
+	else
+		m_preview->setVisible( false );
 
 	KGlobal::config()->setGroup("File Transfer");
 	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homePath() );

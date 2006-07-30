@@ -40,7 +40,7 @@ class KOPETE_EXPORT FileTransferInfo
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
-	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null);
+	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null, const QPixmap &preview=QPixmap() );
 	~FileTransferInfo() {}
 	unsigned int transferId() const { return mId; }
 	const Contact* contact() const { return mContact; }
@@ -49,6 +49,7 @@ public:
 	unsigned long size() const { return mSize; }
 	QString internalId() const { return m_intId; }
 	KopeteTransferDirection direction() const { return mDirection; }
+	QPixmap preview() const { return mPreview; }
 
 private:
 	unsigned long mSize;
@@ -58,6 +59,7 @@ private:
 	QString mFile;
 	QString m_intId;
 	KopeteTransferDirection mDirection;
+	QPixmap mPreview;
 };
 
 /**
@@ -78,7 +80,7 @@ public:
 	 * @brief Adds a file transfer to the Kopete::TransferManager
 	 */
 	Transfer *addTransfer( Contact *contact, const QString& file, const unsigned long size, const QString &recipient , FileTransferInfo::KopeteTransferDirection di);
-	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null);
+	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null, const QPixmap &preview=QPixmap());
 	void removeTransfer( unsigned int id );
 
 	/**
