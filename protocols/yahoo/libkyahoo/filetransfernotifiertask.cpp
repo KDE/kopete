@@ -106,8 +106,8 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 		return;
 	
 
-	unsigned int left = url.findRev( '/' ) + 1;
-	unsigned int right = url.findRev( '?' );
+	unsigned int left = url.lastIndexOf( '/' ) + 1;
+	unsigned int right = url.lastIndexOf( '?' );
 	filename = url.mid( left, right - left );
 
 	emit incomingFileTransfer( from, url, expires, msg, filename, size, QPixmap() );
