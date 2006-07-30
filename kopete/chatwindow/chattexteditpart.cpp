@@ -297,13 +297,13 @@ void ChatTextEditPart::sendMessage()
 		m_lastMatch.clear();
 	}
 
+	slotStoppedTypingTimer();
 	Kopete::Message sentMessage = contents();
 	emit messageSent( sentMessage );
 	historyList.prepend( edit()->text() );
 	historyPos = -1;
 	clear();
 	emit canSendChanged( false );
-	slotStoppedTypingTimer();
 }
 
 bool ChatTextEditPart::isTyping()
@@ -429,6 +429,7 @@ void ChatTextEditPart::slotRepeatTypingTimer()
 void ChatTextEditPart::slotStoppedTypingTimer()
 {
 	m_typingRepeatTimer->stop();
+	m_typingStopTimer->stop();
 	emit typing( false );
 }
 

@@ -68,11 +68,6 @@ public:
 	 */
 	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags );
 	
-	/**
-	 * Reads a vCard object and updates the contact's
-	 * properties accordingly.
-	 */
-	void setPropertiesFromVCard ( const XMPP::VCard &vCard );
 
 	bool isContactRequestingEvent( XMPP::MsgEvent event );
 
@@ -105,12 +100,8 @@ public slots:
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
-	 * Retrieve a vCard for the contact
-	 */
-	void slotUserInfo ();
-
-	/**
 	 * Update the vCard on the server.
+	 * @todo is that still used ?
 	 */ 
 	void slotSendVCard();
 

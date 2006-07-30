@@ -25,6 +25,7 @@
 
 class JabberAccount;
 class JabberContact;
+class JabberBaseContact;
 class QString;
 namespace Ui { class dlgVCard; }
 
@@ -54,14 +55,8 @@ public:
 	 * @param widget Parent widget.
 	 * @param name widget name.
 	 */
-	dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent = 0);
+	dlgJabberVCard (JabberAccount *account, JabberBaseContact *contact, QWidget * parent = 0);
 	~dlgJabberVCard ();
-
-signals:
-	/**
-	 * This signal is emitted when information is changed.
-	 */
-	void informationChanged();
 
 private slots:
 	/**
@@ -102,7 +97,7 @@ private slots:
 
 private:
 	JabberAccount *m_account;
-	JabberContact *m_contact;
+	JabberBaseContact *m_contact;
 	Ui::dlgVCard *m_mainWidget;
 	QString m_photoPath;
 

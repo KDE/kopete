@@ -241,9 +241,18 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		{
 			status = JabberKOSDND;
 		}
+		else if (resource.status ().show () == "online")
+		{ // the ApaSMSAgent sms gateway report status as "online" even if it's not in the RFC 3921 § 2.2.2.1 
+			// See Bug 129059
+			status = JabberKOSOnline;
+		}
 		else if (resource.status ().show () == "connecting")
-		{
+		{ // this is for kopete internals
 			status = JabberKOSConnecting;
+		}
+		else
+		{
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug" << endl;
 		}
 	}
 

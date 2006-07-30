@@ -184,7 +184,7 @@ private:
      *                    conversation
      * @return The created conversation data struct
      */
-    struct ConversationData *MeanwhileSession::createConversationData(
+    struct ConversationData *createConversationData(
             struct mwConversation *conv, MeanwhileContact *contact,
             bool createQueue = false);
 

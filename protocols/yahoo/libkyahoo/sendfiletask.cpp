@@ -92,6 +92,7 @@ void SendFileTask::connectSucceeded()
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << m_file.errorString() << endl;
 		client()->notifyError( i18n( "An error occured sending the file." ), m_file.errorString(), Client::Error );
+		setSuccess( false );
 		return;
 	}
 
@@ -139,6 +140,7 @@ void SendFileTask::transmitData()
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
 		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		setSuccess( false );
+		return;
 	}
 	if( m_transmitted == m_file.size() )
 	{
@@ -171,6 +173,17 @@ void SendFileTask::setFileUrl( KUrl url )
 void SendFileTask::setTransferId( unsigned int transferId )
 {
 	m_transferId = transferId;
+}
+
+void SendFileTask::canceled( unsigned int id )
+{
+	if( m_transferId != id )
+		return;
+	
+	if( m_socket )
+		m_socket->close();
+	
+	setSuccess( false );
 }
 
 #include "sendfiletask.moc"

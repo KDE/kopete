@@ -23,6 +23,7 @@
 #include <QPixmap>
 
 #include <kdebug.h>
+#include <ksocketbase.h>
 
 #include "yahooclientstream.h"
 #include "yahooconnector.h"
@@ -54,6 +55,8 @@
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
+
+using namespace KNetwork;
 
 class Client::ClientPrivate
 {
@@ -92,6 +95,7 @@ public:
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
 	QString statusMessageOnConnect;
+	int pictureFlag;
 };
 
 Client::Client(QObject *par) :QObject(par)
@@ -109,6 +113,7 @@ Client::Client(QObject *par) :QObject(par)
 	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
+	d->pictureFlag = 0;
 	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
@@ -214,7 +219,7 @@ void Client::streamError( int error )
 	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
 	{
 		d->error = m_connector->errorCode();
-		d->errorString = KSocketBase::errorString( (KNetwork::KSocketBase::SocketError)d->error );
+		d->errorString = KSocketBase::errorString( (KSocketBase::SocketError)d->error );
 	}
 	else
 	{
@@ -330,6 +335,8 @@ void Client::sendFile( unsigned int transferId, const QString &to, const QString
 	QObject::connect( sft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
 	QObject::connect( sft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
 
+	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), sft, SLOT(canceled( unsigned int )) );
+
 	sft->setTarget( to );
 	sft->setMessage( msg );
 	sft->setFileUrl( url );
@@ -344,6 +351,7 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KUrl r
 	QObject::connect( rft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
 	QObject::connect( rft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
 	QObject::connect( rft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), rft, SLOT(canceled( unsigned int )) );
 
 	rft->setRemoteUrl( remoteURL );
 	rft->setLocalUrl( localURL );
@@ -367,6 +375,11 @@ void Client::rejectFile( const QString &userId, KUrl remoteURL )
 	rft->setUserId( userId );
 	rft->setType( ReceiveFileTask::FileTransfer7Reject );
 	rft->go( true );
+}
+
+void Client::cancelFileTransfer( unsigned int transferId )
+{
+	emit fileTransferCanceled( transferId );
 }
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )
@@ -478,6 +491,7 @@ void Client::uploadPicture( KUrl url )
 		spt->setPath( url.path() );
 	else
 		spt->setPath( url.url() );
+	d->pictureFlag = 2;
 	spt->go( true );
 }
 
@@ -674,7 +688,7 @@ uint Client::sessionID()
 
 int Client::pictureFlag()
 {
-	return 0;
+	return d->pictureFlag;
 }
 
 QString Client::yCookie()

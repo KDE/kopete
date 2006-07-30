@@ -67,8 +67,20 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().getFirst(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
 
 	setInstance(protocol->instance());
-	jabber_voicecall->setEnabled(true);
+	jabber_voicecall->setEnabled( false );
 
+	
+	Kopete::ContactPtrList chatMembers = members ();
+	if ( chatMembers.first () )
+	{
+		// Check if the current contact support Voice calls, also honour lock by default.
+		// FIXME: we should use the active ressource
+		JabberResource *bestResource = account()->resourcePool()->  bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		if( bestResource && bestResource->features().canVoice() )
+		{
+			jabber_voicecall->setEnabled( true );
+		}
+	}
 
 #endif
 
@@ -284,6 +296,9 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
 					// linebreak that are not interpreted.  - Olivier 2006-31-03
 					xhtmlBody.replace("\n","");
+					
+					//&nbsp; is not a valid XML entity
+					xhtmlBody.replace("&nbsp;" , "&#160;");
 							
 					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +">"+ xhtmlBody +"</p>";
 					jabberMessage.setXHTMLBody ( xhtmlBody );

@@ -67,14 +67,12 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, c
 	//tblServices->horizontalHeader ()->setLabel (0, i18n ("Name"));
 	//tblServices->horizontalHeader ()->setLabel (1, i18n ("Address"));
 
-	connect (btnQuery, SIGNAL (clicked ()), this, SLOT (slotQuery ()));
+	connect (btnQuery, SIGNAL (clicked ()), this, SLOT (slotDisco ()));
 	//connect (tblServices, SIGNAL (clicked (int, int, int, const QPoint &)), this, SLOT (slotSetSelection (int, int, int, const QPoint &)));
 	connect (lvServices, SIGNAL (selectionChanged (Q3ListViewItem *)), this, SLOT (slotSetSelection (Q3ListViewItem *)));
 
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotRegister ()));
 	connect (btnBrowse, SIGNAL (clicked ()), this, SLOT (slotBrowse ()));
-
-	serviceTask = 0L;
 
 }
 
@@ -95,7 +93,7 @@ void dlgJabberServices::slotSetSelection (Q3ListViewItem *it)
 
 }
 
-void dlgJabberServices::slotQuery ()
+void dlgJabberServices::slotService ()
 {
 
 	if(!m_account->isConnected())
@@ -104,11 +102,8 @@ void dlgJabberServices::slotQuery ()
 		return;
 	}
 	
-	// create the jabber task
-	delete serviceTask;
-
-	serviceTask = new XMPP::JT_GetServices (m_account->client()->rootTask ());
-	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotQueryFinished ()));
+	XMPP::JT_GetServices *serviceTask = new XMPP::JT_GetServices (m_account->client()->rootTask ());
+	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotServiceFinished ()));
 
 	/* populate server field if it is empty */
 	if(leServer->text().isEmpty())
@@ -117,11 +112,12 @@ void dlgJabberServices::slotQuery ()
 	kDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text () << endl;
 
 	serviceTask->get (leServer->text ());
-	serviceTask->go (false);
-
+	serviceTask->go (true);
 }
 
-void dlgJabberServices::slotQueryFinished ()
+
+
+void dlgJabberServices::slotServiceFinished ()
 {
 	kDebug (14130) << "[dlgJabberServices] Query task finished" << endl;
 
@@ -129,12 +125,8 @@ void dlgJabberServices::slotQueryFinished ()
 
 	if (!task->success ())
 	{
-		//KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("Unable to retrieve the list of services."), i18n ("Jabber Error"));
-		// In theory, it has to be done in the opposite order,  but as this is not fully imlplemented ....
-		JT_DiscoItems *jt = new JT_DiscoItems(m_account->client()->rootTask());
-		connect(jt, SIGNAL(finished()), this, SLOT(slotDiscoFinished()));
-		jt->get(leServer->text() , QString());
-		jt->go(true);
+		QString error = task->statusString();
+		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("Unable to retrieve the list of services.\nReason: %1").arg(error), i18n ("Jabber Error"));
 		return;
 	}
 
@@ -148,6 +140,31 @@ void dlgJabberServices::slotQueryFinished ()
 		item->can_register=(*it).features().canRegister();
 	}
 }
+
+void dlgJabberServices::slotDisco()
+{
+	lvServices->clear();
+
+	if(!m_account->isConnected())
+	{
+		m_account->errorConnectFirst();
+		return;
+	}
+	
+	JT_DiscoItems *jt = new JT_DiscoItems(m_account->client()->rootTask());
+	connect(jt, SIGNAL(finished()), this, SLOT(slotDiscoFinished()));
+	
+	/* populate server field if it is empty */
+	if(leServer->text().isEmpty())
+		leServer->setText(m_account->server());
+	
+	jt->get(leServer->text() , QString());
+	jt->go(true);
+}
+
+
+
+
 
 void dlgJabberServices::slotDiscoFinished( )
 {
@@ -169,8 +186,7 @@ void dlgJabberServices::slotDiscoFinished( )
 	}
 	else
 	{
-		QString error = jt->statusString();
-		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("Unable to retrieve the list of services.\nReason: %1", error), i18n ("Jabber Error"));
+		slotService();
 	}
 }
 
@@ -197,9 +213,6 @@ void dlgJabberServices::slotBrowse ()
 
 dlgJabberServices::~dlgJabberServices ()
 {
-
-	delete serviceTask;
-
 }
 
 void dlgJabberServies_item::updateInfo( const XMPP::Jid & jid , const QString & node , JabberAccount *account )

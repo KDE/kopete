@@ -2,7 +2,7 @@
     kopetemessage.cpp  -  Base class for Kopete messages
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -26,6 +26,7 @@
 #include <qtextcodec.h>
 #include <QByteArray>
 #include <QSharedData>
+#include <QPointer>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -51,7 +52,7 @@ public:
 	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
 	         const QString &requestedPlugin, MessageType type );
 
-	const Contact *from;
+	QPointer<Contact> from;
 	ContactPtrList to;
 	ChatSession *manager;
 
@@ -75,10 +76,12 @@ public:
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		const ContactPtrList &to, const QString &body, const QString &subject,
 		MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-	: from(from), to(to), manager(0), direction(direction), format(f), type(type)
+	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(f), type(type)
 	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
+	
+	//TODO: move that in ChatTextEditPart::contents
 	if( format == RichText )
 	{
 		//This is coming from the RichTextEditor component.
@@ -99,6 +102,8 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		if ( this->body.endsWith( QLatin1String("<br/>") ) )
 			this->body.truncate( this->body.length() - 5 );
 		this->body.remove(  QLatin1String("\n") );
+		this->body.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+
 	}
 }
 
@@ -192,6 +197,7 @@ void Message::setFont( const QFont &font )
 void Message::setBody( const QString &body, MessageFormat f )
 {
 	QString theBody = body;
+	//TODO: move that in ChatTextEditPart::contents
 	if( f == RichText )
 	{
 		//This is coming from the RichTextEditor component.
@@ -211,8 +217,9 @@ void Message::setBody( const QString &body, MessageFormat f )
 		//Remove trailing </br>
 		if ( theBody.endsWith( QLatin1String("<br/>") ) )
 			theBody.truncate( theBody.length() - 5 );
-
+	
 		theBody.remove( QLatin1String("\n") );
+		theBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 	}
 	/*	else if( f == ParsedHTML )
 	{
@@ -246,6 +253,7 @@ QString Message::unescape( const QString &xml )
 	data.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
 	data.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
 	data.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
+	data.replace( QString::fromLatin1( "&#160;" ), QString::fromLatin1( " " ) );  //this one is used in jabber:  note, we should escape all &#xx;
 
 	return data;
 }

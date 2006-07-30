@@ -19,7 +19,13 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kstandarddirs.h>
 #include <qtimer.h>
+#include <qimage.h>
+#include <qregexp.h>
+#include <kmessagebox.h>
+#include <kio/netaccess.h>
+
 
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
@@ -34,7 +40,10 @@
 #include "jabberresourcepool.h"
 #include "kopetemetacontact.h"
 #include "kopetemessage.h"
+#include "kopeteuiglobal.h"
 #include "jabbertransport.h"
+#include "dlgjabbervcard.h"
+
 
 /**
  * JabberBaseContact constructor
@@ -377,6 +386,283 @@ void JabberBaseContact::serialize (QMap < QString, QString > &serializedData, QM
 
 	serializedData["groups"] = mRosterItem.groups ().join (QString::fromLatin1 (","));
 }
+
+void JabberBaseContact::slotUserInfo( )
+{
+	if ( !account()->isConnected () )
+	{
+		account()->errorConnectFirst ();
+		return;
+	}
+	
+	// Update the vCard
+	//slotGetTimedVCard();
+
+	new dlgJabberVCard ( account(), this, Kopete::UI::Global::mainWidget () );
+}
+
+void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
+
+	// update vCard cache timestamp if this is not a temporary contact
+	if ( metaContact() && !metaContact()->isTemporary () )
+	{
+		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+	}
+
+	
+	/*
+	* Set the nickname property.
+	*  but ignore it if we are in a groupchat, or it will clash with the normal nickname
+	*/
+	if(inherits ( "JabberContact" ))
+	{
+		if ( !vCard.nickName().isEmpty () )
+		{
+			setProperty ( protocol()->propNickName, vCard.nickName () );
+		}
+		else
+		{
+			removeProperty ( protocol()->propNickName );
+		}
+	}
+
+	/**
+	 * Kopete does not allow a modification of the "full name"
+	 * property. However, some vCards specify only the full name,
+	 * some specify only first and last name.
+	 * Due to these inconsistencies, if first and last name don't
+	 * exist, it is attempted to parse the full name.
+	 */
+
+	// remove all properties first
+	removeProperty ( protocol()->propFirstName );
+	removeProperty ( protocol()->propLastName );
+	removeProperty ( protocol()->propFullName );
+
+	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
+	{
+		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
+		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).stripWhiteSpace ();
+
+		setProperty ( protocol()->propFirstName, firstName );
+		setProperty ( protocol()->propLastName, lastName );
+	}
+	else
+	{
+		if ( !vCard.givenName().isEmpty () )
+			setProperty ( protocol()->propFirstName, vCard.givenName () );
+
+		if ( !vCard.familyName().isEmpty () )
+			setProperty ( protocol()->propLastName, vCard.familyName () );
+	}
+	if( !vCard.fullName().isEmpty() )
+		setProperty ( protocol()->propFullName, vCard.fullName() );
+
+	/* 
+	* Set the general information 
+	*/
+	removeProperty( protocol()->propJid );
+	removeProperty( protocol()->propBirthday );
+	removeProperty( protocol()->propTimezone );
+	removeProperty( protocol()->propHomepage );
+
+	setProperty( protocol()->propJid, vCard.jid() );
+	
+	if( !vCard.bdayStr().isEmpty () )
+		setProperty( protocol()->propBirthday, vCard.bdayStr() );
+	if( !vCard.timezone().isEmpty () )
+		setProperty( protocol()->propTimezone, vCard.timezone() );
+	if( !vCard.url().isEmpty () )
+		setProperty( protocol()->propHomepage, vCard.url() );
+
+	/*
+	* Set the work information.
+	*/
+	removeProperty( protocol()->propCompanyName );
+	removeProperty( protocol()->propCompanyDepartement );
+	removeProperty( protocol()->propCompanyPosition );
+	removeProperty( protocol()->propCompanyRole );
+	
+	if( !vCard.org().name.isEmpty() )
+		setProperty( protocol()->propCompanyName, vCard.org().name );
+	if( !vCard.org().unit.join(",").isEmpty() )
+		setProperty( protocol()->propCompanyDepartement, vCard.org().unit.join(",")) ;
+	if( !vCard.title().isEmpty() )
+		setProperty( protocol()->propCompanyPosition, vCard.title() );
+	if( !vCard.role().isEmpty() )
+		setProperty( protocol()->propCompanyRole, vCard.role() );
+
+	/*
+	* Set the about information
+	*/
+	removeProperty( protocol()->propAbout );
+
+	if( !vCard.desc().isEmpty() )
+		setProperty( protocol()->propAbout, vCard.desc() );
+
+	
+	/*
+	* Set the work and home addresses information
+	*/
+	removeProperty( protocol()->propWorkStreet );
+	removeProperty( protocol()->propWorkExtAddr );
+	removeProperty( protocol()->propWorkPOBox );
+	removeProperty( protocol()->propWorkCity );
+	removeProperty( protocol()->propWorkPostalCode );
+	removeProperty( protocol()->propWorkCountry );
+
+	removeProperty( protocol()->propHomeStreet );
+	removeProperty( protocol()->propHomeExtAddr );
+	removeProperty( protocol()->propHomePOBox );
+	removeProperty( protocol()->propHomeCity );
+	removeProperty( protocol()->propHomePostalCode );
+	removeProperty( protocol()->propHomeCountry );
+
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	{
+		XMPP::VCard::Address address = (*it);
+
+		if(address.work)
+		{
+			setProperty( protocol()->propWorkStreet, address.street );
+			setProperty( protocol()->propWorkExtAddr, address.extaddr );
+			setProperty( protocol()->propWorkPOBox, address.pobox );
+			setProperty( protocol()->propWorkCity, address.locality );
+			setProperty( protocol()->propWorkPostalCode, address.pcode );
+			setProperty( protocol()->propWorkCountry, address.country );
+		}
+		else
+			if(address.home)
+		{
+			setProperty( protocol()->propHomeStreet, address.street );
+			setProperty( protocol()->propHomeExtAddr, address.extaddr );
+			setProperty( protocol()->propHomePOBox, address.pobox );
+			setProperty( protocol()->propHomeCity, address.locality );
+			setProperty( protocol()->propHomePostalCode, address.pcode );
+			setProperty( protocol()->propHomeCountry, address.country );
+		}
+	}
+
+
+	/*
+	* Delete emails first, they might not be present
+	* in the vCard at all anymore.
+	*/
+	removeProperty ( protocol()->propEmailAddress );
+	removeProperty ( protocol()->propWorkEmailAddress );
+
+	/*
+	* Set the home and work email information.
+	*/
+	XMPP::VCard::EmailList::const_iterator emailEnd = vCard.emailList().end ();
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != emailEnd; ++it)
+	{
+		XMPP::VCard::Email email = (*it);
+		
+		if(email.work)
+		{
+			if( !email.userid.isEmpty() )
+				setProperty ( protocol()->propWorkEmailAddress, email.userid );
+		}
+		else
+			if(email.home)
+		{	
+			if( !email.userid.isEmpty() )
+				setProperty ( protocol()->propEmailAddress, email.userid );
+		}
+	}
+
+	/*
+	* Delete phone number properties first as they might have
+	* been unset during an update and are not present in
+	* the vCard at all anymore.
+	*/
+	removeProperty ( protocol()->propPrivatePhone );
+	removeProperty ( protocol()->propPrivateMobilePhone );
+	removeProperty ( protocol()->propWorkPhone );
+	removeProperty ( protocol()->propWorkMobilePhone );
+
+	/*
+	* Set phone numbers. Note that if a mobile phone number
+	* is specified, it's assigned to the private mobile
+	* phone number property. This might not be the desired
+	* behavior for all users.
+	*/
+	XMPP::VCard::PhoneList::const_iterator phoneEnd = vCard.phoneList().end ();
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != phoneEnd; ++it)
+	{
+		XMPP::VCard::Phone phone = (*it);
+
+		if(phone.work)
+		{
+			setProperty ( protocol()->propWorkPhone, phone.number );
+		}
+		else
+			if(phone.fax)
+		{
+			setProperty ( protocol()->propPhoneFax, phone.number);
+		}
+		else
+			if(phone.cell)
+		{
+			setProperty ( protocol()->propPrivateMobilePhone, phone.number );
+		}
+		else
+			if(phone.home)
+		{
+			setProperty ( protocol()->propPrivatePhone, phone.number );
+		}
+
+	}
+
+	/*
+	* Set photo/avatar property.
+	*/
+	removeProperty( protocol()->propPhoto );
+
+	QImage contactPhoto;
+	QString fullJid =  mRosterItem.jid().full();
+	QString finalPhotoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
+	
+	// photo() is a QByteArray
+	if ( !vCard.photo().isEmpty() )
+	{
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
+
+		// QImage is used to save to disk in PNG later.
+		contactPhoto = QImage( vCard.photo() );
+	}
+	// Contact photo is a URI.
+	else if( !vCard.photoURI().isEmpty() )
+	{
+		QString tempPhotoPath = 0;
+		
+		// Downalod photo from URI.
+		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
+		{
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
+			return;
+		}
+
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
+
+		contactPhoto = QImage( tempPhotoPath );
+		
+		KIO::NetAccess::removeTempFile(  tempPhotoPath );
+	}
+
+	// Save the image to the disk, then set the property.
+	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
+	{
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
+		setProperty( protocol()->propPhoto, finalPhotoPath );
+	}
+
+}
+
+
 
 
 #include "jabberbasecontact.moc"

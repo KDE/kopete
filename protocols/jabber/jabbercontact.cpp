@@ -67,7 +67,7 @@
  * JabberContact constructor
  */
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
-	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , m_syncTimer(0L)
+	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is created  - " << this << endl;
 	// this contact is able to transfer files
@@ -121,7 +121,6 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
 	mRequestGoneEvent = false;
-	mDiscoDone = false;
 }
 
 JabberContact::~JabberContact()
@@ -425,6 +424,8 @@ void JabberContact::slotCheckVCard ()
 	{
 		if(transport()) //no need to disco if this is a legacy contact
 			mDiscoDone = true;
+		else if(!rosterItem().jid().node().isEmpty())
+			mDiscoDone = true; //contact with an @ are not transport for sure
 		else
 		{
 			mDiscoDone = true; //or it will happen twice, we don't want that.
@@ -472,6 +473,8 @@ void JabberContact::slotGetTimedVCard ()
 	{
 		if(transport()) //no need to disco if this is a legacy contact
 			mDiscoDone = true;
+		else if(!rosterItem().jid().node().isEmpty())
+			mDiscoDone = true; //contact with an @ are not transport for sure
 		else
 		{
 			//disco to see if it's not a transport
@@ -593,262 +596,6 @@ void JabberContact::slotGotLastActivity ()
 		{
 			setProperty( protocol()->propAwayMessage, task->message() );
 		}
-	}
-
-}
-
-void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
-{
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
-
-	// update vCard cache timestamp if this is not a temporary contact
-	if ( metaContact() && !metaContact()->isTemporary () )
-	{
-		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
-	}
-
-	/*
-	 * Set the nickname property.
-	 */
-	if ( !vCard.nickName().isEmpty () )
-	{
-		setProperty ( protocol()->propNickName, vCard.nickName () );
-	}
-	else
-	{
-		removeProperty ( protocol()->propNickName );
-	}
-
-	/**
-	 * Kopete does not allow a modification of the "full name"
-	 * property. However, some vCards specify only the full name,
-	 * some specify only first and last name.
-	 * Due to these inconsistencies, if first and last name don't
-	 * exist, it is attempted to parse the full name.
-	 */
-
-	// remove all properties first
-	removeProperty ( protocol()->propFirstName );
-	removeProperty ( protocol()->propLastName );
-	removeProperty ( protocol()->propFullName );
-
-	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
-	{
-		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
-		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).trimmed ();
-
-		setProperty ( protocol()->propFirstName, firstName );
-		setProperty ( protocol()->propLastName, lastName );
-	}
-	else
-	{
-		if ( !vCard.givenName().isEmpty () )
-			setProperty ( protocol()->propFirstName, vCard.givenName () );
-
-		if ( !vCard.familyName().isEmpty () )
-			setProperty ( protocol()->propLastName, vCard.familyName () );
-	}
-	if( !vCard.fullName().isEmpty() )
-		setProperty ( protocol()->propFullName, vCard.fullName() );
-
-	/* 
-	 * Set the general information 
-	 */
-	removeProperty( protocol()->propJid );
-	removeProperty( protocol()->propBirthday );
-	removeProperty( protocol()->propTimezone );
-	removeProperty( protocol()->propHomepage );
-
-	setProperty( protocol()->propJid, vCard.jid() );
-	
-	if( !vCard.bdayStr().isEmpty () )
-		setProperty( protocol()->propBirthday, vCard.bdayStr() );
-	if( !vCard.timezone().isEmpty () )
-		setProperty( protocol()->propTimezone, vCard.timezone() );
-	if( !vCard.url().isEmpty () )
-		setProperty( protocol()->propHomepage, vCard.url() );
-
-	/*
-	 * Set the work information.
-	 */
-	removeProperty( protocol()->propCompanyName );
-	removeProperty( protocol()->propCompanyDepartement );
-	removeProperty( protocol()->propCompanyPosition );
-	removeProperty( protocol()->propCompanyRole );
-	
-	if( !vCard.org().name.isEmpty() )
-		setProperty( protocol()->propCompanyName, vCard.org().name );
-	if( !vCard.org().unit.join(",").isEmpty() )
-		setProperty( protocol()->propCompanyDepartement, vCard.org().unit.join(",")) ;
-	if( !vCard.title().isEmpty() )
-		setProperty( protocol()->propCompanyPosition, vCard.title() );
-	if( !vCard.role().isEmpty() )
-		setProperty( protocol()->propCompanyRole, vCard.role() );
-
-	/*
-	 * Set the about information
-	 */
-	removeProperty( protocol()->propAbout );
-
-	if( !vCard.desc().isEmpty() )
-		setProperty( protocol()->propAbout, vCard.desc() );
-
-	
-	/*
-	 * Set the work and home addresses information
-	 */
-	removeProperty( protocol()->propWorkStreet );
-	removeProperty( protocol()->propWorkExtAddr );
-	removeProperty( protocol()->propWorkPOBox );
-	removeProperty( protocol()->propWorkCity );
-	removeProperty( protocol()->propWorkPostalCode );
-	removeProperty( protocol()->propWorkCountry );
-
-	removeProperty( protocol()->propHomeStreet );
-	removeProperty( protocol()->propHomeExtAddr );
-	removeProperty( protocol()->propHomePOBox );
-	removeProperty( protocol()->propHomeCity );
-	removeProperty( protocol()->propHomePostalCode );
-	removeProperty( protocol()->propHomeCountry );
-
-	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
-	{
-		XMPP::VCard::Address address = (*it);
-
-		if(address.work)
-		{
-			setProperty( protocol()->propWorkStreet, address.street );
-			setProperty( protocol()->propWorkExtAddr, address.extaddr );
-			setProperty( protocol()->propWorkPOBox, address.pobox );
-			setProperty( protocol()->propWorkCity, address.locality );
-			setProperty( protocol()->propWorkPostalCode, address.pcode );
-			setProperty( protocol()->propWorkCountry, address.country );
-		}
-		else
-		if(address.home)
-		{
-			setProperty( protocol()->propHomeStreet, address.street );
-			setProperty( protocol()->propHomeExtAddr, address.extaddr );
-			setProperty( protocol()->propHomePOBox, address.pobox );
-			setProperty( protocol()->propHomeCity, address.locality );
-			setProperty( protocol()->propHomePostalCode, address.pcode );
-			setProperty( protocol()->propHomeCountry, address.country );
-		}
-	}
-
-
-	/*
-	 * Delete emails first, they might not be present
-	 * in the vCard at all anymore.
-	 */
-	removeProperty ( protocol()->propEmailAddress );
-	removeProperty ( protocol()->propWorkEmailAddress );
-
-	/*
-	 * Set the home and work email information.
-	 */
-	XMPP::VCard::EmailList::const_iterator emailEnd = vCard.emailList().end ();
-	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != emailEnd; ++it)
-	{
-		XMPP::VCard::Email email = (*it);
-		
-		if(email.work)
-		{
-			if( !email.userid.isEmpty() )
-				setProperty ( protocol()->propWorkEmailAddress, email.userid );
-		}
-		else
-		if(email.home)
-		{	
-			if( !email.userid.isEmpty() )
-				setProperty ( protocol()->propEmailAddress, email.userid );
-		}
-	}
-
-	/*
-	 * Delete phone number properties first as they might have
-	 * been unset during an update and are not present in
-	 * the vCard at all anymore.
-	 */
-	removeProperty ( protocol()->propPrivatePhone );
-	removeProperty ( protocol()->propPrivateMobilePhone );
-	removeProperty ( protocol()->propWorkPhone );
-	removeProperty ( protocol()->propWorkMobilePhone );
-
-	/*
-	 * Set phone numbers. Note that if a mobile phone number
-	 * is specified, it's assigned to the private mobile
-	 * phone number property. This might not be the desired
-	 * behavior for all users.
-	 */
-	XMPP::VCard::PhoneList::const_iterator phoneEnd = vCard.phoneList().end ();
-	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != phoneEnd; ++it)
-	{
-		XMPP::VCard::Phone phone = (*it);
-
-		if(phone.work)
-		{
-			setProperty ( protocol()->propWorkPhone, phone.number );
-		}
-		else
-		if(phone.fax)
-		{
-			setProperty ( protocol()->propPhoneFax, phone.number);
-		}
-		else
-		if(phone.cell)
-		{
-			setProperty ( protocol()->propPrivateMobilePhone, phone.number );
-		}
-		else
-		if(phone.home)
-		{
-			setProperty ( protocol()->propPrivatePhone, phone.number );
-		}
-
-	}
-
-	/*
-	 * Set photo/avatar property.
-	 */
-	removeProperty( protocol()->propPhoto );
-
-	QImage contactPhoto;
-	QString fullJid =  mRosterItem.jid().full();
-	QString finalPhotoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
-	
-	// photo() is a QByteArray
-	if ( !vCard.photo().isEmpty() )
-	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
-
-		// QImage is used to save to disk in PNG later.
-		contactPhoto = QImage( vCard.photo() );
-	}
-	// Contact photo is a URI.
-	else if( !vCard.photoURI().isEmpty() )
-	{
-		QString tempPhotoPath = 0;
-		
-		// Downalod photo from URI.
-		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
-		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed." ) );
-			return;
-		}
-
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
-
-		contactPhoto = QImage( tempPhotoPath );
-		
-		KIO::NetAccess::removeTempFile(  tempPhotoPath );
-	}
-
-	// Save the image to the disk, then set the property.
-	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
-	{
-			kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
-			setProperty( protocol()->propPhoto, finalPhotoPath );
 	}
 
 }
@@ -1283,23 +1030,6 @@ void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*
 
 }
 
-void JabberContact::slotUserInfo ()
-{
-
-	if ( !account()->isConnected () )
-	{
-		account()->errorConnectFirst ();
-		return;
-	}
-	
-	// Update the vCard
-	//slotGetTimedVCard();
-
-	dlgJabberVCard *dlgVCard = new dlgJabberVCard ( account(), this, Kopete::UI::Global::mainWidget () );
-	
-	connect(dlgVCard, SIGNAL(informationChanged()), this, SLOT(slotSendVCard()));
-
-}
 
 void JabberContact::slotSendAuth ()
 {
@@ -1393,7 +1123,8 @@ void JabberContact::sendPresence ( const XMPP::Status status )
 	XMPP::Status newStatus = status;
 
 	// honour our priority
-	newStatus.setPriority ( account()->configGroup()->readEntry ( "Priority", 5 ) );
+	if(newStatus.isAvailable())
+		newStatus.setPriority ( account()->configGroup()->readEntry ( "Priority", 5 ) );
 
 	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
 
@@ -1458,8 +1189,7 @@ void JabberContact::slotStatusInvisible ()
 {
 
 	XMPP::Status status;
-	status.setShow ("away");
-	status.setIsInvisible ( true );
+	status.setIsAvailable( false );
 
 	sendPresence ( status );
 
@@ -1550,6 +1280,16 @@ void JabberContact::slotDiscoFinished( )
 				//name=ident.name;
 				
 				break;  //(we currently only support gateway)
+			}
+			else if (ident.category == "service")
+			{
+				//The ApaSMSAgent is reporting itself as service (instead of gateway) which is broken.
+				//we anyway support it.  See bug  127811
+				if(ident.type == "sms")
+				{
+					is_transport=true;
+					tr_type=ident.type;
+				}
 			}
 		}
  	}

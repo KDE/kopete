@@ -18,9 +18,10 @@
 
 #include "kopeteaccountmanager.h"
 
-#include <qapplication.h>
-#include <qregexp.h>
-#include <qtimer.h>
+#include <QtGui/QApplication>
+#include <QtCore/QRegExp>
+#include <QtCore/QTimer>
+#include <QtCore/QHash>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -31,9 +32,12 @@
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
+#include "kopetecontactlist.h"
 #include "kopetepluginmanager.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
+#include "kopetemetacontact.h"
+#include "kopetegroup.h"
 
 namespace Kopete {
 
@@ -41,7 +45,7 @@ static int compareAccountsByPriority( Account *a, Account *b )
 {
 	uint priority1 = a->priority();
 	uint priority2 = b->priority();
-	
+
 	if( a==b ) //two account are equal only if they are equal :-)
 		return 0;  // remember than an account can be only once on the list, but two account may have the same priority when loading
 	else if( priority1 > priority2 )
@@ -117,7 +121,7 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 	bool anyConnected = isAnyAccountConnected();
-	
+
 	foreach( Account *account ,  d->accounts )
 	{
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
@@ -183,7 +187,7 @@ Account* AccountManager::registerAccount( Account *account )
 {
 	if( !account || d->accounts.contains( account ) )
 		return account;
-		
+
 	if( account->accountId().isEmpty() )
 	{
 		account->deleteLater();
@@ -202,9 +206,9 @@ Account* AccountManager::registerAccount( Account *account )
 		}
 	}
 
-	d->accounts.append( account );	
+	d->accounts.append( account );
 	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
-	
+
 	// Connect to the account's status changed signal
 	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
 			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
@@ -260,6 +264,29 @@ void AccountManager::removeAccount( Account *account )
 
 	KConfigGroup *configgroup = account->configGroup();
 
+	// Clean up the contact list
+	const QHash<QString, Kopete::Contact*> contactList = account->contacts();
+	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contactList.constEnd();
+
+	for ( it = contactList.constBegin(); it != itEnd; ++it )
+	{
+		Contact* c = it.value();
+		MetaContact* mc = c->metaContact();
+		if ( mc == ContactList::self()->myself() )
+			continue;
+		mc->removeContact( c );
+		c->deleteLater();
+		if ( mc->contacts().count() == 0 ) //we can delete the metacontact
+		{
+			//get the first group and it's members
+			Group* group = mc->groups().first();
+			MetaContact::List groupMembers = group->members();
+			ContactList::self()->removeMetaContact( mc );
+			if ( groupMembers.count() == 1 && groupMembers.indexOf( mc ) != -1 )
+				ContactList::self()->removeGroup( group );
+		}
+	}
+
 	// Clean up the account list
 	d->accounts.removeAll( account );
 
@@ -288,12 +315,12 @@ void AccountManager::save()
 {
 	//kDebug( 14010 ) << k_funcinfo << endl;
 	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
-	
+
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
 		Account *a = it.next();
 		KConfigBase *config = a->configGroup();
-	
+
 		config->writeEntry( "Protocol", a->protocol()->pluginId() );
 		config->writeEntry( "AccountId", a->accountId() );
 	}
@@ -311,7 +338,7 @@ void AccountManager::load()
 	// Don't try to optimize duplicate calls out, the plugin queue is smart enough
 	// (and fast enough) to handle that without adding complexity here
 	KConfig *config = KGlobal::config();
-	QStringList accountGroups = config->groupList().grep( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
 		config->setGroup( *it );
@@ -334,7 +361,7 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and parse them if they are from this protocol
 	KConfig *config = KGlobal::config();
-	QStringList accountGroups = config->groupList().grep( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
 		config->setGroup( *it );
@@ -356,7 +383,7 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 
 		kDebug( 14010 ) << k_funcinfo <<
 			"Creating account for '" << accountId << "'" << endl;
-		
+
 		Account *account = 0L;
 		account = registerAccount( protocol->createNewAccount( accountId ) );
 		if ( !account )

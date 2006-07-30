@@ -54,7 +54,9 @@ class FileTransferInfo;
 }
 class Client;
 class YABEntry;
-
+namespace KIO{
+	class Job;
+}
 
 class YahooAccount : public Kopete::PasswordedAccount
 {
@@ -229,6 +231,7 @@ protected slots:
 	void slotFileTransferComplete( unsigned int id );
 	void slotFileTransferError( unsigned int id, int error, const QString &desc );
 	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );
+	void slotFileTransferResult( KIO::Job * );
 	void slotError( int level );
 
 private slots:
