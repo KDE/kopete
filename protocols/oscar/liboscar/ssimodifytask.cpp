@@ -220,10 +220,6 @@ void SSIModifyTask::handleContactAck()
 		if ( ackCode != 0x0000 )
 			freeIdOnError();
 		
-		
-		if ( ackCode != 0x0000 )
-			freeIdOnError();
-		
 		switch( ackCode )
 		{
 		case 0x0000:
