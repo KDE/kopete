@@ -1049,8 +1049,11 @@ void Client::determineDisconnection( int code, const QString& string )
     if ( !c )
         return;
 
-    if ( c->isSupported( 0x0002 ) )
+    if ( c->isSupported( 0x0002 ) ||
+         d->stage == ClientPrivate::StageOne ) //emit on login
+    {
         emit socketError( code, string );
+    }
 
     //connection is deleted. deleteLater() is used
     d->connections.remove( c );
