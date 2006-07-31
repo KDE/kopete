@@ -360,7 +360,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 											 message.subject (), Kopete::Message::Inbound,
 											 Kopete::Message::RichText, viewPlugin );
 		}
-		if ( !body.isEmpty () )
+		else if ( !body.isEmpty () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
