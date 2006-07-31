@@ -185,21 +185,28 @@ bool FileTransferTask::validFile()
 			emit error( KIO::ERR_COULD_NOT_READ, i18n("file is empty: ") + m_file.fileName() );
 			return 0;
 		}
-		if ( ! m_file.open( QIODevice::ReadOnly ) )
+		if ( ! QFileInfo( m_file ).isReadable() )
 		{
 			emit error( KIO::ERR_CANNOT_OPEN_FOR_READING, m_file.fileName() );
 			return 0;
 		}
 	}
 	else //receive
-	{
-		if ( ! m_file.open( QIODevice::WriteOnly ) )
+	{ //note: opening for writing clobbers the file
+		if ( m_file.exists() )
 		{
-			emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
-			return 0;
+			if ( ! QFileInfo( m_file ).isWritable() )
+			{ //it's there and readonly
+				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
+				return 0;
+			}
+		}
+		else if ( ! QFileInfo( QFileInfo( m_file ).path() ).isWritable() )
+		{ //not allowed to create it
+				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
+				return 0;
 		}
 	}
-	m_file.close();
 	return true;
 }
 
@@ -288,8 +295,6 @@ void FileTransferTask::socketError( int e )
 
 void FileTransferTask::socketRead()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-
 	switch( m_state )
 	{
 		case Receiving: //raw file data
@@ -364,11 +369,33 @@ void FileTransferTask::oftRead()
 	switch( data.type )
 	{
 	 case 0x101:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl
+			<< "\tmysize " <<  m_file.size() << endl
+			<< "\tsendersize " << m_oft.fileSize << endl;
 		//do we care about anything *in* the prompt?
 		//just the checksum.
 		m_oft.checksum = data.checksum;
 		m_oft.modTime = data.modTime;
+		if ( m_file.size() > 0 && m_file.size() <= m_oft.fileSize )
+		{
+			m_oft.sentChecksum = checksum();
+			if ( m_file.size() < m_oft.fileSize )
+			{ //could be a partial file
+				oftResume();
+				break;
+			}
+			else if ( m_oft.checksum == m_oft.sentChecksum )
+			{ //apparently we've already got it
+				//TODO: set bytesSent?
+				oftDone( 0 ); //don't redo checksum
+				emit fileComplete();
+				setSuccess( true );
+				break;
+			}
+
+			//if we didn't break then we need the whole file
+			m_oft.sentChecksum = 0xffff0000;
+		}
 		m_file.open( QIODevice::WriteOnly );
 		//TODO what if open failed?
 		oftAck();
@@ -391,15 +418,45 @@ void FileTransferTask::oftRead()
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
 		setSuccess( true );
 		break;
-	 case 0x205: //not supported yet
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl;
-		doCancel();
+	 case 0x205:
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl 
+			<< "\tfilesize\t" << data.fileSize << endl
+			<< "\tmodTime\t" << data.modTime << endl
+			<< "\tbytesSent\t" << data.bytesSent << endl
+			<< "\tflags\t" << data.flags << endl;
+		if ( checksum( data.bytesSent ) == data.sentChecksum )
+		//ok, we can resume this
+			m_oft.bytesSent = data.bytesSent;
+		oftRAgree();
 		break;
-	 case 0x106: //can't happen
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sender resume" << endl;
-		break;
-	 case 0x207: //can't happen
+	 case 0x106:{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sender resume" << endl
+			<< "\tfilesize\t" << data.fileSize << endl
+			<< "\tmodTime\t" << data.modTime << endl
+			<< "\tbytesSent\t" << data.bytesSent << endl
+			<< "\tflags\t" << data.flags << endl;
+		QIODevice::OpenMode flags;
+		if ( data.bytesSent ) //yay, we can resume
+			flags = QIODevice::WriteOnly | QIODevice::Append;
+		else
+		{ //they insist on sending the whole file :(
+			flags = QIODevice::WriteOnly;
+			m_oft.sentChecksum = 0xffff0000;
+			m_oft.bytesSent = 0;
+		}
+		m_file.open( flags ); 
+		//TODO what if open failed?
+		oftRAck();
+		break;}
+	 case 0x207:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "resume ack" << endl;
+		//TODO: validate file again, just to be sure
+		m_file.open( QIODevice::ReadOnly );
+		m_file.seek( m_oft.bytesSent );
+		//switch the timer over to the other function
+		m_timer.disconnect();
+		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
+		m_timer.start(0);
 		break;
 	 default:
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown type " << data.type << endl;
@@ -513,14 +570,39 @@ void FileTransferTask::oftAck()
 	m_state = Receiving;
 }
 
-void FileTransferTask::oftDone()
+void FileTransferTask::oftRAck()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	m_oft.type = 0x0207; //type = resume ack
+	sendOft();
+	m_state = Receiving;
+}
+
+void FileTransferTask::oftDone( bool check )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_oft.type = 0x0204; //type = done
-	m_oft.sentChecksum = checksum();
+	if ( check )
+		m_oft.sentChecksum = checksum();
 	if ( m_oft.sentChecksum != m_oft.checksum )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
 	m_oft.flags = 1;
+	sendOft();
+}
+
+void FileTransferTask::oftResume()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	m_oft.type = 0x0205; //type = resume
+	m_oft.bytesSent = m_file.size();
+	//TODO: what other vars need setting?
+	sendOft();
+}
+
+void FileTransferTask::oftRAgree()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	m_oft.type = 0x0106; //type = sender resume
 	sendOft();
 }
 
@@ -759,6 +841,8 @@ void FileTransferTask::sendReq()
 
 	if ( m_action == Receive )
 		msg.setReqNum( 2 );
+	else if ( m_proxy && (! client()->settings()->fileProxy() ) )
+		msg.setReqNum( 3 );
 	//TODO: could be 3
 
 	//we're done, send it off!
@@ -775,7 +859,8 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	return msg;
 }
 
-DWORD FileTransferTask::checksum()
+//FIXME: this is called more often than necessary. for large files that might be annoying.
+DWORD FileTransferTask::checksum( int max )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//code adapted from joscar's FileTransferChecksum
@@ -783,12 +868,15 @@ DWORD FileTransferTask::checksum()
 	m_file.open( QIODevice::ReadOnly );
 
 	char b;
-	while( m_file.getChar( &b ) ) {
+	while( max != 0 && m_file.getChar( &b ) ) {
 		DWORD oldcheck = check;
 
 		int val = ( b & 0xff ) << 8;
-		if ( m_file.getChar( &b ) )
+		if ( --max && m_file.getChar( &b ) )
+		{
 			val += ( b & 0xff );
+			--max;
+		}
 
 		check -= val;
 

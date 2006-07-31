@@ -87,7 +87,10 @@ private:
 	void sendOft();
 	void oftPrompt();
 	void oftAck();
-	void oftDone();
+	void oftDone( bool check = 1 );
+	void oftResume(); //receiver wants to resume partial file
+	void oftRAgree(); //sender agrees to resume
+	void oftRAck(); //resume ack
 	void parseReq( Buffer b );
 	void saveData(); //save incoming data to disk
 	void doConnect(); //attempt connection to other user (direct or redirect)
@@ -96,7 +99,8 @@ private:
 	void oftRead(); //handle incoming oft packet
 	void proxyRead(); //handle incoming proxy packet
 	void connectFailed(); //tries another method of connecting
-	DWORD checksum(); //return checksum of our file
+	DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
+					//XXX this does put an arbitrary limit on file size
 
 	OFT m_oft;
 	enum Action { Send, Receive };
