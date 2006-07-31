@@ -49,12 +49,210 @@ namespace XMPP
 		Private *d;
 	};
 
+	class Address
+	{
+	public:
+		typedef enum { Unknown, To, Cc, Bcc, ReplyTo, ReplyRoom, NoReply, OriginalFrom, OriginalTo } Type;
+
+		Address(Type type = Unknown, const Jid& jid = Jid());
+		Address(const QDomElement&);
+
+		const Jid& jid() const;
+		const QString& uri() const;
+		const QString& node() const;
+		const QString& desc() const;
+		bool delivered() const;
+		Type type() const;
+		
+		QDomElement toXml(Stanza&) const;
+		void fromXml(const QDomElement& t);
+
+		void setJid(const Jid &);
+		void setUri(const QString &);
+		void setNode(const QString &);
+		void setDesc(const QString &);
+		void setDelivered(bool);
+		void setType(Type);
+
+	private:
+		Jid v_jid;
+		QString v_uri, v_node, v_desc;
+		bool v_delivered;
+		Type v_type;
+	};
+	
 	typedef QList<Url> UrlList;
+	typedef QList<Address> AddressList;
 	typedef QMap<QString, QString> StringMap;
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
 			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
-                                           
-	class IRIS_EXPORT Message
+	typedef enum { StateNone, StateActive, StateComposing, StatePaused, 
+			StateInactive, StateGone } ChatState;
+	
+	class PubSubItem 
+	{
+	public:
+		PubSubItem();
+		PubSubItem(const QString& id, const QDomElement& payload);
+		const QString& id() const;
+		const QDomElement& payload() const;
+
+	private:
+		QString id_;
+		QDomElement payload_;
+	};
+
+	class MUCItem
+	{
+	public:
+		enum Affiliation { UnknownAffiliation, Outcast, NoAffiliation, Member, Admin, Owner };
+		enum Role { UnknownRole, NoRole, Visitor, Participant, Moderator };
+
+		MUCItem(Role = UnknownRole, Affiliation = UnknownAffiliation);
+		MUCItem(const QDomElement&);
+
+		void setNick(const QString&);
+		void setJid(const Jid&);
+		void setAffiliation(Affiliation);
+		void setRole(Role);
+		void setActor(const Jid&);
+		void setReason(const QString&);
+
+		const QString& nick() const;
+		const Jid& jid() const;
+		Affiliation affiliation() const;
+		Role role() const;
+		const Jid& actor() const;
+		const QString& reason() const;
+
+		void fromXml(const QDomElement&);
+		QDomElement toXml(QDomDocument&);
+
+		bool operator==(const MUCItem& o);
+
+	private:
+		QString nick_;
+		Jid jid_, actor_;
+		Affiliation affiliation_;
+		Role role_;	
+		QString reason_;
+	};
+	
+	class MUCInvite
+	{
+	public:
+		MUCInvite();
+		MUCInvite(const QDomElement&);
+		MUCInvite(const Jid& to, const QString& reason = QString());
+
+		const Jid& to() const;
+		void setTo(const Jid&);
+		const Jid& from() const;
+		void setFrom(const Jid&);
+		const QString& reason() const;
+		void setReason(const QString&);
+		bool cont() const;
+		void setCont(bool);
+
+
+		void fromXml(const QDomElement&);
+		QDomElement toXml(QDomDocument&) const;
+		bool isNull() const;
+		
+	private:
+		Jid to_, from_;
+		QString reason_, password_;
+		bool cont_;
+	};
+	
+	class MUCDecline
+	{
+	public:
+		MUCDecline();
+		MUCDecline(const Jid& to, const QString& reason);
+		MUCDecline(const QDomElement&);
+
+		const Jid& to() const;
+		void setTo(const Jid&);
+		const Jid& from() const;
+		void setFrom(const Jid&);
+		const QString& reason() const;
+		void setReason(const QString&);
+
+		void fromXml(const QDomElement&);
+		QDomElement toXml(QDomDocument&) const;
+		bool isNull() const;
+		
+	private:
+		Jid to_, from_;
+		QString reason_;
+	};
+	
+	class MUCDestroy
+	{
+	public:
+		MUCDestroy();
+		MUCDestroy(const QDomElement&);
+
+		const Jid& jid() const;
+		void setJid(const Jid&);
+		const QString& reason() const;
+		void setReason(const QString&);
+
+		void fromXml(const QDomElement&);
+		QDomElement toXml(QDomDocument&) const;
+		
+	private:
+		Jid jid_;
+		QString reason_;
+	};
+
+	class RosterExchangeItem
+	{
+	public:
+		enum Action { Add, Delete, Modify };
+
+		RosterExchangeItem(const Jid& jid, const QString& name = "", const QStringList& groups = QStringList(), Action = Add);
+		RosterExchangeItem(const QDomElement&);
+		
+		const Jid& jid() const;
+		Action action() const;
+		const QString& name() const;
+		const QStringList& groups() const;
+		bool isNull() const;
+
+		void setJid(const Jid&);
+		void setAction(Action);
+		void setName(const QString&);
+		void setGroups(const QStringList&);
+
+		QDomElement toXml(Stanza&) const;
+		void fromXml(const QDomElement&);
+		
+	private:
+		Jid jid_;
+		QString name_;
+		QStringList groups_;
+		Action action_;
+	};
+	typedef QList<RosterExchangeItem> RosterExchangeItems;
+
+	class HTMLElement
+	{
+	public:
+		HTMLElement();
+		HTMLElement(const QDomElement &body);
+
+		void setBody(const QDomElement &body);
+		const QDomElement& body() const;
+		QString toString(const QString &rootTagName = "body") const;
+		QString text() const;
+
+	private:
+		QDomElement body_;
+	};
+
+	class Message
 	{
 	public:
 		Message(const Jid &to="");
@@ -69,7 +267,6 @@ namespace XMPP
 		QString lang() const;
 		QString subject(const QString &lang="") const;
 		QString body(const QString &lang="") const;
-		QString xHTMLBody(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -80,13 +277,21 @@ namespace XMPP
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
-		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr = "");
 		void setThread(const QString &s);
 		void setError(const Stanza::Error &err);
 
+		// JEP-0060
+		const QString& pubsubNode() const;
+		const QList<PubSubItem>& pubsubItems() const;
+
 		// JEP-0091
 		QDateTime timeStamp() const;
-		void setTimeStamp(const QDateTime &ts);
+		void setTimeStamp(const QDateTime &ts, bool send = false);
+
+		// JEP-0071
+		HTMLElement html(const QString &lang="") const;
+		void setHTML(const HTMLElement &s, const QString &lang="");
+		bool containsHTML() const;
 
 		// JEP-0066
 		UrlList urlList() const;
@@ -100,10 +305,40 @@ namespace XMPP
 		bool containsEvents() const;
 		bool containsEvent(MsgEvent e) const;
 		void addEvent(MsgEvent e);
+
+		// JEP-0085
+		ChatState chatState() const;
+		void setChatState(ChatState);
  
 		// JEP-0027
 		QString xencrypted() const;
 		void setXEncrypted(const QString &s);
+		
+		// JEP-0033
+		AddressList addresses() const;
+		AddressList findAddresses(Address::Type t) const;
+		void addAddress(const Address &a);
+		void clearAddresses();
+		void setAddresses(const AddressList &list);
+
+		// JEP-144
+		const RosterExchangeItems& rosterExchangeItems() const;
+		void setRosterExchangeItems(const RosterExchangeItems&);
+
+		// JEP-172
+		void setNick(const QString&);
+		const QString& nick() const;
+
+		// MUC
+		void setMUCStatus(int);
+		bool hasMUCStatus() const;
+		int mucStatus() const;
+		void addMUCInvite(const MUCInvite&);
+		const QList<MUCInvite>& mucInvites() const;
+		void setMUCDecline(const MUCDecline&);
+		const MUCDecline& mucDecline() const;
+		const QString& mucPassword() const;
+		void setMUCPassword(const QString&);
 
 		// Obsolete invitation
 		QString invite() const;
@@ -162,6 +397,19 @@ namespace XMPP
 		const QString & capsNode() const;
 		const QString & capsVersion() const;
 		const QString & capsExt() const;
+		
+		bool isMUC() const;
+		bool hasMUCItem() const;
+		const MUCItem & mucItem() const;
+		bool hasMUCDestroy() const;
+		const MUCDestroy & mucDestroy() const;
+		bool hasMUCStatus() const;
+		int mucStatus() const;
+		const QString& mucPassword() const;
+		bool hasMUCHistory() const;
+		int mucHistoryMaxChars() const;
+		int mucHistoryMaxStanzas() const;
+		int mucHistorySeconds() const;
 
 		void setPriority(int);
 		void setShow(const QString &);
@@ -174,9 +422,21 @@ namespace XMPP
 		void setCapsNode(const QString&);
 		void setCapsVersion(const QString&);
 		void setCapsExt(const QString&);
+		
+		void setMUC();
+		void setMUCItem(const MUCItem&);
+		void setMUCDestroy(const MUCDestroy&);
+		void setMUCStatus(int);
+		void setMUCPassword(const QString&);
+		void setMUCHistory(int maxchars, int maxstanzas, int seconds);
 
 		void setXSigned(const QString &);
 		void setSongTitle(const QString &);
+
+		// JEP-153: VCard-based Avatars
+		const QString& photoHash() const;
+		void setPhotoHash(const QString&);
+		bool hasPhotoHash() const;
 
 	private:
 		int v_priority;
@@ -184,11 +444,21 @@ namespace XMPP
 		QDateTime v_timeStamp;
 		bool v_isAvailable;
 		bool v_isInvisible;
+		QString v_photoHash;
+		bool v_hasPhotoHash;
 
 		QString v_xsigned;
 		// gabber song extension
 		QString v_songTitle;
 		QString v_capsNode, v_capsVersion, v_capsExt;
+
+		// MUC
+		bool v_isMUC, v_hasMUCItem, v_hasMUCDestroy;
+		MUCItem v_mucItem;
+		MUCDestroy v_mucDestroy;
+		int v_mucStatus;
+		QString v_mucPassword;
+		int v_mucHistoryMaxChars, v_mucHistoryMaxStanzas, v_mucHistorySeconds;
 
 		int ecode;
 		QString estr;
@@ -283,13 +553,17 @@ namespace XMPP
 
 		QStringList list() const; // actual featurelist
 		void setList(const QStringList &);
+		void addFeature(const QString&);
 
 		// features
 		bool canRegister() const;
 		bool canSearch() const;
+		bool canMulticast() const;
 		bool canGroupchat() const;
 		bool canVoice() const;
 		bool canDisco() const;
+		bool canChatState() const;
+		bool canCommand() const;
 		bool canXHTML() const;
 		bool isGateway() const;
 		bool haveVCard() const;
@@ -303,6 +577,7 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
+			FID_AHCommand,
 			FID_Xhtml,
 
 			// private Psi actions
@@ -560,7 +835,7 @@ namespace XMPP
 
 		void rosterRequest();
 		void sendMessage(const Message &);
-		void sendSubscription(const Jid &, const QString &);
+		void sendSubscription(const Jid &, const QString &, const QString& nick = QString());
 		void setPresence(const Status &);
 
 		void debug(const QString &);
@@ -587,6 +862,9 @@ namespace XMPP
 		void setIdentity(DiscoItem::Identity);
 		DiscoItem::Identity identity();
 
+		void setFeatures(const Features& f);
+		const Features& features() const;
+
 		void addExtension(const QString& ext, const Features& f);
 		void removeExtension(const QString& ext);
 		const Features& extension(const QString& ext) const;
@@ -599,8 +877,8 @@ namespace XMPP
 		void setFileTransferEnabled(bool b);
 		FileTransferManager *fileTransferManager() const;
 
-		bool groupChatJoin(const QString &host, const QString &room, const QString &nick);
-		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString &password);
+		QString groupChatPassword(const QString& host, const QString& room) const;
+		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password = QString(), int maxchars = -1, int maxstanzas = -1, int seconds = -1, const Status& = Status());
 		void groupChatSetStatus(const QString &host, const QString &room, const Status &);
 		void groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &);
 		void groupChatLeave(const QString &host, const QString &room);
@@ -616,7 +894,7 @@ namespace XMPP
 		void resourceAvailable(const Jid &, const Resource &);
 		void resourceUnavailable(const Jid &, const Resource &);
 		void presenceError(const Jid &, int, const QString &);
-		void subscription(const Jid &, const QString &);
+		void subscription(const Jid &, const QString &, const QString &);
 		void messageReceived(const Message &);
 		void debugText(const QString &);
 		void xmlIncoming(const QString &);
@@ -642,7 +920,7 @@ namespace XMPP
 		void slotRosterRequestFinished();
 
 		// basic daemons
-		void ppSubscription(const Jid &, const QString &);
+		void ppSubscription(const Jid &, const QString &, const QString&);
 		void ppPresence(const Jid &, const Status &);
 		void pmMessage(const Message &);
 		void prRoster(const Roster &);

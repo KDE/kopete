@@ -146,8 +146,8 @@ public:
 		p.sasl = s;
 		init();
 		connect(p.sasl, SIGNAL(readyRead()), SLOT(sasl_readyRead()));
-		connect(p.sasl, SIGNAL(readyReadOutgoing(int)), SLOT(sasl_readyReadOutgoing(int)));
-		connect(p.sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
+		connect(p.sasl, SIGNAL(readyReadOutgoing()), SLOT(sasl_readyReadOutgoing()));
+		connect(p.sasl, SIGNAL(error()), SLOT(sasl_error()));
 	}
 
 #ifdef USE_TLSHANDLER
@@ -263,16 +263,17 @@ private slots:
 		readyRead(a);
 	}
 
-	void sasl_readyReadOutgoing(int plainBytes)
+	void sasl_readyReadOutgoing()
 	{
-		QByteArray a = p.sasl->readOutgoing();
+		int plainBytes;
+		QByteArray a = p.sasl->readOutgoing(&plainBytes);
 		layer.specifyEncoded(a.size(), plainBytes);
 		needWrite(a);
 	}
 
-	void sasl_error(int x)
+	void sasl_error()
 	{
-		error(x);
+		error(p.sasl->errorCode());
 	}
 
 #ifdef USE_TLSHANDLER

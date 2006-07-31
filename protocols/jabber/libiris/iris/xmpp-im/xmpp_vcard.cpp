@@ -43,7 +43,7 @@ static QDomElement textTag(QDomDocument *doc, const QString &name, const QString
 static QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 {
 	if(found)
-		*found = false;
+		*found = FALSE;
 
 	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
 		QDomElement i = n.toElement();
@@ -51,7 +51,7 @@ static QDomElement findSubTag(const QDomElement &e, const QString &name, bool *f
 			continue;
 		if(i.tagName().upper() == name.upper()) { // mblsha: ignore case when searching
 			if(found)
-				*found = true;
+				*found = TRUE;
 			return i;
 		}
 	}
@@ -90,7 +90,7 @@ using namespace XMPP;
 //----------------------------------------------------------------------------
 // VCard
 //----------------------------------------------------------------------------
-static QString image2type(const QByteArray &ba)
+QString image2type(const QByteArray &ba)
 {
 	QBuffer buf;
 	buf.setData(ba);
@@ -113,7 +113,7 @@ static QString image2type(const QByteArray &ba)
 	if ( format.toUpper() == "JPEG" )
 		return "image/jpeg";
 
-	qWarning(QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format).toAscii());
+	qWarning(QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format.isNull() ? QString("UNKNOWN") : format).toAscii());
 
 	return "image/unknown";
 }

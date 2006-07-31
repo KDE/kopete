@@ -41,7 +41,7 @@ namespace XMPP
 		enum { ErrRequest, ErrData };
 		enum { Idle, Requesting, WaitingForAccept, Active };
 		IBBConnection(IBBManager *);
-		virtual ~IBBConnection();
+		~IBBConnection();
 
 		void connectToJid(const Jid &peer, const QDomElement &comment);
 		void accept();

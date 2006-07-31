@@ -283,4 +283,6 @@ namespace XMPP
 	};
 }
 
+QString image2type(const QByteArray &ba);
+
 #endif

@@ -21,6 +21,7 @@
 #ifndef XMPP_H
 #define XMPP_H
 
+#include <QPair>
 #include <qobject.h>
 #include <qstring.h>
 #include <qhostaddress.h>
@@ -39,6 +40,8 @@ namespace QCA
 #ifndef CS_XMPP
 class ByteStream;
 #endif
+
+#include <QtCrypto> // For QCA::SASL::Params
 
 namespace XMPP
 {
@@ -274,28 +277,6 @@ namespace XMPP
 	{
 	public:
 		enum Kind { Message, Presence, IQ };
-		enum ErrorType { Cancel, Continue, Modify, Auth, Wait };
-		enum ErrorCond
-		{
-			BadRequest,
-			Conflict,
-			FeatureNotImplemented,
-			Forbidden,
-			InternalServerError,
-			ItemNotFound,
-			JidMalformed,
-			NotAllowed,
-			PaymentRequired,
-			RecipientUnavailable,
-			RegistrationRequired,
-			ServerNotFound,
-			ServerTimeout,
-			ResourceConstraint,
-			ServiceUnavailable,
-			SubscriptionRequired,
-			UndefinedCondition,
-			UnexpectedRequest
-		};
 
 		Stanza();
 		Stanza(const Stanza &from);
@@ -305,12 +286,51 @@ namespace XMPP
 		class Error
 		{
 		public:
+			enum ErrorType { Cancel = 1, Continue, Modify, Auth, Wait };
+			enum ErrorCond
+			{
+				BadRequest = 1,
+				Conflict,
+				FeatureNotImplemented,
+				Forbidden,
+				Gone,
+				InternalServerError,
+				ItemNotFound,
+				JidMalformed,
+				NotAcceptable,
+				NotAllowed,
+				NotAuthorized,
+				PaymentRequired,
+				RecipientUnavailable,
+				Redirect,
+				RegistrationRequired,
+				RemoteServerNotFound,
+				RemoteServerTimeout,
+				ResourceConstraint,
+				ServiceUnavailable,
+				SubscriptionRequired,
+				UndefinedCondition,
+				UnexpectedRequest
+			};
+
 			Error(int type=Cancel, int condition=UndefinedCondition, const QString &text="", const QDomElement &appSpec=QDomElement());
 
 			int type;
 			int condition;
 			QString text;
 			QDomElement appSpec;
+
+			int code() const;
+			bool fromCode(int code);
+
+			QPair<QString, QString> description() const;
+
+			QDomElement toXml(QDomDocument &doc, const QString &baseNS) const;
+			bool fromXml(const QDomElement &e, const QString &baseNS);
+		private:
+			class Private;
+			int originalCode;
+
 		};
 
 		bool isNull() const;
@@ -320,11 +340,8 @@ namespace XMPP
 
 		QDomDocument & doc() const;
 		QString baseNS() const;
-		QString xhtmlImNS() const;
-		QString xhtmlNS() const;
 		QDomElement createElement(const QString &ns, const QString &tagName);
 		QDomElement createTextElement(const QString &ns, const QString &tagName, const QString &text);
-		QDomElement createXHTMLElement(const QString &xHTML);
 		void appendChild(const QDomElement &e);
 
 		Kind kind() const;
@@ -377,8 +394,6 @@ namespace XMPP
 
 		virtual QDomDocument & doc() const=0;
 		virtual QString baseNS() const=0;
-		virtual QString xhtmlImNS() const=0;
-		virtual QString xhtmlNS() const=0;
 		virtual bool old() const=0;
 
 		virtual void close()=0;
@@ -486,8 +501,6 @@ namespace XMPP
 		// reimplemented
 		QDomDocument & doc() const;
 		QString baseNS() const;
-		QString xhtmlImNS() const;
-		QString xhtmlNS() const;
 		bool old() const;
 
 		void close();
@@ -529,12 +542,12 @@ namespace XMPP
 		void ss_tlsClosed();
 		void ss_error(int);
 
-		void sasl_clientFirstStep(const QString &mech, const QByteArray *clientInit);
+		void sasl_clientFirstStep(bool, const QByteArray&);
 		void sasl_nextStep(const QByteArray &stepData);
-		void sasl_needParams(bool user, bool authzid, bool pass, bool realm);
+		void sasl_needParams(const QCA::SASL::Params&);
 		void sasl_authCheck(const QString &user, const QString &authzid);
 		void sasl_authenticated();
-		void sasl_error(int);
+		void sasl_error();
 
 		void doNoop();
 		void doReadyRead();

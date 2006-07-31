@@ -21,11 +21,13 @@
 #ifndef SIMPLESASL_H
 #define SIMPLESASL_H
 
-#include "qcaprovider.h"
+namespace QCA {
+	class Provider;
+}
 
 namespace XMPP
 {
-	QCAProvider *createProviderSimpleSASL();
+	QCA::Provider* createProviderSimpleSASL();
 }
 
 #endif

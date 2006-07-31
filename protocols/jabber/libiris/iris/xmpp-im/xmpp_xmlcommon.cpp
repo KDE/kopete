@@ -146,17 +146,52 @@ QString queryNS(const QDomElement &e)
 	return "";
 }
 
-void getErrorFromElement(const QDomElement &e, int *code, QString *str)
+/**
+	\brief Extracts the error code and description from the stanza element.
+
+	This function finds the error element in the given stanza element \a e.
+
+	You need to provide the base namespace of the stream to which this stanza belongs to
+	(probably by using stream.baseNS() function).
+
+	The error description is either error text extracted from XML
+	or - if no text is found - the error name and description (separated by '\n') taken from RFC-3920
+	or - if the error is not defined in the RFC - the empty string.
+
+	Note: This function uses the Stanza::Error class,
+	so it may guess missing values as defined in JEP-0086.
+
+	\param e	the element representing stanza
+	\param baseNS	the base namespace of the stream
+	\param code	if not NULL, will be filled with numeric error code
+	\param str	if not NULL, will be filled with human readable error description
+*/
+
+void getErrorFromElement(const QDomElement &e, const QString &baseNS, int *code, QString *str)
 {
 	bool found;
 	QDomElement tag = findSubTag(e, "error", &found);
 	if(!found)
 		return;
 
+	XMPP::Stanza::Error err;
+	err.fromXml(tag, baseNS);
+
 	if(code)
-		*code = tag.attribute("code").toInt();
-	if(str)
-		*str = tagContent(tag);
+		*code = err.code();
+	if(str) {
+		if(!err.text.isEmpty()) {
+			*str = err.text;
+		}
+		else {
+			QPair<QString, QString> desc = err.description();
+			if(!desc.first.isEmpty())
+				*str = desc.first + ".\n" + desc.second;
+			else
+				*str = "";
+		}
+	}
+
 }
 
 //----------------------------------------------------------------------------
@@ -264,7 +299,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 /*QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 {
 	if(found)
-		*found = false;
+		*found = FALSE;
 
 	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
 		QDomElement i = n.toElement();
@@ -272,7 +307,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 			continue;
 		if(i.tagName() == name) {
 			if(found)
-				*found = true;
+				*found = TRUE;
 			return i;
 		}
 	}
@@ -283,7 +318,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 
 void readEntry(const QDomElement &e, const QString &name, QString *v)
 {
-	bool found = false;
+	bool found = FALSE;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -292,7 +327,7 @@ void readEntry(const QDomElement &e, const QString &name, QString *v)
 
 void readNumEntry(const QDomElement &e, const QString &name, int *v)
 {
-	bool found = false;
+	bool found = FALSE;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -301,16 +336,16 @@ void readNumEntry(const QDomElement &e, const QString &name, int *v)
 
 void readBoolEntry(const QDomElement &e, const QString &name, bool *v)
 {
-	bool found = false;
+	bool found = FALSE;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
-	*v = (tagContent(tag) == "true");
+	*v = (tagContent(tag) == "true") ? TRUE: FALSE;
 }
 
 void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
 {
-	bool found = false;
+	bool found = FALSE;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -325,7 +360,7 @@ void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
 
 void readRectEntry(const QDomElement &e, const QString &name, QRect *v)
 {
-	bool found = false;
+	bool found = FALSE;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -342,7 +377,7 @@ void readRectEntry(const QDomElement &e, const QString &name, QRect *v)
 
 void readColorEntry(const QDomElement &e, const QString &name, QColor *v)
 {
-	bool found = false;
+	bool found = FALSE;
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
@@ -378,7 +413,7 @@ void readBoolAttribute(QDomElement e, const QString &name, bool *v)
 {
 	if(e.hasAttribute(name)) {
 		QString s = e.attribute(name);
-		*v = (s == "true");
+		*v = (s == "true") ? TRUE: FALSE;
 	}
 }
 

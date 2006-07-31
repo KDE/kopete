@@ -19,12 +19,12 @@
  */
 
 #include "im.h"
-#include "protocol.h"
 
 #include <qmap.h>
 #include <qapplication.h>
 //Added by qt3to4:
 #include <QList>
+#include "protocol.h"
 
 #define NS_XML     "http://www.w3.org/XML/1998/namespace"
 
@@ -76,7 +76,7 @@ static QDateTime stamp2TS(const QString &ts)
 	return QDateTime(xd, xt);
 }
 
-/*static QString TS2stamp(const QDateTime &d)
+static QString TS2stamp(const QDateTime &d)
 {
 	QString str;
 
@@ -89,7 +89,7 @@ static QDateTime stamp2TS(const QString &ts)
 		d.time().second());
 
 	return str;
-}*/
+}
 
 namespace XMPP
 {
@@ -174,6 +174,775 @@ void Url::setDesc(const QString &desc)
 	d->desc = desc;
 }
 
+ //----------------------------------------------------------------------------
+// Address
+//----------------------------------------------------------------------------
+
+//! \brief Construct Address object with a given Type and Jid.
+//!
+//! This function will construct a Address object.
+//! \param Type - type (default: Unknown)
+//! \param Jid - specify address (default: empty string)
+//! \sa setType() setJid()
+Address::Address(Type type, const Jid & jid)
+: v_delivered(false)
+{
+	v_type = type;
+	v_jid = jid;
+	v_delivered = false;
+}
+
+Address::Address(const QDomElement& e)
+: v_delivered(false)
+{
+	fromXml(e);
+}
+
+void Address::fromXml(const QDomElement& t)
+{
+	setJid(t.attribute("jid"));
+	setUri(t.attribute("uri"));
+	setNode(t.attribute("node"));
+	setDesc(t.attribute("desc"));
+	setDelivered(t.attribute("delivered") == "true");
+	QString type = t.attribute("type");
+	if (type == "to")
+		setType(To);
+	else if (type == "cc")
+		setType(Cc);
+	else if (type == "bcc")
+		setType(Bcc);
+	else if (type == "replyto")
+		setType(ReplyTo);
+	else if (type == "replyroom")
+		setType(ReplyRoom);
+	else if (type == "noreply")
+		setType(NoReply);
+	else if (type == "ofrom")
+		setType(OriginalFrom);
+	else if (type == "oto")
+		setType(OriginalTo);
+}
+
+QDomElement Address::toXml(Stanza& s) const
+{
+	QDomElement e = s.createElement("http://jabber.org/protocol/address", "address");
+	if(!jid().isEmpty())
+		e.setAttribute("jid", jid().full());
+	if(!uri().isEmpty())
+		e.setAttribute("uri", uri());
+	if(!node().isEmpty())
+		e.setAttribute("node", node());
+	if(!desc().isEmpty())
+		e.setAttribute("desc", desc());
+	if(delivered())
+		e.setAttribute("delivered", "true");
+	switch (type()) {
+		case To:
+			e.setAttribute("type", "to");
+			break;
+		case Cc:
+			e.setAttribute("type", "cc");
+			break;
+		case Bcc:
+			e.setAttribute("type", "bcc");
+			break;
+		case ReplyTo: 
+			e.setAttribute("type", "replyto");
+			break;
+		case ReplyRoom: 
+			e.setAttribute("type", "replyroom");
+			break;
+		case NoReply: 
+			e.setAttribute("type", "noreply");
+			break;
+		case OriginalFrom:
+			e.setAttribute("type", "ofrom");
+			break;
+		case OriginalTo: 
+			e.setAttribute("type", "oto");
+			break;
+		case Unknown:
+			// Add nothing
+			break;
+	}
+	return e;
+}
+
+//! \brief Get Jid information.
+//!
+//! Returns jid information.
+const Jid& Address::jid() const
+{
+	return v_jid;
+}
+
+//! \brief Get Uri information.
+//!
+//! Returns desction of the Address.
+const QString& Address::uri() const
+{
+	return v_uri;
+}
+
+//! \brief Get Node information.
+//!
+//! Returns node of the Address.
+const QString& Address::node() const
+{
+	return v_node;
+}
+
+//! \brief Get Description information.
+//!
+//! Returns desction of the Address.
+const QString& Address::desc() const
+{
+	return v_desc;
+}
+
+//! \brief Get Delivered information.
+//!
+//! Returns delivered of the Address.
+bool Address::delivered() const
+{
+	return v_delivered;
+}
+
+//! \brief Get Type information.
+//!
+//! Returns type of the Address.
+Address::Type Address::type() const
+{
+	return v_type;
+}
+
+//! \brief Set Address information.
+//!
+//! Set jid information.
+//! \param jid - jid
+void Address::setJid(const Jid &jid)
+{
+	v_jid = jid;
+}
+
+//! \brief Set Address information.
+//!
+//! Set uri information.
+//! \param uri - url string (eg: http://psi.affinix.com/)
+void Address::setUri(const QString &uri)
+{
+	v_uri = uri;
+}
+
+//! \brief Set Node information.
+//!
+//! Set node information.
+//! \param node - node string
+void Address::setNode(const QString &node)
+{
+	v_node = node;
+}
+
+//! \brief Set Description information.
+//!
+//! Set description of the url.
+//! \param desc - description of url
+void Address::setDesc(const QString &desc)
+{
+	v_desc = desc;
+}
+
+//! \brief Set delivered information.
+//!
+//! Set delivered information.
+//! \param delivered - delivered flag
+void Address::setDelivered(bool delivered)
+{
+	v_delivered = delivered;
+}
+
+//! \brief Set Type information.
+//!
+//! Set type information.
+//! \param type - type
+void Address::setType(Type type)
+{
+	v_type = type;
+}
+
+//----------------------------------------------------------------------------
+// RosterExchangeItem
+//----------------------------------------------------------------------------
+
+RosterExchangeItem::RosterExchangeItem(const Jid& jid, const QString& name, const QStringList& groups, Action action) : jid_(jid), name_(name), groups_(groups), action_(action)
+{
+}
+
+RosterExchangeItem::RosterExchangeItem(const QDomElement& el) : action_(Add)
+{
+	fromXml(el);
+}
+
+const Jid& RosterExchangeItem::jid() const
+{
+	return jid_;
+}
+
+RosterExchangeItem::Action RosterExchangeItem::action() const
+{
+	return action_;
+}
+
+const QString& RosterExchangeItem::name() const
+{
+	return name_;
+}
+
+const QStringList& RosterExchangeItem::groups() const
+{
+	return groups_;
+}
+
+bool RosterExchangeItem::isNull() const
+{
+	return jid_.isEmpty();
+}
+
+void RosterExchangeItem::setJid(const Jid& jid)
+{
+	jid_ = jid;
+}
+
+void RosterExchangeItem::setAction(Action action)
+{
+	action_ = action;
+}
+
+void RosterExchangeItem::setName(const QString& name)
+{
+	name_ = name;
+}
+
+void RosterExchangeItem::setGroups(const QStringList& groups)
+{
+	groups_ = groups;
+}
+
+QDomElement RosterExchangeItem::toXml(Stanza& s) const
+{
+	QDomElement e = s.createElement("http://jabber.org/protocol/rosterx", "item");
+	e.setAttribute("jid", jid().full());
+	if (!name().isEmpty())
+		e.setAttribute("name", name());
+	switch(action()) {
+		case Add:
+			e.setAttribute("action","add");
+			break;
+		case Delete:
+			e.setAttribute("action","delete");
+			break;
+		case Modify:
+			e.setAttribute("action","modify");
+			break;
+	}
+	foreach(QString group, groups_) {
+		e.appendChild(s.createTextElement("http://jabber.org/protocol/rosterx", "group",group));
+	}
+	return e;
+}
+
+void RosterExchangeItem::fromXml(const QDomElement& e)
+{
+	setJid(e.attribute("jid"));
+	setName(e.attribute("name"));
+	if (e.attribute("action") == "delete") {
+		setAction(Delete);
+	}
+	else if (e.attribute("action") == "modify") {
+		setAction(Modify);
+	}
+	else {
+		setAction(Add);
+	}
+	QDomNodeList nl = e.childNodes();
+	for(int n = 0; n < nl.count(); ++n) {
+		QDomElement g = nl.item(n).toElement();
+		if (!g.isNull() && g.tagName() == "group") {
+			groups_ += g.text();
+		}
+	}
+}
+
+
+//----------------------------------------------------------------------------
+// MUCItem
+//----------------------------------------------------------------------------
+MUCItem::MUCItem(Role r, Affiliation a) : affiliation_(a), role_(r)
+{
+}
+
+MUCItem::MUCItem(const QDomElement& el) : affiliation_(UnknownAffiliation), role_(UnknownRole)
+{
+	fromXml(el);
+}
+
+void MUCItem::setNick(const QString& n)
+{
+	nick_ = n;
+}
+
+void MUCItem::setJid(const Jid& j)
+{
+	jid_ = j;
+}
+
+void MUCItem::setAffiliation(Affiliation a)
+{
+	affiliation_ = a;
+}
+
+void MUCItem::setRole(Role r)
+{
+	role_ = r;
+}
+
+void MUCItem::setActor(const Jid& a)
+{
+	actor_ = a;
+}
+
+void MUCItem::setReason(const QString& r)
+{
+	reason_ = r;
+}
+
+const QString& MUCItem::nick() const
+{
+	return nick_;
+}
+
+const Jid& MUCItem::jid() const
+{
+	return jid_;
+}
+
+MUCItem::Affiliation MUCItem::affiliation() const
+{
+	return affiliation_;
+}
+
+MUCItem::Role MUCItem::role() const
+{
+	return role_;
+}
+
+const Jid& MUCItem::actor() const
+{
+	return actor_;
+}
+
+const QString& MUCItem::reason() const
+{
+	return reason_;
+}
+
+void MUCItem::fromXml(const QDomElement& e)
+{
+	if (e.tagName() != "item")
+		return;
+
+	jid_ = Jid(e.attribute("jid"));
+	nick_ = e.attribute("nick");
+	
+	// Affiliation
+	if (e.attribute("affiliation") == "owner") {
+		affiliation_ = Owner;
+	}
+	else if (e.attribute("affiliation") == "admin") {
+		affiliation_ = Admin;
+	}
+	else if (e.attribute("affiliation") == "member") {
+		affiliation_ = Member;
+	}
+	else if (e.attribute("affiliation") == "outcast") {
+		affiliation_ = Outcast;
+	}
+	else if (e.attribute("affiliation") == "none") {
+		affiliation_ = NoAffiliation;
+	}
+	
+	// Role
+	if (e.attribute("role") == "moderator") {
+		role_ = Moderator;
+	}
+	else if (e.attribute("role") == "participant") {
+		role_ = Participant;
+	}
+	else if (e.attribute("role") == "visitor") {
+		role_ = Visitor;
+	}
+	else if (e.attribute("role") == "none") {
+		role_ = NoRole;
+	}
+	
+	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
+		QDomElement i = n.toElement();
+		if(i.isNull())
+			continue;
+
+		if (i.tagName() == "actor") 
+			actor_ = Jid(i.attribute("jid"));
+		else if (i.tagName() == "reason") 
+			reason_ = i.text();
+	}
+}
+
+QDomElement MUCItem::toXml(QDomDocument& d)
+{
+	QDomElement e = d.createElement("item");
+	
+	if (!nick_.isEmpty())
+		e.setAttribute("nick",nick_);
+
+	if (!jid_.isEmpty())
+		e.setAttribute("jid",jid_.full());
+	
+	if (!reason_.isEmpty())
+		e.appendChild(textTag(&d,"reason",reason_));
+	
+	switch (affiliation_) {
+		case NoAffiliation:
+			e.setAttribute("affiliation","none");
+			break;
+		case Owner:
+			e.setAttribute("affiliation","owner");
+			break;
+		case Admin:
+			e.setAttribute("affiliation","admin");
+			break;
+		case Member:
+			e.setAttribute("affiliation","member");
+			break;
+		case Outcast:
+			e.setAttribute("affiliation","outcast");
+			break;
+		default:
+			break;
+	}
+	switch (role_) {
+		case NoRole:
+			e.setAttribute("role","none");
+			break;
+		case Moderator:
+			e.setAttribute("role","moderator");
+			break;
+		case Participant:
+			e.setAttribute("role","participant");
+			break;
+		case Visitor:
+			e.setAttribute("role","visitor");
+			break;
+		default:
+			break;
+	}
+	
+	return e;
+}
+
+bool MUCItem::operator==(const MUCItem& o)
+{
+	return !nick_.compare(o.nick_) && ((!jid_.isValid() && !o.jid_.isValid()) || jid_.compare(o.jid_,true)) && ((!actor_.isValid() && !o.actor_.isValid()) || actor_.compare(o.actor_,true)) && affiliation_ == o.affiliation_ && role_ == o.role_ && !reason_.compare(o.reason_);
+}
+
+//----------------------------------------------------------------------------
+// MUCInvite
+//----------------------------------------------------------------------------
+
+MUCInvite::MUCInvite() : cont_(false)
+{
+}
+
+MUCInvite::MUCInvite(const Jid& to, const QString& reason) : to_(to), reason_(reason), cont_(false)
+{
+}
+
+MUCInvite::MUCInvite(const QDomElement& e) : cont_(false)
+{
+	fromXml(e);
+}
+
+const Jid& MUCInvite::from() const
+{
+	return from_;
+}
+
+void MUCInvite::setFrom(const Jid& j)
+{
+	from_ = j;
+}
+
+const Jid& MUCInvite::to() const
+{
+	return to_;
+}
+
+void MUCInvite::setTo(const Jid& j)
+{
+	to_ = j;
+}
+
+const QString& MUCInvite::reason() const
+{
+	return reason_;
+}
+
+void MUCInvite::setReason(const QString& r)
+{
+	reason_ = r;
+}
+
+bool MUCInvite::cont() const
+{
+	return cont_;
+}
+
+void MUCInvite::setCont(bool b)
+{
+	cont_ = b;
+}
+
+void MUCInvite::fromXml(const QDomElement& e)
+{
+	if (e.tagName() != "invite")
+		return;
+	
+	from_ = e.attribute("from");
+	to_ = e.attribute("to");
+	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
+		QDomElement i = n.toElement();
+		if(i.isNull())
+			continue;
+
+		if (i.tagName() == "continue")
+		   cont_ = true;	
+		else if (i.tagName() == "reason") 
+			reason_ = i.text();
+	}
+}
+
+QDomElement MUCInvite::toXml(QDomDocument& d) const
+{
+	QDomElement invite = d.createElement("invite");
+	if (!to_.isEmpty()) {
+		invite.setAttribute("to",to_.full());
+	}
+	if (!from_.isEmpty()) {
+		invite.setAttribute("from",from_.full());
+	}
+	if (!reason_.isEmpty()) {
+		invite.appendChild(textTag(&d, "reason", reason_));
+	}
+	if (cont_) {
+		invite.appendChild(d.createElement("continue"));
+	}
+	return invite;
+}
+
+bool MUCInvite::isNull() const
+{
+	return to_.isEmpty() && from_.isEmpty();
+}
+
+//----------------------------------------------------------------------------
+// MUCDecline
+//----------------------------------------------------------------------------
+
+MUCDecline::MUCDecline()
+{
+}
+
+MUCDecline::MUCDecline(const QDomElement& e) 
+{
+	fromXml(e);
+}
+
+const Jid& MUCDecline::from() const
+{
+	return from_;
+}
+
+void MUCDecline::setFrom(const Jid& j)
+{
+	from_ = j;
+}
+
+const Jid& MUCDecline::to() const
+{
+	return to_;
+}
+
+void MUCDecline::setTo(const Jid& j)
+{
+	to_ = j;
+}
+
+const QString& MUCDecline::reason() const
+{
+	return reason_;
+}
+
+void MUCDecline::setReason(const QString& r)
+{
+	reason_ = r;
+}
+
+void MUCDecline::fromXml(const QDomElement& e)
+{
+	if (e.tagName() != "decline")
+		return;
+	
+	from_ = e.attribute("from");
+	to_ = e.attribute("to");
+	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
+		QDomElement i = n.toElement();
+		if(i.isNull())
+			continue;
+
+		if (i.tagName() == "reason") 
+			reason_ = i.text();
+	}
+}
+
+QDomElement MUCDecline::toXml(QDomDocument& d) const
+{
+	QDomElement decline = d.createElement("decline");
+	if (!to_.isEmpty()) {
+		decline.setAttribute("to",to_.full());
+	}
+	if (!from_.isEmpty()) {
+		decline.setAttribute("from",from_.full());
+	}
+	if (!reason_.isEmpty()) {
+		decline.appendChild(textTag(&d, "reason", reason_));
+	}
+	return decline;
+}
+
+bool MUCDecline::isNull() const
+{
+	return to_.isEmpty() && from_.isEmpty();
+}
+
+//----------------------------------------------------------------------------
+// MUCDestroy
+//----------------------------------------------------------------------------
+
+MUCDestroy::MUCDestroy()
+{
+}
+
+MUCDestroy::MUCDestroy(const QDomElement& e) 
+{
+	fromXml(e);
+}
+
+const Jid& MUCDestroy::jid() const
+{
+	return jid_;
+}
+
+void MUCDestroy::setJid(const Jid& j)
+{
+	jid_ = j;
+}
+
+const QString& MUCDestroy::reason() const
+{
+	return reason_;
+}
+
+void MUCDestroy::setReason(const QString& r)
+{
+	reason_ = r;
+}
+
+void MUCDestroy::fromXml(const QDomElement& e)
+{
+	if (e.tagName() != "destroy")
+		return;
+	
+	jid_ = e.attribute("jid");
+	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
+		QDomElement i = n.toElement();
+		if(i.isNull())
+			continue;
+
+		if (i.tagName() == "reason") 
+			reason_ = i.text();
+	}
+}
+
+QDomElement MUCDestroy::toXml(QDomDocument& d) const
+{
+	QDomElement destroy = d.createElement("destroy");
+	if (!jid_.isEmpty()) {
+		destroy.setAttribute("jid",jid_.full());
+	}
+	if (!reason_.isEmpty()) {
+		destroy.appendChild(textTag(&d, "reason", reason_));
+	}
+	return destroy;
+}
+
+//----------------------------------------------------------------------------
+// HTMLElement
+//----------------------------------------------------------------------------
+HTMLElement::HTMLElement() 
+{
+}
+
+HTMLElement::HTMLElement(const QDomElement &body) : body_(body) {}
+
+void HTMLElement::setBody(const QDomElement &body)
+{
+	body_ = body;
+}
+
+const QDomElement& HTMLElement::body() const
+{
+	return body_;
+}
+
+/**
+ * Returns the string reperesentation of the HTML element.
+ * By default, this is of the form <body ...>...</body>, but the
+ * root tag can be modified using a parameter.
+ *
+ * \param rootTagName the tagname of the root element to use.
+ */
+QString HTMLElement::toString(const QString &rootTagName) const
+{
+	// create a copy of the body_ node,
+	// get rid of the xmlns attribute and
+	// change the root node name
+	QDomElement e = body_.cloneNode().toElement();
+	e.setTagName(rootTagName);
+
+	// instead of using:
+	//	QDomDocument msg;
+	//	msg.appendChild(e);
+	//	return msg.toString();
+	// call Stream::xmlToString, to remove unwanted namespace attributes
+	return(Stream::xmlToString(e));
+}
+
+QString HTMLElement::text() const
+{
+	return body_.text();
+}
+
+
 //----------------------------------------------------------------------------
 // Message
 //----------------------------------------------------------------------------
@@ -183,17 +952,30 @@ public:
 	Jid to, from;
 	QString id, type, lang;
 
-	StringMap subject, body, xHTMLBody;
-
+	StringMap subject, body;
 	QString thread;
 	Stanza::Error error;
 
 	// extensions
 	QDateTime timeStamp;
+	bool timeStampSend;
 	UrlList urlList;
+	AddressList addressList;
+	RosterExchangeItems rosterExchangeItems;
 	QList<MsgEvent> eventList;
+	QString pubsubNode;
+	QList<PubSubItem> pubsubItems;
 	QString eventId;
 	QString xencrypted, invite;
+	ChatState chatState;
+	QString nick;
+	QMap<QString,HTMLElement> htmlElements;
+	
+	int mucStatus;
+	QList<MUCInvite> mucInvites;
+	MUCDecline mucDecline;
+	QString mucPassword;
+	int mucHistoryMaxChars, mucHistoryMaxStanzas, mucHistorySeconds;
 
 	bool spooled, wasEncrypted;
 };
@@ -207,11 +989,14 @@ Message::Message(const Jid &to)
 	d = new Private;
 	d->to = to;
 	d->spooled = false;
+	d->timeStampSend = false;
 	d->wasEncrypted = false;
 	/*d->flag = false;
 	d->spooled = false;
 	d->wasEncrypted = false;
 	d->errorCode = -1;*/
+	d->chatState = StateNone;
+	d->mucStatus = -1;
 }
 
 //! \brief Constructs a copy of Message object
@@ -280,12 +1065,39 @@ QString Message::subject(const QString &lang) const
 //! \note Richtext is in Qt's richtext format and not in xhtml.
 QString Message::body(const QString &lang) const
 {
-	return d->body[lang];
+	if (d->body.empty())
+		return "";
+	else if (d->body.contains(lang))
+		return d->body[lang];
+	else
+		return d->body.begin().value();
 }
 
-QString Message::xHTMLBody(const QString &lang) const
+//! \brief Return xhtml body.
+//!
+//! This function will return the richtext version of the body, if
+//! available.
+//! \param lang - body language
+//! \note The return string is in xhtml
+HTMLElement Message::html(const QString &lang) const
 {
-	return d->xHTMLBody[lang];
+	if(containsHTML()) {
+		if (d->htmlElements.contains(lang))
+			return d->htmlElements[lang];
+		else
+			return d->htmlElements.begin().value();
+	}
+	else
+		return HTMLElement();
+}
+
+//! \brief Tells if message has xhtml-im items.
+//!
+//! Returns true if there is at least one xhtml-im body
+//! in the message.
+bool Message::containsHTML() const
+{
+	return !(d->htmlElements.isEmpty());
 }
 
 QString Message::thread() const
@@ -349,14 +1161,17 @@ void Message::setSubject(const QString &s, const QString &lang)
 void Message::setBody(const QString &s, const QString &lang)
 {
 	d->body[lang] = s;
+	//d->flag = false;
 }
 
-void Message::setXHTMLBody(const QString &s, const QString &lang, const QString &attr)
+//! \brief Set xhtml body
+//!
+//! \param s - body node
+//! \param lang - body language
+//! \note The body should be in xhtml.
+void Message::setHTML(const HTMLElement &e, const QString &lang)
 {
-	//ugly but needed if s is not a node but a list of leaf
-
-	QString content = "<body xmlns='" + QString(NS_XHTML) + "' "+attr+" >\n" + s +"\n</body>";
-	d->xHTMLBody[lang] = content;
+	d->htmlElements[lang] = e;
 }
 
 void Message::setThread(const QString &s)
@@ -369,13 +1184,24 @@ void Message::setError(const Stanza::Error &err)
 	d->error = err;
 }
 
+const QString& Message::pubsubNode() const
+{
+	return d->pubsubNode;
+}
+
+const QList<PubSubItem>& Message::pubsubItems() const
+{
+	return d->pubsubItems;
+}
+
 QDateTime Message::timeStamp() const
 {
 	return d->timeStamp;
 }
 
-void Message::setTimeStamp(const QDateTime &ts)
+void Message::setTimeStamp(const QDateTime &ts, bool send)
 {
+	d->timeStampSend = send;
 	d->timeStamp = ts;
 }
 
@@ -407,6 +1233,54 @@ void Message::setUrlList(const UrlList &list)
 	d->urlList = list;
 }
 
+//! \brief Return list of addresses attached to message.
+AddressList Message::addresses() const
+{
+	return d->addressList;
+}
+
+//! \brief Add Address to the address list.
+//!
+//! \param address - address to append
+void Message::addAddress(const Address &a)
+{
+	d->addressList += a;
+}
+
+//! \brief clear out the address list.
+void Message::clearAddresses()
+{
+	d->addressList.clear();
+}
+
+AddressList Message::findAddresses(Address::Type t) const
+{
+	AddressList matches;
+	foreach(Address a, d->addressList) {
+		if (a.type() == t)
+			matches.append(a);
+	}
+	return matches;
+}
+
+//! \brief Set addresses to send
+//!
+//! \param list - list of addresses to send
+void Message::setAddresses(const AddressList &list)
+{
+	d->addressList = list;
+}
+
+const RosterExchangeItems& Message::rosterExchangeItems() const
+{
+	return d->rosterExchangeItems;
+}
+
+void Message::setRosterExchangeItems(const RosterExchangeItems& items)
+{
+	d->rosterExchangeItems = items;
+}
+
 QString Message::eventId() const
 {
 	return d->eventId;
@@ -436,6 +1310,16 @@ void Message::addEvent(MsgEvent e)
 	}
 }
 
+ChatState Message::chatState() const
+{
+	return d->chatState;
+}
+
+void Message::setChatState(ChatState state)
+{
+	d->chatState = state;
+}
+
 QString Message::xencrypted() const
 {
 	return d->xencrypted;
@@ -446,6 +1330,51 @@ void Message::setXEncrypted(const QString &s)
 	d->xencrypted = s;
 }
 
+bool Message::hasMUCStatus() const
+{
+	return d->mucStatus != -1;
+}
+
+int Message::mucStatus() const
+{
+	return d->mucStatus;
+}
+
+void Message::setMUCStatus(int i)
+{
+	d->mucStatus = i;
+}
+
+void Message::addMUCInvite(const MUCInvite& i)
+{
+	d->mucInvites += i;
+}
+
+const QList<MUCInvite>& Message::mucInvites() const
+{
+	return d->mucInvites;
+}
+
+void Message::setMUCDecline(const MUCDecline& de)
+{
+	d->mucDecline = de;
+}
+
+const MUCDecline& Message::mucDecline() const
+{
+	return d->mucDecline;
+}
+
+const QString& Message::mucPassword() const
+{
+	return d->mucPassword;
+}
+
+void Message::setMUCPassword(const QString& p) 
+{
+	d->mucPassword = p;
+}
+
 QString Message::invite() const
 {
 	return d->invite;
@@ -454,6 +1383,16 @@ QString Message::invite() const
 void Message::setInvite(const QString &s)
 {
 	d->invite = s;
+}
+
+const QString& Message::nick() const
+{
+	return d->nick;
+}
+
+void Message::setNick(const QString& n)
+{
+	d->nick = n;
 }
 
 bool Message::spooled() const
@@ -505,28 +1444,16 @@ Stanza Message::toStanza(Stream *stream) const
 			s.appendChild(e);
 		}
 	}
-	if ( !d->xHTMLBody.isEmpty()) {
-		QDomElement parent = s.createElement(s.xhtmlImNS(), "html");
-		for(it = d->xHTMLBody.begin(); it != d->xHTMLBody.end(); ++it) {
-			const QString &str = it.data();
-			if(!str.isEmpty()) {
-				QDomElement child = s.createXHTMLElement(str);
-				if(!it.key().isEmpty())
-					child.setAttributeNS(NS_XML, "xml:lang", it.key());
-				parent.appendChild(child);
-			}
-		}
-		s.appendChild(parent);
-	}
+
 	if(d->type == "error")
 		s.setError(d->error);
 
 	// timestamp
-	/*if(!d->timeStamp.isNull()) {
+	if(d->timeStampSend && !d->timeStamp.isNull()) {
 		QDomElement e = s.createElement("jabber:x:delay", "x");
 		e.setAttribute("stamp", TS2stamp(d->timeStamp));
 		s.appendChild(e);
-	}*/
+	}
 
 	// urls
 	for(QList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
@@ -584,21 +1511,84 @@ Stanza Message::toStanza(Stream *stream) const
 					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
 						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
 					break;
-			}
-		}
+  			}
+  		}
 		if(need_x_event)  //we don't need to have the (empty) x:event element if this is only <gone> or <inactive>
 			s.appendChild(x);
 	}
-		
+
+	// chat state
+	QString chatStateNS = "http://jabber.org/protocol/chatstates";
+	if (d->chatState != StateNone) {
+		switch(d->chatState) {
+			case StateActive:
+				s.appendChild(s.createElement(chatStateNS, "active"));
+				break;
+			case StateComposing:
+				s.appendChild(s.createElement(chatStateNS, "composing"));
+				break;
+			case StatePaused:
+				s.appendChild(s.createElement(chatStateNS, "paused"));
+				break;
+			case StateInactive:
+				s.appendChild(s.createElement(chatStateNS, "inactive"));
+				break;
+			case StateGone:
+				s.appendChild(s.createElement(chatStateNS, "gone"));
+				break;
+			default: 
+				break;
+		}
+	}
 
 	// xencrypted
 	if(!d->xencrypted.isEmpty())
 		s.appendChild(s.createTextElement("jabber:x:encrypted", "x", d->xencrypted));
 
+	// addresses
+	if (!d->addressList.isEmpty()) {
+		QDomElement as = s.createElement("http://jabber.org/protocol/address","addresses");
+		foreach(Address a, d->addressList) {
+			as.appendChild(a.toXml(s));
+		}
+		s.appendChild(as);
+	}
+	
+	// roster item exchange
+	if (!d->rosterExchangeItems.isEmpty()) {
+		QDomElement rx = s.createElement("http://jabber.org/protocol/rosterx","x");
+		foreach(RosterExchangeItem r, d->rosterExchangeItems) {
+			rx.appendChild(r.toXml(s));
+		}
+		s.appendChild(rx);
+	}
+
 	// invite
 	if(!d->invite.isEmpty()) {
 		QDomElement e = s.createElement("jabber:x:conference", "x");
 		e.setAttribute("jid", d->invite);
+		s.appendChild(e);
+	}
+
+	// nick
+	if(!d->nick.isEmpty()) {
+		s.appendChild(s.createTextElement("http://jabber.org/protocol/nick", "nick", d->nick));
+	}
+	
+	// muc
+	if(!d->mucInvites.isEmpty()) {
+		QDomElement e = s.createElement("http://jabber.org/protocol/muc#user","x");
+		foreach(MUCInvite i, d->mucInvites) {
+			e.appendChild(i.toXml(s.doc()));
+		}
+		if (!d->mucPassword.isEmpty()) {
+			e.appendChild(s.createTextElement("http://jabber.org/protocol/muc#user","password",d->mucPassword));
+		}
+		s.appendChild(e);
+	}
+	else if(!d->mucDecline.isNull()) {
+		QDomElement e = s.createElement("http://jabber.org/protocol/muc#user","x");
+		e.appendChild(d->mucDecline.toXml(s.doc()));
 		s.appendChild(e);
 	}
 
@@ -618,6 +1608,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 
 	d->subject.clear();
 	d->body.clear();
+	d->htmlElements.clear();
 	d->thread = QString();
 	d->eventList.clear();
 
@@ -641,17 +1632,21 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				else if(e.tagName() == "thread")
 					d->thread = e.text();
 			}
-			else if (e.namespaceURI() == s.xhtmlImNS()) {
-				 if (e.tagName() == "html") {
-					QDomNodeList htmlNL= e.childNodes();
-					for (unsigned int x = 0; x < htmlNL.count(); x++) {
-						QDomElement i = htmlNL.item(x).toElement();
-
-						if (i.tagName() == "body") {
-							QDomDocument RichText;
-							QString lang = i.attributeNS(NS_XML, "lang", "");
-							RichText.appendChild(i);
-							d-> xHTMLBody[lang] = RichText.toString();
+			else if(e.tagName() == "event" && e.namespaceURI() == "http://jabber.org/protocol/pubsub#event") {
+				for(QDomNode enode = e.firstChild(); !enode.isNull(); enode = enode.nextSibling()) {
+					QDomElement eel = enode.toElement();
+					if (eel.tagName() == "items") {
+						d->pubsubNode = eel.attribute("node");
+						for(QDomNode inode = eel.firstChild(); !inode.isNull(); inode = inode.nextSibling()) {
+							QDomElement o = inode.toElement();
+							if (o.tagName() == "item") {
+								for(QDomNode j = o.firstChild(); !j.isNull(); j = j.nextSibling()) {
+									QDomElement item = j.toElement();
+									if (!item.isNull()) {
+										d->pubsubItems += PubSubItem(o.attribute("id"),item);
+									}
+								}
+							}
 						}
 					}
 				}
@@ -661,7 +1656,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				if(e.tagName() == "active")
 				{
 					//like in JEP-0022  we let the client know that we can receive ComposingEvent
-					// (we can do that according to  4.6  of the JEP-0085)
+					// (we can do that according to  §4.6  of the JEP-0085)
 					d->eventList += ComposingEvent;
 					d->eventList += InactiveEvent;
 					d->eventList += GoneEvent;
@@ -691,6 +1686,19 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 
 	if(s.type() == "error")
 		d->error = s.error();
+
+	// xhtml-im
+	nl = root.elementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html");
+	if (nl.count()) {
+		nl = nl.item(0).childNodes();
+		for(n = 0; n < nl.count(); ++n) {
+			QDomElement e = nl.item(n).toElement();
+			if (e.tagName() == "body" && e.namespaceURI() == "http://www.w3.org/1999/xhtml") {
+				QString lang = e.attributeNS(NS_XML, "lang", "");
+				d->htmlElements[lang] = e;
+			}
+		}
+	}
 
 	// timestamp
 	QDomElement t = root.elementsByTagNameNS("jabber:x:delay", "x").item(0).toElement();
@@ -737,12 +1745,55 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 			d->eventList += CancelEvent;
 	}
 
+	// Chat states
+	QString chatStateNS = "http://jabber.org/protocol/chatstates";
+	t = root.elementsByTagNameNS(chatStateNS, "active").item(0).toElement();
+	if(!t.isNull())
+		d->chatState = StateActive;
+	t = root.elementsByTagNameNS(chatStateNS, "composing").item(0).toElement();
+	if(!t.isNull())
+		d->chatState = StateComposing;
+	t = root.elementsByTagNameNS(chatStateNS, "paused").item(0).toElement();
+	if(!t.isNull())
+		d->chatState = StatePaused;
+	t = root.elementsByTagNameNS(chatStateNS, "inactive").item(0).toElement();
+	if(!t.isNull())
+		d->chatState = StateInactive;
+	t = root.elementsByTagNameNS(chatStateNS, "gone").item(0).toElement();
+	if(!t.isNull())
+		d->chatState = StateGone;
+	
+
 	// xencrypted
 	t = root.elementsByTagNameNS("jabber:x:encrypted", "x").item(0).toElement();
 	if(!t.isNull())
 		d->xencrypted = t.text();
 	else
 		d->xencrypted = QString();
+		
+	// addresses
+	d->addressList.clear();
+	nl = root.elementsByTagNameNS("http://jabber.org/protocol/address", "addresses");
+	if (nl.count()) {
+		QDomElement t = nl.item(0).toElement();
+		nl = t.elementsByTagName("address");
+		for(n = 0; n < nl.count(); ++n) {
+			d->addressList += Address(nl.item(n).toElement());
+		}
+	}
+	
+	// roster item exchange
+	d->rosterExchangeItems.clear();
+	nl = root.elementsByTagNameNS("http://jabber.org/protocol/rosterx", "x");
+	if (nl.count()) {
+		QDomElement t = nl.item(0).toElement();
+		nl = t.elementsByTagName("item");
+		for(n = 0; n < nl.count(); ++n) {
+			RosterExchangeItem it = RosterExchangeItem(nl.item(n).toElement());
+			if (!it.isNull())
+				d->rosterExchangeItems += it;
+		}
+	}
 
 	// invite
 	t = root.elementsByTagNameNS("jabber:x:conference", "x").item(0).toElement();
@@ -750,6 +1801,36 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 		d->invite = t.attribute("jid");
 	else
 		d->invite = QString();
+	
+	// nick
+	t = root.elementsByTagNameNS("http://jabber.org/protocol/nick", "nick").item(0).toElement();
+	if(!t.isNull())
+		d->nick = t.text();
+	else
+		d->nick = QString();
+	
+	t = root.elementsByTagNameNS("http://jabber.org/protocol/muc#user", "x").item(0).toElement();
+	if(!t.isNull()) {
+		for(QDomNode muc_n = t.firstChild(); !muc_n.isNull(); muc_n = muc_n.nextSibling()) {
+			QDomElement muc_e = muc_n.toElement();
+			if(muc_e.isNull())
+				continue;
+			if (muc_e.tagName() == "status") {
+				setMUCStatus(muc_e.attribute("code").toInt());
+			}
+			else if (muc_e.tagName() == "invite") {
+				MUCInvite inv(muc_e);
+				if (!inv.isNull())
+					addMUCInvite(inv);
+			}
+			else if (muc_e.tagName() == "decline") {
+				setMUCDecline(MUCDecline(muc_e));
+			}
+			else if (muc_e.tagName() == "password") {
+				setMUCPassword(muc_e.text());
+			}
+		}
+	}
 
 	return true;
 }
@@ -814,6 +1895,14 @@ Status::Status(const QString &show, const QString &status, int priority, bool av
 	v_priority = priority;
 	v_timeStamp = QDateTime::currentDateTime();
 	v_isInvisible = false;
+	v_hasPhotoHash = false;
+	v_isMUC = false;
+	v_hasMUCItem = false;
+	v_hasMUCDestroy = false;
+	v_mucStatus = -1;
+	v_mucHistoryMaxChars = -1;
+	v_mucHistoryMaxStanzas = -1;
+	v_mucHistorySeconds = -1;
 	ecode = -1;
 }
 
@@ -892,6 +1981,47 @@ void Status::setCapsExt(const QString & _capsExt)
 	v_capsExt = _capsExt;
 }
 
+void Status::setMUC() 
+{
+	v_isMUC = true;
+}
+
+void Status::setMUCItem(const MUCItem& i)
+{
+	v_hasMUCItem = true;
+	v_mucItem = i;
+}
+
+void Status::setMUCDestroy(const MUCDestroy& i)
+{
+	v_hasMUCDestroy = true;
+	v_mucDestroy = i;
+}
+
+void Status::setMUCHistory(int maxchars, int maxstanzas, int seconds)
+{
+	v_mucHistoryMaxChars = maxchars;
+	v_mucHistoryMaxStanzas = maxstanzas;
+	v_mucHistorySeconds = seconds;
+}
+
+
+const QString& Status::photoHash() const
+{
+	return v_photoHash;
+}
+
+void Status::setPhotoHash(const QString& h)
+{
+	v_photoHash = h;
+	v_hasPhotoHash = true;
+}
+
+bool Status::hasPhotoHash() const
+{
+	return v_hasPhotoHash;
+}
+
 bool Status::isAvailable() const
 {
 	return v_isAvailable;
@@ -957,6 +2087,76 @@ const QString & Status::capsVersion() const
 const QString & Status::capsExt() const
 {
 	return v_capsExt;
+}
+
+bool Status::isMUC() const
+{
+	return v_isMUC || !v_mucPassword.isEmpty() || hasMUCHistory();
+}
+
+bool Status::hasMUCItem() const
+{
+	return v_hasMUCItem;
+}
+
+const MUCItem& Status::mucItem() const
+{
+	return v_mucItem;
+}
+
+bool Status::hasMUCDestroy() const
+{
+	return v_hasMUCDestroy;
+}
+
+const MUCDestroy& Status::mucDestroy() const
+{
+	return v_mucDestroy;
+}
+
+bool Status::hasMUCStatus() const
+{
+	return v_mucStatus != -1;
+}
+
+int Status::mucStatus() const
+{
+	return v_mucStatus;
+}
+
+void Status::setMUCStatus(int i)
+{
+	v_mucStatus = i;
+}
+
+const QString& Status::mucPassword() const
+{
+	return v_mucPassword;
+}
+
+bool Status::hasMUCHistory() const
+{
+	return v_mucHistoryMaxChars >= 0 || v_mucHistoryMaxStanzas >= 0 || v_mucHistorySeconds >= 0;
+}
+
+int Status::mucHistoryMaxChars() const
+{
+	return v_mucHistoryMaxChars;
+}
+
+int Status::mucHistoryMaxStanzas() const
+{
+	return v_mucHistoryMaxStanzas;
+}
+
+int Status::mucHistorySeconds() const
+{
+	return v_mucHistorySeconds;
+}
+
+void Status::setMUCPassword(const QString& i)
+{
+	v_mucPassword = i;
 }
 
 int Status::errorCode() const
@@ -1512,6 +2712,11 @@ void Features::setList(const QStringList &l)
 	_list = l;
 }
 
+void Features::addFeature(const QString& s)
+{
+	_list += s;
+}
+
 bool Features::test(const QStringList &ns) const
 {
 	QStringList::ConstIterator it = ns.begin();
@@ -1520,6 +2725,24 @@ bool Features::test(const QStringList &ns) const
 			return true;
 
 	return false;
+}
+
+#define FID_MULTICAST "http://jabber.org/protocol/address"
+bool Features::canMulticast() const
+{
+	QStringList ns;
+	ns << FID_MULTICAST;
+
+	return test(ns);
+}
+
+#define FID_AHCOMMAND "http://jabber.org/protocol/commands"
+bool Features::canCommand() const
+{
+	QStringList ns;
+	ns << FID_AHCOMMAND;
+
+	return test(ns);
 }
 
 #define FID_REGISTER "jabber:iq:register"
@@ -1536,16 +2759,6 @@ bool Features::canSearch() const
 {
 	QStringList ns;
 	ns << FID_SEARCH;
-
-	return test(ns);
-}
-
-#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
-bool Features::canXHTML() const
-{
-	QStringList ns;
-
-	ns << FID_XHTML;
 
 	return test(ns);
 }
@@ -1569,6 +2782,14 @@ bool Features::canVoice() const
 	return test(ns);
 }
 
+#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
+bool Features::canXHTML() const
+{
+	QStringList ns;
+	ns << FID_XHTML;
+	return test(ns);
+}
+
 #define FID_GATEWAY "jabber:iq:gateway"
 bool Features::isGateway() const
 {
@@ -1585,6 +2806,15 @@ bool Features::canDisco() const
 	ns << FID_DISCO;
 	ns << "http://jabber.org/protocol/disco#info";
 	ns << "http://jabber.org/protocol/disco#items";
+
+	return test(ns);
+}
+
+#define FID_CHATSTATE "http://jabber.org/protocol/chatstates"
+bool Features::canChatState() const
+{
+	QStringList ns;
+	ns << FID_CHATSTATE;
 
 	return test(ns);
 }
@@ -1616,6 +2846,7 @@ public:
 		id2s[FID_Gateway]	= tr("Gateway");
 		id2s[FID_Disco]		= tr("Service Discovery");
 		id2s[FID_VCard]		= tr("VCard");
+		id2s[FID_AHCommand]	= tr("Execute command");
 
 		// custom Psi actions
 		id2s[FID_Add]		= tr("Add to roster");
@@ -1631,6 +2862,7 @@ public:
 		id2f[FID_Gateway]	= FID_GATEWAY;
 		id2f[FID_Disco]		= FID_DISCO;
 		id2f[FID_VCard]		= FID_VCARD;
+		id2f[FID_AHCommand]	= FID_AHCOMMAND;
 
 		// custom Psi actions
 		id2f[FID_Add]		= FID_ADD;
@@ -1659,6 +2891,8 @@ long Features::id() const
 		return FID_Disco;
 	else if ( haveVCard() )
 		return FID_VCard;
+	else if ( canCommand() )
+		return FID_AHCommand;
 	else if ( test(QStringList(FID_ADD)) )
 		return FID_Add;
 
@@ -1874,6 +3108,26 @@ QString DiscoItem::action2string(Action a)
 
 	return s;
 }
+
+
+PubSubItem::PubSubItem() 
+{
+}
+
+PubSubItem::PubSubItem(const QString& id, const QDomElement& payload) : id_(id), payload_(payload) 
+{ 
+}
+
+const QString& PubSubItem::id() const 
+{ 
+	return id_; 
+}
+
+const QDomElement& PubSubItem::payload() const 
+{ 
+	return payload_; 
+}
+
 
 }
 

@@ -37,8 +37,6 @@
 #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
 #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
 #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
-#define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
-#define NS_XHTML "http://www.w3.org/1999/xhtml"
 #define NS_CHATSTATES "http://jabber.org/protocol/chatstates"
 
 namespace XMPP
@@ -266,6 +264,7 @@ namespace XMPP
 		void setAllowTLS(bool b);
 		void setAllowBind(bool b);
 		void setAllowPlain(bool b); // old-mode
+		const Jid& jid() const;
 
 		void setPassword(const QString &s);
 		void setFrom(const QString &s);
@@ -322,7 +321,7 @@ namespace XMPP
 		bool digest;
 		bool tls_started, sasl_started;
 
-		Jid jid;
+		Jid jid_;
 		bool oldOnly;
 		bool allowPlain;
 		bool doTLS, doAuth, doBinding;

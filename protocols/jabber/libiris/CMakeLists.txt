@@ -37,6 +37,7 @@ iris/xmpp-core/protocol.cpp
 iris/xmpp-core/stream.cpp 
 iris/xmpp-core/xmlprotocol.cpp 
 iris/xmpp-core/parser.cpp 
+iris/xmpp-core/simplesasl.cpp 
 iris/xmpp-im/client.cpp 
 iris/xmpp-im/types.cpp 
 iris/xmpp-im/xmpp_tasks.cpp 
@@ -45,7 +46,7 @@ iris/xmpp-im/xmpp_xmlcommon.cpp
 iris/jabber/filetransfer.cpp 
 iris/jabber/s5b.cpp 
 iris/jabber/xmpp_ibb.cpp 
-iris/jabber/xmpp_jidlink.cpp
+#iris/jabber/xmpp_jidlink.cpp
 ${CMAKE_CURRENT_BUILD_DIR}/im.cpp
 ${CMAKE_CURRENT_BUILD_DIR}/xmpp.cpp
 )

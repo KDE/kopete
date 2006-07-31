@@ -321,7 +321,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () && message.urlList().isEmpty () && message.xHTMLBody().isEmpty() && message.xencrypted().isEmpty() )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () && !message.containsHTML() && message.xencrypted().isEmpty() )
 		return;
 
 	// determine message type
@@ -346,22 +346,17 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		// store message id for outgoing notifications
 		mLastReceivedMessageId = message.id ();
 
+		// convert XMPP::Message into Kopete::Message²
 		// retrieve and reformat body
 		QString body = message.body ();
-		QString xHTMLBody;
 		if( !message.xencrypted().isEmpty() )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
-		else
+		else if( message.containsHTML() )
 		{
-			xHTMLBody = message.xHTMLBody ();
-		}
-
-		// convert XMPP::Message into Kopete::Message
-		if (!xHTMLBody.isEmpty()) {
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, xHTMLBody,
+			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, message.html().toString(),
 											 message.subject (), Kopete::Message::Inbound,
 											 Kopete::Message::RichText, viewPlugin );
 		}

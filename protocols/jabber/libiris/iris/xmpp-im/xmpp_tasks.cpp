@@ -20,7 +20,7 @@
 
 #include "xmpp_tasks.h"
 
-#include <QtCrypto>
+//#include <QtCrypto>
 //#include "sha1.h"
 #include "xmpp_xmlcommon.h"
 //#include "xmpp_stream.h"
@@ -89,6 +89,38 @@ static Roster xmlReadRoster(const QDomElement &q, bool push)
 	return r;
 }
 
+//----------------------------------------------------------------------------
+// JT_Session
+//----------------------------------------------------------------------------
+//
+#include "protocol.h"
+
+JT_Session::JT_Session(Task *parent) : Task(parent)
+{
+}
+
+void JT_Session::onGo() 
+{
+	QDomElement iq = createIQ(doc(), "set", "", id());
+	QDomElement session = doc()->createElement("session");
+	session.setAttribute("xmlns",NS_SESSION);
+	iq.appendChild(session);
+	send(iq);
+}
+
+bool JT_Session::take(const QDomElement& x) 
+{
+	if(!iqVerify(x, "", id()))
+		return false;
+
+	if(x.attribute("type") == "result") {
+		setSuccess();
+	}
+	else {
+		setError(x);
+	}
+	return true;
+}
 
 //----------------------------------------------------------------------------
 // JT_Register
@@ -526,6 +558,25 @@ void JT_Presence::pres(const Status &s)
 				c.setAttribute("ext",s.capsExt());
 			tag.appendChild(c);
 		}
+
+		if(s.isMUC()) {
+			QDomElement m = doc()->createElement("x");
+			m.setAttribute("xmlns","http://jabber.org/protocol/muc");
+			if (!s.mucPassword().isEmpty()) {
+				m.appendChild(textTag(doc(),"password",s.mucPassword()));
+			}
+			if (s.hasMUCHistory()) {
+				QDomElement h = doc()->createElement("history");
+				if (s.mucHistoryMaxChars() >= 0)
+					h.setAttribute("maxchars",s.mucHistoryMaxChars());
+				if (s.mucHistoryMaxStanzas() >= 0)
+					h.setAttribute("maxstanzas",s.mucHistoryMaxStanzas());
+				if (s.mucHistorySeconds() >= 0)
+					h.setAttribute("seconds",s.mucHistorySeconds());
+				m.appendChild(h);
+			}
+			tag.appendChild(m);
+		}
 	}
 }
 
@@ -535,13 +586,18 @@ void JT_Presence::pres(const Jid &to, const Status &s)
 	tag.setAttribute("to", to.full());
 }
 
-void JT_Presence::sub(const Jid &to, const QString &subType)
+void JT_Presence::sub(const Jid &to, const QString &subType, const QString& nick)
 {
 	type = 1;
 
 	tag = doc()->createElement("presence");
 	tag.setAttribute("to", to.full());
 	tag.setAttribute("type", subType);
+	if (!nick.isEmpty()) {
+		QDomElement nick_tag = textTag(doc(),"nick",nick);
+		nick_tag.setAttribute("xmlns","http://jabber.org/protocol/nick");
+		tag.appendChild(nick_tag);
+	}
 }
 
 void JT_Presence::onGo()
@@ -579,11 +635,17 @@ bool JT_PushPresence::take(const QDomElement &e)
 		else if(type == "error") {
 			QString str = "";
 			int code = 0;
-			getErrorFromElement(e, &code, &str);
+			getErrorFromElement(e, client()->stream().baseNS(), &code, &str);
 			p.setError(code, str);
 		}
-		else {
-			subscription(j, type);
+		else if(type == "subscribe" || type == "subscribed" || type == "unsubscribe" || type == "unsubscribed") {
+			QString nick;
+			bool found;
+			QDomElement tag = findSubTag(e, "nick", &found);
+			if (found && tag.attribute("xmlns") == "http://jabber.org/protocol/nick") {
+				nick = tagContent(tag);
+			}
+			subscription(j, type, nick);
 			return true;
 		}
 	}
@@ -640,6 +702,29 @@ bool JT_PushPresence::take(const QDomElement &e)
  			p.setCapsVersion(i.attribute("ver"));
  			p.setCapsExt(i.attribute("ext"));
   		}
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "vcard-temp:x:update") {
+			QDomElement t;
+			bool found;
+			t = findSubTag(i, "photo", &found);
+			if (found)
+				p.setPhotoHash(tagContent(t));
+			else
+				p.setPhotoHash("");
+		}
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/muc#user") {
+			for(QDomNode muc_n = i.firstChild(); !muc_n.isNull(); muc_n = muc_n.nextSibling()) {
+				QDomElement muc_e = muc_n.toElement();
+				if(muc_e.isNull())
+					continue;
+
+				if (muc_e.tagName() == "item") 
+					p.setMUCItem(MUCItem(muc_e));
+				else if (muc_e.tagName() == "status") 
+					p.setMUCStatus(muc_e.attribute("code").toInt());
+				else if (muc_e.tagName() == "destroy")
+					p.setMUCDestroy(MUCDestroy(muc_e));
+			}
+		}
 	}
 
 	presence(j, p);
@@ -1276,7 +1361,7 @@ void JT_ClientTime::go()
 bool JT_ClientTime::take(const QDomElement &x)
 {
 	if(x.attribute("id") != id())
-		return false;
+		return FALSE;
 
 	if(x.attribute("type") == "result") {
 		bool found;
@@ -1292,14 +1377,14 @@ bool JT_ClientTime::take(const QDomElement &x)
 		if(found)
 			display = tagContent(tag);
 
-		setSuccess(true);
+		setSuccess(TRUE);
 	}
 	else {
 		setError(getErrorString(x));
-		setSuccess(false);
+		setSuccess(FALSE);
 	}
 
-	return true;
+	return TRUE;
 }
 */
 
@@ -1397,6 +1482,14 @@ bool JT_ServInfo::take(const QDomElement &e)
 			feature = doc()->createElement("feature");
 			feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
 			query.appendChild(feature);
+
+			// Client-specific features
+			QStringList clientFeatures = client()->features().list();
+			for (QStringList::ConstIterator i = clientFeatures.begin(); i != clientFeatures.end(); ++i) {
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", *i);
+				query.appendChild(feature);
+			}
 
 			feature = doc()->createElement("feature");
 			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
@@ -1956,78 +2049,7 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 	return true;
 }
 
-//----------------------------------------------------------------------------
-// JT_MucPresence
-//----------------------------------------------------------------------------
-JT_MucPresence::JT_MucPresence(Task *parent)
-:Task(parent)
-{
-	type = -1;
-}
 
-JT_MucPresence::~JT_MucPresence()
-{
-}
-
-void JT_MucPresence::pres(const Status &s)
-{
-	type = 0;
-
-	tag = doc()->createElement("presence");
-	if(!s.isAvailable()) {
-		tag.setAttribute("type", "unavailable");
-		if(!s.status().isEmpty())
-			tag.appendChild(textTag(doc(), "status", s.status()));
-	}
-	else {
-		if(s.isInvisible())
-			tag.setAttribute("type", "invisible");
-
-		if(!s.show().isEmpty())
-			tag.appendChild(textTag(doc(), "show", s.show()));
-		if(!s.status().isEmpty())
-			tag.appendChild(textTag(doc(), "status", s.status()));
-
-		tag.appendChild( textTag(doc(), "priority", QString("%1").arg(s.priority()) ) );
-
-		if(!s.keyID().isEmpty()) {
-			QDomElement x = textTag(doc(), "x", s.keyID());
-			x.setAttribute("xmlns", "http://jabber.org/protocol/e2e");
-			tag.appendChild(x);
-		}
-		if(!s.xsigned().isEmpty()) {
-			QDomElement x = textTag(doc(), "x", s.xsigned());
-			x.setAttribute("xmlns", "jabber:x:signed");
-			tag.appendChild(x);
-		}
-
-		if(!s.capsNode().isEmpty() && !s.capsVersion().isEmpty()) {
-			QDomElement c = doc()->createElement("c");
-			c.setAttribute("xmlns","http://jabber.org/protocol/caps");
-			c.setAttribute("node",s.capsNode());
-			c.setAttribute("ver",s.capsVersion());
-			if (!s.capsExt().isEmpty()) 
-				c.setAttribute("ext",s.capsExt());
-			tag.appendChild(c);
-		}
-	}
-}
-
-void JT_MucPresence::pres(const Jid &to, const Status &s, const QString &password)
-{
-	pres(s);
-	tag.setAttribute("to", to.full());
-	QDomElement x = textTag(doc(), "x", s.xsigned());
-	x.setAttribute("xmlns", "http://jabber.org/protocol/muc");
-	x.appendChild( textTag(doc(), "password", password.latin1()) );
-	tag.appendChild(x);
-}
-
-void JT_MucPresence::onGo()
-{
-	send(tag);
-	setSuccess();
-}
 
 
 //----------------------------------------------------------------------------

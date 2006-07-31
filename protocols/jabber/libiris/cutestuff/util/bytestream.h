@@ -34,7 +34,7 @@ class CUTESTUFF_EXPORT ByteStream : public QObject
 public:
 	enum Error { ErrRead, ErrWrite, ErrCustom = 10 };
 	ByteStream(QObject *parent=0);
-	virtual ~ByteStream();
+	virtual ~ByteStream()=0;
 
 	virtual bool isOpen() const;
 	virtual void close();

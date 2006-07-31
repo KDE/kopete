@@ -55,8 +55,7 @@
 #include <stdlib.h>
 #include "bytestream.h"
 #include <QtCrypto>
-#include "hash.h"
-//#include "simplesasl.h"
+#include "simplesasl.h"
 #include "securestream.h"
 #include "protocol.h"
 
@@ -92,8 +91,47 @@ static QString genId()
 }
 
 //----------------------------------------------------------------------------
-// Stanza
+// Stanza::Error
 //----------------------------------------------------------------------------
+
+/**
+	\class Stanza::Error
+	\brief Represents stanza error
+
+	Stanza error consists of error type and condition.
+	In addition, it may contain a human readable description,
+	and application specific element.
+
+	One of the usages of this class is to easily generate error XML:
+
+	\code
+	QDomElement e = createIQ(client()->doc(), "error", jid, id);
+	Error error(Stanza::Error::Auth, Stanza::Error::NotAuthorized);
+	e.appendChild(error.toXml(*client()->doc(), client()->stream().baseNS()));
+	\endcode
+
+	This class implements JEP-0086, which means that it can read both
+	old and new style error elements. Also, generated XML will contain
+	both type/condition and code.
+	Error text in output XML is always presented in XMPP-style only.
+
+	All functions will always try to guess missing information based on mappings defined in the JEP.
+*/
+
+/**
+
+	\enum Stanza::Error::ErrorType
+	\brief Represents error type
+*/
+
+/**
+	\enum Stanza::Error::ErrorCond
+	\brief Represents error condition
+*/
+
+/**
+	\brief Constructs new error
+*/
 Stanza::Error::Error(int _type, int _condition, const QString &_text, const QDomElement &_appSpec)
 {
 	type = _type;
@@ -102,7 +140,8 @@ Stanza::Error::Error(int _type, int _condition, const QString &_text, const QDom
 	appSpec = _appSpec;
 }
 
-class Stanza::Private
+
+class Stanza::Error::Private
 {
 public:
 	struct ErrorTypeEntry
@@ -119,27 +158,22 @@ public:
 	};
 	static ErrorCondEntry errorCondTable[];
 
-	static int stringToKind(const QString &s)
+	struct ErrorCodeEntry
 	{
-		if(s == "message")
-			return Message;
-		else if(s == "presence")
-			return Presence;
-		else if(s == "iq")
-			return IQ;
-		else
-			return -1;
-	}
+		int cond;
+		int type;
+		int code;
+	};
+	static ErrorCodeEntry errorCodeTable[];
 
-	static QString kindToString(Kind k)
+	struct ErrorDescEntry
 	{
-		if(k == Message)
-			return "message";
-		else if(k == Presence)
-			return "presence";
-		else
-			return "iq";
-	}
+		int cond;
+		char *name;
+		char *str;
+	};
+	static ErrorDescEntry errorDescriptions[];
+
 
 	static int stringToErrorType(const QString &s)
 	{
@@ -177,11 +211,36 @@ public:
 		return QString();
 	}
 
-	Stream *s;
-	QDomElement e;
+	static int errorTypeCondToCode(int t, int c)
+	{
+		Q_UNUSED(t);
+		for(int n = 0; errorCodeTable[n].cond; ++n) {
+			if(c == errorCodeTable[n].cond)
+				return errorCodeTable[n].code;
+		}
+		return 0;
+	}
+
+	static QPair<int, int> errorCodeToTypeCond(int x)
+	{
+		for(int n = 0; errorCodeTable[n].cond; ++n) {
+			if(x == errorCodeTable[n].code)
+				return QPair<int, int>(errorCodeTable[n].type, errorCodeTable[n].cond);
+		}
+		return QPair<int, int>(-1, -1);
+	}
+
+	static QPair<QString,QString> errorCondToDesc(int x)
+	{
+		for(int n = 0; errorDescriptions[n].str; ++n) {
+			if(x == errorDescriptions[n].cond)
+				return QPair<QString,QString>(QObject::tr(errorDescriptions[n].name), QObject::tr(errorDescriptions[n].str));
+		}
+		return QPair<QString,QString>();
+	}
 };
 
-Stanza::Private::ErrorTypeEntry Stanza::Private::errorTypeTable[] =
+Stanza::Error::Private::ErrorTypeEntry Stanza::Error::Private::errorTypeTable[] =
 {
 	{ "cancel",   Cancel },
 	{ "continue", Continue },
@@ -191,7 +250,7 @@ Stanza::Private::ErrorTypeEntry Stanza::Private::errorTypeTable[] =
 	{ 0, 0 },
 };
 
-Stanza::Private::ErrorCondEntry Stanza::Private::errorCondTable[] =
+Stanza::Error::Private::ErrorCondEntry Stanza::Error::Private::errorCondTable[] =
 {
 	{ "bad-request",             BadRequest },
 	{ "conflict",                Conflict },
@@ -201,17 +260,259 @@ Stanza::Private::ErrorCondEntry Stanza::Private::errorCondTable[] =
 	{ "item-not-found",          ItemNotFound },
 	{ "jid-malformed",           JidMalformed },
 	{ "not-allowed",             NotAllowed },
+	{ "not-authorized",          NotAuthorized },
 	{ "payment-required",        PaymentRequired },
 	{ "recipient-unavailable",   RecipientUnavailable },
 	{ "registration-required",   RegistrationRequired },
-	{ "remote-server-not-found", ServerNotFound },
-	{ "remote-server-timeout",   ServerTimeout },
+	{ "remote-server-not-found", RemoteServerNotFound },
+	{ "remote-server-timeout",   RemoteServerTimeout },
 	{ "resource-constraint",     ResourceConstraint },
 	{ "service-unavailable",     ServiceUnavailable },
 	{ "subscription-required",   SubscriptionRequired },
 	{ "undefined-condition",     UndefinedCondition },
 	{ "unexpected-request",      UnexpectedRequest },
 	{ 0, 0 },
+};
+
+Stanza::Error::Private::ErrorCodeEntry Stanza::Error::Private::errorCodeTable[] =
+{
+	{ BadRequest,            Modify, 400 },
+	{ Conflict,              Cancel, 409 },
+	{ FeatureNotImplemented, Cancel, 501 },
+	{ Forbidden,             Auth,   403 },
+	{ Gone,                  Modify, 302 },	// permanent
+	{ InternalServerError,   Wait,   500 },
+	{ ItemNotFound,          Cancel, 404 },
+	{ JidMalformed,          Modify, 400 },
+	{ NotAcceptable,         Modify, 406 },
+	{ NotAllowed,            Cancel, 405 },
+	{ NotAuthorized,         Auth,   401 },
+	{ PaymentRequired,       Auth,   402 },
+	{ RecipientUnavailable,  Wait,   404 },
+	{ Redirect,              Modify, 302 },	// temporary
+	{ RegistrationRequired,  Auth,   407 },
+	{ RemoteServerNotFound,  Cancel, 404 },
+	{ RemoteServerTimeout,   Wait,   504 },
+	{ ResourceConstraint,    Wait,   500 },
+	{ ServiceUnavailable,    Cancel, 503 },
+	{ SubscriptionRequired,  Auth,   407 },
+	{ UndefinedCondition,    Wait,   500 },	// Note: any type matches really
+	{ UnexpectedRequest,     Wait,   400 },
+	{ 0, 0, 0 },
+};
+
+Stanza::Error::Private::ErrorDescEntry Stanza::Error::Private::errorDescriptions[] =
+{
+	{ BadRequest,            QT_TR_NOOP("Bad request"),             QT_TR_NOOP("The sender has sent XML that is malformed or that cannot be processed.") },
+	{ Conflict,              QT_TR_NOOP("Conflict"),                QT_TR_NOOP("Access cannot be granted because an existing resource or session exists with the same name or address.") },
+	{ FeatureNotImplemented, QT_TR_NOOP("Feature not implemented"), QT_TR_NOOP("The feature requested is not implemented by the recipient or server and therefore cannot be processed.") },
+	{ Forbidden,             QT_TR_NOOP("Forbidden"),               QT_TR_NOOP("The requesting entity does not possess the required permissions to perform the action.") },
+	{ Gone,                  QT_TR_NOOP("Gone"),                    QT_TR_NOOP("The recipient or server can no longer be contacted at this address.") },
+	{ InternalServerError,   QT_TR_NOOP("Internal server error"),   QT_TR_NOOP("The server could not process the stanza because of a misconfiguration or an otherwise-undefined internal server error.") },
+	{ ItemNotFound,          QT_TR_NOOP("Item not found"),          QT_TR_NOOP("The addressed JID or item requested cannot be found.") },
+	{ JidMalformed,          QT_TR_NOOP("JID malformed"),           QT_TR_NOOP("The sending entity has provided or communicated an XMPP address (e.g., a value of the 'to' attribute) or aspect thereof (e.g., a resource identifier) that does not adhere to the syntax defined in Addressing Scheme.") },
+	{ NotAcceptable,         QT_TR_NOOP("Not acceptable"),          QT_TR_NOOP("The recipient or server understands the request but is refusing to process it because it does not meet criteria defined by the recipient or server (e.g., a local policy regarding acceptable words in messages).") },
+	{ NotAllowed,            QT_TR_NOOP("Not allowed"),             QT_TR_NOOP("The recipient or server does not allow any entity to perform the action.") },
+	{ NotAuthorized,         QT_TR_NOOP("Not authorized"),          QT_TR_NOOP("The sender must provide proper credentials before being allowed to perform the action, or has provided improper credentials.") },
+	{ PaymentRequired,       QT_TR_NOOP("Payment required"),        QT_TR_NOOP("The requesting entity is not authorized to access the requested service because payment is required.") },
+	{ RecipientUnavailable,  QT_TR_NOOP("Recipient unavailable"),   QT_TR_NOOP("The intended recipient is temporarily unavailable.") },
+	{ Redirect,              QT_TR_NOOP("Redirect"),                QT_TR_NOOP("The recipient or server is redirecting requests for this information to another entity, usually temporarily.") },
+	{ RegistrationRequired,  QT_TR_NOOP("Registration required"),   QT_TR_NOOP("The requesting entity is not authorized to access the requested service because registration is required.") },
+	{ RemoteServerNotFound,  QT_TR_NOOP("Remote server not found"), QT_TR_NOOP("A remote server or service specified as part or all of the JID of the intended recipient does not exist.") },
+	{ RemoteServerTimeout,   QT_TR_NOOP("Remote server timeout"),   QT_TR_NOOP("A remote server or service specified as part or all of the JID of the intended recipient (or required to fulfill a request) could not be contacted within a reasonable amount of time.") },
+	{ ResourceConstraint,    QT_TR_NOOP("Resource constraint"),     QT_TR_NOOP("The server or recipient lacks the system resources necessary to service the request.") },
+	{ ServiceUnavailable,    QT_TR_NOOP("Service unavailable"),     QT_TR_NOOP("The server or recipient does not currently provide the requested service.") },
+	{ SubscriptionRequired,  QT_TR_NOOP("Subscription required"),   QT_TR_NOOP("The requesting entity is not authorized to access the requested service because a subscription is required.") },
+	{ UndefinedCondition,    QT_TR_NOOP("Undefined condition"),     QT_TR_NOOP("The error condition is not one of those defined by the other conditions in this list.") },
+	{ UnexpectedRequest,     QT_TR_NOOP("Unexpected request"),      QT_TR_NOOP("The recipient or server understood the request but was not expecting it at this time (e.g., the request was out of order).") },
+};
+
+/**
+	\brief Returns the error code
+
+	If the error object was constructed with a code, this code will be returned.
+	Otherwise, the code will be guessed.
+
+	0 means unknown code.
+*/
+int Stanza::Error::code() const
+{
+	return originalCode ? originalCode : Private::errorTypeCondToCode(type, condition);
+}
+
+/**
+	\brief Creates a StanzaError from \a code.
+
+	The error's type and condition are guessed from the give \a code.
+	The application-specific error element is preserved.
+*/
+bool Stanza::Error::fromCode(int code)
+{
+	QPair<int, int> guess = Private::errorCodeToTypeCond(code);
+	if(guess.first == -1 || guess.second == -1)
+		return false;
+
+	type = guess.first;
+	condition = guess.second;
+	originalCode = code;
+
+	return true;
+}
+
+/**
+	\brief Reads the error from XML
+
+	This function finds and reads the error element \a e.
+
+	You need to provide the base namespace of the stream which this stanza belongs to
+	(probably by using stream.baseNS() function).
+*/
+bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
+{
+	if(e.tagName() != "error" && e.namespaceURI() != baseNS)
+		return false;
+
+	// type
+	type = Private::stringToErrorType(e.attribute("type"));
+
+	// condition
+	QDomNodeList nl = e.childNodes();
+	QDomElement t;
+	condition = -1;
+	int n;
+	for(n = 0; n < nl.count(); ++n) {
+		QDomNode i = nl.item(n);
+		t = i.toElement();
+		if(!t.isNull()) {
+			QString d= t.namespaceURI();
+			                                     // FIX-ME: this shouldn't be needed
+			if(t.namespaceURI() == NS_STANZAS || t.attribute("xmlns") == NS_STANZAS) {
+				condition = Private::stringToErrorCond(t.tagName());
+				if (condition != -1)
+					break;
+			}
+		}
+	}
+
+	// code
+	originalCode = e.attribute("code").toInt();
+
+	// try to guess type/condition
+	if(type == -1 && condition == -1) {
+		QPair<int, int> guess;
+		if (originalCode)
+			guess = Private::errorCodeToTypeCond(originalCode);
+
+		type = guess.first != -1 ? guess.first: Cancel;
+		condition = guess.second != -1 ? guess.second: UndefinedCondition;
+	}
+
+	// text
+	t = e.elementsByTagNameNS(NS_STANZAS, "text").item(0).toElement();
+	if(!t.isNull())
+		text = t.text();
+	else
+		text = e.text();
+
+	// appspec: find first non-standard namespaced element
+	appSpec = QDomElement();
+	nl = e.childNodes();
+	for(n = 0; n < nl.count(); ++n) {
+		QDomNode i = nl.item(n);
+		if(i.isElement() && i.namespaceURI() != NS_STANZAS) {
+			appSpec = i.toElement();
+			break;
+		}
+	}
+
+	return true;
+}
+
+/**
+	\brief Writes the error to XML
+
+	This function creates an error element representing the error object.
+
+	You need to provide the base namespace of the stream to which this stanza belongs to
+	(probably by using stream.baseNS() function).
+*/
+QDomElement Stanza::Error::toXml(QDomDocument &doc, const QString &baseNS) const
+{
+	QDomElement errElem = doc.createElementNS(baseNS, "error");
+	QDomElement t;
+
+	// XMPP error
+	QString stype = Private::errorTypeToString(type);
+	if(stype.isEmpty())
+		return errElem;
+	QString scond = Private::errorCondToString(condition);
+	if(scond.isEmpty())
+		return errElem;
+
+	errElem.setAttribute("type", stype);
+	errElem.appendChild(t = doc.createElementNS(NS_STANZAS, scond));
+	t.setAttribute("xmlns", NS_STANZAS);	// FIX-ME: this shouldn't be needed
+
+	// old code
+	int scode = code();
+	if(scode)
+		errElem.setAttribute("code", scode);
+
+	// text
+	if(!text.isEmpty()) {
+		t = doc.createElementNS(NS_STANZAS, "text");
+		t.setAttribute("xmlns", NS_STANZAS);	// FIX-ME: this shouldn't be needed
+		t.appendChild(doc.createTextNode(text));
+		errElem.appendChild(t);
+	}
+
+	// application specific
+	errElem.appendChild(appSpec);
+
+	return errElem;
+}
+
+/**
+	\brief Returns the error name and description
+
+	Returns the error name (e.g. "Not Allowed")	and error text.
+	Text comes either from XML, or - if not present - from RFC.
+*/
+QPair<QString,QString> Stanza::Error::description() const
+{
+	return Private::errorCondToDesc(condition);
+}
+
+//----------------------------------------------------------------------------
+// Stanza
+//----------------------------------------------------------------------------
+class Stanza::Private
+{
+public:
+	static int stringToKind(const QString &s)
+	{
+		if(s == "message")
+			return Message;
+		else if(s == "presence")
+			return Presence;
+		else if(s == "iq")
+			return IQ;
+		else
+			return -1;
+	}
+
+	static QString kindToString(Kind k)
+	{
+		if(k == Message)
+			return "message";
+		else if(k == Presence)
+			return "presence";
+		else
+			return "iq";
+	}
+
+	Stream *s;
+	QDomElement e;
 };
 
 Stanza::Stanza()
@@ -297,16 +598,6 @@ QString Stanza::baseNS() const
 	return d->s->baseNS();
 }
 
-QString Stanza::xhtmlImNS() const
-{
-	return d->s->xhtmlImNS();
-}
-
-QString Stanza::xhtmlNS() const
-{
-	return d->s->xhtmlNS();
-}
-
 QDomElement Stanza::createElement(const QString &ns, const QString &tagName)
 {
 	return d->s->doc().createElementNS(ns, tagName);
@@ -317,16 +608,6 @@ QDomElement Stanza::createTextElement(const QString &ns, const QString &tagName,
 	QDomElement e = d->s->doc().createElementNS(ns, tagName);
 	e.appendChild(d->s->doc().createTextNode(text));
 	return e;
-}
-
-QDomElement Stanza::createXHTMLElement(const QString &xHTML)
-{
-	QDomDocument doc;
-
-  	doc.setContent(xHTML, true);
-	QDomElement root = doc.documentElement();
-	//QDomElement e;
-	return (root);
 }
 
 void Stanza::appendChild(const QDomElement &e)
@@ -398,87 +679,24 @@ Stanza::Error Stanza::error() const
 {
 	Error err;
 	QDomElement e = d->e.elementsByTagNameNS(d->s->baseNS(), "error").item(0).toElement();
-	if(e.isNull())
-		return err;
+	if(!e.isNull())
+		err.fromXml(e, d->s->baseNS());
 
-	// type
-	int x = Private::stringToErrorType(e.attribute("type"));
-	if(x != -1)
-		err.type = x;
-
-	// condition: find first element
-	QDomNodeList nl = e.childNodes();
-	QDomElement t;
-	int n;
-	for(n = 0; n < nl.count(); ++n) {
-		QDomNode i = nl.item(n);
-		if(i.isElement()) {
-			t = i.toElement();
-			break;
-		}
-	}
-	if(!t.isNull() && t.namespaceURI() == NS_STANZAS) {
-		x = Private::stringToErrorCond(t.tagName());
-		if(x != -1)
-			err.condition = x;
-	}
-
-	// text
-	t = e.elementsByTagNameNS(NS_STANZAS, "text").item(0).toElement();
-	if(!t.isNull())
-		err.text = t.text();
-	else
-		err.text = e.text();
-
-	// appspec: find first non-standard namespaced element
-	nl = e.childNodes();
-	for(n = 0; n < nl.count(); ++n) {
-		QDomNode i = nl.item(n);
-		if(i.isElement() && i.namespaceURI() != NS_STANZAS) {
-			err.appSpec = i.toElement();
-			break;
-		}
-	}
 	return err;
 }
 
 void Stanza::setError(const Error &err)
 {
-	// create the element if necessary
-	QDomElement errElem = d->e.elementsByTagNameNS(d->s->baseNS(), "error").item(0).toElement();
-	if(errElem.isNull()) {
-		errElem = d->e.ownerDocument().createElementNS(d->s->baseNS(), "error");
+	QDomDocument doc = d->e.ownerDocument();
+	QDomElement errElem = err.toXml(doc, d->s->baseNS());
+
+	QDomElement oldElem = d->e.elementsByTagNameNS(d->s->baseNS(), "error").item(0).toElement();
+	if(oldElem.isNull()) {
 		d->e.appendChild(errElem);
 	}
-
-	// error type/condition
-	if(d->s->old()) {
-		errElem.setAttribute("code", QString::number(err.condition));
-	}
 	else {
-		QString stype = Private::errorTypeToString(err.type);
-		if(stype.isEmpty())
-			return;
-		QString scond = Private::errorCondToString(err.condition);
-		if(scond.isEmpty())
-			return;
-
-		errElem.setAttribute("type", stype);
-		errElem.appendChild(d->e.ownerDocument().createElementNS(d->s->baseNS(), scond));
+		d->e.replaceChild(errElem, oldElem);
 	}
-
-	// text
-	if(d->s->old()) {
-		errElem.appendChild(d->e.ownerDocument().createTextNode(err.text));
-	}
-	else {
-		QDomElement te = d->e.ownerDocument().createElementNS(d->s->baseNS(), "text");
-		te.appendChild(d->e.ownerDocument().createTextNode(err.text));
-		errElem.appendChild(te);
-	}
-
-	// application specific
-	errElem.appendChild(err.appSpec);
 }
 
 void Stanza::clearError()
@@ -546,7 +764,7 @@ public:
 		ss = 0;
 		tlsHandler = 0;
 		tls = 0;
-		//sasl = 0;
+		sasl = 0;
 		in.setAutoDelete(true);
 
 		oldOnly = false;
@@ -567,7 +785,7 @@ public:
 		state = Idle;
 		notify = 0;
 		newStanzas = false;
-		//sasl_ssf = 0;
+		sasl_ssf = 0;
 		tls_warned = false;
 		using_tls = false;
 	}
@@ -580,7 +798,7 @@ public:
 	QHostAddress localAddr;
 	Q_UINT16 localPort;
 	int minimumSSF, maximumSSF;
-	//QString sasl_mech;
+	QString sasl_mech;
 	bool doBinding;
 
 	bool in_rrsig;
@@ -589,7 +807,7 @@ public:
 	ByteStream *bs;
 	TLSHandler *tlsHandler;
 	QCA::TLS *tls;
-	//QCA::SASL *sasl;
+	QCA::SASL *sasl;
 	SecureStream *ss;
 	CoreProtocol client;
 	CoreProtocol srv;
@@ -600,11 +818,11 @@ public:
 	int state;
 	int notify;
 	bool newStanzas;
-	//int sasl_ssf;
+	int sasl_ssf;
 	bool tls_warned, using_tls;
 	bool doAuth;
 
-	//QStringList sasl_mechlist;
+	QStringList sasl_mechlist;
 
 	int errCond;
 	QString errText;
@@ -678,8 +896,8 @@ void ClientStream::reset(bool all)
 	d->ss = 0;
 
 	// reset sasl
-	//delete d->sasl;
-	//d->sasl = 0;
+	delete d->sasl;
+	d->sasl = 0;
 
 	// client
 	if(d->mode == Client) {
@@ -768,8 +986,8 @@ bool ClientStream::isAuthenticated() const
 
 void ClientStream::setUsername(const QString &s)
 {
-	//if(d->sasl)
-	//	d->sasl->setUsername(s);
+	if(d->sasl)
+		d->sasl->setUsername(s);
 }
 
 void ClientStream::setPassword(const QString &s)
@@ -778,15 +996,15 @@ void ClientStream::setPassword(const QString &s)
 		d->client.setPassword(s);
 	}
 	else {
-		//if(d->sasl)
-		//	d->sasl->setPassword(s);
+		if(d->sasl)
+			d->sasl->setPassword(QSecureArray(s.utf8()));
 	}
 }
 
 void ClientStream::setRealm(const QString &s)
 {
-	//if(d->sasl)
-	//	d->sasl->setRealm(s);
+	if(d->sasl)
+		d->sasl->setRealm(s);
 }
 
 void ClientStream::continueAfterParams()
@@ -796,10 +1014,10 @@ void ClientStream::continueAfterParams()
 		if(d->client.old) {
 			processNext();
 		}
-		//else {
-			//if(d->sasl)
-			//	d->sasl->continueAfterParams();
-		//}
+		else {
+			if(d->sasl)
+				d->sasl->continueAfterParams();
+		}
 	}
 }
 
@@ -824,19 +1042,17 @@ void ClientStream::setNoopTime(int mills)
 
 QString ClientStream::saslMechanism() const
 {
-	//return d->client.saslMech();
-	return "";
+	return d->client.saslMech();
 }
 
 int ClientStream::saslSSF() const
 {
-	//return d->sasl_ssf;
-	return 0;
+	return d->sasl_ssf;
 }
 
 void ClientStream::setSASLMechanism(const QString &s)
 {
-	//d->sasl_mech = s;
+	d->sasl_mech = s;
 }
 
 void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
@@ -886,16 +1102,6 @@ QDomDocument & ClientStream::doc() const
 QString ClientStream::baseNS() const
 {
 	return NS_CLIENT;
-}
-
-QString ClientStream::xhtmlImNS() const
-{
-	return NS_XHTML_IM;
-}
-
-QString ClientStream::xhtmlNS() const
-{
-	return NS_XHTML;
 }
 
 void ClientStream::setAllowPlain(bool b)
@@ -1077,9 +1283,9 @@ void ClientStream::ss_error(int x)
 	}
 }
 
-void ClientStream::sasl_clientFirstStep(const QString &mech, const QByteArray *stepData)
+void ClientStream::sasl_clientFirstStep(bool, const QByteArray& ba)
 {
-	//d->client.setSASLFirst(mech, stepData ? *stepData : QByteArray());
+	d->client.setSASLFirst(d->sasl->mechanism(), ba);
 	//d->client.sasl_mech = mech;
 	//d->client.sasl_firstStep = stepData ? true : false;
 	//d->client.sasl_step = stepData ? *stepData : QByteArray();
@@ -1089,31 +1295,31 @@ void ClientStream::sasl_clientFirstStep(const QString &mech, const QByteArray *s
 
 void ClientStream::sasl_nextStep(const QByteArray &stepData)
 {
-	//if(d->mode == Client)
-	//	d->client.setSASLNext(stepData);
+	if(d->mode == Client)
+		d->client.setSASLNext(stepData);
 		//d->client.sasl_step = stepData;
-	//else
-	//	d->srv.setSASLNext(stepData);
+	else
+		d->srv.setSASLNext(stepData);
 		//d->srv.sasl_step = stepData;
 
-	//processNext();
+	processNext();
 }
 
-void ClientStream::sasl_needParams(bool user, bool authzid, bool pass, bool realm)
+void ClientStream::sasl_needParams(const QCA::SASL::Params& p) 
 {
 #ifdef XMPP_DEBUG
-	printf("need params: %d,%d,%d,%d\n", user, authzid, pass, realm);
+	printf("need params: %d,%d,%d,%d\n", p.user, p.authzid, p.pass, p.realm);
 #endif
-	/*if(authzid && !user) {
+	if(p.authzid && !p.user) {
 		d->sasl->setAuthzid(d->jid.bare());
 		//d->sasl->setAuthzid("infiniti.homelesshackers.org");
 	}
-	if(user || pass || realm) {
+	if(p.user || p.pass || p.realm) {
 		d->state = NeedParams;
-		needAuthParams(user, pass, realm);
+		needAuthParams(p.user, p.pass, p.realm);
 	}
 	else
-		d->sasl->continueAfterParams();*/
+		d->sasl->continueAfterParams();
 }
 
 void ClientStream::sasl_authCheck(const QString &user, const QString &)
@@ -1121,12 +1327,12 @@ void ClientStream::sasl_authCheck(const QString &user, const QString &)
 //#ifdef XMPP_DEBUG
 //	printf("authcheck: [%s], [%s]\n", user.latin1(), authzid.latin1());
 //#endif
-/*	QString u = user;
+	QString u = user;
 	int n = u.find('@');
 	if(n != -1)
 		u.truncate(n);
 	d->srv.user = u;
-	d->sasl->continueAfterAuthCheck();*/
+	d->sasl->continueAfterAuthCheck();
 }
 
 void ClientStream::sasl_authenticated()
@@ -1134,24 +1340,24 @@ void ClientStream::sasl_authenticated()
 #ifdef XMPP_DEBUG
 	printf("sasl authed!!\n");
 #endif
-/*	d->sasl_ssf = d->sasl->ssf();
+	d->sasl_ssf = d->sasl->ssf();
 
 	if(d->mode == Server) {
 		d->srv.setSASLAuthed();
 		processNext();
-	}*/
+	}
 }
 
-void ClientStream::sasl_error(int)
+void ClientStream::sasl_error()
 {
-//#ifdef XMPP_DEBUG
-//	printf("sasl error: %d\n", c);
-//#endif
+#ifdef XMPP_DEBUG
+	printf("sasl error: %d\n", d->sasl->authCondition());
+#endif
 	// has to be auth error
-	/*int x = convertedSASLCond();
+	int x = convertedSASLCond();
 	reset();
 	d->errCond = x;
-	error(ErrAuth);*/
+	error(ErrAuth);
 }
 
 void ClientStream::srvProcessNext()
@@ -1168,29 +1374,25 @@ void ClientStream::srvProcessNext()
 					printf("More data is needed to process next step\n");
 			}
 			else if(need == CoreProtocol::NSASLMechs) {
-				/*if(!d->sasl) {
+				if(!d->sasl) {
 					d->sasl = new QCA::SASL;
 					connect(d->sasl, SIGNAL(authCheck(const QString &, const QString &)), SLOT(sasl_authCheck(const QString &, const QString &)));
 					connect(d->sasl, SIGNAL(nextStep(const QByteArray &)), SLOT(sasl_nextStep(const QByteArray &)));
 					connect(d->sasl, SIGNAL(authenticated()), SLOT(sasl_authenticated()));
-					connect(d->sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
+					connect(d->sasl, SIGNAL(error()), SLOT(sasl_error()));
 
 					//d->sasl->setAllowAnonymous(false);
 					//d->sasl->setRequirePassCredentials(true);
 					//d->sasl->setExternalAuthID("localhost");
-
-					d->sasl->setMinimumSSF(0);
-					d->sasl->setMaximumSSF(256);
+					QCA::SASL::AuthFlags auth_flags;
+					d->sasl->setConstraints(auth_flags,0,256);
 
 					QStringList list;
 					// TODO: d->server is probably wrong here
-					if(!d->sasl->startServer("xmpp", d->server, d->defRealm, &list)) {
-						printf("Error initializing SASL\n");
-						return;
-					}
+					d->sasl->startServer("xmpp", d->server, d->defRealm, QCA::SASL::AllowServerSendLast);
 					d->sasl_mechlist = list;
 				}
-				d->srv.setSASLMechList(d->sasl_mechlist);*/
+				d->srv.setSASLMechList(d->sasl_mechlist);
 				continue;
 			}
 			else if(need == CoreProtocol::NStartTLS) {
@@ -1201,16 +1403,16 @@ void ClientStream::srvProcessNext()
 				d->ss->startTLSServer(d->tls, a);
 			}
 			else if(need == CoreProtocol::NSASLFirst) {
-				/*printf("Need SASL First Step\n");
+				printf("Need SASL First Step\n");
 				QByteArray a = d->srv.saslStep();
-				d->sasl->putServerFirstStep(d->srv.saslMech(), a);*/
+				d->sasl->putServerFirstStep(d->srv.saslMech(), a);
 			}
 			else if(need == CoreProtocol::NSASLNext) {
-				/*printf("Need SASL Next Step\n");
+				printf("Need SASL Next Step\n");
 				QByteArray a = d->srv.saslStep();
 				Q3CString cs(a.data(), a.size()+1);
 				printf("[%s]\n", cs.data());
-				d->sasl->putStep(a);*/
+				d->sasl->putStep(a);
 			}
 			else if(need == CoreProtocol::NSASLLayer) {
 			}
@@ -1262,9 +1464,9 @@ void ClientStream::srvProcessNext()
 			}
 			case CoreProtocol::ESASLSuccess: {
 				printf("Break SASL Success\n");
-				//disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
-				//QByteArray a = d->srv.spare;
-				//d->ss->setLayerSASL(d->sasl, a);
+				disconnect(d->sasl, SIGNAL(error()), this, SLOT(sasl_error()));
+				QByteArray a = d->srv.spare;
+				d->ss->setLayerSASL(d->sasl, a);
 				break;
 			}
 			case CoreProtocol::EPeerClosed: {
@@ -1399,7 +1601,7 @@ void ClientStream::processNext()
 				printf("Done!\n");
 #endif
 				// grab the JID, in case it changed
-				// TODO: d->jid = d->client.jid;
+				d->jid = d->client.jid();
 				d->state = Active;
 				setNoopTime(d->noop_time);
 				authenticated();
@@ -1476,73 +1678,62 @@ bool ClientStream::handleNeed()
 			printf("Need SASL First Step\n");
 #endif
 			// no SASL plugin?  fall back to Simple SASL
-			//if(!QCA::isSupported(QCA::CAP_SASL)) {
-			//	// Simple SASL needs MD5.  do we have that either?
-			//	if(!QCA::isSupported(QCA::CAP_MD5))
-			//		QCA::insertProvider(createProviderHash());
-			//	QCA::insertProvider(createProviderSimpleSASL());
-			//}
+			if(!QCA::isSupported("sasl")) {
+				QCA::insertProvider(createProviderSimpleSASL());
+			}
 
-			//d->sasl = new QCA::SASL;
-			//connect(d->sasl, SIGNAL(clientFirstStep(const QString &, const QByteArray *)), SLOT(sasl_clientFirstStep(const QString &, const QByteArray *)));
-			//connect(d->sasl, SIGNAL(nextStep(const QByteArray &)), SLOT(sasl_nextStep(const QByteArray &)));
-			//connect(d->sasl, SIGNAL(needParams(bool, bool, bool, bool)), SLOT(sasl_needParams(bool, bool, bool, bool)));
-			//connect(d->sasl, SIGNAL(authenticated()), SLOT(sasl_authenticated()));
-			//connect(d->sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
+			d->sasl = new QCA::SASL();
+			connect(d->sasl, SIGNAL(clientStarted(bool,const QByteArray&)), SLOT(sasl_clientFirstStep(bool, const QByteArray&)));
+			connect(d->sasl, SIGNAL(nextStep(const QByteArray &)), SLOT(sasl_nextStep(const QByteArray &)));
+			connect(d->sasl, SIGNAL(needParams(const QCA::SASL::Params&)), SLOT(sasl_needParams(const QCA::SASL::Params&)));
+			connect(d->sasl, SIGNAL(authenticated()), SLOT(sasl_authenticated()));
+			connect(d->sasl, SIGNAL(error()), SLOT(sasl_error()));
 
-			//if(d->haveLocalAddr)
-			//	d->sasl->setLocalAddr(d->localAddr, d->localPort);
-			//if(d->conn->havePeerAddress())
-			//	d->sasl->setRemoteAddr(d->conn->peerAddress(), d->conn->peerPort());
-
-			//d->sasl->setAllowAnonymous(false);
+			if(d->haveLocalAddr)
+				d->sasl->setLocalAddr(d->localAddr.toString(), d->localPort);
+			if(d->conn->havePeerAddress())
+				d->sasl->setRemoteAddr(d->conn->peerAddress().toString(), d->conn->peerPort());
 
 			//d->sasl_mech = "ANONYMOUS";
 			//d->sasl->setRequirePassCredentials(true);
-
 			//d->sasl->setExternalAuthID("localhost");
 			//d->sasl->setExternalSSF(64);
 			//d->sasl_mech = "EXTERNAL";
 
-			//d->sasl->setAllowPlain(d->allowPlain);
-			//d->sasl->setRequireMutualAuth(d->mutualAuth);
+			QCA::SASL::AuthFlags auth_flags = (QCA::SASL::AuthFlags) 0;
+			if (d->allowPlain)
+				auth_flags = (QCA::SASL::AuthFlags) (auth_flags | QCA::SASL::AllowPlain);
+			if (d->mutualAuth)
+				auth_flags = (QCA::SASL::AuthFlags) (auth_flags | QCA::SASL::RequireMutualAuth);
+			d->sasl->setConstraints(auth_flags,d->minimumSSF,d->maximumSSF);
 
-			//d->sasl->setMinimumSSF(d->minimumSSF);
-			//d->sasl->setMaximumSSF(d->maximumSSF);
+			QStringList ml;
+			if(!d->sasl_mech.isEmpty())
+				ml += d->sasl_mech;
+			else
+				ml = d->client.features.sasl_mechs;
 
-			//QStringList ml;
-			//if(!d->sasl_mech.isEmpty())
-			//	ml += d->sasl_mech;
-			//else
-			//	ml = d->client.features.sasl_mechs;
-
-			//if(!d->sasl->startClient("xmpp", d->server, ml, true)) {
-			//	int x = convertedSASLCond();
-			//	reset();
-			//	d->errCond = x;
-			//	error(ErrAuth);
-			//	return false;
-			//}
+			d->sasl->startClient("xmpp", d->server, ml, QCA::SASL::AllowClientSendFirst);
 			return false;
 		}
 		case CoreProtocol::NSASLNext: {
 #ifdef XMPP_DEBUG
 			printf("Need SASL Next Step\n");
 #endif
-			/*QByteArray a = d->client.saslStep();
-			d->sasl->putStep(a);*/
+			QByteArray a = d->client.saslStep();
+			d->sasl->putStep(a);
 			return false;
 		}
 		case CoreProtocol::NSASLLayer: {
 			// SecureStream will handle the errors from this point
-			/*disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
+			disconnect(d->sasl, SIGNAL(error()), this, SLOT(sasl_error()));
 			d->ss->setLayerSASL(d->sasl, d->client.spare);
 			if(d->sasl_ssf > 0) {
 				QPointer<QObject> self = this;
 				securityLayerActivated(LayerSASL);
 				if(!self)
 					return false;
-			}*/
+			}
 			break;
 		}
 		case CoreProtocol::NPassword: {
@@ -1560,7 +1751,7 @@ bool ClientStream::handleNeed()
 
 int ClientStream::convertedSASLCond() const
 {
-	/*int x = d->sasl->errorCondition();
+	int x = d->sasl->authCondition();
 	if(x == QCA::SASL::NoMech)
 		return NoMech;
 	else if(x == QCA::SASL::BadProto)
@@ -1570,7 +1761,7 @@ int ClientStream::convertedSASLCond() const
 	else if(x == QCA::SASL::TooWeak)
 		return MechTooWeak;
 	else
-		return GenericAuthError;*/
+		return GenericAuthError;
 	return 0;
 }
 

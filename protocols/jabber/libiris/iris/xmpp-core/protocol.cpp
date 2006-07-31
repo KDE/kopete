@@ -30,7 +30,6 @@
 #include <QList>
 #include <Q3CString>
 #include <QtCrypto>
-#include "hash.h"
 
 #ifdef XMPP_TEST
 #include "td.h"
@@ -614,7 +613,7 @@ void CoreProtocol::init()
 	dialback_verify = false;
 
 	// settings
-	jid = Jid();
+	jid_ = Jid();
 	password = QString();
 	oldOnly = false;
 	allowPlain = false;
@@ -641,7 +640,7 @@ void CoreProtocol::reset()
 
 void CoreProtocol::startClientOut(const Jid &_jid, bool _oldOnly, bool tlsActive, bool _doAuth)
 {
-	jid = _jid;
+	jid_ = _jid;
 	to = _jid.domain();
 	oldOnly = _oldOnly;
 	doAuth = _doAuth;
@@ -711,6 +710,11 @@ void CoreProtocol::setAllowBind(bool b)
 void CoreProtocol::setAllowPlain(bool b)
 {
 	allowPlain = b;
+}
+
+const Jid& CoreProtocol::jid() const
+{
+	return jid_;
 }
 
 void CoreProtocol::setPassword(const QString &s)
@@ -1058,8 +1062,13 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		if(!sasl_authed) {
 			if(!features.sasl_supported) {
 				// SASL MUST be supported
-				event = EError;
-				errorCode = ErrProtocol;
+				//event = EError;
+				//errorCode = ErrProtocol;
+				//return true;
+				
+				// Fall back on auth for non-compliant servers 
+				step = HandleAuthGet;
+				old = true;
 				return true;
 			}
 
@@ -1093,10 +1102,10 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		QDomElement b = doc.createElementNS(NS_BIND, "bind");
 
 		// request specific resource?
-		QString resource = jid.resource();
+		QString resource = jid_.resource();
 		if(!resource.isEmpty()) {
 			QDomElement r = doc.createElement("resource");
-			r.appendChild(doc.createTextNode(jid.resource()));
+			r.appendChild(doc.createTextNode(jid_.resource()));
 			b.appendChild(r);
 		}
 
@@ -1171,7 +1180,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		e.setAttribute("id", "auth_1");
 		QDomElement q = doc.createElementNS("jabber:iq:auth", "query");
 		QDomElement u = doc.createElement("username");
-		u.appendChild(doc.createTextNode(jid.node()));
+		u.appendChild(doc.createTextNode(jid_.node()));
 		q.appendChild(u);
 		e.appendChild(q);
 
@@ -1187,7 +1196,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		e.setAttribute("id", "auth_2");
 		QDomElement q = doc.createElementNS("jabber:iq:auth", "query");
 		QDomElement u = doc.createElement("username");
-		u.appendChild(doc.createTextNode(jid.node()));
+		u.appendChild(doc.createTextNode(jid_.node()));
 		q.appendChild(u);
 		QDomElement p;
 		if(digest) {
@@ -1205,7 +1214,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		}
 		q.appendChild(p);
 		QDomElement r = doc.createElement("resource");
-		r.appendChild(doc.createTextNode(jid.resource()));
+		r.appendChild(doc.createTextNode(jid_.resource()));
 		q.appendChild(r);
 		e.appendChild(q);
 
@@ -1393,7 +1402,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 						errorCode = ErrProtocol;
 						return true;
 					}
-					jid = j;
+					jid_ = j;
 					return loginComplete();
 				}
 				else {

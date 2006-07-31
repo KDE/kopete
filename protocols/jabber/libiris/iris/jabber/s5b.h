@@ -64,7 +64,7 @@ namespace XMPP
 		enum Mode { Stream, Datagram };
 		enum Error { ErrRefused, ErrConnect, ErrProxy, ErrSocket };
 		enum State { Idle, Requesting, Connecting, WaitingForAccept, Active };
-		virtual ~S5BConnection();
+		~S5BConnection();
 
 		Jid proxy() const;
 		void setProxy(const Jid &proxy);

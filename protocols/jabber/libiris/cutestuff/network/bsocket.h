@@ -35,7 +35,7 @@ public:
 	enum Error { ErrConnectionRefused = ErrCustom, ErrHostNotFound };
 	enum State { Idle, HostLookup, Connecting, Connected, Closing };
 	BSocket(QObject *parent=0);
-	virtual ~BSocket();
+	~BSocket();
 
 	void connectToHost(const QString &host, Q_UINT16 port);
 	void connectToServer(const QString &srv, const QString &type);

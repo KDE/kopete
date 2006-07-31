@@ -25,6 +25,7 @@
 #include <QList>
 #include <QTextStream>
 #include <Q3CString>
+#include <QApplication>
 
 using namespace XMPP;
 
@@ -145,6 +146,58 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	*xmlHeader = "<?xml version=\"1.0\"?>";
 }
 
+// force encoding of '>'.  this function is needed for XMPP-Core, which
+//  requires the '>' character to be encoded as "&gt;" even though this is
+//  not required by the XML spec.
+static QString ensureGTEncoded(const QString &in)
+{
+	QString out;
+	bool intag = false;
+	bool inquote = false;
+	QChar quotechar;
+	for(int n = 0; n < in.length(); ++n)
+	{
+		QChar c = in[n];
+		bool escape = false;
+		if(c == '<')
+		{
+			intag = true;
+		}
+		else if(c == '>')
+		{
+			if(inquote)
+				escape = true;
+			else if(!intag)
+				escape = true;
+			else
+				intag = false;
+		}
+		else if(c == '\'' || c == '\"')
+		{
+			if(intag)
+			{
+				if(!inquote)
+				{
+					inquote = true;
+					quotechar = c;
+				}
+				else
+				{
+					if(quotechar == c)
+						inquote = false;
+				}
+			}
+		}
+
+		if(escape) {
+			out += "&gt;";
+		 }else
+			out += c;
+	}
+	return out;
+}
+
+
 //----------------------------------------------------------------------------
 // Protocol
 //----------------------------------------------------------------------------
@@ -169,6 +222,7 @@ XmlProtocol::TransferItem::TransferItem(const QDomElement &_elem, bool sent, boo
 }
 
 XmlProtocol::XmlProtocol()
+	: QObject(qApp)
 {
 	init();
 }
@@ -189,6 +243,7 @@ void XmlProtocol::reset()
 	init();
 
 	elem = QDomElement();
+	elemDoc = QDomDocument();
 	tagOpen = QString();
 	tagClose = QString();
 	xml.reset();
@@ -271,7 +326,8 @@ bool XmlProtocol::processStep()
 					return true;
 				}
 				case Parser::Event::Element: {
-					transferItemList += TransferItem(pe.element(), false);
+					QDomElement e = elemDoc.importNode(pe.element(),true).toElement();
+					transferItemList += TransferItem(e, false);
 
 					//elementRecv(pe.element());
 					break;
@@ -356,7 +412,7 @@ QString XmlProtocol::elementToString(const QDomElement &e, bool clip)
 	qn += elem.localName();
 
 	// make the string
-	return xmlToString(e, ns, qn, clip);
+	return ensureGTEncoded(xmlToString(e, ns, qn, clip));
 }
 
 bool XmlProtocol::stepRequiresElement() const
@@ -423,7 +479,7 @@ int XmlProtocol::writeElement(const QDomElement &e, int id, bool external, bool 
 	transferItemList += TransferItem(e, true, external);
 
 	//elementSend(e);
-	QString out = elementToString(e, clip);
+	QString out = ensureGTEncoded(elementToString(e, clip));
 	return internalWriteString(out, TrackItem::Custom, id);
 }
 
@@ -455,6 +511,7 @@ int XmlProtocol::internalWriteData(const QByteArray &a, TrackItem::Type t, int i
 
 int XmlProtocol::internalWriteString(const QString &s, TrackItem::Type t, int id)
 {
+	QString out=ensureGTEncoded(s);
 	Q3CString cs = s.utf8();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
@@ -471,7 +528,7 @@ void XmlProtocol::sendTagOpen()
 
 	QString s;
 	s += xmlHeader + '\n';
-	s += tagOpen + '\n';
+	s += ensureGTEncoded(tagOpen) + '\n';
 
 	transferItemList += TransferItem(xmlHeader, true);
 	transferItemList += TransferItem(tagOpen, true);

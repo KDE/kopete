@@ -23,13 +23,14 @@
 
 #include <qdom.h>
 #include <QList>
+#include <QObject>
 #include "parser.h"
 
 #define NS_XML "http://www.w3.org/XML/1998/namespace"
 
 namespace XMPP
 {
-	class XmlProtocol
+	class XmlProtocol : public QObject
 	{
 	public:
 		enum Need {

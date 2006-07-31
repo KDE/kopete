@@ -301,7 +301,10 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					xhtmlBody.replace("&nbsp;" , "&#160;");
 							
 					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +">"+ xhtmlBody +"</p>";
-					jabberMessage.setXHTMLBody ( xhtmlBody );
+					
+					QDomDocument doc;
+					doc.setContent(xhtmlBody, true);
+					jabberMessage.setHTML( XMPP::HTMLElement( doc.documentElement() ) );
 				}
         	}
 		}
