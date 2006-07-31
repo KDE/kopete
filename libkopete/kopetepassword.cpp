@@ -91,7 +91,9 @@ public:
 	void begin()
 	{
 		kDebug( 14010 ) << k_funcinfo << endl;
-		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
+#warning TODO
+//		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
+		walletReceived( 0L );
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
