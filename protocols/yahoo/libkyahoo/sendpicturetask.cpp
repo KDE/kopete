@@ -135,9 +135,7 @@ void SendPictureTask::connectSucceeded()
 
 void SendPictureTask::readResult()
 {
-	QByteArray ar( m_socket->bytesAvailable() );
-	m_socket->readBlock ( ar.data (), ar.size () );
-	QString buf( ar );
+	QString buf( m_socket->readAll() );
 
 	m_socket->close();
 	if( buf.indexOf( "error", 0, Qt::CaseInsensitive ) >= 0 )

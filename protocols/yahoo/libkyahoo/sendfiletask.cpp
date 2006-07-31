@@ -72,7 +72,7 @@ void SendFileTask::connectSucceeded()
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer t( Yahoo::ServiceFileTransfer );
 
-	m_file.setName( m_url.path() );
+	m_file.setFileName( m_url.path() );
 
 	t.setId( client()->sessionID() );
 	t.setParam( 0, client()->userId().toLocal8Bit());
@@ -104,11 +104,11 @@ void SendFileTask::connectSucceeded()
 			"Host: filetransfer.msg.yahoo.com:80\r\n"
 			"Content-length: %4\r\n"
 			"Cache-Control: no-cache\r\n\r\n").arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()).arg(m_file.size()+4+paket.size());
-	stream.writeRawBytes( header.toLocal8Bit(), header.length() );
-	stream.writeRawBytes( paket.data(), paket.size() );
+	stream.writeRawData( header.toLocal8Bit(), header.length() );
+	stream.writeRawData( paket.data(), paket.size() );
 	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
 
-	if( !m_socket->writeBlock( buffer, buffer.size() ) )
+	if( !m_socket->write( buffer ) )
 	{
 		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		m_socket->close();
@@ -128,8 +128,8 @@ void SendFileTask::transmitData()
 	char buf[1024];
 
 	m_socket->enableWrite( false );
-	read = m_file.readBlock( buf, 1024 );
-	written = m_socket->writeBlock( buf, read );
+	read = m_file.read( buf, 1024 );
+	written = m_socket->write( buf );
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "read:" << read << " written: " << written << endl;
 
 	m_transmitted += read;

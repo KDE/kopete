@@ -120,7 +120,7 @@ void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 
 	m_transmitted += data.size();
 	emit bytesProcessed( m_transferId, m_transmitted );
-	m_file->writeBlock( data.data() , data.size() );
+	m_file->write( data );
 	
 }
 
