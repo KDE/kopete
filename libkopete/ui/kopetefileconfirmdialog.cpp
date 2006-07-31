@@ -35,12 +35,10 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 : KDialog( parent ), m_info( info )
 {
 	setCaption( i18n( "A User Would Like to Send You a File" ) );
-	setButtons( KDialog::User1 | KDialog::User2 );
-	setButtonGuiItem( KDialog::User1, i18n("&Refuse") );
-	setButtonGuiItem( KDialog::User2, i18n("&Accept") );	
+	setButtons( KDialog::Ok | KDialog::Cancel );
+	setButtonGuiItem( KDialog::Cancel, i18n("&Refuse") );
+	setButtonGuiItem( KDialog::Ok, i18n("&Accept") );	
 
-	setEscapeButton( KDialog::User1 );
-	setDefaultButton( KDialog::User2 );
 	setAttribute( Qt::WA_DeleteOnClose );
 	m_emited=false;
 
@@ -69,6 +67,10 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 
 KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
 {
+	if(!m_emited)
+	{
+		emit refused(m_info);
+	}
 }
 
 void KopeteFileConfirmDialog::slotBrowsePressed()
@@ -80,9 +82,8 @@ void KopeteFileConfirmDialog::slotBrowsePressed()
 	}
 }
 
-void KopeteFileConfirmDialog::slotUser2()
+void KopeteFileConfirmDialog::accept()
 {
-	m_emited=true;
 	KUrl url = KUrl(m_saveto->text());
 	if(url.isValid() && url.isLocalFile() )
 	{
@@ -102,27 +103,11 @@ void KopeteFileConfirmDialog::slotUser2()
 		}
 
 		emit accepted(m_info,m_saveto->text());
-		close();
+		m_emited=true;
+		KDialog::accept();
 	}
 	else
 		KMessageBox::queuedMessageBox (this, KMessageBox::Sorry, i18n("You must provide a valid local filename") );
-}
-
-void KopeteFileConfirmDialog::slotUser1()
-{
-	m_emited=true;
-	emit refused(m_info);
-	close();
-}
-
-void KopeteFileConfirmDialog::closeEvent( QCloseEvent *e)
-{
-	if(!m_emited)
-	{
-		m_emited=true;
-		emit refused(m_info);
-	}
-	KDialog::closeEvent(e);
 }
 
 #include "kopetefileconfirmdialog.moc"

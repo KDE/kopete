@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>FileConfirmBase</class>
  <widget class="QWidget" name="FileConfirmBase" >
   <property name="geometry" >
@@ -41,6 +38,9 @@
      </property>
      <property name="alignment" >
       <set>Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -139,22 +139,16 @@
    <class>Q3TextEdit</class>
    <extends>Q3Frame</extends>
    <header>q3textedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
    <extends>QWidget</extends>
    <header>klineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KPushButton</class>
    <extends>QWidget</extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <resources/>

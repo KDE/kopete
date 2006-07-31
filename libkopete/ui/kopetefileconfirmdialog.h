@@ -35,7 +35,7 @@ public:
 	                         const QString& description = QString::null,
 	                         QWidget *parent = 0 );
 	~KopeteFileConfirmDialog();
-
+	
 private:
 	QWidget* m_view;
 	Kopete::FileTransferInfo m_info;
@@ -43,11 +43,7 @@ private:
 
 public slots:
 	void slotBrowsePressed();
-
-protected slots:
-	virtual void slotUser2();
-	virtual void slotUser1();
-	virtual void closeEvent( QCloseEvent *e);
+	virtual void accept();
 
 signals:
 	void accepted(const Kopete::FileTransferInfo &info, const QString &filename);
