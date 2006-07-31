@@ -237,7 +237,7 @@ struct ChatRoomInfo
 	const WORD ICQ_MAJOR 			= 0x0014;
 	const WORD ICQ_MINOR 			= 0x0034;
 	const WORD ICQ_POINT 			= 0x0000;
-	const WORD ICQ_BUILD 			= 0x0A0F;
+	const WORD ICQ_BUILD 			= 0x0BB8;
 	const char ICQ_OTHER[] 			= { 0x00, 0x00, 0x04, 0x3d };
 	const char ICQ_COUNTRY[] 		= "us";
 	const char ICQ_LANG[] 			= "en";
