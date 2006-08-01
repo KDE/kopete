@@ -30,7 +30,6 @@
  * classes.
  *
  * @author Richard Moore, rich@kde.org
- * @version $Id$
  */
 class BindingObject : public QObject
 {

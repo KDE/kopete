@@ -1,35 +1,38 @@
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE3_INCLUDE_DIR} ${QT_INCLUDE_DIR}  )
+
+INCLUDE_DIRECTORIES(
+    ${KOPETE_INCLUDES}
+)
 
 
 ########### next target ###############
 
-SET(kopetemessageplugin_PART_SRCS
-kopetemessage_imp.cpp
+set(kopetemessageplugin_PART_SRCS
+    kopetemessageimp.cpp
 )
 
-KDE3_AUTOMOC(${kopetemessageplugin_PART_SRCS})
+kde4_automoc(${kopetemessageplugin_PART_SRCS})
 
-KDE3_ADD_KPART(kopetemessageplugin WITH_PREFIX ${kopetemessageplugin_PART_SRCS})
+kde4_add_plugin(kopetemessageplugin ${kopetemessageplugin_PART_SRCS})
 
-TARGET_LINK_LIBRARIES(kopetemessageplugin  ${QT_AND_KDECORE_LIBS} kparts kjsembed kopete )
+target_link_libraries(kopetemessageplugin  ${KDE4_KDECORE_LIBS} kparts kjsembed kopete )
 
-INSTALL_TARGETS(/lib/kde3 kopetemessageplugin )
+install(TARGETS kopetemessageplugin DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
 
-SET(wrappers_STAT_SRCS
-kopeteonlinestatus_imp.cpp
+set(wrappers_STAT_SRCS
+    kopeteonlinestatusimp.cpp
 )
 
-KDE3_AUTOMOC(${wrappers_STAT_SRCS})
+kde4_automoc(${wrappers_STAT_SRCS})
 
 ADD_LIBRARY(wrappers STATIC ${wrappers_STAT_SRCS})
 
 
 ########### install files ###############
 
-INSTALL_FILES( /share/services FILES  kopetemessageplugin.desktop )
+install( FILES kopetemessageplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 
 
 

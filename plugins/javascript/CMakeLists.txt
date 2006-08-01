@@ -1,50 +1,55 @@
-ADD_SUBDIRECTORY( wrappers ) 
 
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE3_INCLUDE_DIR} ${QT_INCLUDE_DIR}  )
+add_subdirectory( wrappers ) 
+
+include_directories(
+    ${KOPETE_INCLUDES}
+)
 
 
 ########### next target ###############
 
-SET(kopete_javascript_PART_SRCS
-javascriptplugin.cpp
-javascriptconfig.cpp
+set( kopete_javascript_PART_SRCS
+    javascriptplugin.cpp
+    javascriptconfig.cpp
 )
 
-KDE3_AUTOMOC(${kopete_javascript_PART_SRCS})
+kde4_automoc(${kopete_javascript_PART_SRCS})
 
-KDE3_ADD_KPART(kopete_javascript ${kopete_javascript_PART_SRCS})
+kde4_add_plugin(kopete_javascript ${kopete_javascript_PART_SRCS})
 
-TARGET_LINK_LIBRARIES(kopete_javascript  ${QT_AND_KDECORE_LIBS} kopete kjsembed wrappers )
+kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_javascript )
 
-INSTALL_TARGETS(/lib/kde3 kopete_javascript )
+target_link_libraries(kopete_javascript  ${KDE4_KDECORE_LIBS} kopete kjsembed wrappers )
+
+install( TARGETS kopete_javascript DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
 
-SET(kcm_kopete_javascript_PART_SRCS
-javascriptpreferences.cpp
-javascriptconfig.cpp
+set( kcm_kopete_javascript_PART_SRCS
+    javascriptpreferences.cpp
+    javascriptconfig.cpp
 )
 
-KDE3_AUTOMOC(${kcm_kopete_javascript_PART_SRCS})
+kde4_automoc(${kcm_kopete_javascript_PART_SRCS})
 
-SET( kcm_kopete_javascript_UI
-javascriptprefsbase.ui
+set( kcm_kopete_javascript_UI
+    javascriptprefsbase.ui
 )
 
-KDE3_ADD_UI_FILES(kcm_kopete_javascript_PART_SRCS ${kcm_kopete_javascript_UI} )
+kde4_add_ui_files(kcm_kopete_javascript_PART_SRCS ${kcm_kopete_javascript_UI} )
 
-KDE3_ADD_KPART(kcm_kopete_javascript ${kcm_kopete_javascript_PART_SRCS})
+kde4_add_plugin(kcm_kopete_javascript ${kcm_kopete_javascript_PART_SRCS})
 
-TARGET_LINK_LIBRARIES(kcm_kopete_javascript  ${QT_AND_KDECORE_LIBS} knewstuff kopete )
+target_link_libraries(kcm_kopete_javascript ${QT_AND_KDECORE_LIBS} knewstuff kopete )
 
-INSTALL_TARGETS(/lib/kde3 kcm_kopete_javascript )
+install( TARGETS kcm_kopete_javascript DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-INSTALL_FILES( /share/services FILES  kopete_javascript.desktop )
-INSTALL_FILES( /share/services/kconfiguredialog FILES  kopete_javascript_config.desktop )
+install( FILES kopete_javascript.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES kopete_javascript_config.desktop DESTINATION  ${SERVICES_INSTALL_DIR}/kconfiguredialog )
 
 
 

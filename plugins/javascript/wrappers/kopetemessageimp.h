@@ -19,8 +19,8 @@
  *  Boston, MA 02111-1307, USA.
  */
 
-#ifndef KJSEMBED_CUSTOMOBJECT_PLUGIN_H
-#define KJSEMBED_CUSTOMOBJECT_PLUGIN_H
+#ifndef KJSEMBED_BINDINGS_KOPETEMESSAGE_H
+#define KJSEMBED_BINDINGS_KOPETEMESSAGE_H
 
 #include <kjsembed/jsbindingplugin.h>
 #include <kjsembed/jsproxy_imp.h>
@@ -29,14 +29,15 @@
 namespace KJSEmbed {
 namespace Bindings {
 
-class KopeteMessageLoader : public JSBindingPlugin
+class KopeteMessageLoader
+	: public JSBindingPlugin
 {
-	public:
-		KopeteMessageLoader( QObject *parent, const char *name, const QStringList &args );
-		KJS::Object createBinding(KJSEmbedPart *jspart, KJS::ExecState *exec, const KJS::List &args) const;
+public:
+	KopeteMessageLoader( QObject *parent, const char *name, const QStringList &args );
+	KJS::Object createBinding(KJSEmbedPart *jspart, KJS::ExecState *exec, const KJS::List &args) const;
 };
 
-class KopeteMessageImp : public JSProxyImp
+class JSKopeteMessageImp : public JSProxyImp
 {
 	/** Identifiers for the methods provided by this class. */
 	enum MethodId
@@ -57,26 +58,27 @@ class KopeteMessageImp : public JSProxyImp
 		asXML
 	};
 
-	public:
-		KopeteMessageImp( KJS::ExecState *exec, int id );
-		virtual ~KopeteMessageImp();
+public:
+	JSKopeteMessageImp( KJS::ExecState *exec, int id );
+	virtual ~JSKopeteMessageImp();
 
-		static void addBindings( KJS::ExecState *exec, KJS::Object &object );
+	static void addBindings( KJS::ExecState *exec, KJS::Object &object );
 
-		/** Returns true iff this object implements the call function. */
-		virtual bool implementsCall() const { return true; }
+	/** Returns true iff this object implements the call function. */
+	virtual bool implementsCall() const { return true; }
 
-		KJS::Value call( KJS::ExecState *exec, KJS::Object &self, const KJS::List &args );
+	KJS::Value call( KJS::ExecState *exec, KJS::Object &self, const KJS::List &args );
 
-		static Kopete::Message *message( KJS::Object &object );
+	static Kopete::Message *message( KJS::Object &object );
 
-	private:
-		int extractInt( KJS::ExecState *exec, const KJS::List &args, int idx);
-		QString extractString(KJS::ExecState *exec, const KJS::List &args, int idx);
-		int mid;
+private:
+	int extractInt( KJS::ExecState *exec, const KJS::List &args, int idx);
+	QString extractString(KJS::ExecState *exec, const KJS::List &args, int idx);
+	int mid;
 };
 
-} // namespace
-} // namespace
+} // Bindings namespace
+} // KJSEmbed namespace
 
-#endif // KJSEMBED_IMAGE_IMP_H
+#endif
+
