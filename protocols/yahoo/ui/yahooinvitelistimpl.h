@@ -19,12 +19,11 @@
 #define YAHOO_INVITE_LIST_IMPL
 
 #include <qwidget.h>
-
+#include <kdialog.h>
 #include "ui_yahooinvitelistbase.h"
 
-class KDialog;
 
-class YahooInviteListImpl : public QWidget, public Ui::YahooInviteListBase
+class YahooInviteListImpl : public KDialog
 {
 	Q_OBJECT
 public: 
@@ -43,11 +42,11 @@ signals:
 protected slots:
 
 public slots:
-    virtual void btnInvite_clicked();
-    virtual void btnCancel_clicked();
-    virtual void btnAddCustom_clicked();
-    virtual void btnRemove_clicked();
-    virtual void btnAdd_clicked();
+	virtual void slotInvite();
+	virtual void slotCancel();
+	virtual void slotAddCustom();
+	virtual void slotRemove();
+	virtual void slotAdd();
 private:
 	void updateListBoxes();
 
@@ -56,7 +55,7 @@ private:
 	QStringList m_participants;
 	QString m_room;
 
-	KDialog* m_dialog;
+	Ui::YahooInviteListBase* m_inviteWidget;
 };
 
 #endif

@@ -19,19 +19,34 @@
 
 #include <kdebug.h>
 
-#include <q3listbox.h>
-#include <qlineedit.h>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QLineEdit>
 
-YahooInviteListImpl::YahooInviteListImpl(QWidget *parent) : QWidget(parent)
+YahooInviteListImpl::YahooInviteListImpl(QWidget *parent) : KDialog(parent)
 {
-	m_dialog = new KDialog( this );
-	setupUi( m_dialog );
-	listFriends->setSelectionMode( Q3ListBox::Extended );
-	listInvited->setSelectionMode( Q3ListBox::Extended );
+	setButtons( KDialog::Cancel | KDialog::User1 );
+	setEscapeButton( KDialog::Cancel );
+	setButtonText( KDialog::User1, i18n("Invite") );
+
+	QWidget* w = new QWidget( this );
+	m_inviteWidget = new Ui::YahooInviteListBase();
+	m_inviteWidget->setupUi( w );
+	setMainWidget( w );	
+	QObject::connect( this, SIGNAL(user1Clicked()), this, SLOT(slotInvite()) );
+	QObject::connect( m_inviteWidget->btn_Add, SIGNAL(clicked()), this, SLOT(slotAdd()) );
+	QObject::connect( m_inviteWidget->btn_Remove, SIGNAL(clicked()), this, SLOT(slotRemove()) );
+	QObject::connect( m_inviteWidget->btnCustomAdd, SIGNAL(clicked()), this, SLOT(slotAddCustom()) );
+
+	m_inviteWidget->listFriends->setSelectionMode( QAbstractItemView::ExtendedSelection );
+	m_inviteWidget->listInvited->setSelectionMode( QAbstractItemView::ExtendedSelection );
+
+	show();
 }
 
 YahooInviteListImpl::~YahooInviteListImpl()
 {
+	delete m_inviteWidget;
 }
 
 void YahooInviteListImpl::setRoom( const QString &room )
@@ -53,12 +68,12 @@ void YahooInviteListImpl::updateListBoxes()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
-	listFriends->clear();
-	listInvited->clear();
-	listFriends->insertStringList( m_buddyList );
-	listFriends->sort();
-	listInvited->insertStringList( m_inviteeList );
-	listInvited->sort();
+	m_inviteWidget->listFriends->clear();
+	m_inviteWidget->listInvited->clear();
+	m_inviteWidget->listFriends->insertItems( 0, m_buddyList );
+	m_inviteWidget->listFriends->sortItems();
+	m_inviteWidget->listInvited->insertItems( 0, m_inviteeList );
+	m_inviteWidget->listInvited->sortItems();
 }
 
 void YahooInviteListImpl::addInvitees( const QStringList &invitees )
@@ -96,72 +111,65 @@ void YahooInviteListImpl::addParticipant( const QString &p )
 	m_participants.push_back( p );
 }
 
-void YahooInviteListImpl::btnInvite_clicked()
+void YahooInviteListImpl::slotInvite()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
 	if( m_inviteeList.count() )
-		emit readyToInvite( m_room, m_inviteeList,m_participants, editMessage->text() );
-	m_dialog->accept();
+		emit readyToInvite( m_room, m_inviteeList,m_participants, m_inviteWidget->editMessage->text() );
+	accept();
 }
 
 
-void YahooInviteListImpl::btnCancel_clicked()
+void YahooInviteListImpl::slotCancel()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
-	m_dialog->reject();
+	reject();
 }
 
 
-void YahooInviteListImpl::btnAddCustom_clicked()
+void YahooInviteListImpl::slotAddCustom()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
 	QString userId;
-	userId = editBuddyAdd->text();
+	userId = m_inviteWidget->editBuddyAdd->text();
 	if( userId.isEmpty() )
 		return;
 	
 	addInvitees( QStringList(userId) );
-	editBuddyAdd->clear();
+	m_inviteWidget->editBuddyAdd->clear();
 }
 
 
-void YahooInviteListImpl::btnRemove_clicked()
+void YahooInviteListImpl::slotRemove()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
 	QStringList buddies;
-	for( uint i=0; i<listInvited->count(); i++ )
+	QList<QListWidgetItem *> items = m_inviteWidget->listInvited->selectedItems();
+	foreach( QListWidgetItem *item, items )
 	{
-		if (listInvited->isSelected(i))
-		{
-			buddies.push_back( listInvited->text(i) );
-		}
+		buddies.push_back( item->text() );
 	}
 	removeInvitees( buddies );
 }
 
 
-void YahooInviteListImpl::btnAdd_clicked()
+void YahooInviteListImpl::slotAdd()
 {
 	kDebug(14180) << k_funcinfo << endl;
 
 	QStringList buddies;
-	for( uint i=0; i<listFriends->count(); i++ )
-	{
-		if (listFriends->isSelected(i))
-		{
-			buddies.push_back( listFriends->text(i) );
-		}
+	QList<QListWidgetItem *> items = m_inviteWidget->listFriends->selectedItems();
+	foreach( QListWidgetItem *item, items )
+        {
+		buddies.push_back( item->text() );
 	}
 	addInvitees( buddies );
 }
 
 
 #include "yahooinvitelistimpl.moc"
-
-
-
 
