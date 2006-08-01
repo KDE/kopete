@@ -8,7 +8,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qregexp.h>
+#include "javascriptconfig.h"
+
+#include "javascriptfile.h"
+
+#include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
+
+#include <kstandarddirs.h>
 
 #include <kdebug.h>
 #include <ksimpleconfig.h>
@@ -19,20 +26,12 @@
 #include <kdesktopfile.h>
 #include <kmessagebox.h>
 
-#include "kopeteuiglobal.h"
-#include "kopeteaccount.h"
+#include <qregexp.h>
 
-#include "javascriptconfig.h"
-
-class JavaScriptConfigPrivate
+struct JavaScriptConfig::Private
 {
-	public:
-	JavaScriptConfigPrivate()
-	{
-	}
-
 	KConfig *config;
-	QMap< QString, Script* > scripts;
+	QMap< QString, JavaScriptFile * > scripts;
 };
 
 JavaScriptConfig* JavaScriptConfig::m_config = 0L;
@@ -40,25 +39,25 @@ JavaScriptConfig* JavaScriptConfig::m_config = 0L;
 JavaScriptConfig *JavaScriptConfig::instance()
 {
 	if( !m_config )
-		m_config = new JavaScriptConfig(0L,"");
+		m_config = new JavaScriptConfig(0L);
 	return m_config;
 }
 
-JavaScriptConfig::JavaScriptConfig( QObject *parent, const char* name ) : QObject( parent, name )
-	, MimeTypeHandler( false )
+JavaScriptConfig::JavaScriptConfig(QObject *parent)
+	: QObject(parent)
+	, MimeTypeHandler(false)
+	, d(new JavaScriptConfig::Private)
 {
-	kdDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo << endl;
 
-	d = new JavaScriptConfigPrivate;
 	d->config = new KConfig("javascriptplugin.rc");
 
-	QStringList groups = d->config->groupList();
-	for( QStringList::iterator it = groups.begin(); it != groups.end(); ++it )
+	foreach( const QString group, d->config->groupList() )
 	{
-		if( (*it).endsWith( "_Script" ) )
+		if( group.endsWith( "_Script" ) )
 		{
-			d->config->setGroup( *it );
-			Script *s = new Script;
+			d->config->setGroup( group );
+			JavaScriptFile *s = new JavaScriptFile(this);
 			s->id = d->config->readEntry("ID", QString::number( time( NULL ) ) );
 			s->name = d->config->readEntry("Name", "" );
 			s->description = d->config->readEntry("Description", "" );
@@ -69,7 +68,7 @@ JavaScriptConfig::JavaScriptConfig( QObject *parent, const char* name ) : QObjec
 			QStringList ftns = d->config->readListEntry("Functions");
 			for( QStringList::iterator it2 = ftns.begin(); it2 != ftns.end(); ++it2 )
 				s->functions.insert( *it2, d->config->readEntry( *it2 + "_Function", "" ) );
-			s->immutable = d->config->entryIsImmutable( *it );
+			s->immutable = d->config->entryIsImmutable( group );
 
 			d->scripts.insert( s->id, s );
 		}
@@ -84,9 +83,6 @@ JavaScriptConfig::~JavaScriptConfig()
 {
 	apply();
 	delete d->config;
-
-	for( QMap<QString,Script*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it )
-		delete it.data();
 
 	delete d;
 }
@@ -146,9 +142,9 @@ void JavaScriptConfig::setFactoryEnabled( bool val )
 
 void JavaScriptConfig::apply()
 {
-	for( QMap<QString,Script*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it  )
+	for( QMap<QString,JavaScriptFile*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it  )
 	{
-		Script *s = it.data();
+		JavaScriptFile *s = it.data();
 		d->config->setGroup( s->id + "_Script" );
 		d->config->writeEntry("ID", s->id );
 		d->config->writeEntry("Name", s->name );
@@ -167,11 +163,11 @@ void JavaScriptConfig::apply()
 	emit changed();
 }
 
-Script* JavaScriptConfig::addScript( const QString &fileName, const QString &name, const QString &description,
+JavaScriptFile *JavaScriptConfig::addScript( const QString &fileName, const QString &name, const QString &description,
 	const QString &author, const QString &version, const QMap<QString,QString> &functions,
 	const QString &id )
 {
-	Script *s = new Script;
+	JavaScriptFile *s = new JavaScriptFile(this);
 	s->id = id;
 	s->name = name;
 	s->fileName = fileName;
@@ -185,7 +181,7 @@ Script* JavaScriptConfig::addScript( const QString &fileName, const QString &nam
 	return s;
 }
 
-Script* JavaScriptConfig::script( const QString &id )
+JavaScriptFile* JavaScriptConfig::script( const QString &id )
 {
 	return d->scripts[id];
 }
@@ -195,7 +191,7 @@ void JavaScriptConfig::removeScript( const QString &id )
 	d->scripts.remove( id );
 }
 
-QValueList<Script*> JavaScriptConfig::scriptsFor( Kopete::Account *account )
+QList<JavaScriptFile *> JavaScriptConfig::scriptsFor( Kopete::Account *account )
 {
 	QString key;
 	if( account )
@@ -203,10 +199,10 @@ QValueList<Script*> JavaScriptConfig::scriptsFor( Kopete::Account *account )
 	else
 		key = "GLOBAL_SCRIPT";
 
-	QValueList<Script*> retVal;
-	for( QMap<QString,Script*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it )
+	QList<JavaScriptFile *> retVal;
+	for( QMap<QString,JavaScriptFile*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it )
 	{
-		kdDebug() << it.data()->accounts << endl;
+		kDebug() << it.data()->accounts << endl;
 		if( it.data()->accounts.contains( key ) || it.data()->accounts.contains( "GLOBAL_SCRIPT" ) )
 			retVal.append( it.data() );
 	}
@@ -222,9 +218,9 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 	else
 		key = "GLOBAL_SCRIPT";
 
-	kdDebug() << k_funcinfo << key << " " << script << " " << enabled << endl;
+	kDebug() << k_funcinfo << key << " " << script << " " << enabled << endl;
 
-	Script *scriptPtr = d->scripts[script];
+	JavaScriptFile *scriptPtr = d->scripts[script];
 	if( scriptPtr )
 	{
 		if( scriptPtr->accounts.contains( script ) )
@@ -246,7 +242,7 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal )
 {
 	retVal = false;
-	QString localScriptsDir( locateLocal("data", QString::fromLatin1("kopete/scripts")) );
+	QString localScriptsDir( KStandardDirs::locateLocal("data", QLatin1String("kopete/scripts")) );
 
 	if(localScriptsDir.isEmpty())
 	{
@@ -312,7 +308,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 	);
 }
 
-void JavaScriptConfig::handleURL( const QString &, const KURL &url ) const
+void JavaScriptConfig::handleURL( const QString &, const KUrl &url ) const
 {
 	bool retVal = false;
 	const_cast<JavaScriptConfig*>(this)->installPackage( url.path(), retVal );

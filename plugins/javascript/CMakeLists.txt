@@ -3,14 +3,16 @@ add_subdirectory( wrappers )
 
 include_directories(
     ${KOPETE_INCLUDES}
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 
 ########### next target ###############
 
 set( kopete_javascript_PART_SRCS
-    javascriptplugin.cpp
     javascriptconfig.cpp
+    javascriptfile.cpp
+    javascriptplugin.cpp
 )
 
 kde4_automoc(${kopete_javascript_PART_SRCS})
@@ -27,8 +29,8 @@ install( TARGETS kopete_javascript DESTINATION ${PLUGIN_INSTALL_DIR} )
 ########### next target ###############
 
 set( kcm_kopete_javascript_PART_SRCS
-    javascriptpreferences.cpp
     javascriptconfig.cpp
+    javascriptpreferences.cpp
 )
 
 kde4_automoc(${kcm_kopete_javascript_PART_SRCS})
