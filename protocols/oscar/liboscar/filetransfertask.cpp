@@ -234,7 +234,8 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 		break;
 	 case 1:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user cancelled filetransfer :(" << endl;
-		emit gotCancel();
+		emit gotCancel(); //FIXME: what if it's not hooked up?
+		m_timer.stop();
 		setSuccess( true );
 		break;
 	 case 2:
@@ -608,10 +609,12 @@ void FileTransferTask::oftRAgree()
 
 void FileTransferTask::doCancel()
 {
+	//tell the other side
 	Oscar::Message msg = makeFTMsg();
 	msg.setReqType( 1 );
-
 	emit sendMessage( msg );
+	//stop our timer in case we were sending stuff
+	m_timer.stop();
 	setSuccess( true );
 }
 
