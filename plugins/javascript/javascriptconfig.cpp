@@ -65,9 +65,8 @@ JavaScriptConfig::JavaScriptConfig(QObject *parent)
 			s->version = d->config->readEntry("Version", "Unknown" );
 			s->fileName = d->config->readEntry("FileName", "");
 			s->accounts = d->config->readListEntry("Accounts");
-			QStringList ftns = d->config->readListEntry("Functions");
-			for( QStringList::iterator it2 = ftns.begin(); it2 != ftns.end(); ++it2 )
-				s->functions.insert( *it2, d->config->readEntry( *it2 + "_Function", "" ) );
+			foreach( const QString &function, d->config->readListEntry("Functions") )
+				s->functions.insert( function, d->config->readEntry( function + "_Function", QString() ) );
 			s->immutable = d->config->entryIsImmutable( group );
 
 			d->scripts.insert( s->id, s );
@@ -75,8 +74,8 @@ JavaScriptConfig::JavaScriptConfig(QObject *parent)
 	}
 
 	//Handler for script packages
-	registerAsHandler( QString::fromLatin1("application/x-kopete-javascript") );
-	registerAsHandler( QString::fromLatin1("application/x-zip") );
+	registerAsMimeHandler( QLatin1String("application/x-kopete-javascript") );
+	registerAsMimeHandler( QLatin1String("application/x-zip") );
 }
 
 JavaScriptConfig::~JavaScriptConfig()
@@ -87,7 +86,7 @@ JavaScriptConfig::~JavaScriptConfig()
 	delete d;
 }
 
-QValueList<Script*> JavaScriptConfig::allScripts() const
+QList<JavaScriptFile *> JavaScriptConfig::allScripts() const
 {
 	return d->scripts.values();
 }
@@ -95,49 +94,49 @@ QValueList<Script*> JavaScriptConfig::allScripts() const
 bool JavaScriptConfig::signalsEnabled() const
 {
 	d->config->setGroup("Global");
-	return d->config->readBoolEntry( QString::fromLatin1("SignalsEnabled"), true );
+	return d->config->readEntry( QLatin1String("SignalsEnabled"), true );
 }
 
 void JavaScriptConfig::setSignalsEnabled( bool val )
 {
 	d->config->setGroup("Global");
-	d->config->writeEntry( QString::fromLatin1("signalsEnabled"), val );
+	d->config->writeEntry( QLatin1String("signalsEnabled"), val );
 }
 
 bool JavaScriptConfig::writeEnabled() const
 {
 	d->config->setGroup("Global");
-	return d->config->readBoolEntry( QString::fromLatin1("writeEnabled"), true );
+	return d->config->readEntry( QLatin1String("writeEnabled"), true );
 }
 
 void JavaScriptConfig::setWriteEnabled( bool val )
 {
 	d->config->setGroup("Global");
-	d->config->writeEntry( QString::fromLatin1("writeEnabled"), val );
+	d->config->writeEntry( QLatin1String("writeEnabled"), val );
 }
 
 bool JavaScriptConfig::treeEnabled() const
 {
 	d->config->setGroup("Global");
-	return d->config->readBoolEntry( QString::fromLatin1("treeEnabled"), true );
+	return d->config->readEntry( QLatin1String("treeEnabled"), true );
 }
 
 void JavaScriptConfig::setTreeEnabled( bool val )
 {
 	d->config->setGroup("Global");
-	d->config->writeEntry( QString::fromLatin1("treeEnabled"), val );
+	d->config->writeEntry( QLatin1String("treeEnabled"), val );
 }
 
 bool JavaScriptConfig::factoryEnabled() const
 {
 	d->config->setGroup("Global");
-	return d->config->readBoolEntry( QString::fromLatin1("factoryEnabled"), true );
+	return d->config->readEntry( QLatin1String("factoryEnabled"), true );
 }
 
 void JavaScriptConfig::setFactoryEnabled( bool val )
 {
 	d->config->setGroup("Global");
-	d->config->writeEntry( QString::fromLatin1("factoryEnabled"), val );
+	d->config->writeEntry( QLatin1String("factoryEnabled"), val );
 }
 
 void JavaScriptConfig::apply()
@@ -278,18 +277,18 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 			manifestEntry->copyTo( manifest.name() );
 			KDesktopFile manifestFile( manifest.name() );
 
-			if( manifestFile.readType() == QString::fromLatin1("KopeteScript") )
+			if( manifestFile.readType() == QLatin1String("KopeteScript") )
 			{
+#warning find a better uinique id
 				QString id = QString::number( time( NULL ) );
-				QString dir = localScriptsDir + QString::fromLatin1("/") + id;
+				QString dir = localScriptsDir + QChar('/') + id;
 				rootDir->copyTo( dir );
-				KSimpleConfig conf( dir + QString::fromLatin1("/") + manifestFile.readURL() );
+				KSimpleConfig conf( dir + QChar('/') + manifestFile.readURL() );
 
 				QMap<QString,QString> functions;
-				QStringList ftns = conf.readListEntry("Functions");
 
-				for( QStringList::iterator it = ftns.begin(); it != ftns.end(); ++it )
-					functions.insert( *it, conf.readEntry( *it + "_Function" ) );
+				foreach( const QString &function, conf.readListEntry("Functions") )
+					functions.insert( function, conf.readEntry( function + "_Function", QString()));
 
 				addScript( conf.readEntry("FileName"), conf.readEntry("Name"),
 					conf.readEntry("Description"), conf.readEntry("Author"),

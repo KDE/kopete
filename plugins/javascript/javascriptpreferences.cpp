@@ -11,8 +11,7 @@
 
 #include "javascriptconfig.h"
 #include "javascriptfile.h"
-#include "javascriptnamedialog.h"
-#include "javascriptprefsbase.h"
+//#include "javascriptnamedialog.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -25,8 +24,8 @@
 #include <ktempfile.h>
 
 #include <qdir.h>
-/*
-#include <klistview.h>
+
+#warning CLEAN ME
 #include <krun.h>
 #include <kurl.h>
 #include <kurlrequester.h>
@@ -36,7 +35,6 @@
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kconfig.h>
-#include <ktrader.h>
 #include <klibloader.h>
 
 #include <qfile.h>
@@ -46,22 +44,21 @@
 #include <qpushbutton.h>
 #include <qlistview.h>
 #include <qtimer.h>
-#include <qvbox.h>
 #include <qlineedit.h>
-*/
+
 struct JavaScriptPreferences::Private {
-	JavaScriptPrefsBase *preferencesDialog;
 	JavaScriptConfig *config;
 	KTempFile *tempFile;
 	JavaScriptFile *currentScript;
 	KDialog *addScriptDialog;
-	JavaScriptDialog *nameDialog;
+//	JavaScriptDialog *nameDialog;
 //	pid_t editProcess;
 };
 
-//typedef KGenericFactory<JavaScriptPreferences> JavaScriptPreferencesFactory;
-
-class ScriptItem : public QCheckListItem
+typedef KGenericFactory<JavaScriptPreferences> JavaScriptPreferencesFactory;
+/*
+class ScriptItem
+	: public QCheckListItem
 {
 public:
 	ScriptItem( QListView *parent, Script *m_script, QObject *reciever, const char* slot ) :
@@ -100,7 +97,8 @@ private:
 	bool lockSig;
 };
 
-class AccountItem : public QListViewItem
+class AccountItem
+	: public QListViewItem
 {
 public:
 	AccountItem( QListView *parent, Kopete::Account *a ) :
@@ -112,54 +110,62 @@ public:
 
 	Kopete::Account *account;
 };
-
+*/
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_javascript, JavaScriptPreferencesFactory( "kcm_kopete_javascript" ) )
 
-JavaScriptPreferences::JavaScriptPreferences( QWidget *parent, const char *, const QStringList &args )
-	: KCModule( JavaScriptPreferencesFactory::instance(), parent, args ),
-	KNewStuff( "kopete/javascript", "http://kopete.kde.org/knewstuff/javascript/providers.xml", parent )
+JavaScriptPreferences::JavaScriptPreferences( QWidget *parent, const QStringList &args )
+	: KCModule( JavaScriptPreferencesFactory::instance(), parent, args )
+	, KNewStuff( "kopete/javascript", "http://kopete.kde.org/knewstuff/javascript/providers.xml", parent )
+	, d(new JavaScriptPreferences::Private)
 {
-	config = JavaScriptConfig::instance();
+	d->config = JavaScriptConfig::instance();
 
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new JavaScriptPrefsBase( this );
+//	( new QVBoxLayout( this ) )->setAutoAdd( true );
+//	preferencesDialog = new JavaScriptPrefsBase( this );
+	setupUi(this);
 
-	new QListViewItem( preferencesDialog->accountList, i18n("All Accounts") );
-        tempFile = 0L;
+//	new QListViewItem( preferencesDialog->accountList, i18n("All Accounts") );
+        d->tempFile = 0L;
 
 	load();
 
-	connect(config, SIGNAL(changed()), this, SLOT(slotEmitChanged()) );
+	connect(d->config, SIGNAL(changed()),
+		this, SLOT(slotEmitChanged()) );
 	connect(this, SIGNAL( installPackage( const QString &, bool & ) ),
-		config, SLOT( installPackage( const QString &, bool &) ) );
-
-	connect(preferencesDialog->scriptList, SIGNAL(selectionChanged()),
+		d->config, SLOT( installPackage( const QString &, bool &) ) );
+/*
+	connect(scriptList, SIGNAL(selectionChanged()),
 		this, SLOT(slotUpdateButtons()) );
-	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()),
+	connect(accountList, SIGNAL(selectionChanged()),
 		this, SLOT(slotUpdateScriptList()) );
-	connect(preferencesDialog->addScript, SIGNAL(clicked()),
+	connect(addScript, SIGNAL(clicked()),
 		this, SLOT( slotAddScript() ) );
-	connect(preferencesDialog->downloadScript, SIGNAL(clicked()),
+	connect(downloadScript, SIGNAL(clicked()),
 		this, SLOT( slotDownloadScript() ) );
-	connect(preferencesDialog->editScript, SIGNAL(clicked()),
+	connect(editScript, SIGNAL(clicked()),
 		this, SLOT(slotEditScript()) );
-	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()),
+	connect(accountList, SIGNAL(selectionChanged()),
 		this, SLOT(slotUpdateScriptList()) );
 	connect(KDirWatch::self(), SIGNAL( dirty( const QString & ) ),
 		this, SLOT( slotFileDirty( const QString & ) ) );
 
-	foreach(Kopete::Account *account, Kopete::AccountManager::self()->accoxunts())
+	foreach(Kopete::Account *account, Kopete::AccountManager::self()->accounts())
 	{
-		new AccountItem( preferencesDialog->accountList, account );
+//		new AccountItem( accountList, account );
 	}
 
 	foreach( JavaScriptFile *script, d->config->allScripts() )
 	{
-		new ScriptItem( preferencesDialog->scriptList, script,
-			this, SLOT( slotEnableScript(const QVariant &) ) );
+//		new ScriptItem( preferencesDialog->scriptList, script,
+//			this, SLOT( slotEnableScript(const QVariant &) ) );
 	}
-
+*/
 	slotUpdateButtons();
+}
+
+JavaScriptPreferences::~JavaScriptPreferences()
+{
+	delete d;
 }
 
 void JavaScriptPreferences::slotEmitChanged()
@@ -169,47 +175,52 @@ void JavaScriptPreferences::slotEmitChanged()
 
 void JavaScriptPreferences::slotUpdateButtons()
 {
+/*
 	ScriptItem *selectedItem = static_cast<ScriptItem*>( preferencesDialog->scriptList->selectedItem() );
 	if( selectedItem )
 	{
 		JavaScriptFile *s = config->script( selectedItem->script->id );
 		if( s )
 		{
-			preferencesDialog->editScript->setEnabled( !s->immutable );
-			preferencesDialog->removeScript->setEnabled( !s->immutable );
-			preferencesDialog->configureScript->setEnabled( s->functions.contains("Configure") );
+			editScript->setEnabled( !s->immutable );
+			removeScript->setEnabled( !s->immutable );
+			configureScript->setEnabled( s->functions.contains("Configure") );
 		}
 		else
 		{
-			preferencesDialog->editScript->setEnabled( false );
-			preferencesDialog->removeScript->setEnabled( false );
-			preferencesDialog->configureScript->setEnabled( false );
+			editScript->setEnabled( false );
+			removeScript->setEnabled( false );
+			configureScript->setEnabled( false );
 		}
 	}
 	else
 	{
-		preferencesDialog->editScript->setEnabled( false );
-		preferencesDialog->removeScript->setEnabled( false );
-		preferencesDialog->configureScript->setEnabled( false );
+		editScript->setEnabled( false );
+		removeScript->setEnabled( false );
+		configureScript->setEnabled( false );
 	}
+*/
 }
 
 void JavaScriptPreferences::slotUpdateScriptList()
 {
-	AccountItem *item = dynamic_cast<AccountItem*>( preferencesDialog->accountList->selectedItem() );
+/*
+	AccountItem *item = dynamic_cast<AccountItem*>( accountList->selectedItem() );
 	QString act("GLOBAL_SCRIPT");
 	if( item )
 		act = item->account->accountId();
 
-	for( ScriptItem *i = static_cast<ScriptItem*>( preferencesDialog->scriptList->firstChild() );
+	for( ScriptItem *i = static_cast<ScriptItem*>( scriptList->firstChild() );
 		i; i = static_cast<ScriptItem*>( i->nextSibling() ) )
 	{
 		i->setOn( i->script->accounts.contains( act ) );
 	}
+*/
 }
 
 void JavaScriptPreferences::slotAddScript()
 {
+/*
 	addScriptDialog = new KDialogBase( this, "javascriptdialog", false, "Add Script",
                   KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 
@@ -220,10 +231,12 @@ void JavaScriptPreferences::slotAddScript()
 	connect( addScriptDialog, SIGNAL( finished() ), this, SLOT( slotAddDone() ) );
 
 	addScriptDialog->show();
+*/
 }
 
 void JavaScriptPreferences::slotAddComplete()
 {
+/*
 	QMap<QString,QString> functions;
 	QString none = QLatin1String("None");
 
@@ -293,15 +306,17 @@ void JavaScriptPreferences::slotAddComplete()
 			i18n("Unable to open %1 for writing, check permissions to this location.").arg( f.name() ) );
 		}
 	}
+*/
 }
 
 void JavaScriptPreferences::slotAddDone()
 {
-	addScriptDialog->delayedDestruct();
+	d->addScriptDialog->delayedDestruct();
 }
 
 void JavaScriptPreferences::slotEditScript()
 {
+/*
 	ScriptItem *selItem = static_cast<ScriptItem*>( preferencesDialog->scriptList->selectedItem() );
 	if( selItem )
 	{
@@ -312,10 +327,12 @@ void JavaScriptPreferences::slotEditScript()
 			"text/javascript", false, false );
 		slotWaitForEdit();
 	}
+*/
 }
 
 void JavaScriptPreferences::slotWaitForEdit()
 {
+/*
 	int status;
 	if( waitpid( editProcess, &status, WNOHANG ) < 1 )
 	{
@@ -326,25 +343,29 @@ void JavaScriptPreferences::slotWaitForEdit()
 	{
 		QTimer::singleShot( 100, this, SLOT( slotWaitForEdit() ) );
 	}
+*/
 }
 
 void JavaScriptPreferences::slotEditDone()
 {
-	QObject *runner = const_cast<QObject*>( sender() );
+	QObject *runner = sender();
 	runner->deleteLater();
 
-	preferencesDialog->scriptList->setEnabled( true );
+	scriptList->setEnabled( true );
+/*
 	ScriptItem *selItem = static_cast<ScriptItem*>( preferencesDialog->scriptList->selectedItem() );
 	if( selItem )
 	{
 		selItem->script->script(true);
 		emit KCModule::changed(true);
 	}
+*/
 }
 
 void JavaScriptPreferences::slotEnableScript( const QVariant &scriptItem )
 {
 	kDebug() << k_funcinfo << endl;
+/*
 	ScriptItem *i = (ScriptItem*)scriptItem.toInt();
 
 	QListViewItem *accountItem = preferencesDialog->accountList->selectedItem();
@@ -354,33 +375,36 @@ void JavaScriptPreferences::slotEnableScript( const QVariant &scriptItem )
 		config->setScriptEnabled( a ? a->account : 0L, i->script->id, i->isOn() );
 		emit KCModule::changed(true);
 	}
+*/
 }
 
 void JavaScriptPreferences::slotFileDirty( const QString &file )
 {
-	if( tempFile && file == tempFile->name() )
+/*
+	if( d->tempFile && file == d->tempFile->name() )
 	{
-		*tempFile->textStream() >> currentScript->fileName;
+		*d->tempFile->textStream() >> d->currentScript->fileName;
 		emit KCModule::changed(true);
 	}
+*/
 }
 
 // reload configuration reading it from kopeterc
 void JavaScriptPreferences::load()
 {
-	d->preferencesDialog->writeEnabled->setChecked( config->writeEnabled() );
-	d->preferencesDialog->treeEnabled->setChecked( config->treeEnabled() );
-	d->preferencesDialog->factoryEnabled->setChecked( config->factoryEnabled() );
-	d->preferencesDialog->signalsEnabled->setChecked( config->signalsEnabled() );
+	writeEnabled->setChecked( d->config->writeEnabled() );
+	treeEnabled->setChecked( d->config->treeEnabled() );
+	factoryEnabled->setChecked( d->config->factoryEnabled() );
+	signalsEnabled->setChecked( d->config->signalsEnabled() );
 }
 
 // save list to kopeterc and creates map out of it
 void JavaScriptPreferences::save()
 {
-	d->config->setWriteEnabled( d->preferencesDialog->writeEnabled->isChecked() );
-	d->config->setTreeEnabled( d->preferencesDialog->treeEnabled->isChecked() );
-	d->config->setFactoryEnabled( d->preferencesDialog->factoryEnabled->isChecked() );
-	d->config->setSignalsEnabled( d->preferencesDialog->signalsEnabled->isChecked() );
+	d->config->setWriteEnabled( writeEnabled->isChecked() );
+	d->config->setTreeEnabled( treeEnabled->isChecked() );
+	d->config->setFactoryEnabled( factoryEnabled->isChecked() );
+	d->config->setSignalsEnabled( signalsEnabled->isChecked() );
 
 	d->config->apply();
 

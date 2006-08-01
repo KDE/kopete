@@ -1,5 +1,5 @@
 
-add_subdirectory( wrappers ) 
+#add_subdirectory( wrappers ) 
 
 include_directories(
     ${KOPETE_INCLUDES}
@@ -30,16 +30,17 @@ install( TARGETS kopete_javascript DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 set( kcm_kopete_javascript_PART_SRCS
     javascriptconfig.cpp
+    javascriptfile.cpp
     javascriptpreferences.cpp
 )
-
-kde4_automoc(${kcm_kopete_javascript_PART_SRCS})
 
 set( kcm_kopete_javascript_UI
     javascriptprefsbase.ui
 )
 
 kde4_add_ui_files(kcm_kopete_javascript_PART_SRCS ${kcm_kopete_javascript_UI} )
+
+kde4_automoc(${kcm_kopete_javascript_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_javascript ${kcm_kopete_javascript_PART_SRCS})
 

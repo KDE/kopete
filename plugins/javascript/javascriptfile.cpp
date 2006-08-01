@@ -8,7 +8,19 @@
  *                                                                         *
  ***************************************************************************/
 
-const QString JavaScriptFile::script( bool reload = false )
+#include "javascriptfile.h"
+
+#include <kstandarddirs.h>
+
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+
+JavaScriptFile::JavaScriptFile(QObject *parent)
+	: QObject(parent)
+{
+}
+
+QString JavaScriptFile::script( bool reload )
 {
 	if( reload || m_script.isEmpty() )
 	{

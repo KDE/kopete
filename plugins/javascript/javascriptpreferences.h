@@ -10,19 +10,21 @@
 #ifndef JSPREFERENCES_H
 #define JSPREFERENCES_H
 
-#include <kcmodule.h>
+#include "ui_javascriptprefsbase.h"
 
+#include <kcmodule.h>
 #include <knewstuff/knewstuff.h>
 
 class JavaScriptPreferences
 	: public KCModule
 	, public KNewStuff
+	, Ui::JavaScriptPrefsBase
 {
 	Q_OBJECT
 
 public:
-	JavaScriptPreferences( QWidget *parent = 0, const char *name = 0,
-			const QStringList &args = QStringList() );
+	JavaScriptPreferences( QWidget *parent = 0, const QStringList &args = QStringList());
+	~JavaScriptPreferences();
 
 	virtual void save();
 	virtual void load();

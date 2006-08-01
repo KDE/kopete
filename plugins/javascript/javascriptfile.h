@@ -13,15 +13,16 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QObject>
+#include <QtCore/QStringList>
 
 class JavaScriptFile
 	: public QObject
 {
 	Q_OBJECT
 public:
-	JavaScriptFile(QObject parent = 0);
+	JavaScriptFile(QObject *parent = 0);
 
-	const QString script( bool reload = false );
+	QString script( bool reload = false );
 
 	QString id;
 	QString name;
