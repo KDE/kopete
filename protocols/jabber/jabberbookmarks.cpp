@@ -131,7 +131,7 @@ KAction * JabberBookmarks::bookmarksAction(QObject *parent)
 {
 	KSelectAction *groupchatBM = new KSelectAction( i18n("Groupchat bookmark") , "jabber_group" , 0 , 0 , "actionBookMark" );
 	groupchatBM->setItems(m_conferencesJID);
-	QObject::connect(groupchatBM, SIGNAL(activated (const QString&)) , this, SLOT(slotJoinChatBookmark(const QString&)));
+	QObject::connect(groupchatBM, SIGNAL(triggered(const QString&)) , this , SLOT(slotJoinChatBookmark(const QString&)));
 	return groupchatBM;
 }
 
