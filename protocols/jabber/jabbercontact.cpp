@@ -137,37 +137,39 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
-	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
-								 this, SLOT (slotSendAuth ()), 0, "actionSendAuth");
+	resendAuthAction = new KAction (KIcon("mail_forward"), i18n ("(Re)send Authorization To"), 0, "actionSendAuth");
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
+	connect(resendAuthAction, SIGNAL(triggered(bool)), SLOT(slotSendAuth()));
 	actionAuthorization->addAction(resendAuthAction);
 
-	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
-								 this, SLOT (slotRequestAuth ()), 0, "actionRequestAuth");
+	requestAuthAction = new KAction (KIcon("mail_reply"), i18n ("(Re)request Authorization From"), 0, "actionRequestAuth");
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
+	connect(requestAuthAction, SIGNAL(triggered(bool)), SLOT(slotRequestAuth()));
 	actionAuthorization->addAction(requestAuthAction);
 	
-	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
-								 this, SLOT (slotRemoveAuth ()), 0, "actionRemoveAuth");
+	removeAuthAction = new KAction (KIcon("mail_delete"), i18n ("Remove Authorization From"), 0, "actionRemoveAuth");
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
+	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
 	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), 0, "jabber_online");
 
-	actionSetAvailability->addAction(new KAction (i18n ("Online"), protocol()->JabberKOSOnline.iconFor(this),
-									 0, this, SLOT (slotStatusOnline ()), 0, "actionOnline"));
-	actionSetAvailability->addAction(new KAction (i18n ("Free to Chat"), protocol()->JabberKOSChatty.iconFor(this),
-									 0, this, SLOT (slotStatusChatty ()), 0, "actionChatty"));
-	actionSetAvailability->addAction(new KAction (i18n ("Away"), protocol()->JabberKOSAway.iconFor(this),
-									 0, this, SLOT (slotStatusAway ()), 0, "actionAway"));
-	actionSetAvailability->addAction(new KAction (i18n ("Extended Away"), protocol()->JabberKOSXA.iconFor(this),
-									 0, this, SLOT (slotStatusXA ()), 0, "actionXA"));
-	actionSetAvailability->addAction(new KAction (i18n ("Do Not Disturb"), protocol()->JabberKOSDND.iconFor(this),
-									 0, this, SLOT (slotStatusDND ()), 0, "actionDND"));
-	actionSetAvailability->addAction(new KAction (i18n ("Invisible"), protocol()->JabberKOSInvisible.iconFor(this),
-									 0, this, SLOT (slotStatusInvisible ()), 0, "actionInvisible"));
+#define KACTION(status, text, name, slot) \
+	{ KAction *tmp = new KAction (KIcon(QIcon((status).iconFor(this))), (text), 0, (name));\
+	connect(tmp, SIGNAL(triggered(bool)), (slot));\
+	actionSetAvailability->addAction(tmp); }
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), 0, "actionSelectResource");
+	KACTION( protocol()->JabberKOSOnline, i18n ("Online"),         "actionOnline", SLOT(slotStatusOnline()) );
+	KACTION( protocol()->JabberKOSChatty, i18n ("Free to Chat"),   "actionChatty", SLOT(slotStatusChatty()) );
+	KACTION( protocol()->JabberKOSAway,   i18n ("Away"),           "actionAway",   SLOT(slotStatusAway()) );
+	KACTION( protocol()->JabberKOSXA,     i18n ("Extended Away"),  "actionXA",     SLOT(slotStatusXA()) );
+	KACTION( protocol()->JabberKOSDND,    i18n ("Do Not Disturb"), "actionDND",    SLOT(slotStatusDND()) );
+	KACTION( protocol()->JabberKOSInvisible, i18n ("Invisible"),   "actionInvisible", SLOT(slotStatusInvisible()) );
+
+#undef KACTION
+
+	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"),
+					0, "actionSelectResource");
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
@@ -188,24 +190,25 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 		account()->resourcePool()->findResources ( mRosterItem.jid (), availableResources );
 
-		XMPP::ResourceList::const_iterator resourcesEnd = availableResources.end ();
-		for ( XMPP::ResourceList::const_iterator it = availableResources.begin(); it != resourcesEnd; ++it, i++)
+		foreach(const XMPP::Resource& res, availableResources)
 		{
-			items.append ( (*it).name() );
+			items.append ( res.name() );
 
-			if ( (*it).name() == lockedResource.name() )
+			if ( res.name() == lockedResource.name() )
 				activeItem = i;
+
+			++i;
 		}
 
 		// now go through the string list and add the resources with their icons
 		i = 0;
-		QStringList::const_iterator itemsEnd = items.end ();
-		for(QStringList::const_iterator it = items.begin(); it != itemsEnd; ++it)
+		foreach(const QString& str, items)
 		{
 			if( i == activeItem )
 			{
-				actionSelectResource->addAction ( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
-												  0, QString::number( i ).toLatin1() ) );
+				KAction *tmp = new KAction( KIcon("button_ok"), str, 0, QString::number( i ).toLatin1());
+				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
+				actionSelectResource->addAction(tmp);
 			}
 			else
 			{
@@ -214,10 +217,11 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 				 * and the resources' respective status icons for the rest.
 				 */
 				QIcon iconSet ( !i ?
-					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
+					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(str) ).iconFor ( account () ));
 
-				actionSelectResource->addAction ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
-												  0, QString::number( i ).toLatin1() ) );
+				KAction *tmp = new KAction(KIcon(iconSet), str, 0, QString::number( i ).toLatin1());
+				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
+				actionSelectResource->addAction ( tmp );
 			}
 
 			i++;
@@ -663,7 +667,7 @@ void JabberContact::slotSendVCard()
 	// work information tab
 	XMPP::VCard::Org org;
 	org.name = property(protocol()->propCompanyName).value().toString();
-	org.unit = QStringList::split(',', property(protocol()->propCompanyDepartement).value().toString());
+	org.unit = property(protocol()->propCompanyDepartement).value().toString().split(',');
 	vCard.setOrg(org);
 	vCard.setTitle (property(protocol()->propCompanyPosition).value().toString());
 	vCard.setRole (property(protocol()->propCompanyRole).value().toString());
