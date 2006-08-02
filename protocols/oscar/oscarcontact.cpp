@@ -166,7 +166,9 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
 	m_details.merge( details );
-	
+
+	setFileCapable( m_details.hasCap( CAP_SENDFILE ) );
+
 	QStringList capList;
 	// Append client name and version in case we found one
 	if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
