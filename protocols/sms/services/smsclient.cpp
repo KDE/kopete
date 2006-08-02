@@ -79,7 +79,7 @@ void SMSClient::send(const Kopete::Message& msg)
 	QString nr = msg.to().first()->contactId();
 
 	*p << programName;
-	*p << provider + ":" + nr;
+	*p << provider + ':' + nr;
 	*p << message;
 
 	QObject::connect(p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
@@ -157,7 +157,7 @@ QStringList SMSClient::providers()
 
 void SMSClient::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
 {
-	QStringList lines = QStringList::split("\n", QString::fromLocal8Bit(buffer, buflen));
+	QStringList lines = QStringList::split('\n', QString::fromLocal8Bit(buffer, buflen));
 	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
 		output.append(*it);
 }

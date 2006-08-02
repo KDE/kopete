@@ -197,7 +197,7 @@ void SMSSend::setOptions(const QString& name)
 		if (!m_provider->name(i).isNull())
 		{
 			QLabel *l = new QLabel(m_parent);
-			l->setText("&" + m_provider->name(i) + ":");
+			l->setText('&' + m_provider->name(i) + ':');
 			l->setToolTip( m_provider->description(i));
 			m_layout->addWidget(l, i+2, 0);
 			KLineEdit *e = new KLineEdit(m_parent);
