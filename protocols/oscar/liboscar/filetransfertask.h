@@ -115,7 +115,7 @@ private:
 	QByteArray m_ip; //to connect to
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
-	enum State { Default, Connecting, ProxySetup, Receiving, Done };
+	enum State { Default, Listening, Connecting, ProxySetup, Receiving, Done };
 	State m_state;
 };
 

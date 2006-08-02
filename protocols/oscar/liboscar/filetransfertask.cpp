@@ -227,6 +227,12 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 	{
 	 case 0: //direct transfer ain't good enough
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "redirect or proxy request" << endl;
+		if ( m_state != Listening )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other client is insane." << endl;
+			break;
+		}
+
 		delete m_ss;
 		m_ss = 0;
 		parseReq( b );
@@ -370,6 +376,8 @@ void FileTransferTask::oftRead()
 	switch( data.type )
 	{
 	 case 0x101:
+		 if ( m_action != Receive )
+			 break;
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl
 			<< "\tmysize " <<  m_file.size() << endl
 			<< "\tsendersize " << m_oft.fileSize << endl;
@@ -403,6 +411,8 @@ void FileTransferTask::oftRead()
 		oftAck();
 		break;
 	 case 0x202:
+		 if ( m_action != Send )
+			 break;
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ack" << endl;
 		//time to send real data
 		//TODO: validate file again, just to be sure
@@ -421,6 +431,8 @@ void FileTransferTask::oftRead()
 		setSuccess( true );
 		break;
 	 case 0x205:
+		 if ( m_action != Send )
+			 break;
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl 
 			<< "\tfilesize\t" << data.fileSize << endl
 			<< "\tmodTime\t" << data.modTime << endl
@@ -432,6 +444,8 @@ void FileTransferTask::oftRead()
 		oftRAgree();
 		break;
 	 case 0x106:{
+		 if ( m_action != Receive )
+			 break;
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sender resume" << endl
 			<< "\tfilesize\t" << data.fileSize << endl
 			<< "\tmodTime\t" << data.modTime << endl
@@ -451,6 +465,8 @@ void FileTransferTask::oftRead()
 		oftRAck();
 		break;}
 	 case 0x207:
+		 if ( m_action != Send )
+			 break;
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "resume ack" << endl;
 		//TODO: validate file again, just to be sure
 		m_file.open( QIODevice::ReadOnly );
@@ -599,7 +615,6 @@ void FileTransferTask::oftResume()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_oft.type = 0x0205; //type = resume
 	m_oft.bytesSent = m_file.size();
-	//TODO: what other vars need setting?
 	sendOft();
 }
 
@@ -792,7 +807,6 @@ void FileTransferTask::connectFailed()
 	bool proxy = client()->settings()->fileProxy();
 	if ( m_action == Receive && (! proxy ) )
 	{ //try redirect
-		m_state = Default;
 		sendReq();
 	}
 	else
@@ -830,9 +844,10 @@ bool FileTransferTask::listen()
 		setSuccess(false);
 		return false;
 	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections on port " << m_port << endl;
-	return true;
 
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections on port " << m_port << endl;
+	m_state = Listening;
+	return true;
 }
 
 void FileTransferTask::sendReq()
@@ -858,7 +873,6 @@ void FileTransferTask::sendReq()
 		msg.setReqNum( 2 );
 	else if ( m_proxy && (! client()->settings()->fileProxy() ) )
 		msg.setReqNum( 3 );
-	//TODO: could be 3
 
 	//we're done, send it off!
 	emit sendMessage( msg );
