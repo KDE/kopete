@@ -388,9 +388,10 @@ void FileTransferTask::oftRead()
 			else if ( m_oft.checksum == m_oft.sentChecksum )
 			{ //apparently we've already got it
 				//TODO: set bytesSent?
-				oftDone( 0 ); //don't redo checksum
+				oftDone(); //don't redo checksum
 				emit fileComplete();
-				setSuccess( true );
+				//wait for the oftDone to be really sent
+				m_timer.start( 10 );
 				break;
 			}
 
@@ -522,9 +523,11 @@ void FileTransferTask::saveData()
 	if ( m_oft.bytesSent >= m_oft.fileSize )
 	{
 		m_file.close();
+		m_oft.sentChecksum = checksum();
 		oftDone();
 		emit fileComplete();
-		setSuccess( true );
+		//wait for the oftDone to be really sent
+		m_timer.start( 10 );
 	}
 
 }
@@ -579,16 +582,16 @@ void FileTransferTask::oftRAck()
 	m_state = Receiving;
 }
 
-void FileTransferTask::oftDone( bool check )
+void FileTransferTask::oftDone()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_oft.type = 0x0204; //type = done
-	if ( check )
-		m_oft.sentChecksum = checksum();
 	if ( m_oft.sentChecksum != m_oft.checksum )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
 	m_oft.flags = 1;
 	sendOft();
+	m_connection->close();
+	m_state = Done;
 }
 
 void FileTransferTask::oftResume()
@@ -764,6 +767,15 @@ void FileTransferTask::timeout()
 		}
 		else
 			connectFailed();
+		return;
+	}
+	if ( m_state == Done )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "waiting for empty buffer..." << endl;
+		if ( m_connection->bytesToWrite() == 0 )
+			setSuccess( true ); //yay, it's ok to kill everything now
+		else //keep waiting
+			m_timer.start( 10 );
 		return;
 	}
 

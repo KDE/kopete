@@ -87,7 +87,7 @@ private:
 	void sendOft();
 	void oftPrompt();
 	void oftAck();
-	void oftDone( bool check = 1 );
+	void oftDone();
 	void oftResume(); //receiver wants to resume partial file
 	void oftRAgree(); //sender agrees to resume
 	void oftRAck(); //resume ack
@@ -115,7 +115,7 @@ private:
 	QByteArray m_ip; //to connect to
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
-	enum State { Default, Connecting, ProxySetup, Receiving };
+	enum State { Default, Connecting, ProxySetup, Receiving, Done };
 	State m_state;
 };
 
