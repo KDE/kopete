@@ -31,6 +31,8 @@ namespace Kopete
 
 class Transfer;
 class Contact;
+class Message;
+class ChatSession;
 
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
@@ -43,7 +45,7 @@ public:
 	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null);
 	~FileTransferInfo() {}
 	unsigned int transferId() const { return mId; }
-	const Contact* contact() const { return mContact; }
+	Contact* contact() const { return mContact; }
 	QString file() const { return mFile; }
 	QString recipient() const { return mRecipient; }
 	unsigned long size() const { return mSize; }
@@ -189,6 +191,11 @@ public slots:
 
 	/** transfer was cancelled (but not by our user) */
 	void slotCancelled();
+	/** something interesting happened; not an error /
+	void slotInfo( int type, const QString &text ); */
+
+	/** display a message in the chatwindow if it exists */
+	bool showMessage( QString text );
 
 signals:
 	/**

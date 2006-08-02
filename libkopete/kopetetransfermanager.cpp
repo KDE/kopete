@@ -26,6 +26,8 @@
 
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
+#include "kopetemessage.h"
+#include "kopetechatsession.h"
 #include "kopeteuiglobal.h"
 
 #include "kopetetransfermanager.h"
@@ -127,6 +129,7 @@ void Kopete::Transfer::slotProcessed(unsigned int bytes)
 
 void Kopete::Transfer::slotComplete()
 {
+	showMessage( i18n("File transfer completed. :)") );
 	emitResult();
 }
 
@@ -135,19 +138,38 @@ void Kopete::Transfer::slotError( int error, const QString &errorText )
 	setError(error);
 	setErrorText(errorText);
 
+	showMessage( i18n("File transfer failed. :(") );
 	emitResult();
 }
 
 void Kopete::Transfer::slotResultEmitted()
 {
 	if( error() == KIO::ERR_USER_CANCELED )
+	{
+		showMessage( i18n("You cancelled the filetransfer.") );
 		emit transferCanceled();
+	}
 }
 
 void Kopete::Transfer::slotCancelled()
 {
-	slotError( KIO::ERR_ABORTED, i18n("File transfer cancelled.") );
+	showMessage( i18n("File transfer cancelled.") );
+	emitResult();
+	//slotError( KIO::ERR_ABORTED, i18n("File transfer cancelled.") );
 }
+
+bool Kopete::Transfer::showMessage( QString text )
+{
+	Kopete::ChatSession *cs = mInfo.contact()->manager();
+	if (! cs)
+		return false;
+
+	Kopete::Message msg;
+	msg.setBody( text );
+	cs->appendMessage( msg );
+	return true;
+}
+
 
 /***************************
  *  Kopete::TransferManager  *
