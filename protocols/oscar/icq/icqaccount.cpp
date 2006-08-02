@@ -183,6 +183,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 			status |= ICQ::StatusCode::WEBAWARE;
 
 		engine()->setStatus( status, mInitialStatusMessage );
+		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 

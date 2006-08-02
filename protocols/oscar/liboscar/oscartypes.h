@@ -232,29 +232,24 @@ struct ChatRoomInfo
 	QString name;
 };
 
+struct ClientVersion
+{
+	QString clientString;
+	WORD clientId;
+	WORD major;
+	WORD minor;
+	WORD point;
+	WORD build;
+	DWORD other;
+	QString country;
+	QString lang;
+};
+
 	/* ICQ Version Characteristics */
 	const unsigned char ICQ_TCP_VERSION 	= 0x0008;
-	const char ICQ_CLIENTSTRING[] 		= "ICQBasic";
-	const WORD ICQ_CLIENTID 		= 0x010A;
-	const WORD ICQ_MAJOR 			= 0x0014;
-	const WORD ICQ_MINOR 			= 0x0034;
-	const WORD ICQ_POINT 			= 0x0000;
-	const WORD ICQ_BUILD 			= 0x0BB8;
-	const char ICQ_OTHER[] 			= { 0x00, 0x00, 0x04, 0x3d };
-	const char ICQ_COUNTRY[] 		= "us";
-	const char ICQ_LANG[] 			= "en";
 
 	/* AIM Version Characteristics */
 	const char AIM_MD5_STRING[]     = "AOL Instant Messenger (SM)";
-	const char AIM_CLIENTSTRING[]   = "AOL Instant Messenger (SM), version 5.1.3036/WIN32";
-	const WORD AIM_CLIENTID         = 0x0109;
-	const WORD AIM_MAJOR            = 0x0005;
-	const WORD AIM_MINOR            = 0x0001;
-	const WORD AIM_POINT            = 0x0000;
-	const WORD AIM_BUILD            = 0x0bdc;
-	const DWORD AIM_OTHER           = 0x000000d2;
-	const char AIM_COUNTRY[]        = "us";
-	const char AIM_LANG[]           = "en";
 
 	/* SSI types */
 	const WORD ROSTER_CONTACT       = 0x0000; // a normal contact

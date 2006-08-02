@@ -132,6 +132,8 @@ public:
 	QValueList<AwayMsgRequest> awayMsgRequestQueue;
 	QTimer* awayMsgRequestTimer;
 	CodecProvider* codecProvider;
+	
+	const Oscar::ClientVersion* version;
 };
 
 Client::Client( QObject* parent )
@@ -313,6 +315,11 @@ SSIManager* Client::ssiManager() const
 	return d->ssiManager;
 }
 
+const Oscar::ClientVersion* Client::version() const
+{
+	return d->version;
+}
+
 // SLOTS //
 
 void Client::streamConnected()
@@ -443,6 +450,10 @@ void Client::setCodecProvider( Client::CodecProvider* codecProvider )
 	d->codecProvider = codecProvider;
 }
 
+void Client::setVersion( const Oscar::ClientVersion* version )
+{
+	d->version = version;
+}
 
 // INTERNALS //
 

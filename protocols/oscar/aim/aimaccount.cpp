@@ -772,6 +772,7 @@ void AIMAccount::connectWithPassword( const QString & )
 	else if ( myself()->onlineStatus() == static_cast<AIMProtocol*>( protocol() )->statusOffline )
 	{
 		kdDebug(14152) << k_funcinfo << "Logging in as " << accountId() << endl ;
+		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), _password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );
