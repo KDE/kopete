@@ -63,7 +63,6 @@ public slots:
 
 signals:
 	void sendMessage( const Oscar::Message &msg );
-	void gotAccept();
 	void gotCancel();
 	void error( int, const QString & );
 	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );

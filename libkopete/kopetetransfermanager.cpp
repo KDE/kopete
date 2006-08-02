@@ -149,11 +149,6 @@ void Kopete::Transfer::slotCancelled()
 	slotError( KIO::ERR_ABORTED, i18n("File transfer cancelled.") );
 }
 
-void Kopete::Transfer::slotAccepted()
-{
-	//TODO
-}
-
 /***************************
  *  Kopete::TransferManager  *
  ***************************/

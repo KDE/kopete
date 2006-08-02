@@ -68,7 +68,6 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const 
 	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
 	//hook up our ui signals
 	connect( this , SIGNAL( gotCancel() ), transfer, SLOT( slotCancelled() ) );
-	connect( this , SIGNAL( gotAccept() ), transfer, SLOT( slotAccepted() ) );
 	connect( this , SIGNAL( error( int, const QString & ) ), transfer, SLOT( slotError( int, const QString & ) ) );
 	connect( this , SIGNAL( processed( unsigned int ) ), transfer, SLOT( slotProcessed( unsigned int ) ) );
 	connect( this , SIGNAL( fileComplete() ), transfer, SLOT( slotComplete() ) );
@@ -246,7 +245,6 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 		break;
 	 case 2:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user acceptetd filetransfer :)" << endl;
-		emit gotAccept();
 		break;
 	 default:
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "bad request type: " << type << endl;

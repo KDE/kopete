@@ -189,8 +189,6 @@ public slots:
 
 	/** transfer was cancelled (but not by our user) */
 	void slotCancelled();
-	/** transfer was accepted by the other user */
-	void slotAccepted();
 
 signals:
 	/**
