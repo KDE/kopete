@@ -222,7 +222,7 @@ void Client::close()
 	if ( d->stage == ClientPrivate::StageTwo )
 	{
 		d->connectAsStatus = 0x0;
-		d->connectWithMessage = QString::null;
+		d->connectWithMessage.clear();
 	}
 
     d->exchanges.clear();

@@ -118,7 +118,7 @@ bool GroupWiseChatSession::secure()
 void GroupWiseChatSession::setClosed()
 {
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " Conference " << m_guid << " is now Closed " << endl;
-	m_guid = QString::null;
+	m_guid.clear();
 	m_flags = m_flags | GroupWise::Closed;
 }
 

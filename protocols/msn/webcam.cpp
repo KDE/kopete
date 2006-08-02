@@ -344,19 +344,19 @@ void Webcam::processMessage(const Message& message)
 		rx.search(m_content);
 		QString port1=rx.cap(1);
 		if(port1=="0")
-			port1=QString::null;
+			port1.clear();
 		
 		rx=QRegExp("<tcplocalport>([^<]*)</tcplocalport>");
 		rx.search(m_content);
 		QString port2=rx.cap(1);
 		if(port2==port1 || port2=="0")
-			port2=QString::null;
+			port2.clear();
 		
 		rx=QRegExp("<tcpexternalport>([^<]*)</tcpexternalport>");
 		rx.search(m_content);
 		QString port3=rx.cap(1);
 		if(port3==port1 || port3==port2 || port3=="0")
-			port3=QString::null;
+			port3.clear();
 
 		int an=0;
 		while(true)
@@ -367,10 +367,10 @@ void Webcam::processMessage(const Message& message)
 			rx=QRegExp(QString("<tcpipaddress%1>([^<]*)</tcpipaddress%2>").arg(an).arg(an));
 			rx.search(m_content);
 			QString ip=rx.cap(1);
-			if(ip.isNull())
+			if(ip.isEmpty())
 				continue;
 			
-			if(!port1.isNull())
+			if(!port1.isEmpty())
 			{
 				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port1 << endl;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port1, this );
@@ -380,7 +380,7 @@ void Webcam::processMessage(const Message& message)
 				sock->connect(ip, port1);
 				kDebug(14140) << k_funcinfo << "okok " << sock << " - " << sock->peerAddress().toString() << " ; " << sock->localAddress().toString()  << endl;
 			}
-			if(!port2.isNull())
+			if(!port2.isEmpty())
 			{
 				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port2 << endl;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port2, this );
@@ -389,7 +389,7 @@ void Webcam::processMessage(const Message& message)
 				QObject::connect( sock, SIGNAL( gotError(int)), this, SLOT(slotSocketError(int)));
 				sock->connect(ip, port2);
 			}
-			if(!port3.isNull())
+			if(!port3.isEmpty())
 			{
 				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port3 << endl;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port3, this );
@@ -414,7 +414,7 @@ void Webcam::processMessage(const Message& message)
 	}
 	else
 		error();
-	m_content=QString::null;
+	m_content.clear();
 }
 
 void Webcam::makeSIPMessage(const QString &message, quint8 XX, quint8 YY , quint8 ZZ)

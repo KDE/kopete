@@ -245,7 +245,7 @@ void TcpTransportBridge::slotOnSocketConnect()
 	mVerified = true;
 	QString foo = "foo\0";
 	mSocket->writeBlock(foo.toAscii(), foo.length());
-	foo = QString::null;
+	foo.clear();
 
 	emit bridgeConnect();
 }

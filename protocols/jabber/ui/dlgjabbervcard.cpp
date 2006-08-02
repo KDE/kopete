@@ -537,7 +537,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		}
 		else
 		{
-			m_photoPath = QString::null;
+			m_photoPath.clear();
 		}
 	}
 	else
@@ -552,7 +552,7 @@ void dlgJabberVCard::slotSelectPhoto()
 void dlgJabberVCard::slotClearPhoto()
 {
 	m_mainWidget->lblPhoto->setPixmap( QPixmap() );
-	m_photoPath = QString::null;
+	m_photoPath.clear();
 }
 
 void dlgJabberVCard::slotOpenURL(const QString &url)

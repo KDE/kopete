@@ -24,7 +24,7 @@ QString JavaScriptFile::script( bool reload )
 {
 	if( reload || m_script.isEmpty() )
 	{
-		m_script = QString::null;
+		m_script.clear();
 		QString localScriptsDir( KStandardDirs::locateLocal("data", QString::fromLatin1("kopete/scripts")) );
 		QFile f( localScriptsDir + "/" +  id + "/" + fileName );
 

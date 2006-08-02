@@ -386,7 +386,7 @@ void IRCChannelContact::incomingModeChange( const QString &nick, const QString &
 
 	bool inParams = false;
 	bool modeEnabled = false;
-	QString params = QString::null;
+	QString params;
 	for( uint i=0; i < mode.length(); i++ )
 	{
 		switch( mode[i] )

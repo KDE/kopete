@@ -399,7 +399,7 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 	{
 		makeSIPMessage(m_content.replace("producer","viewer"));
 	}
-	m_content=QString::null;
+	m_content.clear();
 }
 
 void MSNP2PWebcam::makeSIPMessage(const QString &message)

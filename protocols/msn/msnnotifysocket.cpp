@@ -977,7 +977,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 				contact->setStatusMessage( Kopete::StatusMessage(currentMedia.isEmpty() ? personalMessage : currentMedia) );
 			}
 		}
-		m_tmpLastHandle = QString::null;
+		m_tmpLastHandle.clear();
 	}
 }
 

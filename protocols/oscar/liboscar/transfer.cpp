@@ -96,8 +96,8 @@ QString Transfer::toString() const
 		{
 			output += hex + "   |" + ascii + "|\n";
 			i=0;
-			hex=QString::null;
-			ascii=QString::null;
+			hex.clear();
+			ascii.clear();
 		}
 	}
 

@@ -872,7 +872,7 @@ bool MSNSocket::setUseHttpMethod( bool useHttp )
 		else if( s == "msnswitchboardsocket" )
 			m_type = "SB";
 		else
-			m_type = QString::null;
+			m_type.clear();
 
 		if( m_type.isNull() )
 			return false;

@@ -732,7 +732,7 @@ GaduSession::checkDescriptor()
 				gaduNotify.description = textcodec->toUnicode( event->event.status.descr );
 			}
 			else {
-				gaduNotify.description = QString::null;
+				gaduNotify.description.clear();
 			}
 			gaduNotify.remote_port	= 0;
 			gaduNotify.version	= 0;
@@ -749,7 +749,7 @@ GaduSession::checkDescriptor()
 				gaduNotify.description = textcodec->toUnicode( event->event.status60.descr );
 			}
 			else {
-				gaduNotify.description = QString::null;
+				gaduNotify.description.clear();
 			}
 			gaduNotify.remote_ip.setAddress( ntohl( event->event.status60.remote_ip ) );
 			gaduNotify.remote_port	= event->event.status60.remote_port;

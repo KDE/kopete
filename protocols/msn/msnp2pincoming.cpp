@@ -168,7 +168,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 			 */
 
 			if(msgStr.dataOffset ==0)
-				fullContentMessage=QString::null;
+				fullContentMessage.clear();
 
 
 			/*

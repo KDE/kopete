@@ -736,7 +736,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
-			newPhotoPath = QString::null;
+			newPhotoPath.clear();
 		else
 			newPhotoPath = newLocation;
 	}
@@ -755,7 +755,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
-			newPhotoPath = QString::null;
+			newPhotoPath.clear();
 		else
 			newPhotoPath = newLocation;
 	}
@@ -771,7 +771,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
-			newPhotoPath = QString::null;
+			newPhotoPath.clear();
 		else
 			newPhotoPath = newLocation;
 	}

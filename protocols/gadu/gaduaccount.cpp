@@ -141,7 +141,7 @@ static const char* const servers_ip[] = {
 	setMyself( new GaduContact( accountId().toInt(), accountId(), this, Kopete::ContactList::self()->myself() ) );
 
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-	p->lastDescription = QString::null;
+	p->lastDescription.clear();
 
 	for ( unsigned int i = 0; i < NUM_SERVERS ; i++ ) {
 		ip.setAddress( QString( servers_ip[i] ) );

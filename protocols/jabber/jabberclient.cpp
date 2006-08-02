@@ -160,7 +160,7 @@ void JabberClient::cleanUp ()
 	d->currentPenaltyTime = 0;
 
 	d->jid = XMPP::Jid ();
-	d->password = QString::null;
+	d->password.clear();
 
 	setForceTLS ( false );
 	setUseSSL ( false );

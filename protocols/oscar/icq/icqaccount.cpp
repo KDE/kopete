@@ -86,7 +86,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
 	mHideIP = configGroup()->readEntry( "HideIP", true );
-	mInitialStatusMessage = QString::null;
+	mInitialStatusMessage.clear();
 
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
@@ -186,7 +186,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		engine()->start( server, port, accountId(), password.left(8) );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 
-		mInitialStatusMessage = QString::null;
+		mInitialStatusMessage.clear();
 	}
 }
 

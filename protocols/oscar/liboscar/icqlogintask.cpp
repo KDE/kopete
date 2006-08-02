@@ -85,7 +85,7 @@ QString IcqLoginTask::encodePassword( const QString& loginPassword )
 
 	const uint MAX_PASSWORD_SIZE = 8;
 	unsigned int i = 0;
-	QString encodedPassword = QString::null;
+	QString encodedPassword;
 
 	//encoding table used in ICQ password XOR transformation
 	unsigned char encoding_table[] =
