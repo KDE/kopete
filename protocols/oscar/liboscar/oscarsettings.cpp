@@ -22,6 +22,7 @@ namespace Oscar
 
 //FIXME: variables are not initialised. imho this is asking for trouble.
 Settings::Settings()
+: m_fileProxy( 0 ), m_firstPort( 5190 ), m_lastPort( 5199 ), m_timeout( 10 )
 {
 }
 
@@ -99,7 +100,16 @@ int Settings::lastPort() const
 {
 	return m_lastPort;
 }
-	
+
+void Settings::setTimeout( int time )
+{
+	m_timeout = time;
+}
+
+int Settings::timeout() const
+{
+	return m_timeout;
+}
 
 
 }

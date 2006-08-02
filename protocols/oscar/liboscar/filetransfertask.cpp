@@ -518,7 +518,7 @@ void FileTransferTask::write()
 		//but I want to do it this way for now
 		m_timer.disconnect();
 		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-		m_timer.start( 10 * 1000 );
+		m_timer.start( client()->settings()->timeout() * 1000 );
 	}
 }
 
@@ -707,7 +707,7 @@ void FileTransferTask::doConnect()
 	m_state = Connecting;
 	//socket doesn't seem to have its own timeout, so here's mine
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-	m_timer.start( 10 * 1000 ); //TODO: maybe let the user set timeout
+	m_timer.start( client()->settings()->timeout()  * 1000 );
 	//try it
 	m_connection->connect();
 }

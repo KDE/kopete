@@ -371,19 +371,6 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="chkFileProxy" >
-          <property name="toolTip" >
-           <string>Use AOL proxy server instead of direct connections. If you're behind a router that you don't control, you'll probably want this.</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Use the AOL proxy server for things that would normally need a direct connection, like file transfers. You'll want this if there's a firewall or router that blocks connections to your computer and you can't get unblocked. If a direct connection fails, a proxy connection will be tried regardless of this setting.</string>
-          </property>
-          <property name="text" >
-           <string>&amp;Use proxy instead</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" >
           <property name="margin" >
            <number>0</number>
@@ -451,6 +438,70 @@
             </property>
             <property name="value" >
              <number>5199</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="chkFileProxy" >
+          <property name="toolTip" >
+           <string>Use AOL proxy server instead of direct connections. If you're behind a router that you don't control, you'll probably want this.</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Use the AOL proxy server for things that would normally need a direct connection, like file transfers. You'll want this if there's a firewall or router that blocks connections to your computer and you can't get unblocked. If a direct connection fails, a proxy connection will be tried regardless of this setting.</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Use proxy instead</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="lblTimeout" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="toolTip" >
+             <string>Timeout for direct connections.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The number of seconds to wait for a connection to succeed before trying a different method.</string>
+            </property>
+            <property name="text" >
+             <string>T&amp;imeout (secs):</string>
+            </property>
+            <property name="buddy" >
+             <cstring>sbxTimeout</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="sbxTimeout" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="toolTip" >
+             <string>Timeout for direct connections.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The number of seconds to wait for a connection to succeed before trying a different method.</string>
+            </property>
+            <property name="maximum" >
+             <number>60</number>
+            </property>
+            <property name="minimum" >
+             <number>1</number>
+            </property>
+            <property name="value" >
+             <number>10</number>
             </property>
            </widget>
           </item>

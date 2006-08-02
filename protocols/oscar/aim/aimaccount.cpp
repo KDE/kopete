@@ -745,6 +745,7 @@ void AIMAccount::connectWithPassword( const QString & )
 		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
 		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
+		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
 		engine()->start( server, port, accountId(), _password.left(16) );
 		engine()->connectToServer( c, server, true /* doAuth */ );

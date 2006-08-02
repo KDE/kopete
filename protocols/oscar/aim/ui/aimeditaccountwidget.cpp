@@ -88,6 +88,8 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		configValue = mAccount->configGroup()->readEntry( "LastPort", 5199 );
 		mGui->sbxLastPort->setValue( configValue );
 		//mGui->sbxLastPort->setDisabled( configChecked );
+		configValue = mAccount->configGroup()->readEntry( "Timeout", 10 );
+		mGui->sbxTimeout->setValue( configValue );
 
 
 		// Global Identity
@@ -156,6 +158,8 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	mAccount->configGroup()->writeEntry( "FirstPort", configValue );
 	configValue = mGui->sbxLastPort->value();
 	mAccount->configGroup()->writeEntry( "LastPort", configValue );
+	configValue = mGui->sbxTimeout->value();
+	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );

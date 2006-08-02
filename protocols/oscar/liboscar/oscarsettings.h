@@ -59,6 +59,10 @@ public:
 	void setLastPort( int port );
 	int lastPort() const;
 	
+	/* timeout in seconds */
+	void setTimeout( int time );
+	int timeout() const;
+	
 private:
 	
 	bool m_webAware;
@@ -68,6 +72,7 @@ private:
 	bool m_fileProxy;
 	int  m_firstPort;
 	int  m_lastPort;
+	int  m_timeout;
 };
 
 }
