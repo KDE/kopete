@@ -179,7 +179,7 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 
-	int slash=accountId.find('/');
+	int slash=accountId.indexOf('/');
 	if(slash>=0)
 	{
 		QString realAccountId=accountId.left(slash);
@@ -252,7 +252,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		}
 		else
 		{
-			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug" << endl;
+			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug" << endl;
 		}
 	}
 
