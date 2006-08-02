@@ -68,7 +68,7 @@ public:
     /**
      * @brief Checks if we are online.
      * @note This method is reserved for future use. Do not use at the moment!
-     * @return <code>TRUE</code> if online, otherwise <code>FALSE</code>
+     * @return <code>true</code> if online, otherwise <code>false</code>
      */
     virtual bool isOnline() const;
 

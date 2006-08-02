@@ -93,7 +93,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	{
 		QLabel *mImage = new QLabel(this);
 		mImage->setObjectName("mImage");
-		mImage->setScaledContents(FALSE);
+		mImage->setScaledContents(false);
 		mImage->setPixmap(KStandardDirs::locate("data", pix));
 
 		Layout1->addWidget(mImage);
@@ -119,7 +119,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	// END Layout2
 
 	setPalette(QToolTip::palette());
-	//setAutoMask(TRUE);
+	//setAutoMask(true);
 
 	connect(mViewButton, SIGNAL(clicked()),
 		this, SIGNAL(signalButtonClicked()));

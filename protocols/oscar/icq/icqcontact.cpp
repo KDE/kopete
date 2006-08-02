@@ -303,7 +303,7 @@ void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reas
 	connect( replyDialog, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyDialogOkClicked() ) );
 	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	replyDialog->setRequestReason( reason );
-	replyDialog->setModal( TRUE );
+	replyDialog->setModal( true );
 	replyDialog->show();
 }
 

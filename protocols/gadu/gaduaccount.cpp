@@ -265,9 +265,9 @@ GaduAccount::actionMenu()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
-		p->searchAction->setEnabled( TRUE );
-		p->listputAction->setEnabled( TRUE );
-		p->friendsModeAction->setEnabled( TRUE );
+		p->searchAction->setEnabled( true );
+		p->listputAction->setEnabled( true );
+		p->friendsModeAction->setEnabled( true );
 	}
 	else {
 		p->searchAction->setEnabled( false );
@@ -280,10 +280,10 @@ GaduAccount::actionMenu()
 			p->listToFileAction->setEnabled( false );
 		}
 		else {
-			p->listToFileAction->setEnabled( TRUE );
+			p->listToFileAction->setEnabled( true );
 		}
 
-		p->listToFileAction->setEnabled( TRUE );
+		p->listToFileAction->setEnabled( true );
 	}
 	else {
 		p->listToFileAction->setEnabled( false );
@@ -293,7 +293,7 @@ GaduAccount::actionMenu()
 		p->listFromFileAction->setEnabled( false );
 	}
 	else {
-		p->listFromFileAction->setEnabled( TRUE );
+		p->listFromFileAction->setEnabled( true );
 	}
 
 	KAction* action = new KAction(

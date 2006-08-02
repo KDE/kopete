@@ -37,7 +37,7 @@ public:
      * This method needs to get reimplemented at classes which implement
      * this interface.
      *
-     * @param newStatus the status of the internet connection, <code>TRUE</code> if there is a connection, otherwise <code>FALSE</code>
+     * @param newStatus the status of the internet connection, <code>true</code> if there is a connection, otherwise <code>false</code>
      */
     virtual void setConnectedStatus(bool newStatus) = 0;
 };

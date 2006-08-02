@@ -65,8 +65,8 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
 				(*it)->accountId() + " (" + protoName + ')', QCheckListItem::CheckBox);
 		cli->setPixmap(0, (*it)->accountIcon());
 		
-		m_accountMapOld[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + '_' + (*it)->accountId());
-		m_accountMapCur[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + '_' + (*it)->accountId());;
+		m_accountMapOld[cli->text(0)] = AccountPrivMap(false, (*it)->protocol()->pluginId() + '_' + (*it)->accountId());
+		m_accountMapCur[cli->text(0)] = AccountPrivMap(false, (*it)->protocol()->pluginId() + '_' + (*it)->accountId());;
 		m_ui->accountList->insertItem(cli);
 	}
 
@@ -94,11 +94,11 @@ void SMPPPDCSPreferences::listClicked(QListViewItem * item)
 	if(cli->isOn() != m_accountMapCur[cli->text(0)].m_on) {
 		AccountMap::iterator itOld = m_accountMapOld.begin();
 		AccountMap::iterator itCur;
-		bool change = FALSE;
+		bool change = false;
 		
 		for(itCur = m_accountMapCur.begin(); itCur != m_accountMapCur.end(); ++itCur, ++itOld) {
 			if((*itCur).m_on != (*itOld).m_on){
-				change = TRUE;
+				change = true;
 				break;
 			}
 		}
@@ -112,7 +112,7 @@ void SMPPPDCSPreferences::defaults()
 	QListViewItemIterator it(m_ui->accountList);
 	while(it.current()) {
 		QCheckListItem * cli = dynamic_cast<QCheckListItem *>(it.current());
-		cli->setOn(FALSE);
+		cli->setOn(false);
 		++it;
 	}
 	

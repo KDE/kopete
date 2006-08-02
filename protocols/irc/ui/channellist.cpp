@@ -196,10 +196,10 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Client *client )
 	mChannelList = new K3ListView( this );
 	mChannelList->addColumn( i18n( "Channel" ) );
 	mChannelList->addColumn( i18n( "Users" ) );
-	//mChannelList->header()->setResizeEnabled( FALSE, mChannelList->header()->count() - 1 );
+	//mChannelList->header()->setResizeEnabled( false, mChannelList->header()->count() - 1 );
 	mChannelList->addColumn( i18n( "Topic" ) );
-	mChannelList->setAllColumnsShowFocus( TRUE );
-	mChannelList->setShowSortIndicator( TRUE );
+	mChannelList->setAllColumnsShowFocus( true );
+	mChannelList->setShowSortIndicator( true );
 
 	ChannelListLayout->addWidget( mChannelList );
 

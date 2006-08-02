@@ -110,7 +110,7 @@ GaduEditContact::fillGroups()
 		// FIXME: optimize this O(2) search
 		foreach( cg , cgl ) {
 			if ( cg->groupId() == g->groupId() ) {
-				item->setOn( TRUE );
+				item->setOn( true );
 				break;
 			}
 		}
@@ -209,7 +209,7 @@ GaduEditContact::slotApply()
 		}
 	}
 	
-	if( contact_->metaContact()->groups().isEmpty() == TRUE )
+	if( contact_->metaContact()->groups().isEmpty() == true )
 		contact_->metaContact()->addToGroup( Kopete::Group::topLevel() );
 }
 #include "gadueditcontact.moc"

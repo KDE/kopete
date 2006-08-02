@@ -192,7 +192,7 @@ bool Transfer::initiate()
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()),
 		this, SLOT(flush()));
-	timer->start(1000, FALSE); // flush the streams at every seconds
+	timer->start(1000, false); // flush the streams at every seconds
 
 	return true;
 }

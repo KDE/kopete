@@ -74,7 +74,7 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
         }
 
 		setSocket(client, new KNetwork::KStreamSocket(resolvedServer, QString::number(port)));
-		socket(client)->setBlocking(TRUE);
+		socket(client)->setBlocking(true);
 
 		if(!socket(client)->connect()) {
 			kDebug(14312) << k_funcinfo << "Socket Error: " << socket(client)->errorString() << endl;

@@ -89,7 +89,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(0,FALSE);
+	qtimer.start(0,false);
 }
 
 

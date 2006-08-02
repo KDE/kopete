@@ -24,7 +24,7 @@
 #include "smpppdsearcher.h"
 
 SMPPPDSearcher::SMPPPDSearcher()
-        : m_cancelSearchNow(FALSE),
+        : m_cancelSearchNow(false),
         m_procIfconfig(NULL),
 m_procNetstat(NULL) {}
 
@@ -149,7 +149,7 @@ bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
         }
 
         uint range = max_range - min_range;
-        m_cancelSearchNow = FALSE;
+        m_cancelSearchNow = false;
         if(range > 1) {
             emit scanStarted(max_range);
         }

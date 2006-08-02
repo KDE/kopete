@@ -19,7 +19,7 @@
 #include "onlineinquiry.h"
 
 OnlineInquiry::OnlineInquiry()
-        : m_detector(NULL), m_online(FALSE) {}
+        : m_detector(NULL), m_online(false) {}
 
 OnlineInquiry::~OnlineInquiry() {
     delete m_detector;

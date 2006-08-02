@@ -470,7 +470,7 @@ void popupPublic::slotprocread(KProcIO *p)
                                         UpdateViewItem2 *item=new UpdateViewItem2(keysList,keyname,keymail,id,isDefaultKey);
 					//K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
                                         //sub->setSelectable(false);
-                                        if (seclist.find(tst,0,FALSE)!=-1)
+                                        if (seclist.find(tst,0,false)!=-1)
                                                 item->setPixmap(0,keyPair);
                                         else
                                                 item->setPixmap(0,keySingle);
