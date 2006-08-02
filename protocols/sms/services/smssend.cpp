@@ -87,7 +87,7 @@ void SMSSend::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
 
 	prefWidget->program->setMode(KFile::Directory);
 
-	QString prefix = QString::null;
+	QString prefix;
 
 	if (m_account)
 		prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString());
