@@ -66,7 +66,7 @@ JabberCapabilitiesManager::CapabilitiesList JabberCapabilitiesManager::Capabilit
 	CapabilitiesList capsList;
 	capsList.append( Capabilities(node(), version(), version()) );
 
-	QStringList extensionList = QStringList::split(" ",extensions());
+	QStringList extensionList = QStringList::split(' ',extensions());
 	QStringList::ConstIterator it, itEnd = extensionList.constEnd();
 	for(it = extensionList.constBegin(); it != itEnd; ++it)
 	{
@@ -402,10 +402,10 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 			{
 				if( !d->capabilitiesInformationMap[*newCapsIt].discovered() && d->capabilitiesInformationMap[*newCapsIt].pendingRequests() == 0 ) 
 				{
-					kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + "#" + (*newCapsIt).extensions()) << endl;
+					kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + '#' + (*newCapsIt).extensions()) << endl;
 
 					d->capabilitiesInformationMap[*newCapsIt].setPendingRequests(1);
-					requestDiscoInfo(account, jid, node + "#" + (*newCapsIt).extensions());
+					requestDiscoInfo(account, jid, node + '#' + (*newCapsIt).extensions());
 				}
 			}
 		}
@@ -452,7 +452,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 	Jid jid = discoInfo->jid();
 	kDebug(JABBER_DEBUG_GLOBAL) << QString("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',"%%")).arg(discoInfo->node()).arg(discoInfo->success()) << endl;
 
-	QStringList tokens = QStringList::split("#",discoInfo->node());
+	QStringList tokens = QStringList::split('#',discoInfo->node());
 
 	// Update features
 	Q_ASSERT(tokens.count() == 2);
@@ -601,7 +601,7 @@ QString JabberCapabilitiesManager::clientName(const Jid& jid) const
 			if (name.startsWith("www."))
 				name = name.right(name.length() - 4);
 			
-			int cut_pos = name.find(".");
+			int cut_pos = name.find('.');
 			if (cut_pos != -1) {
 				name = name.left(cut_pos);
 			}

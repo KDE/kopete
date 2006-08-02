@@ -246,15 +246,15 @@ void Webcam::processMessage(const Message& message)
 	unsigned int f=0;
 	while(f<dataMessage.size())
 	{
-		echoS+="\n";
+		echoS+='\n';
 		for(unsigned int q=0; q<16 ; q++)
 		{
 			if(q+f<dataMessage.size())
 			{
 				unsigned int N=(unsigned int) (dataMessage[q+f]);
 				if(N<16)
-					echoS+="0";
-				echoS+=QString::number( N  ,16)+" ";
+					echoS+='0';
+				echoS+=QString::number( N  ,16)+' ';
 			}
 			else
 				echoS+="   ";
@@ -285,7 +285,7 @@ void Webcam::processMessage(const Message& message)
 	if(message.header.dataOffset+message.header.dataSize < message.header.totalDataSize)
 		return;
 
-	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << "\n" << endl;
+	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << '\n' << endl;
 	if(m_content.startsWith("syn"))
 	{
 		if(m_direction == Incoming)
@@ -372,7 +372,7 @@ void Webcam::processMessage(const Message& message)
 			
 			if(!port1.isEmpty())
 			{
-				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port1 << endl;
+				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port1 << endl;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port1, this );
 				m_allSockets.append(sock);
 				QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
@@ -382,7 +382,7 @@ void Webcam::processMessage(const Message& message)
 			}
 			if(!port2.isEmpty())
 			{
-				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port2 << endl;
+				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port2 << endl;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port2, this );
 				m_allSockets.append(sock);
 				QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
@@ -391,7 +391,7 @@ void Webcam::processMessage(const Message& message)
 			}
 			if(!port3.isEmpty())
 			{
-				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port3 << endl;
+				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port3 << endl;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port3, this );
 				m_allSockets.append(sock);
 				QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
@@ -436,15 +436,15 @@ void Webcam::makeSIPMessage(const QString &message, quint8 XX, quint8 YY , quint
 	unsigned int f=0;
 	while(f<dataMessage.size())
 	{
-		echoS+="\n";
+		echoS+='\n';
 		for(unsigned int q=0; q<16 ; q++)
 		{
 			if(q+f<dataMessage.size())
 			{
 				unsigned int N=(unsigned int) (dataMessage[q+f]);
 				if(N<16)
-					echoS+="0";
-				echoS+=QString::number( N  ,16)+" ";
+					echoS+='0';
+				echoS+=QString::number( N  ,16)+' ';
 			}
 			else
 				echoS+="   ";
@@ -507,7 +507,7 @@ QString Webcam::xml(uint session , uint rid)
 	
 	m_listener = new KServerSocket(port, this) ;
 	
-	return "<" + who + "><version>2.0</version><rid>"+QString::number(rid)+"</rid><udprid>"+QString::number(rid+1)+"</udprid><session>"+QString::number(session)+"</session><ctypes>0</ctypes><cpu>2931</cpu>" +
+	return '<' + who + "><version>2.0</version><rid>"+QString::number(rid)+"</rid><udprid>"+QString::number(rid+1)+"</udprid><session>"+QString::number(session)+"</session><ctypes>0</ctypes><cpu>2931</cpu>" +
 			"<tcp><tcpport>7786</tcpport>\t\t\t\t\t\t\t\t  <tcplocalport>7786</tcplocalport>\t\t\t\t\t\t\t\t  <tcpexternalport>7786</tcpexternalport>"+ip+"</tcp>"+
 			"<udp><udplocalport>7786</udplocalport><udpexternalport>31863</udpexternalport><udpexternalip>"+ ip +"</udpexternalip><a1_port>31859</a1_port><b1_port>31860</b1_port><b2_port>31861</b2_port><b3_port>31862</b3_port><symmetricallocation>1</symmetricallocation><symmetricallocationincrement>1</symmetricallocationincrement><udpversion>1</udpversion><udpinternalipaddress1>127.0.0.1</udpinternalipaddress1></udp>"+
 			"<codec></codec><channelmode>1</channelmode></"+who+">\r\n\r\n";
@@ -827,7 +827,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	
 	if(img.width()!=320 || img.height()!=240)
 	{
-		kWarning(14140) << k_funcinfo << "Bad image size " <<img.width() << "x" <<  img.height() << endl;
+		kWarning(14140) << k_funcinfo << "Bad image size " <<img.width() << 'x' <<  img.height() << endl;
 		return;
 	}
 

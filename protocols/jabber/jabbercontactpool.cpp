@@ -222,7 +222,7 @@ void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 	else
 	{
 		//this is a legacy contact. we have no way to get the real Jid at this point, we can only guess it.
-		QString contactId= contact->contactId().replace('@','%') + "@" + contact->account()->myself()->contactId();
+		QString contactId= contact->contactId().replace('@','%') + '@' + contact->account()->myself()->contactId();
 		mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contactId ) ) ;
 	}
 

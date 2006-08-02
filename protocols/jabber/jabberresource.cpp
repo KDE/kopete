@@ -135,7 +135,7 @@ void JabberResource::slotGotClientVersion ()
 
 	if ( clientVersion->success () )
 	{
-		d->clientName = clientVersion->name () + " " + clientVersion->version ();
+		d->clientName = clientVersion->name () + ' ' + clientVersion->version ();
 		d->clientSystem = clientVersion->os ();
 
 		emit updated ( this );

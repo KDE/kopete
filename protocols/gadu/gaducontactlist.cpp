@@ -78,7 +78,7 @@ GaduContactsList::GaduContactsList( QString sList )
 
 		cl.firstname		= (*stringIterator);
 
-		if ( cl.firstname == QString( "i" ) ) {
+		if ( cl.firstname == QString( 'i' ) ) {
 			kDebug(14100) << cline << " ignored" << endl;
 			cl.ignored	= true;
 			cl.uin		= strList[6];
@@ -105,7 +105,7 @@ GaduContactsList::GaduContactsList( QString sList )
 			++stringIterator;
 
 			if ( stringIterator != strList.end() ) {
-				cl.offlineTo = (*++stringIterator) == QString("0") ? false : true;
+				cl.offlineTo = (*++stringIterator) == QString('0') ? false : true;
 				cl.landline  = (*++stringIterator);
 			}
         	}
@@ -171,22 +171,22 @@ GaduContactsList::asString()
 
 	for (  it = cList.begin(); it != cList.end(); ++it ) {
 		if ( (*it).ignored ) {
-			contacts += "i;;;;;;" + (*it).uin + "\n";
+			contacts += "i;;;;;;" + (*it).uin + '\n';
 		}
 		else {
 //	name;surname;nick;displayname;telephone;group(s);uin;email;;0;0;;offlineTo;homePhone;
 			contacts +=
-				(*it).firstname + ";"+
-				(*it).surname + ";"+
-				(*it).nickname + ";"+
-				(*it).displayname + ";"+
-				(*it).phonenr + ";"+
-				(*it).group + ";"+
-				(*it).uin + ";"+
+				(*it).firstname + ';'+
+				(*it).surname + ';'+
+				(*it).nickname + ';'+
+				(*it).displayname + ';'+
+				(*it).phonenr + ';'+
+				(*it).group + ';'+
+				(*it).uin + ';'+
 				(*it).email +
 				";;0;0;;" +
-				((*it).offlineTo == true ? QString("1") : QString("0"))
-				+ ";" +
+				((*it).offlineTo == true ? '1' : '0')
+				+ ';' +
 				(*it).landline +
 				";\r\n";
 		}

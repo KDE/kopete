@@ -304,7 +304,7 @@ GaduContact::contactDetails()
 // in case of topLevel group, Kopete::Group::displayName() returns "TopLevel" ineasted of just " " or "/"
 // imo TopLevel group should be detected like i am doing that below
 		if ( gr!=Kopete::Group::topLevel() ) {
-			groups += gr->displayName()+",";
+			groups += gr->displayName()+',';
 		}
 	}
 
@@ -351,7 +351,7 @@ GaduContact::findBestContactName( const GaduContactsList::ContactLine* cl )
 						name = cl->firstname;
 					}
 					else {
-						name = cl->firstname + " " + cl->surname;
+						name = cl->firstname + ' ' + cl->surname;
 					}
 				}
 			}

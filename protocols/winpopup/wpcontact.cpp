@@ -154,7 +154,7 @@ void WPContact::slotCheckStatus()
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
-	kDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")" << endl;
+	kDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ')' << endl;
 
 	QList<Kopete::Contact*> contactList;
 	contactList.append(account()->myself());
@@ -177,7 +177,7 @@ void WPContact::slotSendMessage( Kopete::Message& message )
 	// Warning: this could crash
 	kDebug(14170) << message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId() << endl;
 
-	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
+	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + '\n' : QString("")) + message.plainBody();
 	WPAccount *acct = dynamic_cast<WPAccount *>(account());
 	WPContact *contact = dynamic_cast<WPContact *>( message.to().first() );
 	if (acct && contact) {

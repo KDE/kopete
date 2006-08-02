@@ -284,7 +284,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		uname ( &utsBuf );
 
 		sendCommand( "CVR", i18n( "MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx", "0x0409" ) +
-			" " + escape( utsBuf.sysname ) + " " + escape( utsBuf.release ) + " " + escape( utsBuf.machine ) + " Kopete " +
+			' ' + escape( utsBuf.sysname ) + ' ' + escape( utsBuf.release ) + ' ' + escape( utsBuf.machine ) + " Kopete " +
 			escape( kapp->aboutData()->version() ) + " Kopete " + m_msnId );
 */
 	}
@@ -322,11 +322,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			{
 				//the contactliust has maybe being removed, force to sync
 				//(the only contact is myself)
-				lastSyncTime="0";
-				lastChange="0";
+				lastSyncTime='0';
+				lastChange='0';
 			}
 
-			sendCommand( "SYN", lastChange + " " + lastSyncTime);
+			sendCommand( "SYN", lastChange + ' ' + lastSyncTime);
 			// Get client features.
 			if(!useHttpMethod()) {
 				sendCommand( "GCF", "Shields.xml");
@@ -676,7 +676,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	{
 		// Let the base class handle the rest
 		//MSNSocket::parseCommand( cmd, id, data );
-		kDebug( 14140 ) << k_funcinfo << "Unimplemented command '" << cmd << " " << id << " " << data << "' from server!" << endl;
+		kDebug( 14140 ) << k_funcinfo << "Unimplemented command '" << cmd << ' ' << id << ' ' << data << "' from server!" << endl;
 	}
 }
 
@@ -781,7 +781,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		 //this sends the server if mails are deleted
 		 QString m = msg.right(msg.length() - msg.indexOf("Message-Delta:") );
 		 m = m.left(msg.indexOf("\r\n"));
-		 mailCount = mailCount - m.right(m.length() -m.indexOf(" ")-1).toUInt();
+		 mailCount = mailCount - m.right(m.length() -m.indexOf(' ')-1).toUInt();
 	}
 	else if(msg.contains("text/x-msmsgsemailnotification"))
 	{
@@ -1054,7 +1054,7 @@ void MSNNotifySocket::addGroup(const QString& groupName)
 void MSNNotifySocket::renameGroup( const QString& groupName, const QString& groupGuid )
 {
 	// escape spaces
-	sendCommand( "REG", groupGuid + " " + escape( groupName ) );
+	sendCommand( "REG", groupGuid + ' ' + escape( groupName ) );
 }
 
 void MSNNotifySocket::removeGroup( const QString& groupGuid )
@@ -1093,7 +1093,7 @@ void MSNNotifySocket::addContact( const QString &handle, int list, const QString
 			args = QString("RL N=%1").arg( handle );
 			break;
 		default:
-			kDebug(14140) << k_funcinfo <<"WARNING! Unknown list " << list << "!" << endl;
+			kDebug(14140) << k_funcinfo <<"WARNING! Unknown list " << list << '!' << endl;
 			return;
 	}
 	unsigned int id=sendCommand( "ADC", args );
@@ -1109,7 +1109,7 @@ void MSNNotifySocket::removeContact( const QString &handle, int list, const QStr
 		args = "FL " + contactGuid;
 		// Removing a contact from a group
 		if( !groupGuid.isEmpty() )
-			args += " " + groupGuid;
+			args += ' ' + groupGuid;
 		break;
 	case MSNProtocol::AL:
 		args = "AL " + handle;
@@ -1121,7 +1121,7 @@ void MSNNotifySocket::removeContact( const QString &handle, int list, const QStr
 		args = "PL " + handle;
 		break;
 	default:
-		kDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << "!" << endl;
+		kDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << '!' << endl;
 		return;
 	}
 	unsigned int id=sendCommand( "REM", args );
@@ -1135,7 +1135,7 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;
 	else
-		sendCommand( "CHG", statusToString( status ) + " " + m_account->myselfClientId() + " " + escape(m_account->pictureObject()) );
+		sendCommand( "CHG", statusToString( status ) + ' ' + m_account->myselfClientId() + ' ' + escape(m_account->pictureObject()) );
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
@@ -1231,7 +1231,7 @@ void MSNNotifySocket::changePersonalMessage( const Kopete::StatusMessage &person
 
 void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )
 {
-	sendCommand( "PRP", key + " " + escape ( data ) );
+	sendCommand( "PRP", key + ' ' + escape ( data ) );
 }
 
 
@@ -1262,7 +1262,7 @@ QString MSNNotifySocket::statusToString( const Kopete::OnlineStatus &status ) co
 		return "IDL";
 	else
 	{
-		kWarning( 14140 ) << k_funcinfo << "Unknown status " << status.internalStatus() << "!" << endl;
+		kWarning( 14140 ) << k_funcinfo << "Unknown status " << status.internalStatus() << '!' << endl;
 		return "UNK";
 	}
 }

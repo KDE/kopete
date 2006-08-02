@@ -41,7 +41,7 @@
 #include "xmpp_tasks.h"
 
 JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::RosterItem & item, const QString& gateway_type)
-	: Kopete::Account ( parentAccount->protocol(), parentAccount->accountId()+"/"+ item.jid().bare() )
+	: Kopete::Account ( parentAccount->protocol(), parentAccount->accountId()+'/'+ item.jid().bare() )
 {
 	m_status=Creating;
 	m_account = parentAccount;
@@ -304,7 +304,7 @@ QString JabberTransport::legacyId( const XMPP::Jid & jid )
 	if(jid.node().isEmpty())
 		return QString();
 	QString node = jid.node();
-	return node.replace("%","@");
+	return node.replace('%','@');
 }
 
 void JabberTransport::jabberAccountRemoved( )

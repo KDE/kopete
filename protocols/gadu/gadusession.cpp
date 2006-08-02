@@ -431,7 +431,7 @@ GaduSession::pubDirSearch(  ResLine& query, int ageFrom, int ageTo, bool onlyAli
 
 			if ( ageFrom && ageTo ) {
 				gg_pubdir50_add( searchRequest, GG_PUBDIR50_BIRTHYEAR,
-							(const char*)textcodec->fromUnicode( yearFrom + " " + yearTo ) );
+							(const char*)textcodec->fromUnicode( yearFrom + ' ' + yearTo ) );
 			}
 			if ( ageFrom ) {
 				gg_pubdir50_add( searchRequest, GG_PUBDIR50_BIRTHYEAR,
@@ -498,7 +498,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 			resultLine.age.truncate( 0 );
 		}
 		sres.append( resultLine );
-		kDebug(14100) << "found line "<< resultLine.uin << " " << resultLine.firstname << endl;
+		kDebug(14100) << "found line "<< resultLine.uin << ' ' << resultLine.firstname << endl;
 	}
 
 	searchSeqNr_ = gg_pubdir50_next( result );

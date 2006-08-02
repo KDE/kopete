@@ -63,7 +63,7 @@ GroupWiseContactProperties::GroupWiseContactProperties( GroupWise::ContactDetail
 	// set up the contents of the props widget
 	m_propsWidget->m_userId->setText( GroupWiseProtocol::protocol()->dnToDotted( cd.dn ) );
 	m_propsWidget->m_status->setText( GroupWiseProtocol::protocol()->gwStatusToKOS( cd.status ).description() );
-	m_propsWidget->m_displayName->setText( cd.fullName.isEmpty() ? ( cd.givenName + " " + cd.surname ) : cd.fullName );
+	m_propsWidget->m_displayName->setText( cd.fullName.isEmpty() ? ( cd.givenName + ' ' + cd.surname ) : cd.fullName );
 	m_propsWidget->m_firstName->setText( cd.givenName );
 	m_propsWidget->m_lastName->setText( cd.surname );
 

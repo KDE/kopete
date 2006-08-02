@@ -192,7 +192,7 @@ void Socket::connectToServer(const KUrl &url)
 
 	#warning FIXME: send an event here to reflect connection state
 
-	kDebug(14121) << k_funcinfo << "connecting: (" << host << ", " << port << ")" << endl;
+	kDebug(14121) << k_funcinfo << "connecting: (" << host << ", " << port << ')' << endl;
 	d->socket->connectToHost(host, port);
 }
 
@@ -232,11 +232,11 @@ void Socket::writeMessage(const Message &msg)
 {
 	#warning Check message validity before sending it
 
-	QByteArray arr = msg.rawPrefix() + " " + msg.rawCommand();
+	QByteArray arr = msg.rawPrefix() + ' ' + msg.rawCommand();
 	foreach(QByteArray arg, msg.rawArgs())
-		(arr += " ") += arg;
+		(arr += ' ') += arg;
 
-	(arr += " ") += msg.rawSuffix();
+	(arr += ' ') += msg.rawSuffix();
 
 	//writeMessage(msg.rawLine());
 	writeMessage(arr.trimmed());

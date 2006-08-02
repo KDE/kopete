@@ -70,7 +70,7 @@ void JabberBookmarks::slotReceivedBookmarks( )
 						if(e.isNull())
 							continue;
 						else if(e.tagName() == "nick")
-							jid+="/"+e.text();
+							jid+='/'+e.text();
 						else if(e.tagName() == "password")
 							password=e.text();
 						

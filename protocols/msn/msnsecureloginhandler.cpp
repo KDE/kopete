@@ -76,7 +76,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 								"OrgURL=http%3A%2F%2Fmessenger%2Emsn%2Ecom,"
 								"sign-in=" + QUrl::toPercentEncoding(m_accountId) +
 								",pwd=" + QUrl::toPercentEncoding( m_password ).replace(',',"%2C") +
-								"," + m_authentification + "\r\n";
+								',' + m_authentification + "\r\n";
 
 //   warning, this debug contains the password
 //		kDebug(14140) << k_funcinfo << "Auth request: " << authRequest << endl;

@@ -121,7 +121,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	if ( jid.resource().isEmpty () )
 		setDisplayName ( chatMembers.first()->metaContact()->displayName () + statusText );
 	else
-		setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () + statusText );
+		setDisplayName ( chatMembers.first()->metaContact()->displayName () + '/' + jid.resource () + statusText );
 
 }
 
@@ -295,12 +295,12 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					//  see Bug 121627
 					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
 					// linebreak that are not interpreted.  - Olivier 2006-31-03
-					xhtmlBody.replace("\n","");
+					xhtmlBody.replace('\n',"");
 					
 					//&nbsp; is not a valid XML entity
 					xhtmlBody.replace("&nbsp;" , "&#160;");
 							
-					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +">"+ xhtmlBody +"</p>";
+					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +'>'+ xhtmlBody +"</p>";
 					
 					QDomDocument doc;
 					doc.setContent(xhtmlBody, true);

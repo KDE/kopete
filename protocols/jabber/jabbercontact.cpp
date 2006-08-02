@@ -663,7 +663,7 @@ void JabberContact::slotSendVCard()
 	// work information tab
 	XMPP::VCard::Org org;
 	org.name = property(protocol()->propCompanyName).value().toString();
-	org.unit = QStringList::split(",", property(protocol()->propCompanyDepartement).value().toString());
+	org.unit = QStringList::split(',', property(protocol()->propCompanyDepartement).value().toString());
 	vCard.setOrg(org);
 	vCard.setTitle (property(protocol()->propCompanyPosition).value().toString());
 	vCard.setRole (property(protocol()->propCompanyRole).value().toString());
@@ -1299,7 +1299,7 @@ void JabberContact::slotDiscoFinished( )
 		
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << ri.jid().full() << " is not a contact but a gateway   - " << this << endl;
 		
-		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , account()->accountId() + "/" + ri.jid().bare() ) )
+		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , account()->accountId() + '/' + ri.jid().bare() ) )
 		{
 			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport already exists, abort operation " <<  endl;
 			return;

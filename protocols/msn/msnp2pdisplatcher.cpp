@@ -49,10 +49,10 @@
 static QString randomid()
 {
 	return (QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + '-'
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + '-'
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + '-'
+			+ QString::number(rand()%0xAAFF+0x1111, 16) + '-'
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).toUpper();
@@ -430,7 +430,7 @@ void MSNP2PDisplatcher::requestDisplayPicture( const QString &myHandle, const QS
 	p2p->m_CallID=randomid();
 
 	msnObject=QString::fromUtf8(KCodecs::base64Encode( msnObject.toUtf8() ));
-	msnObject.replace("=" , QString::null ) ;
+	msnObject.replace('=' , QString::null ) ;
 
 
 	QString content="EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"

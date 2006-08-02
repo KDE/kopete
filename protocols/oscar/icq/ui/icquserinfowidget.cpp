@@ -105,7 +105,7 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 	QTextCodec* codec = m_contact->contactCodec();
 	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
 	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickname ) );
-	m_genInfoWidget->fullNameEdit->setText( codec->toUnicode( ui.firstName ) + " " + codec->toUnicode( ui.lastName ) );
+	m_genInfoWidget->fullNameEdit->setText( codec->toUnicode( ui.firstName ) + ' ' + codec->toUnicode( ui.lastName ) );
 	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
 	m_genInfoWidget->emailEdit->setText( codec->toUnicode( ui.email ) );
 	m_genInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );

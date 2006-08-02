@@ -365,7 +365,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
+		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << ' ' << data << endl;
 	}
 }
 
@@ -377,18 +377,18 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 	{
 		groups += it.key();
-		groups += ",";
+		groups += ',';
 	}
     if(groups.length() > 0)
         groups.truncate(groups.length()-1);
 
 	QString lists="C";
 	if(m_blocked)
-		lists +="B";
+		lists +='B';
 	if(m_allowed)
-		lists +="A";
+		lists +='A';
 	if(m_reversed)
-		lists +="R";
+		lists +='R';
 
 	serializedData[ "groups" ]  = groups;
 	serializedData[ "PHH" ]  = m_phoneHome;

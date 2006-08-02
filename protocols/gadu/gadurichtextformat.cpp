@@ -124,16 +124,16 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 QString
 GaduRichTextFormat::formatOpeningTag( const QString& tag, const QString& attributes )
 {
-	QString res = "<" + tag;
+	QString res = '<' + tag;
 	if(!attributes.isEmpty())
-		res.append(" " + attributes);
-	return res + ">";
+		res.append(' ' + attributes);
+	return res + '>';
 }
 
 QString
 GaduRichTextFormat::formatClosingTag( const QString& tag )
 {
-	return "</" + tag + ">";
+	return "</" + tag + '>';
 }
 
 // the initial idea stolen from IRC plugin

@@ -405,7 +405,7 @@ void GroupWiseChatSession::addInvitee( const Kopete::Contact * c )
 	QString pending = i18nc("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
 	Kopete::MetaContact * inviteeMC = new Kopete::MetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
-	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
+	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + ' ' + pending, inviteeMC, 0, 0, 0 );
 	invitee->setOnlineStatus( c->onlineStatus() );
 	// TODO: we could set all the placeholder's properties etc here too
 	addContact( invitee, true );
