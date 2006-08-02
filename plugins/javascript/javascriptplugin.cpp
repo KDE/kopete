@@ -8,23 +8,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qptrlist.h>
-#include <qregexp.h>
-#include <qtimer.h>
-#include <kdebug.h>
-#include <kgenericfactory.h>
-#include <kapplication.h>
-#include <kjsembed/kjsembedpart.h>
-#include <kjsembed/jsconsolewidget.h>
-#include <kjsembed/jsproxy.h>
-#include <kjsembed/jsfactory.h>
-#include <kjsembed/jssecuritypolicy.h>
-#include <kjsembed/jsopaqueproxy.h>
+#include "javascriptplugin.h"
 
-#include "kopetemessagemanagerfactory.h"
+#include "javascriptconfig.h"
+#include "javascriptfile.h"
+
+/*
+#include "wrappers/kopetemessageimp.h"
+#include "wrappers/kopetecontactimp.h"
+*/
+
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetecontact.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
@@ -32,137 +29,21 @@
 #include "kopeteuiglobal.h"
 #include "kopeteview.h"
 #include "kopetecontactlist.h"
-#include "wrappers/kopetemessage_imp.h"
-#include "wrappers/kopetecontact_imp.h"
-#include "javascriptplugin.h"
-#include "javascriptconfig.h"
 
-class JavaScriptIdentifier
-{
-	public:
-		static QString id( Kopete::Contact *c )
-		{
-			return c->contactId();
-		}
+#include <kjsembed/kjsembed.h>
+/*
+#include <kjsembed/kjsembedpart.h>
+#include <kjsembed/jsconsolewidget.h>
+#include <kjsembed/jsproxy.h>
+#include <kjsembed/jsfactory.h>
+#include <kjsembed/jssecuritypolicy.h>
+#include <kjsembed/jsopaqueproxy.h>
+*/
+#include <kdebug.h>
+#include <kgenericfactory.h>
+#include <kapplication.h>
 
-		static QString id( Kopete::MetaContact *c )
-		{
-			return c->displayName();
-		}
-
-		static QString id( Kopete::Group *c )
-		{
-			return c->displayName();
-		}
-};
-
-template< class ObjectT >
-class ObjectList
-{
-	public:
-        	ObjectList( KJSEmbed::KJSEmbedPart *engine ) : exec( engine->globalExec() ), jsEngine( engine )
-		{
-			init();
-		}
-
-		ObjectList( KJSEmbed::KJSEmbedPart *engine, const QPtrList<ObjectT> &list )
-			: exec( engine->globalExec() ), jsEngine( engine )
-		{
-			init();
-
-			for( QPtrListIterator<ObjectT> it( list ); it.current(); ++it )
-			{
-				addObject( JavaScriptIdentifier::id( it.current() ), it.current() );
-			}
-		}
-
-		ObjectList( KJSEmbed::KJSEmbedPart *engine, const QDict<ObjectT> &list )
-			: exec( engine->globalExec() ), jsEngine( engine )
-		{
-			init();
-
-			for( QDictIterator<ObjectT> it( list ); it.current(); ++it )
-			{
-				addObject( JavaScriptIdentifier::id( it.current() ), it.current() );
-			}
-		}
-
-		void addObject( const QString &name, ObjectT *object )
-		{
-			//kdDebug() << k_funcinfo << "Adding object " << name << endl;
-			if( !objectList[name] )
-			{
-				KJS::List arg;
-
-				KJS::Object jsObject = jsEngine->factory()->createProxy( exec, object );
-				addChildObjects( jsObject, object );
-				arg.append( jsObject );
-				pushMethod.call( exec, jsArray, arg );
-				objectList.insert( name, object );
-			}
-		}
-
-		void addChildObjects( KJS::Object &jsObject, Kopete::MetaContact *object )
-		{
-			ObjectList<Kopete::Contact> *contacts = new ObjectList<Kopete::Contact>(
-				jsEngine, object->contacts()
-			);
-
-			wrapperList.insert( JavaScriptIdentifier::id( object ), contacts );
-			jsObject.put( exec, "contacts", contacts->array() );
-
-			/*ObjectList<Kopete::Group> *groups = new ObjectList<Kopete::Group>(
-				jsEngine, object->groups()
-			);
-
-			wrapperList.insert( JavaScriptIdentifier::id( object ), groups );
-			jsObject.put( exec, "groups", groups->array() );*/
-		}
-
-		void addChildObjects( KJS::Object &jsObject, Kopete::Contact *object )
-		{
-			JSStatus* status = new JSStatus( object->onlineStatus() );
-			wrapperList.insert( JavaScriptIdentifier::id( object ), status );
-			jsObject.put( exec, "onlineStatus", KJS::Object( status ) );
-		}
-
-		void addChildObjects( KJS::Object &, Kopete::Group * ){}
-
-		void removeObject( const QString &name )
-		{
-			KJS::Object jsObject = object( name );
-			byNameObject.deleteProperty( exec, name );
-			objectList.remove( name );
-			wrapperList.remove( name );
-		}
-
-		KJS::Object &array()
-		{
-			return jsArray;
-		}
-
-		ObjectT *objectPointer( const QString &name ) const
-		{
-			return objectList[ name ];
-		}
-
-	private:
-		void init()
-		{
-			KJS::List arg;
-			jsArray = jsEngine->interpreter()->builtinArray().construct( exec, arg );
-			pushMethod = jsArray.get( exec, "push" ).toObject( exec );
-
-			wrapperList.setAutoDelete(true);
-		}
-
-		KJS::Object jsArray;
-		KJS::Object pushMethod;
-		KJS::ExecState *exec;
-		KJSEmbed::KJSEmbedPart *jsEngine;
-		QDict<ObjectT>	objectList;
-		QDict<void>	wrapperList;
-};
+#include <QtCore/QRegExp>
 
 typedef KGenericFactory<JavaScriptPlugin> JavaScriptPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_javascript, JavaScriptPluginFactory( "kopete_javascript" )  )
@@ -171,37 +52,42 @@ JavaScriptPlugin* JavaScriptPlugin::pluginStatic_ = 0L;
 
 class JavaScriptEnginePrivate
 {
-	public:
-		JavaScriptEnginePrivate() :
-			jsEngine( new KJSEmbed::KJSEmbedPart ), contactList( jsEngine ), groupList( jsEngine )
+public:
+	JavaScriptEnginePrivate()
+		: jsEngine( new KJSEmbed::Engine )
+//		, contactList( jsEngine )
+//		, groupList( jsEngine )
+	{}
 
-		{}
+	~JavaScriptEnginePrivate()
+	{
+		delete jsEngine;
+	}
 
-		~JavaScriptEnginePrivate()
-		{
-			delete jsEngine;
-		}
-
-		KJSEmbed::KJSEmbedPart *jsEngine;
-		ObjectList<Kopete::MetaContact> contactList;
-		ObjectList<Kopete::Group> groupList;
+	KJSEmbed::Engine *jsEngine;
+//	ObjectList<Kopete::MetaContact> contactList;
+//	ObjectList<Kopete::Group> groupList;
 };
 
 class JavaScriptPluginPrivate
 {
-	public:
-		JavaScriptPluginPrivate() :
-			config( JavaScriptConfig::instance() )
-		{
-			engineMap.setAutoDelete( true );
-		}
+public:
+	JavaScriptPluginPrivate()
+		: config( JavaScriptConfig::instance() )
+	{
+	}
 
-		QPtrDict<JavaScriptEnginePrivate> engineMap;
-		JavaScriptConfig *config;
+	~JavaScriptPluginPrivate()
+	{
+		qDeleteAll(engineMap.values());
+	}
+
+	QHash<Kopete::Account *, JavaScriptEnginePrivate *> engineMap;
+	JavaScriptConfig *config;
 };
 
-JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: Kopete::Plugin( JavaScriptPluginFactory::instance(), parent, name )
+JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const QStringList &/*args*/ )
+: Kopete::Plugin( JavaScriptPluginFactory::instance(), parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
@@ -219,13 +105,14 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 	connect( Kopete::AccountManager::self(), SIGNAL( accountRegistered( Kopete::Account * ) ),
 		this, SLOT( slotAccountCreated( Kopete::Account * ) ) );
 
-	KJSEmbed::JSSecurityPolicy::setDefaultPolicy( KJSEmbed::JSSecurityPolicy::CapabilityAll );
+#warning REANABLE POLICIES ?
+//	KJSEmbed::JSSecurityPolicy::setDefaultPolicy( KJSEmbed::JSSecurityPolicy::CapabilityAll );
 
 	d = new JavaScriptPluginPrivate();
 	connect( d->config, SIGNAL( changed() ), this, SLOT( slotReloadScripts() ) );
-	for( QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() ); it.current(); ++it )
+	foreach( Kopete::Account *account, Kopete::AccountManager::self()->accounts() )
 	{
-		slotAccountCreated( it.current() );
+//		slotAccountCreated( account );
 	}
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("jsconsole"),
@@ -237,33 +124,45 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 		i18n("USAGE: /jsexec [-o] <args> - Executes the JavaScript arguments in the current context and displays the results in the chat buffer. If -o is specified, the output is sent to all members of the chat."), 1 );
 }
 
+JavaScriptPlugin::~JavaScriptPlugin()
+{
+	delete d;
+	pluginStatic_ = 0;
+}
+
+JavaScriptPlugin* JavaScriptPlugin::self()
+{
+	return pluginStatic_ ;
+}
+
 void JavaScriptPlugin::slotReloadScripts()
 {
-	for( QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() ); it.current(); ++it )
+	foreach( Kopete::Account *account, Kopete::AccountManager::self()->accounts() )
 	{
-		execScripts( it.current() );
+		execScripts( account );
 	}
 }
 
-void JavaScriptPlugin::execScripts( Kopete::Account *a )
+void JavaScriptPlugin::execScripts( Kopete::Account *account )
 {
-	QValueList<Script*> scripts = d->config->scriptsFor( a );
-	if( !scripts.isEmpty() )
+        JavaScriptEnginePrivate *ep = d->engineMap[account];
+	foreach( JavaScriptFile *scriptfile, d->config->scriptsFor( account ) )
 	{
-		JavaScriptEnginePrivate *ep = d->engineMap[a];
-		for( QValueList<Script*>::iterator s = scripts.begin(); s != scripts.end(); ++s )
+		kDebug() << scriptfile->script() << endl;
+		ep->jsEngine->execute( scriptfile->script() );
+#warning Temporary disable Init function loading
+/*
+		QMap<QString,QString>::iterator it = scriptfile->functions.find( QLatin1String("Init") );
+		if( it != scriptfile->functions.end() )
 		{
-			kdDebug() << (*s)->script() << endl;
-			ep->jsEngine->execute( (*s)->script() );
-			QMap<QString,QString>::iterator it = (*s)->functions.find( QString::fromLatin1("Init") );
-			if( it != (*s)->functions.end() )
-			{
-				ep->jsEngine->evaluate( it.data() + QString::fromLatin1("()") );
-			}
+			ep->jsEngine->evaluate( it.data() + QString::fromLatin1("()") );
 		}
+*/
 	}
 }
 
+#warning Temporary disable account creation code
+/*
 void JavaScriptPlugin::slotAccountCreated( Kopete::Account *a )
 {
 	JavaScriptEnginePrivate *ep = d->engineMap[a];
@@ -315,17 +214,7 @@ void JavaScriptPlugin::slotAccountDestroyed( Kopete::Account *a )
 		d->engineMap.remove( a );
 	}
 }
-
-JavaScriptPlugin::~JavaScriptPlugin()
-{
-	delete d;
-	pluginStatic_ = 0L;
-}
-
-JavaScriptPlugin* JavaScriptPlugin::self()
-{
-	return pluginStatic_ ;
-}
+*/
 
 void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::ChatSession *manager )
 {
@@ -335,12 +224,13 @@ void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::ChatSession *ma
 		//TODO: Init EP and continue
 		Kopete::Message msg( manager->myself(), manager->members(),
 			i18n("There are no scripts currently active for this account."),
-			Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat );
+			Kopete::Message::Internal, Kopete::Message::PlainText );
 		manager->appendMessage( msg );
 	}
 	else
 	{
-		ep->jsEngine->view()->show();
+		kDebug() << "No console widget for now" << endl;
+//		ep->jsEngine->view()->show();
 	}
 }
 
@@ -352,7 +242,7 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 		//TODO: Init EP and continue
 		Kopete::Message msg( manager->myself(), manager->members(),
 			i18n("There are no scripts currently active for this account."),
-			Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat );
+			Kopete::Message::Internal, Kopete::Message::PlainText );
 		manager->appendMessage( msg );
 	}
 	else
@@ -367,6 +257,8 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 			cmd = args.section( QRegExp(QString::fromLatin1("\\s+") ), 1);
 		}
 
+#warning disable some execution code for now
+/*
 		KJS::Value val = ep->jsEngine->evaluate( cmd );
 		Kopete::Message msg( manager->myself(), manager->members(),
 			val.toString( ep->jsEngine->globalExec() ).qstring(), dir,
@@ -376,10 +268,13 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 			manager->sendMessage( msg );
 		else
 			manager->appendMessage( msg );
+*/
 	}
 }
 
-void JavaScriptPlugin::publishMessage( JSMessage *msg, KJSEmbed::KJSEmbedPart *jsEngine )
+#warning Disable message management
+/*
+void JavaScriptPlugin::publishMessage( JSMessage *msg, KJSEmbed::Engine *jsEngine )
 {
 	KJS::ExecState *exec = jsEngine->globalExec();
         KJS::Object message( msg );
@@ -431,7 +326,8 @@ void JavaScriptPlugin::slotDisplayMessage( Kopete::Message &msg )
 	}
 }
 
-void JavaScriptPlugin::slotAccountChangedStatus( Kopete::Account *a, const Kopete::OnlineStatus &,
+void JavaScriptPlugin::slotAccountChangedStatus( Kopete::Account *a,
+	const Kopete::OnlineStatus &,
 	const Kopete::OnlineStatus & )
 {
 	JavaScriptEnginePrivate *ep = d->engineMap[ a ];
@@ -480,18 +376,18 @@ void JavaScriptPlugin::slotContactRemoved( Kopete::Contact *c )
 		);
 	}
 }
-
-void JavaScriptPlugin::runScripts( Kopete::Account *a, const QString &scriptType, KJSEmbed::KJSEmbedPart *jsEngine )
+*/
+void JavaScriptPlugin::runScripts( Kopete::Account *a, const QString &scriptType, KJSEmbed::Engine *jsEngine )
 {
-	QValueList<Script*> scripts = d->config->scriptsFor( a );
-	kdDebug() << k_funcinfo << "Scripts for " << a->accountId() << ", type " << scriptType << " = " << scripts.count() << endl;
-	for( QValueList<Script*>::iterator s = scripts.begin(); s != scripts.end(); ++s )
+//	kDebug() << k_funcinfo << "Scripts for " << a->accountId() << ", type " << scriptType << " = " << scripts.count() << endl;
+	foreach( JavaScriptFile *scriptfile, d->config->scriptsFor( a ) )
 	{
-		QMap<QString,QString>::iterator it = (*s)->functions.find( scriptType );
-		if( it != (*s)->functions.end() )
+		QMap<QString,QString>::iterator it = scriptfile->functions.find( scriptType );
+		if( it != scriptfile->functions.end() )
 		{
-			kdDebug() << k_funcinfo << "Executing " << it.data() << QString::fromLatin1("()") << endl;
-			jsEngine->evaluate( it.data() + QString::fromLatin1("()") );
+			QString functionCall = it.data() + QLatin1String("()");
+			kDebug() << k_funcinfo << "Executing " << functionCall << endl;
+//			jsEngine->evaluate( functionCall );
 		}
 	}
 }

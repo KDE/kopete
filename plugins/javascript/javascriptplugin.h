@@ -27,8 +27,9 @@ class JavaScriptPluginPrivate;
 
 namespace KJSEmbed
 {
-	class JSOpaqueProxy;
-	class KJSEmbedPart;
+	class Engine;
+//	class JSOpaqueProxy;
+//	class KJSEmbedPart;
 }
 
 class JavaScriptPlugin
@@ -39,35 +40,36 @@ class JavaScriptPlugin
 public:
 	static JavaScriptPlugin  *self();
 
-	JavaScriptPlugin( QObject *parent, const char *name, const QStringList &args );
+	JavaScriptPlugin( QObject *parent, const QStringList &args );
 	~JavaScriptPlugin();
 
 private slots:
 	void slotReloadScripts();
-
+/*
 	void slotAccountCreated( Kopete::Account *a );
 	void slotAccountDestroyed( Kopete::Account *a );
-
-	void slotIncomingMessage( Kopete::Message& msg );
-	void slotOutgoingMessage( Kopete::Message& msg );
-	void slotDisplayMessage( Kopete::Message& msg );
-
-	void slotAccountChangedStatus( Kopete::Account *c, const Kopete::OnlineStatus &,
-		const Kopete::OnlineStatus & );
-
-	void slotContactChangedStatus( Kopete::Contact *c, const Kopete::OnlineStatus &,
+	void slotAccountChangedStatus( Kopete::Account *c,
+		const Kopete::OnlineStatus &,
 		const Kopete::OnlineStatus & );
 
 	void slotContactAdded( Kopete::Contact *c );
 	void slotContactRemoved( Kopete::Contact *c );
+	void slotContactChangedStatus( Kopete::Contact *c,
+		const Kopete::OnlineStatus &,
+		const Kopete::OnlineStatus & );
 
+	void slotIncomingMessage( Kopete::Message& msg );
+	void slotOutgoingMessage( Kopete::Message& msg );
+	void slotDisplayMessage( Kopete::Message& msg );
+*/
 	void slotShowConsole( const QString &, Kopete::ChatSession *manager );
 	void slotJsExec( const QString &, Kopete::ChatSession *manager );
 
 private:
 	void execScripts( Kopete::Account *a );
-	void runScripts( Kopete::Account *a, const QString &scriptType, KJSEmbed::KJSEmbedPart *engine );
-	void publishMessage( JSMessage *msg, KJSEmbed::KJSEmbedPart *engine );
+	void runScripts( Kopete::Account *a, const QString &scriptType,
+		KJSEmbed::Engine *jsEngine );
+//	void publishMessage( JSMessage *msg, KJSembed::Engine *jsEngine );
 
 	static JavaScriptPlugin* pluginStatic_;
 
