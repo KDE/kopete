@@ -112,6 +112,7 @@ private:
 	QTimer m_timer; //if we're idle too long, then give up
 	WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
+	QByteArray m_altIp; //to connect to if m_ip fails
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
 	enum State { Default, Listening, Connecting, ProxySetup, Receiving, Done };

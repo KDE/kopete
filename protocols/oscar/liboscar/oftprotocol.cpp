@@ -120,7 +120,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 		data.fileName = c->toUnicode( name2 );
 	else
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec " << d << endl;
 		data.fileName = name; //pretend it's just ascii
 	}
 

@@ -118,8 +118,10 @@ void FileTransferTask::onGo()
 void FileTransferTask::parseReq( Buffer b )
 {
 	QByteArray proxy_ip;
-	//DWORD client_ip = 0;
+	QByteArray client_ip;
 	QByteArray verified_ip;
+	m_altIp.clear(); //just to be sure
+
 	while( b.bytesAvailable() )
 	{
 		TLV tlv = b.getTLV();
@@ -143,8 +145,8 @@ void FileTransferTask::parseReq( Buffer b )
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip << endl;
 			break;
 		 case 3:
-		 	//client_ip = b2.getDWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << tlv.data << endl;
+		 	client_ip = tlv.data;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << client_ip << endl;
 			break;
 		 case 4:
 		 	verified_ip = tlv.data;
@@ -170,10 +172,19 @@ void FileTransferTask::parseReq( Buffer b )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy requested" << endl;
 		m_ip = proxy_ip;
 	}
+	else if ( client_ip.isEmpty() )
+		m_ip = verified_ip;
+	else if ( client_ip == "\0\0\0\0" ) //XXX will this compare properly?
+	{
+		//wtf... I guess it wants *me* to request a proxy?
+		m_proxy = 1;
+		m_proxyRequester = 1;
+	}
 	else
 	{
-		//for now, only try the verified ip. FIXME
-		m_ip = verified_ip;
+		m_ip = client_ip;
+		if ( verified_ip != client_ip )
+			m_altIp = verified_ip;
 	}
 
 }
@@ -811,16 +822,26 @@ void FileTransferTask::connectFailed()
 	delete m_connection;
 	m_connection = 0;
 	bool proxy = client()->settings()->fileProxy();
-	if ( m_action == Receive && (! proxy ) )
-	{ //try redirect
-		sendReq();
+	if (! proxy )
+	{
+		if ( ! m_altIp.isEmpty() )
+		{ //there's another ip to try
+			m_ip = m_altIp;
+			m_altIp.clear();
+			doConnect();
+			return;
+		}
+		if ( m_action == Receive )
+		{ //try redirect
+			sendReq();
+			return;
+		}
 	}
-	else
-	{ //proxy stage 2 or 3
-		m_proxy = 1;
-		m_proxyRequester = 1;
-		doConnect();
-	}
+
+	//proxy stage 2 or 3
+	m_proxy = 1;
+	m_proxyRequester = 1;
+	doConnect();
 }
 
 bool FileTransferTask::listen()
