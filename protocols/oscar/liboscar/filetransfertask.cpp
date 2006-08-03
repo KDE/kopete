@@ -659,6 +659,7 @@ void FileTransferTask::oftRAgree()
 
 void FileTransferTask::doCancel()
 {
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//tell the other side
 	Oscar::Message msg = makeFTMsg();
 	msg.setReqType( 1 );
@@ -694,6 +695,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 	//TODO: we should unhook the old transfermanager signals now
 
 	//hook up the ones for the transfer
+	connect( t , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
 	connect( this , SIGNAL( gotCancel() ), t, SLOT( slotCancelled() ) );
 	connect( this , SIGNAL( error( int, const QString & ) ), t, SLOT( slotError( int, const QString & ) ) );
 	connect( this , SIGNAL( processed( unsigned int ) ), t, SLOT( slotProcessed( unsigned int ) ) );
