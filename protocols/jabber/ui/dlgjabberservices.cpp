@@ -73,6 +73,8 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent) :
 
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotRegister ()));
 	connect (btnBrowse, SIGNAL (clicked ()), this, SLOT (slotBrowse ()));
+	
+	connect (btnDisco, SIGNAL (clicked ()), this, SLOT (slotDiscoClicked()));
 
 }
 
@@ -83,12 +85,14 @@ void dlgJabberServices::slotSetSelection (Q3ListViewItem *it)
 	{
 		btnRegister->setDisabled (true);
 		btnBrowse->setDisabled (true);
+		current_node.clear();
 	}
 	else
 	{
 		btnRegister->setDisabled (! item->can_register);
 		btnBrowse->setDisabled (! item->can_browse);
 		current_jid=item->jid;
+		current_node=item->node;
 	}
 
 }
@@ -134,7 +138,7 @@ void dlgJabberServices::slotServiceFinished ()
 
 	for (XMPP::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); ++it)
 	{
-		dlgJabberServies_item *item=new dlgJabberServies_item( lvServices , (*it).jid ().userHost () , (*it).name ());
+		dlgJabberServies_item *item=new dlgJabberServies_item( lvServices , (*it).jid ().userHost () , QString(),  (*it).name ());
 		item->jid=(*it).jid();
 		item->can_browse=(*it).features().canSearch();
 		item->can_register=(*it).features().canRegister();
@@ -158,7 +162,7 @@ void dlgJabberServices::slotDisco()
 	if(leServer->text().isEmpty())
 		leServer->setText(m_account->server());
 	
-	jt->get(leServer->text() , QString());
+	jt->get(leServer->text() , leNode->text());
 	jt->go(true);
 }
 
@@ -179,8 +183,9 @@ void dlgJabberServices::slotDiscoFinished( )
 		for(Q3ValueList<XMPP::DiscoItem>::ConstIterator it = list.begin(); it != list.end(); ++it) 
 		{
 			const XMPP::DiscoItem a = *it;
-			dlgJabberServies_item *item=new dlgJabberServies_item( lvServices , (*it).jid ().userHost () , (*it).name ());
+			dlgJabberServies_item *item=new dlgJabberServies_item( lvServices ,a.jid().full() , a.node() , a.name());
 			item->jid=a.jid();
+			item->node=a.node();
 			item->updateInfo(a.jid() , a.node(), m_account);
 		}
 	}
@@ -237,5 +242,12 @@ void dlgJabberServies_item::slotDiscoFinished( )
 	{
 		//TODO: error message  (it's a simple message box to show)
 	}
+}
+
+void dlgJabberServices::slotDiscoClicked()
+{
+	leServer->setText(current_jid.full());
+	leNode->setText(current_node);
+	slotDisco();
 }
 
