@@ -120,6 +120,8 @@ void FileTransferTask::parseReq( Buffer b )
 	QByteArray proxy_ip;
 	QByteArray client_ip;
 	QByteArray verified_ip;
+	QByteArray fileName;
+	QTextCodec *c=0;
 	m_altIp.clear(); //just to be sure
 
 	while( b.bytesAvailable() )
@@ -133,12 +135,12 @@ void FileTransferTask::parseReq( Buffer b )
 				break;
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
 			m_oft.fileSize = b2.getDWord();
-			m_oft.fileName = b2.getBlock( b2.bytesAvailable() );
+			fileName = b2.getBlock( b2.bytesAvailable() );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_oft.fileSize << " file: " << m_oft.fileName << endl;
 			break;
 		 case 0x2712:
+			c=QTextCodec::codecForName( tlv.data );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "filename encoding " << tlv.data << endl;
-			//FIXME: if it's not ascii, set up a qtextcodec
 			break;
 		 case 2:
 		 	proxy_ip = tlv.data;
@@ -165,6 +167,19 @@ void FileTransferTask::parseReq( Buffer b )
 		 default:
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ignoring tlv type " << tlv.type << endl;
 		}
+	}
+
+	if ( ! c )
+	{
+		c=QTextCodec::codecForName( "UTF8" );
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no codec, assuming utf8" << endl;
+	}
+	if ( c )
+		m_oft.fileName = c->toUnicode( fileName );
+	else
+	{
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't get any codec! " << endl;
+		m_oft.fileName = fileName;
 	}
 
 	if( m_proxy )

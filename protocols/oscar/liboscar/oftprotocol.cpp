@@ -105,7 +105,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	switch ( d )
 	{
 		case 0:
-			c=QTextCodec::codecForName( "ascii" );
+			c=QTextCodec::codecForName( "UTF8" );
 			break;
 		case 0x00020000:
 			c=QTextCodec::codecForName( "UTF-16BE" );
@@ -120,7 +120,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 		data.fileName = c->toUnicode( name2 );
 	else
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec " << d << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec!!!!!! " << d << endl;
 		data.fileName = name; //pretend it's just ascii
 	}
 
