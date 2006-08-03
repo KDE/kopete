@@ -34,7 +34,7 @@
 
 #include "dlgjabberservices.moc"
 
-dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, const char *name) : QDialog(parent)
+dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent) : QDialog(parent)
 {
 	setupUi(this);
 

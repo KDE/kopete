@@ -40,7 +40,7 @@
 #include "jabberregisteraccount.h"
 #include "dlgjabberchangepassword.h"
 
-JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent, const char *name)
+JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent)
 						: DlgJabberEditAccountWidget(), KopeteEditAccountWidget (ident), QWidget(parent)
 {
 	setupUi(this);

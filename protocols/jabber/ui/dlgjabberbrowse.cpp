@@ -32,7 +32,7 @@
 #include "jabberformtranslator.h"
 #include "dlgjabberbrowse.h"
 
-dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name) : QDialog (parent)
+dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent) : QDialog (parent)
 {
 	setupUi (this);
 

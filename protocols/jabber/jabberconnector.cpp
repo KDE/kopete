@@ -22,7 +22,7 @@
 #include "jabberbytestream.h"
 #include "jabberprotocol.h"
 
-JabberConnector::JabberConnector ( QObject *parent, const char */*name*/ )
+JabberConnector::JabberConnector ( QObject *parent )
  : XMPP::Connector ( parent )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New Jabber connector." << endl;

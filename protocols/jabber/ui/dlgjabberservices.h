@@ -36,7 +36,7 @@ class dlgJabberServices : public QDialog, private Ui::dlgServices
 	Q_OBJECT
 
 public:
-	  dlgJabberServices (JabberAccount *account, QWidget *parent = 0, const char *name = 0);
+	  dlgJabberServices (JabberAccount *account, QWidget *parent = 0);
 	 ~dlgJabberServices ();
 
 private slots:

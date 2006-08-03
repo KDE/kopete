@@ -17,9 +17,7 @@
 
 #include "jabberformlineedit.h"
 
-JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent, const char *name):QLineEdit (value,
-																																						parent,
-																																						name)
+JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : QLineEdit (value, parent)
 {
 
 	fieldType = type;
@@ -38,7 +36,7 @@ JabberFormLineEdit::~JabberFormLineEdit ()
 {
 }
 
-JabberFormPasswordEdit::JabberFormPasswordEdit (const int type, const QString & realName, const QString & value, QWidget * parent, const char */*name*/):KPasswordEdit(parent)
+JabberFormPasswordEdit::JabberFormPasswordEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : KPasswordEdit(parent)
 {
 
 	setText(value);

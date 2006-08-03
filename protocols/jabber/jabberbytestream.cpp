@@ -24,7 +24,7 @@
 #include <kresolver.h>
 #include "jabberprotocol.h"
 
-JabberByteStream::JabberByteStream ( QObject *parent, const char */*name*/ )
+JabberByteStream::JabberByteStream ( QObject *parent )
  : ByteStream ( parent )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new Jabber byte stream." << endl;

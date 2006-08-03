@@ -32,7 +32,7 @@ class JabberFormLineEdit:public QLineEdit
 {
 
   Q_OBJECT public:
-	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = 0, const char *name = 0);
+	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = 0);
 	 ~JabberFormLineEdit ();
 
 	public slots:void slotGatherData (XMPP::Form & form);
@@ -47,7 +47,7 @@ class JabberFormPasswordEdit:public KPasswordEdit
 {
 
   Q_OBJECT public:
-	  JabberFormPasswordEdit(const int type, const QString & realName, const QString & value, QWidget * parent = 0, const char *name = 0);
+	  JabberFormPasswordEdit(const int type, const QString & realName, const QString & value, QWidget * parent = 0);
 
 	public slots:void slotGatherData (XMPP::Form & form);
 
