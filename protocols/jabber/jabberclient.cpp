@@ -272,10 +272,10 @@ void JabberClient::addS5BServerAddress ( const QString &address )
 	d->s5bAddressList.append ( address );
 
 	// now filter the list without dupes
-	for ( QStringList::Iterator it = d->s5bAddressList.begin (); it != d->s5bAddressList.end (); ++it )
+	foreach( QStringList::const_reference str, d->s5bAddressList )
 	{
-		if ( !newList.contains ( *it ) )
-			newList.append ( *it );
+		if ( !newList.contains ( str ) )
+			newList.append ( str );
 	}
 
 	s5bServer()->setHostList ( newList );
@@ -286,11 +286,10 @@ void JabberClient::removeS5BServerAddress ( const QString &address )
 {
 	QStringList newList;
 
-	QStringList::iterator it = d->s5bAddressList.find ( address );
-	if ( it != d->s5bAddressList.end () )
-	{
-		d->s5bAddressList.erase ( it );
-	}
+	int idx = d->s5bAddressList.indexOf( address );
+
+	if ( idx != -1 )
+		d->s5bAddressList.removeAt(idx);
 
 	if ( d->s5bAddressList.isEmpty () )
 	{
@@ -300,10 +299,10 @@ void JabberClient::removeS5BServerAddress ( const QString &address )
 	else
 	{
 		// now filter the list without dupes
-		for ( QStringList::Iterator it = d->s5bAddressList.begin (); it != d->s5bAddressList.end (); ++it )
+		foreach( QStringList::const_reference str, d->s5bAddressList )
 		{
-			if ( !newList.contains ( *it ) )
-				newList.append ( *it );
+			if ( !newList.contains ( str ) )
+				newList.append ( str );
 		}
 
 		s5bServer()->setHostList ( newList );
