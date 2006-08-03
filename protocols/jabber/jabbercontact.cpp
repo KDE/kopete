@@ -382,30 +382,24 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	}
 
 	// append URLs as separate messages
-	if ( !message.urlList().isEmpty () )
+
+	/*
+	 * We need to copy it here because Iris returns a copy
+	 * and we can't work with a returned copy in a for() loop.
+	 */
+	XMPP::UrlList urlList = message.urlList();
+
+	foreach(XMPP::UrlList::const_reference xurl, urlList)
 	{
-		/*
-		 * We need to copy it here because Iris returns a copy
-		 * and we can't work with a returned copy in a for() loop.
-		 */
-		XMPP::UrlList urlList = message.urlList();
+		QString description = !xurl.desc().isEmpty() ? Qt::escape ( xurl.desc() ) : xurl.url();
 
-		for ( XMPP::UrlList::const_iterator it = urlList.begin (); it != urlList.end (); ++it )
-		{
-			QString description = (*it).desc().isEmpty() ? (*it).url() : Qt::escape ( (*it).desc() );
-			QString url = (*it).url ();
+		Kopete::Message msg ( message.timeStamp (), this, contactList,
+				QString ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ),
+				message.subject (), Kopete::Message::Inbound,
+				Kopete::Message::RichText, viewPlugin );
 
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
-											 QString ( "<a href=\"%1\">%2</a>" ).arg ( url, description ),
-											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::RichText, viewPlugin );
-
-			mManager->appendMessage ( *newMessage, message.from().resource () );
-
-			delete newMessage;
-		}
+		mManager->appendMessage ( msg, message.from().resource () );
 	}
-
 }
 
 void JabberContact::slotCheckVCard ()
