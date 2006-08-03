@@ -740,6 +740,7 @@ void FileTransferTask::doConnect()
 
 	m_state = Connecting;
 	//socket doesn't seem to have its own timeout, so here's mine
+	m_timer.disconnect();
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 	m_timer.start( client()->settings()->timeout()  * 1000 );
 	//try it
@@ -876,6 +877,7 @@ bool FileTransferTask::listen()
 		last = first;
 	for ( m_port = first; m_port <= last; ++m_port )
 	{ //try ports in the range (default 5190-5199)
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "trying port " << m_port << endl;
 		m_ss->setAddress( QString::number( m_port ) );
 		if( success = ( m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError ) )
 			break;
