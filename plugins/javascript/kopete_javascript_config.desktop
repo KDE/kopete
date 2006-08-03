@@ -10,8 +10,5 @@ X-KDE-ParentApp=kopete_javascript
 X-KDE-ParentComponents=kopete_javascript
 
 Name=JavaScript
-Name[x-test]=xxJavaScriptxx
 Comment=Add JavaScript bindings
-Comment[fr]=Ajoute des extensions pour JavaScript
-Comment[x-test]=xxAdd JavaScript bindingsxx
 
