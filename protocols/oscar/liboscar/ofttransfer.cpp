@@ -49,7 +49,9 @@ QByteArray OftTransfer::toWire()
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer length is " << m_buffer.length() << endl;
 
 	//get filename length - the only variable length in the OFT
-	int len = m_data.fileName.length();
+	QTextCodec *c = QTextCodec::codecForName( "UTF-16BE" );
+	QByteArray name = c->fromUnicode( m_data.fileName );
+	int len = name.length();
 	Buffer b;
 	b.addString( "OFT2" ); //protocol version
 	b.addWord( len > 63 ? len - 63 + 256 : 256 );
@@ -86,8 +88,7 @@ QByteArray OftTransfer::toWire()
 	//let's always send unicode. it makes things easier.
 	b.addWord( 2 ); //encoding 0=ascii, 2=UTF-16BE or UCS-2BE, 3= ISO-8859-1
 	b.addWord( 0 ); //encoding subcode
-	QTextCodec *c = QTextCodec::codecForName( "UTF-16BE" );
-	b.addString( c->fromUnicode( m_data.fileName ) );
+	b.addString( name );
 	if ( len < 63 )
 	{ //minimum length 64
 		zeros.fill( 0, 64 - len );
