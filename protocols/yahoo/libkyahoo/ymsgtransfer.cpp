@@ -224,9 +224,9 @@ QByteArray YMSGTransfer::serialize()
 	
 	stream << (Q_INT8)'Y' << (Q_INT8)'M' << (Q_INT8)'S' << (Q_INT8)'G';
 	if( d->service == Yahoo::ServicePictureUpload )
-		stream << (Q_INT16)0x0e00;
+		stream << (Q_INT16)0x0f00;
 	else
-		stream << (Q_INT16)0x000e;
+		stream << (Q_INT16)0x000f;
 	stream << (Q_INT16)0x0000;
 	if( d->service == Yahoo::ServicePictureUpload ||
 		d->service == Yahoo::ServiceFileTransfer )
