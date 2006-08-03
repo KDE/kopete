@@ -2,6 +2,7 @@
     jabbercapabilitiesmanager.h - Manage entity capabilities(JEP-0115) pool.
 
     Copyright (c) 2006      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -20,10 +21,13 @@
 #ifndef JABBERCAPABILITIESMANAGER_H
 #define JABBERCAPABILITIESMANAGER_H
 
-#include <qobject.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 #include <QPair>
+#include <QList>
+#include <QDate>
+#include <QString>
+#include <QStringList>
+#include <QDomElement>
+
 #include <im.h>
 #include <xmpp.h>
 
@@ -118,7 +122,7 @@ private:
 	void saveInformation();
 
 	class Capabilities;
-	typedef Q3ValueList<Capabilities> CapabilitiesList;
+	typedef QList<Capabilities> CapabilitiesList;
 	/**
 	 * @brief A class representing an entity capability specification.
 	 * An entity capability is a combination of a node, a version, and a set of
@@ -203,7 +207,10 @@ private:
 			int m_pendingRequests;
 			QStringList m_features;
 			DiscoItem::Identities m_identities;
-			Q3ValueList<QPair<QString,JabberAccount*> > m_jids;
+
+			typedef QList<QPair<QString, JabberAccount*> > JidList;
+			JidList m_jids;
+
 			QDate m_lastSeen;
 	};
 
