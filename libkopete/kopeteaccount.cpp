@@ -95,7 +95,7 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
-	d->color = d->configGroup->readEntry( "Color" );
+	d->color = d->configGroup->readEntry( "Color" , QColor() );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
