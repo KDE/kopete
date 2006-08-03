@@ -4,11 +4,13 @@
                              -------------------
     begin                : Sat Mar 8 2003
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
-							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
-							and Till Gerken <till@tantalo.net>.
-   copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
+				Based on JabberProtocol by Daniel Stone <dstone@kde.org>
+				and Till Gerken <till@tantalo.net>.
+    copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
 
-			   Kopete (C) 2001-2003 Kopete developers  <kopete-devel@kde.org>.
+    Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
+
+    Kopete (C) 2001-2006 Kopete developers  <kopete-devel@kde.org>.
  ***************************************************************************/
 
 /***************************************************************************
@@ -36,6 +38,7 @@
 #include "jabberclient.h"
 
 #include <QMap>
+#include <QtCrypto>
 
 class QString;
 class QStringList;
@@ -115,19 +118,16 @@ public:
 	 * an answer of him. */
 	void errorConnectionLost ();
 
-	/*
-	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
-	 * Parameters: Warning code from QCA::TLS
-	 * Automatically resumes the stream if wanted.
-	 */
 	/**
 	 * Handle a TLS warning. Displays a dialog and returns if the
 	 * stream can be continued or not.
+	 *
 	 * @param client JabberClient instance
-	 * @param warning Warning code from QCA::TLS
+	 * @param identityResult Peer identity checking result from QCA::TLS
+	 * @param validityResult Certificate validity checking result from QCA::TLS
 	 * @return True if stream can be resumed.
 	 */
-	static bool handleTLSWarning ( JabberClient *client, int warning );
+	static bool handleTLSWarning ( JabberClient *client, QCA::TLS::IdentityResult identityResult, QCA::Validity validityResult );
 	
 	/*
 	 * Handle stream errors. Displays a dialog and returns.
@@ -235,7 +235,7 @@ private slots:
 	void slotDisconnect ();
 
 	// handle a TLS warning
-	void slotHandleTLSWarning ( int validityResult );
+	void slotHandleTLSWarning ( QCA::TLS::IdentityResult identityResult, QCA::Validity validityResult );
 
 	// handle client errors
 	void slotClientError ( JabberClient::ErrorCode errorCode );

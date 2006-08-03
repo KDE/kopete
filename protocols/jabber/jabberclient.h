@@ -6,6 +6,8 @@
     copyright            : (C) 2005 by Till Gerken <till@tantalo.net>
                            (C) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
+    Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
+
 			   Kopete (C) 2001-2006 Kopete developers
 			   <kopete-devel@kde.org>.
  ***************************************************************************/
@@ -28,6 +30,8 @@
 #include <im.h>
 #include <xmpp.h>
 #include <s5b.h>
+
+#include <QtCrypto>
 
 #include <kopete_export.h>
 
@@ -429,7 +433,7 @@ signals:
 	/**
 	 * TLS problem encountered.
 	 */
-	void tlsWarning ( int validityResult );
+	void tlsWarning ( QCA::TLS::IdentityResult, QCA::Validity );
 
 	/**
 	 * A new file transfer needs to be handled.

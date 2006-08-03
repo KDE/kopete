@@ -7,8 +7,9 @@
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
 	copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
+	Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
-			   Kopete (C) 2001-2003 Kopete developers
+			   Kopete (C) 2001-2006 Kopete developers
 			   <kopete-devel@kde.org>.
  ***************************************************************************/
 
@@ -303,7 +304,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	
 		QObject::connect ( m_jabberClient, SIGNAL ( csDisconnected () ), this, SLOT ( slotCSDisconnected () ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
-		QObject::connect ( m_jabberClient, SIGNAL ( tlsWarning ( int ) ), this, SLOT ( slotHandleTLSWarning ( int ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( tlsWarning ( QCA::TLS::IdentityResult, QCA::Validity ) ), this, SLOT ( slotHandleTLSWarning ( QCA::TLS::IdentityResult, QCA::Validity ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( error ( JabberClient::ErrorCode ) ), this, SLOT ( slotClientError ( JabberClient::ErrorCode ) ) );
 
@@ -448,85 +449,121 @@ void JabberAccount::slotClientDebugMessage ( const QString &msg )
 
 }
 
-bool JabberAccount::handleTLSWarning ( JabberClient *jabberClient, int warning )
+bool JabberAccount::handleTLSWarning (
+		JabberClient *jabberClient,
+		QCA::TLS::IdentityResult identityResult,
+		QCA::Validity validityResult )
 {
-	QString validityString, code;
+	QString validityString, code, idString, idCode;
 
-	QString server = jabberClient->jid().domain ();
+	QString server    = jabberClient->jid().domain ();
 	QString accountId = jabberClient->jid().bare ();
 
-#warning Port to new QCA2 API
-#if 0
-	switch ( warning )
+	switch ( identityResult )
 	{
-		case QCA::TLS::NoCert:
-			validityString = i18n("No certificate was presented.");
-			code = "NoCert";
+		case QCA::TLS::Valid:
 			break;
 		case QCA::TLS::HostMismatch:
-			validityString = i18n("The host name does not match the one in the certificate.");
-			code = "HostMismatch";
+			idString = i18n("The host name does not match the one in the certificate.");
+			idCode   = "HostMismatch";
 			break;
-		case QCA::TLS::Rejected:
+		case QCA::TLS::InvalidCertificate:
+			idString = i18n("The certificate is invalid.");
+			idCode   = "InvalidCert";
+			break;
+		case QCA::TLS::NoCertificate:
+			idString = i18n("No certificate was presented.");
+			idCode   = "NoCert";
+			break;
+	}
+
+	switch ( validityResult )
+	{
+		case QCA::ValidityGood:
+			break;
+		case QCA::ErrorRejected:
 			validityString = i18n("The Certificate Authority rejected the certificate.");
 			code = "Rejected";
 			break;
-		case QCA::TLS::Untrusted:
-			// FIXME: write better error message here
-			validityString = i18n("The certificate is untrusted.");
+		case QCA::ErrorUntrusted:
+			validityString = i18n("The certificate is not trusted.");
 			code = "Untrusted";
 			break;
-		case QCA::TLS::SignatureFailed:
+		case QCA::ErrorSignatureFailed:
 			validityString = i18n("The signature is invalid.");
 			code = "SignatureFailed";
 			break;
-		case QCA::TLS::InvalidCA:
+		case QCA::ErrorInvalidCA:
 			validityString = i18n("The Certificate Authority is invalid.");
 			code = "InvalidCA";
 			break;
-		case QCA::TLS::InvalidPurpose:
-			// FIXME: write better error  message here
+		case QCA::ErrorInvalidPurpose:
 			validityString = i18n("Invalid certificate purpose.");
 			code = "InvalidPurpose";
 			break;
-		case QCA::TLS::SelfSigned:
+		case QCA::ErrorSelfSigned:
 			validityString = i18n("The certificate is self-signed.");
 			code = "SelfSigned";
 			break;
-		case QCA::TLS::Revoked:
+		case QCA::ErrorRevoked:
 			validityString = i18n("The certificate has been revoked.");
 			code = "Revoked";
 			break;
-		case QCA::TLS::PathLengthExceeded:
+		case QCA::ErrorPathLengthExceeded:
 			validityString = i18n("Maximum certificate chain length was exceeded.");
 			code = "PathLengthExceeded";
 			break;
-		case QCA::TLS::Expired:
+		case QCA::ErrorExpired:
 			validityString = i18n("The certificate has expired.");
 			code = "Expired";
 			break;
-		case QCA::TLS::Unknown:
-		default:
-			validityString = i18n("An unknown error occurred trying to validate the certificate.");
-			code = "Unknown";
+		case QCA::ErrorExpiredCA:
+			validityString = i18n("The Certificate Authority has expired.");
+			code = "ExpiredCA";
 			break;
+		case QCA::ErrorValidityUnknown:
+			validityString = i18n("Validity is unknown.");
+			code = "ValidityUnknown";
+			break;
+	}
+
+	QString message;
+   
+	if (!idString.isEmpty())
+	{
+		if (!validityString.isEmpty())
+		{
+			message = i18n("<qt><p>The identity and the certificate of server %1 could not be "
+					"validated for account %2:</p><p>%3</p><p>%4</p><p>Do you want to continue?</p></qt>",
+					server, accountId, idString, validityString);
 		}
-#endif
+		else
+		{
+			message = i18n("<qt><p>The certificate of server %1 could not be validated for "
+					"account %2: %3</p><p>Do you want to continue?</p></qt>",
+					server, accountId, idString);
+		}
+	} else {
+		message = i18n("<qt><p>The certificate of server %1 could not be validated for "
+			"account %2: %3</p><p>Do you want to continue?</p></qt>",
+			server, accountId, validityString);
+	}
 
 	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
-						  i18n("<qt><p>The certificate of server %1 could not be validated for account %2: %3</p><p>Do you want to continue?</p></qt>",
-						  server, accountId, validityString),
-						  i18n("Jabber Connection Certificate Problem"),
-						  KStdGuiItem::cont(),
-						  QString("KopeteTLSWarning") + server + code) == KMessageBox::Continue );
+					  message,
+					  i18n("Jabber Connection Certificate Problem"),
+					  KStdGuiItem::cont(),
+					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 
 }
 
-void JabberAccount::slotHandleTLSWarning ( int validityResult )
+void JabberAccount::slotHandleTLSWarning (
+		QCA::TLS::IdentityResult identityResult,
+		QCA::Validity validityResult )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling TLS warning..." << endl;
 
-	if ( handleTLSWarning ( m_jabberClient, validityResult ) )
+	if ( handleTLSWarning ( m_jabberClient, identityResult, validityResult ) )
 	{
 		// resume stream
 		m_jabberClient->continueAfterTLSWarning ();
