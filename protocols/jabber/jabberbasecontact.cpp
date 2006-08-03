@@ -156,17 +156,17 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
 	
 		// find all groups our contact is in but that are not in the server side roster
-		for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
+		for ( int i = 0; i < metaContact()->groups().count (); i++ )
 		{
-			if ( item.groups().find ( metaContact()->groups().at(i)->displayName () ) == item.groups().end () )
+			if ( !item.groups().contains ( metaContact()->groups().at(i)->displayName () ) )
 				groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
 		}
 	
 		// now find all groups that are in the server side roster but not in the local group
-		for ( unsigned i = 0; i < item.groups().count (); i++ )
+		for ( int i = 0; i < item.groups().count (); i++ )
 		{
 			bool found = false;
-			for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
+			for ( int j = 0; j < metaContact()->groups().count (); j++)
 			{
 				if ( metaContact()->groups().at(j)->displayName () == item.groups().at(i) )
 				{
@@ -403,7 +403,7 @@ void JabberBaseContact::slotUserInfo( )
 
 void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
 
 	// update vCard cache timestamp if this is not a temporary contact
 	if ( metaContact() && !metaContact()->isTemporary () )
@@ -444,7 +444,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
 	{
 		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
-		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).stripWhiteSpace ();
+		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).trimmed ();
 
 		setProperty ( protocol()->propFirstName, firstName );
 		setProperty ( protocol()->propLastName, lastName );
@@ -629,10 +629,10 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	// photo() is a QByteArray
 	if ( !vCard.photo().isEmpty() )
 	{
-		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
+		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
 
 		// QImage is used to save to disk in PNG later.
-		contactPhoto = QImage( vCard.photo() );
+		contactPhoto = QImage::fromData( vCard.photo() );
 	}
 	// Contact photo is a URI.
 	else if( !vCard.photoURI().isEmpty() )
@@ -646,7 +646,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 			return;
 		}
 
-		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
+		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
 
 		contactPhoto = QImage( tempPhotoPath );
 		
@@ -656,7 +656,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	// Save the image to the disk, then set the property.
 	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
 	{
-		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
+		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
 		setProperty( protocol()->propPhoto, finalPhotoPath );
 	}
 
