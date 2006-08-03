@@ -19,6 +19,7 @@
 
 #include "oftprotocol.h"
 
+#include <qtextcodec.h>
 #include <qdatastream.h>
 #include <qobject.h>
 #include <kdebug.h>
@@ -95,11 +96,33 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	data.flags = b;
 	m_din->skipRawData( 87 ); //name offset, size offset, dummy block, mac info
 	*m_din >> d;
-	if ( d != 0 )
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "non-ascii encoding" << endl;
-	char name[length - 256 +  64];
-	m_din->readRawData( name, length - 256 +  64 );
-	data.fileName = name;
+	int namelen = length - 256 +  64;
+	char name[namelen];
+	m_din->readRawData( name, namelen );
+	QByteArray name2( name, namelen ); //make sure we don't trip over possible nulls in it
+
+	QTextCodec *c=0;
+	switch ( d )
+	{
+		case 0:
+			c=QTextCodec::codecForName( "ascii" );
+			break;
+		case 0x00020000:
+			c=QTextCodec::codecForName( "UTF-16BE" );
+			break;
+		case 0x00030000:
+			c=QTextCodec::codecForName( "ISO-8859-1" );
+			break;
+		default:
+			kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "unknown codec: " << d << endl;
+	}
+	if ( c )
+		data.fileName = c->toUnicode( name2 );
+	else
+	{
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec" << endl;
+		data.fileName = name; //pretend it's just ascii
+	}
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "got OFT" << endl;
 

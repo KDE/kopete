@@ -16,6 +16,7 @@
 
 #include "sendmessagetask.h"
 
+#include <qtextcodec.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <krandom.h>
@@ -256,12 +257,19 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
 			tlv2711.addWord( 1 ); //file count
 			tlv2711.addDWord( m_message.fileSize() );
-			tlv2711.addString( m_message.fileName().toLatin1() );
+			//mm, unicode.
+			QTextCodec *c = QTextCodec::codecForName( "UTF-16BE" );
+			tlv2711.addString( c->fromUnicode( m_message.fileName() ) );
 			tlv2711.addByte( 0 ); //make sure the name's null-terminated
+			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+			//send filename encoding
+			tlv5buffer.addTLV( 0x2712, 8, "UTF-16BE" );
 		}
-		else //chat
+		else
+		{//chat
 			addRendezvousMessageData( &tlv2711 );
-		tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+		}
 	}
 
 	b->addTLV( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );

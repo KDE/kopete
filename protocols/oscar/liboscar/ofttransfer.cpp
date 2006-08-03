@@ -14,6 +14,7 @@
 
 #include "ofttransfer.h"
 //#include <ctype.h>
+#include <qtextcodec.h>
 #include <kdebug.h>
 
 /*
@@ -82,9 +83,11 @@ QByteArray OftTransfer::toWire()
 	b.addString( zeros ); //dummy block
 	zeros.resize( 16 );
 	b.addString( zeros ); //mac file info
-	b.addWord( 0 ); //encoding 0=ascii, 2=UTF-16BE or UCS-2BE, 3= ISO-8859-1
+	//let's always send unicode. it makes things easier.
+	b.addWord( 2 ); //encoding 0=ascii, 2=UTF-16BE or UCS-2BE, 3= ISO-8859-1
 	b.addWord( 0 ); //encoding subcode
-	b.addString( m_data.fileName.toAscii() );
+	QTextCodec *c = QTextCodec::codecForName( "UTF-16BE" );
+	b.addString( c->fromUnicode( m_data.fileName ) );
 	if ( len < 63 )
 	{ //minimum length 64
 		zeros.fill( 0, 64 - len );

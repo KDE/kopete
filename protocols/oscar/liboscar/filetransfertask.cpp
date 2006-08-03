@@ -25,6 +25,7 @@
 #include <kbufferedsocket.h>
 #include <krandom.h>
 #include <qstring.h>
+#include <qtextcodec.h>
 #include <kdebug.h>
 #include "buffer.h"
 #include "connection.h"
@@ -133,6 +134,10 @@ void FileTransferTask::parseReq( Buffer b )
 			m_oft.fileName = b2.getBlock( b2.bytesAvailable() );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_oft.fileSize << " file: " << m_oft.fileName << endl;
 			break;
+		 case 0x2712:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "filename encoding " << tlv.data << endl;
+			//FIXME: if it's not ascii, set up a qtextcodec
+			break;
 		 case 2:
 		 	proxy_ip = tlv.data;
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip << endl;
@@ -148,6 +153,9 @@ void FileTransferTask::parseReq( Buffer b )
 		 case 5:
 		 	m_port = b2.getWord();
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "port " << m_port << endl;
+			break;
+		 case 0x0d:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "default encoding " << tlv.data << endl;
 			break;
 		 case 0x10:
 		 	m_proxy = true;
