@@ -875,18 +875,21 @@ bool FileTransferTask::listen()
 	//I don't trust the settings to be sane
 	if ( last < first )
 		last = first;
-	for ( m_port = first; m_port <= last; ++m_port )
+
+	for ( int i = first; i <= last; i++ )
 	{ //try ports in the range (default 5190-5199)
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "trying port " << m_port << endl;
-		m_ss->setAddress( QString::number( m_port ) );
+		m_ss->setAddress( QString::number( i ) );
 		if( success = ( m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError ) )
+		{
+			m_port = i;
 			break;
+		}
 		m_ss->close();
 	}
 	if (! success )
 	{ //uhoh... what do we do? FIXME: maybe tell the user too many filetransfers
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning" << endl;
-		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( m_port ) );
+		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( last ) );
 		setSuccess(false);
 		return false;
 	}
@@ -898,6 +901,7 @@ bool FileTransferTask::listen()
 
 void FileTransferTask::sendReq()
 {
+	m_state = Default;
 	//if we're not using a proxy we need a working serversocket
 	if (!( m_proxy || listen() ))
 		return;
