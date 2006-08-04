@@ -34,6 +34,7 @@
 #include <ksavefile.h>
 
 // Kopete includes
+#include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetecontact.h"
@@ -250,14 +251,16 @@ void XmlContactStorage::save()
     doc.documentElement().setAttribute( QLatin1String("version"), QLatin1String("1.0"));
 
     // Save group information. ie: Open/Closed, pehaps later icons? Who knows.
-    foreach( Kopete::Group *group, groups() )
+    Kopete::Group::List groupList = Kopete::ContactList::self()->groups();
+    foreach( Kopete::Group *group, groupList )
     {
         QDomNode node = doc.importNode( storeGroup( group ), true );
         doc.documentElement().appendChild( node );
     }
 
     // Save metacontact information.
-    foreach( Kopete::MetaContact *metaContact, contacts() )
+    Kopete::MetaContact::List metaContactList = Kopete::ContactList::self()->metaContacts();
+    foreach( Kopete::MetaContact *metaContact, metaContactList )
     {
         if( !metaContact->isTemporary() )
         {
