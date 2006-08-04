@@ -542,13 +542,8 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 					effect->fade(photoImg, 0.8, Qt::white);
 			}
 			delete effect;
+			
 			photoPixmap = photoImg;
-			QPainter p(&photoPixmap);
-			p.setPen(Qt::black);
-			p.drawLine(0, 0, photoPixmap.width()-1, 0);
-			p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
-			p.drawLine(0, 0, 0, photoPixmap.height()-1);
-			p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
 		}
 		else
 		{
