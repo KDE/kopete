@@ -1069,7 +1069,7 @@ void JabberContact::sendSubscription ( const QString& subType )
 
 void JabberContact::slotSelectResource ()
 {
-	int currentItem = QString ( static_cast<const KAction *>( sender() )->name () ).toUInt ();
+	int currentItem = QString ( static_cast<const KAction *>( sender() )->objectName () ).toUInt ();
 
 	/*
 	 * Warn the user if there is already an active chat window.
