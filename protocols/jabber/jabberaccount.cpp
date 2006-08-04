@@ -28,8 +28,6 @@
 #include "xmpp.h"
 #include "xmpp_tasks.h"
 #include "qca.h"
-//Added by qt3to4:
-#include <Q3CString>
 #include "bsocket.h"
 
 #include "jabberaccount.h"
@@ -182,7 +180,9 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	KAction *action;
 	
-	action = new KAction (i18n ("Join Groupchat..."), "jabber_group", 0, this, SLOT (slotJoinNewChat ()), 0, "actionJoinChat");
+	action = new KAction ( KIcon("jabber_group"), i18n ("Join Groupchat..."),
+	                      0, "actionJoinChat" );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotJoinNewChat()) );
 	m_actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 	
