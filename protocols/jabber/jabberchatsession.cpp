@@ -31,6 +31,8 @@
 #include "kopetemessage.h"
 #include "kopeteviewplugin.h"
 #include "kopeteview.h"
+#include "kopetemetacontact.h"
+
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"

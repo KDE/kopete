@@ -22,11 +22,15 @@
 #include <QString>
 #include <QMap>
 
-#include "kopetecontact.h"
+#include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
-#include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
-#include "addcontactpage.h"
+
+class AddContactPage;
+namespace Kopete {
+	class Contact;
+	class MetaContact;
+}
 
 #define JABBER_DEBUG_GLOBAL		14130
 #define JABBER_DEBUG_PROTOCOL	14131

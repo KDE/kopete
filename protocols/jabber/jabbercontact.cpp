@@ -47,6 +47,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteaccountmanager.h"
+#include "kopetemetacontact.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"

@@ -18,12 +18,13 @@
 
 #include "jabbercontactpool.h"
 
-#include <q3ptrlist.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kopeteaccountmanager.h>
 #include <kopetecontactlist.h>
 #include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
+
 #include "jabberprotocol.h"
 #include "jabberbasecontact.h"
 #include "jabbercontact.h"

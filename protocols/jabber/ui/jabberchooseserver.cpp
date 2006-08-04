@@ -19,6 +19,7 @@
 
 #include "jabberchooseserver.h"
 
+#include <QDomDocument>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kio/global.h>
