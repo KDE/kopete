@@ -263,7 +263,7 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 			tlv2711.addByte( 0 ); //make sure the name's null-terminated
 			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
 			//send filename encoding
-			tlv5buffer.addTLV( 0x2712, 8, "UTF8" );
+			//tlv5buffer.addTLV( 0x2712, 8, "UTF8" );
 		}
 		else
 		{//chat
