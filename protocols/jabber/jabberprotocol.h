@@ -19,13 +19,8 @@
 #ifndef JABBERPROTOCOL_H
 #define JABBERPROTOCOL_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qpixmap.h>
-#include <qmovie.h>
-#include <kaction.h>
-#include <kmenu.h>
+#include <QString>
+#include <QMap>
 
 #include "kopetecontact.h"
 #include "kopetecontactproperty.h"

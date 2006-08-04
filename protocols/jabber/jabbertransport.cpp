@@ -31,6 +31,7 @@
 
 #include <qpixmap.h>
 #include <qtimer.h>
+#include <kmenu.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
