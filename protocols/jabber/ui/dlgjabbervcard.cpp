@@ -368,7 +368,7 @@ void dlgJabberVCard::slotSaveVCard()
 	// work information tab
 	XMPP::VCard::Org org;
 	org.name = m_mainWidget->leCompany->text();
-	org.unit = QStringList::split(",", m_mainWidget->leDepartment->text());
+	org.unit = m_mainWidget->leDepartment->text().split(',');
 	vCard.setOrg(org);
 	vCard.setTitle( m_mainWidget->lePosition->text() );
 	vCard.setRole( m_mainWidget->leRole->text() );

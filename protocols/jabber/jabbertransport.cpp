@@ -96,7 +96,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	
 	if(contactJID_s.isEmpty())
 	{
-		kdError(JABBER_DEBUG_GLOBAL) << k_funcinfo << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
+		kError(JABBER_DEBUG_GLOBAL) << k_funcinfo << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
 	}
 	
 	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
@@ -136,7 +136,7 @@ KActionMenu *JabberTransport::actionMenu ()
 		menu->addSeparator();
 
 		foreach( KAction *a, *customActions )
-			a->plug( menu->menu() );
+			menu->menu()->addAction(a);
 	}
 	delete customActions;
 

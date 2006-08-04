@@ -84,7 +84,8 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #endif
 
- new KAction( i18n( "Send File" ), "attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "jabberSendFile" );
+	KAction* sendFile = new KAction( KIcon( "attach" ), i18n( "Send File" ), actionCollection(), "jabberSendFile" );
+	QObject::connect(sendFile, SIGNAL( triggered( bool ) ), SLOT( slotSendFile() ));
 
 	setXMLFile("jabberchatui.rc");
 
