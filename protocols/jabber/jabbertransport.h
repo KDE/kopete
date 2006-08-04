@@ -22,9 +22,7 @@
 #include <config.h>
 #endif
 
-
 #include <kopeteaccount.h>
-
 
 namespace XMPP { 
 	class Jid;
