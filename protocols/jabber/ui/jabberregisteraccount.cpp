@@ -322,7 +322,7 @@ void JabberRegisterAccount::slotCSError (int error)
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Protocol error." ) );
 
 	// display message to user
-	JabberAccount::handleStreamError (error, jabberClient->clientStream()->errorCondition (), jabberClient->clientConnector()->errorCode (), mMainWidget->leServer->text (), errorClass);
+	JabberAccount::handleStreamError (error, jabberClient->clientStream()->errorCondition (), jabberClient->clientConnector()->errorCode (), mMainWidget->leServer->text (), errorClass, jabberClient->clientStream()->errorText());
 
 	disconnect ();
 

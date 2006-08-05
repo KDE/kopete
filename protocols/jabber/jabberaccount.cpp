@@ -774,7 +774,7 @@ void JabberAccount::slotCSDisconnected ()
 
 }
 
-void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass)
+void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass, QString additionalErrMsg)
 {
 	QString errorText;
 	QString errorCondition;
@@ -801,7 +801,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			switch(streamCondition)
 			{
 				case XMPP::Stream::GenericStreamError:
-					errorCondition = i18n("Generic stream error (sorry, I do not have a more-detailed reason)");
+					errorCondition = i18n("Generic stream error.");
 					break;
 				case XMPP::Stream::Conflict:
 					// FIXME: need a better error message here
@@ -1027,11 +1027,18 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	 * API will attempt to reconnect, queueing another
 	 * error until memory is exhausted.
 	 */
-	if(!errorText.isEmpty())
-		KMessageBox::error (Kopete::UI::Global::mainWidget (),
-						errorText,
-						i18n("Connection problem with Jabber server %1", server));
-
+	if(!errorText.isEmpty()) {
+		if (!additionalErrMsg.isEmpty()) {
+			KMessageBox::detailedError (Kopete::UI::Global::mainWidget (),
+					errorText,
+					additionalErrMsg,
+					i18n("Connection problem with Jabber server %1", server));
+		} else {
+			KMessageBox::error (Kopete::UI::Global::mainWidget (),
+					errorText,
+					i18n("Connection problem with Jabber server %1", server));
+		}
+	}
 
 }
 
@@ -1053,7 +1060,7 @@ void JabberAccount::slotCSError ( int error )
 
 		// display message to user
 		if(!m_removing) //when removing the account, connection errors are normal.
-			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
+			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass, client()->clientStream()->errorText());
 
 		disconnect ( errorClass );
 		
