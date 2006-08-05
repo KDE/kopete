@@ -19,6 +19,7 @@
 #include <kfontsizeaction.h>
 #include <kactionmenu.h>
 #include <kfontaction.h>
+#include <kicon.h>
 //#include <private/q3richtext_p.h>
 //#include <Q3RichText>
 #include <QTextCursor>

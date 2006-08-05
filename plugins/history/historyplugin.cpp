@@ -22,6 +22,7 @@
 //#include <kconfig.h>
 #include <kplugininfo.h>
 #include <kdeversion.h>
+#include <kicon.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"

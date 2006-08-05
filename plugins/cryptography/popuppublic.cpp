@@ -49,6 +49,7 @@
 #include <kiconloader.h>
 #include <klineedit.h>
 #include <kconfig.h>
+#include <kicon.h>
 
 
 #include "popuppublic.h"

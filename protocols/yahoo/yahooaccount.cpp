@@ -41,6 +41,7 @@
 #include <kstandarddirs.h>
 #include <kactionmenu.h>
 #include <ktoolinvocation.h>
+#include <kicon.h>
 
 // Kopete
 #include <kopetechatsession.h>

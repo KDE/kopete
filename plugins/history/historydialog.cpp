@@ -59,6 +59,7 @@
 #include <kstdaction.h>
 #include <kaction.h>
 #include <kactioncollection.h>
+#include <kicon.h>
 
 class KListViewDateItem : public K3ListViewItem
 {

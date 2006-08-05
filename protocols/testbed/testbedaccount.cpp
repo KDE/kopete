@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kactionmenu.h>
 #include <kmenu.h>
+#include <kicon.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

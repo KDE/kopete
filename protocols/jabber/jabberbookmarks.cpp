@@ -23,6 +23,7 @@
 #include <kaction.h>
 #include <kselectaction.h>
 #include <klocale.h>
+#include <kicon.h>
 
 #include "xmpp_tasks.h"
 

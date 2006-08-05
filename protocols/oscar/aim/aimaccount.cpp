@@ -24,6 +24,7 @@
 #include <kmessagebox.h>
 #include <kcodecs.h>
 #include <ktoggleaction.h>
+#include <kicon.h>
 
 #include "kopeteawayaction.h"
 #include "kopetepassword.h"

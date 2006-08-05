@@ -48,6 +48,7 @@
 #include <kio/netaccess.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
+#include <kicon.h>
 
 #include <qapplication.h>
 #include <qdialog.h>

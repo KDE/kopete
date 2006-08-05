@@ -60,6 +60,7 @@
 #include <kstandarddirs.h>
 #include <kfiledialog.h>
 #include <ktoolinvocation.h>
+#include <kicon.h>
 
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )

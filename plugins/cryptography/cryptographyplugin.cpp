@@ -27,6 +27,7 @@
 #include <kgenericfactory.h>
 #include <kdeversion.h>
 #include <kaboutdata.h>
+#include <kicon.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

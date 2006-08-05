@@ -34,6 +34,7 @@
 #include <qcheckbox.h>
 #include <kprocess.h>
 #include <kiconloader.h>
+#include <kicon.h>
 
 #include "kgpgselkey.h"
 

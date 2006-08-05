@@ -34,6 +34,7 @@
 #include <kdeversion.h>
 #include <kaboutdata.h>
 #include <kselectaction.h>
+#include <kicon.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

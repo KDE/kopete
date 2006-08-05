@@ -18,6 +18,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
+#include <kicon.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

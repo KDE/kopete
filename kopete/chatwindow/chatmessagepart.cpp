@@ -67,6 +67,7 @@
 #include <kcodecs.h>
 #include <k3multipledrag.h>
 #include <kstdaction.h>
+#include <kicon.h>
 
 // Kopete includes
 #include "chatmemberslistwidget.h"

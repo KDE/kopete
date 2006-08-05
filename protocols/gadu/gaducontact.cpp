@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <kicon.h>
 
 #include "gaduaccount.h"
 #include "gaduprotocol.h"

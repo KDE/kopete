@@ -37,6 +37,7 @@
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
+#include <kicon.h>
 
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
