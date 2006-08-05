@@ -43,6 +43,7 @@
 #include "kopetegroup.h"
 #include "kopetepicture.h"
 #include "kopetegeneralsettings.h"
+#include "xmlcontactstorage.h"
 
 namespace  Kopete
 {
@@ -225,6 +226,11 @@ QList<Group *> ContactList::selectedGroups() const
 	return d->selectedGroups;
 }
 
+void ContactList::addMetaContacts( QList<MetaContact *> metaContacts )
+{
+	foreach( MetaContact* mc, metaContacts )
+		addMetaContact( mc );
+}
 
 void ContactList::addMetaContact( MetaContact *mc )
 {
@@ -267,6 +273,11 @@ void ContactList::removeMetaContact(MetaContact *m)
 	m->deleteLater();
 }
 
+void ContactList::addGroups( QList<Group *> groups )
+{
+	foreach( Group* g, groups )
+		addGroup( g );
+}
 
 void ContactList::addGroup( Group * g )
 {
@@ -379,9 +390,27 @@ void ContactList::slotPhotoChanged()
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void ContactList::load()
 {
-	loadXML();
+	// don't save when we're in the middle of this...
+	d->loaded = false;
+	
+	Kopete::ContactListStorage *storage = new Kopete::XmlContactStorage();
+	storage->load();
+	if( !storage->isValid() )
+	{
+		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage() << endl;
+		d->loaded = true;
+		delete storage;
+		return;
+	}
+
+	addGroups( storage->groups() );
+	addMetaContacts( storage->contacts() );
+
 	// Apply the global identity when all the protocols plugins are loaded.
 	connect(PluginManager::self(), SIGNAL(allPluginsLoaded()), this, SLOT(loadGlobalIdentity()));
+	
+	d->loaded = true;
+	delete storage;
 }
 
 void ContactList::loadXML()
@@ -862,7 +891,29 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 
 void Kopete::ContactList::save()
 {
-	saveXML();
+	if( !d->loaded )
+	{
+		kDebug(14010) << "Contact list not loaded, abort saving" << endl;
+		return;
+	}
+
+	Kopete::ContactListStorage *storage = new Kopete::XmlContactStorage();
+	storage->save();
+	if( !storage->isValid() )
+	{
+		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage() << endl;
+
+		// Saving the contact list failed. retry every minute until it works.
+		// single-shot: will get restarted by us next time if it's still failing
+		d->saveTimer->setSingleShot( true );
+		d->saveTimer->start( 60000 );
+		delete storage;
+		return;
+	}
+
+	// cancel any scheduled saves
+	d->saveTimer->stop();
+	delete storage;
 }
 
 void Kopete::ContactList::saveXML()

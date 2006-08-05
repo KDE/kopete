@@ -142,6 +142,14 @@ public:
 public slots:
 
 	/**
+	 * Add metacontacts into the contact list
+	 * When calling this method, contacts have to be already placed in the correct group.
+	 * If contacts are not in a group, they will be added to the top-level group.
+	 * It is also better if the MetaContacts could also be completely created, i.e: all contacts already in it
+	 */
+	void addMetaContacts( QList<MetaContact *> metaContacts );
+
+	/**
 	 * Add the metacontact into the contact list
 	 * When calling this method, the contact has to be already placed in the correct group.
 	 * If the contact is not in a  group, it will be added to the top-level group.
@@ -154,6 +162,12 @@ public slots:
 	 * This method delete itself the metacontact.
 	 */
 	void removeMetaContact( Kopete::MetaContact *contact );
+
+	/**
+	 * Add groups
+	 * each group must be added on the list after his creation.
+	 */
+	void addGroups( QList<Group *> groups );
 
 	/**
 	 * Add a group
