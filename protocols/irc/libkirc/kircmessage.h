@@ -47,7 +47,6 @@ public:
 
 public:
 	Message();
-	Message(const QByteArray &rawLine, KIRC::Message::Direction direction);
 	Message(const KIRC::Message &o);
 	~Message();
 

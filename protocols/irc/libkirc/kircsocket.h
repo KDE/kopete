@@ -2,7 +2,7 @@
     kircsocket.h - IRC socket.
 
     Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
-    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -120,7 +120,7 @@ signals:
 
 	void connectionStateChanged(KIRC::Socket::ConnectionState newstate);
 
-	void receivedMessage(KIRC::Message &message);
+	void receivedMessage(const KIRC::Message &message);
 
 protected:
 	void setConnectionState(KIRC::Socket::ConnectionState newstate);

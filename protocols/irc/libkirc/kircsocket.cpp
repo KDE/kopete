@@ -285,7 +285,9 @@ void Socket::onReadyRead()
 
 		kDebug(14121) << rawMsg.data() << endl;
 
-		Message msg(rawMsg, Message::InGoing);
+		Message msg;
+		msg.setLine(rawMsg);
+		msg.setDirection(Message::InGoing);
 
 		if (msg.isValid())
 			emit receivedMessage(msg);

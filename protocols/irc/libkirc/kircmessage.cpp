@@ -78,13 +78,6 @@ Message::Message()
 {
 }
 
-Message::Message(const QByteArray &rawLine, KIRC::Message::Direction direction)
-	: d(new Private())
-{
-	setLine(rawLine);
-	setDirection(direction);
-}
-
 Message::Message(const Message &o)
         : d(o.d)
 {
