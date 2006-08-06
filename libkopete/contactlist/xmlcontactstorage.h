@@ -22,6 +22,8 @@
 
 #include <kopetecontactliststorage.h>
 
+class QDomElement;
+
 namespace Kopete
 {
 
@@ -63,7 +65,12 @@ protected:
     const QList<QDomElement> storeContactListElement( Kopete::ContactListElement *contactListElement ) const;
 
 private:
-    QString sourceToString( Kopete::MetaContact::PropertySource source)  const;
+    /**
+     * Convert the contact list from an older version
+     */
+    void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
+
+    QString sourceToString( Kopete::MetaContact::PropertySource source ) const;
     Kopete::MetaContact::PropertySource stringToSource( const QString &name ) const;
 
     class Private;

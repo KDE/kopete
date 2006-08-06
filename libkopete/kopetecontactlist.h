@@ -26,9 +26,6 @@
 
 #include "kopete_export.h"
 
-class QDomDocument;
-
-
 namespace Kopete 
 {
 
@@ -302,12 +299,6 @@ private slots:
 private:
 	
 	/**
-	 * Convert the contact list from an older version
-	 */
-	void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
-	
-	
-	/**
 	 * Private constructor: we are a singleton
 	 */
 	ContactList();
@@ -388,28 +379,11 @@ public slots:
 	/**
 	 * @internal
 	 * Load the contact list
-	 *
-	 * FIXME: Use a better way, without exposing the XML backend, though.
 	 */
 	void load();
 
 	void save();
-	
-private:
-	/**
-	 * Return a XML representation of the contact list
-	 */
-	const QDomDocument toXML();
 
-	/**
-	 * Load the contact list from XML file
-	 */
-	void loadXML();
-
-	/**
-	 * Save the contact list to XML file
-	 */
-	void saveXML();
 };
 
 } //END namespace Kopete

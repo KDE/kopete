@@ -32,8 +32,6 @@
 #include "kopetecontactlistelement.h"
 #include "kopeteonlinestatus.h"
 
-class QDomNode;
-
 namespace Kopete {
 
 
@@ -354,23 +352,6 @@ public:
 	unsigned long int idleTime() const;
 
 	/**
-	 * Return a XML representation of the metacontact
-	 * @internal
-	 * @param minimal When true, it doesn't save the
-	 * plugins, groups. False by default.
-	 */
-	const QDomElement toXML(bool minimal = false);
-
-	/**
-	 * Creates a metacontact from XML
-	 * Return value of false indicated that
-	 * creation failed and this contact should be
-	 * discarded.
-	 * @internal
-	 */
-	bool fromXML( const QDomElement& cnode );
-
-	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to Plugin::addressBookFields()
 	 * cannot be altered!
@@ -603,8 +584,6 @@ protected:
 	//QString nameFromContact( Kopete::Contact *c) const;
 	//QString nameFromKABC( const QString &id ) const;
 
-	QString sourceToString(PropertySource source) const;
-	PropertySource stringToSource(const QString &name) const;
 private:
 	class Private;
 	Private *d;

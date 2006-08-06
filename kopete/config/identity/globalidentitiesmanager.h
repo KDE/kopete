@@ -21,11 +21,10 @@
 #include <qobject.h>
 #include <qmap.h>
 
-namespace Kopete
-{
-	class MetaContact;
-}
+#include "kopetemetacontact.h"
+
 class QDomDocument;
+class QDomElement;
 
 /**
  * This singleton class handle the loading, saving and manipulating of all the global identities from a XML file. 
@@ -132,6 +131,12 @@ private:
 	Kopete::MetaContact *createNewMetaContact();
 	Kopete::MetaContact *createCopyMetaContact(Kopete::MetaContact *source);
 	void copyMetaContact(Kopete::MetaContact *destination, Kopete::MetaContact *source);
+
+	bool parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element );
+	const QDomElement storeMetaContact( Kopete::MetaContact *metaContact ) const;
+
+	QString sourceToString( Kopete::MetaContact::PropertySource source ) const;
+	Kopete::MetaContact::PropertySource stringToSource( const QString &name ) const;
 
 private:
 	static GlobalIdentitiesManager *s_self;

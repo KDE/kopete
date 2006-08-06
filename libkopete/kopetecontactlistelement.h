@@ -20,7 +20,6 @@
 #define KOPETEPLUGINDATAOBJECT_H
 
 #include <QObject>
-#include <qdom.h>
 #include <QList>
 #include <QMap>
 
@@ -174,19 +173,6 @@ signals:
 	 * The useCustomIcon property has changed
 	 */
 	void useCustomIconChanged( bool useCustomIcon );
-
-protected:
-	/**
-	 * Return a XML representation of plugin data
-	 */
-	const QList<QDomElement> toXML();
-
-	/**
-	 * Load plugin data from one Dom Element:
-	 * It should be a \<plugin-data\> element or a \<custom-icons\> element. if not, nothing will happen
-	 * @return true if something has ben loaded. false if the element was not a fine
-	 */
-	bool fromXML( const QDomElement &element );
 
 private:
 	class Private;
