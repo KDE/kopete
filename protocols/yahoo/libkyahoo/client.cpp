@@ -495,7 +495,7 @@ void Client::uploadPicture( KUrl url )
 	spt->go( true );
 }
 
-void Client::sendPictureChecksum( int checksum, const QString &who )
+void Client::sendPictureChecksum( const QString &userId, int checksum )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "checksum: " << checksum << endl;
 	SendPictureTask *spt = new SendPictureTask( d->root );
@@ -724,11 +724,6 @@ void Client::send( Transfer* request )
 	}
 
 	d->stream->write( request );
-}
-
-void Client::debug(const QString &str)
-{
-	qDebug( "CLIENT: %s", qPrintable(str) );
 }
 
 Task * Client::rootTask()

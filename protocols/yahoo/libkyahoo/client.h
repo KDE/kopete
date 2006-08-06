@@ -30,7 +30,7 @@
 #include "transfer.h"
 #include "yahootypes.h"
 
-#define YMSG_PROGRAM_VERSION_STRING "7,5,0,33"
+#define YMSG_PROGRAM_VERSION_STRING "8.0.0.633"
 
 class QString;
 class QTimer;
@@ -56,6 +56,11 @@ Q_OBJECT
 		  
 		Client(QObject *parent=0);
 		~Client();
+
+		/**
+		 * Set the Yahoo Id of the account
+		 * @param username The Yahoo Id
+		 */
 		void setUserId( const QString& userName );
 
 		/**
@@ -69,29 +74,19 @@ Q_OBJECT
 		 */
 		void connect( const QString &host, const uint port, const QString &userId, const QString &pass );
 
-		/**
-		 * Cancel active login attemps
-		 */
+		/** Cancel active login attemps	 */
 		void cancelConnect();
 
-		/**
-		 * Logout and disconnect
-		 */
+		/** Logout and disconnect */
 		void close();
 
-		/**
-		 * Returns the errorcode
-		 */
+		/** Returns the errorcode */
 		int error();
 
-		/**
-		 * Returns a description of the error
-		 */
+		/** Returns a description of the error */
 		QString errorString();
 
-		/**
-		 * Returns information about what went wrong
-		 */
+		/** Returns information about what went wrong */
 		QString errorInformation();
 
 		/**
@@ -110,9 +105,7 @@ Q_OBJECT
 		 */
 		void setStatusMessageOnConnect( const QString &msg );
 
-		/**
-		 * Accessors needed for login
-		 */
+		/** Accessors needed for login */
 		QString host();
 		int port();
 
@@ -168,151 +161,210 @@ Q_OBJECT
 
 		/**
 		 * Remove a buddy from the contact list
+		 * @param userId the yahoo ID of the buddy that should be removed
+		 * @param group the group where the buddy belongs to
 		 */
 		void removeBuddy( const QString &userId, const QString &group );
 
 		/**
 		 * Move a buddy into another group
+		 * @param userId the yahoo ID of the buddy that should be moved
+		 * @param oldGroup the group where the buddy belongs to
+		 * @param newGroup the group where the buddy will be placed
 		 */
 		void moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup );
 
 		/**
 		 * Change the stealth status of a buddy
+		 * @param userId the yahoo ID of the buddy that should be moved
+		 * @param mode defines the Stealth mode that is changed. That can be "Appear Offline", "Appear Online" or "Apper permanently offline"
+		 * @param state the status of the specified Stealth mode. Active, Not Active or Clear
 		 */
 		void stealthContact( QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state );
 
 		/**
 		 * Request the buddy's picture
+		 * @param userId the yahoo ID of the buddy
 		 */
 		void requestPicture( const QString &userId );
 
 		/**
 		 * Download the buddy's picture
+		 * @param userId the yahoo ID of the buddy
+		 * @param url the url of the picture
+		 * @param checksum the checksum of the picture
 		 */
 		void downloadPicture( const QString &userId, KUrl url, int checksum );
 
 		/**
 		 * Send our picture
+		 * @param url the file that should be sent as our buddy picture
 		 */
 		void uploadPicture( KUrl url );
 
 		/**
 		 * Send checksum of our picture
+		 * @param userId the yahoo ID of the buddy. Can be a null string if the picture has changed.
+		 * @param checksum the checksum of the picture
 		 */
-		void sendPictureChecksum( int checksum, const QString & );
+		void sendPictureChecksum( const QString &userId, int checksum );
 
 		/**
 		 * Send information about our picture
+		 * @param userId the yahoo ID of the buddy that should be informed
+		 * @param url the url of our picture
+		 * @param checksum the checksum of the picture
 		 */
 		void sendPictureInformation( const QString &userId, const QString &url, int checksum );
 
 		/**
 		 * Notify the buddies about our new status
+		 * @param userId the yahoo ID of the buddy that should be informed
+		 * @param type the type of our picture (0=none, 1=avatar, 2=picture)
 		 */
 		void sendPictureStatusUpdate( const QString &userId, int type );
 
 		/**
 		 * Send a response to the webcam invite ( Accept / Decline )
+		 * @param userId the yahoo ID of the sender
 		 */
 		void requestWebcam( const QString &userId );
 
 		/**
 		 * Stop receiving of webcam
+		 * @param userId the yahoo ID of the sender
 		 */
 		void closeWebcam( const QString &userId );
 
 		/**
 		 * Invite the user to view your Webcam
+		 * @param userId the yahoo ID of the receiver
 		 */
 		void sendWebcamInvite( const QString &userId );
 
 		/**
 		 * transmit a new image to the watchers
+		 * @param image the image data
 		 */
 		void sendWebcamImage( const QByteArray &image );
 
-		/**
-		 * Stop transmission
-		 */
+		/** Stop the webcam transmission */
 		void closeOutgoingWebcam();
 
 		/**
 		 * Allow a buddy to watch the cam
+		 * @param userId the yahoo ID of the receiver
 		 */
 		void grantWebcamAccess( const QString &userId );
 
 		/**
 		 * Invite buddies to a conference
+		 * @param room the name of the conference
+		 * @param members a list of members that are invited to the conference
+		 * @param msg the invite message
 		 */
 		void inviteConference( const QString &room, const QStringList &members, const QString &msg );
 
 		/**
 		 * Invite buddies to a already existing conference
+		 * @param room the name of the conference
+		 * @param who a list of members that are additionally invited to the conference
+		 * @param members a list of members that are already in the conference
+		 * @param msg the invite message
 		 */
 		void addInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
 
 		/**
 		 * Join a conference
+		 * @param room the name of the conference
+		 * @param members a list of members that are already in the conference
 		 */
 		void joinConference( const QString &room, const QStringList &members );
 
 		/**
 		 * Decline to join a conference
+		 * @param room the name of the conference
+		 * @param members a list of members that are in the conference
+		 * @param msg the reason why we don't want to join
 		 */
 		void declineConference( const QString &room, const QStringList &members, const QString &msg );
 
 		/**
 		 * Leave the conference
+		 * @param room the name of the conference
+		 * @param members a list of members that are in the conference
 		 */
 		void leaveConference( const QString &room, const QStringList &members );
 
 		/**
 		 * Send a message to the conference
+		 * @param room the name of the conference
+		 * @param members a list of members that are in the conference
+		 * @param msg the message
 		 */
 		void sendConferenceMessage( const QString &room, const QStringList &members, const QString &msg );
 
 		/**
 		 * Send a authorization request response
+		 * @param userId the yahoo ID of the requesting buddy
+		 * @param accept true, if the user is allowed to see our status, false if not
+		 * @param msg the reason for our decision
 		 */
 		void sendAuthReply( const QString &userId, bool accept, const QString &msg );
 
 		/**
 		 * Fetches all entries of the YAB
+		 * @param lastMerge the YAB-Revision that was last merged with the local YAB
+		 * @param lastRemoteRevision the latest known YAB-Revision
 		 */
 		void getYABEntries( long lastMerge, long lastRemoteRevision );
 
 		/**
 		 * Saves a modified YAB entry
+		 * @param entry the YAB entry
 		 */
 		void saveYABEntry( YABEntry &entry );
 
 		/**
 		 * Creates a new YAB entry
+		 * @param entry the YAB entry
 		 */
 		void addYABEntry( YABEntry &entry );
 
 		/**
 		 * Deletes a YAB entry
+		 * @param entry the YAB entry
 		 */
 		void deleteYABEntry( YABEntry &entry );
 
 		/**
 		 * Send a file to a buddy
+		 * @param transferId the unique ID of the transfer
+		 * @param userId yahoo ID of the receiver
+		 * @param msg a description of the file to be sent
+		 * @param url the location of the file to be sent
 		 */
 		void sendFile( unsigned int transferId, const QString &userId, const QString &msg, KUrl url );
 
 		/**
 		 * Receive a file from a buddy
+		 * @param transferId the unique ID of the transfer
+		 * @param userId yahoo ID of the sender
+		 * @param remoteURL the url of the file
+		 * @param localURL the location where the file should be stored
 		 */
 		void receiveFile( unsigned int transferId, const QString &userId, KUrl remoteURL, KUrl localURL );
 
 		/**
 		 * Reject a file offered by a buddy
+		 * @param userId yahoo ID of the sender
+		 * @param remoteURL the url of the file
 		 */
 		void rejectFile( const QString &userId, KUrl remoteURL );
 
 		/**
-		 * The user canceled the filetransfer
+		 * Canceled a filetransfer
+		 * @param transferId the unique ID of the transfer
 		 */
 		void cancelFileTransfer( unsigned int transferId );	
 
@@ -321,27 +373,17 @@ Q_OBJECT
 		 *************/
 		/**
 		 * Send an outgoing request to the server
+		 * @param request the transfer to be sent
 		 */
 		void send( Transfer *request );
 		
-		/**
-		 * Print a debug statement
-		 */
-		void debug( const QString &str );
-		
-		/**
-		 * The current user's user ID
-		 */
+		/** The current user's user ID */
 		QString userId();
 		
-		/**
-		 * The current user's password
-		 */
+		/** The current user's password */
 		QString password();
 		
-		/**
-		 * current Session ID
-		 */
+		/** current Session ID */
 		uint sessionID();
 		
 		/**
@@ -350,19 +392,16 @@ Q_OBJECT
 		 */
 		int pictureFlag();
 
-		/**
-		 * Get our status
-		 */
+		/** Get our status */
 		Yahoo::Status status();
 
 		/**
 		 * Set our status
+		 * @param status the new status
 		 */
-		void setStatus( Yahoo::Status );
+		void setStatus( Yahoo::Status status );
 
-		/**
-		 * Access the root Task for this client, so tasks may be added to it.
-		 */
+		/** Access the root Task for this client, so tasks may be added to it. */
 		Task* rootTask();
 
 		/**

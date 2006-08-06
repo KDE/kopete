@@ -1657,7 +1657,7 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 		myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, url );
 		configGroup()->writeEntry( "iconRemoteUrl", url );
 		setPictureFlag( 2 );
-		m_session->sendPictureChecksum( checksum, QString::null );
+		m_session->sendPictureChecksum( QString::null, checksum );
 	}
 	
 	QHash<QString,Kopete::Contact*>::const_iterator it;

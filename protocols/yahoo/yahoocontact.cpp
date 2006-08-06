@@ -537,7 +537,7 @@ void YahooContact::buzzContact()
 void YahooContact::sendBuddyIconChecksum( int checksum )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	m_account->yahooSession()->sendPictureChecksum( checksum, m_userId );
+	m_account->yahooSession()->sendPictureChecksum( m_userId, checksum );
 	
 }
 
