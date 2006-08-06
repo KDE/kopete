@@ -113,6 +113,8 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 	QObject::connect( m_notifySocket, SIGNAL( contactList(const Eva::ContactInfo &) ),
 		SLOT( slotContactListed(const Eva::ContactInfo &) ) );
 
+	QObject::connect( m_notifySocket, SIGNAL( contactStatusChanged(const Eva::ContactStatus&) ),
+		SLOT( slotContactStatusChanged(const Eva::ContactStatus &) ) );
 	m_notifySocket->connect(host, port);
 }
 
@@ -304,6 +306,40 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 	return ;
 }
 
+
+void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
+{
+	kDebug(14210) << k_funcinfo << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << "status = " << cs.status << endl;
+
+	QQContact* c = static_cast<QQContact*> (contacts()[ QString::number( cs.qqId ) ]);
+	if (c) 
+		c->setOnlineStatus( fromEvaStatus(cs.status) );
+}
+
+
+Kopete::OnlineStatus QQAccount::fromEvaStatus( char es )
+{
+	Kopete::OnlineStatus status;
+	switch( es )
+	{
+		case Eva::Online : 
+			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
+			break;
+
+		case Eva::Offline:
+			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Offline );
+			break;
+
+		case Eva::Away:
+			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Away );
+			break;
+
+		case Eva::Invisible:
+			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Invisible );
+			break;
+	}
+	return status;
+}
 
 void QQAccount::updateContactStatus()
 {

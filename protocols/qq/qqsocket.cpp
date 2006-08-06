@@ -74,6 +74,7 @@ void QQSocket::connect( const QString &server, uint port )
 	m_id = 5; // FIXME:Don't use the magic #, use random number instead.
 	m_server = server;
 	m_port = port;
+	kDebug( 14140 ) << k_funcinfo << "connecting to :" << server << ":" << port << endl;
 	m_socket = new KBufferedSocket( server, QString::number(port) );
 	m_socket->enableRead( true );
 
@@ -250,7 +251,6 @@ void QQSocket::slotReadyWrite()
 		QList<QByteArray>::Iterator it = m_sendQueue.begin();
 		
 		// Otherwise, send the command normally.
-		kDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).trimmed() << endl;
 		m_socket->write( *it, ( *it ).size() );
 		m_sendQueue.erase( it );
 

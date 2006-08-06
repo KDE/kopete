@@ -490,54 +490,7 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 
 void QQContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
-	if(isBlocked() && status.internalStatus() < 15)
-	{
-		Kopete::Contact::setOnlineStatus(
-				Kopete::OnlineStatus(status.status() ,
-				(status.weight()==0) ? 0 : (status.weight() -1)  ,
-				protocol() ,
-				status.internalStatus()+15 ,
-				status.overlayIcons() + QStringList("qq_blocked") ,
-				i18n("%1|Blocked", status.description() ) ) );
-	}
-	else if(!isBlocked() && status.internalStatus() >= 15)
-	{	//the user is not blocked, but the status is blocked
-		switch(status.internalStatus()-15)
-		{
-			case 1:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->Online);
-				break;
-			case 2:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->BSY);
-				break;
-			case 3:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->BRB);
-				break;
-			case 4:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->AWY);
-				break;
-			case 5:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->PHN);
-				break;
-			case 6:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->LUN);
-				break;
-			case 7:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->Offline);
-				break;
-			case 8:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->HDN);
-				break;
-			case 9:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->IDL);
-				break;
-			default:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->UNK);
-				break;
-		}
-	}
-	else
-		Kopete::Contact::setOnlineStatus(status);
+	Kopete::Contact::setOnlineStatus(status);
 	m_currentStatus=status;
 }
 

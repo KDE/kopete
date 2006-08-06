@@ -222,9 +222,11 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					break;
 
 				case Eva::LoginWrongPassword :
+					kDebug( 14140 )  << "password is wrong. " << endl;
 					break;
 
 				case Eva::LoginMiscError :
+					kDebug( 14140 )  << "unknown error. " << endl;
 					break;
 
 				default:
@@ -268,7 +270,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 
 		case Eva::RequestLoginToken :
 			m_token = text;
-			kDebug( 14140 ) << packet.command() << ": token = " << 
+			kDebug( 14140 ) << "command = " << packet.command() << ": token = " << 
 				QByteArray ( m_token.data(), m_token.size() ) << endl;
 
 			sendLogin();
@@ -277,7 +279,11 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::ExtraInfo :
 		case Eva::Signature :
 		case Eva::ReceiveSysMsg :
-		case Eva::FriendStausChange :
+			break;
+		case Eva::ContactStausChanged :
+			kDebug( 14140 ) << "contact status signal" << endl;
+			emit contactStatusChanged( Eva::ContactStatus(text) );
+			break;
 
 		default:
 			break;
@@ -294,6 +300,7 @@ void QQNotifySocket::sendLoginTokenRequest()
 
 void QQNotifySocket::sendLogin()
 {
+	kDebug( 14140 ) << "QQ = " << m_qqId << endl;
 	Eva::ByteArray data = Eva::login( m_qqId, m_id++, m_passwordKey, 
 				m_token, m_loginMode );
 	sendPacket( QByteArray( data.data(), data.size()) );

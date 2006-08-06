@@ -30,6 +30,7 @@ namespace Kopete
 
 namespace Eva {
 	struct ContactInfo;
+	struct ContactStatus;
 }
 
 class QQContact;
@@ -86,6 +87,11 @@ public:
 
 	QQNotifySocket* notifySocket();
 
+	/**
+	 * Returns the online status from Eva status
+	 */
+	Kopete::OnlineStatus fromEvaStatus( char es );
+
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
@@ -97,6 +103,7 @@ public slots:
 	void slotContactListed( const Eva::ContactInfo& ci );
 	void slotGroupNamesListed(const QStringList& ql );
 	void slotContactInGroup(const int qqId, const char type, const int groupId );
+	void slotContactStatusChanged(const Eva::ContactStatus& cs);
 
 protected:
 	/**

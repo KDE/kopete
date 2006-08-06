@@ -45,7 +45,7 @@ namespace Eva {
 	short const ExtraInfo = 0x0065;
 	short const Signature = 0x0067;
 	short const ReceiveSysMsg = 0x0080;
-	short const FriendStausChange = 0x0081;
+	short const ContactStausChanged = 0x0081;
 
 	// status
 	char const Online = 10;
@@ -299,8 +299,19 @@ namespace Eva {
 	const char* getInitKey();
 	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
 
-	// FIXME: move me to the Packet
+	struct ContactStatus
+	{
+		int qqId;
+		int ip;
+		short port;
+		char status;
 
+		ContactStatus( const ByteArray& text ) :
+			qqId( ntohl( type_cast<int> (text.data() )) ), 
+			ip( ntohl( type_cast<int> (text.data()+5 )) ), 
+			port( ntohs( type_cast<short> (text.data()+9 )) ), 
+			status( type_cast<char> (text.data()+12 ))  {};
+	};
 
 };
 #endif
