@@ -522,7 +522,7 @@ int Webcam::getAvailablePort()
 		basePort="6891";
 	
     uint firstport = basePort.toInt();
-    uint maxOffset=config->readUnsignedNumEntry("WebcamMaxPortOffset", 10);
+    uint maxOffset=config->readEntry("WebcamMaxPortOffset", 10);
     uint lastport = firstport + maxOffset;
 
 	// try to find an available port
