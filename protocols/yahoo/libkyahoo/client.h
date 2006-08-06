@@ -376,7 +376,12 @@ Q_OBJECT
 		 * @param request the transfer to be sent
 		 */
 		void send( Transfer *request );
-		
+
+		/**
+		 * Print a debug statement
+		 */
+		void debug( const QString &str );
+
 		/** The current user's user ID */
 		QString userId();
 		

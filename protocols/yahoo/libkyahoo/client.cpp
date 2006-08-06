@@ -501,8 +501,8 @@ void Client::sendPictureChecksum( const QString &userId, int checksum )
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendChecksum );
 	spt->setChecksum( checksum );
-	if( !who.isEmpty() )
-		spt->setTarget( who );
+	if( !userId.isEmpty() )
+		spt->setTarget( userId );
 	spt->go( true );	
 }
 
@@ -724,6 +724,11 @@ void Client::send( Transfer* request )
 	}
 
 	d->stream->write( request );
+}
+
+void Client::debug(const QString &str)
+{
+       qDebug( "CLIENT: %s", qPrintable(str) );
 }
 
 Task * Client::rootTask()
