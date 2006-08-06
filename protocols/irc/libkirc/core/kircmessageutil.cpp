@@ -110,7 +110,7 @@ QByteArray KIRC::MessageUtil::unquote(const QByteArray &buffer)
 
 #ifndef KIRC_STRICT
 
-static struct quote_data irc_ctcp_quote_data =
+static struct quote_data irc_ctcp_quote_data[] =
 {
 	{ '\\', '\\' },
 	{ 1, '1' },

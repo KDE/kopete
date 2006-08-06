@@ -95,8 +95,9 @@ public:
 	void setSuffix(const QString &, QTextCodec *codec = 0);
 
 #ifndef KIRC_STRICT
-	bool hasCtcpMessage() const;
-	KIRC::Message ctcpMessage() const;
+	// Core doesn't need to know about CTCP messages
+	KDE_DEPRECATED bool hasCtcpMessage() const { return false; }
+	KIRC::Message ctcpMessage() const KDE_DEPRECATED;
 #endif
 
 

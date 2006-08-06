@@ -1,31 +1,3 @@
-include_directories( ${KOPETE_INCLUDES} )
+add_subdirectory( core )
+add_subdirectory( client )
 
-set(libkirc_SRCS
-  kircclient.cpp 
-  kircclientcommandhandler.cpp 
-  kircclientcommands.cpp 
-  kirccommand.cpp
-  kirccommandhandler.cpp
-  kircconst.cpp 
-  kircentity.cpp 
-  kircentitymanager.cpp 
-  kircevent.cpp 
-  kircmessage.cpp 
-  kircmessageutil.cpp 
-  kircsocket.cpp 
-  kircstdcommands.cpp 
-#	kirctransfer.cpp 
-#	kirctransferhandler.cpp 
-#	kirctransferserver.cpp 
-)
-
-# Temporary add KIRC_STRICT here
-add_definitions( -DKIRC_STRICT )
-
-kde4_automoc( ${libkirc_SRCS} )
-
-kde4_add_library( kirc SHARED ${libkirc_SRCS} )
-
-target_link_libraries( kirc ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} )
-
-install(TARGETS kirc  DESTINATION ${LIB_INSTALL_DIR})

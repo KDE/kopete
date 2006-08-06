@@ -283,7 +283,7 @@ void ClientCommands::privmsg(Message msg)
 #ifndef KIRC_STRICT
 	if (msg.hasCtcpMessage())
 	{
-		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
+//		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
 	}
 #endif
 }

@@ -23,9 +23,8 @@
 
 #include "kircstdcommands.h"
 
-#include "kircclient.h"
 #include "kircmessage.h"
-#include "kirctransferhandler.h"
+#include "kircsocket.h"
 
 #include <kdebug.h>
 #include <klocale.h>
