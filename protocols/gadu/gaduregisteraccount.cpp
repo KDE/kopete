@@ -140,7 +140,7 @@ GaduRegisterAccount::validateInput()
 	if ( valid )
 	{
 		// clear status message if we have valid data
-		updateStatus( i18n( "" ) );
+		updateStatus( QString( ) );
 	}
 
 	enableButton( User1, valid );
