@@ -141,6 +141,7 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 	{
 		//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
 		//      iris doesn't implement groupchat yet
+		//NOTE: This code is duplicated in JabberProtocol::handleURL
 		XMPP::Message jabberMessage;
 		XMPP::Jid jid = static_cast<const JabberBaseContact*>(account()->myself())->rosterItem().jid() ;
 		jabberMessage.setFrom ( jid );

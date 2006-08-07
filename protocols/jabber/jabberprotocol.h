@@ -23,6 +23,7 @@
 #include <QMap>
 
 #include "kopeteprotocol.h"
+#include "kopetemimetypehandler.h"
 #include "kopetecontactproperty.h"
 #include "kopeteonlinestatus.h"
 
@@ -46,7 +47,7 @@ class dlgJabberStatus;
 class dlgJabberSendRaw;
 class JabberCapabilitiesManager;
 
-class JabberProtocol:public Kopete::Protocol
+class JabberProtocol:public Kopete::Protocol , private Kopete::MimeTypeHandler
 {
 	Q_OBJECT
 
@@ -147,6 +148,11 @@ public:
 	 * Return the Entity Capabilities(JEP-0115) manager instance.
 	 */
 	JabberCapabilitiesManager *capabilitiesManager();
+	
+	/**
+	 * inherited from Kopete::MimeTypeHandler
+	 */
+	virtual void handleURL( const KUrl & url ) const;
 
 private:
 	/*
@@ -158,6 +164,7 @@ private:
 	 * Unique Instance of the Entity Capabilities(JEP-0115) manager for Kopete Jabber plugin.
 	 */
 	JabberCapabilitiesManager *capsManager;
+	
 };
 
 #endif
