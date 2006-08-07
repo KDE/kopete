@@ -301,7 +301,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 					Kopete::Message m=Kopete::Message ( this, mManager->members(),
 						i18n("%1 has ended their participation in the chat session.").arg(metaContact()->displayName()),
 						Kopete::Message::Internal  );
-					mManager->appendMessage ( m, message.from().resource () );
+					m.setImportance(Kopete::Message::Low);
+					mManager->view()->appendMessage ( m ); //use KopeteView::AppendMessage to bypass notifications
 				}
 			}
 		}
