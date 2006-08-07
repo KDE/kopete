@@ -61,7 +61,6 @@ class AccountSelectorPrivate
 	public:
 		K3ListView *lv;
 		Kopete::Protocol *proto;
-		QVBoxLayout* layout;
 };
 
 
@@ -94,12 +93,13 @@ AccountSelector::~AccountSelector()
 void AccountSelector::initUI()
 {
 	kDebug(14010) << k_funcinfo << endl;
-	d->layout = new QVBoxLayout();
+	QVBoxLayout *layout = new QVBoxLayout(this);
 	d->lv = new K3ListView(this);
 	d->lv->setFullWidth(true);
 	d->lv->addColumn(QString::fromLatin1(""));
 	d->lv->header()->hide();
-	d->layout->addWidget(d->lv);
+	layout->addWidget(d->lv);
+	setLayout(layout);
 	kDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
 	foreach(Kopete::Account *account , Kopete::AccountManager::self()->accounts() )
 	{
