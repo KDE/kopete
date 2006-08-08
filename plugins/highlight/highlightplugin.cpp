@@ -16,8 +16,7 @@
  ***************************************************************************/
 
 #include <qregexp.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+
 #include <kgenericfactory.h>
 #include <knotifyclient.h>
 
@@ -65,15 +64,11 @@ void HighlightPlugin::slotIncomingMessage( Kopete::Message& msg )
 		return;	// FIXME: highlighted internal/actions messages are not showed correctly in the chat window (bad style)
 				//  but they should maybe be highlinghted if needed
 
-	Q3PtrList<Filter> filters=m_config->filters();
-	Q3PtrListIterator<Filter> it( filters );
-	Filter *f;
-	while ((f = it.current()) != 0 )
+	foreach( Filter *f, m_config->filters() )
 	{
-		++it;
 		if(f->isRegExp ?
-			msg.plainBody().contains(QRegExp(f->search , f->caseSensitive)) :
-			msg.plainBody().contains(f->search , f->caseSensitive) )
+			msg.plainBody().contains(QRegExp(f->search , f->caseSensitive?Qt::CaseSensitive:Qt::CaseInsensitive )) :
+			msg.plainBody().contains(f->search , f->caseSensitive?Qt::CaseSensitive:Qt::CaseInsensitive) )
 		{
 			if(f->setBG)
 				msg.setBg(f->BG);

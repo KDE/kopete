@@ -52,7 +52,7 @@
        </widget>
       </item>
       <item row="0" column="0" colspan="3" >
-       <widget class="K3ListView" name="m_list" >
+       <widget class="QListWidget" name="m_list" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>7</hsizetype>
@@ -109,7 +109,7 @@
        </widget>
       </item>
       <item>
-       <widget class="KLineEdit" name="m_search" />
+       <widget class="QLineEdit" name="m_search" />
       </item>
       <item>
        <layout class="QHBoxLayout" >
@@ -208,7 +208,7 @@
          </widget>
         </item>
         <item>
-         <widget class="KComboBox" name="m_importance" >
+         <widget class="QComboBox" name="m_importance" >
           <property name="enabled" >
            <bool>false</bool>
           </property>
@@ -408,35 +408,35 @@
  <customwidgets>
   <customwidget>
    <class>KColorButton</class>
-   <extends></extends>
+   <extends>QPushButton</extends>
    <header>kcolorbutton.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KComboBox</class>
-   <extends></extends>
+   <extends>QComboBox</extends>
    <header>kcombobox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
-   <extends></extends>
+   <extends>QLineEdit</extends>
    <header>klineedit.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KUrlRequester</class>
-   <extends></extends>
+   <extends>QLineEdit</extends>
    <header>kurlrequester.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>K3ListView</class>
-   <extends></extends>
+   <extends>QListWidget</extends>
    <header>k3listview.h</header>
    <container>0</container>
    <pixmap></pixmap>

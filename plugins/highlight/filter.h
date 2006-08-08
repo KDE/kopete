@@ -21,6 +21,7 @@
 
 #include <qstring.h>
 #include <qcolor.h>
+#include <QVariant>
 
 /**
  * @author Olivier Goffart <ogoffart @ kde.org>
@@ -50,5 +51,7 @@ public:
 
 	bool raiseView;
 };
+
+Q_DECLARE_METATYPE(Filter*);
 
 #endif

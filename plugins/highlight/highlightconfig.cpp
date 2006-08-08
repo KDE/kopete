@@ -23,7 +23,6 @@
 #include <qdom.h>
 //Added by qt3to4:
 #include <QTextStream>
-#include <Q3PtrList>
 
 #include <ksavefile.h>
 #include <kstandarddirs.h>
@@ -36,19 +35,18 @@
 HighlightConfig::HighlightConfig()
 {
 	load();
-	m_filters.setAutoDelete(true);
 }
 
 HighlightConfig::~HighlightConfig()
 {
+	qDeleteAll(m_filters);
 	m_filters.clear();
 }
 
 void HighlightConfig::removeFilter(Filter *f)
 {
-    //m_filters is "autodelete (true) so when we use remove(...) it deleted f
-    //so don't use (delete (f) after otherwise ot crash
-	m_filters.remove(f);
+	m_filters.removeAll(f);
+	delete f;
 }
 
 void HighlightConfig::appendFilter(Filter *f)
@@ -56,7 +54,7 @@ void HighlightConfig::appendFilter(Filter *f)
 	m_filters.append(f);
 }
 
-Q3PtrList<Filter> HighlightConfig::filters() const
+QList<Filter*> HighlightConfig::filters() const
 {
 	return m_filters;
 }
@@ -171,10 +169,8 @@ void HighlightConfig::save()
 			"<highlight-plugin>\n" );
 
 			// Save metafilter information.
-		Q3PtrListIterator<Filter> filtreIt( m_filters );
-		for( ; filtreIt.current(); ++filtreIt )
+		foreach(Filter *filtre , m_filters )
 		{
-			Filter *filtre = *filtreIt;
 			xml += QString::fromLatin1( "  <filter>\n    <display-name>" )
 				+ Qt::escape(filtre->displayName)
 				+ QString::fromLatin1( "</display-name>\n" );
