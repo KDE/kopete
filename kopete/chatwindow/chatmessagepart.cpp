@@ -195,6 +195,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->manager = mgr;
 
 	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( Kopete::AppearanceSettings::self()->stylePath() );
+	
+	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath()  << endl;
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( true ) ;
@@ -1068,8 +1070,11 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 	
 	formattedBody += message.getHtmlStyleAttribute();
 
+	QStringList classes("KopeteMessageBody");
+	classes+=message.classes();
+			
 	// Affect the parsed body.
-	formattedBody += QString::fromUtf8("class=\"KopeteMessageBody\">%1</span>").arg(message.parsedBody());
+	formattedBody += QString::fromUtf8("class=\"%1\">%2</span>").arg(classes.join(" "), message.parsedBody());
 	
 	return formattedBody;
 }

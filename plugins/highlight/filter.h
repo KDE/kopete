@@ -46,10 +46,9 @@ public:
 	bool setBG;
 	QColor BG;
 	
-	bool playSound;
-	QString soundFN;
-
 	bool raiseView;
+	
+	QString className() const;
 };
 
 Q_DECLARE_METATYPE(Filter*);

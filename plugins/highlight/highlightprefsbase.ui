@@ -1,15 +1,13 @@
 <ui version="4.0" >
  <author>Olivier Goffart</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>HighlightPrefsUI</class>
  <widget class="QWidget" name="HighlightPrefsUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>773</height>
+    <width>439</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -61,11 +59,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <column>
-         <property name="text" >
-          <string>Filters</string>
-         </property>
-        </column>
        </widget>
       </item>
       <item row="1" column="2" >
@@ -366,16 +359,9 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="m_sound" >
+         <widget class="QCheckBox" name="m_raise" >
           <property name="text" >
-           <string>Play a sound:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="KUrlRequester" name="m_soundFN" >
-          <property name="enabled" >
-           <bool>false</bool>
+           <string>Raise window</string>
           </property>
          </widget>
         </item>
@@ -390,11 +376,24 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="m_raise" >
+         <widget class="QPushButton" name="m_notifications" >
           <property name="text" >
-           <string>Raise window</string>
+           <string>Configure Notifications ...</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -410,36 +409,6 @@
    <class>KColorButton</class>
    <extends>QPushButton</extends>
    <header>kcolorbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>KUrlRequester</class>
-   <extends>QLineEdit</extends>
-   <header>kurlrequester.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>K3ListView</class>
-   <extends>QListWidget</extends>
-   <header>k3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -457,8 +426,6 @@
   <tabstop>m_BG</tabstop>
   <tabstop>m_setFG</tabstop>
   <tabstop>m_FG</tabstop>
-  <tabstop>m_sound</tabstop>
-  <tabstop>m_soundFN</tabstop>
   <tabstop>m_raise</tabstop>
  </tabstops>
  <resources/>
@@ -524,22 +491,6 @@
     <hint type="destinationlabel" >
      <x>244</x>
      <y>680</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>m_sound</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_soundFN</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>89</x>
-     <y>708</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>118</x>
-     <y>709</y>
     </hint>
    </hints>
   </connection>

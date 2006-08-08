@@ -42,7 +42,8 @@
 #include "kopeteemoticons.h"
 
 
-using namespace Kopete;
+namespace Kopete
+{
 
 class Message::Private
 	: public QSharedData
@@ -66,6 +67,7 @@ public:
 	bool rtfOverride;
 	QDateTime timeStamp;
 	QFont font;
+	QStringList classes;
 
 	QColor fgColor;
 	QColor bgColor;
@@ -147,7 +149,7 @@ Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList
 {
 }
 
-Kopete::Message::Message( const Message &other )
+Message::Message( const Message &other )
 	: d(other.d)
 {
 }
@@ -587,4 +589,21 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 	return result;
 */
 	return QString::null;
+}
+
+QStringList Message::classes() const
+{
+	return d->classes;
+}
+
+void Message::addClass(const QString & classe)
+{
+	d->classes.append(classe);
+}
+
+void Message::setClasses(const QStringList & classes)
+{
+	d->classes = classes;
+}
+
 }

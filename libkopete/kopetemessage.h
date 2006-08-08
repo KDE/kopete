@@ -357,6 +357,25 @@ public:
 	 * @return A string formatted like this: "style=attr"
 	 */
 	QString getHtmlStyleAttribute() const;
+	
+	/**
+	 * @return the list of classes
+	 * 
+	 * class are used to give different notification on a message.  But are also used in the chatwindow as html class 
+	 */
+	QStringList classes() const;
+	
+	/**
+	 * add a class
+	 * @see classes
+	 */
+	void addClass(const QString& classe);
+	
+	/**
+	 * set the classes
+	 * @see classes
+	 */
+	void setClasses(const QStringList &classes);
 
 public:  /* static helpers */
 

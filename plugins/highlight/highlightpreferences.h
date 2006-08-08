@@ -53,6 +53,7 @@ private slots:
 	void slotRenameFilter();
 	void slotSomethingHasChanged();
 	void slotEditRegExp();
+	void slotConfigureNotifications();
 };
 
 #endif

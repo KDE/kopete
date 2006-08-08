@@ -251,6 +251,10 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString());
 				notify->setActions(QStringList( i18n( "View" ) ));
 				
+				foreach(QString cl , msg.classes())
+					notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
+
+				
 				Kopete::MetaContact *mc= msg.from()->metaContact();
 				if(mc)
 				{

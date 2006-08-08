@@ -13,10 +13,16 @@ Name=Contact
 Comment=The specified contact
 Icon=metacontact
 
+[Context/class]
+Name=Class
+Comment=The message class
+Icon=highlight
+
+
 [Event/kopete_contact_incoming]
 Name=Incoming Message
 Comment=An incoming message has been received
-Contexts=contact,group
+Contexts=contact,group,class
 default_sound=Kopete_Received.ogg
 Action=Sound|PassivePopup|Taskbar
 
@@ -24,7 +30,7 @@ Action=Sound|PassivePopup|Taskbar
 [Event/kopete_outgoing]
 Name=Outgoing Message
 Comment=An outgoing message has been sent
-Contexts=contact,group
+Contexts=contact,group,class
 default_sound=Kopete_Sent.ogg
 Action=None
 
@@ -49,6 +55,7 @@ Action=None
 
 [Event/kopete_contact_highlight]
 Name=Highlight
+Contexts=contact,group,class
 Comment=A highlighted message has been received
 Default_sound=Kopete_Received.ogg
 Action=Sound|PassivePopup|Taskbar
@@ -57,6 +64,7 @@ Action=Sound|PassivePopup|Taskbar
 [Event/kopete_contact_lowpriority]
 Name=Low priority messages
 Comment=A message marked with a low priority has been received
+Contexts=contact,group,class
 Action=None
 
 [Event/yahoo_mail]

@@ -31,6 +31,7 @@
 #include <kurlrequester.h>
 #include <kregexpeditorinterface.h>
 #include <kdebug.h>
+#include <knotifyconfigwidget.h>
 
 #include "filter.h"
 #include "highlightplugin.h"
@@ -64,8 +65,7 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const QStringList &a
 	connect(preferencesDialog.m_setBG , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_setFG , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog.m_sound , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog.m_soundFN , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog.m_notifications , SIGNAL(pressed()) , this , SLOT(slotConfigureNotifications()));
 	connect(preferencesDialog.m_raise , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_importance , SIGNAL(activated(int)) , this , SLOT(slotSomethingHasChanged()));
@@ -122,27 +122,24 @@ void HighlightPreferences::slotCurrentFilterChanged()
 		preferencesDialog.m_setBG->setEnabled(false);
 		preferencesDialog.m_FG->setEnabled(false);
 		preferencesDialog.m_setFG->setEnabled(false);
-		preferencesDialog.m_soundFN->setEnabled(false);
-		preferencesDialog.m_sound->setEnabled(false);
 		preferencesDialog.m_raise->setEnabled(false);
 		preferencesDialog.m_editregexp->setEnabled(false);
 		preferencesDialog.m_rename->setEnabled(false);
 		preferencesDialog.m_remove->setEnabled(false);
+		preferencesDialog.m_notifications->setEnabled(false);
 		donttouch=false;
 		return;
 	}
 	
 	preferencesDialog.m_rename->setEnabled(true);
 	preferencesDialog.m_remove->setEnabled(true);
-	
+	preferencesDialog.m_notifications->setEnabled(true);	
 	preferencesDialog.m_search->setEnabled(true);
 	preferencesDialog.m_case->setEnabled(true);
 	preferencesDialog.m_regexp->setEnabled(true);
 	preferencesDialog.m_setImportance->setEnabled(true);
 	preferencesDialog.m_setBG->setEnabled(true);
 	preferencesDialog.m_setFG->setEnabled(true);
-	preferencesDialog.m_sound->setEnabled(true);
-	preferencesDialog.m_raise->setEnabled(true);
 
 
 	preferencesDialog.m_search->setText(current->search);
@@ -158,10 +155,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog.m_FG->setColor(current->FG);
 	preferencesDialog.m_setFG->setChecked(current->setFG);
 	preferencesDialog.m_FG->setEnabled(current->setFG);
-	preferencesDialog.m_soundFN->setUrl(current->soundFN);
-	preferencesDialog.m_sound->setChecked(current->playSound);
 	preferencesDialog.m_raise->setChecked(current->raiseView);
-	preferencesDialog.m_soundFN->setEnabled(current->playSound);
 
 	donttouch=false;
 }
@@ -230,9 +224,6 @@ void HighlightPreferences::slotSomethingHasChanged()
 	current->FG=preferencesDialog.m_FG->color();
 	current->setFG=preferencesDialog.m_setFG->isChecked();
 	preferencesDialog.m_FG->setEnabled(current->setFG);
-	current->soundFN=preferencesDialog.m_soundFN->url().url();
-	current->playSound=preferencesDialog.m_sound->isChecked();
-	preferencesDialog.m_soundFN->setEnabled(current->playSound);
 	current->raiseView=preferencesDialog.m_raise->isChecked();
 
 	emit KCModule::changed(true);
@@ -273,8 +264,29 @@ Filter * HighlightPreferences::selectedItem()
 
 }
 
+void HighlightPreferences::slotConfigureNotifications()
+{
+	Filter *current=selectedItem();
+	if(!current)
+		return;
+
+	
+	KDialog *dialog=new KDialog(this);
+	KNotifyConfigWidget *w=new KNotifyConfigWidget(this);
+	dialog->setMainWidget(w);
+	
+	connect(dialog,SIGNAL(applyClicked()),w,SLOT(save()));
+	connect(dialog,SIGNAL(okClicked()),w,SLOT(save()));
+	connect(w,SIGNAL(changed(bool)) , dialog , SLOT(enableButtonApply(bool)));
+
+	w->setApplication(QString(), "class" , current->className() );
+	dialog->exec();
+}
+
+
 
 #include "highlightpreferences.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
 

@@ -605,6 +605,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 							Kopete::Message::RichText
 						);
 						msg.setFg( fgColor );
+						msg.addClass( "history" );
 					}
 					else
 					{
