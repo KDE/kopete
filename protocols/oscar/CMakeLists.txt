@@ -18,6 +18,7 @@ set(kopete_oscar_LIB_SRCS
    oscarmyselfcontact.cpp 
    oscarencodingselectiondialog.cpp 
    oscarlistnonservercontacts.cpp 
+   oscarversionupdater.cpp
    oscarvisibilitydialog.cpp )
 
 kde4_add_ui_files(kopete_oscar_LIB_SRCS

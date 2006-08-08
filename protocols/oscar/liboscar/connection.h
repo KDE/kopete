@@ -145,6 +145,7 @@ public:
 	QString password() const;
 	bool isIcq() const;
 	ContactManager* ssiManager() const;
+	const Oscar::ClientVersion* version() const;
 	RateClassManager* rateManager() const;
 	bool isLoggedIn() const;
 

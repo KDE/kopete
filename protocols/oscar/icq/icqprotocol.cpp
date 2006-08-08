@@ -574,6 +574,9 @@ void ICQProtocol::initEncodings()
 
 	mEncodings.insert(2259, i18n("TIS-620 Thai"));
 
+	mEncodings.insert(106, i18n("UTF-8 Unicode"));
+	mEncodings.insert(1015, i18n("UTF-16 Unicode"));
+
 /*
 Missing ones (copied from qtextcodec doc):
 TSCII -- Tamil

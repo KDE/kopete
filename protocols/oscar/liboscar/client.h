@@ -313,6 +313,9 @@ public:
 
 	/** Set codec provider */
 	void setCodecProvider( CodecProvider* codecProvider );
+	
+	/** Set pointer to version info */
+	void setVersion( const Oscar::ClientVersion* version );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
@@ -327,6 +330,9 @@ public:
 
 	/** Accessor for the Contact Manager */
 	ContactManager* ssiManager() const;
+
+	/** Return version info */
+	const Oscar::ClientVersion* version() const;
 
 	/** The current user's user ID */
 	QString userId() const;

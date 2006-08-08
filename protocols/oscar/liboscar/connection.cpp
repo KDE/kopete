@@ -170,6 +170,11 @@ ContactManager* Connection::ssiManager() const
 	return d->client->ssiManager();
 }
 
+const Oscar::ClientVersion* Connection::version() const
+{
+	return d->client->version();
+}
+
 bool Connection::isLoggedIn() const
 {
 	return m_loggedIn;
