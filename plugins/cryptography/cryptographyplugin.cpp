@@ -197,6 +197,8 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 				+ plainBody
 				+ QString::fromLatin1(" </td></tr></table>")
 				, Kopete::Message::RichText );
+			
+			msg.addClass("cryptography:encrypted");
 		}
 
 		//if there are too messages in cache, clear the cache
@@ -228,6 +230,8 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 			+ body
 			+ QString::fromLatin1(" </td></tr></table>")
 			, Kopete::Message::RichText );
+		
+		msg.addClass("cryptography:encrypted");
 	}
 
 }
