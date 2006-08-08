@@ -87,7 +87,7 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
 		if (this->body.contains(QLatin1String("<body"))) {
-			QRegExp rx( QLatin1String("<body[^>]*>\\s+(.*)\\s+</body>") );
+			QRegExp rx( QLatin1String("<body[^>]*>(.*)</body>") );
 			if (rx.indexIn(this->body) != -1)
 				this->body = rx.cap(1);
 		}
@@ -203,7 +203,7 @@ void Message::setBody( const QString &body, MessageFormat f )
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
 		if (theBody.contains(QLatin1String("<body"))) {
-			QRegExp rx( QLatin1String("<body[^>]*>\\s+(.*)\\s+</body>") );
+			QRegExp rx( QLatin1String("<body[^>]*>(.*)</body>") );
 			if (rx.indexIn(theBody) != -1)
 				theBody = rx.cap(1);
 		}
@@ -317,7 +317,7 @@ QString Message::parsedBody() const
 #if 0
 		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), RichText));
 #endif
-		return d->body;
+		return escapedBody();
 	}
 }
 
