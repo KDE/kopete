@@ -36,10 +36,15 @@ using namespace KIRC;
 class KIRC::Client::Private
 {
 public:
-	bool failedNickOnLogin;
+	Private()
+		: server(new Entity(QString::null, KIRC::Entity::Server))
+		, failedNickOnLogin(false)
+	{ }
 
 //	KIRC::Entity::List entities;
 	KIRC::Entity::Ptr server;
+
+	bool failedNickOnLogin : 1;
 };
 
 Client::Client(QObject *parent)
@@ -48,12 +53,6 @@ Client::Client(QObject *parent)
 {
 	kDebug(14120) << k_funcinfo << endl;
 
-/*
-	  d->FailedNickOnLogin(false),
-	  d->useSSL(false),
-	  d->server(new Entity(QString::null, KIRC::Server)),
-	  d->self(new Entity(QString::null, KIRC::User))
-*/
 //	setUserName(QString::null);
 
 //	d->entities << d->server << d->self;

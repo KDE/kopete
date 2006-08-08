@@ -40,10 +40,13 @@ class KIRC::Socket::Private
 {
 public:
 	Private()
-		: socket(0),
-		  useSSL(false),
-		  state(Idle),
-		  defaultCodec(0)
+		: socket(0)
+		, useSSL(false)
+		, state(Idle)
+		, defaultCodec(0)
+		, commandHandler(0)
+		, entityManager(0)
+		, owner(new Entity(QString::null, KIRC::Entity::User))
 	{ }
 
 	QTcpSocket *socket;
