@@ -14,8 +14,10 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDACCOUNT_H
-#define TESTBEDACCOUNT_H
+#ifndef QQACCOUNT_H
+#define QQACCOUNT_H
+
+#include <kopetechatsessionmanager.h>
 
 #include "kopetepasswordedaccount.h"
 #include "qqwebcamdialog.h"
@@ -36,6 +38,7 @@ namespace Eva {
 class QQContact;
 class QQProtocol;
 class QQNotifySocket;
+class QQChatSession;
 
 /**
  * This represents an account connected to the qq
@@ -92,6 +95,11 @@ public:
 	 */
 	Kopete::OnlineStatus fromEvaStatus( char es );
 
+	QQChatSession * chatSession( Kopete::ContactPtrList others, const QString& guid, Kopete::Contact::CanCreateFlags canCreate );
+
+	void sendInvitation(const QString& guid, const QString& id, const QString& message );
+	void sendMessage(const QString& guid, Kopete::Message& message );
+
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
@@ -119,6 +127,8 @@ protected slots:
 
 private:
 	void createNotificationServer( const QString &host, uint port );
+	QQChatSession * findChatSessionByGuid( const QString& guid );
+
 
 
 private:
@@ -148,6 +158,8 @@ private:
 	 * Cliend ID is a bitfield that contains supported features for a MSN contact.
 	 */
 	uint m_clientId;
+
+	QList<QQChatSession*> m_chatSessions;
 };
 
 #endif

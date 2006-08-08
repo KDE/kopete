@@ -18,6 +18,7 @@ set(kopete_qq_PART_SRCS
    qqsocket.cpp
    qqnotifysocket.cpp
    qqfakeserver.cpp 
+   qqchatsession.cpp
    qqincomingmessage.cpp 
    ui/qqwebcamdialog.cpp 
    libeva.cpp

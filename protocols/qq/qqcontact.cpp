@@ -50,6 +50,7 @@
 
 #include "qqnotifysocket.h"
 #include "qqaccount.h"
+#include "qqchatsession.h"
 
 QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )
 : Kopete::Contact( account, id, parent )
@@ -111,19 +112,16 @@ bool QQContact::isReachable()
 
 Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	Kopete::ContactPtrList chatmembers;
-	chatmembers.append(this);
+	Kopete::ContactPtrList chatMembers;
+	chatMembers.append(this);
+	QString guid(QString::null);
 
-	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession(  account()->myself(), chatmembers, protocol() );
-	/*
-	QQChatSession *manager = dynamic_cast<QQChatSession*>( _manager );
-	if(!manager &&  canCreate==Kopete::Contact::CanCreate)
-	{
-		manager = new QQChatSession( protocol(), account()->myself(), chatmembers  );
-		static_cast<QQAccount*>( account() )->slotStartChatSession( contactId() );
-	}
-	return manager; */
-	return _manager;
+	// 1 to 1 chat session
+	if( chatMembers.count() == 1 )
+		// FIXME: Use a function to override the hard hack!
+		guid = account()->myself()->contactId() + ":" + this->contactId();
+
+	return static_cast<QQAccount*>(account())->chatSession( chatMembers, guid, canCreate );
 }
 
 QList<KAction*> *QQContact::customContextMenuActions()

@@ -32,6 +32,7 @@
 #include "qqnotifysocket.h"
 #include "qqfakeserver.h"
 #include "qqprotocol.h"
+#include "qqchatsession.h"
 
 
 QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
@@ -176,6 +177,84 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 	kDebug( 14140 ) << k_funcinfo << endl;
 	QQContact* newContact = new QQContact( this, contactId, parentContact );
 	return newContact != 0L;
+	
+}
+
+QQChatSession * QQAccount::findChatSessionByGuid( const QString& guid )
+{
+	QQChatSession * chatSession = 0;
+	QList<QQChatSession *>::const_iterator it;
+	for ( it = m_chatSessions.begin(); it != m_chatSessions.end(); ++it )
+	{
+		if ( (*it)->guid() == guid )
+		{
+				chatSession = *it;
+				break;
+		}
+	}
+	return chatSession;
+}
+
+
+QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QString& guid, Kopete::Contact::CanCreateFlags canCreate )
+{
+	QQChatSession * chatSession = 0;
+	do // one iteration misuse of do...while to enable an easy drop-out once we locate a manager
+	{
+		// do we have a manager keyed by GUID?
+		if ( !guid.isEmpty() )
+		{
+			chatSession = findChatSessionByGuid( guid );
+			if ( chatSession )
+			{
+					kDebug( 14140 ) << k_funcinfo << " found a message manager by GUID: " << guid << endl;
+					break;
+			}
+		}
+		// does the factory know about one, going on the chat members?
+		chatSession = dynamic_cast<QQChatSession*>(
+				Kopete::ChatSessionManager::self()->findChatSession( myself(), others, protocol() ) );
+		if ( chatSession )
+		{
+			kDebug( 14140 ) << k_funcinfo << " found a message manager by members with GUID: " << chatSession->guid() << endl;
+			// re-add the returning contact(s) (very likely only one) to the chat
+			Kopete::ContactPtrList::const_iterator returningContact;
+			for ( returningContact = others.begin(); returningContact != others.end(); returningContact++ )
+					chatSession->joined( static_cast<QQContact*> ( *returningContact ) );
+
+			if ( !guid.isEmpty() )
+				chatSession->setGuid( guid );
+			break;
+		}
+		// we don't have an existing message manager for this chat, so create one if we may
+		if ( canCreate )
+		{
+			chatSession = new QQChatSession( myself(), others, protocol(), guid );
+			kDebug( 14140 ) << k_funcinfo <<
+					" created a new message manager with GUID: " << chatSession->guid() << endl;
+			m_chatSessions.append( chatSession );
+			// listen for the message manager telling us that the user
+			//has left the conference so we remove it from our map
+			QObject::connect( chatSession, SIGNAL( leavingConference( QQChatSession * ) ),
+							SLOT( slotLeavingConference( QQChatSession * ) ) );
+			break;
+		}
+		//kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo <<
+		//		" no message manager available." << endl;
+	}
+	while ( 0 );
+	return chatSession;
+}
+
+
+void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
+{
+	kDebug(14140) << k_funcinfo << "Sending the message to" << guid << endl;
+}
+
+void QQAccount::sendInvitation(const QString& guid, const QString& id, const QString& message )
+{
+	kDebug(14140) << k_funcinfo << "Sending the invitation to" << id << " for group(" << guid  << "):" << message << endl;
 }
 
 void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
