@@ -107,6 +107,7 @@ private:
 	QFile m_file;
 	QString m_contactName; //other person's username
 	QString m_selfName; //my username
+	QString m_desc; //file description
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up

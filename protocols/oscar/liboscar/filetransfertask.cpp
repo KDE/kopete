@@ -94,8 +94,7 @@ void FileTransferTask::onGo()
 		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
 		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
 
-		emit askIncoming( m_contactName, m_oft.fileName, m_oft.fileSize, QString::null, m_oft.cookie );
-		//TODO: support icq descriptions
+		emit askIncoming( m_contactName, m_oft.fileName, m_oft.fileSize, m_desc, m_oft.cookie );
 		return;
 	} 
 	//else, send
@@ -136,7 +135,7 @@ void FileTransferTask::parseReq( Buffer b )
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
 			m_oft.fileSize = b2.getDWord();
 			fileName = b2.getBlock( b2.bytesAvailable() );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_oft.fileSize << " file: " << m_oft.fileName << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_oft.fileSize << " file: " << fileName << endl;
 			break;
 		 case 0x2712:
 			c=QTextCodec::codecForName( tlv.data );
@@ -157,6 +156,10 @@ void FileTransferTask::parseReq( Buffer b )
 		 case 5:
 		 	m_port = b2.getWord();
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "port " << m_port << endl;
+			break;
+		 case 0x0c:
+			m_desc = tlv.data; //FIXME: what codec?
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user message: " << tlv.data << endl;
 			break;
 		 case 0x0d:
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "default encoding " << tlv.data << endl;
@@ -189,7 +192,7 @@ void FileTransferTask::parseReq( Buffer b )
 	}
 	else if ( client_ip.isEmpty() )
 		m_ip = verified_ip;
-	else if ( client_ip == "\0\0\0\0" ) //XXX will this compare properly?
+	else if ( client_ip == "\0\0\0\0" )
 	{
 		//wtf... I guess it wants *me* to request a proxy?
 		m_proxy = 1;
