@@ -2,8 +2,8 @@
  <author></author>
  <comment></comment>
  <exportmacro></exportmacro>
- <class>AppearanceConfig_ChatWindow</class>
- <widget class="QWidget" name="AppearanceConfig_ChatWindow" >
+ <class>ChatWindowConfig_Style</class>
+ <widget class="QWidget" name="ChatWindowConfig_Style" >
   <property name="geometry" >
         <rect>
             <x>0</x>
@@ -181,14 +181,14 @@
  <customwidgets>
   <customwidget>
    <class>KPushButton</class>
-   <extends></extends>
+   <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KListBox</class>
-   <extends></extends>
+   <extends>Q3ListBox</extends>
    <header>klistbox.h</header>
    <container>0</container>
    <pixmap></pixmap>

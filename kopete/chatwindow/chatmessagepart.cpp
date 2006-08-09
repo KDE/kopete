@@ -85,6 +85,7 @@
 #include "kopetepicture.h"
 #include "kopeteappearancesettings.h"
 #include "kopetebehaviorsettings.h"
+#include "kopetechatwindowsettings.h"
 
 #include "kopetechatwindowstyle.h"
 #include "kopetechatwindowstylemanager.h"
@@ -194,7 +195,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 {
 	d->manager = mgr;
 
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( Kopete::AppearanceSettings::self()->stylePath() );
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
+			 KopeteChatWindowSettings::self()->stylePath() );
 	
 	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath()  << endl;
 
@@ -213,11 +215,11 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL(messageOverridesChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
-	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
+	connect( KopeteChatWindowSettings::self(), SIGNAL(chatwindowAppearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
-	connect( Kopete::AppearanceSettings::self(), SIGNAL(styleChanged(const QString &)),
+	connect( KopeteChatWindowSettings::self(), SIGNAL(styleChanged(const QString &)),
 			 this, SLOT( setStyle(const QString &) ) );
-	connect( Kopete::AppearanceSettings::self(), SIGNAL(styleVariantChanged(const QString &)),
+	connect( KopeteChatWindowSettings::self(), SIGNAL(styleVariantChanged(const QString &)),
 			 this, SLOT( setStyleVariant(const QString &) ) );
 
 	// Refresh the style if the display name change.
@@ -407,7 +409,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
 	// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
 	// Group only if the user want it.
-	if( Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
+	if( KopeteChatWindowSettings::self()->groupConsecutiveMessages() )
 	{
 		isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from() && message.type() == d->latestType);
 	}
@@ -513,7 +515,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			
 		// FIXME: Find a way to make work Chat View Buffer efficiently with consecutives messages.
 		// Before it was calling changeStyle() but it's damn too slow.
-		if( !Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
+		if( !KopeteChatWindowSettings::self()->groupConsecutiveMessages() )
 		{
 			chatNode.removeChild( chatNode.firstChild() );
 		}
@@ -1166,7 +1168,7 @@ void ChatMessagePart::writeTemplate()
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( Kopete::AppearanceSettings::self()->styleVariant() )
+		.arg( KopeteChatWindowSettings::self()->styleVariant() )
 		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();
