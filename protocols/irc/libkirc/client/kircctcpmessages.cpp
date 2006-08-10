@@ -1,11 +1,11 @@
 /*
-    kircclientcommands.cpp - IRC Client Commands
+    kircctcpmessages.cpp - IRC CTCP messages factory.
 
-    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,7 +21,7 @@
 #include "config.h"
 #endif
 
-#include "kircstdcommands.h"
+#include "kircctcpmessages.h"
 
 #include "kircmessage.h"
 #include "kircsocket.h"

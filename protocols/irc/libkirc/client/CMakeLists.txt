@@ -5,6 +5,8 @@ include_directories(
 
 set(libkirc_client_SRCS
   kircclient.cpp 
+  kirccommand.cpp
+  kirccommandhandler.cpp
   kircclientcommandhandler.cpp 
   kircclientcommands.cpp 
 #	kirctransfer.cpp 
