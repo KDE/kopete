@@ -344,7 +344,7 @@ void IRCProtocol::slotViewCreated( KopeteView *view )
 
 void IRCProtocol::slotMessageFilter( Kopete::Message &msg )
 {
-	if( msg.from()->protocol() == this )
+	if( msg.from() && msg.from()->protocol() == this )
 	{
 		QString messageText = msg.escapedBody();
 
