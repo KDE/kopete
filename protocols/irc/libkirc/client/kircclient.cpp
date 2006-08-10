@@ -23,7 +23,8 @@
 #include "kircclient.moc"
 
 #include "kircclientcommandhandler.h"
-#include "kircstdcommands.h"
+#include "kircentity.h"
+#include "kircstdmessages.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -31,24 +32,24 @@
 #include <kstandarddirs.h>
 #include <kurl.h>
 
-using namespace KIRC;
-
-class KIRC::Client::Private
+class KIrc::Client::Private
 {
 public:
 	Private()
-		: server(new Entity(QString::null, KIRC::Entity::Server))
+		: server(new Entity(QString::null, KIrc::Entity::Server))
 		, failedNickOnLogin(false)
 	{ }
 
-//	KIRC::Entity::List entities;
-	KIRC::Entity::Ptr server;
+//	KIrc::Entity::List entities;
+	KIrc::Entity::Ptr server;
 
 	bool failedNickOnLogin : 1;
 };
 
+using namespace KIrc;
+
 Client::Client(QObject *parent)
-	: KIRC::Socket(parent),
+	: Socket(parent),
 	  d( new Private )
 {
 	kDebug(14120) << k_funcinfo << endl;
@@ -65,14 +66,14 @@ Client::Client(QObject *parent)
 	connect(this, SIGNAL(internalError(const QString &)),
 		this, SLOT());
 */
-	connect(this, SIGNAL(receivedMessage(KIRC::Message &)),
-		this, SLOT(onReceivedMessage(KIRC::Message &)));
+	connect(this, SIGNAL(receivedMessage(KIrc::Message &)),
+		this, SLOT(onReceivedMessage(KIrc::Message &)));
 }
 
 Client::~Client()
 {
 	kDebug(14120) << k_funcinfo << endl;
-	StdCommands::quit(this, QString::fromLatin1("KIRC Deleted"));
+//	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
 
 	delete d;
 }
@@ -89,6 +90,7 @@ bool Client::isConnected() const
 
 void Client::authentify()
 {
+/*
 	// If password is given for this server, send it now, and don't expect a reply
 	const KUrl &url = this->url();
 
@@ -99,7 +101,8 @@ void Client::authentify()
 	StdCommands::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
 	StdCommands::nick(this, url.queryItem(URL_NICKNAME));
 
-	KIRC::Socket::authentify();
+	KIrc::Socket::authentify();
+*/
 }
 
 Entity::Ptr Client::server()

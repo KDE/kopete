@@ -26,8 +26,6 @@
 #include <QSharedData>
 #include <QTextCodec>
 
-using namespace KIRC;
-
 //QRegExp Message::sm_("^()\\r\\n$")
 /*
 #ifndef _IRC_STRICTNESS_
@@ -47,7 +45,7 @@ QRegExp Message::sm_IRCCommandType2(
 	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
 */
-class KIRC::Message::Private
+class KIrc::Message::Private
 	: public QSharedData
 {
 public:
@@ -57,8 +55,8 @@ public:
 		, dirty(false)
 	{ }
 
-	QPointer<KIRC::Socket> socket;
-	KIRC::Message::Direction direction;
+	QPointer<KIrc::Socket> socket;
+	KIrc::Message::Direction direction;
 
 	QTextCodec *codec;	
 	QByteArray line;
@@ -67,11 +65,13 @@ public:
 	QByteArrayList args;
 	QByteArray suffix;
 
-	QList<KIRC::Message> ctcpMessages;
+//	QList<KIrc::Message> ctcpMessages;
 
 	bool valid:1; // if the message was parsed successfuly
 	bool dirty:1; // if the message contents is modified, so should be rebuilded
 };
+
+using namespace KIrc;
 
 Message::Message()
 	: d(new Private())
@@ -317,7 +317,7 @@ void Message::dump() const
 */
 }
 /*
-Entity::Ptr Message::entityFromPrefix(KIRC::Engine *engine) const
+Entity::Ptr Message::entityFromPrefix(Engine *engine) const
 {
 	if (d->prefix.isEmpty())
 		return engine->self();
@@ -325,7 +325,7 @@ Entity::Ptr Message::entityFromPrefix(KIRC::Engine *engine) const
 		return engine->getEntity(d->prefix);
 }
 
-Entity::Ptr Message::entityFromArg(KIRC::Engine *engine, size_t i) const
+Entity::Ptr Message::entityFromArg(Engine *engine, size_t i) const
 {
 	return engine->getEntity(d->argList[i]);
 }

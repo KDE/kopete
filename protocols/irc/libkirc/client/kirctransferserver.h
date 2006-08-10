@@ -27,7 +27,7 @@ class KExtendedSocket;
 class QFile;
 class QTextCodec;
 
-namespace KIRC
+namespace KIrc
 {
 
 class TransferServer
@@ -38,7 +38,7 @@ class TransferServer
 public:
 //	TransferServer(QObject *parent = 0, const char *name = 0);
 	TransferServer(quint16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
-	TransferServer(KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+	TransferServer(KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize,
 			QObject *parent = 0, const char *name = 0);
@@ -65,7 +65,7 @@ private:
 	int			m_backlog;
 
 	// The following will be deprecated ...
-	KIRC::Engine *		m_engine;
+	KIrc::Engine *		m_engine;
 	QString			m_nick;
 	Transfer::Type	m_type;
 	QString			m_fileName;

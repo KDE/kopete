@@ -30,7 +30,7 @@ class KUrl;
 
 class QTextCodec;
 
-namespace KIRC
+namespace KIrc
 {
 
 class CommandHandler;
@@ -72,9 +72,9 @@ public:
 
 	QTextCodec *defaultCodec() const;
 
-	KIRC::CommandHandler *commandHandler() const;
-	KIRC::EntityManager *entityManager() const;
-	KIRC::Entity::Ptr owner() const;
+	CommandHandler *commandHandler() const;
+	EntityManager *entityManager() const;
+	Entity::Ptr owner() const;
 
 	/**
 	 * The connection url.
@@ -84,16 +84,16 @@ public:
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
 
-	void setCommandHandler(KIRC::CommandHandler *newCommandHandler);
-	void setEntityManager(KIRC::EntityManager *newEntityManager);
-	void setOwner(const KIRC::Entity::Ptr &newOwner);
+	void setCommandHandler(CommandHandler *newCommandHandler);
+	void setEntityManager(EntityManager *newEntityManager);
+	void setOwner(const Entity::Ptr &newOwner);
 
 	void connectToServer(const KUrl &url);
 	void close();
 
 	void writeMessage(QByteArray message);
 	void writeMessage(const QString &message, QTextCodec *codec = 0);
-	void writeMessage(const KIRC::Message &message);
+	void writeMessage(const Message &message);
 
 	void showInfoDialog();
 
@@ -103,7 +103,7 @@ public slots:
 	 * @param messageType the type of event message.
 	 * @param message the event message content.
 	 */
-	void postEvent(KIRC::Event::MessageType messageType, const QString &message);
+	void postEvent(Event::MessageType messageType, const QString &message);
 
 	/**
 	 * Post an error event for the given socket.
@@ -113,17 +113,17 @@ public slots:
 	 * @note The error event is only informational and won't change the status.
 	 */
 	inline void postErrorEvent(const QString &errStr)
-	{ postEvent(KIRC::Event::ErrorMessage, errStr); }
+	{ postEvent(Event::ErrorMessage, errStr); }
 
 signals:
-//	void eventOccured(const KIRC::Event *);
+//	void eventOccured(const Event *);
 
-	void connectionStateChanged(KIRC::Socket::ConnectionState newstate);
+	void connectionStateChanged(Socket::ConnectionState newstate);
 
-	void receivedMessage(const KIRC::Message &message);
+	void receivedMessage(const Message &message);
 
 protected:
-	void setConnectionState(KIRC::Socket::ConnectionState newstate);
+	void setConnectionState(Socket::ConnectionState newstate);
 	virtual void authentify();
 
 private slots:
@@ -144,3 +144,4 @@ private:
 }
 
 #endif
+

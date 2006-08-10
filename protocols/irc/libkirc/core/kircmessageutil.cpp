@@ -98,12 +98,12 @@ static struct quote_data irc_quote_data[] =
 	{ 0, 0 }
 };
 
-QByteArray KIRC::MessageUtil::quote(const QByteArray &buffer)
+QByteArray KIrc::MessageUtil::quote(const QByteArray &buffer)
 {
 	return quote(buffer, irc_quote_data);
 }
 
-QByteArray KIRC::MessageUtil::unquote(const QByteArray &buffer)
+QByteArray KIrc::MessageUtil::unquote(const QByteArray &buffer)
 {
 	return unquote(buffer, irc_quote_data);
 }
@@ -117,12 +117,12 @@ static struct quote_data irc_ctcp_quote_data[] =
 	{ 0, 0 }
 };
 
-QByteArray KIRC::MessageUtil::quoteCtcp(const QByteArray &buffer)
+QByteArray KIrc::MessageUtil::quoteCtcp(const QByteArray &buffer)
 {
 	return quote(buffer, irc_ctcp_quote_data);
 }
 
-QByteArray KIRC::MessageUtil::unquoteCtcp(const QByteArray &buffer)
+QByteArray KIrc::MessageUtil::unquoteCtcp(const QByteArray &buffer)
 {
 	return unquote(buffer, irc_ctcp_quote_data);
 }

@@ -25,7 +25,7 @@
 #include <QFlags>
 #include <QStringList>
 
-namespace KIRC
+namespace KIrc
 {
 
 class Socket;
@@ -51,54 +51,54 @@ namespace StdMessages
 	};
 	Q_DECLARE_FLAGS(UserMode, UserModes)
 
-	KIRC::Message away(QString awayMessage = QString::null);
+	KIrc::Message away(QString awayMessage = QString::null);
 
-//	KIRC::Message invite();
+//	KIrc::Message invite();
 
-	KIRC::Message ison(QStringList nickList);
+	KIrc::Message ison(QStringList nickList);
 
-	KIRC::Message join(QString name, QString key);
+	KIrc::Message join(QString name, QString key);
 
-	KIRC::Message kick(QString user, QString channel, QString reason);
+	KIrc::Message kick(QString user, QString channel, QString reason);
 
-	KIRC::Message list();
+	KIrc::Message list();
 
-	KIRC::Message mode(QString target, QString mode);
+	KIrc::Message mode(QString target, QString mode);
 
-	KIRC::Message motd(QString server = QString::null);
+	KIrc::Message motd(QString server = QString::null);
 
-	KIRC::Message nick(QString newNickname);
+	KIrc::Message nick(QString newNickname);
 
-	KIRC::Message notice(QString target, QString message);
+	KIrc::Message notice(QString target, QString message);
 
-	KIRC::Message part(QString name, QString reason);
+	KIrc::Message part(QString name, QString reason);
 
-	KIRC::Message pass(QString password);
+	KIrc::Message pass(QString password);
 
-	KIRC::Message privmsg(QString contact, QString message);
+	KIrc::Message privmsg(QString contact, QString message);
 
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
 	 * Therefore setting now to true should only be used while destroying the object.
 	 */
-	KIRC::Message quit(QString reason);
+	KIrc::Message quit(QString reason);
 
-	KIRC::Message topic(QString channel, QString topic);
+	KIrc::Message topic(QString channel, QString topic);
 
-	KIRC::Message user(QString user, QString hostname, QString realName);
+	KIrc::Message user(QString user, QString hostname, QString realName);
 
-	KIRC::Message user(QString user, UserMode modes, QString realName);
+	KIrc::Message user(QString user, UserMode modes, QString realName);
 
-	KIRC::Message who(QString mask/*, bool isOperator*/);
+	KIrc::Message who(QString mask/*, bool isOperator*/);
 
-	KIRC::Message whois(QString target);
-
-}
+	KIrc::Message whois(QString target);
 
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(KIRC::StdMessages::UserMode)
+}
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(KIrc::StdMessages::UserMode)
 
 #endif
 

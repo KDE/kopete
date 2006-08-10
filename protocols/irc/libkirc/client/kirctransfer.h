@@ -27,7 +27,7 @@
 class QFile;
 class QTextCodec;
 
-namespace KIRC
+namespace KIrc
 {
 class Engine;
 
@@ -54,21 +54,21 @@ public:
 		Closed
 	};
 public:
-	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress
+	Transfer(	KIrc::Engine *engine, QString nick,// QString nick_peer_adress
 			Type type = Unknown,
 			QObject *parent = 0L, const char *name = 0L );
 
-	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+	Transfer(	KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, quint16 peer_port,
 			Transfer::Type type,
 			QObject *parent = 0L, const char *name = 0L );
 
-	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+	Transfer(	KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 
-	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+	Transfer(	KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, quint16 peer_port,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize,
@@ -86,13 +86,13 @@ public:
 		quint32		fileSize
 	for detemining the file propeties.
 *//*
-	Transfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+	Transfer(	KIrc *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type, QVariant properties,
 			QObject *parent = 0L, const char *name = 0L );
 */
 	~Transfer();
 
-	KIRC::Engine *engine() const
+	KIrc::Engine *engine() const
 		{ return m_engine; }
 	QString nick() const
 		{ return m_nick; }
@@ -155,7 +155,7 @@ protected:
 //	void emitSignals();
 	void checkFileTransferEnd( quint32 fileSizeAck );
 
-	KIRC::Engine *	m_engine;
+	KIrc::Engine *	m_engine;
 	QString		m_nick;
 
 	Type		m_type;

@@ -34,9 +34,7 @@
 
 #include <QTcpSocket>
 
-using namespace KIRC;
-
-class KIRC::Socket::Private
+class KIrc::Socket::Private
 {
 public:
 	Private()
@@ -46,20 +44,22 @@ public:
 		, defaultCodec(0)
 		, commandHandler(0)
 		, entityManager(0)
-		, owner(new Entity(QString::null, KIRC::Entity::User))
+		, owner(new Entity(QString::null, KIrc::Entity::User))
 	{ }
 
 	QTcpSocket *socket;
 	KUrl url;
 	bool useSSL;
-	KIRC::Socket::ConnectionState state;
+	KIrc::Socket::ConnectionState state;
 
 	QTextCodec *defaultCodec;
 
-	KIRC::CommandHandler *commandHandler;
-	KIRC::EntityManager *entityManager;
-	KIRC::Entity::Ptr owner;
+	KIrc::CommandHandler *commandHandler;
+	KIrc::EntityManager *entityManager;
+	KIrc::Entity::Ptr owner;
 };
+
+using namespace KIrc;
 
 Socket::Socket(QObject *parent)
 	: QObject(parent),

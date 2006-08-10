@@ -22,7 +22,7 @@
 
 #include "kirccommandhandler.h"
 
-namespace KIRC
+namespace KIrc
 {
 
 class Message;
@@ -33,7 +33,7 @@ class Message;
  * @author Jason Keirstead <jason@keirstead.org>
  */
 class ClientCommandHandler
-	: public KIRC::CommandHandler
+	: public KIrc::CommandHandler
 {
 	Q_OBJECT
 
@@ -42,7 +42,7 @@ public:
 	~ClientCommandHandler();
 
 public slots:
-	void handleMessage(KIRC::Message msg);
+	void handleMessage(KIrc::Message msg);
 
 private:
 	Q_DISABLE_COPY(ClientCommandHandler)

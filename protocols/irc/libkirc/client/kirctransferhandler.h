@@ -28,7 +28,7 @@ class QTextCodec;
 
 class KExtendedSocket;
 
-namespace KIRC
+namespace KIrc
 {
 
 class TransferHandler
@@ -42,12 +42,12 @@ public:
 	TransferServer *server();
 	TransferServer *server( quint16 port, int backlog  = 1 );
 
-	TransferServer *createServer(KIRC::Engine *engine, QString m_userName,
+	TransferServer *createServer(KIrc::Engine *engine, QString m_userName,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize);
 
 	Transfer *createClient(
-		KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+		KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 		QHostAddress peer_address, quint16 peer_port,
 		Transfer::Type type,
 		QString file = QString::null, quint32 fileSize = 0 );
@@ -63,8 +63,8 @@ public:
 //	void unregisterClient( DCCClient * );
 
 signals:
-	void transferServerCreated(KIRC::TransferServer *server);
-	void transferCreated(KIRC::Transfer *transfer);
+	void transferServerCreated(KIrc::TransferServer *server);
+	void transferCreated(KIrc::Transfer *transfer);
 
 private:
 //	TransferHandler();

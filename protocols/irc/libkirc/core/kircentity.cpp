@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 
-using namespace KIRC;
+using namespace KIrc;
 
 /**
  * Match a possible user definition:
@@ -56,7 +56,7 @@ bool Entity::isChannel( const QString &name )
 	return sm_channelRegExp.exactMatch(name);
 }
 */
-class KIRC::Entity::Private
+class KIrc::Entity::Private
 {
 public:
 	Private()

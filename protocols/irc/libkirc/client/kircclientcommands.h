@@ -23,7 +23,7 @@
 #include "kircmessage.h"
 #include "kircevent.h"
 
-namespace KIRC
+namespace KIrc
 {
 
 class Event;
@@ -43,100 +43,100 @@ public:
 	~ClientCommands();
 
 private slots:
-	void postEvent(const KIRC::Message &msg, Event::MessageType messageType, const QString &message);
-	void postErrorEvent(const KIRC::Message &msg, const QString &message = QString());
-	void postInfoEvent(const KIRC::Message &msg, const QString &message = QString());
-	void postMOTDEvent(const KIRC::Message &msg, const QString &message = QString());
+	void postEvent(const KIrc::Message &msg, Event::MessageType messageType, const QString &message);
+	void postErrorEvent(const KIrc::Message &msg, const QString &message = QString());
+	void postInfoEvent(const KIrc::Message &msg, const QString &message = QString());
+	void postMOTDEvent(const KIrc::Message &msg, const QString &message = QString());
 
-	void receivedServerMessage(KIRC::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
-	void receivedServerMessage(KIRC::Message msg, const QString &message) KDE_DEPRECATED;
+	void receivedServerMessage(KIrc::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
+	void receivedServerMessage(KIrc::Message msg, const QString &message) KDE_DEPRECATED;
 
 private slots:
-	void error(KIRC::Message msg);
-	void join(KIRC::Message msg);
-	void kick(KIRC::Message msg);
-	void mode(KIRC::Message msg);
-	void nick(KIRC::Message msg);
-	void notice(KIRC::Message msg);
-	void part(KIRC::Message msg);
-	void ping(KIRC::Message msg);
-	void pong(KIRC::Message msg);
-	void privmsg(KIRC::Message msg);
-//	void squit(KIRC::Message msg);
-	void quit(KIRC::Message msg);
-	void topic(KIRC::Message msg);
+	void error(KIrc::Message msg);
+	void join(KIrc::Message msg);
+	void kick(KIrc::Message msg);
+	void mode(KIrc::Message msg);
+	void nick(KIrc::Message msg);
+	void notice(KIrc::Message msg);
+	void part(KIrc::Message msg);
+	void ping(KIrc::Message msg);
+	void pong(KIrc::Message msg);
+	void privmsg(KIrc::Message msg);
+//	void squit(KIrc::Message msg);
+	void quit(KIrc::Message msg);
+	void topic(KIrc::Message msg);
 
-	void numericReply_001(KIRC::Message msg);
-	void numericReply_002(KIRC::Message msg);
-	void numericReply_003(KIRC::Message msg);
-	void numericReply_004(KIRC::Message msg);
-	void numericReply_005(KIRC::Message msg);
-	void numericReply_250(KIRC::Message msg);
-	void numericReply_251(KIRC::Message msg);
-	void numericReply_252(KIRC::Message msg);
-	void numericReply_253(KIRC::Message msg);
-	void numericReply_254(KIRC::Message msg);
-	void numericReply_255(KIRC::Message msg);
-	void numericReply_263(KIRC::Message msg);
-	void numericReply_265(KIRC::Message msg);
-	void numericReply_266(KIRC::Message msg);
-	void numericReply_301(KIRC::Message msg);
-	void numericReply_303(KIRC::Message msg);
-	void numericReply_305(KIRC::Message msg);
-	void numericReply_306(KIRC::Message msg);
-	void numericReply_307(KIRC::Message msg);
-	void numericReply_311(KIRC::Message msg);
-	void numericReply_312(KIRC::Message msg);
-	void numericReply_313(KIRC::Message msg);
-	void numericReply_314(KIRC::Message msg);
-	void numericReply_315(KIRC::Message msg);
-	void numericReply_317(KIRC::Message msg);
-	void numericReply_318(KIRC::Message msg);
-	void numericReply_319(KIRC::Message msg);
-	void numericReply_320(KIRC::Message msg);
-	void numericReply_322(KIRC::Message msg);
-	void numericReply_323(KIRC::Message msg);
-	void numericReply_324(KIRC::Message msg);
-	void numericReply_328(KIRC::Message msg);
-	void numericReply_329(KIRC::Message msg);
-	void numericReply_331(KIRC::Message msg);
-	void numericReply_332(KIRC::Message msg);
-	void numericReply_333(KIRC::Message msg);
-	void numericReply_352(KIRC::Message msg);
-	void numericReply_353(KIRC::Message msg);
-	void numericReply_366(KIRC::Message msg);
-	void numericReply_369(KIRC::Message msg);
-	void numericReply_372(KIRC::Message msg);
-	void numericReply_375(KIRC::Message msg);
-	void numericReply_376(KIRC::Message msg);
+	void numericReply_001(KIrc::Message msg);
+	void numericReply_002(KIrc::Message msg);
+	void numericReply_003(KIrc::Message msg);
+	void numericReply_004(KIrc::Message msg);
+	void numericReply_005(KIrc::Message msg);
+	void numericReply_250(KIrc::Message msg);
+	void numericReply_251(KIrc::Message msg);
+	void numericReply_252(KIrc::Message msg);
+	void numericReply_253(KIrc::Message msg);
+	void numericReply_254(KIrc::Message msg);
+	void numericReply_255(KIrc::Message msg);
+	void numericReply_263(KIrc::Message msg);
+	void numericReply_265(KIrc::Message msg);
+	void numericReply_266(KIrc::Message msg);
+	void numericReply_301(KIrc::Message msg);
+	void numericReply_303(KIrc::Message msg);
+	void numericReply_305(KIrc::Message msg);
+	void numericReply_306(KIrc::Message msg);
+	void numericReply_307(KIrc::Message msg);
+	void numericReply_311(KIrc::Message msg);
+	void numericReply_312(KIrc::Message msg);
+	void numericReply_313(KIrc::Message msg);
+	void numericReply_314(KIrc::Message msg);
+	void numericReply_315(KIrc::Message msg);
+	void numericReply_317(KIrc::Message msg);
+	void numericReply_318(KIrc::Message msg);
+	void numericReply_319(KIrc::Message msg);
+	void numericReply_320(KIrc::Message msg);
+	void numericReply_322(KIrc::Message msg);
+	void numericReply_323(KIrc::Message msg);
+	void numericReply_324(KIrc::Message msg);
+	void numericReply_328(KIrc::Message msg);
+	void numericReply_329(KIrc::Message msg);
+	void numericReply_331(KIrc::Message msg);
+	void numericReply_332(KIrc::Message msg);
+	void numericReply_333(KIrc::Message msg);
+	void numericReply_352(KIrc::Message msg);
+	void numericReply_353(KIrc::Message msg);
+	void numericReply_366(KIrc::Message msg);
+	void numericReply_369(KIrc::Message msg);
+	void numericReply_372(KIrc::Message msg);
+	void numericReply_375(KIrc::Message msg);
+	void numericReply_376(KIrc::Message msg);
 
-	void numericReply_401(KIRC::Message msg);
-	void numericReply_404(KIRC::Message msg);
-	void numericReply_406(KIRC::Message msg);
-	void numericReply_422(KIRC::Message msg);
-	void numericReply_433(KIRC::Message msg);
-	void numericReply_442(KIRC::Message msg);
-	void numericReply_464(KIRC::Message msg);
-	void numericReply_471(KIRC::Message msg);
-	void numericReply_473(KIRC::Message msg);
-	void numericReply_474(KIRC::Message msg);
-	void numericReply_475(KIRC::Message msg);
+	void numericReply_401(KIrc::Message msg);
+	void numericReply_404(KIrc::Message msg);
+	void numericReply_406(KIrc::Message msg);
+	void numericReply_422(KIrc::Message msg);
+	void numericReply_433(KIrc::Message msg);
+	void numericReply_442(KIrc::Message msg);
+	void numericReply_464(KIrc::Message msg);
+	void numericReply_471(KIrc::Message msg);
+	void numericReply_473(KIrc::Message msg);
+	void numericReply_474(KIrc::Message msg);
+	void numericReply_475(KIrc::Message msg);
 
 //#ifndef KIRC_STRICT
 #if 0
-	void CtcpQuery_action(KIRC::Message msg);
-	void CtcpQuery_clientinfo(KIRC::Message msg);
-	void CtcpQuery_finger(KIRC::Message msg);
-	void CtcpQuery_dcc(KIRC::Message msg);
-	void CtcpQuery_ping(KIRC::Message msg);
-	void CtcpQuery_source(KIRC::Message msg);
-	void CtcpQuery_time(KIRC::Message msg);
-	void CtcpQuery_userinfo(KIRC::Message msg);
-	void CtcpQuery_version(KIRC::Message msg);
+	void CtcpQuery_action(KIrc::Message msg);
+	void CtcpQuery_clientinfo(KIrc::Message msg);
+	void CtcpQuery_finger(KIrc::Message msg);
+	void CtcpQuery_dcc(KIrc::Message msg);
+	void CtcpQuery_ping(KIrc::Message msg);
+	void CtcpQuery_source(KIrc::Message msg);
+	void CtcpQuery_time(KIrc::Message msg);
+	void CtcpQuery_userinfo(KIrc::Message msg);
+	void CtcpQuery_version(KIrc::Message msg);
 
-	void CtcpReply_errmsg(KIRC::Message msg);
-	void CtcpReply_ping(KIRC::Message msg);
-	void CtcpReply_version(KIRC::Message msg);
+	void CtcpReply_errmsg(KIrc::Message msg);
+	void CtcpReply_ping(KIrc::Message msg);
+	void CtcpReply_version(KIrc::Message msg);
 #endif // KIRC_STRICT
 
 private:

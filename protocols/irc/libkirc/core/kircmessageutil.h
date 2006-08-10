@@ -15,12 +15,12 @@
     *************************************************************************
 */
 
-#ifndef KIRC_MESSAGEUTIL_H
-#define KIRC_MESSAGEUTIL_H
+#ifndef KIRCMESSAGEUTIL_H
+#define KIRCMESSAGEUTIL_H
 
 #include <QByteArray>
 
-namespace KIRC {
+namespace KIrc {
 namespace MessageUtil {
 
 extern QByteArray quote(const QByteArray &buffer);
@@ -39,7 +39,7 @@ extern QByteArray unquoteCtcp(const QByteArray &buffer);
 #endif
 
 } // MessageUtil
-} // KIRC
+}
 
 #endif
 

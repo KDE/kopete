@@ -19,21 +19,21 @@
 
 #include <QStringList>
 
-using namespace KIRC;
-
-QString Command::expand(QString command, QString args)
-{
-	#warning IMPLEMENT ME
-	return command;
-}
-
-class KIRC::Command::Private
+class KIrc::Command::Private
 {
 public:
 	int argsSize_min;
 	int argsSize_max;
 	QString helpMessage;
 };
+
+using namespace KIrc;
+
+QString Command::expand(QString command, QString args)
+{
+        #warning IMPLEMENT ME
+        return command;
+}
 
 Command::Command(QObject *parent)
 	: QObject(parent),

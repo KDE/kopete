@@ -15,14 +15,14 @@
     *************************************************************************
 */
 
-#ifndef KIRC_ENTITYMANAGER_H
-#define KIRC_ENTITYMANAGER_H
+#ifndef KIRCENTITYMANAGER_H
+#define KIRCENTITYMANAGER_H
 
 #include <QObject>
 
 class QByteArray;
 
-namespace KIRC
+namespace KIrc
 {
 
 class Entity;
@@ -42,19 +42,19 @@ public:
 	~EntityManager();
 
 public:
-	QList<KIRC::Entity *> entities() const;
-//	QList<KIRC::Entity *> entitiesByHost(...) const;
-//	QList<KIRC::Entity *> entitiesByServer(...) const;
-//	QList<KIRC::Entity *> entitiesByType(...) const;
+	QList<Entity *> entities() const;
+//	QList<Entity *> entitiesByHost(...) const;
+//	QList<Entity *> entitiesByServer(...) const;
+//	QList<Entity *> entitiesByType(...) const;
 
-	KIRC::Entity *entityByName(const QByteArray &name) const;
+	Entity *entityByName(const QByteArray &name) const;
 
 protected:
-	void add(KIRC::Entity *entity);
-//	void add(const QList<KIRC::Entity *> &entities);
+	void add(Entity *entity);
+//	void add(const QList<Entity *> &entities);
 
-	void remove(KIRC::Entity *entity);
-//	void remove(const QList<KIRC::Entity *> &entities);
+	void remove(Entity *entity);
+//	void remove(const QList<Entity *> &entities);
 
 private:
 	Q_DISABLE_COPY(EntityManager);

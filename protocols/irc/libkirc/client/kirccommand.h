@@ -20,7 +20,7 @@
 
 #include "kircmessage.h"
 
-namespace KIRC
+namespace KIrc
 {
 
 class Message;
@@ -69,17 +69,17 @@ public slots:
 	/**
 	 * Attempt to send the message.
 	 */
-	virtual void handleMessage(KIRC::Message msg);
+	virtual void handleMessage(KIrc::Message msg);
 
 signals:
-	void redirect(KIRC::Message);
+	void redirect(KIrc::Message);
 
 protected:
 	/**
 	 * Check that the given message can be send.
 	 * @return true if the message can be send.
 	 */
-	bool checkValidity(const KIRC::Message &msg);
+	bool checkValidity(const Message &msg);
 
 private:
 	Q_DISABLE_COPY(Command);

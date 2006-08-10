@@ -22,7 +22,6 @@
 
 #include "kdemacros.h"
 
-//#include <QList> // From QStringList
 #include <QSharedDataPointer>
 #include <QStringList>
 
@@ -30,7 +29,7 @@ typedef QList<QByteArray> QByteArrayList;
 
 class QTextCodec;
 
-namespace KIRC
+namespace KIrc
 {
 
 class Socket;
@@ -42,22 +41,22 @@ public:
 	{
 		Unknown  = 0,
 		OutGoing = 1, // From the client to the network
-		InGoing	 = 1  // From the network to the client
+		InGoing	 = 2  // From the network to the client
 	};
 
 public:
 	Message();
-	Message(const KIRC::Message &o);
+	Message(const KIrc::Message &o);
 	~Message();
 
-	KIRC::Message &operator = (const KIRC::Message &o);
+	Message &operator = (const Message &o);
 
 public:
-	KIRC::Socket *socket() const;
+	Socket *socket() const;
 	void setSocket(Socket *);
 
 	Direction direction() const;
-	void setDirection(KIRC::Message::Direction direction);
+	void setDirection(Message::Direction direction);
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *codec);
@@ -94,12 +93,9 @@ public:
 	QString suffix(QTextCodec *codec = 0) const;
 	void setSuffix(const QString &, QTextCodec *codec = 0);
 
-#ifndef KIRC_STRICT
 	// Core doesn't need to know about CTCP messages
 	KDE_DEPRECATED bool hasCtcpMessage() const { return false; }
-	KIRC::Message ctcpMessage() const KDE_DEPRECATED;
-#endif
-
+	Message ctcpMessage() const KDE_DEPRECATED;
 
 public:
 	bool isValid() const;
@@ -107,8 +103,8 @@ public:
 	bool isNumeric() const;
 	void dump() const;
 
-//	KIRC::Entity::Ptr entityFromPrefix() const;
-//	KIRC::Entity::Ptr entityFromArg(size_t i) const;
+//	Entity::Ptr entityFromPrefix() const;
+//	Entity::Ptr entityFromArg(size_t i) const;
 
 	size_t argsSize() const;
 	QByteArray rawArg(size_t i) const;
@@ -134,4 +130,4 @@ private:
 
 }
 
-#endif // KIRCMESSAGE_H
+#endif

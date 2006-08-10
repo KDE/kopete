@@ -26,7 +26,7 @@
 #include <QSharedDataPointer>
 #include <QStringList>
 
-namespace KIRC
+namespace KIrc
 {
 
 class Socket;
@@ -53,30 +53,30 @@ public:
 	};
 
 	Event();
-	Event(const KIRC::Event &o);
+	Event(const Event &o);
 	virtual ~Event();
 
-	KIRC::Event &operator = (const KIRC::Event &o);
+	Event &operator = (const Event &o);
 
 public:
 /*
-	KIRC::Socket *socket() const;
-	KIRC::Event &setSocket(KIRC::Socket *socket);
+	Socket *socket() const;
+	Event &setSocket(Socket *socket);
 */
-	KIRC::Event::MessageType messageType() const;
-	KIRC::Event &setMessageType(KIRC::Event::MessageType messageType);
+	Event::MessageType messageType() const;
+	Event &setMessageType(Event::MessageType messageType);
 
-	KIRC::Entity::Ptr from() const;
-	KIRC::Event &setFrom(const KIRC::Entity::Ptr &from);
+	Entity::Ptr from() const;
+	Event &setFrom(const Entity::Ptr &from);
 
-	KIRC::Entity::Ptr to() const;
-	KIRC::Event &setTo(const KIRC::Entity::Ptr &to);
+	Entity::Ptr to() const;
+	Event &setTo(const Entity::Ptr &to);
 
-	KIRC::Entity::List cc() const;
-	KIRC::Event &setCc(const KIRC::Entity::List &cc);
+	Entity::List cc() const;
+	Event &setCc(const Entity::List &cc);
 
 	QString message() const;
-	KIRC::Event &setMessage(const QString &message);
+	Event &setMessage(const QString &message);
 
 private:
 	class Private;

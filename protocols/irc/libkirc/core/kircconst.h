@@ -25,7 +25,7 @@ class QTextCodec;
 /**
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
-namespace KIRC
+namespace KIrc
 {
 	enum MessageType
 	{

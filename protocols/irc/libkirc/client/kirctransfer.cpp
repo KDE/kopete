@@ -24,7 +24,7 @@
 
 #include "kirctransfer.h"
 
-using namespace KIRC;
+using namespace KIrc;
 
 Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
 			Type type,

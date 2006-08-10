@@ -19,7 +19,7 @@
 
 #include "kircentity.h"
 
-using namespace KIRC;
+using namespace KIrc;
 
 class EntityManager::Private
 {
@@ -73,8 +73,8 @@ void EntityManager::add(Entity *entity)
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
-		connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
-			this, SLOT(remove(KIRC::Entity *)));
+		connect(entity, SIGNAL(destroyed(KIrc::Entity *)),
+			this, SLOT(remove(KIrc::Entity *)));
 	}
 }
 

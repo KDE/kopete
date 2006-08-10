@@ -22,7 +22,7 @@
 
 #include "kirctransferserver.h"
 
-using namespace KIRC;
+using namespace KIrc;
 
 /*
 TransferServer::TransferServer( QObject *parent, const char *name )

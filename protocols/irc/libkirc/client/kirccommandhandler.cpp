@@ -20,7 +20,7 @@
 #include "kirccommand.h"
 #include "kircsocket.h"
 
-using namespace KIRC;
+using namespace KIrc;
 
 CommandHandler::CommandHandler(QObject *parent)
 	: QObject(parent)

@@ -34,17 +34,17 @@
 #include <qfileinfo.h>
 #include <qregexp.h>
 /*
-class KIRC::ClientCommandHandler::Private
+class KIrc::ClientCommandHandler::Private
 {
 public:
 };
 */
-using namespace KIRC;
+using namespace KIrc;
 
 ClientCommandHandler::ClientCommandHandler(QObject *parent)
 	: CommandHandler(parent)
 	, d(0)
-//	, d(new KIRC::ClientCommandHandler::Private)
+//	, d(new KIrc::ClientCommandHandler::Private)
 {
 }
 

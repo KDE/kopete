@@ -40,10 +40,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 */
-using namespace KIRC;
+using namespace KIrc;
 #warning make usage of KUser (done!) and make more usefull using some default strings (todo!)
 
-KIRC::Message StdMessages::away(QString awayMessage)
+Message StdMessages::away(QString awayMessage)
 {
 	Message msg;
 	msg.setCommand(AWAY);
@@ -51,7 +51,7 @@ KIRC::Message StdMessages::away(QString awayMessage)
 	return msg;
 }
 
-KIRC::Message StdMessages::ison(QStringList nickList)
+Message StdMessages::ison(QStringList nickList)
 {
 	kDebug(14120) << k_funcinfo << endl;
 
@@ -77,7 +77,7 @@ KIRC::Message StdMessages::ison(QStringList nickList)
 	return msg;
 }
 
-KIRC::Message StdMessages::join(QString name, QString key)
+Message StdMessages::join(QString name, QString key)
 {
 	Message msg;
 	msg.setCommand(JOIN);
@@ -88,7 +88,7 @@ KIRC::Message StdMessages::join(QString name, QString key)
 	return msg;
 }
 
-KIRC::Message StdMessages::kick(QString user, QString channel, QString reason)
+Message StdMessages::kick(QString user, QString channel, QString reason)
 {
 	Message msg;
 	msg.setCommand(KICK);
@@ -97,14 +97,14 @@ KIRC::Message StdMessages::kick(QString user, QString channel, QString reason)
 	return msg;
 }
 
-KIRC::Message StdMessages::list()
+Message StdMessages::list()
 {
 	Message msg;
 	msg.setCommand(LIST);
 	return msg;
 }
 
-KIRC::Message StdMessages::mode(QString target, QString mode)
+Message StdMessages::mode(QString target, QString mode)
 {
 	Message msg;
 	msg.setCommand(MODE);
@@ -112,7 +112,7 @@ KIRC::Message StdMessages::mode(QString target, QString mode)
 	return msg;
 }
 
-KIRC::Message StdMessages::motd(QString server)
+Message StdMessages::motd(QString server)
 {
 	Message msg;
 	msg.setCommand(MOTD);
@@ -120,7 +120,7 @@ KIRC::Message StdMessages::motd(QString server)
 	return msg;
 }
 
-KIRC::Message StdMessages::nick(QString newNickName)
+KIrc::Message StdMessages::nick(QString newNickName)
 {
 	if (newNickName.isEmpty()) newNickName = KUser().loginName();
 
@@ -131,7 +131,7 @@ KIRC::Message StdMessages::nick(QString newNickName)
 	return msg;
 }
 
-KIRC::Message StdMessages::notice(QString target, QString content)
+KIrc::Message StdMessages::notice(QString target, QString content)
 {
 	Message msg;
 	msg.setCommand(NOTICE);
@@ -142,7 +142,7 @@ KIRC::Message StdMessages::notice(QString target, QString content)
 
 /* This will part a channel with 'reason' as the reason for parting
  */
-KIRC::Message StdMessages::part(QString channel, QString reason)
+KIrc::Message StdMessages::part(QString channel, QString reason)
 {
 	Message msg;
 	msg.setCommand(PART);
@@ -151,7 +151,7 @@ KIRC::Message StdMessages::part(QString channel, QString reason)
 	return msg;
 }
 
-KIRC::Message StdMessages::pass(QString password)
+KIrc::Message StdMessages::pass(QString password)
 {
 	Message msg;
 	msg.setCommand(PASS);
@@ -159,7 +159,7 @@ KIRC::Message StdMessages::pass(QString password)
 	return msg;
 }
 
-KIRC::Message StdMessages::privmsg(QString contact, QString content)
+KIrc::Message StdMessages::privmsg(QString contact, QString content)
 {
 	Message msg;
 	msg.setCommand(PRIVMSG);
@@ -168,7 +168,7 @@ KIRC::Message StdMessages::privmsg(QString contact, QString content)
 	return msg;
 }
 
-KIRC::Message StdMessages::quit(QString reason)
+KIrc::Message StdMessages::quit(QString reason)
 {
 	Message msg;
 	msg.setCommand(QUIT);
@@ -176,7 +176,7 @@ KIRC::Message StdMessages::quit(QString reason)
 	return msg;
 }
 
-KIRC::Message StdMessages::topic(QString channel, QString topic)
+Message StdMessages::topic(QString channel, QString topic)
 {
 	Message msg;
 	msg.setCommand(TOPIC);
@@ -190,7 +190,7 @@ KIRC::Message StdMessages::topic(QString channel, QString topic)
  * the username, hostname and realname of a new user.
  * hostname is usualy set to "127.0.0.1"
  */
-KIRC::Message StdMessages::user(QString user, QString hostName, QString realName)
+Message StdMessages::user(QString user, QString hostName, QString realName)
 {
 	if (user.isEmpty())     user     = KUser().loginName();
 	if (realName.isEmpty()) realName = KUser().fullName();
@@ -202,7 +202,7 @@ KIRC::Message StdMessages::user(QString user, QString hostName, QString realName
 	return msg;
 }
 
-KIRC::Message StdMessages::user(QString user, UserMode mode, QString realName)
+Message StdMessages::user(QString user, UserMode mode, QString realName)
 {
 	if (user.isEmpty())     user     = KUser().loginName();
 	if (realName.isEmpty()) realName = KUser().fullName();
@@ -214,7 +214,7 @@ KIRC::Message StdMessages::user(QString user, UserMode mode, QString realName)
 	return msg;
 }
 
-KIRC::Message StdMessages::whois(QString user)
+Message StdMessages::whois(QString user)
 {
 	Message msg;
 	msg.setCommand(WHOIS);

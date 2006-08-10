@@ -1,5 +1,5 @@
 /*
-    kircengine.h - IRC Client
+    kircclient.h - IRC Client
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
@@ -22,7 +22,7 @@
 
 #include "kircsocket.h"
 
-namespace KIRC
+namespace KIrc
 {
 
 class ClientCommandHandler;
@@ -34,7 +34,7 @@ class Message;
  * @author Jason Keirstead <jason@keirstead.org>
  */
 class Client
-	: public KIRC::Socket
+	: public KIrc::Socket
 {
 	Q_OBJECT
 
@@ -50,9 +50,9 @@ public:
 	bool isDisconnected() const KDE_DEPRECATED;
 	bool isConnected() const KDE_DEPRECATED;
 
-	KIRC::Entity::Ptr server();
+	Entity::Ptr server();
 
-	KIRC::ClientCommandHandler *clientCommandHandler();
+	ClientCommandHandler *clientCommandHandler();
 
 signals:
 	/**
@@ -65,13 +65,13 @@ signals:
 	 * @param msg the message (usually translated).
 	 *
 	 * @note Most of the following numeric messages should be deprecated, and call this method instead.
-	 *	 Most of the methods, using it, update KIRC::Entities.
+	 *	 Most of the methods, using it, update KIrc::Entities.
 	 *	 Lists based messages are sent via dedicated API, therefore they don't use this.
 	 */
 	// @param args the args to apply to this message.
-	void receivedMessage(	KIRC::MessageType type,
-				const KIRC::Entity::Ptr &from,
-				const KIRC::Entity::List &to,
+	void receivedMessage(	MessageType type,
+				const Entity::Ptr &from,
+				const Entity::List &to,
 				const QString &msg);
 
 private slots:

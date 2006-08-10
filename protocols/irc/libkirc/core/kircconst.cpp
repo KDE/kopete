@@ -23,7 +23,7 @@
 
 #include <qtextcodec.h>
 
-#define CONST_BYTEARRAY(str) const QByteArray KIRC::str(#str)
+#define CONST_BYTEARRAY(str) const QByteArray KIrc::str(#str)
 
 /* The usage of the namespace, instead of the "using" keyword, is intentional.
  * Not using it introduce compiler confusion, and lead to new symbols declaration.
@@ -32,10 +32,10 @@
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
-const QRegExp KIRC::sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
+const QRegExp KIrc::sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
-const QString KIRC::URL_NICKNAME("nickname");
-const QString KIRC::URL_REALNAME("realname");
+const QString KIrc::URL_NICKNAME("nickname");
+const QString KIrc::URL_REALNAME("realname");
 
 CONST_BYTEARRAY(AWAY);
 CONST_BYTEARRAY(ERROR);
@@ -61,5 +61,5 @@ CONST_BYTEARRAY(WHO);
 CONST_BYTEARRAY(WHOIS);
 CONST_BYTEARRAY(WHOWAS);
 
-QTextCodec *KIRC::UTF8 = QTextCodec::codecForName("UTF-8");
+QTextCodec *KIrc::UTF8 = QTextCodec::codecForName("UTF-8");
 

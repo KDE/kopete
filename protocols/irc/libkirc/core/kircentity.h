@@ -27,7 +27,7 @@
 
 class QTextCodec;
 
-namespace KIRC
+namespace KIrc
 {
 
 class Engine;
@@ -44,10 +44,10 @@ class Entity
 //	Q_ENUMS(Type)
 
 public:
-	typedef KSharedPtr<KIRC::Entity> Ptr;
-	typedef QList<KIRC::Entity::Ptr> List;
+	typedef KSharedPtr<Entity> Ptr;
+	typedef QList<Entity::Ptr> List;
 
-	typedef enum
+	enum Type
 	{
 		// From lower to higher importance
 		Unknown,
@@ -55,9 +55,9 @@ public:
 		Service,
 		Channel,
 		Server
-	} Type;
+	};
 /*
-	static KIRC::EntityType guessType(const QString &name);
+	static EntityType guessType(const QString &name);
 	static bool isChannel( const QString &name );
 	static bool isUser( const QString &name );
 */
@@ -83,18 +83,18 @@ public slots: // Write attributes accessors
 //	void setUser(const QString &);
 
 public:
-	KIRC::Entity::Type type() const;
+	Entity::Type type() const;
 	bool isChannel() const;
 	bool isUser() const;
-	void setType(KIRC::Entity::Type type);
+	void setType(Entity::Type type);
 
-//	KIRC::EntityType guessType();
+//	EntityType guessType();
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);
 
 signals:
-	void destroyed(KIRC::Entity *self);
+	void destroyed(Entity *self);
 
 	void updated();
 

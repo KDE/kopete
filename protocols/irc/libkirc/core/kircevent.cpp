@@ -25,22 +25,22 @@
 #include <QSharedData>
 #include <QTextCodec>
 
-class KIRC::Event::Private
+class KIrc::Event::Private
 	: public QSharedData
 {
 public:
-//	QPointer<KIRC::Socket> socket;
+//	QPointer<KIrc::Socket> socket;
 
 	MessageType messageType;
 
-	KIRC::Entity::Ptr from;
-	KIRC::Entity::Ptr to;
-	KIRC::Entity::List cc;
+	KIrc::Entity::Ptr from;
+	KIrc::Entity::Ptr to;
+	KIrc::Entity::List cc;
 
 	QString message;
 };
 
-using namespace KIRC;
+using namespace KIrc;
 
 Event::Event()
 	: d(new Private())

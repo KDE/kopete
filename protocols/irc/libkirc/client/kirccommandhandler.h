@@ -1,5 +1,5 @@
 /*
-    kircmessageredirector.h - IRC Client
+    kirccommandhandler.h - IRC Client
 
     Copyright (c) 2004-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -15,14 +15,15 @@
     *************************************************************************
 */
 
-#ifndef KIRC_COMMANDHANDLER_H
-#define KIRC_COMMANDHANDLER_H
+#ifndef KIRCCOMMANDHANDLER_H
+#define KIRCCOMMANDHANDLER_H
 
 #include "kircmessage.h"
 
-#include <QMultiHash>
+#include <QtCore/QMultiHash>
+#include <QtCore/QObject>
 
-namespace KIRC
+namespace KIrc
 {
 
 class Command;
@@ -42,13 +43,13 @@ public slots:
 	/**
 	 * Connects the given object member signal/slot to this message redirector.
 	 * The member signal slot should be looking like:
-	 * SIGNAL(mysignal(KIRC::Message msg))
+	 * SIGNAL(mysignal(KIrc::Message msg))
 	 * or
-	 * SIGNAL(myslot(KIRC::Message msg))
+	 * SIGNAL(myslot(KIrc::Message msg))
 	 */
 	Command *registerCommand(const QString &name, QObject *object, const char *member);
 
-	virtual void handleMessage(KIRC::Message msg);
+	virtual void handleMessage(KIrc::Message msg);
 
 	void unregisterCommand(Command *command);
 

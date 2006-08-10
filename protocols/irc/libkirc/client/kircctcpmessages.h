@@ -35,10 +35,10 @@ class Socket;
 namespace CtcpMessages
 {
 	/* CTCP commands */
-	KIrc::Message CtcpRequestCommand(KIRC::Socket *socket, QString contact, QString command);
-	KIrc::Message action(QString contact, QString message);
-//	KIrc::Message dcc(QString, QString, unsigned int port, KIRC::Transfer::Type type);
-	KIrc::Message ping(QString target);
+	Message CtcpRequestCommand(Socket *socket, QString contact, QString command);
+	Message action(QString contact, QString message);
+//	KIrc::Message dcc(QString, QString, unsigned int port, KIrc::Transfer::Type type);
+	Message ping(QString target);
 	KIrc version(QString target);
 }
 

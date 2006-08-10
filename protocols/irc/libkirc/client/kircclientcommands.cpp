@@ -40,12 +40,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 /*
-class KIRC::ClientCommands::Private
+class ClientCommands::Private
 {
 public:
 };
 */
-using namespace KIRC;
+using namespace KIrc;
 
 ClientCommands::ClientCommands(QObject *parent)
 	: QObject(parent)
@@ -58,7 +58,7 @@ ClientCommands::~ClientCommands()
 //	delete d;
 }
 
-void ClientCommands::postEvent(const KIRC::Message &msg, Event::MessageType messageType, const QString &message)
+void ClientCommands::postEvent(const Message &msg, Event::MessageType messageType, const QString &message)
 {
 	Event event;
 	event.setMessageType(messageType);
@@ -73,59 +73,59 @@ void ClientCommands::postEvent(const KIRC::Message &msg, Event::MessageType mess
 //	post the message here ... still dunno where, socket ?
 }
 
-void ClientCommands::postErrorEvent(const KIRC::Message &msg, const QString &message)
+void ClientCommands::postErrorEvent(const Message &msg, const QString &message)
 {
 //	postEvent(msg, Event::ErrorMessage, message);
 }
 
-void ClientCommands::postInfoEvent(const KIRC::Message &msg, const QString &message)
+void ClientCommands::postInfoEvent(const Message &msg, const QString &message)
 {
 	postEvent(msg, Event::InfoMessage, message);
 }
 
-void ClientCommands::postMOTDEvent(const KIRC::Message &msg, const QString &message)
+void ClientCommands::postMOTDEvent(const Message &msg, const QString &message)
 {
 //	postEvent(msg, Event::MOTDMessage, message);
 }
 
-void ClientCommands::receivedServerMessage(KIRC::Message msg)
+void ClientCommands::receivedServerMessage(Message msg)
 {
 	receivedServerMessage(msg, msg.suffix());
 }
 
-void ClientCommands::receivedServerMessage(KIRC::Message msg, const QString &message)
+void ClientCommands::receivedServerMessage(Message msg, const QString &message)
 {
 //	emit receivedMessage(InfoMessage, msg.prefix(), Entity::List(), message);
 }
 /*
 void ClientCommands::registerStandardCommands(CommandManager *cm)
 {
-	cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message &));
+	cm->registerCommand(ERROR,	this, SLOT(error(Message &));
 //		setMinMax(0, 0);
 
-	bind(JOIN,	this, SLOT(join(KIRC::Message)),	0, 1);
+	bind(JOIN,	this, SLOT(join(Message)),	0, 1);
 
-	bind(KICK,	this, SLOT(kick(KIRC::Message)),	2, 2);
+	bind(KICK,	this, SLOT(kick(Message)),	2, 2);
 
-	bind(MODE,	this, SLOT(mode(KIRC::Message)),	1, 1);
+	bind(MODE,	this, SLOT(mode(Message)),	1, 1);
 
-	bind(NICK,	this, SLOT(nick(KIRC::Message)),	0, 0);
+	bind(NICK,	this, SLOT(nick(Message)),	0, 0);
 
-	bind(NOTICE,	this, SLOT(notice(KIRC::Message)),	1, 1);
+	bind(NOTICE,	this, SLOT(notice(Message)),	1, 1);
 
-	bind(PART,	this, SLOT(part(KIRC::Message)),	1, 1);
+	bind(PART,	this, SLOT(part(Message)),	1, 1);
 
-	bind(PING,	this, SLOT(ping(KIRC::Message)),	0, 0);
+	bind(PING,	this, SLOT(ping(Message)),	0, 0);
 
-	bind(PONG,	this, SLOT(pong(KIRC::Message)),	0, 0);
+	bind(PONG,	this, SLOT(pong(Message)),	0, 0);
 
-	bind(PRIVMSG,	this, SLOT(privmsg(KIRC::Message)),	1, 1);
+	bind(PRIVMSG,	this, SLOT(privmsg(Message)),	1, 1);
 
-	bind(QUIT,	this, SLOT(quit(KIRC::Message)),	0, 0);
+	bind(QUIT,	this, SLOT(quit(Message)),	0, 0);
 
-//	bind(SQUIT,	this, SLOT(squit(KIRC::Message)),	1, 1);
+//	bind(SQUIT,	this, SLOT(squit(Message)),	1, 1);
 
-	bind(TOPIC,	this, SLOT(topic(KIRC::Message)),	1, 1);
+	bind(TOPIC,	this, SLOT(topic(Message)),	1, 1);
 }
 */
 
@@ -187,7 +187,7 @@ void ClientCommands::mode(Message msg)
 	emit receivedMessage(
 		Info,
 		fromEntity,
-		KIRC::Entity::List::null,
+		Entity::List::null,
 		i18n(""));
 
 	toEntity->setModes(args.join(" "));
@@ -215,7 +215,7 @@ void ClientCommands::nick(Message msg)
 	emit receivedMessage(
 		InfoMessage,
 		msg.entityFromPrefix(),
-		KIRC::Entity::List::null,
+		Entity::List::null,
 		message);
 
 	fromEntity->rename();
@@ -322,69 +322,69 @@ void ClientCommands::topic(Message msg)
 /*
 void ClientCommands::bindNumericReplies()
 {
-	bind(1, this, SLOT(numericReply_001(KIRC::Message &)), 1, 1);
-	bind(2, this, SLOT(numericReply_002(KIRC::Message &)), 1, 1);
-	bind(3, this, SLOT(numericReply_003(KIRC::Message &)), 1, 1);
-	bind(4, this, SLOT(numericReply_004(KIRC::Message &)), 5, 5);
-	bind(5, this, SLOT(numericReply_004(KIRC::Message &)), 1, 1);
+	bind(1, this, SLOT(numericReply_001(Message &)), 1, 1);
+	bind(2, this, SLOT(numericReply_002(Message &)), 1, 1);
+	bind(3, this, SLOT(numericReply_003(Message &)), 1, 1);
+	bind(4, this, SLOT(numericReply_004(Message &)), 5, 5);
+	bind(5, this, SLOT(numericReply_004(Message &)), 1, 1);
 
-	bind(250, this, SLOT(numericReply_250(KIRC::Message &)));
-	bind(251, this, SLOT(numericReply_251(KIRC::Message &)));
-	bind(252, this, SLOT(numericReply_252(KIRC::Message &)), 2, 2);
-	bind(253, this, SLOT(numericReply_253(KIRC::Message &)), 2, 2);
-	bind(254, this, SLOT(numericReply_254(KIRC::Message &)), 2, 2);
-	bind(255, this, SLOT(numericReply_255(KIRC::Message &)), 1, 1);
+	bind(250, this, SLOT(numericReply_250(Message &)));
+	bind(251, this, SLOT(numericReply_251(Message &)));
+	bind(252, this, SLOT(numericReply_252(Message &)), 2, 2);
+	bind(253, this, SLOT(numericReply_253(Message &)), 2, 2);
+	bind(254, this, SLOT(numericReply_254(Message &)), 2, 2);
+	bind(255, this, SLOT(numericReply_255(Message &)), 1, 1);
 
-	bind(263, this, SLOT(numericReply_263(KIRC::Message &)));
-	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
-	bind(266, this, SLOT(numericReply_266(KIRC::Message &)));
+	bind(263, this, SLOT(numericReply_263(Message &)));
+	bind(265, this, SLOT(numericReply_265(Message &)));
+	bind(266, this, SLOT(numericReply_266(Message &)));
 
-	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2);
-	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1);
-//	bind(305, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
-//	bind(306, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
-	bind(307, this, SLOT(numericReply_307(KIRC::Message &)), 1, 1);
-	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
-	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(KIRC::Message &)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(KIRC::Message &)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(KIRC::Message &)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(KIRC::Message &)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(KIRC::Message &)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(KIRC::Message &)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2);
-//	bind(321, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(KIRC::Message &)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(KIRC::Message &)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(KIRC::Message &)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(KIRC::Message &)), 3, 3);
-//	bind(330, this, SLOT(ignoreMessage(KIRC::Message &)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(KIRC::Message &)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(KIRC::Message &)), 2, 2);
-	bind(333, this, SLOT(numericReply_333(KIRC::Message &)), 4, 4);
-	bind(352, this, SLOT(numericReply_352(KIRC::Message &)), 5, 10);
-	bind(353, this, SLOT(numericReply_353(KIRC::Message &)), 3, 3);
-	bind(366, this, SLOT(numericReply_366(KIRC::Message &)), 2, 2);
-	bind(369, this, SLOT(numericReply_369(KIRC::Message &)), 2, 2);
-	bind(372, this, SLOT(numericReply_372(KIRC::Message &)), 1, 1);
-	bind(375, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
-	bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
+	bind(301, this, SLOT(numericReply_301(Message &)), 2, 2);
+	bind(303, this, SLOT(numericReply_303(Message &)), 1, 1);
+//	bind(305, this, SLOT(ignoreMessage(Message &)), 0, 0 );
+//	bind(306, this, SLOT(ignoreMessage(Message &)), 0, 0 );
+	bind(307, this, SLOT(numericReply_307(Message &)), 1, 1);
+	bind(311, this, SLOT(numericReply_311(Message &)), 5, 5);
+	bind(312, this, SLOT(numericReply_312(Message &)), 3, 3);
+	bind(313, this, SLOT(numericReply_313(Message &)), 2, 2);
+	bind(314, this, SLOT(numericReply_314(Message &)), 5, 5);
+	bind(315, this, SLOT(numericReply_315(Message &)), 2, 2);
+	bind(317, this, SLOT(numericReply_317(Message &)), 3, 4);
+	bind(318, this, SLOT(numericReply_318(Message &)), 2, 2);
+	bind(319, this, SLOT(numericReply_319(Message &)), 2, 2);
+	bind(320, this, SLOT(numericReply_320(Message &)), 2, 2);
+//	bind(321, this, SLOT(ignoreMessage(Message &)), 0, 0 );
+	bind(322, this, SLOT(numericReply_322(Message &)), 3, 3);
+	bind(323, this, SLOT(numericReply_323(Message &)), 1, 1);
+	bind(324, this, SLOT(numericReply_324(Message &)), 2, 4);
+	bind(328, this, SLOT(numericReply_328(Message &)), 2, 2);
+	bind(329, this, SLOT(numericReply_329(Message &)), 3, 3);
+//	bind(330, this, SLOT(ignoreMessage(Message &)), 3, 3); // ???
+	bind(331, this, SLOT(numericReply_331(Message &)), 2, 2);
+	bind(332, this, SLOT(numericReply_332(Message &)), 2, 2);
+	bind(333, this, SLOT(numericReply_333(Message &)), 4, 4);
+	bind(352, this, SLOT(numericReply_352(Message &)), 5, 10);
+	bind(353, this, SLOT(numericReply_353(Message &)), 3, 3);
+	bind(366, this, SLOT(numericReply_366(Message &)), 2, 2);
+	bind(369, this, SLOT(numericReply_369(Message &)), 2, 2);
+	bind(372, this, SLOT(numericReply_372(Message &)), 1, 1);
+	bind(375, this, SLOT(ignoreMessage(Message&)), 0, 0 );
+	bind(376, this, SLOT(ignoreMessage(Message&)), 0, 0 );
 
-	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2);
-	bind(404, this, SLOT(numericReply_404(KIRC::Message &)), 2, 2);
-	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2);
-	bind(422, this, SLOT(numericReply_422(KIRC::Message &)), 1, 1);
-	bind(433, this, SLOT(numericReply_433(KIRC::Message &)), 2, 2);
-	bind(442, this, SLOT(numericReply_442(KIRC::Message &)), 2, 2);
-	bind(464, this, SLOT(numericReply_464(KIRC::Message &)), 1, 1);
-	bind(471, this, SLOT(numericReply_471(KIRC::Message &)), 2, 2);
-	bind(473, this, SLOT(numericReply_473(KIRC::Message &)), 2, 2);
-	bind(474, this, SLOT(numericReply_474(KIRC::Message &)), 2, 2);
-	bind(475, this, SLOT(numericReply_475(KIRC::Message &)), 2, 2);
+	bind(401, this, SLOT(numericReply_401(Message &)), 2, 2);
+	bind(404, this, SLOT(numericReply_404(Message &)), 2, 2);
+	bind(406, this, SLOT(numericReply_406(Message &)), 2, 2);
+	bind(422, this, SLOT(numericReply_422(Message &)), 1, 1);
+	bind(433, this, SLOT(numericReply_433(Message &)), 2, 2);
+	bind(442, this, SLOT(numericReply_442(Message &)), 2, 2);
+	bind(464, this, SLOT(numericReply_464(Message &)), 1, 1);
+	bind(471, this, SLOT(numericReply_471(Message &)), 2, 2);
+	bind(473, this, SLOT(numericReply_473(Message &)), 2, 2);
+	bind(474, this, SLOT(numericReply_474(Message &)), 2, 2);
+	bind(475, this, SLOT(numericReply_475(Message &)), 2, 2);
 
 	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(receivedServerMessage(KIRC::Message&)),0,0);
+	bind(477, this, SLOT(receivedServerMessage(Message&)),0,0);
 }
 */
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -399,7 +399,7 @@ void ClientCommands::numericReply_001(Message msg)
 	 */
 	receivedServerMessage(msg);
 
-//	msg->client->setConnectionState(KIRC::Socket::Open);
+//	msg->client->setConnectionState(Socket::Open);
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
@@ -944,30 +944,30 @@ void ClientCommands::numericReply_475(Message msg)
 /*
 void ClientCommands::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(KIRC::Message &)),
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message &)),
 		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(KIRC::Message &)),
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message &)),
 		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(KIRC::Message &)),
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message &)),
 		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(KIRC::Message &)),
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message &)),
 		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(KIRC::Message &)),
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message &)),
 		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(KIRC::Message &)),
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message &)),
 		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(KIRC::Message &)),
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message &)),
 		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(KIRC::Message &)),
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message &)),
 		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(KIRC::Message &)),
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message &)),
 		-1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(KIRC::Message &)),
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message &)),
 		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(KIRC::Message &)),
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message &)),
 		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(KIRC::Message &)),
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message &)),
 		-1,	-1,	"");
 }
 */
@@ -1151,4 +1151,4 @@ void ClientCommands::CtcpReply_version(Message msg)
 //	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.prefix(), msg.ctcpMessage().ctcpRaw());
 }
 
-#endif // KIRC_STRICT
+#endif
