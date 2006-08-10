@@ -81,12 +81,12 @@ ContactPropertyTmpl &ContactPropertyTmpl::operator=(
 {
 	if (this == &other)
 	{
-		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
+//		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
 		return *this;
 	}
 	if( d == other.d )
 	{
-		kDebug(14000) << k_funcinfo << "trying to assign d to itself!" << endl;
+//		kDebug(14000) << k_funcinfo << "trying to assign d to itself!" << endl;
 		return *this;
 	}
 	d->refCount--;
@@ -215,7 +215,7 @@ ContactProperty& ContactProperty::operator=(const ContactProperty& other)
 {
 	if (this == &other)
 	{
-		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
+//		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
 		return *this;
 	}
 
