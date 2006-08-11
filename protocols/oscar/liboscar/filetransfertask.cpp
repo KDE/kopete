@@ -164,6 +164,9 @@ void FileTransferTask::parseReq( Buffer b )
 		 case 0x0d:
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "default encoding " << tlv.data << endl;
 			break;
+		 case 0x0e:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language " << tlv.data << endl;
+			break;
 		 case 0x10:
 		 	m_proxy = true;
 			break;
@@ -193,7 +196,8 @@ void FileTransferTask::parseReq( Buffer b )
 	else if ( client_ip.isEmpty() )
 		m_ip = verified_ip;
 	else if ( client_ip == "\0\0\0\0" )
-	{
+	{ //ip is all 0's
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy??" << endl;
 		//wtf... I guess it wants *me* to request a proxy?
 		m_proxy = 1;
 		m_proxyRequester = 1;
@@ -352,6 +356,7 @@ void FileTransferTask::socketRead()
 
 void FileTransferTask::proxyRead()
 {
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray raw = m_connection->readAll(); //is this safe?
 	Buffer b( raw );
 	WORD length = b.getWord();
@@ -390,6 +395,7 @@ void FileTransferTask::proxyRead()
 		case 3: //ack
 			m_port = b.getWord();
 			m_ip = b.getBlock( 4 );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got port " << m_port << " ip " << m_ip << endl;
 			//now we send a proxy request to the other side
 			sendReq();
 			break;
@@ -400,6 +406,7 @@ void FileTransferTask::proxyRead()
 
 void FileTransferTask::oftRead()
 {
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray raw = m_connection->readAll(); //is this safe?
 	OftProtocol p;
 	uint b=0;
@@ -764,11 +771,12 @@ void FileTransferTask::socketConnected()
 void FileTransferTask::doneConnect()
 {
 	m_state = Default;
-	//TODO: proxy requester doesn't send accept
-	//yay! send an accept message
-	Oscar::Message msg = makeFTMsg();
-	msg.setReqType( 2 );
-	emit sendMessage( msg );
+	if ( ! m_proxyRequester )
+	{ //yay! send an accept message
+		Oscar::Message msg = makeFTMsg();
+		msg.setReqType( 2 );
+		emit sendMessage( msg );
+	}
 	//next the receiver should get a prompt from the sender.
 	if ( m_action == Send )
 		oftPrompt();
@@ -868,6 +876,7 @@ void FileTransferTask::connectFailed()
 bool FileTransferTask::listen()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	m_state = Default;
 	//listen for connections
 	m_ss = new KServerSocket( this );
 	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(readyAccept()) );
@@ -904,7 +913,6 @@ bool FileTransferTask::listen()
 
 void FileTransferTask::sendReq()
 {
-	m_state = Default;
 	//if we're not using a proxy we need a working serversocket
 	if (!( m_proxy || listen() ))
 		return;
