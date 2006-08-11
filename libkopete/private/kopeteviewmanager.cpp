@@ -40,6 +40,63 @@
 
 #include "kopeteviewmanager.h"
 
+/**
+ * Used to exrtract the message that will be shown in the notification popup.
+ * 
+ * Was in KopeteSystemTray::squashMessage in KDE3
+ */
+
+static QString squashMessage( const Kopete::Message& msg )
+{
+	QString msgText = msg.parsedBody();
+
+	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
+	rx.setMinimal( true );
+	if ( rx.search( msgText ) == -1 )
+	{
+		// no URLs in text, just pick the first 30 chars of
+		// the parsed text if necessary. We used parsed text
+		// so that things like "<knuff>" show correctly
+		//  Escape it after snipping it to not snip entities
+		msgText =msg.plainBody() ;
+		if( msgText.length() > 30 )
+			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
+		msgText=Kopete::Message::escape(msgText);
+	}
+	else
+	{
+		QString plainText = msg.plainBody();
+		if ( plainText.length() > 30 )
+		{
+			QString fullUrl = rx.cap( 2 );
+			QString shorterUrl;
+			if ( fullUrl.length() > 30 )
+			{
+				QString urlWithoutProtocol = rx.cap( 4 );
+				shorterUrl = urlWithoutProtocol.left( 27 )
+						+ QString::fromLatin1( "... " );
+			}
+			else
+			{
+				shorterUrl = fullUrl.left( 27 )
+						+ QString::fromLatin1( "... " );
+			}
+			// remove message text
+			msgText = QString::fromLatin1( "... " ) +
+					rx.cap( 1 ) +
+					QString::fromLatin1( " ..." );
+			// find last occurrence of URL (the one inside the <a> tag)
+			int revUrlOffset = msgText.findRev( fullUrl );
+			msgText.replace( revUrlOffset,
+						fullUrl.length(), shorterUrl );
+		}
+	}
+ 	kDebug(14000) << k_funcinfo << msgText << endl;	
+	return msgText;
+}
+
+
+
 typedef QMap<Kopete::ChatSession*,KopeteView*> ManagerMap;
 typedef QList<Kopete::MessageEvent*> EventList;
 
@@ -223,12 +280,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 				else
 					msgFrom = msg.from()->contactId();
 
-				QString msgText = msg.plainBody();
-				if( msgText.length() > 90 )
-					msgText = msgText.left(88) + QLatin1String("...");
-
 				QString eventId;
-				KLocalizedString body = ki18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
+				KLocalizedString body = ki18n( "<qt>Incoming message from %1<br />\"%2\"</qt>" );
 				switch( msg.importance() )
 				{
 					case Kopete::Message::Low:
@@ -236,14 +289,14 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 						break;
 					case Kopete::Message::Highlight:
 						eventId = QLatin1String( "kopete_contact_highlight" );
-						body = ki18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
+						body = ki18n( "<qt>A highlighted message arrived from %1<br />\"%2\"</qt>" );
 						break;
 					default:
 						eventId = QLatin1String( "kopete_contact_incoming" );
 				}
 				KNotification *notify=new KNotification(eventId, w, KNotification::Persistant);
-				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString());
-				notify->setActions(QStringList( i18n( "View" ) ));
+				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
+                notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
 				
 				foreach(QString cl , msg.classes())
 					notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
@@ -257,7 +310,9 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 						notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
 					}
 				}
-				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );
+				connect(notify,SIGNAL(activated()), manager , SLOT(raiseView()) );
+				connect(notify,SIGNAL(action1Activated()), manager , SLOT(raiseView()) );
+                connect(notify,SIGNAL(action2Activated()), event , SLOT(discard()) );
 				connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 				notify->sendEvent();
 			}
