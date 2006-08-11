@@ -32,9 +32,9 @@
 class IRCAccount;
 class IRCProtocol;
 
-namespace KIRC
+namespace KIrc
 {
-class Client;
+class ClientSocket;
 }
 
 namespace Kopete
@@ -59,12 +59,12 @@ class IRCContact
 public:
 	typedef QList<IRCContact *> List;
 
-	IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity,
+	IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity,
 		Kopete::MetaContact *metac = 0, const QString& icon = QString::null);
 	~IRCContact();
 
 	IRCAccount *ircAccount() const;
-	KIRC::Client *kircClient() const;
+	KIrc::ClientSocket *kircClient() const;
 
 	QString caption() const;
 

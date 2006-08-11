@@ -23,7 +23,7 @@
 
 #include "kircclientcommandhandler.moc"
 
-#include "kircclient.h"
+#include "kircclientsocket.h"
 #include "kircmessage.h"
 #include "kirctransferhandler.h"
 

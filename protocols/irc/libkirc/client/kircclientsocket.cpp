@@ -20,7 +20,7 @@
 #include <config.h>
 #endif
 
-#include "kircclient.moc"
+#include "kircclientsocket.moc"
 
 #include "kircclientcommandhandler.h"
 #include "kircentity.h"
@@ -32,7 +32,7 @@
 #include <kstandarddirs.h>
 #include <kurl.h>
 
-class KIrc::Client::Private
+class KIrc::ClientSocket::Private
 {
 public:
 	Private()
@@ -48,7 +48,7 @@ public:
 
 using namespace KIrc;
 
-Client::Client(QObject *parent)
+ClientSocket::ClientSocket(QObject *parent)
 	: Socket(parent),
 	  d( new Private )
 {
@@ -70,7 +70,7 @@ Client::Client(QObject *parent)
 		this, SLOT(onReceivedMessage(KIrc::Message &)));
 }
 
-Client::~Client()
+ClientSocket::~ClientSocket()
 {
 	kDebug(14120) << k_funcinfo << endl;
 //	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
@@ -78,17 +78,17 @@ Client::~Client()
 	delete d;
 }
 
-bool Client::isDisconnected() const
+bool ClientSocket::isDisconnected() const
 {
 	return connectionState() == Idle;
 }
 
-bool Client::isConnected() const
+bool ClientSocket::isConnected() const
 {
 	return connectionState() == Open;
 }
 
-void Client::authentify()
+void ClientSocket::authentify()
 {
 /*
 	// If password is given for this server, send it now, and don't expect a reply
@@ -105,12 +105,12 @@ void Client::authentify()
 */
 }
 
-Entity::Ptr Client::server()
+Entity::Ptr ClientSocket::server()
 {
 	return d->server;
 }
 
-ClientCommandHandler *Client::clientCommandHandler()
+ClientCommandHandler *ClientSocket::clientCommandHandler()
 {
 //	return dynamic_cast<ClientCommandHandler *>(commandHandler());
 	return 0;

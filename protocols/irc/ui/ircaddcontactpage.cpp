@@ -20,8 +20,6 @@
 
 #include "ircaccount.h"
 
-//Added by qt3to4:
-//#include <Q3VBoxLayout>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -39,7 +37,7 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
 
 	//(new Q3VBoxLayout(this))->setAutoAdd(true);
 
-	d->search = new ChannelList( hbox, a->client() );
+//	d->search = new ChannelList( hbox, a->client() );
 	d->account = a;
 
 	connect( d->search, SIGNAL( channelSelected( const QString & ) ),

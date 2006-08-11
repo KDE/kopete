@@ -23,9 +23,10 @@
 
 #include "kircclientcommands.moc"
 
-#include "kircclient.h"
-#include "kircevent.h"
+#include "kircclientsocket.h"
 #include "kirctransferhandler.h"
+
+#include "kircevent.h"
 
 #include <kdebug.h>
 #include <klocale.h>

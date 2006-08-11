@@ -16,13 +16,13 @@
     *************************************************************************
 */
 
-#include "irccontact.h"
+#include "irccontact.moc"
 
 #include "ircaccount.h"
 #include "ircprotocol.h"
 #include "ksparser.h"
 
-#include "kircclient.h"
+#include "kircclientsocket.h"
 #include "kircentity.h"
 
 #include "kopetechatsessionmanager.h"
@@ -44,7 +44,7 @@ using namespace Kopete;
 class IRCContact::Private
 {
 public:
-	KIRC::Entity::Ptr entity;
+	KIrc::Entity::Ptr entity;
 
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
@@ -59,7 +59,7 @@ public:
 	QList<KAction *> userActions;
 };
 
-IRCContact::IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
+IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon),
 	  d (new IRCContact::Private)
 {
@@ -74,13 +74,13 @@ IRCContact::IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity, Met
 		setMetaContact(metac);
 	}
 
-	KIRC::Client *client = kircClient();
+	KIrc::ClientSocket *client = kircClient();
 
 	// ChatSessionManager stuff
 //	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
-	connect(client, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
+	connect(client, SIGNAL(connectionStateChanged(KIrc::ConnectionState)),
 		this, SLOT(updateStatus()));
 /*
 	connect(entity, SIGNAL(updated()),
@@ -122,7 +122,7 @@ IRCAccount *IRCContact::ircAccount() const
 	return static_cast<IRCAccount *>(account());
 }
 
-KIRC::Client *IRCContact::kircClient() const
+KIrc::ClientSocket *IRCContact::kircClient() const
 {
 	return ircAccount()->client();
 }
@@ -146,17 +146,17 @@ void IRCContact::entityUpdated()
 	// Update Icon properties
 	switch(m_entity->type())
 	{
-//	case KIRC::Entity::Unknown: // Use default
-	case KIRC::Entity::Server:
+//	case KIrc::Entity::Unknown: // Use default
+	case KIrc::Entity::Server:
 		setIcon("irc_server");
 		break;
-	case KIRC::Entity::Channel:
+	case KIrc::Entity::Channel:
 		setIcon("irc_channel");
 		break;
-//	case KIRC::Entity::Service: // Use default for now
+//	case KIrc::Entity::Service: // Use default for now
 //		setIcon("irc_service");
 //		break;
-	case KIRC::Entity::User:
+	case KIrc::Entity::User:
 		setIcon("irc_user");
 		break;
 	default:
@@ -233,12 +233,12 @@ ChatSession *IRCContact::manager(CanCreateFlags create)
 ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags create)
 {
 	IRCAccount *account = ircAccount();
-	KIRC::Client *engine = kircClient();
+	KIrc::ClientSocket *engine = kircClient();
 /*
 	Kopete::ChatSession *chatSession = d->chatSessions.get();
 	if (!chatSession)
 	{
-//		if (engine->status() == KIRC::Client::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
+//		if (engine->status() == KIrc::ClientSocket::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
 		chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
@@ -419,6 +419,4 @@ void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QSt
 {
 	addressBookData[protocol()->addressBookIndexField()] = contactId() + QChar(0xE120) + account()->accountId();
 }
-
-#include "irccontact.moc"
 

@@ -1,5 +1,5 @@
 /*
-    kircclient.h - IRC Client
+    kircclientsocket.h - IRC Client
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENT_H
-#define KIRCCLIENT_H
+#ifndef KIRCCLIENTSOCKET_H
+#define KIRCCLIENTSOCKET_H
 
 #include "kircsocket.h"
 
@@ -33,14 +33,14 @@ class Message;
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class Client
+class ClientSocket
 	: public KIrc::Socket
 {
 	Q_OBJECT
 
 public:
-	Client(QObject *parent = 0);
-	~Client();
+	ClientSocket(QObject *parent = 0);
+	~ClientSocket();
 
 public: // READ properties accessors.
 
@@ -78,7 +78,7 @@ private slots:
 	void authentify();
 
 private:
-	Q_DISABLE_COPY(Client)
+	Q_DISABLE_COPY(ClientSocket)
 
 	class Private;
 	Private * const d;

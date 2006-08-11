@@ -19,14 +19,13 @@
 
 #include "ircaccount.h"
 
-#include "ircconst.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
 
-#include "kircclient.h"
+#include "kircclientsocket.h"
 #include "kircentitymanager.h"
 #include "kircevent.h"
-#include "kircstdcommands.h"
+#include "kircstdmessages.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaway.h"
@@ -70,7 +69,7 @@ public:
 	Kopete::ChatSession *manager;
 	QString autoConnect;
 
-	KIRC::Client *client;
+	KIrc::ClientSocket *client;
 	IRC::Network network;
 	int currentHost;
 
@@ -94,15 +93,15 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	: PasswordedAccount(IRCProtocol::self(), accountId, true),
 	  d( new Private )
 {
-	d->client = new KIRC::Client(this);
+	d->client = new KIrc::ClientSocket(this);
 	d->autoConnect = autoChan;
 	d->currentHost = 0;
 
-	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
-			 this, SLOT(clientConnectionStateChanged(KIRC::ConnectionState)));
+	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIrc::ConnectionState)),
+			 this, SLOT(clientConnectionStateChanged(KIrc::ConnectionState)));
 
-	QObject::connect(d->client, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::Entity::Ptr &, const KIRC::Entity::List &, const QString &)),
-			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::Entity::Ptr &, const KIRC::Entity::List &, const QString &)));
+	QObject::connect(d->client, SIGNAL(receivedMessage(KIrc::MessageType, const KIrc::Entity::Ptr &, const KIrc::Entity::List &, const QString &)),
+			 this, SLOT(receivedMessage(KIrc::MessageType, const KIrc::Entity::Ptr &, const KIrc::Entity::List &, const QString &)));
 
 //	loadProperties();
 
@@ -180,7 +179,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 IRCAccount::~IRCAccount()
 {
 	kDebug(14120) << k_funcinfo << endl;
-	KIRC::StdCommands::quit(d->client, i18n("Plugin Unloaded"));
+//	KIrc::StdMessage::quit(d->client, i18n("Plugin Unloaded"));
 
 	delete d;
 }
@@ -411,7 +410,7 @@ void IRCAccount::setAutoShowServerWindow(bool autoShow)
 	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShow);
 }
 
-KIRC::Client *IRCAccount::client() const
+KIrc::ClientSocket *IRCAccount::client() const
 {
 	kDebug(14120) << k_funcinfo << endl;
 	return d->client;
@@ -488,7 +487,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 	clientConnect();
 }
 
-void IRCAccount::clientConnectionStateChanged(KIRC::Socket::ConnectionState newstate)
+void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState newstate)
 {
 	kDebug(14120) << k_funcinfo << endl;
 
@@ -496,35 +495,31 @@ void IRCAccount::clientConnectionStateChanged(KIRC::Socket::ConnectionState news
 
 	switch (newstate)
 	{
-	case KIRC::Socket::Connecting:
-	{
+	case KIrc::Socket::Connecting:
 		// d->expectedOnlineStatus check and use it
 		if (autoShowServerWindow())
 			myServer()->startChat();
 		break;
-	}
 /*
-	case KIRC::Socket::Open:
-		{
-			//Reset the host so re-connection will start over at first server
-			d->currentHost = 0;
-//			d->contactManager->addToNotifyList( d->client->nickName() );
+	case KIrc::Socket::Open:
+		//Reset the host so re-connection will start over at first server
+		d->currentHost = 0;
+//		d->contactManager->addToNotifyList( d->client->nickName() );
 
-			// HACK! See bug #85200 for details. Some servers still cannot accept commands
-			// after the 001 is sent, you need to wait until all the init junk is done.
-			// Unfortunatly, there is no way for us to know when it is done (it could be
-			// spewing out any number of replies), so just try delaying it
-//			QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
-		}
+		// HACK! See bug #85200 for details. Some servers still cannot accept commands
+		// after the 001 is sent, you need to wait until all the init junk is done.
+		// Unfortunatly, there is no way for us to know when it is done (it could be
+		// spewing out any number of replies), so just try delaying it
+//		QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		break;
-	case KIRC::Socket::Closing:
+	case KIrc::Socket::Closing:
 //		mySelf()->setOnlineStatus( protocol->m_UserStatusOffline );
 //		d->contactManager->removeFromNotifyList( d->client->nickName() );
 
 //		if (d->contactManager && !autoConnect.isNull())
 //			AccountManager::self()->removeAccount( this );
 		break;
-//	case KIRC::Socket::Timeout:
+//	case KIrc::Socket::Timeout:
 		//Try next server
 //		connect();
 //		break;
@@ -561,13 +556,13 @@ void IRCAccount::quit( const QString &quitMessage )
 {
 	kDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
-	KIRC::StdCommands::quit(d->client, quitMessage.isEmpty() ? defaultQuitMessage() : quitMessage);
+//	KIrc::StdCommands::quit(d->client, quitMessage.isEmpty() ? defaultQuitMessage() : quitMessage);
 }
 
 void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
 	kDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
-	KIRC::StdCommands::away(d->client, awayMessage);
+//	KIrc::StdCommands::away(d->client, awayMessage);
 }
 
 void IRCAccount::slotShowServerWindow()
@@ -666,7 +661,7 @@ IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 	return 0;
 }
 
-IRCContact *IRCAccount::getContact(const KIRC::Entity::Ptr &entity, MetaContact *metac)
+IRCContact *IRCAccount::getContact(const KIrc::Entity::Ptr &entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 
@@ -689,7 +684,7 @@ void IRCAccount::destroyed(IRCContact *contact)
 	d->contacts.remove(contact);
 }
 
-void IRCAccount::receivedEvent(KIRC::Event *event)
+void IRCAccount::receivedEvent(KIrc::Event *event)
 {
 /*
 	IRCContact *from = getContact(event->from());
@@ -702,7 +697,7 @@ void IRCAccount::receivedEvent(KIRC::Event *event)
 	Kopete::Message::MessageType msgType;
 	switch (type)
 	{
-	case KIRC::????: // Action
+	case KIrc::????: // Action
 		msgType = Kopete::Message::TypeAction;
 		break;
 	default:

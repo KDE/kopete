@@ -10,7 +10,7 @@ include_directories(
 )
 
 set(kopeteirc_ui_SRCS 
-  ui/channellist.cpp 
+#  ui/channellist.cpp 
 #  ui/channellistdialog.cpp 
   ui/ircaddcontactpage.cpp 
 #  ui/ircdialogs.cpp 
@@ -55,3 +55,4 @@ install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES kopete_irc.desktop irc.protocol  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES ircchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_irc)
 install( FILES ircnetworks.xml  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+

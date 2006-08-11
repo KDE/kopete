@@ -29,7 +29,7 @@
 //#include "ircguiclient.h"
 #include "irceditaccountwidget.h"
 
-#include "kircclient.h"
+#include "kircclientsocket.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopetechatsessionmanager.h"
@@ -316,8 +316,8 @@ void IRCProtocol::initOnlineStatus()
 		QString::null, i18n("Offline")),
 	m_statusMap.insert(ChannelOffline.internalStatus(), ChannelOffline);
 
-	KIRC::EntityStatus status;
-	status.type = KIRC::User;
+	KIrc::EntityStatus status;
+	status.type = KIrc::User;
 
 	onlineStatusFor(status, OnlineStatusManager::Offline);
 
@@ -341,16 +341,16 @@ void IRCProtocol::initOnlineStatus()
 */
 }
 
-OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::Entity::Ptr &entity)
+OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity)
 {
 //	return onlineStatusFor(entity, 0);
 	return OnlineStatus::Unknown;
 }
 /*
-OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::Entity::Ptr &entity, unsigned categories)
+OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity, unsigned categories)
 {
 	// Only copy the needed status
-	KIRC::EntityStatus status;
+	KIrc::EntityStatus status;
 	status.online = _status.online;
 	status.mode_a = _status.mode_a;
 //	status.mode_i = _status.mode_i;

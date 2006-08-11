@@ -16,13 +16,11 @@
     *************************************************************************
 */
 
-#include "irceditaccountwidget.h"
+#include "irceditaccountwidget.moc"
 
 #include "ircaccount.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
-
-#include "kircclient.h"
 
 #include "kopetepasswordwidget.h"
 
@@ -278,6 +276,4 @@ bool IRCEditAccountWidget::validateData()
 
 	return false;
 }
-
-#include "irceditaccountwidget.moc"
 
