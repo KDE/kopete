@@ -22,6 +22,7 @@ set(kopete_qq_PART_SRCS
    qqincomingmessage.cpp 
    ui/qqwebcamdialog.cpp 
    libeva.cpp
+   evautil.cpp
    md5.c
    crypt.cpp
 )
