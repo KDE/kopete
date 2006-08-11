@@ -37,7 +37,6 @@
 #include <kiconloader.h>
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
-#include "kopeteballoon.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
@@ -58,7 +57,6 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	: KSystemTrayIcon(parent)
 	, mMovie(0)
-	, m_balloon(0)
 {
 	kDebug(14010) <<  k_funcinfo << endl;
 	setToolTip(kapp->aboutData()->shortDescription());
@@ -234,128 +232,24 @@ void KopeteSystemTray::slotBlink()
 void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 {
 	if( Kopete::BehaviorSettings::self()->useMessageStack() )
-	{
 		mEventList.prepend( event );
-		mBalloonEventList.prepend( event );
-	}
 	else
-	{
 		mEventList.append( event );
-		mBalloonEventList.append( event );
-	}
 
 	connect(event, SIGNAL(done(Kopete::MessageEvent*)),
 		this, SLOT(slotEventDone(Kopete::MessageEvent*)));
 
-	if( event->message().manager() != 0 )
-	{
-		if( event->message().manager()->account() )
-		{
-			if( !event->message().manager()->account()->isAway() ||
-				Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
-			{
-				addBalloon();
-			}
-			else
-			{
-				kDebug(14000) << k_funcinfo << "Supressing balloon, account is away" << endl;
-			}
-		}
-	}
-	else
-		kDebug(14000) << k_funcinfo << "NULL message().manager()!" << endl;
-
 	// tray animation
 	if ( Kopete::BehaviorSettings::self()->trayflashNotify() )
-		if( mBalloonEventList.count() == mEventList.count() )
-			startBlink();
-		else
-			stopBlink();
+		startBlink();
 }
 
 void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 {
 	mEventList.removeAll(event);
 
-	removeBalloonEvent(event);
-
 	if(mEventList.isEmpty())
 		stopBlink();
-}
-
-void KopeteSystemTray::slotRemoveBalloon()
-{
-	removeBalloonEvent(mBalloonEventList.first());
-}
-
-void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
-{
-#warning PORT ME
-#if 0
-	bool current= event==mBalloonEventList.first();
-	mBalloonEventList.removeAll(event);
-
-	if(current && m_balloon)
-	{
-		m_balloon->deleteLater();
-		m_balloon=0l;
-		if(!mBalloonEventList.isEmpty())
-		{
-			//delay the addBalloon to let the time to event be deleted
-			//in case a contact has been deleted   cf Bug 100196
-			QTimer::singleShot(0, this, SLOT(addBalloon()));
-		}
-		else
-		{
-			if(Kopete::BehaviorSettings::self()->trayflashNotify() && !mEventList.isEmpty())
-				startBlink();
-		}
-	}
-#endif
-}
-
-void KopeteSystemTray::addBalloon()
-{
-#warning PORT ME
-#if 0
-	/*kDebug(14010) << k_funcinfo <<
-		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
-		":" << KopetePrefs::prefs()->balloonNotify()
-		<< ":" << !mBalloonEventList.isEmpty() << endl;*/
-
-	if( m_balloon && Kopete::BehaviorSettings::self()->useMessageStack() )
-	{
-		m_balloon->deleteLater();
-		m_balloon=0l;
-	}
-
-	if( !m_balloon && Kopete::BehaviorSettings::self()->showSystemTray() && Kopete::BehaviorSettings::self()->balloonNotify() && !mBalloonEventList.isEmpty() )
-	{
-		Kopete::Message msg = mBalloonEventList.first()->message();
-
-		if ( msg.from() )
-		{
-			QString msgText = squashMessage( msg );
-			kDebug(14010) << k_funcinfo << "msg text=" << msgText << endl;
-
-			QString msgFrom;
-			if( msg.from()->metaContact() )
-				msgFrom = msg.from()->metaContact()->displayName();
-			else
-				msgFrom = msg.from()->contactId();
-			m_balloon = new KopeteBalloon(
-				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>",
-				      msgFrom, msgText ), QString::null );
-			connect(m_balloon, SIGNAL(signalBalloonClicked()), mBalloonEventList.first() , SLOT(apply()));
-			connect(m_balloon, SIGNAL(signalButtonClicked()), mBalloonEventList.first() , SLOT(apply()));
-			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mBalloonEventList.first() , SLOT(ignore()));
-			connect(m_balloon, SIGNAL(signalTimeout()), this , SLOT(slotRemoveBalloon()));
-			m_balloon->setAnchor(mapToGlobal(pos()));
-			m_balloon->show();
-			KWin::setOnAllDesktops(m_balloon->winId(), true);
-		}
-	}
-#endif
 }
 
 void KopeteSystemTray::slotConfigChanged()

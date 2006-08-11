@@ -31,7 +31,6 @@ class QTimer;
 class QPoint;
 class KMenu;
 class KActionMenu;
-class KopeteBalloon;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -71,13 +70,10 @@ private Q_SLOTS:
 	void slotEventDone(Kopete::MessageEvent *);
 	void slotConfigChanged();
 	void slotReevaluateAccountStates();
-	void slotRemoveBalloon();
-	void addBalloon();
 
 private:
 	KopeteSystemTray( QWidget* parent );
 	QString squashMessage( const Kopete::Message& msgText );
-	void removeBalloonEvent(Kopete::MessageEvent *);
 
 	QTimer *mBlinkTimer;
 	QIcon mKopeteIcon;
@@ -90,8 +86,6 @@ private:
 	static KopeteSystemTray* s_systemTray;
 
 	QList<Kopete::MessageEvent*> mEventList;
-	QList<Kopete::MessageEvent*> mBalloonEventList;
-	KopeteBalloon *m_balloon;
 };
 
 #endif

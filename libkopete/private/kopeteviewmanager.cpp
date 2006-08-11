@@ -199,23 +199,17 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		// in group chats always append highlighted messages to queue
 		appendMessageEvent = appendMessageEvent && (!d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight);
 
-        if( appendMessageEvent )
-        {
-            if ( !outgoingMessage )
-            {
-                Kopete::MessageEvent *event=new Kopete::MessageEvent(msg,manager);
-                d->eventList.append( event );
-                connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
-                Kopete::ChatSessionManager::self()->postNewEvent(event);
-            }
-        }
-        else if( d->eventList.isEmpty() )
-        {
-            readMessages( manager, outgoingMessage );
-        }
-
-		if ( !outgoingMessage && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
-				&& msg.direction() != Kopete::Message::Internal )
+		
+		Kopete::MessageEvent *event=0L;
+		if ( !outgoingMessage )
+		{
+			event=new Kopete::MessageEvent(msg,manager);
+			d->eventList.append( event );
+			connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
+		}
+		
+		if ( event && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
+					&& msg.direction() != Kopete::Message::Internal )
 		{
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			if( (!manager->view(false) || !w || manager->view() != d->activeView ||
@@ -233,28 +227,27 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 				if( msgText.length() > 90 )
 					msgText = msgText.left(88) + QLatin1String("...");
 
-				QString event;
+				QString eventId;
 				KLocalizedString body = ki18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
 				switch( msg.importance() )
 				{
 					case Kopete::Message::Low:
-						event = QLatin1String( "kopete_contact_lowpriority" );
+						eventId = QLatin1String( "kopete_contact_lowpriority" );
 						break;
 					case Kopete::Message::Highlight:
-						event = QLatin1String( "kopete_contact_highlight" );
+						eventId = QLatin1String( "kopete_contact_highlight" );
 						body = ki18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 						break;
 					default:
-						event = QLatin1String( "kopete_contact_incoming" );
+						eventId = QLatin1String( "kopete_contact_incoming" );
 				}
-				KNotification *notify=new KNotification(event, w);
+				KNotification *notify=new KNotification(eventId, w, KNotification::Persistant);
 				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( Qt::escape(msgText) ).toString());
 				notify->setActions(QStringList( i18n( "View" ) ));
 				
 				foreach(QString cl , msg.classes())
 					notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
 
-				
 				Kopete::MetaContact *mc= msg.from()->metaContact();
 				if(mc)
 				{
@@ -265,9 +258,20 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					}
 				}
 				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );
+				connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 				notify->sendEvent();
 			}
 		}
+
+		if( /* appendMessageEvent && */ event  )
+		{
+			Kopete::ChatSessionManager::self()->postNewEvent(event);
+		}
+		else if( d->eventList.isEmpty() )
+		{
+			readMessages( manager, outgoingMessage );
+		}
+
 	}
 }
 
