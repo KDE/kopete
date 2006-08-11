@@ -79,7 +79,7 @@ public:
 	 *  show into the chatview, with Emoticons, and URLs
 	 * - Crypted is used only by Jabber and the Cryptography plugin
 	 */
-	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|Qt::RichText , Crypted = 0x08|Qt::PlainText};
+	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
 
 	/**
 	 * Specifies the type of the message.
