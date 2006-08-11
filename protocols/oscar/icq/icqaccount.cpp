@@ -174,6 +174,10 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setHideIP( configGroup()->readEntry( "HideIP", true ) );
 		oscarSettings->setRequireAuth( configGroup()->readEntry( "RequireAuth", false ) );
 		oscarSettings->setRespectRequireAuth( configGroup()->readEntry( "RespectRequireAuth", true ) );
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
+		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
+		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
 		DWORD status = pres.toOscarStatus();
 
