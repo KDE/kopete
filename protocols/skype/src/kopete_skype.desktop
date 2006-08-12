@@ -19,6 +19,7 @@ Name=Skype
 Name[pa]=ਸਕਾਈਪੀ
 Name[xx]=xxSkypexx
 Comment=Skype protocol plugin (only wrapper!)
+Comment[be]=Утулка пратаколу Skype (толькі wrapper!)
 Comment[cs]=Modul protokolu Skype (pouze wrapper!)
 Comment[da]=Plugin for skype-protokol (kun wrapper!)
 Comment[de]=Skype Protokoll-Modul (nur ein Wrapper!)
