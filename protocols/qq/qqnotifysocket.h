@@ -91,6 +91,7 @@ protected:
 	void sendLogin(); 
 	void sendContactList( short pos );
 	void sendChangeStatus( char status );
+	void sendRequestTransferKey();
 	void sendGoodbye() { return; }
 
 public:
@@ -118,7 +119,19 @@ private:
 	 * Twice Md5 hashed password
 	 */
 	Eva::ByteArray m_passwordKey;
+
+	/**
+	 * sessionKey is used to encrypt the conversation
+	 */
 	Eva::ByteArray m_sessionKey;
+
+	/**
+	 * transferKey is the identification for the conversation
+	 * transferToken is used to fetch the user picture 
+	 */
+	Eva::ByteArray m_transferKey;
+	Eva::ByteArray m_transferToken;
+
 	char m_loginMode;
 	// FIXME: Do we need this ?
 	QString m_password;

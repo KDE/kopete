@@ -183,7 +183,28 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::SendMsg :
 		case Eva::ReceiveMsg :
 		case Eva::RemoveMe :
+			break;
+
 		case Eva::RequestKey :
+		{
+			char type = text.data()[0];
+			char reply = text.data()[1];
+
+			if( reply == Eva::RequestKeyOK )
+			{
+				// NOTE: the type of the key supports TransferKey only.
+				if( type == Eva::TransferKey )
+				{
+					m_transferKey = Eva::Packet::transferKey( text );
+					m_transferToken = Eva::Packet::transferToken( text );
+					kDebug( 14140 ) << "transferKey =" << QByteArray( m_transferKey.data(), m_transferKey.size()) << endl;
+					kDebug( 14140 ) << "transferToken =" << QByteArray( m_transferToken.data(), m_transferToken.size()) << endl;
+
+				}
+			}
+			break;
+		}
+
 		case Eva::GetCell :
 			break;
 
@@ -209,7 +230,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					// FIXME: We might login in as invisible as well.
 					m_newstatus = Kopete::OnlineStatus::Online;
 					sendChangeStatus( Eva::Online );
-					// TODO: sendRequestKey() for the file transfer function.
+					sendRequestTransferKey();
 
 					break;
 
@@ -309,6 +330,12 @@ void QQNotifySocket::sendLogin()
 void QQNotifySocket::sendChangeStatus( char status )
 {
 	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+
+void QQNotifySocket::sendRequestTransferKey()
+{
+	Eva::ByteArray packet = Eva::requestTransferKey( m_qqId, m_id++, m_sessionKey);
 	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
 

@@ -196,6 +196,14 @@ namespace Eva {
 		return data;
 	}
 
+	ByteArray requestTransferKey( int id, short const sequence, const ByteArray& key )
+	{
+		ByteArray text(1);
+		text += TransferKey;
+		
+		return buildPacket(id, RequestKey, sequence, key, text );
+	}
+
 	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos )
 	{
 		ByteArray text(5);

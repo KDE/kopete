@@ -61,6 +61,7 @@ namespace Eva {
 	char const LoginWrongPassword = 0x05;
 	char const LoginMiscError = 0x06;
 	char const ChangeStatusOK= 0x30;
+	char const RequestKeyOK = 0x00;
 
 	// Lengths
 	int const MaxPacketLength = 65535;
@@ -77,6 +78,7 @@ namespace Eva {
 	const char ContactListEnd = 0xff;
 	const char UploadGroupNames = 0x2;
 	const char DownloadGroupNames = 0x1;
+	const char TransferKey = 0x03; // file agent key in eva
 
 	// POD storage
 	struct ContactInfo {
@@ -246,6 +248,12 @@ namespace Eva {
 		static inline ByteArray sessionKey( ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+1, KeyLength ); }
 
+		static inline ByteArray transferKey( ByteArray& data ) 
+		{ return ByteArray::duplicate( data.data()+2, KeyLength ); }
+
+		static inline ByteArray transferToken( ByteArray& data ) 
+		{ return ByteArray::duplicate( data.data()+2+KeyLength+13, (unsigned)(data.data()[2+KeyLength+12]) ); }
+
 		static inline int remoteIP( ByteArray& data ) 
 		{ return ntohl( type_cast<int> (data.data()+27) ); }
 
@@ -288,6 +296,7 @@ namespace Eva {
 	ByteArray login( int id, short const sequence, const ByteArray& key, 
 			const ByteArray& token, char const loginMode );
 	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status );
+	ByteArray requestTransferKey( int id, short const sequence, const ByteArray& key );
 	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos = 0);
 	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );
 	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos );
