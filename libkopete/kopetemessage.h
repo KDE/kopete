@@ -39,7 +39,7 @@ class QDateTime;
 namespace Kopete {
 
 
-  class ChatSession;
+class ChatSession;
 class Contact;
 
 

@@ -17,10 +17,10 @@
     *************************************************************************
 */
 
-#ifndef __KOPETECONTACT_H__
-#define __KOPETECONTACT_H__
+#ifndef KOPETECONTACT_H
+#define KOPETECONTACT_H
 
-#include <qobject.h>
+#include "kopetecontactlistelement.h"
 
 #include <kurl.h>
 #include <kdemacros.h>
@@ -54,7 +54,8 @@ typedef QList<Group *> GroupList;
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
-class KOPETE_EXPORT Contact : public QObject
+class KOPETE_EXPORT Contact
+	: public ContactListElement
 {
 	Q_OBJECT
 
@@ -563,6 +564,4 @@ private:
 } //END namespace Kopete
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

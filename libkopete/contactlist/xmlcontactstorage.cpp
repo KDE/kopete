@@ -65,6 +65,11 @@ public:
     bool isValid;
     QString xmlFilename;
     QString errorMessage;
+
+    /**
+     * Current contact list version * 10 ( i.e. '10' is version '1.0' )
+     */
+    static const uint ContactListVersion = 10;
 };
 
 

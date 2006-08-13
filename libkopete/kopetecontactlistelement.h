@@ -19,9 +19,9 @@
 #ifndef KOPETEPLUGINDATAOBJECT_H
 #define KOPETEPLUGINDATAOBJECT_H
 
-#include <QObject>
-#include <QList>
-#include <QMap>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QObject>
 
 #include "kopete_export.h"
 
@@ -42,7 +42,8 @@ class Plugin;
  *
  * It also allow to store an icon for this element.
  */
-class KOPETE_EXPORT ContactListElement : public QObject  /* public KopeteNotifyDataObject */
+class KOPETE_EXPORT ContactListElement
+	: public QObject  /* public KopeteNotifyDataObject */
 {
 	Q_OBJECT
 

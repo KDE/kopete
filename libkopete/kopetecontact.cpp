@@ -83,7 +83,7 @@ public:
 
 Contact::Contact( Account *account, const QString &contactId,
 	MetaContact *parent, const QString &icon )
-	: QObject( parent )
+	: ContactListElement( parent )
 {
 	d = new Private;
 

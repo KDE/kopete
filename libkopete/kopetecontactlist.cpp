@@ -64,11 +64,6 @@ class ContactList::Private
 
 	/** Flag: does the user uses the global identity */
 	bool useGlobalIdentity;
-
-	/**
-	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
-	 */
-	static const uint ContactListVersion = 10;
 };
 
 ContactList *ContactList::s_self = 0L;
