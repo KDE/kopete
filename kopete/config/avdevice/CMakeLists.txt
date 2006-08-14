@@ -14,7 +14,7 @@ kde4_add_plugin(kcm_kopete_avdeviceconfig ${kcm_kopete_avdeviceconfig_PART_SRCS}
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_avdeviceconfig )
 
-target_link_libraries(kcm_kopete_avdeviceconfig  ${KDE4_KDECORE_LIBS} kopete kopete_videodevice kutils )
+target_link_libraries(kcm_kopete_avdeviceconfig  ${KDE4_KUTILS_LIBS} kopete kopete_videodevice)
 
 install(TARGETS kcm_kopete_avdeviceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -24,31 +24,3 @@ install(TARGETS kcm_kopete_avdeviceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES kopete_avdeviceconfig.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 kde4_install_icons( ${DATA_INSTALL_DIR}/kopete/icons  )
-
-
-#original Makefile.am contents follow:
-
-#METASOURCES = AUTO
-#AM_CPPFLAGS = $(KOPETE_INCLUDES) \
-#	-I$(top_srcdir)/kopete/libkopete/avdevice \
-#	-I$(top_srcdir)/kopete/libkopete/private $(KOPETE_COMPAT_INCLUDES) $(all_includes)
-#
-#kde_module_LTLIBRARIES = kcm_kopete_avdeviceconfig.la
-#
-#kcm_kopete_avdeviceconfig_la_SOURCES = avdeviceconfig.cpp \
-#	avdeviceconfig_videoconfig.ui
-#
-#kcm_kopete_avdeviceconfig_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-#
-#kcm_kopete_avdeviceconfig_la_LIBADD  = ../../../libkopete/libkopete.la \
-#	../../../libkopete/avdevice/libkopete_videodevice.la \
-#	$(LIB_KOPETECOMPAT) $(LIB_KUTILS)
-#
-#service_DATA = kopete_avdeviceconfig.desktop
-#servicedir = $(kde_servicesdir)
-#
-#kopeteicondir = $(kde_datadir)/kopete/icons
-#kopeteicon_ICON = AUTO
-#
-## vim: set noet:
-#noinst_HEADERS = avdeviceconfig_videoconfig.h

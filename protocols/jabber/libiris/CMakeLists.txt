@@ -98,10 +98,3 @@ install(TARGETS iris_kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = cutestuff iris
