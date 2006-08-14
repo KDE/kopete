@@ -79,6 +79,6 @@ install( FILES kopete.desktop  DESTINATION ${XDG_APPS_DIR})
 install( FILES kopeteui.rc kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
 install( FILES x-kopete-emoticons.desktop  DESTINATION ${MIME_INSTALL_DIR}/application)
 
-kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
+kde4_install_icons( ${ICON_INSTALL_DIR}   )
 
 
