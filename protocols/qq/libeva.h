@@ -80,6 +80,18 @@ namespace Eva {
 	const char DownloadGroupNames = 0x1;
 	const char TransferKey = 0x03; // file agent key in eva
 
+	// IM operation
+	const short IMText = 0x000b;
+	const short IMNotifyIP = 0x003b;
+
+	// IM reply types
+	const char NormalReply = 0x01;
+	const char AutoReply = 0x02;
+	const char ImageReply = 0x05;
+
+	// Encoding
+	const short GBEncoding = 0x8602;
+
 	// POD storage
 	struct ContactInfo {
 		int id;
@@ -300,6 +312,7 @@ namespace Eva {
 	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos = 0);
 	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );
 	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos );
+	ByteArray textMessage( int id, short const sequence, ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );

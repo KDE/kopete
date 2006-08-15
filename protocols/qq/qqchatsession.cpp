@@ -215,6 +215,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 			}
 			else
 			{
+				// we are working for this now.
 				kDebug ( 14140 ) << "sending message" << endl;
 				account()->sendMessage( guid(), message );
 				// we could wait until the server acks our send,

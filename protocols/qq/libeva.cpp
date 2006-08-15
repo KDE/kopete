@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 namespace Eva {
 	static const char login_16_51 [] = {
@@ -54,7 +55,7 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray messageHeader( int sender, int receiver, const ByteArray& sessionKey, short const type, short const sequence, short const timestamp)
+	ByteArray messageHeader( int sender, int receiver, const ByteArray& transferKey, short const type, short const sequence, int const timestamp, short const face = 0 )
 	{
 		// CODE DEBT: udp does not have the lenght placeholder!
 		ByteArray data(64);
@@ -63,10 +64,11 @@ namespace Eva {
 		data += htons(Version);
 		data += htonl(sender);
 		data += htonl(receiver);
-		data += sessionKey;
+		data += transferKey;
 		data += htons(type);
 		data += htons(sequence);
-		data += htons(timestamp);
+		data += htonl(timestamp);
+		data += htons(face);
 		data += '\0';
 		data += '\0';
 		data += '\0';
@@ -75,6 +77,40 @@ namespace Eva {
 		data += (int) 0;
 
 		return data;
+	}
+
+	ByteArray encodeMessage( const ByteArray& text )
+	{
+		// TODO: remove the magic number!
+		ByteArray encoded( 65536 );
+		// TODO: implement the reply types later:
+		// normal, image, auto
+		encoded += NormalReply;
+		// TODO: convert //img to the image resource image, using convertToSend method.
+		encoded += text;
+		encoded += '\0x20';
+		encoded += '\0x0';
+
+		// fontStyle
+		// the layout is like this:
+		// MSB --------------------- LSB
+		// Underlined, Italic, Bold, size (5 bit)
+		encoded += '0x9'; // font size = 9, normal decoration.
+		encoded += '0x0'; // r
+		encoded += '0x0'; // g
+		encoded += '0x0'; // b
+		encoded += '0x0'; // alpha? we mighe use 32-bit int to represent rgb later.
+		encoded += htons( GBEncoding );
+
+		// font name: Song Ti
+		encoded += '0xcb';
+		encoded += '0xce';
+		encoded += '0xcc';
+		encoded += '0xe5';
+
+		encoded += '0x0d'; // return 
+
+		return encoded;
 	}
 
 	void setLength( ByteArray& data )
@@ -245,4 +281,13 @@ namespace Eva {
 		return buildPacket(id, DownloadGroups, sequence, key, text );
 	}
 
+	ByteArray textMessage( int id, short const sequence, ByteArray& key, 
+	// Here are the message variables:
+		int toId, const ByteArray& transferKey, ByteArray& message )
+	{
+		ByteArray text( 65536 );
+		text += messageHeader( id, toId, transferKey, IMText, sequence, time(NULL));
+		text += encodeMessage( message );
+		return buildPacket(id, SendMsg, sequence, key, text );
+	}
 }

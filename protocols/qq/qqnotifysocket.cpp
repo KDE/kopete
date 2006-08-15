@@ -357,6 +357,20 @@ void QQNotifySocket::sendDownloadGroups( int pos )
 	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
 
+void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message )
+{
+	// Translate the message to Eva::ByteArray
+	// TODO: color and font
+	kDebug( 14140 ) << "Send the message: " << message << " from " << m_qqId << " to " << toId;
+	// attach the ByteArray to QString:
+	// FIXME: Add an adapter to ByteArray
+	Eva::ByteArray text( (char*)message.data(), message.size() );
+
+	text.release();
+
+	Eva::ByteArray packet = Eva::textMessage(m_qqId, m_id++, m_sessionKey, toId, m_transferKey, text );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
 
 void QQNotifySocket::doGetGroupNames( const Eva::ByteArray& text )
 {

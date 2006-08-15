@@ -97,6 +97,7 @@ protected:
 public:
 	void sendDownloadGroups( int pos = 0 );
 	void sendGetGroupNames();
+	void sendTextMessage( const uint toId, const QByteArray& message );
 
 private:
 	void doGetGroupNames( const Eva::ByteArray& text );

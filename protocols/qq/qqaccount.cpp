@@ -17,6 +17,8 @@
 
 #include "qqaccount.h"
 
+#include <QTextCodec>
+
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -249,7 +251,19 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 
 void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 {
-	kDebug(14140) << k_funcinfo << "Sending the message to" << guid << endl;
+	kDebug(14140) << k_funcinfo << "Sending the message to " << guid << endl;
+	// TODO: Add font style, font color, font size, font family here
+	// translate the QT font to Eva::Font.
+	// Currently, just send the plain text.
+
+	// TODO: implement autoreply, font, color
+	uint to = message.to().first()->contactId().toUInt();
+	// TODO: use guid for the conference
+	// TODO: use to for the conversation
+	// TODO: Add codec to the member variable, to improve the preformance.
+	QTextCodec* m_codec = QTextCodec::codecForName("GB18030");
+	QByteArray text = m_codec->fromUnicode( message.plainBody() );
+	notifySocket()->sendTextMessage(to, text );
 }
 
 void QQAccount::sendInvitation(const QString& guid, const QString& id, const QString& message )
