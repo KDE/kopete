@@ -38,7 +38,7 @@
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal, bool firstRun )
 	: 
-	KWizard(parent),
+	KAssistantDialog(parent),
 	m_accountPage(0),
 	m_proto(0)
 {
@@ -128,7 +128,7 @@ void AddAccountWizard::back()
 
 		// removePage() already goes back to previous page, no back() needed
 	}
-	KWizard::back();
+	KAssistantDialog::back();
 }
 
 void AddAccountWizard::next()
@@ -158,7 +158,7 @@ void AddAccountWizard::next()
 			return;
 		}
 	
-		KWizard::next();
+		KAssistantDialog::next();
 	}
 	else if (currentPage()->widget() == m_accountPageWidget)
 	{
@@ -172,12 +172,12 @@ void AddAccountWizard::next()
 
 		m_uiFinish.mColorButton->setColor(col);
 		m_uiFinish.mUseColor->setChecked(col.isValid());
-		KWizard::next();
+		KAssistantDialog::next();
 	}
 	else 
 	{
 		kDebug(14100) << k_funcinfo << "Next pressed on misc page" << endl;
-		KWizard::next();
+		KAssistantDialog::next();
 	}
 
 }
@@ -211,7 +211,7 @@ void AddAccountWizard::accept()
 		account->connect();
 	}
 
-	KWizard::accept();
+	KAssistantDialog::accept();
 }
 
 void AddAccountWizard::reject()
@@ -235,7 +235,7 @@ void AddAccountWizard::reject()
 		}
 	}
 
-	KWizard::reject();
+	KAssistantDialog::reject();
 }
 
 AddAccountWizard::~AddAccountWizard()

@@ -21,7 +21,7 @@
 
 #include <qmap.h>
 
-#include <kwizard.h>
+#include <kassistantdialog.h>
 
 #include <kopete_export.h>
 
@@ -44,7 +44,7 @@ class KopeteEditAccountWidget;
 /**
  * @author  Olivier Goffart <ogoffart @ kde.org>
  */
-class KOPETE_EXPORT AddAccountWizard : public KWizard
+class KOPETE_EXPORT AddAccountWizard : public KAssistantDialog
 {
 	Q_OBJECT
 
