@@ -302,10 +302,14 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 		case Eva::ReceiveSysMsg :
 			break;
 		case Eva::ContactStausChanged :
+		{
 			kDebug( 14140 ) << "contact status signal" << endl;
-			emit contactStatusChanged( Eva::ContactStatus(text) );
+			Eva::ContactStatus cs(text);
+			kDebug( 14140 ) << "contact status detail:" << endl;
+			kDebug( 14140 ) << "id = " << cs.qqId << " status = " << cs.status << endl;
+			emit contactStatusChanged( cs );
 			break;
-
+		}
 		default:
 			break;
 

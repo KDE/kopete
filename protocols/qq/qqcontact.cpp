@@ -89,6 +89,8 @@ QQContact::~QQContact()
 
 bool QQContact::isReachable()
 {
+	// QQ supports offline chat.
+	return true;
 	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != QQProtocol::protocol()->HDN )
 		return true;
 /*

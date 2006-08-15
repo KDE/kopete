@@ -402,9 +402,10 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 
 void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
 {
-	kDebug(14210) << k_funcinfo << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << "status = " << cs.status << endl;
+	kDebug(14210) << k_funcinfo << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << " status = " << cs.status << endl;
 
 	QQContact* c = static_cast<QQContact*> (contacts()[ QString::number( cs.qqId ) ]);
+	kDebug( 14140 ) << "get the status from " << cs.qqId << endl;
 	if (c) 
 		c->setOnlineStatus( fromEvaStatus(cs.status) );
 }
@@ -419,8 +420,8 @@ Kopete::OnlineStatus QQAccount::fromEvaStatus( char es )
 			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
 			break;
 
-		case Eva::Offline:
-			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Offline );
+			case Eva::Offline:
+				status = Kopete::OnlineStatus( Kopete::OnlineStatus::Offline );
 			break;
 
 		case Eva::Away:
