@@ -88,27 +88,24 @@ namespace Eva {
 		encoded += NormalReply;
 		// TODO: convert //img to the image resource image, using convertToSend method.
 		encoded += text;
-		encoded += '\0x20';
-		encoded += '\0x0';
+		encoded += char(0x20);
+		encoded += char(0x0);
 
 		// fontStyle
 		// the layout is like this:
 		// MSB --------------------- LSB
 		// Underlined, Italic, Bold, size (5 bit)
-		encoded += '0x9'; // font size = 9, normal decoration.
-		encoded += '0x0'; // r
-		encoded += '0x0'; // g
-		encoded += '0x0'; // b
-		encoded += '0x0'; // alpha? we mighe use 32-bit int to represent rgb later.
+		encoded += char(0x9); // font size = 9, normal decoration.
+		encoded += char(0x0); // r
+		encoded += char(0x0); // g
+		encoded += char(0x0); // b
+		encoded += char(0x0); // alpha? we mighe use 32-bit int to represent rgb later.
 		encoded += htons( GBEncoding );
 
 		// font name: Song Ti
-		encoded += '0xcb';
-		encoded += '0xce';
-		encoded += '0xcc';
-		encoded += '0xe5';
+		encoded += htonl(0xe5cccecb);
 
-		encoded += '0x0d'; // return 
+		encoded += char(0xd); // return 
 
 		return encoded;
 	}
