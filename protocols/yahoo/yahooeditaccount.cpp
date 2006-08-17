@@ -49,7 +49,7 @@
 // Yahoo Add Contact page
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	theProtocol = protocol;
 
@@ -81,6 +81,9 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		if( !iconUrl.isEmpty() )
 			m_Picture->setPixmap( KURL( iconUrl ).path() );
 		editPictureUrl->setEnabled( sendPicture );
+
+		// Global Identity
+		mGlobalIdentity->setChecked( account()->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -98,7 +101,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 
 bool YahooEditAccount::validateData()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if(mScreenName->text().isEmpty())
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
@@ -115,7 +118,7 @@ bool YahooEditAccount::validateData()
 
 Kopete::Account *YahooEditAccount::apply()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if ( !account() )
 		setAccount( new YahooAccount( theProtocol, mScreenName->text().lower() ) );
@@ -148,6 +151,9 @@ Kopete::Account *YahooEditAccount::apply()
 		yahooAccount->setBuddyIcon( KURL( QString::null ) );
 	}
 	
+	// Global Identity
+	account()->configGroup()->writeEntry("ExcludeGlobalIdentity", mGlobalIdentity->isChecked() );
+
 	return yahooAccount;
 }
 

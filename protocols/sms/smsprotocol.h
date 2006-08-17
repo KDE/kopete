@@ -58,8 +58,8 @@ public:
 	virtual Kopete::Account *createNewAccount(const QString &accountId);
 
 	const Kopete::OnlineStatus SMSOnline;
-	const Kopete::OnlineStatus SMSUnknown;
 	const Kopete::OnlineStatus SMSOffline;
+	const Kopete::OnlineStatus SMSConnecting;
 
 private:
 	static SMSProtocol *s_protocol;

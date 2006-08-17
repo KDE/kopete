@@ -90,8 +90,6 @@ public slots:
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
 
-	void slotSettingsChanged();
-
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
 
@@ -99,12 +97,11 @@ private slots:
 //	void updateAccountId();
 
 private:
+	WPProtocol *mProtocol;
 	QString theAwayMessage;			// The message to give when the user is away
-
-signals:
-	void settingsChanged();
 };
 
 #endif
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

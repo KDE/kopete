@@ -132,7 +132,7 @@ const cap oscar_caps[] =
 	// third number, point version 100+
 	// fourth number,  point version 0-99
 	{'K', 'o', 'p', 'e', 't', 'e', ' ', 'I',
-			'C', 'Q', ' ', ' ', 0, 10, 0, 92},
+			'C', 'Q', ' ', ' ', 0, 12, 0, 1},
 
 	// CAP_MICQ
 	// last 4 bytes determine version
@@ -210,7 +210,9 @@ struct RateInfo
 struct ChatExchangeInfo
 {
 	WORD number;
-	BYTE maxNameLength;
+    WORD maxRooms;
+    WORD maxRoomNameLength;
+	WORD maxMsgLength;
 	BYTE flags;
 	QString description;
 	BYTE canCreate;
@@ -230,29 +232,24 @@ struct ChatRoomInfo
 	QString name;
 };
 
+struct ClientVersion
+{
+	QString clientString;
+	WORD clientId;
+	WORD major;
+	WORD minor;
+	WORD point;
+	WORD build;
+	DWORD other;
+	QString country;
+	QString lang;
+};
+
 	/* ICQ Version Characteristics */
 	const unsigned char ICQ_TCP_VERSION 	= 0x0008;
-	const char ICQ_CLIENTSTRING[] 		= "ICQBasic";
-	const WORD ICQ_CLIENTID 		= 0x010A;
-	const WORD ICQ_MAJOR 			= 0x0014;
-	const WORD ICQ_MINOR 			= 0x0034;
-	const WORD ICQ_POINT 			= 0x0000;
-	const WORD ICQ_BUILD 			= 0x0BB8;
-	const char ICQ_OTHER[] 			= { 0x00, 0x00, 0x04, 0x3d };
-	const char ICQ_COUNTRY[] 		= "us";
-	const char ICQ_LANG[] 			= "en";
 
 	/* AIM Version Characteristics */
 	const char AIM_MD5_STRING[]     = "AOL Instant Messenger (SM)";
-	const char AIM_CLIENTSTRING[]   = "AOL Instant Messenger (SM), version 5.1.3036/WIN32";
-	const WORD AIM_CLIENTID         = 0x0109;
-	const WORD AIM_MAJOR            = 0x0005;
-	const WORD AIM_MINOR            = 0x0001;
-	const WORD AIM_POINT            = 0x0000;
-	const WORD AIM_BUILD            = 0x0bdc;
-	const DWORD AIM_OTHER           = 0x000000d2;
-	const char AIM_COUNTRY[]        = "us";
-	const char AIM_LANG[]           = "en";
 
 	/* SSI types */
 	const WORD ROSTER_CONTACT       = 0x0000; // a normal contact
@@ -267,6 +264,27 @@ struct ChatRoomInfo
 	const WORD ROSTER_NONICQ        = 0x0010; // a non-icq contact, no UIN, used to send SMS
 	const WORD ROSTER_IMPORTTIME    = 0x0013; // roster import time (name: "Import time")
 	const WORD ROSTER_BUDDYICONS    = 0x0014; // Buddy icon info. (names: from "0" and incrementing by one)
+
+    /* User classes/statuses */
+    const WORD CLASS_UNCONFIRMED    = 0x0001; // AOL Unconfirmed user
+    const WORD CLASS_ADMINISTRATOR  = 0x0002; // AOL Administrator
+    const WORD CLASS_AOL            = 0x0004; // AOL Staff
+    const WORD CLASS_COMMERCIAL     = 0x0008; // AOL commercial account
+    const WORD CLASS_FREE           = 0x0010; // ICQ non-commerical account
+    const WORD CLASS_AWAY           = 0x0020; // Away status
+    const WORD CLASS_ICQ            = 0x0040; // ICQ user
+    const WORD CLASS_WIRELESS       = 0x0080; // AOL wireless user
+    const WORD CLASS_UNKNOWN100     = 0x0100; // Unknown
+    const WORD CLASS_UNKNOWN400     = 0x0400; // Unknown
+    const WORD CLASS_UNKNOWN800     = 0x0800; // Unknown
+
+    const WORD STATUS_ONLINE        = 0x0000; // Online
+    const WORD STATUS_AWAY          = 0x0001; // Away
+    const WORD STATUS_DND           = 0x0002; // Do not Disturb
+    const WORD STATUS_NA            = 0x0004; // Not Available
+    const WORD STATUS_OCCUPIED      = 0x0010; // Occupied (BUSY/BISY)
+    const WORD STATUS_FREE4CHAT     = 0x0020; // Free for chat
+    const WORD STATUS_INVISIBLE     = 0x0100; // Invisible
 }
 
 #endif

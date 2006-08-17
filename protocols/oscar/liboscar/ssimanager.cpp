@@ -86,6 +86,7 @@ WORD SSIManager::nextContactId()
 		d->nextContactId++;
 	
 	d->nextContactId = findFreeId( d->itemIdList, d->nextContactId );
+	
 	if ( d->nextContactId == 0xFFFF )
 	{
 		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free id!" << endl;
@@ -104,6 +105,7 @@ WORD SSIManager::nextGroupId()
 		d->nextGroupId++;
 	
 	d->nextGroupId = findFreeId( d->groupIdList, d->nextGroupId );
+	
 	if ( d->nextGroupId == 0xFFFF )
 	{
 		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free group id!" << endl;
@@ -301,6 +303,17 @@ Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
 	return m_dummyItem;	
 }
 
+Oscar::SSI SSIManager::findItem( const QString &contact, int type ) const
+{
+	QValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	
+	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
+		if ( ( *it ).type() == type && ( *it ).name() == contact )
+			return ( *it );
+	
+	return m_dummyItem;
+}
+
 QValueList<Oscar::SSI> SSIManager::groupList() const
 {
 	QValueList<Oscar::SSI> list;
@@ -419,6 +432,29 @@ bool SSIManager::newGroup( const Oscar::SSI& group )
 	return false;
 }
 
+bool SSIManager::updateGroup( const Oscar::SSI& oldGroup, const Oscar::SSI& newGroup )
+{
+	removeID( oldGroup );
+	if ( d->SSIList.remove( oldGroup ) == 0 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No group were removed." << endl;
+		return false;
+	}
+	
+	if ( d->SSIList.findIndex( newGroup ) != -1 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New group is already in list." << endl;
+		return false;
+	}
+	
+	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating group '" << newGroup.name() << "' in SSI list" << endl;
+	d->SSIList.append( newGroup );
+	addID( newGroup );
+	emit groupUpdated( newGroup );
+	
+	return true;
+}
+
 bool SSIManager::removeGroup( const Oscar::SSI& group )
 {
 	QString groupName = group.name();
@@ -461,6 +497,29 @@ bool SSIManager::newContact( const Oscar::SSI& contact )
 	}
 	else
 		return false;
+	return true;
+}
+
+bool SSIManager::updateContact( const Oscar::SSI& oldContact, const Oscar::SSI& newContact )
+{
+	removeID( oldContact );
+	if ( d->SSIList.remove( oldContact ) == 0 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed." << endl;
+		return false;
+	}
+	
+	if ( d->SSIList.findIndex( newContact ) != -1 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New contact is already in list." << endl;
+		return false;
+	}
+	
+	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating contact '" << newContact.name() << "' in SSI list" << endl;
+	addID( newContact );
+	d->SSIList.append( newContact );
+	emit contactUpdated( newContact );
+	
 	return true;
 }
 

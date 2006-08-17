@@ -21,6 +21,7 @@
 #include "client.h"
 
 #include <qtimer.h>
+#include <qtextcodec.h>
 
 #include <kdebug.h> //for kdDebug()
 #include <klocale.h>
@@ -40,6 +41,7 @@
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
 #include "oscarsettings.h"
+#include "oscarutils.h"
 #include "ownuserinfotask.h"
 #include "profiletask.h"
 #include "senddcinfotask.h"
@@ -55,8 +57,27 @@
 #include "userinfotask.h"
 #include "usersearchtask.h"
 #include "warningtask.h"
+#include "chatservicetask.h"
 #include "rateclassmanager.h"
 
+
+namespace
+{
+	class DefaultCodecProvider : public Client::CodecProvider
+	{
+	public:
+		virtual QTextCodec* codecForContact( const QString& ) const
+		{
+			return QTextCodec::codecForMib( 4 );
+		}
+		virtual QTextCodec* codecForAccount() const
+		{
+			return QTextCodec::codecForMib( 4 );
+		}
+	};
+
+	DefaultCodecProvider defaultCodecProvider;
+}
 
 class Client::ClientPrivate
 {
@@ -97,6 +118,9 @@ public:
 	//Our Userinfo
 	UserDetails ourDetails;
 
+    //Infos
+    QValueList<int> exchanges;
+
 	QString statusMessage; // for away-,DND-message etc...
 
 	//away messages
@@ -107,6 +131,9 @@ public:
 	};
 	QValueList<AwayMsgRequest> awayMsgRequestQueue;
 	QTimer* awayMsgRequestTimer;
+	CodecProvider* codecProvider;
+	
+	const Oscar::ClientVersion* version;
 };
 
 Client::Client( QObject* parent )
@@ -134,6 +161,7 @@ Client::Client( QObject* parent )
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
+	d->codecProvider = &defaultCodecProvider;
 
 	connect( this, SIGNAL( redirectionFinished( WORD ) ),
 	         this, SLOT( checkRedirectionQueue( WORD ) ) );
@@ -147,6 +175,7 @@ Client::~Client()
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
 	deleteStaticTasks();
+    delete d->settings;
 	delete d->ssiManager;
 	delete d->awayMsgRequestTimer;
 	delete d;
@@ -195,6 +224,10 @@ void Client::close()
 		d->connectWithMessage = QString::null;
 	}
 
+    d->exchanges.clear();
+    d->redirectRequested = false;
+    d->currentRedirect = 0;
+    d->redirectionServices.clear();
     d->ssiManager->clear();
 }
 
@@ -280,6 +313,11 @@ int Client::port()
 SSIManager* Client::ssiManager() const
 {
 	return d->ssiManager;
+}
+
+const Oscar::ClientVersion* Client::version() const
+{
+	return d->version;
 }
 
 // SLOTS //
@@ -407,6 +445,15 @@ void Client::haveOwnUserInfo()
 	emit haveOwnInfo();
 }
 
+void Client::setCodecProvider( Client::CodecProvider* codecProvider )
+{
+	d->codecProvider = codecProvider;
+}
+
+void Client::setVersion( const Oscar::ClientVersion* version )
+{
+	d->version = version;
+}
 
 // INTERNALS //
 
@@ -448,30 +495,52 @@ void Client::notifySocketError( int errCode, const QString& msg )
 
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
-	Connection* c = d->connections.connectionForFamily( 0x0004 );
-	if ( !c )
-		return;
-	SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
-	// Set whether or not the message is an automated response
-	sendMsgTask->setAutoResponse( isAuto );
-	sendMsgTask->setMessage( msg );
-	sendMsgTask->go( true );
+    Connection* c = 0L;
+    if ( msg.type() == 0x0003 )
+    {
+        c = d->connections.connectionForChatRoom( msg.exchange(), msg.chatRoom() );
+        if ( !c )
+            return;
+
+        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending message to chat room" << endl;
+        ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
+        cst->setMessage( msg );
+        cst->setEncoding( d->codecProvider->codecForAccount()->name() );
+        cst->go( true );
+    }
+    else
+    {
+        c = d->connections.connectionForFamily( 0x0004 );
+        if ( !c )
+            return;
+        SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+        // Set whether or not the message is an automated response
+        sendMsgTask->setAutoResponse( isAuto );
+        sendMsgTask->setMessage( msg );
+        sendMsgTask->go( true );
+    }
 }
 
 void Client::receivedMessage( const Oscar::Message& msg )
 {
-	if ( ( msg.type() == 2 ) && ( ! msg.hasProperty( Oscar::Message::AutoResponse ) ) )
+	if ( msg.type() == 2 && !msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
 		// type 2 message needs an autoresponse, regardless of type
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
 		if ( !c )
 			return;
 		
-		Oscar::Message response = Oscar::Message( msg );
+		Oscar::Message response ( msg );
 		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
-			response.setText( statusMessage() );
+		{
+			QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
+			response.setText( Oscar::Message::UserDefined, statusMessage(), codec );
+		}
 		else
-			response.setText( "" );
+		{
+			response.setEncoding( Oscar::Message::UserDefined );
+			response.setTextArray( QByteArray() );
+		}
 		response.setReceiver( msg.sender() );
 		response.addProperty( Oscar::Message::AutoResponse );
 		SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
@@ -483,11 +552,12 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
 		{
 			// we got a response to a status message request.
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message." << endl;
-			emit receivedAwayMessage( msg );
+			QString awayMessage( msg.text( d->codecProvider->codecForContact( msg.sender() ) ) );
+			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage << endl;
+			emit receivedAwayMessage( msg.sender(), awayMessage );
 		}
 	}
-	else
+	else if ( ! msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
 		// let application handle it
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
@@ -745,6 +815,16 @@ ICQShortInfo Client::getShortInfo( const QString& contact )
 	return d->icqInfoTask->shortInfoFor( contact );
 }
 
+QValueList<int> Client::chatExchangeList() const
+{
+    return d->exchanges;
+}
+
+void Client::setChatExchangeList( const QValueList<int>& exchanges )
+{
+	d->exchanges = exchanges;
+}
+
 void Client::requestAIMProfile( const QString& contact )
 {
 	d->userInfoTask->requestInfoFor( contact, UserInfoTask::Profile );
@@ -915,6 +995,54 @@ void Client::connectToIconServer()
 	return;
 }
 
+void Client::setIgnore( const QString& user, bool ignore )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_IGNORE );
+	if ( item && !ignore )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from ignore list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && ignore )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
+void Client::setVisibleTo( const QString& user, bool visible )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_VISIBLE );
+	if ( item && !visible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from visible list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && visible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
+void Client::setInvisibleTo( const QString& user, bool invisible )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_INVISIBLE );
+	if ( item && !invisible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from invisible list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && invisible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
 void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
@@ -930,12 +1058,14 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE
 	bit->go( true );
 }
 
-void Client::requestServerRedirect( WORD family )
+void Client::requestServerRedirect( WORD family, WORD exchange,
+                                    QByteArray cookie, WORD instance,
+                                    const QString& room )
 {
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
 	Connection* c = d->connections.connectionForFamily( family );
-	if ( c )
+	if ( c && family != 0x000E )
 		return; //we already have the connection
 
 	c = d->connections.connectionForFamily( 0x0002 );
@@ -950,7 +1080,15 @@ void Client::requestServerRedirect( WORD family )
 
 	d->currentRedirect = family;
 
+    //FIXME. this won't work if we have to defer the connection because we're
+    //already connecting to something
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
+    if ( family == 0x000E )
+    {
+        srt->setChatParams( exchange, cookie, instance );
+        srt->setChatRoom( room );
+    }
+
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
 	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
 	srt->setService( family );
@@ -959,6 +1097,10 @@ void Client::requestServerRedirect( WORD family )
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
 {
+    //nasty sender() usage to get the task with chat room info
+	QObject* o = const_cast<QObject*>( sender() );
+    ServerRedirectTask* srt = dynamic_cast<ServerRedirectTask*>( o );
+
 	//create a new connection and set it up
 	int colonPos = host.find(':');
 	QString realHost, realPort;
@@ -981,7 +1123,10 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	//connect
 	connectToServer( c, d->host, false );
-	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+  	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+
+    if ( srt )
+        d->connections.addChatInfoForConnection( c, srt->chatExchange(), srt->chatRoomName() );
 }
 
 void Client::serverRedirectFinished()
@@ -1009,7 +1154,35 @@ void Client::serverRedirectFinished()
 		emit chatNavigationConnected();
 	}
 
+    if ( d->currentRedirect == 0x000E )
+    {
+        //HACK! such abuse! think of a better way
+        if ( !m_loginTaskTwo )
+        {
+            kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "no login task to get connection from!" << endl;
+            emit redirectionFinished( d->currentRedirect );
+            return;
+        }
+
+        Connection* c = m_loginTaskTwo->client();
+        QString roomName = d->connections.chatRoomForConnection( c );
+        WORD exchange = d->connections.exchangeForConnection( c );
+        if ( c )
+        {
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection" << endl;
+            ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
+            connect( cst, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
+                     this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+        }
+        emit chatRoomConnected( exchange, roomName );
+    }
+
 	emit redirectionFinished( d->currentRedirect );
+
 }
 
 void Client::checkRedirectionQueue( WORD family )
@@ -1034,6 +1207,8 @@ void Client::requestChatNavLimits()
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting chat nav service limits" << endl;
 	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->setRequestType( ChatNavServiceTask::Limits );
+    QObject::connect( cnst, SIGNAL( haveChatExchanges( const QValueList<int>& ) ),
+                      this, SLOT( setChatExchangeList( const QValueList<int>& ) ) );
 	cnst->go( true ); //autodelete
 
 }
@@ -1049,11 +1224,11 @@ void Client::determineDisconnection( int code, const QString& string )
     if ( !c )
         return;
 
-    if ( c->isSupported( 0x0002 ) ||
-         d->stage == ClientPrivate::StageOne ) //emit on login
-    {
-        emit socketError( code, string );
-    }
+	if ( c->isSupported( 0x0002 ) ||
+	     d->stage == ClientPrivate::StageOne ) //emit on login
+	{
+		emit socketError( code, string );
+	}
 
     //connection is deleted. deleteLater() is used
     d->connections.remove( c );
@@ -1071,6 +1246,40 @@ void Client::sendBuddyIcon( const QByteArray& iconData )
 	bit->uploadIcon( iconData.size(), iconData );
 	bit->go( true );
 }
+
+void Client::joinChatRoom( const QString& roomName, int exchange )
+{
+    Connection* c = d->connections.connectionForFamily( 0x000D );
+    if ( !c )
+        return;
+
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
+                             << "' on exchange " << exchange << endl;
+    ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
+    connect( cnst, SIGNAL( connectChat( WORD, QByteArray, WORD, const QString& ) ),
+             this, SLOT( setupChatConnection( WORD, QByteArray, WORD, const QString& ) ) );
+    cnst->createRoom( exchange, roomName );
+
+}
+
+void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance, const QString& room )
+{
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is:" << cookie << endl;
+    QByteArray realCookie( cookie );
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
+    requestServerRedirect( 0x000E, exchange, realCookie, instance, room );
+}
+
+void Client::disconnectChatRoom( WORD exchange, const QString& room )
+{
+    Connection* c = d->connections.connectionForChatRoom( exchange, room );
+    if ( !c )
+        return;
+
+    d->connections.remove( c );
+    c = 0;
+}
+
 
 Connection* Client::createConnection( const QString& host, const QString& port )
 {

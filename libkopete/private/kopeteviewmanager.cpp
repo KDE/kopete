@@ -48,7 +48,7 @@ struct KopeteViewManagerPrivate
 	EventList eventList;
 	KopeteView *activeView;
 
-	bool useQueue;
+	bool useQueueOrStack;
 	bool raiseWindow;
 	bool queueUnreadMessages;
 	bool queueOnlyHighlightedMessagesInGroupChats;
@@ -98,7 +98,7 @@ KopeteViewManager::~KopeteViewManager()
 
 void KopeteViewManager::slotPrefsChanged()
 {
-	d->useQueue = KopetePrefs::prefs()->useQueue();
+	d->useQueueOrStack = KopetePrefs::prefs()->useQueue() || KopetePrefs::prefs()->useStack();
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 	d->queueUnreadMessages = KopetePrefs::prefs()->queueUnreadMessages();
 	d->queueOnlyHighlightedMessagesInGroupChats = KopetePrefs::prefs()->queueOnlyHighlightedMessagesInGroupChats();
@@ -167,7 +167,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
-		bool appendMessageEvent = d->useQueue;
+		bool appendMessageEvent = d->useQueueOrStack;
 
 		QWidget *w;
 		if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
@@ -201,7 +201,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			readMessages( manager, outgoingMessage );
 		}
 
-		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
+		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+				&& msg.direction() != Kopete::Message::Internal )
 		{
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			KConfig *config = KGlobal::config();
@@ -344,7 +345,10 @@ void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *manager )
 
 	if( d->managerMap.contains( manager ) )
 	{
-		d->managerMap[ manager ]->closeView( true );
+		KopeteView *v=d->managerMap[ manager ];
+		v->closeView( true );
+		delete v;   //closeView call deleteLater,  but in this case this is not enough, because some signal are called that case crash
+		d->managerMap.remove( manager );
 	}
 }
 

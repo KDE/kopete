@@ -177,7 +177,7 @@ bool SSIModifyTask::removeItem( const Oscar::SSI& item )
 	m_opType = Remove;
 	m_opSubject = NoSubject;
 	m_oldItem = item;
-	return false;
+	return true;
 }
 
 bool SSIModifyTask::modifyItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem )
@@ -418,11 +418,28 @@ void SSIModifyTask::changeGroupOnServer()
 void SSIModifyTask::updateSSIManager()
 {
 	if ( m_oldItem.isValid() && m_newItem.isValid() )
-	{ //changing groups on the server, or renaming. the group item will have already been updated
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << endl;
-		m_ssiManager->removeContact( m_oldItem.name() );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to SSI manager" << endl;
-		m_ssiManager->newContact( m_newItem );
+	{
+		if ( m_opSubject == Contact )
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << endl;
+			m_ssiManager->removeContact( m_oldItem.name() );
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to SSI manager" << endl;
+			m_ssiManager->newContact( m_newItem );
+		}
+		else if ( m_opSubject == Group )
+		{
+			if ( m_opType == Rename )
+				m_ssiManager->updateGroup( m_oldItem, m_newItem );
+			else if ( m_opType == Change )
+				m_ssiManager->updateContact( m_oldItem, m_newItem );
+		}
+		else if ( m_opSubject == NoSubject )
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << endl;
+			m_ssiManager->removeItem( m_oldItem );
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to SSI manager" << endl;
+			m_ssiManager->newItem( m_newItem );
+		}
 		setSuccess( 0, QString::null );
 		return;
 	}
@@ -432,8 +449,10 @@ void SSIModifyTask::updateSSIManager()
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from SSI manager" << endl;
 		if ( m_opSubject == Group )
 			m_ssiManager->removeGroup( m_oldItem.name() );
-		if ( m_opSubject == Contact )
+		else if ( m_opSubject == Contact )
 			m_ssiManager->removeContact( m_oldItem.name() );
+		else if ( m_opSubject == NoSubject )
+			m_ssiManager->removeItem( m_oldItem );
 		setSuccess( 0, QString::null );
 		return;
 	}
@@ -443,8 +462,10 @@ void SSIModifyTask::updateSSIManager()
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << m_newItem.name() << " to SSI manager" << endl;
 		if ( m_opSubject == Group )
 			m_ssiManager->newGroup( m_newItem );
-		if ( m_opSubject == Contact )
+		else if ( m_opSubject == Contact )
 			m_ssiManager->newContact( m_newItem );
+		else if ( m_opSubject == NoSubject )
+			m_ssiManager->newItem( m_newItem );
 		setSuccess( 0, QString::null );
 		return;
 	}

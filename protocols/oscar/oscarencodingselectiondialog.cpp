@@ -32,6 +32,7 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
     clearWFlags( QWidget::WDestructiveClose );
     m_encodingUI = new OscarEncodingBaseUI( this );
     //fill the encoding combo boxes
+  	m_encodings.insert(0, i18n("Default"));
   	m_encodings.insert(2026, i18n("Big5"));
 	m_encodings.insert(2101, i18n("Big5-HKSCS"));
 	m_encodings.insert(18, i18n("euc-JP Japanese"));
@@ -75,6 +76,9 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
 	m_encodings.insert(2085, i18n("IBM 866"));
 
 	m_encodings.insert(2259, i18n("TIS-620 Thai"));
+
+	m_encodings.insert(106, i18n("UTF-8 Unicode"));
+	m_encodings.insert(1015, i18n("UTF-16 Unicode"));
 
     m_encodingUI->encodingCombo->insertStringList( m_encodings.values() );
     if( (initialEncodingIndex = m_encodings.keys().findIndex(initialEncoding)) == -1 )

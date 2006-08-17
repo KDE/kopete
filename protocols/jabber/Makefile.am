@@ -1,5 +1,11 @@
+if include_jingle
+JINGLE=jingle
+JINGLE_LIBS=jingle/libkopetejabberjingle.la
+JINGLE_INCLUDES=-I$(srcdir)/jingle -I$(top_builddir)/kopete/protocols/jabber/jingle
+endif
+
 METASOURCES = AUTO
-SUBDIRS = ui icons libiris . kioslave
+SUBDIRS = ui icons libiris $(JINGLE) . kioslave
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/iris/include \
 	-I$(srcdir)/libiris/iris/xmpp-im \
@@ -9,7 +15,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/cutestuff/network \
 	-I$(srcdir)/ui \
 	-I./ui \
-	$(all_includes)
+	$(all_includes) $(JINGLE_INCLUDES)
 
 noinst_LTLIBRARIES = libjabberclient.la
 libjabberclient_la_SOURCES = \
@@ -33,7 +39,10 @@ kopete_jabber_la_SOURCES = \
 	jabberformlineedit.cpp \
 	jabberchatsession.cpp \
 	jabbergroupchatmanager.cpp \
-	jabberfiletransfer.cpp
+	jabberfiletransfer.cpp \
+	jabbercapabilitiesmanager.cpp\
+	jabbertransport.cpp\
+	jabberbookmarks.cpp
 
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
@@ -45,10 +54,14 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	libiris/qca/src/libqca.la \
 	libiris/cutestuff/network/libcutestuff_network.la \
 	libiris/cutestuff/util/libcutestuff_util.la \
-	libjabberclient.la
+	libjabberclient.la \
+	$(JINGLE_LIBS)
 
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
+
+mydatadir = $(kde_datadir)/kopete_jabber
+mydata_DATA = jabberchatui.rc
 
 noinst_HEADERS = jabberresourcepool.h jabbercontact.h jabbergroupcontact.h \
 	jabberclient.h

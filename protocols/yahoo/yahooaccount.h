@@ -29,8 +29,8 @@
 #include "kopeteawaydialog.h"
 
 // Local
-#include "yahooconferencemessagemanager.h"
 #include "yahooprotocol.h"
+#include "yahootypes.h"
 
 class QColor;
 class KAction;
@@ -38,10 +38,20 @@ class KActionMenu;
 class YahooContact;
 class YahooAccount;
 class YahooProtocol;
+class YahooWebcam;
+class YahooConferenceChatSession;
 class KTempFile;
-class QTimer;
 struct KURL;
-
+namespace Kopete{
+class Transfer;
+class ChatSession;
+class FileTransferInfo;
+}
+class Client;
+class YABEntry;
+namespace KIO{
+	class Job;
+}
 class YahooAwayDialog : public KopeteAwayDialog
 {
 public:
@@ -78,7 +88,7 @@ public:
 	/**
 	 * The session
 	 */
-	YahooSession *yahooSession();
+	Client *yahooSession();
 
 	/**
 	 * Returns true if contact @p id is on the server-side contact list
@@ -114,6 +124,12 @@ public:
 	 * 0 = no image, 2 = buddy icon, 1 = avatar?
 	 */
 	int pictureFlag();
+
+	void verifyAccount( const QString &word );
+
+	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
+	void prepareConference( const QString &who );
+	void sendFile( YahooContact *to, const KURL &url );
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -160,14 +176,21 @@ protected slots:
 	void slotGoOffline();
 	void slotOpenInbox();			// Open Yahoo Mailbox in browser
 	void slotOpenYAB();			// Open Yahoo Addressbook in browser
+	void slotEditOwnYABEntry();		// Show own Yahoo Addressbook entry
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
-	void slotGotBuddies(const YList * buds);
+	void slotDisconnected();
+	void slotLoginFailed();
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
+	void slotAuthorizationAccepted( const QString &who );
+	void slotAuthorizationRejected( const QString &who, const QString &msg );
+	void slotgotAuthorizationRequest( const QString &, const QString &, const QString & );
+	void slotContactAddedNotifyDialogClosed( const QString & );
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
-	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away);
+	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle);
+	void slotStealthStatusChanged(const QString &who, Yahoo::StealthStatus state);
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
 	void slotGotBuzz(const QString &who, long tm);
 	void slotGotConfInvite(const QString &who, const QString &room, const QString &msg, const QStringList &members);
@@ -175,6 +198,9 @@ protected slots:
 	void slotConfUserJoin(const QString &who, const QString &room);
 	void slotConfUserLeave(const QString &who, const QString &room);
 	void slotConfMessage(const QString &who, const QString &room, const QString &msg);
+	void slotConfLeave( YahooConferenceChatSession *s );
+	void slotInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
+	void slotAddInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
 	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
@@ -182,34 +208,50 @@ protected slots:
 	void slotGameNotify(const QString &, int);
 	void slotMailNotify(const QString &, const QString &, int);
 	void slotSystemMessage(const QString &);
-	void slotError(const QString &, int);
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
 	void slotGotWebcamInvite(const QString &);
 	void slotGotWebcamImage(const QString&, const QPixmap&);
+	void slotWebcamReadyForTransmission();
+	void slotWebcamStopTransmission();
+	void slotOutgoingWebcamClosing();
 	void slotWebcamClosed(const QString&, int);
+	void slotWebcamPaused(const QString&);
+	void slotWebcamViewerJoined( const QString & );
+	void slotWebcamViewerLeft( const QString & );
+	void slotWebcamViewerRequest( const QString & );
+	void slotPictureStatusNotiy( const QString&, int);
 	void slotGotBuddyIcon(const QString&, KTempFile*, int);
 	void slotGotBuddyIconInfo(const QString&, KURL, int);
 	void slotGotBuddyIconChecksum(const QString&, int);
 	void slotGotBuddyIconRequest(const QString &);
 	void slotBuddyIconChanged(const QString&);
-
-	void slotBuddyListFetched( int numBuddies );
+	void slotGotYABEntry( YABEntry *entry );
+	void slotGotYABRevision( long revision, bool merged );
+	void slotSaveYABEntry( YABEntry &entry );
+	void slotModifyYABEntryError( YABEntry *entry, const QString & );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
+	void slotReceiveFileRefused( const Kopete::FileTransferInfo& info );
+	void slotFileTransferComplete( unsigned int id );
+	void slotFileTransferError( unsigned int id, int error, const QString &desc );
+	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );
+	void slotFileTransferResult( KIO::Job * );
+	void slotError( int level );
 
 private slots:
 	/**
 	 * When a global identity key get changed.
 	 */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
-	void slotKeepalive();
 private:
 
 	/**
 	 * Handle the signal and slot connections and disconnects
 	 */
 	void initConnectionSignals( enum SignalConnectionType sct );
+
+	QString prepareIncomingMessage( const QString &msg );
 
 	/**
 	 * internal (to the plugin) controls/flags
@@ -221,13 +263,14 @@ private:
 	 * Conferences list, maped by room name (id)
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
+	QStringList m_pendingConfInvites;
+
+	QMap<unsigned int, Kopete::Transfer *> m_fileTransfers;
 
 	void setPictureFlag( int flag );
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
-	QTimer* m_keepaliveTimer;
-	bool m_waitingForResponse;
 
 	/**
 	 * External Settings and Descriptors
@@ -238,14 +281,19 @@ private:
 	int m_lastDisconnectCode;	// The last disconnect code.
 	int m_currentMailCount;
 	int m_pictureFlag;			// Describes if we send a buddy icon or not
-	YahooSession *m_session;	// Connection Object
+	long m_YABLastMerge;		// The YAB Revision on which the last merge was done
+	long m_YABLastRemoteRevision;	// The last remote YAB Revision on which a sync was done
 	YahooProtocol *m_protocol;	// The Protocol Object
 
+	YahooWebcam *m_webcam;
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 
 	KAction *m_openInboxAction;	// Menu item openInbox
 	KAction *m_openYABAction;	// Menu item openYahooAddressbook
+	KAction *m_editOwnYABEntry;	// Menu item editOwnYABEntry
+	
+	Client *m_session;		// The Connection object
 };
 
 

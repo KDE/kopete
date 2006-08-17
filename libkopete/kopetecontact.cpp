@@ -44,6 +44,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprefs.h"
 #include "metacontactselectorwidget.h"
+#include "kopeteemoticons.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -92,19 +93,26 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 
+	// If can happend that a MetaContact may be used without a account
+	// (ex: for unit tests or chat window style preview)
 	if ( account )
+	{
 		account->registerContact( this );
+		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
+	}
 
 	// Need to check this because myself() may have no parent
-	if( parent )
+	// Maybe too the metaContact doesn't have a valid protocol() 
+	// (ex: for unit tests or chat window style preview)
+	if( parent && protocol() )
 	{
 		connect( parent, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
 		parent->addContact( this );
 	}
-	if( account )
-		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
+
+	
 }
 
 Contact::~Contact()
@@ -201,7 +209,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
+		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "add_user" ),
 		                                         0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 		actionAddContact->plug( menu );
 		menu->insertSeparator();
@@ -266,7 +274,8 @@ void Contact::changeMetaContact()
 	w->setSpacing( KDialog::spacingHint() );
 	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget(w);
 	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));
-
+	// exclude this metacontact as a target metacontact for the move
+	selector->excludeMetaContact( metaContact() );
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
 	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
@@ -449,7 +458,7 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ).
-		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("editdelete") ),
+		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{
@@ -656,7 +665,7 @@ QString Contact::toolTip() const
 			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
 				arg( Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
-					Kopete::Message::escape( nick ) );
+					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -698,7 +707,7 @@ QString Contact::toolTip() const
 			if(!awaymsg.isEmpty())
 			{
 				tip += i18n("<br><b>Away Message:</b>&nbsp;FORMATTED AWAY MESSAGE",
-							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Message::escape(awaymsg) );
+							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(awaymsg) ) );
 			}
 		}
 		else

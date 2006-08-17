@@ -20,6 +20,7 @@
 
 #include <qcheckbox.h>
 #include <qlayout.h>
+#include <qguardedptr.h>
 
 #include <kcolorbutton.h>
 #include <kpushbutton.h>
@@ -45,7 +46,8 @@ class KopeteAccountLVI : public KListViewItem
 		Kopete::Account *account() { return m_account; }
 
 	private:
-		Kopete::Account *m_account;
+		//need to be guarded because some accounts may be linked (that's the case of jabber transports)
+		QGuardedPtr<Kopete::Account> m_account;
 };
 
 typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
@@ -84,8 +86,10 @@ void KopeteAccountConfig::save()
 	KopeteAccountLVI *i = static_cast<KopeteAccountLVI*>( m_view->mAccountList->firstChild() );
 	while( i )
 	{
-		  i->account()->setPriority( priority-- );
-		  i = static_cast<KopeteAccountLVI*>( i->nextSibling() );
+		if(!i->account())
+			continue;
+		i->account()->setPriority( priority-- );
+		i = static_cast<KopeteAccountLVI*>( i->nextSibling() );
 	}
 
 	QMap<Kopete::Account *, QColor>::Iterator it;
@@ -126,7 +130,7 @@ void KopeteAccountConfig::slotItemSelected()
 	m_view->mButtonEdit->setEnabled( itemSelected );
 	m_view->mButtonRemove->setEnabled( itemSelected );
 
-	if ( itemSelected )
+	if ( itemSelected &&  itemSelected->account() )
 	{
 		m_view->mButtonUp->setEnabled( itemSelected->itemAbove() );
 		m_view->mButtonDown->setEnabled( itemSelected->itemBelow() );
@@ -184,7 +188,7 @@ void KopeteAccountConfig::slotAddAccount()
 void KopeteAccountConfig::slotEditAccount()
 {
 	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
-	if ( !lvi )
+	if ( !lvi || !lvi->account() )
 		return;
 
 	Kopete::Account *ident = lvi->account();
@@ -223,7 +227,7 @@ void KopeteAccountConfig::slotEditAccount()
 void KopeteAccountConfig::slotRemoveAccount()
 {
 	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
-	if ( !lvi )
+	if ( !lvi || !lvi->account() )
 		return;
 
 	Kopete::Account *i = lvi->account();
@@ -248,7 +252,7 @@ void KopeteAccountConfig::slotColorChanged()
 		return;      // color because another account has been selected
 
 	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
-	if ( !lvi )
+	if ( !lvi || !lvi->account() )
 		return;
 	Kopete::Account *account = lvi->account();
 

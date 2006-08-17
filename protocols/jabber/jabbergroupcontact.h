@@ -72,17 +72,27 @@ public slots:
 	virtual void sendFile( const KURL &sourceURL = KURL(),
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
-	/**
-	 * Retrieve a vCard for the contact
-	 */
-	void slotUserInfo ();
-
 private slots:
 
 	/**
 	 * Catch a dying message manager and leave the room.
 	 */
 	void slotChatSessionDeleted ();
+	
+	/**
+	 * When our own status change, we need to manually send the presence.
+	 */
+	void slotStatusChanged();
+	
+	/**
+	 * ask the user to change the nick, and change it
+	 */
+	void slotChangeNick();
+	
+	/**
+	 * a subcontact has been destroyed   (may happen when closing kopete)
+	 */
+	void slotSubContactDestroyed(Kopete::Contact*);
 
 private:
 
@@ -90,7 +100,8 @@ private:
 	QPtrList<Kopete::MetaContact> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
-
+	JabberBaseContact *mSelfContact;
+	QString mNick;
 };
 
 #endif

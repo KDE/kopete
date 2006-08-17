@@ -22,6 +22,7 @@
 #include <kpopupmenu.h>
 
 #include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 
 #include "testbedcontact.h"
 #include "testbedfakeserver.h"
@@ -32,8 +33,7 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 : Kopete::Account ( parent, accountID , name )
 {
 	// Init the myself contact
-	// FIXME: I think we should add a global self metaContact (Olivier)
-	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), 0L ) );
+	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
@@ -46,6 +46,15 @@ TestbedAccount::~TestbedAccount()
 KActionMenu* TestbedAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+
+	mActionMenu->popupMenu()->insertSeparator();
+
+	KAction *action;
+	
+	action = new KAction (i18n ("Show my own video..."), "testbed_showvideo", 0, this, SLOT (slotShowVideo ()), this, "actionShowVideo");
+	mActionMenu->insert(action);
+	action->setEnabled( isConnected() );
+
 	return mActionMenu;
 }
 
@@ -129,6 +138,15 @@ void TestbedAccount::slotGoOffline ()
 	updateContactStatus();
 }
 
+void TestbedAccount::slotShowVideo ()
+{
+	kdDebug ( 14210 ) << k_funcinfo << endl;
+
+	if (isConnected ())
+		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0, "Testbed video window");
+	updateContactStatus();
+}
+
 void TestbedAccount::receivedMessage( const QString &message )
 {
 	// Look up the contact the message is from
@@ -136,12 +154,15 @@ void TestbedAccount::receivedMessage( const QString &message )
 	TestbedContact* messageSender;
 
 	from = message.section( ':', 0, 0 );
-	//from = QString::fromLatin1("echo");
-	messageSender = static_cast<TestbedContact *>( contacts ()[ from ] );
+	Kopete::Contact* contact = contacts()[from];
+	messageSender = dynamic_cast<TestbedContact *>( contact );
 
 	kdDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
-	messageSender->receivedMessage( message );
+	if ( messageSender )
+		messageSender->receivedMessage( message );
+	else
+		kdWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
 }
 
 void TestbedAccount::updateContactStatus()

@@ -25,7 +25,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kfileitem.h>
+#include <kdirlister.h>
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
@@ -33,18 +33,28 @@
 // Local Includes
 #include "libwinpopup.h"
 
-WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq,int messageCheck)
-	: smbClientBin(smbClient), groupCheckFreq(groupFreq), messageCheckFreq(messageCheck)
+WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq)
+	: smbClientBin(smbClient), groupCheckFreq(groupFreq)
 {
 	connect(&updateGroupDataTimer, SIGNAL(timeout()), this, SLOT(slotUpdateGroupData()));
-	connect(&messageCheckTimer, SIGNAL(timeout()), this, SLOT(slotCheckForNewMessages()));
 
 	updateGroupDataTimer.start(1, true);
-	messageCheckTimer.start(1, true);
+	QTimer::singleShot(1, this, SLOT(slotStartDirLister()));
 }
 
 WinPopupLib::~WinPopupLib()
 {
+}
+
+void WinPopupLib::slotStartDirLister()
+{
+	if (checkMessageDir()) {
+		dirLister = new KDirLister();
+		dirLister->setAutoUpdate(true);
+		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
+		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
+		dirLister->openURL(KURL::fromPathOrURL(WP_POPUP_DIR));
+	}
 }
 
 /**
@@ -53,12 +63,9 @@ WinPopupLib::~WinPopupLib()
 const QStringList WinPopupLib::getGroups()
 {
 	QStringList ret;
-	// Do we need a mutex or semaphore here? GF
-	groupMutex.lock();
 	QMap<QString, WorkGroup>::ConstIterator end = theGroups.end();
 	for(QMap<QString, WorkGroup>::ConstIterator i = theGroups.begin(); i != end; i++)
 		ret += i.key();
-	groupMutex.unlock();
 
 	return ret;
 }
@@ -79,16 +86,13 @@ bool WinPopupLib::checkHost(const QString &Name)
 //	kdDebug() << "WP checkHost: " << Name << endl;
 	bool ret = false;
 
-	// Do we need a mutex or semaphore here? GF
-	groupMutex.lock();
 	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
 	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
 		if ((*i).Hosts().contains(Name.upper())) {
 			ret = true;
-			break; //keep the mutex locked as short as possible
+			break;
 		}
 	}
-	groupMutex.unlock();
 
 	return ret;
 }
@@ -98,27 +102,34 @@ bool WinPopupLib::checkMessageDir()
 {
 	QDir dir(WP_POPUP_DIR);
 	if (! dir.exists()) {
-		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Working directory /var/lib/winpopup/ does not exist.\n"
-								     "If you have not configured anything yet (samba) it may be better to call\n"
-								     "Install Into Samba (Configure... -> Account -> Edit)\n"
-								     "Should the directory be created? (May need root password)"), QString::null, i18n("Create Directory"), i18n("Do Not Create"));
+		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+												  i18n("Working directory %1 does not exist.\n"
+													   "If you have not configured anything yet (samba) please see\n"
+													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
+													   "on how to do this.\n"
+													   "Should the directory be created? (May need root password)").arg(WP_POPUP_DIR),
+												  QString::fromLatin1("Winpopup"), i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
-			QString kdesuArgs = "mkdir -p -m 0777 /var/lib/winpopup";
+			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
 			if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
-		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, "/var/lib/winpopup/");
-		QString tmpPerms = tmpFileItem.permissionsString();
+		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, KURL::fromPathOrURL(WP_POPUP_DIR));
+		mode_t tmpPerms = tmpFileItem.permissions();
 
-		if (tmpPerms != "drwxrwxrwx") {
+		if (tmpPerms != 0777) {
 
 			kdDebug(14170) << "Perms not ok!" << endl;
 
-			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Permissions of the working directory "
-									     "/var/lib/winpopup/ are wrong!\n"
-									     "Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
+			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+													  i18n("Permissions of the working directory "
+														   "%1 are wrong!\n"
+														   "You will not receive messages if you say no.\n"
+														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
+														   "Fix? (May need root password)").arg(WP_POPUP_DIR),
+													  QString::fromLatin1("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
-				QString kdesuArgs = "chmod 0777 /var/lib/winpopup";
+				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
 				if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 			}
 		} else {
@@ -128,19 +139,25 @@ bool WinPopupLib::checkMessageDir()
 
 	return false;
 }
+
 /**
  * read the groups and their hosts
  */
 void WinPopupLib::slotUpdateGroupData()
 {
 	passedInitialHost = false;
+	todo.clear();
 	currentGroupsMap.clear();
-	currentHost = "LOCALHOST";
+	currentHost = QString::fromLatin1("LOCALHOST");
 	startReadProcess(currentHost);
 }
 
 void WinPopupLib::startReadProcess(const QString &Host)
 {
+	currentHosts.clear();
+	currentGroups.clear();
+	currentGroup = QString();
+
 	// for Samba 3
 	KProcIO *reader = new KProcIO;
 	*reader << smbClientBin << "-N" << "-E" << "-g" << "-L" << Host << "-";
@@ -158,12 +175,17 @@ void WinPopupLib::slotReadProcessReady(KProcIO *r)
 {
 	QString tmpLine = QString::null;
 	QRegExp group("^Workgroup\\|(.*)\\|(.*)$"), host("^Server\\|(.*)\\|(.*)$"),
-		info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
+			info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
+			error("Connection.*failed");
 
 	while (r->readln(tmpLine) > -1) {
 		if (info.search(tmpLine) != -1) currentGroup = info.cap(1);
 		if (host.search(tmpLine) != -1) currentHosts += host.cap(1);
 		if (group.search(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
+		if (error.search(tmpLine) != -1) {
+			kdDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
+			if (currentHost == QString::fromLatin1("LOCALHOST")) currentHost = QString::fromLatin1("failed"); // to be sure
+		}
 	}
 }
 
@@ -180,116 +202,124 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 		todo.remove(currentHost);
 		done += currentHost;
 
-		QMap<QString, WorkGroup> newGroups;
-		//loop through the read groups and check for new ones
-		QMap<QString, QString>::ConstIterator end = currentGroups.end();
-		for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-			QString groupMaster = i.data();
-			if (!done.contains(groupMaster)) todo += groupMaster;
+		if (!currentGroups.isEmpty()) {
+			QMap<QString, WorkGroup> newGroups;
+			//loop through the read groups and check for new ones
+			QMap<QString, QString>::ConstIterator end = currentGroups.end();
+			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+				QString groupMaster = i.data();
+				if (!done.contains(groupMaster)) todo += groupMaster;
+			}
 		}
 
-		// create a workgroup object and put the hosts in
-		WorkGroup nWG;
-		nWG.addHosts(currentHosts);
+		if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
+			// create a workgroup object and put the hosts in
+			WorkGroup nWG;
+			nWG.addHosts(currentHosts);
 
-		currentGroupsMap.insert(currentGroup, nWG, true);
+			currentGroupsMap.insert(currentGroup, nWG, true);
+		}
 
 	} else {
 		passedInitialHost = true;
-		QMap<QString, QString>::ConstIterator end = currentGroups.end();
-		for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-			QString groupMaster = i.data();
-			todo += groupMaster;
+		if (!currentGroups.isEmpty()) {
+			QMap<QString, QString>::ConstIterator end = currentGroups.end();
+			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+				QString groupMaster = i.data();
+				todo += groupMaster;
+			}
+		} else {
+			if (currentHost == QString::fromLatin1("failed"))
+				KMessageBox::error(Kopete::UI::Global::mainWidget(),
+								   i18n("Connection to localhost failed!\n"
+									    "Is your samba server running?"),
+								   QString::fromLatin1("Winpopup"));
 		}
 	}
 
 	// maybe restart cycle
-	currentHosts.clear();
-	currentGroups.clear();
 	if (todo.count()) {
 		currentHost = todo[0];
 		startReadProcess(currentHost);
 	} else {
-		groupMutex.lock();
 		theGroups = currentGroupsMap;
-		groupMutex.unlock();
 		updateGroupDataTimer.start(groupCheckFreq * 1000, true);
 	}
 }
 
-/**
- * check for new arrived messages
- */
-void WinPopupLib::slotCheckForNewMessages()
+void WinPopupLib::slotListCompleted()
 {
-//	kdDebug(14170) << "check for new Messages: " << this << endl;
+	/// only to check received messages during start up, then we use newItems. GF
+	disconnect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
+	readMessages(dirLister->items());
+}
 
-	if (!checkMessageDir()) return; // Restart timer if false? GF
+void WinPopupLib::slotNewMessages(const KFileItemList &items)
+{
+	readMessages(items);
+}
 
-	QDir dir(WP_POPUP_DIR);
-	const QFileInfoList *messageFiles = dir.entryInfoList(QDir::Files, QDir::Name);
-	if (messageFiles) {
-		QFileInfoListIterator it(*messageFiles);
-		QFileInfo *messageFileInfo;
-		while((messageFileInfo = it.current()) != 0) {
-			++it;
-			if (messageFileInfo->isFile()) {
-				QString messageFileName(messageFileInfo->fileName());
-				QString messageFilePath(WP_POPUP_DIR);
-//				messageFilePath.append("/");
-				messageFilePath.append(messageFileName);
-				QFile messageFile(messageFilePath);
+/**
+ * read new arrived messages
+ */
+void WinPopupLib::readMessages(const KFileItemList &items)
+{
+	QPtrListIterator<KFileItem> it(items);
+	KFileItem *tmpItem;
+	while ((tmpItem = it.current()) != 0) {
+		if (tmpItem->isFile()) {
+			QFile messageFile(tmpItem->url().path());
 
-				if (messageFile.open(IO_ReadOnly)) {
-					QTextStream stream(&messageFile);
-					QString sender;
-					QDateTime time;
-					QString text;
+			if (messageFile.open(IO_ReadOnly)) {
+				QTextStream stream(&messageFile);
+				QString sender;
+				QDateTime time;
+				QString text;
 
-					// first line is sender, can this really be empty? GF
-					sender = stream.readLine();
-					sender = sender.upper();
+				// first line is sender, can this really be empty? GF
+				sender = stream.readLine();
+				sender = sender.upper();
 
-					// second line is time
-					QString tmpTime = stream.readLine();
-					time = QDateTime::fromString(tmpTime, Qt::ISODate);
+				// second line is time
+				QString tmpTime = stream.readLine();
+				time = QDateTime::fromString(tmpTime, Qt::ISODate);
 
-					while (!stream.atEnd()) {
-						text.append(stream.readLine());
-						text.append('\n');
-					}
+				while (!stream.atEnd()) {
+					text.append(stream.readLine());
+					text.append('\n');
+				}
 
-					// remove trailing CR
-					text = text.stripWhiteSpace();
+				// remove trailing CR
+				text = text.stripWhiteSpace();
 
-					messageFile.close();
+				messageFile.close();
 
-					// delete file
-					if (!messageFile.remove()) {
-						// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
-						// if the directory permissions are 0777 - so this is just for safety. GF
-						kdDebug(14170) << "Message file not removed - how that?" << endl;
-						int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
-											"maybe the permissions are wrong.\n"
-											"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
-						if (tmpYesNo == KMessageBox::Yes) {
-							QFileInfo messageFileInfo(messageFile);
-							QString kdesuArgs = "chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName();
-							if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
-								if (!messageFile.remove())
-									KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
-							}
+				// delete file
+				if (!messageFile.remove()) {
+					// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
+					// if the directory permissions are 0777 - so this is just for safety. GF
+					kdDebug(14170) << "Message file not removed - how that?" << endl;
+					int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+															  i18n("A message file could not be removed; "
+																   "maybe the permissions are wrong.\n"
+																   "Fix? (May need root password)"),
+															  QString::fromLatin1("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
+					if (tmpYesNo == KMessageBox::Yes) {
+						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem->url().path()));
+						if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
+							if (!messageFile.remove())
+								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
 						}
 					}
-					if (!sender.isEmpty() && time.isValid())
-						emit signalNewMessage(text, time, sender);
-					else
-						kdDebug(14170) << "Received invalid message!" << endl;
 				}
+				if (!sender.isEmpty() && time.isValid())
+					emit signalNewMessage(text, time, sender);
+				else
+					kdDebug(14170) << "Received invalid message!" << endl;
 			}
-		} // while
-	} // if messageFiles
-	messageCheckTimer.start(messageCheckFreq *1000, true);
+		} // isFile
+		++it;
+	} // while
 }
 
 /**
@@ -319,16 +349,15 @@ void WinPopupLib::slotSendProcessExited(KProcess *p)
 	delete p;
 }
 
-void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq, int messageCheck)
+void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)
 {
 	smbClientBin = smbClient;
 	groupCheckFreq = groupFreq;
-	messageCheckFreq = messageCheck;
 
 	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.changeInterval(groupCheckFreq * 1000);
-	if (messageCheckTimer.isActive()) messageCheckTimer.changeInterval(messageCheckFreq * 1000);
 }
 
 #include "libwinpopup.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

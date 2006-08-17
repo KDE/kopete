@@ -6,7 +6,7 @@ METASOURCES = AUTO
 check_LTLIBRARIES = kunittest_kopetemessage_test.la kunittest_kopetepropertiestest.la kunittest_kopetecontactlist_test.la 
 noinst_LTLIBRARIES = kunittest_kopeteemoticontest.la
 
-check_PROGRAMS = kopetewallettest_program kopetepasswordtest_program kopeteerrornotifiertest_program
+check_PROGRAMS = kopetewallettest_program kopetepasswordtest_program
 
 kunittest_kopetepropertiestest_la_SOURCES = kopetepropertiestest.cpp ../kopeteproperties.cpp
 kunittest_kopetepropertiestest_la_LIBADD = -lkunittest ../libkopete.la
@@ -27,10 +27,6 @@ kopetewallettest_program_LDADD = ../libkopete.la
 kopetepasswordtest_program_SOURCES = kopetepasswordtest_program.cpp
 kopetepasswordtest_program_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
 kopetepasswordtest_program_LDADD = ../libkopete.la
-
-kopeteerrornotifiertest_program_SOURCES = kopeteerrornotifiertest_program.cpp
-kopeteerrornotifiertest_program_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
-kopeteerrornotifiertest_program_LDADD = ../libkopete.la
 
 kunittest_kopetecontactlist_test_la_SOURCES = kopetecontactlist_test.cpp
 kunittest_kopetecontactlist_test_la_LIBADD = -lkunittest mock/libkopete_mock.la

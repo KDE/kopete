@@ -27,6 +27,8 @@
 #include <kprogress.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
+#include <kzip.h>
+#include <kmimetype.h>
 
 
 namespace Kopete
@@ -220,7 +222,7 @@ void installEmoticonTheme(const QString &archiveName)
 	KArchiveEntry *currentEntry = 0L;
 	KArchiveDirectory* currentDir = 0L;
 	KProgressDialog *progressDlg = 0L;
-	KTar *archive = 0L;
+	KArchive *archive = 0L;
 
 	QString localThemesDir(locateLocal("emoticons", QString::null) );
 
@@ -238,8 +240,20 @@ void installEmoticonTheme(const QString &archiveName)
 	progressDlg->show();
 	kapp->processEvents();
 
-	archive = new KTar(archiveName);
-	if ( !archive->open(IO_ReadOnly) )
+	QString currentBundleMimeType = KMimeType::findByPath(archiveName, 0, false)->name();
+	if( currentBundleMimeType == QString::fromLatin1("application/x-zip") )
+		archive = new KZip(archiveName);
+	else if( currentBundleMimeType == QString::fromLatin1("application/x-tgz") || 
+				currentBundleMimeType == QString::fromLatin1("application/x-tbz") ||
+				currentBundleMimeType == QString::fromLatin1("application/x-gzip") ||
+				currentBundleMimeType == QString::fromLatin1("application/x-bzip2") )
+		archive = new KTar(archiveName);
+	else if(archiveName.endsWith(QString::fromLatin1("jisp")) || archiveName.endsWith(QString::fromLatin1("zip")) )
+		archive = new KZip(archiveName);
+	else
+		archive = new KTar(archiveName);
+
+	if ( !archive || !archive->open(IO_ReadOnly) )
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,
@@ -259,7 +273,8 @@ void installEmoticonTheme(const QString &archiveName)
 		if (currentEntry->isDirectory())
 		{
 			currentDir = dynamic_cast<KArchiveDirectory*>( currentEntry );
-			if (currentDir && (currentDir->entry(QString::fromLatin1("emoticons.xml")) != NULL))
+			if (currentDir && ( currentDir->entry(QString::fromLatin1("emoticons.xml")) != NULL ||
+						 		currentDir->entry(QString::fromLatin1("icondef.xml")) != NULL ) )
 				foundThemes.append(currentDir->name());
 		}
 	}
@@ -312,8 +327,7 @@ void installEmoticonTheme(const QString &archiveName)
 
 	// check if all steps were done, if there are skipped ones then we didn't
 	// succeed copying all dirs from the tarball
-	if (progressDlg->progressBar()->totalSteps() !=
-		progressDlg->progressBar()->progress())
+	if (progressDlg->progressBar()->totalSteps() > progressDlg->progressBar()->progress())
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,

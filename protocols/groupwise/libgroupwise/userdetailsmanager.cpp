@@ -41,6 +41,7 @@ bool UserDetailsManager::known( const QString & dn )
 {
 	if ( dn == m_client->userDN() )
 		return true;
+	// TODO: replace with m_detailsMap.contains( dn );
 	QStringList::Iterator found = m_detailsMap.keys().find( dn );
 	// we always know the local user's details, so don't look them up
 	return ( found !=m_detailsMap.keys().end() );

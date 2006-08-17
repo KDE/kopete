@@ -22,6 +22,8 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
+#include <qtextcodec.h>
+#include <qtabwidget.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klistview.h>
@@ -93,10 +95,12 @@ void ICQSearchDialog::startSearch()
 				this, SLOT( newResult( const ICQSearchResult& ) ) );
 		connect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
 				this, SLOT( searchFinished( int ) ) );
-		
-		if ( !m_searchUI->uin->text().isEmpty() )
+
+		const QWidget* currentPage = m_searchUI->tabWidget3->currentPage();
+
+		if ( currentPage == m_searchUI->tab )
 		{
-			if(m_searchUI->uin->text().toULong() == 0)
+			if( m_searchUI->uin->text().isEmpty() || m_searchUI->uin->text().toULong() == 0 )
 			{
 				// Invalid UIN
 				stopSearch();
@@ -110,16 +114,17 @@ void ICQSearchDialog::startSearch()
 				m_account->engine()->uinSearch( m_searchUI->uin->text() );
 			}
 		}
-		else
+		else if ( currentPage == m_searchUI->tab_2 )
 		{
 			//create a ICQWPSearchInfo struct and send it
 			ICQProtocol* p = ICQProtocol::protocol();
 			ICQWPSearchInfo info;
-			info.firstName = m_searchUI->firstName->text();
-			info.lastName = m_searchUI->lastName->text();
-			info.nickName = m_searchUI->nickName->text();
-			info.email = m_searchUI->email->text();
-			info.city = m_searchUI->city->text(); // City
+			QTextCodec* codec = m_account->defaultCodec();
+			info.firstName = codec->fromUnicode( m_searchUI->firstName->text() );
+			info.lastName = codec->fromUnicode( m_searchUI->lastName->text() );
+			info.nickName = codec->fromUnicode( m_searchUI->nickName->text() );
+			info.email = codec->fromUnicode( m_searchUI->email->text() );
+			info.city = codec->fromUnicode( m_searchUI->city->text() ); // City
 			info.gender = p->getCodeForCombo(m_searchUI->gender, p->genders()); // Gender
 			info.language = p->getCodeForCombo(m_searchUI->language, p->languages()); // Lang
 			info.country =p->getCodeForCombo(m_searchUI->country, p->countries()); // country code
@@ -236,7 +241,7 @@ void ICQSearchDialog::closeDialog()
 	clearResults();
 	clearFields();
 
-	closeClicked();
+	slotClose();
 }
 
 void ICQSearchDialog::resultSelectionChanged()
@@ -260,11 +265,16 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 		//TODO update progress
 		return;
 	}
-		
+
+	QTextCodec* codec = m_account->defaultCodec();
+
 	QListViewItem *item = new QListViewItem( m_searchUI->searchResults, QString::number( info.uin ),
-	                                         info.nickName, info.firstName, info.lastName, info.email,
+	                                         codec->toUnicode( info.nickName ),
+	                                         codec->toUnicode( info.firstName ),
+	                                         codec->toUnicode( info.lastName ),
+	                                         codec->toUnicode( info.email ),
 	                                         info.auth ? i18n( "Yes" ) : i18n( "No" ) );
-	
+
 	if ( !item )
 		return;
 	

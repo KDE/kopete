@@ -395,7 +395,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 										contactAdded = true;
 									else
 										KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-											i18n( "<qt>It was not possible to add the contact. Please see the debug messages for details.</qt>" ),
+											i18n( "<qt>It was not possible to add the contact.</qt>" ),
 											i18n( "Could Not Add Contact") ) ;
 								}
 							}

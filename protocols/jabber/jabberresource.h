@@ -1,9 +1,10 @@
  /*
   * jabberresource.h
   *
+  * Copyright (c) 2005-2006 by Michaël Larouche <michael.larouche@kdemail.net>
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
   *
-  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) 2001-2006 by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
   * *                                                                       *
@@ -24,17 +25,24 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <im.h>
-#include "jabberprotocol.h"
 
 class JabberAccount;
 
-class JabberResource:public QObject
+namespace XMPP
 {
+class Resource;
+class Jid;
+class Features;
+}
 
+class JabberResource : public QObject
+{
 Q_OBJECT
 
 public:
+	/**
+	 * Create a new Jabber resource.
+	 */
 	JabberResource (JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource);
 	~JabberResource ();
 
@@ -43,8 +51,21 @@ public:
 
 	void setResource ( const XMPP::Resource &resource );
 
+	/**
+	 * Return the client name for this resource.
+	 * @return the client name
+	 */
 	const QString &clientName () const;
+	/**
+	 * Return the client system for this resource.
+	 * @return the client system.
+	 */
 	const QString &clientSystem () const;
+
+	/**
+	 * Get the available features for this resource.
+	 */
+	XMPP::Features features() const;
 
 signals:
 	void updated ( JabberResource * );
@@ -52,13 +73,12 @@ signals:
 private slots:
 	void slotGetTimedClientVersion ();
 	void slotGotClientVersion ();
+	void slotGetDiscoCapabilties ();
+	void slotGotDiscoCapabilities ();
 
 private:
-	XMPP::Jid mJid;
-	XMPP::Resource mResource;
-	JabberAccount *mAccount;
-	QString mClientName, mClientSystem;
-
+	class Private;
+	Private *d;
 };
 
 #endif

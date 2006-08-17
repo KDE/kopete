@@ -2,8 +2,9 @@
     chatmessagepart.h - Chat Message KPart
 
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Copyright (c) 2005      by Michaël Larouche      <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,19 +20,18 @@
 #define CHATMESSAGEPART_H
 
 #include <khtml_part.h>
-
 #include <dom/html_element.h>
 
-#include <qptrdict.h>
 #include <qvaluelist.h>
-#include <qpair.h>
 
-#include "kopeteview.h"
-
-class KTempFile;
-class KRootPixmap;
-namespace DOM { class Node; }
-namespace Kopete { class ChatSession; }
+namespace Kopete
+{ 
+	class Message; 
+	class ChatSession; 
+	class Contact; 
+}
+class KPopupMenu;
+class ChatWindowStyle;
 
 /**
  * @author Richard Smith
@@ -40,15 +40,16 @@ class ChatMessagePart : public KHTMLPart
 {
 	Q_OBJECT
 public:
-	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent, const char *name = 0 );
+	/**
+	 * Create a new ChatMessage Part.
+	 */
+	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent, const char *name = 0);
 	~ChatMessagePart();
 
 	/**
 	 * Clear the message window
 	 */
 	void clear();
-
-	void setStylesheet( const QString &style  );
 
 	/**
 	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
@@ -90,8 +91,37 @@ public slots:
 	/**
 	 * Appends a message to the messave view
 	 * @param message The message to be appended
+	 * @param restoring This flag is used to not re-append message when changing style. By default false.
 	 */
-	void appendMessage( Kopete::Message &message );
+	void appendMessage( Kopete::Message &message, bool restoring = false);
+
+	/**
+	 * Change the current style.
+	 * This method override is used when preferences change.
+	 * This method create a new ChatWindowStyle object.
+	 *
+	 * Need to rebuild all the XHTML content.
+	 *
+	 * @param stylePath absolute path to the style.
+	 */
+	void setStyle( const QString &stylePath );
+	
+	/**
+	 * Change the current style
+	 * This method override is used on preview and unit tests.
+	 * Use a already existing ChatWindowStyle object.
+	 *
+	 * Need to rebuild all the XHTML content.
+	 *
+	 * @param chatWindowStyle ChatWindowStyle object.
+	 */
+	void setStyle( ChatWindowStyle *style );
+	
+	/**
+	 * Change the current variant for the current style
+	 * @param variantPath relative path to the style variant.
+	 */
+	void setStyleVariant( const QString &variantPath );
 
 signals:
 	/**
@@ -109,24 +139,9 @@ private slots:
 	void slotScrollView();
 	void slotAppearanceChanged();
 
-	/**
-	 * Called when KopetePrefs are saved
-	 */
-	void slotTransparencyChanged();
-
-	/**
-	 * Sets the background of the widget
-	 * @param pm The new background image
-	 */
-	void slotUpdateBackground( const QPixmap &pm );
-
 	void slotScrollingTo( int x, int y );
 
-	void slotRefreshNodes();
-
 	void slotRefreshView();
-
-	void slotTransformComplete( const QVariant &result );
 
 	void slotRightClick( const QString &, const QPoint &point );
 
@@ -134,35 +149,27 @@ private slots:
 
 	void slotCloseView( bool force = false );
 
+	/**
+	 * Do the actual style change.
+	 */
+	void changeStyle();
+	
+	/**
+	 * Update the display in the header template if any.
+	 */
+	void slotUpdateHeaderDisplayName();
+	/**
+	 * Upda the photo in the header.
+	 */
+	void slotUpdateHeaderPhoto();
+
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 	
 private:
-	Kopete::ChatSession *m_manager;
-
-	unsigned long messageId;
-	QStringList messageMap;
-
-	bool scrollPressed;
-	bool bgChanged;
-
-	DOM::HTMLElement activeElement;
-
-	// FIXME: share
-	KTempFile *backgroundFile;
-	KRootPixmap *root;
-
-	KAction *copyAction;
-	KAction *saveAction;
-	KAction *printAction;
-	KAction *closeAction;
-	KAction *copyURLAction;
-
 	void readOverrides();
 
 	const QString styleHTML() const;
-
-	const QString addNickLinks( const QString &html ) const;
 
 	Kopete::Contact *contactFromNode( const DOM::Node &n ) const;
 
@@ -175,6 +182,58 @@ private:
 	 * Returns the text currently under the mouse
 	 */
 	QString textUnderMouse();
+
+	/**
+	 * Format(replace) style keywords for messages (incoming, outgoing, internal)
+	 * Use formatStyleKeywords(const QString &sourceHTML) for header and footer.
+	 *
+	 * @param sourceHTML the source html which contains the keywords
+	 * @param message the current Message.
+	 * 
+	 * @return the resulting HTML with replaced keywords.
+	 */
+	QString formatStyleKeywords( const QString &sourceHTML, const Kopete::Message &message );
+	/**
+	 * Format(replace) style keywords for header and footers.
+	 * For messages, use formatStyleKeywords(const QString &sourceHTML, Kopete::Message &message)  instead.
+	 *
+	 * @param sourceHTML HTML source needed to be replaced.
+	 *
+	 * @return the resulting HTML with replaced keywords.
+	 */
+	QString formatStyleKeywords( const QString &sourceHTML );
+
+	/**
+	 * Helper function to parse time in correct format.
+	 * Use glibc strftime function.
+	 *
+	 * @param timeFormat the time format to parse.
+	 * @param dateTime the QDateTime which contains the datetime to format.
+	 * @return the formatted time string.
+	 */
+	QString formatTime(const QString &timeFormat, const QDateTime &dateTime);
+
+	/**
+	 * Format a nickname/displayname according to preferences.
+	 *
+	 * @param sourceName Source name to format.
+	 * @return the formatted name.
+	 */
+	QString formatName( const QString &sourceName );
+
+	/**
+	 * Format a message body according to the style included
+	 * in the message.
+	 *
+	 * @param message Kopete::Message to format.
+	 * @return a span tag with a style attribute.
+	 */
+	QString formatMessageBody( const Kopete::Message &message );
+
+	/**
+	 * Write the template file to KHTMLPart
+	 */
+	void writeTemplate();
 
 	class ToolTip;
 	friend class ToolTip;

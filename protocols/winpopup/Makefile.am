@@ -8,7 +8,7 @@ AM_CPPFLAGS = -I$(srcdir)/ui \
 
 kde_module_LTLIBRARIES = kopete_wp.la
 
-noinst_HEADERS = wpdebug.h wpprotocol.h wpeditaccount.h wpaccount.h wpuserinfo.h wpcontact.h wpaddcontact.h
+noinst_HEADERS = wpprotocol.h wpeditaccount.h wpaccount.h wpuserinfo.h wpcontact.h wpaddcontact.h
 
 kopete_wp_la_SOURCES = wpprotocol.cpp wpcontact.cpp  wpaddcontact.cpp wpeditaccount.cpp  wpaccount.cpp wpuserinfo.cpp
 kopete_wp_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)

@@ -20,9 +20,9 @@
 
 #include "transfer.h"
 #include "buffer.h"
+#include "task.h"
+#include "client.h"
 #include "connection.h"
-#include "oscartypes.h"
-
 
 
 ChatNavServiceTask::ChatNavServiceTask( Task* parent ) : Task( parent )
@@ -45,6 +45,10 @@ ChatNavServiceTask::RequestType ChatNavServiceTask::requestType()
 	return m_type;
 }
 
+QValueList<int> ChatNavServiceTask::exchangeList() const
+{
+    return m_exchanges;
+}
 
 bool ChatNavServiceTask::forMe( const Transfer* transfer ) const
 {
@@ -82,12 +86,17 @@ bool ChatNavServiceTask::take( Transfer* transfer )
         case 0x0003:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found" << endl;
 			handleExchangeInfo( t );
+            //set the exchanges for the client
+            emit haveChatExchanges( m_exchanges );
             break;
         case 0x0004:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found" << endl;
+            handleBasicRoomInfo( t );
             break;
         };
     }
+
+
     setSuccess( 0, QString::null );
     setTransfer( 0 );
 	return true;
@@ -137,6 +146,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	b->addWord( lang.length() );
 	b->addString( lang.latin1(), lang.length() );
 
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending join room packet" << endl;
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
@@ -144,42 +154,47 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 
 void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << t.length << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << endl;
 	Buffer b(t.data);
-	WORD id = b.getWord();
-	int tlvCount = b.getWord();
-	int realCount = 0;
-	kdDebug(OSCAR_RAW_DEBUG) << "Expecting " << tlvCount << " TLVs" << endl;
+    ChatExchangeInfo exchangeInfo;
+
+	exchangeInfo.number = b.getWord();
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange id is: " << exchangeInfo.number << endl;
+    b.getWord();
 	while ( b.length() > 0 )
 	{
 		TLV t = b.getTLV();
+        Buffer tmp = t.data;
 		switch (t.type)
 		{
 		case 0x02:
-			kdDebug(OSCAR_RAW_DEBUG) << "user class is " << t.data << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "user class is " << t.data << endl;
 			break;
 		case 0x03:
+            exchangeInfo.maxRooms = tmp.getWord();
 			kdDebug(OSCAR_RAW_DEBUG) << "max concurrent rooms for the exchange is " << t.data << endl;
 			break;
 		case 0x04:
-			kdDebug(OSCAR_RAW_DEBUG) << "max room name length is " << t.data << endl;
+            exchangeInfo.maxRoomNameLength = tmp.getWord();
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max room name length is " << exchangeInfo.maxRoomNameLength << endl;
 			break;
 		case 0x05:
-			kdDebug(OSCAR_RAW_DEBUG) << "received root rooms info" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "received root rooms info" << endl;
 			break;
 		case 0x06:
-			kdDebug(OSCAR_RAW_DEBUG) << "received search tags" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "received search tags" << endl;
 			break;
 		case 0xCA:
-			kdDebug(OSCAR_RAW_DEBUG) << "have exchange creation time" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "have exchange creation time" << endl;
 			break;
 		case 0xC9:
-			kdDebug(OSCAR_RAW_DEBUG) << "got chat flag" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "got chat flag" << endl;
 			break;
 		case 0xD0:
-			kdDebug(OSCAR_RAW_DEBUG) << "got mandantory channels" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "got mandantory channels" << endl;
 			break;
 		case 0xD1:
+            exchangeInfo.maxMsgLength = tmp.getWord();
 			kdDebug(OSCAR_RAW_DEBUG) << "max message length" << t.data << endl;
 			break;
 		case 0xD2:
@@ -189,34 +204,42 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 		{
 			QString eName( t.data );
 			kdDebug(OSCAR_RAW_DEBUG) << "exchange name: " << eName << endl;
+            exchangeInfo.description = eName;
 			break;
 		}
 		case 0xD4:
-			kdDebug(OSCAR_RAW_DEBUG) << "got optional channels" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "got optional channels" << endl;
 			break;
 		case 0xD5:
-			kdDebug(OSCAR_RAW_DEBUG) << "creation permissions " << t.data << endl;
+            exchangeInfo.canCreate = tmp.getByte();
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "creation permissions " << exchangeInfo.canCreate << endl;
 			break;
 		default:
 			kdDebug(OSCAR_RAW_DEBUG) << "unknown TLV type " << t.type << endl;
 			break;
 		}
-		realCount++;
 	}
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "real tlv count is: " << realCount << endl;
+    m_exchanges.append( exchangeInfo.number );
 }
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << t.length << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << "Parsing room info TLV" << t.length << endl;
 	Buffer b(t.data);
-	WORD id = b.getWord();
-	int tlvCount = b.getWord();
-	int realCount = 0;
-	kdDebug(OSCAR_RAW_DEBUG) << "Expecting " << tlvCount << " TLVs" << endl;
-	while ( b.length() > 0 )
-	{
-		TLV t = b.getTLV();
+    WORD exchange = b.getWord();
+    QByteArray cookie( b.getBlock( b.getByte() ) );
+    WORD instance = b.getWord();
+    b.getByte(); //detail level, which i'm not sure we need
+    WORD tlvCount = b.getWord();
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
+                             << " c: " << cookie << " i: " << instance << endl;
+
+    QValueList<Oscar::TLV> tlvList = b.getTLVList();
+    QValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
+    QString roomName;
+    for ( it = tlvList.begin(); it != itEnd; ++it )
+    {
+        TLV t = ( *it );
 		switch (t.type)
 		{
 		case 0x66:
@@ -232,7 +255,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "evil generated array" << endl;
 			break;
 		case 0x6A:
-			kdDebug(OSCAR_RAW_DEBUG) << "fully qualified name" << endl;
+            roomName = QString( t.data );
+			kdDebug(OSCAR_RAW_DEBUG) << "fully qualified name" << roomName << endl;
 			break;
 		case 0x6B:
 			kdDebug(OSCAR_RAW_DEBUG) << "moderator" << endl;
@@ -271,8 +295,9 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "unknown TLV type " << t.type << endl;
 			break;
 		}
-		realCount++;
 	}
+
+    emit connectChat( exchange, cookie, instance, roomName );
 }
 
 void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
@@ -326,4 +351,5 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 }
 
+#include "chatnavservicetask.moc"
 //kate: indent-mode csands; tab-width 4;

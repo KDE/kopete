@@ -21,6 +21,7 @@
 
 #include "icqtask.h"
 #include "oscarmessage.h"
+
 /**
 ICQ Offline messages handling
 

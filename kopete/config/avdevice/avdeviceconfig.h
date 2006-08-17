@@ -1,7 +1,7 @@
 /*
     avdeviceconfig.h  -  Kopete Video Device Configuration Panel
 
-    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005-2006 by ClÃ¡udio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -35,7 +35,7 @@ class AVDeviceConfig_VideoDevice;
 class AVDeviceConfig_AudioDevice;
 
 /**
-@author Cláudio da Silveira Pinheiro
+@author Clï¿½dio da Silveira Pinheiro
 */
 class AVDeviceConfig : public KCModule
 {
@@ -61,6 +61,7 @@ private slots:
 	void slotImageAutoBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotImageAsMirrorChanged(bool);
+	void slotDeviceDisableMMapChanged(bool);
 	void slotDeviceWorkaroundBrokenDriverChanged(bool);
 	void slotUpdateImage();
 private:
@@ -69,7 +70,7 @@ private:
 	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
 	Kopete::AV::VideoDevicePool *mVideoDevicePool ;
 	QImage qimage;
-	QPixmap qpixmap, m_video_image;
+	QPixmap qpixmap;
 	QTimer qtimer;
 	void setVideoInputParameters();
 #ifdef HAVE_GL

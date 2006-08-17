@@ -37,12 +37,16 @@
 #include <qstylesheet.h>
 #include <qtimer.h>
 #include <qptrlist.h>
+#include <qtextcodec.h>
+#include <qimage.h>
+#include <qfile.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
+#include <kstandarddirs.h>
 
 #include "client.h"
 #include "connection.h"
@@ -53,11 +57,14 @@
 #include "oscarconnector.h"
 #include "ssimanager.h"
 #include "oscarlistnonservercontacts.h"
-#include <qtextcodec.h>
+#include "oscarversionupdater.h"
 
-class OscarAccountPrivate
+class OscarAccountPrivate : public Client::CodecProvider
 {
+	// Backreference
+	OscarAccount& account;
 public:
+	OscarAccountPrivate( OscarAccount& a ): account( a ) {}
 
 	//The liboscar hook for the account
 	Client* engine;
@@ -69,9 +76,22 @@ public:
 
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
+	QMap<QString, QString> contactChangeQueue;
 
     OscarListNonServerContacts* olnscDialog;
+	
+	unsigned int versionUpdaterStamp;
+	bool versionAlreadyUpdated;
 
+	virtual QTextCodec* codecForContact( const QString& contactName ) const
+	{
+		return account.contactCodec( Oscar::normalize( contactName ) );
+	}
+
+	virtual QTextCodec* codecForAccount() const
+	{
+		return account.defaultCodec();
+	}
 };
 
 OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name, bool isICQ)
@@ -80,8 +100,18 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;
 
-	d = new OscarAccountPrivate;
+	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
+	d->engine->setIsIcq( isICQ );
+	
+	d->versionAlreadyUpdated = false;
+	d->versionUpdaterStamp = OscarVersionUpdater::self()->stamp();
+	if ( isICQ )
+		d->engine->setVersion( OscarVersionUpdater::self()->getICQVersion() );
+	else
+		d->engine->setVersion( OscarVersionUpdater::self()->getAIMVersion() );
+
+	d->engine->setCodecProvider( d );
     d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
@@ -94,6 +124,8 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	                  this, SLOT( userStartedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
+	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
+	                  this, SLOT( slotSendBuddyIcon() ) );
 }
 
 OscarAccount::~OscarAccount()
@@ -120,15 +152,16 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const Oscar::SSI& ) ),
+	                     this, SLOT( ssiGroupUpdated( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const Oscar::SSI& ) ),
+	                     this, SLOT( ssiContactUpdated( const Oscar::SSI& ) ) );
 
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
 
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for( ; it.current(); ++it )
-	{
-		it.current()->setOnlineStatus(Kopete::OnlineStatus::Offline);
-	}
+	d->contactAddQueue.clear();
+	d->contactChangeQueue.clear();
 
 	disconnected( reason );
 }
@@ -141,19 +174,6 @@ void OscarAccount::disconnect()
 bool OscarAccount::passwordWasWrong()
 {
 	return password().isWrong();
-}
-
-void OscarAccount::updateContact( Oscar::SSI item )
-{
-	Kopete::Contact* contact = contacts()[item.name()];
-	if ( !contact )
-		return;
-	else
-	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
-		OscarContact* oc = static_cast<OscarContact*>( contact );
-		oc->setSSIItem( item );
-	}
 }
 
 void OscarAccount::loginActions()
@@ -169,12 +189,9 @@ void OscarAccount::loginActions()
 		d->engine->requestServerRedirect( 0x000D );
 	}
 
-	//ICQ handles icons but we don't support those right now
-	if ( !engine()->isIcq() )
-	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending request for icon service" << endl;
-		d->engine->requestServerRedirect( 0x0010 );
-	}
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending request for icon service" << endl;
+	d->engine->requestServerRedirect( 0x0010 );
+
 }
 
 void OscarAccount::processSSIList()
@@ -239,6 +256,10 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( groupUpdated( const Oscar::SSI& ) ),
+	                  this, SLOT( ssiGroupUpdated( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( contactUpdated( const Oscar::SSI& ) ),
+	                  this, SLOT( ssiContactUpdated( const Oscar::SSI& ) ) );
 
     //TODO: check the kopete contact list and handle non server side contacts appropriately.
     QDict<Kopete::Contact> nonServerContacts = contacts();
@@ -306,18 +327,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
                 continue;
             }
 
-            SSIManager* listManager = d->engine->ssiManager();
-            if ( !listManager->findGroup( group->displayName() ) )
-            {
-                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
-                                         << group->displayName() << endl;
-                d->contactAddQueue[Oscar::normalize( ( *it ) )] = group->displayName();
-                d->engine->addGroup( group->displayName() );
-            }
-            else
-            {
-                d->engine->addContact( ( *it ), group->displayName() );
-            }
+	        addContactToSSI( ( *it ), group->displayName(), true );
         }
 
 
@@ -365,7 +375,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	if ( Oscar::normalize( message.receiver() ) != Oscar::normalize( accountId() ) )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got a message but we're not the receiver: "
-			<< message.text() << endl;
+			<< message.textArray() << endl;
 		return;
 	}
 
@@ -387,7 +397,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	if ( !ocSender )
 	{
 		kdWarning(OSCAR_RAW_DEBUG) << "Temporary contact creation failed for '"
-			<< sender << "'! Discarding message: " << message.text() << endl;
+			<< sender << "'! Discarding message: " << message.textArray() << endl;
 		return;
 	}
 	else
@@ -402,20 +412,11 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
 
 
-    //decode message
-    //HACK HACK HACK! Until AIM supports per contact encoding, just decode as ISO-8559-1
-    QTextCodec* codec = 0L;
-    if ( ocSender->hasProperty( "contactEncoding" ) )
-        codec = QTextCodec::codecForMib( ocSender->property( "contactEncoding" ).value().toInt() );
-    else
-        codec = QTextCodec::codecForMib( 4 );
+	//decode message
+	QString realText( message.text( contactCodec( ocSender ) ) );
 
-    QString realText = message.text();
-    if ( message.properties() & Oscar::Message::NotDecoded )
-        realText = codec->toUnicode( message.textArray() );
-
-    //sanitize;
-    QString sanitizedMsg = sanitizedMessage( realText );
+	//sanitize;
+	QString sanitizedMsg = sanitizedMessage( realText );
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );
@@ -437,6 +438,104 @@ void OscarAccount::setServerPort(int port)
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );
 	else //set to default 5190
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), 5190 );
+}
+
+QTextCodec* OscarAccount::defaultCodec() const
+{
+	return QTextCodec::codecForMib( configGroup()->readNumEntry( "DefaultEncoding", 4 ) );
+}
+
+QTextCodec* OscarAccount::contactCodec( const OscarContact* contact ) const
+{
+	if ( contact )
+		return contact->contactCodec();
+	else
+		return defaultCodec();
+}
+
+QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
+{
+	// XXX  Need const_cast because Kopete::Account::contacts()
+	// XXX  method is not const for some strange reason.
+	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts()[contactName] );
+	return contactCodec( contact );
+}
+
+void OscarAccount::setBuddyIcon( KURL url )
+{
+	if ( url.path().isEmpty() )
+	{
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
+	else
+	{
+		QImage image( url.path() );
+		if ( image.isNull() )
+			return;
+		
+		const QSize size = ( d->engine->isIcq() ) ? QSize( 52, 64 ) : QSize( 48, 48 );
+		
+		image = image.smoothScale( size, QImage::ScaleMax );
+		if( image.width() > size.width())
+			image = image.copy( ( image.width() - size.width() ) / 2, 0, size.width(), image.height() );
+		
+		if( image.height() > size.height())
+			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
+		
+		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
+		
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
+		if ( !image.save( newlocation, "JPEG" ) )
+			return;
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	}
+	
+	emit buddyIconChanged();
+}
+
+bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
+{
+	SSIManager* listManager = d->engine->ssiManager();
+	if ( !listManager->findGroup( groupName ) )
+	{
+		if ( !autoAddGroup )
+			return false;
+
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
+			<< groupName << endl;
+
+		d->contactAddQueue[Oscar::normalize( contactName )] = groupName;
+		d->engine->addGroup( groupName );
+	}
+	else
+	{
+		d->engine->addContact( contactName, groupName );
+	}
+
+	return true;
+}
+
+bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup )
+{
+	SSIManager* listManager = d->engine->ssiManager();
+	if ( !listManager->findGroup( newGroupName ) )
+	{
+		if ( !autoAddGroup )
+			return false;
+		
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group " 
+				<< newGroupName << endl;
+			
+		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
+		d->engine->addGroup( newGroupName );
+	}
+	else
+	{
+		d->engine->changeContactGroup( contact, newGroupName );
+	}
+	
+	return true;
 }
 
 Connection* OscarAccount::setupConnection( const QString& server, uint port )
@@ -532,18 +631,15 @@ bool OscarAccount::createContact(const QString &contactId,
 			return false;
 		}
 
-		if ( !d->engine->ssiManager()->findGroup( groupName ) )
-		{ //group isn't on SSI
-			d->contactAddQueue[Oscar::normalize( contactId )] = groupName;
-			d->addContactMap[Oscar::normalize( contactId )] = parentContact;
-			d->engine->addGroup( groupName );
-			return true;
-		}
-
 		d->addContactMap[Oscar::normalize( contactId )] = parentContact;
-		d->engine->addContact( Oscar::normalize( contactId ), groupName );
+		addContactToSSI( Oscar::normalize( contactId ), groupName, true );
 		return true;
 	}
+}
+
+void OscarAccount::updateVersionUpdaterStamp()
+{
+	d->versionUpdaterStamp = OscarVersionUpdater::self()->stamp();
 }
 
 void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
@@ -553,6 +649,12 @@ void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
 		createNewContact( item.name(), d->addContactMap[Oscar::normalize( item.name() )], item );
+	}
+	else if ( contacts()[item.name()] )
+	{
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. modifying " << item.name() << endl;
+		OscarContact* oc = static_cast<OscarContact*>( contacts()[item.name()] );
+		oc->setSSIItem( item );
 	}
 	else
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Got addition for contact we weren't waiting on" << endl;
@@ -568,10 +670,37 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 	{
 		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
 		{
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key() << "' to group "
-				<< item.name() << endl;
-			d->engine->addContact( Oscar::normalize( it.key() ), item.name() ); //already in the map
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed add of contact '" << it.key()
+				<< "' to group " << item.name() << endl;
+			
+			d->engine->addContact( Oscar::normalize( it.key() ), item.name() );
+			d->contactAddQueue.remove( it );
 		}
+	}
+	
+	for ( it = d->contactChangeQueue.begin(); it != d->contactChangeQueue.end(); ++it )
+	{
+		if ( Oscar::normalize( it.data() ) == Oscar::normalize( item.name() ) )
+		{
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "starting delayed change of contact '" << it.key()
+				<< "' to group " << item.name() << endl;
+			
+			d->engine->changeContactGroup( it.key(),  item.name() );
+			d->contactChangeQueue.remove( it );
+		}
+	}
+}
+
+void OscarAccount::ssiContactUpdated( const Oscar::SSI& item )
+{
+	Kopete::Contact* contact = contacts()[item.name()];
+	if ( !contact )
+		return;
+	else
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating SSI Item" << endl;
+		OscarContact* oc = static_cast<OscarContact*>( contact );
+		oc->setSSIItem( item );
 	}
 }
 
@@ -647,6 +776,31 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	                        Kopete::UI::Global::mainWidget() );
 	if ( fatal )
 		logOff( Kopete::Account::ConnectionReset );
+}
+
+void OscarAccount::slotSendBuddyIcon()
+{
+	//need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	if ( photoPath.isEmpty() )
+		return;
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << photoPath << endl;
+	QFile iconFile( photoPath );
+	
+	if ( iconFile.open( IO_ReadOnly ) )
+	{
+		if ( !engine()->hasIconConnection() )
+		{
+			//will send icon when we connect to icon server
+			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
+			                  this, SLOT( slotSendBuddyIcon() ) );
+			return;
+		}
+		QByteArray imageData = iconFile.readAll();
+		engine()->sendBuddyIcon( imageData );
+	}
 }
 
 QString OscarAccount::getFLAPErrorMessage( int code )
@@ -725,9 +879,20 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		}
 		break;
 	case 0x001C:
-		reason = i18n("The %1 server thinks the client you are using is " \
-		              "too old. Please report this as a bug at http://bugs.kde.org")
-			.arg( acctType );
+		OscarVersionUpdater::self()->update( d->versionUpdaterStamp );
+		if ( !d->versionAlreadyUpdated )
+		{
+			reason = i18n("Sign on to %1 with your account %2 failed.")
+				.arg( acctType ).arg( accountId() );
+			
+			d->versionAlreadyUpdated = true;
+		}
+		else
+		{
+			reason = i18n("The %1 server thinks the client you are using is " \
+						  "too old. Please report this as a bug at http://bugs.kde.org")
+				.arg( acctType );
+		}
 		break;
 	case 0x0022: // Account suspended because of your age (age < 13)
 		reason = i18n("Account %1 was disabled on the %2 server because " \
@@ -744,5 +909,6 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 	}
 	return reason;
 }
+
 #include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode csands;

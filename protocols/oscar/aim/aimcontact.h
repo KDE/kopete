@@ -83,14 +83,20 @@ private slots:
 	void closeUserInfoDialog();
 	void warnUser();
 
+	void slotVisibleTo();
+	void slotInvisibleTo();
+
 private:
 	AIMProtocol* mProtocol;
 	AIMUserInfoDialog* m_infoDialog;
 	QString mUserProfile;
 	bool m_haveAwayMessage;
+	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
 	QDateTime m_lastAutoresponseTime;
 	
 	KAction* m_warnUserAction;
+	KToggleAction *m_actionVisibleTo;
+	KToggleAction *m_actionInvisibleTo;
 };
 #endif 
 //kate: tab-width 4; indent-mode csands;

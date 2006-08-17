@@ -53,7 +53,7 @@ Message::Message()
 }
 
 Message::Message(const Message &obj)
-        : QObject(), m_ctcpMessage(0)
+        : m_ctcpMessage(0)
 {
 	m_raw = obj.m_raw;
 
@@ -123,7 +123,7 @@ void Message::writeMessage(Engine *engine, const QTextCodec *codec,
 		msg += QChar(' ') + args.join(QChar(' ')).stripWhiteSpace(); // some extra check should be done here
 
 	if (!suffix.isNull())
-          msg = msg.stripWhiteSpace() + QString::fromLatin1(" :") + suffix;
+		msg = msg.stripWhiteSpace() + QString::fromLatin1(" :") + suffix;
 
 	writeMessage(engine, codec, msg);
 }
@@ -368,5 +368,3 @@ void Message::dump() const
 		m_ctcpMessage->dump();
 	}
 }
-
-#include "kircmessage.moc"

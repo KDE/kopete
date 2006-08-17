@@ -4,9 +4,9 @@
     Kopete Now Listening To plugin
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
-    Copyright (c) 2005           by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright (c) 2005-2006           by Michaël Larouche <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2005      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,6 +20,7 @@
 
 #include <qtimer.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -245,7 +246,7 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 void NowListeningPlugin::slotAdvertCurrentMusic()
 {
 	// Do anything when statusAdvertising is off.
-	if( !NowListeningConfig::self()->statusAdvertising() )
+	if( !NowListeningConfig::self()->statusAdvertising() && !NowListeningConfig::self()->appendStatusAdvertising() )
 		return; 
 
 	// This slot is called every 5 seconds, so we check if we have a new track playing.
@@ -260,8 +261,10 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				NOTE:
 				MSN status message(personal message) use a special tag to advert the current music playing. 
 				So, we don't send the all formatted string, send a special string seperated by ";".
+				
+				Also, do not use MSN hack in appending mode.
 			*/
-			if( a->protocol()->pluginId() == "MSNProtocol" )
+			if( a->protocol()->pluginId() == "MSNProtocol" && !NowListeningConfig::self()->appendStatusAdvertising() )
 			{
 				QString track, artist, album, mediaList;
 				bool isPlaying=false;
@@ -294,12 +297,45 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 
 				// KDE4 TODO: Use the new status message framework, and remove this "hack".
 				if( isPlaying )
+				{
 					advert = QString("[Music]%1").arg(mediaList);
+				}
+
 			}
 			else
 			{
-				advert = mediaPlayerAdvert(false); // newTrackPlaying has done the update.
+				if( NowListeningConfig::self()->appendStatusAdvertising() )
+				{
+					// Check for the now listening message in parenthesis, 
+					// include the header to not override other messages in parenthesis.
+					QRegExp statusSong( QString("\\(%1.*\\)$").arg( NowListeningConfig::header()) );
+					
+					// HACK: Don't keep appending the now listened song. Replace it in the status message.
+					advert = a->myself()->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
+					// Remove the braces when they are no listened song.
+					QString mediaAdvert = mediaPlayerAdvert(false);
+					if(!mediaAdvert.isEmpty())
+					{
+						if(statusSong.search(advert) != -1)
+						{
+							advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
+						}
+						else
+						{
+							advert += QString("(%1)").arg( mediaPlayerAdvert(false) );
+						}
+					}
+					else
+					{
+						advert = advert.replace(statusSong, "");
+					}
+				}
+				else
+				{
+					advert = mediaPlayerAdvert(false); // newTrackPlaying has done the update.
+				}
 			}
+
 			a->setOnlineStatus(a->myself()->onlineStatus(), advert);
 		}
 	}
@@ -502,7 +538,7 @@ void NowListeningPlugin::slotSettingsChanged()
 				this,
 				SLOT(slotOutgoingMessage(Kopete::Message&)));
 	}
-	else if( NowListeningConfig::self()->statusAdvertising() )
+	else if( NowListeningConfig::self()->statusAdvertising() || NowListeningConfig::self()->appendStatusAdvertising() )
 	{
 		kdDebug(14307) << k_funcinfo << "Now using status message advertising." << endl;
 

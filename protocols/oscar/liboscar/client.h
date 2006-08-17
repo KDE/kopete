@@ -40,6 +40,7 @@ class SSIManager;
 class UserDetails;
 class QString;
 class Task;
+class QTextCodec;
 
 namespace Oscar
 {
@@ -51,6 +52,13 @@ class KOPETE_EXPORT Client : public QObject
 Q_OBJECT
 
 public:
+
+	class CodecProvider {
+	public:
+		virtual ~CodecProvider() {}
+		virtual QTextCodec* codecForContact( const QString& contactName ) const = 0;
+		virtual QTextCodec* codecForAccount() const = 0;
+	};
 
 	enum ErrorCodes {
 		NoError = 0,
@@ -93,7 +101,6 @@ public:
 
 	/** Logout and disconnect */
 	void close();
-	
 	/** Set our status for AIM */
 	void setStatus( AIMStatus status, const QString &message = QString::null );
 	/** Set our status for ICQ */
@@ -227,6 +234,11 @@ public:
 	 */
 	ICQShortInfo getShortInfo( const QString& contact );
 
+    /**
+     * Get the list of chat room exchanges we have
+     */
+    QValueList<int> chatExchangeList() const;
+
 	/**
 	 * Request the aim profile
 	 * \param contact the contact to get info for
@@ -267,11 +279,20 @@ public:
 	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
 
 	//! Start a server redirect for a different service
-	void requestServerRedirect( WORD family );
+	void requestServerRedirect( WORD family, WORD e = 0, QByteArray c = QByteArray(),
+                                WORD instance = 0, const QString& room = QString::null );
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
 
+    void joinChatRoom( const QString& roomName, int exchange );
+
+	void setIgnore( const QString& user, bool ignore );
+	
+	void setVisibleTo( const QString& user, bool visible );
+	
+	void setInvisibleTo( const QString& user, bool invisible );
+	
 	/** Accessors needed for login */
 	QString host();
 	int port();
@@ -284,6 +305,14 @@ public:
 
 	bool hasIconConnection() const;
 
+    /** We've finished chatting in a chat room, disconnect from it */
+    void disconnectChatRoom( WORD exchange, const QString& room );
+
+	/** Set codec provider */
+	void setCodecProvider( CodecProvider* codecProvider );
+	
+	/** Set pointer to version info */
+	void setVersion( const Oscar::ClientVersion* version );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
@@ -298,6 +327,9 @@ public:
 
 	/** Accessor for the SSI Manager */
 	SSIManager* ssiManager() const;
+	
+	/** Return version info */
+	const Oscar::ClientVersion* version() const;
 
 	/** The current user's user ID */
 	QString userId() const;
@@ -396,6 +428,9 @@ signals:
 
 	/* Chat rooms */
 	void chatNavigationConnected();
+    void chatRoomConnected( WORD, const QString& );
+    void userJoinedChat( Oscar::WORD, const QString& room, const QString& contact );
+    void userLeftChat( Oscar::WORD, const QString& room, const QString& contact );
 
 	/* service redirection */
 	void redirectionFinished( WORD );
@@ -439,6 +474,16 @@ protected slots:
 	void checkRedirectionQueue( WORD );
 
 	void requestChatNavLimits();
+    /**
+     * Set the list of chat room exchanges we have
+     */
+    void setChatExchangeList( const QValueList<int>& exchanges );
+
+    /**
+     * set up the connection to a chat room
+     */
+    void setupChatConnection( WORD, QByteArray, WORD, const QString& );
+
 
     void determineDisconnection( int, const QString& );
 

@@ -10,19 +10,13 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libkopetejabberui.la
 
-libkopetejabberui_la_SOURCES = \
-	dlgsendraw.ui dlgjabbersendraw.cpp \
-	dlgaddcontact.ui jabberaddcontactpage.cpp \
-	dlgvcard.ui dlgjabbervcard.cpp \
-	dlgservices.ui dlgjabberservices.cpp \
-	dlgregister.ui dlgjabberregister.cpp \
-	dlgbrowse.ui dlgjabberbrowse.cpp \
-	dlgchatjoin.ui dlgjabberchatjoin.cpp \
-	dlgjabbereditaccountwidget.ui jabbereditaccountwidget.cpp \
-	dlgjabberregisteraccount.ui jabberregisteraccount.cpp \
-	dlgjabberchooseserver.ui jabberchooseserver.cpp \
-	dlgchangepassword.ui dlgjabberchangepassword.cpp \
-	empty.cpp
+libkopetejabberui_la_SOURCES = dlgsendraw.ui dlgjabbersendraw.cpp \
+	dlgaddcontact.ui jabberaddcontactpage.cpp dlgvcard.ui dlgjabbervcard.cpp \
+	dlgjabberservices.cpp dlgregister.ui dlgjabberregister.cpp dlgbrowse.ui dlgjabberbrowse.cpp \
+	dlgjabbereditaccountwidget.ui jabbereditaccountwidget.cpp dlgjabberregisteraccount.ui \
+	jabberregisteraccount.cpp dlgjabberchooseserver.ui jabberchooseserver.cpp dlgchangepassword.ui \
+	dlgjabberchangepassword.cpp empty.cpp dlgchatroomslist.ui dlgjabberchatroomslist.cpp dlgchatjoin.ui \
+	dlgjabberchatjoin.cpp dlgservices.ui
 
 EXTRA_DIST = dlgjabbereditaccountwidget.ui \
 	dlgsendraw.ui \
@@ -32,3 +26,6 @@ EXTRA_DIST = dlgjabbereditaccountwidget.ui \
 	dlgservices.ui \
 	dlgregister.ui \
 	dlgbrowse.ui
+
+
+noinst_HEADERS = dlgjabberchatroomslist.h dlgjabberchatjoin.h

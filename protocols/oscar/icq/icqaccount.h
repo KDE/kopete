@@ -29,6 +29,8 @@ class KAction;
 namespace Kopete { class AwayAction; }
 class ICQProtocol;
 class ICQAccount;
+class OscarVisibilityDialog;
+
 class ICQMyselfContact : public OscarMyselfContact
 {
 Q_OBJECT
@@ -85,9 +87,18 @@ private:
 private slots:
 	void slotToggleInvisible();
 
+	void slotSetVisiblility();
+	void slotVisibilityDialogClosed();
+
+	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
+
+	void slotBuddyIconChanged();
+
 private:
 	bool mWebAware;
 	bool mHideIP;
+	QString mInitialStatusMessage;
+	OscarVisibilityDialog* m_visibilityDialog;
 };
 
 #endif

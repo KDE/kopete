@@ -17,7 +17,7 @@
 #ifndef YAHOOWEBCAMDIALOG_H_
 #define YAHOOWEBCAMDIALOG_H_
 
-#include <qlabel.h>
+#include <qstring.h>
 #include <kdialogbase.h>
 
 
@@ -25,22 +25,29 @@ class QPixmap;
 class QWidget;
 class YahooContact;
 
+namespace Kopete
+{
+	class WebcamWidget;
+}
+
 class YahooWebcamDialog : public KDialogBase
 {
 Q_OBJECT
 public:
-	YahooWebcamDialog( YahooContact*, QWidget* parent = 0, const char* name = 0 );
+	YahooWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
 	~YahooWebcamDialog();
 	
+	void setViewer( const QStringList & );
 public slots:
-	void newImage( const QPixmap& image );
+	void newImage( const QPixmap &image );
 	void webcamClosed( int );
-
+	void webcamPaused();
 signals:
 	void closingWebcamDialog();
 	
 private:
-	QLabel m_imageContainer;
+	Kopete::WebcamWidget *m_imageContainer;
+	QLabel *m_Viewer;
 	QString contactName;
 	
 };

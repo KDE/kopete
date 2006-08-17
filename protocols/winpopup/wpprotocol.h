@@ -61,7 +61,6 @@ public:
 	const QStringList getGroups() {return popupClient->getGroups(); }
 	const QStringList getHosts(const QString &Group) { return popupClient->getHosts(Group); }
 	bool checkHost(const QString &Name) { return popupClient->checkHost(Name); }
-	bool checkMessageDir() { return popupClient->checkMessageDir(); }
 
 // Kopete::Plugin overloading
 public:
@@ -75,17 +74,21 @@ public:
 	const Kopete::OnlineStatus WPAway;
 	const Kopete::OnlineStatus WPOffline;
 	void sendMessage(const QString &Body, const QString &Destination);
+	void settingsChanged(void);			// Callback when settings changed
 
 public slots:
-	void slotSettingsChanged(void);			// Callback when settings changed
 	void installSamba();				// Modify smb.conf to use winpopup-send.sh script
 	void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
 
 private:
+	QString smbClientBin;
+	int groupCheckFreq;
+	void readConfig();
 	WinPopupLib *popupClient;
 	static WPProtocol *sProtocol;			// Singleton
 };
 
 #endif
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

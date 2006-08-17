@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>519</width>
-            <height>403</height>
+            <width>398</width>
+            <height>445</height>
         </rect>
     </property>
     <property name="caption">
@@ -45,13 +45,13 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Basic &amp;Setup</string>
+                    <string>Basi&amp;c Setup</string>
                 </attribute>
-                <grid>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox" row="0" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>groupBox51</cstring>
                         </property>
@@ -114,31 +114,20 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>mAutoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Excl&amp;ude from connection</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
-                                </property>
-                            </widget>
                         </vbox>
                     </widget>
-                    <widget class="QGroupBox" row="1" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>groupBox22</cstring>
                         </property>
                         <property name="title">
                             <string>Information</string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>textLabel12</cstring>
                                 </property>
@@ -157,11 +146,32 @@
                                     <set>WordBreak|AlignTop</set>
                                 </property>
                             </widget>
-                        </grid>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>The samba server must be configured and running.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;br&gt;
+However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and add
+'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;' (substitute _PATH_TO_ by the real path) to your smb.conf [global]-section.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignTop</set>
+                                </property>
+                            </widget>
+                        </vbox>
                     </widget>
-                    <spacer row="2" column="0">
+                    <spacer>
                         <property name="name">
-                            <cstring>spacer30</cstring>
+                            <cstring>spacer7</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -171,12 +181,12 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
-                                <height>140</height>
+                                <width>21</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
-                </grid>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -238,7 +248,7 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="1" column="0">
+                            <widget class="QLabel" row="0" column="0">
                                 <property name="name">
                                     <cstring>textLabel4</cstring>
                                 </property>
@@ -246,15 +256,7 @@
                                     <string>Host check frequency:</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Message check frequency:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
                                     <cstring>textLabel1</cstring>
                                 </property>
@@ -262,7 +264,7 @@
                                     <string>Path to 'smbclient' executable:</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget" row="0" column="1" rowspan="3" colspan="1">
+                            <widget class="QLayoutWidget" row="0" column="1" rowspan="2" colspan="1">
                                 <property name="name">
                                     <cstring>layout6</cstring>
                                 </property>
@@ -270,51 +272,6 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout4</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="KIntSpinBox">
-                                                <property name="name">
-                                                    <cstring>mMessageCheckFreq</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>7</hsizetype>
-                                                        <vsizetype>0</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="maxValue">
-                                                    <number>3600</number>
-                                                </property>
-                                                <property name="minValue">
-                                                    <number>1</number>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel5</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>3</hsizetype>
-                                                        <vsizetype>5</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="text">
-                                                    <string>second(s)</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
                                     <widget class="QLayoutWidget">
                                         <property name="name">
                                             <cstring>layout5</cstring>
@@ -386,7 +343,6 @@
     <tabstop>tabWidget10</tabstop>
     <tabstop>mHostName</tabstop>
     <tabstop>doInstallSamba</tabstop>
-    <tabstop>mAutoConnect</tabstop>
 </tabstops>
 <slots>
     <slot>installSamba()</slot>
@@ -394,7 +350,6 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>

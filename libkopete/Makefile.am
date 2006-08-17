@@ -1,14 +1,19 @@
+if compile_LIBKOPETE_COMPAT
+COMPAT_DIR = compat
+COMPAT_LIBS = compat/libkopetecompat.la
+endif
+
+
 include ../../admin/Doxyfile.am
 DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
 DOXYGEN_SET_PROJECT_NAME = libkopete
 
-SUBDIRS = private ui . avdevice
+SUBDIRS = $(COMPAT_DIR) private ui . avdevice
 
 METASOURCES = AUTO
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-	$(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) \
 	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private \
 	-I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
 
@@ -22,14 +27,15 @@ libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatu
 	kopetecontactlistelement.cpp kopetecommandhandler.cpp kopeteaway.cpp \
 	kopeteawayaction.cpp kautoconfig.cpp kopetewalletmanager.cpp kopetecontactproperty.cpp \
 	kopetepassword.cpp kopeteglobal.cpp kopeteuiglobal.cpp kopetepasswordedaccount.cpp \
-	kopetemimetypehandler.cpp kopetetask.cpp kopetemimesourcefactory.cpp kopetexsl.cpp \
+	kopetemimetypehandler.cpp kopetetask.cpp kopetemimesourcefactory.cpp \
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
 	kopetemessageevent.cpp kopetemessagehandler.cpp kopetemessagehandlerchain.cpp \
 	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp connectionmanager.skel \
-	clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp
+	clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp \
+	kopeteprefs.cpp kopetepicture.cpp webcamwidget.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
-libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS) $(LIB_XRENDER)
 
 kde_kcfg_DATA = kopete.kcfg
 
@@ -39,8 +45,8 @@ kde_kcfg_DATA = kopete.kcfg
 #libkopetewidgets_la_LIBADD = $(LIB_KIO) libkopete.la ui/libkopeteui.la
 #libkopetewidgets_la_SOURCES = ui/kopetewidgets.cpp
 
-#kopetewidgets.cpp: $(srcdir)/kopete.widgets
-#	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets
+kopetewidgets.cpp: $(srcdir)/kopete.widgets
+	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets
 
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetecommandui.rc
@@ -56,8 +62,8 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h \
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
-	kopetetransfermanager.h kopeteuiglobal.h kopetexsl.h kabcpersistence.h managedconnectionaccount.h \
-	kopetenotifydataobject.h kopeteversion.h
+	kopetetransfermanager.h kopeteuiglobal.h kabcpersistence.h managedconnectionaccount.h \
+	kopetenotifydataobject.h kopeteversion.h kopeteprefs.h kopetepicture.h webcamwidget.h
 
 # vim: set noet:
 

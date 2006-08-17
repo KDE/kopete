@@ -1,0 +1,6 @@
+File=smpppdcs.kcfg
+ClassName=SMPPPDCSConfig
+Singleton=true
+Mutators=true
+MemberVariables=private
+GlobalEnums=true

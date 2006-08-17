@@ -22,6 +22,7 @@
 class KActionMenu;
 class SMSProtocol;
 class SMSContact;
+class SMSService;
 class KProcess;
 
 enum SMSMsgAction { ACT_ASK = 0, ACT_CANCEL, ACT_SPLIT };
@@ -45,15 +46,25 @@ public:
 	 *
 	 * Only ever call in case of message being too long - may result in user interaction.
 	 */
-	const bool splitNowMsgTooLong(int max, int msgLength);
+	const bool splitNowMsgTooLong(int msgLength);
+
+	SMSService* service();
 
 public slots:
 	void loadConfig();
-
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());
 	virtual void disconnect();
+	virtual void slotSendMessage(Kopete::Message &msg);
+
+protected slots:
+	virtual void slotSendingSuccess(const Kopete::Message &msg);
+	virtual void slotSendingFailure(const Kopete::Message &msg, const QString &error);
+	virtual void slotConnected();
+	virtual void slotDisconnected();
+	
 
 protected:
 	bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
@@ -62,6 +73,7 @@ private:
 	bool theSubEnable;
 	QString theSubCode;
 	SMSMsgAction theLongMsgAction;
+	SMSService* theService;
 };
 
 #endif

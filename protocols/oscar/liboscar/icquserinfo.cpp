@@ -183,7 +183,7 @@ void ICQInterestInfo::fill( Buffer* buffer )
 		for ( int i = 0; i < len; i++ )
 		{
 			int t=buffer->getLEWord();
-			QString d = buffer->getLELNTS();
+			QCString d = buffer->getLELNTS();
 			if (t>0) { //there is some topic
 				if (count<4) { //i think this could not happen, i have never seen more
 					topics[count]=t;
@@ -216,19 +216,19 @@ void ICQSearchResult::fill( Buffer* buffer )
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		nickName = QString( buffer->getBlock( len ) );
+		nickName = QCString( buffer->getBlock( len ) );
 	
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		firstName = QString( buffer->getBlock( len ) );
+		firstName = QCString( buffer->getBlock( len ) );
 	
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		lastName = QString( buffer->getBlock( len ) );
+		lastName = QCString( buffer->getBlock( len ) );
 	
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		email = QString( buffer->getBlock( len ) );
+		email = QCString( buffer->getBlock( len ) );
 	
 	auth = ( buffer->getByte() != 0x01 );
 	online = ( buffer->getLEWord() == 0x0001 );

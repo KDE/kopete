@@ -2,6 +2,7 @@
   * jabbercontact.cpp  -  Regular Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006      by Olivier Goffart <ogoffart @ kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -20,6 +21,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kfiledialog.h>
+#include <kinputdialog.h>
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -28,14 +30,16 @@
 #include "jabbergroupmembercontact.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
+#include "xmpp_tasks.h"
 
 /**
  * JabberGroupContact constructor
  */
 JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc)
+	: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc) , mNick( rosterItem.jid().resource() )
 {
-
+	setIcon( "jabber_group" );
+	
 	// initialize here, we need it set before we instantiate the manager below
 	mManager = 0;
 
@@ -46,15 +50,18 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * because we need to set this contact as myself() of the message
 	 * manager).
 	 */
-	JabberBaseContact *subContact = addSubContact ( rosterItem );
+	mSelfContact = addSubContact ( rosterItem );
 
 	/**
 	 * Instantiate a new message manager without members.
 	 */
-	mManager = new JabberGroupChatManager ( protocol (), subContact,
+	mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
 											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
+	
+	connect ( account->myself() , SIGNAL(onlineStatusChanged( Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus& ) ) ,
+			  this , SLOT(slotStatusChanged()  ) ) ;
 
 	/**
 	 * FIXME: The first contact in the list of the message manager
@@ -64,10 +71,17 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * is empty. This makes at least the history plugin crash.
 	 */
 	mManager->addContact ( this );
-
-	// call moved from superclass, see JabberBaseContact for details
-	reevaluateStatus ();
-
+	
+	
+	
+	/**
+	 * Let's construct the window:
+	 *  otherwise, the ref count of maznager is equal to zero. 
+	 *   and if we receive a message before the window is shown,
+	 *   it will be deleted and we will be out of the channel
+	 * In all case, there are no reason to don't show it.
+	 */
+	mManager->view( true , "kopete_chatwindow" );
 }
 
 JabberGroupContact::~JabberGroupContact ()
@@ -75,32 +89,51 @@ JabberGroupContact::~JabberGroupContact ()
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
-	delete mManager;
-
+	if(mManager) 
+	{
+		mManager->deleteLater();
+	}
+	
 	for ( Kopete::Contact *contact = mContactList.first (); contact; contact = mContactList.next () )
 	{
+		/*if(mManager)
+		mManager->removeContact( contact );*/
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
-		delete contact;
+		contact->deleteLater();
 	}
 
 	for ( Kopete::MetaContact *metaContact = mMetaContactList.first (); metaContact; metaContact = mMetaContactList.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
-		delete metaContact;
+		metaContact->deleteLater();
 	}
-
 }
 
 QPtrList<KAction> *JabberGroupContact::customContextMenuActions ()
 {
+	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 
-	return 0;
+	KAction *actionSetNick = new KAction (i18n ("Change nick name"), 0, 0, this, SLOT (slotChangeNick()), this, "jabber_changenick");
+	actionCollection->append( actionSetNick );
 
+	return actionCollection;
 }
 
-Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
+Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
+	if(!mManager && canCreate == Kopete::Contact::CanCreate)
+	{
+		kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "somehow, the chat manager was removed, and the contact is still there" << endl;
+		mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
+				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
 
+		mManager->addContact ( this );
+		
+		connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
+		
+		//if we have to recreate the manager, we probably have to connect again to the chat.
+		slotStatusChanged();
+	}
 	return mManager;
 
 }
@@ -110,8 +143,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
-
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received a message"  << endl;
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -120,8 +153,9 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.body().isEmpty () )
 		return;
 
-	Kopete::ContactPtrList contactList;
-	contactList.append ( mManager->user () );
+	manager(CanCreate); //force to create mManager
+	
+	Kopete::ContactPtrList contactList = manager()->members();
 
 	// check for errors
 	if ( message.type () == "error" )
@@ -146,6 +180,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if ( !subContact )
 		{
+			kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
+			return;
 			/**
 			 * We couldn't find the contact for this message. That most likely means
 			 * that it originated from a history backlog or something similar and
@@ -181,7 +217,7 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact already exists, not adding again." << endl;
 		return subContact;
 	}
-
+	
 	// Create new meta contact that holds the group chat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 	metaContact->setTemporary ( true );
@@ -201,6 +237,8 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 
 	// now, add the contact also to our own list
 	mContactList.append ( subContact );
+	
+	connect(subContact , SIGNAL(contactDestroyed(Kopete::Contact*)) , this , SLOT(slotSubContactDestroyed(Kopete::Contact*)));
 
 	return subContact;
 
@@ -225,9 +263,18 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Subcontact couldn't be located!" << endl;
 		return;
 	}
+	
+	if(mManager && subContact->contactId() == mManager->myself()->contactId() )
+	{
+		//HACK WORKAROUND FIXME KDE4
+		//impossible to remove myself, or we will die
+		//subContact->setNickName( mNick ); //this is even worse than nothing
+		return;
+	}
 
 	// remove the contact from the message manager first
-	mManager->removeContact ( subContact );
+	if(mManager)
+		mManager->removeContact ( subContact );
 
 	// remove the contact's meta contact from our internal list
 	mMetaContactList.remove ( subContact->metaContact () );
@@ -263,11 +310,6 @@ void JabberGroupContact::sendFile ( const KURL &sourceURL, const QString &/*file
 
 }
 
-void JabberGroupContact::slotUserInfo ()
-{
-
-}
-
 void JabberGroupContact::slotChatSessionDeleted ()
 {
 
@@ -278,7 +320,58 @@ void JabberGroupContact::slotChatSessionDeleted ()
 		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
 	
-	deleteLater();
+	//deleteLater(); //we will be deleted later when the the account will know we have left
+
+}
+
+void JabberGroupContact::slotStatusChanged( )
+{
+	if( !account()->isConnected() )
+	{
+		//we need to remove all contact, because when we connect again, we will not receive the notificaion they are gone.
+		QPtrList<Kopete::Contact> copy_contactlist=mContactList;
+		for ( Kopete::Contact *contact = copy_contactlist.first (); contact; contact = copy_contactlist.next () )
+		{
+			removeSubContact( XMPP::Jid(contact->contactId()) );
+		}
+		return;
+	}
+	
+	
+	if( !isOnline() )
+	{
+		//HACK WORKAROUND   XMPP::client->d->groupChatList must contains us.
+		account()->client()->joinGroupChat( rosterItem().jid().host() , rosterItem().jid().user() , mNick );
+	}
+	
+	//TODO: away message
+	XMPP::Status newStatus = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
+	account()->client()->setGroupChatStatus( rosterItem().jid().host() , rosterItem().jid().user() , newStatus );
+}
+
+void JabberGroupContact::slotChangeNick( )
+{
+	
+	bool ok;
+	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickanme - Jabber Plugin" ),
+			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" ).arg(rosterItem().jid().userHost()),
+			mNick, &ok );
+	if ( !ok || !account()->isConnected())
+		return;
+	
+	mNick=futureNewNickName;
+	
+	XMPP::Status status = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
+	account()->client()->changeGroupChatNick( rosterItem().jid().host() , rosterItem().jid().user()  , mNick , status);
+
+}
+
+void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full () << endl;
+
+	mMetaContactList.remove ( deadContact->metaContact () );
+	mContactList.remove ( deadContact );
 
 }
 

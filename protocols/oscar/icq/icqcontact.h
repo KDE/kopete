@@ -87,6 +87,9 @@ signals:
 	void haveInterestInfo( const ICQInterestInfo& );
 
 private:
+	bool cachedBuddyIcon( QByteArray hash );
+	bool m_buddyIconDirty;
+	
 	bool m_requestingNickname;
 	ICQProtocol *mProtocol;
 	ICQUserInfoWidget* m_infoWidget;
@@ -97,10 +100,12 @@ private:
 	KAction *actionRequestAuth;
 	KAction *actionSendAuth;
     KAction *m_selectEncoding;
-	/*
-	KToggleAction *actionIgnore;
-	KToggleAction *actionVisibleTo;
+	
+	KToggleAction *m_actionIgnore;
+	KToggleAction *m_actionVisibleTo;
+	KToggleAction *m_actionInvisibleTo;
 
+	/*
 	bool mInvisible;
 	*/
 
@@ -133,14 +138,17 @@ private slots:
     void changeContactEncoding();
     void changeEncodingDialogClosed( int );
 
+	void requestBuddyIcon();
+	void haveIcon( const QString&, QByteArray );
 	void receivedStatusMessage( const QString &contact, const QString &message );
 	void receivedStatusMessage( const Oscar::Message &message );
 
 //void slotCloseAwayMessageDialog();
 	//void slotReadAwayMessage();
 
-	//void slotIgnore();
-	//void slotVisibleTo();
+	void slotIgnore();
+	void slotVisibleTo();
+	void slotInvisibleTo();
 };
 
 #endif

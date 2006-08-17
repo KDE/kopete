@@ -246,7 +246,6 @@ public:
 	 : ContactListViewStrategy( view )
 	 , m_onlineItem( new KopeteStatusGroupViewItem( Kopete::OnlineStatus::Online, listView() ) )
 	 , m_offlineItem( new KopeteStatusGroupViewItem( Kopete::OnlineStatus::Offline, listView() ) )
-	 , m_temporaryItem( 0 )
 	{
 		m_onlineItem->setOpen( true );
 		m_offlineItem->setOpen( true );
@@ -259,7 +258,7 @@ public:
 		removeMetaContactFromGroupInner( mc, m_onlineItem );
 		removeMetaContactFromGroupInner( mc, m_offlineItem );
 		if ( m_temporaryItem )
-			removeMetaContactFromGroupInner( mc, m_temporaryItem );
+			removeMetaContactFromGroupInner( mc, (KopeteGroupViewItem*)m_temporaryItem );
 	}
 
 	void addMetaContact( Kopete::MetaContact *mc )
@@ -311,20 +310,19 @@ private:
 				m_temporaryItem->setOpen( true );
 			}
 
-			addMetaContactToGroupInner( mc, m_temporaryItem );
+			addMetaContactToGroupInner( mc, (KopeteGroupViewItem*)m_temporaryItem );
 			return;
 		}
 
 		// if it's not temporary, it should not be in the temporary group
 		if ( m_temporaryItem )
 		{
-			removeMetaContactFromGroupInner( mc, m_temporaryItem );
+			removeMetaContactFromGroupInner( mc, (KopeteGroupViewItem*)m_temporaryItem );
 
 			// remove temporary item if empty
 			if ( m_temporaryItem && m_temporaryItem->childCount() == 0 )
 			{
-				delete m_temporaryItem;
-				m_temporaryItem = 0;
+				delete (KopeteGroupViewItem*)m_temporaryItem;
 			}
 		}
 
@@ -356,7 +354,7 @@ private:
 	}
 
 	KopeteStatusGroupViewItem *m_onlineItem, *m_offlineItem;
-	KopeteGroupViewItem *m_temporaryItem;
+	QGuardedPtr<KopeteGroupViewItem> m_temporaryItem;
 };
 
 void KopeteContactListViewPrivate::updateViewStrategy( KListView *view )
@@ -486,16 +484,17 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactRemove" );
 	actionSendEmail = new KAction( i18n( "Send Email..." ), QString::fromLatin1( "mail_generic" ),
 		0, this, SLOT(  slotSendEmail() ), ac, "contactSendEmail" );
+	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
 	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0,
 		this, SLOT( slotRename() ), ac, "contactRename" );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
 	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
-		QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
+		QString::fromLatin1( "add_user" ), ac , "contactAddContact" );
 	actionAddContact->popupMenu()->insertTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
+	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "add_user", 0,
 		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
@@ -503,7 +502,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( i18n( "&Properties" ), "", Qt::Key_Alt + Qt::Key_Return,
+	actionProperties = new KAction( i18n( "&Properties" ), "edit_user", Qt::Key_Alt + Qt::Key_Return,
 		this, SLOT( slotProperties() ), ac, "contactProperties" );
 
 	// Update enabled/disabled actions

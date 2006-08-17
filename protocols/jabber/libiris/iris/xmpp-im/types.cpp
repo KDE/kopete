@@ -19,7 +19,7 @@
  */
 
 #include"im.h"
-
+#include "protocol.h"
 #include<qmap.h>
 #include<qapplication.h>
 
@@ -180,7 +180,8 @@ public:
 	Jid to, from;
 	QString id, type, lang;
 
-	StringMap subject, body;
+	StringMap subject, body, xHTMLBody;
+
 	QString thread;
 	Stanza::Error error;
 
@@ -279,6 +280,11 @@ QString Message::body(const QString &lang) const
 	return d->body[lang];
 }
 
+QString Message::xHTMLBody(const QString &lang) const
+{
+	return d->xHTMLBody[lang];
+}
+
 QString Message::thread() const
 {
 	return d->thread;
@@ -340,7 +346,14 @@ void Message::setSubject(const QString &s, const QString &lang)
 void Message::setBody(const QString &s, const QString &lang)
 {
 	d->body[lang] = s;
-	//d->flag = false;
+}
+
+void Message::setXHTMLBody(const QString &s, const QString &lang, const QString &attr)
+{
+	//ugly but needed if s is not a node but a list of leaf
+
+	QString content = "<body xmlns='" + QString(NS_XHTML) + "' "+attr+" >\n" + s +"\n</body>";
+	d->xHTMLBody[lang] = content;
 }
 
 void Message::setThread(const QString &s)
@@ -489,7 +502,19 @@ Stanza Message::toStanza(Stream *stream) const
 			s.appendChild(e);
 		}
 	}
-
+	if ( !d->xHTMLBody.isEmpty()) {
+		QDomElement parent = s.createElement(s.xhtmlImNS(), "html");
+		for(it = d->xHTMLBody.begin(); it != d->xHTMLBody.end(); ++it) {
+			const QString &str = it.data();
+			if(!str.isEmpty()) {
+				QDomElement child = s.createXHTMLElement(str);
+				if(!it.key().isEmpty())
+					child.setAttributeNS(NS_XML, "xml:lang", it.key());
+				parent.appendChild(child);
+			}
+		}
+		s.appendChild(parent);
+	}
 	if(d->type == "error")
 		s.setError(d->error);
 
@@ -519,28 +544,49 @@ Stanza Message::toStanza(Stream *stream) const
 			else
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
+		else if (d->type=="chat" || d->type=="groupchat")
+			s.appendChild(  s.createElement(NS_CHATSTATES , "active" ) );
 
+		bool need_x_event=false;
 		for(QValueList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));
+					need_x_event=true;
 					break;
 				case DeliveredEvent:
 					x.appendChild(s.createElement("jabber:x:event", "delivered"));
+					need_x_event=true;
 					break;
 				case DisplayedEvent:
 					x.appendChild(s.createElement("jabber:x:event", "displayed"));
+					need_x_event=true;
 					break;
 				case ComposingEvent: 
 					x.appendChild(s.createElement("jabber:x:event", "composing"));
+					need_x_event=true;
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "composing" ) ); 
 					break;
 				case CancelEvent:
-					// Add nothing
+					need_x_event=true;
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "paused" ) ); 
+					break;
+				case InactiveEvent:
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "inactive" ) ); 
+					break;
+				case GoneEvent:
+					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
+						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
 					break;
 			}
 		}
-		s.appendChild(x);
-	} 
+		if(need_x_event)  //we don't need to have the (empty) x:event element if this is only <gone> or <inactive>
+			s.appendChild(x);
+	}
+		
 
 	// xencrypted
 	if(!d->xencrypted.isEmpty())
@@ -570,6 +616,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	d->subject.clear();
 	d->body.clear();
 	d->thread = QString();
+	d->eventList.clear();
 
 	QDomElement root = s.element();
 
@@ -590,6 +637,48 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				}
 				else if(e.tagName() == "thread")
 					d->thread = e.text();
+			}
+			else if (e.namespaceURI() == s.xhtmlImNS()) {
+				 if (e.tagName() == "html") {
+					QDomNodeList htmlNL= e.childNodes();
+					for (unsigned int x = 0; x < htmlNL.count(); x++) {
+						QDomElement i = htmlNL.item(x).toElement();
+
+						if (i.tagName() == "body") {
+							QDomDocument RichText;
+							QString lang = i.attributeNS(NS_XML, "lang", "");
+							RichText.appendChild(i);
+							d-> xHTMLBody[lang] = RichText.toString();
+						}
+					}
+				}
+			}
+			else if (e.namespaceURI() == NS_CHATSTATES)
+			{
+				if(e.tagName() == "active")
+				{
+					//like in JEP-0022  we let the client know that we can receive ComposingEvent
+					// (we can do that according to  §4.6  of the JEP-0085)
+					d->eventList += ComposingEvent;
+					d->eventList += InactiveEvent;
+					d->eventList += GoneEvent;
+				}
+				else if (e.tagName() == "composing")
+				{
+					d->eventList += ComposingEvent;
+				}
+				else if (e.tagName() == "paused")
+				{
+					d->eventList += CancelEvent;
+				}
+				else if (e.tagName() == "inactive")
+				{
+					d->eventList += InactiveEvent;
+				}
+				else if (e.tagName() == "gone")
+				{
+					d->eventList += GoneEvent;
+				}
 			}
 			else {
 				//printf("extension element: [%s]\n", e.tagName().latin1());
@@ -624,7 +713,6 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	}
 	
     // events
-	d->eventList.clear();
 	nl = root.elementsByTagNameNS("jabber:x:event", "x");
 	if (nl.count()) {
 		nl = nl.item(0).childNodes();
@@ -786,6 +874,21 @@ void Status::setSongTitle(const QString & _songtitle)
 	v_songTitle = _songtitle;
 }
 
+void Status::setCapsNode(const QString & _capsNode)
+{
+	v_capsNode = _capsNode;
+}
+
+void Status::setCapsVersion(const QString & _capsVersion)
+{
+	v_capsVersion = _capsVersion;
+}
+
+void Status::setCapsExt(const QString & _capsExt)
+{
+	v_capsExt = _capsExt;
+}
+
 bool Status::isAvailable() const
 {
 	return v_isAvailable;
@@ -836,6 +939,21 @@ const QString & Status::xsigned() const
 const QString & Status::songTitle() const
 {
 	return v_songTitle;
+}
+
+const QString & Status::capsNode() const
+{
+	return v_capsNode;
+}
+
+const QString & Status::capsVersion() const
+{
+	return v_capsVersion;
+}
+
+const QString & Status::capsExt() const
+{
+	return v_capsExt;
 }
 
 int Status::errorCode() const
@@ -1418,12 +1536,31 @@ bool Features::canSearch() const
 	return test(ns);
 }
 
+#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
+bool Features::canXHTML() const
+{
+	QStringList ns;
+
+	ns << FID_XHTML;
+
+	return test(ns);
+}
+
 #define FID_GROUPCHAT "jabber:iq:conference"
 bool Features::canGroupchat() const
 {
 	QStringList ns;
 	ns << "http://jabber.org/protocol/muc";
 	ns << FID_GROUPCHAT;
+
+	return test(ns);
+}
+
+#define FID_VOICE "http://www.google.com/xmpp/protocol/voice/v1"
+bool Features::canVoice() const
+{
+	QStringList ns;
+	ns << FID_VOICE;
 
 	return test(ns);
 }

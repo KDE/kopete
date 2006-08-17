@@ -1,0 +1,170 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>OscarVisibilityBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>OscarVisibilityBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>594</width>
+            <height>409</height>
+        </rect>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="2">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Always visible:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Contacts:</string>
+            </property>
+        </widget>
+        <widget class="QListBox" row="1" column="0" rowspan="9" colspan="1">
+            <property name="name">
+                <cstring>contacts</cstring>
+            </property>
+        </widget>
+        <spacer row="1" column="1">
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>31</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="2" column="1">
+            <property name="name">
+                <cstring>visibleAdd</cstring>
+            </property>
+            <property name="text">
+                <string>Add</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="1">
+            <property name="name">
+                <cstring>visibleRemove</cstring>
+            </property>
+            <property name="text">
+                <string>Remove</string>
+            </property>
+        </widget>
+        <spacer row="4" column="1">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QListBox" row="1" column="2" rowspan="4" colspan="1">
+            <property name="name">
+                <cstring>visibleContacts</cstring>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="8" column="1">
+            <property name="name">
+                <cstring>invisibleRemove</cstring>
+            </property>
+            <property name="text">
+                <string>Remove</string>
+            </property>
+        </widget>
+        <spacer row="9" column="1">
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="7" column="1">
+            <property name="name">
+                <cstring>invisibleAdd</cstring>
+            </property>
+            <property name="text">
+                <string>Add</string>
+            </property>
+        </widget>
+        <widget class="QListBox" row="6" column="2" rowspan="4" colspan="1">
+            <property name="name">
+                <cstring>invisibleContacts</cstring>
+            </property>
+        </widget>
+        <spacer row="6" column="1">
+            <property name="name">
+                <cstring>spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="5" column="2">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Always invisible:</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>contacts</tabstop>
+    <tabstop>visibleAdd</tabstop>
+    <tabstop>visibleRemove</tabstop>
+    <tabstop>invisibleAdd</tabstop>
+    <tabstop>invisibleRemove</tabstop>
+    <tabstop>visibleContacts</tabstop>
+    <tabstop>invisibleContacts</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

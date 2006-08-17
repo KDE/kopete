@@ -24,7 +24,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>Please specify an away message, or choose a predefined one from the dropdown.</string>
+                <string>Please specify an away message, or choose a predefined one.</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter|AlignLeft</set>

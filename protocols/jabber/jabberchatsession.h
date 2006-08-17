@@ -28,6 +28,7 @@ class JabberBaseContact;
 namespace Kopete { class Message; }
 class QString;
 
+
 /**
  * @author Till Gerken
  */
@@ -39,7 +40,9 @@ public:
 	JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 						   Kopete::ContactPtrList others, const QString &resource = "",
 						   const char *name = 0 );
-
+	
+	~JabberChatSession();
+	
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
@@ -81,6 +84,8 @@ private slots:
 	 * Re-generate the display name
 	 */
 	void slotUpdateDisplayName ();
+
+	void slotSendFile();
 
 private:
 	/**

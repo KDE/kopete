@@ -22,6 +22,7 @@
 #define XMPP_IM_H
 
 #include<qdatetime.h>
+#include<qvaluelist.h>
 #include"xmpp.h"
 
 namespace XMPP
@@ -48,7 +49,7 @@ namespace XMPP
 	typedef QValueList<Url> UrlList;
 	typedef QMap<QString, QString> StringMap;
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
-			ComposingEvent, CancelEvent } MsgEvent;
+			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
                                            
 	class Message
 	{
@@ -65,6 +66,7 @@ namespace XMPP
 		QString lang() const;
 		QString subject(const QString &lang="") const;
 		QString body(const QString &lang="") const;
+		QString xHTMLBody(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -75,6 +77,7 @@ namespace XMPP
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
+		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr = "");
 		void setThread(const QString &s);
 		void setError(const Stanza::Error &err);
 
@@ -153,6 +156,9 @@ namespace XMPP
 
 		const QString & xsigned() const;
 		const QString & songTitle() const;
+		const QString & capsNode() const;
+		const QString & capsVersion() const;
+		const QString & capsExt() const;
 
 		void setPriority(int);
 		void setShow(const QString &);
@@ -162,6 +168,9 @@ namespace XMPP
 		void setIsAvailable(bool);
 		void setIsInvisible(bool);
 		void setError(int, const QString &);
+		void setCapsNode(const QString&);
+		void setCapsVersion(const QString&);
+		void setCapsExt(const QString&);
 
 		void setXSigned(const QString &);
 		void setSongTitle(const QString &);
@@ -176,6 +185,7 @@ namespace XMPP
 		QString v_xsigned;
 		// gabber song extension
 		QString v_songTitle;
+		QString v_capsNode, v_capsVersion, v_capsExt;
 
 		int ecode;
 		QString estr;
@@ -285,7 +295,9 @@ namespace XMPP
 		bool canRegister() const;
 		bool canSearch() const;
 		bool canGroupchat() const;
+		bool canVoice() const;
 		bool canDisco() const;
+		bool canXHTML() const;
 		bool isGateway() const;
 		bool haveVCard() const;
 
@@ -298,6 +310,7 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
+			FID_Xhtml,
 
 			// private Psi actions
 			FID_Add
@@ -567,12 +580,25 @@ namespace XMPP
 		int timeZoneOffset() const;
 		QString clientName() const;
 		QString clientVersion() const;
+		QString capsNode() const;
+		QString capsVersion() const;
+		QString capsExt() const;
 
 		void setOSName(const QString &);
 		void setTimeZone(const QString &, int);
 		void setClientName(const QString &);
 		void setClientVersion(const QString &);
+		void setCapsNode(const QString &);
+		void setCapsVersion(const QString &);
 
+		void setIdentity(DiscoItem::Identity);
+		DiscoItem::Identity identity();
+
+		void addExtension(const QString& ext, const Features& f);
+		void removeExtension(const QString& ext);
+		const Features& extension(const QString& ext) const;
+		QStringList extensions() const;
+		
 		S5BManager *s5bManager() const;
 		IBBManager *ibbManager() const;
 		JidLinkManager *jidLinkManager() const;
@@ -581,6 +607,7 @@ namespace XMPP
 		FileTransferManager *fileTransferManager() const;
 
 		bool groupChatJoin(const QString &host, const QString &room, const QString &nick);
+		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString &password);
 		void groupChatSetStatus(const QString &host, const QString &room, const Status &);
 		void groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &);
 		void groupChatLeave(const QString &host, const QString &room);

@@ -31,9 +31,12 @@
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
+#include "kopetecontactlist.h"
 #include "kopetepluginmanager.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
+#include "kopetemetacontact.h"
+#include "kopetegroup.h"
 
 namespace Kopete {
 
@@ -48,7 +51,7 @@ public:
 			{
 				uint priority1 = static_cast<Account*>(a)->priority();
 				uint priority2 = static_cast<Account*>(b)->priority();
-	
+
 				if( a==b ) //two account are equal only if they are equal :-)
 					return 0;  // remember than an account can be only once on the list, but two account may have the same priority when loading
 				else if( priority1 > priority2 )
@@ -114,7 +117,7 @@ void AccountManager::setAvailableAll( const QString &awayReason )
 			if ( it.current()->isConnected() )
 				it.current()->setAway( false, awayReason );
 		}
-		else 
+		else
 			if(!it.current()->excludeConnect())
 				it.current()->connect();
 	}
@@ -153,7 +156,7 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 	bool anyConnected = isAnyAccountConnected();
-	
+
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		Account *account = it.current();
@@ -219,7 +222,7 @@ Account* AccountManager::registerAccount( Account *account )
 {
 	if( !account || d->accounts.contains( account ) )
 		return account;
-		
+
 	if( account->accountId().isEmpty() )
 	{
 		account->deleteLater();
@@ -236,9 +239,9 @@ Account* AccountManager::registerAccount( Account *account )
 		}
 	}
 
-	d->accounts.append( account );	
+	d->accounts.append( account );
 	d->accounts.sort();
-	
+
 	// Connect to the account's status changed signal
 	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
 			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
@@ -295,6 +298,27 @@ void AccountManager::removeAccount( Account *account )
 
 	KConfigGroup *configgroup = account->configGroup();
 
+	// Clean up the contact list
+	QDictIterator<Kopete::Contact> it( account->contacts() );
+	for ( ; it.current(); ++it )
+	{
+		Contact* c = it.current();
+		MetaContact* mc = c->metaContact();
+		if ( mc == ContactList::self()->myself() )
+			continue;
+		mc->removeContact( c );
+		c->deleteLater();
+		if ( mc->contacts().count() == 0 ) //we can delete the metacontact
+		{
+			//get the first group and it's members
+			Group* group = mc->groups().first();
+			QPtrList<MetaContact> groupMembers = group->members();
+			ContactList::self()->removeMetaContact( mc );
+			if ( groupMembers.count() == 1 && groupMembers.findRef( mc ) != -1 )
+				ContactList::self()->removeGroup( group );
+		}
+	}
+
 	// Clean up the account list
 	d->accounts.remove( account );
 
@@ -319,11 +343,11 @@ void AccountManager::save()
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	d->accounts.sort();
-	
+
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		KConfigBase *config = it.current()->configGroup();
-	
+
 		config->writeEntry( "Protocol", it.current()->protocol()->pluginId() );
 		config->writeEntry( "AccountId", it.current()->accountId() );
 	}
@@ -386,7 +410,7 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 
 		kdDebug( 14010 ) << k_funcinfo <<
 			"Creating account for '" << accountId << "'" << endl;
-		
+
 		Account *account = 0L;
 		account = registerAccount( protocol->createNewAccount( accountId ) );
 		if ( !account )

@@ -84,6 +84,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 MSNContact::~MSNContact()
 {
+	kdDebug(14140) << k_funcinfo << endl;
 }
 
 bool MSNContact::isReachable()
@@ -142,6 +143,12 @@ QPtrList<KAction> *MSNContact::customContextMenuActions()
 		// Send mail (only available if it is an hotmail account)
 		actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ),
 			this, "actionSendMail" );
+
+		// Invite to receive webcam
+		actionWebcamReceive = new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive() ), this, "msnWebcamReceive" ) ;
+
+		//Send webcam action
+		actionWebcamSend = new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend() ), this, "msnWebcamSend" ) ;
 	}
 	else
 		actionBlock->setText( label );
@@ -151,6 +158,9 @@ QPtrList<KAction> *MSNContact::customContextMenuActions()
 	m_actionCollection->append( actionBlock );
 	m_actionCollection->append( actionShowProfile );
 	m_actionCollection->append( actionSendMail );
+	m_actionCollection->append( actionWebcamReceive );
+	m_actionCollection->append( actionWebcamSend );
+
 
 	return m_actionCollection;
 }
@@ -215,28 +225,25 @@ void MSNContact::deleteContact()
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
-		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
+		if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 		{
-			if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+			// Remove from all groups he belongs (if applicable)
+			for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			{
-				kdDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
-				notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null );
+				kdDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"" << endl;
+				notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			}
-			else
-			{
-				kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
-				deleteLater();
-			}
-			return;
+	
+			// Then trully remove it from server contact list, 
+			// because only removing the contact from his groups isn't sufficent from MSNP11.
+			kdDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
 		}
-
-		// Remove from all groups he belongs (if applicable)
-		for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
-			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
-
-		// Then trully remove it from server contact list, 
-		// because only removing the contact from his groups isn't sufficent from MSNP11.
-		notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
+		else
+		{
+			kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+			deleteLater();
+		}
 	}
 	else
 	{
@@ -570,7 +577,7 @@ void MSNContact::rename( const QString &newName )
 
 void MSNContact::slotShowProfile()
 {
-	KRun::runURL( KURL( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId())  , "text/html" );
+	KRun::runURL( KURL( QString::fromLatin1("http://members.msn.com/?pgmarket=it-it&mem=") + contactId())  , "text/html" );
 }
 
 

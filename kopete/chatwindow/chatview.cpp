@@ -192,11 +192,6 @@ QWidget *ChatView::mainWidget()
 	return this;
 }
 
-KParts::Part *ChatView::part() const
-{
-	return editPart();
-}
-
 bool ChatView::canSend()
 {
 	return editPart()->canSend();
@@ -536,8 +531,16 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	for( ; it.current(); ++it )
 	{
 		Kopete::Contact *c = static_cast<Kopete::Contact*>( it.currentKey() );
-		QString nick = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-		typingList.append( c->metaContact() ? c->metaContact()->displayName() : ( nick.isEmpty() ? c->contactId() : nick ) );
+		QString nick;
+		if( c->metaContact() && c->metaContact() != Kopete::ContactList::self()->myself() )
+		{
+			nick = c->metaContact()->displayName();
+		}
+		else
+		{
+			nick = c->nickName();
+		}
+		typingList.append( nick );
 	}
 
 	// Update the status area
@@ -594,11 +597,38 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 	}
 }
 
+void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &newValue )
+{
+	if( KopetePrefs::prefs()->showEvents() )
+	{
+		if( oldValue != newValue )
+			sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldValue, newValue ) );
+	}
+}
+
 void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
-	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+	QString contactName;
+	// Myself metacontact is not a reliable source.
+	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+	{
+		contactName = contact->metaContact()->displayName();
+	}
+	else
+	{
+		contactName = contact->nickName();
+	}
+
+	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+	{
+		connect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
+			this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
+	}
+	else
+	{
+		connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	}
 
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
@@ -624,13 +654,29 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 	{
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
 
-		QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		QString contactName;
+		if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+		{
+			contactName = contact->metaContact()->displayName();
+		}
+		else
+		{
+			contactName = contact->nickName();
+		}
 
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( m_manager->members().count() > 0 )
 		{
-			disconnect(contact,SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & )),
+			if( contact->metaContact() )
+			{
+				disconnect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
+				this, SLOT( slotDisplayNameChanged(const QString&, const QString&) ) );
+			}
+			else
+			{
+				disconnect(contact,SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & )),
 				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			}
 		}
 
 		if ( !suppressNotification )
@@ -682,6 +728,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 	remoteTyping( message.from(), false );
 
 	messagePart()->appendMessage(message);
+
 	if( !d->isActive )
 	{
 		switch ( message.importance() )
@@ -702,8 +749,14 @@ void ChatView::appendMessage(Kopete::Message &message)
 
 	if( message.direction() == Kopete::Message::Inbound )
 	{
-		unreadMessageFrom = message.from()->metaContact() ?
-			 message.from()->metaContact()->displayName() : message.from()->contactId();
+		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
+		{
+			unreadMessageFrom = message.from()->metaContact()->displayName();
+		}
+		else
+		{
+			unreadMessageFrom = message.from()->nickName();
+		}
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
 	else
@@ -736,16 +789,16 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
 			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
-			if ( contact->metaContact() )
+			if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 			{
 				sendInternalMessage( i18n( "%2 is now %1." )
 					.arg( newStatus.description(), contact->metaContact()->displayName() ) );
 			}
 			else
 			{
-				QString nick=contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+				QString nick=contact->nickName();
 				sendInternalMessage( i18n( "%2 is now %1." )
-					.arg( newStatus.description(), nick.isEmpty() ? contact->contactId() : nick  ) );
+					.arg( newStatus.description(), nick ) );
 			}
 		}
 	}
@@ -785,7 +838,52 @@ void ChatView::saveOptions()
 	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
 	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
 	config->writeEntry( QString::fromLatin1( "membersDockPosition" ), membersDockPosition );
+	saveChatSettings();
 	config->sync();
+}
+
+void ChatView::saveChatSettings()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+
+	if ( contacts.count() == 0 )
+		return;
+
+	Kopete::MetaContact* mc = contacts.first()->metaContact();
+	
+	if ( contacts.count() > 1 )
+		return; //can't save with more than one person in chatview
+
+	if ( !mc )
+		return;
+
+	KConfig* config = KGlobal::config();
+	
+	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	                           mc->metaContactId();
+
+	config->setGroup( contactListGroup );
+	config->writeEntry( "EnableRichText", editPart()->richTextEnabled() );
+	config->writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
+	config->sync();
+}
+
+void ChatView::loadChatSettings()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() > 1 )
+		return; //can't load with more than one other person in the chat
+
+	//read settings for metacontact
+	QString contactListGroup = QString::fromLatin1("chatwindow_") +
+	                           contacts.first()->metaContact()->metaContactId();
+	KConfig* config = KGlobal::config();
+	config->setGroup( contactListGroup );
+	bool enableRichText = config->readBoolEntry( "EnableRichText", true );
+	editPart()->slotSetRichTextEnabled( enableRichText );
+	emit rtfEnabled( this, editPart()->richTextEnabled() );
+	bool enableAutoSpell = config->readBoolEntry( "EnableAutoSpellCheck", false );
+	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 
 void ChatView::readOptions()

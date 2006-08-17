@@ -412,21 +412,24 @@ void Engine::numericReply_333( Message &msg )
 
 /* 352:
  * WHO Reply
+ * 
+ * "<channel> <user> <host> <server> <nick> ("H" / "G") ["*"] [("@" / "+")] :<hopcount> <real name>"
+ *
+ * :efnet.cs.hut.fi 352 userNick #foobar username some.host.name efnet.cs.hut.fi someNick H :0 foobar
+ * :efnet.cs.hut.fi 352 userNick #foobar ~fooobar other.hostname irc.dkom.at anotherNick G+ :3 Unknown
  */
 void Engine::numericReply_352(Message &msg)
 {
-	QStringList suffix = QStringList::split( ' ', msg.suffix() );
-
 	emit incomingWhoReply(
-		Kopete::Message::unescape(msg.arg(5)),
-		Kopete::Message::unescape(msg.arg(1)),
-		msg.arg(2),
-		msg.arg(3),
-		msg.arg(4),
-		msg.arg(6)[0] != 'H',
-		msg.arg(7),
-		msg.suffix().section(' ', 0, 1 ).toUInt(),
-		msg.suffix().section(' ', 1 )
+		Kopete::Message::unescape(msg.arg(5)),       // nick name
+		Kopete::Message::unescape(msg.arg(1)),       // channel name
+		msg.arg(2),                                  // user name
+		msg.arg(3),                                  // host name
+		msg.arg(4),                                  // server name
+		msg.arg(6)[0] != 'H',                        // G=away (true), H=not away (false)
+		msg.arg(7),                                  // @ (op), + (voiced)
+		msg.suffix().section(' ', 0, 1 ).toUInt(),   // hopcount
+		msg.suffix().section(' ', 1 )                // real name
 	);
 }
 

@@ -20,10 +20,10 @@
 #include "historylogger.h"
 #include "historyviewer.h"
 #include "kopetemetacontact.h"
-#include "kopetexsl.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontactlist.h"
+#include "kopeteprefs.h"
 
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
@@ -40,6 +40,7 @@
 #include <qdatetime.h>
 #include <qheader.h>
 #include <qlabel.h>
+#include <qclipboard.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -52,6 +53,9 @@
 #include <kprogress.h>
 #include <kiconloader.h>
 #include <kcombobox.h>
+#include <kpopupmenu.h>
+#include <kstdaction.h>
+#include <kaction.h>
 
 class KListViewDateItem : public KListViewItem
 {
@@ -70,7 +74,7 @@ private:
 
 
 KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc)
-		: KListViewItem(parent, date.toString(Qt::LocalDate), mc->displayName())
+		: KListViewItem(parent, date.toString(Qt::ISODate), mc->displayName())
 {
 	mDate = date;
 	mMetaContact = mc;
@@ -78,15 +82,14 @@ KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::Meta
 
 int KListViewDateItem::compare(QListViewItem *i, int col, bool ascending) const
 {
-	if (col) return QListViewItem::compare(i, col, ascending);
+	if (col) 
+		return QListViewItem::compare(i, col, ascending);
 
+	//compare dates - do NOT use ascending var here
 	KListViewDateItem* item = static_cast<KListViewDateItem*>(i);
-	if (item->date() > mDate)
-		return ascending ? -1 : 1;
-	else if (item->date() < mDate)
-		return ascending ? 1 : -1;
-	
-	return 0;
+	if ( mDate < item->date() )
+		return -1;
+	return ( mDate > item->date() );
 }
 
 
@@ -94,6 +97,10 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	const char* name) : KDialogBase(parent, name, false,
 		i18n("History for %1").arg(mc->displayName()), 0)
 {
+	QString fontSize;
+	QString htmlCode;
+	QString fontStyle;
+
 	kdDebug(14310) << k_funcinfo << "called." << endl;
 	setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
 
@@ -108,7 +115,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 
 	// Widgets initializations
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
-	mMainWidget->searchLine->setFocus();
+	mMainWidget->searchLine->setFocus(); 
+	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
 	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
 
@@ -124,6 +132,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 		mMainWidget->contactComboBox->setCurrentItem(mMetaContactList.find(mMetaContact)+1);
 
 	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
+	mMainWidget->dateListView->setSorting(0, 0); //newest-first
 
 	setMainWidget(mMainWidget);
 
@@ -146,8 +155,12 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(mHtmlView);
 
+	QTextOStream( &fontSize ) << KopetePrefs::prefs()->fontFace().pointSize();
+	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + KopetePrefs::prefs()->fontFace().family() + "; color: " + KopetePrefs::prefs()->textColor().name() + "; }</style>";
+
 	mHtmlPart->begin();
-	mHtmlPart->write( QString::fromLatin1( "<html><head></head><body></body></html>") );
+	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
+	mHtmlPart->write( QString::fromLatin1( htmlCode.latin1() ) );
 	mHtmlPart->end();
 
 	
@@ -159,6 +172,13 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
+	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
+	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
+
+	//initActions
+	KActionCollection* ac = new KActionCollection(this);
+	mCopyAct = KStdAction::copy( this, SLOT(slotCopy()), ac );
+	mCopyURLAct = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), ac );
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -345,37 +365,47 @@ void HistoryDialog::setMessages(QValueList<Kopete::Message> msgs)
 	// Populating HTML Part with messages
 	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
-		resultHTML = "";
-
-		if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
-		// If the message's account is new, just specify it to the user
+		if ( mMainWidget->messageFilterBox->currentItem() == 0
+			|| ( mMainWidget->messageFilterBox->currentItem() == 1 && (*it).direction() == Kopete::Message::Inbound )
+			|| ( mMainWidget->messageFilterBox->currentItem() == 2 && (*it).direction() == Kopete::Message::Outbound ) )
 		{
-			if (!accountLabel.isEmpty())
-				resultHTML += "<br/><br/><br/>";
-			resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
-		}
-		accountLabel = (*it).from()->account()->accountLabel();
-
-		QString body = (*it).parsedBody();
-
-		if (!mMainWidget->searchLine->text().isEmpty())
-		// If there is a search, then we hightlight the keywords
-		{
-			body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
-		}
+			resultHTML = "";
 	
-		resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
-				   + ((*it).direction() == Kopete::Message::Outbound ?
-								"<font color=\"navy\"><b>&gt;</b></font> "
-								: "<font color=\"orange\"><b>&lt;</b></font> ")
-				   + body + "<br/>";
-
-		newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
-		newNode.setAttribute(QString::fromLatin1("dir"), dir);
-		newNode.setInnerHTML(resultHTML);
-
-		mHtmlPart->htmlDocument().body().appendChild(newNode);
+			if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
+			// If the message's account is new, just specify it to the user
+			{
+				if (!accountLabel.isEmpty())
+					resultHTML += "<br/><br/><br/>";
+				resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
+			}
+			accountLabel = (*it).from()->account()->accountLabel();
+	
+			QString body = (*it).parsedBody();
+	
+			if (!mMainWidget->searchLine->text().isEmpty())
+			// If there is a search, then we hightlight the keywords
+			{
+				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
+			}
+		
+			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
+					+ ((*it).direction() == Kopete::Message::Outbound ?
+									"<font color=\"" + KopetePrefs::prefs()->textColor().dark().name() + "\"><b>&gt;</b></font> "
+									: "<font color=\"" + KopetePrefs::prefs()->textColor().light(200).name() + "\"><b>&lt;</b></font> ")
+					+ body + "<br/>";
+	
+			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
+			newNode.setAttribute(QString::fromLatin1("dir"), dir);
+			newNode.setInnerHTML(resultHTML);
+	
+			mHtmlPart->htmlDocument().body().appendChild(newNode);
+		}
 	}
+}
+
+void HistoryDialog::slotFilterChanged(int index)
+{
+	dateSelected(mMainWidget->dateListView->currentItem());
 }
 
 void HistoryDialog::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
@@ -527,7 +557,7 @@ void HistoryDialog::searchFirstStep()
 			if (mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 				mSearch->item->setVisible(true);
 		}
-		while((mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling())));
+		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
 		mMainWidget->searchButton->setText(i18n("&Search"));
 
 		delete mSearch;
@@ -544,12 +574,14 @@ void HistoryDialog::slotContactChanged(int index)
 	mMainWidget->dateListView->clear();
 	if (index == 0)
 	{
-		mMetaContact = 0;
+        setCaption(i18n("History for All Contacts"));
+        mMetaContact = 0;
 		init();
 	}
 	else
 	{
 		mMetaContact = mMetaContactList.at(index-1);
+        setCaption(i18n("History for %1").arg(mMetaContact->displayName()));
 		init();
 	}
 }
@@ -566,6 +598,44 @@ void HistoryDialog::doneProgressBar()
 {
 		mMainWidget->searchProgress->hide();
 		mMainWidget->statusLabel->setText(i18n("Ready"));
+}
+
+void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
+{
+	KPopupMenu *chatWindowPopup = 0L;
+	chatWindowPopup = new KPopupMenu();
+	
+	if ( !url.isEmpty() )
+	{
+		mURL = url;
+		mCopyURLAct->plug( chatWindowPopup );
+		chatWindowPopup->insertSeparator();
+	}
+	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
+	mCopyAct->plug( chatWindowPopup );
+	
+	connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
+	chatWindowPopup->popup(point);
+}
+
+void HistoryDialog::slotCopy()
+{
+	QString qsSelection;
+	qsSelection = mHtmlPart->selectedText();
+	if ( qsSelection.isEmpty() ) return;
+	
+	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
+	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
+	connect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+}
+
+void HistoryDialog::slotCopyURL()
+{
+	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
+	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
+	connect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 #include "historydialog.moc"

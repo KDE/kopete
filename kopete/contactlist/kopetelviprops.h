@@ -29,6 +29,7 @@
 
 class QButtonGroup;
 
+class AddressBookLinkWidget;
 class CustomNotificationProps;
 class KPushButton;
 class KopeteGroupViewItem;
@@ -36,6 +37,7 @@ class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
 class KURLRequester;
 
+namespace KABC { class Addressee; }
 namespace Kopete { class Contact; }
 
 class KopeteGVIProps: public KDialogBase
@@ -71,6 +73,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		CustomNotificationProps * mNotificationProps;
 		QPushButton *mFromKABC;
 		KopeteMetaLVIPropsWidget *mainWidget;
+		AddressBookLinkWidget *linkWidget;
 		KopeteMetaContactLVI *item;
 		KopeteAddressBookExport *mExport;
 		KABC::Sound mSound;
@@ -85,8 +88,8 @@ class KopeteMetaLVIProps: public KDialogBase
 	private slots:
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
-		void slotClearAddresseeClicked();
-		void slotSelectAddresseeClicked();
+		void slotClearPhotoClicked();
+		void slotAddresseeChanged( const KABC::Addressee & );
 		void slotExportClicked();
 		void slotImportClicked();
 		void slotFromKABCClicked();

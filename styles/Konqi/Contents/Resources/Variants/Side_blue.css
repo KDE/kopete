@@ -1,0 +1,39 @@
+body {	
+	background: #000000 url(konqui/konqui-blue.png) fixed;
+	background-repeat : no-repeat;
+	background-size : 100% auto;
+	background-position : bottom right;
+}
+
+.contenu_incoming .corps_message
+{
+	background-color: transparente;
+	color: black; 
+	background: url("konqui/cadre3.png");
+	border: 2px solid #365396;
+}
+
+.contenu_outgoing .corps_message
+{
+	background-color: transparente;
+	color: black; 	
+	background: url("konqui/cadre3.png");
+	border: 2px solid #365396;
+}
+
+.status
+{
+	background-color: transparent;
+	color: white;
+}
+
+.nom 
+{
+	color: #0000FF;
+}
+
+.texte 
+{
+    	text-shadow: 1px 1px 3px #000000;
+    	color: white;
+}

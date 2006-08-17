@@ -2,6 +2,7 @@
   * jabbercontact.cpp  -  Base class for the Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c)      2006 by Olivier Goffart <ogoffart at kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -18,6 +19,13 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kstandarddirs.h>
+#include <qtimer.h>
+#include <qimage.h>
+#include <qregexp.h>
+#include <kmessagebox.h>
+#include <kio/netaccess.h>
+
 
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
@@ -32,43 +40,41 @@
 #include "jabberresourcepool.h"
 #include "kopetemetacontact.h"
 #include "kopetemessage.h"
+#include "kopeteuiglobal.h"
+#include "jabbertransport.h"
+#include "dlgjabbervcard.h"
+
 
 /**
  * JabberBaseContact constructor
  */
-JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: Kopete::Contact (account, rosterItem.jid().full(), mc)
+JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId)
+	: Kopete::Contact (account, legacyId.isEmpty() ? rosterItem.jid().full() : legacyId , mc )
 {
-
 	setDontSync ( false );
+	
+	JabberTransport *t=transport();
+	m_account= t ? t->account() : static_cast<JabberAccount *>(Kopete::Contact::account());
+
 
 	// take roster item and update display name
 	updateContact ( rosterItem );
 
-	// since we're not in the account's contact pool yet
-	// (we'll only be once we returned from this constructor),
-	// we need to force an update to our status here
-	// FIXME: libkopete doesn't allow us to use this call
-	// here anymore as it causes an invocation of manager()
-	// which is still a pure virtual in this constructor.
-	// (needs to be done in subclasses instead)
-	//reevaluateStatus ();
-
 }
+
 
 JabberProtocol *JabberBaseContact::protocol ()
 {
 
 	return static_cast<JabberProtocol *>(Kopete::Contact::protocol ());
-
 }
 
-JabberAccount *JabberBaseContact::account ()
+
+JabberTransport * JabberBaseContact::transport( )
 {
-
-	return static_cast<JabberAccount *>(Kopete::Contact::account ());
-
+	return dynamic_cast<JabberTransport*>(Kopete::Contact::account());
 }
+
 
 /* Return if we are reachable (defaults to true because
    we can send on- and offline, only return false if the
@@ -134,78 +140,83 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			break;
 	}
 
-	/*
-	 * In this method, as opposed to KC::syncGroups(),
-	 * the group list from the server is authoritative.
-	 * As such, we need to find a list of all groups
-	 * that the meta contact resides in but does not
-	 * reside in on the server anymore, as well as all
-	 * groups that the meta contact does not reside in,
-	 * but resides in on the server.
-	 * Then, we'll have to synchronize the KMC using
-	 * that information.
-	 */
-	Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
-
-	// find all groups our contact is in but that are not in the server side roster
-	for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
+	if( !metaContact()->isTemporary() )
 	{
-		if ( item.groups().find ( metaContact()->groups().at(i)->displayName () ) == item.groups().end () )
-			groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
-	}
-
-	// now find all groups that are in the server side roster but not in the local group
-	for ( unsigned i = 0; i < item.groups().count (); i++ )
-	{
-		bool found = false;
-		for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
+		/*
+		* In this method, as opposed to KC::syncGroups(),
+		* the group list from the server is authoritative.
+		* As such, we need to find a list of all groups
+		* that the meta contact resides in but does not
+		* reside in on the server anymore, as well as all
+		* groups that the meta contact does not reside in,
+		* but resides in on the server.
+		* Then, we'll have to synchronize the KMC using
+		* that information.
+		*/
+		Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
+	
+		// find all groups our contact is in but that are not in the server side roster
+		for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
 		{
-			if ( metaContact()->groups().at(j)->displayName () == *item.groups().at(i) )
+			if ( item.groups().find ( metaContact()->groups().at(i)->displayName () ) == item.groups().end () )
+				groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
+		}
+	
+		// now find all groups that are in the server side roster but not in the local group
+		for ( unsigned i = 0; i < item.groups().count (); i++ )
+		{
+			bool found = false;
+			for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
 			{
-				found = true;
-				break;
+				if ( metaContact()->groups().at(j)->displayName () == *item.groups().at(i) )
+				{
+					found = true;
+					break;
+				}
+			}
+			
+			if ( !found )
+			{
+				groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( *item.groups().at(i) ) );
 			}
 		}
-		
-		if ( !found )
+	
+		/*
+		* Special case: if we don't add the contact to any group and the
+		* list of groups to remove from contains the top level group, we
+		* risk removing the contact from the visible contact list. In this
+		* case, we need to make sure at least the top level group stays.
+		*/
+		if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( Kopete::Group::topLevel () ) ) )
 		{
-			groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( *item.groups().at(i) ) );
+			groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
 		}
-	}
-
-	/*
-	 * Special case: if we don't add the contact to any group and the
-	 * list of groups to remove from contains the top level group, we
-	 * risk removing the contact from the visible contact list. In this
-	 * case, we need to make sure at least the top level group stays.
-	 */
-	if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( Kopete::Group::topLevel () ) ) )
-	{
-		groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
-	}
-
-	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
-	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
-		metaContact()->removeFromGroup ( group );
-	}
-
-	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
-	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
-		metaContact()->addToGroup ( group );
+	
+		for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
+		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
+			metaContact()->removeFromGroup ( group );
+		}
+	
+		for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
+		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
+			metaContact()->addToGroup ( group );
+		}
 	}
 
 	/*
 	 * Enable updates for the server again.
 	 */
 	setDontSync ( false );
+	
+	//can't do it now because it's called from contructor at a point some virtual function are not available
+	QTimer::singleShot(0, this, SLOT(reevaluateStatus()));
 
 }
 
 void JabberBaseContact::updateResourceList ()
 {
-
 	/*
 	 * Set available resources.
 	 * This is a bit more complicated: We need to generate
@@ -214,7 +225,7 @@ void JabberBaseContact::updateResourceList ()
 	 * the richtext.
 	 */
 	JabberResourcePool::ResourceList resourceList;
-	account()->resourcePool()->findResources ( XMPP::Jid ( contactId () ), resourceList );
+	account()->resourcePool()->findResources ( rosterItem().jid() , resourceList );
 
 	if ( resourceList.isEmpty () )
 	{
@@ -237,7 +248,27 @@ void JabberBaseContact::updateResourceList ()
 			resourceListStr += QString ( "<tr><td>%1: %2 (%3)</td></tr>" ).
 							   arg ( i18n ( "Client" ), (*it)->clientName (), (*it)->clientSystem () );
 		}
-
+		
+		// Supported features
+#if 0  //disabled because it's just an ugly and long list of incomprehensible namespaces to the user
+		QStringList supportedFeatures = (*it)->features().list();
+		QStringList::ConstIterator featuresIt, featuresItEnd = supportedFeatures.constEnd();
+		if( !supportedFeatures.empty() )
+			resourceListStr += QString( "<tr><td>Supported Features:" );
+		for( featuresIt = supportedFeatures.constBegin(); featuresIt != featuresItEnd; ++featuresIt )
+		{
+			XMPP::Features tempFeature(*featuresIt);
+			resourceListStr += QString("\n<br>");
+			if ( tempFeature.id() > XMPP::Features::FID_None )
+				resourceListStr += tempFeature.name() + QString(" (");
+			resourceListStr += *featuresIt;
+			if ( tempFeature.id() > Features::FID_None )
+				resourceListStr += QString(")");	
+		}
+		if( !supportedFeatures.empty() )
+			resourceListStr += QString( "</td></tr>" );
+#endif
+		
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
 						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it)->resource().status().timeStamp(), true, true ) );
@@ -266,6 +297,20 @@ void JabberBaseContact::reevaluateStatus ()
 	XMPP::Resource resource = account()->resourcePool()->bestResource ( mRosterItem.jid () );
 
 	status = protocol()->resourceToKOS ( resource );
+	
+	
+	/* Add some icon to show the subscription */ 
+	if( ( mRosterItem.subscription().type() == XMPP::Subscription::None || mRosterItem.subscription().type() == XMPP::Subscription::From)
+			 && inherits ( "JabberContact" ) && metaContact() != Kopete::ContactList::self()->myself() && account()->isConnected() )
+	{
+		status = Kopete::OnlineStatus(status.status() ,
+									  status.weight() ,
+									  protocol() ,
+									  status.internalStatus() | 0x0100,
+									  status.overlayIcons() + QStringList("status_unknown_overlay") , //FIXME: find better icon
+									  status.description() );
+	}
+	
 
 	updateResourceList ();
 
@@ -290,7 +335,7 @@ void JabberBaseContact::reevaluateStatus ()
 QString JabberBaseContact::fullAddress ()
 {
 
-	XMPP::Jid jid ( contactId () );
+	XMPP::Jid jid = rosterItem().jid();
 
 	if ( jid.resource().isEmpty () )
 	{
@@ -337,10 +382,288 @@ void JabberBaseContact::serialize (QMap < QString, QString > &serializedData, QM
 {
 
 	// Contact id and display name are already set for us, only add the rest
-	serializedData["identityId"] = account()->accountId();
+	serializedData["JID"] = mRosterItem.jid().full();
 
 	serializedData["groups"] = mRosterItem.groups ().join (QString::fromLatin1 (","));
 }
+
+void JabberBaseContact::slotUserInfo( )
+{
+	if ( !account()->isConnected () )
+	{
+		account()->errorConnectFirst ();
+		return;
+	}
+	
+	// Update the vCard
+	//slotGetTimedVCard();
+
+	new dlgJabberVCard ( account(), this, Kopete::UI::Global::mainWidget () );
+}
+
+void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
+
+	// update vCard cache timestamp if this is not a temporary contact
+	if ( metaContact() && !metaContact()->isTemporary () )
+	{
+		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+	}
+
+	
+	/*
+	* Set the nickname property.
+	*  but ignore it if we are in a groupchat, or it will clash with the normal nickname
+	*/
+	if(inherits ( "JabberContact" ))
+	{
+		if ( !vCard.nickName().isEmpty () )
+		{
+			setProperty ( protocol()->propNickName, vCard.nickName () );
+		}
+		else
+		{
+			removeProperty ( protocol()->propNickName );
+		}
+	}
+
+	/**
+	 * Kopete does not allow a modification of the "full name"
+	 * property. However, some vCards specify only the full name,
+	 * some specify only first and last name.
+	 * Due to these inconsistencies, if first and last name don't
+	 * exist, it is attempted to parse the full name.
+	 */
+
+	// remove all properties first
+	removeProperty ( protocol()->propFirstName );
+	removeProperty ( protocol()->propLastName );
+	removeProperty ( protocol()->propFullName );
+
+	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
+	{
+		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
+		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).stripWhiteSpace ();
+
+		setProperty ( protocol()->propFirstName, firstName );
+		setProperty ( protocol()->propLastName, lastName );
+	}
+	else
+	{
+		if ( !vCard.givenName().isEmpty () )
+			setProperty ( protocol()->propFirstName, vCard.givenName () );
+
+		if ( !vCard.familyName().isEmpty () )
+			setProperty ( protocol()->propLastName, vCard.familyName () );
+	}
+	if( !vCard.fullName().isEmpty() )
+		setProperty ( protocol()->propFullName, vCard.fullName() );
+
+	/* 
+	* Set the general information 
+	*/
+	removeProperty( protocol()->propJid );
+	removeProperty( protocol()->propBirthday );
+	removeProperty( protocol()->propTimezone );
+	removeProperty( protocol()->propHomepage );
+
+	setProperty( protocol()->propJid, vCard.jid() );
+	
+	if( !vCard.bdayStr().isEmpty () )
+		setProperty( protocol()->propBirthday, vCard.bdayStr() );
+	if( !vCard.timezone().isEmpty () )
+		setProperty( protocol()->propTimezone, vCard.timezone() );
+	if( !vCard.url().isEmpty () )
+		setProperty( protocol()->propHomepage, vCard.url() );
+
+	/*
+	* Set the work information.
+	*/
+	removeProperty( protocol()->propCompanyName );
+	removeProperty( protocol()->propCompanyDepartement );
+	removeProperty( protocol()->propCompanyPosition );
+	removeProperty( protocol()->propCompanyRole );
+	
+	if( !vCard.org().name.isEmpty() )
+		setProperty( protocol()->propCompanyName, vCard.org().name );
+	if( !vCard.org().unit.join(",").isEmpty() )
+		setProperty( protocol()->propCompanyDepartement, vCard.org().unit.join(",")) ;
+	if( !vCard.title().isEmpty() )
+		setProperty( protocol()->propCompanyPosition, vCard.title() );
+	if( !vCard.role().isEmpty() )
+		setProperty( protocol()->propCompanyRole, vCard.role() );
+
+	/*
+	* Set the about information
+	*/
+	removeProperty( protocol()->propAbout );
+
+	if( !vCard.desc().isEmpty() )
+		setProperty( protocol()->propAbout, vCard.desc() );
+
+	
+	/*
+	* Set the work and home addresses information
+	*/
+	removeProperty( protocol()->propWorkStreet );
+	removeProperty( protocol()->propWorkExtAddr );
+	removeProperty( protocol()->propWorkPOBox );
+	removeProperty( protocol()->propWorkCity );
+	removeProperty( protocol()->propWorkPostalCode );
+	removeProperty( protocol()->propWorkCountry );
+
+	removeProperty( protocol()->propHomeStreet );
+	removeProperty( protocol()->propHomeExtAddr );
+	removeProperty( protocol()->propHomePOBox );
+	removeProperty( protocol()->propHomeCity );
+	removeProperty( protocol()->propHomePostalCode );
+	removeProperty( protocol()->propHomeCountry );
+
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	{
+		XMPP::VCard::Address address = (*it);
+
+		if(address.work)
+		{
+			setProperty( protocol()->propWorkStreet, address.street );
+			setProperty( protocol()->propWorkExtAddr, address.extaddr );
+			setProperty( protocol()->propWorkPOBox, address.pobox );
+			setProperty( protocol()->propWorkCity, address.locality );
+			setProperty( protocol()->propWorkPostalCode, address.pcode );
+			setProperty( protocol()->propWorkCountry, address.country );
+		}
+		else
+			if(address.home)
+		{
+			setProperty( protocol()->propHomeStreet, address.street );
+			setProperty( protocol()->propHomeExtAddr, address.extaddr );
+			setProperty( protocol()->propHomePOBox, address.pobox );
+			setProperty( protocol()->propHomeCity, address.locality );
+			setProperty( protocol()->propHomePostalCode, address.pcode );
+			setProperty( protocol()->propHomeCountry, address.country );
+		}
+	}
+
+
+	/*
+	* Delete emails first, they might not be present
+	* in the vCard at all anymore.
+	*/
+	removeProperty ( protocol()->propEmailAddress );
+	removeProperty ( protocol()->propWorkEmailAddress );
+
+	/*
+	* Set the home and work email information.
+	*/
+	XMPP::VCard::EmailList::const_iterator emailEnd = vCard.emailList().end ();
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != emailEnd; ++it)
+	{
+		XMPP::VCard::Email email = (*it);
+		
+		if(email.work)
+		{
+			if( !email.userid.isEmpty() )
+				setProperty ( protocol()->propWorkEmailAddress, email.userid );
+		}
+		else
+			if(email.home)
+		{	
+			if( !email.userid.isEmpty() )
+				setProperty ( protocol()->propEmailAddress, email.userid );
+		}
+	}
+
+	/*
+	* Delete phone number properties first as they might have
+	* been unset during an update and are not present in
+	* the vCard at all anymore.
+	*/
+	removeProperty ( protocol()->propPrivatePhone );
+	removeProperty ( protocol()->propPrivateMobilePhone );
+	removeProperty ( protocol()->propWorkPhone );
+	removeProperty ( protocol()->propWorkMobilePhone );
+
+	/*
+	* Set phone numbers. Note that if a mobile phone number
+	* is specified, it's assigned to the private mobile
+	* phone number property. This might not be the desired
+	* behavior for all users.
+	*/
+	XMPP::VCard::PhoneList::const_iterator phoneEnd = vCard.phoneList().end ();
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != phoneEnd; ++it)
+	{
+		XMPP::VCard::Phone phone = (*it);
+
+		if(phone.work)
+		{
+			setProperty ( protocol()->propWorkPhone, phone.number );
+		}
+		else
+			if(phone.fax)
+		{
+			setProperty ( protocol()->propPhoneFax, phone.number);
+		}
+		else
+			if(phone.cell)
+		{
+			setProperty ( protocol()->propPrivateMobilePhone, phone.number );
+		}
+		else
+			if(phone.home)
+		{
+			setProperty ( protocol()->propPrivatePhone, phone.number );
+		}
+
+	}
+
+	/*
+	* Set photo/avatar property.
+	*/
+	removeProperty( protocol()->propPhoto );
+
+	QImage contactPhoto;
+	QString fullJid =  mRosterItem.jid().full();
+	QString finalPhotoPath = locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
+	
+	// photo() is a QByteArray
+	if ( !vCard.photo().isEmpty() )
+	{
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
+
+		// QImage is used to save to disk in PNG later.
+		contactPhoto = QImage( vCard.photo() );
+	}
+	// Contact photo is a URI.
+	else if( !vCard.photoURI().isEmpty() )
+	{
+		QString tempPhotoPath = 0;
+		
+		// Downalod photo from URI.
+		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
+		{
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
+			return;
+		}
+
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
+
+		contactPhoto = QImage( tempPhotoPath );
+		
+		KIO::NetAccess::removeTempFile(  tempPhotoPath );
+	}
+
+	// Save the image to the disk, then set the property.
+	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
+	{
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
+		setProperty( protocol()->propPhoto, finalPhotoPath );
+	}
+
+}
+
+
+
 
 #include "jabberbasecontact.moc"
 

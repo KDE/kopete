@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>dlgAddContact</class>
 <widget class="QWidget">
     <property name="name">
@@ -74,7 +74,7 @@
                 <string>&lt;i&gt;(for example: joe@jabber.org)&lt;/i&gt;</string>
             </property>
             <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
+                <set>WordBreak|AlignVCenter|AlignRight</set>
             </property>
         </widget>
         <spacer>
@@ -96,6 +96,8 @@
         </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>

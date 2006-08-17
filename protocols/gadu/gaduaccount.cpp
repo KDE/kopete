@@ -83,6 +83,7 @@ public:
 
 	QString		lastDescription;
 	bool		forFriends;
+	bool		ignoreAnons;
         
 	QTimer*         exportTimer_;
 	bool		exportUserlist;
@@ -98,15 +99,18 @@ public:
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 static const char* const servers_ip[] = {
+	"217.17.41.82",
+	"217.17.41.83",
+	"217.17.41.84",
+	"217.17.41.85",
+	"217.17.41.86",
+	"217.17.41.87",
 	"217.17.41.88",
 	"217.17.41.92",
 	"217.17.41.93",
- 	"217.17.41.85",
-	"217.17.41.87",
-	"217.17.41.86",
-	"217.17.41.84",
-	"217.17.41.83",
-	"217.17.41.82"
+	"217.17.45.133",
+	"217.17.45.143",
+	"217.17.45.144"
 };
 
 #define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
@@ -145,7 +149,6 @@ static const char* const servers_ip[] = {
 	p->loginInfo.useTls		= false;
 	p->loginInfo.status		= GG_STATUS_AVAIL;
 	p->loginInfo.server		= 0;
-	p->loginInfo.forFriends		= false;
 	p->loginInfo.client_port	= 0;
 	p->loginInfo.client_addr	= 0;
 
@@ -156,6 +159,9 @@ static const char* const servers_ip[] = {
 	p->gaduDcc_ = NULL;
 
 	p->config = configGroup();
+
+	p->ignoreAnons = ignoreAnons();
+	p->forFriends = loadFriendsMode();
 
 	initConnections();
 	initActions();
@@ -189,6 +195,8 @@ GaduAccount::initActions()
 	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
 							this, SLOT( slotFriendsMode() ), this,
 							"actionFriendsMode" );
+
+	static_cast<KToggleAction*>(p->friendsModeAction)->setChecked( p->forFriends );
 }
 
 void
@@ -586,7 +594,6 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	QPtrList<Kopete::Contact> contactsListTmp;
 
 	// FIXME:check for ignored users list
-	// FIXME:anonymous (those not on the list) users should be ignored, as an option
 
 	if ( gaduMessage->sender_id == 0 ) {
 		//system message, display them or not?
@@ -597,6 +604,10 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	contact = static_cast<GaduContact*> ( contacts()[ QString::number( gaduMessage->sender_id ) ] );
 
 	if ( !contact ) {
+		if ( p->ignoreAnons == true ) {
+			return;
+		}
+
 		Kopete::MetaContact* metaContact = new Kopete::MetaContact ();
 		metaContact->setTemporary ( true );
 		contact = new GaduContact( gaduMessage->sender_id,
@@ -895,6 +906,8 @@ GaduAccount::slotFriendsMode()
 	// now change status, it will changing it with p->forFriends flag
 	changeStatus( p->status, p->lastDescription );
 
+	saveFriendsMode( p->forFriends );
+
 }
 
 // FIXME: make loading and saving nonblocking (at the moment KFileDialog stops plugin/kopete)
@@ -1109,7 +1122,7 @@ bool
 GaduAccount::dccEnabled()
 {
 	QString s = p->config->readEntry( QString::fromAscii( "useDcc" ) );
-	kdDebug( 14100 ) << "dccEnabled: "<<s<<endl;
+	kdDebug( 14100 ) << "dccEnabled: "<< s << endl;
 	if ( s == QString::fromAscii( "enabled" ) ) {
 		return true;
 	}
@@ -1132,12 +1145,65 @@ GaduAccount::setDcc( bool d )
 
 	p->config->writeEntry( QString::fromAscii( "useDcc" ), s );
 
-	if ( p->session_->isConnected() & d ) {
+	if ( p->session_->isConnected() && d ) {
 		dccOn();
 	}
+
 	kdDebug( 14100 ) << "s: "<<s<<endl;
 
 	return f;
+}
+
+void
+GaduAccount::saveFriendsMode( bool i )
+{
+	p->config->writeEntry( QString::fromAscii( "forFriends" ), 
+			i == true ? QString::fromAscii( "1" ) : QString::fromAscii( "0" ) );
+}
+
+bool
+GaduAccount::loadFriendsMode()
+{
+	QString s;
+	bool r;
+	int n;
+
+	s = p->config->readEntry( QString::fromAscii( "forFriends" ) );
+	n = s.toInt( &r );
+
+	if ( n ) {
+		return true;
+	}
+
+	return false;
+
+}
+
+// might be bit inconsistent with what I used in DCC, but hell, it is so much easier to parse :-)
+bool
+GaduAccount::ignoreAnons()
+{
+	QString s;
+	bool r;
+	int n;
+	
+	s = p->config->readEntry( QString::fromAscii( "ignoreAnons" ) );
+	n = s.toInt( &r );
+	
+	if ( n ) {
+		return true;
+	}
+
+	return false;
+	
+}
+
+void 
+GaduAccount::setIgnoreAnons( bool i )
+{
+	p->ignoreAnons = i;
+	p->config->writeEntry( QString::fromAscii( "ignoreAnons" ), 
+			i == true ? QString::fromAscii( "1" ) : QString::fromAscii( "0" ) );
 }
 
 GaduAccount::tlsConnection

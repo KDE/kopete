@@ -37,6 +37,7 @@ class Client;
 class Connection;
 class OscarContact;
 class OscarAccountPrivate;
+class QTextCodec;
 
 class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
 {
@@ -79,6 +80,44 @@ public:
 	/** Set the server port */
 	void setServerPort( int port );
 
+	/** Returns codec for account's default encoding */
+	QTextCodec* defaultCodec() const;
+
+	/**
+	 * Returns codec for given contact's encoding or default one
+	 * if contact has no encoding
+	 */
+	QTextCodec* contactCodec( const OscarContact* contact ) const;
+
+	/**
+	 * Returns codec for given contact's encoding or default one
+	 * if contact has no encoding
+	 */
+	QTextCodec* contactCodec( const QString& contactName ) const;
+
+	/**
+	 * Sets buddy icon
+	 */
+	void setBuddyIcon( KURL url );
+
+	/**
+	 * Add a contact to the server site list
+	 * \param contactName the screen name of the new contact to add
+	 * \param groupName the group of the new contact
+	 * \param autoAddGroup if the group doesn't exist add that group
+	 * \return true if the contact will be added
+	 */
+	bool addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup );
+
+	/**
+	 * Change a contact's group on the server
+	 * \param contact the contact to change
+	 * \param newGroup the new group to move the contact to
+	 * \param autoAddGroup if the new group doesn't exist add that group
+	 * \return true if the contact will be added
+	 */
+	bool changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup );
+
 public slots:
 	void slotGoOffline();
 
@@ -107,10 +146,12 @@ protected:
 
 	virtual QString sanitizedMessage( const QString& message ) = 0;
 
+	void updateVersionUpdaterStamp();
+
 protected slots:
 
 	//! do stuff on login
-	void loginActions();
+	virtual void loginActions();
 
     void processSSIList();
 
@@ -120,11 +161,11 @@ protected slots:
 
 	virtual void messageReceived( const Oscar::Message& message );
 
-	void updateContact( Oscar::SSI );
-
 	void ssiGroupAdded( const Oscar::SSI& );
+	void ssiGroupUpdated( const Oscar::SSI& ) {}
 	void ssiGroupRemoved( const Oscar::SSI& ) {}
 	void ssiContactAdded( const Oscar::SSI& );
+	void ssiContactUpdated( const Oscar::SSI& );
 	void ssiContactRemoved( const Oscar::SSI& ) {}
 
 	/* slots for receiving typing notifications, and notify the appropriate OscarContact */
@@ -137,6 +178,8 @@ signals:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
 
+	void buddyIconChanged();
+
 private:
 	QString getFLAPErrorMessage( int code );
 
@@ -146,6 +189,9 @@ private slots:
 
 	/** Handle task errors from the client */
 	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
+
+	/** Sends buddy icon to server */
+	void slotSendBuddyIcon();
 
 private:
 	OscarAccountPrivate *d;

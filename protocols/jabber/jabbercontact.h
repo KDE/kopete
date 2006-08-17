@@ -18,6 +18,10 @@
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "jabberbasecontact.h"
 #include "xmpp_vcard.h"
 
@@ -34,7 +38,9 @@ Q_OBJECT
 public:
 
 	JabberContact (const XMPP::RosterItem &rosterItem,
-				   JabberAccount *account, Kopete::MetaContact * mc);
+				   Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId = QString());
+	
+	~JabberContact();
 
 	/**
 	 * Create custom context menu items for the contact
@@ -60,11 +66,6 @@ public:
 	 */
 	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags );
 	
-	/**
-	 * Reads a vCard object and updates the contact's
-	 * properties accordingly.
-	 */
-	void setPropertiesFromVCard ( const XMPP::VCard &vCard );
 
 	bool isContactRequestingEvent( XMPP::MsgEvent event );
 
@@ -97,14 +98,21 @@ public slots:
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
-	 * Retrieve a vCard for the contact
-	 */
-	void slotUserInfo ();
-
-	/**
 	 * Update the vCard on the server.
+	 * @todo is that still used ?
 	 */ 
 	void slotSendVCard();
+
+	/**
+	 * Set contact photo.
+	 * @param path Path to the photo.
+	 */
+	void setPhoto(const QString &photoPath);
+	
+	/**
+	 * this will start a voice call to the contact
+	 */
+	void voiceCall();
 
 private slots:
 
@@ -178,12 +186,17 @@ private slots:
 	 * Display a error message if the vCard sent was unsuccesful.
 	 */
 	void slotSentVCard();
-
-       /**
-        * actually perform operations of sync() with a delay.
-        * slot received by the syncTimer.
-        */
-       void slotDelayedSync();
+	
+	/**
+	 * The service discovery on that contact is finished
+	 */
+	void slotDiscoFinished();
+	
+	/**
+	 * actually perform operations of sync() with a delay.
+	 * slot received by the syncTimer.
+	 */
+	void slotDelayedSync();
 private:
 
 	/**
@@ -233,12 +246,17 @@ private:
 	 * Indicates whether the vCard is currently
 	 * being updated or not.
 	 */
-	bool mVCardUpdateInProgress;
+	bool mVCardUpdateInProgress :1;
 
-	bool mRequestComposingEvent;
-	bool mRequestOfflineEvent;
-	bool mRequestDisplayedEvent;
-	bool mRequestDeliveredEvent;
+	bool mRequestComposingEvent :1;
+	bool mRequestOfflineEvent :1;
+	bool mRequestDisplayedEvent :1;
+	bool mRequestDeliveredEvent :1;
+	bool mRequestGoneEvent :1;
+	/**
+	 * tell if the disco#info has been done for this contact.
+	 */
+	bool mDiscoDone :1;
 
 	QString mLastReceivedMessageId;
 	QTimer *m_syncTimer;

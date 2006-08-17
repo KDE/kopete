@@ -102,6 +102,7 @@
 #define	NM_A_B_NO_CONTACTS				"NM_A_B_NO_CONTACTS"
 #define	NM_A_B_NO_CUSTOMS				"NM_A_B_NO_CUSTOMS"
 #define	NM_A_B_NO_PRIVACY				"NM_A_B_NO_PRIVACY"
+#define	NM_A_B_ONLY_MODIFIED			"NM_A_B_ONLY_MODIFIED"
 #define	NM_A_UW_STATUS					"NM_A_UW_STATUS"
 #define	NM_A_UD_OBJECT_ID				"NM_A_UD_OBJECT_ID"
 #define	NM_A_SZ_TRANSACTION_ID			"NM_A_SZ_TRANSACTION_ID"
@@ -118,9 +119,28 @@
 #define NM_A_LOCKED_ATTR_LIST			"nnmLockedAttrList"
 #define NM_A_SZ_DEPARTMENT				"OU"
 #define NM_A_SZ_TITLE					"Title"
+// GW7
+#define NM_A_FA_CUSTOM_STATUSES			"NM_A_FA_CUSTOM_STATUSES"
+#define NM_A_FA_STATUS					"NM_A_FA_STATUS"
+#define NM_A_UD_QUERY_COUNT				"NM_A_UD_QUERY_COUNT"
+#define NM_A_FA_CHAT					"NM_A_FA_CHAT"
+#define NM_A_DISPLAY_NAME				"nnmDisplayName"
+#define NM_A_CHAT_OWNER_DN				"nnmChatOwnerDN"
+#define NM_A_UD_PARTICIPANTS			"NM_A_UD_PARTICIPANTS"
+#define NM_A_DESCRIPTION				"nnmDescription"
+#define NM_A_DISCLAIMER					"nnmDisclaimer"
+#define NM_A_QUERY						"nnmQuery"
+#define NM_A_ARCHIVE					"nnmArchive"
+#define NM_A_MAX_USERS					"nnmMaxUsers"
+#define NM_A_SZ_TOPIC					"NM_A_SZ_TOPIC"
+#define NM_A_FA_CHAT_ACL				"NM_A_FA_CHAT_ACL"
+#define NM_A_FA_CHAT_ACL_ENTRY			"NM_A_FA_CHAT_ACL_ENTRY"
+#define NM_A_SZ_ACCESS_FLAGS			"NM_A_SZ_ACCESS_FLAGS"
+#define NM_A_CHAT_CREATOR_DN			"nnmCreatorDN"
+#define NM_A_CREATION_TIME				"nnmCreationTime"
+#define NM_A_UD_CHAT_RIGHTS				"NM_A_UD_CHAT_RIGHTS"
 
-#define NM_PROTOCOL_VERSION		 		2
-
+#define NM_PROTOCOL_VERSION		 		5
 #define	NM_FIELD_TRUE					"1"
 #define	NM_FIELD_FALSE					"0"
 

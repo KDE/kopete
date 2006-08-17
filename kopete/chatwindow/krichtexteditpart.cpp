@@ -74,7 +74,9 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 
 void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 {
-	if( enable )
+	m_richTextEnabled = enable && m_richTextAvailable;
+
+	if( m_richTextEnabled )
 	{
 		editor->setTextFormat( Qt::RichText );
 	}
@@ -83,16 +85,16 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 		editor->setTextFormat( Qt::PlainText );
 	}
 
-	m_richTextEnabled = enable;
 	emit toggleToolbar( buttonsEnabled() );
 
 	// Spellchecking disabled when using rich text because the
 	// text we were getting from widget was coloured HTML!
-	editor->setCheckSpellingEnabled( !richTextEnabled() );
-	checkSpelling->setEnabled( !richTextEnabled() );
+	editor->setCheckSpellingEnabled( !m_richTextEnabled );
+	checkSpelling->setEnabled( !m_richTextEnabled );
 
 	//Enable / disable buttons
 	updateActions();
+	enableRichText->setChecked( m_richTextEnabled );
 }
 
 void KopeteRichTextEditPart::checkToolbarEnabled()
@@ -473,12 +475,12 @@ void KopeteRichTextEditPart::setFont( const QString &newFont )
 void KopeteRichTextEditPart::setBold( bool b )
 {
 	mFont.setBold(b);
-	if( m_capabilities & Kopete::Protocol::RichBFormatting || m_capabilities & Kopete::Protocol::BaseBFormatting ) 
+	if( m_capabilities & Kopete::Protocol::RichBFormatting || m_capabilities & Kopete::Protocol::BaseBFormatting )
 	{
 		if( m_richTextEnabled )
 			editor->setBold(b);
-		else 
-			editor->setFont(mFont);  
+		else
+			editor->setFont(mFont);
 	}
 	writeConfig();
 }
@@ -486,12 +488,12 @@ void KopeteRichTextEditPart::setBold( bool b )
 void KopeteRichTextEditPart::setItalic( bool b )
 {
 	mFont.setItalic( b );
-	if( m_capabilities & Kopete::Protocol::RichIFormatting ||  m_capabilities & Kopete::Protocol::BaseIFormatting ) 
+	if( m_capabilities & Kopete::Protocol::RichIFormatting ||  m_capabilities & Kopete::Protocol::BaseIFormatting )
 	{
 		if(m_richTextEnabled)
 			editor->setItalic(b);
-		else 
-			editor->setFont(mFont);  
+		else
+			editor->setFont(mFont);
 	}
 	writeConfig();
 }
@@ -503,8 +505,8 @@ void KopeteRichTextEditPart::setUnderline( bool b )
 	{
 		if(m_richTextEnabled)
 			editor->setUnderline(b);
-		else 
-			editor->setFont(mFont);  
+		else
+			editor->setFont(mFont);
 	}
 	writeConfig();
 }

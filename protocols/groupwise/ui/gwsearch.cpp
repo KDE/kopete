@@ -33,8 +33,7 @@
 #include "gwcontact.h"
 #include "gwcontactproperties.h"
 #include "gwprotocol.h"
-#include "gwsearchwidget.h"
-#include "tasks/searchtask.h"
+#include "tasks/searchusertask.h"
 
 #include "gwsearch.h"
 
@@ -57,8 +56,8 @@ public:
 	int m_status;
 };
 
-GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
- : GroupWiseSearchWidget(parent, name), m_account( account ), m_onlineOnly( onlineOnly )
+GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
+ : GroupWiseContactSearchWidget(parent, name), m_account( account ), m_onlineOnly( onlineOnly )
 {
 	m_results->setSelectionMode( mode );
 	m_results->setAllColumnsShowFocus( true );
@@ -69,11 +68,11 @@ GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::Selecti
 }
 
 
-GroupWiseSearch::~GroupWiseSearch()
+GroupWiseContactSearch::~GroupWiseContactSearch()
 {
 }
 
-void GroupWiseSearch::slotClear()
+void GroupWiseContactSearch::slotClear()
 {
 	m_firstName->clear();
 	m_lastName->clear();
@@ -82,7 +81,7 @@ void GroupWiseSearch::slotClear()
 	m_dept->clear();
 }
 
-void GroupWiseSearch::slotDoSearch()
+void GroupWiseContactSearch::slotDoSearch()
 {
 	// build a query
 	QValueList< GroupWise::UserSearchQueryTerm > searchTerms;
@@ -129,7 +128,7 @@ void GroupWiseSearch::slotDoSearch()
 	if ( !searchTerms.isEmpty() )
 	{
 		// start a search task
-		SearchTask * st = new SearchTask( m_account->client()->rootTask() );
+		SearchUserTask * st = new SearchUserTask( m_account->client()->rootTask() );
 		st->search( searchTerms );
 		connect( st, SIGNAL( finished() ), SLOT( slotGotSearchResults() ) );
 		st->go( true );
@@ -142,7 +141,7 @@ void GroupWiseSearch::slotDoSearch()
 	
 }
 
-void GroupWiseSearch::slotShowDetails()
+void GroupWiseContactSearch::slotShowDetails()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// get the first selected result
@@ -159,10 +158,10 @@ void GroupWiseSearch::slotShowDetails()
 	}
 }
 
-void GroupWiseSearch::slotGotSearchResults()
+void GroupWiseContactSearch::slotGotSearchResults()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	SearchTask * st = ( SearchTask * )sender();
+	SearchUserTask * st = ( SearchUserTask * ) sender();
 	m_searchResults = st->results();
 	
 	m_matchCount->setText( i18n( "1 matching user found", "%n matching users found", m_searchResults.count() ) );
@@ -211,7 +210,7 @@ void GroupWiseSearch::slotGotSearchResults()
 	slotValidateSelection();
 }
 
-QValueList< GroupWise::ContactDetails > GroupWiseSearch::selectedResults()
+QValueList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults()
 {
     QValueList< GroupWise::ContactDetails > lst;
     QListViewItemIterator it( m_results );
@@ -228,7 +227,7 @@ QValueList< GroupWise::ContactDetails > GroupWiseSearch::selectedResults()
 // 		displayName = selection->text( 1 ) + " " + selection->text( 3 );
 
 
-unsigned char GroupWiseSearch::searchOperation( int comboIndex )
+unsigned char GroupWiseContactSearch::searchOperation( int comboIndex )
 {
 	switch ( comboIndex )
 	{
@@ -242,7 +241,7 @@ unsigned char GroupWiseSearch::searchOperation( int comboIndex )
 	return NMFIELD_METHOD_IGNORE;
 }
 
-void GroupWiseSearch::slotValidateSelection()
+void GroupWiseContactSearch::slotValidateSelection()
 {
 	bool ok = false;
 	// if we only allow online contacts to be selected

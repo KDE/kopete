@@ -82,6 +82,16 @@ public:
 	void setActive( bool value );
 
 	/**
+	 * save the chat settings (rich text, auto spelling)
+	 */
+	void saveChatSettings();
+
+	/**
+	 * read the chat settings (rich text, auto spelling)
+	 */
+	void loadChatSettings();
+
+	/**
 	 * Clears the chat buffer
 	 *
 	 * Reimplemented from KopeteView
@@ -94,14 +104,13 @@ public:
 	void setCaption( const QString &text, bool modified );
 
 	/**
-	 * Changes the pointer to the chat widnow. Used to re-parent the view
+	 * Changes the pointer to the chat window. Used to re-parent the view
 	 * @param parent The new chat window
 	 */
 	void setMainWindow( KopeteChatWindow* parent );
 
 	/**
 	 * Returns the message currently in the edit area
-	 * Reimplemented from KopeteView
 	 * @return The Kopete::Message object for the message
 	 *
 	 * Reimplemented from KopeteView
@@ -168,10 +177,10 @@ public:
 
 	bool canSend();
 
-	/** Reimplimented from KopeteView **/
+	/** Reimplemented from KopeteView **/
 	virtual void registerContextMenuHandler( QObject *target, const char* slot );
 
-	/** Reimplimented from KopeteView **/
+	/** Reimplemented from KopeteView **/
 	virtual void registerTooltipHandler( QObject *target, const char* slot );
 
 public slots:
@@ -254,8 +263,6 @@ public slots:
 
 	virtual bool closeView( bool force = false );
 
-	KParts::Part *part() const;
-
 signals:
 	/**
 	 * Emitted when a message is sent
@@ -302,8 +309,13 @@ signals:
 	 */
 	void rtfEnabled( ChatView*, bool );
 
+	void autoSpellCheckEnabled( ChatView*, bool );
+
 private slots:
 	void slotRemoteTypingTimeout();
+	/**
+	 * Show that a contact changed his nickname when a metacontact is not avaiable.
+	 */
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
@@ -341,6 +353,11 @@ private slots:
 	void slotMarkMessageRead();
 
 	void slotToggleRtfToolbar( bool enabled );
+
+	/**
+	 * Show that a (meta)contact change his display name.
+	 */
+	void slotDisplayNameChanged(const QString &oldValue, const QString &newValue);
 
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );

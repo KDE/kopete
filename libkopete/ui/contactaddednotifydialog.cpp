@@ -37,6 +37,7 @@
 #include "kopeteprotocol.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "addressbooklinkwidget.h"
 #include "addressbookselectordialog.h"
 
 
@@ -69,7 +70,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	
 	d->account=account;
 	d->contactId=contactId;
-	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" /> The contact <b>%2</b> has added you in his contactlist. (Account %3)</qt>")
+	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" /> The contact <b>%2</b> has added you to his/her contactlist. (Account %3)</qt>")
 			.arg( KURL::encode_string( account->protocol()->pluginId() ) + QString::fromLatin1(":")
 			                  + KURL::encode_string( account->accountId() ) ,
 				  contactNick.isEmpty() ? contactId : contactNick + QString::fromLatin1(" < ") + contactId + QString::fromLatin1(" >")  ,
@@ -77,9 +78,15 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	if( hide & InfoButton)
 		d->widget->m_infoButton->hide() ;
 	if( hide & AuthorizeCheckBox )
+	{
 		d->widget->m_authorizeCb->hide();
+		d->widget->m_authorizeCb->setChecked(false);
+	}
 	if( hide & AddCheckBox )
+	{
 		d->widget->m_addCb->hide();
+		d->widget->m_addCb->setChecked(false);
+	}
 	if( hide & AddGroupBox )
 		d->widget->m_contactInfoBox->hide();
 
@@ -95,10 +102,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	}
 	d->widget->m_groupList->setCurrentText(QString::null); //default to top-level
 
-	d->widget->btnClear->setIconSet( SmallIconSet( QApplication::reverseLayout() ?
-			 QString::fromLatin1 ( "locationbar_erase" ) : QString::fromLatin1 ("clear_left") ) );
-	connect( d->widget->btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddresseeClicked() ) );
-	connect( d->widget->btnSelectAddressee, SIGNAL( clicked() ), this, SLOT( slotSelectAddresseeClicked() ) );
+	connect( d->widget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee& ) ), this, SLOT( slotAddresseeSelected( const KABC::Addressee& ) ) );
 	connect( d->widget->m_infoButton, SIGNAL( clicked() ), this, SLOT( slotInfoClicked() ) );
 
 	connect( this, SIGNAL(okClicked()) , this , SLOT(slotFinished()));
@@ -149,27 +153,12 @@ MetaContact *ContactAddedNotifyDialog::addContact() const
 	return metacontact;
 }
 
-
-
-
-
-void ContactAddedNotifyDialog::slotSelectAddresseeClicked()
+void ContactAddedNotifyDialog::slotAddresseeSelected( const KABC::Addressee & addr )
 {
-	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(d->contactId ), d->addressbookId , this);
-	
-	if ( !a.isEmpty() )
+	if ( !addr.isEmpty() )
 	{
-		d->widget->edtAddressee->setText( a.realName() );
-		// set/update the MC's addressee uin field
-		d->addressbookId = a.uid();
+		d->addressbookId = addr.uid();
 	}
-}
-
-
-void ContactAddedNotifyDialog::slotClearAddresseeClicked()
-{
-	d->widget->edtAddressee->setText( QString::null );
-	d->addressbookId=QString::null;
 }
 
 void ContactAddedNotifyDialog::slotInfoClicked()

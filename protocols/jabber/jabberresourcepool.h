@@ -2,6 +2,7 @@
   * jabberresourcepool.h
   *
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -26,12 +27,11 @@ class JabberAccount;
 
 /**
  * @author Till Gerken <till@tantalo.net>
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
 class JabberResourcePool : public QObject
 {
-
-Q_OBJECT
-
+	Q_OBJECT
 public:
 	static XMPP::Resource EmptyResource;
 
@@ -86,9 +86,24 @@ public:
 	void removeLock ( const XMPP::Jid &jid );
 
 	/**
+	 * Return the JabberResource instance for the locked resource, if any.
+	 */
+	 JabberResource *lockedJabberResource( const XMPP::Jid &jid );
+
+	/**
 	 * Return currently locked resource, if any
 	 */
 	const XMPP::Resource &lockedResource ( const XMPP::Jid &jid );
+
+	/**
+	 * Return a usable JabberResource for a given JID.
+	 *
+	 * @param jid Jid to look for the best resource.
+	 * @param honourLock Honour the resource locked by the user.
+	 * 
+	 * @return a JabberResource instance.
+	 */
+	JabberResource *bestJabberResource( const XMPP::Jid &jid, bool honourLock = true );
 
 	/**
 	 * Return usable resource for a given JID
@@ -101,17 +116,14 @@ public:
 	 */
 	void findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList );
 	void findResources ( const XMPP::Jid &jid, XMPP::ResourceList &resourceList );
-
+	
 private slots:
 	void slotResourceDestroyed ( QObject *sender );
 	void slotResourceUpdated ( JabberResource *resource );
-
+	
 private:
-	QPtrList<JabberResource> mPool;
-	QPtrList<JabberResource> mLockList;
-
-	JabberAccount *mAccount;
-
+	class Private;
+	Private *d;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
-    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
     Copyright (C) 2002      by James Grant
     Copyright (c) 2002      by Stefan Gehn           <metz AT gehn.net>
@@ -311,10 +311,8 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
+	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), QKeySequence(Key_Return) ,
 		this, SLOT( slotSendMessage() ), coll, "chat_send" );
-	//Default to 'Return' for sending messages
-	chatSend->setShortcut( QKeySequence(Key_Return) );
 	chatSend->setEnabled( false );
 
  	KStdAction::save ( this, SLOT(slotChatSave()), coll );
@@ -381,7 +379,7 @@ void KopeteChatWindow::initActions(void)
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), QString::null, 0,
 		this, SLOT( toggleAutoSpellChecking() ), coll, "enable_auto_spell_check" );
 	toggleAutoSpellCheck->setChecked( true );
-	
+
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
@@ -702,8 +700,12 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(rtfEnabled( ChatView*, bool ) ), this, SLOT( slotRTFEnabled( ChatView*, bool ) ) );
 	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
 	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+
 	updateSpellCheckAction();
 	checkDetachEnable();
+	newView->loadChatSettings();
+	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
+	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
 }
 
 void KopeteChatWindow::checkDetachEnable()
@@ -839,10 +841,11 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	{
 		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
+		m_activeView->saveChatSettings();
 	}
 
 	guiFactory()->addClient(view->msgManager());
-	createGUI( view->part() );
+	createGUI( view->editPart() );
 
 	if( m_activeView )
 		m_activeView->setActive( false );
@@ -889,6 +892,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
 	m_activeView->editPart()->reloadConfig();
+	m_activeView->loadChatSettings();
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
@@ -903,7 +907,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	
+
 	if ( view == m_activeView )
  	{
 		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) :
@@ -1095,6 +1099,16 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	updateSpellCheckAction();
 }
 
+void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled )
+{
+	if ( view != m_activeView )
+		return;
+
+	toggleAutoSpellCheck->setEnabled( isEnabled );
+	toggleAutoSpellCheck->setChecked( isEnabled );
+	m_activeView->editPart()->toggleAutoSpellCheck( isEnabled );
+}
+
 bool KopeteChatWindow::queryClose()
 {
 	bool canClose = true;
@@ -1135,7 +1149,7 @@ bool KopeteChatWindow::queryExit()
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
-	else 
+	else
 		return false;
 }
 
@@ -1150,7 +1164,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
-	
+
 		if ( queryClose() ) {
 			e->accept();
 		}
@@ -1175,8 +1189,8 @@ void KopeteChatWindow::slotConfKeys()
 			++it;
 		}
 
-		if( m_activeView->part() )
-			dlg.insert( m_activeView->part()->actionCollection(), m_activeView->part()->name() );
+		if( m_activeView->editPart() )
+			dlg.insert( m_activeView->editPart()->actionCollection(), m_activeView->editPart()->name() );
 	}
 
 	dlg.configure();
@@ -1189,10 +1203,7 @@ void KopeteChatWindow::slotConfToolbar()
 	if (dlg->exec())
 	{
 		if( m_activeView )
-		{
-			createGUI( m_activeView->part() );
-			//guiFactory()->addClient(m_activeView->msgManager());
-		}
+			createGUI( m_activeView->editPart() );
 		else
 			createGUI( 0L );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));

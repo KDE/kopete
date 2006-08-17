@@ -283,29 +283,44 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason)
 {
-	// Only update the personal/status message, don't change the online status
-	// since it's the same.
-	if( reason.contains("[Music]") )
-	{
-		QString personalMessage = reason.section("[Music]", 1);
-		setPersonalMessage( MSNProtocol::PersonalMessageMusic, personalMessage );
-	}
-	else
-	{
-		setPersonalMessage( MSNProtocol::PersonalMessageNormal, reason );
+	kdDebug( 14140 ) << k_funcinfo << status.description() << endl;
 
-		if(status.status()== Kopete::OnlineStatus::Offline)
-			disconnect();
-		else if ( m_notifySocket )
+	// HACK: When changing song, do don't anything while connected
+	if( reason.contains("[Music]") && ( status == MSNProtocol::protocol()->UNK || status == MSNProtocol::protocol()->CNT ) )
+		return;
+
+	// Only send personal message when logged.
+	if( m_notifySocket && m_notifySocket->isLogged() )
+	{
+		// Only update the personal/status message, don't change the online status
+		// since it's the same.
+		if( reason.contains("[Music]") )
 		{
-			m_notifySocket->setStatus( status );
+			QString personalMessage = reason.section("[Music]", 1);
+			setPersonalMessage( MSNProtocol::PersonalMessageMusic, personalMessage );
+
+			// Don't send un-needed status change.
+			return;
 		}
 		else
 		{
-			m_connectstatus = status;
-			connect();
+			setPersonalMessage( MSNProtocol::PersonalMessageNormal, reason );
 		}
 	}
+
+	if(status.status()== Kopete::OnlineStatus::Offline)
+		disconnect();
+	else if ( m_notifySocket )
+	{
+		m_notifySocket->setStatus( status );
+	}
+	else
+	{
+		m_connectstatus = status;
+		connect();
+	}
+
+	
 }
 
 void MSNAccount::slotStartChat()
@@ -1012,6 +1027,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 
 void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid )
 {
+	kdDebug( 14140 ) << k_funcinfo << "handle: " << handle << " list: " << list << " contact-uid: " << contactGuid << endl;
 	MSNContact *c=static_cast<MSNContact *>( contacts()[ handle ] );
 	if ( list == "BL" )
 	{
@@ -1060,16 +1076,17 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	{
 		// The FL list only use the contact GUID, use the contact referenced by the GUID.
 		MSNContact *contactRemoved = findContactByGuid(contactGuid);
-
 		QStringList groupGuidList;
+		bool deleteContact = groupGuid.isEmpty() ? true : false; // Delete the contact when the group GUID is empty.
 		// Remove the contact from the contact list for all the group he is a member.
 		if( groupGuid.isEmpty() )
 		{
 			if(contactRemoved)
 			{
 				QPtrList<Kopete::Group> groupList = contactRemoved->metaContact()->groups();
-				for( Kopete::Group *group = groupList.first(); group; groupList.next() )
+				for( QPtrList<Kopete::Group>::Iterator it = groupList.begin(); it != groupList.end(); ++it )
 				{
+					Kopete::Group *group = *it;
 					if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 					{
 						groupGuidList.append( group->pluginData( protocol(), accountId() + " id" ) );
@@ -1110,6 +1127,11 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 						m_notifySocket->removeGroup( *stringIt );
 				}
 			}
+		}
+		if(deleteContact && contactRemoved)
+		{
+			kdDebug(14140) << k_funcinfo << "Deleting the MSNContact " << contactRemoved->contactId() << endl;
+			contactRemoved->deleteLater();
 		}
 	}
 }
@@ -1206,7 +1228,7 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 	{
 		Kopete::MetaContact *mc=dialog->addContact();
 		if(mc)
-		{ //if the contact has been added this way, it's because the other user added us.²
+		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
 			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
 			if(c && c->contactId() == handle )
@@ -1236,21 +1258,24 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 
 void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
 {
-	if(key == Kopete::Global::Properties::self()->nickName().key())
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		QString oldNick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
-		QString newNick = value.toString();
-	
-		if(newNick != oldNick)
+		if(key == Kopete::Global::Properties::self()->nickName().key())
 		{
-			setPublicName( value.toString() );
+			QString oldNick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+			QString newNick = value.toString();
+		
+			if(newNick != oldNick)
+			{
+				setPublicName( value.toString() );
+			}
 		}
-	}
-	else if(key == Kopete::Global::Properties::self()->photo().key())
-	{
-		m_pictureFilename = value.toString();
-		kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
-		resetPictureObject(false);
+		else if(key == Kopete::Global::Properties::self()->photo().key())
+		{
+			m_pictureFilename = value.toString();
+			kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
+			resetPictureObject(false);
+		}
 	}
 }
 
@@ -1367,13 +1392,13 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 
 MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kdDebug(14140) << k_funcinfo << "Looking for " << contactGuid << endl;
 	QDictIterator<Kopete::Contact> it( contacts() );
 	for ( ; it.current(); ++it )
 	{
-		MSNContact *c = static_cast<MSNContact *>( *it );
+		MSNContact *c = dynamic_cast<MSNContact *>( it.current() );
 
-		if(c && c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
+		if(c && c->guid() == contactGuid )
 		{
 			kdDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
 			// Found the contact GUID

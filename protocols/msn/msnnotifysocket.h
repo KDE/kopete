@@ -75,8 +75,12 @@ public:
 
 	bool setUseHttpMethod( bool useHttpMethod );
 
+	bool isLogged() const { return m_isLogged; }
+
 public slots:
 	void slotOpenInbox();
+	void slotMSNAlertLink(unsigned int action);
+	void slotMSNAlertUnwanted();
 
 signals:
 	void newContactList();
@@ -153,6 +157,7 @@ private:
 
 	MSNAccount *m_account;
 	QString m_password;
+	QStringList m_msnAlertURLs;
 
 	unsigned int mailCount;
 
@@ -195,6 +200,14 @@ private:
 	 * The personalMessage is built into @ref changePersonalMessage
 	 */
 	QString m_propertyPersonalMessage;
+
+	/**
+	 * Used to tell when we are logged in to MSN Messeger service.
+	 * Logged when we receive the initial profile message from Hotmail.
+	 *
+	 * Some commands only make sense to be done when logged.
+	 */
+	bool m_isLogged;
 };
 
 #endif

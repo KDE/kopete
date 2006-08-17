@@ -136,6 +136,11 @@ class Buffer
 		int addTLV(WORD, WORD, const char *);
 
 		/**
+		 * Adds a little-endian TLV with the given type and data
+		 */
+		int addLETLV(WORD, WORD, const char *);
+
+		/**
 		 * Returns a QString representation of the buffer
 		 */
 		QString toString() const;
@@ -204,9 +209,19 @@ class Buffer
 		int addTLV16(const WORD type, const WORD data);
 
 		/**
+		 * adds a 16-bit long little-endian TLV
+		 */
+		int addLETLV16(const WORD type, const WORD data);
+
+		/**
 		 * adds the given byte to a TLV
 		 */
 		int addTLV8(const WORD type, const BYTE data);
+
+		/**
+		 * adds the given byte to a little-endian TLV
+		 */
+		int addLETLV8(const WORD type, const BYTE data);
 
 		/**
 		 * Gets a TLV, storing it in a struct and returning it

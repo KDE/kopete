@@ -113,6 +113,14 @@ public slots:
 	bool dccEnabled();
 	bool setDcc( bool );
 
+	// anons
+	bool ignoreAnons();
+	void setIgnoreAnons( bool );
+
+	// forFriends
+	bool loadFriendsMode();
+	void saveFriendsMode( bool );
+
 signals:
 	void pubDirSearchResult( const SearchResult&, unsigned int );
 

@@ -35,6 +35,7 @@ class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
 class YahooChatSession;
+class YABEntry;
 struct KURL;
 
 class YahooContact : public Kopete::Contact
@@ -53,27 +54,40 @@ public:
 
 	void setOnlineStatus(const Kopete::OnlineStatus &status);
 	void setYahooStatus( const Kopete::OnlineStatus& );
+	void setStealthed( bool );
+	bool stealthed();
+
 
 	/** The group name getter and setter methods**/
 	QString group() const;
 	void setGroup( const QString& );
 
-	void gotWebcamInvite();
+	/** The userId getter method**/
+	QString userId() const;
+
 	void receivedWebcamImage( const QPixmap& );
 	void webcamClosed( int );
+	void webcamPaused();
+	
+	const YABEntry *yabEntry();
+
+	static QString prepareMessage( const QString &messageText );
 
 public slots:
 	virtual void slotUserInfo();
-	virtual void slotSendFile();
+	virtual void slotSendFile( const KURL &file );
 	virtual void deleteContact();
 	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
+	void slotUserProfile();
 	void stealthContact();
 	void requestWebcam();
+	void inviteWebcam();
 	void buzzContact();
 	void setDisplayPicture(KTempFile *f, int checksum);
 	void sendBuddyIconInfo( const QString &url, int checksum );
 	void sendBuddyIconUpdate( int type );
 	void sendBuddyIconChecksum( int checksum );
+	void setYABEntry( YABEntry *, bool show = false );
 
 	/**
 	 * Must be called after the contact list has been received
@@ -84,10 +98,9 @@ public slots:
 	void sync(unsigned int flags);
 
 signals:
-	void signalReceivedWebcamInvite();
 	void signalReceivedWebcamImage( const QPixmap &pic );
 	void signalWebcamClosed( int reason );
-	void signalWebcamInviteAccepted();
+	void signalWebcamPaused();
 	void displayPictureChanged();
 
 private slots:
@@ -97,23 +110,29 @@ private slots:
 	void slotEmitDisplayPictureChanged();
 
 	void closeWebcamDialog();
-	//void webcamClosed( const QString& contact, int reason );
+	void initWebcamViewer();
+	void inviteConference();
+
+	void writeYABEntry();
+	void readYABEntry();
 
 private:
 	QString m_userId; 
 	QString m_groupName;
+	YABEntry *m_YABEntry;
 	YahooChatSession *m_manager;
-	YahooAccount* m_account;
-
-	//stealth
-	KAction* m_stealthAction;
-	
-	//webcam handling
-	KAction* m_webcamAction;
 	YahooWebcamDialog* m_webcamDialog;
+	YahooAccount* m_account;
+	bool m_stealthed;
+	bool m_receivingWebcam;
+	bool m_sessionActive;
 	
-	//buzz
+	KAction* m_stealthAction;
+	KAction* m_profileAction;
+	KAction* m_webcamAction;
+	KAction* m_inviteWebcamAction;
 	KAction* m_buzzAction;	
+	KAction* m_inviteConferenceAction;
 };
 
 #endif

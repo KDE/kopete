@@ -18,11 +18,8 @@
 #ifndef LIBWINPOPUP_H
 #define LIBWINPOPUP_H
 
-#define WP_POPUP_DIR "/var/lib/winpopup/"
-
 //QT includes
 #include <qobject.h>
-#include <qmutex.h>
 #include <qmap.h>
 #include <qstringlist.h>
 #include <qtimer.h>
@@ -30,6 +27,11 @@
 
 // KDE Includes
 #include <kprocio.h>
+#include <kfileitem.h>
+
+const QString WP_POPUP_DIR = QString::fromLatin1("/var/lib/winpopup");
+
+class KDirLister;
 
 typedef QMap<QString, QString> stringMap;
 
@@ -47,14 +49,13 @@ class WinPopupLib : public QObject
 	Q_OBJECT
 
 public:
-	WinPopupLib(const QString &smbClient,int groupFreq,int messageCheck);
+	WinPopupLib(const QString &smbClient,int groupFreq);
 	~WinPopupLib();
 
 	const QStringList getGroups();
 	const QStringList getHosts(const QString &Group);
 	bool checkHost(const QString &Name);
-	bool checkMessageDir();
-	void settingsChanged(const QString &smbClient, int groupFreq, int messageCheck);
+	void settingsChanged(const QString &smbClient, int groupFreq);
 	void sendMessage(const QString &Body, const QString &Destination);
 
 private:
@@ -63,18 +64,23 @@ private:
 	QString currentGroup, currentHost;
 	QStringList todo, done, currentHosts;
 	stringMap currentGroups;
-	QMutex groupMutex;
-	QTimer updateGroupDataTimer, messageCheckTimer;
+	QTimer updateGroupDataTimer;
 	QString smbClientBin;
-	int groupCheckFreq, messageCheckFreq;
+	int groupCheckFreq;
+	KDirLister *dirLister;
 
-public slots:
+	void readMessages(const KFileItemList &items);
+	bool checkMessageDir();
+
+private slots:
 	void slotUpdateGroupData();
 	void startReadProcess(const QString &Host);
 	void slotReadProcessReady(KProcIO *r);
 	void slotReadProcessExited(KProcess *r);
-	void slotCheckForNewMessages();
 	void slotSendProcessExited(KProcess *p);
+	void slotStartDirLister();
+	void slotListCompleted();
+	void slotNewMessages(const KFileItemList &items);
 
 signals:
 	void signalNewMessage(const QString &, const QDateTime &, const QString &);
@@ -82,4 +88,5 @@ signals:
 
 #endif
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

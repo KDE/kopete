@@ -269,7 +269,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(385, kl->twoAlphaToCountryName("hr"));
 	mCountries.insert(53, kl->twoAlphaToCountryName("cu"));
 	mCountries.insert(357, kl->twoAlphaToCountryName("cy"));
-	mCountries.insert(420, kl->twoAlphaToCountryName("cz"));
+	mCountries.insert(42, kl->twoAlphaToCountryName("cz"));
 	mCountries.insert(45, kl->twoAlphaToCountryName("dk"));
 	mCountries.insert(246, i18n("Diego Garcia"));
 	mCountries.insert(253, kl->twoAlphaToCountryName("dj"));
@@ -336,7 +336,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(965, kl->twoAlphaToCountryName("kw"));
 	mCountries.insert(706, kl->twoAlphaToCountryName("kg"));
 	mCountries.insert(856, kl->twoAlphaToCountryName("la"));
-	mCountries.insert(371, kl->twoAlphaToCountryName("kv"));
+	mCountries.insert(371, kl->twoAlphaToCountryName("lv"));
 	mCountries.insert(961, kl->twoAlphaToCountryName("kb"));
 	mCountries.insert(266, kl->twoAlphaToCountryName("ls"));
 	mCountries.insert(231, kl->twoAlphaToCountryName("lr"));
@@ -406,7 +406,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(248, kl->twoAlphaToCountryName("sc"));
 	mCountries.insert(232, kl->twoAlphaToCountryName("sl"));
 	mCountries.insert(65, kl->twoAlphaToCountryName("sg"));
-	mCountries.insert(421, kl->twoAlphaToCountryName("sk"));
+	mCountries.insert(4201, kl->twoAlphaToCountryName("sk"));
 	mCountries.insert(386, kl->twoAlphaToCountryName("si"));
 	mCountries.insert(677, kl->twoAlphaToCountryName("sb"));
 	mCountries.insert(252, kl->twoAlphaToCountryName("so"));
@@ -570,6 +570,9 @@ void ICQProtocol::initEncodings()
 	mEncodings.insert(2085, i18n("IBM 866"));
 
 	mEncodings.insert(2259, i18n("TIS-620 Thai"));
+
+	mEncodings.insert(106, i18n("UTF-8 Unicode"));
+	mEncodings.insert(1015, i18n("UTF-16 Unicode"));
 
 /*
 Missing ones (copied from qtextcodec doc):

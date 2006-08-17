@@ -6,9 +6,9 @@
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
+   copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
 
-			   Kopete (C) 2001-2003 Kopete developers
-			   <kopete-devel@kde.org>.
+			   Kopete (C) 2001-2003 Kopete developers  <kopete-devel@kde.org>.
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,6 +23,10 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // we need these for type reasons
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>
@@ -36,7 +40,17 @@ class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
 class JabberProtocol;
+class JabberTransport;
+class JabberBookmarks;
+
 namespace Kopete { class MetaContact; }
+
+#ifdef SUPPORT_JINGLE
+//class JingleSessionManager; 
+//class JingleSession; 
+class VoiceCaller;
+#endif
+
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -69,6 +83,18 @@ public:
 	{
 		return m_jabberClient;
 	}
+	
+#ifdef SUPPORT_JINGLE
+	VoiceCaller *voiceCaller() const
+	{
+		return m_voiceCaller;
+	}
+
+// 	JingleSessionManager *sessionManager()  const
+// 	{
+// 		return m_jingleSessionManager;
+// 	}
+#endif
 
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
@@ -80,9 +106,6 @@ public:
 	/* Tells the user that the connection was lost while we waited for
 	 * an answer of him. */
 	void errorConnectionLost ();
-
-	/* Tells the user that a connection attempt is already in progress */
-	void errorConnectionInProgress ();
 
 	/*
 	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
@@ -102,6 +125,15 @@ public:
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass);
+	
+	const QMap<QString, JabberTransport *> &transports()
+	{ return m_transports; }
+	
+	
+	/** 
+	 * called when the account is removed in the config ui
+	*/
+	virtual bool removeAccount();
 
 public slots:
 	/* Connects to the server. */
@@ -113,8 +145,14 @@ public slots:
 	/* Disconnect with a reason */
 	void disconnect ( Kopete::Account::DisconnectReason reason );
 
+    /* Disconnect with a reason, and status */
+    void disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status );
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	
+	void addTransport( JabberTransport *tr ,  const QString &jid);
+	void removeTransport( const QString &jid );
+
 
 protected:
 	/**
@@ -135,6 +173,8 @@ protected:
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
+	
+	
 
 private:
 	JabberProtocol *m_protocol;
@@ -144,6 +184,13 @@ private:
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
+
+#ifdef SUPPORT_JINGLE
+	VoiceCaller *m_voiceCaller;
+	//JingleSessionManager *m_jingleSessionManager;
+#endif
+
+	JabberBookmarks *m_bookmarks;
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
@@ -164,6 +211,13 @@ private:
 	 */
 	bool isConnecting ();
 
+	QMap<QString, JabberTransport *>m_transports;
+	
+	/* used in removeAccount() */
+	bool m_removing;
+	/* keep track if we told the user we were not able to bind the
+	   jabber transfer port, to avoid popup insanity */
+	bool m_notifiedUserCannotBindTransferPort;
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -207,12 +261,16 @@ private slots:
 
 	/* Incoming subscription request. */
 	void slotSubscription ( const XMPP::Jid &jid, const QString &type );
+	
+	/* the dialog that asked to add the contact was closed   (that dialog is shown in slotSubscription) */
+	void slotContactAddedNotifyDialogClosed(const QString& contactid);
 
 	/**
 	 * A new item appeared in our roster, synch it with the
 	 * contact list.
+	 * (or the contact has been updated
 	 */
-	void slotNewContact ( const XMPP::RosterItem & );
+	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/**
 	 * An item has been deleted from our roster,
@@ -220,8 +278,6 @@ private slots:
 	 */
 	void slotContactDeleted ( const XMPP::RosterItem & );
 
-	/* Update a contact's details. */
-	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/* Someone on our contact list had (another) resource come online. */
 	void slotResourceAvailable ( const XMPP::Jid &, const XMPP::Resource & );
@@ -240,6 +296,14 @@ private slots:
 
 	/* Update the myself information if the global identity changes. */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+	
+	/* we received a voice invitation */	
+	void slotIncomingVoiceCall(const Jid&);
+	
+	/* the unregister task finished */
+	void slotUnregisterFinished();
+
+	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 
 #endif

@@ -20,6 +20,7 @@
 
 #include <qapplication.h>
 
+#include "chatroommanager.h"
 #include "gwclientstream.h"
 #include "privacymanager.h"
 #include "requestfactory.h"
@@ -55,9 +56,11 @@ public:
 /*	int tzoffset;*/
 	bool active;
 	RequestFactory * requestFactory;
+	ChatroomManager * chatroomMgr;
 	UserDetailsManager * userDetailsMgr;
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
+	QValueList<GroupWise::CustomStatus> customStatuses;
 };
 
 Client::Client(QObject *par, uint protocolVersion )
@@ -71,6 +74,7 @@ Client::Client(QObject *par, uint protocolVersion )
 	d->clientVersion = "0.0";
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
+	d->chatroomMgr = 0;
 	d->requestFactory = new RequestFactory;
 	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
 	d->privacyMgr = new PrivacyManager( this, "privacymgr" );
@@ -139,7 +143,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 	connect( login, SIGNAL( gotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ),
 			privacyManager(), SLOT( slotGotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ) );
-			
+
+	connect( login, SIGNAL( gotCustomStatus( const GroupWise::CustomStatus & ) ), 
+			SLOT( lt_gotCustomStatus( const GroupWise::CustomStatus & ) ) );
+
 	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
 	login->initialise();
@@ -166,6 +173,11 @@ QString Client::host()
 int Client::port()
 {
 	return d->port;
+}
+
+QValueList<GroupWise::CustomStatus> Client::customStatuses()
+{
+	return d->customStatuses;
 }
 
 void Client::initialiseEventTasks()
@@ -379,6 +391,11 @@ void Client::jct_joinConfCompleted()
 	emit conferenceJoined( jct->guid(), jct->participants(), jct->invitees() );
 }
 
+void Client::lt_gotCustomStatus( const GroupWise::CustomStatus & custom )
+{
+	d->customStatuses.append( custom );
+}
+
 // INTERNALS //
 
 QString Client::userId()
@@ -476,4 +493,12 @@ uint Client::protocolVersion() const
 {
 	return d->protocolVersion;
 }
+
+ChatroomManager * Client::chatroomManager()
+{
+	if ( !d->chatroomMgr )
+		d->chatroomMgr = new ChatroomManager( this, "chatroommgr" );
+	return d->chatroomMgr;
+}
+
 #include "client.moc"

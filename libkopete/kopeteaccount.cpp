@@ -78,6 +78,9 @@ public:
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
 	uint connectionTry;
+	QString customIcon;
+	Kopete::OnlineStatus restoreStatus;
+	QString restoreMessage;
 };
 
 Account::Account( Protocol *parent, const QString &accountId, const char *name )
@@ -87,7 +90,11 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 
 	d->excludeconnect = d->configGroup->readBoolEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
+	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
+
+	d->restoreStatus = Kopete::OnlineStatus::Online;
+	d->restoreMessage = "";
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
@@ -109,17 +116,26 @@ Account::~Account()
 	delete d;
 }
 
+void Account::reconnect()
+{
+	kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+	setOnlineStatus( d->restoreStatus, d->restoreMessage );
+}
+
 void Account::disconnected( DisconnectReason reason )
 {
+	kdDebug( 14010 ) << k_funcinfo << reason << endl;
 	//reconnect if needed
-	if ( ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual ) ||
-	     reason == BadPassword )
+	if(reason == BadPassword )
 	{
-		if(reason != BadPassword) 
-			d->connectionTry++;
+		QTimer::singleShot(0, this, SLOT(reconnect()));
+	}
+	else if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual )
+	{
+		d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
 		if(d->connectionTry < 3)
-			QTimer::singleShot( 0, this, SLOT(connect()));
+			QTimer::singleShot(10000, this, SLOT(reconnect())); // wait 10 seconds before reconnect
 	}
 	if(reason== OtherClient)
 	{
@@ -166,9 +182,11 @@ uint Account::priority() const
 
 QPixmap Account::accountIcon(const int size) const
 {
+	QString icon= d->customIcon.isEmpty() ? d->protocol->pluginIcon() : d->customIcon;
+	
 	// FIXME: this code is duplicated with OnlineStatus, can we merge it somehow?
 	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
-		d->protocol->pluginIcon(), KIcon::Small, size );
+		icon, KIcon::Small, size );
 
 	if ( d->color.isValid() )
 	{
@@ -381,6 +399,8 @@ void Account::setMyself( Contact *myself )
 	{
 		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
 	}
 
 	d->myself = myself;
@@ -389,6 +409,8 @@ void Account::setMyself( Contact *myself )
 	
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
 
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();
@@ -413,6 +435,13 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		//the timer is also used to reset the d->connectionTry
 	}
 
+	if ( !isOffline )
+	{
+		d->restoreStatus = newStatus;
+		d->restoreMessage = myself()->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
+//		kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+	}
+
 /*	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
@@ -428,6 +457,16 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 	for ( QDictIterator<Contact> it( d->contacts ); it.current(); ++it )
 		if ( it.current() != d->myself )
 			it.current()->setOnlineStatus( status );
+}
+
+void Account::slotContactPropertyChanged( Contact * /* contact */,
+	const QString &key, const QVariant &old, const QVariant &newVal )
+{
+	if ( key == QString::fromLatin1("awayMessage") && old != newVal && isConnected() )
+	{
+		d->restoreMessage = newVal.toString();
+//		kdDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreMessage " << d->restoreMessage << endl;
+	}
 }
 
 void Account::slotStopSuppression()
@@ -514,11 +553,29 @@ void Account::setAway(bool away, const QString& reason)
 	setOnlineStatus( OnlineStatusManager::self()->onlineStatus(protocol() , away ? OnlineStatusManager::Away : OnlineStatusManager::Online)  , reason );
 }
 
+void Account::setCustomIcon( const QString & i)
+{
+	d->customIcon = i;
+	if(!i.isEmpty())
+		d->configGroup->writeEntry( "Icon", i );
+	else
+		d->configGroup->deleteEntry( "Icon" );
+	emit colorChanged( color() );
+}
+
+QString Account::customIcon()  const
+{
+	return d->customIcon;
+}
+
 void Account::virtual_hook( uint /*id*/, void* /*data*/)
 {
 }
 
 
-} //END namespace Kopete
+
+}
+
+ //END namespace Kopete
 
 #include "kopeteaccount.moc"

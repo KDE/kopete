@@ -191,7 +191,6 @@ void WebPresencePlugin::slotWriteFile()
 		delete xml; // might make debugging harder!
 		break;
 	default:
-		delete xml;
 		return;
 	}
 

@@ -19,12 +19,6 @@
 #ifndef YAHOOPROTOCOL_H
 #define YAHOOPROTOCOL_H
 
-#include "libyahoo2/yahoo2.h"
-#include "libyahoo2/yahoo2_callbacks.h"
-
-// Local Includes
-#include "kyahoo.h"
-
 // Kopete Includes
 #include "kopeteonlinestatus.h"
 
@@ -69,10 +63,64 @@ public:
 	const Kopete::OnlineStatus Idle;
 	const Kopete::OnlineStatus Connecting;
 
-	const Kopete::ContactPropertyTmpl awayMessage;
-	const Kopete::ContactPropertyTmpl iconCheckSum;
-	const Kopete::ContactPropertyTmpl iconExpire;
-	const Kopete::ContactPropertyTmpl iconRemoteUrl;
+	const Kopete::ContactPropertyTmpl 	awayMessage;
+	const Kopete::ContactPropertyTmpl 	iconCheckSum;
+	const Kopete::ContactPropertyTmpl 	iconExpire;
+	const Kopete::ContactPropertyTmpl 	iconRemoteUrl;
+
+	// Personal
+	const Kopete::ContactPropertyTmpl	propfirstName;
+	const Kopete::ContactPropertyTmpl	propSecondName;
+	const Kopete::ContactPropertyTmpl	propLastName;
+	const Kopete::ContactPropertyTmpl	propNickName;
+	const Kopete::ContactPropertyTmpl	propTitle;
+
+	// Primary Information	
+	const Kopete::ContactPropertyTmpl	propPhoneMobile;
+	const Kopete::ContactPropertyTmpl	propEmail;
+	const Kopete::ContactPropertyTmpl	propYABId;
+
+	// Additional Information
+	const Kopete::ContactPropertyTmpl	propPager;
+	const Kopete::ContactPropertyTmpl	propFax;
+	const Kopete::ContactPropertyTmpl	propAdditionalNumber;
+	const Kopete::ContactPropertyTmpl	propAltEmail1;
+	const Kopete::ContactPropertyTmpl	propAltEmail2;
+	const Kopete::ContactPropertyTmpl	propImAIM;
+	const Kopete::ContactPropertyTmpl	propImICQ;
+	const Kopete::ContactPropertyTmpl	propImMSN;
+	const Kopete::ContactPropertyTmpl	propImGoogleTalk;
+	const Kopete::ContactPropertyTmpl	propImSkype;
+	const Kopete::ContactPropertyTmpl	propImIRC;
+	const Kopete::ContactPropertyTmpl	propImQQ;
+
+	// Private Information
+	const Kopete::ContactPropertyTmpl	propPrivateAddress;
+	const Kopete::ContactPropertyTmpl	propPrivateCity;
+	const Kopete::ContactPropertyTmpl	propPrivateState;
+	const Kopete::ContactPropertyTmpl	propPrivateZIP;
+	const Kopete::ContactPropertyTmpl	propPrivateCountry;
+	const Kopete::ContactPropertyTmpl	propPrivatePhone;
+	const Kopete::ContactPropertyTmpl	propPrivateURL;
+		
+	// Work Information
+	const Kopete::ContactPropertyTmpl	propCorporation;
+	const Kopete::ContactPropertyTmpl	propWorkAddress;
+	const Kopete::ContactPropertyTmpl	propWorkCity;
+	const Kopete::ContactPropertyTmpl	propWorkState;
+	const Kopete::ContactPropertyTmpl	propWorkZIP;
+	const Kopete::ContactPropertyTmpl	propWorkCountry;
+	const Kopete::ContactPropertyTmpl	propWorkPhone;
+	const Kopete::ContactPropertyTmpl	propWorkURL;
+
+	// Miscellanous
+	const Kopete::ContactPropertyTmpl	propBirthday;
+	const Kopete::ContactPropertyTmpl	propAnniversary;
+	const Kopete::ContactPropertyTmpl	propNotes;
+	const Kopete::ContactPropertyTmpl	propAdditional1;
+	const Kopete::ContactPropertyTmpl	propAdditional2;
+	const Kopete::ContactPropertyTmpl	propAdditional3;
+	const Kopete::ContactPropertyTmpl	propAdditional4;
 
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();

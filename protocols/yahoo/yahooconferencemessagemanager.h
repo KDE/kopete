@@ -2,8 +2,9 @@
     yahooconferencemessagemanager.h - Yahoo Conference Message Manager
 
     Copyright (c) 2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2005 by André Duffeck        <andre@duffeck.de>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,8 +23,8 @@
 
 class KActionCollection;
 class YahooContact;
+class YahooAccount;
 class KActionMenu;
-
 
 /**
  * @author Duncan Mac-Vicar Prett
@@ -35,8 +36,20 @@ class YahooConferenceChatSession : public Kopete::ChatSession
 public:
 	YahooConferenceChatSession( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
 	~YahooConferenceChatSession();
+
+	void joined( YahooContact *c );
+	void left( YahooContact *c );
+	const QString &room();
+	YahooAccount *account();
+signals:
+	void leavingConference( YahooConferenceChatSession *s );
+protected slots:
+	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
+	void slotInviteOthers();
 private:
 	QString m_yahooRoom;
+
+	KAction *m_actionInvite;
 };
 
 #endif

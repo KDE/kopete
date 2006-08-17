@@ -27,7 +27,7 @@ DetectorNetstat::~DetectorNetstat() {
     delete m_process;
 }
 
-void DetectorNetstat::checkStatus() {
+void DetectorNetstat::checkStatus() const {
     kdDebug(14312) << k_funcinfo << endl;
 
     if(m_process) {
@@ -64,9 +64,10 @@ void DetectorNetstat::slotProcessStdout(KProcess *, char *buffer, int buflen) {
 }
 
 void DetectorNetstat::slotProcessExited(KProcess *process) {
+    kdDebug(14312) << k_funcinfo << m_buffer << endl;
     if(process == m_process) {
-	m_connector->setConnectedStatus(m_buffer.contains("default"));
-	m_buffer = QString::null;
+        m_connector->setConnectedStatus(m_buffer.contains("default"));
+        m_buffer = QString::null;
         delete m_process;
         m_process = 0L;
     }

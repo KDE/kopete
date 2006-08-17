@@ -6,7 +6,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by MichaÃ«l Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -81,6 +81,9 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 
 	connect( user, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ), this,
 		SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+
+	if( user->metaContact() )
+		connect( user->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 
 	slotUpdateDisplayName();
 }
@@ -321,7 +324,10 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
 
 			if ( old->metaContact() )
+			{
 				disconnect( old->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+				disconnect( old->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+			}
 			else
 				disconnect( old, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
@@ -337,7 +343,10 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
 ;
 		if ( c->metaContact() )
+		{
 			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			connect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+		}
 		else
 			connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
@@ -366,7 +375,10 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
 
 		if ( c->metaContact() )
+		{
 			disconnect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			disconnect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+		}
 		else
 			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
@@ -457,7 +469,10 @@ Kopete::Account *Kopete::ChatSession::account() const
 
 void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 {
-	if ( !contact || !d->mContactList.contains( contact ) )
+	if(contact == myself())
+		deleteLater();
+		
+	if( !contact || !d->mContactList.contains( contact ) )
 		return;
 
 	//This is a workaround to prevent crash if the contact get deleted.

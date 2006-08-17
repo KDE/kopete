@@ -23,15 +23,21 @@
 #include <qptrdict.h>
 
 #include <kmainwindow.h>
+#include <qlabel.h>
 
 class QHBox;
 class QTimer;
+class QSignalMapper;
+
+class QMouseEvent;
+class QPoint;
 
 class KAction;
 class KActionMenu;
 
 class KGlobalAccel;
 class KSelectAction;
+class KSqueezedTextLabel;
 class KToggleAction;
 
 class KopeteAccountStatusBarIcon;
@@ -60,7 +66,7 @@ public:
 	KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
 	~KopeteWindow();
 
-    virtual bool eventFilter( QObject* o, QEvent* e );
+	virtual bool eventFilter( QObject* o, QEvent* e );
 
 protected:
 	virtual void closeEvent( QCloseEvent *ev );
@@ -81,6 +87,10 @@ private slots:
 	void slotShowHide();
 	void slotToggleAway();
 
+	/* show the global status message selector menu
+	 */
+	void setStatusMessage( const QString & );
+	
 	/**
 	 * Checks if the mousecursor is in the contact list.
 	 * If not, the window will be hidden.
@@ -95,14 +105,13 @@ private slots:
 	void slotContactListAppearanceChanged();
 
 	/**
-	 * This slot will show an away dialog and then
-	 * set all the protocols to away
+	 * This slot will set all the protocols to away
 	 */
-	void slotGlobalAwayMessageSelect( const QString & );
-	void slotGlobalBusyMessageSelect( const QString & );
-	void slotGlobalAvailableMessageSelect( const QString & );
-	void slotSetInvisibleAll(  );
-
+	void slotGlobalAway();
+	void slotGlobalBusy();
+	void slotGlobalAvailable();
+	void slotSetInvisibleAll();
+	void slotDisconnectAll();
 
 	void slotQuit();
 
@@ -150,7 +159,7 @@ private slots:
 	/**
 	 * Show the Add Contact wizard
 	 */
-	void showAddContactDialog();
+	void showAddContactDialog( Kopete::Account * );
 
 	/**
 	 * Show the Export Contacts wizards
@@ -163,12 +172,32 @@ private slots:
 	 * signals.
 	 */
 	void slotAllPluginsLoaded();
+	
+	/**
+	 * Protected slot to setup the Set Global Status Message menu.
+	 */
+	void slotBuildStatusMessageMenu();
+	void slotStatusMessageSelected( int i );
+	void slotNewStatusMessageEntered();
 
+        /**
+         * Show the set global status message menu when clicking on the icon in the status bar.
+         */
+        void slotGlobalStatusMessageIconClicked( const QPoint &position );
+
+	/**
+	 * Extracts protocolId and accountId from the single QString argument signalled by a QSignalMapper,
+	 * get the account, and call showAddContactDialog.
+	 * @param accountIdentifer QString of protocolId and accountId, concatenated with QChar( 0xE000 )
+	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
+	 */
+	void slotAddContactDialogInternal( const QString & accountIdentifier );
+	
 public:
 	KopeteContactListView *contactlist;
 
 	// Some Actions
-	KAction* actionAddContact;
+	KActionMenu* actionAddContact;
 
 	//KActionMenu* actionConnectionMenu;
 	//KAction* actionConnect;
@@ -177,8 +206,8 @@ public:
 
 	KActionMenu* actionAwayMenu;
 	KActionMenu* actionDockMenu;
-	Kopete::AwayAction* selectAway;
-	Kopete::AwayAction* selectBusy;
+	KAction* selectAway;
+	KAction* selectBusy;
 	KAction* actionSetAvailable;
 	KAction* actionSetInvisible;
 
@@ -215,6 +244,7 @@ private:
 	bool m_autoHide;
 	unsigned int m_autoHideTimeout;
 	QTimer* m_autoHideTimer;
+	QSignalMapper* addContactMapper;
 
 	KopetePluginConfig *m_pluginConfig;
 
@@ -225,6 +255,26 @@ private:
 	 * use QObject instead.
 	 */
 	QPtrDict<QObject> m_accountStatusBarIcons;
+	KSqueezedTextLabel * m_globalStatusMessage;
+	KPopupMenu * m_globalStatusMessageMenu;
+	QLineEdit * m_newMessageEdit;
+	QString m_globalStatusMessageStored;
 };
+
+
+class GlobalStatusMessageIconLabel : public QLabel
+{
+      Q_OBJECT
+public:
+      GlobalStatusMessageIconLabel(QWidget *parent = 0, const char *name = 0);
+
+protected:
+      void mouseReleaseEvent(QMouseEvent *event);
+
+signals:
+      void iconClicked(const QPoint &position);
+
+};
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

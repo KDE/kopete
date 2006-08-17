@@ -26,6 +26,7 @@
 #include <qradiobutton.h>
 #include <qcombobox.h>
 #include <qapplication.h>
+#include <qbuffer.h>
 
 // KDE includes
 #include <kcombobox.h>
@@ -41,6 +42,7 @@
 #include <kurlrequester.h>
 #include <kinputdialog.h>
 #include <kpixmapregionselectordialog.h>
+#include <kmdcodec.h>
 
 // KDE KIO includes
 #include <kio/netaccess.h>
@@ -121,7 +123,8 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	d->m_view->buttonNewIdentity->setIconSet(SmallIconSet("new"));
 	d->m_view->buttonCopyIdentity->setIconSet(SmallIconSet("editcopy"));
 	d->m_view->buttonRenameIdentity->setIconSet(SmallIconSet("edit"));
-	d->m_view->buttonRemoveIdentity->setIconSet(SmallIconSet("editdelete"));
+	d->m_view->buttonRemoveIdentity->setIconSet(SmallIconSet("delete_user"));
+	d->m_view->buttonClearPhoto->setIconSet(  SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
 
 	load(); // Load Configuration
 
@@ -133,6 +136,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(d->m_view->buttonRenameIdentity, SIGNAL(clicked()), this, SLOT(slotRenameIdentity()));
 	connect(d->m_view->buttonRemoveIdentity, SIGNAL(clicked()), this, SLOT(slotRemoveIdentity()));
 	connect(d->m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotChangePhoto(const QString& )));
+	connect(d->m_view->buttonClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhoto()));
 
 	// Settings signal/slots
 	connect(d->m_view->radioNicknameContact, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
@@ -197,12 +201,17 @@ void KopeteIdentityConfig::save()
 		d->myself->setPhotoSourceContact(selectedPhotoSourceContact());
 		if(!d->m_view->comboPhotoURL->url().isEmpty())
 			d->myself->setPhoto(d->m_view->comboPhotoURL->url());
+		else
+			d->myself->setPhoto( KURL() );
 		d->myself->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 	}
 	
 	// Save global identities list.
 	KopeteIdentityConfigPreferences::self()->setSelectedIdentity(d->selectedIdentity);
 	GlobalIdentitiesManager::self()->saveXML();
+
+	// (Re)made slot connections to apply Global Identity in protocols
+	Kopete::ContactList::self()->loadGlobalIdentity();
 
 	load();
 }
@@ -248,6 +257,8 @@ void KopeteIdentityConfig::saveCurrentIdentity()
 	d->currentIdentity->setPhotoSourceContact(selectedPhotoSourceContact());
 	if(!d->m_view->comboPhotoURL->url().isEmpty())
 		d->currentIdentity->setPhoto(d->m_view->comboPhotoURL->url());
+	else
+		d->currentIdentity->setPhoto( KURL() );
 	d->currentIdentity->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 }
 
@@ -373,6 +384,8 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 
 	if(!photo.isNull())
 		d->m_view->labelPhoto->setPixmap(QPixmap(photo.smoothScale(64, 92, QImage::ScaleMin)));
+	else
+		d->m_view->labelPhoto->setPixmap(QPixmap());
 
 	emit changed(true);
 }
@@ -445,6 +458,10 @@ void KopeteIdentityConfig::slotRenameIdentity()
 	if(renamedName.isEmpty() || !ok)
 		return;
 
+
+	if(renamedName.isEmpty())
+		return;
+
 	if(!GlobalIdentitiesManager::self()->isIdentityPresent(renamedName))
 	{
 		GlobalIdentitiesManager::self()->renameIdentity(d->selectedIdentity, renamedName);
@@ -500,21 +517,54 @@ void KopeteIdentityConfig::slotChangeAddressee()
 
 void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 {
-	QString saveLocation = locateLocal("appdata", "globalidentitiespictures/"+d->selectedIdentity.replace(" ", "-")+".png");
-
+	QString saveLocation;
+	
 	QImage photo(photoUrl);
 	// use KABC photo size 100x140
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 96, 96, this );
 
 	if(!photo.isNull())
 	{
-		if(photo.width() != 100 || photo.height() != 140)
+		if(photo.width() > 96 || photo.height() > 96)
 		{
-			 if (photo.height() > photo.width())
-				photo = photo.scaleHeight(140);
-			else
-				photo = photo.scaleWidth(100);
+			// Scale and crop the picture.
+			photo = photo.smoothScale( 96, 96, QImage::ScaleMin );
+			// crop image if not square
+			if(photo.width() < photo.height()) 
+				photo = photo.copy((photo.width()-photo.height())/2, 0, 96, 96);
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, 96, 96);
+
 		}
+		else if (photo.width() < 32 || photo.height() < 32)
+		{
+			// Scale and crop the picture.
+			photo = photo.smoothScale( 32, 32, QImage::ScaleMin );
+			// crop image if not square
+			if(photo.width() < photo.height())
+				photo = photo.copy((photo.width()-photo.height())/2, 0, 32, 32);
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, 32, 32);
+	
+		}
+		else if (photo.width() != photo.height())
+		{
+			if(photo.width() < photo.height())
+				photo = photo.copy((photo.width()-photo.height())/2, 0, photo.height(), photo.height());
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, photo.height(), photo.height());
+		}
+
+		// Use MD5 hash to save the filename, so no problems will occur with the filename because of non-ASCII characters.
+		// Bug 124175: My personnal picture doesn't appear cause of l10n
+		QByteArray tempArray;
+		QBuffer tempBuffer(tempArray);
+		tempBuffer.open( IO_WriteOnly );
+		photo.save(&tempBuffer, "PNG");
+		KMD5 context(tempArray);
+		// Save the image to a file.
+		saveLocation = context.hexDigest() + ".png";
+		saveLocation = locateLocal( "appdata", QString::fromUtf8("globalidentitiespictures/%1").arg( saveLocation ) );
 
 		if(!photo.save(saveLocation, "PNG"))
 		{
@@ -531,6 +581,12 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
 					i18n("Identity Configuration"));
 	}
+}
+
+void KopeteIdentityConfig::slotClearPhoto()
+{
+	d->m_view->comboPhotoURL->setURL( QString::null );
+	slotEnableAndDisableWidgets();
 }
 
 void KopeteIdentityConfig::slotSettingsChanged()

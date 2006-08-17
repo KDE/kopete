@@ -87,6 +87,8 @@ public:
 	
 	Oscar::SSI findItemForIcon( QByteArray iconHash ) const;
 	Oscar::SSI findItemForIconByRef( int ) const;
+	
+	Oscar::SSI findItem( const QString &contact, int type ) const;
 
 	QValueList<Oscar::SSI> groupList() const;
 	QValueList<Oscar::SSI> contactList() const;
@@ -101,10 +103,12 @@ public:
 
 public slots:
 	bool newGroup( const Oscar::SSI& group );
+	bool updateGroup( const Oscar::SSI& oldGroup, const Oscar::SSI& newGroup );
 	bool removeGroup( const Oscar::SSI& group );
 	bool removeGroup( const QString& group );
 
 	bool newContact( const Oscar::SSI& contact );
+	bool updateContact( const Oscar::SSI& oldContact, const Oscar::SSI& newContact );
 	bool removeContact( const Oscar::SSI& contact );
 	bool removeContact( const QString& contact );
 	
@@ -119,11 +123,17 @@ signals:
 	//! Emitted when we've added a new contact to the list
 	void contactAdded( const Oscar::SSI& );
 	
+	//! Emitted when we've updated a contact in the list
+	void contactUpdated( const Oscar::SSI& );
+	
 	//! Emitted when we've removed a contact from the list
 	void contactRemoved( const QString& contactName );
 	
 	//! Emitted when we've added a new group to the list
 	void groupAdded( const Oscar::SSI& );
+	
+	//! Emitted when we've updated a group in the list
+	void groupUpdated( const Oscar::SSI& );
 	
 	//! Emitted when we've removed a group from the ssi list
 	void groupRemoved( const QString& groupName );

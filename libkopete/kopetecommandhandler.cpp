@@ -202,7 +202,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 	}
 	else
 		return false;
-
+	
 	CommandList mCommands = commands( manager->protocol() );
 	Kopete::Command *c = mCommands[ command ];
 	if(c)

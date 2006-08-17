@@ -300,7 +300,7 @@ void Engine::notice(const QString &target, const QString &message)
 void Engine::notice(Message &msg)
 {
 	if(!msg.suffix().isEmpty())
-		emit incomingNotice(msg.arg(0), msg.suffix());
+		emit incomingNotice(msg.prefix(), msg.suffix());
 
 	if(msg.hasCtcpMessage())
 		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);

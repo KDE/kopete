@@ -183,7 +183,7 @@ Leave it empty if you want to see the contact nickname as display name.</string>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout14</cstring>
+                        <cstring>layout11</cstring>
                     </property>
                     <hbox>
                         <property name="name">
@@ -191,58 +191,24 @@ Leave it empty if you want to see the contact nickname as display name.</string>
                         </property>
                         <spacer>
                             <property name="name">
-                                <cstring>spacer17</cstring>
+                                <cstring>spacer11</cstring>
                             </property>
                             <property name="orientation">
                                 <enum>Horizontal</enum>
                             </property>
                             <property name="sizeType">
-                                <enum>Fixed</enum>
+                                <enum>Expanding</enum>
                             </property>
                             <property name="sizeHint">
                                 <size>
-                                    <width>31</width>
-                                    <height>21</height>
+                                    <width>51</width>
+                                    <height>20</height>
                                 </size>
                             </property>
                         </spacer>
-                        <widget class="KLineEdit">
+                        <widget class="Kopete::UI::AddressBookLinkWidget">
                             <property name="name">
-                                <cstring>edtAddressee</cstring>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="readOnly">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The KDE Address Book entry associated with this Kopete Contact</string>
-                            </property>
-                        </widget>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>btnClear</cstring>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Clear</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>btnSelectAddressee</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>true</bool>
-                            </property>
-                            <property name="text">
-                                <string>Change...</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Select an address book entry</string>
+                                <cstring>widAddresseeLink</cstring>
                             </property>
                         </widget>
                     </hbox>
@@ -268,8 +234,6 @@ Leave it empty if you want to see the contact nickname as display name.</string>
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_addCb</sender>
@@ -278,6 +242,12 @@ Leave it empty if you want to see the contact nickname as display name.</string>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<customwidgets>
+    <customwidget>
+           <class>Kopete::UI::AddressBookLinkWidget</class>
+	   <header>addressbooklinkwidget.h</header>
+    </customwidget>
+</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>

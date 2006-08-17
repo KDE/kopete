@@ -39,18 +39,19 @@
 namespace XMPP
 {
 	class Resource;
+	class Status;
 }
 
 class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
+class JabberCapabilitiesManager;
 
 class JabberProtocol:public Kopete::Protocol
 {
 	Q_OBJECT
 
 public:
-
 	/**
 	 * Object constructor and destructor
 	 */
@@ -97,6 +98,7 @@ public:
 	const Kopete::ContactPropertyTmpl propAuthorizationStatus;
 	const Kopete::ContactPropertyTmpl propAvailableResources;
 	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
+	const Kopete::ContactPropertyTmpl propPhoto;
 	// extra properties to match with vCard
 	const Kopete::ContactPropertyTmpl propJid;
 	const Kopete::ContactPropertyTmpl propBirthday;
@@ -136,6 +138,16 @@ public:
 	 * Convert an XMPP::Resource status to a Kopete::OnlineStatus
 	 */
 	Kopete::OnlineStatus resourceToKOS ( const XMPP::Resource &resource );
+	
+	/**
+	 * Convert an online status to a  XMPP::Status
+	 */
+	XMPP::Status kosToStatus( const Kopete::OnlineStatus & status, const QString& message=QString() );
+
+	/**
+	 * Return the Entity Capabilities(JEP-0115) manager instance.
+	 */
+	JabberCapabilitiesManager *capabilitiesManager();
 
 private:
 	/*
@@ -143,6 +155,10 @@ private:
 	 */
 	static JabberProtocol *protocolInstance;
 
+	/**
+	 * Unique Instance of the Entity Capabilities(JEP-0115) manager for Kopete Jabber plugin.
+	 */
+	JabberCapabilitiesManager *capsManager;
 };
 
 #endif

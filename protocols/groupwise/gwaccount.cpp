@@ -57,6 +57,7 @@
 #include "tasks/movecontacttask.h"
 #include "tasks/updatecontacttask.h"
 #include "tasks/updatefoldertask.h"
+#include "ui/gwchatsearchdialog.h"
 #include "ui/gwprivacy.h"
 #include "ui/gwprivacydialog.h"
 #include "ui/gwreceiveinvitationdialog.h"
@@ -79,9 +80,11 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 
 	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), QString::null, 0, this,
 			SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
+	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), QString::null, 0, this,
+										 SLOT( slotJoinChatRoom() ), this, "actionJoinChatRoom");
 	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), QString::null, 0, this,
 			SLOT( slotPrivacy() ), this, "actionPrivacy");
-
+			
 	m_connector = 0;
 	m_QCATLS = 0;
 	m_tlsHandler = 0;
@@ -104,6 +107,7 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	m_actionManagePrivacy->setEnabled( isConnected() );
 	m_actionMenu->insert( m_actionManagePrivacy );
 	m_actionMenu->insert( m_actionAutoReply );
+	m_actionMenu->insert( m_actionJoinChatRoom );
 	/* Used for debugging */
 	/*
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
@@ -454,11 +458,15 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 void GroupWiseAccount::slotLoggedIn()
 {
 	reconcileOfflineChanges();
-	
+	// set local status display
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
-	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) )
+	// set status on server
+	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) &&
+		( ( GroupWise::Status )initialStatus().internalStatus() != GroupWise::Unknown ) )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Initial status is not online, setting status to " << initialStatus().internalStatus() << endl;
 		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply" ) );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status was " << initialStatus().description() << ", initial reason was " << m_initialReason << endl;
+	}
 }
 
 void GroupWiseAccount::reconcileOfflineChanges()
@@ -522,21 +530,6 @@ void GroupWiseAccount::reconcileOfflineChanges()
 			}
 			if ( !found )
 			{
-// sync debugging output
-#if 0
-				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact ' " << c->dn() << " 'with instances: " << endl;
-				for ( instIt = instances.begin(); instIt != instances.end(); ++instIt )
-				{
-					kdDebug() << "  id: " << (*instIt )->id << " parent: " << ::qt_cast<GWFolder*>( ( *instIt )->parent() )->id <<  endl;
-				}
-				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " in MC groups: " << endl;
-				QPtrListIterator<Kopete::Group> grpIt( groups );
-				while ( *grpIt )
-				{
-					kdDebug() << "  display name: " << (*grpIt)->displayName() << " id: " <<  (*grpIt)->pluginData(  protocol(), accountId() + " objectId" ) << endl;
-					++grpIt;
-				}
-#endif
 				if ( c->metaContact()->contacts().count() == 1 )
 				{
 					if ( c->metaContact()->groups().count() == 1 )
@@ -954,7 +947,7 @@ void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
 		<< ", givenname" << details.givenName
 		<< ", status" << details.status
 		<< endl;
-	if ( details.cn.lower() == accountId().lower().section('@', 0, 0) )
+	if ( details.cn.lower() == accountId().lower().section('@', 0, 0) ) // incase user set account ID foo@novell.com
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - got our details in contact list, updating them" << endl;
 		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( myself() );
@@ -1087,7 +1080,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	Kopete::GroupList groupList = parentContact->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
-		if ( group->type() == Kopete::Group::TopLevel || group->displayName() == i18n("Top Level") ) // no need to create it on the server
+		if ( group->type() == Kopete::Group::TopLevel ) // no need to create it on the server
 		{
 			topLevel = true;
 			continue;
@@ -1394,6 +1387,11 @@ void GroupWiseAccount::slotTestRTFize()
 void GroupWiseAccount::slotPrivacy()
 {
 	new GroupWisePrivacyDialog( this, Kopete::UI::Global::mainWidget(), "gwprivacydialog" );
+}
+
+void GroupWiseAccount::slotJoinChatRoom()
+{
+	new GroupWiseChatSearchDialog( this, Kopete::UI::Global::mainWidget(), "gwjoinchatdialog" );
 }
 
 bool GroupWiseAccount::isContactBlocked( const QString & dn )

@@ -40,7 +40,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
                                       QWidget *parent, const char* name )
 	: KDialogBase( parent, name, modal, i18n( "User Information on %1" )
 	               .arg( c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ),
-	               Cancel | Ok | User1, Ok, true, i18n("&Update Nickname") )
+	               Cancel | Ok , Ok, true )
 {
 	kdDebug(14200) << k_funcinfo << "for contact '" << c->contactId() << "'" << endl;
 
@@ -168,7 +168,6 @@ void AIMUserInfoDialog::slotCloseClicked()
 void AIMUserInfoDialog::slotUpdateProfile()
 {
 	kdDebug(14152) << k_funcinfo << "Got User Profile." << endl;
-	
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
 	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setText( awayMessage );

@@ -40,6 +40,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetegroup.h"
+#include "kopetepicture.h"
 
 
 namespace  Kopete
@@ -302,6 +303,10 @@ void ContactList::loadGlobalIdentity()
  	// Apply the global identity
 	if(Kopete::Config::enableGlobalIdentity())
  	{
+		// Disconnect to make sure it will not cause duplicate calls.
+		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
+		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
+
 		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
 		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
 
@@ -317,43 +322,47 @@ void ContactList::loadGlobalIdentity()
 		slotDisplayNameChanged();
 		slotPhotoChanged();
  	}
+	else
+	{
+		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
+		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
+	}
 }
 
 void ContactList::slotDisplayNameChanged()
 {
+	static bool mutex=false;
+	if(mutex)
+	{
+		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		return;
+	}
+	mutex=true;
+
 	kdDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
+	mutex=false;
 }
 
 void ContactList::slotPhotoChanged()
 {
-	QString photoURL;
-	
-	MetaContact::PropertySource photoSource = myself()->photoSource();
-	
-	// Save the image to ~./kde/share/apps/kopete/global-photo.png if the source is not custom.
-	if(photoSource != MetaContact::SourceCustom)
+	static bool mutex=false;
+	if(mutex)
 	{
-		QImage globalPhoto = myself()->photo();
-
-		photoURL = "global-photo.png";
-		photoURL = locateLocal("appdata", photoURL);
-
-		if(!globalPhoto.save(photoURL, "PNG"))
-		{
-				kdDebug( 14010 ) << k_funcinfo << "Error while saving the global photo to file." << endl;
-				return;
-		}
+		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		return;
 	}
-	else
-	{
-		photoURL = myself()->customPhoto().path();
-	}
+	mutex=true;
+	kdDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
 
-	kdDebug( 14010 ) << k_funcinfo << photoURL << endl;
-
-	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), photoURL);
+	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
+	mutex=false;
+	/* The mutex is usefull to don't have such as stack overflow 
+	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
+	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
+	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 
+	*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

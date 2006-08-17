@@ -19,20 +19,20 @@
 
 #include "aimjoinchat.h"
 
+#include <qlineedit.h>
+#include <qcombobox.h>
 #include <klocale.h>
 
 #include "aimjoinchatbase.h"
 #include "aimaccount.h"
-
-
-
 
 AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
                               QWidget* parent, const char* name )
     : KDialogBase( parent, name, modal, i18n( "Join AIM Chat Room" ),
                    Cancel | User1, User1, true, i18n( "Join" ) )
 {
-    kdDebug(14200) << k_funcinfo << "Account " << account->accountId()
+
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Account " << account->accountId()
                    << " joining a chat room" << endl;
 
     m_account = account;
@@ -43,25 +43,52 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
 
     QObject::connect( this, SIGNAL( user1Clicked() ), this, SLOT( joinChat() ) );
     QObject::connect( this, SIGNAL( cancelClicked() ), this, SLOT( closeClicked() ) );
-
-
-    //add exchanges to the spin box
 }
 
 AIMJoinChatUI::~AIMJoinChatUI()
 {
+    m_exchanges.clear();
+}
 
+void AIMJoinChatUI::setExchangeList( const QValueList<int>& list )
+{
+    m_exchanges = list;
+    QStringList exchangeList;
+    QValueList<int>::const_iterator it = list.begin();
+    while ( it != list.end() )
+    {
+        exchangeList.append( QString::number( ( *it ) ) );
+        ++it;
+    }
+
+
+    m_joinUI->exchange->insertStringList( exchangeList );
 }
 
 void AIMJoinChatUI::joinChat()
 {
-    //join a chat room
+    m_roomName = m_joinUI->roomName->text();
+    int item = m_joinUI->exchange->currentItem();
+    m_exchange = m_joinUI->exchange->text( item );
+
+    emit closing( QDialog::Accepted );
 }
 
 void AIMJoinChatUI::closeClicked()
 {
     //hmm, do nothing?
-    emit closing();
+    emit closing( QDialog::Rejected );
+}
+
+QString AIMJoinChatUI::roomName() const
+{
+    return m_roomName;
+}
+
+QString AIMJoinChatUI::exchange() const
+{
+    return m_exchange;
 }
 
 #include "aimjoinchat.moc"
+//kate: space-indent on; indent-width 4;

@@ -1,0 +1,432 @@
+diff -ur psi/iris/include/im.h psi-jingle/iris/include/im.h
+--- psi/iris/include/im.h	2005-12-27 15:12:42.000000000 +0100
++++ psi-jingle/iris/include/im.h	2005-12-27 11:05:53.000000000 +0100
+@@ -22,6 +22,7 @@
+ #define XMPP_IM_H
+ 
+ #include<qdatetime.h>
++#include<qvaluelist.h>
+ #include"xmpp.h"
+ 
+ namespace XMPP
+@@ -153,6 +154,9 @@
+ 
+ 		const QString & xsigned() const;
+ 		const QString & songTitle() const;
++		const QString & capsNode() const;
++		const QString & capsVersion() const;
++		const QString & capsExt() const;
+ 
+ 		void setPriority(int);
+ 		void setShow(const QString &);
+@@ -162,6 +166,9 @@
+ 		void setIsAvailable(bool);
+ 		void setIsInvisible(bool);
+ 		void setError(int, const QString &);
++		void setCapsNode(const QString&);
++		void setCapsVersion(const QString&);
++		void setCapsExt(const QString&);
+ 
+ 		void setXSigned(const QString &);
+ 		void setSongTitle(const QString &);
+@@ -176,6 +183,7 @@
+ 		QString v_xsigned;
+ 		// gabber song extension
+ 		QString v_songTitle;
++		QString v_capsNode, v_capsVersion, v_capsExt;
+ 
+ 		int ecode;
+ 		QString estr;
+@@ -285,6 +293,7 @@
+ 		bool canRegister() const;
+ 		bool canSearch() const;
+ 		bool canGroupchat() const;
++		bool canVoice() const;
+ 		bool canDisco() const;
+ 		bool isGateway() const;
+ 		bool haveVCard() const;
+@@ -567,12 +576,25 @@
+ 		int timeZoneOffset() const;
+ 		QString clientName() const;
+ 		QString clientVersion() const;
++		QString capsNode() const;
++		QString capsVersion() const;
++		QString capsExt() const;
+ 
+ 		void setOSName(const QString &);
+ 		void setTimeZone(const QString &, int);
+ 		void setClientName(const QString &);
+ 		void setClientVersion(const QString &);
++		void setCapsNode(const QString &);
++		void setCapsVersion(const QString &);
+ 
++		void setIdentity(DiscoItem::Identity);
++		DiscoItem::Identity identity();
++
++		void addExtension(const QString& ext, const Features& f);
++		void removeExtension(const QString& ext);
++		const Features& extension(const QString& ext) const;
++		QStringList extensions() const;
++		
+ 		S5BManager *s5bManager() const;
+ 		IBBManager *ibbManager() const;
+ 		JidLinkManager *jidLinkManager() const;
+diff -ur psi/iris/xmpp-im/client.cpp psi-jingle/iris/xmpp-im/client.cpp
+--- psi/iris/xmpp-im/client.cpp	2005-12-27 15:12:44.000000000 +0100
++++ psi-jingle/iris/xmpp-im/client.cpp	2005-12-27 11:05:53.000000000 +0100
+@@ -70,6 +70,7 @@
+ //!  \endcode
+ 
+ #include<stdarg.h>
++#include<qmap.h>
+ #include<qobjectlist.h>
+ #include<qtimer.h>
+ #include<qguardedptr.h>
+@@ -125,7 +126,9 @@
+ 	int id_seed;
+ 	Task *root;
+ 	QString host, user, pass, resource;
+-	QString osname, tzname, clientName, clientVersion;
++	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt;
++	DiscoItem::Identity identity;
++	QMap<QString,Features> extension_features;
+ 	int tzoffset;
+ 	bool active;
+ 
+@@ -149,6 +152,9 @@
+ 	d->osname = "N/A";
+ 	d->clientName = "N/A";
+ 	d->clientVersion = "0.0";
++	d->capsNode = "";
++	d->capsVersion = "";
++	d->capsExt = "";
+ 
+ 	d->id_seed = 0xaaaa;
+ 	d->root = new Task(this, true);
+@@ -996,6 +1002,21 @@
+ 	return d->clientVersion;
+ }
+ 
++QString Client::capsNode() const
++{
++	return d->capsNode;
++}
++
++QString Client::capsVersion() const
++{
++	return d->capsVersion;
++}
++
++QString Client::capsExt() const
++{
++	return d->capsExt;
++}
++
+ void Client::setOSName(const QString &name)
+ {
+ 	d->osname = name;
+@@ -1017,6 +1038,52 @@
+ 	d->clientVersion = s;
+ }
+ 
++void Client::setCapsNode(const QString &s)
++{
++	d->capsNode = s;
++}
++
++void Client::setCapsVersion(const QString &s)
++{
++	d->capsVersion = s;
++}
++
++DiscoItem::Identity Client::identity()
++{
++	return d->identity;
++}
++
++void Client::setIdentity(DiscoItem::Identity identity)
++{
++	d->identity = identity;
++}
++
++void Client::addExtension(const QString& ext, const Features& features)
++{
++	if (!ext.isEmpty()) {
++		d->extension_features[ext] = features;
++		d->capsExt = extensions().join(" ");
++	}
++}
++
++void Client::removeExtension(const QString& ext)
++{
++	if (d->extension_features.contains(ext)) {
++		d->extension_features.remove(ext);
++		d->capsExt = extensions().join(" ");
++	}
++}
++
++QStringList Client::extensions() const
++{
++	return d->extension_features.keys();
++}
++
++const Features& Client::extension(const QString& ext) const
++{
++	return d->extension_features[ext];
++}
++
+ void Client::s5b_incomingReady()
+ {
+ 	S5BConnection *c = d->s5bman->takeIncoming();
+diff -ur psi/iris/xmpp-im/types.cpp psi-jingle/iris/xmpp-im/types.cpp
+--- psi/iris/xmpp-im/types.cpp	2005-12-27 15:12:55.000000000 +0100
++++ psi-jingle/iris/xmpp-im/types.cpp	2005-12-27 11:05:53.000000000 +0100
+@@ -784,6 +784,21 @@
+ 	v_songTitle = _songtitle;
+ }
+ 
++void Status::setCapsNode(const QString & _capsNode)
++{
++	v_capsNode = _capsNode;
++}
++
++void Status::setCapsVersion(const QString & _capsVersion)
++{
++	v_capsVersion = _capsVersion;
++}
++
++void Status::setCapsExt(const QString & _capsExt)
++{
++	v_capsExt = _capsExt;
++}
++
+ bool Status::isAvailable() const
+ {
+ 	return v_isAvailable;
+@@ -836,6 +851,21 @@
+ 	return v_songTitle;
+ }
+ 
++const QString & Status::capsNode() const
++{
++	return v_capsNode;
++}
++
++const QString & Status::capsVersion() const
++{
++	return v_capsVersion;
++}
++
++const QString & Status::capsExt() const
++{
++	return v_capsExt;
++}
++
+ int Status::errorCode() const
+ {
+ 	return ecode;
+@@ -1427,6 +1457,15 @@
+ 	return test(ns);
+ }
+ 
++#define FID_VOICE "http://www.google.com/xmpp/protocol/voice/v1"
++bool Features::canVoice() const
++{
++	QStringList ns;
++	ns << FID_VOICE;
++
++	return test(ns);
++}
++
+ #define FID_GATEWAY "jabber:iq:gateway"
+ bool Features::isGateway() const
+ {
+diff -ur psi/iris/xmpp-im/xmpp_tasks.cpp psi-jingle/iris/xmpp-im/xmpp_tasks.cpp
+--- psi/iris/xmpp-im/xmpp_tasks.cpp	2005-12-27 15:12:45.000000000 +0100
++++ psi-jingle/iris/xmpp-im/xmpp_tasks.cpp	2005-12-27 11:05:53.000000000 +0100
+@@ -516,6 +516,16 @@
+ 			x.setAttribute("xmlns", "jabber:x:signed");
+ 			tag.appendChild(x);
+ 		}
++
++		if(!s.capsNode().isEmpty() && !s.capsVersion().isEmpty()) {
++			QDomElement c = doc()->createElement("c");
++			c.setAttribute("xmlns","http://jabber.org/protocol/caps");
++			c.setAttribute("node",s.capsNode());
++			c.setAttribute("ver",s.capsVersion());
++			if (!s.capsExt().isEmpty()) 
++				c.setAttribute("ext",s.capsExt());
++			tag.appendChild(c);
++		}
+ 	}
+ }
+ 
+@@ -625,6 +635,11 @@
+ 		else if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/e2e") {
+ 			p.setKeyID(tagContent(i));
+ 		}
++ 		else if(i.tagName() == "c" && i.attribute("xmlns") == "http://jabber.org/protocol/caps") {
++ 			p.setCapsNode(i.attribute("node"));
++ 			p.setCapsVersion(i.attribute("ver"));
++ 			p.setCapsExt(i.attribute("ext"));
++  		}
+ 	}
+ 
+ 	presence(j, p);
+@@ -1265,23 +1280,86 @@
+ 	//	return TRUE;
+ 	//}
+ 	else if(ns == "http://jabber.org/protocol/disco#info") {
++		// Find out the node
++		QString node;
++		bool found;
++		QDomElement q = findSubTag(e, "query", &found);
++		if(found) // NOTE: Should always be true, since a NS was found above
++			node = q.attribute("node");
++		
+ 		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
+ 		QDomElement query = doc()->createElement("query");
+ 		query.setAttribute("xmlns", "http://jabber.org/protocol/disco#info");
++		if (!node.isEmpty())
++			query.setAttribute("node", node);
+ 		iq.appendChild(query);
+-		QDomElement feature;
+ 
+-		feature = doc()->createElement("feature");
+-		feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
+-		query.appendChild(feature);
+-
+-		feature = doc()->createElement("feature");
+-		feature.setAttribute("var", "http://jabber.org/protocol/si");
+-		query.appendChild(feature);
+-
+-		feature = doc()->createElement("feature");
+-		feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
+-		query.appendChild(feature);
++		// Identity
++		DiscoItem::Identity identity = client()->identity();
++		QDomElement id = doc()->createElement("identity");
++		if (!identity.category.isEmpty() && !identity.type.isEmpty()) {
++			id.setAttribute("category",identity.category);
++			id.setAttribute("type",identity.type);
++			if (!identity.name.isEmpty()) {
++				id.setAttribute("name",identity.name);
++			}
++		}
++		else {
++			// Default values
++			id.setAttribute("category","client");
++			id.setAttribute("type","pc");
++		}
++		query.appendChild(id);
++
++		QDomElement feature;
++		if (node.isEmpty() || node == client()->capsNode() + "#" + client()->capsVersion()) {
++			// Standard features
++			feature = doc()->createElement("feature");
++			feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
++			query.appendChild(feature);
++
++			feature = doc()->createElement("feature");
++			feature.setAttribute("var", "http://jabber.org/protocol/si");
++			query.appendChild(feature);
++
++			feature = doc()->createElement("feature");
++			feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
++			query.appendChild(feature);
++			
++			feature = doc()->createElement("feature");
++			feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
++			query.appendChild(feature);
++
++			if (node.isEmpty()) {
++				// Extended features
++				QStringList exts = client()->extensions();
++				for (QStringList::ConstIterator i = exts.begin(); i != exts.end(); ++i) {
++					const QStringList& l = client()->extension(*i).list();
++					for ( QStringList::ConstIterator j = l.begin(); j != l.end(); ++j ) {
++						feature = doc()->createElement("feature");
++						feature.setAttribute("var", *j);
++						query.appendChild(feature);
++					}
++				}
++			}
++		}
++		else if (node.startsWith(client()->capsNode() + "#")) {
++			QString ext = node.right(node.length()-client()->capsNode().length()-1);
++			if (client()->extensions().contains(ext)) {
++				const QStringList& l = client()->extension(ext).list();
++				for ( QStringList::ConstIterator it = l.begin(); it != l.end(); ++it ) {
++					feature = doc()->createElement("feature");
++					feature.setAttribute("var", *it);
++					query.appendChild(feature);
++				}
++			}
++			else {
++				// TODO: ERROR
++			}
++		}
++		else {
++			// TODO: ERROR
++		}
+ 
+ 		send(iq);
+ 		return true;
+@@ -1599,6 +1677,7 @@
+ 
+ 	QDomElement iq;
+ 	Jid jid;
++	QString node;
+ 	DiscoItem item;
+ };
+ 
+@@ -1626,6 +1705,7 @@
+ 	d->item = DiscoItem(); // clear item
+ 
+ 	d->jid = j;
++	d->node = node;
+ 	d->iq = createIQ(doc(), "get", d->jid.full(), id());
+ 	QDomElement query = doc()->createElement("query");
+ 	query.setAttribute("xmlns", "http://jabber.org/protocol/disco#info");
+@@ -1648,6 +1728,29 @@
+ 	d->iq.appendChild(query);
+ }
+ 
++
++/**
++ * Original requested jid.
++ * Is here because sometimes the responder does not include this information
++ * in the reply.
++ */
++const Jid& JT_DiscoInfo::jid() const
++{
++	return d->jid;
++}
++
++/**
++ * Original requested node.
++ * Is here because sometimes the responder does not include this information
++ * in the reply.
++ */
++const QString& JT_DiscoInfo::node() const
++{
++	return d->node;
++}
++
++
++
+ const DiscoItem &JT_DiscoInfo::item() const
+ {
+ 	return d->item;
+diff -ur psi/iris/xmpp-im/xmpp_tasks.h psi-jingle/iris/xmpp-im/xmpp_tasks.h
+--- psi/iris/xmpp-im/xmpp_tasks.h	2005-12-27 15:12:45.000000000 +0100
++++ psi-jingle/iris/xmpp-im/xmpp_tasks.h	2005-12-27 11:05:53.000000000 +0100
+@@ -389,6 +389,8 @@
+ 		void get(const DiscoItem &);
+ 	
+ 		const DiscoItem &item() const;
++		const Jid& jid() const;
++		const QString& node() const;
+ 	
+ 		void onGo();
+ 		bool take(const QDomElement &);

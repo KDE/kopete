@@ -86,6 +86,7 @@ void JabberEditAccountWidget::reopen ()
 
 	mID->setText (account()->accountId ());
 	mPass->load (&account()->password ());
+	cbAutoConnect->setChecked (account()->excludeConnect());
 	
 	mResource->setText (account()->configGroup()->readEntry ("Resource", QString::fromLatin1("Kopete")));
 	mPriority->setValue (account()->configGroup()->readNumEntry ("Priority", 5));
@@ -101,7 +102,9 @@ void JabberEditAccountWidget::reopen ()
 
 	if(cbCustomServer->isChecked ())
 	{
+		labelServer->setEnabled(true);
 		mServer->setEnabled(true);
+		labelPort->setEnabled(true);
 		mPort->setEnabled(true);
 	}
 	else
@@ -123,8 +126,12 @@ void JabberEditAccountWidget::reopen ()
 	cbSendDeliveredEvent->setChecked( account()->configGroup()->readBoolEntry("SendDeliveredEvent", true) );
 	cbSendDisplayedEvent->setChecked( account()->configGroup()->readBoolEntry("SendDisplayedEvent", true) );
 	cbSendComposingEvent->setChecked( account()->configGroup()->readBoolEntry("SendComposingEvent", true) );
+	cbSendGoneEvent->setChecked( account()->configGroup()->readBoolEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readBoolEntry("HideSystemInfo", false) );
+
+	// Global Identity
+	cbGlobalIdentity->setChecked( account()->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -138,7 +145,7 @@ Kopete::Account *JabberEditAccountWidget::apply ()
 
 	if(account()->isConnected())
 	{
-		KMessageBox::information(this,
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information,
 					i18n("The changes you just made will take effect next time you log in with Jabber."),
 					i18n("Jabber Changes During Online Jabber Session"));
 	}
@@ -182,9 +189,12 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("SendDeliveredEvent", cbSendDeliveredEvent->isChecked());
 	account()->configGroup()->writeEntry("SendDisplayedEvent", cbSendDisplayedEvent->isChecked());
 	account()->configGroup()->writeEntry("SendComposingEvent", cbSendComposingEvent->isChecked());
+	account()->configGroup()->writeEntry("SendGoneEvent", cbSendGoneEvent->isChecked());
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
 
+	// Global Identity
+	account()->configGroup()->writeEntry("ExcludeGlobalIdentity", cbGlobalIdentity->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()
@@ -212,12 +222,16 @@ void JabberEditAccountWidget::updateServerField ()
 		// check if ssl is enabled and set the port correctly
 		sslToggled(cbUseSSL->isChecked());
 		mServer->setText(newServer);
+		labelServer->setEnabled(false);
 		mServer->setEnabled(false);
+		labelPort->setEnabled(false);
 		mPort->setEnabled(false);
 	}
 	else
 	{
+		labelServer->setEnabled(true);
 		mServer->setEnabled(true);
+		labelPort->setEnabled(true);
 		mPort->setEnabled(true);
 	}
 

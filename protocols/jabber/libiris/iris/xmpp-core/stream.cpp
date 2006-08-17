@@ -293,6 +293,16 @@ QString Stanza::baseNS() const
 	return d->s->baseNS();
 }
 
+QString Stanza::xhtmlImNS() const
+{
+	return d->s->xhtmlImNS();
+}
+
+QString Stanza::xhtmlNS() const
+{
+	return d->s->xhtmlNS();
+}
+
 QDomElement Stanza::createElement(const QString &ns, const QString &tagName)
 {
 	return d->s->doc().createElementNS(ns, tagName);
@@ -303,6 +313,16 @@ QDomElement Stanza::createTextElement(const QString &ns, const QString &tagName,
 	QDomElement e = d->s->doc().createElementNS(ns, tagName);
 	e.appendChild(d->s->doc().createTextNode(text));
 	return e;
+}
+
+QDomElement Stanza::createXHTMLElement(const QString &xHTML)
+{
+	QDomDocument doc;
+
+  	doc.setContent(xHTML, true);
+	QDomElement root = doc.documentElement();
+	//QDomElement e;
+	return (root);
 }
 
 void Stanza::appendChild(const QDomElement &e)
@@ -859,6 +879,16 @@ QDomDocument & ClientStream::doc() const
 QString ClientStream::baseNS() const
 {
 	return NS_CLIENT;
+}
+
+QString ClientStream::xhtmlImNS() const
+{
+	return NS_XHTML_IM;
+}
+
+QString ClientStream::xhtmlNS() const
+{
+	return NS_XHTML;
 }
 
 void ClientStream::setAllowPlain(bool b)

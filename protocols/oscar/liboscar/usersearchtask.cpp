@@ -135,7 +135,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
 	
 	setRequestType( 0x07D0 );
-	setRequestSubType( 0x0533 );
+	setRequestSubType( 0x055F );
 	setSequence( f.sequence );
 	Buffer* tlvData = new Buffer();
 	/*
@@ -241,67 +241,66 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	*/
 	if ( !info.firstName.isEmpty() )
 	{
-		tlvData->addLEWord( info.firstName.length() );
-		tlvData->addLEString( info.firstName.latin1(), info.firstName.length() );
+		Buffer bufFileName;
+		bufFileName.addLEWord( info.firstName.length() );
+		bufFileName.addLEString( info.firstName, info.firstName.length() );
+		tlvData->addLETLV( 0x0140, bufFileName.length(), bufFileName.buffer() );
 	}
-	else
-		tlvData->addLEWord( 0x0000 );
-	
+
 	if ( !info.lastName.isEmpty() )
 	{
-		tlvData->addLEWord( info.lastName.length() );
-		tlvData->addLEString( info.lastName.latin1(), info.lastName.length() );
+		Buffer bufLastName;
+		bufLastName.addLEWord( info.lastName.length() );
+		bufLastName.addLEString( info.lastName, info.lastName.length() );
+		tlvData->addLETLV( 0x014A, bufLastName.length(), bufLastName.buffer() );
 	}
-	else
-		tlvData->addLEWord( 0x0000 );
-	
+
 	if ( !info.nickName.isEmpty() )
 	{
-		tlvData->addLEWord( info.nickName.length() );
-		tlvData->addLEString( info.nickName.latin1(), info.nickName.length() );
+		Buffer bufNickName;
+		bufNickName.addLEWord( info.nickName.length() );
+		bufNickName.addLEString( info.nickName, info.nickName.length() );
+		tlvData->addLETLV( 0x0154, bufNickName.length(), bufNickName.buffer() );
 	}
-	else
-		tlvData->addLEWord( 0x0000 );
-	
+
 	if ( !info.email.isEmpty() )
 	{
-		tlvData->addLEWord( info.email.length() );
-		tlvData->addLEString( info.email.latin1(), info.email.length() );
+		Buffer bufEmail;
+		bufEmail.addLEWord( info.email.length() );
+		bufEmail.addLEString( info.email, info.email.length() );
+		tlvData->addLETLV( 0x015E, bufEmail.length(), bufEmail.buffer() );
 	}
-	else
-		tlvData->addLEWord( 0x0000 );
-	
-	tlvData->addLEWord( info.age );
-	tlvData->addLEWord( info.age );
-	tlvData->addByte( info.gender );
-	tlvData->addByte( info.language );
-	
+
+	if ( info.age > 0 )
+	{
+		Buffer bufAge;
+		bufAge.addWord( info.age );
+		bufAge.addWord( info.age );
+		tlvData->addLETLV( 0x0168, bufAge.length(), bufAge.buffer() );
+	}
+
+	if ( info.gender > 0 )
+		tlvData->addLETLV8( 0x017C, info.gender );
+
+	if ( info.language > 0 )
+		tlvData->addLETLV16( 0x0186, info.language );
+
+	if ( info.country > 0 )
+		tlvData->addLETLV16( 0x01A4, info.country );
+
 	if ( !info.city.isEmpty() )
 	{
-		tlvData->addLEWord( info.city.length() );
-		tlvData->addLEString( info.city.latin1(), info.city.length() );
+		Buffer bufCity;
+		bufCity.addLEWord( info.city.length() );
+		bufCity.addLEString( info.city, info.city.length() );
+		tlvData->addLETLV( 0x0190, bufCity.length(), bufCity.buffer() );
 	}
-	else
-		tlvData->addLEWord( 0x0000 );
 
-	tlvData->addLEWord( 0x0000 );
-	tlvData->addLEWord( info.country );
-	tlvData->addLEWord( 0x0000 ); //company
-	tlvData->addLEWord( 0x0000 ); //department
-	tlvData->addLEWord( 0x0000 ); //position
-	tlvData->addLEWord( info.occupation );
-	tlvData->addLEWord( 0x0000 ); //past category
-	tlvData->addLEWord( 0x0000 ); //past keywords
-	tlvData->addLEWord( 0x0000 ); //interests category
-	tlvData->addLEWord( 0x0000 ); //interests keywords
-	tlvData->addLEWord( 0x0000 ); //affiliations category
-	tlvData->addLEWord( 0x0000 ); //affiliations keywords
-	tlvData->addLEWord( 0x0000 ); //homepage category
-	tlvData->addLEWord( 0x0000 ); //homepage keywords
+	if ( info.occupation > 0 )
+		tlvData->addLETLV16( 0x01CC, info.occupation );
+
 	if ( info.onlineOnly )
-		tlvData->addByte( 0x01 );
-	else
-		tlvData->addByte( 0x00 );
+		tlvData->addLETLV8( 0x0230, 0x01 );
 	
 	Buffer* buf = addInitialData( tlvData );
 	delete tlvData; //we're done with it

@@ -168,7 +168,7 @@ void GWContactList::dump()
 		}
 	}
 	else
-		kdDebug() << "  contact list is empty." << endl;
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "  contact list is empty." << endl;
 }
 
 void GWContactList::clear()

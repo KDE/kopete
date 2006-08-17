@@ -176,16 +176,38 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 
 	QString saveLocation(locateLocal("appdata", "global-photo.png"));
 	QImage photo(photoURL.path());
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 96, 96, this );
 
 	if(!photo.isNull())
 	{
-		if(photo.width() != 100 || photo.height() != 140)
+		if(photo.width() > 96 || photo.height() > 96)
 		{
-			 if (photo.height() > photo.width())
-				photo = photo.scaleHeight(140);
-			else
-				photo = photo.scaleWidth(100);
+			// Scale and crop the picture.
+			photo = photo.smoothScale( 96, 96, QImage::ScaleMin );
+			// crop image if not square
+			if(photo.width() < photo.height()) 
+				photo = photo.copy((photo.width()-photo.height())/2, 0, 96, 96);
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, 96, 96);
+
+		}
+		else if (photo.width() < 32 || photo.height() < 32)
+		{
+			// Scale and crop the picture.
+			photo = photo.smoothScale( 32, 32, QImage::ScaleMin );
+			// crop image if not square
+			if(photo.width() < photo.height())
+				photo = photo.copy((photo.width()-photo.height())/2, 0, 32, 32);
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, 32, 32);
+	
+		}
+		else if (photo.width() != photo.height())
+		{
+			if(photo.width() < photo.height())
+				photo = photo.copy((photo.width()-photo.height())/2, 0, photo.height(), photo.height());
+			else if (photo.width() > photo.height())
+				photo = photo.copy(0, (photo.height()-photo.width())/2, photo.height(), photo.height());
 		}
 
 		if(!photo.save(saveLocation, "PNG"))

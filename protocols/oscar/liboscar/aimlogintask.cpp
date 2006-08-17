@@ -154,6 +154,8 @@ void AimLoginTask::sendLoginRequest()
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer *outbuf = new Buffer;
+	const Oscar::ClientVersion* version = client()->version();
+	
 	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().latin1());
 
 	QByteArray digest( 17 ); //apparently MD5 digests are 16 bytes long
@@ -161,16 +163,16 @@ void AimLoginTask::sendLoginRequest()
 	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
 
 	outbuf->addTLV(0x0025, 16, digest);
-	outbuf->addTLV(0x0003, 0x32, AIM_CLIENTSTRING);
-	outbuf->addTLV16(0x0016, AIM_CLIENTID);
-	outbuf->addTLV16(0x0017, AIM_MAJOR);
-	outbuf->addTLV16(0x0018, AIM_MINOR);
-	outbuf->addTLV16(0x0019, AIM_POINT);
-	outbuf->addTLV16(0x001a, AIM_BUILD);
+	outbuf->addTLV(0x0003, version->clientString.length(), version->clientString.latin1() );
+	outbuf->addTLV16(0x0016, version->clientId );
+	outbuf->addTLV16(0x0017, version->major );
+	outbuf->addTLV16(0x0018, version->minor );
+	outbuf->addTLV16(0x0019, version->point );
+	outbuf->addTLV16(0x001a, version->build );
 	outbuf->addDWord(0x00140004); //TLV type 0x0014, length 0x0004
-	outbuf->addDWord(AIM_OTHER); //TLV data for type 0x0014
-	outbuf->addTLV(0x000f, 0x0002, AIM_LANG);
-	outbuf->addTLV(0x000e, 0x0002, AIM_COUNTRY);
+	outbuf->addDWord( version->other ); //TLV data for type 0x0014
+	outbuf->addTLV(0x000f, version->lang.length(), version->lang.latin1() );
+	outbuf->addTLV(0x000e, version->country.length(), version->country.latin1() );
 
 	//if set, old-style buddy lists will not work... you will need to use SSI
 	outbuf->addTLV8(0x004a,0x01);

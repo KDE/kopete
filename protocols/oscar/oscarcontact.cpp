@@ -19,6 +19,7 @@
 #include <time.h>
 
 #include <qapplication.h>
+#include <qtextcodec.h>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -132,46 +133,29 @@ void OscarContact::chatSessionDestroyed()
 void OscarContact::sync(unsigned int flags)
 {
 	/* 
-	 * If the contact is waiting for auth, we do nothing
 	 * If the contact has changed groups, then we update the server
 	 *   adding the group if it doesn't exist, changing the ssi item
 	 *   contained in the client and updating the contact's ssi item
 	 * Otherwise, we don't do much
 	 */
+	
+	if( !metaContact() || metaContact()->isTemporary() )
+		return;
+	
 	if ( flags & Kopete::Contact::MovedBetweenGroup == Kopete::Contact::MovedBetweenGroup )
 	{
-
-		if ( m_ssiItem.waitingAuth() )
-		{
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact still requires auth. Doing nothing" << endl;
-			return;
-		}
-		
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
 		SSIManager* ssiManager = mAccount->engine()->ssiManager();
+		
 		SSI oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
 		Kopete::Group* newGroup = metaContact()->groups().first();
 		if ( newGroup->displayName() == oldGroup.name() )
 			return; //we didn't really move
 		
-		if ( !ssiManager->findGroup( newGroup->displayName() ) )
-		{ //we don't have the group on the server
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the group '" << newGroup->displayName() << "' is not on the server"
-				<< "adding it" << endl;
-			mAccount->engine()->addGroup( newGroup->displayName() );
-		}
-		
-		SSI newSSIGroup = ssiManager->findGroup( newGroup->displayName() );
-		if ( !newSSIGroup )
-		{
-			kdWarning(OSCAR_GEN_DEBUG) << k_funcinfo << newSSIGroup.name() << " not found on SSI list after addition!" << endl;
-			return;
-		}
-		
-		mAccount->engine()->changeContactGroup( contactId(), newGroup->displayName() );
-		SSI newItem( m_ssiItem.name(), newSSIGroup.gid(), m_ssiItem.bid(), m_ssiItem.type(),
-		             m_ssiItem.tlvList(), m_ssiItem.tlvListLength() );
-		setSSIItem( newItem );
+		if ( m_ssiItem.isValid() )
+			mAccount->changeContactGroupInSSI( contactId(), newGroup->displayName(), true );
+		else
+			mAccount->addContactToSSI( contactId(), newGroup->displayName(), true );
 	}
 	return;
 }
@@ -239,6 +223,14 @@ void OscarContact::slotTyping( bool typing )
 {
 	if ( this != account()->myself() )
 		account()->engine()->sendTyping( contactId(), typing );
+}
+
+QTextCodec* OscarContact::contactCodec() const
+{
+	if ( hasProperty( "contactEncoding" ) )
+		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+	else
+		return mAccount->defaultCodec();
 }
 
 #include "oscarcontact.moc"

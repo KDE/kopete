@@ -24,6 +24,7 @@
 #include <qpixmap.h>
 #include <qpainter.h>
 #include <qlayout.h>
+#include <qvaluelist.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -55,7 +56,6 @@ namespace UI
 class MetaContactSelectorWidgetLVI::Private
 {
 public:
-	
 	Kopete::MetaContact *metaContact;
 	ImageComponent *metaContactPhoto;
 	ImageComponent *metaContactIcon;
@@ -177,6 +177,7 @@ class MetaContactSelectorWidget::Private
 {
 public:
 	MetaContactSelectorWidget_Base *widget;
+	QValueList<Kopete::MetaContact *> excludedMetaContacts;
 };
 
 
@@ -241,12 +242,21 @@ void MetaContactSelectorWidget::selectMetaContact( Kopete::MetaContact *mc )
 	}
 }
 
+void MetaContactSelectorWidget::excludeMetaContact( Kopete::MetaContact *mc )
+{
+	if( d->excludedMetaContacts.findIndex(mc) == -1 )
+	{
+		d->excludedMetaContacts.append(mc);
+	}
+	slotLoadMetaContacts();
+}
+
 bool MetaContactSelectorWidget::metaContactSelected()
 {
 	return d->widget->metaContactListView->selectedItem() ? true : false;
 }
 
-/**  Read in contacts from addressbook, and select the contact that is for our nick. */
+/**  Read in metacontacts from contactlist */
 void MetaContactSelectorWidget::slotLoadMetaContacts()
 {
 	d->widget->metaContactListView->clear();
@@ -254,7 +264,7 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 	QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
 	for( Kopete::MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
-		if( !mc->isTemporary() && mc != metaContact() )
+		if( !mc->isTemporary() && (d->excludedMetaContacts.findIndex(mc) == -1) )
 		{
 			new MetaContactSelectorWidgetLVI(mc, d->widget->metaContactListView);
 		}

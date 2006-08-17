@@ -1,10 +1,11 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="22">
+<kpartgui name="kopete" version="25">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
 			<!-- <Action name="Connection"/> -->
 			<Action name="Status"/>
+			<Action name="SetStatusMessage"/>
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
 			<Action name="AddGroup"/>
@@ -20,13 +21,10 @@
 			<Separator lineSeparator="true" />
 			<Action name="contactMove" />
 			<Action name="contactCopy" />
-			<Action name="contactRemove" />
-			<Action name="contactRename" />
 			<Action name="contactAddContact" />
 			<Action name="contactAddTemporaryContact" />
-			<Separator lineSeparator="true" />
+			<Action name="contactRemove" />
 			<Merge />
-			<Separator lineSeparator="true" />
 			<Action name="contactProperties" />
 
 		</Menu>
@@ -48,6 +46,7 @@
 
 	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
 		<Action name="Status"/>
+		<Action name="SetStatusMessage"/>
 		<Action name="AddContact"/>
 		<Action name="settings_show_offliners"/>
 		<Action name="settings_show_empty_groups"/>
@@ -79,13 +78,10 @@
 			  <Action name="contactMove" />
 			  <Action name="contactCopy" />
 		</Menu>
-		<Action name="contactRemove" />
-		<Action name="contactRename" />
 		<Action name="contactAddContact" />
 		<Action name="contactAddTemporaryContact" />
-		<Separator lineSeparator="true" />
+		<Action name="contactRemove" />
 		<Merge />
-		<Separator lineSeparator="true" />
 		<Action name="contactProperties" />
 		<Separator lineSeparator="true" />
 	</Menu>

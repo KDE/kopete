@@ -36,7 +36,7 @@
 #include "wpaccount.h"
 #include "wpaddcontact.h"
 
-WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *parent, const char *name): AddContactPage(parent, name)
+WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount, const char *name) : AddContactPage(parent, name)
 {
 //	kdDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
 
@@ -45,7 +45,7 @@ WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *pa
 	connect(theDialog->mHostGroup, SIGNAL(activated(const QString &)), this, SLOT(slotSelected(const QString &)));
 	connect(theDialog->mRefresh, SIGNAL(clicked()), this, SLOT(slotUpdateGroups()));
 	theDialog->show();
-	theProtocol = owner;
+
 	theAccount = newAccount;
 
 	slotUpdateGroups();
@@ -74,9 +74,10 @@ void WPAddContact::slotSelected(const QString &Group)
 
 	theDialog->mHostName->clear();
 	QStringList Hosts = theAccount->getHosts(Group);
+	QString ownHost = theAccount->myself()->contactId();
 	QStringList::ConstIterator end = Hosts.end();
 	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
-		theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
+		if (*i != ownHost) theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
 }
 
 bool WPAddContact::validateData()
@@ -92,7 +93,7 @@ bool WPAddContact::validateData()
 
 	// If our own host is not allowed as contact localhost should be forbidden as well,
 	// additionally somehow localhost as contact crashes when receiving a message from it?? GF
-	if (tmpHostName.upper() == "LOCALHOST") {
+	if (tmpHostName.upper() == QString::fromLatin1("LOCALHOST")) {
 		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as contact.</qt>"), i18n("WinPopup"));
 		return false;
 	}
@@ -105,8 +106,7 @@ bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMe
 	kdDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")" << endl;
 
 	// TODO: make the nickname an option
-	theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
-	return true;
+	return theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
 }
 
 #include "wpaddcontact.moc"

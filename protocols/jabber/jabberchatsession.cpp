@@ -18,16 +18,27 @@
 #include "jabberchatsession.h"
 
 #include <qptrlist.h>
+#include <qlabel.h>
+#include <qimage.h>
+#include <qtooltip.h>
+#include <qfile.h>
+#include <qiconset.h>
+
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include "kopetechatsessionmanager.h"
+#include "kopetemessage.h"
 #include "kopeteviewplugin.h"
 #include "kopeteview.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
 #include "jabbercontact.h"
+#include "jabberresource.h"
+#include "jabberresourcepool.h"
+#include "kioslave/jabberdisco.h"
+
 
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource, const char *name )
@@ -47,13 +58,48 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
-	XMPP::Jid jid ( user->contactId () );
+	XMPP::Jid jid = user->rosterItem().jid() ;
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
-
 	slotUpdateDisplayName ();
 
+#ifdef SUPPORT_JINGLE
+	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().getFirst(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
+
+	setInstance(protocol->instance());
+	jabber_voicecall->setEnabled( false );
+
+	
+	Kopete::ContactPtrList chatMembers = members ();
+	if ( chatMembers.first () )
+	{
+		// Check if the current contact support Voice calls, also honour lock by default.
+		// FIXME: we should use the active ressource
+		JabberResource *bestResource = account()->resourcePool()->  bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		if( bestResource && bestResource->features().canVoice() )
+		{
+			jabber_voicecall->setEnabled( true );
+		}
+	}
+
+#endif
+
+ new KAction( i18n( "Send File" ), "attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "jabberSendFile" );
+
+	setXMLFile("jabberchatui.rc");
+
 }
+
+JabberChatSession::~JabberChatSession( )
+{
+	JabberAccount * a = dynamic_cast<JabberAccount *>(Kopete::ChatSession::account ());
+	if( !a ) //When closing kopete, the account is partially destroyed already,  dynamic_cast return 0
+		return;
+	if ( a->configGroup()->readBoolEntry ("SendEvents", true) &&
+			 a->configGroup()->readBoolEntry ("SendGoneEvent", true) )
+		sendNotification( XMPP::GoneEvent );
+}
+
 
 void JabberChatSession::slotUpdateDisplayName ()
 {
@@ -65,7 +111,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	if ( !chatMembers.first () )
 		return;
 
-	XMPP::Jid jid ( chatMembers.first()->contactId () );
+	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();
 
 	if ( !mResource.isEmpty () )
 		jid.setResource ( mResource );
@@ -106,7 +152,6 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 	mResource = fromResource;
 
 	slotUpdateDisplayName ();
-
 	Kopete::ChatSession::appendMessage ( msg );
 
 	// We send the notifications for Delivered and Displayed events. More granular management
@@ -141,11 +186,11 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 		if ( contact->isContactRequestingEvent( event ) )
 		{
 			// create JID for us as sender
-			XMPP::Jid fromJid ( myself()->contactId () );
+			XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
 			fromJid.setResource ( account()->resource () );
 	
 			// create JID for the recipient
-			XMPP::Jid toJid ( contact->contactId () );
+			XMPP::Jid toJid = contact->rosterItem().jid();
 	
 			// set resource properly if it has been selected already
 			if ( !resource().isEmpty () )
@@ -158,6 +203,16 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 			message.setEventId ( contact->lastReceivedMessageId () );
 			// store composing event depending on state
 			message.addEvent ( event );
+			
+			if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+			{	
+				message.setType ( "normal" );
+			}
+			else
+			{	
+				message.setType ( "chat" );
+			}
+
 	
 			// send message
 			account()->client()->sendMessage ( message );
@@ -172,7 +227,7 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 		return;
 
 	// create JID for us as sender
-	XMPP::Jid fromJid ( myself()->contactId () );
+	XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
 	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
@@ -186,13 +241,13 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 	if( account()->isConnected () )
 	{
 		XMPP::Message jabberMessage;
-		Kopete::Contact *recipient = message.to().first ();
+		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(message.to().first());
 
-		XMPP::Jid jid ( message.from()->contactId () );
+		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid();
 		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 		jabberMessage.setFrom ( jid );
 
-		XMPP::Jid toJid ( recipient->contactId () );
+		XMPP::Jid toJid = recipient->rosterItem().jid();
 
 		if( !resource().isEmpty () )
 			toJid.setResource ( resource() );
@@ -227,8 +282,30 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         else
         {
 			// this message is not encrypted
-			jabberMessage.setBody ( message.plainBody () );
-        }
+			jabberMessage.setBody ( message.plainBody ());
+			if (message.format() ==  Kopete::Message::RichText) 
+			{
+				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
+				if( bestResource && bestResource->features().canXHTML() )
+				{
+					QString xhtmlBody = message.escapedBody();
+					
+					// According to JEP-0071 8.9  it is only RECOMMANDED to replace \n with <br/>
+					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
+					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
+					//  see Bug 121627
+					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
+					// linebreak that are not interpreted.  - Olivier 2006-31-03
+					xhtmlBody.replace("\n","");
+					
+					//&nbsp; is not a valid XML entity
+					xhtmlBody.replace("&nbsp;" , "&#160;");
+							
+					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +">"+ xhtmlBody +"</p>";
+					jabberMessage.setXHTMLBody ( xhtmlBody );
+				}
+        	}
+		}
 
 		// determine type of the widget and set message type accordingly
 		// "kopete_emailwindow" is the default email Kopete::ViewPlugin.  If other email plugins
@@ -272,6 +349,12 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 	}
 
 }
+
+ void JabberChatSession::slotSendFile()
+      {
+              QPtrList<Kopete::Contact>contacts = members();
+              static_cast<JabberContact *>(contacts.first())->sendFile();
+      }
 
 #include "jabberchatsession.moc"
 

@@ -27,11 +27,19 @@
 #include "oscaraccount.h"
 #include "oscarmyselfcontact.h"
 
+namespace AIM
+{
+	namespace PrivacySettings
+	{
+		enum { AllowAll = 0, AllowMyContacts, AllowPremitList, BlockAll, BlockAIM, BlockDenyList };
+	}
+}
 
 namespace Kopete
 {
 class Contact;
 class Group;
+class ChatSession;
 }
 
 class KAction;
@@ -39,9 +47,12 @@ class OscarContact;
 class AIMContact;
 class AIMAccount;
 class AIMJoinChatUI;
+class AIMChatSession;
+class OscarVisibilityDialog;
 
 class AIMMyselfContact : public OscarMyselfContact
 {
+Q_OBJECT
 public:
 	AIMMyselfContact( AIMAccount *acct );
 	void userInfoUpdated();
@@ -50,6 +61,13 @@ public:
 	void setLastAwayMessage( const QString& msg) {m_lastAwayMessage = msg;}
 	QString lastAwayMessage() { return m_lastAwayMessage; };
 
+    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate,
+                                          WORD exchange = 0, const QString& room = QString::null);
+
+public slots:
+    void sendMessage( Kopete::Message&, Kopete::ChatSession* session );
+    void chatSessionDestroyed( Kopete::ChatSession* );
+
 private:
 	QString m_profileString;
 	AIMAccount* m_acct;
@@ -57,6 +75,8 @@ private:
 	 * There has GOT to be a better way to get this away message
 	 */
 	QString m_lastAwayMessage;
+    QValueList<Kopete::ChatSession*> m_chatRoomSessions;
+
 
 };
 
@@ -77,24 +97,33 @@ public:
 
 	void setUserProfile(const QString &profile);
 	
+	void setPrivacySettings( int privacy );
+
 public slots:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );
 	void slotEditInfo();
 	void slotGoOnline();
 
-	void globalIdentityChanged( const QString&, const QVariant& );
-	void sendBuddyIcon();
-    void slotJoinChat();
+	void slotGlobalIdentityChanged( const QString&, const QVariant& );
+	void slotBuddyIconChanged();
 
+	void slotJoinChat();
 
 protected slots:
 	void slotGoAway(const QString&);
-    void joinChatDialogClosed();
+    void joinChatDialogClosed( int );
 
+	virtual void loginActions();
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
-
 	virtual void messageReceived( const Oscar::Message& message );
+
+    void connectedToChatRoom( WORD exchange, const QString& roomName );
+    void userJoinedChat( Oscar::WORD exchange, const QString& room, const QString& contact );
+    void userLeftChat( Oscar::WORD exchange, const QString& room, const QString& contact );
+
+	void slotSetVisiblility();
+	void slotVisibilityDialogClosed();
 
 protected:
 
@@ -107,7 +136,11 @@ protected:
 	QString sanitizedMessage( const QString& message );
 
 private:
+	// Set privacy tlv item
+	void setPrivacyTLVs( BYTE privacy, DWORD userClasses );
+
     AIMJoinChatUI* m_joinChatDialog;
+	OscarVisibilityDialog* m_visibilityDialog;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

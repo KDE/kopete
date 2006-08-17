@@ -147,6 +147,7 @@ private:
 	 */
 	static void raiseWidget(QWidget *w);
 
+	bool m_linkClicked;
 
 private slots:
 	void notifyByMessagebox();

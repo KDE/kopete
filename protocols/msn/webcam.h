@@ -50,6 +50,7 @@ class Webcam  : public TransferContext
 		QString m_content;
 		
 		QString xml(uint session , uint rid);
+    int getAvailablePort();
 
 		
 		KNetwork::KServerSocket   *m_listener;

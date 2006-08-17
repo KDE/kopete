@@ -516,6 +516,16 @@ void JT_Presence::pres(const Status &s)
 			x.setAttribute("xmlns", "jabber:x:signed");
 			tag.appendChild(x);
 		}
+
+		if(!s.capsNode().isEmpty() && !s.capsVersion().isEmpty()) {
+			QDomElement c = doc()->createElement("c");
+			c.setAttribute("xmlns","http://jabber.org/protocol/caps");
+			c.setAttribute("node",s.capsNode());
+			c.setAttribute("ver",s.capsVersion());
+			if (!s.capsExt().isEmpty()) 
+				c.setAttribute("ext",s.capsExt());
+			tag.appendChild(c);
+		}
 	}
 }
 
@@ -625,6 +635,11 @@ bool JT_PushPresence::take(const QDomElement &e)
 		else if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/e2e") {
 			p.setKeyID(tagContent(i));
 		}
+ 		else if(i.tagName() == "c" && i.attribute("xmlns") == "http://jabber.org/protocol/caps") {
+ 			p.setCapsNode(i.attribute("node"));
+ 			p.setCapsVersion(i.attribute("ver"));
+ 			p.setCapsExt(i.attribute("ext"));
+  		}
 	}
 
 	presence(j, p);
@@ -1333,23 +1348,90 @@ bool JT_ServInfo::take(const QDomElement &e)
 	//	return TRUE;
 	//}
 	else if(ns == "http://jabber.org/protocol/disco#info") {
+		// Find out the node
+		QString node;
+		bool found;
+		QDomElement q = findSubTag(e, "query", &found);
+		if(found) // NOTE: Should always be true, since a NS was found above
+				node = q.attribute("node");
+
 		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 		QDomElement query = doc()->createElement("query");
 		query.setAttribute("xmlns", "http://jabber.org/protocol/disco#info");
+		if (!node.isEmpty())
+				query.setAttribute("node", node);
 		iq.appendChild(query);
+
+		// Identity
+		DiscoItem::Identity identity = client()->identity();
+		QDomElement id = doc()->createElement("identity");
+		if (!identity.category.isEmpty() && !identity.type.isEmpty()) {
+				id.setAttribute("category",identity.category);
+				id.setAttribute("type",identity.type);
+				if (!identity.name.isEmpty()) {
+						id.setAttribute("name",identity.name);
+				}
+		}
+		else {
+				// Default values
+				id.setAttribute("category","client");
+				id.setAttribute("type","pc");
+		}
+		query.appendChild(id);
+
 		QDomElement feature;
+		if (node.isEmpty() || node == client()->capsNode() + "#" + client()->capsVersion()) {
+				// Standard features
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
+				query.appendChild(feature);
 
-		feature = doc()->createElement("feature");
-		feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
-		query.appendChild(feature);
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/si");
+				query.appendChild(feature);
 
-		feature = doc()->createElement("feature");
-		feature.setAttribute("var", "http://jabber.org/protocol/si");
-		query.appendChild(feature);
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
+				query.appendChild(feature);
 
-		feature = doc()->createElement("feature");
-		feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
-		query.appendChild(feature);
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
+				query.appendChild(feature);
+
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
+				query.appendChild(feature);
+
+				if (node.isEmpty()) {
+						// Extended features
+						QStringList exts = client()->extensions();
+						for (QStringList::ConstIterator i = exts.begin(); i != exts.end(); ++i) {
+								const QStringList& l = client()->extension(*i).list();
+								for ( QStringList::ConstIterator j = l.begin(); j != l.end(); ++j ) {
+										feature = doc()->createElement("feature");
+										feature.setAttribute("var", *j);
+										query.appendChild(feature);
+								}
+						}
+				}
+		}
+		else if (node.startsWith(client()->capsNode() + "#")) {
+				QString ext = node.right(node.length()-client()->capsNode().length()-1);
+				if (client()->extensions().contains(ext)) {
+						const QStringList& l = client()->extension(ext).list();
+						for ( QStringList::ConstIterator it = l.begin(); it != l.end(); ++it ) {
+								feature = doc()->createElement("feature");
+								feature.setAttribute("var", *it);
+								query.appendChild(feature);
+						}
+				}
+				else {
+						// TODO: ERROR
+				}
+		}
+		else {
+				// TODO: ERROR
+		}
 
 		send(iq);
 		return true;
@@ -1667,6 +1749,7 @@ public:
 
 	QDomElement iq;
 	Jid jid;
+	QString node;
 	DiscoItem item;
 };
 
@@ -1694,6 +1777,7 @@ void JT_DiscoInfo::get (const Jid &j, const QString &node, DiscoItem::Identity i
 	d->item = DiscoItem(); // clear item
 
 	d->jid = j;
+	d->node = node;
 	d->iq = createIQ(doc(), "get", d->jid.full(), id());
 	QDomElement query = doc()->createElement("query");
 	query.setAttribute("xmlns", "http://jabber.org/protocol/disco#info");
@@ -1715,6 +1799,29 @@ void JT_DiscoInfo::get (const Jid &j, const QString &node, DiscoItem::Identity i
 
 	d->iq.appendChild(query);
 }
+
+
+/**
+ * Original requested jid.
+ * Is here because sometimes the responder does not include this information
+ * in the reply.
+ */
+const Jid& JT_DiscoInfo::jid() const
+{
+	return d->jid;
+}
+
+/**
+ * Original requested node.
+ * Is here because sometimes the responder does not include this information
+ * in the reply.
+ */
+const QString& JT_DiscoInfo::node() const
+{
+	return d->node;
+}
+
+
 
 const DiscoItem &JT_DiscoInfo::item() const
 {
@@ -1847,5 +1954,167 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 	}
 
 	return true;
+}
+
+//----------------------------------------------------------------------------
+// JT_MucPresence
+//----------------------------------------------------------------------------
+JT_MucPresence::JT_MucPresence(Task *parent)
+:Task(parent)
+{
+	type = -1;
+}
+
+JT_MucPresence::~JT_MucPresence()
+{
+}
+
+void JT_MucPresence::pres(const Status &s)
+{
+	type = 0;
+
+	tag = doc()->createElement("presence");
+	if(!s.isAvailable()) {
+		tag.setAttribute("type", "unavailable");
+		if(!s.status().isEmpty())
+			tag.appendChild(textTag(doc(), "status", s.status()));
+	}
+	else {
+		if(s.isInvisible())
+			tag.setAttribute("type", "invisible");
+
+		if(!s.show().isEmpty())
+			tag.appendChild(textTag(doc(), "show", s.show()));
+		if(!s.status().isEmpty())
+			tag.appendChild(textTag(doc(), "status", s.status()));
+
+		tag.appendChild( textTag(doc(), "priority", QString("%1").arg(s.priority()) ) );
+
+		if(!s.keyID().isEmpty()) {
+			QDomElement x = textTag(doc(), "x", s.keyID());
+			x.setAttribute("xmlns", "http://jabber.org/protocol/e2e");
+			tag.appendChild(x);
+		}
+		if(!s.xsigned().isEmpty()) {
+			QDomElement x = textTag(doc(), "x", s.xsigned());
+			x.setAttribute("xmlns", "jabber:x:signed");
+			tag.appendChild(x);
+		}
+
+		if(!s.capsNode().isEmpty() && !s.capsVersion().isEmpty()) {
+			QDomElement c = doc()->createElement("c");
+			c.setAttribute("xmlns","http://jabber.org/protocol/caps");
+			c.setAttribute("node",s.capsNode());
+			c.setAttribute("ver",s.capsVersion());
+			if (!s.capsExt().isEmpty()) 
+				c.setAttribute("ext",s.capsExt());
+			tag.appendChild(c);
+		}
+	}
+}
+
+void JT_MucPresence::pres(const Jid &to, const Status &s, const QString &password)
+{
+	pres(s);
+	tag.setAttribute("to", to.full());
+	QDomElement x = textTag(doc(), "x", s.xsigned());
+	x.setAttribute("xmlns", "http://jabber.org/protocol/muc");
+	x.appendChild( textTag(doc(), "password", password.latin1()) );
+	tag.appendChild(x);
+}
+
+void JT_MucPresence::onGo()
+{
+	send(tag);
+	setSuccess();
+}
+
+
+//----------------------------------------------------------------------------
+// JT_PrivateStorage
+//----------------------------------------------------------------------------
+class JT_PrivateStorage::Private
+{
+	public:
+		Private() : type(-1) {}
+
+		QDomElement iq;
+		QDomElement elem;
+		int type;
+};
+
+JT_PrivateStorage::JT_PrivateStorage(Task *parent)
+	:Task(parent)
+{
+	d = new Private;
+}
+
+JT_PrivateStorage::~JT_PrivateStorage()
+{
+	delete d;
+}
+
+void JT_PrivateStorage::get(const QString& tag, const QString& xmlns)
+{
+	d->type = 0;
+	d->iq = createIQ(doc(), "get" , QString() , id() );
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:private");
+	d->iq.appendChild(query);
+	QDomElement s = doc()->createElement(tag);
+	if(!xmlns.isEmpty())
+		s.setAttribute("xmlns", xmlns);
+	query.appendChild(s);
+}
+
+void JT_PrivateStorage::set(const QDomElement& element)
+{
+	d->type = 1;
+	d->elem=element;
+	QDomNode n=doc()->importNode(element,true);
+
+	d->iq = createIQ(doc(), "set" , QString() , id() );
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:private");
+	d->iq.appendChild(query);
+	query.appendChild(n);
+}
+
+void JT_PrivateStorage::onGo()
+{
+	send(d->iq);
+}
+
+bool JT_PrivateStorage::take(const QDomElement &x)
+{
+	QString to = client()->host();
+	if(!iqVerify(x, to, id()))
+		return false;
+
+	if(x.attribute("type") == "result") {
+		if(d->type == 0) {
+			QDomElement q = queryTag(x);
+			for(QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling()) {
+				QDomElement i = n.toElement();
+				if(i.isNull())
+					continue;
+				d->elem=i;
+				break;
+			}
+		}
+		setSuccess();
+		return true;
+	}
+	else {
+		setError(x);
+	}
+
+	return true;
+}
+
+
+QDomElement JT_PrivateStorage::element( )
+{
+	return d->elem;
 }
 

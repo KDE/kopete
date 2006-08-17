@@ -16,7 +16,6 @@
 
 #include "sendmessagetask.h"
 
-#include <qtextcodec.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include "connection.h"
@@ -27,6 +26,7 @@
 SendMessageTask::SendMessageTask(Task* parent): Task(parent)
 {
 	m_autoResponse = false;
+	m_cookieCount = 0x7FFF;
 }
 
 
@@ -46,112 +46,87 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 
 void SendMessageTask::onGo()
 {
-	if ( m_message.text().isEmpty() && m_message.type() == 1 ) // at least channel 2 needs to send empty messages
+	if ( m_message.textArray().isEmpty() && m_message.type() == 1 ) // at least channel 2 needs to send empty messages
 	{
 		setError(-1, "No message to send");
 		return;
 	}
-	
-	const uint CHUNK_LENGTH = 450;
-	uint msgPostion = 0;
-	
-	do
+
+	// Check Message to see what SNAC to use
+	int snacSubfamily = 0x0006;
+	if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	{ // an auto response is send for ack of channel 2 messages
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
+		snacSubfamily = 0x000B;
+	}
+	FLAP f = { 0x02, 0, 0 };
+	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
+	Buffer* b = new Buffer();
+
+	if ( snacSubfamily == 0x0006 )
 	{
-		// Check Message to see what SNAC to use
-		int snacSubfamily = 0x0006;
-		if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
-		{ // an auto response is send for ack of channel 2 messages
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
-			snacSubfamily = 0x000B;
-		}
-		FLAP f = { 0x02, 0, 0 };
-		SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
-		Buffer* b = new Buffer();
+		DWORD cookie1 = KApplication::random();
+		DWORD cookie2 = KApplication::random();
+		
+		b->addDWord( cookie1 );
+		b->addDWord( cookie2 );
+	}
+	else
+	{
+		b->addString( m_message.icbmCookie() ); // in automated response, we need the same cookie as in the request
+	}
 
-		if ( snacSubfamily == 0x0006 )
+	b->addWord( m_message.type() );
+
+	b->addByte( m_message.receiver().length() );
+	b->addString( m_message.receiver().latin1(), m_message.receiver().length() );
+
+
+	if ( snacSubfamily == 0x0006 )
+	{
+		/* send a regular message */
+		switch ( m_message.type() )
 		{
-			DWORD cookie1 = KApplication::random();
-			DWORD cookie2 = KApplication::random();
-			
-			b->addDWord( cookie1 );
-			b->addDWord( cookie2 );
+		case 1:
+			addChannel1Data( b );
+			break;
+		case 2:
+			addChannel2Data( b );
+			break;
+		case 4:
+			addChannel4Data( b );
+			break;
+		}
+
+		// Add the TLV to indicate if this is an autoresponse: 0x00040000
+		// Right now, only supported for the AIM client, I'm not sure about ICQ
+		// For some reason you can't have both a 0x0004 and 0x0003 TLV in the same
+		// SNAC, if you do the AIM server complains
+		if ( !client()->isIcq() && (m_autoResponse == true) )
+		{
+			TLV tlv4( 0x0004, 0, NULL);
+			b->addTLV( tlv4 );
 		}
 		else
 		{
-			b->addString( m_message.icbmCookie() ); // in automated response, we need the same cookie as in the request
+			b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 		}
-		
-		b->addWord( m_message.type() );
-		
-		b->addByte( m_message.receiver().length() );
-		b->addString( m_message.receiver().latin1(), m_message.receiver().length() );
-		
-		QString msgChunk = m_message.text().mid( msgPostion, CHUNK_LENGTH );
-		// Try to split on space if needed
-		if ( msgChunk.length() == CHUNK_LENGTH )
-		{
-			for ( int i = 0; i < 100; i++ )
-			{
-				if ( msgChunk[CHUNK_LENGTH - i].isSpace() )
-				{
-					msgChunk = msgChunk.left(CHUNK_LENGTH - i);
-					msgPostion++;
-					break;
-				}
-			}
-		}
-		msgPostion += msgChunk.length();
 
+		if ( client()->isIcq() && m_message.type() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+			b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
+	}
+	else
+	{
+		/* send an autoresponse */
+		b->addWord( 0x0003 ); // reason code: 1: channel not supported; 2: busted payload; 3: channel specific;
+		//TODO: i hardcoded it for now, since we don't suppoert error messages atm anyway
+		addRendezvousMessageData( b );
+	}
 
-		if ( snacSubfamily == 0x0006 )
-		{
-			/* send a regular message */
-			switch ( m_message.type() )
-			{
-			case 1:
-				addChannel1Data( b, msgChunk );
-				break;
-			case 2:
-				addChannel2Data( b, msgChunk );
-				break;
-			case 4:
-				addChannel4Data( b, msgChunk );
-				break;
-			}
+	Transfer* t = createTransfer( f, s, b );
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SENDING: " << t->toString() << endl;
+	send( t );
 
-			// Add the TLV to indicate if this is an autoresponse: 0x00040000
-			// Right now, only supported for the AIM client, I'm not sure about ICQ
-			// For some reason you can't have both a 0x0004 and 0x0003 TLV in the same
-			// SNAC, if you do the AIM server complains
-			if ( !client()->isIcq() && (m_autoResponse == true) )
-			{
-				TLV tlv4( 0x0004, 0, NULL);
-				b->addTLV( tlv4 );
-			}
-			else
-			{
-				b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
-			}
-			
-			if ( client()->isIcq() && ( ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) ) )
-				b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
-		}
-		else
-		{
-			/* send an autoresponse */
-			b->addWord( 0x0003 ); // reason code: 1: channel not supported; 2: busted payload; 3: channel specific;
-			//TODO: i hardcoded it for now, since we don't suppoert error messages atm anyway
-			addRendezvousMessageData( b, msgChunk );
-		}
-		
-
-	
-		Transfer* t = createTransfer( f, s, b );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SENDING: " << t->toString() << endl;
-		send( t );
-		
-	} while ( msgPostion < m_message.text().length() );
-	
 	setSuccess(true);
 }
 
@@ -162,10 +137,10 @@ void SendMessageTask::addBasicTLVs( Buffer* b )
 }
 
 
-void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
+void SendMessageTask::addChannel1Data( Buffer* b )
 {
 	Buffer tlv2buffer;
-	
+
 	//Send features TLV using data from gaim. Features are different
 	//depending on whether we're ICQ or AIM
 	if ( client()->isIcq() )
@@ -181,45 +156,29 @@ void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
 	//we only send one message part. There's only one client that actually uses
 	//them and it's quite old and infrequently used
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
-	
-	/* If we can encode in Latin1, do that, otherwise send Unicode */
-	QTextCodec* codec = QTextCodec::codecForMib( 4 ); //4 is the MIBEnum for ISO-8859-1
-	if ( codec->canEncode( message ) )
+	tlv2buffer.addWord( m_message.textArray().size() + 4 ); // add TLV length
+
+	if ( m_message.encoding() == Oscar::Message::UserDefined )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding successful. Sending outgoing message as "
-			<< "ISO-8859-1" << endl;
-		tlv2buffer.addWord( message.length() + 4 ); // add TLV length
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending outgoing message in "
+			<< "per-contact encoding" << endl;
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
-		tlv2buffer.addString( message.latin1(), message.length() );
 	}
 	else
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding not successful. Sending outgoing message as "
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending outgoing message as "
 			<< "UCS-2" << endl;
-		
-		int length = message.length() * 2;
-		unsigned char* utfMessage = new unsigned char[length];
-		for ( unsigned int l = 0; l < message.length(); l++ )
-		{
-			utfMessage[l * 2] = message.unicode()[l].row();
-			utfMessage[( l * 2 ) + 1] = message.unicode()[l].cell();
-		}
-		
-		tlv2buffer.addWord( length + 4 ); // add TLV length
 		tlv2buffer.addWord( 0x0002 );
 		tlv2buffer.addWord( 0x0000 );
-		tlv2buffer.addString( utfMessage, length );
-		
-		delete [] utfMessage;
 	}
-	
-		// Add the actual message TLV
+	tlv2buffer.addString( m_message.textArray() );
+
 	TLV tlv2( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
 	b->addTLV( tlv2 );
 }
 
-void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
+void SendMessageTask::addChannel2Data( Buffer* b )
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send type 2 message!" << endl;
 
@@ -268,7 +227,7 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 // 	tlv5buffer.addWord( 0x0002 ); // TLV Length
 // 	tlv5buffer.addWord( 0x0000 ); // TLV Data: listening port
 
-	// add TLV 0A: unknown
+	// add TLV 0A: acktype (1 = normal message)
 	tlv5buffer.addWord( 0x000A ); // TLV Type
 	tlv5buffer.addWord( 0x0002 ); // TLV Length
 	tlv5buffer.addWord( 0x0001 ); // TLV Data: unknown, usually 1
@@ -285,25 +244,23 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 	
 		
 	
-	/* now comes the important TLV 0x271 */
+	/* now comes the important TLV 0x2711 */
 	
-	int tlv2711DataLength = 2+2+16+2+4+1+2 + 2+2+4+4+4 + 2+4+2+message.length()+1 /*+ 4+4+4+16+1*/;
-	
-	tlv5buffer.addWord( 0x2711 ); // start extended data TLV
-	tlv5buffer.addWord( tlv2711DataLength ); // the calculated length
-	//TODO: might change when changing message encoding to utf?
-	
-	addRendezvousMessageData( &tlv5buffer, message );
+	Buffer tlv2711buffer;
+	addRendezvousMessageData( &tlv2711buffer );
+	TLV tlv2711( 0x2711, tlv2711buffer.length(), tlv2711buffer.buffer() );
+	tlv5buffer.addTLV( tlv2711 );
+
 	TLV tlv5( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
 	b->addTLV( tlv5 );
 }
 
-void SendMessageTask::addChannel4Data( Buffer* b, const QString& message )
+void SendMessageTask::addChannel4Data( Buffer* b )
 {
 	//TODO
 }
 
-void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& message )
+void SendMessageTask::addRendezvousMessageData( Buffer* b )
 {
 	// first data segment
 	b->addLEWord( 0x001B ); // length of this data segment, always 27
@@ -326,6 +283,8 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 	int channel2Counter = 0xBEEF; // just some number for now
 	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		channel2Counter = m_message.channel2Counter();
+	else
+		channel2Counter = (m_cookieCount--) & 0x7FFF;
 	
 	b->addLEWord( channel2Counter ); // channel 2 counter
 	
@@ -346,7 +305,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 	else
 		b->addByte( m_message.messageType() );
 	
-	int messageFlags = 0x01; // Normal
+	int messageFlags = 0x00; // Normal
 	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		messageFlags = 0x03; // Auto message. required for both requesting and sending status messages
 	else if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
@@ -369,21 +328,17 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 	}
 	
 
-	//! UTF in away messages doesnt work. using latin1 for now
-	// need to append message itself now. i am not sure about how encoding is handled, so i use utf for now
-// 	int length = msgChunk.length() * 2;
-// 	unsigned char* utfMessage = new unsigned char[length];
-// 	for ( unsigned int l = 0; l < msgChunk.length(); l++ )
-// 	{
-// 		utfMessage[l*2] = msgChunk.unicode()[l].row();
-// 		utfMessage[(l*2)+1] = msgChunk.unicode()[l].cell();
-// 	}
-// 	b->addLEWord( length + 1 ); // length of string + zero termination
-// 	b->addString( utfMessage, length ); // string itself
-	
-	b->addLEWord( message.length() + 1 ); // length of string + zero termination
-	b->addString( message.latin1(), message.length() ); // string itself
+	b->addLEWord( m_message.textArray().size() + 1 ); // length of string + zero termination
+	b->addString( m_message.textArray() ); // string itself
 	b->addByte( 0x00 ); // zero termination
+	b->addLEDWord( 0x00000000 ); // foreground
+	b->addLEDWord( 0x00FFFFFF ); // foreground
+
+	if ( m_message.encoding() == Oscar::Message::UTF8 )
+	{
+		b->addLEDWord( 38 );
+		b->addString( "{0946134E-4C7F-11D1-8222-444553540000}", 38 );
+	}
 }
 
 
@@ -415,7 +370,7 @@ if(codec)
 	}
 }
 
-// if we couldn't encode it as ascii, and either the client says it can do UTF8, or we have no 
+// if we couldn't encode it as ascii, and either the client says it can do UTF8, or we have no
 // contact specific encoding set, might as well send it as UTF-16BE as as ISO-8859-1
 if ( !codec && ( contact->hasCap(CAP_UTF8) || !contact->encoding() ) )
 {

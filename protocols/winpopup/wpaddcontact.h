@@ -18,8 +18,6 @@
 #ifndef WPADDCONTACT_H
 #define WPADDCONTACT_H
 
-// Local Includes
-
 // Kopete Includes
 #include <addcontactpage.h>
 
@@ -27,7 +25,8 @@
 
 // KDE Includes
 
-class WPProtocol;
+// Local Includes
+
 class WPAccount;
 class WPAddContactBase;
 namespace Kopete { class MetaContact; }
@@ -37,12 +36,11 @@ class WPAddContact: public AddContactPage
 	Q_OBJECT
 
 private:
-	WPProtocol *theProtocol;
 	WPAccount *theAccount;
 	WPAddContactBase *theDialog;
 
 public:
-	WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *parent = 0, const char *name = 0);
+	WPAddContact(QWidget *parent, WPAccount *newAccount, const char *name = 0);
 	~WPAddContact();
 
 	virtual bool validateData();

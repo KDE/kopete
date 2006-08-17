@@ -1,0 +1,87 @@
+AC_DEFINE(PRODUCTION_BUILD, 1, [Build as a production build])
+AC_DEFINE(PRODUCTION, 1, [Build as a production build])
+AC_DEFINE(POSIX, 1, [If we're using configure, we're on POSIX])
+
+# Check if the user want Jabber Jingle voice support
+AC_ARG_ENABLE(jingle, [  --enable-jingle     enable Jabber Jingle voice support ],  with_jingle=$enableval, with_jingle=no)
+
+# Here we go
+HAVE_EXPAT=no
+AC_CHECK_LIB(expat, XML_ParserCreate, HAVE_EXPAT="yes")
+if test "x$HAVE_EXPAT" = xyes ; then
+  EXPAT_LIBS="-lexpat"
+  AC_SUBST(EXPAT_LIBS)
+else
+  with_jingle=no
+  AC_MSG_WARN([Expat is required to build Jabber Jingle voice support. You can get it from http://expat.sourceforge.net/])
+fi
+
+AC_CHECK_HEADERS(alsa/asoundlib.h,
+	[AC_CHECK_LIB(asound, snd_pcm_open,
+		[ALSA_LIBS="-lasound" ; AC_DEFINE(__ALSA_ENABLED__,1,[Defined when alsa support is enabled]) ])
+	]
+)
+AC_SUBST(ALSA_LIBS)
+
+# We test for GLIB in protocols/configure.in.in
+if test x$have_glib = xno; then
+	with_jingle=no
+fi
+
+PKG_CHECK_MODULES(ORTP, ortp, enable_ortp=yes, enable_ortp=no)
+if test x$enable_ortp = xno ; then
+      with_jingle=no
+      AC_MSG_WARN([oRTP is required to build Jabber Jingle voice support. You can get it from http://www.linphone.org/ortp/])
+fi 
+AC_SUBST(ORTP_CFLAGS)
+AC_SUBST(ORTP_LIBS)
+
+AC_ARG_WITH( speex,
+      [  --with-speex      Set prefix where speex lib can be found (ex:/usr, /usr/local) [default=/usr] ],
+      [ speex_prefix=${withval}],[ speex_prefix="/usr" ])
+
+PKG_CHECK_MODULES(SPEEX, speex, speex_found=yes, speex_found=no)
+AC_CHECK_HEADERS(speex.h,[AC_CHECK_LIB(speex,speex_encode_int,speex_found=yes,speex_found=no)],speex_found=no)
+AC_CHECK_HEADERS(speex/speex.h,[AC_CHECK_LIB(speex,speex_encode_int,speex_found=yes,speex_found=no)],speex_found=no)
+
+if test x$speex_found = xno; then
+	AC_MSG_WARN([Could not find a libspeex version that have the speex_encode_int() function. Please install libspeex=1.0.5 or libspeex>=1.1.6 from http://www.speex.org/])
+else
+	SPEEX_CFLAGS="$SPEEX_CFLAGS -I${speex_prefix}/include -I${speex_prefix}/include/speex"
+	AC_SUBST(SPEEX_CFLAGS)
+	AC_SUBST(SPEEX_LIBS)
+	AC_DEFINE(HAVE_SPEEX,1,[Speex codec is enabled])
+fi
+
+
+# dnl only accept speex>=1.1.6 or 1.0.5 (the versions that have speex_encode_int )
+# AC_ARG_WITH( speex,
+#       [  --with-speex      Set prefix where speex lib can be found (ex:/usr, /usr/local) [default=/usr] ],
+#       [ speex_prefix=${withval}],[ speex_prefix="/usr" ])
+#                                                                                                                                      
+# AC_CHECK_HEADERS(speex.h,[AC_CHECK_LIB(speex,speex_encode_int,speex_found=yes,speex_found=no)
+# ],speex_found=no)
+#                                                                                                                                      
+# if test "$speex_found" = "no" ; then
+# AC_MSG_WARN([Could not find a libspeex version that have the speex_encode_int() function. Please install libspeex=1.0.5 or libspeex>=1.1.6 from http://www.speex.org/])
+# else
+# SPEEX_CFLAGS=" -I${speex_prefix}/include -I${speex_prefix}/include/speex"
+# SPEEX_LIBS="-L${speex_prefix}/lib -lspeex -lm"
+# CPPFLAGS_save=$CPPFLAGS
+# CPPFLAGS=$SPEEX_CFLAGS
+# LDFLAGS_save=$LDFLAGS
+# LDFLAGS=$SPEEX_LIBS
+# AC_DEFINE(HAVE_SPEEX,1,[has speex])
+# fi
+#                                                                                                                                      
+# AC_SUBST(SPEEX_CFLAGS)
+# AC_SUBST(SPEEX_LIBS)
+# CPPFLAGS=$CPPFLAGS_save
+# LDFLAGS=$LDFLAGS_save
+ilbc_found="no"
+
+AM_CONDITIONAL(include_jingle, test "$with_jingle" = "yes")
+
+if test "$with_jingle" = "yes" ; then
+	AC_DEFINE(SUPPORT_JINGLE,1,[Jingle support is enabled])
+fi

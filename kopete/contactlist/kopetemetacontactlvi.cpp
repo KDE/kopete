@@ -542,13 +542,8 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 					effect->fade(photoImg, 0.8, Qt::white);
 			}
 			delete effect;
+			
 			photoPixmap = photoImg;
-			QPainter p(&photoPixmap);
-			p.setPen(Qt::black);
-			p.drawLine(0, 0, photoPixmap.width()-1, 0);
-			p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
-			p.drawLine(0, 0, 0, photoPixmap.height()-1);
-			p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
 		}
 		else
 		{
@@ -568,7 +563,7 @@ void KopeteMetaContactLVI::slotRemoveThisUser()
 
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove %1 from your contact list?" ).
-		arg( m_metaContact->displayName() ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"),"editdelete") )
+		arg( m_metaContact->displayName() ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"),"delete_user") )
 		== KMessageBox::Continue )
 	{
 		Kopete::ContactList::self()->removeMetaContact( m_metaContact );

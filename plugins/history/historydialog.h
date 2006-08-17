@@ -88,12 +88,16 @@ class HistoryDialog : public KDialogBase
 		void slotSearchErase();
 		void slotSearchTextChanged(const QString& txt); // To enable/disable search button
 		void slotContactChanged(int index);
+		void slotFilterChanged(int index);
 
 		void searchFirstStep();
 
 		void init();
 		void slotLoadDays();
 
+		void slotRightClick(const QString &url, const QPoint &point);
+		void slotCopy();
+		void slotCopyURL();
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
@@ -150,6 +154,10 @@ class HistoryDialog : public KDialogBase
 
 				Kopete::MetaContact *currentMetaContact;
 		} *mSearch;
+
+		KAction *mCopyAct;
+		KAction *mCopyURLAct;
+		QString mURL;
 };
 
 #endif

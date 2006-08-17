@@ -19,6 +19,7 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <qtextcodec.h>
 
 #include <kapplication.h>
 #include <kactionclasses.h>
@@ -35,6 +36,7 @@
 #include "client.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
+#include "ssimanager.h"
 
 #include "aimprotocol.h"
 #include "aimuserinfo.h"
@@ -52,6 +54,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	m_warnUserAction = 0L;
 	mUserProfile="";
 	m_haveAwayMessage = false;
+	m_mobile = false;
 	// Set the last autoresponse time to the current time yesterday
 	m_lastAutoresponseTime = QDateTime::currentDateTime().addDays(-1);
 
@@ -89,10 +92,28 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 	{
 		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, this, SLOT( warnUser() ), this, "warnAction" );
 	}
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
+	                                      this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
+	                                        this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
+	
+	bool on = account()->isConnected();
 
-	m_warnUserAction->setEnabled( account()->isConnected() );
+	m_warnUserAction->setEnabled( on );
+
+	m_actionVisibleTo->setEnabled(on);
+	m_actionInvisibleTo->setEnabled(on);
+
+	SSIManager* ssi = account()->engine()->ssiManager();
+	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
+	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
 	actionCollection->append( m_warnUserAction );
+
+	actionCollection->append(m_actionVisibleTo);
+	actionCollection->append(m_actionInvisibleTo);
+
+
 	return actionCollection;
 }
 
@@ -166,14 +187,44 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
-	if ( ( details.userClass() & 32 ) == 0 )
+	( details.userClass() & CLASS_WIRELESS ) ? m_mobile = true : m_mobile = false;
+
+	if ( ( details.userClass() & CLASS_AWAY ) == STATUS_ONLINE )
 	{
-		setOnlineStatus( mProtocol->statusOnline ); //we're online
+		if ( m_mobile ) 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
+			setOnlineStatus( mProtocol->statusWirelessOnline );
+    	}
+		else 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
+			setOnlineStatus( mProtocol->statusOnline ); //we're online
+		}
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
 	}
+	else if ( ( details.userClass() & CLASS_AWAY ) ) // STATUS_AWAY
+	{
+		if ( m_mobile ) 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
+			setOnlineStatus( mProtocol->statusWirelessOnline );
+		}
+		else 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
+			setOnlineStatus( mProtocol->statusAway ); //we're away
+		}
+		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		{
+			mAccount->engine()->requestAIMAwayMessage( contactId() );
+			m_haveAwayMessage = true;
+		}
+	}
 	else
 	{
+        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
 		setOnlineStatus( mProtocol->statusAway ); //we're away
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
 		{
@@ -222,14 +273,20 @@ void AIMContact::updateAwayMessage( const QString& contact, const QString& messa
 		if ( message.isEmpty() )
 		{
 			removeProperty( mProtocol->awayMessage );
-			setOnlineStatus( mProtocol->statusOnline );
+			if ( !m_mobile )
+				setOnlineStatus( mProtocol->statusOnline );
+			else
+				setOnlineStatus( mProtocol->statusWirelessOnline );
 			m_haveAwayMessage = false;
 		}
 		else
 		{
 			m_haveAwayMessage = true;
 			setAwayMessage( message );
-			setOnlineStatus( mProtocol->statusAway );
+			if ( !m_mobile )
+				setOnlineStatus( mProtocol->statusAway );
+			else
+				setOnlineStatus( mProtocol->statusWirelessAway );
 		}
 	}
 
@@ -307,6 +364,16 @@ void AIMContact::warnUser()
 		mAccount->engine()->sendWarning( contactId(), false);
 }
 
+void AIMContact::slotVisibleTo()
+{
+	account()->engine()->setVisibleTo( contactId(), m_actionVisibleTo->isChecked() );
+}
+
+void AIMContact::slotInvisibleTo()
+{
+	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
+}
+
 void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 {
 	Oscar::Message msg;
@@ -374,7 +441,13 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	kdDebug(14190) << k_funcinfo << "sending "
 		<< s << endl;
 
-	msg.setText(s);
+	// XXX Need to check for message size?
+
+	if ( m_details.hasCap( CAP_UTF8 ) )
+		msg.setText( Oscar::Message::UCS2, s );
+	else
+		msg.setText( Oscar::Message::UserDefined, s, contactCodec() );
+
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
 	msg.setType(0x01);
@@ -402,11 +475,20 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 	if(delta > 120)
 	{
 		kdDebug(14152) << k_funcinfo << "Sending auto response" << endl;
+
 		// This code was yoinked straight from OscarContact::slotSendMsg()
 		// If only that slot wasn't private, but I'm not gonna change it right now.
 		Oscar::Message message;
 
-		message.setText( msg.plainBody() );
+		if ( m_details.hasCap( CAP_UTF8 ) )
+		{
+			message.setText( Oscar::Message::UCS2, msg.plainBody() );
+		}
+		else
+		{
+			QTextCodec* codec = contactCodec();
+			message.setText( Oscar::Message::UserDefined, msg.plainBody(), codec );
+		}
 
 		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );

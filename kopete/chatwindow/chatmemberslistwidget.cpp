@@ -169,7 +169,6 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 
 ChatMembersListWidget::~ChatMembersListWidget()
 {
-	delete m_toolTip;
 }
 
 void ChatMembersListWidget::slotContextMenu( KListView*, QListViewItem *item, const QPoint &point )

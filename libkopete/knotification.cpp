@@ -18,6 +18,7 @@
 
 #include "knotification.h"
 
+#include <kdebug.h>
 #include <kapplication.h>
 #include <knotifyclient.h>
 #include <kmessagebox.h>
@@ -65,11 +66,11 @@ struct KNotification::Private
 KNotification::KNotification(QObject *parent) :
 		QObject(parent) , d(new Private)
 {
+	m_linkClicked = false;
 }
 
 KNotification::~KNotification() 
 {
-	emit closed();
 	delete d;
 }
 
@@ -228,17 +229,23 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 
 void KNotification::slotPopupLinkClicked(const QString &adr)
 {
+	m_linkClicked = true;
 	unsigned int action=adr.toUInt();
 	if(action==0)
 		return;
 
 	activate(action);
+
+	// since we've hidden the message (KNotification::notifyByPassivePopup(const QPixmap &pix ))
+	// we must now schedule overselves for deletion
+	close();
 }
 
 void KNotification::activate(unsigned int action)
 {
 	if(action==0)
 		emit activated();
+
 	emit activated(action);
 	deleteLater();
 }
@@ -246,6 +253,14 @@ void KNotification::activate(unsigned int action)
 
 void KNotification::close()
 {
+	// if the user hasn't clicked the link, and if we got here, it means the dialog closed
+	// and we were ignored
+	if (!m_linkClicked)
+	{
+		emit ignored();
+	}
+
+	emit closed();
 	deleteLater();
 }
 

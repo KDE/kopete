@@ -34,6 +34,8 @@
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kapplication.h>
+#include <kstandarddirs.h>
+
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -41,20 +43,24 @@
 // Local Includes
 #include "wpaccount.h"
 #include "wpeditaccount.h"
+#include "wpprotocol.h"
 
-WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char *name)
-	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount), mProtocol(protocol)
+WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
+	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
-	kdDebug(14170) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
+	kdDebug(14170) << "WPEditAccount::WPEditAccount(<parent>, <theAccount>)";
+
+	mProtocol = WPProtocol::protocol();
+
+	QString tmpSmbcPath = KStandardDirs::findExe("smbclient");
 
 	if(account()) {
 		mHostName->setText(account()->accountId());
-		mAutoConnect->setChecked(account()->excludeConnect());
+//		mAutoConnect->setChecked(account()->excludeConnect());
 		mHostName->setReadOnly(true);
 		KGlobal::config()->setGroup("WinPopup");
-		mMessageCheckFreq->setValue(KGlobal::config()->readNumEntry("MessageCheckFreq", 5));
 		mHostCheckFreq->setValue(KGlobal::config()->readNumEntry("HostCheckFreq", 60));
-		mSmbcPath->setURL(KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient"));
+		mSmbcPath->setURL(KGlobal::config()->readEntry("SmbcPath", tmpSmbcPath));
 
 	}
 	else {
@@ -74,9 +80,8 @@ WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, 
 		else
 			mHostName->setText("LOCALHOST");
 
-		mMessageCheckFreq->setValue(5);
 		mHostCheckFreq->setValue(60);
-		mSmbcPath->setURL("/usr/bin/smbclient");
+		mSmbcPath->setURL(tmpSmbcPath);
 	}
 
 	show();
@@ -102,11 +107,6 @@ bool WPEditAccount::validateData()
 		return false;
 	}
 
-	if (!mProtocol->checkMessageDir()) {
-		KMessageBox::sorry(this, i18n("<qt>There is a serious problem with your working directory.</qt>"), i18n("WinPopup"));
-		return false;
-	}
-
 	return true;
 }
 
@@ -115,7 +115,6 @@ void WPEditAccount::writeConfig()
 	KGlobal::config()->setGroup("WinPopup");
 	KGlobal::config()->writeEntry("SmbcPath", mSmbcPath->url());
 	KGlobal::config()->writeEntry("HostCheckFreq", mHostCheckFreq->text());
-	KGlobal::config()->writeEntry("MessageCheckFreq", mMessageCheckFreq->text());
 }
 
 Kopete::Account *WPEditAccount::apply()
@@ -125,11 +124,10 @@ Kopete::Account *WPEditAccount::apply()
 	if(!account())
 		setAccount(new WPAccount(mProtocol, mHostName->text()));
 
-	account()->setExcludeConnect(mAutoConnect->isChecked());
+//	account()->setExcludeConnect(mAutoConnect->isChecked());
 	writeConfig();
 
-	//is there already an API function or signal? GF
-	dynamic_cast<WPAccount *>(account())->slotSettingsChanged();
+	mProtocol->settingsChanged();
 
 	return account();
 }

@@ -31,7 +31,7 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	: Kopete::Contact(account, newHostName, metaContact)
 {
 //	kdDebug(14170) << "WPContact::WPContact(<account>, " << newHostName << ", " << nickName << ", <parent>)" << endl;
-	kdDebug(14170) << "I am " << this << "!" << endl;
+	kdDebug(14170) << "WPContact::WPContact: " << this << endl;
 
 	QString theNickName = nickName;
 
@@ -44,15 +44,15 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	setNickName(theNickName);
 	myWasConnected = false;
 
-	// Initialise and start the periodical checking for contact's status
-	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
-
-	//TODO: makes checking more often than hostcheck cycle sense? GF
-	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
-	checkStatus.start(1000, false);
 
 	m_manager = 0;
 	m_infoDialog = 0;
+
+	// Initialise and start the periodical checking for contact's status
+	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
+
+	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
+	checkStatus.start(1000, false);
 }
 
 QPtrList<KAction> * WPContact::customContextMenuActions()
@@ -141,16 +141,10 @@ void WPContact::slotCheckStatus()
 	if (acct) newIsOnline = acct->checkHost(contactId());
 
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected) {
-		Kopete::OnlineStatus tmpStatus;
-		if (myWasConnected) {
-			if (newIsOnline)
+		Kopete::OnlineStatus tmpStatus = WPProtocol::protocol()->WPOffline;
+		if (myWasConnected && newIsOnline) {
 				tmpStatus = WPProtocol::protocol()->WPOnline;
-			else
-				WPProtocol::protocol()->WPOffline;
-		} else {
-			WPProtocol::protocol()->WPOffline;
 		}
-
 		setOnlineStatus(tmpStatus);
 	}
 }
@@ -191,4 +185,5 @@ void WPContact::slotSendMessage( Kopete::Message& message )
 
 #include "wpcontact.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;
