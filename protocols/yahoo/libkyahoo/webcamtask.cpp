@@ -200,6 +200,7 @@ void WebcamTask::slotConnectionFailed( int error )
 	client()->notifyError( i18n("Webcam connection to the user %1 could not be established.\n\nPlease relogin and try again.")
 			.arg(socketMap[socket].sender), QString("%1 - %2").arg(error).arg( socket->errorString()), Client::Error );
 	socketMap.remove( socket );
+	socket->deleteLater();
 }
 
 void WebcamTask::slotRead()
@@ -233,21 +234,28 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Magic Byte:" << data[2] << endl;
 
 	socketMap[socket].status = ConnectedStage2;
-	if( data[2] == (Q_INT8)0x06 )
+
+	QString server;
+	int i = 4;
+	KStreamSocket *newSocket;
+	switch( (const char)data[2] )
 	{
+	case (Q_INT8)0x06:
 		emit webcamNotAvailable(socketMap[socket].sender);
-	}
-	else if( data[2] == (Q_INT8)0x04 || data[2] == (Q_INT8)0x07 )
-	{
-		QString server;
-		int i = 4;
-		while( data[i] != (Q_INT8)0x00 )
+		break;
+	case (Q_INT8)0x04:
+	case (Q_INT8)0x07:
+		while( (const char)data[i] != (Q_INT8)0x00 )
 			server += data[i++];
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Server:" << server << endl;
-// 		server = server.mid( 4, server.find( '0', 4) );
+		if( server.isEmpty() )
+		{
+			emit webcamNotAvailable(socketMap[socket].sender);
+			break;
+		}
 		
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Connecting to " << server << endl;
-		KStreamSocket *newSocket = new KStreamSocket( server, QString::number(5100) );
+		newSocket = new KStreamSocket( server, QString::number(5100) );
 		socketMap[newSocket] = socketMap[socket];
 		newSocket->enableRead( true );
 		connect( newSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( slotConnectionStage2Established() ) );
@@ -260,6 +268,9 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 		}
 		
 		newSocket->connect();	
+		break;
+	default:
+		break;
 	}
 	socketMap.remove( socket );
 	delete socket;
