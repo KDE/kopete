@@ -791,8 +791,29 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 
 	if ( status != Kopete::OnlineStatus::Connecting )
 	{
-		m_globalStatusMessageStored = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
-		m_globalStatusMessage->setText( m_globalStatusMessageStored );
+		if(contact->hasProperty(Kopete::Global::Properties::self()->awayMessage().key()))
+		{
+			m_globalStatusMessageStored = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
+			m_globalStatusMessage->setText( m_globalStatusMessageStored );
+		}
+		else //If the account has not status message, it may be because the protocol doesn't support it (Bug 132609)
+		{    // or because the user just set an empty status to this account.
+			// We will check if another account has still a status message, if yes, we will use it, if not, we will clear it.
+			QString statusMessageToUse;
+			QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
+			for(Kopete::Account *a = accounts.first(); a; a = accounts.next())
+			{
+				Kopete::Contact *self = a->myself();
+				if(self->hasProperty(Kopete::Global::Properties::self()->awayMessage().key()))
+				{
+					statusMessageToUse = self->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
+					if(statusMessageToUse == m_globalStatusMessageStored )
+						break; //keep this one
+				}
+			}
+			m_globalStatusMessageStored = statusMessageToUse;
+			m_globalStatusMessage->setText( m_globalStatusMessageStored );
+		}
 	}
 	
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ contact->account() ] );
