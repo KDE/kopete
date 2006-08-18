@@ -102,6 +102,9 @@ public:
 private:
 	void doGetGroupNames( const Eva::ByteArray& text );
 	void doGetCGTs( const Eva::ByteArray& text );
+	void doGetContactStatuses( const Eva::ByteArray& text );
+	void sendListOnlineContacts(uint pos = 0);
+	void heartbeat();
 
 private:
 	QQAccount *m_account;
@@ -148,8 +151,10 @@ private:
 
 	//know the last handle used
 	QString m_configFile;
-
 	QString m_localIP;
+
+	// heartbeat timer
+	QTimer* m_heartbeat;
 };
 
 #endif

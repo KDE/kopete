@@ -186,6 +186,21 @@ namespace Eva {
 		}
 		return list;
 	}
+
+	std::list< ContactStatus > Packet::onlineContacts( const ByteArray& text, char& pos )
+	{
+		int offset = 1;
+		std::list< ContactStatus > list;
+		pos = text.data()[0];
+
+		while( offset < text.size() )
+		{
+			list.push_back( 
+				ContactStatus( text.data()+offset ) );
+			offset += 31;
+		}
+		return list;
+	}
 					
 			
 	// Core functions
@@ -287,4 +302,23 @@ namespace Eva {
 		text += encodeMessage( message );
 		return buildPacket(id, SendMsg, sequence, key, text );
 	}
+
+	ByteArray heartbeat(int id, short const sequence, ByteArray& key )
+	{
+		ByteArray text(4);
+		text += id;
+		return buildPacket(id, Heartbeat, sequence, key, text );
+	}
+
+	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, char pos )
+	{
+		ByteArray text(5);
+		text += char(0x02);
+		text += pos;
+		text += char(0x00);
+		text += char(0x00);
+		text += char(0x00);
+		return buildPacket(id, ContactsOnline, sequence, key, text );
+	}
+		
 }

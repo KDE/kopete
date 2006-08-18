@@ -120,6 +120,7 @@ void QQSocket::doneConnect()
 
 void QQSocket::doneDisconnect()
 {
+	kDebug( 14140 ) << k_funcinfo << "disconnected done" << endl;
 	setOnlineStatus( Disconnected );
 }
 
@@ -129,6 +130,7 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 		return;
 
 	m_onlineStatus = status;
+	kDebug( 14140 ) << k_funcinfo << ": status = " << m_onlineStatus << endl;
 	emit onlineStatusChanged( status );
 }
 

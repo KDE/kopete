@@ -16,7 +16,7 @@ namespace Eva {
 
 	// command
 	short const Logout = 0x0001;
-	short const KeepAlive = 0x0002;
+	short const Heartbeat = 0x0002;
 	short const UpdateInfo = 0x0004;
 	short const Search = 0x0005;
 	short const UserInfo = 0x0006;
@@ -75,6 +75,7 @@ namespace Eva {
 	const char InvisibleLogin = 0x28;
 	const char ContactListSorted = 0x01;
 	const char ContactListUnsorted = 0x00;
+	const char ContactListBegin = 0x00;
 	const char ContactListEnd = 0xff;
 	const char UploadGroupNames = 0x2;
 	const char DownloadGroupNames = 0x1;
@@ -109,6 +110,7 @@ namespace Eva {
 
 		CGT( int q, char t, char g ) : qqId(q), type (t), groupId(g) {};
 	};
+
 
 	// Customized max to get rid of stl dependence
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
@@ -219,6 +221,40 @@ namespace Eva {
 		return (* ((T*) buffer) );
 	}
 	
+	struct ContactStatus
+	{
+		int qqId;
+		int ip;
+		short port;
+		char status;
+
+		ContactStatus( char* data ) :
+			qqId( ntohl( type_cast<int> (data )) ), 
+			ip( ntohl( type_cast<int> (data+5 )) ), 
+			port( ntohs( type_cast<short> (data+9 )) ), 
+			status( type_cast<char> (data+12 ))  {};
+	};
+
+	struct MessageHeader
+	{
+		int sender;
+		int receiver;
+		int sequence;
+		int ip;
+		short port;
+		short type;
+
+		MessageHeader( const ByteArray& text ) :
+			sender( ntohl( type_cast<int>(text.data())) ),
+			receiver( ntohl( type_cast<int>(text.data() + 4 )) ),
+			sequence( ntohl( type_cast<int>( text.data() + 8 )) ),
+			ip( ntohl( type_cast<int>( text.data() + 12 )) ),
+			port( ntohs( type_cast<short>( text.data() + 16 )) ),
+			type( ntohs( type_cast<short>( text.data() + 18 )) )  {};
+	};
+
+			
+
 	/** 
 	 * normalized QQ packet
 	 */
@@ -294,6 +330,7 @@ namespace Eva {
 		// FIXME: use list as others
 		ContactInfo contactInfo( char* buffer, int& len );
 		static std::list< CGT > cgts( const ByteArray& text );
+		static std::list< ContactStatus > onlineContacts( const ByteArray& text, char& pos );
 
 	private:
 		short m_version;
@@ -313,6 +350,8 @@ namespace Eva {
 	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );
 	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos );
 	ByteArray textMessage( int id, short const sequence, ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
+	ByteArray heartbeat(int id, short const sequence, ByteArray& key );
+	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, char pos );
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
@@ -321,19 +360,6 @@ namespace Eva {
 	const char* getInitKey();
 	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
 
-	struct ContactStatus
-	{
-		int qqId;
-		int ip;
-		short port;
-		char status;
-
-		ContactStatus( const ByteArray& text ) :
-			qqId( ntohl( type_cast<int> (text.data() )) ), 
-			ip( ntohl( type_cast<int> (text.data()+5 )) ), 
-			port( ntohs( type_cast<short> (text.data()+9 )) ), 
-			status( type_cast<char> (text.data()+12 ))  {};
-	};
 
 };
 #endif
