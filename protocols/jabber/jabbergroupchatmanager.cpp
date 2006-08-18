@@ -79,8 +79,8 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 	{
 		XMPP::Message jabberMessage;
 
-		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid() ;
-		jabberMessage.setFrom ( jid );
+		jabberMessage.setFrom ( account()->client()->jid() );
+		
 
 		XMPP::Jid toJid ( mRoomJid );
 
@@ -142,8 +142,7 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 		//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
 		//      iris doesn't implement groupchat yet
 		XMPP::Message jabberMessage;
-		XMPP::Jid jid = static_cast<const JabberBaseContact*>(account()->myself())->rosterItem().jid() ;
-		jabberMessage.setFrom ( jid );
+		jabberMessage.setFrom ( account()->client()->jid() );
 		jabberMessage.setTo ( contactId );
 		jabberMessage.setInvite( mRoomJid.userHost() );
 		jabberMessage.setBody( i18n("You have been invited to %1").arg( mRoomJid.userHost() ) );

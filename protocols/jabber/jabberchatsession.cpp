@@ -185,10 +185,6 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 		++listIterator;
 		if ( contact->isContactRequestingEvent( event ) )
 		{
-			// create JID for us as sender
-			XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
-			fromJid.setResource ( account()->resource () );
-	
 			// create JID for the recipient
 			XMPP::Jid toJid = contact->rosterItem().jid();
 	
@@ -198,7 +194,7 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 	
 			XMPP::Message message;
 	
-			message.setFrom ( fromJid );
+			message.setFrom ( account()->client()->jid() );
 			message.setTo ( toJid );
 			message.setEventId ( contact->lastReceivedMessageId () );
 			// store composing event depending on state
@@ -243,9 +239,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		XMPP::Message jabberMessage;
 		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(message.to().first());
 
-		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid();
-		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
-		jabberMessage.setFrom ( jid );
+		jabberMessage.setFrom ( account()->client()->jid() );
+
 
 		XMPP::Jid toJid = recipient->rosterItem().jid();
 
