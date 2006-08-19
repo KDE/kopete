@@ -18,6 +18,7 @@
 #include "qqaccount.h"
 
 #include <QTextCodec>
+#include <QDateTime>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -118,6 +119,10 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 
 	QObject::connect( m_notifySocket, SIGNAL( contactStatusChanged(const Eva::ContactStatus&) ),
 		SLOT( slotContactStatusChanged(const Eva::ContactStatus &) ) );
+
+	QObject::connect( m_notifySocket, SIGNAL( messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ),
+		SLOT( slotMessageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ) );
+
 	m_notifySocket->connect(host, port);
 }
 
@@ -463,6 +468,26 @@ void QQAccount::receivedMessage( const QString &message )
 		kWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
 }
 
+void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva::ByteArray& message )
+{
+	QString from = QString::number(header.sender);
+	QString to = QString::number(header.receiver);
+	QString msg ( QByteArray(message.data(), message.size()) );
+	QDateTime timestamp;
+	timestamp.setTime_t(header.timestamp);
+
+	QQContact* sender = static_cast<QQContact*>( contacts()[from] );
+	Kopete::ContactPtrList contactList;
+	contactList.append( sender );
+	QString guid = to +  ":" + from;
+
+	QQChatSession* sess = chatSession( contactList, guid, Kopete::Contact::CanCreate );
+	Q_ASSERT( sess );
+	Kopete::Message * newMessage = 
+			new Kopete::Message( timestamp, sender, contactList, msg,
+								 Kopete::Message::Inbound, Kopete::Message::PlainText );
+	sess->appendMessage( *newMessage );
+}
 
 
 

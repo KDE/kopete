@@ -33,6 +33,8 @@ namespace Kopete
 namespace Eva {
 	struct ContactInfo;
 	struct ContactStatus;
+	struct MessageHeader;
+	struct ByteArray;
 }
 
 class QQContact;
@@ -112,6 +114,7 @@ public slots:
 	void slotGroupNamesListed(const QStringList& ql );
 	void slotContactInGroup(const int qqId, const char type, const int groupId );
 	void slotContactStatusChanged(const Eva::ContactStatus& cs);
+	void slotMessageReceived( const Eva::MessageHeader& header, const Eva::ByteArray& message );
 
 protected:
 	/**

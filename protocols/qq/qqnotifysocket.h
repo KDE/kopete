@@ -66,6 +66,7 @@ signals:
 	void groupNames( const QStringList& ql );
 	void contactInGroup(const int qqId, const char type, const int groupId );
 	void contactStatusChanged( const Eva::ContactStatus& cs);
+	void messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& );
 
 protected:
 	/**

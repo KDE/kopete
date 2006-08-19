@@ -216,7 +216,14 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 						<< " timestamp:" << mh.timestamp << " avatar:" << mh.avatar 
 						<< endl;
 
+					if( mh.receiver != m_qqId )
+					{
+						kDebug(14140) << "receive other(" << mh.receiver <<")'s message" << endl;
+						break;
+					}
+
 					// FIXME: replace the magic number!
+					// FIXME: the code stinks!
 					char* p = body.data()+36;
 					bool hasFontStyle = p[3] != 0;
 					char replyType = p[8];
@@ -228,6 +235,9 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					msg += char(0x0);
 
 					kDebug(14140) << "message received: " << msg.data() << endl;
+					// FIXME: use a function to generate guid!
+					emit messageReceived(mh, msg);
+					
 					break;
 				}
 				default:
@@ -428,7 +438,7 @@ void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message
 {
 	// Translate the message to Eva::ByteArray
 	// TODO: color and font
-	kDebug( 14140 ) << "Send the message: " << message << " from " << m_qqId << " to " << toId;
+	kDebug( 14140 ) << "Send the message: " << message << " from " << m_qqId << " to " << toId << endl;
 	// attach the ByteArray to QString:
 	// FIXME: Add an adapter to ByteArray
 	Eva::ByteArray text( (char*)message.data(), message.size() );
