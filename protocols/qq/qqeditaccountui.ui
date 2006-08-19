@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <author>Hui Jin</author>
- <comment>Based upon Oliver Goffart's MSN UI</comment>
+ <author>Olivier Goffart</author>
+ <comment></comment>
  <exportmacro></exportmacro>
  <class>QQEditAccountUI</class>
  <widget class="QWidget" name="QQEditAccountUI" >
@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
-    <height>578</height>
+    <width>716</width>
+    <height>739</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -26,9 +26,6 @@
     <widget class="QTabWidget" name="tabWidget3" >
      <property name="tabShape" >
       <enum>QTabWidget::Rounded</enum>
-     </property>
-     <property name="currentIndex" >
-      <number>4</number>
      </property>
      <widget class="QWidget" name="tab_connection" >
       <attribute name="title" >
@@ -75,10 +72,10 @@
                <string>The user ID of the QQ contact you would like to use.</string>
               </property>
               <property name="whatsThis" >
-               <string>The user ID of the QQ contact you would like to use.  This should be in the form of a valid natural integral.</string>
+               <string>The user ID of the QQ contact you would like to use.  This should be in the form of a valid E-mail address.</string>
               </property>
               <property name="text" >
-               <string>&amp;QQ Number:</string>
+               <string>&amp;QQ Passport ID:</string>
               </property>
               <property name="buddy" >
                <cstring>m_login</cstring>
@@ -91,7 +88,7 @@
                <string>The user ID of the QQ contact you would like to use.</string>
               </property>
               <property name="whatsThis" >
-               <string>The user ID of the QQ contact you would like to use.  This should be in the form of a valid natural integral.</string>
+               <string>The user ID of the QQ contact you would like to use.  This should be in the form of a valid E-mail address.</string>
               </property>
               <property name="text" >
                <string/>
@@ -155,9 +152,7 @@
              </size>
             </property>
             <property name="text" >
-             <string>To connect to QQ instant message network, you will need a QQ Number.
-
-If you do not currently have a QQ ID, please click the button to get one.</string>
+             <string>To connect to the Microsoft network, you will need a Microsoft Passport.&lt;br>&lt;br>If you do not currently have a Passport, please click the button to create one.</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
@@ -203,6 +198,149 @@ If you do not currently have a QQ ID, please click the button to get one.</strin
        <property name="spacing" >
         <number>6</number>
        </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Connection Preferences</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="optionOverrideServer" >
+            <property name="text" >
+             <string>&amp;Override default server information</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="1" >
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="labelServer" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Ser&amp;ver /</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>m_serverName</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelPort" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>po&amp;rt:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>m_serverPort</cstring>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QSpinBox" name="m_serverPort" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="toolTip" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="whatsThis" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="value" >
+               <number>1863</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="3" >
+             <widget class="QCheckBox" name="optionUseHttpMethod" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Use HTTP method</string>
+              </property>
+              <property name="shortcut" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLineEdit" name="m_serverName" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>3</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="whatsThis" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="text" >
+               <string>messenger.hotmail.com</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item>
         <widget class="QGroupBox" name="global_settings_page" >
          <property name="title" >
@@ -260,7 +398,7 @@ If you do not currently have a QQ ID, please click the button to get one.</strin
 &lt;dt>Automatically&lt;/dt>&lt;dd>Always try to download the picture if the contact has one.  &lt;b>Note:&lt;/b> this will open a socket, and let the user know you are downloading their picture.&lt;/dd>&lt;/dl></string>
               </property>
               <property name="text" >
-               <string>Download the msn picture:</string>
+               <string>Download the qq picture:</string>
               </property>
              </widget>
             </item>
@@ -305,7 +443,7 @@ If you do not currently have a QQ ID, please click the button to get one.</strin
           <item>
            <widget class="QCheckBox" name="useCustomEmoticons" >
             <property name="whatsThis" >
-             <string>QQ allows users to download and use custom emoticons. If this option is enabled, Kopete will download these emoticons and show them.</string>
+             <string>QQ Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download these emoticons and show them.</string>
             </property>
             <property name="text" >
              <string>&amp;Download and show custom emoticons</string>
@@ -404,6 +542,9 @@ Only works for emoticons in the PNG format.</string>
              <widget class="KComboBox" name="JabberAccount" >
               <property name="whatsThis" >
                <string>If you have a Jabber account, you may let Jabber users on an QQ gateway know that you are also using Jabber.</string>
+              </property>
+              <property name="editable" >
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -1050,23 +1191,9 @@ Only works for emoticons in the PNG format.</string>
            <number>6</number>
           </property>
           <item>
-           <widget class="QRadioButton" name="radioButton" >
+           <widget class="QCheckBox" name="optionOverrideServer" >
             <property name="text" >
-             <string>TCP Connection</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButton_2" >
-            <property name="text" >
-             <string>UDP Connection</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButton_3" >
-            <property name="text" >
-             <string>HTTP Proxy</string>
+             <string>&amp;Override default server information</string>
             </property>
            </widget>
           </item>
@@ -1078,68 +1205,6 @@ Only works for emoticons in the PNG format.</string>
             <property name="spacing" >
              <number>6</number>
             </property>
-            <item row="1" column="1" >
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="label" >
-                <property name="text" >
-                 <string>Username:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="lineEdit" />
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_2" >
-                <property name="text" >
-                 <string>Password:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="lineEdit_2" />
-              </item>
-             </layout>
-            </item>
-            <item rowspan="2" row="0" column="0" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>16</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="0" column="1" >
              <layout class="QHBoxLayout" >
               <property name="margin" >
@@ -1232,6 +1297,92 @@ Only works for emoticons in the PNG format.</string>
               </item>
              </layout>
             </item>
+            <item rowspan="2" row="0" column="0" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QCheckBox" name="optionUseHttpMethod" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="whatsThis" >
+               <string>Connect to QQ Messenger using an HTTP-like protocol on port 80.
+This may be used to connect on a network with a restrictive firewall.
+Only check this option if the normal connection doesn't work.</string>
+              </property>
+              <property name="text" >
+               <string>Use &amp;HTTP method</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="m_useWebcamPort" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="whatsThis" >
+                 <string>If you are behind a firewall, you may specify a base port to use for the incoming connection, and configure your firewall to accept connections on a range of 10 ports, starting at this one. Incoming connections are used for the webcam. If you don't specify a port yourself, the operating system will choose an available port for you. It is recommended to leave the checkbox unchecked.</string>
+                </property>
+                <property name="text" >
+                 <string>S&amp;pecify a base port for incoming webcam connections:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="m_webcamPort" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="whatsThis" >
+                 <string>If you are behind a firewall, you may specify a base port to use for the incoming connection, and configure your firewall to accept connections on a range of 10 ports, starting at this one. Incoming connections are used for the webcam. If you don't specify a port yourself, the operating system will choose an available port for you. It is recommended to leave the checkbox unchecked.</string>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
+                </property>
+                <property name="minimum" >
+                 <number>1</number>
+                </property>
+                <property name="value" >
+                 <number>6891</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
            </layout>
           </item>
          </layout>
@@ -1274,30 +1425,32 @@ Only works for emoticons in the PNG format.</string>
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QWidget</extends>
-   <header>kcombobox.h</header>
+   <class>Q3ListBox</class>
+   <extends></extends>
+   <header>q3listbox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>Q3ListBox</class>
-   <extends>Q3Frame</extends>
-   <header>q3listbox.h</header>
+   <class>KComboBox</class>
+   <extends></extends>
+   <header>kcombobox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget3</tabstop>
+  <tabstop>optionOverrideServer</tabstop>
   <tabstop>m_serverName</tabstop>
   <tabstop>m_serverPort</tabstop>
+  <tabstop>optionUseHttpMethod</tabstop>
   <tabstop>NotifyNewChat</tabstop>
   <tabstop>DownloadPicture</tabstop>
   <tabstop>useCustomEmoticons</tabstop>
@@ -1319,6 +1472,118 @@ Only works for emoticons in the PNG format.</string>
  </tabstops>
  <resources/>
  <connections>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_useWebcamPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_webcamPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelServer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>79</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>77</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>optionUseHttpMethod</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>108</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>101</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_serverPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_serverName</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>110</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>m_useDisplayPicture</sender>
    <signal>toggled(bool)</signal>
