@@ -739,7 +739,17 @@ default_presentation=0
 
 [kopete_authorization]
 Name=Authorization
+Name[et]=Autoriseerimine
+Name[nds]=Identifikatschoon
+Name[nl]=Autorisatie
+Name[pt]=Autorização
+Name[pt_BR]=Autorização
 Comment=An user has accepted/declined your authorization request
+Comment[et]=Kasutaja autoriseeris/lükkas tagasi sinu autoriseerimissoovi
+Comment[nds]=En Bruker hett Dien Identifikatschoonanfraag tolaten/afwiest
+Comment[nl]=Een gebruiker heeft uw autorisatieverzoek geaccepteerd/afgewezen
+Comment[pt]=Um utilizador autorizou/rejeitou o seu pedido de autorização
+Comment[pt_BR]=Um utilizador autorizou/rejeitou o seu pedido de autorização
 default_presentation=16
 
 [yahoo_mail]
@@ -823,7 +833,17 @@ default_presentation=16
 
 [msn_alert]
 Name=MSN Alert
+Name[et]=MSN teade
+Name[nds]=MSN-Alarm
+Name[nl]=MSN-melding
+Name[pt]=Alerta MSN
+Name[pt_BR]=Alerta MSN
 Comment=A new alert has been sent to you
+Comment[et]=Sulle saadeti uus teade
+Comment[nds]=Een hett Di en niegen Alarm sendt
+Comment[nl]=U hebt een nieuwe melding ontvangen
+Comment[pt]=Foi enviada um novo alerta
+Comment[pt_BR]=Foi enviada um novo alerta
 default_presentation=16
 
 [msn_mail]
