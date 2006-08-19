@@ -81,7 +81,7 @@ namespace Eva {
 	const char DownloadGroupNames = 0x1;
 	const char TransferKey = 0x03; // file agent key in eva
 
-	// IM operation
+	// IM operation( sending )
 	const short IMText = 0x000b;
 	const short IMNotifyIP = 0x003b;
 
@@ -92,6 +92,9 @@ namespace Eva {
 
 	// Encoding
 	const short GBEncoding = 0x8602;
+
+	// IM command ( receiving )
+	const short RcvFromBuddy = 0x0009;
 
 	// POD storage
 	struct ContactInfo {
@@ -235,7 +238,7 @@ namespace Eva {
 			status( type_cast<char> (data+12 ))  {};
 	};
 
-	struct MessageHeader
+	struct MessageEnvelop
 	{
 		int sender;
 		int receiver;
@@ -244,7 +247,7 @@ namespace Eva {
 		short port;
 		short type;
 
-		MessageHeader( const ByteArray& text ) :
+		MessageEnvelop( const ByteArray& text ) :
 			sender( ntohl( type_cast<int>(text.data())) ),
 			receiver( ntohl( type_cast<int>(text.data() + 4 )) ),
 			sequence( ntohl( type_cast<int>( text.data() + 8 )) ),
@@ -253,7 +256,28 @@ namespace Eva {
 			type( ntohs( type_cast<short>( text.data() + 18 )) )  {};
 	};
 
-			
+	struct MessageHeader
+	{
+	// pack me !
+		short version;
+		int sender;
+		int receiver;
+		ByteArray transferKey;
+		short type;
+		short sequence;
+		int timestamp;
+		short avatar;
+
+		MessageHeader( const ByteArray& text ) :
+			version( ntohs( type_cast<short>(text.data())) ),
+			sender( ntohl( type_cast<int>(text.data()+2)) ),
+			receiver( ntohl( type_cast<int>(text.data() + 6 )) ),
+			transferKey( text.data()+10, 16),
+			type( ntohs( type_cast<short>( text.data() + 26)) ),
+			sequence( ntohs( type_cast<short>( text.data() + 28)) ),
+			timestamp( ntohl( type_cast<int>( text.data() + 30)) ),
+			avatar( ntohs( type_cast<short>( text.data() + 34)) ) {};
+	};
 
 	/** 
 	 * normalized QQ packet
@@ -298,6 +322,9 @@ namespace Eva {
 
 		static inline ByteArray transferKey( ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+2, KeyLength ); }
+
+		static inline ByteArray replyKey( ByteArray& data ) 
+		{ return ByteArray::duplicate( data.data(), KeyLength ); }
 
 		static inline ByteArray transferToken( ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+2+KeyLength+13, (unsigned)(data.data()[2+KeyLength+12]) ); }
@@ -350,6 +377,7 @@ namespace Eva {
 	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );
 	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos );
 	ByteArray textMessage( int id, short const sequence, ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
+	ByteArray messageReply(int id, short const sequence, ByteArray& key, const ByteArray& text );
 	ByteArray heartbeat(int id, short const sequence, ByteArray& key );
 	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, char pos );
 

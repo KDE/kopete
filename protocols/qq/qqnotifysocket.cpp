@@ -192,12 +192,50 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 			break;
 		case Eva::ReceiveMsg :
 		{
-			Eva::MessageHeader mh(text);
-			kDebug(14140) << "Received message from " << mh.sender << " to " << mh.receiver << endl;
-			kDebug(14140) << "seq = " << mh.sequence << " from " << mh.ip << ":" << mh.port << endl;
+			Eva::MessageEnvelop envelop(text);
+			kDebug(14140) << "Received message from " << envelop.sender << " to " << envelop.receiver << " type=" << envelop.type << endl;
+			kDebug(14140) << "seq = " << envelop.sequence << " from " << envelop.ip << ":" << envelop.port << endl;
+
+			sendMsgReply( packet.sequence(), Eva::Packet::replyKey(text) );
+			Eva::ByteArray body( text.data() + sizeof(envelop), text.size() - sizeof(envelop) );
+			body.release();
+
+			// TODO: check whether this is a duplicated message
+			switch( envelop.type )
+			{
+				case 0x0010:
+					kDebug(14140) << "command 0x0010: " << QByteArray( body.data(), body.size() ) << endl;
+					break;
+				case Eva::RcvFromBuddy:
+				{
+					Eva::MessageHeader mh(body);
+					kDebug(14140) << "message header:" << endl;
+					kDebug(14140) << "ver:" << mh.version << " sender:" << mh.sender 
+						<< " receiver:" << mh.receiver 
+						<< " type:" << mh.type << " seq:" << mh.sequence 
+						<< " timestamp:" << mh.timestamp << " avatar:" << mh.avatar 
+						<< endl;
+
+					// FIXME: replace the magic number!
+					char* p = body.data()+36;
+					bool hasFontStyle = p[3] != 0;
+					char replyType = p[8];
+					Eva::ByteArray msg(body.size());
+					p += 9;
+
+					while( *p )
+						msg += *p++;
+					msg += char(0x0);
+
+					kDebug(14140) << "message received: " << msg.data() << endl;
+					break;
+				}
+				default:
+					break;
+			}
 			break;
 		}
-			
+
 		case Eva::RemoveMe :
 			break;
 
@@ -399,6 +437,13 @@ void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message
 	Eva::ByteArray packet = Eva::textMessage(m_qqId, m_id++, m_sessionKey, toId, m_transferKey, text );
 	sendPacket( QByteArray( packet.data(), packet.size()) );
 }
+
+void QQNotifySocket::sendMsgReply( int sequence, const Eva::ByteArray& replyKey )
+{
+	Eva::ByteArray packet = Eva::messageReply(m_qqId, sequence, m_sessionKey, replyKey );
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+
 
 void QQNotifySocket::heartbeat()
 {

@@ -103,7 +103,7 @@ namespace Eva {
 		encoded += htons( GBEncoding );
 
 		// font name: Song Ti
-		encoded += htonl(0xe5cccecb);
+		encoded += htonl(0xcbcecce5);
 
 		encoded += char(0xd); // return 
 
@@ -301,6 +301,11 @@ namespace Eva {
 		text += messageHeader( id, toId, transferKey, IMText, sequence, time(NULL));
 		text += encodeMessage( message );
 		return buildPacket(id, SendMsg, sequence, key, text );
+	}
+
+	ByteArray messageReply(int id, short const sequence, ByteArray& key, const ByteArray& text )
+	{
+		return buildPacket(id, ReceiveMsg, sequence, key, text );
 	}
 
 	ByteArray heartbeat(int id, short const sequence, ByteArray& key )

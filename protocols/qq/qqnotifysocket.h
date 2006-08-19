@@ -104,6 +104,7 @@ private:
 	void doGetCGTs( const Eva::ByteArray& text );
 	void doGetContactStatuses( const Eva::ByteArray& text );
 	void sendListOnlineContacts(uint pos = 0);
+	void sendMsgReply( int sequence, const Eva::ByteArray& replyKey );
 	void heartbeat();
 
 private:
