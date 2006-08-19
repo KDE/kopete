@@ -33,7 +33,6 @@
 
 #include "qqcontact.h"
 #include "qqnotifysocket.h"
-#include "qqfakeserver.h"
 #include "qqprotocol.h"
 #include "qqchatsession.h"
 
