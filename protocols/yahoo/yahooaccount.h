@@ -261,6 +261,7 @@ private:
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
 	QStringList m_pendingConfInvites;
 	QStringList m_pendingWebcamInvites;
+	QStringList m_pendingFileTransfers;
 
 	QMap<unsigned int, Kopete::Transfer *> m_fileTransfers;
 
