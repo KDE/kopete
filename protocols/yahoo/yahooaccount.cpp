@@ -300,7 +300,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 // 		                 SLOT(slotGotIdentities( const QStringList&)));
 		
 		QObject::connect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
-				
+		
+		QObject::connect(m_session, SIGNAL(webcamNotAvailable(const QString&)), this, SLOT(slotWebcamNotAvailable(const QString&)));
+		
 		QObject::connect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
 		QObject::connect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
@@ -427,6 +429,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 // 		                    SLOT(slotGotIdentities( const QStringList&)));
 		
 		QObject::disconnect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamNotAvailable(const QString&)), this, SLOT(slotWebcamNotAvailable(const QString&)));
 		
 		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
@@ -1484,9 +1488,21 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 		return;
 	}
 	
-	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?",
-							 who), QString::null, i18n("Accept"), i18n("Ignore") ) )	
+	if( m_pendingWebcamInvites.contains( who ) )
+		return;
+	
+	m_pendingWebcamInvites.append( who );
+	
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
+							.arg(who), QString::null, i18n("Accept"), i18n("Ignore") ) )
+	{
+		m_pendingWebcamInvites.remove( who );
 		m_session->requestWebcam( who );
+	}
+}
+void YahooAccount::slotWebcamNotAvailable( const QString &who )
+{
+	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("Webcam for %1 is not available.").arg(who), i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image )

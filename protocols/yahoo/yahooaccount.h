@@ -206,6 +206,7 @@ protected slots:
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
 	void slotGotWebcamInvite(const QString &);
+	void slotWebcamNotAvailable( const QString &who );
 	void slotGotWebcamImage(const QString&, const QPixmap&);
 	void slotWebcamReadyForTransmission();
 	void slotWebcamStopTransmission();
@@ -259,6 +260,7 @@ private:
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
 	QStringList m_pendingConfInvites;
+	QStringList m_pendingWebcamInvites;
 
 	QMap<unsigned int, Kopete::Transfer *> m_fileTransfers;
 
