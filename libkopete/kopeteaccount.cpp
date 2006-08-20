@@ -130,7 +130,7 @@ void Account::reconnect()
 
 void Account::disconnected( DisconnectReason reason )
 {
-	kdDebug( 14010 ) << k_funcinfo << reason << endl;
+	kDebug( 14010 ) << k_funcinfo << reason << endl;
 	//reconnect if needed
 	if(reason == BadPassword )
 	{

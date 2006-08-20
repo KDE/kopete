@@ -52,7 +52,7 @@ static QString squashMessage( const Kopete::Message& msg )
 
 	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
 	rx.setMinimal( true );
-	if ( rx.search( msgText ) == -1 )
+	if ( rx.indexIn( msgText ) == -1 )
 	{
 		// no URLs in text, just pick the first 30 chars of
 		// the parsed text if necessary. We used parsed text
@@ -86,7 +86,7 @@ static QString squashMessage( const Kopete::Message& msg )
 					rx.cap( 1 ) +
 					QString::fromLatin1( " ..." );
 			// find last occurrence of URL (the one inside the <a> tag)
-			int revUrlOffset = msgText.findRev( fullUrl );
+			int revUrlOffset = msgText.lastIndexOf( fullUrl );
 			msgText.replace( revUrlOffset,
 						fullUrl.length(), shorterUrl );
 		}
