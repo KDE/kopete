@@ -182,7 +182,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Maximum simiultaneous users allowed in the chatroom</string>
+                        <string>Maximum simultaneous users allowed in the chatroom</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="4" column="0">

@@ -477,7 +477,7 @@ void dlgJabberVCard::slotSelectPhoto()
 	{
 		if( !KIO::NetAccess::download( filePath, path, this ) ) 
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed!" ) );
 			return;
 		}
 		remoteFile = true;
