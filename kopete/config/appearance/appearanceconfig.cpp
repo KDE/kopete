@@ -102,13 +102,13 @@ public:
 	{}
 
 	QTabWidget *mAppearanceTabCtl;
-	
+
 	ChatMessagePart *preview;
 	AppearanceConfig_Emoticons *mPrfsEmoticons;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
 	AppearanceConfig_Colors *mPrfsColors;
 	AppearanceConfig_ContactList *mPrfsContactList;
-	
+
 	// value is the style path
 	QMap<QListBoxItem*,QString> styleItemMap;
 	ChatWindowStyle::StyleVariants currentVariantMap;
@@ -152,12 +152,12 @@ public:
 			}
 			case ChatWindowStyleManager::StyleCannotOpen:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 				break;
 			}
 			case ChatWindowStyleManager::StyleNoDirectoryValid:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
 				break;
 			}
 			case ChatWindowStyleManager::StyleNotValid:
@@ -165,7 +165,7 @@ public:
 				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
 				break;
 			}
-				
+
 			case ChatWindowStyleManager::StyleUnknow:
 			default:
 			{
@@ -418,7 +418,7 @@ void AppearanceConfig::load()
 	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
 	slotLoadChatStyles();
-	
+
 	// "Contact List" TAB =======================================================
 	d->mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
 	d->mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
@@ -434,7 +434,7 @@ void AppearanceConfig::load()
 	d->mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
 	d->mPrfsContactList->mIconMode->setChecked( p->contactListIconMode() == KopetePrefs::PhotoPic);
 
-            
+
 	d->mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
 #ifdef HAVE_XRENDER
 	d->mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() );
@@ -570,15 +570,15 @@ void AppearanceConfig::slotChatStyleSelected()
 	// Retrieve variant list.
 	QString stylePath = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
 	d->currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
-	
+
 	if(d->currentStyle)
 	{
 		d->currentVariantMap = d->currentStyle->getVariants();
 		kdDebug(14000) << k_funcinfo << "Loading style: " << d->currentStyle->getStylePath() << endl;
-	
+
 		// Update the variant list based on current style.
 		d->mPrfsChatWindow->variantList->clear();
-	
+
 		// Add the no variant item to the list
 		// TODO: Use default name variant from Info.plist
 		// TODO: Select default variant from Info.plist
@@ -590,20 +590,20 @@ void AppearanceConfig::slotChatStyleSelected()
 		{
 			// Insert variant name into the combobox.
 			d->mPrfsChatWindow->variantList->insertItem( it.key() );
-	
+
 			if( it.data() == KopetePrefs::prefs()->styleVariant() )
 				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex+1);
-	
+
 			currentIndex++;
 		}
-		
+
 		// Update the preview
 		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
 		if( !d->currentVariantMap.empty() )
 			d->preview->setStyleVariant(d->currentVariantMap[0]);
-	
+
 		emitChanged();
 	}
 }
@@ -633,7 +633,7 @@ void AppearanceConfig::slotInstallChatStyle()
 			{
 				case ChatWindowStyleManager::StyleCannotOpen:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleNoDirectoryValid:
@@ -656,7 +656,7 @@ void AppearanceConfig::slotInstallChatStyle()
 					break;
 				}
 			}
-			
+
 			// removeTempFile check if the file is a temp file, so it's ok for local files.
 			KIO::NetAccess::removeTempFile( stylePath );
 		}
@@ -670,7 +670,7 @@ void AppearanceConfig::slotDeleteChatStyle()
 	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
 	{
 		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleName));
-		
+
 		// Get the first item in the stye List.
 		QString stylePath = (*d->styleItemMap.begin());
 		d->currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
@@ -750,7 +750,7 @@ void AppearanceConfig::createPreviewChatSession()
 	contactList.append(d->jack);
 	// Create fakeChatSession
 	d->previewChatSession = Kopete::ChatSessionManager::self()->create(d->myself, contactList, 0);
-	d->previewChatSession->setDisplayName("Preview Session");	
+	d->previewChatSession->setDisplayName("Preview Session");
 }
 
 void AppearanceConfig::createPreviewMessages()
@@ -760,7 +760,7 @@ void AppearanceConfig::createPreviewMessages()
 
 	Kopete::Message msgOut( d->myself, d->jack, i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
 	Kopete::Message msgOut2( d->myself, d->jack, i18n( "Ok, a outgoing consecutive message." ), Kopete::Message::Outbound );
- 
+
 	Kopete::Message msgCol( d->jack, d->myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
 	msgCol.setFg( QColor( "DodgerBlue" ) );
 	msgCol.setBg( QColor( "LightSteelBlue" ) );
@@ -855,12 +855,12 @@ void AppearanceConfig::slotGetEmoticonThemes()
 	config->writeEntry( "Uncompress", "application/x-gzip" );
 	config->sync();
 
-#if ( KDE_IS_VERSION(3,3,90) )	
+#if ( KDE_IS_VERSION(3,3,90) )
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
 #else
 	KNS::DownloadDialog::open( i18n( "Get New Emoticons" ) );
 #endif
-	
+
 	updateEmoticonlist();
 }
 
