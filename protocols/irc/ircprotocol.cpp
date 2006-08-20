@@ -891,7 +891,9 @@ void IRCProtocol::slotUpdateNetworkHostConfig()
 		{
 			netConf->host->setText( host->host );
 			netConf->password->setText( host->password );
+			disconnect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
 			netConf->port->setValue( host->port );
+			connect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
 			netConf->useSSL->setChecked( host->ssl );
 
 			netConf->upButton->setEnabled( netConf->hostList->currentItem() > 0 );
