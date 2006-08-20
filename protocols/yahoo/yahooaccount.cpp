@@ -1363,7 +1363,7 @@ void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QSt
 	if( !m_pendingFileTransfers.contains( transfer->info().internalId() ) )
 		return;
 	
-	m_pendingFileTransfers.remove( transfer->info().internalId() );
+	m_pendingFileTransfers.removeAll( transfer->info().internalId() );
 	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );	
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
 	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
@@ -1382,7 +1382,7 @@ void YahooAccount::slotReceiveFileRefused( const Kopete::FileTransferInfo& info 
 	if( !m_pendingFileTransfers.contains( info.internalId() ) )
 		return;
 	
-	m_pendingFileTransfers.remove( info.internalId() );
+	m_pendingFileTransfers.removeAll( info.internalId() );
 	m_session->rejectFile( info.contact()->contactId(), info.internalId() );
 	
 	if( m_pendingFileTransfers.empty() )
@@ -1396,7 +1396,7 @@ void YahooAccount::slotReceiveFileRefused( const Kopete::FileTransferInfo& info 
 
 void YahooAccount::slotFileTransferBytesProcessed( unsigned int transferId, unsigned int bytes )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Transfer: " << transferId << " Bytes:" << bytes << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Transfer: " << transferId << " Bytes:" << bytes << endl;
 	Kopete::Transfer *t = m_fileTransfers[transferId];
 	if( !t )
 		return;
@@ -1512,7 +1512,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
 							.arg(who), QString::null, i18n("Accept"), i18n("Ignore") ) )
 	{
-		m_pendingWebcamInvites.remove( who );
+		m_pendingWebcamInvites.removeAll( who );
 		m_session->requestWebcam( who );
 	}
 }
