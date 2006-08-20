@@ -20,3 +20,4 @@ libkyahoo_la_LIBADD = $(LIB_QT)
 
 noinst_HEADERS = logintask.h yabentry.h yabtask.h modifyyabtask.h \
 	chatsessiontask.h
+KDE_OPTIONS = nofinal
