@@ -1203,7 +1203,8 @@ void IRCProtocol::slotMoveServerUp()
 	if( currentPos > 0 )
 	{
 		netConf->hostList->removeItem( currentPos );
-		netConf->hostList->insertItem( selectedHost->host, --currentPos );
+		QString entryText = selectedHost->host + QString::fromLatin1(":") + QString::number( selectedHost->port );
+		netConf->hostList->insertItem( entryText, --currentPos );
 		netConf->hostList->setSelected( currentPos, true );
 	}
 }
@@ -1227,7 +1228,8 @@ void IRCProtocol::slotMoveServerDown()
 	if( currentPos < ( netConf->hostList->count() - 1 ) )
 	{
 		netConf->hostList->removeItem( currentPos );
-		netConf->hostList->insertItem( selectedHost->host, ++currentPos );
+		QString entryText = selectedHost->host + QString::fromLatin1(":") + QString::number( selectedHost->port );
+		netConf->hostList->insertItem( entryText, ++currentPos );
 		netConf->hostList->setSelected( currentPos, true );
 	}
 }
