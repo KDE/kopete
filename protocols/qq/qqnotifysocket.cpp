@@ -1,6 +1,6 @@
 /*
     qqnotifysocket.cpp - Notify Socket for the QQ Protocol
-    forked from qqnotifysocket.cpp
+    forked from msnnotifysocket.cpp
     
     Copyright (c) 2006      by Hui Jin <blueangel.jin@gmail.com>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -24,34 +24,14 @@
     *************************************************************************
 */
 
-#include "qqnotifysocket.h"
-#include "qqcontact.h"
-#include "qqaccount.h"
-
-#include <QDateTime>
-#include <QRegExp>
-#include <qdom.h>
-#include <QTextStream>
-
 #include <kdebug.h>
-#include <kdeversion.h>
-#include <klocale.h>
-#include <kcodecs.h>
-#include <kmessagebox.h>
-#include <kstandarddirs.h>
-#include <ktempfile.h>
-#include <krun.h>
-#include <kio/job.h>
-#include <qfile.h>
-#include <kconfig.h>
-#include <knotification.h>
 #include <QHostAddress>
 
-#include "kopeteuiglobal.h"
-#include "kopeteglobal.h"
 #include "kopetestatusmessage.h"
 #include "libeva.h"
 
+#include "qqnotifysocket.h"
+#include "qqaccount.h"
 
 QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
