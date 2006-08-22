@@ -25,8 +25,8 @@ namespace Eva {
 		return doMd5( doMd5( text ) );
 	}
 
-	inline void encrypt64( unsigned char* plain, unsigned char* plain_pre, 
-			unsigned char* key, unsigned char* crypted, unsigned char* crypted_pre, 
+	inline void encrypt64( uchar* plain, uchar* plain_pre, 
+			uchar* key, uchar* crypted, uchar* crypted_pre, 
 			bool& isHeader )
 	{
 		int i;
@@ -34,8 +34,7 @@ namespace Eva {
 		for( i = 0; i< 8; i++ )
 			plain[i] ^= isHeader ? plain_pre[i] : crypted_pre[i];
 
-		TEA::encipher( (unsigned int*) plain, (unsigned int*) key, 
-				(unsigned int*) crypted );
+		TEA::encipher( (uint*) plain, (uint*) key, (uint*) crypted );
 
 		for( i = 0; i< 8; i++ )
 			crypted[i] ^= plain_pre[i];
@@ -46,25 +45,20 @@ namespace Eva {
 		isHeader = false;
 	}
 
-	inline void decrypt64( unsigned char* crypt, unsigned char* crypt_pre, 
-			unsigned char* key, unsigned char* decrypted)
+	inline void decrypt64( uchar* crypt, uchar* crypt_pre, 
+			uchar* key, uchar* decrypted)
 	{
 		for( int i = 0; i< 8; i++ )
 			decrypted[i] ^= crypt[i];
 
-		TEA::decipher( (unsigned int*) decrypted,
-				(unsigned int*) key, (unsigned int*) decrypted );
-		/*
-		fprintf( stderr, "decrypt64 : " );
-		for( int i = 0; i< 8; i++ )
-			fprintf( stderr, "%x ", decrypted[i] );
-		fprintf( stderr, "\n" );
-		*/
+		TEA::decipher( (uint*) decrypted,
+				(uint*) key, (uint*) decrypted );
 	}
+
 	ByteArray encrypt( const ByteArray& text, const ByteArray& key )
 	{
 
-		unsigned char 
+		uchar 
 			plain[8],         /* plain text buffer*/
 			plain_pre[8],   /* plain text buffer, previous 8 bytes*/
 			crypted[8],        /* crypted text*/
@@ -92,9 +86,9 @@ namespace Eva {
 
 			if( pos == 8 )
 			{
-				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
+				encrypt64( plain, plain_pre, (uchar*)key.data(), crypted, crypted_pre, isHeader );
 				pos = 0;
-				encoded.append( (char*)crypted, 8 );
+				encoded.append( (uchar*)crypted, 8 );
 			}
 		}
 
@@ -105,9 +99,9 @@ namespace Eva {
 
 			if( pos == 8 )
 			{
-				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
+				encrypt64( plain, plain_pre, (uchar*)key.data(), crypted, crypted_pre, isHeader );
 				pos = 0;
-				encoded.append( (char*)crypted, 8 );
+				encoded.append( (uchar*)crypted, 8 );
 			}
 		}
 
@@ -118,8 +112,8 @@ namespace Eva {
 
 			if( pos == 8 )
 			{
-				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
-				encoded.append( (char*)crypted, 8 );
+				encrypt64( plain, plain_pre, (uchar*)key.data(), crypted, crypted_pre, isHeader );
+				encoded.append( (uchar*)crypted, 8 );
 				break;
 			}
 		}
@@ -129,18 +123,16 @@ namespace Eva {
 
 	ByteArray decrypt( const ByteArray& code, const ByteArray& key )
 	{
-		unsigned char
+		uchar
 			decrypted[8], m[8],
 			*crypt_pre, *crypt;
-		char* outp;
-		
 		int pos, len, i;
 
 		if( code.size() < 16 || code.size() % 8 )
 			return ByteArray(0);
 
-		TEA::decipher( (unsigned int*) code.data(), 
-				(unsigned int*) key.data(), (unsigned int*) decrypted );
+		TEA::decipher( (uint*) code.data(), 
+				(uint*) key.data(), (uint*) decrypted );
 		pos = decrypted[0] & 0x7;
 		len = code.size() - pos - 10;
 		if( len < 0 )
@@ -148,7 +140,7 @@ namespace Eva {
 
 		ByteArray text(len);
 		memset( m, 0, 8 );
-		crypt = (unsigned char*)code.data() + 8;
+		crypt = (uchar*)code.data() + 8;
 		crypt_pre = m;
 		pos ++;
 
@@ -161,8 +153,8 @@ namespace Eva {
 			}
 			if( pos == 8 )
 			{
-				crypt_pre = (unsigned char*) code.data();
-				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), 
+				crypt_pre = (uchar*) code.data();
+				decrypt64( crypt, crypt_pre, (uchar*) key.data(), 
 						decrypted ); 
 				crypt += 8;
 				pos = 0;
@@ -179,7 +171,7 @@ namespace Eva {
 			if( pos == 8 )
 			{
 				crypt_pre = crypt - 8;
-				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted );
+				decrypt64( crypt, crypt_pre, (uchar*) key.data(), decrypted );
 				crypt += 8;
 				pos = 0;
 			}
@@ -196,7 +188,7 @@ namespace Eva {
 			if( pos == 8 )
 			{
 				crypt_pre = crypt;
-				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted );
+				decrypt64( crypt, crypt_pre, (uchar*) key.data(), decrypted );
 				break;
 			}
 				

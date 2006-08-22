@@ -105,10 +105,10 @@ namespace Eva {
 
 	// POD storage
 	struct ContactInfo {
-		int id;
-		short face;
-		char age;
-		char gender;
+		uint id;
+		ushort face;
+		uchar age;
+		uchar gender;
 		std::string nick;
 	};
 
@@ -131,12 +131,17 @@ namespace Eva {
     {
     public:
         ByteArray( int capacity=0 ) : m_itsOwn(capacity>0), m_capacity(capacity), 
-                                       m_size(0), m_data((char*) malloc(capacity))
+                                       m_size(0), m_data((uchar*) malloc(capacity))
 		{ }
-        ByteArray( char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+        ByteArray( uchar* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
                                        m_size(size), m_data(p)
 		{ }
+
+        ByteArray( const char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+                                       m_size(size), m_data((uchar*)p)
+		{ }
         
+
         ~ByteArray() { if( m_itsOwn ) free(m_data); }
         
         ByteArray( const ByteArray& r ) : m_itsOwn(r.m_itsOwn), m_capacity(r.capacity()), 
@@ -163,13 +168,13 @@ namespace Eva {
             return *this;
         }
 
-        char* release() const
+        uchar* release() const
         {
             (const_cast<ByteArray* >(this))->m_itsOwn = false;
             return m_data;
         }
 
-        void copyAt( int index, const char* buf, int length )
+        void copyAt( int index, const uchar* buf, int length )
         {
             // FIXME: use CONFIG to throw exception if possible
 			if( index+length > m_capacity )
@@ -180,7 +185,7 @@ namespace Eva {
 
         template<class T> void copyAt(int index, T d)
         {
-            copyAt( index, (const char*)&d, sizeof(d) );
+            copyAt( index, (const uchar*)&d, sizeof(d) );
         }
 
         template<class T> void operator+= (T d)
@@ -193,28 +198,35 @@ namespace Eva {
             copyAt(m_size, d.data(), d.size());
         }
 
-		void append( const char* d, int s )
+		void append( const uchar* d, int s )
 		{
 			copyAt( m_size, d, s );
 		}
 
-		static ByteArray duplicate( const char* d, int s )
+		static ByteArray duplicate( const uchar* d, int s )
 		{
 			ByteArray x(s);
 			x.append( d, s );
 			return x;
 		}
+		
+		static ByteArray duplicate( const char* d, int s )
+		{
+			return duplicate( (const uchar*)d, s );
+		}
+
 
         int size() const { return m_size; }
 		void setSize( int size ) { if( size<= m_capacity ) m_size = size; }
         int capacity() const { return m_capacity; }
-        char* data() const { return m_data; }
+        uchar* data() const { return m_data; }
+        char* c_str() const { return (char*)m_data; }
 
     private:
         bool m_itsOwn;
         int m_capacity;
         int m_size;
-        char* m_data;
+        uchar* m_data;
 
     };
 
@@ -226,11 +238,15 @@ namespace Eva {
         return sum;
     }
    
-	template<class T> inline T type_cast(char* buffer)
+	template<class T> inline T type_cast( const uchar* buffer)
 	{
 		return (* ((T*) buffer) );
 	}
 	
+	template<class T> inline T type_cast( const char* buffer)
+	{
+		return (* ((T*) buffer) );
+	}
 	struct ContactStatus
 	{
 		int qqId;
@@ -238,7 +254,7 @@ namespace Eva {
 		short port;
 		char status;
 
-		ContactStatus( char* data ) :
+		ContactStatus( uchar* data ) :
 			qqId( ntohl( type_cast<int> (data )) ), 
 			ip( ntohl( type_cast<int> (data+5 )) ), 
 			port( ntohs( type_cast<short> (data+9 )) ), 
@@ -266,24 +282,24 @@ namespace Eva {
 	struct MessageHeader
 	{
 	// pack me !
-		short version;
-		int sender;
-		int receiver;
+		ushort version;
+		uint sender;
+		uint receiver;
 		ByteArray transferKey;
-		short type;
-		short sequence;
-		int timestamp;
-		short avatar;
+		ushort type;
+		ushort sequence;
+		uint timestamp;
+		ushort avatar;
 
 		MessageHeader( const ByteArray& text ) :
-			version( ntohs( type_cast<short>(text.data())) ),
-			sender( ntohl( type_cast<int>(text.data()+2)) ),
-			receiver( ntohl( type_cast<int>(text.data() + 6 )) ),
+			version( ntohs( type_cast<ushort>(text.data())) ),
+			sender( ntohl( type_cast<uint>(text.data()+2)) ),
+			receiver( ntohl( type_cast<uint>(text.data() + 6 )) ),
 			transferKey( text.data()+10, 16),
-			type( ntohs( type_cast<short>( text.data() + 26)) ),
-			sequence( ntohs( type_cast<short>( text.data() + 28)) ),
-			timestamp( ntohl( type_cast<int>( text.data() + 30)) ),
-			avatar( ntohs( type_cast<short>( text.data() + 34)) ) {};
+			type( ntohs( type_cast<ushort>( text.data() + 26)) ),
+			sequence( ntohs( type_cast<ushort>( text.data() + 28)) ),
+			timestamp( ntohl( type_cast<uint>( text.data() + 30)) ),
+			avatar( ntohs( type_cast<ushort>( text.data() + 34)) ) {};
 	};
 
 	/** 
@@ -297,32 +313,32 @@ namespace Eva {
 			// FIXME: TCP packet.
 			// FIXME: Add error handling
 			int pos = 3;
-			m_version = ntohs( *((short*)(buffer+pos)) );
+			m_version = ntohs( type_cast<ushort>(buffer+pos) );
 			pos += 2;
 
-			m_command = ntohs( *((short*)(buffer+pos)) );
+			m_command = ntohs( type_cast<ushort>(buffer+pos) );
 			pos += 2;
 
-			m_sequence = ntohs( *((short*)(buffer+pos)) );
+			m_sequence = ntohs( type_cast<ushort>(buffer+pos) );
 			pos += 2;
 
 			int len = size - pos - 1; // 1 is tail
 			m_body = ByteArray::duplicate( buffer+pos, len );
 		}
 
-		short version() const { return m_version; }
-		short command() const { return m_command; }
-		short sequence() const { return m_sequence; }
+		ushort version() const { return m_version; }
+		ushort command() const { return m_command; }
+		ushort sequence() const { return m_sequence; }
 		ByteArray& body() { return m_body; }
 
 		// FIXME: Add const to data.
-		static inline char replyCode( ByteArray& data ) { return data.data()[0]; }
+		static inline uchar replyCode( ByteArray& data ) { return data.data()[0]; }
 
-		static inline int redirectedIP( ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+5) ); }
+		static inline uint redirectedIP( ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+5) ); }
 
-		static inline int redirectedPort( ByteArray& data ) 
-		{ return ntohs( type_cast<short> (data.data()+9) ); }
+		static inline ushort redirectedPort( ByteArray& data ) 
+		{ return ntohs( type_cast<ushort> (data.data()+9) ); }
 
 		static inline ByteArray sessionKey( ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+1, KeyLength ); }
@@ -333,43 +349,44 @@ namespace Eva {
 		static inline ByteArray replyKey( ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data(), KeyLength ); }
 
+		//TODO: Do we break this?
 		static inline ByteArray transferToken( ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+2+KeyLength+13, (unsigned)(data.data()[2+KeyLength+12]) ); }
 
-		static inline int remoteIP( ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+27) ); }
+		static inline uint remoteIP( ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+27) ); }
 
-		static inline int remotePort( ByteArray& data ) 
-		{ return ntohs( type_cast<short> (data.data()+31) ); }
+		static inline ushort remotePort( ByteArray& data ) 
+		{ return ntohs( type_cast<ushort> (data.data()+31) ); }
 
-		static inline int localIP( ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+21) ); }
+		static inline uint localIP( ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+21) ); }
 
-		static inline int localPort( ByteArray& data ) 
-		{ return ntohs( type_cast<short> (data.data()+25) ); }
+		static inline ushort localPort( ByteArray& data ) 
+		{ return ntohs( type_cast<ushort> (data.data()+25) ); }
 
-		static inline int loginTime( ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+33) ); }
+		static inline uint loginTime( ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+33) ); }
 
-		static inline int lastLoginFrom( ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+123) ); }
+		static inline uint lastLoginFrom( ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+123) ); }
 
-		static inline int lastLoginTime( ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+127) ); }
+		static inline uint lastLoginTime( ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+127) ); }
 
-		static inline int nextGroupId( const ByteArray& data ) 
-		{ return ntohl( type_cast<int> (data.data()+6) ); }
+		static inline uint nextGroupId( const ByteArray& data ) 
+		{ return ntohl( type_cast<uint> (data.data()+6) ); }
 
 		static std::list< std::string > groupNames(const ByteArray& text );
 		// FIXME: use list as others
 		ContactInfo contactInfo( char* buffer, int& len );
 		static std::list< CGT > cgts( const ByteArray& text );
-		static std::list< ContactStatus > onlineContacts( const ByteArray& text, char& pos );
+		static std::list< ContactStatus > onlineContacts( const ByteArray& text, uchar& pos );
 
 	private:
-		short m_version;
-		short m_command;
-		short m_sequence;
+		ushort m_version;
+		ushort m_command;
+		ushort m_sequence;
 		ByteArray m_body;
 	};
 
@@ -387,13 +404,13 @@ namespace Eva {
 	ByteArray textMessage( int id, short const sequence, ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
 	ByteArray messageReply(int id, short const sequence, ByteArray& key, const ByteArray& text );
 	ByteArray heartbeat(int id, short const sequence, ByteArray& key );
-	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, char pos );
+	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, uchar pos );
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
 	ByteArray QQHash( const ByteArray& text );
 	ByteArray decrypt( const ByteArray& code, const ByteArray& key );
-	const char* getInitKey();
+	const uchar* getInitKey();
 	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
 
 

@@ -6,17 +6,17 @@
 #include <time.h>
 
 namespace Eva {
-	static const char login_16_51 [] = {
+	static const uchar login_16_51 [] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x29, 0xc0, 0xf8, 0xc4, 0xbe, 
 		0x3b, 0xee, 0x57, 0x92, 0xd2, 0x42, 0xa6, 0xbe, 
 		0x41, 0x98, 0x97, 0xb4 };
-	static const char login_53_68 []= {
+	static const uchar login_53_68 []= {
 		0xce, 0x11, 0xd5, 0xd9, 0x97, 0x46, 0xac, 0x41, 
 		0xa5, 0x01, 0xb2, 0xf5, 0xe9, 0x62, 0x8e, 0x07 };
 
-	static const char login_94_193 []= {
+	static const uchar login_94_193 []= {
 		0x01, 0x40, 0x01, 0xb6, 0xfb, 0x54, 0x6e, 0x00, 
 		0x10, 0x33, 0x11, 0xa3, 0xab, 0x86, 0x86, 0xff,
 		0x5b, 0x90, 0x5c, 0x74, 0x5d, 0xf1, 0x47, 0xbf,
@@ -30,11 +30,11 @@ namespace Eva {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00 };
-	const char init_key[] = {
+	const uchar init_key[] = {
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
 
-	const char* getInitKey() 
+	const uchar* getInitKey() 
 	{
 		return init_key;
 	}
@@ -166,7 +166,7 @@ namespace Eva {
 		int offset = 7;
 		while( offset < text.size() )
 		{
-			std::string name( text.data() + offset );
+			std::string name( text.c_str() + offset );
 			list.push_back( name );
 			offset += 17;
 		}
@@ -187,7 +187,7 @@ namespace Eva {
 		return list;
 	}
 
-	std::list< ContactStatus > Packet::onlineContacts( const ByteArray& text, char& pos )
+	std::list< ContactStatus > Packet::onlineContacts( const ByteArray& text, uchar& pos )
 	{
 		int offset = 1;
 		std::list< ContactStatus > list;
@@ -275,8 +275,8 @@ namespace Eva {
 	ByteArray userInfo( int id, short const sequence, ByteArray& key, int qqId )
 	{
 		ByteArray text(20);
-		snprintf( text.data(), 19, "%d", qqId );
-		text.setSize( strlen( text.data() ) );
+		snprintf( text.c_str(), 19, "%d", qqId );
+		text.setSize( strlen( text.c_str() ) );
 		return buildPacket(id, UserInfo, sequence, key, text );
 	}
 
@@ -323,14 +323,14 @@ namespace Eva {
 		return buildPacket(id, Heartbeat, sequence, key, text );
 	}
 
-	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, char pos )
+	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, uchar pos )
 	{
 		ByteArray text(5);
-		text += char(0x02);
+		text += uchar(0x02);
 		text += pos;
-		text += char(0x00);
-		text += char(0x00);
-		text += char(0x00);
+		text += uchar(0x00);
+		text += uchar(0x00);
+		text += uchar(0x00);
 		return buildPacket(id, ContactsOnline, sequence, key, text );
 	}
 		

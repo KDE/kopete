@@ -471,7 +471,7 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 {
 	QString from = QString::number(header.sender);
 	QString to = QString::number(header.receiver);
-	QString msg ( QByteArray(message.data(), message.size()) );
+	QString msg ( QByteArray(message.c_str(), message.size()) );
 	QDateTime timestamp;
 	timestamp.setTime_t(header.timestamp);
 
