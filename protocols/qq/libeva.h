@@ -332,7 +332,8 @@ namespace Eva {
 		ByteArray& body() { return m_body; }
 
 		// FIXME: Add const to data.
-		static inline uchar replyCode( ByteArray& data ) { return data.data()[0]; }
+		static inline uchar replyCode( ByteArray& data ) 
+		{ return data.data()[0]; }
 
 		static inline uint redirectedIP( ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+5) ); }
