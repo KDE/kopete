@@ -50,6 +50,7 @@
 
 #include "qqnotifysocket.h"
 #include "qqaccount.h"
+#include "qqprotocol.h"
 #include "qqchatsession.h"
 
 QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )

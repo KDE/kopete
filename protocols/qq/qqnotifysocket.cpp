@@ -37,8 +37,6 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
 {
 	m_account = account;
-	// FIXME: Do we really need password ?
-	m_password = password;
 	m_newstatus = Kopete::OnlineStatus::Offline;
 	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
 	m_passwordKey = Eva::QQHash(pwd);
@@ -112,10 +110,10 @@ void QQNotifySocket::handleError( uint code, uint id )
 }
 
 // Core functions
-void QQNotifySocket::parsePacket( const QByteArray& rawdata )
+void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 {
-	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
-	Eva::Packet packet( rawdata.data(), rawdata.size() );
+	kDebug( 14140 ) << k_funcinfo << rawData << endl;
+	Eva::Packet packet( rawData.data(), rawData.size() );
 	Eva::ByteArray text;
 	int len;
 

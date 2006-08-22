@@ -1,6 +1,6 @@
 /*
     qqnotifysocket.h - Notify Socket for the QQ Protocol
-    forked from qqnotifysocket.h
+    forked from msnnotifysocket.h
 
     Copyright (c) 2006      by Hui Jin <blueangel.jin@gmail.com>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -28,19 +28,16 @@
 #define QQNOTIFYSOCKET_H
 
 #include "qqsocket.h"
-#include "qqprotocol.h"
 #include "libeva.h"
 
 
 class QQAccount;
-class KTempFile;
-
 
 /**
  * @author Hui Jin
  * 
- * QQNotifySocket is inspried by MSNNotifySocket, the QQ incoming packets are
- * parsed here.
+ * QQNotifySocket is forked from MSNNotifySocket, it parse the incoming QQ packets,
+ * emit signals and drive the state machine.
  */
 class QQNotifySocket : public QQSocket
 {
@@ -57,8 +54,6 @@ public:
 	 */
 	int  disconnectReason() { return m_disconnectReason; }
 
-	QString localIP() { return m_localIP; }
-
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 	void newContactList();
@@ -72,7 +67,7 @@ protected:
 	/**
 	 * Handle an QQ incoming packet.
 	 */
-	virtual void parsePacket( const QByteArray& data );
+	virtual void handleIncomingPacket( const QByteArray& rawData );
 
 	/**
 	 * Handle an QQ error condition.
@@ -111,24 +106,30 @@ private:
 
 private:
 	QQAccount *m_account;
+
+	/** 
+	 * The QQ ID associated with m_account for the sake of convenience.
+	 */
+	uint m_qqId;
+
 	/**
 	 * stores the expected status
 	 * would synchronize when ChangeStatus packet recieved.
 	 */
 	Kopete::OnlineStatus m_newstatus; 
 	
-	uint m_qqId;
 	/** 
-	 * stores the token requested from the server
+	 * stores the login token requested from the server
 	 */
 	Eva::ByteArray m_token;
+
 	/**
 	 * Twice Md5 hashed password
 	 */
 	Eva::ByteArray m_passwordKey;
 
 	/**
-	 * sessionKey is used to encrypt the conversation
+	 * sessionKey is used to encrypt/decrypt the conversation
 	 */
 	Eva::ByteArray m_sessionKey;
 
@@ -137,24 +138,11 @@ private:
 	 * transferToken is used to fetch the user picture 
 	 */
 	Eva::ByteArray m_transferKey;
+	// FIXME: Rename me!
 	Eva::ByteArray m_transferToken;
 
 	char m_loginMode;
-	// FIXME: Do we need this ?
-	QString m_password;
-
 	int m_disconnectReason;
-
-
-	/**
-	 * Convert an entry of the Status enum back to a string
-	 */
-	QString statusToString( const Kopete::OnlineStatus &status ) const;
-
-
-	//know the last handle used
-	QString m_configFile;
-	QString m_localIP;
 
 	// heartbeat timer
 	QTimer* m_heartbeat;

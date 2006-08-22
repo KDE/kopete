@@ -215,7 +215,7 @@ void QQSocket::slotDataReceived()
 
 		// FIXME: do we need a incoming message pool right now ?
 
-		parsePacket(buf);
+		handleIncomingPacket(buf);
 	}
 
 	// Cleanup.
