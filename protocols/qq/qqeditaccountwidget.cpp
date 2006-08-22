@@ -97,8 +97,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 		
 		QQContact *myself = static_cast<QQContact *>( account->myself() );
 
-		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
-		d->ui->m_phw->setText( config->readEntry("PHW") );
+		d->ui->m_nickName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
 		d->ui->m_phm->setText( config->readEntry("PHM") );
 		d->ui->m_phh->setText( config->readEntry("PHH") );
 
@@ -108,8 +107,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 			d->ui->m_warning_1->hide();
 			d->ui->m_warning_2->hide();
 		}
-		d->ui->m_phones->setEnabled( connected );
-		d->ui->m_displayName->setEnabled( connected );
+		d->ui->m_nickName->setEnabled( connected );
 		d->ui->m_allowButton->setEnabled( connected );
 		d->ui->m_blockButton->setEnabled( connected );
 
@@ -141,14 +139,9 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 	else
 	{
 		d->ui->tab_contacts->setDisabled( true );
-		d->ui->m_displayName->setDisabled( true );
-		d->ui->m_phones->setDisabled( true );
+		d->ui->m_nickName->setDisabled( true );
 	}
 
-	connect( d->ui->m_allowButton, SIGNAL( clicked() ), this, SLOT( slotAllow() ) );
-	connect( d->ui->m_blockButton, SIGNAL( clicked() ), this, SLOT( slotBlock() ) );
-	connect( d->ui->m_selectImage, SIGNAL( clicked() ), this, SLOT( slotSelectImage() ) );
-	connect( d->ui->m_RLButton, SIGNAL( clicked() ), this, SLOT( slotShowReverseList() ) );
 	connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 	QWidget::setTabOrder( d->ui->m_login, d->ui->m_password->mRemembered );
 	QWidget::setTabOrder( d->ui->m_password->mRemembered, d->ui->m_password->mPassword );
@@ -176,8 +169,8 @@ Kopete::Account * QQEditAccountWidget::apply()
 		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
 	}
 	else {
-		config->writeEntry( "serverName", "messenger.hotmail.com" );
-		config->writeEntry( "serverPort", "1863" );
+		config->writeEntry( "serverName", "tcpconn.tencent.com" );
+		config->writeEntry( "serverPort", "80" );
 	}
 
 	config->writeEntry( "useHttpMethod", d->ui->optionUseHttpMethod->isChecked() );
@@ -207,7 +200,7 @@ Kopete::Account * QQEditAccountWidget::apply()
 	{
 		QQContact *myself = static_cast<QQContact *>( account()->myself() );
 		QQNotifySocket *notify = static_cast<QQAccount *>( account() )->notifySocket();
-		if ( d->ui->m_displayName->text() != myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
+		if ( d->ui->m_nickName->text() != myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
 		;
 			// static_cast<QQAccount *>( account() )->setPublicName( d->ui->m_displayName->text() );
 
