@@ -42,7 +42,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex" >
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab_connection" >
     <attribute name="title" >
@@ -737,7 +737,18 @@ Only works for emoticons in the PNG format.</string>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="Gender" />
+             <widget class="QComboBox" name="Gender" >
+              <item>
+               <property name="text" >
+                <string>Male</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Female</string>
+               </property>
+              </item>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_3" >

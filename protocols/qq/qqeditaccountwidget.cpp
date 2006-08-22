@@ -93,8 +93,6 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
-		// d->ui->optionUseHttpMethod->setChecked( static_cast<QQAccount*>(account)->useHttpMethod() );
-		
 		QQContact *myself = static_cast<QQContact *>( account->myself() );
 
 		d->ui->m_nickName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
@@ -117,7 +115,6 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 
 		QStringList blockList = config->readEntry( "blockList", QStringList() );
 		QStringList allowList = config->readEntry( "allowList", QStringList() );
-		//QStringList reverseList =  config->readListEntry("reverseList" );
 
 		for ( QStringList::Iterator it = blockList.begin(); it != blockList.end(); ++it )
 			d->ui->m_BL->insertItem( *it );

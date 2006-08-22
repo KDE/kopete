@@ -372,6 +372,7 @@ namespace Eva {
 	ByteArray login( int id, short const sequence, const ByteArray& key, 
 			const ByteArray& token, char const loginMode );
 	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status );
+	ByteArray userInfo( int id, short const sequence, ByteArray& key, int qqId );
 	ByteArray requestTransferKey( int id, short const sequence, const ByteArray& key );
 	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos = 0);
 	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );

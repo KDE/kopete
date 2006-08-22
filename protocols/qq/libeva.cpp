@@ -272,6 +272,14 @@ namespace Eva {
 		return buildPacket(id, ChangeStatus, sequence, key, text );
 	}
 
+	ByteArray userInfo( int id, short const sequence, ByteArray& key, int qqId )
+	{
+		ByteArray text(20);
+		snprintf( text.data(), 19, "%d", qqId );
+		text.setSize( strlen( text.data() ) );
+		return buildPacket(id, UserInfo, sequence, key, text );
+	}
+
 	ByteArray getGroupNames( int id, short const sequence, ByteArray& key )
 	{
 		ByteArray text(6);

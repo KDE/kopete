@@ -92,6 +92,7 @@ protected:
 	void sendLogin(); 
 	void sendContactList( short pos );
 	void sendChangeStatus( char status );
+	void sendUserInfo(int qqId);
 	void sendRequestTransferKey();
 	void sendGoodbye() { return; }
 

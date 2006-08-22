@@ -404,6 +404,13 @@ void QQNotifySocket::sendLogin()
 	sendPacket( QByteArray( data.data(), data.size()) );
 }
 
+void QQNotifySocket::sendUserInfo(int qqId)
+{
+	Eva::ByteArray packet = Eva::userInfo( m_qqId, m_id++, m_sessionKey, qqId);
+	sendPacket( QByteArray( packet.data(), packet.size()) );
+}
+	
+
 void QQNotifySocket::sendChangeStatus( char status )
 {
 	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
