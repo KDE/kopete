@@ -377,14 +377,14 @@ void QQNotifySocket::sendLogin()
 	sendPacket( QByteArray( data.c_str(), data.size()) );
 }
 
-void QQNotifySocket::sendUserInfo(int qqId)
+void QQNotifySocket::sendUserInfo(Eva::uint qqId)
 {
 	Eva::ByteArray packet = Eva::userInfo( m_qqId, m_id++, m_sessionKey, qqId);
 	sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
 	
 
-void QQNotifySocket::sendChangeStatus( char status )
+void QQNotifySocket::sendChangeStatus( uchar status )
 {
 	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
 	sendPacket( QByteArray( packet.c_str(), packet.size()) );

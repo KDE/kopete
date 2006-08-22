@@ -40,7 +40,7 @@ namespace Eva {
 	}
 
 
-	ByteArray header( int id, short const command, short const sequence )
+	ByteArray header( uint id, short const command, ushort sequence )
 	{
 		// CODE DEBT: udp does not have the lenght placeholder!
 		ByteArray data(13);
@@ -55,7 +55,7 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray messageHeader( int sender, int receiver, const ByteArray& transferKey, short const type, short const sequence, int const timestamp, short const face = 0 )
+	ByteArray messageHeader( int sender, int receiver, const ByteArray& transferKey, short const type, ushort sequence, int const timestamp, short const face = 0 )
 	{
 		// CODE DEBT: udp does not have the lenght placeholder!
 		ByteArray data(64);
@@ -133,7 +133,7 @@ namespace Eva {
 
 
 	ByteArray encrypt( const ByteArray& text, const ByteArray& key );
-	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text )
+	ByteArray buildPacket( uint id, short const command, ushort sequence, const ByteArray& key, const ByteArray& text )
 	{
 		ByteArray packet(MaxPacketLength);
 		packet += header( id, command, sequence );
@@ -204,7 +204,7 @@ namespace Eva {
 					
 			
 	// Core functions
-	ByteArray requestLoginToken( int id, short const sequence )
+	ByteArray requestLoginToken( uint id, ushort sequence )
 	{
 		ByteArray data(16);
 		data += header(id, RequestLoginToken, sequence);
@@ -215,8 +215,8 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray login( int id, short const sequence, const ByteArray& key, 
-			const ByteArray& token, char const loginMode )
+	ByteArray login( uint id, ushort sequence, const ByteArray& key, 
+			const ByteArray& token, uchar loginMode )
 	{
 		ByteArray login(LoginLength);
 		ByteArray data(MaxPacketLength);
@@ -244,7 +244,7 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray requestTransferKey( int id, short const sequence, const ByteArray& key )
+	ByteArray requestTransferKey( uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(1);
 		text += TransferKey;
@@ -252,7 +252,7 @@ namespace Eva {
 		return buildPacket(id, RequestKey, sequence, key, text );
 	}
 
-	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos )
+	ByteArray contactList( uint id, ushort sequence, const ByteArray& key, short pos )
 	{
 		ByteArray text(5);
 		text += pos;
@@ -264,7 +264,7 @@ namespace Eva {
 		return buildPacket(id, ContactList, sequence, key, text );
 	}
 
-	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status )
+	ByteArray changeStatus( uint id, ushort sequence, const ByteArray& key, char status )
 	{
 		ByteArray text(5);
 		text += status;
@@ -272,7 +272,7 @@ namespace Eva {
 		return buildPacket(id, ChangeStatus, sequence, key, text );
 	}
 
-	ByteArray userInfo( int id, short const sequence, ByteArray& key, int qqId )
+	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId )
 	{
 		ByteArray text(20);
 		snprintf( text.c_str(), 19, "%d", qqId );
@@ -280,7 +280,7 @@ namespace Eva {
 		return buildPacket(id, UserInfo, sequence, key, text );
 	}
 
-	ByteArray getGroupNames( int id, short const sequence, ByteArray& key )
+	ByteArray getGroupNames( uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(6);
 		text += DownloadGroupNames;
@@ -290,7 +290,7 @@ namespace Eva {
 		return buildPacket(id, GroupNames, sequence, key, text );
 	}
 
-	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos )
+	ByteArray downloadGroups( uint id, ushort sequence, const ByteArray& key, int pos )
 	{
 		ByteArray text(10);
 		text += '\1';
@@ -301,7 +301,7 @@ namespace Eva {
 		return buildPacket(id, DownloadGroups, sequence, key, text );
 	}
 
-	ByteArray textMessage( int id, short const sequence, ByteArray& key, 
+	ByteArray textMessage( uint id, ushort sequence, const ByteArray& key, 
 	// Here are the message variables:
 		int toId, const ByteArray& transferKey, ByteArray& message )
 	{
@@ -311,19 +311,19 @@ namespace Eva {
 		return buildPacket(id, SendMsg, sequence, key, text );
 	}
 
-	ByteArray messageReply(int id, short const sequence, ByteArray& key, const ByteArray& text )
+	ByteArray messageReply(uint id, ushort sequence, const ByteArray& key, const ByteArray& text )
 	{
 		return buildPacket(id, ReceiveMsg, sequence, key, text );
 	}
 
-	ByteArray heartbeat(int id, short const sequence, ByteArray& key )
+	ByteArray heartbeat(uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(4);
 		text += id;
 		return buildPacket(id, Heartbeat, sequence, key, text );
 	}
 
-	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, uchar pos )
+	ByteArray onlineContacts(uint id, ushort sequence, const ByteArray& key, uchar pos )
 	{
 		ByteArray text(5);
 		text += uchar(0x02);

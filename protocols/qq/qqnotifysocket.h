@@ -86,8 +86,8 @@ protected:
 	void sendLoginTokenRequest(); 
 	void sendLogin(); 
 	void sendContactList( short pos );
-	void sendChangeStatus( char status );
-	void sendUserInfo(int qqId);
+	void sendChangeStatus( uchar status );
+	void sendUserInfo(Eva::uint qqId);
 	void sendRequestTransferKey();
 	void sendGoodbye() { return; }
 

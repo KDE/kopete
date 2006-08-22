@@ -393,26 +393,26 @@ namespace Eva {
 
 	
 	// Packet operation
-	ByteArray requestLoginToken( int id, short const sequence );
-	ByteArray login( int id, short const sequence, const ByteArray& key, 
-			const ByteArray& token, char const loginMode );
-	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status );
-	ByteArray userInfo( int id, short const sequence, ByteArray& key, int qqId );
-	ByteArray requestTransferKey( int id, short const sequence, const ByteArray& key );
-	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos = 0);
-	ByteArray getGroupNames( int id, short const sequence, ByteArray& key );
-	ByteArray downloadGroups( int id, short const sequence, ByteArray& key, int pos );
-	ByteArray textMessage( int id, short const sequence, ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
-	ByteArray messageReply(int id, short const sequence, ByteArray& key, const ByteArray& text );
-	ByteArray heartbeat(int id, short const sequence, ByteArray& key );
-	ByteArray onlineContacts(int id, short const sequence, const ByteArray& key, uchar pos );
+	ByteArray requestLoginToken( uint id, ushort sequence );
+	ByteArray login( uint id, ushort sequence, const ByteArray& key, 
+			const ByteArray& token, uchar loginMode );
+	ByteArray changeStatus( uint id, ushort sequence, const ByteArray& key, char status );
+	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId );
+	ByteArray requestTransferKey( uint id, ushort sequence, const ByteArray& key );
+	ByteArray contactList( uint id, ushort sequence, const ByteArray& key, short pos = 0);
+	ByteArray getGroupNames( uint id, ushort sequence, const ByteArray& key );
+	ByteArray downloadGroups( uint id, ushort sequence, const ByteArray& key, int pos );
+	ByteArray textMessage( uint id, ushort sequence, const ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
+	ByteArray messageReply(uint id, ushort sequence, const ByteArray& key, const ByteArray& text );
+	ByteArray heartbeat(uint id, ushort sequence, const ByteArray& key );
+	ByteArray onlineContacts(uint id, ushort sequence, const ByteArray& key, uchar pos );
 
 	// Misc.
 	ByteArray loginToken( const ByteArray& buffer );
 	ByteArray QQHash( const ByteArray& text );
 	ByteArray decrypt( const ByteArray& code, const ByteArray& key );
 	const uchar* getInitKey();
-	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text );
+	ByteArray buildPacket( uint id, short const command, ushort sequence, const ByteArray& key, const ByteArray& text );
 
 
 };
