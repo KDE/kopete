@@ -11,12 +11,12 @@ namespace Eva {
 
 	ByteArray doMd5( const ByteArray& text )
 	{
-		ByteArray code( Md5KeyLength );
+		ByteArray code( KeyLength );
 		md5_state_t ctx;
 		md5_init( &ctx );
 		md5_append( &ctx, (md5_byte_t*) text.data(), text.size() );
 		md5_finish( &ctx, (md5_byte_t*)code.data() );
-		code.setSize( Md5KeyLength ); 
+		code.setSize( KeyLength ); 
 		return code;
 	}
 

@@ -9,92 +9,99 @@
 #include <list>
 
 namespace Eva {
-	// magic number used in the packet
-	short const Version = 0x0F15;
-	char const Head = 0x02;
-	char const Tail = 0x03;
+	// NOTICE: the length of the following data declarations are:
+	// uchar : 8bit
+	// ushort: 16bit
+	// uint  : 32bit
+	typedef unsigned char uchar;
+	typedef unsigned short ushort;
+	typedef unsigned int uint;
+
+	// magic number 
+	static const ushort Version = 0x0F15;
+	static const uchar Head = 0x02;
+	static const uchar Tail = 0x03;
 
 	// command
-	short const Logout = 0x0001;
-	short const Heartbeat = 0x0002;
-	short const UpdateInfo = 0x0004;
-	short const Search = 0x0005;
-	short const UserInfo = 0x0006;
-	short const AddFriend = 0x0009;
-	short const RemoveFriend = 0x000A;
-	short const AuthInvite = 0x000B;
-	short const ChangeStatus = 0x000D;
-	short const AckSysMsg = 0x0012;
-	short const SendMsg = 0x0016;
-	short const ReceiveMsg = 0x0017;
-	short const RemoveMe = 0x001C;
-	short const RequestKey = 0x001D;
-	short const GetCell = 0x0021;
-	short const Login = 0x0022;
-	short const ContactList = 0x0026;
-	short const ContactsOnline = 0x0027;
-	short const GetCell2 = 0x0029;
-	short const SIP = 0x0030; // Special Interest Group == Qun( in Chinese )
-	short const Test = 0x0031;
-	short const GroupNames = 0x003C;
-	short const UploadGroups = 0x003D;
-	short const Memo = 0x003E;
-	short const DownloadGroups = 0x0058;
-	short const GetLevel = 0x005C;
-	short const RequestLoginToken = 0x0062;
-	short const ExtraInfo = 0x0065;
-	short const Signature = 0x0067;
-	short const ReceiveSysMsg = 0x0080;
-	short const ContactStausChanged = 0x0081;
-
-	// status
-	char const Online = 10;
-	char const Offline = 20;
-	char const Away = 30;
-	char const Invisible = 40;
-
-
-	// reply
-	char const LoginTokenOK = 0x00;
-	char const LoginOK = 0x00;
-	char const LoginRedirect = 0x01;
-	char const LoginWrongPassword = 0x05;
-	char const LoginMiscError = 0x06;
-	char const ChangeStatusOK= 0x30;
-	char const RequestKeyOK = 0x00;
-
-	// Lengths
-	int const MaxPacketLength = 65535;
-	int const HeaderLength = 13;
-	int const KeyLength = 16;
-	int const Md5KeyLength = 16;
-	int const LoginLength = 416;
+	static const ushort Logout = 0x0001;
+	static const ushort Heartbeat = 0x0002;
+	static const ushort UpdateInfo = 0x0004;
+	static const ushort Search = 0x0005;
+	static const ushort UserInfo = 0x0006;
+	static const ushort AddFriend = 0x0009;
+	static const ushort RemoveFriend = 0x000A;
+	static const ushort AuthInvite = 0x000B;
+	static const ushort ChangeStatus = 0x000D;
+	static const ushort AckSysMsg = 0x0012;
+	static const ushort SendMsg = 0x0016;
+	static const ushort ReceiveMsg = 0x0017;
+	static const ushort RemoveMe = 0x001C;
+	static const ushort RequestKey = 0x001D;
+	static const ushort GetCell = 0x0021;
+	static const ushort Login = 0x0022;
+	static const ushort ContactList = 0x0026;
+	static const ushort ContactsOnline = 0x0027;
+	static const ushort GetCell2 = 0x0029;
+	static const ushort SIP = 0x0030; // Special Interest Group == Qun( in Chinese )
+	static const ushort Test = 0x0031;
+	static const ushort GroupNames = 0x003C;
+	static const ushort UploadGroups = 0x003D;
+	static const ushort Memo = 0x003E;
+	static const ushort DownloadGroups = 0x0058;
+	static const ushort GetLevel = 0x005C;
+	static const ushort RequestLoginToken = 0x0062;
+	static const ushort ExtraInfo = 0x0065;
+	static const ushort Signature = 0x0067;
+	static const ushort ReceiveSysMsg = 0x0080;
+	static const ushort ContactStausChanged = 0x0081;
 
 	// Options
-	const char NormalLogin = 0x0A;
-	const char InvisibleLogin = 0x28;
-	const char ContactListSorted = 0x01;
-	const char ContactListUnsorted = 0x00;
-	const char ContactListBegin = 0x00;
-	const char ContactListEnd = 0xff;
-	const char UploadGroupNames = 0x2;
-	const char DownloadGroupNames = 0x1;
-	const char TransferKey = 0x03; // file agent key in eva
+	static const uchar NormalLogin = 0x0A;
+	static const uchar InvisibleLogin = 0x28;
+	static const uchar ContactListSorted = 0x01;
+	static const uchar ContactListUnsorted = 0x00;
+	static const uchar ContactListBegin = 0x00;
+	static const uchar ContactListEnd = 0xff;
+	static const uchar UploadGroupNames = 0x2;
+	static const uchar DownloadGroupNames = 0x1;
+	static const uchar TransferKey = 0x03; // file agent key in eva
+
+	// reply
+	static const uchar LoginTokenOK = 0x00;
+	static const uchar LoginOK = 0x00;
+	static const uchar LoginRedirect = 0x01;
+	static const uchar LoginWrongPassword = 0x05;
+	static const uchar LoginMiscError = 0x06;
+	static const uchar ChangeStatusOK= 0x30;
+	static const uchar RequestKeyOK = 0x00;
+
+	// status
+	static const uchar Online = 10;
+	static const uchar Offline = 20;
+	static const uchar Away = 30;
+	static const uchar Invisible = 40;
+
 
 	// IM operation( sending )
-	const short IMText = 0x000b;
-	const short IMNotifyIP = 0x003b;
+	static const ushort IMText = 0x000b;
+	static const ushort IMNotifyIP = 0x003b;
 
 	// IM reply types
-	const char NormalReply = 0x01;
-	const char AutoReply = 0x02;
-	const char ImageReply = 0x05;
+	static const uchar NormalReply = 0x01;
+	static const uchar AutoReply = 0x02;
+	static const uchar ImageReply = 0x05;
 
 	// Encoding
-	const short GBEncoding = 0x8602;
+	static const ushort GBEncoding = 0x8602;
 
 	// IM command ( receiving )
-	const short RcvFromBuddy = 0x0009;
+	static const ushort RcvFromBuddy = 0x0009;
+
+	// Lengths
+	static const uint MaxPacketLength = 65535;
+	static const uint HeaderLength = 13;
+	static const uint KeyLength = 16;
+	static const uint LoginLength = 416;
 
 	// POD storage
 	struct ContactInfo {
