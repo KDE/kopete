@@ -39,7 +39,7 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 	m_account = account;
 	m_newstatus = Kopete::OnlineStatus::Offline;
 	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
-	m_passwordKey = Eva::QQHash(pwd);
+	m_passwordKey = Eva::Packet::QQHash(pwd);
 	pwd.release(); // the data is handled in QT
 	m_loginMode = Eva::NormalLogin;
 
@@ -112,26 +112,26 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 	Eva::ByteArray text;
 	int len;
 
-	Eva::ByteArray initKey((char*) Eva::getInitKey(), 16 );
+	Eva::ByteArray initKey((char*) Eva::Packet::getInitKey(), 16 );
 	initKey.release();
 
 	kDebug( 14140 ) << "command = " << packet.command() << endl;
 	switch( packet.command() )
 	{
 		case Eva::RequestLoginToken :
-			text = Eva::loginToken( packet.body() );
+			text = Eva::Packet::loginToken( packet.body() );
 			break;
 
 		case Eva::Login :
-			text = Eva::decrypt( packet.body(), m_passwordKey );
+			text = Eva::Packet::decrypt( packet.body(), m_passwordKey );
 			if( text.size() == 0 )
-				text = Eva::decrypt( packet.body(), initKey );
+				text = Eva::Packet::decrypt( packet.body(), initKey );
 			break;
 
 		default:
-			text = Eva::decrypt( packet.body(), m_sessionKey );
+			text = Eva::Packet::decrypt( packet.body(), m_sessionKey );
 			if ( text.size() == 0 )
-				text = Eva::decrypt( packet.body(), m_passwordKey );
+				text = Eva::Packet::decrypt( packet.body(), m_passwordKey );
 	}
 			
 	kDebug( 14140 ) << "text = " << QByteArray( text.c_str(), text.size() ) << endl;
@@ -301,7 +301,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 
 			break;
 
-		case Eva::ContactList :
+		case Eva::AllContacts:
 			/*
 			{
 				len = 2;
@@ -365,7 +365,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 // FIXME: Refactor us !!
 void QQNotifySocket::sendLoginTokenRequest()
 {
-	Eva::ByteArray data = Eva::requestLoginToken(m_qqId, m_id++);
+	Eva::ByteArray data = Eva::loginToken(m_qqId, m_id++);
 	sendPacket( QByteArray( data.c_str(), data.size()) );
 }
 
@@ -386,25 +386,25 @@ void QQNotifySocket::sendUserInfo(Eva::uint qqId)
 
 void QQNotifySocket::sendChangeStatus( uchar status )
 {
-	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
+	Eva::ByteArray packet = Eva::statusUpdate( m_qqId, m_id++, m_sessionKey, status );
 	sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
 
 void QQNotifySocket::sendRequestTransferKey()
 {
-	Eva::ByteArray packet = Eva::requestTransferKey( m_qqId, m_id++, m_sessionKey);
+	Eva::ByteArray packet = Eva::transferKey( m_qqId, m_id++, m_sessionKey);
 	sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
 
 void QQNotifySocket::sendContactList( short pos )
 {
-	Eva::ByteArray packet = Eva::contactList( m_qqId, m_id++, m_sessionKey, pos );
+	Eva::ByteArray packet = Eva::allContacts( m_qqId, m_id++, m_sessionKey, pos );
 	sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
 
 void QQNotifySocket::sendGetGroupNames()
 {
-	Eva::ByteArray packet = Eva::getGroupNames( m_qqId, m_id++, m_sessionKey );
+	Eva::ByteArray packet = Eva::groupNames( m_qqId, m_id++, m_sessionKey );
 	sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
 

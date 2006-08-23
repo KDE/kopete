@@ -22,7 +22,7 @@ namespace Eva {
 	static const uchar Head = 0x02;
 	static const uchar Tail = 0x03;
 
-	// command
+	// command sent to the server
 	static const ushort Logout = 0x0001;
 	static const ushort Heartbeat = 0x0002;
 	static const ushort UpdateInfo = 0x0004;
@@ -39,15 +39,17 @@ namespace Eva {
 	static const ushort RequestKey = 0x001D;
 	static const ushort GetCell = 0x0021;
 	static const ushort Login = 0x0022;
-	static const ushort ContactList = 0x0026;
+	static const ushort AllContacts= 0x0026;
 	static const ushort ContactsOnline = 0x0027;
 	static const ushort GetCell2 = 0x0029;
-	static const ushort SIP = 0x0030; // Special Interest Group == Qun( in Chinese )
+	// Special Interest Group == Qun( in Chinese )
+	static const ushort SIP = 0x0030; 
 	static const ushort Test = 0x0031;
 	static const ushort GroupNames = 0x003C;
 	static const ushort UploadGroups = 0x003D;
 	static const ushort Memo = 0x003E;
 	static const ushort DownloadGroups = 0x0058;
+	// Level determines how active the use is
 	static const ushort GetLevel = 0x005C;
 	static const ushort RequestLoginToken = 0x0062;
 	static const ushort ExtraInfo = 0x0065;
@@ -331,48 +333,56 @@ namespace Eva {
 		ushort sequence() const { return m_sequence; }
 		ByteArray& body() { return m_body; }
 
-		// FIXME: Add const to data.
-		static inline uchar replyCode( ByteArray& data ) 
+		static const uchar* getInitKey();
+		static ByteArray create( uint id, ushort command, ushort sequence, const ByteArray& key, const ByteArray& text );
+		static ByteArray QQHash( const ByteArray& text );
+		static ByteArray encrypt( const ByteArray& text, const ByteArray& key );
+		static ByteArray decrypt( const ByteArray& code, const ByteArray& key );
+
+		// Packet parsing
+		static ByteArray loginToken( const ByteArray& data );
+
+		static inline uchar replyCode( const ByteArray& data ) 
 		{ return data.data()[0]; }
 
-		static inline uint redirectedIP( ByteArray& data ) 
+		static inline uint redirectedIP( const ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+5) ); }
 
-		static inline ushort redirectedPort( ByteArray& data ) 
+		static inline ushort redirectedPort( const ByteArray& data ) 
 		{ return ntohs( type_cast<ushort> (data.data()+9) ); }
 
-		static inline ByteArray sessionKey( ByteArray& data ) 
+		static inline ByteArray sessionKey( const ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+1, KeyLength ); }
 
-		static inline ByteArray transferKey( ByteArray& data ) 
+		static inline ByteArray transferKey( const ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+2, KeyLength ); }
 
-		static inline ByteArray replyKey( ByteArray& data ) 
+		static inline ByteArray replyKey( const ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data(), KeyLength ); }
 
 		//TODO: Do we break this?
-		static inline ByteArray transferToken( ByteArray& data ) 
+		static inline ByteArray transferToken( const ByteArray& data ) 
 		{ return ByteArray::duplicate( data.data()+2+KeyLength+13, (unsigned)(data.data()[2+KeyLength+12]) ); }
 
-		static inline uint remoteIP( ByteArray& data ) 
+		static inline uint remoteIP( const ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+27) ); }
 
-		static inline ushort remotePort( ByteArray& data ) 
+		static inline ushort remotePort( const ByteArray& data ) 
 		{ return ntohs( type_cast<ushort> (data.data()+31) ); }
 
-		static inline uint localIP( ByteArray& data ) 
+		static inline uint localIP( const ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+21) ); }
 
-		static inline ushort localPort( ByteArray& data ) 
+		static inline ushort localPort( const ByteArray& data ) 
 		{ return ntohs( type_cast<ushort> (data.data()+25) ); }
 
-		static inline uint loginTime( ByteArray& data ) 
+		static inline uint loginTime( const ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+33) ); }
 
-		static inline uint lastLoginFrom( ByteArray& data ) 
+		static inline uint lastLoginFrom( const ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+123) ); }
 
-		static inline uint lastLoginTime( ByteArray& data ) 
+		static inline uint lastLoginTime( const ByteArray& data ) 
 		{ return ntohl( type_cast<uint> (data.data()+127) ); }
 
 		static inline uint nextGroupId( const ByteArray& data ) 
@@ -393,27 +403,34 @@ namespace Eva {
 
 	
 	// Packet operation
-	ByteArray requestLoginToken( uint id, ushort sequence );
-	ByteArray login( uint id, ushort sequence, const ByteArray& key, 
-			const ByteArray& token, uchar loginMode );
-	ByteArray changeStatus( uint id, ushort sequence, const ByteArray& key, char status );
+	
+	/**
+	 * login token request
+	 */
+	ByteArray loginToken( uint id, ushort sequence );
+	ByteArray login( uint id, ushort sequence, const ByteArray& key, const ByteArray& token, uchar loginMode );
+	/** 
+	 * update onlineStatus to status
+	 */
+	ByteArray statusUpdate( uint id, ushort sequence, const ByteArray& key, uchar status );
+	/** 
+	 * Fetch user information of qqId
+	 */
 	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId );
-	ByteArray requestTransferKey( uint id, ushort sequence, const ByteArray& key );
-	ByteArray contactList( uint id, ushort sequence, const ByteArray& key, short pos = 0);
-	ByteArray getGroupNames( uint id, ushort sequence, const ByteArray& key );
+	/**
+	 * request transfer key, which is used as the identification of the conversation
+	 */
+	ByteArray transferKey( uint id, ushort sequence, const ByteArray& key );
+	ByteArray allContacts( uint id, ushort sequence, const ByteArray& key, short pos = 0);
+	ByteArray groupNames( uint id, ushort sequence, const ByteArray& key );
 	ByteArray downloadGroups( uint id, ushort sequence, const ByteArray& key, int pos );
 	ByteArray textMessage( uint id, ushort sequence, const ByteArray& key, int toId, const ByteArray& transferKey, ByteArray& message );
 	ByteArray messageReply(uint id, ushort sequence, const ByteArray& key, const ByteArray& text );
 	ByteArray heartbeat(uint id, ushort sequence, const ByteArray& key );
 	ByteArray onlineContacts(uint id, ushort sequence, const ByteArray& key, uchar pos );
 
-	// Misc.
-	ByteArray loginToken( const ByteArray& buffer );
-	ByteArray QQHash( const ByteArray& text );
-	ByteArray decrypt( const ByteArray& code, const ByteArray& key );
-	const uchar* getInitKey();
-	ByteArray buildPacket( uint id, short const command, ushort sequence, const ByteArray& key, const ByteArray& text );
 
+		// Misc
 
 };
 #endif

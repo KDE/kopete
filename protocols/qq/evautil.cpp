@@ -20,7 +20,7 @@ namespace Eva {
 		return code;
 	}
 
-	ByteArray QQHash( const ByteArray& text )
+	ByteArray Packet::QQHash( const ByteArray& text )
 	{
 		return doMd5( doMd5( text ) );
 	}
@@ -55,7 +55,7 @@ namespace Eva {
 				(uint*) key, (uint*) decrypted );
 	}
 
-	ByteArray encrypt( const ByteArray& text, const ByteArray& key )
+	ByteArray Packet::encrypt( const ByteArray& text, const ByteArray& key )
 	{
 
 		uchar 
@@ -121,7 +121,7 @@ namespace Eva {
 		return encoded;
 	}
 
-	ByteArray decrypt( const ByteArray& code, const ByteArray& key )
+	ByteArray Packet::decrypt( const ByteArray& code, const ByteArray& key )
 	{
 		uchar
 			decrypted[8], m[8],

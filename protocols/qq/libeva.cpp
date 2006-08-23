@@ -34,7 +34,7 @@ namespace Eva {
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
 
-	const uchar* getInitKey() 
+	const uchar* Packet::getInitKey() 
 	{
 		return init_key;
 	}
@@ -115,10 +115,9 @@ namespace Eva {
 		data.copyAt(0, htons(data.size()) );
 	}
 
-	
-	// Interface for application
-	// Utilities
-	ByteArray loginToken( const ByteArray& packet ) 
+	// Utilities functions from Packet
+	// Get information from the raw packet.
+	ByteArray Packet::loginToken( const ByteArray& packet ) 
 	{
 		char reply = packet.data()[0];
 		char length = packet.data()[1];
@@ -133,7 +132,7 @@ namespace Eva {
 
 
 	ByteArray encrypt( const ByteArray& text, const ByteArray& key );
-	ByteArray buildPacket( uint id, short const command, ushort sequence, const ByteArray& key, const ByteArray& text )
+	ByteArray Packet::create( uint id, ushort command, ushort sequence, const ByteArray& key, const ByteArray& text )
 	{
 		ByteArray packet(MaxPacketLength);
 		packet += header( id, command, sequence );
@@ -143,6 +142,7 @@ namespace Eva {
 		return packet;
 	}
 
+	// FIXME: use list instead.
 	ContactInfo Packet::contactInfo( char* buffer, int& len )
 	{
 		ContactInfo ci;
@@ -204,7 +204,7 @@ namespace Eva {
 					
 			
 	// Core functions
-	ByteArray requestLoginToken( uint id, ushort sequence )
+	ByteArray loginToken( uint id, ushort sequence )
 	{
 		ByteArray data(16);
 		data += header(id, RequestLoginToken, sequence);
@@ -223,7 +223,7 @@ namespace Eva {
 		ByteArray initKey( (char*)init_key, 16 );
 
 		ByteArray nil(0);
-		login += encrypt( nil, key );
+		login += Packet::encrypt( nil, key );
 		login.append( login_16_51, 36 );
 		login += loginMode;
 		login.append( login_53_68, 16 );
@@ -235,7 +235,7 @@ namespace Eva {
 
 		data += header( id, Login, sequence );
 		data += initKey;
-		data += encrypt( login, initKey );
+		data += Packet::encrypt( login, initKey );
 		data += Tail;
 		setLength( data );
 
@@ -244,15 +244,15 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray requestTransferKey( uint id, ushort sequence, const ByteArray& key )
+	ByteArray transferKey( uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(1);
 		text += TransferKey;
 		
-		return buildPacket(id, RequestKey, sequence, key, text );
+		return Packet::create(id, RequestKey, sequence, key, text );
 	}
 
-	ByteArray contactList( uint id, ushort sequence, const ByteArray& key, short pos )
+	ByteArray allContacts( uint id, ushort sequence, const ByteArray& key, short pos )
 	{
 		ByteArray text(5);
 		text += pos;
@@ -261,15 +261,15 @@ namespace Eva {
 		text += '\0';
 		text += '\1';
 
-		return buildPacket(id, ContactList, sequence, key, text );
+		return Packet::create(id, AllContacts, sequence, key, text );
 	}
 
-	ByteArray changeStatus( uint id, ushort sequence, const ByteArray& key, char status )
+	ByteArray statusUpdate( uint id, ushort sequence, const ByteArray& key, uchar status )
 	{
 		ByteArray text(5);
 		text += status;
 		text += (int) 0;
-		return buildPacket(id, ChangeStatus, sequence, key, text );
+		return Packet::create(id, ChangeStatus, sequence, key, text );
 	}
 
 	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId )
@@ -277,17 +277,17 @@ namespace Eva {
 		ByteArray text(20);
 		snprintf( text.c_str(), 19, "%d", qqId );
 		text.setSize( strlen( text.c_str() ) );
-		return buildPacket(id, UserInfo, sequence, key, text );
+		return Packet::create(id, UserInfo, sequence, key, text );
 	}
 
-	ByteArray getGroupNames( uint id, ushort sequence, const ByteArray& key )
+	ByteArray groupNames( uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(6);
 		text += DownloadGroupNames;
 		text += '\2' ;
 		text += (int) 0;
 
-		return buildPacket(id, GroupNames, sequence, key, text );
+		return Packet::create(id, GroupNames, sequence, key, text );
 	}
 
 	ByteArray downloadGroups( uint id, ushort sequence, const ByteArray& key, int pos )
@@ -298,7 +298,7 @@ namespace Eva {
 		text += (int) 0;
 		text += htonl(pos);
 
-		return buildPacket(id, DownloadGroups, sequence, key, text );
+		return Packet::create(id, DownloadGroups, sequence, key, text );
 	}
 
 	ByteArray textMessage( uint id, ushort sequence, const ByteArray& key, 
@@ -308,19 +308,19 @@ namespace Eva {
 		ByteArray text( 65536 );
 		text += messageHeader( id, toId, transferKey, IMText, sequence, time(NULL));
 		text += encodeMessage( message );
-		return buildPacket(id, SendMsg, sequence, key, text );
+		return Packet::create(id, SendMsg, sequence, key, text );
 	}
 
 	ByteArray messageReply(uint id, ushort sequence, const ByteArray& key, const ByteArray& text )
 	{
-		return buildPacket(id, ReceiveMsg, sequence, key, text );
+		return Packet::create(id, ReceiveMsg, sequence, key, text );
 	}
 
 	ByteArray heartbeat(uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(4);
 		text += id;
-		return buildPacket(id, Heartbeat, sequence, key, text );
+		return Packet::create(id, Heartbeat, sequence, key, text );
 	}
 
 	ByteArray onlineContacts(uint id, ushort sequence, const ByteArray& key, uchar pos )
@@ -331,7 +331,7 @@ namespace Eva {
 		text += uchar(0x00);
 		text += uchar(0x00);
 		text += uchar(0x00);
-		return buildPacket(id, ContactsOnline, sequence, key, text );
+		return Packet::create(id, ContactsOnline, sequence, key, text );
 	}
 		
 }
