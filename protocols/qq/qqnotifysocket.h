@@ -54,6 +54,16 @@ public:
 	 */
 	int  disconnectReason() { return m_disconnectReason; }
 
+	void sendGetGroupNames()
+	{ sendPacket( Eva::groupNames( m_qqId, m_id++, m_sessionKey ) ); }
+
+	inline void sendDownloadGroups( int next = 0 ) 
+	{ sendPacket( Eva::downloadGroups( m_qqId, m_id++, m_sessionKey, next ) ); }
+
+	void sendTextMessage( const uint toId, const QByteArray& message );
+
+		
+
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 	void newContactList();
@@ -83,21 +93,13 @@ protected:
 	virtual void doneConnect();
 
 	// QQ operations
-	void sendLoginTokenRequest(); 
-	void sendLogin(); 
-	void sendContactList( short pos );
-	void sendChangeStatus( uchar status );
-	void sendUserInfo(Eva::uint qqId);
-	void sendRequestTransferKey();
 	void sendGoodbye() { return; }
 
-public:
-	void sendDownloadGroups( int pos = 0 );
-	void sendGetGroupNames();
-	void sendTextMessage( const uint toId, const QByteArray& message );
-
 private:
-	void doGetGroupNames( const Eva::ByteArray& text );
+	inline void sendPacket( const Eva::ByteArray& packet )
+	{ QQSocket::sendPacket( QByteArray(packet.c_str(), packet.size() ) ); }
+
+	void groupNames( const Eva::ByteArray& text );
 	void doGetCGTs( const Eva::ByteArray& text );
 	void doGetContactStatuses( const Eva::ByteArray& text );
 	void sendListOnlineContacts(uint pos = 0);
