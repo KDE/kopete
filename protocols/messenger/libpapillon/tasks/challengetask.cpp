@@ -100,7 +100,7 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 	Q_ASSERT( QCA::isSupported("md5") );
 
   	// Combine the received challenge string with the product key.
- 	QByteArray digest = QCA::arrayToHex( QCA::MD5().hash( (challengeString + challengeProductKey).toUtf8() ) ).toUtf8();
+ 	QByteArray digest = QCA::arrayToHex( QCA::Hash("md5").hash( (challengeString + challengeProductKey).toUtf8() ) ).toUtf8();
 
  	qDebug() << PAPILLON_FUNCINFO << "md5: " << digest;
 

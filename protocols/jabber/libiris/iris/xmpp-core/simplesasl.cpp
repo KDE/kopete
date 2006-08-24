@@ -333,17 +333,17 @@ public:
 
 			// build 'response'
 			Q3CString X = user.utf8() + ':' + realm.utf8() + ':' + Q3CString(pass.toByteArray());
-			QByteArray Y = QCA::MD5().hash(X).toByteArray();
+			QByteArray Y = QCA::Hash("md5").hash(X).toByteArray();
 			QByteArray tmp = ':' + nonce + ':' + cnonce;
 			if (!authz.isEmpty())
 				tmp += ':' + authz.utf8();
 
 			QByteArray A1(Y + tmp);
 			QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
-			Q3CString HA1 = QCA::MD5().hashToString(A1).latin1();
-			Q3CString HA2 = QCA::MD5().hashToString(A2).latin1();
+			Q3CString HA1 = QCA::Hash("md5").hashToString(A1).latin1();
+			Q3CString HA2 = QCA::Hash("md5").hashToString(A2).latin1();
 			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
-			Q3CString Z = QCA::MD5().hashToString(KD).latin1();
+			Q3CString Z = QCA::Hash("md5").hashToString(KD).latin1();
 
 			// build output
 			PropList out;
