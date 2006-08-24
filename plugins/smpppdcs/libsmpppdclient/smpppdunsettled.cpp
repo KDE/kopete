@@ -89,7 +89,7 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
 
             QString response = read(client)[0];
 
-            if(response != QString::null &&
+            if(!response.isNull() &&
                     ver.exactMatch(response)) {
 				setServerID(client, response);
 				setServerVersion(client, ver.cap(1));
