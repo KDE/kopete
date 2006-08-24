@@ -30,7 +30,7 @@ public:
 	QString parseResult() const { return m_parsed; }
 
 private slots:
-	void slotStart();
+	void start();
 
 private:
 	void parseEmoticon(const QString &value);

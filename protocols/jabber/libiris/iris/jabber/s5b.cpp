@@ -22,13 +22,11 @@
 
 #include <qtimer.h>
 #include <qpointer.h>
-//Added by qt3to4:
-#include <Q3CString>
 #include <Q3PtrList>
+#include <QByteArray>
 #include <stdlib.h>
 #include <qca.h>
 #include "xmpp_xmlcommon.h"
-#include "hash.h"
 #include "socks.h"
 #include "safedelete.h"
 
@@ -47,7 +45,7 @@ namespace XMPP {
 static QString makeKey(const QString &sid, const Jid &initiator, const Jid &target)
 {
 	QString str = sid + initiator.full() + target.full();
-	return QCA::SHA1().hashToString(str.utf8());
+	return QCA::Hash("sha1").hashToString(str.utf8());
 }
 
 static bool haveHost(const StreamHostList &list, const Jid &j)
@@ -508,7 +506,7 @@ void S5BConnection::su_packetReady(const QByteArray &buf)
 
 void S5BConnection::handleUDP(const QByteArray &buf)
 {
-	// must be at least 4 bytes, to accommodate virtual ports
+	// must be at least 4 bytes, to accomodate virtual ports
 	if(buf.size() < 4)
 		return; // drop
 
@@ -1824,9 +1822,7 @@ private slots:
 		}
 
 		// send initialization with our JID
-		Q3CString cs = jid.full().utf8();
-		QByteArray a(cs.length());
-		memcpy(a.data(), cs.data(), a.size());
+		QByteArray a(jid.full().utf8());
 		client_udp->write(a);
 		++udp_tries;
 	}

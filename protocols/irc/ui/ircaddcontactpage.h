@@ -1,10 +1,11 @@
 /*
     ircaddcontactpage.h - IRC Add Contact Widget
 
+    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,28 +21,25 @@
 #define IRCADDCONTACTPAGE_H
 
 #include "addcontactpage.h"
+#include "ui_ircadd.h"
 
-namespace Kopete
-{
-class MetaContact;
- }
+namespace Kopete { class MetaContact; }
 
 class IRCAccount;
-class IRCAddContactPagePrivate;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
   */
 class IRCAddContactPage
-	: public AddContactPage
+	: public AddContactPage, public Ui::ircAddUI
 {
-   Q_OBJECT
+	Q_OBJECT
 public:
 	IRCAddContactPage(QWidget *parent=0, IRCAccount* account = 0);
 	~IRCAddContactPage();
 
 public slots:
-	virtual bool apply(Kopete::Account *account , Kopete::MetaContact *m);
+	virtual bool apply(Kopete::Account *account, Kopete::MetaContact *m);
 
 private slots:
 	virtual bool validateData();
@@ -49,8 +47,8 @@ private slots:
 	void slotChannelDoubleClicked( const QString &channel );
 
 private:
-	IRCAddContactPagePrivate *d;
+	struct Private;
+	Private* d;
 };
 
 #endif
-

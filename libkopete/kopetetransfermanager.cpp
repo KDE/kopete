@@ -37,7 +37,7 @@
  *  Kopete::FileTransferInfo *
  ***************************/
 
-Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId)
+Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId, const QPixmap &preview)
 {
 	mContact = contact;
 	mFile = file;
@@ -46,6 +46,7 @@ Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QSt
 	mRecipient = recipient;
 	m_intId= internalId;
 	mDirection= di;
+	mPreview = preview;
 }
 
 /***************************
@@ -210,14 +211,14 @@ void Kopete::TransferManager::slotAccepted(const Kopete::FileTransferInfo& info,
 	emit accepted(trans,filename);
 }
 
-int Kopete::TransferManager::askIncomingTransfer(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId)
+int Kopete::TransferManager::askIncomingTransfer(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview)
 {
 //	if (nextID != 0)
 		nextID++;
-		
+
 	QString dn= contact ? (contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId()) : i18n("<unknown>");
 
-	Kopete::FileTransferInfo info(contact, file, size, dn, Kopete::FileTransferInfo::Incoming , nextID , internalId);
+	Kopete::FileTransferInfo info(contact, file, size, dn, Kopete::FileTransferInfo::Incoming , nextID , internalId, preview);
 
 	//FIXME!!! this will not be deleted if it's still open when kopete exits
 	KopeteFileConfirmDialog *diag= new KopeteFileConfirmDialog(info, description , 0 )  ;

@@ -19,6 +19,7 @@
 #include <kfontsizeaction.h>
 #include <kactionmenu.h>
 #include <kfontaction.h>
+#include <kicon.h>
 //#include <private/q3richtext_p.h>
 //#include <Q3RichText>
 #include <QTextCursor>
@@ -333,7 +334,7 @@ void KopeteRichTextEditPart::readConfig()
 	action_underline->setChecked( config->readEntry( "FontUnderline", false ) );
 
 #warning Find a what to port "config->readNumEntry( "EditAlignment", Qt::AlignLeft )".
-	switch( config->readNumEntry( "EditAlignment", Qt::AlignLeft ) )
+	switch( config->readEntry( "EditAlignment", int(Qt::AlignLeft) ) )
 	{
 		case Qt::AlignLeft:
 			action_align_left->trigger();

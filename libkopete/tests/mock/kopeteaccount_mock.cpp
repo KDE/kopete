@@ -27,7 +27,8 @@ namespace Test
 namespace Mock
 {
 
-Account::Account(Kopete::Protocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name)
+Account::Account(Kopete::Protocol *parent, const QString &accountID) 
+  : Kopete::Account(parent, accountID)
 {
 
 }
@@ -52,7 +53,7 @@ void Account::disconnect()
 	// do nothing
 }
 
-void Account::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
+void Account::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage )
 {
 	// do nothing
 }

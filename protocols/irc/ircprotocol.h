@@ -86,7 +86,7 @@ public:
 
 //	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(const KIRC::Entity::Ptr &entity);
+	Kopete::OnlineStatus onlineStatusFor(const KIrc::Entity::Ptr &entity);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -110,7 +110,7 @@ private:
 
 	static IRCProtocol *s_protocol;
 
-//	QMap<KIRC::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+//	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

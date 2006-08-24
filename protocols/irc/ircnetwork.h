@@ -26,20 +26,20 @@
 namespace IRC
 {
 
-typedef struct
+struct Host
 {
 	QString host;
 	uint port;
 	QString password;
 	bool ssl;
-} Host;
+};
 
-typedef struct
+struct Network
 {
 	QString name;
 	QString description;
 	QList<Host> hosts;
-} Network;
+};
 
 typedef QList<IRC::Network> NetworkList;
 
@@ -58,13 +58,13 @@ public:
 	const IRC::NetworkList &networks() const;
 
 public slots:
-	bool slotReadNetworks();
+	void slotReadNetworks();
 	bool slotSaveNetworkConfig() const;
 
 //	void addNetwork(const IRCNetwork &network);
 
 private:
-	class Private;
+	struct Private;
 	Private * const d;
 };
 

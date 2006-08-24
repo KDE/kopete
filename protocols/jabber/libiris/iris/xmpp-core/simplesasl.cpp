@@ -25,14 +25,13 @@
 #include <q3ptrlist.h>
 #include <QList>
 #include <qca.h>
-//Added by qt3to4:
 #include <Q3CString>
 #include <stdlib.h>
-#include "base64.h"
+#include <QtCrypto>
 
-namespace XMPP
-{
+#define SIMPLESASL_PLAIN
 
+namespace XMPP {
 struct Prop
 {
 	Q3CString var, val;
@@ -69,13 +68,16 @@ public:
 		for(ConstIterator it = begin(); it != end(); ++it) {
 			if(!first)
 				str += ',';
-			str += (*it).var + "=\"" + (*it).val + '\"';
+			if ((*it).var == "realm" || (*it).var == "nonce" || (*it).var == "username" || (*it).var == "cnonce" || (*it).var == "digest-uri" || (*it).var == "authzid")
+				str += (*it).var + "=\"" + (*it).val + '\"';
+			else 
+				str += (*it).var + "=" + (*it).val;
 			first = false;
 		}
 		return str;
 	}
 
-	bool fromString(const Q3CString &str)
+	bool fromString(const QByteArray &str)
 	{
 		PropList list;
 		int at = 0;
@@ -110,7 +112,7 @@ public:
 			prop.val = val;
 			list.append(prop);
 
-			if(str[at] != ',')
+			if(at >= str.size() - 1 || str[at] != ',')
 				break;
 			++at;
 		}
@@ -145,7 +147,7 @@ public:
 	}
 };
 
-class SimpleSASLContext : public QCA_SASLContext
+class SimpleSASLContext : public QCA::SASLContext
 {
 public:
 	// core props
@@ -153,17 +155,22 @@ public:
 
 	// state
 	int step;
-	QByteArray in_buf;
-	QString out_mech;
-	QByteArray out_buf;
 	bool capable;
-	int err;
+	bool allow_plain;
+	QByteArray out_buf, in_buf;
+	QString mechanism_;
+	QString out_mech;
 
-	QCA_SASLNeedParams need;
-	QCA_SASLNeedParams have;
-	QString user, authz, pass, realm;
+	QCA::SASL::Params need;
+	QCA::SASL::Params have;
+	QString user, authz, realm;
+	QSecureArray pass;
+	Result result_;
+	QCA::SASL::AuthCondition authCondition_;
+	QByteArray result_to_net_, result_to_app_;
+	int encoded_;
 
-	SimpleSASLContext()
+	SimpleSASLContext(QCA::Provider* p) : QCA::SASLContext(p)
 	{
 		reset();
 	}
@@ -176,19 +183,9 @@ public:
 	void reset()
 	{
 		resetState();
-		resetParams();
-	}
 
-	void resetState()
-	{
-		out_mech = QString();
-		out_buf.resize(0);
-		err = -1;
-	}
-
-	void resetParams()
-	{
 		capable = true;
+		allow_plain = false;
 		need.user = false;
 		need.authzid = false;
 		need.pass = false;
@@ -199,75 +196,248 @@ public:
 		have.realm = false;
 		user = QString();
 		authz = QString();
-		pass = QString();
+		pass = QSecureArray();
 		realm = QString();
 	}
 
-	void setCoreProps(const QString &_service, const QString &_host, QCA_SASLHostPort *, QCA_SASLHostPort *)
+	void resetState()
 	{
-		service = _service;
-		host = _host;
+		out_mech = QString();
+		out_buf.resize(0);
+		authCondition_ = QCA::SASL::AuthFail;
 	}
 
-	void setSecurityProps(bool, bool, bool, bool, bool reqForward, bool reqCreds, bool reqMutual, int ssfMin, int, const QString &, int)
-	{
-		if(reqForward || reqCreds || reqMutual || ssfMin > 0)
+	virtual void setConstraints(QCA::SASL::AuthFlags flags, int ssfMin, int) {
+		if(flags & (QCA::SASL::RequireForwardSecrecy | QCA::SASL::RequirePassCredentials | QCA::SASL::RequireMutualAuth) || ssfMin > 0)
 			capable = false;
 		else
 			capable = true;
+		allow_plain = flags & QCA::SASL::AllowPlain;
 	}
-
-	int security() const
-	{
-		return 0;
+	
+	virtual void setup(const QString& _service, const QString& _host, const QCA::SASLContext::HostPort*, const QCA::SASLContext::HostPort*, const QString&, int) {
+		service = _service;
+		host = _host;
 	}
+	
+	virtual void startClient(const QStringList &mechlist, bool allowClientSendFirst) {
+		Q_UNUSED(allowClientSendFirst);
 
-	int errorCond() const
-	{
-		return err;
-	}
-
-	bool clientStart(const QStringList &mechlist)
-	{
-		bool haveMech = false;
-		for(QStringList::ConstIterator it = mechlist.begin(); it != mechlist.end(); ++it) {
-			if((*it) == "DIGEST-MD5") {
-				haveMech = true;
+		mechanism_ = QString();
+		foreach(QString mech, mechlist) {
+			if (mech == "DIGEST-MD5") {
+				mechanism_ = "DIGEST-MD5";
 				break;
 			}
+#ifdef SIMPLESASL_PLAIN
+			if (mech == "PLAIN" && allow_plain) 
+				mechanism_ = "PLAIN";
+#endif
 		}
-		if(!capable || !haveMech) {
-			err = QCA::SASL::NoMech;
-			return false;
+
+		if(!capable || mechanism_.isEmpty()) {
+			result_ = Error;
+			authCondition_ = QCA::SASL::NoMech;
+			if (!capable)
+				qWarning("simplesasl.cpp: Not enough capabilities");
+			if (mechanism_.isEmpty()) 
+				qWarning("simplesasl.cpp: No mechanism available");
+			return;
 		}
 
 		resetState();
+		result_ = Continue;
 		step = 0;
-		return true;
 	}
 
-	int clientFirstStep(bool)
-	{
-		return clientTryAgain();
+	virtual void nextStep(const QByteArray &from_net) {
+		in_buf = from_net;
+		tryAgain();
 	}
 
-	bool serverStart(const QString &, QStringList *, const QString &)
-	{
-		return false;
+	virtual void tryAgain() {
+		if(step == 0) {
+			out_mech = mechanism_;
+			
+#ifdef SIMPLESASL_PLAIN
+			// PLAIN 
+			if (out_mech == "PLAIN") {
+				// Firnst, check if we have everything
+				if(need.user || need.pass) {
+					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
+					result_ = Error;
+					return;
+				}
+				if(!have.user)
+					need.user = true;
+				if(!have.pass)
+					need.pass = true;
+				if(need.user || need.pass) {
+					result_ = NeedParams;
+					return;
+				}
+
+				// Continue with authentication
+				QByteArray plain;
+				if (!authz.isEmpty())
+					plain += authz.utf8();
+			   	plain += '\0' + user.toUtf8() + '\0' + pass.toByteArray();
+				out_buf.resize(plain.length());
+				memcpy(out_buf.data(), plain.data(), out_buf.size());
+			}
+#endif
+			++step;
+			result_ = Continue;
+		}
+		else if(step == 1) {
+			// if we still need params, then the app has failed us!
+			if(need.user || need.authzid || need.pass || need.realm) {
+				qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
+				result_ = Error;
+				return;
+			}
+
+			// see if some params are needed
+			if(!have.user)
+				need.user = true;
+			//if(!have.authzid)
+			//	need.authzid = true;
+			if(!have.pass)
+				need.pass = true;
+			if(need.user || need.authzid || need.pass) {
+				result_ = NeedParams;
+				return;
+			}
+
+			// get props
+			QByteArray cs(in_buf);
+			PropList in;
+			if(!in.fromString(cs)) {
+				authCondition_ = QCA::SASL::BadProto;
+				result_ = Error;
+				return;
+			}
+
+			// make a cnonce
+			QByteArray a(32);
+			for(int n = 0; n < (int)a.size(); ++n)
+				a[n] = (char)(256.0*rand()/(RAND_MAX+1.0));
+			Q3CString cnonce = QCA::Base64().arrayToString(a).latin1();
+
+			// make other variables
+			realm = host;
+			Q3CString nonce = in.get("nonce");
+			Q3CString nc = "00000001";
+			Q3CString uri = service.utf8() + '/' + host.utf8();
+			Q3CString qop = "auth";
+
+			// build 'response'
+			Q3CString X = user.utf8() + ':' + realm.utf8() + ':' + Q3CString(pass.toByteArray());
+			QByteArray Y = QCA::Hash("md5").hash(X).toByteArray();
+			QByteArray tmp = ':' + nonce + ':' + cnonce;
+			if (!authz.isEmpty())
+				tmp += ':' + authz.utf8();
+
+			QByteArray A1(Y + tmp);
+			QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
+			Q3CString HA1 = QCA::Hash("md5").hashToString(A1).latin1();
+			Q3CString HA2 = QCA::Hash("md5").hashToString(A2).latin1();
+			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
+			Q3CString Z = QCA::Hash("md5").hashToString(KD).latin1();
+
+			// build output
+			PropList out;
+			out.set("username", user.utf8());
+			out.set("realm", host.utf8());
+			out.set("nonce", nonce);
+			out.set("cnonce", cnonce);
+			out.set("nc", nc);
+			//out.set("serv-type", service.utf8());
+			//out.set("host", host.utf8());
+			out.set("digest-uri", uri);
+			out.set("qop", qop);
+			out.set("response", Z);
+			out.set("charset", "utf-8");
+			if (!authz.isEmpty())
+				out.set("authzid", authz.utf8());
+			QByteArray s(out.toString());
+
+			// done
+			out_buf.resize(s.length());
+			memcpy(out_buf.data(), s.data(), out_buf.size());
+			++step;
+			result_ = Continue;
+		}
+		else if (step == 2) {
+			out_buf.resize(0);
+			result_ = Continue;
+			++step;
+		}
+		else {
+			out_buf.resize(0);
+			result_ = Success;
+		}
 	}
 
-	int serverFirstStep(const QString &, const QByteArray *)
-	{
-		return Error;
+	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {
+		result_to_app_ = from_net;
+		result_to_net_ = from_app;
+		encoded_ = 1;
+		result_ = Success;
+		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	QCA_SASLNeedParams clientParamsNeeded() const
-	{
+	virtual void waitForResultsReady(int msecs) {
+
+		// TODO: for now, all operations block anyway
+		Q_UNUSED(msecs);
+	}
+
+	virtual Result result() const {
+		return result_;
+	}
+
+	virtual QString mechlist() const {
+		return QString();
+	}
+	
+	virtual QString mech() const {
+		return out_mech;
+	}
+	
+	virtual bool haveClientInit() const {
+		return out_mech == "PLAIN";
+	}
+	
+	virtual QByteArray stepData() const {
+		return out_buf;
+	}
+	
+	virtual QByteArray to_net() const {
+		return result_to_net_;
+	}
+	
+	virtual int encoded() const {
+		return encoded_;
+	}
+	
+	virtual QByteArray to_app() const {
+		return result_to_app_;
+	}
+
+	virtual int ssf() const {
+		return 0;
+	}
+
+	virtual QCA::SASL::AuthCondition authCondition() const {
+		return authCondition_;
+	}
+
+	virtual QCA::SASL::Params clientParamsNeeded() const {
 		return need;
 	}
-
-	void setClientParams(const QString *_user, const QString *_authzid, const QString *_pass, const QString *_realm)
-	{
+	
+	virtual void setClientParams(const QString *_user, const QString *_authzid, const QSecureArray *_pass, const QString *_realm) {
 		if(_user) {
 			user = *_user;
 			need.user = false;
@@ -290,142 +460,26 @@ public:
 		}
 	}
 
-	QString username() const
-	{
+	virtual QString username() const {
 		return QString();
 	}
 
-	QString authzid() const
-	{
+	virtual QString authzid() const {
 		return QString();
 	}
 
-	int nextStep(const QByteArray &in)
-	{
-		in_buf = in;
-		return tryAgain();
+	virtual QCA::Provider::Context* clone() const {
+		SimpleSASLContext* s = new SimpleSASLContext(provider());
+		// TODO: Copy all the members
+		return s;
 	}
+	
+	virtual void startServer(const QString &, bool) {}
+	virtual void serverFirstStep(const QString &, const QByteArray *) { }
 
-	int tryAgain()
-	{
-		return clientTryAgain();
-	}
-
-	QString mech() const
-	{
-		return out_mech;
-	}
-
-	const QByteArray *clientInit() const
-	{
-		return 0;
-	}
-
-	QByteArray result() const
-	{
-		return out_buf;
-	}
-
-	int clientTryAgain()
-	{
-		if(step == 0) {
-			out_mech = "DIGEST-MD5";
-			++step;
-			return Continue;
-		}
-		else if(step == 1) {
-			// if we still need params, then the app has failed us!
-			if(need.user || need.authzid || need.pass || need.realm) {
-				err = -1;
-				return Error;
-			}
-
-			// see if some params are needed
-			if(!have.user)
-				need.user = true;
-			if(!have.authzid)
-				need.authzid = true;
-			if(!have.pass)
-				need.pass = true;
-			if(need.user || need.authzid || need.pass)
-				return NeedParams;
-
-			// get props
-			Q3CString cs(in_buf.data(), in_buf.size()+1);
-			PropList in;
-			if(!in.fromString(cs)) {
-				err = QCA::SASL::BadProto;
-				return Error;
-			}
-
-			// make a cnonce
-			QByteArray a(32);
-			for(int n = 0; n < (int)a.size(); ++n)
-				a[n] = (char)(256.0*rand()/(RAND_MAX+1.0));
-			Q3CString cnonce = Base64::arrayToString(a).latin1();
-
-			// make other variables
-			realm = host;
-			Q3CString nonce = in.get("nonce");
-			Q3CString nc = "00000001";
-			Q3CString uri = service.utf8() + '/' + host.utf8();
-			Q3CString qop = "auth";
-
-			// build 'response'
-			Q3CString X = user.utf8() + ':' + realm.utf8() + ':' + pass.utf8();
-			QByteArray Y = QCA::MD5::hash(X);
-			Q3CString tmp = Q3CString(":") + nonce + ':' + cnonce + ':' + authz.utf8();
-			QByteArray A1(Y.size() + tmp.length());
-			memcpy(A1.data(), Y.data(), Y.size());
-			memcpy(A1.data() + Y.size(), tmp.data(), tmp.length());
-			Q3CString A2 = "AUTHENTICATE:" + uri;
-			Q3CString HA1 = QCA::MD5::hashToString(A1).latin1();
-			Q3CString HA2 = QCA::MD5::hashToString(A2).latin1();
-			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
-			Q3CString Z = QCA::MD5::hashToString(KD).latin1();
-
-			// build output
-			PropList out;
-			out.set("username", user.utf8());
-			out.set("realm", host.utf8());
-			out.set("nonce", nonce);
-			out.set("cnonce", cnonce);
-			out.set("nc", nc);
-			out.set("serv-type", service.utf8());
-			out.set("host", host.utf8());
-			out.set("digest-uri", uri);
-			out.set("qop", qop);
-			out.set("response", Z);
-			out.set("charset", "utf-8");
-			out.set("authzid", authz.utf8());
-			Q3CString s = out.toString();
-
-			// done
-			out_buf.resize(s.length());
-			memcpy(out_buf.data(), s.data(), out_buf.size());
-			++step;
-			return Continue;
-		}
-		else {
-			out_buf.resize(0);
-			return Success;
-		}
-	}
-
-	bool encode(const QByteArray &a, QByteArray *b)
-	{
-		*b = a;
-		return true;
-	}
-
-	bool decode(const QByteArray &a, QByteArray *b)
-	{
-		*b = a;
-		return true;
-	}
 };
 
-class QCASimpleSASL : public QCAProvider
+class QCASimpleSASL : public QCA::Provider
 {
 public:
 	QCASimpleSASL() {}
@@ -435,25 +489,23 @@ public:
 	{
 	}
 
-	int qcaVersion() const
-	{
-		return QCA_PLUGIN_VERSION;
+	QString name() const {
+		return "simplesasl";
 	}
 
-	int capabilities() const
-	{
-		return QCA::CAP_SASL;
+	QStringList features() const {
+		return QStringList("sasl");
 	}
 
-	void *context(int cap)
+	QCA::Provider::Context* createContext(const QString& cap)
 	{
-		if(cap == QCA::CAP_SASL)
-			return new SimpleSASLContext;
+		if(cap == "sasl")
+			return new SimpleSASLContext(this);
 		return 0;
 	}
 };
 
-QCAProvider *createProviderSimpleSASL()
+QCA::Provider *createProviderSimpleSASL()
 {
 	return (new QCASimpleSASL);
 }

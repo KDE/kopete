@@ -37,10 +37,10 @@ using P2P::TransferType;
 QString P2P::Uid::createUid()
 {
 	return (QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + '-'
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + '-'
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + '-'
+			+ QString::number(rand()%0xAAFF+0x1111, 16) + '-'
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).toUpper();
@@ -273,28 +273,28 @@ void TransferContext::sendMessage(MessageType type, const QString& content, qint
 	{
 		case BYE:
 			method = "BYE MSNMSGR:" + m_recipient + " MSNSLP/1.0";
-			cSeq   = "0";
+			cSeq   = '0';
 			break;
 
 		case DECLINE:
 			method = "MSNSLP/1.0 603 DECLINE";
-			cSeq   = "1";
+			cSeq   = '1';
 			break;
 
 		case ERROR:
 			contentType = "null";
 			method = "MSNSLP/1.0 500 Internal Error";
-			cSeq   = "1";
+			cSeq   = '1';
 			break;
 
 		case INVITE:
 			method = "INVITE MSNMSGR:" + m_recipient + " MSNSLP/1.0";
-			cSeq   = "0";
+			cSeq   = '0';
 			break;
 
 		case OK:
 			method = "MSNSLP/1.0 200 OK";
-			cSeq   = "1";
+			cSeq   = '1';
 			break;
 	}
 

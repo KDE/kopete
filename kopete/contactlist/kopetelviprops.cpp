@@ -205,6 +205,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( ui_mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated ( int )), SLOT(slotEnableAndDisableWidgets()));
+	
 
 	ui_mainWidget->btnClearPhoto->setIcon( SmallIconSet( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
@@ -386,7 +388,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromKABC(mAddressBookUid);
 		break;
 		case Kopete::MetaContact::SourceContact:
-		photo = Kopete::photoFromContact(selectedNameSourceContact());
+		photo = Kopete::photoFromContact(selectedPhotoSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
 		photo = QImage(ui_mainWidget->cmbPhotoUrl->url());

@@ -32,8 +32,6 @@
 #include "kopetecontactlistelement.h"
 #include "kopeteonlinestatus.h"
 
-class QDomNode;
-
 namespace Kopete {
 
 
@@ -129,6 +127,8 @@ public:
 	 */
 	void setDisplayNameSource(PropertySource source);
 
+	void setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID );
+
 	/**
 	 * @brief get the source of metacontact display name
 	 *
@@ -148,6 +148,8 @@ public:
 	 * @see PropertySource
 	 */
 	void setPhotoSource(PropertySource source);
+
+	void setPhotoSource( const QString &photoSourcePID, const QString &photoSourceAID, const QString &photoSourceCID );
 
 	/**
 	 * @brief get the source of metacontact photo
@@ -350,23 +352,6 @@ public:
 	unsigned long int idleTime() const;
 
 	/**
-	 * Return a XML representation of the metacontact
-	 * @internal
-	 * @param minimal When true, it doesn't save the
-	 * plugins, groups. False by default.
-	 */
-	const QDomElement toXML(bool minimal = false);
-
-	/**
-	 * Creates a metacontact from XML
-	 * Return value of false indicated that
-	 * creation failed and this contact should be
-	 * discarded.
-	 * @internal
-	 */
-	bool fromXML( const QDomElement& cnode );
-
-	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to Plugin::addressBookFields()
 	 * cannot be altered!
@@ -416,6 +401,12 @@ public slots:
 	 */
 	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString::null,
 		unsigned long fileSize = 0L );
+
+	/**
+	 * Emit aboutToSave signal to notify plugins that this metaContact is going to be saved
+	 */
+	void emitAboutToSave();
+
 signals:
 	/**
 	 * This metaContact is going to be saved to the contactlist. Plugins should
@@ -488,6 +479,16 @@ public slots:
 	 * returns the Contact that was chosen as the preferred
 	 */
 	Contact *startChat();
+
+	/**
+	 * When all the plugins are loaded, set the Contact Source.
+	 */
+	void slotAllPluginsLoaded();
+
+	/**
+	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
+	 */
+	void slotPluginLoaded( Kopete::Plugin *plugin );
 
 signals:
 	/**
@@ -572,16 +573,6 @@ private slots:
 	void slotContactDestroyed( Kopete::Contact* );
 
 	/**
-	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
-	 */
-	void slotPluginLoaded( Kopete::Plugin *plugin );
-
-	/**
-	 * When all the plugins are loaded, set the Contact Source.
-	 */
-	void slotAllPluginsLoaded();
-
-	/**
 	 * Update the KABC Picture when the addressbook is changed.
 	 */
 	void slotUpdateAddressBookPicture();
@@ -593,8 +584,6 @@ protected:
 	//QString nameFromContact( Kopete::Contact *c) const;
 	//QString nameFromKABC( const QString &id ) const;
 
-	QString sourceToString(PropertySource source) const;
-	PropertySource stringToSource(const QString &name) const;
 private:
 	class Private;
 	Private *d;

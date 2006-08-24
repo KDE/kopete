@@ -35,6 +35,7 @@
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kiconloader.h>
+#include <kicon.h>
 
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
@@ -182,7 +183,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 				c->removeProperty(Kopete::Global::Properties::self()->photo());
 				//slotDisplayPictureChanged(); //don't do that or we might end in a infinite loop
 			}
-			QToolTip::add( m_image, "<qt><img src=\"" + imgURL + "\"></qt>" );
+			m_image->setToolTip( "<qt><img src=\"" + imgURL + "\"></qt>" );
 #endif
 		}
 	}

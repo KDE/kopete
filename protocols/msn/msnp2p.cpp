@@ -356,7 +356,7 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 	unsigned int f=0;
 	while(f<dataMessage.size())
 	{
-		echoS+="\n";
+		echoS+='\n';
 		
 		for(unsigned int q=0; q<16 ; q++)
 		{
@@ -364,8 +364,8 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 			{
 				unsigned int N=(unsigned int) (dataMessage[q+f]);
 				if(N<16)
-					echoS+="0";
-				echoS+=QString::number( N  ,16)+" ";
+					echoS+='0';
+				echoS+=QString::number( N  ,16)+' ';
 			}
 			else
 				echoS+="   ";
@@ -392,14 +392,14 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 	if( msgStr.dataMessageSize+msgStr.dataOffset < msgStr.totalSize )
 		return;
 	
-	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << "\n" << endl;
+	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << '\n' << endl;
 	if(m_content.length() < 5)
 		makeSIPMessage(m_content);
 	else if(m_content.contains("<producer>"))
 	{
 		makeSIPMessage(m_content.replace("producer","viewer"));
 	}
-	m_content=QString::null;
+	m_content.clear();
 }
 
 void MSNP2PWebcam::makeSIPMessage(const QString &message)
@@ -427,7 +427,7 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 	unsigned int f=0;
 	while(f<dataMessage.size())
 	{
-		echoS+="\n";
+		echoS+='\n';
 		
 		for(unsigned int q=0; q<16 ; q++)
 		{
@@ -435,8 +435,8 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 			{
 				unsigned int N=(unsigned int) (dataMessage[q+f]);
 				if(N<16)
-					echoS+="0";
-				echoS+=QString::number( N  ,16)+" ";
+					echoS+='0';
+				echoS+=QString::number( N  ,16)+' ';
 			}
 			else
 				echoS+="   ";

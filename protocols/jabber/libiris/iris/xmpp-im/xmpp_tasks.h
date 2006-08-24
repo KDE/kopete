@@ -134,7 +134,7 @@ namespace XMPP
 
 		void pres(const Status &);
 		void pres(const Jid &, const Status &);
-		void sub(const Jid &, const QString &subType);
+		void sub(const Jid &, const QString &subType, const QString& nick = QString());
 
 		void onGo();
 
@@ -157,11 +157,19 @@ namespace XMPP
 
 	signals:
 		void presence(const Jid &, const Status &);
-		void subscription(const Jid &, const QString &);
+		void subscription(const Jid &, const QString &, const QString&);
 
 	private:
 		class Private;
 		Private *d;
+	};
+	
+	class JT_Session : public Task
+	{
+	public:
+		JT_Session(Task *parent);
+		void onGo();
+		bool take(const QDomElement&);
 	};
 
 	class IRIS_EXPORT JT_Message : public Task
@@ -441,28 +449,8 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
-
-	class IRIS_EXPORT JT_MucPresence : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_MucPresence(Task *parent);
-		~JT_MucPresence();
-
-		void pres(const Status &);
-		void pres(const Jid &, const Status &, const QString &password);
-
-		void onGo();
-
-	private:
-		QDomElement tag;
-		int type;
-
-		class Private;
-		Private *d;
-	};
-	
-	class IRIS_EXPORT JT_PrivateStorage : public Task
+    
+	class JT_PrivateStorage : public Task
 	{
 		Q_OBJECT
 	public:

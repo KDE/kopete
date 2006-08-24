@@ -16,7 +16,7 @@
 */
 
 #include "kopetecontactaction.h"
-
+#include "kicon.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"

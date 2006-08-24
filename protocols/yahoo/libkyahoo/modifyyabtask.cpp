@@ -34,20 +34,22 @@ using namespace KNetwork;
 ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	m_socket = 0;
 }
 
 ModifyYABTask::~ModifyYABTask()
 {
+	delete m_socket;
 }
 
 void ModifyYABTask::onGo()
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	KBufferedSocket* yahooSocket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
-	connect( yahooSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
-	connect( yahooSocket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
+	m_socket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
+	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
-	yahooSocket->connect();
+	m_socket->connect();
 }
 
 void ModifyYABTask::setAction( Action action )
@@ -87,8 +89,9 @@ void ModifyYABTask::setEntry( const YABEntry &entry )
 
 void ModifyYABTask::connectFailed( int i)
 {
+	m_socket->close();
 	client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), 
-			QString( "%1 - %2").arg(i).arg(dynamic_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
+			QString( "%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 }
 
 void ModifyYABTask::connectSucceeded()
@@ -115,12 +118,12 @@ void ModifyYABTask::connectSucceeded()
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;
 	else
 	{
-		client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), socket->errorString(), Client::Error );
+		client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
 		setSuccess( false );
 		return;
 	}
 	
-	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
+	connect( m_socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 }
 
 void ModifyYABTask::slotRead()
@@ -132,13 +135,16 @@ void ModifyYABTask::slotRead()
 	QString data( ar );
 	data = data.right( data.length() - data.indexOf("<?xml") );
 
+	if( m_data.indexOf("</ab>") < 0 )
+		return;						// Need more data
 
+	m_socket->close();
 	QDomDocument doc;
 	QDomNodeList list;
 	QDomElement e;
 	int it = 0;
 	
-	doc.setContent( data );
+	doc.setContent( m_data );
 
 	list = doc.elementsByTagName( "ab" );			// Get the Addressbook
 	for( it = 0; it < list.count(); it++ )	{
@@ -193,7 +199,7 @@ void ModifyYABTask::slotRead()
 		emit gotEntry( entry );
 	}
 
-
+	
 	setSuccess( true );
 }
 #include "modifyyabtask.moc"

@@ -52,7 +52,8 @@ public:
 
 public slots:
 	void loadConfig();
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason);
+   void setStatusMessage( const Kopete::StatusMessage& msg );
 
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());

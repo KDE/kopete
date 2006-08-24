@@ -27,7 +27,7 @@ class SMSAddContactPage : public AddContactPage
 {
    Q_OBJECT
 public:
-	SMSAddContactPage(QWidget *parent=0, const char *name=0);
+	SMSAddContactPage(QWidget *parent=0);
 	~SMSAddContactPage();
 	smsAddUI *smsdata;
 	virtual bool validateData();

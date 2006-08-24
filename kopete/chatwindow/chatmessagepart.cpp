@@ -37,6 +37,7 @@
 #include <QTextStream>
 #include <QByteArray>
 #include <QTextCodec>
+#include <QTextDocument>
 
 // KHTML::DOM includes
 #include <dom/dom_doc.h>
@@ -66,6 +67,7 @@
 #include <kcodecs.h>
 #include <k3multipledrag.h>
 #include <kstdaction.h>
+#include <kicon.h>
 
 // Kopete includes
 #include "chatmemberslistwidget.h"
@@ -83,6 +85,7 @@
 #include "kopetepicture.h"
 #include "kopeteappearancesettings.h"
 #include "kopetebehaviorsettings.h"
+#include "kopetechatwindowsettings.h"
 
 #include "kopetechatwindowstyle.h"
 #include "kopetechatwindowstylemanager.h"
@@ -192,7 +195,10 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 {
 	d->manager = mgr;
 
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( Kopete::AppearanceSettings::self()->stylePath() );
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
+			 KopeteChatWindowSettings::self()->stylePath() );
+	
+	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath()  << endl;
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( true ) ;
@@ -209,11 +215,11 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL(messageOverridesChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
-	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
+	connect( KopeteChatWindowSettings::self(), SIGNAL(chatwindowAppearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
-	connect( Kopete::AppearanceSettings::self(), SIGNAL(styleChanged(const QString &)),
+	connect( KopeteChatWindowSettings::self(), SIGNAL(styleChanged(const QString &)),
 			 this, SLOT( setStyle(const QString &) ) );
-	connect( Kopete::AppearanceSettings::self(), SIGNAL(styleVariantChanged(const QString &)),
+	connect( KopeteChatWindowSettings::self(), SIGNAL(styleVariantChanged(const QString &)),
 			 this, SLOT( setStyleVariant(const QString &) ) );
 
 	// Refresh the style if the display name change.
@@ -403,7 +409,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
 	// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
 	// Group only if the user want it.
-	if( Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
+	if( KopeteChatWindowSettings::self()->groupConsecutiveMessages() )
 	{
 		isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from() && message.type() == d->latestType);
 	}
@@ -509,7 +515,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			
 		// FIXME: Find a way to make work Chat View Buffer efficiently with consecutives messages.
 		// Before it was calling changeStyle() but it's damn too slow.
-		if( !Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
+		if( !KopeteChatWindowSettings::self()->groupConsecutiveMessages() )
 		{
 			chatNode.removeChild( chatNode.firstChild() );
 		}
@@ -521,44 +527,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 #ifdef STYLE_TIMETEST
 	kDebug(14000) << "Message time: " << beforeMessage.msecsTo( QTime::currentTime()) << endl;
 #endif
-}
-
-const QString ChatMessagePart::addNickLinks( const QString &html ) const
-{
-	QString retVal = html;
-	unsigned int i;
-	
-	Kopete::ContactPtrList members = d->manager->members();
-	
-	Kopete::Contact* ct;
-	for ( i = 0; i != members.size(); i++ )
-	{
-		ct = members[i];
-		QString nick = ct->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
-		//FIXME: this is really slow in channels with lots of contacts
-		QString parsed_nick = Kopete::Emoticons::parseEmoticons( nick );
-
-		if ( nick != parsed_nick )
-		{
-			retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
-					.arg( QRegExp::escape( parsed_nick ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
-		}
-		if ( nick.length() > 0 && ( retVal.indexOf( nick ) > -1 ) && d->manager->protocol() )
-		{
-			retVal.replace(
-				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
-					.arg( QRegExp::escape( nick ) )  ),
-			QString::fromLatin1("\\1<a href=\"kopetemessage://%1/?protocolId=%2&accountId=%3\" class=\"KopeteDisplayName\">\\2</a>\\3")
-				.arg( ct->contactId(), d->manager->protocol()->pluginId(), d->manager->account()->accountId() )
-			);
-		}
-	}
-#if 0  //disabled because it causes crash on exit  - Olivier 2006-03-31
-	QString nick = d->manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
-	retVal.replace( QRegExp( QLatin1String("([\\s&;>])%1([\\s&;<:])")
-			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QLatin1String("\\1%1\\2").arg( nick ) );
-#endif
-	return retVal;
 }
 
 void ChatMessagePart::slotRefreshView()
@@ -617,7 +585,7 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 {
 	DOM::Node node = n;
         unsigned int i;
-	QList<Kopete::Contact*> m;					       
+	QList<Kopete::Contact*> m;
 
 	if ( node.isNull() )
 		return 0;
@@ -826,10 +794,11 @@ void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString 
 }
 
 // Style formatting for messages(incoming, outgoing, status)
-QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete::Message &message )
+QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const Kopete::Message &_message )
 {
+	Kopete::Message message=_message; //we will eventually need to modify it before showing it.
 	QString resultHTML = sourceHTML;
-	QString nick, contactId, service, protocolIcon;
+	QString nick, contactId, service, protocolIcon, nickLink;
 	
 	if( message.from() )
 	{
@@ -860,18 +829,28 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		}
 
 		protocolIcon = KGlobal::iconLoader()->iconPath( iconName, K3Icon::Small );
+		
+		nickLink=QString::fromLatin1("<a href=\"kopetemessage://%1/?protocolId=%2&amp;accountId=%3\" class=\"KopeteDisplayName\">")
+				.arg( Qt::escape(message.from()->contactId()).replace('"',"&quot;"),
+					  Qt::escape(message.from()->protocol()->pluginId()).replace('"',"&quot;"), 
+					  Qt::escape(message.from()->account()->accountId() ).replace('"',"&quot;"));
+	}
+	else
+	{
+		nickLink="<a>";
 	}
 	
+	
 	// Replace sender (contact nick)
-	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), nick );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), nickLink+nick+"</a>" );
 	// Replace time, by default display only time and display seconds(that was true means).
 	resultHTML = resultHTML.replace( QString::fromUtf8("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
 	// Replace %screenName% (contact ID)
-	resultHTML = resultHTML.replace( QString::fromUtf8("%senderScreenName%"), contactId );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%senderScreenName%"), nickLink+Qt::escape(contactId)+"</a>" );
 	// Replace service name (protocol name)
-	resultHTML = resultHTML.replace( QString::fromUtf8("%service%"), service );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%service%"), Qt::escape(service) );
 	// Replace protocolIcon (sender statusIcon)
-	resultHTML = resultHTML.replace( QString::fromUtf8("%senderStatusIcon%"), protocolIcon );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%senderStatusIcon%"), Qt::escape(protocolIcon).replace('"',"&quot;") );
 	
 	// Look for %time{X}%
 	QRegExp timeRegExp("%time\\{([^}]*)\\}%");
@@ -934,13 +913,9 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	{
 		kDebug(14000) << k_funcinfo << "Map Action message to Status template. " << endl;
 
-		QString boldNick = QString::fromUtf8("<b>%1</b> ").arg(nick);
-		// Don't set the body twice.
-		if( !message.parsedBody().contains(boldNick) )
-		{
-			QString newBody = boldNick + message.parsedBody();
-			message.setBody(newBody, Kopete::Message::ParsedHTML );
-		}
+		QString boldNick = QString::fromUtf8("%1<b>%2</b></a> ").arg(nickLink,nick);
+		QString newBody = boldNick + message.parsedBody();
+		message.setBody(newBody, Kopete::Message::ParsedHTML );
 	}
 
 	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))
@@ -981,7 +956,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), formatMessageBody(message) );
 
 	// TODO: %status
-	resultHTML = addNickLinks( resultHTML );
+//	resultHTML = addNickLinks( resultHTML );
 	return resultHTML;
 }
 
@@ -1097,8 +1072,11 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 	
 	formattedBody += message.getHtmlStyleAttribute();
 
+	QStringList classes("KopeteMessageBody");
+	classes+=message.classes();
+			
 	// Affect the parsed body.
-	formattedBody += QString::fromUtf8("class=\"KopeteMessageBody\">%1</span>").arg(message.parsedBody());
+	formattedBody += QString::fromUtf8("class=\"%1\">%2</span>").arg(classes.join(" "), message.parsedBody());
 	
 	return formattedBody;
 }
@@ -1190,7 +1168,7 @@ void ChatMessagePart::writeTemplate()
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( Kopete::AppearanceSettings::self()->styleVariant() )
+		.arg( KopeteChatWindowSettings::self()->styleVariant() )
 		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();

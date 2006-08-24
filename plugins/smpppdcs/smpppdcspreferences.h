@@ -25,7 +25,7 @@ namespace Ui { class SMPPPDCSPrefs; }
 
 class AccountPrivMap {
 public:
-	AccountPrivMap(bool isOn = FALSE, const QString& id = QString::null)
+	AccountPrivMap(bool isOn = false, const QString& id = QString::null)
 	 : m_on(isOn), m_id(id) {}
 	bool m_on;
 	QString m_id;

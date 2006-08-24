@@ -18,11 +18,13 @@
 
 #include "jabbercontactpool.h"
 
-#include <q3ptrlist.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kopeteaccountmanager.h>
+#include <kopetecontactlist.h>
 #include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
+
 #include "jabberprotocol.h"
 #include "jabberbasecontact.h"
 #include "jabbercontact.h"
@@ -116,14 +118,34 @@ JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &
 	JabberContactPoolItem *mContactItem = findPoolItem ( mContact );
 	if ( mContactItem)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << mContact.jid().full() << endl;
+		if(mContactItem->contact()->inherits(roomContact ?
+				 (const char*)("JabberGroupContact") : (const char*)("JabberGroupMemberContact") ) )
+		{
+			
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << mContact.jid().full() << endl;
+			
+			// It exists, update it.
+			mContactItem->contact()->updateContact ( mContact );
+			mContactItem->setDirty ( dirty );
+	
+			//we must tell to the originating function that no new contact has been added
+			return 0L;//mContactItem->contact ();
+		}
+		else
+		{
+			//this happen if we receive a MUC invitaiton:  when the invitaiton is received, it's from the muc itself
+			//and then kopete will create a temporary contact for it. but it will not be a good contact.
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Bad contact will be removed and re-added " << mContact.jid().full() << endl;
+			Kopete::MetaContact *old_mc=mContactItem->contact()->metaContact();
+			delete mContactItem->contact();
+			mContactItem = 0L;
+			if(old_mc->contacts().isEmpty() && old_mc!=metaContact)
+			{
+				Kopete::ContactList::self()->removeMetaContact( old_mc );
+			}
+			
+		}
 
-		// It exists, update it.
-		mContactItem->contact()->updateContact ( mContact );
-		mContactItem->setDirty ( dirty );
-
-		//we must tell to the originating function that no new contact has been added
-		return 0L;//mContactItem->contact ();
 	}
 
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << mContact.jid().full() << endl;
@@ -159,7 +181,15 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 			 * The following deletion will cause slotContactDestroyed()
 			 * to be called, which will clean the up the list.
 			 */
-			delete mContactItem->contact ();
+			if(mContactItem->contact())
+			{
+				Kopete::MetaContact *mc=mContactItem->contact()->metaContact();
+				delete mContactItem->contact ();
+				if(mc && mc->contacts().isEmpty())
+				{
+					Kopete::ContactList::self()->removeMetaContact(mc) ;
+				}
+			}
 			return;
 		}
 	}
@@ -193,7 +223,7 @@ void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 	else
 	{
 		//this is a legacy contact. we have no way to get the real Jid at this point, we can only guess it.
-		QString contactId= contact->contactId().replace('@','%') + "@" + contact->account()->myself()->contactId();
+		QString contactId= contact->contactId().replace('@','%') + '@' + contact->account()->myself()->contactId();
 		mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contactId ) ) ;
 	}
 

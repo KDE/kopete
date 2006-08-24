@@ -323,7 +323,7 @@ void GSMLib::loadConfig()
 		QString temp;
 		KConfigGroup* c = m_account->configGroup();
 		
-		temp = c->readEntry(QString("%1:%2").arg("GSMLib").arg("Device"), QString::null);
+		temp = c->readEntry(QString("%1:%2").arg("GSMLib").arg("Device"), QString());
 		if( temp != QString::null )
 			m_device = temp;
 	}

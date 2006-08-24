@@ -22,6 +22,7 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kicon.h>
 #include <qimage.h>
 #include <qregexp.h>
 

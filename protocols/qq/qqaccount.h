@@ -14,8 +14,10 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDACCOUNT_H
-#define TESTBEDACCOUNT_H
+#ifndef QQACCOUNT_H
+#define QQACCOUNT_H
+
+#include <kopetechatsessionmanager.h>
 
 #include "kopetepasswordedaccount.h"
 #include "qqwebcamdialog.h"
@@ -30,11 +32,15 @@ namespace Kopete
 
 namespace Eva {
 	struct ContactInfo;
+	struct ContactStatus;
+	struct MessageHeader;
+	struct ByteArray;
 }
 
 class QQContact;
 class QQProtocol;
 class QQNotifySocket;
+class QQChatSession;
 
 /**
  * This represents an account connected to the qq
@@ -86,6 +92,16 @@ public:
 
 	QQNotifySocket* notifySocket();
 
+	/**
+	 * Returns the online status from Eva status
+	 */
+	Kopete::OnlineStatus fromEvaStatus( char es );
+
+	QQChatSession * chatSession( Kopete::ContactPtrList others, const QString& guid, Kopete::Contact::CanCreateFlags canCreate );
+
+	void sendInvitation(const QString& guid, const QString& id, const QString& message );
+	void sendMessage(const QString& guid, Kopete::Message& message );
+
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
@@ -95,7 +111,10 @@ public slots:
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNewContactList();
 	void slotContactListed( const Eva::ContactInfo& ci );
-	void slotGroupListed(const QStringList& ql );
+	void slotGroupNamesListed(const QStringList& ql );
+	void slotContactInGroup(const int qqId, const char type, const int groupId );
+	void slotContactStatusChanged(const Eva::ContactStatus& cs);
+	void slotMessageReceived( const Eva::MessageHeader& header, const Eva::ByteArray& message );
 
 protected:
 	/**
@@ -111,6 +130,8 @@ protected slots:
 
 private:
 	void createNotificationServer( const QString &host, uint port );
+	QQChatSession * findChatSessionByGuid( const QString& guid );
+
 
 
 private:
@@ -134,12 +155,14 @@ private:
 
 	//this is the translation between old to new groups id when syncing from server.
 	QMap<QString, Kopete::Group*> m_oldGroupList;
-	QMap<QString, Kopete::Group*> m_groupList;
+	QList<Kopete::Group*> m_groupList;
 
 	/**
 	 * Cliend ID is a bitfield that contains supported features for a MSN contact.
 	 */
 	uint m_clientId;
+
+	QList<QQChatSession*> m_chatSessions;
 };
 
 #endif

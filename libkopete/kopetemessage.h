@@ -39,7 +39,7 @@ class QDateTime;
 namespace Kopete {
 
 
-  class ChatSession;
+class ChatSession;
 class Contact;
 
 
@@ -79,7 +79,7 @@ public:
 	 *  show into the chatview, with Emoticons, and URLs
 	 * - Crypted is used only by Jabber and the Cryptography plugin
 	 */
-	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|Qt::RichText , Crypted = 0x08|Qt::PlainText};
+	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
 
 	/**
 	 * Specifies the type of the message.
@@ -357,6 +357,25 @@ public:
 	 * @return A string formatted like this: "style=attr"
 	 */
 	QString getHtmlStyleAttribute() const;
+	
+	/**
+	 * @return the list of classes
+	 * 
+	 * class are used to give different notification on a message.  But are also used in the chatwindow as html class 
+	 */
+	QStringList classes() const;
+	
+	/**
+	 * add a class
+	 * @see classes
+	 */
+	void addClass(const QString& classe);
+	
+	/**
+	 * set the classes
+	 * @see classes
+	 */
+	void setClasses(const QStringList &classes);
 
 public:  /* static helpers */
 

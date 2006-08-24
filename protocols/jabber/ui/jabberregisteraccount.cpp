@@ -5,7 +5,9 @@
     begin                : Sun Jul 11 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
 
-		Kopete (C) 2001-2004 Kopete developers <kopete-devel@kde.org>
+    Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
+
+		Kopete (C) 2001-2006 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -72,7 +74,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	jabberClient = new JabberClient ();
 
 	connect ( jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
-	connect ( jabberClient, SIGNAL ( tlsWarning ( int ) ), this, SLOT ( slotHandleTLSWarning ( int ) ) );
+	connect ( jabberClient, SIGNAL ( tlsWarning ( QCA::TLS::IdentityResult, QCA::Validity ) ), this, SLOT ( slotHandleTLSWarning ( QCA::TLS::IdentityResult, QCA::Validity ) ) );
 	connect ( jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 	
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
@@ -88,7 +90,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	mMainWidget->sbPort->setValue ( parent->mPort->value () );
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
 
-	// connect buttons to slots, ok is already connected by default
+	connect ( this, SIGNAL ( okClicked() ), this, SLOT( slotOk() ) );
 	connect ( this, SIGNAL ( cancelClicked () ), this, SLOT ( slotDeleteDialog () ) );
 	connect ( mMainWidget->btnChooseServer, SIGNAL ( clicked () ), this, SLOT ( slotChooseServer () ) );
 	connect ( mMainWidget->leServer, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( slotJIDInformation () ) );
@@ -292,11 +294,13 @@ void JabberRegisterAccount::disconnect ()
 
 }
 
-void JabberRegisterAccount::slotHandleTLSWarning ( int validityResult )
+void JabberRegisterAccount::slotHandleTLSWarning (
+		QCA::TLS::IdentityResult identityResult,
+		QCA::Validity validityResult )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling TLS warning..." << endl;
 
-	if ( JabberAccount::handleTLSWarning ( jabberClient, validityResult ) )
+	if ( JabberAccount::handleTLSWarning ( jabberClient, identityResult, validityResult ) )
 	{
 		// resume stream
 		jabberClient->continueAfterTLSWarning ();
@@ -318,7 +322,7 @@ void JabberRegisterAccount::slotCSError (int error)
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Protocol error." ) );
 
 	// display message to user
-	JabberAccount::handleStreamError (error, jabberClient->clientStream()->errorCondition (), jabberClient->clientConnector()->errorCode (), mMainWidget->leServer->text (), errorClass);
+	JabberAccount::handleStreamError (error, jabberClient->clientStream()->errorCondition (), jabberClient->clientConnector()->errorCode (), mMainWidget->leServer->text (), errorClass, jabberClient->clientStream()->errorText());
 
 	disconnect ();
 

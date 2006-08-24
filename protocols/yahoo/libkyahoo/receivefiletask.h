@@ -62,6 +62,7 @@ signals:
 private slots:
 	void slotData( KIO::Job *job, const QByteArray &data );
 	void slotComplete( KIO::Job *job );
+	void canceled( unsigned int );
 
 private:
 	void parseFileTransfer7Info( YMSGTransfer *transfer );
@@ -73,7 +74,7 @@ private:
 	QFile *m_file;
 	KIO::TransferJob *m_transferJob;
 	KIO::MimetypeJob *m_mimetypeJob;
-	int m_transferId;
+	unsigned int m_transferId;
 	unsigned int m_transmitted;
 	Type m_type;
 };

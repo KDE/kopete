@@ -18,14 +18,6 @@
 	<signal name="contactListAppearanceChanged">
 		<label>Emited when the contact list appearance has changed.</label>
 	</signal>
-	<signal name="styleChanged">
-		<label>Emited when the chat window style change.</label>
-		<argument type="String">stylePath</argument>
-	</signal>
-	<signal name="styleVariantChanged">
-		<label>Emitted when ChatWindowStyle variant has changed.</label>
-		<argument type="String">styleVariant</argument>
-	</signal>
 
 	<group name="Appearance">
 		<!-- Emoticon config -->
@@ -48,19 +40,7 @@
 			<emit signal="messageOverridesChanged" />
 		</entry>
 		
-		<!-- Chat Window Style preferences -->
-		<entry key="stylePath" type="String">
-			<label>Absolute path to a directory containing a Adium/Kopete chat window style.</label>
-			<default code="true">KStandardDirs::locate("appdata", QString("styles/%1/Kopete"))</default>
-		</entry>
-		<entry key="styleVariant" type="String">
-			<label>Relative path to a CSS variant for the current style.</label>
-		</entry>
-		<entry key="groupConsecutiveMessages" type="Bool">
-			<label>Group consecutive messages from the same user as one block.</label>
-			<default>true</default>
-		</entry>
-		
+	
 		<!-- Hightlight preferences -->
 		<entry key="highlightForegroundColor" type="Color">
 			<label>Text color used when hightlighting</label>

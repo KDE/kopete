@@ -81,7 +81,7 @@ Transfer::TransferType YMSGTransfer::type()
 	return Transfer::YMSGTransfer;
 }
 
-bool YMSGTransfer::isValid()
+bool YMSGTransfer::isValid() const
 {
 	return d->valid;
 }
@@ -96,7 +96,7 @@ void YMSGTransfer::setService(Yahoo::Service service)
 	d->service = service;
 }
 
-Yahoo::Status YMSGTransfer::status()
+Yahoo::Status YMSGTransfer::status() const
 {
 	return d->status;
 }
@@ -106,7 +106,7 @@ void YMSGTransfer::setStatus(Yahoo::Status status)
 	d->status = status;
 }
 
-unsigned int YMSGTransfer::id()
+unsigned int YMSGTransfer::id() const
 {
 	return d->id;
 }
@@ -116,12 +116,22 @@ void YMSGTransfer::setId(unsigned int id)
 	d->id = id;
 }
 
-ParamList YMSGTransfer::paramList()
+int YMSGTransfer::packetLength() const
+{
+	return d->packetLength;
+}
+
+void YMSGTransfer::setPacketLength(int len)
+{
+	d->packetLength = len;
+}
+
+ParamList YMSGTransfer::paramList() const
 {
 	return d->data;
 }
 
-int YMSGTransfer::paramCount( int index )
+int YMSGTransfer::paramCount( int index ) const
 {
 	int cnt = 0;
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
@@ -133,7 +143,7 @@ int YMSGTransfer::paramCount( int index )
 }
 
 
-QByteArray YMSGTransfer::nthParam( int index, int occurence )
+QByteArray YMSGTransfer::nthParam( int index, int occurence ) const
 {
 	int cnt = 0;
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
@@ -144,7 +154,7 @@ QByteArray YMSGTransfer::nthParam( int index, int occurence )
 	return QByteArray();
 }
 
-QByteArray YMSGTransfer::nthParamSeparated( int index, int occurence, int separator )
+QByteArray YMSGTransfer::nthParamSeparated( int index, int occurence, int separator ) const
 {
 
 	int cnt = -1;
@@ -158,7 +168,7 @@ QByteArray YMSGTransfer::nthParamSeparated( int index, int occurence, int separa
 	return QByteArray();
 }
 
-QByteArray YMSGTransfer::firstParam( int index )
+QByteArray YMSGTransfer::firstParam( int index ) const
 {
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
@@ -178,7 +188,7 @@ void YMSGTransfer::setParam( int index, int data )
 	d->data.append( Param( index, QString::number( data ).toLocal8Bit() ) );
 }
 
-int YMSGTransfer::length()
+int YMSGTransfer::length() const
 {
 	int len = 0;
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
@@ -192,7 +202,7 @@ int YMSGTransfer::length()
 }
 
 
-QByteArray YMSGTransfer::serialize()
+QByteArray YMSGTransfer::serialize() const
 {
 	/*
 	<------- 4B -------><------- 4B -------><---2B--->
@@ -214,9 +224,9 @@ QByteArray YMSGTransfer::serialize()
 	
 	stream << (Q_INT8)'Y' << (Q_INT8)'M' << (Q_INT8)'S' << (Q_INT8)'G';
 	if( d->service == Yahoo::ServicePictureUpload )
-		stream << (Q_INT16)0x0e00;
+		stream << (Q_INT16)0x0f00;
 	else
-		stream << (Q_INT16)0x000e;
+		stream << (Q_INT16)0x000f;
 	stream << (Q_INT16)0x0000;
 	if( d->service == Yahoo::ServicePictureUpload ||
 		d->service == Yahoo::ServiceFileTransfer )

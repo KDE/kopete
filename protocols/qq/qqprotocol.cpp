@@ -91,7 +91,7 @@ AddContactPage * QQProtocol::createAddContactWidget( QWidget *parent, Kopete::Ac
 KopeteEditAccountWidget * QQProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
 	kDebug(14210) << "Creating Edit Account Page" << endl;
-	return new QQEditAccountWidget( parent, account );
+	return new QQEditAccountWidget( this, account, parent );
 }
 
 Kopete::Account *QQProtocol::createNewAccount( const QString &accountId )

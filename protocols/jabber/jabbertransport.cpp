@@ -31,8 +31,7 @@
 
 #include <qpixmap.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+#include <kmenu.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -41,7 +40,7 @@
 #include "xmpp_tasks.h"
 
 JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::RosterItem & item, const QString& gateway_type)
-	: Kopete::Account ( parentAccount->protocol(), parentAccount->accountId()+"/"+ item.jid().bare() )
+	: Kopete::Account ( parentAccount->protocol(), parentAccount->accountId()+'/'+ item.jid().bare() )
 {
 	m_status=Creating;
 	m_account = parentAccount;
@@ -98,7 +97,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	
 	if(contactJID_s.isEmpty())
 	{
-		kdError(JABBER_DEBUG_GLOBAL) << k_funcinfo << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
+		kError(JABBER_DEBUG_GLOBAL) << k_funcinfo << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
 	}
 	
 	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
@@ -138,7 +137,7 @@ KActionMenu *JabberTransport::actionMenu ()
 		menu->addSeparator();
 
 		foreach( KAction *a, *customActions )
-			a->plug( menu->menu() );
+			menu->menu()->addAction(a);
 	}
 	delete customActions;
 
@@ -304,7 +303,7 @@ QString JabberTransport::legacyId( const XMPP::Jid & jid )
 	if(jid.node().isEmpty())
 		return QString();
 	QString node = jid.node();
-	return node.replace("%","@");
+	return node.replace('%','@');
 }
 
 void JabberTransport::jabberAccountRemoved( )

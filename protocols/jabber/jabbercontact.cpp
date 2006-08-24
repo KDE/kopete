@@ -41,12 +41,14 @@
 #include <kio/netaccess.h>
 #include <kinputdialog.h>
 #include <kopeteview.h>
+#include <kicon.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteaccountmanager.h"
+#include "kopetemetacontact.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -67,7 +69,7 @@
  * JabberContact constructor
  */
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
-	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , m_syncTimer(0L)
+	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is created  - " << this << endl;
 	// this contact is able to transfer files
@@ -121,7 +123,6 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
 	mRequestGoneEvent = false;
-	mDiscoDone = false;
 }
 
 JabberContact::~JabberContact()
@@ -138,37 +139,39 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
-	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
-								 this, SLOT (slotSendAuth ()), 0, "actionSendAuth");
+	resendAuthAction = new KAction (KIcon("mail_forward"), i18n ("(Re)send Authorization To"), 0, "actionSendAuth");
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
+	connect(resendAuthAction, SIGNAL(triggered(bool)), SLOT(slotSendAuth()));
 	actionAuthorization->addAction(resendAuthAction);
 
-	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
-								 this, SLOT (slotRequestAuth ()), 0, "actionRequestAuth");
+	requestAuthAction = new KAction (KIcon("mail_reply"), i18n ("(Re)request Authorization From"), 0, "actionRequestAuth");
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
+	connect(requestAuthAction, SIGNAL(triggered(bool)), SLOT(slotRequestAuth()));
 	actionAuthorization->addAction(requestAuthAction);
 	
-	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
-								 this, SLOT (slotRemoveAuth ()), 0, "actionRemoveAuth");
+	removeAuthAction = new KAction (KIcon("mail_delete"), i18n ("Remove Authorization From"), 0, "actionRemoveAuth");
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
+	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
 	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), 0, "jabber_online");
 
-	actionSetAvailability->addAction(new KAction (i18n ("Online"), protocol()->JabberKOSOnline.iconFor(this),
-									 0, this, SLOT (slotStatusOnline ()), 0, "actionOnline"));
-	actionSetAvailability->addAction(new KAction (i18n ("Free to Chat"), protocol()->JabberKOSChatty.iconFor(this),
-									 0, this, SLOT (slotStatusChatty ()), 0, "actionChatty"));
-	actionSetAvailability->addAction(new KAction (i18n ("Away"), protocol()->JabberKOSAway.iconFor(this),
-									 0, this, SLOT (slotStatusAway ()), 0, "actionAway"));
-	actionSetAvailability->addAction(new KAction (i18n ("Extended Away"), protocol()->JabberKOSXA.iconFor(this),
-									 0, this, SLOT (slotStatusXA ()), 0, "actionXA"));
-	actionSetAvailability->addAction(new KAction (i18n ("Do Not Disturb"), protocol()->JabberKOSDND.iconFor(this),
-									 0, this, SLOT (slotStatusDND ()), 0, "actionDND"));
-	actionSetAvailability->addAction(new KAction (i18n ("Invisible"), protocol()->JabberKOSInvisible.iconFor(this),
-									 0, this, SLOT (slotStatusInvisible ()), 0, "actionInvisible"));
+#define KACTION(status, text, name, slot) \
+	{ KAction *tmp = new KAction (KIcon(QIcon((status).iconFor(this))), (text), 0, (name));\
+	connect(tmp, SIGNAL(triggered(bool)), (slot));\
+	actionSetAvailability->addAction(tmp); }
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), 0, "actionSelectResource");
+	KACTION( protocol()->JabberKOSOnline, i18n ("Online"),         "actionOnline", SLOT(slotStatusOnline()) );
+	KACTION( protocol()->JabberKOSChatty, i18n ("Free to Chat"),   "actionChatty", SLOT(slotStatusChatty()) );
+	KACTION( protocol()->JabberKOSAway,   i18n ("Away"),           "actionAway",   SLOT(slotStatusAway()) );
+	KACTION( protocol()->JabberKOSXA,     i18n ("Extended Away"),  "actionXA",     SLOT(slotStatusXA()) );
+	KACTION( protocol()->JabberKOSDND,    i18n ("Do Not Disturb"), "actionDND",    SLOT(slotStatusDND()) );
+	KACTION( protocol()->JabberKOSInvisible, i18n ("Invisible"),   "actionInvisible", SLOT(slotStatusInvisible()) );
+
+#undef KACTION
+
+	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"),
+					0, "actionSelectResource");
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
@@ -189,24 +192,25 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 		account()->resourcePool()->findResources ( mRosterItem.jid (), availableResources );
 
-		XMPP::ResourceList::const_iterator resourcesEnd = availableResources.end ();
-		for ( XMPP::ResourceList::const_iterator it = availableResources.begin(); it != resourcesEnd; ++it, i++)
+		foreach(const XMPP::Resource& res, availableResources)
 		{
-			items.append ( (*it).name() );
+			items.append ( res.name() );
 
-			if ( (*it).name() == lockedResource.name() )
+			if ( res.name() == lockedResource.name() )
 				activeItem = i;
+
+			++i;
 		}
 
 		// now go through the string list and add the resources with their icons
 		i = 0;
-		QStringList::const_iterator itemsEnd = items.end ();
-		for(QStringList::const_iterator it = items.begin(); it != itemsEnd; ++it)
+		foreach(const QString& str, items)
 		{
 			if( i == activeItem )
 			{
-				actionSelectResource->addAction ( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
-												  0, QString::number( i ).toLatin1() ) );
+				KAction *tmp = new KAction( KIcon("button_ok"), str, 0, QString::number( i ).toLatin1());
+				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
+				actionSelectResource->addAction(tmp);
 			}
 			else
 			{
@@ -215,10 +219,11 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 				 * and the resources' respective status icons for the rest.
 				 */
 				QIcon iconSet ( !i ?
-					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
+					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(str) ).iconFor ( account () ));
 
-				actionSelectResource->addAction ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
-												  0, QString::number( i ).toLatin1() ) );
+				KAction *tmp = new KAction(KIcon(iconSet), str, 0, QString::number( i ).toLatin1());
+				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
+				actionSelectResource->addAction ( tmp );
 			}
 
 			i++;
@@ -322,7 +327,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () && message.urlList().isEmpty () && message.xHTMLBody().isEmpty() && message.xencrypted().isEmpty() )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () && !message.containsHTML() && message.xencrypted().isEmpty() )
 		return;
 
 	// determine message type
@@ -347,26 +352,21 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		// store message id for outgoing notifications
 		mLastReceivedMessageId = message.id ();
 
+		// convert XMPP::Message into Kopete::Message²
 		// retrieve and reformat body
 		QString body = message.body ();
-		QString xHTMLBody;
 		if( !message.xencrypted().isEmpty() )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
-		else
+		else if( message.containsHTML() )
 		{
-			xHTMLBody = message.xHTMLBody ();
-		}
-
-		// convert XMPP::Message into Kopete::Message
-		if (!xHTMLBody.isEmpty()) {
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, xHTMLBody,
+			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, message.html().toString(),
 											 message.subject (), Kopete::Message::Inbound,
 											 Kopete::Message::RichText, viewPlugin );
 		}
-		if ( !body.isEmpty () )
+		else if ( !body.isEmpty () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
@@ -384,30 +384,24 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	}
 
 	// append URLs as separate messages
-	if ( !message.urlList().isEmpty () )
+
+	/*
+	 * We need to copy it here because Iris returns a copy
+	 * and we can't work with a returned copy in a for() loop.
+	 */
+	XMPP::UrlList urlList = message.urlList();
+
+	foreach(XMPP::UrlList::const_reference xurl, urlList)
 	{
-		/*
-		 * We need to copy it here because Iris returns a copy
-		 * and we can't work with a returned copy in a for() loop.
-		 */
-		XMPP::UrlList urlList = message.urlList();
+		QString description = !xurl.desc().isEmpty() ? Qt::escape ( xurl.desc() ) : xurl.url();
 
-		for ( XMPP::UrlList::const_iterator it = urlList.begin (); it != urlList.end (); ++it )
-		{
-			QString description = (*it).desc().isEmpty() ? (*it).url() : Qt::escape ( (*it).desc() );
-			QString url = (*it).url ();
+		Kopete::Message msg ( message.timeStamp (), this, contactList,
+				QString ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ),
+				message.subject (), Kopete::Message::Inbound,
+				Kopete::Message::RichText, viewPlugin );
 
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
-											 QString ( "<a href=\"%1\">%2</a>" ).arg ( url, description ),
-											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::RichText, viewPlugin );
-
-			mManager->appendMessage ( *newMessage, message.from().resource () );
-
-			delete newMessage;
-		}
+		mManager->appendMessage ( msg, message.from().resource () );
 	}
-
 }
 
 void JabberContact::slotCheckVCard ()
@@ -425,6 +419,8 @@ void JabberContact::slotCheckVCard ()
 	{
 		if(transport()) //no need to disco if this is a legacy contact
 			mDiscoDone = true;
+		else if(!rosterItem().jid().node().isEmpty())
+			mDiscoDone = true; //contact with an @ are not transport for sure
 		else
 		{
 			mDiscoDone = true; //or it will happen twice, we don't want that.
@@ -472,6 +468,8 @@ void JabberContact::slotGetTimedVCard ()
 	{
 		if(transport()) //no need to disco if this is a legacy contact
 			mDiscoDone = true;
+		else if(!rosterItem().jid().node().isEmpty())
+			mDiscoDone = true; //contact with an @ are not transport for sure
 		else
 		{
 			//disco to see if it's not a transport
@@ -597,262 +595,6 @@ void JabberContact::slotGotLastActivity ()
 
 }
 
-void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
-{
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
-
-	// update vCard cache timestamp if this is not a temporary contact
-	if ( metaContact() && !metaContact()->isTemporary () )
-	{
-		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
-	}
-
-	/*
-	 * Set the nickname property.
-	 */
-	if ( !vCard.nickName().isEmpty () )
-	{
-		setProperty ( protocol()->propNickName, vCard.nickName () );
-	}
-	else
-	{
-		removeProperty ( protocol()->propNickName );
-	}
-
-	/**
-	 * Kopete does not allow a modification of the "full name"
-	 * property. However, some vCards specify only the full name,
-	 * some specify only first and last name.
-	 * Due to these inconsistencies, if first and last name don't
-	 * exist, it is attempted to parse the full name.
-	 */
-
-	// remove all properties first
-	removeProperty ( protocol()->propFirstName );
-	removeProperty ( protocol()->propLastName );
-	removeProperty ( protocol()->propFullName );
-
-	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
-	{
-		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
-		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).trimmed ();
-
-		setProperty ( protocol()->propFirstName, firstName );
-		setProperty ( protocol()->propLastName, lastName );
-	}
-	else
-	{
-		if ( !vCard.givenName().isEmpty () )
-			setProperty ( protocol()->propFirstName, vCard.givenName () );
-
-		if ( !vCard.familyName().isEmpty () )
-			setProperty ( protocol()->propLastName, vCard.familyName () );
-	}
-	if( !vCard.fullName().isEmpty() )
-		setProperty ( protocol()->propFullName, vCard.fullName() );
-
-	/* 
-	 * Set the general information 
-	 */
-	removeProperty( protocol()->propJid );
-	removeProperty( protocol()->propBirthday );
-	removeProperty( protocol()->propTimezone );
-	removeProperty( protocol()->propHomepage );
-
-	setProperty( protocol()->propJid, vCard.jid() );
-	
-	if( !vCard.bdayStr().isEmpty () )
-		setProperty( protocol()->propBirthday, vCard.bdayStr() );
-	if( !vCard.timezone().isEmpty () )
-		setProperty( protocol()->propTimezone, vCard.timezone() );
-	if( !vCard.url().isEmpty () )
-		setProperty( protocol()->propHomepage, vCard.url() );
-
-	/*
-	 * Set the work information.
-	 */
-	removeProperty( protocol()->propCompanyName );
-	removeProperty( protocol()->propCompanyDepartement );
-	removeProperty( protocol()->propCompanyPosition );
-	removeProperty( protocol()->propCompanyRole );
-	
-	if( !vCard.org().name.isEmpty() )
-		setProperty( protocol()->propCompanyName, vCard.org().name );
-	if( !vCard.org().unit.join(",").isEmpty() )
-		setProperty( protocol()->propCompanyDepartement, vCard.org().unit.join(",")) ;
-	if( !vCard.title().isEmpty() )
-		setProperty( protocol()->propCompanyPosition, vCard.title() );
-	if( !vCard.role().isEmpty() )
-		setProperty( protocol()->propCompanyRole, vCard.role() );
-
-	/*
-	 * Set the about information
-	 */
-	removeProperty( protocol()->propAbout );
-
-	if( !vCard.desc().isEmpty() )
-		setProperty( protocol()->propAbout, vCard.desc() );
-
-	
-	/*
-	 * Set the work and home addresses information
-	 */
-	removeProperty( protocol()->propWorkStreet );
-	removeProperty( protocol()->propWorkExtAddr );
-	removeProperty( protocol()->propWorkPOBox );
-	removeProperty( protocol()->propWorkCity );
-	removeProperty( protocol()->propWorkPostalCode );
-	removeProperty( protocol()->propWorkCountry );
-
-	removeProperty( protocol()->propHomeStreet );
-	removeProperty( protocol()->propHomeExtAddr );
-	removeProperty( protocol()->propHomePOBox );
-	removeProperty( protocol()->propHomeCity );
-	removeProperty( protocol()->propHomePostalCode );
-	removeProperty( protocol()->propHomeCountry );
-
-	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
-	{
-		XMPP::VCard::Address address = (*it);
-
-		if(address.work)
-		{
-			setProperty( protocol()->propWorkStreet, address.street );
-			setProperty( protocol()->propWorkExtAddr, address.extaddr );
-			setProperty( protocol()->propWorkPOBox, address.pobox );
-			setProperty( protocol()->propWorkCity, address.locality );
-			setProperty( protocol()->propWorkPostalCode, address.pcode );
-			setProperty( protocol()->propWorkCountry, address.country );
-		}
-		else
-		if(address.home)
-		{
-			setProperty( protocol()->propHomeStreet, address.street );
-			setProperty( protocol()->propHomeExtAddr, address.extaddr );
-			setProperty( protocol()->propHomePOBox, address.pobox );
-			setProperty( protocol()->propHomeCity, address.locality );
-			setProperty( protocol()->propHomePostalCode, address.pcode );
-			setProperty( protocol()->propHomeCountry, address.country );
-		}
-	}
-
-
-	/*
-	 * Delete emails first, they might not be present
-	 * in the vCard at all anymore.
-	 */
-	removeProperty ( protocol()->propEmailAddress );
-	removeProperty ( protocol()->propWorkEmailAddress );
-
-	/*
-	 * Set the home and work email information.
-	 */
-	XMPP::VCard::EmailList::const_iterator emailEnd = vCard.emailList().end ();
-	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != emailEnd; ++it)
-	{
-		XMPP::VCard::Email email = (*it);
-		
-		if(email.work)
-		{
-			if( !email.userid.isEmpty() )
-				setProperty ( protocol()->propWorkEmailAddress, email.userid );
-		}
-		else
-		if(email.home)
-		{	
-			if( !email.userid.isEmpty() )
-				setProperty ( protocol()->propEmailAddress, email.userid );
-		}
-	}
-
-	/*
-	 * Delete phone number properties first as they might have
-	 * been unset during an update and are not present in
-	 * the vCard at all anymore.
-	 */
-	removeProperty ( protocol()->propPrivatePhone );
-	removeProperty ( protocol()->propPrivateMobilePhone );
-	removeProperty ( protocol()->propWorkPhone );
-	removeProperty ( protocol()->propWorkMobilePhone );
-
-	/*
-	 * Set phone numbers. Note that if a mobile phone number
-	 * is specified, it's assigned to the private mobile
-	 * phone number property. This might not be the desired
-	 * behavior for all users.
-	 */
-	XMPP::VCard::PhoneList::const_iterator phoneEnd = vCard.phoneList().end ();
-	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != phoneEnd; ++it)
-	{
-		XMPP::VCard::Phone phone = (*it);
-
-		if(phone.work)
-		{
-			setProperty ( protocol()->propWorkPhone, phone.number );
-		}
-		else
-		if(phone.fax)
-		{
-			setProperty ( protocol()->propPhoneFax, phone.number);
-		}
-		else
-		if(phone.cell)
-		{
-			setProperty ( protocol()->propPrivateMobilePhone, phone.number );
-		}
-		else
-		if(phone.home)
-		{
-			setProperty ( protocol()->propPrivatePhone, phone.number );
-		}
-
-	}
-
-	/*
-	 * Set photo/avatar property.
-	 */
-	removeProperty( protocol()->propPhoto );
-
-	QImage contactPhoto;
-	QString fullJid =  mRosterItem.jid().full();
-	QString finalPhotoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
-	
-	// photo() is a QByteArray
-	if ( !vCard.photo().isEmpty() )
-	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
-
-		// QImage is used to save to disk in PNG later.
-		contactPhoto = QImage( vCard.photo() );
-	}
-	// Contact photo is a URI.
-	else if( !vCard.photoURI().isEmpty() )
-	{
-		QString tempPhotoPath = 0;
-		
-		// Downalod photo from URI.
-		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
-		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed." ) );
-			return;
-		}
-
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
-
-		contactPhoto = QImage( tempPhotoPath );
-		
-		KIO::NetAccess::removeTempFile(  tempPhotoPath );
-	}
-
-	// Save the image to the disk, then set the property.
-	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
-	{
-			kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
-			setProperty( protocol()->propPhoto, finalPhotoPath );
-	}
-
-}
-
 void JabberContact::slotSendVCard()
 {
 	XMPP::VCard vCard;
@@ -921,7 +663,7 @@ void JabberContact::slotSendVCard()
 	// work information tab
 	XMPP::VCard::Org org;
 	org.name = property(protocol()->propCompanyName).value().toString();
-	org.unit = QStringList::split(",", property(protocol()->propCompanyDepartement).value().toString());
+	org.unit = property(protocol()->propCompanyDepartement).value().toString().split(',');
 	vCard.setOrg(org);
 	vCard.setTitle (property(protocol()->propCompanyPosition).value().toString());
 	vCard.setRole (property(protocol()->propCompanyRole).value().toString());
@@ -994,7 +736,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
-			newPhotoPath = QString::null;
+			newPhotoPath.clear();
 		else
 			newPhotoPath = newLocation;
 	}
@@ -1013,7 +755,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
-			newPhotoPath = QString::null;
+			newPhotoPath.clear();
 		else
 			newPhotoPath = newLocation;
 	}
@@ -1029,7 +771,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
-			newPhotoPath = QString::null;
+			newPhotoPath.clear();
 		else
 			newPhotoPath = newLocation;
 	}
@@ -1283,23 +1025,6 @@ void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*
 
 }
 
-void JabberContact::slotUserInfo ()
-{
-
-	if ( !account()->isConnected () )
-	{
-		account()->errorConnectFirst ();
-		return;
-	}
-	
-	// Update the vCard
-	//slotGetTimedVCard();
-
-	dlgJabberVCard *dlgVCard = new dlgJabberVCard ( account(), this, Kopete::UI::Global::mainWidget () );
-	
-	connect(dlgVCard, SIGNAL(informationChanged()), this, SLOT(slotSendVCard()));
-
-}
 
 void JabberContact::slotSendAuth ()
 {
@@ -1346,7 +1071,7 @@ void JabberContact::sendSubscription ( const QString& subType )
 
 void JabberContact::slotSelectResource ()
 {
-	int currentItem = QString ( static_cast<const KAction *>( sender() )->name () ).toUInt ();
+	int currentItem = QString ( static_cast<const KAction *>( sender() )->objectName () ).toUInt ();
 
 	/*
 	 * Warn the user if there is already an active chat window.
@@ -1393,7 +1118,8 @@ void JabberContact::sendPresence ( const XMPP::Status status )
 	XMPP::Status newStatus = status;
 
 	// honour our priority
-	newStatus.setPriority ( account()->configGroup()->readEntry ( "Priority", 5 ) );
+	if(newStatus.isAvailable())
+		newStatus.setPriority ( account()->configGroup()->readEntry ( "Priority", 5 ) );
 
 	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
 
@@ -1458,8 +1184,7 @@ void JabberContact::slotStatusInvisible ()
 {
 
 	XMPP::Status status;
-	status.setShow ("away");
-	status.setIsInvisible ( true );
+	status.setIsAvailable( false );
 
 	sendPresence ( status );
 
@@ -1551,6 +1276,16 @@ void JabberContact::slotDiscoFinished( )
 				
 				break;  //(we currently only support gateway)
 			}
+			else if (ident.category == "service")
+			{
+				//The ApaSMSAgent is reporting itself as service (instead of gateway) which is broken.
+				//we anyway support it.  See bug  127811
+				if(ident.type == "sms")
+				{
+					is_transport=true;
+					tr_type=ident.type;
+				}
+			}
 		}
  	}
 
@@ -1564,7 +1299,7 @@ void JabberContact::slotDiscoFinished( )
 		
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << ri.jid().full() << " is not a contact but a gateway   - " << this << endl;
 		
-		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , account()->accountId() + "/" + ri.jid().bare() ) )
+		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , account()->accountId() + '/' + ri.jid().bare() ) )
 		{
 			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport already exists, abort operation " <<  endl;
 			return;

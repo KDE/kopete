@@ -99,7 +99,7 @@ void ChatWindowStyleManager::loadStyles()
 		d->styleDirs.push( KUrl(style) );
 	}
 	
-	d->styleDirLister = new KDirLister;
+	d->styleDirLister = new KDirLister(this);
 	d->styleDirLister->setDirOnlyMode(true);
 
 	connect(d->styleDirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewStyles(const KFileItemList &)));
@@ -277,6 +277,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 
 bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 {
+	kDebug(14000) << k_funcinfo << stylePath <<  endl;
 	// Find for the current style in avaiableStyles map.
 	StyleList::Iterator foundStyle = d->availableStyles.find(stylePath);
 	// QHash iterator return end() if it found no item.
@@ -305,6 +306,8 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 {
 	if( d->stylePool.contains(stylePath) )
 	{
+		kDebug(14000) << k_funcinfo << stylePath << " was on the pool" << endl;
+		
 		// NOTE: This is a hidden config switch for style developers
 		// Check in the config if the cache is disabled.
 		// if the cache is disabled, reload the style every time it's getted.
@@ -323,6 +326,8 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 		// Build a chat window style and list its variants, then add it to the pool.
 		ChatWindowStyle *style = new ChatWindowStyle(stylePath, ChatWindowStyle::StyleBuildNormal);
 		d->stylePool.insert(stylePath, style);
+		
+		kDebug(14000) << k_funcinfo << stylePath << " is just created" << endl;
 
 		return style;
 	}

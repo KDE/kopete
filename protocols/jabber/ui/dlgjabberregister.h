@@ -41,7 +41,7 @@ class dlgJabberRegister : public QWidget, private Ui::dlgRegister
 	Q_OBJECT
 
 public:
-	  dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	  dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0);
 	 ~dlgJabberRegister ();
 
 private slots:

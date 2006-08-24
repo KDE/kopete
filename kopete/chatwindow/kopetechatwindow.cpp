@@ -1,7 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
-    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
     Copyright (C) 2002      by James Grant
     Copyright (c) 2002      by Stefan Gehn           <metz AT gehn.net>

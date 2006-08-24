@@ -18,16 +18,16 @@
 #define SENDPICTURETASK_H
 
 #include "task.h"
-#include <kbufferedsocket.h>
 
-using namespace KNetwork;
 class QString;
 class QFile;
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 
 }
-
+namespace KNetwork	{ 
+	class KBufferedSocket;
+}
 
 /**
 @author André Duffeck
@@ -59,6 +59,7 @@ private:
 private slots:
 	void connectSucceeded();
 	void connectFailed( int );
+	void readResult();
 private:
 	Type m_type;
 	QString m_target;
@@ -70,7 +71,7 @@ private:
 	QString m_url;
 	int m_transmitted;
 	QFile *m_file;
-	KBufferedSocket *m_socket;
+	KNetwork::KBufferedSocket *m_socket;
 };
 
 #endif

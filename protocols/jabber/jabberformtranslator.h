@@ -33,7 +33,7 @@ class JabberFormTranslator:public QWidget
 Q_OBJECT
 
 public:
-	JabberFormTranslator (const XMPP::Form & form, QWidget * parent = 0, const char *name = 0);
+	JabberFormTranslator (const XMPP::Form & form, QWidget * parent = 0);
 	~JabberFormTranslator ();
 
 	XMPP::Form & resultData ();

@@ -61,9 +61,6 @@ public:
 		bs = 0;
 		connection = 0;
 		
-		username = QString::null;
-		password = QString::null;
-		server = QString::null;
 		haveLocalAddr = false;
 		doBinding = true;
 

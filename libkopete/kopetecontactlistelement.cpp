@@ -29,9 +29,10 @@ namespace Kopete {
 class ContactListElement::Private
 {
 public:
-	QMap<QString, QMap<QString, QString> > pluginData;
-	QMap<ContactListElement::IconState, QString> icons;
+	ContactListElement::PluginDataMap pluginData;
+	ContactListElement::IconMap icons;
 	bool useCustomIcon;
+	bool loading;
 };
 
 ContactListElement::ContactListElement( QObject *parent )
@@ -40,6 +41,7 @@ ContactListElement::ContactListElement( QObject *parent )
 	d = new Private;
 
 	d->useCustomIcon = false;
+	d->loading = false;
 #if 0  //TODO
 	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
 #endif
@@ -50,16 +52,31 @@ ContactListElement::~ContactListElement()
 	delete d;
 }
 
+void ContactListElement::setLoading( bool value )
+{
+	d->loading = value;
+}
+
+bool ContactListElement::loading() const
+{
+	return d->loading;
+}
+
 void ContactListElement::setPluginData( Plugin *plugin, const QMap<QString, QString> &pluginData )
+{
+	setPluginData( plugin->pluginId(), pluginData );
+}
+
+void ContactListElement::setPluginData( const QString &pluginId, const QMap<QString, QString> &pluginData )
 {
 	if ( pluginData.isEmpty() )
 	{
-		d->pluginData.remove( plugin->pluginId() );
+		d->pluginData.remove( pluginId );
 		return;
 	}
-
-	d->pluginData[ plugin->pluginId() ] = pluginData;
-
+	
+	d->pluginData[ pluginId ] = pluginData;
+	
 	emit pluginDataChanged();
 }
 
@@ -86,138 +103,14 @@ QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) con
 	return d->pluginData[ plugin->pluginId() ][ key ];
 }
 
-const QList<QDomElement> ContactListElement::toXML()
+const ContactListElement::PluginDataMap ContactListElement::pluginData() const
 {
-	QDomDocument pluginData;
-	QList<QDomElement> pluginNodes;
-	pluginData.appendChild( pluginData.createElement( QLatin1String( "plugin-data" ) ) );
-
-	if ( !d->pluginData.isEmpty() )
-	{
-		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for ( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
-		{
-			QDomElement pluginElement = pluginData.createElement( QLatin1String( "plugin-data" ) );
-			pluginElement.setAttribute( QLatin1String( "plugin-id" ), pluginIt.key()  );
-
-			QMap<QString, QString>::ConstIterator it;
-			for ( it = pluginIt.value().begin(); it != pluginIt.value().end(); ++it )
-			{
-				QDomElement pluginDataField = pluginData.createElement( QLatin1String( "plugin-data-field" ) );
-				pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
-				pluginDataField.appendChild( pluginData.createTextNode(  it.value()  ) );
-				pluginElement.appendChild( pluginDataField );
-			}
-
-			pluginData.documentElement().appendChild( pluginElement );
-			pluginNodes.append( pluginElement );
-		}
-	}
-	if ( !d->icons.isEmpty() )
-	{
-		QDomElement iconsElement = pluginData.createElement( QLatin1String( "custom-icons" ) );
-		iconsElement.setAttribute( QLatin1String( "use" ), d->useCustomIcon ?  QLatin1String( "1" ) : QLatin1String( "0" ) );
-
-		for ( QMap<IconState, QString >::ConstIterator it = d->icons.begin(); it != d->icons.end(); ++it )
-		{
-			QDomElement iconElement = pluginData.createElement( QLatin1String( "icon" ) );
-			QString stateStr;
-			switch ( it.key() )
-			{
-			case Open:
-				stateStr = QLatin1String( "open" );
-				break;
-			case Closed:
-				stateStr = QLatin1String( "closed" );
-				break;
-			case Online:
-				stateStr = QLatin1String( "online" );
-				break;
-			case Away:
-				stateStr = QLatin1String( "away" );
-				break;
-			case Offline:
-				stateStr = QLatin1String( "offline" );
-				break;
-			case Unknown:
-				stateStr = QLatin1String( "unknown" );
-				break;
-			case None:
-			default:
-				stateStr = QLatin1String( "none" );
-				break;
-			}
-			iconElement.setAttribute( QLatin1String( "state" ), stateStr );
-			iconElement.appendChild( pluginData.createTextNode( it.value() )  );
-			iconsElement.appendChild( iconElement );
-		}
-		pluginData.documentElement().appendChild( iconsElement );
-		pluginNodes.append( iconsElement );
-	}
-	return pluginNodes;
+	return d->pluginData;
 }
 
-bool ContactListElement::fromXML( const QDomElement& element )
+const ContactListElement::IconMap ContactListElement::icons() const
 {
-	if ( element.tagName() == QLatin1String( "plugin-data" ) )
-	{
-		QMap<QString, QString> pluginData;
-		QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString::null );
-
-		//in kopete 0.6 the AIM protocol was called OSCAR
-		if ( pluginId == QLatin1String( "OscarProtocol" ) )
-			pluginId = QLatin1String( "AIMProtocol" );
-
-		QDomNode field = element.firstChild();
-		while( !field.isNull() )
-		{
-			QDomElement fieldElement = field.toElement();
-			if ( fieldElement.tagName() == QLatin1String( "plugin-data-field" ) )
-			{
-				pluginData.insert( fieldElement.attribute( QLatin1String( "key" ),
-					QLatin1String( "undefined-key" ) ), fieldElement.text() );
-			}
-			field = field.nextSibling();
-		}
-		d->pluginData.insert( pluginId, pluginData );
-	}
-	else if ( element.tagName() == QLatin1String( "custom-icons" ) )
-	{
-		d->useCustomIcon= element.attribute( QLatin1String( "use" ), QLatin1String( "1" ) ) == QLatin1String( "1" );
-		QDomNode ic = element.firstChild();
-		while( !ic.isNull() )
-		{
-			QDomElement iconElement = ic.toElement();
-			if ( iconElement.tagName() == QLatin1String( "icon" ) )
-			{
-				QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString::null );
-				QString icon = iconElement.text();
-				IconState state = None;
-
-				if ( stateStr == QLatin1String( "open" ) )
-					state = Open;
-				if ( stateStr == QLatin1String( "closed" ) )
-					state = Closed;
-				if ( stateStr == QLatin1String( "online" ) )
-					state = Online;
-				if ( stateStr == QLatin1String( "offline" ) )
-					state = Offline;
-				if ( stateStr == QLatin1String( "away" ) )
-					state = Away;
-				if ( stateStr == QLatin1String( "unknown" ) )
-					state = Unknown;
-
-				d->icons[ state ] = icon;
-			}
-			ic = ic.nextSibling();
-		}
-	}
-	else
-	{
-		return false;
-	}
-
-	return true;
+	return d->icons;
 }
 
 QString ContactListElement::icon( ContactListElement::IconState state ) const

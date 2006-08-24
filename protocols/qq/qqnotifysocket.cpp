@@ -1,6 +1,6 @@
 /*
     qqnotifysocket.cpp - Notify Socket for the QQ Protocol
-    forked from qqnotifysocket.cpp
+    forked from msnnotifysocket.cpp
     
     Copyright (c) 2006      by Hui Jin <blueangel.jin@gmail.com>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -24,59 +24,39 @@
     *************************************************************************
 */
 
-#include "qqnotifysocket.h"
-#include "qqcontact.h"
-#include "qqaccount.h"
-
-#include <QDateTime>
-#include <QRegExp>
-#include <qdom.h>
-#include <QTextStream>
-
 #include <kdebug.h>
-#include <kdeversion.h>
-#include <klocale.h>
-#include <kcodecs.h>
-#include <kmessagebox.h>
-#include <kstandarddirs.h>
-#include <ktempfile.h>
-#include <krun.h>
-#include <kio/job.h>
-#include <qfile.h>
-#include <kconfig.h>
-#include <knotification.h>
 #include <QHostAddress>
 
-#include "kopeteuiglobal.h"
-#include "kopeteglobal.h"
 #include "kopetestatusmessage.h"
 #include "libeva.h"
 
+#include "qqnotifysocket.h"
+#include "qqaccount.h"
 
 QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 : QQSocket( account )
 {
 	m_account = account;
-	// FIXME: Do we really need password ?
-	m_password = password;
 	m_newstatus = Kopete::OnlineStatus::Offline;
 	Eva::ByteArray pwd( password.toAscii().data(), password.size() );
-	m_passwordKey = Eva::QQHash(pwd);
+	m_passwordKey = Eva::Packet::QQHash(pwd);
 	pwd.release(); // the data is handled in QT
 	m_loginMode = Eva::NormalLogin;
 
-	// DELME: dump the result
-	QByteArray tmp( m_passwordKey.data(), m_passwordKey.size() );
-	kDebug(14140) << endl << endl << "!!!!" << k_funcinfo << "passwordKey = " << tmp << m_passwordKey.size() << endl;
-
-
 	// FIXME: more error-checking.
 	m_qqId = account->accountId().toInt();
+
+	m_heartbeat = new QTimer(this);
+	QObject::connect( m_heartbeat, SIGNAL(timeout()), SLOT(heartbeat()) );
 }
 
 QQNotifySocket::~QQNotifySocket()
 {
 	kDebug(14140) << k_funcinfo << endl;
+	if( m_heartbeat->isActive() )
+		m_heartbeat->stop();
+
+	delete m_heartbeat;
 }
 
 
@@ -87,9 +67,9 @@ void QQNotifySocket::doneConnect()
 
 	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
 	if( m_token.size() )
-		sendLogin();
+		sendPacket( Eva::login( m_qqId, m_id++, m_passwordKey, m_token, m_loginMode ) );
 	else
-		sendLoginTokenRequest();
+		sendPacket( Eva::loginToken(m_qqId, m_id++) );
 }
 
 
@@ -125,43 +105,43 @@ void QQNotifySocket::handleError( uint code, uint id )
 }
 
 // Core functions
-void QQNotifySocket::parsePacket( const QByteArray& rawdata )
+void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 {
-	kDebug( 14140 ) << k_funcinfo << rawdata << endl;
-	Eva::Packet packet( rawdata.data(), rawdata.size() );
+	kDebug( 14140 ) << k_funcinfo << rawData << endl;
+	Eva::Packet packet( rawData.data(), rawData.size() );
 	Eva::ByteArray text;
-	int len;
 
-	Eva::ByteArray initKey((char*) Eva::getInitKey(), 16 );
+	Eva::ByteArray initKey((char*) Eva::Packet::getInitKey(), 16 );
 	initKey.release();
 
 	kDebug( 14140 ) << "command = " << packet.command() << endl;
 	switch( packet.command() )
 	{
 		case Eva::RequestLoginToken :
-			text = Eva::loginToken( packet.body() );
+			text = Eva::Packet::loginToken( packet.body() );
 			break;
 
 		case Eva::Login :
-			text = Eva::decrypt( packet.body(), m_passwordKey );
+			text = Eva::Packet::decrypt( packet.body(), m_passwordKey );
 			if( text.size() == 0 )
-				text = Eva::decrypt( packet.body(), initKey );
+				text = Eva::Packet::decrypt( packet.body(), initKey );
 			break;
 
 		default:
-			text = Eva::decrypt( packet.body(), m_sessionKey );
+			text = Eva::Packet::decrypt( packet.body(), m_sessionKey );
 			if ( text.size() == 0 )
-				text = Eva::decrypt( packet.body(), m_passwordKey );
+				text = Eva::Packet::decrypt( packet.body(), m_passwordKey );
 	}
 			
-	kDebug( 14140 ) << "text = " << QByteArray( text.data(), text.size() ) << endl;
+	kDebug( 14140 ) << "text = " << QByteArray( text.c_str(), text.size() ) << endl;
 
 	
 	switch( packet.command() )
 	{
 		// FIXME: use table-driven pattern ?
 		case Eva::Logout :
-		case Eva::KeepAlive :
+		case Eva::Heartbeat:
+			break;
 		case Eva::UpdateInfo :
 		case Eva::Search :
 		case Eva::UserInfo :
@@ -181,9 +161,86 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 
 		case Eva::AckSysMsg :
 		case Eva::SendMsg :
+			break;
 		case Eva::ReceiveMsg :
+		{
+			Eva::MessageEnvelop envelop(text);
+			kDebug(14140) << "Received message from " << envelop.sender << " to " << envelop.receiver << " type=" << envelop.type << endl;
+			kDebug(14140) << "seq = " << envelop.sequence << " from " << envelop.ip << ":" << envelop.port << endl;
+			
+			sendPacket( Eva::messageReply(m_qqId, packet.sequence(), m_sessionKey, Eva::Packet::replyKey(text) ));
+			Eva::ByteArray body( text.data() + sizeof(envelop), text.size() - sizeof(envelop) );
+			body.release();
+
+			// TODO: check whether this is a duplicated message
+			switch( envelop.type )
+			{
+				case 0x0010:
+					kDebug(14140) << "command 0x0010: " << QByteArray( body.c_str(), body.size() ) << endl;
+					break;
+				case Eva::RcvFromBuddy:
+				{
+					Eva::MessageHeader mh(body);
+					kDebug(14140) << "message header:" << endl;
+					kDebug(14140) << "ver:" << mh.version << " sender:" << mh.sender 
+						<< " receiver:" << mh.receiver 
+						<< " type:" << mh.type << " seq:" << mh.sequence 
+						<< " timestamp:" << mh.timestamp << " avatar:" << mh.avatar 
+						<< endl;
+
+					if( mh.receiver != m_qqId )
+					{
+						kDebug(14140) << "receive other(" << mh.receiver <<")'s message" << endl;
+						break;
+					}
+
+					// FIXME: replace the magic number!
+					// FIXME: the code stinks!
+					Eva::uchar* p = body.data()+36;
+					bool hasFontStyle = p[3] != 0;
+					Eva::uchar replyType = p[8];
+					Eva::ByteArray msg(body.size());
+					p += 9;
+
+					while( *p )
+						msg += *p++;
+					msg += char(0x0);
+
+					kDebug(14140) << "message received: " << msg.data() << endl;
+					// FIXME: use a function to generate guid!
+					emit messageReceived(mh, msg);
+					
+					break;
+				}
+				default:
+					break;
+			}
+			break;
+		}
+
 		case Eva::RemoveMe :
+			break;
+
 		case Eva::RequestKey :
+		{
+			char type = text.data()[0];
+			char reply = text.data()[1];
+
+			if( reply == Eva::RequestKeyOK )
+			{
+				// NOTE: the type of the key supports TransferKey only.
+				if( type == Eva::TransferKey )
+				{
+					m_transferKey = Eva::Packet::transferKey( text );
+					m_transferToken = Eva::Packet::transferToken( text );
+					kDebug( 14140 ) << "transferKey =" << QByteArray( m_transferKey.c_str(), m_transferKey.size()) << endl;
+					kDebug( 14140 ) << "transferToken =" << QByteArray( m_transferToken.c_str(), m_transferToken.size()) << endl;
+
+				}
+			}
+			break;
+		}
+
 		case Eva::GetCell :
 			break;
 
@@ -195,7 +252,7 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					// show off some meta data :
 					m_sessionKey = Eva::Packet::sessionKey(text);
 					kDebug( 14140 ) << "sessionKey = " << 
-						QByteArray( m_sessionKey.data(), m_sessionKey.size() ) << endl;
+						QByteArray( m_sessionKey.c_str(), m_sessionKey.size() ) << endl;
 
 					kDebug( 14140 )  << "remote IP: " << QHostAddress( Eva::Packet::remoteIP(text) ).toString() << endl;
 					kDebug( 14140 )  << "remote port: " << Eva::Packet::remotePort(text) << endl;
@@ -205,11 +262,18 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
 					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
 
+					// start the heartbeat
+					if( !m_heartbeat->isActive() )
+						m_heartbeat->start(60000, false);
+
 					emit newContactList();
 					// FIXME: We might login in as invisible as well.
 					m_newstatus = Kopete::OnlineStatus::Online;
-					sendChangeStatus( Eva::Online );
-					// TODO: sendRequestKey() for the file transfer function.
+					sendPacket( Eva::statusUpdate( m_qqId, m_id++, m_sessionKey, Eva::Online) );
+					sendPacket( Eva::transferKey( m_qqId, m_id++, m_sessionKey) );
+
+					// fetch the online contacts
+					sendListOnlineContacts();
 
 					break;
 
@@ -222,9 +286,11 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 					break;
 
 				case Eva::LoginWrongPassword :
+					kDebug( 14140 )  << "password is wrong. " << endl;
 					break;
 
 				case Eva::LoginMiscError :
+					kDebug( 14140 )  << "unknown error. " << endl;
 					break;
 
 				default:
@@ -234,7 +300,8 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 
 			break;
 
-		case Eva::ContactList :
+		case Eva::AllContacts:
+			/*
 			{
 				len = 2;
 				while( len < text.size() )
@@ -242,38 +309,51 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 				short pos = ntohs( Eva::type_cast<short> (text.data()) );
 
 				if( pos != Eva::ContactListEnd )
-					sendContactList(pos);
+					sendPacket( Eva::allContacts( m_qqId, m_id++, m_sessionKey, pos ) );
 			}
+			*/
 			break;
 		case Eva::ContactsOnline :
+			
+			break;
 		case Eva::GetCell2 :
 		case Eva::SIP :
 		case Eva::Test :
 			break;
 		case Eva::GroupNames :
-			doGroupList( text );
+			groupNames( text );
 			break;
 
 		case Eva::UploadGroups :
 		case Eva::Memo :
-		case Eva::DownloadGroup :
 			break;
+		case Eva::DownloadGroups :
+			doGetCGTs( text );
+			break;
+
 		case Eva::GetLevel :
 			break;
 
 		case Eva::RequestLoginToken :
 			m_token = text;
-			kDebug( 14140 ) << packet.command() << ": token = " << 
-				QByteArray ( m_token.data(), m_token.size() ) << endl;
-
-			sendLogin();
+			kDebug( 14140 ) << "command = " << packet.command() << ": token = " << 
+				QByteArray ( m_token.c_str(), m_token.size() ) << endl;
+			sendPacket( Eva::login( m_qqId, m_id++, m_passwordKey, m_token, m_loginMode ) );
 			break;
 
 		case Eva::ExtraInfo :
 		case Eva::Signature :
 		case Eva::ReceiveSysMsg :
-		case Eva::FriendStausChange :
-
+			break;
+		case Eva::ContactStausChanged :
+		{
+			kDebug( 14140 ) << "contact status signal" << endl;
+			Eva::ContactStatus cs(text.data());
+			kDebug( 14140 ) << "contact status detail:" << endl;
+			kDebug( 14140 ) << "id = " << cs.qqId << " status = " << cs.status << endl;
+			emit contactStatusChanged( cs );
+			break;
+		}
 		default:
 			break;
 
@@ -281,47 +361,85 @@ void QQNotifySocket::parsePacket( const QByteArray& rawdata )
 }
 
 // FIXME: Refactor us !!
-void QQNotifySocket::sendLoginTokenRequest()
+
+/*
+void QQNotifySocket::sendUserInfo(Eva::uint qqId)
 {
-	Eva::ByteArray data = Eva::requestLoginToken(m_qqId, m_id++);
-	sendPacket( QByteArray( data.data(), data.size()) );
+	Eva::ByteArray packet = Eva::userInfo( m_qqId, m_id++, m_sessionKey, qqId);
+	sendPacket( QByteArray( packet.c_str(), packet.size()) );
+}
+	
+*/
+
+
+void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message )
+{
+	// Translate the message to Eva::ByteArray
+	// TODO: color and font
+	kDebug( 14140 ) << "Send the message: " << message << " from " << m_qqId << " to " << toId << endl;
+	// attach the ByteArray to QString:
+	// FIXME: Add an adapter to ByteArray
+	Eva::ByteArray text( (char*)message.data(), message.size() );
+	text.release();
+
+	Eva::ByteArray packet = Eva::textMessage(m_qqId, m_id++, m_sessionKey, toId, m_transferKey, text );
+	QQSocket::sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
 
-void QQNotifySocket::sendLogin()
+
+void QQNotifySocket::heartbeat()
 {
-	Eva::ByteArray data = Eva::login( m_qqId, m_id++, m_passwordKey, 
-				m_token, m_loginMode );
-	sendPacket( QByteArray( data.data(), data.size()) );
+	sendPacket( Eva::heartbeat( m_qqId, m_id++, m_sessionKey )); 
 }
 
-void QQNotifySocket::sendChangeStatus( char status )
+void QQNotifySocket::sendListOnlineContacts(uint pos)
 {
-	Eva::ByteArray packet = Eva::changeStatus( m_qqId, m_id++, m_sessionKey, status );
-	sendPacket( QByteArray( packet.data(), packet.size()) );
+	sendPacket( Eva::onlineContacts( m_qqId, m_id++, m_sessionKey, pos) );
 }
 
-void QQNotifySocket::sendContactList( short pos )
-{
-	Eva::ByteArray packet = Eva::contactList( m_qqId, m_id++, m_sessionKey, pos );
-	sendPacket( QByteArray( packet.data(), packet.size()) );
-}
-
-void QQNotifySocket::sendDLGroupNames()
-{
-	Eva::ByteArray packet = Eva::dlGroupNames( m_qqId, m_id++, m_sessionKey );
-	sendPacket( QByteArray( packet.data(), packet.size()) );
-}
-
-void QQNotifySocket::doGroupList( const Eva::ByteArray& text )
+void QQNotifySocket::groupNames( const Eva::ByteArray& text )
 {
 	QStringList ql;
-	std::list< std::string > l = Eva::groupNames( text );
+	std::list< std::string > l = Eva::Packet::groupNames( text );
 	for( std::list<std::string>::const_iterator it = l.begin(); it != l.end(); it++ )
 		ql.append( QString( (*it).c_str() ) );
 
 	kDebug(14140) << k_funcinfo << endl;
-	// FIXME: a better name for the signal ?
-	emit groupList( ql );
+	emit groupNames( ql );
+}
+
+void QQNotifySocket::doGetCGTs( const Eva::ByteArray& text )
+{
+	kDebug(14140) << k_funcinfo << endl;
+	std::list< Eva::CGT > cgts = Eva::Packet::cgts( text );
+	// TODO: send it one by one.
+	for( std::list< Eva::CGT >::const_iterator it = cgts.begin();
+		it != cgts.end(); it++ )
+	{
+		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " type = " << (*it).type 
+			<< " groupId = " << (*it).groupId << endl;
+			emit contactInGroup( (*it).qqId, (*it).type, (*it).groupId );
+	}
+
+	int next = Eva::Packet::nextGroupId( text );
+	if( next )
+		sendDownloadGroups( next );
+}
+
+void QQNotifySocket::doGetContactStatuses( const Eva::ByteArray& text )
+{
+	kDebug(14140) << k_funcinfo << endl;
+	Eva::uchar pos = Eva::ContactListBegin;
+	std::list< Eva::ContactStatus > css = Eva::Packet::onlineContacts( text, pos );
+	for( std::list< Eva::ContactStatus >::const_iterator it = css.begin();
+		it != css.end(); it++ )
+	{
+		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " status = " << (*it).status << endl;
+		emit contactStatusChanged(*it);
+	}
+
+	if( pos != 0xff )	
+		sendListOnlineContacts(pos);
 }
 
 #include "qqnotifysocket.moc"

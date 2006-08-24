@@ -91,7 +91,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 				descriptions.append(args[1]);
 				if (m_account)
 					values.append(m_account->configGroup()->readEntry(QString("%1:%2").arg(group).arg(names[names.count()-1]),
-					                                                  QString::null));
+					                                                  QString()));
 				else
 					values.append("");
 

@@ -54,7 +54,9 @@ class FileTransferInfo;
 }
 class Client;
 class YABEntry;
-
+namespace KIO{
+	class Job;
+}
 
 class YahooAccount : public Kopete::PasswordedAccount
 {
@@ -194,7 +196,7 @@ protected slots:
 	void slotConfLeave( YahooConferenceChatSession *s );
 	void slotInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
 	void slotAddInviteConference( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
-	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
+	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize, const QPixmap &);
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
 	void slotTypingNotify(const QString &, int );
@@ -204,6 +206,7 @@ protected slots:
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
 	void slotGotWebcamInvite(const QString &);
+	void slotWebcamNotAvailable( const QString &who );
 	void slotGotWebcamImage(const QString&, const QPixmap&);
 	void slotWebcamReadyForTransmission();
 	void slotWebcamStopTransmission();
@@ -229,6 +232,7 @@ protected slots:
 	void slotFileTransferComplete( unsigned int id );
 	void slotFileTransferError( unsigned int id, int error, const QString &desc );
 	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );
+	void slotFileTransferResult( KIO::Job * );
 	void slotError( int level );
 
 private slots:
@@ -256,6 +260,8 @@ private:
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
 	QStringList m_pendingConfInvites;
+	QStringList m_pendingWebcamInvites;
+	QStringList m_pendingFileTransfers;
 
 	QMap<unsigned int, Kopete::Transfer *> m_fileTransfers;
 

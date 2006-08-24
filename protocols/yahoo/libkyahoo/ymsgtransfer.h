@@ -52,26 +52,29 @@ public:
 	TransferType type();
 
 	//! Get the validity of the transfer object
-	bool isValid();
+	bool isValid() const;
 	Yahoo::Service service() const;
 	void setService(Yahoo::Service service);
-	Yahoo::Status status();
+	Yahoo::Status status() const;
 	void setStatus(Yahoo::Status status);
-	unsigned int id();
+	unsigned int id() const;
 	void setId(unsigned int id);
+	int packetLength() const;
+	void setPacketLength(int len);
+	
 
-	ParamList paramList();
-	QByteArray firstParam( int index );
-	QByteArray nthParam( int index, int occurence );
-	QByteArray nthParamSeparated( int index, int occurence, int separator );
-	int paramCount( int index );
+	ParamList paramList() const;
+	QByteArray firstParam( int index ) const;
+	QByteArray nthParam( int index, int occurence ) const;
+	QByteArray nthParamSeparated( int index, int occurence, int separator ) const;
+	int paramCount( int index ) const;
 	
 
 	void setParam(int index, const QByteArray &data);
 	void setParam(int index, int data);
-	QByteArray serialize();
+	QByteArray serialize() const;
 	
-	int length();
+	int length() const;
 private:
 	YMSGTransferPrivate* d;
 };

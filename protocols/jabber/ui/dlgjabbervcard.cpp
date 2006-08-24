@@ -62,7 +62,7 @@
  *  name 'name'
  *
  */
-dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent)
+dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberBaseContact *contact, QWidget * parent)
 	: KDialog(parent)
 {
 
@@ -368,7 +368,7 @@ void dlgJabberVCard::slotSaveVCard()
 	// work information tab
 	XMPP::VCard::Org org;
 	org.name = m_mainWidget->leCompany->text();
-	org.unit = QStringList::split(",", m_mainWidget->leDepartment->text());
+	org.unit = m_mainWidget->leDepartment->text().split(',');
 	vCard.setOrg(org);
 	vCard.setTitle( m_mainWidget->lePosition->text() );
 	vCard.setRole( m_mainWidget->leRole->text() );
@@ -469,6 +469,9 @@ void dlgJabberVCard::slotGotVCard()
 	else
 	{
 		m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly. Check connectivity with the Jabber server.") );
+		//it is maybe possible to anyway edit our own vCard (if it is new
+		if(m_account->myself() == m_contact)
+			setEnabled( true );
 	}
 }
 
@@ -534,7 +537,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		}
 		else
 		{
-			m_photoPath = QString::null;
+			m_photoPath.clear();
 		}
 	}
 	else
@@ -549,7 +552,7 @@ void dlgJabberVCard::slotSelectPhoto()
 void dlgJabberVCard::slotClearPhoto()
 {
 	m_mainWidget->lblPhoto->setPixmap( QPixmap() );
-	m_photoPath = QString::null;
+	m_photoPath.clear();
 }
 
 void dlgJabberVCard::slotOpenURL(const QString &url)

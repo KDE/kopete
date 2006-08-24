@@ -119,7 +119,7 @@ void GroupWisePrivacyDialog::populateWidgets()
 	{
 		GroupWise::ContactDetails cd = m_account->client()->userDetailsManager()->details( *it );
 		if ( cd.fullName.isEmpty() )
-			cd.fullName = cd.givenName + " " + cd.surname;
+			cd.fullName = cd.givenName + ' ' + cd.surname;
 		new PrivacyLBI( m_privacy->m_allowList, icon, cd.fullName, *it );
 	}
 	// deny list
@@ -129,7 +129,7 @@ void GroupWisePrivacyDialog::populateWidgets()
 	{
 		GroupWise::ContactDetails cd = m_account->client()->userDetailsManager()->details( *it );
 		if ( cd.fullName.isEmpty() )
-			cd.fullName = cd.givenName + " " + cd.surname;
+			cd.fullName = cd.givenName + ' ' + cd.surname;
 		new PrivacyLBI( m_privacy->m_denyList, icon, cd.fullName, *it );
 	}
 	updateButtonState();
@@ -209,7 +209,7 @@ void GroupWisePrivacyDialog::slotSearchedForUsers()
 		m_dirty = true;
 		m_account->client()->userDetailsManager()->addDetails( *it );
 		if ( (*it).fullName.isEmpty() )
-			(*it).fullName = (*it).givenName + " " + (*it).surname;
+			(*it).fullName = (*it).givenName + ' ' + (*it).surname;
 		new PrivacyLBI( m_privacy->m_denyList, icon, (*it).fullName, (*it).dn );
 	}
 }

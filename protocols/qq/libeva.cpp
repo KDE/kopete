@@ -1,22 +1,22 @@
 #include "libeva.h"
-#include "md5.h"
-#include "crypt.h"
 #include <arpa/inet.h>
 
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 
 namespace Eva {
-	static const char login_16_51 [] = {
+	static const uchar login_16_51 [] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x29, 0xc0, 0xf8, 0xc4, 0xbe, 
 		0x3b, 0xee, 0x57, 0x92, 0xd2, 0x42, 0xa6, 0xbe, 
 		0x41, 0x98, 0x97, 0xb4 };
-	static const char login_53_68 []= {
+	static const uchar login_53_68 []= {
 		0xce, 0x11, 0xd5, 0xd9, 0x97, 0x46, 0xac, 0x41, 
 		0xa5, 0x01, 0xb2, 0xf5, 0xe9, 0x62, 0x8e, 0x07 };
 
-	static const char login_94_193 []= {
+	static const uchar login_94_193 []= {
 		0x01, 0x40, 0x01, 0xb6, 0xfb, 0x54, 0x6e, 0x00, 
 		0x10, 0x33, 0x11, 0xa3, 0xab, 0x86, 0x86, 0xff,
 		0x5b, 0x90, 0x5c, 0x74, 0x5d, 0xf1, 0x47, 0xbf,
@@ -30,17 +30,17 @@ namespace Eva {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00 };
-	const char init_key[] = {
+	const uchar init_key[] = {
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
 
-	const char* getInitKey() 
+	const uchar* Packet::getInitKey() 
 	{
 		return init_key;
 	}
 
 
-	ByteArray header( int id, short const command, short const sequence )
+	ByteArray header( uint id, short const command, ushort sequence )
 	{
 		// CODE DEBT: udp does not have the lenght placeholder!
 		ByteArray data(13);
@@ -55,68 +55,69 @@ namespace Eva {
 		return data;
 	}
 
+	ByteArray messageHeader( int sender, int receiver, const ByteArray& transferKey, short const type, ushort sequence, int const timestamp, short const face = 0 )
+	{
+		// CODE DEBT: udp does not have the lenght placeholder!
+		ByteArray data(64);
+		data += htonl(sender);
+		data += htonl(receiver);
+		data += htons(Version);
+		data += htonl(sender);
+		data += htonl(receiver);
+		data += transferKey;
+		data += htons(type);
+		data += htons(sequence);
+		data += htonl(timestamp);
+		data += htons(face);
+		data += '\0';
+		data += '\0';
+		data += '\0';
+
+		data += '\1'; // font info
+		data += (int) 0;
+
+		return data;
+	}
+
+	ByteArray encodeMessage( const ByteArray& text )
+	{
+		// TODO: remove the magic number!
+		ByteArray encoded( 65536 );
+		// TODO: implement the reply types later:
+		// normal, image, auto
+		encoded += NormalReply;
+		// TODO: convert //img to the image resource image, using convertToSend method.
+		encoded += text;
+		encoded += char(0x20);
+		encoded += char(0x0);
+
+		// fontStyle
+		// the layout is like this:
+		// MSB --------------------- LSB
+		// Underlined, Italic, Bold, size (5 bit)
+		encoded += char(0x9); // font size = 9, normal decoration.
+		encoded += char(0x0); // r
+		encoded += char(0x0); // g
+		encoded += char(0x0); // b
+		encoded += char(0x0); // alpha? we mighe use 32-bit int to represent rgb later.
+		encoded += htons( GBEncoding );
+
+		// font name: Song Ti
+		encoded += htonl(0xcbcecce5);
+
+		encoded += char(0xd); // return 
+
+		return encoded;
+	}
+
 	void setLength( ByteArray& data )
 	{
 		data.copyAt(0, htons(data.size()) );
 	}
 
-	int rand(void)
-	{
-		return 0xdead;
-	}
-	
-	ByteArray doMd5( const ByteArray& text )
-	{
-		ByteArray code( Md5KeyLength );
-		md5_state_t ctx;
-		md5_init( &ctx );
-		md5_append( &ctx, (md5_byte_t*) text.data(), text.size() );
-		md5_finish( &ctx, (md5_byte_t*)code.data() );
-		code.setSize( Md5KeyLength ); 
-		return code;
-	}
-
-	inline void encrypt64( unsigned char* plain, unsigned char* plain_pre, 
-			unsigned char* key, unsigned char* crypted, unsigned char* crypted_pre, 
-			bool& isHeader )
-	{
-		int i;
-
-		for( i = 0; i< 8; i++ )
-			plain[i] ^= isHeader ? plain_pre[i] : crypted_pre[i];
-
-		TEA::encipher( (unsigned int*) plain, (unsigned int*) key, 
-				(unsigned int*) crypted );
-
-		for( i = 0; i< 8; i++ )
-			crypted[i] ^= plain_pre[i];
-
-		memcpy( plain_pre, plain, 8 );
-		memcpy( crypted_pre, crypted, 8 );
-			
-		isHeader = false;
-	}
-
-	inline void decrypt64( unsigned char* crypt, unsigned char* crypt_pre, 
-			unsigned char* key, unsigned char* decrypted)
-	{
-		for( int i = 0; i< 8; i++ )
-			decrypted[i] ^= crypt[i];
-
-		TEA::decipher( (unsigned int*) decrypted,
-				(unsigned int*) key, (unsigned int*) decrypted );
-		/*
-		fprintf( stderr, "decrypt64 : " );
-		for( int i = 0; i< 8; i++ )
-			fprintf( stderr, "%x ", decrypted[i] );
-		fprintf( stderr, "\n" );
-		*/
-	}
-
-	
-	// Interface for application
-	// Utilities
-	ByteArray loginToken( const ByteArray& packet ) 
+	// Utilities functions from Packet
+	// Get information from the raw packet.
+	ByteArray Packet::loginToken( const ByteArray& packet ) 
 	{
 		char reply = packet.data()[0];
 		char length = packet.data()[1];
@@ -129,156 +130,9 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray QQHash( const ByteArray& text )
-	{
-		return doMd5( doMd5( text ) );
-	}
 
-	ByteArray encrypt( const ByteArray& text, const ByteArray& key )
-	{
-
-		unsigned char 
-			plain[8],         /* plain text buffer*/
-			plain_pre[8],   /* plain text buffer, previous 8 bytes*/
-			crypted[8],        /* crypted text*/
-			crypted_pre[8];  /* crypted test, previous 8 bytes*/
-	
-		int pos, len, i;
-		bool isHeader = true;      /* header is one byte*/
-		ByteArray encoded( text.size() + 32 );
-		
-		pos = ( text.size() + 10 ) % 8;
-		if( pos )
-			pos = 8 - pos;
-
-		// Prepare the first 8 bytes:
-		plain[0] = ( rand() & 0xf8 ) | pos;
-		memset( plain_pre, 0, 8 );
-		memset( crypted_pre, 0, 8 );
-		memset( plain+1, rand()& 0xff, pos++ );
-
-		// pad 2 bytes
-		for( i = 0; i< 2; i++ )
-		{
-			if( pos < 8 )
-				plain[pos++] = rand() & 0xff;
-
-			if( pos == 8 )
-			{
-				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
-				pos = 0;
-				encoded.append( (char*)crypted, 8 );
-			}
-		}
-
-		for( i = 0; i< text.size(); i++ )
-		{
-			if( pos < 8 )
-				plain[pos++] = text.data()[i];
-
-			if( pos == 8 )
-			{
-				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
-				pos = 0;
-				encoded.append( (char*)crypted, 8 );
-			}
-		}
-
-		for( i = 0; i< 7; i++ )
-		{
-			if( pos < 8 )
-				plain[pos++] = 0;
-
-			if( pos == 8 )
-			{
-				encrypt64( plain, plain_pre, (unsigned char*)key.data(), crypted, crypted_pre, isHeader );
-				encoded.append( (char*)crypted, 8 );
-				break;
-			}
-		}
-
-		return encoded;
-	}
-
-	ByteArray decrypt( const ByteArray& code, const ByteArray& key )
-	{
-		unsigned char
-			decrypted[8], m[8],
-			*crypt_pre, *crypt;
-		char* outp;
-		
-		int pos, len, i;
-
-		if( code.size() < 16 || code.size() % 8 )
-			return ByteArray(0);
-
-		TEA::decipher( (unsigned int*) code.data(), 
-				(unsigned int*) key.data(), (unsigned int*) decrypted );
-		pos = decrypted[0] & 0x7;
-		len = code.size() - pos - 10;
-		if( len < 0 )
-			return ByteArray(0);
-
-		ByteArray text(len);
-		memset( m, 0, 8 );
-		crypt = (unsigned char*)code.data() + 8;
-		crypt_pre = m;
-		pos ++;
-
-		for( i = 0; i< 2; )
-		{
-			if( pos < 8 )
-			{
-				pos ++;
-				i++;
-			}
-			if( pos == 8 )
-			{
-				crypt_pre = (unsigned char*) code.data();
-				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), 
-						decrypted ); 
-				crypt += 8;
-				pos = 0;
-			}
-		}
-		for( i = 0; i< len;  )
-		{
-			if( pos < 8 )
-			{
-				text += (char) (crypt_pre[pos] ^ decrypted[pos]);
-				pos ++;
-				i ++;
-			}
-			if( pos == 8 )
-			{
-				crypt_pre = crypt - 8;
-				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted );
-				crypt += 8;
-				pos = 0;
-			}
-		}
-		
-		for( i = 0; i< 7; i++ )
-		{
-			if( pos < 8 )
-			{
-				if( crypt_pre[pos] ^ decrypted[pos] )
-					return ByteArray(0);
-				pos ++;
-			}
-			if( pos == 8 )
-			{
-				crypt_pre = crypt;
-				decrypt64( crypt, crypt_pre, (unsigned char*) key.data(), decrypted );
-				break;
-			}
-				
-		}
-
-		return text;
-	}
-
-	ByteArray buildPacket( int id, short const command, short const sequence, const ByteArray& key, const ByteArray& text )
+	ByteArray encrypt( const ByteArray& text, const ByteArray& key );
+	ByteArray Packet::create( uint id, ushort command, ushort sequence, const ByteArray& key, const ByteArray& text )
 	{
 		ByteArray packet(MaxPacketLength);
 		packet += header( id, command, sequence );
@@ -288,7 +142,8 @@ namespace Eva {
 		return packet;
 	}
 
-	ContactInfo contactInfo( char* buffer, int& len )
+	// FIXME: use list instead.
+	ContactInfo Packet::contactInfo( char* buffer, int& len )
 	{
 		ContactInfo ci;
 		buffer += len;
@@ -297,29 +152,59 @@ namespace Eva {
 		ci.age = buffer[6];
 		ci.gender = buffer[7];
 		int nl = (int) buffer[8];
-		ci.nick = ByteArray( buffer+9, nl );
+		ci.nick = std::string( strndup( buffer+9, nl) );
 		// 2 bytes are unknown.
 		// 2 bytes are extFlag, commonFlag, ignored here.
 		len += 9+nl+4;
 		return ci;
 	}
 
-	std::list< std::string > groupNames(const ByteArray& text )
+	std::list< std::string > Packet::groupNames(const ByteArray& text )
 	{
 		// starts from 7, and each field is 17 bytes long.
 		std::list< std::string > list;
 		int offset = 7;
 		while( offset < text.size() )
 		{
-			std::string name( text.data() + offset );
+			std::string name( text.c_str() + offset );
 			list.push_back( name );
 			offset += 17;
 		}
 		return list;
 	}
 
+	std::list< CGT > Packet::cgts( const ByteArray& text )
+	{
+		int offset = 10;
+		std::list< CGT > list;
+		while( offset < text.size() )
+		{
+			list.push_back( 
+				CGT( ntohl( type_cast<int>( text.data()+offset ) ), 
+				type_cast<char>(text.data()+offset+4), ( type_cast<short>(text.data()+5) >> 2) & 0x3f ) );
+			offset += 6;
+		}
+		return list;
+	}
+
+	std::list< ContactStatus > Packet::onlineContacts( const ByteArray& text, uchar& pos )
+	{
+		int offset = 1;
+		std::list< ContactStatus > list;
+		pos = text.data()[0];
+
+		while( offset < text.size() )
+		{
+			list.push_back( 
+				ContactStatus( text.data()+offset ) );
+			offset += 31;
+		}
+		return list;
+	}
+					
+			
 	// Core functions
-	ByteArray requestLoginToken( int id, short const sequence )
+	ByteArray loginToken( uint id, ushort sequence )
 	{
 		ByteArray data(16);
 		data += header(id, RequestLoginToken, sequence);
@@ -330,15 +215,15 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray login( int id, short const sequence, const ByteArray& key, 
-			const ByteArray& token, char const loginMode )
+	ByteArray login( uint id, ushort sequence, const ByteArray& key, 
+			const ByteArray& token, uchar loginMode )
 	{
 		ByteArray login(LoginLength);
 		ByteArray data(MaxPacketLength);
 		ByteArray initKey( (char*)init_key, 16 );
 
 		ByteArray nil(0);
-		login += encrypt( nil, key );
+		login += Packet::encrypt( nil, key );
 		login.append( login_16_51, 36 );
 		login += loginMode;
 		login.append( login_53_68, 16 );
@@ -350,7 +235,7 @@ namespace Eva {
 
 		data += header( id, Login, sequence );
 		data += initKey;
-		data += encrypt( login, initKey );
+		data += Packet::encrypt( login, initKey );
 		data += Tail;
 		setLength( data );
 
@@ -359,7 +244,15 @@ namespace Eva {
 		return data;
 	}
 
-	ByteArray contactList( int id, short const sequence, const ByteArray& key, short pos )
+	ByteArray transferKey( uint id, ushort sequence, const ByteArray& key )
+	{
+		ByteArray text(1);
+		text += TransferKey;
+		
+		return Packet::create(id, RequestKey, sequence, key, text );
+	}
+
+	ByteArray allContacts( uint id, ushort sequence, const ByteArray& key, short pos )
 	{
 		ByteArray text(5);
 		text += pos;
@@ -368,25 +261,77 @@ namespace Eva {
 		text += '\0';
 		text += '\1';
 
-		return buildPacket(id, ContactList, sequence, key, text );
+		return Packet::create(id, AllContacts, sequence, key, text );
 	}
 
-	ByteArray changeStatus( int id, short const sequence, ByteArray& key, char status )
+	ByteArray statusUpdate( uint id, ushort sequence, const ByteArray& key, uchar status )
 	{
 		ByteArray text(5);
 		text += status;
 		text += (int) 0;
-		return buildPacket(id, ChangeStatus, sequence, key, text );
+		return Packet::create(id, ChangeStatus, sequence, key, text );
 	}
 
-	ByteArray dlGroupNames( int id, short const sequence, ByteArray& key )
+	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId )
+	{
+		ByteArray text(20);
+		snprintf( text.c_str(), 19, "%d", qqId );
+		text.setSize( strlen( text.c_str() ) );
+		return Packet::create(id, UserInfo, sequence, key, text );
+	}
+
+	ByteArray groupNames( uint id, ushort sequence, const ByteArray& key )
 	{
 		ByteArray text(6);
 		text += DownloadGroupNames;
 		text += '\2' ;
 		text += (int) 0;
 
-		return buildPacket(id, GroupNames, sequence, key, text );
+		return Packet::create(id, GroupNames, sequence, key, text );
 	}
 
+	ByteArray downloadGroups( uint id, ushort sequence, const ByteArray& key, int pos )
+	{
+		ByteArray text(10);
+		text += '\1';
+		text += '\2' ;
+		text += (int) 0;
+		text += htonl(pos);
+
+		return Packet::create(id, DownloadGroups, sequence, key, text );
+	}
+
+	ByteArray textMessage( uint id, ushort sequence, const ByteArray& key, 
+	// Here are the message variables:
+		int toId, const ByteArray& transferKey, ByteArray& message )
+	{
+		ByteArray text( 65536 );
+		text += messageHeader( id, toId, transferKey, IMText, sequence, time(NULL));
+		text += encodeMessage( message );
+		return Packet::create(id, SendMsg, sequence, key, text );
+	}
+
+	ByteArray messageReply(uint id, ushort sequence, const ByteArray& key, const ByteArray& text )
+	{
+		return Packet::create(id, ReceiveMsg, sequence, key, text );
+	}
+
+	ByteArray heartbeat(uint id, ushort sequence, const ByteArray& key )
+	{
+		ByteArray text(4);
+		text += id;
+		return Packet::create(id, Heartbeat, sequence, key, text );
+	}
+
+	ByteArray onlineContacts(uint id, ushort sequence, const ByteArray& key, uchar pos )
+	{
+		ByteArray text(5);
+		text += uchar(0x02);
+		text += pos;
+		text += uchar(0x00);
+		text += uchar(0x00);
+		text += uchar(0x00);
+		return Packet::create(id, ContactsOnline, sequence, key, text );
+	}
+		
 }

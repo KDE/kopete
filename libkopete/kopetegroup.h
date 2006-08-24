@@ -25,8 +25,6 @@
 
 #include "kopete_export.h"
 
-class QDomElement;
-
 
 namespace Kopete {
 
@@ -110,8 +108,6 @@ public:
 
 	/**
 	 * \brief Set if the group is expanded.
-	 *
-	 * This is saved to the xml contactlist file
 	 */
 	void setExpanded( bool expanded );
 
@@ -132,24 +128,20 @@ public:
 	 */
 	static Group *temporary();
 	
-
-	
 	/**
 	 * @internal
-	 * Outputs the group data in XML
 	 */
-	const QDomElement toXML();
+	void setGroupId( uint groupId );
 
-	
 	/**
 	 * @internal
-	 * Loads the group data from XML
 	 */
-	 bool fromXML( const QDomElement &data );
+	uint uniqueGroupId() const;
+	/**
+	 * @internal
+	 */
+	void setUniqueGroupId( uint uniqueGroupId );
 
-	 
-	 
-	 	
 public slots:
 	/**
 	 * Send a message to all contacts in the group

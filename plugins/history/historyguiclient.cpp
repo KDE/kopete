@@ -25,6 +25,7 @@
 #include <kstdaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
+#include <kicon.h>
 
 
 #include <QList>

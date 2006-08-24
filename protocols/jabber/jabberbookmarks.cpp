@@ -23,6 +23,7 @@
 #include <kaction.h>
 #include <kselectaction.h>
 #include <klocale.h>
+#include <kicon.h>
 
 #include "xmpp_tasks.h"
 
@@ -70,7 +71,7 @@ void JabberBookmarks::slotReceivedBookmarks( )
 						if(e.isNull())
 							continue;
 						else if(e.tagName() == "nick")
-							jid+="/"+e.text();
+							jid+='/'+e.text();
 						else if(e.tagName() == "password")
 							password=e.text();
 						
@@ -127,11 +128,11 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 	m_conferencesJID += jid.full();
 }
 
-KAction * JabberBookmarks::bookmarksAction(QObject *parent)
+KAction * JabberBookmarks::bookmarksAction(QObject * /*parent*/)
 {
-	KSelectAction *groupchatBM = new KSelectAction( i18n("Groupchat bookmark") , "jabber_group" , 0 , 0 , "actionBookMark" );
+	KSelectAction *groupchatBM = new KSelectAction( KIcon("jabber_group"), i18n("Groupchat bookmark"), 0, "actionBookMark" );
 	groupchatBM->setItems(m_conferencesJID);
-	QObject::connect(groupchatBM, SIGNAL(activated (const QString&)) , this, SLOT(slotJoinChatBookmark(const QString&)));
+	QObject::connect(groupchatBM, SIGNAL(triggered(const QString&)) , this , SLOT(slotJoinChatBookmark(const QString&)));
 	return groupchatBM;
 }
 
@@ -143,7 +144,4 @@ void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 	m_account->client()->joinGroupChat( jid.host() , jid.user() , jid.resource() );
 }
 
-
-
 #include "jabberbookmarks.moc"
-

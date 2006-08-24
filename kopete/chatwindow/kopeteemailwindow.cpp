@@ -56,6 +56,7 @@
 #include <kxmlguifactory.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
+#include <kicon.h>
 
 #include <qlabel.h>
 #include <qlayout.h>

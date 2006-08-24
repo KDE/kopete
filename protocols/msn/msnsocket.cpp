@@ -177,7 +177,7 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 
 void MSNSocket::slotSocketError( int error )
 {
-	kWarning( 14140 ) << k_funcinfo << "Error: " << error << " (" << m_socket->errorString() << ")" << endl;
+	kWarning( 14140 ) << k_funcinfo << "Error: " << error << " (" << m_socket->errorString() << ')' << endl;
 
 	if(!KSocketBase::isFatalError(error))
 		return;
@@ -221,7 +221,7 @@ void MSNSocket::slotDataReceived()
 
 	if ( ret < 0 )
 	{
-		kWarning( 14140 ) << k_funcinfo << "read() returned " << ret << "!" <<endl;
+		kWarning( 14140 ) << k_funcinfo << "read() returned " << ret << '!' <<endl;
 	}
 	else if ( ret == 0 )
 	{
@@ -318,26 +318,26 @@ void MSNSocket::slotDataReceived()
 				// Retrieve the X-MSN-Messenger header.
 				QString header = response.getHeaders()->getValue("X-MSN-Messenger");
 
-				QStringList parts = header.replace(" ", "").split( ";", QString::SkipEmptyParts );
+				QStringList parts = header.replace(' ', "").split( ';', QString::SkipEmptyParts );
 				if(!header.isNull() && (parts.count() >= 2))
 				{
 					if(parts[0].indexOf("SessionID", 0) != -1)
 					{
 						// Assign the session id.
-						m_sessionId = parts[0].section("=", 1, 1);
+						m_sessionId = parts[0].section('=', 1, 1);
 					}else
 						error = true;
 
 					if(parts[1].indexOf("GW-IP", 0) != -1)
 					{
 						// Assign the gateway IP address.
-						m_gwip = parts[1].section("=", 1, 1);
+						m_gwip = parts[1].section('=', 1, 1);
 					}else
 						error = true;
 
 
 					if(parts.count() > 2)
-						if((parts[2].indexOf("Session", 0) != -1) && (parts[2].section("=", 1, 1) == "close"))
+						if((parts[2].indexOf("Session", 0) != -1) && (parts[2].section('=', 1, 1) == "close"))
 						{
 							// The http session has been closed by the server, disconnect.
 							kDebug(14140) << k_funcinfo << "Session closed." << endl;
@@ -380,7 +380,7 @@ void MSNSocket::slotDataReceived()
 
 			if(error)
 			{
-				kDebug(14140) << k_funcinfo << "Http error: " << response.getStatusCode() << " "
+				kDebug(14140) << k_funcinfo << "Http error: " << response.getStatusCode() << ' '
 					<< response.getStatusDescription() << endl;
 
 				// If we encountered an error, disconnect and return.
@@ -516,7 +516,7 @@ void MSNSocket::parseLine( const QString &str )
 	// In some rare cases, like the 'NLN' / 'FLN' commands no id at all
 	// is sent. Here it's actually a real parameter...
 	if ( !isNum )
-		data = str.section( ' ', 1, 1 ) + " " + data;
+		data = str.section( ' ', 1, 1 ) + ' ' + data;
 
 	//if ( isNum && id )
 	//	m_lastId = id;
@@ -616,14 +616,14 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 
 	QByteArray data = cmd.toUtf8();
 	if ( addId )
-		data += " " + QString::number( m_id ).toUtf8();
+		data += ' ' + QString::number( m_id ).toUtf8();
 
 	if ( !args.isEmpty() )
-		data += " " + args.toUtf8();
+		data += ' ' + args.toUtf8();
 
 	// Add length in bytes, not characters
 	if ( !body.isEmpty() )
-		data += " " + QString::number( binary ? body.size() : qstrlen(body) ).toUtf8();
+		data += ' ' + QString::number( binary ? body.size() : qstrlen(body) ).toUtf8();
 
 	data += "\r\n";
 
@@ -872,7 +872,7 @@ bool MSNSocket::setUseHttpMethod( bool useHttp )
 		else if( s == "msnswitchboardsocket" )
 			m_type = "SB";
 		else
-			m_type = QString::null;
+			m_type.clear();
 
 		if( m_type.isNull() )
 			return false;
@@ -974,7 +974,7 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 {
 	if ( size() < blockSize )
 	{
-		kWarning( 14140 ) << k_funcinfo << "Buffer size " << size() << " < asked size " << blockSize << "!" << endl;
+		kWarning( 14140 ) << k_funcinfo << "Buffer size " << size() << " < asked size " << blockSize << '!' << endl;
 		return QByteArray();
 	}
 

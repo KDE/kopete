@@ -18,7 +18,6 @@
 
 #include <stdlib.h>
 
-#include <q3cstring.h>
 #include <qdatastream.h>
 #include <qmap.h>
 #include <qobject.h>
@@ -321,6 +320,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	t->setService(service);
 	t->setId(sessionid);
 	t->setStatus(status);
+	t->setPacketLength(len);
 	
 	// taken almost as is from libyahoo ;-)
 	

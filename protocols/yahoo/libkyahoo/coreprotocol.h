@@ -23,7 +23,6 @@
 #define YAHOO_CORE_PROTOCOL_H
 
 #include <QObject>
-#include <q3ptrlist.h>
 
 class Transfer;
 class YMSGProtocol;

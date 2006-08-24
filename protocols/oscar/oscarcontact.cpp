@@ -83,6 +83,10 @@ bool OscarContact::isOnServer() const
 void OscarContact::setSSIItem( const OContact& ssiItem )
 {
 	m_ssiItem = ssiItem;
+
+	if ( !m_ssiItem.alias().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->nickName(), m_ssiItem.alias() );
+
 	emit updatedSSI();
 }
 

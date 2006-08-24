@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kactionmenu.h>
+#include <kicon.h>
 
 // Kopete Includes
 

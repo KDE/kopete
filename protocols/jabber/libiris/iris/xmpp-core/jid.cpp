@@ -25,12 +25,14 @@
 #include <Q3CString>
 #include <stringprep.h>
 
+#include <QApplication>
+
 using namespace XMPP;
 
 //----------------------------------------------------------------------------
 // StringPrepCache
 //----------------------------------------------------------------------------
-class StringPrepCache
+class StringPrepCache : public QObject
 {
 public:
 	static bool nameprep(const QString &in, int maxbytes, QString *out)
@@ -175,6 +177,7 @@ private:
 	}
 
 	StringPrepCache()
+		: QObject(qApp)
 	{
 		nameprep_table.setAutoDelete(true);
 		nodeprep_table.setAutoDelete(true);

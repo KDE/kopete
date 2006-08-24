@@ -2,7 +2,7 @@
     kopetemessage.cpp  -  Base class for Kopete messages
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -26,6 +26,7 @@
 #include <qtextcodec.h>
 #include <QByteArray>
 #include <QSharedData>
+#include <QPointer>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -41,7 +42,8 @@
 #include "kopeteemoticons.h"
 
 
-using namespace Kopete;
+namespace Kopete
+{
 
 class Message::Private
 	: public QSharedData
@@ -51,7 +53,7 @@ public:
 	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
 	         const QString &requestedPlugin, MessageType type );
 
-	const Contact *from;
+	QPointer<Contact> from;
 	ContactPtrList to;
 	ChatSession *manager;
 
@@ -65,6 +67,7 @@ public:
 	bool rtfOverride;
 	QDateTime timeStamp;
 	QFont font;
+	QStringList classes;
 
 	QColor fgColor;
 	QColor bgColor;
@@ -75,15 +78,21 @@ public:
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		const ContactPtrList &to, const QString &body, const QString &subject,
 		MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-	: from(from), to(to), manager(0), direction(direction), format(f), type(type)
+	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(f), type(type)
 	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
+	
+	//TODO: move that in ChatTextEditPart::contents
 	if( format == RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		this->body.replace( QRegExp( QLatin1String(".*<body.*>\\s+(.*)\\s+</body>.*") ), QLatin1String("\\1") );
+		if (this->body.contains(QLatin1String("<body"))) {
+			QRegExp rx( QLatin1String("<body[^>]*>(.*)</body>") );
+			if (rx.indexIn(this->body) != -1)
+				this->body = rx.cap(1);
+		}
 
 		//Strip <p> tags
 		this->body.replace( QLatin1String("<p>"), QString::null );
@@ -95,6 +104,8 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		if ( this->body.endsWith( QLatin1String("<br/>") ) )
 			this->body.truncate( this->body.length() - 5 );
 		this->body.remove(  QLatin1String("\n") );
+		this->body.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+
 	}
 }
 
@@ -138,7 +149,7 @@ Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList
 {
 }
 
-Kopete::Message::Message( const Message &other )
+Message::Message( const Message &other )
 	: d(other.d)
 {
 }
@@ -188,11 +199,16 @@ void Message::setFont( const QFont &font )
 void Message::setBody( const QString &body, MessageFormat f )
 {
 	QString theBody = body;
+	//TODO: move that in ChatTextEditPart::contents
 	if( f == RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		theBody.replace( QRegExp( QLatin1String(".*<body.*>\\s+(.*)\\s+</body>.*") ), QLatin1String("\\1") );
+		if (theBody.contains(QLatin1String("<body"))) {
+			QRegExp rx( QLatin1String("<body[^>]*>(.*)</body>") );
+			if (rx.indexIn(theBody) != -1)
+				theBody = rx.cap(1);
+		}
 
 		//Strip <p> tags
 		theBody.replace( QLatin1String("<p>"), QString::null );
@@ -203,8 +219,9 @@ void Message::setBody( const QString &body, MessageFormat f )
 		//Remove trailing </br>
 		if ( theBody.endsWith( QLatin1String("<br/>") ) )
 			theBody.truncate( theBody.length() - 5 );
-
+	
 		theBody.remove( QLatin1String("\n") );
+		theBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 	}
 	/*	else if( f == ParsedHTML )
 	{
@@ -238,6 +255,7 @@ QString Message::unescape( const QString &xml )
 	data.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
 	data.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
 	data.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
+	data.replace( QString::fromLatin1( "&#160;" ), QString::fromLatin1( " " ) );  //this one is used in jabber:  note, we should escape all &#xx;
 
 	return data;
 }
@@ -301,7 +319,7 @@ QString Message::parsedBody() const
 #if 0
 		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), RichText));
 #endif
-		return d->body;
+		return escapedBody();
 	}
 }
 
@@ -571,4 +589,21 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 	return result;
 */
 	return QString::null;
+}
+
+QStringList Message::classes() const
+{
+	return d->classes;
+}
+
+void Message::addClass(const QString & classe)
+{
+	d->classes.append(classe);
+}
+
+void Message::setClasses(const QStringList & classes)
+{
+	d->classes = classes;
+}
+
 }

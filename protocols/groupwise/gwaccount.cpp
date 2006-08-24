@@ -350,7 +350,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	m_client->setClientVersion ( kapp->aboutData ()->version () );
 	m_client->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to GroupWise server " << server() << ":" << port() << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to GroupWise server " << server() << ':' << port() << endl;
 
 	NovellDN dn;
 	dn.dn = "maeuschen";
@@ -461,11 +461,15 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 void GroupWiseAccount::slotLoggedIn()
 {
 	reconcileOfflineChanges();
-	
+	// set local status display
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
-	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) )
+	// set status on server
+	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) &&
+		( ( GroupWise::Status )initialStatus().internalStatus() != GroupWise::Unknown ) )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Initial status is not online, setting status to " << initialStatus().internalStatus() << endl;
 		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply",0 ) );
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status was " << initialStatus().description() << ", initial reason was " << m_initialReason << endl;
+	}
 }
 
 void GroupWiseAccount::reconcileOfflineChanges()
@@ -515,7 +519,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 				QString groupId = ( *candidate )->pluginData(  protocol(), accountId() + " objectId" );
 				if ( groupId.isEmpty() )
 					if ( *candidate == Kopete::Group::topLevel() )
-						groupId = "0";	// hack the top level's objectId to 0
+						groupId = '0';	// hack the top level's objectId to 0
 					else
 						continue;
 
@@ -834,7 +838,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 			<< " displayName: " << folder.name << endl;
 	if ( folder.parentId != 0 )
 	{
-		kWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These were not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ")" << endl;
+		kWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These were not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ')' << endl;
 		return;
 	}
 
@@ -1006,7 +1010,7 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 		metaContact->setTemporary (true);
 		QString displayName = details.fullName;
 		if ( displayName.isEmpty() )
-			displayName = details.givenName + " " + details.surname;
+			displayName = details.givenName + ' ' + details.surname;
 
 		metaContact->setDisplayName( displayName );
 		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
@@ -1123,7 +1127,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	ContactDetails dt = client()->userDetailsManager()->details( contactId );
 	QString displayAs;
 	if ( dt.fullName.isEmpty() )
-		displayAs = dt.givenName + " " + dt.surname;
+		displayAs = dt.givenName + ' ' + dt.surname;
 	else
 		displayAs = dt.fullName;
 

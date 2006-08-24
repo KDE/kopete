@@ -37,7 +37,7 @@ namespace Mock
 class Protocol : public Kopete::Protocol
 {
 public:
-	Protocol( KInstance *instance, QObject *parent, const char *name );
+	Protocol( KInstance *instance, QObject *parent);
 	// pure virtual functions implemented
 	virtual Account *createNewAccount( const QString &accountId );
 	virtual AddContactPage *createAddContactWidget( QWidget *parent, Kopete::Account *account );

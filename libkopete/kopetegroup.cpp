@@ -88,126 +88,15 @@ QList<MetaContact *> Group::members() const
 	return groupMembers;
 }
 
-const QDomElement Group::toXML()
-{
-	QDomDocument group;
-	group.appendChild( group.createElement( QLatin1String( "kopete-group" ) ) );
-	group.documentElement().setAttribute( QLatin1String( "groupId" ), QString::number( groupId() ) );
-
-	QString type;
-	switch ( d->type )
-	{
-	case Temporary:
-		type = QLatin1String( "temporary" );
-		break;
-	case TopLevel:
-		type = QLatin1String( "top-level" );
-		break;
-	default:
-		type = QLatin1String( "standard" ); // == Normal
-		break;
-	}
-
-	group.documentElement().setAttribute( QLatin1String( "type" ), type );
-	group.documentElement().setAttribute( QLatin1String( "view" ), QLatin1String( d->expanded ? "expanded" : "collapsed" )  );
-
-	QDomElement displayName = group.createElement( QLatin1String( "display-name" ) );
-	displayName.appendChild( group.createTextNode( d->displayName ) );
-	group.documentElement().appendChild( displayName );
-
-	// Store other plugin data
-	foreach ( QDomElement  it , ContactListElement::toXML() )
-		group.documentElement().appendChild( group.importNode( it, true ) );
-
-
-	return group.documentElement();
-}
-
-bool Group::fromXML( const QDomElement &data )
-{
-	QString strGroupId = data.attribute( QLatin1String( "groupId" ) );
-	if ( !strGroupId.isEmpty() )
-	{
-		d->groupId = strGroupId.toUInt();
-		if ( d->groupId > d->uniqueGroupId )
-			d->uniqueGroupId = d->groupId;
-	}
-
-	// Don't overwrite type for Temporary and TopLevel groups
-	if ( d->type != Temporary && d->type != TopLevel )
-	{
-		QString type = data.attribute( QLatin1String( "type" ), QLatin1String( "standard" ) );
-		if ( type == QLatin1String( "temporary" ) )
-		{
-			if ( d->type != Temporary )
-			{
-				s_temporary->fromXML( data );
-				return false;
-			}
-		}
-		else if ( type == QLatin1String( "top-level" ) )
-		{
-			if ( d->type != TopLevel )
-			{
-				s_topLevel->fromXML( data );
-				return false;
-			}
-		}
-		else
-		{
-			d->type = Normal;
-		}
-	}
-
-	QString view = data.attribute( QLatin1String( "view" ), QLatin1String( "expanded" ) );
-	d->expanded = ( view != QLatin1String( "collapsed" ) );
-
-	QDomNode groupData = data.firstChild();
-	while ( !groupData.isNull() )
-	{
-		QDomElement groupElement = groupData.toElement();
-		if ( groupElement.tagName() == QLatin1String( "display-name" ) )
-		{
-			// Don't set display name for temporary or top-level items
-			if ( d->type == Normal )
-				d->displayName = groupElement.text();
-		}
-		else
-		{
-			Kopete::ContactListElement::fromXML( groupElement );
-		}
-
-		groupData = groupData.nextSibling();
-	}
-
-	// Sanity checks. We must not have groups without a displayname.
-	if ( d->displayName.isEmpty() )
-	{
-		switch ( d->type )
-		{
-		case Temporary:
-			d->displayName = QLatin1String( "Temporary" );
-			break;
-		case TopLevel:
-			d->displayName = QLatin1String( "Top-Level" );
-			break;
-		default:
-			d->displayName = i18n( "(Unnamed Group)" );
-			break;
-		}
-	}
-
-	//this allows to save data for the top-level group in the top-level group
-	return ( d->type == Normal );
-}
-
 void Group::setDisplayName( const QString &s )
 {
 	if ( d->displayName != s )
 	{
 		QString oldname = d->displayName;
 		d->displayName = s;
-		emit displayNameChanged( this, oldname );
+		// Don't emit the signal in loading state
+		if( !loading() )
+			emit displayNameChanged( this, oldname );
 	}
 }
 
@@ -244,6 +133,20 @@ uint Group::groupId() const
 	return d->groupId;
 }
 
+void Group::setGroupId(uint groupId)
+{
+	d->groupId = groupId;
+}
+
+uint Group::uniqueGroupId() const
+{
+	return d->uniqueGroupId;
+}
+
+void Group::setUniqueGroupId(uint uniqueGroupId)
+{
+	d->uniqueGroupId = uniqueGroupId;
+}
 
 void Group::sendMessage()
 {

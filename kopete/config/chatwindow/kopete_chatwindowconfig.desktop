@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=looknfeel
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-Library=kopete_chatwindowconfig
+X-KDE-FactoryName=kcm_kopete_chatwindowconfig
+X-KDE-ParentApp=kopete
+X-KDE-ParentComponents=kopete
+
+Name=Chatwindow
+Comment=Here You Can Configure Chat Window Look And Feel
+
+
+

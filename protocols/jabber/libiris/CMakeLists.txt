@@ -37,6 +37,7 @@ iris/xmpp-core/protocol.cpp
 iris/xmpp-core/stream.cpp 
 iris/xmpp-core/xmlprotocol.cpp 
 iris/xmpp-core/parser.cpp 
+iris/xmpp-core/simplesasl.cpp 
 iris/xmpp-im/client.cpp 
 iris/xmpp-im/types.cpp 
 iris/xmpp-im/xmpp_tasks.cpp 
@@ -45,9 +46,7 @@ iris/xmpp-im/xmpp_xmlcommon.cpp
 iris/jabber/filetransfer.cpp 
 iris/jabber/s5b.cpp 
 iris/jabber/xmpp_ibb.cpp 
-iris/jabber/xmpp_jidlink.cpp
-${CMAKE_CURRENT_BUILD_DIR}/im.cpp
-${CMAKE_CURRENT_BUILD_DIR}/xmpp.cpp
+#iris/jabber/xmpp_jidlink.cpp
 )
 
 set(libiris_SRCS 
@@ -76,8 +75,9 @@ qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/tlshandler.cpp ${CM
 qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/stream.cpp ${CMAKE_CURRENT_BINARY_DIR}/stream.moc )
 qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/jid.cpp ${CMAKE_CURRENT_BINARY_DIR}/jid.moc )
 qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-im/types.cpp ${CMAKE_CURRENT_BINARY_DIR}/types.moc )
-qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/im.h ${CMAKE_CURRENT_BINARY_DIR}/im.cpp )
-qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/xmpp.h ${CMAKE_CURRENT_BINARY_DIR}/xmpp.cpp )
+
+qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/xmpp.h)
+qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/im.h)
 
 # Ok special case here
 # Both securestream and s5b have Q_OBJECT macro in header and implementation.
@@ -98,10 +98,3 @@ install(TARGETS iris_kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = cutestuff iris

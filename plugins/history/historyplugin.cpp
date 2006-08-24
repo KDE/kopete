@@ -22,6 +22,7 @@
 //#include <kconfig.h>
 #include <kplugininfo.h>
 #include <kdeversion.h>
+#include <kicon.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -128,7 +129,7 @@ void HistoryPlugin::slotViewHistory()
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(m)
 	{
-		int lines = HistoryConfig::number_ChatWindow();
+		//int lines = HistoryConfig::number_ChatWindow();
 
 		// TODO: Keep track of open dialogs and raise instead of
 		// opening a new (duplicated) one
@@ -148,10 +149,11 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
 	KopeteView *m_currentView = v;
 	Kopete::ChatSession *m_currentChatSession = v->msgManager();
-	QList<Kopete::Contact*> mb = m_currentChatSession->members();
 
 	if(!m_currentChatSession)
 		return; //i am sorry
+
+	const Kopete::ContactPtrList& mb = m_currentChatSession->members();
 
 	if(!m_loggers.contains(m_currentChatSession))
 	{
@@ -168,12 +170,11 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 	logger->setPositionToLast();
 
 	QList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
-			/*mb.first()*/ 0L, HistoryLogger::AntiChronological, true, true);
+			mb.first(), HistoryLogger::AntiChronological, true, true);
 
 	// make sure the last message is not the one which will be appened right
 	// after the view is created (and which has just been logged in)
-	if(
-		(msgs.last().plainBody() == m_lastmessage.plainBody()) &&
+	if(!msgs.isEmpty() && (msgs.last().plainBody() == m_lastmessage.plainBody()) &&
 		(m_lastmessage.manager() == m_currentChatSession))
 	{
 		msgs.takeLast();

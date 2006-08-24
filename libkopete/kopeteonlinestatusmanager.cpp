@@ -30,6 +30,7 @@
 #include <kstaticdeleter.h>
 #include <kapplication.h>
 #include <kcpuinfo.h> // for WORDS_BIGENDIAN
+#include <kicon.h>
 
 #include <algorithm> // for min
 #include <QPixmap>

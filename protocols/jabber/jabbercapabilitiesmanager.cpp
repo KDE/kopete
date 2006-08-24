@@ -2,6 +2,7 @@
     jabbercapabilitiesmanager.cpp - Manage entity capabilities(JEP-0115).
 
     Copyright (c) 2006      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -25,8 +26,6 @@
 #include <qpair.h>
 #include <qdom.h>
 #include <qtextstream.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include <kstandarddirs.h>
 #include <kdebug.h>
@@ -66,11 +65,11 @@ JabberCapabilitiesManager::CapabilitiesList JabberCapabilitiesManager::Capabilit
 	CapabilitiesList capsList;
 	capsList.append( Capabilities(node(), version(), version()) );
 
-	QStringList extensionList = QStringList::split(" ",extensions());
-	QStringList::ConstIterator it, itEnd = extensionList.constEnd();
-	for(it = extensionList.constBegin(); it != itEnd; ++it)
+	QStringList extensionList = extensions().split(' ');
+
+	foreach(QStringList::const_reference str, extensionList)
 	{
-		capsList.append( Capabilities(node(),version(),*it) );
+		capsList.append( Capabilities(node(), version(), str) );
 	}
 
 	return capsList;
@@ -114,15 +113,15 @@ const DiscoItem::Identities& JabberCapabilitiesManager::CapabilitiesInformation:
 QStringList JabberCapabilitiesManager::CapabilitiesInformation::jids() const
 {
 	QStringList jids;
-	
-	Q3ValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
-	for( ; it != itEnd; ++it) 
+
+	foreach(JidList::const_reference pair, m_jids)
 	{
-		QString jid( (*it).first );
+		QString jid = pair.first;
+
 		if( !jids.contains(jid) )
 			jids.push_back(jid);
 	}
-
+	
 	return jids;
 }
 
@@ -145,14 +144,12 @@ void JabberCapabilitiesManager::CapabilitiesInformation::reset()
 
 void JabberCapabilitiesManager::CapabilitiesInformation::removeAccount(JabberAccount *account)
 {
-	Q3ValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
+	JidList::Iterator it = m_jids.begin();
 	while( it != m_jids.end() ) 
 	{
 		if( (*it).second == account) 
 		{
-			Q3ValueList<QPair<QString,JabberAccount*> >::Iterator otherIt = it;
-			it++;
-			m_jids.remove(otherIt);
+			it = m_jids.erase(it);
 		}
 		else 
 		{
@@ -163,7 +160,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::removeAccount(JabberAcc
 
 void JabberCapabilitiesManager::CapabilitiesInformation::addJid(const Jid& jid, JabberAccount* account)
 {
-	QPair<QString,JabberAccount*> jidAccountPair(jid.full(),account);
+	QPair<QString, JabberAccount*> jidAccountPair(jid.full(),account);
 
 	if( !m_jids.contains(jidAccountPair) ) 
 	{
@@ -176,14 +173,12 @@ void JabberCapabilitiesManager::CapabilitiesInformation::removeJid(const Jid& ji
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unregistering " << QString(jid.full()).replace('%',"%%") << endl;
 
-	Q3ValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
+	JidList::Iterator it = m_jids.begin();
 	while( it != m_jids.end() ) 
 	{
 		if( (*it).first == jid.full() ) 
 		{
-			Q3ValueList<QPair<QString,JabberAccount*> >::Iterator otherIt = it;
-			it++;
-			m_jids.remove(otherIt);
+			it = m_jids.erase(it);
 		}
 		else 
 		{
@@ -196,7 +191,7 @@ QPair<Jid,JabberAccount*> JabberCapabilitiesManager::CapabilitiesInformation::ne
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Looking for next JID" << endl;
 
-	Q3ValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
+	JidList::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
 	for( ; it != itEnd; ++it) 
 	{
 		if( (*it).first == jid.full() && (*it).second->client()->rootTask() == t) 
@@ -251,22 +246,20 @@ QDomElement JabberCapabilitiesManager::CapabilitiesInformation::toXml(QDomDocume
 	//info.setAttribute("last-seen",lastSeen_.toString(Qt::ISODate));
 
 	// Identities
-	DiscoItem::Identities::ConstIterator discoIt = m_identities.constBegin(), discoItEnd = m_identities.constEnd();
-	for( ; discoIt != discoItEnd; ++discoIt ) 
+	foreach(DiscoItem::Identities::const_reference ident, m_identities)
 	{
 		QDomElement identity = doc->createElement("identity");
-		identity.setAttribute("category",(*discoIt).category);
-		identity.setAttribute("name",(*discoIt).name);
-		identity.setAttribute("type",(*discoIt).type);
+		identity.setAttribute("category", ident.category);
+		identity.setAttribute("name",     ident.name);
+		identity.setAttribute("type",     ident.type);
 		info.appendChild(identity);
 	}
 
 	// Features
-	QStringList::ConstIterator featuresIt = m_features.constBegin(), featuresItEnd = m_features.constEnd();
-	for( ; featuresIt != featuresItEnd; ++featuresIt )
+	foreach(QStringList::const_reference feat, m_features)
 	{
 		QDomElement feature = doc->createElement("feature");
-		feature.setAttribute("node",*featuresIt);
+		feature.setAttribute("node", feat);
 		info.appendChild(feature);
 	}
 
@@ -344,12 +337,11 @@ void JabberCapabilitiesManager::removeAccount(JabberAccount *account)
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing account " << account->accountId() << endl;
 
-	Q3ValueList<CapabilitiesInformation> info = d->capabilitiesInformationMap.values();
+	QList<CapabilitiesInformation> info = d->capabilitiesInformationMap.values();
 
-	Q3ValueList<CapabilitiesInformation>::Iterator it, itEnd = info.end();
-	for(it = info.begin(); it != info.end(); ++it) 
+	foreach(CapabilitiesInformation cap, info)
 	{
-		(*it).removeAccount(account);
+		cap.removeAccount(account);
 	}
 }
 
@@ -402,10 +394,10 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 			{
 				if( !d->capabilitiesInformationMap[*newCapsIt].discovered() && d->capabilitiesInformationMap[*newCapsIt].pendingRequests() == 0 ) 
 				{
-					kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + "#" + (*newCapsIt).extensions()) << endl;
+					kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + '#' + (*newCapsIt).extensions()) << endl;
 
 					d->capabilitiesInformationMap[*newCapsIt].setPendingRequests(1);
-					requestDiscoInfo(account, jid, node + "#" + (*newCapsIt).extensions());
+					requestDiscoInfo(account, jid, node + '#' + (*newCapsIt).extensions());
 				}
 			}
 		}
@@ -452,7 +444,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 	Jid jid = discoInfo->jid();
 	kDebug(JABBER_DEBUG_GLOBAL) << QString("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',"%%")).arg(discoInfo->node()).arg(discoInfo->success()) << endl;
 
-	QStringList tokens = QStringList::split("#",discoInfo->node());
+	QStringList tokens = discoInfo->node().split('#');
 
 	// Update features
 	Q_ASSERT(tokens.count() == 2);
@@ -575,10 +567,10 @@ XMPP::Features JabberCapabilitiesManager::features(const Jid& jid) const
 	if( capabilitiesEnabled(jid) ) 
 	{
 		CapabilitiesList capabilitiesList = d->jidCapabilitiesMap[jid.full()].flatten();
-		CapabilitiesList::ConstIterator capsIt = capabilitiesList.constBegin(), capsItEnd = capabilitiesList.constEnd();
-		for( ; capsIt != capsItEnd; ++capsIt) 
+
+		foreach(CapabilitiesList::value_type cap, capabilitiesList)
 		{
-			featuresList += d->capabilitiesInformationMap[*capsIt].features();
+			featuresList += d->capabilitiesInformationMap[cap].features();
 		}
 	}
 
@@ -601,7 +593,7 @@ QString JabberCapabilitiesManager::clientName(const Jid& jid) const
 			if (name.startsWith("www."))
 				name = name.right(name.length() - 4);
 			
-			int cut_pos = name.find(".");
+			int cut_pos = name.find('.');
 			if (cut_pos != -1) {
 				name = name.left(cut_pos);
 			}
@@ -629,10 +621,11 @@ void JabberCapabilitiesManager::saveInformation()
 	QDomDocument doc;
 	QDomElement capabilities = doc.createElement("capabilities");
 	doc.appendChild(capabilities);
+
 	QMap<Capabilities,CapabilitiesInformation>::ConstIterator it = d->capabilitiesInformationMap.constBegin(), itEnd = d->capabilitiesInformationMap.constEnd();
 	for( ; it != itEnd; ++it ) 
 	{
-		QDomElement info = it.data().toXml(&doc);
+		QDomElement info = it.value().toXml(&doc);
 		info.setAttribute("node",it.key().node());
 		info.setAttribute("ver",it.key().version());
 		info.setAttribute("ext",it.key().extensions());
@@ -649,9 +642,9 @@ void JabberCapabilitiesManager::saveInformation()
 
 	QTextStream textStream;
 	textStream.setDevice(&capsFile);
-	textStream.setEncoding(QTextStream::UnicodeUTF8);
+	textStream.setCodec(QTextCodec::codecForName("UTF-8"));
 	textStream << doc.toString();
-	textStream.unsetDevice();
+	textStream.setDevice(0);
 	capsFile.close();
 }
 

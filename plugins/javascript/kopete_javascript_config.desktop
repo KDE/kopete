@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=color
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-Library=kopete_javascript
+X-KDE-FactoryName=kcm_kopete_javascript
+X-KDE-ParentApp=kopete_javascript
+X-KDE-ParentComponents=kopete_javascript
+
+Name=JavaScript
+Name[x-test]=xxJavaScriptxx
+Comment=Add JavaScript bindings
+Comment[x-test]=xxAdd JavaScript bindingsxx
+

@@ -227,7 +227,7 @@ Q3ValueList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults
 // 	GWSearchResultsLVI * selection = static_cast< GWSearchResultsLVI * >( m_results->selectedItem() );
 // 	contactId = selection->m_dn;
 // 	if ( displayName.isEmpty() )
-// 		displayName = selection->text( 1 ) + " " + selection->text( 3 );
+// 		displayName = selection->text( 1 ) + ' ' + selection->text( 3 );
 
 
 unsigned char GroupWiseContactSearch::searchOperation( int comboIndex )

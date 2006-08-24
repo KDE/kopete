@@ -25,22 +25,21 @@
 #include <qdom.h>
 #include <qfile.h>
 
-class IRC::Networks::Private {
-public:
+struct IRC::Networks::Private {
 	IRC::NetworkList networks;
 };
 
 using namespace IRC;
 
 Networks::Networks()
-	: d(0)
+	: d(new Private)
 {
 	slotReadNetworks();
 }
 
 Networks::~Networks()
 {
-//	delete d;
+	delete d;
 }
 
 Networks *Networks::self()
@@ -54,7 +53,7 @@ const NetworkList &Networks::networks() const
 	return d->networks;
 }
 
-bool Networks::slotReadNetworks()
+void Networks::slotReadNetworks()
 {
 	d->networks.clear();
 

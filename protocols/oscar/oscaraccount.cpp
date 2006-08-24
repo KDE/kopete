@@ -56,6 +56,7 @@
 #include "contactmanager.h"
 #include "oscarlistnonservercontacts.h"
 #include "kopetetransfermanager.h"
+#include "oscarversionupdater.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -77,6 +78,9 @@ public:
 	QMap<QString, QString> contactChangeQueue;
 
     OscarListNonServerContacts* olnscDialog;
+	
+	unsigned int versionUpdaterStamp;
+	bool versionAlreadyUpdated;
 
 	virtual QTextCodec* codecForContact( const QString& contactName ) const
 	{
@@ -98,6 +102,14 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
 	d->engine->setIsIcq( isICQ );
+	
+	d->versionAlreadyUpdated = false;
+	d->versionUpdaterStamp = OscarVersionUpdater::self()->stamp();
+	if ( isICQ )
+		d->engine->setVersion( OscarVersionUpdater::self()->getICQVersion() );
+	else
+		d->engine->setVersion( OscarVersionUpdater::self()->getAIMVersion() );
+
 	d->engine->setCodecProvider( d );
     d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
@@ -637,6 +649,11 @@ bool OscarAccount::createContact(const QString &contactId,
 	}
 }
 
+void OscarAccount::updateVersionUpdaterStamp()
+{
+	d->versionUpdaterStamp = OscarVersionUpdater::self()->stamp();
+}
+
 void OscarAccount::ssiContactAdded( const OContact& item )
 {
 	if ( d->addContactMap.contains( Oscar::normalize( item.name() ) ) )
@@ -882,9 +899,20 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		}
 		break;
 	case 0x001C:
-		reason = i18n("The %1 server thinks the client you are using is " \
-		              "too old. Please report this as a bug at http://bugs.kde.org",
-			  acctType );
+		OscarVersionUpdater::self()->update( d->versionUpdaterStamp );
+		if ( !d->versionAlreadyUpdated )
+		{
+			reason = i18n("Sign on to %1 with your account %2 failed.",
+			              acctType, accountId() );
+			
+			d->versionAlreadyUpdated = true;
+		}
+		else
+		{
+			reason = i18n( "The %1 server thinks the client you are using is " \
+			               "too old. Please report this as a bug at http://bugs.kde.org",
+			               acctType );
+		}
 		break;
 	case 0x0022: // Account suspended because of your age (age < 13)
 		reason = i18n("Account %1 was disabled on the %2 server because " \

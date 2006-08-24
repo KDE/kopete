@@ -133,6 +133,8 @@ JabberProtocol::JabberProtocol (QObject * parent, const QStringList &)
 	// Init the Entity Capabilities manager.
 	capsManager = new JabberCapabilitiesManager;
 	capsManager->loadCachedInformation();
+	
+	registerAsProtocolHandler(QString::fromLatin1("xmpp"));
 }
 
 JabberProtocol::~JabberProtocol ()
@@ -179,7 +181,7 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 
-	int slash=accountId.find('/');
+	int slash=accountId.indexOf('/');
 	if(slash>=0)
 	{
 		QString realAccountId=accountId.left(slash);
@@ -241,9 +243,18 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		{
 			status = JabberKOSDND;
 		}
+		else if (resource.status ().show () == "online")
+		{ // the ApaSMSAgent sms gateway report status as "online" even if it's not in the RFC 3921 § 2.2.2.1 
+			// See Bug 129059
+			status = JabberKOSOnline;
+		}
 		else if (resource.status ().show () == "connecting")
-		{
+		{ // this is for kopete internals
 			status = JabberKOSConnecting;
+		}
+		else
+		{
+			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug" << endl;
 		}
 	}
 
@@ -331,6 +342,186 @@ XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , 
 			break;
 	}
 	return xmppStatus;
+}
+
+#include <accountselector.h>
+#include <kopeteuiglobal.h>
+#include <kvbox.h>
+#include "jabbercontactpool.h"
+#include <kopeteview.h>
+#include <kmessagebox.h>
+#include <kinputdialog.h>
+
+void JabberProtocol::handleURL(const KUrl & kurl) const
+{
+	QUrl url=kurl; //QUrl has better query handling.
+	if(url.scheme() != "xmpp" && !url.scheme().isEmpty() )
+		return;
+
+	url.setQueryDelimiters( '=' , ';' );
+	QString accountid=url.authority();
+	QString jid_str=url.path();
+	if(jid_str.startsWith('/'))
+		jid_str=jid_str.mid(1);
+	XMPP::Jid jid = jid_str;
+	QString action=url.queryItems().isEmpty() ? QString() : url.queryItems().first().first;
+	 
+	kDebug() << k_funcinfo << url.queryItemValue("body") << endl;
+
+	if(jid.isEmpty())
+	{
+		return;
+	}
+	
+	JabberAccount *account=0L;
+	if(!accountid.isEmpty())
+	{
+		account=static_cast<JabberAccount*>(Kopete::AccountManager::self()->findAccount("JabberProtocol" , accountid));
+	}
+	if(!account)
+	{
+		QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts(const_cast<JabberProtocol*>(this));
+		if (accounts.count() == 1)
+			account = static_cast<JabberAccount*>(accounts.first());
+		else
+		{
+			KDialog chooser(Kopete::UI::Global::mainWidget());
+			chooser.setCaption( i18n("Choose Account") );
+			chooser.setButtons( KDialog::Ok | KDialog::Cancel );
+			chooser.setDefaultButton(KDialog::Ok);
+			KVBox vb(&chooser);
+			chooser.setMainWidget(&vb);
+			QLabel label(&vb);
+			label.setText(i18n("Choose an account to handle the uri %1" , kurl.prettyUrl()));
+//			label.setSizePolicy(QSizePolicy::Minimum , QSizePolicy::MinimumExpanding);
+			label.setWordWrap(true);
+			AccountSelector accSelector(const_cast<JabberProtocol*>(this), &vb);
+	//		accSelector.setSizePolicy(QSizePolicy::MinimumExpanding , QSizePolicy::MinimumExpanding);
+			int ret = chooser.exec();
+			account=qobject_cast<JabberAccount*>(accSelector.selectedItem());
+			if (ret == QDialog::Rejected || account == 0)
+				return;
+		}
+	}
+	
+	if(jid.isEmpty())
+	{
+		return;
+	}
+	
+	JabberBaseContact *contact=account->contactPool()->findRelevantRecipient( jid );
+		
+	if(action.isEmpty() || action=="message")
+	{
+		if(!contact)
+		{
+			Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
+			metaContact->setTemporary (true);
+			contact = account->contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
+			Kopete::ContactList::self()->addMetaContact(metaContact);
+		}
+		contact->execute();
+		
+		if(url.hasQueryItem("body") || url.hasQueryItem("subject"))
+		{ //TODO "thread"
+			Kopete::ChatSession *kcs=contact->manager(Kopete::Contact::CanCreate);
+			if(!kcs)
+				return;
+			Kopete::Message msg(account->myself(),kcs->members(), url.queryItemValue("body"),url.queryItemValue("subject"),
+								Kopete::Message::Outbound,Kopete::Message::PlainText);
+			KopeteView *kv=kcs->view(true);
+			if(kv)
+				kv->setCurrentMessage(msg);
+		}
+	}
+	else if(action == "roster" || action == "subscribe")
+	{
+		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+			i18n("Do you want to add '%1' to your contact list?", jid.full()),
+			QString::null, i18n("Add"), i18n("Do Not Add"))
+				  != KMessageBox::Yes)
+		{
+			return;
+		}
+		Kopete::Group *group=0L;
+		if( url.hasQueryItem("group"))
+			group=Kopete::ContactList::self()->findGroup( url.queryItemValue("group") );
+		account->addContact( jid.full() ,  url.queryItemValue("name") , group );
+	}
+	else if(action == "remove" || action== "unsubscribe")
+	{
+		if(!contact)
+			return;
+	
+		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+			i18n("Do you want to remove '%1' from your contact list?", jid.full()),
+			QString::null, i18n("Remove"), i18n("Do Not Remove"))
+						!= KMessageBox::Yes)
+		{
+			return;
+		}
+		
+		contact->deleteContact();
+	}//TODO: probe
+	else if(action == "join" || action=="invite")
+	{
+		if(!account->isConnected() || !account->client())
+		{
+			account->errorConnectFirst();
+			return;
+		}
+		
+		if(!contact)
+		{
+			QString nick=jid.resource();
+			if(nick.isEmpty())
+			{
+				bool ok=true;
+				nick = KInputDialog::getText(i18n("Please enter your nickname for the room %1", jid.bare()),
+						i18n("Give your nickname"),
+						QString(),
+						&ok);
+				if (!ok)
+					return;
+			}
+			if(action=="join" && url.hasQueryItem("password"))
+				account->client()->joinGroupChat( jid.host() , jid.user() , nick, url.queryItemValue("password") );
+			else
+				account->client()->joinGroupChat( jid.host() , jid.user() , nick );
+		}
+		
+		if(action=="invite" && url.hasQueryItem("jid") )
+		{
+			//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
+			//      iris doesn't implement groupchat yet
+			//NOTE: This code is duplicated in JabberGroupChatManager::inviteContact
+			XMPP::Message jabberMessage;
+			XMPP::Jid jid = static_cast<const JabberBaseContact*>(account->myself())->rosterItem().jid() ;
+			jabberMessage.setFrom ( jid );
+			jabberMessage.setTo ( url.queryItemValue("jid") );
+			jabberMessage.setInvite( jid.bare() );
+			jabberMessage.setBody( i18n("You have been invited to %1", jid.bare() ) );
+
+			// send the message
+			account->client()->sendMessage ( jabberMessage );
+		}
+	}
+	else if(action=="sendfile")
+	{
+		if(!contact)
+		{
+			Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
+			metaContact->setTemporary (true);
+			contact = account->contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
+			Kopete::ContactList::self()->addMetaContact(metaContact);
+		}
+		contact->sendFile();
+	}//TODO: recvfile
+	else
+	{
+		kWarning(JABBER_DEBUG_GLOBAL) << k_funcinfo << "unable to handle URL "<< kurl.prettyUrl() << endl;
+	}
+
 }
 
 #include "jabberprotocol.moc"

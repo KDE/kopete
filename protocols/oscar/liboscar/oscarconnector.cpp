@@ -46,7 +46,7 @@ KNetworkConnector::~KNetworkConnector()
 void KNetworkConnector::connectToServer( const QString &server )
 {
 	kDebug( 14151 ) << k_funcinfo << "Initiating connection to " << mHost << endl;
-	Q_ASSERT( !mHost.isNull() );
+	Q_ASSERT( !mHost.isEmpty() );
 	Q_ASSERT( mPort );
 
 	mErrorCode = KNetwork::KSocketBase::NoError;

@@ -173,8 +173,6 @@ private:
 
 	const QString styleHTML() const;
 
-	const QString addNickLinks( const QString &html ) const;
-
 	Kopete::Contact *contactFromNode( const DOM::Node &n ) const;
 
 	/**
@@ -199,7 +197,7 @@ private:
 	 * 
 	 * @return the resulting HTML with replaced keywords.
 	 */
-	QString formatStyleKeywords( const QString &sourceHTML, Kopete::Message &message );
+	QString formatStyleKeywords( const QString &sourceHTML, const Kopete::Message &message );
 	/**
 	 * Format(replace) style keywords for header and footers.
 	 * For messages, use formatStyleKeywords(const QString &sourceHTML, Kopete::Message &message)  instead.

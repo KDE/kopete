@@ -24,7 +24,6 @@
  */
 
 #include <qobject.h>
-#include <qstring.h>
 
 class JabberAccount;
 

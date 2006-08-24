@@ -37,7 +37,7 @@ class KOPETE_EXPORT JabberConnector : public XMPP::Connector
 Q_OBJECT
 
 public:
-	JabberConnector ( QObject *parent = 0, const char *name = 0 );
+	JabberConnector ( QObject *parent = 0 );
 
 	~JabberConnector ();
 

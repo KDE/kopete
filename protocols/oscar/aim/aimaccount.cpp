@@ -24,6 +24,7 @@
 #include <kmessagebox.h>
 #include <kcodecs.h>
 #include <ktoggleaction.h>
+#include <kicon.h>
 
 #include "kopeteawayaction.h"
 #include "kopetepassword.h"
@@ -747,6 +748,7 @@ void AIMAccount::connectWithPassword( const QString & )
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
+		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), _password.left(16) );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );

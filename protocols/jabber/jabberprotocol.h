@@ -19,19 +19,19 @@
 #ifndef JABBERPROTOCOL_H
 #define JABBERPROTOCOL_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qpixmap.h>
-#include <qmovie.h>
-#include <kaction.h>
-#include <kmenu.h>
+#include <QString>
+#include <QMap>
 
-#include "kopetecontact.h"
+#include "kopeteprotocol.h"
+#include "kopetemimetypehandler.h"
 #include "kopetecontactproperty.h"
-#include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
-#include "addcontactpage.h"
+
+class AddContactPage;
+namespace Kopete {
+	class Contact;
+	class MetaContact;
+}
 
 #define JABBER_DEBUG_GLOBAL		14130
 #define JABBER_DEBUG_PROTOCOL	14131
@@ -47,7 +47,7 @@ class dlgJabberStatus;
 class dlgJabberSendRaw;
 class JabberCapabilitiesManager;
 
-class JabberProtocol:public Kopete::Protocol
+class JabberProtocol:public Kopete::Protocol , private Kopete::MimeTypeHandler
 {
 	Q_OBJECT
 
@@ -148,6 +148,11 @@ public:
 	 * Return the Entity Capabilities(JEP-0115) manager instance.
 	 */
 	JabberCapabilitiesManager *capabilitiesManager();
+	
+	/**
+	 * inherited from Kopete::MimeTypeHandler
+	 */
+	virtual void handleURL( const KUrl & url ) const;
 
 private:
 	/*
@@ -159,6 +164,7 @@ private:
 	 * Unique Instance of the Entity Capabilities(JEP-0115) manager for Kopete Jabber plugin.
 	 */
 	JabberCapabilitiesManager *capsManager;
+	
 };
 
 #endif

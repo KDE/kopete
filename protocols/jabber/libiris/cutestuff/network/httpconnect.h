@@ -32,7 +32,7 @@ class CUTESTUFF_EXPORT HttpConnect : public ByteStream
 public:
 	enum Error { ErrConnectionRefused = ErrCustom, ErrHostNotFound, ErrProxyConnect, ErrProxyNeg, ErrProxyAuth };
 	HttpConnect(QObject *parent=0);
-	virtual ~HttpConnect();
+	~HttpConnect();
 
 	void setAuth(const QString &user, const QString &pass="");
 	void connectToHost(const QString &proxyHost, int proxyPort, const QString &host, int port);

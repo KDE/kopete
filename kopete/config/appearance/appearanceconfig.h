@@ -29,7 +29,6 @@ class AppearanceConfig : public KCModule
 {
 	Q_OBJECT
 
-friend class KopeteStyleNewStuff;
 
 public:
 	AppearanceConfig( QWidget *parent, const QStringList &args );
@@ -40,25 +39,16 @@ public:
 
 private slots:
 	void slotSelectedEmoticonsThemeChanged();
-	void slotUpdateChatPreview();
 	void slotHighlightChanged();
 	void slotChangeFont();
-	void slotInstallChatStyle();
-	void slotDeleteChatStyle();
-	void slotChatStyleSelected();
-	void slotChatStyleVariantSelected(const QString &variantName);
 	void slotEditTooltips();
 	void emitChanged();
 	void installEmoticonTheme();
 	void removeSelectedEmoticonTheme();
 	void slotGetEmoticonThemes();
-	void slotGetChatStyles();
-	void slotLoadChatStyles();
 	void updateEmoticonsButton(bool);
 private:
 	void updateEmoticonlist();
-	void createPreviewChatSession();
-	void createPreviewMessages();
 	
 private:
 	class Private;

@@ -318,6 +318,9 @@ public:
 
 	/** Set codec provider */
 	void setCodecProvider( CodecProvider* codecProvider );
+	
+	/** Set pointer to version info */
+	void setVersion( const Oscar::ClientVersion* version );
 
 	/** start a filetransfer task */
 	void sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t );
@@ -335,6 +338,9 @@ public:
 
 	/** Accessor for the Contact Manager */
 	ContactManager* ssiManager() const;
+
+	/** Return version info */
+	const Oscar::ClientVersion* version() const;
 
 	/** The current user's user ID */
 	QString userId() const;

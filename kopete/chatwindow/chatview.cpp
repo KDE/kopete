@@ -767,10 +767,10 @@ void ChatView::loadChatSettings()
 	                           contacts.first()->metaContact()->metaContactId();
 	KConfig* config = KGlobal::config();
 	config->setGroup( contactListGroup );
-	bool enableRichText = config->readBoolEntry( "EnableRichText", true );
+	bool enableRichText = config->readEntry( "EnableRichText", true );
 	editPart()->slotSetRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->richTextEnabled() );
-	bool enableAutoSpell = config->readBoolEntry( "EnableAutoSpellCheck", false );
+	bool enableAutoSpell = config->readEntry( "EnableAutoSpellCheck", false );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 

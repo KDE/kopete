@@ -17,7 +17,7 @@
 
 #include "channellist.h"
 
-#include "kircengine.h"
+#include "kircclient.h"
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -38,14 +38,17 @@
 #include <qtooltip.h>
 #include <qtimer.h>
 #include <qspinbox.h>
-#include <q3whatsthis.h>
+#include <Q3Header>
+
+#include <kdebug.h>
+
 
 class ChannelListItem : public K3ListViewItem
 {
 	public:
 		ChannelListItem( K3ListView *parent, QString arg1, QString arg2, QString arg3 );
 		virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-		virtual void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
+		//virtual void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
 
 	private:
 		K3ListView *parentList;
@@ -74,6 +77,7 @@ int ChannelListItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
 		return Q3ListViewItem::compare( i, col, ascending );
 }
 
+#if 0
 void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
 {
 	QPixmap back( width, height() );
@@ -166,9 +170,10 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 	paint.end();
 	p->drawPixmap( 0, 0, back );
 }
+#endif
 
-ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
-    : QWidget( parent ), m_engine( engine )
+ChannelList::ChannelList( QWidget* parent, KIRC::Client *client )
+    : QWidget( parent ), m_client( client )
 {
 	ChannelListLayout = new Q3VBoxLayout( this, 11, 6, "ChannelListLayout");
 
@@ -188,28 +193,30 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	layout72_2->addWidget( mSearchButton );
 	ChannelListLayout->addLayout( layout72_2 );
 
-	mChannelList = new K3ListView( this, "mChannelList" );
+	mChannelList = new K3ListView( this );
 	mChannelList->addColumn( i18n( "Channel" ) );
 	mChannelList->addColumn( i18n( "Users" ) );
-	mChannelList->header()->setResizeEnabled( FALSE, mChannelList->header()->count() - 1 );
+	//mChannelList->header()->setResizeEnabled( false, mChannelList->header()->count() - 1 );
 	mChannelList->addColumn( i18n( "Topic" ) );
-	mChannelList->setAllColumnsShowFocus( TRUE );
-	mChannelList->setShowSortIndicator( TRUE );
+	mChannelList->setAllColumnsShowFocus( true );
+	mChannelList->setShowSortIndicator( true );
+
 	ChannelListLayout->addWidget( mChannelList );
 
-	clearWState( WState_Polished );
+	//clearWState( WState_Polished );
 
 	textLabel1_2->setText( i18n( "Search for:" ) );
-	QToolTip::add( textLabel1_2, i18n( "You may search for channels on the IRC server for a text string entered here." ) );
-	QToolTip::add( numUsers, i18n( "Channels returned must have at least this many members." ) );
-	Q3WhatsThis::add( numUsers, i18n( "Channels returned must have at least this many members." ) );
-	Q3WhatsThis::add( textLabel1_2, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
-	QToolTip::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here." ) );
-	Q3WhatsThis::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
+	textLabel1_2->setToolTip( i18n( "You may search for channels on the IRC server for a text string entered here." ) );
+	numUsers->setToolTip( i18n( "Channels returned must have at least this many members." ) );
+	numUsers->setWhatsThis( i18n( "Channels returned must have at least this many members." ) );
+	textLabel1_2->setWhatsThis( i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
+	channelSearch->setToolTip( i18n( "You may search for channels on the IRC server for a text string entered here." ) );
+	channelSearch->setWhatsThis( i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
 	mSearchButton->setText( i18n( "S&earch" ) );
-	QToolTip::add( mSearchButton, i18n( "Perform a channel search." ) );
-	Q3WhatsThis::add( mSearchButton, i18n( "Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server." ) );
-	QToolTip::add( mChannelList, i18n( "Double click on a channel to select it." ) );
+	mSearchButton->setToolTip( i18n( "Perform a channel search." ) );
+	mSearchButton->setWhatsThis( i18n( "Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server." ) );
+
+	mChannelList->setToolTip( i18n( "Double click on a channel to select it." ) );
 	mChannelList->header()->setLabel( 0, i18n( "Channel" ) );
 	mChannelList->header()->setLabel( 1, i18n( "Users" ) );
 	mChannelList->header()->setLabel( 2, i18n( "Topic" ) );
@@ -223,6 +230,7 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	connect( mChannelList, SIGNAL( selectionChanged( Q3ListViewItem*) ), this,
 		SLOT( slotItemSelected( Q3ListViewItem *) ) );
 
+	/*
 	connect( m_engine, SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ),
 		this, SLOT( slotChannelListed( const QString &, uint, const QString & ) ) );
 
@@ -230,6 +238,7 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 
 	connect( m_engine, SIGNAL( connectedToServer() ), this, SLOT( reset() ) );
 	connect( m_engine, SIGNAL( disconnected() ), this, SLOT( slotDisconnected() ) );
+	*/
 
 	show();
 }
@@ -259,8 +268,9 @@ void ChannelList::clear()
 
 void ChannelList::search()
 {
-/*
-	if( !m_engine->isDisconnected() || !channelCache.isEmpty() )
+	kDebug(14120) << k_funcinfo << endl;
+
+	if( m_client->connectionState() == KIRC::Socket::Open || !channelCache.isEmpty() )
 	{
 		mChannelList->clear();
 		mChannelList->setSorting( -1 );
@@ -269,8 +279,10 @@ void ChannelList::search()
 		mSearching = true;
 		mUsers = numUsers->value();
 
-		if( channelCache.isEmpty() )
-			m_engine->list();
+		if( channelCache.isEmpty() ) {
+			// FIXME
+			//m_client->list();
+		}
 		else
 		{
 			cacheIterator = channelCache.begin();
@@ -285,7 +297,6 @@ void ChannelList::search()
 			i18n("Not Connected"), 0
 		);
 	}
-*/
 }
 
 void ChannelList::slotChannelListed( const QString &channel, uint users, const QString &topic )
@@ -300,7 +311,7 @@ void ChannelList::checkSearchResult( const QString &channel, uint users, const Q
 		( mSearch.isEmpty() || channel.contains( mSearch, false ) || topic.contains( mSearch, false ) )
 	)
 	{
-		new ChannelListItem( mChannelList, channel, QString::number(users), topic );
+		//new ChannelListItem( mChannelList, channel, QString::number(users), topic );
 	}
 }
 

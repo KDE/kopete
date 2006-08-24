@@ -1,6 +1,5 @@
 /*
     qqeditaccountwidget.h - Kopete QQ Protocol
-
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -14,27 +13,25 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDEDITACCOUNTWIDGET_H
-#define TESTBEDEDITACCOUNTWIDGET_H
+#ifndef QQEDITACCOUNTWIDGET_H
+#define QQEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
 #include <editaccountwidget.h>
 
-class QVBoxLayout;
 namespace Kopete { class Account; }
-namespace Ui { class QQEditAccountUI; }
+class QQEditAccountWidgetPrivate;
+class QQProtocol;
 
 /**
  * A widget for editing this protocol's accounts
- * @author Will Stephenson
+ * @author Hui Jin based on Oliver Goffart's MSNEditAccountWidget
 */
 class QQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 Q_OBJECT
 public:
-    QQEditAccountWidget( QWidget* parent, Kopete::Account* account);
+	QQEditAccountWidget( QQProtocol *proto, Kopete::Account *account, QWidget *parent );
 
     ~QQEditAccountWidget();
 
@@ -46,9 +43,12 @@ public:
 	 * Is the data correct?
 	 */
 	virtual bool validateData();
-protected:
-	Kopete::Account *m_account;
-	Ui::QQEditAccountUI *m_preferencesWidget;
+
+private slots:
+	void slotOpenRegister();
+
+private:
+	QQEditAccountWidgetPrivate* d;
 };
 
 #endif

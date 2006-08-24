@@ -118,11 +118,11 @@ protected:
 	virtual void handleError( uint code, uint id );
 
 	/**
-	 * Handle an QQ command response line.
+	 * Handle an QQ incoming packet.
 	 * This method is pure virtual and *must* be overridden in derived
 	 * classes.
 	 */
-	virtual void parsePacket( const QByteArray& data ) = 0;
+	virtual void handleIncomingPacket( const QByteArray& data ) = 0;
 
 	const QString &server() { return m_server; }
 	uint port() { return m_port; }

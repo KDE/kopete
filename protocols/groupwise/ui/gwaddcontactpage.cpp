@@ -88,7 +88,7 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 			ContactDetails dt = selected.first();
 			m_account->client()->userDetailsManager()->addDetails( dt );
 			contactId = dt.dn;
-			displayName = dt.givenName + " " + dt.surname;
+			displayName = dt.givenName + ' ' + dt.surname;
 		}
 		else
 			return false;

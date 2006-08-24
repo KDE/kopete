@@ -20,6 +20,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kactioncollection.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteaccount.h"
@@ -119,13 +120,27 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 	new SMSContact(account(), phoneNumber, nickName(), metaContact());
 }
 
-QList<KAction*>* SMSContact::customContextMenuActions()
+KActionCollection* SMSContact::customContextMenuActions(QWidget *parent)
 {
-	QList<KAction*> *m_actionCollection = new QList<KAction*>();
-	if( !m_actionPrefs )
-		m_actionPrefs = new KAction(i18n("&Contact Settings"), 0, this, SLOT(userPrefs()), this, "userPrefs");
+	KActionCollection *m_actionCollection = new KActionCollection(parent);
 
-	m_actionCollection->append( m_actionPrefs );
+	if( !m_actionPrefs )
+   {
+		m_actionPrefs = new KAction(i18n("&Contact Settings"),
+                                  m_actionCollection,
+                                  "userPrefs");
+   
+//       dynamic_cast<QObject*>(this),
+//          SLOT(userPrefs()),
+//          dynamic_cast<QObject*>(this),
+//          "userPrefs");
+      QObject::connect(m_actionPrefs,
+                       SIGNAL(triggered(bool)),
+                       dynamic_cast<QObject*>(this),
+                       SLOT(userPrefs()));
+   }
+
+	m_actionCollection->insert( m_actionPrefs );
 
 	return m_actionCollection;
 }

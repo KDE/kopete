@@ -63,7 +63,7 @@ protected:
 	 *
      * @param ip   the ntwork ip
      * @param mask the network mask
-     * @return <code>TRUE</code> if an smpppd was found
+     * @return <code>true</code> if an smpppd was found
      */
     bool scan(const QString& ip, const QString& mask);
 
@@ -95,7 +95,7 @@ private:
 };
 
 inline void SMPPPDSearcher::cancelSearch() {
-	m_cancelSearchNow = TRUE;
+	m_cancelSearchNow = true;
 }
 
 #endif

@@ -110,13 +110,13 @@ void YahooUserInfoDialog::slotSaveAndCloseClicked()
 	entry.privateURL = m_genInfoWidget->homepageEdit->text();
 	entry.title = m_genInfoWidget->titleEdit->text();
 	entry.corporation = m_workInfoWidget->companyEdit->text();
-	entry.workAdress = m_workInfoWidget->addressEdit->text();
+	entry.workAdress = m_workInfoWidget->addressEdit->toPlainText();
 	entry.workCity = m_workInfoWidget->cityEdit->text();
 	entry.workState = m_workInfoWidget->stateEdit->text();
 	entry.workZIP = m_workInfoWidget->zipEdit->text();
 	entry.workCountry = m_workInfoWidget->countryEdit->text();
 	entry.workURL = m_workInfoWidget->homepageEdit->text();
-	entry.privateAdress = m_genInfoWidget->addressEdit->text();
+	entry.privateAdress = m_genInfoWidget->addressEdit->toPlainText();
 	entry.privateCity = m_genInfoWidget->cityEdit->text();
 	entry.privateState = m_genInfoWidget->stateEdit->text();
 	entry.privateZIP = m_genInfoWidget->zipEdit->text();
@@ -129,7 +129,7 @@ void YahooUserInfoDialog::slotSaveAndCloseClicked()
 	entry.additional2 = m_otherInfoWidget->note2Edit->text();
 	entry.additional3 = m_otherInfoWidget->note3Edit->text();
 	entry.additional4 = m_otherInfoWidget->note4Edit->text();
-	entry.notes = m_otherInfoWidget->commentsEdit->text();
+	entry.notes = m_otherInfoWidget->commentsEdit->toPlainText();
 // 	entry.imAIM = m_genInfoWidget->firstNameEdit->text();
 // 	entry.imGoogleTalk = m_genInfoWidget->firstNameEdit->text();
 // 	entry.imICQ = m_genInfoWidget->firstNameEdit->text();
@@ -168,13 +168,13 @@ void YahooUserInfoDialog::slotUser2()
 		entry.privateURL = m_genInfoWidget->homepageEdit->text().isEmpty() ? oldEntry->privateURL : m_genInfoWidget->homepageEdit->text();
 		entry.title = m_genInfoWidget->titleEdit->text().isEmpty() ? oldEntry->title : m_genInfoWidget->titleEdit->text();
 		entry.corporation = m_workInfoWidget->companyEdit->text().isEmpty() ? oldEntry->corporation : m_workInfoWidget->companyEdit->text();
-		entry.workAdress = m_workInfoWidget->addressEdit->text().isEmpty() ? oldEntry->workAdress : m_workInfoWidget->addressEdit->text();
+		entry.workAdress = m_workInfoWidget->addressEdit->toPlainText().isEmpty() ? oldEntry->workAdress : m_workInfoWidget->addressEdit->toPlainText();
 		entry.workCity = m_workInfoWidget->cityEdit->text().isEmpty() ? oldEntry->workCity : m_workInfoWidget->cityEdit->text();
 		entry.workState = m_workInfoWidget->stateEdit->text().isEmpty() ? oldEntry->workState : m_workInfoWidget->stateEdit->text();
 		entry.workZIP = m_workInfoWidget->zipEdit->text().isEmpty() ? oldEntry->workZIP : m_workInfoWidget->zipEdit->text();
 		entry.workCountry = m_workInfoWidget->countryEdit->text().isEmpty() ? oldEntry->workCountry : m_workInfoWidget->countryEdit->text();
 		entry.workURL = m_workInfoWidget->homepageEdit->text().isEmpty() ? oldEntry->workURL : m_workInfoWidget->homepageEdit->text();
-		entry.privateAdress = m_genInfoWidget->addressEdit->text().isEmpty() ? oldEntry->privateAdress : m_genInfoWidget->addressEdit->text();
+		entry.privateAdress = m_genInfoWidget->addressEdit->toPlainText().isEmpty() ? oldEntry->privateAdress : m_genInfoWidget->addressEdit->toPlainText();
 		entry.privateCity = m_genInfoWidget->cityEdit->text().isEmpty() ? oldEntry->privateCity : m_genInfoWidget->cityEdit->text();
 		entry.privateState = m_genInfoWidget->stateEdit->text().isEmpty() ? oldEntry->privateState : m_genInfoWidget->stateEdit->text();
 		entry.privateZIP = m_genInfoWidget->zipEdit->text().isEmpty() ? oldEntry->privateZIP : m_genInfoWidget->zipEdit->text();
@@ -200,7 +200,7 @@ void YahooUserInfoDialog::slotUser2()
 		entry.additional2 = m_otherInfoWidget->note2Edit->text().isEmpty() ? oldEntry->additional2 : m_otherInfoWidget->note2Edit->text();
 		entry.additional3 = m_otherInfoWidget->note3Edit->text().isEmpty() ? oldEntry->additional3 : m_otherInfoWidget->note3Edit->text();
 		entry.additional4 = m_otherInfoWidget->note4Edit->text().isEmpty() ? oldEntry->additional4 : m_otherInfoWidget->note4Edit->text();
-		entry.notes = m_otherInfoWidget->commentsEdit->text().isEmpty() ? oldEntry->notes : m_otherInfoWidget->commentsEdit->text();
+		entry.notes = m_otherInfoWidget->commentsEdit->toPlainText().isEmpty() ? oldEntry->notes : m_otherInfoWidget->commentsEdit->toPlainText();
 	// 	entry.imAIM = m_genInfoWidget->firstNameEdit->text().isEmpty() ? oldEntry->notes : m_otherInfoWidget->commentsEdit->text();
 	// 	entry.imGoogleTalk = m_genInfoWidget->firstNameEdit->text().isEmpty() ? oldEntry->notes : m_otherInfoWidget->commentsEdit->text();
 	// 	entry.imICQ = m_genInfoWidget->firstNameEdit->text().isEmpty() ? oldEntry->notes : m_otherInfoWidget->commentsEdit->text();
@@ -237,7 +237,7 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	if( yab.anniversary.isValid() )
 	m_genInfoWidget->anniversaryEdit->setText( QString("%1/%2/%3").arg( yab.anniversary.day() ).arg( yab.anniversary.month() ).arg( yab.anniversary.year() ));
 	
-	m_genInfoWidget->addressEdit->setText( yab.privateAdress );
+	m_genInfoWidget->addressEdit->setPlainText( yab.privateAdress );
 	m_genInfoWidget->cityEdit->setText( yab.privateCity );
 	m_genInfoWidget->stateEdit->setText( yab.privateState );
 	m_genInfoWidget->zipEdit->setText( yab.privateZIP );
@@ -253,7 +253,7 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_genInfoWidget->additionalEdit->setText( yab.additionalNumber );
 	
 	m_workInfoWidget->phoneEdit->setText( yab.workPhone );
-	m_workInfoWidget->addressEdit->setText( yab.workAdress );
+	m_workInfoWidget->addressEdit->setPlainText( yab.workAdress );
 	m_workInfoWidget->cityEdit->setText( yab.workCity );
 	m_workInfoWidget->stateEdit->setText( yab.workState );
 	m_workInfoWidget->zipEdit->setText( yab.workZIP );
@@ -261,7 +261,7 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_workInfoWidget->companyEdit->setText( yab.corporation );
 	m_workInfoWidget->homepageEdit->setText( yab.workURL );
 	
-	m_otherInfoWidget->commentsEdit->setText( yab.notes );
+	m_otherInfoWidget->commentsEdit->setPlainText( yab.notes );
 	m_otherInfoWidget->note1Edit->setText( yab.additional1 );
 	m_otherInfoWidget->note2Edit->setText( yab.additional2 );
 	m_otherInfoWidget->note3Edit->setText( yab.additional3 );

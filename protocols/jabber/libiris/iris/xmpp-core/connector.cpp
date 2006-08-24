@@ -32,7 +32,7 @@
 #include "xmpp.h"
 
 #include <qpointer.h>
-#include <QtCrypto>
+#include <qca.h>
 //Added by qt3to4:
 #include <QList>
 #include "safedelete.h"
@@ -43,12 +43,11 @@
 #include "ndns.h"
 #endif
 
-#include "srvresolver.h"
 #include "bsocket.h"
 #include "httpconnect.h"
 #include "httppoll.h"
 #include "socks.h"
-#include "hash.h"
+#include "srvresolver.h"
 
 //#define XMPP_DEBUG
 

@@ -135,6 +135,8 @@ public:
 	QList<AwayMsgRequest> awayMsgRequestQueue;
 	QTimer* awayMsgRequestTimer;
 	CodecProvider* codecProvider;
+	
+	const Oscar::ClientVersion* version;
 };
 
 Client::Client( QObject* parent )
@@ -214,6 +216,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 void Client::close()
 {
 	d->active = false;
+	d->awayMsgRequestTimer->stop();
+	d->awayMsgRequestQueue.clear();
 	d->connections.clear();
 	deleteStaticTasks();
 
@@ -221,7 +225,7 @@ void Client::close()
 	if ( d->stage == ClientPrivate::StageTwo )
 	{
 		d->connectAsStatus = 0x0;
-		d->connectWithMessage = QString::null;
+		d->connectWithMessage.clear();
 	}
 
     d->exchanges.clear();
@@ -313,6 +317,11 @@ int Client::port()
 ContactManager* Client::ssiManager() const
 {
 	return d->ssiManager;
+}
+
+const Oscar::ClientVersion* Client::version() const
+{
+	return d->version;
 }
 
 // SLOTS //
@@ -445,6 +454,10 @@ void Client::setCodecProvider( Client::CodecProvider* codecProvider )
 	d->codecProvider = codecProvider;
 }
 
+void Client::setVersion( const Oscar::ClientVersion* version )
+{
+	d->version = version;
+}
 
 // INTERNALS //
 

@@ -60,7 +60,7 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent )
 	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( slotUinChanged( const QString & ) ) );
 	addUI_->addEdit_->setValidChars( "1234567890" );
 	addUI_->addEdit_->setText( "" );
-	addUI_->groups->setDisabled( TRUE );
+	addUI_->groups->setDisabled( true );
 
 	kDebug(14100) << "filling gropus" << endl;
 

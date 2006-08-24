@@ -186,6 +186,8 @@ Kopete::Away::Away() : QObject( kapp )
 
 Kopete::Away::~Away()
 {
+	if(this == instance)
+		instance = 0L;	
 	delete d;
 }
 
@@ -266,7 +268,7 @@ QStringList Kopete::Away::getMessages()
 
 QString Kopete::Away::getMessage( uint messageNumber )
 {
-	if ( messageNumber >= 0 && messageNumber < (unsigned int)d->awayMessageList.size() )
+	if ( messageNumber < (unsigned int)d->awayMessageList.size() )
 	{
 		QString msg = d->awayMessageList.takeAt( messageNumber );
 		d->awayMessageList.prepend( msg );
@@ -306,7 +308,13 @@ void Kopete::Away::slotTimerTimeout()
 	// isn't blanked/locked, because activity while blanked is impossible and
 	// activity while locked never matters (if there is any, it's probably just
 	// the cleaner wiping the keyboard :).
-
+	
+	
+	/* we should be able to respond to KDesktop queries to avoid a deadlock, so we allow the event loop to be called */
+	static bool rentrency_protection=false;
+	if(rentrency_protection)
+		return;
+	rentrency_protection=true;
 #warning verify dcop call
 	QDBusInterface caller("org.kde.kdesktop", "/modules/KScreensaverIface", "org.kde.KScreensaverIfaceModule");
 	QDBusReply<bool> reply = caller.call("isBlanked");

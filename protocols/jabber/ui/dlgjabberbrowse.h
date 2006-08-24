@@ -37,7 +37,7 @@ class dlgJabberBrowse : public QDialog, private Ui::dlgBrowse
 	Q_OBJECT
 
 public:
-	dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0);
 	~dlgJabberBrowse ();
 
 private slots:

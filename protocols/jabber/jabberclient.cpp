@@ -5,6 +5,7 @@
     begin                : Sat May 25 2005
     copyright            : (C) 2005 by Till Gerken <till@tantalo.net>
                            (C) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
 			   Kopete (C) 2001-2006 Kopete developers
 			   <kopete-devel@kde.org>.
@@ -21,12 +22,10 @@
 
 #include "jabberclient.h"
 
-#include <qtimer.h>
-#include <qregexp.h>
-
+#include <QTimer>
+#include <QRegExp>
 #include <QtCrypto>
-//Added by qt3to4:
-#include <Q3PtrList>
+
 #include <bsocket.h>
 #include <filetransfer.h>
 #include <xmpp_tasks.h>
@@ -160,7 +159,7 @@ void JabberClient::cleanUp ()
 	d->currentPenaltyTime = 0;
 
 	d->jid = XMPP::Jid ();
-	d->password = QString::null;
+	d->password.clear();
 
 	setForceTLS ( false );
 	setUseSSL ( false );
@@ -273,10 +272,10 @@ void JabberClient::addS5BServerAddress ( const QString &address )
 	d->s5bAddressList.append ( address );
 
 	// now filter the list without dupes
-	for ( QStringList::Iterator it = d->s5bAddressList.begin (); it != d->s5bAddressList.end (); ++it )
+	foreach( QStringList::const_reference str, d->s5bAddressList )
 	{
-		if ( !newList.contains ( *it ) )
-			newList.append ( *it );
+		if ( !newList.contains ( str ) )
+			newList.append ( str );
 	}
 
 	s5bServer()->setHostList ( newList );
@@ -287,11 +286,10 @@ void JabberClient::removeS5BServerAddress ( const QString &address )
 {
 	QStringList newList;
 
-	QStringList::iterator it = d->s5bAddressList.find ( address );
-	if ( it != d->s5bAddressList.end () )
-	{
-		d->s5bAddressList.erase ( it );
-	}
+	int idx = d->s5bAddressList.indexOf( address );
+
+	if ( idx != -1 )
+		d->s5bAddressList.removeAt(idx);
 
 	if ( d->s5bAddressList.isEmpty () )
 	{
@@ -301,10 +299,10 @@ void JabberClient::removeS5BServerAddress ( const QString &address )
 	else
 	{
 		// now filter the list without dupes
-		for ( QStringList::Iterator it = d->s5bAddressList.begin (); it != d->s5bAddressList.end (); ++it )
+		foreach( QStringList::const_reference str, d->s5bAddressList )
 		{
-			if ( !newList.contains ( *it ) )
-				newList.append ( *it );
+			if ( !newList.contains ( str ) )
+				newList.append ( str );
 		}
 
 		s5bServer()->setHostList ( newList );
@@ -896,11 +894,13 @@ void JabberClient::slotTLSHandshaken ()
 	emit debugMessage ( "TLS handshake done, testing certificate validity..." );
 
 	// FIXME: in the future, this should be handled by KDE, not QCA
-	int validityResult = d->jabberTLS->peerCertificateValidity();
 
-	if ( validityResult == QCA::ValidityGood  )
+	QCA::TLS::IdentityResult identityResult = d->jabberTLS->peerIdentityResult();
+	QCA::Validity            validityResult = d->jabberTLS->peerCertificateValidity();
+
+	if ( identityResult == QCA::TLS::Valid && validityResult == QCA::ValidityGood )
 	{
-		emit debugMessage ( "Certificate is valid, continuing." );
+		emit debugMessage ( "Identity and certificate valid, continuing." );
 
 		// valid certificate, continue
 		d->jabberTLSHandler->continueAfterHandshake ();
@@ -916,7 +916,7 @@ void JabberClient::slotTLSHandshaken ()
 			d->jabberTLSHandler->continueAfterHandshake ();
 		}
 
-		emit tlsWarning ( validityResult );
+		emit tlsWarning ( identityResult, validityResult );
 	}
 
 }

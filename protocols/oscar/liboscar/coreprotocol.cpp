@@ -64,8 +64,8 @@ static QString toString( const QByteArray& buffer )
 		{
 			output += hex + "   |" + ascii + "|\n";
 			i=0;
-			hex=QString::null;
-			ascii=QString::null;
+			hex.clear();
+			ascii.clear();
 		}
 	}
 

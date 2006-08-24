@@ -202,7 +202,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="Q3Frame" name="htmlFrame" >
+     <widget class="QFrame" name="htmlFrame" >
       <property name="sizePolicy" >
        <sizepolicy>
         <hsizetype>5</hsizetype>

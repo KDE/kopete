@@ -51,7 +51,7 @@ SMSSend::~SMSSend()
 void SMSSend::send(const Kopete::Message& msg)
 {
 	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
-	QString provider = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString::null);
+	QString provider = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString());
 
 	if (provider.length() < 1)
 	{
@@ -59,7 +59,7 @@ void SMSSend::send(const Kopete::Message& msg)
 		return;
 	}
 
-	QString prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString::null);
+	QString prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString());
 	if (prefix.isNull())
 	{
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No prefix set for SMSSend, please change it in the configuration dialog."), i18n("No Prefix"));
@@ -87,10 +87,10 @@ void SMSSend::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
 
 	prefWidget->program->setMode(KFile::Directory);
 
-	QString prefix = QString::null;
+	QString prefix;
 
 	if (m_account)
-		prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString::null);
+		prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString());
 	if (prefix.isNull())
 	{
 		QDir d("/usr/share/smssend");
@@ -124,7 +124,7 @@ void SMSSend::savePreferences()
 {
 	if (prefWidget != 0L && m_account != 0L && m_provider != 0L )
 	{
-		m_account->configGroup()->writeEntry("SMSSend:Prefix", prefWidget->program->url());
+		m_account->configGroup()->writeEntry("SMSSend:Prefix", prefWidget->program->url().url());
 		m_account->configGroup()->writeEntry("SMSSend:ProviderName", prefWidget->provider->currentText());
 		m_provider->save(args);
 	}
@@ -161,7 +161,7 @@ void SMSSend::loadProviders(const QString &prefix)
 
 	bool found = false;
 	if (m_account)
-	{	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString::null);
+	{	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString());
 		for (int i=0; i < prefWidget->provider->count(); i++)
 		{
 			if (prefWidget->provider->text(i) == pName)
@@ -197,8 +197,8 @@ void SMSSend::setOptions(const QString& name)
 		if (!m_provider->name(i).isNull())
 		{
 			QLabel *l = new QLabel(m_parent);
-			l->setText("&" + m_provider->name(i) + ":");
-			QToolTip::add(l, m_provider->description(i));
+			l->setText('&' + m_provider->name(i) + ':');
+			l->setToolTip( m_provider->description(i));
 			m_layout->addWidget(l, i+2, 0);
 			KLineEdit *e = new KLineEdit(m_parent);
 			e->setText(m_provider->value(i));
@@ -223,10 +223,10 @@ int SMSSend::maxSize()
 {
 	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 
-	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString::null);
+	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString());
 	if (pName.length() < 1)
 		return 160;
-	QString prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString::null);
+	QString prefix = m_account->configGroup()->readEntry("SMSSend:Prefix", QString());
 	if (prefix.isNull())
 		prefix = "/usr";
 	// quick sanity check

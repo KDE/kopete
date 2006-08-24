@@ -27,10 +27,13 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kicon.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"
 #include "kopeteviewplugin.h"
 #include "kopeteview.h"
+#include "kopetemetacontact.h"
+
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -67,12 +70,25 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().getFirst(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
 
 	setInstance(protocol->instance());
-	jabber_voicecall->setEnabled(true);
+	jabber_voicecall->setEnabled( false );
 
+	
+	Kopete::ContactPtrList chatMembers = members ();
+	if ( chatMembers.first () )
+	{
+		// Check if the current contact support Voice calls, also honour lock by default.
+		// FIXME: we should use the active ressource
+		JabberResource *bestResource = account()->resourcePool()->  bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		if( bestResource && bestResource->features().canVoice() )
+		{
+			jabber_voicecall->setEnabled( true );
+		}
+	}
 
 #endif
 
- new KAction( i18n( "Send File" ), "attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "jabberSendFile" );
+	KAction* sendFile = new KAction( KIcon( "attach" ), i18n( "Send File" ), actionCollection(), "jabberSendFile" );
+	QObject::connect(sendFile, SIGNAL( triggered( bool ) ), SLOT( slotSendFile() ));
 
 	setXMLFile("jabberchatui.rc");
 
@@ -83,8 +99,8 @@ JabberChatSession::~JabberChatSession( )
 	JabberAccount * a = dynamic_cast<JabberAccount *>(Kopete::ChatSession::account ());
 	if( !a ) //When closing kopete, the account is partially destroyed already,  dynamic_cast return 0
 		return;
-	if ( a->configGroup()->readBoolEntry ("SendEvents", true) &&
-			 a->configGroup()->readBoolEntry ("SendGoneEvent", true) )
+	if ( a->configGroup()->readEntry ("SendEvents", true) &&
+			 a->configGroup()->readEntry ("SendGoneEvent", true) )
 		sendNotification( XMPP::GoneEvent );
 }
 
@@ -109,7 +125,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	if ( jid.resource().isEmpty () )
 		setDisplayName ( chatMembers.first()->metaContact()->displayName () + statusText );
 	else
-		setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () + statusText );
+		setDisplayName ( chatMembers.first()->metaContact()->displayName () + '/' + jid.resource () + statusText );
 
 }
 
@@ -283,10 +299,16 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					//  see Bug 121627
 					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
 					// linebreak that are not interpreted.  - Olivier 2006-31-03
-					xhtmlBody.replace("\n","");
+					xhtmlBody.replace('\n',"");
+					
+					//&nbsp; is not a valid XML entity
+					xhtmlBody.replace("&nbsp;" , "&#160;");
 							
-					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +">"+ xhtmlBody +"</p>";
-					jabberMessage.setXHTMLBody ( xhtmlBody );
+					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +'>'+ xhtmlBody +"</p>";
+					
+					QDomDocument doc;
+					doc.setContent(xhtmlBody, true);
+					jabberMessage.setHTML( XMPP::HTMLElement( doc.documentElement() ) );
 				}
         	}
 		}

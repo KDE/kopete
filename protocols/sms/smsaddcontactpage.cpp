@@ -24,8 +24,8 @@
 
 
 
-SMSAddContactPage::SMSAddContactPage(QWidget *parent, const char *name )
-				  : AddContactPage(parent,name)
+SMSAddContactPage::SMSAddContactPage(QWidget *parent)
+				  : AddContactPage(parent)
 {
 	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	smsdata = new smsAddUI(this);

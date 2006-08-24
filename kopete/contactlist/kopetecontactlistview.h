@@ -180,6 +180,8 @@ private slots:
 
 	void slotTimeout();
 
+	void slotMakeMetaContact();
+
 private:
 	bool mShowAsTree;
 
@@ -206,6 +208,7 @@ private:
 	KAction *actionProperties;
 	KAction *actionUndo;
 	KAction *actionRedo;
+	KAction *actionMakeMetaContact;
 
 	KopeteContactListViewPrivate *d;
 

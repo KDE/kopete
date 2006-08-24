@@ -89,7 +89,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
-		if ( message.plainBody().find ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
+		if ( message.plainBody().contains ( "-----BEGIN PGP MESSAGE-----" ) )
 		{
 			/*
 			 * This message is encrypted, so we need to set
@@ -106,7 +106,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 
 			// remove PGP header and footer from message
 			encryptedBody.truncate ( encryptedBody.length () - QString("-----END PGP MESSAGE-----").length () - 2 );
-			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.find ( "\n\n" ) - 2 );
+			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( "\n\n" ) - 2 );
 
 			// assign payload to message
 			jabberMessage.setXEncrypted ( encryptedBody );
@@ -141,6 +141,7 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 	{
 		//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
 		//      iris doesn't implement groupchat yet
+		//NOTE: This code is duplicated in JabberProtocol::handleURL
 		XMPP::Message jabberMessage;
 		XMPP::Jid jid = static_cast<const JabberBaseContact*>(account()->myself())->rosterItem().jid() ;
 		jabberMessage.setFrom ( jid );

@@ -19,10 +19,9 @@
 #ifndef KOPETEPLUGINDATAOBJECT_H
 #define KOPETEPLUGINDATAOBJECT_H
 
-#include <QObject>
-#include <qdom.h>
-#include <QList>
-#include <QMap>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QObject>
 
 #include "kopete_export.h"
 
@@ -43,7 +42,8 @@ class Plugin;
  *
  * It also allow to store an icon for this element.
  */
-class KOPETE_EXPORT ContactListElement : public QObject  /* public KopeteNotifyDataObject */
+class KOPETE_EXPORT ContactListElement
+	: public QObject  /* public KopeteNotifyDataObject */
 {
 	Q_OBJECT
 
@@ -53,6 +53,18 @@ protected:
 
 
 public:
+
+	/**
+	 * @brief Set if we are in loading stage.
+	 */
+	void setLoading( bool value );
+
+	/**
+	 * @brief Check if we are in loading stage.
+	 *
+	 * @return true if we are in loading stage.
+	 */
+	bool loading() const;
 
 	/**
 	 * Set the plugin-specific data.
@@ -66,6 +78,8 @@ public:
 	 *          that takes a single field as parameter.
 	 */
 	void setPluginData( Plugin *plugin, const QMap<QString, QString> &value );
+	
+	void setPluginData( const QString &pluginId, const QMap<QString, QString> &pluginData );
 
 	/**
 	 * Convenience method to store or change only a single field of the
@@ -94,6 +108,13 @@ public:
 	 * constructors).
 	 */
 	QString pluginData( Plugin *plugin, const QString &key ) const;
+	
+	typedef QMap<QString, QMap<QString, QString> > PluginDataMap;
+	
+	/**
+	 * return plugin-specific data for all plugins
+	 */
+	const PluginDataMap pluginData() const;
 
 	/**
 	 * The various icon states. Some state are reserved for Groups,
@@ -101,6 +122,12 @@ public:
 	 * 'None' is the default icon.
 	 */
 	enum IconState { None, Open, Closed, Online, Away, Offline, Unknown };
+	typedef QMap<IconState, QString> IconMap;
+	
+	/**
+	 * return all registered icons
+	 */
+	const IconMap icons() const;
 
 	/**
 	 * return the icon for this object, in the given state.
@@ -147,19 +174,6 @@ signals:
 	 * The useCustomIcon property has changed
 	 */
 	void useCustomIconChanged( bool useCustomIcon );
-
-protected:
-	/**
-	 * Return a XML representation of plugin data
-	 */
-	const QList<QDomElement> toXML();
-
-	/**
-	 * Load plugin data from one Dom Element:
-	 * It should be a \<plugin-data\> element or a \<custom-icons\> element. if not, nothing will happen
-	 * @return true if something has ben loaded. false if the element was not a fine
-	 */
-	bool fromXML( const QDomElement &element );
 
 private:
 	class Private;

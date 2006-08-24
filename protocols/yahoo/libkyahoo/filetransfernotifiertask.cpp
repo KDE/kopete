@@ -19,8 +19,11 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
+#include <QString>
+#include <QFile>
+#include <QPixmap>
 #include <kdebug.h>
+#include <kcodecs.h>
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
@@ -103,11 +106,11 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 		return;
 	
 
-	unsigned int left = url.findRev( '/' ) + 1;
-	unsigned int right = url.findRev( '?' );
+	unsigned int left = url.lastIndexOf( '/' ) + 1;
+	unsigned int right = url.lastIndexOf( '?' );
 	filename = url.mid( left, right - left );
 
-	emit incomingFileTransfer( from, url, expires, msg, filename, size );
+	emit incomingFileTransfer( from, url, expires, msg, filename, size, QPixmap() );
 }
 
 void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
@@ -121,6 +124,8 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	QString msg;		/* key = 14  */
 	QString filename;	/* key = 27  */
 	unsigned long size;	/* key = 28  */
+	QByteArray preview;	/* key = 267 */
+	QPixmap previewPixmap;
 	
 	if( t->firstParam( 222 ).toInt() == 2 )
 		return;					// user cancelled the file transfer
@@ -132,8 +137,14 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	expires = t->firstParam( 38 ).toLong();
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
+	preview = KCodecs::base64Decode( t->firstParam( 267 ) );
 
-	emit incomingFileTransfer( from, url, expires, msg, filename, size );
+	if( preview.size() > 0 )
+	{
+		previewPixmap.loadFromData( preview );
+	}
+
+	emit incomingFileTransfer( from, url, expires, msg, filename, size, previewPixmap );
 }
 
 void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )

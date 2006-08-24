@@ -1,6 +1,6 @@
 /*
     qqnotifysocket.h - Notify Socket for the QQ Protocol
-    forked from qqnotifysocket.h
+    forked from msnnotifysocket.h
 
     Copyright (c) 2006      by Hui Jin <blueangel.jin@gmail.com>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -28,19 +28,16 @@
 #define QQNOTIFYSOCKET_H
 
 #include "qqsocket.h"
-#include "qqprotocol.h"
 #include "libeva.h"
 
 
 class QQAccount;
-class KTempFile;
-
 
 /**
  * @author Hui Jin
  * 
- * QQNotifySocket is inspried by MSNNotifySocket, the QQ incoming packets are
- * parsed here.
+ * QQNotifySocket is forked from MSNNotifySocket, it parse the incoming QQ packets,
+ * emit signals and drive the state machine.
  */
 class QQNotifySocket : public QQSocket
 {
@@ -57,19 +54,30 @@ public:
 	 */
 	int  disconnectReason() { return m_disconnectReason; }
 
-	QString localIP() { return m_localIP; }
+	void sendGetGroupNames()
+	{ sendPacket( Eva::groupNames( m_qqId, m_id++, m_sessionKey ) ); }
+
+	inline void sendDownloadGroups( int next = 0 ) 
+	{ sendPacket( Eva::downloadGroups( m_qqId, m_id++, m_sessionKey, next ) ); }
+
+	void sendTextMessage( const uint toId, const QByteArray& message );
+
+		
 
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 	void newContactList();
 	void contactList( const Eva::ContactInfo& ci );
-	void groupList( const QStringList& ql );
+	void groupNames( const QStringList& ql );
+	void contactInGroup(const int qqId, const char type, const int groupId );
+	void contactStatusChanged( const Eva::ContactStatus& cs);
+	void messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& );
 
 protected:
 	/**
 	 * Handle an QQ incoming packet.
 	 */
-	virtual void parsePacket( const QByteArray& data );
+	virtual void handleIncomingPacket( const QByteArray& rawData );
 
 	/**
 	 * Handle an QQ error condition.
@@ -85,53 +93,61 @@ protected:
 	virtual void doneConnect();
 
 	// QQ operations
-	void sendLoginTokenRequest(); 
-	void sendLogin(); 
-	void sendContactList( short pos );
-	void sendChangeStatus( char status );
 	void sendGoodbye() { return; }
 
-public:
-	void sendDLGroupNames();
-
 private:
-	void doGroupList( const Eva::ByteArray& text );
+	inline void sendPacket( const Eva::ByteArray& packet )
+	{ QQSocket::sendPacket( QByteArray(packet.c_str(), packet.size() ) ); }
+
+	void groupNames( const Eva::ByteArray& text );
+	void doGetCGTs( const Eva::ByteArray& text );
+	void doGetContactStatuses( const Eva::ByteArray& text );
+	void sendListOnlineContacts(uint pos = 0);
+	void sendMsgReply( int sequence, const Eva::ByteArray& replyKey );
+	void heartbeat();
 
 private:
 	QQAccount *m_account;
+
+	/** 
+	 * The QQ ID associated with m_account for the sake of convenience.
+	 */
+	uint m_qqId;
+
 	/**
 	 * stores the expected status
 	 * would synchronize when ChangeStatus packet recieved.
 	 */
 	Kopete::OnlineStatus m_newstatus; 
 	
-	uint m_qqId;
 	/** 
-	 * stores the token requested from the server
+	 * stores the login token requested from the server
 	 */
 	Eva::ByteArray m_token;
+
 	/**
 	 * Twice Md5 hashed password
 	 */
 	Eva::ByteArray m_passwordKey;
-	Eva::ByteArray m_sessionKey;
-	char m_loginMode;
-	// FIXME: Do we need this ?
-	QString m_password;
-
-	int m_disconnectReason;
-
 
 	/**
-	 * Convert an entry of the Status enum back to a string
+	 * sessionKey is used to encrypt/decrypt the conversation
 	 */
-	QString statusToString( const Kopete::OnlineStatus &status ) const;
+	Eva::ByteArray m_sessionKey;
 
+	/**
+	 * transferKey is the identification for the conversation
+	 * transferToken is used to fetch the user picture 
+	 */
+	Eva::ByteArray m_transferKey;
+	// FIXME: Rename me!
+	Eva::ByteArray m_transferToken;
 
-	//know the last handle used
-	QString m_configFile;
+	char m_loginMode;
+	int m_disconnectReason;
 
-	QString m_localIP;
+	// heartbeat timer
+	QTimer* m_heartbeat;
 };
 
 #endif

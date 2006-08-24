@@ -28,6 +28,7 @@
 #include <kopetecontact.h>
 #include <kopetechatsessionmanager.h>
 #include <kopeteuiglobal.h>
+#include <kicon.h>
 
 #include "yahooconferencemessagemanager.h"
 #include "yahoocontact.h"

@@ -27,10 +27,7 @@
 #include <Q3HBoxLayout>
 #include <QLabel>
 
-namespace KIRC
-{
-class Engine;
-}
+namespace KIRC { class Client; }
 
 class Q3VBoxLayout;
 class Q3HBoxLayout;
@@ -48,7 +45,7 @@ class ChannelList
 	Q_OBJECT
 
 public:
-	ChannelList( QWidget *parent, KIRC::Engine *engine );
+	ChannelList( QWidget *parent, KIRC::Client *client );
 
 public slots:
 	void search();
@@ -77,7 +74,7 @@ private:
 	K3ListView* mChannelList;
 	Q3VBoxLayout* ChannelListLayout;
 	Q3HBoxLayout* layout72_2;
-	KIRC::Engine *m_engine;
+	KIRC::Client *m_client;
 	bool mSearching;
 	QString mSearch;
 	uint mUsers;

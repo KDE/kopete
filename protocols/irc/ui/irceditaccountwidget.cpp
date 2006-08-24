@@ -16,13 +16,11 @@
     *************************************************************************
 */
 
-#include "irceditaccountwidget.h"
+#include "irceditaccountwidget.moc"
 
 #include "ircaccount.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
-
-#include "kircclient.h"
 
 #include "kopetepasswordwidget.h"
 
@@ -41,6 +39,8 @@
 #include <qcombobox.h>
 #include <qlineedit.h>
 #include <qtextcodec.h>
+
+#include <algorithm>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(ident)
@@ -66,11 +66,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 
 //		mPasswordWidget->load ( &account()->password() );
 
-		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
-		autoShowServerWindow->setChecked( account()->configGroup()->readBoolEntry("AutoShowServerWindow") );
+		preferSSL->setChecked(account()->configGroup()->readEntry("PreferSSL",false));
+		autoShowServerWindow->setChecked( account()->configGroup()->readEntry("AutoShowServerWindow", false) );
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
-		KConfigGroup *config = account()->configGroup();
+		//KConfigGroup *config = account()->configGroup();
 /*
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
@@ -87,13 +87,13 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 //	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
 	KCharsets *c = KGlobal::charsets();
-	charset->insertStringList( c->availableEncodingNames() );
+	charset->addItems( c->availableEncodingNames() );
 
 	for( int i = 0; i < charset->count(); ++i )
 	{
-		if( c->codecForName( charset->text(i) )->mibEnum() == currentCodec )
+		if( c->codecForName( charset->itemText(i) )->mibEnum() == currentCodec )
 		{
-			charset->setCurrentItem( i );
+			charset->setCurrentIndex( i );
 			break;
 		}
 	}
@@ -126,34 +126,30 @@ IRCAccount *IRCEditAccountWidget::account ()
 	return dynamic_cast<IRCAccount *>(KopeteEditAccountWidget::account () );
 }
 
+struct NetNameComparator {
+	bool operator()(const IRC::Network& a, const IRC::Network& b) const {
+		return a.name < b.name;
+	}
+};
+
 void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 {
-/*
-	uint i = 0;
-	QStringList keys;
-
 	network->clear();
 
-	IRCNetworkList networks = IRCNetworkList::self()->networks();
+	IRC::NetworkList networks = IRC::Networks::self()->networks();
+	std::sort(networks.begin(), networks.end(), NetNameComparator());
 
-	for(QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it )
-		keys.append((*it).name);
+	uint i = 0;
+	foreach(const IRC::Network& net, networks) {
+		network->addItem(net.name);
 
-	keys.sort();
-
-	QStringList::Iterator end = keys.end();
-	for( QStringList::Iterator it = keys.begin(); it != end; ++it )
-	{
-		IRCNetwork * current = IRCProtocol::self()->networks()[*it];
-		network->insertItem( current->name );
-		if ( ( account() && account()->networkName() == current->name ) || current->name == selectedNetwork )
+		if ((account() && account()->networkName() == net.name)
+				|| net.name == selectedNetwork)
 		{
-			network->setCurrentItem( i );
-			description->setText( current->description );
+			network->setCurrentIndex( i );
 		}
 		++i;
 	}
-*/
 }
 
 void IRCEditAccountWidget::slotEditNetworks()
@@ -227,22 +223,20 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 
 Kopete::Account *IRCEditAccountWidget::apply()
 {
-/*
 	QString nickName = mNickName->text();
 	QString networkName = network->currentText();
 
 	if( !account() )
 	{
 		setAccount( new IRCAccount( generateAccountId(networkName), QString::null, networkName, nickName ) );
-
 	}
 	else
 	{
 		account()->setNickName( nickName );
-//		account()->setNetwork( networkName );
+		account()->setNetworkByName( networkName );
 	}
 
-	mPasswordWidget->save( &account()->password() );
+	//mPasswordWidget->save( &account()->password() );
 
 //	account()->setAltNick( mAltNickname->text() );
 	account()->setUserName( mUserName->text() );
@@ -253,7 +247,8 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setExcludeConnect( autoConnect->isChecked() );
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
-/*
+
+	/*
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
@@ -264,13 +259,13 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	account()->setCustomCtcpReplies( replies );
 	account()->setConnectCommands( cmds );
-*/
+	*/
+
 	KCharsets *c = KGlobal::charsets();
 	account()->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
 
 	return account();
 }
-
 
 bool IRCEditAccountWidget::validateData()
 {
@@ -281,6 +276,4 @@ bool IRCEditAccountWidget::validateData()
 
 	return false;
 }
-
-#include "irceditaccountwidget.moc"
 

@@ -2,7 +2,7 @@ macro_optional_find_package(OpenSSL)
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
-
+option(WITH_sms "Enable Kopete SMS protocol" ON)
 include_directories(${KOPETE_INCLUDES})
 
 add_subdirectory( msn ) 
@@ -25,6 +25,10 @@ endif(QCA2_FOUND)
 if(WITH_testbed)
   add_subdirectory( testbed )
 endif(WITH_testbed)
+
+if(WITH_sms)
+  add_subdirectory( sms )
+endif(WITH_sms)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
 

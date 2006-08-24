@@ -16,14 +16,11 @@
 
 #include "yahoowebcamdialog.h"
 
-#include <q3frame.h>
-#include <qobject.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <q3vbox.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QObject>
+#include <QWidget>
+#include <QLabel>
+#include <QLayout>
+#include <QVBoxLayout>
 #include <QPixmap>
 #include <kdebug.h>
 #include <klocale.h>
@@ -47,7 +44,8 @@ YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent
 	QWidget *page = new QWidget(this);
 	setMainWidget(page);
 
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	
+	QVBoxLayout *topLayout = new QVBoxLayout( page );	
+	topLayout->addSpacing( spacingHint() );
 	m_imageContainer = new Kopete::WebcamWidget( page );
 	m_imageContainer->setText( i18n( "No webcam image received" ) );
 	m_imageContainer->setMinimumSize(320,240);
@@ -74,7 +72,7 @@ void YahooWebcamDialog::newImage( const QPixmap &image )
 
 void YahooWebcamDialog::webcamPaused()
 {
-	m_imageContainer->setText( QString::fromLatin1("*** Webcam paused ***") );
+	m_imageContainer->setText( QLatin1String("*** Webcam paused ***") );
 }
 
 void YahooWebcamDialog::webcamClosed( int reason  )

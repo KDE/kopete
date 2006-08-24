@@ -39,6 +39,7 @@
 #include <qregexp.h>
 #include <kio/job.h>
 #include <kdialog.h>
+#include <kicon.h>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
@@ -49,6 +50,8 @@
 
 #include "qqnotifysocket.h"
 #include "qqaccount.h"
+#include "qqprotocol.h"
+#include "qqchatsession.h"
 
 QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )
 : Kopete::Contact( account, id, parent )
@@ -87,6 +90,8 @@ QQContact::~QQContact()
 
 bool QQContact::isReachable()
 {
+	// QQ supports offline chat.
+	return true;
 	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != QQProtocol::protocol()->HDN )
 		return true;
 /*
@@ -110,19 +115,16 @@ bool QQContact::isReachable()
 
 Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	Kopete::ContactPtrList chatmembers;
-	chatmembers.append(this);
+	Kopete::ContactPtrList chatMembers;
+	chatMembers.append(this);
+	QString guid(QString::null);
 
-	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession(  account()->myself(), chatmembers, protocol() );
-	/*
-	QQChatSession *manager = dynamic_cast<QQChatSession*>( _manager );
-	if(!manager &&  canCreate==Kopete::Contact::CanCreate)
-	{
-		manager = new QQChatSession( protocol(), account()->myself(), chatmembers  );
-		static_cast<QQAccount*>( account() )->slotStartChatSession( contactId() );
-	}
-	return manager; */
-	return _manager;
+	// 1 to 1 chat session
+	if( chatMembers.count() == 1 )
+		// FIXME: Use a function to override the hard hack!
+		guid = account()->myself()->contactId() + ":" + this->contactId();
+
+	return static_cast<QQAccount*>(account())->chatSession( chatMembers, guid, canCreate );
 }
 
 QList<KAction*> *QQContact::customContextMenuActions()
@@ -368,7 +370,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
+		kDebug( 14140 ) << k_funcinfo << "Unknown info " << type << ' ' << data << endl;
 	}
 }
 
@@ -380,18 +382,18 @@ void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString,
 	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 	{
 		groups += it.key();
-		groups += ",";
+		groups += ',';
 	}
     if(groups.length() > 0)
         groups.truncate(groups.length()-1);
 
 	QString lists="C";
 	if(m_blocked)
-		lists +="B";
+		lists +='B';
 	if(m_allowed)
-		lists +="A";
+		lists +='A';
 	if(m_reversed)
-		lists +="R";
+		lists +='R';
 
 	serializedData[ "groups" ]  = groups;
 	serializedData[ "PHH" ]  = m_phoneHome;
@@ -489,54 +491,7 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 
 void QQContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
-	if(isBlocked() && status.internalStatus() < 15)
-	{
-		Kopete::Contact::setOnlineStatus(
-				Kopete::OnlineStatus(status.status() ,
-				(status.weight()==0) ? 0 : (status.weight() -1)  ,
-				protocol() ,
-				status.internalStatus()+15 ,
-				status.overlayIcons() + QStringList("qq_blocked") ,
-				i18n("%1|Blocked", status.description() ) ) );
-	}
-	else if(!isBlocked() && status.internalStatus() >= 15)
-	{	//the user is not blocked, but the status is blocked
-		switch(status.internalStatus()-15)
-		{
-			case 1:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->Online);
-				break;
-			case 2:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->BSY);
-				break;
-			case 3:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->BRB);
-				break;
-			case 4:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->AWY);
-				break;
-			case 5:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->PHN);
-				break;
-			case 6:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->LUN);
-				break;
-			case 7:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->Offline);
-				break;
-			case 8:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->HDN);
-				break;
-			case 9:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->IDL);
-				break;
-			default:
-				Kopete::Contact::setOnlineStatus(QQProtocol::protocol()->UNK);
-				break;
-		}
-	}
-	else
-		Kopete::Contact::setOnlineStatus(status);
+	Kopete::Contact::setOnlineStatus(status);
 	m_currentStatus=status;
 }
 

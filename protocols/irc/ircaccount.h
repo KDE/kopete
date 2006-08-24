@@ -29,9 +29,9 @@
 class IRCContact;
 class IRCProtocol;
 
-namespace KIRC
+namespace KIrc
 {
-class Client;
+class ClientSocket;
 class Event;
 }
 
@@ -114,7 +114,7 @@ public slots: // WRITE properties accessors.
 
 public:
 	// Returns the KIRC engine instance
-	KIRC::Client *client() const;
+	KIrc::ClientSocket *client() const;
 
 	QTextCodec *codec() const;
 	void setCodec( QTextCodec *codec );
@@ -138,7 +138,7 @@ public:
 	Kopete::ChatSession *currentCommandSource();
 
 	IRCContact *getContact(const QByteArray &name, Kopete::MetaContact *metac=0);
-	IRCContact *getContact(const KIRC::Entity::Ptr &entity, Kopete::MetaContact *metac=0);
+	IRCContact *getContact(const KIrc::Entity::Ptr &entity, Kopete::MetaContact *metac=0);
 
 	virtual bool isConnected();
 
@@ -170,11 +170,11 @@ protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
 private slots:
-	void clientConnectionStateChanged(KIRC::Socket::ConnectionState newstate);
+	void clientConnectionStateChanged(KIrc::Socket::ConnectionState newstate);
 
 	void destroyed(IRCContact *contact);
 
-	void receivedEvent(KIRC::Event *event);
+	void receivedEvent(KIrc::Event *event);
 
 	void slotPerformOnConnectCommands();
 

@@ -9,337 +9,36 @@
     <x>0</x>
     <y>0</y>
     <width>592</width>
-    <height>637</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>YahooGeneralInfoWidget</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QGridLayout" >
    <property name="margin" >
     <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
-      <string>Personal Information</string>
+   <item row="3" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="lastNameEdit" >
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QLineEdit" name="firstNameEdit" >
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="secondNameEdit" >
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="LastNameLabel" >
-        <property name="text" >
-         <string>Last name:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>fullNameEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3" >
-       <widget class="QLineEdit" name="yahooIdEdit" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>5</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3" >
-       <widget class="QLineEdit" name="birthdayEdit" >
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="3" >
-       <widget class="QLineEdit" name="anniversaryEdit" >
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2" >
-       <widget class="QLabel" name="birthdayLabel_2" >
-        <property name="text" >
-         <string>Anniversary:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>birthday</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QLineEdit" name="nickNameEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>2</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="fullNameLabel_2" >
-        <property name="text" >
-         <string>First name:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>fullNameEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QLabel" name="birthdayLabel" >
-        <property name="text" >
-         <string>Birthday:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>birthday</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3" >
-       <widget class="QLineEdit" name="titleEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>5</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" >
-       <widget class="QLabel" name="yahooIdLabel" >
-        <property name="text" >
-         <string>Yahoo ID:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>uinEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="fullNameLabel_2_2" >
-        <property name="text" >
-         <string>Second name:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>fullNameEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="nickNameLabel" >
-        <property name="text" >
-         <string>&amp;Nickname:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>nickNameEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="yahooIdLabel_2" >
-        <property name="text" >
-         <string>Title:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>uinEdit</cstring>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-      <string>Location Information</string>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>41</width>
-          <height>58</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="3" column="3" >
-       <widget class="QLineEdit" name="countryEdit" >
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="textLabel3" >
-        <property name="text" >
-         <string>&amp;Zip:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>zipEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QLabel" name="textLabel2" >
-        <property name="text" >
-         <string>&amp;City:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>cityEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="2" row="0" column="1" colspan="3" >
-       <widget class="Q3TextEdit" name="addressEdit" />
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="zipEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3" >
-       <widget class="QLineEdit" name="cityEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2" >
-       <widget class="QLabel" name="textLabel8" >
-        <property name="text" >
-         <string>Countr&amp;y:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>countryEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="textLabel1" >
-        <property name="text" >
-         <string>&amp;Address:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>addressEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="textLabel4" >
-        <property name="text" >
-         <string>&amp;State:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>stateEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QLineEdit" name="stateEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+     <property name="sizeHint" >
+      <size>
+       <width>574</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
    </item>
-   <item>
+   <item row="2" column="0" >
     <widget class="QGroupBox" name="groupBox_3" >
      <property name="title" >
       <string>Contact Information</string>
@@ -566,35 +265,327 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Location Information</string>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item rowspan="2" row="0" column="1" colspan="3" >
+       <widget class="QTextEdit" name="addressEdit" />
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLineEdit" name="stateEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="textLabel4" >
+        <property name="text" >
+         <string>&amp;State:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>stateEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="textLabel1" >
+        <property name="text" >
+         <string>&amp;Address:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>addressEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" >
+       <widget class="QLabel" name="textLabel8" >
+        <property name="text" >
+         <string>Countr&amp;y:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>countryEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3" >
+       <widget class="QLineEdit" name="cityEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="zipEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="textLabel2" >
+        <property name="text" >
+         <string>&amp;City:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>cityEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="textLabel3" >
+        <property name="text" >
+         <string>&amp;Zip:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>zipEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3" >
+       <widget class="QLineEdit" name="countryEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>41</width>
+          <height>58</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Personal Information</string>
      </property>
-     <property name="sizeHint" >
-      <size>
-       <width>574</width>
-       <height>16</height>
-      </size>
-     </property>
-    </spacer>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="lastNameEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLineEdit" name="firstNameEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="secondNameEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="LastNameLabel" >
+        <property name="text" >
+         <string>Last name:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>fullNameEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" >
+       <widget class="QLineEdit" name="yahooIdEdit" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3" >
+       <widget class="QLineEdit" name="birthdayEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3" >
+       <widget class="QLineEdit" name="anniversaryEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" >
+       <widget class="QLabel" name="birthdayLabel_2" >
+        <property name="text" >
+         <string>Anniversary:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>birthday</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLineEdit" name="nickNameEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>2</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="fullNameLabel_2" >
+        <property name="text" >
+         <string>First name:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>fullNameEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="birthdayLabel" >
+        <property name="text" >
+         <string>Birthday:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>birthday</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" >
+       <widget class="QLineEdit" name="titleEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="yahooIdLabel" >
+        <property name="text" >
+         <string>Yahoo ID:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>uinEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="fullNameLabel_2_2" >
+        <property name="text" >
+         <string>Second name:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>fullNameEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="nickNameLabel" >
+        <property name="text" >
+         <string>&amp;Nickname:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>nickNameEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QLabel" name="yahooIdLabel_2" >
+        <property name="text" >
+         <string>Title:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>uinEdit</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3TextEdit</class>
-   <extends></extends>
-   <header>q3textedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>firstNameEdit</tabstop>
   <tabstop>secondNameEdit</tabstop>
@@ -603,7 +594,6 @@
   <tabstop>titleEdit</tabstop>
   <tabstop>birthdayEdit</tabstop>
   <tabstop>anniversaryEdit</tabstop>
-  <tabstop>addressEdit</tabstop>
   <tabstop>zipEdit</tabstop>
   <tabstop>cityEdit</tabstop>
   <tabstop>stateEdit</tabstop>

@@ -95,7 +95,7 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
-	d->color = d->configGroup->readEntry( "Color" );
+	d->color = d->configGroup->readEntry( "Color" , QColor() );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
@@ -130,12 +130,15 @@ void Account::reconnect()
 
 void Account::disconnected( DisconnectReason reason )
 {
+	kDebug( 14010 ) << k_funcinfo << reason << endl;
 	//reconnect if needed
-	if ( ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual ) ||
-	     reason == BadPassword )
+	if(reason == BadPassword )
 	{
-		if(reason != BadPassword) 
-			d->connectionTry++;
+		QTimer::singleShot(0, this, SLOT(reconnect()));
+	}
+	else if ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual )
+	{
+		d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
 		if(d->connectionTry < 3)
 			QTimer::singleShot(10000, this, SLOT(reconnect())); // wait 10 seconds before reconnect

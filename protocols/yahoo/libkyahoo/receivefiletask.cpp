@@ -108,7 +108,13 @@ bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 
 
 	if( t->service() == Yahoo::ServiceFileTransfer7Info )
-		return true;
+	{
+		// Only take this transfer if we are the corresponding task (in case of simultaneous file transfers)
+		if( t->firstParam( 265 ) == m_remoteUrl.url().toLocal8Bit() )
+			return true;
+		else
+			return false;
+	}	
 	else
 		return false;
 }
@@ -120,7 +126,7 @@ void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 
 	m_transmitted += data.size();
 	emit bytesProcessed( m_transferId, m_transmitted );
-	m_file->writeBlock( data.data() , data.size() );
+	m_file->write( data );
 	
 }
 
@@ -221,6 +227,17 @@ void ReceiveFileTask::setType( Type type )
 void ReceiveFileTask::setUserId( const QString &userId )
 {
 	m_userId = userId;
+}
+
+void ReceiveFileTask::canceled( unsigned int id )
+{
+	if( m_transferId != id )
+		return;
+	
+	if( m_transferJob )
+		m_transferJob->kill();
+	
+	setSuccess( false );
 }
 
 #include "receivefiletask.moc"

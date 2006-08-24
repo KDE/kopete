@@ -25,6 +25,7 @@
 #include <qlayout.h>
 #include <qtextcodec.h>
 #include <QTabWidget>
+
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klocale.h>

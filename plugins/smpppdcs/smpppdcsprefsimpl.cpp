@@ -56,10 +56,10 @@ SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
 
     // if netstat is NOT available, disable the option and set to SMPPPD
     if(KStandardDirs::findExe("netstat").isNull()) {
-        autoCSTest->setEnabled(FALSE);
-        useNetstat->setEnabled(FALSE);
-        useNetstat->setChecked(FALSE);
-        useSmpppd->setChecked(TRUE);
+        autoCSTest->setEnabled(false);
+        useNetstat->setEnabled(false);
+        useNetstat->setChecked(false);
+        useSmpppd->setChecked(true);
     }
 }
 
@@ -94,9 +94,9 @@ void SMPPPDCSPrefs::scanStarted(uint total) {
 
     // setup the scanProgress Dialog
     if(!m_scanProgressDlg) {
-        m_scanProgressDlg = new KProgressDialog(this, 0, i18n("Searching"), i18n("Searching for a SMPPPD on the local network..."), TRUE);
-        m_scanProgressDlg->setAutoClose(TRUE);
-        m_scanProgressDlg->setAllowCancel(TRUE);
+        m_scanProgressDlg = new KProgressDialog(this, 0, i18n("Searching"), i18n("Searching for a SMPPPD on the local network..."), true);
+        m_scanProgressDlg->setAutoClose(true);
+        m_scanProgressDlg->setAllowCancel(true);
         m_scanProgressDlg->setMinimumDuration(2000);
 
         connect(m_scanProgressDlg, SIGNAL(cancelClicked()), this, SLOT(cancelScanning()));

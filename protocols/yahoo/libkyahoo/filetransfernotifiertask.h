@@ -22,6 +22,7 @@
 
 class QString;
 class YMSGTransfer;
+class QPixmap;
 
 /**
 @author André Duffeck
@@ -39,7 +40,7 @@ protected:
 	virtual bool forMe( const Transfer *transfer ) const;
 signals:
 	void incomingFileTransfer( const QString &who, const QString &url, long expires, const QString &msg ,
-	const QString &fname, unsigned long size );
+	const QString &fname, unsigned long size, const QPixmap &preview );
 private:
 	void parseFileTransfer( YMSGTransfer *transfer );
 	void parseFileTransfer7( YMSGTransfer *transfer );

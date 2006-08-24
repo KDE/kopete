@@ -80,7 +80,6 @@
 #include "xmpp_xmlcommon.h"
 #include "s5b.h"
 #include "xmpp_ibb.h"
-#include "xmpp_jidlink.h"
 #include "filetransfer.h"
 
 /*#include <stdio.h>
@@ -116,6 +115,7 @@ public:
 
 	Jid j;
 	int status;
+	QString password;
 };
 
 class Client::ClientPrivate
@@ -130,6 +130,7 @@ public:
 	QString host, user, pass, resource;
 	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt;
 	DiscoItem::Identity identity;
+	Features features;
 	QMap<QString,Features> extension_features;
 	int tzoffset;
 	bool active;
@@ -138,7 +139,6 @@ public:
 	ResourceList resourceList;
 	S5BManager *s5bman;
 	IBBManager *ibbman;
-	JidLinkManager *jlman;
 	FileTransferManager *ftman;
 	bool ftEnabled;
 	QList<GroupChat> groupChatList;
@@ -169,8 +169,6 @@ Client::Client(QObject *par)
 	d->ibbman = new IBBManager(this);
 	connect(d->ibbman, SIGNAL(incomingReady()), SLOT(ibb_incomingReady()));
 
-	d->jlman = new JidLinkManager(this);
-
 	d->ftman = 0;
 }
 
@@ -179,7 +177,6 @@ Client::~Client()
 	close(true);
 
 	delete d->ftman;
-	delete d->jlman;
 	delete d->ibbman;
 	delete d->s5bman;
 	delete d->root;
@@ -215,7 +212,7 @@ void Client::start(const QString &host, const QString &user, const QString &pass
 	d->resourceList += Resource(resource(), stat);
 
 	JT_PushPresence *pp = new JT_PushPresence(rootTask());
-	connect(pp, SIGNAL(subscription(const Jid &, const QString &)), SLOT(ppSubscription(const Jid &, const QString &)));
+	connect(pp, SIGNAL(subscription(const Jid &, const QString &, const QString&)), SLOT(ppSubscription(const Jid &, const QString &, const QString&)));
 	connect(pp, SIGNAL(presence(const Jid &, const Status &)), SLOT(ppPresence(const Jid &, const Status &)));
 
 	JT_PushMessage *pm = new JT_PushMessage(rootTask());
@@ -248,11 +245,6 @@ FileTransferManager *Client::fileTransferManager() const
 	return d->ftman;
 }
 
-JidLinkManager *Client::jidLinkManager() const
-{
-	return d->jlman;
-}
-
 S5BManager *Client::s5bManager() const
 {
 	return d->s5bman;
@@ -266,6 +258,17 @@ IBBManager *Client::ibbManager() const
 bool Client::isActive() const
 {
 	return d->active;
+}
+
+QString Client::groupChatPassword(const QString& host, const QString& room) const
+{
+	Jid jid(room + "@" + host);
+	foreach(GroupChat i, d->groupChatList) {
+		if(i.j.compare(jid, false)) {
+			return i.password;
+		}
+	}
+	return QString();
 }
 
 void Client::groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &_s)
@@ -288,7 +291,7 @@ void Client::groupChatChangeNick(const QString &host, const QString &room, const
 	}
 }
 
-bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick)
+bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password, int maxchars, int maxstanzas, int seconds, const Status& _s)
 {
 	Jid jid(room + "@" + host + "/" + nick);
 	for(QList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end();) {
@@ -308,39 +311,17 @@ bool Client::groupChatJoin(const QString &host, const QString &room, const QStri
 	GroupChat i;
 	i.j = jid;
 	i.status = GroupChat::Connecting;
+	i.password = password;
 	d->groupChatList += i;
 
 	JT_Presence *j = new JT_Presence(rootTask());
-	j->pres(jid, Status());
-	j->go(true);
-
-	return true;
-}
-
-bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString &password)
-{
-	Jid jid(room + "@" + host + "/" + nick);
-	for(QList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end();) {
-		GroupChat &i = *it;
-		if(i.j.compare(jid, false)) {
-			// if this room is shutting down, then free it up
-			if(i.status == GroupChat::Closing)
-				it = d->groupChatList.remove(it);
-			else
-				return false;
-		}
-		else
-			++it;
+	Status s = _s;
+	s.setMUC();
+	s.setMUCHistory(maxchars,maxstanzas,seconds);
+	if (!password.isEmpty()) {
+		s.setMUCPassword(password);
 	}
-
-	debug(QString("Client: Joined: [%1]\n").arg(jid.full()));
-	GroupChat i;
-	i.j = jid;
-	i.status = GroupChat::Connecting;
-	d->groupChatList += i;
-
-	JT_MucPresence *j = new JT_MucPresence(rootTask());
-	j->pres(jid, Status(), password);
+	j->pres(jid,s);
 	j->go(true);
 
 	return true;
@@ -572,8 +553,31 @@ void Client::distribute(const QDomElement &x)
 		}
 	}
 
-	if(!rootTask()->take(x)) {
-		debug("Client: packet was ignored.\n");
+	if(!rootTask()->take(x) && (x.attribute("type") == "get" || x.attribute("type") == "set") ) {
+		debug("Client: Unrecognized IQ.\n");
+
+		// Create reply element
+		QDomElement reply = doc()->createElement("iq");
+		reply.setAttribute("to",x.attribute("from"));
+		reply.setAttribute("type","error");
+		if (!x.attribute("id").isEmpty())
+			reply.setAttribute("id",x.attribute("id"));
+
+		// Copy children
+		for (QDomNode n = x.firstChild(); !n.isNull(); n = n.nextSibling()) {
+			reply.appendChild(n.cloneNode());
+		}
+		
+		// Add error
+		QDomElement error = doc()->createElement("error");
+		error.setAttribute("type","cancel");
+		reply.appendChild(error);
+
+		QDomElement error_type = doc()->createElement("feature-not-implemented");
+		error_type.setAttribute("xmlns","urn:ietf:params:xml:ns:xmpp-stanzas");
+		error.appendChild(error_type);
+
+		send(reply);
 	}
 }
 
@@ -709,9 +713,9 @@ Jid Client::jid() const
 	return Jid(s);
 }
 
-void Client::ppSubscription(const Jid &j, const QString &s)
+void Client::ppSubscription(const Jid &j, const QString &s, const QString& n)
 {
-	subscription(j, s);
+	subscription(j, s, n);
 }
 
 void Client::ppPresence(const Jid &j, const Status &s)
@@ -988,10 +992,10 @@ void Client::sendMessage(const Message &m)
 	j->go(true);
 }
 
-void Client::sendSubscription(const Jid &jid, const QString &type)
+void Client::sendSubscription(const Jid &jid, const QString &type, const QString& nick)
 {
 	JT_Presence *j = new JT_Presence(rootTask());
-	j->sub(jid, type);
+	j->sub(jid, type, nick);
 	j->go(true);
 }
 
@@ -1089,6 +1093,16 @@ void Client::setIdentity(DiscoItem::Identity identity)
 	d->identity = identity;
 }
 
+void Client::setFeatures(const Features& f)
+{
+	d->features = f;
+}
+
+const Features& Client::features() const
+{
+	return d->features;
+}
+
 void Client::addExtension(const QString& ext, const Features& features)
 {
 	if (!ext.isEmpty()) {
@@ -1126,8 +1140,6 @@ void Client::s5b_incomingReady()
 		return;
 	}
 	d->ftman->s5b_incomingReady(c);
-	//d->jlman->insertStream(c);
-	//incomingJidLink();
 }
 
 void Client::ibb_incomingReady()
@@ -1136,8 +1148,6 @@ void Client::ibb_incomingReady()
 	if(!c)
 		return;
 	c->deleteLater();
-	//d->jlman->insertStream(c);
-	//incomingJidLink();
 }
 
 //----------------------------------------------------------------------------
@@ -1297,7 +1307,7 @@ void Task::setError(const QDomElement &e)
 {
 	if(!d->done) {
 		d->success = false;
-		getErrorFromElement(e, &d->statusCode, &d->statusString);
+		getErrorFromElement(e, d->client->stream().baseNS(), &d->statusCode, &d->statusString);
 		done();
 	}
 }
@@ -1361,7 +1371,7 @@ void Task::debug(const char *fmt, ...)
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
+	client()->debug(QString("%1: ").arg(className()) + str);
 }
 
 bool Task::iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns)
@@ -1380,7 +1390,7 @@ bool Task::iqVerify(const QDomElement &x, const Jid &to, const QString &id, cons
 			return false;
 	}
 	// from ourself?
-	else if(from.compare(local, false)) {
+	else if(from.compare(local, false) || from.compare(local.domain(),false)) {
 		// allowed if we are querying ourself or the server
 		if(!to.isEmpty() && !to.compare(local, false) && !to.compare(server))
 			return false;

@@ -314,8 +314,8 @@ void MeanwhileSession::setStatus(Kopete::OnlineStatus status,
         const QString msg)
 {
     HERE;
-    mwDebug() << "setStatus: " << status.description() << "("
-        << status.internalStatus() << ")" << endl;
+    mwDebug() << "setStatus: " << status.description() << '('
+        << status.internalStatus() << ')' << endl;
     if (status.internalStatus() == 0)
         return;
 
@@ -688,7 +688,7 @@ void MeanwhileSession::handleAwareListAware(struct mwAwareSnapshot *snapshot)
 	idletime = (snapshot->status.time == 0xdeadbeef) ?
             0 : snapshot->status.time;
         if (idletime != 0) {
-        contact->setStatusDescription(statusDesc + "[" +
+        contact->setStatusDescription(statusDesc + '[' +
                 QString::number(idletime/60)+" mins]");
         }
     } else

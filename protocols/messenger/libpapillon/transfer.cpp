@@ -109,17 +109,17 @@ QString Transfer::toString() const
 	
 	if( type() & Transfer::TransactionTransfer && !transactionId().isEmpty() )
 	{
-		result += " " + transactionId();
+		result += ' ' + transactionId();
 	}
 
 	if( !d->arguments.empty() )
 	{
-		result += " " + arguments().join(" ");
+		result += ' ' + arguments().join(" ");
 	}
 
 	if( type() & Transfer::PayloadTransfer )
 	{
-		result += " " + QString::number(payloadLength());
+		result += ' ' + QString::number(payloadLength());
 	}
 	
 	result += "\r\n";

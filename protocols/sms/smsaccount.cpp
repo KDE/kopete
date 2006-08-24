@@ -35,13 +35,13 @@
 #include "smscontact.h"
 
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
-	: Kopete::Account( parent, accountID, name )
+	: Kopete::Account( parent, accountID )
 {
 	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
 
-	QString sName = configGroup()->readEntry("ServiceName", QString::null);
+	QString sName = configGroup()->readEntry("ServiceName", QString());
 	theService = ServiceLoader::loadService(sName, this);
 	
 	if( theService )
@@ -65,7 +65,7 @@ SMSAccount::~SMSAccount()
 void SMSAccount::loadConfig()
 {
 	theSubEnable = configGroup()->readEntry("SubEnable", false);
-	theSubCode = configGroup()->readEntry("SubCode", QString::null);
+	theSubCode = configGroup()->readEntry("SubCode", QString());
 	theLongMsgAction = (SMSMsgAction)configGroup()->readEntry("MsgAction", 0);
 }
 
@@ -184,14 +184,19 @@ KActionMenu* SMSAccount::actionMenu()
 	return theActionMenu;
 }
 
-void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const QString &reason)
+void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Kopete::StatusMessage &reason)
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect();
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
 		disconnect();
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, reason );
+		setAway( true, reason.message() );
+}
+
+void SMSAccount::setStatusMessage( const Kopete::StatusMessage& msg )
+{
+   return;
 }
 
 SMSService* SMSAccount::service()

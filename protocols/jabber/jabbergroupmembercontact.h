@@ -19,8 +19,6 @@
 #define JABBERGROUPMEMBERCONTACT_H
 
 #include "jabberbasecontact.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 
 namespace Kopete { class MetaContact; }
 class JabberGroupChatManager;
@@ -67,11 +65,6 @@ public slots:
 	 */
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 		const QString &fileName = QString::null, uint fileSize = 0L );
-
-	/**
-	 * Retrieve a vCard for the contact
-	 */
-	void slotUserInfo ();
 
 private slots:
 	/**

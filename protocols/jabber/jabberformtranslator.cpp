@@ -25,7 +25,7 @@
 #include "jabberformlineedit.h"
 #include "jabberformtranslator.h"
 
-JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * parent, const char *name):QWidget (parent, name)
+JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * parent) : QWidget (parent)
 {
 	/* Copy basic form values. */
 	privForm.setJid (form.jid ());

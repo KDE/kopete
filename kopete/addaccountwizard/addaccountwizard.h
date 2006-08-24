@@ -21,7 +21,7 @@
 
 #include <qmap.h>
 
-#include <k3wizard.h>
+#include <kassistantdialog.h>
 
 #include <kopete_export.h>
 
@@ -31,6 +31,8 @@
 class QTreeWidgetItem;
 
 class KPluginInfo;
+class KVBox;
+class KPageWidgetItem;
 
 namespace Kopete
 {
@@ -42,7 +44,7 @@ class KopeteEditAccountWidget;
 /**
  * @author  Olivier Goffart <ogoffart @ kde.org>
  */
-class KOPETE_EXPORT AddAccountWizard : public K3Wizard
+class KOPETE_EXPORT AddAccountWizard : public KAssistantDialog
 {
 	Q_OBJECT
 
@@ -64,12 +66,14 @@ private:
 	QTreeWidgetItem* selectedProtocol();
 
 	QMap<QTreeWidgetItem *, KPluginInfo *>  m_protocolItems;
-	KopeteEditAccountWidget              *m_accountPage;
-	QWidget                              *m_selectService;
-	Ui::AddAccountWizardPage1            *m_uiSelectService;
-	QWidget                              *m_finish;
-	Ui::AddAccountWizardPage2            *m_uiFinish;
-	Kopete::Protocol                     *m_proto;
+	KopeteEditAccountWidget *m_accountPage;
+	KVBox *m_accountPageWidget;
+	QWidget *m_selectService;
+	QWidget *m_finish;
+	Ui::AddAccountWizardPage1 m_uiSelectService;
+	Ui::AddAccountWizardPage2 m_uiFinish;
+	Kopete::Protocol *m_proto;
+	KPageWidgetItem *m_selectServiceItem;
 };
 
 #endif

@@ -76,10 +76,10 @@ static QString pushTag(ParserData *d, const QString &tag, const QString &attribu
 		d->attributes.insert(tag, attributes);
 	else if(!d->attributes.isEmpty())
 		d->attributes.replace(tag, attributes);
-	res.append("<" + tag);
+	res.append('<' + tag);
 	if(!d->attributes[tag].isEmpty())
-		res.append(" " + d->attributes[tag]);
-	return res + ">";
+		res.append(' ' + d->attributes[tag]);
+	return res + '>';
 }
 
 static QString pushColorTag(ParserData *d, const QColor &fgColor, const QColor &bgColor)
@@ -108,9 +108,9 @@ static QString popTag(ParserData *d, const QString &tag)
 	while(d->tags.top() != tag)
 	{
 		savedTags.push(d->tags.pop_back());
-		res.append("</" + savedTags.top() + ">");
+		res.append("</" + savedTags.top() + '>');
 	}
-	res.append("</" + d->tags.pop_back() + ">");
+	res.append("</" + d->tags.pop_back() + '>');
 	d->attributes.remove(tag);
 	while(!savedTags.isEmpty())
 		res.append(pushTag(savedTags.pop_back()));
@@ -123,7 +123,7 @@ static QString popAll(ParserData *d)
 {
 	QString res;
 	while(!d->tags.isEmpty())
-		res.append("</" + d->tags.takeLast() + ">");
+		res.append("</" + d->tags.takeLast() + '>');
 	d->attributes.clear();
 	return res;
 }

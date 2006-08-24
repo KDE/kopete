@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include "jabberclient.h"
 
-dlgJabberSendRaw::dlgJabberSendRaw ( JabberClient *client, QWidget *parent, const char *name )
+dlgJabberSendRaw::dlgJabberSendRaw ( JabberClient *client, QWidget *parent )
 	: QDialog (parent), Ui::DlgSendRaw()
 {
 	setupUi(this);

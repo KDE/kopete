@@ -29,6 +29,7 @@
 #include <kstdguiitem.h>
 #include <kwin.h>
 #include <kcmultidialog.h>
+#include <kicon.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"

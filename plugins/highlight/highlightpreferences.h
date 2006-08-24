@@ -23,7 +23,6 @@
 
 namespace Ui { class HighlightPrefsUI; }
 class Filter;
-class Q3ListViewItem;
 
 /**
   *@author Olivier Goffart
@@ -40,9 +39,10 @@ public:
 	virtual void load();
 
 private:
-	Ui::HighlightPrefsUI *preferencesDialog;
+	Ui::HighlightPrefsUI preferencesDialog;
 	HighlightConfig *m_config;
-	QMap <Q3ListViewItem*,Filter*> m_filterItems;
+	
+	Filter *selectedItem();
 
 	bool donttouch;
 
@@ -53,6 +53,7 @@ private slots:
 	void slotRenameFilter();
 	void slotSomethingHasChanged();
 	void slotEditRegExp();
+	void slotConfigureNotifications();
 };
 
 #endif

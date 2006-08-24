@@ -15,38 +15,29 @@
     *************************************************************************
 */
 
-//#include "ircadd.h"
 #include "ircaddcontactpage.h"
 #include "channellist.h"
 
-//#include "kircengine.h"
-
 #include "ircaccount.h"
 
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <q3frame.h>
-#include <qtabwidget.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
-class IRCAddContactPagePrivate
+struct IRCAddContactPage::Private
 {
-public:
-//	ircdata
 	ChannelList *search;
 	IRCAccount *account;
 };
 
 IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
-	: AddContactPage(parent)
+	: AddContactPage(parent), Ui::ircAddUI(), d(new Private)
 {
-	(new Q3VBoxLayout(this))->setAutoAdd(true);
-//	ircdata = new Ui::ircAddUI(this);
-//	d->search = new ChannelList( (QWidget*)ircdata->hbox, a->engine() );
+	setupUi(this);
+
+	//(new Q3VBoxLayout(this))->setAutoAdd(true);
+
+//	d->search = new ChannelList( hbox, a->client() );
 	d->account = a;
 
 	connect( d->search, SIGNAL( channelSelected( const QString & ) ),
@@ -58,39 +49,35 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
 
 IRCAddContactPage::~IRCAddContactPage()
 {
+	delete d;
 }
 
 void IRCAddContactPage::slotChannelSelected( const QString &channel )
 {
-//	ircdata->addID->setText( channel );
+	addID->setText( channel );
 }
 
 void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 {
-//	ircdata->addID->setText( channel );
-//	ircdata->tabWidget3->setCurrentPage(0);
+	addID->setText( channel );
+	tabWidget3->setCurrentPage(0);
 }
 
 bool IRCAddContactPage::apply(Kopete::Account *account , Kopete::MetaContact *m)
 {
-//	QString name = ircdata->addID->text();
-//	return account->addContact(name, m, Kopete::Account::ChangeKABC );
-	return false;
+	QString name = addID->text();
+	return account->addContact(name, m, Kopete::Account::ChangeKABC );
 }
 
 bool IRCAddContactPage::validateData()
 {
-/*
-	QString name = ircdata->addID->text();
+	QString name = addID->text();
 	if (name.isEmpty() == true)
 	{
 		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or query to open.</qt>"), i18n("You Must Specify a Channel"));
 		return false;
 	}
 	return true;
-*/
-	return false;
 }
 
 #include "ircaddcontactpage.moc"
-

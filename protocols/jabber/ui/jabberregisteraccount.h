@@ -5,7 +5,9 @@
     begin                : Sun Jul 11 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
 
-		Kopete (C) 2001-2004 Kopete developers <kopete-devel@kde.org>
+    Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
+
+		Kopete (C) 2001-2006 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,8 +23,9 @@
 #define JABBERREGISTER_H
 
 #include <kdialog.h>
-#include <qregexp.h>
-#include <qpixmap.h>
+#include <QRegExp>
+#include <QPixmap>
+#include <QtCrypto>
 
 namespace Ui { class DlgJabberRegisterAccount; }
 class JabberProtocol;
@@ -50,7 +53,7 @@ private slots:
 	void slotSSLToggled ();
 	void slotOk ();
 
-	void slotHandleTLSWarning ( int validityResult );
+	void slotHandleTLSWarning ( QCA::TLS::IdentityResult, QCA::Validity );
 	void slotCSError ( int error );
 	void slotConnected ();
 

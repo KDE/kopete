@@ -53,7 +53,7 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 	s  = GaduProtocol::protocol()->statusToWithDescription( ks );
 
 	if ( s == GG_STATUS_NOT_AVAIL_DESCR ) {
-		ui_->statusGroup_->find( GG_STATUS_NOT_AVAIL_DESCR )->setDisabled( TRUE );
+		ui_->statusGroup_->find( GG_STATUS_NOT_AVAIL_DESCR )->setDisabled( true );
 		ui_->statusGroup_->setButton( GG_STATUS_AVAIL_DESCR );
 	}
 	else {

@@ -18,10 +18,7 @@
 #ifndef HIGHLIGHTCONFIG_H
 #define HIGHLIGHTCONFIG_H
 
-#include <qmap.h>
-#include <qstring.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 class Filter;
 
@@ -34,13 +31,13 @@ public:
 	void load();
 	void save();
 
-	Q3PtrList<Filter> filters() const;
+	QList<Filter*> filters() const;
 	void removeFilter (Filter *f);
 	void appendFilter (Filter *f);
 	Filter* newFilter();
 
 private:
-	Q3PtrList<Filter> m_filters;
+	QList<Filter*> m_filters;
 };
 
 #endif

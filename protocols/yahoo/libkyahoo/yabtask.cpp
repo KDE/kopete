@@ -97,7 +97,7 @@ void YABTask::parseContactDetails( YMSGTransfer* t )
 void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision << endl;
-	m_data = QString::null;
+	m_data.clear();
 	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
 		.arg( lastMerge ).arg( lastRemoteRevision ).arg( YMSG_PROGRAM_VERSION_STRING );
 

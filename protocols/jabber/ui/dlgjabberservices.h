@@ -36,22 +36,24 @@ class dlgJabberServices : public QDialog, private Ui::dlgServices
 	Q_OBJECT
 
 public:
-	  dlgJabberServices (JabberAccount *account, QWidget *parent = 0, const char *name = 0);
+	  dlgJabberServices (JabberAccount *account, QWidget *parent = 0);
 	 ~dlgJabberServices ();
 
 private slots:
 	void slotSetSelection (Q3ListViewItem *);
-	void slotQuery ();
-	void slotQueryFinished ();
+	void slotService ();
+	void slotServiceFinished ();
 	void slotRegister ();
 	void slotBrowse ();
 	
+	void slotDisco();
 	void slotDiscoFinished();
-
+	
+	void slotDiscoClicked();
 private:
 	JabberAccount *m_account;
-	XMPP::JT_GetServices * serviceTask;
 	XMPP::Jid current_jid;
+	QString current_node;
 
 };
 
@@ -60,10 +62,11 @@ class dlgJabberServies_item : protected QObject, public Q3ListViewItem
 {
 	Q_OBJECT
 	public:
-		dlgJabberServies_item( Q3ListView *parent , const QString &s1 , const QString &s2 ) 
-			: Q3ListViewItem(parent,s1,s2), can_browse(false) , can_register(false) {}
+		dlgJabberServies_item( Q3ListView *parent , const QString &s1 , const QString &s2, const QString &s3 ) 
+			: Q3ListViewItem(parent,s1,s2,s3), can_browse(false) , can_register(false) {}
 		bool can_browse, can_register;
 		XMPP::Jid jid;
+		QString node;
 		
 		void updateInfo(const XMPP::Jid& jid, const QString &node , JabberAccount *account);
 	private slots:

@@ -436,7 +436,8 @@ void KopeteWindow::slotToggleAway()
 void KopeteWindow::initSystray()
 {
 	d->tray = KopeteSystemTray::systemTray( this );
-	Kopete::UI::Global::setSysTrayWId( d->tray->winId() );
+#warning PORT ME
+//	Kopete::UI::Global::setSysTrayWId( d->tray->winId() );
 
 	QObject::connect( d->tray, SIGNAL( aboutToShowMenu( KMenu * ) ),
 	                  this, SLOT( slotTrayAboutToShowMenu( KMenu * ) ) );
@@ -899,6 +900,8 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 
 void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 {
+	KActionCollection *actionCollection = d->tray->actionCollection();
+
 	popup->clear();
 	popup->addTitle( qApp->windowIcon(), KInstance::caption() );
 
@@ -918,13 +921,8 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 	popup->addAction( d->actionPrefs );
 	popup->addAction( d->actionAddContact );
 	popup->addSeparator();
-
-	KAction *action = 0;
-	action = d->tray->actionCollection()->action( "minimizeRestore" );
-	popup->addAction( action );
-
-	action = d->tray->actionCollection()->action( KStdAction::name( KStdAction::Quit ) );
-	popup->addAction( action );
+	popup->addAction( actionCollection->action( "minimizeRestore" ) );
+	popup->addAction( actionCollection->action( KStdAction::name( KStdAction::Quit ) ) );
 }
 
 void KopeteWindow::showExportDialog()

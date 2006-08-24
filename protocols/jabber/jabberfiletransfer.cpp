@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
+#include <kcodecs.h>
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -68,11 +69,19 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 			  this, SLOT ( slotTransferRefused ( const Kopete::FileTransferInfo & ) ) );
 
 	initializeVariables ();
+	
+	QPixmap preview;
+	if(!mXMPPTransfer->preview().isEmpty())
+	{
+		preview.loadFromData(KCodecs::base64Decode(mXMPPTransfer->preview().toAscii()));
+	}
 
 	mTransferId = Kopete::TransferManager::transferManager()->askIncomingTransfer ( contact,
 																				  mXMPPTransfer->fileName (),
 																				  mXMPPTransfer->fileSize (),
-																				  mXMPPTransfer->description () );
+																				  mXMPPTransfer->description () ,
+																				QString(),
+																				  preview);
 
 }
 
@@ -99,8 +108,20 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	connect ( mXMPPTransfer, SIGNAL ( connected () ), this, SLOT ( slotOutgoingConnected () ) );
 	connect ( mXMPPTransfer, SIGNAL ( bytesWritten ( int ) ), this, SLOT ( slotOutgoingBytesWritten ( int ) ) );
 	connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
+	
+	QString preview;
+	QImage img=QImage(mLocalFile.fileName());
+	if(!img.isNull())
+	{
+		img=img.scaled(64,64,Qt::KeepAspectRatio);
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		img.save(&buffer, "PNG"); // writes image into ba in PNG format
+		preview= KCodecs::base64Encode( ba  , true  );
+	}
 
-	mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "" );
+	mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "" , preview);
 
 }
 
@@ -161,7 +182,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 											length = mXMPPTransfer->fileSize () - offset;
 											mBytesTransferred = offset;
 											mBytesToTransfer = length;
-											mLocalFile.at ( mLocalFile.size () );
+											mLocalFile.seek ( mLocalFile.size () );
 										}
 										break;
 
@@ -287,7 +308,7 @@ void JabberFileTransfer::slotOutgoingConnected ()
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Outgoing data connection is open." << endl;
 
 	mBytesTransferred = mXMPPTransfer->offset ();
-	mLocalFile.at ( mXMPPTransfer->offset () );
+	mLocalFile.seek ( mXMPPTransfer->offset () );
 	mBytesToTransfer = ( mXMPPTransfer->fileSize () > mXMPPTransfer->length () ) ? mXMPPTransfer->length () : mXMPPTransfer->fileSize ();
 
 	slotOutgoingBytesWritten ( 0 );
@@ -306,7 +327,7 @@ void JabberFileTransfer::slotOutgoingBytesWritten ( int nrWritten )
 	{
 		int nrToWrite = mXMPPTransfer->dataSizeNeeded ();
 
-		QByteArray readBuffer ( nrToWrite );
+		QByteArray readBuffer ( nrToWrite , '\0' );
 
 		mLocalFile.read ( readBuffer.data (), nrToWrite );
 

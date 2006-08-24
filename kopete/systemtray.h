@@ -20,10 +20,10 @@
 #ifndef SYSTEMTRAY_H
 #define SYSTEMTRAY_H
 
-#include <qpixmap.h>
-#include <qmovie.h>
+#include <QtGui/QIcon>
+#include <QtGui/QMovie>
 
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 
 #include "kopetemessageevent.h"
 
@@ -31,7 +31,6 @@ class QTimer;
 class QPoint;
 class KMenu;
 class KActionMenu;
-class KopeteBalloon;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -39,7 +38,7 @@ class KopeteBalloon;
  * NOTE: This class is for use ONLY in libkopete! It is not public API, and
  *       is NOT supposed to remain binary compatible in the future!
  */
-class KopeteSystemTray : public KSystemTray
+class KopeteSystemTray : public KSystemTrayIcon
 {
 	Q_OBJECT
 
@@ -53,39 +52,32 @@ public:
 
 	// One method, multiple interfaces :-)
 	void startBlink( const QString &icon );
-	void startBlink( const QPixmap &icon );
+	void startBlink( const QIcon &icon );
 	void startBlink( QMovie *movie );
 	void startBlink();
 
 	void stopBlink();
 	bool isBlinking() const { return mIsBlinking; };
-	KMenu *contextMenu() const { return KSystemTray::contextMenu(); };
 
-protected:
-	virtual void mousePressEvent( QMouseEvent *e );
-	virtual void mouseDoubleClickEvent( QMouseEvent *me );
-	virtual void contextMenuAboutToShow( KMenu * );
-
-signals:
+Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);
 
-private slots:
+private Q_SLOTS:
+	void onActivation(QSystemTrayIcon::ActivationReason reason);
+
 	void slotBlink();
 	void slotNewEvent(Kopete::MessageEvent*);
 	void slotEventDone(Kopete::MessageEvent *);
 	void slotConfigChanged();
 	void slotReevaluateAccountStates();
-	void slotRemoveBalloon();
-	void addBalloon();
 
 private:
 	KopeteSystemTray( QWidget* parent );
 	QString squashMessage( const Kopete::Message& msgText );
-	void removeBalloonEvent(Kopete::MessageEvent *);
 
 	QTimer *mBlinkTimer;
-	QPixmap mKopeteIcon;
-	QPixmap mBlinkIcon;
+	QIcon mKopeteIcon;
+	QIcon mBlinkIcon;
 	QMovie *mMovie;
 
 	bool mIsBlinkIcon;
@@ -94,8 +86,6 @@ private:
 	static KopeteSystemTray* s_systemTray;
 
 	QList<Kopete::MessageEvent*> mEventList;
-	QList<Kopete::MessageEvent*> mBalloonEventList;
-	KopeteBalloon *m_balloon;
 };
 
 #endif

@@ -20,6 +20,7 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 #include <kstringhandler.h>
+#include <kicon.h>
 
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"

@@ -58,9 +58,9 @@ public:
 		conn = 0;
 		bs = 0;
 		
-		username = QString::null;
-		password = QString::null;
-		server = QString::null;
+		username.clear();
+		password.clear();
+		server.clear();
 		haveLocalAddr = false;
 		doBinding = true;
 

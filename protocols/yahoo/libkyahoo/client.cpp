@@ -23,6 +23,7 @@
 #include <QPixmap>
 
 #include <kdebug.h>
+#include <ksocketbase.h>
 
 #include "yahooclientstream.h"
 #include "yahooconnector.h"
@@ -54,6 +55,8 @@
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
+
+using namespace KNetwork;
 
 class Client::ClientPrivate
 {
@@ -92,6 +95,7 @@ public:
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
 	QString statusMessageOnConnect;
+	int pictureFlag;
 };
 
 Client::Client(QObject *par) :QObject(par)
@@ -109,6 +113,7 @@ Client::Client(QObject *par) :QObject(par)
 	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
+	d->pictureFlag = 0;
 	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
@@ -214,7 +219,7 @@ void Client::streamError( int error )
 	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
 	{
 		d->error = m_connector->errorCode();
-		d->errorString = KSocketBase::errorString( (KNetwork::KSocketBase::SocketError)d->error );
+		d->errorString = KSocketBase::errorString( (KSocketBase::SocketError)d->error );
 	}
 	else
 	{
@@ -250,7 +255,7 @@ void Client::slotLoginResponse( int response, const QString &msg )
 				d->statusOnConnect == Yahoo::StatusInvisible) ||
 				!d->statusMessageOnConnect.isEmpty() )
 			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
-		d->statusMessageOnConnect = QString::null;
+		d->statusMessageOnConnect.clear();
 		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();
@@ -317,7 +322,7 @@ void Client::sendBuzz( const QString &to )
 {
 	SendMessageTask *smt = new SendMessageTask( d->root );
 	smt->setTarget( to );
-	smt->setText( QString::fromLatin1( "<ding>" ) );
+	smt->setText( QLatin1String( "<ding>" ) );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
 }
@@ -329,6 +334,8 @@ void Client::sendFile( unsigned int transferId, const QString &to, const QString
 	QObject::connect( sft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
 	QObject::connect( sft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
 	QObject::connect( sft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+
+	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), sft, SLOT(canceled( unsigned int )) );
 
 	sft->setTarget( to );
 	sft->setMessage( msg );
@@ -344,6 +351,7 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KUrl r
 	QObject::connect( rft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
 	QObject::connect( rft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
 	QObject::connect( rft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), rft, SLOT(canceled( unsigned int )) );
 
 	rft->setRemoteUrl( remoteURL );
 	rft->setLocalUrl( localURL );
@@ -367,6 +375,11 @@ void Client::rejectFile( const QString &userId, KUrl remoteURL )
 	rft->setUserId( userId );
 	rft->setType( ReceiveFileTask::FileTransfer7Reject );
 	rft->go( true );
+}
+
+void Client::cancelFileTransfer( unsigned int transferId )
+{
+	emit fileTransferCanceled( transferId );
 }
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )
@@ -478,17 +491,18 @@ void Client::uploadPicture( KUrl url )
 		spt->setPath( url.path() );
 	else
 		spt->setPath( url.url() );
+	d->pictureFlag = 2;
 	spt->go( true );
 }
 
-void Client::sendPictureChecksum( int checksum, const QString &who )
+void Client::sendPictureChecksum( const QString &userId, int checksum )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "checksum: " << checksum << endl;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendChecksum );
 	spt->setChecksum( checksum );
-	if( !who.isEmpty() )
-		spt->setTarget( who );
+	if( !userId.isEmpty() )
+		spt->setTarget( userId );
 	spt->go( true );	
 }
 
@@ -674,7 +688,7 @@ uint Client::sessionID()
 
 int Client::pictureFlag()
 {
-	return 0;
+	return d->pictureFlag;
 }
 
 QString Client::yCookie()
@@ -714,7 +728,7 @@ void Client::send( Transfer* request )
 
 void Client::debug(const QString &str)
 {
-	qDebug( "CLIENT: %s", qPrintable(str) );
+       qDebug( "CLIENT: %s", qPrintable(str) );
 }
 
 Task * Client::rootTask()
@@ -809,9 +823,9 @@ void Client::initTasks()
 
 	d->fileTransferTask = new FileTransferNotifierTask( d->root );
 	QObject::connect( d->fileTransferTask, SIGNAL(incomingFileTransfer( const QString &, const QString &, 
-					long, const QString &, const QString &, unsigned long )),
+					long, const QString &, const QString &, unsigned long, const QPixmap & )),
 				SIGNAL(incomingFileTransfer( const QString &, const QString &, 
-					long, const QString &, const QString &, unsigned long )) );
+					long, const QString &, const QString &, unsigned long, const QPixmap & )) );
 }
 
 void Client::deleteTasks()

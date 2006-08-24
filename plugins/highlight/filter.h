@@ -21,6 +21,7 @@
 
 #include <qstring.h>
 #include <qcolor.h>
+#include <QVariant>
 
 /**
  * @author Olivier Goffart <ogoffart @ kde.org>
@@ -45,10 +46,11 @@ public:
 	bool setBG;
 	QColor BG;
 	
-	bool playSound;
-	QString soundFN;
-
 	bool raiseView;
+	
+	QString className() const;
 };
+
+Q_DECLARE_METATYPE(Filter*);
 
 #endif

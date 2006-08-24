@@ -96,8 +96,8 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 	m_ID = ID;
 	m_auth = auth;
 
-	QString server = address.left( address.indexOf( ":" ) );
-	uint port = address.right( address.length() - address.lastIndexOf( ":" ) - 1 ).toUInt();
+	QString server = address.left( address.indexOf( ':' ) );
+	uint port = address.right( address.length() - address.lastIndexOf( ':' ) - 1 ).toUInt();
 
 	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),
 		this, SLOT(slotReadMessage( const QByteArray & ) ) );
@@ -254,7 +254,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	else if( type== "text/x-msmsgscontrol" )
 	{
 		QString message;
-		message = msg.right( msg.length() - msg.lastIndexOf( " " ) - 1 );
+		message = msg.right( msg.length() - msg.lastIndexOf( ' ' ) - 1 );
 		message = message.replace(  "\r\n" ,"" );
 		emit receivedTypingMsg( message.toLower(), true );
 	}
@@ -318,7 +318,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 				}
 			}
 
-			fontName = parseFontAttr(fontInfo, "FN").replace(  "%20" , " " );
+			fontName = parseFontAttr(fontInfo, "FN").replace( QLatin1String("%20") , " " );
 
 			// Some clients like Trillian and Kopete itself send a font
 			// name of 'MS Serif' since MS changed the server to
@@ -657,7 +657,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 	QString msg = "MIME-Version: 1.0\r\n"
 				"Content-Type: text/x-mms-emoticon\r\n"
 				"\r\n" +
-				name + "\t" + picObj + "\t\r\n";
+				name + '\t' + picObj + "\t\r\n";
 
 	return sendCommand("MSG", "A", true, msg.toUtf8());
 
@@ -727,13 +727,13 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		head += "FN=" + escape( msg.font().family().left(31));
 		head += "; EF=";
 		if(msg.font().bold())
-			head += "B";
+			head += 'B';
 		if(msg.font().italic())
-			head += "I";
+			head += 'I';
 		if(msg.font().strikeOut())
-			head += "S";
+			head += 'S';
 		if(msg.font().underline())
-			head += "U";
+			head += 'U';
 		head += "; ";
 	}
 	else head+="FN=; EF=; ";
@@ -759,7 +759,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		head += "; RL=1";
 	head += "\r\n";
 
-	QString message= msg.plainBody().replace(  "\n" , "\r\n" );
+	QString message= msg.plainBody().replace(  '\n' , "\r\n" );
 
 	//-- Check if the message isn't too big,  TODO: do that at the libkopete level.
 	int len_H=head.toUtf8().length();	// != head.length()  because i need the size in butes and
@@ -876,12 +876,12 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 		if( m_ID.isEmpty() ) // we're inviting
 		{
 			command = "USR";
-			args = m_myHandle + " " + m_auth;
+			args = m_myHandle + ' ' + m_auth;
 		}
 		else // we're invited
 		{
 			command = "ANS";
-			args = m_myHandle + " " + m_auth + " " + m_ID;
+			args = m_myHandle + ' ' + m_auth + ' ' + m_ID;
 		}
 		sendCommand( command, args );
 		
@@ -1070,12 +1070,12 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 	QString tmp;
 	int pos1=0, pos2=0;
 
-	pos1 = str.indexOf(attr + "=");
+	pos1 = str.indexOf(attr + '=');
 
 	if (pos1 == -1)
 		return "";
 
-	pos2 = str.indexOf(";", pos1+3);
+	pos2 = str.indexOf(';', pos1+3);
 
 	if (pos2 == -1)
 		tmp = str.mid(pos1+3, str.length() - pos1 - 3);

@@ -48,7 +48,7 @@ install( FILES latexconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
 install( FILES kopete_latex.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES latexchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_latex)
 install( FILES kopete_latex_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
-
+install( PROGRAMS kopete_latexconvert.sh DESTINATION ${BIN_INSTALL_DIR})
 
 
 

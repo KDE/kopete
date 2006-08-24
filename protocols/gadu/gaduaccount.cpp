@@ -48,6 +48,7 @@
 #include <kio/netaccess.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
+#include <kicon.h>
 
 #include <qapplication.h>
 #include <qdialog.h>
@@ -141,7 +142,7 @@ static const char* const servers_ip[] = {
 	setMyself( new GaduContact( accountId().toInt(), accountId(), this, Kopete::ContactList::self()->myself() ) );
 
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-	p->lastDescription = QString::null;
+	p->lastDescription.clear();
 
 	for ( unsigned int i = 0; i < NUM_SERVERS ; i++ ) {
 		ip.setAddress( QString( servers_ip[i] ) );
@@ -265,9 +266,9 @@ GaduAccount::actionMenu()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
-		p->searchAction->setEnabled( TRUE );
-		p->listputAction->setEnabled( TRUE );
-		p->friendsModeAction->setEnabled( TRUE );
+		p->searchAction->setEnabled( true );
+		p->listputAction->setEnabled( true );
+		p->friendsModeAction->setEnabled( true );
 	}
 	else {
 		p->searchAction->setEnabled( false );
@@ -280,10 +281,10 @@ GaduAccount::actionMenu()
 			p->listToFileAction->setEnabled( false );
 		}
 		else {
-			p->listToFileAction->setEnabled( TRUE );
+			p->listToFileAction->setEnabled( true );
 		}
 
-		p->listToFileAction->setEnabled( TRUE );
+		p->listToFileAction->setEnabled( true );
 	}
 	else {
 		p->listToFileAction->setEnabled( false );
@@ -293,7 +294,7 @@ GaduAccount::actionMenu()
 		p->listFromFileAction->setEnabled( false );
 	}
 	else {
-		p->listFromFileAction->setEnabled( TRUE );
+		p->listFromFileAction->setEnabled( true );
 	}
 
 	KAction* action = new KAction(
