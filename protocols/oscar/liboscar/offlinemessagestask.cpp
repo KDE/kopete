@@ -30,7 +30,6 @@ OfflineMessagesTask::OfflineMessagesTask( Task* parent )
  : ICQTask( parent )
 {
 	tzset();
-	m_msgCount = 0;
 	m_sequence = 0;
 }
 
@@ -133,8 +132,6 @@ void OfflineMessagesTask::handleOfflineMessage()
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received offline message '" << msg.data() << "' from " << senderUin << endl;
 	
-	m_msgCount++;
-	
 	emit receivedOfflineMessage( message );
 }
 
@@ -148,8 +145,7 @@ void OfflineMessagesTask::endOfMessages()
 	buffer->skipBytes( 8 );
 	m_sequence = buffer->getLEWord();
 	
-	if ( m_msgCount > 0 )
-		deleteOfflineMessages();
+	deleteOfflineMessages();
 	
 	setSuccess( true );
 }
