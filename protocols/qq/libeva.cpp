@@ -173,14 +173,14 @@ namespace Eva {
 		return list;
 	}
 
-	std::list< CGT > Packet::cgts( const ByteArray& text )
+	std::list< GroupInfo > Packet::groupInfos( const ByteArray& text )
 	{
 		int offset = 10;
-		std::list< CGT > list;
+		std::list< GroupInfo > list;
 		while( offset < text.size() )
 		{
 			list.push_back( 
-				CGT( ntohl( type_cast<int>( text.data()+offset ) ), 
+				GroupInfo( ntohl( type_cast<int>( text.data()+offset ) ), 
 				type_cast<char>(text.data()+offset+4), ( type_cast<short>(text.data()+5) >> 2) & 0x3f ) );
 			offset += 6;
 		}
@@ -201,7 +201,16 @@ namespace Eva {
 		}
 		return list;
 	}
-					
+
+	std::list< std::string > contactDetail( const ByteArray& text )
+	{
+		char* start = text.c_str();
+		std::list< std::string > list;
+		// TODO: convert to string. use split.
+		return list;
+	}
+				
+
 			
 	// Core functions
 	ByteArray loginToken( uint id, ushort sequence )
@@ -272,10 +281,10 @@ namespace Eva {
 		return Packet::create(id, ChangeStatus, sequence, key, text );
 	}
 
-	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId )
+	ByteArray contactInfo( uint id, ushort sequence, const ByteArray& key, int qqId )
 	{
-		ByteArray text(20);
-		snprintf( text.c_str(), 19, "%d", qqId );
+		ByteArray text(32);
+		snprintf( text.c_str(), 31, "%d", qqId );
 		text.setSize( strlen( text.c_str() ) );
 		return Packet::create(id, UserInfo, sequence, key, text );
 	}

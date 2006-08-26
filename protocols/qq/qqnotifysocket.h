@@ -100,11 +100,12 @@ private:
 	{ QQSocket::sendPacket( QByteArray(packet.c_str(), packet.size() ) ); }
 
 	void groupNames( const Eva::ByteArray& text );
-	void doGetCGTs( const Eva::ByteArray& text );
+	void groupInfos( const Eva::ByteArray& text );
 	void doGetContactStatuses( const Eva::ByteArray& text );
 	void sendListOnlineContacts(uint pos = 0);
 	void sendMsgReply( int sequence, const Eva::ByteArray& replyKey );
 	void heartbeat();
+	void contactInfo(Eva::uint qqId);
 
 private:
 	QQAccount *m_account;

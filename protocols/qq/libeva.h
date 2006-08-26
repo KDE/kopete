@@ -114,13 +114,13 @@ namespace Eva {
 		std::string nick;
 	};
 
-	// Contact-Group-Trio
-	struct CGT { 
-		int qqId;
-		char type;
-		char groupId;
+	// GroupInfo
+	struct GroupInfo { 
+		uint qqId;
+		uchar type;
+		uchar groupId;
 
-		CGT( int q, char t, char g ) : qqId(q), type (t), groupId(g) {};
+		GroupInfo( uint q, uchar t, uchar g ) : qqId(q), type (t), groupId(g) {};
 	};
 
 
@@ -391,8 +391,9 @@ namespace Eva {
 		static std::list< std::string > groupNames(const ByteArray& text );
 		// FIXME: use list as others
 		ContactInfo contactInfo( char* buffer, int& len );
-		static std::list< CGT > cgts( const ByteArray& text );
+		static std::list< GroupInfo > groupInfos( const ByteArray& text );
 		static std::list< ContactStatus > onlineContacts( const ByteArray& text, uchar& pos );
+		static std::list< std::string > contactDetail( const ByteArray& text );
 
 	private:
 		ushort m_version;
@@ -416,7 +417,7 @@ namespace Eva {
 	/** 
 	 * Fetch user information of qqId
 	 */
-	ByteArray userInfo( uint id, ushort sequence, const ByteArray& key, int qqId );
+	ByteArray contactInfo( uint id, ushort sequence, const ByteArray& key, int qqId );
 	/**
 	 * request transfer key, which is used as the identification of the conversation
 	 */

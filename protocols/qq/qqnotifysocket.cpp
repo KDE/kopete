@@ -266,14 +266,20 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 					if( !m_heartbeat->isActive() )
 						m_heartbeat->start(60000, false);
 
+					// FIXME: refactor me!
 					emit newContactList();
 					// FIXME: We might login in as invisible as well.
 					m_newstatus = Kopete::OnlineStatus::Online;
 					sendPacket( Eva::statusUpdate( m_qqId, m_id++, m_sessionKey, Eva::Online) );
 					sendPacket( Eva::transferKey( m_qqId, m_id++, m_sessionKey) );
 
+					// get the meta data for myself
+					contactInfo(m_qqId);
+
 					// fetch the online contacts
 					sendListOnlineContacts();
+
+
 
 					break;
 
@@ -328,7 +334,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 		case Eva::Memo :
 			break;
 		case Eva::DownloadGroups :
-			doGetCGTs( text );
+			groupInfos( text );
 			break;
 
 		case Eva::GetLevel :
@@ -360,18 +366,12 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 	}
 }
 
-// FIXME: Refactor us !!
 
-/*
-void QQNotifySocket::sendUserInfo(Eva::uint qqId)
+void QQNotifySocket::contactInfo(Eva::uint qqId)
 {
-	Eva::ByteArray packet = Eva::userInfo( m_qqId, m_id++, m_sessionKey, qqId);
-	sendPacket( QByteArray( packet.c_str(), packet.size()) );
+	sendPacket( Eva::contactInfo( m_qqId, m_id++, m_sessionKey, qqId) );
 }
 	
-*/
-
-
 void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message )
 {
 	// Translate the message to Eva::ByteArray
@@ -408,13 +408,13 @@ void QQNotifySocket::groupNames( const Eva::ByteArray& text )
 	emit groupNames( ql );
 }
 
-void QQNotifySocket::doGetCGTs( const Eva::ByteArray& text )
+void QQNotifySocket::groupInfos( const Eva::ByteArray& text )
 {
 	kDebug(14140) << k_funcinfo << endl;
-	std::list< Eva::CGT > cgts = Eva::Packet::cgts( text );
+	std::list< Eva::GroupInfo > gis = Eva::Packet::groupInfos( text );
 	// TODO: send it one by one.
-	for( std::list< Eva::CGT >::const_iterator it = cgts.begin();
-		it != cgts.end(); it++ )
+	for( std::list< Eva::GroupInfo >::const_iterator it = gis.begin();
+		it != gis.end(); it++ )
 	{
 		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " type = " << (*it).type 
 			<< " groupId = " << (*it).groupId << endl;
