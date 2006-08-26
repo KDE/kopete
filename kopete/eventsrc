@@ -739,6 +739,7 @@ default_presentation=0
 
 [kopete_authorization]
 Name=Authorization
+Name[da]=Godkendelse
 Name[et]=Autoriseerimine
 Name[he]=הזדהות
 Name[nds]=Identifikatschoon
@@ -748,6 +749,7 @@ Name[pt_BR]=Autorização
 Name[sv]=Behörighetskontroll
 Name[zh_TW]=認證
 Comment=An user has accepted/declined your authorization request
+Comment[da]=En bruger har godkendt/afslået din godkendelsesforespørgsel
 Comment[et]=Kasutaja autoriseeris/lükkas tagasi sinu autoriseerimissoovi
 Comment[he]=משתמש אישר/דחה את בקשתך לזיהוי
 Comment[nds]=En Bruker hett Dien Identifikatschoonanfraag tolaten/afwiest
