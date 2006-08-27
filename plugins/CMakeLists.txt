@@ -14,6 +14,7 @@ add_subdirectory( highlight )
 add_subdirectory( alias ) 
 add_subdirectory( addbookmarks ) 
 #add_subdirectory( statistics ) 
+add_subdirectory( privacy )
 
 if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
