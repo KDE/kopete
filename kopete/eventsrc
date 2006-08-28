@@ -843,6 +843,7 @@ default_presentation=16
 
 [msn_alert]
 Name=MSN Alert
+Name[da]=MSN-alarm
 Name[et]=MSN teade
 Name[he]=אזהרה של MSN
 Name[nds]=MSN-Alarm
@@ -853,6 +854,7 @@ Name[sk]=MSN Upozornenie
 Name[sv]=MSN-larm
 Name[zh_TW]=MSN 警告
 Comment=A new alert has been sent to you
+Comment[da]=En ny alarm er sendt til dig
 Comment[et]=Sulle saadeti uus teade
 Comment[he]=אזהרה חדשה נשלחה אליך
 Comment[nds]=Een hett Di en niegen Alarm sendt
