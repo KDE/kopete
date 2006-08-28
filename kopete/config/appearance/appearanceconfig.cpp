@@ -272,7 +272,7 @@ void AppearanceConfig::emitChanged()
 
 void AppearanceConfig::installEmoticonTheme()
 {
-	KUrl themeURL = KUrlRequesterDlg::getURL(QString::null, this,
+	KUrl themeURL = KUrlRequesterDlg::getUrl(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
 	if ( themeURL.isEmpty() )
 		return;

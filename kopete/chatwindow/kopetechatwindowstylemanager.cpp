@@ -106,7 +106,7 @@ void ChatWindowStyleManager::loadStyles()
 	connect(d->styleDirLister, SIGNAL(completed()), this, SLOT(slotDirectoryFinished()));
 
 	if( !d->styleDirs.isEmpty() )
-		d->styleDirLister->openURL(d->styleDirs.pop(), true);
+		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
 }
 
 ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
@@ -370,7 +370,7 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	if( !d->styleDirs.isEmpty() )
 	{
 		kDebug(14000) << k_funcinfo << "Starting another directory." << endl;
-		d->styleDirLister->openURL(d->styleDirs.pop(), true);
+		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
 	}
 	else
 	{
