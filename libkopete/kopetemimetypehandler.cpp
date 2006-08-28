@@ -114,7 +114,7 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 	if( url.isEmpty() )
 		return false;
 
-	QString type = KMimeType::findByURL( url )->name();
+	QString type = KMimeType::findByUrl( url )->name();
 
 	MimeTypeHandler *mimeHandler = g_mimeHandlers[ type ];
 
