@@ -60,14 +60,6 @@ static const QColor s_IRC_Colors[17]=
 
 static const QRegExp s_colorsModeRegexp("(\\d{1,2})(?:,(\\d{1,2}))?");
 
-template <typename _TYPE_>
-	inline void swap(_TYPE_ &o1, _TYPE_ &o2)
-{
-	_TYPE_ tmp = o1;
-	o1 = o2;
-	o2 = tmp;
-}
-
 static QString pushTag(ParserData *d, const QString &tag, const QString &attributes = QString::null)
 {
 	QString res;
@@ -187,7 +179,7 @@ QString KSParser::parse(QString message)
 //		case 0x12:	// Reverse original text colors: ^R
 //			break;
 		case 0x16:	//Invert Colors: ^V
-			swap(fgColor, bgColor);
+			qSwap(fgColor, bgColor);
 			ret += pushColorTag(&d, fgColor, bgColor);
 			break;
 		case 0x1F:	//Underline

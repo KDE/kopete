@@ -22,12 +22,12 @@
 
 namespace IRC {
 
-typedef enum
+enum ChatSessionType
 {
 	SERVER,
 	CHANNEL,
 	DCC
-} ChatSessionType;
+};
 
 extern const QString Version;
 
