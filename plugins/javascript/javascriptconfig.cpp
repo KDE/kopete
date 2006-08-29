@@ -234,7 +234,7 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 	}
 	else
 	{
-		kdError() << k_funcinfo << script << " is not a valid script!" << endl;
+		kError() << k_funcinfo << script << " is not a valid script!" << endl;
 	}
 }
 
@@ -283,7 +283,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 				QString id = QString::number( time( NULL ) );
 				QString dir = localScriptsDir + QChar('/') + id;
 				rootDir->copyTo( dir );
-				KSimpleConfig conf( dir + QChar('/') + manifestFile.readURL() );
+				KSimpleConfig conf( dir + QChar('/') + manifestFile.readUrl() );
 
 				QMap<QString,QString> functions;
 

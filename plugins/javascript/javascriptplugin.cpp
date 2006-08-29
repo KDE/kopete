@@ -150,14 +150,11 @@ void JavaScriptPlugin::execScripts( Kopete::Account *account )
 	{
 		kDebug() << scriptfile->script() << endl;
 		ep->jsEngine->execute( scriptfile->script() );
-#warning Temporary disable Init function loading
-/*
 		QMap<QString,QString>::iterator it = scriptfile->functions.find( QLatin1String("Init") );
 		if( it != scriptfile->functions.end() )
 		{
-			ep->jsEngine->evaluate( it.data() + QString::fromLatin1("()") );
+			ep->jsEngine->execute( it.data() + QLatin1String("()") );
 		}
-*/
 	}
 }
 
@@ -387,7 +384,7 @@ void JavaScriptPlugin::runScripts( Kopete::Account *a, const QString &scriptType
 		{
 			QString functionCall = it.data() + QLatin1String("()");
 			kDebug() << k_funcinfo << "Executing " << functionCall << endl;
-//			jsEngine->evaluate( functionCall );
+			jsEngine->execute( functionCall );
 		}
 	}
 }

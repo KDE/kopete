@@ -221,7 +221,7 @@ void JavaScriptPreferences::slotUpdateScriptList()
 void JavaScriptPreferences::slotAddScript()
 {
 /*
-	addScriptDialog = new KDialogBase( this, "javascriptdialog", false, "Add Script",
+	addScriptDialog = new KDialog( this, "javascriptdialog", false, "Add Script",
                   KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	d->nameDialog = new JavaScriptDialog( addScriptDialog->makeVBoxMainWidget() );
