@@ -64,8 +64,8 @@ JavaScriptConfig::JavaScriptConfig(QObject *parent)
 			s->author = d->config->readEntry("Author", "Unknown" );
 			s->version = d->config->readEntry("Version", "Unknown" );
 			s->fileName = d->config->readEntry("FileName", "");
-			s->accounts = d->config->readListEntry("Accounts");
-			foreach( const QString &function, d->config->readListEntry("Functions") )
+			s->accounts = d->config->readEntry("Accounts", QStringList());
+			foreach( const QString &function, d->config->readEntry("Functions", QStringList()) )
 				s->functions.insert( function, d->config->readEntry( function + "_Function", QString() ) );
 			s->immutable = d->config->entryIsImmutable( group );
 
@@ -141,9 +141,8 @@ void JavaScriptConfig::setFactoryEnabled( bool val )
 
 void JavaScriptConfig::apply()
 {
-	for( QMap<QString,JavaScriptFile*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it  )
+	foreach( JavaScriptFile *s, d->scripts )
 	{
-		JavaScriptFile *s = it.data();
 		d->config->setGroup( s->id + "_Script" );
 		d->config->writeEntry("ID", s->id );
 		d->config->writeEntry("Name", s->name );
@@ -154,7 +153,7 @@ void JavaScriptConfig::apply()
 		d->config->writeEntry("Functions", s->functions.keys() );
 		d->config->writeEntry("Accounts", s->accounts );
 		for( QMap<QString,QString>::iterator it2 = s->functions.begin(); it2 != s->functions.end(); ++it2 )
-			d->config->writeEntry( it2.key() + "_Function", it2.data() );
+			d->config->writeEntry( it2.key() + "_Function", it2.value() );
 	}
 
 	d->config->sync();
@@ -199,11 +198,11 @@ QList<JavaScriptFile *> JavaScriptConfig::scriptsFor( Kopete::Account *account )
 		key = "GLOBAL_SCRIPT";
 
 	QList<JavaScriptFile *> retVal;
-	for( QMap<QString,JavaScriptFile*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it )
+	foreach( JavaScriptFile *scriptFile, d->scripts )
 	{
-		kDebug() << it.data()->accounts << endl;
-		if( it.data()->accounts.contains( key ) || it.data()->accounts.contains( "GLOBAL_SCRIPT" ) )
-			retVal.append( it.data() );
+		kDebug() << scriptFile->accounts << endl;
+		if( scriptFile->accounts.contains( key ) || scriptFile->accounts.contains( "GLOBAL_SCRIPT" ) )
+			retVal.append( scriptFile );
 	}
 
 	return retVal;
@@ -225,7 +224,7 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 		if( scriptPtr->accounts.contains( script ) )
 		{
 			if( !enabled )
-				scriptPtr->accounts.remove( key );
+				scriptPtr->accounts.removeAll( key );
 		}
 		else if( enabled )
 		{
@@ -265,7 +264,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 	}
 
 	const KArchiveDirectory* rootDir = archive.directory();
-	QStringList desktopFiles = rootDir->entries().grep( QRegExp( QString::fromLatin1("^(.*)\\.desktop$") ) );
+	QStringList desktopFiles = rootDir->entries().filter( QRegExp( QString::fromLatin1("^(.*)\\.desktop$") ) );
 
 	if( desktopFiles.size() == 1 )
 	{
@@ -287,7 +286,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 
 				QMap<QString,QString> functions;
 
-				foreach( const QString &function, conf.readListEntry("Functions") )
+				foreach( const QString &function, conf.readEntry("Functions", QStringList()) )
 					functions.insert( function, conf.readEntry( function + "_Function", QString()));
 
 				addScript( conf.readEntry("FileName"), conf.readEntry("Name"),
