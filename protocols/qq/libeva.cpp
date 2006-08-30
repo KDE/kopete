@@ -202,16 +202,22 @@ namespace Eva {
 		return list;
 	}
 
-	std::list< std::string > contactDetail( const ByteArray& text )
+	std::list< std::string > Packet::contactDetail( const ByteArray& text )
 	{
-		char* start = text.c_str();
 		std::list< std::string > list;
-		// TODO: convert to string. use split.
+		static const uchar Divider = 0x1e;
+		int start = 0;
+
+		for( int i = 0; i< text.size(); i++ )
+		{
+			if( text.data()[i] != Divider )
+				continue;
+			list.push_back(std::string(text.c_str()+start, i-start) );
+			start = i+1;
+		}
 		return list;
 	}
 				
-
-			
 	// Core functions
 	ByteArray loginToken( uint id, ushort sequence )
 	{

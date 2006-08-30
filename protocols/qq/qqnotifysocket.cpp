@@ -145,6 +145,20 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 		case Eva::UpdateInfo :
 		case Eva::Search :
 		case Eva::UserInfo :
+		{
+			std::list<std::string> cd = Eva::Packet::contactDetail(text);
+			// dump it
+			kDebug(14140) << "dump the contact info" << endl;
+			for( std::list<std::string>::const_iterator it = cd.begin(); 
+				it != cd.end(); it++ )
+			{
+				kDebug(14140) << QString((*it).c_str()) << endl;
+			}
+			break;
+		}
+
+			
+			break;
 		case Eva::AddFriend :
 		case Eva::RemoveFriend :
 		case Eva::AuthInvite :
