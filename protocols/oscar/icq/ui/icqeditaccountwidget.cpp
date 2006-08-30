@@ -73,22 +73,32 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->edtServerAddress->setText( serverEntry );
 		mAccountSettings->edtServerPort->setValue( portEntry );
 
-        bool configValue = mAccount->configGroup()->readEntry( "RequireAuth", false );
-		mAccountSettings->chkRequireAuth->setChecked( configValue );
+		bool configChecked = mAccount->configGroup()->readEntry( "RequireAuth", false );
+		mAccountSettings->chkRequireAuth->setChecked( configChecked );
 
-        configValue = mAccount->configGroup()->readEntry( "RespectRequireAuth", true );
-		mAccountSettings->chkRespectRequireAuth->setChecked( configValue );
+		configChecked = mAccount->configGroup()->readEntry( "RespectRequireAuth", true );
+		mAccountSettings->chkRespectRequireAuth->setChecked( configChecked );
 
-        configValue = mAccount->configGroup()->readEntry( "HideIP", true );
-		mAccountSettings->chkHideIP->setChecked( configValue );
+		configChecked = mAccount->configGroup()->readEntry( "HideIP", true );
+		mAccountSettings->chkHideIP->setChecked( configChecked );
 
-        configValue = mAccount->configGroup()->readEntry( "WebAware", false );
-		mAccountSettings->chkWebAware->setChecked( configValue );
+		configChecked = mAccount->configGroup()->readEntry( "WebAware", false );
+		mAccountSettings->chkWebAware->setChecked( configChecked );
 
-        int encodingValue = mAccount->configGroup()->readEntry( "DefaultEncoding", 4 );
-        mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
+		int configValue = mAccount->configGroup()->readEntry( "DefaultEncoding", 4 );
+		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
                                       mProtocol->encodings(),
-                                      encodingValue );
+                                      configValue );
+
+		//set filetransfer stuff
+		configChecked = mAccount->configGroup()->readEntry( "FileProxy", false );
+		mAccountSettings->chkFileProxy->setChecked( configChecked );
+		configValue = mAccount->configGroup()->readEntry( "FirstPort", 5190 );
+		mAccountSettings->sbxFirstPort->setValue( configValue );
+		configValue = mAccount->configGroup()->readEntry( "LastPort", 5199 );
+		mAccountSettings->sbxLastPort->setValue( configValue );
+		configValue = mAccount->configGroup()->readEntry( "Timeout", 10 );
+		mAccountSettings->sbxTimeout->setValue( configValue );
 
 		// Global Identity
 		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
@@ -125,21 +135,21 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	mAccountSettings->mPasswordWidget->save(&mAccount->password());
 	mAccount->setExcludeConnect(mAccountSettings->chkAutoLogin->isChecked());
 
-    bool configValue = mAccountSettings->chkRequireAuth->isChecked();
-	mAccount->configGroup()->writeEntry( "RequireAuth", configValue );
+	bool configChecked = mAccountSettings->chkRequireAuth->isChecked();
+	mAccount->configGroup()->writeEntry( "RequireAuth", configChecked );
 
-    configValue = mAccountSettings->chkRespectRequireAuth->isChecked();
-	mAccount->configGroup()->writeEntry( "RespectRequireAuth", configValue );
+	configChecked = mAccountSettings->chkRespectRequireAuth->isChecked();
+	mAccount->configGroup()->writeEntry( "RespectRequireAuth", configChecked );
 
-    configValue = mAccountSettings->chkHideIP->isChecked();
-	mAccount->configGroup()->writeEntry( "HideIP", configValue );
+	configChecked = mAccountSettings->chkHideIP->isChecked();
+	mAccount->configGroup()->writeEntry( "HideIP", configChecked );
 
-    configValue = mAccountSettings->chkWebAware->isChecked();
-	mAccount->configGroup()->writeEntry( "WebAware", configValue );
+	configChecked = mAccountSettings->chkWebAware->isChecked();
+	mAccount->configGroup()->writeEntry( "WebAware", configChecked );
 
-    int encodingMib = mProtocol->getCodeForCombo( mAccountSettings->encodingCombo,
+	int configValue = mProtocol->getCodeForCombo( mAccountSettings->encodingCombo,
                                                   mProtocol->encodings() );
-    mAccount->configGroup()->writeEntry( "DefaultEncoding", encodingMib );
+	mAccount->configGroup()->writeEntry( "DefaultEncoding", configValue );
 
 	if ( mAccountSettings->optionOverrideServer->isChecked() )
 	{
@@ -151,6 +161,16 @@ Kopete::Account *ICQEditAccountWidget::apply()
 		mAccount->setServerAddress("login.oscar.aol.com");
 		mAccount->setServerPort(5190);
 	}
+
+	//set filetransfer stuff
+	configChecked = mAccountSettings->chkFileProxy->isChecked();
+	mAccount->configGroup()->writeEntry( "FileProxy", configChecked );
+	configValue = mAccountSettings->sbxFirstPort->value();
+	mAccount->configGroup()->writeEntry( "FirstPort", configValue );
+	configValue = mAccountSettings->sbxLastPort->value();
+	mAccount->configGroup()->writeEntry( "LastPort", configValue );
+	configValue = mAccountSettings->sbxTimeout->value();
+	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );

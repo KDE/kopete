@@ -79,6 +79,19 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 				mGui->rbAllowAll->setChecked( true );
 		}
 
+		//set filetransfer stuff
+		bool configChecked = mAccount->configGroup()->readEntry( "FileProxy", false );
+		mGui->chkFileProxy->setChecked( configChecked );
+		int configValue = mAccount->configGroup()->readEntry( "FirstPort", 5190 );
+		mGui->sbxFirstPort->setValue( configValue );
+		//mGui->sbxFirstPort->setDisabled( configChecked );
+		configValue = mAccount->configGroup()->readEntry( "LastPort", 5199 );
+		mGui->sbxLastPort->setValue( configValue );
+		//mGui->sbxLastPort->setDisabled( configChecked );
+		configValue = mAccount->configGroup()->readEntry( "Timeout", 10 );
+		mGui->sbxTimeout->setValue( configValue );
+
+
 		// Global Identity
 		mGui->mGlobalIdentity->setChecked( account->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
     }
@@ -137,6 +150,16 @@ Kopete::Account *AIMEditAccountWidget::apply()
 
 	mAccount->configGroup()->writeEntry( "PrivacySetting", privacySetting );
 	mAccount->setPrivacySettings( privacySetting );
+
+	//set filetransfer stuff
+	bool configChecked = mGui->chkFileProxy->isChecked();
+	mAccount->configGroup()->writeEntry( "FileProxy", configChecked );
+	int configValue = mGui->sbxFirstPort->value();
+	mAccount->configGroup()->writeEntry( "FirstPort", configValue );
+	configValue = mGui->sbxLastPort->value();
+	mAccount->configGroup()->writeEntry( "LastPort", configValue );
+	configValue = mGui->sbxTimeout->value();
+	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );

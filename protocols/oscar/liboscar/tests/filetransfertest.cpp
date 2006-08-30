@@ -1,5 +1,5 @@
 /*
-    Offline Messages Task Test
+    Filetransfer Test
 
     Copyright (c) 2006 by Matt Rogers <mattr@kde.org>
 
@@ -15,29 +15,28 @@
     *************************************************************************
 */
 
-#include "offlinemessagestest.h"
-#include "offlinemessagestask.h"
+#include "filetransfertest.h"
+#include "filetransfertask.h"
 #include "buffer.h"
 
-OSCAR_TEST_MAIN( OfflineMessagesTest )
+OSCAR_TEST_MAIN( FileTransferTest )
 
-void OfflineMessagesTest::testOfflineMessages()
+void FileTransferTest::testRRequest()
 {
-	if (! loadFile("snac1503.buffer")){
-		QFAIL("couldn't load test data file");
-	}
-	//m_data should now be a buffer with our data
+	//TODO
+ /*   Buffer* b = new Buffer();
+    b->addDWord( 0x00010002 );
+    b->addDWord( 0x00030004 );
 
-	Oscar::Message msg = OfflineMessagesTask::parseOfflineMessage( m_data );
-	QVERIFY( msg.receiver() == "52009835" );
-	QVERIFY( msg.sender() == "33146327" );
-	QVERIFY( msg.textArray() == "This is a test" );
-	QVERIFY( msg.properties() == 0 );
-	QVERIFY( msg.channel() == 1 );
-	QCOMPARE( msg.timestamp().toString(), 
-			QString("Sat Mar 4 11:38:00 2006") );
-
+    QList<int> families = ServerVersionsTask::buildFamiliesList( b );
+    QVERIFY( families.isEmpty() ==  false );
+    QVERIFY( families.count() == 4 );
+    QVERIFY( families.takeFirst() == 0x0001 );
+    QVERIFY( families.takeFirst() == 0x0002 );
+    QVERIFY( families.takeFirst() == 0x0003 );
+    QVERIFY( families.takeFirst() == 0x0004 );
+    delete b;*/
 }
 
 
-#include "offlinemessagestest.moc"
+#include "filetransfertest.moc"

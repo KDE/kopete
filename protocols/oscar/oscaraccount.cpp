@@ -55,6 +55,7 @@
 #include "oscarconnector.h"
 #include "contactmanager.h"
 #include "oscarlistnonservercontacts.h"
+#include "kopetetransfermanager.h"
 #include "oscarversionupdater.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
@@ -124,6 +125,10 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
 	                  this, SLOT( slotSendBuddyIcon() ) );
+	QObject::connect( d->engine, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),
+	                  this, SLOT( askIncoming( QString, QString, DWORD, QString, QString ) ) );
+	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
+	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
 }
 
 OscarAccount::~OscarAccount()
@@ -338,6 +343,24 @@ void OscarAccount::nonServerAddContactDialogClosed()
 	
     d->olnscDialog->deleteLater();
     d->olnscDialog = 0L;
+}
+
+void OscarAccount::askIncoming( QString c, QString f, DWORD s, QString d, QString i )
+{
+	QString sender = Oscar::normalize( c );
+	if ( !contacts()[sender] )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact" << endl;
+		addContact( sender, QString::null, 0,  Kopete::Account::Temporary );
+	}
+	Kopete::Contact * ct = contacts()[ sender ];
+	Kopete::TransferManager::transferManager()->askIncomingTransfer( ct, f, s, d, i);
+}
+
+//this is because the filetransfer task can't call the function itself.
+void OscarAccount::getTransferManager( Kopete::TransferManager **t )
+{
+	*t = Kopete::TransferManager::transferManager();
 }
 
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )

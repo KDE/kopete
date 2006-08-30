@@ -27,9 +27,13 @@ Oscar::Message::Message()
 : m_channel( -1 ),
   m_properties( -1 ),
   m_messageType( 0 ),
+  m_requestType( 0 ),
+  m_port( 0 ),
+  m_reqNum( 1 ),
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
-  m_encoding( UserDefined )
+  m_encoding( UserDefined ),
+  m_fileSize( 0 )
 {
 }
 
@@ -37,11 +41,15 @@ Oscar::Message::Message( Encoding messageEncoding, const QByteArray& messageText
 : m_channel( channel ),
   m_properties( properties ),
   m_messageType( 0 ),
+  m_requestType( 0 ),
+  m_port( 0 ),
+  m_reqNum( 1 ),
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
   m_textArray( messageText ),
   m_timestamp( timestamp ),
-  m_encoding( messageEncoding )
+  m_encoding( messageEncoding ),
+  m_fileSize( 0 )
 {
 }
 
@@ -50,9 +58,13 @@ Oscar::Message::Message( Encoding messageEncoding, const QString& messageText, i
 : m_channel( channel ),
   m_properties( properties ),
   m_messageType( 0 ),
+  m_requestType( 0 ),
+  m_port( 0 ),
+  m_reqNum( 1 ),
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
-  m_timestamp( timestamp )
+  m_timestamp( timestamp ),
+  m_fileSize( 0 )
 {
 	setText( messageEncoding, messageText, codec );
 }
@@ -172,14 +184,14 @@ bool Oscar::Message::hasProperty( int prop ) const
 		return true;
 }
 
-int Oscar::Message::type() const
+int Oscar::Message::channel() const
 {
 	return m_channel;
 }
 
-void Oscar::Message::setType( int newType )
+void Oscar::Message::setChannel( int newChannel )
 {
-	m_channel = newType;
+	m_channel = newChannel;
 }
 
 QDateTime Oscar::Message::timestamp() const
@@ -230,6 +242,62 @@ int Oscar::Message::messageType() const
 void Oscar::Message::setMessageType( int type )
 {
 	m_messageType = type;
+}
+
+int Oscar::Message::reqType() const
+{
+	return m_requestType;
+}
+
+void Oscar::Message::setReqType( int type )
+{
+	m_requestType = type;
+}
+
+int Oscar::Message::port() const
+{
+	return m_port;
+}
+
+void Oscar::Message::setPort( int port )
+{
+	m_port = port;
+}
+
+QByteArray Oscar::Message::proxy() const
+{
+	return m_proxy;
+}
+
+void Oscar::Message::setProxy( QByteArray proxy )
+{
+	m_proxy = proxy;
+}
+
+int Oscar::Message::reqNum() const
+{
+	return m_reqNum;
+}
+
+void Oscar::Message::setReqNum( int n )
+{
+	m_reqNum = n;
+}
+
+QString Oscar::Message::fileName() const
+{
+	return m_fileName;
+}
+
+Oscar::DWORD Oscar::Message::fileSize() const
+{
+	return m_fileSize;
+}
+
+void Oscar::Message::setFile( Oscar::DWORD size, QString name )
+{
+	m_fileSize = size;
+	m_fileName = name;
 }
 
 Oscar::WORD Oscar::Message::exchange() const

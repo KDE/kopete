@@ -20,6 +20,7 @@
 
 #include <qwidget.h>
 #include <qdatetime.h>
+#include <kurl.h>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "userdetails.h"
@@ -107,6 +108,9 @@ public slots:
 	
 	/** a user is offline */
 	virtual void userOffline( const QString& ) = 0;
+
+	/** send a file to this contact */
+	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString::null, uint fileSize = 0L );
 
 protected slots:
 	void slotTyping( bool typing );

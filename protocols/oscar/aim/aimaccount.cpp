@@ -49,6 +49,7 @@
 #include "oscarutils.h"
 #include "client.h"
 #include "contactmanager.h"
+#include "oscarsettings.h"
 
 
 const DWORD AIM_ONLINE = 0x0;
@@ -181,7 +182,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 	msg.setSender( contactId() );
 	msg.setText( Oscar::Message::UserDefined, s, m_acct->defaultCodec() );
 	msg.setTimestamp(message.timestamp());
-	msg.setType(0x03);
+	msg.setChannel(0x03);
 	msg.addProperty( Oscar::Message::ChatRoom );
 
 	AIMChatSession* aimSession = dynamic_cast<AIMChatSession*>( session );
@@ -564,7 +565,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 {
 	kDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
 	// Want to call the parent to do everything else
-	if ( message.type() != 0x0003 )
+	if ( message.channel() != 0x0003 )
 	{
 		OscarAccount::messageReceived(message);
 
@@ -739,6 +740,14 @@ void AIMAccount::connectWithPassword( const QString & )
 	else if ( myself()->onlineStatus() == static_cast<AIMProtocol*>( protocol() )->statusOffline )
 	{
 		kDebug(14152) << k_funcinfo << "Logging in as " << accountId() << endl ;
+
+		//set up the settings for the account
+		Oscar::Settings* oscarSettings = engine()->clientSettings();
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
+		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
+		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
+
 		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), _password.left(16) );
 		engine()->connectToServer( c, server, true /* doAuth */ );

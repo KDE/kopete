@@ -49,12 +49,30 @@ public:
 	void setHideIP( bool hide );
 	bool hideIP() const;
 	
+	/* proxy Settings */
+	void setFileProxy( bool proxy );
+	bool fileProxy() const;
+	
+	/* port range settings */
+	void setFirstPort( int port );
+	int firstPort() const;
+	void setLastPort( int port );
+	int lastPort() const;
+	
+	/* timeout in seconds */
+	void setTimeout( int time );
+	int timeout() const;
+	
 private:
 	
 	bool m_webAware;
 	bool m_requireAuth;
 	bool m_respectRequireAuth;
 	bool m_hideIP;
+	bool m_fileProxy;
+	int  m_firstPort;
+	int  m_lastPort;
+	int  m_timeout;
 };
 
 }

@@ -452,7 +452,7 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
-	msg.setType(0x01);
+	msg.setChannel(0x01);
 
 	mAccount->engine()->sendMessage(msg);
 
@@ -495,7 +495,7 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );
 		message.setReceiver( mName );
-		message.setType( 0x01 );
+		message.setChannel( 0x01 );
 
 		// isAuto defaults to false
 		mAccount->engine()->sendMessage( message, true);

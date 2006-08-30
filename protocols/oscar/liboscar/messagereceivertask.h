@@ -43,6 +43,7 @@ public:
 signals:
 	
 	void receivedMessage( const Oscar::Message& );
+	void fileMessage( int, const QString, const QByteArray, Buffer );
 	
 private:
 	

@@ -20,7 +20,9 @@
 namespace Oscar
 {
 
+//FIXME: variables are not initialised. imho this is asking for trouble.
 Settings::Settings()
+: m_fileProxy( 0 ), m_firstPort( 5190 ), m_lastPort( 5199 ), m_timeout( 10 )
 {
 }
 
@@ -69,8 +71,45 @@ bool Settings::hideIP() const
 	return m_hideIP;
 }
 
+void Settings::setFileProxy( bool proxy )
+{
+	m_fileProxy = proxy;
+}
 
-	
+bool Settings::fileProxy() const
+{
+	return m_fileProxy;
+}
+
+void Settings::setFirstPort( int port )
+{
+	m_firstPort = port;
+}
+
+int Settings::firstPort() const
+{
+	return m_firstPort;
+}
+
+void Settings::setLastPort( int port )
+{
+	m_lastPort = port;
+}
+
+int Settings::lastPort() const
+{
+	return m_lastPort;
+}
+
+void Settings::setTimeout( int time )
+{
+	m_timeout = time;
+}
+
+int Settings::timeout() const
+{
+	return m_timeout;
+}
 
 
 }

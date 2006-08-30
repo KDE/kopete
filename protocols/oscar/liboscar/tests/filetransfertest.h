@@ -1,5 +1,5 @@
 /*
-    Offline Messages Task Test
+    File Transfer Test
 
     Copyright (c) 2006 by Matt Rogers <mattr@kde.org>
 
@@ -15,29 +15,16 @@
     *************************************************************************
 */
 
-#include "offlinemessagestest.h"
-#include "offlinemessagestask.h"
-#include "buffer.h"
+#ifndef FILETRANSFERTEST_H
+#define FILETRANSFERTEST_H
 
-OSCAR_TEST_MAIN( OfflineMessagesTest )
+#include "oscartestbase.h"
 
-void OfflineMessagesTest::testOfflineMessages()
+class FileTransferTest : public OscarTestBase
 {
-	if (! loadFile("snac1503.buffer")){
-		QFAIL("couldn't load test data file");
-	}
-	//m_data should now be a buffer with our data
+Q_OBJECT
+private slots:
+	void testRRequest();
+};
 
-	Oscar::Message msg = OfflineMessagesTask::parseOfflineMessage( m_data );
-	QVERIFY( msg.receiver() == "52009835" );
-	QVERIFY( msg.sender() == "33146327" );
-	QVERIFY( msg.textArray() == "This is a test" );
-	QVERIFY( msg.properties() == 0 );
-	QVERIFY( msg.channel() == 1 );
-	QCOMPARE( msg.timestamp().toString(), 
-			QString("Sat Mar 4 11:38:00 2006") );
-
-}
-
-
-#include "offlinemessagestest.moc"
+#endif

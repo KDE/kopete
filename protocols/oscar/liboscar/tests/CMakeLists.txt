@@ -69,9 +69,21 @@ target_link_libraries(offlinemessagestest ${LIBOSCAR_TEST_LIBRARIES})
 
 add_test(offlinemessagestest ${EXECUTABLE_OUTPUT_PATH}/offlinemessagestest)
 
+########### next target ###############
+
+set(filetransfertest_SRCS filetransfertest.cpp oscartestbase.cpp )
+
+kde4_automoc(${filetransfertest_SRCS})
+
+kde4_add_executable(filetransfertest RUN_UNINSTALLED ${filetransfertest_SRCS})
+
+target_link_libraries(filetransfertest ${LIBOSCAR_TEST_LIBRARIES} )
+
+add_test(filetransfertest ${EXECUTABLE_OUTPUT_PATH}/filetransfertest)
+
+
+########################################
 endif(KDE4_BUILD_TESTS)
-
-
 
 
 #original Makefile.am contents follow:

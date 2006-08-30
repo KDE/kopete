@@ -203,6 +203,19 @@ struct ChatRoomInfo
 	QString name;
 };
 
+struct OFT
+{
+	WORD type;
+	QByteArray cookie;
+	DWORD fileSize;
+	DWORD modTime;
+	DWORD checksum;
+	DWORD bytesSent;
+	DWORD sentChecksum;
+	BYTE flags;
+	QString fileName;
+};
+
 struct ClientVersion
 {
 	QString clientString;

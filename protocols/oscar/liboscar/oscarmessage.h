@@ -97,11 +97,11 @@ public:
 	/** add a property to the message */
 	void addProperty( int prop );
 
-	/** get the channel ( type ) of the message */
-	int type() const;
+	/** get the channel ( NOT type ) of the message */
+	int channel() const;
 
-	/** set the channel ( type ) of the message */
-	void setType( int newType );
+	/** set the channel ( NOT type ) of the message */
+	void setChannel( int newChannel );
 
 	/** get the timestamp of the message */
 	QDateTime timestamp() const;
@@ -133,6 +133,39 @@ public:
 	/** set the message (content) type */
 	void setMessageType( int type );
 
+	/** get the request type (req/cancel/accept) */
+	int reqType() const;
+
+	/** set the request type (req/cancel/accept) */
+	void setReqType( int type );
+
+	/** get the port */
+	int port() const;
+
+	/** set the port (for transfer requests) */
+	void setPort( int port );
+
+	/** get the proxy ip*/
+	QByteArray proxy() const;
+
+	/** set the proxy ip (for transfer requests) */
+	void setProxy( QByteArray proxy );
+
+	/** get the request # */
+	int reqNum() const;
+
+	/** set the request # (for transfer requests) */
+	void setReqNum( int n );
+
+	/** get the file name */
+	QString fileName() const;
+
+	/** get the file size */
+	DWORD fileSize() const;
+
+	/** set the file (for transfer requests) */
+	void setFile( DWORD size, QString name );
+
     /** get the exchange for the chat room this message is for */
     Oscar::WORD exchange() const;
 
@@ -160,14 +193,20 @@ private:
 	int m_channel;
 	int m_properties;
 	int m_messageType;
+	int m_requestType;
+	int m_port;
+	int m_reqNum;
 	int m_protocolVersion;
 	int m_channel2Counter;
 	QByteArray m_icbmCookie;
+	QByteArray m_proxy;
 	QByteArray m_textArray;
 	QDateTime m_timestamp;
 	Oscar::WORD m_exchange;
 	QString m_chatRoom;
 	Encoding m_encoding;
+	QString m_fileName;
+	DWORD m_fileSize;
 };
 
 }

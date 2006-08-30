@@ -28,6 +28,7 @@
 #include <kdebug.h> //for kDebug()
 #include <klocale.h>
 
+#include "filetransfertask.h"
 #include "buddyicontask.h"
 #include "clientreadytask.h"
 #include "connectionhandler.h"
@@ -499,7 +500,7 @@ void Client::notifySocketError( int errCode, const QString& msg )
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
     Connection* c = 0L;
-    if ( msg.type() == 0x0003 )
+    if ( msg.channel() == 0x0003 )
     {
         c = d->connections.connectionForChatRoom( msg.exchange(), msg.chatRoom() );
         if ( !c )
@@ -520,15 +521,16 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         // Set whether or not the message is an automated response
         sendMsgTask->setAutoResponse( isAuto );
         sendMsgTask->setMessage( msg );
+        sendMsgTask->setIp( ourInfo().dcExternalIp().IPv4Addr() ); //TODO: switch to internal
         sendMsgTask->go( true );
     }
 }
 
 void Client::receivedMessage( const Oscar::Message& msg )
 {
-	if ( msg.type() == 2 && !msg.hasProperty( Oscar::Message::AutoResponse ) )
+	if ( msg.channel() == 2 && !msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
-		// type 2 message needs an autoresponse, regardless of type
+		// channel 2 message needs an autoresponse, regardless of type
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
 		if ( !c )
 			return;
@@ -566,6 +568,14 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
 		emit messageReceived( msg );
 	}
+}
+
+void Client::fileMessage( const Oscar::Message& msg )
+{
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "internal ip: " << ourInfo().dcInternalIp().toString() << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "external ip: " << ourInfo().dcExternalIp().toString() << endl;
+
+	sendMessage( msg );
 }
 
 void Client::requestAuth( const QString& contactid, const QString& reason )
@@ -631,6 +641,8 @@ void Client::initializeStaticTasks()
 
 	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
 	         this, SLOT( receivedMessage( const Oscar::Message& ) ) );
+	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
+	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
 
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
@@ -842,7 +854,7 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting away message for " << contact << endl;
 	Oscar::Message msg;
-	msg.setType( 2 );
+	msg.setChannel( 2 );
 	msg.setReceiver( contact );
 	msg.addProperty( Oscar::Message::StatusMessageRequest );
 	switch ( contactStatus )
@@ -1320,6 +1332,49 @@ bool Client::hasIconConnection( ) const
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	return c;
+}
+
+void Client::sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( !c )
+		return;
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), filePath, t );
+	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
+	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
+	ft->go( true );
+}
+
+void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)
+{
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( !c )
+		return;
+	//pass the message to the matching task if we can
+	const QList<FileTransferTask*> p = c->rootTask()->findChildren<FileTransferTask*>();
+	foreach( FileTransferTask *t, p)
+	{
+		if ( t->take( type, cookie, buf ) )
+		{
+			return;
+		}
+	}
+	//maybe it's a new request!
+	if ( type == 0 )
+	{
+		kDebug(14151) << k_funcinfo << "new request :)" << endl;
+		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
+		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
+				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
+		connect( ft, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),
+				SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ) );
+		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
+				this, SLOT( fileMessage( const Oscar::Message& ) ) );
+		ft->go( true );
+		return;
+	}
+
+	kDebug(14151) << k_funcinfo << "nobody wants it :(" << endl;
 }
 
 #include "client.moc"

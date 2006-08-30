@@ -27,6 +27,7 @@
 #include <kmessagebox.h>
 
 #include <kdeversion.h>
+#include <kfiledialog.h>
 
 #include "kopeteaccount.h"
 #include "kopetechatsessionmanager.h"
@@ -35,6 +36,7 @@
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include <kopeteglobal.h>
+#include "kopetetransfermanager.h"
 
 #include "oscaraccount.h"
 #include "client.h"
@@ -52,6 +54,7 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	mMsgManager = 0L;
 	m_ssiItem = ssiItem;
 	connect( this, SIGNAL( updatedSSI() ), this, SLOT( updateSSIItem() ) );
+	setFileCapable( true );
 }
 
 OscarContact::~OscarContact()
@@ -144,6 +147,7 @@ void OscarContact::sync(unsigned int flags)
 	
 	if ( flags & Kopete::Contact::MovedBetweenGroup == Kopete::Contact::MovedBetweenGroup )
 	{
+		
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
 		ContactManager* ssiManager = mAccount->engine()->ssiManager();
 		
@@ -167,7 +171,9 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
 	m_details.merge( details );
-	
+
+	setFileCapable( m_details.hasCap( CAP_SENDFILE ) );
+
 	QStringList capList;
 	// Append client name and version in case we found one
 	if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
@@ -231,6 +237,31 @@ QTextCodec* OscarContact::contactCodec() const
 		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
 	else
 		return mAccount->defaultCodec();
+}
+
+//here's where a filetransfer usually begins
+//could be called by a KAction or our dcop code or something
+void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
+{
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "file: '" << sourceURL 
+		<< "' '" << altFileName << "' size " << fileSize << endl;
+	QString filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenFileName( KUrl() ,"*", 0l  , i18n( "Kopete File Transfer" ));
+	else
+		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+
+	if( filePath.isEmpty() )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "filePath empty, assuming cancel" << endl;
+		return;
+	}
+	kDebug(OSCAR_GEN_DEBUG) << "filePath: '" << filePath << "' " << endl;
+
+	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, filePath, QFile( filePath ).size(), mName, Kopete::FileTransferInfo::Outgoing);
+	mAccount->engine()->sendFile( mName, filePath, t );
 }
 
 #include "oscarcontact.moc"

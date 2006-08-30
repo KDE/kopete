@@ -16,6 +16,7 @@
 
 #include "sendmessagetask.h"
 
+#include <qtextcodec.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <krandom.h>
@@ -45,18 +46,23 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 	m_autoResponse = autoResponse;
 }
 
+void SendMessageTask::setIp( const DWORD ip )
+{
+	m_ip = ip;
+}
+
 void SendMessageTask::onGo()
 {
-	if ( m_message.textArray().isEmpty() && m_message.type() == 1 ) // at least channel 2 needs to send empty messages
-	{
+	if ( m_message.textArray().isEmpty() && m_message.channel() == 1 )
+	{ //channel 1 shouldn't be sending blanks
 		setError(-1, "No message to send");
 		return;
 	}
 
 	// Check Message to see what SNAC to use
 	int snacSubfamily = 0x0006;
-	if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
-	{ // an auto response is send for ack of channel 2 messages
+	if ( ( m_message.messageType() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	{ // an auto response is send for ack of chat messages
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
 		snacSubfamily = 0x000B;
 	}
@@ -64,37 +70,39 @@ void SendMessageTask::onGo()
 	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 
-	if ( snacSubfamily == 0x0006 )
+	if ( snacSubfamily == 0x0006 && m_message.messageType() != 3 )
 	{
 		DWORD cookie1 = KRandom::random();
 		DWORD cookie2 = KRandom::random();
 		
 		b->addDWord( cookie1 );
 		b->addDWord( cookie2 );
+
+		m_message.setIcbmCookie( b->buffer() ); //in case we need it later
 	}
 	else
-	{
-		b->addString( m_message.icbmCookie() ); // in automated response, we need the same cookie as in the request
+	{ //file msgs and automated responses already have a cookie
+		b->addString( m_message.icbmCookie() );
 	}
 
-	b->addWord( m_message.type() );
+	b->addWord( m_message.channel() );
 
 	b->addByte( m_message.receiver().length() );
-	b->addString( m_message.receiver().toLatin1(), m_message.receiver().length() );
+	b->addString( m_message.receiver().toLatin1() );
 
 
 	if ( snacSubfamily == 0x0006 )
 	{
 		/* send a regular message */
-		switch ( m_message.type() )
+		switch ( m_message.channel() )
 		{
-		case 1:
+		case 1: //plaintext
 			addChannel1Data( b );
 			break;
-		case 2:
+		case 2: //chatreq or filereq
 			addChannel2Data( b );
 			break;
-		case 4:
+		case 4: //url
 			addChannel4Data( b );
 			break;
 		}
@@ -113,7 +121,7 @@ void SendMessageTask::onGo()
 			b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 		}
 
-		if ( client()->isIcq() && m_message.type() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+		if ( client()->isIcq() && m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 			b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 	}
 	else
@@ -176,85 +184,95 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	}
 	tlv2buffer.addString( m_message.textArray() );
 
-	TLV tlv2( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
-	b->addTLV( tlv2 );
+	b->addTLV( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
 }
 
 void SendMessageTask::addChannel2Data( Buffer* b )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send type 2 message!" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send channel 2 message!" << endl;
 
 	Buffer tlv5buffer;
 	
-	tlv5buffer.addWord( 0 ); // 0 = request; other possibilities: 1 = cancel; 2 = accept;
-	//TODO: i hardcoded it for now, don't yet what to use the other stuff for
+	tlv5buffer.addWord( m_message.reqType() ); // 0 = request; 1 = cancel; 2 = accept
 
-	// message id cookie. needs to be the same one as above, thus copy first eight bytes of buffer
-	Buffer* tmp = new Buffer(b->buffer(), 8);
-	tlv5buffer.addString( tmp->buffer(), 8 );
-	delete tmp;
+	// message id cookie. needs to be the same one as above
+	tlv5buffer.addString( m_message.icbmCookie() );
 	
-	/* send our client capability. oscardocs say this one means we support type 2 messages,
-	   ethereal say it means we support server relay. however, it's what most clients send,
-	   even official ones...
-	*/
+	//cap used to identify the message type
+	tlv5buffer.addGuid( oscar_caps[ m_message.messageType() == 3 ? CAP_SENDFILE : CAP_ICQSERVERRELAY ] );
 
-	// too lazy to think about byte order :)
-	tlv5buffer.addByte( 0x09 );
-	tlv5buffer.addByte( 0x46 );
-	tlv5buffer.addByte( 0x13 );
-	tlv5buffer.addByte( 0x49 );
-	tlv5buffer.addByte( 0x4C );
-	tlv5buffer.addByte( 0x7F );
-	tlv5buffer.addByte( 0x11 );
-	tlv5buffer.addByte( 0xD1 );
-	tlv5buffer.addByte( 0x82 );
-	tlv5buffer.addByte( 0x22 );
-	tlv5buffer.addByte( 0x44 );
-	tlv5buffer.addByte( 0x45 );
-	tlv5buffer.addByte( 0x53 );
-	tlv5buffer.addByte( 0x54 );
-	tlv5buffer.addByte( 0x00 );
-	tlv5buffer.addByte( 0x00 );
-	
-	// These are optional, would probably be a god ide to start using them, though
+	if( m_message.reqType() == 0 )
+	{ //requests need more data
 
-	// add TLV 03: internal ip
-// 	tlv5buffer.addWord( 0x0003 ); // TLV Type
-// 	tlv5buffer.addWord( 0x0004 ); // TLV Length
-// 	tlv5buffer.addDWord( 0x00000000 ); // TLV Data: Internal IP
+		// add TLV 0A: request # (usually 1)
+		tlv5buffer.addWord( 0x000A ); // TLV Type
+		tlv5buffer.addWord( 0x0002 ); // TLV Length
+		tlv5buffer.addWord( m_message.reqNum() ); // TLV Data
 
-	// add TLV 05: listening port
-// 	tlv5buffer.addWord( 0x0005 ); // TLV Type
-// 	tlv5buffer.addWord( 0x0002 ); // TLV Length
-// 	tlv5buffer.addWord( 0x0000 ); // TLV Data: listening port
+		// add TLV 0F: unknown but always there
+		tlv5buffer.addWord( 0x000F );
+		tlv5buffer.addWord( 0x0000 );
 
-	// add TLV 0A: acktype (1 = normal message)
-	tlv5buffer.addWord( 0x000A ); // TLV Type
-	tlv5buffer.addWord( 0x0002 ); // TLV Length
-	tlv5buffer.addWord( 0x0001 ); // TLV Data: unknown, usually 1
+		//ft needs at least internal-ip, port, and port check
+		//might need proxy-ip later.
+		if ( int p = m_message.port() )
+		{
+			//our ip
+			tlv5buffer.addWord( 3 );
+			tlv5buffer.addWord( 4 );
+			tlv5buffer.addDWord( m_ip );
+			//our port
+			tlv5buffer.addWord( 5 );
+			tlv5buffer.addWord( 2 );
+			tlv5buffer.addWord( p );
+			//port check
+			tlv5buffer.addWord( 0x17 );
+			tlv5buffer.addWord( 2 );
+			tlv5buffer.addWord( ~ p );
 
-	// add TLV 0B: unknown
-// 	tlv5buffer.addWord( 0x000B ); // TLV Type
-// 	tlv5buffer.addWord( 0x0002 ); // TLV Length
-// 	tlv5buffer.addWord( 0x0000 ); // TLV Data: unknown
+			QByteArray proxy = m_message.proxy();
+			if( proxy.length() == 4 )
+			{ //add proxy ip, check, & flag
+				//proxy flag
+				tlv5buffer.addWord( 0x10 );
+				tlv5buffer.addWord( 0 );
+				//proxy ip
+				tlv5buffer.addWord( 2 );
+				tlv5buffer.addWord( 4 );
+				tlv5buffer.addString( proxy );
+				//proxy ip check
+				for( int i=0; i<4; ++i)
+					proxy[i] = ~ proxy[i];
+				tlv5buffer.addWord( 0x16 );
+				tlv5buffer.addWord( 4 );
+				tlv5buffer.addString( proxy );
+			}
+		}
 
-	// add TLV 0F: unknown
-	tlv5buffer.addWord( 0x000F ); // TLV Type
-	tlv5buffer.addWord( 0x0000 ); // TLV Length
-	// TLV Data: empty
-	
-		
-	
-	/* now comes the important TLV 0x2711 */
-	
-	Buffer tlv2711buffer;
-	addRendezvousMessageData( &tlv2711buffer );
-	TLV tlv2711( 0x2711, tlv2711buffer.length(), tlv2711buffer.buffer() );
-	tlv5buffer.addTLV( tlv2711 );
 
-	TLV tlv5( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
-	b->addTLV( tlv5 );
+		/* now comes the important TLV 0x2711 */
+		Buffer tlv2711;
+		if ( m_message.messageType() == 3 ) //TODO: reduce the amount of magic #s
+		{ //filetransfer
+			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
+			tlv2711.addWord( 1 ); //file count
+			tlv2711.addDWord( m_message.fileSize() );
+			//mm, unicode.
+			QTextCodec *c = QTextCodec::codecForName( "UTF8" );
+			tlv2711.addString( c->fromUnicode( m_message.fileName() ) );
+			tlv2711.addByte( 0 ); //make sure the name's null-terminated
+			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+			//send filename encoding
+			//tlv5buffer.addTLV( 0x2712, 8, "UTF8" );
+		}
+		else
+		{//chat
+			addRendezvousMessageData( &tlv2711 );
+			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+		}
+	}
+
+	b->addTLV( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
 }
 
 void SendMessageTask::addChannel4Data( Buffer* b )
@@ -284,7 +302,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	b->addByte( 0x0000 ); // unknown
 
 	// channel 2 counter: in auto response, use original message value. s/t else otherwise (most anythig will work)
-	int channel2Counter = 0xBEEF; // just some number for now
+	int channel2Counter;
 	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		channel2Counter = m_message.channel2Counter();
 	else

@@ -15,6 +15,7 @@
 */
 
 #include "messagereceivertask.h"
+#include "filetransfertask.h"
 
 #include <qtextcodec.h>
 #include <QList>
@@ -179,7 +180,7 @@ void MessageReceiverTask::handleType1Message()
 	msg.setSender( m_fromUser );
 	msg.setReceiver( client()->userId() );
 	msg.setTimestamp( QDateTime::currentDateTime() );
-	msg.setType( 0x01 );
+	msg.setChannel( 0x01 );
 
 	emit receivedMessage( msg );
 }
@@ -206,8 +207,14 @@ void MessageReceiverTask::handleType2Message()
 	// skip the message id cookie, already handled above
 	messageBuffer.skipBytes( 8 );
 
-	// next is capability identifier (GUID). skip for now
-	messageBuffer.skipBytes( 16 );
+	// next is capability identifier (GUID). this tells us what we're dealing with.
+	Oscar::Guid g = messageBuffer.getGuid();
+	if ( g == oscar_caps[CAP_SENDFILE] )
+	{
+		kDebug(14151) << k_funcinfo << "**************this is a filetransfer message************" << endl;
+		emit fileMessage( requestType, m_fromUser, m_icbmCookie, messageBuffer);
+		return;
+	}
 
 	while( messageBuffer.bytesAvailable() > 0 )
 	{
@@ -223,7 +230,7 @@ void MessageReceiverTask::handleType2Message()
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000A:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got Acktype: " // 0x0001 normal message, 2 Abort Request, 3 Acknowledge request
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got request #: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000B:
@@ -320,7 +327,7 @@ void MessageReceiverTask::handleType4Message()
 		break;
 	}
 
-	msg.setType( 0x04 );
+	msg.setChannel( 0x04 );
 	msg.setTimestamp( QDateTime::currentDateTime() );
 	msg.setSender( msgSender );
 	msg.setReceiver( client()->userId() );
@@ -426,7 +433,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		msg->setSender( m_fromUser );
 		msg->setReceiver( client()->userId() );
 		msg->setTimestamp( QDateTime::currentDateTime() );
-		msg->setType( 0x02 );
+		msg->setChannel( 0x02 );
 		msg->setIcbmCookie( m_icbmCookie );
 		msg->setProtocolVersion( protocolVersion );
 		msg->setChannel2Counter( channel2Counter );
