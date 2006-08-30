@@ -27,7 +27,7 @@ namespace Eva {
 	static const ushort Heartbeat = 0x0002;
 	static const ushort UpdateInfo = 0x0004;
 	static const ushort Search = 0x0005;
-	static const ushort UserInfo = 0x0006;
+	static const ushort ContactDetail = 0x0006;
 	static const ushort AddFriend = 0x0009;
 	static const ushort RemoveFriend = 0x000A;
 	static const ushort AuthInvite = 0x000B;
@@ -415,9 +415,9 @@ namespace Eva {
 	 */
 	ByteArray statusUpdate( uint id, ushort sequence, const ByteArray& key, uchar status );
 	/** 
-	 * Fetch user information of qqId
+	 * Fetch contact information of qqId
 	 */
-	ByteArray contactInfo( uint id, ushort sequence, const ByteArray& key, int qqId );
+	ByteArray contactDetail( uint id, ushort sequence, const ByteArray& key, int qqId );
 	/**
 	 * request transfer key, which is used as the identification of the conversation
 	 */

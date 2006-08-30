@@ -105,7 +105,7 @@ private:
 	void sendListOnlineContacts(uint pos = 0);
 	void sendMsgReply( int sequence, const Eva::ByteArray& replyKey );
 	void heartbeat();
-	void contactInfo(Eva::uint qqId);
+	void contactDetail(Eva::uint qqId);
 
 private:
 	QQAccount *m_account;

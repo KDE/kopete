@@ -287,12 +287,12 @@ namespace Eva {
 		return Packet::create(id, ChangeStatus, sequence, key, text );
 	}
 
-	ByteArray contactInfo( uint id, ushort sequence, const ByteArray& key, int qqId )
+	ByteArray contactDetail( uint id, ushort sequence, const ByteArray& key, int qqId )
 	{
 		ByteArray text(32);
 		snprintf( text.c_str(), 31, "%d", qqId );
 		text.setSize( strlen( text.c_str() ) );
-		return Packet::create(id, UserInfo, sequence, key, text );
+		return Packet::create(id, ContactDetail, sequence, key, text );
 	}
 
 	ByteArray groupNames( uint id, ushort sequence, const ByteArray& key )

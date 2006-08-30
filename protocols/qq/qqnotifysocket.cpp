@@ -144,17 +144,15 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			break;
 		case Eva::UpdateInfo :
 		case Eva::Search :
-		case Eva::UserInfo :
+		case Eva::ContactDetail :
 		{
-			std::list<std::string> cd = Eva::Packet::contactDetail(text);
-			// dump it
-			kDebug(14140) << "dump the contact info" << endl;
-			for( std::list<std::string>::const_iterator it = cd.begin(); 
-				it != cd.end(); it++ )
-			{
-				kDebug(14140) << QString((*it).c_str()) << endl;
-			}
-			break;
+			std::list<std::string> list = Eva::Packet::contactDetail(text);
+			QStringList qsl;
+			for( std::list<std::string>::const_iterator it = list.begin(); 
+				it != list.end(); it++ )
+				qsl.push_back( QString((*it).c_str()) );
+
+			// emit Contact
 		}
 
 			
@@ -288,7 +286,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 					sendPacket( Eva::transferKey( m_qqId, m_id++, m_sessionKey) );
 
 					// get the meta data for myself
-					contactInfo(m_qqId);
+					contactDetail(m_qqId);
 
 					// fetch the online contacts
 					sendListOnlineContacts();
@@ -381,9 +379,9 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 }
 
 
-void QQNotifySocket::contactInfo(Eva::uint qqId)
+void QQNotifySocket::contactDetail(Eva::uint qqId)
 {
-	sendPacket( Eva::contactInfo( m_qqId, m_id++, m_sessionKey, qqId) );
+	sendPacket( Eva::contactDetail( m_qqId, m_id++, m_sessionKey, qqId) );
 }
 	
 void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message )
