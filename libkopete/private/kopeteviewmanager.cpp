@@ -37,6 +37,7 @@
 #include "kopeteview.h"
 #include "kopetechatsession.h"
 #include "kopetegroup.h"
+#include "kopetepicture.h"
 
 #include "kopeteviewmanager.h"
 
@@ -296,6 +297,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 				}
 				KNotification *notify=new KNotification(eventId, w, KNotification::Persistant);
 				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
+				notify->setPixmap( QPixmap(msg.from()->metaContact()->picture().image()) );
                 notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
 				
 				foreach(QString cl , msg.classes())
