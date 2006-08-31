@@ -41,6 +41,7 @@ class QQContact;
 class QQProtocol;
 class QQNotifySocket;
 class QQChatSession;
+class QTextCodec;
 
 /**
  * This represents an account connected to the qq
@@ -115,6 +116,7 @@ public slots:
 	void slotContactInGroup(const int qqId, const char type, const int groupId );
 	void slotContactStatusChanged(const Eva::ContactStatus& cs);
 	void slotMessageReceived( const Eva::MessageHeader& header, const Eva::ByteArray& message );
+	void slotContactDetailReceived( const QString& id, const QList<QByteArray>& list ); 
 
 protected:
 	/**
@@ -163,6 +165,8 @@ private:
 	uint m_clientId;
 
 	QList<QQChatSession*> m_chatSessions;
+
+	QTextCodec* m_codec;
 };
 
 #endif

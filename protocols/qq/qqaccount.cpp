@@ -43,6 +43,7 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 	m_notifySocket = 0L;
 	m_connectstatus = QQProtocol::protocol()->Offline;
 	m_newContactList=false;
+	m_codec = QTextCodec::codecForName("GB18030");
  
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
@@ -52,6 +53,7 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 QString QQAccount::serverName()
 {
 	return configGroup()->readEntry(  "serverName" , "tcpconn3.tencent.com" );
+
 }
 
 uint QQAccount::serverPort()
@@ -121,6 +123,9 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 
 	QObject::connect( m_notifySocket, SIGNAL( messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ),
 		SLOT( slotMessageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ) );
+
+	QObject::connect( m_notifySocket, SIGNAL( contactDetailReceived( const QString&, const QList<QByteArray>& ) ),
+		SLOT( slotContactDetailReceived( const QString&, const QList<QByteArray>& ) ));
 
 	m_notifySocket->connect(host, port);
 }
@@ -265,7 +270,6 @@ void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 	// TODO: use guid for the conference
 	// TODO: use to for the conversation
 	// TODO: Add codec to the member variable, to improve the preformance.
-	QTextCodec* m_codec = QTextCodec::codecForName("GB18030");
 	QByteArray text = m_codec->fromUnicode( message.plainBody() );
 	notifySocket()->sendTextMessage(to, text );
 }
@@ -489,6 +493,24 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 }
 
 
+void QQAccount::slotContactDetailReceived( const QString& id, const QList<QByteArray>& list )
+{
+	// FIXME: update detail information for all contacts!
+	if( id != myself()->contactId() ) 
+		return;
+
+	// Open the configuration for update
+	KConfigGroup * config = configGroup();
+	for( int i = 1; i< sizeof(Eva::contactDetailIndex)/sizeof(Eva::contactDetailIndex[0]); i++ )
+	{
+		kDebug(14140) << k_funcinfo << i << endl;
+		if( 0 == strncmp( Eva::contactDetailIndex[i], "unknown", 7 ) )
+			continue;
+
+		config->writeEntry( QString(Eva::contactDetailIndex[i]), m_codec->toUnicode(list[i]) );
+	}
+
+}
 
 
 #include "qqaccount.moc"

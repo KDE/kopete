@@ -147,12 +147,15 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 		case Eva::ContactDetail :
 		{
 			std::list<std::string> list = Eva::Packet::contactDetail(text);
-			QStringList qsl;
-			for( std::list<std::string>::const_iterator it = list.begin(); 
-				it != list.end(); it++ )
-				qsl.push_back( QString((*it).c_str()) );
+			QList<QByteArray> qsl;
+			
+			std::list<std::string>::const_iterator it = list.begin(); 
+			QString id = QString( (*it).c_str() );
 
-			// emit Contact
+			for( ; it != list.end(); it++ )
+				qsl.push_back( QByteArray((*it).c_str()) );
+
+			emit contactDetailReceived(id, qsl);
 		}
 
 			

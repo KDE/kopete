@@ -105,6 +105,47 @@ namespace Eva {
 	static const uint KeyLength = 16;
 	static const uint LoginLength = 416;
 
+	static const char* contactDetailIndex[] =
+	{
+		"qqID",
+		"nickName",
+		"country",
+		"state",
+		"zipcode",
+		"address",
+		"PHH", 
+		"age",
+		"gender",
+		"name",
+		"email",
+		"pagerSn",
+		"pagerNum",
+		"pagerSP",
+		"pagerBaseNum", 
+		"pagerType",	// what is the heck of these?
+		"occupation",
+		"homepage",
+		"authType",
+		"unknown1",
+		"unknown2",
+		"avatar",
+		"PHM",
+		"mobileType",
+		"intro",
+		"city",
+		"unknown3",
+		"unknown4",
+		"unknown5",
+		"openHP",
+		"openContact",
+		"college",
+		"horoscope",
+		"zodiac",
+		"bloodType",
+		"qqShow",
+		"unknown6"
+	};
+
 	// POD storage
 	struct ContactInfo {
 		uint id;
