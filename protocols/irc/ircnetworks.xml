@@ -734,11 +734,6 @@
         <name>Freenode</name>
         <description>Freenode Peer-directed Projects Network</description>
         <servers>
-            <server>
-	    	<host>irc.debian.org</host>
-		<port>6667</port>
-		<useSSL>false</useSSL>
-	    </server>
 	    <server>
 	    	<host>irc.kde.org</host>
 		<port>6667</port>
@@ -750,22 +745,22 @@
 		<useSSL>true</useSSL>
 	    </server>
 	    <server>
-                <host>irc.openprojects.net</host>
+                <host>chat.freenode.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>us.openprojects.net</host>
+                <host>chat.us.freenode.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>eu.openprojects.net</host>
+                <host>chat.eu.freenode.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>au.openprojects.net</host>
+                <host>chat.au.freenode.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
