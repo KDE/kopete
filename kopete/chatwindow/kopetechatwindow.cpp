@@ -200,9 +200,10 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	m_sideBar = new SidebarWidget(this);
 	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+	m_sideBar->setObjectName("SideBar"); //object name is required for automatic position and settings save.
 
 	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
-
+	
 	KVBox *vBox = new KVBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
@@ -236,8 +237,6 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
 	statusBar()->addWidget( m_status_text, 1 );
 
-	readOptions();
-
 	windows.append( this );
 	windowListChanged();
 
@@ -247,6 +246,8 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	
 	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
 
+	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
+	readOptions();
 }
 
 KopeteChatWindow::~KopeteChatWindow()
