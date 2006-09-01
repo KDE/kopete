@@ -56,13 +56,13 @@ bool ICQTask::take( Transfer* t )
 void ICQTask::parseInitialData( Buffer buf )
 {
 	int tlvLength = 0;
-	WORD sequence = 0;
+
 	TLV tlv1 = buf.getTLV();
 	Buffer tlv1Buffer(tlv1.data, tlv1.length);
 	tlvLength = tlv1Buffer.getLEWord(); //FIXME handle the data chunk size
 	m_icquin = tlv1Buffer.getLEDWord(); //nice ICQ UIN
 	m_requestType = tlv1Buffer.getLEWord(); //request type
-	sequence = tlv1Buffer.getLEWord();
+	m_sequence = tlv1Buffer.getLEWord();
 	if ( m_requestType == 0x07DA ) //there's an extra data subtype
 		m_requestSubType = tlv1Buffer.getLEWord();
 	else

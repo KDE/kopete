@@ -76,6 +76,9 @@ public:
 	const QMap<int, QString> &encodings() { return mEncodings; }
 	const QMap<int, QString> &maritals() { return mMarital; }
 	const QMap<int, QString> &interests() { return mInterests; }
+	const QMap<int, QString> &occupations() { return mOccupations; }
+	const QMap<int, QString> &organizations() { return mOrganizations; }
+	const QMap<int, QString> &affiliations() { return mAffiliations; }
 
 	void fillComboFromTable( QComboBox*, const QMap<int, QString>& );
 	void setComboFromTable( QComboBox*, const QMap<int, QString>&, int );
@@ -91,6 +94,9 @@ private:
 	void initEncodings();
 	void initMaritals();
 	void initInterests();
+	void initOccupations();
+	void initOrganizations();
+	void initAffiliations();
 
 private:
 	static ICQProtocol* protocolStatic_;
@@ -101,6 +107,9 @@ private:
 	QMap<int, QString> mEncodings;
 	QMap<int, QString> mMarital;
 	QMap<int, QString> mInterests;
+	QMap<int, QString> mOccupations;
+	QMap<int, QString> mOrganizations;
+	QMap<int, QString> mAffiliations;
 	ICQProtocolHandler protohandler;
 };
 #endif

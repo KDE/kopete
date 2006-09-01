@@ -197,6 +197,9 @@ contactEncoding( "contactEncoding", i18n( "Contact Encoding" ), QString::null, K
 	initEncodings();
 	initMaritals();
 	initInterests();
+	initOccupations();
+	initOrganizations();
+	initAffiliations();
 }
 
 ICQProtocol::~ICQProtocol()
@@ -224,13 +227,13 @@ void ICQProtocol::initCountries()
 	mCountries.insert(376, kl->twoAlphaToCountryName("ad"));
 	mCountries.insert(244, kl->twoAlphaToCountryName("ao"));
 	mCountries.insert(101, kl->twoAlphaToCountryName("ai"));
-	mCountries.insert(102, kl->twoAlphaToCountryName("ag"));
+	mCountries.insert(102, i18n("Antigua"));
+	mCountries.insert(1021, kl->twoAlphaToCountryName("ag"));
 	mCountries.insert(54, kl->twoAlphaToCountryName("ar"));
 	mCountries.insert(374, kl->twoAlphaToCountryName("am"));
 	mCountries.insert(297, kl->twoAlphaToCountryName("aw"));
 	mCountries.insert(247, i18n("Ascension Island"));
 	mCountries.insert(61, kl->twoAlphaToCountryName("au"));
-	mCountries.insert(6721, i18n("Australian Antarctic Territory"));
 	mCountries.insert(43, kl->twoAlphaToCountryName("at"));
 	mCountries.insert(994, kl->twoAlphaToCountryName("az"));
 	mCountries.insert(103, kl->twoAlphaToCountryName("bs"));
@@ -260,10 +263,12 @@ void ICQProtocol::initCountries()
 	mCountries.insert(108, kl->twoAlphaToCountryName("ky"));
 	mCountries.insert(236, kl->twoAlphaToCountryName("cf"));
 	mCountries.insert(235, kl->twoAlphaToCountryName("td"));
+	mCountries.insert(178, i18n("Canary Islands"));
 	mCountries.insert(56, kl->twoAlphaToCountryName("cl"));
 	mCountries.insert(86, kl->twoAlphaToCountryName("cn"));
 	mCountries.insert(672, kl->twoAlphaToCountryName("cx"));
-	mCountries.insert(6101, kl->twoAlphaToCountryName("c"));
+	mCountries.insert(6101, i18n("Cocos-Keeling Islands"));
+	mCountries.insert(6102, i18n("Cocos (Keeling) Islands"));
 	mCountries.insert(57, kl->twoAlphaToCountryName("co"));
 	mCountries.insert(2691, kl->twoAlphaToCountryName("km"));
 	mCountries.insert(242, kl->twoAlphaToCountryName("cg"));
@@ -291,7 +296,8 @@ void ICQProtocol::initCountries()
 	mCountries.insert(358, kl->twoAlphaToCountryName("fi"));
 	mCountries.insert(33, kl->twoAlphaToCountryName("fr"));
 	mCountries.insert(5901, i18n("French Antilles"));
-	mCountries.insert(594, kl->twoAlphaToCountryName("gf"));
+	mCountries.insert(5902, i18n("Antilles"));
+	mCountries.insert(594, i18n("French Guiana"));
 	mCountries.insert(689, kl->twoAlphaToCountryName("pf"));
 	mCountries.insert(241, kl->twoAlphaToCountryName("ga"));
 	mCountries.insert(220, kl->twoAlphaToCountryName("gm"));
@@ -304,7 +310,6 @@ void ICQProtocol::initCountries()
 	mCountries.insert(111, kl->twoAlphaToCountryName("gd"));
 	mCountries.insert(590, kl->twoAlphaToCountryName("gp"));
 	mCountries.insert(671, kl->twoAlphaToCountryName("gu"));
-	mCountries.insert(5399, i18n("Guantanamo Bay"));
 	mCountries.insert(502, kl->twoAlphaToCountryName("gt"));
 	mCountries.insert(224, kl->twoAlphaToCountryName("gn"));
 	mCountries.insert(245, kl->twoAlphaToCountryName("gw"));
@@ -313,22 +318,16 @@ void ICQProtocol::initCountries()
 	mCountries.insert(504, kl->twoAlphaToCountryName("hn"));
 	mCountries.insert(852, kl->twoAlphaToCountryName("hk"));
 	mCountries.insert(36, kl->twoAlphaToCountryName("hu"));
-	mCountries.insert(871, i18n("INMARSAT (Atlantic-East)"));
-	mCountries.insert(874, i18n("INMARSAT (Atlantic-West)"));
-	mCountries.insert(873, i18n("INMARSAT (Indian)"));
-	mCountries.insert(872, i18n("INMARSAT (Pacific)"));
-	mCountries.insert(870, i18n("INMARSAT"));
 	mCountries.insert(354, kl->twoAlphaToCountryName("is"));
 	mCountries.insert(91, kl->twoAlphaToCountryName("in"));
 	mCountries.insert(62, kl->twoAlphaToCountryName("id"));
-	mCountries.insert(800, i18n("International Freephone Service"));
 	mCountries.insert(98, kl->twoAlphaToCountryName("ir"));
 	mCountries.insert(964, kl->twoAlphaToCountryName("iq"));
 	mCountries.insert(353, kl->twoAlphaToCountryName("ie"));
 	mCountries.insert(972, kl->twoAlphaToCountryName("il"));
 	mCountries.insert(39, kl->twoAlphaToCountryName("it"));
-	mCountries.insert(225, i18n("Ivory Coast"));
-	mCountries.insert(112, kl->twoAlphaToCountryName("jm"));
+	mCountries.insert(225, kl->twoAlphaToCountryName("ci"));
+	mCountries.insert(112, kl->twoAlphaToCountryName("jm")); 
 	mCountries.insert(81, kl->twoAlphaToCountryName("jp"));
 	mCountries.insert(962, kl->twoAlphaToCountryName("jo"));
 	mCountries.insert(705, kl->twoAlphaToCountryName("kz"));
@@ -340,7 +339,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(706, kl->twoAlphaToCountryName("kg"));
 	mCountries.insert(856, kl->twoAlphaToCountryName("la"));
 	mCountries.insert(371, kl->twoAlphaToCountryName("lv"));
-	mCountries.insert(961, kl->twoAlphaToCountryName("kb"));
+	mCountries.insert(961, kl->twoAlphaToCountryName("lb"));
 	mCountries.insert(266, kl->twoAlphaToCountryName("ls"));
 	mCountries.insert(231, kl->twoAlphaToCountryName("lr"));
 	mCountries.insert(218, kl->twoAlphaToCountryName("ly"));
@@ -358,7 +357,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(596, kl->twoAlphaToCountryName("mq"));
 	mCountries.insert(222, kl->twoAlphaToCountryName("mr"));
 	mCountries.insert(230, kl->twoAlphaToCountryName("mu"));
-	mCountries.insert(269, kl->twoAlphaToCountryName("yt"));
+	mCountries.insert(269, i18n("Mayotte Island"));
 	mCountries.insert(52, kl->twoAlphaToCountryName("mx"));
 	mCountries.insert(691, kl->twoAlphaToCountryName("fm"));
 	mCountries.insert(373, kl->twoAlphaToCountryName("md"));
@@ -401,13 +400,13 @@ void ICQProtocol::initCountries()
 	mCountries.insert(7, kl->twoAlphaToCountryName("ru"));
 	mCountries.insert(250, kl->twoAlphaToCountryName("rw"));
 	mCountries.insert(122, kl->twoAlphaToCountryName("lc"));
-	mCountries.insert(670, i18n("Ivory Coast"));
+	mCountries.insert(670, i18n("Saipan Island"));
 	mCountries.insert(378, kl->twoAlphaToCountryName("sm"));
 	mCountries.insert(239, kl->twoAlphaToCountryName("st"));
 	mCountries.insert(966, kl->twoAlphaToCountryName("sa"));
 	mCountries.insert(221, kl->twoAlphaToCountryName("sn"));
 	mCountries.insert(248, kl->twoAlphaToCountryName("sc"));
-	mCountries.insert(232, kl->twoAlphaToCountryName("sl"));
+	mCountries.insert(232, i18n("Sierra Leone"));
 	mCountries.insert(65, kl->twoAlphaToCountryName("sg"));
 	mCountries.insert(4201, kl->twoAlphaToCountryName("sk"));
 	mCountries.insert(386, kl->twoAlphaToCountryName("si"));
@@ -417,7 +416,8 @@ void ICQProtocol::initCountries()
 	mCountries.insert(34, kl->twoAlphaToCountryName("es"));
 	mCountries.insert(94, kl->twoAlphaToCountryName("lk"));
 	mCountries.insert(290, kl->twoAlphaToCountryName("sh"));
-	mCountries.insert(115, kl->twoAlphaToCountryName("kn"));
+	mCountries.insert(115, i18n("St. Kitts"));
+	mCountries.insert(1141, kl->twoAlphaToCountryName("kn"));
 	mCountries.insert(508, kl->twoAlphaToCountryName("pm"));
 	mCountries.insert(116, kl->twoAlphaToCountryName("vc"));
 	mCountries.insert(249, kl->twoAlphaToCountryName("sd"));
@@ -445,6 +445,8 @@ void ICQProtocol::initCountries()
 	mCountries.insert(380, kl->twoAlphaToCountryName("ua")); // Ukraine
 	mCountries.insert(971, kl->twoAlphaToCountryName("ae")); // United Arab Emirates
 	mCountries.insert(44, kl->twoAlphaToCountryName("gb")); // United Kingdom
+	mCountries.insert(441, i18n("Wales"));
+	mCountries.insert(442, i18n("Scotland"));
 	mCountries.insert(123, kl->twoAlphaToCountryName("vi")); // United States Virgin Islands
 	mCountries.insert(598, kl->twoAlphaToCountryName("uy")); // Uruguay
 	mCountries.insert(711, kl->twoAlphaToCountryName("uz")); // Uzbekistan
@@ -453,12 +455,16 @@ void ICQProtocol::initCountries()
 	mCountries.insert(58, kl->twoAlphaToCountryName("ve")); // Venezuela
 	mCountries.insert(84, kl->twoAlphaToCountryName("vn")); // Vietnam
 	mCountries.insert(681, kl->twoAlphaToCountryName("wf")); // Wallis and Futuna Islands
-	mCountries.insert(685, kl->twoAlphaToCountryName("eh"));
+	mCountries.insert(685, kl->twoAlphaToCountryName("ws"));
 	mCountries.insert(967, kl->twoAlphaToCountryName("ye"));
-	mCountries.insert(381, kl->twoAlphaToCountryName("yu"));
-	mCountries.insert(243, kl->twoAlphaToCountryName("zr"));
+	mCountries.insert(3811, i18n("Yugoslavia - Serbia"));
+	mCountries.insert(382, i18n("Yugoslavia - Montenegro"));
+	mCountries.insert(381, i18n("Yugoslavia"));
+	mCountries.insert(243, i18n("Congo, Democratic Republic of (Zaire)"));
 	mCountries.insert(260, kl->twoAlphaToCountryName("zm"));
 	mCountries.insert(263, kl->twoAlphaToCountryName("zw"));
+	mCountries.insert(9999, i18n("Unknown"));
+	
 }
 
 void ICQProtocol::initLang()
@@ -521,11 +527,26 @@ void ICQProtocol::initLang()
 	mLanguages.insert(52, kl->twoAlphaToLanguageName("vi") /*i18n("Vietnamese")*/);
 	mLanguages.insert(53, kl->twoAlphaToLanguageName("yi") /*i18n("Yiddish")*/);
 	mLanguages.insert(54, kl->twoAlphaToLanguageName("yo") /*i18n("Yoruba")*/);
-	mLanguages.insert(55, i18n("Taiwanese"));
-	mLanguages.insert(56, kl->twoAlphaToLanguageName("af") /*i18n("Afrikaans")*/);
+	mLanguages.insert(55, kl->twoAlphaToLanguageName("af") /*i18n("Afrikaans")*/);
+	mLanguages.insert(56, kl->twoAlphaToLanguageName("bs") /*i18n("Bosnian")*/);
 	mLanguages.insert(57, kl->twoAlphaToLanguageName("fa") /*i18n("Persian")*/);
 	mLanguages.insert(58, kl->twoAlphaToLanguageName("sq") /*i18n("Albanian")*/);
 	mLanguages.insert(59, kl->twoAlphaToLanguageName("hy") /*i18n("Armenian")*/);
+	mLanguages.insert(60, i18n("Punjabi"));
+	mLanguages.insert(61, kl->twoAlphaToLanguageName("ch") /*i18n("Chamorro")*/);
+	mLanguages.insert(62, kl->twoAlphaToLanguageName("mn") /*i18n("Mongolian")*/);
+	mLanguages.insert(63, i18n("Mandarin"));
+	mLanguages.insert(64, i18n("Taiwanese"));
+	mLanguages.insert(65, kl->twoAlphaToLanguageName("mk") /*i18n("Macedonian")*/);
+	mLanguages.insert(66, kl->twoAlphaToLanguageName("sd") /*i18n("Sindhi")*/);
+	mLanguages.insert(67, kl->twoAlphaToLanguageName("cy") /*i18n("Welsh")*/);
+	mLanguages.insert(68, kl->twoAlphaToLanguageName("az") /*i18n("Azerbaijani")*/);
+	mLanguages.insert(69, kl->twoAlphaToLanguageName("ku") /*i18n("Kurdish")*/);
+	mLanguages.insert(70, kl->twoAlphaToLanguageName("gu") /*i18n("Gujarati")*/);
+	mLanguages.insert(71, kl->twoAlphaToLanguageName("ta") /*i18n("Tamil")*/);
+	mLanguages.insert(72, i18n("Belorussian"));
+	mLanguages.insert(255, i18n("Unknown"));
+	
 }
 
 void ICQProtocol::initEncodings()
@@ -580,8 +601,6 @@ void ICQProtocol::initEncodings()
 /*
 Missing ones (copied from qtextcodec doc):
 TSCII -- Tamil
-utf8 -- Unicode, 8-bit
-utf16 -- Unicode
 CP874
 Apple Roman
 */
@@ -604,7 +623,7 @@ void ICQProtocol::initInterests()
 	mInterests.insert(0 , "");
 	mInterests.insert(100, i18n("Art"));
 	mInterests.insert(101, i18n("Cars"));
-	mInterests.insert(102, i18n("Celebrities"));
+	mInterests.insert(102, i18n("Celebrity Fans"));
 	mInterests.insert(103, i18n("Collections"));
 	mInterests.insert(104, i18n("Computers"));
 	mInterests.insert(105, i18n("Culture"));
@@ -614,18 +633,18 @@ void ICQProtocol::initInterests()
 	mInterests.insert(109, i18n("ICQ - Help"));
 	mInterests.insert(110, i18n("Internet"));
 	mInterests.insert(111, i18n("Lifestyle"));
-	mInterests.insert(112, i18n("Movies"));
+	mInterests.insert(112, i18n("Movies and TV"));
 	mInterests.insert(113, i18n("Music"));
 	mInterests.insert(114, i18n("Outdoors"));
 	mInterests.insert(115, i18n("Parenting"));
-	mInterests.insert(116, i18n("Pets and animals"));
+	mInterests.insert(116, i18n("Pets and Animals"));
 	mInterests.insert(117, i18n("Religion"));
 	mInterests.insert(118, i18n("Science"));
 	mInterests.insert(119, i18n("Skills"));
 	mInterests.insert(120, i18n("Sports"));
-	mInterests.insert(121, i18n("Web design"));
+	mInterests.insert(121, i18n("Web Design"));
 	mInterests.insert(122, i18n("Ecology"));
-	mInterests.insert(123, i18n("News and media"));
+	mInterests.insert(123, i18n("News and Media"));
 	mInterests.insert(124, i18n("Government"));
 	mInterests.insert(125, i18n("Business"));
 	mInterests.insert(126, i18n("Mystics"));
@@ -640,19 +659,92 @@ void ICQProtocol::initInterests()
 	mInterests.insert(135, i18n("70's"));
 	mInterests.insert(136, i18n("40's"));
 	mInterests.insert(137, i18n("50's"));
-	mInterests.insert(138, i18n("Finance and corporate"));
+	mInterests.insert(138, i18n("Finance and Corporate"));
 	mInterests.insert(139, i18n("Entertainment"));
-	mInterests.insert(140, i18n("Consumer electronics"));
-	mInterests.insert(141, i18n("Retail stores"));
-	mInterests.insert(142, i18n("Health and beauty"));
+	mInterests.insert(141, i18n("Retail Stores"));
+	mInterests.insert(142, i18n("Health and Beauty"));
 	mInterests.insert(143, i18n("Media"));
-	mInterests.insert(144, i18n("Household products"));
-	mInterests.insert(145, i18n("Mail order catalog"));
-	mInterests.insert(146, i18n("Business services"));
-	mInterests.insert(147, i18n("Audio and visual"));
-	mInterests.insert(148, i18n("Sporting and athletic"));
+	mInterests.insert(144, i18n("Household Products"));
+	mInterests.insert(145, i18n("Mail Order Catalog"));
+	mInterests.insert(146, i18n("Business Services"));
+	mInterests.insert(147, i18n("Audio and Visual"));
+	mInterests.insert(148, i18n("Sporting and Athletic"));
 	mInterests.insert(149, i18n("Publishing"));
-	mInterests.insert(150, i18n("Home automation"));
+	mInterests.insert(150, i18n("Home Automation"));
+
+}
+
+void ICQProtocol::initOccupations()
+{
+	mOccupations.insert(0 , "");
+	mOccupations.insert(1 , i18n("Academic"));
+	mOccupations.insert(2 , i18n("Administrative"));
+	mOccupations.insert(3 , i18n("Art/Entertainment"));
+	mOccupations.insert(4 , i18n("College Student"));
+	mOccupations.insert(5 , i18n("Computers"));
+	mOccupations.insert(6 , i18n("Community & Social"));
+	mOccupations.insert(7 , i18n("Education"));
+	mOccupations.insert(8 , i18n("Engineering"));
+	mOccupations.insert(9 , i18n("Financial Services"));
+	mOccupations.insert(10 , i18n("Government"));
+	mOccupations.insert(11 , i18n("High School Student"));
+	mOccupations.insert(12 , i18n("Home"));
+	mOccupations.insert(13 , i18n("ICQ - Providing Help"));
+	mOccupations.insert(14 , i18n("Law"));
+	mOccupations.insert(15 , i18n("Managerial"));
+	mOccupations.insert(16 , i18n("Manufacturing"));
+	mOccupations.insert(17 , i18n("Medical/Health"));
+	mOccupations.insert(18 , i18n("Military"));
+	mOccupations.insert(19 , i18n("Non-Government Organization"));
+	mOccupations.insert(99 , i18n("Other Services"));
+	mOccupations.insert(20 , i18n("Professional"));
+	mOccupations.insert(21 , i18n("Retail"));
+	mOccupations.insert(22 , i18n("Retired"));
+	mOccupations.insert(23 , i18n("Science & Research"));
+	mOccupations.insert(24 , i18n("Sports"));
+	mOccupations.insert(25 , i18n("Technical"));
+	mOccupations.insert(26 , i18n("University Student"));
+	mOccupations.insert(27 , i18n("Web Building"));
+
+}
+
+void ICQProtocol::initOrganizations()
+{
+	mOrganizations.insert(0 , "");
+	mOrganizations.insert(200 , i18n("Alumni Org."));
+	mOrganizations.insert(201 , i18n("Charity Org."));
+	mOrganizations.insert(202 , i18n("Club/Social Org."));
+	mOrganizations.insert(203 , i18n("Community Org."));
+	mOrganizations.insert(204 , i18n("Cultural Org."));
+	mOrganizations.insert(205 , i18n("Fan Clubs"));
+	mOrganizations.insert(206 , i18n("Fraternity/Sorority"));
+	mOrganizations.insert(207 , i18n("Hobbyists Org."));
+	mOrganizations.insert(208 , i18n("International Org."));
+	mOrganizations.insert(209 , i18n("Nature and Environment Org."));
+	mOrganizations.insert(299 , i18n("Other"));
+	mOrganizations.insert(210 , i18n("Professional Org."));
+	mOrganizations.insert(211 , i18n("Scientific/Technical Org."));
+	mOrganizations.insert(212 , i18n("Self Improvement Group"));
+	mOrganizations.insert(213 , i18n("Spiritual/Religious Org."));
+	mOrganizations.insert(214 , i18n("Sports Org."));
+	mOrganizations.insert(215 , i18n("Support Org."));
+	mOrganizations.insert(216 , i18n("Trade and Business Org."));
+	mOrganizations.insert(217 , i18n("Union"));
+	mOrganizations.insert(218 , i18n("Voluntary Org."));
+
+}
+
+void ICQProtocol::initAffiliations()
+{
+	mAffiliations.insert(0 , "");
+	mAffiliations.insert(300 , i18n("Elementary School"));
+	mAffiliations.insert(301 , i18n("High School"));
+	mAffiliations.insert(302 , i18n("Collage"));
+	mAffiliations.insert(303 , i18n("University"));
+	mAffiliations.insert(304 , i18n("Military"));
+	mAffiliations.insert(305 , i18n("Past Work Place"));
+	mAffiliations.insert(306 , i18n("Past Organization"));
+	mAffiliations.insert(399 , i18n("Other"));
 
 }
 

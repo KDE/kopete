@@ -815,6 +815,11 @@ ICQEmailInfo Client::getEmailInfo( const QString& contact )
 	return d->icqInfoTask->emailInfoFor( contact );
 }
 
+ICQNotesInfo Client::getNotesInfo( const QString& contact )
+{
+	return d->icqInfoTask->notesInfoFor( contact );
+}
+
 ICQMoreUserInfo Client::getMoreInfo( const QString& contact )
 {
 	return d->icqInfoTask->moreInfoFor( contact );
@@ -823,6 +828,11 @@ ICQMoreUserInfo Client::getMoreInfo( const QString& contact )
 ICQInterestInfo Client::getInterestInfo( const QString& contact )
 {
 	return d->icqInfoTask->interestInfoFor( contact );
+}
+
+ICQOrgAffInfo Client::getOrgAffInfo( const QString& contact )
+{
+	return d->icqInfoTask->orgAffInfoFor( contact );
 }
 
 ICQShortInfo Client::getShortInfo( const QString& contact )

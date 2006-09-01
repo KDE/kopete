@@ -25,8 +25,10 @@ kde4_add_ui_files(kopete_icq_ui_SRCS
 ui/icqadd.ui 
 ui/icqgeneralinfo.ui 
 ui/icqotherinfowidget.ui 
+ui/icqhomeinfowidget.ui 
 ui/icqworkinfowidget.ui 
 ui/icqinterestinfowidget.ui 
+ui/icqorgaffinfowidget.ui 
 ui/icqauthreplyui.ui 
 ui/icqsearchbase.ui 
 ui/icqeditaccountui.ui 

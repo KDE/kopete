@@ -78,17 +78,19 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		ICQWorkUserInfo workInfo;
 		ICQMoreUserInfo moreInfo;
 		ICQEmailInfo emailInfo;
+		ICQNotesInfo notesInfo;
 		ICQShortInfo shortInfo;
 		ICQInterestInfo interestInfo;
+		ICQOrgAffInfo orgAffInfo;
 		
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
 		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
 		
 		//FIXME this is silly. parseInitialData should take care of this for me.
-		buffer->skipBytes( 8 );
-		WORD seq = buffer->getLEWord(); // request sequence number
-		buffer->getLEWord(); // request data sub type
+		buffer->skipBytes( 12 );
+		
+		WORD seq = sequence();
 		QString contactId = m_contactSequenceMap[seq];
 		
 		switch ( requestSubType() )
@@ -112,7 +114,10 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 			m_moreInfoMap[seq] = moreInfo;
 			break;
 		case 0x00E6:  //notes user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got Notes info, but we don't support it yet" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received notes info" << endl;
+			notesInfo.setSequenceNumber( seq );
+			notesInfo.fill( buffer );
+			m_notesInfoMap[seq] = notesInfo;
 			break;
 		case 0x00EB:  //email user info
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received email info" << endl;
@@ -127,9 +132,12 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 			m_interestInfoMap[seq] = interestInfo;
 			break;
 		case 0x00FA:  //affliations user info
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received organization & affliation info" << endl;
+			orgAffInfo.setSequenceNumber( seq );
+			orgAffInfo.fill( buffer );
+			m_orgAffInfoMap[seq] = orgAffInfo;
 			//affliations seems to be the last info we get, so be hacky and only emit the signal once
 			emit receivedInfoFor( contactId, Long );
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got affliations info, but we don't support it yet" << endl;
 			break;
 		case 0x0104:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received short user info" << endl;
@@ -204,10 +212,16 @@ ICQMoreUserInfo ICQUserInfoRequestTask::moreInfoFor( const QString& contact )
 	return m_moreInfoMap[seq];
 }
 
-ICQEmailInfo ICQUserInfoRequestTask::emailInfoFor(const QString& contact )
+ICQEmailInfo ICQUserInfoRequestTask::emailInfoFor( const QString& contact )
 {
 	int seq = m_reverseContactMap[contact];
 	return m_emailInfoMap[seq];
+}
+
+ICQNotesInfo ICQUserInfoRequestTask::notesInfoFor( const QString& contact )
+{
+	int seq = m_reverseContactMap[contact];
+	return m_notesInfoMap[seq];
 }
 
 ICQShortInfo ICQUserInfoRequestTask::shortInfoFor( const QString& contact )
@@ -222,12 +236,11 @@ ICQInterestInfo ICQUserInfoRequestTask::interestInfoFor( const QString& contact 
 	return m_interestInfoMap[seq];
 }
 
-QString ICQUserInfoRequestTask::notesInfoFor( const QString& contact )
+ICQOrgAffInfo ICQUserInfoRequestTask::orgAffInfoFor( const QString& contact )
 {
 	int seq = m_reverseContactMap[contact];
-	return m_notesInfoMap[seq];
+	return m_orgAffInfoMap[seq];
 }
-
 
 #include "icquserinfotask.moc"
 

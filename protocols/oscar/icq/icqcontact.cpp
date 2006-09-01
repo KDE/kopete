@@ -337,12 +337,20 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );
 	emit haveWorkInfo( workInfo );
 
+	ICQEmailInfo emailInfo = mAccount->engine()->getEmailInfo( contact );
+	emit haveEmailInfo( emailInfo );
+
+	ICQNotesInfo notesInfo = mAccount->engine()->getNotesInfo( contact );
+	emit haveNotesInfo( notesInfo );
+
 	ICQMoreUserInfo moreInfo = mAccount->engine()->getMoreInfo( contact );
 	emit haveMoreInfo( moreInfo );
 
 	ICQInterestInfo interestInfo = mAccount->engine()->getInterestInfo( contact );
 	emit haveInterestInfo( interestInfo );
 
+	ICQOrgAffInfo orgAffInfo = mAccount->engine()->getOrgAffInfo( contact );
+	emit haveOrgAffInfo( orgAffInfo );
 }
 
 void ICQContact::receivedShortInfo( const QString& contact )

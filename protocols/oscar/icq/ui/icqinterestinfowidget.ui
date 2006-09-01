@@ -1,15 +1,12 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ICQInterestInfoWidget</class>
  <widget class="QWidget" name="ICQInterestInfoWidget" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>377</height>
+    <width>376</width>
+    <height>249</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -31,20 +28,6 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="1" column="0" >
-       <widget class="QLineEdit" name="topic2" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="desc2" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="desc1" >
         <property name="readOnly" >
@@ -52,22 +35,8 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QLineEdit" name="topic3" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QLineEdit" name="desc4" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="desc3" >
+      <item row="3" column="0" >
+       <widget class="QLineEdit" name="topic4" >
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -80,8 +49,36 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QLineEdit" name="topic4" >
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="desc3" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLineEdit" name="desc4" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLineEdit" name="topic3" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="desc2" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLineEdit" name="topic2" >
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -100,8 +97,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>220</height>
+       <width>281</width>
+       <height>60</height>
       </size>
      </property>
     </spacer>
@@ -110,6 +107,16 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>topic1</tabstop>
+  <tabstop>desc1</tabstop>
+  <tabstop>topic2</tabstop>
+  <tabstop>desc2</tabstop>
+  <tabstop>topic3</tabstop>
+  <tabstop>desc3</tabstop>
+  <tabstop>topic4</tabstop>
+  <tabstop>desc4</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

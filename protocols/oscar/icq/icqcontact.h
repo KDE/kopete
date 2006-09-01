@@ -87,8 +87,10 @@ signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
 	void haveWorkInfo( const ICQWorkUserInfo& );
 	void haveEmailInfo( const ICQEmailInfo& );
+	void haveNotesInfo( const ICQNotesInfo& );
 	void haveMoreInfo( const ICQMoreUserInfo& );
 	void haveInterestInfo( const ICQInterestInfo& );
+	void haveOrgAffInfo( const ICQOrgAffInfo& );
 
 private:
 	bool cachedBuddyIcon( QByteArray hash );

@@ -45,11 +45,12 @@ public:
 	
 	ICQGeneralUserInfo generalInfoFor( const QString& contact );
 	ICQEmailInfo emailInfoFor( const QString& contact );
+	ICQNotesInfo notesInfoFor( const QString& contact );
 	ICQMoreUserInfo moreInfoFor( const QString& contact );
 	ICQWorkUserInfo workInfoFor( const QString& contact );
-	QString notesInfoFor( const QString& contact );
 	ICQShortInfo shortInfoFor( const QString& contact );
 	ICQInterestInfo interestInfoFor( const QString& contact );
+	ICQOrgAffInfo orgAffInfoFor( const QString& contact );
 	
 	virtual bool forMe( const Transfer* transfer ) const;
 	virtual bool take( Transfer* transfer );
@@ -61,11 +62,12 @@ signals:
 private:
 	QMap<int, ICQGeneralUserInfo> m_genInfoMap;
 	QMap<int, ICQEmailInfo> m_emailInfoMap;
+	QMap<int, ICQNotesInfo> m_notesInfoMap;
 	QMap<int, ICQMoreUserInfo> m_moreInfoMap;
 	QMap<int, ICQWorkUserInfo> m_workInfoMap;
 	QMap<int, ICQShortInfo> m_shortInfoMap;
 	QMap<int, ICQInterestInfo> m_interestInfoMap;
-	QMap<int, QString> m_notesInfoMap;
+	QMap<int, ICQOrgAffInfo> m_orgAffInfoMap;
 	QMap<int, QString> m_contactSequenceMap;
 	QMap<QString, int> m_reverseContactMap;
 	unsigned int m_type;

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ICQOtherInfoWidget</class>
  <widget class="QWidget" name="ICQOtherInfoWidget" >
   <property name="geometry" >
@@ -9,17 +6,37 @@
     <x>0</x>
     <y>0</y>
     <width>289</width>
-    <height>473</height>
+    <height>334</height>
    </rect>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>11</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item row="4" column="1" >
+   <item>
+    <widget class="QLabel" name="textLabel12" >
+     <property name="text" >
+      <string>Email addresses:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListView" name="emailListView" />
+   </item>
+   <item>
+    <widget class="QLabel" name="textLabel13" >
+     <property name="text" >
+      <string>Contact notes:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="notesEdit" />
+   </item>
+   <item>
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -29,56 +46,16 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>30</height>
+       <width>130</width>
+       <height>41</height>
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="textLabel12" >
-     <property name="text" >
-      <string>Email addresses:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="Q3ListBox" name="emailListBox" />
-   </item>
-   <item row="2" column="0" colspan="2" >
-    <widget class="QLabel" name="textLabel13" >
-     <property name="text" >
-      <string>Contact notes:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2" >
-    <widget class="Q3TextEdit" name="notesEdit" >
-     <property name="readOnly" >
-      <bool>true</bool>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3TextEdit</class>
-   <extends></extends>
-   <header>q3textedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends></extends>
-   <header>q3listbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -166,7 +166,19 @@ void ICQEmailInfo::fill( Buffer* buffer )
 		}
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ email user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ email user info packet" << endl;
+}
+
+ICQNotesInfo::ICQNotesInfo()
+{
+}
+
+void ICQNotesInfo::fill( Buffer* buffer )
+{
+	if ( buffer->getByte() == 0x0A )
+		notes = buffer->getLELNTS();
+	else
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ notes user info packet" << endl;
 }
 
 ICQInterestInfo::ICQInterestInfo()
@@ -198,7 +210,46 @@ void ICQInterestInfo::fill( Buffer* buffer )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ interest user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ interest user info packet" << endl;
+}
+
+ICQOrgAffInfo::ICQOrgAffInfo()
+{
+}
+
+void ICQOrgAffInfo::fill( Buffer* buffer )
+{
+	if ( buffer->getByte() == 0x0A )
+	{
+		if ( buffer->getByte() != 0x03 )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ affiliation info packet" << endl;
+			return;
+		}
+		
+		pastAff1Category = buffer->getLEWord();
+		pastAff1Keyword = buffer->getLELNTS();
+		pastAff2Category = buffer->getLEWord();
+		pastAff2Keyword = buffer->getLELNTS();
+		pastAff3Category = buffer->getLEWord();
+		pastAff3Keyword = buffer->getLELNTS();
+		
+		if ( buffer->getByte() != 0x03 )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization info packet" << endl;
+			return;
+		}
+		
+		org1Category = buffer->getLEWord();
+		org1Keyword = buffer->getLELNTS();
+		org2Category = buffer->getLEWord();
+		org2Keyword = buffer->getLELNTS();
+		org3Category = buffer->getLEWord();
+		org3Keyword = buffer->getLELNTS();
+	}
+	else
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization & affiliation info packet" << endl;
+
 }
 
 ICQSearchResult::ICQSearchResult()

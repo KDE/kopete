@@ -22,12 +22,16 @@
 #include <kpagedialog.h>
 #include <icquserinfo.h>
 
+class QStringListModel;
+
 namespace Ui
 {
 	class ICQGeneralInfoWidget;
+	class ICQHomeInfoWidget;
 	class ICQWorkInfoWidget;
 	class ICQOtherInfoWidget;
 	class ICQInterestInfoWidget;
+	class ICQOrgAffInfoWidget;
 }
 class ICQContact;
 
@@ -43,15 +47,21 @@ public slots:
 	void fillBasicInfo( const ICQGeneralUserInfo& );
 	void fillWorkInfo( const ICQWorkUserInfo& );
 	void fillEmailInfo( const ICQEmailInfo& );
+	void fillNotesInfo( const ICQNotesInfo& );
 	void fillMoreInfo( const ICQMoreUserInfo& );
 	void fillInterestInfo( const ICQInterestInfo& );
+	void fillOrgAffInfo( const ICQOrgAffInfo& info);
 
 private:
 	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
 	Ui::ICQWorkInfoWidget* m_workInfoWidget;
+	Ui::ICQHomeInfoWidget* m_homeInfoWidget;
 	Ui::ICQOtherInfoWidget* m_otherInfoWidget;
 	Ui::ICQInterestInfoWidget * m_interestInfoWidget;
+	Ui::ICQOrgAffInfoWidget* m_orgAffInfoWidget;
 	ICQContact* m_contact;
+	
+	QStringListModel* m_emailModel;
 };
 
 #endif

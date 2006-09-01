@@ -225,6 +225,12 @@ public:
 	ICQEmailInfo getEmailInfo( const QString& contact );
 
 	/**
+	 * Get the notes info for a contact
+	 * \param contact the contact to get info for
+	 */
+	ICQNotesInfo getNotesInfo( const QString& contact );
+	
+	/**
 	 * Get the additional info available for a contact
 	 * \param contact the contact to get info for
 	 */
@@ -235,6 +241,12 @@ public:
 	 * \param contact the contact to get info for
 	 */
 	ICQInterestInfo getInterestInfo( const QString& contact );
+
+	/**
+	 * Get the organization and affiliation interest info available for a contact
+	 * \param contact the contact to get info for
+	 */
+	ICQOrgAffInfo getOrgAffInfo( const QString& contact );
 
 	/**
 	 * Get the short info available for an icq contact

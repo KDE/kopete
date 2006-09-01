@@ -145,6 +145,17 @@ public:
 	QList<QByteArray> emailList;
 };
 
+class KOPETE_EXPORT ICQNotesInfo : public ICQInfoBase
+{
+public:
+	ICQNotesInfo();
+	~ICQNotesInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	QByteArray notes;
+};
+
 class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
 {
 public:
@@ -158,6 +169,27 @@ public:
 	QByteArray descriptions[4];
 };
 
+class KOPETE_EXPORT ICQOrgAffInfo : public ICQInfoBase
+{
+public:
+	ICQOrgAffInfo();
+	~ICQOrgAffInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	int org1Category;
+	int org2Category;
+	int org3Category;
+	QByteArray org1Keyword;
+	QByteArray org2Keyword;
+	QByteArray org3Keyword;
+	int pastAff1Category;
+	int pastAff2Category;
+	int pastAff3Category;
+	QByteArray pastAff1Keyword;
+	QByteArray pastAff2Keyword;
+	QByteArray pastAff3Keyword;
+};
 
 class KOPETE_EXPORT ICQSearchResult
 {

@@ -18,11 +18,10 @@
 
 #include "icquserinfowidget.h"
 
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
-#include <qobject.h>
-#include <qtextcodec.h>
+#include <QtCore/QTextCodec>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+#include <QtGui/QStringListModel>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
@@ -33,9 +32,11 @@
 #include "ui_icqgeneralinfo.h"
 #include "icqcontact.h"
 #include "icqprotocol.h"
+#include "ui_icqhomeinfowidget.h"
 #include "ui_icqworkinfowidget.h"
 #include "ui_icqotherinfowidget.h"
 #include "ui_icqinterestinfowidget.h"
+#include "ui_icqorgaffinfowidget.h"
 
 
 ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
@@ -55,6 +56,13 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
 	genInfoItem->setHeader( i18n("General ICQ Information") );
 	genInfoItem->setIcon( KIcon("identity") );
 	
+	QWidget* homeInfo = new QWidget(this);
+	m_homeInfoWidget = new Ui::ICQHomeInfoWidget;
+	m_homeInfoWidget->setupUi( homeInfo );
+	KPageWidgetItem *homeInfoItem = addPage( homeInfo, i18n("Home Info") );
+	homeInfoItem->setHeader( i18n("Home Information") );
+	homeInfoItem->setIcon( KIcon("gohome") );
+	
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::ICQWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
@@ -73,8 +81,18 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
 	m_interestInfoWidget = new Ui::ICQInterestInfoWidget();
 	m_interestInfoWidget->setupUi( interestInfo );
 	KPageWidgetItem *interestInfoItem = addPage( interestInfo, i18n("Interest Info") );
-	interestInfoItem->setHeader( i18n( "Interest" ) );
+	interestInfoItem->setHeader( i18n( "Interest Information" ) );
 	interestInfoItem->setIcon( KIcon("email") );
+	
+	QWidget *orgAffInfo = new QWidget(this);
+	m_orgAffInfoWidget = new Ui::ICQOrgAffInfoWidget();
+	m_orgAffInfoWidget->setupUi( orgAffInfo );
+	KPageWidgetItem *orgAffInfoItem = addPage( orgAffInfo, i18n("Org & Aff Info") );
+	orgAffInfoItem->setHeader( i18n( "Organization & Affiliation Information" ) );
+	orgAffInfoItem->setIcon( KIcon("kontact_contacts") );
+	
+	m_emailModel = new QStringListModel();
+	m_otherInfoWidget->emailListView->setModel( m_emailModel );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -83,6 +101,7 @@ ICQUserInfoWidget::~ ICQUserInfoWidget()
 	delete m_workInfoWidget;
 	delete m_otherInfoWidget;
 	delete m_interestInfoWidget;
+	delete m_emailModel;
 }
 
 void ICQUserInfoWidget::setContact( ICQContact* contact )
@@ -94,10 +113,14 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	                  this, SLOT( fillWorkInfo( const ICQWorkUserInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveEmailInfo( const ICQEmailInfo& ) ),
 	                  this, SLOT( fillEmailInfo( const ICQEmailInfo& ) ) );
+	QObject::connect( contact, SIGNAL( haveNotesInfo( const ICQNotesInfo& ) ),
+	                  this, SLOT( fillNotesInfo( const ICQNotesInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveMoreInfo( const ICQMoreUserInfo& ) ),
 	                  this, SLOT( fillMoreInfo( const ICQMoreUserInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveInterestInfo( const ICQInterestInfo& ) ),
 	                  this, SLOT( fillInterestInfo( const ICQInterestInfo& ) ) );
+	QObject::connect( contact, SIGNAL( haveOrgAffInfo( const ICQOrgAffInfo& ) ),
+	                  this, SLOT( fillOrgAffInfo( const ICQOrgAffInfo& ) ) );
 }
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
@@ -107,17 +130,23 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickname ) );
 	m_genInfoWidget->fullNameEdit->setText( codec->toUnicode( ui.firstName ) + ' ' + codec->toUnicode( ui.lastName ) );
 	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
-	m_genInfoWidget->emailEdit->setText( codec->toUnicode( ui.email ) );
-	m_genInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
-	m_genInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
-	m_genInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber ) );
-	m_genInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber ) );
-	m_genInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
-	m_genInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber ) );
-	m_genInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip ) );
+	m_homeInfoWidget->emailEdit->setText( codec->toUnicode( ui.email ) );
+	m_homeInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
+	m_homeInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
+	m_homeInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber ) );
+	m_homeInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber ) );
+	m_homeInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
+	m_homeInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber ) );
+	m_homeInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip ) );
 	
 	QString country = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.country];
-	m_genInfoWidget->countryEdit->setText( country );
+	m_homeInfoWidget->countryEdit->setText( country );
+	
+	QString timezone = QString( "GTM %1%2:%3" )
+		.arg( ( ui.timezone > 0 ) ? "-" : "" )
+		.arg( qAbs( ui.timezone ) / 2, 2, 10, QLatin1Char('0') )
+		.arg( ( qAbs( ui.timezone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
+	m_genInfoWidget->timezoneEdit->setText( timezone );
 }
 
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
@@ -138,11 +167,26 @@ void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 	QString country = p->countries()[ui.country];
 	m_workInfoWidget->countryEdit->setText( country );
 	
-	//TODO handle the occupation
+	QString occupation = p->occupations()[ui.occupation];
+	m_workInfoWidget->occupationEdit->setText( occupation );
 }
 
-void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& )
+void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 {
+	QTextCodec* codec = m_contact->contactCodec();
+	
+	QStringList emails;
+	foreach( QByteArray email, info.emailList )
+		emails << codec->toUnicode( email );
+	
+	m_emailModel->setStringList( emails );
+}
+
+void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	
+	m_otherInfoWidget->notesEdit->setText( codec->toUnicode( info.notes ) );
 }
 
 void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
@@ -170,6 +214,39 @@ void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
 	}
 }
 
+void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info)
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	
+	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
+	
+	m_orgAffInfoWidget->org1KeywordEdit->setText( codec->toUnicode( info.org1Keyword ) );
+	m_orgAffInfoWidget->org2KeywordEdit->setText( codec->toUnicode( info.org2Keyword ) );
+	m_orgAffInfoWidget->org3KeywordEdit->setText( codec->toUnicode( info.org3Keyword ) );
+	
+	QString org1Category = p->organizations()[ info.org1Category ];
+	m_orgAffInfoWidget->org1CategoryEdit->setText( org1Category );
+	
+	QString org2Category = p->organizations()[ info.org2Category ];
+	m_orgAffInfoWidget->org2CategoryEdit->setText( org2Category );
+	
+	QString org3Category = p->organizations()[ info.org3Category ];
+	m_orgAffInfoWidget->org3CategoryEdit->setText( org3Category );
+	
+	m_orgAffInfoWidget->aff1KeywordEdit->setText( codec->toUnicode( info.pastAff1Keyword ) );
+	m_orgAffInfoWidget->aff2KeywordEdit->setText( codec->toUnicode( info.pastAff2Keyword ) );
+	m_orgAffInfoWidget->aff3KeywordEdit->setText( codec->toUnicode( info.pastAff3Keyword ) );
+	
+	QString pastAff1Category = p->affiliations()[ info.pastAff1Category ];
+	m_orgAffInfoWidget->aff1CategoryEdit->setText( pastAff1Category );
+	
+	QString pastAff2Category = p->affiliations()[ info.pastAff2Category ];
+	m_orgAffInfoWidget->aff2CategoryEdit->setText( pastAff2Category );
+	
+	QString pastAff3Category = p->affiliations()[ info.pastAff3Category ];
+	m_orgAffInfoWidget->aff3CategoryEdit->setText( pastAff3Category );
+}
+
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
@@ -179,7 +256,7 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 		
 	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
 	m_genInfoWidget->genderEdit->setText( gender );
-	m_genInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
+	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
 	QString ms = static_cast<ICQProtocol*>( m_contact->protocol() )->maritals()[ui.marital];
 	m_genInfoWidget->marital->setText( ms );
@@ -187,10 +264,19 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity) );
 	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate) );
 	
-	QString ocountry = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.ocountry];
+	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
+	
+	QString ocountry = p->countries()[ui.ocountry];
 	m_genInfoWidget->oCountryEdit->setText( ocountry );
 	
-	//TODO languages	
+	QString lang1 = p->languages()[ui.lang1];
+	m_genInfoWidget->language1Edit->setText( lang1 );
+	
+	QString lang2 = p->languages()[ui.lang2];
+	m_genInfoWidget->language2Edit->setText( lang2 );
+	
+	QString lang3 = p->languages()[ui.lang3];
+	m_genInfoWidget->language3Edit->setText( lang3 );
 }
 
 
