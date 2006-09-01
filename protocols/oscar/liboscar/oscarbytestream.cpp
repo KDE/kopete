@@ -131,7 +131,7 @@ void KNetworkByteStream::slotError( int code )
 {
 	kDebug( 14151 ) << k_funcinfo << "Socket error " << code << endl;
 
-	if( KNetwork::KSocketBase::isFatalError( code ) )
+	if( code != KNetwork::KSocketBase::WouldBlock )
 		emit error ( code );
 }
 
