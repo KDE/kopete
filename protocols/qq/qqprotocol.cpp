@@ -36,12 +36,21 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 	  qqAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
 			  i18n( "Away" ),   i18n( "&Away" ) ),
 	  qqOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString::null), 
-			  i18n( "Offline" ),   i18n( "O&ffline" ) )
-
+			  i18n( "Offline" ),   i18n( "O&ffline" ) ),
+	  propCountry("QQVCardCountry", i18n("Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propState("QQVCardState", i18n("State"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propCity("QQVCardCity", i18n("State"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
+	  propAddress("QQVCardAddress", i18n("Home Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
+	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
+	  propAge("QQVCardAge", i18n("Age"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty )
 {
 	kDebug( 14210 ) << k_funcinfo << endl;
 
 	s_protocol = this;
+
+
+	// TODO: Add the rest properties.
 }
 
 QQProtocol::~QQProtocol()

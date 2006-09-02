@@ -204,20 +204,24 @@ namespace Eva {
 		return list;
 	}
 
-	std::list< std::string > Packet::contactDetail( const ByteArray& text )
+	std::map<const char*, std::string, Eva::ltstr> Packet::contactDetail( const ByteArray& text )
 	{
-		std::list< std::string > list;
+		std::map<const char*, std::string, ltstr> dict;
 		static const uchar Divider = 0x1e;
 		int start = 0;
+		int index = 0;
 
 		for( int i = 0; i< text.size(); i++ )
 		{
 			if( text.data()[i] != Divider )
 				continue;
-			list.push_back(std::string(text.c_str()+start, i-start) );
+
+			dict[ contactDetailIndex[index++] ] = std::string(text.c_str()+start, i-start);
 			start = i+1;
 		}
-		return list;
+		// the last field
+		dict[ contactDetailIndex[index++] ] = std::string(text.c_str()+start, text.size()-start);
+		return dict;
 	}
 				
 	// Core functions

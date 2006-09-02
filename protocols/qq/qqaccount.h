@@ -116,7 +116,7 @@ public slots:
 	void slotContactInGroup(const int qqId, const char type, const int groupId );
 	void slotContactStatusChanged(const Eva::ContactStatus& cs);
 	void slotMessageReceived( const Eva::MessageHeader& header, const Eva::ByteArray& message );
-	void slotContactDetailReceived( const QString& id, const QList<QByteArray>& list ); 
+	void slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map) ;
 
 protected:
 	/**

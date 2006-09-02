@@ -7,6 +7,7 @@
 
 #include <string>
 #include <list>
+#include <map>
 
 namespace Eva {
 	// NOTICE: the length of the following data declarations are:
@@ -107,13 +108,13 @@ namespace Eva {
 
 	static const char* contactDetailIndex[] =
 	{
-		"qqID",
+		"qqId",
 		"nickName",
 		"country",
 		"state",
 		"zipcode",
 		"address",
-		"PHH", 
+		"Phone", 
 		"age",
 		"gender",
 		"name",
@@ -129,7 +130,7 @@ namespace Eva {
 		"unknown1",
 		"unknown2",
 		"avatar",
-		"PHM",
+		"Mobile",
 		"mobileType",
 		"intro",
 		"city",
@@ -144,6 +145,14 @@ namespace Eva {
 		"bloodType",
 		"qqShow",
 		"unknown6"
+	};
+	
+	struct ltstr
+	{
+		bool operator() (const char*  s1, const char* s2) const
+		{
+			return strcmp(s1, s2) < 0;
+		}
 	};
 
 	// POD storage
@@ -434,7 +443,7 @@ namespace Eva {
 		ContactInfo contactInfo( char* buffer, int& len );
 		static std::list< GroupInfo > groupInfos( const ByteArray& text );
 		static std::list< ContactStatus > onlineContacts( const ByteArray& text, uchar& pos );
-		static std::list< std::string > contactDetail( const ByteArray& text );
+		static std::map<const char*, std::string, Eva::ltstr> contactDetail( const ByteArray& text );
 
 	private:
 		ushort m_version;

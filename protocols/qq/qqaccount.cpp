@@ -52,7 +52,7 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 // The default implementation is TCP
 QString QQAccount::serverName()
 {
-	return configGroup()->readEntry(  "serverName" , "tcpconn3.tencent.com" );
+	return configGroup()->readEntry(  "serverName" , "tcpconn.tencent.com" );
 
 }
 
@@ -124,8 +124,8 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 	QObject::connect( m_notifySocket, SIGNAL( messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ),
 		SLOT( slotMessageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ) );
 
-	QObject::connect( m_notifySocket, SIGNAL( contactDetailReceived( const QString&, const QList<QByteArray>& ) ),
-		SLOT( slotContactDetailReceived( const QString&, const QList<QByteArray>& ) ));
+	QObject::connect( m_notifySocket, SIGNAL( contactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )), 
+		SLOT( slotContactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )) );
 
 	m_notifySocket->connect(host, port);
 }
@@ -493,23 +493,20 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 }
 
 
-void QQAccount::slotContactDetailReceived( const QString& id, const QList<QByteArray>& list )
+void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map) 
 {
-	// FIXME: update detail information for all contacts!
-	if( id != myself()->contactId() ) 
-		return;
-
-	// Open the configuration for update
-	KConfigGroup * config = configGroup();
-	for( int i = 1; i< sizeof(Eva::contactDetailIndex)/sizeof(Eva::contactDetailIndex[0]); i++ )
+	kDebug(14140) << k_funcinfo "contact:" << id << endl;
+	QQContact* contact = dynamic_cast<QQContact*>(contacts()[id]);
+	if(! contact )
 	{
-		kDebug(14140) << k_funcinfo << i << endl;
-		if( 0 == strncmp( Eva::contactDetailIndex[i], "unknown", 7 ) )
-			continue;
-
-		config->writeEntry( QString(Eva::contactDetailIndex[i]), m_codec->toUnicode(list[i]) );
+		kDebug(14140) << k_funcinfo << "unknown contact:" << id << endl;
+		return;
 	}
 
+	QQProtocol* proto = static_cast<QQProtocol*> (protocol());
+
+	contact->setProperty( proto->propCountry, m_codec->toUnicode( map["country"] ) );
+	contact->setProperty( proto->propEmail, m_codec->toUnicode( map["email"] ) );
 }
 
 

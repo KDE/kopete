@@ -146,16 +146,17 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 		case Eva::Search :
 		case Eva::ContactDetail :
 		{
-			std::list<std::string> list = Eva::Packet::contactDetail(text);
-			QList<QByteArray> qsl;
+			// map std::map to QMap
+			std::map<const char*, std::string, Eva::ltstr> dict = Eva::Packet::contactDetail(text);
+			QMap<const char*, QByteArray> qmap;
 			
-			std::list<std::string>::const_iterator it = list.begin(); 
-			QString id = QString( (*it).c_str() );
+			QString id = QString( dict["qqId"].c_str() );
+			std::map<const char*, std::string, Eva::ltstr>::const_iterator it = dict.begin();
 
-			for( ; it != list.end(); it++ )
-				qsl.push_back( QByteArray((*it).c_str()) );
+			for( ; it != dict.end(); it++ )
+				qmap.insert( (*it).first, QByteArray((*it).second.c_str() ) );
 
-			emit contactDetailReceived(id, qsl);
+			emit contactDetailReceived(id, qmap);
 		}
 
 			

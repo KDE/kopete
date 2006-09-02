@@ -18,6 +18,7 @@
 #define TESTBEDPROTOCOL_H
 
 #include <kopeteprotocol.h>
+#include <kopetecontactproperty.h>
 
 
 /**
@@ -83,6 +84,24 @@ public:
 	 * Represents contacts that are Offline
 	 */
 	const Kopete::OnlineStatus qqOffline;
+
+	const Kopete::ContactPropertyTmpl propCountry;
+	const Kopete::ContactPropertyTmpl propState;
+	const Kopete::ContactPropertyTmpl propCity;
+	const Kopete::ContactPropertyTmpl propAddress;
+	const Kopete::ContactPropertyTmpl propZipcode;
+	const Kopete::ContactPropertyTmpl propAge;
+	const Kopete::ContactPropertyTmpl propGender;
+	const Kopete::ContactPropertyTmpl propOccupation;
+	const Kopete::ContactPropertyTmpl propHomepage;
+	const Kopete::ContactPropertyTmpl propIntro;
+	const Kopete::ContactPropertyTmpl propGraduateFrom;
+	const Kopete::ContactPropertyTmpl propHoroscope;
+	const Kopete::ContactPropertyTmpl propZodiac;
+	const Kopete::ContactPropertyTmpl propBloodType;
+	const Kopete::ContactPropertyTmpl propEmail;
+
+
 protected:
 	static QQProtocol *s_protocol;
 };

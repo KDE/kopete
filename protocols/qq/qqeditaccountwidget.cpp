@@ -86,10 +86,11 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 		d->ui->m_login->setText( account->accountId() );
 		d->ui->m_password->load( &static_cast<QQAccount *>(account)->password() );
 
+
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setDisabled( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		if ( ( static_cast<QQAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<QQAccount*>(account)->serverPort() != 1863) ) {
+		if ( ( static_cast<QQAccount*>(account)->serverName() != "tcpconn.tencent.com" ) || ( static_cast<QQAccount*>(account)->serverPort() != 80) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
@@ -98,6 +99,10 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 		d->ui->m_nickName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
 		d->ui->m_phm->setText( config->readEntry("PHM") );
 		d->ui->m_phh->setText( config->readEntry("PHH") );
+
+		// FIXME: just try to load the property
+		d->ui->m_country->setText( myself->property( d->protocol->propCountry ).value().toString() ); 
+		d->ui->m_email->setText( myself->property( d->protocol->propEmail ).value().toString() ); 
 
 		bool connected = account->isConnected();
 		if ( connected )
