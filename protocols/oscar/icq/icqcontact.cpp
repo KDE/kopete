@@ -18,8 +18,6 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
-#include <qimage.h>
-#include <qfile.h>
 
 #include <kaction.h>
 
@@ -32,8 +30,6 @@
 #include <kpassivepopup.h>
 #include <kinputdialog.h>
 #include <krandom.h>
-#include <kcodecs.h>
-#include <kstandarddirs.h>
 #include <ktoggleaction.h>
 
 #include "kopetechatsessionmanager.h"
@@ -61,7 +57,6 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	m_infoWidget = 0L;
 	m_requestingNickname = false;
     m_oesd = 0;
-	m_buddyIconDirty = false;
 
 	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
@@ -86,11 +81,6 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const Oscar::Message& ) ),
 	                  this, SLOT( receivedStatusMessage( const Oscar::Message& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
-	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
-	                  this, SLOT( requestBuddyIcon() ) );
-	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
-	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
-
 }
 
 ICQContact::~ICQContact()
@@ -179,25 +169,6 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 			removeProperty( mProtocol->clientFeatures );
 		else
 			setProperty( mProtocol->clientFeatures, details.clientName() );
-	}
-
-	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
-	{
-		m_buddyIconDirty = true;
-		if ( cachedBuddyIcon( details.buddyIconHash() ) == false )
-		{
-			if ( !mAccount->engine()->hasIconConnection() )
-			{
-				mAccount->engine()->connectToIconServer();
-			}
-			else
-			{
-				int time = ( KRandom::random() % 10 ) * 1000;
-				kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in "
-				                         << time/1000 << " seconds" << endl;
-				QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
-			}
-		}
 	}
 
 	OscarContact::userInfoUpdated( contact, details );
@@ -459,76 +430,6 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 void ICQContact::updateFeatures()
 {
 	setProperty( static_cast<ICQProtocol*>(protocol())->clientFeatures, m_clientFeatures );
-}
-
-void ICQContact::requestBuddyIcon()
-{
-	if ( m_buddyIconDirty && m_details.buddyIconHash().size() > 0 )
-	{
-		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
-		                                       m_details.iconCheckSumType() );
-	}
-}
-
-void ICQContact::haveIcon( const QString& user, QByteArray icon )
-{
-	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
-		return;
-	
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
-	
-	KMD5 buddyIconHash( icon );
-	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
-	{
-		QString iconLocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
-		
-		QFile iconFile( iconLocation );
-		if ( !iconFile.open( QIODevice::WriteOnly ) )
-		{
-			kDebug(14153) << k_funcinfo << "Cannot open file"
-			               << iconLocation << " for writing!" << endl;
-			return;
-		}
-		
-		iconFile.write( icon );
-		iconFile.close();
-		
-		removeProperty( Kopete::Global::Properties::self()->photo() );
-		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
-		m_buddyIconDirty = false;
-	}
-	else
-	{
-		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!" << endl;
-		removeProperty( Kopete::Global::Properties::self()->photo() );
-	}
-}
-
-bool ICQContact::cachedBuddyIcon( QByteArray hash )
-{
-	QString iconLocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ contactId() ) );
-	
-	QFile iconFile( iconLocation );
-	if ( !iconFile.open( QIODevice::ReadOnly ) )
-		return false;
-	
-	KMD5 buddyIconHash;
-	buddyIconHash.update( iconFile );
-	iconFile.close();
-	
-	if ( memcmp( buddyIconHash.rawDigest(), hash.data(), 16 ) == 0 )
-	{
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Updating icon for "
-		                         << contactId() << " from local cache" << endl;
-		removeProperty( Kopete::Global::Properties::self()->photo() );
-		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
-		m_buddyIconDirty = false;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
 }
 
 #if 0

@@ -137,7 +137,12 @@ protected slots:
 	
 private slots:
 	void chatSessionDestroyed();
+	void requestBuddyIcon();
+	void haveIcon( const QString&, QByteArray );
 	
+private:
+	bool cachedBuddyIcon( QByteArray hash );
+	bool m_buddyIconDirty;
 };
 
 #endif

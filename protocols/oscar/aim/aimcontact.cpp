@@ -16,7 +16,6 @@
 
 #include <time.h>
 
-#include <qimage.h>
 #include <qregexp.h>
 #include <qtimer.h>
 #include <qtextcodec.h>
@@ -26,7 +25,6 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <krandom.h>
 #include <ktoggleaction.h>
 
 #include "kopeteaway.h"
@@ -70,10 +68,6 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	                  this, SLOT( updateProfile( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
 	                  this, SLOT( gotWarning( const QString&, quint16, quint16 ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
-	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
-	                  this, SLOT( requestBuddyIcon() ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 }
 
@@ -235,16 +229,6 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		}
 	}
 
-	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
-	{
-        if ( !mAccount->engine()->hasIconConnection() )
-            mAccount->engine()->requestServerRedirect( 0x0010 );
-
-		int time = ( KRandom::random() % 10 ) * 1000;
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
-		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
-	}
-
 	OscarContact::userInfoUpdated( contact, details );
 }
 
@@ -312,32 +296,6 @@ void AIMContact::gotWarning( const QString& contact, quint16 increase, quint16 n
 		m_warningLevel = newLevel;
 
 	//TODO add a KNotify event after merge to HEAD
-}
-
-void AIMContact::requestBuddyIcon()
-{
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating buddy icon for " << contactId() << endl;
-	if ( m_details.buddyIconHash().size() > 0 )
-	{
-		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
-		                                       m_details.iconCheckSumType() );
-	}
-}
-
-void AIMContact::haveIcon( const QString& user, QByteArray icon )
-{
-	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
-		return;
-
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
-	QImage buddyIcon = QImage::fromData( icon );
-	if ( buddyIcon.isNull() )
-	{
-		kWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
-		return;
-	}
-
-	setProperty( Kopete::Global::Properties::self()->photo(), buddyIcon );
 }
 
 void AIMContact::closeUserInfoDialog()

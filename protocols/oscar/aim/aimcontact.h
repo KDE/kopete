@@ -78,8 +78,6 @@ protected slots:
 	virtual void updateFeatures();
 	
 private slots:
-	void requestBuddyIcon();
-	void haveIcon( const QString&, QByteArray );
 	void closeUserInfoDialog();
 	void warnUser();
 

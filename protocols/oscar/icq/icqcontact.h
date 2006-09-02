@@ -92,10 +92,7 @@ signals:
 	void haveInterestInfo( const ICQInterestInfo& );
 	void haveOrgAffInfo( const ICQOrgAffInfo& );
 
-private:
-	bool cachedBuddyIcon( QByteArray hash );
-	bool m_buddyIconDirty;
-	
+private:	
 	bool m_requestingNickname;
 	ICQProtocol *mProtocol;
 	ICQUserInfoWidget* m_infoWidget;
@@ -144,8 +141,6 @@ private slots:
     void changeContactEncoding();
     void changeEncodingDialogClosed( int );
 
-	void requestBuddyIcon();
-	void haveIcon( const QString&, QByteArray );
 	void receivedStatusMessage( const QString &contact, const QString &message );
 	void receivedStatusMessage( const Oscar::Message &message );
 

@@ -20,11 +20,15 @@
 
 #include <qapplication.h>
 #include <qtextcodec.h>
+#include <qtimer.h>
 
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <krandom.h>
+#include <kcodecs.h>
 #include <kmessagebox.h>
+#include <kstandarddirs.h>
 
 #include <kdeversion.h>
 #include <kfiledialog.h>
@@ -53,8 +57,15 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	mName = name;
 	mMsgManager = 0L;
 	m_ssiItem = ssiItem;
+	m_buddyIconDirty = false;
+	
 	connect( this, SIGNAL( updatedSSI() ), this, SLOT( updateSSIItem() ) );
 	setFileCapable( true );
+	
+	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
+	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
+	                  this, SLOT( requestBuddyIcon() ) );
 }
 
 OscarContact::~OscarContact()
@@ -167,6 +178,26 @@ void OscarContact::sync(unsigned int flags)
 void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& details  )
 {
 	Q_UNUSED( contact );
+	
+	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
+	{
+		m_buddyIconDirty = true;
+		if ( cachedBuddyIcon( details.buddyIconHash() ) == false )
+		{
+			if ( !mAccount->engine()->hasIconConnection() )
+			{
+				mAccount->engine()->connectToIconServer();
+			}
+			else
+			{
+				int time = ( KRandom::random() % 10 ) * 1000;
+				kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "updating buddy icon in "
+					<< time/1000 << " seconds" << endl;
+				QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
+			}
+		}
+	}
+	
 	setProperty( Kopete::Global::Properties::self()->onlineSince(), details.onlineSinceTime() );
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
@@ -262,6 +293,76 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, filePath, QFile( filePath ).size(), mName, Kopete::FileTransferInfo::Outgoing);
 	mAccount->engine()->sendFile( mName, filePath, t );
+}
+
+void OscarContact::requestBuddyIcon()
+{
+	if ( m_buddyIconDirty && m_details.buddyIconHash().size() > 0 )
+	{
+		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
+		                                       m_details.iconCheckSumType() );
+	}
+}
+
+void OscarContact::haveIcon( const QString& user, QByteArray icon )
+{
+	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	
+	KMD5 buddyIconHash( icon );
+	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
+	{
+		QString iconLocation = KStandardDirs::locateLocal( "appdata", "oscarpictures/" + Oscar::normalize( contactId() ) );
+		
+		QFile iconFile( iconLocation );
+		if ( !iconFile.open( QIODevice::WriteOnly ) )
+		{
+			kDebug(14153) << k_funcinfo << "Cannot open file"
+				<< iconLocation << " for writing!" << endl;
+			return;
+		}
+		
+		iconFile.write( icon );
+		iconFile.close();
+		
+		removeProperty( Kopete::Global::Properties::self()->photo() );
+		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
+		m_buddyIconDirty = false;
+	}
+	else
+	{
+		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!" << endl;
+		removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
+}
+
+bool OscarContact::cachedBuddyIcon( QByteArray hash )
+{
+	QString iconLocation = KStandardDirs::locateLocal( "appdata", "oscarpictures/" + Oscar::normalize( contactId() ) );
+	
+	QFile iconFile( iconLocation );
+	if ( !iconFile.open( QIODevice::ReadOnly ) )
+		return false;
+	
+	KMD5 buddyIconHash;
+	buddyIconHash.update( iconFile );
+	iconFile.close();
+	
+	if ( memcmp( buddyIconHash.rawDigest(), hash.data(), 16 ) == 0 )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for "
+			<< contactId() << " from local cache" << endl;
+		
+		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
+		m_buddyIconDirty = false;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 #include "oscarcontact.moc"
