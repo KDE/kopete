@@ -78,6 +78,8 @@ private slots:
 	void write();
 
 private:
+	enum Action { Send, Receive };
+	void init( Action act );
 	void sendReq();
 	bool listen();
 	bool validFile();
@@ -102,7 +104,7 @@ private:
 					//XXX this does put an arbitrary limit on file size
 
 	OFT m_oft;
-	enum Action { Send, Receive };
+	
 	Action m_action;
 	QFile m_file;
 	QString m_contactName; //other person's username

@@ -37,21 +37,27 @@
 #include <qfileinfo.h>
 #include <klocale.h>
 
-//TODO: don't have such ugly constructors
-
 //receive
-FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b  )
-:Task( parent ), m_action( Receive ), m_file( this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
+FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
+                                    const QString& self, QByteArray cookie,
+                                    Buffer b  )
+: Task( parent ), m_contactName( contact ), m_selfName( self ), 
+  m_timer( this ), m_file( this )
 {
+	init( Receive );
 	initOft();
 	m_oft.cookie = cookie;
 	parseReq( b );
 }
 
 //send
-FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const QString& self, const QString &fileName, Kopete::Transfer *transfer )
-:Task( parent ), m_action( Send ), m_file( fileName, this ), m_contactName( contact ), m_selfName( self ), m_ss(0), m_connection(0), m_timer( this ), m_port( 0 ), m_proxy( 0 ), m_proxyRequester( 0 ), m_state( Default )
+FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
+                                    const QString& self, const QString &fileName,
+                                    Kopete::Transfer *transfer )
+:Task( parent ), m_file( fileName, this ), m_contactName( contact ),
+ m_selfName( self ), m_timer( this )
 {
+	init( Send );
 	initOft();
 	//get filename without path
 	m_oft.fileName = QFileInfo( fileName ).fileName();
@@ -72,6 +78,17 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact, const 
 	connect( this , SIGNAL( error( int, const QString & ) ), transfer, SLOT( slotError( int, const QString & ) ) );
 	connect( this , SIGNAL( processed( unsigned int ) ), transfer, SLOT( slotProcessed( unsigned int ) ) );
 	connect( this , SIGNAL( fileComplete() ), transfer, SLOT( slotComplete() ) );
+}
+
+void FileTransferTask::init( Action act )
+{
+	m_action = act;
+	m_ss = 0;
+	m_connection = 0;
+	m_port = 0;
+	m_proxy = false;
+	m_proxyRequester = false;
+	m_state = Default;
 }
 
 FileTransferTask::~FileTransferTask()
