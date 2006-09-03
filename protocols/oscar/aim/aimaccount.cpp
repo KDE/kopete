@@ -14,7 +14,6 @@
  */
 
 #include <qdom.h>
-#include <qfile.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -22,7 +21,6 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <kcodecs.h>
 #include <ktoggleaction.h>
 #include <kicon.h>
 
@@ -214,11 +212,6 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 
 	m_joinChatDialog = 0;
 	m_visibilityDialog = 0;
-	QObject::connect( Kopete::ContactList::self(),
-			SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
-			this,
-			SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
-
 	QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
 			this, SLOT( connectedToChatRoom( WORD, const QString& ) ) );
 
@@ -227,8 +220,6 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 
 	QObject::connect( engine(), SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
 			this, SLOT( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
-
-	QObject::connect( this, SIGNAL( buddyIconChanged() ), this, SLOT( slotBuddyIconChanged() ) );
 
 }
 
@@ -381,118 +372,6 @@ void AIMAccount::slotEditInfo()
 	}
 	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this);
 	myInfo->exec(); // This is a modal dialog
-}
-
-void AIMAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
-{
-	//do something with the photo
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "key: " << key << endl;
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "value: " << value << endl;
-
-	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
-	{
-		if ( key == Kopete::Global::Properties::self()->nickName().key() )
-		{
-			//edit ssi item to change alias (if possible)
-		}
-
-		if ( key == Kopete::Global::Properties::self()->photo().key() )
-		{
-			setBuddyIcon( value.toString() );
-		}
-	}
-}
-
-void AIMAccount::slotBuddyIconChanged()
-{
-	// need to disconnect because we could end up with many connections
-	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
-	if ( !engine()->isActive() )
-	{
-		QObject::connect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
-		return;
-	}
-
-	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-
-	ContactManager* ssi = engine()->ssiManager();
-	OContact item = ssi->findItemForIconByRef( 1 );
-
-	if ( photoPath.isEmpty() )
-	{
-		if ( item )
-		{
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Removing icon hash item from ssi" << endl;
-			OContact s(item);
-
-			//remove hash and alias
-			QList<TLV> tList( item.tlvList() );
-			TLV t = Oscar::findTLV( tList, 0x00D5 );
-			if ( t )
-				tList.removeAll( t );
-
-			item.setTLVList( tList );
-			//s is old, item is new. modification will occur
-			engine()->modifyContactItem( s, item );
-		}
-	}
-	else
-	{
-		QFile iconFile( photoPath );
-		iconFile.open( QIODevice::ReadOnly );
-
-		KMD5 iconHash;
-		iconHash.update( iconFile );
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
-
-		//find old item, create updated item
-		if ( !item )
-		{
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
-
-			TLV t;
-			t.type = 0x00D5;
-			t.data.resize( 18 );
-			t.data[0] = 0x00;
-			t.data[1] = 0x10;
-			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-			t.length = t.data.size();
-
-			QList<Oscar::TLV> list;
-			list.append( t );
-
-			OContact s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
-
-			//item is a non-valid ssi item, so the function will add an item
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
-			engine()->modifyContactItem( item, s );
-		}
-		else
-		{ //found an item
-			OContact s(item);
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi." << endl;
-			QList<TLV> tList( item.tlvList() );
-
-			TLV t = Oscar::findTLV( tList, 0x00D5 );
-			if ( t )
-				tList.removeAll( t );
-			else
-				t.type = 0x00D5;
-
-			t.data.resize( 18 );
-			t.data[0] = 0x00;
-			t.data[1] = 0x10;
-			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-			t.length = t.data.size();
-			tList.append( t );
-
-			item.setTLVList( tList );
-			//s is old, item is new. modification will occur
-			engine()->modifyContactItem( s, item );
-		}
-		iconFile.close();
-	}
 }
 
 void AIMAccount::slotJoinChat()

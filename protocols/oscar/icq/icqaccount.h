@@ -91,10 +91,6 @@ private slots:
 	void slotSetVisiblility();
 	void slotVisibilityDialogClosed();
 
-	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
-
-	void slotBuddyIconChanged();
-
 private:
 	bool mWebAware;
 	bool mHideIP;

@@ -15,13 +15,10 @@
   *************************************************************************
 */
 
-#include <qfile.h>
-
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kcodecs.h>
 #include <kmessagebox.h>
 
 #include "kopeteawayaction.h"
@@ -87,11 +84,6 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	mWebAware = configGroup()->readEntry( "WebAware", false );
 	mHideIP = configGroup()->readEntry( "HideIP", true );
 	mInitialStatusMessage.clear();
-
-	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
-	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
-
-	QObject::connect( this, SIGNAL( buddyIconChanged() ), this, SLOT( slotBuddyIconChanged() ) );
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
@@ -399,138 +391,6 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 QString ICQAccount::sanitizedMessage( const QString& message )
 {
 	return Kopete::Message::escape( message );
-}
-
-
-void ICQAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
-{
-	//do something with the photo
-	kDebug(14153) << k_funcinfo << "Global identity changed" << endl;
-	kDebug(14153) << k_funcinfo << "key: " << key << endl;
-	kDebug(14153) << k_funcinfo << "value: " << value << endl;
-	
-	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
-	{
-		if ( key == Kopete::Global::Properties::self()->nickName().key() )
-		{
-			//edit ssi item to change alias (if possible)
-		}
-		
-		if ( key == Kopete::Global::Properties::self()->photo().key() )
-		{
-			setBuddyIcon( value.toString() );
-		}
-	}
-}
-
-void ICQAccount::slotBuddyIconChanged()
-{
-	// need to disconnect because we could end up with many connections
-	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
-	if ( !engine()->isActive() )
-	{
-		QObject::connect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
-		return;
-	}
-	
-	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-	
-	ContactManager* ssi = engine()->ssiManager();
-	OContact item = ssi->findItemForIconByRef( 1 );
-	
-	if ( photoPath.isEmpty() )
-	{
-		if ( item )
-		{
-			kDebug(14153) << k_funcinfo << "Removing icon hash item from ssi" << endl;
-			OContact s(item);
-			
-			//remove hash and alias
-			QList<TLV> tList( item.tlvList() );
-			TLV t = Oscar::findTLV( tList, 0x00D5 );
-			if ( t )
-				tList.removeAll( t );
-			
-			t = Oscar::findTLV( tList, 0x0131 );
-			if ( t )
-				tList.removeAll( t );
-			
-			item.setTLVList( tList );
-			//s is old, item is new. modification will occur
-			engine()->modifyContactItem( s, item );
-		}
-	}
-	else
-	{
-		QFile iconFile( photoPath );
-		iconFile.open( QIODevice::ReadOnly );
-		
-		KMD5 iconHash;
-		iconHash.update( iconFile );
-		kDebug(14153) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
-	
-		//find old item, create updated item
-		if ( !item )
-		{
-			kDebug(14153) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
-			
-			TLV t;
-			t.type = 0x00D5;
-			t.data.resize( 18 );
-			t.data[0] = 0x01;
-			t.data[1] = 0x10;
-			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-			t.length = t.data.size();
-			
-			//alias, it's always empty
-			TLV t2;
-			t2.type = 0x0131;
-			t2.length = 0;
-			
-			QList<Oscar::TLV> list;
-			list.append( t );
-			list.append( t2 );
-			
-			OContact s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
-			
-			//item is a non-valid ssi item, so the function will add an item
-			kDebug(14153) << k_funcinfo << "setting new icon item" << endl;
-			engine()->modifyContactItem( item, s );
-		}
-		else
-		{ //found an item
-			OContact s(item);
-			kDebug(14153) << k_funcinfo << "modifying old item in ssi." << endl;
-			QList<TLV> tList( item.tlvList() );
-			
-			TLV t = Oscar::findTLV( tList, 0x00D5 );
-			if ( t )
-				tList.removeAll( t );
-			else
-				t.type = 0x00D5;
-			
-			t.data.resize( 18 );
-			t.data[0] = 0x01;
-			t.data[1] = 0x10;
-			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-			t.length = t.data.size();
-			tList.append( t );
-			
-			//add empty alias
-			t = Oscar::findTLV( tList, 0x0131 );
-			if ( !t )
-			{
-				t.type = 0x0131;
-				t.length = 0;
-				tList.append( t );
-			}
-			
-			item.setTLVList( tList );
-			//s is old, item is new. modification will occur
-			engine()->modifyContactItem( s, item );
-		}
-		iconFile.close();
-	}
 }
 
 #include "icqaccount.moc"

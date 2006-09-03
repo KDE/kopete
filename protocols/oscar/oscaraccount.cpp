@@ -34,7 +34,6 @@
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qtimer.h>
-//Added by qt3to4:
 #include <qtextcodec.h>
 #include <qimage.h>
 #include <qfile.h>
@@ -42,6 +41,7 @@
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
 #include <kstandarddirs.h>
@@ -81,6 +81,8 @@ public:
 	
 	unsigned int versionUpdaterStamp;
 	bool versionAlreadyUpdated;
+	
+	bool buddyIconDirty;
 
 	virtual QTextCodec* codecForContact( const QString& contactName ) const
 	{
@@ -104,6 +106,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	d->engine->setIsIcq( isICQ );
 	
 	d->versionAlreadyUpdated = false;
+	d->buddyIconDirty = false;
 	d->versionUpdaterStamp = OscarVersionUpdater::self()->stamp();
 	if ( isICQ )
 		d->engine->setVersion( OscarVersionUpdater::self()->getICQVersion() );
@@ -129,6 +132,8 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( askIncoming( QString, QString, DWORD, QString, QString ) ) );
 	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
 	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
+	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
 }
 
 OscarAccount::~OscarAccount()
@@ -195,6 +200,8 @@ void OscarAccount::loginActions()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending request for icon service" << endl;
 	d->engine->requestServerRedirect( 0x0010 );
 
+	if ( d->buddyIconDirty )
+		updateBuddyIconInSSI();
 }
 
 void OscarAccount::processSSIList()
@@ -503,7 +510,8 @@ void OscarAccount::setBuddyIcon( KUrl url )
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	}
 	
-	emit buddyIconChanged();
+	d->buddyIconDirty = true;
+	updateBuddyIconInSSI();
 }
 
 bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
@@ -790,6 +798,113 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		logOff( Kopete::Account::ConnectionReset );
 }
 
+void OscarAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
+{
+	//do something with the photo
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Global identity changed" << endl;
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "key: " << key << endl;
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "value: " << value << endl;
+	
+	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
+	{
+		if ( key == Kopete::Global::Properties::self()->nickName().key() )
+		{
+			//edit ssi item to change alias (if possible)
+		}
+		
+		if ( key == Kopete::Global::Properties::self()->photo().key() )
+		{
+			setBuddyIcon( value.toString() );
+		}
+	}
+}
+
+void OscarAccount::updateBuddyIconInSSI()
+{
+	if ( !engine()->isActive() )
+		return;
+	
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	
+	ContactManager* ssi = engine()->ssiManager();
+	OContact item = ssi->findItemForIconByRef( 1 );
+	
+	if ( photoPath.isEmpty() )
+	{
+		if ( item )
+		{
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Removing icon hash item from ssi" << endl;
+			OContact s(item);
+			
+			//remove hash and alias
+			QList<TLV> tList( item.tlvList() );
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.removeAll( t );
+			
+			t = Oscar::findTLV( tList, 0x0131 );
+			if ( t )
+				tList.removeAll( t );
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifyContactItem( s, item );
+		}
+	}
+	else
+	{
+		QFile iconFile( photoPath );
+		iconFile.open( QIODevice::ReadOnly );
+		
+		KMD5 iconHash;
+		iconHash.update( iconFile );
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+	
+		QByteArray iconTLVData;
+		iconTLVData.resize( 18 );
+		iconTLVData[0] = ( d->engine->isIcq() ) ? 0x01 : 0x00;
+		iconTLVData[1] = 0x10;
+		memcpy( iconTLVData.data() + 2, iconHash.rawDigest(), 16 );
+		
+		QList<Oscar::TLV> tList;
+		tList.append( TLV( 0x00D5, iconTLVData.size(), iconTLVData ) );
+		tList.append( TLV( 0x0131, 0, 0 ) );
+		
+		
+		//find old item, create updated item
+		if ( !item )
+		{
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
+			
+			OContact s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, tList );
+			
+			//item is a non-valid ssi item, so the function will add an item
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "setting new icon item" << endl;
+			engine()->modifyContactItem( item, s );
+		}
+		else
+		{ //found an item
+			OContact s(item);
+			
+			if ( Oscar::updateTLVs( s, tList ) == true )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "modifying old item in ssi." << endl;
+				
+				//s is old, item is new. modification will occur
+				engine()->modifyContactItem( item, s );
+			}
+			else
+			{
+				kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "not updating, item is the same." << endl;
+			}
+		}
+		
+		iconFile.close();
+	}
+	
+	d->buddyIconDirty = false;
+}
+
 void OscarAccount::slotSendBuddyIcon()
 {
 	//need to disconnect because we could end up with many connections
@@ -808,6 +923,8 @@ void OscarAccount::slotSendBuddyIcon()
 			//will send icon when we connect to icon server
 			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
 			                  this, SLOT( slotSendBuddyIcon() ) );
+			
+			engine()->connectToIconServer();
 			return;
 		}
 		QByteArray imageData = iconFile.readAll();

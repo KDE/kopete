@@ -182,10 +182,11 @@ signals:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
 
-	void buddyIconChanged();
-
 private:
 	QString getFLAPErrorMessage( int code );
+
+	/** Updates buddy icon item in ssi */
+	void updateBuddyIconInSSI();
 
 private slots:
 	/** Handler from socket errors from a connection */
@@ -193,6 +194,8 @@ private slots:
 
 	/** Handle task errors from the client */
 	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
+
+	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
 
 	/** Sends buddy icon to server */
 	void slotSendBuddyIcon();
