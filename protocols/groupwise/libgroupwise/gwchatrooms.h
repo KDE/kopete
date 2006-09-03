@@ -74,5 +74,5 @@ class Chatroom
 
 typedef QValueList<Chatroom> ChatroomList;
 typedef QMap<QString, Chatroom> ChatroomMap;
-};
+}
 #endif
