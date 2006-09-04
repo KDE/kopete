@@ -226,7 +226,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(slotUpdateHeaderDisplayName()) );
 	connect( d->manager, SIGNAL(photoChanged()), this, SLOT(slotUpdateHeaderPhoto()) );
 
-	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
+	connect ( browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
 	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::URLArgs & ) ) );
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),

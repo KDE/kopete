@@ -55,7 +55,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	KHBox *hbox = new KHBox(this);
 	
 	generalHTMLPart = new KHTMLPart(hbox);
-	connect ( generalHTMLPart->browserExtension(), SIGNAL( openURLRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
+	connect ( generalHTMLPart->browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
 			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::URLArgs & ) ) );
 	
 	

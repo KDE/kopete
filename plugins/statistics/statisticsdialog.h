@@ -69,7 +69,7 @@ class StatisticsDialog : public KDialog
 
 private slots:
 		/**
-		 * We manage the openURLRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
+		 * We manage the openUrlRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
 		 * generate requested pages on the flow.
 		 */
 		void slotOpenURLRequest(const KUrl& url, const KParts::URLArgs&);

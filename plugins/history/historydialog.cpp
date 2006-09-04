@@ -170,7 +170,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->end();
 
 	
-	connect(mHtmlPart->browserExtension(), SIGNAL(openURLRequestDelayed(const KUrl &, const KParts::URLArgs &)),
+	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::URLArgs &)),
 		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::URLArgs &)));
 	connect(mMainWidget->dateListView, SIGNAL(clicked(Q3ListViewItem*)), this, SLOT(dateSelected(Q3ListViewItem*)));
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
