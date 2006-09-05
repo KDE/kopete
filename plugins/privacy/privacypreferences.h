@@ -23,6 +23,7 @@
 
 namespace Ui { class PrivacyPrefsUI; }
 class PrivacyConfig;
+class PrivacyAccountListModel;
 
 class PrivacyPreferences : public KCModule
 {
@@ -49,6 +50,8 @@ private Q_SLOTS:
 	void slotBtnRemoveFromBlackListClicked();
 private:
 	Ui::PrivacyPrefsUI *prefUi;
+	PrivacyAccountListModel *m_whiteListModel;
+	PrivacyAccountListModel *m_blackListModel;
 };
 
 #endif

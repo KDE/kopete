@@ -34,7 +34,7 @@ PrivacyMessageHandlerFactory::PrivacyMessageHandlerFactory( Message::MessageDire
 	int position, QObject *target, const char *slot )
  : d( new Private )
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug(14313) << k_funcinfo << endl;
 	d->direction = direction;
 	d->position = position;
 	d->target = target;
@@ -43,7 +43,7 @@ PrivacyMessageHandlerFactory::PrivacyMessageHandlerFactory( Message::MessageDire
 
 PrivacyMessageHandlerFactory::~PrivacyMessageHandlerFactory()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug(14313) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -65,26 +65,26 @@ int PrivacyMessageHandlerFactory::filterPosition( ChatSession */*manager*/, Mess
 
 PrivacyMessageHandler::PrivacyMessageHandler()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug(14313) << k_funcinfo << endl;
 }
 
 PrivacyMessageHandler::~PrivacyMessageHandler()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug(14313) << k_funcinfo << endl;
 }
 
 void PrivacyMessageHandler::handleMessage( MessageEvent *e )
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug(14313) << k_funcinfo << endl;
 	QPointer< MessageEvent > event = e;
 	emit handle( e );
 	if( event )
 	{
-		kDebug() << k_funcinfo << "MessageEvent still there!" << endl;
+		kDebug(14313) << k_funcinfo << "MessageEvent still there!" << endl;
 		MessageHandler::handleMessage( event );
 	}
 	else
-		kDebug() << k_funcinfo << "MessageEvent destroyed!" << endl;
+		kDebug(14313) << k_funcinfo << "MessageEvent destroyed!" << endl;
 }
 
 #include "privacymessagehandler.moc"

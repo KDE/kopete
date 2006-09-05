@@ -8,7 +8,7 @@ ${KOPETE_INCLUDES}
 
 ########### next target ###############
 
-set(kopete_privacy_PART_SRCS privacyplugin.cpp privacymessagehandler.cpp privacypreferences.cpp)
+set(kopete_privacy_PART_SRCS privacyplugin.cpp privacymessagehandler.cpp privacypreferences.cpp privacyaccountlistmodel.cpp )
 
 kde4_add_kcfg_files(kopete_privacy_PART_SRCS privacyconfig.kcfgc )
 
@@ -25,7 +25,7 @@ install(TARGETS kopete_privacy  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kcm_kopete_privacy_PART_SRCS privacypreferences.cpp )
+set(kcm_kopete_privacy_PART_SRCS privacypreferences.cpp privacyaccountlistmodel.cpp )
 
 kde4_add_ui_files(kcm_kopete_privacy_PART_SRCS privacydialog.ui )
 
