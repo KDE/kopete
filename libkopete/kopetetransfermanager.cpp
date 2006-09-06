@@ -130,7 +130,7 @@ void Kopete::Transfer::slotProcessed(unsigned int bytes)
 
 void Kopete::Transfer::slotComplete()
 {
-	showMessage( i18n("File transfer completed. :)") );
+	showMessage( i18n("File transfer %1 completed. :)", mInfo.file() ) );
 	emitResult();
 }
 
@@ -139,7 +139,7 @@ void Kopete::Transfer::slotError( int error, const QString &errorText )
 	setError(error);
 	setErrorText(errorText);
 
-	showMessage( i18n("File transfer failed. :(") );
+	showMessage( i18n("File transfer %1 failed. :(", mInfo.file() ) );
 	emitResult();
 }
 
@@ -147,14 +147,14 @@ void Kopete::Transfer::slotResultEmitted()
 {
 	if( error() == KIO::ERR_USER_CANCELED )
 	{
-		showMessage( i18n("You cancelled the filetransfer.") );
+		showMessage( i18n("You cancelled filetransfer %1", mInfo.file() ) );
 		emit transferCanceled();
 	}
 }
 
 void Kopete::Transfer::slotCancelled()
 {
-	showMessage( i18n("File transfer cancelled.") );
+	showMessage( i18n("File transfer %1 cancelled.", mInfo.file() ) );
 	emitResult();
 	//slotError( KIO::ERR_ABORTED, i18n("File transfer cancelled.") );
 }
