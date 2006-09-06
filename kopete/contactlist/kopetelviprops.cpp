@@ -391,7 +391,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromContact(selectedPhotoSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
-		photo = QImage(ui_mainWidget->cmbPhotoUrl->url());
+		photo = QImage(ui_mainWidget->cmbPhotoUrl->url().url());
 		break;
 	}
 	if( !photo.isNull() )

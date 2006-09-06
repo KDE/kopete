@@ -379,7 +379,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 			photo = Kopete::photoFromContact(selectedNameSourceContact());
 			break;
 		case Kopete::MetaContact::SourceCustom:
-			photo = QImage(comboPhotoURL->url().toString());
+			photo = QImage(comboPhotoURL->url().url());
 			break;
 	}
 
