@@ -36,6 +36,7 @@ PrivacyAccountListModel::~PrivacyAccountListModel()
 void PrivacyAccountListModel::loadAccounts( const QStringList &accounts )
 {
 	m_list.clear();
+	beginInsertRows(QModelIndex(), 0, accounts.size());
 	foreach( QString entry, accounts )
 	{
 		Kopete::Plugin *protocol = Kopete::PluginManager::self()->plugin( entry.split(":")[0] );
@@ -44,7 +45,7 @@ void PrivacyAccountListModel::loadAccounts( const QStringList &accounts )
 
 		m_list.append( AccountListEntry( entry.split(":")[1], (Kopete::Protocol *)protocol ) );
 	}
-	emit dataChanged( createIndex(0, 0, 0), createIndex(m_list.size()-1, 0, 0) );
+	endInsertRows();
 }
 
 void PrivacyAccountListModel::addAccount(const QString &accountId, Kopete::Protocol *protocol)
@@ -52,6 +53,7 @@ void PrivacyAccountListModel::addAccount(const QString &accountId, Kopete::Proto
 	beginInsertRows(QModelIndex(), m_list.size()-1, m_list.size());
 
 	m_list.append( AccountListEntry( accountId, protocol ) );
+
 	endInsertRows();
 }
 

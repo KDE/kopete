@@ -16,6 +16,7 @@
 
 #include <QLayout>
 #include <QVBoxLayout>
+#include <QHeaderView>
 
 #include <kgenericfactory.h>
 #include <kinputdialog.h>
@@ -48,8 +49,12 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	m_blackListModel = new PrivacyAccountListModel;
 
 	prefUi->listWhiteList->setSelectionBehavior( QAbstractItemView::SelectRows );
+	prefUi->listWhiteList->horizontalHeader()->hide();
+	prefUi->listWhiteList->verticalHeader()->hide();
 	prefUi->listWhiteList->setModel( m_whiteListModel );
 	prefUi->listBlackList->setSelectionBehavior( QAbstractItemView::SelectRows );
+	prefUi->listBlackList->horizontalHeader()->hide();
+	prefUi->listBlackList->verticalHeader()->hide();
 	prefUi->listBlackList->setModel( m_blackListModel );
 
 	connect(prefUi->radioAllowAll, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
@@ -60,10 +65,8 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	connect(prefUi->chkDropAtLeastOne, SIGNAL(toggled(bool)), prefUi->editDropAtLeastOne, SLOT(setEnabled(bool)));
 	connect(prefUi->chkDropAll, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
 	connect(prefUi->chkDropAll, SIGNAL(toggled(bool)), prefUi->editDropAll, SLOT(setEnabled(bool)));
-	connect(prefUi->editDropAll, SIGNAL(textChanged()), this, SLOT(slotModified()));
-	connect(prefUi->editDropAtLeastOne, SIGNAL(textChanged()), this, SLOT(slotModified()));
-	connect(prefUi->listWhiteList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(slotModified()));
-	connect(prefUi->listBlackList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(slotModified()));
+	connect(prefUi->editDropAll, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(prefUi->editDropAtLeastOne, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 
 	connect(prefUi->btnAddToWhiteList, SIGNAL(clicked()), this, SLOT(slotBtnAddToWhiteListClicked()));
 	connect(prefUi->btnAddToBlackList, SIGNAL(clicked()), this, SLOT(slotBtnAddToBlackListClicked()));
@@ -176,34 +179,36 @@ void PrivacyPreferences::slotBtnAddToBlackListClicked()
 
 void PrivacyPreferences::slotBtnClearWhiteListClicked()
 {
-	m_whiteListModel->removeRows( 0, m_whiteListModel->rowCount() );
+	if( m_whiteListModel->rowCount() )
+		m_whiteListModel->removeRows( 0, m_whiteListModel->rowCount() );
 
 	emit KCModule::changed(true);
 }
 
 void PrivacyPreferences::slotBtnClearBlackListClicked()
 {
-	m_blackListModel->removeRows( 0, m_blackListModel->rowCount() );
+	if( m_blackListModel->rowCount() )
+		m_blackListModel->removeRows( 0, m_blackListModel->rowCount() );
 
 	emit KCModule::changed(true);
 }
 
 void PrivacyPreferences::slotBtnRemoveFromWhiteListClicked()
 {
-// 	foreach(QModelIndex index, prefUi->listWhiteList->selectionModel()->selectedRows() )
-// 	{
-// 		m_whiteListModel->removeRow( index.row() );
-// 	}
+	foreach(QModelIndex index, prefUi->listWhiteList->selectionModel()->selectedRows() )
+	{
+		m_whiteListModel->removeRow( index.row() );
+	}
 	
 	emit KCModule::changed(true);
 }
 
 void PrivacyPreferences::slotBtnRemoveFromBlackListClicked()
 {
-// 	foreach(QModelIndex index, prefUi->listBlackList->selectionModel()->selectedRows() )
-// 	{
-// 		m_blackListModel->removeRow( index.row() );
-// 	}
+	foreach(QModelIndex index, prefUi->listBlackList->selectionModel()->selectedRows() )
+	{
+		m_blackListModel->removeRow( index.row() );
+	}
 
 	emit KCModule::changed(true);
 }
