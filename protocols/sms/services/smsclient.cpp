@@ -149,7 +149,7 @@ QStringList SMSClient::providers()
 	QStringList p;
 
 	QDir d;
-	d.setPath(QString("%1/services/").arg(prefWidget->configDir->url()));
+	d.setPath(QString("%1/services/").arg(prefWidget->configDir->url().url()));
 	p += d.entryList("*", QDir::Files);
 
 	return p;

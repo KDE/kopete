@@ -190,7 +190,7 @@ void SMSSend::setOptions(const QString& name)
 	args.clear();
 
 	if (m_provider) delete m_provider;
-	m_provider = new SMSSendProvider(name, prefWidget->program->url(), m_account, this);
+	m_provider = new SMSSendProvider(name, prefWidget->program->url().url(), m_account, this);
 
 	for (int i=0; i < m_provider->count(); i++)
 	{
