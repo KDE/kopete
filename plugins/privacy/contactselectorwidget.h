@@ -22,12 +22,9 @@
 #include "privacyaccountlistmodel.h"
 
 class Ui_ContactSelectorWidget_Base;
-namespace Kopete { class Contact; }
-
 
 class ContactSelectorWidget : public QWidget
 {
-	Q_OBJECT
 public:
 	ContactSelectorWidget( QWidget *parent = 0);
 	~ContactSelectorWidget();

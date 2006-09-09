@@ -80,13 +80,11 @@ PrivacyConfig *PrivacyPlugin::config()
 
 void PrivacyPlugin::slotSettingsChanged()
 {
-	kDebug(14313) << k_funcinfo << endl;
 	PrivacyConfig::self()->readConfig();
 }
 
 void PrivacyPlugin::slotAddToWhiteList()
 {	
-	kDebug(14313) << k_funcinfo << endl;
 	QStringList whitelist = PrivacyConfig::whiteList();
 	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
@@ -103,7 +101,6 @@ void PrivacyPlugin::slotAddToWhiteList()
 
 void PrivacyPlugin::slotAddToBlackList()
 {	
-	kDebug(14313) << k_funcinfo << endl;
 	QStringList blacklist = PrivacyConfig::blackList();
 	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
@@ -120,8 +117,6 @@ void PrivacyPlugin::slotAddToBlackList()
 
 void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 {
-	kDebug(14313) << k_funcinfo << endl;
-
 	Kopete::Message msg = event->message();
 
 	if( msg.direction() == Kopete::Message::Outbound ||

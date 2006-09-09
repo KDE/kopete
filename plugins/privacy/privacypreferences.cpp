@@ -54,10 +54,12 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	prefUi->listWhiteList->horizontalHeader()->hide();
 	prefUi->listWhiteList->verticalHeader()->hide();
 	prefUi->listWhiteList->setModel( m_whiteListModel );
+	prefUi->listWhiteList->resizeColumnsToContents();
 	prefUi->listBlackList->setSelectionBehavior( QAbstractItemView::SelectRows );
 	prefUi->listBlackList->horizontalHeader()->hide();
 	prefUi->listBlackList->verticalHeader()->hide();
 	prefUi->listBlackList->setModel( m_blackListModel );
+	prefUi->listBlackList->resizeColumnsToContents();
 
 	connect(PrivacyConfig::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
@@ -91,8 +93,6 @@ PrivacyPreferences::~PrivacyPreferences()
 
 void PrivacyPreferences::load()
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
-
 	PrivacyConfig::self()->readConfig();
 
 	prefUi->radioAllowAll->setChecked( PrivacyConfig::sender_AllowAll() );
@@ -114,7 +114,6 @@ void PrivacyPreferences::load()
 
 void PrivacyPreferences::save()
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
 	PrivacyConfig::setSender_AllowAll(prefUi->radioAllowAll->isChecked());
 	PrivacyConfig::setSender_AllowNoneButWhiteList(prefUi->radioOnlyWhiteList->isChecked());
 	PrivacyConfig::setWhiteList(m_whiteListModel->toStringList());
@@ -133,7 +132,6 @@ void PrivacyPreferences::save()
 
 void PrivacyPreferences::slotConfigChanged()
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
 	load();
 }
 

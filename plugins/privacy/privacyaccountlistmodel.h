@@ -45,7 +45,7 @@ public:
 	QStringList toStringList() const;
 
 private:
-	QList< QPair< QString, Kopete::Protocol *> > m_list;
+	QList< AccountListEntry > m_list;
 };
 
 #endif

@@ -16,9 +16,9 @@
 
 #include <QStringList>
 
-#include "klocale.h"
-#include "kdebug.h"
-#include "kiconloader.h"
+#include <klocale.h>
+#include <kdebug.h>
+#include <kiconloader.h>
 
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
@@ -64,11 +64,13 @@ void PrivacyAccountListModel::addAccount(const AccountListEntry &entry)
 
 int PrivacyAccountListModel::rowCount(const QModelIndex &parent) const
 {
+	Q_UNUSED(parent);
 	return m_list.count();
 }
 
 int PrivacyAccountListModel::columnCount(const QModelIndex &parent) const
 {
+	Q_UNUSED(parent);
 	return 2;
 }
 
@@ -97,6 +99,7 @@ QVariant PrivacyAccountListModel::data(const QModelIndex &index, int role) const
 
 bool PrivacyAccountListModel::removeRow(int position, const QModelIndex &index)
 {
+	Q_UNUSED(index);
 	beginRemoveRows(QModelIndex(), position, position);
 	
 	m_list.removeAt(position);
@@ -107,9 +110,11 @@ bool PrivacyAccountListModel::removeRow(int position, const QModelIndex &index)
 
 bool PrivacyAccountListModel::removeRows(int position, int rows, const QModelIndex &index)
 {
+	Q_UNUSED(index);
 	beginRemoveRows(QModelIndex(), position, position+rows-1);
 	
-	for (int row = 0; row < rows; ++row) {
+	for (int row = 0; row < rows; ++row)
+	{
 		m_list.removeAt(position);
 	}
 	

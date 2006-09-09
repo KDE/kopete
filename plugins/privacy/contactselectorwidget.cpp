@@ -25,7 +25,7 @@
 #include "contactselectorwidget.h"
 
 ContactSelectorWidget::ContactSelectorWidget( QWidget *parent )
-		: QWidget(parent)
+	: QWidget(parent)
 {
 	mUi = new Ui_ContactSelectorWidget_Base;
 
@@ -74,5 +74,3 @@ QList<AccountListEntry> ContactSelectorWidget::contacts()
 		return list;
 	}
 }
-
-#include "contactselectorwidget.moc"
