@@ -380,17 +380,17 @@ void KopeteWindow::initActions()
 	slotConfigChanged();
 
 	// Global actions
-	KAction *globalReadMessage = new KAction( i18n("Read Message"), actionCollection(), QLatin1String("Read Message") );
+	KAction *globalReadMessage = new KAction( i18n("Read Message"), actionCollection(), QLatin1String("ReadMessage") );
 	connect( globalReadMessage, SIGNAL( triggered(bool) ), Kopete::ChatSessionManager::self(), SLOT( slotReadMessage() ) );
 	globalReadMessage->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_I) );
 	globalReadMessage->setWhatsThis( i18n("Read the next pending message") );
 
-	KAction *globalShowContactList = new KAction( i18n("Show/Hide Contact List"), actionCollection(), QLatin1String("Show/Hide Contact List") );
+	KAction *globalShowContactList = new KAction( i18n("Show/Hide Contact List"), actionCollection(), QLatin1String("ShowContactList") );
 	connect( globalShowContactList, SIGNAL( triggered(bool) ), this, SLOT( slotShowHide() ) );
 	globalShowContactList->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S) );
 	globalShowContactList->setWhatsThis( i18n("Show or hide the contact list") );
 	
-	KAction *globalSetAway = new KAction( i18n("Set Away/Back"), actionCollection(), QLatin1String("Set Away/Back") );
+	KAction *globalSetAway = new KAction( i18n("Set Away/Back"), actionCollection(), QLatin1String("Set_Away_Back") );
 	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
 	
