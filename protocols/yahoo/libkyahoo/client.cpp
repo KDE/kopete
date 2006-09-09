@@ -699,17 +699,17 @@ int Client::pictureFlag()
 QString Client::yCookie()
 {
 	return d->yCookie;
-};
+}
 
 QString Client::tCookie()
 {
 	return d->tCookie;
-};
+}
 
 QString Client::cCookie()
 {
 	return d->cCookie;
-};
+}
 
 void Client::distribute( Transfer * transfer )
 {
