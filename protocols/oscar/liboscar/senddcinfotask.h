@@ -1,6 +1,6 @@
 /*
   Kopete Oscar Protocol
-  $FILENAME.h
+  Send extended status info to the server
 
   Copyright (c) 2004 Matt Rogers <mattr@kde.org>
 

@@ -1,6 +1,6 @@
 /*
    Kopete Oscar Protocol
-   senddcinfotask.cpp - Send the DC info to the server
+   Send extended status info to the server
 
    Copyright (c) 2004 Matt Rogers <mattr@kde.org>
 
