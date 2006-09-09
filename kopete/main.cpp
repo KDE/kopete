@@ -53,7 +53,6 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Developer and Project founder"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Andre Duffeck", I18N_NOOP("Developer, Yahoo plugin maintainer"), "andre@duffeck.de" );
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@telenet.be" );
-	aboutData.addAuthor ( "Chetan Reddy", I18N_NOOP("Developer, Yahoo"), "chetan13@gmail.com" );
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Developer, Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( "Cláudio da Silveira Pinheiro", I18N_NOOP("Developer, Video device support"), "taupter@gmail.com", "http://taupter.homelinux.org" );
 	aboutData.addAuthor ( "Gregg Edghill", I18N_NOOP("Developer, MSN"), "gregg.edghill@gmail.com");
@@ -76,6 +75,7 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Iris Jabber Backend Library") );
 	aboutData.addCredit ( "Tom Linsky", I18N_NOOP("OscarSocket author"), "twl6@po.cwru.edu" );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
+    aboutData.addCredit ( "Chetan Reddy", I18N_NOOP("Former developer"), "chetan13@gmail.com" );
 	aboutData.addCredit ( "Nick Betcher", I18N_NOOP("Former developer, project co-founder"), "nbetcher@kde.org");
 	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Former developer"), "ryan@kde.org" );
 	aboutData.addCredit ( "Stefan Gehn", I18N_NOOP("Former developer"), "metz@gehn.net", "http://metz.gehn.net" );
