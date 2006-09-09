@@ -16,6 +16,7 @@
 
 #include <kgenericfactory.h>
 #include <kicon.h>
+#include <knotification.h>
 
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
@@ -129,6 +130,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		if( !PrivacyConfig::whiteList().contains( msg.from()->protocol()->pluginId() + ":" + msg.from()->contactId() ) )
 		{
 			kDebug(14313) << k_funcinfo << "Message from " << msg.from()->protocol()->pluginId() << ":" << msg.from()->contactId() << " dropped (not whitelisted)" << endl;
+			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your whitelist.") );
 			event->discard();
 			return;
 		}
@@ -138,6 +140,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		if( PrivacyConfig::blackList().contains( msg.from()->protocol()->pluginId() + ":" + msg.from()->contactId() ) )
 		{
 			kDebug(14313) << k_funcinfo << "Message from " << msg.from()->protocol()->pluginId() << ":" << msg.from()->contactId() << " dropped (blacklisted)" << endl;
+			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is on your blacklist.") );
 			event->discard();
 			return;
 		}
@@ -147,6 +150,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		if( msg.from()->metaContact()->isTemporary() )
 		{
 			kDebug(14313) << k_funcinfo << "Message from " << msg.from()->contactId() << " dropped (not on the contactlist)" << endl;
+			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your contactlist.") );
 			event->discard();
 			return;
 		}
@@ -160,6 +164,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 			if( msg.plainBody().contains( word ) )
 			{
 				kDebug(14313) << k_funcinfo << "Message dropped because it contained: " << word << endl;
+				KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because it contained a blacklisted word.") );
 				event->discard();
 				return;
 			}
@@ -180,6 +185,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		if( drop )
 		{
 			kDebug(14313) << k_funcinfo << "Message dropped because it contained blacklisted words." << endl;
+				KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because it contained blacklisted words.") );
 			event->discard();
 			return;
 		}
