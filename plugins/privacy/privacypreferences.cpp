@@ -25,11 +25,12 @@
 
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
 #include "metacontactselectorwidget.h"
 #include "privacyconfig.h"
 #include "ui_privacydialog.h"
-#include "privacypreferences.h"
 #include "privacyaccountlistmodel.h"
+#include "privacypreferences.h"
 
 typedef KGenericFactory<PrivacyPreferences> PrivacyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_privacy, PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )
@@ -48,6 +49,8 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	m_whiteListModel = new PrivacyAccountListModel;
 	m_blackListModel = new PrivacyAccountListModel;
 
+// 	kDebug(14313) << k_funcinfo << &(*(PrivacyConfig::self())) << endl;
+
 	prefUi->listWhiteList->setSelectionBehavior( QAbstractItemView::SelectRows );
 	prefUi->listWhiteList->horizontalHeader()->hide();
 	prefUi->listWhiteList->verticalHeader()->hide();
@@ -56,6 +59,8 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	prefUi->listBlackList->horizontalHeader()->hide();
 	prefUi->listBlackList->verticalHeader()->hide();
 	prefUi->listBlackList->setModel( m_blackListModel );
+
+	connect(PrivacyConfig::self(), SIGNAL(settingsChanged), this, SLOT(slotConfigChanged()));
 
 	connect(prefUi->radioAllowAll, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
 	connect(prefUi->radioOnlyWhiteList, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
@@ -125,6 +130,12 @@ void PrivacyPreferences::save()
 
 	PrivacyConfig::self()->writeConfig();
 	emit KCModule::changed(false);
+}
+
+void PrivacyPreferences::slotConfigChanged()
+{
+	kDebug(14313) << k_funcinfo << "called." << endl;
+	load();
 }
 
 void PrivacyPreferences::slotModified()

@@ -44,5 +44,6 @@ install(TARGETS kcm_kopete_privacy  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### install files ###############
 
+install( FILES privacyui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_privacy)
 install( FILES kopete_privacy.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES kopete_privacy_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)

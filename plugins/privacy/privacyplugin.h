@@ -25,8 +25,10 @@ namespace Kopete {
 	class Message;
 	class MetaContact;
 	class ChatSession;
+	class MessageEvent;
 }
 class PrivacyMessageHandlerFactory;
+class PrivacyConfig;
 
 class PrivacyPlugin : public Kopete::Plugin
 {
@@ -37,10 +39,13 @@ public:
 	PrivacyPlugin( QObject *parent, const QStringList &args );
 	~PrivacyPlugin();
 
+	PrivacyConfig *config();
+
 private Q_SLOTS:
 	void slotSettingsChanged();
 	void slotIncomingMessage( Kopete::MessageEvent *event );
-
+	void slotAddToWhiteList();
+	void slotAddToBlackList();
 private:
 	static PrivacyPlugin *pluginStatic_;
 	PrivacyMessageHandlerFactory *m_inboundHandler;

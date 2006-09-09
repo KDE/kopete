@@ -36,8 +36,8 @@ public:
 
 	virtual void save();
 	virtual void load();	
-
 private Q_SLOTS:
+	void slotConfigChanged();
 	void slotModified();
 	void slotChkDropAtLeastOneToggled(bool);
 	void slotChkDropAllToggled(bool);

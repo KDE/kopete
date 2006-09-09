@@ -13,16 +13,20 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include <kgenericfactory.h>
+#include <kicon.h>
+
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopetemessage.h"
 #include "kopetemessageevent.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
+#include "kopetecontactlist.h"
+#include "kopetepluginmanager.h"
 #include "privacymessagehandler.h"
 #include "privacyconfig.h"
-
-#include <kgenericfactory.h>
 
 #include "privacyplugin.h"
 
@@ -36,6 +40,21 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QStringList & )
 	kDebug(14313) << k_funcinfo << endl;
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
+
+	KAction *addToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ),
+		actionCollection(), "addToWhiteList" );
+	connect(addToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()));
+	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
+		addToWhiteList, SLOT(setEnabled(bool)));
+	KAction *addToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ),
+		actionCollection(), "addToBlackList" );
+	connect(addToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
+	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
+		addToBlackList, SLOT(setEnabled(bool)));
+
+// 	kDebug(14313) << k_funcinfo << &(*(PrivacyConfig::self())) << endl;
+
+	setXMLFile("privacyui.rc");
 
 	m_inboundHandler = new PrivacyMessageHandlerFactory( Kopete::Message::Inbound,
 		Kopete::MessageHandlerFactory::InStageStart, this, SLOT( slotIncomingMessage( Kopete::MessageEvent * ) ) );
@@ -56,9 +75,49 @@ PrivacyPlugin *PrivacyPlugin::plugin()
 	return pluginStatic_ ;
 }
 
+PrivacyConfig *PrivacyPlugin::config()
+{
+	return PrivacyConfig::self();
+}
+
 void PrivacyPlugin::slotSettingsChanged()
 {
+	kDebug(14313) << k_funcinfo << endl;
 	PrivacyConfig::self()->readConfig();
+}
+
+void PrivacyPlugin::slotAddToWhiteList()
+{	
+	kDebug(14313) << k_funcinfo << endl;
+	QStringList whitelist = PrivacyConfig::whiteList();
+	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
+	{
+		foreach( Kopete::Contact *contact, metacontact->contacts() )
+		{
+			QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
+			if( !whitelist.contains( entry ) )
+				whitelist.append( entry );
+		}
+	}
+	PrivacyConfig::setWhiteList( whitelist );
+	PrivacyConfig::self()->writeConfig();
+}
+
+void PrivacyPlugin::slotAddToBlackList()
+{	
+	kDebug(14313) << k_funcinfo << endl;
+	QStringList blacklist = PrivacyConfig::blackList();
+	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
+	{
+		foreach( Kopete::Contact *contact, metacontact->contacts() )
+		{
+			QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
+			if( !blacklist.contains( entry ) )
+				blacklist.append( entry );
+		}
+	}
+	PrivacyConfig::setBlackList( blacklist );
+	PrivacyConfig::self()->writeConfig();
 }
 
 void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
