@@ -25,8 +25,8 @@ install(TARGETS kopete_privacy  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kcm_kopete_privacy_PART_SRCS privacypreferences.cpp )
-kde4_add_ui_files(kcm_kopete_privacy_PART_SRCS privacydialog.ui )
+set(kcm_kopete_privacy_PART_SRCS privacypreferences.cpp contactselectorwidget.cpp )
+kde4_add_ui_files(kcm_kopete_privacy_PART_SRCS privacydialog.ui contactselectorwidget_base.ui )
 kde4_automoc(${kcm_kopete_privacy_PART_SRCS})
 kde4_add_plugin(kcm_kopete_privacy ${kcm_kopete_privacy_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_privacy )

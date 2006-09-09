@@ -27,6 +27,7 @@
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
 #include "metacontactselectorwidget.h"
+#include "contactselectorwidget.h"
 #include "privacyconfig.h"
 #include "ui_privacydialog.h"
 #include "privacyaccountlistmodel.h"
@@ -161,18 +162,14 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 	KVBox *box = new KVBox( addDialog );
 	box->setSpacing( KDialog::spacingHint() );
-	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget( box );
-	selector->setLabelMessage(i18n( "Select the meta contact to which you want to add:" ));
+	ContactSelectorWidget *selector = new ContactSelectorWidget( box );
 	addDialog->setMainWidget(box);
+
 	if( addDialog->exec() == QDialog::Accepted )
 	{
-		Kopete::MetaContact *mc = selector->metaContact();
-		if( mc )
+		foreach( AccountListEntry entry, selector->contacts() )
 		{
-			foreach( Kopete::Contact *contact, mc->contacts() )
-			{
-				
-			}
+			m_whiteListModel->addAccount( entry );
 		}
 	}
 
@@ -183,6 +180,27 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 void PrivacyPreferences::slotBtnAddToBlackListClicked()
 {
+	KDialog *addDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	addDialog->setCaption( i18n( "Add Contact to Blacklist" ) );
+	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
+	addDialog->setDefaultButton( KDialog::Ok );
+	addDialog->showButtonSeparator( true );
+
+	KVBox *box = new KVBox( addDialog );
+	box->setSpacing( KDialog::spacingHint() );
+	ContactSelectorWidget *selector = new ContactSelectorWidget( box );
+	addDialog->setMainWidget(box);
+
+	if( addDialog->exec() == QDialog::Accepted )
+	{
+		foreach( AccountListEntry entry, selector->contacts() )
+		{
+			m_blackListModel->addAccount( entry );
+		}
+	}
+
+	addDialog->deleteLater();
+
 	emit KCModule::changed(true);
 }
 

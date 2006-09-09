@@ -50,11 +50,16 @@ void PrivacyAccountListModel::loadAccounts( const QStringList &accounts )
 
 void PrivacyAccountListModel::addAccount(const QString &accountId, Kopete::Protocol *protocol)
 {
-	beginInsertRows(QModelIndex(), m_list.size()-1, m_list.size());
+	beginInsertRows(QModelIndex(), m_list.size(), m_list.size()+1);
 
 	m_list.append( AccountListEntry( accountId, protocol ) );
 
 	endInsertRows();
+}
+
+void PrivacyAccountListModel::addAccount(const AccountListEntry &entry)
+{
+	addAccount( entry.first, entry.second );
 }
 
 int PrivacyAccountListModel::rowCount(const QModelIndex &parent) const
