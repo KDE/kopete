@@ -75,36 +75,45 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	QString to = t->firstParam( 5 );
-	QString timestamp = t->firstParam( 15 );
-	QString utf8 = t->firstParam( 97 );
-	QString from = t->firstParam( 1 ).isEmpty() ? t->firstParam( 4 ) : t->firstParam( 1 );
-	QString msg = t->firstParam( 14 );
-	QString sysmsg = t->firstParam( 16 );
-
-	if( !sysmsg.isEmpty() )
+	int cnt = t->paramCount( 5 );
+	for( int i = 0; i < cnt; ++i )
 	{
-		client()->notifyError( "Server message received: ", sysmsg, Client::Error );
-		return;
-	}
+		QString to = t->nthParam( 5, i );
+		QString timestamp = t->nthParamSeparated( 15, i, 5 );
+		QString utf8 = t->nthParamSeparated( 97, i, 5 );
+		QString from = t->nthParamSeparated( 1, i, 5 ).isEmpty() ? t->nthParamSeparated( 4, i, 5 ) : t->nthParamSeparated( 1, i, 5 );
+		QString msg = t->nthParamSeparated( 14, i, 5 );
+		QString sysmsg = t->nthParamSeparated( 16, i, 5 );
 
-	if( msg.isEmpty() )
-	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a empty message. Dropped." << endl;
-		return;
-	}
+		// The arrangement of the key->value pairs is different when there is only one message in the packet.
+		// Separating by key "5" (sender) doesn't work in that case, because the "1" and "4" keys are sent before the "5" key
+		if( cnt == 1 )
+			from = t->firstParam( 1 ).isEmpty() ? t->firstParam( 4 ) : t->firstParam( 1 );
 
-	if( utf8.startsWith( "1" ) )
-		msg = QString::fromUtf8( msg.toLatin1() );
-
-	if( t->service() == Yahoo::ServiceSysMessage )
-		emit systemMessage( sysmsg );
-	else
-	{	
-		if( msg.startsWith( "<ding>" ) )
-			emit gotBuzz( from, timestamp.toLong() );
+		if( !sysmsg.isEmpty() )
+		{
+			client()->notifyError( "Server message received: ", sysmsg, Client::Error );
+			continue;
+		}
+	
+		if( msg.isEmpty() )
+		{
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a empty message. Dropped." << endl;
+			continue;
+		}
+	
+		if( utf8.startsWith( "1" ) )
+			msg = QString::fromUtf8( msg.toLatin1() );
+	
+		if( t->service() == Yahoo::ServiceSysMessage )
+			emit systemMessage( sysmsg );
 		else
-			emit gotIm( from, msg, timestamp.toLong(), 0);
+		{	
+			if( msg.startsWith( "<ding>" ) )
+				emit gotBuzz( from, timestamp.toLong() );
+			else
+				emit gotIm( from, msg, timestamp.toLong(), 0);
+		}
 	}
 }
 
