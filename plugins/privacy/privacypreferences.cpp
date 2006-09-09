@@ -49,8 +49,6 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	m_whiteListModel = new PrivacyAccountListModel;
 	m_blackListModel = new PrivacyAccountListModel;
 
-// 	kDebug(14313) << k_funcinfo << &(*(PrivacyConfig::self())) << endl;
-
 	prefUi->listWhiteList->setSelectionBehavior( QAbstractItemView::SelectRows );
 	prefUi->listWhiteList->horizontalHeader()->hide();
 	prefUi->listWhiteList->verticalHeader()->hide();
@@ -60,7 +58,7 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	prefUi->listBlackList->verticalHeader()->hide();
 	prefUi->listBlackList->setModel( m_blackListModel );
 
-	connect(PrivacyConfig::self(), SIGNAL(settingsChanged), this, SLOT(slotConfigChanged()));
+	connect(PrivacyConfig::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
 	connect(prefUi->radioAllowAll, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
 	connect(prefUi->radioOnlyWhiteList, SIGNAL(toggled(bool)), this, SLOT(slotModified()));

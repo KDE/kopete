@@ -52,8 +52,6 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QStringList & )
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
 		addToBlackList, SLOT(setEnabled(bool)));
 
-// 	kDebug(14313) << k_funcinfo << &(*(PrivacyConfig::self())) << endl;
-
 	setXMLFile("privacyui.rc");
 
 	m_inboundHandler = new PrivacyMessageHandlerFactory( Kopete::Message::Inbound,
