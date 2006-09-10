@@ -114,7 +114,7 @@ namespace Eva {
 		"state",
 		"zipcode",
 		"address",
-		"Phone", 
+		"phone", 
 		"age",
 		"gender",
 		"name",

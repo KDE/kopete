@@ -503,11 +503,15 @@ void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const c
 		return;
 	}
 
+	contact->setDetail(map);
+	return;
+
+	//TODO: clean me!
+
 	QQProtocol* proto = static_cast<QQProtocol*> (protocol());
 
 	contact->setProperty( proto->propCountry, m_codec->toUnicode( map["country"] ) );
 	contact->setProperty( proto->propEmail, m_codec->toUnicode( map["email"] ) );
 }
-
 
 #include "qqaccount.moc"

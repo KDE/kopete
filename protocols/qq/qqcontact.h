@@ -130,6 +130,9 @@ public:
 	void setObject(const QString &obj);
 	QString object() const { return m_obj; }
 
+	void setDetail(const QMap<const char*, QByteArray>& map) 
+	{ m_contactDetail = map; }
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void deleteContact();
@@ -182,6 +185,8 @@ private:
 	KAction *actionWebcamSend;
 
 	QString m_obj; //the QQObject
+	QMap<const char*, QByteArray> m_contactDetail;
+	
 
 	/**
 	 * keep the current status here.  (it's normally already in Kopete::Contact::d->onlineStatus)
