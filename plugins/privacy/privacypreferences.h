@@ -48,6 +48,8 @@ private Q_SLOTS:
 	void slotBtnClearBlackListClicked();
 	void slotBtnRemoveFromWhiteListClicked();
 	void slotBtnRemoveFromBlackListClicked();
+
+	void slotSetupViews();
 private:
 	Ui::PrivacyPrefsUI *prefUi;
 	PrivacyAccountListModel *m_whiteListModel;

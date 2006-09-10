@@ -51,15 +51,15 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	m_blackListModel = new PrivacyAccountListModel;
 
 	prefUi->listWhiteList->setSelectionBehavior( QAbstractItemView::SelectRows );
-	prefUi->listWhiteList->horizontalHeader()->hide();
-	prefUi->listWhiteList->verticalHeader()->hide();
 	prefUi->listWhiteList->setModel( m_whiteListModel );
-	prefUi->listWhiteList->resizeColumnsToContents();
+	prefUi->listWhiteList->header()->setStretchLastSection( false );
+	prefUi->listWhiteList->header()->setResizeMode( prefUi->listWhiteList->header()->logicalIndex( 0 ), QHeaderView::Stretch );
+	prefUi->listWhiteList->header()->hide();	
 	prefUi->listBlackList->setSelectionBehavior( QAbstractItemView::SelectRows );
-	prefUi->listBlackList->horizontalHeader()->hide();
-	prefUi->listBlackList->verticalHeader()->hide();
 	prefUi->listBlackList->setModel( m_blackListModel );
-	prefUi->listBlackList->resizeColumnsToContents();
+	prefUi->listBlackList->header()->setStretchLastSection( false );
+	prefUi->listBlackList->header()->setResizeMode( prefUi->listWhiteList->header()->logicalIndex( 0 ), QHeaderView::Stretch );
+	prefUi->listBlackList->header()->hide();
 
 	connect(PrivacyConfig::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
@@ -80,6 +80,10 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	connect(prefUi->btnClearBlackList, SIGNAL(clicked()), this, SLOT(slotBtnClearBlackListClicked()));
 	connect(prefUi->btnRemoveFromWhiteList, SIGNAL(clicked()), this, SLOT(slotBtnRemoveFromWhiteListClicked()));
 	connect(prefUi->btnRemoveFromBlackList, SIGNAL(clicked()), this, SLOT(slotBtnRemoveFromBlackListClicked()));
+
+	connect(m_whiteListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
+	connect(m_blackListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
+
 	load();
 }
 
@@ -138,6 +142,12 @@ void PrivacyPreferences::slotConfigChanged()
 void PrivacyPreferences::slotModified()
 {
 	emit KCModule::changed(true);
+}
+
+void PrivacyPreferences::slotSetupViews()
+{
+	prefUi->listWhiteList->setColumnWidth( 1, 24 );
+	prefUi->listBlackList->setColumnWidth( 1, 24 );
 }
 
 void PrivacyPreferences::slotChkDropAtLeastOneToggled( bool enabled )
