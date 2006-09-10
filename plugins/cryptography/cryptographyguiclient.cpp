@@ -48,13 +48,6 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 	QList<Kopete::Contact*> mb=parent->members();
 	Kopete::MetaContact *first=mb.first()->metaContact();
 
-	
-	if( !parent || parent->members().isEmpty() )
-	{
-		deleteLater(); //we refuse to build this client, it is based on wrong parameters
-		return;
-	}
-
 	bool wantCrypto=true, keysAvailable=true;
 
 	foreach( Kopete::Contact *c , parent->members() )
@@ -75,7 +68,7 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 	setInstance( KGenericFactory<CryptographyPlugin>::instance() );
 
 	m_action=new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), actionCollection() , "cryptographyToggle" );
-	m_action->setChecked( first->pluginData( CryptographyPlugin::plugin() , "encrypt_messages") != QString::fromLatin1("off") ) ;
+	m_action->setChecked(wantCrypto && keysAvailable);
 	connect( m_action, SIGNAL(triggered(bool)), this, SLOT(slotToggled()) );
 
 	setXMLFile("cryptographychatui.rc");
@@ -119,7 +112,6 @@ void CryptographyGUIClient::slotToggled()
 
 	first->setPluginData( CryptographyPlugin::plugin() , "encrypt_messages" ,
 						  m_action->isChecked() ? "on" : "off" );
-	
 }
 
 
