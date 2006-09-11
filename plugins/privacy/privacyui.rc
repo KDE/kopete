@@ -14,4 +14,10 @@
 			<Action name="addToBlackList" />
 		</Menu>
 	</Menu>
+	<Menu name="contactlistitems_popup">
+		<Menu name="privacyMenu"><Text>Privacy</Text>
+			<Action name="addToWhiteList" />
+			<Action name="addToBlackList" />
+		</Menu>
+	</Menu>
 </kpartgui>
