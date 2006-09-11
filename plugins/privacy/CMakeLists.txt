@@ -6,7 +6,7 @@ ${KOPETE_INCLUDES}
 )
 
 #common lib
-set(kopete_privacy_LIB_SRCS privacymessagehandler.cpp privacyaccountlistmodel.cpp )
+set(kopete_privacy_LIB_SRCS privacymessagehandler.cpp privacyaccountlistmodel.cpp)
 kde4_add_kcfg_files(kopete_privacy_LIB_SRCS privacyconfig.kcfgc )
 kde4_automoc(${kopete_privacy_LIB_SRCS})
 kde4_add_library( kopeteprivacy SHARED ${kopete_privacy_LIB_SRCS})
@@ -15,7 +15,7 @@ install( TARGETS kopeteprivacy DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kopete_privacy_PART_SRCS privacyplugin.cpp )
+set(kopete_privacy_PART_SRCS privacyplugin.cpp privacyguiclient.cpp)
 kde4_automoc(${kopete_privacy_PART_SRCS})
 kde4_add_plugin(kopete_privacy ${kopete_privacy_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_privacy )
@@ -36,6 +36,6 @@ install(TARGETS kcm_kopete_privacy  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES privacyui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_privacy)
+install( FILES privacyui.rc  privacychatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_privacy)
 install( FILES kopete_privacy.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES kopete_privacy_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)

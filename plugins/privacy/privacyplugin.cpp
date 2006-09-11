@@ -17,6 +17,7 @@
 #include <kgenericfactory.h>
 #include <kicon.h>
 #include <knotification.h>
+#include <kplugininfo.h>
 
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
@@ -26,8 +27,11 @@
 #include "kopeteprotocol.h"
 #include "kopetecontactlist.h"
 #include "kopetepluginmanager.h"
+#include "kopeteview.h"
+#include "kopeteviewplugin.h"
 #include "privacymessagehandler.h"
 #include "privacyconfig.h"
+#include "privacyguiclient.h"
 
 #include "privacyplugin.h"
 
@@ -54,6 +58,9 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QStringList & )
 	m_inboundHandler = new PrivacyMessageHandlerFactory( Kopete::Message::Inbound,
 		Kopete::MessageHandlerFactory::InStageStart, this, SLOT( slotIncomingMessage( Kopete::MessageEvent * ) ) );
 
+	connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
+		this, SLOT(slotViewCreated(KopeteView*)));
+
 	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
 }
 
@@ -70,11 +77,6 @@ PrivacyPlugin *PrivacyPlugin::plugin()
 	return pluginStatic_ ;
 }
 
-PrivacyConfig *PrivacyPlugin::config()
-{
-	return PrivacyConfig::self();
-}
-
 void PrivacyPlugin::slotSettingsChanged()
 {
 	PrivacyConfig::self()->readConfig();
@@ -82,32 +84,58 @@ void PrivacyPlugin::slotSettingsChanged()
 
 void PrivacyPlugin::slotAddToWhiteList()
 {	
-	QStringList whitelist = PrivacyConfig::whiteList();
+	QList< Kopete::Contact *> list;
 	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
 		foreach( Kopete::Contact *contact, metacontact->contacts() )
 		{
-			QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
-			if( !whitelist.contains( entry ) )
-				whitelist.append( entry );
+			list.append( contact );
 		}
 	}
-	PrivacyConfig::setWhiteList( whitelist );
-	PrivacyConfig::self()->writeConfig();
+
+	addContactsToWhiteList( list );
 }
 
 void PrivacyPlugin::slotAddToBlackList()
 {	
-	QStringList blacklist = PrivacyConfig::blackList();
+	QList< Kopete::Contact *> list;
 	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
 		foreach( Kopete::Contact *contact, metacontact->contacts() )
 		{
-			QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
-			if( !blacklist.contains( entry ) )
-				blacklist.append( entry );
+			list.append( contact );
 		}
 	}
+
+	addContactsToBlackList( list );
+}
+
+void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
+{
+	QStringList whitelist = PrivacyConfig::whiteList();
+		
+	foreach( Kopete::Contact *contact, list )
+	{
+		QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
+		if( !whitelist.contains( entry ) )
+			whitelist.append( entry );
+	}
+
+	PrivacyConfig::setWhiteList( whitelist );
+	PrivacyConfig::self()->writeConfig();
+}
+
+void PrivacyPlugin::addContactsToBlackList( QList< Kopete::Contact *> list )
+{
+	QStringList blacklist = PrivacyConfig::blackList();
+		
+	foreach( Kopete::Contact *contact, list )
+	{
+		QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
+		if( !blacklist.contains( entry ) )
+			blacklist.append( entry );
+	}
+
 	PrivacyConfig::setBlackList( blacklist );
 	PrivacyConfig::self()->writeConfig();
 }
@@ -186,6 +214,30 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 			return;
 		}
 	}
+}	
+
+void PrivacyPlugin::slotViewCreated( KopeteView *view )
+{
+	if(view->plugin()->pluginInfo()->pluginName() != QString::fromLatin1("kopete_chatwindow") )
+		return;  //Email chat windows are not supported.
+
+	Kopete::ChatSession *session = view->msgManager();
+
+	if(!session)
+		return;
+
+	if(!m_guiClients.contains(session))
+	{
+		m_guiClients.insert(session , new PrivacyGUIClient( session ) );
+		connect( session, SIGNAL(closing(Kopete::ChatSession*)),
+			this , SLOT(slotChatSessionClosed(Kopete::ChatSession*)));
+	}	
+}
+
+void PrivacyPlugin::slotChatSessionClosed( Kopete::ChatSession *session )
+{
+	m_guiClients[session]->deleteLater();
+	m_guiClients.remove( session );
 }
 
 #include "privacyplugin.moc"

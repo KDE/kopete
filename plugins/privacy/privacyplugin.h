@@ -18,6 +18,7 @@
 #define PRIVACY_PLUGIN_H
 
 #include <QObject>
+#include <QMap>
 
 #include "kopeteplugin.h"
 
@@ -26,9 +27,12 @@ namespace Kopete {
 	class MetaContact;
 	class ChatSession;
 	class MessageEvent;
+	class Contact;
 }
+class KopeteView;
 class PrivacyMessageHandlerFactory;
 class PrivacyConfig;
+class PrivacyGUIClient;
 
 class PrivacyPlugin : public Kopete::Plugin
 {
@@ -39,16 +43,21 @@ public:
 	PrivacyPlugin( QObject *parent, const QStringList &args );
 	~PrivacyPlugin();
 
-	PrivacyConfig *config();
+	void addContactsToWhiteList( QList< Kopete::Contact *> list );
+	void addContactsToBlackList( QList< Kopete::Contact *> list );
 
 private Q_SLOTS:
 	void slotSettingsChanged();
 	void slotIncomingMessage( Kopete::MessageEvent *event );
 	void slotAddToWhiteList();
 	void slotAddToBlackList();
+
+	void slotViewCreated( KopeteView* );
+	void slotChatSessionClosed( Kopete::ChatSession* );
 private:
 	static PrivacyPlugin *pluginStatic_;
 	PrivacyMessageHandlerFactory *m_inboundHandler;
+	QMap<Kopete::ChatSession*,PrivacyGUIClient*> m_guiClients;
 };
 
 #endif
