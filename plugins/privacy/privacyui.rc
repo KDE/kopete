@@ -1,5 +1,13 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete_privacy" version="1">
+<kpartgui name="kopete_privacy" version="1">	
+	<MenuBar>
+		<Menu name="edit">
+			<Menu name="privacyMenu"><Text>Privacy</Text>
+				<Action name="addToWhiteList" />
+				<Action name="addToBlackList" />
+			</Menu>
+		</Menu>
+	</MenuBar>
 	<Menu name="contact_popup">
 		<Menu name="privacyMenu"><Text>Privacy</Text>
 			<Action name="addToWhiteList" />

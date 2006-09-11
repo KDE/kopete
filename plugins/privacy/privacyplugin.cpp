@@ -45,13 +45,9 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QStringList & )
 	KAction *addToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ),
 		actionCollection(), "addToWhiteList" );
 	connect(addToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()));
-	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
-		addToWhiteList, SLOT(setEnabled(bool)));
 	KAction *addToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ),
 		actionCollection(), "addToBlackList" );
 	connect(addToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
-	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
-		addToBlackList, SLOT(setEnabled(bool)));
 
 	setXMLFile("privacyui.rc");
 
