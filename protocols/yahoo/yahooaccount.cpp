@@ -26,6 +26,8 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qfile.h>
+#include <qdir.h>
+#include <qfileinfo.h>
 
 // KDE
 #include <klocale.h>
@@ -1378,6 +1380,18 @@ void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QSt
 		return;
 	
 	m_pendingFileTransfers.remove( transfer->info().internalId() );
+	
+	//Create directory if it doesn't already exist
+	QDir dir;
+	QString path = QFileInfo( fileName ).dirPath();
+	for( int i = 1; i <= path.contains('/'); ++i )
+	{
+		if( !dir.exists( path.section( '/', 0, i ) ) )
+		{
+			dir.mkdir( path.section( '/', 0, i) );
+		}		
+	}
+	
 	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );	
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
 	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
