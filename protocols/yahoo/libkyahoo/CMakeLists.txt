@@ -50,6 +50,7 @@ chatsessiontask.cpp
 filetransfernotifiertask.cpp 
 sendfiletask.cpp 
 receivefiletask.cpp 
+yahoochattask.cpp
 )
 
 kde4_automoc( ${libkyahoo_SRCS} )

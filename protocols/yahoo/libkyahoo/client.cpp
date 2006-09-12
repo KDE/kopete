@@ -52,6 +52,7 @@
 #include "sendfiletask.h"
 #include "filetransfernotifiertask.h"
 #include "receivefiletask.h"
+#include "yahoochattask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -86,6 +87,7 @@ public:
 	ConferenceTask *conferenceTask;
 	YABTask *yabTask;
 	FileTransferNotifierTask *fileTransferTask;
+	YahooChatTask *yahooChatTask;
 
 	// Connection data
 	uint sessionID;
@@ -263,6 +265,8 @@ void Client::slotLoginResponse( int response, const QString &msg )
 
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting loggedIn" << endl;
 	emit loggedIn( response, msg );
+	getYahooChatCategories();
+	getYahooChatRooms( -1 );
 }
 
 void Client::lt_gotSessionID( uint id )
@@ -620,6 +624,17 @@ void Client::deleteYABEntry(  YABEntry &entry )
 	myt->go(true);
 }
 
+// ***** Yahoo Chat *****
+void Client::getYahooChatCategories()
+{
+	d->yahooChatTask->getYahooChatCategories();
+}
+
+void Client::getYahooChatRooms( int category )
+{
+	d->yahooChatTask->getYahooChatRooms( category );
+}
+
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
@@ -826,6 +841,12 @@ void Client::initTasks()
 					long, const QString &, const QString &, unsigned long, const QPixmap & )),
 				SIGNAL(incomingFileTransfer( const QString &, const QString &, 
 					long, const QString &, const QString &, unsigned long, const QPixmap & )) );
+
+	d->yahooChatTask = new YahooChatTask( d->root );
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatCategories( const QDomDocument & )),
+				SIGNAL(gotYahooChatCategories( const QDomDocument & )) );
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( int, const QDomDocument & )),
+				SIGNAL(gotYahooChatRooms( int, const QDomDocument & )) );
 }
 
 void Client::deleteTasks()
@@ -847,6 +868,8 @@ void Client::deleteTasks()
 	d->yabTask = 0L;
 	d->fileTransferTask->deleteLater();
 	d->fileTransferTask = 0;
+	d->yahooChatTask->deleteLater();
+	d->yahooChatTask = 0;
 }
 
 #include "client.moc"
