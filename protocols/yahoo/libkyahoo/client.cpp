@@ -265,8 +265,6 @@ void Client::slotLoginResponse( int response, const QString &msg )
 
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting loggedIn" << endl;
 	emit loggedIn( response, msg );
-	getYahooChatCategories();
-	getYahooChatRooms( -1 );
 }
 
 void Client::lt_gotSessionID( uint id )
