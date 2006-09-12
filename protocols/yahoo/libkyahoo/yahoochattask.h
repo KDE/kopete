@@ -20,10 +20,13 @@
 
 #include "task.h"
 #include <QMap>
+#include <QList>
+#include <QPair>
 
 class QByteArray;
 class QDomDocument;
 class KJob;
+class YMSGTransfer;
 namespace KIO {
 	class Job;
 	class TransferJob;
@@ -46,6 +49,7 @@ public:
 	
 	virtual void onGo();
 	virtual bool forMe( const Transfer *transfer ) const;
+	bool take(Transfer *transfer);
 
 	void getYahooChatCategories();
 	void getYahooChatRooms( int category );
@@ -58,10 +62,8 @@ Q_SIGNALS:
 	void gotYahooChatRooms( int category, const QDomDocument & );
 
 private:
-	void parseMessage( YMSGTransfer *transfer );
-
 	void login();
-	void parseLoginResponse();
+	void parseLoginResponse( YMSGTransfer *t );
 
 private Q_SLOTS:
 	void slotData( KIO::Job *, const QByteArray & );
@@ -69,7 +71,7 @@ private Q_SLOTS:
 	void slotChatRoomsComplete( KJob * );
 private:
 	QMap< KIO::Job *, YahooChatJob > m_jobs;
-	QList< QMap< QString, int > > m_pendingJoins;
+	QList< QPair< QString, int > > m_pendingJoins;
 	bool m_loggedIn;
 };
 

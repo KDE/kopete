@@ -37,6 +37,48 @@ YahooChatTask::~YahooChatTask()
 {
 }
 
+bool YahooChatTask::take( Transfer* transfer )
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	
+	if ( !forMe( transfer ) )
+		return false;
+
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return false;
+	
+	if( t->service() == Yahoo::ServiceChatOnline )
+		parseLoginResponse( t );
+
+	return true;
+}
+
+bool YahooChatTask::forMe( const Transfer* transfer ) const
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	
+	const YMSGTransfer *t = 0L;
+	t = dynamic_cast<const YMSGTransfer*>(transfer);
+	if (!t)
+		return false;
+
+	if ( t->service() == Yahoo::ServiceChatOnline ||
+		t->service() == Yahoo::ServiceChatGoto ||
+		t->service() == Yahoo::ServiceChatJoin ||
+		t->service() == Yahoo::ServiceChatleave ||
+		t->service() == Yahoo::ServiceChatExit ||
+		t->service() == Yahoo::ServiceChatLogout ||
+		t->service() == Yahoo::ServiceChatPing ||
+		t->service() == Yahoo::ServiceChatLogon ||
+		t->service() == Yahoo::ServiceChatLogoff ||
+		t->service() == Yahoo::ServiceChatleave )	
+		return true;
+	else
+		return false;
+}
+
 void YahooChatTask::onGo()
 {
 }
@@ -161,6 +203,10 @@ void YahooChatTask::logout()
 	t->setParam( 1, client()->userId().toLocal8Bit() );
 
 	send( t );
+}
+
+void YahooChatTask::parseLoginResponse( YMSGTransfer * )
+{
 }
 
 #include "yahoochattask.moc"
