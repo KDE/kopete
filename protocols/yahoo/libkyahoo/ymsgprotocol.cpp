@@ -235,6 +235,46 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePeerToPeer " << servicenum << endl;
 			service = Yahoo::ServicePeerToPeer;
 		break;
+		case (Yahoo::ServiceChatOnline) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatOnline " << servicenum << endl;
+			service = Yahoo::ServiceChatOnline;
+		break;
+		case (Yahoo::ServiceChatGoto) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatGoto " << servicenum << endl;
+			service = Yahoo::ServiceChatGoto;
+		break;
+		case (Yahoo::ServiceChatJoin) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatJoin " << servicenum << endl;
+			service = Yahoo::ServiceChatJoin;
+		break;
+		case (Yahoo::ServiceChatleave) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatleave " << servicenum << endl;
+			service = Yahoo::ServiceChatleave;
+		break;
+		case (Yahoo::ServiceChatExit) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatExit " << servicenum << endl;
+			service = Yahoo::ServiceChatExit;
+		break;
+		case (Yahoo::ServiceChatLogout) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatLogout " << servicenum << endl;
+			service = Yahoo::ServiceChatLogout;
+		break;
+		case (Yahoo::ServiceChatPing) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePeerToPeer " << servicenum << endl;
+			service = Yahoo::ServiceChatPing;
+		break;
+		case (Yahoo::ServiceChatLogon) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatLogon " << servicenum << endl;
+			service = Yahoo::ServiceChatLogon;
+		break;
+		case (Yahoo::ServiceChatLogoff) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatLogoff " << servicenum << endl;
+			service = Yahoo::ServiceChatLogoff;
+		break;
+		case (Yahoo::ServiceChatMsg) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatMsg " << servicenum << endl;
+			service = Yahoo::ServiceChatMsg;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -248,9 +288,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceGotGroupRename, // < 1, 36(old), 37(new)
 		ServiceSysMessage = 0x14,
 		ServicePassThrough2 = 0x16,
-		ServiceChatLogon,
-		ServiceChatLogoff,
-		ServiceChatMsg = 0x20,
 		ServiceGameMsg = 0x2a,
 		ServiceFileTransfer = 0x46,
 		ServiceVoiceChat = 0x4A,
@@ -260,13 +297,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceIgnoreContact,	// > 1, 7, 13 < 1, 66, 13, 0
 		ServiceRejectContact,
 		ServiceGroupRename = 0x89, // > 1, 65(new), 66(0), 67(old) 
-		ServiceChatOnline = 0x96, // > 109(id), 1, 6(abcde) < 0,1
-		ServiceChatGoto,
-		ServiceChatJoin,	// > 1 104-room 129-1600326591 62-2
-		ServiceChatleave,
-		ServiceChatExit = 0x9b,
-		ServiceChatLogout = 0xa0,
-		ServiceChatPing,
 		ServiceComment = 0xa8
 		ServicePictureUpdate = 0xc1,
 		ServiceVisibility = 0xc5,	// YMSG13, key 13: 2 = invisible, 1 = visible 
