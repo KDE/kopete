@@ -30,6 +30,7 @@
 YahooChatTask::YahooChatTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	m_loggedIn = false;
 }
 
 YahooChatTask::~YahooChatTask()
@@ -117,6 +118,49 @@ void YahooChatTask::slotChatRoomsComplete( KJob *job )
 	}
 
 	m_jobs.remove( transfer );
+}
+
+void YahooChatTask::joinRoom( const QString &topic, int room )
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	if( !m_loggedIn )
+	{
+		login();
+		m_pendingJoins.append( QPair< QString, int >( topic, room ) );
+		return;
+	}
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatJoin);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId().toLocal8Bit() );
+	t->setParam( 104, topic.toLocal8Bit() );
+	t->setParam( 129, room );
+	t->setParam( 62, 2 );
+
+	send( t );
+}
+
+void YahooChatTask::login()
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatOnline);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId().toLocal8Bit() );
+	t->setParam( 135, QString("ym%1").arg(YMSG_PROGRAM_VERSION_STRING).toLocal8Bit() );
+
+	send( t );
+}
+
+void YahooChatTask::logout()
+{	
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatLogout);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId().toLocal8Bit() );
+
+	send( t );
 }
 
 #include "yahoochattask.moc"

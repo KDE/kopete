@@ -45,21 +45,32 @@ public:
 	virtual ~YahooChatTask();
 	
 	virtual void onGo();
+	virtual bool forMe( const Transfer *transfer ) const;
 
 	void getYahooChatCategories();
 	void getYahooChatRooms( int category );
+
+	void joinRoom( const QString &topic, int room );
+	void logout();
 
 Q_SIGNALS:
 	void gotYahooChatCategories( const QDomDocument & );
 	void gotYahooChatRooms( int category, const QDomDocument & );
 
 private:
+	void parseMessage( YMSGTransfer *transfer );
+
+	void login();
+	void parseLoginResponse();
+
 private Q_SLOTS:
 	void slotData( KIO::Job *, const QByteArray & );
 	void slotCategoriesComplete( KJob * );
 	void slotChatRoomsComplete( KJob * );
 private:
 	QMap< KIO::Job *, YahooChatJob > m_jobs;
+	QList< QMap< QString, int > > m_pendingJoins;
+	bool m_loggedIn;
 };
 
 #endif
