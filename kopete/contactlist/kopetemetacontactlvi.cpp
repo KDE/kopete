@@ -38,6 +38,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kapplication.h>
+#include <kglobalsettings.h>
 
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
@@ -259,7 +260,7 @@ void KopeteMetaContactLVI::initLVI()
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 			 SLOT( slotConfigChanged() ) );
-	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
+	connect( KGlobalSettings::self(), SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this );
 	mBlinkTimer->setObjectName( "mBlinkTimer" );
