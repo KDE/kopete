@@ -37,7 +37,6 @@
 #include <kmenu.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <kapplication.h>
 #include <kglobalsettings.h>
 
 #include <kabc/addressbook.h>
@@ -227,7 +226,7 @@ void KopeteMetaContactLVI::initLVI()
 	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );
 
 	m_oldStatus = m_metaContact->status();
-	
+
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
 
@@ -442,7 +441,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				}
 				// if none of the above were true, t will still be noChange
 			}
-			
+
 			// now issue the appropriate notification
 			KNotification *notify=0;
 			switch ( t )
@@ -463,7 +462,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 					//notify->setActions(QStringList(i18n( "Chat" )));
 					break;
 			}
-			
+
 			if(notify)
 			{
 				QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
@@ -473,17 +472,17 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				notify->setText(text);
 				notify->setPixmap(QPixmap::fromImage(m_metaContact->picture().image()));
 				connect(notify, SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
-				
+
 				notify->addContext( qMakePair( QString::fromLatin1("metacontact") , m_metaContact->metaContactId()) );
 				foreach( Kopete::Group *g , m_metaContact->groups() )
 				{
 					notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
-				} 
+				}
 				notify->sendEvent();
 			}
 		}
 		//blink if the metacontact icon has changed.
-		if ( !mBlinkTimer->isActive() && d->metaContactIcon /*&& d->metaContactIcon->pixmap()  != m_oldStatusIcon */) 
+		if ( !mBlinkTimer->isActive() && d->metaContactIcon /*&& d->metaContactIcon->pixmap()  != m_oldStatusIcon */)
 		{
 			mIsBlinkIcon = false;
 			m_blinkLeft = 9;
@@ -502,7 +501,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 
 	// make a note of the current status for the next time we get a status change
 	m_oldStatus = newStatus;
-	
+
 	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
 	updateVisibility();
@@ -523,7 +522,7 @@ void KopeteMetaContactLVI::execute() const
 		d->events.first()->apply();
 	else
 		m_metaContact->execute();
-	
+
 	//The selection is removed, but the contact still hihjlihted,  remove the selection in the contactlist (see bug 106090)
 	Kopete::ContactList::self()->setSelectedItems( QList<Kopete::MetaContact*>() , QList<Kopete::Group*>() );
 }
@@ -544,7 +543,7 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 
 void KopeteMetaContactLVI::slotPhotoChanged()
 {
-	if ( d->metaContactIcon && d->currentIconMode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPhoto ) 
+	if ( d->metaContactIcon && d->currentIconMode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPhoto )
 	{
 		m_oldStatusIcon= d->metaContactIcon->pixmap();
 		QPixmap photoPixmap;
@@ -717,7 +716,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 			d->extraText->setFont( font );
 		}
 	}
-	
+
 	updateVisibility();
 	updateContactIcons();
 	slotIdleStateChanged( 0 );
@@ -760,7 +759,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
-	
+
 	if (iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPhoto) {
 		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 		new VSpacerComponent( imageBox );
@@ -774,7 +773,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	} else {
 		d->metaContactIcon = new ImageComponent( hbox );
 	}
-	 
+
 	if( mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed )
 	{
 		d->contactIconSize = IconSize( K3Icon::Small );
@@ -837,7 +836,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 		bool allOffline = !m_metaContact->isOnline();
 		if ( newVal.toString().isEmpty() || ( !contact->isOnline() && !allOffline ) )
 		{
-			// try to find a more suitable away message to be displayed when: 
+			// try to find a more suitable away message to be displayed when:
 			// -new away message is empty or
 			// -contact who set it is offline and there are contacts online in the metacontact
 			bool allAwayMessagesEmpty = true;
@@ -996,7 +995,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 	if ( m_parentGroup->group() == Kopete::Group::temporary() && !Kopete::AppearanceSettings::self()->groupContactByGroup() )
 		return false;
- 
+
 	return true;
 }
 
@@ -1019,7 +1018,7 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 	if(d->metaContactIcon && d->currentIconMode==Kopete::AppearanceSettings::EnumContactListIconMode::IconPic)
 	{
 		m_oldStatusIcon=d->metaContactIcon->pixmap();
-		
+
 		QPixmap icon = SmallIcon( m_metaContact->statusIcon(), d->iconSize );
 		if ( doWeHaveToGrayThatContact )
 		{
