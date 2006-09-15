@@ -170,7 +170,7 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
 		cd.authAttribute = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
-		cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
+		cd.dn = sf->value().toString().lower(); // HACK: lowercased DN
 	if ( ( sf = fields.findSingleField ( "CN" ) ) )
 		cd.cn = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
@@ -193,10 +193,37 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 		const Field::FieldListIterator end = fl.end();
 		for ( Field::FieldListIterator it = fl.begin(); it != end; ++it )
 		{
-			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
-			QString propName = propField->tag();
-			QString propValue = propField->value().toString();
-			propMap.insert( propName, propValue );
+			Field::SingleField * propField = dynamic_cast<Field::SingleField *>( *it );
+			if ( propField )
+			{
+				QString propName = propField->tag();
+				QString propValue = propField->value().toString();
+				propMap.insert( propName, propValue );
+			}
+			else
+			{
+				Field::MultiField * propList = dynamic_cast<Field::MultiField*>( *it );
+				if ( propList )
+				{
+					// Hello A Nagappan. GW gave us a multiple field where we previously got a single field
+					QString parentName = propList->tag();
+					Field::FieldList propFields = propList->fields();
+					const Field::FieldListIterator end = propFields.end();
+					for ( Field::FieldListIterator it = propFields.begin(); it != end; ++it )
+					{
+						propField = dynamic_cast<Field::SingleField *>( *it );
+						if ( propField /*&& propField->tag() == parentName */)
+						{
+							QString propValue = propField->value().toString();
+							QString contents = propMap[ propField->tag() ];
+							if ( !contents.isEmpty() )
+								contents.append( ", " );
+							contents.append( propField->value().toString());
+							propMap.insert( propField->tag(), contents );
+						}
+					}
+				}
+			}	
 		}
 	}
 	if ( !propMap.empty() )
