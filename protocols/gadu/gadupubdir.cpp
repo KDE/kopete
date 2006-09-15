@@ -79,7 +79,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	mMainWidget->pubsearch->raiseWidget( 1 );
 	mMainWidget->radioByUin->setChecked( true );
 
-	setButtonGuiItem( KDialog::User2, i18n( "Search &More..." ) );
+	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "Search &More..." ) ) );
 	showButton( KDialog::User3, true );
 	showButton( KDialog::User1, true );
 	enableButton( KDialog::User3, false );
@@ -114,10 +114,10 @@ GaduPublicDir::createWidget()
 
 	mMainWidget->UIN->setValidChars( "1234567890" );
 
-	setButtonGuiItem( KDialog::User1, i18n( "&New Search" ) );
-	setButtonGuiItem( KDialog::User2, i18n( "S&earch" ) );
-	setButtonGuiItem( KDialog::User3, i18n( "&Add User..." ) );
-	setButtonGuiItem( KDialog::Cancel, i18n( "&Close" ) );
+	setButtonGuiItem( KDialog::User1, KGuiItem( i18n( "&New Search" ) ) );
+	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "S&earch" ) ) );
+	setButtonGuiItem( KDialog::User3, KGuiItem( i18n( "&Add User..." ) ) );
+	setButtonGuiItem( KDialog::Cancel, KGuiItem( i18n( "&Close" ) ) );
 
 	showButton( KDialog::User1, false );
 	showButton( KDialog::User3, false );
@@ -292,7 +292,7 @@ GaduPublicDir::slotNewSearch()
 {
 	mMainWidget->pubsearch->raiseWidget( 0 );
 
-	setButtonGuiItem( KDialog::User2, i18n( "S&earch" ) );
+	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "S&earch" ) ) );
 
 	showButton( KDialog::User1, false );
 	showButton( KDialog::User3, false );
@@ -327,7 +327,7 @@ GaduPublicDir::slotSearch()
 		// Search for more
 	}
 	mMainWidget->pubsearch->setDisabled( true );
-	setButtonGuiItem( KDialog::User2, i18n( "Search &More..." ) );
+	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "Search &More..." ) ) );
 	showButton( KDialog::User3, true );
 	showButton( KDialog::User1, true );
 	enableButton( KDialog::User3, false );

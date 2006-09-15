@@ -32,8 +32,8 @@ dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent)
 {
 	setCaption( i18n("Join Jabber Groupchat") );
 	setButtons( KDialog::User1 | KDialog::User2 );
-	setButtonGuiItem( KDialog::User1, i18n("Join") );
-	setButtonGuiItem( KDialog::User2, i18n("Browser") );
+	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Join") ) );
+	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Browser") ) );
 	
 	QWidget *mainWidget = new QWidget(this);
 	m_ui.setupUi(mainWidget);

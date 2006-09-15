@@ -45,8 +45,8 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
 	setCaption( i18n( "Yahoo User Information" ) );
 	setButtons( KDialog::User2 | KDialog::User1 | KDialog::Cancel );
 	setDefaultButton( KDialog::Cancel );
-	setButtonGuiItem( KDialog::User1, i18n("Save and Close") );
-	setButtonGuiItem( KDialog::User2, i18n("Merge with existing entry") );
+	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Save and Close") ) );
+	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Merge with existing entry") ) );
 	showButton( KDialog::User2, false );
 
 	kDebug(14180) << k_funcinfo << "Creating new yahoo user info widget" << endl;

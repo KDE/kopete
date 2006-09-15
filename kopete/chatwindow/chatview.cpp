@@ -348,21 +348,21 @@ bool ChatView::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
-				i18n( "Cl&ose Chat" ), QLatin1String( "AskCloseGroupChat" ) );
+				KGuiItem( i18n( "Cl&ose Chat" ) ), QLatin1String( "AskCloseGroupChat" ) );
 		}
 
 		if ( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
-				i18n( "Cl&ose Chat" ), QLatin1String("AskCloseChatRecentMessage" ) );
+				KGuiItem( i18n( "Cl&ose Chat" ) ), QLatin1String("AskCloseChatRecentMessage" ) );
 		}
 
 		if ( d->sendInProgress && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n( "You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?" ), i18n( "Message in Transit" ),
-				i18n( "Cl&ose Chat" ), QLatin1String( "AskCloseChatMessageInProgress" ) );
+				KGuiItem( i18n( "Cl&ose Chat" ) ), QLatin1String( "AskCloseChatMessageInProgress" ) );
 		}
 	}
 

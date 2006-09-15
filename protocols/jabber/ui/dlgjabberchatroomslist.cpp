@@ -26,7 +26,7 @@ dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount* account, const QSt
 {
 	setCaption(i18n("List Chatrooms"));
 	setButtons( KDialog::User1 | KDialog::Close );
-	setButtonGuiItem( KDialog::User1, i18n("Join") );
+	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Join") ) );
 
 	QWidget *mainWidget = new QWidget(this);
 	m_ui.setupUi(mainWidget);

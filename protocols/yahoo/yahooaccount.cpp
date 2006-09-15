@@ -1083,7 +1083,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	}
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
 				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?",
-				 who, m, msg), QString::null, i18n("Accept"), i18n("Ignore") ) )
+				who, m, msg), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
 	{
 		m_session->joinConference( room, myMembers );
 		if( !m_conferences[room] )
@@ -1527,7 +1527,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 	m_pendingWebcamInvites.append( who );
 	
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
-							.arg(who), QString::null, i18n("Accept"), i18n("Ignore") ) )
+							.arg(who), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
 	{
 		m_pendingWebcamInvites.removeAll( who );
 		m_session->requestWebcam( who );
@@ -1760,7 +1760,7 @@ void YahooAccount::slotWebcamViewerJoined( const QString &viewer )
 void YahooAccount::slotWebcamViewerRequest( const QString &viewer )
 {
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 wants to view your webcam. Grant access?",
-		 viewer), QString::null, i18n("Accept"), i18n("Ignore") ) )	
+		viewer), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )	
 		m_session->grantWebcamAccess( viewer );
 }
 

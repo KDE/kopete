@@ -316,7 +316,7 @@ void AIMContact::warnUser()
 
 	int result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), message,
 	                                               i18n( "Warn User %1?", nick ),
-	                                               i18n( "Warn Anonymously" ), i18n( "Warn" ) );
+	                                               KGuiItem( i18n( "Warn Anonymously" ) ), KGuiItem( i18n( "Warn" ) ) );
 
 	if ( result == KMessageBox::Yes )
 		mAccount->engine()->sendWarning( contactId(), true);

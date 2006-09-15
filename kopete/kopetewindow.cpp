@@ -344,8 +344,8 @@ void KopeteWindow::initActions()
 	d->actionShowEmptyGroups->setShortcut( KShortcut(Qt::CTRL + Qt::Key_G) );
 	connect( d->actionShowEmptyGroups, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowEmptyGroups() ) );
 
-	d->actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
-	d->actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
+	d->actionShowOffliners->setCheckedState( KGuiItem( i18n("Hide Offline &Users") ) );
+	d->actionShowEmptyGroups->setCheckedState( KGuiItem( i18n("Hide Empty &Groups") ) );
 
 	// quick search bar
 	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), 0 );
