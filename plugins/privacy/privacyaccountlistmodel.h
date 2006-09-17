@@ -22,18 +22,19 @@
 class QStringList;
 namespace Kopete { class Protocol; }
 
+typedef QPair< QString, Kopete::Protocol *> AccountListEntry;
+
 class PrivacyAccountListModel : public QAbstractTableModel
 {
 Q_OBJECT
 
 public:
-	typedef QPair< QString, Kopete::Protocol *> AccountListEntry;
-
 	PrivacyAccountListModel(QObject *parent = 0);
 	~PrivacyAccountListModel();
 
 	void loadAccounts( const QStringList &accounts );
 	void addAccount(const QString &accountId, Kopete::Protocol *protocol);
+	void addAccount(const AccountListEntry &entry);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -44,7 +45,7 @@ public:
 	QStringList toStringList() const;
 
 private:
-	QList< QPair< QString, Kopete::Protocol *> > m_list;
+	QList< AccountListEntry > m_list;
 };
 
 #endif

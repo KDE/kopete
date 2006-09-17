@@ -31,6 +31,61 @@
       <property name="spacing" >
        <number>6</number>
       </property>
+      <item row="2" column="0" colspan="2" >
+       <widget class="QRadioButton" name="radioOnlyWhiteList" >
+        <property name="text" >
+         <string>Allow messages only from contacts on the whitelist</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="2" column="2" >
+         <widget class="QPushButton" name="btnClearBlackList" >
+          <property name="text" >
+           <string>Clear</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QPushButton" name="btnRemoveFromBlackList" >
+          <property name="text" >
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="3" >
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Blacklist:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="3" >
+         <widget class="QTreeView" name="listBlackList" >
+          <property name="rootIsDecorated" >
+           <bool>false</bool>
+          </property>
+          <property name="itemsExpandable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QPushButton" name="btnAddToBlackList" >
+          <property name="text" >
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item row="0" column="0" colspan="2" >
        <widget class="QRadioButton" name="radioAllowAll" >
         <property name="text" >
@@ -48,13 +103,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2" >
-       <widget class="QRadioButton" name="radioOnlyWhiteList" >
-        <property name="text" >
-         <string>Allow messages only from contacts on the whitelist</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0" colspan="2" >
        <widget class="QRadioButton" name="radioAllButBlackList" >
         <property name="text" >
@@ -62,7 +110,7 @@
         </property>
        </widget>
       </item>
-      <item rowspan="2" row="4" column="0" >
+      <item row="4" column="0" >
        <layout class="QGridLayout" >
         <property name="margin" >
          <number>0</number>
@@ -70,10 +118,24 @@
         <property name="spacing" >
          <number>6</number>
         </property>
+        <item row="0" column="0" colspan="2" >
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>Whitelist:</string>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1" >
          <widget class="QPushButton" name="btnRemoveFromWhiteList" >
           <property name="text" >
            <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QPushButton" name="btnAddToWhiteList" >
+          <property name="text" >
+           <string>Add</string>
           </property>
          </widget>
         </item>
@@ -85,68 +147,12 @@
          </widget>
         </item>
         <item row="1" column="0" colspan="3" >
-         <widget class="QTableView" name="listWhiteList" >
-          <property name="showGrid" >
+         <widget class="QTreeView" name="listWhiteList" >
+          <property name="rootIsDecorated" >
            <bool>false</bool>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="0" >
-         <widget class="QPushButton" name="btnAddToWhiteList" >
-          <property name="text" >
-           <string>Add</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2" >
-         <widget class="QLabel" name="label" >
-          <property name="text" >
-           <string>Whitelist:</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item rowspan="2" row="4" column="1" >
-       <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <item row="2" column="1" >
-         <widget class="QPushButton" name="btnRemoveFromBlackList" >
-          <property name="text" >
-           <string>Remove</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3" >
-         <widget class="QTableView" name="listBlackList" >
-          <property name="showGrid" >
+          <property name="itemsExpandable" >
            <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" >
-         <widget class="QPushButton" name="btnAddToBlackList" >
-          <property name="text" >
-           <string>Add</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="3" >
-         <widget class="QLabel" name="label_2" >
-          <property name="text" >
-           <string>Blacklist:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2" >
-         <widget class="QPushButton" name="btnClearBlackList" >
-          <property name="text" >
-           <string>Clear</string>
           </property>
          </widget>
         </item>

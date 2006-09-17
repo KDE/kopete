@@ -1178,7 +1178,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 								  ("The Jabber user %1 removed %2's subscription to them. "
 								   "This account will no longer be able to view their online/offline status. "
 								   "Do you want to delete the contact?",
-								    jid.full(), accountId()), i18n ("Notification"), KStdGuiItem::del(), i18n("Keep")))
+								    jid.full(), accountId()), i18n ("Notification"), KStdGuiItem::del(), KGuiItem( i18n("Keep") )))
 		{
 
 			case KMessageBox::Yes:

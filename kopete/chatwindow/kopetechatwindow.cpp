@@ -417,7 +417,7 @@ void KopeteChatWindow::initActions(void)
 	connect( membersRight, SLOT(toggled(bool)), this, SLOT(slotViewMembersRight()) );
 
 	toggleMembers = new KToggleAction( i18n( "Show" ), coll, "options_togglemembers" );
-	toggleMembers->setCheckedState(i18n("Hide"));
+	toggleMembers->setCheckedState( KGuiItem( i18n("Hide") ) );
 	connect( toggleMembers, SLOT(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
 
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll, "enable_auto_spell_check" );

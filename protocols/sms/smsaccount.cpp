@@ -84,7 +84,7 @@ const bool SMSAccount::splitNowMsgTooLong(int msgLength)
 	if(theLongMsgAction == ACT_CANCEL) return false;
 	if(theLongMsgAction == ACT_SPLIT) return true;
 	if(KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?", max, msgLength / max + 1),
-		i18n("Message Too Long"), i18n("Divide"), i18n("Do Not Divide")) == KMessageBox::Yes)
+		i18n("Message Too Long"), KGuiItem( i18n("Divide") ), KGuiItem( i18n("Do Not Divide") )) == KMessageBox::Yes)
 		return true;
 	else
 		return false;

@@ -32,7 +32,7 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account, QWidget* parent )
     setCaption(  i18n( "Join AIM Chat Room" ) );
     setButtons( KDialog::Cancel | KDialog::User1 );
     setDefaultButton( KDialog::User1 );
-    setButtonGuiItem( KDialog::User1, i18n("Join") );
+    setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Join") ) );
     showButtonSeparator( true );
 
     kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Account " << account->accountId()

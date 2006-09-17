@@ -25,11 +25,13 @@
 
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
 #include "metacontactselectorwidget.h"
+#include "contactselectorwidget.h"
 #include "privacyconfig.h"
 #include "ui_privacydialog.h"
-#include "privacypreferences.h"
 #include "privacyaccountlistmodel.h"
+#include "privacypreferences.h"
 
 typedef KGenericFactory<PrivacyPreferences> PrivacyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_privacy, PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )
@@ -49,13 +51,17 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	m_blackListModel = new PrivacyAccountListModel;
 
 	prefUi->listWhiteList->setSelectionBehavior( QAbstractItemView::SelectRows );
-	prefUi->listWhiteList->horizontalHeader()->hide();
-	prefUi->listWhiteList->verticalHeader()->hide();
 	prefUi->listWhiteList->setModel( m_whiteListModel );
+	prefUi->listWhiteList->header()->setStretchLastSection( false );
+	prefUi->listWhiteList->header()->setResizeMode( prefUi->listWhiteList->header()->logicalIndex( 0 ), QHeaderView::Stretch );
+	prefUi->listWhiteList->header()->hide();	
 	prefUi->listBlackList->setSelectionBehavior( QAbstractItemView::SelectRows );
-	prefUi->listBlackList->horizontalHeader()->hide();
-	prefUi->listBlackList->verticalHeader()->hide();
 	prefUi->listBlackList->setModel( m_blackListModel );
+	prefUi->listBlackList->header()->setStretchLastSection( false );
+	prefUi->listBlackList->header()->setResizeMode( prefUi->listWhiteList->header()->logicalIndex( 0 ), QHeaderView::Stretch );
+	prefUi->listBlackList->header()->hide();
+
+	connect(PrivacyConfig::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
 	connect(prefUi->radioAllowAll, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
 	connect(prefUi->radioOnlyWhiteList, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
@@ -74,6 +80,10 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	connect(prefUi->btnClearBlackList, SIGNAL(clicked()), this, SLOT(slotBtnClearBlackListClicked()));
 	connect(prefUi->btnRemoveFromWhiteList, SIGNAL(clicked()), this, SLOT(slotBtnRemoveFromWhiteListClicked()));
 	connect(prefUi->btnRemoveFromBlackList, SIGNAL(clicked()), this, SLOT(slotBtnRemoveFromBlackListClicked()));
+
+	connect(m_whiteListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
+	connect(m_blackListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
+
 	load();
 }
 
@@ -87,8 +97,6 @@ PrivacyPreferences::~PrivacyPreferences()
 
 void PrivacyPreferences::load()
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
-
 	PrivacyConfig::self()->readConfig();
 
 	prefUi->radioAllowAll->setChecked( PrivacyConfig::sender_AllowAll() );
@@ -110,7 +118,6 @@ void PrivacyPreferences::load()
 
 void PrivacyPreferences::save()
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
 	PrivacyConfig::setSender_AllowAll(prefUi->radioAllowAll->isChecked());
 	PrivacyConfig::setSender_AllowNoneButWhiteList(prefUi->radioOnlyWhiteList->isChecked());
 	PrivacyConfig::setWhiteList(m_whiteListModel->toStringList());
@@ -127,9 +134,20 @@ void PrivacyPreferences::save()
 	emit KCModule::changed(false);
 }
 
+void PrivacyPreferences::slotConfigChanged()
+{
+	load();
+}
+
 void PrivacyPreferences::slotModified()
 {
 	emit KCModule::changed(true);
+}
+
+void PrivacyPreferences::slotSetupViews()
+{
+	prefUi->listWhiteList->setColumnWidth( 1, 24 );
+	prefUi->listBlackList->setColumnWidth( 1, 24 );
 }
 
 void PrivacyPreferences::slotChkDropAtLeastOneToggled( bool enabled )
@@ -152,18 +170,14 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 	KVBox *box = new KVBox( addDialog );
 	box->setSpacing( KDialog::spacingHint() );
-	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget( box );
-	selector->setLabelMessage(i18n( "Select the meta contact to which you want to add:" ));
+	ContactSelectorWidget *selector = new ContactSelectorWidget( box );
 	addDialog->setMainWidget(box);
+
 	if( addDialog->exec() == QDialog::Accepted )
 	{
-		Kopete::MetaContact *mc = selector->metaContact();
-		if( mc )
+		foreach( AccountListEntry entry, selector->contacts() )
 		{
-			foreach( Kopete::Contact *contact, mc->contacts() )
-			{
-				
-			}
+			m_whiteListModel->addAccount( entry );
 		}
 	}
 
@@ -174,6 +188,27 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 void PrivacyPreferences::slotBtnAddToBlackListClicked()
 {
+	KDialog *addDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	addDialog->setCaption( i18n( "Add Contact to Blacklist" ) );
+	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
+	addDialog->setDefaultButton( KDialog::Ok );
+	addDialog->showButtonSeparator( true );
+
+	KVBox *box = new KVBox( addDialog );
+	box->setSpacing( KDialog::spacingHint() );
+	ContactSelectorWidget *selector = new ContactSelectorWidget( box );
+	addDialog->setMainWidget(box);
+
+	if( addDialog->exec() == QDialog::Accepted )
+	{
+		foreach( AccountListEntry entry, selector->contacts() )
+		{
+			m_blackListModel->addAccount( entry );
+		}
+	}
+
+	addDialog->deleteLater();
+
 	emit KCModule::changed(true);
 }
 

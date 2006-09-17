@@ -147,7 +147,7 @@ KAboutData *KopeteRichTextEditPart::createAboutData()
 void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 {
 	enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), ac, "enableRichText" );
-	enableRichText->setCheckedState(i18n("Disable &Rich Text"));
+	enableRichText->setCheckedState( KGuiItem( i18n("Disable &Rich Text") ) );
 	connect( enableRichText, SIGNAL( toggled(bool) ),
 			this, SLOT( slotSetRichTextEnabled(bool) ) );
 

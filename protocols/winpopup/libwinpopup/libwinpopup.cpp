@@ -111,7 +111,7 @@ bool WinPopupLib::checkMessageDir()
 													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
 													   "on how to do this.\n"
 													   "Should the directory be created? (May need root password)", WP_POPUP_DIR),
-												  QString::fromLatin1("Winpopup"), i18n("Create Directory"), i18n("Do Not Create"));
+		                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Create Directory")), KGuiItem(i18n("Do Not Create")));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -130,7 +130,7 @@ bool WinPopupLib::checkMessageDir()
 														   "You will not receive messages if you say no.\n"
 														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
 														   "Fix? (May need root password)", WP_POPUP_DIR),
-													  QString::fromLatin1("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
+			                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
 				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -305,7 +305,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 															  i18n("A message file could not be removed; "
 																   "maybe the permissions are wrong.\n"
 																   "Fix? (May need root password)"),
-															  QString::fromLatin1("Winpopup"), i18n("Fix"), i18n("Do Not Fix"));
+					                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 					if (tmpYesNo == KMessageBox::Yes) {
 						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem->url().path()));
 						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {

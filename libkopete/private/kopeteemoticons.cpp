@@ -32,10 +32,6 @@
 #include <kstandarddirs.h>
 #include <kdeversion.h>
 
-#include <set>
-#include <algorithm>
-#include <iterator>
-
 
 /*
  * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
@@ -48,6 +44,8 @@ namespace Kopete {
 struct Emoticons::Emoticon
 {
 	Emoticon(){}
+	/* sort by longest to shortest matchText */
+	bool operator < (const Emoticon &e) const { return matchText.length() > e.matchText.length(); }
 	QString matchText;
 	QString matchTextEscaped;
 	QString	picPath;
@@ -425,6 +423,7 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 		node = node.nextSibling();
 	}
 	mapFile.close();
+	sortEmoticons();
 }
 
 
@@ -493,8 +492,17 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 		node = node.nextSibling();
 	}
 	mapFile.close();
+	sortEmoticons();
 }
 
+
+void Emoticons::sortEmoticons()
+{
+	/* sort strings in order of longest to shortest to provide convenient input for
+		greedy matching in the tokenizer */
+	foreach (const QChar &key, d->emoticonMap.keys())
+		qSort(d->emoticonMap[key]);
+}
 
 
 

@@ -162,6 +162,12 @@ private:
 	 * @see initEmoticons
 	 */
 	void initEmoticon_JEP0038( const QString & filename);
+	
+	/**
+	 * sorts emoticons for convenient parsing, which yields greedy matching on
+	 * matchText
+	 */
+	void sortEmoticons();
 
 
 	struct Emoticon;

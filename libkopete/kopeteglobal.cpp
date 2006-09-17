@@ -19,8 +19,8 @@
 #include "kopeteuiglobal.h"
 
 #include <QtCore/QLatin1String>
+#include <QtGui/QApplication>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
@@ -242,7 +242,7 @@ void installEmoticonTheme(const QString &archiveName)
 	 	i18n("Installing Emoticon Themes..."), QString::null, true);
 	progressDlg->progressBar()->setMaximum(foundThemes.count());
 	progressDlg->show();
-	kapp->processEvents();
+	qApp->processEvents();
 
 	QString currentBundleMimeType = KMimeType::findByPath(archiveName, 0, false)->name();
 	if( currentBundleMimeType == QLatin1String("application/x-zip") )
@@ -294,18 +294,21 @@ void installEmoticonTheme(const QString &archiveName)
 		return;
 	}
 
-	for (QStringList::ConstIterator it = foundThemes.begin(); it != foundThemes.end(); ++it)
+	for (int themeIndex = 0; themeIndex < foundThemes.size(); ++themeIndex)
 	{
+		const QString &theme = foundThemes[themeIndex];
+
 		progressDlg->setLabel(
 			i18n("<qt>Installing <strong>%1</strong> emoticon theme</qt>",
-			 *it));
+			theme));
+		progressDlg->progressBar()->setValue(themeIndex);
 		progressDlg->resize(progressDlg->sizeHint());
-		kapp->processEvents();
+		qApp->processEvents();
 
 		if (progressDlg->wasCancelled())
 			break;
 
-		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(*it));
+		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(theme));
 		if (currentEntry == 0)
 		{
 			kDebug(14010) << k_funcinfo << "couldn't get next archive entry" << endl;
@@ -321,8 +324,7 @@ void installEmoticonTheme(const QString &archiveName)
 					"couldn't cast archive entry to KArchiveDirectory" << endl;
 				continue;
 			}
-			currentDir->copyTo(localThemesDir + *it);
-			progressDlg->progressBar()->advance(1);
+			currentDir->copyTo(localThemesDir + theme);
 		}
 	}
 

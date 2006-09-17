@@ -122,3 +122,7 @@ Comment=A contact has sent you a buzz/nudge.
 default_sound=Kopete_Received.ogg
 Action=PassivePopup|Sound|Taskbar
 
+[Event/message_dropped]
+Name=Message dropped
+Comment=A message was filtered by the Privacy Plugin
+Action=PassivePopup

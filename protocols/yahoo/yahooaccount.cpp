@@ -27,6 +27,8 @@
 #include <QImage>
 #include <QFile>
 #include <QPixmap>
+#include <QDir>
+#include <QFileInfo>
 
 // KDE
 #include <klocale.h>
@@ -1081,7 +1083,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	}
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
 				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?",
-				 who, m, msg), QString::null, i18n("Accept"), i18n("Ignore") ) )
+				who, m, msg), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
 	{
 		m_session->joinConference( room, myMembers );
 		if( !m_conferences[room] )
@@ -1351,19 +1353,34 @@ void YahooAccount::slotGotFile( const QString &  who, const QString &  url , lon
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Received File from " << who << ": " << msg << endl;
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Filename :" << fname << " size:" << fesize << endl;
 	
-	Kopete::TransferManager::transferManager()->askIncomingTransfer( contact( who ) , fname, fesize, msg, url, preview );	
+	Kopete::TransferManager::transferManager()->askIncomingTransfer( contact( who ) , fname, fesize, msg, url, preview );
+	
+	if( m_pendingFileTransfers.empty() )
+	{
 	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
 					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
 	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
 	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
+	}
+	m_pendingFileTransfers.append( url );
 }
 
 void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QString& fileName)
 {	
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !m_pendingFileTransfers.contains( transfer->info().internalId() ) )
 		return;
 	
 	m_pendingFileTransfers.removeAll( transfer->info().internalId() );
+	
+	//Create directory if it doesn't already exist
+	QDir dir;
+	QString path = QFileInfo( fileName ).path();
+	if( !dir.exists( path ) )
+	{
+		dir.mkpath( path );
+	}
+	
 	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );	
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
 	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
@@ -1510,7 +1527,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 	m_pendingWebcamInvites.append( who );
 	
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
-							.arg(who), QString::null, i18n("Accept"), i18n("Ignore") ) )
+							.arg(who), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
 	{
 		m_pendingWebcamInvites.removeAll( who );
 		m_session->requestWebcam( who );
@@ -1743,7 +1760,7 @@ void YahooAccount::slotWebcamViewerJoined( const QString &viewer )
 void YahooAccount::slotWebcamViewerRequest( const QString &viewer )
 {
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 wants to view your webcam. Grant access?",
-		 viewer), QString::null, i18n("Accept"), i18n("Ignore") ) )	
+		viewer), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )	
 		m_session->grantWebcamAccess( viewer );
 }
 

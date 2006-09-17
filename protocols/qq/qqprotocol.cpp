@@ -22,7 +22,7 @@
 #include "qqcontact.h"
 #include "qqprotocol.h"
 #include "qqaddcontactpage.h"
-#include "qqeditaccountwidget.h"
+#include "ui/qqeditaccountwidget.h"
 
 typedef KGenericFactory<QQProtocol> QQProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_qq, QQProtocolFactory( "kopete_qq" )  )

@@ -36,8 +36,8 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 {
 	setCaption( i18n( "A User Would Like to Send You a File" ) );
 	setButtons( KDialog::Ok | KDialog::Cancel );
-	setButtonGuiItem( KDialog::Cancel, i18n("&Refuse") );
-	setButtonGuiItem( KDialog::Ok, i18n("&Accept") );	
+	setButtonGuiItem( KDialog::Cancel, KGuiItem( i18n("&Refuse") ) );
+	setButtonGuiItem( KDialog::Ok, KGuiItem( i18n("&Accept") ) );
 
 	setAttribute( Qt::WA_DeleteOnClose );
 	m_emited=false;

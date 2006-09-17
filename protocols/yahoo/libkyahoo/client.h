@@ -35,6 +35,7 @@
 class QString;
 class QTimer;
 class QPixmap;
+class QDomDocument;
 class ClientStream;
 class KNetworkConnector;
 class Task;
@@ -368,6 +369,15 @@ Q_OBJECT
 		 */
 		void cancelFileTransfer( unsigned int transferId );	
 
+		/**
+		 * Get the list of yahoo chat categories
+		 */
+		void getYahooChatCategories();
+
+		/**
+		 * Get the list of chatrooms for the given category
+		 */
+		void getYahooChatRooms( int category );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -607,6 +617,14 @@ Q_OBJECT
 		 */
 		void incomingFileTransfer( const QString &, const QString &, long, const QString &,
 			const QString &, unsigned long, const QPixmap & );
+		/**
+		 * We have received the list of yahoo chat categories
+		 */
+		void gotYahooChatCategories( const QDomDocument & );
+		/**
+		 * We have received the list of chatrooms for the categories
+		 */
+		void gotYahooChatCategories( int, const QDomDocument & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

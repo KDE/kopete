@@ -378,6 +378,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> & /* addressBookData */ )
 {
 	// Contact id and display name are already set for us, only add the rest
+	/*  TODO: use groups later
 	QString groups;
 	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 	{
@@ -394,7 +395,20 @@ void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString,
 		lists +='A';
 	if(m_reversed)
 		lists +='R';
+	*/
+	if( m_contactDetail.empty() )
+		return;
 
+	int size = sizeof(Eva::contactDetailIndex)/sizeof(Eva::contactDetailIndex[0]);
+
+	for( int i=1; i< size; i++)
+	{
+		serializedData[ Eva::contactDetailIndex[i] ] = m_contactDetail[ Eva::contactDetailIndex[i] ];
+	}
+
+	return;
+
+	/* TODO: delete us!
 	serializedData[ "groups" ]  = groups;
 	serializedData[ "PHH" ]  = m_phoneHome;
 	serializedData[ "PHW" ]  = m_phoneWork;
@@ -402,6 +416,7 @@ void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString,
 	serializedData[ "lists" ] = lists;
 	serializedData[ "obj" ] = m_obj;
 	serializedData[ "contactGuid" ] = guid();
+	*/
 }
 
 
@@ -521,6 +536,7 @@ void QQContact::slotEmitDisplayPictureChanged()
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }
+
 
 void QQContact::setObject(const QString &obj)
 {

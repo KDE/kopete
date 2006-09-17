@@ -438,7 +438,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	{
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 			i18n("Do you want to add '%1' to your contact list?", jid.full()),
-			QString::null, i18n("Add"), i18n("Do Not Add"))
+			QString::null, KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 				  != KMessageBox::Yes)
 		{
 			return;
@@ -455,7 +455,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 			i18n("Do you want to remove '%1' from your contact list?", jid.full()),
-			QString::null, i18n("Remove"), i18n("Do Not Remove"))
+			QString::null, KGuiItem( i18n("Remove") ), KGuiItem( i18n("Do Not Remove") ))
 						!= KMessageBox::Yes)
 		{
 			return;

@@ -36,8 +36,8 @@ public:
 
 	virtual void save();
 	virtual void load();	
-
 private Q_SLOTS:
+	void slotConfigChanged();
 	void slotModified();
 	void slotChkDropAtLeastOneToggled(bool);
 	void slotChkDropAllToggled(bool);
@@ -48,6 +48,8 @@ private Q_SLOTS:
 	void slotBtnClearBlackListClicked();
 	void slotBtnRemoveFromWhiteListClicked();
 	void slotBtnRemoveFromBlackListClicked();
+
+	void slotSetupViews();
 private:
 	Ui::PrivacyPrefsUI *prefUi;
 	PrivacyAccountListModel *m_whiteListModel;

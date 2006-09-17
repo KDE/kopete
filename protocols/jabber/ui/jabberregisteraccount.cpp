@@ -66,7 +66,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	// replace "Ok" button with a "Register" button
 	KGuiItem registerButton = KStdGuiItem::ok();
 	registerButton.setText ( i18n ( "Register" ) );
-	setButtonGuiItem( KDialog::Ok, registerButton );
+	setButtonGuiItem( KDialog::Ok, KGuiItem( registerButton ) );
 
 	showButtonSeparator ( true );
 

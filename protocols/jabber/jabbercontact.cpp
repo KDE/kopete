@@ -352,7 +352,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		// store message id for outgoing notifications
 		mLastReceivedMessageId = message.id ();
 
-		// convert XMPP::Message into Kopete::Message²
+		// convert XMPP::Message into Kopete::Message
 		// retrieve and reformat body
 		QString body = message.body ();
 		if( !message.xencrypted().isEmpty() )
@@ -913,7 +913,7 @@ void JabberContact::deleteContact ()
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
 		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" , 
 						  mRosterItem.jid().bare () ), i18n ("Notification"),
-						KStdGuiItem::del (), i18n("Keep"), "JabberRemoveAuthorizationOnDelete" );
+						KStdGuiItem::del (), KGuiItem( i18n("Keep") ), "JabberRemoveAuthorizationOnDelete" );
 		if(result == KMessageBox::Yes )
 			remove_from_roster = true;
 		else if( result == KMessageBox::Cancel)

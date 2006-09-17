@@ -40,7 +40,28 @@ QQ supports two kinds of lists. List online buddies and list all budies. The ret
 QQ also supports GroupInfo and GroupNames functions. The former is the contactId-GroupId table, the latter is the name of ordered groups.
 
 Finding contacts
-=================
+==========
+
+Teenagers and students are QQ's main target market, they still believe cyber love, they would like to find some stranger to talk, then start an affair. The exposed meta data is essentail to narrow the search process, please check contactDetailIndex to find out the full list of meta data:
+		"qqId",
+		"nickName",
+		"country",
+		"state",
+		"zipcode",
+		"address",
+		"phone", 
+		"age",
+		"gender",
+		"name",
+		... ...
+
+The contact data is serialized in QQContact, inspired by MSNContact:
+AccountId, ContactId -- account/contact pair is a unique identification.
+Meta data -- include all QQ specific information
+Group list -- TBD
+
+
+Find user supports to find a user via: QQ number or browse the online user.
 
 TBD
 
@@ -70,6 +91,8 @@ Heartbeat
 ==========
 
 We also need to send heartbeat packet to the server to indicate we are still alive.
+
+
 
 
 =========

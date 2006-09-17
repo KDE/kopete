@@ -184,7 +184,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	{
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 		                               i18n("Do you want to add '%1' to your contact list?", command),
-		                               QString::null, i18n("Add"), i18n("Do Not Add"))
+		                               QString::null, KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 		    != KMessageBox::Yes)
 		{
 			kDebug(14152) << k_funcinfo << "Cancelled" << endl;

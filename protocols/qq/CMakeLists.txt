@@ -9,16 +9,24 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 
 ########### next target ###############
 
+set(kopete_qq_ui_SRCS
+   ui/qqwebcamdialog.cpp 
+   ui/qqeditaccountwidget.cpp 
+)
+	
+kde4_add_ui_files(kopete_qq_ui_SRCS
+   ui/qqeditaccountui.ui
+   ui/qqaddui.ui
+)
 set(kopete_qq_PART_SRCS 
+   ${kopete_qq_ui_SRCS} 
    qqprotocol.cpp 
    qqcontact.cpp 
    qqaccount.cpp 
    qqaddcontactpage.cpp 
-   qqeditaccountwidget.cpp 
    qqsocket.cpp
    qqnotifysocket.cpp
    qqchatsession.cpp
-   ui/qqwebcamdialog.cpp 
    libeva.cpp
    evautil.cpp
    md5.c
@@ -26,15 +34,6 @@ set(kopete_qq_PART_SRCS
 )
 
 kde4_automoc(${kopete_qq_PART_SRCS})
-
-kde4_add_ui_files(kopete_qq_PART_SRCS
-qqeditaccountui.ui
-)
-
-kde4_add_ui_files(kopete_qq_PART_SRCS
-qqaddui.ui
-)
-
 
 kde4_add_plugin(kopete_qq ${kopete_qq_PART_SRCS})
 

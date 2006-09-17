@@ -105,7 +105,6 @@ void QQSocket::disconnect()
 	}
 	else
 		slotSocketClosed();
-
 }
 
 void QQSocket::aboutToConnect()

@@ -23,6 +23,8 @@
 #include <kdebug.h>
 #include <kapplication.h>
 
+#include <kglobalsettings.h>
+
 #include "kopetecontactlistview.h"
 #include "kopetegroupviewitem.h"
 #include "kopetegroup.h"
@@ -107,7 +109,7 @@ void KopeteGroupViewItem::initLVI()
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 		SLOT( slotConfigChanged() ) );
-	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
+	connect( KGlobalSettings::self(), SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
 
