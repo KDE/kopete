@@ -21,7 +21,7 @@
 #define JABBEREDITACCOUNTWIDEGET_H
 
 #include <qwidget.h>
-#include <kprogressbar.h>
+
 #include "editaccountwidget.h"
 #include "jabberaccount.h"
 #include "ui_dlgjabbereditaccountwidget.h"

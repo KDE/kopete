@@ -26,7 +26,6 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kprogressdialog.h>
-#include <kprogressbar.h>
 #include <kapplication.h>
 #include <ksavefile.h>
 
