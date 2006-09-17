@@ -112,8 +112,14 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		// only update the alias if its not empty
 		if ( !item.name().isEmpty () && item.name() != item.jid().bare() )
 		{
-			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "setting display name of " << contactId () << " to " << item.name() << endl;
-			metaContact()->setDisplayName ( item.name () );
+			QString newName = item.name ();
+			QString oldName = metaContact()->displayName();
+			Kopete::Contact *source=metaContact()->displayNameSourceContact();
+//			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "setting display name of " << contactId () << " to " << newName << endl;
+			metaContact()->setDisplayName ( newName );
+			//automatically set  to custom source if the source is to this contact.
+			if( metaContact()->displayNameSource()==Kopete::MetaContact::SourceContact && newName != oldName && ( source == this || source == 0L  ) )
+				metaContact()->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
 		}
 	}
 
