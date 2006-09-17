@@ -1866,8 +1866,11 @@ void YahooAccount::slotJoinChatRoom()
 	
 	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), selector,
 					SLOT(slotSetChatCategories( const QDomDocument & )) );
-	QObject::connect( m_session, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )), 
-	                  selector, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	QObject::connect( m_session, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
+					selector, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	QObject::connect( selector, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
+					this, SLOT(slotChatCategorySelected( const Yahoo::ChatCategory & ) ) );
+	
 	m_session->getYahooChatCategories();
 	
 	if( chatDialog->exec() == QDialog::Accepted )

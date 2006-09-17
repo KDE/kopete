@@ -36,7 +36,7 @@ public Q_SLOTS:
 	void slotSetChatCategories( const QDomDocument & );
 	void slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & );
 Q_SIGNALS:
-	void chatCategorySelected( Yahoo::ChatCategory );
+	void chatCategorySelected( const Yahoo::ChatCategory & );
 private Q_SLOTS:
 	void slotCategorySelectionChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
 private:
