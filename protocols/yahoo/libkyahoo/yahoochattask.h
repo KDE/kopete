@@ -19,6 +19,7 @@
 #define YAHOOCHATTASK_H
 
 #include "task.h"
+#include "yahootypes.h"
 #include <QMap>
 #include <QList>
 #include <QPair>
@@ -34,7 +35,7 @@ namespace KIO {
 
 struct YahooChatJob {
 	QByteArray data;
-	int category;
+	Yahoo::ChatCategory category;
 };
 
 /**
@@ -52,14 +53,14 @@ public:
 	bool take(Transfer *transfer);
 
 	void getYahooChatCategories();
-	void getYahooChatRooms( int category );
+	void getYahooChatRooms( const Yahoo::ChatCategory &category );
 
-	void joinRoom( const QString &topic, int room );
+	void joinRoom( const Yahoo::ChatRoom &room );
 	void logout();
 
 Q_SIGNALS:
 	void gotYahooChatCategories( const QDomDocument & );
-	void gotYahooChatRooms( int category, const QDomDocument & );
+	void gotYahooChatRooms( const Yahoo::ChatCategory &category, const QDomDocument & );
 
 private:
 	void login();
@@ -71,7 +72,7 @@ private Q_SLOTS:
 	void slotChatRoomsComplete( KJob * );
 private:
 	QMap< KIO::Job *, YahooChatJob > m_jobs;
-	QList< QPair< QString, int > > m_pendingJoins;
+	QList< Yahoo::ChatRoom > m_pendingJoins;
 	bool m_loggedIn;
 };
 

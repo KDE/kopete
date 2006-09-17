@@ -99,12 +99,12 @@ void YahooChatTask::getYahooChatCategories()
 	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
 }
 
-void YahooChatTask::getYahooChatRooms( int category )
+void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Category: " << category << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Category Id: " << category.id << endl;
 	KIO::TransferJob *transfer;
 
-	transfer = KIO::get( KUrl(QString("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category )), false, false );
+	transfer = KIO::get( KUrl(QString("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category.id )), false, false );
 	transfer->addMetaData( "UserAgent", "Mozilla/4.0 (compatible; MSIE 5.5)");
 	transfer->addMetaData( "no-cache", "true" );
 	transfer->addMetaData( "cookies", "manual" );
@@ -113,6 +113,8 @@ void YahooChatTask::getYahooChatRooms( int category )
 
 	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotChatRoomsComplete( KJob* ) ) );
 	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
+
+	m_jobs[ transfer ].category = category;
 }
 
 void YahooChatTask::slotData( KIO::Job *job, const QByteArray& data)
@@ -162,21 +164,21 @@ void YahooChatTask::slotChatRoomsComplete( KJob *job )
 	m_jobs.remove( transfer );
 }
 
-void YahooChatTask::joinRoom( const QString &topic, int room )
+void YahooChatTask::joinRoom( const Yahoo::ChatRoom &room )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	if( !m_loggedIn )
 	{
+		m_pendingJoins.append( room );
 		login();
-		m_pendingJoins.append( QPair< QString, int >( topic, room ) );
 		return;
 	}
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatJoin);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit() );
-	t->setParam( 104, topic.toLocal8Bit() );
-	t->setParam( 129, room );
+	t->setParam( 104, room.name.toLocal8Bit() );
+	t->setParam( 129, room.id );
 	t->setParam( 62, 2 );
 
 	send( t );
@@ -207,6 +209,12 @@ void YahooChatTask::logout()
 
 void YahooChatTask::parseLoginResponse( YMSGTransfer * )
 {
+	for( int i = 0; i < m_pendingJoins.size(); ++i )
+	{
+		Yahoo::ChatRoom entry = m_pendingJoins.at( i );
+		joinRoom( entry );
+		m_pendingJoins.removeAt( i );
+	}
 }
 
 #include "yahoochattask.moc"

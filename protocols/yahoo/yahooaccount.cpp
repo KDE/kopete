@@ -44,6 +44,7 @@
 #include <kactionmenu.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
+#include <kvbox.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -69,6 +70,7 @@
 #include "yahooinvitelistimpl.h"
 #include "yabentry.h"
 #include "yahoouserinfodialog.h"
+#include "yahoochatselectorwidget.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
  : Kopete::PasswordedAccount(parent, accountId, false)
@@ -91,6 +93,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
 	m_editOwnYABEntry = new KAction( KIcon("contents"), i18n( "&Edit my contact details..."), 0, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
+	m_joinChatAction = new KAction( KIcon("chat"), i18n( "&Join chat room..."), 0, "m_joinChatAction" );
+	QObject::connect(m_joinChatAction, SIGNAL( triggered(bool) ), this, SLOT( slotJoinChatRoom() ) );
 
 	YahooContact* _myself=new YahooContact( this, accountId.toLower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -588,6 +592,7 @@ KActionMenu *YahooAccount::actionMenu()
 	theActionMenu->addAction( m_editOwnYABEntry );
 	theActionMenu->addAction( m_openInboxAction );
 	theActionMenu->addAction( m_openYABAction );
+	theActionMenu->addAction( m_joinChatAction );
 	
 	return theActionMenu;
 }
@@ -1833,17 +1838,49 @@ void YahooAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 
 void YahooAccount::slotOpenInbox()
 {
-KToolInvocation::invokeBrowser( QLatin1String( "http://mail.yahoo.com/") );
+	KToolInvocation::invokeBrowser( QLatin1String( "http://mail.yahoo.com/") );
 }
 
 void YahooAccount::slotOpenYAB()
 {
-KToolInvocation::invokeBrowser( QLatin1String( "http://address.yahoo.com/") );
+	KToolInvocation::invokeBrowser( QLatin1String( "http://address.yahoo.com/") );
 }
 
 void YahooAccount::slotEditOwnYABEntry()
 {
 	myself()->slotUserInfo();
+}
+
+void YahooAccount::slotJoinChatRoom()
+{
+	KDialog *chatDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	chatDialog->setCaption( i18n( "Choose a chat room..." ) );
+	chatDialog->setButtons( KDialog::Ok | KDialog::Cancel );
+	chatDialog->setDefaultButton( KDialog::Ok );
+	chatDialog->showButtonSeparator( true );
+	
+	KVBox *box = new KVBox( chatDialog );
+	box->setSpacing( KDialog::spacingHint() );
+	YahooChatSelectorWidget *selector = new YahooChatSelectorWidget( box );
+	chatDialog->setMainWidget(box);
+	
+	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), selector,
+					SLOT(slotSetChatCategories( const QDomDocument & )) );
+	QObject::connect( m_session, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )), 
+	                  selector, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	m_session->getYahooChatCategories();
+	
+	if( chatDialog->exec() == QDialog::Accepted )
+	{
+// 		m_session->joinYahooChatRoom( selector->selectedRoom() );
+	}
+	
+	chatDialog->deleteLater();
+}
+
+void YahooAccount::slotChatCategorySelected( const Yahoo::ChatCategory &category )
+{
+	m_session->getYahooChatRooms( category );
 }
 
 #include "yahooaccount.moc"

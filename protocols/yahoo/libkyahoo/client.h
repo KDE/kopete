@@ -377,7 +377,7 @@ Q_OBJECT
 		/**
 		 * Get the list of chatrooms for the given category
 		 */
-		void getYahooChatRooms( int category );
+		void getYahooChatRooms( Yahoo::ChatCategory category );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -624,7 +624,7 @@ Q_OBJECT
 		/**
 		 * We have received the list of chatrooms for the categories
 		 */
-		void gotYahooChatCategories( int, const QDomDocument & );
+		void gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
