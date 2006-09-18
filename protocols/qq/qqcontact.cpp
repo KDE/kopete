@@ -52,6 +52,7 @@
 #include "qqaccount.h"
 #include "qqprotocol.h"
 #include "qqchatsession.h"
+#include "dlgqqvcard.h"
 
 QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )
 : Kopete::Contact( account, id, parent )
@@ -195,29 +196,7 @@ void QQContact::slotBlockUser()
 
 void QQContact::slotUserInfo()
 {
-	KDialog *infoDialog=new KDialog;
-	infoDialog->setButtons( KDialog::Close );
-	infoDialog->setDefaultButton( KDialog::Close );
-	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	// QString personalMessage=property( QQProtocol::protocol()->propPersonalMessage).value().toString();
-	QWidget* w=new QWidget( infoDialog );
-	/*
-	Ui::QQInfo info;
-	info.setupUi( w );
-	info.m_id->setText( contactId() );
-	info.m_displayName->setText(nick);
-	info.m_personalMessage->setText(personalMessage);
-	info.m_phh->setText(m_phoneHome);
-	info.m_phw->setText(m_phoneWork);
-	info.m_phm->setText(m_phoneMobile);
-	info.m_reversed->setChecked(m_reversed);
-
-	connect( info.m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
-
-	infoDialog->setMainWidget(w);
-	infoDialog->setCaption(nick);
-	infoDialog->show();
-	*/
+	new dlgQQVCard(static_cast<QQAccount*>(account()), this, Kopete::UI::Global::mainWidget() );
 }
 
 void QQContact::slotUserInfoDialogReversedToggled()

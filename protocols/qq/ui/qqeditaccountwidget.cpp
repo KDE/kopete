@@ -53,6 +53,7 @@
 #include "ui_qqeditaccountui.h"
 #include "qqnotifysocket.h"
 #include "qqprotocol.h"
+#include "dlgqqvcard.h"
 
 // TODO: This was using KAutoConfig before, use KConfigXT instead.
 class QQEditAccountWidgetPrivate
