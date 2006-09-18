@@ -31,6 +31,7 @@
 #include "qqcontact.h"
 #include "qqaccount.h"
 #include "ui_qqvcard.h"
+#include "dlgqqvcard.h"
 
 /*
  *  Constructs a dlgQQVCard which is a child of 'parent', with the
@@ -54,21 +55,23 @@ dlgQQVCard::dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent
 	m_mainWidget = new Ui::QQVCard;
 	m_mainWidget->setupUi(w);
 	setMainWidget(w);
+	m_mainWidget->lblStatus->setText( i18n("WARNING: This vCard may be out-of-date.") );
 
 	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
 	connect (this, SIGNAL( user2Clicked()), this, SLOT (slotGetVCard ()));
-
-	/*
-	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
-	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
-	*/
 
 	assignContactProperties();
 
 	show ();
 	raise ();
 
-	slotGetVCard();
+	if( m_account->isConnected() )
+		slotGetVCard();
+	else
+	{
+		setEnabled(false);
+		setReadOnly(true);
+	}
 }
 
 /*
@@ -183,17 +186,30 @@ void dlgQQVCard::setEnabled(bool state)
 	// general tab
 	m_mainWidget->leNick->setEnabled (state);
 	m_mainWidget->leName->setEnabled (state);
+	m_mainWidget->leAge->setEnabled (state);
+	m_mainWidget->cbGender->setEnabled (state);
+	m_mainWidget->teSignature->setEnabled (state);
 
-	// home address tab
+
+	// Contact tab
 	m_mainWidget->leStreet->setEnabled (state);
 	m_mainWidget->leCity->setEnabled (state);
+	m_mainWidget->leState->setEnabled (state);
 	m_mainWidget->leZipcode->setEnabled (state);
 	m_mainWidget->leCountry->setEnabled (state);
 
-	// phone numbers tab
 	m_mainWidget->lePhoneHome->setEnabled (state);
 	m_mainWidget->lePhoneQQ->setEnabled (state);
 	m_mainWidget->lePhoneCell->setEnabled (state);
+
+	// About tab
+	m_mainWidget->leOccupation->setEnabled (state);
+	m_mainWidget->leGraduate->setEnabled (state);
+	m_mainWidget->leEmail->setEnabled (state);
+	m_mainWidget->leHomepage->setEnabled (state);
+	m_mainWidget->cbZodiac->setEnabled (state);
+	m_mainWidget->cbHoroscope->setEnabled (state);
+	m_mainWidget->teIntroduction->setEnabled (state);
 
 	// save button
 	enableButton(User1, state);
@@ -205,123 +221,8 @@ void dlgQQVCard::setEnabled(bool state)
  */
 void dlgQQVCard::slotSaveVCard()
 {
-/*
 	setEnabled(false);
 	m_mainWidget->lblStatus->setText( i18n("Saving vCard to server...") );
-
-	XMPP::VCard vCard;
-	XMPP::VCard::AddressList addressList;
-	XMPP::VCard::EmailList emailList;
-	XMPP::VCard::PhoneList phoneList;
-
-	// General information
-	vCard.setNickName( m_mainWidget->leNick->text() );
-	vCard.setFullName( m_mainWidget->leName->text() );
-	vCard.setJid( m_mainWidget->leJID->text() );
-	vCard.setBdayStr( m_mainWidget->leBirthday->text() );
-	vCard.setTimezone( m_mainWidget->leTimezone->text() );
-	vCard.setUrl( m_mainWidget->leHomepage->text() );
-
-	// home address tab
-	XMPP::VCard::Address homeAddress;
-
-	homeAddress.home = true;
-	homeAddress.street = m_mainWidget->leHomeStreet->text();
-	homeAddress.extaddr = m_mainWidget->leHomeExtAddr->text();
-	homeAddress.pobox = m_mainWidget->leHomePOBox->text();
-	homeAddress.locality = m_mainWidget->leHomeCity->text();
-	homeAddress.pcode = m_mainWidget->leHomePostalCode->text();
-	homeAddress.country = m_mainWidget->leHomeCountry->text();
-
-	// work address tab
-	XMPP::VCard::Address workAddress;
-
-	workAddress.work = true;
-	workAddress.street = m_mainWidget->leWorkStreet->text();
-	workAddress.extaddr = m_mainWidget->leWorkExtAddr->text();
-	workAddress.pobox = m_mainWidget->leWorkPOBox->text();
-	workAddress.locality = m_mainWidget->leWorkCity->text();
-	workAddress.pcode = m_mainWidget->leWorkPostalCode->text();
-	workAddress.country = m_mainWidget->leWorkCountry->text();
-
-	addressList.append(homeAddress);
-	addressList.append(workAddress);
-
-	vCard.setAddressList(addressList);
-
-	// home email
-	XMPP::VCard::Email homeEmail;
-
-	homeEmail.home = true;
-	homeEmail.userid = m_mainWidget->leHomeEmail->text();
-
-	// work email
-	XMPP::VCard::Email workEmail;
-
-	workEmail.work = true;
-	workEmail.userid = m_mainWidget->leWorkEmail->text();
-
-	emailList.append(homeEmail);
-	emailList.append(workEmail);
-
-	vCard.setEmailList(emailList);
-
-	// work information tab
-	XMPP::VCard::Org org;
-	org.name = m_mainWidget->leCompany->text();
-	org.unit = m_mainWidget->leDepartment->text().split(',');
-	vCard.setOrg(org);
-	vCard.setTitle( m_mainWidget->lePosition->text() );
-	vCard.setRole( m_mainWidget->leRole->text() );
-
-	// phone numbers tab
-	XMPP::VCard::Phone phoneHome;
-	phoneHome.home = true;
-	phoneHome.number = m_mainWidget->lePhoneHome->text();
-
-	XMPP::VCard::Phone phoneWork;
-	phoneWork.work = true;
-	phoneWork.number = m_mainWidget->lePhoneWork->text();
-
-	XMPP::VCard::Phone phoneFax;
-	phoneFax.fax = true;
-	phoneFax.number = m_mainWidget->lePhoneFax->text();
-
-	XMPP::VCard::Phone phoneCell;
-	phoneCell.cell = true;
-	phoneCell.number = m_mainWidget->lePhoneCell->text();
-
-	phoneList.append(phoneHome);
-	phoneList.append(phoneWork);
-	phoneList.append(phoneFax);
-	phoneList.append(phoneCell);
-
-	vCard.setPhoneList(phoneList);
-
-	// about tab
-	vCard.setDesc( m_mainWidget->teAbout->text() );
-
-	// Set contact photo as a binary value (if he has set a photo)
-	if( !m_photoPath.isEmpty() )
-	{
-		QString photoPath = m_photoPath;
-		QImage image( photoPath );
-		QByteArray ba;
-		QBuffer buffer( &ba );
-		buffer.open( IO_WriteOnly );
-		image.save( &buffer, "PNG" );
-		vCard.setPhoto( ba );
-	}
-
-	vCard.setVersion("3.0");
-	vCard.setProdId("Kopete");
-
-	XMPP::JT_VCard *task = new XMPP::JT_VCard( m_account->client()->rootTask() );
-	// signal to ourselves when the vCard data arrived
-	QObject::connect(task, SIGNAL(finished()), this, SLOT(slotVCardSaved()));
-	task->set(vCard);
-	task->go(true);
-*/
 }
 
 void dlgQQVCard::slotVCardSaved()
@@ -343,12 +244,11 @@ void dlgQQVCard::slotVCardSaved()
 
 void dlgQQVCard::slotGetVCard()
 {
-	//m_mainWidget->lblStatus->setText( i18n("Fetching contact vCard...") );
-/*
+	m_mainWidget->lblStatus->setText( i18n("Fetching contact vCard...") );
 
 	setReadOnly(true);
 	setEnabled(false);
-
+/*
 	XMPP::JT_VCard *task = new XMPP::JT_VCard ( m_account->client()->rootTask() );
 	// signal to ourselves when the vCard data arrived
 	QObject::connect( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );

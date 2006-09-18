@@ -1,13 +1,13 @@
 <ui version="4.0" >
  <author>Hui Jin</author>
  <class>QQVCard</class>
- <widget class="QWidget" name="Form" >
+ <widget class="QWidget" name="QQVCard" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>611</width>
-    <height>439</height>
+    <height>461</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -29,7 +29,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -228,7 +228,7 @@
           <number>6</number>
          </property>
          <item row="1" column="1" >
-          <widget class="QTextEdit" name="txtSignature" >
+          <widget class="QTextEdit" name="teSignature" >
            <property name="minimumSize" >
             <size>
              <width>120</width>
@@ -534,7 +534,7 @@
           </widget>
          </item>
          <item row="1" column="1" >
-          <widget class="QLineEdit" name="leName_3" >
+          <widget class="QLineEdit" name="leGraduate" >
            <property name="sizePolicy" >
             <sizepolicy>
              <hsizetype>7</hsizetype>
@@ -627,7 +627,7 @@
           </widget>
          </item>
          <item row="0" column="1" >
-          <widget class="QLineEdit" name="leName_6" >
+          <widget class="QLineEdit" name="leOccupation" >
            <property name="sizePolicy" >
             <sizepolicy>
              <hsizetype>7</hsizetype>
@@ -695,7 +695,7 @@
           <number>6</number>
          </property>
          <item row="1" column="1" >
-          <widget class="QTextEdit" name="txtIntroduction" />
+          <widget class="QTextEdit" name="teIntroduction" />
          </item>
          <item row="0" column="0" colspan="2" >
           <widget class="QLabel" name="lblIntroduction" >
@@ -723,9 +723,15 @@
      </widget>
     </widget>
    </item>
+   <item>
+    <widget class="QLabel" name="lblStatus" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <includes/>
  <resources/>
  <connections/>
 </ui>
