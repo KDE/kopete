@@ -72,6 +72,10 @@ public:
 	 * Access the instance of this protocol
 	 */
 	static QQProtocol *protocol();
+	/** 
+	 * Validate whether userId is a legal QQ account
+	 */
+	static bool validContactId( const QString& userId );
 	/**
 	 * Represents contacts that are Online
 	 */
@@ -85,10 +89,12 @@ public:
 	 */
 	const Kopete::OnlineStatus qqOffline;
 
+	const Kopete::ContactPropertyTmpl propNickName;
+	const Kopete::ContactPropertyTmpl propFullName;
 	const Kopete::ContactPropertyTmpl propCountry;
 	const Kopete::ContactPropertyTmpl propState;
 	const Kopete::ContactPropertyTmpl propCity;
-	const Kopete::ContactPropertyTmpl propAddress;
+	const Kopete::ContactPropertyTmpl propStreet;
 	const Kopete::ContactPropertyTmpl propZipcode;
 	const Kopete::ContactPropertyTmpl propAge;
 	const Kopete::ContactPropertyTmpl propGender;
