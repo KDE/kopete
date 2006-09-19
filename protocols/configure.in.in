@@ -94,8 +94,6 @@ AM_CONDITIONAL(include_libggcopy, test -n "$use_libgadu_copy")
 if test "$use_libgadu_copy" = "yes"; then
 	AM_CONFIG_HEADER(kopete/protocols/gadu/libgadu/libgadu-config.h)
 
-	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.in \
-	${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h
 	if test "$ac_cv_c_bigendian" = "yes"; then
 		AC_DEFINE_UNQUOTED([__GG_LIBGADU_BIGENDIAN], 1, [Define if big endian])
 	fi
