@@ -94,6 +94,7 @@ public:
 	QList<OContact> contactList() const;
 	QList<OContact> visibleList() const;
 	QList<OContact> invisibleList() const;
+	QList<OContact> ignoreList() const;
 	QList<OContact> contactsFromGroup( const QString& group ) const;
 	QList<OContact> contactsFromGroup( int groupId ) const;
 	

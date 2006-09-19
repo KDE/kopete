@@ -42,7 +42,6 @@
 #include "aimuserinfo.h"
 #include "aimjoinchat.h"
 #include "oscarmyselfcontact.h"
-#include "oscarvisibilitydialog.h"
 
 #include "oscarutils.h"
 #include "client.h"
@@ -211,7 +210,6 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	mc->setOwnProfile( profile );
 
 	m_joinChatDialog = 0;
-	m_visibilityDialog = 0;
 	QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
 			this, SLOT( connectedToChatRoom( WORD, const QString& ) ) );
 
@@ -291,10 +289,6 @@ KActionMenu* AIMAccount::actionMenu()
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
 	mActionMenu->addSeparator();
-
-	KAction* actionVisibility = new KToggleAction( i18n( "Set Visibility..." ), 0, "AIMAccount::mActionSetVisibility" );
-	QObject::connect( actionVisibility, SIGNAL(triggered(bool)), this, SLOT(slotSetVisiblility()) );
-	mActionMenu->addAction( actionVisibility );
 
 	KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), 0, "join_a_chat" );
 	QObject::connect( m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
@@ -632,84 +626,6 @@ void AIMAccount::connectWithPassword( const QString & )
 		engine()->connectToServer( c, server, true /* doAuth */ );
 		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );
 	}
-}
-
-void AIMAccount::slotSetVisiblility()
-{
-	if( !isConnected() )
-	{
-		KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
-				i18n("You must be online to set users visibility."),
-				i18n("ICQ Plugin") );
-		return;
-	}
-
-	if ( !m_visibilityDialog )
-	{
-		m_visibilityDialog = new OscarVisibilityDialog( engine(), Kopete::UI::Global::mainWidget() );
-		QObject::connect( m_visibilityDialog, SIGNAL( closing() ),
-				this, SLOT( slotVisibilityDialogClosed() ) );
-
-		//add all contacts;
-		OscarVisibilityDialog::ContactMap contactMap;
-		QMap<QString, QString> revContactMap;
-
-		QList<OContact> contactList = engine()->ssiManager()->contactList();
-		QList<OContact>::const_iterator it, cEnd = contactList.constEnd();
-
-		for ( it = contactList.constBegin(); it != cEnd; ++it )
-		{
-			QString contactId = ( *it ).name();
-
-			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it ).name()] );
-			if ( oc )
-			{
-				contactMap.insert( oc->nickName(), contactId );
-				revContactMap.insert( contactId, oc->nickName() );
-			}
-			else
-			{
-				contactMap.insert( contactId, contactId );
-				revContactMap.insert( contactId, contactId );
-			}
-		}
-		m_visibilityDialog->addContacts( contactMap );
-
-		//add contacts from visible list
-		QStringList tmpList;
-
-		contactList = engine()->ssiManager()->visibleList();
-		cEnd = contactList.constEnd();
-
-		for ( it = contactList.constBegin(); it != cEnd; ++it )
-			tmpList.append( revContactMap[( *it ).name()] );
-
-		m_visibilityDialog->addVisibleContacts( tmpList );
-
-		//add contacts from invisible list
-		tmpList.clear();
-
-		contactList = engine()->ssiManager()->invisibleList();
-		cEnd = contactList.constEnd();
-
-		for ( it = contactList.constBegin(); it != cEnd; ++it )
-			tmpList.append( revContactMap[( *it ).name()] );
-
-		m_visibilityDialog->addInvisibleContacts( tmpList );
-
-		m_visibilityDialog->resize( 550, 350 );
-		m_visibilityDialog->show();
-	}
-	else
-	{
-		m_visibilityDialog->raise();
-	}
-}
-
-void AIMAccount::slotVisibilityDialogClosed()
-{
-	m_visibilityDialog->deleteLater();
-	m_visibilityDialog = 0L;
 }
 
 void AIMAccount::setPrivacySettings( int privacy )

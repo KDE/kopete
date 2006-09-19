@@ -21,6 +21,8 @@
 #include "aimprotocol.h"
 #include "aimaccount.h"
 
+#include "oscarprivacyengine.h"
+
 AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
         Kopete::Account *account, QWidget *parent )
 		: QWidget( parent ), KopeteEditAccountWidget( account )
@@ -30,6 +32,9 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 	mAccount = dynamic_cast<AIMAccount*>( account );
 	mProtocol = protocol;
 
+	m_visibleEngine = 0;
+	m_invisibleEngine = 0;
+	
 	// create the gui (generated from a .ui file)
 	mGui = new Ui::aimEditAccountUI();
 	mGui->setupUi( this );
@@ -94,8 +99,29 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 
 		// Global Identity
 		mGui->mGlobalIdentity->setChecked( account->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
+
+		if ( mAccount->engine()->isActive() )
+		{
+			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
+			m_visibleEngine->setAllContactsView( mGui->visibleAllContacts );
+			m_visibleEngine->setContactsView( mGui->visibleContacts );
+			QObject::connect( mGui->visibleAdd, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotAdd() ) );
+			QObject::connect( mGui->visibleRemove, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotRemove() ) );
+
+			m_invisibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Invisible );
+			m_invisibleEngine->setAllContactsView( mGui->invisibleAllContacts );
+			m_invisibleEngine->setContactsView( mGui->invisibleContacts );
+			QObject::connect( mGui->invisibleAdd, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotAdd() ) );
+			QObject::connect( mGui->invisibleRemove, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotRemove() ) );
+		}
     }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
+
+	if ( !mAccount || !mAccount->engine()->isActive() )
+	{
+		mGui->tabVisible->setEnabled( false );
+		mGui->tabInvisible->setEnabled( false );
+	}
 
 	/* Set tab order to password custom widget correctly */
 	QWidget::setTabOrder( mGui->edtAccountId, mGui->mPasswordWidget->mRemembered );
@@ -104,7 +130,13 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 }
 
 AIMEditAccountWidget::~AIMEditAccountWidget()
-{}
+{
+	if ( m_visibleEngine )
+		delete m_visibleEngine;
+
+	if ( m_invisibleEngine )
+		delete m_invisibleEngine;
+}
 
 Kopete::Account *AIMEditAccountWidget::apply()
 {
@@ -163,6 +195,15 @@ Kopete::Account *AIMEditAccountWidget::apply()
 
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );
+	
+	if ( mAccount->engine()->isActive() )
+	{
+		if ( m_visibleEngine )
+			m_visibleEngine->storeChanges();
+		
+		if ( m_invisibleEngine )
+			m_invisibleEngine->storeChanges();
+	}
 	return mAccount;
 }
 

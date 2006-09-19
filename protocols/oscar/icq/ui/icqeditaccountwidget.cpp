@@ -40,6 +40,7 @@
 #include "icqprotocol.h"
 #include "icqaccount.h"
 #include "icqcontact.h"
+#include "oscarprivacyengine.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent)
@@ -49,6 +50,10 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
+
+	m_visibleEngine = 0;
+	m_invisibleEngine = 0;
+	m_ignoreEngine = 0;
 
 	mAccountSettings = new Ui::ICQEditAccountUI();
 	mAccountSettings->setupUi( this );
@@ -102,12 +107,40 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		// Global Identity
 		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
+
+		if ( mAccount->engine()->isActive() )
+		{
+			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
+			m_visibleEngine->setAllContactsView( mAccountSettings->visibleAllContacts );
+			m_visibleEngine->setContactsView( mAccountSettings->visibleContacts );
+			QObject::connect( mAccountSettings->visibleAdd, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotAdd() ) );
+			QObject::connect( mAccountSettings->visibleRemove, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotRemove() ) );
+
+			m_invisibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Invisible );
+			m_invisibleEngine->setAllContactsView( mAccountSettings->invisibleAllContacts );
+			m_invisibleEngine->setContactsView( mAccountSettings->invisibleContacts );
+			QObject::connect( mAccountSettings->invisibleAdd, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotAdd() ) );
+			QObject::connect( mAccountSettings->invisibleRemove, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotRemove() ) );
+
+			m_ignoreEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Ignore );
+			m_ignoreEngine->setAllContactsView( mAccountSettings->ignoreAllContacts );
+			m_ignoreEngine->setContactsView( mAccountSettings->ignoreContacts );
+			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotAdd() ) );
+			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotRemove() ) );
+		}
 	}
 	else
 	{
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
 		                              4 );
+	}
+
+	if ( !mAccount || !mAccount->engine()->isActive() )
+	{
+		mAccountSettings->tabVisible->setEnabled( false );
+		mAccountSettings->tabInvisible->setEnabled( false );
+		mAccountSettings->tabIgnore->setEnabled( false );
 	}
 
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -117,6 +150,18 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	QWidget::setTabOrder( mAccountSettings->mPasswordWidget->mRemembered, mAccountSettings->mPasswordWidget->mPassword );
 	QWidget::setTabOrder( mAccountSettings->mPasswordWidget->mPassword, mAccountSettings->chkAutoLogin );
 
+}
+
+ICQEditAccountWidget::~ICQEditAccountWidget()
+{
+	if ( m_visibleEngine )
+		delete m_visibleEngine;
+	
+	if ( m_invisibleEngine )
+		delete m_invisibleEngine;
+	
+	if ( m_ignoreEngine )
+		delete m_ignoreEngine;
 }
 
 Kopete::Account *ICQEditAccountWidget::apply()
@@ -175,6 +220,18 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );
 
+	if ( mAccount->engine()->isActive() )
+	{
+		if ( m_visibleEngine )
+			m_visibleEngine->storeChanges();
+		
+		if ( m_invisibleEngine )
+			m_invisibleEngine->storeChanges();
+		
+		if ( m_ignoreEngine )
+			m_ignoreEngine->storeChanges();
+	}
+	
 	return mAccount;
 }
 

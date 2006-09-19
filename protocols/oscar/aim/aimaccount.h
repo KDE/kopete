@@ -48,7 +48,6 @@ class AIMContact;
 class AIMAccount;
 class AIMJoinChatUI;
 class AIMChatSession;
-class OscarVisibilityDialog;
 
 class AIMMyselfContact : public OscarMyselfContact
 {
@@ -118,9 +117,6 @@ protected slots:
     void userJoinedChat( Oscar::WORD exchange, const QString& room, const QString& contact );
     void userLeftChat( Oscar::WORD exchange, const QString& room, const QString& contact );
 
-	void slotSetVisiblility();
-	void slotVisibilityDialogClosed();
-
 protected:
 
 	/**
@@ -136,7 +132,6 @@ private:
 	void setPrivacyTLVs( BYTE privacy, DWORD userClasses );
 
     AIMJoinChatUI* m_joinChatDialog;
-	OscarVisibilityDialog* m_visibilityDialog;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;
