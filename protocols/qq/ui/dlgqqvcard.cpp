@@ -44,8 +44,8 @@ dlgQQVCard::dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent
 
 	setCaption( i18n("QQ vCard") );
 	setButtons( KDialog::Close | KDialog::User1 | KDialog::User2 );
-	setButtonGuiItem( KDialog::User1, i18n("&Save User Info") );
-	setButtonGuiItem( KDialog::User2, i18n("Fetch vCard") );
+	setButtonGuiItem( KDialog::User1, KGuiItem(i18n("&Save User Info")) );
+	setButtonGuiItem( KDialog::User2, KGuiItem(i18n("Fetch vCard")) );
 	setDefaultButton( KDialog::Close );
 
 	m_account = account;
