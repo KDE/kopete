@@ -1,10 +1,3 @@
-AC_DEFUN([AC_LIBGADU_DEFINE],
-[
-sed -e "s/#undef __GG_LIBGADU_$1/#define __GG_LIBGADU_$1/" \
-${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h > ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.1
-mv ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.1 ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h
-])
-	 
 LIBGG_INCLUDES=""
 LIBGG_LIBS=""
 ac_libgadu_includes=""
@@ -99,18 +92,20 @@ AM_CONDITIONAL(include_gadu, test -n "$COMPILE_GADU")
 AM_CONDITIONAL(include_libggcopy, test -n "$use_libgadu_copy")
 
 if test "$use_libgadu_copy" = "yes"; then
+	AM_CONFIG_HEADER(kopete/protocols/gadu/libgadu/libgadu-config.h)
+
 	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.in \
 	${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h
 	if test "$ac_cv_c_bigendian" = "yes"; then
-		AC_LIBGADU_DEFINE([BIGENDIAN])	
+		AC_DEFINE_UNQUOTED([__GG_LIBGADU_BIGENDIAN], 1, [Define if big endian])
 	fi
 	KDE_CHECK_LONG_LONG()
 	if test "$kde_cv_c_long_long" = "yes"; then
-	AC_LIBGADU_DEFINE([HAVE_LONG_LONG])
+		AC_DEFINE_UNQUOTED([__GG_LIBGADU_HAVE_LONG_LONG], 1, [long long support])
 	fi
 	KDE_CHECK_SSL()
 	if test  "$have_ssl" = "yes"; then
-	AC_LIBGADU_DEFINE([HAVE_OPENSSL])
+	AC_DEFINE_UNQUOTED([__GG_LIBGADU_HAVE_OPENSSL], 1, [Define if SSL support is available])
 	fi
 	AC_MSG_CHECKING([for C99-compatible vsnprintf()])
 	AC_TRY_RUN(
@@ -123,14 +118,14 @@ if test "$use_libgadu_copy" = "yes"; then
 		}
 	],[
 		AC_MSG_RESULT([yes])
-		AC_LIBGADU_DEFINE([HAVE_C99_VSNPRINTF])
+		AC_DEFINE_UNQUOTED([__GG_LIBGADU_HAVE_C99_VSNPRINTF], 1, [C99 vsnprintf() available])
 	], [
 		 AC_MSG_RESULT([no])
 	])
 	AC_CHECK_FUNCS([va_copy],
-		       [AC_LIBGADU_DEFINE([HAVE_VA_COPY])],[])
+		       [AC_DEFINE_UNQUOTED([__GG_LIBGADU_HAVE_VA_COPY], 1, [va_copy])],[])
 	AC_CHECK_FUNCS([_va_copy],
-		       [AC_LIBGADU_DEFINE([HAVE__VA_COPY])],[])
+		       [AC_DEFINE_UNQUOTED([__GG_LIBGADU_HAVE__VA_COPY], 1, [__va_copy])],[])
 fi
 
 KDE_PKG_CHECK_MODULES(IDN, libidn, have_libidn=yes, have_libidn=no)
