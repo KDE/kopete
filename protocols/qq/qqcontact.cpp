@@ -170,28 +170,7 @@ QList<KAction*> *QQContact::customContextMenuActions()
 
 void QQContact::slotBlockUser()
 {
-	QQNotifySocket *notify = static_cast<QQAccount*>( account() )->notifySocket();
-	if( !notify )
-	{
-		KMessageBox::error( Kopete::UI::Global::mainWidget(),
-			i18n( "<qt>Please go online to block or unblock a contact.</qt>" ),
-			i18n( "QQ Plugin" ));
-		return;
-	}
-
-	if( m_blocked )
-	{
-		// notify->removeContact( contactId(), QQProtocol::BL, QString::null, QString::null );
-	}
-	else
-	{
-		/*
-		if(m_allowed)
-			notify->removeContact( contactId(), QQProtocol::AL, QString::null, QString::null );
-		else
-			notify->addContact( contactId(), QQProtocol::BL, QString::null, QString::null, QString::null );
-			*/
-	}
+	return;
 }
 
 void QQContact::slotUserInfo()
@@ -210,37 +189,6 @@ void QQContact::slotUserInfoDialogReversedToggled()
 void QQContact::deleteContact()
 {
 	kDebug( 14140 ) << k_funcinfo << endl;
-
-	QQNotifySocket *notify = static_cast<QQAccount*>( account() )->notifySocket();
-	if( notify )
-	{
-		/*
-		if( hasProperty(QQProtocol::protocol()->propGuid.key()) )
-		{
-			// Remove from all groups he belongs (if applicable)
-			for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
-			{
-				kDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"" << endl;
-				notify->removeContact( contactId(), QQProtocol::FL, guid(), it.key() );
-			}
-	
-			// Then trully remove it from server contact list, 
-			// because only removing the contact from his groups isn't sufficient from QQP11.
-			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
-			notify->removeContact( contactId(), QQProtocol::FL, guid(), QString::null);
-		}
-		else
-		{
-			kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
-			deleteLater();
-		} */
-	}
-	else
-	{
-		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
-		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
-		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "QQ Plugin" ));
-	}
 }
 
 bool QQContact::isBlocked() const
@@ -446,11 +394,7 @@ void QQContact::rename( const QString &newName )
 		return;*/
 
 	// FIXME: This should be called anymore.
-	QQNotifySocket *notify = static_cast<QQAccount*>( account() )->notifySocket();
-	if( notify )
-	{
 		// notify->changePublicName( newName, contactId() );
-	}
 }
 
 void QQContact::slotShowProfile()
@@ -533,6 +477,7 @@ void QQContact::setObject(const QString &obj)
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
+
 
 #include "qqcontact.moc"
 

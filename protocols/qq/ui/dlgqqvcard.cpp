@@ -248,13 +248,9 @@ void dlgQQVCard::slotGetVCard()
 
 	setReadOnly(true);
 	setEnabled(false);
-/*
-	XMPP::JT_VCard *task = new XMPP::JT_VCard ( m_account->client()->rootTask() );
-	// signal to ourselves when the vCard data arrived
-	QObject::connect( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
-	task->get ( m_contact->rosterItem().jid().full() );
-	task->go ( true );	
-*/
+
+	QObject::connect( m_contact, SIGNAL( gotVCard() ), this, SLOT( slotGotVCard() ) ); 
+	m_account->getVCard( m_contact );
 }
 
 void dlgQQVCard::slotGotVCard()
