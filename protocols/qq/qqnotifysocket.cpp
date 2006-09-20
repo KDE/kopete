@@ -117,11 +117,11 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 	kDebug( 14140 ) << "command = " << packet.command() << endl;
 	switch( packet.command() )
 	{
-		case Eva::RequestLoginToken :
+		case Eva::Command::RequestLoginToken :
 			text = Eva::Packet::loginToken( packet.body() );
 			break;
 
-		case Eva::Login :
+		case Eva::Command::Login :
 			text = Eva::Packet::decrypt( packet.body(), m_passwordKey );
 			if( text.size() == 0 )
 				text = Eva::Packet::decrypt( packet.body(), initKey );
@@ -139,12 +139,12 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 	switch( packet.command() )
 	{
 		// FIXME: use table-driven pattern ?
-		case Eva::Logout :
-		case Eva::Heartbeat:
+		case Eva::Command::Logout :
+		case Eva::Command::Heartbeat:
 			break;
-		case Eva::UpdateInfo :
-		case Eva::Search :
-		case Eva::ContactDetail :
+		case Eva::Command::UpdateInfo :
+		case Eva::Command::Search :
+		case Eva::Command::UserInfo :
 		{
 			// map std::map to QMap
 			std::map<const char*, std::string, Eva::ltstr> dict = Eva::Packet::contactDetail(text);
@@ -161,11 +161,11 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 
 			
 			break;
-		case Eva::AddFriend :
-		case Eva::RemoveFriend :
-		case Eva::AuthInvite :
+		case Eva::Command::AddBuddy:
+		case Eva::Command::RemoveBuddy:
+		case Eva::Command::AuthInvite :
 			break;
-		case Eva::ChangeStatus :
+		case Eva::Command::ChangeStatus :
 			if( Eva::Packet::replyCode(text) == Eva::ChangeStatusOK )
 			{
 				kDebug( 14140 ) << "ChangeStatus ok" << endl;
@@ -175,10 +175,10 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 				disconnect();
 			break;
 
-		case Eva::AckSysMsg :
-		case Eva::SendMsg :
+		case Eva::Command::AckSysMsg :
+		case Eva::Command::SendMsg :
 			break;
-		case Eva::ReceiveMsg :
+		case Eva::Command::ReceiveMsg :
 		{
 			Eva::MessageEnvelop envelop(text);
 			kDebug(14140) << "Received message from " << envelop.sender << " to " << envelop.receiver << " type=" << envelop.type << endl;
@@ -234,10 +234,10 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			break;
 		}
 
-		case Eva::RemoveMe :
+		case Eva::Command::RemoveMe :
 			break;
 
-		case Eva::RequestKey :
+		case Eva::Command::RequestKey :
 		{
 			char type = text.data()[0];
 			char reply = text.data()[1];
@@ -257,10 +257,10 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			break;
 		}
 
-		case Eva::GetCell :
+		case Eva::Command::GetCell :
 			break;
 
-		case Eva::Login :
+		case Eva::Command::Login :
 			switch( Eva::Packet::replyCode(text)  )
 			{
 				case Eva::LoginOK:
@@ -322,7 +322,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 
 			break;
 
-		case Eva::AllContacts:
+		case Eva::Command::AllContacts:
 			/*
 			{
 				len = 2;
@@ -335,39 +335,39 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			}
 			*/
 			break;
-		case Eva::ContactsOnline :
+		case Eva::Command::ContactsOnline :
 			
 			break;
-		case Eva::GetCell2 :
-		case Eva::SIP :
-		case Eva::Test :
+		case Eva::Command::GetCell2 :
+		case Eva::Command::SIP :
+		case Eva::Command::Test :
 			break;
-		case Eva::GroupNames :
+		case Eva::Command::GroupNames :
 			groupNames( text );
 			break;
 
-		case Eva::UploadGroups :
-		case Eva::Memo :
+		case Eva::Command::UploadGroups :
+		case Eva::Command::Memo :
 			break;
-		case Eva::DownloadGroups :
+		case Eva::Command::DownloadGroups :
 			groupInfos( text );
 			break;
 
-		case Eva::GetLevel :
+		case Eva::Command::GetLevel :
 			break;
 
-		case Eva::RequestLoginToken :
+		case Eva::Command::RequestLoginToken :
 			m_token = text;
 			kDebug( 14140 ) << "command = " << packet.command() << ": token = " << 
 				QByteArray ( m_token.c_str(), m_token.size() ) << endl;
 			sendPacket( Eva::login( m_qqId, m_id++, m_passwordKey, m_token, m_loginMode ) );
 			break;
 
-		case Eva::ExtraInfo :
-		case Eva::Signature :
-		case Eva::ReceiveSysMsg :
+		case Eva::Command::ExtraInfo :
+		case Eva::Command::Signature :
+		case Eva::Command::ReceiveSysMsg :
 			break;
-		case Eva::ContactStausChanged :
+		case Eva::Command::ContactStausChanged :
 		{
 			kDebug( 14140 ) << "contact status signal" << endl;
 			Eva::ContactStatus cs(text.data());

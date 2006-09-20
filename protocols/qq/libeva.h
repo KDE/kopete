@@ -24,40 +24,42 @@ namespace Eva {
 	static const uchar Tail = 0x03;
 
 	// command sent to the server
-	static const ushort Logout = 0x0001;
-	static const ushort Heartbeat = 0x0002;
-	static const ushort UpdateInfo = 0x0004;
-	static const ushort Search = 0x0005;
-	static const ushort ContactDetail = 0x0006;
-	static const ushort AddFriend = 0x0009;
-	static const ushort RemoveFriend = 0x000A;
-	static const ushort AuthInvite = 0x000B;
-	static const ushort ChangeStatus = 0x000D;
-	static const ushort AckSysMsg = 0x0012;
-	static const ushort SendMsg = 0x0016;
-	static const ushort ReceiveMsg = 0x0017;
-	static const ushort RemoveMe = 0x001C;
-	static const ushort RequestKey = 0x001D;
-	static const ushort GetCell = 0x0021;
-	static const ushort Login = 0x0022;
-	static const ushort AllContacts= 0x0026;
-	static const ushort ContactsOnline = 0x0027;
-	static const ushort GetCell2 = 0x0029;
-	// Special Interest Group == Qun( in Chinese )
-	static const ushort SIP = 0x0030; 
-	static const ushort Test = 0x0031;
-	static const ushort GroupNames = 0x003C;
-	static const ushort UploadGroups = 0x003D;
-	static const ushort Memo = 0x003E;
-	static const ushort DownloadGroups = 0x0058;
-	// Level determines how active the use is
-	static const ushort GetLevel = 0x005C;
-	static const ushort RequestLoginToken = 0x0062;
-	static const ushort ExtraInfo = 0x0065;
-	static const ushort Signature = 0x0067;
-	static const ushort ReceiveSysMsg = 0x0080;
-	static const ushort ContactStausChanged = 0x0081;
-
+	namespace Command {
+		static const ushort Logout = 0x0001;
+		static const ushort Heartbeat = 0x0002;
+		static const ushort UpdateInfo = 0x0004;
+		static const ushort Search = 0x0005;
+		static const ushort UserInfo = 0x0006;
+		static const ushort AddBuddy = 0x0009;
+		static const ushort RemoveBuddy = 0x000A;
+		static const ushort AuthInvite = 0x000B;
+		static const ushort ChangeStatus = 0x000D;
+		static const ushort AckSysMsg = 0x0012;
+		static const ushort SendMsg = 0x0016;
+		static const ushort ReceiveMsg = 0x0017;
+		static const ushort RemoveMe = 0x001C;
+		static const ushort RequestKey = 0x001D;
+		static const ushort GetCell = 0x0021;
+		static const ushort Login = 0x0022;
+		static const ushort AllContacts= 0x0026;
+		static const ushort ContactsOnline = 0x0027;
+		static const ushort GetCell2 = 0x0029;
+		// Special Interest Group == Qun( in Chinese )
+		static const ushort SIP = 0x0030; 
+		static const ushort Test = 0x0031;
+		static const ushort GroupNames = 0x003C;
+		static const ushort UploadGroups = 0x003D;
+		static const ushort Memo = 0x003E;
+		static const ushort DownloadGroups = 0x0058;
+		// Level determines how active the use is
+		static const ushort GetLevel = 0x005C;
+		static const ushort RequestLoginToken = 0x0062;
+		static const ushort ExtraInfo = 0x0065;
+		static const ushort Signature = 0x0067;
+		static const ushort ReceiveSysMsg = 0x0080;
+		static const ushort ContactStausChanged = 0x0081;
+	};
+	
 	// Options
 	static const uchar NormalLogin = 0x0A;
 	static const uchar InvisibleLogin = 0x28;
