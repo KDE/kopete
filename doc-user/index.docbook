@@ -735,7 +735,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 
 <sect2 id="plugins-kopetex">
 <title>KopeteTeX</title>
-<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original Latex.  To use this plugin you must have LaTeX installed</para>
+<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original LaTeX.  To use this plugin you must have LaTeX and ImageMagick installed. Also, make sure that the configuration option <guilabel>Do not show user specified rich text</guilabel> in <menuchoice><guimenu>Appearance</guimenu><guisubmenu>Colors and Fonts</guisubmenu></menuchoice> is <emphasis>not</emphasis> enabled, otherwise KopeTeX will not work.</para>
 </sect2>
 <sect2 id="plugins-motion-auto-away">
 <title>Motion Auto-Away</title>
