@@ -52,7 +52,6 @@
 #include <kstandarddirs.h>
 #include <k3listview.h>
 #include <k3listviewsearchline.h>
-#include <kprogressbar.h>
 #include <kiconloader.h>
 #include <kcombobox.h>
 #include <kmenu.h>
@@ -244,7 +243,7 @@ void HistoryDialog::slotLoadDays()
 			new KListViewDateItem(mMainWidget->dateListView, c2Date, pair.metaContact());
 	}
 
-	mMainWidget->searchProgress->advance(1);
+	mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
 
@@ -533,7 +532,7 @@ void HistoryDialog::searchFirstStep()
 	if(mSearch->item != 0)
 	{
 		// Next iteration
-		mMainWidget->searchProgress->advance(1);
+		mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
 
 		QTimer::singleShot(0,this,SLOT(searchFirstStep()));
 	}

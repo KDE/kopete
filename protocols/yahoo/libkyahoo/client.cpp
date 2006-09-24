@@ -628,7 +628,7 @@ void Client::getYahooChatCategories()
 	d->yahooChatTask->getYahooChatCategories();
 }
 
-void Client::getYahooChatRooms( int category )
+void Client::getYahooChatRooms( Yahoo::ChatCategory category )
 {
 	d->yahooChatTask->getYahooChatRooms( category );
 }
@@ -843,8 +843,8 @@ void Client::initTasks()
 	d->yahooChatTask = new YahooChatTask( d->root );
 	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatCategories( const QDomDocument & )),
 				SIGNAL(gotYahooChatCategories( const QDomDocument & )) );
-	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( int, const QDomDocument & )),
-				SIGNAL(gotYahooChatRooms( int, const QDomDocument & )) );
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &category, const QDomDocument & )),
+				SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
 }
 
 void Client::deleteTasks()

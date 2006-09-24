@@ -12,11 +12,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 set(kopete_qq_ui_SRCS
    ui/qqwebcamdialog.cpp 
    ui/qqeditaccountwidget.cpp 
+   ui/dlgqqvcard.cpp 
 )
 	
 kde4_add_ui_files(kopete_qq_ui_SRCS
    ui/qqeditaccountui.ui
    ui/qqaddui.ui
+   ui/qqvcard.ui
 )
 set(kopete_qq_PART_SRCS 
    ${kopete_qq_ui_SRCS} 

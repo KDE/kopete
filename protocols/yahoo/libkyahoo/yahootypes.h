@@ -19,6 +19,7 @@
 #define YAHOOTYPESH
 
 #include <qglobal.h>
+#include <QString>
 
 const int YAHOO_RAW_DEBUG = 14181;
 const int YAHOO_GEN_DEBUG = 14180;
@@ -161,6 +162,16 @@ namespace Yahoo
 	typedef Q_UINT8 BYTE;
 	typedef Q_UINT16 WORD;
 	typedef Q_UINT32 DWORD;
+
+	struct ChatRoom {
+		QString name;
+		int id;
+	};
+
+	struct ChatCategory {
+		QString name;
+		int id;
+	};
 }
 
 #define yahoo_put16(buf, data) ( \

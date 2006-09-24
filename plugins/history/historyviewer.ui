@@ -55,7 +55,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KProgressBar" name="searchProgress" >
+      <widget class="QProgressBar" name="searchProgress" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
@@ -308,13 +308,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>KProgressBar</class>
-   <extends></extends>
-   <header>kprogressbar.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>KComboBox</class>
    <extends></extends>

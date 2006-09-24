@@ -37,10 +37,12 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 			  i18n( "Away" ),   i18n( "&Away" ) ),
 	  qqOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString::null), 
 			  i18n( "Offline" ),   i18n( "O&ffline" ) ),
+	  propNickName(Kopete::Global::Properties::self()->nickName()),
+	  propFullName(Kopete::Global::Properties::self()->fullName()),
 	  propCountry("QQVCardCountry", i18n("Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
 	  propState("QQVCardState", i18n("State"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
 	  propCity("QQVCardCity", i18n("State"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propAddress("QQVCardAddress", i18n("Home Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
+	  propStreet("QQVCardAddress", i18n("Home Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
 	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
 	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
 	  propAge("QQVCardAge", i18n("Age"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty )
@@ -111,6 +113,12 @@ Kopete::Account *QQProtocol::createNewAccount( const QString &accountId )
 QQProtocol *QQProtocol::protocol()
 {
 	return s_protocol;
+}
+
+bool QQProtocol::validContactId( const QString& userId )
+{
+	QRegExp re("[1-9][0-9]*");
+	return re.exactMatch( userId );
 }
 
 
