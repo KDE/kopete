@@ -1,6 +1,6 @@
 
 project(kopete)
-
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
 
 # For config-kopete.h
