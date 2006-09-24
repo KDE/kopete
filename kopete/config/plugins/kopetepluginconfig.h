@@ -2,6 +2,7 @@
     kopetepluginconfig.h - Configure the Kopete plugins
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2006      by Michaël Larouche      <michael.larouche@kdemail.net>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -18,7 +19,7 @@
 #ifndef KOPETEPLUGINCONFIG_H
 #define KOPETEPLUGINCONFIG_H
 
-#include <kdialog.h>
+#include <kcmodule.h>
 
 class KopetePluginConfigPrivate;
 
@@ -27,24 +28,19 @@ class KopetePluginConfigPrivate;
  *
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopetePluginConfig : public KDialog
+class KopetePluginConfig : public KCModule
 {
 	Q_OBJECT
 
 public:
-	KopetePluginConfig( QWidget *parent );
+	KopetePluginConfig( QWidget *parent, const QStringList &args  );
 	~KopetePluginConfig();
 
 public slots:
-	void slotDefault();
-	void slotReset();
-	void slotApply();
-	void slotHelp();
+	virtual void load();
+	virtual void save();
 
-	virtual void accept();
-
-private slots:
-	void setChanged( bool c );
+	virtual void defaults();
 
 private:
 	KopetePluginConfigPrivate *d;

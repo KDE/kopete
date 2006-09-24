@@ -82,7 +82,6 @@
 #include "kopetegroup.h"
 #include "kopetelistviewsearchline.h"
 #include "kopetechatsessionmanager.h"
-#include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
@@ -117,14 +116,12 @@ public:
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
 	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), editGlobalIdentityWidget(0),
 	docked(0), hidden(false), deskRight(0), statusBarWidget(0), tray(0), autoHide(false),
-	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0), pluginConfig(0),
+	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0),
 	globalStatusMessage(0), globalStatusMessageMenu(0), newMessageEdit(0)
 	{}
 
 	~Private()
-	{
-		delete pluginConfig;
-	}
+	{}
 
 	KopeteContactListView *contactlist;
 
@@ -162,8 +159,6 @@ public:
 	unsigned int autoHideTimeout;
 	QTimer *autoHideTimer;
 	QSignalMapper *addContactMapper;
-
-	KopetePluginConfig *pluginConfig;
 
 	QHash<const Kopete::Account*, KopeteAccountStatusBarIcon*> accountStatusBarIcons;
 	KSqueezedTextLabel *globalStatusMessage;
@@ -325,9 +320,6 @@ void KopeteWindow::initActions()
 	d->statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
-	KAction *configurePluginAction = new KAction( KIcon("input_devices_settings"), i18n( "Configure Plugins..." ),
-		actionCollection(), "settings_plugins" );
-	connect( configurePluginAction, SIGNAL( triggered(bool) ), this, SLOT( slotConfigurePlugins() ) );
 
 	KAction *configureGlobalShortcutsAction = new KAction( KIcon("configure_shortcuts"), i18n( "Configure &Global Shortcuts..." ),
 		actionCollection(), "settings_global" );
@@ -589,17 +581,6 @@ void KopeteWindow::slotContactListAppearanceChanged()
 void KopeteWindow::slotConfNotifications()
 {
 	KNotifyConfigWidget::configure( this );
-}
-
-void KopeteWindow::slotConfigurePlugins()
-{
-	if ( !d->pluginConfig )
-		d->pluginConfig = new KopetePluginConfig( this );
-	d->pluginConfig->show();
-
-	d->pluginConfig->raise();
-
-	KWin::activateWindow( d->pluginConfig->winId() );
 }
 
 void KopeteWindow::slotConfGlobalKeys()

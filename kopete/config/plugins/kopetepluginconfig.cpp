@@ -2,6 +2,7 @@
     kopetepluginconfig.cpp - Configure the Kopete plugins
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2006      by Michaël Larouche      <michael.larouche@kdemail.net>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -17,100 +18,69 @@
 
 #include "kopetepluginconfig.h"
 
-#include <qlayout.h>
-#include <qtimer.h>
-#include <QByteArray>
+// Qt includes
+#include <QtCore/QByteArray>
+#include <QtGui/QVBoxLayout>
 
+// KDE includes
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpluginselector.h>
+#include <kgenericfactory.h>
 #include <ksettings/dispatcher.h>
 
+// Kopete includes
 #include "kopetepluginmanager.h"
 
 class KopetePluginConfigPrivate
 {
 public:
 	KPluginSelector *pluginSelector;
-	bool isChanged;
 };
 
-KopetePluginConfig::~KopetePluginConfig()
+typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) )
+
+KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args )
+: KCModule(KopetePluginConfigFactory::instance(), parent, args), d(new KopetePluginConfigPrivate)
 {
-	delete d;
-}
-
-KopetePluginConfig::KopetePluginConfig( QWidget *parent )
-: KDialog( parent )
-{
-	setCaption( i18n( "Configure Plugins" ) );
-	setButtons( KDialog::Cancel | KDialog::Apply | KDialog::Ok | KDialog::User1 );
-	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("&Reset"), "undo" ) );
-
-	d = new KopetePluginConfigPrivate;
-	showButtonSeparator(true);
-	showButton( User1, false );
-	setChanged( false );
-
-	// FIXME: Implement this - Martijn
-	enableButton( KDialog::Help, false );
-
-	setInitialSize( QSize( 640, 480 ) );
-
 	d->pluginSelector = new KPluginSelector( this );
-	setMainWidget( d->pluginSelector );
-	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );
+	
+	QVBoxLayout *mainLayout = new QVBoxLayout(this);
+	mainLayout->addWidget( d->pluginSelector );
+
+	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( changed( bool ) ) );
 	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
 		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QByteArray & ) ) );
-
-	connect( this, SIGNAL( defaultClicked() ), this, SLOT( slotDefault() ) );
-	connect( this, SIGNAL( user1Clicked() ), this, SLOT( slotReset() ) );
-	connect( this, SIGNAL( applyClicked() ), this, SLOT( slotApply() ) );
-	connect( this, SIGNAL( helpClicked() ), this, SLOT( slotHelp() ) );
 
 	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
 	                               i18n( "General Plugins" ), "Plugins" );
 	d->pluginSelector->load();
 }
 
-void KopetePluginConfig::slotDefault()
+KopetePluginConfig::~KopetePluginConfig()
 {
-	d->pluginSelector->defaults();
-	setChanged( false );
+	delete d;
 }
 
-void KopetePluginConfig::slotReset()
+void KopetePluginConfig::load()
 {
 	d->pluginSelector->load();
-	setChanged( false );
+	
+	KCModule::load();
 }
 
-void KopetePluginConfig::slotApply()
+void KopetePluginConfig::defaults()
 {
-	if( d->isChanged )
-	{
-		d->pluginSelector->save();
-		Kopete::PluginManager::self()->loadAllPlugins();
-		setChanged( false );
-	}
+	d->pluginSelector->defaults();
 }
 
-void KopetePluginConfig::slotHelp()
+void KopetePluginConfig::save()
 {
-	kWarning() << k_funcinfo << "FIXME: Implement!" << endl;
-}
+	d->pluginSelector->save();
+	Kopete::PluginManager::self()->loadAllPlugins();
 
-void KopetePluginConfig::accept()
-{
-	slotApply();
-
-	KDialog::accept();
-}
-
-void KopetePluginConfig::setChanged( bool c )
-{
-	d->isChanged = c;
-	enableButton( Apply, c );
+	KCModule::save();
 }
 
 #include "kopetepluginconfig.moc"
