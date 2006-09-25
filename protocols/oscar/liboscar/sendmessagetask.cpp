@@ -184,7 +184,7 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	}
 	tlv2buffer.addString( m_message.textArray() );
 
-	b->addTLV( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
+	b->addTLV( 0x0002, tlv2buffer.buffer() );
 }
 
 void SendMessageTask::addChannel2Data( Buffer* b )
@@ -261,18 +261,18 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 			QTextCodec *c = QTextCodec::codecForName( "UTF8" );
 			tlv2711.addString( c->fromUnicode( m_message.fileName() ) );
 			tlv2711.addByte( 0 ); //make sure the name's null-terminated
-			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+			tlv5buffer.addTLV( 0x2711, tlv2711.buffer() );
 			//send filename encoding
 			//tlv5buffer.addTLV( 0x2712, 8, "UTF8" );
 		}
 		else
 		{//chat
 			addRendezvousMessageData( &tlv2711 );
-			tlv5buffer.addTLV( 0x2711, tlv2711.length(), tlv2711.buffer() );
+			tlv5buffer.addTLV( 0x2711, tlv2711.buffer() );
 		}
 	}
 
-	b->addTLV( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
+	b->addTLV( 0x0005, tlv5buffer.buffer() );
 }
 
 void SendMessageTask::addChannel4Data( Buffer* b )
@@ -443,7 +443,7 @@ else
 }
 // ====================================================================================
 
-outbuf.addTLV(0x0002, tlv2.length(), tlv2.buffer());
+outbuf.addTLV(0x0002, tlv2.buffer());
 
 if(isAuto) // No clue about this stuff, probably AIM-specific [mETz]
 {

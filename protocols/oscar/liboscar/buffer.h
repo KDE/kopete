@@ -77,7 +77,7 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * adds the given string to the buffer (make sure it's NULL-terminated)
 		 */
-		int addString(QByteArray);
+		int addString( const QByteArray& s );
 		int addString(QByteArray, DWORD);
 		int addString(const char*, DWORD);
 		int addString(const unsigned char*, DWORD);
@@ -138,12 +138,13 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * Adds a TLV with the given type and data
 		 */
+		int addTLV( WORD type, const QByteArray& data );
 		int addTLV(WORD, WORD, const char *);
 
 		/**
 		 * Adds a little-endian TLV with the given type and data
 		 */
-		int addLETLV(WORD, WORD, const char *);
+		int addLETLV( WORD type, const QByteArray& data );
 
 		/**
 		 * Returns a QString representation of the buffer

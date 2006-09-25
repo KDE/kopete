@@ -244,7 +244,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 		Buffer bufFileName;
 		bufFileName.addLEWord( info.firstName.length() );
 		bufFileName.addLEString( info.firstName, info.firstName.length() );
-		tlvData->addLETLV( 0x0140, bufFileName.length(), bufFileName.buffer() );
+		tlvData->addLETLV( 0x0140, bufFileName.buffer() );
 	}
 
 	if ( !info.lastName.isEmpty() )
@@ -252,7 +252,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 		Buffer bufLastName;
 		bufLastName.addLEWord( info.lastName.length() );
 		bufLastName.addLEString( info.lastName, info.lastName.length() );
-		tlvData->addLETLV( 0x014A, bufLastName.length(), bufLastName.buffer() );
+		tlvData->addLETLV( 0x014A, bufLastName.buffer() );
 	}
 
 	if ( !info.nickName.isEmpty() )
@@ -260,7 +260,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 		Buffer bufNickName;
 		bufNickName.addLEWord( info.nickName.length() );
 		bufNickName.addLEString( info.nickName, info.nickName.length() );
-		tlvData->addLETLV( 0x0154, bufNickName.length(), bufNickName.buffer() );
+		tlvData->addLETLV( 0x0154, bufNickName.buffer() );
 	}
 
 	if ( !info.email.isEmpty() )
@@ -268,7 +268,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 		Buffer bufEmail;
 		bufEmail.addLEWord( info.email.length() );
 		bufEmail.addLEString( info.email, info.email.length() );
-		tlvData->addLETLV( 0x015E, bufEmail.length(), bufEmail.buffer() );
+		tlvData->addLETLV( 0x015E, bufEmail.buffer() );
 	}
 
 	if ( info.age > 0 )
@@ -276,7 +276,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 		Buffer bufAge;
 		bufAge.addWord( info.age );
 		bufAge.addWord( info.age );
-		tlvData->addLETLV( 0x0168, bufAge.length(), bufAge.buffer() );
+		tlvData->addLETLV( 0x0168, bufAge.buffer() );
 	}
 
 	if ( info.gender > 0 )
@@ -293,7 +293,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 		Buffer bufCity;
 		bufCity.addLEWord( info.city.length() );
 		bufCity.addLEString( info.city, info.city.length() );
-		tlvData->addLETLV( 0x0190, bufCity.length(), bufCity.buffer() );
+		tlvData->addLETLV( 0x0190, bufCity.buffer() );
 	}
 
 	if ( info.occupation > 0 )

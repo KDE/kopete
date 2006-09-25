@@ -182,7 +182,7 @@ void StageTwoLoginTask::onGo()
 		FLAP f = { 0x01, 0, 0 };
 		Buffer* outbuf = new Buffer();
 		outbuf->addDWord( 0x00000001 );
-		outbuf->addTLV( 0x06, m_cookie.size(), m_cookie.data() );
+		outbuf->addTLV( 0x06, m_cookie );
 		Transfer* ft = createTransfer( f, outbuf );
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the login cookie back" << endl;
 		send( ft );
