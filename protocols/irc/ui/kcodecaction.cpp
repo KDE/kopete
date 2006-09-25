@@ -1,8 +1,9 @@
 /*
     kcodecaction.cpp
 
-    Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
+    Copyrigth (c) 2006      by Michel Hermier         <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -13,42 +14,106 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qstringlist.h>
-#include <qtextcodec.h>
 
 #include "kcodecaction.h"
 
-KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
-		QObject *parent, const char *name )
-	: KSelectAction( text, "", cut, parent, name )
+#include <kcharsets.h>
+#include <kdebug.h>
+
+#include <qtextcodec.h>
+
+KCodecAction::KCodecAction( KActionCollection *parent, const QString &name )
+    : KSelectAction( parent, name )
+    , d(0)
 {
-	QObject::connect( this, SIGNAL( activated( int ) ),
-		this, SLOT(slotActivated( int )) );
-
-	QTextCodec *codec;
-	QStringList items;
-
-	for (uint i = 0; ( codec = QTextCodec::codecForIndex(i) ); ++i)
-	{
-        	items.append( codec->name() );
-		codecMap.insert( i, codec );
-	}
-
-	setItems( items );
+    init();
 }
 
-void KCodecAction::slotActivated(int index)
+KCodecAction::KCodecAction( const QString &text, KActionCollection *parent, const QString &name )
+    : KSelectAction( text, parent, name )
+    , d(0)
 {
-	emit activated(codecMap[index]);
+    init();
 }
 
-void KCodecAction::setCodec(QTextCodec *codec)
+KCodecAction::KCodecAction( const KIcon &icon, const QString &text, KActionCollection *parent, const QString &name )
+    : KSelectAction( icon, text, parent, name )
+    , d(0)
 {
-	for(Q3IntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it)
-	{
-		if(it.current() == codec)
-			setCurrentItem(it.currentKey());
-	}
+    init();
 }
 
+KCodecAction::~KCodecAction()
+{
+//    delete d;
+}
+
+void KCodecAction::init()
+{
+    KCharsets *charsets = KGlobal::charsets();
+    QStringList list = charsets->availableEncodingNames();
+//    QStringList list = charsets->descriptiveEncodingNames(); // Not recognised by KCharset::codecForName
+//    qSort( list );
+    setItems( list );
+
+//    setEditable(true);
+}
+
+void KCodecAction::actionTriggered(QAction *action)
+{
+    // cache values so we don't need access to members in the action
+    // after we've done an emit()
+    bool ok = false;
+    KCharsets *charsets = KGlobal::charsets(); 
+    QTextCodec *codec = charsets->codecForName(action->text(), ok);
+
+    if (ok)
+    {
+        KSelectAction::actionTriggered(action);
+
+        emit triggered(codec);
+    }
+    else
+    {
+        kWarning() << k_funcinfo << "Invalid codec convertion for :\""  << action->text() << '"' << endl;
+//        Warn the user in the gui somehow
+    }
+}
+
+QTextCodec *KCodecAction::currentCodec() const
+{
+#warning Implement me
+    return 0;
+}
+/*
+bool KCodecAction::setCurrentCodec( QTextCodec *codec )
+{
+    if (codec)
+        return setCurrent(codec->name());
+    else
+        return false;
+}
+*/
+QString KCodecAction::currentCodecName() const
+{
+    return currentText();
+}
+
+bool KCodecAction::setCurrentCodec( const QString &codecName )
+{
+    return setCurrentAction(codecName, Qt::CaseInsensitive);
+}
+
+int KCodecAction::currentCodecMib() const
+{
+#warning Implement me
+    return 0;
+}
+/*
+bool KCodecAction::setCurrentCodec( int mib )
+{
+    return setCurrentCodec( QTextCodec::codecForMib(mib) );
+}
+*/
 #include "kcodecaction.moc"
+
