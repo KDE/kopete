@@ -154,7 +154,7 @@ namespace Eva {
 		ci.age = buffer[6];
 		ci.gender = buffer[7];
 		int nl = (int) buffer[8];
-		ci.nick = std::string( strndup( buffer+9, nl) );
+		ci.nick = std::string( buffer+9, nl );
 		// 2 bytes are unknown.
 		// 2 bytes are extFlag, commonFlag, ignored here.
 		len += 9+nl+4;
