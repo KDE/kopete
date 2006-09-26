@@ -139,7 +139,6 @@ class LIBOSCAR_EXPORT Buffer
 		 * Adds a TLV with the given type and data
 		 */
 		int addTLV( WORD type, const QByteArray& data );
-		int addTLV(WORD, WORD, const char *);
 
 		/**
 		 * Adds a little-endian TLV with the given type and data
