@@ -636,7 +636,7 @@ void Client::getYahooChatRooms( Yahoo::ChatCategory category )
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following error occured: %1\n    Reason: %2\n    LogLevel: %3")
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following error occurred: %1\n    Reason: %2\n    LogLevel: %3")
 		.arg(info).arg(errorString).arg(level) << endl;
 	d->errorString = errorString;
 	d->errorInformation = info;

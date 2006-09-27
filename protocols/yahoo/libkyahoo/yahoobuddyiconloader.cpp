@@ -80,9 +80,9 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occurred while downloading buddy icon." << endl;
 		if( m_client )
-			m_client->notifyError( i18n( "An error occured while downloading buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
+			m_client->notifyError( i18n( "An error occurred while downloading buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
 	}
 	else
 	{
@@ -95,7 +95,7 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 		{
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Fatal Error! IconLoadJob has an empty KTempFile pointer." << endl;
 			if( m_client )
-				m_client->notifyError( i18n( "Fatal Error occured while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTempFile pointer." ), Client::Info );
+				m_client->notifyError( i18n( "Fatal Error occurred while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTempFile pointer." ), Client::Info );
 		}
 	}
 

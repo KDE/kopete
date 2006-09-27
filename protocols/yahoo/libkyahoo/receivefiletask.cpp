@@ -140,7 +140,7 @@ void ReceiveFileTask::slotComplete( KIO::Job *job )
 		m_file->close();
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		emit error( m_transferId, KIO::ERR_ABORTED, i18n("An error occured while downloading the file.") );
+		emit error( m_transferId, KIO::ERR_ABORTED, i18n("An error occurred while downloading the file.") );
 		setSuccess( false );
 	}
 	else

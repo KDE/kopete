@@ -90,7 +90,7 @@ void ModifyYABTask::setEntry( const YABEntry &entry )
 void ModifyYABTask::connectFailed( int i)
 {
 	m_socket->close();
-	client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), 
+	client()->notifyError( i18n( "An error occurred saving the Addressbook entry." ), 
 			QString( "%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 }
 
@@ -118,7 +118,7 @@ void ModifyYABTask::connectSucceeded()
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful. Waiting for confirmation..." << endl;
 	else
 	{
-		client()->notifyError( i18n( "An error occured saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
+		client()->notifyError( i18n( "An error occurred saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
 		setSuccess( false );
 		return;
 	}
@@ -195,7 +195,7 @@ void ModifyYABTask::slotRead()
 			break;
 		}
 
-		// No errors occured
+		// No errors occurred
 		emit gotEntry( entry );
 	}
 
