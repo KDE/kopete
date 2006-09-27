@@ -165,13 +165,13 @@ public:
 	 * @brief the display name showed in the contactlist window
 	 *
 	 * The displayname is the name which should be shown almost everywere to
-	 * represent the metacontact.  (in the contactlist, in the chatwindow, ....)
+	 * represent the metacontact.  (in the contactlist, in the chatwindow, ...)
 	 *
 	 * This is a kind of alias, set by the kopete user, as opposed to a nickname
 	 * set by the contact itself.
 	 *
 	 * If the protocol support alias serverside, the metacontact displayname
-	 * should probably be syncronized with the alias on the server.
+	 * should probably be synchronized with the alias on the server.
 	 *
 	 * This displayName is obtained from the source set with @ref setDisplayNameSource
 	 */
@@ -270,7 +270,7 @@ public:
 	/**
 	 * Set if the photo should be synced with the adressbook when the photosource change his photo
 	 *
-	 * If  \p b is true, the photo will be synced immediatly if possible
+	 * If  \p b is true, the photo will be synced immediately if possible
 	 */
 	void setPhotoSyncedWithKABC(bool b);
 

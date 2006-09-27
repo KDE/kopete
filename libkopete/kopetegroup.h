@@ -35,7 +35,7 @@ class Message;
 /**
  * Class which represents the Group.
  *
- * A Group is a ConstacListElement which means plugin can save datas.
+ * A Group is a ConstacListElement which means plugin can save data.
  *
  * some static group are availavle from this class:  topLevel and temporary
  *
