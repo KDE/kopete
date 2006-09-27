@@ -49,7 +49,7 @@ GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 		return;
 	}
 
-	kDebug(14100) << "attempt to initialize gadu-dcc listeing socket sucess" << endl;
+	kDebug(14100) << "attempt to initialize gadu-dcc listeing socket success" << endl;
 
 	// using global variables sucks, don't have too much choice thou
 	if ( dccIp == NULL ) {
@@ -168,7 +168,7 @@ GaduDCCServer::watcher() {
 		case GG_EVENT_NONE:
 			break;
 		case GG_EVENT_DCC_ERROR:
-			kDebug( 14100 ) << " dcc error occured " << endl;
+			kDebug( 14100 ) << " dcc error occurred " << endl;
 			break;
 		case GG_EVENT_DCC_NEW:
 			// I do expect reciver to set this boolean to true if he handled signal

@@ -1306,7 +1306,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				}
 			}
 
-			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() TLS negotiation succeded:\n//   cipher: %s\n", SSL_get_cipher_name(sess->ssl));
+			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() TLS negotiation succeeded:\n//   cipher: %s\n", SSL_get_cipher_name(sess->ssl));
 
 			peer = SSL_get_peer_certificate(sess->ssl);
 
@@ -1482,7 +1482,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			}
 	
 			if (h->type == GG_LOGIN_OK || h->type == GG_NEED_EMAIL) {
-				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() login succeded\n");
+				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() login succeeded\n");
 				e->type = GG_EVENT_CONN_SUCCESS;
 				sess->state = GG_STATE_CONNECTED;
 				sess->timeout = -1;

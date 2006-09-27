@@ -1244,7 +1244,7 @@ GaduAccount::useTls()
 	// we have old format
 	if ( c ) {
 		kDebug( 14100 ) << "old format for param useEncryptedConnection, value " <<
-				oldC << " willl be converted to new string value" << endl;
+				oldC << " will be converted to new string value" << endl;
 		setUseTls( (tlsConnection) oldC );
 		// should be string now, unless there was an error reading
 		s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ), QString() );
