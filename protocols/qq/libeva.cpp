@@ -44,7 +44,7 @@ namespace Eva {
 
 	ByteArray header( uint id, short const command, ushort sequence )
 	{
-		// CODE DEBT: udp does not have the lenght placeholder!
+		// CODE DEBT: udp does not have the length placeholder!
 		ByteArray data(13);
 		data += '\0';
 		data += '\0';
@@ -59,7 +59,7 @@ namespace Eva {
 
 	ByteArray messageHeader( int sender, int receiver, const ByteArray& transferKey, short const type, ushort sequence, int const timestamp, short const face = 0 )
 	{
-		// CODE DEBT: udp does not have the lenght placeholder!
+		// CODE DEBT: udp does not have the length placeholder!
 		ByteArray data(64);
 		data += htonl(sender);
 		data += htonl(receiver);

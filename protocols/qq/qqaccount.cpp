@@ -250,7 +250,7 @@ void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 	uint to = message.to().first()->contactId().toUInt();
 	// TODO: use guid for the conference
 	// TODO: use to for the conversation
-	// TODO: Add codec to the member variable, to improve the preformance.
+	// TODO: Add codec to the member variable, to improve the performance.
 	QByteArray text = m_codec->fromUnicode( message.plainBody() );
 	m_notifySocket->sendTextMessage(to, text );
 }

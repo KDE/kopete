@@ -118,7 +118,7 @@ private:
 
 	/**
 	 * stores the expected status
-	 * would synchronize when ChangeStatus packet recieved.
+	 * would synchronize when ChangeStatus packet received.
 	 */
 	Kopete::OnlineStatus m_newstatus; 
 	
