@@ -96,7 +96,7 @@ void WebPresencePlugin::loadSettings()
 		userStyleSheet = kconfig->readEntry("formatStylesheetURL", QString() );
 	}
 
-	// Default to HTML if we dont get anything useful from config file.
+	// Default to HTML, if we don't get anything useful from config file.
 	if ( resultFormatting == WEB_UNDEFINED )
 		resultFormatting = WEB_HTML;
 
@@ -111,7 +111,7 @@ void WebPresencePlugin::loadSettings()
 
 void WebPresencePlugin::listenToAllAccounts()
 {
-	// connect to signals notifying of all accounts' status changes
+	// Connect to signals notifying of all accounts' status changes.
 	ProtocolList protocols = allProtocols();
 
 	for ( ProtocolList::Iterator it = protocols.begin();

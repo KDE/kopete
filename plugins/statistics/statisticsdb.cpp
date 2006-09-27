@@ -176,7 +176,7 @@ StatisticsDB::~StatisticsDB()
              if ( names ) *names << QString( sqlite3_column_name( stmt, i ) );
          }
      }
-     //deallocate vm ressources
+     //deallocate vm resources
      sqlite3_finalize( stmt );
  
      if ( error != SQLITE_DONE )

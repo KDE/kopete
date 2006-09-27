@@ -120,7 +120,7 @@ void StatisticsContact::commonStatsCheck(const QString name, QString& statVar1, 
 }
 
 /**
- * \brief records informations from the new message
+ * \brief records information from the new message
  *
  * Currently it does :
  * <ul>
@@ -134,7 +134,7 @@ void StatisticsContact::commonStatsCheck(const QString name, QString& statVar1, 
  *
  *	Then it is only a question of some calculations.
  *
- * 	<li>Recalculate the average message lenght
+ * 	<li>Recalculate the average message length
  * 
  *	<li>Change last-talk datetime
  * </ul>
@@ -157,7 +157,7 @@ void StatisticsContact::newMessageReceived(Kopete::Message& m)
 	m_lastMessageReceived = currentDateTime;
 	
 	
-	// Message lenght
+	// Message length
 	m_messageLength= (m.plainBody().length() + m_messageLength * m_messageLengthOn)/(1 + m_messageLengthOn);
 	m_messageLengthOn++;
 	
