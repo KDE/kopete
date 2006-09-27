@@ -354,7 +354,7 @@ void JabberGroupContact::slotChangeNick( )
 {
 	
 	bool ok;
-	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickanme - Jabber Plugin" ),
+	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickname - Jabber Plugin" ),
 			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" , rosterItem().jid().userHost()),
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())

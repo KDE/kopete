@@ -1338,7 +1338,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		else
 		{
 			metaContact=c->metaContact();
-			//TODO: syncronize groups
+			//TODO: synchronize groups
 		}
 
 		/*
@@ -1790,7 +1790,7 @@ void JabberAccount::slotUnregisterFinished( )
 	if ( task && ! task->success ())
 	{
 		KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
-			i18n ("An error occured when trying to remove the account:\n%1", task->statusString()),
+			i18n ("An error occurred when trying to remove the account:\n%1", task->statusString()),
 			i18n ("Jabber Account Unregistration"));
 		m_removing=false;
 		return;
