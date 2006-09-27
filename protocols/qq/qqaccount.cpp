@@ -444,7 +444,7 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 	QQContact* sender = static_cast<QQContact*>( contacts()[from] );
 	Kopete::ContactPtrList contactList;
 	contactList.append( sender );
-	QString guid = to +  ":" + from;
+	QString guid = to +  ':' + from;
 
 	QQChatSession* sess = chatSession( contactList, guid, Kopete::Contact::CanCreate );
 	Q_ASSERT( sess );

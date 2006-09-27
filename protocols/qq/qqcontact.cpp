@@ -123,7 +123,7 @@ Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCrea
 	// 1 to 1 chat session
 	if( chatMembers.count() == 1 )
 		// FIXME: Use a function to override the hard hack!
-		guid = account()->myself()->contactId() + ":" + this->contactId();
+		guid = account()->myself()->contactId() + ':' + this->contactId();
 
 	return static_cast<QQAccount*>(account())->chatSession( chatMembers, guid, canCreate );
 }

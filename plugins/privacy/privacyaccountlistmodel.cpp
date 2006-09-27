@@ -127,7 +127,7 @@ QStringList PrivacyAccountListModel::toStringList() const
 	QStringList list;
 	foreach( AccountListEntry entry, m_list )
 	{
-		list.append( entry.second->pluginId() + ":" + entry.first );
+		list.append( entry.second->pluginId() + ':' + entry.first );
 	}
 	
 	return list;

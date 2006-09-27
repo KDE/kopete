@@ -274,7 +274,7 @@ void IRCAccount::clientConnect()
 			url = "irc://";
 		}
 
-		url += nickName() + "@" + host.host + ":" + host.port;
+		url += nickName() + '@' + host.host + ':' + host.port;
 
 		//d->client->connectToServer( host->host, host->port, mNickName, host->ssl );
 		d->client->connectToServer(KUrl(url));
