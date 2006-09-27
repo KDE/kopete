@@ -56,7 +56,7 @@ private slots:
 	void setChatSession( Kopete::ChatSession *session );
 private:
 	/**
-	 * Generate the HTML page with contact informations
+	 * Generate the HTML page with contact information
 	 */
 	void generateContactDetails();
 

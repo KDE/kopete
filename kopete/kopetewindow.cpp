@@ -255,7 +255,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	foreach(Kopete::Plugin *plug, plugins)
 		slotPluginLoaded( plug );
 
-	// If some account alrady loaded, build the status icon
+	// If some account already loaded, build the status icon
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 	foreach(Kopete::Account *a, accountList)
 		slotAccountRegistered( a );

@@ -65,7 +65,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 		m_uiFinish.m_header->setText( i18nc( "2nd message shown to users on first run of Kopete. Please keep the formatting.", "<h2>Congratulations</h2><p>You have finished configuring the account. You can add more accounts with <i>Settings->Configure</i>.  Please click the \"Finish\" button.</p>") );
 	addPage(m_finish,m_finish->windowTitle());
 
-	// add the available messanger services to the dialogs list
+	// add the available messenger services to the dialogs list
 	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
 	for (QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
@@ -205,7 +205,7 @@ void AddAccountWizard::accept()
 		account->setColor(m_uiFinish.mColorButton->color());
 	}
 
-	// connect if neccessary
+	// connect if necessary
 	if (m_uiFinish.mConnectNow->isChecked())
 	{
 		account->connect();
