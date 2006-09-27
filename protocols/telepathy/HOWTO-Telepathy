@@ -1,0 +1,15 @@
+HOWTO: Compile Telepathy/Tapioca qt
+
+1 - Get Gabble connection Manager
+
+http://telepathy.freedesktop.org/releases/telepathy-gabble/telepathy-gabble-0.3.6.tar.gz
+
+Use glib and LoudMouth
+apt-get install libloudmouth1-dev
+
+2 - Get Tapioca-qt and Telepathy-qt
+
+svn co https://svn.sourceforge.net/svnroot/tapioca-voip/trunk/telepathy-qt
+svn co https://svn.sourceforge.net/svnroot/tapioca-voip/trunk/tapioca-qt
+
+Both use CMake so it's the same way to compile a KDE module.
