@@ -114,7 +114,7 @@ void Engine::numericReply_001(Message &msg)
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
- * Gives information about the host. The given informations are close to 004.
+ * Gives information about the host. The given information are close to 004.
  */
 void Engine::numericReply_002(Message &msg)
 {

@@ -231,7 +231,7 @@ void ClientCommands::notice(Message msg)
 		emit receivedMessage(
 			NoticeMessage,
 			msg.entityFromPrefix(),
-			msg.entityFromArg(0), // shoul allways return myself
+			msg.entityFromArg(0), // should always return myself
 			msg.suffix()
 		);
 */
@@ -404,7 +404,7 @@ void ClientCommands::numericReply_001(Message msg)
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
- * Gives information about the host. The given informations are close to 004.
+ * Gives information about the host. The given information are close to 004.
  */
 void ClientCommands::numericReply_002(Message msg)
 {

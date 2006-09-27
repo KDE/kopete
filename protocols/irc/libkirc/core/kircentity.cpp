@@ -26,7 +26,7 @@ using namespace KIrc;
 /**
  * Match a possible user definition:
  * nick!user@host
- * where user and host are optionnal.
+ * where user and host are optional.
  * NOTE: If changes are done to the regexp string, update also the sm_userStrictRegExp regexp string.
  */
 //const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));

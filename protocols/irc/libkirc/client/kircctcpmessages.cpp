@@ -41,7 +41,7 @@
 #include <arpa/inet.h>
 
 using namespace KIrc;
-#warning make usage of KUser (done!) and make more usefull using some default strings (todo!)
+#warning make usage of KUser (done!) and make more useful using some default strings (todo!)
 
 /*
 void StdCommands::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec)
