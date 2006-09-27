@@ -588,7 +588,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 
 	return result;
 */
-	return QString::null;
+	return QString();
 }
 
 QStringList Message::classes() const

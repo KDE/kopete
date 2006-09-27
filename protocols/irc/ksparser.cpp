@@ -92,7 +92,7 @@ static QString pushColorTag(ParserData *d, const QColor &fgColor, const QColor &
 static QString popTag(ParserData *d, const QString &tag)
 {
 	if (!d->tags.contains(tag))
-		return QString::null;
+		return QString();
 /*
 	QString res;
 	QList<QString> savedTags;
@@ -108,7 +108,7 @@ static QString popTag(ParserData *d, const QString &tag)
 		res.append(pushTag(savedTags.pop_back()));
 	return res;
 */
-	return QString::null;
+	return QString();
 }
 
 static QString popAll(ParserData *d)

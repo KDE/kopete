@@ -153,7 +153,7 @@ void SMSSendProvider::setAccount(Kopete::Account *account)
 const QString& SMSSendProvider::name(int i)
 {
 	if ( telPos == i || messagePos == i)
-		return QString::null;
+		return QString();
 	else
 		return names[i];
 }

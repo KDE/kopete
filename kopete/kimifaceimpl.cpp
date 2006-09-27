@@ -215,7 +215,7 @@ QString KIMIfaceImpl::locate( const QString & contactId, const QString & protoco
 	if ( mc )
 		return mc->metaContactId();
 	else
-		return QString::null;
+		return QString();
 }
 
 Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contactId, const QString & protocolId )
@@ -250,7 +250,7 @@ QString KIMIfaceImpl::context( const QString & uid )
 	// shush warning
 	QString myUid = uid;
 
-	return QString::null;
+	return QString();
 }
 
 QStringList KIMIfaceImpl::protocols()

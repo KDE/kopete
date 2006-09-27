@@ -52,12 +52,12 @@ QString Plugin::pluginId() const
 
 QString Plugin::displayName() const
 {
-	return pluginInfo() ? pluginInfo()->name() : QString::null;
+	return pluginInfo() ? pluginInfo()->name() : QString();
 }
 
 QString Plugin::pluginIcon() const
 {
-	return pluginInfo() ? pluginInfo()->icon() : QString::null;
+	return pluginInfo() ? pluginInfo()->icon() : QString();
 }
 
 

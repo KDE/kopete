@@ -98,7 +98,7 @@ QMap<QString, QString> ContactListElement::pluginData( Plugin *plugin ) const
 QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) const
 {
 	if ( !d->pluginData.contains( plugin->pluginId() ) || !d->pluginData[ plugin->pluginId() ].contains( key ) )
-		return QString::null;
+		return QString();
 
 	return d->pluginData[ plugin->pluginId() ][ key ];
 }

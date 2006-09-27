@@ -937,7 +937,7 @@ bool MSNSocket::accept( KServerSocket *server )
 QString MSNSocket::getLocalIP()
 {
 	if ( !m_socket )
-		return QString::null;
+		return QString();
 
 	const KSocketAddress address = m_socket->localAddress();
 

@@ -147,7 +147,7 @@ public:
 		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
 			return mPassword.d->passwordFromKConfig;
 
-		return QString::null;
+		return QString();
 	}
 
 	void finished( const QString &result )

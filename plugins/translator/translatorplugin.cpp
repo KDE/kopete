@@ -236,14 +236,14 @@ QString TranslatorPlugin::translateMessage( const QString &msg, const QString &f
 	if ( from == to )
 	{
 		kDebug( 14308 ) << k_funcinfo << "Src and Dst languages are the same" << endl;
-		return QString::null;
+		return QString();
 	}
 
 	// We search for src_dst
 	if(! m_languages->supported( m_service ).contains( from + '_' + to ) )
 	{
 		kDebug( 14308 ) << k_funcinfo << from << '_' << to << " is not supported by service " << m_service << endl;
-		return QString::null;
+		return QString();
 	}
 		
 
@@ -252,7 +252,7 @@ QString TranslatorPlugin::translateMessage( const QString &msg, const QString &f
 	else if ( m_service == "google" )
 		return googleTranslateMessage( msg ,from, to );
 	else
-		return QString::null;
+		return QString();
 }
 
 QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QString &from, const QString &to )

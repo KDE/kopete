@@ -672,7 +672,7 @@ QString ChatMessagePart::textUnderMouse()
 {
 	DOM::Node activeNode = nodeUnderMouse();
 	if( activeNode.nodeType() != DOM::Node::TEXT_NODE )
-		return QString::null;
+		return QString();
 
 	DOM::Text textNode = activeNode;
 	QString data = textNode.data().string();

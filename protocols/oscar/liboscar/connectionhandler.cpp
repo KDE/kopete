@@ -139,7 +139,7 @@ Connection* ConnectionHandler::connectionForChatRoom( Oscar::WORD exchange, cons
 QString ConnectionHandler::chatRoomForConnection( Connection* c )
 {
     if ( d->connections.indexOf( c ) == -1 )
-        return QString::null;
+        return QString();
 
     QMap<Connection*, ConnectionRoomInfo>::iterator it, itEnd = d->chatRoomConnections.end();
     for ( it = d->chatRoomConnections.begin(); it != itEnd; ++it )
@@ -151,7 +151,7 @@ QString ConnectionHandler::chatRoomForConnection( Connection* c )
         }
     }
 
-    return QString::null;
+    return QString();
 }
 
 Oscar::WORD ConnectionHandler::exchangeForConnection( Connection* c )
