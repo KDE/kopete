@@ -237,7 +237,7 @@ void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 				// if there are still invitees, the conference is instantiated, and there are only
 				if ( m_invitees.count() )
 				{
-					// the message won't go anywhere, as there's noone there except invitees, but we warn the user
+					// the message won't go anywhere, as there's none there except invitees, but we warn the user
 					// when the last participant leaves.
 					messageSucceeded();
 				}

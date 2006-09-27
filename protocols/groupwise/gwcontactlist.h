@@ -37,7 +37,7 @@ typedef Q3ValueList<GWContactInstance *> GWContactInstanceList;
 	 *  In Kopete's model, this looks like duplicate contacts (illegal), so instead we have unique contacts, 
 	 *  each (by way of its metacontact) knowing membership of potentially >1 KopeteGroups.  Contacts contain a list of the 
 	 *  server side list instances.  Contact list management operations affect this list, which is updated during every
-	 *  operation.  Having this list allows us to update the server side contact list and keep changes synchronised across 
+	 *  operation.  Having this list allows us to update the server side contact list and keep changes synchronized across
 	 *  different clients.
 	 *  The list is volatile - it is not stored in stable storage, but is purged on disconnect and recreated at login.
 	 */

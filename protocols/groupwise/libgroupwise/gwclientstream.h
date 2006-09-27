@@ -50,7 +50,7 @@ public:
 		ErrBind                     // Resource binding error
 	};
 	enum Warning {
-/*#		WarnOldVersion,             // server uses older XMPP/Jabber "0.9" protocol  // can be customised for novell versions*/
+/*#		WarnOldVersion,             // server uses older XMPP/Jabber "0.9" protocol  // can be customized for novell versions*/
 		WarnNoTLS                   // there is no chance for TLS at this point
 	};
 	enum NegCond {
