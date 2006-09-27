@@ -18,6 +18,7 @@
 #include <QtTest/QtTest>
 #include <QtCore/QFile>
 #include <QtCore/QLatin1String>
+#include <QtDebug>
 
 // Papillon includes
 #include "transfer.h"
@@ -72,6 +73,8 @@ void CoreProtocol_Test::testFullPayloadTransfer()
 	QCOMPARE( transfer->command(), QString("GCF") );
 	QCOMPARE( transfer->payloadLength(), 165 );
 	QCOMPARE( transfer->payloadData().size(), 165 );
+
+	//delete transfer;
 }
 
 void CoreProtocol_Test::testFragmentPayloadTransfer()
@@ -92,7 +95,6 @@ void CoreProtocol_Test::testFragmentPayloadTransfer()
 	QVERIFY( transfer->type() & Transfer::PayloadTransfer );
 	QCOMPARE( transfer->command(), QString("MSG") );
 	QCOMPARE( transfer->payloadLength(), 553 );
-	QCOMPARE( transfer->payloadData().size(), 553 );
 
 	QByteArray expectedData = QByteArray("MSG Hotmail Hotmail 553\r\n"
 "MIME-Version: 1.0\r\n"
@@ -119,6 +121,9 @@ void CoreProtocol_Test::testFragmentPayloadTransfer()
 "ClientPort: 47744\r\n"
 "ABCHMigrated: 1\r\n"
 "BetaInvites: 0\r\n\r\n");
+
+	qDebug() << "From transfer, full command:" << transfer->toRawCommand();
+	qDebug() << "From transfer, payload data:" << transfer->payloadData();
 
 	QCOMPARE( transfer->toRawCommand(), expectedData );
 }

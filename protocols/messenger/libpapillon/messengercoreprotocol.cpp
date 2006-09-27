@@ -37,6 +37,11 @@ public:
 		: inTransfer(0), state(MessengerCoreProtocol::NoData)
 	{}
 	
+	~Private()
+	{
+		delete inTransfer;
+	}
+	
 	// buffer containing unprocessed bytes we received
 	QByteArray in;
 	// the transfer that is being received
@@ -52,6 +57,7 @@ MessengerCoreProtocol::MessengerCoreProtocol() : QObject(), d(new Private)
 
 MessengerCoreProtocol::~MessengerCoreProtocol()
 {
+	qDebug() << PAPILLON_FUNCINFO;
 	delete d;
 }
 
@@ -84,7 +90,7 @@ void MessengerCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 		}
 		else
 		{
-			d->in.truncate( 0 );
+			d->in.clear();
 		}
 	}
 
@@ -202,7 +208,7 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 				d->state = NeedMore;
 				return bytesParsed;
 			}
-			
+
 			QByteArray payloadData = QByteArray::fromRawData(raw.data(), d->payloadLength);
 			
 			d->inTransfer->setPayloadData(payloadData);
@@ -211,9 +217,10 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 			// Show full payload command to output
 			qDebug() << PAPILLON_FUNCINFO << d->inTransfer->toRawCommand();
 			d->state = Available;
-			emit incomingData();
 			
-			bytesParsed = d->payloadLength;
+			bytesParsed = raw.size();
+			
+			emit incomingData();
 		}
 	}
 	return bytesParsed;
