@@ -112,12 +112,12 @@ public:
 			}
 			case ChatWindowStyleManager::StyleCannotOpen:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 				break;
 			}
 			case ChatWindowStyleManager::StyleNoDirectoryValid:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
 				break;
 			}
 			case ChatWindowStyleManager::StyleNotValid:
@@ -342,12 +342,12 @@ void ChatWindowConfig::slotInstallChatStyle()
 			{
 				case ChatWindowStyleManager::StyleCannotOpen:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleNoDirectoryValid:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleNotValid:

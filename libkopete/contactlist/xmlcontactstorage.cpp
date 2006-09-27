@@ -246,7 +246,7 @@ void XmlContactStorage::save()
     if( contactListFile.status() != 0 )
     {
         d->isValid = false;
-        d->errorMessage = i18n( "Couldn't open contact list file." );
+        d->errorMessage = i18n( "Could not open contact list file." );
         d->isBusy = false;
         return;
     }
@@ -291,7 +291,7 @@ void XmlContactStorage::save()
     if ( !contactListFile.close() )
     {
         d->isValid = false;
-        d->errorMessage = i18n( "Couldn't write contact list to a file." );
+        d->errorMessage = i18n( "Could not write contact list to a file." );
         d->isBusy = false;
         return;
     }

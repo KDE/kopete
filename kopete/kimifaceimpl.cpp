@@ -372,7 +372,7 @@ void KIMIfaceImpl::unknown( const QString &uid )
 	}
 	else
 	{
-		QString apology = i18nc( "Translators: %1 is the name of a person taken from the KDE address book, who Kopete doesn't know about.  Kopete must either be told that an existing contact in Kopete is this person, or add a new contact for them", 
+		QString apology = i18nc( "Translators: %1 is the name of a person taken from the KDE address book, who Kopete does not know about. Kopete must either be told that an existing contact in Kopete is this person, or add a new contact for them",
 			"<qt><p>The KDE Address Book has no instant messaging information for</p><p><b>%1</b>.</p><p>If he/she is already present in the Kopete contact list, indicate the correct addressbook entry in their properties.</p><p>Otherwise, add a new contact using the Add Contact wizard.</p></qt>", addr.realName() );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, apology, i18n( "No Instant Messaging Address" ) );
 	}

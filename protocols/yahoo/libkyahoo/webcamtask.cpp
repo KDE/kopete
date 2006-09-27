@@ -523,7 +523,7 @@ void WebcamTask::closeWebcam( const QString & who )
 			return;
 		}
 	}
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error. You tried to close a connection that didn't exist." << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error. You tried to close a connection that did not exist." << endl;
 	client()->notifyError( i18n( "An error occurred closing the webcam session. " ), i18n( "You tried to close a connection that didn't exist." ), Client::Debug );
 }
 
