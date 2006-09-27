@@ -131,7 +131,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	//just send three TLVs
 	b->addWord( 0x0003 );
 
-	//i'm lazy, add TLVs manually
+	//I'm lazy, add TLVs manually
 
 	b->addWord( 0x00D3 ); //type of 0x00D3 - name
 	b->addWord( name.length() );
@@ -229,7 +229,7 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
     WORD exchange = b.getWord();
     QByteArray cookie( b.getBlock( b.getByte() ) );
     WORD instance = b.getWord();
-    b.getByte(); //detail level, which i'm not sure we need
+    b.getByte(); //detail level, which I'm not sure we need
     WORD tlvCount = b.getWord();
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
                              << " c: " << cookie << " i: " << instance << endl;

@@ -1,5 +1,5 @@
 /*
-    typingnotifytask.h  - Send/Recieve typing notifications
+    typingnotifytask.h  - Send/Receive typing notifications
 
     Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>

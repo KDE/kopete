@@ -41,7 +41,7 @@ public:
 	UserDetails getInfo() const;
 	
 signals:
-	/** Emitted when user info is recieved. Needed because succeeded() is only emitted once. */
+	/** Emitted when user info is received. Needed because succeeded() is only emitted once. */
 	void gotInfo();
 	
 	void haveAvailableMessage( const QString& );

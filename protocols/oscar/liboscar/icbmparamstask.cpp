@@ -96,7 +96,7 @@ void ICBMParamsTask::handleICBMParameters()
 	/*WORD unknown = */buffer->getWord();
 
 	// Now we set our own parameters.
-	// The ICBM parameters have to be set up seperately for each channel.
+	// The ICBM parameters have to be set up separately for each channel.
 	// Some clients (namely Trillian) might refuse sending on channels that were not set up.
 	sendMessageParams( 0x01 );
 	sendMessageParams( 0x02 );

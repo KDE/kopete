@@ -376,7 +376,7 @@ public:
 	/** Notify that a task error was received */
 	void notifyTaskError( const Oscar::SNAC& s, int errCode, bool fatal );
 
-	/** Notify that a socket error has occured */
+	/** Notify that a socket error has occurred */
 	void notifySocketError( int errCode, const QString& msg );
 
 signals:
