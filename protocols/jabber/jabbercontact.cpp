@@ -242,7 +242,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	actionCollection->append( actionVoiceCall );
 
-	// Check if the current contact support Voice calls, also honour lock by default.
+	// Check if the current contact support Voice calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
 	if( bestResource && bestResource->features().canVoice() )
 	{
@@ -1117,7 +1117,7 @@ void JabberContact::sendPresence ( const XMPP::Status status )
 
 	XMPP::Status newStatus = status;
 
-	// honour our priority
+	// honor our priority
 	if(newStatus.isAvailable())
 		newStatus.setPriority ( account()->configGroup()->readEntry ( "Priority", 5 ) );
 
@@ -1218,7 +1218,7 @@ void JabberContact::voiceCall( )
 #ifdef SUPPORT_JINGLE
 	Jid jid = mRosterItem.jid();
 	
-	// It's honour lock by default.
+	// It's honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( jid );
 	if( bestResource )
 	{
