@@ -34,7 +34,7 @@ class PAPILLON_EXPORT SecureStream : public QObject
 	Q_OBJECT
 public:
 	/**
-	 * Enum used to identity the current error that occured.
+	 * Enum used to identity the current error that occurred.
 	 */
 	enum ErrorCode 
 	{
@@ -138,7 +138,7 @@ signals:
 	 */
 	void readyRead();
 	/**
-	 * @brief An error occured.
+	 * @brief An error occurred.
 	 * Use errorCode() and errorString() to find out what happened.
 	 */
 	void error();

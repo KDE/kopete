@@ -37,7 +37,7 @@ class TweenerHandler;
  *
  * Use success() to check if the login was successful.
  *
- * Use loginState() to check for the error if the login wasn't succesful.
+ * Use loginState() to check for the error if the login wasn't successful.
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
 class PAPILLON_EXPORT LoginTask : public Task
@@ -70,7 +70,7 @@ public:
 		 */
 		StateFinish,
 		/**
-		 * A unknow error occured.
+		 * A unknow error occurred.
 		 */
 		StateError,
 		/**

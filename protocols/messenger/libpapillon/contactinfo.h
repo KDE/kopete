@@ -26,7 +26,7 @@ namespace Papillon
 {
 
 /**
- * @brief A Contact and all its informations
+ * @brief A Contact and all its information
  * Hold address book details, client feature, presence for a single contact.
  * This is managed by ContactListManager.
  *

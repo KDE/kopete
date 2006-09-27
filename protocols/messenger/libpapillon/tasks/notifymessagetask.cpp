@@ -64,7 +64,7 @@ bool NotifyMessageTask::forMe(Transfer *transfer) const
 {
 	if( transfer->command() == QLatin1String("MSG") )
 	{
-		// TODO: Temp, shouldn't asume that it's Hotmail there.
+		// TODO: Temp, shouldn't assume that it's Hotmail there.
 		if( transfer->arguments()[0] == QLatin1String("Hotmail") )
 		{
 			return true;
