@@ -61,7 +61,7 @@ public:
 signals:
 	/**
 	 * 	The account can connect to this signal and append the icon
-	 * 	stored in 'file' to the apropriate contact
+	 * 	stored in 'file' to the appropriate contact
 	 */
 	void fetchedBuddyIcon( const QString &who, KTempFile *file, int checksum );
 
