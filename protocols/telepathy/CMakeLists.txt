@@ -10,8 +10,10 @@ add_definitions( ${DECIBEL_DEFINITIONS} )
 # UI classes
 set(kopete_telepathy_ui_SRCS
 ui/telepathyeditaccountwidget.cpp
+ui/telepathyeditparameterwidget.cpp
 )
 
+# Generated UI files
 kde4_add_ui_files(kopete_telepathy_ui_SRCS
 ui/telepathyeditaccountwidget.ui 
 )

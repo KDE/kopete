@@ -15,6 +15,9 @@ For latest loudmouth:
 start Gabble like this
  GABBLE_PERSIST=1 telepathy-gabble
 
+Also setting TELEPATHY_DATA_PATH helps:
+ TELEPATHY_DATA_PATH=/usr/share/telepathy/managers/
+
 2 - Get Tapioca-qt and Telepathy-qt
 
 svn co https://svn.sourceforge.net/svnroot/tapioca-voip/trunk/telepathy-qt

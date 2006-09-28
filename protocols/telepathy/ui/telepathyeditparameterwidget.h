@@ -1,5 +1,5 @@
 /*
- * telepathycontact.h - Telepathy Kopete Contact.
+ * telepathyeditparameterwidget.h - UI to edit Telepathy connection parameter
  *
  * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
  * 
@@ -14,33 +14,24 @@
  *                                                                       *
  *************************************************************************
  */
-#ifndef TELEPATHYCONTACT_H
-#define TELEPATHYCONTACT_H
+#ifndef TELEPATHYEDITPARAMETERWIDGET_H
+#define TELEPATHYEDITPARAMETERWIDGET_H
 
-#include <QMap>
-#include <QList>
+#include <QtGui/QWidget>
 
-#include <kopetecontact.h>
+#include <QtTapioca/ConnectionManager>
 
-class KAction;
+using namespace QtTapioca;
 
-namespace Kopete
-{
-	class ChatSession;
-	class MetaContact;
-}
-class TelepathyAccount;
-
-class TelepathyContact : public Kopete::Contact
+class TelepathyEditParameterWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent);
+	TelepathyEditParameterWidget(const QList<ConnectionManager::Parameter> &paramsList, QWidget *parent);
+	~TelepathyEditParameterWidget();
 
-	virtual bool isReachable();
-	virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
-	
-	virtual QList<KAction *> *customContextMenuActions();
-	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+private:
+	class Private;
+	Private *d;
 };
 #endif

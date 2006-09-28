@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
  * 
- * Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+ * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
  *************************************************************************
  *                                                                       *
@@ -29,20 +29,21 @@
 #include <klocale.h>
 
 // QtTapioca includes
-#include <CMFactory>
-#include <CM>
+#include <QtTapioca/ConnectionManagerFactory>
+#include <QtTapioca/ConnectionManager>
 
 // Kopete includes
 #include <kopeteaccount.h>
 
 // Local includes
+#include "telepathyeditparameterwidget.h"
 
 using namespace QtTapioca;
 
 class ConnectionManagerItem : public QTreeWidgetItem
 {
 public:
-	ConnectionManagerItem(CM *connectionManager, QTreeWidget *parent)
+	ConnectionManagerItem(ConnectionManager *connectionManager, QTreeWidget *parent)
 	 : QTreeWidgetItem(parent)
 	{
 		m_connectionManager = connectionManager;
@@ -51,31 +52,29 @@ public:
 		setText(1, QString::number(connectionManager->supportedProtocols().size()));
 	}
 
-	CM *connectionManager()
+	ConnectionManager *connectionManager()
 	{
 		return m_connectionManager;
 	}
 
 private:
-	QPointer<CM> m_connectionManager;
+	QPointer<ConnectionManager> m_connectionManager;
 };
 
 class TelepathyEditAccountWidget::Private
 {
 public:
 	Ui::TelepathyEditAccountWidget ui;
-	CMFactory *cmFactory;
 };
 
 TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent)
  : QWidget(parent), KopeteEditAccountWidget(account), d(new Private)
 {
-	d->cmFactory = new QtTapioca::CMFactory(this);
-
 	d->ui.setupUi(this);
 
 	// Setup signal/slot connection
-	connect(d->ui.treeConnectionManager, SIGNAL(itemActivated ( QTreeWidgetItem *, int)), this, SLOT(connectionManagerActivated(QTreeWidgetItem*, int)));
+	connect(d->ui.treeConnectionManager, SIGNAL(itemSelectionChanged()), this, SLOT(connectionManagerSelectionChanged()));
+	connect(d->ui.treeProtocol, SIGNAL(itemSelectionChanged()), this, SLOT(protocolSelectionChanged()));
 
 	// List connection manager after the constructor.
 	QTimer::singleShot(0, this, SLOT(listConnectionManager()));
@@ -104,7 +103,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 	QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
 	QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
 
-	KMessageBox::information(this, QString("CM: %1\nProtocol: %2").arg(selectedConnectionManager).arg(selectedProtocol) );
+	KMessageBox::information(this, QString("ConnectionManager: %1\nProtocol: %2").arg(selectedConnectionManager).arg(selectedProtocol) );
 
 	return account();
 }
@@ -112,15 +111,16 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 void TelepathyEditAccountWidget::listConnectionManager()
 {
 	// List all available connection managers in the tree widget
-	QList<CM*> connectionManagers = d->cmFactory->getAllCMs();
-	foreach(CM *connectionManager, connectionManagers)
+	QList<ConnectionManager*> connectionManagers = ConnectionManagerFactory::self()->getAllConnectionManagers();
+	foreach(ConnectionManager *connectionManager, connectionManagers)
 	{
 		new ConnectionManagerItem(connectionManager, d->ui.treeConnectionManager);
 	}
 }
 
-void TelepathyEditAccountWidget::connectionManagerActivated(QTreeWidgetItem *item, int column)
+void TelepathyEditAccountWidget::connectionManagerSelectionChanged()
 {
+	QTreeWidgetItem *item = d->ui.treeConnectionManager->selectedItems().first();
 	ConnectionManagerItem *itemActivated = static_cast<ConnectionManagerItem*>(item);
 	if( itemActivated )
 	{
@@ -135,4 +135,17 @@ void TelepathyEditAccountWidget::connectionManagerActivated(QTreeWidgetItem *ite
 	}
 }
 
+void TelepathyEditAccountWidget::protocolSelectionChanged()
+{
+	QTreeWidgetItem *connectionItem = d->ui.treeConnectionManager->selectedItems().first();
+	ConnectionManagerItem *cmItem = static_cast<ConnectionManagerItem*>(connectionItem);
+
+	QTreeWidgetItem *protocolItem = d->ui.treeProtocol->selectedItems().first();
+	if( protocolItem && cmItem )
+	{
+		QString protocol = protocolItem->text(0);
+		TelepathyEditParameterWidget *paramWidget = new TelepathyEditParameterWidget(cmItem->connectionManager()->protocolParameters(protocol), this);
+		d->ui.tabWidget->addTab(paramWidget, i18n("Protocol Parameter"));
+	}
+}
 #include "telepathyeditaccountwidget.moc"
