@@ -474,7 +474,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 	else
 	{
 		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "have chat message" << endl;
-		//handle chat room messages seperately
+		//handle chat room messages separately
 		QList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
 		QList<Kopete::ChatSession*>::iterator it,  itEnd = chats.end();
 		for ( it = chats.begin(); it != itEnd; ++it )

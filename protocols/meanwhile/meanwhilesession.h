@@ -50,7 +50,7 @@ public:
     /**
      * Connect to the server. This will open a socket and start login. Note that
      * the connection process is ascychronous - a loginDone() signal will be
-     * emitted when sucessfully logged in.
+     * emitted when successfully logged in.
      */
     void connect(QString host, int port, QString account, QString password);
 

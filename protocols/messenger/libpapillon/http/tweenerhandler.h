@@ -55,7 +55,7 @@ public:
 		 */
 		TwnGetServer,
 		/**
-		 * Sending authentification to the Passport login server.
+		 * Sending authentication to the Passport login server.
 		 */
 		TwnAuth 
 	};

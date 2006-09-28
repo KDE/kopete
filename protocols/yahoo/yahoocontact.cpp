@@ -766,7 +766,7 @@ void YahooContact::writeYABEntry()
 	setProperty( YahooProtocol::protocol()->propWorkPhone, m_YABEntry->workPhone );
 	setProperty( YahooProtocol::protocol()->propWorkURL, m_YABEntry->workURL );
 	
-		// Miscellanous
+		// Miscellaneous
 	setProperty( YahooProtocol::protocol()->propBirthday, m_YABEntry->birthday.toString( Qt::ISODate ) );
 	setProperty( YahooProtocol::protocol()->propAnniversary, m_YABEntry->anniversary.toString( Qt::ISODate ) );
 	setProperty( YahooProtocol::protocol()->propNotes, m_YABEntry->notes );

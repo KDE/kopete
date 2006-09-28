@@ -52,7 +52,7 @@ KOPETE_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
  * \param versionString a QString reference that will contain the
  * version string of the detected client. Will be QString::null if 
  * no client is found
- * \return a DWORD containg a bit array of the capabilities we found
+ * \return a DWORD containing a bit array of the capabilities we found
  */
 DWORD parseCapabilities(Buffer &inbuf, QString &versionString);
 

@@ -429,7 +429,7 @@ void UserDetails::detectClient()
 				m_clientName=QString::fromLatin1("ICQ2go");
 			}
 		}
-		else if (hasCap(CAP_BUDDYICON)) // only gaim seems to advertize this on ICQ
+		else if (hasCap(CAP_BUDDYICON)) // only gaim seems to advertise this on ICQ
 		{
 			m_clientName = QString::fromLatin1("Gaim");
 		}
