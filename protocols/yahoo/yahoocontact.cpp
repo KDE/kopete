@@ -829,7 +829,7 @@ void YahooContact::readYABEntry()
 	m_YABEntry->workPhone = property( YahooProtocol::protocol()->propWorkPhone ).value().toString();
 	m_YABEntry->workURL = property( YahooProtocol::protocol()->propWorkURL ).value().toString();
 
-	// Miscellanous
+	// Miscellaneous
 	m_YABEntry->birthday = QDate::fromString( property( YahooProtocol::protocol()->propBirthday ).value().toString(), Qt::ISODate );
 	m_YABEntry->anniversary = QDate::fromString( property( YahooProtocol::protocol()->propAnniversary ).value().toString(), Qt::ISODate );
 	m_YABEntry->notes = property( YahooProtocol::protocol()->propNotes ).value().toString();
