@@ -24,6 +24,10 @@
 #include <kopeteaccount.h>
 #include <kopetemetacontact.h>
 
+// Local includes
+#include "telepathyaccount.h"
+#include "telepathyeditaccountwidget.h"
+
 typedef KGenericFactory<TelepathyProtocol> TelepathyProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_telepathy, TelepathyProtocolFactory("kopete_telepathy") )
 
@@ -44,8 +48,7 @@ TelepathyProtocol *TelepathyProtocol::protocol()
 
 Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 {
-	// TODO
-	return 0;
+	return new TelepathyAccount(this, accountId);
 }
 
 AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
@@ -55,7 +58,7 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	return 0;
+	return new TelepathyEditAccountWidget(account, parent);
 }
 
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
