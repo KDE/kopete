@@ -241,11 +241,11 @@ std::string textToStream(const std::string &text, bool& hasImage)
 							code32FileTag += seperator32_2;
 							isFirst32 = false;
 						}
-						sendFormat += "2"; // 0x32
+						sendFormat += '2'; // 0x32
 						sendFormat += zdyTag.substr(zdyTag.length() - 2, 2);
 						sendFormat += "999999";
 					} else	if(zdyType == "36"){
-						sendFormat += "6"; // note: at the moment, we only use type 6
+						sendFormat += '6'; // note: at the moment, we only use type 6
 						int len = zdyTag.length() + 5; // the len includes tag(1) and type(1) and itself(3)
 						char *strLen = new char[4];
 						sprintf(strLen, "%3d", len);
