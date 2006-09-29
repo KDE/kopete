@@ -66,3 +66,5 @@ Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *met
 {
 	return 0;
 }
+
+#include "telepathyprotocol.moc"

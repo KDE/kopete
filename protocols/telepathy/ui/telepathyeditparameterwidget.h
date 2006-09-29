@@ -30,6 +30,15 @@ public:
 	TelepathyEditParameterWidget(const QList<ConnectionManager::Parameter> &paramsList, QWidget *parent);
 	~TelepathyEditParameterWidget();
 
+	/**
+	 * @brief Get the modified parameters as a list of ConnectionManager::Paramater
+	 */
+	QList<QtTapioca::ConnectionManager::Parameter> parameterList();
+
+	/**
+	 * @brief Set the parameter read mostly from the config file.
+	 */
+	void setParameterList(const QList<QtTapioca::ConnectionManager::Parameter> &parameterList);
 private:
 	class Private;
 	Private *d;

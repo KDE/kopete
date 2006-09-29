@@ -55,6 +55,8 @@ private slots:
 	void connectionManagerSelectionChanged();
 	void protocolSelectionChanged();
 	void listConnectionManager();
+	void readConfig();
+	void writeConfig();
 
 private:
 	class Private;

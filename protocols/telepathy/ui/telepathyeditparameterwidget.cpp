@@ -29,9 +29,10 @@ using namespace QtTapioca;
  */
 class ParameterLineEdit : public QWidget
 {
+	// TODO Support flags
 public:
 	ParameterLineEdit(const ConnectionManager::Parameter &parameter, QWidget *parent)
-	 : QWidget(parent)
+	 : QWidget(parent), m_lineValue(0)
 	{
 		m_parameter = parameter;
 		createWidget();
@@ -47,7 +48,7 @@ public:
 		QHBoxLayout *mainLayout = new QHBoxLayout(this);
 		
 		// Create name label
-		mainLayout->addWidget( new QLabel(this, parameter().name()) );
+		mainLayout->addWidget( new QLabel(parameter().name(), this) );
 
 		// Create editable value field
 		m_lineValue = new QLineEdit(this);
@@ -57,6 +58,11 @@ public:
 
 		// Set a spacing item
 		mainLayout->addSpacing(10);
+	}
+
+	QString name() const
+	{
+		return m_parameter.name();
 	}
 
 	QString value() const
@@ -72,9 +78,17 @@ private:
 class TelepathyEditParameterWidget::Private
 {
 public:
-	void init(QWidget *parent);
+	Private()
+	 : mainLayout(0)
+	{}
 
+	void init(QWidget *parent);
+	void createWidgets(QWidget *parent);
+	void clear();
+
+	QVBoxLayout *mainLayout;
 	QList<ConnectionManager::Parameter> paramList;
+	QList<ParameterLineEdit*> lineEditList;
 };
 
 TelepathyEditParameterWidget::TelepathyEditParameterWidget(const QList<ConnectionManager::Parameter> &paramList, QWidget *parent)
@@ -89,17 +103,48 @@ TelepathyEditParameterWidget::~TelepathyEditParameterWidget()
 	delete d;
 }
 
+QList<QtTapioca::ConnectionManager::Parameter> TelepathyEditParameterWidget::parameterList()
+{
+	QList<ConnectionManager::Parameter> parameterList;
+
+	foreach(ParameterLineEdit *lineEdit, d->lineEditList)
+	{
+		ConnectionManager::Parameter updatedParameter(lineEdit->name(), lineEdit->value());
+		parameterList.append(updatedParameter);
+	}
+
+	return parameterList;
+}
+
+void TelepathyEditParameterWidget::setParameterList(const QList<QtTapioca::ConnectionManager::Parameter> &parameterList)
+{
+	d->clear();
+	d->paramList = parameterList;
+	d->createWidgets(this);
+}
+
 void TelepathyEditParameterWidget::Private::init(QWidget *parent)
 {
-	QVBoxLayout *mainLayout = new QVBoxLayout(parent);
+	mainLayout = new QVBoxLayout(parent);
 
+	createWidgets(parent);
+
+	mainLayout->addStretch(2);
+}
+
+void TelepathyEditParameterWidget::Private::createWidgets(QWidget *parent)
+{
 	foreach(ConnectionManager::Parameter parameter, paramList)
 	{
 		ParameterLineEdit *lineEdit = new ParameterLineEdit(parameter, parent);
 		mainLayout->addWidget(lineEdit);
+		lineEditList.append(lineEdit);
 	}
+}
 
-	mainLayout->addStretch(2);
+void TelepathyEditParameterWidget::Private::clear()
+{
+	qDeleteAll(lineEditList);
 }
 
 #include "telepathyeditparameterwidget.moc"

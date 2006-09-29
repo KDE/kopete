@@ -19,6 +19,8 @@
 
 #include <kopeteprotocol.h>
 
+#define TELEPATHY_DEBUG_AREA 14400
+
 namespace Kopete
 {
 	class Account;
@@ -33,6 +35,7 @@ class KopeteEditAccountWidget;
  */
 class KOPETE_EXPORT TelepathyProtocol : public Kopete::Protocol
 {
+	Q_OBJECT
 public:
 	TelepathyProtocol(QObject *parent, const QStringList &args);
 	
