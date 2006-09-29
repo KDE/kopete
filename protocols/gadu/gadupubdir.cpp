@@ -88,7 +88,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	// now it is time to switch to Right Page(tm)
 	rs.uin = searchFor;
 	
-	fName	= fSurname = fNick = fCity = QString::null;
+	fName	= fSurname = fNick = fCity = QString();
 	fUin	= searchFor;
 	fGender	= fAgeFrom = fAgeTo = 0;
 	fOnlyOnline = false;
