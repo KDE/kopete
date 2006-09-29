@@ -23,8 +23,8 @@
 
 INCLUDE(UsePkgConfig)
 
-PKGCONFIG(telepathy-qt _TelepathyIncDir _TelepathyLinkDir _TelepathyLinkFlags _TelepathyCflags)
-PKGCONFIG(tapioca-qt _TapiocaIncDir _TapiocaLinkDir _TapiocaLinkFlags _TapiocaCflags)
+PKGCONFIG(QtTelepathy _TelepathyIncDir _TelepathyLinkDir _TelepathyLinkFlags _TelepathyCflags)
+PKGCONFIG(QtTapioca _TapiocaIncDir _TapiocaLinkDir _TapiocaLinkFlags _TapiocaCflags)
 
 set(QT_TELEPATHY_INCLUDE_DIR ${_TelepathyIncDir})
 set(QT_TAPIOCA_INCLUDE_DIR ${_TapiocaIncDir})
