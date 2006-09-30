@@ -34,7 +34,21 @@ K_EXPORT_COMPONENT_FACTORY( kopete_telepathy, TelepathyProtocolFactory("kopete_t
 TelepathyProtocol *TelepathyProtocol::s_self = 0;
 
 TelepathyProtocol::TelepathyProtocol(QObject *parent, const QStringList &/*args*/)
- : Kopete::Protocol(TelepathyProtocolFactory::instance(), parent)
+ : Kopete::Protocol(TelepathyProtocolFactory::instance(), parent),
+	// Create Kopete::OnlineStatus
+	Available(Kopete::OnlineStatus::Online, 25, this, 1, QStringList(),
+			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
+	Away(Kopete::OnlineStatus::Away, 18, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
+			i18n( "Away From Computer" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away ),
+	Busy(Kopete::OnlineStatus::Away, 20, this, 2, QStringList(),
+			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy),
+	Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")), 
+			i18n( "Invisible" ), i18n( "&Hidden" ), Kopete::OnlineStatusManager::Invisible),
+	ExtendedAway(Kopete::OnlineStatus::Away, 15, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
+			i18n( "Extented Away" ), i18n( "&Extented Away" ), Kopete::OnlineStatusManager::Away),
+	Offline(Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(),
+			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
+			Kopete::OnlineStatusManager::DisabledIfOffline)
 {
 	s_self = this;
 
@@ -65,6 +79,11 @@ Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *met
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
 	return 0;
+}
+
+QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId)
+{
+	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
 
 #include "telepathyprotocol.moc"

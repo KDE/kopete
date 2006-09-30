@@ -31,7 +31,7 @@ namespace Kopete
 }
 
 class QTreeWidgetItem;
-
+class TelepathyAccount;
 /**
  * @brief Edit Telepathy account settings.
  * @author Michaël Larouche <michael.larouche@kdemail.net>
@@ -50,6 +50,12 @@ public:
 	 * otherwise update the existing account.
 	 */
 	virtual Kopete::Account *apply();
+
+protected:
+	/**
+	 * @brief Reimplement account() to access TelepathyAccount specific methods.
+	 */
+	TelepathyAccount *account();
 
 private slots:
 	void connectionManagerSelectionChanged();

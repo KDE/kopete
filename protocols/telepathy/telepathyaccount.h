@@ -18,7 +18,9 @@
 #define TELEPATHYACCOUNT_H
 
 #include <kopeteaccount.h>
+#include <QtCore/QList>
 
+#include <QtTapioca/ConnectionManager>
 
 class KActionMenu;
 
@@ -42,6 +44,34 @@ public:
 
 	virtual KActionMenu *actionMenu();
 
+	/**
+	 * @brief Read the configuration for the current account.
+	 * @return true if reading went well.
+	 */
+	bool readConfig();
+
+	/**
+	 * @brief Get the name of the connection manager for this account.
+	 *
+	 * You must call readConfig() before.
+	 * @return name of the connection manager used by this account.
+	 */
+	QString connectionManager() const;
+	/**
+	 * @brief Get the current protocol used by this account.
+	 *
+	 * You must call readConfig() before.
+	 * @return name of the protocol used by this account.
+	 */
+	QString connectionProtocol() const;
+	/**
+	 * @brief Get the connection parameters read from the config.
+     *
+	 * You must call readConfig() before.
+	 * @return
+	 */
+	QList<QtTapioca::ConnectionManager::Parameter> connectionParameters() const;
+
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
 	virtual void disconnect();
@@ -53,6 +83,7 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 	
 private:
-	
+	class Private;
+	Private *d;
 };
 #endif

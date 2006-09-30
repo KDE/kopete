@@ -18,6 +18,7 @@
 #define TELEPATHYPROTOCOL_H
 
 #include <kopeteprotocol.h>
+#include <kopeteonlinestatus.h>
 
 #define TELEPATHY_DEBUG_AREA 14400
 
@@ -37,6 +38,13 @@ class KOPETE_EXPORT TelepathyProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
+	const Kopete::OnlineStatus Available;
+	const Kopete::OnlineStatus Away;
+	const Kopete::OnlineStatus Busy;
+	const Kopete::OnlineStatus Hidden;
+	const Kopete::OnlineStatus ExtendedAway;
+	const Kopete::OnlineStatus Offline;
+
 	TelepathyProtocol(QObject *parent, const QStringList &args);
 	
 	virtual Kopete::Account *createNewAccount(const QString &accountId);
@@ -47,6 +55,9 @@ public:
 
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+
+	QString formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId);
+
 private:
 	static TelepathyProtocol *s_self;
 };
