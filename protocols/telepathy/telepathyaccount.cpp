@@ -61,6 +61,9 @@ TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &a
  : Kopete::Account(protocol, accountId.toLower()), d(new Private)
 {
 	setMyself( new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()) );
+
+	// Get ConnectionManager early
+	d->getConnectionManager();
 }
 
 TelepathyAccount::~TelepathyAccount()
@@ -128,10 +131,15 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting with initial status: " << status.description() << endl;
 		connect(status);
 	}
+	// FIXME: Temp
+	else if ( status.status() == Kopete::OnlineStatus::Offline )
+	{
+		disconnect();
+	}
 	else
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Chaning online status" << endl;
-		// TODO
+		//TODO:
 	}
 }
 
@@ -154,14 +162,46 @@ bool TelepathyAccount::readConfig()
 	d->connectionManager = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
 	d->connectionProtocol = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
 
-	// Now fill the preferences
+	// Get the preferences from the connection manager to get the right types
+	QList<ConnectionManager::Parameter> tempParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
+
+	// Now update the preferences
 	KConfig *telepathyConfig = KGlobal::config();
 	QMap<QString,QString> allEntries = telepathyConfig->entryMap( TelepathyProtocol::protocol()->formatTelepathyConfigGroup(d->connectionManager, d->connectionProtocol, accountId()) );
 	QMap<QString,QString>::ConstIterator it, itEnd = allEntries.constEnd();
 	for(it = allEntries.constBegin(); it != itEnd; ++it)
 	{
-		ConnectionManager::Parameter parameter(it.key(), it.value());
-		d->connectionParameters.append(parameter);
+		foreach(ConnectionManager::Parameter parameter, tempParameters)
+		{
+			if( parameter.name() == it.key() )
+			{
+				if( parameter.value().toString() != it.value() )
+				{
+					QVariant oldValue = parameter.value();
+					QVariant newValue(oldValue.type());
+					if ( oldValue.type() == QVariant::String )
+						newValue = QVariant(it.value());
+					else if( oldValue.type() == QVariant::Int )
+						newValue = QVariant(it.value()).toInt();
+					else if( oldValue.type() == QVariant::UInt )
+						newValue = QVariant(it.value()).toUInt();
+					else if( oldValue.type() == QVariant::Double )
+						newValue = QVariant(it.value()).toDouble();
+					else if( oldValue.type() == QVariant::Bool)
+					{
+						if( it.value().toLower() == "true")
+							newValue = true;
+						else
+							newValue = false;
+					}
+					else
+						newValue = QVariant(it.value());
+// 					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName() << endl;
+					d->connectionParameters.append( ConnectionManager::Parameter(parameter.name(), newValue) );
+					break;
+				}
+			}
+		}
 	}
 
 	if( !d->connectionManager.isEmpty() &&
@@ -184,10 +224,14 @@ QString TelepathyAccount::connectionProtocol() const
 
 QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::connectionParameters() const
 {
+	foreach(ConnectionManager::Parameter parameter, d->connectionParameters)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << parameter.value() << "Type: " << parameter.value().typeName() << endl;
+	}
 	return d->connectionParameters;
 }
 
-void TelepathyAccount::telepathyStateChanged(QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
+void TelepathyAccount::telepathyStatusChanged(Connection::Status status, Connection::Reason reason)
 {
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 
@@ -198,6 +242,8 @@ void TelepathyAccount::telepathyStateChanged(QtTapioca::Connection::Status statu
 			break;
 		case Connection::Connected:
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connected using Telepathy :)" << endl;
+			// FIXME: Use initial status
+			myself()->setOnlineStatus( TelepathyProtocol::protocol()->Available );
 			break;
 		case Connection::Disconnected:
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Disconnected :(" << endl;

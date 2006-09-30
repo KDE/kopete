@@ -33,6 +33,7 @@ namespace Kopete
 
 class TelepathyProtocol;
 
+using namespace QtTapioca;
 /**
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
@@ -84,7 +85,7 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 
 private slots:
-	void telepathyStateChanged(QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason);
+	void telepathyStatusChanged(Connection::Status status, Connection::Reason reason);
 	
 private:
 	class Private;
