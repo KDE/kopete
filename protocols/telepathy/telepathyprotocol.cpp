@@ -28,6 +28,8 @@
 #include "telepathyaccount.h"
 #include "telepathyeditaccountwidget.h"
 
+using namespace QtTapioca;
+
 typedef KGenericFactory<TelepathyProtocol> TelepathyProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_telepathy, TelepathyProtocolFactory("kopete_telepathy") )
 
@@ -84,6 +86,53 @@ Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *met
 QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId)
 {
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
+}
+
+QtTapioca::ContactInfo::Presence TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
+{
+	QtTapioca::ContactInfo::Presence telepathyPresence;
+
+	if( status == Available )
+		telepathyPresence = ContactInfo::Available;
+	else if( status == Away )
+		telepathyPresence = ContactInfo::Away;
+	else if( status == Busy )
+		telepathyPresence = ContactInfo::Busy;
+	else if( status == Hidden )
+		telepathyPresence = ContactInfo::Hidden;
+	else if( status == ExtendedAway )
+		telepathyPresence = ContactInfo::XA;
+	else if( status == Offline )
+		telepathyPresence = ContactInfo::Offline;
+
+	return telepathyPresence;
+}
+Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(QtTapioca::ContactInfo::Presence presence)
+{
+	Kopete::OnlineStatus result;
+	switch(presence)
+	{
+		case ContactInfo::Available:
+			result = Available;
+			break;
+		case ContactInfo::Away:
+			result = Away;
+			break;
+		case ContactInfo::Busy:
+			result = Busy;
+			break;
+		case ContactInfo::Hidden:
+			result = Hidden;
+			break;
+		case ContactInfo::XA:
+			result = ExtendedAway;
+			break;
+		case ContactInfo::Offline:
+			result = Offline;
+			break;
+	}
+
+	return result;
 }
 
 #include "telepathyprotocol.moc"

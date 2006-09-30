@@ -33,7 +33,6 @@
 #include "kopetecontactlist.h"
 
 // QtTapioca includes
-#include <QtTapioca/ConnectionManager>
 #include <QtTapioca/ConnectionManagerFactory>
 
 // Local includes
@@ -45,9 +44,17 @@ using namespace QtTapioca;
 class TelepathyAccount::Private
 {
 public:
+	Private()
+	 : currentConnectionManager(0), currentConnection(0)
+	{}
+
+	ConnectionManager *getConnectionManager();
+
 	QString connectionManager;
 	QString connectionProtocol;
 	QList<ConnectionManager::Parameter> connectionParameters;
+	ConnectionManager *currentConnectionManager;
+	Connection *currentConnection;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -70,16 +77,48 @@ KActionMenu *TelepathyAccount::actionMenu()
 
 void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting to connection manager" << endl;
 	if( readConfig() )
 	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Succesfully read config." << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol() << endl;
+		ConnectionManager *connectionManager = d->getConnectionManager();
 		
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Actual connection manager: " << connectionManager->name() << endl;
+		if( d->currentConnection )
+		{
+			delete d->currentConnection;
+			d->currentConnection = 0;
+		}
+
+		if( connectionManager->isRunning() )
+		{
+			d->currentConnection = connectionManager->requestConnection( connectionProtocol(), connectionParameters() );
+			if( d->currentConnection )
+			{
+				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a valid connection." << endl;
+				// Connect signals/slots
+				QObject::connect(d->currentConnection, SIGNAL(statusChanged(Connection::Status, Connection::Reason)), this, SLOT(telepathyStatusChanged(Connection::Status, Connection::Reason)));
+	
+				d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
+			}
+			else
+			{
+				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Failed to get a valid connection." << endl;
+				// TODO: Show an error message
+			}
+		}
+		else
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << connectionManager->name() << " is not running." << endl;
+			// TODO: Shown an error message
+		}
 	}
 }
 
 void TelepathyAccount::disconnect()
 {
-	
+	if( d->currentConnection )
+		d->currentConnection->disconnect();
 }
 
 void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason)
@@ -148,5 +187,32 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::connectionParam
 	return d->connectionParameters;
 }
 
+void TelepathyAccount::telepathyStateChanged(QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 
+	switch(status)
+	{
+		case Connection::Connecting:
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting...." << endl;
+			break;
+		case Connection::Connected:
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connected using Telepathy :)" << endl;
+			break;
+		case Connection::Disconnected:
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Disconnected :(" << endl;
+			break;
+	}
+	//TODO: reason
+}
+
+ConnectionManager *TelepathyAccount::Private::getConnectionManager()
+{
+	if( !currentConnectionManager )
+	{
+		currentConnectionManager = ConnectionManagerFactory::self()->getConnectionManagerByName(connectionManager);
+	}
+
+	return currentConnectionManager;
+}
 #include "telepathyaccount.moc"

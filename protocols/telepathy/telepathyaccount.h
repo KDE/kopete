@@ -21,6 +21,7 @@
 #include <QtCore/QList>
 
 #include <QtTapioca/ConnectionManager>
+#include <QtTapioca/Connection>
 
 class KActionMenu;
 
@@ -81,6 +82,9 @@ public slots:
 	
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
+
+private slots:
+	void telepathyStateChanged(QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason);
 	
 private:
 	class Private;
