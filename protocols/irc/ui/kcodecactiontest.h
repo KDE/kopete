@@ -20,9 +20,6 @@ public Q_SLOTS:
 
     void slotActionTriggered(bool state);
 
-    void addAction();
-    void removeAction();
-
 private:
     KCodecAction* m_comboCodec;
     KCodecAction* m_buttonCodec;

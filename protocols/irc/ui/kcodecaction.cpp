@@ -19,42 +19,56 @@
 
 #include <kcharsets.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 #include <qtextcodec.h>
 
+class KCodecAction::Private
+{
+    QAction *defaultAction;
+#if 0
+    QAction *configureAction;
+#endif
+};
+
 KCodecAction::KCodecAction( KActionCollection *parent, const QString &name )
     : KSelectAction( parent, name )
-    , d(0)
+    , d(new Private)
 {
     init();
 }
 
 KCodecAction::KCodecAction( const QString &text, KActionCollection *parent, const QString &name )
     : KSelectAction( text, parent, name )
-    , d(0)
+    , d(new Private)
 {
     init();
 }
 
 KCodecAction::KCodecAction( const KIcon &icon, const QString &text, KActionCollection *parent, const QString &name )
     : KSelectAction( icon, text, parent, name )
-    , d(0)
+    , d(new Private)
 {
     init();
 }
 
 KCodecAction::~KCodecAction()
 {
-//    delete d;
+    delete d;
 }
 
 void KCodecAction::init()
 {
-    KCharsets *charsets = KGlobal::charsets();
-    QStringList list = charsets->availableEncodingNames();
-//    QStringList list = charsets->descriptiveEncodingNames(); // Not recognised by KCharset::codecForName
-//    qSort( list );
-    setItems( list );
+#if 0
+    d->defaultAction = addAction(i18n("Default"));
+#endif
+    foreach(QString encodingName, KGlobal::charsets()->descriptiveEncodingNames())
+       addAction(encodingName);
+#if 0
+    addSeparator();
+    d->configureAction = addAction(i18n("Configure"));
+#endif
+    setCurrentItem(0);
 
 //    setEditable(true);
 }
@@ -65,7 +79,8 @@ void KCodecAction::actionTriggered(QAction *action)
     // after we've done an emit()
     bool ok = false;
     KCharsets *charsets = KGlobal::charsets(); 
-    QTextCodec *codec = charsets->codecForName(action->text(), ok);
+    QString encoding = charsets->encodingForName(action->text());
+    QTextCodec *codec = charsets->codecForName(encoding, ok);
 
     if (ok)
     {
