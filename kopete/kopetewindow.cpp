@@ -349,13 +349,6 @@ void KopeteWindow::initActions()
 	KAction *searchLabelAction = new KAction( i18n("Search:"), actionCollection(), "quicksearch_label" );
 	searchLabelAction->setDefaultWidget( searchLabel );
 
-	// quick search bar - clear button
-	KAction *resetQuickSearch = new KAction( QApplication::isRightToLeft() ? KIcon("clear_left") : KIcon("locationbar_erase"), i18n( "Reset Quick Search" ),
-		actionCollection(), "quicksearch_reset" );
-	connect( resetQuickSearch, SIGNAL( triggered(bool) ),  searchBar, SLOT( clear() ) );
-	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
-		"Resets the quick search so that all contacts and groups are shown again." ) );
-
 	// Edit global identity widget/bar
 	d->editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
 	d->editGlobalIdentityWidget->setObjectName( QLatin1String("editglobalBar") );
