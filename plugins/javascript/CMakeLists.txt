@@ -47,7 +47,7 @@ kde4_add_plugin(kcm_kopete_javascript ${kcm_kopete_javascript_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_javascript )
 
-target_link_libraries(kcm_kopete_javascript ${QT_AND_KDECORE_LIBS} knewstuff kopete )
+target_link_libraries(kcm_kopete_javascript ${QT_AND_KDECORE_LIBS} ${KDE4_KNEWSTUFF_LIBS} kopete )
 
 install( TARGETS kcm_kopete_javascript DESTINATION ${PLUGIN_INSTALL_DIR})
 
