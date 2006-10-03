@@ -23,7 +23,7 @@ class YahooAccount;
 class YahooWebcamDialog;
 class QTimer;
 class QImage;
-class KTempFile;
+class KTemporaryFile;
 
 namespace Kopete { 
 	namespace AV	{
@@ -54,8 +54,8 @@ private:
 	QTimer *m_updateTimer;
 	QStringList m_viewer;
 	QImage *m_img;
-	KTempFile *origImg;
-	KTempFile *convertedImg;
+	KTemporaryFile *origImg;
+	KTemporaryFile *convertedImg;
 	Kopete::AV::VideoDevicePool *m_devicePool;
 };
 

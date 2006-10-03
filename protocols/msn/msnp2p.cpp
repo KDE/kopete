@@ -31,7 +31,7 @@
 // kde
 #include <kdebug.h>
 #include <kcodecs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <krun.h>
 #include <klocale.h>
 #include <kglobal.h>

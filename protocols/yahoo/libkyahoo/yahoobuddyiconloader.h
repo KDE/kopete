@@ -24,7 +24,7 @@
 // KDE Includes
 #include <kurl.h>
 
-class KTempFile;
+class KTemporaryFile;
 class KJob;
 class Client;
 namespace KIO {
@@ -36,7 +36,7 @@ struct IconLoadJob {
 	KUrl url;
 	QString who;
 	int checksum;
-	KTempFile *file;
+	KTemporaryFile *file;
 };
 
 /**
@@ -63,7 +63,7 @@ signals:
 	 * 	The account can connect to this signal and append the icon
 	 * 	stored in 'file' to the appropriate contact
 	 */
-	void fetchedBuddyIcon( const QString &who, KTempFile *file, int checksum );
+	void fetchedBuddyIcon( const QString &who, KTemporaryFile *file, int checksum );
 
 private slots:
 	void slotData( KIO::Job *job, const QByteArray &data );

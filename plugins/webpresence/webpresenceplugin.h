@@ -28,7 +28,7 @@
 #include "kopeteonlinestatus.h"
 
 class QTimer;
-class KTempFile;
+class KTemporaryFile;
 namespace Kopete { class MetaContact; }
 class KToggleAction;
 class KActionCollection;
@@ -96,11 +96,11 @@ protected:
 	/**
 	 * Generate the file (HTML, text) to be uploaded
 	 */
-	KTempFile* generateFile();
+	KTemporaryFile* generateFile();
 	/**
 	* Apply named stylesheet to get content and presentation
 	*/
-	bool transform( KTempFile* src, KTempFile* dest );
+	bool transform( KTemporaryFile* src, KTemporaryFile* dest );
 	/** 
 	 * Helper method, generates list of all IM protocols
 	 */
@@ -115,7 +115,7 @@ protected:
 	QTimer* m_writeScheduler;
 
 	// The file to be uploaded to the WWW
-	KTempFile *m_output;
+	KTemporaryFile *m_output;
 };
 
 #endif

@@ -36,7 +36,7 @@ class MSNAccount;
 class QTimer;
 
 class MSNP2PDisplatcher;
-class KTempFile;
+class KTemporaryFile;
 
 namespace P2P { class Dispatcher; }
 
@@ -71,10 +71,10 @@ private:
 	//used for emoticons
 	QList<Kopete::Message> m_msgQueue;
 	unsigned  m_recvIcons;
-	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
+	QMap<QString , QPair<QString , KTemporaryFile*> >  m_emoticons;
 	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
-	QList<KTempFile*> m_typewrited;
+	QList<KTemporaryFile*> m_typewrited;
 
 	struct InkMessage{
 		quint32 chunks;
@@ -140,7 +140,7 @@ private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );
 	void slotReadMessage( const QByteArray &bytes );
-	void slotEmoticonReceived( KTempFile *, const QString& );
+	void slotEmoticonReceived( KTemporaryFile *, const QString& );
 	void slotIncomingFileTransfer(const QString& from, const QString& fileName, qint64 fileSize);
 	void cleanQueue();
 	

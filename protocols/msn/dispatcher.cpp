@@ -36,7 +36,7 @@ using P2P::OutgoingTransfer;
 #include <kdebug.h>
 #include <kcodecs.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 // Qt includes
 #include <qdatastream.h>
@@ -580,11 +580,13 @@ void Dispatcher::dispatch(const P2P::Message& message)
 // 				Convert from base64 encoding to byte array.
 				KCodecs::base64Decode(base64.toUtf8(), image);
 // 				Create a temporary file to store the image data.
-				KTempFile *ink = new KTempFile(KStandardDirs::locateLocal("tmp", "inkformatgif-" ), ".gif");
-				ink->setAutoDelete(true);
+				KTemporaryFile *ink = new KTemporaryFile();
+				ink->setPrefix("inkformatgif-");
+				ink->setSuffix(".gif");
+				ink->open();
 // 				Save the image data to disk.
-				ink->file()->write(image);
-				ink->file()->close();
+				ink->write(image);
+				ink->close();
 				displayIconReceived(ink, "inkformatgif");
 				ink = 0l;
 			}

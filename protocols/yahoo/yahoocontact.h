@@ -29,7 +29,7 @@
 #include <kurl.h>
 
 class KAction;
-class KTempFile;
+class KTemporaryFile;
 
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
@@ -86,7 +86,7 @@ public slots:
 	void requestWebcam();
 	void inviteWebcam();
 	void buzzContact();
-	void setDisplayPicture(KTempFile *f, int checksum);
+	void setDisplayPicture(KTemporaryFile *f, int checksum);
 	void sendBuddyIconInfo( const QString &url, int checksum );
 	void sendBuddyIconUpdate( int type );
 	void sendBuddyIconChecksum( int checksum );

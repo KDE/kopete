@@ -48,7 +48,7 @@ signals:
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
-	void fileReceived( KTempFile * , const QString &msnObject );
+	void fileReceived( KTemporaryFile * , const QString &msnObject );
 
 private:
 

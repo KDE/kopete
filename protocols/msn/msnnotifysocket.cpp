@@ -39,7 +39,7 @@
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <krun.h>
 #include <kio/job.h>
 #include <qfile.h>
@@ -659,12 +659,16 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 					"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
 				"</form></body>\n</html>\n";
 
-		KTempFile tmpMailFile( KStandardDirs::locateLocal( "tmp", "kopetehotmail-" ), ".html" );
-		QTextStream *textStream = tmpMailFile.textStream();
-		*textStream << hotmailRequest;
-		tmpMailFile.file()->flush();
+		KTemporaryFile tmpMailFile;
+		tmpMailFile.setPrefix("kopetehotmail-");
+		tmpMailFile.setSuffix(".html");
+		tmpMailFile.setAutoRemove(false);
+		tmpMailFile.open();
+		QTextStream textStream ( &tmpMailFile );
+		textStream << hotmailRequest;
+		textStream.flush();
 
-		KRun::runUrl( KUrl( tmpMailFile.name() ), "text/html" , 0l, true );
+		KRun::runUrl( KUrl( tmpMailFile.fileName() ), "text/html" , 0l, true );
 
 	}
 	else if ( cmd == "NOT" )

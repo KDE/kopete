@@ -25,7 +25,7 @@
 #include <QFile>
 #include <QTimer>
 #include <QPixmap>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kprocess.h>
 #include <kstreamsocket.h>
 #include <kdebug.h>
@@ -453,15 +453,19 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			QPixmap webcamImage;
 			//webcamImage.loadFromData( info->buffer->buffer() );
 	
-			KTempFile jpcTmpImageFile;
-			KTempFile bmpTmpImageFile;
-			QFile *file = jpcTmpImageFile.file();
-			file->write((info->buffer->buffer()).data(), info->buffer->size());
-			file->close();
+			KTemporaryFile jpcTmpImageFile;
+			jpcTmpImageFile.setAutoRemove(false);
+			jpcTmpImageFile.open();
+			KTemporaryFile bmpTmpImageFile;
+			bmpTmpImageFile.setAutoRemove(false);
+			bmpTmpImageFile.open();
+
+			jpcTmpImageFile.write((info->buffer->buffer()).data(), info->buffer->size());
+			jpcTmpImageFile.close();
 			
 			KProcess p;
 			p << "jasper";
-			p << "--input" << jpcTmpImageFile.name() << "--output" << bmpTmpImageFile.name() << "--output-format" << "bmp";
+			p << "--input" << jpcTmpImageFile.fileName() << "--output" << bmpTmpImageFile.fileName() << "--output-format" << "bmp";
 			
 			p.start( KProcess::Block );
 			if( p.exitStatus() != 0 )
@@ -470,12 +474,12 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			}
 			else
 			{
-				webcamImage.load( bmpTmpImageFile.name() );
+				webcamImage.load( bmpTmpImageFile.fileName() );
 				/******* UPTO THIS POINT ******/
 				emit webcamImageReceived( info->sender, webcamImage );
 			}
-			QFile::remove(jpcTmpImageFile.name());
-			QFile::remove(bmpTmpImageFile.name());
+			QFile::remove(jpcTmpImageFile.fileName());
+			QFile::remove(bmpTmpImageFile.fileName());
 	
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Image Received. Size: " << webcamImage.size() << endl;
 			}

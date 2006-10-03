@@ -33,7 +33,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <ktoolinvocation.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <qregexp.h>
@@ -674,17 +674,19 @@ void MSNContact::slotSendMail()
 	}
 }
 
-void MSNContact::setDisplayPicture(KTempFile *f)
+void MSNContact::setDisplayPicture(KTemporaryFile *f)
 {
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
 	QString newlocation=KStandardDirs::locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 
-	KIO::Job *j=KIO::file_move( KUrl( f->name() ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
-	
-	f->setAutoDelete(false);
+	QString fileName = f->fileName();
+	f->setAutoRemove(false);
 	delete f;
+
+	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+
 
 	//let the time to KIO to copy the file
 	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));

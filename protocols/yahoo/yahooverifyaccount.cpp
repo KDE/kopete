@@ -21,7 +21,7 @@
 // KDE Includes
 #include <kdebug.h>
 #include <klineedit.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <klocale.h>
 #include <kio/global.h>
 #include <kio/job.h>
@@ -62,8 +62,9 @@ YahooVerifyAccount::~YahooVerifyAccount()
 
 void YahooVerifyAccount::setUrl( const KUrl &url )
 {
-	mFile = new KTempFile( KStandardDirs::locateLocal( "tmp", url.fileName() ) );
-	mFile->setAutoDelete( true );
+	mFile = new KTemporaryFile();
+	mFile->setPrefix(url.fileName());
+	mFile->open();
 	KIO::TransferJob *transfer = KIO::get( url, false, false );
 	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
@@ -74,15 +75,15 @@ void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
-	mFile->file()->write( data.data() , data.size() );
+	mFile->write( data.data() , data.size() );
 }
 
 void YahooVerifyAccount::slotComplete( KJob */*job*/ )
 {
 
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	mFile->file()->close();
-	mTheDialog->mPicture->setPixmap( mFile->file()->fileName() );
+	mFile->close();
+	mTheDialog->mPicture->setPixmap( mFile->fileName() );
 	mTheDialog->mPicture->show();
 }
 

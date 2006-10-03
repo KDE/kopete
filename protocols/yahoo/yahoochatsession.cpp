@@ -30,7 +30,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>

@@ -22,7 +22,7 @@
 #include <klocale.h>
 #include <kzip.h>
 #include <kurl.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kdesktopfile.h>
 #include <kmessagebox.h>
 
@@ -271,10 +271,10 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 		const KArchiveFile *manifestEntry = static_cast<const KArchiveFile*>( rootDir->entry( desktopFiles[0] ) );
 		if( manifestEntry )
 		{
-			KTempFile manifest;
-			manifest.setAutoDelete(true);
-			manifestEntry->copyTo( manifest.name() );
-			KDesktopFile manifestFile( manifest.name() );
+			KTemporaryFile manifest;
+			manifest.open();
+			manifestEntry->copyTo( manifest.fileName() );
+			KDesktopFile manifestFile( manifest.fileName() );
 
 			if( manifestFile.readType() == QLatin1String("KopeteScript") )
 			{

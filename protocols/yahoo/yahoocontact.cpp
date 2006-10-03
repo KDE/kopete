@@ -52,7 +52,7 @@
 #include <krun.h>
 #include <kshortcut.h>
 #include <kmessagebox.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -553,7 +553,7 @@ void YahooContact::sendBuddyIconUpdate( int type )
 	m_account->yahooSession()->sendPictureStatusUpdate( m_userId, type );
 }
 
-void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
+void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !f )
@@ -562,11 +562,12 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 	
-	KIO::Job *j=KIO::file_move( KUrl( f->name() ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
-	
-	f->setAutoDelete(false);
+	QString fileName = f->fileName();
+	f->setAutoRemove(false);
 	delete f;
 	
+	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+
 	//let the time to KIO to copy the file
 	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
 }

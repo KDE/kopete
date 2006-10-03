@@ -39,7 +39,7 @@ class QDomDocument;
 class ClientStream;
 class KNetworkConnector;
 class Task;
-class KTempFile;
+class KTemporaryFile;
 class YABEntry;
 class SendFileTask;
 
@@ -507,7 +507,7 @@ Q_OBJECT
 		/**
 		 * The iconLoader has successfully downloaded a picutre
 		 */
-		void pictureDownloaded( const QString &, KTempFile *, int );
+		void pictureDownloaded( const QString &, KTemporaryFile *, int );
 		/**
 		 * A Buddy asks for our picture
 		 */

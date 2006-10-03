@@ -37,7 +37,7 @@
 class KAction;
 class KToggleAction;
 class KActionMenu;
-class KTempFile;
+class KTemporaryFile;
 class QPixmap;
 class QTabWidget;
 class QDockWidget;
@@ -112,7 +112,7 @@ public:
 	virtual bool queryClose();
 	virtual bool queryExit();
 
-	KTempFile *backgroundFile;
+	KTemporaryFile *backgroundFile;
 	Q3PtrList<ChatView> chatViewList;
 
 private:

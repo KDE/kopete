@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 #include <qdir.h>
 
@@ -48,7 +48,7 @@
 
 struct JavaScriptPreferences::Private {
 	JavaScriptConfig *config;
-	KTempFile *tempFile;
+	KTemporaryFile *tempFile;
 	JavaScriptFile *currentScript;
 	KDialog *addScriptDialog;
 //	JavaScriptDialog *nameDialog;

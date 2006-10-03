@@ -49,7 +49,7 @@ namespace P2P{
 			virtual void acknowledged();
 			virtual void processMessage(const Message& message);
 
-			KTempFile *m_tempFile;
+			KTemporaryFile *m_tempFile;
 			KNetwork::KServerSocket   *m_listener;
 	};
 }

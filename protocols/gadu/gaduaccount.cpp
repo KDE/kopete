@@ -42,7 +42,7 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <knotification.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kio/netaccess.h>
@@ -941,8 +941,7 @@ GaduAccount::slotFriendsMode()
 void
 GaduAccount::slotExportContactsListToFile()
 {
-	KTempFile tempFile;
-	tempFile.setAutoDelete( true );
+	KTemporaryFile tempFile;
 
 	if ( p->saveListDialog ) {
 		kDebug( 14100 ) << " save contacts to file: alread waiting for input " << endl ;
@@ -958,17 +957,17 @@ GaduAccount::slotExportContactsListToFile()
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
 		QByteArray list = p->textcodec_->fromUnicode( userlist()->asString() );
 
-		if ( tempFile.status() ) {
+		if ( !tempFile.open() ) {
 			// say cheese, can't create file.....
 			error( i18n( "Unable to create temporary file." ), i18n( "Save Contacts List Failed" ) );
 		}
 		else {
-			QTextStream* tempStream = tempFile.textStream();
-			(*tempStream) << list.data();
-			tempFile.close();
+			QTextStream tempStream ( &tempFile );
+			tempStream << list.data();
+			tempStream.flush();
 
 			bool res = KIO::NetAccess::upload(
-								tempFile.name() ,
+								tempFile.fileName() ,
 								p->saveListDialog->selectedUrl() ,
 								Kopete::UI::Global::mainWidget()
 								);

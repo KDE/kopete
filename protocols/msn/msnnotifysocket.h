@@ -31,7 +31,7 @@
 
 class MSNDispatchSocket;
 class MSNAccount;
-class KTempFile;
+class KTemporaryFile;
 class MSNSecureLoginHandler;
 class MSNChallengeHandler;
 

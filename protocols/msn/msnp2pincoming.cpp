@@ -29,7 +29,7 @@
 // kde
 #include <kdebug.h>
 #include <kcodecs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <krun.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -102,9 +102,11 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 	}
 	else if(msgStr.message.data()[48] == '\0' && msgStr.dataMessageSize==4)
 	{  //This can be only the data preparaion message.   prepare to download
-		m_file=new KTempFile( KStandardDirs::locateLocal( "tmp", "msnpicture-" ), ".png" );
-		m_file->setAutoDelete(true);
-		m_Rfile=m_file->file();
+		m_file=new KTemporaryFile();
+		m_file->setPrefix("msnpicture-");
+		m_file->setSuffix(".png");
+		m_file->open();
+		m_Rfile=m_file;
 
 	}
 	else
@@ -225,10 +227,12 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 					QByteArray image;
 					KCodecs::base64Decode( base64.toUtf8() , image );
 
-					KTempFile *imageFile=new KTempFile( KStandardDirs::locateLocal( "tmp", "msntypewrite-" ), ext );
-					imageFile->setAutoDelete(true);
-					imageFile->file()->write( image.data() , image.size() );
-					imageFile->file()->close();
+					KTemporaryFile *imageFile=new KTemporaryFile();
+					imageFile->setPrefix("msntypewrite-");
+					imageFile->setSuffix(ext);
+					imageFile->open();
+					imageFile->write( image.data() , image.size() );
+					imageFile->close();
 
 					m_parent->fileReceived( imageFile , "typewrite" );
 				}
