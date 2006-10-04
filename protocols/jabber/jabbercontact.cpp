@@ -952,7 +952,7 @@ void JabberContact::sync ( unsigned int )
 	
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () /*<< " - " <<kdBacktrace()*/ << endl;
 
-	if(!m_syncTimer);
+	if(!m_syncTimer)
 	{
 		m_syncTimer=new QTimer(this);
 		connect(m_syncTimer, SIGNAL(timeout()) , this , SLOT(slotDelayedSync()));
