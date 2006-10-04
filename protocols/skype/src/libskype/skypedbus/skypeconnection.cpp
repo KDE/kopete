@@ -320,7 +320,7 @@ QString SkypeConnection::operator %(const QString &message) {
 		return (*it).toString();//ok, just return it
 	}
 
-	return "";//the skype did not respond, wich is unusual but what can I do..
+	return "";//the skype did not respond, which is unusual but what can I do..
 }
 
 void SkypeConnection::setEnv(KProcess *, char *buffer, int length) {

@@ -52,7 +52,7 @@ class Skype : public QObject
 		 */
 		void closed(int reason);
 		/**
-		 * Listens for finishing the connecting atempt and sending the queue if it was successfull
+		 * Listens for finishing the connecting attempt and sending the queue if it was successful
 		 * @param error - Did it work or was there some error?
 		 * @param protocolVer - Version of protocol used by this connection
 		 */
@@ -316,61 +316,61 @@ class Skype : public QObject
 		void setAuthor(const QString &contactId, AuthorType author);
 	signals:
 		/**
-		 * Emited when the skype changes to online (or says it goes online)
+		 * Emitted when the skype changes to online (or says it goes online)
 		 */
 		void wentOnline();
 		/**
-		 * Emited when the skype goes offline
+		 * Emitted when the skype goes offline
 		 */
 		void wentOffline();
 		/**
-		 * Emited when the skype goes away
+		 * Emitted when the skype goes away
 		 */
 		void wentAway();
 		/**
-		 * Emited when the skype goes to Not awailable
+		 * Emitted when the skype goes to Not awailable
 		 */
 		void wentNotAvailable();
 		/**
-		 * Emited when the skype goes to DND mode
+		 * Emitted when the skype goes to DND mode
 		 */
 		void wentDND();
 		/**
-		 * Emited when skype changes to skype me mode
+		 * Emitted when skype changes to skype me mode
 		 */
 		void wentSkypeMe();
 		/**
-		 * Emited when skype becomes invisible
+		 * Emitted when skype becomes invisible
 		 */
 		void wentInvisible();
 		/**
-		 * Emited when atempt to connect started
+		 * Emitted when atempt to connect started
 		 */
 		void statusConnecting();
 		/**
-		 * Emited when new user should be added to the list
+		 * Emitted when new user should be added to the list
 		 * @param name The skype name of the user
 		 */
 		void newUser(const QString &name);
 		/**
-		 * All contacts should be asked to request update of their information. This is emited after the connection to skype is made.
+		 * All contacts should be asked to request update of their information. This is emitted after the connection to skype is made.
 		 */
 		void updateAllContacts();
 		/**
-		 * This is emited whenever some contact should be notified of info change
+		 * This is emitted whenever some contact should be notified of info change
 		 * @param contact What contact is it
 		 * @param change The change. The syntax is [property (displayname, onlinestatus..)] [value]
 		 */
 		void contactInfo(const QString &contact, const QString &change);
 		/**
-		 * This is emited when a new message is received
+		 * This is emitted when a new message is received
 		 * @param user Contact ID of user that sent it. It is NOT guaranteed that the user is in list!
 		 * @param body The message body that was received
 		 * @param messageId ID of that message
 		 */
 		void receivedIM(const QString &user, const QString &body, const QString &messageId);
 		/**
-		 * This is emited when a new message from multi-user chat is received
+		 * This is emitted when a new message from multi-user chat is received
 		 * @param chat Id of the chat
 		 * @param body Tect of the message
 		 * @param messageId Id of this message to get information about it if needed
@@ -378,7 +378,7 @@ class Skype : public QObject
 		 */
 		void receivedMultiIM(const QString &chat, const QString &body, const QString &messageId, const QString &user);
 		/**
-		 * This is emited when an Id of the last outgoing message is known
+		 * This is emitted when an Id of the last outgoing message is known
 		 * @param id The ID of that message
 		 */
 		void gotMessageId(const QString &id);
@@ -436,20 +436,20 @@ class Skype : public QObject
 		 */
 		void setTopic(const QString &chat, const QString &topic);
 		/**
-		 * This is emited when a new user joins a chat
+		 * This is emitted when a new user joins a chat
 		 * @param chat What chat he joined
 		 * @param userId ID of the new user
 		 */
 		void joinUser(const QString &chat, const QString &userId);
 		/**
-		 * This is emited when user leaves a chat
+		 * This is emitted when user leaves a chat
 		 * @param chat What chat did he leave
 		 * @param userId ID of that user
 		 * @param reason Reason why he left
 		 */
 		void leftUser(const QString &chat, const QString &userd, const QString &reason);
 		/**
-		 * Emited when some message is meing sent out right now
+		 * Emitted when some message is being sent out right now
 		 * @param body Text of the message
 		 * @param chat Id of the chat it has been sent to
 		 */

@@ -53,7 +53,7 @@ class SkypeContact : public Kopete::Contact
 	public:
 		/**
 		 * Constructor.
-		 * @param account Account to wich it belongs
+		 * @param account Account to which it belongs
 		 * @param id ID of the new contact
 		 * @param parent Metacontact to put it inside
 		 */
@@ -137,7 +137,7 @@ class SkypeContact : public Kopete::Contact
 	signals:
 		/**
 		 * There is a request to get/refresh the contact info from skype
-		 * @param contact Wich contact wants it?
+		 * @param contact Which contact wants it?
 		 */
 		void infoRequest(const QString &contact);
 		/**

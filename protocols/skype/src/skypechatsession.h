@@ -47,7 +47,7 @@ class SkypeChatSession : public Kopete::ChatSession
 		void callChatSession();
 	public:
 		/**
-		 * Constructor. The chat session will be created with first message comming out.
+		 * Constructor. The chat session will be created with first message coming out.
 		 * @param account The account it belongs to
 		 * @param other The other side. There it no way user could create chat with more than one user at once. If user is invited to chat by someone, the other constructor should be used. It is automatically registered in the manager.
 		 */

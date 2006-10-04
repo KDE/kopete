@@ -65,7 +65,7 @@ class SkypeCallDialog : public SkypeCallDialogBase
 	public slots:
 		///Update the status of call and disable/enable the right buttons and show it in the labels
 		void updateStatus(const QString &callId, const QString &status);
-		///Updates an error message when some error occured
+		///Updates an error message when some error occurred
 		void updateError(const QString &callId, const QString &status);
 		/**
 		 * Incoming skype-out balance info

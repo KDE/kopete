@@ -131,7 +131,7 @@ Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaCont
 	QString contactID = serializedData["contactId"];//get the contact ID
 
 	if (!d->account) {
-		kdDebug(14311) << "Account does not exists, skiping contact creation" << endl;//write error for debuging
+		kdDebug(14311) << "Account does not exists, skiping contact creation" << endl;//write error for debugging
 		return 0L;//create nothing
 	}
 

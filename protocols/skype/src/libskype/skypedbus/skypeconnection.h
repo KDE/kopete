@@ -15,7 +15,7 @@
 #include <qobject.h>
 
 typedef enum {
-	///The connection was successfull
+	///The connection was successful
 	seSuccess = 0,
 	///No runnign DBUS found
 	seNoDBus,
@@ -69,7 +69,7 @@ class SkypeConnection : public QObject
 	public slots:
 		/**
 		 * Connects to skype
-		 * After connection (bosth successfull or unsuccessfull) connectionDone is emited
+		 * After connection (both successful or unsuccessful) connectionDone is emitted
 		 * @see connectionDone
 		 * @param start By what command start Skype if it is not running (empty string means nothing is started)
 		 * @param appName tells as what application it should authorise itself (this will user see on the "do you want to allow" dialog box)
@@ -139,30 +139,30 @@ class SkypeConnection : public QObject
 		QString operator%(const QString &message);
 	signals:
 		/**
-		 * This signal is emited when an atempt to connect to skype application is done. It is done in both cases, success or not.
-		 * @param error Indicates error code. seSuccess means there was no error and the connection was successfull.
+		 * This signal is emitted when an attempt to connect to skype application is done. It is done in both cases, success or not.
+		 * @param error Indicates error code. seSuccess means there was no error and the connection was successful.
 		 * @param protocolVer Protocol version used by this connection. Is less or equal to the version set in connect
 		 * @see connect
 		 */
 		void connectionDone(int error, int protocolVer);
 		/**
-		 * This signal is emited when the connection is closed due to error or because it was disconnetcted
+		 * This signal is emitted when the connection is closed due to error or because it was disconnetcted
 		 * @param reason Describes why it was closed (you can typecast it to skypeCloseReason if you are interested, or just use the numeric values)
 		 */
 		void connectionClosed(int reason);
 		/**
-		 * This slot is emited when something is comming from skype.
+		 * This slot is emitted when something is coming from skype.
 		 * It contains pongs as well (responses to ping) and if you do not care about them, you should ignore them.
 		 * @param message The message that arrived
 		 */
 		void received(const QString &message);
 		/**
-		 * This is emited when some error ocurs
+		 * This is emitted when some error occurs
 		 * @param message Describes the error
 		 */
 		void error(const QString &message);
 		/**
-		 * This is provided for debuging so you can see what you have sent to skype
+		 * This is provided for debugging so you can see what you have sent to skype
 		 * @param message The message that was sent to skype
 		 */
 		void sent(const QString &message);

@@ -310,7 +310,7 @@ Q_OBJECT
 		 */
 		bool endCallCommandOnlyLast() const;
 		/**
-		 * Command that should be executed on incomming call, or empty string if nothing to execute
+		 * Command that should be executed on incoming call, or empty string if nothing to execute
 		 */
 		QString incomingCommand() const;
 		/**

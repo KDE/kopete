@@ -40,7 +40,7 @@ class SkypeAddContact : public AddContactPage
 		/**
 		 * Constructor.
 		 * @param protocol Pointer to the Skype protocol.
-		 * @param parent Widget inside wich I will be showed.
+		 * @param parent Widget inside which I will be showed.
 		 * @param name My name I can be found by.
 		 */
 		SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, SkypeAccount *account, const char *name);
@@ -57,7 +57,7 @@ class SkypeAddContact : public AddContactPage
 		/**
 		 * Adds it into the account.kdDebug(14311) << k_funcinfo << endl;//some debug info
 		 * @param account Where to add it.
-		 * @param metaContact Metacontact wich will hold it.
+		 * @param metaContact Metacontact which will hold it.
 		 * @return True if it worked, false if not.
 		 */
 		virtual bool apply(Kopete::Account *account, Kopete::MetaContact *metaContact);

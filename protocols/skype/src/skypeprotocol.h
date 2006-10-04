@@ -98,7 +98,7 @@ class SkypeProtocol : public Kopete::Protocol
 		 */
 		virtual KopeteEditAccountWidget* createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 		/**
-		 * Skype plugin allows only one skype account at once. This anwsers weather one exists or not.
+		 * Skype plugin allows only one skype account at once. This answers weather one exists or not.
 		 * @return true if some account exists and false if not
 		 */
 		bool hasAccount() const;
