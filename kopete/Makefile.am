@@ -9,6 +9,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_srcdir)/kopete/addcontactwizard \
 	-I$(kopete_srcdir)/kopete/config/accounts \
 	-I$(kopete_builddir)/kopete/addcontactwizard \
+	-I$(kopete_builddir)/libkopete/ \
 	-I$(kopete_srcdir)/libkopete/ui \
 	-I$(kopete_srcdir)/kopete/contactlist \
 	-I$(kopete_builddir)/kopete/contactlist \
