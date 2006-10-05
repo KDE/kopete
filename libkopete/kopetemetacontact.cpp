@@ -114,7 +114,9 @@ void MetaContact::addContact( Contact *c )
 				setPhotoSource(SourceContact);
 			}
 		}
+		setChild( rowCount(), c );
 	}
+	
 }
 
 void MetaContact::updateOnlineStatus()
@@ -156,6 +158,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		QString currDisplayName = displayName();
 
 		d->contacts.removeAll( c );
+		removeRow( c->row() );
 		
 		// if the contact was a source of property data, clean
 		if (displayNameSourceContact() == c)
@@ -224,7 +227,6 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 		// Reparent the contact
 		c->setParent( 0 );
-
 		emit contactRemoved( c );
 	}
 	updateOnlineStatus();
