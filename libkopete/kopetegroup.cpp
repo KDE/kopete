@@ -105,7 +105,7 @@ QString Group::displayName() const
 	return d->displayName;
 }
 
-Group::GroupType Group::type() const
+Group::GroupType Group::groupType() const
 {
 	return d->type;
 }

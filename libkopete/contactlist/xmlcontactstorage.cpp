@@ -524,12 +524,12 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
     }
 
     // Don't overwrite type for Temporary and TopLevel groups
-    if ( group->type() != Kopete::Group::Temporary && group->type() != Kopete::Group::TopLevel )
+    if ( group->groupType() != Kopete::Group::Temporary && group->groupType() != Kopete::Group::TopLevel )
     {
         QString type = element.attribute( QLatin1String( "type" ), QLatin1String( "standard" ) );
         if ( type == QLatin1String( "temporary" ) )
         {
-            if ( group->type() != Kopete::Group::Temporary )
+            if ( group->groupType() != Kopete::Group::Temporary )
             {
                 parseGroup( Kopete::Group::temporary(), element );
                 return false;
@@ -537,7 +537,7 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
         }
         else if ( type == QLatin1String( "top-level" ) )
         {
-            if ( group->type() != Kopete::Group::TopLevel )
+            if ( group->groupType() != Kopete::Group::TopLevel )
             {
                 parseGroup( Kopete::Group::topLevel(), element );
                 return false;
@@ -560,7 +560,7 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
         if ( groupElement.tagName() == QLatin1String( "display-name" ) )
         {
             // Don't set display name for temporary or top-level items
-            if ( group->type() == Kopete::Group::Normal )
+            if ( group->groupType() == Kopete::Group::Normal )
                 group->setDisplayName( groupElement.text() );
         }
         else
@@ -575,7 +575,7 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
     // FIXME or TODO: This sanity check should be done once, not by each ContactListStorage
     if ( group->displayName().isEmpty() )
     {
-        switch ( group->type() )
+        switch ( group->groupType() )
         {
             case Kopete::Group::Temporary:
                 group->setDisplayName( QLatin1String( "Temporary" ) );
@@ -592,7 +592,7 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
     group->setLoading( false );
     
     //this allows to save data for the top-level group in the top-level group
-    return ( group->type() == Kopete::Group::Normal );
+    return ( group->groupType() == Kopete::Group::Normal );
 }
 
 bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *contactListElement, const QDomElement &element )
@@ -747,7 +747,7 @@ const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
     groupDoc.documentElement().setAttribute( QLatin1String( "groupId" ), QString::number( group->groupId() ) );
 
     QString type;
-    switch ( group->type() )
+    switch ( group->groupType() )
     {
         case Kopete::Group::Temporary:
             type = QLatin1String( "temporary" );

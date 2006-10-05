@@ -201,7 +201,7 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 	while ( it.hasNext() )
 	{
 		Group *curr = it.next();
-		if( curr->type() == type && curr->displayName() == displayName )
+		if( curr->groupType() == type && curr->displayName() == displayName )
 			return curr;
 	}
 

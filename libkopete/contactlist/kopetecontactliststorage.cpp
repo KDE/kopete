@@ -81,7 +81,7 @@ Kopete::Group * ContactListStorage::findGroup( const QString& displayName, int t
 
     foreach( Kopete::Group * group, d->groupList )
     {
-        if( group->type() == type && group->displayName() == displayName )
+        if( group->groupType() == type && group->displayName() == displayName )
             return group;
     }
 

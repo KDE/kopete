@@ -93,7 +93,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	{
 		Group *g = it.next();
 		QString groupname = g->displayName();
-		if ( g->type() == Group::Normal && !groupname.isEmpty() )
+		if ( g->groupType() == Group::Normal && !groupname.isEmpty() )
 		{
 			d->widget->m_groupList->addItem(groupname);
 		}

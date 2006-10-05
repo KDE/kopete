@@ -475,7 +475,7 @@ void MSNContact::sync( unsigned int changed )
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString::null);
 				kWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
 
-				if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
+				if(!group->displayName().isEmpty() && group->groupType() == Kopete::Group::Normal) //not the top-level
 				{
 					//Create the group and add the contact
 					static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
@@ -493,7 +493,7 @@ void MSNContact::sync( unsigned int changed )
 		}
 		else
 		{
-			if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
+			if(!group->displayName().isEmpty() && group->groupType() == Kopete::Group::Normal) //not the top-level
 			{
 				//Create the group and add the contact
 				static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );

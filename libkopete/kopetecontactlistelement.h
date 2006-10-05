@@ -22,7 +22,7 @@
 #include <QtCore/QList>
 #include <QtCore/QMap>
 #include <QtCore/QObject>
-
+#include <QtGui/QStandardItem>
 #include "kopete_export.h"
 
 namespace Kopete {
@@ -43,7 +43,7 @@ class Plugin;
  * It also allow to store an icon for this element.
  */
 class KOPETE_EXPORT ContactListElement
-	: public QObject
+	: public QObject, public QStandardItem
 {
 	Q_OBJECT
 
@@ -134,12 +134,14 @@ public:
 	 * if there is no icon registered for this state, the None icon is used
 	 * if available
 	 */
+	using QStandardItem::icon;
 	QString icon( IconState state = None ) const;
 
 	/**
 	 * Set the icon in the given state
 	 * To clear an entry, set a QString::null
 	 */
+	using QStandardItem::setIcon;
 	void setIcon( const QString &icon, IconState = None );
 
 	/**

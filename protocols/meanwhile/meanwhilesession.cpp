@@ -360,11 +360,11 @@ void MeanwhileSession::syncContactsToServer()
         if (contactgroup == 0L)
             continue;
 
-        if (contactgroup->type() == Kopete::Group::Temporary)
+        if (contactgroup->groupType() == Kopete::Group::Temporary)
             continue;
 
         struct mwSametimeGroup *stgroup;
-        if (contactgroup->type() == Kopete::Group::TopLevel) {
+        if (contactgroup->groupType() == Kopete::Group::TopLevel) {
             stgroup = topstgroup;
         } else  {
             /* find (or create) a matching sametime list group */

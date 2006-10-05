@@ -548,7 +548,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 				}
 			}
 			else {*/
-			if ( g->displayName() == groupName && (groupGuid.isEmpty()|| g->type()==Kopete::Group::Normal)  &&
+			if ( g->displayName() == groupName && (groupGuid.isEmpty()|| g->groupType()==Kopete::Group::Normal)  &&
 					g->pluginData( protocol(), accountId() + " id" ).isEmpty()  )
 			{
 				fallBack = g;
@@ -656,7 +656,7 @@ void MSNAccount::addGroup( const QString &groupName, const QString& contactToAdd
 
 void MSNAccount::slotKopeteGroupRenamed( Kopete::Group *g )
 {
-	if ( notifySocket() && g->type() == Kopete::Group::Normal )
+	if ( notifySocket() && g->groupType() == Kopete::Group::Normal )
 	{
 		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() &&
 			g->displayName() != g->pluginData( protocol(), accountId() + " displayName" ) &&
@@ -694,7 +694,7 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 		{
 			// the group #0 can't be deleted
 			// then we set it as the top-level group
-			if ( g->type() == Kopete::Group::TopLevel )
+			if ( g->groupType() == Kopete::Group::TopLevel )
 				return;
 
 			Kopete::Group::topLevel()->setPluginData( protocol(), accountId() + " id", "" );
@@ -1378,7 +1378,7 @@ void MSNAccount::addContactServerside(const QString &contactId, QList<Kopete::Gr
 		}
 		else
 		{
-			if( !group->displayName().isEmpty() && group->type() == Kopete::Group::Normal )
+			if( !group->displayName().isEmpty() && group->groupType() == Kopete::Group::Normal )
 			{
 				kDebug(14140) << k_funcinfo << "Group not on MSN server, add it" << endl;
 				addGroup( group->displayName(), contactId );

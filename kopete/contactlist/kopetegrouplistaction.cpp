@@ -57,7 +57,7 @@ void KopeteGroupListAction::slotUpdateList()
 	QList<Kopete::Group*>::iterator it, itEnd = groups.end();
 	for ( it = groups.begin(); it != itEnd; ++it )
 	{
-		if((*it)->type() == Kopete::Group::Normal)
+		if((*it)->groupType() == Kopete::Group::Normal)
 			groupList.append( (*it)->displayName() );
 	}
 

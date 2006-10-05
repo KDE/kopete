@@ -1083,7 +1083,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	Kopete::GroupList groupList = parentContact->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
-		if ( group->type() == Kopete::Group::TopLevel ) // no need to create it on the server
+		if ( group->groupType() == Kopete::Group::TopLevel ) // no need to create it on the server
 		{
 			topLevel = true;
 			continue;

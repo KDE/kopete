@@ -861,7 +861,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 	}
 
-	if ( isTemporary() && to->type() != Group::Temporary )
+	if ( isTemporary() && to->groupType() != Group::Temporary )
 		return;
 
 
@@ -879,7 +879,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 
 void MetaContact::removeFromGroup( Group *group )
 {
-	if ( !group || !groups().contains( group ) || ( isTemporary() && group->type() == Group::Temporary ) )
+	if ( !group || !groups().contains( group ) || ( isTemporary() && group->groupType() == Group::Temporary ) )
 	{
 		return;
 	}
@@ -905,7 +905,7 @@ void MetaContact::addToGroup( Group *to )
 	if ( !to || groups().contains( to )  )
 		return;
 
-	if ( d->temporary && to->type() != Group::Temporary )
+	if ( d->temporary && to->groupType() != Group::Temporary )
 		return;
 
 	if ( d->groups.contains( Group::topLevel() ) )
