@@ -254,7 +254,7 @@ struct ClientVersion
     const WORD CLASS_ADMINISTRATOR  = 0x0002; // AOL Administrator
     const WORD CLASS_AOL            = 0x0004; // AOL Staff
     const WORD CLASS_COMMERCIAL     = 0x0008; // AOL commercial account
-    const WORD CLASS_FREE           = 0x0010; // ICQ non-commerical account
+    const WORD CLASS_FREE           = 0x0010; // ICQ non-commercial account
     const WORD CLASS_AWAY           = 0x0020; // Away status
     const WORD CLASS_ICQ            = 0x0040; // ICQ user
     const WORD CLASS_WIRELESS       = 0x0080; // AOL wireless user

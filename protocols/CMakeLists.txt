@@ -3,6 +3,8 @@ macro_optional_find_package(OpenSSL)
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
 option(WITH_sms "Enable Kopete SMS protocol" ON)
+option(WITH_telepathy "Enable Telepathy testbed protocol" OFF)
+
 include_directories(${KOPETE_INCLUDES})
 
 add_subdirectory( msn ) 
@@ -30,33 +32,8 @@ if(WITH_sms)
   add_subdirectory( sms )
 endif(WITH_sms)
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")
+if(WITH_telepathy AND DECIBEL_FOUND)
+  add_subdirectory( telepathy )
+endif(WITH_telepathy AND DECIBEL_FOUND)
 
-
-#original Makefile.am contents follow:
-
-#if include_meanwhile
-#MEANWHILE=meanwhile
-#endif
-#
-#if include_gadu
-#GADU=gadu
-#endif
-#
-#if include_jabber
-#JABBER=jabber
-#endif
-#
-#if include_testbed
-#TESTBED=testbed
-#endif
-#
-#if include_smsgsm
-#SMS=sms
-#endif
-#
-##SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo winpopup $(SMS) $(JABBER) $(GADU) $(MEANWHILE)
-#
-## Disabled IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now
-## I leave that to the protocol maintainer (-DarkShock)
-#SUBDIRS = $(TESTBED) msn oscar yahoo winpopup $(GADU) messenger $(JABBER)
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled Groupwise, Meanwhile for compiling, because they are not ported right now. I leave that to the protocol maintainer (-DarkShock)")

@@ -49,18 +49,6 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 	setMyself( new QQContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
 }
 
-// The default implementation is TCP
-QString QQAccount::serverName()
-{
-	return configGroup()->readEntry(  "serverName" , "tcpconn.tencent.com" );
-
-}
-
-uint QQAccount::serverPort()
-{
-	return configGroup()->readEntry(  "serverPort" , 80 );
-}
-
 void QQAccount::connectWithPassword( const QString &password )
 {
 	kDebug ( 14210 ) << k_funcinfo << "connect with password" << password << endl;
@@ -99,7 +87,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 		// from the old socket thinking they are from the new one
 		QObject::disconnect( m_notifySocket , 0, this, 0 );
 		m_notifySocket->deleteLater(); //be sure it will be deleted
-		m_notifySocket=0L;
+		m_notifySocket = 0L;
 	}
 
 	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
@@ -151,13 +139,6 @@ KActionMenu* QQAccount::actionMenu()
 
 	return mActionMenu;
 }
-
-QQNotifySocket *QQAccount::notifySocket()
-{
-	return m_notifySocket;
-}
-
-
 
 void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
@@ -269,9 +250,9 @@ void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 	uint to = message.to().first()->contactId().toUInt();
 	// TODO: use guid for the conference
 	// TODO: use to for the conversation
-	// TODO: Add codec to the member variable, to improve the preformance.
+	// TODO: Add codec to the member variable, to improve the performance.
 	QByteArray text = m_codec->fromUnicode( message.plainBody() );
-	notifySocket()->sendTextMessage(to, text );
+	m_notifySocket->sendTextMessage(to, text );
 }
 
 void QQAccount::sendInvitation(const QString& guid, const QString& id, const QString& message )
@@ -452,25 +433,6 @@ void QQAccount::updateContactStatus()
 	}
 }
 
-void QQAccount::receivedMessage( const QString &message )
-{
-	// Look up the contact the message is from
-	QString from;
-	QQContact* messageSender;
-
-	from = message.section( ':', 0, 0 );
-	Kopete::Contact* contact = contacts()[from];
-	messageSender = dynamic_cast<QQContact *>( contact );
-
-	kDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
-	// Pass it on to the contact to process and display via a KMM
-	if ( messageSender )
-		;
-		// messageSender->receivedMessage( message );
-	else
-		kWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
-}
-
 void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva::ByteArray& message )
 {
 	QString from = QString::number(header.sender);
@@ -482,7 +444,7 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 	QQContact* sender = static_cast<QQContact*>( contacts()[from] );
 	Kopete::ContactPtrList contactList;
 	contactList.append( sender );
-	QString guid = to +  ":" + from;
+	QString guid = to +  ':' + from;
 
 	QQChatSession* sess = chatSession( contactList, guid, Kopete::Contact::CanCreate );
 	Q_ASSERT( sess );
@@ -506,12 +468,11 @@ void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const c
 	contact->setDetail(map);
 	return;
 
-	//TODO: clean me!
+}
 
-	QQProtocol* proto = static_cast<QQProtocol*> (protocol());
-
-	contact->setProperty( proto->propCountry, m_codec->toUnicode( map["country"] ) );
-	contact->setProperty( proto->propEmail, m_codec->toUnicode( map["email"] ) );
+void QQAccount::getVCard( QQContact* contact )
+{
+	return ;
 }
 
 #include "qqaccount.moc"

@@ -372,7 +372,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	// unknown
 	b->skipBytes( 1 );
 
-	// (down)counter: basically just some number, ICQ counts down, miranda up, doesnt matter.
+	// (down)counter: basically just some number, ICQ counts down, miranda up, doesn't matter.
 	// BUT: when sending auto response on channel 2, like with the icbm cookie, we need to send the same value!
 	int channel2Counter = b->getLEWord();
 

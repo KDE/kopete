@@ -44,7 +44,7 @@ class YahooAccount;
 class YahooProtocol;
 class YahooWebcam;
 class YahooConferenceChatSession;
-class KTempFile;
+class KTemporaryFile;
 
 namespace Kopete{
 class Transfer;
@@ -219,7 +219,7 @@ protected slots:
 	void slotWebcamViewerLeft( const QString & );
 	void slotWebcamViewerRequest( const QString & );
 	void slotPictureStatusNotiy( const QString&, int);
-	void slotGotBuddyIcon(const QString&, KTempFile*, int);
+	void slotGotBuddyIcon(const QString&, KTemporaryFile*, int);
 	void slotGotBuddyIconInfo(const QString&, KUrl, int);
 	void slotGotBuddyIconChecksum(const QString&, int);
 	void slotGotBuddyIconRequest(const QString &);

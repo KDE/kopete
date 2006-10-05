@@ -28,7 +28,7 @@ class SecureStream;
  *
  * Using TweenerHandler:
  * TweenerHandler require a SecureStream instance for TLS/SSL connection.
- * Use setLoginInformation() to set required login information  and start() to begin negociation of the tweener.
+ * Use setLoginInformation() to set required login information and start() to begin negotiation of the tweener.
  *
  * @code
  * TweenerHandler *twn = new TweenerHandler(secureStream);
@@ -37,7 +37,7 @@ class SecureStream;
  * twn->start();
  * @endcode
  *
- * If success() return false, asume that the password was bad.
+ * If success() return false, assume that the password was bad.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */
@@ -55,7 +55,7 @@ public:
 		 */
 		TwnGetServer,
 		/**
-		 * Sending authentification to the Passport login server.
+		 * Sending authentication to the Passport login server.
 		 */
 		TwnAuth 
 	};
@@ -71,7 +71,7 @@ public:
 	~TweenerHandler();
 	
 	/**
-	 * @brief Setup the login information for the negociation
+	 * @brief Setup the login information for the negotiation
 	 * You must call this method before calling start().
 	 * @param tweener tweener string challenge received from Messenger Notification server.
 	 * @param passportId the passport id.
@@ -80,7 +80,7 @@ public:
 	void setLoginInformation(const QString &tweener, const QString &passportId, const QString &password);
 
 	/**
-	 * @brief Return the succes of the negociation.
+	 * @brief Return the succes of the negotiation.
 	 * @return false if the passport was bad.
 	 */
 	bool success() const;
@@ -94,7 +94,7 @@ public:
 
 signals:
 	/**
-	 * Emitted when the negociation is done.
+	 * Emitted when the negotiation is done.
 	 * Look with success() if the task was a succes or not and
 	 * ticket() to get the retrieved ticket.
 	 * @param tweenerHandler this
@@ -103,7 +103,7 @@ signals:
 
 public slots:
 	/**
-	 * @brief Start negociation process.
+	 * @brief Start negotiation process.
 	 * You must set login information before or this class will fail.
 	 */
 	void start();

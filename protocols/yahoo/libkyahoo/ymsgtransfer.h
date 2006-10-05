@@ -65,8 +65,8 @@ public:
 
 	ParamList paramList() const;
 	QByteArray firstParam( int index ) const;
-	QByteArray nthParam( int index, int occurence ) const;
-	QByteArray nthParamSeparated( int index, int occurence, int separator ) const;
+	QByteArray nthParam( int index, int occurrence ) const;
+	QByteArray nthParamSeparated( int index, int occurrence, int separator ) const;
 	int paramCount( int index ) const;
 	
 

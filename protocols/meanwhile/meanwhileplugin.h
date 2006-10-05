@@ -34,7 +34,7 @@ public:
     /* can this plugin provide the above functionality */
     virtual bool canProvideMeanwhileId();
 
-    /* show user info has been selected - the meanwhile server doesnt
+    /* show user info has been selected - the meanwhile server doesn't
      *  seem to have any info...maybe you can find it somewhere else
      */
     virtual void showUserInfo(const QString &userid);

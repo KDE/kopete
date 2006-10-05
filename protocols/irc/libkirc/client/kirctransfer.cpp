@@ -120,7 +120,7 @@ bool Transfer::initiate()
 
 	if(m_initiated)
 	{
-		kDebug(14121) << k_funcinfo << "Transfer allready initiated" << endl;
+		kDebug(14121) << k_funcinfo << "Transfer already initiated" << endl;
 		return false;
 	}
 
@@ -205,7 +205,7 @@ bool Transfer::setSocket( KExtendedSocket *socket )
 		return true;
 	}
 	else
-		kDebug(14121) << k_funcinfo << "Socket allready set" << endl;
+		kDebug(14121) << k_funcinfo << "Socket already set" << endl;
 	return false;
 }
 
@@ -298,7 +298,7 @@ void Transfer::readyReadFileIncoming()
 			return;
 		}
 		else
-			// Something bad happened while writting.
+			// Something bad happened while writing.
 			abort(m_file.errorString());
 	}
 	else if(m_bufferLength == -1)
@@ -312,7 +312,7 @@ void Transfer::readyReadFileOutgoing()
 	bool hadData = false;
 	quint32 fileSizeAck = 0;
 
-//	if (m_socket->bytesAvailable() >= sizeof(fileSizeAck)) // BUGGY: bytesAvailable() that allways return 0 on unbuffered sockets.
+//	if (m_socket->bytesAvailable() >= sizeof(fileSizeAck)) // BUGGY: bytesAvailable() that always return 0 on unbuffered sockets.
 	{
 		m_socketDataStream >> fileSizeAck;
 		hadData = true;

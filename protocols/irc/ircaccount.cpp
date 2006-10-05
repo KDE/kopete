@@ -274,7 +274,7 @@ void IRCAccount::clientConnect()
 			url = "irc://";
 		}
 
-		url += nickName() + "@" + host.host + ":" + host.port;
+		url += nickName() + '@' + host.host + ':' + host.port;
 
 		//d->client->connectToServer( host->host, host->port, mNickName, host->ssl );
 		d->client->connectToServer(KUrl(url));
@@ -508,7 +508,7 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 
 		// HACK! See bug #85200 for details. Some servers still cannot accept commands
 		// after the 001 is sent, you need to wait until all the init junk is done.
-		// Unfortunatly, there is no way for us to know when it is done (it could be
+		// Unfortunately, there is no way for us to know when it is done (it could be
 		// spewing out any number of replies), so just try delaying it
 //		QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		break;

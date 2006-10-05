@@ -282,7 +282,7 @@ void JabberTransport::removeAllContacts( )
 
 /*	if ( ! task->success ())
 	KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
-									i18n ("An error occured when trying to remove the transport:\n%1").arg(task->statusString()),
+									i18n ("An error occurred when trying to remove the transport:\n%1").arg(task->statusString()),
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 

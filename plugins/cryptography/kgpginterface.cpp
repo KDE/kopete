@@ -77,7 +77,7 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	if( !encResult.isEmpty() )
 		return encResult;
 	else
-		return QString::null;
+		return QString();
 }
 
 QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
@@ -105,7 +105,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			/// pipe for passphrase
 			int code=KPasswordDialog::getPassword(0,password,passdlg);
 			if (code!=QDialog::Accepted)
-				return QString::null;
+				return QString();
 			CryptographyPlugin::setCachedPass(password);
 		}
 	
@@ -137,7 +137,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 	if( !encResult.isEmpty() )
 		return encResult;
 	else
-		return QString::null;
+		return QString();
 }
 
 QString KgpgInterface::checkForUtf8(QString txt)
@@ -149,7 +149,7 @@ QString KgpgInterface::checkForUtf8(QString txt)
         /* Make sure the encoding is UTF-8.
          * Test structure suggested by Werner Koch */
         if (txt.isEmpty())
-                return QString::null;
+                return QString();
 
         for (s = txt.toAscii(); *s && !(*s & 0x80); s++)
                 ;

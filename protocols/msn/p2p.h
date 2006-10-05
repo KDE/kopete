@@ -30,7 +30,7 @@ namespace Kopete { struct FileTransferInfo; }
 namespace P2P { class Dispatcher; }
 namespace KNetwork { class KBufferedSocket; }
 class QFile;
-class KTempFile;
+class KTemporaryFile;
 
 /**
 @author Kopete Developers

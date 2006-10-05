@@ -39,7 +39,7 @@ class QDomDocument;
 class ClientStream;
 class KNetworkConnector;
 class Task;
-class KTempFile;
+class KTemporaryFile;
 class YABEntry;
 class SendFileTask;
 
@@ -507,7 +507,7 @@ Q_OBJECT
 		/**
 		 * The iconLoader has successfully downloaded a picutre
 		 */
-		void pictureDownloaded( const QString &, KTempFile *, int );
+		void pictureDownloaded( const QString &, KTemporaryFile *, int );
 		/**
 		 * A Buddy asks for our picture
 		 */
@@ -593,7 +593,7 @@ Q_OBJECT
 		 */
 		void gotYABEntry( YABEntry * );
 		/**
-		 * An error occured while saving a Yahoo Addressbook entry
+		 * An error occurred while saving a Yahoo Addressbook entry
 		 */
 		void modifyYABEntryError( YABEntry *, const QString & );
 		/**
@@ -605,7 +605,7 @@ Q_OBJECT
 		 */
 		void fileTransferComplete( unsigned int );
 		/**
-		 * An error occured during the filetransfer
+		 * An error occurred during the filetransfer
 		 */
 		void fileTransferError( unsigned int, int, const QString & );
 		/**

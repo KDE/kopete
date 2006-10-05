@@ -116,7 +116,7 @@ void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
 		
 	foreach( Kopete::Contact *contact, list )
 	{
-		QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
+		QString entry( contact->protocol()->pluginId() + ':' + contact->contactId() );
 		if( !whitelist.contains( entry ) )
 			whitelist.append( entry );
 	}
@@ -131,7 +131,7 @@ void PrivacyPlugin::addContactsToBlackList( QList< Kopete::Contact *> list )
 		
 	foreach( Kopete::Contact *contact, list )
 	{
-		QString entry( contact->protocol()->pluginId() + ":" + contact->contactId() );
+		QString entry( contact->protocol()->pluginId() + ':' + contact->contactId() );
 		if( !blacklist.contains( entry ) )
 			blacklist.append( entry );
 	}
@@ -151,7 +151,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 	// Verify sender
 	if( PrivacyConfig::sender_AllowNoneButWhiteList() )
 	{
-		if( !PrivacyConfig::whiteList().contains( msg.from()->protocol()->pluginId() + ":" + msg.from()->contactId() ) )
+		if( !PrivacyConfig::whiteList().contains( msg.from()->protocol()->pluginId() + ':' + msg.from()->contactId() ) )
 		{
 			kDebug(14313) << k_funcinfo << "Message from " << msg.from()->protocol()->pluginId() << ":" << msg.from()->contactId() << " dropped (not whitelisted)" << endl;
 			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your whitelist.").arg(msg.from()->contactId()) );
@@ -161,7 +161,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 	}
 	else if( PrivacyConfig::sender_AllowAllButBlackList() )
 	{
-		if( PrivacyConfig::blackList().contains( msg.from()->protocol()->pluginId() + ":" + msg.from()->contactId() ) )
+		if( PrivacyConfig::blackList().contains( msg.from()->protocol()->pluginId() + ':' + msg.from()->contactId() ) )
 		{
 			kDebug(14313) << k_funcinfo << "Message from " << msg.from()->protocol()->pluginId() << ":" << msg.from()->contactId() << " dropped (blacklisted)" << endl;
 			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is on your blacklist.").arg(msg.from()->contactId()) );

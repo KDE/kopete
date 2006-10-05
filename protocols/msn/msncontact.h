@@ -36,7 +36,7 @@ class QTimer;
 class MSNChatSession;
 class KAction;
 class KActionCollection;
-class KTempFile;
+class KTemporaryFile;
 
 namespace Kopete { class Protocol; }
 namespace Kopete { class OnlineStatus; }
@@ -142,7 +142,7 @@ public slots:
 	virtual void sync( unsigned int cvhanged= 0xff);
 
 
-	void setDisplayPicture(KTempFile *f) ;
+	void setDisplayPicture(KTemporaryFile *f) ;
 
 signals:
 	void displayPictureChanged();

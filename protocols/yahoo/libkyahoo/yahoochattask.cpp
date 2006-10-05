@@ -131,7 +131,7 @@ void YahooChatTask::slotCategoriesComplete( KJob *job )
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading the chat categories list." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occurred while downloading the chat categories list." << endl;
 	}
 	else
 	{
@@ -151,7 +151,7 @@ void YahooChatTask::slotChatRoomsComplete( KJob *job )
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading the chat categories list." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occurred while downloading the chat categories list." << endl;
 	}
 	else
 	{

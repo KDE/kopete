@@ -71,7 +71,7 @@ struct YABEntry
 	QString		workPhone;
 	QString		workURL;
 
-	// Miscellanous
+	// Miscellaneous
 	QDate		birthday;
 	QDate		anniversary;
 	QString		notes;

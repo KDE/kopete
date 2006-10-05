@@ -44,8 +44,8 @@ dlgQQVCard::dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent
 
 	setCaption( i18n("QQ vCard") );
 	setButtons( KDialog::Close | KDialog::User1 | KDialog::User2 );
-	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("&Save User Info") ) );
-	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Fetch vCard") ) );
+	setButtonGuiItem( KDialog::User1, KGuiItem(i18n("&Save User Info")) );
+	setButtonGuiItem( KDialog::User2, KGuiItem(i18n("Fetch vCard")) );
 	setDefaultButton( KDialog::Close );
 
 	m_account = account;
@@ -248,13 +248,9 @@ void dlgQQVCard::slotGetVCard()
 
 	setReadOnly(true);
 	setEnabled(false);
-/*
-	XMPP::JT_VCard *task = new XMPP::JT_VCard ( m_account->client()->rootTask() );
-	// signal to ourselves when the vCard data arrived
-	QObject::connect( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
-	task->get ( m_contact->rosterItem().jid().full() );
-	task->go ( true );	
-*/
+
+	QObject::connect( m_contact, SIGNAL( gotVCard() ), this, SLOT( slotGotVCard() ) ); 
+	m_account->getVCard( m_contact );
 }
 
 void dlgQQVCard::slotGotVCard()

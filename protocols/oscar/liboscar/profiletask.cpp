@@ -86,16 +86,16 @@ void ProfileTask::sendProfileUpdate()
 		if ( !m_profileText.isNull() )
 		{
 			static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-			buffer->addTLV(0x0001, defencoding.length(), defencoding.toLatin1());
-			buffer->addTLV(0x0002, m_profileText.length(), m_profileText.toLocal8Bit());
+			buffer->addTLV(0x0001, defencoding.toLatin1());
+			buffer->addTLV(0x0002, m_profileText.toLocal8Bit());
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
 		}
 
 		if ( !m_awayMessage.isNull() )
 		{
 			static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-			buffer->addTLV(0x0003, defencoding.length(), defencoding.toLatin1());
-			buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.toLocal8Bit());
+			buffer->addTLV(0x0003, defencoding.toLatin1());
+			buffer->addTLV(0x0004, m_awayMessage.toLocal8Bit());
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
 		}
 		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
@@ -106,7 +106,7 @@ void ProfileTask::sendProfileUpdate()
 	capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
-	buffer->addTLV(0x0005, capBuf.length(), capBuf.buffer());
+	buffer->addTLV(0x0005, capBuf.buffer());
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );
 	setSuccess( 0, QString::null );

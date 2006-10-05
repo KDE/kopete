@@ -27,7 +27,7 @@ using P2P::Message;
 #include <klocale.h>
 #include <kserversocket.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 using namespace KNetwork;
 
 // Qt includes
@@ -179,9 +179,11 @@ void IncomingTransfer::processMessage(const Message& message)
 	else if(message.header.dataSize == 4 && message.applicationIdentifier == 1)
 	{
 		// Data preparation message.
-		m_tempFile = new KTempFile(KStandardDirs::locateLocal("tmp", "msnpicture--"), ".png");
-		m_tempFile->setAutoDelete(true);
-		m_file = m_tempFile->file();
+		m_tempFile = new KTemporaryFile();
+		m_tempFile->setPrefix("msnpicture--");
+		m_tempFile->setSuffix(".png");
+		m_tempFile->open();
+		m_file = m_tempFile;
 		m_state = DataTransfer;
 		// Send data preparation acknowledge message.
 		acknowledge(message);

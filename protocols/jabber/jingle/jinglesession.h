@@ -57,7 +57,7 @@ public:
 public slots:
 	/**
 	 * @brief Start a session with the give JID.
-	 * You should begin the negociation here.
+	 * You should begin the negotiation here.
 	 */
 	virtual void start() = 0;
 	/**

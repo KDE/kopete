@@ -61,7 +61,7 @@ public:
 	void setPersonalInformation(Papillon::ClientInfo::PersonalInformation type, const QString &value);
 
 	/**
-	 * @brief Check for task acknowledge if the task executed succesfully.
+	 * @brief Check for task acknowledge if the task executed successfully.
 	 * @param transfer the Transfer
 	 * @return true if this is the task acknowledge
 	 */

@@ -39,11 +39,10 @@
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kconfig.h>
 #include <kcodecs.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
 #include <klocale.h>
 
 // for the display picture
@@ -82,7 +81,7 @@ MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
 	kDebug(14140) << k_funcinfo << endl;
 
-	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
+	QMap<QString , QPair<QString , KTemporaryFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
 		delete it.value().second;
@@ -424,7 +423,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 				if( !m_emoticons.contains(msnobj) || !m_emoticons[msnobj].second )
 				{
-					m_emoticons.insert(msnobj, qMakePair(txt,(KTempFile*)0L));
+					m_emoticons.insert(msnobj, qMakePair(txt,(KTemporaryFile*)0L));
 					MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
 					if(!c)
 						return;
@@ -576,10 +575,12 @@ void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
 	QByteArray image;
 	// Convert from base64 encoded string to byte array.
 	KCodecs::base64Decode(base64String.toUtf8() , image);
-	KTempFile *inkImage = new KTempFile(KStandardDirs::locateLocal( "tmp", "inkformatgif-" ), ".gif");
-	inkImage->setAutoDelete(true);
-	inkImage->file()->write(image.data(), image.size());
-	inkImage->file()->close();
+	KTemporaryFile *inkImage = new KTemporaryFile();
+	inkImage->setPrefix("inkformatgif-");
+	inkImage->setSuffix(".gif");
+	inkImage->open();
+	inkImage->write(image.data(), image.size());
+	inkImage->close();
 
 	slotEmoticonReceived(inkImage , "inkformatgif");
 	inkImage = 0l;
@@ -914,7 +915,7 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 	PeerDispatcher()->requestDisplayIcon(m_msgHandle, contact->object());
 }
 
-void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
+void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QString &msnObj )
 {
 	kDebug(14141) << k_funcinfo << msnObj << endl;
 
@@ -931,9 +932,9 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 	}
 	else if(msnObj == "inkformatgif")
 	{
-		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->name() );
+		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->fileName() );
 
-		kDebug(14140) << k_funcinfo << file->name()  <<endl;
+		kDebug(14140) << k_funcinfo << file->fileName()  <<endl;
 
 		m_typewrited.append(file);
 
@@ -1018,14 +1019,14 @@ void MSNSwitchBoardSocket::cleanQueue()
 Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kmsg)
 {
 	QString message=kmsg.escapedBody();
-	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
+	QMap<QString , QPair<QString , KTemporaryFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
 		QString es=Qt::escape(it.value().first);
-		KTempFile *f=it.value().second;
+		KTemporaryFile *f=it.value().second;
 		if(message.contains(es) && f)
 		{
-			QString imgPath = f->name();
+			QString imgPath = f->fileName();
 			QImage iconImage(imgPath);
 			/* We don't use a comple algoritm (like the one in the #if)  because the msn client shows
 		     * emoticons like that. So, in that case, we show like the MSN client */
@@ -1103,7 +1104,7 @@ Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 // 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
 // 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
 		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, qint64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, qint64)));
-		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTempFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTempFile *, const QString&)));
+		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTemporaryFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTemporaryFile *, const QString&)));
 		QObject::connect(this, SIGNAL(msgAcknowledgement(unsigned int, bool)), m_dispatcher, SLOT(messageAcknowledged(unsigned int, bool)));
 		m_dispatcher->m_pictureUrl = m_account->pictureUrl();
 	}

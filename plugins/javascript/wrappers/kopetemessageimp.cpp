@@ -167,7 +167,7 @@ int KopeteMessageImp::extractInt( KJS::ExecState *exec, const KJS::List &args, i
 }
 QString KopeteMessageImp::extractString(KJS::ExecState *exec, const KJS::List &args, int idx)
 {
-     return (args.size() > idx) ? args[idx].toString(exec).qstring() : QString::null;
+     return (args.size() > idx) ? args[idx].toString(exec).qstring() : QString();
 }
 
 } // namespace KJSEmbed::Bindings

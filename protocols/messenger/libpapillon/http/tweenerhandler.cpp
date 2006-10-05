@@ -75,7 +75,7 @@ void TweenerHandler::setLoginInformation(const QString &tweener, const QString &
 
 void TweenerHandler::start()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Begin tweener ticket negociation.";
+	qDebug() << PAPILLON_FUNCINFO << "Begin tweener ticket negotiation.";
 	Q_ASSERT( !d->tweener.isEmpty() );
 	Q_ASSERT( !d->passportId.isEmpty() );
 	Q_ASSERT( !d->password.isEmpty() );
@@ -162,7 +162,7 @@ void TweenerHandler::slotReadyRead()
 				QString loginServer = login.section("/", 0, 0);
 				d->loginUrl = QLatin1String("/") + login.section("/", 1);
 	
-				// Change state of negociation process.
+				// Change state of negotiation process.
 				d->state = TwnAuth;
 				qDebug() << PAPILLON_FUNCINFO << "Connecting to auth server. Server:" << login;
 

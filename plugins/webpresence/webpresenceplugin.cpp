@@ -32,7 +32,7 @@
 #include <kconfig.h>
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 
 #ifdef HAVE_XSLT
@@ -96,7 +96,7 @@ void WebPresencePlugin::loadSettings()
 		userStyleSheet = kconfig->readEntry("formatStylesheetURL", QString() );
 	}
 
-	// Default to HTML if we dont get anything useful from config file.
+	// Default to HTML, if we don't get anything useful from config file.
 	if ( resultFormatting == WEB_UNDEFINED )
 		resultFormatting = WEB_HTML;
 
@@ -111,7 +111,7 @@ void WebPresencePlugin::loadSettings()
 
 void WebPresencePlugin::listenToAllAccounts()
 {
-	// connect to signals notifying of all accounts' status changes
+	// Connect to signals notifying of all accounts' status changes.
 	ProtocolList protocols = allProtocols();
 
 	for ( ProtocolList::Iterator it = protocols.begin();
@@ -165,8 +165,8 @@ void WebPresencePlugin::slotWriteFile()
 		return;
 	}
 
-	KTempFile* xml = generateFile();
-	xml->setAutoDelete( true );
+	KTemporaryFile* xml = generateFile();
+	xml->setAutoRemove( true );
 	kDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
 	switch( resultFormatting ) {
@@ -177,8 +177,8 @@ void WebPresencePlugin::slotWriteFile()
 	case WEB_HTML:
 	case WEB_XHTML:
 	case WEB_CUSTOM:
-		m_output = new KTempFile();
-		m_output->setAutoDelete( true );
+		m_output = new KTemporaryFile();
+		m_output->open();
 
 		if ( !transform( xml, m_output ) )
 		{
@@ -197,7 +197,7 @@ void WebPresencePlugin::slotWriteFile()
 	}
 
 	// upload it to the specified URL
-	KUrl src( m_output->name() );
+	KUrl src( m_output->fileName() );
 	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
 	connect( job, SIGNAL( result( KJob * ) ),
 			SLOT(  slotUploadJobResult( KJob * ) ) );
@@ -213,7 +213,7 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 	}
 }
 
-KTempFile* WebPresencePlugin::generateFile()
+KTemporaryFile* WebPresencePlugin::generateFile()
 {
 	// generate the (temporary) XML file representing the current contactlist
 	kDebug( 14309 ) << k_funcinfo << endl;
@@ -312,15 +312,16 @@ KTempFile* WebPresencePlugin::generateFile()
 	}
 
 	// write the XML to a temporary file
-	KTempFile* file = new KTempFile();
-	QTextStream *stream = file->textStream();
-	stream->setCodec(QTextCodec::codecForName("UTF-8"));
-	doc.save( *stream, 4 );
-	file->close();
+	KTemporaryFile* file = new KTemporaryFile();
+	file->setAutoRemove(false);
+	QTextStream stream ( file );
+	stream.setCodec(QTextCodec::codecForName("UTF-8"));
+	doc.save( stream, 4 );
+	stream.flush();
 	return file;
 }
 
-bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
+bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 {
 #ifdef HAVE_XSLT
 	bool retval = true;
@@ -374,7 +375,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		goto end;
 	}
 
-	doc = xmlParseFile( QFile::encodeName( src->name() ) );
+	doc = xmlParseFile( QFile::encodeName( src->fileName() ) );
 	if ( !doc ) {
 		kDebug(14309) << k_funcinfo << "ERROR: XML parsing failed" << endl;
 		retval = false;
@@ -388,7 +389,8 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		goto end;
 	}
 
-	if ( xsltSaveResultToFile(dest->fstream(), res, cur) == -1 ) {
+
+	if ( xsltSaveResultToFd(dest->handle(), res, cur) == -1 ) {
 		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
 		retval = false;
 		goto end;

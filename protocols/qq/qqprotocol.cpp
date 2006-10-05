@@ -48,11 +48,7 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 	  propAge("QQVCardAge", i18n("Age"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty )
 {
 	kDebug( 14210 ) << k_funcinfo << endl;
-
 	s_protocol = this;
-
-
-	// TODO: Add the rest properties.
 }
 
 QQProtocol::~QQProtocol()
@@ -110,17 +106,15 @@ Kopete::Account *QQProtocol::createNewAccount( const QString &accountId )
 	return new QQAccount( this, accountId );
 }
 
-QQProtocol *QQProtocol::protocol()
-{
-	return s_protocol;
-}
-
 bool QQProtocol::validContactId( const QString& userId )
 {
 	QRegExp re("[1-9][0-9]*");
 	return re.exactMatch( userId );
 }
 
-
+QQProtocol *QQProtocol::protocol()
+{
+	return s_protocol;
+}
 
 #include "qqprotocol.moc"

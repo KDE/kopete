@@ -33,17 +33,17 @@ class Plugin;
 /**
  * @author Olivier Goffart
  *
- * This is the base class for  base elements of the contactlist.
+ * This is the base class for base elements of the contactlist.
  * His purpose is to share the code between @ref Group and @ref MetaContact
  *
  * It handle the saving and loading of plugin data from the contactlist.
- * Plugins may set custom datas to metaocntacts or groups by calling @ref setPluginData
- * and may retreive them with @ref pluginData
+ * Plugins may set custom data to metaocntacts or groups by calling @ref setPluginData
+ * and may retrieve them with @ref pluginData
  *
  * It also allow to store an icon for this element.
  */
 class KOPETE_EXPORT ContactListElement
-	: public QObject  /* public KopeteNotifyDataObject */
+	: public QObject
 {
 	Q_OBJECT
 

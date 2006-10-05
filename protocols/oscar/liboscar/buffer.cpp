@@ -111,15 +111,9 @@ int Buffer::addLEDWord(const DWORD dw)
 	return mBuffer.size();
 }
 
-int Buffer::addString(QByteArray s)
+int Buffer::addString( const QByteArray& s )
 {
-	unsigned int pos = mBuffer.size();
-	int len = s.size();
-	expandBuffer(len);
-
-	for ( int i = 0; i < len; i++ )
-		mBuffer[pos + i] = s[i];
-
+	mBuffer.append( s );
 	return mBuffer.size();
 }
 
@@ -162,22 +156,21 @@ void Buffer::clear()
 
 int Buffer::addTLV( const TLV& t )
 {
-	return addTLV( t.type, t.length, t.data );
+	return addTLV( t.type, t.data );
 }
 
-int Buffer::addTLV(WORD type, WORD len, const char *data)
+int Buffer::addTLV( WORD type, const QByteArray& data )
 {
-
-	addWord(type);
-	addWord(len);
-	return addString(data,len);
+	addWord( type );
+	addWord( data.length() );
+	return addString( data );
 }
 
-int Buffer::addLETLV(WORD type, WORD len, const char *data)
+int Buffer::addLETLV( WORD type, const QByteArray& data )
 {
 	addLEWord( type );
-	addLEWord( len );
-	return addString( data, len );
+	addLEWord( data.length() );
+	return addString( data );
 }
 
 BYTE Buffer::getByte()

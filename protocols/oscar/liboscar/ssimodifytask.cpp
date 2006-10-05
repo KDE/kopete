@@ -360,7 +360,7 @@ void SSIModifyTask::changeGroupOnServer()
 	//find the old group so we can change it's list of buddy ids
 	//what a kludge
 	OContact oldGroupItem = m_ssiManager->findGroup( m_oldItem.gid() );
-	/* not checking the existance of oldGroupItem because if we got here
+	/* not checking the existence of oldGroupItem because if we got here
 	   it has to exist */
 
 	//Change the 0x00C8 TLV in the old group item to remove the bid we're

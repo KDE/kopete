@@ -262,7 +262,7 @@ void Engine::notice(Message &msg)
 		emit receivedMessage(
 			NoticeMessage,
 			msg.entityFromPrefix(),
-			msg.entityFromArg(0), // shoul allways return myself
+			msg.entityFromArg(0), // should always return myself
 			msg.suffix()
 		);
 */

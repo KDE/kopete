@@ -15,7 +15,7 @@
 
 #include <kdebug.h>
 #include <kprocess.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <qtimer.h>
 
 #include "client.h"
@@ -31,8 +31,12 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	theAccount = account;
 	theDialog = 0L;
-	origImg = new KTempFile();
-	convertedImg = new KTempFile();
+	origImg = new KTemporaryFile();
+	origImg->setAutoRemove(false);
+	origImg->open();
+	convertedImg = new KTemporaryFile();
+	convertedImg->setAutoRemove(false);
+	convertedImg->open();
 	m_img = new QImage();
 
 	m_sendTimer = new QTimer( this );
@@ -53,8 +57,8 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 
 YahooWebcam::~YahooWebcam()
 {
-	QFile::remove( origImg->name() );
-	QFile::remove( convertedImg->name() );
+	QFile::remove( origImg->fileName() );
+	QFile::remove( convertedImg->fileName() );
 	delete origImg;
 	delete convertedImg;
 	delete m_img;
@@ -96,11 +100,11 @@ void YahooWebcam::sendImage()
 	origImg->close();
 	convertedImg->close();
 	
-	m_img->save( origImg->name(), "JPEG");
+	m_img->save( origImg->fileName(), "JPEG");
 	
 	KProcess p;
 	p << "jasper";
-	p << "--input" << origImg->name() << "--output" << convertedImg->name() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
+	p << "--input" << origImg->fileName() << "--output" << convertedImg->fileName() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
 	
 	
 	p.start( KProcess::Block );
@@ -110,7 +114,7 @@ void YahooWebcam::sendImage()
 	}
 	else
 	{
-		QFile file( convertedImg->name() );
+		QFile file( convertedImg->fileName() );
 		if( file.open( QIODevice::ReadOnly ) )
 		{
 			QByteArray ar = file.readAll();

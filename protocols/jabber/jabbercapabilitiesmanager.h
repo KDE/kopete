@@ -97,10 +97,10 @@ public slots:
 private slots:
 	/**
 	 * @brief Called when a reply to disco#info request was received.
-	 * If the result was succesful, the resulting features are recorded in the
+	 * If the result was successful, the resulting features are recorded in the
 	 * features database for the requested node, and all the affected jids are
 	 * put in the queue for update notification.
-	 * If the result was unsuccesful, another jid with the same capabilities is
+	 * If the result was unsuccessful, another jid with the same capabilities is
 	 * selected and sent a disco#info query.
 	 */
 	void discoRequestFinished();

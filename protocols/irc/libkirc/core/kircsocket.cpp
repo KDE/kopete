@@ -163,7 +163,7 @@ void Socket::connectToServer(const KUrl &url)
 
 	if (port == -1)
 	{
-		// Make the port beeing guessed by the socket (look into /etc/services) 
+		// Make the port being guessed by the socket (look into /etc/services)
 		//port = url.scheme();
 		;
 	}

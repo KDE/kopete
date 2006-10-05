@@ -327,7 +327,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
-		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*, int)) );
+		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTemporaryFile*, int)) );
 
 		QObject::connect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
 
@@ -454,7 +454,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(webcamViewerRequest(const QString&)), this, SLOT(slotWebcamViewerRequest( const QString&)));
 		
-		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
+		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTemporaryFile*,int )));
 
 		QObject::disconnect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
 	
@@ -1599,7 +1599,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 		m_session->downloadPicture( who, url, checksum );
 }
 
-void YahooAccount::slotGotBuddyIcon( const QString &who, KTempFile *file, int checksum )
+void YahooAccount::slotGotBuddyIcon( const QString &who, KTemporaryFile *file, int checksum )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );

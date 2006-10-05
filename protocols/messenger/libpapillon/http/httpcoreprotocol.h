@@ -34,7 +34,7 @@ class HttpTransfer;
 /**
  * @brief Translate raw data into HttpTransfer
  * The sole purpose of this class is to parse in a low-level way the HTTP protocol.
- * it create a HttpTransfer that will be usuable afterwards.
+ * it create a HttpTransfer that will be useable afterwards.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  * @author SuSE Linux AG

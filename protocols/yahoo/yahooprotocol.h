@@ -113,7 +113,7 @@ public:
 	const Kopete::ContactPropertyTmpl	propWorkPhone;
 	const Kopete::ContactPropertyTmpl	propWorkURL;
 
-	// Miscellanous
+	// Miscellaneous
 	const Kopete::ContactPropertyTmpl	propBirthday;
 	const Kopete::ContactPropertyTmpl	propAnniversary;
 	const Kopete::ContactPropertyTmpl	propNotes;

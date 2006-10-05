@@ -100,7 +100,7 @@ QString KopeteIface::messageContact( const QString &contactId, const QString &me
 		return "The contact is not reachable";
 	
 	//Default return value
-	return QString::null;
+	return QString();
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KUrl &sourceURL,

@@ -82,7 +82,6 @@
 #include "kopetegroup.h"
 #include "kopetelistviewsearchline.h"
 #include "kopetechatsessionmanager.h"
-#include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
@@ -117,14 +116,12 @@ public:
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
 	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), editGlobalIdentityWidget(0),
 	docked(0), hidden(false), deskRight(0), statusBarWidget(0), tray(0), autoHide(false),
-	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0), pluginConfig(0),
+	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0),
 	globalStatusMessage(0), globalStatusMessageMenu(0), newMessageEdit(0)
 	{}
 
 	~Private()
-	{
-		delete pluginConfig;
-	}
+	{}
 
 	KopeteContactListView *contactlist;
 
@@ -162,8 +159,6 @@ public:
 	unsigned int autoHideTimeout;
 	QTimer *autoHideTimer;
 	QSignalMapper *addContactMapper;
-
-	KopetePluginConfig *pluginConfig;
 
 	QHash<const Kopete::Account*, KopeteAccountStatusBarIcon*> accountStatusBarIcons;
 	KSqueezedTextLabel *globalStatusMessage;
@@ -260,7 +255,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	foreach(Kopete::Plugin *plug, plugins)
 		slotPluginLoaded( plug );
 
-	// If some account alrady loaded, build the status icon
+	// If some account already loaded, build the status icon
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 	foreach(Kopete::Account *a, accountList)
 		slotAccountRegistered( a );
@@ -325,9 +320,6 @@ void KopeteWindow::initActions()
 	d->statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
-	KAction *configurePluginAction = new KAction( KIcon("input_devices_settings"), i18n( "Configure Plugins..." ),
-		actionCollection(), "settings_plugins" );
-	connect( configurePluginAction, SIGNAL( triggered(bool) ), this, SLOT( slotConfigurePlugins() ) );
 
 	KAction *configureGlobalShortcutsAction = new KAction( KIcon("configure_shortcuts"), i18n( "Configure &Global Shortcuts..." ),
 		actionCollection(), "settings_global" );
@@ -356,13 +348,6 @@ void KopeteWindow::initActions()
 	quickSearch->setDefaultWidget( searchBar );
 	KAction *searchLabelAction = new KAction( i18n("Search:"), actionCollection(), "quicksearch_label" );
 	searchLabelAction->setDefaultWidget( searchLabel );
-
-	// quick search bar - clear button
-	KAction *resetQuickSearch = new KAction( QApplication::isRightToLeft() ? KIcon("clear_left") : KIcon("locationbar_erase"), i18n( "Reset Quick Search" ),
-		actionCollection(), "quicksearch_reset" );
-	connect( resetQuickSearch, SIGNAL( triggered(bool) ),  searchBar, SLOT( clear() ) );
-	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
-		"Resets the quick search so that all contacts and groups are shown again." ) );
 
 	// Edit global identity widget/bar
 	d->editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
@@ -589,17 +574,6 @@ void KopeteWindow::slotContactListAppearanceChanged()
 void KopeteWindow::slotConfNotifications()
 {
 	KNotifyConfigWidget::configure( this );
-}
-
-void KopeteWindow::slotConfigurePlugins()
-{
-	if ( !d->pluginConfig )
-		d->pluginConfig = new KopetePluginConfig( this );
-	d->pluginConfig->show();
-
-	d->pluginConfig->raise();
-
-	KWin::activateWindow( d->pluginConfig->winId() );
 }
 
 void KopeteWindow::slotConfGlobalKeys()

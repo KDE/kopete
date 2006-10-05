@@ -185,7 +185,7 @@ private slots:
 	void slotGotLastActivity ();
 
 	/**
-	 * Display a error message if the vCard sent was unsuccesful.
+	 * Display a error message if the vCard sent was unsuccessful.
 	 */
 	void slotSentVCard();
 	

@@ -26,14 +26,14 @@
 
 namespace Kopete { class Account; }
 namespace Ui { class YahooVerifyAccountBase; }
-class KTempFile;
+class KTemporaryFile;
 
 class YahooVerifyAccount : public KDialog
 {
 	Q_OBJECT
 private:
 	Kopete::Account *mTheAccount;
-	KTempFile *mFile;
+	KTemporaryFile *mFile;
 	Ui::YahooVerifyAccountBase *mTheDialog;
 public:
 	YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0);

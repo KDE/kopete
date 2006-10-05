@@ -143,18 +143,18 @@ int YMSGTransfer::paramCount( int index ) const
 }
 
 
-QByteArray YMSGTransfer::nthParam( int index, int occurence ) const
+QByteArray YMSGTransfer::nthParam( int index, int occurrence ) const
 {
 	int cnt = 0;
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
-		if( (*it).first == index && cnt++ == occurence)
+		if( (*it).first == index && cnt++ == occurrence)
 			return (*it).second;
 	}
 	return QByteArray();
 }
 
-QByteArray YMSGTransfer::nthParamSeparated( int index, int occurence, int separator ) const
+QByteArray YMSGTransfer::nthParamSeparated( int index, int occurrence, int separator ) const
 {
 
 	int cnt = -1;
@@ -162,7 +162,7 @@ QByteArray YMSGTransfer::nthParamSeparated( int index, int occurence, int separa
 	{
 		if( (*it).first == separator )
 			cnt++;
-		if( (*it).first == index && cnt == occurence)
+		if( (*it).first == index && cnt == occurrence)
 			return (*it).second;
 	}
 	return QByteArray();

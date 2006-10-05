@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 #include <qdir.h>
 
@@ -48,7 +48,7 @@
 
 struct JavaScriptPreferences::Private {
 	JavaScriptConfig *config;
-	KTempFile *tempFile;
+	KTemporaryFile *tempFile;
 	JavaScriptFile *currentScript;
 	KDialog *addScriptDialog;
 //	JavaScriptDialog *nameDialog;
@@ -61,7 +61,7 @@ class ScriptItem
 	: public QCheckListItem
 {
 public:
-	ScriptItem( QListView *parent, Script *m_script, QObject *reciever, const char* slot ) :
+	ScriptItem( QListView *parent, Script *m_script, QObject *receiver, const char* slot ) :
 		QCheckListItem( parent, m_script->name, QCheckListItem::CheckBox ),
 		script( m_script )
 	{
@@ -70,7 +70,7 @@ public:
 		setText( 3, script->author );
 		setEnabled( !script->immutable );
 
-//		sig.connect( reciever, slot );
+//		sig.connect( receiver, slot );
 //		sig.setValue( (int)this );
 		lockSig = false;
 	}

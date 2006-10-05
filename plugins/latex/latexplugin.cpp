@@ -25,7 +25,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kprocess.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
 
@@ -217,10 +217,12 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 
 QString LatexPlugin::handleLatex(const QString &latexFormula)
 {
-	KTempFile *tempFile=new KTempFile( KStandardDirs::locateLocal( "tmp", "kopetelatex-" ), ".png" );
-	tempFile->setAutoDelete(true);
+	KTemporaryFile *tempFile=new KTemporaryFile();
+	tempFile->setPrefix("kopetelatex-");
+	tempFile->setSuffix(".png");
+	tempFile->open();
 	m_tempFiles.append(tempFile);
-	QString fileName = tempFile->name();
+	QString fileName = tempFile->fileName();
 
 	KProcess p;
 			

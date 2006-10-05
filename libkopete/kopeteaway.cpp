@@ -276,7 +276,7 @@ QString Kopete::Away::getMessage( uint messageNumber )
 		return msg;
 	}
 	else
-		return QString::null;
+		return QString();
 }
 
 void Kopete::Away::addMessage(const QString &message)

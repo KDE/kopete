@@ -101,7 +101,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 
 	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
-		client()->notifyError( i18n("An unknown error has occured."), customError, Client::Warning );
+		client()->notifyError( i18n("An unknown error has occurred."), customError, Client::Warning );
 
 	myNick = t->firstParam( 1 );
 	

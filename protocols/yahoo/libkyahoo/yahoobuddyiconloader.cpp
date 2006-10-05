@@ -20,7 +20,7 @@
 
 // KDE Includes
 #include <kdebug.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -55,8 +55,10 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 	m_jobs[transfer].url = url;
 	m_jobs[transfer].who = who;
 	m_jobs[transfer].checksum = checksum;
-	m_jobs[transfer].file = new KTempFile( KStandardDirs::locateLocal( "tmp", "yahoobuddyicon-" ), ext );
-	m_jobs[transfer].file->setAutoDelete( true );
+	m_jobs[transfer].file = new KTemporaryFile();
+	m_jobs[transfer].file->setPrefix( "yahoobuddyicon-" );
+	m_jobs[transfer].file->setSuffix( ext );
+	m_jobs[transfer].file->open();
 
 }
 
@@ -68,7 +70,7 @@ void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if( m_jobs[transfer].file )
-		m_jobs[transfer].file->file()->write( data.data() , data.size() );
+		m_jobs[transfer].file->write( data.data() , data.size() );
 
 }
 
@@ -80,9 +82,9 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occurred while downloading buddy icon." << endl;
 		if( m_client )
-			m_client->notifyError( i18n( "An error occured while downloading buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
+			m_client->notifyError( i18n( "An error occurred while downloading buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
 	}
 	else
 	{
@@ -93,9 +95,9 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 		}
 		else
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Fatal Error! IconLoadJob has an empty KTempFile pointer." << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Fatal Error! IconLoadJob has an empty KTemporaryFile pointer." << endl;
 			if( m_client )
-				m_client->notifyError( i18n( "Fatal Error occured while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTempFile pointer." ), Client::Info );
+				m_client->notifyError( i18n( "Fatal Error occurred while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTemporaryFile pointer." ), Client::Info );
 		}
 	}
 

@@ -130,3 +130,12 @@ Reference
 ==========
 
 [1] libeva is named after Eva project, since it is almost a re-writen Eva library. 
+
+======
+NOTE
+======
+Rename CGT to  GroupInfo
+Rename cgts to groupInfos
+Add contactDetail skeleton.
+Rename userInfo to contactInfo, but still using UserInfo as the command. Shall we use Eva::Command::ContactInfo instead?
+

@@ -84,14 +84,15 @@ public:
 	/**
 	 * Returns the address of the QQ server
 	 */
-	QString serverName();
+	QString serverName() 
+	{ return configGroup()->readEntry(  "serverName" , "tcpconn.tencent.com" ); }
 
 	/**
 	 * Returns the address of the QQ server port
 	 */
-	uint serverPort();
+	uint serverPort()
+	{ return configGroup()->readEntry(  "serverPort" , 80 ); }
 
-	QQNotifySocket* notifySocket();
 
 	/**
 	 * Returns the online status from Eva status
@@ -102,13 +103,13 @@ public:
 
 	void sendInvitation(const QString& guid, const QString& id, const QString& message );
 	void sendMessage(const QString& guid, Kopete::Message& message );
+	void getVCard( QQContact* contact );
 
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
 	 */
-	void receivedMessage( const QString &message );
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNewContactList();
 	void slotContactListed( const Eva::ContactInfo& ci );

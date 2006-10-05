@@ -297,7 +297,7 @@ void QQSocket::slotSocketClosed()
 QString QQSocket::getLocalIP()
 {
 	if ( !m_socket )
-		return QString::null;
+		return QString();
 
 	const KSocketAddress address = m_socket->localAddress();
 

@@ -1,8 +1,9 @@
 /*
     kcodecaction.cpp
 
-    Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
+    Copyrigth (c) 2006      by Michel Hermier         <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -13,42 +14,121 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qstringlist.h>
-#include <qtextcodec.h>
 
 #include "kcodecaction.h"
 
-KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
-		QObject *parent, const char *name )
-	: KSelectAction( text, "", cut, parent, name )
+#include <kcharsets.h>
+#include <kdebug.h>
+#include <klocale.h>
+
+#include <qtextcodec.h>
+
+class KCodecAction::Private
 {
-	QObject::connect( this, SIGNAL( activated( int ) ),
-		this, SLOT(slotActivated( int )) );
+    QAction *defaultAction;
+#if 0
+    QAction *configureAction;
+#endif
+};
 
-	QTextCodec *codec;
-	QStringList items;
-
-	for (uint i = 0; ( codec = QTextCodec::codecForIndex(i) ); ++i)
-	{
-        	items.append( codec->name() );
-		codecMap.insert( i, codec );
-	}
-
-	setItems( items );
+KCodecAction::KCodecAction( KActionCollection *parent, const QString &name )
+    : KSelectAction( parent, name )
+    , d(new Private)
+{
+    init();
 }
 
-void KCodecAction::slotActivated(int index)
+KCodecAction::KCodecAction( const QString &text, KActionCollection *parent, const QString &name )
+    : KSelectAction( text, parent, name )
+    , d(new Private)
 {
-	emit activated(codecMap[index]);
+    init();
 }
 
-void KCodecAction::setCodec(QTextCodec *codec)
+KCodecAction::KCodecAction( const KIcon &icon, const QString &text, KActionCollection *parent, const QString &name )
+    : KSelectAction( icon, text, parent, name )
+    , d(new Private)
 {
-	for(Q3IntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it)
-	{
-		if(it.current() == codec)
-			setCurrentItem(it.currentKey());
-	}
+    init();
 }
 
+KCodecAction::~KCodecAction()
+{
+    delete d;
+}
+
+void KCodecAction::init()
+{
+#if 0
+    d->defaultAction = addAction(i18n("Default"));
+#endif
+    foreach(QString encodingName, KGlobal::charsets()->descriptiveEncodingNames())
+       addAction(encodingName);
+#if 0
+    addSeparator();
+    d->configureAction = addAction(i18n("Configure"));
+#endif
+    setCurrentItem(0);
+
+//    setEditable(true);
+}
+
+void KCodecAction::actionTriggered(QAction *action)
+{
+    // cache values so we don't need access to members in the action
+    // after we've done an emit()
+    bool ok = false;
+    KCharsets *charsets = KGlobal::charsets(); 
+    QString encoding = charsets->encodingForName(action->text());
+    QTextCodec *codec = charsets->codecForName(encoding, ok);
+
+    if (ok)
+    {
+        KSelectAction::actionTriggered(action);
+
+        emit triggered(codec);
+    }
+    else
+    {
+        kWarning() << k_funcinfo << "Invalid codec convertion for :\""  << action->text() << '"' << endl;
+//        Warn the user in the gui somehow
+    }
+}
+
+QTextCodec *KCodecAction::currentCodec() const
+{
+#warning Implement me
+    return 0;
+}
+/*
+bool KCodecAction::setCurrentCodec( QTextCodec *codec )
+{
+    if (codec)
+        return setCurrent(codec->name());
+    else
+        return false;
+}
+*/
+QString KCodecAction::currentCodecName() const
+{
+    return currentText();
+}
+
+bool KCodecAction::setCurrentCodec( const QString &codecName )
+{
+    return setCurrentAction(codecName, Qt::CaseInsensitive);
+}
+
+int KCodecAction::currentCodecMib() const
+{
+#warning Implement me
+    return 0;
+}
+/*
+bool KCodecAction::setCurrentCodec( int mib )
+{
+    return setCurrentCodec( QTextCodec::codecForMib(mib) );
+}
+*/
 #include "kcodecaction.moc"
+

@@ -28,7 +28,7 @@ class Client;
 /**
  * @brief Connection encapsulate a connection to a Windows Live Messenger service.
  *
- * Contains the transaction ID reference count, the root Task. Dispatch also the transfers throught the task.
+ * Contains the transaction ID reference count, the root Task. Dispatch also the transfers through the task.
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
 */

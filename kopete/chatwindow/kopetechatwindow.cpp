@@ -45,7 +45,7 @@
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwin.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
 #include <kstatusbar.h>
@@ -289,8 +289,6 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	if( backgroundFile )
 	{
-		backgroundFile->close();
-		backgroundFile->unlink();
 		delete backgroundFile;
 	}
 
@@ -827,12 +825,13 @@ void KopeteChatWindow::updateBackground( const QPixmap &pm )
 		updateBg = false;
 		if( backgroundFile != 0L )
 		{
-			backgroundFile->close();
-			backgroundFile->unlink();
+			delete backgroundFile;
 		}
 
-		backgroundFile = new KTempFile( QString::null, QLatin1String( ".bmp" ) );
-		pm.save( backgroundFile->name(), "BMP" );
+		backgroundFile = new KTemporaryFile();
+		backgroundFile->setSuffix(".bmp");
+		backgroundFile->open();
+		pm.save( backgroundFile, "BMP" );
 		QTimer::singleShot( 100, this, SLOT( slotEnableUpdateBg() ) );
 	}
 }

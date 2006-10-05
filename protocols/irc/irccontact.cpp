@@ -352,7 +352,7 @@ QString IRCContact::sendMessage(const QString &msg)
 
 	return newMessage;
 */
-	return QString::null;
+	return QString();
 }
 
 Contact *IRCContact::locateUser(const QString &nick)

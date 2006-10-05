@@ -489,7 +489,7 @@ void MeanwhileSession::resolveContactNickname(MeanwhileContact *contact)
 QString MeanwhileSession::getNickName(struct mwLoginInfo *logininfo)
 {
     if (logininfo == 0L || logininfo->user_name == 0L)
-        return QString::null;
+        return QString();
     return getNickName(logininfo->user_name);
 }
 

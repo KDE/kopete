@@ -202,7 +202,7 @@ protected slots:
 	void receiveContact( const ContactItem & );
 	/**
 	 * Called when we receive a CONTACT'S METADATA (including initial status) from the server side contact list,
-	 * or in response to an explicity query.  This is necessary to handle some events from the server.
+	 * or in response to an explicitly query.  This is necessary to handle some events from the server.
 	 * These events are queued in the account until the data arrives and then we handle the event.
 	 */
 	void receiveContactUserDetails( const GroupWise::ContactDetails & );

@@ -29,6 +29,7 @@ class ICQProtocol;
 namespace Ui {
 class ICQEditAccountUI;
 }
+class OscarPrivacyEngine;
 
 class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
@@ -37,6 +38,7 @@ Q_OBJECT
 public:
 	ICQEditAccountWidget(ICQProtocol *, Kopete::Account *,
 	                     QWidget *parent=0);
+	~ICQEditAccountWidget();
 	
 	virtual bool validateData();
 	virtual Kopete::Account *apply();
@@ -48,6 +50,11 @@ protected:
 	ICQAccount *mAccount;
 	ICQProtocol *mProtocol;
 	Ui::ICQEditAccountUI *mAccountSettings;
+	
+private:
+	OscarPrivacyEngine* m_visibleEngine;
+	OscarPrivacyEngine* m_invisibleEngine;
+	OscarPrivacyEngine* m_ignoreEngine;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

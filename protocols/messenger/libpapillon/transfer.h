@@ -80,7 +80,7 @@ public:
 	QString transactionId() const;
 	/**
 	 * Set the transaction ID.
-	 * The tranfer must be set to TransactionTransfer type.
+	 * The transfer must be set to TransactionTransfer type.
 	 * @param transactionId the Transaction ID.
 	 */
 	 void setTransactionId(const QString &transactionId);

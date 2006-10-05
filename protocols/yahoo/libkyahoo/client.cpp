@@ -476,8 +476,8 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 	if( !d->iconLoader )
 	{
 		d->iconLoader = new YahooBuddyIconLoader( this );
-		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )),
-				SIGNAL(pictureDownloaded(const QString&, KTempFile*,  int ) ) );
+		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTemporaryFile*, int )),
+				SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*,  int ) ) );
 	}
 
 	d->iconLoader->fetchBuddyIcon( QString(userId), KUrl(url), checksum );
@@ -636,7 +636,7 @@ void Client::getYahooChatRooms( Yahoo::ChatCategory category )
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following error occured: %1\n    Reason: %2\n    LogLevel: %3")
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << QString::fromLatin1("\nThe following error occurred: %1\n    Reason: %2\n    LogLevel: %3")
 		.arg(info).arg(errorString).arg(level) << endl;
 	d->errorString = errorString;
 	d->errorInformation = info;

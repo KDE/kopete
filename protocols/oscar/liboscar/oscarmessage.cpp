@@ -119,7 +119,7 @@ QString Oscar::Message::text( QTextCodec *codec ) const
 	default:
 		break; // Should never happen.
 	}
-	return QString::null;
+	return QString();
 	//FIXME: warn at least with kdWarning if an unrecognised encoding style was seen.
 }
 

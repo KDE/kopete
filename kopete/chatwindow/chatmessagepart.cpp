@@ -59,7 +59,7 @@
 #include <kmenu.h>
 #include <krun.h>
 #include <kstringhandler.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <kstdaction.h>
@@ -272,11 +272,11 @@ void ChatMessagePart::save()
 		return;
 
 	KUrl saveURL = dlg.selectedUrl();
-	KTempFile tempFile;
-	tempFile.setAutoDelete( true );
-	QFile* file = tempFile.file();
+	KTemporaryFile *tempFile = new KTemporaryFile();
+	tempFile->setAutoRemove(false);
+	tempFile->open();
 
-	QTextStream stream ( file );
+	QTextStream stream ( tempFile );
 	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 
 	if ( dlg.currentFilter() == QLatin1String( "text/plain" ) )
@@ -298,9 +298,11 @@ void ChatMessagePart::save()
 		stream << htmlDocument().toHTML() << '\n';
 	}
 
-	tempFile.close();
+	stream.flush();
+	QString fileName = tempFile->fileName();
+	delete tempFile;
 
-	if ( !KIO::NetAccess::move( KUrl( tempFile.name() ), saveURL ) )
+	if ( !KIO::NetAccess::move( KUrl( fileName ), saveURL ) )
 	{
 		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
 				i18n("<qt>Could not open <b>%1</b> for writing.</qt>", saveURL.prettyUrl() ), // Message
@@ -672,7 +674,7 @@ QString ChatMessagePart::textUnderMouse()
 {
 	DOM::Node activeNode = nodeUnderMouse();
 	if( activeNode.nodeType() != DOM::Node::TEXT_NODE )
-		return QString::null;
+		return QString();
 
 	DOM::Text textNode = activeNode;
 	QString data = textNode.data().string();

@@ -33,6 +33,7 @@ class Account;
 class AIMAccount;
 class AIMProtocol;
 namespace Ui { class aimEditAccountUI; }
+class OscarPrivacyEngine;
 
 class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
@@ -53,6 +54,10 @@ protected:
 	AIMAccount *mAccount;
 	AIMProtocol *mProtocol;
 	Ui::aimEditAccountUI *mGui;
+
+private:
+	OscarPrivacyEngine* m_visibleEngine;
+	OscarPrivacyEngine* m_invisibleEngine;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

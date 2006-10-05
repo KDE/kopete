@@ -149,7 +149,7 @@ public:
 signals:
 	/**
 	 * Emmited when the Task has finished.
-	 * Check if the task was succesful with success().
+	 * Check if the task was successful with success().
 	 *
 	 * @param task Pointer to the current Task.
 	 */

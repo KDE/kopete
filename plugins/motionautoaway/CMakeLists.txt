@@ -33,7 +33,7 @@ kde4_add_plugin(kcm_kopete_motionaway ${kcm_kopete_motionaway_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_motionaway )
 
-target_link_libraries(kcm_kopete_motionaway  ${KDE4_KDECORE_LIBS} kutils )
+target_link_libraries(kcm_kopete_motionaway  ${KDE4_KDECORE_LIBS} ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kcm_kopete_motionaway  DESTINATION ${PLUGIN_INSTALL_DIR})
 

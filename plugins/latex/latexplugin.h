@@ -30,7 +30,7 @@
 class QStringList;
 class QString;
 
-class KTempFile;
+class KTemporaryFile;
 
 namespace Kopete { class Message; class ChatSession; }
 
@@ -70,7 +70,7 @@ private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
 	bool mMagickNotFoundShown;
-	QList<KTempFile *> m_tempFiles;
+	QList<KTemporaryFile *> m_tempFiles;
 };
 
 #endif

@@ -635,13 +635,13 @@ QString nameFromKABC( const QString &id ) /*const*/
 		}
 	}
 	// no kabc association, return null image
-	return QString::null;
+	return QString();
 }
 
 QString nameFromContact( Kopete::Contact *c) /*const*/
 {
 	if ( !c )
-		return QString::null;
+		return QString();
 
 	QString contactName;
 	if ( c->hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
@@ -1013,10 +1013,10 @@ QString MetaContact::metaContactId() const
 	if(d->metaContactId.isEmpty())
 	{
 		if(d->contacts.isEmpty())
-			return QString::null;
+			return QString();
 		Contact *c=d->contacts.first();
 		if(!c)
-			return QString::null;
+			return QString();
 		return c->protocol()->pluginId()+QString::fromUtf8(":")+c->account()->accountId()+QString::fromUtf8(":") + c->contactId() ;
 	}
 	return d->metaContactId;

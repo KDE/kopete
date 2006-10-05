@@ -58,9 +58,9 @@ void IcqLoginTask::onGo()
 
 	const Oscar::ClientVersion* version = client()->version();
 	outbuf->addDWord( flapVersion );
-	outbuf->addTLV( 0x0001, client()->userId().length(), client()->userId().toLatin1() );
-	outbuf->addTLV( 0x0002, encodedPassword.length(), encodedPassword.toLatin1() );
-	outbuf->addTLV( 0x0003, version->clientString.length(), version->clientString.toLatin1() );
+	outbuf->addTLV( 0x0001, client()->userId().toLatin1() );
+	outbuf->addTLV( 0x0002, encodedPassword.toLatin1() );
+	outbuf->addTLV( 0x0003, version->clientString.toLatin1() );
 	outbuf->addTLV16( 0x0016, version->clientId );
 	outbuf->addTLV16( 0x0017, version->major );
 	outbuf->addTLV16( 0x0018, version->minor );
@@ -68,8 +68,8 @@ void IcqLoginTask::onGo()
 	outbuf->addTLV16(0x001a, version->build );
 	outbuf->addDWord( 0x00140004 ); //TLV type 0x0014, length 0x0004
 	outbuf->addDWord( version->other ); //TLV data for type 0x0014
-	outbuf->addTLV( 0x000f, version->lang.length(), version->lang.toLatin1() );
-	outbuf->addTLV( 0x000e, version->country.length(), version->country.toLatin1() );
+	outbuf->addTLV( 0x000f, version->lang.toLatin1() );
+	outbuf->addTLV( 0x000e, version->country.toLatin1() );
 
 	Transfer* ft = createTransfer( f, outbuf );
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICQ channel 0x01 login packet" << endl;

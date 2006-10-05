@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Handles incoming webcam connections
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 AndrÃ© Duffeck <andre.duffeck@kdemail.net>
 
     *************************************************************************
     *                                                                       *
@@ -25,7 +25,7 @@
 #include <QFile>
 #include <QTimer>
 #include <QPixmap>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kprocess.h>
 #include <kstreamsocket.h>
 #include <kdebug.h>
@@ -453,15 +453,19 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			QPixmap webcamImage;
 			//webcamImage.loadFromData( info->buffer->buffer() );
 	
-			KTempFile jpcTmpImageFile;
-			KTempFile bmpTmpImageFile;
-			QFile *file = jpcTmpImageFile.file();
-			file->write((info->buffer->buffer()).data(), info->buffer->size());
-			file->close();
+			KTemporaryFile jpcTmpImageFile;
+			jpcTmpImageFile.setAutoRemove(false);
+			jpcTmpImageFile.open();
+			KTemporaryFile bmpTmpImageFile;
+			bmpTmpImageFile.setAutoRemove(false);
+			bmpTmpImageFile.open();
+
+			jpcTmpImageFile.write((info->buffer->buffer()).data(), info->buffer->size());
+			jpcTmpImageFile.close();
 			
 			KProcess p;
 			p << "jasper";
-			p << "--input" << jpcTmpImageFile.name() << "--output" << bmpTmpImageFile.name() << "--output-format" << "bmp";
+			p << "--input" << jpcTmpImageFile.fileName() << "--output" << bmpTmpImageFile.fileName() << "--output-format" << "bmp";
 			
 			p.start( KProcess::Block );
 			if( p.exitStatus() != 0 )
@@ -470,12 +474,12 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			}
 			else
 			{
-				webcamImage.load( bmpTmpImageFile.name() );
+				webcamImage.load( bmpTmpImageFile.fileName() );
 				/******* UPTO THIS POINT ******/
 				emit webcamImageReceived( info->sender, webcamImage );
 			}
-			QFile::remove(jpcTmpImageFile.name());
-			QFile::remove(bmpTmpImageFile.name());
+			QFile::remove(jpcTmpImageFile.fileName());
+			QFile::remove(bmpTmpImageFile.fileName());
 	
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Image Received. Size: " << webcamImage.size() << endl;
 			}
@@ -523,8 +527,8 @@ void WebcamTask::closeWebcam( const QString & who )
 			return;
 		}
 	}
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error. You tried to close a connection that didn't exist." << endl;
-	client()->notifyError( i18n( "An error occured closing the webcam session. " ), i18n( "You tried to close a connection that didn't exist." ), Client::Debug );
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error. You tried to close a connection that did not exist." << endl;
+	client()->notifyError( i18n( "An error occurred closing the webcam session. " ), i18n( "You tried to close a connection that did not exist." ), Client::Debug );
 }
 
 

@@ -31,7 +31,7 @@ public:
 	virtual void error();
 
 	//for the display image
-	KTempFile *m_file;
+	KTemporaryFile *m_file;
 	QFile *m_Rfile;
 	QString m_obj;
 

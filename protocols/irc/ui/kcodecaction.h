@@ -2,8 +2,8 @@
    kcodecaction.h
 
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
-    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
-    Kopete    (c) 2003-2005 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2003-2006 by Michel Hermier         <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,27 +17,48 @@
 #ifndef KCODECACTION_H
 #define KCODECACTION_H
 
-#include <kaction.h>
+#include <kselectaction.h>
 
 class KCodecAction
 	: public KSelectAction
 {
 	Q_OBJECT
 
-public:
-	KCodecAction(const QString &text, const KShortcut &cut = KShortcut(),
-		QObject *parent = 0, const char *name = 0);
+	Q_PROPERTY(QString codecName READ currentCodecName WRITE setCurrentCodec)
+	Q_PROPERTY(int codecMib READ currentCodecMib)
 
-	void setCodec(QTextCodec *codec);
+public:
+	KCodecAction(KActionCollection *parent, const QString &name);
+
+	KCodecAction(const QString &text,
+		KActionCollection *parent, const QString &name);
+
+	KCodecAction(const KIcon &icon, const QString &text,
+		KActionCollection *parent, const QString &name);
+
+	virtual ~KCodecAction();
+
+public:
+	QTextCodec *currentCodec() const;
+//	bool setCurrentCodec(QTextCodec *codec);
+
+	QString currentCodecName() const;
+	bool setCurrentCodec(const QString &codecName);
+
+	int currentCodecMib() const;
+//	bool setCurrentCodec(int mib);
 
 signals:
-	void activated(QTextCodec *);
+	void triggered(QTextCodec *codec);
 
-private slots:
-	void slotActivated(int);
+protected slots:
+	virtual void actionTriggered(QAction *action);
 
 private:
-	QMap<quint32, QTextCodec *> codecMap;
+	void init();
+
+	class Private;
+	Private* const d;
 };
 
 #endif

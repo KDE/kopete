@@ -359,6 +359,18 @@ QList<OContact> ContactManager::invisibleList() const
 	return list;
 }
 
+QList<OContact> ContactManager::ignoreList() const
+{
+	QList<OContact> list;
+	
+	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
+	for ( it = d->contactList.begin(); it != listEnd; ++it )
+		if ( ( *it ).type() == ROSTER_IGNORE  )
+			list.append( ( *it ) );
+	
+	return list;
+}
+
 QList<OContact> ContactManager::contactsFromGroup( const QString &group ) const
 {
 	QList<OContact> list;

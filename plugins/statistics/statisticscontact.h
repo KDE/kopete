@@ -117,7 +117,7 @@ public:
 	 * Prevision methods
 	 */
 	/**
-// 	 * \brief Give informations on when the next event will occur
+// 	 * \brief Give information on when the next event will occur
 // 	 *
 // 	 * \param status the status to be checked.
 // 	 * \retval nextEventDateTime the next event average prevision datetime.

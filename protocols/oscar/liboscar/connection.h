@@ -109,7 +109,7 @@ public:
 	 * Indicate to the connection that there has been an error in a task. The
 	 * error won't require us to go offline, but the user should be notified
 	 * about the error
-	 * \param s the SNAC the error occured from
+	 * \param s the SNAC the error occurred from
 	 * \param errCode the error code
 	 */
 	void taskError( const Oscar::SNAC& s, int errCode );
@@ -119,7 +119,7 @@ public:
 	 * This error will require a disconnection from the OSCAR service and if
 	 * necessary, the user should be prompted to reconnect manually or an
 	 * automatic reconnection should be attempted.
-	 * \param s the SNAC the error occured from
+	 * \param s the SNAC the error occurred from
 	 * \param errCode the error code
 	 */
 	void fatalTaskError( const Oscar::SNAC& s, int errCode );
