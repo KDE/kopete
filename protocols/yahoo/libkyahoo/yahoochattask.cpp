@@ -157,7 +157,7 @@ void YahooChatTask::slotChatRoomsComplete( KJob *job )
 	{
 		QDomDocument doc;
 		doc.setContent( m_jobs[ transfer ].data );
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString() << endl;
+// 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString() << endl;
 		emit gotYahooChatRooms( m_jobs[ transfer ].category, doc );
 	}
 

@@ -60,7 +60,7 @@ public:
 
 Q_SIGNALS:
 	void gotYahooChatCategories( const QDomDocument & );
-	void gotYahooChatRooms( const Yahoo::ChatCategory &category, const QDomDocument & );
+	void gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & );
 
 private:
 	void login();

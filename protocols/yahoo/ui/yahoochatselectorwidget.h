@@ -41,6 +41,7 @@ private Q_SLOTS:
 	void slotCategorySelectionChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
 private:
 	void parseChatCategory( const QDomNode &, QTreeWidgetItem * );
+	void parseChatRoom( const QDomNode & );
 
 	Ui_YahooChatSelectorWidgetBase *mUi;
 };

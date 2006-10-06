@@ -165,6 +165,7 @@ namespace Yahoo
 
 	struct ChatRoom {
 		QString name;
+		QString topic;
 		int id;
 	};
 

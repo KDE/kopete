@@ -843,7 +843,7 @@ void Client::initTasks()
 	d->yahooChatTask = new YahooChatTask( d->root );
 	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatCategories( const QDomDocument & )),
 				SIGNAL(gotYahooChatCategories( const QDomDocument & )) );
-	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &category, const QDomDocument & )),
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
 				SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
 }
 
