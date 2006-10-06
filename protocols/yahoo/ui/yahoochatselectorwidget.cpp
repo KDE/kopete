@@ -135,7 +135,13 @@ void YahooChatSelectorWidget::parseChatRoom( const QDomNode &node )
 
 Yahoo::ChatRoom YahooChatSelectorWidget::selectedRoom()
 {
-	
+	Yahoo::ChatRoom room;
+	QTreeWidgetItem *item = mUi->treeRooms->selectedItems().first();
+	room.name =  item->text( 0 );
+	room.topic = item->data( 0, Qt::ToolTipRole ).toString();
+	room.id = item->data( 0, Qt::UserRole ).toInt();
+
+	return room;
 }
 
 #include "yahoochatselectorwidget.moc"
