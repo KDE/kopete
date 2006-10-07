@@ -213,13 +213,11 @@ void WebcamTask::slotRead()
 	{
 		case ConnectedStage1:
 			disconnect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Connected into stage 1" << endl;
 			connectStage2( socket );
 		break;
 		case ConnectedStage2:
 		case Sending:
 		case SendingEmpty:
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Connected into stage 2" << endl;
 			processData( socket );
 		default:
 		break;
@@ -278,7 +276,6 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 
 void WebcamTask::processData( KStreamSocket *socket )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray data( socket->bytesAvailable() );
 	
 	socket->readBlock ( data.data (), data.size () );
@@ -293,7 +290,6 @@ void WebcamTask::processData( KStreamSocket *socket )
 
 void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.size() << " bytes " << endl;
 	uint headerLength = 0;
 	uint read = 0;
 	YahooWebcamInformation *info = &socketMap[socket];
@@ -398,9 +394,17 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	}
 	
 	if( info->dataLength <= 0 )
+	{
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "No data to read. (info->dataLength <= 0)" << endl;
+		if( info->headerRead )
+			info->headerRead = false;
 		return;
+	}
 	if( headerLength >= data.size() )
+	{
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "No data to read. (headerLength >= data.size())" << endl;
 		return;		//Nothing to read here...
+	}
 	if( !info->buffer )
 	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffer created" << endl;
