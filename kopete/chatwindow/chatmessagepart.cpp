@@ -568,9 +568,23 @@ const QString ChatMessagePart::styleHTML() const
 {
 	KopetePrefs *p = KopetePrefs::prefs();
 
+	int fontSize = 0;
+	QString fontSizeCss;
+	// Use correct font size unit, depending of how the QFont was build.
+	if( p->fontFace().pointSize() != -1 )
+	{
+		fontSize = p->fontFace().pointSize();
+		fontSizeCss = QString::fromUtf8("%1pt;").arg(fontSize);
+	}
+	else if( p->fontFace().pixelSize() != -1 )
+	{
+		fontSize = p->fontFace().pixelSize();
+		fontSizeCss = QString::fromUtf8("%1px;").arg(fontSize);
+	}
+
 	QString style = QString::fromLatin1(
-		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4}"
-		"td{font-family:%5;font-size:%6pt;color:%7}"
+		"body{background-color:%1;font-family:%2;font-size:%3;color:%4}"
+		"td{font-family:%5;font-size:%6;color:%7}"
 		"a{color:%8}a.visited{color:%9}"
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
 		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
@@ -578,10 +592,10 @@ const QString ChatMessagePart::styleHTML() const
 		".KopeteMessageBody > p:first-child{margin:0;padding:0;display:inline;}" /* some html messages are encapsuled into a <p> */ )
 		.arg( p->bgColor().name() )
 		.arg( p->fontFace().family() )
-		.arg( p->fontFace().pointSize() )
+		.arg( fontSizeCss )
 		.arg( p->textColor().name() )
 		.arg( p->fontFace().family() )
-		.arg( p->fontFace().pointSize() )
+		.arg( fontSizeCss )
 		.arg( p->textColor().name() )
 		.arg( p->linkColor().name() )
 		.arg( p->linkColor().name() );

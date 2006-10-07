@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Lead Developer, AIM and ICQ plugin maintainer"), "mattr@kde.org" );
 	aboutData.addAuthor ( "Michel Hermier", I18N_NOOP("IRC plugin maintainer"), "michel.hermier@wanadoo.fr" );
-	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Lead Developer"), "michael.larouche@kdemail.net", "http://mlarouche.blogspot.com" );
+	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Lead Developer"), "larouche@kde.org", "http://www.tehbisnatch.org/" );
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Lead Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
 	aboutData.addAuthor ( "Ollivier Lapeyre Johann", I18N_NOOP("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
 	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );

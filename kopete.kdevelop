@@ -19,7 +19,7 @@
       <part>kdevsnippet</part>
       <part>kdevdebugger</part>
       <part>kdevdistpart</part>
-      <part>kdevvalgrind</part>
+      <part>kdevquickopen</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
@@ -125,14 +125,14 @@
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
       </envvars>
       <abortonerror>true</abortonerror>
-      <numberofjobs>2</numberofjobs>
+      <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin>unsermake --compile-jobs=30</makebin>
+      <makebin>make</makebin>
       <prio>0</prio>
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>protocols/groupwise/kopete_groupwise.la</activetarget>
+      <activetarget>libkopete/avdevice/libkopete_videodevice.la</activetarget>
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>
@@ -145,9 +145,9 @@
     </run>
     <configurations>
       <default>
-        <configargs>--enable-debug=full --enable-libsuffix=64</configargs>
-        <builddir>/space/kde/builds/opt_3_5/kdenetwork/kopete</builddir>
-        <topsourcedir>/space/kde/sources/3_5/kdenetwork/kopete</topsourcedir>
+        <configargs>--enable-debug=full</configargs>
+        <builddir/>
+        <topsourcedir/>
         <cppflags/>
         <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
@@ -205,6 +205,14 @@
       <argumentsHintDelay>100</argumentsHintDelay>
       <automaticHeaderCompletion>true</automaticHeaderCompletion>
       <headerCompletionDelay>250</headerCompletionDelay>
+      <showOnlyAccessibleItems>false</showOnlyAccessibleItems>
+      <completionBoxItemOrder>0</completionBoxItemOrder>
+      <howEvaluationContextMenu>true</howEvaluationContextMenu>
+      <showCommentWithArgumentHint>true</showCommentWithArgumentHint>
+      <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
+      <namespaceAliases>std=_GLIBCXX_STD</namespaceAliases>
+      <processPrimaryTypes>true</processPrimaryTypes>
+      <processFunctionArguments>false</processFunctionArguments>
     </codecompletion>
     <references/>
     <creategettersetter>
@@ -215,11 +223,12 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
-    <qt>
-      <used>false</used>
-      <version>3</version>
-      <root>/home/qt/3.3</root>
-    </qt>
+    <designerintegration>
+      <qtdesigner>
+        <implementation class="dlgChatJoin" path="protocols/jabber/ui/dlgchatjoin.ui" implementationpath="protocols/jabber/ui/dlgchatjoin.h" />
+        <implementation class="dlgChatRoomsList" path="protocols/jabber/ui/dlgchatroomslist.ui" implementationpath="protocols/jabber/ui/dlgchatroomslist.h" />
+      </qtdesigner>
+    </designerintegration>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>
