@@ -1,7 +1,7 @@
 /*
    contactlistmanager.cpp - Windows Live Messenger Contact List
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

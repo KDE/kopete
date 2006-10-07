@@ -1,7 +1,7 @@
 /*
    soapactions.h - Helper functions to create SOAP actions.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

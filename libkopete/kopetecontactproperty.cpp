@@ -4,7 +4,7 @@
     Kopete::Contact Property class
 
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
-    Copyright (c) 2006    by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright (c) 2006    by Michaël Larouche <larouche@kde.org>
 
     Kopete    (c) 2004-2006    by the Kopete developers <kopete-devel@kde.org>
 

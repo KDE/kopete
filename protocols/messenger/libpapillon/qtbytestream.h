@@ -1,7 +1,7 @@
 /*
    qtbytestream.h - ByteStream using QtNetwork's QTcpSocket.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

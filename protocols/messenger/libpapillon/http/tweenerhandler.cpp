@@ -1,7 +1,7 @@
 /*
    tweenerhandler.cpp - Negociation with Passport to get the login ticket.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

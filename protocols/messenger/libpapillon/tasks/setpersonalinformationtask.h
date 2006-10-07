@@ -1,7 +1,7 @@
 /*
    setpersonalinformationtask.h - Set personal information for myself contact.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -37,7 +37,7 @@ namespace Papillon
  * setInfo->go(Task::AutoDelete);
  * @endcode
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT SetPersonalInformationTask : public Papillon::Task
 {

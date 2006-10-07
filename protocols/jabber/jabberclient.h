@@ -4,7 +4,7 @@
                              -------------------
     begin                : Sat May 25 2005
     copyright            : (C) 2005 by Till Gerken <till@tantalo.net>
-                           (C) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+                           (C) 2006 by Michaël Larouche <larouche@kde.org>
 
     Copyright 2006 by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 

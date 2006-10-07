@@ -1,7 +1,7 @@
 /*
  * telepathycontact.h - Telepathy Kopete Contact.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *

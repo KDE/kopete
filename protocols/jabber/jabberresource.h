@@ -1,7 +1,7 @@
  /*
   * jabberresource.h
   *
-  * Copyright (c) 2005-2006 by Michaël Larouche <michael.larouche@kdemail.net>
+  * Copyright (c) 2005-2006 by Michaël Larouche <larouche@kde.org>
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
   *
   * Kopete    (c) 2001-2006 by the Kopete developers  <kopete-devel@kde.org>

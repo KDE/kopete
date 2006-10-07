@@ -1,7 +1,7 @@
 /*
    httpcoreprotocol_test.h - Test reconstitution of incoming packets for HTTP
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

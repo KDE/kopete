@@ -1,7 +1,7 @@
 /*
    logintask.h - Windows Live Messenger Login Task
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -38,7 +38,7 @@ class TweenerHandler;
  * Use success() to check if the login was successful.
  *
  * Use loginState() to check for the error if the login wasn't successful.
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class PAPILLON_EXPORT LoginTask : public Task
 {

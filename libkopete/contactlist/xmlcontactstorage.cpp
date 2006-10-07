@@ -2,7 +2,7 @@
     Kopete Contact List XML Storage Class
 
     Copyright  2006      by Matt Rogers <mattr@kde.org>
-    Copyright  2006      by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright  2006      by Michaël Larouche <larouche@kde.org>
     Copyright  2006      by Roman Jarosz <kedgedev@centrum.cz>
 
     Kopete     2002-2006 by the Kopete developers <kopete-devel@kde.org>

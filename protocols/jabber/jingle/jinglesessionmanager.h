@@ -1,7 +1,7 @@
 /*
     jinglesessionmanager.h - Manage Jingle sessions.
 
-    Copyright (c) 2006      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright (c) 2006      by Michaël Larouche     <larouche@kde.org>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -34,7 +34,7 @@ class JabberAccount;
 
 /**
  * @brief Manage Jingle sessions. 
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class JingleSessionManager : public QObject
 {

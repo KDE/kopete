@@ -2,7 +2,7 @@
     chatmessagepart.h - Chat Message KPart
 
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
-    Copyright (c) 2005      by Michaël Larouche      <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 

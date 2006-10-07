@@ -1,7 +1,7 @@
 /*
    tweenerhandler.h - Negociation with Passport to get the login ticket.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -39,7 +39,7 @@ class SecureStream;
  *
  * If success() return false, assume that the password was bad.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class PAPILLON_EXPORT TweenerHandler : public QObject
 {

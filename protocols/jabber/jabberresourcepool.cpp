@@ -2,7 +2,7 @@
   * jabberresourcepool.cpp
   *
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
-  * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *

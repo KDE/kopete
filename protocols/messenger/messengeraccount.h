@@ -1,7 +1,7 @@
 /*
  * messengeraccount.h - Windows Live Messenger Kopete Account.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -31,7 +31,7 @@ namespace Kopete
 class MessengerProtocol;
 
 /**
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class MessengerAccount : public Kopete::PasswordedAccount
 {

@@ -1,7 +1,7 @@
 /*
    securestream.h - Secure stream based on TLS/SSL.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -27,7 +27,7 @@ class Connector;
  * @brief Secure stream using TLS/SSL (Transport Layer Security/Secure Socket Layer)
  * This is used in Messenger context to retrieve MS Passport ticket for login, and retrieve Contact List from a Web Service.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT SecureStream : public QObject
 {

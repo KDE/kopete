@@ -1,7 +1,7 @@
 /*
    papillonstatusmessage.cpp - Dynamic Personal Status Message for Windows Live Messenger.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

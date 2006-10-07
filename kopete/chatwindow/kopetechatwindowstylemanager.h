@@ -1,7 +1,7 @@
  /*
     kopetechatwindowstylemanager.h - Manager all chat window styles
 
-    Copyright (c) 2005      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -41,7 +41,7 @@ class ChatWindowStyle;
  * If you want to keep a trace of avaiable styles, connect to loadStylesFinished() signal. 
  * It is called when KDirLister finish a job(ex: on new directory).
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class KOPETE_EXPORT ChatWindowStyleManager : public QObject
 {

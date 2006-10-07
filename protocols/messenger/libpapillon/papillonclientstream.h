@@ -1,7 +1,7 @@
 /*
    papillonclientstream.h - Represent a stream with a Messenger service.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -27,7 +27,7 @@ class Transfer;
 /**
  * @brief A client stream to a Messenger service.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class PAPILLON_EXPORT ClientStream : public Stream
 {

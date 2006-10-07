@@ -1,7 +1,7 @@
 /*
  * telepathyprotocol.h - Windows Live Telepathy Kopete protocol definition.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -34,7 +34,7 @@ class KopeteEditAccountWidget;
 
 /**
  * 
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class KOPETE_EXPORT TelepathyProtocol : public Kopete::Protocol
 {

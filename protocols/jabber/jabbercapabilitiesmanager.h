@@ -1,7 +1,7 @@
  /*
     jabbercapabilitiesmanager.h - Manage entity capabilities(JEP-0115) pool.
 
-    Copyright (c) 2006      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright (c) 2006      by Michaël Larouche     <larouche@kde.org>
     Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -37,7 +37,7 @@ class JabberAccount;
 
 /**
  * @brief Manage Jabber entity capabilities (JEP-0115)
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  * @author Remko Troncon
  */
 class JabberCapabilitiesManager : public QObject

@@ -1,7 +1,7 @@
 /*
    contactinfo.cpp - Information for a Windows Live Messenger contact.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

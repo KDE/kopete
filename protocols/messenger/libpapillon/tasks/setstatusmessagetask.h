@@ -1,7 +1,7 @@
 /*
    setstatusmessagetask.h - Set status message on server.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -33,7 +33,7 @@ class StatusMessage;
  * setStatus->go(Task::AutoDelete);
  * @endcode
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT SetStatusMessageTask : public Papillon::Task
 {

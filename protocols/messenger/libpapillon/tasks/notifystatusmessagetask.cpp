@@ -1,7 +1,7 @@
 /*
    notifystatusmessagetask.cpp - Notify contact status message changes.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

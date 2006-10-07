@@ -1,7 +1,7 @@
 /*
    transfer.h - Represent a transfer between the Messenger server.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

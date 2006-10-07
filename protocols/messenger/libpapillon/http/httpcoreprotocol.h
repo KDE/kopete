@@ -1,7 +1,7 @@
 /*
    httpcoreprotocol.h - HTTP core protocol for Papillon 
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    Based on code copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
    Based on Iris, Copyright (C) 2003  Justin Karneges
@@ -36,7 +36,7 @@ class HttpTransfer;
  * The sole purpose of this class is to parse in a low-level way the HTTP protocol.
  * it create a HttpTransfer that will be useable afterwards.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  * @author SuSE Linux AG
  * @author Justin Karneges
  */

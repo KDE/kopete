@@ -1,7 +1,7 @@
 /*
    notifymessagetask.h - Notify about new messages on Notification server.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -31,7 +31,7 @@ class MimeHeader;
  * -Initial new email notification (for Hotmail)
  * -Email and Hotmail notifications.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class PAPILLON_EXPORT NotifyMessageTask : public Papillon::Task
 {

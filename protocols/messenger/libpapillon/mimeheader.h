@@ -1,7 +1,7 @@
 /*
    mimeheader.h - Create/Manage a MIME header.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -31,7 +31,7 @@ namespace Papillon
  * It doesn't support the full MIME header, only the things required for Windows Live Messenger.
  *
  * This class is implicit shared.
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class PAPILLON_EXPORT MimeHeader
 {

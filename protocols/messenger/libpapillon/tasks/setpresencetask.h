@@ -1,7 +1,7 @@
 /*
    setpresencetask.h - Set our own presence on Windows Live Messenger service.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -35,7 +35,7 @@ namespace Papillon
  * presenceTask->go(true);
  * @endcode
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT SetPresenceTask : public Papillon::Task
 {

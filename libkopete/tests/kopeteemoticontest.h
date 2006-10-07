@@ -3,7 +3,7 @@
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
-    Copyright (c) 2006      by Michael Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2006      by Michael Larouche       <larouche@kde.org>
 
     Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 

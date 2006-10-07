@@ -2,7 +2,7 @@
     kopetepluginconfig.cpp - Configure the Kopete plugins
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2006      by Michaël Larouche      <michael.larouche@kdemail.net>
+    Copyright (c) 2006      by Michaël Larouche      <larouche@kde.org>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
