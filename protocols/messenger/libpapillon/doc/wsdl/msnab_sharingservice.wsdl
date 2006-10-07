@@ -1,64 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 	Reverse engineered MSN AddressBook webservice WSDL definition
-	
+
 	by Michaël Larouche <michael.larouche@kdemail.net>
-	Latest update: 25 June 2006
+	and Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 27 July 2006
 -->
 <definitions targetNamespace="http://www.msn.com/webservices/AddressBook"
 			xmlns:msnab="http://www.msn.com/webservices/AddressBook"
 			xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 			xmlns="http://schemas.xmlsoap.org/wsdl/">
-	
+
 	<types>
 		<schema xmlns="http://www.w3.org/2001/XMLSchema">
 			<import namespace="http://www.msn.com/webservices/AddressBook" schemaLocation="msnab_servicetypes.xsd" />
 		</schema>
 	</types>
-	
+
 	<message name="ABHeader">
 		<part name="ApplicationHeader" element="msnab:ABApplicationHeader" />
 		<part name="AuthHeader" element="msnab:ABAuthHeader" />
 	</message>
-	
+
 	<message name="FindMembershipMessage">
 		<part name="FindMembershipRequest" element="msnab:FindMembership" />
 	</message>
-	
-	<message name="ServiceHeader">
-		<part name="serviceHeader" element="msnab:ServiceHeader" />
+
+	<message name="ABFindAllMessage">
+		<part name="ABFindAllRequest" element="msnab:ABFindAll" />
 	</message>
-	
+
+	<message name="ServiceHeader">
+		<part name="ServiceHeader" element="msnab:ServiceHeader" />
+	</message>
+
 	<message name="FindMembershipResponseMessage">
 		<part name="FindMembershipResponse" element="msnab:FindMembershipResponse" />
 	</message>
-	
+
+	<message name="ABFindAllResponseMessage">
+		<part name="ABFindAllResponse" element="msnab:ABFindAllResponse" />
+	</message>
+
 	<portType name="SharingServicePortType">
 		<operation name="FindMembership">
 			<input message="msnab:FindMembershipMessage" />
 			<output message="msnab:FindMembershipResponseMessage" />
 		</operation>
 	</portType>
-	
+
+	<portType name="ABServicePortType">
+		<operation name="ABFindAll">
+			<input message="msnab:ABFindAllMessage" />
+			<output message="msnab:ABFindAllResponseMessage" />
+		</operation>
+	</portType>
+
 	<binding name="SharingServiceBinding" type="msnab:SharingServicePortType">
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<operation name="FindMembership">
-			<soap:operation soapAction="FindMembership" style="document" />
+			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/FindMembership" style="document" />
 			<input>
 				<soap:header message="msnab:ABHeader" part="ApplicationHeader" use="literal"/>
 				<soap:header message="msnab:ABHeader" part="AuthHeader" use="literal" />
 				<soap:body use="literal" />
 			</input>
 			<output>
-				<soap:header message="msnab:ServiceHeader" part="serviceHeader" use="literal" />
+				<soap:header message="msnab:ServiceHeader" part="ServiceHeader" use="literal" />
 				<soap:body use="literal" />
 			</output>
 		</operation>
 	</binding>
-	
+
+	<binding name="ABServiceBinding" type="msnab:ABServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="ABFindAll">
+			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/ABFindAll" style="document" />
+			<input>
+				<soap:header message="msnab:ABHeader" part="ApplicationHeader" use="literal"/>
+				<soap:header message="msnab:ABHeader" part="AuthHeader" use="literal" />
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:header message="msnab:ServiceHeader" part="ServiceHeader" use="literal" />
+				<soap:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+
 	<service name="SharingService">
 		<port name="FindMembershipPort" binding="msnab:SharingServiceBinding">
-			<soap:address location="https://omega.contacts.msn.com/abservice/SharingService.asmx" />
+			<soap:address location="https://contacts.msn.com/abservice/SharingService.asmx" />
+		</port>
+	</service>
+
+	<service name="ABService">
+		<port name="ABFindAllPort" binding="msnab:ABServiceBinding">
+			<soap:address location="https://contacts.msn.com/abservice/abservice.asmx" />
 		</port>
 	</service>
 </definitions>
