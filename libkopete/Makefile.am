@@ -45,8 +45,8 @@ kde_kcfg_DATA = kopete.kcfg
 #libkopetewidgets_la_LIBADD = $(LIB_KIO) libkopete.la ui/libkopeteui.la
 #libkopetewidgets_la_SOURCES = ui/kopetewidgets.cpp
 
-#kopetewidgets.cpp: $(srcdir)/kopete.widgets
-#	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets
+kopetewidgets.cpp: $(srcdir)/kopete.widgets
+	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets
 
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetecommandui.rc
