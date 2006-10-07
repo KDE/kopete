@@ -1875,7 +1875,8 @@ void YahooAccount::slotJoinChatRoom()
 	
 	if( chatDialog->exec() == QDialog::Accepted )
 	{
-// 		m_session->joinYahooChatRoom( selector->selectedRoom() );
+		kDebug() << k_funcinfo << selector->selectedRoom().topic << " " << selector->selectedRoom().topic << " " << selector->selectedRoom().id << endl;
+		m_session->joinYahooChatRoom( selector->selectedRoom() );
 	}
 	
 	chatDialog->deleteLater();

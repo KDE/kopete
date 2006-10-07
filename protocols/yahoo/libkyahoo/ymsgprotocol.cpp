@@ -275,6 +275,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceChatMsg " << servicenum << endl;
 			service = Yahoo::ServiceChatMsg;
 		break;
+		case (Yahoo::ServiceComment) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceComment " << servicenum << endl;
+			service = Yahoo::ServiceComment;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -297,7 +301,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceIgnoreContact,	// > 1, 7, 13 < 1, 66, 13, 0
 		ServiceRejectContact,
 		ServiceGroupRename = 0x89, // > 1, 65(new), 66(0), 67(old) 
-		ServiceComment = 0xa8
 		ServicePictureUpdate = 0xc1,
 		ServiceVisibility = 0xc5,	// YMSG13, key 13: 2 = invisible, 1 = visible 
 		ServiceStatus = 0xc6,		// YMSG13 

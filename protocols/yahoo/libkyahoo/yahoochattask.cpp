@@ -51,6 +51,8 @@ bool YahooChatTask::take( Transfer* transfer )
 	
 	if( t->service() == Yahoo::ServiceChatOnline )
 		parseLoginResponse( t );
+	else if( t->service() == Yahoo::ServiceComment )
+		parseChatMessage( t );
 
 	return true;
 }
@@ -73,7 +75,7 @@ bool YahooChatTask::forMe( const Transfer* transfer ) const
 		t->service() == Yahoo::ServiceChatPing ||
 		t->service() == Yahoo::ServiceChatLogon ||
 		t->service() == Yahoo::ServiceChatLogoff ||
-		t->service() == Yahoo::ServiceChatleave )	
+		t->service() == Yahoo::ServiceComment )	
 		return true;
 	else
 		return false;
@@ -166,7 +168,7 @@ void YahooChatTask::slotChatRoomsComplete( KJob *job )
 
 void YahooChatTask::joinRoom( const Yahoo::ChatRoom &room )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Joining room " << room.name << " (" << room.id << ")..." << endl;
 	if( !m_loggedIn )
 	{
 		m_pendingJoins.append( room );
@@ -207,13 +209,62 @@ void YahooChatTask::logout()
 	send( t );
 }
 
-void YahooChatTask::parseLoginResponse( YMSGTransfer * )
+void YahooChatTask::parseLoginResponse( YMSGTransfer *t )
 {
+	if( !t->firstParam( 1 ).startsWith( client()->userId().toLocal8Bit() ) )
+		return;
+	m_loggedIn = true;
 	for( int i = 0; i < m_pendingJoins.size(); ++i )
 	{
 		Yahoo::ChatRoom entry = m_pendingJoins.at( i );
 		joinRoom( entry );
 		m_pendingJoins.removeAt( i );
+	}
+}
+
+void YahooChatTask::parseJoin( YMSGTransfer *t )
+{
+	int room;
+	int category;
+	QString handle;
+	QString comment;
+	bool suppressJoinNotification = false;
+
+	room = t->firstParam( 129 ).toInt();
+	category = t->firstParam( 128 ).toInt();
+	handle = t->firstParam( 104 );
+	comment = t->firstParam( 105 );
+
+	if( room > 0 && category > 0 )
+	{
+		// We have just joined this room. Suppress join notifications for the people
+		// that are already in here.
+		suppressJoinNotification = true;
+		emit chatRoomJoined( room, category, comment, handle );
+	}
+
+	QString nick;
+	for( int i = 0; i < t->paramCount( 109 ); ++i )
+	{
+		nick = t->nthParam( 109 , i );
+		emit chatBuddyHasJoined( nick, handle, suppressJoinNotification );
+	}
+}
+
+void YahooChatTask::parseChatMessage( YMSGTransfer *t )
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	QString handle;
+	QString msg;
+	QString nick;
+
+	handle = t->firstParam( 104 );
+	for( int i = 0; i < t->paramCount( 109 ); ++i )
+	{
+		nick = t->nthParam( 109, i );
+		msg = t->nthParamSeparated( 117, i, 109 );
+		emit chatMessageReceived( nick, msg, handle );
 	}
 }
 

@@ -377,7 +377,13 @@ Q_OBJECT
 		/**
 		 * Get the list of chatrooms for the given category
 		 */
-		void getYahooChatRooms( Yahoo::ChatCategory category );
+		void getYahooChatRooms( const Yahoo::ChatCategory &category );
+
+		/**
+		 * Join a chat room
+		 */
+		void joinYahooChatRoom( const Yahoo::ChatRoom &room );
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -625,6 +631,18 @@ Q_OBJECT
 		 * We have received the list of chatrooms for the categories
 		 */
 		void gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & );
+		/**
+		 * We have joined a chatroom
+		 */
+		void chatRoomJoined( int, int, const QString &, const QString & );
+		/**
+		 * A buddy has joined a chatroom
+		 */
+		void chatBuddyHasJoined( const QString &, const QString &, bool );
+		/**
+		 * We have received a message in a chatroom
+		 */
+		void chatMessageReceived( const QString &, const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

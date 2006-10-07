@@ -628,9 +628,14 @@ void Client::getYahooChatCategories()
 	d->yahooChatTask->getYahooChatCategories();
 }
 
-void Client::getYahooChatRooms( Yahoo::ChatCategory category )
+void Client::getYahooChatRooms( const Yahoo::ChatCategory &category )
 {
 	d->yahooChatTask->getYahooChatRooms( category );
+}
+
+void Client::joinYahooChatRoom( const Yahoo::ChatRoom &room )
+{
+	d->yahooChatTask->joinRoom( room );
 }
 
 // ***** other *****
@@ -845,6 +850,12 @@ void Client::initTasks()
 				SIGNAL(gotYahooChatCategories( const QDomDocument & )) );
 	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
 				SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ),
+				SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ),
+				SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ),
+				SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ) );
 }
 
 void Client::deleteTasks()
