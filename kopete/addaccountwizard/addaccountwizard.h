@@ -49,7 +49,7 @@ class KOPETE_EXPORT AddAccountWizard : public KAssistantDialog
 	Q_OBJECT
 
 public:
-	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false, bool firstRun = false );
+	AddAccountWizard( QWidget *parent = 0, bool firstRun = false );
 	~AddAccountWizard();
 
 private slots:

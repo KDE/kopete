@@ -36,7 +36,7 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 
-AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal, bool firstRun )
+AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 	: 
 	KAssistantDialog(parent),
 	m_accountPage(0),
