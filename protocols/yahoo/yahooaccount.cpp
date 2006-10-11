@@ -1531,8 +1531,8 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 	
 	m_pendingWebcamInvites.append( who );
 	
-	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
-							.arg(who), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?", who),
+                            QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
 	{
 		m_pendingWebcamInvites.removeAll( who );
 		m_session->requestWebcam( who );
@@ -1540,7 +1540,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 }
 void YahooAccount::slotWebcamNotAvailable( const QString &who )
 {
-	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("Webcam for %1 is not available.").arg(who), i18n( "Yahoo Plugin" ) );
+	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("Webcam for %1 is not available.", who), i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image )
