@@ -687,7 +687,13 @@ void MetaContact::setPhoto( const KURL &url )
 
 QImage MetaContact::photo() const
 {
-	return picture().image();
+  if( picture().image().width() > 96 && picture().image().height() > 96 )
+    {
+      kdDebug( 14010 )  << k_funcinfo << "Resizing image from " << picture().image().width() << " x " << picture().image().height() << endl;
+      return picture().image().smoothScale(96,96);
+    }
+  else
+    return picture().image();
 }
 
 Picture &MetaContact::picture() const
