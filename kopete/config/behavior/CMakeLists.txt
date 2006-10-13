@@ -18,7 +18,7 @@ kde4_add_ui_files(kcm_kopete_behaviorconfig_PART_SRCS
    behaviorconfig_general.ui 
    kopeteawayconfigbase.ui )
 
-kde4_automoc(${kcm_kopete_behaviorconfig_PART_SRCS})
+kde4_automoc(kcm_kopete_behaviorconfig ${kcm_kopete_behaviorconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_behaviorconfig ${kcm_kopete_behaviorconfig_PART_SRCS})
 

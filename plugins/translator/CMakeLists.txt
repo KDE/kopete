@@ -12,7 +12,7 @@ set(kopete_translator_PART_SRCS
    translatorguiclient.cpp 
    translatorlanguages.cpp )
 
-kde4_automoc(${kopete_translator_PART_SRCS})
+kde4_automoc(kopete_translator ${kopete_translator_PART_SRCS})
 
 kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})
 
@@ -29,7 +29,7 @@ set(kcm_kopete_translator_PART_SRCS translatorprefs.cpp translatorlanguages.cpp 
 
 kde4_add_ui_files(kcm_kopete_translator_PART_SRCS translatorprefsbase.ui )
 
-kde4_automoc(${kcm_kopete_translator_PART_SRCS})
+kde4_automoc(kcm_kopete_translator ${kcm_kopete_translator_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_translator ${kcm_kopete_translator_PART_SRCS})
 

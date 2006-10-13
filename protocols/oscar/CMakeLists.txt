@@ -26,7 +26,7 @@ kde4_add_ui_files(kopete_oscar_LIB_SRCS
    oscarlistcontactsbase.ui
 )
 
-kde4_automoc(${kopete_oscar_LIB_SRCS})
+kde4_automoc(kopete_oscar ${kopete_oscar_LIB_SRCS})
 
 kde4_add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
 

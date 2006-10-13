@@ -6,7 +6,7 @@ ${KOPETE_INCLUDES}
 
 set(kcm_kopete_pluginconfig_PART_SRCS kopetepluginconfig.cpp )
 
-kde4_automoc(${kcm_kopete_pluginconfig_PART_SRCS})
+kde4_automoc(kcm_kopete_pluginconfig ${kcm_kopete_pluginconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_pluginconfig ${kcm_kopete_pluginconfig_PART_SRCS})
 

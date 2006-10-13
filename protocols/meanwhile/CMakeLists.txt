@@ -16,7 +16,7 @@ set(kopete_meanwhile_PART_SRCS
    meanwhilesession.cpp 
    meanwhileplugin.cpp )
 
-kde4_automoc(${kopete_meanwhile_PART_SRCS})
+kde4_automoc(kopete_meanwhile ${kopete_meanwhile_PART_SRCS})
 
 kde4_add_plugin(kopete_meanwhile ${kopete_meanwhile_PART_SRCS})
 

@@ -6,7 +6,7 @@ set( kopete_sms_services_SRCS
   smsclient.cpp
   smssend.cpp
   smssendprovider.cpp )
-kde4_automoc(${kopete_sms_services_SRCS})
+kde4_automoc(kopete_sms_services ${kopete_sms_services_SRCS})
 kde4_add_ui3_files( kopete_sms_services_SRCS
   gsmlibprefs.ui
   smsclientprefs.ui

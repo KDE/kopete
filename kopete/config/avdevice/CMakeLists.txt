@@ -6,7 +6,7 @@
 
 set(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig.cpp )
 
-kde4_automoc(${kcm_kopete_avdeviceconfig_PART_SRCS})
+kde4_automoc(kcm_kopete_avdeviceconfig ${kcm_kopete_avdeviceconfig_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig_videoconfig.ui )
 

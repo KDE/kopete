@@ -20,7 +20,7 @@ kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS
    appearanceconfig_emoticons.ui 
    tooltipeditwidget.ui )
 
-kde4_automoc(${kcm_kopete_appearanceconfig_PART_SRCS})
+kde4_automoc(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_SRCS})
 

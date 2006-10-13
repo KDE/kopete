@@ -26,7 +26,7 @@ buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp filetransfertask.cpp
 localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservicetask.cpp oscarguid.cpp 
 )
 
-kde4_automoc( ${liboscar_SRCS} )
+kde4_automoc( liboscar ${liboscar_SRCS} )
 
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 

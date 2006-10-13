@@ -13,7 +13,7 @@ set(LIBOSCAR_TEST_LIBRARIES ${KDE4_KDECORE_LIBS} oscar ${QT_QTTEST_LIBRARY})
 
 set(buffertest_SRCS buffertest.cpp )
 
-kde4_automoc(${buffertest_SRCS})
+kde4_automoc(buffertest ${buffertest_SRCS})
 
 kde4_add_executable(buffertest RUN_UNINSTALLED ${buffertest_SRCS})
 
@@ -25,7 +25,7 @@ add_test(buffertest ${EXECUTABLE_OUTPUT_PATH}/buffertest)
 
 set(serverversionstest_SRCS serverversionstest.cpp oscartestbase.cpp )
 
-kde4_automoc(${serverversionstest_SRCS})
+kde4_automoc(serverversionstest ${serverversionstest_SRCS})
 
 kde4_add_executable(serverversionstest RUN_UNINSTALLED ${serverversionstest_SRCS})
 
@@ -37,7 +37,7 @@ add_test(serverversionstest ${EXECUTABLE_OUTPUT_PATH}/serverversionstest)
 
 set(connectiontest_SRCS connectiontest.cpp oscartestbase.cpp )
 
-kde4_automoc(${connectiontest_SRCS})
+kde4_automoc(connectiontest ${connectiontest_SRCS})
 
 kde4_add_executable(connectiontest RUN_UNINSTALLED ${connectiontest_SRCS})
 
@@ -49,7 +49,7 @@ add_test(connectiontest ${EXECUTABLE_OUTPUT_PATH}/connectiontest)
 
 set(rateinfotest_SRCS rateinfotest.cpp oscartestbase.cpp )
 
-kde4_automoc(${rateinfotest_SRCS})
+kde4_automoc(rateinfotest ${rateinfotest_SRCS})
 
 kde4_add_executable(rateinfotest RUN_UNINSTALLED ${rateinfotest_SRCS})
 
@@ -61,7 +61,7 @@ add_test(rateinfotest ${EXECUTABLE_OUTPUT_PATH}/rateinfotest)
 
 set(offlinemessagestest_SRCS offlinemessagestest.cpp oscartestbase.cpp )
 
-kde4_automoc(${offlinemessagestest_SRCS})
+kde4_automoc(offlinemessagestest ${offlinemessagestest_SRCS})
 
 kde4_add_executable(offlinemessagestest RUN_UNINSTALLED ${offlinemessagestest_SRCS})
 
@@ -73,7 +73,7 @@ add_test(offlinemessagestest ${EXECUTABLE_OUTPUT_PATH}/offlinemessagestest)
 
 set(filetransfertest_SRCS filetransfertest.cpp oscartestbase.cpp )
 
-kde4_automoc(${filetransfertest_SRCS})
+kde4_automoc(filetransfertest ${filetransfertest_SRCS})
 
 kde4_add_executable(filetransfertest RUN_UNINSTALLED ${filetransfertest_SRCS})
 

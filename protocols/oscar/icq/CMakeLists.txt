@@ -41,7 +41,7 @@ set(kopete_icq_PART_SRCS
    icqcontact.cpp 
    icqprotocol.cpp )
 
-kde4_automoc(${kopete_icq_PART_SRCS})
+kde4_automoc(kopete_icq ${kopete_icq_PART_SRCS})
 
 kde4_add_plugin(kopete_icq ${kopete_icq_PART_SRCS})
 

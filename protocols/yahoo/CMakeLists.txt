@@ -44,7 +44,7 @@ set(kopete_yahoo_PART_SRCS
    yahooverifyaccount.cpp 
    yahoowebcam.cpp )
 
-kde4_automoc(${kopete_yahoo_PART_SRCS})
+kde4_automoc(kopete_yahoo ${kopete_yahoo_PART_SRCS})
 
 kde4_add_plugin(kopete_yahoo ${kopete_yahoo_PART_SRCS})
 

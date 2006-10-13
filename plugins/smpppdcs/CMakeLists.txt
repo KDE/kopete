@@ -16,7 +16,7 @@ set(kopete_smpppdcs_PART_SRCS
    detectornetstat.cpp 
    detectornetworkstatus.cpp )
 
-kde4_automoc(${kopete_smpppdcs_PART_SRCS})
+kde4_automoc(kopete_smpppdcs ${kopete_smpppdcs_PART_SRCS})
 
 kde4_add_dcop_skels(kopete_smpppdcs_PART_SRCS smpppdcsiface.h )
 
@@ -41,7 +41,7 @@ set(kcm_kopete_smpppdcs_PART_SRCS
    smpppdcsprefsimpl.cpp 
    smpppdlocationwidget.cpp )
 
-kde4_automoc(${kcm_kopete_smpppdcs_PART_SRCS})
+kde4_automoc(kcm_kopete_smpppdcs ${kcm_kopete_smpppdcs_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsprefs.ui smpppdlocationui.ui )
 

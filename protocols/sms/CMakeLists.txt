@@ -38,7 +38,7 @@ kde4_add_ui3_files( kopete_sms_PART_SRCS
   ui/smsuserprefs.ui
   ui/smsadd.ui )
 
-kde4_automoc(${kopete_sms_PART_SRCS})
+kde4_automoc(kopete_sms ${kopete_sms_PART_SRCS})
 
 kde4_add_plugin(kopete_sms ${kopete_sms_PART_SRCS})
 

@@ -6,7 +6,7 @@
 
 set(kio_jabberdisco_PART_SRCS jabberdisco.cpp )
 
-kde4_automoc(${kio_jabberdisco_PART_SRCS})
+kde4_automoc(kio_jabberdisco ${kio_jabberdisco_PART_SRCS})
 
 kde4_add_plugin(kio_jabberdisco ${kio_jabberdisco_PART_SRCS})
 

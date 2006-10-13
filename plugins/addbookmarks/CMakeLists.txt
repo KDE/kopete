@@ -7,7 +7,7 @@ ${KOPETE_INCLUDES}
 
 set(kopete_addbookmarks_PART_SRCS addbookmarksplugin.cpp addbookmarksprefssettings.cpp )
 
-kde4_automoc(${kopete_addbookmarks_PART_SRCS})
+kde4_automoc(kopete_addbookmarks ${kopete_addbookmarks_PART_SRCS})
 
 kde4_add_plugin(kopete_addbookmarks ${kopete_addbookmarks_PART_SRCS})
 
@@ -24,7 +24,7 @@ set(kcm_kopete_addbookmarks_PART_SRCS addbookmarkspreferences.cpp addbookmarkspr
 
 kde4_add_ui_files(kcm_kopete_addbookmarks_PART_SRCS addbookmarksprefsui.ui )
 
-kde4_automoc(${kcm_kopete_addbookmarks_PART_SRCS})
+kde4_automoc(kcm_kopete_addbookmarks ${kcm_kopete_addbookmarks_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_addbookmarks ${kcm_kopete_addbookmarks_PART_SRCS})
 

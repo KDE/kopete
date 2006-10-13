@@ -56,7 +56,7 @@ set(kopete_SRCS
 #   kimifaceimpl.cpp 
    kopeteeditglobalidentitywidget.cpp )
 
-kde4_automoc(${kopete_SRCS})
+kde4_automoc(kopete ${kopete_SRCS})
 
 kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 

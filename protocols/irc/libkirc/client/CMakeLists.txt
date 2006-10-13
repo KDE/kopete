@@ -14,7 +14,7 @@ set(libkirc_client_SRCS
 #	kirctransferserver.cpp 
 )
 
-kde4_automoc( ${libkirc_client_SRCS} )
+kde4_automoc( libkirc_client ${libkirc_client_SRCS} )
 
 kde4_add_library( kirc_client SHARED ${libkirc_client_SRCS} )
 

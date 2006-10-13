@@ -6,7 +6,7 @@
 if(KDE4_BUILD_TESTS)
 set(kopetetabwidgettest_SRCS kopetetabwidgettest.cpp )
 
-kde4_automoc(${kopetetabwidgettest_SRCS})
+kde4_automoc(kopetetabwidgettest ${kopetetabwidgettest_SRCS})
 
 
 kde4_add_executable(kopetetabwidgettest ${kopetetabwidgettest_SRCS})

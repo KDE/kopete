@@ -26,7 +26,7 @@ telepathycontact.cpp
 ${kopete_telepathy_ui_SRCS}
 )
 
-kde4_automoc(${kopete_telepathy_PART_SRCS})
+kde4_automoc(kopete_telepathy ${kopete_telepathy_PART_SRCS})
 
 kde4_add_plugin(kopete_telepathy ${kopete_telepathy_PART_SRCS})
 

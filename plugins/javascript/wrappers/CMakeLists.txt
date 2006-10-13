@@ -10,7 +10,7 @@ set(kopetemessageplugin_PART_SRCS
     kopetemessageimp.cpp
 )
 
-kde4_automoc(${kopetemessageplugin_PART_SRCS})
+kde4_automoc(kopetemessageplugin ${kopetemessageplugin_PART_SRCS})
 
 kde4_add_plugin(kopetemessageplugin ${kopetemessageplugin_PART_SRCS})
 
@@ -25,7 +25,7 @@ set(wrappers_STAT_SRCS
     kopeteonlinestatusimp.cpp
 )
 
-kde4_automoc(${wrappers_STAT_SRCS})
+kde4_automoc(wrappers_STAT ${wrappers_STAT_SRCS})
 
 ADD_LIBRARY(wrappers STATIC ${wrappers_STAT_SRCS})
 
