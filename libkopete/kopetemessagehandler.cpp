@@ -76,7 +76,6 @@ class MessageHandlerFactory::Private
 {
 public:
 	static FactoryList &factories();
-	FactoryList::Iterator iterator;
 };
 
 MessageHandlerFactory::FactoryList &MessageHandlerFactory::Private::factories()
@@ -91,12 +90,12 @@ MessageHandlerFactory::FactoryList &MessageHandlerFactory::Private::factories()
 MessageHandlerFactory::MessageHandlerFactory()
 	: d( new Private )
 {
-	d->iterator = Private::factories().append(this);
+	Private::factories().append(this);
 }
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
-	Private::factories().remove( d->iterator );
+	Private::factories().remove( this );
 	delete d;
 }
 
