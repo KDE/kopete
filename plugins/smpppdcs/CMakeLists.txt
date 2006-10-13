@@ -22,7 +22,7 @@ kde4_add_dcop_skels(kopete_smpppdcs_PART_SRCS smpppdcsiface.h )
 
 kde4_add_dcop_stubs(kopete_smpppdcs_PART_SRCS kinternetiface.h )
 
-kde4_add_kcfg_files(kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
+kde4_add_kcfg_files(kopete_smpppdcs kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
 
 kde4_add_plugin(kopete_smpppdcs ${kopete_smpppdcs_PART_SRCS})
 
@@ -45,7 +45,7 @@ kde4_automoc(kcm_kopete_smpppdcs ${kcm_kopete_smpppdcs_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsprefs.ui smpppdlocationui.ui )
 
-kde4_add_kcfg_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
+kde4_add_kcfg_files(kcm_kopete_smpppdcs kcm_kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
 
 kde4_add_plugin(kcm_kopete_smpppdcs ${kcm_kopete_smpppdcs_PART_SRCS})
 

@@ -15,7 +15,7 @@ set(kopete_history_PART_SRCS
 
 kde4_add_ui_files(kopete_history_PART_SRCS historyviewer.ui )
 
-kde4_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
+kde4_add_kcfg_files(kopete_history kopete_history_PART_SRCS historyconfig.kcfgc )
 
 kde4_automoc(kopete_history ${kopete_history_PART_SRCS})
 
@@ -34,7 +34,7 @@ set(kcm_kopete_history_PART_SRCS historypreferences.cpp )
 
 kde4_add_ui_files(kcm_kopete_history_PART_SRCS historyprefsui.ui )
 
-kde4_add_kcfg_files(kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
+kde4_add_kcfg_files(kcm_kopete_history kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
 
 kde4_automoc(kcm_kopete_history ${kcm_kopete_history_PART_SRCS})
 

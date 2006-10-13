@@ -10,7 +10,7 @@ ${KOPETE_INCLUDES}
 
 set(kopete_latex_PART_SRCS latexplugin.cpp latexguiclient.cpp )
 
-kde4_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
+kde4_add_kcfg_files(kopete_latex kopete_latex_PART_SRCS latexconfig.kcfgc )
 
 kde4_automoc(kopete_latex ${kopete_latex_PART_SRCS})
 
@@ -29,7 +29,7 @@ set(kcm_kopete_latex_PART_SRCS latexpreferences.cpp )
 
 kde4_add_ui_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
 
-kde4_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
+kde4_add_kcfg_files(kcm_kopete_latex kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
 
 kde4_automoc(kcm_kopete_latex ${kcm_kopete_latex_PART_SRCS})
 

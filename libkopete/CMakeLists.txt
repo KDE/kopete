@@ -109,7 +109,7 @@ kde4_add_ui_files(kopete_LIB_SRCS
 
 kde4_automoc(kopete ${kopete_LIB_SRCS})
 
-kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+kde4_add_kcfg_files(kopete kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 

@@ -9,7 +9,7 @@ set(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfig.cpp globalidentitie
 
 kde4_add_ui_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigbase.ui )
 
-kde4_add_kcfg_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigpreferences.kcfgc )
+kde4_add_kcfg_files(kcm_kopete_identityconfig kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigpreferences.kcfgc )
 
 kde4_automoc(kcm_kopete_identityconfig ${kcm_kopete_identityconfig_PART_SRCS})
 

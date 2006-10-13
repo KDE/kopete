@@ -7,7 +7,7 @@ ${KOPETE_INCLUDES}
 
 #common lib
 set(kopete_privacy_LIB_SRCS privacymessagehandler.cpp privacyaccountlistmodel.cpp)
-kde4_add_kcfg_files(kopete_privacy_LIB_SRCS privacyconfig.kcfgc )
+kde4_add_kcfg_files(kopete_privacy kopete_privacy_LIB_SRCS privacyconfig.kcfgc )
 kde4_automoc(kopete_privacy ${kopete_privacy_LIB_SRCS})
 kde4_add_library( kopeteprivacy SHARED ${kopete_privacy_LIB_SRCS})
 target_link_libraries( kopeteprivacy ${KDE4_KDECORE_LIBS} kopete )

@@ -8,7 +8,7 @@ set(kopete_motionaway_PART_SRCS motionawayplugin.cpp )
 
 kde4_automoc(kopete_motionaway ${kopete_motionaway_PART_SRCS})
 
-kde4_add_kcfg_files(kopete_motionaway_PART_SRCS motionawayconfig.kcfgc )
+kde4_add_kcfg_files(kopete_motionaway kopete_motionaway_PART_SRCS motionawayconfig.kcfgc )
 
 kde4_add_plugin(kopete_motionaway ${kopete_motionaway_PART_SRCS})
 
@@ -27,7 +27,7 @@ kde4_automoc(kcm_kopete_motionaway ${kcm_kopete_motionaway_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_motionaway_PART_SRCS motionawayprefs.ui )
 
-kde4_add_kcfg_files(kcm_kopete_motionaway_PART_SRCS motionawayconfig.kcfgc )
+kde4_add_kcfg_files(kcm_kopete_motionaway kcm_kopete_motionaway_PART_SRCS motionawayconfig.kcfgc )
 
 kde4_add_plugin(kcm_kopete_motionaway ${kcm_kopete_motionaway_PART_SRCS})
 
