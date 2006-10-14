@@ -63,17 +63,8 @@ protected slots:
 	virtual void reject();
 
 private:
-	QTreeWidgetItem* selectedProtocol();
-
-	QMap<QTreeWidgetItem *, KPluginInfo *>  m_protocolItems;
-	KopeteEditAccountWidget *m_accountPage;
-	KVBox *m_accountPageWidget;
-	QWidget *m_selectService;
-	QWidget *m_finish;
-	Ui::AddAccountWizardPage1 m_uiSelectService;
-	Ui::AddAccountWizardPage2 m_uiFinish;
-	Kopete::Protocol *m_proto;
-	KPageWidgetItem *m_selectServiceItem;
+	class Private;
+	Private *d;
 };
 
 #endif
