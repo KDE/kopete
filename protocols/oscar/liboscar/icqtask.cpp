@@ -92,14 +92,14 @@ Buffer* ICQTask::addInitialData( Buffer* buf ) const
 		<<" request type: 0x" << QString::number( m_requestType, 16 )
 		<< " request sub type: 0x" << QString::number( m_requestSubType, 16 ) << endl; */
 	if ( buf != 0 )
-		tlvData->addString( buf->buffer(), buf->length() );
+		tlvData->addString( buf->buffer() );
 	
 	Buffer* newBuffer = new Buffer();
 	//add TLV 1
 	newBuffer->addWord( 0x0001 ); //TLV 1
 	newBuffer->addWord( tlvData->length() + 2 ); //TLV length
 	newBuffer->addLEWord( tlvData->length() ); // data chunk size
-	newBuffer->addString( tlvData->buffer(), tlvData->length() );
+	newBuffer->addString( tlvData->buffer() );
 	
 	delete tlvData;
 

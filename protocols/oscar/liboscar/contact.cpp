@@ -213,17 +213,8 @@ OContact::operator QByteArray() const
 {
 	Buffer b;
 	QByteArray name( m_name.toUtf8() );
-	uint namelen = name.length();
-	const char *namedata = name;
-	b.addWord( namelen );
-	// Using namedata instead of name because
-	// Buffer::addString(QByteArray, DWORD) ignores it's second argument,
-	// while Buffer::addString(const char*, DWORD) does not ignore it.
-	// We must provide the explicit length argument to addString() because
-	// we don't need trailing null byte to be added when automatic
-	// conversion from QCString to QByteArray is performed.
-	// This hack will not be needed with Qt 4.
-	b.addString( namedata, namelen );
+	b.addWord( name.length() );
+	b.addString( name );
 	b.addWord( m_gid );
 	b.addWord( m_bid );
 	b.addWord( m_type );
@@ -233,7 +224,7 @@ OContact::operator QByteArray() const
 	{
 		b.addWord( (*it).type );
 		b.addWord( (*it).length );
-		b.addString( (*it).data, (*it).data.size() );
+		b.addString( (*it).data );
 	}
 
 	return (QByteArray) b;

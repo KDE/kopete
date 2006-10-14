@@ -91,7 +91,7 @@ void ChatServiceTask::onGo()
     tlv5.addTLV( type2 );
     tlv5.addTLV( type3 );
 
-    b->addString( tlv5.buffer(), tlv5.length() );
+    b->addString( tlv5.buffer() );
 
     FLAP f = { 0x02, 0, 0 };
     SNAC s = { 0x000E, 0x0005, 0x0000, client()->snacSequence() };
