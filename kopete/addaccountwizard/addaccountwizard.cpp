@@ -36,49 +36,69 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 
+class AddAccountWizard::Private
+{
+public:
+	Private()
+		: accountPage(0)
+		, proto(0)
+		{
+		}
+
+	QTreeWidgetItem* selectedProtocol();
+
+	QMap<QTreeWidgetItem *, KPluginInfo *>  protocolItems;
+	KopeteEditAccountWidget *accountPage;
+	KVBox *accountPageWidget;
+	QWidget *selectService;
+	QWidget *finish;
+	Ui::AddAccountWizardPage1 uiSelectService;
+	Ui::AddAccountWizardPage2 uiFinish;
+	Kopete::Protocol *proto;
+	KPageWidgetItem *selectServiceItem;
+};
+
 AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
-	: 
-	KAssistantDialog(parent),
-	m_accountPage(0),
-	m_proto(0)
+	: KAssistantDialog(parent)
+	, d(new Private)
 {
 	// setup the select service page
-	m_selectService = new QWidget(this);
-	m_uiSelectService.setupUi(m_selectService);
-	m_uiSelectService.protocolListView->setColumnCount( 2 );
+	d->selectService = new QWidget(this);
+	d->uiSelectService.setupUi(d->selectService);
+	d->uiSelectService.protocolListView->setColumnCount( 2 );
 	QStringList header;
 	header << i18n("Name") << i18n("Description");
-	m_uiSelectService.protocolListView->setHeaderLabels( header );
+	d->uiSelectService.protocolListView->setHeaderLabels( header );
 	if ( firstRun )
-		m_uiSelectService.m_header->setText( i18nc( "1st message shown to users on first run of Kopete. Please keep the formatting.", "<h2>Welcome to Kopete</h2><p>Which messaging service do you want to connect to?</p>") );
+		d->uiSelectService.m_header->setText( i18nc( "1st message shown to users on first run of Kopete. Please keep the formatting.", "<h2>Welcome to Kopete</h2><p>Which messaging service do you want to connect to?</p>") );
 	
-	m_selectServiceItem = addPage(m_selectService,m_selectService->windowTitle());
-	setValid(m_selectServiceItem, false);
+	d->selectServiceItem = addPage(d->selectService,d->selectService->windowTitle());
+	setValid(d->selectServiceItem, false);
 		
-	m_accountPageWidget = new KVBox(this);
-	addPage(m_accountPageWidget,i18n("Step Two: Account Information"));
+	d->accountPageWidget = new KVBox(this);
+	addPage(d->accountPageWidget,i18n("Step Two: Account Information"));
 
 	// setup the final page
-	m_finish = new QWidget(this);
-	m_uiFinish.setupUi(m_finish);
+	d->finish = new QWidget(this);
+	d->uiFinish.setupUi(d->finish);
 	if ( firstRun )
-		m_uiFinish.m_header->setText( i18nc( "2nd message shown to users on first run of Kopete. Please keep the formatting.", "<h2>Congratulations</h2><p>You have finished configuring the account. You can add more accounts with <i>Settings->Configure</i>.  Please click the \"Finish\" button.</p>") );
-	addPage(m_finish,m_finish->windowTitle());
+		d->uiFinish.m_header->setText( i18nc( "2nd message shown to users on first run of Kopete. Please keep the formatting.", "<h2>Congratulations</h2><p>You have finished configuring the account. You can add more accounts with <i>Settings->Configure</i>.  Please click the \"Finish\" button.</p>") );
+	addPage(d->finish,d->finish->windowTitle());
 
 	// add the available messenger services to the dialogs list
 	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
 	for (QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
-		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(m_uiSelectService.protocolListView);
+		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(d->uiSelectService.protocolListView);
 		pluginItem->setIcon(0, QIcon(SmallIcon((*it)->icon())));
 		pluginItem->setText(0, (*it)->name());
 		pluginItem->setText(1, (*it)->comment());
 
-		m_protocolItems.insert(pluginItem, *it);
+		d->protocolItems.insert(pluginItem, *it);
 	}
 
 	// focus the ListView and select the first item
-	QTreeWidget *protocol_list = m_uiSelectService.protocolListView;
+	QTreeWidget *protocol_list = d->uiSelectService.protocolListView;
 	protocol_list->setFocus();
 	if (protocol_list->topLevelItemCount() > 0)
 		protocol_list->setItemSelected( protocol_list->topLevelItem(0), true );
@@ -88,17 +108,17 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 	
  
 	// hook up the user input
-	connect(m_uiSelectService.protocolListView, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+	connect(d->uiSelectService.protocolListView, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
 		this, SLOT(slotProtocolListClicked()));
-	connect(m_uiSelectService.protocolListView, SIGNAL(itemSelectionChanged()),
+	connect(d->uiSelectService.protocolListView, SIGNAL(itemSelectionChanged()),
 		this, SLOT( slotProtocolListClicked()));
-	connect(m_uiSelectService.protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
+	connect(d->uiSelectService.protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
 		this, SLOT(slotProtocolListDoubleClicked()));
 }
 
-QTreeWidgetItem* AddAccountWizard::selectedProtocol()
+QTreeWidgetItem* AddAccountWizard::Private::selectedProtocol()
 {
-	QList<QTreeWidgetItem*> selectedItems = m_uiSelectService.protocolListView->selectedItems();
+	QList<QTreeWidgetItem*> selectedItems = uiSelectService.protocolListView->selectedItems();
 	if(!selectedItems.empty())
  		return selectedItems.first();
 	return 0;
@@ -107,7 +127,7 @@ QTreeWidgetItem* AddAccountWizard::selectedProtocol()
 void AddAccountWizard::slotProtocolListClicked()
 {
 	// Make sure a protocol is selected before allowing the user to continue
-	setValid(m_selectServiceItem, selectedProtocol() != 0);
+	setValid(d->selectServiceItem, d->selectedProtocol() != 0);
 }
 
 void AddAccountWizard::slotProtocolListDoubleClicked()
@@ -118,13 +138,13 @@ void AddAccountWizard::slotProtocolListDoubleClicked()
 
 void AddAccountWizard::back()
 {
-	if (currentPage()->widget() == m_accountPageWidget)
+	if (currentPage()->widget() == d->accountPageWidget)
 	{
 		// Deletes the accountPage, K3Wizard does not like deleting pages
 		// using different pointers, it only seems to watch its own pointer
-		delete m_accountPage;
-		m_accountPage = 0;
-		m_proto       = 0;
+		delete d->accountPage;
+		d->accountPage = 0;
+		d->proto       = 0;
 
 		// removePage() already goes back to previous page, no back() needed
 	}
@@ -133,24 +153,24 @@ void AddAccountWizard::back()
 
 void AddAccountWizard::next()
 {
-	if (currentPage()->widget() == m_selectService)
+	if (currentPage()->widget() == d->selectService)
 	{
-		QTreeWidgetItem *lvi = selectedProtocol();
-		if(!m_protocolItems[lvi])
+		QTreeWidgetItem *lvi = d->selectedProtocol();
+		if(!d->protocolItems[lvi])
 		{ //no item selected
 			return;
 		}
-		m_proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(m_protocolItems[lvi]->pluginName()));
-		if (!m_proto)
+		d->proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(d->protocolItems[lvi]->pluginName()));
+		if (!d->proto)
 		{
 			KMessageBox::queuedMessageBox(this, KMessageBox::Error,
-				i18n("Cannot load the %1 protocol plugin.", m_protocolItems[lvi]->name()), 
+				i18n("Cannot load the %1 protocol plugin.", d->protocolItems[lvi]->name()),
 				i18n("Error While Adding Account"));
 			return;
 		}
 
-		m_accountPage = m_proto->createEditAccountWidget(0, m_accountPageWidget);
-		if (!m_accountPage)
+		d->accountPage = d->proto->createEditAccountWidget(0, d->accountPageWidget);
+		if (!d->accountPage)
 		{
 			KMessageBox::queuedMessageBox(this, KMessageBox::Error,
 				i18n("This protocol does not currently support adding accounts."),
@@ -160,18 +180,18 @@ void AddAccountWizard::next()
 	
 		KAssistantDialog::next();
 	}
-	else if (currentPage()->widget() == m_accountPageWidget)
+	else if (currentPage()->widget() == d->accountPageWidget)
 	{
 		// check the data of the page is valid
-		if (!m_accountPage->validateData())
+		if (!d->accountPage->validateData())
 		{
 			return;
 		}
 
-		QColor col = Kopete::AccountManager::self()->guessColor(m_proto);
+		QColor col = Kopete::AccountManager::self()->guessColor(d->proto);
 
-		m_uiFinish.mColorButton->setColor(col);
-		m_uiFinish.mUseColor->setChecked(col.isValid());
+		d->uiFinish.mColorButton->setColor(col);
+		d->uiFinish.mUseColor->setChecked(col.isValid());
 		KAssistantDialog::next();
 	}
 	else 
@@ -187,7 +207,7 @@ void AddAccountWizard::accept()
 	// registeredAccount shouldn't probably be called here. Anyway, if the account is already registered, 
 	// it won't be registered twice
 	Kopete::AccountManager *manager = Kopete::AccountManager::self();
-	Kopete::Account        *account = manager->registerAccount(m_accountPage->apply());
+	Kopete::Account        *account = manager->registerAccount(d->accountPage->apply());
 
 	// if the account wasn't created correctly then leave
 	if (!account)
@@ -196,17 +216,17 @@ void AddAccountWizard::accept()
 	}
 
 	// Make sure the protocol is correctly enabled.  This is not really needed, but still good
-	const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").toLower();
+	const QString PROTO_NAME = d->proto->pluginId().remove("Protocol").toLower();
 	Kopete::PluginManager::self()->setPluginEnabled(PROTO_NAME , true);
 
 	// setup the custom colour
-	if (m_uiFinish.mUseColor->isChecked())
+	if (d->uiFinish.mUseColor->isChecked())
 	{
-		account->setColor(m_uiFinish.mColorButton->color());
+		account->setColor(d->uiFinish.mColorButton->color());
 	}
 
 	// connect if necessary
-	if (m_uiFinish.mConnectNow->isChecked())
+	if (d->uiFinish.mConnectNow->isChecked())
 	{
 		account->connect();
 	}
@@ -217,12 +237,12 @@ void AddAccountWizard::accept()
 void AddAccountWizard::reject()
 {
     // if we have a protocol plugin loaded and its not being used, unload it
-	if (m_proto)
+	if (d->proto)
 	{
 		bool hasAccount=false;
 		foreach( Kopete::Account *act, Kopete::AccountManager::self()->accounts() )
 		{
-			if( act->protocol() == m_proto )
+			if( act->protocol() == d->proto )
 			{
 				hasAccount=true;
 				break;
@@ -230,7 +250,7 @@ void AddAccountWizard::reject()
 		}
 		if(hasAccount)
 		{
-			const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").toLower();
+			const QString PROTO_NAME = d->proto->pluginId().remove("Protocol").toLower();
 			Kopete::PluginManager::self()->unloadPlugin(PROTO_NAME);
 		}
 	}
@@ -240,6 +260,7 @@ void AddAccountWizard::reject()
 
 AddAccountWizard::~AddAccountWizard()
 {
+	delete d;
 }
 
 #include "addaccountwizard.moc"
