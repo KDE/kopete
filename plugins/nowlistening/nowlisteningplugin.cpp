@@ -308,7 +308,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				{
 					// Check for the now listening message in parenthesis, 
 					// include the header to not override other messages in parenthesis.
-					QRegExp statusSong( QString("\\(%1.*\\)$").arg( NowListeningConfig::header()) );
+					QRegExp statusSong( QString(" \\(%1.*\\)$").arg( NowListeningConfig::header()) );
 					
 					// HACK: Don't keep appending the now listened song. Replace it in the status message.
 					advert = a->myself()->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
@@ -318,11 +318,11 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 					{
 						if(statusSong.search(advert) != -1)
 						{
-							advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
+							advert = advert.replace(statusSong, QString(" (%1)").arg(mediaPlayerAdvert(false)) );
 						}
 						else
 						{
-							advert += QString("(%1)").arg( mediaPlayerAdvert(false) );
+							advert += QString(" (%1)").arg( mediaPlayerAdvert(false) );
 						}
 					}
 					else
