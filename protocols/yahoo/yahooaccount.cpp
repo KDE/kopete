@@ -71,6 +71,7 @@
 #include "yabentry.h"
 #include "yahoouserinfodialog.h"
 #include "yahoochatselectorwidget.h"
+#include "yahoochatchatsession.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
  : Kopete::PasswordedAccount(parent, accountId, false)
@@ -342,6 +343,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
 		
 		QObject::connect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
+		
+		QObject::connect(m_session, SIGNAL(chatRoomJoined(int,int,QString,QString)), this, SLOT(slotChatJoined(int,int,QString,QString)));
+		
+		QObject::connect(m_session, SIGNAL(chatBuddyHasJoined(QString,QString,bool)), this, SLOT(slotChatBuddyHasJoined(QString,QString,bool)));
+		
+		QObject::connect(m_session, SIGNAL(chatMessageReceived(QString,QString,QString)), this, SLOT(slotChatMessageReceived(QString,QString,QString)));
 	}
 
 	if ( sct == DeleteConnections )
@@ -471,6 +478,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
 		
 		QObject::disconnect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
+		
+		QObject::disconnect(m_session, SIGNAL(chatRoomJoined(int,int,QString,QString)), this, SLOT(slotChatJoined(int,int,QString,QString)));
+		
+		QObject::disconnect(m_session, SIGNAL(chatBuddyHasJoined(QString,QString,bool)), this, SLOT(slotChatBuddyHasJoined(QString,QString,bool)));
+		
+		QObject::disconnect(m_session, SIGNAL(chatMessageReceived(QString,QString,QString)), this, SLOT(slotChatMessageReceived(QString,QString,QString)));
 	}
 }
 
@@ -1886,6 +1899,69 @@ void YahooAccount::slotChatCategorySelected( const Yahoo::ChatCategory &category
 {
 	m_session->getYahooChatRooms( category );
 }
+
+
+void YahooAccount::slotChatJoined( int roomId, int categoryId, const QString &comment, const QString &handle )
+{
+	Kopete::ContactPtrList others;
+	others.append(myself());
+	YahooChatChatSession *session = new YahooChatChatSession( QString::number(roomId), protocol(), myself(), others );
+	m_chats[handle] = session;
+	
+	session->view( true )->raise( false );
+}
+
+void YahooAccount::slotChatBuddyHasJoined( const QString &nick, const QString &handle, bool suppressNotification )
+{
+	YahooChatChatSession *session = m_chats[handle];
+	
+	if(!session)
+		return;
+	
+	YahooContact *c = contact( nick );
+	if ( !c )
+	{
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Adding contact " << nick << " to chat." << endl;
+		addContact( nick, nick, 0, Kopete::Account::Temporary );
+		c = contact( nick );
+	}
+	session->joined( c, suppressNotification );
+}
+
+void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &message, const QString &handle )
+{
+	YahooChatChatSession *session = m_chats[handle];
+	
+	if(!session)
+		return;
+	
+	QFont msgFont;
+	QDateTime msgDT;
+	Kopete::ContactPtrList justMe;
+	
+	if( !contact( nick ) )
+	{
+		kDebug(YAHOO_GEN_DEBUG) << "Adding contact " << nick << endl;
+		addContact( nick, nick, 0, Kopete::Account::Temporary );
+	}
+	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << message << "'" << endl;
+	
+	QColor fgColor = getMsgColor( message );
+	msgDT.setTime_t(time(0L));	
+	
+	QString newMsgText = prepareIncomingMessage( message );
+	
+	kDebug(YAHOO_GEN_DEBUG) << "Message after fixing font tags '" << newMsgText << "'" << endl;
+	
+	justMe.append(myself());
+	
+	Kopete::Message kmsg(msgDT, contact(nick), justMe, newMsgText,
+	                     Kopete::Message::Inbound, Kopete::Message::RichText);
+	
+	kmsg.setFg( fgColor );
+	session->appendMessage(kmsg);
+}
+
 
 #include "yahooaccount.moc"
 

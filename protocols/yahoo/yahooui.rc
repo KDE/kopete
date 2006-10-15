@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="9" name="kopete_yahoo_chat">
+<kpartgui version="9" name="kopete_yahoo_im">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<Action name="yahooRequestWebcam" />

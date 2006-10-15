@@ -90,7 +90,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 		m_image = 0L;
 	}
 
-	setXMLFile("yahoochatui.rc");
+	setXMLFile("yahooui.rc");
 }
 
 YahooChatSession::~YahooChatSession()

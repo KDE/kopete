@@ -53,6 +53,8 @@ bool YahooChatTask::take( Transfer* transfer )
 		parseLoginResponse( t );
 	else if( t->service() == Yahoo::ServiceComment )
 		parseChatMessage( t );
+	else if( t->service() == Yahoo::ServiceChatJoin )
+		parseJoin( t );
 
 	return true;
 }

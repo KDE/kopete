@@ -40,6 +40,7 @@ set(kopete_yahoo_PART_SRCS
    yahooaccount.cpp 
    yahooeditaccount.cpp 
    yahooconferencemessagemanager.cpp 
+   yahoochatchatsession.cpp
    yahoochatsession.cpp 
    yahooverifyaccount.cpp 
    yahoowebcam.cpp )
@@ -58,7 +59,7 @@ install(TARGETS kopete_yahoo  DESTINATION ${PLUGIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES kopete_yahoo.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES yahooconferenceui.rc yahoochatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_yahoo)
+install( FILES yahooconferenceui.rc yahooui.rc yahoochatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_yahoo)
 
 
 
