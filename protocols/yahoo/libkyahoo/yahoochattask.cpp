@@ -55,6 +55,8 @@ bool YahooChatTask::take( Transfer* transfer )
 		parseChatMessage( t );
 	else if( t->service() == Yahoo::ServiceChatJoin )
 		parseJoin( t );
+	else if( t->service() == Yahoo::ServiceChatExit )
+		parseChatExit( t );
 
 	return true;
 }
@@ -267,6 +269,21 @@ void YahooChatTask::parseChatMessage( YMSGTransfer *t )
 		nick = t->nthParam( 109, i );
 		msg = t->nthParamSeparated( 117, i, 109 );
 		emit chatMessageReceived( nick, msg, handle );
+	}
+}
+
+void YahooChatTask::parseChatExit( YMSGTransfer *t )
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	QString handle;
+	QString nick;
+
+	handle = t->firstParam( 104 );
+	for( int i = 0; i < t->paramCount( 109 ); ++i )
+	{
+		nick = t->nthParam( 109, i );
+		emit chatBuddyHasLeft( nick, handle );
 	}
 }
 

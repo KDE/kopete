@@ -231,6 +231,7 @@ protected slots:
 	void slotModifyYABEntryError( YABEntry *entry, const QString & );
 	void slotChatJoined( int roomId, int categoryId, const QString &comment, const QString &handle );
 	void slotChatBuddyHasJoined( const QString &nick, const QString &handle, bool suppressNotification );
+	void slotChatBuddyHasLeft( const QString &nick, const QString &handle );
 	void slotChatMessageReceived( const QString &nick, const QString &message, const QString &handle );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );

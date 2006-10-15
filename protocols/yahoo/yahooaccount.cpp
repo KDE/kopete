@@ -348,6 +348,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(chatBuddyHasJoined(QString,QString,bool)), this, SLOT(slotChatBuddyHasJoined(QString,QString,bool)));
 		
+		QObject::connect(m_session, SIGNAL(chatBuddyHasLeft(QString,QString)), this, SLOT(slotChatBuddyHasLeft(QString,QString)));
+		
 		QObject::connect(m_session, SIGNAL(chatMessageReceived(QString,QString,QString)), this, SLOT(slotChatMessageReceived(QString,QString,QString)));
 	}
 
@@ -482,6 +484,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(chatRoomJoined(int,int,QString,QString)), this, SLOT(slotChatJoined(int,int,QString,QString)));
 		
 		QObject::disconnect(m_session, SIGNAL(chatBuddyHasJoined(QString,QString,bool)), this, SLOT(slotChatBuddyHasJoined(QString,QString,bool)));
+		
+		QObject::disconnect(m_session, SIGNAL(chatBuddyHasLeft(QString,QString)), this, SLOT(slotChatBuddyHasLeft(QString,QString)));
 		
 		QObject::disconnect(m_session, SIGNAL(chatMessageReceived(QString,QString,QString)), this, SLOT(slotChatMessageReceived(QString,QString,QString)));
 	}
@@ -1905,7 +1909,7 @@ void YahooAccount::slotChatJoined( int roomId, int categoryId, const QString &co
 {
 	Kopete::ContactPtrList others;
 	others.append(myself());
-	YahooChatChatSession *session = new YahooChatChatSession( QString::number(roomId), protocol(), myself(), others );
+	YahooChatChatSession *session = new YahooChatChatSession( comment, protocol(), myself(), others );
 	m_chats[handle] = session;
 	
 	session->view( true )->raise( false );
@@ -1924,8 +1928,23 @@ void YahooAccount::slotChatBuddyHasJoined( const QString &nick, const QString &h
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Adding contact " << nick << " to chat." << endl;
 		addContact( nick, nick, 0, Kopete::Account::Temporary );
 		c = contact( nick );
+		c->setOnlineStatus( m_protocol->Online );
 	}
 	session->joined( c, suppressNotification );
+}
+
+void YahooAccount::slotChatBuddyHasLeft( const QString &nick, const QString &handle )
+{
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	YahooChatChatSession *session = m_chats[handle];
+	
+	if(!session)
+		return;
+	
+	YahooContact *c = contact( nick );
+	if ( !c )
+		return;
+	session->left( c );
 }
 
 void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &message, const QString &handle )
@@ -1942,7 +1961,7 @@ void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &
 	if( !contact( nick ) )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << "Adding contact " << nick << endl;
-		addContact( nick, nick, 0, Kopete::Account::Temporary );
+		addContact( nick, nick, 0, Kopete::Account::DontChangeKABC );
 	}
 	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << message << "'" << endl;
 	

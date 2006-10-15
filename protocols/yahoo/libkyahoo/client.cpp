@@ -854,6 +854,8 @@ void Client::initTasks()
 				SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ) );
 	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ),
 				SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasLeft(QString,QString) ),
+				SIGNAL(chatBuddyHasLeft(QString,QString) ) );
 	QObject::connect( d->yahooChatTask, SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ),
 				SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ) );
 }

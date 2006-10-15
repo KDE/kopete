@@ -640,6 +640,10 @@ Q_OBJECT
 		 */
 		void chatBuddyHasJoined( const QString &, const QString &, bool );
 		/**
+		 * A buddy has left a chatroom
+		 */
+		void chatBuddyHasLeft( const QString &, const QString & );
+		/**
 		 * We have received a message in a chatroom
 		 */
 		void chatMessageReceived( const QString &, const QString &, const QString & );
