@@ -315,12 +315,12 @@ void HistoryLogger::saveToDisk()
 	t.start(); //mesure the time needed to save.
 
 	KSaveFile file( m_toSaveFileName );
-	if( file.status() == 0 )
+	if( file.open() )
 	{
-		QTextStream *stream = file.textStream();
-		//stream->setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
-		m_toSaveDocument.save( *stream, 1 );
-		file.close();
+		QTextStream stream ( &file );
+		//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
+		m_toSaveDocument.save( stream, 1 );
+		file.finalize();
 
 		m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
 		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 5 minutes

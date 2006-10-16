@@ -221,12 +221,12 @@ void HistoryPlugin::convertOldHistory()
 											date.toString(".yyyyMM");
 									KSaveFile file(  KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name +
 									                                             QString::fromLatin1( ".xml" ) )  );
-									if( file.status() == 0 )
+									if( file.open() )
 									{
-										QTextStream *stream = file.textStream();
-										//stream->setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
-										doc.save( *stream , 1 );
-										file.close();
+										QTextStream stream ( &file );
+										//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
+										doc.save( stream , 1 );
+										file.finalize();
 									}
 								}
 
@@ -284,12 +284,12 @@ void HistoryPlugin::convertOldHistory()
 								date.toString(".yyyyMM");
 						KSaveFile file( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name +
 						                                            QString::fromLatin1( ".xml" ) )  );
-						if( file.status() == 0 )
+						if( file.open() )
 						{
-							QTextStream *stream = file.textStream();
-							//stream->setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
-							doc.save( *stream ,1 );
-							file.close();
+							QTextStream stream ( &file );
+							//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
+							doc.save( stream ,1 );
+							file.finalize();
 						}
 					}
 

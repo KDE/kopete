@@ -152,10 +152,10 @@ void HighlightConfig::save()
 	QString fileName = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
 
 	KSaveFile file( fileName );
-	if( file.status() == 0 )
+	if( file.open() )
 	{
-		QTextStream *stream = file.textStream();
-		stream->setCodec(QTextCodec::codecForName("UTF-8"));
+		QTextStream stream ( &file );
+		stream.setCodec(QTextCodec::codecForName("UTF-8"));
 
 		QString xml = QString::fromLatin1(
 			"<?xml version=\"1.0\"?>\n"
@@ -189,7 +189,7 @@ void HighlightConfig::save()
 
 		xml += QString::fromLatin1( "</highlight-plugin>\n" );
 
-		*stream << xml;
+		stream << xml;
 	}
 }
 
