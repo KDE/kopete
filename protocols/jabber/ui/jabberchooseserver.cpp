@@ -20,6 +20,9 @@
 #include "jabberchooseserver.h"
 
 #include <QDomDocument>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QHeaderView>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kio/global.h>
@@ -38,16 +41,16 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
 	setButtons( KDialog::Ok | KDialog::Cancel );
 
 	mParentWidget = parent;
-	mSelectedRow = -1;
 
 	QWidget* w = new QWidget( this );
 	mMainWidget = new Ui::DlgJabberChooseServer;
 	mMainWidget->setupUi( w );
 	setMainWidget ( w );
 
-	mMainWidget->lblStatus->setText ( i18n ( "Retrieving server list...") );
+	mMainWidget->listServers->verticalHeader ()->setVisible ( false );
+	mMainWidget->listServers->horizontalHeader ()->setClickable ( false );
 
-	mMainWidget->listServers->setLeftMargin ( 0 );
+	mMainWidget->lblStatus->setText ( i18n ( "Retrieving server list...") );
 
 	// retrieve server list
 	mTransferJob = KIO::get ( KUrl("http://www.jabber.org/servers.xml") );
@@ -55,8 +58,10 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
 	connect ( mTransferJob, SIGNAL ( result ( KJob* ) ), this, SLOT ( slotTransferResult ( KJob* ) ) );
 	connect ( mTransferJob, SIGNAL ( data ( KIO::Job*, const QByteArray& ) ), this, SLOT ( slotTransferData ( KIO::Job*, const QByteArray& ) ) );
 
-	connect ( mMainWidget->listServers, SIGNAL ( pressed ( int, int, int, const QPoint & ) ), this, SLOT ( slotSetSelection ( int ) ) );
-	connect ( mMainWidget->listServers, SIGNAL ( doubleClicked ( int, int, int, const QPoint & ) ), this, SLOT ( slotOk () ) );
+	connect ( mMainWidget->listServers, SIGNAL (cellClicked(int,int)), this, SLOT (slotListServerClicked()) );
+	connect ( mMainWidget->listServers, SIGNAL (cellDoubleClicked(int,int)), this, SLOT (slotOk()) );
+
+	connect ( this, SIGNAL (okClicked()), this, SLOT(slotOk()) );
 
 	enableButtonOk ( false );
 
@@ -69,10 +74,11 @@ JabberChooseServer::~JabberChooseServer()
 
 void JabberChooseServer::slotOk ()
 {
+	QList<QTableWidgetItem *> mySelectedItem = mMainWidget->listServers->selectedItems();
 
-	if ( mSelectedRow != -1 )
+	if ( !mySelectedItem.empty () )
 	{
-		mParentWidget->setServer ( mMainWidget->listServers->text ( mSelectedRow, 0 ) );
+		mParentWidget->setServer ( mySelectedItem[0]->text() );
 	}
 
 	deleteLater ();
@@ -86,11 +92,9 @@ void JabberChooseServer::slotCancel ()
 
 }
 
-void JabberChooseServer::slotSetSelection ( int row )
+void JabberChooseServer::slotListServerClicked ( )
 {
 
-	mSelectedRow = row;
-	mMainWidget->listServers->selectRow ( row );
 	enableButtonOk ( true );
 
 }
@@ -135,18 +139,20 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 
 		QDomElement docElement = doc.documentElement ();
 
-		mMainWidget->listServers->setNumRows ( docElement.childNodes().count () );
-
 		int listIndex = 0;
+		QTableWidgetItem *newItem;
 		for( QDomNode node = docElement.firstChild (); !node.isNull (); node = node.nextSibling (), listIndex++ )
 		{
+			mMainWidget->listServers->insertRow ( listIndex );
 			QDomNamedNodeMap attributes = node.attributes ();
-			mMainWidget->listServers->setText ( listIndex, 0, attributes.namedItem ( "jid" ).nodeValue () );
-			mMainWidget->listServers->setText ( listIndex, 1, attributes.namedItem ( "name" ).nodeValue () );
+
+			newItem = new QTableWidgetItem ( attributes.namedItem ( "jid" ).nodeValue () );
+			mMainWidget->listServers->setItem ( listIndex, 0, newItem );
+			newItem = new QTableWidgetItem ( attributes.namedItem ( "name" ).nodeValue () );
+			mMainWidget->listServers->setItem ( listIndex, 1, newItem );
 		}
 
-		mMainWidget->listServers->adjustColumn ( 0 );
-		mMainWidget->listServers->adjustColumn ( 1 );
+		mMainWidget->listServers->adjustSize();
 	}
 
 }
