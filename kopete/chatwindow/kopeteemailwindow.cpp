@@ -334,7 +334,10 @@ void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 			slotReadNext();
 		else
 		{
-			d->btnReadNext->setPaletteForegroundColor( QColor("red") );
+			QPalette palette;
+			palette.setColor(d->btnReadNext->foregroundRole(), QColor("red") );
+			d->btnReadNext->setPalette(palette);
+            			
 			updateNextButton();
 		}
 
@@ -355,7 +358,9 @@ void KopeteEmailWindow::updateNextButton()
 	{
 		d->btnReadNext->setEnabled( false );
 
-		d->btnReadNext->setPaletteForegroundColor( KGlobalSettings::textColor() );
+		QPalette palette;
+		palette.setColor(d->btnReadNext->foregroundRole(), KGlobalSettings::textColor() );
+		d->btnReadNext->setPalette(palette);
 	}
 	else
 		d->btnReadNext->setEnabled( true );

@@ -258,8 +258,6 @@ int KopeteApplication::newInstance()
 //	kDebug(14000) << k_funcinfo << endl;
 	handleURLArgs();
 
-	setMainWidget( m_mainWindow );
-
 	return KUniqueApplication::newInstance();
 }
 

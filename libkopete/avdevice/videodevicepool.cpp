@@ -552,7 +552,7 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 	{
 		for (unsigned int loop=0; loop < m_videodevice.size(); loop++)
 		{
-			combobox->insertItem(m_videodevice[loop].m_name);
+			combobox->addItem(m_videodevice[loop].m_name);
 			kDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name << endl;
 		}
 		combobox->setCurrentIndex(currentDevice());
@@ -575,7 +575,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 		{
 			for (unsigned int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
 			{
-				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
+				combobox->addItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;
 			}
 			combobox->setCurrentIndex(currentInput());
@@ -600,7 +600,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 			for (unsigned int loop=0; loop < 25; loop++)
 			{
 				if ( (m_videodevice[currentDevice()].m_input[currentInput()].m_standards) & (1 << loop) )
-					combobox->insertItem(m_videodevice[currentDevice()].signalStandardName( 1 << loop));
+					combobox->addItem(m_videodevice[currentDevice()].signalStandardName( 1 << loop));
 /*
 				case STANDARD_PAL_B1	: return V4L2_STD_PAL_B1;	break;
 				case STANDARD_PAL_G	: return V4L2_STD_PAL_G;	break;
@@ -657,14 +657,14 @@ int VideoDevicePool::scanDevices()
 #if defined(__linux__) && defined(ENABLE_AV)
 	QDir videodevice_dir;
 	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
-	const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");
+	const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
 	VideoDevice videodevice;
 
 	m_videodevice.clear();
 	m_modelvector.clear();
 
 	videodevice_dir.setPath(videodevice_dir_path);
-	videodevice_dir.setNameFilter(videodevice_dir_filter);
+	videodevice_dir.setNameFilters(videodevice_dir_filter);
         videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         videodevice_dir.setSorting( QDir::Name );
 
@@ -675,11 +675,11 @@ int VideoDevicePool::scanDevices()
 		kDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
 		QDir videodevice_dir;
 		const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/");
-		const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");
+		const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
 		VideoDevice videodevice;
 
 		videodevice_dir.setPath(videodevice_dir_path);
-		videodevice_dir.setNameFilter(videodevice_dir_filter);
+		videodevice_dir.setNameFilters(videodevice_dir_filter);
         	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         	videodevice_dir.setSorting( QDir::Name );
 

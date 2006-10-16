@@ -950,7 +950,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 				addText( (*it).url() );
 			}
 		}
-		event->acceptAction();
+		event->accept();
 		return;
 	}
 	else
