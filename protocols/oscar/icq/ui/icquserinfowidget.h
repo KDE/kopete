@@ -3,8 +3,9 @@
  icquserinfowidget.h - Display ICQ user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
+ Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 
- Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+ Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                       *
@@ -39,10 +40,12 @@ class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	ICQUserInfoWidget( QWidget* parent = 0 );
+	ICQUserInfoWidget( QWidget* parent = 0, bool editable = false );
 	~ICQUserInfoWidget();
 	void setContact( ICQContact* contact );
 	
+	QList<ICQInfoBase*> getInfoData() const;
+
 public slots:
 	void fillBasicInfo( const ICQGeneralUserInfo& );
 	void fillWorkInfo( const ICQWorkUserInfo& );
@@ -53,6 +56,8 @@ public slots:
 	void fillOrgAffInfo( const ICQOrgAffInfo& info);
 
 private:
+	ICQGeneralUserInfo* storeBasicInfo() const;
+	
 	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
 	Ui::ICQWorkInfoWidget* m_workInfoWidget;
 	Ui::ICQHomeInfoWidget* m_homeInfoWidget;
@@ -62,6 +67,9 @@ private:
 	ICQContact* m_contact;
 	
 	QStringListModel* m_emailModel;
+	bool m_editable;
+
+	ICQGeneralUserInfo m_generalUserInfo;
 };
 
 #endif

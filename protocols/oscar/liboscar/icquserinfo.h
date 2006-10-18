@@ -3,8 +3,9 @@
 	icquserinfo.h - ICQ User Info Data Types
 	
 	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+	Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 	
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 	
 	*************************************************************************
 	*                                                                       *
@@ -23,6 +24,7 @@
 #include <QList>
 #include <qdatetime.h>
 #include "kopete_export.h"
+#include "icqinfovalue.h"
 
 class Buffer;
 
@@ -38,6 +40,7 @@ public:
 	ICQInfoBase() : m_sequence( 0 ) {}
 	virtual ~ICQInfoBase() {}
 	virtual void fill( Buffer* buffer ) = 0;
+	virtual void store( Buffer* ) {}
 	
 	void setSequenceNumber( int number ) { m_sequence = number; }
 	int sequenceNumber() { return m_sequence; }
@@ -70,25 +73,27 @@ public:
 	ICQGeneralUserInfo();
 	~ICQGeneralUserInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	unsigned long uin;
-	QByteArray nickname;
-	QByteArray firstName;
-	QByteArray lastName;
-	QByteArray email;
-	QByteArray city;
-	QByteArray state;
-	QByteArray phoneNumber;
-	QByteArray faxNumber;
-	QByteArray address;
-	QByteArray cellNumber;
-	QByteArray zip;
-	int country;
-	char timezone;
-	bool publishEmail;
-	bool allowsDC;
-	bool webaware;
+	ICQInfoValue<unsigned long> uin;
+	ICQInfoValue<QByteArray> nickName;
+	ICQInfoValue<QByteArray> firstName;
+	ICQInfoValue<QByteArray> lastName;
+	ICQInfoValue<QByteArray> email;
+	ICQInfoValue<QByteArray> city;
+	ICQInfoValue<QByteArray> state;
+	ICQInfoValue<QByteArray> phoneNumber;
+	ICQInfoValue<QByteArray> faxNumber;
+	ICQInfoValue<QByteArray> address;
+	ICQInfoValue<QByteArray> cellNumber;
+	ICQInfoValue<QByteArray> zip;
+	ICQInfoValue<int> country;
+	ICQInfoValue<char> timezone;
+	ICQInfoValue<bool> publishEmail;
+	ICQInfoValue<bool> allowsDC;
+	ICQInfoValue<bool> webAware;
+	ICQInfoValue<bool> authorization;
 };
 
 class KOPETE_EXPORT ICQWorkUserInfo : public ICQInfoBase
@@ -132,6 +137,7 @@ public:
 	QByteArray ostate;
 	int ocountry;
 	int marital;
+	bool sendInfo;
 };
 
 class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase

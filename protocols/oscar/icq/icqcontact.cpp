@@ -301,8 +301,8 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
 
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
-	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickname.isEmpty() )
-		setNickName( codec->toUnicode( genInfo.nickname ) );
+	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickName.get().isEmpty() )
+		setNickName( codec->toUnicode( genInfo.nickName.get() ) );
 	emit haveBasicInfo( genInfo );
 
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );

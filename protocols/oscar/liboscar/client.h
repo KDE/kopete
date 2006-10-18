@@ -295,6 +295,9 @@ public:
 	//! Update the user's AIM profile
 	void updateProfile( const QString& profile );
 
+	//! Update the user's ICQ profile
+	bool updateProfile( const QList<ICQInfoBase*>& infoList );
+
 	//! Get buddy icon information for a person
 	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
 

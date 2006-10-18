@@ -3,8 +3,9 @@
  icquserinfowidget.cpp - Display ICQ user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
+ Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 
- Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+ Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                       *
@@ -39,8 +40,8 @@
 #include "ui_icqorgaffinfowidget.h"
 
 
-ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
-: KPageDialog( parent )
+ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
+: KPageDialog( parent ), m_editable( editable )
 {
 	setFaceType( KPageDialog::List );
 	setModal( false );
@@ -93,6 +94,20 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
 	
 	m_emailModel = new QStringListModel();
 	m_otherInfoWidget->emailListView->setModel( m_emailModel );
+
+	//ICQGeneralUserInfo
+	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->lastNameEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->cityEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->stateEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->phoneEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->faxEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->addressEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->cellEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->zipEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->emailEdit->setReadOnly( !m_editable );
+	
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -121,32 +136,69 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	                  this, SLOT( fillInterestInfo( const ICQInterestInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveOrgAffInfo( const ICQOrgAffInfo& ) ),
 	                  this, SLOT( fillOrgAffInfo( const ICQOrgAffInfo& ) ) );
+
+	QMap<QString, int> sortedCountries;
+	QMapIterator<int, QString> it( static_cast<ICQProtocol*>( m_contact->protocol() )->countries() );
+
+	while ( it.hasNext() )
+	{
+		it.next();
+		sortedCountries.insert( it.value(), it.key() );
+	}
+
+	QMapIterator<QString, int> it2( sortedCountries );
+	while ( it2.hasNext() )
+	{
+		it2.next();
+		m_homeInfoWidget->countryCombo->addItem( it2.key(), it2.value() );
+	}
+
+	QString timezone;
+	for ( int zone = 24; zone >= -24; zone-- )
+	{
+		timezone = QString( "GTM %1%2:%3" )
+			.arg( ( zone > 0 ) ? "-" : "" )
+			.arg( qAbs( zone ) / 2, 2, 10, QLatin1Char('0') )
+			.arg( ( qAbs( zone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
+		
+		m_genInfoWidget->timezoneCombo->addItem( timezone, zone );
+	}
+}
+
+QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
+{
+	QList<ICQInfoBase*> infoList;
+	
+	if ( !m_editable )
+		return infoList;
+	
+	infoList.append( storeBasicInfo() );
+	
+	return infoList;
 }
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
-	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickname ) );
-	m_genInfoWidget->fullNameEdit->setText( codec->toUnicode( ui.firstName ) + ' ' + codec->toUnicode( ui.lastName ) );
-	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
-	m_homeInfoWidget->emailEdit->setText( codec->toUnicode( ui.email ) );
-	m_homeInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
-	m_homeInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
-	m_homeInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber ) );
-	m_homeInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber ) );
-	m_homeInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
-	m_homeInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber ) );
-	m_homeInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip ) );
 	
-	QString country = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.country];
-	m_homeInfoWidget->countryEdit->setText( country );
+	if ( m_editable )
+		m_generalUserInfo = ui;
 	
-	QString timezone = QString( "GTM %1%2:%3" )
-		.arg( ( ui.timezone > 0 ) ? "-" : "" )
-		.arg( qAbs( ui.timezone ) / 2, 2, 10, QLatin1Char('0') )
-		.arg( ( qAbs( ui.timezone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
-	m_genInfoWidget->timezoneEdit->setText( timezone );
+	m_genInfoWidget->uinEdit->setText( QString::number( ui.uin.get() ) );
+	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickName.get() ) );
+	m_genInfoWidget->firstNameEdit->setText( codec->toUnicode( ui.firstName.get() ) );
+	m_genInfoWidget->lastNameEdit->setText( codec->toUnicode( ui.lastName.get() ) );
+	m_homeInfoWidget->emailEdit->setText( codec->toUnicode( ui.email.get() ) );
+	m_homeInfoWidget->cityEdit->setText( codec->toUnicode( ui.city.get() ) );
+	m_homeInfoWidget->stateEdit->setText( codec->toUnicode( ui.state.get() ) );
+	m_homeInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber.get() ) );
+	m_homeInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber.get() ) );
+	m_homeInfoWidget->addressEdit->setText( codec->toUnicode( ui.address.get() ) );
+	m_homeInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber.get() ) );
+	m_homeInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip.get() ) );
+	
+	m_homeInfoWidget->countryCombo->setCurrentIndex( m_homeInfoWidget->countryCombo->findData( ui.country.get() ) );
+	m_genInfoWidget->timezoneCombo->setCurrentIndex( m_genInfoWidget->timezoneCombo->findData( ui.timezone.get() ) );
 }
 
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
@@ -279,6 +331,31 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	m_genInfoWidget->language3Edit->setText( lang3 );
 }
 
+ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQGeneralUserInfo* info = new ICQGeneralUserInfo( m_generalUserInfo );
+
+	info->nickName.set( codec->fromUnicode( m_genInfoWidget->nickNameEdit->text() ) );
+	info->firstName.set( codec->fromUnicode( m_genInfoWidget->firstNameEdit->text() ) );
+	info->lastName.set( codec->fromUnicode( m_genInfoWidget->lastNameEdit->text() ) );
+	info->email.set( codec->fromUnicode( m_homeInfoWidget->emailEdit->text() ) );
+	info->city.set( codec->fromUnicode( m_homeInfoWidget->cityEdit->text() ) );
+	info->state.set( codec->fromUnicode( m_homeInfoWidget->stateEdit->text() ) );
+	info->phoneNumber.set( codec->fromUnicode( m_homeInfoWidget->phoneEdit->text() ) );
+	info->faxNumber.set( codec->fromUnicode( m_homeInfoWidget->faxEdit->text() ) );
+	info->address.set( codec->fromUnicode( m_homeInfoWidget->addressEdit->text() ) );
+	info->cellNumber.set( codec->fromUnicode( m_homeInfoWidget->cellEdit->text() ) );
+	info->zip.set( codec->fromUnicode( m_homeInfoWidget->zipEdit->text() ) );
+
+	int index = m_homeInfoWidget->countryCombo->currentIndex();
+	info->country.set( m_homeInfoWidget->countryCombo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->timezoneCombo->currentIndex();
+	info->timezone.set( m_genInfoWidget->timezoneCombo->itemData( index ).toInt() );
+	
+	return info;
+}
 
 #include "icquserinfowidget.moc"
 

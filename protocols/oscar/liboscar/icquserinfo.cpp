@@ -3,8 +3,9 @@
 	icquserinfo.h - ICQ User Info Data Types
 
 	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+	Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -47,12 +48,12 @@ void ICQShortInfo::fill( Buffer* buffer )
 
 ICQGeneralUserInfo::ICQGeneralUserInfo()
 {
-	uin = 0;
-	country = 0;
-	timezone = 0;
-	publishEmail = false;
-	webaware = false;
-	allowsDC = false;
+	uin.init( 0 );
+	country.init( 0 );
+	timezone.init( 0 );
+	publishEmail.init( false );
+	webAware.init( false );
+	allowsDC.init( false );
 }
 
 void ICQGeneralUserInfo::fill( Buffer* buffer )
@@ -60,7 +61,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 	if ( buffer->getByte() == 0x0A )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet" << endl;
-		nickname = buffer->getLELNTS();
+		nickName = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
 		email = buffer->getLELNTS();
@@ -73,12 +74,100 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 		zip = buffer->getLELNTS();
 		country = buffer->getLEWord();
 		timezone = buffer->getLEByte(); // UTC+(tzcode * 30min)
-		webaware = ( buffer->getByte() == 0x01 );
+		authorization = ( buffer->getByte() == 0x00 );
+		webAware = ( buffer->getByte() == 0x01 );
 		allowsDC = ( buffer->getByte() == 0x01 ); //taken from sim
 		publishEmail = ( buffer->getByte() == 0x01 );
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet" << endl;
+}
+
+void ICQGeneralUserInfo::store( Buffer* buffer )
+{
+	if ( nickName.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( nickName.get() );
+		buffer->addLETLV( 0x0154, buf );
+	}
+	if ( firstName.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( firstName.get() );
+		buffer->addLETLV( 0x0140, buf );
+	}
+	if ( lastName.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( lastName.get() );
+		buffer->addLETLV( 0x014A, buf );
+	}
+	if ( email.hasChanged() || publishEmail.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( email.get() );
+		buf.addByte( ( publishEmail.get() ) ? 0x00 : 0x01 );
+		buffer->addLETLV( 0x015E, buf );
+	}
+	if ( city.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( city.get() );
+		buffer->addLETLV( 0x0190, buf );
+	}
+	if ( state.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( state.get() );
+		buffer->addLETLV( 0x019A, buf );
+	}
+	if ( phoneNumber.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( phoneNumber.get() );
+		buffer->addLETLV( 0x0276, buf );
+	}
+	if ( faxNumber.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( faxNumber.get() );
+		buffer->addLETLV( 0x0280, buf );
+	}
+	if ( address.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( address.get() );
+		buffer->addLETLV( 0x0262, buf );
+	}
+	if ( cellNumber.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( cellNumber.get() );
+		buffer->addLETLV( 0x028A, buf );
+	}
+	if ( zip.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( zip.get() );
+		buffer->addLETLV( 0x026D, buf );
+	}
+	if ( country.hasChanged() )
+	{
+		buffer->addLETLV16( 0x01A4, country.get() );
+	}
+	if ( timezone.hasChanged() )
+	{
+		buffer->addLETLV8( 0x0316, timezone.get() );
+	}
+	if ( webAware.hasChanged() )
+	{
+		buffer->addLETLV8( 0x02F8, ( webAware.get() ) ? 0x01 : 0x00 );
+	}
+	if ( authorization.hasChanged() )
+	{
+		buffer->addLETLV8( 0x030C, ( authorization.get() ) ? 0x00 : 0x01 );
+	}
 }
 
 ICQWorkUserInfo::ICQWorkUserInfo()
@@ -117,6 +206,7 @@ ICQMoreUserInfo::ICQMoreUserInfo()
 	lang3 = 0;
 	ocountry = 0;
 	marital = 0;
+	sendInfo = false;
 }
 
 void ICQMoreUserInfo::fill( Buffer* buffer )
@@ -143,7 +233,8 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		ocity = buffer->getLELNTS();
 		ostate = buffer->getLELNTS();
 		ocountry = buffer->getLEWord();
-		marital = buffer->getLEWord();
+		marital = buffer->getByte();
+		sendInfo = buffer->getByte();
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
@@ -158,11 +249,13 @@ void ICQEmailInfo::fill( Buffer* buffer )
 	if ( buffer->getByte() == 0x0A )
 	{
 		int numEmails = buffer->getByte();
-		QString email;
+		QByteArray email;
+		bool publish;
 		for ( int i = 0; i < numEmails; i++ )
 		{
-			if ( buffer->getByte() == 0x00 )
-				email = buffer->getLELNTS();
+			publish = ( buffer->getByte() == 0x00 );
+			email = buffer->getLELNTS();
+			emailList.append( email );
 		}
 	}
 	else

@@ -62,6 +62,7 @@
 #include "warningtask.h"
 #include "chatservicetask.h"
 #include "rateclassmanager.h"
+#include "icquserinfoupdatetask.h"
 
 
 namespace
@@ -999,6 +1000,18 @@ void Client::updateProfile( const QString& profile )
 	ProfileTask* pt = new ProfileTask( c->rootTask() );
 	pt->setProfileText( profile );
 	pt->go(true);
+}
+
+bool Client::updateProfile( const QList<ICQInfoBase*>& infoList )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return false;
+
+	ICQUserInfoUpdateTask* ui = new ICQUserInfoUpdateTask( c->rootTask() );
+	ui->setInfo( infoList );
+	ui->go(true);
+	return true;
 }
 
 void Client::sendTyping( const QString & contact, bool typing )

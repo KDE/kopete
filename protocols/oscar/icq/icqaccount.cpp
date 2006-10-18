@@ -20,6 +20,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
+#include <kicon.h>
 
 #include "kopeteawayaction.h"
 #include "kopetemessage.h"
@@ -35,6 +36,7 @@
 #include "icqcontact.h"
 #include "icqprotocol.h"
 #include "icqaccount.h"
+#include "icquserinfowidget.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -79,6 +81,8 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
 	mHideIP = configGroup()->readEntry( "HideIP", true );
+	mInfoContact = 0L;
+	mInfoWidget = 0L;
 	mInitialStatusMessage.clear();
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
@@ -114,6 +118,10 @@ KActionMenu* ICQAccount::actionMenu()
 
 	actionMenu->addSeparator();
 
+	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), 0, "actionEditInfo" );
+	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
+	actionMenu->addAction( m_editInfoAction );
+	
 	/*	KToggleAction* actionInvisible =
 	    new KToggleAction( i18n( "In&visible" ),
 	                       ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ),
@@ -207,6 +215,44 @@ void ICQAccount::slotToggleInvisible()
 {
 	using namespace ICQ;
 	setInvisible( (presence().visibility() == Presence::Visible) ? Presence::Invisible : Presence::Visible );
+}
+
+void ICQAccount::slotUserInfo()
+{
+	if ( mInfoWidget )
+	{
+		mInfoWidget->raise();
+	}
+	else
+	{
+		if ( !this->isConnected() )
+			return;
+
+		mInfoContact = new ICQContact( this, engine()->userId(), NULL );
+		
+		mInfoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), true );
+		QObject::connect( mInfoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
+		QObject::connect( mInfoWidget, SIGNAL( okClicked() ), this, SLOT( storeUserInfoDialog() ) );
+		mInfoWidget->setContact( mInfoContact );
+		mInfoWidget->show();
+		engine()->requestFullInfo( engine()->userId() );
+	}
+}
+
+void ICQAccount::storeUserInfoDialog()
+{
+	QList<ICQInfoBase*> infoList = mInfoWidget->getInfoData();
+	if ( !engine()->updateProfile( infoList ) )
+		qDeleteAll( infoList );
+}
+
+void ICQAccount::closeUserInfoDialog()
+{
+	QObject::disconnect( this, 0, mInfoWidget, 0 );
+	mInfoWidget->delayedDestruct();
+	delete mInfoContact;
+	mInfoContact = 0L;
+	mInfoWidget = 0L;
 }
 
 void ICQAccount::setAway( bool away, const QString &awayReason )
