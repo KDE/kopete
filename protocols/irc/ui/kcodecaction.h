@@ -40,13 +40,13 @@ public:
 
 public:
 	QTextCodec *currentCodec() const;
-//	bool setCurrentCodec(QTextCodec *codec);
+	bool setCurrentCodec(QTextCodec *codec);
 
 	QString currentCodecName() const;
 	bool setCurrentCodec(const QString &codecName);
 
 	int currentCodecMib() const;
-//	bool setCurrentCodec(int mib);
+	bool setCurrentCodec(int mib);
 
 signals:
 	void triggered(QTextCodec *codec);
