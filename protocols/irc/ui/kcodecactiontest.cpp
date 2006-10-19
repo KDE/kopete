@@ -63,7 +63,7 @@ void CodecActionTest::triggered(const QString& text)
 
 void CodecActionTest::triggered(QTextCodec *codec)
 {
-  kDebug() << k_funcinfo << '"' << codec->name() << '"' << endl;
+  kDebug() << k_funcinfo << codec->name() << ':' << codec->mibEnum() << endl;
 }
 
 void CodecActionTest::slotActionTriggered(bool state)

@@ -25,7 +25,7 @@
 
 // Acording to http://www.iana.org/assignments/ianacharset-mib
 // the default/unknown mib value is 2. 
-#define DEFAULT_MIB 2
+#define MIB_DEFAULT 2
 
 class KCodecAction::Private
 {
@@ -33,14 +33,11 @@ public:
     Private()
         : defaultAction(0)
         , configureAction(0)
-        , currentCodecMib(DEFAULT_MIB)
     {
     }
 
     QAction *defaultAction;
     QAction *configureAction;
-
-    int currentCodecMib;
 };
 
 KCodecAction::KCodecAction( KActionCollection *parent, const QString &name )
@@ -84,6 +81,50 @@ void KCodecAction::init()
 //    setEditable(true);
 }
 
+int KCodecAction::mibForName(const QString &codecName, bool *ok) const
+{
+    // FIXME logic is good but code is ugly
+
+    bool success = false;
+    int mib = MIB_DEFAULT;
+    KCharsets *charsets = KGlobal::charsets();
+
+    if (codecName == d->defaultAction->text())
+        success = true;
+    else
+    {    
+        QTextCodec *codec = charsets->codecForName(codecName, success);
+        if (!success)
+        {
+            // Maybe we got a description name instead
+            codec = charsets->codecForName(charsets->encodingForName(codecName), success);
+        }
+        
+        if (codec)
+            mib = codec->mibEnum();
+    }
+
+    if (ok)
+        *ok = success;
+
+    if (success)
+        return mib;
+
+    kWarning() << k_funcinfo << "Invalid codec name: "  << codecName << endl;
+    return MIB_DEFAULT;
+}
+
+QTextCodec *KCodecAction::codecForMib(int mib) const
+{
+    if (mib == MIB_DEFAULT)
+    {
+        // FIXME offer to change the default codec
+        return QTextCodec::codecForLocale();
+    }
+    else
+        return QTextCodec::codecForMib(mib);
+}
+
 void KCodecAction::actionTriggered(QAction *action)
 {
 #if 0
@@ -94,13 +135,14 @@ void KCodecAction::actionTriggered(QAction *action)
     }
 #endif
 
-    // cache values so we don't need access to members in the action
-    // after we've done an emit() (done in KSelectAction::actionTriggered)
-    QTextCodec *codec = currentCodec();
-    if (codec)
+    bool ok = false;
+    int mib = mibForName(action->text(), &ok);
+    if (ok)
     {
         KSelectAction::actionTriggered(action);
-        emit triggered(codec);
+
+//	emit triggeredMib(mib);
+        emit triggered(codecForMib(mib));
     }
 #if 0
     else
@@ -112,37 +154,18 @@ void KCodecAction::actionTriggered(QAction *action)
 
 QTextCodec *KCodecAction::currentCodec() const
 {
-    QAction *action = currentAction();
-    QTextCodec *codec = 0;
-
-    if (action == d->defaultAction)
-    {
-        // Take default codec
-        // FIXME offer to change the default codec
-        codec = QTextCodec::codecForLocale();
-    }
-    else
-    {
-        bool ok = false;
-        KCharsets *charsets = KGlobal::charsets();
-        QString encoding = charsets->encodingForName(action->text());
-        codec = charsets->codecForName(encoding, ok);
-        if (!ok)
-        {
-            kWarning() << k_funcinfo << "Invalid codec convertion for :\""  << action->text() << '"' << endl;
-            return 0;
-        }
-    }
-
-    return codec;
+    return codecForMib(currentCodecMib());
 }
 
 bool KCodecAction::setCurrentCodec( QTextCodec *codec )
 {
     if (codec)
-        return setCurrentAction(codec->name());
+        return setCurrentCodec(QLatin1String(codec->name()));
     else
+    {
+        kWarning() << k_funcinfo << "Codec is not selectable: " << codec->name() << endl;
         return false;
+    }
 }
 
 QString KCodecAction::currentCodecName() const
@@ -152,24 +175,28 @@ QString KCodecAction::currentCodecName() const
 
 bool KCodecAction::setCurrentCodec( const QString &codecName )
 {
-    return setCurrentAction(codecName, Qt::CaseInsensitive);
+    if (setCurrentAction(codecName, Qt::CaseInsensitive))
+        return true;
+
+    // Maybe we got an encoding , not a description name
+    KCharsets *charsets = KGlobal::charsets();
+    if (setCurrentAction(charsets->encodingForName(codecName), Qt::CaseInsensitive))
+        return true;
+
+    return false;
 }
 
 int KCodecAction::currentCodecMib() const
 {
-    QTextCodec *codec = currentCodec();
-    if (codec)
-        return codec->mibEnum();
-    else
-        return DEFAULT_MIB;
+    return mibForName(currentCodecName());
 }
 
 bool KCodecAction::setCurrentCodec( int mib )
 {
-    if (mib == DEFAULT_MIB)
+    if (mib == MIB_DEFAULT)
         return setCurrentAction(d->defaultAction);
     else
-        return setCurrentCodec( QTextCodec::codecForMib(mib) );
+        return setCurrentCodec(codecForMib(mib));
 }
 
 #include "kcodecaction.moc"
