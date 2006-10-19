@@ -102,20 +102,21 @@ public:
 	ICQWorkUserInfo();
 	~ICQWorkUserInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	QByteArray city;
-	QByteArray state;
-	QByteArray phone;
-	QByteArray fax;
-	QByteArray address;
-	QByteArray zip;
-	int country;
-	QByteArray company;
-	QByteArray department;
-	QByteArray position;
-	int occupation;
-	QByteArray homepage;
+	ICQInfoValue<QByteArray> city;
+	ICQInfoValue<QByteArray> state;
+	ICQInfoValue<QByteArray> phone;
+	ICQInfoValue<QByteArray> fax;
+	ICQInfoValue<QByteArray> address;
+	ICQInfoValue<QByteArray> zip;
+	ICQInfoValue<int> country;
+	ICQInfoValue<QByteArray> company;
+	ICQInfoValue<QByteArray> department;
+	ICQInfoValue<QByteArray> position;
+	ICQInfoValue<int> occupation;
+	ICQInfoValue<QByteArray> homepage;
 };
 
 class KOPETE_EXPORT ICQMoreUserInfo : public ICQInfoBase

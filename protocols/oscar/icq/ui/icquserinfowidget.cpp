@@ -122,6 +122,17 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_homeInfoWidget->homepageEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->oCityEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->oStateEdit->setReadOnly( !m_editable );
+
+	m_workInfoWidget->cityEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->stateEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->phoneEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->faxEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->addressEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->zipEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->companyEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->departmentEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->positionEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->homepageEdit->setReadOnly( !m_editable );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -160,10 +171,11 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 		it.next();
 		m_homeInfoWidget->countryCombo->addItem( it.key(), it.value() );
 		m_genInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
+		m_workInfoWidget->countryCombo->addItem( it.key(), it.value() );
 	}
 
 	//Languages
-	it = sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->languages() );
+	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->languages() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
@@ -174,7 +186,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	//Genders
-	it = sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->genders() );
+	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->genders() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
@@ -183,12 +195,21 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	//Maritals
-	it = sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->maritals() );
+	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->maritals() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
 		it.next();
 		m_genInfoWidget->maritalCombo->addItem( it.key(), it.value() );
+	}
+
+	//Occupation
+	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->occupations() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_workInfoWidget->occupationCombo->addItem( it.key(), it.value() );
 	}
 
 	//Timezone
@@ -213,6 +234,7 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 	
 	infoList.append( storeBasicInfo() );
 	infoList.append( storeMoreInfo() );
+	infoList.append( storeWorkInfo() );
 	
 	return infoList;
 }
@@ -244,23 +266,23 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	m_workInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
-	m_workInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
-	m_workInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phone ) );
-	m_workInfoWidget->faxEdit->setText( codec->toUnicode( ui.fax ) );
-	m_workInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
-	m_workInfoWidget->zipEdit->setText( codec->toUnicode( ui.zip ) );
-	m_workInfoWidget->companyEdit->setText( codec->toUnicode( ui.company ) );
-	m_workInfoWidget->departmentEdit->setText( codec->toUnicode( ui.department ) );
-	m_workInfoWidget->positionEdit->setText( codec->toUnicode( ui.position ) );
-	m_workInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
-	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
-	QString country = p->countries()[ui.country];
-	m_workInfoWidget->countryEdit->setText( country );
-	
-	QString occupation = p->occupations()[ui.occupation];
-	m_workInfoWidget->occupationEdit->setText( occupation );
+	if ( m_editable )
+		m_workUserInfo = ui;
+
+	m_workInfoWidget->cityEdit->setText( codec->toUnicode( ui.city.get() ) );
+	m_workInfoWidget->stateEdit->setText( codec->toUnicode( ui.state.get() ) );
+	m_workInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phone.get() ) );
+	m_workInfoWidget->faxEdit->setText( codec->toUnicode( ui.fax.get() ) );
+	m_workInfoWidget->addressEdit->setText( codec->toUnicode( ui.address.get() ) );
+	m_workInfoWidget->zipEdit->setText( codec->toUnicode( ui.zip.get() ) );
+	m_workInfoWidget->companyEdit->setText( codec->toUnicode( ui.company.get() ) );
+	m_workInfoWidget->departmentEdit->setText( codec->toUnicode( ui.department.get() ) );
+	m_workInfoWidget->positionEdit->setText( codec->toUnicode( ui.position.get() ) );
+	m_workInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage.get() ) );
+
+	m_workInfoWidget->countryCombo->setCurrentIndex( m_workInfoWidget->countryCombo->findData( ui.country.get() ) );
+	m_workInfoWidget->occupationCombo->setCurrentIndex( m_workInfoWidget->occupationCombo->findData( ui.occupation.get() ) );
 }
 
 void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
@@ -460,6 +482,31 @@ ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 
 	index = m_genInfoWidget->language3Combo->currentIndex();
 	info->lang3.set( m_genInfoWidget->language3Combo->itemData( index ).toInt() );
+
+	return info;
+}
+
+ICQWorkUserInfo* ICQUserInfoWidget::storeWorkInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQWorkUserInfo* info = new ICQWorkUserInfo( m_workUserInfo );
+
+	info->city.set( codec->fromUnicode( m_workInfoWidget->cityEdit->text() ) );
+	info->state.set( codec->fromUnicode( m_workInfoWidget->stateEdit->text() ) );
+	info->phone.set( codec->fromUnicode( m_workInfoWidget->phoneEdit->text() ) );
+	info->fax.set( codec->fromUnicode( m_workInfoWidget->faxEdit->text() ) );
+	info->address.set( codec->fromUnicode( m_workInfoWidget->addressEdit->text() ) );
+	info->zip.set( codec->fromUnicode( m_workInfoWidget->zipEdit->text() ) );
+	info->company.set( codec->fromUnicode( m_workInfoWidget->companyEdit->text() ) );
+	info->department.set( codec->fromUnicode( m_workInfoWidget->departmentEdit->text() ) );
+	info->position.set( codec->fromUnicode( m_workInfoWidget->positionEdit->text() ) );
+	info->homepage.set( codec->fromUnicode( m_workInfoWidget->homepageEdit->text() ) );
+
+	int index = m_workInfoWidget->countryCombo->currentIndex();
+	info->country.set( m_workInfoWidget->countryCombo->itemData( index ).toInt() );
+
+	index = m_workInfoWidget->occupationCombo->currentIndex();
+	info->occupation.set( m_workInfoWidget->occupationCombo->itemData( index ).toInt() );
 
 	return info;
 }

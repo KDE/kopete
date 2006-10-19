@@ -172,8 +172,8 @@ void ICQGeneralUserInfo::store( Buffer* buffer )
 
 ICQWorkUserInfo::ICQWorkUserInfo()
 {
-	country = 0;
-	occupation = 0;
+	country.init( 0 );
+	occupation.init( 0 );
 }
 
 void ICQWorkUserInfo::fill( Buffer* buffer )
@@ -195,6 +195,89 @@ void ICQWorkUserInfo::fill( Buffer* buffer )
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+}
+
+void ICQWorkUserInfo::store( Buffer* buffer )
+{
+	if ( city.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( city.get() );
+		buffer->addLETLV( 0x029E, buf );
+	}
+
+	if ( state.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( state.get() );
+		buffer->addLETLV( 0x02A8, buf );
+	}
+
+	if ( phone.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( phone.get() );
+		buffer->addLETLV( 0x02C6, buf );
+	}
+
+	if ( fax.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( fax.get() );
+		buffer->addLETLV( 0x02D0, buf );
+	}
+
+	if ( address.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( address.get() );
+		buffer->addLETLV( 0x0294, buf );
+	}
+
+	if ( zip.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( zip.get() );
+		buffer->addLETLV( 0x02BD, buf );
+	}
+
+	if ( country.hasChanged() )
+	{
+		buffer->addLETLV16( 0x02B2, country.get() );
+	}
+
+	if ( company.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( company.get() );
+		buffer->addLETLV( 0x01AE, buf );
+	}
+
+	if ( department.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( department.get() );
+		buffer->addLETLV( 0x01B8, buf );
+	}
+
+	if ( position.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( position.get() );
+		buffer->addLETLV( 0x01C2, buf );
+	}
+
+	if ( occupation.hasChanged() )
+	{
+		buffer->addLETLV16( 0x01CC, occupation.get() );
+	}
+
+	if ( homepage.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( homepage.get() );
+		buffer->addLETLV( 0x02DA, buf );
+	}
 }
 
 ICQMoreUserInfo::ICQMoreUserInfo()

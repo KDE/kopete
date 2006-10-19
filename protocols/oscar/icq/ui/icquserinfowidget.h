@@ -62,6 +62,7 @@ private slots:
 private:
 	ICQGeneralUserInfo* storeBasicInfo() const;
 	ICQMoreUserInfo* storeMoreInfo() const;
+	ICQWorkUserInfo* storeWorkInfo() const;
 
 	QMap<QString, int> reverseMap( const QMap<int, QString>& map ) const;
 
@@ -78,6 +79,7 @@ private:
 
 	ICQGeneralUserInfo m_generalUserInfo;
 	ICQMoreUserInfo m_moreUserInfo;
+	ICQWorkUserInfo m_workUserInfo;
 };
 
 #endif
