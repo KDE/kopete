@@ -451,6 +451,12 @@ void ICQInterestInfo::fill( Buffer* buffer )
 
 ICQOrgAffInfo::ICQOrgAffInfo()
 {
+	org1Category.init( 0 );
+	org2Category.init( 0 );
+	org3Category.init( 0 );
+	pastAff1Category.init( 0 );
+	pastAff2Category.init( 0 );
+	pastAff3Category.init( 0 );
 }
 
 void ICQOrgAffInfo::fill( Buffer* buffer )
@@ -486,6 +492,67 @@ void ICQOrgAffInfo::fill( Buffer* buffer )
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization & affiliation info packet" << endl;
 
+}
+
+void ICQOrgAffInfo::store( Buffer* buffer )
+{
+	if ( org1Category.hasChanged() || org1Keyword.hasChanged() ||
+	     org2Category.hasChanged() || org2Keyword.hasChanged() ||
+	     org3Category.hasChanged() || org3Keyword.hasChanged() )
+	{
+		if ( org1Category.get() != 0 )
+		{
+			Buffer buf;
+			buf.addLEWord( org1Category.get() );
+			buf.addLELNTS( org1Keyword.get() );
+			buffer->addLETLV( 0x01FE, buf );
+		}
+
+		if ( org2Category.get() != 0 )
+		{
+			Buffer buf;
+			buf.addLEWord( org2Category.get() );
+			buf.addLELNTS( org2Keyword.get() );
+			buffer->addLETLV( 0x01FE, buf );
+		}
+
+		if ( org3Category.get() != 0 )
+		{
+			Buffer buf;
+			buf.addLEWord( org3Category.get() );
+			buf.addLELNTS( org3Keyword.get() );
+			buffer->addLETLV( 0x01FE, buf );
+		}
+	}
+
+	if ( pastAff1Category.hasChanged() || pastAff1Keyword.hasChanged() ||
+	     pastAff2Category.hasChanged() || pastAff2Keyword.hasChanged() ||
+	     pastAff3Category.hasChanged() || pastAff3Keyword.hasChanged() )
+	{
+		if ( pastAff1Category.get() != 0 )
+		{
+			Buffer buf;
+			buf.addLEWord( pastAff1Category.get() );
+			buf.addLELNTS( pastAff1Keyword.get() );
+			buffer->addLETLV( 0x01D6, buf );
+		}
+
+		if ( pastAff2Category.get() != 0 )
+		{
+			Buffer buf;
+			buf.addLEWord( pastAff2Category.get() );
+			buf.addLELNTS( pastAff2Keyword.get() );
+			buffer->addLETLV( 0x01D6, buf );
+		}
+
+		if ( pastAff3Category.get() != 0 )
+		{
+			Buffer buf;
+			buf.addLEWord( pastAff3Category.get() );
+			buf.addLELNTS( pastAff3Keyword.get() );
+			buffer->addLETLV( 0x01D6, buf );
+		}
+	}
 }
 
 ICQSearchResult::ICQSearchResult()

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>394</width>
-    <height>333</height>
+    <height>287</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -31,23 +31,35 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="1" column="0" >
-       <widget class="QLineEdit" name="org2CategoryEdit" />
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLineEdit" name="org3CategoryEdit" />
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="org2KeywordEdit" />
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="org3KeywordEdit" />
-      </item>
       <item row="0" column="0" >
-       <widget class="QLineEdit" name="org1CategoryEdit" />
+       <widget class="QComboBox" name="org1CategoryCombo" />
       </item>
       <item row="0" column="1" >
-       <widget class="QLineEdit" name="org1KeywordEdit" />
+       <widget class="QLineEdit" name="org1KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QComboBox" name="org2CategoryCombo" />
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="org2KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QComboBox" name="org3CategoryCombo" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="org3KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -65,22 +77,34 @@
        <number>6</number>
       </property>
       <item row="0" column="0" >
-       <widget class="QLineEdit" name="aff1CategoryEdit" />
+       <widget class="QComboBox" name="aff1CategoryCombo" />
       </item>
       <item row="0" column="1" >
-       <widget class="QLineEdit" name="aff1KeywordEdit" />
+       <widget class="QLineEdit" name="aff1KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QLineEdit" name="aff2CategoryEdit" />
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLineEdit" name="aff3CategoryEdit" />
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="aff3KeywordEdit" />
+       <widget class="QComboBox" name="aff2CategoryCombo" />
       </item>
       <item row="1" column="1" >
-       <widget class="QLineEdit" name="aff2KeywordEdit" />
+       <widget class="QLineEdit" name="aff2KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QComboBox" name="aff3CategoryCombo" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="aff3KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -101,17 +125,17 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>org1CategoryEdit</tabstop>
+  <tabstop>org1CategoryCombo</tabstop>
   <tabstop>org1KeywordEdit</tabstop>
-  <tabstop>org2CategoryEdit</tabstop>
+  <tabstop>org2CategoryCombo</tabstop>
   <tabstop>org2KeywordEdit</tabstop>
-  <tabstop>org3CategoryEdit</tabstop>
+  <tabstop>org3CategoryCombo</tabstop>
   <tabstop>org3KeywordEdit</tabstop>
-  <tabstop>aff1CategoryEdit</tabstop>
+  <tabstop>aff1CategoryCombo</tabstop>
   <tabstop>aff1KeywordEdit</tabstop>
-  <tabstop>aff2CategoryEdit</tabstop>
+  <tabstop>aff2CategoryCombo</tabstop>
   <tabstop>aff2KeywordEdit</tabstop>
-  <tabstop>aff3CategoryEdit</tabstop>
+  <tabstop>aff3CategoryCombo</tabstop>
   <tabstop>aff3KeywordEdit</tabstop>
  </tabstops>
  <resources/>

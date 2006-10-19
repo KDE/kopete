@@ -102,6 +102,14 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
 	connect( m_genInfoWidget->birthdayDaySpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
 
+	connect( m_orgAffInfoWidget->org1CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg1CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->org2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg2CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->org3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg3CategoryChanged(int)) );
+
+	connect( m_orgAffInfoWidget->aff1CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff1CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->aff2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff2CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->aff3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff3CategoryChanged(int)) );
+
 	//ICQGeneralUserInfo
 	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
@@ -133,6 +141,13 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_workInfoWidget->departmentEdit->setReadOnly( !m_editable );
 	m_workInfoWidget->positionEdit->setReadOnly( !m_editable );
 	m_workInfoWidget->homepageEdit->setReadOnly( !m_editable );
+
+	m_orgAffInfoWidget->org1KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->org2KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->org3KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->aff1KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->aff2KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->aff3KeywordEdit->setReadOnly( !m_editable );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -162,8 +177,10 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	QObject::connect( contact, SIGNAL( haveOrgAffInfo( const ICQOrgAffInfo& ) ),
 	                  this, SLOT( fillOrgAffInfo( const ICQOrgAffInfo& ) ) );
 
+	ICQProtocol* icqProtocol = static_cast<ICQProtocol*>( m_contact->protocol() );
+
 	//Countries
-	QMap<QString, int> sortedMap( reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->countries() ) );
+	QMap<QString, int> sortedMap( reverseMap( icqProtocol->countries() ) );
 	QMapIterator<QString, int> it( sortedMap );
 
 	while ( it.hasNext() )
@@ -175,7 +192,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	//Languages
-	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->languages() );
+	sortedMap = reverseMap( icqProtocol->languages() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
@@ -186,7 +203,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	//Genders
-	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->genders() );
+	sortedMap = reverseMap( icqProtocol->genders() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
@@ -195,7 +212,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	//Maritals
-	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->maritals() );
+	sortedMap = reverseMap( icqProtocol->maritals() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
@@ -203,13 +220,35 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 		m_genInfoWidget->maritalCombo->addItem( it.key(), it.value() );
 	}
 
-	//Occupation
-	sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->occupations() );
+	//Occupations
+	sortedMap = reverseMap( icqProtocol->occupations() );
 	it = sortedMap;
 	while ( it.hasNext() )
 	{
 		it.next();
 		m_workInfoWidget->occupationCombo->addItem( it.key(), it.value() );
+	}
+
+	//Organizations
+	sortedMap = reverseMap( icqProtocol->organizations() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_orgAffInfoWidget->org1CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->org2CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->org3CategoryCombo->addItem( it.key(), it.value() );
+	}
+
+	//Affiliations
+	sortedMap = reverseMap( icqProtocol->affiliations() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_orgAffInfoWidget->aff1CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->aff2CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->aff3CategoryCombo->addItem( it.key(), it.value() );
 	}
 
 	//Timezone
@@ -235,6 +274,7 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 	infoList.append( storeBasicInfo() );
 	infoList.append( storeMoreInfo() );
 	infoList.append( storeWorkInfo() );
+	infoList.append( storeOrgAffInfo() );
 	
 	return infoList;
 }
@@ -328,37 +368,38 @@ void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
 	}
 }
 
-void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info)
+void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	
-	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
-	
-	m_orgAffInfoWidget->org1KeywordEdit->setText( codec->toUnicode( info.org1Keyword ) );
-	m_orgAffInfoWidget->org2KeywordEdit->setText( codec->toUnicode( info.org2Keyword ) );
-	m_orgAffInfoWidget->org3KeywordEdit->setText( codec->toUnicode( info.org3Keyword ) );
-	
-	QString org1Category = p->organizations()[ info.org1Category ];
-	m_orgAffInfoWidget->org1CategoryEdit->setText( org1Category );
-	
-	QString org2Category = p->organizations()[ info.org2Category ];
-	m_orgAffInfoWidget->org2CategoryEdit->setText( org2Category );
-	
-	QString org3Category = p->organizations()[ info.org3Category ];
-	m_orgAffInfoWidget->org3CategoryEdit->setText( org3Category );
-	
-	m_orgAffInfoWidget->aff1KeywordEdit->setText( codec->toUnicode( info.pastAff1Keyword ) );
-	m_orgAffInfoWidget->aff2KeywordEdit->setText( codec->toUnicode( info.pastAff2Keyword ) );
-	m_orgAffInfoWidget->aff3KeywordEdit->setText( codec->toUnicode( info.pastAff3Keyword ) );
-	
-	QString pastAff1Category = p->affiliations()[ info.pastAff1Category ];
-	m_orgAffInfoWidget->aff1CategoryEdit->setText( pastAff1Category );
-	
-	QString pastAff2Category = p->affiliations()[ info.pastAff2Category ];
-	m_orgAffInfoWidget->aff2CategoryEdit->setText( pastAff2Category );
-	
-	QString pastAff3Category = p->affiliations()[ info.pastAff3Category ];
-	m_orgAffInfoWidget->aff3CategoryEdit->setText( pastAff3Category );
+
+	if ( m_editable )
+		m_orgAffUserInfo = info;
+
+	m_orgAffInfoWidget->org1KeywordEdit->setText( codec->toUnicode( info.org1Keyword.get() ) );
+	m_orgAffInfoWidget->org2KeywordEdit->setText( codec->toUnicode( info.org2Keyword.get() ) );
+	m_orgAffInfoWidget->org3KeywordEdit->setText( codec->toUnicode( info.org3Keyword.get() ) );
+
+	int index = m_orgAffInfoWidget->org1CategoryCombo->findData( info.org1Category.get() );
+	m_orgAffInfoWidget->org1CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->org2CategoryCombo->findData( info.org2Category.get() );
+	m_orgAffInfoWidget->org2CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->org3CategoryCombo->findData( info.org3Category.get() );
+	m_orgAffInfoWidget->org3CategoryCombo->setCurrentIndex( index );
+
+	m_orgAffInfoWidget->aff1KeywordEdit->setText( codec->toUnicode( info.pastAff1Keyword.get() ) );
+	m_orgAffInfoWidget->aff2KeywordEdit->setText( codec->toUnicode( info.pastAff2Keyword.get() ) );
+	m_orgAffInfoWidget->aff3KeywordEdit->setText( codec->toUnicode( info.pastAff3Keyword.get() ) );
+
+	index = m_orgAffInfoWidget->aff1CategoryCombo->findData( info.pastAff1Category.get() );
+	m_orgAffInfoWidget->aff1CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->aff2CategoryCombo->findData( info.pastAff2Category.get() );
+	m_orgAffInfoWidget->aff2CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->aff3CategoryCombo->findData( info.pastAff3Category.get() );
+	m_orgAffInfoWidget->aff3CategoryCombo->setCurrentIndex( index );
 }
 
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
@@ -422,6 +463,42 @@ void ICQUserInfoWidget::slotUpdateAge()
 	}
 
 	m_genInfoWidget->ageEdit->setText( QString::number( age ) );
+}
+
+void ICQUserInfoWidget::slotOrg1CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->org1CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->org1KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotOrg2CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->org2CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->org2KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotOrg3CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->org3CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->org3KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAff1CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->aff1CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->aff1KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAff2CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->aff2CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->aff2KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAff3CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->aff3CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->aff3KeywordEdit->setEnabled( enable );
 }
 
 ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
@@ -508,6 +585,40 @@ ICQWorkUserInfo* ICQUserInfoWidget::storeWorkInfo() const
 	index = m_workInfoWidget->occupationCombo->currentIndex();
 	info->occupation.set( m_workInfoWidget->occupationCombo->itemData( index ).toInt() );
 
+	return info;
+}
+
+ICQOrgAffInfo* ICQUserInfoWidget::storeOrgAffInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQOrgAffInfo* info = new ICQOrgAffInfo( m_orgAffUserInfo );
+
+	info->org1Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org1KeywordEdit->text() ) );
+	info->org2Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org2KeywordEdit->text() ) );
+	info->org3Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org3KeywordEdit->text() ) );
+
+	int index = m_orgAffInfoWidget->org1CategoryCombo->currentIndex();
+	info->org1Category.set( m_orgAffInfoWidget->org1CategoryCombo->itemData( index ).toInt() );
+
+	index = m_orgAffInfoWidget->org2CategoryCombo->currentIndex();
+	info->org2Category.set( m_orgAffInfoWidget->org2CategoryCombo->itemData( index ).toInt() );
+
+	index = m_orgAffInfoWidget->org3CategoryCombo->currentIndex();
+	info->org3Category.set( m_orgAffInfoWidget->org3CategoryCombo->itemData( index ).toInt() );
+
+	info->pastAff1Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->aff1KeywordEdit->text() ) );
+	info->pastAff2Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->aff2KeywordEdit->text() ) );
+	info->pastAff3Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->aff3KeywordEdit->text() ) );
+
+	index = m_orgAffInfoWidget->aff1CategoryCombo->currentIndex();
+	info->pastAff1Category.set( m_orgAffInfoWidget->aff1CategoryCombo->itemData( index ).toInt() );
+
+	index = m_orgAffInfoWidget->aff2CategoryCombo->currentIndex();
+	info->pastAff2Category.set( m_orgAffInfoWidget->aff2CategoryCombo->itemData( index ).toInt() );
+	
+	index = m_orgAffInfoWidget->aff3CategoryCombo->currentIndex();
+	info->pastAff3Category.set( m_orgAffInfoWidget->aff3CategoryCombo->itemData( index ).toInt() );
+	
 	return info;
 }
 

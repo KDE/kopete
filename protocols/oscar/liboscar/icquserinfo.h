@@ -185,20 +185,21 @@ public:
 	ICQOrgAffInfo();
 	~ICQOrgAffInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	int org1Category;
-	int org2Category;
-	int org3Category;
-	QByteArray org1Keyword;
-	QByteArray org2Keyword;
-	QByteArray org3Keyword;
-	int pastAff1Category;
-	int pastAff2Category;
-	int pastAff3Category;
-	QByteArray pastAff1Keyword;
-	QByteArray pastAff2Keyword;
-	QByteArray pastAff3Keyword;
+	ICQInfoValue<int> org1Category;
+	ICQInfoValue<int> org2Category;
+	ICQInfoValue<int> org3Category;
+	ICQInfoValue<QByteArray> org1Keyword;
+	ICQInfoValue<QByteArray> org2Keyword;
+	ICQInfoValue<QByteArray> org3Keyword;
+	ICQInfoValue<int> pastAff1Category;
+	ICQInfoValue<int> pastAff2Category;
+	ICQInfoValue<int> pastAff3Category;
+	ICQInfoValue<QByteArray> pastAff1Keyword;
+	ICQInfoValue<QByteArray> pastAff2Keyword;
+	ICQInfoValue<QByteArray> pastAff3Keyword;
 };
 
 class KOPETE_EXPORT ICQSearchResult
