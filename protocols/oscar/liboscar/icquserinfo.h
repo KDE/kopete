@@ -172,11 +172,11 @@ public:
 	ICQInterestInfo();
 	~ICQInterestInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	int count;
-	int topics[4];
-	QByteArray descriptions[4];
+	ICQInfoValue<int> topics[4];
+	ICQInfoValue<QByteArray> descriptions[4];
 };
 
 class KOPETE_EXPORT ICQOrgAffInfo : public ICQInfoBase

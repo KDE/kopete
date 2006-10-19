@@ -419,14 +419,15 @@ void ICQNotesInfo::fill( Buffer* buffer )
 
 ICQInterestInfo::ICQInterestInfo()
 {
-	count=0;
+	for ( int i = 0; i < 4; i++ )
+		topics[i] = 0;
 }
 
 void ICQInterestInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		count=0; //valid interests
+		int count=0; //valid interests
 		int len= buffer->getByte();  //interests we get
 		for ( int i = 0; i < len; i++ )
 		{
@@ -436,7 +437,6 @@ void ICQInterestInfo::fill( Buffer* buffer )
 				if (count<4) { //i think this could not happen, i have never seen more
 					topics[count]=t;
 					descriptions[count]=d;
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got topic: "<<topics[count]<<" desc: " << topics[count] << endl;
 					count++;
 				} else {
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
@@ -447,6 +447,33 @@ void ICQInterestInfo::fill( Buffer* buffer )
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ interest user info packet" << endl;
+}
+
+void ICQInterestInfo::store( Buffer* buffer )
+{
+	bool hasChanged = false;
+	for ( int i = 0; i < 4; i++ )
+	{
+		if ( topics[i].hasChanged() || descriptions[i].hasChanged() )
+		{
+			hasChanged = true;
+			break;
+		}
+	}
+
+	if ( hasChanged )
+	{
+		for ( int i = 0; i < 4; i++ )
+		{
+			if ( topics[i].get() != 0 )
+			{
+				Buffer buf;
+				buf.addLEWord( topics[i].get() );
+				buf.addLELNTS( descriptions[i].get() );
+				buffer->addLETLV( 0x01EA, buf );
+			}
+		}
+	}
 }
 
 ICQOrgAffInfo::ICQOrgAffInfo()

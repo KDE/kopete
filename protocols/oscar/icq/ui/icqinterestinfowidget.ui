@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>376</width>
-    <height>249</height>
+    <height>193</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -28,6 +28,9 @@
       <property name="spacing" >
        <number>6</number>
       </property>
+      <item row="0" column="0" >
+       <widget class="QComboBox" name="topic1Combo" />
+      </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="desc1" >
         <property name="readOnly" >
@@ -35,40 +38,8 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QLineEdit" name="topic4" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLineEdit" name="topic1" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="desc3" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QLineEdit" name="desc4" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLineEdit" name="topic3" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item row="1" column="0" >
+       <widget class="QComboBox" name="topic2Combo" />
       </item>
       <item row="1" column="1" >
        <widget class="QLineEdit" name="desc2" >
@@ -77,8 +48,21 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLineEdit" name="topic2" >
+      <item row="2" column="0" >
+       <widget class="QComboBox" name="topic3Combo" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="desc3" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QComboBox" name="topic4Combo" />
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLineEdit" name="desc4" >
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -108,13 +92,13 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
-  <tabstop>topic1</tabstop>
+  <tabstop>topic1Combo</tabstop>
   <tabstop>desc1</tabstop>
-  <tabstop>topic2</tabstop>
+  <tabstop>topic2Combo</tabstop>
   <tabstop>desc2</tabstop>
-  <tabstop>topic3</tabstop>
+  <tabstop>topic3Combo</tabstop>
   <tabstop>desc3</tabstop>
-  <tabstop>topic4</tabstop>
+  <tabstop>topic4Combo</tabstop>
   <tabstop>desc4</tabstop>
  </tabstops>
  <resources/>

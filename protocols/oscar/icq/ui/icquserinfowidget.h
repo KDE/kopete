@@ -65,12 +65,18 @@ private slots:
 	void slotAff1CategoryChanged( int index );
 	void slotAff2CategoryChanged( int index );
 	void slotAff3CategoryChanged( int index );
-	
+
+	void slotInterestTopic1Changed( int index );
+	void slotInterestTopic2Changed( int index );
+	void slotInterestTopic3Changed( int index );
+	void slotInterestTopic4Changed( int index );
+
 private:
 	ICQGeneralUserInfo* storeBasicInfo() const;
 	ICQMoreUserInfo* storeMoreInfo() const;
 	ICQWorkUserInfo* storeWorkInfo() const;
 	ICQOrgAffInfo* storeOrgAffInfo() const;
+	ICQInterestInfo* storeInterestInfo() const;
 
 	QMap<QString, int> reverseMap( const QMap<int, QString>& map ) const;
 
@@ -89,6 +95,7 @@ private:
 	ICQMoreUserInfo m_moreUserInfo;
 	ICQWorkUserInfo m_workUserInfo;
 	ICQOrgAffInfo m_orgAffUserInfo;
+	ICQInterestInfo m_interestInfo;
 };
 
 #endif

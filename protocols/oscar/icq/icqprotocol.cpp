@@ -658,10 +658,11 @@ void ICQProtocol::initInterests()
 	mInterests.insert(133, i18n("Social science"));
 	mInterests.insert(134, i18n("60's"));
 	mInterests.insert(135, i18n("70's"));
-	mInterests.insert(136, i18n("40's"));
+	mInterests.insert(136, i18n("80's"));
 	mInterests.insert(137, i18n("50's"));
 	mInterests.insert(138, i18n("Finance and Corporate"));
 	mInterests.insert(139, i18n("Entertainment"));
+	mInterests.insert(140, i18n("Consumer Electronics"));
 	mInterests.insert(141, i18n("Retail Stores"));
 	mInterests.insert(142, i18n("Health and Beauty"));
 	mInterests.insert(143, i18n("Media"));

@@ -110,6 +110,11 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	connect( m_orgAffInfoWidget->aff2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff2CategoryChanged(int)) );
 	connect( m_orgAffInfoWidget->aff3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff3CategoryChanged(int)) );
 
+	connect( m_interestInfoWidget->topic1Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic1Changed(int)) );
+	connect( m_interestInfoWidget->topic2Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic2Changed(int)) );
+	connect( m_interestInfoWidget->topic3Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic3Changed(int)) );
+	connect( m_interestInfoWidget->topic4Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic4Changed(int)) );
+
 	//ICQGeneralUserInfo
 	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
@@ -148,6 +153,11 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_orgAffInfoWidget->aff1KeywordEdit->setReadOnly( !m_editable );
 	m_orgAffInfoWidget->aff2KeywordEdit->setReadOnly( !m_editable );
 	m_orgAffInfoWidget->aff3KeywordEdit->setReadOnly( !m_editable );
+
+	m_interestInfoWidget->desc1->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc2->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc3->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc4->setReadOnly( !m_editable );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -251,6 +261,18 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 		m_orgAffInfoWidget->aff3CategoryCombo->addItem( it.key(), it.value() );
 	}
 
+	//Interests
+	sortedMap = reverseMap( icqProtocol->interests() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_interestInfoWidget->topic1Combo->addItem( it.key(), it.value() );
+		m_interestInfoWidget->topic2Combo->addItem( it.key(), it.value() );
+		m_interestInfoWidget->topic3Combo->addItem( it.key(), it.value() );
+		m_interestInfoWidget->topic4Combo->addItem( it.key(), it.value() );
+	}
+
 	//Timezone
 	QString timezone;
 	for ( int zone = 24; zone >= -24; zone-- )
@@ -275,6 +297,7 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 	infoList.append( storeMoreInfo() );
 	infoList.append( storeWorkInfo() );
 	infoList.append( storeOrgAffInfo() );
+	infoList.append( storeInterestInfo() );
 	
 	return infoList;
 }
@@ -343,29 +366,28 @@ void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
 	m_otherInfoWidget->notesEdit->setText( codec->toUnicode( info.notes ) );
 }
 
-void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
+void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	if (info.count>0) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[0]];
-		m_interestInfoWidget->topic1->setText( topic );
-		m_interestInfoWidget->desc1->setText( codec->toUnicode( info.descriptions[0] ) );
-	}
-	if (info.count>1) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[1]];
-		m_interestInfoWidget->topic2->setText( topic );
-		m_interestInfoWidget->desc2->setText( codec->toUnicode( info.descriptions[1] ) );
-	}
-	if (info.count>2) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[2]];
-		m_interestInfoWidget->topic3->setText( topic );
-		m_interestInfoWidget->desc3->setText( codec->toUnicode( info.descriptions[2] ) );
-	}
-	if (info.count>3) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[3]];
-		m_interestInfoWidget->topic4->setText( topic );
-		m_interestInfoWidget->desc4->setText( codec->toUnicode( info.descriptions[3] ) );
-	}
+
+	if ( m_editable )
+		m_interestInfo = info;
+
+	int index = m_interestInfoWidget->topic1Combo->findData( info.topics[0].get() );
+	m_interestInfoWidget->topic1Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc1->setText( codec->toUnicode( info.descriptions[0].get() ) );
+
+	index = m_interestInfoWidget->topic2Combo->findData( info.topics[1].get() );
+	m_interestInfoWidget->topic2Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc2->setText( codec->toUnicode( info.descriptions[1].get() ) );
+
+	index = m_interestInfoWidget->topic3Combo->findData( info.topics[2].get() );
+	m_interestInfoWidget->topic3Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc3->setText( codec->toUnicode( info.descriptions[2].get() ) );
+
+	index = m_interestInfoWidget->topic4Combo->findData( info.topics[3].get() );
+	m_interestInfoWidget->topic4Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc4->setText( codec->toUnicode( info.descriptions[3].get() ) );
 }
 
 void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info )
@@ -501,6 +523,30 @@ void ICQUserInfoWidget::slotAff3CategoryChanged( int index )
 	m_orgAffInfoWidget->aff3KeywordEdit->setEnabled( enable );
 }
 
+void ICQUserInfoWidget::slotInterestTopic1Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic1Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc1->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic2Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic2Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc2->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic3Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic3Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc3->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic4Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic4Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc4->setEnabled( enable );
+}
+
 ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
 {
 	QTextCodec* codec = m_contact->contactCodec();
@@ -619,6 +665,30 @@ ICQOrgAffInfo* ICQUserInfoWidget::storeOrgAffInfo() const
 	index = m_orgAffInfoWidget->aff3CategoryCombo->currentIndex();
 	info->pastAff3Category.set( m_orgAffInfoWidget->aff3CategoryCombo->itemData( index ).toInt() );
 	
+	return info;
+}
+
+ICQInterestInfo* ICQUserInfoWidget::storeInterestInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQInterestInfo* info = new ICQInterestInfo( m_interestInfo );
+
+	int index = m_interestInfoWidget->topic1Combo->currentIndex();
+	info->topics[0].set( m_interestInfoWidget->topic1Combo->itemData( index ).toInt() );
+	info->descriptions[0].set( codec->fromUnicode( m_interestInfoWidget->desc1->text() ) );
+
+	index = m_interestInfoWidget->topic2Combo->currentIndex();
+	info->topics[1].set( m_interestInfoWidget->topic2Combo->itemData( index ).toInt() );
+	info->descriptions[1].set( codec->fromUnicode( m_interestInfoWidget->desc2->text() ) );
+
+	index = m_interestInfoWidget->topic3Combo->currentIndex();
+	info->topics[2].set( m_interestInfoWidget->topic3Combo->itemData( index ).toInt() );
+	info->descriptions[2].set( codec->fromUnicode( m_interestInfoWidget->desc3->text() ) );
+
+	index = m_interestInfoWidget->topic4Combo->currentIndex();
+	info->topics[3].set( m_interestInfoWidget->topic4Combo->itemData( index ).toInt() );
+	info->descriptions[3].set( codec->fromUnicode( m_interestInfoWidget->desc4->text() ) );
+
 	return info;
 }
 
