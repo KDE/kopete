@@ -95,6 +95,13 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_emailModel = new QStringListModel();
 	m_otherInfoWidget->emailListView->setModel( m_emailModel );
 
+	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
+	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
+
+	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+	connect( m_genInfoWidget->birthdayDaySpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+
 	//ICQGeneralUserInfo
 	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
@@ -107,7 +114,14 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_homeInfoWidget->cellEdit->setReadOnly( !m_editable );
 	m_homeInfoWidget->zipEdit->setReadOnly( !m_editable );
 	m_homeInfoWidget->emailEdit->setReadOnly( !m_editable );
-	
+
+	m_genInfoWidget->ageEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->birthdayDaySpin->setReadOnly( !m_editable );
+	m_genInfoWidget->birthdayMonthSpin->setReadOnly( !m_editable );
+	m_genInfoWidget->birthdayYearSpin->setReadOnly( !m_editable );
+	m_homeInfoWidget->homepageEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->oCityEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->oStateEdit->setReadOnly( !m_editable );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -137,22 +151,47 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	QObject::connect( contact, SIGNAL( haveOrgAffInfo( const ICQOrgAffInfo& ) ),
 	                  this, SLOT( fillOrgAffInfo( const ICQOrgAffInfo& ) ) );
 
-	QMap<QString, int> sortedCountries;
-	QMapIterator<int, QString> it( static_cast<ICQProtocol*>( m_contact->protocol() )->countries() );
+	//Countries
+	QMap<QString, int> sortedMap( reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->countries() ) );
+	QMapIterator<QString, int> it( sortedMap );
 
 	while ( it.hasNext() )
 	{
 		it.next();
-		sortedCountries.insert( it.value(), it.key() );
+		m_homeInfoWidget->countryCombo->addItem( it.key(), it.value() );
+		m_genInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
 	}
 
-	QMapIterator<QString, int> it2( sortedCountries );
-	while ( it2.hasNext() )
+	//Languages
+	it = sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->languages() );
+	it = sortedMap;
+	while ( it.hasNext() )
 	{
-		it2.next();
-		m_homeInfoWidget->countryCombo->addItem( it2.key(), it2.value() );
+		it.next();
+		m_genInfoWidget->language1Combo->addItem( it.key(), it.value() );
+		m_genInfoWidget->language2Combo->addItem( it.key(), it.value() );
+		m_genInfoWidget->language3Combo->addItem( it.key(), it.value() );
 	}
 
+	//Genders
+	it = sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->genders() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_genInfoWidget->genderCombo->addItem( it.key(), it.value() );
+	}
+
+	//Maritals
+	it = sortedMap = reverseMap( static_cast<ICQProtocol*>( m_contact->protocol() )->maritals() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_genInfoWidget->maritalCombo->addItem( it.key(), it.value() );
+	}
+
+	//Timezone
 	QString timezone;
 	for ( int zone = 24; zone >= -24; zone-- )
 	{
@@ -173,6 +212,7 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 		return infoList;
 	
 	infoList.append( storeBasicInfo() );
+	infoList.append( storeMoreInfo() );
 	
 	return infoList;
 }
@@ -302,33 +342,64 @@ void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info)
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	m_genInfoWidget->ageSpinBox->setValue( ui.age );
-	if ( ui.birthday.isValid() )
-		m_genInfoWidget->birthday->setText( KGlobal::locale()->formatDate( ui.birthday,true ) );
-		
-	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
-	m_genInfoWidget->genderEdit->setText( gender );
-	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
-	QString ms = static_cast<ICQProtocol*>( m_contact->protocol() )->maritals()[ui.marital];
-	m_genInfoWidget->marital->setText( ms );
+	if ( m_editable )
+		m_moreUserInfo = ui;
 
-	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity) );
-	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate) );
+	m_genInfoWidget->ageEdit->setText( QString::number( ui.age.get() ) );
+	m_genInfoWidget->birthdayYearSpin->setValue( ui.birthdayYear.get() );
+	m_genInfoWidget->birthdayMonthSpin->setValue( ui.birthdayMonth.get() );
+	m_genInfoWidget->birthdayDaySpin->setValue( ui.birthdayDay.get() );
+	m_genInfoWidget->genderCombo->setCurrentIndex( m_genInfoWidget->genderCombo->findData( ui.gender.get() ) );
+	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage.get() ) );
+	m_genInfoWidget->maritalCombo->setCurrentIndex( m_genInfoWidget->maritalCombo->findData( ui.marital.get() ) );
+	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity.get() ) );
+	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate.get() ) );
+	m_genInfoWidget->oCountryCombo->setCurrentIndex( m_genInfoWidget->oCountryCombo->findData( ui.ocountry.get() ) );
+	m_genInfoWidget->language1Combo->setCurrentIndex( m_genInfoWidget->language1Combo->findData( ui.lang1.get() ) );
+	m_genInfoWidget->language2Combo->setCurrentIndex( m_genInfoWidget->language2Combo->findData( ui.lang2.get() ) );
+	m_genInfoWidget->language3Combo->setCurrentIndex( m_genInfoWidget->language3Combo->findData( ui.lang3.get() ) );
+}
+
+
+void ICQUserInfoWidget::slotUpdateDay()
+{
+	int year = m_genInfoWidget->birthdayYearSpin->value();
+	int month = m_genInfoWidget->birthdayMonthSpin->value();
+	QDate date( year, month, 1 );
 	
-	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
-	
-	QString ocountry = p->countries()[ui.ocountry];
-	m_genInfoWidget->oCountryEdit->setText( ocountry );
-	
-	QString lang1 = p->languages()[ui.lang1];
-	m_genInfoWidget->language1Edit->setText( lang1 );
-	
-	QString lang2 = p->languages()[ui.lang2];
-	m_genInfoWidget->language2Edit->setText( lang2 );
-	
-	QString lang3 = p->languages()[ui.lang3];
-	m_genInfoWidget->language3Edit->setText( lang3 );
+	if ( date.isValid() )
+		m_genInfoWidget->birthdayDaySpin->setMaximum( date.daysInMonth() );
+	else
+		m_genInfoWidget->birthdayDaySpin->setMaximum( 31 );
+}
+
+void ICQUserInfoWidget::slotUpdateAge()
+{
+	QDate now = QDate::currentDate();
+	int year = m_genInfoWidget->birthdayYearSpin->value();
+	int month = m_genInfoWidget->birthdayMonthSpin->value();
+	int day = m_genInfoWidget->birthdayDaySpin->value();
+
+	int age = 0;
+
+	if ( year > 0 )
+	{
+		age = now.year() - year;
+		if ( month > now.month() )
+		{
+			age--;
+		}
+		else if ( month == now.month() )
+		{
+			if ( day > now.day() )
+			{
+				age--;
+			}
+		}
+	}
+
+	m_genInfoWidget->ageEdit->setText( QString::number( age ) );
 }
 
 ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
@@ -355,6 +426,56 @@ ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
 	info->timezone.set( m_genInfoWidget->timezoneCombo->itemData( index ).toInt() );
 	
 	return info;
+}
+
+ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQMoreUserInfo* info = new ICQMoreUserInfo( m_moreUserInfo );
+
+	info->age.set( m_genInfoWidget->ageEdit->text().toInt() );
+	info->birthdayYear.set( m_genInfoWidget->birthdayYearSpin->value() );
+	info->birthdayMonth.set( m_genInfoWidget->birthdayMonthSpin->value() );
+	info->birthdayDay.set( m_genInfoWidget->birthdayDaySpin->value() );
+
+	int index = m_genInfoWidget->genderCombo->currentIndex();
+	info->gender.set( m_genInfoWidget->genderCombo->itemData( index ).toInt() );
+
+	info->homepage.set( codec->fromUnicode( m_homeInfoWidget->homepageEdit->text() ) );
+
+	index = m_genInfoWidget->maritalCombo->currentIndex();
+	info->marital.set( m_genInfoWidget->maritalCombo->itemData( index ).toInt() );
+	
+	info->ocity.set( codec->fromUnicode( m_genInfoWidget->oCityEdit->text() ) );
+	info->ostate.set( codec->fromUnicode( m_genInfoWidget->oStateEdit->text() ) );
+
+	index = m_genInfoWidget->oCountryCombo->currentIndex();
+	info->ocountry.set( m_genInfoWidget->oCountryCombo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->language1Combo->currentIndex();
+	info->lang1.set( m_genInfoWidget->language1Combo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->language2Combo->currentIndex();
+	info->lang2.set( m_genInfoWidget->language2Combo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->language3Combo->currentIndex();
+	info->lang3.set( m_genInfoWidget->language3Combo->itemData( index ).toInt() );
+
+	return info;
+}
+
+QMap<QString, int> ICQUserInfoWidget::reverseMap( const QMap<int, QString>& map ) const
+{
+	QMap<QString, int> revMap;
+	QMapIterator<int, QString> it( map );
+
+	while ( it.hasNext() )
+	{
+		it.next();
+		revMap.insert( it.value(), it.key() );
+	}
+
+	return revMap;
 }
 
 #include "icquserinfowidget.moc"

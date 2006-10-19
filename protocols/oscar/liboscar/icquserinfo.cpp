@@ -199,14 +199,17 @@ void ICQWorkUserInfo::fill( Buffer* buffer )
 
 ICQMoreUserInfo::ICQMoreUserInfo()
 {
-	age = 0;
-	gender = 0;
-	lang1 = 0;
-	lang2 = 0;
-	lang3 = 0;
-	ocountry = 0;
-	marital = 0;
-	sendInfo = false;
+	age.init( 0 );
+	gender.init( 0 );
+	birthdayYear.init( 0 );
+	birthdayMonth.init( 0 );
+	birthdayDay.init( 0 );
+	lang1.init( 0 );
+	lang2.init( 0 );
+	lang3.init( 0 );
+	ocountry.init( 0 );
+	marital.init( 0 );
+	sendInfo.init( false );
 }
 
 void ICQMoreUserInfo::fill( Buffer* buffer )
@@ -216,16 +219,9 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		age = buffer->getLEWord();
 		gender = buffer->getByte();
 		homepage = buffer->getLELNTS();
-		WORD year = buffer->getLEWord();
-		BYTE month = buffer->getByte();
-		BYTE day = buffer->getByte();
-
-		// set birthday to NULL if at least one of the values in the buffer is 0
-		if ( year == 0 || month == 0 || day == 0 )
-			birthday = QDate();
-		else
-			birthday = QDate( year, month, day );
-
+		birthdayYear = buffer->getLEWord();
+		birthdayMonth = buffer->getByte();
+		birthdayDay = buffer->getByte();
 		lang1 = buffer->getByte();
 		lang2 = buffer->getByte();
 		lang3 = buffer->getByte();
@@ -238,6 +234,70 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+}
+
+void ICQMoreUserInfo::store( Buffer* buffer )
+{
+	if ( age.hasChanged() )
+	{
+		buffer->addLETLV16( 0x0172, age.get() );
+	}
+
+	if ( gender.hasChanged() )
+	{
+		buffer->addLETLV8( 0x017C, gender.get() );
+	}
+	
+	if ( homepage.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( homepage.get() );
+		buffer->addLETLV( 0x0213, buf );
+	}
+
+	if ( birthdayYear.hasChanged() || birthdayMonth.hasChanged() || birthdayDay.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLEWord( birthdayYear.get() );
+		buf.addLEWord( birthdayMonth.get() );
+		buf.addLEWord( birthdayDay.get() );
+		buffer->addLETLV( 0x023A, buf );
+	}
+
+	if ( lang1.hasChanged() || lang2.hasChanged() || lang3.hasChanged() )
+	{
+		buffer->addLETLV16( 0x0186, lang1.get() );
+		buffer->addLETLV16( 0x0186, lang2.get() );
+		buffer->addLETLV16( 0x0186, lang3.get() );
+	}
+
+	if ( ocity.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( ocity.get() );
+		buffer->addLETLV( 0x0320, buf );
+	}
+
+	if ( ostate.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( ostate.get() );
+		buffer->addLETLV( 0x032A, buf );
+	}
+
+	if ( ocountry.hasChanged() )
+	{
+		buffer->addLETLV16( 0x0334, ocountry.get() );
+	}
+
+// 	if ( marital.hasChanged() )
+// 	{
+// 	}
+	
+	if ( sendInfo.hasChanged() )
+	{
+		buffer->addLETLV8( 0x0348, sendInfo.get() );
+	}
 }
 
 ICQEmailInfo::ICQEmailInfo()

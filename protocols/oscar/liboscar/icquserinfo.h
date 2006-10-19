@@ -22,7 +22,7 @@
 
 #include <QByteArray>
 #include <QList>
-#include <qdatetime.h>
+
 #include "kopete_export.h"
 #include "icqinfovalue.h"
 
@@ -124,20 +124,23 @@ public:
 	ICQMoreUserInfo();
 	~ICQMoreUserInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	int age;
-	unsigned int gender;
-	QByteArray homepage;
-	QDate birthday;
-	unsigned int lang1;
-	unsigned int lang2;
-	unsigned int lang3;
-	QByteArray ocity;
-	QByteArray ostate;
-	int ocountry;
-	int marital;
-	bool sendInfo;
+	ICQInfoValue<int> age;
+	ICQInfoValue<unsigned int> gender;
+	ICQInfoValue<QByteArray> homepage;
+	ICQInfoValue<int> birthdayDay;
+	ICQInfoValue<int> birthdayMonth;
+	ICQInfoValue<int> birthdayYear;
+	ICQInfoValue<unsigned int> lang1;
+	ICQInfoValue<unsigned int> lang2;
+	ICQInfoValue<unsigned int> lang3;
+	ICQInfoValue<QByteArray> ocity;
+	ICQInfoValue<QByteArray> ostate;
+	ICQInfoValue<int> ocountry;
+	ICQInfoValue<int> marital;
+	ICQInfoValue<bool> sendInfo;
 };
 
 class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase

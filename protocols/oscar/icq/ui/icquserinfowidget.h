@@ -55,9 +55,16 @@ public slots:
 	void fillInterestInfo( const ICQInterestInfo& );
 	void fillOrgAffInfo( const ICQOrgAffInfo& info);
 
+private slots:
+	void slotUpdateDay();
+	void slotUpdateAge();
+
 private:
 	ICQGeneralUserInfo* storeBasicInfo() const;
-	
+	ICQMoreUserInfo* storeMoreInfo() const;
+
+	QMap<QString, int> reverseMap( const QMap<int, QString>& map ) const;
+
 	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
 	Ui::ICQWorkInfoWidget* m_workInfoWidget;
 	Ui::ICQHomeInfoWidget* m_homeInfoWidget;
@@ -70,6 +77,7 @@ private:
 	bool m_editable;
 
 	ICQGeneralUserInfo m_generalUserInfo;
+	ICQMoreUserInfo m_moreUserInfo;
 };
 
 #endif
