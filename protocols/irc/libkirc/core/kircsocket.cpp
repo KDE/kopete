@@ -207,12 +207,12 @@ void Socket::close()
 	d->socket = 0;
 }
 
-void Socket::writeMessage(QByteArray msg)
+void Socket::writeMessage(const QByteArray &msg)
 {
 	kDebug(14121) << k_funcinfo << "msg=" << msg << endl;
 	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
 	{
-		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
+//		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
 		return;
 	}
 
@@ -235,14 +235,7 @@ void Socket::writeMessage(const Message &msg)
 {
 	#warning Check message validity before sending it
 
-	QByteArray arr = msg.rawPrefix() + ' ' + msg.rawCommand();
-	foreach(QByteArray arg, msg.rawArgs())
-		(arr += ' ') += arg;
-
-	(arr += ' ') += msg.rawSuffix();
-
-	//writeMessage(msg.rawLine());
-	writeMessage(arr.trimmed());
+	writeMessage(msg.rawLine());
 }
 
 void Socket::showInfoDialog()
@@ -255,12 +248,12 @@ void Socket::showInfoDialog()
 	}
 */
 }
-
+#if 0
 void Socket::postEvent(Event::MessageType messageType, const QString &message)
 {
 #warning implement me
 }
-
+#endif
 void Socket::setConnectionState(ConnectionState newstate)
 {
 	if (d->state != newstate)
@@ -327,7 +320,7 @@ void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)
 		setConnectionState(Closing);
 		break;
 	default:
-		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
+//		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
 		close();
 	}
 }
@@ -344,7 +337,7 @@ void Socket::socketGotError(QAbstractSocket::SocketError)
 
 	QString errStr = d->socket->errorString();
 	kDebug(14121) << k_funcinfo << "Socket error: " << errStr << endl;
-	postErrorEvent(errStr);
+//	postErrorEvent(errStr);
 
 	// ignore non-fatal error
 	if (!KBufferedSocket::isFatalError(err))
@@ -382,3 +375,4 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 	*success = true;
 	return codec->fromUnicode(str);
 }
+

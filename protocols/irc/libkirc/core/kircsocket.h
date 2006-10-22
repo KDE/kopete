@@ -91,12 +91,14 @@ public slots:
 	void connectToServer(const KUrl &url);
 	void close();
 
-	void writeMessage(QByteArray message);
+	void writeMessage(const QByteArray &message);
 	void writeMessage(const QString &message, QTextCodec *codec = 0);
 	void writeMessage(const Message &message);
 
 	void showInfoDialog();
 
+#if 0
+public: //moc error
 	/**
 	 * Post an event for the given socket.
 	 *
@@ -114,6 +116,7 @@ public slots:
 	 */
 	inline void postErrorEvent(const QString &errStr)
 	{ postEvent(Event::ErrorMessage, errStr); }
+#endif
 
 signals:
 //	void eventOccured(const Event *);
