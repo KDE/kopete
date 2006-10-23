@@ -59,7 +59,7 @@ papillonglobal.cpp
 papillonstatusmessage.cpp 
 )
 
-kde4_automoc( libpapillon ${libpapillon_SRCS} )
+kde4_automoc()
 
 kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
 

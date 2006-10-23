@@ -23,7 +23,7 @@ set( KOPETE_TEST_LIBRARIES ${QT_QTTEST_LIBRARY} ${KDE4_KIO_LIBS} kopete )
 
 set(kopeteemoticontest_SRCS kopeteemoticontest.cpp )
 
-kde4_automoc(kopeteemoticontest ${kopeteemoticontest_SRCS})
+kde4_automoc(${kopeteemoticontest_SRCS})
 
 kde4_add_executable(kopeteemoticontest ${kopeteemoticontest_SRCS})
 
@@ -35,7 +35,7 @@ add_test(kopeteemoticontest ${EXECUTABLE_OUTPUT_PATH}/kopeteemoticontest)
 
 set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})
 
-kde4_automoc(kopetemessage_test ${kopetemessage_test_SRCS})
+kde4_automoc(${kopetemessage_test_SRCS})
 
 kde4_add_executable(kopetemessage_test ${kopetemessage_test_SRCS})
 
@@ -47,7 +47,7 @@ add_test(kopetemessage_test ${EXECUTABLE_OUTPUT_PATH}/kopetemessage_test)
 
 set(kopetetask_test_SRCS kopetetask_test.cpp )
 
-kde4_automoc(kopetetask_test ${kopetetask_test_SRCS})
+kde4_automoc(${kopetetask_test_SRCS})
 
 kde4_add_executable(kopetetask_test ${kopetetask_test_SRCS})
 
@@ -59,7 +59,7 @@ add_test(kopetetask_test ${EXECUTABLE_OUTPUT_PATH}/kopetetask_test)
 
 set(statusmessage_test_SRCS statusmessage_test.cpp )
 
-kde4_automoc(statusmessage_test ${statusmessage_test_SRCS})
+kde4_automoc(${statusmessage_test_SRCS})
 
 kde4_add_executable(statusmessage_test ${statusmessage_test_SRCS})
 
@@ -71,7 +71,7 @@ add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 
 set(xmlcontactstorage_test_SRCS xmlcontactstorage_test.cpp)
 
-kde4_automoc(xmlcontactstorage_test ${xmlcontactstorage_test_SRCS})
+kde4_automoc(${xmlcontactstorage_test_SRCS})
 
 kde4_add_executable(xmlcontactstorage_test ${xmlcontactstorage_test_SRCS})
 

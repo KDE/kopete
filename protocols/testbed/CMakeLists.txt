@@ -20,7 +20,7 @@ set(kopete_testbed_PART_SRCS
    ui/testbedwebcamdialog.cpp 
 )
 
-kde4_automoc(kopete_testbed ${kopete_testbed_PART_SRCS})
+kde4_automoc(${kopete_testbed_PART_SRCS})
 
 kde4_add_ui_files(kopete_testbed_PART_SRCS
 testbedaddui.ui

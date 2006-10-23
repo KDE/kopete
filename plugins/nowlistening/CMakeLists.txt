@@ -14,9 +14,9 @@ set(kopete_nowlistening_PART_SRCS
    nlamarok.cpp 
    nlkaffeine.cpp )
 
-kde4_add_kcfg_files(kopete_nowlistening kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
+kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 
-kde4_automoc(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
+kde4_automoc(${kopete_nowlistening_PART_SRCS})
 
 kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
@@ -37,9 +37,9 @@ set(kcm_kopete_nowlistening_PART_SRCS nowlisteningpreferences.cpp )
 
 kde4_add_ui_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
 
-kde4_add_kcfg_files(kcm_kopete_nowlistening kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
+kde4_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 
-kde4_automoc(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
+kde4_automoc(${kcm_kopete_nowlistening_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
 

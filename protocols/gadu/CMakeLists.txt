@@ -39,7 +39,7 @@ set(kopete_gadu_PART_SRCS
    gadudcctransaction.cpp 
    gadudcc.cpp )
 
-kde4_automoc(kopete_gadu ${kopete_gadu_PART_SRCS})
+kde4_automoc(${kopete_gadu_PART_SRCS})
 
 kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
 

@@ -6,7 +6,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/src  )
 
 set(smpppdcstests_SRCS main.cpp clienttest.cpp )
 
-kde4_automoc(smpppdcstests ${smpppdcstests_SRCS})
+kde4_automoc(${smpppdcstests_SRCS})
 
 if(KDE4_BUILD_TESTS)
 

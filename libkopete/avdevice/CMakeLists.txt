@@ -12,7 +12,7 @@ set(kopete_videodevice_LIB_SRCS
    videodevicepool.cpp 
    videodevicemodelpool.cpp )
 
-kde4_automoc(kopete_videodevice ${kopete_videodevice_LIB_SRCS})
+kde4_automoc(${kopete_videodevice_LIB_SRCS})
 
 kde4_add_library(kopete_videodevice SHARED ${kopete_videodevice_LIB_SRCS})
 

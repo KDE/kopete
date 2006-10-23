@@ -30,7 +30,7 @@ set(kopete_aim_PART_SRCS
    aimjoinchat.cpp 
    aimchatsession.cpp )
 
-kde4_automoc(kopete_aim ${kopete_aim_PART_SRCS})
+kde4_automoc(${kopete_aim_PART_SRCS})
 
 kde4_add_plugin(kopete_aim ${kopete_aim_PART_SRCS})
 

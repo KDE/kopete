@@ -9,7 +9,7 @@ link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../ )
 
 set(clientstream_test_SRCS clientstream_test.cpp )
 
-kde4_automoc(clientstream_test ${clientstream_test_SRCS})
+kde4_automoc(${clientstream_test_SRCS})
 
 kde4_add_executable(clientstream_test RUN_UNINSTALLED ${clientstream_test_SRCS})
 

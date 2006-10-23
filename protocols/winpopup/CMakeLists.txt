@@ -33,7 +33,7 @@ set(kopete_wp_PART_SRCS
    wpaccount.cpp 
    wpuserinfo.cpp )
 
-kde4_automoc(kopete_wp ${kopete_wp_PART_SRCS})
+kde4_automoc(${kopete_wp_PART_SRCS})
 
 kde4_add_plugin(kopete_wp ${kopete_wp_PART_SRCS})
 

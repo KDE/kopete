@@ -88,7 +88,7 @@ qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.cpp ${CMAKE_CURREN
 qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/securestream.h )
 qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.h )
 
-kde4_automoc( libiris_needmoc ${libiris_needmoc_SRCS} )
+kde4_automoc()
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 

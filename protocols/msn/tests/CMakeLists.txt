@@ -6,7 +6,7 @@
 
 set(challengetest_SRCS challengetest.cpp )
 
-kde4_automoc(challengetest ${challengetest_SRCS})
+kde4_automoc(${challengetest_SRCS})
 
 if(KDE4_BUILD_TESTS)
 

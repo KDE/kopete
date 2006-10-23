@@ -17,7 +17,7 @@ set(kopete_groupwise_PART_SRCS
    gwmessagemanager.cpp 
    gwcontactlist.cpp )
 
-kde4_automoc(kopete_groupwise ${kopete_groupwise_PART_SRCS})
+kde4_automoc(${kopete_groupwise_PART_SRCS})
 
 kde4_add_plugin(kopete_groupwise ${kopete_groupwise_PART_SRCS})
 

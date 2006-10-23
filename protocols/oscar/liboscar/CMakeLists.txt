@@ -27,7 +27,7 @@ localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservic
 icquserinfoupdatetask.cpp
 )
 
-kde4_automoc( liboscar ${liboscar_SRCS} )
+kde4_automoc()
 
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 

@@ -6,7 +6,7 @@
 
 set(kcm_kopete_msn_PART_SRCS msnpreferences.cpp )
 
-kde4_automoc(kcm_kopete_msn ${kcm_kopete_msn_PART_SRCS})
+kde4_automoc(${kcm_kopete_msn_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_msn_PART_SRCS msnprefs.ui )
 

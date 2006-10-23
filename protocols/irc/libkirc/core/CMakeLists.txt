@@ -12,7 +12,7 @@ set(libkirc_SRCS
   kircstdmessages.cpp 
 )
 
-kde4_automoc( libkirc ${libkirc_SRCS} )
+kde4_automoc()
 
 kde4_add_library( kirc SHARED ${libkirc_SRCS} )
 
