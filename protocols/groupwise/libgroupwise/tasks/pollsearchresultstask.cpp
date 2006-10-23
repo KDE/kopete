@@ -140,10 +140,39 @@ GroupWise::ContactDetails PollSearchResultsTask::extractUserDetails( Field::Fiel
 		const Field::FieldListIterator end = fl.end();
 		for ( Field::FieldListIterator it = fl.begin(); it != end; ++it )
 		{
-			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
-			QString propName = propField->tag();
-			QString propValue = propField->value().toString();
-			propMap.insert( propName, propValue );
+			// assumes each property only present once
+			// check in logintask.cpp and if it's a multi field,
+			// get the value of this instance, check if it's already in the property map and append if found.
+			Field::SingleField * propField = dynamic_cast<Field::SingleField *>( *it );
+			if ( propField )
+			{
+				QString propName = propField->tag();
+				QString propValue = propField->value().toString();
+				propMap.insert( propName, propValue );
+			}
+			else
+			{
+				Field::MultiField * propList = dynamic_cast<Field::MultiField*>( *it );
+				if ( propList )
+				{
+					QString parentName = propList->tag();
+					Field::FieldList propFields = propList->fields();
+					const Field::FieldListIterator end = propFields.end();
+					for ( Field::FieldListIterator it = propFields.begin(); it != end; ++it )
+					{
+						propField = dynamic_cast<Field::SingleField *>( *it );
+						if ( propField )
+						{
+							QString propValue = propField->value().toString();
+							QString contents = propMap[ propField->tag() ];
+							if ( !contents.isEmpty() )
+								contents.append( ", " );
+							contents.append( propField->value().toString());
+							propMap.insert( propField->tag(), contents );
+						}
+					}
+				}
+			}
 		}
 	}
 	if ( !propMap.empty() )
