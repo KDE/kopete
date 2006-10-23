@@ -391,18 +391,36 @@ void ICQEmailInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
+		QList<EmailItem> emails;
 		int numEmails = buffer->getByte();
-		QByteArray email;
-		bool publish;
 		for ( int i = 0; i < numEmails; i++ )
 		{
-			publish = ( buffer->getByte() == 0x00 );
-			email = buffer->getLELNTS();
-			emailList.append( email );
+			EmailItem item;
+			item.publish = ( buffer->getByte() == 0x00 );
+			item.email = buffer->getLELNTS();
+			emails.append( item );
 		}
+		emailList = emails;
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ email user info packet" << endl;
+}
+
+void ICQEmailInfo::store( Buffer* buffer )
+{
+	if ( emailList.hasChanged() )
+	{
+		int size = emailList.get().size();
+		for ( int i = 0; i < size; i++ )
+		{
+			EmailItem item = emailList.get().at(i);
+
+			Buffer buf;
+			buf.addLELNTS( item.email );
+			buf.addByte( ( item.publish ) ? 0x00 : 0x01 );
+			buffer->addLETLV( 0x015E, buf );
+		}
+	}
 }
 
 ICQNotesInfo::ICQNotesInfo()
@@ -417,10 +435,20 @@ void ICQNotesInfo::fill( Buffer* buffer )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ notes user info packet" << endl;
 }
 
+void ICQNotesInfo::store( Buffer* buffer )
+{
+	if ( notes.hasChanged() )
+	{
+		Buffer buf;
+		buf.addLELNTS( notes.get() );
+		buffer->addLETLV( 0x0258, buf );
+	}
+}
+
 ICQInterestInfo::ICQInterestInfo()
 {
 	for ( int i = 0; i < 4; i++ )
-		topics[i] = 0;
+		topics[i].init( 0 );
 }
 
 void ICQInterestInfo::fill( Buffer* buffer )
@@ -433,14 +461,20 @@ void ICQInterestInfo::fill( Buffer* buffer )
 		{
 			int t=buffer->getLEWord();
 			QByteArray d = buffer->getLELNTS();
-			if (t>0) { //there is some topic
-				if (count<4) { //i think this could not happen, i have never seen more
-					topics[count]=t;
-					descriptions[count]=d;
-					count++;
-				} else {
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
-				}
+			if (count<4) { //i think this could not happen, i have never seen more
+				topics[count]=t;
+				descriptions[count]=d;
+				count++;
+			} else {
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
+			}
+		}
+		if ( count < 4 )
+		{
+			for ( int i = count; i < 4; i++ )
+			{
+				topics[i] = 0;
+				descriptions[i] = QByteArray();
 			}
 		}
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;

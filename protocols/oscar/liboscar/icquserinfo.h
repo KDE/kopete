@@ -150,9 +150,21 @@ public:
 	ICQEmailInfo();
 	~ICQEmailInfo() {}
 	void fill( Buffer* buffer );
-	
+	void store( Buffer* buffer );
+
 public:
-	QList<QByteArray> emailList;
+	class EmailItem
+	{
+	public:
+		bool publish;
+		QByteArray email;
+		bool operator==( const EmailItem& item ) const
+		{
+			return ( publish == item.publish && email == item.email );
+		}
+	};
+
+	ICQInfoValue< QList<EmailItem> > emailList;
 };
 
 class KOPETE_EXPORT ICQNotesInfo : public ICQInfoBase
@@ -161,9 +173,10 @@ public:
 	ICQNotesInfo();
 	~ICQNotesInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	QByteArray notes;
+	ICQInfoValue<QByteArray> notes;
 };
 
 class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase

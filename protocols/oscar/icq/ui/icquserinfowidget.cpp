@@ -22,7 +22,8 @@
 #include <QtCore/QTextCodec>
 #include <QtGui/QLineEdit>
 #include <QtGui/QSpinBox>
-#include <QtGui/QStringListModel>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QHeaderView>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
@@ -92,8 +93,15 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	orgAffInfoItem->setHeader( i18n( "Organization & Affiliation Information" ) );
 	orgAffInfoItem->setIcon( KIcon("kontact_contacts") );
 	
-	m_emailModel = new QStringListModel();
-	m_otherInfoWidget->emailListView->setModel( m_emailModel );
+	m_emailModel = new QStandardItemModel();
+	QStandardItem *modelItem = new QStandardItem( "Type" );
+	m_emailModel->setHorizontalHeaderItem( 0, modelItem );
+	modelItem = new QStandardItem( "Publish Email/Email" );
+	m_emailModel->setHorizontalHeaderItem( 1, modelItem );
+
+	m_otherInfoWidget->emailTableView->setModel( m_emailModel );
+	m_otherInfoWidget->emailTableView->horizontalHeader()->setStretchLastSection( true );
+	m_otherInfoWidget->emailTableView->setSelectionMode( QAbstractItemView::SingleSelection );
 
 	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
 	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
@@ -115,6 +123,16 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	connect( m_interestInfoWidget->topic3Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic3Changed(int)) );
 	connect( m_interestInfoWidget->topic4Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic4Changed(int)) );
 
+	if ( m_editable )
+	{
+		connect( m_otherInfoWidget->addEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotAddEmail()) );
+		connect( m_otherInfoWidget->removeEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotRemoveEmail()) );
+		connect( m_otherInfoWidget->upEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotUpEmail()) );
+		connect( m_otherInfoWidget->downEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotDownEmail()) );
+		connect( m_otherInfoWidget->emailTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+		         this, SLOT(slotEmailSelectionChanged(const QItemSelection&)) );
+	}
+
 	//ICQGeneralUserInfo
 	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
@@ -126,7 +144,6 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_homeInfoWidget->addressEdit->setReadOnly( !m_editable );
 	m_homeInfoWidget->cellEdit->setReadOnly( !m_editable );
 	m_homeInfoWidget->zipEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->emailEdit->setReadOnly( !m_editable );
 
 	m_genInfoWidget->ageEdit->setReadOnly( !m_editable );
 	m_genInfoWidget->birthdayDaySpin->setReadOnly( !m_editable );
@@ -158,6 +175,13 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_interestInfoWidget->desc2->setReadOnly( !m_editable );
 	m_interestInfoWidget->desc3->setReadOnly( !m_editable );
 	m_interestInfoWidget->desc4->setReadOnly( !m_editable );
+
+	m_otherInfoWidget->notesEdit->setReadOnly( !m_editable );
+
+	m_otherInfoWidget->addEmailButton->setEnabled( m_editable );
+	m_otherInfoWidget->removeEmailButton->setEnabled( false );
+	m_otherInfoWidget->upEmailButton->setEnabled( false );
+	m_otherInfoWidget->downEmailButton->setEnabled( false );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -284,6 +308,9 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 		
 		m_genInfoWidget->timezoneCombo->addItem( timezone, zone );
 	}
+
+	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
+	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
 }
 
 QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
@@ -298,6 +325,8 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 	infoList.append( storeWorkInfo() );
 	infoList.append( storeOrgAffInfo() );
 	infoList.append( storeInterestInfo() );
+	infoList.append( storeNotesInfo() );
+	infoList.append( storeEmailInfo() );
 	
 	return infoList;
 }
@@ -309,11 +338,9 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 	if ( m_editable )
 		m_generalUserInfo = ui;
 	
-	m_genInfoWidget->uinEdit->setText( QString::number( ui.uin.get() ) );
 	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickName.get() ) );
 	m_genInfoWidget->firstNameEdit->setText( codec->toUnicode( ui.firstName.get() ) );
 	m_genInfoWidget->lastNameEdit->setText( codec->toUnicode( ui.lastName.get() ) );
-	m_homeInfoWidget->emailEdit->setText( codec->toUnicode( ui.email.get() ) );
 	m_homeInfoWidget->cityEdit->setText( codec->toUnicode( ui.city.get() ) );
 	m_homeInfoWidget->stateEdit->setText( codec->toUnicode( ui.state.get() ) );
 	m_homeInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber.get() ) );
@@ -324,6 +351,25 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 	
 	m_homeInfoWidget->countryCombo->setCurrentIndex( m_homeInfoWidget->countryCombo->findData( ui.country.get() ) );
 	m_genInfoWidget->timezoneCombo->setCurrentIndex( m_genInfoWidget->timezoneCombo->findData( ui.timezone.get() ) );
+
+	if ( !ui.email.get().isEmpty() )
+	{
+		QList<QStandardItem *> items;
+		QStandardItem *modelItem;
+
+		modelItem = new QStandardItem( "Primary" );
+		modelItem->setEditable( false );
+		modelItem->setSelectable( false );
+		items.append( modelItem );
+
+		modelItem = new QStandardItem( codec->toUnicode( ui.email.get() ) );
+		modelItem->setEditable( m_editable );
+		modelItem->setCheckable( true );
+		modelItem->setCheckState( ( ui.publishEmail.get() ) ? Qt::Checked : Qt::Unchecked );
+		items.append( modelItem );
+
+		m_emailModel->insertRow( 0, items );
+	}
 }
 
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
@@ -351,19 +397,36 @@ void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	
-	QStringList emails;
-	foreach( QByteArray email, info.emailList )
-		emails << codec->toUnicode( email );
-	
-	m_emailModel->setStringList( emails );
+
+	if ( m_editable )
+		m_emailInfo = info;
+
+	int size = info.emailList.get().size();
+	for ( int i = 0; i < size; i++ )
+	{
+		int row = m_emailModel->rowCount();
+
+		ICQEmailInfo::EmailItem item = info.emailList.get().at(i);
+		QStandardItem *modelItem = new QStandardItem( "More" );
+		modelItem->setEditable( false );
+		modelItem->setSelectable( false );
+		m_emailModel->setItem( row, 0, modelItem );
+		modelItem = new QStandardItem( codec->toUnicode( item.email ) );
+		modelItem->setEditable( m_editable );
+		modelItem->setCheckable( true );
+		modelItem->setCheckState( ( item.publish ) ? Qt::Checked : Qt::Unchecked );
+		m_emailModel->setItem( row, 1, modelItem );
+	}
 }
 
 void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	
-	m_otherInfoWidget->notesEdit->setText( codec->toUnicode( info.notes ) );
+
+	if ( m_editable )
+		m_notesInfo = info;
+
+	m_otherInfoWidget->notesEdit->setPlainText( codec->toUnicode( info.notes.get() ) );
 }
 
 void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info )
@@ -444,6 +507,7 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	m_genInfoWidget->language1Combo->setCurrentIndex( m_genInfoWidget->language1Combo->findData( ui.lang1.get() ) );
 	m_genInfoWidget->language2Combo->setCurrentIndex( m_genInfoWidget->language2Combo->findData( ui.lang2.get() ) );
 	m_genInfoWidget->language3Combo->setCurrentIndex( m_genInfoWidget->language3Combo->findData( ui.lang3.get() ) );
+	m_otherInfoWidget->sendInfoCheck->setChecked( ui.sendInfo.get() );
 }
 
 
@@ -547,15 +611,129 @@ void ICQUserInfoWidget::slotInterestTopic4Changed( int index )
 	m_interestInfoWidget->desc4->setEnabled( enable );
 }
 
+void ICQUserInfoWidget::slotAddEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+	int row = ( indexes.count() > 0 ) ? indexes.at( 0 ).row() + 1 : m_emailModel->rowCount();
+
+	QList<QStandardItem *> items;
+	QStandardItem *modelItem;
+
+	modelItem = new QStandardItem( ( row == 0 ) ? "Primary" : "More" );
+	modelItem->setEditable( false );
+	modelItem->setSelectable( false );
+	items.append( modelItem );
+
+	modelItem = new QStandardItem();
+	modelItem->setEditable( m_editable );
+	modelItem->setCheckable( true );
+	modelItem->setCheckState( Qt::Unchecked );
+	items.append( modelItem );
+
+	m_emailModel->insertRow( row, items );
+	QModelIndex idx = m_emailModel->index( row, 1 );
+	selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+
+	if ( row == 0 && m_emailModel->rowCount() > 1 )
+		m_emailModel->item( 1, 0 )->setText( "More" );
+}
+
+void ICQUserInfoWidget::slotRemoveEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+	
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		m_emailModel->removeRow( row );
+
+		if ( row == 0 && m_emailModel->rowCount() > 0 )
+			m_emailModel->item( 0, 0 )->setText( "Primary" );
+
+		QModelIndex idx = m_emailModel->index( ( row > 0 ) ? row - 1 : row , 1 );
+		selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+	}
+}
+
+void ICQUserInfoWidget::slotUpEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		if ( row > 0 )
+		{
+			swapEmails( row-1, row );
+
+			QModelIndex idx = m_emailModel->index( row - 1, 1 );
+			selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+		}
+	}
+}
+
+void ICQUserInfoWidget::slotDownEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		if ( row < m_emailModel->rowCount() - 1 )
+		{
+			swapEmails( row, row + 1 );
+
+			QModelIndex idx = m_emailModel->index( row + 1, 1 );
+			selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+		}
+	}
+}
+
+void ICQUserInfoWidget::slotEmailSelectionChanged( const QItemSelection& selected )
+{
+	QModelIndexList indexes = selected.indexes();
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		m_otherInfoWidget->upEmailButton->setEnabled( (row > 0) );
+		m_otherInfoWidget->downEmailButton->setEnabled( (row < m_emailModel->rowCount()-1 ) );
+		m_otherInfoWidget->removeEmailButton->setEnabled( true );
+	}
+	else
+	{
+		m_otherInfoWidget->removeEmailButton->setEnabled( false );
+		m_otherInfoWidget->upEmailButton->setEnabled( false );
+		m_otherInfoWidget->downEmailButton->setEnabled( false );
+	}
+}
+
+void ICQUserInfoWidget::swapEmails( int r1, int r2 )
+{
+	if ( r1 > r2 )
+		qSwap( r1, r2 );
+
+	QList<QStandardItem *> rowItems1 = m_emailModel->takeRow( r1 );
+	QList<QStandardItem *> rowItems2 = m_emailModel->takeRow( r2-1 );
+
+	rowItems1.at( 0 )->setText( ( r2 == 0 ) ? "Primary" : "More" );
+	rowItems2.at( 0 )->setText( ( r1 == 0 ) ? "Primary" : "More" );
+	m_emailModel->insertRow( r1, rowItems2 );
+	m_emailModel->insertRow( r2, rowItems1 );
+}
+
 ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
 {
 	QTextCodec* codec = m_contact->contactCodec();
 	ICQGeneralUserInfo* info = new ICQGeneralUserInfo( m_generalUserInfo );
 
+	//Email is stored in storeEmailInfo(), because if we change primary email we have to update all emails.
 	info->nickName.set( codec->fromUnicode( m_genInfoWidget->nickNameEdit->text() ) );
 	info->firstName.set( codec->fromUnicode( m_genInfoWidget->firstNameEdit->text() ) );
 	info->lastName.set( codec->fromUnicode( m_genInfoWidget->lastNameEdit->text() ) );
-	info->email.set( codec->fromUnicode( m_homeInfoWidget->emailEdit->text() ) );
 	info->city.set( codec->fromUnicode( m_homeInfoWidget->cityEdit->text() ) );
 	info->state.set( codec->fromUnicode( m_homeInfoWidget->stateEdit->text() ) );
 	info->phoneNumber.set( codec->fromUnicode( m_homeInfoWidget->phoneEdit->text() ) );
@@ -605,6 +783,8 @@ ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 
 	index = m_genInfoWidget->language3Combo->currentIndex();
 	info->lang3.set( m_genInfoWidget->language3Combo->itemData( index ).toInt() );
+
+	info->sendInfo.set( m_otherInfoWidget->sendInfoCheck->isChecked() );
 
 	return info;
 }
@@ -688,6 +868,57 @@ ICQInterestInfo* ICQUserInfoWidget::storeInterestInfo() const
 	index = m_interestInfoWidget->topic4Combo->currentIndex();
 	info->topics[3].set( m_interestInfoWidget->topic4Combo->itemData( index ).toInt() );
 	info->descriptions[3].set( codec->fromUnicode( m_interestInfoWidget->desc4->text() ) );
+
+	return info;
+}
+
+ICQNotesInfo* ICQUserInfoWidget::storeNotesInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQNotesInfo* info = new ICQNotesInfo( m_notesInfo );
+
+	info->notes.set( codec->fromUnicode( m_otherInfoWidget->notesEdit->toPlainText() ) );
+
+	return info;
+}
+
+ICQEmailInfo* ICQUserInfoWidget::storeEmailInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQEmailInfo* info = new ICQEmailInfo( m_emailInfo );
+
+	//Prepend primary email to emails
+	QList<ICQEmailInfo::EmailItem> emails = info->emailList.get();
+	if ( !m_generalUserInfo.email.get().isEmpty() )
+	{
+		ICQEmailInfo::EmailItem item;
+		item.email = m_generalUserInfo.email.get();
+		item.publish = m_generalUserInfo.publishEmail.get();
+		emails.prepend( item );
+	}
+	info->emailList = emails;
+
+	//Store emails
+	emails.clear();
+
+	int size = m_emailModel->rowCount();
+	for ( int i = 0; i < size; i++ )
+	{
+		QStandardItem *modelItem = m_emailModel->item( i, 1 );
+
+		ICQEmailInfo::EmailItem item;
+		item.email = codec->fromUnicode( modelItem->text() );
+		item.publish = ( i > 0 ) ? ( modelItem->checkState() == Qt::Checked ) : false;
+		emails.append( item );
+	}
+
+	if ( emails.count() == 0 )
+	{	// Delete all emails
+		ICQEmailInfo::EmailItem item;
+		item.publish = false;
+		emails.append( item );
+	}
+	info->emailList.set( emails );
 
 	return info;
 }

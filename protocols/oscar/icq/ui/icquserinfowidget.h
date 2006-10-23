@@ -23,7 +23,8 @@
 #include <kpagedialog.h>
 #include <icquserinfo.h>
 
-class QStringListModel;
+class QStandardItemModel;
+class QItemSelection;
 
 namespace Ui
 {
@@ -71,13 +72,23 @@ private slots:
 	void slotInterestTopic3Changed( int index );
 	void slotInterestTopic4Changed( int index );
 
+	void slotAddEmail();
+	void slotRemoveEmail();
+	void slotUpEmail();
+	void slotDownEmail();
+	void slotEmailSelectionChanged( const QItemSelection& selected );
+
 private:
+	void swapEmails( int r1, int r2 );
+
 	ICQGeneralUserInfo* storeBasicInfo() const;
 	ICQMoreUserInfo* storeMoreInfo() const;
 	ICQWorkUserInfo* storeWorkInfo() const;
 	ICQOrgAffInfo* storeOrgAffInfo() const;
 	ICQInterestInfo* storeInterestInfo() const;
-
+	ICQNotesInfo* storeNotesInfo() const;
+	ICQEmailInfo* storeEmailInfo() const;
+	
 	QMap<QString, int> reverseMap( const QMap<int, QString>& map ) const;
 
 	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
@@ -88,7 +99,7 @@ private:
 	Ui::ICQOrgAffInfoWidget* m_orgAffInfoWidget;
 	ICQContact* m_contact;
 	
-	QStringListModel* m_emailModel;
+	QStandardItemModel* m_emailModel;
 	bool m_editable;
 
 	ICQGeneralUserInfo m_generalUserInfo;
@@ -96,6 +107,8 @@ private:
 	ICQWorkUserInfo m_workUserInfo;
 	ICQOrgAffInfo m_orgAffUserInfo;
 	ICQInterestInfo m_interestInfo;
+	ICQNotesInfo m_notesInfo;
+	ICQEmailInfo m_emailInfo;
 };
 
 #endif
