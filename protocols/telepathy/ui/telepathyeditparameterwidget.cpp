@@ -19,6 +19,7 @@
 // Qt includes
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 
@@ -45,7 +46,7 @@ public:
 
 	void createWidget()
 	{
-		QHBoxLayout *mainLayout = new QHBoxLayout(this);
+		QVBoxLayout *mainLayout = new QVBoxLayout(this);
 		
 		// Create name label
 		mainLayout->addWidget( new QLabel(parameter().name(), this) );
@@ -86,7 +87,7 @@ public:
 	void createWidgets(QWidget *parent);
 	void clear();
 
-	QVBoxLayout *mainLayout;
+	QGridLayout *mainLayout;
 	QList<ConnectionManager::Parameter> paramList;
 	QList<ParameterLineEdit*> lineEditList;
 };
@@ -125,20 +126,27 @@ void TelepathyEditParameterWidget::setParameterList(const QList<QtTapioca::Conne
 
 void TelepathyEditParameterWidget::Private::init(QWidget *parent)
 {
-	mainLayout = new QVBoxLayout(parent);
+	mainLayout = new QGridLayout(parent);
 
 	createWidgets(parent);
 
-	mainLayout->addStretch(2);
+// 	mainLayout->addStretch(2);
 }
 
 void TelepathyEditParameterWidget::Private::createWidgets(QWidget *parent)
 {
+	int column=0, row=0;
 	foreach(ConnectionManager::Parameter parameter, paramList)
 	{
 		ParameterLineEdit *lineEdit = new ParameterLineEdit(parameter, parent);
-		mainLayout->addWidget(lineEdit);
+		mainLayout->addWidget(lineEdit, row, column);
 		lineEditList.append(lineEdit);
+	
+		if( ++row >= 5 )
+		{
+			column++;
+			row = 0;
+		}
 	}
 }
 
