@@ -190,6 +190,25 @@ void YahooChatTask::joinRoom( const Yahoo::ChatRoom &room )
 	send( t );
 }
 
+void YahooChatTask::sendYahooChatMessage( const QString &msg, const QString &handle )
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	if( !m_loggedIn )
+	{
+		kDebug(YAHOO_RAW_DEBUG) << "Error: trying to send, but not logged in." << endl;
+		return;
+	}
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceComment);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId().toLocal8Bit() );
+	t->setParam( 104, handle.toLocal8Bit() );
+	t->setParam( 117, msg.toLocal8Bit() );
+	t->setParam( 124, 1 );
+
+	send( t );
+}
+
 void YahooChatTask::login()
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;

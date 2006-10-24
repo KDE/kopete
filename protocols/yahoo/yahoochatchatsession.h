@@ -32,19 +32,26 @@ class KActionMenu;
 class YahooChatChatSession : public Kopete::ChatSession
 {
 	Q_OBJECT
-
 public:
-	YahooChatChatSession( const QString &title, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
+	YahooChatChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~YahooChatChatSession();
 
 	void joined( YahooContact *c, bool suppressNotification = false );
 	void left( YahooContact *c );
 	YahooAccount *account();
+
+	void setTopic( const QString & topic );
+	void setHandle( const QString &handle ) { m_handle = handle; }
+	QString handle() { return m_handle; }
+
+	void removeAllContacts();
 signals:
 	void leavingChat( YahooChatChatSession *s );
 protected slots:
 	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
 private:
+	QString m_topic;
+	QString m_handle;
 };
 
 #endif

@@ -84,7 +84,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
-	m_webcam = 0L;
+	m_webcam = 0;
+	m_chatChatSession = 0;
 	
 	m_session->setUserId( accountId.toLower() );
 	
@@ -1295,7 +1296,7 @@ void YahooAccount::slotConfMessage( const QString &who, const QString &room, con
 	session->appendMessage(kmsg);
 }
 
-void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message )
+void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, const Kopete::Message &message )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QStringList members;
@@ -1905,22 +1906,33 @@ void YahooAccount::slotChatCategorySelected( const Yahoo::ChatCategory &category
 }
 
 
-void YahooAccount::slotChatJoined( int roomId, int categoryId, const QString &comment, const QString &handle )
+void YahooAccount::slotChatJoined( int /*roomId*/, int /*categoryId*/, const QString &comment, const QString &handle )
 {
 	Kopete::ContactPtrList others;
 	others.append(myself());
-	YahooChatChatSession *session = new YahooChatChatSession( comment, protocol(), myself(), others );
-	m_chats[handle] = session;
 	
-	session->view( true )->raise( false );
+	if( !m_chatChatSession )
+		m_chatChatSession = new YahooChatChatSession( protocol(), myself(), others );
+	m_chatChatSession->removeAllContacts();
+	m_chatChatSession->setHandle( handle );
+	m_chatChatSession->setTopic( handle );
+	
+	m_chatChatSession->view( true )->raise( false );
+	
+	Kopete::Message msg(myself(), m_chatChatSession->members(), i18n("You are now in %1 (%2)", handle, comment),
+	                     Kopete::Message::Internal, Kopete::Message::RichText);
+	m_chatChatSession->appendMessage( msg );
 }
 
 void YahooAccount::slotChatBuddyHasJoined( const QString &nick, const QString &handle, bool suppressNotification )
 {
-	YahooChatChatSession *session = m_chats[handle];
-	
-	if(!session)
+	if(!m_chatChatSession)
 		return;
+	
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << m_chatChatSession->handle() << handle << endl;
+	if( !m_chatChatSession->handle().startsWith( handle ) )
+		return;
+		kDebug(YAHOO_GEN_DEBUG) << "passed" << endl;
 	
 	YahooContact *c = contact( nick );
 	if ( !c )
@@ -1930,28 +1942,31 @@ void YahooAccount::slotChatBuddyHasJoined( const QString &nick, const QString &h
 		c = contact( nick );
 		c->setOnlineStatus( m_protocol->Online );
 	}
-	session->joined( c, suppressNotification );
+	m_chatChatSession->joined( c, suppressNotification );
 }
 
 void YahooAccount::slotChatBuddyHasLeft( const QString &nick, const QString &handle )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	YahooChatChatSession *session = m_chats[handle];
+
+	if(!m_chatChatSession)
+		return;
 	
-	if(!session)
+	if( !m_chatChatSession->handle().startsWith( handle ) )
 		return;
 	
 	YahooContact *c = contact( nick );
 	if ( !c )
 		return;
-	session->left( c );
+	m_chatChatSession->left( c );
 }
 
 void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &message, const QString &handle )
 {
-	YahooChatChatSession *session = m_chats[handle];
+	if(!m_chatChatSession)
+		return;
 	
-	if(!session)
+	if( !m_chatChatSession->handle().startsWith( handle ) )
 		return;
 	
 	QFont msgFont;
@@ -1978,7 +1993,12 @@ void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &
 	                     Kopete::Message::Inbound, Kopete::Message::RichText);
 	
 	kmsg.setFg( fgColor );
-	session->appendMessage(kmsg);
+	m_chatChatSession->appendMessage(kmsg);
+}
+
+void YahooAccount::sendChatMessage( const Kopete::Message &msg, const QString &handle )
+{
+	m_session->sendYahooChatMessage( YahooContact::prepareMessage( msg.escapedBody() ), handle );
 }
 
 

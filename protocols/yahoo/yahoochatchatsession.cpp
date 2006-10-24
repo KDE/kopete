@@ -23,11 +23,13 @@
 #include <kopetecontact.h>
 #include <kopetechatsessionmanager.h>
 #include <kopeteuiglobal.h>
+#include <kopetemessage.h>
 
 #include "yahoochatchatsession.h"
 #include "yahoocontact.h"
 #include "yahooaccount.h"
-YahooChatChatSession::YahooChatChatSession( const QString &title, Kopete::Protocol *protocol, const Kopete::Contact *user,
+
+YahooChatChatSession::YahooChatChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others )
 : Kopete::ChatSession( user, others, protocol )
 {
@@ -37,8 +39,7 @@ YahooChatChatSession::YahooChatChatSession( const QString &title, Kopete::Protoc
 	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
 			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
 
-	setDisplayName( title );
-
+	setDisplayName( i18n("Yahoo Chat: " ));
 
 	setXMLFile("yahoochatui.rc");
 }
@@ -46,6 +47,20 @@ YahooChatChatSession::YahooChatChatSession( const QString &title, Kopete::Protoc
 YahooChatChatSession::~YahooChatChatSession()
 {
 	emit leavingChat( this );
+}
+
+void YahooChatChatSession::removeAllContacts()
+{
+	Kopete::ContactPtrList m = members();
+	foreach( Kopete::Contact *c, m )
+	{
+		removeContact( c );
+	}
+}
+
+void YahooChatChatSession::setTopic( const QString &topic )
+{
+	setDisplayName( i18n("Yahoo Chat: %1", topic) );
 }
 
 YahooAccount *YahooChatChatSession::account()
@@ -68,8 +83,8 @@ void YahooChatChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 	kDebug ( YAHOO_GEN_DEBUG ) << k_funcinfo << endl;
 
 	YahooAccount *acc = dynamic_cast< YahooAccount *>( account() );
-// 	if( acc )
-// 		acc->sendConfMessage( this, message );
+	if( acc )
+		acc->sendChatMessage( message, m_handle );
 	appendMessage( message );
 	messageSucceeded();
 }

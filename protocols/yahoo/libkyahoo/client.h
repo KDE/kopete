@@ -384,6 +384,11 @@ Q_OBJECT
 		 */
 		void joinYahooChatRoom( const Yahoo::ChatRoom &room );
 
+		/**
+		 * Send a chat message
+		 */
+		void sendYahooChatMessage( const QString &msg, const QString &handle );
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/

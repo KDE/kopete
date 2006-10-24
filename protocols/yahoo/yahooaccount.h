@@ -124,7 +124,8 @@ public:
 
 	void verifyAccount( const QString &word );
 
-	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
+	void sendConfMessage( YahooConferenceChatSession *s, const Kopete::Message &message );
+	void sendChatMessage( const Kopete::Message &msg, const QString &handle );
 	void prepareConference( const QString &who );
 	void sendFile( YahooContact *to, const KUrl &url );
 public slots:
@@ -266,7 +267,7 @@ private:
 	 * Conferences list, maped by room name (id)
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
-	QMap<QString, YahooChatChatSession *> m_chats;
+	YahooChatChatSession * m_chatChatSession;
 	QStringList m_pendingConfInvites;
 	QStringList m_pendingWebcamInvites;
 	QStringList m_pendingFileTransfers;

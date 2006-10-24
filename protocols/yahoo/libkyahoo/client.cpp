@@ -638,6 +638,11 @@ void Client::joinYahooChatRoom( const Yahoo::ChatRoom &room )
 	d->yahooChatTask->joinRoom( room );
 }
 
+void Client::sendYahooChatMessage( const QString &msg, const QString &handle )
+{
+	d->yahooChatTask->sendYahooChatMessage( msg, handle );
+}
+
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {

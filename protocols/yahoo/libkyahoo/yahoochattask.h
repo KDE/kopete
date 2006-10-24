@@ -56,6 +56,9 @@ public:
 	void getYahooChatRooms( const Yahoo::ChatCategory &category );
 
 	void joinRoom( const Yahoo::ChatRoom &room );
+
+	void sendYahooChatMessage( const QString &msg, const QString &handle );
+
 	void logout();
 
 Q_SIGNALS:
