@@ -23,6 +23,12 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 
+// KDE includes
+#include <kdebug.h>
+
+// Local includes
+#include "telepathyprotocol.h"
+
 using namespace QtTapioca;
 
 /**
@@ -68,7 +74,8 @@ public:
 
 	QString value() const
 	{
-		return m_lineValue->text();
+		QString temp = m_lineValue->text();
+		return temp;
 	}
 
 private:
@@ -101,6 +108,7 @@ TelepathyEditParameterWidget::TelepathyEditParameterWidget(const QList<Connectio
 
 TelepathyEditParameterWidget::~TelepathyEditParameterWidget()
 {
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -110,6 +118,10 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyEditParameterWidget::par
 
 	foreach(ParameterLineEdit *lineEdit, d->lineEditList)
 	{
+		if( !lineEdit )
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: A ParameterLineEdit is null !" << endl;
+		}
 		ConnectionManager::Parameter updatedParameter(lineEdit->name(), lineEdit->value());
 		parameterList.append(updatedParameter);
 	}

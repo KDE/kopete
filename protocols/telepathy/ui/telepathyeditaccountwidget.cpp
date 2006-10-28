@@ -95,6 +95,7 @@ TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account,
 
 TelepathyEditAccountWidget::~TelepathyEditAccountWidget()
 {
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -122,6 +123,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 	// Get parameter list
 	if( d->paramWidget )
 	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 		d->savedParameterList = d->paramWidget->parameterList();
 	
 		if( !account() )
@@ -178,7 +180,7 @@ void TelepathyEditAccountWidget::readConfig()
 					// At this point, the protocol preferences tab is created
 
 					// Update the parameters in the UI
-					d->paramWidget->setParameterList( account()->connectionParameters() );
+					d->paramWidget->setParameterList( account()->allConnectionParameters() );
 				}
 			}
 		}
@@ -187,6 +189,7 @@ void TelepathyEditAccountWidget::readConfig()
 
 void TelepathyEditAccountWidget::writeConfig()
 {
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 	QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
 	QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
 	QString accountId = account()->accountId();
@@ -257,7 +260,19 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
 
 		// Add new tab
 		QString protocol = protocolItem->text(0);
-		d->paramWidget = new TelepathyEditParameterWidget(cmItem->connectionManager()->protocolParameters(protocol), this);
+
+		// Use saved parameters if available
+		QList<QtTapioca::ConnectionManager::Parameter> tabParameter;
+		if( account() && protocol == account()->connectionProtocol() )
+		{
+			tabParameter = account()->allConnectionParameters();
+		}
+		else
+		{
+			tabParameter = cmItem->connectionManager()->protocolParameters(protocol);
+		}
+
+		d->paramWidget = new TelepathyEditParameterWidget(tabParameter, this);
 		d->ui.tabWidget->addTab(d->paramWidget, i18n("Protocol Parameters"));
 	}
 }

@@ -53,6 +53,7 @@ public:
 	QString connectionManager;
 	QString connectionProtocol;
 	QList<ConnectionManager::Parameter> connectionParameters;
+	QList<ConnectionManager::Parameter> allConnectionParameters;
 	ConnectionManager *currentConnectionManager;
 	Connection *currentConnection;
 };
@@ -162,6 +163,10 @@ bool TelepathyAccount::readConfig()
 	d->connectionManager = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
 	d->connectionProtocol = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
 
+	// Clear current connection parameters
+	d->allConnectionParameters.clear();
+	d->connectionParameters.clear();
+
 	// Get the preferences from the connection manager to get the right types
 	QList<ConnectionManager::Parameter> tempParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
 
@@ -198,6 +203,7 @@ bool TelepathyAccount::readConfig()
 						newValue = QVariant(it.value());
 // 					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName() << endl;
 					d->connectionParameters.append( ConnectionManager::Parameter(parameter.name(), newValue) );
+					
 					break;
 				}
 			}
@@ -229,6 +235,34 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::connectionParam
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << parameter.value() << "Type: " << parameter.value().typeName() << endl;
 	}
 	return d->connectionParameters;
+}
+
+QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionParameters()
+{
+	if( d->allConnectionParameters.isEmpty() )
+	{
+		if( d->connectionProtocol.isEmpty() )
+			readConfig();
+
+		QList<ConnectionManager::Parameter> allParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
+		foreach(ConnectionManager::Parameter parameter, allParameters)
+		{
+			ConnectionManager::Parameter newParameter = parameter;
+			foreach(ConnectionManager::Parameter connectionParameter, d->connectionParameters)
+			{
+				// Use value from the saved connection parameter
+				if( parameter.name() == connectionParameter.name() )
+				{
+					newParameter = ConnectionManager::Parameter( parameter.name(), connectionParameter.value() );
+					break;
+				}
+			}
+
+			d->allConnectionParameters.append( newParameter );
+		}
+	}
+	
+	return d->allConnectionParameters;
 }
 
 void TelepathyAccount::telepathyStatusChanged(Connection::Status status, Connection::Reason reason)

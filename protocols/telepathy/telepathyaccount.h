@@ -68,11 +68,20 @@ public:
 	QString connectionProtocol() const;
 	/**
 	 * @brief Get the connection parameters read from the config.
-     *
+	 * Only needed parameters are included in the list.
+	 *
 	 * You must call readConfig() before.
-	 * @return
+	 *
+	 * @return saved connection parameters.
 	 */
 	QList<QtTapioca::ConnectionManager::Parameter> connectionParameters() const;
+
+	/**
+	 * @brief Get all connection parameters merged with values from the config
+	 *
+	 * @return all connection parameters.
+	 */
+	QList<QtTapioca::ConnectionManager::Parameter> allConnectionParameters();
 
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
