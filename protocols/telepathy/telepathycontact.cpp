@@ -16,30 +16,80 @@
  */
 #include "telepathycontact.h"
 
+// Qt includes
+#include <QtCore/QPointer>
+
 // KDE includes
 #include <kaction.h>
+#include <kdebug.h>
 
 // Kopete includes
 #include "kopetechatsessionmanager.h"
 #include "kopetechatsession.h"
 #include "kopetemetacontact.h"
 
+// QtTapioca includes
+#include <QtTapioca/Contact>
+
 // Telepathy includes
 #include "telepathyaccount.h"
+#include "telepathyprotocol.h"
+
+using namespace QtTapioca;
+
+class TelepathyContact::Private
+{
+public:
+	Private()
+	{}
+
+	QPointer<QtTapioca::Contact> internalContact;
+};
 
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent)
- : Kopete::Contact(account, contactId, parent)
+ : Kopete::Contact(account, contactId, parent), d(new Private)
 {
+}
+
+TelepathyContact::~TelepathyContact()
+{
+	delete d;
+}
+
+QtTapioca::Contact *TelepathyContact::internalContact()
+{
+	Q_ASSERT( !d->internalContact.isNull() );
+	return d->internalContact;
+}
+
+void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
+{
+	if( !d->internalContact.isNull() )
+	{
+		// Disconnect signals from previous internal contact
+		d->internalContact->disconnect();
+	}
+	d->internalContact = internalContact;
+
+	// Set initial presence
+	TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->getContactInfo()->presence() );
+
+	// Set nickname/alias
+	setNickName( d->internalContact->getContactInfo()->alias() );
+
+	// Connect signal/slots
+	connect(d->internalContact->getContactInfo(), SIGNAL(presenceUpdated(ContactInfo*, ContactInfo::Presence, QString)), this, SLOT(slotPresenceUpdated(ContactInfo*, ContactInfo::Presence, QString)));
 }
 
 bool TelepathyContact::isReachable()
 {
-	return false;
+	return account()->isConnected();
 }
 
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData)
 {
-	
+	// Do not save Telepathy contact from now.
+	serializedData.clear();
 }
 
 QList<KAction *> *TelepathyContact::customContextMenuActions()
@@ -50,6 +100,18 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
 Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 {
 	return 0;
+}
+
+void TelepathyContact::slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage)
+{
+	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence);
+
+	
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating " << contactId() << " presence to " << newStatus.description() << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "New Status Message for " << contactId() << ": " << presenceMessage << endl;
+
+	setOnlineStatus( newStatus );
+	setStatusMessage( Kopete::StatusMessage(presenceMessage) );
 }
 
 #include "telepathycontact.moc"

@@ -17,12 +17,22 @@
 #ifndef TELEPATHYCONTACT_H
 #define TELEPATHYCONTACT_H
 
-#include <QMap>
-#include <QList>
+// Qt Includes
+#include <QtCore/QMap>
+#include <QtCore/QList>
 
+// Kopete includes
 #include <kopetecontact.h>
 
+// QtTapioca includes
+#include <QtTapioca/ContactInfo>
+
 class KAction;
+
+namespace QtTapioca
+{
+	class Contact;
+}
 
 namespace Kopete
 {
@@ -31,16 +41,31 @@ namespace Kopete
 }
 class TelepathyAccount;
 
+using namespace QtTapioca;
+
 class TelepathyContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
 	TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent);
+	~TelepathyContact();
 
 	virtual bool isReachable();
 	virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
 	
 	virtual QList<KAction *> *customContextMenuActions();
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+
+	void setInternalContact(QtTapioca::Contact *internalContact);
+
+private slots:
+	void slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage);
+
+private:
+	QtTapioca::Contact *internalContact();
+
+private:
+	class Private;
+	Private *d;
 };
 #endif

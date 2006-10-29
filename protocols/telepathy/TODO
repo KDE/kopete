@@ -1,0 +1,18 @@
+This file is the list of things todo accross all project needed for Kopete Telepathy plugin to work. It is also
+a list of question that I will need to answer later.
+
+Telepathy Spec:
+
+QtTapioca:
+
+Kopete plugin TODO:
+-Manage contact list
+ +List contact
+ -Add contact
+ -Move contact
+ -Remove contact
+ -Manage local and remote pending contact list
+-Manage presence
+-Manage text channel i.e ChatSession
+-Manage aliasing
+-Manage avatar

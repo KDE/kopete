@@ -32,6 +32,7 @@ namespace Kopete
 }
 
 class TelepathyProtocol;
+class TelepathyContactManager;
 
 using namespace QtTapioca;
 /**
@@ -83,6 +84,12 @@ public:
 	 */
 	QList<QtTapioca::ConnectionManager::Parameter> allConnectionParameters();
 
+signals:
+	/**
+	 * Emitted when we are connected to a Telepathy connection manager.
+	 */
+	void telepathyConnected();
+
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
 	virtual void disconnect();
@@ -94,8 +101,19 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 
 private slots:
-	void telepathyStatusChanged(Connection::Status status, Connection::Reason reason);
-	
+	void telepathyStatusChanged(Connection *connection, Connection::Status status, Connection::Reason reason);
+	/**
+	 * @brief Do all the initialition stuff after being connection
+	 */
+	void slotTelepathyConnected();
+	/**
+	 * @brief Fetch the contact list.
+	 */
+	void fetchContactList();
+
+private:
+	TelepathyContactManager *contactManager();
+
 private:
 	class Private;
 	Private *d;

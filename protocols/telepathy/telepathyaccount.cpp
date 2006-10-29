@@ -34,10 +34,12 @@
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
+#include <QtTapioca/ContactList>
 
 // Local includes
 #include "telepathyprotocol.h"
 #include "telepathycontact.h"
+#include "telepathycontactmanager.h"
 
 using namespace QtTapioca;
 
@@ -45,7 +47,7 @@ class TelepathyAccount::Private
 {
 public:
 	Private()
-	 : currentConnectionManager(0), currentConnection(0)
+	 : currentConnectionManager(0), currentConnection(0), contactManager(0)
 	{}
 
 	ConnectionManager *getConnectionManager();
@@ -56,6 +58,8 @@ public:
 	QList<ConnectionManager::Parameter> allConnectionParameters;
 	ConnectionManager *currentConnectionManager;
 	Connection *currentConnection;
+	Kopete::OnlineStatus initialStatus;
+	TelepathyContactManager *contactManager;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -101,8 +105,9 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			{
 				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a valid connection." << endl;
 				// Connect signals/slots
-				QObject::connect(d->currentConnection, SIGNAL(statusChanged(Connection::Status, Connection::Reason)), this, SLOT(telepathyStatusChanged(Connection::Status, Connection::Reason)));
-	
+				QObject::connect(d->currentConnection, SIGNAL(statusChanged(Connection*, Connection::Status, Connection::Reason)), this, SLOT(telepathyStatusChanged(Connection*, Connection::Status, Connection::Reason)));
+				QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
+
 				d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
 			}
 			else
@@ -130,6 +135,7 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 	if( !isConnected() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting with initial status: " << status.description() << endl;
+		d->initialStatus = status;
 		connect(status);
 	}
 	// FIXME: Temp
@@ -146,11 +152,19 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 
 void TelepathyAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	
 }
 
 bool TelepathyAccount::createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact)
 {
+	if( !contacts()[contactId] )
+	{
+		TelepathyContact *contact = new TelepathyContact(this, contactId, parentMetaContact);
+		
+		return contact != 0;
+	}
+	else
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Contact " << contactId << " already exists." << endl;
+
 	return false;
 }
 
@@ -265,9 +279,9 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionPa
 	return d->allConnectionParameters;
 }
 
-void TelepathyAccount::telepathyStatusChanged(Connection::Status status, Connection::Reason reason)
+void TelepathyAccount::telepathyStatusChanged(Connection *connection, Connection::Status status, Connection::Reason reason)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	Q_UNUSED(connection);
 
 	switch(status)
 	{
@@ -276,14 +290,25 @@ void TelepathyAccount::telepathyStatusChanged(Connection::Status status, Connect
 			break;
 		case Connection::Connected:
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connected using Telepathy :)" << endl;
-			// FIXME: Use initial status
-			myself()->setOnlineStatus( TelepathyProtocol::protocol()->Available );
+			emit telepathyConnected();
 			break;
 		case Connection::Disconnected:
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Disconnected :(" << endl;
 			break;
 	}
 	//TODO: reason
+}
+
+void TelepathyAccount::slotTelepathyConnected()
+{
+	myself()->setOnlineStatus( d->initialStatus );
+	fetchContactList();
+}
+
+void TelepathyAccount::fetchContactList()
+{
+	contactManager()->setContactList( d->currentConnection->contactList() );
+	contactManager()->loadContacts();
 }
 
 ConnectionManager *TelepathyAccount::Private::getConnectionManager()
@@ -295,4 +320,15 @@ ConnectionManager *TelepathyAccount::Private::getConnectionManager()
 
 	return currentConnectionManager;
 }
+
+TelepathyContactManager *TelepathyAccount::contactManager()
+{
+	if( !d->contactManager )
+	{
+		d->contactManager = new TelepathyContactManager(this);
+	}
+
+	return d->contactManager;
+}
+
 #include "telepathyaccount.moc"

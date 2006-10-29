@@ -21,8 +21,9 @@ ui/telepathyeditaccountwidget.ui
 # Normal protocol classes
 set(kopete_telepathy_PART_SRCS 
 telepathyprotocol.cpp
-telepathyaccount.cpp 
+telepathyaccount.cpp
 telepathycontact.cpp
+telepathycontactmanager.cpp
 ${kopete_telepathy_ui_SRCS}
 )
 
