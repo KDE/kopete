@@ -49,9 +49,9 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->addWidget( d->pluginSelector );
 
-	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( changed( bool ) ) );
-	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
-		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QByteArray & ) ) );
+	connect( d->pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );
+	connect( d->pluginSelector, SIGNAL(configCommitted(const QByteArray&) ),
+		KSettings::Dispatcher::self(), SLOT(reparseConfiguration(const QByteArray&)) );
 
 	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
 	                               i18n( "General Plugins" ), "Plugins" );
