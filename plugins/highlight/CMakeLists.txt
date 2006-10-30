@@ -33,7 +33,7 @@ kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_highlight )
 
-target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  knotifyconfig )
+target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS} )
 
 install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
