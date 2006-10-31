@@ -340,6 +340,7 @@ void Client::lt_loginFinished()
 		//we've finished logging in. start the services setup
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "stage two done. setting up services" << endl;
 		initializeStaticTasks();
+		d->ownStatusTask->go();
 		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.defaultConnection()->rootTask() );
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
 		ssTask->go( true ); //fire and forget
