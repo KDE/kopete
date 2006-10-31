@@ -47,7 +47,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QString::null, 
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QString::null, 
-			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
+			i18n( "Online" ), i18n( "&Online" ), Kopete::OnlineStatusManager::Online ),
 	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, "contact_busy_overlay", 
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasAwayMessage ),
 	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, "contact_away_overlay", 
