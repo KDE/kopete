@@ -54,6 +54,11 @@ StatusMessage &StatusMessage::operator=(const StatusMessage &other)
 	return *this;
 }
 
+bool StatusMessage::isEmpty() const
+{
+	return d->statusMessage.isEmpty() && d->metaData.isEmpty();
+}
+
 void StatusMessage::setMessage(const QString &message)
 {
 	d->statusMessage = message;

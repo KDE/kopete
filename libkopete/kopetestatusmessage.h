@@ -76,6 +76,12 @@ public:
 	StatusMessage &operator=(const StatusMessage &other);
 
 	/**
+	 * Verify if the status message is empty.
+	 * @return true if the status message is empty.
+	 */
+	bool isEmpty() const;
+
+	/**
 	 * Add a metadata to the status message.
 	 * @param key Key to identity the metadata.
 	 * @param value Value for the metadata.
