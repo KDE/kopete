@@ -22,6 +22,7 @@
 namespace QtTapioca
 {
 	class ContactList;
+	class Contact;
 }
 
 class TelepathyAccount;
@@ -39,11 +40,18 @@ public:
 	~TelepathyContactManager();
 
 	void setContactList( QtTapioca::ContactList *contactList );
+	/**
+	 * @brief Load contact information from Telepathy into Kopete.
+	 */
 	void loadContacts();
 
 private:
 	TelepathyAccount *account();
 	QtTapioca::ContactList *contactList();
+	/**
+	 * @brief Create a contact if required.
+	 */
+	void createContact(QtTapioca::Contact *telepathyContact);
 
 private:
 	class Private;

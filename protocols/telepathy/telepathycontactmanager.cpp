@@ -89,18 +89,34 @@ void TelepathyContactManager::loadContacts()
 	{
 		QString contactId = tempContact->uri();
 
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Creating Telepathy " << contactId << " in Kopete." << endl;
-
-		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
-		metaContact->setTemporary();
-
-		// Create the TelepathyContact
-		TelepathyContact *newContact = new TelepathyContact( account(), contactId, metaContact );
-		newContact->setInternalContact(tempContact);
-		newContact->setMetaContact(metaContact);
-
-		Kopete::ContactList::self()->addMetaContact( metaContact );
+		// If the contact doesn't exist in Kopete, create it
+		if( !account()->contacts()[contactId] )
+		{
+			createContact(tempContact);
+		}
+		// else, set the internal telepathy object in the existing contact.
+		else
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Set internal information from Telepathy to " << contactId << endl;
+			TelepathyContact *contact = static_cast<TelepathyContact*>( account()->contacts()[contactId] );
+			contact->setInternalContact(tempContact);
+		}
 	}
 }
 
+void TelepathyContactManager::createContact(QtTapioca::Contact *telepathyContact)
+{
+	QString contactId = telepathyContact->uri();
+
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Creating Telepathy contact \"" << contactId << "\" in Kopete." << endl;
+
+	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
+
+	// Create the TelepathyContact
+	TelepathyContact *newContact = new TelepathyContact( account(), contactId, metaContact );
+	newContact->setInternalContact(telepathyContact);
+	newContact->setMetaContact(metaContact);
+
+	Kopete::ContactList::self()->addMetaContact( metaContact );
+}
 #include "telepathycontactmanager.moc"

@@ -22,10 +22,12 @@
 
 // Kopete includes
 #include <kopeteaccount.h>
+#include <kopeteaccountmanager.h>
 #include <kopetemetacontact.h>
 
 // Local includes
 #include "telepathyaccount.h"
+#include "telepathycontact.h"
 #include "telepathyeditaccountwidget.h"
 
 using namespace QtTapioca;
@@ -80,6 +82,24 @@ KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Acco
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
+	QString contactId = serializedData["contactId"];
+	QString accountId = serializedData["accountId"];
+
+	// Find the account
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
+
+	Kopete::Account *account = 0;
+	foreach( account, accounts )
+	{
+		if(account->accountId() == accountId)
+			break;
+	}
+
+	if( account )
+	{
+		return new TelepathyContact( static_cast<TelepathyAccount*>(account), contactId, metaContact);
+	}
+
 	return 0;
 }
 

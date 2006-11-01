@@ -88,8 +88,7 @@ bool TelepathyContact::isReachable()
 
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData)
 {
-	// Do not save Telepathy contact from now.
-	serializedData.clear();
+	// Nothing specific to serialize yet.
 }
 
 QList<KAction *> *TelepathyContact::customContextMenuActions()
@@ -106,7 +105,6 @@ void TelepathyContact::slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo
 {
 	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence);
 
-	
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating " << contactId() << " presence to " << newStatus.description() << endl;
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "New Status Message for " << contactId() << ": " << presenceMessage << endl;
 
