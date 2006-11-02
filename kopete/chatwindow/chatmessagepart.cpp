@@ -201,7 +201,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath()  << endl;
 
 	//Security settings, we don't need this stuff
-	setJScriptEnabled( true ) ;
+	setJScriptEnabled( false ) ;
 	setJavaEnabled( false );
 	setPluginsEnabled( false );
 	setMetaRefreshEnabled( false );

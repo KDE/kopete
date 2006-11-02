@@ -151,6 +151,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->setJavaEnabled(false);
 	mHtmlPart->setPluginsEnabled(false);
 	mHtmlPart->setMetaRefreshEnabled(false);
+        mHtmlPart->setOnlyLocalReferences(true);
 
 	mHtmlView = mHtmlPart->view();
 	mHtmlView->setMarginWidth(4);
