@@ -54,6 +54,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	QHBox *hbox = new QHBox(this);
 	
 	generalHTMLPart = new KHTMLPart(hbox);
+        generalHTMLPart->setOnlyLocalReferences(true);
 	connect ( generalHTMLPart->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
 			  this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
 	

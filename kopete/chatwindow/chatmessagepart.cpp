@@ -218,7 +218,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( kopetePrefs->stylePath() );
 
 	//Security settings, we don't need this stuff
-	setJScriptEnabled( true ) ;
+	setJScriptEnabled( false ) ;
 	setJavaEnabled( false );
 	setPluginsEnabled( false );
 	setMetaRefreshEnabled( false );

@@ -146,6 +146,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	mHtmlPart->setJavaEnabled(false);
 	mHtmlPart->setPluginsEnabled(false);
 	mHtmlPart->setMetaRefreshEnabled(false);
+        mHtmlPart->setOnlyLocalReferences(true);
 
 	mHtmlView = mHtmlPart->view();
 	mHtmlView->setMarginWidth(4);
@@ -557,7 +558,8 @@ void HistoryDialog::searchFirstStep()
 			if (mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 				mSearch->item->setVisible(true);
 		}
-		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
+		while((mSearch->item = static_cast<KListViewDateItem
+                            *>(mSearch->item->nextSibling())));
 		mMainWidget->searchButton->setText(i18n("&Search"));
 
 		delete mSearch;
