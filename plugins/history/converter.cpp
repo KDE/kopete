@@ -169,7 +169,7 @@ void HistoryPlugin::convertOldHistory()
 
 								while ( strchr(cbuf, '\n') == NULL && !feof(f) )
 								{
-									fgets( cbuf, 511, f );
+									fgets( cbuf, CBUFLENGTH, f );
 									buffer += QString::fromUtf8(cbuf);
 								}
 								msgBlock.append(buffer);
