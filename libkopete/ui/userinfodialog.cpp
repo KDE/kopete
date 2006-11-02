@@ -196,6 +196,7 @@ void UserInfoDialog::fillHTML()
 		text.append( d->info + "</div><br>" );
 	}
 */
+	d->htmlPart->setOnlyLocalReferences( true );
 	d->htmlPart->begin();
 	d->htmlPart->write( text );
 	d->htmlPart->end();
