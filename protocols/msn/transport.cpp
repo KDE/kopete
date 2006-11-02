@@ -332,7 +332,7 @@ void TcpTransportBridge::Buffer::write(const QByteArray& bytes)
 
 QByteArray TcpTransportBridge::Buffer::read(Q_UINT32 length)
 {
-	if (length > size()) return QByteArray();
+	if (length >= size()) return QByteArray();
 
 	QByteArray buffer;
 	buffer.duplicate(data(), length);
