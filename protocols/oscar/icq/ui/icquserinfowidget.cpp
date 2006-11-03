@@ -357,7 +357,7 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 		QList<QStandardItem *> items;
 		QStandardItem *modelItem;
 
-		modelItem = new QStandardItem( "Primary" );
+		modelItem = new QStandardItem( i18nc("Primary email address", "Primary") );
 		modelItem->setEditable( false );
 		modelItem->setSelectable( false );
 		items.append( modelItem );
@@ -407,7 +407,7 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 		int row = m_emailModel->rowCount();
 
 		ICQEmailInfo::EmailItem item = info.emailList.get().at(i);
-		QStandardItem *modelItem = new QStandardItem( "More" );
+		QStandardItem *modelItem = new QStandardItem( i18nc("Other email address", "More")  );
 		modelItem->setEditable( false );
 		modelItem->setSelectable( false );
 		m_emailModel->setItem( row, 0, modelItem );
@@ -620,7 +620,7 @@ void ICQUserInfoWidget::slotAddEmail()
 	QList<QStandardItem *> items;
 	QStandardItem *modelItem;
 
-	modelItem = new QStandardItem( ( row == 0 ) ? "Primary" : "More" );
+	modelItem = new QStandardItem( ( row == 0 ) ? i18nc("Primary email address", "Primary") : i18nc("Other email address", "More") );
 	modelItem->setEditable( false );
 	modelItem->setSelectable( false );
 	items.append( modelItem );
@@ -636,7 +636,7 @@ void ICQUserInfoWidget::slotAddEmail()
 	selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
 
 	if ( row == 0 && m_emailModel->rowCount() > 1 )
-		m_emailModel->item( 1, 0 )->setText( "More" );
+		m_emailModel->item( 1, 0 )->setText( i18nc("Other email address", "More") );
 }
 
 void ICQUserInfoWidget::slotRemoveEmail()
@@ -650,7 +650,7 @@ void ICQUserInfoWidget::slotRemoveEmail()
 		m_emailModel->removeRow( row );
 
 		if ( row == 0 && m_emailModel->rowCount() > 0 )
-			m_emailModel->item( 0, 0 )->setText( "Primary" );
+			m_emailModel->item( 0, 0 )->setText( i18nc("Primary email address", "Primary") );
 
 		QModelIndex idx = m_emailModel->index( ( row > 0 ) ? row - 1 : row , 1 );
 		selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
@@ -719,8 +719,8 @@ void ICQUserInfoWidget::swapEmails( int r1, int r2 )
 	QList<QStandardItem *> rowItems1 = m_emailModel->takeRow( r1 );
 	QList<QStandardItem *> rowItems2 = m_emailModel->takeRow( r2-1 );
 
-	rowItems1.at( 0 )->setText( ( r2 == 0 ) ? "Primary" : "More" );
-	rowItems2.at( 0 )->setText( ( r1 == 0 ) ? "Primary" : "More" );
+	rowItems1.at( 0 )->setText( ( r2 == 0 ) ? i18nc("Primary email address", "Primary") : i18nc("Other email address", "More") );
+	rowItems2.at( 0 )->setText( ( r1 == 0 ) ? i18nc("Primary email address", "Primary") : i18nc("Other email address", "More") );
 	m_emailModel->insertRow( r1, rowItems2 );
 	m_emailModel->insertRow( r2, rowItems1 );
 }
