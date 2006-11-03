@@ -26,6 +26,7 @@ namespace QtTapioca
 }
 
 class TelepathyAccount;
+class TelepathyContact;
 /**
  * @brief Manager for Telepathy contact list
  *
@@ -39,7 +40,31 @@ public:
 	TelepathyContactManager(TelepathyAccount *account);
 	~TelepathyContactManager();
 
+	/**
+	 * @brief Add a new contact to the remote contact list
+	 *
+	 * @param contactId Contact id (ex: user@jabber.org) to add
+	 * @return Internal Contact instance or 0 if operation failed.
+	 */
+	QtTapioca::Contact *addContact(const QString &contactId);
+
+	/**
+	 * @brief Remove the specified contact from the contact list
+	 *
+	 * This method delete the contact. No need to do it yourself.
+	 *
+	 * @param contact TelepathyContact instance to be removed from contact list.
+	 */
+	void removeContact(TelepathyContact *contact);
+
+	/**
+	 * @brief Set the Tapioca contact list object needed for
+	 * all contact list management tasks.
+	 *
+	 * @param contactList QtTapioca contact list object
+	 */
 	void setContactList( QtTapioca::ContactList *contactList );
+
 	/**
 	 * @brief Load contact information from Telepathy into Kopete.
 	 */

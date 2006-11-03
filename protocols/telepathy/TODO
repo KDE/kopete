@@ -4,14 +4,15 @@ a list of question that I will need to answer later.
 Telepathy Spec:
 
 QtTapioca:
+-Find out the source of the crash when removing a contact in ContactList
 
 Kopete plugin TODO:
 -Manage contact list
  +List contact
- -Add contact
- -Move contact
- -Remove contact
+ +Add contact
+ +Remove contact
  -Manage local and remote pending contact list
+ -Ensure integrity
 +Manage presence
 -Manage text channel i.e ChatSession
 -Manage aliasing

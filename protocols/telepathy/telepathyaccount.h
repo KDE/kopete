@@ -84,6 +84,12 @@ public:
 	 */
 	QList<QtTapioca::ConnectionManager::Parameter> allConnectionParameters();
 
+	/**
+	 * @brief Return the contact manager
+	 * @return the Telepathy contact manager.
+	 */
+	TelepathyContactManager *contactManager();
+
 signals:
 	/**
 	 * Emitted when we are connected to a Telepathy connection manager.
@@ -110,9 +116,6 @@ private slots:
 	 * @brief Fetch the contact list.
 	 */
 	void fetchContactList();
-
-private:
-	TelepathyContactManager *contactManager();
 
 private:
 	class Private;

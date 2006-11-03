@@ -22,11 +22,14 @@
 // KDE includes
 #include <kaction.h>
 #include <kdebug.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 
 // Kopete includes
-#include "kopetechatsessionmanager.h"
-#include "kopetechatsession.h"
-#include "kopetemetacontact.h"
+#include <kopetechatsessionmanager.h>
+#include <kopetechatsession.h>
+#include <kopetemetacontact.h>
+#include <kopeteuiglobal.h>
 
 // QtTapioca includes
 #include <QtTapioca/Contact>
@@ -34,6 +37,7 @@
 // Telepathy includes
 #include "telepathyaccount.h"
 #include "telepathyprotocol.h"
+#include "telepathycontactmanager.h"
 
 using namespace QtTapioca;
 
@@ -56,9 +60,14 @@ TelepathyContact::~TelepathyContact()
 	delete d;
 }
 
+TelepathyAccount *TelepathyContact::account()
+{
+	return static_cast<TelepathyAccount*>( Kopete::Contact::account() );
+}
+
 QtTapioca::Contact *TelepathyContact::internalContact()
 {
-	Q_ASSERT( !d->internalContact.isNull() );
+// 	Q_ASSERT( !d->internalContact.isNull() );
 	return d->internalContact;
 }
 
@@ -88,6 +97,8 @@ bool TelepathyContact::isReachable()
 
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData)
 {
+	Q_UNUSED(serializedData);
+	Q_UNUSED(addressBookData);
 	// Nothing specific to serialize yet.
 }
 
@@ -99,6 +110,17 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
 Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 {
 	return 0;
+}
+
+void TelepathyContact::deleteContact()
+{
+	if( !account()->isConnected() )
+	{
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n("You must be connected to delete a contact."), i18n("Telepathy plugin") );
+		return;
+	}
+
+	account()->contactManager()->removeContact(this);
 }
 
 void TelepathyContact::slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage)

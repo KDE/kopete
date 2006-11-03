@@ -29,6 +29,7 @@
 #include "telepathyaccount.h"
 #include "telepathycontact.h"
 #include "telepathyeditaccountwidget.h"
+#include "telepathyaddcontactpage.h"
 
 using namespace QtTapioca;
 
@@ -71,7 +72,9 @@ Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 
 AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-	return 0;
+	Q_UNUSED(account);
+
+	return new TelepathyAddContactPage(parent);
 }
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)

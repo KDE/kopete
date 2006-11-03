@@ -11,11 +11,13 @@ add_definitions( ${DECIBEL_DEFINITIONS} )
 set(kopete_telepathy_ui_SRCS
 ui/telepathyeditaccountwidget.cpp
 ui/telepathyeditparameterwidget.cpp
+ui/telepathyaddcontactpage.cpp
 )
 
 # Generated UI files
 kde4_add_ui_files(kopete_telepathy_ui_SRCS
-ui/telepathyeditaccountwidget.ui 
+ui/telepathyeditaccountwidget.ui
+ui/telepathyaddcontactpage.ui
 )
 
 # Normal protocol classes

@@ -58,11 +58,32 @@ public:
 
 	void setInternalContact(QtTapioca::Contact *internalContact);
 
-private slots:
-	void slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage);
+	/**
+	 * @brief Reimplement Kopete::Contact::account() to cast to specific TelepathyAccount
+	 * @return TelepathyAccount for this contact.
+	 */
+	TelepathyAccount *account();
 
-private:
+	/**
+	 * @brief Get the internal Tapioca contact.
+	 * @return the internal Tapioca contact instance (a reference)
+	 */
 	QtTapioca::Contact *internalContact();
+
+public slots:
+	/**
+	 * @brief Delete the contact on server and remove it from Kopete.
+	 */
+	virtual void deleteContact();
+
+private slots:
+	/**
+	 * @brief Called when the contact has updated its presence information.
+	 * @param contactInfo Refering ContactInfo
+	 * @param presence New presence.
+	 * @param presenceMessage New presenceMessage, if any.
+	 */
+	void slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage);
 
 private:
 	class Private;

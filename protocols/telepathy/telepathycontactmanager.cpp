@@ -74,6 +74,27 @@ QtTapioca::ContactList *TelepathyContactManager::contactList()
 	return d->contactList;
 }
 
+QtTapioca::Contact *TelepathyContactManager::addContact(const QString &contactId)
+{
+	return const_cast<QtTapioca::Contact*>( contactList()->addContact(contactId) );
+}
+
+void TelepathyContactManager::removeContact(TelepathyContact *contact)
+{
+	if( contact->internalContact() )
+	{
+		// First remove the contact from the contact list
+		contactList()->removeContact( contact->internalContact() );
+	}
+	else
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Internal contact in " << contact->contactId() << " is null. Removing in Kopete only." << endl;
+	}
+
+	// Then delete the contact from Kopete
+	contact->deleteLater();
+}
+
 void TelepathyContactManager::setContactList(QtTapioca::ContactList *contactList)
 {
 	d->contactList = contactList;
