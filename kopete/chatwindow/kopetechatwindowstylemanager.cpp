@@ -279,7 +279,10 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 {
 	kDebug(14000) << k_funcinfo << stylePath <<  endl;
 	// Find for the current style in avaiableStyles map.
-	StyleList::Iterator foundStyle = d->availableStyles.find(stylePath);
+        KUrl urlStyle(stylePath);
+        QString styleName=urlStyle.fileName();
+        StyleList::Iterator foundStyle = d->availableStyles.find(styleName);
+
 	// QHash iterator return end() if it found no item.
 	if(foundStyle != d->availableStyles.end())
 	{
@@ -294,7 +297,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 		}
 	
 		// Do the actual deletion of the directory style.
-		return KIO::NetAccess::del( KUrl(stylePath), 0 );
+		return KIO::NetAccess::del( urlStyle, 0 );
 	}
 	else
 	{
