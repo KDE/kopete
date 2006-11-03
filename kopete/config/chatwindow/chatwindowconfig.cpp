@@ -404,6 +404,9 @@ void ChatWindowConfig::slotGetChatStyles()
 	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );
 	provider->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml" );
 	downloadDialog->exec();
+	delete downloadDialog;
+	delete kopeteNewStuff;
+	delete engine;
 }
 
 // Reimplement Kopete::Contact and its abstract method
