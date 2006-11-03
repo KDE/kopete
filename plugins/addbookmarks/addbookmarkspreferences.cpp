@@ -37,7 +37,8 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, co
 	connect( p_dialog->onlySelectedButton, SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->onlyNotSelectedButton, SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->contactList, SIGNAL( selectionChanged() ), this, SLOT( slotSetStatusChanged() ));
-	connect( this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin("kopete_addbookmarks") , SLOT(slotReloadSettings()));
+	if(Kopete::PluginManager::self()->plugin("kopete_addbookmarks") )
+           connect( this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin("kopete_addbookmarks") , SLOT(slotReloadSettings()));
 }
 
 
