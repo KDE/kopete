@@ -66,7 +66,8 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Lead Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
-	
+	aboutData.addAuthor ( "Rafael Fernández López", I18N_NOOP("Developer"), "ereslibre@gmail.com" );
+
 	aboutData.addCredit ( "Vally8", I18N_NOOP("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
 	aboutData.addCredit ( "Tm_T", I18N_NOOP("Hacker style author"), "jussi.kekkonen@gmail.com");
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
