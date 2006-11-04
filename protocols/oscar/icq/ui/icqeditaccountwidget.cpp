@@ -41,6 +41,7 @@
 #include "icqaccount.h"
 #include "icqcontact.h"
 #include "oscarprivacyengine.h"
+#include "oscarsettings.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent)
@@ -180,17 +181,23 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	mAccountSettings->mPasswordWidget->save(&mAccount->password());
 	mAccount->setExcludeConnect(mAccountSettings->chkAutoLogin->isChecked());
 
+	Oscar::Settings* oscarSettings = mAccount->engine()->clientSettings();
+
 	bool configChecked = mAccountSettings->chkRequireAuth->isChecked();
 	mAccount->configGroup()->writeEntry( "RequireAuth", configChecked );
+	oscarSettings->setRequireAuth( configChecked );
 
 	configChecked = mAccountSettings->chkRespectRequireAuth->isChecked();
 	mAccount->configGroup()->writeEntry( "RespectRequireAuth", configChecked );
+	oscarSettings->setRespectRequireAuth( configChecked );
 
 	configChecked = mAccountSettings->chkHideIP->isChecked();
 	mAccount->configGroup()->writeEntry( "HideIP", configChecked );
+	oscarSettings->setHideIP( configChecked );
 
 	configChecked = mAccountSettings->chkWebAware->isChecked();
 	mAccount->configGroup()->writeEntry( "WebAware", configChecked );
+	oscarSettings->setWebAware( configChecked );
 
 	int configValue = mProtocol->getCodeForCombo( mAccountSettings->encodingCombo,
                                                   mProtocol->encodings() );
@@ -210,12 +217,19 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	//set filetransfer stuff
 	configChecked = mAccountSettings->chkFileProxy->isChecked();
 	mAccount->configGroup()->writeEntry( "FileProxy", configChecked );
+	oscarSettings->setFileProxy( configChecked );
+
 	configValue = mAccountSettings->sbxFirstPort->value();
 	mAccount->configGroup()->writeEntry( "FirstPort", configValue );
+	oscarSettings->setFirstPort( configValue );
+
 	configValue = mAccountSettings->sbxLastPort->value();
 	mAccount->configGroup()->writeEntry( "LastPort", configValue );
+	oscarSettings->setLastPort( configValue );
+
 	configValue = mAccountSettings->sbxTimeout->value();
 	mAccount->configGroup()->writeEntry( "Timeout", configValue );
+	oscarSettings->setTimeout( configValue );
 
 	// Global Identity
 	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );
@@ -230,6 +244,9 @@ Kopete::Account *ICQEditAccountWidget::apply()
 		
 		if ( m_ignoreEngine )
 			m_ignoreEngine->storeChanges();
+
+		//Update Oscar settings
+		static_cast<ICQMyselfContact*>( mAccount->myself() )->fetchShortInfo();
 	}
 	
 	return mAccount;

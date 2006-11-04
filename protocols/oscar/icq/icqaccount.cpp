@@ -59,11 +59,25 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	ICQShortInfo shortInfo = static_cast<ICQAccount*>( account() )->engine()->getShortInfo( contact );
+	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
+	ICQShortInfo shortInfo = icqAccount->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
 	{
-		setProperty( Kopete::Global::Properties::self()->nickName(), static_cast<ICQAccount*>( account() )->defaultCodec()->toUnicode( shortInfo.nickname ) );
+		setProperty( Kopete::Global::Properties::self()->nickName(), icqAccount->defaultCodec()->toUnicode( shortInfo.nickname ) );
 	}
+
+	//Sync server settings with local
+	QList<ICQInfoBase*> infoList;
+
+	ICQShortInfo* info = new ICQShortInfo( shortInfo );
+
+	Oscar::Settings* oscarSettings = icqAccount->engine()->clientSettings();
+	info->needsAuth.set( oscarSettings->requireAuth() );
+	info->webAware.set( oscarSettings->webAware() );
+
+	infoList.append( info );
+	if ( !icqAccount->engine()->updateProfile( infoList ) )
+		qDeleteAll( infoList );
 }
 
 void ICQMyselfContact::fetchShortInfo()

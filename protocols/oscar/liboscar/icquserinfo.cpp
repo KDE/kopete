@@ -25,8 +25,8 @@
 ICQShortInfo::ICQShortInfo()
 {
 	uin = 0;
-	needsAuth = false;
-	gender = 0;
+	needsAuth.init( false );
+	webAware.init( false );
 }
 
 void ICQShortInfo::fill( Buffer* buffer )
@@ -38,12 +38,25 @@ void ICQShortInfo::fill( Buffer* buffer )
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
 		email = buffer->getLELNTS();
-		needsAuth = buffer->getByte();
-		buffer->skipBytes( 1 ); //skip the unknown byte
-		gender = buffer->getByte();
+		needsAuth = ( buffer->getByte() == 0x00 );
+		webAware = ( buffer->getByte() != 0x02 );
+// 		gender = buffer->getByte();
 	}
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet" << endl;
+}
+
+void ICQShortInfo::store( Buffer* buffer )
+{
+	if ( needsAuth.hasChanged() )
+	{
+		buffer->addLETLV8( 0x02F8, ( needsAuth.get() ) ? 0x00 : 0x01 );
+	}
+
+	if ( webAware.hasChanged() )
+	{
+		buffer->addLETLV8( 0x030C, ( webAware.get() ) ? 0x01 : 0x00 );
+	}
 }
 
 ICQGeneralUserInfo::ICQGeneralUserInfo()
@@ -54,6 +67,7 @@ ICQGeneralUserInfo::ICQGeneralUserInfo()
 	publishEmail.init( false );
 	webAware.init( false );
 	allowsDC.init( false );
+	needsAuth.init( false );
 }
 
 void ICQGeneralUserInfo::fill( Buffer* buffer )
@@ -74,7 +88,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 		zip = buffer->getLELNTS();
 		country = buffer->getLEWord();
 		timezone = buffer->getLEByte(); // UTC+(tzcode * 30min)
-		authorization = ( buffer->getByte() == 0x00 );
+		needsAuth = ( buffer->getByte() == 0x00 );
 		webAware = ( buffer->getByte() == 0x01 );
 		allowsDC = ( buffer->getByte() == 0x01 ); //taken from sim
 		publishEmail = ( buffer->getByte() == 0x01 );
@@ -162,11 +176,11 @@ void ICQGeneralUserInfo::store( Buffer* buffer )
 	}
 	if ( webAware.hasChanged() )
 	{
-		buffer->addLETLV8( 0x02F8, ( webAware.get() ) ? 0x01 : 0x00 );
+		buffer->addLETLV8( 0x030C, ( webAware.get() ) ? 0x01 : 0x00 );
 	}
-	if ( authorization.hasChanged() )
+	if ( needsAuth.hasChanged() )
 	{
-		buffer->addLETLV8( 0x030C, ( authorization.get() ) ? 0x00 : 0x01 );
+		buffer->addLETLV8( 0x02F8, ( needsAuth.get() ) ? 0x00 : 0x01 );
 	}
 }
 

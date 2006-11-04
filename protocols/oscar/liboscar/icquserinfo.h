@@ -56,6 +56,7 @@ public:
 	ICQShortInfo();
 	~ICQShortInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
 	unsigned long uin;
@@ -63,8 +64,9 @@ public:
 	QByteArray firstName;
 	QByteArray lastName;
 	QByteArray email;
-	bool needsAuth;
-	unsigned int gender; // 0=offline, 1=online, 2=not webaware
+	ICQInfoValue<bool> needsAuth;
+	ICQInfoValue<bool> webAware; // 0=offline, 1=online, 2=not webaware
+// 	unsigned int gender;
 };
 
 class KOPETE_EXPORT ICQGeneralUserInfo : public ICQInfoBase
@@ -93,7 +95,7 @@ public:
 	ICQInfoValue<bool> publishEmail;
 	ICQInfoValue<bool> allowsDC;
 	ICQInfoValue<bool> webAware;
-	ICQInfoValue<bool> authorization;
+	ICQInfoValue<bool> needsAuth;
 };
 
 class KOPETE_EXPORT ICQWorkUserInfo : public ICQInfoBase
