@@ -12,6 +12,9 @@
             <height>421</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>BookmarksPrefsUI</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -63,7 +66,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>Only the selected contacts</string>
+                        <string>Onl&amp;y the selected contacts</string>
                     </property>
                     <property name="checked">
                         <bool>false</bool>
@@ -88,6 +91,14 @@
         <widget class="QListBox">
             <property name="name">
                 <cstring>contactList</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>m_addUntrusted</cstring>
+            </property>
+            <property name="text">
+                <string>Add Bookmarks from Contacts Not In Your Contact List</string>
             </property>
         </widget>
     </vbox>

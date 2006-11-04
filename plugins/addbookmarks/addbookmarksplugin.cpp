@@ -16,6 +16,7 @@
 #include <qtextcodec.h>
 #include <qregexp.h>
 
+#include "addbookmarksplugin.moc"
 #include "addbookmarksplugin.h"
 #include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
@@ -25,21 +26,25 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
 
+
+static bool isURLInGroup(const KURL& url, const KBookmarkGroup& group)
+{
+	KBookmark bookmark = group.first();
+	
+	for( ; !bookmark.isNull() ; bookmark = group.next(bookmark) ){
+		if( !bookmark.isGroup() && !bookmark.isSeparator() )
+			if( url == bookmark.url() )
+				return true;
+	}
+	return false;
+}
+
 BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &/*args*/)
  : Kopete::Plugin(BookmarksPluginFactory::instance(), parent, name)
 {
 	//kdDebug(14501) << "plugin loading" << endl;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), this, SLOT( slotBookmarkURLsInMessage( Kopete::Message & ) ) );
 }
-
-
-BookmarksPlugin::~BookmarksPlugin()
-{
-}
-
-
-#include "addbookmarksplugin.moc"
-
 
 /*!
     \fn BookmarksPlugin::slotBookmarkURLsInMessage(KopeteMessage & msg)
@@ -54,7 +59,7 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 	URLsList = extractURLsFromString( msg.parsedBody() );
 	if (!URLsList->empty()) {
 		for( it = URLsList->begin() ; it != URLsList->end() ; ++it){
-			if( msg.from()->metaContact() ) {
+			if( msg.from()->metaContact() && ( m_settings.addBookmarksFromUnknownContacts() || !msg.from()->metaContact()->isTemporary() ) ) {
 				addKopeteBookmark(*it, msg.from()->metaContact()->displayName() );
 				//kdDebug (14501) << "name:" << msg.from()->metaContact()->displayName() << endl;
 			}
@@ -71,7 +76,8 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 {
 	QTextCodec *codec = getPageEncoding( data );
 	QString htmlpage = codec->toUnicode( data );
-	QRegExp rx("<(?:title|TITLE)>([^<]*)</(?:title|TITLE)>");
+	QRegExp rx("<title>([^<]*){1,96}</title>");
+	rx.setCaseSensitive(false);
 	int pos = rx.search( htmlpage );
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 	KBookmarkGroup group = getKopeteFolder();
@@ -93,7 +99,7 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 	transfer->kill();
 }
 
-KURL::List* BookmarksPlugin::extractURLsFromString( QString text )
+KURL::List* BookmarksPlugin::extractURLsFromString( const QString& text )
 {
 	KURL::List *list = new KURL::List;
 	QRegExp rx("<a href=\"[^\\s\"]+\"");
@@ -110,17 +116,20 @@ KURL::List* BookmarksPlugin::extractURLsFromString( QString text )
 	return list;
 }
 
-void BookmarksPlugin::addKopeteBookmark( KURL url, QString sender )
+void BookmarksPlugin::addKopeteBookmark( const KURL& url, const QString& sender )
 {
 	KBookmarkGroup group = getKopeteFolder();
 
 	if ( m_settings.useSubfolderForContact( sender ) ) {
 		group = getFolder( group, sender );
 	}
-	if( !isURLInGroup( url, group ) ){
+	// either restrict to http(s) or to KProtocolInfo::protocolClass() == :internet
+	if( !isURLInGroup( url, group )
+		&& url.isValid() && url.protocol().startsWith("http") ) {
 		KIO::TransferJob *transfer;
 		// make asynchronous transfer to avoid GUI freezing due to overloaded web servers
 		transfer = KIO::get(url, false, false);
+		transfer->setInteractive(false);
 		connect ( transfer, SIGNAL ( data( KIO::Job *, const QByteArray & ) ),
 		this, SLOT ( slotAddKopeteBookmark( KIO::Job *, const QByteArray & ) ) );
 		m_map[transfer].url = url;
@@ -132,22 +141,10 @@ KBookmarkGroup BookmarksPlugin::getKopeteFolder()
 {
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 
-	return getFolder( mgr->root(), "kopete" );
+	return getFolder( mgr->root(), QString::fromLatin1("kopete") );
 }
 
-bool BookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
-{
-	KBookmark bookmark = group.first();
-	
-	for( ; !bookmark.isNull() ; bookmark = group.next(bookmark) ){
-		if( !bookmark.isGroup() && !bookmark.isSeparator() )
-			if( url == bookmark.url() )
-				return true;
-	}
-	return false;
-}
-
-KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, QString folder )
+KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, const QString& folder )
 {
 	KBookmark bookmark;
 
@@ -163,7 +160,7 @@ KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, QString folder 
 	return group;
 }
 
-QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
+QTextCodec* BookmarksPlugin::getPageEncoding( const QByteArray& data )
 {
 	QString temp = QString::fromLatin1(data);
 	QRegExp rx("<meta[^>]*(charset|CHARSET)\\s*=\\s*[^>]*>");

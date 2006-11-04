@@ -35,9 +35,12 @@ public:
     bool useSubfolderForContact( QString nickname );
     QStringList getContactsList() {return m_contactslist;}
     void setContactsList(QStringList list) {m_contactslist = list;}
+    bool addBookmarksFromUnknownContacts() { return m_addbookmarksfromunknowns; };
+    void setAddBookmarksFromUnknownContacts( bool );
     
 private:
     bool m_folderPerContact;
+    bool m_addbookmarksfromunknowns;
     UseSubfolders m_isfolderforeachcontact;
     QStringList m_contactslist;
 

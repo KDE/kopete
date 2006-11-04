@@ -42,6 +42,8 @@ void BookmarksPrefsSettings::load()
 	configfile->setGroup("Bookmarks Plugin");
 	m_isfolderforeachcontact = (UseSubfolders)configfile->readNumEntry( "UseSubfolderForEachContact", 0 );
 	m_contactslist = configfile->readListEntry( "ContactsList" );
+	m_addbookmarksfromunknowns = configfile->readBoolEntry( "AddBookmarksFromUnknownContacts" );
+	kdDebug( 14501 ) << k_funcinfo << "Unknowns loading: " << m_addbookmarksfromunknowns << endl;
 }
 
 void BookmarksPrefsSettings::save()
@@ -55,6 +57,8 @@ void BookmarksPrefsSettings::save()
 	configfile->setGroup( "Bookmarks Plugin" );
 	configfile->writeEntry( "UseSubfolderForEachContact", (int)m_isfolderforeachcontact );
 	configfile->writeEntry( "ContactsList", m_contactslist );
+	kdDebug( 14501 ) << k_funcinfo << "Unknowns saving : " << m_addbookmarksfromunknowns << endl;
+	configfile->writeEntry( "AddBookmarksFromUnknownContacts", m_addbookmarksfromunknowns );
 	configfile->sync();
 }
 
@@ -74,6 +78,11 @@ bool BookmarksPrefsSettings::useSubfolderForContact( QString nickname )
 		}
 	}
 	return false;
+}
+
+void BookmarksPrefsSettings::setAddBookmarksFromUnknownContacts( bool addUntrusted )
+{
+    m_addbookmarksfromunknowns = addUntrusted;
 }
 
 #include "addbookmarksprefssettings.moc"

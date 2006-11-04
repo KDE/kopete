@@ -39,7 +39,7 @@ private:
 
 private slots:
     void slotSetStatusChanged();
-           
+    void slotAddUntrustedChanged();
 };
 
 #endif

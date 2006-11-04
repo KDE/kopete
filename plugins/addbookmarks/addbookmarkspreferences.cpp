@@ -15,6 +15,7 @@
 #include <kgenericfactory.h>
 #include <kopetepluginmanager.h>
 #include <kopetecontactlist.h>
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qbuttongroup.h>
 #include <qlistbox.h>
@@ -39,6 +40,7 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, co
 	connect( p_dialog->contactList, SIGNAL( selectionChanged() ), this, SLOT( slotSetStatusChanged() ));
 	if(Kopete::PluginManager::self()->plugin("kopete_addbookmarks") )
            connect( this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin("kopete_addbookmarks") , SLOT(slotReloadSettings()));
+	connect( p_dialog->m_addUntrusted, SIGNAL( toggled(bool) ), this, SLOT( slotAddUntrustedChanged() ) );
 }
 
 
@@ -62,6 +64,7 @@ void BookmarksPreferences::save()
 		}
 		m_settings.setContactsList( list );
 	}
+	m_settings.setAddBookmarksFromUnknownContacts( p_dialog->m_addUntrusted->isChecked() );
 	m_settings.save();
 	emit PreferencesChanged(); 
 	emit KCModule::changed(false);
@@ -77,6 +80,11 @@ void BookmarksPreferences::slotSetStatusChanged()
 	emit KCModule::changed(true);
 }
 
+void BookmarksPreferences::slotAddUntrustedChanged()
+{
+    emit KCModule::changed(true);
+}
+
 void BookmarksPreferences::load()
 {
 	QStringList list;
@@ -85,7 +93,7 @@ void BookmarksPreferences::load()
 	
 	m_settings.load();
 	p_dialog->buttonGroup1->setButton(m_settings.isFolderForEachContact());
-
+    p_dialog->m_addUntrusted->setChecked( m_settings.addBookmarksFromUnknownContacts() );
 	if( p_dialog->contactList->count() == 0 ){
 		QStringList contacts = Kopete::ContactList::self()->contacts();
 		contacts.sort();
