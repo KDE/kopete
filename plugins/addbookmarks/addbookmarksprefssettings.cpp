@@ -31,6 +31,7 @@ void BookmarksPrefsSettings::load()
 	KConfig * configfile = KGlobal::config();
 	m_isfolderforeachcontact = Always;
 	m_contactslist.clear();
+	m_addbookmarksfromunknowns = false;
 	if( configfile->getConfigState() == KConfigBase::NoAccess ){
 		kdDebug( 14501 ) << "load: failed to open config file for reading" << endl;
 		return;
@@ -43,7 +44,6 @@ void BookmarksPrefsSettings::load()
 	m_isfolderforeachcontact = (UseSubfolders)configfile->readNumEntry( "UseSubfolderForEachContact", 0 );
 	m_contactslist = configfile->readListEntry( "ContactsList" );
 	m_addbookmarksfromunknowns = configfile->readBoolEntry( "AddBookmarksFromUnknownContacts" );
-	kdDebug( 14501 ) << k_funcinfo << "Unknowns loading: " << m_addbookmarksfromunknowns << endl;
 }
 
 void BookmarksPrefsSettings::save()
@@ -57,7 +57,6 @@ void BookmarksPrefsSettings::save()
 	configfile->setGroup( "Bookmarks Plugin" );
 	configfile->writeEntry( "UseSubfolderForEachContact", (int)m_isfolderforeachcontact );
 	configfile->writeEntry( "ContactsList", m_contactslist );
-	kdDebug( 14501 ) << k_funcinfo << "Unknowns saving : " << m_addbookmarksfromunknowns << endl;
 	configfile->writeEntry( "AddBookmarksFromUnknownContacts", m_addbookmarksfromunknowns );
 	configfile->sync();
 }
