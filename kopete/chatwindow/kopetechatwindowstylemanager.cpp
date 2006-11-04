@@ -94,7 +94,7 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 void ChatWindowStyleManager::loadStyles()
 {
         QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
-        QString localStyleDir( locateLocal( "appdata", QLatin1String("styles/"),true) );
+        QString localStyleDir( KStandardDirs::locateLocal( "appdata", QLatin1String("styles/"),true) );
         if( !chatStyles.contains(localStyleDir))
                 chatStyles<<localStyleDir;
 	foreach(const QString &style, chatStyles)
