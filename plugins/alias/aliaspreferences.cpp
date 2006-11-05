@@ -290,6 +290,19 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 
 	aliasMap.insert( alias, new AliasItem( preferencesDialog->aliasList, id, alias, command, p ) );
 
+	// count the number of arguments present in 'command'
+	QRegExp rx( "(%\\d+)" );
+	QStringList list;
+	int pos = 0;
+	while ( pos >= 0 ) {
+		pos = rx.search( command, pos );
+		if ( pos > -1 ) {
+			list += rx.cap( 1 );
+			pos  += rx.matchedLength();
+		}
+	}
+	int argc = list.count();
+
 	for( ProtocolList::ConstIterator it = p.begin(); it != p.end(); ++it )
 	{
 		Kopete::CommandHandler::commandHandler()->registerAlias(
@@ -297,7 +310,9 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 			alias,
 			command,
 			QString::fromLatin1("Custom alias for %1").arg(command),
-			Kopete::CommandHandler::UserAlias
+			Kopete::CommandHandler::UserAlias,
+			0,
+			argc
 		);
 
 		protocolMap.insert( QPair<Kopete::Protocol*,QString>( *it, alias ), true );
