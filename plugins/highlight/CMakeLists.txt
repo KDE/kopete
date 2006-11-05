@@ -14,7 +14,6 @@ kde4_automoc(${kopete_highlight_PART_SRCS})
 
 kde4_add_plugin(kopete_highlight ${kopete_highlight_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_highlight )
 
 target_link_libraries(kopete_highlight  ${KDE4_KDECORE_LIBS} kopete )
 
@@ -31,7 +30,6 @@ kde4_automoc(${kcm_kopete_highlight_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_highlight )
 
 target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS} )
 

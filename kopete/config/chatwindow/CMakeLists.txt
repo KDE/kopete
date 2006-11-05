@@ -18,7 +18,6 @@ kde4_automoc(${kcm_kopete_chatwindowconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_chatwindowconfig ${kcm_kopete_chatwindowconfig_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_chatwindowconfig )
 
 target_link_libraries(kcm_kopete_chatwindowconfig ${KDE4_KUTILS_LIBS} kopete kopetechatwindow_shared ${KDE4_KNEWSTUFF_LIBS} )
 

@@ -10,7 +10,6 @@ kde4_automoc(${kio_jabberdisco_PART_SRCS})
 
 kde4_add_plugin(kio_jabberdisco ${kio_jabberdisco_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kio_jabberdisco )
 
 target_link_libraries(kio_jabberdisco  ${KDE4_KIO_LIBS} jabberclient iris_local  )
 

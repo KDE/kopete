@@ -44,7 +44,6 @@ kde4_automoc(${kopete_irc_SRCS})
 
 kde4_add_plugin(kopete_irc ${kopete_irc_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_irc )
 
 target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} kopete kirc_client )
 

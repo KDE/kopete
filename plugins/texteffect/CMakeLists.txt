@@ -14,7 +14,6 @@ kde4_automoc(${kopete_texteffect_PART_SRCS})
 
 kde4_add_plugin(kopete_texteffect ${kopete_texteffect_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_texteffect )
 
 target_link_libraries(kopete_texteffect  ${KDE4_KDECORE_LIBS} kopete )
 
@@ -31,7 +30,6 @@ kde4_automoc(${kcm_kopete_texteffect_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_texteffect ${kcm_kopete_texteffect_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_texteffect )
 
 target_link_libraries(kcm_kopete_texteffect  ${KDE4_KUTILS_LIBS} kopete )
 

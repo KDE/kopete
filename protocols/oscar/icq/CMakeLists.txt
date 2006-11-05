@@ -45,7 +45,6 @@ kde4_automoc(${kopete_icq_PART_SRCS})
 
 kde4_add_plugin(kopete_icq ${kopete_icq_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_icq )
 
 target_link_libraries(kopete_icq ${KDE4_KDECORE_LIBS} kopete_oscar kopete )
 

@@ -33,7 +33,6 @@ kde4_automoc(${kopete_telepathy_PART_SRCS})
 
 kde4_add_plugin(kopete_telepathy ${kopete_telepathy_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_telepathy )
 
 target_link_libraries(kopete_telepathy  ${KDE4_KIO_LIBS} kopete ${DECIBEL_LIBRARIES} )
 

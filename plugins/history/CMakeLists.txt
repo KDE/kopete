@@ -21,7 +21,6 @@ kde4_automoc(${kopete_history_PART_SRCS})
 
 kde4_add_plugin(kopete_history ${kopete_history_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_history )
 
 target_link_libraries(kopete_history  ${KDE4_KDECORE_LIBS} ${KDE4_KHTML_LIBS} kopete )
 
@@ -40,7 +39,6 @@ kde4_automoc(${kcm_kopete_history_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_history ${kcm_kopete_history_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_history )
 
 target_link_libraries(kcm_kopete_history  ${KDE4_KUTILS_LIBS} kopete )
 

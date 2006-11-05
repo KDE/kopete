@@ -19,7 +19,6 @@ kde4_automoc(${kopete_javascript_PART_SRCS})
 
 kde4_add_plugin(kopete_javascript ${kopete_javascript_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_javascript )
 
 target_link_libraries(kopete_javascript  ${KDE4_KDECORE_LIBS} kopete kjsembed )
 #wrappers
@@ -45,7 +44,6 @@ kde4_automoc(${kcm_kopete_javascript_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_javascript ${kcm_kopete_javascript_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_javascript )
 
 target_link_libraries(kcm_kopete_javascript ${QT_AND_KDECORE_LIBS} ${KDE4_KNEWSTUFF_LIBS} kopete )
 

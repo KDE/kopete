@@ -21,7 +21,6 @@ kde4_automoc(${kopete_groupwise_PART_SRCS})
 
 kde4_add_plugin(kopete_groupwise ${kopete_groupwise_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_groupwise )
 
 target_link_libraries(kopete_groupwise  ${KDE4_KDECORE_LIBS} kopetegroupwiseui groupwise kopete )
 

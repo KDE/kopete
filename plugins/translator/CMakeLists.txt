@@ -16,7 +16,6 @@ kde4_automoc(${kopete_translator_PART_SRCS})
 
 kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_translator )
 
 target_link_libraries(kopete_translator  ${KDE4_KIO_LIBS} kopete )
 
@@ -33,7 +32,6 @@ kde4_automoc(${kcm_kopete_translator_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_translator ${kcm_kopete_translator_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_translator )
 
 target_link_libraries(kcm_kopete_translator  ${KDE4_KUTILS_LIBS} kopete )
 

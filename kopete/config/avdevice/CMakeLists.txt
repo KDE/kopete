@@ -12,7 +12,6 @@ kde4_add_ui_files(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig_videoconfig
 
 kde4_add_plugin(kcm_kopete_avdeviceconfig ${kcm_kopete_avdeviceconfig_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_avdeviceconfig )
 
 target_link_libraries(kcm_kopete_avdeviceconfig  ${KDE4_KUTILS_LIBS} kopete kopete_videodevice)
 

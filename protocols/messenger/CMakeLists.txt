@@ -14,7 +14,6 @@ kde4_automoc(${kopete_messenger_PART_SRCS})
 
 kde4_add_plugin(kopete_messenger ${kopete_messenger_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_messenger )
 
 target_link_libraries(kopete_messenger  ${KDE4_KIO_LIBS} kopete )
 

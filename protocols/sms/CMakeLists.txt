@@ -42,7 +42,6 @@ kde4_automoc(${kopete_sms_PART_SRCS})
 
 kde4_add_plugin(kopete_sms ${kopete_sms_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_sms )
 
 target_link_libraries(kopete_sms  ${KDE4_KIO_LIBS} kopete )
 

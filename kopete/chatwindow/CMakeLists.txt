@@ -33,7 +33,6 @@ kde4_automoc(${krichtexteditpart_PART_SRCS})
 
 kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} krichtexteditpart )
 
 target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KPARTS_LIBS} ${KDE4_KSPELL2_LIBS} ${KDE4_KDEPRINT_LIBS} )
 
@@ -48,7 +47,6 @@ kde4_automoc(${kopete_chatwindow_PART_SRCS})
 
 kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_chatwindow )
 
 target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 
@@ -63,7 +61,6 @@ kde4_automoc(${kopete_emailwindow_PART_SRCS})
 
 kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_emailwindow )
 
 target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
 

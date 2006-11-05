@@ -43,7 +43,6 @@ kde4_automoc(${kopete_gadu_PART_SRCS})
 
 kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_gadu )
 
 target_link_libraries(kopete_gadu ${KDE4_KDEUI_LIBS} ${QT_QTNETWORK_LIBRARY} gadu_kopete kopete )
 

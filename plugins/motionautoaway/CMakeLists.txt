@@ -12,7 +12,6 @@ kde4_add_kcfg_files(kopete_motionaway_PART_SRCS motionawayconfig.kcfgc )
 
 kde4_add_plugin(kopete_motionaway ${kopete_motionaway_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_motionaway )
 
 target_link_libraries(kopete_motionaway  ${KDE4_KDECORE_LIBS} kopete )
 
@@ -31,7 +30,6 @@ kde4_add_kcfg_files(kcm_kopete_motionaway_PART_SRCS motionawayconfig.kcfgc )
 
 kde4_add_plugin(kcm_kopete_motionaway ${kcm_kopete_motionaway_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_motionaway )
 
 target_link_libraries(kcm_kopete_motionaway  ${KDE4_KDECORE_LIBS} ${KDE4_KUTILS_LIBS} )
 
