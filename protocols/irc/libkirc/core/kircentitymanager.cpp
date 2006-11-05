@@ -38,26 +38,31 @@ EntityManager::~EntityManager()
 	delete d;
 }
 
-QList<Entity *> EntityManager::entities() const
+Entity::List EntityManager::entities() const
 {
-	return d->entities;
+	Entity::List entities;
+
+	foreach(Entity *entity, d->entities)
+		entities.append(Entity::Ptr(entity));
+
+	return entities;
 }
 
-Entity *EntityManager::entityByName(const QByteArray &name) const
+Entity::Ptr EntityManager::entityFromName(const QByteArray &name) const
 {
-	if (name.isEmpty())
-		return 0;
+	Entity::Ptr entity;
 
-	Entity *entity = 0;
+	if (name.isEmpty())
+		return entity;
 
 	#warning Do the searching code here.
 
 	return entity;
 }
 /*
-Entity *EntityManager::entityByName(const QByteArray &name, bool createIfNotFound)
+Entity::Ptr EntityManager::entityFromName(const QByteArray &name, bool createIfNotFound)
 {
-	Entity *entity = entityByName(name);
+	Entity *entity = entityFromName(name);
 
 	if (!entity)
 	{
@@ -68,6 +73,22 @@ Entity *EntityManager::entityByName(const QByteArray &name, bool createIfNotFoun
 	return entity;
 }
 */
+
+Entity::List EntityManager::entitiesFromNames(const QList<QByteArray> &names)
+{
+	Entity::List entities;
+
+	foreach (const QByteArray &name, names)
+		entities.append(entityFromName(name));
+
+	return entities;
+}
+
+Entity::List EntityManager::entitiesFromNames(const QByteArray &names, char sep)
+{
+	return entitiesFromNames(names.split(sep));
+}
+
 void EntityManager::add(Entity *entity)
 {
 	if (!d->entities.contains(entity))
@@ -80,7 +101,7 @@ void EntityManager::add(Entity *entity)
 
 void EntityManager::remove(Entity *entity)
 {
-	d->entities.remove(entity);
+	d->entities.removeAll(entity);
 //	disconnect(entity);
 }
 
