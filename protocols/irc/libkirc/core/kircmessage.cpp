@@ -17,6 +17,7 @@
 
 #include "kircmessage.h"
 
+#include "kircentitymanager.h"
 #include "kircsocket.h"
 #include "kircmessageutil.h"
 
@@ -50,7 +51,9 @@ class KIrc::Message::Private
 {
 public:
 	Private()
-		: codec(0)
+		: socket(0)
+		, direction(Undefined)
+		, codec(0)
 		, valid(false)
 		, dirty(false)
 	{ }
@@ -62,10 +65,8 @@ public:
 	QByteArray line;
 	QByteArray prefix;
 	QByteArray command;
-	QByteArrayList args;
+	QList<QByteArray> args;
 	QByteArray suffix;
-
-//	QList<KIrc::Message> ctcpMessages;
 
 	bool valid:1; // if the message was parsed successfuly
 	bool dirty:1; // if the message contents is modified, so should be rebuilded
@@ -91,6 +92,11 @@ Message &Message::operator = (const Message &o)
 {
 	d = o.d;
 	return *this;
+}
+
+bool Message::isValid() const
+{
+	return d->valid;
 }
 
 Socket *Message::socket() const
@@ -194,12 +200,12 @@ void Message::setCommand(const QByteArray &command)
 	}
 }
 
-QByteArrayList Message::rawArgs() const
+QList<QByteArray> Message::rawArgs() const
 {
 	return d->args;
 }
 
-void Message::setArgs(const QByteArrayList &args)
+void Message::setArgs(const QList<QByteArray> &args)
 {
 	if (d->args != args)
 	{
@@ -260,7 +266,7 @@ QStringList Message::args(QTextCodec *codec) const
 
 void Message::setArgs(const QStringList &args, QTextCodec *codec)
 {
-	QByteArrayList arrayList;
+	QList<QByteArray> arrayList;
 	codec = checkCodec(codec);
 
 	foreach (const QString &arg, args)
@@ -289,50 +295,50 @@ void Message::setSuffix(const QString &suffix, QTextCodec *codec)
 	setSuffix(checkCodec(codec)->fromUnicode(suffix));
 }
 
-bool Message::isValid() const
-{
-	return d->valid;
-}
-
-bool Message::isNumeric() const
-{
-#warning FIXME
-//	return sm_IRCNumericCommand.exactMatch(d->command);
-	return false;
-}
-
-void Message::dump() const
-{
-	kDebug(14120)	<< "Line:" << d->line << endl
-			<< "Prefix:" << d->prefix << endl
-			<< "Command:" << d->command << endl
-			<< "Args:" << d->args << endl
-			<< "Suffix:" << d->suffix << endl;
-/*
-	if (d->ctcpMessage)
-	{
-		kDebug(14120) << "Contains CTCP Message:" << endl;
-		d->ctcpMessage->dump();
-	}
-*/
-}
-/*
-Entity::Ptr Message::entityFromPrefix(Engine *engine) const
-{
-	if (d->prefix.isEmpty())
-		return engine->self();
-	else
-		return engine->getEntity(d->prefix);
-}
-
-Entity::Ptr Message::entityFromArg(Engine *engine, size_t i) const
-{
-	return engine->getEntity(d->argList[i]);
-}
-*/
 size_t Message::argsSize() const
 {
 	return d->args.size();
+}
+/*
+Entity::Ptr Message::entityFromPrefix() const
+{
+        if (d->prefix.isEmpty())
+                return engine->self();
+        else
+                return socket()->entityManager()->entityFromName(d->prefix);
+}
+
+Entity::Ptr Message::entityFromArg(size_t i) const
+{
+        return socket()-entityManager()->entityFromName(d->argList[i]);
+}
+*/
+Entity::Ptr Message::entityFromName(const QByteArray &name)
+{
+	return socket()->entityManager()->entityFromName(name);
+}
+
+Entity::List Message::entitiesFromNames(const QList<QByteArray> &names)
+{
+	return socket()->entityManager()->entitiesFromNames(names);
+}
+
+Entity::List Message::entitiesFromNames(const QByteArray &names, char separator)
+{
+	return socket()->entityManager()->entitiesFromNames(names, separator);
+}
+
+bool Message::isNumericReply() const
+{
+#warning FIXME
+//      return sm_IRCNumericCommand.exactMatch(d->command);
+        return false;
+}
+
+Message::Type Message::type() const
+{
+#warning FIXME
+	return Unknown;
 }
 
 QTextCodec *Message::checkCodec(QTextCodec *codec) const
@@ -355,11 +361,12 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
+/*
 bool Message::extractCtcpCommand()
 {
 	if (d->suffix.isEmpty())
 		return false;
-/*
+
 	uint len = message.length();
 
 	if (message[0] == 1 && message[len-1] == 1)
@@ -384,8 +391,8 @@ bool Message::extractCtcpCommand()
 
 		return true;
 	}
-*/
 	return false;
 }
+*/
 #endif
 
