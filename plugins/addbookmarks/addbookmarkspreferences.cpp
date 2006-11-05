@@ -93,7 +93,6 @@ void BookmarksPreferences::load()
 	
 	m_settings.load();
 	p_dialog->buttonGroup1->setButton(m_settings.isFolderForEachContact());
-	
     p_dialog->m_addUntrusted->setChecked( m_settings.addBookmarksFromUnknownContacts() );
 	if( p_dialog->contactList->count() == 0 ){
 		QStringList contacts = Kopete::ContactList::self()->contacts();
