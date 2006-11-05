@@ -13,13 +13,16 @@
             <height>378</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>AutoReplacePrefsUI</string>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <widget class="QGroupBox" row="0" column="0">
             <property name="name">
-                <cstring>groupBox3</cstring>
+                <cstring>gb_sentences</cstring>
             </property>
             <property name="title">
                 <string>Sentence Options</string>
@@ -80,7 +83,7 @@
         </widget>
         <widget class="QGroupBox" row="1" column="0">
             <property name="name">
-                <cstring>groupBox4</cstring>
+                <cstring>replacementsGroup</cstring>
             </property>
             <property name="title">
                 <string>Replacements List</string>
@@ -168,7 +171,7 @@
                                 <cstring>textLabel1</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Text:</string>
+                                <string>Te&amp;xt:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>m_key</cstring>

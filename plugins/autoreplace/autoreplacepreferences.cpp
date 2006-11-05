@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qgroupbox.h>
@@ -60,8 +61,12 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 
 	m_wordListChanged = false;
 
-	setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
-
+	// Sentence options and which messages to apply autoreplace to
+	// are managed by KCMAutoConfigModule.  The list of replacements
+	// itself is manually read/written as KCMAutoConfigModule doesn't support it.
+	autoConfig()->ignoreSubWidget( preferencesDialog->replacementsGroup );
+	setMainWidget( preferencesDialog, "AutoReplace Plugin" );
+	
 	m_config = new AutoReplaceConfig;
 	load();
 }

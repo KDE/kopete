@@ -20,6 +20,7 @@
 #include <kopetecontact.h>
 
 #include "kopetechatsessionmanager.h"
+#include "kopetesimplemessagehandler.h"
 
 #include "autoreplaceplugin.h"
 #include "autoreplaceconfig.h"
@@ -39,13 +40,19 @@ AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const char * name, const 
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotAboutToSend( Kopete::Message & ) ) );
 
+	// nb this connection causes the slot to be called on in- and outbound
+	// messages which suggests something is broken in the message handler
+	// system!
+	m_inboundHandler = new Kopete::SimpleMessageHandlerFactory( Kopete::Message::Inbound,
+		Kopete::MessageHandlerFactory::InStageToSent, this, SLOT( slotAboutToSend( Kopete::Message& ) ) );
+
 	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
 }
 
 AutoReplacePlugin::~AutoReplacePlugin()
 {
 	pluginStatic_ = 0L;
-
+	delete m_inboundHandler;
 	delete m_prefs;
 }
 
@@ -87,30 +94,30 @@ void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 		// the message is now the one with replaced words
 		if(isReplaced)
 			msg.setBody( replaced_message, Kopete::Message::PlainText );
-	}
 
-	if( msg.direction() == Kopete::Message::Outbound )
-	{
-		if ( m_prefs->dotEndSentence() )
+		if( msg.direction() == Kopete::Message::Outbound )
 		{
-			QString replaced_message = msg.plainBody();
-			// eventually add . at the end of the lines, sent lines only
-			replaced_message.replace( QRegExp( "([a-z])$" ), "\\1." );
-			// replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
-			
-			// the message is now the one with replaced words
-			msg.setBody( replaced_message, Kopete::Message::PlainText );
-		}
+			if ( m_prefs->dotEndSentence() )
+			{
+				QString replaced_message = msg.plainBody();
+				// eventually add . at the end of the lines, sent lines only
+				replaced_message.replace( QRegExp( "([a-z])$" ), "\\1." );
+				// replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
 
-		if( m_prefs->capitalizeBeginningSentence() )
-		{
-			QString replaced_message = msg.plainBody();
-			// eventually start each sent line with capital letter
-			// TODO 	". "	 "? "	 "! " 
-			replaced_message[ 0 ] = replaced_message.at( 0 ).upper();
-			
-			// the message is now the one with replaced words
-			msg.setBody( replaced_message, Kopete::Message::PlainText );
+				// the message is now the one with replaced words
+				msg.setBody( replaced_message, Kopete::Message::PlainText );
+			}
+
+			if( m_prefs->capitalizeBeginningSentence() )
+			{
+				QString replaced_message = msg.plainBody();
+				// eventually start each sent line with capital letter
+				// TODO 	". "	 "? "	 "! "
+				replaced_message[ 0 ] = replaced_message.at( 0 ).upper();
+
+				// the message is now the one with replaced words
+				msg.setBody( replaced_message, Kopete::Message::PlainText );
+			}
 		}
 	}
 }
