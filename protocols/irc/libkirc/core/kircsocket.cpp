@@ -207,35 +207,23 @@ void Socket::close()
 	d->socket = 0;
 }
 
-void Socket::writeMessage(const QByteArray &msg)
+void Socket::writeMessage(const Message &msg)
 {
-	kDebug(14121) << k_funcinfo << "msg=" << msg << endl;
+	#warning Check message validity before sending it
+
+	kDebug(14121) << k_funcinfo << "msg=" << msg.rawLine() << endl;
 	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
 	{
 //		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
 		return;
 	}
 
-	qint64 wrote = d->socket->write(msg + "\n\r");
+	qint64 wrote = d->socket->write(msg.rawLine() + "\n\r");
 
 	if (wrote == -1)
 		kDebug(14121) << k_funcinfo << "Socket write failed!" << endl;
 
 //	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
-}
-
-void Socket::writeMessage(const QString &msg, QTextCodec *codec)
-{
-	kDebug(14121) << k_funcinfo << "msg=" << msg << endl;
-	bool encodeSuccess = false;
-	writeMessage(encode(msg, &encodeSuccess, codec));
-}
-
-void Socket::writeMessage(const Message &msg)
-{
-	#warning Check message validity before sending it
-
-	writeMessage(msg.rawLine());
 }
 
 void Socket::showInfoDialog()
@@ -262,11 +250,6 @@ void Socket::setConnectionState(ConnectionState newstate)
 		d->state = newstate;
 		emit connectionStateChanged(newstate);
 	}
-}
-
-void Socket::authentify()
-{
-	setConnectionState(Open);
 }
 
 void Socket::onReadyRead()
@@ -313,8 +296,7 @@ void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)
 		setConnectionState(Connecting);
 		break;
 	case QAbstractSocket::ConnectedState:
-		setConnectionState(Authentifying);
-		authentify();
+		setConnectionState(Open);
 		break;
 	case QAbstractSocket::ClosingState:
 		setConnectionState(Closing);
@@ -346,7 +328,7 @@ void Socket::socketGotError(QAbstractSocket::SocketError)
 	close();
 	*/
 }
-
+/*
 QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
 {
 	kDebug(14121) << k_funcinfo << endl;
@@ -375,4 +357,4 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 	*success = true;
 	return codec->fromUnicode(str);
 }
-
+*/
