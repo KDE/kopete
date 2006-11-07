@@ -311,13 +311,11 @@ void IRCAccount::setCodec( QTextCodec *codec )
 
 const QString IRCAccount::networkName() const
 {
-	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::NETWORKNAME, QString());
 }
 
 void IRCAccount::setNetworkByName(const QString &networkName)
 {
-	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::NETWORKNAME, networkName);
 //	setAccountLabel(network.name);
 }
@@ -329,65 +327,53 @@ IRCNetwork network() const
 */
 const QString IRCAccount::userName() const
 {
-	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::USERNAME, QString());
 }
 
 void IRCAccount::setUserName(const QString &userName)
 {
-	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::USERNAME, userName);
 }
 
 const QString IRCAccount::realName() const
 {
-	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::REALNAME, QString());
 }
 
 void IRCAccount::setRealName( const QString &userName )
 {
-	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::REALNAME, userName);
 }
 
 const QString IRCAccount::nickName() const
 {
-	kDebug(14120) << k_funcinfo << endl;
 	return configGroup()->readEntry(Config::NICKNAME, QString());
 }
 
 void IRCAccount::setNickName(const QString &nickName)
 {
-	kDebug(14120) << k_funcinfo << endl;
 	configGroup()->writeEntry(Config::NICKNAME, nickName);
 //	d->self->setNickName(nickName);
 }
 
 const QString IRCAccount::partMessage() const
 {
-	QString partMsg = configGroup()->readEntry(QLatin1String("defaultPart"), QString());
-	if( partMsg.isEmpty() )
-		return IRC::Version;
-	return partMsg;
+	return configGroup()->readEntry(QLatin1String("defaultPart"), QString());
 }
 
-void IRCAccount::setPartMessage( const QString &defaultPart )
+void IRCAccount::setPartMessage( const QString &partMessage )
 {
-	configGroup()->writeEntry( QLatin1String( "defaultPart" ), defaultPart );
+	configGroup()->writeEntry(QLatin1String("defaultPart"), partMessage);
 }
 
 const QString IRCAccount::quitMessage() const
 {
-	QString quitMsg = configGroup()->readEntry(QLatin1String("defaultQuit"), QString());
-	if( quitMsg.isEmpty() )
-		return IRC::Version;
-	return quitMsg;
+	return configGroup()->readEntry(QLatin1String("defaultQuit"), QString());
 }
 
-void IRCAccount::setQuitMessage( const QString &quit )
+void IRCAccount::setQuitMessage(const QString &quitMessage)
 {
-	configGroup()->writeEntry( QLatin1String("defaultQuit"), quit );
+	configGroup()->writeEntry( QLatin1String("defaultQuit"), quitMessage );
 }
 
 bool IRCAccount::autoShowServerWindow() const
@@ -406,7 +392,7 @@ KIrc::ClientSocket *IRCAccount::client() const
 	return d->client;
 }
 
-void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies ) const
+void IRCAccount::setCustomCtcpReplies(const QMap<QString, QString> &replies)
 {
 /*
 	QStringList val;
@@ -420,7 +406,7 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 */
 }
 
-const QMap< QString, QString > IRCAccount::customCtcpReplies() const
+const QMap<QString, QString> IRCAccount::customCtcpReplies() const
 {
 	kDebug(14120) << k_funcinfo << endl;
 	QMap< QString, QString > replies;
