@@ -62,13 +62,13 @@ class IRCAccount
 	Q_PROPERTY(QString nickName READ nickName WRITE setNickName)
 //	Q_PROPERTY(QStringList nickNames READ nickNames WRITE setNickNames)
 
-	Q_PROPERTY(QString defaultPartMessage READ defaultPartMessage WRITE setDefaultPartMessage)
-	Q_PROPERTY(QString defaultQuitMessage READ defaultQuitMessage WRITE setDefaultQuitMessage)
+	Q_PROPERTY(QString partMessage READ partMessage WRITE setPartMessage)
+	Q_PROPERTY(QString quitMessage READ quitMessage WRITE setQuitMessage)
 
 	Q_PROPERTY(bool autoShowServerWindow READ autoShowServerWindow WRITE setAutoShowServerWindow)
 
 public:
-	IRCAccount(const QString &accountid, const QString &autoConnect = QString::null,
+	explicit IRCAccount(const QString &accountid, const QString &autoConnect = QString::null,
 			const QString& networkName = QString::null, const QString &nickName = QString::null);
 	virtual ~IRCAccount();
 
@@ -86,9 +86,9 @@ public: // READ properties accessors.
 
 //	const QString altNick() const;
 
-	const QString defaultPartMessage() const;
+	const QString partMessage() const;
 
-	const QString defaultQuitMessage() const;
+	const QString quitMessage() const;
 
 	bool autoShowServerWindow() const;
 
@@ -104,11 +104,9 @@ public slots: // WRITE properties accessors.
 
 	void setNickName( const QString & );
 
-//	void setAltNick( const QString & );
+	void setPartMessage( const QString & );
 
-	void setDefaultPartMessage( const QString & );
-
-	void setDefaultQuitMessage( const QString & );
+	void setQuitMessage( const QString & );
 
 	void setAutoShowServerWindow( bool autoShow );
 

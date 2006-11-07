@@ -363,41 +363,31 @@ void IRCAccount::setNickName(const QString &nickName)
 	configGroup()->writeEntry(Config::NICKNAME, nickName);
 //	d->self->setNickName(nickName);
 }
-/*
-const QString IRCAccount::altNick() const
-{
-	return configGroup()->readEntry(QString::fromLatin1("altNick"));
-}
 
-void IRCAccount::setAltNick( const QString &altNick )
+const QString IRCAccount::partMessage() const
 {
-	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
-}
-*/
-const QString IRCAccount::defaultPartMessage() const
-{
-	QString partMsg = configGroup()->readEntry(QString::fromLatin1("defaultPart"), QString());
+	QString partMsg = configGroup()->readEntry(QLatin1String("defaultPart"), QString());
 	if( partMsg.isEmpty() )
 		return IRC::Version;
 	return partMsg;
 }
 
-void IRCAccount::setDefaultPartMessage( const QString &defaultPart )
+void IRCAccount::setPartMessage( const QString &defaultPart )
 {
-	configGroup()->writeEntry( QString::fromLatin1( "defaultPart" ), defaultPart );
+	configGroup()->writeEntry( QLatin1String( "defaultPart" ), defaultPart );
 }
 
-const QString IRCAccount::defaultQuitMessage() const
+const QString IRCAccount::quitMessage() const
 {
-	QString quitMsg = configGroup()->readEntry(QString::fromLatin1("defaultQuit"), QString());
+	QString quitMsg = configGroup()->readEntry(QLatin1String("defaultQuit"), QString());
 	if( quitMsg.isEmpty() )
 		return IRC::Version;
 	return quitMsg;
 }
 
-void IRCAccount::setDefaultQuitMessage( const QString &defaultQuit )
+void IRCAccount::setQuitMessage( const QString &quit )
 {
-	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
+	configGroup()->writeEntry( QLatin1String("defaultQuit"), quit );
 }
 
 bool IRCAccount::autoShowServerWindow() const
