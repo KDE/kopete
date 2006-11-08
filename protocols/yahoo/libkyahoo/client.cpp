@@ -258,6 +258,9 @@ void Client::slotLoginResponse( int response, const QString &msg )
 		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();
+	} else {
+		d->active = false;
+		close();
 	}
 
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting loggedIn" << endl;
@@ -752,7 +755,7 @@ void Client::initTasks()
 	QObject::connect( d->statusTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
 				SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
-				SIGNAL( loggedIn( int, const QString& ) ) );
+				SLOT( slotLoginResponse( int, const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( authorizationRejected( const QString&, const QString& ) ), 
 				SIGNAL( authorizationRejected( const QString&, const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( authorizationAccepted( const QString& ) ), 
