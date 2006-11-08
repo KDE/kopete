@@ -25,7 +25,7 @@
 #include <kopetecontact.h>
 
 // QtTapioca includes
-#include <QtTapioca/ContactInfo>
+#include <QtTapioca/ContactBase>
 
 class KAction;
 
@@ -79,11 +79,11 @@ public slots:
 private slots:
 	/**
 	 * @brief Called when the contact has updated its presence information.
-	 * @param contactInfo Refering ContactInfo
+	 * @param contactInfo Refering ContactBase
 	 * @param presence New presence.
 	 * @param presenceMessage New presenceMessage, if any.
 	 */
-	void slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage);
+	void slotPresenceUpdated(ContactBase *contactInfo, ContactBase::Presence presence, const QString &presenceMessage);
 
 private:
 	class Private;

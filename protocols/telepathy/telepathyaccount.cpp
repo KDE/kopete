@@ -35,7 +35,7 @@
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
 #include <QtTapioca/ContactList>
-#include <QtTapioca/PersonalInfo>
+#include <QtTapioca/UserContact>
 
 // Local includes
 #include "telepathyprotocol.h"
@@ -145,10 +145,10 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 	}
 	else
 	{
-		if( d->currentConnection && d->currentConnection->personalInfo() )
+		if( d->currentConnection && d->currentConnection->userContact() )
 		{
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Changing online status to " << status.description() << endl;
-			d->currentConnection->personalInfo()->setPresence( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status) );
+			d->currentConnection->userContact()->setPresence( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status) );
 
 			setStatusMessage( reason );
 		}
@@ -157,11 +157,11 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 
 void TelepathyAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	if( d->currentConnection && d->currentConnection->personalInfo() )
+	if( d->currentConnection && d->currentConnection->userContact() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting status message to \"" << statusMessage.message() << "\"." << endl;
 
-		d->currentConnection->personalInfo()->setPresenceMessage( statusMessage.message() );
+		d->currentConnection->userContact()->setPresenceMessage( statusMessage.message() );
 	}
 }
 

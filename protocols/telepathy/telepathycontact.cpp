@@ -81,13 +81,13 @@ void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 	d->internalContact = internalContact;
 
 	// Set initial presence
-	TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->getContactInfo()->presence() );
+	TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->presence() );
 
 	// Set nickname/alias
-	setNickName( d->internalContact->getContactInfo()->alias() );
+	setNickName( d->internalContact->alias() );
 
 	// Connect signal/slots
-	connect(d->internalContact->getContactInfo(), SIGNAL(presenceUpdated(ContactInfo*, ContactInfo::Presence, QString)), this, SLOT(slotPresenceUpdated(ContactInfo*, ContactInfo::Presence, QString)));
+	connect(d->internalContact, SIGNAL(presenceUpdated(ContactBase*, ContactBase::Presence, QString)), this, SLOT(slotPresenceUpdated(ContactBase*, ContactBase::Presence, QString)));
 }
 
 bool TelepathyContact::isReachable()
@@ -123,8 +123,10 @@ void TelepathyContact::deleteContact()
 	account()->contactManager()->removeContact(this);
 }
 
-void TelepathyContact::slotPresenceUpdated(ContactInfo *contactInfo, ContactInfo::Presence presence, const QString &presenceMessage)
+void TelepathyContact::slotPresenceUpdated(ContactBase *contactInfo, ContactBase::Presence presence, const QString &presenceMessage)
 {
+	Q_UNUSED(contactInfo);
+
 	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence);
 
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating " << contactId() << " presence to " << newStatus.description() << endl;

@@ -26,7 +26,7 @@
 // QtTapioca includes
 #include <QtTapioca/ContactList>
 #include <QtTapioca/Contact>
-#include <QtTapioca/ContactInfo>
+#include <QtTapioca/ContactBase>
 
 // Kopete includes
 #include <kopetemetacontact.h>

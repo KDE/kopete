@@ -111,46 +111,46 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
 
-QtTapioca::ContactInfo::Presence TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
+QtTapioca::ContactBase::Presence TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
-	QtTapioca::ContactInfo::Presence telepathyPresence;
+	QtTapioca::ContactBase::Presence telepathyPresence;
 
 	if( status == Available )
-		telepathyPresence = ContactInfo::Available;
+		telepathyPresence = ContactBase::Available;
 	else if( status == Away )
-		telepathyPresence = ContactInfo::Away;
+		telepathyPresence = ContactBase::Away;
 	else if( status == Busy )
-		telepathyPresence = ContactInfo::Busy;
+		telepathyPresence = ContactBase::Busy;
 	else if( status == Hidden )
-		telepathyPresence = ContactInfo::Hidden;
+		telepathyPresence = ContactBase::Hidden;
 	else if( status == ExtendedAway )
-		telepathyPresence = ContactInfo::XA;
+		telepathyPresence = ContactBase::XA;
 	else if( status == Offline )
-		telepathyPresence = ContactInfo::Offline;
+		telepathyPresence = ContactBase::Offline;
 
 	return telepathyPresence;
 }
-Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(QtTapioca::ContactInfo::Presence presence)
+Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(QtTapioca::ContactBase::Presence presence)
 {
 	Kopete::OnlineStatus result;
 	switch(presence)
 	{
-		case ContactInfo::Available:
+		case ContactBase::Available:
 			result = Available;
 			break;
-		case ContactInfo::Away:
+		case ContactBase::Away:
 			result = Away;
 			break;
-		case ContactInfo::Busy:
+		case ContactBase::Busy:
 			result = Busy;
 			break;
-		case ContactInfo::Hidden:
+		case ContactBase::Hidden:
 			result = Hidden;
 			break;
-		case ContactInfo::XA:
+		case ContactBase::XA:
 			result = ExtendedAway;
 			break;
-		case ContactInfo::Offline:
+		case ContactBase::Offline:
 			result = Offline;
 			break;
 	}
