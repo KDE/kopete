@@ -106,7 +106,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			{
 				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a valid connection." << endl;
 				// Connect signals/slots
-				QObject::connect(d->currentConnection, SIGNAL(statusChanged(Connection*, Connection::Status, Connection::Reason)), this, SLOT(telepathyStatusChanged(Connection*, Connection::Status, Connection::Reason)));
+				QObject::connect(d->currentConnection, SIGNAL(statusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)), this, SLOT(telepathyStatusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)));
 				QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
 
 				d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
@@ -290,7 +290,7 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionPa
 	return d->allConnectionParameters;
 }
 
-void TelepathyAccount::telepathyStatusChanged(Connection *connection, Connection::Status status, Connection::Reason reason)
+void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
 {
 	Q_UNUSED(connection);
 

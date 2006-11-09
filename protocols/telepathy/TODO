@@ -2,9 +2,13 @@ This file is the list of things todo accross all project needed for Kopete Telep
 a list of question that I will need to answer later.
 
 Telepathy Spec:
+-Buddy group list
+-File transfer
+-Emoticon upload/download
 
 QtTapioca:
--Find out the source of the crash when removing a contact in ContactList
+-Find out a better way to set connection parameters
+-Implement parts of Telepathy spec not done yet.
 
 Kopete plugin TODO:
 -Manage contact list

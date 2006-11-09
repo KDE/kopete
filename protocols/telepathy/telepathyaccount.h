@@ -107,7 +107,7 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 
 private slots:
-	void telepathyStatusChanged(Connection *connection, Connection::Status status, Connection::Reason reason);
+	void telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason);
 	/**
 	 * @brief Do all the initialition stuff after being connection
 	 */

@@ -81,6 +81,8 @@ QtTapioca::Contact *TelepathyContactManager::addContact(const QString &contactId
 
 void TelepathyContactManager::removeContact(TelepathyContact *contact)
 {
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+
 	if( contact->internalContact() )
 	{
 		// First remove the contact from the contact list
