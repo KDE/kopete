@@ -40,6 +40,8 @@ namespace Kopete
 
 class TelepathyProtocol;
 class TelepathyContactManager;
+class TelepathyContact;
+
 /**
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -51,6 +53,12 @@ public:
 	~TelepathyAccount();
 
 	virtual KActionMenu *actionMenu();
+
+	/**
+	 * @brief Get the casted instance of myself contact
+	 * @return Myself contact as TelepathyContact.
+	 */
+	TelepathyContact *myself();
 
 	/**
 	 * @brief Read the configuration for the current account.
@@ -107,6 +115,14 @@ public:
 	 */
 	QtTapioca::TextChannel *createTextChannel(QtTapioca::Contact *internalContact);
 
+	/**
+	 * @brief Change the alias of the contact if the connection manager support it
+	 *
+	 * @param newAlias New alias to give to the contact
+	 * @return true if alias was changed.
+	 */
+	bool changeAlias(const QString &newAlias);
+
 signals:
 	/**
 	 * Emitted when we are connected to a Telepathy connection manager.
@@ -120,6 +136,11 @@ public slots:
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage());
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 	
+	/**
+	 * @brief Called from the menu to change the myself contact alias
+	 */
+	void slotSetAlias();
+
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 

@@ -26,12 +26,16 @@
 #include <kmenu.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kinputdialog.h>
+#include <kmessagebox.h>
+#include <kicon.h>
 
 // Kopete includes
 #include <kopetemetacontact.h>
 #include <kopeteonlinestatus.h>
 #include <kopetecontactlist.h>
 #include <kopetechatsessionmanager.h>
+#include <kopeteuiglobal.h>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
@@ -85,7 +89,20 @@ KActionMenu *TelepathyAccount::actionMenu()
 {
 	KActionMenu *actionMenu = Kopete::Account::actionMenu();
 
+	// FIXME: Maybe we should cache the action.
+	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0, "changeAliasAction");
+	changeAliasAction->setEnabled( isConnected() );
+	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
+
+	actionMenu->addSeparator();
+	actionMenu->addAction( changeAliasAction );
+
 	return actionMenu;
+}
+
+TelepathyContact *TelepathyAccount::myself()
+{
+	return static_cast<TelepathyContact*>( Kopete::Account::myself() );
 }
 
 void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
@@ -169,6 +186,40 @@ void TelepathyAccount::setStatusMessage(const Kopete::StatusMessage &statusMessa
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting status message to \"" << statusMessage.message() << "\"." << endl;
 
 		d->currentConnection->userContact()->setPresenceMessage( statusMessage.message() );
+	}
+}
+
+bool TelepathyAccount::changeAlias(const QString &newAlias)
+{
+	if( d->currentConnection && d->currentConnection->userContact() )
+	{
+		if( d->currentConnection->userContact()->setAlias( newAlias ) )
+		{
+			myself()->setNickName( newAlias );
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void TelepathyAccount::slotSetAlias()
+{
+	QString currentAlias = myself()->nickName();
+
+	bool ok;
+	QString newAlias = KInputDialog::getText(
+			i18n("Change alias"), 
+			i18n("Enter the new alias by which you want to be visible to your friends:"), 
+			currentAlias,
+			&ok );
+
+	if( ok )
+	{
+		if( !changeAlias(newAlias) )
+		{
+			KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n("Current connection manager does not support changing the visible alias to your friends.") );
+		}
 	}
 }
 
@@ -370,7 +421,12 @@ void TelepathyAccount::telepathyChannelCreated(QtTapioca::Connection *connection
 
 void TelepathyAccount::slotTelepathyConnected()
 {
+	// Set initial status to myself contact
 	myself()->setOnlineStatus( d->initialStatus );
+	// Set nickname to myself contact
+	myself()->setNickName( d->currentConnection->userContact()->alias() );
+
+	// Load contact list
 	fetchContactList();
 }
 
