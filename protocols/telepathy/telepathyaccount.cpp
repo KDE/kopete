@@ -28,19 +28,23 @@
 #include <kglobal.h>
 
 // Kopete includes
-#include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
-#include "kopetecontactlist.h"
+#include <kopetemetacontact.h>
+#include <kopeteonlinestatus.h>
+#include <kopetecontactlist.h>
+#include <kopetechatsessionmanager.h>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
 #include <QtTapioca/ContactList>
+#include <QtTapioca/Contact>
 #include <QtTapioca/UserContact>
+#include <QtTapioca/TextChannel>
 
 // Local includes
 #include "telepathyprotocol.h"
 #include "telepathycontact.h"
 #include "telepathycontactmanager.h"
+#include "telepathychatsession.h"
 
 using namespace QtTapioca;
 
@@ -107,6 +111,9 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a valid connection." << endl;
 				// Connect signals/slots
 				QObject::connect(d->currentConnection, SIGNAL(statusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)), this, SLOT(telepathyStatusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)));
+
+				QObject::connect(d->currentConnection, SIGNAL(channelCreated(QtTapioca::Connection*, QtTapioca::Channel*)), this, SLOT(telepathyChannelCreated(QtTapioca::Connection*,QtTapioca::Channel*)));
+
 				QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
 
 				d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
@@ -290,6 +297,42 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionPa
 	return d->allConnectionParameters;
 }
 
+void TelepathyAccount::createTextChatSession(QtTapioca::TextChannel *newChannel)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+
+	// Get contact id
+	QString contactUri = newChannel->target()->uri();
+	Kopete::Contact *destinationContact = contacts()[contactUri];
+	if( destinationContact )
+	{
+		Kopete::ContactPtrList others;
+		others.append( destinationContact );
+
+		// Try to find an existing chatsession
+		Kopete::ChatSession *currentChatSession = Kopete::ChatSessionManager::self()->findChatSession( myself(), others, protocol() );
+		if( !currentChatSession )
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Creating a new chat session" << endl;
+
+			TelepathyChatSession *newChatSession = new TelepathyChatSession( myself(), others, protocol() );
+			newChatSession->setTextChannel( newChannel );
+		}
+		else
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found an existing chat session." << endl;
+	}
+}
+
+QtTapioca::TextChannel *TelepathyAccount::createTextChannel(QtTapioca::Contact *internalContact)
+{
+	if( d->currentConnection && isConnected() )
+	{
+		return dynamic_cast<QtTapioca::TextChannel*>( d->currentConnection->createChannel(QtTapioca::Channel::Text, internalContact) );
+	}
+
+	return 0;
+}
+
 void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
 {
 	Q_UNUSED(connection);
@@ -308,6 +351,21 @@ void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection,
 			break;
 	}
 	//TODO: reason
+}
+
+void TelepathyAccount::telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo  << endl;
+
+	Q_UNUSED(connection);
+
+	if( channel->type() == QtTapioca::Channel::Text )
+	{
+		// Find or create a new chat session
+		QtTapioca::TextChannel *textChannel = dynamic_cast<QtTapioca::TextChannel*>(channel);
+		if( textChannel )
+			createTextChatSession(textChannel);
+	}
 }
 
 void TelepathyAccount::slotTelepathyConnected()

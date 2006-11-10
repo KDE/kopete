@@ -27,17 +27,18 @@
 
 // Kopete includes
 #include <kopetechatsessionmanager.h>
-#include <kopetechatsession.h>
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>
 
 // QtTapioca includes
 #include <QtTapioca/Contact>
+#include <QtTapioca/TextChannel>
 
 // Telepathy includes
 #include "telepathyaccount.h"
 #include "telepathyprotocol.h"
 #include "telepathycontactmanager.h"
+#include "telepathychatsession.h"
 
 using namespace QtTapioca;
 
@@ -48,6 +49,7 @@ public:
 	{}
 
 	QPointer<QtTapioca::Contact> internalContact;
+	QPointer<Kopete::ChatSession> currentChatSession;
 };
 
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent)
@@ -87,7 +89,7 @@ void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 	setNickName( d->internalContact->alias() );
 
 	// Connect signal/slots
-	connect(d->internalContact, SIGNAL(presenceUpdated(ContactBase*, ContactBase::Presence, QString)), this, SLOT(slotPresenceUpdated(ContactBase*, ContactBase::Presence, QString)));
+	connect(d->internalContact, SIGNAL(presenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)), this, SLOT(slotPresenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)));
 }
 
 bool TelepathyContact::isReachable()
@@ -109,7 +111,32 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
 
 Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 {
-	return 0;
+	if( d->currentChatSession.isNull() )
+	{
+		QList<Kopete::Contact*> others;
+		others.append( this );
+
+		// Fist try to find an existing chat session
+		Kopete::ChatSession *existingSession = Kopete::ChatSessionManager::self()->findChatSession( account()->myself(), others, account()->protocol() );
+		if( existingSession )
+		{
+			d->currentChatSession = existingSession;
+		}
+		// Else create a new chat session and text channel
+		else if( canCreate == Kopete::Contact::CanCreate )
+		{
+			TelepathyChatSession *newSession = new TelepathyChatSession( account()->myself(), others, account()->protocol() );
+			// Assume that we create a new session
+			TextChannel *textChannel = account()->createTextChannel( internalContact() );
+			if( textChannel )
+			{
+				newSession->setTextChannel(textChannel);
+				d->currentChatSession = newSession;
+			}
+		}
+	}
+
+	return d->currentChatSession;
 }
 
 void TelepathyContact::deleteContact()
@@ -123,7 +150,7 @@ void TelepathyContact::deleteContact()
 	account()->contactManager()->removeContact(this);
 }
 
-void TelepathyContact::slotPresenceUpdated(ContactBase *contactInfo, ContactBase::Presence presence, const QString &presenceMessage)
+void TelepathyContact::slotPresenceUpdated(QtTapioca::ContactBase *contactInfo, QtTapioca::ContactBase::Presence presence, const QString &presenceMessage)
 {
 	Q_UNUSED(contactInfo);
 

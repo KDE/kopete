@@ -25,6 +25,13 @@
 
 class KActionMenu;
 
+namespace QtTapioca
+{
+	class Channel;
+	class TextChannel;
+	class Contact;
+}
+
 namespace Kopete 
 { 
 	class MetaContact;
@@ -33,8 +40,6 @@ namespace Kopete
 
 class TelepathyProtocol;
 class TelepathyContactManager;
-
-using namespace QtTapioca;
 /**
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -90,6 +95,18 @@ public:
 	 */
 	TelepathyContactManager *contactManager();
 
+	/**
+	 * @brief Create a new chat session using the given text channel
+	 * @param newChannel Instance of TextChannel.
+	 */
+	void createTextChatSession(QtTapioca::TextChannel *newChannel);
+
+	/**
+	 * @brief Create a new text channel to the given contacté
+	 * @param internalContact QtTapioca contact instance.
+	 */
+	QtTapioca::TextChannel *createTextChannel(QtTapioca::Contact *internalContact);
+
 signals:
 	/**
 	 * Emitted when we are connected to a Telepathy connection manager.
@@ -107,11 +124,24 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 
 private slots:
+	/**
+	 * @brief State of Telepathy connection changed.
+	 */
 	void telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason);
+
+	/**
+	 * @brief Dispatch incoming channel request to the Kopete equivalent.
+	 *
+	 * @param connection Connection where the channel request come from
+	 * @param channel Incoming channel.
+	 */
+	void telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel);
+
 	/**
 	 * @brief Do all the initialition stuff after being connection
 	 */
 	void slotTelepathyConnected();
+
 	/**
 	 * @brief Fetch the contact list.
 	 */

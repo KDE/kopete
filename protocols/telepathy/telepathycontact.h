@@ -41,8 +41,6 @@ namespace Kopete
 }
 class TelepathyAccount;
 
-using namespace QtTapioca;
-
 class TelepathyContact : public Kopete::Contact
 {
 	Q_OBJECT
@@ -83,7 +81,7 @@ private slots:
 	 * @param presence New presence.
 	 * @param presenceMessage New presenceMessage, if any.
 	 */
-	void slotPresenceUpdated(ContactBase *contactInfo, ContactBase::Presence presence, const QString &presenceMessage);
+	void slotPresenceUpdated(QtTapioca::ContactBase *contactInfo, QtTapioca::ContactBase::Presence presence, const QString &presenceMessage);
 
 private:
 	class Private;

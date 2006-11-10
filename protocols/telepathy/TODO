@@ -9,6 +9,7 @@ Telepathy Spec:
 QtTapioca:
 -Find out a better way to set connection parameters
 -Implement parts of Telepathy spec not done yet.
+-Multi-user chat(MUC and IRC)
 
 Kopete plugin TODO:
 -Manage contact list
@@ -18,6 +19,6 @@ Kopete plugin TODO:
  -Manage local and remote pending contact list
  -Ensure integrity
 +Manage presence
--Manage text channel i.e ChatSession
++Manage text channel i.e ChatSession
 -Manage aliasing
 -Manage avatar
