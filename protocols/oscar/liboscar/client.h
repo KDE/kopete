@@ -207,6 +207,12 @@ public:
 	void sendWarning( const QString& contact, bool anonymous );
 
 	/**
+	 * Change ICQ password
+	 * \param password your new password
+	 */
+	bool changeICQPassword( const QString& password );
+
+	/**
 	 * Get the general ICQ info for a client
 	 * \param contact the contact to get info for
 	 */
@@ -418,6 +424,9 @@ signals:
 	/** we've received an authorization reply */
 	void authReplyReceived( const QString& contact, const QString& reason, bool auth );
 
+	/** we've received a ICQ password change reply */
+	void icqPasswordChanged( bool error );
+
 	/**
 	 * we've received an error from a task and need to notify somebody
 	 */
@@ -523,6 +532,9 @@ protected slots:
     void determineDisconnection( int, const QString& );
 
 	void nextICQAwayMessageRequest();
+
+	/** Change ICQ password finished */
+	void changeICQPasswordFinished();
 
 private:
 

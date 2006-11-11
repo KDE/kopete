@@ -42,6 +42,7 @@
 #include "icqcontact.h"
 #include "oscarprivacyengine.h"
 #include "oscarsettings.h"
+#include "icqchangepassworddialog.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent)
@@ -142,9 +143,11 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->tabVisible->setEnabled( false );
 		mAccountSettings->tabInvisible->setEnabled( false );
 		mAccountSettings->tabIgnore->setEnabled( false );
+		mAccountSettings->buttonChangePassword->setEnabled( false );
 	}
 
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
+	QObject::connect(mAccountSettings->buttonChangePassword, SIGNAL(clicked()), this, SLOT(slotChangePassword()));
 
 	/* Set tab order to password custom widget correctly */
 	QWidget::setTabOrder( mAccountSettings->edtAccountId, mAccountSettings->mPasswordWidget->mRemembered );
@@ -281,6 +284,13 @@ bool ICQEditAccountWidget::validateData()
 void ICQEditAccountWidget::slotOpenRegister()
 {
 	KToolInvocation::invokeBrowser( QLatin1String("http://go.icq.com/register/") );
+}
+
+void ICQEditAccountWidget::slotChangePassword()
+{
+	ICQChangePasswordDialog *passwordDlg = new ICQChangePasswordDialog( mAccount, this );
+	passwordDlg->exec();
+	delete passwordDlg;
 }
 
 #include "icqeditaccountwidget.moc"

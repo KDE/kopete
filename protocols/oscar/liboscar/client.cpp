@@ -63,6 +63,7 @@
 #include "chatservicetask.h"
 #include "rateclassmanager.h"
 #include "icquserinfoupdatetask.h"
+#include "icqchangepasswordtask.h"
 
 
 namespace
@@ -800,6 +801,28 @@ void Client::sendWarning( const QString& contact, bool anonymous )
 	QObject::connect( warnTask, SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
 	                  this, SIGNAL( userWarned( const QString&, quint16, quint16 ) ) );
 	warnTask->go( true );
+}
+
+bool Client::changeICQPassword( const QString& password )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return false;
+
+	ICQChangePasswordTask* task = new ICQChangePasswordTask( c->rootTask() );
+	QObject::connect( task, SIGNAL(finished()), this, SLOT(changeICQPasswordFinished()) );
+	task->setPassword( password );
+	task->go( true );
+	return true;
+}
+
+void Client::changeICQPasswordFinished()
+{
+	ICQChangePasswordTask* task = (ICQChangePasswordTask*)sender();
+	if ( task->success() )
+		d->pass = task->password();
+
+	emit icqPasswordChanged( !task->success() );
 }
 
 ICQGeneralUserInfo Client::getGeneralInfo( const QString& contact )

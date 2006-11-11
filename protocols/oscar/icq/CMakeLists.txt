@@ -19,6 +19,7 @@ ui/icquserinfowidget.cpp
 ui/icqauthreplydialog.cpp 
 ui/icqaddcontactpage.cpp 
 ui/icqsearchdialog.cpp
+ui/icqchangepassworddialog.cpp
 )
 
 kde4_add_ui_files(kopete_icq_ui_SRCS 
@@ -31,7 +32,8 @@ ui/icqinterestinfowidget.ui
 ui/icqorgaffinfowidget.ui 
 ui/icqauthreplyui.ui 
 ui/icqsearchbase.ui 
-ui/icqeditaccountui.ui 
+ui/icqeditaccountui.ui
+ui/icqchangepassword.ui
 )
 
 set(kopete_icq_PART_SRCS 
