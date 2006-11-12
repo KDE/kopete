@@ -15,6 +15,6 @@ DocPath=kopete/index.html
 Terminal=false
 Icon=kopete
 Categories=Qt;KDE;Network;
-X-DCOP-ServiceType=Unique
+X-DBUS-StartupType=Unique
 X-DCOP-ServiceName=kopete
 ServiceTypes=DCOP/InstantMessenger
