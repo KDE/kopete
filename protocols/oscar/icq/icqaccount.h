@@ -93,6 +93,8 @@ private slots:
 	void storeUserInfoDialog();
 	void closeUserInfoDialog();
 
+	void userReadsStatusMessage( const QString& contact );
+
 private:
 	bool mWebAware;
 	bool mHideIP;

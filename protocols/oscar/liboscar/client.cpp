@@ -543,6 +543,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		{
 			QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
 			response.setText( Oscar::Message::UserDefined, statusMessage(), codec );
+			emit userReadsStatusMessage( msg.sender() );
 		}
 		else
 		{

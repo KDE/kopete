@@ -444,6 +444,7 @@ signals:
 	void receivedAwayMessage( const QString& contact, const QString& message );
 	void receivedAwayMessage( const Oscar::Message& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
+	void userReadsStatusMessage( const QString& contact );
 
 	/** We warned a user */
 	void userWarned( const QString& contact, quint16 increase, quint16 newLevel );

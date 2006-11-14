@@ -21,6 +21,7 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <kicon.h>
+#include <knotification.h>
 
 #include "kopeteawayaction.h"
 #include "kopetemessage.h"
@@ -98,6 +99,9 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	mInfoContact = 0L;
 	mInfoWidget = 0L;
 	mInitialStatusMessage.clear();
+
+	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
+	                  this, SLOT(userReadsStatusMessage(const QString&)) );
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
@@ -267,6 +271,21 @@ void ICQAccount::closeUserInfoDialog()
 	delete mInfoContact;
 	mInfoContact = 0L;
 	mInfoWidget = 0L;
+}
+
+void ICQAccount::userReadsStatusMessage( const QString& contact )
+{
+	QString name;
+	
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	if ( ct )
+		name = ct->nickName();
+	else
+		name = contact;
+	
+	KNotification* notification = new KNotification( "icq_user_reads_status_message" );
+	notification->setText( i18n( "User %1 is reading your status message", name ) );
+	notification->sendEvent();
 }
 
 void ICQAccount::setAway( bool away, const QString &awayReason )
