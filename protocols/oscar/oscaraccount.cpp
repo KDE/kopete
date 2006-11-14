@@ -580,7 +580,7 @@ bool OscarAccount::createContact(const QString &contactId,
 	/* We're not even online or connecting
 	 * (when getting server contacts), so don't bother
 	 */
-	if ( !myself()->isOnline() )
+	if ( !engine()->isActive() )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Can't add contact, we are offline!" << endl;
 		return false;
