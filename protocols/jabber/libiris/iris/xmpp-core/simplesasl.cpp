@@ -413,7 +413,7 @@ public:
 		return out_buf;
 	}
 	
-	virtual QByteArray to_net() const {
+	virtual QByteArray to_net() {
 		return result_to_net_;
 	}
 	
@@ -421,7 +421,7 @@ public:
 		return encoded_;
 	}
 	
-	virtual QByteArray to_app() const {
+	virtual QByteArray to_app() {
 		return result_to_app_;
 	}
 
@@ -488,6 +488,10 @@ public:
 	void init()
 	{
 	}
+
+    int version() const {
+		return QCA_VERSION;
+    }
 
 	QString name() const {
 		return "simplesasl";
