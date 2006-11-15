@@ -10,6 +10,7 @@ QtTapioca:
 -Find out a better way to set connection parameters
 -Implement parts of Telepathy spec not done yet.
 -Multi-user chat(MUC and IRC)
+-Do not block interface when negociate the connection object path on D-BUS
 
 Kopete plugin TODO:
 -Manage contact list
