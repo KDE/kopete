@@ -272,13 +272,13 @@ void ChatView::raise( bool activate )
 
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
-
+#ifdef Q_OS_UNIX
 	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
 			KWin::setCurrentDesktop( KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
 		else
 			KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
-
+#endif
 	if(m_mainWindow->isMinimized())
 	{
 		m_mainWindow->showNormal();
@@ -295,10 +295,11 @@ void ChatView::raise( bool activate )
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-
+#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if ( activate )
 		KWin::activateWindow( m_mainWindow->winId() );
+#endif	
 
 }
 

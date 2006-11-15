@@ -531,10 +531,10 @@ void KopeteEmailWindow::slotReplySend()
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
-
+#ifdef Q_OS_UNIX
 	if ( !KWin::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
 		KWin::setOnDesktop( winId(), KWin::currentDesktop() );
-
+#endif
 	KMainWindow::raise();
 
 	/* Removed Nov 2003
@@ -545,10 +545,11 @@ void KopeteEmailWindow::raise(bool activate)
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-
+#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if(activate)
 		KWin::activateWindow( winId() );
+#endif	
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

@@ -55,8 +55,9 @@ void KopetePreferencesAction::slotShowPreferences()
 	s_settingsDialog->show();
 
 	s_settingsDialog->dialog()->raise();
-
+#ifdef Q_OS_UNIX
 	KWin::activateWindow( s_settingsDialog->dialog()->winId() );
+#endif	
 }
 
 KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )
