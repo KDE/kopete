@@ -19,7 +19,7 @@
 #define CHATTEXTEDITPART_H
 
 #include "krichtexteditpart.h"
-#include <qstringlist.h>
+#include <QtCore/QStringList>
 
 #include <kopete_export.h>
 
@@ -34,6 +34,7 @@ class Message;
 class Contact;
 class OnlineStatus;
 class ChatSession;
+class Protocol;
 }
 
 /**
@@ -45,7 +46,7 @@ class ChatSession;
  * 
  * @author Richard Smith
  */
-class KOPETE_EXPORT ChatTextEditPart : public KopeteRichTextEditPart
+class KOPETE_EXPORT ChatTextEditPart : public KRichTextEditPart
 {
 	Q_OBJECT
 public:
@@ -79,11 +80,6 @@ public:
 	 * Is the user typing right now?
 	 */
 	bool isTyping();
-	
-	/**
-	 * @return This part's main widget
-	 */
-	KTextEdit *edit();
 
 	/** 
 	 * Enable or Disable the automatic spell checking
@@ -182,7 +178,8 @@ private slots:
 
 private:
 	KDictSpellingHighlighter* spellHighlighter();
-	
+	void setProtocolRichTextSupport();
+
 private:
 	Kopete::ChatSession *m_session;
 	

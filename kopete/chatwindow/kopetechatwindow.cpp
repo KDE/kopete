@@ -501,7 +501,7 @@ void KopeteChatWindow::updateSpellCheckAction()
 	if ( !m_activeView )
 		return;
 
-	if ( m_activeView->editPart()->richTextEnabled() )
+	if ( m_activeView->editPart()->isRichTextEnabled() )
 	{
 		toggleAutoSpellCheck->setEnabled( false );
 		toggleAutoSpellCheck->setChecked( false );

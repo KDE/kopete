@@ -318,7 +318,7 @@ void KopeteEmailWindow::slotCopy()
 	if ( d->messagePart->hasSelection() )
 		d->messagePart->copy();
 	else
-		d->editPart->editorWidget()->copy();
+		d->editPart->textEdit()->copy();
 }
 
 void KopeteEmailWindow::appendMessage(Kopete::Message &message)
