@@ -47,9 +47,11 @@ void UI::Global::setSysTrayWId( int newWinId )
 
 int UI::Global::sysTrayWId()
 {
+#ifndef Q_OS_WIN	
 	if ( g_sysTrayWId == 0 )
 		return g_mainWidget->winId();
 	else
+#endif		
 		return g_sysTrayWId;
 }
 
