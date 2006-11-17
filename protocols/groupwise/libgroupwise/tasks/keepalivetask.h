@@ -21,7 +21,7 @@
 #ifndef KEEPALIVETASK_H
 #define KEEPALIVETASK_H
 
-#include <requesttask.h>
+#include "requesttask.h"
 
 class QTimer;
 

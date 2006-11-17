@@ -12,14 +12,13 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
     <ignoreparts>
       <part>kdevabbrev</part>
       <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
       <part>kdevdebugger</part>
       <part>kdevdistpart</part>
-      <part>kdevquickopen</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
@@ -36,7 +35,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -127,16 +126,17 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin>make</makebin>
+      <makebin>unsermake --compile-jobs=20</makebin>
       <prio>0</prio>
+      <runmultiplejobs>false</runmultiplejobs>
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>libkopete/avdevice/libkopete_videodevice.la</activetarget>
+      <activetarget>protocols/groupwise/kopete_groupwise.la</activetarget>
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -145,9 +145,9 @@
     </run>
     <configurations>
       <default>
-        <configargs>--enable-debug=full</configargs>
-        <builddir/>
-        <topsourcedir/>
+        <configargs>--enable-debug=full --without-arts --prefix=/space/kde/installs/3_5</configargs>
+        <builddir>/space/kde/builds/3_5/kdenetwork/kopete</builddir>
+        <topsourcedir>/space/kde/sources/3_5/kdenetwork/kopete</topsourcedir>
         <cppflags/>
         <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
@@ -214,9 +214,13 @@
       <processPrimaryTypes>true</processPrimaryTypes>
       <processFunctionArguments>false</processFunctionArguments>
     </codecompletion>
-    <references/>
+    <references>
+      <pcs>Qt</pcs>
+      <pcs>libkopete</pcs>
+      <pcs>KDElibs</pcs>
+    </references>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -229,6 +233,11 @@
         <implementation class="dlgChatRoomsList" path="protocols/jabber/ui/dlgchatroomslist.ui" implementationpath="protocols/jabber/ui/dlgchatroomslist.h" />
       </qtdesigner>
     </designerintegration>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <root>/usr/lib/qt3</root>
+    </qt>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>

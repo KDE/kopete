@@ -3,7 +3,8 @@
     client.cpp - The main interface for the Groupwise protocol
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+              (c) 2008      Novell, Inc.
+
     Based on Iris, Copyright (C) 2003  Justin Karneges
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -31,6 +32,7 @@
 #include "tasks/getdetailstask.h"
 #include "tasks/getstatustask.h"
 #include "tasks/joinconferencetask.h"
+#include "tasks/keepalivetask.h"
 #include "tasks/leaveconferencetask.h"
 #include "tasks/logintask.h"
 #include "tasks/rejectinvitetask.h"
@@ -317,6 +319,9 @@ void Client::lt_loginFinished()
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString::null, QString::null );
 		sst->go( true );
+		// Sends keepalives every minute so the server knows we are still alive
+		KeepAliveTask * kat = new KeepAliveTask( d->root );
+		kat->go( true );
 		emit loggedIn();
 		// fetch details for any privacy list items that aren't in our contact list.
 		// There is a chicken-and-egg case regarding this: We need the privacy before reading the contact list so

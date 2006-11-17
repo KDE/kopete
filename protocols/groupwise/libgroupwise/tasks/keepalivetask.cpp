@@ -3,7 +3,8 @@
     keepalivetask.cpp - Send keepalive pings to the server
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+              (c) 2006      Novell, Inc.
+
     Based on Iris, Copyright (C) 2003  Justin Karneges
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -30,14 +31,13 @@
 KeepAliveTask::KeepAliveTask(Task* parent): RequestTask(parent)
 {
 	m_keepAliveTimer = new QTimer( this );
-	connect( m_keepAliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive ) );
+	connect( m_keepAliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
 	m_keepAliveTimer->start( GW_KEEPALIVE_INTERVAL );
 }
 
 
 KeepAliveTask::~KeepAliveTask()
 {
-	m_keepAliveTimer->stop();
 	delete m_keepAliveTimer;
 }
 
