@@ -20,10 +20,11 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-
+IF (NOT WIN32)
 INCLUDE(UsePkgConfig)
 
 PKGCONFIG(QtTapioca _TapiocaIncDir _TapiocaLinkDir _TapiocaLinkFlags _TapiocaCflags)
+ENDIF(NOT WIN32)
 
 set(QT_TAPIOCA_INCLUDE_DIR ${_TapiocaIncDir})
 
