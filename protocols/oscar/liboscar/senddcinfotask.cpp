@@ -54,8 +54,6 @@ void SendDCInfoTask::onGo()
 	*/
 
 	/* This is TLV 0x06 */
-	buffer->addWord( 0x0006 );
-	buffer->addWord( 0x0004 );
 	//### Don't hardcode this value
 	//Right now, it's always coded to not support DC
 	DWORD statusFlag = 0x01000000;
@@ -69,34 +67,32 @@ void SendDCInfoTask::onGo()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting show ip on" << endl;
 		statusFlag |= 0x00020000;
 	}
-	
-	buffer->addDWord( statusFlag | mStatus );
+	Buffer tlv06;
+	tlv06.addDWord( statusFlag | mStatus );
+	buffer->addTLV( 0x0006, tlv06.buffer() );
 
 	/* Fill in the DC Info 
 	 * We don't support Direct Connection yet. So fill in some
 	 * dummy values
 	 */
-	buffer->addWord( 0x000C ); //TLV Type 0x0C
-	buffer->addWord( 0x0025 );
+	Buffer tlv0C;
+	tlv0C.addDWord( 0x00000000 );
+	tlv0C.addWord( 0x0000 );
+	tlv0C.addWord( 0x0000 );
 
-	buffer->addDWord( 0x00000000 );
-	buffer->addWord( 0x0000 );
-	buffer->addWord( 0x0000 );
+	tlv0C.addByte( 0x00 ); // Mode, TODO: currently fixed to "Direct Connection disabled"
+	tlv0C.addWord( ICQ_TCP_VERSION ); // icq tcp protocol version, v8 currently
 
-	buffer->addByte( 0x00 ); // Mode, TODO: currently fixed to "Direct Connection disabled"
-	buffer->addWord( ICQ_TCP_VERSION ); // icq tcp protocol version, v8 currently
+	tlv0C.addDWord( 0x00000000 ); // Direct Connection Cookie
+	tlv0C.addDWord( 0x00000050 ); // web front port
+	tlv0C.addDWord( 0x00000003 ); // number of following client features
+	tlv0C.addDWord( 0x00000000 ); // InfoUpdateTime
+	tlv0C.addDWord( 0x00000000 ); // PhoneStatusTime
+	tlv0C.addDWord( 0x00000000 ); // PhoneBookTime
+	tlv0C.addWord( 0x0000 );
+	buffer->addTLV( 0x000C, tlv0C.buffer() );
 
-	buffer->addDWord( 0x00000000 ); // Direct Connection Cookie
-	buffer->addDWord( 0x00000050 ); // web front port
-	buffer->addDWord( 0x00000003 ); // number of following client features
-	buffer->addDWord( 0x00000000 ); // InfoUpdateTime
-	buffer->addDWord( 0x00000000 ); // PhoneStatusTime
-	buffer->addDWord( 0x00000000 ); // PhoneBookTime
-	buffer->addWord( 0x0000 );
-
-	buffer->addWord( 0x0008 ); // TLV(8)
-	buffer->addWord( 0x0002 ); // length 2
-	buffer->addWord( 0x0000 ); // error code - 0
+	buffer->addTLV16( 0x0008, 0x0000 ); // error code - 0
 
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
