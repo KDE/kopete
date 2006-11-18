@@ -125,8 +125,6 @@ protected:
 	*/
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
-	QString sanitizedMessage( const QString& message );
-
 private:
 	// Set privacy tlv item
 	void setPrivacyTLVs( BYTE privacy, DWORD userClasses );

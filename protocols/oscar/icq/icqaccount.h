@@ -71,8 +71,6 @@ public:
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
-	virtual QString sanitizedMessage( const QString& message );
-
 protected slots:
 	virtual void disconnected( DisconnectReason reason );
 

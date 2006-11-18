@@ -41,6 +41,7 @@ set(kopete_icq_PART_SRCS
    icqpresence.cpp 
    icqaccount.cpp 
    icqcontact.cpp 
+   aimcontact.cpp 
    icqprotocol.cpp )
 
 kde4_automoc(${kopete_icq_PART_SRCS})

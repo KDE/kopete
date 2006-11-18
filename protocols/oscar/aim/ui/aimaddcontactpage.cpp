@@ -35,6 +35,8 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 	{
 		m_gui = new Ui::aimAddContactUI();
 		m_gui->setupUi(this);
+		connect( m_gui->icqRadioButton, SIGNAL(toggled(bool)), m_gui->icqEdit, SLOT(setEnabled(bool)) );
+		connect( m_gui->aimRadioButton, SIGNAL(toggled(bool)), m_gui->aimEdit, SLOT(setEnabled(bool)) );
 		canadd = true;
 	}
 	else
@@ -58,23 +60,42 @@ bool AIMAddContactPage::validateData()
     if ( !m_gui )
         return false;
 
-	QString sn = m_gui->addSN->text();
-	if ( sn.isEmpty() )
+	if ( m_gui->icqRadioButton->isChecked() )
 	{
-		KMessageBox::sorry ( this,
-			i18n("<qt>You must enter a valid screen name.</qt>"),
-			i18n("No Screen Name") );
-		return false;
+		ulong uin = m_gui->icqEdit->text().toULong();
+		if ( uin < 1000 )
+		{
+			KMessageBox::sorry( this, i18n("You must enter a valid ICQ number."), i18n("ICQ Plugin") );
+			return false;
+		}
+		return true;
 	}
-	return true;
+	else if ( m_gui->aimRadioButton->isChecked() )
+	{
+		QRegExp rx("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
+		if ( !rx.exactMatch( m_gui->aimEdit->text() ) )
+		{
+			KMessageBox::sorry( this, i18n("You must enter a valid AOL screen name."), i18n("No Screen Name") );
+			return false;
+		}
+		return true;
+	}
+
+	return false;
 }
 
 bool AIMAddContactPage::apply(Kopete::Account *account,
 	Kopete::MetaContact *metaContact)
 {
-	if(validateData())
-	{ // If everything is ok
-		return account->addContact( m_gui->addSN->text(), metaContact, Kopete::Account::ChangeKABC );
+	if ( m_gui->icqRadioButton->isChecked() )
+	{
+		QString contactId = m_gui->icqEdit->text();
+		return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
+	}
+	else if ( m_gui->aimRadioButton->isChecked() )
+	{
+		QString contactId = m_gui->aimEdit->text();
+		return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 	}
 	return false;
 }

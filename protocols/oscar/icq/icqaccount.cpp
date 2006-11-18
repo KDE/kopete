@@ -35,6 +35,7 @@
 #include "contactmanager.h"
 
 #include "icqcontact.h"
+#include "aimcontact.h"
 #include "icqprotocol.h"
 #include "icqaccount.h"
 #include "icquserinfowidget.h"
@@ -369,20 +370,29 @@ void ICQAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 
 OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
 {
-	ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
-	if ( !ssiItem.alias().isEmpty() )
-		contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
+	{
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
 
-	if ( isConnected() )
-		contact->loggedIn();
+		if ( !ssiItem.alias().isEmpty() )
+			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
 
-	return contact;
+		if ( isConnected() )
+			contact->loggedIn();
+
+		return contact;
+	}
+	else
+	{
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
+
+		if ( !ssiItem.alias().isEmpty() )
+			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+
+		return contact;
+	}
 }
 
-QString ICQAccount::sanitizedMessage( const QString& message )
-{
-	return Kopete::Message::escape( message );
-}
 
 #include "icqaccount.moc"
 

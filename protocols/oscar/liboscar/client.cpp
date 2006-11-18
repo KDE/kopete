@@ -292,7 +292,10 @@ void Client::setStatus( DWORD status, const QString &message )
 
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
 		sdcit->go( true ); //autodelete
-		// TODO: send away message
+
+		ProfileTask* pt = new ProfileTask( c->rootTask() );
+		pt->setAwayMessage( message );
+		pt->go( true );
 	}
 	else
 	{

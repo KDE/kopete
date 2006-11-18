@@ -39,6 +39,7 @@
 #include "aimaccount.h"
 #include "aimchatsession.h"
 #include "aimcontact.h"
+#include "icqcontact.h"
 #include "aimuserinfo.h"
 #include "aimjoinchat.h"
 #include "oscarmyselfcontact.h"
@@ -227,61 +228,27 @@ AIMAccount::~AIMAccount()
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
 {
-	AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
-	if ( !ssiItem.alias().isEmpty() )
-		contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-
-	return contact;
-}
-
-QString AIMAccount::sanitizedMessage( const QString& message )
-{
-	QDomDocument doc;
-	QString domError;
-	int errLine = 0, errCol = 0;
-	doc.setContent( message, false, &domError, &errLine, &errCol );
-	if ( !domError.isEmpty() ) //error parsing, do nothing
+	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "error from dom document conversion: "
-			<< domError << endl;
-		return message;
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
+		
+		if ( !ssiItem.alias().isEmpty() )
+			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		
+		if ( isConnected() )
+			contact->loggedIn();
+		
+		return contact;
 	}
 	else
 	{
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "conversion to dom document successful."
-			<< "looking for font tags" << endl;
-		QDomNodeList fontTagList = doc.elementsByTagName( "font" );
-		if ( fontTagList.count() == 0 )
-		{
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "No font tags found. Returning normal message" << endl;
-			return message;
-		}
-		else
-		{
-			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found font tags. Attempting replacement" << endl;
-			uint numFontTags = fontTagList.count();
-			for ( uint i = 0; i < numFontTags; i++ )
-			{
-				QDomNode fontNode = fontTagList.item(i);
-				QDomElement fontEl;
-				if ( !fontNode.isNull() && fontNode.isElement() )
-					fontEl = fontTagList.item(i).toElement();
-				else 
-					continue;
-				if ( fontEl.hasAttribute( "back" ) )
-				{
-					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
-					QString backgroundColor = fontEl.attribute( "back" );
-					backgroundColor.insert( 0, "background-color: " );
-					backgroundColor.append( ';' );
-					fontEl.setAttribute( "style", backgroundColor );
-					fontEl.removeAttribute( "back" );
-				}
-			}
-		}
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
+		
+		if ( !ssiItem.alias().isEmpty() )
+			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		
+		return contact;
 	}
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sanitized message is " << doc.toString();
-	return doc.toString();
 }
 
 KActionMenu* AIMAccount::actionMenu()
@@ -449,7 +416,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 		if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
 		{
 			QString sender = Oscar::normalize( message.sender() );
-			AIMContact* aimSender = static_cast<AIMContact *> ( contacts()[sender] ); //should exist now
+			AIMContact* aimSender = dynamic_cast<AIMContact *> ( contacts()[sender] ); //should exist now
 			if ( !aimSender )
 			{
 				kWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
@@ -489,9 +456,9 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 					Oscar::normalize( message.chatRoom() ) )
 			{
 				kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
-				Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
+				OscarContact* ocSender = static_cast<OscarContact*>(contacts()[Oscar::normalize( message.sender() )]);
 				//sanitize;
-				QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
+				QString sanitizedMsg = ocSender->sanitizedMessage( message.text( defaultCodec() ) );
 
 				Kopete::ContactPtrList me;
 				me.append( myself() );

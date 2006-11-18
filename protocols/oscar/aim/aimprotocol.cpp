@@ -15,29 +15,22 @@
   *************************************************************************
   */
 
-#include <qstringlist.h>
 #include <kgenericfactory.h>
-#include <kdebug.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
-#include "aimcontact.h"
 #include "aimaddcontactpage.h"
 #include "aimeditaccountwidget.h"
 
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
-#include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
-#include "kopetecontactproperty.h"
 
 #include <kdialog.h>
 #include <kmessagebox.h>
-#include <kimageio.h>
 
-#include "contact.h"
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
@@ -222,7 +215,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
-  : Kopete::Protocol( AIMProtocolFactory::instance(), parent ),
+: OscarProtocol( AIMProtocolFactory::instance(), parent ),
 	statusOnline( Kopete::OnlineStatus::Online, 2, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
 	statusOffline( Kopete::OnlineStatus::Offline, 2, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
 	statusAway( Kopete::OnlineStatus::Away, 2, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
@@ -232,10 +225,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 	statusWirelessAway( Kopete::OnlineStatus::Away, 1, this, 31, QString("contact_phone_overlay contact_away_overlay").split(" "),
 	i18n("Mobile Away"), i18n("Mobile Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HideFromMenu ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, QStringList(QString("aim_connecting")), i18n("Connecting...")),
-	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
-	clientFeatures("clientFeatures", i18n("Client Features"), 0),
-	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty),
-	iconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty)
+	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)
 		kDebug(14152) << k_funcinfo << "AIM plugin already initialized" << endl;
@@ -256,42 +246,6 @@ AIMProtocol::~AIMProtocol()
 AIMProtocol *AIMProtocol::protocol(void)
 {
 	return protocolStatic_;
-}
-
-Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContact,
-    const QMap<QString, QString> &serializedData,
-    const QMap<QString, QString> &/*addressBookData*/)
-{
-
-	QString contactId = serializedData["contactId"];
-	QString accountId = serializedData["accountId"];
-	QString displayName = serializedData["displayName"];
-
-	// Get the account it belongs to
-	Kopete::Account* account = Kopete::AccountManager::self()->findAccount( QString("AIMProtocol"), accountId );
-
-	if ( !account ) //no account
-		return 0;
-
-	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
-	QString ssiName;
-	bool ssiWaitingAuth = false;
-	if ( serializedData.contains( "ssi_type" ) )
-	{
-		ssiName = serializedData["ssi_name"];
-		QString authStatus = serializedData["ssi_waitingAuth"];
-		if ( authStatus == "true" )
-		ssiWaitingAuth = true;
-		ssiGid = serializedData["ssi_gid"].toUInt();
-		ssiBid = serializedData["ssi_bid"].toUInt();
-		ssiType = serializedData["ssi_type"].toUInt();
-	}
-
-	OContact item( ssiName, ssiGid, ssiBid, ssiType, QList<TLV>(), 0 );
-	item.setWaitingAuth( ssiWaitingAuth );
-
-	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );
-	return c;
 }
 
 AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)

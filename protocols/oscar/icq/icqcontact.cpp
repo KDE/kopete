@@ -3,7 +3,8 @@
 
   Copyright (c) 2003      by Stefan Gehn  <metz AT gehn.net>
   Copyright (c) 2003      by Olivier Goffart
-  Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
+  Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -18,45 +19,30 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
-
-#include <kaction.h>
-
-#include <kapplication.h>
-#include <kdebug.h>
-#include <kiconloader.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 #include <knotification.h>
-#include <kpassivepopup.h>
 #include <kinputdialog.h>
 #include <krandom.h>
 #include <ktoggleaction.h>
+#include <kicon.h>
 
-#include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
 
-#include "icquserinfo.h"
-#include "icqreadaway.h"
 #include "icqprotocol.h"
 #include "icqaccount.h"
-#include "icqpresence.h"
 #include "icquserinfowidget.h"
 #include "icqauthreplydialog.h"
 
-#include "client.h"
 #include "oscarutils.h"
-#include "oscarencodingselectiondialog.h"
 #include "contactmanager.h"
 
-ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
+ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon, const OContact& ssiItem )
-: OscarContact( account, name, parent, icon, ssiItem )
+: ICQContactBase( account, name, parent, icon, ssiItem )
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	m_infoWidget = 0L;
-	m_requestingNickname = false;
-    m_oesd = 0;
 
 	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
@@ -70,17 +56,10 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
 	                  this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqShortInfo( const QString& ) ),
-	                  this, SLOT( receivedShortInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
-	                  this, SLOT( receivedStatusMessage( const QString&, const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const Oscar::Message& ) ),
-	                  this, SLOT( receivedStatusMessage( const Oscar::Message& ) ) );
-	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 }
 
 ICQContact::~ICQContact()
@@ -204,8 +183,8 @@ void ICQContact::loggedIn()
 
 	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
 	         && nickName() == contactId() )
-	     || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) ) &&
-	     !m_requestingNickname && m_ssiItem.alias().isEmpty() )
+	       || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
+	     && !m_requestingNickname && m_ssiItem.alias().isEmpty() )
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
@@ -213,12 +192,6 @@ void ICQContact::loggedIn()
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
 	}
 
-}
-
-void ICQContact::requestShortInfo()
-{
-	if ( mAccount->isConnected() )
-		mAccount->engine()->requestShortInfo( contactId() );
 }
 
 void ICQContact::slotRequestAuth()
@@ -322,114 +295,6 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 	ICQOrgAffInfo orgAffInfo = mAccount->engine()->getOrgAffInfo( contact );
 	emit haveOrgAffInfo( orgAffInfo );
-}
-
-void ICQContact::receivedShortInfo( const QString& contact )
-{
-	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
-		return;
-
-	QTextCodec* codec = contactCodec();
-
-	m_requestingNickname = false; //done requesting nickname
-	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
-	/*
-	if(!shortInfo.firstName.isEmpty())
-		setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
-	else
-		removeProperty(mProtocol->firstName);
-
-	if(!shortInfo.lastName.isEmpty())
-		setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
-	else
-		removeProperty(mProtocol->lastName);
-	*/
-	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
-	{
-		kDebug(14153) << k_funcinfo <<
-			"setting new displayname for former UIN-only Contact" << endl;
-		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
-	}
-
-}
-
-void ICQContact::receivedStatusMessage( const QString &contact, const QString &message )
-{
-	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
-		return;
-
-	if ( ! message.isEmpty() )
-		setProperty( mProtocol->awayMessage, message );
-	else
-		removeProperty( mProtocol->awayMessage );
-}
-
-void ICQContact::receivedStatusMessage( const Oscar::Message &message )
-{
-	if ( Oscar::normalize( message.sender() ) != Oscar::normalize( contactId() ) )
-		return;
-	
-	//decode message
-	QTextCodec* codec = contactCodec();
-	
-	QString realText = message.text(codec);
-
-	if ( !realText.isEmpty() )
-		setProperty( mProtocol->awayMessage, realText );
-	else
-		removeProperty( mProtocol->awayMessage );
-}
-
-void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
-{
-	//Why is this unused?
-	Q_UNUSED( session );
-
-	QTextCodec* codec = contactCodec();
-
-	int messageChannel = 0x01;
-	Oscar::Message::Encoding messageEncoding;
-
-	if ( isOnline() && m_details.hasCap( CAP_UTF8 ) )
-		messageEncoding = Oscar::Message::UCS2;
-	else
-		messageEncoding = Oscar::Message::UserDefined;
-
-	QString msgText( msg.plainBody() );
-	// TODO: More intelligent handling of message length.
-	uint chunk_length = !isOnline() ? 450 : 4096;
-	uint msgPosition = 0;
-
-	do
-	{
-		QString msgChunk( msgText.mid( msgPosition, chunk_length ) );
-		// Try to split on space if needed
-		if ( msgChunk.length() == chunk_length )
-		{
-			for ( int i = 0; i < 100; i++ )
-			{
-				if ( msgChunk[chunk_length - i].isSpace() )
-				{
-					msgChunk = msgChunk.left( chunk_length - i );
-					msgPosition++;
-				}
-			}
-		}
-		msgPosition += msgChunk.length();
-
-		Oscar::Message message( messageEncoding, msgChunk, messageChannel, 0, msg.timestamp(), codec );
-		message.setSender( mAccount->accountId() );
-		message.setReceiver( mName );
-		mAccount->engine()->sendMessage( message );
-	} while ( msgPosition < msgText.length() );
-
-	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
-	manager(Kopete::Contact::CanCreate)->messageSucceeded();
-}
-
-void ICQContact::updateFeatures()
-{
-	setProperty( static_cast<ICQProtocol*>(protocol())->clientFeatures, m_clientFeatures );
 }
 
 #if 0
@@ -563,60 +428,27 @@ bool ICQContact::isReachable()
 QList<KAction*> *ICQContact::customContextMenuActions()
 {
 	QList<KAction*> *actionCollection = new QList<KAction*>();
-/*
-	QString awTxt;
-	QString awIcn;
-	unsigned int status = onlineStatus().internalStatus();
-	if (status >= 15)
-		status -= 15; // get rid of invis addon
-	switch(status)
-	{
-		case OSCAR_FFC:
-			awTxt = i18n("Read 'Free For Chat' &Message");
-			awIcn = "icq_ffc";
-			break;
-		case OSCAR_DND:
-			awTxt = i18n("Read 'Do Not Disturb' &Message");
-			awIcn = "icq_dnd";
-			break;
-		case OSCAR_NA:
-			awTxt = i18n("Read 'Not Available' &Message");
-			awIcn = "icq_na";
-			break;
-		case OSCAR_OCC:
-			awTxt = i18n("Read 'Occupied' &Message");
-			awIcn = "icq_occ";
-			break;
-		default:
-			awTxt = i18n("Read 'Away' &Message");
-			awIcn = "icq_away";
-			break;
-	}
 
-	if(actionReadAwayMessage==0)
-	{
-		actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
-			this, SLOT(slotReadAwayMessage()), this, "actionReadAwayMessage");
-		
-		actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
-			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
-		actionSendAuth = new KAction(i18n("&Grant Authorization"), "mail_forward", 0,
-			this, SLOT(slotSendAuth()), this, "actionSendAuth");
-		
-	}
-	else
-	{
-		actionReadAwayMessage->setText(awTxt);
-		actionReadAwayMessage->setIconSet(SmallIconSet(awIcn));
-	}
+	actionRequestAuth = new KAction( i18n("&Request Authorization"), 0, "actionRequestAuth");
+	actionRequestAuth->setIcon( KIcon( "mail_reply" ) );
+	QObject::connect( actionRequestAuth, SIGNAL(triggered(bool)), this, SLOT(slotRequestAuth()) );
+	
+	actionSendAuth = new KAction( i18n("&Grant Authorization"), 0, "actionSendAuth");
+	actionSendAuth->setIcon( KIcon( "mail_forward" ) );
+	QObject::connect( actionSendAuth, SIGNAL(triggered(bool)), this, SLOT(slotSendAuth()) );
 
+	m_actionIgnore = new KToggleAction(i18n("&Ignore"), 0, "actionIgnore");
+	QObject::connect( m_actionIgnore, SIGNAL(triggered(bool)), this, SLOT(slotIgnore()) );
 
-	m_actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
-	                                   this, SLOT(slotIgnore()), this, "actionIgnore");
-	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
-	                                      this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
-	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
-	                                        this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), 0, "actionVisibleTo");
+	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
+	
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), 0, "actionInvisibleTo");
+	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
+
+	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), 0, "changeEncoding" );
+	m_selectEncoding->setIcon( KIcon( "charset" ) );
+	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
 
 	bool on = account()->isConnected();
 	if ( m_ssiItem.waitingAuth() )
@@ -625,18 +457,11 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 		actionRequestAuth->setEnabled(false);
 
 	actionSendAuth->setEnabled(on);
-
-
-    m_selectEncoding = new KAction( i18n( "Select Encoding..." ), "charset", 0,
-                                    this, SLOT( changeContactEncoding() ), this, "changeEncoding" );
-
-	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
-
 	m_actionIgnore->setEnabled(on);
 	m_actionVisibleTo->setEnabled(on);
 	m_actionInvisibleTo->setEnabled(on);
 
-	SSIManager* ssi = account()->engine()->ssiManager();
+	ContactManager* ssi = account()->engine()->ssiManager();
 	m_actionIgnore->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_IGNORE ));
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
@@ -649,8 +474,6 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	actionCollection->append(m_actionVisibleTo);
 	actionCollection->append(m_actionInvisibleTo);
 
-//	actionCollection->append(actionReadAwayMessage);
-*/
 	return actionCollection;
 }
 
@@ -671,44 +494,6 @@ void ICQContact::closeUserInfoDialog()
 	m_infoWidget->delayedDestruct();
 	m_infoWidget = 0L;
 }
-
-void ICQContact::changeContactEncoding()
-{
-    if ( m_oesd )
-        return;
-
-    m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget(), property(mProtocol->contactEncoding).value().toInt() );
-    connect( m_oesd, SIGNAL( closing( int ) ),
-             this, SLOT( changeEncodingDialogClosed( int ) ) );
-    m_oesd->show();
-}
-
-void ICQContact::changeEncodingDialogClosed( int result )
-{
-	if ( result == QDialog::Accepted )
-	{
-		int mib = m_oesd->selectedEncoding();
-		if ( mib != 0 )
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
-			                         << m_oesd->selectedEncoding() << endl;
-			setProperty( mProtocol->contactEncoding, m_oesd->selectedEncoding() );
-		}
-		else
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo
-			                         << "setting encoding to default" << endl;
-			removeProperty( mProtocol->contactEncoding );
-		}
-	}
-
-    if ( m_oesd )
-    {
-        m_oesd->deleteLater();
-        m_oesd = 0L;
-    }
-}
-
 
 void ICQContact::slotIgnore()
 {

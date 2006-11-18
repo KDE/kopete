@@ -21,9 +21,11 @@
 #define ICQCONTACT_H
 
 #include "icqcontactbase.h"
+#include <QList>
 
-class ICQProtocol;
-class ICQUserInfoWidget;
+class OContact;
+
+class AIMProtocol;
 
 /**
  * Contact for ICQ over Oscar protocol
@@ -52,7 +54,6 @@ public:
 	virtual bool isReachable();
 
 public slots:
-	virtual void slotUserInfo();
 	virtual void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 
@@ -60,47 +61,13 @@ public slots:
 	void userOffline( const QString& userID );
 	void loggedIn();
 
-signals:
-	void haveBasicInfo( const ICQGeneralUserInfo& );
-	void haveWorkInfo( const ICQWorkUserInfo& );
-	void haveEmailInfo( const ICQEmailInfo& );
-	void haveNotesInfo( const ICQNotesInfo& );
-	void haveMoreInfo( const ICQMoreUserInfo& );
-	void haveInterestInfo( const ICQInterestInfo& );
-	void haveOrgAffInfo( const ICQOrgAffInfo& );
-
 private:	
-	ICQProtocol *mProtocol;
-	ICQUserInfoWidget* m_infoWidget;
-
-	KAction *actionRequestAuth;
-	KAction *actionSendAuth;
-    KAction *m_selectEncoding;
+	AIMProtocol *mProtocol;
 	
-	KToggleAction *m_actionIgnore;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
 private slots:
-	/** Request authorization from this contact */
-	void slotRequestAuth();
-
-	/** Authorize this contact */
-	void slotSendAuth();
-
-	void slotAuthReplyDialogOkClicked();
-
-	/** We have received an auth request */
-	void slotGotAuthRequest( const QString& contact, const QString& reason );
-
-	/** We have received an auth reply */
-	void slotGotAuthReply( const QString& contact, const QString& reason, bool granted );
-
-	void closeUserInfoDialog();
-
-	void receivedLongInfo( const QString& contact );
-
-	void slotIgnore();
 	void slotVisibleTo();
 	void slotInvisibleTo();
 };

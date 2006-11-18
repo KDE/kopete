@@ -13,13 +13,16 @@ ${CMAKE_CURRENT_SOURCE_DIR}/liboscar/
 ########### next target ###############
 
 set(kopete_oscar_LIB_SRCS 
+   oscarprotocol.cpp 
    oscaraccount.cpp 
    oscarcontact.cpp 
    oscarmyselfcontact.cpp 
    oscarencodingselectiondialog.cpp 
    oscarlistnonservercontacts.cpp 
    oscarversionupdater.cpp
-   oscarprivacyengine.cpp )
+   oscarprivacyengine.cpp
+   aimcontactbase.cpp
+   icqcontactbase.cpp )
 
 kde4_add_ui_files(kopete_oscar_LIB_SRCS
    oscarencodingselectionbase.ui

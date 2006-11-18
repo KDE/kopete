@@ -17,10 +17,10 @@
 #ifndef ICQPROTOCOL_H
 #define ICQPROTOCOL_H
 
-#include "kopeteprotocol.h"
+#include "oscarprotocol.h"
 #include "kopetemimetypehandler.h"
-#include "kopeteonlinestatus.h"
-#include "kopetecontactproperty.h"
+// #include "kopeteonlinestatus.h"
+// #include "kopetecontactproperty.h"
 
 class QComboBox;
 /*class ICQUserInfoWidget;
@@ -36,7 +36,7 @@ public:
 };
 
 
-class ICQProtocol : public Kopete::Protocol
+class ICQProtocol : public OscarProtocol
 {
 Q_OBJECT
 
@@ -51,9 +51,6 @@ public:
 
 	virtual bool canSendOffline() const;
 
-	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
-	                                             const QMap<QString, QString> &serializedData,
-	                                             const QMap<QString, QString> &addressBookData );
 	AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
 	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 	Kopete::Account *createNewAccount(const QString &accountId);
@@ -63,12 +60,8 @@ public:
 
 	const Kopete::ContactPropertyTmpl firstName;
 	const Kopete::ContactPropertyTmpl lastName;
-	const Kopete::ContactPropertyTmpl awayMessage;
 	const Kopete::ContactPropertyTmpl emailAddress;
 	const Kopete::ContactPropertyTmpl ipAddress;
-	const Kopete::ContactPropertyTmpl clientFeatures;
-	const Kopete::ContactPropertyTmpl buddyIconHash;
-    const Kopete::ContactPropertyTmpl contactEncoding;
 
 	const QMap<int, QString> &genders() { return mGenders; }
 	const QMap<int, QString> &countries() { return mCountries; }

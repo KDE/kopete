@@ -18,12 +18,9 @@
 #ifndef AIMPROTOCOL_H
 #define AIMPROTOCOL_H
 
-#include "kopeteprotocol.h"
-#include "kopetecontactproperty.h"
+#include "oscarprotocol.h"
 #include "kopetemimetypehandler.h"
 #include "kopeteonlinestatus.h"
-
-#include <qmap.h>
 
 namespace Kopete
 {
@@ -37,7 +34,7 @@ public:
 	void handleURL( const KUrl & url ) const;
 };
 
-class AIMProtocol : public Kopete::Protocol
+class AIMProtocol : public OscarProtocol
 {
 	Q_OBJECT
 
@@ -52,10 +49,6 @@ public:
 
 	bool canSendOffline() const { return false; }
 
-	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
-	                                             const QMap<QString, QString> &serializedData,
-	                                             const QMap<QString, QString> &addressBookData );
-	
 	AddContactPage*createAddContactWidget( QWidget *parent, Kopete::Account *account );
 	KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account *account, QWidget *parent );
 	Kopete::Account* createNewAccount( const QString &accountId );
@@ -70,10 +63,7 @@ public:
 	const Kopete::OnlineStatus statusWirelessAway;
 	const Kopete::OnlineStatus statusConnecting;
 
-	const Kopete::ContactPropertyTmpl awayMessage;
-	const Kopete::ContactPropertyTmpl clientFeatures;
 	const Kopete::ContactPropertyTmpl clientProfile;
-	const Kopete::ContactPropertyTmpl iconHash;
 
 private:
 	/** The active instance of oscarprotocol */

@@ -26,6 +26,7 @@ set(kopete_aim_PART_SRCS
    aimprotocol.cpp 
    aimaccount.cpp 
    aimcontact.cpp 
+   icqcontact.cpp 
    aimuserinfo.cpp 
    aimjoinchat.cpp 
    aimchatsession.cpp )

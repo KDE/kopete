@@ -21,8 +21,7 @@
 
 #include "aimcontactbase.h"
 
-class AIMProtocol;
-class AIMUserInfoDialog;
+class ICQProtocol;
 
 class AIMContact : public AIMContactBase
 {
@@ -34,34 +33,31 @@ public:
 	virtual ~AIMContact();
 
 	bool isReachable();
-	QList<KAction*> *customContextMenuActions();
-
-	int warningLevel() const;
+	
+	/**
+	 * Returns a set of custom menu items for
+	 * the context menu
+	 */
+	virtual QList<KAction*> *customContextMenuActions();
 
 public slots:
 	void updateSSIItem();
-	void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userId );
-	void updateProfile( const QString& contact, const QString& profile );
-	void gotWarning( const QString& contact, quint16, quint16 );
-
-signals:
-	void updatedProfile();
 
 private slots:
-	void closeUserInfoDialog();
-	void warnUser();
 
+	void slotIgnore();
 	void slotVisibleTo();
 	void slotInvisibleTo();
 
 private:
-	AIMProtocol* mProtocol;
-	AIMUserInfoDialog* m_infoDialog;
-	
-	KAction* m_warnUserAction;
+	ICQProtocol* mProtocol;
+
+	KAction *m_selectEncoding;
+
+	KToggleAction *m_actionIgnore;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
