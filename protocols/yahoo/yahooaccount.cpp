@@ -247,8 +247,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotAuthorizationRequest( const QString &, const QString &, const QString & )),
 		                 this, SLOT(slotgotAuthorizationRequest( const QString &, const QString &, const QString & )) );
 		
-		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
-		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
+		QObject::connect(m_session, SIGNAL(statusChanged(QString,int,const QString,int,int,int)),
+		                 this, SLOT(slotStatusChanged(QString,int,const QString,int,int,int)));
 		
 		QObject::connect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)), 
 		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
@@ -380,8 +380,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(gotAuthorizationRequest( const QString &, const QString &, const QString & )),
 		                 this, SLOT(slotgotAuthorizationRequest( const QString &, const QString &, const QString & )) );
 		
-		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
-		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
+		QObject::disconnect(m_session, SIGNAL(statusChanged(QString,int,const QString,int,int,int)),
+		                    this, SLOT(slotStatusChanged(QString,int,QString,int,int,int)));
 		
 		QObject::disconnect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)), 
 		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
@@ -872,7 +872,7 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away, int idle )
+void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away, int idle, int pictureChecksum )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << who << " status: " << stat << " msg: " << msg << " away: " << away << " idle: " << idle <<endl;
 	YahooContact *kc = contact( who );
@@ -914,6 +914,8 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 			kc->setIdleTime( 0 );
 		
 		kc->setOnlineStatus( newStatus );
+		
+		slotGotBuddyIconChecksum( who, pictureChecksum );
 	}
 }
 

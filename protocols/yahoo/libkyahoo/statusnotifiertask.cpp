@@ -48,7 +48,7 @@ bool StatusNotifierTask::take( Transfer* transfer )
 	else if( t->service() == Yahoo::ServiceAuthorization )
 		parseAuthorization( t );
 	else
-		parseStatus( t );	
+		parseStatus( t );
 
 	return true;
 }
@@ -72,7 +72,8 @@ bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 		t->service() == Yahoo::ServiceIddeAct ||
 		t->service() == Yahoo::ServiceStatus ||
 		t->service() == Yahoo::ServiceStealthOffline ||
-		t->service() == Yahoo::ServiceAuthorization
+		t->service() == Yahoo::ServiceAuthorization ||
+		t->service() == Yahoo::ServiceBuddyStatus
 	)
 		return true;
 	else
@@ -98,6 +99,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 	int away;		/* key = 47  */
 	int idle;		/* key = 137 */
 	bool utf;		/* key = 97 */
+	int pictureChecksum;	/* key = 192 */
 
 	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
@@ -113,15 +115,16 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 		away = t->nthParamSeparated( 47, i, 7 ).toInt();
 		idle = t->nthParamSeparated( 137, i, 7 ).toInt();
 		utf = t->nthParamSeparated( 97, i, 7 ).toInt() == 1;
+		pictureChecksum = t->nthParamSeparated( 192, i, 7 ).toInt();
 		if( utf )
 			message = QString::fromUtf8( t->nthParamSeparated( 19, i, 7 ) );
 		else
 			message = t->nthParamSeparated( 19, i, 7 );
 
 		if( t->service() == Yahoo::ServiceLogoff || ( state != 0 && flags == 0 ) )
-			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0, 0 );
+			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0, 0, 0 );
 		else
-			emit statusChanged( nick, state, message, away, idle );
+			emit statusChanged( nick, state, message, away, idle, pictureChecksum );
 	}
 }
 

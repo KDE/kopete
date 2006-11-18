@@ -768,8 +768,8 @@ void Client::initTasks()
 		return;
 
 	d->statusTask = new StatusNotifierTask( d->root );
-	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int, int ) ), 
-				SIGNAL( statusChanged( const QString&, int, const QString&, int, int ) ) );
+	QObject::connect( d->statusTask, SIGNAL( statusChanged(QString,int,const QString,int,int,int) ), 
+				SIGNAL( statusChanged(QString,int,const QString,int,int,int) ) );
 	QObject::connect( d->statusTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
 				SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 

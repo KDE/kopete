@@ -188,7 +188,7 @@ protected slots:
 	void slotContactAddedNotifyDialogClosed( const QString & );
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
-	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle);
+	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle, int pictureChecksum);
 	void slotStealthStatusChanged(const QString &who, Yahoo::StealthStatus state);
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
 	void slotGotBuzz(const QString &who, long tm);

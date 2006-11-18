@@ -279,6 +279,14 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceComment " << servicenum << endl;
 			service = Yahoo::ServiceComment;
 		break;
+		case (Yahoo::ServiceBuddyStatus) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceBuddyStatus " << servicenum << endl;
+			service = Yahoo::ServiceBuddyStatus;
+		break;
+		case (Yahoo::ServiceBuddyList) :
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceBuddyList " << servicenum << endl;
+			service = Yahoo::ServiceBuddyList;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
