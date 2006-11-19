@@ -44,6 +44,7 @@ class YahooAccount;
 class YahooProtocol;
 class YahooWebcam;
 class YahooConferenceChatSession;
+class YahooChatChatSession;
 class KTemporaryFile;
 
 namespace Kopete{
@@ -123,7 +124,8 @@ public:
 
 	void verifyAccount( const QString &word );
 
-	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
+	void sendConfMessage( YahooConferenceChatSession *s, const Kopete::Message &message );
+	void sendChatMessage( const Kopete::Message &msg, const QString &handle );
 	void prepareConference( const QString &who );
 	void sendFile( YahooContact *to, const KUrl &url );
 public slots:
@@ -186,7 +188,7 @@ protected slots:
 	void slotContactAddedNotifyDialogClosed( const QString & );
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
-	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle);
+	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle, int pictureChecksum);
 	void slotStealthStatusChanged(const QString &who, Yahoo::StealthStatus state);
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
 	void slotGotBuzz(const QString &who, long tm);
@@ -228,6 +230,10 @@ protected slots:
 	void slotGotYABRevision( long revision, bool merged );
 	void slotSaveYABEntry( YABEntry &entry );
 	void slotModifyYABEntryError( YABEntry *entry, const QString & );
+	void slotChatJoined( int roomId, int categoryId, const QString &comment, const QString &handle );
+	void slotChatBuddyHasJoined( const QString &nick, const QString &handle, bool suppressNotification );
+	void slotChatBuddyHasLeft( const QString &nick, const QString &handle );
+	void slotChatMessageReceived( const QString &nick, const QString &message, const QString &handle );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 	void slotReceiveFileRefused( const Kopete::FileTransferInfo& info );
@@ -261,6 +267,7 @@ private:
 	 * Conferences list, maped by room name (id)
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
+	YahooChatChatSession * m_chatChatSession;
 	QStringList m_pendingConfInvites;
 	QStringList m_pendingWebcamInvites;
 	QStringList m_pendingFileTransfers;

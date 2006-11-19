@@ -1,7 +1,7 @@
 /*
    client.h - Papillon Client to Windows Live Messenger.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -39,7 +39,7 @@ class StatusMessage;
  * Papillon::Client need a valid Papillon::Connector objet to be used.
  * Set the client info with setClientInfo() before attempt to connect to Windows Live Messenger service.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT Client : public QObject
 {

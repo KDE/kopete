@@ -1,7 +1,7 @@
 /*
     appearanceconfig.cpp  -  Kopete Look Feel Config
 
-    Copyright (c) 2005-2006 by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005-2006 by Michaël Larouche       <larouche@kde.org>
     Copyright (c) 2005-2006 by Olivier Goffart         <ogoffart at kde.org>
 
     Kopete    (c) 2005-2006 by the Kopete developers  <kopete-devel@kde.org>
@@ -404,6 +404,9 @@ void ChatWindowConfig::slotGetChatStyles()
 	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );
 	provider->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml" );
 	downloadDialog->exec();
+	delete downloadDialog;
+	delete kopeteNewStuff;
+	delete engine;
 }
 
 // Reimplement Kopete::Contact and its abstract method

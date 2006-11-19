@@ -1,7 +1,7 @@
 /*
     kopetestatusmessage.cpp - Describle a status message and it's metadata.
 
-    Copyright (c) 2006  by Michaël Larouche          <michael.larouche@kdemail.net>
+    Copyright (c) 2006  by Michaël Larouche          <larouche@kde.org>
 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -52,6 +52,11 @@ StatusMessage &StatusMessage::operator=(const StatusMessage &other)
 {
 	d = other.d;
 	return *this;
+}
+
+bool StatusMessage::isEmpty() const
+{
+	return d->statusMessage.isEmpty() && d->metaData.isEmpty();
 }
 
 void StatusMessage::setMessage(const QString &message)

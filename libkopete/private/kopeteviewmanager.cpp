@@ -246,7 +246,12 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			// append msg event to queue if chat window is active but not the chat view in it...
 			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
-			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
+			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop 
+#ifdef Q_OS_UNIX					
+					||!KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
+#else
+					);
+#endif					
 		}
 		else
 		{

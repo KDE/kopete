@@ -1,7 +1,7 @@
 /*
  * telepathycontact.h - Telepathy Kopete Contact.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -17,12 +17,22 @@
 #ifndef TELEPATHYCONTACT_H
 #define TELEPATHYCONTACT_H
 
-#include <QMap>
-#include <QList>
+// Qt Includes
+#include <QtCore/QMap>
+#include <QtCore/QList>
 
+// Kopete includes
 #include <kopetecontact.h>
 
+// QtTapioca includes
+#include <QtTapioca/ContactBase>
+
 class KAction;
+
+namespace QtTapioca
+{
+	class Contact;
+}
 
 namespace Kopete
 {
@@ -36,11 +46,52 @@ class TelepathyContact : public Kopete::Contact
 	Q_OBJECT
 public:
 	TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent);
+	~TelepathyContact();
 
 	virtual bool isReachable();
 	virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
 	
 	virtual QList<KAction *> *customContextMenuActions();
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+
+	void setInternalContact(QtTapioca::Contact *internalContact);
+
+	/**
+	 * @brief Reimplement Kopete::Contact::account() to cast to specific TelepathyAccount
+	 * @return TelepathyAccount for this contact.
+	 */
+	TelepathyAccount *account();
+
+	/**
+	 * @brief Get the internal Tapioca contact.
+	 * @return the internal Tapioca contact instance (a reference)
+	 */
+	QtTapioca::Contact *internalContact();
+
+public slots:
+	/**
+	 * @brief Delete the contact on server and remove it from Kopete.
+	 */
+	virtual void deleteContact();
+
+private slots:
+	/**
+	 * @brief Called when the contact has updated its presence information.
+	 * @param contactBase Refering ContactBase
+	 * @param presence New presence.
+	 * @param presenceMessage New presenceMessage, if any.
+	 */
+	void telepathyPresenceUpdated(QtTapioca::ContactBase *contactBase, QtTapioca::ContactBase::Presence presence, const QString &presenceMessage);
+
+	/**
+	 * @brief Called when contact has changed its alias.
+	 * @param contactBase Refering ContactBase
+	 * @param alias New alias
+	 */
+	void telepathyAliasChanged(QtTapioca::ContactBase *contactBase, const QString &alias);
+
+private:
+	class Private;
+	Private *d;
 };
 #endif

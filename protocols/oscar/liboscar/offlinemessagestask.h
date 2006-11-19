@@ -50,7 +50,6 @@ private:
 	void deleteOfflineMessages();
 	
 private:
-	int m_msgCount;
 	int m_sequence;
 };
 

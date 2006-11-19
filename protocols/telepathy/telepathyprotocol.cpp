@@ -1,7 +1,7 @@
 /*
  * telepathyprotocol.cpp - Telepathy protocol definition.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -22,11 +22,14 @@
 
 // Kopete includes
 #include <kopeteaccount.h>
+#include <kopeteaccountmanager.h>
 #include <kopetemetacontact.h>
 
 // Local includes
 #include "telepathyaccount.h"
+#include "telepathycontact.h"
 #include "telepathyeditaccountwidget.h"
+#include "telepathyaddcontactpage.h"
 
 using namespace QtTapioca;
 
@@ -39,15 +42,15 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QStringList &/*args*
  : Kopete::Protocol(TelepathyProtocolFactory::instance(), parent),
 	// Create Kopete::OnlineStatus
 	Available(Kopete::OnlineStatus::Online, 25, this, 1, QStringList(),
-			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
+			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage),
 	Away(Kopete::OnlineStatus::Away, 18, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
-			i18n( "Away From Computer" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away ),
+			i18n( "Away From Computer" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
 	Busy(Kopete::OnlineStatus::Away, 20, this, 2, QStringList(),
-			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy),
+			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage),
 	Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")), 
 			i18n( "Invisible" ), i18n( "&Hidden" ), Kopete::OnlineStatusManager::Invisible),
 	ExtendedAway(Kopete::OnlineStatus::Away, 15, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
-			i18n( "Extented Away" ), i18n( "&Extented Away" ), Kopete::OnlineStatusManager::Away),
+			i18n( "Extented Away" ), i18n( "&Extented Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
 	Offline(Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(),
 			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
 			Kopete::OnlineStatusManager::DisabledIfOffline)
@@ -69,7 +72,9 @@ Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 
 AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-	return 0;
+	Q_UNUSED(account);
+
+	return new TelepathyAddContactPage(parent);
 }
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
@@ -80,6 +85,24 @@ KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Acco
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
+	QString contactId = serializedData["contactId"];
+	QString accountId = serializedData["accountId"];
+
+	// Find the account
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
+
+	Kopete::Account *account = 0;
+	foreach( account, accounts )
+	{
+		if(account->accountId() == accountId)
+			break;
+	}
+
+	if( account )
+	{
+		return new TelepathyContact( static_cast<TelepathyAccount*>(account), contactId, metaContact);
+	}
+
 	return 0;
 }
 
@@ -88,46 +111,46 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
 
-QtTapioca::ContactInfo::Presence TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
+QtTapioca::ContactBase::Presence TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
-	QtTapioca::ContactInfo::Presence telepathyPresence;
+	QtTapioca::ContactBase::Presence telepathyPresence;
 
 	if( status == Available )
-		telepathyPresence = ContactInfo::Available;
+		telepathyPresence = ContactBase::Available;
 	else if( status == Away )
-		telepathyPresence = ContactInfo::Away;
+		telepathyPresence = ContactBase::Away;
 	else if( status == Busy )
-		telepathyPresence = ContactInfo::Busy;
+		telepathyPresence = ContactBase::Busy;
 	else if( status == Hidden )
-		telepathyPresence = ContactInfo::Hidden;
+		telepathyPresence = ContactBase::Hidden;
 	else if( status == ExtendedAway )
-		telepathyPresence = ContactInfo::XA;
+		telepathyPresence = ContactBase::XA;
 	else if( status == Offline )
-		telepathyPresence = ContactInfo::Offline;
+		telepathyPresence = ContactBase::Offline;
 
 	return telepathyPresence;
 }
-Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(QtTapioca::ContactInfo::Presence presence)
+Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(QtTapioca::ContactBase::Presence presence)
 {
 	Kopete::OnlineStatus result;
 	switch(presence)
 	{
-		case ContactInfo::Available:
+		case ContactBase::Available:
 			result = Available;
 			break;
-		case ContactInfo::Away:
+		case ContactBase::Away:
 			result = Away;
 			break;
-		case ContactInfo::Busy:
+		case ContactBase::Busy:
 			result = Busy;
 			break;
-		case ContactInfo::Hidden:
+		case ContactBase::Hidden:
 			result = Hidden;
 			break;
-		case ContactInfo::XA:
+		case ContactBase::XA:
 			result = ExtendedAway;
 			break;
-		case ContactInfo::Offline:
+		case ContactBase::Offline:
 			result = Offline;
 			break;
 	}

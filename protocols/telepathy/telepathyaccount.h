@@ -1,7 +1,7 @@
 /*
  * telepathyaccount.h - Telepathy Kopete Account.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -25,6 +25,13 @@
 
 class KActionMenu;
 
+namespace QtTapioca
+{
+	class Channel;
+	class TextChannel;
+	class Contact;
+}
+
 namespace Kopete 
 { 
 	class MetaContact;
@@ -32,10 +39,11 @@ namespace Kopete
 }
 
 class TelepathyProtocol;
+class TelepathyContactManager;
+class TelepathyContact;
 
-using namespace QtTapioca;
 /**
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class TelepathyAccount : public Kopete::Account
 {
@@ -45,6 +53,12 @@ public:
 	~TelepathyAccount();
 
 	virtual KActionMenu *actionMenu();
+
+	/**
+	 * @brief Get the casted instance of myself contact
+	 * @return Myself contact as TelepathyContact.
+	 */
+	TelepathyContact *myself();
 
 	/**
 	 * @brief Read the configuration for the current account.
@@ -68,11 +82,52 @@ public:
 	QString connectionProtocol() const;
 	/**
 	 * @brief Get the connection parameters read from the config.
-     *
+	 * Only needed parameters are included in the list.
+	 *
 	 * You must call readConfig() before.
-	 * @return
+	 *
+	 * @return saved connection parameters.
 	 */
 	QList<QtTapioca::ConnectionManager::Parameter> connectionParameters() const;
+
+	/**
+	 * @brief Get all connection parameters merged with values from the config
+	 *
+	 * @return all connection parameters.
+	 */
+	QList<QtTapioca::ConnectionManager::Parameter> allConnectionParameters();
+
+	/**
+	 * @brief Return the contact manager
+	 * @return the Telepathy contact manager.
+	 */
+	TelepathyContactManager *contactManager();
+
+	/**
+	 * @brief Create a new chat session using the given text channel
+	 * @param newChannel Instance of TextChannel.
+	 */
+	void createTextChatSession(QtTapioca::TextChannel *newChannel);
+
+	/**
+	 * @brief Create a new text channel to the given contacté
+	 * @param internalContact QtTapioca contact instance.
+	 */
+	QtTapioca::TextChannel *createTextChannel(QtTapioca::Contact *internalContact);
+
+	/**
+	 * @brief Change the alias of the contact if the connection manager support it
+	 *
+	 * @param newAlias New alias to give to the contact
+	 * @return true if alias was changed.
+	 */
+	bool changeAlias(const QString &newAlias);
+
+signals:
+	/**
+	 * Emitted when we are connected to a Telepathy connection manager.
+	 */
+	void telepathyConnected();
 
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
@@ -81,12 +136,38 @@ public slots:
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage());
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 	
+	/**
+	 * @brief Called from the menu to change the myself contact alias
+	 */
+	void slotSetAlias();
+
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 
 private slots:
-	void telepathyStatusChanged(Connection::Status status, Connection::Reason reason);
-	
+	/**
+	 * @brief State of Telepathy connection changed.
+	 */
+	void telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason);
+
+	/**
+	 * @brief Dispatch incoming channel request to the Kopete equivalent.
+	 *
+	 * @param connection Connection where the channel request come from
+	 * @param channel Incoming channel.
+	 */
+	void telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel);
+
+	/**
+	 * @brief Do all the initialition stuff after being connection
+	 */
+	void slotTelepathyConnected();
+
+	/**
+	 * @brief Fetch the contact list.
+	 */
+	void fetchContactList();
+
 private:
 	class Private;
 	Private *d;

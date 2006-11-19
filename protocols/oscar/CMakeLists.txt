@@ -13,13 +13,16 @@ ${CMAKE_CURRENT_SOURCE_DIR}/liboscar/
 ########### next target ###############
 
 set(kopete_oscar_LIB_SRCS 
+   oscarprotocol.cpp 
    oscaraccount.cpp 
    oscarcontact.cpp 
    oscarmyselfcontact.cpp 
    oscarencodingselectiondialog.cpp 
    oscarlistnonservercontacts.cpp 
    oscarversionupdater.cpp
-   oscarprivacyengine.cpp )
+   oscarprivacyengine.cpp
+   aimcontactbase.cpp
+   icqcontactbase.cpp )
 
 kde4_add_ui_files(kopete_oscar_LIB_SRCS
    oscarencodingselectionbase.ui
@@ -42,19 +45,3 @@ install(TARGETS kopete_oscar  DESTINATION ${LIB_INSTALL_DIR})
 
 
 
-#original Makefile.am contents follow:
-
-#SUBDIRS = liboscar . aim icq icons
-#METASOURCES = AUTO
-#AM_CPPFLAGS = -I./ui -I$(srcdir)/ui \
-#	-I./liboscar -I$(srcdir)/liboscar \
-#	 $(KOPETE_INCLUDES) $(all_includes)
-#
-#lib_LTLIBRARIES = libkopete_oscar.la
-#
-#libkopete_oscar_la_SOURCES = oscaraccount.cpp oscarcontact.cpp oscarmyselfcontact.cpp \
-#	oscarencodingselectionbase.ui oscarencodingselectiondialog.cpp \
-#	oscarlistcontactsbase.ui oscarlistnonservercontacts.cpp \
-#	oscarvisibilitybase.ui oscarvisibilitydialog.cpp
-#libkopete_oscar_la_LDFLAGS = -no-undefined -version-info 2:0:0 $(all_libraries)
-#libkopete_oscar_la_LIBADD  = $(LIB_KIO) $(top_builddir)/kopete/libkopete/libkopete.la ./liboscar/liboscar.la

@@ -1,7 +1,7 @@
 /*
    mimeheader_test.cpp - Unittest for Papillon::MimeHeader
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

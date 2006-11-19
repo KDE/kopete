@@ -1,7 +1,7 @@
 /*
    challengetask.cpp - Answer to challenge string given by Notification Server.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    Portions used from Kopete with Gregg's approval on LGPL license:
    Copyright (c) 2005 by Gregg Edghill       <gregg.edghill@gmail.com>

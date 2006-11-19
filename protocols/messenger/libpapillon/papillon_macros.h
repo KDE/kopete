@@ -1,7 +1,7 @@
 /*
    papillon_macros.h - List of macros used across libpapillon
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *

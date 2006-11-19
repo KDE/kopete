@@ -75,7 +75,7 @@ signals:
 				const QString &msg);
 
 private slots:
-	void authentify();
+	void onConnectionStateChanged(Socket::ConnectionState newState);
 
 private:
 	Q_DISABLE_COPY(ClientSocket)

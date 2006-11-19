@@ -45,6 +45,7 @@ public:
 	
 private slots:
 	void slotOpenRegister();
+	void slotChangePassword();
 	
 protected:
 	ICQAccount *mAccount;

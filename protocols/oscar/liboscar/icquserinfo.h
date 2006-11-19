@@ -3,8 +3,9 @@
 	icquserinfo.h - ICQ User Info Data Types
 	
 	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+	Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 	
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 	
 	*************************************************************************
 	*                                                                       *
@@ -21,8 +22,9 @@
 
 #include <QByteArray>
 #include <QList>
-#include <qdatetime.h>
+
 #include "kopete_export.h"
+#include "icqinfovalue.h"
 
 class Buffer;
 
@@ -38,6 +40,7 @@ public:
 	ICQInfoBase() : m_sequence( 0 ) {}
 	virtual ~ICQInfoBase() {}
 	virtual void fill( Buffer* buffer ) = 0;
+	virtual void store( Buffer* ) {}
 	
 	void setSequenceNumber( int number ) { m_sequence = number; }
 	int sequenceNumber() { return m_sequence; }
@@ -53,6 +56,7 @@ public:
 	ICQShortInfo();
 	~ICQShortInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
 	unsigned long uin;
@@ -60,8 +64,9 @@ public:
 	QByteArray firstName;
 	QByteArray lastName;
 	QByteArray email;
-	bool needsAuth;
-	unsigned int gender; // 0=offline, 1=online, 2=not webaware
+	ICQInfoValue<bool> needsAuth;
+	ICQInfoValue<bool> webAware; // 0=offline, 1=online, 2=not webaware
+// 	unsigned int gender;
 };
 
 class KOPETE_EXPORT ICQGeneralUserInfo : public ICQInfoBase
@@ -70,25 +75,27 @@ public:
 	ICQGeneralUserInfo();
 	~ICQGeneralUserInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	unsigned long uin;
-	QByteArray nickname;
-	QByteArray firstName;
-	QByteArray lastName;
-	QByteArray email;
-	QByteArray city;
-	QByteArray state;
-	QByteArray phoneNumber;
-	QByteArray faxNumber;
-	QByteArray address;
-	QByteArray cellNumber;
-	QByteArray zip;
-	int country;
-	char timezone;
-	bool publishEmail;
-	bool allowsDC;
-	bool webaware;
+	ICQInfoValue<unsigned long> uin;
+	ICQInfoValue<QByteArray> nickName;
+	ICQInfoValue<QByteArray> firstName;
+	ICQInfoValue<QByteArray> lastName;
+	ICQInfoValue<QByteArray> email;
+	ICQInfoValue<QByteArray> city;
+	ICQInfoValue<QByteArray> state;
+	ICQInfoValue<QByteArray> phoneNumber;
+	ICQInfoValue<QByteArray> faxNumber;
+	ICQInfoValue<QByteArray> address;
+	ICQInfoValue<QByteArray> cellNumber;
+	ICQInfoValue<QByteArray> zip;
+	ICQInfoValue<int> country;
+	ICQInfoValue<char> timezone;
+	ICQInfoValue<bool> publishEmail;
+	ICQInfoValue<bool> allowsDC;
+	ICQInfoValue<bool> webAware;
+	ICQInfoValue<bool> needsAuth;
 };
 
 class KOPETE_EXPORT ICQWorkUserInfo : public ICQInfoBase
@@ -97,20 +104,21 @@ public:
 	ICQWorkUserInfo();
 	~ICQWorkUserInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	QByteArray city;
-	QByteArray state;
-	QByteArray phone;
-	QByteArray fax;
-	QByteArray address;
-	QByteArray zip;
-	int country;
-	QByteArray company;
-	QByteArray department;
-	QByteArray position;
-	int occupation;
-	QByteArray homepage;
+	ICQInfoValue<QByteArray> city;
+	ICQInfoValue<QByteArray> state;
+	ICQInfoValue<QByteArray> phone;
+	ICQInfoValue<QByteArray> fax;
+	ICQInfoValue<QByteArray> address;
+	ICQInfoValue<QByteArray> zip;
+	ICQInfoValue<int> country;
+	ICQInfoValue<QByteArray> company;
+	ICQInfoValue<QByteArray> department;
+	ICQInfoValue<QByteArray> position;
+	ICQInfoValue<int> occupation;
+	ICQInfoValue<QByteArray> homepage;
 };
 
 class KOPETE_EXPORT ICQMoreUserInfo : public ICQInfoBase
@@ -119,19 +127,23 @@ public:
 	ICQMoreUserInfo();
 	~ICQMoreUserInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	int age;
-	unsigned int gender;
-	QByteArray homepage;
-	QDate birthday;
-	unsigned int lang1;
-	unsigned int lang2;
-	unsigned int lang3;
-	QByteArray ocity;
-	QByteArray ostate;
-	int ocountry;
-	int marital;
+	ICQInfoValue<int> age;
+	ICQInfoValue<unsigned int> gender;
+	ICQInfoValue<QByteArray> homepage;
+	ICQInfoValue<int> birthdayDay;
+	ICQInfoValue<int> birthdayMonth;
+	ICQInfoValue<int> birthdayYear;
+	ICQInfoValue<unsigned int> lang1;
+	ICQInfoValue<unsigned int> lang2;
+	ICQInfoValue<unsigned int> lang3;
+	ICQInfoValue<QByteArray> ocity;
+	ICQInfoValue<QByteArray> ostate;
+	ICQInfoValue<int> ocountry;
+	ICQInfoValue<int> marital;
+	ICQInfoValue<bool> sendInfo;
 };
 
 class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase
@@ -140,9 +152,21 @@ public:
 	ICQEmailInfo();
 	~ICQEmailInfo() {}
 	void fill( Buffer* buffer );
-	
+	void store( Buffer* buffer );
+
 public:
-	QList<QByteArray> emailList;
+	class EmailItem
+	{
+	public:
+		bool publish;
+		QByteArray email;
+		bool operator==( const EmailItem& item ) const
+		{
+			return ( publish == item.publish && email == item.email );
+		}
+	};
+
+	ICQInfoValue< QList<EmailItem> > emailList;
 };
 
 class KOPETE_EXPORT ICQNotesInfo : public ICQInfoBase
@@ -151,9 +175,10 @@ public:
 	ICQNotesInfo();
 	~ICQNotesInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	QByteArray notes;
+	ICQInfoValue<QByteArray> notes;
 };
 
 class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
@@ -162,11 +187,11 @@ public:
 	ICQInterestInfo();
 	~ICQInterestInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	int count;
-	int topics[4];
-	QByteArray descriptions[4];
+	ICQInfoValue<int> topics[4];
+	ICQInfoValue<QByteArray> descriptions[4];
 };
 
 class KOPETE_EXPORT ICQOrgAffInfo : public ICQInfoBase
@@ -175,20 +200,21 @@ public:
 	ICQOrgAffInfo();
 	~ICQOrgAffInfo() {}
 	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
 	
 public:
-	int org1Category;
-	int org2Category;
-	int org3Category;
-	QByteArray org1Keyword;
-	QByteArray org2Keyword;
-	QByteArray org3Keyword;
-	int pastAff1Category;
-	int pastAff2Category;
-	int pastAff3Category;
-	QByteArray pastAff1Keyword;
-	QByteArray pastAff2Keyword;
-	QByteArray pastAff3Keyword;
+	ICQInfoValue<int> org1Category;
+	ICQInfoValue<int> org2Category;
+	ICQInfoValue<int> org3Category;
+	ICQInfoValue<QByteArray> org1Keyword;
+	ICQInfoValue<QByteArray> org2Keyword;
+	ICQInfoValue<QByteArray> org3Keyword;
+	ICQInfoValue<int> pastAff1Category;
+	ICQInfoValue<int> pastAff2Category;
+	ICQInfoValue<int> pastAff3Category;
+	ICQInfoValue<QByteArray> pastAff1Keyword;
+	ICQInfoValue<QByteArray> pastAff2Keyword;
+	ICQInfoValue<QByteArray> pastAff3Keyword;
 };
 
 class KOPETE_EXPORT ICQSearchResult

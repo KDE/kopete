@@ -80,7 +80,6 @@ kde4_automoc(${kopete_jabber_PART_SRCS})
 
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_jabber )
 
 target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete )
 

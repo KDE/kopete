@@ -1,7 +1,7 @@
 /*
  * telepathyaccount.cpp - Telepathy Kopete Account.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  *
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -26,18 +26,29 @@
 #include <kmenu.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kinputdialog.h>
+#include <kmessagebox.h>
+#include <kicon.h>
 
 // Kopete includes
-#include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
-#include "kopetecontactlist.h"
+#include <kopetemetacontact.h>
+#include <kopeteonlinestatus.h>
+#include <kopetecontactlist.h>
+#include <kopetechatsessionmanager.h>
+#include <kopeteuiglobal.h>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
+#include <QtTapioca/ContactList>
+#include <QtTapioca/Contact>
+#include <QtTapioca/UserContact>
+#include <QtTapioca/TextChannel>
 
 // Local includes
 #include "telepathyprotocol.h"
 #include "telepathycontact.h"
+#include "telepathycontactmanager.h"
+#include "telepathychatsession.h"
 
 using namespace QtTapioca;
 
@@ -45,7 +56,7 @@ class TelepathyAccount::Private
 {
 public:
 	Private()
-	 : currentConnectionManager(0), currentConnection(0)
+	 : currentConnectionManager(0), currentConnection(0), contactManager(0)
 	{}
 
 	ConnectionManager *getConnectionManager();
@@ -53,8 +64,11 @@ public:
 	QString connectionManager;
 	QString connectionProtocol;
 	QList<ConnectionManager::Parameter> connectionParameters;
+	QList<ConnectionManager::Parameter> allConnectionParameters;
 	ConnectionManager *currentConnectionManager;
 	Connection *currentConnection;
+	Kopete::OnlineStatus initialStatus;
+	TelepathyContactManager *contactManager;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -75,7 +89,20 @@ KActionMenu *TelepathyAccount::actionMenu()
 {
 	KActionMenu *actionMenu = Kopete::Account::actionMenu();
 
+	// FIXME: Maybe we should cache the action.
+	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0, "changeAliasAction");
+	changeAliasAction->setEnabled( isConnected() );
+	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
+
+	actionMenu->addSeparator();
+	actionMenu->addAction( changeAliasAction );
+
 	return actionMenu;
+}
+
+TelepathyContact *TelepathyAccount::myself()
+{
+	return static_cast<TelepathyContact*>( Kopete::Account::myself() );
 }
 
 void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
@@ -100,8 +127,12 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			{
 				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a valid connection." << endl;
 				// Connect signals/slots
-				QObject::connect(d->currentConnection, SIGNAL(statusChanged(Connection::Status, Connection::Reason)), this, SLOT(telepathyStatusChanged(Connection::Status, Connection::Reason)));
-	
+				QObject::connect(d->currentConnection, SIGNAL(statusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)), this, SLOT(telepathyStatusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)));
+
+				QObject::connect(d->currentConnection, SIGNAL(channelCreated(QtTapioca::Connection*, QtTapioca::Channel*)), this, SLOT(telepathyChannelCreated(QtTapioca::Connection*,QtTapioca::Channel*)));
+
+				QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
+
 				d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
 			}
 			else
@@ -129,27 +160,80 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 	if( !isConnected() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting with initial status: " << status.description() << endl;
+		d->initialStatus = status;
 		connect(status);
 	}
-	// FIXME: Temp
 	else if ( status.status() == Kopete::OnlineStatus::Offline )
 	{
 		disconnect();
 	}
 	else
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Chaning online status" << endl;
-		//TODO:
+		if( d->currentConnection && d->currentConnection->userContact() )
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Changing online status to " << status.description() << endl;
+			d->currentConnection->userContact()->setPresence( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status) );
+
+			setStatusMessage( reason );
+		}
 	}
 }
 
 void TelepathyAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	
+	if( d->currentConnection && d->currentConnection->userContact() )
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting status message to \"" << statusMessage.message() << "\"." << endl;
+
+		d->currentConnection->userContact()->setPresenceMessage( statusMessage.message() );
+	}
+}
+
+bool TelepathyAccount::changeAlias(const QString &newAlias)
+{
+	if( d->currentConnection && d->currentConnection->userContact() )
+	{
+		if( d->currentConnection->userContact()->setAlias( newAlias ) )
+		{
+			myself()->setNickName( newAlias );
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void TelepathyAccount::slotSetAlias()
+{
+	QString currentAlias = myself()->nickName();
+
+	bool ok;
+	QString newAlias = KInputDialog::getText(
+			i18n("Change alias"), 
+			i18n("Enter the new alias by which you want to be visible to your friends:"), 
+			currentAlias,
+			&ok );
+
+	if( ok )
+	{
+		if( !changeAlias(newAlias) )
+		{
+			KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n("Current connection manager does not support changing the visible alias to your friends.") );
+		}
+	}
 }
 
 bool TelepathyAccount::createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact)
 {
+	if( !contacts()[contactId] )
+	{
+		TelepathyContact *contact = new TelepathyContact(this, contactId, parentMetaContact);
+		
+		return contact != 0;
+	}
+	else
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Contact " << contactId << " already exists." << endl;
+
 	return false;
 }
 
@@ -161,6 +245,10 @@ bool TelepathyAccount::readConfig()
 	KConfigGroup *accountConfig = configGroup();
 	d->connectionManager = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
 	d->connectionProtocol = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
+
+	// Clear current connection parameters
+	d->allConnectionParameters.clear();
+	d->connectionParameters.clear();
 
 	// Get the preferences from the connection manager to get the right types
 	QList<ConnectionManager::Parameter> tempParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
@@ -198,6 +286,7 @@ bool TelepathyAccount::readConfig()
 						newValue = QVariant(it.value());
 // 					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName() << endl;
 					d->connectionParameters.append( ConnectionManager::Parameter(parameter.name(), newValue) );
+					
 					break;
 				}
 			}
@@ -231,9 +320,73 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::connectionParam
 	return d->connectionParameters;
 }
 
-void TelepathyAccount::telepathyStatusChanged(Connection::Status status, Connection::Reason reason)
+QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionParameters()
+{
+	if( d->allConnectionParameters.isEmpty() )
+	{
+		if( d->connectionProtocol.isEmpty() )
+			readConfig();
+
+		QList<ConnectionManager::Parameter> allParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
+		foreach(ConnectionManager::Parameter parameter, allParameters)
+		{
+			ConnectionManager::Parameter newParameter = parameter;
+			foreach(ConnectionManager::Parameter connectionParameter, d->connectionParameters)
+			{
+				// Use value from the saved connection parameter
+				if( parameter.name() == connectionParameter.name() )
+				{
+					newParameter = ConnectionManager::Parameter( parameter.name(), connectionParameter.value() );
+					break;
+				}
+			}
+
+			d->allConnectionParameters.append( newParameter );
+		}
+	}
+	
+	return d->allConnectionParameters;
+}
+
+void TelepathyAccount::createTextChatSession(QtTapioca::TextChannel *newChannel)
 {
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+
+	// Get contact id
+	QString contactUri = newChannel->target()->uri();
+	Kopete::Contact *destinationContact = contacts()[contactUri];
+	if( destinationContact )
+	{
+		Kopete::ContactPtrList others;
+		others.append( destinationContact );
+
+		// Try to find an existing chatsession
+		Kopete::ChatSession *currentChatSession = Kopete::ChatSessionManager::self()->findChatSession( myself(), others, protocol() );
+		if( !currentChatSession )
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Creating a new chat session" << endl;
+
+			TelepathyChatSession *newChatSession = new TelepathyChatSession( myself(), others, protocol() );
+			newChatSession->setTextChannel( newChannel );
+		}
+		else
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found an existing chat session." << endl;
+	}
+}
+
+QtTapioca::TextChannel *TelepathyAccount::createTextChannel(QtTapioca::Contact *internalContact)
+{
+	if( d->currentConnection && isConnected() )
+	{
+		return dynamic_cast<QtTapioca::TextChannel*>( d->currentConnection->createChannel(QtTapioca::Channel::Text, internalContact) );
+	}
+
+	return 0;
+}
+
+void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
+{
+	Q_UNUSED(connection);
 
 	switch(status)
 	{
@@ -242,14 +395,45 @@ void TelepathyAccount::telepathyStatusChanged(Connection::Status status, Connect
 			break;
 		case Connection::Connected:
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connected using Telepathy :)" << endl;
-			// FIXME: Use initial status
-			myself()->setOnlineStatus( TelepathyProtocol::protocol()->Available );
+			emit telepathyConnected();
 			break;
 		case Connection::Disconnected:
 			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Disconnected :(" << endl;
 			break;
 	}
 	//TODO: reason
+}
+
+void TelepathyAccount::telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo  << endl;
+
+	Q_UNUSED(connection);
+
+	if( channel->type() == QtTapioca::Channel::Text )
+	{
+		// Find or create a new chat session
+		QtTapioca::TextChannel *textChannel = dynamic_cast<QtTapioca::TextChannel*>(channel);
+		if( textChannel )
+			createTextChatSession(textChannel);
+	}
+}
+
+void TelepathyAccount::slotTelepathyConnected()
+{
+	// Set initial status to myself contact
+	myself()->setOnlineStatus( d->initialStatus );
+	// Set nickname to myself contact
+	myself()->setNickName( d->currentConnection->userContact()->alias() );
+
+	// Load contact list
+	fetchContactList();
+}
+
+void TelepathyAccount::fetchContactList()
+{
+	contactManager()->setContactList( d->currentConnection->contactList() );
+	contactManager()->loadContacts();
 }
 
 ConnectionManager *TelepathyAccount::Private::getConnectionManager()
@@ -261,4 +445,15 @@ ConnectionManager *TelepathyAccount::Private::getConnectionManager()
 
 	return currentConnectionManager;
 }
+
+TelepathyContactManager *TelepathyAccount::contactManager()
+{
+	if( !d->contactManager )
+	{
+		d->contactManager = new TelepathyContactManager(this);
+	}
+
+	return d->contactManager;
+}
+
 #include "telepathyaccount.moc"

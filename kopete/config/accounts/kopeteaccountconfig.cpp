@@ -206,8 +206,8 @@ void KopeteAccountConfig::slotAccountDown()
 
 void KopeteAccountConfig::slotAddAccount()
 {
-	AddAccountWizard *m_addwizard = new AddAccountWizard( this, "addAccountWizard", true );
-	connect( m_addwizard, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotAddWizardDone() ) );
+	AddAccountWizard *m_addwizard = new AddAccountWizard( this, true );
+	connect( m_addwizard, SIGNAL(finished()), this, SLOT(slotAddWizardDone()) );
 	m_addwizard->show();
 }
 

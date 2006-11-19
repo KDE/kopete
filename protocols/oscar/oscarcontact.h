@@ -38,6 +38,8 @@ class OscarAccount;
 class QTimer;
 class QTextCodec;
 class KToggleAction;
+class OscarEncodingSelectionDialog;
+
 /**
  * Contact for oscar protocol
  * @author Matt Rogers
@@ -90,6 +92,8 @@ public:
 	 */
 	QTextCodec *contactCodec() const;
 
+	virtual QString sanitizedMessage( const QString& message ) = 0;
+
 public slots:
 	/** slot so that properties can be updated based on a new SSI item */
 	virtual void updateSSIItem() = 0;
@@ -112,14 +116,18 @@ public slots:
 	/** send a file to this contact */
 	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString::null, uint fileSize = 0L );
 
+	/** set a away message */
+	virtual void setAwayMessage( const QString &message );
+
+	/** change contact encoding */
+	void changeContactEncoding();
+
 protected slots:
 	void slotTyping( bool typing );
-	virtual void updateFeatures() = 0;
 
 signals:
 	void updatedSSI();
-	void featuresUpdated();
-	
+
 protected:
 	OscarAccount *mAccount;
 	QString mName;
@@ -128,6 +136,7 @@ protected:
 	OContact m_ssiItem;
 	int m_warningLevel;
 	QString m_clientFeatures;
+	bool m_haveAwayMessage;
 	
 private:
 	void initActions();
@@ -136,13 +145,18 @@ protected slots:
 	virtual void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session) = 0;
 	
 private slots:
+	void changeEncodingDialogClosed( int );
 	void chatSessionDestroyed();
 	void requestBuddyIcon();
 	void haveIcon( const QString&, QByteArray );
+	void receivedStatusMessage( const QString& userId, const QString& message );
 	
 private:
+	QString filterAwayMessage( const QString &message ) const;
 	bool cachedBuddyIcon( QByteArray hash );
 	bool m_buddyIconDirty;
+
+	OscarEncodingSelectionDialog* m_oesd;
 };
 
 #endif

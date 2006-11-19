@@ -1,7 +1,7 @@
 /*
  * telepathyeditparameterwidget.cpp - UI to edit Telepathy connection parameter
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -19,8 +19,15 @@
 // Qt includes
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
+
+// KDE includes
+#include <kdebug.h>
+
+// Local includes
+#include "telepathyprotocol.h"
 
 using namespace QtTapioca;
 
@@ -45,7 +52,7 @@ public:
 
 	void createWidget()
 	{
-		QHBoxLayout *mainLayout = new QHBoxLayout(this);
+		QVBoxLayout *mainLayout = new QVBoxLayout(this);
 		
 		// Create name label
 		mainLayout->addWidget( new QLabel(parameter().name(), this) );
@@ -67,7 +74,8 @@ public:
 
 	QString value() const
 	{
-		return m_lineValue->text();
+		QString temp = m_lineValue->text();
+		return temp;
 	}
 
 private:
@@ -86,7 +94,7 @@ public:
 	void createWidgets(QWidget *parent);
 	void clear();
 
-	QVBoxLayout *mainLayout;
+	QGridLayout *mainLayout;
 	QList<ConnectionManager::Parameter> paramList;
 	QList<ParameterLineEdit*> lineEditList;
 };
@@ -100,6 +108,7 @@ TelepathyEditParameterWidget::TelepathyEditParameterWidget(const QList<Connectio
 
 TelepathyEditParameterWidget::~TelepathyEditParameterWidget()
 {
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -109,6 +118,10 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyEditParameterWidget::par
 
 	foreach(ParameterLineEdit *lineEdit, d->lineEditList)
 	{
+		if( !lineEdit )
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: A ParameterLineEdit is null !" << endl;
+		}
 		ConnectionManager::Parameter updatedParameter(lineEdit->name(), lineEdit->value());
 		parameterList.append(updatedParameter);
 	}
@@ -125,20 +138,27 @@ void TelepathyEditParameterWidget::setParameterList(const QList<QtTapioca::Conne
 
 void TelepathyEditParameterWidget::Private::init(QWidget *parent)
 {
-	mainLayout = new QVBoxLayout(parent);
+	mainLayout = new QGridLayout(parent);
 
 	createWidgets(parent);
 
-	mainLayout->addStretch(2);
+// 	mainLayout->addStretch(2);
 }
 
 void TelepathyEditParameterWidget::Private::createWidgets(QWidget *parent)
 {
+	int column=0, row=0;
 	foreach(ConnectionManager::Parameter parameter, paramList)
 	{
 		ParameterLineEdit *lineEdit = new ParameterLineEdit(parameter, parent);
-		mainLayout->addWidget(lineEdit);
+		mainLayout->addWidget(lineEdit, row, column);
 		lineEditList.append(lineEdit);
+	
+		if( ++row >= 5 )
+		{
+			column++;
+			row = 0;
+		}
 	}
 }
 

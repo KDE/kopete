@@ -1,7 +1,7 @@
 /*
    stream.cpp - Papillon Abstract class for a Stream(Notification/Switchboard)
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    Based on code Copyright (c) 2004 Matt Rogers <mattr@kde.org>
    Based on code copyright (c) 2004 SuSE Linux AG <http://www.suse.com>

@@ -501,7 +501,7 @@ void KopeteChatWindow::updateSpellCheckAction()
 	if ( !m_activeView )
 		return;
 
-	if ( m_activeView->editPart()->richTextEnabled() )
+	if ( m_activeView->editPart()->isRichTextEnabled() )
 	{
 		toggleAutoSpellCheck->setEnabled( false );
 		toggleAutoSpellCheck->setChecked( false );
@@ -639,7 +639,11 @@ void KopeteChatWindow::addTab( ChatView *view )
 	}
 	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 
-	view->reparent( m_tabBar, 0, QPoint(), true );
+	view->setParent( m_tabBar );
+    view->setWindowFlags( 0 );
+    view->move( QPoint() );
+    view->show();
+    
 	m_tabBar->addTab( view, pluginIcon, view->caption() );
 	if( view == m_activeView )
 		view->show();
@@ -655,7 +659,9 @@ void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 	//TODO figure out what else we have to save here besides the font
 	//reparent clears a lot of stuff out
 	QFont savedFont = view->font();
-	view->reparent( mainArea, 0, QPoint(), true );
+	view->setParent( mainArea );
+    view->setWindowFlags( 0 );
+    view->move( QPoint() );
 	view->setFont( savedFont );
 	view->show();
 
@@ -920,11 +926,13 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+#ifdef Q_OS_UNIX
 		KWin::setIcons( winId(), icon32, icon16 );
+#endif		
 	}
 
 	if ( m_tabBar )
-		m_tabBar->setTabIconSet( view, c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
+		m_tabBar->setTabIcon(m_tabBar->indexOf( view ), c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
 		                                   SmallIcon( view->msgManager()->protocol()->pluginIcon() ) );
 }
 
@@ -1211,7 +1219,7 @@ void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 void KopeteChatWindow::updateChatTooltip( ChatView* cv )
 {
 	if ( m_tabBar )
-		m_tabBar->setTabToolTip( cv, QString::fromLatin1("<qt>%1</qt>").arg( cv->caption() ) );
+		m_tabBar->setTabToolTip( m_tabBar->indexOf( cv ), QString::fromLatin1("<qt>%1</qt>").arg( cv->caption() ) );
 }
 
 void KopeteChatWindow::updateChatLabel()

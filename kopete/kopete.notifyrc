@@ -126,3 +126,8 @@ Action=PassivePopup|Sound|Taskbar
 Name=Message dropped
 Comment=A message was filtered by the Privacy Plugin
 Action=PassivePopup
+
+[Event/icq_user_reads_status_message]
+Name=ICQ Reading status
+Comment=An ICQ user is reading your status message
+Action=PassivePopup

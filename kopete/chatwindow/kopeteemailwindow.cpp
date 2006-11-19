@@ -318,7 +318,7 @@ void KopeteEmailWindow::slotCopy()
 	if ( d->messagePart->hasSelection() )
 		d->messagePart->copy();
 	else
-		d->editPart->editorWidget()->copy();
+		d->editPart->textEdit()->copy();
 }
 
 void KopeteEmailWindow::appendMessage(Kopete::Message &message)
@@ -334,7 +334,10 @@ void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 			slotReadNext();
 		else
 		{
-			d->btnReadNext->setPaletteForegroundColor( QColor("red") );
+			QPalette palette;
+			palette.setColor(d->btnReadNext->foregroundRole(), QColor("red") );
+			d->btnReadNext->setPalette(palette);
+            			
 			updateNextButton();
 		}
 
@@ -355,7 +358,9 @@ void KopeteEmailWindow::updateNextButton()
 	{
 		d->btnReadNext->setEnabled( false );
 
-		d->btnReadNext->setPaletteForegroundColor( KGlobalSettings::textColor() );
+		QPalette palette;
+		palette.setColor(d->btnReadNext->foregroundRole(), KGlobalSettings::textColor() );
+		d->btnReadNext->setPalette(palette);
 	}
 	else
 		d->btnReadNext->setEnabled( true );
@@ -526,10 +531,10 @@ void KopeteEmailWindow::slotReplySend()
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
-
+#ifdef Q_OS_UNIX
 	if ( !KWin::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
 		KWin::setOnDesktop( winId(), KWin::currentDesktop() );
-
+#endif
 	KMainWindow::raise();
 
 	/* Removed Nov 2003
@@ -540,10 +545,11 @@ void KopeteEmailWindow::raise(bool activate)
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-
+#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if(activate)
 		KWin::activateWindow( winId() );
+#endif	
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

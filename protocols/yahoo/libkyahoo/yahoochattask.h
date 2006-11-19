@@ -56,15 +56,25 @@ public:
 	void getYahooChatRooms( const Yahoo::ChatCategory &category );
 
 	void joinRoom( const Yahoo::ChatRoom &room );
+
+	void sendYahooChatMessage( const QString &msg, const QString &handle );
+
 	void logout();
 
 Q_SIGNALS:
 	void gotYahooChatCategories( const QDomDocument & );
-	void gotYahooChatRooms( const Yahoo::ChatCategory &category, const QDomDocument & );
+	void gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & );
 
+	void chatRoomJoined( int roomId, int categoryId, const QString &comment, const QString &handle );
+	void chatBuddyHasJoined( const QString &nick, const QString &handle, bool suppressNotification );
+	void chatBuddyHasLeft( const QString &nick, const QString &handle );
+	void chatMessageReceived( const QString &nick, const QString &message, const QString &handle );
 private:
 	void login();
 	void parseLoginResponse( YMSGTransfer *t );
+	void parseJoin( YMSGTransfer *t );
+	void parseChatMessage( YMSGTransfer * );
+	void parseChatExit( YMSGTransfer * );
 
 private Q_SLOTS:
 	void slotData( KIO::Job *, const QByteArray & );

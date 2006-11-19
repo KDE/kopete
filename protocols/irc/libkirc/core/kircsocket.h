@@ -56,8 +56,9 @@ public:
 		HostFound,
 //		Bound,
 		Connecting,
-		Authentifying,
 		Open,
+		Authentifying,
+		Authentified,
 		Closing
 	};
 
@@ -91,12 +92,12 @@ public slots:
 	void connectToServer(const KUrl &url);
 	void close();
 
-	void writeMessage(QByteArray message);
-	void writeMessage(const QString &message, QTextCodec *codec = 0);
 	void writeMessage(const Message &message);
 
 	void showInfoDialog();
 
+#if 0
+public: //moc error
 	/**
 	 * Post an event for the given socket.
 	 *
@@ -114,17 +115,17 @@ public slots:
 	 */
 	inline void postErrorEvent(const QString &errStr)
 	{ postEvent(Event::ErrorMessage, errStr); }
+#endif
 
 signals:
 //	void eventOccured(const Event *);
 
-	void connectionStateChanged(Socket::ConnectionState newstate);
+	void connectionStateChanged(Socket::ConnectionState newState);
 
 	void receivedMessage(const Message &message);
 
 protected:
 	void setConnectionState(Socket::ConnectionState newstate);
-	virtual void authentify();
 
 private slots:
 	void onReadyRead();
@@ -133,8 +134,6 @@ private slots:
 	void socketGotError(QAbstractSocket::SocketError);
 
 private:
-	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
-
 	Q_DISABLE_COPY(Socket)
 
 	class Private;

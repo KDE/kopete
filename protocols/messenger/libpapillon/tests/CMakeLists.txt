@@ -55,7 +55,7 @@ add_test(transfer_test ${EXECUTABLE_OUTPUT_PATH}/transfer_test)
 
 set( coreprotocol_test_SRCS coreprotocol_test.cpp )
 
-kde4_automoc( ${coreprotocol_test_SRCS} )
+kde4_automoc(${coreprotocol_test_SRCS} )
 
 kde4_add_executable(coreprotocol_test RUN_UNINSTALLED ${coreprotocol_test_SRCS})
 
@@ -67,7 +67,7 @@ add_test(coreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/coreprotocol_test)
 
 set( mimeheader_test_SRCS mimeheader_test.cpp )
 
-kde4_automoc( ${mimeheader_test_SRCS} )
+kde4_automoc(${mimeheader_test_SRCS} )
 
 kde4_add_executable(mimeheader_test RUN_UNINSTALLED ${mimeheader_test_SRCS})
 
@@ -80,7 +80,7 @@ add_test(mimeheader_test ${EXECUTABLE_OUTPUT_PATH}/mimeheader_test)
 
 set( httptransfer_test_SRCS httptransfer_test.cpp )
 
-kde4_automoc( ${httptransfer_test_SRCS} )
+kde4_automoc(${httptransfer_test_SRCS})
 
 kde4_add_executable(httptransfer_test RUN_UNINSTALLED ${httptransfer_test_SRCS})
 
@@ -92,7 +92,7 @@ add_test(httptransfer_test ${EXECUTABLE_OUTPUT_PATH}/httptransfer_test)
 
 set( httpcoreprotocol_test_SRCS httpcoreprotocol_test.cpp )
 
-kde4_automoc( ${httpcoreprotocol_test_SRCS} )
+kde4_automoc(${httpcoreprotocol_test_SRCS})
 
 kde4_add_executable(httpcoreprotocol_test RUN_UNINSTALLED ${httpcoreprotocol_test_SRCS})
 
@@ -104,7 +104,7 @@ add_test(httpcoreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/httpcoreprotocol_test)
 
 set( statusmessage_test_SRCS statusmessage_test.cpp )
 
-kde4_automoc( ${statusmessage_test_SRCS} )
+kde4_automoc(${statusmessage_test_SRCS})
 
 kde4_add_executable(statusmessage_test RUN_UNINSTALLED ${statusmessage_test_SRCS})
 
@@ -116,7 +116,7 @@ add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 
 set( challenge_test_SRCS challengetest.cpp )
 
-kde4_automoc( ${challenge_test_SRCS} )
+kde4_automoc(${challenge_test_SRCS})
 
 kde4_add_executable(challenge_test RUN_UNINSTALLED ${challenge_test_SRCS})
 

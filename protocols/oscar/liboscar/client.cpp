@@ -62,6 +62,8 @@
 #include "warningtask.h"
 #include "chatservicetask.h"
 #include "rateclassmanager.h"
+#include "icquserinfoupdatetask.h"
+#include "icqchangepasswordtask.h"
 
 
 namespace
@@ -290,7 +292,10 @@ void Client::setStatus( DWORD status, const QString &message )
 
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
 		sdcit->go( true ); //autodelete
-		// TODO: send away message
+
+		ProfileTask* pt = new ProfileTask( c->rootTask() );
+		pt->setAwayMessage( message );
+		pt->go( true );
 	}
 	else
 	{
@@ -401,9 +406,12 @@ void Client::serviceSetupFinished()
 	d->active = true;
 
 	if ( isIcq() )
-	{
 		setStatus( d->connectAsStatus, d->connectWithMessage );
 
+	d->ownStatusTask->go();
+
+	if ( isIcq() )
+	{
 		//retrieve offline messages
 		Connection* c = d->connections.connectionForFamily( 0x0015 );
 		if ( !c )
@@ -540,6 +548,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		{
 			QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
 			response.setText( Oscar::Message::UserDefined, statusMessage(), codec );
+			emit userReadsStatusMessage( msg.sender() );
 		}
 		else
 		{
@@ -800,6 +809,28 @@ void Client::sendWarning( const QString& contact, bool anonymous )
 	warnTask->go( true );
 }
 
+bool Client::changeICQPassword( const QString& password )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return false;
+
+	ICQChangePasswordTask* task = new ICQChangePasswordTask( c->rootTask() );
+	QObject::connect( task, SIGNAL(finished()), this, SLOT(changeICQPasswordFinished()) );
+	task->setPassword( password );
+	task->go( true );
+	return true;
+}
+
+void Client::changeICQPasswordFinished()
+{
+	ICQChangePasswordTask* task = (ICQChangePasswordTask*)sender();
+	if ( task->success() )
+		d->pass = task->password();
+
+	emit icqPasswordChanged( !task->success() );
+}
+
 ICQGeneralUserInfo Client::getGeneralInfo( const QString& contact )
 {
 	return d->icqInfoTask->generalInfoFor( contact );
@@ -999,6 +1030,18 @@ void Client::updateProfile( const QString& profile )
 	ProfileTask* pt = new ProfileTask( c->rootTask() );
 	pt->setProfileText( profile );
 	pt->go(true);
+}
+
+bool Client::updateProfile( const QList<ICQInfoBase*>& infoList )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return false;
+
+	ICQUserInfoUpdateTask* ui = new ICQUserInfoUpdateTask( c->rootTask() );
+	ui->setInfo( infoList );
+	ui->go(true);
+	return true;
 }
 
 void Client::sendTyping( const QString & contact, bool typing )

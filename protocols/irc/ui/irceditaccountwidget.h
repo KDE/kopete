@@ -29,7 +29,7 @@ class IRCEditAccountWidget
 	Q_OBJECT
 
 public:
-	IRCEditAccountWidget(IRCAccount *account, QWidget *parent=0);
+	explicit IRCEditAccountWidget(IRCAccount *account, QWidget *parent=0);
 	~IRCEditAccountWidget();
 
 	IRCAccount *account();

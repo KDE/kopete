@@ -1,12 +1,11 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="krichtexteditpart" version="7">
+<kpartgui name="krichtexteditpart" version="8">
 <MenuBar>
   <Menu name="format"><text>F&amp;ormat</text>
     <Action name="format_bold"/>
     <Action name="format_italic"/>
     <Action name="format_underline"/>
-    <Action name="format_color"/>
-    <Action name="format_bgcolor"/>
+    <Action name="format_textcolor"/>
     <Separator/>
     <Menu name="alignment"><text>&amp;Alignment</text>
        <Action name="format_align_left"/>
@@ -17,6 +16,7 @@
     <Separator/>
     <Action name="format_font_size"/>
     <Action name="format_font"/>
+    <Action name="enableRichText"/>
   </Menu>
   <Merge />
 </MenuBar>
@@ -33,8 +33,7 @@
   <Action name="format_bold"/>
   <Action name="format_italic"/>
   <Action name="format_underline"/>
-  <Action name="format_color"/>
-  <Action name="format_bgcolor"/>
+  <Action name="format_textcolor"/>
   <Separator lineSeparator="true"/>
   <Action name="format_font"/>
   <Action name="format_font_size"/>

@@ -19,27 +19,10 @@
 #include "config-kopete.h"
 #endif
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#include <netinet/in.h> // for ntohl()
-
 #include <qcombobox.h>
-/*
-#include <qhostaddress.h>
-#include <qlistbox.h>
-#include <qspinbox.h>
-#include <qtextedit.h>
-
-#include <kdatewidget.h>*/
 #include <kdialog.h>
-/*
-#include <klineedit.h>
-#include <kurllabel.h>
-*/
+
 #include <kgenericfactory.h>
-#include <kdebug.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kmessagebox.h>
@@ -48,17 +31,10 @@
 #include "kopeteuiglobal.h"
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
-#include "kopetecontactproperty.h"
-
-#include "oscartypeclasses.h"
-#include "contact.h"
 
 #include "icqaccount.h"
-#include "icqcontact.h"
 #include "icqaddcontactpage.h"
 #include "icqeditaccountwidget.h"
-//#include "icquserinfowidget.h"
-
 
 #include "icqprotocol.h"
 
@@ -171,16 +147,11 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
 ICQProtocol::ICQProtocol(QObject *parent, const QStringList&)
-: Kopete::Protocol( ICQProtocolFactory::instance(), parent ),
+: OscarProtocol( ICQProtocolFactory::instance(), parent ),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
-	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
 	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
-	ipAddress("ipAddress", i18n("IP Address") ),
-	clientFeatures("clientFeatures", i18n("Client Features"), 0),
-buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty ),
-contactEncoding( "contactEncoding", i18n( "Contact Encoding" ), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty )
-
+	ipAddress("ipAddress", i18n("IP Address") )
 {
 	if (protocolStatic_)
 		kWarning(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
@@ -658,10 +629,11 @@ void ICQProtocol::initInterests()
 	mInterests.insert(133, i18n("Social science"));
 	mInterests.insert(134, i18n("60's"));
 	mInterests.insert(135, i18n("70's"));
-	mInterests.insert(136, i18n("40's"));
+	mInterests.insert(136, i18n("80's"));
 	mInterests.insert(137, i18n("50's"));
 	mInterests.insert(138, i18n("Finance and Corporate"));
 	mInterests.insert(139, i18n("Entertainment"));
+	mInterests.insert(140, i18n("Consumer Electronics"));
 	mInterests.insert(141, i18n("Retail Stores"));
 	mInterests.insert(142, i18n("Health and Beauty"));
 	mInterests.insert(143, i18n("Media"));
@@ -838,47 +810,6 @@ ICQProtocol *ICQProtocol::protocol()
 bool ICQProtocol::canSendOffline() const
 {
 	return true;
-}
-
-Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaContact,
-                                                  const QMap<QString, QString> &serializedData,
-                                                  const QMap<QString, QString> &/*addressBookData*/ )
-{
-	QString accountId = serializedData["accountId"];
-	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( this->pluginId(), accountId );
-
-	if(!account)
-	{
-		kWarning(14153) << k_funcinfo <<
-			"WARNING: Account for contact does not exist, skipping " << accountId << endl;
-		return 0;
-	}
-
-	QString contactId=serializedData["contactId"];
-	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
-	QString ssiName;
-	bool ssiWaitingAuth = false;
-    if ( serializedData.contains( "ssi_name" ) )
-	ssiName = serializedData["ssi_name"];
-
-    if ( serializedData.contains( "ssi_waitingAuth" ) )
-    {
-	QString authStatus = serializedData["ssi_waitingAuth"];
-	if ( authStatus == "true" )
-		ssiWaitingAuth = true;
-    }
-
-    if ( serializedData.contains( "ssi_gid" ) )
-	ssiGid = serializedData["ssi_gid"].toUInt();
-    if ( serializedData.contains( "ssi_bid" ) )
-	ssiBid = serializedData["ssi_bid"].toUInt();
-    if ( serializedData.contains( "ssi_type" ) )
-	ssiType = serializedData["ssi_type"].toUInt();
-
-	OContact item( ssiName, ssiGid, ssiBid, ssiType, QList<TLV>(), 0 );
-	item.setWaitingAuth( ssiWaitingAuth );
-	ICQContact *c = new ICQContact( static_cast<ICQAccount*>(account), contactId, metaContact, QString::null, item );
-	return c;
 }
 
 AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)

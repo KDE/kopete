@@ -113,7 +113,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 			"\"%1\" has a maximum of %n arguments.", m_minArgs,
 			  text() ), manager, gui );
 	}
-	else if( !KAuthorized::authorizeKAction( name() ) )
+	else if( !KAuthorized::authorizeKAction( objectName() ) )
 	{
 		printError( i18n("You are not authorized to perform the command \"%1\".", text()), manager, gui );
 	}

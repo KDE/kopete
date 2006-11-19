@@ -1,0 +1,25 @@
+This file is the list of things todo accross all project needed for Kopete Telepathy plugin to work. It is also
+a list of question that I will need to answer later.
+
+Telepathy Spec:
+-Buddy group list
+-File transfer
+-Emoticon upload/download
+
+QtTapioca:
+-Find out a better way to set connection parameters
+-Implement parts of Telepathy spec not done yet.
+-Multi-user chat(MUC and IRC)
+-Do not block interface when negociate the connection object path on D-BUS
+
+Kopete plugin TODO:
+-Manage contact list
+ +List contact
+ +Add contact
+ +Remove contact
+ -Manage local and remote pending contact list
+ -Ensure integrity
++Manage presence
++Manage text channel i.e ChatSession
++Manage aliasing
+-Manage avatar

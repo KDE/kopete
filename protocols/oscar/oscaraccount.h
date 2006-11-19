@@ -132,6 +132,7 @@ protected:
 	/**
 	 * Adds a contact to a meta contact
 	 */
+	friend class OscarProtocol;
 	virtual bool createContact(const QString &contactId,
 		 Kopete::MetaContact *parentContact );
 
@@ -143,8 +144,6 @@ protected:
 	 * @return whether the creation succeeded or not
 	 */
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) = 0;
-
-	virtual QString sanitizedMessage( const QString& message ) = 0;
 
 	void updateVersionUpdaterStamp();
 

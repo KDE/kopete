@@ -43,15 +43,16 @@
 using namespace KIrc;
 #warning make usage of KUser (done!) and make more useful using some default strings (todo!)
 
-Message StdMessages::away(QString awayMessage)
+Message StdMessages::away(const QString &awayMessage)
 {
 	Message msg;
 	msg.setCommand(AWAY);
-	msg.setSuffix(awayMessage);
+	if (!awayMessage.isNull())
+		msg.setSuffix(awayMessage);
 	return msg;
 }
 
-Message StdMessages::ison(QStringList nickList)
+Message StdMessages::ison(const QStringList &nickList)
 {
 	kDebug(14120) << k_funcinfo << endl;
 
@@ -77,18 +78,18 @@ Message StdMessages::ison(QStringList nickList)
 	return msg;
 }
 
-Message StdMessages::join(QString name, QString key)
+Message StdMessages::join(const QString &name, const QString &key)
 {
 	Message msg;
 	msg.setCommand(JOIN);
 	QStringList args(name);
-	if (!key.isNull())
+	if (!key.isEmpty())
 		args << key;
 	msg.setArgs(args);
 	return msg;
 }
 
-Message StdMessages::kick(QString user, QString channel, QString reason)
+Message StdMessages::kick(const QString &user, const QString &channel, const QString &reason)
 {
 	Message msg;
 	msg.setCommand(KICK);
@@ -104,7 +105,7 @@ Message StdMessages::list()
 	return msg;
 }
 
-Message StdMessages::mode(QString target, QString mode)
+Message StdMessages::mode(const QString &target, const QString &mode)
 {
 	Message msg;
 	msg.setCommand(MODE);
@@ -112,26 +113,26 @@ Message StdMessages::mode(QString target, QString mode)
 	return msg;
 }
 
-Message StdMessages::motd(QString server)
+Message StdMessages::motd(const QString &server)
 {
 	Message msg;
 	msg.setCommand(MOTD);
-	msg.setArgs(server);
+	if (!server.isNull())
+		msg.setArgs(server);
 	return msg;
 }
 
-KIrc::Message StdMessages::nick(QString newNickName)
+KIrc::Message StdMessages::nick(const QString &newNickName)
 {
-	if (newNickName.isEmpty()) newNickName = KUser().loginName();
+//	if (newNickName.isEmpty()) newNickName = KUser().loginName();
 
-//	m_PendingNick = newNickname;
 	Message msg;
 	msg.setCommand(NICK);
 	msg.setArgs(newNickName);
 	return msg;
 }
 
-KIrc::Message StdMessages::notice(QString target, QString content)
+KIrc::Message StdMessages::notice(const QString &target, const QString &content)
 {
 	Message msg;
 	msg.setCommand(NOTICE);
@@ -142,7 +143,7 @@ KIrc::Message StdMessages::notice(QString target, QString content)
 
 /* This will part a channel with 'reason' as the reason for parting
  */
-KIrc::Message StdMessages::part(QString channel, QString reason)
+KIrc::Message StdMessages::part(const QString &channel, const QString &reason)
 {
 	Message msg;
 	msg.setCommand(PART);
@@ -151,7 +152,7 @@ KIrc::Message StdMessages::part(QString channel, QString reason)
 	return msg;
 }
 
-KIrc::Message StdMessages::pass(QString password)
+KIrc::Message StdMessages::pass(const QString &password)
 {
 	Message msg;
 	msg.setCommand(PASS);
@@ -159,7 +160,7 @@ KIrc::Message StdMessages::pass(QString password)
 	return msg;
 }
 
-KIrc::Message StdMessages::privmsg(QString contact, QString content)
+KIrc::Message StdMessages::privmsg(const QString &contact, const QString &content)
 {
 	Message msg;
 	msg.setCommand(PRIVMSG);
@@ -168,7 +169,7 @@ KIrc::Message StdMessages::privmsg(QString contact, QString content)
 	return msg;
 }
 
-KIrc::Message StdMessages::quit(QString reason)
+KIrc::Message StdMessages::quit(const QString &reason)
 {
 	Message msg;
 	msg.setCommand(QUIT);
@@ -176,7 +177,7 @@ KIrc::Message StdMessages::quit(QString reason)
 	return msg;
 }
 
-Message StdMessages::topic(QString channel, QString topic)
+Message StdMessages::topic(const QString &channel, const QString &topic)
 {
 	Message msg;
 	msg.setCommand(TOPIC);
@@ -190,31 +191,31 @@ Message StdMessages::topic(QString channel, QString topic)
  * the username, hostname and realname of a new user.
  * hostname is usualy set to "127.0.0.1"
  */
-Message StdMessages::user(QString user, QString hostName, QString realName)
+Message StdMessages::user(const QString &user, const QString &hostName, const QString &serverName, const QString &realName)
 {
-	if (user.isEmpty())     user     = KUser().loginName();
-	if (realName.isEmpty()) realName = KUser().fullName();
+//	if (user.isEmpty())     user     = KUser().loginName();
+//	if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
 	msg.setCommand(USER);
-//	msg.setArgList(QStringList(user) << hostName << serverName);
+	msg.setArgs(QStringList(user) << hostName << serverName);
 	msg.setSuffix(realName);
 	return msg;
 }
 
-Message StdMessages::user(QString user, UserMode mode, QString realName)
+Message StdMessages::user(const QString &user, UserMode mode, const QString &realName)
 {
-	if (user.isEmpty())     user     = KUser().loginName();
-	if (realName.isEmpty()) realName = KUser().fullName();
+//      if (user.isEmpty())     user     = KUser().loginName();
+//      if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
 	msg.setCommand(USER);
-	msg.setArgs(QStringList(user) << QString::number(mode) << QLatin1String("*"));
+	msg.setArgs(QStringList(user) << QString::number(mode) << QChar('*'));
 	msg.setSuffix(realName);
 	return msg;
 }
 
-Message StdMessages::whois(QString user)
+Message StdMessages::whois(const QString &user)
 {
 	Message msg;
 	msg.setCommand(WHOIS);

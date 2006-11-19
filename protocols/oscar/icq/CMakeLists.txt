@@ -19,6 +19,7 @@ ui/icquserinfowidget.cpp
 ui/icqauthreplydialog.cpp 
 ui/icqaddcontactpage.cpp 
 ui/icqsearchdialog.cpp
+ui/icqchangepassworddialog.cpp
 )
 
 kde4_add_ui_files(kopete_icq_ui_SRCS 
@@ -31,7 +32,8 @@ ui/icqinterestinfowidget.ui
 ui/icqorgaffinfowidget.ui 
 ui/icqauthreplyui.ui 
 ui/icqsearchbase.ui 
-ui/icqeditaccountui.ui 
+ui/icqeditaccountui.ui
+ui/icqchangepassword.ui
 )
 
 set(kopete_icq_PART_SRCS 
@@ -39,13 +41,13 @@ set(kopete_icq_PART_SRCS
    icqpresence.cpp 
    icqaccount.cpp 
    icqcontact.cpp 
+   aimcontact.cpp 
    icqprotocol.cpp )
 
 kde4_automoc(${kopete_icq_PART_SRCS})
 
 kde4_add_plugin(kopete_icq ${kopete_icq_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_icq )
 
 target_link_libraries(kopete_icq ${KDE4_KDECORE_LIBS} kopete_oscar kopete )
 
@@ -60,27 +62,3 @@ install( FILES x-icq.desktop  DESTINATION ${MIME_INSTALL_DIR}/application)
 
 
 
-#original Makefile.am contents follow:
-
-#SUBDIRS = ui .
-#METASOURCES = AUTO
-#AM_CPPFLAGS = -I$(srcdir)/../ \
-#	-I$(srcdir)/ui/ \
-#	-I$(top_builddir)/kopete/protocols/oscar/icq/ui \
-#	-I$(srcdir)/../liboscar \
-#	$(KOPETE_INCLUDES) $(all_includes)
-#
-#kde_module_LTLIBRARIES = kopete_icq.la
-#
-#kopete_icq_la_SOURCES = icqpresence.cpp icqaccount.cpp icqcontact.cpp icqprotocol.cpp
-## icquserinfo.cpp icqreadaway.cpp icqsendsmsdialog.cpp
-#
-#kopete_icq_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-#kopete_icq_la_LIBADD  = ../libkopete_oscar.la \
-#	$(top_builddir)/kopete/libkopete/libkopete.la ui/libkopeteicqui.la
-#
-#service_DATA = kopete_icq.desktop
-#servicedir = $(kde_servicesdir)
-#
-#mime_DATA = x-icq.desktop
-#mimedir = $(kde_mimedir)/application

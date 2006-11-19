@@ -40,7 +40,6 @@ public:
 		, failedNickOnLogin(false)
 	{ }
 
-//	KIrc::Entity::List entities;
 	KIrc::Entity::Ptr server;
 
 	bool failedNickOnLogin : 1;
@@ -66,6 +65,9 @@ ClientSocket::ClientSocket(QObject *parent)
 	connect(this, SIGNAL(internalError(const QString &)),
 		this, SLOT());
 */
+	connect(this, SIGNAL(connectionStateChanged(Socket::ConnectionState)),
+		this, SLOT(onConnectionStateChanged(Socket::ConnectionState)));
+
 	connect(this, SIGNAL(receivedMessage(KIrc::Message &)),
 		this, SLOT(onReceivedMessage(KIrc::Message &)));
 }
@@ -88,21 +90,28 @@ bool ClientSocket::isConnected() const
 	return connectionState() == Open;
 }
 
-void ClientSocket::authentify()
+void ClientSocket::onConnectionStateChanged(Socket::ConnectionState newState)
 {
-/*
-	// If password is given for this server, send it now, and don't expect a reply
-	const KUrl &url = this->url();
+	switch(newState)
+	{
+	case Open:
+		setConnectionState(Authentifying);
+/* 
+		// If password is given for this server, send it now, and don't expect a reply
+		const KUrl &url = this->url();
 
-	if (url.hasPass())
-		StdCommands::pass(this, url.pass());
+		if (url.hasPass())
+			StdMessage::pass(this, url.pass());
 
-	#warning make the following string arguments static const
-	StdCommands::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
-	StdCommands::nick(this, url.queryItem(URL_NICKNAME));
-
-	KIrc::Socket::authentify();
+		#warning make the following string arguments static const
+		StdMessage::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
+		StdMessage::nick(this, url.queryItem(URL_NICKNAME));
 */
+		break;
+	default:
+		//do nothing
+		break;
+	}
 }
 
 Entity::Ptr ClientSocket::server()

@@ -2,7 +2,7 @@
     kopetepluginconfig.cpp - Configure the Kopete plugins
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2006      by Michaël Larouche      <michael.larouche@kdemail.net>
+    Copyright (c) 2006      by Michaël Larouche      <larouche@kde.org>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -49,9 +49,9 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->addWidget( d->pluginSelector );
 
-	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( changed( bool ) ) );
-	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
-		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QByteArray & ) ) );
+	connect( d->pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );
+	connect( d->pluginSelector, SIGNAL(configCommitted(const QByteArray&) ),
+		KSettings::Dispatcher::self(), SLOT(reparseConfiguration(const QByteArray&)) );
 
 	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
 	                               i18n( "General Plugins" ), "Plugins" );

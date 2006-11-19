@@ -48,7 +48,10 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 
 	addUI = new Ui::icqAddUI();
 	addUI->setupUi(this);
-	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
+	connect( addUI->searchButton, SIGNAL(clicked()), this, SLOT(showSearchDialog()) );
+	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->icqEdit, SLOT(setEnabled(bool)) );
+	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->searchButton, SLOT(setEnabled(bool)) );
+	connect( addUI->aimRadioButton, SIGNAL(toggled(bool)), addUI->aimEdit, SLOT(setEnabled(bool)) );
 }
 
 ICQAddContactPage::~ICQAddContactPage()
@@ -58,7 +61,7 @@ ICQAddContactPage::~ICQAddContactPage()
 
 void ICQAddContactPage::setUINFromSearch( const QString& uin )
 {
-	addUI->uinEdit->setText( uin );
+	addUI->icqEdit->setText( uin );
 }
 
 void ICQAddContactPage::showEvent(QShowEvent *e)
@@ -71,10 +74,17 @@ bool ICQAddContactPage::apply(Kopete::Account* , Kopete::MetaContact *parentCont
 {
 	kDebug(14153) << k_funcinfo << "called; adding contact..." << endl;
 
-	QString contactId = addUI->uinEdit->text();
-	kDebug(14153) << k_funcinfo << "uin=" << contactId << endl;
-	return mAccount->addContact(contactId, parentContact, Kopete::Account::ChangeKABC );
-
+	if ( addUI->icqRadioButton->isChecked() )
+	{
+		QString contactId = addUI->icqEdit->text();
+		return mAccount->addContact( contactId, parentContact, Kopete::Account::ChangeKABC );
+	}
+	else if ( addUI->aimRadioButton->isChecked() )
+	{
+		QString contactId = addUI->aimEdit->text();
+		return mAccount->addContact( contactId, parentContact, Kopete::Account::ChangeKABC );
+	}
+	return false;
 }
 
 bool ICQAddContactPage::validateData()
@@ -82,24 +92,31 @@ bool ICQAddContactPage::validateData()
 	if(!mAccount->isConnected())
 	{
 		// Account currently offline
-		addUI->searchButton->setEnabled( false );
-		addUI->uinEdit->setEnabled( false );
 		KMessageBox::sorry( this, i18n("You must be online to add a contact."), i18n("ICQ Plugin") );
 		return false;
 	}
 
-	ulong uin = addUI->uinEdit->text().toULong();
-	if ( uin < 1000 )
+	if ( addUI->icqRadioButton->isChecked() )
 	{
-		// Invalid (or missing) UIN
-		KMessageBox::sorry( this, i18n("You must enter a valid UIN."), i18n("ICQ Plugin") );
-		return false;
-	}
-	else
-	{
-		// UIN is valid
+		ulong uin = addUI->icqEdit->text().toULong();
+		if ( uin < 1000 )
+		{
+			KMessageBox::sorry( this, i18n("You must enter a valid ICQ number."), i18n("ICQ Plugin") );
+			return false;
+		}
 		return true;
 	}
+	else if ( addUI->aimRadioButton->isChecked() )
+	{
+		QRegExp rx("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
+		if ( !rx.exactMatch( addUI->aimEdit->text() ) )
+		{
+			KMessageBox::sorry( this, i18n("You must enter a valid AOL screen name."), i18n("ICQ Plugin") );
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 void ICQAddContactPage::showSearchDialog()

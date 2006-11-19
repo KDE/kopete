@@ -25,8 +25,6 @@
 #include <QSharedDataPointer>
 #include <QStringList>
 
-typedef QList<QByteArray> QByteArrayList;
-
 class QTextCodec;
 
 namespace KIrc
@@ -39,9 +37,18 @@ class Message
 public:
 	enum Direction
 	{
-		Unknown  = 0,
-		OutGoing = 1, // From the client to the network
-		InGoing	 = 2  // From the network to the client
+		Undefined = 0,
+		OutGoing  = 1, // From the client to the network
+		InGoing	  = 2  // From the network to the client
+	};
+
+	enum Type
+	{
+		Unknown           = 0,
+		Command           = 1, // Text command
+		ClientServerReply = 2, // Numeric reply in the 001-099 range
+		CommandReply      = 3, // Numeric reply in the 200-399 range
+		ErrorReply        = 4, // Numeric reply in the 400-599 range
 	};
 
 public:
@@ -52,8 +59,10 @@ public:
 	Message &operator = (const Message &o);
 
 public:
+	bool isValid() const;
+
 	Socket *socket() const;
-	void setSocket(Socket *);
+	void setSocket(Socket *socket);
 
 	Direction direction() const;
 	void setDirection(Message::Direction direction);
@@ -70,8 +79,8 @@ public:
 	QByteArray rawCommand() const;
 	void setCommand(const QByteArray &);
 
-	QByteArrayList rawArgs() const;
-	void setArgs(const QByteArrayList &);
+	QList<QByteArray> rawArgs() const;
+	void setArgs(const QList<QByteArray> &);
 
 	QByteArray rawSuffix() const;
 	void setSuffix(const QByteArray &);
@@ -93,22 +102,28 @@ public:
 	QString suffix(QTextCodec *codec = 0) const;
 	void setSuffix(const QString &, QTextCodec *codec = 0);
 
-	// Core doesn't need to know about CTCP messages
-	KDE_DEPRECATED bool hasCtcpMessage() const { return false; }
-	Message ctcpMessage() const KDE_DEPRECATED;
-
 public:
-	bool isValid() const;
-
-	bool isNumeric() const;
-	void dump() const;
-
-//	Entity::Ptr entityFromPrefix() const;
-//	Entity::Ptr entityFromArg(size_t i) const;
-
 	size_t argsSize() const;
+
 	QByteArray rawArg(size_t i) const;
 	QString arg(size_t i, QTextCodec *codec = 0) const;
+
+#if 0
+	QByteArray rawArgs(size_t from, size_t to) const;
+	QString args(size_t from, size_t to, QTextCodec *codec) const;
+#endif
+	Entity::Ptr entityFromPrefix() const;
+	Entity::Ptr entityFromArg(size_t i) const;
+
+	Entity::Ptr entityFromName(const QByteArray &name);
+
+	Entity::List entitiesFromNames(const QList<QByteArray> &names);
+
+	Entity::List entitiesFromNames(const QByteArray &names, char separator = ',');
+
+	bool isNumericReply() const;
+
+	Type type() const;
 
 private:
 	/**
@@ -120,10 +135,6 @@ private:
 
 	bool matchForIRCRegExp(QRegExp &regexp);
 
-#ifndef _IRC_STRICTNESS_
-	bool extractCtcpCommand();
-#endif // _IRC_STRICTNESS_
-
 	class Private;
 	QSharedDataPointer<Private> d;
 };
@@ -131,3 +142,4 @@ private:
 }
 
 #endif
+

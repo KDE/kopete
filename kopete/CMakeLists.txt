@@ -64,7 +64,7 @@ kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 kde4_add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
-target_link_libraries(kopete_bin ${KDE4_KDE3SUPPORT_LIBS} ktexteditor knotifyconfig kopete kopeteaddaccountwizard)
+target_link_libraries(kopete_bin ${KDE4_KDE3SUPPORT_LIBS} ktexteditor ${KDE4_KNOTIFYCONFIG_LIBS} kopete kopeteaddaccountwizard)
 
 if(X11_Xrender_FOUND)
   target_link_libraries(kopete_bin ${X11_Xrender_LIB})

@@ -1,7 +1,7 @@
 /*
    notifystatusmessagetask.h - Notify contact status message changes.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -28,7 +28,7 @@ class StatusMessage;
  * emit ontactStatusMessageChanged() signal when it receive 
  * a status message update.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class NotifyStatusMessageTask : public Papillon::Task
 {

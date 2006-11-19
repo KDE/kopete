@@ -109,7 +109,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	splitter->addWidget(m_editPart->widget());
 
 	// FIXME: is this used these days? it seems totally unnecessary
-	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
+	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
 
 	connect( editPart(), SIGNAL( messageSent( Kopete::Message & ) ),
 	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
@@ -182,7 +182,7 @@ ChatView::~ChatView()
 
 KTextEdit *ChatView::editWidget()
 {
-	return editPart()->editorWidget();
+	return editPart()->textEdit();
 }
 
 QWidget *ChatView::mainWidget()
@@ -207,7 +207,7 @@ void ChatView::setCurrentMessage( const Kopete::Message &message )
 
 void ChatView::cut()
 {
-	editPart()->edit()->cut();
+	editPart()->textEdit()->cut();
 }
 
 void ChatView::copy()
@@ -215,12 +215,12 @@ void ChatView::copy()
 	if ( messagePart()->hasSelection() )
 		messagePart()->copy();
 	else
-		editPart()->edit()->copy();
+		editPart()->textEdit()->copy();
 }
 
 void ChatView::paste()
 {
-	editPart()->edit()->paste();
+	editPart()->textEdit()->paste();
 }
 
 void ChatView::nickComplete()
@@ -240,7 +240,7 @@ void ChatView::clear()
 
 void ChatView::setBgColor( const QColor &newColor )
 {
-	editPart()->setBgColor( newColor );
+// 	editPart()->setBgColor( newColor );
 }
 
 void ChatView::setFont()
@@ -260,7 +260,7 @@ void ChatView::setFont( const QFont &font )
 
 void ChatView::setFgColor( const QColor &newColor )
 {
-	editPart()->setFgColor( newColor );
+	editPart()->setTextColor( newColor );
 }
 
 void ChatView::raise( bool activate )
@@ -272,13 +272,13 @@ void ChatView::raise( bool activate )
 
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
-
+#ifdef Q_OS_UNIX
 	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
 			KWin::setCurrentDesktop( KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
 		else
 			KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
-
+#endif
 	if(m_mainWindow->isMinimized())
 	{
 		m_mainWindow->showNormal();
@@ -295,10 +295,11 @@ void ChatView::raise( bool activate )
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-
+#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if ( activate )
 		KWin::activateWindow( m_mainWindow->winId() );
+#endif	
 
 }
 
@@ -751,7 +752,7 @@ void ChatView::saveChatSettings()
 	                           mc->metaContactId();
 
 	config->setGroup( contactListGroup );
-	config->writeEntry( "EnableRichText", editPart()->richTextEnabled() );
+	config->writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
 	config->writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
 	config->sync();
 }
@@ -768,8 +769,8 @@ void ChatView::loadChatSettings()
 	KConfig* config = KGlobal::config();
 	config->setGroup( contactListGroup );
 	bool enableRichText = config->readEntry( "EnableRichText", true );
-	editPart()->slotSetRichTextEnabled( enableRichText );
-	emit rtfEnabled( this, editPart()->richTextEnabled() );
+	editPart()->setRichTextEnabled( enableRichText );
+	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
 	bool enableAutoSpell = config->readEntry( "EnableAutoSpellCheck", false );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
@@ -950,7 +951,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 				addText( (*it).url() );
 			}
 		}
-		event->acceptAction();
+		event->accept();
 		return;
 	}
 	else

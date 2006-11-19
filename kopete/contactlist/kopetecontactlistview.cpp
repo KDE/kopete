@@ -1022,7 +1022,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 				}
 			}
 		}
-		e->acceptAction();
+		e->accept();
 	}
 }
 

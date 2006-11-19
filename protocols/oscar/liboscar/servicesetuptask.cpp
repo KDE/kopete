@@ -49,6 +49,8 @@ ServiceSetupTask::ServiceSetupTask( Task* parent )
 	m_ssiListTask = new SSIListTask( parent );
 	m_ssiActivateTask = new SSIActivateTask( parent );
 
+	m_profileTask->setCapabilities( true );
+
 	QObject::connect( m_ssiListTask, SIGNAL( finished() ), this, SLOT( childTaskFinished() ) );
 	QObject::connect( m_ssiParamTask, SIGNAL( finished() ), this, SLOT( childTaskFinished() ) );
 	QObject::connect( m_prmTask, SIGNAL( finished() ), this, SLOT( childTaskFinished() ) );

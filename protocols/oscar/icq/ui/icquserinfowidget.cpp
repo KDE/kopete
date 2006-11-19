@@ -3,8 +3,9 @@
  icquserinfowidget.cpp - Display ICQ user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
+ Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 
- Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+ Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                       *
@@ -21,7 +22,8 @@
 #include <QtCore/QTextCodec>
 #include <QtGui/QLineEdit>
 #include <QtGui/QSpinBox>
-#include <QtGui/QStringListModel>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QHeaderView>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
@@ -39,8 +41,8 @@
 #include "ui_icqorgaffinfowidget.h"
 
 
-ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
-: KPageDialog( parent )
+ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
+: KPageDialog( parent ), m_editable( editable )
 {
 	setFaceType( KPageDialog::List );
 	setModal( false );
@@ -91,8 +93,95 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent )
 	orgAffInfoItem->setHeader( i18n( "Organization & Affiliation Information" ) );
 	orgAffInfoItem->setIcon( KIcon("kontact_contacts") );
 	
-	m_emailModel = new QStringListModel();
-	m_otherInfoWidget->emailListView->setModel( m_emailModel );
+	m_emailModel = new QStandardItemModel();
+	QStandardItem *modelItem = new QStandardItem( "Type" );
+	m_emailModel->setHorizontalHeaderItem( 0, modelItem );
+	modelItem = new QStandardItem( "Publish Email/Email" );
+	m_emailModel->setHorizontalHeaderItem( 1, modelItem );
+
+	m_otherInfoWidget->emailTableView->setModel( m_emailModel );
+	m_otherInfoWidget->emailTableView->horizontalHeader()->setStretchLastSection( true );
+	m_otherInfoWidget->emailTableView->setSelectionMode( QAbstractItemView::SingleSelection );
+
+	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
+	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
+
+	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+	connect( m_genInfoWidget->birthdayDaySpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+
+	connect( m_orgAffInfoWidget->org1CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg1CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->org2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg2CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->org3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg3CategoryChanged(int)) );
+
+	connect( m_orgAffInfoWidget->aff1CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff1CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->aff2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff2CategoryChanged(int)) );
+	connect( m_orgAffInfoWidget->aff3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff3CategoryChanged(int)) );
+
+	connect( m_interestInfoWidget->topic1Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic1Changed(int)) );
+	connect( m_interestInfoWidget->topic2Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic2Changed(int)) );
+	connect( m_interestInfoWidget->topic3Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic3Changed(int)) );
+	connect( m_interestInfoWidget->topic4Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic4Changed(int)) );
+
+	if ( m_editable )
+	{
+		connect( m_otherInfoWidget->addEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotAddEmail()) );
+		connect( m_otherInfoWidget->removeEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotRemoveEmail()) );
+		connect( m_otherInfoWidget->upEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotUpEmail()) );
+		connect( m_otherInfoWidget->downEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotDownEmail()) );
+		connect( m_otherInfoWidget->emailTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+		         this, SLOT(slotEmailSelectionChanged(const QItemSelection&)) );
+	}
+
+	//ICQGeneralUserInfo
+	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->lastNameEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->cityEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->stateEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->phoneEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->faxEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->addressEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->cellEdit->setReadOnly( !m_editable );
+	m_homeInfoWidget->zipEdit->setReadOnly( !m_editable );
+
+	m_genInfoWidget->ageEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->birthdayDaySpin->setReadOnly( !m_editable );
+	m_genInfoWidget->birthdayMonthSpin->setReadOnly( !m_editable );
+	m_genInfoWidget->birthdayYearSpin->setReadOnly( !m_editable );
+	m_homeInfoWidget->homepageEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->oCityEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->oStateEdit->setReadOnly( !m_editable );
+
+	m_workInfoWidget->cityEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->stateEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->phoneEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->faxEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->addressEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->zipEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->companyEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->departmentEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->positionEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->homepageEdit->setReadOnly( !m_editable );
+
+	m_orgAffInfoWidget->org1KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->org2KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->org3KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->aff1KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->aff2KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->aff3KeywordEdit->setReadOnly( !m_editable );
+
+	m_interestInfoWidget->desc1->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc2->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc3->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc4->setReadOnly( !m_editable );
+
+	m_otherInfoWidget->notesEdit->setReadOnly( !m_editable );
+
+	m_otherInfoWidget->addEmailButton->setEnabled( m_editable );
+	m_otherInfoWidget->removeEmailButton->setEnabled( false );
+	m_otherInfoWidget->upEmailButton->setEnabled( false );
+	m_otherInfoWidget->downEmailButton->setEnabled( false );
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
@@ -121,164 +210,732 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	                  this, SLOT( fillInterestInfo( const ICQInterestInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveOrgAffInfo( const ICQOrgAffInfo& ) ),
 	                  this, SLOT( fillOrgAffInfo( const ICQOrgAffInfo& ) ) );
+
+	ICQProtocol* icqProtocol = static_cast<ICQProtocol*>( m_contact->protocol() );
+
+	//Countries
+	QMap<QString, int> sortedMap( reverseMap( icqProtocol->countries() ) );
+	QMapIterator<QString, int> it( sortedMap );
+
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_homeInfoWidget->countryCombo->addItem( it.key(), it.value() );
+		m_genInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
+		m_workInfoWidget->countryCombo->addItem( it.key(), it.value() );
+	}
+
+	//Languages
+	sortedMap = reverseMap( icqProtocol->languages() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_genInfoWidget->language1Combo->addItem( it.key(), it.value() );
+		m_genInfoWidget->language2Combo->addItem( it.key(), it.value() );
+		m_genInfoWidget->language3Combo->addItem( it.key(), it.value() );
+	}
+
+	//Genders
+	sortedMap = reverseMap( icqProtocol->genders() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_genInfoWidget->genderCombo->addItem( it.key(), it.value() );
+	}
+
+	//Maritals
+	sortedMap = reverseMap( icqProtocol->maritals() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_genInfoWidget->maritalCombo->addItem( it.key(), it.value() );
+	}
+
+	//Occupations
+	sortedMap = reverseMap( icqProtocol->occupations() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_workInfoWidget->occupationCombo->addItem( it.key(), it.value() );
+	}
+
+	//Organizations
+	sortedMap = reverseMap( icqProtocol->organizations() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_orgAffInfoWidget->org1CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->org2CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->org3CategoryCombo->addItem( it.key(), it.value() );
+	}
+
+	//Affiliations
+	sortedMap = reverseMap( icqProtocol->affiliations() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_orgAffInfoWidget->aff1CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->aff2CategoryCombo->addItem( it.key(), it.value() );
+		m_orgAffInfoWidget->aff3CategoryCombo->addItem( it.key(), it.value() );
+	}
+
+	//Interests
+	sortedMap = reverseMap( icqProtocol->interests() );
+	it = sortedMap;
+	while ( it.hasNext() )
+	{
+		it.next();
+		m_interestInfoWidget->topic1Combo->addItem( it.key(), it.value() );
+		m_interestInfoWidget->topic2Combo->addItem( it.key(), it.value() );
+		m_interestInfoWidget->topic3Combo->addItem( it.key(), it.value() );
+		m_interestInfoWidget->topic4Combo->addItem( it.key(), it.value() );
+	}
+
+	//Timezone
+	QString timezone;
+	for ( int zone = 24; zone >= -24; zone-- )
+	{
+		timezone = QString( "GTM %1%2:%3" )
+			.arg( ( zone > 0 ) ? "-" : "" )
+			.arg( qAbs( zone ) / 2, 2, 10, QLatin1Char('0') )
+			.arg( ( qAbs( zone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
+		
+		m_genInfoWidget->timezoneCombo->addItem( timezone, zone );
+	}
+
+	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
+	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
+}
+
+QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
+{
+	QList<ICQInfoBase*> infoList;
+	
+	if ( !m_editable )
+		return infoList;
+	
+	infoList.append( storeBasicInfo() );
+	infoList.append( storeMoreInfo() );
+	infoList.append( storeWorkInfo() );
+	infoList.append( storeOrgAffInfo() );
+	infoList.append( storeInterestInfo() );
+	infoList.append( storeNotesInfo() );
+	infoList.append( storeEmailInfo() );
+	
+	return infoList;
 }
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
-	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickname ) );
-	m_genInfoWidget->fullNameEdit->setText( codec->toUnicode( ui.firstName ) + ' ' + codec->toUnicode( ui.lastName ) );
-	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
-	m_homeInfoWidget->emailEdit->setText( codec->toUnicode( ui.email ) );
-	m_homeInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
-	m_homeInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
-	m_homeInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber ) );
-	m_homeInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber ) );
-	m_homeInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
-	m_homeInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber ) );
-	m_homeInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip ) );
 	
-	QString country = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.country];
-	m_homeInfoWidget->countryEdit->setText( country );
+	if ( m_editable )
+		m_generalUserInfo = ui;
 	
-	QString timezone = QString( "GTM %1%2:%3" )
-		.arg( ( ui.timezone > 0 ) ? "-" : "" )
-		.arg( qAbs( ui.timezone ) / 2, 2, 10, QLatin1Char('0') )
-		.arg( ( qAbs( ui.timezone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
-	m_genInfoWidget->timezoneEdit->setText( timezone );
+	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickName.get() ) );
+	m_genInfoWidget->firstNameEdit->setText( codec->toUnicode( ui.firstName.get() ) );
+	m_genInfoWidget->lastNameEdit->setText( codec->toUnicode( ui.lastName.get() ) );
+	m_homeInfoWidget->cityEdit->setText( codec->toUnicode( ui.city.get() ) );
+	m_homeInfoWidget->stateEdit->setText( codec->toUnicode( ui.state.get() ) );
+	m_homeInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber.get() ) );
+	m_homeInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber.get() ) );
+	m_homeInfoWidget->addressEdit->setText( codec->toUnicode( ui.address.get() ) );
+	m_homeInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber.get() ) );
+	m_homeInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip.get() ) );
+	
+	m_homeInfoWidget->countryCombo->setCurrentIndex( m_homeInfoWidget->countryCombo->findData( ui.country.get() ) );
+	m_genInfoWidget->timezoneCombo->setCurrentIndex( m_genInfoWidget->timezoneCombo->findData( ui.timezone.get() ) );
+
+	if ( !ui.email.get().isEmpty() )
+	{
+		QList<QStandardItem *> items;
+		QStandardItem *modelItem;
+
+		modelItem = new QStandardItem( i18nc("Primary email address", "Primary") );
+		modelItem->setEditable( false );
+		modelItem->setSelectable( false );
+		items.append( modelItem );
+
+		modelItem = new QStandardItem( codec->toUnicode( ui.email.get() ) );
+		modelItem->setEditable( m_editable );
+		modelItem->setCheckable( true );
+		modelItem->setCheckState( ( ui.publishEmail.get() ) ? Qt::Checked : Qt::Unchecked );
+		items.append( modelItem );
+
+		m_emailModel->insertRow( 0, items );
+	}
 }
 
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	m_workInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
-	m_workInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
-	m_workInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phone ) );
-	m_workInfoWidget->faxEdit->setText( codec->toUnicode( ui.fax ) );
-	m_workInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
-	m_workInfoWidget->zipEdit->setText( codec->toUnicode( ui.zip ) );
-	m_workInfoWidget->companyEdit->setText( codec->toUnicode( ui.company ) );
-	m_workInfoWidget->departmentEdit->setText( codec->toUnicode( ui.department ) );
-	m_workInfoWidget->positionEdit->setText( codec->toUnicode( ui.position ) );
-	m_workInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
-	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
-	QString country = p->countries()[ui.country];
-	m_workInfoWidget->countryEdit->setText( country );
-	
-	QString occupation = p->occupations()[ui.occupation];
-	m_workInfoWidget->occupationEdit->setText( occupation );
+	if ( m_editable )
+		m_workUserInfo = ui;
+
+	m_workInfoWidget->cityEdit->setText( codec->toUnicode( ui.city.get() ) );
+	m_workInfoWidget->stateEdit->setText( codec->toUnicode( ui.state.get() ) );
+	m_workInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phone.get() ) );
+	m_workInfoWidget->faxEdit->setText( codec->toUnicode( ui.fax.get() ) );
+	m_workInfoWidget->addressEdit->setText( codec->toUnicode( ui.address.get() ) );
+	m_workInfoWidget->zipEdit->setText( codec->toUnicode( ui.zip.get() ) );
+	m_workInfoWidget->companyEdit->setText( codec->toUnicode( ui.company.get() ) );
+	m_workInfoWidget->departmentEdit->setText( codec->toUnicode( ui.department.get() ) );
+	m_workInfoWidget->positionEdit->setText( codec->toUnicode( ui.position.get() ) );
+	m_workInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage.get() ) );
+
+	m_workInfoWidget->countryCombo->setCurrentIndex( m_workInfoWidget->countryCombo->findData( ui.country.get() ) );
+	m_workInfoWidget->occupationCombo->setCurrentIndex( m_workInfoWidget->occupationCombo->findData( ui.occupation.get() ) );
 }
 
 void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	
-	QStringList emails;
-	foreach( QByteArray email, info.emailList )
-		emails << codec->toUnicode( email );
-	
-	m_emailModel->setStringList( emails );
+
+	if ( m_editable )
+		m_emailInfo = info;
+
+	int size = info.emailList.get().size();
+	for ( int i = 0; i < size; i++ )
+	{
+		int row = m_emailModel->rowCount();
+
+		ICQEmailInfo::EmailItem item = info.emailList.get().at(i);
+		QStandardItem *modelItem = new QStandardItem( i18nc("Other email address", "More")  );
+		modelItem->setEditable( false );
+		modelItem->setSelectable( false );
+		m_emailModel->setItem( row, 0, modelItem );
+		modelItem = new QStandardItem( codec->toUnicode( item.email ) );
+		modelItem->setEditable( m_editable );
+		modelItem->setCheckable( true );
+		modelItem->setCheckState( ( item.publish ) ? Qt::Checked : Qt::Unchecked );
+		m_emailModel->setItem( row, 1, modelItem );
+	}
 }
 
 void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	
-	m_otherInfoWidget->notesEdit->setText( codec->toUnicode( info.notes ) );
+
+	if ( m_editable )
+		m_notesInfo = info;
+
+	m_otherInfoWidget->notesEdit->setPlainText( codec->toUnicode( info.notes.get() ) );
 }
 
-void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
+void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	if (info.count>0) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[0]];
-		m_interestInfoWidget->topic1->setText( topic );
-		m_interestInfoWidget->desc1->setText( codec->toUnicode( info.descriptions[0] ) );
-	}
-	if (info.count>1) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[1]];
-		m_interestInfoWidget->topic2->setText( topic );
-		m_interestInfoWidget->desc2->setText( codec->toUnicode( info.descriptions[1] ) );
-	}
-	if (info.count>2) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[2]];
-		m_interestInfoWidget->topic3->setText( topic );
-		m_interestInfoWidget->desc3->setText( codec->toUnicode( info.descriptions[2] ) );
-	}
-	if (info.count>3) {
-		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[3]];
-		m_interestInfoWidget->topic4->setText( topic );
-		m_interestInfoWidget->desc4->setText( codec->toUnicode( info.descriptions[3] ) );
-	}
+
+	if ( m_editable )
+		m_interestInfo = info;
+
+	int index = m_interestInfoWidget->topic1Combo->findData( info.topics[0].get() );
+	m_interestInfoWidget->topic1Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc1->setText( codec->toUnicode( info.descriptions[0].get() ) );
+
+	index = m_interestInfoWidget->topic2Combo->findData( info.topics[1].get() );
+	m_interestInfoWidget->topic2Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc2->setText( codec->toUnicode( info.descriptions[1].get() ) );
+
+	index = m_interestInfoWidget->topic3Combo->findData( info.topics[2].get() );
+	m_interestInfoWidget->topic3Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc3->setText( codec->toUnicode( info.descriptions[2].get() ) );
+
+	index = m_interestInfoWidget->topic4Combo->findData( info.topics[3].get() );
+	m_interestInfoWidget->topic4Combo->setCurrentIndex( index );
+	m_interestInfoWidget->desc4->setText( codec->toUnicode( info.descriptions[3].get() ) );
 }
 
-void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info)
+void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	
-	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
-	
-	m_orgAffInfoWidget->org1KeywordEdit->setText( codec->toUnicode( info.org1Keyword ) );
-	m_orgAffInfoWidget->org2KeywordEdit->setText( codec->toUnicode( info.org2Keyword ) );
-	m_orgAffInfoWidget->org3KeywordEdit->setText( codec->toUnicode( info.org3Keyword ) );
-	
-	QString org1Category = p->organizations()[ info.org1Category ];
-	m_orgAffInfoWidget->org1CategoryEdit->setText( org1Category );
-	
-	QString org2Category = p->organizations()[ info.org2Category ];
-	m_orgAffInfoWidget->org2CategoryEdit->setText( org2Category );
-	
-	QString org3Category = p->organizations()[ info.org3Category ];
-	m_orgAffInfoWidget->org3CategoryEdit->setText( org3Category );
-	
-	m_orgAffInfoWidget->aff1KeywordEdit->setText( codec->toUnicode( info.pastAff1Keyword ) );
-	m_orgAffInfoWidget->aff2KeywordEdit->setText( codec->toUnicode( info.pastAff2Keyword ) );
-	m_orgAffInfoWidget->aff3KeywordEdit->setText( codec->toUnicode( info.pastAff3Keyword ) );
-	
-	QString pastAff1Category = p->affiliations()[ info.pastAff1Category ];
-	m_orgAffInfoWidget->aff1CategoryEdit->setText( pastAff1Category );
-	
-	QString pastAff2Category = p->affiliations()[ info.pastAff2Category ];
-	m_orgAffInfoWidget->aff2CategoryEdit->setText( pastAff2Category );
-	
-	QString pastAff3Category = p->affiliations()[ info.pastAff3Category ];
-	m_orgAffInfoWidget->aff3CategoryEdit->setText( pastAff3Category );
+
+	if ( m_editable )
+		m_orgAffUserInfo = info;
+
+	m_orgAffInfoWidget->org1KeywordEdit->setText( codec->toUnicode( info.org1Keyword.get() ) );
+	m_orgAffInfoWidget->org2KeywordEdit->setText( codec->toUnicode( info.org2Keyword.get() ) );
+	m_orgAffInfoWidget->org3KeywordEdit->setText( codec->toUnicode( info.org3Keyword.get() ) );
+
+	int index = m_orgAffInfoWidget->org1CategoryCombo->findData( info.org1Category.get() );
+	m_orgAffInfoWidget->org1CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->org2CategoryCombo->findData( info.org2Category.get() );
+	m_orgAffInfoWidget->org2CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->org3CategoryCombo->findData( info.org3Category.get() );
+	m_orgAffInfoWidget->org3CategoryCombo->setCurrentIndex( index );
+
+	m_orgAffInfoWidget->aff1KeywordEdit->setText( codec->toUnicode( info.pastAff1Keyword.get() ) );
+	m_orgAffInfoWidget->aff2KeywordEdit->setText( codec->toUnicode( info.pastAff2Keyword.get() ) );
+	m_orgAffInfoWidget->aff3KeywordEdit->setText( codec->toUnicode( info.pastAff3Keyword.get() ) );
+
+	index = m_orgAffInfoWidget->aff1CategoryCombo->findData( info.pastAff1Category.get() );
+	m_orgAffInfoWidget->aff1CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->aff2CategoryCombo->findData( info.pastAff2Category.get() );
+	m_orgAffInfoWidget->aff2CategoryCombo->setCurrentIndex( index );
+
+	index = m_orgAffInfoWidget->aff3CategoryCombo->findData( info.pastAff3Category.get() );
+	m_orgAffInfoWidget->aff3CategoryCombo->setCurrentIndex( index );
 }
 
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
-	m_genInfoWidget->ageSpinBox->setValue( ui.age );
-	if ( ui.birthday.isValid() )
-		m_genInfoWidget->birthday->setText( KGlobal::locale()->formatDate( ui.birthday,true ) );
-		
-	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
-	m_genInfoWidget->genderEdit->setText( gender );
-	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
-	QString ms = static_cast<ICQProtocol*>( m_contact->protocol() )->maritals()[ui.marital];
-	m_genInfoWidget->marital->setText( ms );
+	if ( m_editable )
+		m_moreUserInfo = ui;
 
-	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity) );
-	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate) );
-	
-	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
-	
-	QString ocountry = p->countries()[ui.ocountry];
-	m_genInfoWidget->oCountryEdit->setText( ocountry );
-	
-	QString lang1 = p->languages()[ui.lang1];
-	m_genInfoWidget->language1Edit->setText( lang1 );
-	
-	QString lang2 = p->languages()[ui.lang2];
-	m_genInfoWidget->language2Edit->setText( lang2 );
-	
-	QString lang3 = p->languages()[ui.lang3];
-	m_genInfoWidget->language3Edit->setText( lang3 );
+	m_genInfoWidget->ageEdit->setText( QString::number( ui.age.get() ) );
+	m_genInfoWidget->birthdayYearSpin->setValue( ui.birthdayYear.get() );
+	m_genInfoWidget->birthdayMonthSpin->setValue( ui.birthdayMonth.get() );
+	m_genInfoWidget->birthdayDaySpin->setValue( ui.birthdayDay.get() );
+	m_genInfoWidget->genderCombo->setCurrentIndex( m_genInfoWidget->genderCombo->findData( ui.gender.get() ) );
+	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage.get() ) );
+	m_genInfoWidget->maritalCombo->setCurrentIndex( m_genInfoWidget->maritalCombo->findData( ui.marital.get() ) );
+	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity.get() ) );
+	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate.get() ) );
+	m_genInfoWidget->oCountryCombo->setCurrentIndex( m_genInfoWidget->oCountryCombo->findData( ui.ocountry.get() ) );
+	m_genInfoWidget->language1Combo->setCurrentIndex( m_genInfoWidget->language1Combo->findData( ui.lang1.get() ) );
+	m_genInfoWidget->language2Combo->setCurrentIndex( m_genInfoWidget->language2Combo->findData( ui.lang2.get() ) );
+	m_genInfoWidget->language3Combo->setCurrentIndex( m_genInfoWidget->language3Combo->findData( ui.lang3.get() ) );
+	m_otherInfoWidget->sendInfoCheck->setChecked( ui.sendInfo.get() );
 }
 
+
+void ICQUserInfoWidget::slotUpdateDay()
+{
+	int year = m_genInfoWidget->birthdayYearSpin->value();
+	int month = m_genInfoWidget->birthdayMonthSpin->value();
+	QDate date( year, month, 1 );
+	
+	if ( date.isValid() )
+		m_genInfoWidget->birthdayDaySpin->setMaximum( date.daysInMonth() );
+	else
+		m_genInfoWidget->birthdayDaySpin->setMaximum( 31 );
+}
+
+void ICQUserInfoWidget::slotUpdateAge()
+{
+	QDate now = QDate::currentDate();
+	int year = m_genInfoWidget->birthdayYearSpin->value();
+	int month = m_genInfoWidget->birthdayMonthSpin->value();
+	int day = m_genInfoWidget->birthdayDaySpin->value();
+
+	int age = 0;
+
+	if ( year > 0 )
+	{
+		age = now.year() - year;
+		if ( month > now.month() )
+		{
+			age--;
+		}
+		else if ( month == now.month() )
+		{
+			if ( day > now.day() )
+			{
+				age--;
+			}
+		}
+	}
+
+	m_genInfoWidget->ageEdit->setText( QString::number( age ) );
+}
+
+void ICQUserInfoWidget::slotOrg1CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->org1CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->org1KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotOrg2CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->org2CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->org2KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotOrg3CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->org3CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->org3KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAff1CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->aff1CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->aff1KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAff2CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->aff2CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->aff2KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAff3CategoryChanged( int index )
+{
+	bool enable = !( m_orgAffInfoWidget->aff3CategoryCombo->itemData( index ).toInt() == 0 );
+	m_orgAffInfoWidget->aff3KeywordEdit->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic1Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic1Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc1->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic2Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic2Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc2->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic3Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic3Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc3->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotInterestTopic4Changed( int index )
+{
+	bool enable = !( m_interestInfoWidget->topic4Combo->itemData( index ).toInt() == 0 );
+	m_interestInfoWidget->desc4->setEnabled( enable );
+}
+
+void ICQUserInfoWidget::slotAddEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+	int row = ( indexes.count() > 0 ) ? indexes.at( 0 ).row() + 1 : m_emailModel->rowCount();
+
+	QList<QStandardItem *> items;
+	QStandardItem *modelItem;
+
+	modelItem = new QStandardItem( ( row == 0 ) ? i18nc("Primary email address", "Primary") : i18nc("Other email address", "More") );
+	modelItem->setEditable( false );
+	modelItem->setSelectable( false );
+	items.append( modelItem );
+
+	modelItem = new QStandardItem();
+	modelItem->setEditable( m_editable );
+	modelItem->setCheckable( true );
+	modelItem->setCheckState( Qt::Unchecked );
+	items.append( modelItem );
+
+	m_emailModel->insertRow( row, items );
+	QModelIndex idx = m_emailModel->index( row, 1 );
+	selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+
+	if ( row == 0 && m_emailModel->rowCount() > 1 )
+		m_emailModel->item( 1, 0 )->setText( i18nc("Other email address", "More") );
+}
+
+void ICQUserInfoWidget::slotRemoveEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+	
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		m_emailModel->removeRow( row );
+
+		if ( row == 0 && m_emailModel->rowCount() > 0 )
+			m_emailModel->item( 0, 0 )->setText( i18nc("Primary email address", "Primary") );
+
+		QModelIndex idx = m_emailModel->index( ( row > 0 ) ? row - 1 : row , 1 );
+		selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+	}
+}
+
+void ICQUserInfoWidget::slotUpEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		if ( row > 0 )
+		{
+			swapEmails( row-1, row );
+
+			QModelIndex idx = m_emailModel->index( row - 1, 1 );
+			selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+		}
+	}
+}
+
+void ICQUserInfoWidget::slotDownEmail()
+{
+	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
+	QModelIndexList indexes = selectionModel->selectedIndexes();
+
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		if ( row < m_emailModel->rowCount() - 1 )
+		{
+			swapEmails( row, row + 1 );
+
+			QModelIndex idx = m_emailModel->index( row + 1, 1 );
+			selectionModel->select( idx, QItemSelectionModel::SelectCurrent );
+		}
+	}
+}
+
+void ICQUserInfoWidget::slotEmailSelectionChanged( const QItemSelection& selected )
+{
+	QModelIndexList indexes = selected.indexes();
+	if ( indexes.count() > 0 )
+	{
+		int row = indexes.at( 0 ).row();
+		m_otherInfoWidget->upEmailButton->setEnabled( (row > 0) );
+		m_otherInfoWidget->downEmailButton->setEnabled( (row < m_emailModel->rowCount()-1 ) );
+		m_otherInfoWidget->removeEmailButton->setEnabled( true );
+	}
+	else
+	{
+		m_otherInfoWidget->removeEmailButton->setEnabled( false );
+		m_otherInfoWidget->upEmailButton->setEnabled( false );
+		m_otherInfoWidget->downEmailButton->setEnabled( false );
+	}
+}
+
+void ICQUserInfoWidget::swapEmails( int r1, int r2 )
+{
+	if ( r1 > r2 )
+		qSwap( r1, r2 );
+
+	QList<QStandardItem *> rowItems1 = m_emailModel->takeRow( r1 );
+	QList<QStandardItem *> rowItems2 = m_emailModel->takeRow( r2-1 );
+
+	rowItems1.at( 0 )->setText( ( r2 == 0 ) ? i18nc("Primary email address", "Primary") : i18nc("Other email address", "More") );
+	rowItems2.at( 0 )->setText( ( r1 == 0 ) ? i18nc("Primary email address", "Primary") : i18nc("Other email address", "More") );
+	m_emailModel->insertRow( r1, rowItems2 );
+	m_emailModel->insertRow( r2, rowItems1 );
+}
+
+ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQGeneralUserInfo* info = new ICQGeneralUserInfo( m_generalUserInfo );
+
+	//Email is stored in storeEmailInfo(), because if we change primary email we have to update all emails.
+	info->nickName.set( codec->fromUnicode( m_genInfoWidget->nickNameEdit->text() ) );
+	info->firstName.set( codec->fromUnicode( m_genInfoWidget->firstNameEdit->text() ) );
+	info->lastName.set( codec->fromUnicode( m_genInfoWidget->lastNameEdit->text() ) );
+	info->city.set( codec->fromUnicode( m_homeInfoWidget->cityEdit->text() ) );
+	info->state.set( codec->fromUnicode( m_homeInfoWidget->stateEdit->text() ) );
+	info->phoneNumber.set( codec->fromUnicode( m_homeInfoWidget->phoneEdit->text() ) );
+	info->faxNumber.set( codec->fromUnicode( m_homeInfoWidget->faxEdit->text() ) );
+	info->address.set( codec->fromUnicode( m_homeInfoWidget->addressEdit->text() ) );
+	info->cellNumber.set( codec->fromUnicode( m_homeInfoWidget->cellEdit->text() ) );
+	info->zip.set( codec->fromUnicode( m_homeInfoWidget->zipEdit->text() ) );
+
+	int index = m_homeInfoWidget->countryCombo->currentIndex();
+	info->country.set( m_homeInfoWidget->countryCombo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->timezoneCombo->currentIndex();
+	info->timezone.set( m_genInfoWidget->timezoneCombo->itemData( index ).toInt() );
+	
+	return info;
+}
+
+ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQMoreUserInfo* info = new ICQMoreUserInfo( m_moreUserInfo );
+
+	info->age.set( m_genInfoWidget->ageEdit->text().toInt() );
+	info->birthdayYear.set( m_genInfoWidget->birthdayYearSpin->value() );
+	info->birthdayMonth.set( m_genInfoWidget->birthdayMonthSpin->value() );
+	info->birthdayDay.set( m_genInfoWidget->birthdayDaySpin->value() );
+
+	int index = m_genInfoWidget->genderCombo->currentIndex();
+	info->gender.set( m_genInfoWidget->genderCombo->itemData( index ).toInt() );
+
+	info->homepage.set( codec->fromUnicode( m_homeInfoWidget->homepageEdit->text() ) );
+
+	index = m_genInfoWidget->maritalCombo->currentIndex();
+	info->marital.set( m_genInfoWidget->maritalCombo->itemData( index ).toInt() );
+	
+	info->ocity.set( codec->fromUnicode( m_genInfoWidget->oCityEdit->text() ) );
+	info->ostate.set( codec->fromUnicode( m_genInfoWidget->oStateEdit->text() ) );
+
+	index = m_genInfoWidget->oCountryCombo->currentIndex();
+	info->ocountry.set( m_genInfoWidget->oCountryCombo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->language1Combo->currentIndex();
+	info->lang1.set( m_genInfoWidget->language1Combo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->language2Combo->currentIndex();
+	info->lang2.set( m_genInfoWidget->language2Combo->itemData( index ).toInt() );
+
+	index = m_genInfoWidget->language3Combo->currentIndex();
+	info->lang3.set( m_genInfoWidget->language3Combo->itemData( index ).toInt() );
+
+	info->sendInfo.set( m_otherInfoWidget->sendInfoCheck->isChecked() );
+
+	return info;
+}
+
+ICQWorkUserInfo* ICQUserInfoWidget::storeWorkInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQWorkUserInfo* info = new ICQWorkUserInfo( m_workUserInfo );
+
+	info->city.set( codec->fromUnicode( m_workInfoWidget->cityEdit->text() ) );
+	info->state.set( codec->fromUnicode( m_workInfoWidget->stateEdit->text() ) );
+	info->phone.set( codec->fromUnicode( m_workInfoWidget->phoneEdit->text() ) );
+	info->fax.set( codec->fromUnicode( m_workInfoWidget->faxEdit->text() ) );
+	info->address.set( codec->fromUnicode( m_workInfoWidget->addressEdit->text() ) );
+	info->zip.set( codec->fromUnicode( m_workInfoWidget->zipEdit->text() ) );
+	info->company.set( codec->fromUnicode( m_workInfoWidget->companyEdit->text() ) );
+	info->department.set( codec->fromUnicode( m_workInfoWidget->departmentEdit->text() ) );
+	info->position.set( codec->fromUnicode( m_workInfoWidget->positionEdit->text() ) );
+	info->homepage.set( codec->fromUnicode( m_workInfoWidget->homepageEdit->text() ) );
+
+	int index = m_workInfoWidget->countryCombo->currentIndex();
+	info->country.set( m_workInfoWidget->countryCombo->itemData( index ).toInt() );
+
+	index = m_workInfoWidget->occupationCombo->currentIndex();
+	info->occupation.set( m_workInfoWidget->occupationCombo->itemData( index ).toInt() );
+
+	return info;
+}
+
+ICQOrgAffInfo* ICQUserInfoWidget::storeOrgAffInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQOrgAffInfo* info = new ICQOrgAffInfo( m_orgAffUserInfo );
+
+	info->org1Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org1KeywordEdit->text() ) );
+	info->org2Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org2KeywordEdit->text() ) );
+	info->org3Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org3KeywordEdit->text() ) );
+
+	int index = m_orgAffInfoWidget->org1CategoryCombo->currentIndex();
+	info->org1Category.set( m_orgAffInfoWidget->org1CategoryCombo->itemData( index ).toInt() );
+
+	index = m_orgAffInfoWidget->org2CategoryCombo->currentIndex();
+	info->org2Category.set( m_orgAffInfoWidget->org2CategoryCombo->itemData( index ).toInt() );
+
+	index = m_orgAffInfoWidget->org3CategoryCombo->currentIndex();
+	info->org3Category.set( m_orgAffInfoWidget->org3CategoryCombo->itemData( index ).toInt() );
+
+	info->pastAff1Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->aff1KeywordEdit->text() ) );
+	info->pastAff2Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->aff2KeywordEdit->text() ) );
+	info->pastAff3Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->aff3KeywordEdit->text() ) );
+
+	index = m_orgAffInfoWidget->aff1CategoryCombo->currentIndex();
+	info->pastAff1Category.set( m_orgAffInfoWidget->aff1CategoryCombo->itemData( index ).toInt() );
+
+	index = m_orgAffInfoWidget->aff2CategoryCombo->currentIndex();
+	info->pastAff2Category.set( m_orgAffInfoWidget->aff2CategoryCombo->itemData( index ).toInt() );
+	
+	index = m_orgAffInfoWidget->aff3CategoryCombo->currentIndex();
+	info->pastAff3Category.set( m_orgAffInfoWidget->aff3CategoryCombo->itemData( index ).toInt() );
+	
+	return info;
+}
+
+ICQInterestInfo* ICQUserInfoWidget::storeInterestInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQInterestInfo* info = new ICQInterestInfo( m_interestInfo );
+
+	int index = m_interestInfoWidget->topic1Combo->currentIndex();
+	info->topics[0].set( m_interestInfoWidget->topic1Combo->itemData( index ).toInt() );
+	info->descriptions[0].set( codec->fromUnicode( m_interestInfoWidget->desc1->text() ) );
+
+	index = m_interestInfoWidget->topic2Combo->currentIndex();
+	info->topics[1].set( m_interestInfoWidget->topic2Combo->itemData( index ).toInt() );
+	info->descriptions[1].set( codec->fromUnicode( m_interestInfoWidget->desc2->text() ) );
+
+	index = m_interestInfoWidget->topic3Combo->currentIndex();
+	info->topics[2].set( m_interestInfoWidget->topic3Combo->itemData( index ).toInt() );
+	info->descriptions[2].set( codec->fromUnicode( m_interestInfoWidget->desc3->text() ) );
+
+	index = m_interestInfoWidget->topic4Combo->currentIndex();
+	info->topics[3].set( m_interestInfoWidget->topic4Combo->itemData( index ).toInt() );
+	info->descriptions[3].set( codec->fromUnicode( m_interestInfoWidget->desc4->text() ) );
+
+	return info;
+}
+
+ICQNotesInfo* ICQUserInfoWidget::storeNotesInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQNotesInfo* info = new ICQNotesInfo( m_notesInfo );
+
+	info->notes.set( codec->fromUnicode( m_otherInfoWidget->notesEdit->toPlainText() ) );
+
+	return info;
+}
+
+ICQEmailInfo* ICQUserInfoWidget::storeEmailInfo() const
+{
+	QTextCodec* codec = m_contact->contactCodec();
+	ICQEmailInfo* info = new ICQEmailInfo( m_emailInfo );
+
+	//Prepend primary email to emails
+	QList<ICQEmailInfo::EmailItem> emails = info->emailList.get();
+	if ( !m_generalUserInfo.email.get().isEmpty() )
+	{
+		ICQEmailInfo::EmailItem item;
+		item.email = m_generalUserInfo.email.get();
+		item.publish = m_generalUserInfo.publishEmail.get();
+		emails.prepend( item );
+	}
+	info->emailList = emails;
+
+	//Store emails
+	emails.clear();
+
+	int size = m_emailModel->rowCount();
+	for ( int i = 0; i < size; i++ )
+	{
+		QStandardItem *modelItem = m_emailModel->item( i, 1 );
+
+		ICQEmailInfo::EmailItem item;
+		item.email = codec->fromUnicode( modelItem->text() );
+		item.publish = ( i > 0 ) ? ( modelItem->checkState() == Qt::Checked ) : false;
+		emails.append( item );
+	}
+
+	if ( emails.count() == 0 )
+	{	// Delete all emails
+		ICQEmailInfo::EmailItem item;
+		item.publish = false;
+		emails.append( item );
+	}
+	info->emailList.set( emails );
+
+	return info;
+}
+
+QMap<QString, int> ICQUserInfoWidget::reverseMap( const QMap<int, QString>& map ) const
+{
+	QMap<QString, int> revMap;
+	QMapIterator<int, QString> it( map );
+
+	while ( it.hasNext() )
+	{
+		it.next();
+		revMap.insert( it.value(), it.key() );
+	}
+
+	return revMap;
+}
 
 #include "icquserinfowidget.moc"
 

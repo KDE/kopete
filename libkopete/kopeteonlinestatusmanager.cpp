@@ -374,7 +374,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 					++i;
 				}
 				blendOnLower( overlayImage, basisImage, offset );
-				basis->fromImage( basisImage );
+				*basis = QPixmap::fromImage( basisImage );
 			}
 		}
 	}

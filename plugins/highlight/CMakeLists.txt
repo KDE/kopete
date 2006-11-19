@@ -14,7 +14,6 @@ kde4_automoc(${kopete_highlight_PART_SRCS})
 
 kde4_add_plugin(kopete_highlight ${kopete_highlight_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_highlight )
 
 target_link_libraries(kopete_highlight  ${KDE4_KDECORE_LIBS} kopete )
 
@@ -31,9 +30,8 @@ kde4_automoc(${kcm_kopete_highlight_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_highlight )
 
-target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  knotifyconfig )
+target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS} )
 
 install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -46,26 +44,3 @@ install( FILES kopete_highlight_config.desktop  DESTINATION ${SERVICES_INSTALL_D
 
 
 
-#original Makefile.am contents follow:
-
-#METASOURCES = AUTO
-#
-#SUBDIRS = icons
-#
-#AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
-#
-#kde_module_LTLIBRARIES = kopete_highlight.la kcm_kopete_highlight.la
-#
-#kopete_highlight_la_SOURCES = highlightplugin.cpp highlightconfig.cpp filter.cpp
-#kopete_highlight_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-#kopete_highlight_la_LIBADD      = ../../libkopete/libkopete.la
-#
-#kcm_kopete_highlight_la_SOURCES = highlightprefsbase.ui highlightpreferences.cpp filter.cpp highlightconfig.cpp
-#kcm_kopete_highlight_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-#kcm_kopete_highlight_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
-#
-#service_DATA = kopete_highlight.desktop
-#servicedir = $(kde_servicesdir)
-#
-#kcm_DATA = kopete_highlight_config.desktop
-#kcmdir = $(kde_servicesdir)/kconfiguredialog

@@ -1,7 +1,7 @@
 /*
     msnsecureloginhandler.h - SSL login for MSN protocol
 
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -30,7 +30,7 @@ namespace KIO
  * This class handle the login process. It connect to the .NET Password service and retrive the ticket(tweener) to login.
  * Use KIO.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class MSNSecureLoginHandler : public QObject
 {

@@ -1,7 +1,7 @@
  /*
     jabbercapabilitiesmanager.cpp - Manage entity capabilities(JEP-0115).
 
-    Copyright (c) 2006      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright (c) 2006      by Michaël Larouche     <larouche@kde.org>
     Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>

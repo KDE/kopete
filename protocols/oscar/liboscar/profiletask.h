@@ -41,6 +41,7 @@ public:
 
 	void setProfileText( const QString& text );
 	void setAwayMessage( const QString& text );
+	void setCapabilities( bool value );
 
 private:
 
@@ -49,6 +50,7 @@ private:
 private:
 	QString m_profileText;
 	QString m_awayMessage;
+	bool m_sendCaps;
 };
 
 #endif

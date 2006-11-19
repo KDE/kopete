@@ -170,7 +170,7 @@ void BuddyIconTask::sendAIMBuddyIconRequest()
 	b->addWord( 0x0001 );
 	b->addByte( m_hashType );
 	b->addByte( m_hash.size() ); //MD5 Hash Size
-	b->addString( m_hash, m_hash.size() ); //MD5 Hash
+	b->addString( m_hash ); //MD5 Hash
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
@@ -203,7 +203,7 @@ void BuddyIconTask::sendICQBuddyIconRequest()
 	b->addWord( 0x0001 );
 	b->addByte( m_hashType );
 	b->addByte( m_hash.size() ); //MD5 Hash Size
-	b->addString( m_hash, m_hash.size() ); //MD5 Hash
+	b->addString( m_hash ); //MD5 Hash
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }

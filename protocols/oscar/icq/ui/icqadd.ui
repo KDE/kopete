@@ -1,85 +1,86 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>icqAddUI</class>
  <widget class="QWidget" name="icqAddUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
-    <height>74</height>
+    <width>511</width>
+    <height>141</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QGridLayout" >
    <property name="margin" >
-    <number>0</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+   <item row="0" column="0" >
+    <widget class="QRadioButton" name="icqRadioButton" >
+     <property name="text" >
+      <string>ICQ Number:</string>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="checked" >
+      <bool>true</bool>
      </property>
-     <item>
-      <widget class="QLabel" name="textLabel1" >
-       <property name="text" >
-        <string>UIN #:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="uinEdit" />
-     </item>
-    </layout>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="textLabel1_2" >
-       <property name="text" >
-        <string>Alternatively, you can search the ICQ Whitepages :</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>47</width>
-         <height>26</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="KPushButton" name="searchButton" >
-       <property name="text" >
-        <string>&amp;Search</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="0" column="1" colspan="3" >
+    <widget class="QLineEdit" name="icqEdit" />
    </item>
-   <item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QLabel" name="textLabel1_2" >
+     <property name="text" >
+      <string>Alternatively, you can search the ICQ Whitepages :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>47</width>
+       <height>26</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="3" >
+    <widget class="KPushButton" native="1" name="searchButton" >
+     <property name="text" >
+      <string>&amp;Search</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4" >
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QRadioButton" name="aimRadioButton" >
+     <property name="text" >
+      <string>AOL Screen Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="3" >
+    <widget class="QLineEdit" name="aimEdit" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -89,8 +90,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>31</width>
+       <height>81</height>
       </size>
      </property>
     </spacer>
@@ -98,16 +99,19 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>KPushButton</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>icqRadioButton</tabstop>
+  <tabstop>icqEdit</tabstop>
+  <tabstop>aimRadioButton</tabstop>
+  <tabstop>aimEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

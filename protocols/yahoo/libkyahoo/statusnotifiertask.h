@@ -41,7 +41,7 @@ protected:
 	void parseStealthStatus( YMSGTransfer *transfer );
 	void parseAuthorization( YMSGTransfer *transfer );
 signals:
-	void statusChanged( const QString&, int, const QString&, int, int );
+	void statusChanged( const QString &nick, int state, const QString &message, int away, int idle, int pictureChecksum );
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
 	void loginResponse( int, const QString& );
 	void authorizationAccepted( const QString & );

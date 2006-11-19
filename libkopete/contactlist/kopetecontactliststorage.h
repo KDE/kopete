@@ -2,7 +2,7 @@
     Kopete Contact List Storage Base Class
 
     Copyright  2006      by Matt Rogers <mattr@kde.org>
-    Copyright  2006      by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright  2006      by Michaël Larouche <larouche@kde.org>
 
     Kopete     2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -29,7 +29,7 @@ namespace Kopete
  * @brief Provide a storage for Kopete Contact List.
  *
  * @author Matt Rogers <mattr@kde.org>
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class ContactListStorage
 {

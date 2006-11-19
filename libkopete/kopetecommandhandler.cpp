@@ -16,7 +16,6 @@
 
 #include <kapplication.h>
 #include <qregexp.h>
-//Added by qt3to4:
 #include <QList>
 #include <kdebug.h>
 #include <klocale.h>
@@ -64,14 +63,13 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 				KAction *a = static_cast<KAction*>( it.value() );
 				actionCollection()->insert( a );
 				QDomElement newNode = doc.createElement( QString::fromLatin1("Action") );
-				newNode.setAttribute( QString::fromLatin1("name"),
-					QString::fromLatin1( a->name() ) );
+				newNode.setAttribute( QString::fromLatin1("name"), a->objectName() );
 
 				bool added = false;
 				for( QDomElement n = menu.firstChild().toElement();
 					!n.isNull(); n = n.nextSibling().toElement() )
 				{
-					if( QString::fromLatin1(a->name()) < n.attribute(QString::fromLatin1("name")))
+					if( a->objectName() < n.attribute(QString::fromLatin1("name")))
 					{
 						menu.insertBefore( newNode, n );
 						added = true;

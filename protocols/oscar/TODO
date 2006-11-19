@@ -48,6 +48,3 @@ that was done in oscarsocket, that will need redoing in liboscar
 - make renaming serverside contacts possible (function is there but fails due
   to massive contactlist bugs caused by above mentioned classes)
 - support logging in with something different than "online" status for AIM
-- finish icq userinfo dialog and sending your own icq userinfo to the server,
-  it's easy to do but because of the mass of items takes lots of time
-  and is extremely boring. (requires snac 0x15, * parsing)

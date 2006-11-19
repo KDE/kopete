@@ -51,15 +51,13 @@ private slots:
 	void slotCancel ();
 	void slotTransferData ( KIO::Job *job, const QByteArray &data );
 	void slotTransferResult ( KJob *job );
-	void slotSetSelection ( int row );
+	void slotListServerClicked ( );
 
 private:
 	Ui::DlgJabberChooseServer *mMainWidget;
 	JabberRegisterAccount *mParentWidget;
 	KIO::TransferJob *mTransferJob;
 	QByteArray xmlServerList;
-
-	int mSelectedRow;
 
 };
 

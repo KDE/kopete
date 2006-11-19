@@ -3,8 +3,9 @@
  icquserinfowidget.h - Display ICQ user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
+ Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 
- Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+ Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                       *
@@ -22,7 +23,8 @@
 #include <kpagedialog.h>
 #include <icquserinfo.h>
 
-class QStringListModel;
+class QStandardItemModel;
+class QItemSelection;
 
 namespace Ui
 {
@@ -39,10 +41,12 @@ class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	ICQUserInfoWidget( QWidget* parent = 0 );
+	ICQUserInfoWidget( QWidget* parent = 0, bool editable = false );
 	~ICQUserInfoWidget();
 	void setContact( ICQContact* contact );
 	
+	QList<ICQInfoBase*> getInfoData() const;
+
 public slots:
 	void fillBasicInfo( const ICQGeneralUserInfo& );
 	void fillWorkInfo( const ICQWorkUserInfo& );
@@ -52,7 +56,41 @@ public slots:
 	void fillInterestInfo( const ICQInterestInfo& );
 	void fillOrgAffInfo( const ICQOrgAffInfo& info);
 
+private slots:
+	void slotUpdateDay();
+	void slotUpdateAge();
+
+	void slotOrg1CategoryChanged( int index );
+	void slotOrg2CategoryChanged( int index );
+	void slotOrg3CategoryChanged( int index );
+	void slotAff1CategoryChanged( int index );
+	void slotAff2CategoryChanged( int index );
+	void slotAff3CategoryChanged( int index );
+
+	void slotInterestTopic1Changed( int index );
+	void slotInterestTopic2Changed( int index );
+	void slotInterestTopic3Changed( int index );
+	void slotInterestTopic4Changed( int index );
+
+	void slotAddEmail();
+	void slotRemoveEmail();
+	void slotUpEmail();
+	void slotDownEmail();
+	void slotEmailSelectionChanged( const QItemSelection& selected );
+
 private:
+	void swapEmails( int r1, int r2 );
+
+	ICQGeneralUserInfo* storeBasicInfo() const;
+	ICQMoreUserInfo* storeMoreInfo() const;
+	ICQWorkUserInfo* storeWorkInfo() const;
+	ICQOrgAffInfo* storeOrgAffInfo() const;
+	ICQInterestInfo* storeInterestInfo() const;
+	ICQNotesInfo* storeNotesInfo() const;
+	ICQEmailInfo* storeEmailInfo() const;
+	
+	QMap<QString, int> reverseMap( const QMap<int, QString>& map ) const;
+
 	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
 	Ui::ICQWorkInfoWidget* m_workInfoWidget;
 	Ui::ICQHomeInfoWidget* m_homeInfoWidget;
@@ -61,7 +99,16 @@ private:
 	Ui::ICQOrgAffInfoWidget* m_orgAffInfoWidget;
 	ICQContact* m_contact;
 	
-	QStringListModel* m_emailModel;
+	QStandardItemModel* m_emailModel;
+	bool m_editable;
+
+	ICQGeneralUserInfo m_generalUserInfo;
+	ICQMoreUserInfo m_moreUserInfo;
+	ICQWorkUserInfo m_workUserInfo;
+	ICQOrgAffInfo m_orgAffUserInfo;
+	ICQInterestInfo m_interestInfo;
+	ICQNotesInfo m_notesInfo;
+	ICQEmailInfo m_emailInfo;
 };
 
 #endif

@@ -2,7 +2,8 @@
   aimcontact.cpp  -  Oscar Protocol Plugin
 
   Copyright (c) 2003 by Will Stephenson
-  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
+  Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -14,61 +15,40 @@
   *************************************************************************
 */
 
-#include <time.h>
-
-#include <qregexp.h>
-#include <qtimer.h>
-#include <qtextcodec.h>
-
-#include <kapplication.h>
+#include "aimcontact.h"
 
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <ktoggleaction.h>
-
-#include "kopeteaway.h"
-#include "kopetechatsession.h"
 #include "kopeteuiglobal.h"
-#include "kopetemetacontact.h"
 
 //liboscar
-#include "client.h"
-#include "oscartypes.h"
 #include "oscarutils.h"
 #include "contactmanager.h"
 
 #include "aimprotocol.h"
 #include "aimuserinfo.h"
-#include "aimcontact.h"
 #include "aimaccount.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
                         const QString& icon, const OContact& ssiItem )
-: OscarContact(account, name, parent, icon, ssiItem )
+: AIMContactBase(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setOnlineStatus( mProtocol->statusOffline );
 
 	m_infoDialog = 0L;
 	m_warnUserAction = 0L;
-	mUserProfile="";
-	m_haveAwayMessage = false;
-	m_mobile = false;
-	// Set the last autoresponse time to the current time yesterday
-	m_lastAutoresponseTime = QDateTime::currentDateTime().addDays(-1);
 
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ),
 	                  this, SLOT( userOffline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
-	                  this, SLOT( updateAwayMessage( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	                  this, SLOT( updateProfile( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
 	                  this, SLOT( gotWarning( const QString&, quint16, quint16 ) ) );
-	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 }
 
 AIMContact::~AIMContact()
@@ -84,14 +64,16 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 {
 
 	QList<KAction*> *actionCollection = new QList<KAction*>();
-	/*if ( !m_warnUserAction )
+	if ( !m_warnUserAction )
 	{
-		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, this, SLOT( warnUser() ), this, "warnAction" );
+		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, "warnAction" );
+		QObject::connect( m_warnUserAction, SIGNAL(triggered(bool)), this, SLOT(warnUser()) );
 	}
-	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
-	                                      this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
-	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
-	                                        this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), 0, "actionVisibleTo");
+	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
+	
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), 0, "actionInvisibleTo");
+	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
 	
 	bool on = account()->isConnected();
 
@@ -100,7 +82,7 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 	m_actionVisibleTo->setEnabled(on);
 	m_actionInvisibleTo->setEnabled(on);
 
-	SSIManager* ssi = account()->engine()->ssiManager();
+	ContactManager* ssi = account()->engine()->ssiManager();
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
@@ -108,32 +90,8 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 
 	actionCollection->append(m_actionVisibleTo);
 	actionCollection->append(m_actionInvisibleTo);
-*/
 
 	return actionCollection;
-}
-
-const QString AIMContact::awayMessage()
-{
-	return property(mProtocol->awayMessage).value().toString();
-}
-
-void AIMContact::setAwayMessage(const QString &message)
-{
-	kDebug(14152) << k_funcinfo <<
-		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
-	QString filteredMessage = message;
-	filteredMessage.replace(
-		QRegExp(QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>")),
-		QString::fromLatin1("\\1"));
-	filteredMessage.replace(
-		QRegExp(QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>")),
-		QString::fromLatin1("\\1") );
-	QRegExp fontRemover( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") );
-	fontRemover.setMinimal(true);
-	while ( filteredMessage.indexOf( fontRemover ) != -1 )
-		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
-	setProperty(mProtocol->awayMessage, filteredMessage);
 }
 
 int AIMContact::warningLevel() const
@@ -187,12 +145,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( ( details.userClass() & CLASS_AWAY ) == STATUS_ONLINE )
 	{
-		if ( m_mobile ) 
+		if ( m_mobile )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
 			setOnlineStatus( mProtocol->statusWirelessOnline );
     	}
-		else 
+		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
 			setOnlineStatus( mProtocol->statusOnline ); //we're online
@@ -202,12 +160,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	}
 	else if ( ( details.userClass() & CLASS_AWAY ) ) // STATUS_AWAY
 	{
-		if ( m_mobile ) 
+		if ( m_mobile )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
 			setOnlineStatus( mProtocol->statusWirelessOnline );
 		}
-		else 
+		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
 			setOnlineStatus( mProtocol->statusAway ); //we're away
@@ -248,35 +206,6 @@ void AIMContact::userOffline( const QString& userId )
 		setOnlineStatus( mProtocol->statusOffline );
 		removeProperty( mProtocol->awayMessage );
 	}
-}
-
-void AIMContact::updateAwayMessage( const QString& contact, const QString& message )
-{
-	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
-		return;
-	else
-	{
-		if ( message.isEmpty() )
-		{
-			removeProperty( mProtocol->awayMessage );
-			if ( !m_mobile )
-				setOnlineStatus( mProtocol->statusOnline );
-			else
-				setOnlineStatus( mProtocol->statusWirelessOnline );
-			m_haveAwayMessage = false;
-		}
-		else
-		{
-			m_haveAwayMessage = true;
-			setAwayMessage( message );
-			if ( !m_mobile )
-				setOnlineStatus( mProtocol->statusAway );
-			else
-				setOnlineStatus( mProtocol->statusWirelessAway );
-		}
-	}
-
-	emit updatedProfile();
 }
 
 void AIMContact::updateProfile( const QString& contact, const QString& profile )
@@ -334,139 +263,5 @@ void AIMContact::slotInvisibleTo()
 	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
-void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
-{
-	Oscar::Message msg;
-	QString s;
-
-	if (message.plainBody().isEmpty()) // no text, do nothing
-		return;
-	//okay, now we need to change the message.escapedBody from real HTML to aimhtml.
-	//looking right now for docs on that "format".
-	//looks like everything except for alignment codes comes in the format of spans
-
-	//font-style:italic -> <i>
-	//font-weight:600 -> <b> (anything > 400 should be <b>, 400 is not bold)
-	//text-decoration:underline -> <u>
-	//font-family: -> <font face="">
-	//font-size:xxpt -> <font ptsize=xx>
-
-	s=message.escapedBody();
-	s.replace ( QRegExp( QString::fromLatin1("<span style=\"([^\"]*)\">([^<]*)</span>")),
-			QString::fromLatin1("<style>\\1;\"\\2</style>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-style:italic;([^\"]*)\"([^<]*)</style>")),
-	            QString::fromLatin1("<i><style>\\1\\2\"\\3</style></i>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-weight:600;([^\"]*)\"([^<]*)</style>")),
-	            QString::fromLatin1("<b><style>\\1\\2\"\\3</style></b>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)text-decoration:underline;([^\"]*)\"([^<]*)</style>")),
-	            QString::fromLatin1("<u><style>\\1\\2\"\\3</style></u>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-family:([^;]*);([^\"]*)\"([^<]*)</style>")),
-	            QString::fromLatin1("<font face=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-size:([^p]*)pt;([^\"]*)\"([^<]*)</style>")),
-				QString::fromLatin1("<font ptsize=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)color:([^;]*);([^\"]*)\"([^<]*)</style>")),
-	            QString::fromLatin1("<font color=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
-
-	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)\"([^<]*)</style>")),
-	            QString::fromLatin1("\\2"));
-
-	//okay now change the <font ptsize="xx"> to <font size="xx">
-
-	//0-9 are size 1
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"\\d\">")),
-	            QString::fromLatin1("<font size=\"1\">"));
-	//10-11 are size 2
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[01]\">")),
-	            QString::fromLatin1("<font size=\"2\">"));
-	//12-13 are size 3
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[23]\">")),
-	            QString::fromLatin1("<font size=\"3\">"));
-	//14-16 are size 4
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[456]\">")),
-	            QString::fromLatin1("<font size=\"4\">"));
-	//17-22 are size 5
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"(?:1[789]|2[012])\">")),
-	            QString::fromLatin1("<font size=\"5\">"));
-	//23-29 are size 6
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"2[3456789]\">")),QString::fromLatin1("<font size=\"6\">"));
-	//30- (and any I missed) are size 7
-	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
-
-	kDebug(14190) << k_funcinfo << "sending "
-		<< s << endl;
-
-	// XXX Need to check for message size?
-
-	if ( m_details.hasCap( CAP_UTF8 ) )
-		msg.setText( Oscar::Message::UCS2, s );
-	else
-		msg.setText( Oscar::Message::UserDefined, s, contactCodec() );
-
-	msg.setReceiver(mName);
-	msg.setTimestamp(message.timestamp());
-	msg.setChannel(0x01);
-
-	mAccount->engine()->sendMessage(msg);
-
-	// Show the message we just sent in the chat window
-	manager(Kopete::Contact::CanCreate)->appendMessage(message);
-	manager(Kopete::Contact::CanCreate)->messageSucceeded();
-}
-
-void AIMContact::updateFeatures()
-{
-	setProperty( static_cast<AIMProtocol*>(protocol())->clientFeatures, m_clientFeatures );
-}
-
-void AIMContact::sendAutoResponse(Kopete::Message& msg)
-{
-	// The target time is 2 minutes later than the last message
-	int delta = m_lastAutoresponseTime.secsTo( QDateTime::currentDateTime() );
-	kDebug(14152) << k_funcinfo << "Last autoresponse time: " << m_lastAutoresponseTime << endl;
-	kDebug(14152) << k_funcinfo << "Current time: " << QDateTime::currentDateTime() << endl;
-	kDebug(14152) << k_funcinfo << "Difference: " << delta << endl;
-	// Check to see if we're past that time
-	if(delta > 120)
-	{
-		kDebug(14152) << k_funcinfo << "Sending auto response" << endl;
-
-		// This code was yoinked straight from OscarContact::slotSendMsg()
-		// If only that slot wasn't private, but I'm not gonna change it right now.
-		Oscar::Message message;
-
-		if ( m_details.hasCap( CAP_UTF8 ) )
-		{
-			message.setText( Oscar::Message::UCS2, msg.plainBody() );
-		}
-		else
-		{
-			QTextCodec* codec = contactCodec();
-			message.setText( Oscar::Message::UserDefined, msg.plainBody(), codec );
-		}
-
-		message.setTimestamp( msg.timestamp() );
-		message.setSender( mAccount->accountId() );
-		message.setReceiver( mName );
-		message.setChannel( 0x01 );
-
-		// isAuto defaults to false
-		mAccount->engine()->sendMessage( message, true);
-		kDebug(14152) << k_funcinfo << "Sent auto response" << endl;
-		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
-		manager(Kopete::Contact::CanCreate)->messageSucceeded();
-		// Update the last autoresponse time
-		m_lastAutoresponseTime = QDateTime::currentDateTime();
-	}
-	else
-	{
-		kDebug(14152) << k_funcinfo << "Not enough time since last autoresponse, NOT sending" << endl;
-	}
-}
 #include "aimcontact.moc"
 //kate: tab-width 4; indent-mode csands;

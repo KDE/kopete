@@ -30,7 +30,6 @@ OfflineMessagesTask::OfflineMessagesTask( Task* parent )
  : ICQTask( parent )
 {
 	tzset();
-	m_msgCount = 0;
 	m_sequence = 0;
 }
 
@@ -125,7 +124,6 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 void OfflineMessagesTask::handleOfflineMessage()
 {
 	Oscar::Message message = parseOfflineMessage(transfer()->buffer());
-	m_msgCount++;
 	emit receivedOfflineMessage( message );
 }
 
@@ -139,8 +137,7 @@ void OfflineMessagesTask::endOfMessages()
 	buffer->skipBytes( 8 );
 	m_sequence = buffer->getLEWord();
 	
-	if ( m_msgCount > 0 )
-		deleteOfflineMessages();
+	deleteOfflineMessages();
 	
 	setSuccess( true );
 }

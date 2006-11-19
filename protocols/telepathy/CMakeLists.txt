@@ -11,18 +11,22 @@ add_definitions( ${DECIBEL_DEFINITIONS} )
 set(kopete_telepathy_ui_SRCS
 ui/telepathyeditaccountwidget.cpp
 ui/telepathyeditparameterwidget.cpp
+ui/telepathyaddcontactpage.cpp
 )
 
 # Generated UI files
 kde4_add_ui_files(kopete_telepathy_ui_SRCS
-ui/telepathyeditaccountwidget.ui 
+ui/telepathyeditaccountwidget.ui
+ui/telepathyaddcontactpage.ui
 )
 
 # Normal protocol classes
 set(kopete_telepathy_PART_SRCS 
 telepathyprotocol.cpp
-telepathyaccount.cpp 
+telepathyaccount.cpp
 telepathycontact.cpp
+telepathycontactmanager.cpp
+telepathychatsession.cpp
 ${kopete_telepathy_ui_SRCS}
 )
 
@@ -30,7 +34,6 @@ kde4_automoc(${kopete_telepathy_PART_SRCS})
 
 kde4_add_plugin(kopete_telepathy ${kopete_telepathy_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_telepathy )
 
 target_link_libraries(kopete_telepathy  ${KDE4_KIO_LIBS} kopete ${DECIBEL_LIBRARIES} )
 

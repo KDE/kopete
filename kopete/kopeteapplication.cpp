@@ -197,7 +197,7 @@ void KopeteApplication::slotLoadPlugins()
 		//        command line arguments processed below. But how exactly? - Martijn
 		// NB: the command line args are completely broken atm.  
 		// I don't want to fix them for 3.5 as plugin loading will change for KDE4.	- Will
-		AddAccountWizard *m_addwizard = new AddAccountWizard( Kopete::UI::Global::mainWidget(), "addAccountWizard", true, true );
+		AddAccountWizard *m_addwizard = new AddAccountWizard( Kopete::UI::Global::mainWidget(), true );
 		m_addwizard->exec();
 		Kopete::AccountManager::self()->save();
 	}
@@ -257,8 +257,6 @@ int KopeteApplication::newInstance()
 {
 //	kDebug(14000) << k_funcinfo << endl;
 	handleURLArgs();
-
-	setMainWidget( m_mainWindow );
 
 	return KUniqueApplication::newInstance();
 }

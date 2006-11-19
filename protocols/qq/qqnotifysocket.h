@@ -6,7 +6,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
     Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>

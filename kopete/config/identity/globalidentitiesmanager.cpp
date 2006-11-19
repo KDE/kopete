@@ -1,7 +1,7 @@
 /*
     globalidentitiesmanager.h  -  Kopete Global identities manager.
 
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
 
     Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -181,19 +181,19 @@ void GlobalIdentitiesManager::saveXML()
 
 	QString globalIdentitiesListFileName = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	KSaveFile globalIdentitiesListFile(globalIdentitiesListFileName);
-	if( globalIdentitiesListFile.status() == 0 )
+	if( globalIdentitiesListFile.open() )
 	{
-		QTextStream *stream = globalIdentitiesListFile.textStream();
-		stream->setCodec(QTextCodec::codecForName("UTF-8"));
-		toXML().save( *stream, 4 );
+		QTextStream stream (&globalIdentitiesListFile);
+		stream.setCodec(QTextCodec::codecForName("UTF-8"));
+		toXML().save( stream, 4 );
 
-		if ( globalIdentitiesListFile.close() )
+		if ( globalIdentitiesListFile.finalize() )
 		{
 			return;
 		}
 		else
 		{
-			kDebug(14000) << k_funcinfo << "Failed to write global identities list, error code is: " << globalIdentitiesListFile.status() << endl;
+			kDebug(14000) << k_funcinfo << "Failed to write global identities list, error code is: " << globalIdentitiesListFile.error() << endl;
 		}
 	}
 	else

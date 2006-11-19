@@ -51,48 +51,48 @@ namespace StdMessages
 	};
 	Q_DECLARE_FLAGS(UserMode, UserModes)
 
-	KIrc::Message away(QString awayMessage = QString::null);
+	KIrc::Message away(const QString &awayMessage = QString::null);
 
 //	KIrc::Message invite();
 
-	KIrc::Message ison(QStringList nickList);
+	KIrc::Message ison(const QStringList &nickList);
 
-	KIrc::Message join(QString name, QString key);
+	KIrc::Message join(const QString &name, const QString &key = QString());
 
-	KIrc::Message kick(QString user, QString channel, QString reason);
+	KIrc::Message kick(const QString &user, const QString &channel, const QString &reason);
 
 	KIrc::Message list();
 
-	KIrc::Message mode(QString target, QString mode);
+	KIrc::Message mode(const QString &target, const QString &mode);
 
-	KIrc::Message motd(QString server = QString::null);
+	KIrc::Message motd(const QString &server = QString::null);
 
-	KIrc::Message nick(QString newNickname);
+	KIrc::Message nick(const QString &newNickname);
 
-	KIrc::Message notice(QString target, QString message);
+	KIrc::Message notice(const QString &target, const QString &message);
 
-	KIrc::Message part(QString name, QString reason);
+	KIrc::Message part(const QString &name, const QString &reason);
 
-	KIrc::Message pass(QString password);
+	KIrc::Message pass(const QString &password);
 
-	KIrc::Message privmsg(QString contact, QString message);
+	KIrc::Message privmsg(const QString &contact, const QString &message);
 
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
 	 * Therefore setting now to true should only be used while destroying the object.
 	 */
-	KIrc::Message quit(QString reason);
+	KIrc::Message quit(const QString &reason);
 
-	KIrc::Message topic(QString channel, QString topic);
+	KIrc::Message topic(const QString &channel, const QString &topic);
 
-	KIrc::Message user(QString user, QString hostname, QString realName);
+	KIrc::Message user(const QString &user, const QString &hostname, const QString &servername, const QString &realName);
 
-	KIrc::Message user(QString user, UserMode modes, QString realName);
+	KIrc::Message user(const QString &user, UserMode modes, const QString &realName);
 
-	KIrc::Message who(QString mask/*, bool isOperator*/);
+	KIrc::Message who(const QString &mask/*, bool isOperator*/);
 
-	KIrc::Message whois(QString target);
+	KIrc::Message whois(const QString &target);
 
 }
 

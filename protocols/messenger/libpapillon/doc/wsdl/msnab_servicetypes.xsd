@@ -2,9 +2,10 @@
 <!--
 	Reverse engineered MSN AddressBook webservice XML Schema
 	Part: Service types. (Convience types to use with the web service binding)
-	
+
 	by Michaël Larouche <michael.larouche@kdemail.net>
-		Latest update: 25 June 2006
+	and Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 27 July 2006
 -->
 <xsd:schema
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -36,7 +37,7 @@
 			description will automate the generation of a WDSL binding to MSN AddressBook Web service.
 		</xsd:documentation>
 	</xsd:annotation>
-			
+
 	<!-- Include MSN AddressBook data types -->
 	<xsd:include schemaLocation="msnab_datatypes.xsd" />
 
@@ -46,44 +47,44 @@
 				ABApplicationHeader is a part of request SOAP header, it identify the application information.
 			</xsd:documentation>
 		</xsd:annotation>
-		
+
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="ApplicationId" type="msnab:Guid" fixed="09607671-1C32-421F-A6A6-CBFAA51AB5F4" />
+				<xsd:element name="ApplicationId" type="Guid" fixed="09607671-1C32-421F-A6A6-CBFAA51AB5F4" />
 				<xsd:element name="IsMigration" type="xsd:boolean" />
-				<xsd:element name="ParnerScenario" type="xsd:string" />
+				<xsd:element name="PartnerScenario" type="xsd:string" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="ABAuthHeader">
 		<xsd:annotation>
 			<xsd:documentation>
 				ABAuthHeader meaning unknow for the moment but it's a part of request SOAP header.
 			</xsd:documentation>
 		</xsd:annotation>
-		
+
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="ManagedGroupRequest" type="xsd:boolean" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="ServiceHeader">
 		<xsd:annotation>
 			<xsd:documentation>
 				ServiceHeade is the SOAP Header received in a MSN AddressBook webservice response.
 			</xsd:documentation>
 		</xsd:annotation>
-		
+
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="Version" type="xsd:string" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-			
+
 
 	<xsd:complexType name="FindMembershipRequestType">
 		<xsd:annotation>
@@ -91,7 +92,7 @@
 				Parameters to the FindMembership SOAP Action
 			</xsd:documentation>
 		</xsd:annotation>
-				
+
 		<xsd:sequence>
 			<xsd:element name="serviceFilter">
 				<xsd:complexType>
@@ -106,14 +107,14 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
-					
+
 			<xsd:element name="View" type="xsd:string" minOccurs="0" />
 			<xsd:element name="deltasOnly" type="xsd:boolean" minOccurs="0" />
 			<xsd:element name="lastChange" type="xsd:dateTime" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:element name="FindMembership" type="msnab:FindMembershipRequestType" />
+	<xsd:element name="FindMembership" type="FindMembershipRequestType" />
 
 	<xsd:complexType name="FindMembershipResultType">
 		<xsd:annotation>
@@ -126,7 +127,7 @@
 			<xsd:element name="Services">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="Service" type="msnab:ServiceType" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element name="Service" type="ServiceType" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
@@ -163,9 +164,99 @@
 	<xsd:element name="FindMembershipResponse">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="FindMembershipResult" type="msnab:FindMembershipResultType" />
+				<xsd:element name="FindMembershipResult" type="FindMembershipResultType" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+
+	<xsd:complexType name="ABFindAllRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the ABFindAll SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="abView" type="xsd:string" minOccurs="0" />
+			<xsd:element name="deltasOnly" type="xsd:boolean" minOccurs="0" />
+			<xsd:element name="lastChange" type="xsd:dateTime" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABFindAll" type="ABFindAllRequestType" />
+
+	<xsd:complexType name="ABFindAllResultType">
+		<xsd:annotation>
+			<xsd:documentation>
+				ABFindAllResult contains a list of contacts and address
+				book information.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="groups">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Group" type="GroupType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="contacts">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Contact" type="ContactType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ab">
+				<xsd:complexType>
+					<xsd:sequence>
+                        <xsd:element name="abId" type="Guid">
+						</xsd:element>
+                        <xsd:element name="abInfo">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="ownerPuid"
+										type="xsd:integer" />
+									<xsd:element name="OwnerCID"
+										type="xsd:integer" />
+									<xsd:element name="ownerEmail"
+										type="xsd:string" />
+									<xsd:element name="fDefault"
+										type="xsd:boolean" />
+									<xsd:element name="joinedNamespace"
+										type="xsd:boolean" />
+									<xsd:element name="IsBot"
+										type="xsd:boolean">
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="lastChange"
+							type="xsd:dateTime" />
+						<xsd:element name="DynamicItemLastChanged"
+							type="xsd:dateTime" />
+						<xsd:element name="createDate"
+							type="xsd:dateTime" />
+						<xsd:element name="propertiesChanged"
+							type="xsd:string"><!-- Is this a list? --></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABFindAllResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ABFindAllResult" type="ABFindAllResultType" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
 
 </xsd:schema>

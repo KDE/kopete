@@ -22,7 +22,6 @@ kde4_automoc(${kcm_kopete_behaviorconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_behaviorconfig ${kcm_kopete_behaviorconfig_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kopete_behaviorconfig )
 
 target_link_libraries(kcm_kopete_behaviorconfig  ${KDE4_KUTILS_LIBS} kopete)
 

@@ -1,7 +1,7 @@
 /*
    httptransfer.h - HTTP transfer
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -32,7 +32,7 @@ namespace Papillon
  * This is wrapper around QHttpHeader and a body.
  * Based on QHttpHeader classes.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT HttpTransfer
 {

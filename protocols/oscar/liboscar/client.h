@@ -207,6 +207,12 @@ public:
 	void sendWarning( const QString& contact, bool anonymous );
 
 	/**
+	 * Change ICQ password
+	 * \param password your new password
+	 */
+	bool changeICQPassword( const QString& password );
+
+	/**
 	 * Get the general ICQ info for a client
 	 * \param contact the contact to get info for
 	 */
@@ -294,6 +300,9 @@ public:
 
 	//! Update the user's AIM profile
 	void updateProfile( const QString& profile );
+
+	//! Update the user's ICQ profile
+	bool updateProfile( const QList<ICQInfoBase*>& infoList );
 
 	//! Get buddy icon information for a person
 	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
@@ -415,6 +424,9 @@ signals:
 	/** we've received an authorization reply */
 	void authReplyReceived( const QString& contact, const QString& reason, bool auth );
 
+	/** we've received a ICQ password change reply */
+	void icqPasswordChanged( bool error );
+
 	/**
 	 * we've received an error from a task and need to notify somebody
 	 */
@@ -432,6 +444,7 @@ signals:
 	void receivedAwayMessage( const QString& contact, const QString& message );
 	void receivedAwayMessage( const Oscar::Message& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
+	void userReadsStatusMessage( const QString& contact );
 
 	/** We warned a user */
 	void userWarned( const QString& contact, quint16 increase, quint16 newLevel );
@@ -520,6 +533,9 @@ protected slots:
     void determineDisconnection( int, const QString& );
 
 	void nextICQAwayMessageRequest();
+
+	/** Change ICQ password finished */
+	void changeICQPasswordFinished();
 
 private:
 

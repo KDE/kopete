@@ -16,7 +16,6 @@ qt_add_dbus_interfaces(kopete_statistics_PART_SRCS org.kde.kopete.statisticsifac
 
 kde4_add_plugin(kopete_statistics ${kopete_statistics_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kopete_statistics )
 
 target_link_libraries(kopete_statistics  ${KDE4_KDECORE_LIBS} kopete sqlite )
 

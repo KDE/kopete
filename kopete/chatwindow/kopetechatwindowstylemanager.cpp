@@ -1,7 +1,7 @@
  /*
     kopetechatwindowstylemanager.cpp - Manager all chat window styles
 
-    Copyright (c) 2005      by Michaël Larouche     <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -93,7 +93,11 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 
 void ChatWindowStyleManager::loadStyles()
 {
-	foreach(const QString &style, KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" )))
+        QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
+        QString localStyleDir( KStandardDirs::locateLocal( "appdata", QLatin1String("styles/"),true) );
+        if( !chatStyles.contains(localStyleDir))
+                chatStyles<<localStyleDir;
+	foreach(const QString &style, chatStyles)
 	{
 		kDebug(14000) << k_funcinfo << style << endl;
 		d->styleDirs.push( KUrl(style) );
@@ -279,7 +283,10 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 {
 	kDebug(14000) << k_funcinfo << stylePath <<  endl;
 	// Find for the current style in avaiableStyles map.
-	StyleList::Iterator foundStyle = d->availableStyles.find(stylePath);
+        KUrl urlStyle(stylePath);
+        QString styleName=urlStyle.fileName();
+        StyleList::Iterator foundStyle = d->availableStyles.find(styleName);
+
 	// QHash iterator return end() if it found no item.
 	if(foundStyle != d->availableStyles.end())
 	{
@@ -294,7 +301,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 		}
 	
 		// Do the actual deletion of the directory style.
-		return KIO::NetAccess::del( KUrl(stylePath), 0 );
+		return KIO::NetAccess::del( urlStyle, 0 );
 	}
 	else
 	{

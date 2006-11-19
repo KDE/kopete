@@ -21,35 +21,37 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopeteglobal.h"
+#include <kopeteappearancesettings.h>
 
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <ktextedit.h>
 //#include <ksyntaxhighlighter.h>
 
-#include <qtimer.h>
-#include <qregexp.h>
+#include <QtCore/QTimer>
+#include <QtCore/QRegExp>
 
 ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent )
-	: KopeteRichTextEditPart( parent, session->protocol()->capabilities() ), m_session(session)
+	: KRichTextEditPart(parent, 0, QStringList()), m_session(session)
 {
+	// Set rich support in the part
+	setProtocolRichTextSupport();
+
 	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
-	unsigned int i;
-	QList<Kopete::Contact*> m;
 	
 	mComplete = new KCompletion();
 	mComplete->setIgnoreCase( true );
 	mComplete->setOrder( KCompletion::Weighted );
 	
 	// set params on the edit widget
-	edit()->setMinimumSize( QSize( 75, 20 ) );
-//	edit()->setWordWrap( Q3TextEdit::WidgetWidth );
-//	edit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
-//	edit()->setAutoFormatting( Q3TextEdit::AutoNone );
+	textEdit()->setMinimumSize( QSize( 75, 20 ) );
+//	textEdit()->setWordWrap( Q3TextEdit::WidgetWidth );
+//	textEdit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
+//	textEdit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
 	// some signals and slots connections
-	connect( edit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
+	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 
 	// timers for typing notifications
 	m_typingRepeatTimer = new QTimer(this);
@@ -67,10 +69,12 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	
+	setFont( Kopete::AppearanceSettings::self()->chatFont() );
+
 	slotContactAdded( session->myself() );
-	m = session->members();
-	for ( i = 0; i != m.size(); i++ )
-		slotContactAdded( m[i] );
+
+	foreach( Kopete::Contact *contact, session->members() )
+		slotContactAdded( contact );
 }
 
 ChatTextEditPart::~ChatTextEditPart()
@@ -78,14 +82,9 @@ ChatTextEditPart::~ChatTextEditPart()
 	delete mComplete;
 }
 
-KTextEdit *ChatTextEditPart::edit()
-{
-	return static_cast<KTextEdit*>(widget());
-}
-
 void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
 {
-	if ( richTextEnabled() )
+	if ( useRichText() )
 		enabled = false;
 
 	m_autoSpellCheckEnabled = enabled;
@@ -96,7 +95,7 @@ void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
 		spellHighlighter()->setAutomatic( enabled );
 		spellHighlighter()->setActive( enabled );
 	}
-	edit()->setCheckSpellingEnabled( enabled );
+	textEdit()->setCheckSpellingEnabled( enabled );
 #endif
 }
 
@@ -109,7 +108,7 @@ KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
 {
 #warning disabled to make it compile
 #if 0
-	Q3SyntaxHighlighter *qsh = edit()->syntaxHighlighter();
+	Q3SyntaxHighlighter *qsh = textEdit()->syntaxHighlighter();
 	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
 	return kdsh;
 #else 
@@ -137,11 +136,11 @@ void ChatTextEditPart::complete()
 #warning disabled to make it compile
 #if 0
 	int para = 1, parIdx = 1;
-	edit()->getCursorPosition( &para, &parIdx);
+	textEdit()->getCursorPosition( &para, &parIdx);
 
 	// FIXME: strips out all formatting
-//QString txt = static_cast<EvilTextEdit*>(edit())->plainText( para );
-	QString txt = edit()->text(para);
+//QString txt = static_cast<EvilTextEdit*>(textEdit())->plainText( para );
+	QString txt = textEdit()->text(para);
 
 	if ( parIdx > 0 )
 	{
@@ -182,13 +181,13 @@ void ChatTextEditPart::complete()
 			// insert *before* remove. this is becase Qt adds an extra blank line
 			// if the rich text control becomes empty (if you remove the only para).
 			// disable updates while we change the contents to eliminate flicker.
-			edit()->setUpdatesEnabled( false );
-			edit()->insertParagraph( txt.left(firstSpace) + rightText, para );
-			edit()->removeParagraph( para + 1 );
-			edit()->setCursorPosition( para, parIdx + match.length() );
-			edit()->setUpdatesEnabled( true );
+			textEdit()->setUpdatesEnabled( false );
+			textEdit()->insertParagraph( txt.left(firstSpace) + rightText, para );
+			textEdit()->removeParagraph( para + 1 );
+			textEdit()->setCursorPosition( para, parIdx + match.length() );
+			textEdit()->setUpdatesEnabled( true );
 			// must call this rather than update because QTextEdit is broken :(
-			edit()->updateContents();
+			textEdit()->updateContents();
 			m_lastMatch = match;
 		}
 		else
@@ -234,7 +233,7 @@ bool ChatTextEditPart::canSend()
 	if ( !m_session ) return false;
 
 	// can't send if there's nothing *to* send...
-	if ( edit()->text().isEmpty() )
+	if ( text().isEmpty() )
 		return false;
 
 	Kopete::ContactPtrList members = m_session->members();
@@ -274,7 +273,7 @@ void ChatTextEditPart::slotContactStatusChanged( Kopete::Contact *, const Kopete
 
 void ChatTextEditPart::sendMessage()
 {
-	QString txt = text( Qt::PlainText );
+	QString txt = this->text( Qt::PlainText );
 	// avoid sending emtpy messages or enter keys (see bug 100334)
 	if ( txt.isEmpty() || txt == "\n" )
 		return;
@@ -286,7 +285,7 @@ void ChatTextEditPart::sendMessage()
 		{
 			QString match = mComplete->makeCompletion( search );
 			if( !match.isNull() )
-				edit()->setText( txt.replace(0,search.length(),match) );
+				textEdit()->setText( txt.replace(0,search.length(),match) );
 		}
 	}
 
@@ -300,7 +299,7 @@ void ChatTextEditPart::sendMessage()
 	slotStoppedTypingTimer();
 	Kopete::Message sentMessage = contents();
 	emit messageSent( sentMessage );
-	historyList.prepend( edit()->text() );
+	historyList.prepend( this->text( Qt::PlainText) );
 	historyPos = -1;
 	clear();
 	emit canSendChanged( false );
@@ -341,7 +340,7 @@ void ChatTextEditPart::historyUp()
 	if ( historyList.empty() || historyPos == historyList.count() - 1 )
 		return;
 	
-	QString text = edit()->text();
+	QString text = this->text(Qt::PlainText);
 	bool empty = text.trimmed().isEmpty();
 	
 	// got text? save it
@@ -361,11 +360,12 @@ void ChatTextEditPart::historyUp()
 	historyPos++;
 	
 	QString newText = historyList[historyPos];
-// 	TextFormat format=edit()->textFormat();
-// 	edit()->setTextFormat(AutoText); //workaround bug 115690
-	edit()->setText( newText );
-// 	edit()->setTextFormat(format);
-	edit()->moveCursor( QTextEdit::MoveEnd );
+// 	TextFormat format=textEdit()->textFormat();
+// 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
+	textEdit()->setText( newText );
+// 	textEdit()->setTextFormat(format);
+	// TODO: Port to Qt4
+	textEdit()->moveCursor( QTextEdit::MoveEnd );
 }
 
 void ChatTextEditPart::historyDown()
@@ -373,7 +373,7 @@ void ChatTextEditPart::historyDown()
 	if ( historyList.empty() || historyPos == -1 )
 		return;
 	
-	QString text = edit()->text();
+	QString text = this->text(Qt::PlainText);
 	bool empty = text.trimmed().isEmpty();
 	
 	// got text? save it
@@ -387,35 +387,43 @@ void ChatTextEditPart::historyDown()
 	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString::null );
 	
 	
-// 	TextFormat format=edit()->textFormat();
-// 	edit()->setTextFormat(AutoText); //workaround bug 115690
-	edit()->setText( newText );
-// 	edit()->setTextFormat(format);
-	edit()->moveCursor( QTextEdit::MoveEnd, false );
+// 	TextFormat format=textEdit()->textFormat();
+// 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
+	textEdit()->setText( newText );
+// 	textEdit()->setTextFormat(format);
+	// TODO: Port to Qt4
+	textEdit()->moveCursor( QTextEdit::MoveEnd, false );
 }
 
 void ChatTextEditPart::addText( const QString &text )
 {
-	edit()->insert( text );
+	if( Qt::mightBeRichText(text) )
+	{
+		textEdit()->insertHtml( text );
+	}
+	else
+	{
+		textEdit()->insertPlainText( text );
+	}
 }
 
 void ChatTextEditPart::setContents( const Kopete::Message &message )
 {
-	edit()->setText( richTextEnabled() ? message.escapedBody() : message.plainBody() );
+	textEdit()->setText( useRichText() ? message.escapedBody() : message.plainBody() );
 
 	setFont( message.font() );
-	setFgColor( message.fg() );
-	setBgColor( message.bg() );
+	setTextColor( message.fg() );
+// 	setBgColor( message.bg() );
 }
 
 Kopete::Message ChatTextEditPart::contents()
 {
-	Kopete::Message currentMsg( m_session->myself(), m_session->members(), edit()->text(),
-	                            Kopete::Message::Outbound, richTextEnabled() ?
+	Kopete::Message currentMsg( m_session->myself(), m_session->members(), text(),
+	                            Kopete::Message::Outbound, useRichText() ?
 	                            Kopete::Message::RichText : Kopete::Message::PlainText );
 	
-	currentMsg.setBg( bgColor() );
-	currentMsg.setFg( fgColor() );
+// 	currentMsg.setBg( bgColor() );
+	currentMsg.setFg( textColor() );
 	currentMsg.setFont( font() );
 	
 	return currentMsg;
@@ -433,7 +441,46 @@ void ChatTextEditPart::slotStoppedTypingTimer()
 	emit typing( false );
 }
 
+void ChatTextEditPart::setProtocolRichTextSupport()
+{
+	KRichTextEditPart::RichTextSupport richText;
+	Kopete::Protocol::Capabilities protocolCaps = m_session->protocol()->capabilities();
+
+	// Check for bold
+	if( (protocolCaps & Kopete::Protocol::BaseBFormatting) || (protocolCaps & Kopete::Protocol::RichBFormatting) )
+	{
+		richText |= KRichTextEditPart::SupportBold;
+	}
+	// Check for italic
+	if( (protocolCaps & Kopete::Protocol::BaseIFormatting) || (protocolCaps & Kopete::Protocol::RichIFormatting) )
+	{
+		richText |= KRichTextEditPart::SupportItalic;
+	}
+	// Check for underline
+	if( (protocolCaps & Kopete::Protocol::BaseUFormatting) || (protocolCaps & Kopete::Protocol::RichUFormatting) )
+	{
+		richText |= KRichTextEditPart::SupportUnderline;
+	}
+	// Check for font support
+	if( (protocolCaps & Kopete::Protocol::BaseFont) || (protocolCaps & Kopete::Protocol::RichFont) )
+	{
+		richText |= KRichTextEditPart::SupportFont;
+	}
+	// Check for text color support
+	if( (protocolCaps & Kopete::Protocol::BaseFgColor) || (protocolCaps & Kopete::Protocol::RichFgColor) )
+	{
+		richText |= KRichTextEditPart::SupportTextColor;
+	}
+	// Check for alignment
+	if( protocolCaps & Kopete::Protocol::Alignment )
+	{
+		richText |= KRichTextEditPart::SupportAlignment;
+	}
+
+	// Set rich text support in KRichTextEditPart
+	setRichTextSupport( richText );
+}
+
 #include "chattexteditpart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -98,6 +98,7 @@ public:
 	Yahoo::Status statusOnConnect;
 	QString statusMessageOnConnect;
 	int pictureFlag;
+	int pictureChecksum;
 };
 
 Client::Client(QObject *par) :QObject(par)
@@ -261,6 +262,9 @@ void Client::slotLoginResponse( int response, const QString &msg )
 		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();
+	} else {
+		d->active = false;
+		close();
 	}
 
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting loggedIn" << endl;
@@ -628,9 +632,19 @@ void Client::getYahooChatCategories()
 	d->yahooChatTask->getYahooChatCategories();
 }
 
-void Client::getYahooChatRooms( Yahoo::ChatCategory category )
+void Client::getYahooChatRooms( const Yahoo::ChatCategory &category )
 {
 	d->yahooChatTask->getYahooChatRooms( category );
+}
+
+void Client::joinYahooChatRoom( const Yahoo::ChatRoom &room )
+{
+	d->yahooChatTask->joinRoom( room );
+}
+
+void Client::sendYahooChatMessage( const QString &msg, const QString &handle )
+{
+	d->yahooChatTask->sendYahooChatMessage( msg, handle );
 }
 
 // ***** other *****
@@ -704,6 +718,16 @@ int Client::pictureFlag()
 	return d->pictureFlag;
 }
 
+int Client::pictureChecksum()
+{
+	return d->pictureChecksum;
+}
+
+void Client::setPictureChecksum( int cs )
+{
+	d->pictureChecksum = cs;
+}
+
 QString Client::yCookie()
 {
 	return d->yCookie;
@@ -755,12 +779,12 @@ void Client::initTasks()
 		return;
 
 	d->statusTask = new StatusNotifierTask( d->root );
-	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int, int ) ), 
-				SIGNAL( statusChanged( const QString&, int, const QString&, int, int ) ) );
+	QObject::connect( d->statusTask, SIGNAL( statusChanged(QString,int,const QString,int,int,int) ), 
+				SIGNAL( statusChanged(QString,int,const QString,int,int,int) ) );
 	QObject::connect( d->statusTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
 				SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
-				SIGNAL( loggedIn( int, const QString& ) ) );
+				SLOT( slotLoginResponse( int, const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( authorizationRejected( const QString&, const QString& ) ), 
 				SIGNAL( authorizationRejected( const QString&, const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( authorizationAccepted( const QString& ) ), 
@@ -843,8 +867,16 @@ void Client::initTasks()
 	d->yahooChatTask = new YahooChatTask( d->root );
 	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatCategories( const QDomDocument & )),
 				SIGNAL(gotYahooChatCategories( const QDomDocument & )) );
-	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &category, const QDomDocument & )),
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
 				SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ),
+				SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ),
+				SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasLeft(QString,QString) ),
+				SIGNAL(chatBuddyHasLeft(QString,QString) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ),
+				SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ) );
 }
 
 void Client::deleteTasks()

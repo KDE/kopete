@@ -128,12 +128,6 @@ void BehaviorConfig::load()
 	}
 
 	mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);
-	slotUpdatePluginLabel(selectedIdx);
-}
-
-void BehaviorConfig::slotUpdatePluginLabel(int)
-{
-	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentIndex() ]->comment() );
 }
 
 void BehaviorConfig::slotSettingsChanged(bool)

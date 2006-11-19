@@ -31,6 +31,7 @@ using namespace Oscar;
 ProfileTask::ProfileTask( Task* parent )
 		: Task( parent )
 {
+	m_sendCaps = false;
 }
 
 
@@ -66,6 +67,11 @@ void ProfileTask::setAwayMessage( const QString& text )
 	m_awayMessage = text;
 }
 
+void ProfileTask::setCapabilities( bool value )
+{
+	m_sendCaps = value;
+}
+
 void ProfileTask::sendProfileUpdate()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
@@ -74,39 +80,44 @@ void ProfileTask::sendProfileUpdate()
 	Buffer *buffer = new Buffer();
 	Buffer capBuf;
 
-
-	if ( client()->isIcq() )
+	if ( !m_profileText.isNull() )
 	{
-		capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
-		capBuf.addGuid( oscar_caps[CAP_ISICQ] ); // I think this is an icq client, but maybe I'm wrong
-		//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
+		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+		buffer->addTLV(0x0001, defencoding.toLatin1());
+		buffer->addTLV(0x0002, m_profileText.toLocal8Bit());
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
 	}
-	else
+
+	if ( !m_awayMessage.isNull() )
 	{
-		if ( !m_profileText.isNull() )
-		{
-			static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-			buffer->addTLV(0x0001, defencoding.toLatin1());
-			buffer->addTLV(0x0002, m_profileText.toLocal8Bit());
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
-		}
-
-		if ( !m_awayMessage.isNull() )
-		{
-			static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-			buffer->addTLV(0x0003, defencoding.toLatin1());
-			buffer->addTLV(0x0004, m_awayMessage.toLocal8Bit());
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
-		}
-		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
+		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+		buffer->addTLV(0x0003, defencoding.toLatin1());
+		buffer->addTLV(0x0004, m_awayMessage.toLocal8Bit());
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
 	}
-	capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
-	capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
-	capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
-	capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
-	buffer->addTLV(0x0005, capBuf.buffer());
+	if ( m_sendCaps )
+	{
+		if ( client()->isIcq() )
+		{
+			capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
+			capBuf.addGuid( oscar_caps[CAP_ISICQ] ); // I think this is an icq client, but maybe I'm wrong
+			//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
+		}
+		else
+		{
+			capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
+		}
+		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
+		capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
+		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
+		capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
+		capBuf.addGuid( oscar_caps[CAP_INTEROPERATE] ); //AIM can communicate with ICQ users and ICQ with AIM users.
+
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
+		buffer->addTLV(0x0005, capBuf.buffer());
+	}
+
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );
 	setSuccess( 0, QString::null );

@@ -1,141 +1,166 @@
-// -*- c++ -*-
+/* This file is part of the KDE libraries
+   Copyright (C) 2006 Michaël Larouche <larouche@kde.org>
+   Copyright (C) 2003 Richard Moore <rich@kde.org>
+   Copyright (c) 2003-2005 Jason Keirstead <jason@keirstead.org>
 
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License version 2 as published by the Free Software Foundation.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
+*/
 #ifndef KRICHTEXTEDITPART_H
 #define KRICHTEXTEDITPART_H
 
 #include <kparts/part.h>
 
-#include <qfont.h>
-#include <qcolor.h>
+#include <QtGui/QFont>
+#include <QtGui/QColor>
+#include <QtCore/QFlags>
 
+// TODO: Use kdelibs export
 #include <kopete_export.h>
 
 class KAboutData;
 class KTextEdit;
-class KFontAction;
-class KFontSizeAction;
-class KToggleAction;
-class KopeteTextEdit;
 
 /**
- * KParts wrapper for QTextEdit.
+ * @brief Simple WYSIWYG rich text editor part.
  *
- * Originally by Richard Moore, rich@kde.org
- * forked by Jason Keirstead
+ * Technicaly it just a wrapper around KTextEdit which a toolbar of actions.
+ * The action toolbar adds buttons to set text bold, italic 
+ * or underline, set font size and font familly and set text color.
+ *
+ * @author Michaël Larouche <larouche@kde.org>
+ * @author Richard Moore <rich@kde.org>
  */
-class KOPETE_EXPORT KopeteRichTextEditPart : public KParts::ReadOnlyPart
+class KOPETE_EXPORT KRichTextEditPart : public KParts::ReadOnlyPart
 {
-	Q_OBJECT
+    Q_OBJECT
+public:
+    enum RichTextSupportValues
+    {
+        DisableRichText = 0,
+        SupportBold,
+        SupportItalic,
+        SupportUnderline,
+        SupportAlignment,
+        SupportFont,
+        SupportTextColor,
 
-	public:
-		KopeteRichTextEditPart( QWidget *wparent, QObject*, const QStringList& );
-		KopeteRichTextEditPart( QWidget *wparent, int capabilities );
+        FormattingSupport = SupportBold | SupportItalic | SupportUnderline,
 
-		/**
-		* Returns the current editor widget.
-		*/
-		KTextEdit *editorWidget();
+        FullSupport = FormattingSupport | SupportAlignment | SupportFont | SupportTextColor
+    };
+    Q_DECLARE_FLAGS(RichTextSupport, RichTextSupportValues);
 
-		QString text( Qt::TextFormat = Qt::AutoText ) const;
+    KRichTextEditPart(QWidget *parent, QObject *, const QStringList &);
 
-		QFont font() { return mFont; }
+    /**
+     * @brief Get the text in the editor in the given format.
+     * By default if return the text using the most appropriate format.
+     *
+     * @param format A value in Qt::TextFormat enum.
+     *
+     * @return text using the given format
+     */
+    QString text( Qt::TextFormat format = Qt::AutoText ) const;
 
-		QColor fgColor();
+    /**
+     * @brief Get the font currently used by the editor.
+     */
+    QFont font() const;
+    /**
+     * @brief Get the current text color
+     */
+    QColor textColor() const;
 
-		QColor bgColor();
+    /**
+     * @brief Clear text inside the editor
+     */
+    void clear();
 
-		void clear();
+    /**
+     * @brief Is rich text is currently enabled
+     */
+    bool isRichTextEnabled() const;
 
-		int capabilities() { return m_capabilities; }
+    bool isRichTextAvailable() const;
 
-		bool richTextEnabled() { return m_richTextAvailable && m_richTextEnabled; }
+    static KAboutData *createAboutData();
 
-		bool buttonsEnabled() { return !m_richTextAvailable || m_richTextEnabled; }
+    /**
+     * @brief Disable file open, because it's not used by this part.
+     */
+    virtual bool openFile() { return false; };
 
-		static KAboutData *createAboutData();
+    void setRichTextSupport(const KRichTextEditPart::RichTextSupport &support);
+    RichTextSupport richTextSupport() const;
 
-		virtual bool openFile() { return false; };
+    /**
+     * @brief Get the inside KTextEdit
+     * @return instance of KTextEdit
+     */
+    KTextEdit *textEdit();
 
-	public slots:
+public slots:
+    void setTextColor();
+    void setTextColor( const QColor & );
 
-		void setFgColor();
-		void setFgColor( const QColor & );
+    void setFont();
+    void setFont(const QFont &font);
+    void setFont(const QString &familyName);
+    void setFontSize(int size);
+    void setFontUnderline(bool value);
+    void setFontBold(bool value);
+    void setFontItalic(bool value);
 
-		void setBgColor();
-		void setBgColor( const QColor & );
+    void setAlignLeft(bool yes);
+    void setAlignRight(bool yes);
+    void setAlignCenter(bool yes);
+    void setAlignJustify(bool yes);
 
-		void setFont();
-		void setFont( const QFont & );
-		void setFont( const QString & );
+    void checkToolbarEnabled();
+    void reloadConfig();
+    void setRichTextEnabled(bool enable);
 
-		void setFontSize( int );
+signals:
+    void toolbarToggled(bool enabled);
 
-		void setUnderline( bool );
-		void setBold( bool );
-		void setItalic( bool );
+protected:
+    /**
+     * @brief Create the required actions for the part.
+     */
+    virtual void createActions();
 
-		void setAlignLeft( bool yes );
-		void setAlignRight( bool yes );
-		void setAlignCenter( bool yes );
-		void setAlignJustify( bool yes );
+    bool useRichText() const;
 
-		void checkToolbarEnabled();
-		void reloadConfig();
-		void slotSetRichTextEnabled( bool enable );
+protected slots:
+    void updateActions();
 
-	signals:
-		void toggleToolbar( bool enabled );
+    void updateFont();
+    void updateCharFormat();
+    void updateAligment();
 
-	protected:
-		/**
-		* Creates the part's actions in the specified action collection.
-		*/
-		virtual void createActions( KActionCollection *ac );
+private:
+    void readConfig();
+    void writeConfig();
 
-	protected slots:
-
-		/**
-		* Creates the part's actions in the part's action collection.
-		*/
-		void createActions();
-		void updateActions();
-
-		void updateFont();
-		void updateCharFmt();
-		void updateAligment();
-
-	private:
-		void readConfig();
-		void writeConfig();
-
-		KopeteTextEdit *editor;
-		KAction *checkSpelling;
-		KToggleAction *enableRichText;
-
-		KAction *actionFgColor;
-		KAction *actionBgColor;
-
-		KToggleAction *action_bold;
-		KToggleAction *action_italic;
-		KToggleAction *action_underline;
-
-		KFontAction *action_font;
-		KFontSizeAction *action_font_size;
-
-		KToggleAction *action_align_left;
-		KToggleAction *action_align_right;
-		KToggleAction *action_align_center;
-		KToggleAction *action_align_justify;
-
-		int m_capabilities;
-		bool m_richTextAvailable;
-		bool m_richTextEnabled;
-
-		bool m_configWriteLock;
-
-		QFont mFont;
-		QColor mBgColor;
-		QColor mFgColor;
+private:
+    class Private;
+    Private *d;
 };
 
-#endif // KRICHTEXTEDITPART_H
+Q_DECLARE_OPERATORS_FOR_FLAGS(KRichTextEditPart::RichTextSupport);
+
+#endif
+
+// kate: space-indent on; indent-width 4; encoding utf-8; replace-tabs on;

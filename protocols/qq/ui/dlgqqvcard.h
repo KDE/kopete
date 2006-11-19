@@ -4,7 +4,7 @@
                              -------------------
     begin                : Thu Aug 08 2002
     copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
-                           (C) 2005      by Michaël Larouche <michael.larouche@kdemail.net>
+                           (C) 2005      by Michaël Larouche <larouche@kde.org>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -39,7 +39,7 @@ namespace Ui { class QQVCard; }
  * information. User can force the update using the "Update vCard" button.
  * 
  * @author Till Gerken <till@tantolo.net>
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class dlgQQVCard : public KDialog
 {

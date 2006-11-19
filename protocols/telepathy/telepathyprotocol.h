@@ -1,7 +1,7 @@
 /*
  * telepathyprotocol.h - Windows Live Telepathy Kopete protocol definition.
  *
- * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+ * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -20,7 +20,7 @@
 #include <kopeteprotocol.h>
 #include <kopeteonlinestatus.h>
 
-#include <QtTapioca/ContactInfo>
+#include <QtTapioca/ContactBase>
 
 #define TELEPATHY_DEBUG_AREA 14400
 
@@ -34,7 +34,7 @@ class KopeteEditAccountWidget;
 
 /**
  * 
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class KOPETE_EXPORT TelepathyProtocol : public Kopete::Protocol
 {
@@ -60,8 +60,8 @@ public:
 
 	QString formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId);
 
-	QtTapioca::ContactInfo::Presence kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
-	Kopete::OnlineStatus telepathyStatusToKopete(QtTapioca::ContactInfo::Presence presence);
+	QtTapioca::ContactBase::Presence kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
+	Kopete::OnlineStatus telepathyStatusToKopete(QtTapioca::ContactBase::Presence presence);
 
 private:
 	static TelepathyProtocol *s_self;

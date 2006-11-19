@@ -54,13 +54,12 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 		QString nickName = account()->mySelf()->nickName();
 		QString serverInfo = account()->accountId();
 
-		mNickName->setText( nickName );
-//		mAltNickname->setText( account()->altNick() );
-		mUserName->setText( account()->userName() );
-		m_realNameLineEdit->setText( account()->realName() );
+		nickNames->setText( nickName );
+		userName->setText( account()->userName() );
+		realName->setText( account()->realName() );
 
-		partMessage->setText( account()->defaultPartMessage() );
-		quitMessage->setText( account()->defaultQuitMessage() );
+		partMessage->setText( account()->partMessage() );
+		quitMessage->setText( account()->quitMessage() );
 		if( account()->codec() )
 			currentCodec = account()->codec()->mibEnum();
 
@@ -223,7 +222,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 
 Kopete::Account *IRCEditAccountWidget::apply()
 {
-	QString nickName = mNickName->text();
+	QString nickName = nickNames->text();
 	QString networkName = network->currentText();
 
 	if( !account() )
@@ -238,11 +237,11 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	//mPasswordWidget->save( &account()->password() );
 
-//	account()->setAltNick( mAltNickname->text() );
-	account()->setUserName( mUserName->text() );
-	account()->setRealName( m_realNameLineEdit->text() );
-	account()->setDefaultPartMessage( partMessage->text() );
-	account()->setDefaultQuitMessage( quitMessage->text() );
+	account()->setNickName( nickNames->text() );
+	account()->setUserName( userName->text() );
+	account()->setRealName( realName->text() );
+	account()->setPartMessage( partMessage->text() );
+	account()->setQuitMessage( quitMessage->text() );
 	account()->setAutoShowServerWindow( autoShowServerWindow->isChecked() );
 	account()->setExcludeConnect( autoConnect->isChecked() );
 
@@ -269,7 +268,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 bool IRCEditAccountWidget::validateData()
 {
-	if( mNickName->text().isEmpty() )
+	if( nickNames->text().isEmpty() )
 		KMessageBox::sorry(this, i18n("<qt>You must enter a nickname.</qt>"), i18n("Kopete"));
 	else
 		return true;

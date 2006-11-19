@@ -10,6 +10,3 @@ add_subdirectory( src )
 
 
 
-#original Makefile.am contents follow:
-
-#SUBDIRS = src

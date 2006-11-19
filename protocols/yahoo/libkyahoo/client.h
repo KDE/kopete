@@ -65,6 +65,12 @@ Q_OBJECT
 		void setUserId( const QString& userName );
 
 		/**
+		 * Set the picture checksum
+		 * @param username The checksum
+		 */
+		void setPictureChecksum( int cs );
+
+		/**
 		 * Start a connection to the server using the supplied @ref ClientStream.
 		 * This is only a transport layer connection.
 		 * Needed for protocol action P1.
@@ -377,7 +383,18 @@ Q_OBJECT
 		/**
 		 * Get the list of chatrooms for the given category
 		 */
-		void getYahooChatRooms( Yahoo::ChatCategory category );
+		void getYahooChatRooms( const Yahoo::ChatCategory &category );
+
+		/**
+		 * Join a chat room
+		 */
+		void joinYahooChatRoom( const Yahoo::ChatRoom &room );
+
+		/**
+		 * Send a chat message
+		 */
+		void sendYahooChatMessage( const QString &msg, const QString &handle );
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -406,6 +423,11 @@ Q_OBJECT
 		 * 0 = no icon, 2 = icon, 1 = avatar (?)
 		 */
 		int pictureFlag();
+		
+		/**
+		 * return the picture checksum
+		 */
+		int pictureChecksum();
 
 		/** Get our status */
 		Yahoo::Status status();
@@ -463,7 +485,7 @@ Q_OBJECT
 		/**
 		 * Notifies about the status of online buddies
 		 */
-		void statusChanged( const QString&, int, const QString&, int, int );
+		void statusChanged( const QString&, int, const QString&, int, int, int );
 		/**
 		 * Notifies about the stealth status of buddies
 		 */
@@ -625,6 +647,22 @@ Q_OBJECT
 		 * We have received the list of chatrooms for the categories
 		 */
 		void gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & );
+		/**
+		 * We have joined a chatroom
+		 */
+		void chatRoomJoined( int, int, const QString &, const QString & );
+		/**
+		 * A buddy has joined a chatroom
+		 */
+		void chatBuddyHasJoined( const QString &, const QString &, bool );
+		/**
+		 * A buddy has left a chatroom
+		 */
+		void chatBuddyHasLeft( const QString &, const QString & );
+		/**
+		 * We have received a message in a chatroom
+		 */
+		void chatMessageReceived( const QString &, const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

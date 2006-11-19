@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>484</width>
-    <height>500</height>
+    <height>502</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -28,25 +28,42 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="4" column="2" >
-       <widget class="QLabel" name="textLabel10" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>0</hsizetype>
-          <vsizetype>5</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="uinLabel" >
         <property name="text" >
-         <string>A&amp;ge:</string>
+         <string>&amp;UIN #:</string>
         </property>
         <property name="buddy" >
-         <cstring>ageSpinBox</cstring>
+         <cstring>uinEdit</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="3" >
+      <item row="0" column="1" >
+       <widget class="QLineEdit" name="uinEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="ipLabel" >
+        <property name="text" >
+         <string>&amp;IP:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>ipEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" >
        <widget class="QLineEdit" name="ipEdit" >
         <property name="sizePolicy" >
          <sizepolicy>
@@ -70,127 +87,17 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" >
-       <widget class="QLabel" name="maritalLabel" >
-        <property name="text" >
-         <string>Marital status:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3" >
-       <widget class="QLineEdit" name="timezoneEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" colspan="3" >
-       <widget class="QLineEdit" name="marital" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="genderEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0" >
-       <widget class="QLabel" name="fullNameLabel" >
+       <widget class="QLabel" name="nickNameLabel" >
         <property name="text" >
-         <string>&amp;Full name:</string>
+         <string>&amp;Nickname:</string>
         </property>
         <property name="buddy" >
-         <cstring>fullNameEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="birthdayLabel" >
-        <property name="text" >
-         <string>&amp;Birthday:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>birthday</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="ipLabel" >
-        <property name="text" >
-         <string>&amp;IP:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>ipEdit</cstring>
+         <cstring>nickNameEdit</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QLineEdit" name="fullNameEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="2" row="2" column="2" >
-       <widget class="QLabel" name="textLabel7" >
-        <property name="text" >
-         <string>&amp;Timezone:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>timezoneEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="2" row="3" column="1" >
-       <widget class="QLineEdit" name="birthday" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="2" row="2" column="0" >
-       <widget class="QLabel" name="textLabel6" >
-        <property name="text" >
-         <string>Gen&amp;der:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>genderEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="2" row="3" column="3" >
-       <widget class="QSpinBox" name="ageSpinBox" />
-      </item>
-      <item row="0" column="3" >
-       <widget class="QLineEdit" name="uinEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" >
-       <widget class="QLabel" name="uinLabel" >
-        <property name="text" >
-         <string>&amp;UIN #:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>uinEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
        <widget class="QLineEdit" name="nickNameEdit" >
         <property name="sizePolicy" >
          <sizepolicy>
@@ -205,13 +112,219 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="nickNameLabel" >
+      <item row="1" column="2" >
+       <widget class="QLabel" name="textLabel6" >
         <property name="text" >
-         <string>&amp;Nickname:</string>
+         <string>Gen&amp;der:</string>
         </property>
         <property name="buddy" >
-         <cstring>nickNameEdit</cstring>
+         <cstring>genderCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" >
+       <widget class="QComboBox" name="genderCombo" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="firstNameLabel" >
+        <property name="text" >
+         <string>&amp;First name:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>firstNameEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="firstNameEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="lastNameLabel" >
+        <property name="text" >
+         <string>&amp;Last name:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>lastNameEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3" >
+       <widget class="QLineEdit" name="lastNameEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="maritalLabel" >
+        <property name="text" >
+         <string>Marital status:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>maritalCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QComboBox" name="maritalCombo" />
+      </item>
+      <item row="3" column="2" >
+       <widget class="QLabel" name="textLabel7" >
+        <property name="text" >
+         <string>&amp;Timezone:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>timezoneCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3" >
+       <widget class="QComboBox" name="timezoneCombo" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_4" >
+     <property name="title" >
+      <string>Birthday</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="birthdayDayLabel" >
+          <property name="text" >
+           <string>Day:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>birthdayDaySpin</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="birthdayDaySpin" >
+          <property name="readOnly" >
+           <bool>true</bool>
+          </property>
+          <property name="maximum" >
+           <number>31</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="birthdayMonthLabel" >
+          <property name="text" >
+           <string>Month:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>birthdayMonthSpin</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="birthdayMonthSpin" >
+          <property name="readOnly" >
+           <bool>true</bool>
+          </property>
+          <property name="maximum" >
+           <number>12</number>
+          </property>
+          <property name="value" >
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="birthdayYearLabel" >
+          <property name="text" >
+           <string>Year:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>birthdayYearSpin</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="birthdayYearSpin" >
+          <property name="readOnly" >
+           <bool>true</bool>
+          </property>
+          <property name="maximum" >
+           <number>7999</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="textLabel10" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>0</hsizetype>
+          <vsizetype>5</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>A&amp;ge:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>ageEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="ageEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>13</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize" >
+         <size>
+          <width>35</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maxLength" >
+         <number>3</number>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -230,8 +343,18 @@
       <property name="spacing" >
        <number>6</number>
       </property>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="language1Label" >
+        <property name="text" >
+         <string>First:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>language1Combo</cstring>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1" >
-       <widget class="QLineEdit" name="language1Edit" >
+       <widget class="QComboBox" name="language1Combo" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>7</hsizetype>
@@ -240,15 +363,27 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="readOnly" >
-         <bool>true</bool>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="language2Label" >
+        <property name="text" >
+         <string>Second:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>language2Combo</cstring>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="language3Edit" >
-        <property name="readOnly" >
-         <bool>true</bool>
+      <item row="1" column="1" >
+       <widget class="QComboBox" name="language2Combo" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -257,26 +392,20 @@
         <property name="text" >
          <string>Third:</string>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="language2Edit" >
-        <property name="readOnly" >
-         <bool>true</bool>
+        <property name="buddy" >
+         <cstring>language3Combo</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="language2Label" >
-        <property name="text" >
-         <string>Second:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="language1Label" >
-        <property name="text" >
-         <string>First:</string>
+      <item row="2" column="1" >
+       <widget class="QComboBox" name="language3Combo" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -300,33 +429,8 @@
         <property name="text" >
          <string>City:</string>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="textLabel1_2" >
-        <property name="text" >
-         <string>State:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="oStateEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="textLabel3_2" >
-        <property name="text" >
-         <string>Country:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="oCountryEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
+        <property name="buddy" >
+         <cstring>oCityEdit</cstring>
         </property>
        </widget>
       </item>
@@ -342,6 +446,45 @@
         </property>
         <property name="readOnly" >
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="textLabel1_2" >
+        <property name="text" >
+         <string>State:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>oStateEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="oStateEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="textLabel3_2" >
+        <property name="text" >
+         <string>Country:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>oCountryCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QComboBox" name="oCountryCombo" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -369,21 +512,24 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
-  <tabstop>nickNameEdit</tabstop>
   <tabstop>uinEdit</tabstop>
-  <tabstop>fullNameEdit</tabstop>
   <tabstop>ipEdit</tabstop>
-  <tabstop>genderEdit</tabstop>
-  <tabstop>timezoneEdit</tabstop>
-  <tabstop>birthday</tabstop>
-  <tabstop>ageSpinBox</tabstop>
-  <tabstop>marital</tabstop>
-  <tabstop>language1Edit</tabstop>
-  <tabstop>language2Edit</tabstop>
-  <tabstop>language3Edit</tabstop>
+  <tabstop>nickNameEdit</tabstop>
+  <tabstop>genderCombo</tabstop>
+  <tabstop>firstNameEdit</tabstop>
+  <tabstop>lastNameEdit</tabstop>
+  <tabstop>maritalCombo</tabstop>
+  <tabstop>timezoneCombo</tabstop>
+  <tabstop>birthdayDaySpin</tabstop>
+  <tabstop>birthdayMonthSpin</tabstop>
+  <tabstop>birthdayYearSpin</tabstop>
+  <tabstop>ageEdit</tabstop>
+  <tabstop>language1Combo</tabstop>
+  <tabstop>language2Combo</tabstop>
+  <tabstop>language3Combo</tabstop>
   <tabstop>oCityEdit</tabstop>
   <tabstop>oStateEdit</tabstop>
-  <tabstop>oCountryEdit</tabstop>
+  <tabstop>oCountryCombo</tabstop>
  </tabstops>
  <resources/>
  <connections/>

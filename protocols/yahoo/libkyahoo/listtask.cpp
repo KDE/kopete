@@ -58,7 +58,7 @@ bool ListTask::forMe( const Transfer* transfer ) const
 		return false;
 
 
-	if ( t->service() == Yahoo::ServiceList )
+	if ( t->service() == Yahoo::ServiceBuddyList )
 		return true;
 	else
 		return false;
@@ -68,24 +68,18 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	QString raw;
-	raw = t->firstParam( 87 );
-	
-	if( raw.isEmpty() )
-		return;
+	QString group;
 
-	QStringList groups;
-	groups = raw.split( "\n", QString::SkipEmptyParts );
-
-	for ( QStringList::Iterator groupIt = groups.begin(); groupIt != groups.end(); ++groupIt ) 
+	// We need some low-level parsing here
+	foreach( Param p, t->paramList() )
 	{
-		QString group = (*groupIt).section(":", 0, 0);
-		QStringList buddies;
-		buddies = (*groupIt).section(":", 1,1).split( ",", QString::SkipEmptyParts );
-		for ( QStringList::Iterator buddyIt = buddies.begin(); buddyIt != buddies.end(); ++buddyIt ) 
+		switch( p.first )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsed buddy: " << *buddyIt << " in group " << group << endl;
-			emit gotBuddy( *buddyIt, QString::null, group );
+		case 65:
+			group = p.second;
+			break;
+		case 7:
+			emit gotBuddy( p.second, QString::null, group );
 		}
 	}
 }

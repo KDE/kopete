@@ -44,7 +44,6 @@ class BehaviorConfig : public KCModule
 	private slots:
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);
-		void slotUpdatePluginLabel(int);
 		void slotTextChanged(const QString&);
 
 	private:

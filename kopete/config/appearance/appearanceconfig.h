@@ -2,7 +2,7 @@
     appearanceconfig.h  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -23,7 +23,7 @@
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class AppearanceConfig : public KCModule
 {

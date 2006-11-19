@@ -46,6 +46,24 @@ YahooChatSelectorWidget::~YahooChatSelectorWidget()
 {
 }
 
+void YahooChatSelectorWidget::slotCategorySelectionChanged( QTreeWidgetItem *newItem, QTreeWidgetItem *oldItem )
+{
+	Q_UNUSED( oldItem );
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Selected Category: " << newItem->text( 0 ) <<  "(" << newItem->data( 0, Qt::UserRole ).toInt() << ")" << endl;
+
+	mUi->treeRooms->clear();
+	
+	QTreeWidgetItem *loading = new QTreeWidgetItem(mUi->treeRooms);
+	loading->setText( 0, i18n("Loading...") );
+	mUi->treeRooms->addTopLevelItem( loading );
+
+	Yahoo::ChatCategory category;
+	category.id = newItem->data( 0, Qt::UserRole ).toInt();
+	category.name = newItem->text( 0 );
+
+	emit chatCategorySelected( category );
+}
+
 void YahooChatSelectorWidget::slotSetChatCategories( const QDomDocument &doc )
 {
 	mUi->treeCategories->takeTopLevelItem(0);
@@ -63,29 +81,11 @@ void YahooChatSelectorWidget::slotSetChatCategories( const QDomDocument &doc )
 	
 }
 
-void YahooChatSelectorWidget::slotCategorySelectionChanged( QTreeWidgetItem *newItem, QTreeWidgetItem *oldItem )
-{
-	Q_UNUSED( oldItem );
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Selected Category: " << newItem->text( 0 ) <<  "(" << newItem->data( 0, Qt::UserRole ).toInt() << ")" << endl;
-
-	mUi->treeRooms->takeTopLevelItem(0);
-	
-	QTreeWidgetItem *loading = new QTreeWidgetItem(mUi->treeRooms);
-	loading->setText( 0, i18n("Loading...") );
-	mUi->treeRooms->addTopLevelItem( loading );
-
-	Yahoo::ChatCategory category;
-	category.id = newItem->data( 0, Qt::UserRole ).toInt();
-	category.name = newItem->text( 0 );
-
-	emit chatCategorySelected( category );
-}
-
 void YahooChatSelectorWidget::parseChatCategory( const QDomNode &node, QTreeWidgetItem *parentItem )
 {
 	QTreeWidgetItem *newParent = parentItem;
 	if( node.nodeName().startsWith( "category" ) )
-	{kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << node.nodeName() << endl;
+	{
 		QTreeWidgetItem *item = new QTreeWidgetItem( parentItem );
 	
 		item->setText( 0, node.toElement().attribute( "name" ) );
@@ -101,14 +101,47 @@ void YahooChatSelectorWidget::parseChatCategory( const QDomNode &node, QTreeWidg
 	}
 }
 
-void YahooChatSelectorWidget::slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )
+void YahooChatSelectorWidget::slotSetChatRooms( const Yahoo::ChatCategory &category, const QDomDocument &doc )
 {
+	Q_UNUSED( category );
+	mUi->treeRooms->clear();
+
+	QDomNode child = doc.firstChild();
+	while( !child.isNull() )
+	{
+		parseChatRoom( child );
+		child = child.nextSibling();
+	}
 	
+}
+
+void YahooChatSelectorWidget::parseChatRoom( const QDomNode &node )
+{
+	if( node.nodeName().startsWith( "room" ) )
+	{
+		QTreeWidgetItem *item = new QTreeWidgetItem( mUi->treeRooms );
+	
+		item->setText( 0, node.toElement().attribute( "name" ) );
+		item->setData( 0, Qt::ToolTipRole, node.toElement().attribute( "topic" ) );
+		item->setData( 0, Qt::UserRole, node.toElement().attribute( "id" ) );
+	}
+	QDomNode child = node.firstChild();
+	while( !child.isNull() )
+	{
+		parseChatRoom( child );
+		child = child.nextSibling();
+	}
 }
 
 Yahoo::ChatRoom YahooChatSelectorWidget::selectedRoom()
 {
-	
+	Yahoo::ChatRoom room;
+	QTreeWidgetItem *item = mUi->treeRooms->selectedItems().first();
+	room.name =  item->text( 0 );
+	room.topic = item->data( 0, Qt::ToolTipRole ).toString();
+	room.id = item->data( 0, Qt::UserRole ).toInt();
+
+	return room;
 }
 
 #include "yahoochatselectorwidget.moc"

@@ -1,7 +1,7 @@
 /*
     kopeteeditglobalidentitywidget.h  -  Kopete Edit Global Identity widget
 
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -29,7 +29,7 @@ class QSize;
  * When either the photo or the nickname change, it's set the source to Custom.
  * When well connected(signal/slot), it react to the toolbar icon size change.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class KopeteEditGlobalIdentityWidget : public QWidget
 {

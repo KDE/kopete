@@ -2,7 +2,7 @@
     Kopete Contact List XML Storage Class
 
     Copyright  2006      by Matt Rogers <mattr@kde.org>
-    Copyright  2006      by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright  2006      by Michaël Larouche <larouche@kde.org>
     Copyright  2006      by Roman Jarosz <kedgedev@centrum.cz>
 
     Kopete     2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -243,7 +243,7 @@ void XmlContactStorage::save()
     }
 
     KSaveFile contactListFile( filename );
-    if( contactListFile.status() != 0 )
+    if( !contactListFile.open() )
     {
         d->isValid = false;
         d->errorMessage = i18n( "Could not open contact list file." );
@@ -284,11 +284,11 @@ void XmlContactStorage::save()
     }
 #endif
 
-    QTextStream *stream = contactListFile.textStream();
-    stream->setCodec(QTextCodec::codecForName("UTF-8"));
-    doc.save( *stream, 4 );
+    QTextStream stream ( &contactListFile );
+    stream.setCodec(QTextCodec::codecForName("UTF-8"));
+    doc.save( stream, 4 );
 
-    if ( !contactListFile.close() )
+    if ( !contactListFile.finalize() )
     {
         d->isValid = false;
         d->errorMessage = i18n( "Could not write contact list to a file." );

@@ -46,6 +46,8 @@
 #include "client.h"
 #include "contactmanager.h"
 #include "oscarutils.h"
+#include "oscarprotocol.h"
+#include "oscarencodingselectiondialog.h"
 
 #include <assert.h>
 
@@ -58,14 +60,18 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	mMsgManager = 0L;
 	m_ssiItem = ssiItem;
 	m_buddyIconDirty = false;
-	
-	connect( this, SIGNAL( updatedSSI() ), this, SLOT( updateSSIItem() ) );
+	m_haveAwayMessage = false;
+	m_oesd = 0;
+
+	connect( this, SIGNAL(updatedSSI()), this, SLOT(updateSSIItem()) );
 	setFileCapable( true );
-	
-	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
-	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
-	                  this, SLOT( requestBuddyIcon() ) );
+
+	QObject::connect( mAccount->engine(), SIGNAL(haveIconForContact(const QString&, QByteArray)),
+	                  this, SLOT(haveIcon(const QString&, QByteArray)) );
+	QObject::connect( mAccount->engine(), SIGNAL(iconServerConnected()),
+	                  this, SLOT(requestBuddyIcon()) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedAwayMessage(const QString&, const QString& )),
+	                  this, SLOT(receivedStatusMessage(const QString&, const QString&)) );
 }
 
 OscarContact::~OscarContact()
@@ -241,7 +247,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 		capList << i18n( "Trillian user" );
 	
 	m_clientFeatures = capList.join( ", " );
-	emit featuresUpdated();
+	setProperty( static_cast<OscarProtocol*>(protocol())->clientFeatures, m_clientFeatures );
 }
 
 void OscarContact::startedTyping()
@@ -295,6 +301,55 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	mAccount->engine()->sendFile( mName, filePath, t );
 }
 
+void OscarContact::setAwayMessage( const QString &message )
+{
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo <<
+		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
+	
+	if ( !message.isEmpty() )
+		setProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage, filterAwayMessage( message ) );
+	else
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage );
+}
+
+void OscarContact::changeContactEncoding()
+{
+	if ( m_oesd )
+		return;
+
+	OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
+	m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget(), property(p->contactEncoding).value().toInt() );
+	connect( m_oesd, SIGNAL(closing(int)), this, SLOT(changeEncodingDialogClosed(int)) );
+	m_oesd->show();
+}
+
+void OscarContact::changeEncodingDialogClosed( int result )
+{
+	if ( result == QDialog::Accepted )
+	{
+		OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
+		int mib = m_oesd->selectedEncoding();
+		if ( mib != 0 )
+		{
+			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
+				<< m_oesd->selectedEncoding() << endl;
+			setProperty( p->contactEncoding, m_oesd->selectedEncoding() );
+		}
+		else
+		{
+			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo
+				<< "setting encoding to default" << endl;
+			removeProperty( p->contactEncoding );
+		}
+	}
+	
+	if ( m_oesd )
+	{
+		m_oesd->deleteLater();
+		m_oesd = 0L;
+	}
+}
+
 void OscarContact::requestBuddyIcon()
 {
 	if ( m_buddyIconDirty && m_details.buddyIconHash().size() > 0 )
@@ -336,6 +391,31 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!" << endl;
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 	}
+}
+
+void OscarContact::receivedStatusMessage( const QString& contact, const QString& message )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	setAwayMessage( message );
+	m_haveAwayMessage = true;
+}
+
+QString OscarContact::filterAwayMessage( const QString &message ) const
+{
+	QString filteredMessage = message;
+	filteredMessage.replace(
+	                         QRegExp(QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>")),
+	                         QString::fromLatin1("\\1"));
+	filteredMessage.replace(
+	                         QRegExp(QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>")),
+	                         QString::fromLatin1("\\1") );
+	QRegExp fontRemover( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") );
+	fontRemover.setMinimal(true);
+	while ( filteredMessage.indexOf( fontRemover ) != -1 )
+		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
+	return filteredMessage;
 }
 
 bool OscarContact::cachedBuddyIcon( QByteArray hash )

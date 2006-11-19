@@ -189,7 +189,7 @@ public:
 		setupUi( mView );
 		passwdDialog->setMainWidget( mView );
 
-		m_text->setPlainText( mPrompt );
+		m_text->setText( mPrompt );
 		m_image->setPixmap( mImage );
 		/* Do not put the default password, or it will confuse those which doesn't echo anything for the password m_password->insert( password );
 		*/

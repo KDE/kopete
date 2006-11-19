@@ -60,13 +60,15 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Lead Developer, AIM and ICQ plugin maintainer"), "mattr@kde.org" );
 	aboutData.addAuthor ( "Michel Hermier", I18N_NOOP("IRC plugin maintainer"), "michel.hermier@wanadoo.fr" );
-	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Lead Developer"), "michael.larouche@kdemail.net", "http://mlarouche.blogspot.com" );
+	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Lead Developer, Telepathy and Messenger plugin maintainer"), "larouche@kde.org", "http://www.tehbisnatch.org/" );
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Lead Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
 	aboutData.addAuthor ( "Ollivier Lapeyre Johann", I18N_NOOP("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
 	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Lead Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
-	
+	aboutData.addAuthor ( "Rafael Fernández López", I18N_NOOP("Developer"), "ereslibre@gmail.com" );
+	aboutData.addAuthor ( "Roman Jarosz", I18N_NOOP("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
+
 	aboutData.addCredit ( "Vally8", I18N_NOOP("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
 	aboutData.addCredit ( "Tm_T", I18N_NOOP("Hacker style author"), "jussi.kekkonen@gmail.com");
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
@@ -89,8 +91,8 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
 	aboutData.addCredit ( "Gav Wood", I18N_NOOP("Former developer and WinPopup maintainer"), "gav@indigoarchive.net" );
 
-	aboutData.setTranslator( I18N_NOOP2("NAME OF TRANSLATORS","Your names"),
-		I18N_NOOP2("EMAIL OF TRANSLATORS","Your emails") );
+	aboutData.setTranslator( ki18nc("NAME OF TRANSLATORS","Your names"),
+		ki18nc("EMAIL OF TRANSLATORS","Your emails") );
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.

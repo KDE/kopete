@@ -1,7 +1,7 @@
 /*
    connection.h - Connection with a Messenger service.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -30,7 +30,7 @@ class Client;
  *
  * Contains the transaction ID reference count, the root Task. Dispatch also the transfers through the task.
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
 */
 class PAPILLON_EXPORT Connection : public QObject
 {

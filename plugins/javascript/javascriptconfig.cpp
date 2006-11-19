@@ -258,7 +258,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 		KMessageBox::queuedMessageBox(
 			Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,
-			i18n("Could not open \"%1\" for unpacking.").arg(archiveName )
+			i18n("Could not open \"%1\" for unpacking.", archiveName )
 		);
 		return;
 	}
@@ -301,8 +301,8 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 
 	KMessageBox::queuedMessageBox(
 		Kopete::UI::Global::mainWidget(),
-		KMessageBox::Error, i18n("The file \"%1\" is not a valid Kopete script package.")
-		.arg(archiveName)
+		KMessageBox::Error, i18n("The file \"%1\" is not a valid Kopete script package.",
+		                         archiveName)
 	);
 }
 

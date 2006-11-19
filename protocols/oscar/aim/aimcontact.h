@@ -2,8 +2,9 @@
  aimcontact.h  -  Oscar Protocol Plugin
 
  Copyright (c) 2003 by Will Stephenson
- Copyright (c) 2004 by Matt Rogers <mattr@kde.org> 
- Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+ Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
+ Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
+ Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                       *
@@ -18,21 +19,12 @@
 #ifndef AIMCONTACT_H
 #define AIMCONTACT_H
 
-#include <qdatetime.h>
+#include "aimcontactbase.h"
 
-#include "oscarcontact.h"
-
-
-namespace Kopete
-{
-class ChatSession;
-}
-
-class AIMAccount;
 class AIMProtocol;
 class AIMUserInfoDialog;
 
-class AIMContact : public OscarContact
+class AIMContact : public AIMContactBase
 {
 Q_OBJECT
 
@@ -44,21 +36,7 @@ public:
 	bool isReachable();
 	QList<KAction*> *customContextMenuActions();
 
-	const QString &userProfile() { return mUserProfile; }
-
-	virtual const QString awayMessage();
-	virtual void setAwayMessage( const QString &message );
-	
 	int warningLevel() const;
-	
-	/**
-	 * Gets the last time an autoresponse was sent to this contact
-	 * @returns QDateTime Object that represents the date/time
-	 */
-	 QDateTime lastAutoResponseTime() {return m_lastAutoresponseTime;}	
-	
-	/** Sends an auto response to this contact */
-	virtual void sendAutoResponse(Kopete::Message& msg);
 
 public slots:
 	void updateSSIItem();
@@ -66,17 +44,12 @@ public slots:
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userId );
-	void updateAwayMessage( const QString& userId, const QString& message );
 	void updateProfile( const QString& contact, const QString& profile );
 	void gotWarning( const QString& contact, quint16, quint16 );
 
 signals:
 	void updatedProfile();
 
-protected slots:
-	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
-	virtual void updateFeatures();
-	
 private slots:
 	void closeUserInfoDialog();
 	void warnUser();
@@ -87,14 +60,11 @@ private slots:
 private:
 	AIMProtocol* mProtocol;
 	AIMUserInfoDialog* m_infoDialog;
-	QString mUserProfile;
-	bool m_haveAwayMessage;
-	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
-	QDateTime m_lastAutoresponseTime;
 	
 	KAction* m_warnUserAction;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
+
 };
 #endif 
 //kate: tab-width 4; indent-mode csands;

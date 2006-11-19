@@ -27,7 +27,6 @@ class KTextEdit;
 class OscarAccount;
 class AIMMyselfContact;
 class AIMAccount;
-class KHTMLPart;
 
 class AIMUserInfoDialog : public KDialog
 {

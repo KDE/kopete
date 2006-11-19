@@ -1,7 +1,7 @@
 /*
    task.h - Papillon Task base class.
 
-   Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
+   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    Based on code Copyright (c) 2004 Matt Rogers <mattr@kde.org>
    Based on code copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
@@ -42,7 +42,7 @@ class Connection;
  * forMe() - Used to check if the incoming Transfer is for us. <br>
  * onDisconnect() - If you need to do something special when a Connection disconnect. <br>
  *
- * @author Michaël Larouche <michael.larouche@kdemail.net>
+ * @author Michaël Larouche <larouche@kde.org>
  * @author Matt Rogers  <mattr@kde.org>
  * @author SuSE Linux AG <http://www.suse.com>
  * @author Justin Karneges

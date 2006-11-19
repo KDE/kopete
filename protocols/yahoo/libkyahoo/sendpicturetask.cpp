@@ -64,8 +64,9 @@ void SendPictureTask::initiateUpload()
 {	
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	m_socket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
-	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
+	connect( m_socket, SIGNAL( readyRead() ), this, SLOT( readResult() ) );
 
 	m_socket->connect();
 }
@@ -124,7 +125,8 @@ void SendPictureTask::connectSucceeded()
 	if( m_socket->write( buffer, buffer.size() ) )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
-		setSuccess( true );
+		m_socket->enableRead( true );
+// 		setSuccess( true );
 	}
 	else
 	{
@@ -135,10 +137,12 @@ void SendPictureTask::connectSucceeded()
 
 void SendPictureTask::readResult()
 {
-	QString buf( m_socket->readAll() );
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_socket->bytesAvailable() << endl;
+	m_socket->enableRead( false );
+	QByteArray buf( m_socket->bytesAvailable() );
+	m_socket->read( buf.data(), m_socket->bytesAvailable() );
 
-	m_socket->close();
-	if( buf.indexOf( "error", 0, Qt::CaseInsensitive ) >= 0 )
+	if( buf.indexOf( "error", 0 ) >= 0 )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed" << endl;
 		setSuccess( false );

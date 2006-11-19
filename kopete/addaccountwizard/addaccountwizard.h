@@ -49,7 +49,7 @@ class KOPETE_EXPORT AddAccountWizard : public KAssistantDialog
 	Q_OBJECT
 
 public:
-	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false, bool firstRun = false );
+	AddAccountWizard( QWidget *parent = 0, bool firstRun = false );
 	~AddAccountWizard();
 
 private slots:
@@ -63,17 +63,8 @@ protected slots:
 	virtual void reject();
 
 private:
-	QTreeWidgetItem* selectedProtocol();
-
-	QMap<QTreeWidgetItem *, KPluginInfo *>  m_protocolItems;
-	KopeteEditAccountWidget *m_accountPage;
-	KVBox *m_accountPageWidget;
-	QWidget *m_selectService;
-	QWidget *m_finish;
-	Ui::AddAccountWizardPage1 m_uiSelectService;
-	Ui::AddAccountWizardPage2 m_uiFinish;
-	Kopete::Protocol *m_proto;
-	KPageWidgetItem *m_selectServiceItem;
+	class Private;
+	Private *d;
 };
 
 #endif

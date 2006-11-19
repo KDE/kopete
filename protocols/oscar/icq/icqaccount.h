@@ -29,6 +29,8 @@ class KAction;
 namespace Kopete { class AwayAction; class StatusMessage; }
 class ICQProtocol;
 class ICQAccount;
+class ICQUserInfoWidget;
+class ICQContact;
 
 class ICQMyselfContact : public OscarMyselfContact
 {
@@ -69,8 +71,6 @@ public:
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
-	virtual QString sanitizedMessage( const QString& message );
-
 protected slots:
 	virtual void disconnected( DisconnectReason reason );
 
@@ -87,10 +87,18 @@ private:
 private slots:
 	void slotToggleInvisible();
 
+	void slotUserInfo();
+	void storeUserInfoDialog();
+	void closeUserInfoDialog();
+
+	void userReadsStatusMessage( const QString& contact );
+
 private:
 	bool mWebAware;
 	bool mHideIP;
 	QString mInitialStatusMessage;
+	ICQUserInfoWidget* mInfoWidget;
+	ICQContact* mInfoContact;
 };
 
 #endif

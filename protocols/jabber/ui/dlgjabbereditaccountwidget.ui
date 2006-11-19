@@ -721,7 +721,7 @@ If two resources have the same priority, the messages will be sent to the one co
            <widget class="QLabel" name="textLabel3" >
             <property name="text" >
              <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li>
-&lt;li>You can leave the "public IP address" empty if you do not use NAT.&lt;/li>
+&lt;li>You can leave the "public IP address" empty if your computer is directly connected to the internet.&lt;/li>
 &lt;li>A hostname is also valid.&lt;/li>
 &lt;li>Changes to these fields will only take effect the next time you start Kopete.&lt;/li>
 &lt;li>The "Proxy JID" can be configured per account.&lt;/li>&lt;/ul>&lt;/i></string>

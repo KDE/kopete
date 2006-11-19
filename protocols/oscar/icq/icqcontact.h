@@ -4,7 +4,8 @@
   Copyright (c) 2003 by Stefan Gehn  <metz AT gehn.net>
   Copyright (c) 2003 by Olivier Goffart
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
+  Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -19,28 +20,10 @@
 #ifndef ICQCONTACT_H
 #define ICQCONTACT_H
 
-#include "oscarcontact.h"
-#include "userdetails.h"
-//Added by qt3to4:
-#include <QList>
+#include "icqcontactbase.h"
 
-class OContact;
-
-class OscarEncodingSelectionDialog;
-class KAction;
-class KToggleAction;
-namespace Kopete { class ChatSession; }
-namespace Kopete { class OnlineStatus; }
 class ICQProtocol;
-class ICQAccount;
-class OscarAccount;
-class ICQUserInfo; // user info dialog
-class ICQReadAway;
-
-class ICQGeneralUserInfo;
-class ICQWorkUserInfo;
 class ICQUserInfoWidget;
-class ICQInterestInfoWidget;
 
 /**
  * Contact for ICQ over Oscar protocol
@@ -48,14 +31,14 @@ class ICQInterestInfoWidget;
  * @author Richard Smith
  * @author Matt Rogers
  */
-class ICQContact : public OscarContact
+class ICQContact : public ICQContactBase
 {
 Q_OBJECT
 
 public:
 
 	/** Normal ICQ constructor */
-	ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
+	ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
 	            const QString& icon = QString::null, const OContact& ssiItem = OContact()  );
 	virtual ~ICQContact();
 
@@ -68,10 +51,6 @@ public:
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();
 
-
-	//virtual const QString awayMessage();
-	//virtual void setAwayMessage(const QString &message);
-
 public slots:
 	virtual void slotUserInfo();
 	virtual void updateSSIItem();
@@ -80,8 +59,6 @@ public slots:
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userID );
 	void loggedIn();
-
-	void requestShortInfo();
 
 signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
@@ -93,13 +70,9 @@ signals:
 	void haveOrgAffInfo( const ICQOrgAffInfo& );
 
 private:	
-	bool m_requestingNickname;
 	ICQProtocol *mProtocol;
 	ICQUserInfoWidget* m_infoWidget;
-	/*
-	ICQReadAway *awayMessageDialog;
-	KAction *actionReadAwayMessage;
-	*/
+
 	KAction *actionRequestAuth;
 	KAction *actionSendAuth;
     KAction *m_selectEncoding;
@@ -107,16 +80,6 @@ private:
 	KToggleAction *m_actionIgnore;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
-
-	/*
-	bool mInvisible;
-	*/
-
-    OscarEncodingSelectionDialog* m_oesd;
-
-protected slots:
-	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
-	virtual void updateFeatures();
 
 private slots:
 	/** Request authorization from this contact */
@@ -136,16 +99,6 @@ private slots:
 	void closeUserInfoDialog();
 
 	void receivedLongInfo( const QString& contact );
-	void receivedShortInfo( const QString& contact );
-
-    void changeContactEncoding();
-    void changeEncodingDialogClosed( int );
-
-	void receivedStatusMessage( const QString &contact, const QString &message );
-	void receivedStatusMessage( const Oscar::Message &message );
-
-//void slotCloseAwayMessageDialog();
-	//void slotReadAwayMessage();
 
 	void slotIgnore();
 	void slotVisibleTo();

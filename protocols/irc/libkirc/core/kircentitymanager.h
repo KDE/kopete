@@ -18,7 +18,7 @@
 #ifndef KIRCENTITYMANAGER_H
 #define KIRCENTITYMANAGER_H
 
-#include <QObject>
+#include "kircentity.h"
 
 class QByteArray;
 
@@ -42,12 +42,17 @@ public:
 	~EntityManager();
 
 public:
-	QList<Entity *> entities() const;
-//	QList<Entity *> entitiesByHost(...) const;
-//	QList<Entity *> entitiesByServer(...) const;
-//	QList<Entity *> entitiesByType(...) const;
+	Entity::List entities() const;
+//	Entity::List entitiesByHost(...) const;
+//	Entity::List entitiesByServer(...) const;
+//	Entity::List entitiesByType(...) const;
 
-	Entity *entityByName(const QByteArray &name) const;
+	Entity::Ptr entityFromName(const QByteArray &name) const;
+//	Entity::Ptr entityFromName(const QByteArray &name, bool );
+
+	Entity::List entitiesFromNames(const QList<QByteArray> &names);
+
+	Entity::List entitiesFromNames(const QByteArray &names, char sep);
 
 protected:
 	void add(Entity *entity);

@@ -4,7 +4,7 @@
     Kopete Now Listening To plugin
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
-    Copyright (c) 2005-2006           by Michaël Larouche <michael.larouche@kdemail.net>
+    Copyright (c) 2005-2006           by Michaël Larouche <larouche@kde.org>
 
     Kopete    (c) 2002-2006      by the Kopete developers  <kopete-devel@kde.org>
 
