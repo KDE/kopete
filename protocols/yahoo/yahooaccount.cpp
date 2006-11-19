@@ -1867,7 +1867,6 @@ void YahooAccount::slotJoinChatRoom()
 					selector, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
 	QObject::connect( selector, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
 					this, SLOT(slotChatCategorySelected( const Yahoo::ChatCategory & ) ) );
-	
 	m_session->getYahooChatCategories();
 	
 	if( chatDialog->exec() == QDialog::Accepted )
@@ -1877,6 +1876,12 @@ void YahooAccount::slotJoinChatRoom()
 	}
 	
 	chatDialog->deleteLater();
+}
+
+void YahooAccount::slotLeavChat()
+{
+	m_chatChatSession = 0;
+	m_session->leaveChat();
 }
 
 void YahooAccount::slotChatCategorySelected( const Yahoo::ChatCategory &category )
@@ -1891,7 +1896,11 @@ void YahooAccount::slotChatJoined( int /*roomId*/, int /*categoryId*/, const QSt
 	others.append(myself());
 	
 	if( !m_chatChatSession )
+	{
 		m_chatChatSession = new YahooChatChatSession( protocol(), myself(), others );
+		QObject::connect( m_chatChatSession, SIGNAL(closing(Kopete::ChatSession *)), this,
+					SLOT(slotLeavChat()) );
+	}
 	m_chatChatSession->removeAllContacts();
 	m_chatChatSession->setHandle( handle );
 	m_chatChatSession->setTopic( handle );

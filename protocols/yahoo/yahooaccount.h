@@ -234,6 +234,7 @@ protected slots:
 	void slotChatBuddyHasJoined( const QString &nick, const QString &handle, bool suppressNotification );
 	void slotChatBuddyHasLeft( const QString &nick, const QString &handle );
 	void slotChatMessageReceived( const QString &nick, const QString &message, const QString &handle );
+	void slotLeavChat();
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 	void slotReceiveFileRefused( const Kopete::FileTransferInfo& info );

@@ -647,6 +647,11 @@ void Client::sendYahooChatMessage( const QString &msg, const QString &handle )
 	d->yahooChatTask->sendYahooChatMessage( msg, handle );
 }
 
+void Client::leaveChat()
+{
+	d->yahooChatTask->logout();
+}
+
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {

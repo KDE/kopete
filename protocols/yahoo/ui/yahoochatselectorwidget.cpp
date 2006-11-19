@@ -66,8 +66,8 @@ void YahooChatSelectorWidget::slotCategorySelectionChanged( QTreeWidgetItem *new
 
 void YahooChatSelectorWidget::slotSetChatCategories( const QDomDocument &doc )
 {
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString() << endl;
 	mUi->treeCategories->takeTopLevelItem(0);
-
 
 	QTreeWidgetItem *root = new QTreeWidgetItem( mUi->treeCategories );
 	root->setText( 0, i18n("Yahoo Chat rooms") );
@@ -103,6 +103,7 @@ void YahooChatSelectorWidget::parseChatCategory( const QDomNode &node, QTreeWidg
 
 void YahooChatSelectorWidget::slotSetChatRooms( const Yahoo::ChatCategory &category, const QDomDocument &doc )
 {
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString() << endl;
 	Q_UNUSED( category );
 	mUi->treeRooms->clear();
 
