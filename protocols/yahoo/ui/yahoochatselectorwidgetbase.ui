@@ -51,7 +51,7 @@
    <item row="1" column="1" >
     <widget class="QTreeWidget" name="treeRooms" >
      <property name="rootIsDecorated" >
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="columnCount" >
       <number>1</number>
