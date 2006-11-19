@@ -121,16 +121,33 @@ void YahooChatSelectorWidget::parseChatRoom( const QDomNode &node )
 	if( node.nodeName().startsWith( "room" ) )
 	{
 		QTreeWidgetItem *item = new QTreeWidgetItem( mUi->treeRooms );
-	
-		item->setText( 0, node.toElement().attribute( "name" ) );
-		item->setData( 0, Qt::ToolTipRole, node.toElement().attribute( "topic" ) );
-		item->setData( 0, Qt::UserRole, node.toElement().attribute( "id" ) );
+		QDomElement elem = node.toElement();
+		QString name = elem.attribute( "name" );
+		QString id = elem.attribute( "id" );
+		item->setText( 0, name );
+		item->setData( 0, Qt::ToolTipRole, elem.attribute( "topic" ) );
+		item->setData( 0, Qt::UserRole, id );
+		
+		QDomNode child;
+		for( child = node.firstChild(); !child.isNull(); child = child.nextSibling() )
+		{
+			if( child.nodeName().startsWith( "lobby" ) )
+			{
+				QTreeWidgetItem *lobby = new QTreeWidgetItem( item );
+				lobby->setText( 0, name + ":" + child.toElement().attribute( "count" ) );
+				lobby->setData( 0, Qt::UserRole, id );
+				item->addChild( lobby );
+			}
+		}
 	}
-	QDomNode child = node.firstChild();
-	while( !child.isNull() )
+	else
 	{
-		parseChatRoom( child );
-		child = child.nextSibling();
+		QDomNode child = node.firstChild();
+		while( !child.isNull() )
+		{
+			parseChatRoom( child );
+			child = child.nextSibling();
+		}
 	}
 }
 
