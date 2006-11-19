@@ -65,6 +65,12 @@ Q_OBJECT
 		void setUserId( const QString& userName );
 
 		/**
+		 * Set the picture checksum
+		 * @param username The checksum
+		 */
+		void setPictureChecksum( int cs );
+
+		/**
 		 * Start a connection to the server using the supplied @ref ClientStream.
 		 * This is only a transport layer connection.
 		 * Needed for protocol action P1.
@@ -417,6 +423,11 @@ Q_OBJECT
 		 * 0 = no icon, 2 = icon, 1 = avatar (?)
 		 */
 		int pictureFlag();
+		
+		/**
+		 * return the picture checksum
+		 */
+		int pictureChecksum();
 
 		/** Get our status */
 		Yahoo::Status status();

@@ -87,8 +87,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 	
-	m_session->setUserId( accountId.toLower() );
-	
 	m_openInboxAction = new KAction( KIcon("mail_generic"), i18n( "Open Inbo&x..." ), 0, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
 	m_openYABAction = new KAction( KIcon("contents"), i18n( "Open &Addressbook..." ), 0, "m_openYABAction" );
@@ -115,6 +113,9 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	
 	m_YABLastMerge = configGroup()->readEntry( "YABLastMerge", 0 );
 	m_YABLastRemoteRevision = configGroup()->readEntry( "YABLastRemoteRevision", 0 );
+	
+	m_session->setUserId( accountId.toLower() );
+	m_session->setPictureChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 }
 
 YahooAccount::~YahooAccount()
@@ -892,20 +893,6 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		}
 		else
 			kc->removeProperty( m_protocol->awayMessage );
-
-		if( newStatus != m_protocol->Offline &&
-		    oldStatus == m_protocol->Offline && contact(who) != myself() )
-		{
-			//m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
-
-			if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() &&
-					myself()->onlineStatus() != m_protocol->Invisible && 
-					!kc->stealthed() )
-			{
-				kc->sendBuddyIconUpdate( pictureFlag() );
-				kc->sendBuddyIconChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
-			}
-		}
 		
 		//if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
 		if( newStatus == m_protocol->Idle )
@@ -1732,16 +1719,6 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 		configGroup()->writeEntry( "iconRemoteUrl", url );
 		setPictureFlag( 2 );
 		m_session->sendPictureChecksum( QString::null, checksum );
-	}
-	
-	QHash<QString,Kopete::Contact*>::const_iterator it;
-	QHash<QString,Kopete::Contact*>::const_iterator end = contacts().constEnd();
-	for ( it = contacts().constBegin(); it != end; ++it )
-	{
-		if ( it.value() == myself() || !it.value()->isReachable() )
-			continue;
-		static_cast< YahooContact* >( it.value() )->sendBuddyIconChecksum( checksum );
-		static_cast< YahooContact* >( it.value() )->sendBuddyIconUpdate( pictureFlag() );
 	}
 }
 

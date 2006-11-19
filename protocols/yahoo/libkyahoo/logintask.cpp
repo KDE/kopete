@@ -204,6 +204,7 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 // 	t->setParam( 59 , "B\\tfckeert1kk1nl&b=2" );	// ???
 	t->setParam( 135 , YMSG_PROGRAM_VERSION_STRING );	// Client version
 	t->setParam( 148 , -60 );
+	t->setParam( 192 , client()->pictureChecksum() );
 	t->setParam( 244 , 524223 );
 	t->setParam( 1 , sn.toLocal8Bit());
 

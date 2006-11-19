@@ -98,6 +98,7 @@ public:
 	Yahoo::Status statusOnConnect;
 	QString statusMessageOnConnect;
 	int pictureFlag;
+	int pictureChecksum;
 };
 
 Client::Client(QObject *par) :QObject(par)
@@ -715,6 +716,16 @@ uint Client::sessionID()
 int Client::pictureFlag()
 {
 	return d->pictureFlag;
+}
+
+int Client::pictureChecksum()
+{
+	return d->pictureChecksum;
+}
+
+void Client::setPictureChecksum( int cs )
+{
+	d->pictureChecksum = cs;
 }
 
 QString Client::yCookie()
