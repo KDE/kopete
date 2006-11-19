@@ -158,6 +158,8 @@ protected:
 	 */
 	virtual bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
 
+	virtual bool createChatContact( const QString &nick );
+
 	/**
 	 * Gets the just-received message color
 	 */

@@ -641,6 +641,13 @@ bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *
 	return false;
 }
 
+bool YahooAccount::createChatContact(const QString &nick)
+{
+	Kopete::MetaContact *m = new Kopete::MetaContact;
+	m->setTemporary( true );
+	return createContact( nick, m );
+}
+
 void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
 {
 	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
@@ -1916,17 +1923,17 @@ void YahooAccount::slotChatBuddyHasJoined( const QString &nick, const QString &h
 {
 	if(!m_chatChatSession)
 		return;
-	
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << m_chatChatSession->handle() << handle << endl;
+
 	if( !m_chatChatSession->handle().startsWith( handle ) )
 		return;
-		kDebug(YAHOO_GEN_DEBUG) << "passed" << endl;
-	
+
 	YahooContact *c = contact( nick );
 	if ( !c )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Adding contact " << nick << " to chat." << endl;
-		addContact( nick, nick, 0, Kopete::Account::Temporary );
+// 		addContact( nick, nick, 0, Kopete::Account::Temporary );
+		if( !createChatContact( nick ) )
+			return;
 		c = contact( nick );
 		c->setOnlineStatus( m_protocol->Online );
 	}
@@ -1944,7 +1951,7 @@ void YahooAccount::slotChatBuddyHasLeft( const QString &nick, const QString &han
 		return;
 	
 	YahooContact *c = contact( nick );
-	if ( !c )
+	if( !c )
 		return;
 	m_chatChatSession->left( c );
 }
@@ -1965,6 +1972,8 @@ void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &
 	{
 		kDebug(YAHOO_GEN_DEBUG) << "Adding contact " << nick << endl;
 		addContact( nick, nick, 0, Kopete::Account::DontChangeKABC );
+		if( !createChatContact( nick ) )
+			return;
 	}
 	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << message << "'" << endl;
 	
