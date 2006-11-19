@@ -31,7 +31,7 @@ NLamaroK::NLamaroK( DCOPClient *client ) : NLMediaPlayer()
 {
 	m_client = client;
 	m_type = Audio;
-	m_name = "amaroK";
+	m_name = "Amarok";
 }
 
 void NLamaroK::update()
