@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "qtbytestream.h"
+#include "Papillon/QtByteStream"
 
 // Qt includes
 #include <QtNetwork/QTcpSocket>

@@ -17,7 +17,7 @@
 #include <QtCore/QLatin1String>
 
 // Papillon includes
-#include "papillonstatusmessage.h"
+#include "Papillon/StatusMessage"
 
 #include "statusmessage_test.h"
 

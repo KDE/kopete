@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "setpersonalinformationtask.h"
+#include "Papillon/Tasks/SetPersonalInformationTask"
 
 // Qt includes
 #include <QtCore/QStringList>
@@ -21,8 +21,8 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "transfer.h"
-#include "connection.h"
+#include "Papillon/Transfer"
+#include "Papillon/Connection"
 
 namespace Papillon
 {

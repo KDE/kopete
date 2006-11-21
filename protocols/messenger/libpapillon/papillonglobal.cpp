@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "papillonglobal.h"
+#include "Papillon/Global"
 
 namespace Papillon
 {

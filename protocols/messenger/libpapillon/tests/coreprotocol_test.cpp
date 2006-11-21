@@ -21,8 +21,8 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "transfer.h"
-#include "messengercoreprotocol.h"
+#include "Papillon/Transfer"
+#include "Papillon/MessengerCoreProtocol"
 
 #ifndef PAPILLON_TESTS_DATA
 #define PAPILLON_TESTS_DATA

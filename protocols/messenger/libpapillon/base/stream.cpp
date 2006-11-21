@@ -17,7 +17,7 @@
    *************************************************************************
 */
 
-#include "stream.h"
+#include "Papillon/Base/Stream"
 
 namespace Papillon
 {

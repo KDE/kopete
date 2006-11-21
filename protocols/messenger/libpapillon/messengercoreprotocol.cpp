@@ -15,7 +15,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "messengercoreprotocol.h"
+#include "Papillon/MessengerCoreProtocol"
 
 // Qt includes
 #include <QtDebug>
@@ -25,7 +25,7 @@
 #include <QtCore/QStringList>
 
 // Papillon includes
-#include "transfer.h"
+#include "Papillon/Transfer"
 
 namespace Papillon
 {

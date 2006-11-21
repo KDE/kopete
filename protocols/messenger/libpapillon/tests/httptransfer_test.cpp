@@ -21,7 +21,7 @@
 #include <QtNetwork/QHttpResponseHeader>
 
 // Papillon includes
-#include "httptransfer.h"
+#include "Papillon/Http/Transfer"
 
 using namespace Papillon;
 

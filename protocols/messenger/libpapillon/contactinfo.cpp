@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "contactinfo.h"
+#include "Papillon/ContactInfo"
 
 // Qt includes
 #include <QtCore/QSharedData>

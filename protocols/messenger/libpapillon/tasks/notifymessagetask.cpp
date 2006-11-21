@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "notifymessagetask.h"
+#include "Papillon/Tasks/NotifyMessageTask"
 
 // Qt includes
 #include <QtCore/QLatin1String>
@@ -20,8 +20,8 @@
 #include <QtCore/QStringList>
 
 // Papillon includes
-#include "transfer.h"
-#include "mimeheader.h"
+#include "Papillon/Transfer"
+#include "Papillon/MimeHeader"
 
 namespace Papillon
 {

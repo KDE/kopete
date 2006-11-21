@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "tweenerhandler.h"
+#include "Papillon/Http/TweenerHandler"
 
 // Qt includes
 #include <QtDebug>
@@ -23,7 +23,7 @@
 #include <QtNetwork/QHttpResponseHeader>
 
 // Papillon includes
-#include "securestream.h"
+#include "Papillon/Http/SecureStream"
 
 namespace Papillon 
 {

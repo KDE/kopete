@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "logintask.h"
+#include "Papillon/Tasks/LoginTask"
 
 // Qt includes
 #include <QtCore/QLatin1String>
@@ -20,10 +20,10 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "transfer.h"
-#include "connection.h"
-#include "tweenerhandler.h"
-#include "client.h"
+#include "Papillon/Transfer"
+#include "Papillon/Connection"
+#include "Papillon/Http/TweenerHandler"
+#include "Papillon/Client"
 
 namespace Papillon 
 {

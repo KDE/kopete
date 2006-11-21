@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "httptransfer.h"
+#include "Papillon/Http/Transfer"
 
 #include <QtNetwork/QHttpHeader>
 #include <QtNetwork/QHttpRequestHeader>

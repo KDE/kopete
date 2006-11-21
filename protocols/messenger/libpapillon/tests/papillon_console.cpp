@@ -30,16 +30,16 @@
 #include <QtGui/QInputDialog>
 
 // Papillon includes
-#include "connection.h"
-#include "papillonclientstream.h"
-#include "logintask.h"
-#include "qtconnector.h"
-#include "transfer.h"
-#include "securestream.h"
+#include "Papillon/Connection"
+#include "Papillon/ClientStream"
+#include "Papillon/Tasks/LoginTask"
+#include "Papillon/QtConnector"
+#include "Papillon/Transfer"
+#include "Papillon/Http/SecureStream"
 
 // Little hack to access writeCommand method in Client
 #define private public
-#include "client.h"
+#include "Papillon/Client"
 #undef private
 
 #include "connection_test.h"

@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "securestream.h"
+#include "Papillon/Http/SecureStream"
 
 // Qt includes
 #include <QtDebug>
@@ -22,8 +22,8 @@
 #include <QtCrypto>
 
 // Papillon includes
-#include "connector.h"
-#include "bytestream.h"
+#include "Papillon/Base/Connector"
+#include "Papillon/Base/ByteStream"
 
 namespace Papillon
 {

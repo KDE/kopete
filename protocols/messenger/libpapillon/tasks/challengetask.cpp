@@ -15,7 +15,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "challengetask.h"
+#include "Papillon/Tasks/ChallengeTask"
 
 // Qt includes
 #include <QtCore/QStringList>
@@ -29,8 +29,8 @@
 #include <QtCrypto>
 
 // Papillon includes
-#include "transfer.h"
-#include "connection.h"
+#include "Papillon/Transfer"
+#include "Papillon/Connection"
 
 namespace Papillon
 {

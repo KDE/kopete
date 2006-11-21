@@ -15,7 +15,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "httpcoreprotocol.h"
+#include "Papillon/Http/CoreProtocol"
 
 // Qt includes
 #include <QtDebug>
@@ -26,7 +26,7 @@
 #include <QtNetwork/QHttpResponseHeader>
 
 // Papillon includes
-#include "httptransfer.h"
+#include "Papillon/Http/Transfer"
 
 namespace Papillon
 {

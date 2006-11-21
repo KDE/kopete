@@ -18,7 +18,7 @@
  *
  */
 
-#include"bytestream.h"
+#include "Papillon/Base/ByteStream"
 
 // CS_NAMESPACE_BEGIN
 

@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
  */
-#include "contactlistmanager.h"
+#include "Papillon/ContactListManager"
 
 // Qt includes
 #include <QtXml/QDomDocument>

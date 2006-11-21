@@ -20,8 +20,8 @@
 #include <QtCore/QLatin1String>
 
 // Papillon includes
-#include "httptransfer.h"
-#include "httpcoreprotocol.h"
+#include "Papillon/Http/Transfer"
+#include "Papillon/Http/CoreProtocol"
 
 #ifndef PAPILLON_TESTS_DATA
 #define PAPILLON_TESTS_DATA

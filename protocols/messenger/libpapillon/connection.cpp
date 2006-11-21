@@ -12,16 +12,16 @@
    *                                                                       *
    *************************************************************************
 */
-#include "connection.h"
+#include "Papillon/Connection"
 
 // Qt includes
 #include <QtDebug>
 
 // Papillon includes
-#include "task.h"
-#include "papillonclientstream.h"
-#include "transfer.h"
-#include "client.h"
+#include "Papillon/Task"
+#include "Papillon/ClientStream"
+#include "Papillon/Transfer"
+#include "Papillon/Client"
 
 namespace Papillon 
 {

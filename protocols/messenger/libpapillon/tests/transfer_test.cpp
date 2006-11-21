@@ -19,7 +19,7 @@
 
 #include "transfer_test.h"
 
-#include <transfer.h>
+#include <Papillon/Transfer>
 
 using namespace Papillon;
 

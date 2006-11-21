@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "mimeheader.h"
+#include "Papillon/MimeHeader"
 
 // Qt includes
 #include <QtCore/QSharedData>

@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
  */
-#include "papillonstatusmessage.h"
+#include "Papillon/StatusMessage"
 
 // Qt includes
 #include <QtCore/QSharedData>

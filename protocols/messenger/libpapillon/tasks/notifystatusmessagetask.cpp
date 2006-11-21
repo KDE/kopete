@@ -12,15 +12,15 @@
    *                                                                       *
    *************************************************************************
  */
-#include "notifystatusmessagetask.h"
+#include "Papillon/Tasks/NotifyStatusMessageTask"
 
 // Qt includes
 #include <QtCore/QStringList>
 #include <QtCore/QLatin1String>
 
 // Papillon includes
-#include "transfer.h"
-#include "papillonstatusmessage.h"
+#include "Papillon/Transfer"
+#include "Papillon/StatusMessage"
 
 namespace Papillon
 {

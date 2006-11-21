@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
  */
-#include "transfer.h"
+#include "Papillon/Transfer"
 
 // Qt includes
 #include <QtCore/QStringList>

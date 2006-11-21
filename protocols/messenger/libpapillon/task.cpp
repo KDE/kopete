@@ -16,16 +16,16 @@
    *                                                                       *
    *************************************************************************
 */
+#include "Papillon/Task"
 
 #include <QtCore/QTimer>
 
 #include <QtDebug>
 
 // Papillon includes
-#include "transfer.h"
-#include "safedelete.h"
-#include "task.h"
-#include "connection.h"
+#include "Papillon/Transfer"
+#include "Papillon/Base/SafeDelete"
+#include "Papillon/Connection"
 
 namespace Papillon
 {

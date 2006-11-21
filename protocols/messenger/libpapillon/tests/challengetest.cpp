@@ -24,9 +24,8 @@
 // Papillon includes
 // Use the #define hack to get acces to private methods in ChallengeTask
 #define private public
-#include "challengetask.h"
+#include "Papillon/Tasks/ChallengeTask"
 #undef private
-#include "task.h"
 
 // This test the ChallengeHandler with Windows Live Messenger 8 product key/id
 // Values from http://msnpiki.msnfanatic.com/index.php/MSNP13:Challenges

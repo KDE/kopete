@@ -12,9 +12,9 @@
    *                                                                       *
    *************************************************************************
 */
-#include "qtconnector.h"
+#include "Papillon/QtConnector"
 
-#include "qtbytestream.h"
+#include "Papillon/QtByteStream"
 
 namespace Papillon {
 
@@ -75,3 +75,5 @@ Connector *QtConnector::createNewConnector(QObject *parent)
 }
 
 }
+
+#include "qtconnector.moc"

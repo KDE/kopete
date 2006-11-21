@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "setpresencetask.h"
+#include "Papillon/Tasks/SetPresenceTask"
 
 // Qt includes
 #include <QtCore/QStringList>
@@ -20,10 +20,10 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "client.h"
-#include "connection.h"
-#include "transfer.h"
-#include "papillonglobal.h"
+#include "Papillon/Client"
+#include "Papillon/Connection"
+#include "Papillon/Transfer"
+#include "Papillon/Global"
 
 namespace Papillon
 {

@@ -20,10 +20,10 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "papillonclientstream.h"
-#include "qtconnector.h"
-#include "transfer.h"
-#include "papillon_macros.h"
+#include "Papillon/ClientStream"
+#include "Papillon/QtConnector"
+#include "Papillon/Transfer"
+#include "Papillon/Macros"
 
 #define PASSPORT_ID "klj345sdas765d@passport.com"
 

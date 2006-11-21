@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "client.h"
+#include "Papillon/Client"
 
 // Qt includes
 #include <QtDebug>
@@ -21,20 +21,20 @@
 #include <QtCrypto>
 
 // Papillon includes
-#include "connection.h"
-#include "connector.h"
-#include "securestream.h"
-#include "papillonclientstream.h"
-#include "transfer.h"
-#include "mimeheader.h"
+#include "Papillon/Connection"
+#include "Papillon/Base/Connector"
+#include "Papillon/Http/SecureStream"
+#include "Papillon/ClientStream"
+#include "Papillon/Transfer"
+#include "Papillon/MimeHeader"
 
 // Papillon tasks
-#include "logintask.h"
-#include "notifymessagetask.h"
-#include "notifypresencetask.h"
-#include "notifystatusmessagetask.h"
-#include "setpresencetask.h"
-#include "setpersonalinformationtask.h"
+#include "Papillon/Tasks/LoginTask"
+#include "Papillon/Tasks/NotifyMessageTask"
+#include "Papillon/Tasks/NotifyPresenceTask"
+#include "Papillon/Tasks/NotifyStatusMessageTask"
+#include "Papillon/Tasks/SetPresenceTask"
+#include "Papillon/Tasks/SetPersonalInformationTask"
 
 namespace Papillon
 {

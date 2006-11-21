@@ -19,7 +19,7 @@
 #include <QtCore/QLatin1String>
 
 // Papillon includes
-#include "mimeheader.h"
+#include "Papillon/MimeHeader"
 
 using namespace Papillon;
 

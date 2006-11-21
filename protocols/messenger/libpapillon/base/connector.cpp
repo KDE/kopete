@@ -17,7 +17,7 @@
    *************************************************************************
 */
 
-#include "connector.h"
+#include "Papillon/Base/Connector"
 
 namespace Papillon
 {

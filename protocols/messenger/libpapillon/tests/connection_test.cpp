@@ -19,11 +19,10 @@
 #include <QtCore/QCoreApplication>
 
 // Papillon includes
-#include "connection.h"
-#include "papillonclientstream.h"
-#include "logintask.h"
-#include "qtconnector.h"
-#include "client.h"
+#include "Papillon/ClientStream"
+#include "Papillon/Tasks/LoginTask"
+#include "Papillon/QtConnector"
+#include "Papillon/Client"
 
 using namespace Papillon;
 

@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "papillonclientstream.h"
+#include "Papillon/ClientStream"
 
 // Qt includes
 #include <QtCore/QQueue>
@@ -20,10 +20,10 @@
 #include <QtDebug>
 
 // Papillon includes.
-#include "transfer.h"
-#include "messengercoreprotocol.h"
-#include "connector.h"
-#include "bytestream.h"
+#include "Papillon/Transfer"
+#include "Papillon/MessengerCoreProtocol"
+#include "Papillon/Base/Connector"
+#include "Papillon/Base/ByteStream"
 
 namespace Papillon 
 {

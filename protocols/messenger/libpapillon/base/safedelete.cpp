@@ -17,7 +17,7 @@
     *************************************************************************
 */
 
-#include "safedelete.h"
+#include "Papillon/Base/SafeDelete"
 #include <QtCore/QList>
 #include <QtCore/QTimer>
 
