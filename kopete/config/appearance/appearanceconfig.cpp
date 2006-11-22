@@ -771,6 +771,7 @@ void AppearanceConfig::createPreviewMessages()
 	msgHigh.setImportance( Kopete::Message::Highlight );
 	// This is a UTF-8 string btw.
 	Kopete::Message msgRightToLeft(d->myself, d->jack, i18n("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט"), Kopete::Message::Outbound);
+	Kopete::Message msgExplanation( d->myself, d->jack, i18n( "That message was in a Right-to-Left language, which Kopete also supports." ), Kopete::Message::Outbound );
 	Kopete::Message msgBye ( d->myself, d->jack,   i18n( "Bye" ), Kopete::Message::Outbound );
 
 	// Add the messages to ChatMessagePart
@@ -783,6 +784,7 @@ void AppearanceConfig::createPreviewMessages()
 	d->preview->appendMessage(msgAct);
 	d->preview->appendMessage(msgHigh);
 	d->preview->appendMessage(msgRightToLeft);
+	d->preview->appendMessage(msgExplanation);
 	d->preview->appendMessage(msgBye);
 }
 
