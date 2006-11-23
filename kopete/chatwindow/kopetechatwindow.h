@@ -83,7 +83,7 @@ public:
 	/**
 	 * Returns the number of chat views attached to this window
 	 */
-	const int chatViewCount() { return chatViewList.count(); }
+	int chatViewCount() { return chatViewList.count(); }
 
 	/**
 	 * Returns the chatview in the currently active tab, or the only chat view

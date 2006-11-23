@@ -117,7 +117,7 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	return m_actionMenu;
 }
 
-const int GroupWiseAccount::port() const
+int GroupWiseAccount::port() const
 {
 	return configGroup()->readNumEntry( "Port" );
 }

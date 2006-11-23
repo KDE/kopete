@@ -85,7 +85,7 @@ public:
 	/**
 	 * Utility access to the port given by the user
 	 */
-	const int port() const;
+	int port() const;
 	/**
 	 * Utility access to the server given by the user
 	 */
