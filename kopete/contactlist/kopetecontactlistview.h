@@ -229,7 +229,7 @@ public:
 	// This is public so the chatwinodw can handle sub actions
 	// FIXME: do we not believe in accessor functions any more?
 	KActionMenu *actionAddContact;
-	QMap<const Kopete::Account *, KAction *> m_accountAddContactMap;
+	QMap<KAction *, Kopete::Account *> m_addContactAccountMap;
 };
 
 struct KopeteContactListView::UndoItem

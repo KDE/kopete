@@ -534,18 +534,24 @@ void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* a
 {
 	KAction *action = new KAction( KIcon(QIcon(account->accountIcon())), account->accountLabel(), 0, 0 );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotAddContact()) );
-	m_accountAddContactMap.insert( account, action);
+	m_addContactAccountMap.insert( action, account );
 	actionAddContact->addAction( action );
 }
 
 void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)
 {
 	kDebug(14000) << k_funcinfo << endl;
-	if ( m_accountAddContactMap.contains( account ) )
+
+	QMapIterator<KAction *, Kopete::Account *> it(m_addContactAccountMap);
+	while ( it.hasNext() )
 	{
-		KAction *action = m_accountAddContactMap[account];
-		m_accountAddContactMap.remove( account );
-		actionAddContact->removeAction( action );
+		it.next();
+		if ( it.value() == account )
+		{
+			KAction *action = it.key();
+			m_addContactAccountMap.remove( action );
+			actionAddContact->removeAction( action );
+		}
 	}
 }
 
@@ -1734,11 +1740,13 @@ void KopeteContactListView::slotAddContact()
 	if( !sender() )
 		return;
 
-	Kopete::MetaContact *metacontact =
-			Kopete::ContactList::self()->selectedMetaContacts().first();
-	Kopete::Group *group =
-			Kopete::ContactList::self()->selectedGroups().first();
-	Kopete::Account *account = dynamic_cast<Kopete::Account*>( sender()->parent() );
+	QList<Kopete::MetaContact*> metaContacts = Kopete::ContactList::self()->selectedMetaContacts();
+	Kopete::MetaContact *metacontact = ( !metaContacts.isEmpty() ) ? metaContacts.first() : 0;
+
+	QList<Kopete::Group*> groups = Kopete::ContactList::self()->selectedGroups();
+	Kopete::Group *group = ( !groups.isEmpty() ) ? groups.first() : 0;
+
+	Kopete::Account *account = m_addContactAccountMap.value( dynamic_cast<KAction*>( sender() ) );
 
 	if ( ( metacontact && metacontact->isTemporary() ) ||
 			  (group && group->type()!=Kopete::Group::Normal ) )
