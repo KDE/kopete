@@ -947,20 +947,21 @@ void JabberContact::sync ( unsigned int )
 	
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () /*<< " - " <<kdBacktrace()*/ << endl;
 
-	if(!m_syncTimer);
+	if(!m_syncTimer)
 	{
 		m_syncTimer=new QTimer(this);
 		connect(m_syncTimer, SIGNAL(timeout()) , this , SLOT(slotDelayedSync()));
 	}
 	m_syncTimer->setSingleShot(true);
 	m_syncTimer->start(2*1000);
+
 	/*
-		the sync operation is delayed, because when we are doing a move to group operation,
-	     kopete first add the contact to the group, then removes it.
-		Theses two operations should anyway be done in only one pass.
+	the sync operation is delayed, because when we are doing a move to group operation,
+	kopete first add the contact to the group, then removes it.
+	Theses two operations should anyway be done in only one pass.
 	
-		if there is two jabber contact in one metacontact, this may result in an infinite change of
-	 	groups between theses two contacts, and the server is being flooded.
+	if there is two jabber contact in one metacontact, this may result in an infinite change of
+	groups between theses two contacts, and the server is being flooded.
 	*/
 }
 
