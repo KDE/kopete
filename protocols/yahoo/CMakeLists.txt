@@ -17,7 +17,7 @@ set(kopete_yahoo_ui_SRCS
 ui/yahooinvitelistimpl.cpp 
 ui/yahoowebcamdialog.cpp 
 ui/yahoouserinfodialog.cpp 
-ui/yahoochatselectorwidget.cpp
+ui/yahoochatselectordialog.cpp
 )
 
 kde4_add_ui_files(kopete_yahoo_ui_SRCS 

@@ -44,7 +44,6 @@
 #include <kactionmenu.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
-#include <kvbox.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -70,7 +69,7 @@
 #include "yahooinvitelistimpl.h"
 #include "yabentry.h"
 #include "yahoouserinfodialog.h"
-#include "yahoochatselectorwidget.h"
+#include "yahoochatselectordialog.h"
 #include "yahoochatchatsession.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
@@ -1868,29 +1867,20 @@ void YahooAccount::slotEditOwnYABEntry()
 
 void YahooAccount::slotJoinChatRoom()
 {
-	KDialog *chatDialog = new KDialog( Kopete::UI::Global::mainWidget() );
-	chatDialog->setCaption( i18n( "Choose a chat room..." ) );
-	chatDialog->setButtons( KDialog::Ok | KDialog::Cancel );
-	chatDialog->setDefaultButton( KDialog::Ok );
-	chatDialog->showButtonSeparator( true );
+	YahooChatSelectorDialog *chatDialog = new YahooChatSelectorDialog( Kopete::UI::Global::mainWidget() );
 	
-	KVBox *box = new KVBox( chatDialog );
-	box->setSpacing( KDialog::spacingHint() );
-	YahooChatSelectorWidget *selector = new YahooChatSelectorWidget( box );
-	chatDialog->setMainWidget(box);
-	
-	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), selector,
+	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), chatDialog,
 					SLOT(slotSetChatCategories( const QDomDocument & )) );
 	QObject::connect( m_session, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
-					selector, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
-	QObject::connect( selector, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
+					chatDialog, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	QObject::connect( chatDialog, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
 					this, SLOT(slotChatCategorySelected( const Yahoo::ChatCategory & ) ) );
 	m_session->getYahooChatCategories();
 	
 	if( chatDialog->exec() == QDialog::Accepted )
 	{
-		kDebug() << k_funcinfo << selector->selectedRoom().topic << " " << selector->selectedRoom().topic << " " << selector->selectedRoom().id << endl;
-		m_session->joinYahooChatRoom( selector->selectedRoom() );
+		kDebug() << k_funcinfo << chatDialog->selectedRoom().topic << " " << chatDialog->selectedRoom().topic << " " << chatDialog->selectedRoom().id << endl;
+		m_session->joinYahooChatRoom( chatDialog->selectedRoom() );
 	}
 	
 	chatDialog->deleteLater();

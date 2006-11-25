@@ -1,5 +1,5 @@
 /*
-    yahoochatselectorwidget.h
+    yahoochatselectordialog.h
 
     Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -19,17 +19,22 @@
 #include <QHeaderView>
 
 #include "ui_yahoochatselectorwidgetbase.h"
-#include "yahoochatselectorwidget.h"
+#include "yahoochatselectordialog.h"
 
-YahooChatSelectorWidget::YahooChatSelectorWidget( QWidget *parent )
-	: QWidget(parent)
-{
-	mUi = new Ui_YahooChatSelectorWidgetBase;
+YahooChatSelectorDialog::YahooChatSelectorDialog( QWidget *parent )
+	: KDialog( parent )
+{	
+	setCaption( i18n( "Choose a chat room..." ) );
+	setButtons( KDialog::Ok | KDialog::Cancel );
+	setDefaultButton( KDialog::Ok );
+	showButtonSeparator( true );
+	mUi = new Ui_YahooChatSelectorWidgetBase();
 
 	QBoxLayout *layout = new QVBoxLayout(this);
 	QWidget *widget = new QWidget(this);
 	mUi->setupUi(widget);
 	layout->addWidget(widget);
+	setMainWidget(widget);
 
 	mUi->treeCategories->header()->hide();
 	mUi->treeRooms->header()->hide();
@@ -40,13 +45,16 @@ YahooChatSelectorWidget::YahooChatSelectorWidget( QWidget *parent )
 
  	connect(mUi->treeCategories, SIGNAL(currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * )), 
 		this, SLOT(slotCategorySelectionChanged( QTreeWidgetItem *, QTreeWidgetItem * )));
+	connect(mUi->treeRooms, SIGNAL(itemDoubleClicked( QTreeWidgetItem *, int )),
+		this, SLOT(slotChatRoomDoubleClicked( QTreeWidgetItem *, int )) );
 }
 
-YahooChatSelectorWidget::~YahooChatSelectorWidget()
+YahooChatSelectorDialog::~YahooChatSelectorDialog()
 {
+	delete mUi;
 }
 
-void YahooChatSelectorWidget::slotCategorySelectionChanged( QTreeWidgetItem *newItem, QTreeWidgetItem *oldItem )
+void YahooChatSelectorDialog::slotCategorySelectionChanged( QTreeWidgetItem *newItem, QTreeWidgetItem *oldItem )
 {
 	Q_UNUSED( oldItem );
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Selected Category: " << newItem->text( 0 ) <<  "(" << newItem->data( 0, Qt::UserRole ).toInt() << ")" << endl;
@@ -64,7 +72,14 @@ void YahooChatSelectorWidget::slotCategorySelectionChanged( QTreeWidgetItem *new
 	emit chatCategorySelected( category );
 }
 
-void YahooChatSelectorWidget::slotSetChatCategories( const QDomDocument &doc )
+void YahooChatSelectorDialog::slotChatRoomDoubleClicked( QTreeWidgetItem * item, int column )
+{
+	Q_UNUSED( column );
+	Q_UNUSED( item );
+	QDialog::accept();
+}
+
+void YahooChatSelectorDialog::slotSetChatCategories( const QDomDocument &doc )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString() << endl;
 	mUi->treeCategories->takeTopLevelItem(0);
@@ -81,7 +96,7 @@ void YahooChatSelectorWidget::slotSetChatCategories( const QDomDocument &doc )
 	
 }
 
-void YahooChatSelectorWidget::parseChatCategory( const QDomNode &node, QTreeWidgetItem *parentItem )
+void YahooChatSelectorDialog::parseChatCategory( const QDomNode &node, QTreeWidgetItem *parentItem )
 {
 	QTreeWidgetItem *newParent = parentItem;
 	if( node.nodeName().startsWith( "category" ) )
@@ -101,7 +116,7 @@ void YahooChatSelectorWidget::parseChatCategory( const QDomNode &node, QTreeWidg
 	}
 }
 
-void YahooChatSelectorWidget::slotSetChatRooms( const Yahoo::ChatCategory &category, const QDomDocument &doc )
+void YahooChatSelectorDialog::slotSetChatRooms( const Yahoo::ChatCategory &category, const QDomDocument &doc )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString() << endl;
 	Q_UNUSED( category );
@@ -116,7 +131,7 @@ void YahooChatSelectorWidget::slotSetChatRooms( const Yahoo::ChatCategory &categ
 	
 }
 
-void YahooChatSelectorWidget::parseChatRoom( const QDomNode &node )
+void YahooChatSelectorDialog::parseChatRoom( const QDomNode &node )
 {
 	if( node.nodeName().startsWith( "room" ) )
 	{
@@ -151,7 +166,7 @@ void YahooChatSelectorWidget::parseChatRoom( const QDomNode &node )
 	}
 }
 
-Yahoo::ChatRoom YahooChatSelectorWidget::selectedRoom()
+Yahoo::ChatRoom YahooChatSelectorDialog::selectedRoom()
 {
 	Yahoo::ChatRoom room;
 	QTreeWidgetItem *item = mUi->treeRooms->selectedItems().first();
@@ -162,5 +177,5 @@ Yahoo::ChatRoom YahooChatSelectorWidget::selectedRoom()
 	return room;
 }
 
-#include "yahoochatselectorwidget.moc"
+#include "yahoochatselectordialog.moc"
 

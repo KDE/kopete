@@ -1,5 +1,5 @@
 /*
-    yahoochatselectorwidget.h
+    yahoochatselectordialog.h
 
     Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -15,21 +15,21 @@
 */
 
 
-#ifndef YAHOOCHATSELECTORWIDGET_H
-#define YAHOOCHATSELECTORWIDGET_H
+#ifndef YAHOOCHATSELECTORDIALOG_H
+#define YAHOOCHATSELECTORDIALOG_H
 
-#include <QWidget>
+#include <KDialog>
 #include "yahootypes.h"
 
 class Ui_YahooChatSelectorWidgetBase;
 class QTreeWidgetItem;
 
-class YahooChatSelectorWidget : public QWidget
+class YahooChatSelectorDialog : public KDialog
 {
 	Q_OBJECT
 public:
-	YahooChatSelectorWidget( QWidget *parent = 0);
-	~YahooChatSelectorWidget();
+	YahooChatSelectorDialog( QWidget *parent = 0);
+	~YahooChatSelectorDialog();
 
 	Yahoo::ChatRoom selectedRoom();
 public Q_SLOTS:
@@ -39,6 +39,7 @@ Q_SIGNALS:
 	void chatCategorySelected( const Yahoo::ChatCategory & );
 private Q_SLOTS:
 	void slotCategorySelectionChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
+	void slotChatRoomDoubleClicked( QTreeWidgetItem * item, int column );
 private:
 	void parseChatCategory( const QDomNode &, QTreeWidgetItem * );
 	void parseChatRoom( const QDomNode & );
