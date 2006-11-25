@@ -21,8 +21,8 @@
 #define KOPETE_AVVIDEOINPUT_H
 
 #ifdef __linux__
-#include <asm/types.h>
 #undef __STRICT_ANSI__
+#include <asm/types.h>
 #endif // __linux__
 #ifndef __u64 //required by videodev.h
 #define __u64 unsigned long long

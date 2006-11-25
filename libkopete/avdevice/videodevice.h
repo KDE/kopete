@@ -35,11 +35,8 @@
 
 #if defined(__linux__) && defined(ENABLE_AV)
 
-#include <asm/types.h>
 #undef __STRICT_ANSI__
-#ifndef __u64 //required by videodev.h
-#define __u64 unsigned long long
-#endif // __u64
+#include <asm/types.h>
 
 #ifndef pgoff_t
 #define pgoff_t unsigned long
