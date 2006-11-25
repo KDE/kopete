@@ -116,6 +116,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	
 	m_session->setUserId( accountId.toLower() );
 	m_session->setPictureChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+	
+	setupActions( false );
 }
 
 YahooAccount::~YahooAccount()
@@ -559,6 +561,7 @@ void YahooAccount::disconnect()
 	}
 
 	initConnectionSignals( DeleteConnections );
+	setupActions( false );
 	theHaveContactList = false;
 }
 
@@ -608,9 +611,9 @@ KActionMenu *YahooAccount::actionMenu()
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
 	theActionMenu->addSeparator();
-	theActionMenu->addAction( m_editOwnYABEntry );
 	theActionMenu->addAction( m_openInboxAction );
 	theActionMenu->addAction( m_openYABAction );
+	theActionMenu->addAction( m_editOwnYABEntry );
 	theActionMenu->addAction( m_joinChatAction );
 	
 	return theActionMenu;
@@ -683,6 +686,12 @@ void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );	
 }
 
+void YahooAccount::setupActions( bool connected )
+{
+	m_joinChatAction->setEnabled( connected );
+	m_editOwnYABEntry->setEnabled( connected );
+}
+
 /***************************************************************************
  *                                                                         *
  *   Slot for KYahoo signals                                               *
@@ -693,6 +702,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << succ << ", " << url << ")]" << endl;
 	QString errorMsg;
+	setupActions( succ == Yahoo::LoginOk );
 	if ( succ == Yahoo::LoginOk || (succ == Yahoo::LoginDupl && m_lastDisconnectCode == 2) )
 	{
 		if ( initialStatus().internalStatus() )
@@ -764,6 +774,7 @@ void YahooAccount::slotDisconnected()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	initConnectionSignals( DeleteConnections );
+	setupActions( false );
 	if( !isConnected() )
 		return;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );

@@ -258,6 +258,8 @@ private:
 	 */
 	void initConnectionSignals( enum SignalConnectionType sct );
 
+	void setupActions( bool connected );
+
 	QString prepareIncomingMessage( const QString &msg );
 
 	/**
