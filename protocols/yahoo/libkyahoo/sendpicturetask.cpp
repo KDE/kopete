@@ -178,7 +178,6 @@ void SendPictureTask::sendInformation()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
 	t->setId( client()->sessionID() );
 	t->setParam(1, client()->userId().toLocal8Bit());
-	t->setParam(4, client()->userId().toLocal8Bit());
 	t->setParam(13, 2 );
 	t->setParam(5, m_target.toLocal8Bit() );
 	t->setParam(20, m_url.toLocal8Bit() );
