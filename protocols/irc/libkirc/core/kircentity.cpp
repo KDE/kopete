@@ -29,29 +29,29 @@ using namespace KIrc;
  * where user and host are optional.
  * NOTE: If changes are done to the regexp string, update also the sm_userStrictRegExp regexp string.
  */
-//const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
+//const QRegExp Entity::sm_userRegExp(QLatin1String("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
 
 /**
  * Regexp to match strictly the complete user definition:
  * nick!user@host
  * NOTE: If changes are done to the regexp string, update also the sm_userRegExp regexp string.
  */
-//const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
+//const QRegExp Entity::sm_userStrictRegExp(QLatin1String("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
 
-//const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
+//const QRegExp Entity::sm_channelRegExp(QLatin1String("^[#!+&][^\\s,]+$") );
 /*
 // FIXME: Implement me
-EntityType Entity::guessType(const QString &)
+EntityType Entity::guessType(const QByteArray &)
 {
 	return Unknown;
 }
 
-bool Entity::isUser( const QString &name )
+bool Entity::isUser( const QByteArray &name )
 {
 	return sm_userRegExp.exactMatch(name);
 }
 
-bool Entity::isChannel( const QString &name )
+bool Entity::isChannel( const QByteArray &name )
 {
 	return sm_channelRegExp.exactMatch(name);
 }
@@ -60,48 +60,30 @@ class KIrc::Entity::Private
 {
 public:
 	Private()
-		: manager(0), type(Unknown), codec(0)
+		: type(Unknown)
+		, codec(0)
 	{ }
-
-	EntityManager *manager;
 
 	Entity::Type type;
 
-	QString name;
-	QString host;
+	QByteArray name;
+	QByteArray host;
 
-	QString awayMessage;
-	QString modes;
-	QString topic;
+	QByteArray awayMessage;
+	QByteArray modes;
+	QByteArray topic;
 
 	QTextCodec *codec;
 };
 
-Entity::Entity(const QString &name, const Type type)
-	: d( new Private )
-{
-	setName(name);
-	setType(type);
-
-//	if (d->type == Unknown)
-//		guessType();
-}
-
-Entity::Entity(EntityManager *entityManager)
-	: QObject(entityManager)
+Entity::Entity(QObject *parent)
+	: QObject(parent)
 	, d(new Private)
 {
-	Q_ASSERT(entityManager);
-
-	d->manager = entityManager;
-	d->manager->add(this);
-
-	d->type = Unknown;
 }
 
 Entity::~Entity()
 {
-	if (d->manager) d->manager->remove(this);
 	delete d;
 }
 
@@ -110,7 +92,7 @@ Entity::Type Entity::type() const
 	return d->type;
 }
 
-QString Entity::topic() const
+QByteArray Entity::topic() const
 {
 	return d->topic;
 }
@@ -140,12 +122,12 @@ EntityType Entity::guessType()
 	return type();
 }
 */
-QString Entity::name() const
+QByteArray Entity::name() const
 {
 	return d->name;
 }
 
-void Entity::setName(const QString &name)
+void Entity::setName(const QByteArray &name)
 {
 	if ( d->name != name )
 	{
@@ -154,12 +136,12 @@ void Entity::setName(const QString &name)
 	}
 }
 
-QString Entity::host() const
+QByteArray Entity::host() const
 {
 	return d->host;
 }
 
-void Entity::setAwayMessage(const QString &awayMessage)
+void Entity::setAwayMessage(const QByteArray &awayMessage)
 {
 	if ( d->awayMessage != awayMessage )
 	{
@@ -168,12 +150,12 @@ void Entity::setAwayMessage(const QString &awayMessage)
 	}
 }
 
-QString Entity::modes() const
+QByteArray Entity::modes() const
 {
 	return d->modes;
 }
 
-QString Entity::setModes(const QString &modes)
+QByteArray Entity::setModes(const QByteArray &modes)
 {
 	#warning this needs more logic to handle the +/- modes.
 	if ( d->modes != modes )

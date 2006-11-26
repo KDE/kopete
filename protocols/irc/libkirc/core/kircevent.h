@@ -18,7 +18,7 @@
 #ifndef KIRCEVENT_H
 #define KIRCEVENT_H
 
-#include "kircentity.h"
+#include "kircmessage.h"
 
 #include "kdemacros.h"
 
@@ -35,23 +35,6 @@ class Event
 //	: QEvent // Use QEvent interface here ???
 {
 public:
-        enum MessageType
-        {
-		ErrorMessage = -1,
-
-		JoinMessage,
-		PartMessage,
-
-		PrivateMessage,
-		InfoMessage,
-		NoticeMessage,
-
-		WhoMessage,
-
-		MOTDMessage,
-		MOTDCondensedMessage
-	};
-
 	Event();
 	Event(const Event &o);
 	virtual ~Event();
@@ -59,24 +42,26 @@ public:
 	Event &operator = (const Event &o);
 
 public:
+	Message message() const;
+	Event &setMessage(const KIrc::Message &message);
 /*
 	Socket *socket() const;
 	Event &setSocket(Socket *socket);
 */
-	Event::MessageType messageType() const;
-	Event &setMessageType(Event::MessageType messageType);
+	const QByteArray &from() const;
+	Event &setFrom(const QByteArray &from);
 
-	Entity::Ptr from() const;
-	Event &setFrom(const Entity::Ptr &from);
+	const QList<QByteArray> &to() const;
+	Event &setTo(const QList<QByteArray> &to);
+/*
+	const QList<QByteArray> &cc() const;
+	Event &setCc(const QList<QByteArray> &cc);
+*/
+	const QList<QByteArray> &victims() const;
+	Event &setVictims(const QList<QByteArray> &cc);
 
-	Entity::Ptr to() const;
-	Event &setTo(const Entity::Ptr &to);
-
-	Entity::List cc() const;
-	Event &setCc(const Entity::List &cc);
-
-	QString message() const;
-	Event &setMessage(const QString &message);
+	QString text() const;
+	Event &setText(const QString &text);
 
 private:
 	class Private;

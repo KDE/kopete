@@ -31,7 +31,6 @@ namespace KIrc
 {
 
 class Engine;
-class EntityManager;
 
 class Entity
 	: public QObject
@@ -39,7 +38,7 @@ class Entity
 {
 	Q_OBJECT
 
-//	Q_PROPERTY(QString modes READ modes write setModes)
+//	Q_PROPERTY(QByteArray modes READ modes write setModes)
 
 //	Q_ENUMS(Type)
 
@@ -57,30 +56,29 @@ public:
 		Server
 	};
 /*
-	static EntityType guessType(const QString &name);
-	static bool isChannel( const QString &name );
-	static bool isUser( const QString &name );
+	static EntityType guessType(const QByteArray &name);
+	static bool isChannel( const QByteArray &name );
+	static bool isUser( const QByteArray &name );
 */
-	Entity(const QString &name = QString::null, const Type type = Unknown);
-	Entity(EntityManager *entityManager);
+	Entity(QObject *parent = 0);
 	virtual ~Entity();
 
 public: // Read attributes accessors
-	QString awayMessage() const;
-	QString host() const;
-	QString modes() const;
-	QString name() const;
-//	QString nick() const;
-	QString topic() const;
-//	QString user() const;
+	QByteArray awayMessage() const;
+	QByteArray host() const;
+	QByteArray modes() const;
+	QByteArray name() const;
+//	QByteArray nick() const;
+	QByteArray topic() const;
+//	QByteArray user() const;
 
 public slots: // Write attributes accessors
-	void setAwayMessage(const QString &);
-	QString setModes(const QString &);
-	void setName(const QString &);
-//	void setNick(const QString &);
-//	void setTopic(const QString &);
-//	void setUser(const QString &);
+	void setAwayMessage(const QByteArray &);
+	QByteArray setModes(const QByteArray &);
+	void setName(const QByteArray &);
+//	void setNick(const QByteArray &);
+//	void setTopic(const QByteArray &);
+//	void setUser(const QByteArray &);
 
 public:
 	Entity::Type type() const;
@@ -99,7 +97,7 @@ signals:
 	void updated();
 
 private:
-	static QString userInfo(const QString &s, int num_cap);
+	static QByteArray userInfo(const QByteArray &s, int num_cap);
 
 	Q_DISABLE_COPY(Entity)
 
@@ -110,3 +108,4 @@ private:
 }
 
 #endif
+

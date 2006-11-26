@@ -106,7 +106,16 @@ public:
 	size_t argsSize() const;
 
 	QByteArray rawArg(size_t i) const;
+	void setArg(size_t i, const QByteArray &arg);
+
 	QString arg(size_t i, QTextCodec *codec = 0) const;
+	void setArg(size_t i, const QString &arg, QTextCodec *codec);
+
+	void appendArgs(const QList<QByteArray> &args);
+	void appendArgs(const QStringList &args, QTextCodec *codec = 0);
+
+	void appendArg(const QByteArray &arg);
+	void appendArg(const QString &arg, QTextCodec *codec = 0);
 
 #if 0
 	QByteArray rawArgs(size_t from, size_t to) const;

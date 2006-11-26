@@ -44,7 +44,7 @@ public:
 		, defaultCodec(0)
 		, commandHandler(0)
 		, entityManager(0)
-		, owner(new Entity(QString::null, KIrc::Entity::User))
+		, owner(new Entity())
 	{ }
 
 	QTcpSocket *socket;

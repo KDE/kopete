@@ -36,7 +36,7 @@ class KIrc::ClientSocket::Private
 {
 public:
 	Private()
-		: server(new Entity(QString::null, KIrc::Entity::Server))
+		: server(new Entity())
 		, failedNickOnLogin(false)
 	{ }
 

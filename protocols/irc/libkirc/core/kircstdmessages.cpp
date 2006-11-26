@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@gmail.com>
 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -43,7 +43,7 @@
 using namespace KIrc;
 #warning make usage of KUser (done!) and make more useful using some default strings (todo!)
 
-Message StdMessages::away(const QString &awayMessage)
+Message StdMessages::away(const QByteArray &awayMessage)
 {
 	Message msg;
 	msg.setCommand(AWAY);
@@ -52,21 +52,20 @@ Message StdMessages::away(const QString &awayMessage)
 	return msg;
 }
 
-Message StdMessages::ison(const QStringList &nickList)
+Message StdMessages::ison(const QList<QByteArray> &nickList)
 {
-	kDebug(14120) << k_funcinfo << endl;
-
+	Message msg;
 	#warning FIXME bogus length check
 /*
 	if (!nickList.isEmpty())
 	{
-		QString statement = ISON;
-		for (QStringList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
+		QByteArray statement = ISON;
+		for (QByteArrayList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
 		{
 			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
 			{
 				writeMessage(statement);
-				statement = QString::fromLatin1("ISON ") +  (*it);
+				statement = QByteArray::fromLatin1("ISON ") +  (*it);
 			}
 			else
 				statement.append(QChar(' ') + (*it));
@@ -74,26 +73,25 @@ Message StdMessages::ison(const QStringList &nickList)
 		writeMessage(statement);
 	}
 */
-	Message msg;
 	return msg;
 }
 
-Message StdMessages::join(const QString &name, const QString &key)
+Message StdMessages::join(const QByteArray &name, const QByteArray &key)
 {
 	Message msg;
 	msg.setCommand(JOIN);
-	QStringList args(name);
+	msg.appendArg(name);
 	if (!key.isEmpty())
-		args << key;
-	msg.setArgs(args);
+		msg.appendArg(key);
 	return msg;
 }
 
-Message StdMessages::kick(const QString &user, const QString &channel, const QString &reason)
+Message StdMessages::kick(const QByteArray &user, const QByteArray &channel, const QByteArray &reason)
 {
 	Message msg;
 	msg.setCommand(KICK);
-	msg.setArgs(QStringList(channel) << user);
+	msg.appendArg(channel);
+	msg.appendArg(user);
 	msg.setSuffix(reason);
 	return msg;
 }
@@ -105,34 +103,35 @@ Message StdMessages::list()
 	return msg;
 }
 
-Message StdMessages::mode(const QString &target, const QString &mode)
+Message StdMessages::mode(const QByteArray &target, const QByteArray &mode)
 {
 	Message msg;
 	msg.setCommand(MODE);
-	msg.setArgs(QStringList(target) << mode);
+	msg.appendArg(target);
+	msg.appendArg(mode);
 	return msg;
 }
 
-Message StdMessages::motd(const QString &server)
+Message StdMessages::motd(const QByteArray &server)
 {
 	Message msg;
 	msg.setCommand(MOTD);
 	if (!server.isNull())
-		msg.setArgs(server);
+		msg.appendArg(server);
 	return msg;
 }
 
-KIrc::Message StdMessages::nick(const QString &newNickName)
+KIrc::Message StdMessages::nick(const QByteArray &newNickName)
 {
 //	if (newNickName.isEmpty()) newNickName = KUser().loginName();
 
 	Message msg;
 	msg.setCommand(NICK);
-	msg.setArgs(newNickName);
+	msg.appendArg(newNickName);
 	return msg;
 }
 
-KIrc::Message StdMessages::notice(const QString &target, const QString &content)
+KIrc::Message StdMessages::notice(const QByteArray &target, const QByteArray &content)
 {
 	Message msg;
 	msg.setCommand(NOTICE);
@@ -143,7 +142,7 @@ KIrc::Message StdMessages::notice(const QString &target, const QString &content)
 
 /* This will part a channel with 'reason' as the reason for parting
  */
-KIrc::Message StdMessages::part(const QString &channel, const QString &reason)
+KIrc::Message StdMessages::part(const QByteArray &channel, const QByteArray &reason)
 {
 	Message msg;
 	msg.setCommand(PART);
@@ -152,7 +151,7 @@ KIrc::Message StdMessages::part(const QString &channel, const QString &reason)
 	return msg;
 }
 
-KIrc::Message StdMessages::pass(const QString &password)
+KIrc::Message StdMessages::pass(const QByteArray &password)
 {
 	Message msg;
 	msg.setCommand(PASS);
@@ -160,7 +159,7 @@ KIrc::Message StdMessages::pass(const QString &password)
 	return msg;
 }
 
-KIrc::Message StdMessages::privmsg(const QString &contact, const QString &content)
+KIrc::Message StdMessages::privmsg(const QByteArray &contact, const QByteArray &content)
 {
 	Message msg;
 	msg.setCommand(PRIVMSG);
@@ -169,7 +168,7 @@ KIrc::Message StdMessages::privmsg(const QString &contact, const QString &conten
 	return msg;
 }
 
-KIrc::Message StdMessages::quit(const QString &reason)
+KIrc::Message StdMessages::quit(const QByteArray &reason)
 {
 	Message msg;
 	msg.setCommand(QUIT);
@@ -177,7 +176,7 @@ KIrc::Message StdMessages::quit(const QString &reason)
 	return msg;
 }
 
-Message StdMessages::topic(const QString &channel, const QString &topic)
+Message StdMessages::topic(const QByteArray &channel, const QByteArray &topic)
 {
 	Message msg;
 	msg.setCommand(TOPIC);
@@ -191,35 +190,39 @@ Message StdMessages::topic(const QString &channel, const QString &topic)
  * the username, hostname and realname of a new user.
  * hostname is usualy set to "127.0.0.1"
  */
-Message StdMessages::user(const QString &user, const QString &hostName, const QString &serverName, const QString &realName)
+Message StdMessages::user(const QByteArray &user, const QByteArray &hostName, const QByteArray &serverName, const QByteArray &realName)
 {
 //	if (user.isEmpty())     user     = KUser().loginName();
 //	if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
 	msg.setCommand(USER);
-	msg.setArgs(QStringList(user) << hostName << serverName);
+	msg.appendArg(user);
+	msg.appendArg(hostName);
+	msg.appendArg(serverName);
 	msg.setSuffix(realName);
 	return msg;
 }
 
-Message StdMessages::user(const QString &user, UserMode mode, const QString &realName)
+Message StdMessages::user(const QByteArray &user, UserMode mode, const QByteArray &realName)
 {
 //      if (user.isEmpty())     user     = KUser().loginName();
 //      if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
 	msg.setCommand(USER);
-	msg.setArgs(QStringList(user) << QString::number(mode) << QChar('*'));
+	msg.appendArg(user);
+	msg.appendArg(QByteArray::number(mode));
+	msg.appendArg(QChar('*')); // empty byte array instead ...
 	msg.setSuffix(realName);
 	return msg;
 }
 
-Message StdMessages::whois(const QString &user)
+Message StdMessages::whois(const QByteArray &user)
 {
 	Message msg;
 	msg.setCommand(WHOIS);
-//	msg.setArgs(user);
+	msg.setArgs(user);
 	return msg;
 }
 
