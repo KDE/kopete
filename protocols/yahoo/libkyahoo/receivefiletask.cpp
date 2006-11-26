@@ -130,7 +130,7 @@ void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 	
 }
 
-void ReceiveFileTask::slotComplete( KIO::Job *job )
+void ReceiveFileTask::slotComplete( KJob *job )
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
@@ -196,7 +196,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 
 		m_transferJob = KIO::get( QString::fromLatin1("http://%1/relay?token=%2&sender=%3&recver=%4")
 				.arg( QString(transfer->firstParam( 250 )) ).arg( QString(transfer->firstParam( 251 )) ).arg(m_userId).arg(client()->userId()), false, false );
-		QObject::connect( m_transferJob, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );
+		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		m_transferJob->addMetaData("cookies", "manual");
 		m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: T=%1; path=/; domain=.yahoo.com; Y=%2; C=%3;")

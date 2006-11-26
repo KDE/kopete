@@ -27,6 +27,7 @@ namespace KIO {
 	class TransferJob;
 	class MimetypeJob;
 }
+class KJob;
 class YMSGTransfer;
 
 /**
@@ -61,7 +62,7 @@ signals:
 
 private slots:
 	void slotData( KIO::Job *job, const QByteArray &data );
-	void slotComplete( KIO::Job *job );
+	void slotComplete( KJob *job );
 	void canceled( unsigned int );
 
 private:
