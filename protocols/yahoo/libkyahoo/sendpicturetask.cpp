@@ -54,6 +54,7 @@ void SendPictureTask::onGo()
 		break;
 		case SendInformation:
 			sendInformation();
+		break;
 		case SendStatus:
 			sendStatus();
 		break;
@@ -139,7 +140,8 @@ void SendPictureTask::readResult()
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_socket->bytesAvailable() << endl;
 	m_socket->enableRead( false );
-	QByteArray buf( m_socket->bytesAvailable() );
+	QByteArray buf;
+	buf.resize( m_socket->bytesAvailable() );
 	m_socket->read( buf.data(), m_socket->bytesAvailable() );
 
 	if( buf.indexOf( "error", 0 ) >= 0 )
@@ -192,11 +194,10 @@ void SendPictureTask::sendStatus()
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureUpdate);
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureStatus);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId().toLocal8Bit());
-	t->setParam(5, m_target.toLocal8Bit() );
-	t->setParam(206, m_status );
+	t->setParam(3, client()->userId().toLocal8Bit());
+	t->setParam(213, m_status );
 
 	send( t );
 	

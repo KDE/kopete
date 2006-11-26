@@ -161,6 +161,12 @@ namespace Yahoo
 		ResponseDecline
 	};
 
+	enum PictureStatus {
+		NoPicture = 0,
+		Avatar = 1,
+		Picture = 2
+	};
+
 	typedef Q_UINT8 BYTE;
 	typedef Q_UINT16 WORD;
 	typedef Q_UINT32 DWORD;

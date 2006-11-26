@@ -87,9 +87,6 @@ public slots:
 	void inviteWebcam();
 	void buzzContact();
 	void setDisplayPicture(KTemporaryFile *f, int checksum);
-	void sendBuddyIconInfo( const QString &url, int checksum );
-	void sendBuddyIconUpdate( int type );
-	void sendBuddyIconChecksum( int checksum );
 	void setYABEntry( YABEntry *, bool show = false );
 
 	/**

@@ -226,10 +226,9 @@ Q_OBJECT
 
 		/**
 		 * Notify the buddies about our new status
-		 * @param userId the yahoo ID of the buddy that should be informed
-		 * @param type the type of our picture (0=none, 1=avatar, 2=picture)
+		 * @param flag the type of our picture (0=none, 1=avatar, 2=picture)
 		 */
-		void sendPictureStatusUpdate( const QString &userId, int type );
+		void setPictureStatus( Yahoo::PictureStatus flag );
 
 		/**
 		 * Send a response to the webcam invite ( Accept / Decline )

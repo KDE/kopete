@@ -545,25 +545,6 @@ void YahooContact::buzzContact()
 	}
 }
 
-void YahooContact::sendBuddyIconChecksum( int checksum )
-{
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	m_account->yahooSession()->sendPictureChecksum( m_userId, checksum );
-	
-}
-
-void YahooContact::sendBuddyIconInfo( const QString &url, int checksum )
-{
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	m_account->yahooSession()->sendPictureInformation( m_userId, url, checksum );
-}
-
-void YahooContact::sendBuddyIconUpdate( int type )
-{
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	m_account->yahooSession()->sendPictureStatusUpdate( m_userId, type );
-}
-
 void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
