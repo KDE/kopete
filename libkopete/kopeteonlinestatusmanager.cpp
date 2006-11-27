@@ -414,10 +414,12 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		QByteArray actionName = status.description().toAscii();
 		if ( !( action = account->findChild<KAction*>( actionName ) ) )
 		{
-#warning  give a parent to actions
+#ifdef __GNUC__
+#warning  give a parent collection to actions
+#endif
 			if(options & OnlineStatusManager::HasStatusMessage)
 			{
-				action = new AwayAction( status, caption, status.iconFor(account), 0, account,
+				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account,
 						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage& ) ),
 						0l, actionName );
 			}

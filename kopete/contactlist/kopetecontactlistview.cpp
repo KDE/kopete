@@ -489,9 +489,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactStartChat" );
 
 	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "editcut" ),
-														  0, this, SLOT( slotMoveToGroup() ), ac, "contactMove" );
-	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "editcopy" ), 0,
-														 this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
+														  KShortcut(), this, SLOT( slotMoveToGroup() ), ac, "contactMove" );
+	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "editcopy" ),
+														 KShortcut(), this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
 
 	actionMakeMetaContact = new KAction(KIcon("move"), i18n("Make Meta Contact"), ac, "makeMetaContact");
     connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
