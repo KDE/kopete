@@ -37,7 +37,7 @@ public:
   QString publicKey() const;
 
 private slots:
-	void keySelected(QString &);
+	void keySelected(const QString &);
 	void slotSelectPressed();
   /** No descriptions */
   void slotRemovePressed();

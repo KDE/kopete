@@ -97,7 +97,7 @@ QString UpdateViewItem2 :: key(int c,bool ) const
 
 ///////////////  main view
 
-popupPublic::popupPublic(QWidget *parent, const char */*name*/,QString sfile,bool filemode,KShortcut goDefaultKey)
+popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, const KShortcut& goDefaultKey)
  : KDialog( parent )
 {
 	setCaption( i18n("Select Public Key") );
