@@ -876,11 +876,15 @@ IRCContact *IRCAccount::getContact(KIRC::EntityPtr entity, Kopete::MetaContact *
 {
 	IRCContact *contact = 0;
 
-	#pragma warning Do the search code here.
+#ifdef __GNUC__
+	#warning Do the search code here.
+#endif
 
 	if (!contact)
 	{
-		#pragma warning Make a temporary meta contact if metac is null
+#ifdef __GNUC__
+		#warning Make a temporary meta contact if metac is null
+#endif
 		contact = new IRCContact(this, entity, metac);
 		m_contacts.append(contact);
 	}
