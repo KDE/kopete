@@ -16,5 +16,4 @@ Terminal=false
 Icon=kopete
 Categories=Qt;KDE;Network;
 X-DBUS-StartupType=Unique
-X-DCOP-ServiceName=kopete
 ServiceTypes=DCOP/InstantMessenger
