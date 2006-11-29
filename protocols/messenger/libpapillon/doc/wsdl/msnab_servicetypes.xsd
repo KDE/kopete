@@ -3,9 +3,9 @@
 	Reverse engineered MSN AddressBook webservice XML Schema
 	Part: Service types. (Convience types to use with the web service binding)
 
-	by Michaël Larouche <michael.larouche@kdemail.net>
+	by Michaël Larouche <larouche@kde.org>
 	and Javier Kohen <javier.kohen@buddystream.com>
-	Latest update: 27 July 2006
+	Latest update: 29 November 2006
 -->
 <xsd:schema
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -149,6 +149,15 @@
 									<xsd:element name="CreatorPuid" type="xsd:integer" />
 									<xsd:element name="CreatorCID" type="xsd:integer" />
 									<xsd:element name="CreatorPassportName" type="xsd:string" />
+									<xsd:element name="CircleAttributes">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="IsPresenceEnabled" type="xsd:boolean" />
+												<xsd:element name="IsEvent" type="xsd:boolean" />
+												<xsd:element name="Domain" type="xsd:string" />
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
 								</xsd:sequence>
 							</xsd:complexType>
 						</xsd:element>
@@ -211,6 +220,13 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="CircleResult">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="CircleTicket" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
 			<xsd:element name="ab">
 				<xsd:complexType>
 					<xsd:sequence>
@@ -229,9 +245,11 @@
 										type="xsd:boolean" />
 									<xsd:element name="joinedNamespace"
 										type="xsd:boolean" />
-									<xsd:element name="IsBot"
-										type="xsd:boolean">
-									</xsd:element>
+									<xsd:element name="IsBot" type="xsd:boolean" />
+									<xsd:element name="IsParentManaged" type="xsd:boolean" />
+									<xsd:element name="SubscribeExternalPartner" type="xsd:boolean" />
+									<xsd:element name="NotifyExternalPartner" type="xsd:boolean" />
+									<xsd:element name="AddressBookType" type="xsd:string" />
 								</xsd:sequence>
 							</xsd:complexType>
 						</xsd:element>
@@ -257,6 +275,305 @@
 		</xsd:complexType>
 	</xsd:element>
 
+	<xsd:complexType name="ABContactAddRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the ABContactAdd SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
 
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="contacts">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Contact" type="ContactType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="options" maxOccurs="1" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="EnableAllowListManagement" type="xsd:boolean" minOccurs="0" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
 
+	<xsd:element name="ABContactAdd" type="ABContactAddRequestType" />
+
+	<xsd:complexType name="ABContactAddResultType">
+		<xsd:annotation>
+			<xsd:documentation>
+				ABContactAddResult optionally contains the contact ID.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="guid" type="Guid" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABContactAddResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ABContactAddResult" type="ABContactAddResultType" maxOccurs="1" minOccurs="0" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="ABGroupContactAddRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the ABGroupContactAdd SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="groupFilter" type="groupFilterType" />
+			<xsd:element name="contacts">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Contact" type="ContactType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="groupContactAddOptions" maxOccurs="1" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="fGenerateMissingQuickName" type="xsd:boolean" minOccurs="0" />
+						<xsd:element name="EnableAllowListManagement" type="xsd:boolean" minOccurs="0" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupContactAdd" type="ABGroupContactAddRequestType" />
+
+	<xsd:complexType name="ABGroupContactAddResultType">
+		<xsd:annotation>
+			<xsd:documentation>
+				ABGroupContactAddResult optionally contains the group ID.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="guid" type="Guid" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupContactAddResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ABGroupContactAddResult" type="ABGroupContactAddResultType" maxOccurs="1" minOccurs="0" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="ABGroupAddRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the ABGroupAdd SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="groupAddOptions">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="fRenameOnMsgrConflict" type="xsd:boolean" minOccurs="0" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="groupInfo">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="GroupInfo" type="groupInfoType" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupAdd" type="ABGroupAddRequestType" />
+
+	<xsd:complexType name="ABGroupAddResultType">
+		<xsd:annotation>
+			<xsd:documentation>
+				ABGroupAddResult contains the group ID.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="guid" type="Guid" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupAddResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ABGroupAddResult" type="ABGroupAddResultType" maxOccurs="1" minOccurs="0" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="ABGroupUpdateRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the ABGroupUpdate SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="groups">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Group" type="GroupType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupUpdate" type="ABGroupUpdateRequestType" />
+
+	<xsd:element name="ABGroupUpdateResponse">
+		<xsd:complexType>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="ABGroupDeleteRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Specifies what groups to delete.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="groupFilter" type="groupFilterType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupDelete" type="ABGroupDeleteRequestType" />
+
+	<xsd:element name="ABGroupDeleteResponse">
+		<xsd:complexType>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="ABGroupContactDeleteRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Specifies what groups to delete.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="contacts">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Contact" type="ContactType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="groupFilter" type="groupFilterType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABGroupContactDelete" type="ABGroupContactDeleteRequestType" />
+
+	<xsd:element name="ABGroupContactDeleteResponse">
+		<xsd:complexType>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="AddMemberRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Requests that a contact is granted the specified member role.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="serviceHandle" type="HandleType" />
+			<xsd:element name="memberships">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Membership" type="msnab:Membership" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ABContactUpdateRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Parameters to the ABContactUpdate SOAP Action
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="abId" type="Guid" fixed="00000000-0000-0000-0000-000000000000" />
+			<xsd:element name="contacts">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Contact" type="ContactType"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="ABContactUpdate" type="ABContactUpdateRequestType" />
+
+	<xsd:element name="ABContactUpdateResponse">
+		<xsd:complexType>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="AddMember" type="AddMemberRequestType" />
+
+	<xsd:element name="AddMemberResponse">
+		<xsd:complexType>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="DeleteMemberRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Requests that a contact is revoked the specified member role.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:sequence>
+			<xsd:element name="serviceHandle" type="HandleType" />
+			<xsd:element name="memberships">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Membership" type="msnab:Membership" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="DeleteMember" type="DeleteMemberRequestType" />
+
+	<xsd:element name="DeleteMemberResponse">
+		<xsd:complexType>
+		</xsd:complexType>
+	</xsd:element>
 </xsd:schema>
