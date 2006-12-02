@@ -438,6 +438,8 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	//30- (and any I missed) are size 7
 	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
 
+	s.replace ( QRegExp ( QString::fromLatin1("<br[ /]*>")), QString::fromLatin1("<br>") );
+
 	kdDebug(14190) << k_funcinfo << "sending "
 		<< s << endl;
 
