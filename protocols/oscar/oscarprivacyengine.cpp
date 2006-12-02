@@ -102,13 +102,10 @@ void OscarPrivacyEngine::slotAdd()
 	else
 		id = m_comboBox->currentText();
 	
-	QRegExp rx;
-	if ( m_client->isIcq() )
-		rx = QRegExp("^[0-9]*$");
-	else
-		rx = QRegExp("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
+	QRegExp rxIcq("^[0-9]*$");
+	QRegExp rxAim("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
 	
-	if ( !rx.exactMatch( id ) || m_idSet.contains( id ) )
+	if ( !rxIcq.exactMatch( id ) && !rxAim.exactMatch( id ) || m_idSet.contains( id ) )
 		return;
 	
 	int rowCount = m_contactsModel.rowCount();
