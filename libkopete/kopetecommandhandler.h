@@ -87,7 +87,7 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 			const QString &help = QString::null, uint minArgs = 0, int maxArgs = -1,
-			const KShortcut &cut = 0, const QString &pix = QString::null );
+			const KShortcut &cut = KShortcut(), const QString &pix = QString::null );
 
 		/**
 		 * \brief Register a command alias.
@@ -113,7 +113,7 @@ class KOPETE_EXPORT CommandHandler : public QObject
 			CommandType = SystemAlias,
 			uint minArgs = 0,
 			int maxArgs = -1,
-			const KShortcut &cut = 0,
+			const KShortcut &cut = KShortcut(),
 			const QString &pix = QString::null );
 
 		/**

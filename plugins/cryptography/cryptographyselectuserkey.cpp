@@ -54,13 +54,13 @@ CryptographySelectUserKey::~CryptographySelectUserKey()
 
 void CryptographySelectUserKey::slotSelectPressed()
 {
-	popupPublic *dialog=new popupPublic(this, "public_keys", 0,false);
-	connect(dialog,SIGNAL(selectedKey(QString &,QString,bool,bool)),this,SLOT(keySelected(QString &)));
+	popupPublic *dialog=new popupPublic(this, QString(), false);
+	connect(dialog,SIGNAL(selectedKey(QString,QString,bool,bool)),this,SLOT(keySelected(QString)));
 	dialog->show();
 }
 
 
-void CryptographySelectUserKey::keySelected(QString &key)
+void CryptographySelectUserKey::keySelected(const QString &key)
 {
 	view->m_editKey->setText(key);
 }

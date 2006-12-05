@@ -75,6 +75,7 @@ private:
 	void parseJoin( YMSGTransfer *t );
 	void parseChatMessage( YMSGTransfer * );
 	void parseChatExit( YMSGTransfer * );
+	void parseLogout( YMSGTransfer * );
 
 private Q_SLOTS:
 	void slotData( KIO::Job *, const QByteArray & );

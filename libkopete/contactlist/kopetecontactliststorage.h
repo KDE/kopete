@@ -21,7 +21,7 @@
 
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
-
+#include <kopete_export.h>
 namespace Kopete
 {
 
@@ -31,7 +31,7 @@ namespace Kopete
  * @author Matt Rogers <mattr@kde.org>
  * @author Michaël Larouche <larouche@kde.org>
  */
-class ContactListStorage
+class KOPETE_EXPORT ContactListStorage
 {
 public:
     ContactListStorage( );

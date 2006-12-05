@@ -18,10 +18,10 @@
 #define PRIVACY_MESSAGEHANDLER_H
 
 #include "kopetemessagehandler.h"
-
+#include <kopete_export.h>
 using namespace Kopete;
 
-class PrivacyMessageHandlerFactory : public MessageHandlerFactory
+class KOPETEPRIVACY_EXPORT PrivacyMessageHandlerFactory : public MessageHandlerFactory
 {
 public:
 

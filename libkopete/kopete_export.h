@@ -30,8 +30,18 @@
 # endif
 #endif
 
+#ifndef KOPETEPRIVACY_EXPORT
+# ifdef MAKE_KOPETEPRIVACY_LIB
+#  define KOPETEPRIVACY_EXPORT  KDE_EXPORT
+# else
+#  define KOPETEPROVACY_EXPORT KDE_IMPORT
+# endif
+#endif
+
 #else
 #define KOPETE_EXPORT KDE_EXPORT
+#define KOPETEPRIVACY_EXPORT KDE_EXPORT
+
 #endif
 
 #endif

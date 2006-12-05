@@ -18,13 +18,14 @@
 
 #include <QAbstractTableModel>
 #include <QPair>
+#include <kopete_export.h>
 
 class QStringList;
 namespace Kopete { class Protocol; }
 
 typedef QPair< QString, Kopete::Protocol *> AccountListEntry;
 
-class PrivacyAccountListModel : public QAbstractTableModel
+class KOPETEPRIVACY_EXPORT PrivacyAccountListModel : public QAbstractTableModel
 {
 Q_OBJECT
 

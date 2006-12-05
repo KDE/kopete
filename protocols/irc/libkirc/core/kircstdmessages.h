@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@gmail.com>
 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -23,7 +23,6 @@
 #include "kircmessage.h"
 
 #include <QFlags>
-#include <QStringList>
 
 namespace KIrc
 {
@@ -51,48 +50,48 @@ namespace StdMessages
 	};
 	Q_DECLARE_FLAGS(UserMode, UserModes)
 
-	KIrc::Message away(const QString &awayMessage = QString::null);
+	KIrc::Message away(const QByteArray &awayMessage = QByteArray());
 
 //	KIrc::Message invite();
 
-	KIrc::Message ison(const QStringList &nickList);
+	KIrc::Message ison(const QList<QByteArray> &nickList);
 
-	KIrc::Message join(const QString &name, const QString &key = QString());
+	KIrc::Message join(const QByteArray &name, const QByteArray &key = QByteArray());
 
-	KIrc::Message kick(const QString &user, const QString &channel, const QString &reason);
+	KIrc::Message kick(const QByteArray &user, const QByteArray &channel, const QByteArray &reason);
 
 	KIrc::Message list();
 
-	KIrc::Message mode(const QString &target, const QString &mode);
+	KIrc::Message mode(const QByteArray &target, const QByteArray &mode);
 
-	KIrc::Message motd(const QString &server = QString::null);
+	KIrc::Message motd(const QByteArray &server = QByteArray());
 
-	KIrc::Message nick(const QString &newNickname);
+	KIrc::Message nick(const QByteArray &newNickname);
 
-	KIrc::Message notice(const QString &target, const QString &message);
+	KIrc::Message notice(const QByteArray &target, const QByteArray &message);
 
-	KIrc::Message part(const QString &name, const QString &reason);
+	KIrc::Message part(const QByteArray &name, const QByteArray &reason);
 
-	KIrc::Message pass(const QString &password);
+	KIrc::Message pass(const QByteArray &password);
 
-	KIrc::Message privmsg(const QString &contact, const QString &message);
+	KIrc::Message privmsg(const QByteArray &contact, const QByteArray &message);
 
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
 	 * Therefore setting now to true should only be used while destroying the object.
 	 */
-	KIrc::Message quit(const QString &reason);
+	KIrc::Message quit(const QByteArray &reason);
 
-	KIrc::Message topic(const QString &channel, const QString &topic);
+	KIrc::Message topic(const QByteArray &channel, const QByteArray &topic);
 
-	KIrc::Message user(const QString &user, const QString &hostname, const QString &servername, const QString &realName);
+	KIrc::Message user(const QByteArray &user, const QByteArray &hostname, const QByteArray &servername, const QByteArray &realName);
 
-	KIrc::Message user(const QString &user, UserMode modes, const QString &realName);
+	KIrc::Message user(const QByteArray &user, UserMode modes, const QByteArray &realName);
 
-	KIrc::Message who(const QString &mask/*, bool isOperator*/);
+	KIrc::Message who(const QByteArray &mask/*, bool isOperator*/);
 
-	KIrc::Message whois(const QString &target);
+	KIrc::Message whois(const QByteArray &target);
 
 }
 

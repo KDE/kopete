@@ -38,7 +38,8 @@ class popupPublic : public KDialog
         Q_OBJECT
 public:
 
-        popupPublic(QWidget *parent=0, const char *name=0,QString sfile="",bool filemode=false,KShortcut goDefaultKey=QKeySequence(Qt::CTRL+Qt::Key_Home));
+        popupPublic(QWidget *parent, const QString& sfile=QString(), bool filemode=false,
+                    const KShortcut& goDefaultKey=KShortcut(QKeySequence(Qt::CTRL+Qt::Key_Home)));
 	~popupPublic();
         K3ListView *keysList;
         QCheckBox *CBarmor,*CBuntrusted,*CBshred,*CBsymmetric,*CBhideid;
@@ -71,7 +72,7 @@ protected slots:
 virtual void slotOk();
 	
 signals:
-        void selectedKey(QString & ,QString,bool,bool);
+        void selectedKey(const QString & ,QString,bool,bool);
 	void keyListFilled();
 
 };

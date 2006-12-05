@@ -439,9 +439,9 @@ KopeteWindow::~KopeteWindow()
 bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
 {
     KToolBar *toolBar = dynamic_cast<KToolBar*>( target );
-    KAction *resetAction = actionCollection()->action( "quicksearch_reset" );
+    QAction *resetAction = actionCollection()->action( "quicksearch_reset" );
 
-    if ( toolBar && resetAction && resetAction->isPlugged( toolBar ) )
+    if ( toolBar && resetAction && resetAction->associatedWidgets().contains( toolBar ) )
     {
 
         if ( event->type() == QEvent::Hide )
@@ -768,7 +768,7 @@ void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 	
 	// update add contact actionmenu
 	QString s = QString("actionAdd%1Contact").arg( account->accountId() );
-	KAction *action = actionCollection()->action( s );
+	QAction *action = actionCollection()->action( s );
 	if ( action )
 	{
 		kDebug(14000) << " found KAction " << action << " with name: " << action->objectName() << endl;

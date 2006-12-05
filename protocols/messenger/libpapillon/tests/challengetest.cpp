@@ -19,7 +19,7 @@
 #include <QtDebug>
 
 // QCA includes
-#include <QtCrypto/QtCrypto>
+#include <QtCrypto>
 
 // Papillon includes
 // Use the #define hack to get acces to private methods in ChallengeTask

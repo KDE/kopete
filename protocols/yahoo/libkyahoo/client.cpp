@@ -97,7 +97,7 @@ public:
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
 	QString statusMessageOnConnect;
-	int pictureFlag;
+	Yahoo::PictureStatus pictureFlag;
 	int pictureChecksum;
 };
 
@@ -116,7 +116,7 @@ Client::Client(QObject *par) :QObject(par)
 	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
-	d->pictureFlag = 0;
+	d->pictureFlag = Yahoo::NoPicture;
 	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
@@ -497,7 +497,6 @@ void Client::uploadPicture( KUrl url )
 		spt->setPath( url.path() );
 	else
 		spt->setPath( url.url() );
-	d->pictureFlag = 2;
 	spt->go( true );
 }
 
@@ -523,13 +522,16 @@ void Client::sendPictureInformation( const QString &userId, const QString &url, 
 	spt->go( true );
 }
 
-void Client::sendPictureStatusUpdate( const QString &userId, int type )
+void Client::setPictureStatus( Yahoo::PictureStatus status )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Setting PictureStatus to: " << type << endl;
+	if( d->pictureFlag == status )
+		return;
+
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Setting PictureStatus to: " << status << endl;
+	d->pictureFlag = status;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendStatus );
-	spt->setStatus( type );
-	spt->setTarget( userId );
+	spt->setStatus( status );
 	spt->go( true );
 }
 

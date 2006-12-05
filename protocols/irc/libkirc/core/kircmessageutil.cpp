@@ -41,7 +41,7 @@ QRegExp Message::sm_IRCCommandType2(
 /*
 QByteArray MessageUtil::format(
 		const QByteArray &command,
-		const QByteArrayList &args,
+		const QList<ByteArray> &args,
 		const QByteArray &suffix)
 {
 	#warning implement me

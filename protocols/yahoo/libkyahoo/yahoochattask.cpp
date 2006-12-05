@@ -57,7 +57,8 @@ bool YahooChatTask::take( Transfer* transfer )
 		parseJoin( t );
 	else if( t->service() == Yahoo::ServiceChatExit )
 		parseChatExit( t );
-
+	else if( t->service() == Yahoo::ServiceChatLogout )
+		parseLogout( t );
 	return true;
 }
 
@@ -304,6 +305,15 @@ void YahooChatTask::parseChatExit( YMSGTransfer *t )
 		nick = t->nthParam( 109, i );
 		emit chatBuddyHasLeft( nick, handle );
 	}
+}
+
+void YahooChatTask::parseLogout( YMSGTransfer *t )
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+
+	QString nick = t->firstParam( 1 );
+	if( nick == client()->userId() )
+		m_loggedIn = false;
 }
 
 #include "yahoochattask.moc"

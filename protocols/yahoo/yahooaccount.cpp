@@ -44,7 +44,6 @@
 #include <kactionmenu.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
-#include <kvbox.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -70,7 +69,7 @@
 #include "yahooinvitelistimpl.h"
 #include "yabentry.h"
 #include "yahoouserinfodialog.h"
-#include "yahoochatselectorwidget.h"
+#include "yahoochatselectordialog.h"
 #include "yahoochatchatsession.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
@@ -83,7 +82,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_session = new Client( this );
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
-	m_pictureFlag = 0;
 	m_webcam = 0;
 	m_chatChatSession = 0;
 	
@@ -116,6 +114,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	
 	m_session->setUserId( accountId.toLower() );
 	m_session->setPictureChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+	
+	setupActions( false );
 }
 
 YahooAccount::~YahooAccount()
@@ -559,6 +559,7 @@ void YahooAccount::disconnect()
 	}
 
 	initConnectionSignals( DeleteConnections );
+	setupActions( false );
 	theHaveContactList = false;
 }
 
@@ -608,9 +609,9 @@ KActionMenu *YahooAccount::actionMenu()
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
 	theActionMenu->addSeparator();
-	theActionMenu->addAction( m_editOwnYABEntry );
 	theActionMenu->addAction( m_openInboxAction );
 	theActionMenu->addAction( m_openYABAction );
+	theActionMenu->addAction( m_editOwnYABEntry );
 	theActionMenu->addAction( m_joinChatAction );
 	
 	return theActionMenu;
@@ -652,17 +653,6 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	}
 }
 
-void YahooAccount::setPictureFlag( int flag )
-{
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << " PictureFlag: " << flag << endl;
-	m_pictureFlag = flag;
-}
-
-int YahooAccount::pictureFlag()
-{
-	return m_pictureFlag;
-}
-
 void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
 {	
 	QFile file( url.path() );
@@ -676,6 +666,12 @@ void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );	
 }
 
+void YahooAccount::setupActions( bool connected )
+{
+	m_joinChatAction->setEnabled( connected );
+	m_editOwnYABEntry->setEnabled( connected );
+}
+
 /***************************************************************************
  *                                                                         *
  *   Slot for KYahoo signals                                               *
@@ -686,6 +682,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << succ << ", " << url << ")]" << endl;
 	QString errorMsg;
+	setupActions( succ == Yahoo::LoginOk );
 	if ( succ == Yahoo::LoginOk || (succ == Yahoo::LoginDupl && m_lastDisconnectCode == 2) )
 	{
 		if ( initialStatus().internalStatus() )
@@ -757,6 +754,7 @@ void YahooAccount::slotDisconnected()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	initConnectionSignals( DeleteConnections );
+	setupActions( false );
 	if( !isConnected() )
 		return;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
@@ -1619,13 +1617,8 @@ void YahooAccount::slotGotBuddyIcon( const QString &who, KTemporaryFile *file, i
 void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	YahooContact *kc = contact( who );
-	if ( kc == NULL ) {
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
-		return;
-	}
-	kc->sendBuddyIconInfo( myself()->property( YahooProtocol::protocol()->iconRemoteUrl ).value().toString(),
-							myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+	m_session->sendPictureInformation( who, myself()->property( YahooProtocol::protocol()->iconRemoteUrl ).value().toString(),
+	                                   myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 }
 
 void YahooAccount::setBuddyIcon( const KUrl &url )
@@ -1637,9 +1630,9 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		myself()->removeProperty( YahooProtocol::protocol()->iconRemoteUrl );
 		myself()->removeProperty( YahooProtocol::protocol()->iconExpire );
-		setPictureFlag( 0 );
 		
-		slotBuddyIconChanged( QString::null );
+		if ( m_session )
+			m_session->setPictureStatus( Yahoo::NoPicture );
 	}
 	else
 	{
@@ -1688,8 +1681,6 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 		configGroup()->writeEntry( "iconLocalUrl", newlocation );
 		
-		setPictureFlag( 2 );
-		
 		if ( checksum != static_cast<uint>(myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
 		     QDateTime::currentDateTime().toTime_t() > expire )
 		{
@@ -1710,14 +1701,13 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 
 	if ( url.isEmpty() )	// remove pictures from buddie's clients
 	{
-		checksum = 0;	
-		setPictureFlag( 0 );
+		myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, 0 );
 	}
 	else
 	{
 		myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, url );
 		configGroup()->writeEntry( "iconRemoteUrl", url );
-		setPictureFlag( 2 );
+		m_session->setPictureStatus( Yahoo::Picture );
 		m_session->sendPictureChecksum( QString::null, checksum );
 	}
 }
@@ -1850,30 +1840,21 @@ void YahooAccount::slotEditOwnYABEntry()
 
 void YahooAccount::slotJoinChatRoom()
 {
-	KDialog *chatDialog = new KDialog( Kopete::UI::Global::mainWidget() );
-	chatDialog->setCaption( i18n( "Choose a chat room..." ) );
-	chatDialog->setButtons( KDialog::Ok | KDialog::Cancel );
-	chatDialog->setDefaultButton( KDialog::Ok );
-	chatDialog->showButtonSeparator( true );
+	YahooChatSelectorDialog *chatDialog = new YahooChatSelectorDialog( Kopete::UI::Global::mainWidget() );
 	
-	KVBox *box = new KVBox( chatDialog );
-	box->setSpacing( KDialog::spacingHint() );
-	YahooChatSelectorWidget *selector = new YahooChatSelectorWidget( box );
-	chatDialog->setMainWidget(box);
-	
-	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), selector,
+	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), chatDialog,
 					SLOT(slotSetChatCategories( const QDomDocument & )) );
 	QObject::connect( m_session, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
-					selector, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
-	QObject::connect( selector, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
+					chatDialog, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
+	QObject::connect( chatDialog, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
 					this, SLOT(slotChatCategorySelected( const Yahoo::ChatCategory & ) ) );
 	
 	m_session->getYahooChatCategories();
 	
 	if( chatDialog->exec() == QDialog::Accepted )
 	{
-		kDebug() << k_funcinfo << selector->selectedRoom().topic << " " << selector->selectedRoom().topic << " " << selector->selectedRoom().id << endl;
-		m_session->joinYahooChatRoom( selector->selectedRoom() );
+		kDebug() << k_funcinfo << chatDialog->selectedRoom().topic << " " << chatDialog->selectedRoom().topic << " " << chatDialog->selectedRoom().id << endl;
+		m_session->joinYahooChatRoom( chatDialog->selectedRoom() );
 	}
 	
 	chatDialog->deleteLater();

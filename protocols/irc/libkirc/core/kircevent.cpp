@@ -29,15 +29,17 @@ class KIrc::Event::Private
 	: public QSharedData
 {
 public:
+	Message msg;
 //	QPointer<KIrc::Socket> socket;
 
 	MessageType messageType;
 
-	KIrc::Entity::Ptr from;
-	KIrc::Entity::Ptr to;
-	KIrc::Entity::List cc;
+	QByteArray from;
+	QList<QByteArray> to;
+//	QList<QByteArray> cc;
+	QList<QByteArray> victims;
 
-	QString message;
+	QString text;
 };
 
 using namespace KIrc;
@@ -61,6 +63,17 @@ Event &Event::operator = (const Event &o)
 	d = o.d;
 	return *this;
 }
+
+Message Event::message() const
+{
+	return d->msg;
+}
+
+Event &Event::setMessage(const Message &msg)
+{
+	d->msg = msg;
+	return *this;
+}
 /*
 Socket *Event::socket() const
 {
@@ -73,6 +86,7 @@ Event &Event::setSocket(Socket *socket)
 	return *this;
 }
 */
+#if 0
 Event::MessageType Event::messageType() const
 {
 	return d->messageType;
@@ -83,48 +97,58 @@ Event &Event::setMessageType(MessageType messageType)
 	d->messageType = messageType;
 	return *this;
 }
-
-Entity::Ptr Event::from() const
+#endif
+const QByteArray &Event::from() const
 {
 	return d->from;
 }
 
-Event &Event::setFrom(const Entity::Ptr &from)
+Event &Event::setFrom(const QByteArray &from)
 {
 	d->from = from;
 	return *this;
 }
 
-Entity::Ptr Event::to() const
+const QList<QByteArray> &Event::to() const
 {
 	return d->to;
 }
 
-Event &Event::setTo(const Entity::Ptr &to)
+Event &Event::setTo(const QList<QByteArray> &to)
 {
 	d->to = to;
 	return *this;
 }
-
-Entity::List Event::cc() const
+/*
+const QList<QByteArray> &Event::cc() const
 {
 	return d->cc;
 }
 
-Event &Event::setCc(const Entity::List &cc)
+Event &Event::setCc(const QList<QByteArray> &cc)
 {
 	d->cc = cc;
 	return *this;
 }
-
-QString Event::message() const
+*/
+const QList<QByteArray> &Event::victims() const
 {
-	return d->message;
+	return d->victims;
 }
 
-Event &Event::setMessage(const QString &message)
+Event &Event::setVictims(const QList<QByteArray> &victims)
 {
-	d->message = message;
+	d->victims = victims;
+	return *this;
+}
+QString Event::text() const
+{
+	return d->text;
+}
+
+Event &Event::setText(const QString &text)
+{
+	d->text = text;
 	return *this;
 }
 

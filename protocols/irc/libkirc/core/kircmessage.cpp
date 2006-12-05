@@ -214,9 +214,35 @@ void Message::setArgs(const QList<QByteArray> &args)
 	}
 }
 
+void Message::appendArgs(const QList<QByteArray> &args)
+{
+	if (!args.isEmpty())
+	{
+		d->dirty = true;
+#warning use operator << until the append methods for QList are defined.
+		d->args << args;
+	}
+}
+
 QByteArray Message::rawArg(size_t i) const
 {
 	return d->args[i];
+}
+
+void Message::setArg(size_t i, const QByteArray &arg)
+{
+#warning allow so kind of append mode ?
+	if (d->args[i] != arg)
+	{
+		d->dirty = true;
+		d->args[i] = arg;
+	}
+}
+
+void Message::appendArg(const QByteArray &arg)
+{
+	d->dirty = true;
+	d->args.append(arg);
 }
 
 QByteArray Message::rawSuffix() const
@@ -279,12 +305,17 @@ QString Message::arg(size_t i, QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->args[i]);
 }
-/*
-void Message::setArgs(size_t i, QString arg, QTextCodec *codec)
+
+void Message::setArg(size_t i, const QString &arg, QTextCodec *codec)
 {
 	setArg(i, checkCodec(codec)->fromUnicode(arg));
 }
-*/
+
+void Message::appendArg(const QString &arg, QTextCodec *codec)
+{
+	appendArg(checkCodec(codec)->fromUnicode(arg));
+}
+
 QString Message::suffix(QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->suffix);
