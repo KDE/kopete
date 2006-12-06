@@ -1,6 +1,7 @@
 /*
     gwcontact.cpp - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -26,15 +27,15 @@
 */
 
 #include <qmap.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 #include <kaction.h>
 #include <kdebug.h>
+#include <kicon.h>
 #include <klocale.h>
 
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>
+#include <kopeteprotocol.h>
 
 #include "client.h"
 #include "gwaccount.h"
@@ -54,7 +55,7 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 : Kopete::Contact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
 {
-	if ( dn.find( '=' ) != -1 )
+	if ( dn.indexOf( '=' ) != -1 )
 	{
 		m_dn = dn;
 	}
@@ -96,21 +97,17 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 	
 	m_serverProperties = details.properties;
 	
-	QMap<QString, QString>::Iterator it;
 	// work phone number
-	if ( ( it = m_serverProperties.find( "telephoneNumber" ) )
-		!= m_serverProperties.end() )
-		setProperty( protocol()->propPhoneWork, it.data() );
+	if ( m_serverProperties.contains( "telephoneNumber" ) )
+		setProperty( protocol()->propPhoneWork, m_serverProperties.value( "telephoneNumber" ) );
 	
 	// mobile phone number
-	if ( ( it = m_serverProperties.find( "mobile" ) )
-		!= m_serverProperties.end() )
-		setProperty( protocol()->propPhoneMobile, it.data() );
+	if ( m_serverProperties.contains( "mobile" ) )
+		setProperty( protocol()->propPhoneMobile, m_serverProperties.value( "mobile" ) );
 	
 	// email
-	if ( ( it = m_serverProperties.find( "Internet EMail Address" ) )
-		!= m_serverProperties.end() )
-		setProperty( protocol()->propEmail, it.data() );
+	if ( m_serverProperties.contains( "Internet EMail Address" ) )
+		setProperty( protocol()->propEmail, m_serverProperties.value( "Internet EMail Address" ) );
 		
 	if ( details.status != GroupWise::Invalid )
 	{	
@@ -157,27 +154,27 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
 
-	return account()->chatSession( chatMembers, QString::null, canCreate );
+	return account()->chatSession( chatMembers, QString("")/*FIXME Check this is right*/, canCreate );
 }
 
-Q3PtrList<KAction> *GroupWiseContact::customContextMenuActions() 
+QList<KAction*> *GroupWiseContact::customContextMenuActions()
 {
-	Q3PtrList<KAction> *m_actionCollection = new Q3PtrList<KAction>;
+	QList<KAction *> * actionCollection = new QList<KAction *>;
 
-	// Block/unblock Contact
+	// Block/unblock contact
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !m_actionBlock )
 	{
-		m_actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlock() ),
-			this, "actionBlock" );
+		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
+		QObject::connect( m_actionBlock, SIGNAL( triggered( bool ) ), SLOT( slotBlock() ) );
 	}
 	else
 		m_actionBlock->setText( label );
 	m_actionBlock->setEnabled( account()->isConnected() );
-	
-	m_actionCollection->append( m_actionBlock );
 
-	return m_actionCollection;
+	actionCollection->append( m_actionBlock );
+
+	return actionCollection;
 }
 
 void GroupWiseContact::slotUserInfo()
@@ -236,8 +233,8 @@ void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 	
 	if ( account()->isContactBlocked( m_dn ) && status.internalStatus() < 15 )
 	{
-		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
-			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
+		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status(), (status.weight()==0) ? 0 : (status.weight() -1),
+			protocol() , status.internalStatus()+15 , QStringList("msn_blocked"),
 			i18n("%1|Blocked", status.description() ) ) );
 	}
 	else

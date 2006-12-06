@@ -1,6 +1,7 @@
 /*
     gwcontact.h - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -29,8 +30,6 @@
 
 #include <q3dict.h>
 #include <qmap.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"
@@ -101,7 +100,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction *> *customContextMenuActions();
 	
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
@@ -175,7 +174,7 @@ protected:
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
 	// Novell Messenger Properties, as received by the server.  
-	// Unfortunately we don't the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
+	// Unfortunately we don't know the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
 	QMap< QString, QString > m_serverProperties;
 	bool m_archiving;
 	// HACK: flag used to differentiate between 'all contact list instances gone while we are moving on the server' 
