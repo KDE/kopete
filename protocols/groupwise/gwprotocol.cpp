@@ -1,6 +1,7 @@
 /*
     gwprotocol.cpp - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -45,34 +46,34 @@ K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args*/ )
-	: Kopete::Protocol( GroupWiseProtocolFactory::instance(), parent, name ),
+	: Kopete::Protocol( GroupWiseProtocolFactory::instance(), parent ),
 /* initialise Kopete::OnlineStatus that should be user selectable in the user interface */
-	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QString::null, 
+	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
-	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QString::null, 
+	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QStringList(), 
 			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
-	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, "contact_busy_overlay", 
-			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasAwayMessage ),
-	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, "contact_away_overlay", 
-			i18n( "Away" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage ),
-	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, "contact_away_overlay", 
+	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, QStringList( "contact_busy_overlay" ),
+			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage ),
+	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, QStringList( "contact_away_overlay" ),
+			i18n( "Away" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage ),
+	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, QStringList( "contact_away_overlay" ),
 			i18n( "Idle" ), "FIXME: Make groupwiseAwayIdle unselectable", Kopete::OnlineStatusManager::Idle,
 			Kopete::OnlineStatusManager::HideFromMenu ),
-	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, "contact_invisible_overlay",
+	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, QStringList( "contact_invisible_overlay" ),
 	  		i18n( "Appear Offline" ), i18n( "A&ppear Offline" ), Kopete::OnlineStatusManager::Invisible ),
 /* initialise Kopete::OnlineStatus used by the protocol, but that are not user selectable */
-	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Unknown, "status_unknown",
+	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Unknown, QStringList( "status_unknown" ),
 			i18n( "Unknown" ) ),
-	  groupwiseInvalid    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Invalid, "status_unknown",
+	  groupwiseInvalid    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Invalid, QStringList( "status_unknown" ),
 			i18n( "Invalid Status" ) ),
-	  groupwiseConnecting ( Kopete::OnlineStatus::Connecting, 25, this, 99, "groupwise_connecting",
+	  groupwiseConnecting ( Kopete::OnlineStatus::Connecting, 25, this, 99, QStringList( "groupwise_connecting" ),
 			i18n( "Connecting" ) ),
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
-	  propAwayMessage( Kopete::Global::Properties::self()->awayMessage() ),
-	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString::null, false, false ),
-	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false ),
+	  propAwayMessage( Kopete::Global::Properties::self()->statusMessage() ),
+	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString() ),
+	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
 	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),
 	  propPhoneMobile( Kopete::Global::Properties::self()->privateMobilePhone() ),
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
@@ -100,9 +101,10 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 	int parentId = serializedData[ "parentId" ].toInt();
 	int sequence = serializedData[ "sequenceNumber" ].toInt();
 	
-	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 
-	Kopete::Account *account = accounts[ accountId ];
+	Kopete::Account *account = (Kopete::AccountManager::self()->findAccount(pluginId(), accountId));
+
 	if ( !account )
 	{
 		kDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping" << endl;
