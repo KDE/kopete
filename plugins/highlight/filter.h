@@ -51,6 +51,6 @@ public:
 	QString className() const;
 };
 
-Q_DECLARE_METATYPE(Filter*);
+Q_DECLARE_METATYPE(Filter*)
 
 #endif

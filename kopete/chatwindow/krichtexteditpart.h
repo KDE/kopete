@@ -60,7 +60,7 @@ public:
 
         FullSupport = FormattingSupport | SupportAlignment | SupportFont | SupportTextColor
     };
-    Q_DECLARE_FLAGS(RichTextSupport, RichTextSupportValues);
+    Q_DECLARE_FLAGS(RichTextSupport, RichTextSupportValues)
 
     KRichTextEditPart(QWidget *parent, QObject *, const QStringList &);
 
@@ -159,7 +159,7 @@ private:
     Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(KRichTextEditPart::RichTextSupport);
+Q_DECLARE_OPERATORS_FOR_FLAGS(KRichTextEditPart::RichTextSupport)
 
 #endif
 

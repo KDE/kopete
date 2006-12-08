@@ -48,7 +48,7 @@ public:
 		TransactionTransfer,
 		PayloadTransfer
 	};
-	Q_DECLARE_FLAGS(TransferType, TransferTypeValues);
+	Q_DECLARE_FLAGS(TransferType, TransferTypeValues)
 	
 	/**
 	 * @brief Build a new transfer
@@ -131,7 +131,7 @@ private:
 	Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Transfer::TransferType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Transfer::TransferType)
 
 }
 

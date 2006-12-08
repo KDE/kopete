@@ -58,7 +58,7 @@ namespace Eva {
 		static const ushort Signature = 0x0067;
 		static const ushort ReceiveSysMsg = 0x0080;
 		static const ushort ContactStausChanged = 0x0081;
-	};
+	}
 	
 	// Options
 	static const uchar NormalLogin = 0x0A;
@@ -485,5 +485,5 @@ namespace Eva {
 
 		// Misc
 
-};
+}
 #endif

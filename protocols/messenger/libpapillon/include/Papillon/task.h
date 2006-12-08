@@ -70,7 +70,7 @@ public:
 		GoNothing, ///<Do nothing
 		AutoDelete ///<Auto delete the task after completion.
 	};
-	Q_DECLARE_FLAGS(GoParameters, GoParameter);
+	Q_DECLARE_FLAGS(GoParameters, GoParameter)
 
 	/**
 	 * Create a new task.
@@ -217,7 +217,7 @@ private:
 	Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( Task::GoParameters );
+Q_DECLARE_OPERATORS_FOR_FLAGS( Task::GoParameters )
 
 }
 #endif

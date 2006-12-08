@@ -32,5 +32,5 @@ QString PAPILLON_EXPORT statusToString(Papillon::OnlineStatus::Status status);
 
 Papillon::OnlineStatus::Status PAPILLON_EXPORT stringToStatus(const QString &status);
 
-};
+}
 #endif

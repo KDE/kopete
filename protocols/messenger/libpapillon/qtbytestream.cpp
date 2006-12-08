@@ -47,6 +47,7 @@ QtByteStream::~QtByteStream()
 bool QtByteStream::connect(const QString &host, quint16 port)
 {
 	d->socket->connectToHost(host, port);
+        return true;
 }
 
 bool QtByteStream::isOpen() const

@@ -35,7 +35,7 @@ namespace Papillon
 			ReverseList = 8, ///<Contacts that have you on their Forward List.
 			PendingList = 16 ///<Contacts pending to be added.
 		};
-		Q_DECLARE_FLAGS(ContactListFlags, Type);
+		Q_DECLARE_FLAGS(ContactListFlags, Type)
 	};
 	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactList::ContactListFlags )
 
@@ -69,7 +69,7 @@ namespace Papillon
 			MSNC5 = 0x50000000, ///<MSNC Version 5 (with MSN Messenger 7.5)
 			MSNC6 = 0x60000000 ///<MSNC Version 6 (with Windows Live Messenger 8)
 		};
-		Q_DECLARE_FLAGS(Features, Feature);
+		Q_DECLARE_FLAGS(Features, Feature)
 
 		/**
 		 * @brief This enum is used to determine the personal information changed on server.
@@ -82,7 +82,7 @@ namespace Papillon
 			PhoneWork, ///<Setting the work phone number
 			PhoneMobile, ///<Setting the mobile phone number
 			MobileAuthorization, ///<are other people authorised to contact me on my MSN Mobile (Y or N)
-			MobileDeviceEnabled, ///<do I have a mobile device enabled on MSN Mobile (Y or N)
+			MobileDeviceEnabled ///<do I have a mobile device enabled on MSN Mobile (Y or N)
 		};
 	};
 	Q_DECLARE_OPERATORS_FOR_FLAGS( Papillon::ClientInfo::Features )
