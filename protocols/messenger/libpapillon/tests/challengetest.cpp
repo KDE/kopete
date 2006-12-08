@@ -52,6 +52,6 @@ void Challenge_Test::testChallenge()
 	delete challengeTask;
 }
 
-QTEST_MAIN(Challenge_Test);
+QTEST_MAIN(Challenge_Test)
 
 #include "challengetest.moc"

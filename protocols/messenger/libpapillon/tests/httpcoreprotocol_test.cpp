@@ -61,6 +61,6 @@ void HttpCoreProtocol_Test::testNormalTransfer()
 	QVERIFY( indexOf != 1 );
 }
 
-QTEST_MAIN(HttpCoreProtocol_Test);
+QTEST_MAIN(HttpCoreProtocol_Test)
 
 #include "httpcoreprotocol_test.moc"

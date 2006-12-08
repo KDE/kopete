@@ -63,6 +63,6 @@ void HttpTransfer_Test::testHttpResponse()
 }
 
 
-QTEST_MAIN(HttpTransfer_Test);
+QTEST_MAIN(HttpTransfer_Test)
 
 #include "httptransfer_test.moc"

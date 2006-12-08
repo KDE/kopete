@@ -128,6 +128,6 @@ void CoreProtocol_Test::testFragmentPayloadTransfer()
 	QCOMPARE( transfer->toRawCommand(), expectedData );
 }
 
-QTEST_MAIN(CoreProtocol_Test);
+QTEST_MAIN(CoreProtocol_Test)
 
 #include "coreprotocol_test.moc"

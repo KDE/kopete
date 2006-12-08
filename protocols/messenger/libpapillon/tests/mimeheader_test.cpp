@@ -48,6 +48,6 @@ void MimeHeader_Test::testMimeGeneration()
 	QCOMPARE( test.toString(), expectedGeneratedMimeHeader );
 }
 
-QTEST_MAIN(MimeHeader_Test);
+QTEST_MAIN(MimeHeader_Test)
 
 #include "mimeheader_test.moc"

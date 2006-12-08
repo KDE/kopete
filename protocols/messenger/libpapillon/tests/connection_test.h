@@ -22,7 +22,7 @@ namespace Papillon
 {
 	class ClientStream;
 	class Task;
-	class LoginTask;;
+	class LoginTask;
 }
 
 using namespace Papillon;
