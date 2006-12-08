@@ -97,9 +97,9 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	m_din->skipRawData( 87 ); //name offset, size offset, dummy block, mac info
 	*m_din >> d;
 	int namelen = length - 256 +  64;
-	char name[namelen];
-	m_din->readRawData( name, namelen );
-	QByteArray name2( name, namelen ); //make sure we don't trip over possible nulls in it
+	QByteArray name;
+	name.resize( namelen + 1 );
+	m_din->readRawData( name.data(), namelen );
 
 	QTextCodec *c=0;
 	switch ( d )
@@ -117,7 +117,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 			kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "unknown codec: " << d << endl;
 	}
 	if ( c )
-		data.fileName = c->toUnicode( name2 );
+		data.fileName = c->toUnicode( name );
 	else
 	{
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec!!!!!! " << d << endl;
