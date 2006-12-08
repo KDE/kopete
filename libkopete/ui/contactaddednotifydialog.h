@@ -82,7 +82,7 @@ public:
 		AddCheckBox = 0x04, /**< the checkbox which ask if the contact should be added */
 		AddGroupBox = 0x08 /**< all the widget about metacontact properties */
 	};
-	Q_DECLARE_FLAGS(HideWidgetOptions, HideWidget);
+	Q_DECLARE_FLAGS(HideWidgetOptions, HideWidget)
 
 	/**
 	 * @brief Constructor
@@ -170,7 +170,7 @@ private:
 	Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( ContactAddedNotifyDialog::HideWidgetOptions );
+Q_DECLARE_OPERATORS_FOR_FLAGS( ContactAddedNotifyDialog::HideWidgetOptions )
 
 } // namespace UI
 } // namespace Kopete
