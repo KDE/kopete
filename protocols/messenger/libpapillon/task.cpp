@@ -45,7 +45,7 @@ public:
 };
 
 Task::Task(Task *parent)
-:QObject(parent)
+ : QObject(parent)
 {
 	init();
 	d->connection = parent->connection();
@@ -53,7 +53,7 @@ Task::Task(Task *parent)
 }
 
 Task::Task(Connection* parent, bool)
-:QObject(0)
+ : QObject(0)
 {
 	init();
 	d->connection = parent;
@@ -78,7 +78,7 @@ void Task::init()
 
 Task *Task::parent() const
 {
-	return (Task *)QObject::parent();
+	return static_cast<Task *>( QObject::parent() );
 }
 
 Connection *Task::connection() const
@@ -123,7 +123,7 @@ bool Task::take(Transfer *transfer)
 	const QList<Task*> taskList = findChildren<Task*>();
 
 	// pass along the transfer to our children
-	foreach( Task* task, taskList)
+	foreach( Task* task, taskList )
 	{
 		if ( task->take( transfer ) )
 			return true;
