@@ -53,10 +53,10 @@ bool isHostReachable( const QString &host );
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyConnectionLost( const Account *account,
-                                         const QString caption = QString::null,
-                                         const QString message = QString::null,
-                                         const QString explanation = QString::null,
-                                         const QString debugInfo = QString::null );
+                                         const QString &caption = QString::null,
+                                         const QString &message = QString::null,
+                                         const QString &explanation = QString::null,
+                                         const QString &debugInfo = QString::null );
 
 
 /**
@@ -70,9 +70,44 @@ void KOPETE_EXPORT notifyConnectionLost( const Account *account,
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyCannotConnect( const Account *account,
-                                        const QString explanation = QString::null,
-                                        const QString debugInfo = QString::null);
+                                        const QString &explanation = QString::null,
+                                        const QString &debugInfo = QString::null);
 
+/**
+ * Notifies the user that an error on a connection occcured without coupling plugins with GUI code.
+ *
+ * @param account The account where the connection error occured and wants to notify the user.
+ * @param caption A brief subject line, used where possible if the presentation allows it.
+ * @param message A short description of the error.
+ * @param explanation A long description on how the error occured and what the user can do about it.
+ * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
+ *
+ * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * explanation, Kopete will use a default explanation.
+ */
+void KOPETE_EXPORT notifyConnectionError( const Account *account,
+                                          const QString &caption = QString::null,
+                                          const QString &message = QString::null,
+                                          const QString &explanation = QString::null,
+                                          const QString &debugInfo = QString::null );
+
+/**
+ * Notifies the user that an error on the server occcured without coupling plugins with GUI code.
+ *
+ * @param account The account where the server error occured and wants to notify the user.
+ * @param caption A brief subject line, used where possible if the presentation allows it.
+ * @param message A short description of the error.
+ * @param explanation A long description on how the error occured and what the user can do about it.
+ * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
+ *
+ * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * explanation, Kopete will use a default explanation.
+ */
+void KOPETE_EXPORT notifyServerError( const Account *account,
+                                      const QString &caption = QString::null,
+                                      const QString &message = QString::null,
+                                      const QString &explanation = QString::null,
+                                      const QString &debugInfo = QString::null );
 } // end ns Utils
 } // end ns Kopete
 

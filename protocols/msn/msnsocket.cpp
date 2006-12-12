@@ -196,8 +196,7 @@ void MSNSocket::slotSocketError( int error )
 	//like if the socket is closed
 	emit socketClosed();
 
-	//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, errormsg, i18n( "MSN Plugin" ) );
-	emit errorMessage( ErrorNormal, errormsg );
+	emit errorMessage( ErrorConnectionError, errormsg );
 }
 
 void MSNSocket::slotDataReceived()
@@ -531,7 +530,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 {
 	kdDebug(14140) << k_funcinfo << endl;
 	QString msg;
-
+	ErrorType type = ErrorServerError;
 	switch ( code )
 	{
 /*
@@ -567,15 +566,19 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 */
 	case 500:
 		msg = i18n ( "An internal server error occurred. Please try again later." );
+		type = MSNSocket::ErrorCannotConnect;
 		break;
 	case 502:
 		msg = i18n ( "It is no longer possible to perform this operation. The MSN server does not allow it anymore." );
+		type = MSNSocket::ErrorServerError;
 		break;
 	case 600:
 	case 910:
 	case 912:
+	case 921:
 	case 922:
 		msg = i18n ( "The MSN server is busy. Please try again later." );
+		type = MSNSocket::ErrorConnectionError;
 		break;
 	case 601:
 	case 604:
@@ -585,7 +588,9 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	case 916:
 	case 917:
 		msg = i18n ( "The server is not available at the moment. Please try again later." );
+		type = MSNSocket::ErrorCannotConnect;
 		break;
+	// Server error
 	default:
 		// FIXME: if the error causes a disconnect, it will crash, but we can't disconnect every time
 		msg = i18n( "Unhandled MSN error code %1 \n"
@@ -595,8 +600,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	}
 
 	if ( !msg.isEmpty() )
-		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
-		emit errorMessage( ErrorNormal, msg );
+		emit errorMessage( type, msg );
 
 	return;
 }

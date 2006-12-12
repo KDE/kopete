@@ -77,7 +77,7 @@ public:
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
 	enum LookupStatus { Processing, Success, Failed };
 	enum Transport { TcpTransport, HttpTransport };
-	enum ErrorType { ErrorNormal, ErrorInternal, ErrorInformation, ErrorSorry };
+	enum ErrorType { ErrorConnectionLost, ErrorConnectionError, ErrorCannotConnect, ErrorServerError, ErrorInformation};
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 

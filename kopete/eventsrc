@@ -1665,7 +1665,7 @@ Comment[uz]=Хизматда ички хато рўй берди
 Comment[zh_CN]=发生了服务内部错误
 Comment[zh_HK]=服務發生內部錯誤
 Comment[zh_TW]=服務發生內部錯誤
-default_presentation=2
+default_presentation=16
 
 [buzz_nudge]
 Name=Buzz/Nudge

@@ -47,6 +47,7 @@
 #include "kopeteglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "contactaddednotifydialog.h"
+#include "kopeteutils.h"
 
 #include "sha1.h"
 
@@ -59,6 +60,7 @@
 #if MSN_WEBCAM
 #include "avdevice/videodevicepool.h"
 #endif
+
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
 	: Kopete::PasswordedAccount ( parent, AccountID.lower(), 0, name )
 {
@@ -1280,43 +1282,38 @@ void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &
 
 void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )
 {
-	KMessageBox::DialogType msgBoxType;
 	QString caption = i18n( "MSN Plugin" );
 
+	// Use different notification type based on the error context.
 	switch(type)
 	{
-		case MSNSocket::ErrorNormal:
+		case MSNSocket::ErrorConnectionLost:
 		{
-			msgBoxType = KMessageBox::Error;
+			Kopete::Utils::notifyConnectionLost( this, caption, msg );
 			break;
 		}
-		case MSNSocket::ErrorSorry:
+		case MSNSocket::ErrorConnectionError:
 		{
-			msgBoxType = KMessageBox::Sorry;
+			Kopete::Utils::notifyConnectionError( this, caption, msg );
+			break;
+		}
+		case MSNSocket::ErrorCannotConnect:
+		{
+			Kopete::Utils::notifyCannotConnect( this );
 			break;
 		}
 		case MSNSocket::ErrorInformation:
 		{
-			msgBoxType = KMessageBox::Information;
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, caption );
 			break;
 		}
-		case MSNSocket::ErrorInternal:
-		{
-			msgBoxType = KMessageBox::Information;
-			caption = i18n( "MSN Internal Error" );
-			break;
-		}
+		case MSNSocket::ErrorServerError:
 		default:
 		{
-			msgBoxType = KMessageBox::Error;
+			Kopete::Utils::notifyServerError( this, caption, msg );
 			break;
 		}
 	}
-
-	kdDebug(14140) << k_funcinfo << msg << endl;
-	// Display the error
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption );
-
 }
 
 bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )

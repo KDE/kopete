@@ -111,54 +111,68 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 void MSNSwitchBoardSocket::handleError( uint code, uint id )
 {
 	kdDebug(14140) << k_funcinfo << endl;
+
+	QString msg;
+	MSNSocket::ErrorType type;
+
 	switch( code )
 	{
 		case 208:
 		{
-			QString msg = i18n( "Invalid user:\n"
+			msg = i18n( "Invalid user:\n"
 				"this MSN user does not exist; please check the MSN ID." );
-			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
-			emit errorMessage( MSNSocket::ErrorNormal, msg );
+			type = MSNSocket::ErrorServerError;
+
 			userLeftChat(m_msgHandle , i18n("user never joined"));
 			break;
 		}
 		case 215:
 		{
-			QString msg = i18n( "The user %1 is already in this chat." ).arg( m_msgHandle );
-			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
-			emit errorMessage( MSNSocket::ErrorNormal, msg );
+			msg = i18n( "The user %1 is already in this chat." ).arg( m_msgHandle );
+			type = MSNSocket::ErrorServerError;
+
 			//userLeftChat(m_msgHandle , i18n("user was twice in this chat") ); //(the user shouln't join there
 			break;
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user." ).arg( m_msgHandle );
-			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
-			emit errorMessage( MSNSocket::ErrorInformation, msg );
+			msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user." ).arg( m_msgHandle );
+			type = MSNSocket::ErrorInformation;
+
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
 			break;
 		}
 		case 217:
 		{
 			// TODO: we need to know the nickname instead of the handle.
-			QString msg = i18n( "The user %1 is currently not signed in.\n" "Messages will not be delivered." ).arg( m_msgHandle );
-			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
-			emit errorMessage( MSNSocket::ErrorNormal, msg );
+			msg = i18n( "The user %1 is currently not signed in.\n" "Messages will not be delivered." ).arg( m_msgHandle );
+			type = MSNSocket::ErrorServerError;
+
 			userLeftChat(m_msgHandle, i18n("user disconnected"));
 			break;
 		}
 		case 713:
 		{
 			QString msg = i18n( "You are trying to invite too many contacts to this chat at the same time" ).arg( m_msgHandle );
-			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
-			emit errorMessage( MSNSocket::ErrorInformation, msg );
+			type = MSNSocket::ErrorInformation;
+
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
+			break;
+		}
+		case 911:
+		{
+			msg = i18n("Kopete MSN plugin has trouble authenticating with switchboard server.");
+			type = MSNSocket::ErrorServerError;
+
 			break;
 		}
 		default:
 			MSNSocket::handleError( code, id );
 			break;
 	}
+
+	if( !msg.isEmpty() )
+		emit errorMessage( type, msg );
 }
 
 void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,

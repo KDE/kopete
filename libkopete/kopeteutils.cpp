@@ -64,7 +64,7 @@ void notify( QPixmap pic, const QString &eventid, const QString &caption, const 
 		QObject::connect( n, SIGNAL(closed()) , NotifyHelper::self() , SLOT( slotEventClosed() ) );
 }
 
-void notifyConnectionLost( const Account *account, const QString caption, const QString message, const QString explanation, const QString debugInfo)
+void notifyConnectionLost( const Account *account, const QString &caption, const QString &message, const QString &explanation, const QString &debugInfo )
 {
 	if (!account)
 		return;
@@ -93,12 +93,30 @@ bool isHostReachable(const QString &host)
 	return false; // On error, assume we are online
 }
 
-void notifyCannotConnect( const Account *account, const QString explanation, const QString debugInfo)
+void notifyCannotConnect( const Account *account, const QString &explanation, const QString &debugInfo)
 {
 	if (!account)
 		return;
 
 	notify( account->accountIcon(), QString::fromLatin1("cannot_connect"), notifyCannotConnect_DefaultCaption, notifyCannotConnect_DefaultMessage, notifyCannotConnect_DefaultExplanation, debugInfo);
+}
+
+void notifyConnectionError( const Account *account, const QString &caption, const QString &message, const QString &explanation, const QString &debugInfo )
+{
+	if (!account)
+		return;
+
+	// TODO: Display a specific default connection error message, I don't want to introducte too many new strings
+	notify( account->accountIcon(32), QString::fromLatin1("connection_error"), caption, message, explanation, debugInfo);
+}
+
+void notifyServerError( const Account *account, const QString &caption, const QString &message, const QString &explanation, const QString &debugInfo )
+{
+	if (!account)
+		return;
+
+	// TODO: Display a specific default server error message, I don't want to introducte too many new strings
+	notify( account->accountIcon(32), QString::fromLatin1("server_error"), caption, message, explanation, debugInfo);
 }
 
 } // end ns ErrorNotifier
