@@ -19,6 +19,7 @@
 
 #include <kopeteprotocol.h>
 #include <kopeteonlinestatus.h>
+#include <kopetecontactproperty.h>
 
 #include <QtTapioca/ContactBase>
 
@@ -46,6 +47,8 @@ public:
 	const Kopete::OnlineStatus Hidden;
 	const Kopete::OnlineStatus ExtendedAway;
 	const Kopete::OnlineStatus Offline;
+
+	const Kopete::ContactPropertyTmpl propAvatarToken;
 
 	TelepathyProtocol(QObject *parent, const QStringList &args);
 	

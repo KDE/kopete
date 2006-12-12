@@ -18,12 +18,14 @@
 
 // Qt includes
 #include <QtCore/QPointer>
+#include <QtGui/QImage>
 
 // KDE includes
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kstandarddirs.h>
 
 // Kopete includes
 #include <kopetechatsessionmanager.h>
@@ -33,6 +35,7 @@
 // QtTapioca includes
 #include <QtTapioca/Contact>
 #include <QtTapioca/TextChannel>
+#include <QtTapioca/Avatar>
 
 // Telepathy includes
 #include "telepathyaccount.h"
@@ -75,6 +78,8 @@ QtTapioca::Contact *TelepathyContact::internalContact()
 
 void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 {
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating internal contact pointer for " << contactId() << endl;
+
 	if( !d->internalContact.isNull() )
 	{
 		// Disconnect signals from previous internal contact
@@ -82,15 +87,20 @@ void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 	}
 	d->internalContact = internalContact;
 
+	// Connect signal/slots
+	connect(d->internalContact, SIGNAL(presenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)), this, SLOT(telepathyPresenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)));
+	connect(d->internalContact, SIGNAL(aliasChanged(QtTapioca::ContactBase*,QString)), this, SLOT(telepathyAliasChanged(QtTapioca::ContactBase*,QString)));
+	connect(d->internalContact, SIGNAL(avatarUpdated(QtTapioca::ContactBase *)), this, SLOT(telepathyAvatarChanged(QtTapioca::ContactBase*)));
+
 	// Set initial presence
 	TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->presence() );
 
 	// Set nickname/alias
 	setNickName( d->internalContact->alias() );
 
-	// Connect signal/slots
-	connect(d->internalContact, SIGNAL(presenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)), this, SLOT(telepathyPresenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)));
-	connect(d->internalContact, SIGNAL(aliasChanged(QtTapioca::ContactBase*,QString)), this, SLOT(telepathyAliasChanged(QtTapioca::ContactBase*,QString)));
+	// Enable avatar update
+	d->internalContact->setReceiveAvatarUpdates( true, property(TelepathyProtocol::protocol()->propAvatarToken).value().toString() );
+	telepathyAvatarChanged( d->internalContact );
 }
 
 bool TelepathyContact::isReachable()
@@ -172,4 +182,38 @@ void TelepathyContact::telepathyAliasChanged(QtTapioca::ContactBase *contactBase
 
 	setNickName( newAlias );
 }
+
+void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBase)
+{
+	if( contactBase->avatar()/* && !contactBase->avatar()->image().isEmpty() */)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a avatar update for " << contactId() << endl;
+
+		// TODO: Use a common avatar storage for all protocols
+		QString pictureLocation = KStandardDirs::locateLocal( "appdata", "telepathypictures/" + contactId().replace(QRegExp("[./~]"),"-")  + ".png" );
+
+		if( contactBase->avatar()->image().isEmpty() )
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Whoopies, avatar image is empty" << endl;
+
+		// Guess file format from header for now
+		QImage avatar = QImage::fromData( contactBase->avatar()->image() );
+
+		if( avatar.save(pictureLocation, "PNG") )
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting avatar information for " << contactId() << endl;
+
+			// Set avatar in Kopete
+			setProperty( Kopete::Global::Properties::self()->photo(), pictureLocation );
+			setProperty( TelepathyProtocol::protocol()->propAvatarToken, contactBase->avatar()->token() );
+		}
+		else
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Removing avatar information for " << contactId() << endl;
+
+			removeProperty( Kopete::Global::Properties::self()->photo() );
+			removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
+		}
+	}
+}
+
 #include "telepathycontact.moc"

@@ -90,6 +90,12 @@ private slots:
 	 */
 	void telepathyAliasChanged(QtTapioca::ContactBase *contactBase, const QString &alias);
 
+	/**
+	 * @brief Called when contact has changed its avatar.
+	 * @param contact Refering ContactBase
+	 */
+	void telepathyAvatarChanged(QtTapioca::ContactBase *contact);
+
 private:
 	class Private;
 	Private *d;
