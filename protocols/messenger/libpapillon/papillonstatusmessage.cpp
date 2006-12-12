@@ -163,22 +163,22 @@ StatusMessage StatusMessage::fromXml(const QString &xml)
 	{
 		// <Data><PSM>My Personal Message</PSM><CurrentMedia></CurrentMedia></Data>
 		/*
-			The value of the CurrentMedia tag you can think of like an array
-			separated by "\0" characters (literal backslash followed by zero, not NULL).
+		 	You can imagine the content of CurrentMedia tag as a flat array
+			separated by "\0" characters (literally backslash followed by zero, not NULL).
 	
 			The elements of this "array" are as follows:
 	
-			* Application - This is the app you are using. Usually empty
-			* Type - This is the type of PSM, either “Music”, “Games” or “Office”
+			* Application - This is the application you are using. Usually empty
+			* Type - This is the type of PSM, either "Music", "Games" or "Office"
 			* Enabled - This is a boolean value (0/1) to enable/disable
-			* Format - A formatter string ala .Net; For example, “{0} - {1}”
-			* First line - The first line (Matches {0} in the Format)
-			* Second line - The second line (Matches {1} in the Format)
-			* Third line - The third line (Matches {2} in the Format)
+			* Format - Formatter string using .NET formatting style, for example: "{0} - {1}"
+			* First value - The first value (Matches {0} in the Format)
+			* Second value - The second value (Matches {1} in the Format)
+			* Third value - The third value (Matches {2} in the Format)
 	
-			There is probably no limit to the number of lines unless you go over the maximum length of the tag.
+			There is probably no limit in the number of values unless you go over the maximum length of the tag.
 	
-			Example of currentMedia xml tag:
+			Example of CurrentMedia xml tag:
 			<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>
 			<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>
 			<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>
