@@ -28,7 +28,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 
-#include <kactivelabel.h>
+#include <k3activelabel.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>

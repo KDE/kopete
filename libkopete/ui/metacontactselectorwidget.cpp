@@ -34,7 +34,7 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 #include <kpushbutton.h>
-#include <kactivelabel.h>
+#include <k3activelabel.h>
 #include <kdebug.h>
 #include <k3listview.h>
 #include <k3listviewsearchline.h>
