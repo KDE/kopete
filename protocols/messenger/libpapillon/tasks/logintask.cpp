@@ -15,8 +15,8 @@
 #include "Papillon/Tasks/LoginTask"
 
 // Qt includes
-#include <QtCore/QLatin1String>
 #include <QtCore/QStringList>
+#include <QtCore/QLatin1String>
 #include <QtDebug>
 
 // Papillon includes
@@ -179,8 +179,7 @@ void LoginTask::sendVersionCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	versionTransfer->setTransactionId( d->currentTransactionId );
 
-	QStringList arguments = QString("MSNP13 CVR0").split(" ");
-	versionTransfer->setArguments(arguments);
+	versionTransfer->setArguments( QString("MSNP13 CVR0") );
 
 	send(versionTransfer);
 }
@@ -195,8 +194,7 @@ void LoginTask::sendCvrCommand()
 	cvrTransfer->setTransactionId( d->currentTransactionId );
 
 	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %1").arg(d->passportId);
-	QStringList argsList = arguments.split(" ");
-	cvrTransfer->setArguments(argsList);
+	cvrTransfer->setArguments(arguments);
 
 	send(cvrTransfer);
 }
@@ -211,8 +209,7 @@ void LoginTask::sendTweenerInviteCommand()
 	twnTransfer->setTransactionId( d->currentTransactionId );
 
 	QString arguments = QString("TWN I %1").arg(d->passportId);
-	QStringList args = arguments.split(" ");
-	twnTransfer->setArguments(args);
+	twnTransfer->setArguments(arguments);
 
 	send(twnTransfer);
 }
@@ -227,8 +224,7 @@ void LoginTask::sendTweenerConfirmation()
 	twnTransfer->setTransactionId( d->currentTransactionId );
 
 	QString arguments = QString("TWN S %1").arg(d->tweenerTicket);
-	QStringList args = arguments.split(" ");
-	twnTransfer->setArguments(args);
+	twnTransfer->setArguments(arguments);
 
 	send(twnTransfer);
 }

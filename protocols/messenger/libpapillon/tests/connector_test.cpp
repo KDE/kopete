@@ -71,9 +71,7 @@ void Connector_Test::doLoginProcess()
 	Transfer *usrTransfer = new Transfer(Transfer::TransactionTransfer);
 	usrTransfer->setCommand( QLatin1String("VER") );
 	usrTransfer->setTransactionId( QString::number(++d->trId) );
-	QStringList arguments;
-	arguments  = QString("MSNP11 MSNP10 CVR0").split(" ");
-	usrTransfer->setArguments(arguments);
+	usrTransfer->setArguments( QString("MSNP11 MSNP10 CVR0") );
 
 	d->stream->write(usrTransfer);
 }
@@ -83,9 +81,7 @@ void Connector_Test::loginProcessCvr()
 	Transfer *cvrTransfer = new Transfer(Transfer::TransactionTransfer);
 	cvrTransfer->setCommand( QLatin1String("CVR") );
 	cvrTransfer->setTransactionId( QString::number(++d->trId) );
-	QStringList args;
-	args = QString("0x040c winnt 5.1 i386 MSNMSGR 7.0.0777 msmsgs "PASSPORT_ID).split(" ");
-	cvrTransfer->setArguments(args);
+	cvrTransfer->setArguments( QString("0x040c winnt 5.1 i386 MSNMSGR 7.0.0777 msmsgs "PASSPORT_ID) );
 
 	d->stream->write(cvrTransfer);
 }
@@ -95,8 +91,7 @@ void Connector_Test::loginProcessTwnI()
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
 	twnTransfer->setTransactionId( QString::number(++d->trId) );
-	QStringList args = QString("TWN I "PASSPORT_ID).split(" ");
-	twnTransfer->setArguments(args);
+	twnTransfer->setArguments( QString("TWN I "PASSPORT_ID) );
 
 	d->stream->write(twnTransfer);
 }
@@ -106,7 +101,7 @@ void Connector_Test::loginProcessTwnS()
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
 	twnTransfer->setTransactionId( QString::number(++d->trId) );
-	QStringList args = QString("TWN S t=7tLSuqR92Bo*17x76PDg87IVMA5FKqxccJDUocFzfCXbipUMZuMv4HatazUwTBVqsFkTxkS0qFCSbzA9SUFjM*SHzGKIIC7kgZAEikfzfAUufs*L!3B5i0aSrNo03BAeQP&p=7nhP1TIX4BGQ*k4JKZw0JHP5rb3A9wk8fw!ZYadtXN0OFiN*yZr6UaFwBAdUOKwoQkYfK1gEzWE*Op16WDcE*9J3Hv4JWG1TF3eSoAq71CITPmkZONAReXYlGz5Rk5l7ZFwbAPq6NxxqxzK24mx74JkLst2Z7gEm*hbz9gfIUu!0M$").split(" ");
+	QString args = QString("TWN S t=7tLSuqR92Bo*17x76PDg87IVMA5FKqxccJDUocFzfCXbipUMZuMv4HatazUwTBVqsFkTxkS0qFCSbzA9SUFjM*SHzGKIIC7kgZAEikfzfAUufs*L!3B5i0aSrNo03BAeQP&p=7nhP1TIX4BGQ*k4JKZw0JHP5rb3A9wk8fw!ZYadtXN0OFiN*yZr6UaFwBAdUOKwoQkYfK1gEzWE*Op16WDcE*9J3Hv4JWG1TF3eSoAq71CITPmkZONAReXYlGz5Rk5l7ZFwbAPq6NxxqxzK24mx74JkLst2Z7gEm*hbz9gfIUu!0M$");
 	twnTransfer->setArguments(args);
 
 	d->stream->write(twnTransfer);

@@ -69,6 +69,21 @@ void Transfer_Test::testPayloadTransfer()
 	QCOMPARE(payTransfer.toRawCommand(), expectedRaw);
 }
 
+void Transfer_Test::testStringArguments()
+{
+	Transfer transfer(Transfer::TransactionTransfer);
+	
+	transfer.setCommand("USR");
+	transfer.setTransactionId("1");
+	
+	QString arguments("TWN I test@passport.com");
+	transfer.setArguments(arguments);
+	
+	QCOMPARE(transfer.arguments()[0], QString("TWN"));
+	QCOMPARE(transfer.arguments()[1], QString("I"));
+	QCOMPARE(transfer.arguments()[2], QString("test@passport.com"));
+}
+
 QTEST_MAIN(Transfer_Test)
 
 #include "transfer_test.moc"

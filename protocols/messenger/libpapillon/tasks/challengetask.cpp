@@ -18,7 +18,6 @@
 #include "Papillon/Tasks/ChallengeTask"
 
 // Qt includes
-#include <QtCore/QStringList>
 #include <QtCore/QLatin1String>
 #include <QtCore/QByteArray>
 #include <QtCore/QDataStream>
@@ -76,9 +75,7 @@ bool ChallengeTask::take(Transfer *transfer)
 		challengeResult->setTransactionId( QString::number( connection()->transactionId() ) );
 		challengeResult->setPayloadData( challengeHash.toUtf8() );
 
-		QStringList args;
-		args << challengeProductId;
-		challengeResult->setArguments( args );
+		challengeResult->setArguments( challengeProductId );
 
 		send(challengeResult);
 

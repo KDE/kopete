@@ -24,5 +24,6 @@ private slots:
 	void testNormalTransfer();
 	void testTransactionTransfer();
 	void testPayloadTransfer();
+	void testStringArguments();
 };
 #endif

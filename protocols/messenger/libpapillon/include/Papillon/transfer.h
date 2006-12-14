@@ -94,6 +94,13 @@ public:
 	 * @param arguments Argument list.
 	 */
 	void setArguments(const QStringList &arguments);
+	/**
+	 * This is a convience method to set arguments to a transfer.
+	 *
+	 * It take a QString instead of a QStringList.
+	 * @param argumentString A string containing the arguments separated by an empty space.
+	 */
+	void setArguments(const QString &argumentString);
 
 	/**
 	 * Return the length of the payload data.

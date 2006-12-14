@@ -80,6 +80,11 @@ void Transfer::setArguments(const QStringList &arguments)
 	d->arguments = arguments;
 }
 
+void Transfer::setArguments(const QString &argumentString)
+{
+	d->arguments = argumentString.split(" ");
+}
+
 int Transfer::payloadLength() const
 {
 	Q_ASSERT(type() & Transfer::PayloadTransfer);
