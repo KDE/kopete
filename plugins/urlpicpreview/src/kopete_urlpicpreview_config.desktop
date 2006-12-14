@@ -13,6 +13,7 @@ X-KDE-ParentComponents=kopete_urlpicpreview
 X-Kopete-Version=1000900
 
 Name=URLPicPreview Plugin Configuration
+Name[ar]=إعدادات قابس URLPicPreview Plugin
 Name[bg]=Настройка на приставката URLPicPreview
 Name[cs]=Modul nastavení URLPicPreview
 Name[da]=Indstilling af plugin for forhåndsvisning af web-adresse-billeder
@@ -30,6 +31,7 @@ Name[sr@Latn]=Podešavanje priključka URLPicPreview
 Name[sv]=Inställning av insticksprogram för förhandsgranskning av webbadressbilder
 Name[xx]=xxURLPicPreview Plugin Configurationxx
 Comment=URLPicPreview Plugin
+Comment[ar]=قابس URLPicPreview
 Comment[bg]=Приставка URLPicPreview
 Comment[cs]=Modul URLPicPreview
 Comment[da]=Plugin for forhåndsvisning af web-adresse-billeder
