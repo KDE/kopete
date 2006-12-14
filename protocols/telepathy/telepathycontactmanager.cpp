@@ -106,7 +106,7 @@ void TelepathyContactManager::loadContacts()
 {
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Loading contact list into Kopete." << endl;
 
-	QList<Contact*> contacts = contactList()->contacts();
+	QList<Contact*> contacts = contactList()->knownContacts();
 	Contact *tempContact;
 	foreach(tempContact, contacts)
 	{
