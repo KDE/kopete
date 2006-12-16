@@ -316,5 +316,29 @@ void KopeteIface::setGlobalPhoto( const KURL &photoUrl )
 	}
 }
 
+QStringList KopeteIface::contactsForDisplayName( const QString & displayName )
+{
+	Kopete::MetaContact * mc = Kopete::ContactList::self()->findMetaContactByDisplayName( displayName );
+	QStringList contactIds;
+	if ( mc )
+	{
+		QPtrList<Kopete::Contact> contacts = mc->contacts();
+		QPtrListIterator<Kopete::Contact> it( contacts );
+		for( ; it.current(); ++it )
+		{
+			contactIds.append( (*it)->contactId() );
+    	}
+    }
+	return contactIds;
+}
+
+QStringList KopeteIface::metacontactsForContactId( const QString & contactId )
+{
+	Kopete::MetaContact * mc = Kopete::ContactList::self()->findMetaContactByContactId( contactId );
+	if ( mc )
+		return QStringList( mc->displayName() );
+	else
+		return QStringList();
+}
 // vim: set noet ts=4 sts=4 sw=4:
 

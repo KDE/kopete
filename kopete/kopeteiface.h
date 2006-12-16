@@ -155,6 +155,18 @@ k_dcop:
 	 * @param photoUrl URL to the photo
 	 */
 	void setGlobalPhoto( const KURL &photoUrl );
+    
+    /**
+     * get the contactIds for a given display name
+     * @param displayName
+     */
+    QStringList contactsForDisplayName( const QString & displayName );
+
+    /**
+     * get the metacontactIds that have the given contactId
+     * @param contactId
+     */
+    QStringList metacontactsForContactId( const QString & contactId );
 };
 
 #endif
