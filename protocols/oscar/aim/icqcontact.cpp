@@ -37,7 +37,11 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 : ICQContactBase( account, name, parent, icon, ssiItem )
 {
 	mProtocol = static_cast<AIMProtocol *>(protocol());
-	setOnlineStatus( mProtocol->statusOffline );
+
+	if ( ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	else
+		setOnlineStatus( AIM::Presence( AIM::Presence::Offline, AIM::Presence::ICQ ).toOnlineStatus() );
 
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
@@ -54,15 +58,14 @@ void ICQContact::updateSSIItem()
 {
 	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << endl;
 
-//	FIXME: icq contact in aim account doesn't require authorization
-// 	if ( m_ssiItem.waitingAuth() )
-// 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	if ( m_ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
 	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
-		setOnlineStatus( mProtocol->statusOffline );
+		setOnlineStatus( AIM::Presence( AIM::Presence::Offline, AIM::Presence::ICQ ).toOnlineStatus() );
 	}
 }
 
@@ -78,33 +81,16 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		removeProperty( mProtocol->awayMessage );
 
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	AIM::Presence presence = AIM::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
+	setOnlineStatus( presence.toOnlineStatus() );
 
-// 	TODO: implement this after presence is done for aim
-// 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
-// 	setOnlineStatus( presence.toOnlineStatus() );
-
-	if ( ( details.userClass() & CLASS_AWAY ) == STATUS_ONLINE )
+	if ( presence.type() == AIM::Presence::Online )
 	{
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
-		setOnlineStatus( mProtocol->statusOnline ); //we're online
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
 	}
-	else if ( ( details.userClass() & CLASS_AWAY ) ) // STATUS_AWAY
-	{
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
-		setOnlineStatus( mProtocol->statusAway ); //we're away
-
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
-		{
-			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
-		}
-	}
 	else
 	{
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
-		setOnlineStatus( mProtocol->statusAway ); //we're away
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
@@ -138,7 +124,7 @@ void ICQContact::userOnline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " online" << endl;
-	setOnlineStatus( mProtocol->statusOnline );
+	setOnlineStatus( AIM::Presence( AIM::Presence::Online, AIM::Presence::ICQ ).toOnlineStatus() );
 }
 
 void ICQContact::userOffline( const QString& userId )
@@ -147,7 +133,11 @@ void ICQContact::userOffline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline" << endl;
-	setOnlineStatus( mProtocol->statusOffline );
+	if ( m_ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	else
+		setOnlineStatus( AIM::Presence( AIM::Presence::Offline, AIM::Presence::ICQ ).toOnlineStatus() );
+
 	removeProperty( mProtocol->awayMessage );
 }
 
@@ -156,9 +146,8 @@ void ICQContact::loggedIn()
 	if ( metaContact()->isTemporary() )
 		return;
 
-// 	FIXME: icq contact in aim account doesn't require authorization
-// 	if ( m_ssiItem.waitingAuth() )
-// 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	if ( m_ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
 	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
 			&& nickName() == contactId() )

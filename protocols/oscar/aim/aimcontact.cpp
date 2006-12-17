@@ -36,7 +36,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 : AIMContactBase(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
-	setOnlineStatus( mProtocol->statusOffline );
+	setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
 
 	m_infoDialog = 0L;
 	m_warnUserAction = 0L;
@@ -105,7 +105,7 @@ void AIMContact::updateSSIItem()
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
-		setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
+		setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
 	}
 }
 
@@ -141,45 +141,17 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
-	( details.userClass() & CLASS_WIRELESS ) ? m_mobile = true : m_mobile = false;
-
-	if ( ( details.userClass() & CLASS_AWAY ) == STATUS_ONLINE )
+	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	AIM::Presence presence = AIM::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
+	setOnlineStatus( presence.toOnlineStatus() );
+	
+	if ( presence.type() == AIM::Presence::Online )
 	{
-		if ( m_mobile )
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
-			setOnlineStatus( mProtocol->statusWirelessOnline );
-    	}
-		else
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
-			setOnlineStatus( mProtocol->statusOnline ); //we're online
-		}
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
 	}
-	else if ( ( details.userClass() & CLASS_AWAY ) ) // STATUS_AWAY
-	{
-		if ( m_mobile )
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
-			setOnlineStatus( mProtocol->statusWirelessOnline );
-		}
-		else
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
-			setOnlineStatus( mProtocol->statusAway ); //we're away
-		}
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
-		{
-			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
-		}
-	}
 	else
 	{
-        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
-		setOnlineStatus( mProtocol->statusAway ); //we're away
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
@@ -195,7 +167,7 @@ void AIMContact::userOnline( const QString& userId )
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Getting more contact info" << endl;
-		setOnlineStatus( mProtocol->statusOnline );
+		setOnlineStatus( AIM::Presence( AIM::Presence::Online ).toOnlineStatus() );
 	}
 }
 
@@ -203,7 +175,8 @@ void AIMContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
-		setOnlineStatus( mProtocol->statusOffline );
+		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline" << endl;
+		setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
 		removeProperty( mProtocol->awayMessage );
 	}
 }

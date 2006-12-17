@@ -26,6 +26,8 @@
 #include "oscaraccount.h"
 #include "oscarmyselfcontact.h"
 
+#include "aimpresence.h"
+
 namespace AIM
 {
 	namespace PrivacySettings
@@ -46,6 +48,7 @@ class KAction;
 class OscarContact;
 class AIMContact;
 class AIMAccount;
+class AIMProtocol;
 class AIMJoinChatUI;
 class AIMChatSession;
 
@@ -57,8 +60,6 @@ public:
 	void userInfoUpdated();
 	void setOwnProfile( const QString& newProfile );
 	QString userProfile();
-	void setLastAwayMessage( const QString& msg) {m_lastAwayMessage = msg;}
-	QString lastAwayMessage() { return m_lastAwayMessage; };
 
     virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate,
                                           WORD exchange = 0, const QString& room = QString::null);
@@ -73,7 +74,6 @@ private:
 	/**
 	 * There has GOT to be a better way to get this away message
 	 */
-	QString m_lastAwayMessage;
     QList<Kopete::ChatSession*> m_chatRoomSessions;
 
 
@@ -87,10 +87,10 @@ public:
 	AIMAccount(Kopete::Protocol *parent, QString accountID);
 	virtual ~AIMAccount();
 
+	AIMProtocol *protocol() const;
+
 	// Accessor method for the action menu
 	virtual KActionMenu* actionMenu();
-
-	void setAway(bool away, const QString &awayReason = QString::null );
 
 	virtual void connectWithPassword( const QString &password );
 
@@ -103,6 +103,8 @@ public slots:
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	void slotEditInfo();
+
+	void slotToggleInvisible();
 
 	void slotJoinChat();
 
@@ -126,10 +128,17 @@ protected:
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
 private:
+	AIM::Presence presence();
+
+	void setPresenceFlags( AIM::Presence::Flags flags, const QString &message = QString::null );
+	void setPresenceType( AIM::Presence::Type, const QString &awayMessage = QString::null );
+	void setPresenceTarget( const AIM::Presence &presence, const QString &message = QString::null );
+
 	// Set privacy tlv item
 	void setPrivacyTLVs( BYTE privacy, DWORD userClasses );
 
     AIMJoinChatUI* m_joinChatDialog;
+	QString mInitialStatusMessage;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

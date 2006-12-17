@@ -22,6 +22,7 @@
 #include <kmessagebox.h>
 #include <kicon.h>
 #include <knotification.h>
+#include <ktoggleaction.h>
 
 #include "kopeteawayaction.h"
 #include "kopetemessage.h"
@@ -140,14 +141,13 @@ KActionMenu* ICQAccount::actionMenu()
 	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), 0, "actionEditInfo" );
 	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 	actionMenu->addAction( m_editInfoAction );
-	
-	/*	KToggleAction* actionInvisible =
-	    new KToggleAction( i18n( "In&visible" ),
-	                       ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ),
-	                       0, this, SLOT( slotToggleInvisible() ), this );
+
+	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), 0, "actionInvisible" );
+	actionInvisible->setIcon( KIcon( ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ) ) );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
-	actionMenu->insert( actionInvisible );
-    
+	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
+	actionMenu->addAction( actionInvisible );
+	/*    
 	actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
 	*/
@@ -288,16 +288,6 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 	notification->setText( i18n( "User %1 is reading your status message", name ) );
 	notification->sendEvent();
 }
-
-void ICQAccount::setAway( bool away, const QString &awayReason )
-{
-	kDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	if ( away )
-		setPresenceType( ICQ::Presence::Away, awayReason );
-	else
-		setPresenceType( ICQ::Presence::Online );
-}
-
 
 void ICQAccount::setInvisible( ICQ::Presence::Visibility vis )
 {

@@ -103,8 +103,8 @@ public:
 	QList<WORD> redirectionServices;
     WORD currentRedirect;
 	QByteArray cookie;
-	DWORD connectAsStatus; // icq only
-	QString connectWithMessage; // icq only
+	DWORD connectAsStatus;
+	QString connectWithMessage;
 	Oscar::Settings* settings;
 
 	//Tasks
@@ -237,64 +237,60 @@ void Client::close()
     d->ssiManager->clear();
 }
 
-void Client::setStatus( AIMStatus status, const QString &_message )
-{
-	// AIM: you're away exactly when your away message isn't empty.
-	// can't use QString::null as a message either; ProfileTask
-	// interprets null as "don't change".
-	QString message;
-	if ( status == Online )
-		message = QString::fromAscii("");
-	else
-	{
-		if ( _message.isEmpty() )
-			message = QString::fromAscii(" ");
-		else
-			message = _message;
-	}
-
-	Connection* c = d->connections.connectionForFamily( 0x0002 );
-	if ( !c )
-		return;
-	ProfileTask* pt = new ProfileTask( c->rootTask() );
-	pt->setAwayMessage( message );
-	pt->go( true );
-}
-
 void Client::setStatus( DWORD status, const QString &message )
 {
 	// remember the message to reply with, when requested
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
 	d->statusMessage = message;
-	// ICQ: if we're active, set status. otherwise, just store the status for later.
+	// if we're active, set status. otherwise, just store the status for later.
 	if ( d->active )
 	{
-		//the first connection is always the BOS connection
-		Connection* c = d->connections.connectionForFamily( 0x0013 );
-		if ( !c )
-			return; //TODO trigger an error of some sort?
+		if ( d->isIcq )
+		{
+			//the first connection is always the BOS connection
+			Connection* c = d->connections.connectionForFamily( 0x0013 );
+			if ( !c )
+				return; //TODO trigger an error of some sort?
 
-		ChangeVisibilityTask* cvt = new ChangeVisibilityTask( c->rootTask() );
-		if ( ( status & 0x0100 ) == 0x0100 )
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting invisible" << endl;
-			cvt->setVisible( false );
+			ChangeVisibilityTask* cvt = new ChangeVisibilityTask( c->rootTask() );
+			if ( ( status & 0x0100 ) == 0x0100 )
+			{
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting invisible" << endl;
+				cvt->setVisible( false );
+			}
+			else
+			{
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting visible" << endl;
+				cvt->setVisible( true );
+			}
+			cvt->go( true );
 		}
-		else
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting visible" << endl;
-			cvt->setVisible( true );
-		}
-		cvt->go( true );
-		c = d->connections.connectionForFamily( 0x0002 );
+		
+		Connection* c = d->connections.connectionForFamily( 0x0002 );
 		if ( !c )
 			return;
 
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
 		sdcit->go( true ); //autodelete
 
+		QString msg;
+		// AIM: you're away exactly when your away message isn't empty.
+		// can't use QString::null as a message either; ProfileTask
+		// interprets null as "don't change".
+		if ( (status & 0xFF) == 0x00 ) //is status online?
+		{
+			msg = QString::fromAscii("");
+		}
+		else
+		{
+			if ( message.isEmpty() )
+				msg = QString::fromAscii(" ");
+			else
+				msg = message;
+		}
+
 		ProfileTask* pt = new ProfileTask( c->rootTask() );
-		pt->setAwayMessage( message );
+		pt->setAwayMessage( msg );
 		pt->go( true );
 	}
 	else
@@ -405,9 +401,7 @@ void Client::serviceSetupFinished()
 {
 	d->active = true;
 
-	if ( isIcq() )
-		setStatus( d->connectAsStatus, d->connectWithMessage );
-
+	setStatus( d->connectAsStatus, d->connectWithMessage );
 	d->ownStatusTask->go();
 
 	if ( isIcq() )

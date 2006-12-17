@@ -12,7 +12,6 @@ This is the TODO file for the OSCAR plugin.
 
 ====== Catching up to OscarSocket =====
 
-- Fill in all the ICQ user info
 - Add preferences for "Requires Auth", "Web Aware", etc.
 
 
@@ -47,4 +46,4 @@ that was done in oscarsocket, that will need redoing in liboscar
   for the same account, one at home and one at work).
 - make renaming serverside contacts possible (function is there but fails due
   to massive contactlist bugs caused by above mentioned classes)
-- support logging in with something different than "online" status for AIM
+

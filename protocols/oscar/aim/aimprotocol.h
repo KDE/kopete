@@ -27,6 +27,8 @@ namespace Kopete
 class OnlineStatus;
 }
 
+namespace AIM { class OnlineStatusManager; }
+
 class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
@@ -53,21 +55,14 @@ public:
 	KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account *account, QWidget *parent );
 	Kopete::Account* createNewAccount( const QString &accountId );
 
-	/**
-	 * The set of online statuses that AIM contacts can have
-	 */
-	const Kopete::OnlineStatus statusOnline;
-	const Kopete::OnlineStatus statusOffline;
-	const Kopete::OnlineStatus statusAway;
-	const Kopete::OnlineStatus statusWirelessOnline;
-	const Kopete::OnlineStatus statusWirelessAway;
-	const Kopete::OnlineStatus statusConnecting;
+	AIM::OnlineStatusManager *statusManager();
 
 	const Kopete::ContactPropertyTmpl clientProfile;
 
 private:
 	/** The active instance of oscarprotocol */
 	static AIMProtocol *protocolStatic_;
+	AIM::OnlineStatusManager* statusManager_;
 	AIMProtocolHandler protohandler;
 };
 

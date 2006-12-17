@@ -19,6 +19,7 @@
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
+#include "aimpresence.h"
 #include "aimaddcontactpage.h"
 #include "aimeditaccountwidget.h"
 
@@ -216,21 +217,15 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 : OscarProtocol( AIMProtocolFactory::instance(), parent ),
-	statusOnline( Kopete::OnlineStatus::Online, 2, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
-	statusOffline( Kopete::OnlineStatus::Offline, 2, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
-	statusAway( Kopete::OnlineStatus::Away, 2, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
-		Kopete::OnlineStatusManager::HasStatusMessage | Kopete::OnlineStatusManager::DisabledIfOffline ),
-	statusWirelessOnline( Kopete::OnlineStatus::Online, 1, this, 30, QStringList("contact_phone_overlay"), i18n("Mobile"), i18n("Mobile"),
-	Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HideFromMenu ),
-	statusWirelessAway( Kopete::OnlineStatus::Away, 1, this, 31, QString("contact_phone_overlay contact_away_overlay").split(" "),
-	i18n("Mobile Away"), i18n("Mobile Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HideFromMenu ),
-	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, QStringList(QString("aim_connecting")), i18n("Connecting...")),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)
 		kDebug(14152) << k_funcinfo << "AIM plugin already initialized" << endl;
 	else
 		protocolStatic_ = this;
+
+	// must be done after protocolStatic_ is set...
+	statusManager_ = new AIM::OnlineStatusManager;
 
 	setCapabilities( Kopete::Protocol::FullRTF ); // setting capabilities
 	kDebug(14152) << k_funcinfo << "capabilities set to FullRTF" << endl;
@@ -240,6 +235,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 
 AIMProtocol::~AIMProtocol()
 {
+	delete statusManager_;
 	protocolStatic_ =0L;
 }
 
@@ -261,6 +257,11 @@ KopeteEditAccountWidget *AIMProtocol::createEditAccountWidget(Kopete::Account *a
 Kopete::Account *AIMProtocol::createNewAccount(const QString &accountId)
 {
 	return ( new AIMAccount( this, accountId ) );
+}
+
+AIM::OnlineStatusManager *AIMProtocol::statusManager()
+{
+	return statusManager_;
 }
 
 #include "aimprotocol.moc"

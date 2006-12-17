@@ -65,11 +65,6 @@ public:
 	bool passwordWasWrong();
 
 	/**
-	 * Sets the account away
-	 */
-	virtual void setAway( bool away, const QString &awayMessage = QString::null ) = 0;
-
-	/**
 	 * Accessor method for the action menu
 	 */
 	virtual KActionMenu* actionMenu() = 0;

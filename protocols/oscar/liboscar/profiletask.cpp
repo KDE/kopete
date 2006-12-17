@@ -78,7 +78,6 @@ void ProfileTask::sendProfileUpdate()
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer *buffer = new Buffer();
-	Buffer capBuf;
 
 	if ( !m_profileText.isNull() )
 	{
@@ -98,6 +97,7 @@ void ProfileTask::sendProfileUpdate()
 
 	if ( m_sendCaps )
 	{
+		Buffer capBuf;
 		if ( client()->isIcq() )
 		{
 			capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages

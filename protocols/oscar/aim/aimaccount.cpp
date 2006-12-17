@@ -63,10 +63,11 @@ AIMMyselfContact::AIMMyselfContact( AIMAccount *acct )
 
 void AIMMyselfContact::userInfoUpdated()
 {
-	if ( ( details().userClass() & 32 ) == 0 )
-		setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOnline ); //we're online
-	else
-		setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusAway ); //we're away
+	DWORD extendedStatus = details().extendedStatus();
+	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
+	AIM::Presence presence = AIM::Presence::fromOscarStatus( extendedStatus, details().userClass() );
+	setOnlineStatus( presence.toOnlineStatus() );
+	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 }
 
 void AIMMyselfContact::setOwnProfile( const QString& newProfile )
@@ -205,10 +206,11 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	AIMMyselfContact* mc = new AIMMyselfContact( this );
 	setMyself( mc );
-	myself()->setOnlineStatus( static_cast<AIMProtocol*>( parent )->statusOffline );
+	mc->setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
 	QString profile = configGroup()->readEntry( "Profile",
 			i18n( "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>") );
 	mc->setOwnProfile( profile );
+	mInitialStatusMessage.clear();
 
 	m_joinChatDialog = 0;
 	QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
@@ -224,6 +226,16 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 
 AIMAccount::~AIMAccount()
 {
+}
+
+AIMProtocol* AIMAccount::protocol() const
+{
+	return static_cast<AIMProtocol*>(OscarAccount::protocol());
+}
+
+AIM::Presence AIMAccount::presence()
+{
+	return AIM::Presence::fromOnlineStatus( myself()->onlineStatus() );
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
@@ -265,46 +277,75 @@ KActionMenu* AIMAccount::actionMenu()
 	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
 	mActionMenu->addAction( m_editInfoAction );
 
+	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), 0, "actionInvisible" );
+	AIM::Presence pres( presence().type(), presence().flags() | AIM::Presence::Invisible );
+	actionInvisible->setIcon( KIcon( pres.toOnlineStatus().iconFor( this ) ) );
+	actionInvisible->setChecked( (presence().flags() & AIM::Presence::Invisible) == AIM::Presence::Invisible );
+	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
+	mActionMenu->addAction( actionInvisible );
+	
 	return mActionMenu;
 }
 
-void AIMAccount::setAway(bool away, const QString &awayReason)
+void AIMAccount::setPresenceFlags( AIM::Presence::Flags flags, const QString &message )
 {
-	//kDebug(14152) << k_funcinfo << accountId() << "reason is " << awayReason << endl;
-	if ( away )
+	AIM::Presence pres = presence();
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "new flags=" << (int)flags << ", old type="
+	                        << (int)pres.flags() << ", new message=" << message << endl;
+	setPresenceTarget( AIM::Presence( pres.type(), flags ), message );
+}
+
+void AIMAccount::setPresenceType( AIM::Presence::Type type, const QString &message )
+{
+	AIM::Presence pres = presence();
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "new type=" << (int)type << ", old type="
+	                        << (int)pres.type() << ", new message=" << message << endl;
+	setPresenceTarget( AIM::Presence( type, pres.flags() ), message );
+}
+
+void AIMAccount::setPresenceTarget( const AIM::Presence &newPres, const QString &message )
+{
+	bool targetIsOffline = (newPres.type() == AIM::Presence::Offline);
+	bool accountIsOffline = ( presence().type() == AIM::Presence::Offline ||
+	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
+	
+	if ( targetIsOffline )
 	{
-		engine()->setStatus( Client::Away, awayReason );
-		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
-		me->setLastAwayMessage(awayReason);
-		me->setProperty( Kopete::Global::Properties::self()->statusMessage(), awayReason );
+		OscarAccount::disconnect();
+		// allow toggling invisibility when offline
+		myself()->setOnlineStatus( newPres.toOnlineStatus() );
+	}
+	else if ( accountIsOffline )
+	{
+		mInitialStatusMessage = message;
+		OscarAccount::connect( newPres.toOnlineStatus() );
 	}
 	else
 	{
-		engine()->setStatus( Client::Online );
-		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
-		me->setLastAwayMessage(QString::null);
-		me->removeProperty( Kopete::Global::Properties::self()->statusMessage() );
+		engine()->setStatus( newPres.toOscarStatus(), message );
 	}
 }
 
 void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
-	kDebug(14152) << k_funcinfo << "called with reason = '" << reason.message() <<"' status = " << status.status() << endl;
-	if ( status.status() == Kopete::OnlineStatus::Offline )
-		disconnect();
-	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
-	{ //account isn't online, so we'll need to connect. 
-		//FIXME: what if we're in the middle of connecting?
-		kDebug(14152) << k_funcinfo << accountId() << " was offline. time to connect" << endl;
-		//ah, but is there a to set away as well? TODO
-		OscarAccount::connect();
+	if ( status.status() == Kopete::OnlineStatus::Invisible )
+	{
+		// called from outside, i.e. not by our custom action menu entry...
+		
+		if ( presence().type() == AIM::Presence::Offline )
+		{
+			// ...when we are offline go online invisible.
+			setPresenceTarget( AIM::Presence( AIM::Presence::Online, AIM::Presence::Invisible ) );
+		}
+		else
+		{
+			// ...when we are not offline set invisible.
+			setPresenceFlags( AIM::Presence::Invisible );
+		}
 	}
 	else
-	{ //we're just changing our away-ness and possibly a message.
-		if ( status.status() == Kopete::OnlineStatus::Away )
-			setAway( true, reason.message() );
-		else
-			setAway( false );
+	{
+		setPresenceType( AIM::Presence::fromOnlineStatus( status ).type(), reason.message() );
 	}
 }
 
@@ -333,6 +374,15 @@ void AIMAccount::slotEditInfo()
 	}
 	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this);
 	myInfo->exec(); // This is a modal dialog
+}
+
+void AIMAccount::slotToggleInvisible()
+{
+	using namespace AIM;
+	if ( (presence().flags() & Presence::Invisible) == Presence::Invisible )
+		setPresenceFlags( presence().flags() & ~Presence::Invisible );
+	else
+		setPresenceFlags( presence().flags() | Presence::Invisible );
 }
 
 void AIMAccount::slotJoinChat()
@@ -388,14 +438,14 @@ void AIMAccount::loginActions()
 void AIMAccount::disconnected( DisconnectReason reason )
 {
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
-	myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
+	myself()->setOnlineStatus( AIM::Presence( AIM::Presence::Offline, presence().flags() ).toOnlineStatus() );
 
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	foreach( Kopete::Contact* c, contactList.values() )
 	{
-		OscarContact* oc = static_cast<OscarContact*>( c );
+		OscarContact* oc = dynamic_cast<OscarContact*>( c );
 		if ( oc )
-			oc->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
+			oc->userOffline( oc->contactId() );
 	}
 	
 	OscarAccount::disconnected( reason );
@@ -427,8 +477,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 			Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
 
 			// get the away message we have set
-			AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
-			QString msg = myContact->lastAwayMessage();
+			QString msg = engine()->statusMessage();
 			kDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
 			// Create the message
 			Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
@@ -518,7 +567,7 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
 			}
 
 			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "adding contact" << endl;
-			session->addContact( c, static_cast<AIMProtocol*>( protocol() )->statusOnline, true /* suppress */ );
+			session->addContact( c, AIM::Presence( AIM::Presence::Online ).toOnlineStatus(), true /* suppress */ );
 		}
 	}
 }
@@ -559,27 +608,32 @@ void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString
 }
 
 
-void AIMAccount::connectWithPassword( const QString & )
+void AIMAccount::connectWithPassword( const QString &password )
 {
+	if ( password.isNull() )
+		return;
+	
 	kDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 
-	// Get the screen name for this account
-	QString screenName = accountId();
-	QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
-	uint port = configGroup()->readEntry( "Port", 5190 );
-
-	Connection* c = setupConnection( server, port );
-
-	QString _password = password().cachedValue();
-	if ( _password.isEmpty() )
-	{
-		kDebug(14150) << "Kopete is unable to attempt to sign-on to the "
-			<< "AIM network because no password was specified in the "
-			<< "preferences." << endl;
-	}
-	else if ( myself()->onlineStatus() == static_cast<AIMProtocol*>( protocol() )->statusOffline )
+	Kopete::OnlineStatus status = initialStatus();
+	if ( status == Kopete::OnlineStatus() && status.status() == Kopete::OnlineStatus::Unknown )
+		//use default online in case of invalid online status for connecting
+		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
+	
+	AIM::Presence pres = AIM::Presence::fromOnlineStatus( status );
+	bool accountIsOffline = ( presence().type() == AIM::Presence::Offline ||
+	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
+	
+	if ( accountIsOffline )
 	{
 		kDebug(14152) << k_funcinfo << "Logging in as " << accountId() << endl ;
+		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
+
+		// Get the screen name for this account
+		QString screenName = accountId();
+		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
+		uint port = configGroup()->readEntry( "Port", 5190 );
+		Connection* c = setupConnection( server, port );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -588,10 +642,13 @@ void AIMAccount::connectWithPassword( const QString & )
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
+		DWORD status = pres.toOscarStatus();
+		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
-		engine()->start( server, port, accountId(), _password.left(16) );
+		engine()->start( server, port, accountId(), password.left(16) );
 		engine()->connectToServer( c, server, true /* doAuth */ );
-		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );
+
+		mInitialStatusMessage.clear();
 	}
 }
 

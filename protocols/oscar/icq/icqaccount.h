@@ -62,8 +62,6 @@ public:
 	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	void setStatusMessage( const Kopete::StatusMessage& );
 
-	virtual void setAway( bool away, const QString &awayReason );
-
 	void connectWithPassword( const QString &password );
 
 	void setUserProfile( const QString &profile );

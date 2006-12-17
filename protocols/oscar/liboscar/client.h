@@ -75,7 +75,6 @@ public:
 		FatalProtocolError = 3
 	};
 
-	enum AIMStatus { Online = 0, Away };
 	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat };
 
 	/*************
@@ -109,9 +108,7 @@ public:
 
 	/** Logout and disconnect */
 	void close();
-	/** Set our status for AIM */
-	void setStatus( AIMStatus status, const QString &message = QString::null );
-	/** Set our status for ICQ */
+	/** Set our status */
  	void setStatus( DWORD status, const QString &message = QString::null );
 
 	/** Retrieve our user info */
