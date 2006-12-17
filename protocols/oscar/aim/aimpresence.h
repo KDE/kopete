@@ -72,7 +72,7 @@ namespace ClassCode
 	{
 			AWAY       = 0x0020,
 			ICQ        = 0x0040,
-			WIRELESS   = 0x0080,
+			WIRELESS   = 0x0080
 	};
 } // end namespace ClassCode
 
