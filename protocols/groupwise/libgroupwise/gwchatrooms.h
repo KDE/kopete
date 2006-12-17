@@ -18,7 +18,7 @@
 
 #include <QDateTime>
 #include <QList>
-
+#include <QMap>
 #ifndef GROUPWISE_CHATROOMS_H
 #define GROUPWISE_CHATROOMS_H
 

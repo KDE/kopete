@@ -32,7 +32,7 @@ typedef quint16 NMERR_T;
 #define CONF_GUID_END 27
 
 //#define LIBGW_DEBUG 1
-#define LIBGW_USE_KDEBUG 1
+//#define LIBGW_USE_KDEBUG 0
 
 namespace GroupWise
 {

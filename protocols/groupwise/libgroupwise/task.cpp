@@ -126,15 +126,10 @@ void Task::go(bool autoDelete)
 
 bool Task::take( Transfer * transfer)
 {
-	const QObjectList *p = children();
-	if(!p)
-		return false;
-
 	// pass along the transfer to our children
-	QObjectListIt it(*p);
 	Task *t;
-	for(; it.current(); ++it) {
-		QObject *obj = it.current();
+	foreach( QObject* obj, children() )
+	{
 		if(!obj->inherits("Task"))
 			continue;
 

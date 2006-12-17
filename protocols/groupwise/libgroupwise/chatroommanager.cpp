@@ -61,7 +61,7 @@ void ChatroomManager::getChatrooms( bool refresh )
 
 void ChatroomManager::slotGotChatroomList()
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+//	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	SearchChatTask * sct = (SearchChatTask *)sender();
 	if ( sct )
 	{
@@ -118,7 +118,7 @@ void ChatroomManager::requestProperties( const QString & displayName )
 
 void ChatroomManager::slotGotChatProperties()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+//	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	ChatPropertiesTask * cpt = (ChatPropertiesTask *)sender();
 	if ( cpt )
 	{

@@ -40,7 +40,7 @@ bool EventTask::forMe( Transfer * transfer, EventTransfer*& event ) const
 	{
 		// see if we are supposed to handle this kind of event
 		// consider speeding this up by having 1 handler per event
-		return ( m_eventCodes.find( event->eventType() ) != m_eventCodes.end() );
+		return ( m_eventCodes.indexOf( event->eventType() ) != -1 );
 	}
 	return false;
 }

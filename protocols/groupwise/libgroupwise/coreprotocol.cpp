@@ -217,8 +217,8 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	
 	// convert to QByteArray
 	QByteArray bytesOut;
-	Q3TextStream dout( bytesOut, QIODevice::WriteOnly );
-	dout.setEncoding( Q3TextStream::Latin1 );
+	QTextStream dout( bytesOut, QIODevice::WriteOnly );
+	dout.setCodec( "ISO 8859-1" );
 	//dout.setByteOrder( QDataStream::LittleEndian );
 
 	// strip out any embedded host and port in the command string 
@@ -249,7 +249,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 		dout <<  "\r\n";
 
 	debug( QString( "data out: %1" ).arg( bytesOut.data() ) );
-
+	dout.flush();
 	emit outgoingData( bytesOut );
 	// now convert 
 	fieldsToWire( fields );
@@ -336,7 +336,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		QByteArray typeString;
 		typeString.setNum( field->type() );
 		QByteArray outgoing = GW_URLVAR_TAG + field->tag() 
-								+ GW_URLVAR_METHOD + (char)encode_method( field->method() ) 
+								+ GW_URLVAR_METHOD + encode_method( field->method() ).toAscii()
 								+ GW_URLVAR_VAL + (const char *)valString 
 								+ GW_URLVAR_TYPE + typeString;
 								
@@ -370,13 +370,13 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 	//debug( " - method done" );
 }
 
-int CoreProtocol::wireToTransfer( const QByteArray& wire )
+int CoreProtocol::wireToTransfer( QByteArray& wire )
 {
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
 	uint bytesParsed = 0;
 	m_din = new QDataStream( &wire,QIODevice::ReadOnly );
-	m_din = new .setVersion(QDataStream::Qt_3_1);
+	m_din->setVersion(QDataStream::Qt_3_1);
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
 	// look at first four bytes and decide what to do with the chunk
@@ -490,7 +490,7 @@ QChar CoreProtocol::encode_method( quint8 method )
 
 void CoreProtocol::slotOutgoingData( const QByteArray &out )
 {
-	debug( QString( "CoreProtocol::slotOutgoingData() %1" ).arg( out ) );
+	debug( QString( "CoreProtocol::slotOutgoingData() %1" ).arg( QString::fromAscii( out ) ) );
 }
 
 bool CoreProtocol::okToProceed()

@@ -177,7 +177,7 @@ protected:
 	 * Convert incoming wire data into a Transfer object and queue it
 	 * @return number of bytes from the input that were parsed into a Transfer
 	 */ 
-	int wireToTransfer( const QByteArray& wire );
+	int wireToTransfer( QByteArray& wire );
 	/**
 	 * Convert fields to a wire representation.  Emits outgoingData as each field is written.
 	 * Calls itself recursively to process nested fields, hence

@@ -37,7 +37,7 @@ Q_OBJECT
 		bool forMe( Transfer * transfer, EventTransfer *& event ) const;
 		void registerEvent( GroupWise::Event e );
 	private:
-		Q3ValueList<int> m_eventCodes;
+		QList<int> m_eventCodes;
 };
 
 #endif

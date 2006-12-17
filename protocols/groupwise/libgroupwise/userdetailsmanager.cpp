@@ -76,21 +76,22 @@ void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUn
 {
 	// build a list of DNs that are not already subject to a pending request
 	QStringList requestList;
-	Q3ValueListConstIterator<QString> end = dnList.end();
-	for ( Q3ValueListConstIterator<QString> it = dnList.begin(); it != end; ++it )
+	QStringListIterator it( dnList );
+	while ( it.hasNext() )
 	{
+		QString dn = it.next();
 		// don't request our own details
-		if ( *it == m_client->userDN() )
+		if ( dn == m_client->userDN() )
 			break;
 		// don't request details we already have unless the caller specified this
-		if ( onlyUnknown && known( *it ) )
+		if ( onlyUnknown && known( dn ) )
 			break;
-		QStringList::Iterator found = m_pendingDNs.find( *it );
+		QStringList::Iterator found = m_pendingDNs.find( dn );
 		if ( found == m_pendingDNs.end() )
 		{
-			m_client->debug( QString( "UserDetailsManager::requestDetails - including %1" ).arg( (*it) ) );
-			requestList.append( *it );
-			m_pendingDNs.append( *it );
+			m_client->debug( QString( "UserDetailsManager::requestDetails - including %1" ).arg( dn ) );
+			requestList.append( dn);
+			m_pendingDNs.append( dn );
 		}
 	}
 	if ( !requestList.empty() )

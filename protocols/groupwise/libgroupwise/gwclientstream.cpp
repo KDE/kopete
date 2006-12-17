@@ -33,7 +33,7 @@
 #include <qapplication.h>  // for qdebug
 #include <qpointer.h> 
 #include <qobject.h>
-#include <q3ptrqueue.h>
+#include <QQueue>
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QByteArray>
@@ -79,7 +79,6 @@ public:
 		tlsHandler = 0;
 		tls = 0;
 //		sasl = 0;
-		in.setAutoDelete(true);
 
 		allowPlain = false;
 		mutualAuth = false;
@@ -139,7 +138,7 @@ public:
 	int errCond;
 	QString errText;
 
-	Q3PtrQueue<Transfer> in;
+	QQueue<Transfer *> in;
 
 	QTimer noopTimer; // probably not needed
 	int noop_time;
@@ -164,7 +163,7 @@ ClientStream::ClientStream(Connector *conn, TLSHandler *tlsHandler, QObject *par
 
 ClientStream::~ClientStream()
 {
-	reset();
+	reset( true );
 	delete d;
 }
 
@@ -198,7 +197,8 @@ void ClientStream::reset(bool all)
 		d->client.reset();
 	}
 	if(all)
-		d->in.clear();
+		while (!d->in.isEmpty())
+			delete d->in.dequeue();
 }
 
 // Jid ClientStream::jid() const

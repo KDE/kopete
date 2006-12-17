@@ -54,7 +54,7 @@ ConferenceTask::~ConferenceTask()
 void ConferenceTask::dumpConferenceEvent( ConferenceEvent & evt )
 {
 	client()->debug( QString( "Conference Event - guid: %1 user: %2 timestamp: %3:%4:%5" ).arg
-			( evt.guid ).arg( evt.user.ascii() ).arg( evt.timeStamp.time().hour() ).arg
+			( evt.guid ).arg( evt.user ).arg( evt.timeStamp.time().hour() ).arg
 			( evt.timeStamp.time().minute() ).arg( evt.timeStamp.time().second() ) ); 
  	client()->debug( QString( "                  flags: %1" ).arg( evt.flags, 8 ) );
 }
@@ -138,7 +138,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				Q_ASSERT( incomingEvent->hasMessage() );
 				event.message = incomingEvent->message();
 				client()->debug( "ReceiveAutoReply" );
-				client()->debug( QString( "message: %1" ).arg( event.message.toAscii() ) );
+				client()->debug( QString( "message: %1" ).arg( event.message ) );
 				emit autoReply( event );
 				break;
 			case GroupWise::ReceivedBroadcast:
@@ -157,7 +157,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				emit systemBroadcast( event );
 				break;
 			default:
-				client()->debug( QString( "WARNING: didn't handle registered event %1, on conference %2" ).arg( incomingEvent->eventType() ).arg( event.guid.ascii() ) );
+				client()->debug( QString( "WARNING: didn't handle registered event %1, on conference %2" ).arg( incomingEvent->eventType() ).arg( event.guid ) );
 		}
 		dumpConferenceEvent( event );
 

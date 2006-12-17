@@ -119,7 +119,7 @@ public:
 	 * @param bytes An integer used to return the number of bytes read.
 	 * @return A pointer to an EventTransfer object if successful, otherwise 0.  The caller is responsible for deleting this object.
 	 */
-	Transfer * parse( const QByteArray &, uint & bytes );
+	Transfer * parse( QByteArray &, uint & bytes );
 protected:
 	/**
 	 * Reads a conference's flags

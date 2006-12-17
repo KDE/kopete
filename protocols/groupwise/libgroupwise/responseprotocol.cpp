@@ -17,8 +17,8 @@
 */
 
 #include <qbuffer.h>
-//Added by qt3to4:
 #include <QByteArray>
+#include <QStringList>
 
 #include "response.h"
 
@@ -33,12 +33,12 @@ ResponseProtocol::~ResponseProtocol()
 {
 }
 
-Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
+Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 {
 	m_bytes = 0;
 	m_collatingFields.clear();
 	//m_din = new QDataStream( wire, QIODevice::ReadOnly );
-	QBuffer inBuf( wire );
+	QBuffer inBuf( &wire );
 	inBuf.open( QIODevice::ReadOnly); 
 	m_din.setDevice( &inBuf );
 	m_din.setByteOrder( QDataStream::LittleEndian );
@@ -306,7 +306,7 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 			return false;
 		m_din >> c;
 		m_bytes++;
-		line += QChar(c);
+		line.append( c );
 		if ( c == '\n' )
 			break;
 	}

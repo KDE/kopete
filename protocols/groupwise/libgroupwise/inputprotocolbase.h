@@ -20,8 +20,8 @@
 #define INPUTPROTOCOLBASE_H
 
 #include <qobject.h>
-//Added by qt3to4:
 #include <QByteArray>
+#include <QDataStream>
 
 class Transfer;
 /**
@@ -53,7 +53,7 @@ public:
 	 * @param bytes this will be set to the number of bytes that were successfully parsed.  It is no indication of the success of the whole procedure
 	 * @return On success, a Transfer object that the caller is responsible for deleting.  It will be either an EventTransfer or a Response, delete as appropriate.  On failure, returns 0.
 	 */
-	virtual Transfer * parse( const QByteArray &, uint & bytes ) = 0 ;
+	virtual Transfer * parse( QByteArray &, uint & bytes ) = 0 ;
 protected:
 	/**
 	 * Reads an arbitrary string

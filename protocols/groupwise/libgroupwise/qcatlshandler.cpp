@@ -69,8 +69,7 @@ void QCATLSHandler::startClient(const QString &host)
 {
 	d->state = 0;
 	d->err = -1;
-	if(!d->tls->startClient(host))
-		QTimer::singleShot(0, this, SIGNAL(fail()));
+	d->tls->startClient(host);
 }
 
 void QCATLSHandler::write(const QByteArray &a)

@@ -292,7 +292,7 @@ void Client::sendInvitation( const GroupWise::ConferenceGuid & guid, const QStri
 {
 	SendInviteTask * sit = new SendInviteTask( d->root );
 	QStringList invitees( dn );
-	sit->invite( guid, dn, message );
+	sit->invite( guid, invitees, message );
 	sit->go( true );
 }
 

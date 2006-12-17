@@ -71,7 +71,7 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-		kDebug( GROUPWISE_DEBUG_LIBGW ) << k_funcinfo << ( recursive ? ", recursively" : ", non-recursive" ) << endl;
+//		kDebug( GROUPWISE_DEBUG_LIBGW ) << k_funcinfo << ( recursive ? ", recursively" : ", non-recursive" ) << endl;
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
 		QString s;
@@ -83,7 +83,7 @@ void FieldList::dump( bool recursive, int offset )
 			s.append( " :" );
 			s.append( sf->value().toString() );
 		}
-		kDebug( GROUPWISE_DEBUG_LIBGW ) << s << endl;
+//		kDebug( GROUPWISE_DEBUG_LIBGW ) << s << endl;
 		if ( recursive )
 		{
 			MultiField * mf;

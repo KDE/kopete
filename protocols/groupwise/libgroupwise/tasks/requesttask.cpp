@@ -50,7 +50,7 @@ void RequestTask::onGo()
 {
 	if ( transfer() )
 	{
-		client()->debug( QString( "%1::onGo() - sending %2 fields" ).arg( className() ).arg( static_cast<Request *>( transfer() )->command() ) );
+		client()->debug( QString( "%1::onGo() - sending %2 fields" ).arg( metaObject()->className() ).arg( static_cast<Request *>( transfer() )->command() ) );
 		send( static_cast<Request *>( transfer() ) );
 	}
 	else
