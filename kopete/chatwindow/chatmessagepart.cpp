@@ -62,11 +62,11 @@
 #include <ktemporaryfile.h>
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
 #include <k3multipledrag.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kicon.h>
 
 // Kopete includes
@@ -235,10 +235,10 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	         this, SLOT(slotScrollingTo(int,int)) );
 
 	//initActions
-	d->copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
-	d->saveAction = KStdAction::saveAs( this, SLOT(save()), actionCollection() );
-	d->printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
-	d->closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
+	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
+	d->saveAction = KStandardAction::saveAs( this, SLOT(save()), actionCollection() );
+	d->printAction = KStandardAction::print( this, SLOT(print()),actionCollection() );
+	d->closeAction = KStandardAction::close( this, SLOT(slotCloseView()),actionCollection() );
 	d->copyURLAction = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), actionCollection(), "editcopy" );
 	connect( d->copyURLAction, SIGNAL( triggered(bool) ), this, SLOT( slotCopyURL() ) );
 

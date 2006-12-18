@@ -60,7 +60,7 @@
 #include <khbox.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
 // #include <k3widgetaction.h>
@@ -343,12 +343,12 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
 	chatSend->setEnabled( false );
 
- 	KStdAction::save ( this, SLOT(slotChatSave()), coll );
- 	KStdAction::print ( this, SLOT(slotChatPrint()), coll );
-	KAction* quitAction = KStdAction::quit ( this, SLOT(close()), coll );
+ 	KStandardAction::save ( this, SLOT(slotChatSave()), coll );
+ 	KStandardAction::print ( this, SLOT(slotChatPrint()), coll );
+	KAction* quitAction = KStandardAction::quit ( this, SLOT(close()), coll );
 	quitAction->setText( i18n("Close All Chats") );
 
-	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
+	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 
 	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll, "tabs_right" );
 	tabRight->setShortcut( KStdAccel::tabNext() );
@@ -381,9 +381,9 @@ void KopeteChatWindow::initActions(void)
 
 	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
-	KStdAction::cut( this, SLOT(slotCut()), coll);
-	KStdAction::copy( this, SLOT(slotCopy()), coll);
-	KStdAction::paste( this, SLOT(slotPaste()), coll);
+	KStandardAction::cut( this, SLOT(slotCut()), coll);
+	KStandardAction::copy( this, SLOT(slotCopy()), coll);
+	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
 	action = new KAction( KIcon("charset"), i18n( "Set Default &Font..." ), coll, "format_font" );
@@ -403,10 +403,10 @@ void KopeteChatWindow::initActions(void)
 	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
 	connect( historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()) );
 
-	KStdAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
-	KStdAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
+	KStandardAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
+	KStandardAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
 
-	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
+	KStandardAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll, "options_membersleft" );
 	connect( membersLeft, SLOT(toggled(bool)), this, SLOT(slotViewMembersLeft()) );

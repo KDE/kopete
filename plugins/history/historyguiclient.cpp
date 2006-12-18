@@ -22,7 +22,7 @@
 #include "kopeteview.h"
 
 #include <kaction.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
@@ -48,8 +48,8 @@ HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent)
 
 	actionLast = new KAction( KIcon("finish"), i18n("History Last" ), actionCollection() , "historyLast" );
 	connect( actionLast, SIGNAL(triggered(bool)), this, SLOT(slotLast()) );
-	actionPrev = KStdAction::back( this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
-	actionNext = KStdAction::forward( this, SLOT(slotNext()), actionCollection() , "historyNext" );
+	actionPrev = KStandardAction::back( this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
+	actionNext = KStandardAction::forward( this, SLOT(slotNext()), actionCollection() , "historyNext" );
 
 	// we are generally at last when beginning
 	actionPrev->setEnabled(true);

@@ -25,7 +25,7 @@
 #include <kguiitem.h>
 #include <klocale.h>
 #include <ksettings/dialog.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kstdguiitem.h>
 #include <kwin.h>
 #include <kcmultidialog.h>

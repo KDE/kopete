@@ -36,7 +36,7 @@
 #include <kglobalsettings.h>
 #include <kicon.h>
 #include <kparts/genericfactory.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <ktextedit.h>
 #include <ktoggleaction.h>
 

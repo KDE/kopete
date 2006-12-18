@@ -31,7 +31,7 @@
 #include "kopeteviewmanager.h"
 
 #include <kaction.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -226,11 +226,11 @@ void KopeteEmailWindow::initActions(void)
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
 	connect( d->chatSend, SIGNAL(triggered()), this, SLOT( slotReplySend()) );
 
-	KStdAction::quit ( this, SLOT( slotCloseView() ), coll );
+	KStandardAction::quit ( this, SLOT( slotCloseView() ), coll );
 
-	KStdAction::cut( d->editPart->widget(), SLOT( cut() ), coll );
-	KStdAction::copy( this, SLOT(slotCopy()), coll);
-	KStdAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
+	KStandardAction::cut( d->editPart->widget(), SLOT( cut() ), coll );
+	KStandardAction::copy( this, SLOT(slotCopy()), coll);
+	KStandardAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
 
 	KAction* action;
 	action = new KAction( KIcon("charset"), i18n( "&Set Font..." ), coll, "format_font" );
@@ -242,7 +242,7 @@ void KopeteEmailWindow::initActions(void)
 	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll, "format_bgcolor" );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBgColor()) );
 
-	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
+	KStandardAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	setStandardToolBarMenuEnabled( true );
 
 	d->actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
@@ -250,8 +250,8 @@ void KopeteEmailWindow::initActions(void)
 	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
 	// add configure key bindings menu item
-	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
-	KStdAction::configureToolbars(this, SLOT( slotConfToolbar() ), coll);
+	KStandardAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
+	KStandardAction::configureToolbars(this, SLOT( slotConfToolbar() ), coll);
 	//FIXME: no longer works?
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 

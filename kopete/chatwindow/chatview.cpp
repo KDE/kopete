@@ -42,7 +42,7 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 //#include <ksyntaxhighlighter.h>
 
 
@@ -162,8 +162,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	// init actions
 #warning "For a unknow reason, actionCollection() doesn't exist anymore (-DarkShock)"
-	KStdAction::copy( this, SLOT(copy()), 0, 0);
-	KStdAction::close( this, SLOT(closeView()), 0, 0);
+	KStandardAction::copy( this, SLOT(copy()), 0, 0);
+	KStandardAction::close( this, SLOT(closeView()), 0, 0);
 
 	setCaption( m_manager->displayName(), false );
 

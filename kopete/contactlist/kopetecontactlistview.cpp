@@ -53,7 +53,7 @@
 #include <k3multipledrag.h>
 #include <kdialog.h>
 #include <kicon.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -474,8 +474,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 
 void KopeteContactListView::initActions( KActionCollection *ac )
 {
-	actionUndo = KStdAction::undo( this , SLOT( slotUndo() ) , ac );
-	actionRedo = KStdAction::redo( this , SLOT( slotRedo() ) , ac );
+	actionUndo = KStandardAction::undo( this , SLOT( slotUndo() ) , ac );
+	actionRedo = KStandardAction::redo( this , SLOT( slotRedo() ) , ac );
 	actionUndo->setEnabled(false);
 	actionRedo->setEnabled(false);
 

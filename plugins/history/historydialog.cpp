@@ -55,7 +55,7 @@
 #include <kiconloader.h>
 #include <kcombobox.h>
 #include <kmenu.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kicon.h>
@@ -183,7 +183,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 
 	//initActions
 	KActionCollection* ac = new KActionCollection(this);
-	mCopyAct = KStdAction::copy( this, SLOT(slotCopy()), ac );
+	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), ac );
 	mCopyURLAct = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), ac, "mCopyURLAct" );
 	connect(mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT( slotCopyURL() ) );
 
