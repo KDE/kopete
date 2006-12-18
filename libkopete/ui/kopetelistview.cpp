@@ -172,7 +172,8 @@ ListView::ListView( QWidget *parent )
 	static_cast<ListView*>(viewport())->setAttribute( Qt::WA_StaticContents, false );
 
 	// init smooth scrolling
- 	setSmoothScrolling( Kopete::BehaviorSettings::self()->smoothScrolling() );
+	// NOTE: Disabled smooth scrolling in KDE4 because it is buggy -DarkShock
+ 	setSmoothScrolling( false );
 }
 
 ListView::~ListView()
