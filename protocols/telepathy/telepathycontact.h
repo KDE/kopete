@@ -96,6 +96,9 @@ private slots:
 	 */
 	void telepathyAvatarChanged(QtTapioca::ContactBase *contact);
 
+	void actionAuthorize();
+	void actionSubscribe();
+
 private:
 	class Private;
 	Private *d;

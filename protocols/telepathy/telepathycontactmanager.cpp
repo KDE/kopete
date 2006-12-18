@@ -37,6 +37,7 @@
 #include "telepathyaccount.h"
 #include "telepathycontact.h"
 #include "telepathyprotocol.h"
+#include "telepathyaddpendingcontactjob.h"
 
 using namespace QtTapioca;
 
@@ -99,7 +100,17 @@ void TelepathyContactManager::removeContact(TelepathyContact *contact)
 
 void TelepathyContactManager::setContactList(QtTapioca::ContactList *contactList)
 {
+	// Disconnect signals from previous instance.
+	if( !d->contactList.isNull() )
+	{
+		d->contactList->disconnect();
+	}
+
 	d->contactList = contactList;
+	
+	// Connect signals/slot
+	connect(d->contactList, SIGNAL(authorizationRequested(QtTapioca::Contact*)), this, SLOT(telepathyAuthorizationRequired(QtTapioca::Contact*)));
+	connect(d->contactList, SIGNAL(subscriptionAccepted(QtTapioca::Contact *)), this, SLOT(telepathySubscriptionAccepted(QtTapioca::Contact*)));
 }
 
 void TelepathyContactManager::loadContacts()
@@ -107,24 +118,65 @@ void TelepathyContactManager::loadContacts()
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Loading contact list into Kopete." << endl;
 
 	QList<Contact*> contacts = contactList()->knownContacts();
+	if( contacts.isEmpty() )
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Contact list from Telepathy is empty !" << endl;
+	}
+
 	Contact *tempContact;
 	foreach(tempContact, contacts)
 	{
 		QString contactId = tempContact->uri();
 
-		// If the contact doesn't exist in Kopete, create it
-		if( !account()->contacts()[contactId] )
+		kDebug(TELEPATHY_DEBUG_AREA) << "Subscription Status(" << contactId << "): " << int(tempContact->subscriptionStatus()) << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Authorization Status(" << contactId << "): " << int(tempContact->authorizationStatus()) << endl;
+
+		if( tempContact->authorizationStatus() == QtTapioca::Contact::LocalPending )
 		{
-			createContact(tempContact);
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found a local pending contact. Adding it" << endl;
+
+			// Add the pending contact
+			TelepathyAddPendingContactJob *addPendingContactJob = new TelepathyAddPendingContactJob( account() );
+			addPendingContactJob->setPendingContact( tempContact );
+			addPendingContactJob->start();
 		}
-		// else, set the internal telepathy object in the existing contact.
 		else
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Set internal information from Telepathy to " << contactId << endl;
-			TelepathyContact *contact = static_cast<TelepathyContact*>( account()->contacts()[contactId] );
-			contact->setInternalContact(tempContact);
+			// If the contact doesn't exist in Kopete, create it
+			if( !account()->contacts()[contactId] )
+			{
+				createContact(tempContact);
+			}
+			// else, set the internal telepathy object in the existing contact.
+			else
+			{
+				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Set internal information from Telepathy to " << contactId << endl;
+				TelepathyContact *contact = static_cast<TelepathyContact*>( account()->contacts()[contactId] );
+				contact->setInternalContact(tempContact);
+			}
 		}
 	}
+}
+
+void TelepathyContactManager::telepathyAuthorizationRequired(QtTapioca::Contact *newContact)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "A contact want authorization" << endl;
+	
+	QString contactUri = newContact->uri();
+
+	// Add and/or authorize the pending contact
+	TelepathyAddPendingContactJob *addPendingContactJob = new TelepathyAddPendingContactJob( account() );
+	addPendingContactJob->setPendingContact( newContact );
+
+	// Set to authorization only if the contact already exist in Kopete
+	addPendingContactJob->setAuthorizeOnly( account()->contacts()[contactUri] ? true : false );
+
+	addPendingContactJob->start();
+}
+
+void TelepathyContactManager::telepathySubscriptionAccepted(QtTapioca::Contact *contact)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Contact " << contact->uri() << " has accepted your subscription request." << endl;
 }
 
 void TelepathyContactManager::createContact(QtTapioca::Contact *telepathyContact)
@@ -142,4 +194,5 @@ void TelepathyContactManager::createContact(QtTapioca::Contact *telepathyContact
 
 	Kopete::ContactList::self()->addMetaContact( metaContact );
 }
+
 #include "telepathycontactmanager.moc"

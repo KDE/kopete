@@ -70,6 +70,10 @@ public:
 	 */
 	void loadContacts();
 
+private slots:
+	void telepathyAuthorizationRequired(QtTapioca::Contact *newContact);
+	void telepathySubscriptionAccepted(QtTapioca::Contact *contact);
+
 private:
 	TelepathyAccount *account();
 	QtTapioca::ContactList *contactList();

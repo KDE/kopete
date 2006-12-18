@@ -76,6 +76,8 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
 			// Add the internal contact to the Kopete contact
 			TelepathyContact *newContact = static_cast<TelepathyContact*>( tAccount->contacts()[newId] );
 			newContact->setInternalContact( internalContact );
+			// Subsribe to contact status.
+			internalContact->subscribe(true);
 
 			return true;
 		}

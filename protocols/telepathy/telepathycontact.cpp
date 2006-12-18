@@ -117,7 +117,25 @@ void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap<
 
 QList<KAction *> *TelepathyContact::customContextMenuActions()
 {
-	return 0;
+	// TODO: Optimize
+	QList<KAction*> *actionList = new QList<KAction*>;
+
+	KAction *actionAuthorize = new KAction( KIcon("mail_forward"), i18n("Authorize Contact"), 0, "actionAuthorizeContact" );
+	connect( actionAuthorize, SIGNAL(triggered(bool)), this, SLOT(actionAuthorize()) );
+	actionAuthorize->setEnabled(false);
+	if( internalContact() && internalContact()->authorizationStatus() != QtTapioca::Contact::Authorized )
+		actionAuthorize->setEnabled(true);
+
+	KAction *actionSubscribe = new KAction( KIcon("mail_reply"), i18n("Subscribe to Contact"), 0, "actionSubscribeContact" );
+	connect( actionSubscribe, SIGNAL(triggered(bool)), this, SLOT(actionSubscribe()) );
+	actionSubscribe->setEnabled(false);
+	if( internalContact() && internalContact()->subscriptionStatus() != QtTapioca::Contact::Subscribed )
+		actionSubscribe->setEnabled(true);
+
+	actionList->append( actionAuthorize );
+	actionList->append( actionSubscribe );
+
+	return actionList;
 }
 
 Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
@@ -185,7 +203,7 @@ void TelepathyContact::telepathyAliasChanged(QtTapioca::ContactBase *contactBase
 
 void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBase)
 {
-	if( contactBase->avatar()/* && !contactBase->avatar()->image().isEmpty() */)
+	if( contactBase->avatar() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a avatar update for " << contactId() << endl;
 
@@ -193,7 +211,7 @@ void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBas
 		QString pictureLocation = KStandardDirs::locateLocal( "appdata", "telepathypictures/" + contactId().replace(QRegExp("[./~]"),"-")  + ".png" );
 
 		if( contactBase->avatar()->image().isEmpty() )
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Whoopies, avatar image is empty" << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty." << endl;
 
 		// Guess file format from header for now
 		QImage avatar = QImage::fromData( contactBase->avatar()->image() );
@@ -214,6 +232,16 @@ void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBas
 			removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
 		}
 	}
+}
+
+void TelepathyContact::actionAuthorize()
+{
+	internalContact()->authorize(true);
+}
+
+void TelepathyContact::actionSubscribe()
+{
+	internalContact()->subscribe(true);
 }
 
 #include "telepathycontact.moc"
