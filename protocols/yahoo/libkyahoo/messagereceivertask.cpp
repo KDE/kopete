@@ -79,11 +79,11 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 	for( int i = 0; i < cnt; ++i )
 	{
 		QString to = t->nthParam( 5, i );
-		QString timestamp = t->nthParamSeparated( 15, i, 5 );
-		QString utf8 = t->nthParamSeparated( 97, i, 5 );
-		QString from = t->nthParamSeparated( 1, i, 5 ).isEmpty() ? t->nthParamSeparated( 4, i, 5 ) : t->nthParamSeparated( 1, i, 5 );
-		QString msg = t->nthParamSeparated( 14, i, 5 );
-		QString sysmsg = t->nthParamSeparated( 16, i, 5 );
+		QString timestamp = t->nthParamSeparated( 15, i, 4 );
+		QString utf8 = t->nthParamSeparated( 97, i, 4 );
+		QString from = t->nthParamSeparated( 1, i, 4 ).isEmpty() ? t->nthParam( 4, i ) : t->nthParamSeparated( 1, i, 4 );
+		QString msg = t->nthParamSeparated( 14, i, 4 );
+		QString sysmsg = t->nthParamSeparated( 16, i, 4 );
 
 		// The arrangement of the key->value pairs is different when there is only one message in the packet.
 		// Separating by key "5" (sender) doesn't work in that case, because the "1" and "4" keys are sent before the "5" key
