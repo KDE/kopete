@@ -73,7 +73,8 @@ void NowListeningGUIClient::slotAdvertToCurrentChat()
 // The plugin itself is being unloaded - so remove the GUI entry.
 void NowListeningGUIClient::slotPluginUnloaded()
 {
-	m_action->unplugAll();
+	foreach (QWidget *w, m_action->associatedWidgets())
+		w->removeAction(m_action);
 }
 
 #include "nowlisteningguiclient.moc"

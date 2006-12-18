@@ -64,10 +64,16 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "qqInvite" );
 	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
-	m_secure = new KAction( i18n( "Security Status" ), "encrypted", KShortcut(), this, SLOT( slotShowSecurity() ), actionCollection(), "qqSecureChat" );
+	m_secure = new KAction( actionCollection(), "qqSecureChat" );
+	m_secure->setText( i18n( "Security Status" ) );
+        m_secure->setIcon( KIcon( "encrypted" ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
+        connect( m_secure, SIGNAL( triggered() ), this, SLOT( slotShowSecurity() ) );
 
-	m_logging = new KAction( i18n( "Archiving Status" ), "logchat", KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "qqLoggingChat" );
+	m_logging = new KAction( actionCollection(), "qqLoggingChat" );
+	m_logging->setText( i18n( "Archiving Status" ) );
+        m_logging->setIcon( KIcon( "logchat" ) );
+        connect( m_logging, SIGNAL( triggered() ), this, SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
 	setXMLFile("qqchatui.rc");

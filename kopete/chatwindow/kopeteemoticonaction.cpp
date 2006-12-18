@@ -89,7 +89,6 @@ KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const ch
 
 KopeteEmoticonAction::~KopeteEmoticonAction()
 {
-	unplugAll();
 //	kDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
 	delete d;
 	d = 0;
