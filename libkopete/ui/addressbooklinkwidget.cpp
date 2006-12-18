@@ -43,7 +43,7 @@ AddressBookLinkWidget::AddressBookLinkWidget( QWidget * parent, const char * nam
 	setObjectName(name);
 	setupUi(this);
 
-	btnClear->setIcon( SmallIconSet( (QApplication::layoutDirection() == Qt::RightToLeft) ? QString::fromLatin1( "locationbar_erase" ) : QString::fromLatin1( "clear_left") ) );
+	btnClear->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? QString::fromLatin1( "locationbar_erase" ) : QString::fromLatin1( "clear_left") ) );
 	connect( btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddressee() ) );
 	connect( btnSelectAddressee, SIGNAL( clicked() ), SLOT( slotSelectAddressee() ) );
 }

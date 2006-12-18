@@ -36,7 +36,7 @@
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kiconloader.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
@@ -120,11 +120,11 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	d->currentIdentity = GlobalIdentitiesManager::self()->getIdentity(d->selectedIdentity);
 	
 	// Set icon for KPushButton
-	buttonNewIdentity->setIcon(SmallIconSet("new"));
-	buttonCopyIdentity->setIcon(SmallIconSet("editcopy"));
-	buttonRenameIdentity->setIcon(SmallIconSet("edit"));
-	buttonRemoveIdentity->setIcon(SmallIconSet("delete_user"));
-	buttonClearPhoto->setIcon( SmallIconSet( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
+	buttonNewIdentity->setIcon(KIcon("new"));
+	buttonCopyIdentity->setIcon(KIcon("editcopy"));
+	buttonRenameIdentity->setIcon(KIcon("edit"));
+	buttonRemoveIdentity->setIcon(KIcon("delete_user"));
+	buttonClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
 
 	load(); // Load Configuration
 
