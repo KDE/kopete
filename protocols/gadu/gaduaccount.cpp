@@ -38,6 +38,7 @@
 #include <kpassworddialog.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>

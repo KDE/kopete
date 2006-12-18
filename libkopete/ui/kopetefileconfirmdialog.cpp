@@ -19,6 +19,7 @@
 
 #include <klineedit.h>
 #include <kconfig.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kpushbutton.h>

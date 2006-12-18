@@ -29,6 +29,7 @@
 #include <kactionmenu.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
