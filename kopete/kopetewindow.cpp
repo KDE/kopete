@@ -37,7 +37,6 @@
 #include <khbox.h>
 #include <kaction.h>
 #include <kactioncollection.h>
-#include <kstdaction.h>
 #include <ktoggleaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -63,7 +62,7 @@
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>
 #include <kdialog.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -313,20 +312,20 @@ void KopeteWindow::initActions()
 
 	d->actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
-	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
+	KStandardAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	setStandardToolBarMenuEnabled(true);
-	d->menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
-	d->statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
+	d->menubarAction = KStandardAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
+	d->statusbarAction = KStandardAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
-	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
+	KStandardAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
 
 	KAction *configureGlobalShortcutsAction = new KAction( KIcon("configure_shortcuts"), i18n( "Configure &Global Shortcuts..." ),
 		actionCollection(), "settings_global" );
 	connect( configureGlobalShortcutsAction, SIGNAL( triggered(bool) ), this, SLOT( slotConfGlobalKeys() ) );
 
-	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
-	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
+	KStandardAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
+	KStandardAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
 	d->actionShowOffliners = new KToggleAction( KIcon("show_offliners"), i18n( "Show Offline &Users" ), actionCollection(), "settings_show_offliners" );
 	d->actionShowOffliners->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
@@ -898,7 +897,7 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 	popup->addAction( d->actionAddContact );
 	popup->addSeparator();
 	popup->addAction( actionCollection->action( "minimizeRestore" ) );
-	popup->addAction( actionCollection->action( KStdAction::name( KStdAction::Quit ) ) );
+	popup->addAction( actionCollection->action( KStandardAction::name( KStandardAction::Quit ) ) );
 }
 
 void KopeteWindow::showExportDialog()
