@@ -25,7 +25,6 @@
 #include <QPixmap>
 
 #include <kaction.h>
-#include <kstdaction.h>
 #include <kactionmenu.h>
 #include <kconfig.h>
 #include <kdebug.h>

@@ -33,7 +33,7 @@
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>
 #include <kaction.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 
 #include "gwcontact.h"
 #include "gwcontactpropswidget.h"
@@ -85,7 +85,7 @@ void GroupWiseContactProperties::init()
 	m_dialog->setModal(false);
 	m_propsWidget = new GroupWiseContactPropsWidget( m_dialog );
 	// set up the context menu and copy action
-	m_copyAction = KStdAction::copy( this, SLOT( slotCopy() ), 0 );
+	m_copyAction = KStandardAction::copy( this, SLOT( slotCopy() ), 0 );
 	connect( m_propsWidget->m_propsView, 
 			 SIGNAL( contextMenuRequested( Q3ListViewItem *, const QPoint & , int) ),
 			 SLOT( slotShowContextMenu( Q3ListViewItem *, const QPoint & ) ) );
