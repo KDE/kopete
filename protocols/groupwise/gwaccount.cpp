@@ -482,12 +482,10 @@ void GroupWiseAccount::slotLoggedIn()
 
 void GroupWiseAccount::reconcileOfflineChanges()
 {
-#warning port GroupWiseAccount::reconcileOfflineChanges()
-#if 0
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	m_dontSync = true;
 	//sanity check the server side model vs our contact list.
-	//Contacts might have been removed from some groups or entirely on the server.  
+	//Cont->acts might have been removed from some groups or entirely on the server.  
 	//Any contact not present on the server should be deleted locally.
 
 	// for each metacontact group membership:
@@ -508,36 +506,36 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	//             // affecting other protocols' contacts
 	//       	set flag to warn user that incompatible changes were made on other client
 	bool conflicts = false;
-	Q3DictIterator<Kopete::Contact> it( contacts() );
-	for ( ; it.current(); ++it )
+	QHashIterator<QString, Kopete::Contact*> it( contacts() );
+	while( it.hasNext() )
 	{
-		if ( *it == myself() )
+		it.next();
+		if ( it.value() == myself() )
 			continue;
 
-		GroupWiseContact * c = static_cast< GroupWiseContact *>( *it );
+		GroupWiseContact * c = static_cast< GroupWiseContact *>( it.value() );
 		GWContactInstanceList instances = m_serverListModel->instancesWithDn( c->dn() );
-		Q3PtrList<Kopete::Group> groups = c->metaContact()->groups();
-		Q3PtrListIterator<Kopete::Group> grpIt( groups );
-		while ( *grpIt )
+		QListIterator<Kopete::Group *> grpIt( c->metaContact()->groups() );
+		while ( grpIt.hasNext() )
 		{
-			Q3PtrListIterator<Kopete::Group> candidate = grpIt;
-			++grpIt;
+			Kopete::Group * grp = grpIt.next();
 			bool found = false;
-			GWContactInstanceList::Iterator instIt = instances.begin();
-			for ( ; instIt != instances.end(); ++instIt )
+			QMutableListIterator<GWContactInstance*> instIt( instances );
+			while ( instIt.hasNext() )
 			{
-				QString groupId = ( *candidate )->pluginData(  protocol(), accountId() + " objectId" );
+				instIt.next();
+				QString groupId = grp->pluginData( protocol(), accountId() + " objectId" );
 				if ( groupId.isEmpty() )
-					if ( *candidate == Kopete::Group::topLevel() )
+					if ( grp == Kopete::Group::topLevel() )
 						groupId = '0';	// hack the top level's objectId to 0
 					else
 						continue;
 
-				GWFolder * folder = qobject_cast<GWFolder*>( ( *instIt )->parent() );
+				GWFolder * folder = qobject_cast<GWFolder*>( instIt.value()->parent() );
 				if ( folder->id == ( unsigned int )groupId.toInt() )
 				{
 					found = true;
-					instances.remove( instIt );
+					instIt.remove();
 					break;
 				}
 			}
@@ -553,8 +551,8 @@ void GroupWiseAccount::reconcileOfflineChanges()
 					}
 					else
 					{
-						kDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact instance " << c->dn() << " not found, removing metacontact " << c->metaContact()->displayName() << " from group " << ( *candidate )->displayName() << endl;
-						c->metaContact()->removeFromGroup( *candidate );
+						kDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact instance " << c->dn() << " not found, removing metacontact " << c->metaContact()->displayName() << " from group " << grp->displayName() << endl;
+						c->metaContact()->removeFromGroup( grp );
 					}
 				}
 				else
@@ -571,12 +569,11 @@ void GroupWiseAccount::reconcileOfflineChanges()
 				}
 			} // 
 		} //end while, now check the next group membership
-	} //end for, now check the next groupwise contact
+	} //end while, now check the next groupwise contact
 	if ( conflicts )
 		// show queuedmessagebox
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), i18n( "Conflicting Changes Made Offline" ) );
 	m_dontSync = false;
-#endif
 }
 
 void GroupWiseAccount::slotLoginFailed()
@@ -1467,8 +1464,6 @@ bool GroupWiseAccount::dontSync()
 
 void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 {
-#warning todo port GroupWiseAccount::syncContact
-#if 0
 	if ( dontSync() )
 		return;
 	
@@ -1503,58 +1498,52 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 
 		// seek corresponding pairs in both lists and remove
 		// ( for each group )
-		Q3PtrListIterator< Kopete::Group > grpIt( groupList );
-		while ( *grpIt )
+		QMutableListIterator< Kopete::Group *> grpIt( groupList );
+		while ( grpIt.hasNext() )
 		{
-			Q3PtrListIterator< Kopete::Group > candidateGrp( groupList );
-			candidateGrp = grpIt;
-			++grpIt;
-	
-			GWContactInstanceList::Iterator instIt = instances.begin();
-			const GWContactInstanceList::Iterator instEnd = instances.end();
+			grpIt.next();
+			
+			QMutableListIterator< GWContactInstance *> instIt( instances );
 			// ( see if a contactlist instance matches the group)
-			while ( instIt != instEnd )
+			while ( instIt.hasNext() )
 			{
-				GWContactInstanceList::Iterator candidateInst = instIt;
-				++instIt;
-				GWFolder * folder = qobject_cast<GWFolder *>( ( *candidateInst )->parent() );
+				instIt.next();
+				GWFolder * folder = qobject_cast<GWFolder *>( instIt.value()->parent() );
 				kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - Looking for a match, MC grp '" 
-					<< ( *candidateGrp )->displayName() 
+					<< grpIt.value()->displayName()
 					<< "', GWFolder '" << folder->displayName << "', objectId is " << folder->id << endl;
 				
-				if ( ( folder->id == 0 && ( ( *candidateGrp ) == Kopete::Group::topLevel() ) )
-						|| ( ( *candidateGrp )->displayName() == folder->displayName ) )
+				if ( ( folder->id == 0 && ( grpIt.value() == Kopete::Group::topLevel() ) )
+						|| ( grpIt.value()->displayName() == folder->displayName ) )
 				{
 					//this pair matches, we can remove its members from both lists )
 					kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - match! removing both entries" << endl;
-					instances.remove( candidateInst );
-					groupList.remove( *candidateGrp );
+					instIt.remove();
+					grpIt.remove();
 					break;
 				}
 			}
 		}
 		
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR UNMATCHED PAIRS => GROUP MOVES" << endl;
-		grpIt.toFirst();
+		grpIt.toFront();
 		// ( take the first pair and carry out a move )
-		while ( *grpIt && !instances.isEmpty() )
+		while ( grpIt.hasNext() && !instances.isEmpty() )
 		{
-			Q3PtrListIterator< Kopete::Group > candidateGrp( groupList );
-			candidateGrp = grpIt;
-			++grpIt;
-			GWContactInstanceList::Iterator instIt = instances.begin();
-			GWFolder * sourceFolder =qobject_cast<GWFolder*>( ( *instIt)->parent() );
-			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - moving contact instance from group '" << sourceFolder->displayName << "' to group '" << ( *candidateGrp )->displayName() << "'" << endl;
+			grpIt.next();
+			GWContactInstance * cliInstance = instances.takeFirst();
+			GWFolder * sourceFolder = qobject_cast<GWFolder*>( cliInstance->parent() );
+			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - moving contact instance from group '" << sourceFolder->displayName << "' to group '" << grpIt.value()->displayName() << "'" << endl;
 
 			// create contactItem parameter
 			ContactItem instance;
-			instance.id = ( *instIt )->id;
+			instance.id = cliInstance->id;
 			instance.parentId = sourceFolder->id;
-			instance.sequence = ( *instIt )->sequence;
-			instance.dn = ( *instIt )->dn;
+			instance.sequence = cliInstance->sequence;
+			instance.dn = cliInstance->dn;
 			instance.displayName = contact->nickName();
 			// identify the destination folder
-			GWFolder * destinationFolder = m_serverListModel->findFolderByName( ( ( *candidateGrp )->displayName() ) );
+			GWFolder * destinationFolder = m_serverListModel->findFolderByName( grpIt.value()->displayName() );
 			if ( destinationFolder ) // folder already exists on the server
 			{
 				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
@@ -1562,8 +1551,8 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
 				mit->go();
 			}
-			else if ( *candidateGrp == Kopete::Group::topLevel() )
-			{	
+			else if ( grpIt.value() == Kopete::Group::topLevel() )
+			{
 				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
 				mit->moveContact( instance, 0 );
 				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
@@ -1576,21 +1565,18 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 								  SLOT( receiveContactDeleted( const ContactItem & ) ) );
 				// discover the next free sequence number and add the group using that
 				mit->moveContactToNewFolder( instance, nextFreeSequence++,
-											 ( *candidateGrp )->displayName() );
+											 grpIt.value()->displayName() );
 				mit->go( true );
 			}
-			groupList.remove( candidateGrp );
-			instances.remove( instIt );
+			grpIt.remove();
 		}
 
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR ADDS" << endl;
-		grpIt.toFirst();
-		while ( *grpIt )
+		grpIt.toFront();
+		while ( grpIt.hasNext() )
 		{
-			Q3PtrListIterator< Kopete::Group > candidateGrp( groupList );
-			candidateGrp = grpIt;
-			++grpIt;
-			GWFolder * destinationFolder = m_serverListModel->findFolderByName( ( ( *candidateGrp )->displayName() ) );
+			grpIt.next();
+			GWFolder * destinationFolder = m_serverListModel->findFolderByName( grpIt.value()->displayName() );
 			CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
 
 			contact->setNickName( contact->metaContact()->displayName() );
@@ -1602,64 +1588,57 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			}
 			else
 			{
-				if ( ( *candidateGrp ) == Kopete::Group::topLevel() )
+				if ( grpIt.value() == Kopete::Group::topLevel() )
 					ccit->contactFromUserId( contact->dn(), contact->metaContact()->displayName(),
 							m_serverListModel->rootFolder->id );
 				else
 					// discover the next free sequence number and add the group using that
 					ccit->contactFromUserIdAndFolder( contact->dn(), contact->metaContact()->displayName(),
-							nextFreeSequence++, ( *candidateGrp )->displayName() );
+							nextFreeSequence++, grpIt.value()->displayName() );
 			}
 			ccit->go( true );
-			groupList.remove( candidateGrp );
+			grpIt.remove();
 		}
 
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR REMOVES" << endl;
-		GWContactInstanceList::Iterator instIt = instances.begin();
-		const GWContactInstanceList::Iterator instEnd = instances.end();
+		QMutableListIterator<GWContactInstance *>  instIt( instances );
 		// ( remove each remaining contactlist instance, because it doesn't exist locally any more )
-		while ( instIt != instEnd )
+		while ( instIt.hasNext() )
 		{
-			GWContactInstanceList::Iterator candidateInst = instIt;
-			++instIt;
-			GWFolder * folder =qobject_cast<GWFolder*>( ( *candidateInst )->parent() );
-			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - remove contact instance '"<< ( *candidateInst )->id << "' in group '" << folder->displayName << "'" << endl;
+			instIt.next();
+			GWFolder * folder =qobject_cast<GWFolder*>( ( instIt.value() )->parent() );
+			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - remove contact instance '"<< ( instIt.value() )->id << "' in group '" << folder->displayName << "'" << endl;
 
 			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
-			dit->item( folder->id, (*candidateInst)->id );
+			dit->item( folder->id, instIt.value()->id );
 			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
 			dit->go( true );
 
-			instances.remove( candidateInst );
+			instIt.remove();
 		}
 
 		// start an UpdateItem
 		if ( contact->metaContact()->displayName() != contact->nickName() )
 		{
 			kDebug( GROUPWISE_DEBUG_GLOBAL ) << " updating the contact's display name to the metacontact's: " << contact->metaContact()->displayName() << endl;
-			// form a list of the contact's groups
-			GWContactInstanceList instances = m_serverListModel->instancesWithDn( contact->dn() );
-			GWContactInstanceList::Iterator it = instances.begin();
-			const GWContactInstanceList::Iterator end = instances.end();
-			for ( ; it != end; ++it )
+			foreach ( GWContactInstance * instance, m_serverListModel->instancesWithDn( contact->dn() ) )
 			{
-				Q3ValueList< ContactItem > instancesToChange;
-				ContactItem instance;
-				instance.id = (*it)->id;
-				instance.parentId = qobject_cast<GWFolder *>( (*it)->parent() )->id;
-				instance.sequence = (*it)->sequence;
-				instance.dn = contact->dn();
-				instance.displayName = contact->nickName();
-				instancesToChange.append( instance );
+				QList< ContactItem > instancesToChange;
+				ContactItem item;
+				item.id = instance->id;
+				item.parentId = qobject_cast<GWFolder *>( instance->parent() )->id;
+				item.sequence = instance->sequence;
+				item.dn = contact->dn();
+				item.displayName = contact->nickName();
+				instancesToChange.append( item );
 
 				UpdateContactTask * uct = new UpdateContactTask( client()->rootTask() );
 				uct->renameContact( contact->metaContact()->displayName(), instancesToChange );
 				QObject::connect ( uct, SIGNAL( finished() ), contact, SLOT( renamedOnServer() ) );
 				uct->go( true );
 			}
- 		}
+		}
 	}
-#endif
 }
 
 #include "gwaccount.moc"
