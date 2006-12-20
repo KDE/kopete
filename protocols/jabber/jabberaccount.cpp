@@ -49,6 +49,7 @@
 #include <kpassworddialog.h>
 #include <kinputdialog.h>
 #include <kicon.h>
+#include <kglobal.h>
 
 #include "kopetepassword.h"
 #include "kopeteawayaction.h"

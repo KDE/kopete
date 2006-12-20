@@ -28,6 +28,7 @@
 #include <kconfig.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include <kpassworddialog.h>
 #include <kopetepassword.h>
 #include <kopetepasswordedaccount.h>
