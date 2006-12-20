@@ -1,14 +1,24 @@
-//
-// C++ Interface: gwmessagemanager
-//
-// Description: 
-//
-//
-// Author: SUSE AG <>, (C) 2004
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+    gwmessagemanager.h - Kopete GroupWise Protocol
+
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Based on Testbed
+    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU General Public                   *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #ifndef GWMESSAGEMANAGER_H
 #define GWMESSAGEMANAGER_H
 
@@ -149,7 +159,7 @@ protected slots:
 	void slotShowArchiving();
 private:
 	
-	GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
+	GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0 );
 	
 	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server

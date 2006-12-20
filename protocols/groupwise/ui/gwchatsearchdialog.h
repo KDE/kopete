@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwchatsearchdialog.h - dialog for searching for chatrooms
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -20,7 +21,7 @@
 #define GWCHATSEARCHDIALOG_H
 
 class GroupWiseAccount;
-class GroupWiseChatSearchWidget;
+namespace Ui { class GroupWiseChatSearchWidget; }
 
 #include "gwchatrooms.h"
 
@@ -44,6 +45,6 @@ class GroupWiseChatSearchDialog : public KDialog
 	private:
 		GroupWiseAccount * m_account;
 		ChatroomManager * m_manager;
-		GroupWiseChatSearchWidget * m_widget;
+		Ui::GroupWiseChatSearchWidget * m_widget;
 };
 #endif

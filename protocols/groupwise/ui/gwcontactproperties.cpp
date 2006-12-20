@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwcontactproperties.cpp - dialog showing a contact's server side properties
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -26,7 +27,6 @@
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
 #include <klocale.h>
 #include <kopeteglobal.h>
 #include <kopeteonlinestatus.h>
@@ -36,7 +36,7 @@
 #include <kstandardaction.h>
 
 #include "gwcontact.h"
-#include "gwcontactpropswidget.h"
+#include "ui_gwcontactpropswidget.h"
 #include "gwprotocol.h"
 
 #include "gwcontactproperties.h"
@@ -78,12 +78,13 @@ GroupWiseContactProperties::~GroupWiseContactProperties()
 
 void GroupWiseContactProperties::init()
 {
-	m_dialog = new KDialog( ::qt_cast<QWidget*>( parent() ));
+	m_dialog = new KDialog( qobject_cast<QWidget*>( parent() ));
 	m_dialog->setCaption(i18n( "Contact Properties" ));
 	m_dialog->setButtons(KDialog::Ok);
 	m_dialog->setDefaultButton(KDialog::Ok);
 	m_dialog->setModal(false);
-	m_propsWidget = new GroupWiseContactPropsWidget( m_dialog );
+	m_propsWidget = new Ui::GroupWiseContactPropsWidget;
+	m_propsWidget->setupUi( m_dialog );
 	// set up the context menu and copy action
 	m_copyAction = KStandardAction::copy( this, SLOT( slotCopy() ), 0 );
 	connect( m_propsWidget->m_propsView, 
@@ -91,18 +92,18 @@ void GroupWiseContactProperties::init()
 			 SLOT( slotShowContextMenu( Q3ListViewItem *, const QPoint & ) ) );
 
 	// insert the props widget into the dialog
-	m_dialog->setMainWidget( m_propsWidget );
+	//m_dialog->setMainWidget( wid );
 }
 
-void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serverProps )
+void GroupWiseContactProperties::setupProperties( QHash< QString, QString > serverProps )
 {
 	m_propsWidget->m_propsView->header()->hide();
-	QMap< QString, QString >::Iterator it;
-	QMap< QString, QString >::Iterator end = serverProps.end();
-	for ( it = serverProps.begin(); it != end; ++it )
+	QHashIterator< QString, QString > i( serverProps );
+	while ( i.hasNext() )
 	{
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " adding property: " << it.key() << ", " << it.data() << endl;
-		QString key = it.key();
+		i.next();
+		QString key = i.key();
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " adding property: " << key << ", " << i.value() << endl;
 		QString localised;
 		if ( key == "telephoneNumber" )
 			localised = i18n( "Telephone Number" );
@@ -121,7 +122,7 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 		else
 			localised = key;
 
-		new K3ListViewItem( m_propsWidget->m_propsView, localised, it.data() );
+		new K3ListViewItem( m_propsWidget->m_propsView, localised, i.value() );
 	}
 }
 
@@ -131,9 +132,9 @@ void GroupWiseContactProperties::slotShowContextMenu( Q3ListViewItem * item, con
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "for item " << item->text(0) << ", " << item->text(1) << endl;
 	else
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "no selected item" << endl;
-	Q3PopupMenu * popupMenu = new Q3PopupMenu( m_propsWidget->m_propsView );
-	m_copyAction->plug( popupMenu );
-	popupMenu->exec( pos );
+	QMenu popupMenu;
+	popupMenu.addAction( m_copyAction );
+	popupMenu.exec( pos );
 }
 
 void GroupWiseContactProperties::slotCopy()

@@ -1,116 +1,90 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>GroupWiseChatSearchWidget</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>GroupWiseChatSearchWidget</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>579</width>
-            <height>480</height>
-        </rect>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="K3ListView">
-            <column>
-                <property name="text">
-                    <string>Chatroom </string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Owner</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Members</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <property name="name">
-                <cstring>m_chatrooms</cstring>
-            </property>
-            <property name="allColumnsShowFocus">
-                <bool>true</bool>
-            </property>
-            <property name="fullWidth">
-                <bool>true</bool>
-            </property>
-            <property name="itemsMovable">
-                <bool>false</bool>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>m_btnProperties</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Properties</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer3</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>340</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>m_btnRefresh</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Refresh</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-    </vbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>k3listview.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
-</UI>
+<ui version="4.0" >
+ <class>GroupWiseChatSearchWidget</class>
+ <widget class="QWidget" name="GroupWiseChatSearchWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>579</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="K3ListView" name="m_chatrooms" >
+     <property name="allColumnsShowFocus" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="KPushButton" native="1" name="m_btnProperties" />
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>340</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="m_btnRefresh" >
+       <property name="text" >
+        <string>&amp;Refresh</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3ListView</class>
+   <extends>Q3Frame</extends>
+   <header>q3listview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>K3ListView</class>
+   <extends>Q3ListView</extends>
+   <header>k3listview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QWidget</extends>
+   <header>kpushbutton.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <includes>
+  <include location="local" >k3listview.h</include>
+  <include location="local" >kpushbutton.h</include>
+ </includes>
+ <resources/>
+ <connections/>
+</ui>

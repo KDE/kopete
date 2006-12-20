@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwsearch.cpp - logic for server side search widget
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -59,8 +60,8 @@ public:
 	int m_status;
 };
 
-GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
- : GroupWiseContactSearchWidget(parent, name), m_account( account ), m_onlineOnly( onlineOnly )
+GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly,  QWidget *parent )
+ : QWidget( parent ), m_account( account ), m_onlineOnly( onlineOnly )
 {
 	m_results->setSelectionMode( mode );
 	m_results->setAllColumnsShowFocus( true );

@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwreceiveinvitationdialog.cpp - dialog shown when the user receives an invitation to chat
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -20,6 +21,7 @@
 #include <qlabel.h>
 
 #include <kconfig.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kopetecontact.h>
 #include <kopeteglobal.h>
@@ -29,7 +31,7 @@
 #include "gwcontact.h"
 #include "gwerror.h"
 #include "gwprotocol.h"
-#include "gwshowinvitation.h"
+#include "ui_gwshowinvitation.h"
 
 #include "gwreceiveinvitationdialog.h"
 
@@ -37,7 +39,7 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
  : KDialog(  parent )
 {
 	setCaption(i18n("Invitation to Conversation"));
-	setButtons(KDialog::Yes|KDialog::No, KDialog::Yes);
+	setButtons(KDialog::Yes|KDialog::No);
 	setDefaultButton(KDialog::No);
 	setModal(false);
 	m_account = account;
@@ -46,8 +48,10 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 	connect( this, SIGNAL( noClicked() ), SLOT( slotNoClicked() ) );
 	
 	GroupWiseContact * c = account->contactForDN( event.user );
-	
-	m_wid = new ShowInvitationWidget ( this );
+
+	QWidget * wid = new QWidget( this );
+	m_wid = new Ui::ShowInvitationWidget;
+	m_wid->setupUi( wid );
 	if ( c )
 		m_wid->m_contactName->setText( c->metaContact()->displayName() );
 	else //something is very wrong
@@ -56,7 +60,7 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 	m_wid->m_dateTime->setText( KGlobal::locale()->formatDateTime( event.timeStamp ) );
 	m_wid->m_message->setText( QString("<b>%1</b>").arg( event.message ) );
 	
-	setMainWidget( m_wid );
+	setMainWidget( wid );
 }
 
 ReceiveInvitationDialog::~ReceiveInvitationDialog()

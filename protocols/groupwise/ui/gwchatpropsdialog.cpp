@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwchatpropsdialog.h - dialog for viewing/modifying chat properties
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -25,7 +26,7 @@
 #include <kpushbutton.h>
 #include <klocale.h>
 #include "gwerror.h"
-#include "gwchatpropswidget.h"
+#include "ui_gwchatpropswidget.h"
 
 #include "gwchatpropsdialog.h"
 
@@ -90,7 +91,7 @@ GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( const GroupWise::Chatroom & 
 void GroupWiseChatPropsDialog::initialise()
 {
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	m_widget = new GroupWiseChatPropsWidget( this );
+	m_widget = new Ui::GroupWiseChatPropsWidget;
 	connect( m_widget->m_topic, SIGNAL( textChanged( const QString & )  ), SLOT( slotWidgetChanged() ) );
 	connect( m_widget->m_owner, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
 	connect( m_widget->m_createdOn, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
@@ -103,7 +104,7 @@ void GroupWiseChatPropsDialog::initialise()
 	connect( m_widget->m_btnAddAcl, SIGNAL( clicked() ), SLOT( slotWidgetChanged() ) );
 	connect( m_widget->m_btnEditAcl, SIGNAL( clicked() ), SLOT( slotWidgetChanged() ) );
 	connect( m_widget->m_btnDeleteAcl, SIGNAL( clicked() ), SLOT( slotWidgetChanged() ) );
-	setMainWidget( m_widget );
+	m_widget->setupUi( this );
 	show();
 }
 

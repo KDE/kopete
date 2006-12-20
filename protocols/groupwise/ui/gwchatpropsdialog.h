@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwchatpropsdialog.h - dialog for viewing/modifying chat properties
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -23,7 +24,7 @@
 
 #include "gwchatrooms.h"
 
-class GroupWiseChatPropsWidget;
+namespace Ui { class GroupWiseChatPropsWidget; }
 /**
  * Dialog for viewing/modifying chat properties.
  * Chatroom list dialog gets props from manager
@@ -61,7 +62,7 @@ class GroupWiseChatPropsDialog : public KDialog
 	protected slots:
 		void slotWidgetChanged();
 	private:
-		GroupWiseChatPropsWidget * m_widget;
+		Ui::GroupWiseChatPropsWidget * m_widget;
 		GroupWise::Chatroom m_room;
 		bool m_dirty;
 };

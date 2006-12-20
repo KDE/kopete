@@ -2,6 +2,7 @@
     Kopete GroupWise Protocol
     gweditaccountwidget.h - widget for adding or editing GroupWise accounts
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -23,13 +24,11 @@
 #define TESTBEDEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <editaccountwidget.h>
 
-class Q3VBoxLayout;
+class QVBoxLayout;
 namespace Kopete { class Account; }
-class GroupWiseAccountPreferences;
+namespace Ui { class GroupWiseAccountPreferences; }
 
 /**
  * A widget for editing this protocol's accounts
@@ -59,8 +58,8 @@ protected:
 	void reOpen();
 	void writeConfig();
 	Kopete::Account *m_account;
-	Q3VBoxLayout *m_layout;
-	GroupWiseAccountPreferences *m_preferencesDialog;
+	QVBoxLayout *m_layout;
+	Ui::GroupWiseAccountPreferences *m_preferencesDialog;
 };
 
 #endif

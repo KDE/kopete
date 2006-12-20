@@ -1,6 +1,7 @@
 /*
     qcatlshandler.cpp - Kopete Groupwise Protocol
   
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
@@ -19,7 +20,7 @@
 
 #include <qtimer.h>
 
-#include "qca.h"
+#include <QtCrypto>
 
 #include "qcatlshandler.h"
 

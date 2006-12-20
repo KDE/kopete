@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwprivacydialog.h - dialog summarising, and editing, the user's privacy settings
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -22,8 +23,11 @@
 #include <kdialog.h>
 
 class GroupWiseAccount;
-class GroupWisePrivacyWidget;
-class GroupWiseContactSearch;
+namespace Ui
+{
+	class GroupWisePrivacyWidget;
+	class GroupWiseContactSearchWidget;
+}
 class Q3ListBoxItem;
 
 /**
@@ -57,7 +61,7 @@ protected slots:
 	
 private:
 	GroupWiseAccount * m_account;
-	GroupWisePrivacyWidget * m_privacy;
+	Ui::GroupWisePrivacyWidget * m_privacy;
 	GroupWiseContactSearch * m_search;
 	Q3ListBoxItem * m_defaultPolicy;
 	bool m_dirty;

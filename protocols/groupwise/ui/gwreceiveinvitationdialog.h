@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwreceiveinvitationdialog.h - dialog shown when the user receives an invitation to chat
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -21,7 +22,7 @@
 
 #include <kdialog.h>
 
-class ShowInvitationWidget;
+namespace Ui { class ShowInvitationWidget; }
 
 /**
 This is the dialog that is shown when you receive an invitation to chat.
@@ -42,7 +43,7 @@ protected slots:
 private:
 	GroupWiseAccount * m_account;
 	ConferenceGuid m_guid; // the conference we were invited to join.
-	ShowInvitationWidget * m_wid;
+	Ui::ShowInvitationWidget * m_wid;
 };
 
 #endif

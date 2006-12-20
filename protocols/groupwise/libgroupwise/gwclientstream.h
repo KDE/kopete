@@ -16,13 +16,13 @@
     *                                                                       *
     *************************************************************************
 */
-  
+
 #ifndef GW_CLIENTSTREAM_H
 #define GW_CLIENTSTREAM_H
 
 #include <QHostAddress>
 
-#include <qca.h>
+#include <QtCrypto>
 
 #include "gwfield.h"
 #include "stream.h"

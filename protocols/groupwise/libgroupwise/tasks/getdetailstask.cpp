@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     getdetailstask.cpp - fetch a contact's details from the server
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
@@ -97,7 +98,7 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
 		cd.awayMessage = sf->value().toString();
 	Field::MultiField * mf;
-	QMap< QString, QString > propMap;
+	QHash< QString, QString > propHash;
 	if ( ( mf = fields.findMultiField ( NM_A_FA_INFO_DISPLAY_ARRAY ) ) )
 	{
 		Field::FieldList fl = mf->fields();
@@ -107,12 +108,12 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
 			QString propName = propField->tag();
 			QString propValue = propField->value().toString();
-			propMap.insert( propName, propValue );
+			propHash.insert( propName, propValue );
 		}
 	}
-	if ( !propMap.empty() )
+	if ( !propHash.empty() )
 	{
-		cd.properties = propMap;
+		cd.properties = propHash;
 	}
 	return cd;
 }

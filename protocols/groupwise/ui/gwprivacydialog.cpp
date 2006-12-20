@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwprivacydialog.cpp - dialog summarising, and editing, the user's privacy settings
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -32,7 +33,8 @@
 
 #include "client.h"
 #include "gwaccount.h"
-#include "gwprivacy.h"
+#include "ui_gwcontactsearch.h"
+#include "ui_gwprivacy.h"
 #include "gwprotocol.h"
 #include "gwsearch.h"
 #include "privacymanager.h"
@@ -59,8 +61,8 @@ GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWid
 	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
 	setDefaultButton(Ok);
 	setModal(false);
-	m_privacy = new GroupWisePrivacyWidget( this );
-	setMainWidget( m_privacy );
+	m_privacy = new Ui::GroupWisePrivacyWidget();
+	m_privacy->setupUi( this );
 	PrivacyManager * mgr = m_account->client()->privacyManager();
 	// populate the widget;
 	// admin lock
@@ -188,10 +190,10 @@ void GroupWisePrivacyDialog::slotAddClicked()
 		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
 		m_searchDlg->setDefaultButton(KDialog::Ok);
 		m_searchDlg->setModal(false);
-		m_search = new GroupWiseContactSearch( m_account, Q3ListView::Multi, false, m_searchDlg, "privacysearchwidget" );
-		m_searchDlg->setMainWidget( m_search );
-		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
+		m_search = new GroupWiseContactSearch( m_account, Q3ListView::Multi, false, m_searchDlg );
+		m_search->setupUi( this );
+		QObject::connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
+		QObject::connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
 		m_searchDlg->enableButtonOk( false );
 	}
 	m_searchDlg->show();

@@ -1,6 +1,7 @@
 /*
     gwerror.h - Kopete Groupwise Protocol
   
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -20,7 +21,7 @@
 
 #include <qdatetime.h>
 #include <qglobal.h>
-#include <qmap.h>
+#include <QHash>
 #include <qstring.h>
 
 typedef quint16 NMERR_T;
@@ -136,16 +137,16 @@ namespace GroupWise
 
 	struct ContactDetails
 	{
-		QString cn, 
-				dn, 
-				givenName, 
-				surname, 
-				fullName, 
-				awayMessage, 
+		QString cn,
+				dn,
+				givenName,
+				surname,
+				fullName,
+				awayMessage,
 				authAttribute;
 		int status;
 		bool archive;
-		QMap< QString, QString > properties;
+		QHash< QString, QString > properties;
 	};
 
 	struct OutgoingMessage

@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwcontactproperties.h - dialog showing a contact's server side properties
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -19,10 +20,10 @@
 #ifndef GROUPWISECONTACTPROPERTIES_H
 #define GROUPWISECONTACTPROPERTIES_H
 
+#include <QHash>
+#include <QObject>
 
-#include <qobject.h>
-
-class GroupWiseContactPropsWidget;
+namespace Ui { class GroupWiseContactPropsWidget; }
 class KDialog;
 class Q3ListViewItem;
 class KAction;
@@ -46,13 +47,13 @@ public:
 	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0, const char *name = 0 );
 	~GroupWiseContactProperties();
 protected:
-	void setupProperties( QMap< QString, QString > serverProps );
+	void setupProperties( QHash< QString, QString > serverProps );
 	void init();
 protected slots:
 	void slotShowContextMenu( Q3ListViewItem *, const QPoint & );
 	void slotCopy();
 private:
-	GroupWiseContactPropsWidget * m_propsWidget;
+	Ui::GroupWiseContactPropsWidget * m_propsWidget;
 	KAction * m_copyAction;
 	KDialog * m_dialog;
 };

@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwchatsearchdialog.cpp - dialog for searching for chatrooms
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -29,7 +30,7 @@
 
 #include "gwaccount.h"
 #include "gwprotocol.h"
-#include "gwchatsearchwidget.h"
+#include "ui_gwchatsearchwidget.h"
 #include "gwchatpropsdialog.h"
 
 #include "gwchatsearchdialog.h"
@@ -38,13 +39,13 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 	: KDialog(  parent),
 					m_account( account )
 {
-	m_widget = new GroupWiseChatSearchWidget( this );
+	m_widget = new Ui::GroupWiseChatSearchWidget();
 	setCaption(i18n( "Search Chatrooms" ));
 	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
 	setDefaultButton(Ok);
 	showButtonSeparator(true);
 //	m_widget->m_searchLineWidget->createSearchLine( m_widget->m_chatrooms );
-	setMainWidget( m_widget );
+	m_widget->setupUi( this );
 
 	m_manager = m_account->client()->chatroomManager();
 	

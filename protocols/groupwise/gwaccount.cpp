@@ -1,6 +1,7 @@
 /*
     gwaccount.cpp - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
@@ -21,15 +22,11 @@
 #include <sys/utsname.h>
 
 #include <qvalidator.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -45,7 +42,7 @@
 #include <kopeteview.h>
 
 #include "client.h"
-#include "qca.h"
+#include <QtCrypto>
 #include "gwcontact.h"
 #include "gwcontactlist.h"
 #include "gwprotocol.h"
@@ -61,14 +58,14 @@
 #include "tasks/updatecontacttask.h"
 #include "tasks/updatefoldertask.h"
 #include "ui/gwchatsearchdialog.h"
-#include "ui/gwprivacy.h"
+#include "ui_gwprivacy.h"
 #include "ui/gwprivacydialog.h"
 #include "ui/gwreceiveinvitationdialog.h"
 
 #include "gwaccount.h"
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
-: Kopete::ManagedConnectionAccount ( parent, accountID, 0, "groupwiseaccount" )
+: Kopete::PasswordedAccount ( parent, accountID )
 {
 	Q_UNUSED( name );
 	// Init the myself contact
@@ -81,12 +78,17 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 			SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
-	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), QString::null, 0, this,
-			SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
-	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), QString::null, 0, this,
-										 SLOT( slotJoinChatRoom() ), this, "actionJoinChatRoom");
-	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), QString::null, 0, this,
-			SLOT( slotPrivacy() ), this, "actionPrivacy");
+//		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
+//		QObject::connect( m_actionBlock, SIGNAL( triggered( bool ) ), SLOT( slotBlock() ) );
+	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), 0, "actionSetAutoReply" );
+	QObject::connect( m_actionAutoReply, SIGNAL( triggered( bool ) ),
+			SLOT( slotSetAutoReply() ) );
+	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), 0, "actionJoinChatRoom");
+	QObject::connect( m_actionJoinChatRoom, SIGNAL( triggered( bool ) ),
+										 SLOT( slotJoinChatRoom() ) );
+	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), 0, "actionPrivacy" );
+	QObject::connect( m_actionManagePrivacy, SIGNAL( triggered( bool ) ),
+										 SLOT( slotPrivacy() ) );
 			
 	m_connector = 0;
 	m_QCATLS = 0;
@@ -108,9 +110,9 @@ KActionMenu* GroupWiseAccount::actionMenu()
 
 	m_actionAutoReply->setEnabled( isConnected() );
 	m_actionManagePrivacy->setEnabled( isConnected() );
-	m_actionMenu->insert( m_actionManagePrivacy );
-	m_actionMenu->insert( m_actionAutoReply );
-	m_actionMenu->insert( m_actionJoinChatRoom );
+	m_actionMenu->addAction( m_actionManagePrivacy );
+	m_actionMenu->addAction( m_actionAutoReply );
+	m_actionMenu->addAction( m_actionJoinChatRoom );
 	/* Used for debugging */
 	/*
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
@@ -127,7 +129,7 @@ const int GroupWiseAccount::port() const
 
 const QString GroupWiseAccount::server() const
 {
-	return configGroup()->readEntry( "Server", 0 );
+	return configGroup()->readEntry( "Server", "" );
 }
 
 Client * GroupWiseAccount::client() const
@@ -162,9 +164,8 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 		{
 			kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " found a message manager by members with GUID: " << chatSession->guid() << endl;
 			// re-add the returning contact(s) (very likely only one) to the chat
-			Kopete::Contact * returningContact;
-			for ( returningContact = others.first(); returningContact; returningContact = others.next() )
-					chatSession->joined( static_cast<GroupWiseContact *>( returningContact ) );
+			foreach ( Kopete::Contact * returningContact, others )
+				chatSession->joined( static_cast<GroupWiseContact *>( returningContact ) );
 
 			if ( !guid.isEmpty() )
 				chatSession->setGuid( guid );
@@ -208,11 +209,12 @@ GroupWiseChatSession * GroupWiseAccount::findChatSessionByGuid( const GroupWise:
 
 GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
 {
-	Q3DictIterator<Kopete::Contact> it( contacts() );
+	QHashIterator<QString, Kopete::Contact*> i( contacts() );
 	// check if we have a DN for them
-	for( ; it.current(); ++it )
+	while ( i.hasNext() )
 	{
-		GroupWiseContact * candidate = static_cast<GroupWiseContact*>( it.current() );
+		i.next();
+		GroupWiseContact * candidate = static_cast<GroupWiseContact*>( i.value() );
 		if ( candidate && candidate->dn() == dn )
 			return candidate;
 	}
@@ -225,7 +227,7 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 	if ( away )
 	{
 		if ( Kopete::Away::getInstance()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
-			setOnlineStatus( protocol()->groupwiseAwayIdle, QString::null );
+			setOnlineStatus( protocol()->groupwiseAwayIdle );
 		else
 			setOnlineStatus( protocol()->groupwiseAway, reason );
 	}
@@ -233,7 +235,7 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 		setOnlineStatus( protocol()->groupwiseAvailable );
 }
 
-void GroupWiseAccount::performConnectWithPassword( const QString &password )
+void GroupWiseAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isEmpty() )
 	{
@@ -244,7 +246,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	if ( isConnected () )
 		return;
 
-	bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
+	bool sslPossible = QCA::isSupported("tls");
 
 	if (!sslPossible)
 	{
@@ -264,7 +266,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	//myConnector->setOptHostPort( "localhost", 8300 );
 	m_connector->setOptHostPort( server(), port() );
 	m_connector->setOptSSL( true );
-	Q_ASSERT( QCA::isSupported(QCA::CAP_TLS) );
+	Q_ASSERT( QCA::isSupported("tls") );
 	m_QCATLS = new QCA::TLS;
 	m_tlsHandler = new QCATLSHandler( m_QCATLS );
 	m_clientStream = new ClientStream( m_connector, m_tlsHandler, 0);
@@ -361,7 +363,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 
 }
 
-void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString &reason )
+void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( status == protocol()->groupwiseUnknown
@@ -384,17 +386,23 @@ void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, cons
 		// Appear Offline is achieved by explicitly setting the status to offline, 
 		// rather than disconnecting as when really going offline.
 		if ( status == protocol()->groupwiseAppearOffline )
-			m_client->setStatus( GroupWise::Offline, reason, configGroup()->readEntry( "AutoReply",0 ) );
+			m_client->setStatus( GroupWise::Offline, reason.message(), configGroup()->readEntry( "AutoReply", "" ) );
 		else
-			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason, configGroup()->readEntry( "AutoReply",0 ) );
+			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason.message(), configGroup()->readEntry( "AutoReply", "" ) );
 	}
 	// going online
 	else
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Must be connected before changing status" << endl;
-		m_initialReason = reason;
+		m_initialReason = reason.message();
 		connect( status );
 	}
+}
+
+void GroupWiseAccount::setStatusMessage( const Kopete::StatusMessage & statusMessage )
+{
+	int currentStatus = myself()->onlineStatus().internalStatus();
+	m_client->setStatus( ( GroupWise::Status )currentStatus, statusMessage.message(), configGroup()->readEntry( "AutoReply", "" ) );
 }
 
 void GroupWiseAccount::disconnect ()
@@ -467,13 +475,15 @@ void GroupWiseAccount::slotLoggedIn()
 	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) &&
 		( ( GroupWise::Status )initialStatus().internalStatus() != GroupWise::Unknown ) )
 	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Initial status is not online, setting status to " << initialStatus().internalStatus() << endl;
-		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply",0 ) );
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Initial status is not online, setting status to " << initialStatus().internalStatus() << endl;
+		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply", "" ) );
 	}
 }
 
 void GroupWiseAccount::reconcileOfflineChanges()
 {
+#warning port GroupWiseAccount::reconcileOfflineChanges()
+#if 0
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	m_dontSync = true;
 	//sanity check the server side model vs our contact list.
@@ -523,7 +533,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 					else
 						continue;
 
-				GWFolder * folder = ::qt_cast<GWFolder*>( ( *instIt )->parent() );
+				GWFolder * folder = qobject_cast<GWFolder*>( ( *instIt )->parent() );
 				if ( folder->id == ( unsigned int )groupId.toInt() )
 				{
 					found = true;
@@ -566,6 +576,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 		// show queuedmessagebox
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), i18n( "Conflicting Changes Made Offline" ) );
 	m_dontSync = false;
+#endif
 }
 
 void GroupWiseAccount::slotLoginFailed()
@@ -673,9 +684,10 @@ void GroupWiseAccount::slotCSWarning( int warning )
 void GroupWiseAccount::slotTLSHandshaken()
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "TLS handshake complete" << endl;
-	int validityResult = m_QCATLS->certificateValidityResult ();
+	QCA::TLS::IdentityResult identityResult = m_QCATLS->peerIdentityResult();
+	QCA::Validity            validityResult = m_QCATLS->peerCertificateValidity();
 
-	if( validityResult == QCA::TLS::Valid )
+	if( identityResult == QCA::TLS::Valid && validityResult == QCA::ValidityGood )
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Certificate is valid, continuing." << endl;
 		// valid certificate, continue
@@ -685,7 +697,7 @@ void GroupWiseAccount::slotTLSHandshaken()
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Certificate is not valid, continuing anyway" << endl;
 		// certificate is not valid, query the user
-		if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
+		if(handleTLSWarning ( identityResult, validityResult, server(), myself()->contactId ()) == KMessageBox::Continue)
 		{
 			m_tlsHandler->continueAfterHandshake ();
 		}
@@ -696,73 +708,106 @@ void GroupWiseAccount::slotTLSHandshaken()
 	}
 }
 
-int GroupWiseAccount::handleTLSWarning (int warning, QString server, QString accountId)
+int GroupWiseAccount::handleTLSWarning ( QCA::TLS::IdentityResult identityResult,
+		QCA::Validity validityResult , QString server, QString accountId)
 {
-	QString validityString, code;
+	QString validityString, idString, code, idCode;
 
-	switch(warning)
+	switch ( identityResult )
 	{
-		case QCA::TLS::NoCert:
-			validityString = i18n("No certificate was presented.");
-			code = "NoCert";
+		case QCA::TLS::Valid:
 			break;
 		case QCA::TLS::HostMismatch:
-			validityString = i18n("The host name does not match the one in the certificate.");
-			code = "HostMismatch";
+			idString = i18n("The host name does not match the one in the certificate.");
+			idCode   = "HostMismatch";
 			break;
-		case QCA::TLS::Rejected:
+		case QCA::TLS::InvalidCertificate:
+			idString = i18n("The certificate is invalid.");
+			idCode   = "InvalidCert";
+			break;
+		case QCA::TLS::NoCertificate:
+			idString = i18n("No certificate was presented.");
+			idCode   = "NoCert";
+			break;
+	}
+
+	switch ( validityResult )
+	{
+		case QCA::ValidityGood:
+			break;
+		case QCA::ErrorRejected:
 			validityString = i18n("The Certificate Authority rejected the certificate.");
 			code = "Rejected";
 			break;
-		case QCA::TLS::Untrusted:
-			// FIXME: write better error message here
-			validityString = i18n("The certificate is untrusted.");
+		case QCA::ErrorUntrusted:
+			validityString = i18n("The certificate is not trusted.");
 			code = "Untrusted";
 			break;
-		case QCA::TLS::SignatureFailed:
+		case QCA::ErrorSignatureFailed:
 			validityString = i18n("The signature is invalid.");
 			code = "SignatureFailed";
 			break;
-		case QCA::TLS::InvalidCA:
+		case QCA::ErrorInvalidCA:
 			validityString = i18n("The Certificate Authority is invalid.");
 			code = "InvalidCA";
 			break;
-		case QCA::TLS::InvalidPurpose:
-			// FIXME: write better error  message here
+		case QCA::ErrorInvalidPurpose:
 			validityString = i18n("Invalid certificate purpose.");
 			code = "InvalidPurpose";
 			break;
-		case QCA::TLS::SelfSigned:
+		case QCA::ErrorSelfSigned:
 			validityString = i18n("The certificate is self-signed.");
 			code = "SelfSigned";
 			break;
-		case QCA::TLS::Revoked:
+		case QCA::ErrorRevoked:
 			validityString = i18n("The certificate has been revoked.");
 			code = "Revoked";
 			break;
-		case QCA::TLS::PathLengthExceeded:
+		case QCA::ErrorPathLengthExceeded:
 			validityString = i18n("Maximum certificate chain length was exceeded.");
 			code = "PathLengthExceeded";
 			break;
-		case QCA::TLS::Expired:
+		case QCA::ErrorExpired:
 			validityString = i18n("The certificate has expired.");
 			code = "Expired";
 			break;
-		case QCA::TLS::Unknown:
-		default:
-			validityString = i18n("An unknown error occurred trying to validate the certificate.");
-			code = "Unknown";
+		case QCA::ErrorExpiredCA:
+			validityString = i18n("The Certificate Authority has expired.");
+			code = "ExpiredCA";
 			break;
-		}
+		case QCA::ErrorValidityUnknown:
+			validityString = i18n("Validity is unknown.");
+			code = "ValidityUnknown";
+			break;
+	}
 
-	return KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
-						  i18n("The certificate of server %1 could not be validated for account %2: %3", 
-						  server, 
-						  accountId, 
-						  validityString),
-						  i18n("GroupWise Connection Certificate Problem"),
-						  KStdGuiItem::cont(),
-						  QString("KopeteTLSWarning") + server + code);
+	QString message;
+   
+	if (!idString.isEmpty())
+	{
+		if (!validityString.isEmpty())
+		{
+			message = i18n("<qt><p>The identity and the certificate of server %1 could not be "
+					"validated for account %2:</p><p>%3</p><p>%4</p><p>Do you want to continue?</p></qt>",
+					server, accountId, idString, validityString);
+		}
+		else
+		{
+			message = i18n("<qt><p>The certificate of server %1 could not be validated for "
+					"account %2: %3</p><p>Do you want to continue?</p></qt>",
+					server, accountId, idString);
+		}
+	} else {
+		message = i18n("<qt><p>The certificate of server %1 could not be validated for "
+			"account %2: %3</p><p>Do you want to continue?</p></qt>",
+			server, accountId, validityString);
+	}
+
+	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
+					  message,
+					  i18n("GroupWise Connection Certificate Problem"),
+					  KStdGuiItem::cont(),
+					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 }
 
 void GroupWiseAccount::slotTLSReady( int secLayerCode )
@@ -847,8 +892,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 
 	// either find a local group and record these details there, or create a new group to suit
 	Kopete::Group * found = 0;
-	Q3PtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
-	for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
+	foreach( Kopete::Group * grp, Kopete::ContactList::self()->groups() )
 	{
 		// see if there is already a local group that matches this group
 		QString groupId = grp->pluginData( protocol(), accountId() + " objectId" );
@@ -1064,7 +1108,7 @@ void GroupWiseAccount::sendMessage( const GroupWise::ConferenceGuid &guid, const
 		// make a list of DNs to send to
 		QStringList addresseeDNs;
 		Kopete::ContactPtrList addressees = message.to();
-		for ( Kopete::Contact * contact = addressees.first(); contact; contact = addressees.next() )
+		foreach( Kopete::Contact * contact, message.to() )
 			addresseeDNs.append( static_cast< GroupWiseContact* >( contact )->dn() );
 		// send the message
 		m_client->sendMessage( addresseeDNs, outMsg );
@@ -1080,8 +1124,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	// Set object id to 0 if not found - they do not exist on the server
 	bool topLevel = false;
 	Q3ValueList< FolderItem > folders;
-	Kopete::GroupList groupList = parentContact->groups();
-	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
+	foreach ( Kopete::Group *group, parentContact->groups() )
 	{
 		if ( group->type() == Kopete::Group::TopLevel ) // no need to create it on the server
 		{
@@ -1096,7 +1139,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 		{
 			kDebug( GROUPWISE_DEBUG_GLOBAL ) << fld->displayName << endl;
 			//FIXME - get rid of FolderItem & co
-			fi.parentId = ::qt_cast<GWFolder*>( fld->parent() )->id;
+			fi.parentId = qobject_cast<GWFolder*>( fld->parent() )->id;
 			fi.id = fld->id;
 			fi.name = fld->displayName;
 		}
@@ -1109,7 +1152,6 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 			fi.name = group->displayName();
 		}
 		folders.append( fi );
-
 	}
 
 	// find out the sequence number to use for any new folders
@@ -1202,7 +1244,7 @@ void GroupWiseAccount::deleteContact( GroupWiseContact * contact )
 		for ( ; it != instances.end(); ++it )
 		{
 			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
-			dit->item( ::qt_cast<GWFolder*>( (*it)->parent() )->id, (*it)->id );
+			dit->item( qobject_cast<GWFolder*>( (*it)->parent() )->id, (*it)->id );
 			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
 			dit->go( true );
 		}
@@ -1241,7 +1283,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	GroupWiseContact * contactFrom = contactForDN( event.user );
 	if ( !contactFrom )
 		contactFrom = createTemporaryContact( event.user );
-	if ( configGroup()->readEntry( "AlwaysAcceptInvitations",false ) == "true" )
+	if ( configGroup()->readBoolEntry( "AlwaysAcceptInvitations",false ) == true )
 	{
 		client()->joinConference( event.guid );
 	}
@@ -1260,21 +1302,25 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 	Kopete::ContactPtrList others;
 	GroupWiseChatSession * sess = chatSession( others, guid, Kopete::Contact::CanCreate);
 	// find each contact and add them to the GWMM, and tell them they are in the conference
-	for ( Q3ValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
+	QStringListIterator joinerIt( participants );
+	while ( joinerIt.hasNext() )
 	{
 		//kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " adding participant " << *it << endl;
-		GroupWiseContact * c = contactForDN( *it );
+		QString dn = joinerIt.next();
+		GroupWiseContact * c = contactForDN( dn );
 		if ( !c )
-			c = createTemporaryContact( *it );
+			c = createTemporaryContact( dn );
 		sess->joined( c );	
 	}
 	// add each invitee too
-	for ( Q3ValueList<QString>::ConstIterator it = invitees.begin(); it != invitees.end(); ++it )
+	QStringListIterator inviteeIt( invitees );
+	while ( inviteeIt.hasNext() )
 	{
 		//kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " adding invitee " << *it << endl;
-		GroupWiseContact * c = contactForDN( *it );
+		QString dn = inviteeIt.next();
+		GroupWiseContact * c = contactForDN( dn );
 		if ( !c )
-			c = createTemporaryContact( *it );
+			c = createTemporaryContact( dn );
 		sess->addInvitee( c );
 	}
 	sess->view( true )->raise( false );
@@ -1361,8 +1407,8 @@ void GroupWiseAccount::slotSetAutoReply()
 	QRegExp rx( ".*" );
     QRegExpValidator validator( rx, this );
 	QString newAutoReply = KInputDialog::getText( i18n( "Enter Auto-Reply Message" ),
-			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), configGroup()->readEntry( "AutoReply",0 ),
-			 &ok, Kopete::UI::Global::mainWidget(), "autoreplymessagedlg", &validator );
+			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), configGroup()->readEntry( "AutoReply", "" ),
+			 &ok, Kopete::UI::Global::mainWidget(), &validator );
 	if ( ok )
 		configGroup()->writeEntry( "AutoReply", newAutoReply );
 }
@@ -1421,6 +1467,8 @@ bool GroupWiseAccount::dontSync()
 
 void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 {
+#warning todo port GroupWiseAccount::syncContact
+#if 0
 	if ( dontSync() )
 		return;
 	
@@ -1449,7 +1497,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 		int nextFreeSequence = m_serverListModel->maxSequenceNumber() + 1;
 		// 1)
 		// make a list of all the groups the metacontact is in
-		Q3PtrList<Kopete::Group> groupList = contact->metaContact()->groups();
+		QList<Kopete::Group *> groupList = contact->metaContact()->groups();
 		// make a list of all the groups this contact is in, according to the server model
 		GWContactInstanceList instances = m_serverListModel->instancesWithDn( contact->dn() );
 
@@ -1469,7 +1517,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			{
 				GWContactInstanceList::Iterator candidateInst = instIt;
 				++instIt;
-				GWFolder * folder = ::qt_cast<GWFolder *>( ( *candidateInst )->parent() );
+				GWFolder * folder = qobject_cast<GWFolder *>( ( *candidateInst )->parent() );
 				kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - Looking for a match, MC grp '" 
 					<< ( *candidateGrp )->displayName() 
 					<< "', GWFolder '" << folder->displayName << "', objectId is " << folder->id << endl;
@@ -1495,7 +1543,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			candidateGrp = grpIt;
 			++grpIt;
 			GWContactInstanceList::Iterator instIt = instances.begin();
-			GWFolder * sourceFolder =::qt_cast<GWFolder*>( ( *instIt)->parent() );
+			GWFolder * sourceFolder =qobject_cast<GWFolder*>( ( *instIt)->parent() );
 			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - moving contact instance from group '" << sourceFolder->displayName << "' to group '" << ( *candidateGrp )->displayName() << "'" << endl;
 
 			// create contactItem parameter
@@ -1574,7 +1622,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 		{
 			GWContactInstanceList::Iterator candidateInst = instIt;
 			++instIt;
-			GWFolder * folder =::qt_cast<GWFolder*>( ( *candidateInst )->parent() );
+			GWFolder * folder =qobject_cast<GWFolder*>( ( *candidateInst )->parent() );
 			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - remove contact instance '"<< ( *candidateInst )->id << "' in group '" << folder->displayName << "'" << endl;
 
 			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
@@ -1598,7 +1646,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 				Q3ValueList< ContactItem > instancesToChange;
 				ContactItem instance;
 				instance.id = (*it)->id;
-				instance.parentId = ::qt_cast<GWFolder *>( (*it)->parent() )->id;
+				instance.parentId = qobject_cast<GWFolder *>( (*it)->parent() )->id;
 				instance.sequence = (*it)->sequence;
 				instance.dn = contact->dn();
 				instance.displayName = contact->nickName();
@@ -1611,6 +1659,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			}
  		}
 	}
+#endif
 }
 
 #include "gwaccount.moc"

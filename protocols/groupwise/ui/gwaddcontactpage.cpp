@@ -2,6 +2,7 @@
     Kopete GroupWise Protocol
     gweditaccountwidget.cpp - widget for adding GroupWise contacts
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -44,11 +45,11 @@
 #include "gwerror.h"
 //#include "gwprotocol.h"
 #include "gwsearch.h"
-#include "gwaddui.h"
+#include "ui_gwaddui.h"
 #include "userdetailsmanager.h"
 
-GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent, const char* name )
-		: AddContactPage(parent, name)
+GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent )
+		: AddContactPage(parent)
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
@@ -56,7 +57,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 	if (owner->isConnected ())
 	{
 		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
-				 this, "acwsearchwidget" );
+				 this );
 		show();
 		m_canadd = true;
 	}

@@ -110,7 +110,7 @@ public:
 	/**
 	 * Access the contact's server properties
 	 */
-	QMap< QString, QString > serverProperties();
+	QHash< QString, QString > serverProperties();
 	/** 
 	 * Updates this contact's group membership and display name on the server
 	 */
@@ -175,7 +175,7 @@ protected:
 	KAction *m_actionBlock;
 	// Novell Messenger Properties, as received by the server.  
 	// Unfortunately we don't know the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
-	QMap< QString, QString > m_serverProperties;
+	QHash< QString, QString > m_serverProperties;
 	bool m_archiving;
 	// HACK: flag used to differentiate between 'all contact list instances gone while we are moving on the server' 
 	// and 'all contact list instances gone because we wanted to delete them all'

@@ -182,7 +182,7 @@ void GroupWiseContact::slotUserInfo()
 	new GroupWiseContactProperties( this, Kopete::UI::Global::mainWidget(), "gwcontactproperties" );
 }
 
-QMap< QString, QString > GroupWiseContact::serverProperties()
+QHash< QString, QString > GroupWiseContact::serverProperties()
 {
 	return m_serverProperties;
 }

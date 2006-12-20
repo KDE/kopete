@@ -118,7 +118,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, Kopete::Account *  account )
 {
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page" << endl;
-	return new GroupWiseAddContactPage( account, parent, "addcontactpage");
+	return new GroupWiseAddContactPage( account, parent );
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
@@ -184,7 +184,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 						"\\uc1\\cf1\\f0\\fs18 %1\\par\n}");
 	QString outputText; // output text
 	QByteArray plainUtf8 = plain.toUtf8(); // encoded as UTF8, because that's what this encoding algorithm, taken from Gaim's Novell plugin
-	uint index = 0; // current char to transcode
+	int index = 0; // current char to transcode
 	while ( index  < plainUtf8.length() )
 	{
 		quint8 current = plainUtf8.data()[ index ];

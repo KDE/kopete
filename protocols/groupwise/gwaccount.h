@@ -1,6 +1,7 @@
 /*
     gwaccount.h - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
@@ -21,13 +22,15 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
+#include <QtCrypto>
+
 #include <kaction.h>
 
 #include <kopetechatsessionmanager.h>
 
 #include "gwerror.h"
 
-#include <managedconnectionaccount.h>
+#include <kopetepasswordedaccount.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
@@ -56,7 +59,7 @@ using namespace GroupWise;
 /**
  * This represents an account on a Novell GroupWise Messenger Server
  */
-class GroupWiseAccount : public Kopete::ManagedConnectionAccount
+class GroupWiseAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 public:
@@ -148,14 +151,19 @@ public slots:
 	void slotTestRTFize();
 
 	/* Connects to the server. */
-	void performConnectWithPassword ( const QString &password );
+	void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
 	virtual void disconnect( Kopete::Account::DisconnectReason reason );
 
 	/** Set the online status for the account. Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+	/**
+	 * Set the status message for the account. Reimplemented from Kopete::Account
+	 */
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+
 signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
@@ -309,7 +317,8 @@ protected:
 	 */
 	//void setStatus( GroupWise::Status status, const QString & reason = QString::null );
 
-	int handleTLSWarning (int warning, QString server, QString accountId);
+	int handleTLSWarning (QCA::TLS::IdentityResult identityResult,
+		QCA::Validity validityResult, QString server, QString accountId);
 
 	GroupWiseChatSession * findChatSessionByGuid( const GroupWise::ConferenceGuid & guid );
 	/**

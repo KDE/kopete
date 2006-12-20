@@ -1,7 +1,8 @@
 /*
     Kopete GroupWise Protocol
-    gweditaccountwidget.h- widget for adding GroupWise contacts
+    gwaddcontactpage.h- widget for adding GroupWise contacts
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -45,7 +46,7 @@ class GroupWiseAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-    GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent = 0, const char* name = 0 );
+    GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent = 0 );
     ~GroupWiseAddContactPage();
 	
     /**

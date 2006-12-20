@@ -1,6 +1,7 @@
 /*
     gwcontactlist.h - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -28,7 +29,7 @@ class GWFolder;
 class GWContactInstance;
 class GWContactListItem;
 
-typedef Q3ValueList<GWContactInstance *> GWContactInstanceList;
+typedef QList<GWContactInstance *> GWContactInstanceList;
 
 	/**
 	 *  These functions model the server side contact list structure enough to allow Kopete to manipulate it correctly

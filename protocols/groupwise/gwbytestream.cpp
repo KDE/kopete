@@ -4,6 +4,7 @@
                              -------------------
     begin                : Wed Jul 7 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
+    Copyright 			 : (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
 
 			   Kopete (C) 2004 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
@@ -113,7 +114,7 @@ void KNetworkByteStream::slotConnectionClosed ()
 	if ( mClosing )
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by ourselves!" << endl;
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is \"" << socket()->errorString( socket()->error() ) << "\"" << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is \"" << socket()->errorString() << "\"" << endl;
 		emit connectionClosed ();
 	}
 	else

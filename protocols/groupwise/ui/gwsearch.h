@@ -2,6 +2,7 @@
     Kopete Groupwise Protocol
     gwsearch.h - logic for server side search widget
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -21,24 +22,23 @@
 #include <q3listview.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include "gwcontactsearch.h"
+#include "ui_gwcontactsearch.h"
 
 class GroupWiseAccount;
 class GroupWiseContactProperties;
-class GroupWiseContactSearchWidget;
 
 /**
 Logic for searching for and displaying users and chat rooms using a GroupWiseContactSearchWidget
 
 @author SUSE Linux Products GmbH
 */
-class GroupWiseContactSearch : public GroupWiseContactSearchWidget
+class GroupWiseContactSearch : public QWidget, public Ui::GroupWiseContactSearchWidget
 {
 Q_OBJECT
 public:
 	GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly, 
-			QWidget *parent = 0, const char *name = 0);
-	~GroupWiseContactSearch();
+			QWidget *parent = 0 );
+	virtual ~GroupWiseContactSearch();
 	Q3ValueList< GroupWise::ContactDetails > selectedResults();
 signals:
 	void selectionValidates( bool );

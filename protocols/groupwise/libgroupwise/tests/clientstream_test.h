@@ -19,7 +19,7 @@
 
 #include "gwclientstream.h"
 #include "gwconnector.h"
-#include <qca.h>
+#include <QtCrypto>
 #include "qcatlshandler.h"
 #include "requestfactory.h"
 #include "request.h"

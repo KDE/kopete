@@ -1,21 +1,29 @@
-//
-// C++ Implementation: gwmessagemanager
-//
-// Description:
-//
-//
-// Author: SUSE AG <>, (C) 2004
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+    gwmessagemanager.cpp - Kopete GroupWise Protocol
+
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Based on Testbed
+    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU General Public                   *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <qlabel.h>
 #include <qvalidator.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <kdebug.h>
-#include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -41,7 +49,7 @@
 
 #include "gwmessagemanager.h"
 
-GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::ChatSession(user, others, protocol, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
+GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id ): Kopete::ChatSession( user, others, protocol ), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	Q_UNUSED( id );
 	static uint s_id=0;
@@ -65,23 +73,25 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "gwInvite" );
-	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
-	m_secure = new KAction( i18n( "Security Status" ), "encrypted", KShortcut(), this, SLOT( slotShowSecurity() ), actionCollection(), "gwSecureChat" );
+	m_secure = new KAction( KIcon( "encrypted" ), i18n( "Security Status" ), 0, "gwSecureChat" );
+	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
-	m_logging = new KAction( i18n( "Archiving Status" ), "logchat", KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "gwLoggingChat" );
+	m_logging = new KAction( KIcon( "logchat" ), i18n( "Archiving Status" ), 0, "gwLoggingChat" );
+	QObject::connect( m_secure, SIGNAL( triggered( bool ) ),  SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
 	setXMLFile("gwchatui.rc");
 	setMayInvite( true );
-
-	m_invitees.setAutoDelete( true );
 }
 
 GroupWiseChatSession::~GroupWiseChatSession()
 {
 	emit leavingConference( this );
+	foreach (Kopete::Contact * contact, m_invitees )
+		delete contact;
 }
 
 uint GroupWiseChatSession::mmId() const
@@ -150,8 +160,7 @@ void GroupWiseChatSession::createConference()
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 		// form a list of invitees
 		QStringList invitees;
-		Kopete::ContactPtrList chatMembers = members();
-		for ( Kopete::Contact * contact = chatMembers.first(); contact; contact = chatMembers.next() )
+		foreach ( Kopete::Contact * contact, members() )
 		{
 			invitees.append( static_cast< GroupWiseContact * >( contact )->dn() );
 		}
@@ -177,13 +186,8 @@ void GroupWiseChatSession::receiveGuid( const int newMmId, const GroupWise::Conf
 		// they are removed from the chat member list GUI.  By re-adding them here, we guarantee they appear
 		// in the UI again, at the price of a debug message when starting up a new chatwindow
 
-		Q3PtrListIterator< Kopete::Contact > it( members() );
-		Kopete::Contact * contact;
-		while ( ( contact = it.current() ) )
-		{
-			++it;
+		foreach( Kopete::Contact * contact, members() )
 			addContact( contact, true );
-		}
 
 		// notify the contact(s) using this message manager that it's been instantiated on the server
 		emit conferenceCreated();
@@ -285,13 +289,9 @@ void GroupWiseChatSession::dequeueMessagesAndInvites()
 		slotMessageSent( *it, this );
 	}
 	m_pendingOutgoingMessages.clear();
-	Q3PtrListIterator< Kopete::Contact > it( m_pendingInvites );
-	Kopete::Contact * contact;
-	while ( ( contact = it.current() ) )
-	{
-		++it;
+
+	foreach( Kopete::Contact * contact, m_pendingInvites )
 		slotInviteContact( contact );
-	}
 	m_pendingInvites.clear();
 }
 
@@ -306,22 +306,21 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	m_actionInvite->popupMenu()->clear();
 
 
-	Q3DictIterator<Kopete::Contact> it( account()->contacts() );
-	for( ; it.current(); ++it )
+	foreach( Kopete::Contact * contact, account()->contacts() )
 	{
-		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
+		if( !members().contains( contact ) && contact->isOnline() && contact != myself() )
 		{
-			KAction *a = new Kopete::UI::ContactAction( it.current(),
+			KAction *a = new Kopete::UI::ContactAction( contact,
 			                                            m_actionInvite->parentCollection() );
-			m_actionInvite->insert( a );
+			m_actionInvite->addAction( a );
 			m_inviteActions.append( a ) ;
 		}
 	}
 	// Invite someone off-list
-	KAction *b=new KAction( QIcon(), i18n ("&Other..."), m_actionInvite->parentCollection(), "actionOther" );
+	KAction *b = new KAction( i18n("&Other..."), m_actionInvite->parentCollection(), "actionOther" );
 	QObject::connect( b, SIGNAL( triggered( bool ) ),
 	                  this, SLOT( slotInviteOtherContact() ) );
-	m_actionInvite->insert( b );
+	m_actionInvite->addAction( b );
 	m_inviteActions.append( b ) ;
 }
 
@@ -340,8 +339,7 @@ void GroupWiseChatSession::slotInviteContact( Kopete::Contact * contact )
 		QRegExp rx( ".*" );
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
-				&ok, w ? w : Kopete::UI::Global::mainWidget(), "invitemessagedlg", &validator );
+		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(), &ok, w ? w : Kopete::UI::Global::mainWidget(), &validator );
 		if ( ok )
 		{
 			GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
@@ -368,7 +366,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		m_searchDlg->setCaption(i18n( "Search for Contact to Invite" ));
 		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
 		m_searchDlg->setDefaultButton(KDialog::Ok);
-		m_search = new GroupWiseContactSearch( account(), Q3ListView::Single, true, m_searchDlg, "invitesearchwidget" );
+		m_search = new GroupWiseContactSearch( account(), Q3ListView::Single, true, m_searchDlg );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
 		m_searchDlg->enableButtonOk( false );
@@ -389,8 +387,7 @@ void GroupWiseChatSession::slotSearchedForUsers()
 		QRegExp rx( ".*" );
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
-				&ok, w , "invitemessagedlg", &validator );
+		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(), &ok, w, &validator );
 		if ( ok )
 		{
 			account()->sendInvitation( m_guid, cd.dn, inviteMessage );
@@ -419,8 +416,8 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 	addContact( c );
 
 	// look for the invitee and remove it
-	Kopete::Contact * pending;
-	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
+	Kopete::Contact * pending = 0;
+	foreach( pending, m_invitees )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
@@ -430,6 +427,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 	}
 
 	m_invitees.remove( pending );
+	delete pending;
 
 	updateArchiving();
 
@@ -461,8 +459,8 @@ void GroupWiseChatSession::left( GroupWiseContact * c )
 void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 {
 	// look for the invitee and remove it
-	Kopete::Contact * pending;
-	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
+	Kopete::Contact * pending = 0;
+	foreach( pending, m_invitees )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
@@ -471,6 +469,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 		}
 	}
 	m_invitees.remove( pending );
+	delete pending;
 
 	QString from = c->metaContact()->displayName();
 
@@ -483,11 +482,9 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 void GroupWiseChatSession::updateArchiving()
 {
 	bool archiving = false;
-	Q3PtrListIterator< Kopete::Contact > it( members() );
-	GroupWiseContact * contact;
-	while ( ( contact = static_cast<GroupWiseContact*>( it.current() ) ) )
+	foreach( Kopete::Contact * c, members() )
 	{
-		++it;
+		GroupWiseContact * contact = static_cast<GroupWiseContact*>( c );
 		if ( contact->archiving() )
 		{
 			archiving = true;

@@ -2,6 +2,7 @@
     securestream.h - Kopete Groupwise Protocol
     Combines a ByteStream with TLS and SASL
   
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
@@ -21,7 +22,7 @@
 #ifndef SECURESTREAM_H
 #define SECURESTREAM_H
 
-#include<qca.h>
+#include <QtCrypto>
 //Added by qt3to4:
 #include <Q3ValueList>
 #include "tlshandler.h"

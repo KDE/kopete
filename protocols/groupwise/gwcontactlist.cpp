@@ -1,6 +1,7 @@
 /*
     gwcontactlist.cpp - Kopete GroupWise Protocol
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -36,94 +37,69 @@ GWFolder * GWContactList::addFolder( unsigned int id, unsigned int sequence, con
 
 GWContactInstance * GWContactList::addContactInstance( unsigned int id, unsigned int parent, unsigned int sequence, const QString & displayName, const QString & dn )
 {
-	QObjectList * l = queryList( "GWFolder", 0, false, true );
-	QObjectListIt it( *l ); // iterate over the buttons
-    QObject *obj;
 	GWContactInstance * contact = 0;
-    while ( (obj = it.current()) != 0 )
+    foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
 	{
-		GWFolder * folder = ::qt_cast< GWFolder * >( obj );
+		GWFolder * folder = qobject_cast< GWFolder * >( obj );
 		if ( folder && folder->id == parent )
 		{
 			contact = new GWContactInstance( folder, id, sequence, displayName, dn );
 			break;
 		}
-		++it;
 	}
-	delete l;
 	return contact;
 }
 
 GWFolder * GWContactList::findFolderById( unsigned int id )
 {
-	QObjectList * l = queryList( "GWFolder", 0, false, true );
-	QObjectListIt it( *l ); // iterate over the buttons
-    QObject *obj;
 	GWFolder * candidate, * folder = 0;
-    while ( (obj = it.current()) != 0 )
+	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
 	{
-		candidate = ::qt_cast< GWFolder * >( obj );
+		candidate = qobject_cast< GWFolder * >( obj );
 		if ( candidate->id == id )
 		{
 			folder = candidate;
 			break;
 		}
-		++it;
 	}
-	delete l;
 	return folder;
 }
 
 GWFolder * GWContactList::findFolderByName( const QString & displayName )
 {
-	QObjectList * l = queryList( "GWFolder", 0, false, true );
-	QObjectListIt it( *l ); // iterate over the buttons
-    QObject *obj;
 	GWFolder *  folder = 0;
-    while ( (obj = it.current()) != 0 )
+	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
 	{
-		GWFolder * candidate = ::qt_cast< GWFolder * >( obj );
+		GWFolder * candidate = qobject_cast< GWFolder * >( obj );
 		if ( candidate->displayName == displayName )
 		{
 			folder = candidate;
 			break;
 		}
-		++it;
 	}
-	delete l;
 	return folder;
 }
 
 int GWContactList::maxSequenceNumber()
 {
-	QObjectList * l = queryList( "GWFolder", 0, false, true );
-	QObjectListIt it( *l ); // iterate over the buttons
-	QObject *obj;
 	unsigned int sequence = 0;
-	while ( (obj = it.current()) != 0 )
+	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
 	{
-		GWFolder * current = ::qt_cast< GWFolder * >( obj );
+		GWFolder * current = qobject_cast< GWFolder * >( obj );
 		sequence = qMax( sequence, current->sequence );
-		++it;
 	}
-	delete l;
 	return sequence;
 }
 
 GWContactInstanceList GWContactList::instancesWithDn( const QString & dn )
 {
-	QObjectList * l = queryList( "GWContactInstance", 0, false, true );
-	QObjectListIt it( *l ); // iterate over the buttons
-	QObject *obj;
 	GWContactInstanceList matches;
-	while ( (obj = it.current()) != 0 )
+	foreach ( QObject *obj, queryList( "GWContactInstance", 0, false, true ) )
 	{
-		++it;
-		GWContactInstance * current = ::qt_cast<GWContactInstance *>( obj );
+		GWContactInstance * current = qobject_cast<GWContactInstance *>( obj );
 		if ( current->dn == dn )
 			matches.append( current );
 	}
-	delete l;
 	return matches;
 }
 
@@ -134,56 +110,35 @@ void GWContactList::removeInstance( GWContactListItem * instance )
 
 void GWContactList::removeInstanceById( unsigned int id )
 {
-	QObjectList * l = queryList( "GWContactInstance", 0, false, true );
-	QObjectListIt it( *l ); // iterate over the buttons
-	QObject *obj;
 	GWContactInstanceList matches;
-	while ( (obj = it.current()) != 0 )
+	foreach ( QObject *obj, queryList( "GWContactInstance", 0, false, true ) )
 	{
-		++it;
-		GWContactInstance * current = ::qt_cast<GWContactInstance *>( obj );
+		GWContactInstance * current = qobject_cast<GWContactInstance *>( obj );
 		if ( current->id == id )
 		{
 			delete current;
 			break;
 		}
 	}
-	delete l;
 }
 
 void GWContactList::dump()
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	const QObjectList * l = children();
-	if ( l && !l->isEmpty() )
+	foreach( QObject *obj, children() )
 	{
-		QObjectListIt it( *l ); // iterate over the buttons
-		QObject *obj;
-		while ( (obj = it.current()) != 0 )
-		{
-			GWFolder * folder = ::qt_cast< GWFolder * >( obj );
-			if ( folder )
-				folder->dump( 1 );
-			++it;
-		}
+		GWFolder * folder = qobject_cast< GWFolder * >( obj );
+		if ( folder )
+			folder->dump( 1 );
 	}
-	else
-		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "  contact list is empty." << endl;
 }
 
 void GWContactList::clear()
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	const QObjectList * l = children();
-	if ( l && !l->isEmpty() )
+	foreach ( QObject *obj, children() )
 	{
-		QObjectListIt it( *l );
-		QObject *obj;
-		while ( (obj = it.current()) != 0 )
-		{
-			delete obj;
-			++it;
-		}
+		delete obj;
 	}
 }
 
@@ -200,27 +155,18 @@ void GWFolder::dump( unsigned int depth )
 	QString s;
 	s.fill( ' ', ++depth * 2 );
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s <<"Folder " << displayName << " id: " << id << " contains: " << endl;
-	const QObjectList * l = children();
-	if ( l )
+	foreach ( QObject *obj, children() )
 	{
-		QObjectListIt it( *l ); // iterate over the buttons
-		QObject *obj;
-		while ( (obj = it.current()) != 0 )
+		GWContactInstance * instance = qobject_cast< GWContactInstance * >( obj );
+		if (instance)
+			instance->dump( depth );
+		else
 		{
-			++it;
-			GWContactInstance * instance = ::qt_cast< GWContactInstance * >( obj );
-			if (instance)
-				instance->dump( depth );
-			else
-			{
-				GWFolder * folder = ::qt_cast< GWFolder * >( obj );
-				if ( folder )
-					folder->dump( depth );
-			}
+			GWFolder * folder = qobject_cast< GWFolder * >( obj );
+			if ( folder )
+				folder->dump( depth );
 		}
 	}
-	else
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "  no contacts." << endl;
 }
 
 GWContactInstance::GWContactInstance( QObject * parent, unsigned int theId, unsigned int theSequence, const QString & theDisplayName, const QString & theDn ) :

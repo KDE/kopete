@@ -2,6 +2,7 @@
     Kopete GroupWise Protocol
     gweditaccountwidget.cpp - widget for adding or editing GroupWise accounts
 
+    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
@@ -23,8 +24,7 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -36,7 +36,7 @@
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
 
-#include "gwaccountpreferences.h"
+#include "ui_gwaccountpreferences.h"
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwprotocol.h"
@@ -47,9 +47,11 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 : QWidget( parent ), KopeteEditAccountWidget( theAccount )
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	m_layout = new Q3VBoxLayout( this );
-	m_preferencesDialog = new GroupWiseAccountPreferences( this );
-	m_layout->addWidget( m_preferencesDialog );
+	m_layout = new QVBoxLayout( this );
+	m_preferencesDialog = new Ui::GroupWiseAccountPreferences;
+	QWidget * wid = new QWidget;
+	m_preferencesDialog->setupUi( wid );
+	m_layout->addWidget( wid );
 	connect( m_preferencesDialog->m_password, SIGNAL( changed() ), this, SLOT( configChanged() ) );
 	connect( m_preferencesDialog->m_server, SIGNAL( textChanged( const QString & ) ), this, SLOT( configChanged() ) );
 	connect( m_preferencesDialog->m_port, SIGNAL( valueChanged( int ) ), this, SLOT( configChanged() ) );
@@ -89,9 +91,10 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
 	m_preferencesDialog->m_password->load( &account()->password() );
 	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );
-	m_preferencesDialog->m_port->setValue( account()->configGroup()->readEntry( "Port" ) );
+	
+	m_preferencesDialog->m_port->setValue( account()->configGroup()->readUnsignedNumEntry( "Port" ) );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->excludeConnect() );
-	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readEntry( "AlwaysAcceptInvitations" ) );
+	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readBoolEntry( "AlwaysAcceptInvitations" ) );
 }
 
 Kopete::Account* GroupWiseEditAccountWidget::apply()
