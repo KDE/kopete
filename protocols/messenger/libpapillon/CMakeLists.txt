@@ -1,4 +1,18 @@
 
+if(NOT PAPILLON_INSIDE_KOPETE)
+project(libpapillon)
+
+# search packages used by KDE (TODO: Use Qt only)
+find_package(KDE4 REQUIRED)
+find_package(QCA2 REQUIRED)
+include (KDE4Defaults)
+include (MacroLibrary)
+
+link_directories (${KDE4_LIB_DIR})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+
+endif(NOT PAPILLON_INSIDE_KOPETE)
+
 # Propagate includes to tests subdirs
 set(PAPILLON_INCLUDES 
 ${CMAKE_CURRENT_SOURCE_DIR}/include/

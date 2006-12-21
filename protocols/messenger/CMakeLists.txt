@@ -1,3 +1,4 @@
+set(PAPILLON_INSIDE_KOPETE TRUE)
 
 add_subdirectory( libpapillon ) 
 
