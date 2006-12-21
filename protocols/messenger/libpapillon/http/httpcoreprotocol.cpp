@@ -79,7 +79,7 @@ void HttpCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 		if ( parsedBytes < size )
 		{
 			// copy the unparsed bytes into a new qbytearray and replace d->in with that
-			QByteArray remainder( size - parsedBytes );
+			QByteArray remainder( size - parsedBytes, char(' ') );
 			memcpy( remainder.data(), d->in.data() + parsedBytes, remainder.size() );
 			d->in = remainder;
 		}
@@ -122,7 +122,7 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 	}
 	
 	QByteArray tempRaw = raw;
-	QDataStream din( &tempRaw, IO_ReadOnly );
+	QDataStream din( &tempRaw, QIODevice::ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
 	if ( okToProceed( din ) )
