@@ -1,5 +1,5 @@
 /*
-   contactlistmanager.cpp - Windows Live Messenger Contact List
+   contactlist.cpp - Windows Live Messenger Contact List
 
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
  */
-#include "Papillon/ContactListManager"
+#include "Papillon/ContactList"
 
 // Qt includes
 #include <QtXml/QDomDocument>
@@ -20,20 +20,20 @@
 namespace Papillon 
 {
 
-class ContactListManager::Private
+class ContactList::Private
 {
 public:
 	Private()
 	{}
 };
 
-ContactListManager::ContactListManager(QObject *parent)
+ContactList::ContactList(QObject *parent)
  : QObject(parent), d(new Private)
 {
 }
 
 
-ContactListManager::~ContactListManager()
+ContactList::~ContactList()
 {
 	delete d;
 }
@@ -41,4 +41,4 @@ ContactListManager::~ContactListManager()
 
 }
 
-#include "contactlistmanager.moc"
+#include "contactlist.moc"

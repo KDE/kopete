@@ -66,7 +66,7 @@ qtbytestream.cpp
 connection.cpp
 client.cpp
 mimeheader.cpp
-contactlistmanager.cpp
+contactlist.cpp
 contact.cpp
 papillonglobal.cpp
 papillonstatusmessage.cpp
