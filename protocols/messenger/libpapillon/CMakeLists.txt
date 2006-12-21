@@ -67,7 +67,7 @@ connection.cpp
 client.cpp
 mimeheader.cpp
 contactlistmanager.cpp
-contactinfo.cpp
+contact.cpp
 papillonglobal.cpp
 papillonstatusmessage.cpp
 )
