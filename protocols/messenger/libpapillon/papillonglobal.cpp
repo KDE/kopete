@@ -16,37 +16,39 @@
 
 namespace Papillon
 {
+namespace Global
+{
 
-QString statusToString(Papillon::OnlineStatus::Status status)
+QString presenceToString(Papillon::Presence::Status status)
 {
 	QString result;
 	switch(status)
 	{
-		case OnlineStatus::Away:
+		case Presence::Away:
 			result = QLatin1String("AWY");
 			break;
-		case OnlineStatus::BeRightBack:
+		case Presence::BeRightBack:
 			result = QLatin1String("BRB");
 			break;
-		case OnlineStatus::Busy:
+		case Presence::Busy:
 			result = QLatin1String("BSY");
 			break;
-		case OnlineStatus::Idle:
+		case Presence::Idle:
 			result = QLatin1String("IDL");
 			break;
-		case OnlineStatus::Invisible:
+		case Presence::Invisible:
 			result = QLatin1String("HDN");
 			break;
-		case OnlineStatus::Offline:
+		case Presence::Offline:
 			result = QLatin1String("FLN");
 			break;
-		case OnlineStatus::Online:
+		case Presence::Online:
 			result = QLatin1String("NLN");
 			break;
-		case OnlineStatus::OnThePhone:
+		case Presence::OnThePhone:
 			result = QLatin1String("PHN");
 			break;
-		case OnlineStatus::OutToLunch:
+		case Presence::OutToLunch:
 			result = QLatin1String("LUN");
 			break;
 	}
@@ -54,30 +56,31 @@ QString statusToString(Papillon::OnlineStatus::Status status)
 	return result;
 }
 
-Papillon::OnlineStatus::Status stringToStatus(const QString &status)
+Papillon::Presence::Status stringToPresence(const QString &status)
 {
-	Papillon::OnlineStatus::Status onlineStatus;
+	Papillon::Presence::Status presence;
 
 	if( status == QLatin1String("AWY") )
-		onlineStatus = OnlineStatus::Away;
+		presence = Presence::Away;
 	else if( status == QLatin1String("BRB") )
-		onlineStatus = OnlineStatus::BeRightBack;
+		presence = Presence::BeRightBack;
 	else if( status == QLatin1String("BSY") )
-		onlineStatus = OnlineStatus::Busy;
+		presence = Presence::Busy;
 	else if( status == QLatin1String("IDL") )
-		onlineStatus = OnlineStatus::Idle;
+		presence = Presence::Idle;
 	else if( status == QLatin1String("HDN") )
-		onlineStatus = OnlineStatus::Invisible;
+		presence = Presence::Invisible;
 	else if( status == QLatin1String("FLN") )
-		onlineStatus = OnlineStatus::Offline;
+		presence = Presence::Offline;
 	else if( status == QLatin1String("NLN") )
-		onlineStatus = OnlineStatus::Online;
+		presence = Presence::Online;
 	else if( status == QLatin1String("PHN") )
-		onlineStatus = OnlineStatus::OnThePhone;
+		presence = Presence::OnThePhone;
 	else if( status == QLatin1String("LUN") )
-		onlineStatus = OnlineStatus::OutToLunch;
+		presence = Presence::OutToLunch;
 
-	return onlineStatus;
+	return presence;
 }
 
-}
+} // Global
+} // Papillon

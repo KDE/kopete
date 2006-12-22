@@ -32,7 +32,7 @@ void StatusMessage_Test::testStatusMessageParsing()
 	QCOMPARE( statusMessage.message(), QString("Papillon::StatusMessage's test <>") );
 	
 	QVERIFY( statusMessage.currentMediaApplication().isEmpty() );
-	QCOMPARE( static_cast<int>(statusMessage.currentMediaType()), static_cast<int>(OnlineStatus::MediaMusic) );
+	QCOMPARE( static_cast<int>(statusMessage.currentMediaType()), static_cast<int>(Presence::MediaMusic) );
 	QVERIFY( statusMessage.isCurrentMediaEnabled() );
 	QCOMPARE( statusMessage.currentMediaFormatterString(), QString("{0} - {1}") );
 	QCOMPARE( statusMessage.formattedMediaString(), QString("Song Title - Song Artist") );
@@ -45,7 +45,7 @@ void StatusMessage_Test::testStatusMessageGeneration()
 	StatusMessage statusMessage("Papillon::StatusMessage's test <> test");
 	
 	statusMessage.setCurrentMediaApplication( QLatin1String("Amarok") );
-	statusMessage.setCurrentMediaType( OnlineStatus::MediaMusic );
+	statusMessage.setCurrentMediaType( Presence::MediaMusic );
 	statusMessage.setCurrentMediaFormatterString( QLatin1String("{0} - {1} ({2})") );
 	
 	QList<QVariant> args;

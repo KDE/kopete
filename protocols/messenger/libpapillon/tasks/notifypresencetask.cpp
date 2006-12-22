@@ -48,23 +48,23 @@ bool NotifyPresenceTask::take(Transfer *transfer)
 	if( forMe(transfer) )
 	{
 		QString contactId;
-		Papillon::OnlineStatus::Status newOnlineStatus;
+		Papillon::Presence::Status newPresence;
 
 		// ILN is initial presence and NLN normal presence change.
 		if( transfer->command() == QLatin1String("NLN") || transfer->command() == QLatin1String("ILN") )
 		{
-			newOnlineStatus = stringToStatus( transfer->arguments()[0] );
+			newPresence = Papillon::Global::stringToPresence( transfer->arguments()[0] );
 			contactId = transfer->arguments()[1];
 			// TODO: Handle nickname, features, MsnObject
 		}
 		// Contact went offline
 		else if( transfer->command() == QLatin1String("FLN") )
 		{
-			newOnlineStatus = OnlineStatus::Offline;
+			newPresence = Presence::Offline;
 			contactId = transfer->arguments()[0];
 		}
 
-		emit contactStatusChanged(contactId, newOnlineStatus);
+		emit contactPresenceChanged(contactId, newPresence);
 
 		return true;
 	}

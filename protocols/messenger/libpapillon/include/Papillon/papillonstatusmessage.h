@@ -49,7 +49,7 @@ namespace Papillon
  *   mediaArgs.append( musicData.value("artist") );
  * }
  *
- * mediaStatus.setCurrentMediaType( Papillon::OnlineStatus::MediaMusic );
+ * mediaStatus.setCurrentMediaType( Papillon::Presence::MediaMusic );
  * mediaStatus.setCurrentMediaFormatterString( formatterString );
  * mediaStatus.setCurrentMediaArguments( mediaArgs );
  * @endcode
@@ -124,7 +124,7 @@ public:
 	 * @see Papillon::OnlineStatus::MediaType for more details.
 	 * @param mediaType Current media type
 	 */
-	void setCurrentMediaType( Papillon::OnlineStatus::MediaType mediaType );
+	void setCurrentMediaType( Papillon::Presence::MediaType mediaType );
 	/**
 	 * @brief Set the formatter string. (required)
 	 *
@@ -162,7 +162,7 @@ public:
 	 * ignore all information about current media.
 	 * @return Current media type (MediaNone if no type is defined)
 	 */
-	Papillon::OnlineStatus::MediaType currentMediaType() const;
+	Papillon::Presence::MediaType currentMediaType() const;
 	/**
 	 * @brief Get the current media formatter string.
 	 *

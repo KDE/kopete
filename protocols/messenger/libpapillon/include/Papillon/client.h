@@ -48,13 +48,13 @@ Papillon::Client *client = new Client(new QtConnector(qObjectParent), qObjectPar
  *
  * @section Login Logging to Windows Live Messenger
  * After setting up the Client object, you must set some information before attemping to connect
- * like the passport identifier, the password and optionally the initial online status. You can
+ * like the passport identifier, the password and optionally the initial presence. You can
  * set a different server using setServer(). An example of login:
 @code
 connect(client, SIGNAL(connected()), this, SLOT(papillonConnected()));
 client->userContact()>setLoginInformation( "test@passport.com", "password" );
 client->setServer("messenger.hotmail.com", 1863);
-client->connectToServer( Papillon::OnlineStatus::Busy );
+client->connectToServer( Papillon::Presence::Busy );
 @endcode
  *
  * @author Michaël Larouche <larouche@kde.org>
@@ -125,11 +125,11 @@ signals:
 
 	// TODO: Move those signals in Contact class
 	/**
-	 * Emitted when a contact change his status
+	 * Emitted when a contact change his online presence
 	 * @param contactId Contact ID
-	 * @param status Contact's new online status.
+	 * @param presence Contact's new online presence
 	 */
-	void contactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+	void contactPresenceChanged(const QString &contactId, Papillon::Presence::Status presence);
 
 	/**
 	 * Emitted when a contact has updated his status message.
@@ -151,13 +151,13 @@ public slots:
 	/**
 	 * @brief Connect to Windows Live Messenger
 	 *
-	 * You can optionally pass the initial online status of the user contact.
+	 * You can optionally pass the initial presence of the user contact.
 	 *
 	 * You must set login information before calling this method. See @ref Login
 	 *
-	 * @param initialStatus Initial login status
+	 * @param initialPresence Initial presence at login
 	 */
-	void connectToServer(Papillon::OnlineStatus::Status initialStatus = Papillon::OnlineStatus::Online);
+	void connectToServer(Papillon::Presence::Status initialPresence = Papillon::Presence::Online);
 
 	// FIXME: Maybe remove login or put it in private section
 	/**
@@ -190,15 +190,15 @@ private slots:
 
 	/**
 	 * @internal
-	 * A contact status changed.
+	 * A contact's presence has changed.
 	 * @param contactId His contact ID
-	 * @param status His new online status.
+	 * @param presence His new presence.
 	 */
-	void slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+	void slotContactPresenceChanged(const QString &contactId, Papillon::Presence::Status presence);
 
 	/**
 	 * @internal
-	 * A contact status message changed.
+	 * A contact's status message has changed.
 	 * @param contactId His contact ID
 	 * @param newStatusMessage His new status message.
 	 */

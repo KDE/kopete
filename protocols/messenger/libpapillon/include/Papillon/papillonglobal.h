@@ -23,14 +23,23 @@
 
 namespace Papillon
 {
+namespace Global
+{
+/**
+ * @brief Convert a numeric presence to string.
+ * Handy function to get the string represention of Papillon::OnlineStatus.
+ * @param presence Presence enum value to convert to string
+ */
+QString PAPILLON_EXPORT presenceToString(Papillon::Presence::Status presence);
 
 /**
- * @brief Convert a numeric presence status to string.
- * Handly function to get the string represention of Papillon::OnlineStatus.
+ * @brief Convert a string presence to enum value
+ * Handy function to get the enum value representation of a string.
+ * @param presence Presence string to convert to enum value
  */
-QString PAPILLON_EXPORT statusToString(Papillon::OnlineStatus::Status status);
+Papillon::Presence::Status PAPILLON_EXPORT stringToPresence(const QString &presence);
 
-Papillon::OnlineStatus::Status PAPILLON_EXPORT stringToStatus(const QString &status);
+} // Global
+} // Papillon
 
-}
 #endif

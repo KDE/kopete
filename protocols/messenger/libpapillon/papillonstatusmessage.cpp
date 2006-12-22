@@ -30,7 +30,7 @@ class StatusMessage::Private : public QSharedData
 {
 public:
 	Private()
-	 : currentMediaEnabled(true), currentMediaType(Papillon::OnlineStatus::MediaNone)
+	 : currentMediaEnabled(true), currentMediaType(Papillon::Presence::MediaNone)
 	{}
 
 	QString plainMessage;
@@ -39,12 +39,12 @@ public:
 	
 	bool currentMediaEnabled;
 
-	Papillon::OnlineStatus::MediaType currentMediaType;
+	Papillon::Presence::MediaType currentMediaType;
 
 	QList<QVariant> arguments;
 
-	static QString mediaTypeToString(Papillon::OnlineStatus::MediaType);
-	static Papillon::OnlineStatus::MediaType mediaTypeFromString(const QString &media);
+	static QString mediaTypeToString(Papillon::Presence::MediaType);
+	static Papillon::Presence::MediaType mediaTypeFromString(const QString &media);
 };
 
 StatusMessage::StatusMessage()
@@ -78,7 +78,7 @@ void StatusMessage::clear()
 	d->formatterString.clear();
 	d->currentMediaEnabled = true;
 	d->application.clear();
-	d->currentMediaType = Papillon::OnlineStatus::MediaNone;
+	d->currentMediaType = Papillon::Presence::MediaNone;
 	d->arguments.clear();
 }
 
@@ -102,7 +102,7 @@ void StatusMessage::setCurrentMediaApplication(const QString &application)
 	d->application = application;
 }
 
-void StatusMessage::setCurrentMediaType(Papillon::OnlineStatus::MediaType type)
+void StatusMessage::setCurrentMediaType(Papillon::Presence::MediaType type)
 {
 	d->currentMediaType = type;
 }
@@ -127,7 +127,7 @@ QString StatusMessage::currentMediaApplication() const
 	return d->application;
 }
 
-Papillon::OnlineStatus::MediaType StatusMessage::currentMediaType() const
+Papillon::Presence::MediaType StatusMessage::currentMediaType() const
 {
 	return d->currentMediaType;
 }
@@ -242,7 +242,7 @@ QString StatusMessage::toXml() const
 	QString mediaString;
 
 	// Do nothing if current media type is None.
-	if( d->currentMediaType != Papillon::OnlineStatus::MediaNone )
+	if( d->currentMediaType != Papillon::Presence::MediaNone )
 	{
 		Q_ASSERT( !d->formatterString.isEmpty() );
 		Q_ASSERT( !d->arguments.isEmpty() );
@@ -271,18 +271,18 @@ QString StatusMessage::toXml() const
 	return smData.toString(0).replace("\n", "");
 }
 
-QString StatusMessage::Private::mediaTypeToString(Papillon::OnlineStatus::MediaType type)
+QString StatusMessage::Private::mediaTypeToString(Papillon::Presence::MediaType type)
 {
 	QString result;
 	switch(type)
 	{
-		case Papillon::OnlineStatus::MediaMusic:
+		case Papillon::Presence::MediaMusic:
 			result = QLatin1String("Music");
 			break;
-		case Papillon::OnlineStatus::MediaGames:
+		case Papillon::Presence::MediaGames:
 			result = QLatin1String("Games");
 			break;
-		case Papillon::OnlineStatus::MediaOffice:
+		case Papillon::Presence::MediaOffice:
 			result = QLatin1String("Office");
 			break;
 		default:
@@ -292,16 +292,16 @@ QString StatusMessage::Private::mediaTypeToString(Papillon::OnlineStatus::MediaT
 	return result;
 }
 
-Papillon::OnlineStatus::MediaType StatusMessage::Private::mediaTypeFromString(const QString &media)
+Papillon::Presence::MediaType StatusMessage::Private::mediaTypeFromString(const QString &media)
 {
-	Papillon::OnlineStatus::MediaType mediaType(Papillon::OnlineStatus::MediaNone);
+	Papillon::Presence::MediaType mediaType(Papillon::Presence::MediaNone);
 
 	if( media == QLatin1String("Music") )
-		mediaType = Papillon::OnlineStatus::MediaMusic;
+		mediaType = Papillon::Presence::MediaMusic;
 	else if( media == QLatin1String("Games") )
-		mediaType = Papillon::OnlineStatus::MediaGames;
+		mediaType = Papillon::Presence::MediaGames;
 	else if( media == QLatin1String("Office") )
-		mediaType = Papillon::OnlineStatus::MediaOffice;
+		mediaType = Papillon::Presence::MediaOffice;
 	
 	return mediaType;	
 }

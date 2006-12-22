@@ -35,7 +35,7 @@ public:
 	 : features(0)
 	{}
 
-	Papillon::OnlineStatus::Status onlineStatus;
+	Papillon::Presence::Status presence;
 	Papillon::ClientInfo::Features features;
 
 	// Keep track of the expected transaction ID.
@@ -52,9 +52,9 @@ SetPresenceTask::~SetPresenceTask()
 	delete d;
 }
 
-void SetPresenceTask::setOnlineStatus(Papillon::OnlineStatus::Status onlineStatus)
+void SetPresenceTask::setPresence(Papillon::Presence::Status presence)
 {
-	d->onlineStatus = onlineStatus;
+	d->presence = presence;
 }
 
 void SetPresenceTask::setClientFeatures(Papillon::ClientInfo::Features features)
@@ -84,15 +84,15 @@ void SetPresenceTask::onGo()
 	
 	// Set arguments
 	QStringList args;
-	// String representation of the online status
-	args << statusToString(d->onlineStatus);
+	// String representation of the presence
+	args << Papillon::Global::presenceToString(d->presence);
 	// Features that we support
 	args << QString::number( static_cast<int>(d->features) );
 	// TODO: Add MSNObject
 
 	setPresenceTransfer->setArguments( args );
 
-	qDebug() << PAPILLON_FUNCINFO << "Changing our own presence to:" << statusToString(d->onlineStatus);
+	qDebug() << PAPILLON_FUNCINFO << "Changing our own presence to:" << Papillon::Global::presenceToString(d->presence);
 
 	send(setPresenceTransfer);
 }

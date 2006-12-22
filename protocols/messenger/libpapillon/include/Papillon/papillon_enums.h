@@ -88,12 +88,12 @@ namespace Papillon
 	Q_DECLARE_OPERATORS_FOR_FLAGS( Papillon::ClientInfo::Features )
 
 	/**
-	 * @brief Enums related to OnlineStatus
+	 * @brief Enums related to online presence.
 	 */
-	struct OnlineStatus
+	struct Presence
 	{
 		/**
-		 * Types of online status.
+		 * Types of online presense.
 	 	 */
 		enum Status
 		{

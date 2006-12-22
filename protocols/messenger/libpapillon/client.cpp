@@ -116,10 +116,10 @@ Connection *Client::notificationConnection()
 	return d->notificationConnection;
 }
 
-void Client::connectToServer(Papillon::OnlineStatus::Status initialStatus)
+void Client::connectToServer(Papillon::Presence::Status initialPresence)
 {
-	// TODO: Make use of initial status.
-	Q_UNUSED(initialStatus);
+	// TODO: Make use of initial presence.
+	Q_UNUSED(initialPresence);
 
 	if( !d->notificationConnection )
 	{
@@ -145,19 +145,19 @@ void Client::initNotificationTasks()
 	if( !d->notifyMessageTask )
 	{
 		d->notifyMessageTask = new NotifyMessageTask( d->notificationConnection->rootTask() );
-		connect(d->notifyMessageTask, SIGNAL(profileMessage(const Papillon::MimeHeader &)), this, SLOT(gotInitalProfile(const Papillon::MimeHeader& )));
+		connect(d->notifyMessageTask, SIGNAL(profileMessage(Papillon::MimeHeader)), this, SLOT(gotInitalProfile(Papillon::MimeHeader)));
 	}
 
 	if( !d->notifyPresenceTask )
 	{
 		d->notifyPresenceTask = new NotifyPresenceTask( d->notificationConnection->rootTask() );
-		connect(d->notifyPresenceTask, SIGNAL(contactStatusChanged( const QString&, Papillon::OnlineStatus::Status )), this, SLOT(slotContactStatusChanged( const QString&, Papillon::OnlineStatus::Status )));
+		connect(d->notifyPresenceTask, SIGNAL(contactPresenceChanged(QString, Papillon::Presence::Status )), this, SLOT(slotContactPresenceChanged(QString, Papillon::Presence::Status )));
 	}
 
 	if( !d->notifyStatusMessageTask )
 	{
 		d->notifyStatusMessageTask = new NotifyStatusMessageTask( d->notificationConnection->rootTask() );
-		connect(d->notifyStatusMessageTask, SIGNAL(contactStatusMessageChanged(const QString &, const Papillon::StatusMessage &)), this, SLOT(slotContactStatusMessageChanged(const QString &, const Papillon::StatusMessage &)));
+		connect(d->notifyStatusMessageTask, SIGNAL(contactStatusMessageChanged(QString, Papillon::StatusMessage)), this, SLOT(slotContactStatusMessageChanged(QString, Papillon::StatusMessage)));
 	}
 }
 
@@ -170,7 +170,7 @@ void Client::login()
 	}
 
 	d->loginTask = new LoginTask(d->notificationConnection->rootTask());
-	connect(d->loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(loginRedirect( const QString&, quint16 )));
+	connect(d->loginTask, SIGNAL(redirection(QString, quint16)), this, SLOT(loginRedirect(QString, quint16 )));
 	connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
 	d->loginTask->go(Task::AutoDelete);
 }
@@ -200,9 +200,9 @@ void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
 	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << passportAuthTicket;
 }
 
-void Client::slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status)
+void Client::slotContactPresenceChanged(const QString &contactId, Papillon::Presence::Status presence)
 {
-	emit contactStatusChanged(contactId, status);
+	emit contactPresenceChanged(contactId, presence);
 }
 
 void Client::slotContactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage)

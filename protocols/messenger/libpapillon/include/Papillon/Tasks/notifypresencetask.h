@@ -54,11 +54,11 @@ public:
 signals:
 	// TODO: Maybe add nickname, features and MsnObject to this signal
 	/**
-	 * @brief A contact status has changed.
+	 * @brief A contact has changed his online presence.
 	 * @param contactId the contact ID.
-	 * @param status new online status of the contact.
+	 * @param presence new online presence for this contact
 	 */
-	void contactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status);
+	void contactPresenceChanged(const QString &contactId, Papillon::Presence::Status presence);
 
 protected:
 	/**

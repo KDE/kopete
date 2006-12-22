@@ -77,10 +77,10 @@ QString UserContact::loginCookie() const
 	return d->loginCookie;
 }
 
-void UserContact::setOnlineStatus(Papillon::OnlineStatus::Status newStatus)
+void UserContact::setPresence(Papillon::Presence::Status newPresence)
 {
 	SetPresenceTask *presenceTask = new SetPresenceTask( client()->notificationConnection()->rootTask() );
-	presenceTask->setOnlineStatus( newStatus );
+	presenceTask->setPresence( newPresence );
 	// TODO: Set client features
 	// TODO: Do something about MsnObject
 	

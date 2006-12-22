@@ -78,10 +78,10 @@ public:
 
 public slots:
 	/**
-	 * @brief Change online status
-	 * @param newStatus New online status
+	 * @brief Change online presence
+	 * @param newPresence New presence
 	 */
-	void setOnlineStatus(Papillon::OnlineStatus::Status newStatus);
+	void setPresence(Papillon::Presence::Status newPresence);
 
 	/**
 	 * @brief Set a new personal status message.

@@ -27,7 +27,7 @@ namespace Papillon
  * 
  * @code
  * Papillon::SetPresenceTask *presenceTask = new Papillon::SetPresenceTask(connection->rootTask());
- * presenceTask->setOnlineStatus( Papillon::OnlineStatus::Online );
+ * presenceTask->setPresence( Papillon::Presence::Online );
  * presenceTask->setClientFeatures(...); // Optional
  * presenceTask->setMsnObject( msnObject.toString() ); // Optional
  * connect(presenceTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(slotPresenceSent(Papillon::Task*)));
@@ -55,7 +55,7 @@ public:
 	 * @brief Give the online status to be set on server.
 	 * @param onlineStatus online status to set.
 	 */
-	void setOnlineStatus( Papillon::OnlineStatus::Status onlineStatus );
+	void setPresence( Papillon::Presence::Status onlineStatus );
 
 	/**
 	 * @brief Set our features.
