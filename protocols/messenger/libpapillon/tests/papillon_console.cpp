@@ -36,6 +36,7 @@
 #include "Papillon/QtConnector"
 #include "Papillon/Transfer"
 #include "Papillon/Http/SecureStream"
+#include "Papillon/UserContact"
 
 // Little hack to access writeCommand method in Client
 #define private public
@@ -201,8 +202,8 @@ void PapillonConsole::buttonConnectClicked()
 		password = d->settings->value( QLatin1String("password") ).toString();
 	}
 
-	d->client->setClientInfo( passportId, password );
-	d->client->connectToServer( QLatin1String("messenger.hotmail.com"), 1863 );
+	d->client->userContact()->setLoginInformation( passportId, password );
+	d->client->connectToServer();
 }
 
 void PapillonConsole::buttonTestSOAP()
@@ -258,7 +259,7 @@ void PapillonConsole::streamConnected()
 "Host: omega.contacts.msn.com\r\n"
 "Content-Length: %2\r\n"
 "\r\n"
-).arg( d->client->passportAuthTicket() ).arg( soapData.size() ).toUtf8();
+).arg( d->client->userContact()->loginCookie() ).arg( soapData.size() ).toUtf8();
 
 	QByteArray soapRequest;
 	soapRequest = soapHeader + soapData;

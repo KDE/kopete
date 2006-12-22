@@ -45,9 +45,11 @@ papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/setstatusmessag
 # Papillon
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/client.h ${CMAKE_CURRENT_SOURCE_DIR}/client.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/connection.h ${CMAKE_CURRENT_SOURCE_DIR}/connection.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/contact.h ${CMAKE_CURRENT_SOURCE_DIR}/contact.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/contactlist.h ${CMAKE_CURRENT_SOURCE_DIR}/contactlist.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/messengercoreprotocol.h ${CMAKE_CURRENT_SOURCE_DIR}/messengercoreprotocol.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/papillonclientstream.h ${CMAKE_CURRENT_SOURCE_DIR}/papillonclientstream.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/qtbytestream.h ${CMAKE_CURRENT_SOURCE_DIR}/qtbytestream.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/qtconnector.h ${CMAKE_CURRENT_SOURCE_DIR}/qtconnector.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/task.h ${CMAKE_CURRENT_SOURCE_DIR}/task.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/usercontact.h ${CMAKE_CURRENT_SOURCE_DIR}/usercontact.cpp )

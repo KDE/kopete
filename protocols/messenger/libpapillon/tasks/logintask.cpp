@@ -24,6 +24,7 @@
 #include "Papillon/Connection"
 #include "Papillon/Http/TweenerHandler"
 #include "Papillon/Client"
+#include "Papillon/UserContact"
 
 namespace Papillon 
 {
@@ -34,10 +35,6 @@ public:
 	Private()
 	 : currentState(LoginTask::StateVersion)
 	{}
-
-	QString passportId;
-	// TODO: Use QSecureArray
-	QString password;
 
 	LoginTask::LoginState currentState;
 
@@ -55,12 +52,6 @@ LoginTask::LoginTask(Task *parent)
 LoginTask::~LoginTask()
 {
 	delete d;
-}
-
-void LoginTask::setUserInfo(const QString &passportId, const QString &password)
-{
-	d->passportId = passportId;
-	d->password = password;
 }
 
 LoginTask::LoginState LoginTask::loginState() const
@@ -105,7 +96,7 @@ bool LoginTask::take(Transfer *transfer)
 
 						QString tweener = transfer->arguments()[2];
 						TweenerHandler *tweenerHandler = new TweenerHandler( connection()->client()->createSecureStream() );
-						tweenerHandler->setLoginInformation(tweener, d->passportId, d->password);
+						tweenerHandler->setLoginInformation(tweener, passportId(), password());
 						connect(tweenerHandler, SIGNAL(result( TweenerHandler* )), this, SLOT(ticketReceived( TweenerHandler* )));
 						tweenerHandler->start();
 
@@ -162,9 +153,6 @@ bool LoginTask::forMe(Transfer *transfer)
 // TODO: Send VER, CVR, USR I at the same time
 void LoginTask::onGo()
 {
-	Q_ASSERT(!d->passportId.isEmpty());
-	Q_ASSERT(!d->password.isEmpty());
-
 	qDebug() << PAPILLON_FUNCINFO << "Begin login process...";
 
 	sendVersionCommand();
@@ -193,7 +181,7 @@ void LoginTask::sendCvrCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	cvrTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %1").arg(d->passportId);
+	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %1").arg( passportId() );
 	cvrTransfer->setArguments(arguments);
 
 	send(cvrTransfer);
@@ -208,7 +196,7 @@ void LoginTask::sendTweenerInviteCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	twnTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("TWN I %1").arg(d->passportId);
+	QString arguments = QString("TWN I %1").arg( passportId() );
 	twnTransfer->setArguments(arguments);
 
 	send(twnTransfer);
@@ -244,6 +232,17 @@ void LoginTask::ticketReceived(TweenerHandler *tweenerHandler)
 		setError();
 	}
 }
+
+QString LoginTask::passportId() const
+{
+	return connection()->client()->userContact()->passportId();
+}
+
+QString LoginTask::password() const
+{
+	return connection()->client()->userContact()->password();
+}
+
 }
 
 #include "logintask.moc"

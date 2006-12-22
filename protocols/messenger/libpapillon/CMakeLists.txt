@@ -70,6 +70,7 @@ contactlist.cpp
 contact.cpp
 papillonglobal.cpp
 papillonstatusmessage.cpp
+usercontact.cpp
 )
 
 kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})

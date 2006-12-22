@@ -35,8 +35,8 @@ public:
 	QString displayName;
 };
 
-Contact::Contact()
- : d(new Private)
+Contact::Contact(QObject *parent)
+ : QObject(parent), d(new Private)
 {}
 
 Contact::~Contact()
@@ -91,3 +91,5 @@ void Contact::setDisplayName(const QString &displayName)
 
 
 }
+
+#include "contact.moc"

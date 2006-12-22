@@ -30,15 +30,32 @@ class Transfer;
 class MimeHeader;
 class StatusMessage;
 class ContactList;
+class UserContact;
 
 // TODO APIDOX, add a reference about connector model.
 /**
  * @brief Client to Windows Live Messenger service.
+ *
  * This is the main interface between the client application (ex: Kopete, telepathy-papillon, etc.) and
  * the Windows Live Messenger service.
  *
- * Papillon::Client need a valid Papillon::Connector objet to be used.
- * Set the client info with setClientInfo() before attempt to connect to Windows Live Messenger service.
+ * @section Setup Setting up Client object
+ * First of all, you must initialize a Connector object. A Connector object is a abstract representation of a socket.
+ * For convience, libpapillon include a QtConnector object, like the follwing example:
+@code
+Papillon::Client *client = new Client(new QtConnector(qObjectParent), qObjectParent);
+@endcode
+ *
+ * @section Login Logging to Windows Live Messenger
+ * After setting up the Client object, you must set some information before attemping to connect
+ * like the passport identifier, the password and optionally the initial online status. You can
+ * set a different server using setServer(). An example of login:
+@code
+connect(client, SIGNAL(connected()), this, SLOT(papillonConnected()));
+client->userContact()>setLoginInformation( "test@passport.com", "password" );
+client->setServer("messenger.hotmail.com", 1863);
+client->connectToServer( Papillon::OnlineStatus::Busy );
+@endcode
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -73,20 +90,10 @@ public:
 	Connection *createConnection();
 
 	/**
-	 * @brief Set client Info
-	 * @param passportId Client Passport ID
-	 * @param password Client password.
-	 * TODO: Use a ClientInfo data class.
-	 * TODO: Use QSecureArray for password.
+	 * @brief Get the user contact.
+	 * @return UserContact instance for this Client.
 	 */
-	void setClientInfo(const QString &passportId, const QString &password);
-
-	/**
-	 * @brief Get the Passport auth ticket.
-	 * This is used to identity us when doing SOAP requests.
-	 * @return the Passport auth ticket.
-	 */
-	QString passportAuthTicket() const;
+	UserContact *userContact();
 
 	/**
 	 * @brief Get the contact list instance.
@@ -97,6 +104,14 @@ public:
 	 * @return the ContactList instance.
 	 */
 	ContactList *contactList();
+
+	/**
+	 * @brief Get the current connection to Notification server (NS)
+	 *
+	 * Use its rootTask when creating tasks for the notification server yourself.
+	 * @return Notification server Connection instance.
+	 */
+	Connection *notificationConnection();
 
 signals:
 	/**
@@ -124,46 +139,33 @@ signals:
 	void contactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
 
 public slots:
-	// FIXME: Maybe merge connectToServer and setInitialOnlineStatus
-	// FIXME: Maybe remove login or put it in private section
+	/**
+	 * @brief Set an alternative login server.
+	 *
+	 * Use this method if you want to change the default server.
+	 * @param server Alternative server IP address or domain name.
+	 * @param port Alternative server TCP port.
+	 */
+	void setServer(const QString &server, quint16 port);
+
 	/**
 	 * @brief Connect to Windows Live Messenger
-	 * If no arguments are passed, it use the default server and port used by
-	 * Windows Live Messenger official client.
-	 * Note that it doesn't login to the server. it just connects.
-	 * @param server The Windows Live Messenger server, if you want to override it.
-	 * @param port the Windows Live Messenger server port, if you want to override it.
+	 *
+	 * You can optionally pass the initial online status of the user contact.
+	 *
+	 * You must set login information before calling this method. See @ref Login
+	 *
+	 * @param initialStatus Initial login status
 	 */
-	void connectToServer(const QString &server = QString(), quint16 port = 0);
+	void connectToServer(Papillon::OnlineStatus::Status initialStatus = Papillon::OnlineStatus::Online);
+
+	// FIXME: Maybe remove login or put it in private section
 	/**
 	 * @brief Start the login process.
 	 * Make sure that you setup client information with setClientInfo()
 	 */
 	void login();
-
-	/**
-	 * @brief Set the initial online status.
-	 * This is the first online status that will be set on server.
-	 *
-	 * @param status the initial online status
-	 */
-	void setInitialOnlineStatus(Papillon::OnlineStatus::Status status);
 	
-	// TODO: Move these methods to ClientInfo or UserContact
-	/**
-	 * @brief Change our current online status
-	 * @param status Given online status
-	 */
-	void changeOnlineStatus(Papillon::OnlineStatus::Status status);
-
-	/**
-	 * @brief Set the personal information to be updated on server.
-	 * @param type The type of the personal information it need to update on server.
-	 * @param value New value for the given personal information. Set an empty string to reset the value.
-	 */
-	void setPersonalInformation(Papillon::ClientInfo::PersonalInformation type, const QString &value);
-
-// Slots from tasks
 //BEGIN Private Task slots
 private slots:
 	/**

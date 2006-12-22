@@ -28,14 +28,13 @@
 #include "Papillon/Transfer"
 #include "Papillon/MimeHeader"
 #include "Papillon/ContactList"
+#include "Papillon/UserContact"
 
 // Papillon tasks
 #include "Papillon/Tasks/LoginTask"
 #include "Papillon/Tasks/NotifyMessageTask"
 #include "Papillon/Tasks/NotifyPresenceTask"
 #include "Papillon/Tasks/NotifyStatusMessageTask"
-#include "Papillon/Tasks/SetPresenceTask"
-#include "Papillon/Tasks/SetPersonalInformationTask"
 
 namespace Papillon
 {
@@ -45,7 +44,7 @@ class Client::Private
 public:
 	Private()
 	 : connector(0), notificationConnection(0),
-	   server( QLatin1String("messenger.hotmail.com") ), port(1863), contactList(0),
+	   server( QLatin1String("messenger.hotmail.com") ), port(1863), contactList(0), userContact(0),
 	   loginTask(0), notifyMessageTask(0), notifyPresenceTask(0), notifyStatusMessageTask(0)
 	{}
 
@@ -62,6 +61,7 @@ public:
 	QCA::Initializer qcaInit;
 
 	ContactList *contactList;
+	UserContact *userContact;
 
 	// All the tasks
 	LoginTask *loginTask;
@@ -75,6 +75,7 @@ Client::Client(Connector *connector, QObject *parent)
 {
 	d->connector = connector;
 	d->contactList = new ContactList(this);
+	d->userContact = new UserContact(this);
 }
 
 Client::~Client()
@@ -105,12 +106,20 @@ ContactList *Client::contactList()
 	return d->contactList;
 }
 
-void Client::connectToServer(const QString &server, quint16 port)
+UserContact *Client::userContact()
 {
-	if( !server.isEmpty() )
-		d->server = server;
-	if( port != 0 )
-		d->port = port;
+	return d->userContact;
+}
+
+Connection *Client::notificationConnection()
+{
+	return d->notificationConnection;
+}
+
+void Client::connectToServer(Papillon::OnlineStatus::Status initialStatus)
+{
+	// TODO: Make use of initial status.
+	Q_UNUSED(initialStatus);
 
 	if( !d->notificationConnection )
 	{
@@ -122,10 +131,13 @@ void Client::connectToServer(const QString &server, quint16 port)
 	d->notificationConnection->connectToServer(d->server, d->port);
 }
 
-void Client::setClientInfo(const QString &passportId, const QString &password)
+void Client::setServer(const QString &server, quint16 port)
 {
-	d->passportId = passportId;
-	d->password = password;
+	// Don't override the default or another alternative server with an empty server.
+	if( !server.isEmpty() )
+		d->server = server;
+	if( port != 0 )
+		d->port = port;
 }
 
 void Client::initNotificationTasks()
@@ -158,34 +170,9 @@ void Client::login()
 	}
 
 	d->loginTask = new LoginTask(d->notificationConnection->rootTask());
-	d->loginTask->setUserInfo(d->passportId, d->password);
 	connect(d->loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(loginRedirect( const QString&, quint16 )));
 	connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
 	d->loginTask->go(Task::AutoDelete);
-}
-
-void Client::setInitialOnlineStatus(Papillon::OnlineStatus::Status status)
-{
-	// TODO:
-	Q_UNUSED(status);
-}
-
-void Client::changeOnlineStatus(Papillon::OnlineStatus::Status status)
-{
-	SetPresenceTask *presenceTask = new SetPresenceTask(d->notificationConnection->rootTask());
-	presenceTask->setOnlineStatus( status );
-	// TODO: Set client features
-	// TODO: Do something about MsnObject
-	
-	presenceTask->go(Task::AutoDelete);
-}
-
-void Client::setPersonalInformation(Papillon::ClientInfo::PersonalInformation type, const QString &value)
-{
-	SetPersonalInformationTask *setInfo = new SetPersonalInformationTask( d->notificationConnection->rootTask() );
-	setInfo->setPersonalInformation(type, value);
-
-	setInfo->go(Task::AutoDelete);
 }
 
 void Client::loginRedirect(const QString &server, quint16 port)
@@ -201,14 +188,16 @@ void Client::loginRedirect(const QString &server, quint16 port)
 
 void Client::loginResult(Papillon::Task *task)
 {
-
+	Q_UNUSED(task);
 }
 
 void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
 {
-	d->passportAuthTicket = profileMessage.value( QLatin1String("MSPAuth") ).toString();
+	QString passportAuthTicket = profileMessage.value( QLatin1String("MSPAuth") ).toString();
 
-	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << d->passportAuthTicket;
+	userContact()->setLoginCookie( passportAuthTicket );
+
+	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << passportAuthTicket;
 }
 
 void Client::slotContactStatusChanged(const QString &contactId, Papillon::OnlineStatus::Status status)
@@ -219,11 +208,6 @@ void Client::slotContactStatusChanged(const QString &contactId, Papillon::Online
 void Client::slotContactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage)
 {
 	emit contactStatusMessageChanged(contactId, newStatusMessage);
-}
-
-QString Client::passportAuthTicket() const
-{
-	return d->passportAuthTicket;
 }
 
 void Client::writeCommand(Transfer *command)

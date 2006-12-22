@@ -18,6 +18,8 @@
 #include <Papillon/Macros>
 #include <Papillon/Enums>
 
+#include <QtCore/QObject>
+
 class QStringList;
 class QDomElement;
 
@@ -30,13 +32,14 @@ namespace Papillon
  * This is managed by ContactListManager.
  *
  */
-class PAPILLON_EXPORT Contact
+class PAPILLON_EXPORT Contact : public QObject
 {
+	Q_OBJECT
 public:
 	/**
 	 * @brief Create an empty Contact.
 	 */
-	Contact();
+	Contact(QObject *parent = 0);
 	/**
 	 * d-tor
 	 */

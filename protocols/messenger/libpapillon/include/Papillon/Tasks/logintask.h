@@ -26,10 +26,9 @@ class TweenerHandler;
 /**
  * Login on Windows Live Messenger.
  *
- * First you create the Login Task, you must set the user info.
+ * First you create the Login Task after you set login information in the Client.
  * @code
  * LoginTask *login = new LoginTask( connection->rootTask() );
- * login->setUserInfo("example@passport.com", "password");
  * connect(login, SIGNAL(finished(Papillon::Task*)), ...);
  * connect(login, SIGNAL(redirection(const QString &, quint16)), ...);
  * login->go();
@@ -90,14 +89,6 @@ public:
 	virtual ~LoginTask();
 
 	/**
-	 * Set the user info to log with.
-	 * @param passportId passport id to log with.
-	 * @param password user password.
-	 * TODO: Use a QSecureArray to pass the password.
-	 */
-	void setUserInfo(const QString &passportId, const QString &password);
-
-	/**
 	 * Inherited from Task.
 	 * Proceed the given transfer according to the current LoginState.
 	 * Move to the next login step if required.
@@ -139,6 +130,18 @@ private slots:
 	void sendTweenerInviteCommand();
 	void sendTweenerConfirmation();
 	void ticketReceived(TweenerHandler *tweenerHandler);
+
+private:
+	/**
+	 * @internal
+	 * Get the passport id from Client's UserContact.
+	 */
+	QString passportId() const;
+	/**
+	 * @internal
+	 * Get the password from Client's UserContact.
+	 */
+	QString password() const;
 
 private:
 	class Private;

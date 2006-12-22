@@ -23,6 +23,7 @@
 #include "Papillon/Tasks/LoginTask"
 #include "Papillon/QtConnector"
 #include "Papillon/Client"
+#include "Papillon/UserContact"
 
 using namespace Papillon;
 
@@ -34,7 +35,6 @@ FakeConnection::FakeConnection(Papillon::ClientStream *stream)
 void FakeConnection::start()
 {
 	m_loginTask = new LoginTask( rootTask() );
-	m_loginTask->setUserInfo("ljlkjwerklwjerwlek@mwerewerty.org", "h4x0rl33t");
 	connect(m_loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(redirect(const QString &, quint16)));
 	connect(m_loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginTaskFinished(Papillon::Task *)));
 	
@@ -65,10 +65,12 @@ void FakeConnection::redirect(const QString &newServer, quint16 newPort)
 void Connection_Test::testConnection()
 {
 	Client *client = new Client(new QtConnector(this), this);
+	client->userContact()->setLoginInformation("ljlkjwerklwjerwlek@mwerewerty.org", "h4x0rl33t");
+
 	ClientStream *stream = new ClientStream(new QtConnector(this), this);
 	m_connection = new FakeConnection(stream);
-	m_connection->connectToServer("messenger.hotmail.com", 1863);
 	m_connection->setClient(client);
+	m_connection->connectToServer("messenger.hotmail.com", 1863);
 
 	connect(m_connection, SIGNAL(connected()), m_connection, SLOT(start()));
 	connect(m_connection, SIGNAL(loginFinished(Papillon::LoginTask*)), this, SLOT(slotLoginFinished()));;
