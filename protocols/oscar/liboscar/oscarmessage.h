@@ -32,12 +32,39 @@ class QTextCodec;
 namespace Oscar
 {
 
+	class MessagePlugin;
+
 /**
  * This class is responsible for holding all the details
  * of a message and includes the following:
  * \li channel ( type )
  * \li encoding
  */
+
+namespace MessageType
+{
+	enum {
+		Unknown      = 0x00, // Unknown
+		Plain        = 0x01, // Plain text (simple) message
+		Chat         = 0x02, // Chat request message
+		File         = 0x03, // File request / file ok message
+		Url          = 0x04, // URL message (0xFE formatted)
+		AuthRequest  = 0x06, // Authorization request message (0xFE formatted)
+		AuthDeny     = 0x07, // Authorization denied message (0xFE formatted)
+		AuthGranted  = 0x08, // Authorization given message (empty)
+		Server       = 0x09, // Message from OSCAR server (0xFE formatted)
+		Added        = 0x0C, // "You-were-added" message (0xFE formatted)
+		WebPager     = 0x0D, // Web pager message (0xFE formatted)
+		EmailExpress = 0x0E, // Email express message (0xFE formatted)
+		ContactList  = 0x13, // Contact list message
+		Plugin       = 0x1A, // Plugin message described by text string
+		AutoAway     = 0xE8, // Auto away message
+		AutoBusy     = 0xE9, // Auto occupied message
+		AutoNA       = 0xEA, // Auto not available message
+		AutoDND      = 0xEB, // Auto do not disturb message
+		AutoFFC      = 0xEC  // Auto free for chat message
+	};
+}
 
 class KOPETE_EXPORT Message
 {
@@ -63,6 +90,8 @@ public:
 
 	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
 	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
+
+	~Message();
 
 	/** Get the sender of the message */
 	QString sender() const;
@@ -184,6 +213,12 @@ public:
 	/** set the message encoding */
 	void setEncoding( Encoding newEncoding );
 
+	/** get the message plugin */
+	const MessagePlugin* plugin() const;
+
+	/** set the message plugin */
+	void setPlugin( MessagePlugin* plugin );
+
 	operator bool() const;
 
 private:
@@ -207,6 +242,7 @@ private:
 	Encoding m_encoding;
 	QString m_fileName;
 	DWORD m_fileSize;
+	MessagePlugin* m_plugin;
 };
 
 }

@@ -286,6 +286,20 @@ QByteArray Buffer::getLEBlock(WORD len)
 	return ch;
 }
 
+int Buffer::addTLV32(const WORD type, const DWORD data)
+{
+	addWord(type);
+	addWord(0x0004); //4 bytes long
+	return addDWord(data);
+}
+
+int Buffer::addLETLV32(const WORD type, const DWORD data)
+{
+	addLEWord(type);
+	addLEWord(0x0004); //4 bytes long
+	return addLEDWord(data);
+}
+
 int Buffer::addTLV16(const WORD type, const WORD data)
 {
 	addWord(type);

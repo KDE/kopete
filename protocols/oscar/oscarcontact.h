@@ -92,6 +92,11 @@ public:
 	 */
 	QTextCodec *contactCodec() const;
 
+	/**
+	 * Returns true if contact has this capability
+	 */
+	bool hasCap( int capNumber ) const;
+
 	virtual QString sanitizedMessage( const QString& message ) = 0;
 
 public slots:

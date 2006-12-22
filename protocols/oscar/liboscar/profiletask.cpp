@@ -101,8 +101,10 @@ void ProfileTask::sendProfileUpdate()
 		if ( client()->isIcq() )
 		{
 			capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
-			capBuf.addGuid( oscar_caps[CAP_ISICQ] ); // I think this is an icq client, but maybe I'm wrong
-			//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
+			capBuf.addGuid( oscar_caps[CAP_DIRECT_ICQ_COMMUNICATION] ); // we support direct communication
+			//capBuf.addGuid( oscar_caps[CAP_RTFMSGS] ); // we do incoming RTF messages
+			capBuf.addGuid( oscar_caps[CAP_NEWCAPS] ); // we understand the new format of caps (xtra status)
+			//capBuf.addGuid( oscar_caps[CAP_XTRAZ] ); // we support xtraz
 		}
 		else
 		{

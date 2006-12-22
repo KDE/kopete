@@ -895,19 +895,19 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 	switch ( contactStatus )
 	{
 	case ICQAway:
-		msg.setMessageType( 0xE8 ); // away
+		msg.setMessageType( Oscar::MessageType::AutoAway ); // away
 		break;
 	case ICQOccupied:
-		msg.setMessageType( 0xE9 ); // occupied
+		msg.setMessageType( Oscar::MessageType::AutoBusy ); // occupied
 		break;
 	case ICQNotAvailable:
-		msg.setMessageType( 0xEA ); // not awailable
+		msg.setMessageType( Oscar::MessageType::AutoNA ); // not awailable
 		break;
 	case ICQDoNotDisturb:
-		msg.setMessageType( 0xEB ); // do not disturb
+		msg.setMessageType( Oscar::MessageType::AutoDND ); // do not disturb
 		break;
 	case ICQFreeForChat:
-		msg.setMessageType( 0xEC ); // free for chat
+		msg.setMessageType( Oscar::MessageType::AutoFFC ); // free for chat
 		break;
 	default:
 		// may be a good way to deal with possible error and lack of online status message?

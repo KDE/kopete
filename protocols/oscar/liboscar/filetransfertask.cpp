@@ -959,7 +959,7 @@ void FileTransferTask::sendReq()
 Oscar::Message FileTransferTask::makeFTMsg()
 {
 	Oscar::Message msg;
-	msg.setMessageType( 3 ); //filetransfer
+	msg.setMessageType( Oscar::MessageType::File );
 	msg.setChannel( 2 ); //rendezvous
 	msg.setIcbmCookie( m_oft.cookie );
 	msg.setReceiver( m_contactName );

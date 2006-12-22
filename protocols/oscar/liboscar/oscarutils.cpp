@@ -189,8 +189,8 @@ const QString Oscar::capName( int capNumber )
 	case CAP_SENDBUDDYLIST:
 		capString = "CAP_SENDBUDDYLIST ";
 		break;
-	case CAP_ISICQ:
-		capString = "CAP_ISICQ ";
+	case CAP_DIRECT_ICQ_COMMUNICATION:
+		capString = "CAP_DIRECT_ICQ_COMMUNICATION ";
 		break;
 	case CAP_APINFO:
 		capString = "CAP_APINFO ";
@@ -242,6 +242,24 @@ const QString Oscar::capName( int capNumber )
 		break;
 	case CAP_STR_2002:
 		capString = "CAP_STR_2002 ";
+		break;
+	case CAP_XTRAZ_MULTIUSER_CHAT:
+		capString = "CAP_XTRAZ_MULTIUSER_CHAT ";
+		break;
+	case CAP_DEVILS:
+		capString = "CAP_DEVILS ";
+		break;
+	case CAP_NEWCAPS:
+		capString = "CAP_NEWCAPS ";
+		break;
+	case CAP_UNKNOWN1:
+		capString = "CAP_UNKNOWN1 ";
+		break;
+	case CAP_UNKNOWN2:
+		capString = "CAP_UNKNOWN2 ";
+		break;
+	case CAP_UNKNOWN3:
+		capString = "CAP_UNKNOWN3 ";
 		break;
 	default:
 		capString = "UNKNOWN CAP ";

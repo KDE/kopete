@@ -46,6 +46,7 @@ private:
 	void addChannel2Data( Buffer* b );
 	void addChannel4Data( Buffer* b );
 	void addRendezvousMessageData( Buffer* b );
+	void addPluginData( Buffer* b );
 
 private:
 	Oscar::Message m_message;

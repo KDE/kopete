@@ -22,6 +22,7 @@
 #include <qtextcodec.h>
 #include <QByteArray>
 
+#include "oscarmessageplugin.h"
 
 Oscar::Message::Message()
 : m_channel( -1 ),
@@ -33,7 +34,8 @@ Oscar::Message::Message()
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
   m_encoding( UserDefined ),
-  m_fileSize( 0 )
+  m_fileSize( 0 ),
+  m_plugin( 0 )
 {
 }
 
@@ -49,7 +51,8 @@ Oscar::Message::Message( Encoding messageEncoding, const QByteArray& messageText
   m_textArray( messageText ),
   m_timestamp( timestamp ),
   m_encoding( messageEncoding ),
-  m_fileSize( 0 )
+  m_fileSize( 0 ),
+  m_plugin( 0 )
 {
 }
 
@@ -64,9 +67,16 @@ Oscar::Message::Message( Encoding messageEncoding, const QString& messageText, i
   m_protocolVersion( 0 ),
   m_channel2Counter( 0 ),
   m_timestamp( timestamp ),
-  m_fileSize( 0 )
+  m_fileSize( 0 ),
+  m_plugin( 0 )
 {
 	setText( messageEncoding, messageText, codec );
+}
+
+Oscar::Message::~Message()
+{
+	if ( m_plugin )
+		delete m_plugin;
 }
 
 QString Oscar::Message::sender() const
@@ -328,6 +338,19 @@ Oscar::Message::Encoding Oscar::Message::encoding() const
 void Oscar::Message::setEncoding( Oscar::Message::Encoding newEncoding )
 {
 	m_encoding = newEncoding;
+}
+
+const Oscar::MessagePlugin* Oscar::Message::plugin() const
+{
+	return m_plugin;
+}
+
+void Oscar::Message::setPlugin( Oscar::MessagePlugin* plugin )
+{
+	if ( m_plugin )
+		delete m_plugin;
+	
+	m_plugin = plugin;
 }
 
 Oscar::Message::operator bool() const

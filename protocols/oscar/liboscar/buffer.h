@@ -209,6 +209,16 @@ class LIBOSCAR_EXPORT Buffer
 		QByteArray getLELNTS();
 
 		/**
+		 * adds a 32-bit long TLV
+		 */
+		int addTLV32(const WORD type, const DWORD data);
+		
+		/**
+		 * adds a 32-bit long little-endian TLV
+		 */
+		int addLETLV32(const WORD type, const DWORD data);
+		
+		/**
 		 * adds a 16-bit long TLV
 		 */
 		int addTLV16(const WORD type, const WORD data);

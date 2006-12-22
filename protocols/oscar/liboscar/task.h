@@ -48,7 +48,6 @@ public:
 	Transfer *transfer() const;
 
 	quint32 id() const;
-	void setId();
 
 	bool success() const;
 	int statusCode() const;

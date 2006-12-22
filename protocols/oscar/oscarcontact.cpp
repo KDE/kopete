@@ -276,6 +276,11 @@ QTextCodec* OscarContact::contactCodec() const
 		return mAccount->defaultCodec();
 }
 
+bool OscarContact::hasCap( int capNumber ) const
+{
+	return m_details.hasCap( capNumber );
+}
+
 //here's where a filetransfer usually begins
 //could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )

@@ -135,7 +135,7 @@ void ServerVersionsTask::requestFamilyVersions()
 	{
 		outbuf->addWord( familiesList[i] );
 		if ( familiesList[i] == 0x0001 )
-			val = 0x0003;
+			val = 0x0004;
 		else
 		{
 			if ( familiesList[i] == 0x0013 )

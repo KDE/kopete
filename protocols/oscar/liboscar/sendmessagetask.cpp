@@ -70,7 +70,7 @@ void SendMessageTask::onGo()
 	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 
-	if ( snacSubfamily == 0x0006 && m_message.messageType() != 3 )
+	if ( snacSubfamily == 0x0006 && m_message.messageType() != Oscar::MessageType::File )
 	{
 		DWORD cookie1 = KRandom::random();
 		DWORD cookie2 = KRandom::random();
@@ -154,15 +154,10 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	//Send features TLV using data from gaim. Features are different
 	//depending on whether we're ICQ or AIM
 	if ( client()->isIcq() )
-	{
-		tlv2buffer.addDWord( 0x05010002 ); //TLV 0x0501, length 2
-		tlv2buffer.addWord( 0x0106 ); //TLV 0x0501 data
-	}
+		tlv2buffer.addTLV16( 0x0501, 0x0106 );
 	else
-	{
-		tlv2buffer.addDWord( 0x05010004 ); //TLV 0x0501, length 4
-		tlv2buffer.addDWord( 0x01010102 ); //TLV 0x0501 data.
-	}
+		tlv2buffer.addTLV32( 0x0501, 0x01010102 );
+
 	//we only send one message part. There's only one client that actually uses
 	//them and it's quite old and infrequently used
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
@@ -199,15 +194,14 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 	tlv5buffer.addString( m_message.icbmCookie() );
 	
 	//cap used to identify the message type
-	tlv5buffer.addGuid( oscar_caps[ m_message.messageType() == 3 ? CAP_SENDFILE : CAP_ICQSERVERRELAY ] );
+	int capNumber = (m_message.messageType() == Oscar::MessageType::File) ? CAP_SENDFILE : CAP_ICQSERVERRELAY;
+	tlv5buffer.addGuid( oscar_caps[capNumber] );
 
 	if( m_message.reqType() == 0 )
 	{ //requests need more data
 
 		// add TLV 0A: request # (usually 1)
-		tlv5buffer.addWord( 0x000A ); // TLV Type
-		tlv5buffer.addWord( 0x0002 ); // TLV Length
-		tlv5buffer.addWord( m_message.reqNum() ); // TLV Data
+		tlv5buffer.addTLV16( 0x000A, m_message.reqNum() );
 
 		// add TLV 0F: unknown but always there
 		tlv5buffer.addWord( 0x000F );
@@ -217,42 +211,26 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 		//might need proxy-ip later.
 		if ( int p = m_message.port() )
 		{
-			//our ip
-			tlv5buffer.addWord( 3 );
-			tlv5buffer.addWord( 4 );
-			tlv5buffer.addDWord( m_ip );
-			//our port
-			tlv5buffer.addWord( 5 );
-			tlv5buffer.addWord( 2 );
-			tlv5buffer.addWord( p );
-			//port check
-			tlv5buffer.addWord( 0x17 );
-			tlv5buffer.addWord( 2 );
-			tlv5buffer.addWord( ~ p );
+			tlv5buffer.addTLV32( 0x0003, m_ip ); //our ip
+			tlv5buffer.addTLV16( 0x0005, p );    //our port
+			tlv5buffer.addTLV16( 0x0017, ~ p );  //port check
 
 			QByteArray proxy = m_message.proxy();
 			if( proxy.length() == 4 )
 			{ //add proxy ip, check, & flag
-				//proxy flag
-				tlv5buffer.addWord( 0x10 );
-				tlv5buffer.addWord( 0 );
-				//proxy ip
-				tlv5buffer.addWord( 2 );
-				tlv5buffer.addWord( 4 );
-				tlv5buffer.addString( proxy );
+				tlv5buffer.addDWord( 0x00100000 );  //proxy flag, empty TLV 10
+				tlv5buffer.addTLV( 0x0002, proxy ); //proxy ip
 				//proxy ip check
 				for( int i=0; i<4; ++i)
 					proxy[i] = ~ proxy[i];
-				tlv5buffer.addWord( 0x16 );
-				tlv5buffer.addWord( 4 );
-				tlv5buffer.addString( proxy );
+				tlv5buffer.addTLV( 0x0016, proxy );
 			}
 		}
 
 
 		/* now comes the important TLV 0x2711 */
 		Buffer tlv2711;
-		if ( m_message.messageType() == 3 ) //TODO: reduce the amount of magic #s
+		if ( m_message.messageType() == Oscar::MessageType::File ) //TODO: reduce the amount of magic #s
 		{ //filetransfer
 			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
 			tlv2711.addWord( 1 ); //file count
@@ -299,7 +277,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	
 	b->addWord( 0x0000 ); // unknown
 	b->addLEDWord( 0x00000003 ); // FIXME client capabilities: not sure, but should be ICQ Server Relay
-	b->addByte( 0x0000 ); // unknown
+	b->addByte( 0x00 ); // unknown
 
 	// channel 2 counter: in auto response, use original message value. s/t else otherwise (most anythig will work)
 	int channel2Counter;
@@ -322,8 +300,8 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	// actual message data segment
 
 	// Message type
-	if ( m_message.messageType() == 0x00 )
-		b->addByte( 0x01 );
+	if ( m_message.messageType() == Oscar::MessageType::Unknown )
+		b->addByte( Oscar::MessageType::Plain );
 	else
 		b->addByte( m_message.messageType() );
 	
@@ -353,8 +331,26 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	b->addLEWord( m_message.textArray().size() + 1 ); // length of string + zero termination
 	b->addString( m_message.textArray() ); // string itself
 	b->addByte( 0x00 ); // zero termination
-	b->addLEDWord( 0x00000000 ); // foreground
-	b->addLEDWord( 0x00FFFFFF ); // foreground
+
+	if ( m_message.messageType() == Oscar::MessageType::Plugin )
+	{
+		b->addLEWord( 0x0001 ); // length of empty string + zero termination
+		b->addByte( 0x00 ); // zero termination
+
+		Buffer pluginBuffer;
+		addPluginData( &pluginBuffer );
+		b->addLEWord( pluginBuffer.length() );
+		b->addString( pluginBuffer.buffer() );
+	}
+	else
+	{
+		b->addLEWord( m_message.textArray().size() + 1 ); // length of string + zero termination
+		b->addString( m_message.textArray() ); // string itself
+		b->addByte( 0x00 ); // zero termination
+
+		b->addLEDWord( 0x00000000 ); // foreground
+		b->addLEDWord( 0x00FFFFFF ); // foreground
+	}
 
 	if ( m_message.encoding() == Oscar::Message::UTF8 )
 	{
@@ -363,7 +359,15 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	}
 }
 
+void SendMessageTask::addPluginData( Buffer* b )
+{
+	const MessagePlugin* plugin = m_message.plugin();
 
+	if ( !plugin )
+		return;
+
+	
+}
 
 /* Old oscarsocket code, which is here for reference in case this doesn't work
 QTextCodec *codec = 0L;

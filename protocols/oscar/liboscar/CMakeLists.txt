@@ -24,7 +24,7 @@ offlinemessagestask.cpp ssiauthtask.cpp userinfotask.cpp icquserinfo.cpp icquser
 usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp 
 buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp filetransfertask.cpp
 localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservicetask.cpp oscarguid.cpp 
-icquserinfoupdatetask.cpp icqchangepasswordtask.cpp
+icquserinfoupdatetask.cpp icqchangepasswordtask.cpp oscarmessageplugin.cpp
 )
 
 kde4_automoc(${liboscar_SRCS} )

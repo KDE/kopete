@@ -174,8 +174,7 @@ void AimLoginTask::sendLoginRequest()
 	outbuf->addTLV16(0x0018, version->minor );
 	outbuf->addTLV16(0x0019, version->point );
 	outbuf->addTLV16(0x001a, version->build );
-	outbuf->addDWord(0x00140004); //TLV type 0x0014, length 0x0004
-	outbuf->addDWord( version->other ); //TLV data for type 0x0014
+	outbuf->addTLV32(0x0014, version->other );
 	outbuf->addTLV(0x000f, version->lang.toLatin1() );
 	outbuf->addTLV(0x000e, version->country.toLatin1() );
 
