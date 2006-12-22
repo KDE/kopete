@@ -22,7 +22,7 @@ namespace Papillon
 	/**
 	 * @brief Enums related to Contact list
 	 */
-	struct ContactList
+	struct ContactListEnums
 	{
 		/**
 		 * @brief Flags for the different contact list type.
@@ -37,7 +37,7 @@ namespace Papillon
 		};
 		Q_DECLARE_FLAGS(ContactListFlags, Type)
 	};
-	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactList::ContactListFlags )
+	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactListEnums::ContactListFlags )
 
 	/**
 	 * @brief Enums related to ClientInfo

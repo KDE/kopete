@@ -27,6 +27,7 @@
 #include "Papillon/ClientStream"
 #include "Papillon/Transfer"
 #include "Papillon/MimeHeader"
+#include "Papillon/ContactList"
 
 // Papillon tasks
 #include "Papillon/Tasks/LoginTask"
@@ -44,7 +45,7 @@ class Client::Private
 public:
 	Private()
 	 : connector(0), notificationConnection(0),
-	   server( QLatin1String("messenger.hotmail.com") ), port(1863),
+	   server( QLatin1String("messenger.hotmail.com") ), port(1863), contactList(0),
 	   loginTask(0), notifyMessageTask(0), notifyPresenceTask(0), notifyStatusMessageTask(0)
 	{}
 
@@ -60,6 +61,8 @@ public:
 	// Convience object that init QCA.
 	QCA::Initializer qcaInit;
 
+	ContactList *contactList;
+
 	// All the tasks
 	LoginTask *loginTask;
 	NotifyMessageTask *notifyMessageTask;
@@ -71,6 +74,7 @@ Client::Client(Connector *connector, QObject *parent)
  : QObject(parent), d(new Private)
 {
 	d->connector = connector;
+	d->contactList = new ContactList(this);
 }
 
 Client::~Client()
@@ -94,6 +98,11 @@ Connection *Client::createConnection()
 	newConnection->setClient(this);
 
 	return newConnection;
+}
+
+ContactList *Client::contactList()
+{
+	return d->contactList;
 }
 
 void Client::connectToServer(const QString &server, quint16 port)

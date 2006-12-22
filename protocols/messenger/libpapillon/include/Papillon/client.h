@@ -29,6 +29,7 @@ class Task;
 class Transfer;
 class MimeHeader;
 class StatusMessage;
+class ContactList;
 
 // TODO APIDOX, add a reference about connector model.
 /**
@@ -85,6 +86,16 @@ public:
 	 * @return the Passport auth ticket.
 	 */
 	QString passportAuthTicket() const;
+
+	/**
+	 * @brief Get the contact list instance.
+	 *
+	 * Initially, the contact list isn't loaded. Fetching of the 
+	 * contact list will be called when necessary.
+	 *
+	 * @return the ContactList instance.
+	 */
+	ContactList *contactList();
 
 signals:
 	/**

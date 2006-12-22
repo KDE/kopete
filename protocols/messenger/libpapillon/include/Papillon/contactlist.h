@@ -23,6 +23,7 @@ class QDomDocument;
 namespace Papillon 
 {
 
+class Client;
 /**
  * @brief Manage contact list.
  *
@@ -35,11 +36,18 @@ public:
 	/**
 	 * @brief Create a new ContactList.
 	 */
-	ContactList(QObject *parent = 0);
+	ContactList(Client *client);
 	/**
 	 * d-tor
 	 */
 	~ContactList();
+
+private:
+	/**
+	 * Get the current instance of Client.
+	 * @return the current Client pointer.
+	 */
+	Client *client();
 
 private:
 	class Private;

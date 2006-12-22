@@ -15,7 +15,10 @@
 #include "Papillon/ContactList"
 
 // Qt includes
-#include <QtXml/QDomDocument>
+#include <QtCore/QPointer>
+
+// Papillon includes
+#include "Papillon/Client"
 
 namespace Papillon 
 {
@@ -25,11 +28,14 @@ class ContactList::Private
 public:
 	Private()
 	{}
+	
+	QPointer<Client> client;
 };
 
-ContactList::ContactList(QObject *parent)
- : QObject(parent), d(new Private)
+ContactList::ContactList(Client *client)
+ : QObject(client), d(new Private)
 {
+	d->client = client;
 }
 
 
@@ -38,6 +44,10 @@ ContactList::~ContactList()
 	delete d;
 }
 
+Client *ContactList::client()
+{
+	return d->client;
+}
 
 }
 
