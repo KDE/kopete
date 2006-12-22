@@ -189,7 +189,6 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	qDebug() << PAPILLON_FUNCINFO;
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;

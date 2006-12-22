@@ -44,7 +44,7 @@ class Client::Private
 public:
 	Private()
 	 : connector(0), notificationConnection(0),
-	   server( QLatin1String("messenger.hotmail.com") ), port(1863), contactList(0), userContact(0),
+	   server( QLatin1String("messenger.hotmail.com") ), port(1863), connectionStatus(Disconnected), contactList(0), userContact(0),
 	   loginTask(0), notifyMessageTask(0), notifyPresenceTask(0), notifyStatusMessageTask(0)
 	{}
 
@@ -53,12 +53,9 @@ public:
 
 	QString server;
 	quint16 port;
-
-	QString passportId;
-	QString password;
-	QString passportAuthTicket;
 	// Convience object that init QCA.
 	QCA::Initializer qcaInit;
+	Papillon::Client::ConnectionStatus connectionStatus;
 
 	ContactList *contactList;
 	UserContact *userContact;
@@ -116,6 +113,11 @@ Connection *Client::notificationConnection()
 	return d->notificationConnection;
 }
 
+Papillon::Client::ConnectionStatus Client::connectionStatus() const
+{
+	return d->connectionStatus;
+}
+
 void Client::connectToServer(Papillon::Presence::Status initialPresence)
 {
 	// TODO: Make use of initial presence.
@@ -124,11 +126,19 @@ void Client::connectToServer(Papillon::Presence::Status initialPresence)
 	if( !d->notificationConnection )
 	{
 		d->notificationConnection = createConnection();
-		connect(d->notificationConnection, SIGNAL(connected()), this, SIGNAL(connected()));
+		connect(d->notificationConnection, SIGNAL(connected()), this, SLOT(notificationConnected()));
 		connect(d->notificationConnection, SIGNAL(connected()), this, SLOT(initNotificationTasks()));
 	}
 
+	setConnectionStatus( Client::Connecting );
 	d->notificationConnection->connectToServer(d->server, d->port);
+}
+
+void Client::disconnectFromServer()
+{
+	d->notificationConnection->disconnectFromServer();
+
+	setConnectionStatus( Client::Disconnected );
 }
 
 void Client::setServer(const QString &server, quint16 port)
@@ -161,18 +171,24 @@ void Client::initNotificationTasks()
 	}
 }
 
+void Client::notificationConnected()
+{
+	setConnectionStatus( Client::Connected );
+	// Init login process.
+	login();
+}
+
 void Client::login()
 {
-	if(d->loginTask)
+	// Do not login twice
+	if( d->connectionStatus != Client::LoggedIn )
 	{
-		delete d->loginTask;
-		d->loginTask = 0;
+		// LoginTask got deleted by Task::onDisconnect() because of the redirection.
+		d->loginTask = new LoginTask(d->notificationConnection->rootTask());
+		connect(d->loginTask, SIGNAL(redirection(QString, quint16)), this, SLOT(loginRedirect(QString, quint16 )));
+		connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
+		d->loginTask->go(Task::AutoDelete);
 	}
-
-	d->loginTask = new LoginTask(d->notificationConnection->rootTask());
-	connect(d->loginTask, SIGNAL(redirection(QString, quint16)), this, SLOT(loginRedirect(QString, quint16 )));
-	connect(d->loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginResult(Papillon::Task*)));
-	d->loginTask->go(Task::AutoDelete);
 }
 
 void Client::loginRedirect(const QString &server, quint16 port)
@@ -181,14 +197,20 @@ void Client::loginRedirect(const QString &server, quint16 port)
 
 	d->notificationConnection->disconnectFromServer();
 	d->notificationConnection->connectToServer(server, port);
-	
-	// Redo login process.
-	login();
 }
 
 void Client::loginResult(Papillon::Task *task)
 {
-	Q_UNUSED(task);
+	LoginTask *loginTask = static_cast<LoginTask*>(task);
+	if( loginTask )
+	{
+		if( loginTask->success() )
+			setConnectionStatus( Client::LoggedIn );
+		else if( loginTask->loginState() == LoginTask::StateBadPassword )
+			setConnectionStatus( Client::LoginBadPassword );
+		else if( loginTask->loginState() != LoginTask::StateRedirection )
+			setConnectionStatus( Client::Disconnected );
+	}
 }
 
 void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
@@ -213,6 +235,15 @@ void Client::slotContactStatusMessageChanged(const QString &contactId, const Pap
 void Client::writeCommand(Transfer *command)
 {
 	d->notificationConnection->send(command);
+}
+
+void Client::setConnectionStatus(Papillon::Client::ConnectionStatus newStatus)
+{
+	qDebug() << PAPILLON_FUNCINFO << "New connection status: " << newStatus;
+
+	d->connectionStatus = newStatus;
+
+	emit connectionStatusChanged(newStatus);
 }
 
 }

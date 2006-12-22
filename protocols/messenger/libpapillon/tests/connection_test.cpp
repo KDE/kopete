@@ -19,68 +19,30 @@
 #include <QtCore/QCoreApplication>
 
 // Papillon includes
-#include "Papillon/ClientStream"
-#include "Papillon/Tasks/LoginTask"
 #include "Papillon/QtConnector"
-#include "Papillon/Client"
 #include "Papillon/UserContact"
 
 using namespace Papillon;
 
-FakeConnection::FakeConnection(Papillon::ClientStream *stream)
-	: Papillon::Connection(stream), m_loginTask(0)
-{
-}
-
-void FakeConnection::start()
-{
-	m_loginTask = new LoginTask( rootTask() );
-	connect(m_loginTask, SIGNAL(redirection(const QString &, quint16)), this, SLOT(redirect(const QString &, quint16)));
-	connect(m_loginTask, SIGNAL(finished(Papillon::Task*)), this, SLOT(loginTaskFinished(Papillon::Task *)));
-	
-	m_loginTask->go();
-}
-
-void FakeConnection::loginTaskFinished(Papillon::Task *task)
-{
-	LoginTask *login = static_cast<LoginTask*>(task);
-
-	// LoginTask will always fail.
-	if( !login->success() )
-		emit loginFinished(login);
-}
-
-void FakeConnection::redirect(const QString &newServer, quint16 newPort)
-{
-	qDebug() << "Redirect to" << newServer;
-
-	// Reset Login Task.
-	delete m_loginTask;
-	m_loginTask = 0;
-
-	disconnectFromServer();
-	connectToServer(newServer, newPort);
-}
-
 void Connection_Test::testConnection()
 {
-	Client *client = new Client(new QtConnector(this), this);
-	client->userContact()->setLoginInformation("ljlkjwerklwjerwlek@mwerewerty.org", "h4x0rl33t");
+	m_client = new Client(new QtConnector(this), this);
+	m_client->userContact()->setLoginInformation("ljlkjwerklwjerwlek@mwerewerty.org", "h4x0rl33t");
+	m_client->connectToServer();
 
-	ClientStream *stream = new ClientStream(new QtConnector(this), this);
-	m_connection = new FakeConnection(stream);
-	m_connection->setClient(client);
-	m_connection->connectToServer("messenger.hotmail.com", 1863);
-
-	connect(m_connection, SIGNAL(connected()), m_connection, SLOT(start()));
-	connect(m_connection, SIGNAL(loginFinished(Papillon::LoginTask*)), this, SLOT(slotLoginFinished()));;
+	connect(m_client, SIGNAL(connectionStatusChanged(Papillon::Client::ConnectionStatus)), this, SLOT(clientConnectionStatusChanged(Papillon::Client::ConnectionStatus)));
 }
 
-void Connection_Test::slotLoginFinished()
+void Connection_Test::clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status)
 {
-	qDebug() << "Login Task test complete. Exiting.";
-	m_connection->disconnectFromServer();
-	QCoreApplication::exit(0);
+	switch(status)
+	{
+		case Client::LoginBadPassword:
+			qDebug() << "Got a login bad password (expected behavior). Exiting...";
+			m_client->disconnectFromServer();
+			QCoreApplication::exit(0);
+			break;
+	}
 }
 
 int main(int argc, char **argv)

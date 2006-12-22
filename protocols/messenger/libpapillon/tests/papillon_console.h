@@ -17,6 +17,11 @@
 
 #include <QtGui/QWidget>
 
+// Little hack to access writeCommand method in Client
+#define private public
+#include "Papillon/Client"
+#undef private
+
 namespace PapillonConsole
 {
 
@@ -35,7 +40,7 @@ private slots:
 	void buttonSendClicked();
 	void buttonConnectClicked();
 	void buttonTestSOAP();
-	void clientConnected();
+	void clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status);
 	void streamConnected();
 	void streamReadyRead();
 

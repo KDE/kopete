@@ -16,35 +16,9 @@
 #define CONNECTIONTEST_H
 
 #include <QtCore/QObject>
-#include "Papillon/Connection"
-
-namespace Papillon
-{
-	class ClientStream;
-	class Task;
-	class LoginTask;
-}
+#include <Papillon/Client>
 
 using namespace Papillon;
-
-class FakeConnection : public Connection
-{
-	Q_OBJECT
-public:
-	FakeConnection(Papillon::ClientStream *stream);
-
-public slots:
-	void start();
-
-private slots:
-	void redirect(const QString &newServer, quint16 newPort);
-	void loginTaskFinished(Papillon::Task *task);
-
-signals:
-	void loginFinished(Papillon::LoginTask *task);
-private:
-	LoginTask *m_loginTask;
-};
 
 class Connection_Test : public QObject
 {
@@ -53,9 +27,10 @@ public slots:
 	void testConnection();
 
 private slots:
-	void slotLoginFinished();
+	void clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status);
+
 private:
-	FakeConnection *m_connection;
+	Client *m_client;
 };
 
 

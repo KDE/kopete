@@ -110,6 +110,7 @@ bool LoginTask::take(Transfer *transfer)
 					bool dummy;
 					int newPort = tempPort.toUInt(&dummy);
 
+					d->currentState = StateRedirection;
 					proceeded = true;
 					emit redirection(newServer, newPort);
 				}

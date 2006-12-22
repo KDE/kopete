@@ -41,9 +41,11 @@ class UserContact;
  *
  * @section Setup Setting up Client object
  * First of all, you must initialize a Connector object. A Connector object is a abstract representation of a socket.
- * For convience, libpapillon include a QtConnector object, like the follwing example:
+ * For convience, libpapillon include a QtConnector object. After you must listen to connectioStatusChanged() signal to
+ * be notified of connection status change, like connected and login. See the following example:
 @code
 Papillon::Client *client = new Client(new QtConnector(qObjectParent), qObjectParent);
+connect(client, SIGNAL(connectionStatusChanged(Papillon::Client::ConnectionStatus)), this, SLOT(aSlot(Papillon::Client::ConnectionStatus)));
 @endcode
  *
  * @section Login Logging to Windows Live Messenger
@@ -51,7 +53,6 @@ Papillon::Client *client = new Client(new QtConnector(qObjectParent), qObjectPar
  * like the passport identifier, the password and optionally the initial presence. You can
  * set a different server using setServer(). An example of login:
 @code
-connect(client, SIGNAL(connected()), this, SLOT(papillonConnected()));
 client->userContact()>setLoginInformation( "test@passport.com", "password" );
 client->setServer("messenger.hotmail.com", 1863);
 client->connectToServer( Papillon::Presence::Busy );
@@ -63,6 +64,33 @@ class PAPILLON_EXPORT Client : public QObject
 {
 	Q_OBJECT
 public:
+	/**
+	 * ConnectionStatus is the possible states of Client's connection status
+	 */
+	enum ConnectionStatus
+	{
+		/**
+		 * Client is current disconnected
+		 */
+		Disconnected = 0,
+		/**
+		 * Client got a bad password
+		 */
+		LoginBadPassword,
+		/**
+		 * Client is currently connecting to Windows Live Messenger
+		 */
+		Connecting,
+		/**
+		 * Client is connected and now will proceed to login.
+		 */
+		Connected,
+		/**
+		 * Client is now logged in.
+		 */
+		LoggedIn
+	};
+
 	/**
 	 * Create a new Client.
 	 * @param connector Connector to use.
@@ -113,15 +141,18 @@ public:
 	 */
 	Connection *notificationConnection();
 
+	/**
+	 * @brief Get the current connection status.
+	 * @return Current connection status.
+	 */
+	Papillon::Client::ConnectionStatus connectionStatus() const;
+
 signals:
 	/**
-	 * Emitted when Client is connected, but not logged, to Windows Live Messenger's service.
+	 * Emitted when Client's connection status has changed.
+	 * @see ConnectionStatus
 	 */
-	void connected();
-	/**
-	 * Emitted when Client got disconnected from Windows Live Messenger's service.
-	 */
-	void disconnected();
+	void connectionStatusChanged(Papillon::Client::ConnectionStatus status);
 
 	// TODO: Move those signals in Contact class
 	/**
@@ -159,13 +190,12 @@ public slots:
 	 */
 	void connectToServer(Papillon::Presence::Status initialPresence = Papillon::Presence::Online);
 
-	// FIXME: Maybe remove login or put it in private section
 	/**
-	 * @brief Start the login process.
-	 * Make sure that you setup client information with setClientInfo()
+	 * @brief Disconnect from Windows Live Messenger
+	 * Close the connection and set the status to offline.
 	 */
-	void login();
-	
+	void disconnectFromServer();
+
 //BEGIN Private Task slots
 private slots:
 	/**
@@ -213,6 +243,18 @@ private slots:
 	 * Called after being connected to the server.
 	 */	
 	void initNotificationTasks();
+
+	/**
+	 * @internal
+	 * We are connected to notification server
+	 */
+	void notificationConnected();
+
+	/**
+	 * @brief Start the login process.
+	 * See @ref Login for more information.
+	 */
+	void login();
 //END Private Normal slots
 
 private:
@@ -223,6 +265,13 @@ private:
 	 * @param command the command.
 	 */
 	void writeCommand(Transfer *command);
+
+	/**
+	 * @internal
+	 * Set a new connection status and emit connectionStatusChanged() signal.
+	 * @param newStatus New connection status
+	 */
+	void setConnectionStatus(Papillon::Client::ConnectionStatus newStatus);
 
 	class Private;
 	Private *d;

@@ -38,11 +38,6 @@
 #include "Papillon/Http/SecureStream"
 #include "Papillon/UserContact"
 
-// Little hack to access writeCommand method in Client
-#define private public
-#include "Papillon/Client"
-#undef private
-
 #include "connection_test.h"
 
 using namespace Papillon;
@@ -57,7 +52,7 @@ class PapillonConsole::Private
 {
 public:
 	Private()
-	 : logged(false), client(0), settings(0), sslStream(0), soapResultFile(0)
+	 : client(0), settings(0), sslStream(0), soapResultFile(0)
 	{
 		settings = new QSettings( QLatin1String("papillonconsole.ini"), QSettings::IniFormat );
 	}
@@ -73,7 +68,6 @@ public:
 	QPushButton *buttonSend;
 	QPushButton *buttonConnect;
 
-	bool logged;
 	Client *client;
 
 	QSettings *settings;
@@ -119,7 +113,7 @@ PapillonConsole::PapillonConsole(QWidget *parent)
 
 	// Create the client
 	d->client = new Client(new QtConnector(this), this);
-	connect(d->client, SIGNAL(connected()), this, SLOT(clientConnected()));
+	connect(d->client, SIGNAL(connectionStatusChanged(Papillon::Client::ConnectionStatus)), this, SLOT(clientConnectionStatusChanged(Papillon::Client::ConnectionStatus)));
 }
 
 PapillonConsole::~PapillonConsole()
@@ -187,23 +181,26 @@ void PapillonConsole::buttonSendClicked()
 
 void PapillonConsole::buttonConnectClicked()
 {
-	QString passportId, password;
-	if( d->settings->value( QLatin1String("passportId") ).toString().isEmpty() && d->settings->value( QLatin1String("password") ).toString().isEmpty() )
+	if( d->client->connectionStatus() == Papillon::Client::Disconnected )
 	{
-		passportId = QInputDialog::getText( this, QString("Passport ID"), QString("Enter your Microsoft Passport account ID:") );
-		password = QInputDialog::getText( this, QString("Passport password"), QString("Enter your Microsoft Passport password:"), QLineEdit::Password);
+		QString passportId, password;
+		if( d->settings->value( QLatin1String("passportId") ).toString().isEmpty() && d->settings->value( QLatin1String("password") ).toString().isEmpty() )
+		{
+			passportId = QInputDialog::getText( this, QString("Passport ID"), QString("Enter your Microsoft Passport account ID:") );
+			password = QInputDialog::getText( this, QString("Passport password"), QString("Enter your Microsoft Passport password:"), QLineEdit::Password);
+		
+			d->settings->setValue( QLatin1String("passportId"), passportId );
+			d->settings->setValue( QLatin1String("password"), password );
+		}
+		else
+		{
+			passportId = d->settings->value( QLatin1String("passportId") ).toString();
+			password = d->settings->value( QLatin1String("password") ).toString();
+		}
 	
-		d->settings->setValue( QLatin1String("passportId"), passportId );
-		d->settings->setValue( QLatin1String("password"), password );
+		d->client->userContact()->setLoginInformation( passportId, password );
+		d->client->connectToServer();
 	}
-	else
-	{
-		passportId = d->settings->value( QLatin1String("passportId") ).toString();
-		password = d->settings->value( QLatin1String("password") ).toString();
-	}
-
-	d->client->userContact()->setLoginInformation( passportId, password );
-	d->client->connectToServer();
 }
 
 void PapillonConsole::buttonTestSOAP()
@@ -281,12 +278,25 @@ void PapillonConsole::streamReadyRead()
 	}
 }
 
-void PapillonConsole::clientConnected()
+void PapillonConsole::clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status)
 {
-	if( !d->logged )
+	switch(status)
 	{
-		d->logged = true;
-		d->client->login();
+		case Client::Disconnected:
+			qDebug() << "Disconnected from server....";
+			break;
+		case Client::Connecting:
+			qDebug() << "Connecting to Windows Live Messenger service...";
+			break;
+		case Client::Connected:
+			qDebug() << "Connected to Windows Live Messenger service, login in...";
+			break;
+		case Client::LoggedIn:
+			qDebug() << "Logged in.";
+			break;
+		case Client::LoginBadPassword:
+			qDebug() << "Login got a bad password.";
+			break;
 	}
 }
 

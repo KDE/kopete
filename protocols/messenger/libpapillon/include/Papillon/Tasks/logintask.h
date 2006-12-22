@@ -75,7 +75,11 @@ public:
 		/**
 		 * Nexus service returned a bad passport error.
 		 */
-		StateBadPassword
+		StateBadPassword,
+		/**
+		 * Login has requested redirection
+		 */
+		StateRedirection
 	};
 
 	/**
