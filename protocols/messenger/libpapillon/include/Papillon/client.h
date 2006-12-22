@@ -33,8 +33,8 @@ class ContactList;
 
 // TODO APIDOX, add a reference about connector model.
 /**
- * @brief Client to Windows Live Messenger.
- * This is the main interface between the client application (ex: Kopete, papillon-telepathy, etc...) and
+ * @brief Client to Windows Live Messenger service.
+ * This is the main interface between the client application (ex: Kopete, telepathy-papillon, etc.) and
  * the Windows Live Messenger service.
  *
  * Papillon::Client need a valid Papillon::Connector objet to be used.
@@ -59,6 +59,7 @@ public:
 
 	/**
 	 * @brief Create a new SecureStream ready to be used.
+	 *
 	 * You must delete the SecureStream instance yourself.
 	 *
 	 * @return the new SecureStream instance.
@@ -107,6 +108,7 @@ signals:
 	 */
 	void disconnected();
 
+	// TODO: Move those signals in Contact class
 	/**
 	 * Emitted when a contact change his status
 	 * @param contactId Contact ID
@@ -122,6 +124,8 @@ signals:
 	void contactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
 
 public slots:
+	// FIXME: Maybe merge connectToServer and setInitialOnlineStatus
+	// FIXME: Maybe remove login or put it in private section
 	/**
 	 * @brief Connect to Windows Live Messenger
 	 * If no arguments are passed, it use the default server and port used by
@@ -145,6 +149,7 @@ public slots:
 	 */
 	void setInitialOnlineStatus(Papillon::OnlineStatus::Status status);
 	
+	// TODO: Move these methods to ClientInfo or UserContact
 	/**
 	 * @brief Change our current online status
 	 * @param status Given online status
