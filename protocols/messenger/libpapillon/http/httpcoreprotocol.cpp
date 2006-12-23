@@ -178,8 +178,9 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 				d->state = NeedMore;
 				return bytesParsed;
 			}
-			
-			QByteArray bodyData = QByteArray::fromRawData(tempRaw.data(), d->contentLength);
+
+			// Retrieve the full content data from raw data (do a shared copy)
+			QByteArray bodyData = tempRaw.left(d->contentLength);
 			
 			d->inTransfer->setBody(bodyData);
 			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << bodyData.size();
@@ -189,7 +190,7 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 			d->state = Available;
 			emit incomingData();
 			
-			bytesParsed = d->contentLength;
+			bytesParsed = bodyData.length();
 		}
 	}
 	return bytesParsed;

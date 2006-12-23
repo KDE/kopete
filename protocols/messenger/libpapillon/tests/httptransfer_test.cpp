@@ -52,14 +52,14 @@ void HttpTransfer_Test::testHttpResponse()
 	
 	response.setHttpHeader(httpHeader);
 	response.setContentType( QLatin1String("text/html") );
-	response.setValue( QLatin1String("Cookie"), QLatin1String("fortune cookie") );
-	
+	response.setValue( QString("Cookie"), QString("fortune cookie") );
 
 	qDebug() << response.toRawCommand();
 	QCOMPARE( (int)response.type(), (int)HttpTransfer::HttpResponse );
 	QCOMPARE( response.statusCode(), 200 );
 	QCOMPARE( response.contentType(), QString("text/html") );
-	QCOMPARE( response.value( QLatin1String("Cookie") ), QString("fortune cookie") );
+
+	QCOMPARE( response.value( QString("Cookie") ), QString("fortune cookie") );
 }
 
 

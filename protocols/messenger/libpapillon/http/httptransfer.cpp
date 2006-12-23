@@ -121,12 +121,12 @@ bool HttpTransfer::hasContentType() const
 
 bool HttpTransfer::hasKey(const QString &key) const
 {
-	return d->httpHeader->hasKey(key);
+	return d->httpHeader->hasKey(key.toLower());
 }
 
 QString HttpTransfer::value(const QString & key) const
 {
-	return d->httpHeader->value(key);
+	return d->httpHeader->value(key.toLower());
 }
 
 QList<QPair<QString, QString> > HttpTransfer::values() const
@@ -136,7 +136,7 @@ QList<QPair<QString, QString> > HttpTransfer::values() const
 
 void HttpTransfer::setValue(const QString & key, const QString &value)
 {
-	d->httpHeader->setValue(key, value);
+	d->httpHeader->setValue(key.toLower(), value);
 }
 
 void HttpTransfer::setValues(const QList<QPair<QString, QString> > &values)

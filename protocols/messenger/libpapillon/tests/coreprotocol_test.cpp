@@ -122,9 +122,6 @@ void CoreProtocol_Test::testFragmentPayloadTransfer()
 "ABCHMigrated: 1\r\n"
 "BetaInvites: 0\r\n\r\n");
 
-	qDebug() << "From transfer, full command:" << transfer->toRawCommand();
-	qDebug() << "From transfer, payload data:" << transfer->payloadData();
-
 	QCOMPARE( transfer->toRawCommand(), expectedData );
 }
 

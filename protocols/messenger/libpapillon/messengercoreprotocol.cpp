@@ -208,17 +208,18 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 				d->state = NeedMore;
 				return bytesParsed;
 			}
-
-			QByteArray payloadData = QByteArray::fromRawData(raw.data(), d->payloadLength);
+			
+			// Retrieve the full payload data from raw data (do a shared copy)
+			QByteArray payloadData = raw.left(d->payloadLength);
 			
 			d->inTransfer->setPayloadData(payloadData);
 			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << payloadData.size();
-// 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from Transfer):" << d->inTransfer->payloadLength();
+// 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from CoreProtocol):" << raw;
 			// Show full payload command to output
 			qDebug() << PAPILLON_FUNCINFO << d->inTransfer->toRawCommand();
 			d->state = Available;
 			
-			bytesParsed = raw.size();
+			bytesParsed = payloadData.size();
 			
 			emit incomingData();
 		}
