@@ -158,6 +158,10 @@ void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QStrin
 			*p++ = newText[i].row();
 			*p++ = newText[i].cell();
 		}
+		//check if last character isn't null
+		if ( result.at(len-1).isNull() )
+			result.resize( len - 1 );
+
 		break;
 	}
 	default:
