@@ -113,6 +113,10 @@ QString Oscar::Message::text( QTextCodec *codec ) const
 			char cell = *p++;
 			result[i] = QChar( cell, row );
 		}
+		//check if last character isn't null
+		if ( result[len-1].isNull() )
+			result.setLength( len - 1 );
+
 		return result;
 	}
 	default:
