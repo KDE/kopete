@@ -124,6 +124,10 @@ QString Oscar::Message::text( QTextCodec *codec ) const
 			char cell = *p++;
 			result[i] = QChar( cell, row );
 		}
+		//check if last character isn't null
+		if ( result.at(len-1).isNull() )
+			result.resize( len - 1 );
+
 		return result;
 	}
 	default:
@@ -158,10 +162,6 @@ void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QStrin
 			*p++ = newText[i].row();
 			*p++ = newText[i].cell();
 		}
-		//check if last character isn't null
-		if ( result.at(len-1).isNull() )
-			result.resize( len - 1 );
-
 		break;
 	}
 	default:
