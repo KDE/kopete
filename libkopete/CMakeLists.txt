@@ -142,4 +142,4 @@ install( FILES
 
 
 
-
+install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_DIR} )
