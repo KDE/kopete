@@ -1,6 +1,6 @@
 Libpapillon Roadmap
 -------------------
-Last Update: 20 November 2006 by Michaël Larouche <larouche@kde.org>
+Last Update: 26 December 2006 by Michaël Larouche <larouche@kde.org>
 
 CHART:
 ---------
@@ -52,6 +52,7 @@ M3 P2P
 -Download and upload Display picture
 -Download and upload Custom emoticons
 -File transfer using Switchboard
+-Ability to register external P2P context using context GUID (suggestion by Diederick from KMess)
 
 After this milestone, basic P2P framework will be complete. Futher P2P features will come after.
 

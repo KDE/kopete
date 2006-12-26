@@ -16,6 +16,7 @@ endif(NOT PAPILLON_INSIDE_KOPETE)
 # Propagate includes to tests subdirs
 set(PAPILLON_INCLUDES 
 ${CMAKE_CURRENT_SOURCE_DIR}/include/
+${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
 ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/
 ${QCA2_INCLUDE_DIR}
 )
