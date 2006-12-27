@@ -40,6 +40,10 @@
 #ifndef __u64 //required by videodev.h
 #define __u64 unsigned long long
 #endif // __u64
+#ifndef __s64 //required by videodev.h
+#define __s64 signed long long
+#endif // __s64
+
 
 #ifndef pgoff_t
 #define pgoff_t unsigned long
