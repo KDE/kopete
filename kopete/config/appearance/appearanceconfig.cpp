@@ -303,7 +303,7 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 			"This will delete the files installed by this theme.</qt>", 
 		themeName);
 
-        int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStdGuiItem::del());
+        int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStandardGuiItem::del());
 	if (res!=KMessageBox::Continue)
 		return;
 

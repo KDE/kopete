@@ -26,7 +26,7 @@
 #include <klocale.h>
 #include <ksettings/dialog.h>
 #include <kstandardaction.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 #include <kwin.h>
 #include <kcmultidialog.h>
 #include <kicon.h>
@@ -38,7 +38,7 @@
 KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
-: KAction( KIcon(KStdGuiItem::configure().iconName()), KStdGuiItem::configure().text(), parent, name )
+: KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent, name )
 {
 	connect( this, SIGNAL( triggered(bool) ), this, SLOT( slotShowPreferences() ) );
 }

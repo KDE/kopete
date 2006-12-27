@@ -55,7 +55,7 @@
 #include <kdialog.h>
 #include <kstringhandler.h>
 #include <ksqueezedtextlabel.h>
-#include <kstdaccel.h>
+#include <kstandardshortcut.h>
 #include <kglobalsettings.h>
 #include <khbox.h>
 #include <kvbox.h>
@@ -351,12 +351,12 @@ void KopeteChatWindow::initActions(void)
 	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 
 	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll, "tabs_right" );
-	tabRight->setShortcut( KStdAccel::tabNext() );
+	tabRight->setShortcut( KStandardShortcut::tabNext() );
 	tabRight->setEnabled( false );
 	connect( tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()) );
 
 	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), coll, "tabs_left" );
-	tabLeft->setShortcut( KStdAccel::tabPrev() );
+	tabLeft->setShortcut( KStandardShortcut::tabPrev() );
 	tabLeft->setEnabled( false );
 	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
 

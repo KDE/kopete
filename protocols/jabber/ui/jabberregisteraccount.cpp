@@ -64,7 +64,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	setMainWidget ( w );
 
 	// replace "Ok" button with a "Register" button
-	KGuiItem registerButton = KStdGuiItem::ok();
+	KGuiItem registerButton = KStandardGuiItem::ok();
 	registerButton.setText ( i18n ( "Register" ) );
 	setButtonGuiItem( KDialog::Ok, KGuiItem( registerButton ) );
 
@@ -376,7 +376,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 
 		// rewire buttons
 		enableButtonOk ( false );
-		setButtonGuiItem( KDialog::Cancel, KStdGuiItem::close () );
+		setButtonGuiItem( KDialog::Cancel, KStandardGuiItem::close () );
 		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
 	}
 	else

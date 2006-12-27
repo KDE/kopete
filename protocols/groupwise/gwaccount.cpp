@@ -803,7 +803,7 @@ int GroupWiseAccount::handleTLSWarning ( QCA::TLS::IdentityResult identityResult
 	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
 					  message,
 					  i18n("GroupWise Connection Certificate Problem"),
-					  KStdGuiItem::cont(),
+					  KStandardGuiItem::cont(),
 					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 }
 
