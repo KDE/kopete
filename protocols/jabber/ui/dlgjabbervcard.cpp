@@ -85,9 +85,9 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberBaseContact *conta
 
 	connect (m_mainWidget->btnSelectPhoto, SIGNAL (clicked()), this, SLOT (slotSelectPhoto()));
 	connect (m_mainWidget->btnClearPhoto, SIGNAL (clicked()), this, SLOT (slotClearPhoto()));
-	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
-	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
-	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedUrl(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedUrl(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedUrl(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 
 	assignContactProperties();
 
