@@ -36,6 +36,7 @@
 #include "kopetetransfermanager.h"
 #include <qfileinfo.h>
 #include <klocale.h>
+#include "oftmetatransfer.h"
 
 //receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
@@ -298,6 +299,7 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 	 case 1:
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user cancelled filetransfer :(" << endl;
 		emit gotCancel(); //FIXME: what if it's not hooked up?
+		emit cancelOft();
 		m_timer.stop();
 		setSuccess( true );
 		break;
@@ -325,12 +327,29 @@ void FileTransferTask::readyAccept()
 		return;
 	}
 	//ok, so we have a direct connection. for filetransfers. cool.
+	//now we go on to the OFT phase.
+	doOft();
+}
+
+void FileTransferTask::doOft()
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
+	QObject::disconnect( m_connection, 0, 0, 0 ); //disconnect signals
+	OftMetaTransfer *oft = new OftMetaTransfer( m_oft, m_file.fileName(), m_connection );
+	m_connection=0; //it's not ours any more
 	//might be a good idea to hook up some signals&slots.
-	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
-	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
+	connect( oft, SIGNAL( processed( unsigned int ) ), this, SIGNAL( processed( unsigned int ) ) );
+	connect( oft, SIGNAL( fileComplete() ), this, SLOT( doneOft() ) );
+	connect( this, SIGNAL( cancelOft() ), oft, SLOT( doCancel() ) );
 	//now we can finally send the first OFT packet.
 	if ( m_action == Send )
-		oftPrompt();
+		oft->start();
+}
+
+void FileTransferTask::doneOft()
+{
+	emit fileComplete();
+	setSuccess( true );
 }
 
 void FileTransferTask::socketError( int e )
@@ -356,25 +375,16 @@ void FileTransferTask::socketError( int e )
 	}
 }
 
-void FileTransferTask::socketRead()
-{
-	switch( m_state )
-	{
-		case Receiving: //raw file data
-			saveData();
-			break;
-		case ProxySetup: //proxy command
-			proxyRead();
-			break;
-		default: //oft packet
-			oftRead();
-	}
-}
-
 void FileTransferTask::proxyRead()
 {
+	if ( m_state != ProxySetup )
+	{
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "reading non-proxy data!" << endl;
+	}
+
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray raw = m_connection->readAll(); //is this safe?
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	Buffer b( raw );
 	WORD length = b.getWord();
 	if ( b.bytesAvailable() != length )
@@ -421,192 +431,6 @@ void FileTransferTask::proxyRead()
 	}
 }
 
-void FileTransferTask::oftRead()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	QByteArray raw = m_connection->readAll(); //is this safe?
-	OftProtocol p;
-	uint b=0;
-	//remember we're responsible for freeing this!
-	OftTransfer *t = static_cast<OftTransfer*>( p.parse( raw, b ) );
-	OFT data = t->data();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum: " << data.checksum << endl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sentChecksum: " << data.sentChecksum << endl;
-	switch( data.type )
-	{
-	 case 0x101:
-		 if ( m_action != Receive )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl
-			<< "\tmysize " <<  m_file.size() << endl
-			<< "\tsendersize " << m_oft.fileSize << endl;
-		//do we care about anything *in* the prompt?
-		//just the checksum.
-		m_oft.checksum = data.checksum;
-		m_oft.modTime = data.modTime;
-		if ( m_file.size() > 0 && m_file.size() <= m_oft.fileSize )
-		{
-			m_oft.sentChecksum = checksum();
-			if ( m_file.size() < m_oft.fileSize )
-			{ //could be a partial file
-				oftResume();
-				break;
-			}
-			else if ( m_oft.checksum == m_oft.sentChecksum )
-			{ //apparently we've already got it
-				//TODO: set bytesSent?
-				oftDone(); //don't redo checksum
-				emit fileComplete();
-				//wait for the oftDone to be really sent
-				m_timer.start( 10 );
-				break;
-			}
-
-			//if we didn't break then we need the whole file
-			m_oft.sentChecksum = 0xffff0000;
-		}
-		m_file.open( QIODevice::WriteOnly );
-		//TODO what if open failed?
-		oftAck();
-		break;
-	 case 0x202:
-		 if ( m_action != Send )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ack" << endl;
-		//time to send real data
-		//TODO: validate file again, just to be sure
-		m_file.open( QIODevice::ReadOnly );
-		//switch the timer over to the other function
-		m_timer.disconnect();
-		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
-		m_timer.start(0);
-		break;
-	 case 0x204:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
-		emit fileComplete();
-		m_timer.stop();
-		if ( data.sentChecksum != checksum() )
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
-		setSuccess( true );
-		break;
-	 case 0x205:
-		 if ( m_action != Send )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl 
-			<< "\tfilesize\t" << data.fileSize << endl
-			<< "\tmodTime\t" << data.modTime << endl
-			<< "\tbytesSent\t" << data.bytesSent << endl
-			<< "\tflags\t" << data.flags << endl;
-		if ( checksum( data.bytesSent ) == data.sentChecksum )
-		//ok, we can resume this
-			m_oft.bytesSent = data.bytesSent;
-		oftRAgree();
-		break;
-	 case 0x106:{
-		 if ( m_action != Receive )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sender resume" << endl
-			<< "\tfilesize\t" << data.fileSize << endl
-			<< "\tmodTime\t" << data.modTime << endl
-			<< "\tbytesSent\t" << data.bytesSent << endl
-			<< "\tflags\t" << data.flags << endl;
-		QIODevice::OpenMode flags;
-		if ( data.bytesSent ) //yay, we can resume
-			flags = QIODevice::WriteOnly | QIODevice::Append;
-		else
-		{ //they insist on sending the whole file :(
-			flags = QIODevice::WriteOnly;
-			m_oft.sentChecksum = 0xffff0000;
-			m_oft.bytesSent = 0;
-		}
-		m_file.open( flags ); 
-		//TODO what if open failed?
-		oftRAck();
-		break;}
-	 case 0x207:
-		 if ( m_action != Send )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "resume ack" << endl;
-		//TODO: validate file again, just to be sure
-		m_file.open( QIODevice::ReadOnly );
-		m_file.seek( m_oft.bytesSent );
-		//switch the timer over to the other function
-		m_timer.disconnect();
-		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
-		m_timer.start(0);
-		break;
-	 default:
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown type " << data.type << endl;
-	}
-
-	delete t;
-}
-
-void FileTransferTask::write()
-{
-	if ( m_connection->bytesToWrite() )
-		return; //give hte socket time to catch up
-	//an arbitrary amount to send each time.
-	int max = 256;
-	char data[256];
-	int read = m_file.read( data, max );
-	if( read == -1 )
-	{ //FIXME: handle this properly
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to read :(" << endl;
-		return;
-	}
-
-	int written = m_connection->write( data, read );
-	if( written == -1 )
-	{ //FIXME: handle this properly
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
-		return;
-	}
-
-	m_oft.bytesSent += written;
-	if ( written != read ) //FIXME: handle this properly
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
-	//tell the ui
-	emit processed( m_oft.bytesSent );
-	if ( m_oft.bytesSent >= m_oft.fileSize )
-	{
-		m_file.close();
-		//switch the timer over to the other function
-		//we should always get OFT Done before this times out
-		//or we could just finish now without waiting
-		//but I want to do it this way for now
-		m_timer.disconnect();
-		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-		m_timer.start( client()->settings()->timeout() * 1000 );
-	}
-}
-
-void FileTransferTask::saveData()
-{
-	QByteArray raw = m_connection->readAll(); //is this safe?
-	int written = m_file.write( raw );
-	if( written == -1 )
-	{ //FIXME: handle this properly
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
-		return;
-	}
-	m_oft.bytesSent += written;
-	if ( written != raw.size() ) //FIXME: handle this properly
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
-	//tell the ui
-	emit processed( m_oft.bytesSent );
-	if ( m_oft.bytesSent >= m_oft.fileSize )
-	{
-		m_file.close();
-		m_oft.sentChecksum = checksum();
-		oftDone();
-		emit fileComplete();
-		//wait for the oftDone to be really sent
-		m_timer.start( 10 );
-	}
-
-}
-
 void FileTransferTask::initOft()
 {
 	//set up the default values for the oft
@@ -621,69 +445,6 @@ void FileTransferTask::initOft()
 	m_oft.fileName = QString::null;
 }
 
-void FileTransferTask::sendOft()
-{
-	//now make a transfer out of it
-	OftTransfer t( m_oft );
-	int written = m_connection->write( t.toWire() );
-
-	if( written == -1 ) //FIXME: handle this properly
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
-}
-
-void FileTransferTask::oftPrompt()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_oft.type = 0x0101; //type = prompt
-	m_oft.modTime = QFileInfo( m_file ).lastModified().toTime_t();
-	m_oft.checksum = checksum();
-	sendOft();
-	//now we wait for the other side to ack
-}
-
-void FileTransferTask::oftAck()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_oft.type = 0x0202; //type = ack
-	sendOft();
-	m_state = Receiving;
-}
-
-void FileTransferTask::oftRAck()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_oft.type = 0x0207; //type = resume ack
-	sendOft();
-	m_state = Receiving;
-}
-
-void FileTransferTask::oftDone()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_oft.type = 0x0204; //type = done
-	if ( m_oft.sentChecksum != m_oft.checksum )
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
-	m_oft.flags = 1;
-	sendOft();
-	m_connection->close();
-	m_state = Done;
-}
-
-void FileTransferTask::oftResume()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_oft.type = 0x0205; //type = resume
-	m_oft.bytesSent = m_file.size();
-	sendOft();
-}
-
-void FileTransferTask::oftRAgree()
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_oft.type = 0x0106; //type = sender resume
-	sendOft();
-}
-
 void FileTransferTask::doCancel()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
@@ -691,8 +452,9 @@ void FileTransferTask::doCancel()
 	Oscar::Message msg = makeFTMsg();
 	msg.setReqType( 1 );
 	emit sendMessage( msg );
-	//stop our timer in case we were sending stuff
+	//stop our timer in case we were doing stuff
 	m_timer.stop();
+	emit cancelOft();
 	setSuccess( true );
 }
 
@@ -761,7 +523,7 @@ void FileTransferTask::doConnect()
 
 	//proxies *always* use port 5190; the "port" value is some retarded check
 	m_connection = new KBufferedSocket( host, QString::number( m_proxy ? 5190 : m_port ) );
-	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
+	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( proxyRead() ) );
 	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
 	connect( m_connection, SIGNAL( connected(const KNetwork::KResolverEntry&)), this, SLOT(socketConnected()));
 
@@ -795,8 +557,7 @@ void FileTransferTask::doneConnect()
 		emit sendMessage( msg );
 	}
 	//next the receiver should get a prompt from the sender.
-	if ( m_action == Send )
-		oftPrompt();
+	doOft();
 }
 
 void FileTransferTask::proxyInit()
@@ -845,15 +606,6 @@ void FileTransferTask::timeout()
 		}
 		else
 			connectFailed();
-		return;
-	}
-	if ( m_state == Done )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "waiting for empty buffer..." << endl;
-		if ( m_connection->bytesToWrite() == 0 )
-			setSuccess( true ); //yay, it's ok to kill everything now
-		else //keep waiting
-			m_timer.start( 10 );
 		return;
 	}
 
@@ -966,40 +718,5 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	return msg;
 }
 
-//FIXME: this is called more often than necessary. for large files that might be annoying.
-DWORD FileTransferTask::checksum( int max )
-{
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	//code adapted from joscar's FileTransferChecksum
-	DWORD check = 0x0000ffff;
-	m_file.open( QIODevice::ReadOnly );
-
-	char b;
-	while( max != 0 && m_file.getChar( &b ) ) {
-		DWORD oldcheck = check;
-
-		int val = ( b & 0xff ) << 8;
-		if ( --max && m_file.getChar( &b ) )
-		{
-			val += ( b & 0xff );
-			--max;
-		}
-
-		check -= val;
-
-		if (check > oldcheck)
-			check--;
-	}
-	m_file.close();
-
-	check = ((check & 0x0000ffff) + (check >> 16));
-	check = ((check & 0x0000ffff) + (check >> 16));
-	check = check << 16;
-
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << check << endl;
-	return check;
-}
-
 #include "filetransfertask.moc"
-
 

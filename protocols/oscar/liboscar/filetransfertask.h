@@ -63,19 +63,20 @@ public slots:
 
 signals:
 	void sendMessage( const Oscar::Message &msg );
-	void gotCancel();
-	void error( int, const QString & );
 	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
+	void gotCancel();
+	void error( int, const QString & );
 	void processed( unsigned int );
 	void fileComplete();
+	void cancelOft();
 
 private slots:
 	void readyAccept(); //serversocket got connection
 	void socketError( int );
-	void socketRead();
+	void proxyRead();
 	void socketConnected();
-	void write();
+	void doneOft(); //oft told us it's done
 
 private:
 	enum Action { Send, Receive };
@@ -85,23 +86,12 @@ private:
 	bool validFile();
 	Oscar::Message makeFTMsg();
 	void initOft();
-	void sendOft();
-	void oftPrompt();
-	void oftAck();
-	void oftDone();
-	void oftResume(); //receiver wants to resume partial file
-	void oftRAgree(); //sender agrees to resume
-	void oftRAck(); //resume ack
 	void parseReq( Buffer b );
-	void saveData(); //save incoming data to disk
 	void doConnect(); //attempt connection to other user (direct or redirect)
 	void proxyInit(); //send init command to proxy server
 	void doneConnect();
-	void oftRead(); //handle incoming oft packet
-	void proxyRead(); //handle incoming proxy packet
 	void connectFailed(); //tries another method of connecting
-	DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
-					//XXX this does put an arbitrary limit on file size
+	void doOft();
 
 	OFT m_oft;
 	
@@ -118,7 +108,7 @@ private:
 	QByteArray m_altIp; //to connect to if m_ip fails
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
-	enum State { Default, Listening, Connecting, ProxySetup, Receiving, Done };
+	enum State { Default, Listening, Connecting, ProxySetup, Done };
 	State m_state;
 };
 
