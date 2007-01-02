@@ -18,7 +18,6 @@
 #include <qregexp.h>
 
 #include <kgenericfactory.h>
-#include <knotifyclient.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"

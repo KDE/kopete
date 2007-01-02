@@ -49,7 +49,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
+
 
 #include <qtextcodec.h>
 

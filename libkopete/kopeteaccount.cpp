@@ -32,7 +32,6 @@
 #include <kaction.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
 #include <kinstance.h>
 #include <kmenu.h>
 #include <kactionmenu.h>

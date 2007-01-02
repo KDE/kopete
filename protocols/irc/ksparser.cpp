@@ -23,8 +23,8 @@ Modified by Jason Keirstead <jason@keirstead.org>
 
 #include "ksparser.h"
 
-#include <knotifyclient.h>
 //#include <kdebug.h>
+#include <knotification.h>
 
 #include <QBuffer>
 #include <QList>
@@ -162,7 +162,7 @@ QString KSParser::parse(QString message)
 			}
 			break;
 		case 0x07:	//System bell: ^G
-			KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
+			KNotification::beep( QString::fromLatin1("IRC beep event received in a message") );
 			break;
 		case '\t':	// 0x09
 			ret += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");

@@ -23,7 +23,6 @@
 #include <QByteArray>
 
 #include <kmessagebox.h>
-#include <knotifyclient.h>
 
 #include <kapplication.h>
 #include <klocale.h>
