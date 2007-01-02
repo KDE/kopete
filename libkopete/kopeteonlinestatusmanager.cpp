@@ -349,7 +349,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	QStringList overlays = statusFor.overlayIcons();
 	if ( !( overlays.isEmpty() ) ) // otherwise leave the basis as-is
 	{
-		KIconLoader *loader = KGlobal::instance()->iconLoader();
+		KIconLoader *loader = kapp->iconLoader();
 
 		int i = 0;
 		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )

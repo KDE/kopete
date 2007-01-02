@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 
+#include <kapplication.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
@@ -58,7 +59,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
 	cRegister = new RegisterCommand( this );
 
 	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = KGlobal::iconLoader()->loadIcon ( "gadu_protocol", K3Icon::Small );
+	hintPixmap = kapp->iconLoader()->loadIcon ( "gadu_protocol", K3Icon::Small );
 
 	connect( this, SIGNAL( user1Clicked() ), SLOT( doRegister() ) );
 	connect( this, SIGNAL( okClicked() ), SLOT( slotClose() ) );

@@ -21,6 +21,7 @@
 #include <QPixmap>
 #include <QIcon>
 
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
@@ -190,7 +191,7 @@ QPixmap Account::accountIcon(const int size) const
 	QString icon= d->customIcon.isEmpty() ? d->protocol->pluginIcon() : d->customIcon;
 	
 	// FIXME: this code is duplicated with OnlineStatus, can we merge it somehow?
-	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
+	QPixmap base = kapp->iconLoader()->loadIcon(
 		icon, K3Icon::Small, size );
 
 	if ( d->color.isValid() )
