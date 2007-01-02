@@ -30,7 +30,7 @@
 #include <kurl.h>
 #include <kurlrequester.h>
 #include <kio/netaccess.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <kdirwatch.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>

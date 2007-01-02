@@ -49,7 +49,7 @@
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <kurl.h> // KNewStuff
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
 
