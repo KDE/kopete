@@ -32,6 +32,7 @@ class KAction;
 namespace QtTapioca
 {
 	class Contact;
+	class Avatar;
 }
 
 namespace Kopete
@@ -93,8 +94,16 @@ private slots:
 	/**
 	 * @brief Called when contact has changed its avatar.
 	 * @param contact Refering ContactBase
+	 * @param newToken New token for the avatar update
 	 */
-	void telepathyAvatarChanged(QtTapioca::ContactBase *contact);
+	void telepathyAvatarChanged(QtTapioca::ContactBase *contact, const QString &newToken);
+
+	/**
+	 * @brief Called when we got avatar from contact.
+	 * @param contact Refering ContactBase
+	 * @param avatar New avatar data
+	 */
+	void telepathyAvatarReceived(QtTapioca::ContactBase *contact, QtTapioca::Avatar *avatar);
 
 	void actionAuthorize();
 	void actionSubscribe();

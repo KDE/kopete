@@ -90,17 +90,16 @@ void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 	// Connect signal/slots
 	connect(d->internalContact, SIGNAL(presenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)), this, SLOT(telepathyPresenceUpdated(QtTapioca::ContactBase*, QtTapioca::ContactBase::Presence, QString)));
 	connect(d->internalContact, SIGNAL(aliasChanged(QtTapioca::ContactBase*,QString)), this, SLOT(telepathyAliasChanged(QtTapioca::ContactBase*,QString)));
-	connect(d->internalContact, SIGNAL(avatarUpdated(QtTapioca::ContactBase *)), this, SLOT(telepathyAvatarChanged(QtTapioca::ContactBase*)));
-
+	connect(d->internalContact, SIGNAL(avatarUpdated(QtTapioca::ContactBase*,QString)), this, SLOT(telepathyAvatarChanged(QtTapioca::ContactBase*,QString)));
+	connect(d->internalContact, SIGNAL(avatarReceived(QtTapioca::ContactBase*,QtTapioca::Avatar*)), this, SLOT(telepathyAvatarReceived(QtTapioca::ContactBase*,QtTapioca::Avatar*)));
 	// Set initial presence
 	TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->presence() );
 
 	// Set nickname/alias
 	setNickName( d->internalContact->alias() );
 
-	// Enable avatar update
-	d->internalContact->setReceiveAvatarUpdates( true, property(TelepathyProtocol::protocol()->propAvatarToken).value().toString() );
-	telepathyAvatarChanged( d->internalContact );
+	// Request avatar
+	d->internalContact->requestAvatar();
 }
 
 bool TelepathyContact::isReachable()
@@ -201,36 +200,42 @@ void TelepathyContact::telepathyAliasChanged(QtTapioca::ContactBase *contactBase
 	setNickName( newAlias );
 }
 
-void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBase)
+void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBase, const QString &newToken)
 {
-	if( contactBase->avatar() )
+	QString currentToken = property(TelepathyProtocol::protocol()->propAvatarToken).value().toString();
+	if( currentToken != newToken )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a avatar update for " << contactId() << endl;
+		internalContact()->requestAvatar();
+	}
+}
 
-		// TODO: Use a common avatar storage for all protocols
-		QString pictureLocation = KStandardDirs::locateLocal( "appdata", "telepathypictures/" + contactId().replace(QRegExp("[./~]"),"-")  + ".png" );
+void TelepathyContact::telepathyAvatarReceived(QtTapioca::ContactBase *contactBase, QtTapioca::Avatar *avatar)
+{
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Received avatar for " << contactId() << endl;
 
-		if( contactBase->avatar()->image().isEmpty() )
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty." << endl;
+	// TODO: Use a common avatar storage for all protocols
+	QString pictureLocation = KStandardDirs::locateLocal( "appdata", "telepathypictures/" + contactId().replace(QRegExp("[./~]"),"-")  + ".png" );
 
-		// Guess file format from header for now
-		QImage avatar = QImage::fromData( contactBase->avatar()->image() );
+	if( avatar->data().isEmpty() )
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty." << endl;
 
-		if( avatar.save(pictureLocation, "PNG") )
-		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting avatar information for " << contactId() << endl;
+	// Guess file format from header for now
+	QImage avatarImage = QImage::fromData( avatar->data() );
 
-			// Set avatar in Kopete
-			setProperty( Kopete::Global::Properties::self()->photo(), pictureLocation );
-			setProperty( TelepathyProtocol::protocol()->propAvatarToken, contactBase->avatar()->token() );
-		}
-		else
-		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Removing avatar information for " << contactId() << endl;
+	if( avatarImage.save(pictureLocation, "PNG") )
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting avatar information for " << contactId() << endl;
 
-			removeProperty( Kopete::Global::Properties::self()->photo() );
-			removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
-		}
+		// Set avatar in Kopete
+		setProperty( Kopete::Global::Properties::self()->photo(), pictureLocation );
+		setProperty( TelepathyProtocol::protocol()->propAvatarToken, avatar->token() );
+	}
+	else
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Removing avatar information for " << contactId() << endl;
+
+		removeProperty( Kopete::Global::Properties::self()->photo() );
+		removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
 	}
 }
 
