@@ -30,6 +30,7 @@ M1 Contact List and Presence
  #Get modification of presence from others
  #Get information change from contacts (nickname, personal message, etc..)
 +Papillon/Class include structure
+-Error framework that manage error code received from server
 
 After this milestone, all(or mostly all) contactlist and presence manipulation will be in and we should be able to start the Kopete plugin.
 
