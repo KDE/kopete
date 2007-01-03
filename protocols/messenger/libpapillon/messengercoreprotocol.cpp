@@ -68,12 +68,10 @@ int MessengerCoreProtocol::state()
 
 void MessengerCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 {
-	// store locally
-	int oldsize = d->in.size();
-	d->in.resize( oldsize + incomingBytes.size() );
-	memcpy( d->in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
-
-	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
+	// Append incoming bytes to incoming buffer
+	d->in += incomingBytes;
+	
+	// convert every event in the chunk to a Transfer, signalling it back to the ClientStream
 	int parsedBytes = 0;
 	int transferCount = 0;
 	// while there is data left in the input buffer, and we are able to parse something out of it
@@ -83,17 +81,14 @@ void MessengerCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 		int size =  d->in.size();
 		if ( parsedBytes < size )
 		{
-			// copy the unparsed bytes into a new qbytearray and replace d->in with that
-			QByteArray remainder( size - parsedBytes, ' ' );
-			memcpy( remainder.data(), d->in.data() + parsedBytes, remainder.size() );
-			d->in = remainder;
+			// Remove the parsed bytes and keep the old ones.
+			d->in = d->in.right( size - parsedBytes );
 		}
 		else
 		{
 			d->in.clear();
 		}
 	}
-
 }
 
 Transfer *MessengerCoreProtocol::incomingTransfer()
@@ -229,7 +224,7 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 
 void MessengerCoreProtocol::reset()
 {
-	d->in.resize( 0 );
+	d->in.clear();
 }
 
 bool MessengerCoreProtocol::okToProceed(const QDataStream &din)

@@ -63,10 +63,8 @@ int HttpCoreProtocol::state()
 
 void HttpCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 {
-	// store locally
-	int oldsize = d->in.size();
-	d->in.resize( oldsize + incomingBytes.size() );
-	memcpy( d->in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
+	// Append incoming bytes to incoming buffer
+	d->in += incomingBytes;
 
 	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
 	int parsedBytes = 0;
@@ -78,14 +76,12 @@ void HttpCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 		int size =  d->in.size();
 		if ( parsedBytes < size )
 		{
-			// copy the unparsed bytes into a new qbytearray and replace d->in with that
-			QByteArray remainder( size - parsedBytes, char(' ') );
-			memcpy( remainder.data(), d->in.data() + parsedBytes, remainder.size() );
-			d->in = remainder;
+			// Remove the parsed bytes and keep the old ones.
+			d->in = d->in.right( size - parsedBytes );
 		}
 		else
 		{
-			d->in.truncate( 0 );
+			d->in.clear();
 		}
 	}
 
@@ -198,7 +194,7 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 
 void HttpCoreProtocol::reset()
 {
-	d->in.resize( 0 );
+	d->in.clear();
 }
 
 bool HttpCoreProtocol::okToProceed(const QDataStream &din)
