@@ -14,7 +14,11 @@ INCLUDE(UsePkgConfig)
 
 PKGCONFIG(libidn _IDNIncDir _IDNLinkDir _IDNLinkFlags _IDNCflags)
 
-set(IDN_INCLUDE_DIR ${_IDNIncDir})
+FIND_PATH(IDN_INCLUDE_DIR idna.h
+  PATHS
+  ${_IDNIncDir}
+  NO_DEFAULT_PATH
+)
 
 set(IDN_DEFINITIONS ${_IDNCflags})
 set(IDN_INCLUDES ${IDN_INCLUDE_DIR} )
