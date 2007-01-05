@@ -1,7 +1,7 @@
 /*
    contact.h - Information for a Windows Live Messenger contact.
 
-   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
+   Copyright (c) 2006-2007 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -29,8 +29,8 @@ namespace Papillon
 /**
  * @brief A Contact and all its information
  * Hold client feature, presence for a single contact.
- * This is managed by ContactListManager.
- *
+ * This is managed by ContactList.
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT Contact : public QObject
 {
@@ -44,12 +44,6 @@ public:
 	 * d-tor
 	 */
 	~Contact();
-
-	/**
-	 * @brief Is this Contact valid ?
-	 * @return true if the Contact is valid
-	 */
-	bool isValid() const;
 
 	/**
 	 * @brief Get contact ID.
@@ -84,6 +78,28 @@ public:
 	 * @param features New client features
 	 */
 	void setClientFeatures(const ClientInfo::Features &features);
+
+	/**
+	 * @brief Get the lists on which the contact is subscribed.
+	 * @return The list flags.
+	 */
+	Papillon::ContactListEnums::ListFlags lists() const;
+
+	/**
+	 * @brief Add the contact to the given list.
+	 *
+	 * You can pass multiple list flag to this method.
+	 * @param list Lists on which the contact will be added.
+	 */
+	void addToList(const Papillon::ContactListEnums::ListFlags &list);
+	
+	/**
+	 * @brief Remove the contact from the given list.
+	 *
+	 * You can pass multiple list flag to this method.
+	 * @param list Lists on which the contact will be removed.
+	 */
+	void removeFromList(const Papillon::ContactListEnums::ListFlags &list);
 
 //BEGIN AddressBook data
 	/**

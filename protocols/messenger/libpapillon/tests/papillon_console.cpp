@@ -19,8 +19,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QByteArray>
 #include <QtCore/QSettings>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
 #include <QtGui/QApplication>
 #include <QtGui/QLayout>
 #include <QtGui/QTextEdit>
@@ -28,6 +26,8 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QLabel>
 #include <QtGui/QInputDialog>
+#include <QtGui/QStringListModel>
+#include <QtGui/QListView>
 
 // Papillon includes
 #include "Papillon/Connection"
@@ -35,10 +35,8 @@
 #include "Papillon/Tasks/LoginTask"
 #include "Papillon/QtConnector"
 #include "Papillon/Transfer"
-#include "Papillon/Http/SecureStream"
+#include "Papillon/ContactList"
 #include "Papillon/UserContact"
-
-#include "connection_test.h"
 
 using namespace Papillon;
 
@@ -52,7 +50,7 @@ class PapillonConsole::Private
 {
 public:
 	Private()
-	 : client(0), settings(0), sslStream(0), soapResultFile(0)
+	 : client(0), settings(0)
 	{
 		settings = new QSettings( QLatin1String("papillonconsole.ini"), QSettings::IniFormat );
 	}
@@ -71,9 +69,6 @@ public:
 	Client *client;
 
 	QSettings *settings;
-	SecureStream *sslStream;
-	QFile *soapResultFile;
-	QTextStream *textStream;
 };
 
 PapillonConsole::PapillonConsole(QWidget *parent)
@@ -103,9 +98,9 @@ PapillonConsole::PapillonConsole(QWidget *parent)
 
 	layout->addLayout(payloadLayout);	
 
-	QPushButton *soap = new QPushButton( QLatin1String("Test SOAP"), this );
-	connect(soap, SIGNAL(clicked()), this, SLOT(buttonTestSOAP()));
-	layout->addWidget(soap);
+	QPushButton *testContactListButton = new QPushButton( QLatin1String("Test Contact list (must be logged in)"), this );
+	connect(testContactListButton, SIGNAL(clicked()), this, SLOT(buttonTestContactList()));
+	layout->addWidget(testContactListButton);
 
 	connect(d->buttonSend, SIGNAL(clicked()), this, SLOT(buttonSendClicked()));
 	connect(d->lineCommand, SIGNAL(returnPressed()), this, SLOT(buttonSendClicked()));
@@ -203,79 +198,65 @@ void PapillonConsole::buttonConnectClicked()
 	}
 }
 
-void PapillonConsole::buttonTestSOAP()
+void PapillonConsole::buttonTestContactList()
 {
-	if(!d->sslStream)
-	{
-		d->sslStream = new SecureStream(new QtConnector(this));
-		connect(d->sslStream, SIGNAL(connected()), this, SLOT(streamConnected()));
-		connect(d->sslStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
+	disconnect(d->client->contactList());
+	connect(d->client->contactList(), SIGNAL(contactListLoaded()), this, SLOT(contactListLoaded()));
 
-		d->soapResultFile = new QFile( QLatin1String("soapresult.txt"), this);
-		d->soapResultFile->open( QIODevice::ReadWrite | QIODevice::Truncate );
-		d->textStream = new QTextStream(d->soapResultFile);
-	}
-
-	d->sslStream->connectToServer( QLatin1String("omega.contacts.msn.com") );
+	d->client->contactList()->load();
 }
 
-void PapillonConsole::streamConnected()
+void PapillonConsole::contactListLoaded()
 {
-	qDebug() << "SOAP Test connected.";
-	QByteArray soapData = QString::fromUtf8("<?xml version='1.0' encoding='utf-8'?>\r\n"
-"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
-    "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
-        "<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-            "<ApplicationId xmlns=\"http://www.msn.com/webservices/AddressBook\">09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>\r\n"
-            "<IsMigration xmlns=\"http://www.msn.com/webservices/AddressBook\">false</IsMigration>\r\n"
-            "<PartnerScenario xmlns=\"http://www.msn.com/webservices/AddressBook\">Initial</PartnerScenario>\r\n"
-        "</ABApplicationHeader>\r\n"
-        "<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-            "<ManagedGroupRequest xmlns=\"http://www.msn.com/webservices/AddressBook\">false</ManagedGroupRequest>\r\n"
-        "</ABAuthHeader>\r\n"
-    "</soap:Header>\r\n"
-    "<soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
-        "<FindMembership xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-            "<serviceFilter xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-                "<Types xmlns=\"http://www.msn.com/webservices/AddressBook\">\r\n"
-                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Messenger</ServiceType>\r\n"
-                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Invitation</ServiceType>\r\n"
-                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">SocialNetwork</ServiceType>\r\n"
-                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Space</ServiceType>\r\n"
-                    "<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Profile</ServiceType>\r\n"
-                "</Types>\r\n"
-            "</serviceFilter>\r\n"
-        "</FindMembership>\r\n"
-    "</soap:Body>\r\n"
-"</soap:Envelope>\r\n").toUtf8();
+	QStringList allowList, blockList, reverseList, pendingList;
 
-	QByteArray soapHeader = QString::fromUtf8("POST /abservice/SharingService.asmx HTTP/1.1\r\n"
-"SOAPAction: http://www.msn.com/webservices/AddressBook/FindMembership\r\n"
-"Content-Type: text/xml; charset=utf-8\r\n"
-"Cookie: MSPAuth=%1\r\n"
-"Host: omega.contacts.msn.com\r\n"
-"Content-Length: %2\r\n"
-"\r\n"
-).arg( d->client->userContact()->loginCookie() ).arg( soapData.size() ).toUtf8();
-
-	QByteArray soapRequest;
-	soapRequest = soapHeader + soapData;
-
-	d->sslStream->write( soapRequest );
-}
-
-void PapillonConsole::streamReadyRead()
-{
-	qDebug() << "PapillonConsole::streamReadyRead()";
-	QByteArray read = d->sslStream->read();
-	*d->textStream << read;
-	qDebug() << "PapillonConsole::streamReadyRead(): Read" << read.size();
-
-	if( QString(read).indexOf("</soap:Envelope>") != -1 )
+	foreach(Contact *contact, d->client->contactList()->allowList())
 	{
-		qDebug() << "SOAP result end.";
-		d->soapResultFile->close();
+		allowList << contact->contactId();
 	}
+
+	foreach(Contact *contact, d->client->contactList()->blockList())
+	{
+		blockList << contact->contactId();
+	}
+
+	foreach(Contact *contact, d->client->contactList()->reverseList())
+	{
+		reverseList << contact->contactId();
+	}
+
+	foreach(Contact *contact, d->client->contactList()->pendingList())
+	{
+		pendingList << contact->contactId();
+	}
+
+	// Allow list
+	QStringListModel *allowModel = new QStringListModel( allowList );
+	QListView *allowView = new QListView(0);
+	allowView->setModel(allowModel);
+	allowView->setWindowTitle( QLatin1String("Allow List") );
+	allowView->show();
+
+	// Block list
+	QStringListModel *blockModel = new QStringListModel( blockList );
+	QListView *blockView = new QListView(0);
+	blockView->setModel(blockModel);
+	blockView->setWindowTitle( QLatin1String("Block List") );
+	blockView->show();
+
+	// Reverse list
+	QStringListModel *reverseModel = new QStringListModel( reverseList );
+	QListView *reserveView = new QListView(0);
+	reserveView->setModel(reverseModel);
+	reserveView->setWindowTitle( QLatin1String("Reverse List") );
+	reserveView->show();
+
+	// Pending list
+	QStringListModel *pendingModel = new QStringListModel( pendingList );
+	QListView *pendingView = new QListView(0);
+	pendingView->setModel(pendingModel);
+	pendingView->setWindowTitle( QLatin1String("Pending list") );
+	pendingView->show();
 }
 
 void PapillonConsole::clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status)

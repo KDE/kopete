@@ -204,9 +204,9 @@ void Client::loginResult(Papillon::Task *task)
 	LoginTask *loginTask = static_cast<LoginTask*>(task);
 	if( loginTask )
 	{
-		if( loginTask->success() )
-			setConnectionStatus( Client::LoggedIn );
-		else if( loginTask->loginState() == LoginTask::StateBadPassword )
+// 		if( loginTask->success() )
+// 			setConnectionStatus( Client::LoggedIn );
+		if( loginTask->loginState() == LoginTask::StateBadPassword )
 			setConnectionStatus( Client::LoginBadPassword );
 		else if( loginTask->loginState() != LoginTask::StateRedirection )
 			setConnectionStatus( Client::Disconnected );
@@ -218,6 +218,10 @@ void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
 	QString passportAuthTicket = profileMessage.value( QLatin1String("MSPAuth") ).toString();
 
 	userContact()->setLoginCookie( passportAuthTicket );
+
+	// We are really logged in when we receive the initial profile message.
+	// Also it contain the MSPAuth cookie REQUIRED to talk with the address book/sharing Web Service
+	setConnectionStatus( Client::LoggedIn );
 
 	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << passportAuthTicket;
 }

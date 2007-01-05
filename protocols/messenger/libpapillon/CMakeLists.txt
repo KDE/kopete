@@ -36,11 +36,17 @@ base/safedelete.cpp
 base/stream.cpp
 )
 
+set(papillon_private_contactlist_SRCS
+contactlist/fetchcontactlistjob.cpp
+contactlist/sharingservicebinding.cpp
+)
+
 set(papillon_http_SRCS
 http/securestream.cpp
 http/tweenerhandler.cpp
 http/httptransfer.cpp
 http/httpcoreprotocol.cpp
+http/httpconnection.cpp
 )
 
 set(papillon_tasks_SRCS
@@ -56,6 +62,7 @@ tasks/setstatusmessagetask.cpp
 
 set(libpapillon_SRCS
 ${papillon_base_SRCS}
+${papillon_private_contactlist_SRCS}
 ${papillon_http_SRCS}
 ${papillon_tasks_SRCS}
 task.cpp

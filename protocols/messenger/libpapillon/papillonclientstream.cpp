@@ -120,10 +120,7 @@ void ClientStream::slotByteStreamConnectionClosed()
 
 void ClientStream::slotByteStreamReadyRead()
 {
-	QByteArray a;
-	a = d->byteStream->read();
-
-	d->protocol.addIncomingData(a);
+	d->protocol.addIncomingData( d->byteStream->read() );
 }
 
 void ClientStream::slotByteStreamBytesWritten(int bytes)

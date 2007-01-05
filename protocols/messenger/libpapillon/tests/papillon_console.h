@@ -22,6 +22,11 @@
 #include "Papillon/Client"
 #undef private
 
+namespace Papillon
+{
+	class FetchContactListJob;
+}
+
 namespace PapillonConsole
 {
 
@@ -39,10 +44,10 @@ public:
 private slots:
 	void buttonSendClicked();
 	void buttonConnectClicked();
-	void buttonTestSOAP();
+	void buttonTestContactList();
+
 	void clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status);
-	void streamConnected();
-	void streamReadyRead();
+	void contactListLoaded();
 
 private:
 	bool isPayloadCommand(const QString &command);

@@ -53,7 +53,7 @@ connect(client, SIGNAL(connectionStatusChanged(Papillon::Client::ConnectionStatu
  * like the passport identifier, the password and optionally the initial presence. You can
  * set a different server using setServer(). An example of login:
 @code
-client->userContact()>setLoginInformation( "test@passport.com", "password" );
+client->userContact()->setLoginInformation( "test@passport.com", "password" );
 client->setServer("messenger.hotmail.com", 1863);
 client->connectToServer( Papillon::Presence::Busy );
 @endcode

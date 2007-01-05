@@ -31,6 +31,7 @@ papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/stream.h ${CMAKE
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/httpcoreprotocol.h ${CMAKE_CURRENT_SOURCE_DIR}/http/httpcoreprotocol.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/securestream.h ${CMAKE_CURRENT_SOURCE_DIR}/http/securestream.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/tweenerhandler.h ${CMAKE_CURRENT_SOURCE_DIR}/http/tweenerhandler.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/httpconnection.h ${CMAKE_CURRENT_SOURCE_DIR}/http/httpconnection.cpp )
 
 # Papillon/Tasks
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/challengetask.h ${CMAKE_CURRENT_SOURCE_DIR}/tasks/challengetask.cpp )
@@ -41,6 +42,14 @@ papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/notifystatusmes
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/setpersonalinformationtask.h ${CMAKE_CURRENT_SOURCE_DIR}/tasks/setpersonalinformationtask.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/setpresencetask.h ${CMAKE_CURRENT_SOURCE_DIR}/tasks/setpresencetask.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/setstatusmessagetask.h ${CMAKE_CURRENT_SOURCE_DIR}/tasks/setstatusmessagetask.cpp )
+
+# Papillon/contactlist
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/fetchcontactlistjob.h ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/fetchcontactlistjob.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/sharingservicebinding.h ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/sharingservicebinding.cpp )
+
+# Papillon/contactlist
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/fetchcontactlistjob.h ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/fetchcontactlistjob.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/sharingservicebinding.h ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/sharingservicebinding.cpp )
 
 # Papillon
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/client.h ${CMAKE_CURRENT_SOURCE_DIR}/client.cpp )

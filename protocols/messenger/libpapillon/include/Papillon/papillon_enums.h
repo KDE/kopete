@@ -35,9 +35,9 @@ namespace Papillon
 			ReverseList = 8, ///<Contacts that have you on their Forward List.
 			PendingList = 16 ///<Contacts pending to be added.
 		};
-		Q_DECLARE_FLAGS(ContactListFlags, Type)
+		Q_DECLARE_FLAGS(ListFlags, Type)
 	};
-	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactListEnums::ContactListFlags )
+	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactListEnums::ListFlags )
 
 	/**
 	 * @brief Enums related to ClientInfo

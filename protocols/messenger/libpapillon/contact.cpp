@@ -1,7 +1,7 @@
 /*
    contact.cpp - Information for a Windows Live Messenger contact.
 
-   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
+   Copyright (c) 2006-2007 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -24,14 +24,14 @@ class Contact::Private
 {
 public:
 	Private()
-	 : clientFeatures(0)
+	 : clientFeatures(0), lists(0)
 	{}
 
 	QString contactId;
 	QString passportId;
 	
 	Papillon::ClientInfo::Features clientFeatures;
-	
+	ContactListEnums::ListFlags lists;
 	QString displayName;
 };
 
@@ -42,11 +42,6 @@ Contact::Contact(QObject *parent)
 Contact::~Contact()
 {
 	delete d;
-}
-
-bool Contact::isValid() const
-{
-	return !d->passportId.isEmpty();
 }
 
 QString Contact::contactId() const
@@ -79,6 +74,21 @@ void Contact::setClientFeatures(const ClientInfo::Features &features)
 	d->clientFeatures = features;
 }
 
+Papillon::ContactListEnums::ListFlags Contact::lists() const
+{
+	return d->lists;
+}
+
+void Contact::addToList(const Papillon::ContactListEnums::ListFlags &list)
+{
+	d->lists |= list;
+}
+
+void Contact::removeFromList(const Papillon::ContactListEnums::ListFlags &list)
+{
+	d->lists |= ~list;
+}
+
 QString Contact::displayName() const
 {
 	return d->displayName;
@@ -88,7 +98,6 @@ void Contact::setDisplayName(const QString &displayName)
 {
 	d->displayName = displayName;
 }
-
 
 }
 

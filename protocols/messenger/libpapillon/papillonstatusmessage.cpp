@@ -303,7 +303,7 @@ Papillon::Presence::MediaType StatusMessage::Private::mediaTypeFromString(const 
 	else if( media == QLatin1String("Office") )
 		mediaType = Papillon::Presence::MediaOffice;
 	
-	return mediaType;	
+	return mediaType;
 }
 
 }
