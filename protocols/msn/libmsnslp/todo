@@ -1,0 +1,10 @@
+TODO
+
+- direct connection TCPv1 and UDPv1
+- file transfer resumes
+  Adds the following message headers to the initial invite 200 OK response
+  Transfer-Resume: true
+  Data-Offset: [bytes received]
+- media sessions
+  - video (webcam)
+  - audio
