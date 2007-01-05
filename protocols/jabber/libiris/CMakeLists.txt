@@ -12,6 +12,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-im/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/ 
 ${QCA2_INCLUDE_DIR} 
+${IDN_INCLUDE_DIR}
 )
 
 set(cutestuff_SRCS 
@@ -92,7 +93,7 @@ kde4_automoc(${libiris_needmoc_SRCS} )
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 
-target_link_libraries(iris_kopete ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} idn ${QCA2_LIBRARIES})
+target_link_libraries(iris_kopete ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${IDN_LIBRARY} ${QCA2_LIBRARIES})
 
 install(TARGETS iris_kopete  DESTINATION ${LIB_INSTALL_DIR})
 
