@@ -68,7 +68,7 @@ class LIBOSCAR_EXPORT Buffer
 		 * current position in the buffer to be read.
 		 */
 		int length() const;
-	
+
 		/**
 		 * Returns the amount of data left in the buffer to read.
 		 */
@@ -188,7 +188,7 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * Allocates memory for and gets a block of buffer bytes
 		 */
-		QByteArray getBlock(WORD len);
+		QByteArray getBlock(DWORD len);
 		QByteArray getBBlock(WORD len);
 
 		/**
@@ -212,12 +212,12 @@ class LIBOSCAR_EXPORT Buffer
 		 * adds a 32-bit long TLV
 		 */
 		int addTLV32(const WORD type, const DWORD data);
-		
+
 		/**
 		 * adds a 32-bit long little-endian TLV
 		 */
 		int addLETLV32(const WORD type, const DWORD data);
-		
+
 		/**
 		 * adds a 16-bit long TLV
 		 */
@@ -269,6 +269,30 @@ class LIBOSCAR_EXPORT Buffer
 
 		/** gets guid from the buffer */
 		Guid getGuid();
+
+		/**
+		 * Adds the given block to the buffer with the length in front of it.
+		 * Length is little-endian WORD.
+		 */
+		int addLEBlock( const QByteArray& block );
+
+		/**
+		 * Gets a block form the buffer with the length in front of it.
+		 * Length is little-endian WORD.
+		 */
+		QByteArray addLEBlock();
+
+		/**
+		 * Adds the given block to the buffer with the length in front of it.
+		 * Length is little-endian DWORD.
+		 */
+		int addLEDBlock( const QByteArray& block );
+
+		/**
+		 * Gets a block form the buffer with the length in front of it.
+		 * Length is little-endian DWORD.
+		 */
+		QByteArray getLEDBlock();
 
 		operator QByteArray() const;
 

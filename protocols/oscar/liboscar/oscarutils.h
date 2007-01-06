@@ -54,7 +54,7 @@ KOPETE_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
  * no client is found
  * \return a DWORD containing a bit array of the capabilities we found
  */
-DWORD parseCapabilities(Buffer &inbuf, QString &versionString);
+DWORD parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus );
 
 /**
  * Get the name of the capability from its number

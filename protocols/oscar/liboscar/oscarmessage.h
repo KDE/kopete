@@ -5,8 +5,9 @@
     Copyright (c) 2005 Matt Rogers <mattr@kde.org>
     Copyright (c) 2005 Conrad Hoffmann <conrausch@gmx.de>
     Copyright (c) 2005 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2006-2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,9 +22,10 @@
 #ifndef _OSCARMESSAGE_H_
 #define _OSCARMESSAGE_H_
 
-#include <qglobal.h>
-#include <qstring.h>
-#include <qdatetime.h>
+#include <QString>
+#include <QDateTime>
+#include <QSharedDataPointer>
+
 #include "kopete_export.h"
 #include "oscartypes.h"
 
@@ -91,6 +93,8 @@ public:
 	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
 	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
 
+	Message( const Message& m );
+	Message& operator=( const Message& m );
 	~Message();
 
 	/** Get the sender of the message */
@@ -214,35 +218,19 @@ public:
 	void setEncoding( Encoding newEncoding );
 
 	/** get the message plugin */
-	const MessagePlugin* plugin() const;
+	MessagePlugin* plugin() const;
 
-	/** set the message plugin */
+	/** set the message plugin
+	 *  The message deletes old plugin when a new plugin is set.
+	 */
 	void setPlugin( MessagePlugin* plugin );
 
 	operator bool() const;
 
 private:
-    //TODO d-pointer
-	QString m_sender;
-	QString m_receiver;
-	int m_channel;
-	int m_properties;
-	int m_messageType;
-	int m_requestType;
-	int m_port;
-	int m_reqNum;
-	int m_protocolVersion;
-	int m_channel2Counter;
-	QByteArray m_icbmCookie;
-	QByteArray m_proxy;
-	QByteArray m_textArray;
-	QDateTime m_timestamp;
-	Oscar::WORD m_exchange;
-	QString m_chatRoom;
-	Encoding m_encoding;
-	QString m_fileName;
-	DWORD m_fileSize;
-	MessagePlugin* m_plugin;
+	class MessagePrivate;
+	QSharedDataPointer<MessagePrivate> d;
+
 };
 
 }

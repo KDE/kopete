@@ -243,12 +243,18 @@ void Buffer::setBuf(char *b, const WORD len)
 	mReadPos = 0;
 }
 
-QByteArray Buffer::getBlock(WORD len)
+QByteArray Buffer::getBlock(DWORD len)
 {
+	if ( len > (DWORD)(mBuffer.size() - mReadPos) )
+	{
+		kDebug(14150) << "Buffer::getBlock(DWORD): mBuffer underflow!!!" << endl;
+		len = mBuffer.size() - mReadPos;
+	}
+
 	QByteArray ch;
 	ch.resize( len );
 
-	for ( int i = 0; i < len; i++ )
+	for ( DWORD i = 0; i < len; i++ )
 	{
 		ch[i] = getByte();
 	}
@@ -536,6 +542,35 @@ Guid Buffer::getGuid()
 	return Guid(getBBlock(16)); //block or bblock?
 }
 
+int Buffer::addLEBlock( const QByteArray& block )
+{
+	int ret = addLEWord( block.length() );
+	if ( block.length() > 0 )
+		ret = addString( block );
+	
+	return ret;
+}
+
+QByteArray Buffer::addLEBlock()
+{
+	DWORD len = getLEWord();
+	return getBlock( len );
+}
+
+int Buffer::addLEDBlock( const QByteArray& block )
+{
+	int ret = addLEDWord( block.length() );
+	if ( block.length() > 0 )
+		ret = addString( block );
+
+	return ret;
+}
+
+QByteArray Buffer::getLEDBlock()
+{
+	DWORD len = getLEDWord();
+	return getBlock( len );
+}
 
 Buffer::operator QByteArray() const
 {

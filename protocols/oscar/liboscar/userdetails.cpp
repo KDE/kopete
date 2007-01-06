@@ -36,6 +36,7 @@ UserDetails::UserDetails()
 	m_userClass = 0;
 	m_idleTime = 0;
 	m_extendedStatus = 0;
+	m_xtrazStatus = 0;
 	m_capabilities = 0;
 	m_dcPort = 0;
 	m_dcType = 0;
@@ -52,6 +53,7 @@ UserDetails::UserDetails()
 	m_numSecondsOnlineSpecified = false;
 	m_idleTimeSpecified = false;
 	m_extendedStatusSpecified = false;
+	m_xtrazStatusSpecified = false;
 	m_capabilitiesSpecified = false;
 	m_dcOutsideSpecified = false;
 	m_dcInsideSpecified = false;
@@ -111,6 +113,11 @@ int UserDetails::userClass() const
 DWORD UserDetails::extendedStatus() const
 {
 	return m_extendedStatus;
+}
+
+int UserDetails::xtrazStatus() const
+{
+	return m_xtrazStatus;
 }
 
 BYTE UserDetails::iconCheckSumType() const
@@ -214,8 +221,9 @@ void UserDetails::fill( Buffer * buffer )
 #endif
 				break;
 			case 0x000D: //capability info
-				m_capabilities = Oscar::parseCapabilities( b, m_clientVersion );
+				m_capabilities = Oscar::parseCapabilities( b, m_clientVersion, m_xtrazStatus );
 				m_capabilitiesSpecified = true;
+				m_xtrazStatusSpecified = (m_xtrazStatus > -1) ? true : false;
 				break;
 			case 0x0010:
 			case 0x000F: //online time
@@ -506,6 +514,11 @@ void UserDetails::merge( const UserDetails& ud )
 	{
 		m_extendedStatus = ud.m_extendedStatus;
 		m_extendedStatusSpecified = true;
+	}
+	if ( ud.m_xtrazStatusSpecified )
+	{
+		m_xtrazStatus = ud.m_xtrazStatus;
+		m_xtrazStatusSpecified = true;
 	}
 	if ( ud.m_capabilitiesSpecified )
 	{

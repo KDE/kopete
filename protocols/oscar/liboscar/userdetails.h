@@ -45,6 +45,7 @@ public:
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
 	DWORD extendedStatus() const; //!User status accessor
+	int xtrazStatus() const;
 	BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
@@ -68,6 +69,7 @@ public:
 	bool numSecondsOnlineSpecified() const { return m_numSecondsOnlineSpecified; }
 	bool idleTimeSpecified() const { return m_idleTimeSpecified; }
 	bool extendedStatusSpecified() const { return m_extendedStatusSpecified; }
+	bool xtrazStatusSpecified() const { return m_xtrazStatusSpecified; }
 	bool capabilitiesSpecified() const { return m_capabilitiesSpecified; }
 	bool dcOutsideSpecified() const { return m_dcOutsideSpecified; }
 	bool dcInsideSpecified() const { return m_dcInsideSpecified; }
@@ -85,7 +87,8 @@ private:
 	QDateTime m_onlineSince; /// how long the contact's been online - TLV 0x03
 	DWORD m_numSecondsOnline; /// how long the contact's been online in seconds
 	WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
-	DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06	
+	DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
+	int m_xtrazStatus;
 	DWORD m_capabilities; //TLV 0x05
 	QString m_clientVersion; /// the version of client they're using
 	QString m_clientName; /// the name of the client they're using
@@ -110,6 +113,7 @@ private:
 	bool m_numSecondsOnlineSpecified;
 	bool m_idleTimeSpecified;
 	bool m_extendedStatusSpecified;
+	bool m_xtrazStatusSpecified;
 	bool m_capabilitiesSpecified;
 	bool m_dcOutsideSpecified;
 	bool m_dcInsideSpecified;

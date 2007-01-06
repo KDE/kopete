@@ -4,8 +4,9 @@
 
     Copyright (c) 2005 Matt Rogers <mattr@kde.org>
     Copyright (c) 2005 Conrad Hoffmann <conrausch@gmx.de>
+    Copyright (c) 2006-2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,105 +20,168 @@
 
 #include "oscarmessage.h"
 
-#include <qtextcodec.h>
+#include <QTextCodec>
 #include <QByteArray>
+#include <QSharedData>
 
 #include "oscarmessageplugin.h"
 
-Oscar::Message::Message()
-: m_channel( -1 ),
-  m_properties( -1 ),
-  m_messageType( 0 ),
-  m_requestType( 0 ),
-  m_port( 0 ),
-  m_reqNum( 1 ),
-  m_protocolVersion( 0 ),
-  m_channel2Counter( 0 ),
-  m_encoding( UserDefined ),
-  m_fileSize( 0 ),
-  m_plugin( 0 )
+namespace Oscar
+{
+
+class Message::MessagePrivate : public QSharedData
+{
+public:
+	MessagePrivate()
+		: QSharedData()
+	{
+		channel = -1;
+		properties = -1;
+		messageType = 0;
+		requestType = 0;
+		port = 0;
+		reqNum = 1;
+		protocolVersion = 0;
+		channel2Counter = 0;
+		encoding = UserDefined;
+		fileSize = 0;
+		plugin = 0;
+	}
+	MessagePrivate( const MessagePrivate &other )
+		: QSharedData( other )
+	{
+		sender = other.sender;
+		receiver = other.receiver;
+		channel = other.channel;
+		properties = other.properties;
+		messageType = other.messageType;
+		requestType = other.requestType;
+		port = other.port;
+		reqNum = other.reqNum;
+		protocolVersion = other.protocolVersion;
+		channel2Counter = other.channel2Counter;
+		icbmCookie = other.icbmCookie;
+		proxy = other.proxy;
+		textArray = other.textArray;
+		timestamp = other.timestamp;
+		exchange = other.exchange;
+		chatRoom = other.chatRoom;
+		encoding = other.encoding;
+		fileName = other.fileName;
+		fileSize = other.fileSize;
+
+		if ( other.plugin )
+			plugin = new MessagePlugin(*other.plugin);
+		else
+			plugin = 0;
+	}
+		
+	~MessagePrivate()
+	{
+		delete plugin;
+	}
+	
+	QString sender;
+	QString receiver;
+	int channel;
+	int properties;
+	int messageType;
+	int requestType;
+	int port;
+	int reqNum;
+	int protocolVersion;
+	int channel2Counter;
+	QByteArray icbmCookie;
+	QByteArray proxy;
+	QByteArray textArray;
+	QDateTime timestamp;
+	WORD exchange;
+	QString chatRoom;
+	Encoding encoding;
+	QString fileName;
+	DWORD fileSize;
+	MessagePlugin* plugin;
+};
+
+Message::Message()
+	: d( new MessagePrivate )
 {
 }
 
-Oscar::Message::Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp )
-: m_channel( channel ),
-  m_properties( properties ),
-  m_messageType( 0 ),
-  m_requestType( 0 ),
-  m_port( 0 ),
-  m_reqNum( 1 ),
-  m_protocolVersion( 0 ),
-  m_channel2Counter( 0 ),
-  m_textArray( messageText ),
-  m_timestamp( timestamp ),
-  m_encoding( messageEncoding ),
-  m_fileSize( 0 ),
-  m_plugin( 0 )
+Message::Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp )
+	: d( new MessagePrivate )
 {
+	d->channel = channel;
+	d->properties = properties;
+	d->textArray = messageText;
+	d->timestamp = timestamp;
+	d->encoding = messageEncoding;
 }
 
-
-Oscar::Message::Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec )
-: m_channel( channel ),
-  m_properties( properties ),
-  m_messageType( 0 ),
-  m_requestType( 0 ),
-  m_port( 0 ),
-  m_reqNum( 1 ),
-  m_protocolVersion( 0 ),
-  m_channel2Counter( 0 ),
-  m_timestamp( timestamp ),
-  m_fileSize( 0 ),
-  m_plugin( 0 )
+Message::Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec )
+	: d( new MessagePrivate )
 {
+	d->channel = channel;
+	d->properties = properties;
+	d->timestamp = timestamp;
+
 	setText( messageEncoding, messageText, codec );
 }
 
-Oscar::Message::~Message()
+Message::Message( const Message& m )
+	: d( m.d )
 {
-	if ( m_plugin )
-		delete m_plugin;
 }
 
-QString Oscar::Message::sender() const
+Message& Message::operator=( const Message& m )
 {
-	return m_sender;
+	d = m.d;
+	return *this;
 }
 
-void Oscar::Message::setSender( const QString& sender  )
+Message::~Message()
 {
-	m_sender = sender;
 }
 
-QString Oscar::Message::receiver() const
+QString Message::sender() const
 {
-	return m_receiver;
+	return d->sender;
 }
 
-void Oscar::Message::setReceiver( const QString& receiver )
+void Message::setSender( const QString& sender  )
 {
-	m_receiver = receiver;
+	d->sender = sender;
 }
 
-QByteArray Oscar::Message::textArray() const
+QString Message::receiver() const
 {
-    return m_textArray;
+	return d->receiver;
 }
 
-QString Oscar::Message::text( QTextCodec *codec ) const
+void Message::setReceiver( const QString& receiver )
 {
-	switch ( m_encoding )
+	d->receiver = receiver;
+}
+
+QByteArray Message::textArray() const
+{
+    return d->textArray;
+}
+
+QString Message::text( QTextCodec *codec ) const
+{
+	switch ( d->encoding )
 	{
-	case Oscar::Message::UserDefined:
-		return codec->toUnicode( m_textArray );
-	case Oscar::Message::UTF8:
-		return QString::fromUtf8( m_textArray.data(), m_textArray.size() );
-	case Oscar::Message::UCS2:
+	case Message::UserDefined:
+		return codec->toUnicode( d->textArray );
+	case Message::UTF8:
+		return QString::fromUtf8( d->textArray.data(), d->textArray.size() );
+	case Message::UCS2:
 	{
-		uint len = m_textArray.size() / 2;
+		uint len = d->textArray.size() / 2;
 		QString result;
 		result.resize( len );
-		QByteArray::ConstIterator p = m_textArray.begin();
+		QByteArray::ConstIterator p = d->textArray.begin();
 		for ( uint i = 0; i < len; i++)
 		{
 			char row = *p++;
@@ -137,26 +201,26 @@ QString Oscar::Message::text( QTextCodec *codec ) const
 	//FIXME: warn at least with kdWarning if an unrecognised encoding style was seen.
 }
 
-void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QString& newText, QTextCodec* codec )
+void Message::setText( Message::Encoding newEncoding, const QString& newText, QTextCodec* codec )
 {
 	uint len;
 	switch ( newEncoding )
 	{
-	case Oscar::Message::UserDefined:
-		// Oscar::Message::setTextArray( const QCString& )
+	case Message::UserDefined:
+		// Message::setTextArray( const QCString& )
 		// strips trailing null byte automatically.
 		setTextArray( codec->fromUnicode( newText ) );
 		break;
-	case Oscar::Message::UTF8:
-		// Oscar::Message::setTextArray( const QCString& )
+	case Message::UTF8:
+		// Message::setTextArray( const QCString& )
 		// strips trailing null byte automatically.
 		setTextArray( newText.toUtf8() );
 		break;
-	case Oscar::Message::UCS2:
+	case Message::UCS2:
 	{
 		len = newText.length();
-		m_textArray.resize( len * 2 );
-		QByteArray::Iterator p = m_textArray.begin();
+		d->textArray.resize( len * 2 );
+		QByteArray::Iterator p = d->textArray.begin();
 		for ( uint i = 0; i < len; i++)
 		{
 			*p++ = newText[i].row();
@@ -167,199 +231,201 @@ void Oscar::Message::setText( Oscar::Message::Encoding newEncoding, const QStrin
 	default:
 		break; // Should never happen.
 	}
-	m_encoding = newEncoding;
+	d->encoding = newEncoding;
 }
 
-void Oscar::Message::setTextArray( const QByteArray& newTextArray )
+void Message::setTextArray( const QByteArray& newTextArray )
 {
-	m_textArray = newTextArray;
+	d->textArray = newTextArray;
 }
 
-int Oscar::Message::properties() const
+int Message::properties() const
 {
-	return m_properties;
+	return d->properties;
 }
 
-void Oscar::Message::addProperty( int prop )
+void Message::addProperty( int prop )
 {
-	if ( m_properties == -1  )
-		m_properties = 0;
+	if ( d->properties == -1  )
+		d->properties = 0;
 
-	m_properties = m_properties | prop;
+	d->properties = d->properties | prop;
 }
 
-bool Oscar::Message::hasProperty( int prop ) const
+bool Message::hasProperty( int prop ) const
 {
-	if ( m_properties == -1 )
+	if ( d->properties == -1 )
 		return false;
-	if ( ( m_properties & prop ) == 0 )
+	if ( ( d->properties & prop ) == 0 )
 		return false;
 	else
 		return true;
 }
 
-int Oscar::Message::channel() const
+int Message::channel() const
 {
-	return m_channel;
+	return d->channel;
 }
 
-void Oscar::Message::setChannel( int newChannel )
+void Message::setChannel( int newChannel )
 {
-	m_channel = newChannel;
+	d->channel = newChannel;
 }
 
-QDateTime Oscar::Message::timestamp() const
+QDateTime Message::timestamp() const
 {
-	return m_timestamp;
+	return d->timestamp;
 }
 
-void Oscar::Message::setTimestamp( QDateTime ts )
+void Message::setTimestamp( QDateTime ts )
 {
-	m_timestamp = ts;
+	d->timestamp = ts;
 }
 
-QByteArray Oscar::Message::icbmCookie() const
+QByteArray Message::icbmCookie() const
 {
-	return m_icbmCookie;
+	return d->icbmCookie;
 }
 
-void Oscar::Message::setIcbmCookie( const QByteArray& cookie )
+void Message::setIcbmCookie( const QByteArray& cookie )
 {
-	m_icbmCookie = cookie;
+	d->icbmCookie = cookie;
 }
 
-int Oscar::Message::protocolVersion() const
+int Message::protocolVersion() const
 {
-	return m_protocolVersion;
+	return d->protocolVersion;
 }
 
-void Oscar::Message::setProtocolVersion( int version )
+void Message::setProtocolVersion( int version )
 {
-	m_protocolVersion = version;
+	d->protocolVersion = version;
 }
 
-int Oscar::Message::channel2Counter() const
+int Message::channel2Counter() const
 {
-	return m_channel2Counter;
+	return d->channel2Counter;
 }
 
-void Oscar::Message::setChannel2Counter( int value )
+void Message::setChannel2Counter( int value )
 {
-	m_channel2Counter = value;
+	d->channel2Counter = value;
 }
 
-int Oscar::Message::messageType() const
+int Message::messageType() const
 {
-	return m_messageType;
+	return d->messageType;
 }
 
-void Oscar::Message::setMessageType( int type )
+void Message::setMessageType( int type )
 {
-	m_messageType = type;
+	d->messageType = type;
 }
 
-int Oscar::Message::reqType() const
+int Message::reqType() const
 {
-	return m_requestType;
+	return d->requestType;
 }
 
-void Oscar::Message::setReqType( int type )
+void Message::setReqType( int type )
 {
-	m_requestType = type;
+	d->requestType = type;
 }
 
-int Oscar::Message::port() const
+int Message::port() const
 {
-	return m_port;
+	return d->port;
 }
 
-void Oscar::Message::setPort( int port )
+void Message::setPort( int port )
 {
-	m_port = port;
+	d->port = port;
 }
 
-QByteArray Oscar::Message::proxy() const
+QByteArray Message::proxy() const
 {
-	return m_proxy;
+	return d->proxy;
 }
 
-void Oscar::Message::setProxy( QByteArray proxy )
+void Message::setProxy( QByteArray proxy )
 {
-	m_proxy = proxy;
+	d->proxy = proxy;
 }
 
-int Oscar::Message::reqNum() const
+int Message::reqNum() const
 {
-	return m_reqNum;
+	return d->reqNum;
 }
 
-void Oscar::Message::setReqNum( int n )
+void Message::setReqNum( int n )
 {
-	m_reqNum = n;
+	d->reqNum = n;
 }
 
-QString Oscar::Message::fileName() const
+QString Message::fileName() const
 {
-	return m_fileName;
+	return d->fileName;
 }
 
-Oscar::DWORD Oscar::Message::fileSize() const
+DWORD Message::fileSize() const
 {
-	return m_fileSize;
+	return d->fileSize;
 }
 
-void Oscar::Message::setFile( Oscar::DWORD size, QString name )
+void Message::setFile( DWORD size, QString name )
 {
-	m_fileSize = size;
-	m_fileName = name;
+	d->fileSize = size;
+	d->fileName = name;
 }
 
-Oscar::WORD Oscar::Message::exchange() const
+WORD Message::exchange() const
 {
-    return m_exchange;
+    return d->exchange;
 }
 
-void Oscar::Message::setExchange( Oscar::WORD exchange )
+void Message::setExchange( WORD exchange )
 {
-    m_exchange = exchange;
+    d->exchange = exchange;
 }
 
-QString Oscar::Message::chatRoom() const
+QString Message::chatRoom() const
 {
-    return m_chatRoom;
+    return d->chatRoom;
 }
 
-void Oscar::Message::setChatRoom( const QString& room )
+void Message::setChatRoom( const QString& room )
 {
-    m_chatRoom = room;
+    d->chatRoom = room;
 }
 
-Oscar::Message::Encoding Oscar::Message::encoding() const
+Message::Encoding Message::encoding() const
 {
-	return m_encoding;
+	return d->encoding;
 }
 
-void Oscar::Message::setEncoding( Oscar::Message::Encoding newEncoding )
+void Message::setEncoding( Message::Encoding newEncoding )
 {
-	m_encoding = newEncoding;
+	d->encoding = newEncoding;
 }
 
-const Oscar::MessagePlugin* Oscar::Message::plugin() const
+MessagePlugin* Message::plugin() const
 {
-	return m_plugin;
+	return d->plugin;
 }
 
-void Oscar::Message::setPlugin( Oscar::MessagePlugin* plugin )
+void Message::setPlugin( MessagePlugin* plugin )
 {
-	if ( m_plugin )
-		delete m_plugin;
+	if ( d->plugin )
+		delete d->plugin;
 	
-	m_plugin = plugin;
+	d->plugin = plugin;
 }
 
-Oscar::Message::operator bool() const
+Message::operator bool() const
 {
-	return m_channel != -1 && m_properties != -1;
+	return d->channel != -1 && d->properties != -1;
+}
+
 }
 
 //kate: indent-mode csands; auto-insert-doxygen on; tab-width 4;

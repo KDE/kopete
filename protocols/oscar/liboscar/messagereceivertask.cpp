@@ -26,6 +26,7 @@
 #include "connection.h"
 #include "oscarutils.h"
 #include "userdetails.h"
+#include "oscarmessageplugin.h"
 
 
 MessageReceiverTask::MessageReceiverTask( Task* parent ) : Task( parent )
@@ -402,23 +403,49 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 
 		QByteArray msgText( b->getLELNTS() );
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
-		int fgcolor = 0x00000000;
-		int bgcolor = 0x00ffffff;
 
-		if ( b->bytesAvailable() >= 8 )
+		if ( messageType == Oscar::MessageType::Plugin )
 		{
-			fgcolor = b->getLEDWord();
-			bgcolor = b->getLEDWord();
+			WORD pluginHeaderLength = b->getLEWord();
+			Oscar::MessagePlugin *plugin = new MessagePlugin();
 
-			while ( b->bytesAvailable() >= 4 )
+			Oscar::Guid pluginGuid = b->getGuid();
+			plugin->setType( pluginGuid );
+			plugin->setSubTypeId( b->getLEWord() );
+			plugin->setSubTypeText( b->getLEDBlock() );
+
+			// Unknown
+			b->skipBytes( 4 );
+			b->skipBytes( 4 );
+			b->skipBytes( 4 );
+			b->skipBytes( 2 );
+			b->skipBytes( 1 );
+
+			if ( b->bytesAvailable() >= 4 )
+				plugin->setData( b->getLEDBlock() );
+
+			msg->setPlugin( plugin );
+		}
+		else
+		{
+			int fgcolor = 0x00000000;
+			int bgcolor = 0x00ffffff;
+
+			if ( b->bytesAvailable() >= 8 )
 			{
-				int capLength = b->getLEDWord();
-				if ( b->bytesAvailable() < capLength )
-					break;
+				fgcolor = b->getLEDWord();
+				bgcolor = b->getLEDWord();
 
-				QByteArray cap( b->getBlock( capLength ) );
-				if ( qstrncmp ( cap.data(), "{0946134E-4C7F-11D1-8222-444553540000}", capLength ) == 0 )
-					encoding = Oscar::Message::UTF8;
+				while ( b->bytesAvailable() >= 4 )
+				{
+					int capLength = b->getLEDWord();
+					if ( b->bytesAvailable() < capLength )
+						break;
+
+					QByteArray cap( b->getBlock( capLength ) );
+					if ( qstrncmp ( cap.data(), "{0946134E-4C7F-11D1-8222-444553540000}", capLength ) == 0 )
+						encoding = Oscar::Message::UTF8;
+				}
 			}
 		}
 

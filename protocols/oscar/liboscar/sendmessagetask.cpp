@@ -23,6 +23,7 @@
 #include "connection.h"
 #include "oscartypes.h"
 #include "transfer.h"
+#include "oscarmessageplugin.h"
 
 
 SendMessageTask::SendMessageTask(Task* parent): Task(parent)
@@ -334,20 +335,10 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 
 	if ( m_message.messageType() == Oscar::MessageType::Plugin )
 	{
-		b->addLEWord( 0x0001 ); // length of empty string + zero termination
-		b->addByte( 0x00 ); // zero termination
-
-		Buffer pluginBuffer;
-		addPluginData( &pluginBuffer );
-		b->addLEWord( pluginBuffer.length() );
-		b->addString( pluginBuffer.buffer() );
+		addPluginData( b );
 	}
 	else
 	{
-		b->addLEWord( m_message.textArray().size() + 1 ); // length of string + zero termination
-		b->addString( m_message.textArray() ); // string itself
-		b->addByte( 0x00 ); // zero termination
-
 		b->addLEDWord( 0x00000000 ); // foreground
 		b->addLEDWord( 0x00FFFFFF ); // foreground
 	}
@@ -361,12 +352,25 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 
 void SendMessageTask::addPluginData( Buffer* b )
 {
-	const MessagePlugin* plugin = m_message.plugin();
+	const Oscar::MessagePlugin* plugin = m_message.plugin();
 
 	if ( !plugin )
 		return;
 
-	
+	Buffer headerBuffer;
+	headerBuffer.addGuid( plugin->guid() );
+	headerBuffer.addLEWord( plugin->subTypeId() );
+	headerBuffer.addLEDBlock( plugin->subTypeText() );
+
+	//Unknown
+	headerBuffer.addDWord( 0x00000100 );
+	headerBuffer.addDWord( 0x00000000 );
+	headerBuffer.addDWord( 0x00000000 );
+	headerBuffer.addWord( 0x0000 );
+	headerBuffer.addByte( 0x00 );
+	b->addLEBlock( headerBuffer.buffer() );
+
+	b->addLEDBlock( plugin->data() );
 }
 
 /* Old oscarsocket code, which is here for reference in case this doesn't work

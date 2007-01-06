@@ -78,13 +78,15 @@ bool Oscar::updateTLVs( OContact& item, const QList<TLV>& list )
 	return changed;
 }
 
-DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
+DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus )
 {
 	DWORD capflags = 0;
+	xStatus = -1;
 	QString dbgCaps = "CAPS: ";
 
 	while(inbuf.bytesAvailable() >= 16)
 	{
+		bool found = false;
 		Guid cap( inbuf.getGuid() );
 
 		for (int i=0; i < CAP_LAST; i++)
@@ -97,6 +99,8 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 					versionString.sprintf( "%d.%d.%d%d", cap.data().at(12), cap.data().at(13), cap.data().at(14), cap.data().at(15) );
 					versionString.insert( 0, "Kopete " );
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Kopete version - " << versionString << endl;
+					found = true;
+					break;
 				}
 			}
 			else if (i == CAP_MICQ)
@@ -112,6 +116,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 						// FIXME: how to decode this micq version mess? [mETz - 08.06.2004]
 						/*versionString.sprintf("%d.%d.%d%d",
 							cap[12], cap[13], cap[14], cap[15]);*/
+					found = true;
 					break;
 				}
 			}
@@ -126,6 +131,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 					versionString.sprintf("%d.%d.%d%d",
 					                      cap.data().at(12), cap.data().at(13), cap.data().at(14), cap.data().at(15));
 					versionString.insert( 0, "SIM " );
+					found = true;
 					break;
 				}
 			}
@@ -140,6 +146,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 					capflags |= (1 << i);
 					versionString.sprintf("%d.%d", (unsigned int)hiVersion, loVersion);
 					versionString.insert( 0, "SIM " );
+					found = true;
 					break;
 				}
 			}
@@ -147,9 +154,22 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 			{
 				capflags |= (1 << i);
 				dbgCaps += capName(i);
+				found = true;
 				break;
 			} // END if...
 		} // END for...
+		if ( !found && xStatus == -1 )
+		{
+			for ( int i = 0; i < XSTATUSCAPS; i++ )
+			{
+				if ( oscar_xStatus[i] == cap )
+				{
+					xStatus = i;
+					found = true;
+					break;
+				}
+			}
+		}
 	}
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;
 	return capflags;

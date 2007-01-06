@@ -64,6 +64,7 @@
 #include "rateclassmanager.h"
 #include "icquserinfoupdatetask.h"
 #include "icqchangepasswordtask.h"
+#include "oscarmessageplugin.h"
 
 
 namespace
@@ -555,21 +556,33 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		sendMsgTask->setMessage( response );
 		sendMsgTask->go( true );
 	}
-	if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
+
+	if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
-		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
+		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		{
 			// we got a response to a status message request.
 			QString awayMessage( msg.text( d->codecProvider->codecForContact( msg.sender() ) ) );
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage << endl;
 			emit receivedAwayMessage( msg.sender(), awayMessage );
 		}
+		else if ( msg.messageType() == Oscar::MessageType::Plugin )
+		{
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received a plugin message response." << endl;
+		}
 	}
-	else if ( ! msg.hasProperty( Oscar::Message::AutoResponse ) )
+	else
 	{
-		// let application handle it
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
-		emit messageReceived( msg );
+		if ( msg.messageType() == Oscar::MessageType::Plugin )
+		{
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received a plugin message." << endl;
+		}
+		else if ( !msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
+		{
+			// let application handle it
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
+			emit messageReceived( msg );
+		}
 	}
 }
 
