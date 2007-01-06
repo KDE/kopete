@@ -30,10 +30,10 @@ ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, K
 {
 	m_requestingNickname = false;
 
-	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqShortInfo( const QString& ) ),
-	                  this, SLOT( receivedShortInfo( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const Oscar::Message& ) ),
-	                  this, SLOT( receivedStatusMessage( const Oscar::Message& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(const QString&)),
+	                  this, SLOT(receivedShortInfo(const QString&)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(const QString&, int, const QString&, const QString&)),
+	                  this, SLOT(receivedXStatusMessage(const QString&, int, const QString&, const QString&)) );
 }
 
 ICQContactBase::~ICQContactBase()
@@ -79,14 +79,15 @@ void ICQContactBase::receivedShortInfo( const QString& contact )
 	}
 }
 
-void ICQContactBase::receivedStatusMessage( const Oscar::Message &message )
+void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& desc )
 {
-	if ( Oscar::normalize( message.sender() ) != Oscar::normalize( contactId() ) )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
+
+	// TODOL create OnlineStatus with icon and title
+	setAwayMessage( desc );
 	
-	//decode message
-	QTextCodec* codec = contactCodec();
-	setAwayMessage( message.text(codec) );
+	m_haveAwayMessage = true;
 }
 
 void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )

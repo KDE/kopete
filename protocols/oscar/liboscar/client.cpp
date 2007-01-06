@@ -65,6 +65,8 @@
 #include "icquserinfoupdatetask.h"
 #include "icqchangepasswordtask.h"
 #include "oscarmessageplugin.h"
+#include "xtrazxtraznotify.h"
+#include "xtrazxawayservice.h"
 
 
 namespace
@@ -545,6 +547,31 @@ void Client::receivedMessage( const Oscar::Message& msg )
 			response.setText( Oscar::Message::UserDefined, statusMessage(), codec );
 			emit userReadsStatusMessage( msg.sender() );
 		}
+		else if ( msg.messageType() == Oscar::MessageType::Plugin )
+		{
+			Oscar::MessagePlugin::Types type = msg.plugin()->type();
+			Oscar::WORD subType = msg.plugin()->subTypeId();
+			if ( type == Oscar::MessagePlugin::XtrazScript )
+			{
+				if ( subType == Oscar::MessagePlugin::SubScriptNotify )
+				{
+					using namespace Xtraz;
+					XtrazNotify xNotify;
+					xNotify.handle( msg.plugin() );
+					if ( xNotify.type() == XtrazNotify::Request && xNotify.pluginId() == "srvMng" )
+					{
+						if ( xNotify.findService( "cAwaySrv" ) )
+						{
+							//TODO: Send own Xtraz status
+							/* XtrazNotify xNotifyResponse;
+							xNotifyResponse.setSenderUni( userId() );
+							response.setPlugin( xNotifyResponse.statusResponse( 1, "title", "desc" ) );
+							emit userReadsStatusMessage( msg.sender() );*/
+						}
+					}
+				}
+			}
+		}
 		else
 		{
 			response.setEncoding( Oscar::Message::UserDefined );
@@ -568,7 +595,26 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		}
 		else if ( msg.messageType() == Oscar::MessageType::Plugin )
 		{
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received a plugin message response." << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an plugin message response." << endl;
+
+			Oscar::MessagePlugin::Types type = msg.plugin()->type();
+			Oscar::WORD subType = msg.plugin()->subTypeId();
+			if ( type == Oscar::MessagePlugin::XtrazScript )
+			{
+				if ( subType == Oscar::MessagePlugin::SubScriptNotify )
+				{
+					using namespace Xtraz;
+					XtrazNotify xNotify;
+					xNotify.handle( msg.plugin() );
+					if ( xNotify.type() == XtrazNotify::Response )
+					{
+						const Xtraz::XAwayService* service = dynamic_cast<const XAwayService*>(xNotify.findService( "cAwaySrv" ));
+						if ( service )
+							emit receivedXStatusMessage( service->senderId(), service->iconIndex(),
+							                             service->title(), service->description() );
+					}
+				}
+			}
 		}
 	}
 	else
@@ -922,6 +968,16 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 	case ICQFreeForChat:
 		msg.setMessageType( Oscar::MessageType::AutoFFC ); // free for chat
 		break;
+	case ICQXStatus:
+		{
+			msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
+			msg.addProperty( ~ Oscar::Message::StatusMessageRequest );
+
+			Xtraz::XtrazNotify xNotify;
+			xNotify.setSenderUni( userId() );
+			msg.setPlugin( xNotify.statusRequest() );
+			break;
+		}
 	default:
 		// may be a good way to deal with possible error and lack of online status message?
 		emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );

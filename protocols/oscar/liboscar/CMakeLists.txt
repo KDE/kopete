@@ -25,13 +25,14 @@ usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp
 buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp filetransfertask.cpp
 localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservicetask.cpp oscarguid.cpp 
 icquserinfoupdatetask.cpp icqchangepasswordtask.cpp oscarmessageplugin.cpp oftmetatransfer.cpp
+xtrazxawayservice.cpp xtrazxservice.cpp xtrazxtraznotify.cpp xtrazxrandomizerservice.cpp
 )
 
 kde4_automoc(${liboscar_SRCS} )
 
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 
-target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} )
+target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} )
 
 install(TARGETS oscar  DESTINATION ${LIB_INSTALL_DIR})
 

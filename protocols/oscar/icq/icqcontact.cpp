@@ -96,15 +96,25 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
 
-	// ICQ does not support status messages for state Online
+	bool selfVisible = ( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ).visibility() == ICQ::Presence::Visible );
 	if ( presence.type() == ICQ::Presence::Online )
 	{
-		mAccount->engine()->removeICQAwayMessageRequest( contactId() );
-		removeProperty( mProtocol->awayMessage );
+		if ( details.xtrazStatusSpecified() )
+		{
+			if ( selfVisible )
+				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQXStatus );
+			else
+				mAccount->engine()->removeICQAwayMessageRequest( contactId() );
+		}
+		else
+		{
+			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
+			removeProperty( mProtocol->awayMessage );
+		}
 	}
 	else
 	{
-		if ( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ).visibility() == ICQ::Presence::Visible )
+		if ( selfVisible )
 		{
 			switch ( presence.type() )
 			{

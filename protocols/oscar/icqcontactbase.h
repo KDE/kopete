@@ -29,6 +29,7 @@
  * @author Richard Smith
  * @author Matt Rogers
  */
+
 class KOPETE_EXPORT ICQContactBase : public OscarContact
 {
 Q_OBJECT
@@ -53,7 +54,7 @@ protected slots:
 
 private slots:
 	void receivedShortInfo( const QString& contact );
-	void receivedStatusMessage( const Oscar::Message &message );
+	void receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& desc );
 
 };
 

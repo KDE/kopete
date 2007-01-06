@@ -75,7 +75,7 @@ public:
 		FatalProtocolError = 3
 	};
 
-	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat };
+	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat, ICQXStatus };
 
 	/*************
 	  EXTERNAL API
@@ -439,7 +439,7 @@ signals:
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
-	void receivedAwayMessage( const Oscar::Message& message );
+	void receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& desc );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
 	void userReadsStatusMessage( const QString& contact );
 
