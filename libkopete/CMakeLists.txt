@@ -98,7 +98,6 @@ set(kopete_LIB_SRCS
 
 
 kde4_add_ui_files(kopete_LIB_SRCS
-    ui/kopetepassworddialog.ui
     ui/metacontactselectorwidget_base.ui
     ui/fileconfirmbase.ui
     ui/kopetepasswordwidgetbase.ui

@@ -18,7 +18,7 @@
 #include "kopetepasswordwidget.h"
 #include "kopetepassword.h"
 
-#include <kpassworddialog.h>
+#include <klineedit.h>
 
 #include <qcheckbox.h>
 
@@ -58,6 +58,7 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 
 
 	mPassword->setEnabled( false );
+    mPassword->setPasswordMode(true);
 
 	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
 	connect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );
@@ -102,7 +103,7 @@ bool Kopete::UI::PasswordWidget::validate()
 
 QString Kopete::UI::PasswordWidget::password() const
 {
-	return QString::fromLocal8Bit( mPassword->password() );
+	return mPassword->text();
 }
 
 bool Kopete::UI::PasswordWidget::remember() const
@@ -116,8 +117,8 @@ void Kopete::UI::PasswordWidget::setPassword( const QString &pass )
 	mRemembered->setTristate( false );
 
 	// fill in the password text
-	mPassword->erase();
-	mPassword->insert( pass );
+	mPassword->clear();
+	mPassword->setText( pass );
 	mPassword->setEnabled( remember() );
 }
 

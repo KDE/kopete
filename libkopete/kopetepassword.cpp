@@ -16,7 +16,6 @@
 
 #include "kopeteuiglobal.h"
 #include "kopetepassword.h"
-#include "ui_kopetepassworddialog.h"
 #include "kopetewalletmanager.h"
 
 #include <kwallet.h>
@@ -108,7 +107,7 @@ public:
 	 */
 	virtual void processRequest() = 0;
 
-	void slotOkPressed() {}
+    void gotPassword(const QString&, bool) {}
 	void slotCancelPressed() {}
 
 protected:
@@ -158,7 +157,7 @@ public:
 	}
 };
 
-class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest, private Ui::KopetePasswordDialog
+class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
 {
 public:
 	KopetePasswordGetRequestPrompt( QObject *owner, Kopete::Password &pass,  const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
@@ -179,39 +178,23 @@ public:
 	{
 		kDebug( 14010 ) << k_funcinfo << endl;
 
-		KDialog *passwdDialog = new KDialog( Kopete::UI::Global::mainWidget() );
-		passwdDialog->setCaption( i18n( "Password Required" ) );
-		passwdDialog->setButtons( KDialog::Ok | KDialog::Cancel );
-		passwdDialog->setDefaultButton( KDialog::Ok );
-		passwdDialog->showButtonSeparator( true );
+		KPasswordDialog *passwdDialog = new KPasswordDialog( Kopete::UI::Global::mainWidget() );
+		passwdDialog->setWindowTitle( i18n( "Password Required" ) );
+		passwdDialog->setPrompt( mPrompt );
+		passwdDialog->setPixmap( mImage );
 
-		mView = new QWidget( passwdDialog );
-		setupUi( mView );
-		passwdDialog->setMainWidget( mView );
-
-		m_text->setText( mPrompt );
-		m_image->setPixmap( mImage );
-		/* Do not put the default password, or it will confuse those which doesn't echo anything for the password m_password->insert( password );
-		*/
-		m_password->setFocus();
-
-		// FIXME: either document what these are for or remove them - lilac
-		mView->adjustSize();
-		passwdDialog->adjustSize();
-
-		connect( passwdDialog, SIGNAL( okClicked() ), SLOT( slotOkPressed() ) );
-		connect( passwdDialog, SIGNAL( cancelClicked() ), SLOT( slotCancelPressed() ) );
+		connect( passwdDialog, SIGNAL( gotPassword(const QString&, bool) ), SLOT( slotGotPassword( const QString&, bool) )) ;
+		connect( passwdDialog, SIGNAL( rejected() ), SLOT( slotCancelPressed() ) );
 		connect( this, SIGNAL( destroyed() ), passwdDialog, SLOT( deleteLater() ) );
 		passwdDialog->show();
 	}
 
-	void slotOkPressed()
+	void gotPassword(const QString& pass, bool keep)
 	{
-		QString result = QString::fromLocal8Bit( m_password->password() );
-		if ( m_save_passwd->isChecked() )
-			mPassword.set( result );
+		if ( keep )
+			mPassword.set( pass );
 
-		finished( result );
+		finished( pass );
 	}
 
 	void slotCancelPressed()
