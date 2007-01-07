@@ -28,7 +28,7 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
-#include <kpassworddialog.h>
+#include <klineedit.h>
 #include <knuminput.h>
 #include <kpushbutton.h>
 #include <qlabel.h>
@@ -87,7 +87,9 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	mMainWidget->leServer->setText ( parent->mServer->text () );
 	mMainWidget->leJID->setText ( parent->mID->text () );
 	mMainWidget->lePassword->setText ( parent->mPass->password () );
+    mMainWidget->lePassword->setPasswordMode ( true );
 	//	mMainWidget->lePasswordVerify->setText ( parent->mPass->password () ); //BUG 114631
+    mMainWidget->lePasswordVerify->setPasswordMode ( true );
 	mMainWidget->sbPort->setValue ( parent->mPort->value () );
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
 
@@ -153,17 +155,15 @@ void JabberRegisterAccount::validateData ()
 	}
 
 	if ( valid &&
-	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ).isEmpty () ||
-	     QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ).isEmpty () ) )
+	   (  mMainWidget->lePassword->text().isEmpty () ||
+	      mMainWidget->lePasswordVerify->text ().isEmpty () ) )
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter the same password twice." ) );
 		valid = false;
 		passwordHighlight = true;
 	}
 
-	if ( valid &&
-	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ) !=
-	     QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ) ) )
+	if ( valid &&  mMainWidget->lePassword->text () != mMainWidget->lePasswordVerify->text () )
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Password entries do not match." ) );
 		valid = false;
@@ -337,7 +337,7 @@ void JabberRegisterAccount::slotConnected ()
 
 	XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
-	task->reg (mMainWidget->leJID->text().section("@", 0, 0), mMainWidget->lePassword->password ());
+	task->reg (mMainWidget->leJID->text().section("@", 0, 0), mMainWidget->lePassword->text ());
 	task->go (true);
 
 }
@@ -353,7 +353,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		// save settings to parent
 		mParentWidget->mServer->setText ( mMainWidget->leServer->text () );
 		mParentWidget->mID->setText ( mMainWidget->leJID->text () );
-		mParentWidget->mPass->setPassword ( mMainWidget->lePassword->password () );
+		mParentWidget->mPass->setPassword ( mMainWidget->lePassword->text () );
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 

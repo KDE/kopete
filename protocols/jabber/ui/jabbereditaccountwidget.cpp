@@ -29,7 +29,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <kpassworddialog.h>
+#include <klineedit.h>
 #include <kopetepassword.h>
 #include <kopetepasswordedaccount.h>
 

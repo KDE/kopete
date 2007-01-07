@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kpassworddialog.h>
+#include <klineedit.h>
 #include <kmessagebox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -42,9 +42,11 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
 
 	QWidget* w = new QWidget( this );
 	m_mainWidget = new Ui::DlgChangePassword;
-	m_mainWidget->setupUi( w );
-	setMainWidget ( w );
-
+	m_mainWidget->setupUi( mainWidget() );
+    
+    m_mainWidget->peNewPassword1->setPasswordMode( true );
+    m_mainWidget->peNewPassword2->setPasswordMode( true );
+    m_mainWidget->peCurrentPassword->setPasswordMode( true );
 }
 
 DlgJabberChangePassword::~DlgJabberChangePassword()
@@ -54,9 +56,7 @@ DlgJabberChangePassword::~DlgJabberChangePassword()
 
 void DlgJabberChangePassword::slotOk ()
 {
-
-	if ( !strlen ( m_mainWidget->peCurrentPassword->password () )
-		|| ( m_account->password().cachedValue () != m_mainWidget->peCurrentPassword->password () ) )
+	if ( m_account->password().cachedValue () != m_mainWidget->peCurrentPassword->text() )
 	{
 		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
 							 i18n ( "You entered your current password incorrectly." ),
@@ -64,7 +64,7 @@ void DlgJabberChangePassword::slotOk ()
 		return;
 	}
 
-	if ( strcmp ( m_mainWidget->peNewPassword1->password (), m_mainWidget->peNewPassword2->password () ) != 0 )
+	if ( m_mainWidget->peNewPassword1->text() !=  m_mainWidget->peNewPassword2->text() )
 	{
 		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
 							 i18n ( "Your new passwords do not match. Please enter them again." ),
@@ -72,7 +72,7 @@ void DlgJabberChangePassword::slotOk ()
 		return;
 	}
 
-	if ( !strlen ( m_mainWidget->peNewPassword1->password () ) )
+	if ( m_mainWidget->peNewPassword1->text().isEmpty() ) 
 	{
 		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
 							 i18n ( "For security reasons, you are not allowed to set an empty password." ),
@@ -92,7 +92,7 @@ void DlgJabberChangePassword::slotOk ()
 	}
 	else
 	{
-		slotChangePassword ();
+		slotChangePassword();
 	}
 
 }
@@ -110,7 +110,7 @@ void DlgJabberChangePassword::slotChangePassword ()
 	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
 	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotChangePasswordDone () ) );
 
-	task->changepw ( m_mainWidget->peNewPassword1->password () );
+	task->changepw ( m_mainWidget->peNewPassword1->text () );
 	task->go ( true );
 
 }
@@ -126,7 +126,7 @@ void DlgJabberChangePassword::slotChangePasswordDone ()
 								   i18n ( "Your password has been changed successfully. Please note that the change may not be instantaneous. If you have problems logging in with your new password, please contact the administrator." ),
 								   i18n ( "Jabber Password Change" ) );
 
-		m_account->password().set ( m_mainWidget->peNewPassword1->password () );
+		m_account->password().set ( m_mainWidget->peNewPassword1->text () );
 	}
 	else
 	{
