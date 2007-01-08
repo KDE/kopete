@@ -23,7 +23,7 @@ kde4_automoc(${kopete_cryptography_PART_SRCS})
 kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
 
 
-target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kopete )
 
 install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
