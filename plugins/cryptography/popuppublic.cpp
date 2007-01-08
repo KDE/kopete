@@ -35,7 +35,6 @@
 #include <QVBoxLayout>
 #include <Q3WhatsThis>
 
-#include <kapplication.h>
 #include <kdeversion.h>
 #include <k3listview.h>
 #include <kprocess.h>
@@ -116,7 +115,7 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 /*        if (KGpgSettings::allowCustomEncryptionOptions())
                 customOptions=KGpgSettings::customEncryptionOptions();*/
 
-        KIconLoader *loader = kapp->iconLoader();
+        KIconLoader *loader = KIconLoader::global();
 
         keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
         keySingle=loader->loadIcon("kgpg_key1",K3Icon::Small,20);

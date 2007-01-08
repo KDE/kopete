@@ -199,7 +199,7 @@ void KopeteSystemTray::startBlink( QMovie *movie )
 void KopeteSystemTray::startBlink()
 {
 	if ( !mMovie )
-		mMovie = kapp->iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Panel );
+		mMovie = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Panel );
 	// KIconLoader already checked isValid()
 	if ( !mMovie) return;
 	

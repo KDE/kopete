@@ -21,7 +21,6 @@
 
 #include "jabberregisteraccount.h"
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -79,7 +78,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	connect ( jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 	
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = kapp->iconLoader()->loadIcon ( "jabber_online", K3Icon::Small );
+	hintPixmap = KIconLoader::global()->loadIcon ( "jabber_online", K3Icon::Small );
 
 	mSuccess = false;
 

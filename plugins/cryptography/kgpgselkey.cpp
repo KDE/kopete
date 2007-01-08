@@ -29,7 +29,6 @@
 #include <QVBoxLayout>
 #include <Q3ListViewItem>
 
-#include <kapplication.h>
 #include <k3listview.h>
 #include <klocale.h>
 #include <qcheckbox.h>
@@ -53,7 +52,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
   QString keyname;
   QWidget *page = new QWidget(this);
   QLabel *labeltxt;
-  KIconLoader *loader = kapp->iconLoader();
+  KIconLoader *loader = KIconLoader::global();
 
   keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
 

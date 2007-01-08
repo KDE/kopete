@@ -29,7 +29,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstaticdeleter.h>
-#include <kapplication.h>
 #include <kcpuinfo.h> // for WORDS_BIGENDIAN
 #include <kicon.h>
 
@@ -349,7 +348,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	QStringList overlays = statusFor.overlayIcons();
 	if ( !( overlays.isEmpty() ) ) // otherwise leave the basis as-is
 	{
-		KIconLoader *loader = kapp->iconLoader();
+		KIconLoader *loader = KIconLoader::global();
 
 		int i = 0;
 		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )
