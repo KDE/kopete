@@ -450,7 +450,7 @@ namespace XMPP
 		Private *d;
 	};
     
-	class JT_PrivateStorage : public Task
+	class IRIS_EXPORT JT_PrivateStorage : public Task
 	{
 		Q_OBJECT
 	public:

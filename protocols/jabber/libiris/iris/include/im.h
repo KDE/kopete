@@ -237,7 +237,7 @@ namespace XMPP
 	};
 	typedef QList<RosterExchangeItem> RosterExchangeItems;
 
-	class HTMLElement
+	class IRIS_EXPORT HTMLElement
 	{
 	public:
 		HTMLElement();
@@ -252,7 +252,7 @@ namespace XMPP
 		QDomElement body_;
 	};
 
-	class Message
+	class IRIS_EXPORT Message
 	{
 	public:
 		Message(const Jid &to="");

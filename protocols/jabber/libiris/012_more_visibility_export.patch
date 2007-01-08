@@ -1,0 +1,35 @@
+Index: iris/include/im.h
+===================================================================
+--- iris/include/im.h	(revision 620864)
++++ iris/include/im.h	(working copy from alsuren)
+@@ -237,7 +237,7 @@
+ 	};
+ 	typedef QList<RosterExchangeItem> RosterExchangeItems;
+ 
+-	class HTMLElement
++	class IRIS_EXPORT HTMLElement
+ 	{
+ 	public:
+ 		HTMLElement();
+@@ -252,7 +252,7 @@
+ 		QDomElement body_;
+ 	};
+ 
+-	class Message
++	class IRIS_EXPORT Message
+ 	{
+ 	public:
+ 		Message(const Jid &to="");
+Index: iris/xmpp-im/xmpp_tasks.h
+===================================================================
+--- iris/xmpp-im/xmpp_tasks.h	(revision 620864)
++++ iris/xmpp-im/xmpp_tasks.h	(working copy from alsuren)
+@@ -450,7 +450,7 @@
+ 		Private *d;
+ 	};
+     
+-	class JT_PrivateStorage : public Task
++	class IRIS_EXPORT JT_PrivateStorage : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
