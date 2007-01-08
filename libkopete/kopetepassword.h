@@ -190,8 +190,9 @@ signals:
 	void requestFinished( const QString &password );
 public slots:
 	virtual void walletReceived( KWallet::Wallet *wallet ) = 0;
-	virtual void slotOkPressed() = 0;
-	virtual void slotCancelPressed() = 0;
+    virtual void gotPassword(const QString&, bool) =0;
+	virtual void slotCancelPressed() =0;
+
 };
 
 #endif
