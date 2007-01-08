@@ -19,8 +19,7 @@
 #define JABBERFORMLINEEDIT_H
 
 #include <qwidget.h>
-#include <qlineedit.h>
-#include <kpassworddialog.h>
+#include <klineedit.h>
 
 #include "xmpp_tasks.h"
 
@@ -28,7 +27,7 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberFormLineEdit:public QLineEdit
+class JabberFormLineEdit:public KLineEdit
 {
 
   Q_OBJECT public:
@@ -43,17 +42,4 @@ class JabberFormLineEdit:public QLineEdit
 
 };
 
-class JabberFormPasswordEdit:public KPasswordEdit
-{
-
-  Q_OBJECT public:
-	  JabberFormPasswordEdit(const int type, const QString & realName, const QString & value, QWidget * parent = 0);
-
-	public slots:void slotGatherData (XMPP::Form & form);
-
-  private:
-	int fieldType;
-	QString fieldName;
-
-};
 #endif

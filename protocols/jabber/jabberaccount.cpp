@@ -1568,10 +1568,10 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	{
 	case JabberClient::InvalidPasswordForMUC:
 		{
-			QByteArray password;
- 			int result = KPasswordDialog::getPassword(Kopete::UI::Global::mainWidget(), password, i18n("A password is required to join the room %1.", jid.node()));
-			if (result == KPasswordDialog::Accepted)
-				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), password);
+			KPasswordDialog dlg(Kopete::UI::Global::mainWidget());
+            dlg.setPrompt(i18n("A password is required to join the room %1.", jid.node()));
+			if (dlg.exec() == KPasswordDialog::Accepted)
+				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), dlg.password());
 		}
 		break;
 

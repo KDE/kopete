@@ -17,7 +17,7 @@
 
 #include "jabberformlineedit.h"
 
-JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : QLineEdit (value, parent)
+JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : KLineEdit (value, parent)
 {
 
 	fieldType = type;
@@ -35,22 +35,5 @@ void JabberFormLineEdit::slotGatherData (XMPP::Form & form)
 JabberFormLineEdit::~JabberFormLineEdit ()
 {
 }
-
-JabberFormPasswordEdit::JabberFormPasswordEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : KPasswordEdit(parent)
-{
-
-	setText(value);
-	fieldType = type;
-	fieldName = realName;
-
-}
-
-void JabberFormPasswordEdit::slotGatherData (XMPP::Form & form)
-{
-
-	form += XMPP::FormField (fieldName, password());
-
-}
-
 
 #include "jabberformlineedit.moc"
