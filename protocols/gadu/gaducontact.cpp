@@ -1,4 +1,4 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
+// -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
 // Copyright (C) 	2002-2003	 Zack Rusin 	<zack@kde.org>
@@ -54,7 +54,7 @@ GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* accou
 	remote_port	= 0;
 	version		= 0;
 	image_size	= 0;
-	// let us not ignore the contact by default right? causes ugly bug if 
+	// let us not ignore the contact by default right? causes ugly bug if
 	// setContactDetails is not run on a contact right after it is added
 	ignored_	= false;
 
@@ -146,7 +146,7 @@ Kopete::ChatSession*
 GaduContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
 	if ( !msgManager_ && canCreate ) {
-		msgManager_ = Kopete::ChatSessionManager::self()->create( account_->myself(), thisContact_, 
+		msgManager_ = Kopete::ChatSessionManager::self()->create( account_->myself(), thisContact_,
 				GaduProtocol::protocol() );
 		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession*) ),
 			 this, SLOT( messageSend( Kopete::Message&, Kopete::ChatSession*) ) );
@@ -197,12 +197,14 @@ GaduContact::customContextMenuActions()
 {
 	QList<KAction*> *fakeCollection = new QList<KAction*>();
 	//show profile
-	KAction* actionShowProfile = new KAction( KIcon("info"), i18n("Show Profile"), 0, "actionShowPublicProfile" );
+	KAction* actionShowProfile = new KAction( KIcon("info"), i18n("Show Profile"), this );
+	//, "actionShowPublicProfile" );
 	connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()) );
 
 	fakeCollection->append( actionShowProfile );
 
-	KAction* actionEditContact = new KAction( KIcon("edit"), i18n("Edit..."), 0, "actionEditContact" );
+	KAction* actionEditContact = new KAction( KIcon("edit"), i18n("Edit..."), this );
+	//, "actionEditContact" );
 	connect( actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()) );
 
 	fakeCollection->append( actionEditContact );
@@ -245,8 +247,8 @@ GaduContact::deleteContact()
 		deleteLater();
 	}
 	else {
-		KMessageBox::error( Kopete::UI::Global::mainWidget(), 
-				i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), 
+		KMessageBox::error( Kopete::UI::Global::mainWidget(),
+				i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ),
 				i18n( "Gadu-Gadu Plugin" ));
 	}
 }

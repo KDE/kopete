@@ -245,22 +245,22 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
 		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
-		
+
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-		
+
 		if ( isConnected() )
 			contact->loggedIn();
-		
+
 		return contact;
 	}
 	else
 	{
 		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
-		
+
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-		
+
 		return contact;
 	}
 }
@@ -271,21 +271,24 @@ KActionMenu* AIMAccount::actionMenu()
 
 	mActionMenu->addSeparator();
 
-	KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), 0, "join_a_chat" );
+	KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), this );
+        //, "join_a_chat" );
 	QObject::connect( m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
 	mActionMenu->addAction( m_joinChatAction );
 
-	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), 0, "actionEditInfo" );
+	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+        //, "actionEditInfo" );
 	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
 	mActionMenu->addAction( m_editInfoAction );
 
-	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), 0, "actionInvisible" );
+	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
+        //, "actionInvisible" );
 	AIM::Presence pres( presence().type(), presence().flags() | AIM::Presence::Invisible );
 	actionInvisible->setIcon( KIcon( pres.toOnlineStatus().iconFor( this ) ) );
 	actionInvisible->setChecked( (presence().flags() & AIM::Presence::Invisible) == AIM::Presence::Invisible );
 	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 	mActionMenu->addAction( actionInvisible );
-	
+
 	return mActionMenu;
 }
 
@@ -310,7 +313,7 @@ void AIMAccount::setPresenceTarget( const AIM::Presence &newPres, const QString 
 	bool targetIsOffline = (newPres.type() == AIM::Presence::Offline);
 	bool accountIsOffline = ( presence().type() == AIM::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
-	
+
 	if ( targetIsOffline )
 	{
 		OscarAccount::disconnect();
@@ -333,7 +336,7 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
 	{
 		// called from outside, i.e. not by our custom action menu entry...
-		
+
 		if ( presence().type() == AIM::Presence::Offline )
 		{
 			// ...when we are offline go online invisible.
@@ -449,7 +452,7 @@ void AIMAccount::disconnected( DisconnectReason reason )
 		if ( oc )
 			oc->userOffline( oc->contactId() );
 	}
-	
+
 	OscarAccount::disconnected( reason );
 }
 
@@ -614,18 +617,18 @@ void AIMAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isNull() )
 		return;
-	
+
 	kDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 
 	Kopete::OnlineStatus status = initialStatus();
 	if ( status == Kopete::OnlineStatus() && status.status() == Kopete::OnlineStatus::Unknown )
 		//use default online in case of invalid online status for connecting
 		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
-	
+
 	AIM::Presence pres = AIM::Presence::fromOnlineStatus( status );
 	bool accountIsOffline = ( presence().type() == AIM::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
-	
+
 	if ( accountIsOffline )
 	{
 		kDebug(14152) << k_funcinfo << "Logging in as " << accountId() << endl ;

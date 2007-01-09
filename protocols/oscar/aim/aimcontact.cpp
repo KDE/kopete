@@ -66,15 +66,18 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 	if ( !m_warnUserAction )
 	{
-		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, "warnAction" );
+		m_warnUserAction = new KAction( i18n( "&Warn User" ), this );
+                //, "warnAction" );
 		QObject::connect( m_warnUserAction, SIGNAL(triggered(bool)), this, SLOT(warnUser()) );
 	}
-	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), 0, "actionVisibleTo");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
+        //, "actionVisibleTo");
 	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
-	
-	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), 0, "actionInvisibleTo");
+
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
+        //, "actionInvisibleTo");
 	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
-	
+
 	bool on = account()->isConnected();
 
 	m_warnUserAction->setEnabled( on );
@@ -144,7 +147,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	AIM::Presence presence = AIM::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
 	setOnlineStatus( presence.toOnlineStatus() );
-	
+
 	if ( presence.type() == AIM::Presence::Online )
 	{
 		removeProperty( mProtocol->awayMessage );

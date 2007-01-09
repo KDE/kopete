@@ -1,4 +1,4 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
+// -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
 // Copyright (C) 2003 Zack Rusin 		<zack@kde.org>
@@ -73,7 +73,7 @@ public:
 	GaduDCC*	gaduDcc_;
 
 	QTimer*		pingTimer_;
-	
+
 	QTextCodec*	textcodec_;
 	KFileDialog*	saveListDialog;
 	KFileDialog*	loadListDialog;
@@ -92,10 +92,10 @@ public:
 	QString		lastDescription;
 	bool		forFriends;
 	bool		ignoreAnons;
-        
+
 	QTimer*         exportTimer_;
 	bool		exportUserlist;
-	
+
 	KConfigGroup*			config;
 	Kopete::OnlineStatus		status;
 	QList<unsigned int>		servers;
@@ -193,15 +193,20 @@ GaduAccount::~GaduAccount()
 void
 GaduAccount::initActions()
 {
-	p->searchAction		= new KAction( i18n( "&Search for Friends" ),0 , "actionSearch" );
+	p->searchAction		= new KAction( i18n( "&Search for Friends" ), this );
+        //, "actionSearch" );
 	QObject::connect( p->searchAction, SIGNAL(triggered(bool)), this, SLOT(search()) );
-	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), 0, "actionListput" );
+	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), this );
+        //, "actionListput" );
 	QObject::connect( p->listputAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsList()) );
-	p->listToFileAction	= new KAction( i18n( "Export Contacts to File..." ), 0, "actionListputFile" );
+	p->listToFileAction	= new KAction( i18n( "Export Contacts to File..." ), this );
+        //, "actionListputFile" );
 	QObject::connect( p->listToFileAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsListToFile()) );
-	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File..." ), 0, "actionListgetFile" );
+	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File..." ), this );
+        //, "actionListgetFile" );
 	QObject::connect( p->listFromFileAction, SIGNAL(triggered(bool)), this, SLOT(slotImportContactsFromFile()) );
-	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), 0, "actionFriendsMode" );
+	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), this );
+        //, "actionFriendsMode" );
 	QObject::connect( p->friendsModeAction, SIGNAL(triggered(bool)), this, SLOT(slotFriendsMode()) );
 
 	static_cast<KToggleAction*>(p->friendsModeAction)->setChecked( p->forFriends );
@@ -260,9 +265,8 @@ GaduAccount::actionMenu()
 {
 	kDebug(14100) << "actionMenu() " << endl;
 
-#warning Icon removed from KActionMenu, port
-// 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
-	p->actionMenu_ = new KActionMenu( accountId(), 0, 0 );
+	p->actionMenu_ = new KActionMenu( accountId(), this );
+        p->actionMenu_->setIcon( myself()->onlineStatus().iconFor( this ) );
 	p->actionMenu_->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
@@ -300,29 +304,34 @@ GaduAccount::actionMenu()
 
 	KAction* action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ))),
-		i18n("Go O&nline"), 0, "actionGaduConnect" );
+		i18n("Go O&nline"), this );
+        //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
 	p->actionMenu_->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
-		i18n( "Set &Busy" ), 0, "actionGaduConnect" );
+		i18n( "Set &Busy" ), this );
+        //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()) );
 	p->actionMenu_->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
-		i18n( "Set &Invisible" ), 0, "actionGaduConnect" );
+		i18n( "Set &Invisible" ), this );
+        //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()) );
 	p->actionMenu_->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
-		i18n( "Go &Offline" ), 0, "actionGaduConnect" );
+		i18n( "Go &Offline" ), this );
+        //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
 	p->actionMenu_->addAction( action );
 
-	action = new KAction( KIcon("info"), i18n( "Set &Description..." ), 0, "actionGaduDescription" );
+	action = new KAction( KIcon("info"), i18n( "Set &Description..." ), this );
+        //, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
 	p->actionMenu_->addAction( action );
 
@@ -412,7 +421,7 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 	addNotify( uinNumber );
 
 	userlistChanged();
-	
+
 	return true;
 }
 
@@ -420,7 +429,7 @@ void
 GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& descr )
 {
 	unsigned int ns;
-	
+
 	kDebug(14100) << "##### change status #####" << endl;
 	kDebug(14100) << "### Status = " << p->session_->isConnected() << endl;
 	kDebug(14100) << "### Status description = \"" << descr << "\"" << endl;
@@ -455,7 +464,7 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 			changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
 			return;
 		}
-				
+
 		if ( !p->session_->isConnected() ) {
 			if ( password().cachedValue().isEmpty() ) {
 				// FIXME: when status string added to connect(), use it here
@@ -643,7 +652,7 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	}
 
 	contactsListTmp.append( myself() );
-	Kopete::Message msg( gaduMessage->sendTime, contact, contactsListTmp, 
+	Kopete::Message msg( gaduMessage->sendTime, contact, contactsListTmp,
 			gaduMessage->message, Kopete::Message::Inbound, Kopete::Message::RichText );
 	contact->messageReceived( msg );
 }
@@ -829,7 +838,7 @@ GaduAccount::startNotify()
 	uin_t* userlist = 0;
 	userlist = new uin_t[ contacts().count() ];
 
-	QHashIterator<QString, Kopete::Contact*> it(contacts());	
+	QHashIterator<QString, Kopete::Contact*> it(contacts());
 	for(  i=0 ; it.hasNext() ; ) {
 		it.next();
 		userlist[i++] = static_cast<GaduContact*> (it.value())->uin();
@@ -873,7 +882,7 @@ GaduAccount::userlist( const QString& contactsListString )
 
 	// don't export any new changes that were just imported :-)
 	p->exportTimer_->stop();
-	
+
 	for ( i = 0; i != contactsList.size() ; i++ ) {
 		kDebug(14100) << "uin " << contactsList[i].uin << endl;
 
@@ -914,8 +923,8 @@ GaduAccount::userlist( const QString& contactsListString )
 			}
 		}
 	}
-	// start to check if we need to export userlist 
-	p->exportUserlist = false;	
+	// start to check if we need to export userlist
+	p->exportUserlist = false;
 	p->exportTimer_->start( USERLISTEXPORT_TIMEOUT );
 }
 
@@ -952,7 +961,7 @@ GaduAccount::slotExportContactsListToFile()
 	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
-	    i18n("Save Contacts List for Account %1 As", 
+	    i18n("Save Contacts List for Account %1 As",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
@@ -998,7 +1007,7 @@ GaduAccount::slotImportContactsFromFile()
 	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
-	    i18n("Load Contacts List for Account %1 As", 
+	    i18n("Load Contacts List for Account %1 As",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
@@ -1038,7 +1047,7 @@ GaduAccount::getPersonalInformation()
 	return p->session_->getPersonalInformation();
 }
 
-bool 
+bool
 GaduAccount::publishPersonalInformation( ResLine& d )
 {
 	return p->session_->publishPersonalInformation( d );
@@ -1182,7 +1191,7 @@ GaduAccount::setDcc( bool d )
 void
 GaduAccount::saveFriendsMode( bool i )
 {
-	p->config->writeEntry( QString::fromAscii( "forFriends" ), 
+	p->config->writeEntry( QString::fromAscii( "forFriends" ),
 			i == true ? QString::fromAscii( "1" ) : QString::fromAscii( "0" ) );
 }
 
@@ -1211,23 +1220,23 @@ GaduAccount::ignoreAnons()
 	QString s;
 	bool r;
 	int n;
-	
+
 	s = p->config->readEntry( QString( "ignoreAnons" ), QString() );
 	n = s.toInt( &r );
-	
+
 	if ( n ) {
 		return true;
 	}
 
 	return false;
-	
+
 }
 
-void 
+void
 GaduAccount::setIgnoreAnons( bool i )
 {
 	p->ignoreAnons = i;
-	p->config->writeEntry( QString::fromAscii( "ignoreAnons" ), 
+	p->config->writeEntry( QString::fromAscii( "ignoreAnons" ),
 			i == true ? QString::fromAscii( "1" ) : QString::fromAscii( "0" ) );
 }
 

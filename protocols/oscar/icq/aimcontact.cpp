@@ -53,17 +53,21 @@ bool AIMContact::isReachable()
 QList<KAction*> *AIMContact::customContextMenuActions()
 {
 	QList<KAction*> *actionCollection = new QList<KAction*>();
-	
-	m_actionIgnore = new KToggleAction(i18n("&Ignore"), 0, "actionIgnore");
+
+	m_actionIgnore = new KToggleAction(i18n("&Ignore"), this );
+        //, "actionIgnore");
 	QObject::connect( m_actionIgnore, SIGNAL(triggered(bool)), this, SLOT(slotIgnore()) );
-	
-	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), 0, "actionVisibleTo");
+
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
+        //, "actionVisibleTo");
 	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
-	
-	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), 0, "actionInvisibleTo");
+
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
+        //, "actionInvisibleTo");
 	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
 
-	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), 0, "changeEncoding" );
+	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), this );
+        //, "changeEncoding" );
 	m_selectEncoding->setIcon( KIcon( "charset" ) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
 
@@ -82,7 +86,7 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 	actionCollection->append(m_actionIgnore);
 	actionCollection->append(m_actionVisibleTo);
 	actionCollection->append(m_actionInvisibleTo);
-	
+
 	return actionCollection;
 }
 
@@ -166,7 +170,7 @@ void AIMContact::userOnline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
 	ICQ::Presence online = mProtocol->statusManager()->presenceOf( ICQ::Presence::Online );
 	//mAccount->engine()->requestStatusInfo( contactId() );
@@ -176,7 +180,7 @@ void AIMContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
 	ICQ::Presence offline = mProtocol->statusManager()->presenceOf( ICQ::Presence::Offline );
 	setOnlineStatus( mProtocol->statusManager()->onlineStatusOf( offline ) );

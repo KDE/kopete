@@ -142,7 +142,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
 		}
 	}
-		
+
 
 	if ( details.dcOutsideSpecified() )
 	{
@@ -439,24 +439,30 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 {
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	actionRequestAuth = new KAction( i18n("&Request Authorization"), 0, "actionRequestAuth");
+	actionRequestAuth = new KAction( i18n("&Request Authorization"), this );
+        //, "actionRequestAuth");
 	actionRequestAuth->setIcon( KIcon( "mail_reply" ) );
 	QObject::connect( actionRequestAuth, SIGNAL(triggered(bool)), this, SLOT(slotRequestAuth()) );
-	
-	actionSendAuth = new KAction( i18n("&Grant Authorization"), 0, "actionSendAuth");
+
+	actionSendAuth = new KAction( i18n("&Grant Authorization"), this );
+        //, "actionSendAuth");
 	actionSendAuth->setIcon( KIcon( "mail_forward" ) );
 	QObject::connect( actionSendAuth, SIGNAL(triggered(bool)), this, SLOT(slotSendAuth()) );
 
-	m_actionIgnore = new KToggleAction(i18n("&Ignore"), 0, "actionIgnore");
+	m_actionIgnore = new KToggleAction(i18n("&Ignore"), this );
+        //, "actionIgnore");
 	QObject::connect( m_actionIgnore, SIGNAL(triggered(bool)), this, SLOT(slotIgnore()) );
 
-	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), 0, "actionVisibleTo");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
+        //, "actionVisibleTo");
 	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
-	
-	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), 0, "actionInvisibleTo");
+
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
+        //, "actionInvisibleTo");
 	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
 
-	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), 0, "changeEncoding" );
+	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), this );
+        //, "changeEncoding" );
 	m_selectEncoding->setIcon( KIcon( "charset" ) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
 

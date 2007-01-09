@@ -171,24 +171,26 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 {
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), 0, "actionVisibleTo");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
+        //, "actionVisibleTo");
 	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
-	
-	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), 0, "actionInvisibleTo");
+
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
+        //, "actionInvisibleTo");
 	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
-	
+
 	bool on = account()->isConnected();
-	
+
 	m_actionVisibleTo->setEnabled(on);
 	m_actionInvisibleTo->setEnabled(on);
-	
+
 	ContactManager* ssi = account()->engine()->ssiManager();
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
-	
+
 	actionCollection->append(m_actionVisibleTo);
 	actionCollection->append(m_actionInvisibleTo);
-	
+
 	return actionCollection;
 }
 

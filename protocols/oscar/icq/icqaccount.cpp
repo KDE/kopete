@@ -138,16 +138,18 @@ KActionMenu* ICQAccount::actionMenu()
 
 	actionMenu->addSeparator();
 
-	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), 0, "actionEditInfo" );
+	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+        //, "actionEditInfo" );
 	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 	actionMenu->addAction( m_editInfoAction );
 
-	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), 0, "actionInvisible" );
+	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
+        //, "actionInvisible" );
 	actionInvisible->setIcon( KIcon( ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ) ) );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 	actionMenu->addAction( actionInvisible );
-	/*    
+	/*
 	actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
 	*/
@@ -248,7 +250,7 @@ void ICQAccount::slotUserInfo()
 			return;
 
 		mInfoContact = new ICQContact( this, engine()->userId(), NULL );
-		
+
 		mInfoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), true );
 		QObject::connect( mInfoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
 		QObject::connect( mInfoWidget, SIGNAL( okClicked() ), this, SLOT( storeUserInfoDialog() ) );
@@ -277,13 +279,13 @@ void ICQAccount::closeUserInfoDialog()
 void ICQAccount::userReadsStatusMessage( const QString& contact )
 {
 	QString name;
-	
+
 	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
 	if ( ct )
 		name = ct->nickName();
 	else
 		name = contact;
-	
+
 	KNotification* notification = new KNotification( "icq_user_reads_status_message" );
 	notification->setText( i18n( "User %1 is reading your status message", name ) );
 	notification->sendEvent();
