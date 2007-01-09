@@ -53,6 +53,13 @@ Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, Q_UINT32 sessionI
 	
 	m_mimic=0L;
 	m_widget=0L;
+
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+
+	// Read the configuration to get the number of frame per second to send
+	int webCamFps=config->readNumEntry("WebcamFPS", 25);
+	m_timerFps = 1000 / webCamFps;
 }
 
 Webcam::~Webcam()
@@ -657,7 +664,7 @@ void Webcam::slotSocketRead()
 					videoDevice->setSize(320, 240);
 					videoDevice->startCapturing();
 					
-					m_timerId=startTimer(1000);
+					m_timerId=startTimer(m_timerFps);
 					kdDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
 				}
 				m_widget=new MSNWebcamDialog(m_recipient);
@@ -707,7 +714,7 @@ void Webcam::slotSocketRead()
 					videoDevice->setSize(320, 240);
 					videoDevice->startCapturing();
 					
-					m_timerId=startTimer(1000);
+					m_timerId=startTimer(m_timerFps);
 					kdDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
 				}
 				m_widget=new MSNWebcamDialog(m_recipient);
