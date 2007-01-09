@@ -62,7 +62,7 @@ QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaC
 	m_blocked = false;
 	m_reversed = false;
 	m_moving = false;
-	
+
 	m_clientFlags=0;
 
 	setFileCapable( true );
@@ -104,13 +104,13 @@ bool QQContact::isReachable()
 	// (This is an QQ limitation, not a problem in Kopete)
 	if ( !account()->isConnected() || account()->myself()->onlineStatus() == QQProtocol::protocol()->HDN )
 		return false;
-		
+
 	//if the contact is offline, it is impossible to send it a message.  but it is impossible
 	//to be sure the contact is really offline. For example, if the contact is not on the contact list for
 	//some reason.
 	if( onlineStatus() == QQProtocol::protocol()->Offline && ( isAllowed() || isBlocked() ) && !serverGroups().isEmpty() )
 		return false;
-		
+
 	return true;
 }
 
@@ -136,23 +136,23 @@ QList<KAction*> *QQContact::customContextMenuActions()
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-		actionBlock = new KAction( KIcon("qq_blocked"), label, 0, "actionBlock" );
+		actionBlock = new KAction( KIcon("qq_blocked"), label, this );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT( slotBlockUser()) );
 
 		//show profile
-		actionShowProfile = new KAction( i18n("Show Profile"), 0, "actionShowProfile" );
+		actionShowProfile = new KAction( i18n("Show Profile"), this );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( KIcon("mail_generic"), i18n("Send Email..."), 0, "actionSendMail" );
+		actionSendMail = new KAction( KIcon("mail_generic"), i18n("Send Email..."), this );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
 		// Invite to receive webcam
-		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), 0, "qqWebcamReceive" ) ;
+		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), this );
 		connect( actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 		//Send webcam action
-		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), 0, "qqWebcamSend" ) ;
+		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), this );
 		connect( actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 	}
 	else
@@ -170,7 +170,6 @@ QList<KAction*> *QQContact::customContextMenuActions()
 
 void QQContact::slotBlockUser()
 {
-	return;
 }
 
 void QQContact::slotUserInfo()
@@ -245,7 +244,7 @@ uint QQContact::clientFlags() const
 
 void QQContact::setClientFlags( uint flags )
 {
-	if(m_clientFlags != flags) 
+	if(m_clientFlags != flags)
 	{
 		/*
 		if(hasProperty( QQProtocol::protocol()->propClient.key() ))
@@ -358,7 +357,7 @@ const QMap<QString, Kopete::Group*>  QQContact::serverGroups() const
 {
 	return m_serverGroups;
 }
-void QQContact::clearServerGroups() 
+void QQContact::clearServerGroups()
 {
 	m_serverGroups.clear();
 }
@@ -449,7 +448,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 	delete f;
 
 	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
-	
+
 
 	//let the time to KIO to copy the file
 	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
@@ -475,7 +474,7 @@ void QQContact::setObject(const QString &obj)
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "QQ" );
-	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() 
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

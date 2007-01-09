@@ -54,6 +54,7 @@
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
+#include <kactioncollection.h>
 #endif
 
 MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
@@ -77,27 +78,33 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
 
 
-	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), actionCollection(), "msnInvite" );
+	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), this );
+        actionCollection()->addAction( "msnInvite", m_actionInvite );
 	connect ( m_actionInvite->menu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	#if !defined NDEBUG
-	KAction* rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), actionCollection(), "msnDebugRawCommand" ) ;
+	KAction* rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), this );
+        actionCollection()->addAction( "msnDebugRawCommand", rawCmd ) ;
 	connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	#endif
 
-	m_actionNudge=new KAction( KIcon("bell"), i18n( "Send Nudge" ), actionCollection(), "msnSendNudge" ) ;
+	m_actionNudge=new KAction( KIcon("bell"), i18n( "Send Nudge" ), this );
+        actionCollection()->addAction( "msnSendNudge", m_actionNudge ) ;
 	connect( m_actionNudge, SIGNAL(triggered(bool)), this, SLOT(slotSendNudge()) );
 
 	// Invite to receive webcam action
-	m_actionWebcamReceive=new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive=new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), this );
+        actionCollection()->addAction( "msnWebcamReceive", m_actionWebcamReceive ) ;
 	connect( m_actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 	//Send webcam action
-	m_actionWebcamSend=new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), actionCollection(), "msnWebcamSend" ) ;
+	m_actionWebcamSend=new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), this );
+        actionCollection()->addAction( "msnWebcamSend", m_actionWebcamSend ) ;
 	connect( m_actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
-	KAction* requestPicture = new KAction( KIcon("image"), i18n( "Request Display Picture" ), actionCollection(), "msnRequestDisplayPicture" );
+	KAction* requestPicture = new KAction( KIcon("image"), i18n( "Request Display Picture" ), this );
+        actionCollection()->addAction( "msnRequestDisplayPicture", requestPicture );
 	requestPicture->setEnabled(!c->object().isEmpty());
 	connect( requestPicture, SIGNAL(triggered()), this, SLOT(slotRequestPicture()) );
 
@@ -106,7 +113,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L );
-		KAction *imageAction = new KAction( i18n( "MSN Display Picture" ), actionCollection(), "msnDisplayPicture" );
+		KAction *imageAction = new KAction( i18n( "MSN Display Picture" ), this );
+                actionCollection()->addAction( "msnDisplayPicture", imageAction );
 		imageAction->setDefaultWidget( m_image );
 		connect( imageAction, SIGNAL( triggered() ), this, SLOT( slotRequestPicture() ) );
 
@@ -317,12 +325,13 @@ void MSNChatSession::slotActionInviteAboutToShow()
 	{
 		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
 		{
-			KAction *a = new Kopete::UI::ContactAction( it.value(), m_actionInvite->parentCollection() );
+			KAction *a = new Kopete::UI::ContactAction( it.value(), actionCollection() );
 			m_actionInvite->addAction( a );
 			m_inviteactions.append( a ) ;
 		}
 	}
-	KAction *b = new KAction( i18n ("Other..."), m_actionInvite->parentCollection(), "actionOther" );
+	KAction *b = new KAction( i18n ("Other..."), actionCollection() );
+        actionCollection()->addAction( "actionOther", b );
 	QObject::connect( b, SIGNAL( triggered( bool ) ),
 	                  this, SLOT( slotInviteOtherContact() ) );
 	m_actionInvite->addAction( b );

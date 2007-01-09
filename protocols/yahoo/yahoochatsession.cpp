@@ -47,6 +47,7 @@
 
 #include "yahoocontact.h"
 #include "yahooaccount.h"
+#include <kactioncollection.h>
 
 YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others )
@@ -57,27 +58,33 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	setInstance(protocol->instance());
 
 	// Add Actions
-	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), actionCollection(), "yahooBuzz" ) ;
+	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), this );
+        actionCollection()->addAction( "yahooBuzz", buzzAction );
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
 	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
 
-	KAction *sendFileAction = new KAction( KIcon("attach"), i18n( "Send File" ), actionCollection(), "yahooSendFile" );
+	KAction *sendFileAction = new KAction( KIcon("attach"), i18n( "Send File" ), this );
+        actionCollection()->addAction( "yahooSendFile", sendFileAction );
 	connect( sendFileAction, SIGNAL( triggered() ), this, SLOT( slotSendFile() ) );
 
-	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), actionCollection(), "yahooShowInfo" ) ;
+	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), this );
+        actionCollection()->addAction( "yahooShowInfo",  userInfoAction) ;
 	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
 
-	KAction *receiveWebcamAction = new KAction( KIcon("webcamreceive"), i18n( "Request Webcam" ), actionCollection(), "yahooRequestWebcam" ) ;
+	KAction *receiveWebcamAction = new KAction( KIcon("webcamreceive"), i18n( "Request Webcam" ), this );
+        actionCollection()->addAction( "yahooRequestWebcam",  receiveWebcamAction) ;
 	connect( receiveWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( slotRequestWebcam() ) );
 
-	KAction *sendWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), actionCollection(), "yahooSendWebcam" ) ;
+	KAction *sendWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), this );
+        actionCollection()->addAction( "yahooSendWebcam",  sendWebcamAction) ;
 	connect( sendWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( slotInviteWebcam() ) );
 
 	YahooContact *c = static_cast<YahooContact*>( others.first() );
 	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 	m_image = new QLabel( 0L );
 	m_image->setObjectName( QLatin1String("kde toolbar widget") );
-	KAction *imageAction = new KAction( i18n( "Yahoo Display Picture" ), actionCollection(), "yahooDisplayPicture" );
+	KAction *imageAction = new KAction( i18n( "Yahoo Display Picture" ), this );
+        actionCollection()->addAction( "yahooDisplayPicture", imageAction );
 	imageAction->setDefaultWidget( m_image );
 	connect( imageAction, SIGNAL( triggered() ), this, SLOT( slotDisplayPictureChanged() ) );
 

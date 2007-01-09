@@ -34,6 +34,7 @@
 #include "yahoocontact.h"
 #include "yahooaccount.h"
 #include "yahooinvitelistimpl.h"
+#include <kactioncollection.h>
 
 YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others )
@@ -48,7 +49,8 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( KIcon("kontact_contacts"), i18n( "&Invite others" ), actionCollection(), "yahooInvite");
+	m_actionInvite = new KAction( KIcon("kontact_contacts"), i18n( "&Invite others" ), this );
+        actionCollection()->addAction( "yahooInvite", m_actionInvite );
 	connect ( m_actionInvite, SIGNAL( triggered ( bool ) ), this, SLOT( slotInviteOthers() ) );
 
 	setXMLFile("yahooconferenceui.rc");
@@ -62,7 +64,7 @@ YahooConferenceChatSession::~YahooConferenceChatSession()
 YahooAccount *YahooConferenceChatSession::account()
 {
 	return static_cast< YahooAccount *>( Kopete::ChatSession::account() );
-}	
+}
 
 const QString &YahooConferenceChatSession::room()
 {
@@ -103,7 +105,7 @@ void YahooConferenceChatSession::slotInviteOthers()
 	}
 
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
-	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QStringList &, const QString & ) ), 
+	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QStringList &, const QString & ) ),
 				account(), SLOT( slotAddInviteConference( const QString &, const QStringList &, const QStringList &, const QString & ) ) );
 	dlg->setRoom( m_yahooRoom );
 	dlg->fillFriendList( buddies );

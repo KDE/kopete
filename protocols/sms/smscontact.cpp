@@ -125,22 +125,21 @@ KActionCollection* SMSContact::customContextMenuActions(QWidget *parent)
 	KActionCollection *m_actionCollection = new KActionCollection(parent);
 
 	if( !m_actionPrefs )
-   {
+	{
 		m_actionPrefs = new KAction(i18n("&Contact Settings"),
-                                  m_actionCollection,
-                                  "userPrefs");
-   
+					    m_actionCollection );
+
 //       dynamic_cast<QObject*>(this),
 //          SLOT(userPrefs()),
 //          dynamic_cast<QObject*>(this),
 //          "userPrefs");
-      QObject::connect(m_actionPrefs,
-                       SIGNAL(triggered(bool)),
-                       dynamic_cast<QObject*>(this),
-                       SLOT(userPrefs()));
-   }
+		QObject::connect(m_actionPrefs,
+				 SIGNAL(triggered(bool)),
+				 dynamic_cast<QObject*>(this),
+				 SLOT(userPrefs()));
+	}
 
-	m_actionCollection->insert( m_actionPrefs );
+	m_actionCollection->addAction("userPrefs", m_actionPrefs);
 
 	return m_actionCollection;
 }

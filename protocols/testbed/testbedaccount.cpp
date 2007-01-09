@@ -53,8 +53,9 @@ KActionMenu* TestbedAccount::actionMenu()
 	mActionMenu->addSeparator();
 
 	KAction *action;
-	
-	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), 0, "actionShowVideo");
+
+	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), mActionMenu );
+        //, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	mActionMenu->addAction(action);
 	action->setEnabled( isConnected() );

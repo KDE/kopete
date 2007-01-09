@@ -1,17 +1,17 @@
 //
 // C++ Interface: qqmessagemanager
 //
-// Description: 
+// Description:
 //
 //
 // Author: Hui Jin based on groupwise/qqmessengmanager.h
-// 
+//
 //
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef QQCHATSESSION_H 
-#define QQCHATSESSION_H 
+#ifndef QQCHATSESSION_H
+#define QQCHATSESSION_H
 
 #include <q3ptrqueue.h>
 //Added by qt3to4:
@@ -30,7 +30,7 @@ class QQAccount;
 class QQContact;
 // class QQContactSearch;
 
-struct ConferenceEvent 
+struct ConferenceEvent
 	{
 		int type;
 		QString guid;
@@ -48,7 +48,7 @@ Q_OBJECT
 friend class QQAccount;
 
 public:
-	
+
 	/**
      * The destructor emits leavingConference so that the account can tell the server that the user has left the chat
 	 */
@@ -77,11 +77,11 @@ public:
 	 * Add members to the conference
 	 */
 	void joined( QQContact * );
-	/** 
+	/**
 	 * Remove members from conference
 	 */
 	void left( QQContact * );
-	/** 
+	/**
 	 * An invitation was declined
 	 */
 	void inviteDeclined( QQContact * );
@@ -107,12 +107,12 @@ protected:
 	 * Start the process of creating a conference for this GWMM on the server.
 	 */
 	void createConference();
-	/** 
+	/**
 	 * Sends any messages and invitations that were queued while waiting for the conference to be created
 	 */
 	void dequeueMessagesAndInvites();
 protected slots:
-	/** 
+	/**
 	 * Receive the GUID returned by the server when we start a chat.
 	 * @param mmId Message Manager ID, used to determine if this GUID is meant for this message manager
 	 * @param guid The GUID allotted us by the server.
@@ -123,7 +123,7 @@ protected slots:
 	 * @param mmId Message Manager ID to see if the failure refers to this message manager
 	 */
 	void slotCreationFailed( const int mmId,const int statusCode );
-	 
+
 	void slotSendTypingNotification ( bool typing );
 	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
 	// TODO: slots for us leaving conference, us inviting someone, someone joining, someone leaving, someone sending an invitation, getting typing?
@@ -137,7 +137,7 @@ protected slots:
 	 * Invite a contact to join this chat
 	 */
 	void slotInviteContact( Kopete::Contact * );
-	/** 
+	/**
 	 * Show the search dialog to invite another contact to the chat
 	 */
 	void slotInviteOtherContact();
@@ -149,19 +149,19 @@ protected slots:
 	void slotShowSecurity();
 	void slotShowArchiving();
 private:
-	
-	QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const QString& guid ); 
+
+	QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const QString& guid );
 
 	QString m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
-	
+
 	Q3ValueList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
 	Q3PtrList<KAction> m_inviteActions;
 	// labels showing secure and logging status
-	KAction *m_secure;
-	KAction *m_logging;
+	QAction *m_secure;
+	QAction *m_logging;
 	// search widget and dialog used for inviting contacts
 	// QQContactSearch * m_search;
 	KDialog * m_searchDlg;
@@ -169,7 +169,7 @@ private:
 	Kopete::ContactPtrList m_invitees;
 	// track the number of members actually in the chat
 	uint m_memberCount;
-	
+
 	/**
 	 * return an unique identifier for that kmm
 	 * @todo check it!

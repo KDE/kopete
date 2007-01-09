@@ -61,7 +61,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 	m_blocked = false;
 	m_reversed = false;
 	m_moving = false;
-	
+
 	m_clientFlags=0;
 
 	setFileCapable( true );
@@ -103,13 +103,13 @@ bool MSNContact::isReachable()
 	// (This is an MSN limitation, not a problem in Kopete)
 	if ( !account()->isConnected() || account()->myself()->onlineStatus() == MSNProtocol::protocol()->HDN )
 		return false;
-		
+
 	//if the contact is offline, it is impossible to send it a message.  but it is impossible
 	//to be sure the contact is really offline. For example, if the contact is not on the contact list for
 	//some reason.
 	if( onlineStatus() == MSNProtocol::protocol()->FLN && ( isAllowed() || isBlocked() ) && !serverGroups().isEmpty() )
 		return false;
-		
+
 	return true;
 }
 
@@ -136,23 +136,28 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-		actionBlock = new KAction( KIcon("msn_blocked"), label, 0, "actionBlock" );
+		actionBlock = new KAction( KIcon("msn_blocked"), label, this );
+                //, "actionBlock" );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT( slotBlockUser()) );
 
 		//show profile
-		actionShowProfile = new KAction( i18n("Show Profile"), 0, "actionShowProfile" );
+		actionShowProfile = new KAction( i18n("Show Profile"), this );
+                //, "actionShowProfile" );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( KIcon("mail_generic"), i18n("Send Email..."), 0, "actionSendMail" );
+		actionSendMail = new KAction( KIcon("mail_generic"), i18n("Send Email..."), this );
+                //, "actionSendMail" );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
 		// Invite to receive webcam
-		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), 0, "msnWebcamReceive" ) ;
+		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), this );
+                //, "msnWebcamReceive" ) ;
 		connect( actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 		//Send webcam action
-		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), 0, "msnWebcamSend" ) ;
+		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), this );
+                //, "msnWebcamSend" ) ;
 		connect( actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 	}
 	else
@@ -242,8 +247,8 @@ void MSNContact::deleteContact()
 				kDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"" << endl;
 				notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			}
-	
-			// Then trully remove it from server contact list, 
+
+			// Then trully remove it from server contact list,
 			// because only removing the contact from his groups isn't sufficient from MSNP11.
 			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
 			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
@@ -316,7 +321,7 @@ uint MSNContact::clientFlags() const
 
 void MSNContact::setClientFlags( uint flags )
 {
-	if(m_clientFlags != flags) 
+	if(m_clientFlags != flags)
 	{
 		if(hasProperty( MSNProtocol::protocol()->propClient.key() ))
 		{
@@ -412,7 +417,7 @@ const QMap<QString, Kopete::Group*>  MSNContact::serverGroups() const
 {
 	return m_serverGroups;
 }
-void MSNContact::clearServerGroups() 
+void MSNContact::clearServerGroups()
 {
 	m_serverGroups.clear();
 }
@@ -437,7 +442,7 @@ void MSNContact::sync( unsigned int changed )
 		kDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
 		return;
 	}
-	
+
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( !notify )
 	{
@@ -446,9 +451,9 @@ void MSNContact::sync( unsigned int changed )
 		account()->configGroup()->writeEntry("serial", 0 );
 		return;
 	}
-	
+
 	if(m_deleted)  //the contact hasn't been synced from server yet.
-		return; 
+		return;
 
 	unsigned int count=m_serverGroups.count();
 
@@ -465,7 +470,7 @@ void MSNContact::sync( unsigned int changed )
 		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
 		{
 			QString Gid=group->pluginData( protocol(), account()->accountId() + " id" );
-			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) ) 
+			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) )
 			{ // ohoh!   something is corrupted on the contact list.xml
 			  // anyway, we never should add a contact to an unexisting group on the server.
 			  //     This shouln't be possible anymore  2004-06-10 -Olivier
@@ -509,8 +514,8 @@ void MSNContact::sync( unsigned int changed )
 	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
 
 	//contact is not in that group. on the server. we will remove them dirrectly after the loop
-	QStringList removinglist; 
-	
+	QStringList removinglist;
+
 	for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
 		if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(it.key()) )
@@ -537,7 +542,7 @@ void MSNContact::sync( unsigned int changed )
 			count--;
 		}
 	}
-	
+
 	for(QStringList::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
 		contactRemovedFromGroup(*it);
 
@@ -711,7 +716,7 @@ void MSNContact::setObject(const QString &obj)
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() 
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

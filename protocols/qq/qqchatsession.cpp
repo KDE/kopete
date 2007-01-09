@@ -38,6 +38,7 @@
 #include "qqcontact.h"
 #include "qqprotocol.h"
 #include "qqchatsession.h"
+#include <kactioncollection.h>
 
 QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const QString& guid) : Kopete::ChatSession(user, others, protocol), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
@@ -61,16 +62,17 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 						SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
 
 	// Set up the Invite menu
-	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "qqInvite" );
+	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
+        actionCollection()->addAction( "qqInvite", m_actionInvite );
 	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
-	m_secure = new KAction( actionCollection(), "qqSecureChat" );
+	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
         m_secure->setIcon( KIcon( "encrypted" ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
         connect( m_secure, SIGNAL( triggered() ), this, SLOT( slotShowSecurity() ) );
 
-	m_logging = new KAction( actionCollection(), "qqLoggingChat" );
+	m_logging = actionCollection()->addAction( "qqLoggingChat" );
 	m_logging->setText( i18n( "Archiving Status" ) );
         m_logging->setIcon( KIcon( "logchat" ) );
         connect( m_logging, SIGNAL( triggered() ), this, SLOT( slotShowArchiving() ) );
@@ -278,13 +280,14 @@ void QQChatSession::slotActionInviteAboutToShow()
 	{
 		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
 		{
-			KAction *a = new Kopete::UI::ContactAction( it.value(), m_actionInvite->parentCollection() );
+			KAction *a = new Kopete::UI::ContactAction( it.value(), actionCollection() );
 			m_actionInvite->addAction( a );
 			m_inviteActions.append( a ) ;
 		}
 	}
 	// Invite someone off-list
-	KAction *b=new KAction( KIcon(), i18n ("&Other..."), m_actionInvite->parentCollection(), "actionOther" );
+	KAction *b=new KAction( KIcon(), i18n ("&Other..."), actionCollection() );
+        actionCollection()->addAction( "actionOther", b );
 	QObject::connect( b, SIGNAL( triggered( bool ) ),
 	                  this, SLOT( slotInviteOtherContact() ) );
 	m_actionInvite->addAction( b );

@@ -44,7 +44,7 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 	m_connectstatus = QQProtocol::protocol()->Offline;
 	m_newContactList=false;
 	m_codec = QTextCodec::codecForName("GB18030");
- 
+
 	// Init the myself contact
 	setMyself( new QQContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
 }
@@ -99,7 +99,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 		SLOT( slotNewContactList() ) );
 	QObject::connect( m_notifySocket, SIGNAL( groupNames(const QStringList& )),
 		SLOT( slotGroupNamesListed(const QStringList& ) ) );
-	
+
 	QObject::connect( m_notifySocket, SIGNAL( contactInGroup(int, char, int)),
 		SLOT( slotContactInGroup(int, char, int)) );
 
@@ -112,7 +112,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 	QObject::connect( m_notifySocket, SIGNAL( messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ),
 		SLOT( slotMessageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ) );
 
-	QObject::connect( m_notifySocket, SIGNAL( contactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )), 
+	QObject::connect( m_notifySocket, SIGNAL( contactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )),
 		SLOT( slotContactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )) );
 
 	m_notifySocket->connect(host, port);
@@ -131,8 +131,9 @@ KActionMenu* QQAccount::actionMenu()
 	mActionMenu->addSeparator();
 
 	KAction *action;
-	
-	action = new KAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), 0, "actionShowVideo");
+
+	action = new KAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), mActionMenu );
+        action->setObjectName("actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	mActionMenu->addAction(action);
 	action->setEnabled( isConnected() );
@@ -169,7 +170,7 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 	kDebug( 14140 ) << k_funcinfo << endl;
 	QQContact* newContact = new QQContact( this, contactId, parentContact );
 	return newContact != 0L;
-	
+
 }
 
 QQChatSession * QQAccount::findChatSessionByGuid( const QString& guid )
@@ -275,7 +276,7 @@ void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 		// m_notifySocket->sendContactList();
 		// Fetch the relation of contact <--> group
 
-	
+
 	}
 }
 
@@ -289,7 +290,7 @@ void QQAccount::slotGroupNamesListed(const QStringList& ql )
 
 	// add the default group as #0 group.
 	m_groupList += Kopete::Group::topLevel();
-	
+
 	for( QStringList::const_iterator it = ql.begin(); it != ql.end(); it++ )
 	{
 		foreach(g, groupList)
@@ -357,7 +358,7 @@ void QQAccount::slotContactInGroup(const int qqId, const char type, const int gr
 		metaContact->addToGroup( m_groupList[groupId] );
 	}
 }
-	
+
 void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 {
 	// ignore also the myself contact.
@@ -373,15 +374,15 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 	else
 	{
 		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
-			
+
 		c = new QQContact( this, id, metaContact );
 		c->setOnlineStatus( QQProtocol::protocol()->Offline );
-			
+
 		if(!publicName.isEmpty() )
 			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
 		else
 			c->removeProperty( Kopete::Global::Properties::self()->nickName() );
-			
+
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}
 
@@ -395,7 +396,7 @@ void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
 
 	QQContact* c = static_cast<QQContact*> (contacts()[ QString::number( cs.qqId ) ]);
 	kDebug( 14140 ) << "get the status from " << cs.qqId << endl;
-	if (c) 
+	if (c)
 		c->setOnlineStatus( fromEvaStatus(cs.status) );
 }
 
@@ -405,7 +406,7 @@ Kopete::OnlineStatus QQAccount::fromEvaStatus( char es )
 	Kopete::OnlineStatus status;
 	switch( es )
 	{
-		case Eva::Online : 
+		case Eva::Online :
 			status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
 			break;
 
@@ -448,14 +449,14 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 
 	QQChatSession* sess = chatSession( contactList, guid, Kopete::Contact::CanCreate );
 	Q_ASSERT( sess );
-	Kopete::Message * newMessage = 
+	Kopete::Message * newMessage =
 			new Kopete::Message( timestamp, sender, contactList, msg,
 								 Kopete::Message::Inbound, Kopete::Message::PlainText );
 	sess->appendMessage( *newMessage );
 }
 
 
-void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map) 
+void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map)
 {
 	kDebug(14140) << k_funcinfo "contact:" << id << endl;
 	QQContact* contact = dynamic_cast<QQContact*>(contacts()[id]);

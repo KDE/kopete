@@ -81,10 +81,10 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	setNickName( fullName );
 	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
 	setFileCapable( true );
-	
+
 	if ( m_account->haveContactList() )
 		syncToServer();
-	
+
 	m_webcamDialog = 0L;
 	m_webcamAction = 0L;
 	m_stealthAction = 0L;
@@ -110,7 +110,7 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 {
 	if( m_stealthed && status.internalStatus() <= 999)	// Not Stealted -> Stealthed
 	{
-		Contact::setOnlineStatus( 
+		Contact::setOnlineStatus(
 			Kopete::OnlineStatus(status.status() ,
 			(status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() ,
@@ -122,8 +122,8 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 		Contact::setOnlineStatus( static_cast< YahooProtocol *>( protocol() )->statusFromYahoo( status.internalStatus() - 1000 ) );
 	else
 		Contact::setOnlineStatus( status );
-	
-	if( status.status() == Kopete::OnlineStatus::Offline ) 
+
+	if( status.status() == Kopete::OnlineStatus::Offline )
 		removeProperty( ((YahooProtocol*)(m_account->protocol()))->awayMessage);
 }
 
@@ -219,7 +219,7 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 }
 
 QString YahooContact::prepareMessage( const QString &messageText )
-{	
+{
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
 	QString newMsg( messageText );
@@ -236,8 +236,8 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("\\2" ) );
 		}
 	}
-	
-	
+
+
 	// find and replace Bold-formattings
 	regExp.setPattern( "<span([^>]*)font-weight:600([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -248,7 +248,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
 		}
 	}
-	
+
 	// find and replace Underline-formattings
 	regExp.setPattern( "<span([^>]*)text-decoration:underline([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -259,7 +259,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
 		}
 	}
-	
+
 	// find and replace Italic-formattings
 	regExp.setPattern( "<span([^>]*)font-style:italic([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -270,7 +270,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
 		}
 	}
-	
+
 	// find and replace Color-formattings
 	regExp.setPattern( "<span([^>]*)color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -281,7 +281,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
 		}
 	}
-	
+
 	// find and replace Font-formattings
 	regExp.setPattern( "<span([^>]*)font-family:([^;\"]*)([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -292,7 +292,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
 		}
 	}
-	
+
 	// find and replace Size-formattings
 	regExp.setPattern( "<span([^>]*)font-size:([0-9]*)pt([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -303,7 +303,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
 		}
 	}
-	
+
 	// remove span-tags
 	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -314,7 +314,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 			newMsg.replace( regExp, QLatin1String("\\2") );
 		}
 	}
-	
+
 	// convert escaped chars
 	newMsg.replace( QLatin1String( "&gt;" ), QLatin1String( ">" ) );
 	newMsg.replace( QLatin1String( "&lt;" ), QLatin1String( "<" ) );
@@ -322,19 +322,19 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	newMsg.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
 	newMsg.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
 	newMsg.replace( QLatin1String( "<br/>" ), QLatin1String( "\r" ) );
-	
+
 	return newMsg;
 }
 
 void YahooContact::slotSendMessage( Kopete::Message &message )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	
+
 	QString messageText = message.escapedBody();
 	kDebug(YAHOO_GEN_DEBUG) << "Original message: " << messageText << endl;
 	messageText = prepareMessage( messageText );
 	kDebug(YAHOO_GEN_DEBUG) << "Converted message: " << messageText << endl;
-	
+
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
@@ -343,9 +343,9 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		m_account->yahooSession()->setChatSessionState( m_userId, false );
 		m_sessionActive = true;
 	}
-	
+
 	m_account->yahooSession()->sendMessage( static_cast<YahooContact *>(target)->m_userId, messageText );
-	
+
 	// append message to window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
@@ -353,7 +353,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 
 void YahooContact::sendFile( const KUrl &sourceURL, const QString &fileName, uint fileSize )
 {
-	Kopete::TransferManager::transferManager()->sendFile( sourceURL, fileName, fileSize, 
+	Kopete::TransferManager::transferManager()->sendFile( sourceURL, fileName, fileSize,
 			false, this, SLOT(slotSendFile( const KUrl & )) );
 }
 
@@ -378,70 +378,74 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 	if ( !m_webcamAction )
 	{
-		m_webcamAction = new KAction( KIcon("webcamreceive"), i18n( "View &Webcam" ), 0, "view_webcam" );
+		m_webcamAction = new KAction( KIcon("webcamreceive"), i18n( "View &Webcam" ), this );
 		connect( m_webcamAction, SIGNAL( triggered(bool) ), this, SLOT( requestWebcam() ) );
 	}
 	if ( isReachable() )
 		m_webcamAction->setEnabled( true );
 	else
 		m_webcamAction->setEnabled( false );
-	actionCollection->append( m_webcamAction );
-	
+	//actionCollection->addAction( "view_webcam", m_webcamAction );
+        actionCollection->append( m_webcamAction );
+
 	if( !m_inviteWebcamAction )
 	{
-		m_inviteWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), 0, "invite_webcam" );
+		m_inviteWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), this );
 		connect( m_inviteWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( inviteWebcam() ) );
 	}
 	if ( isReachable() )
 		m_inviteWebcamAction->setEnabled( true );
 	else
 		m_inviteWebcamAction->setEnabled( false );
-	actionCollection->append( m_inviteWebcamAction );
-	
+	//actionCollection->addAction( "invite_webcam", m_inviteWebcamAction );
+        actionCollection->append( m_inviteWebcamAction );
+
 	if ( !m_buzzAction )
 	{
-		m_buzzAction = new KAction( KIcon("bell"), i18n( "&Buzz Contact" ), 0, "buzz_contact");
+		m_buzzAction = new KAction( KIcon("bell"), i18n( "&Buzz Contact" ), this);
 		connect( m_buzzAction, SIGNAL( triggered(bool) ), this, SLOT( buzzContact() ) );
 	}
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
 	else
 		m_buzzAction->setEnabled( false );
-	actionCollection->append( m_buzzAction );
+	//actionCollection->addAction( "buzz_contact", m_buzzAction );
+        actionCollection->append( m_buzzAction );
 
 	if ( !m_stealthAction )
 	{
-		m_stealthAction = new KAction( KIcon("yahoo_stealthed"), i18n( "&Stealth Setting" ), 0, "stealth_contact");
+		m_stealthAction = new KAction( KIcon("yahoo_stealthed"), i18n( "&Stealth Setting" ), this );
 		connect( m_stealthAction, SIGNAL( triggered(bool) ), this, SLOT( stealthContact() ) );
 	}
 	if ( isReachable() )
 		m_stealthAction->setEnabled( true );
 	else
 		m_stealthAction->setEnabled( false );
-	actionCollection->append( m_stealthAction );
-	
+	//actionCollection->addAction( "stealth_contact", m_stealthAction );
+        actionCollection->append( m_stealthAction );
+
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( KIcon("kontact_contacts"), i18n( "&Invite to Conference" ), 0, "invite_conference");
+		m_inviteConferenceAction = new KAction( KIcon("kontact_contacts"), i18n( "&Invite to Conference" ), this );
 		connect( m_inviteConferenceAction, SIGNAL( triggered(bool) ), this, SLOT( inviteConference() ) );
 	}
 	if ( isReachable() )
 		m_inviteConferenceAction->setEnabled( true );
 	else
 		m_inviteConferenceAction->setEnabled( false );
-	actionCollection->append( m_inviteConferenceAction );
-	
+	//actionCollection->addAction( "invite_conference", m_inviteConferenceAction );
+        actionCollection->append( m_inviteConferenceAction );
+
 	if ( !m_profileAction )
 	{
-		m_profileAction = new KAction( KIcon("kontact_notes"), i18n( "&View Yahoo Profile" ), 0, "profile_contact");
+		m_profileAction = new KAction( KIcon("kontact_notes"), i18n( "&View Yahoo Profile" ), this );
 		connect( m_profileAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserProfile() ) );
 	}
 	m_profileAction->setEnabled( true );
-	actionCollection->append( m_profileAction );
-	
+	//actionCollection->addAction( "profile_contact", m_profileAction );
+        actionCollection->append( m_profileAction );
+
 	return actionCollection;
-	
-	//return 0L;
 }
 
 void YahooContact::slotUserInfo()
@@ -451,7 +455,7 @@ void YahooContact::slotUserInfo()
 	{
 		readYABEntry();	// No YABEntry was set, so read the one from contactlist.xml
 	}
-	
+
 	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( this, Kopete::UI::Global::mainWidget() );
 	dlg->setData( *m_YABEntry );
 	dlg->setAccountConnected( m_account->isConnected() );
@@ -462,7 +466,7 @@ void YahooContact::slotUserInfo()
 void YahooContact::slotUserProfile()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	
+
 	QString profileSiteString = QLatin1String("http://profiles.yahoo.com/") + userId();
 	KToolInvocation::invokeBrowser(  profileSiteString );
 }
@@ -482,7 +486,7 @@ void YahooContact::stealthContact()
 	stealthSettingDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	stealthSettingDialog->setDefaultButton(KDialog::Ok);
 	stealthSettingDialog->showButtonSeparator(true);
-	
+
 	QWidget* w = new QWidget( stealthSettingDialog );
 	Ui::YahooStealthSetting stealthWidget = Ui::YahooStealthSetting();
 	stealthWidget.setupUi( w );
@@ -496,21 +500,21 @@ void YahooContact::stealthContact()
 	}
 	if( stealthed() )
 		stealthWidget.radioPermOffline->setChecked( true );
-		
-	
+
+
 	// Show dialog
 	if ( stealthSettingDialog->exec() == QDialog::Rejected )
-	{	
+	{
 		stealthSettingDialog->deleteLater();
 		return;
-	}	
-	
+	}
+
 	// Apply permanent setting
 	if( stealthed() && !stealthWidget.radioPermOffline->isChecked() )
 		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthNotActive );
 	else if( !stealthed() && stealthWidget.radioPermOffline->isChecked() )
 		m_account->yahooSession()->stealthContact( m_userId, Yahoo::StealthPermOffline, Yahoo::StealthActive );
-	
+
 	// Apply temporary setting
 	if( m_account->myself()->onlineStatus() == YahooProtocol::protocol()->Invisible )
 	{
@@ -531,7 +535,7 @@ void YahooContact::buzzContact()
 {
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
-	
+
 	m_account->yahooSession()->sendBuzz( static_cast<YahooContact*>(target)->m_userId );
 
 	KopeteView *view = manager(Kopete::Contact::CannotCreate)->view(false);
@@ -553,11 +557,11 @@ void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 	// stolen from msncontact.cpp ;)
 	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
-	
+
 	QString fileName = f->fileName();
 	f->setAutoRemove(false);
 	delete f;
-	
+
 	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 
 	//let the time to KIO to copy the file
@@ -570,10 +574,10 @@ void YahooContact::setYABEntry( YABEntry *entry, bool show )
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << userId() << endl;
 	if( m_YABEntry )
 		delete m_YABEntry;
-	
+
 	m_YABEntry = entry;
 	writeYABEntry();	// Store data in Contact
-	
+
 	if( show )
 		slotUserInfo();
 }
@@ -602,7 +606,7 @@ void YahooContact::inviteWebcam()
 {
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
 			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
@@ -632,21 +636,21 @@ void YahooContact::webcamPaused()
 void YahooContact::initWebcamViewer()
 {
 	//
-	
+
 	if ( !m_webcamDialog )
 	{
 		m_webcamDialog = new YahooWebcamDialog( userId(), Kopete::UI::Global::mainWidget() );
 // 		QObject::connect( m_webcamDialog, SIGNAL( closeClicked() ), this, SLOT( closeWebcamDialog() ) );
-	
+
 		QObject::connect( this, SIGNAL( signalWebcamClosed( int ) ),
 		                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
-		
+
 		QObject::connect( this, SIGNAL( signalWebcamPaused() ),
 		                  m_webcamDialog, SLOT( webcamPaused() ) );
-		
+
 		QObject::connect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
 				m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
-		
+
 		QObject::connect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
 				this, SLOT ( closeWebcamDialog ( ) ) );
 	}
@@ -657,12 +661,12 @@ void YahooContact::requestWebcam()
 {
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
 			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}
-	
+
 	if( !m_webcamDialog )
 		initWebcamViewer();
 	m_account->yahooSession()->requestWebcam( contactId() );
@@ -672,13 +676,13 @@ void YahooContact::closeWebcamDialog()
 {
 	QObject::disconnect( this, SIGNAL( signalWebcamClosed( int ) ),
 	                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
-	
+
 	QObject::disconnect( this, SIGNAL( signalWebcamPaused() ),
 	                  m_webcamDialog, SLOT( webcamPaused( ) ) );
-	
+
 	QObject::disconnect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
 	                  m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
-	
+
 	QObject::disconnect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
 	                  this, SLOT ( closeWebcamDialog ( ) ) );
 	if( m_receivingWebcam )
@@ -690,10 +694,10 @@ void YahooContact::closeWebcamDialog()
 void YahooContact::deleteContact()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	
+
 	if( !m_account->isOnServer( contactId() ) )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact does not exist on server-side. Not removing..." << endl;		
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact does not exist on server-side. Not removing..." << endl;
 	}
 	else
 	{
@@ -703,7 +707,7 @@ void YahooContact::deleteContact()
 			readYABEntry();
 		if( m_YABEntry->YABId )
 			m_account->yahooSession()->deleteYABEntry( *m_YABEntry );
-		
+
 		// Now remove from the contactlist
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
@@ -713,19 +717,19 @@ void YahooContact::deleteContact()
 void YahooContact::writeYABEntry()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	
+
 	// Personal
 	setProperty( YahooProtocol::protocol()->propfirstName, m_YABEntry->firstName );
 	setProperty( YahooProtocol::protocol()->propSecondName, m_YABEntry->secondName );
 	setProperty( YahooProtocol::protocol()->propLastName, m_YABEntry->lastName );
 	setProperty( YahooProtocol::protocol()->propNickName, m_YABEntry->nickName );
 	setProperty( YahooProtocol::protocol()->propTitle, m_YABEntry->title );
-	
-	// Primary Information	
+
+	// Primary Information
 	setProperty( YahooProtocol::protocol()->propPhoneMobile, m_YABEntry->phoneMobile );
 	setProperty( YahooProtocol::protocol()->propEmail, m_YABEntry->email );
 	setProperty( YahooProtocol::protocol()->propYABId, m_YABEntry->YABId );
-	
+
 		// Additional Information
 	setProperty( YahooProtocol::protocol()->propPager, m_YABEntry->pager );
 	setProperty( YahooProtocol::protocol()->propFax, m_YABEntry->fax );
@@ -739,7 +743,7 @@ void YahooContact::writeYABEntry()
 	setProperty( YahooProtocol::protocol()->propImSkype, m_YABEntry->imSkype );
 	setProperty( YahooProtocol::protocol()->propImIRC, m_YABEntry->imIRC );
 	setProperty( YahooProtocol::protocol()->propImQQ, m_YABEntry->imQQ );
-	
+
 		// Private Information
 	setProperty( YahooProtocol::protocol()->propPrivateAddress, m_YABEntry->privateAdress );
 	setProperty( YahooProtocol::protocol()->propPrivateCity, m_YABEntry->privateCity );
@@ -748,7 +752,7 @@ void YahooContact::writeYABEntry()
 	setProperty( YahooProtocol::protocol()->propPrivateCountry, m_YABEntry->privateCountry );
 	setProperty( YahooProtocol::protocol()->propPrivatePhone, m_YABEntry->privatePhone );
 	setProperty( YahooProtocol::protocol()->propPrivateURL, m_YABEntry->privateURL );
-	
+
 		// Work Information
 	setProperty( YahooProtocol::protocol()->propCorporation, m_YABEntry->corporation );
 	setProperty( YahooProtocol::protocol()->propWorkAddress, m_YABEntry->workAdress );
@@ -758,7 +762,7 @@ void YahooContact::writeYABEntry()
 	setProperty( YahooProtocol::protocol()->propWorkCountry, m_YABEntry->workCountry );
 	setProperty( YahooProtocol::protocol()->propWorkPhone, m_YABEntry->workPhone );
 	setProperty( YahooProtocol::protocol()->propWorkURL, m_YABEntry->workURL );
-	
+
 		// Miscellaneous
 	setProperty( YahooProtocol::protocol()->propBirthday, m_YABEntry->birthday.toString( Qt::ISODate ) );
 	setProperty( YahooProtocol::protocol()->propAnniversary, m_YABEntry->anniversary.toString( Qt::ISODate ) );
@@ -774,7 +778,7 @@ void YahooContact::readYABEntry()
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( m_YABEntry )
 		delete m_YABEntry;
-	
+
 	m_YABEntry = new YABEntry;
 	m_YABEntry->yahooId = userId();
 	// Personal
@@ -783,12 +787,12 @@ void YahooContact::readYABEntry()
 	m_YABEntry->lastName = property( YahooProtocol::protocol()->propLastName ).value().toString();
 	m_YABEntry->nickName = property( YahooProtocol::protocol()->propNickName ).value().toString();
 	m_YABEntry->title = property( YahooProtocol::protocol()->propTitle ).value().toString();
-	
-	// Primary Information	
+
+	// Primary Information
 	m_YABEntry->phoneMobile = property( YahooProtocol::protocol()->propPhoneMobile ).value().toString();
 	m_YABEntry->email = property( YahooProtocol::protocol()->propEmail ).value().toString();
 	m_YABEntry->YABId = property( YahooProtocol::protocol()->propYABId ).value().toInt();
-	
+
 	// Additional Information
 	m_YABEntry->pager = property( YahooProtocol::protocol()->propPager ).value().toString();
 	m_YABEntry->fax = property( YahooProtocol::protocol()->propFax ).value().toString();
@@ -802,7 +806,7 @@ void YahooContact::readYABEntry()
 	m_YABEntry->imSkype = property( YahooProtocol::protocol()->propImSkype ).value().toString();
 	m_YABEntry->imIRC = property( YahooProtocol::protocol()->propImIRC ).value().toString();
 	m_YABEntry->imQQ = property( YahooProtocol::protocol()->propImQQ ).value().toString();
-	
+
 	// Private Information
 	m_YABEntry->privateAdress = property( YahooProtocol::protocol()->propPrivateAddress ).value().toString();
 	m_YABEntry->privateCity = property( YahooProtocol::protocol()->propPrivateCity ).value().toString();
@@ -811,8 +815,8 @@ void YahooContact::readYABEntry()
 	m_YABEntry->privateCountry = property( YahooProtocol::protocol()->propPrivateCountry ).value().toString();
 	m_YABEntry->privatePhone = property( YahooProtocol::protocol()->propPrivatePhone ).value().toString();
 	m_YABEntry->privateURL = property( YahooProtocol::protocol()->propPrivateURL ).value().toString();
-	
-	// Work Information 
+
+	// Work Information
 	m_YABEntry->corporation = property( YahooProtocol::protocol()->propCorporation ).value().toString();
 	m_YABEntry->workAdress = property( YahooProtocol::protocol()->propWorkAddress ).value().toString();
 	m_YABEntry->workCity = property( YahooProtocol::protocol()->propWorkCity ).value().toString();

@@ -163,20 +163,20 @@ KActionMenu* WPAccount::actionMenu()
 
 	/// How to remove an action from Kopete::Account::actionMenu()? GF
 
-#warning Icon removed from KActionMenu here, port
-// 	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
-	KActionMenu *theActionMenu = new KActionMenu(accountId(), 0, 0);
+	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
+        theActionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
 	theActionMenu->menu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
 
 	if (mProtocol)
 	{
-		//Why aren't the action names i18n'd?
-		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), i18n("Online"), 0, "actionGoAvailable" );
+		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), i18n("Online"), this );
+		//, "actionGoAvailable" );
 		QObject::connect( goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()) );
 		goOnline->setEnabled(isConnected() && isAway());
 		theActionMenu->addAction(goOnline);
 
-		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), 0, "actionGoAway" );
+		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), this );
+                //, "actionGoAway" );
 		QObject::connect( goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()) );
 		goAway->setEnabled(isConnected() && !isAway());
 		theActionMenu->addAction(goAway);
@@ -184,7 +184,8 @@ KActionMenu* WPAccount::actionMenu()
 		/// One can not really go offline manually - appears online as long as samba server is running. GF
 
 		theActionMenu->addSeparator();
-		KAction *properties = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
+		KAction *properties = new KAction( i18n("Properties"), this );
+                // "actionAccountProperties" );
 		QObject::connect( properties, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
 		theActionMenu->addAction( properties );
 	}
