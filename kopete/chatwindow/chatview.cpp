@@ -31,6 +31,7 @@
 #include "kopeteviewmanager.h"
 #include "kopetebehaviorsettings.h"
 
+#include <kactioncollection.h>
 #include <kconfig.h>
 #include <ktabwidget.h>
 #include <kdebug.h>
@@ -99,7 +100,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	QSplitter *splitter = new QSplitter( Qt::Vertical, vbox );
 
-	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)	
+	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
 	m_messagePart = new ChatMessagePart( mgr , this );
 
 	//Create the bottom dock widget, with the edit area, statusbar and send button
@@ -159,11 +160,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
-
-	// init actions
-#warning "For a unknow reason, actionCollection() doesn't exist anymore (-DarkShock)"
-	KStandardAction::copy( this, SLOT(copy()), 0, 0);
-	KStandardAction::close( this, SLOT(closeView()), 0, 0);
 
 	setCaption( m_manager->displayName(), false );
 
@@ -299,7 +295,7 @@ void ChatView::raise( bool activate )
 	//Will not activate window if user was typing
 	if ( activate )
 		KWin::activateWindow( m_mainWindow->winId() );
-#endif	
+#endif
 
 }
 
@@ -406,6 +402,10 @@ void ChatView::updateChatState( KopeteTabState newState )
 void ChatView::setMainWindow( KopeteChatWindow* parent )
 {
 	m_mainWindow = parent;
+
+	// init actions
+	KStandardAction::copy( this, SLOT(copy()), m_mainWindow->actionCollection());
+	KStandardAction::close( this, SLOT(closeView()), m_mainWindow->actionCollection());
 }
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
@@ -739,7 +739,7 @@ void ChatView::saveChatSettings()
 		return;
 
 	Kopete::MetaContact* mc = contacts.first()->metaContact();
-	
+
 	if ( contacts.count() > 1 )
 		return; //can't save with more than one person in chatview
 
@@ -747,7 +747,7 @@ void ChatView::saveChatSettings()
 		return;
 
 	KConfig* config = KGlobal::config();
-	
+
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           mc->metaContactId();
 
@@ -908,7 +908,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
-		
+
 #warning commented to make it compile
 #if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));

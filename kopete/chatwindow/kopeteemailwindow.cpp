@@ -68,6 +68,7 @@
 #include <QList>
 #include <QMovie>
 #include <QSplitter>
+#include <kactioncollection.h>
 
 typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
@@ -221,7 +222,8 @@ void KopeteEmailWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-	d->chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), coll, "chat_send" );
+	d->chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), this );
+        coll->addAction( "chat_send", d->chatSend );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
 	connect( d->chatSend, SIGNAL(triggered()), this, SLOT( slotReplySend()) );
@@ -233,19 +235,23 @@ void KopeteEmailWindow::initActions(void)
 	KStandardAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
 
 	KAction* action;
-	action = new KAction( KIcon("charset"), i18n( "&Set Font..." ), coll, "format_font" );
+	action = new KAction( KIcon("charset"), i18n( "&Set Font..." ), coll );
+        coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll, "format_color" );
+	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll );
+        coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setFgColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll, "format_bgcolor" );
+	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+        coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBgColor()) );
 
 	KStandardAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	setStandardToolBarMenuEnabled( true );
 
-	d->actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
+	d->actionSmileyMenu = new KopeteEmoticonAction( coll );
+        coll->addAction( "format_smiley", d->actionSmileyMenu );
 	d->actionSmileyMenu->setDelayed( false );
 	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
@@ -264,8 +270,9 @@ void KopeteEmailWindow::initActions(void)
 	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
-	
-	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll, "toolbar_animation" );
+
+	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
+        coll->addAction( "toolbar_animation", action );
 	animAction->setDefaultWidget( d->anim );
 
 	setXMLFile( QLatin1String( "kopeteemailwindow.rc" ) );
@@ -337,7 +344,7 @@ void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 			QPalette palette;
 			palette.setColor(d->btnReadNext->foregroundRole(), QColor("red") );
 			d->btnReadNext->setPalette(palette);
-            			
+
 			updateNextButton();
 		}
 
@@ -549,7 +556,7 @@ void KopeteEmailWindow::raise(bool activate)
 	//Will not activate window if user was typing
 	if(activate)
 		KWin::activateWindow( winId() );
-#endif	
+#endif
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

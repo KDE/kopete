@@ -49,6 +49,7 @@
 
 
 // KDE includes
+#include <kactioncollection.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -95,13 +96,13 @@ class ToolTip;
 class ChatMessagePart::Private
 {
 public:
-	Private() 
+	Private()
 	 : /*tt(0L),*/ manager(0L), scrollPressed(false),
 	   copyAction(0L), saveAction(0L), printAction(0L),
 	   closeAction(0L),copyURLAction(0L), currentChatStyle(0L), latestContact(0L),
 	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal)
 	{}
-	
+
 	~Private()
 	{
 		// Don't delete manager and latestContact, because they could be still used.
@@ -149,7 +150,7 @@ public:
 		DOM::Node node = m_chat->nodeUnderMouse();
 		Kopete::Contact *contact = m_chat->contactFromNode( node );
 		QString toolTipText;
-		
+
 		if(node.isNull())
 			return;
 
@@ -197,7 +198,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
 			 KopeteChatWindowSettings::self()->stylePath() );
-	
+
 	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath()  << endl;
 
 	//Security settings, we don't need this stuff
@@ -239,7 +240,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->saveAction = KStandardAction::saveAs( this, SLOT(save()), actionCollection() );
 	d->printAction = KStandardAction::print( this, SLOT(print()),actionCollection() );
 	d->closeAction = KStandardAction::close( this, SLOT(slotCloseView()),actionCollection() );
-	d->copyURLAction = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), actionCollection(), "editcopy" );
+	d->copyURLAction = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), actionCollection() );
+        actionCollection()->addAction( "editcopy", d->copyURLAction );
 	connect( d->copyURLAction, SIGNAL( triggered(bool) ), this, SLOT( slotCopyURL() ) );
 
 	// read formatting override flags
@@ -383,7 +385,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	message.setBgOverride( d->bgOverride );
 	message.setFgOverride( d->fgOverride );
 	message.setRtfOverride( d->rtfOverride );
-	
+
 	// parse emoticons and URL now.
 	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
 	if( !restoring )
@@ -514,7 +516,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	while ( bufferLen>0 && d->allMessages.count() >= bufferLen )
 	{
 		d->allMessages.pop_front();
-			
+
 		// FIXME: Find a way to make work Chat View Buffer efficiently with consecutives messages.
 		// Before it was calling changeStyle() but it's damn too slow.
 		if( !KopeteChatWindowSettings::self()->groupConsecutiveMessages() )
@@ -739,7 +741,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	*/
 	QString text;
 	QString htmltext;
-	
+
         htmltext = selectedTextAsHTML();
         text = selectedText();
         //selectedText is now sufficient
@@ -801,7 +803,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	Kopete::Message message=_message; //we will eventually need to modify it before showing it.
 	QString resultHTML = sourceHTML;
 	QString nick, contactId, service, protocolIcon, nickLink;
-	
+
 	if( message.from() )
 	{
 		// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
@@ -831,18 +833,18 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		}
 
 		protocolIcon = KIconLoader::global()->iconPath( iconName, K3Icon::Small );
-		
+
 		nickLink=QString::fromLatin1("<a href=\"kopetemessage://%1/?protocolId=%2&amp;accountId=%3\" class=\"KopeteDisplayName\">")
 				.arg( Qt::escape(message.from()->contactId()).replace('"',"&quot;"),
-					  Qt::escape(message.from()->protocol()->pluginId()).replace('"',"&quot;"), 
+					  Qt::escape(message.from()->protocol()->pluginId()).replace('"',"&quot;"),
 					  Qt::escape(message.from()->account()->accountId() ).replace('"',"&quot;"));
 	}
 	else
 	{
 		nickLink="<a>";
 	}
-	
-	
+
+
 	// Replace sender (contact nick)
 	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), nickLink+nick+"</a>" );
 	// Replace time, by default display only time and display seconds(that was true means).
@@ -853,7 +855,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	resultHTML = resultHTML.replace( QString::fromUtf8("%service%"), Qt::escape(service) );
 	// Replace protocolIcon (sender statusIcon)
 	resultHTML = resultHTML.replace( QString::fromUtf8("%senderStatusIcon%"), Qt::escape(protocolIcon).replace('"',"&quot;") );
-	
+
 	// Look for %time{X}%
 	QRegExp timeRegExp("%time\\{([^}]*)\\}%");
 	int pos=0;
@@ -863,7 +865,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 	}
 
-	// Look for %textbackgroundcolor{X}% 
+	// Look for %textbackgroundcolor{X}%
 	// TODO: use the X value.
 	// Replace with user-selected highlight color if to be highlighted or
 	// with "inherit" otherwise to keep CSS clean
@@ -1020,7 +1022,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		{
 			photoIncoming = QString::fromUtf8("Incoming/buddy_icon.png");
 		}
-		
+
 		if( d->manager->myself()->metaContact() && !d->manager->myself()->metaContact()->picture().isNull() )
 		{
 			photoOutgoing =  QString("data:image/png;base64,%1").arg( d->manager->myself()->metaContact()->picture().base64() );
@@ -1071,15 +1073,15 @@ QString ChatMessagePart::formatName(const QString &sourceName)
 QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 {
 	QString formattedBody("<span ");
-	
+
 	formattedBody += message.getHtmlStyleAttribute();
 
 	QStringList classes("KopeteMessageBody");
 	classes+=message.classes();
-			
+
 	// Affect the parsed body.
 	formattedBody += QString::fromUtf8("class=\"%1\">%2</span>").arg(classes.join(" "), message.parsedBody());
-	
+
 	return formattedBody;
 }
 
@@ -1108,7 +1110,7 @@ void ChatMessagePart::changeStyle()
 
 	// Rewrite the header and footer.
 	writeTemplate();
-	
+
 	// Readd all current messages.
 	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
 	for(it = d->allMessages.constBegin(); it != itEnd; ++it)

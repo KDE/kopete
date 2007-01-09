@@ -39,6 +39,7 @@
 #include <kstandardaction.h>
 #include <ktextedit.h>
 #include <ktoggleaction.h>
+#include <kactioncollection.h>
 
 typedef KParts::GenericFactory<KRichTextEditPart> KRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( librichtexteditpart, KRichTextEditPartFactory )
@@ -134,8 +135,8 @@ bool KRichTextEditPart::isRichTextEnabled() const
 bool KRichTextEditPart::isRichTextAvailable() const
 {
     return (d->richTextSupport & FormattingSupport ||
-            d->richTextSupport & SupportAlignment || 
-            d->richTextSupport & SupportFont || 
+            d->richTextSupport & SupportAlignment ||
+            d->richTextSupport & SupportFont ||
             d->richTextSupport & SupportTextColor);
 }
 
@@ -155,7 +156,7 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
     // Spellchecking disabled when using rich text because the
     // text we were getting from widget was coloured HTML!
 #warning Renable spellchecker (-DarkShock)
-#if 0    
+#if 0
     editor->setCheckSpellingEnabled( !richTextEnabled() );
     checkSpelling->setEnabled( !richTextEnabled() );
 #endif
@@ -199,37 +200,45 @@ KAboutData *KRichTextEditPart::createAboutData()
 
 void KRichTextEditPart::createActions()
 {
-    d->enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), actionCollection(), "enableRichText" );
+    d->enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), this );
+    actionCollection()->addAction( "enableRichText", d->enableRichText );
     d->enableRichText->setCheckedState( KGuiItem( i18n("Disable &Rich Text") ) );
     connect( d->enableRichText, SIGNAL(toggled(bool)),
             this, SLOT(setRichTextEnabled(bool)) );
 
-    d->checkSpelling = new KAction( KIcon("spellcheck"), i18n("Check &Spelling"), actionCollection(), "check_spelling" );
+    d->checkSpelling = new KAction( KIcon("spellcheck"), i18n("Check &Spelling"), actionCollection() );
+    actionCollection()->addAction( "check_spelling", d->checkSpelling );
     connect( d->checkSpelling, SIGNAL(triggered(bool)), d->editor, SLOT(checkSpelling()) );
 
     //Foreground Color
-    d->actionTextColor = new KAction( KIcon("color_line"), i18n("Text &Color..."), actionCollection(), "format_textcolor" );
+    d->actionTextColor = new KAction( KIcon("color_line"), i18n("Text &Color..."), actionCollection() );
+    actionCollection()->addAction( "format_textcolor", d->actionTextColor );
     connect( d->actionTextColor, SIGNAL(triggered(bool)), this, SLOT(setTextColor()) );
 
     //Font Family
-    d->action_font = new KFontAction( i18n("&Font"), actionCollection(), "format_font" );
+    d->action_font = new KFontAction( i18n("&Font"), actionCollection() );
+    actionCollection()->addAction( "format_font", d->action_font );
     connect( d->action_font, SIGNAL(activated(QString)), this, SLOT(setFont(QString)) );
 
     //Font Size
-    d->action_font_size = new KFontSizeAction( i18n("Font &Size"), actionCollection(), "format_font_size" );
+    d->action_font_size = new KFontSizeAction( i18n("Font &Size"), actionCollection() );
+    actionCollection()->addAction( "format_font_size", d->action_font_size );
     connect( d->action_font_size, SIGNAL(fontSizeChanged(int)), this, SLOT( setFontSize(int) ) );
 
     //Formatting
-    d->action_bold = new KToggleAction( KIcon("text_bold"), i18n("&Bold"), actionCollection(), "format_bold" );
+    d->action_bold = new KToggleAction( KIcon("text_bold"), i18n("&Bold"), actionCollection() );
+    actionCollection()->addAction( "format_bold", d->action_bold );
     d->action_bold->setShortcut( KShortcut(Qt::CTRL + Qt::Key_B) );
     connect( d->action_bold, SIGNAL(toggled(bool)), this, SLOT(setFontBold(bool)) );
 
-    d->action_italic = new KToggleAction( KIcon("text_italic"), i18n("&Italic"), actionCollection(), "format_italic" );
+    d->action_italic = new KToggleAction( KIcon("text_italic"), i18n("&Italic"), actionCollection() );
+    actionCollection()->addAction( "format_italic", d->action_italic );
     d->action_italic->setShortcut( KShortcut(Qt::CTRL + Qt::Key_I) );
     connect(d->action_italic, SIGNAL(toggled(bool)),
         this, SLOT(setFontItalic(bool)) );
 
-    d->action_underline = new KToggleAction( KIcon("text_under"), i18n("&Underline"), actionCollection(), "format_underline" );
+    d->action_underline = new KToggleAction( KIcon("text_under"), i18n("&Underline"), actionCollection() );
+    actionCollection()->addAction( "format_underline", d->action_underline );
     d->action_underline->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
     connect( d->action_underline, SIGNAL(toggled(bool)),
         this, SLOT(setFontUnderline(bool)) );
@@ -243,19 +252,23 @@ void KRichTextEditPart::createActions()
     updateFont();
 
     //Alignment
-    d->action_align_left = new KToggleAction( KIcon("text_left"), i18n("Align &Left"), actionCollection(), "format_align_left" );
+    d->action_align_left = new KToggleAction( KIcon("text_left"), i18n("Align &Left"), actionCollection() );
+    actionCollection()->addAction( "format_align_left", d->action_align_left );
     connect( d->action_align_left, SIGNAL(toggled(bool)),
         this, SLOT(setAlignLeft(bool)) );
 
-    d->action_align_center = new KToggleAction( KIcon("text_center"), i18n("Align &Center"), actionCollection(), "format_align_center" );
+    d->action_align_center = new KToggleAction( KIcon("text_center"), i18n("Align &Center"), actionCollection() );
+    actionCollection()->addAction( "format_align_center", d->action_align_center );
     connect( d->action_align_center, SIGNAL(toggled(bool)),
         this, SLOT(setAlignCenter(bool)) );
 
-    d->action_align_right = new KToggleAction( KIcon("text_right"), i18n("Align &Right"), actionCollection(), "format_align_right" );
+    d->action_align_right = new KToggleAction( KIcon("text_right"), i18n("Align &Right"), actionCollection() );
+    actionCollection()->addAction( "format_align_right", d->action_align_right );
     connect( d->action_align_right, SIGNAL(toggled(bool)),
         this, SLOT(setAlignRight(bool)) );
 
-    d->action_align_justify = new KToggleAction( KIcon("text_block"), i18n("&Justify"), actionCollection(), "format_align_justify" );
+    d->action_align_justify = new KToggleAction( KIcon("text_block"), i18n("&Justify"), actionCollection() );
+    actionCollection()->addAction( "format_align_justify", d->action_align_justify );
     connect( d->action_align_justify, SIGNAL(toggled(bool)),
         this, SLOT(setAlignJustify(bool)) );
 

@@ -35,6 +35,7 @@
 #include <QVBoxLayout>
 #include <QMenu>
 
+#include <kactioncollection.h>
 #include <kapplication.h>
 #include <kcursor.h>
 #include <klocale.h>
@@ -116,7 +117,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 	switch( Kopete::BehaviorSettings::self()->chatWindowGroupPolicy() )
 	{
 		//Open chats from the same protocol in the same window
-		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByAccount: 
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByAccount:
 			if( accountMap.contains( manager->account() ) )
 				myWindow = accountMap[ manager->account() ];
 			else
@@ -124,7 +125,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			break;
 
 		//Open chats from the same group in the same window
-		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByGroup: 
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByGroup:
 			if( group && groupMap.contains( group ) )
 				myWindow = groupMap[ group ];
 			else
@@ -132,7 +133,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			break;
 
 		//Open chats from the same metacontact in the same window
-		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByMetaContact: 
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByMetaContact:
 			if( mcMap.contains( metaContact ) )
 				myWindow = mcMap[ metaContact ];
 			else
@@ -140,7 +141,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			break;
 
 		//Open all chats in the same window
-		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupAll: 
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupAll:
 			if( windows.isEmpty() )
 				windowCreated = true;
 			else
@@ -162,7 +163,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			break;
 
 		//Open every chat in a new window
-		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::OpenNewWindow: 
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::OpenNewWindow:
 		default:
 			windowCreated = true;
 			break;
@@ -203,7 +204,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	m_sideBar->setObjectName("SideBar"); //object name is required for automatic position and settings save.
 
 	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
-	
+
 	KVBox *vBox = new KVBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
@@ -243,7 +244,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	KGlobal::config()->setGroup( QLatin1String("ChatWindowSettings") );
 	m_alwaysShowTabs = KGlobal::config()->readEntry( QLatin1String("AlwaysShowTabs"), false );
 //	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
-	
+
 	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
 
 	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
@@ -337,7 +338,8 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), coll, "chat_send" );
+	chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), coll );
+        coll->addAction( "chat_send", chatSend );
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
 	//Default to 'Return' for sending messages
 	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
@@ -348,34 +350,40 @@ void KopeteChatWindow::initActions(void)
 	KAction* quitAction = KStandardAction::quit ( this, SLOT(close()), coll );
 	quitAction->setText( i18n("Close All Chats") );
 
-	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
+	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll );
+        coll->addAction( "tabs_close", tabClose );
 
-	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll, "tabs_right" );
+	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll );
+        coll->addAction( "tabs_right", tabRight );
 	tabRight->setShortcut( KStandardShortcut::tabNext() );
 	tabRight->setEnabled( false );
 	connect( tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()) );
 
-	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), coll, "tabs_left" );
+	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), coll );
+        coll->addAction( "tabs_left", tabLeft );
 	tabLeft->setShortcut( KStandardShortcut::tabPrev() );
 	tabLeft->setEnabled( false );
 	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
 
-	//TODO Shouldn't this action be named "nick_complete" ?
-	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll, "nick_compete" );
+	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll );
+        coll->addAction( "nick_complete", nickComplete );
 	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( KIcon("tab_breakoff"), i18n( "&Detach Chat" ), coll, "tabs_detach" );
+	tabDetach = new KAction( KIcon("tab_breakoff"), i18n( "&Detach Chat" ), coll );
+        coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
-	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll, "tabs_detachmove" );
+	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll );
+        coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 
 	connect ( actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
 	connect ( actionDetachMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
 
-	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll, "tabs_placement" );
+	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll );
+        coll->addAction( "tabs_placement", actionTabPlacementMenu );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
 
@@ -386,47 +394,60 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("charset"), i18n( "Set Default &Font..." ), coll, "format_font" );
+	action = new KAction( KIcon("charset"), i18n( "Set Default &Font..." ), coll );
+        coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Default Text &Color..." ), coll, "format_fgcolor" );
+	action = new KAction( KIcon("pencil"), i18n( "Set Default Text &Color..." ), coll );
+        coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll, "format_bgcolor" );
+	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+        coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
-	historyUp = new KAction( i18n( "Previous History" ), coll, "history_up" );
+	historyUp = new KAction( i18n( "Previous History" ), coll );
+        coll->addAction( "history_up", historyUp );
 	historyUp->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Up) );
 	connect( historyUp, SIGNAL(triggered(bool)), this, SLOT(slotHistoryUp()) );
 
-	historyDown = new KAction( i18n( "Next History" ), coll, "history_down" );
+	historyDown = new KAction( i18n( "Next History" ), coll );
+        coll->addAction( "history_down", historyDown );
 	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
 	connect( historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()) );
 
-	KStandardAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
-	KStandardAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
+	action = KStandardAction::prior( this, SLOT( slotPageUp() ), coll );
+        coll->addAction( "scroll_up", action );
+	action = KStandardAction::next( this, SLOT( slotPageDown() ), coll );
+        coll->addAction( "scroll_down", action );
 
 	KStandardAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 
-	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll, "options_membersleft" );
+	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
+        coll->addAction( "options_membersleft", membersLeft );
 	connect( membersLeft, SLOT(toggled(bool)), this, SLOT(slotViewMembersLeft()) );
 
-	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll, "options_membersright" );
+	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll );
+        coll->addAction( "options_membersright", membersRight );
 	connect( membersRight, SLOT(toggled(bool)), this, SLOT(slotViewMembersRight()) );
 
-	toggleMembers = new KToggleAction( i18n( "Show" ), coll, "options_togglemembers" );
+	toggleMembers = new KToggleAction( i18n( "Show" ), coll );
+        coll->addAction( "options_togglemembers", toggleMembers );
 	toggleMembers->setCheckedState( KGuiItem( i18n("Hide") ) );
 	connect( toggleMembers, SLOT(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
 
-	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll, "enable_auto_spell_check" );
+	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll );
+        coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
-	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
+	actionSmileyMenu = new KopeteEmoticonAction( coll );
+        coll->addAction( "format_smiley", actionSmileyMenu );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
-	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll, "contacts_menu" );
+	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll );
+        coll->addAction( "contacts_menu", actionContactMenu );
 	actionContactMenu->setDelayed( false );
 	connect ( actionContactMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
@@ -449,7 +470,8 @@ void KopeteChatWindow::initActions(void)
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
 
-	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll, "toolbar_animation" );
+	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
+        coll->addAction( "toolbar_animation", animAction );
 	animAction->setDefaultWidget( anim );
 
 	//toolBar()->insertWidget( 99, anim->width(), anim );
@@ -643,7 +665,7 @@ void KopeteChatWindow::addTab( ChatView *view )
     view->setWindowFlags( 0 );
     view->move( QPoint() );
     view->show();
-    
+
 	m_tabBar->addTab( view, pluginIcon, view->caption() );
 	if( view == m_activeView )
 		view->show();
@@ -928,7 +950,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 #ifdef Q_OS_UNIX
 		KWin::setIcons( winId(), icon32, icon16 );
-#endif		
+#endif
 	}
 
 	if ( m_tabBar )
@@ -1004,7 +1026,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
 		{
-			KActionMenu *moreMenu = new KActionMenu( KIcon("folder_open"), i18n("More..."), 0, 0);
+			KActionMenu *moreMenu = new KActionMenu( KIcon("folder_open"), i18n("More..."), this);
 			connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
 			contactsMenu->addAction( moreMenu );

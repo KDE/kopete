@@ -62,8 +62,8 @@ public:
 	bool m_stickyMenu;
 };
 
-KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const char* name )
-  : KAction( i18n( "Add Smiley" ), parent, name )
+KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
+  : KAction( i18n( "Add Smiley" ), parent )
 {
 	d = new KopeteEmoticonActionPrivate;
 
@@ -75,8 +75,8 @@ KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const ch
 		icon=emoticonsMap[":)"];
 	else
 		icon=emoticonsMap[":-)"];
-	
-	
+
+
 	if ( icon.isNull() )
 		setIcon( KIcon("emoticon") );
 	else
