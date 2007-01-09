@@ -1,6 +1,5 @@
 
 add_subdirectory( private ) 
-add_subdirectory( ui ) 
 add_subdirectory( avdevice ) 
 add_subdirectory( tests )
 
@@ -123,6 +122,26 @@ install(TARGETS kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
+
+install(FILES accountselector.h
+ ${CMAKE_CURRENT_BINARY_DIR}/ui_fileconfirmbase.h 
+ ui/kopetefileconfirmdialog.h
+ ui/kopetepasswordwidget.h
+ ui/kopeteview.h
+ ui/addcontactpage.h
+ ${CMAKE_CURRENT_BINARY_DIR}/ui_kopeteawaydialogbase.h
+ ${CMAKE_CURRENT_BINARY_DIR}/ui_kopetepasswordwidgetbase.h
+ ui/kopeteviewplugin.h
+ ui/editaccountwidget.h
+ ui/kopetecontactaction.h
+ ui/kopetestdaction.h
+ ui/addressbookselectordialog.h
+ ui/addressbookselectorwidget.h
+ ui/kopetelistview.h
+ ui/kopetelistviewitem.h
+ ui/kopetelistviewsearchline.h 
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
+
 
 install( FILES kopetegeneralsettings.kcfg kopeteappearancesettings.kcfg kopetebehaviorsettings.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
 install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)

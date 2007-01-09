@@ -61,7 +61,7 @@ class Account::Private
 public:
 	Private( Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
-	 , excludeconnect( true ), priority( 0 ) 
+	 , excludeconnect( true ), priority( 0 )
 	 , connectionTry(0), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
@@ -112,7 +112,7 @@ Account::~Account()
 	foreach (Contact* c, d->contacts) QObject::disconnect(c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, 0);
 	qDeleteAll(d->contacts);
 	d->contacts.clear();
-	
+
 	kDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
 	emit accountDestroyed(this);
 
@@ -188,7 +188,7 @@ uint Account::priority() const
 QPixmap Account::accountIcon(const int size) const
 {
 	QString icon= d->customIcon.isEmpty() ? d->protocol->pluginIcon() : d->customIcon;
-	
+
 	// FIXME: this code is duplicated with OnlineStatus, can we merge it somehow?
 	QPixmap base = KIconLoader::global()->loadIcon(
 		icon, K3Icon::Small, size );
@@ -264,7 +264,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		);
 		return false;
 	}
- 
+
 	bool isTemporary = mode == Temporary;
 
 	Contact *c = d->contacts[ contactId ];
@@ -366,9 +366,8 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 KActionMenu * Account::actionMenu()
 {
 	//default implementation
-#warning Give a KActionCollection to KAction(s)
 // 	KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), 0, 0);
-	KActionMenu *menu = new KActionMenu( accountId(), 0, 0 );
+	KActionMenu *menu = new KActionMenu( accountId(), this );
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
@@ -379,7 +378,7 @@ KActionMenu * Account::actionMenu()
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
 	menu->menu()->addSeparator();
 
-	KAction *propertiesAction = new KAction( i18n("Properties"), 0, "actionAccountProperties" );
+	KAction *propertiesAction = new KAction( i18n("Properties"), menu );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
 	menu->addAction( propertiesAction );
 
@@ -405,7 +404,7 @@ Contact * Account::myself() const
 void Account::setMyself( Contact *myself )
 {
 	//FIXME  does it make sens to change the myself contact to another ?   - Olivier 2005-11-21
-	
+
 	bool wasConnected = isConnected();
 
 	if ( d->myself )
@@ -419,7 +418,7 @@ void Account::setMyself( Contact *myself )
 	d->myself = myself;
 
 //	d->contacts.remove( myself->contactId() );
-	
+
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),

@@ -39,7 +39,7 @@ namespace Kopete
 /**
  * OnlineStatusManager is a singleton which manage OnlineStatus
  *
- * @author Olivier Goffart 
+ * @author Olivier Goffart
  */
 class OnlineStatusManager : public QObject
 {
@@ -50,7 +50,7 @@ public:
 
 	/**
 	 * Kopete will uses categories to have a more general system than simply globally away.
-	 * 
+	 *
 	 * Idealy, in each protocol, there should be one status per categories (status may be in several or in none categories
 	 *
 	 * Idle is the status used for auto-away
@@ -70,29 +70,29 @@ public:
 		Offline=1
 	};
 	Q_DECLARE_FLAGS(Categories, Category)
-	
+
 
 	/**
 	 * @see registerOnlineStatus
 	 */
 	enum Option
 	{
-		/// The user may set status messages for this online status   
-		HasStatusMessage = 0x01,  
+		/// The user may set status messages for this online status
+		HasStatusMessage = 0x01,
 		/// The action of the status will be disabled if the account is offline.
 		/// use it if your protocol doesn't support connecting with the status as initial status.
 		/// You praticaly shouldn't abuse of that, and automatically set status after connecting if possible
 		DisabledIfOffline = 0x02,
 		///  The status will not appears in the action menu. Used if you want to register the status for e.g. autoaway,
-		///  without letting the user set itself that status  
+		///  without letting the user set itself that status
 		HideFromMenu = 0x04
 	};
 	Q_DECLARE_FLAGS(Options, Option)
-	
+
 	/**
 	 * You need to register each status an account can be.
 	 * Registered statuses will appear in the account menu.
-	 * 
+	 *
 	 * The Protocol constructor is a good place to call this function.
 	 * But if you want, you may use a special OnlineStatus constructor that call this function automatically
 	 *
@@ -114,7 +114,7 @@ public:
 	 * they are connected to the Account::setOnlineStatus signal
 	 *
 	 * Items are stored by status height.
-	 * 
+	 *
 	 * @param account the account
 	 * @param parent  the ActionMenu where action are inserted
 	 */
@@ -157,7 +157,7 @@ class OnlineStatusAction : public KAction
 {
 	Q_OBJECT
   public:
-	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent=0, const char *name=0);
+	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent );
 	~OnlineStatusAction();
 
   signals:
@@ -169,7 +169,7 @@ class OnlineStatusAction : public KAction
 	Private *d;
 };
 
-}  //END namespace Kopete 
+}  //END namespace Kopete
 
 #endif
 

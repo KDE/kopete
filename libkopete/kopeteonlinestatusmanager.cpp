@@ -79,12 +79,12 @@ OnlineStatusManager::OnlineStatusManager()
 OnlineStatusManager::~OnlineStatusManager()
 {
 	QHashIterator<QString, QPixmap*> it(d->iconCache);
-	while ( it.hasNext() ) 
+	while ( it.hasNext() )
 	{
 		it.next();
 		delete it.value();
 	}
-						
+
 	delete d->nullPixmap;
 	delete d;
 }
@@ -115,10 +115,10 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 	 *      / \     /  \
 	 *     4  5     6    7
 	 *   /\  / \   / \   / \
-	 *  8 9 10 11 12 13 14 15 
+	 *  8 9 10 11 12 13 14 15
 	 *  To get the parent of a key, one just divide per two the number
 	 */
-	
+
 	Private::ProtocolMap protocolMap=d->registeredStatus[protocol];
 
 	int categ_nb=-1;  //the logaritm of category
@@ -141,7 +141,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 		//no status found in this category, try the previous one.
 		categ_nb=(int)(categ_nb/2);
 	} while (categ_nb > 0);
-	
+
 	kWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName() <<endl;
 	return OnlineStatus();
 }
@@ -413,21 +413,19 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		QByteArray actionName = status.description().toAscii();
 		if ( !( action = account->findChild<KAction*>( actionName ) ) )
 		{
-#ifdef __GNUC__
-#warning  give a parent collection to actions
-#endif
 			if(options & OnlineStatusManager::HasStatusMessage)
 			{
 				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account,
 						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage& ) ),
-						0l, actionName );
+						0 );
 			}
 			else
 			{
-				action=new OnlineStatusAction( status, caption, status.iconFor(account) , account, actionName );
-				connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) ,
-						account , SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+				action = new OnlineStatusAction( status, caption, status.iconFor(account), account );
+				connect(action, SIGNAL(activated(const Kopete::OnlineStatus&)) ,
+                                        account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 			}
+                        action->setObjectName( actionName ); // for the lookup by name above
 		}
 
 		if( options & OnlineStatusManager::DisabledIfOffline )
@@ -449,8 +447,8 @@ public:
 
 	OnlineStatus status;
 };
-OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent, const char *name)
-	: KAction( KIcon(pix), text, 0l, name) , d( new Private(status) )
+OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent )
+	: KAction( KIcon(pix), text, parent) , d( new Private(status) )
 {
 	setShortcut( KShortcut() );
 

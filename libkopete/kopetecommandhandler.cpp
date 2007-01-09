@@ -61,7 +61,7 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 			for( it = mCommands.begin(); it != itEnd; ++it )
 			{
 				KAction *a = static_cast<KAction*>( it.value() );
-				actionCollection()->insert( a );
+				actionCollection()->addAction( a->objectName(), a );
 				QDomElement newNode = doc.createElement( QString::fromLatin1("Action") );
 				newNode.setAttribute( QString::fromLatin1("name"), a->objectName() );
 
@@ -147,13 +147,13 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 Kopete::CommandHandler::~CommandHandler()
 {
 	CommandList commandList = p->pluginCommands[this];
-	while (!commandList.isEmpty()) 
+	while (!commandList.isEmpty())
 	{
 		Kopete::Command *value = *commandList.begin();
 		commandList.erase(commandList.begin());
 		delete value;
     	}
-	
+
 	delete p;
 }
 
@@ -214,7 +214,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 	}
 	else
 		return false;
-	
+
 	CommandList mCommands = commands( manager->protocol() );
 	Kopete::Command *c = mCommands.value(command);
 	if(c)
@@ -288,7 +288,7 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 	{
 		KProcess *proc = 0L;
 		if ( KAuthorized::authorizeKAction( "shell_access" ) )
-				proc = new KProcess(manager);	
+				proc = new KProcess(manager);
 		if( proc )
 		{
 			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
@@ -334,7 +334,7 @@ void Kopete::CommandHandler::slotPartCommand( const QString &, Kopete::ChatSessi
 void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	bool goAway = !manager->account()->isAway();
-											 
+
 	if( args.isEmpty() )
 		manager->account()->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(manager->account()->protocol() , goAway ? OnlineStatusManager::Away : OnlineStatusManager::Online) );
 	else

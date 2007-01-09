@@ -21,6 +21,7 @@
 #include <kaction.h>
 #include "kopete_export.h"
 
+class KActionCollection;
 namespace Kopete
 {
 class Contact;
@@ -43,7 +44,7 @@ public:
 	 * Kopete::Contact object given to this constructor
 	 *
 	 * @param contact the contact this action is for
-	 * @param parent the parent of this action
+	 * @param parent the collection this action belongs to. The action is automatically added to the collection.
 	 *
 	 */
 	ContactAction( Kopete::Contact *contact, KActionCollection* parent );

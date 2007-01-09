@@ -24,6 +24,7 @@
 
 #include "kopete_export.h"
 
+class KActionCollection;
 namespace Kopete
 {
 

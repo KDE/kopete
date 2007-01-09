@@ -20,6 +20,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
+#include <kactioncollection.h>
 
 namespace Kopete
 {
@@ -28,12 +29,12 @@ namespace UI
 
 ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* parent )
 : KAction( KIcon( contact->onlineStatus().iconFor( contact ) ),
-           contact->metaContact()->displayName(), parent,
-           contact->contactId() )
+           contact->metaContact()->displayName(), parent )
 {
 	setData( contact );
 	connect( this, SIGNAL( triggered( bool ) ),
 	         this, SLOT( slotTriggered( bool ) ) );
+        parent->addAction( contact->contactId(), this );
 }
 
 void ContactAction::slotTriggered( bool checked )

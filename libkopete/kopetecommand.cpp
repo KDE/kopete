@@ -46,9 +46,10 @@ public:
 Kopete::Command::Command( QObject *parent, const QString &command, const char* handlerSlot,
 		const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
 		uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
-	: KAction( KIcon(pix), command[0].toUpper() + command.right( command.length() - 1).toLower(), 0, (command.toLower() + QString::fromLatin1("_command")).toLatin1() )
+	: KAction( KIcon(pix), command[0].toUpper() + command.right( command.length() - 1).toLower(), 0 )
 	, d(new Private)
 {
+	setObjectName( command.toLower() + QString::fromLatin1("_command") );
 	setShortcut( cut );
 	d->parent = parent;
 	connect(this, SIGNAL(triggered(bool)),this, SLOT(slotAction()));

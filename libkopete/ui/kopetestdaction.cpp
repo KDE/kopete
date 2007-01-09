@@ -34,13 +34,15 @@
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
+#include <kactioncollection.h>
 
 KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
-: KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent, name )
+: KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
 {
 	connect( this, SIGNAL( triggered(bool) ), this, SLOT( slotShowPreferences() ) );
+        parent->addAction( name, this );
 }
 
 KopetePreferencesAction::~KopetePreferencesAction()
@@ -57,7 +59,7 @@ void KopetePreferencesAction::slotShowPreferences()
 	s_settingsDialog->dialog()->raise();
 #ifdef Q_OS_UNIX
 	KWin::activateWindow( s_settingsDialog->dialog()->winId() );
-#endif	
+#endif
 }
 
 KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )
@@ -67,11 +69,12 @@ KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *n
 
 KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, const QObject *receiver, const char *slot, KActionCollection* parent, const char *name)
 {
-	KAction *newAction = new KAction(icon, text, parent, name);
+	KAction *newAction = new KAction(icon, text, parent);
 	if(receiver && slot)
 	{
 		QObject::connect(newAction, SIGNAL(triggered(bool)), receiver, slot);
 	}
+        parent->addAction(name, newAction);
 
 	return newAction;
 }

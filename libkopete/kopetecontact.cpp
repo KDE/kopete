@@ -105,7 +105,7 @@ Contact::Contact( Account *account, const QString &contactId,
 	}
 
 	// Need to check this because myself() may have no parent
-	// Maybe too the metaContact doesn't have a valid protocol() 
+	// Maybe too the metaContact doesn't have a valid protocol()
 	// (ex: for unit tests or chat window style preview)
 	if( parent && protocol() )
 	{
@@ -115,7 +115,7 @@ Contact::Contact( Account *account, const QString &contactId,
 		parent->addContact( this );
 	}
 
-	
+
 }
 
 Contact::~Contact()
@@ -176,7 +176,7 @@ Kopete::StatusMessage Contact::statusMessage() const
 void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 	d->statusMessage = statusMessage;
-	
+
 	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message() << endl;
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
@@ -226,7 +226,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( KIcon("add_user"), i18n( "&Add to Your Contact List" ), 0, "actionAddContact" );
+		KAction *actionAddContact = new KAction( KIcon("add_user"), i18n( "&Add to Your Contact List" ), menu );
 		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT( slotAddContact() ) );
 
 		menu->addAction(actionAddContact);
@@ -481,7 +481,7 @@ void Contact::execute()
 void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
-		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" , 
+		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
 		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )

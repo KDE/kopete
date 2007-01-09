@@ -25,6 +25,7 @@
 
 #include "kopete_export.h"
 
+class KActionCollection;
 class KIcon;
 /**
  * @author Ryan Cumming <bodnar42@phalynx.dhs.org>

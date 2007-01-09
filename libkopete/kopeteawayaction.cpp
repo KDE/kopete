@@ -26,6 +26,7 @@
 #include "kopeteaway.h"
 #include "kopeteonlinestatus.h"
 #include "kopetestatusmessage.h"
+#include <kactioncollection.h>
 
 
 namespace Kopete {
@@ -41,9 +42,10 @@ public:
 
 AwayAction::AwayAction(const QString &text, const QIcon &pix, const KShortcut &cut,
 	const QObject *receiver, const char *slot, KActionCollection *parent, const char *name )
-	: KSelectAction( KIcon(pix), text, parent, name ) , d(new Private( OnlineStatus() ) )
+	: KSelectAction( KIcon(pix), text, parent ) , d(new Private( OnlineStatus() ) )
 {
 	setShortcut( cut );
+	parent->addAction( name, this );
 
 	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 		this, SLOT( slotAwayChanged() ) );
@@ -59,9 +61,10 @@ AwayAction::AwayAction(const QString &text, const QIcon &pix, const KShortcut &c
 
 AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const QIcon &pix, const KShortcut &cut,
 					   const QObject *receiver, const char *slot, KActionCollection *parent, const char *name )
-	: KSelectAction( KIcon(pix), text, parent, name ) , d(new Private( status ) )
+	: KSelectAction( KIcon(pix), text, parent ) , d(new Private( status ) )
 {
 	setShortcut( cut );
+	parent->addAction( name, this );
 	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 					  this, SLOT( slotAwayChanged() ) );
 
@@ -100,7 +103,7 @@ void AwayAction::slotSelectAway( int index )
 {
 	//remove that crappy check mark  cf bug 119862
 	setCurrentItem( -1 );
-	
+
 	Kopete::Away *mAway = Kopete::Away::getInstance();
 	QString awayReason;
 
@@ -108,7 +111,7 @@ void AwayAction::slotSelectAway( int index )
 	// Use the last entered message (0)
 	if( index == -1 )
 		index = 0;
-	
+
 	switch(index)
 	{
 		case 0:
