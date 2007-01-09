@@ -58,7 +58,7 @@ class Webcam  : public TransferContext
 		QString m_content;
 		
 		QString xml(uint session , uint rid);
-    int getAvailablePort();
+		int getAvailablePort();
 
 		
 		KNetwork::KServerSocket   *m_listener;
@@ -77,6 +77,7 @@ class Webcam  : public TransferContext
 		QList<KNetwork::KBufferedSocket* > m_allSockets;
 		
 		int m_timerId;
+		int m_timerFps;
 
 	private slots:
 		void slotListenError(int errorCode);

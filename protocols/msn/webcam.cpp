@@ -57,6 +57,13 @@ Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, quint32 sessionId
 	
 	m_mimic=0L;
 	m_widget=0L;
+
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+
+	// Read the configuration to get the number of frame per second to send
+	int webCamFps=config->readNumEntry("WebcamFPS", 25);
+	m_timerFps = 1000 / webCamFps;
 }
 
 Webcam::~Webcam()
