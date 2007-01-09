@@ -1,5 +1,5 @@
 /*
-    Privacy Plugin - Filter messages 
+    Privacy Plugin - Filter messages
 
     Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -34,6 +34,7 @@
 #include "privacyguiclient.h"
 
 #include "privacyplugin.h"
+#include <kactioncollection.h>
 
 typedef KGenericFactory<PrivacyPlugin> PrivacyPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_privacy, PrivacyPluginFactory( "kopete_privacy" )  )
@@ -46,11 +47,11 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QStringList & )
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
 
-	KAction *addToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ),
-		actionCollection(), "addToWhiteList" );
+	KAction *addToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ), this );
+        actionCollection()->addAction( "addToWhiteList", addToWhiteList );
 	connect(addToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()));
-	KAction *addToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ),
-		actionCollection(), "addToBlackList" );
+	KAction *addToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ), this );
+        actionCollection()->addAction( "addToBlackList", addToBlackList );
 	connect(addToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
 
 	setXMLFile("privacyui.rc");
@@ -83,7 +84,7 @@ void PrivacyPlugin::slotSettingsChanged()
 }
 
 void PrivacyPlugin::slotAddToWhiteList()
-{	
+{
 	QList< Kopete::Contact *> list;
 	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
@@ -97,7 +98,7 @@ void PrivacyPlugin::slotAddToWhiteList()
 }
 
 void PrivacyPlugin::slotAddToBlackList()
-{	
+{
 	QList< Kopete::Contact *> list;
 	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
@@ -113,7 +114,7 @@ void PrivacyPlugin::slotAddToBlackList()
 void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
 {
 	QStringList whitelist = PrivacyConfig::whiteList();
-		
+
 	foreach( Kopete::Contact *contact, list )
 	{
 		QString entry( contact->protocol()->pluginId() + ':' + contact->contactId() );
@@ -128,7 +129,7 @@ void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
 void PrivacyPlugin::addContactsToBlackList( QList< Kopete::Contact *> list )
 {
 	QStringList blacklist = PrivacyConfig::blackList();
-		
+
 	foreach( Kopete::Contact *contact, list )
 	{
 		QString entry( contact->protocol()->pluginId() + ':' + contact->contactId() );
@@ -214,7 +215,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 			return;
 		}
 	}
-}	
+}
 
 void PrivacyPlugin::slotViewCreated( KopeteView *view )
 {
@@ -231,7 +232,7 @@ void PrivacyPlugin::slotViewCreated( KopeteView *view )
 		m_guiClients.insert(session , new PrivacyGUIClient( session ) );
 		connect( session, SIGNAL(closing(Kopete::ChatSession*)),
 			this , SLOT(slotChatSessionClosed(Kopete::ChatSession*)));
-	}	
+	}
 }
 
 void PrivacyPlugin::slotChatSessionClosed( Kopete::ChatSession *session )

@@ -32,6 +32,7 @@
 
 #include "latexplugin.h"
 #include "latexguiclient.h"
+#include <kactioncollection.h>
 
 LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
 : QObject( parent), KXMLGUIClient( parent )
@@ -41,10 +42,11 @@ LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
 
 	m_manager = parent;
 
-	KAction *previewAction = new KAction( KIcon("latex"), i18n( "Preview Latex Images" ), actionCollection(), "latexPreview" );
+	KAction *previewAction = new KAction( KIcon("latex"), i18n( "Preview Latex Images" ), this );
+        actionCollection()->addAction( "latexPreview", previewAction );
 	previewAction->setShortcut( KShortcut(Qt::CTRL + Qt::Key_L) );
 	connect(previewAction, SIGNAL( triggered(bool) ), this, SLOT( slotPreview() ) );
-	
+
 	setXMLFile( "latexchatui.rc" );
 }
 

@@ -35,6 +35,7 @@
 #include "translatorplugin.h"
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"
+#include <kactioncollection.h>
 
 TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 : QObject( parent ), KXMLGUIClient( parent )
@@ -44,10 +45,11 @@ TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 
 	m_manager = parent;
 
-	KAction *translate = new KAction( KIcon("locale"), i18n( "Translate" ), actionCollection(), "translateCurrentMessage" );
+	KAction *translate = new KAction( KIcon("locale"), i18n( "Translate" ), this );
+        actionCollection()->addAction( "translateCurrentMessage", translate );
 	connect( translate, SIGNAL( triggered(bool) ), this, SLOT( slotTranslateChat() ) );
 	translate->setShortcut( KShortcut(Qt::CTRL + Qt::Key_T) );
-	
+
 	setXMLFile( "translatorchatui.rc" );
 }
 

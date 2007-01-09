@@ -82,6 +82,7 @@
 
 #include <memory>
 #include <ktoolinvocation.h>
+#include <kactioncollection.h>
 
 class ContactListViewStrategy;
 
@@ -480,8 +481,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionRedo->setEnabled(false);
 
 
-	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac, "AddGroup" );
+	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
 	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
+        ac->addAction( "AddGroup", actionCreateNewGroup );
 
 	actionSendMessage = KopeteStdAction::sendMessage(
 		this, SLOT( slotSendMessage() ), ac, "contactSendMessage" );
@@ -489,27 +491,34 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactStartChat" );
 
 	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "editcut" ),
-														  KShortcut(), this, SLOT( slotMoveToGroup() ), ac, "contactMove" );
+                                                KShortcut(), this, SLOT( slotMoveToGroup() ), ac );
+        ac->addAction( "contactMove", actionMove );
 	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "editcopy" ),
-														 KShortcut(), this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
+                                                KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
+        ac->addAction( "contactCopy", actionCopy );
 
-	actionMakeMetaContact = new KAction(KIcon("move"), i18n("Make Meta Contact"), ac, "makeMetaContact");
-    connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
+	actionMakeMetaContact = new KAction(KIcon("move"), i18n("Make Meta Contact"), ac);
+        ac->addAction( "makeMetaContact", actionMakeMetaContact );
+        connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
 
-	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ),
-		ac, "contactRemove" );
-	actionSendEmail = new KAction( KIcon("mail_generic"), i18n( "Send Email..." ), ac, "contactSendEmail" );
+	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
+        ac->addAction( "contactRemove", actionRemove );
+	actionSendEmail = new KAction( KIcon("mail_generic"), i18n( "Send Email..." ), ac );
+        ac->addAction( "contactSendEmail", actionSendEmail );
 	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
 	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
-	actionRename = new KAction( KIcon("filesaveas"), i18n( "Rename" ), ac, "contactRename" );
+	actionRename = new KAction( KIcon("filesaveas"), i18n( "Rename" ), ac );
+        ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( KIcon( QLatin1String("add_user") ), i18n( "&Add Contact" ), ac, "contactAddContact" );
+	actionAddContact = new KActionMenu( KIcon( QLatin1String("add_user") ), i18n( "&Add Contact" ), ac );
+        ac->addAction( "contactAddContact", actionAddContact );
 	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac, "contactAddTemporaryContact" );
+	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac );
+        ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
@@ -517,7 +526,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( KIcon("edit_user"), i18n( "&Properties" ), ac, "contactProperties" );
+	actionProperties = new KAction( KIcon("edit_user"), i18n( "&Properties" ), ac );
+        ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
 	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
 
@@ -532,7 +542,7 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* account)
 {
-	KAction *action = new KAction( KIcon(QIcon(account->accountIcon())), account->accountLabel(), 0, 0 );
+	KAction *action = new KAction( KIcon(QIcon(account->accountIcon())), account->accountLabel(), this );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotAddContact()) );
 	m_addContactAccountMap.insert( action, account );
 	actionAddContact->addAction( action );
@@ -644,7 +654,7 @@ void KopeteContactListView::slotExpanded( Q3ListViewItem *item )
 		groupLVI->group()->setExpanded( true );
 		groupLVI->updateIcon();
 	}
-	
+
 	//workaround a bug in qt which make the items of a closed item not sorted. (qt 3.3.4 here)
 	delayedSort();
 }
@@ -837,7 +847,7 @@ void KopeteContactListView::slotSettingsChanged( void )
 		setScrollHide(false);
 		setScrollAutoHide( Kopete::AppearanceSettings::self()->contactListAutoHideVScroll() );
 	}
-	
+
 
 	setScrollAutoHideTimeout( Kopete::AppearanceSettings::self()->contactListAutoHideTimeout() );
 	setMouseNavigation( Kopete::BehaviorSettings::self()->contactListMouseNavigation() );
@@ -1316,7 +1326,7 @@ Q3DragObject *KopeteContactListView::dragObject()
 
 	QPixmap pm;
 	Kopete::Contact *c = metaLVI->contactForPoint( m_startDragPos );
-	
+
 	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", /*0L*/ this );
 	d->setEncodedData( metaLVI->metaContact()->metaContactId().toUtf8() );
 	return d;
@@ -1394,7 +1404,7 @@ void KopeteContactListView::slotViewSelectionChanged()
 				m_selectedGroups.append( groupLVI );
 				if(!groups.contains(groupLVI->group()))
 					groups.append( groupLVI->group() );
-				
+
 			}
 		}
 	}
@@ -1601,7 +1611,7 @@ void KopeteContactListView::slotRemove()
 	{
 		if(!(*it)->displayName().isEmpty())
 			items.append( (*it)->displayName() );
-		
+
 	}
 
 	QList<Kopete::MetaContact*>::iterator mcIt, mcItEnd = contacts.end();
@@ -1953,7 +1963,7 @@ void KopeteContactListView::slotUndo()
 					m_undo->args[2] = c->account()->accountId();
 				}
 				// source kabc requires no arguments
-			
+
 				// do the undo
 				if ( undoSource == Kopete::MetaContact::SourceContact )
 				{ // do undo

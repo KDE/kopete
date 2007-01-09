@@ -39,6 +39,7 @@
 #include "historyconfig.h"
 
 #include <QList>
+#include <kactioncollection.h>
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
 static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0" );
@@ -47,8 +48,8 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
 : Kopete::Plugin( HistoryPluginFactory::instance(), parent ), m_loggerFactory( this )
 {
-	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ),
-		actionCollection(), "viewMetaContactHistory" );
+	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ), this );
+	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
 	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(
 		Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );

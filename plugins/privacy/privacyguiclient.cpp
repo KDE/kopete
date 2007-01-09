@@ -27,6 +27,7 @@
 #include <kicon.h>
 
 #include <QList>
+#include <kactioncollection.h>
 
 class PrivacyPlugin;
 
@@ -43,11 +44,11 @@ PrivacyGUIClient::PrivacyGUIClient(Kopete::ChatSession *parent)
 
 	QList<Kopete::Contact*> mb=m_manager->members();
 
-	actionAddToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ),
-		actionCollection(), "addToWhiteList" );
+	actionAddToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ), this );
+        actionCollection()->addAction( "addToWhiteList", actionAddToWhiteList );
 	connect( actionAddToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()) );
-	actionAddToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ),
-		actionCollection(), "addToBlackList" );
+	actionAddToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ), this );
+        actionCollection()->addAction( "addToBlackList", actionAddToBlackList );
 	connect( actionAddToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()) );
 	actionAddToWhiteList->setEnabled(true);
 	actionAddToBlackList->setEnabled(true);
@@ -68,7 +69,7 @@ void PrivacyGUIClient::slotAddToBlackList()
 	if( !plugin )
 		return;
 	kDebug(14313) << k_funcinfo << "Plugin found" << endl;
-	
+
 	QList<Kopete::Contact*> members = m_manager->members();
 
 	QList< Kopete::Contact *> list;
@@ -87,7 +88,7 @@ void PrivacyGUIClient::slotAddToWhiteList()
 	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin("kopete_privacy");
 	if( !plugin )
 		return;
-	
+
 	QList<Kopete::Contact*> members = m_manager->members();
 
 	QList< Kopete::Contact *> list;

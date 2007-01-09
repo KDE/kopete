@@ -31,8 +31,8 @@
 #include "kopetegroup.h"
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
-	const char *slot, KActionCollection *parent, const char *name )
-: KSelectAction( KIcon(pix), text, parent, name )
+                                              const char *slot, QObject* parent )
+: KSelectAction( KIcon(pix), text, parent )
 {
 	setShortcut(cut);
 	if( receiver && slot )

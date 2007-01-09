@@ -33,6 +33,7 @@
 
 
 #include <QList>
+#include <kactioncollection.h>
 
 class CryptographyPlugin;
 
@@ -64,10 +65,11 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 			keysAvailable = false;
 	}
 
-	
+
 	setInstance( KGenericFactory<CryptographyPlugin>::instance() );
 
-	m_action=new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), actionCollection() , "cryptographyToggle" );
+	m_action=new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), this );
+        actionCollection()->addAction( "cryptographyToggle", m_action );
 	m_action->setChecked(wantCrypto && keysAvailable);
 	connect( m_action, SIGNAL(triggered(bool)), this, SLOT(slotToggled()) );
 
@@ -89,7 +91,7 @@ void CryptographyGUIClient::slotToggled()
 		Kopete::MetaContact *mc = c->metaContact();
 		if(!mc)
 			continue;
-		
+
 		if(!first)
 			first=mc;
 

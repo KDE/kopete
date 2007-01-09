@@ -85,7 +85,7 @@ KListViewDateItem::KListViewDateItem(K3ListView* parent, QDate date, Kopete::Met
 
 int KListViewDateItem::compare(Q3ListViewItem *i, int col, bool ascending) const
 {
-	if (col) 
+	if (col)
 		return Q3ListViewItem::compare(i, col, ascending);
 
 	//compare dates - do NOT use ascending var here
@@ -96,7 +96,7 @@ int KListViewDateItem::compare(Q3ListViewItem *i, int col, bool ascending) const
 }
 
 
-HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent) 
+HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
  : KDialog(parent)
 {
 	setCaption( i18n("History for %1", mc->displayName()) );
@@ -113,20 +113,20 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	// FIXME: Allow to show this dialog for only one contact
 	mMetaContact = mc;
 
-	
+
 
 	// Widgets initializations
 	QWidget* w = new QWidget( this );
 	mMainWidget = new Ui::HistoryViewer();
 	mMainWidget->setupUi( w );
-	mMainWidget->searchLine->setFocus(); 
+	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
 	mMainWidget->searchErase->setIcon( QIcon(BarIcon("locationbar_erase")) );
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
-	
+
 	foreach(Kopete::MetaContact *metaContact, mMetaContactList)
 	{
 		mMainWidget->contactComboBox->addItem(metaContact->displayName());
@@ -169,7 +169,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->write( QString::fromLatin1( htmlCode.toLatin1() ) );
 	mHtmlPart->end();
 
-	
+
 	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::URLArgs &)),
 		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::URLArgs &)));
 	connect(mMainWidget->dateListView, SIGNAL(clicked(Q3ListViewItem*)), this, SLOT(dateSelected(Q3ListViewItem*)));
@@ -184,7 +184,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	//initActions
 	KActionCollection* ac = new KActionCollection(this);
 	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), ac );
-	mCopyURLAct = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), ac, "mCopyURLAct" );
+	mCopyURLAct = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), this );
+        ac->addAction( "mCopyURLAct", mCopyURLAct );
 	connect(mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT( slotCopyURL() ) );
 
 	resize(650, 700);
@@ -287,7 +288,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 				mInit.dateMCList.append(pair);
 			}
 		}
-		
+
 	}
 	// END of kopete 0.7.x check
 
@@ -306,9 +307,9 @@ void HistoryDialog::init(Kopete::Contact *c)
 		{
 			if(fi.fileName().contains(contact_in_filename))
 			{
-				
+
 				rx.indexIn(fi.fileName());
-				
+
 				// We search for an item in the list view with the same year. If then we add the month
 				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
@@ -361,7 +362,7 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 			|| ( mMainWidget->messageFilterBox->currentIndex() == 2 && msg.direction() == Kopete::Message::Outbound ) )
 		{
 			resultHTML.clear();
-	
+
 			if (accountLabel.isEmpty() || accountLabel != msg.from()->account()->accountLabel())
 			// If the message's account is new, just specify it to the user
 			{
@@ -370,15 +371,15 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 				resultHTML += "<b><font color=\"blue\">" + msg.from()->account()->accountLabel() + "</font></b><br/>";
 			}
 			accountLabel = msg.from()->account()->accountLabel();
-	
+
 			QString body = msg.parsedBody();
-	
+
 			if (!mMainWidget->searchLine->text().isEmpty())
 			// If there is a search, then we hightlight the keywords
 			{
 				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
 			}
-		
+
 			resultHTML += "(<b>" + msg.timestamp().time().toString() + "</b>) "
 				+ (msg.direction() == Kopete::Message::Outbound ?
 				"<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().dark().name() + "\"><b>&gt;</b></font> "
@@ -490,20 +491,20 @@ void HistoryDialog::searchFirstStep()
 	{
 		return;
 	}
-	
+
 	if (!mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 	{
 		if (mMainWidget->contactComboBox->currentIndex() == 0
 				|| mMetaContactList.at(mMainWidget->contactComboBox->currentIndex()-1) == mSearch->item->metaContact())
 		{
 			HistoryLogger hlog(mSearch->item->metaContact());
-	
+
 			QList<Kopete::Contact*> contacts=mSearch->item->metaContact()->contacts();
-	
+
 			foreach(Kopete::Contact* contact, contacts)
 			{
 				mSearch->datePrevious = mSearch->item->date();
-	
+
 				QString fullText;
 
 				QFile file(hlog.getFileName(contact, mSearch->item->date()));
@@ -522,7 +523,7 @@ void HistoryDialog::searchFirstStep()
 						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())].push_back(mSearch->item->metaContact());
 					}
 				}
-				
+
 				file.close();
 			}
 		}
@@ -592,7 +593,7 @@ void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 {
 	KMenu *chatWindowPopup = 0L;
 	chatWindowPopup = new KMenu();
-	
+
 	if ( !url.isEmpty() )
 	{
 		mURL = url;
@@ -601,7 +602,7 @@ void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 	}
 	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
 	chatWindowPopup->addAction( mCopyAct );
-	
+
 	connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
 	chatWindowPopup->popup(point);
 }
@@ -611,7 +612,7 @@ void HistoryDialog::slotCopy()
 	QString qsSelection;
 	qsSelection = mHtmlPart->selectedText();
 	if ( qsSelection.isEmpty() ) return;
-	
+
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);

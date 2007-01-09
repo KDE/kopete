@@ -45,6 +45,7 @@
 #include "translatordialog.h"
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"
+#include <kactioncollection.h>
 
 typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
 static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") , "1.0" );
@@ -75,7 +76,8 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args
 	for ( int k = 0; k <= m_languages->numLanguages(); k++ )
 		keys << m[ m_languages->languageKey( k ) ];
 
-	m_actionLanguage = new KSelectAction( KIcon("locale"), i18n( "Set &Language" ), actionCollection(), "contactLanguage" );
+	m_actionLanguage = new KSelectAction( KIcon("locale"), i18n( "Set &Language" ), this );
+        actionCollection()->addAction( "contactLanguage", m_actionLanguage );
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
@@ -245,7 +247,7 @@ QString TranslatorPlugin::translateMessage( const QString &msg, const QString &f
 		kDebug( 14308 ) << k_funcinfo << from << '_' << to << " is not supported by service " << m_service << endl;
 		return QString();
 	}
-		
+
 
 	if ( m_service == "babelfish" )
 		return babelTranslateMessage( msg ,from, to );

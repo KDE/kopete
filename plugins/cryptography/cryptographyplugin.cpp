@@ -41,6 +41,7 @@
 #include "cryptographyguiclient.h"
 
 #include "kgpginterface.h"
+#include <kactioncollection.h>
 
 //This regexp try to match an HTML text,  but only some authorized tags.
 // used in slotIncomingMessage
@@ -71,7 +72,8 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const QStringList & /* 
 	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
 
 
-	KAction *action=new KAction( KIcon("encrypted"), i18n("&Select Cryptography Public Key..."), actionCollection() , "contactSelectKey");
+	KAction *action=new KAction( KIcon("encrypted"), i18n("&Select Cryptography Public Key..."), this );
+        actionCollection()->addAction( "contactSelectKey", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSelectContactKey()) );
 	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
 	action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
@@ -79,7 +81,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const QStringList & /* 
 	setXMLFile("cryptographyui.rc");
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
-	
+
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -197,7 +199,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 				+ plainBody
 				+ QString::fromLatin1(" </td></tr></table>")
 				, Kopete::Message::RichText );
-			
+
 			msg.addClass("cryptography:encrypted");
 		}
 
@@ -211,7 +213,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 
 	//the Message::unescape is there because client like fire replace linebreak by <BR> to work even if the protocol doesn't allow newlines (IRC)
 	// cf http://fire.sourceforge.net/forums/viewtopic.php?t=174  and Bug #96052
-	if(body.contains("<"))  
+	if(body.contains("<"))
 		body= Kopete::Message::unescape(body);
 
 	body = KgpgInterface::KgpgDecryptText( body, mPrivateKeyID );
@@ -230,7 +232,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 			+ body
 			+ QString::fromLatin1(" </td></tr></table>")
 			, Kopete::Message::RichText );
-		
+
 		msg.addClass("cryptography:encrypted");
 	}
 
@@ -323,7 +325,7 @@ void CryptographyPlugin::slotForgetCachedPass()
 	m_cachedPass_timer->stop();
 }
 
-void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM) 
+void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 {
 	connect(this , SIGNAL( destroyed(QObject*)) ,
 			new CryptographyGUIClient(KMM) , SLOT(deleteLater()));

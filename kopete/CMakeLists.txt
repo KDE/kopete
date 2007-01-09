@@ -1,10 +1,8 @@
 
 add_subdirectory( addaccountwizard ) 
-#add_subdirectory( addcontactwizard ) 
 add_subdirectory( config )
-#add_subdirectory( contactlist ) 
 add_subdirectory( chatwindow )
-#add_subdirectory( kconf_update ) 
+add_subdirectory( kconf_update ) 
 
 include_directories( 
 ${KOPETE_INCLUDES} 

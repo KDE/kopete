@@ -29,6 +29,7 @@
 
 
 #include <QList>
+#include <kactioncollection.h>
 
 class HistoryPlugin;
 
@@ -46,10 +47,13 @@ HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent)
 	QList<Kopete::Contact*> mb=m_manager->members();
 	m_logger=new HistoryLogger( mb.first() , this );
 
-	actionLast = new KAction( KIcon("finish"), i18n("History Last" ), actionCollection() , "historyLast" );
+	actionLast = new KAction( KIcon("finish"), i18n("History Last" ), this );
+        actionCollection()->addAction( "historyLast", actionLast );
 	connect( actionLast, SIGNAL(triggered(bool)), this, SLOT(slotLast()) );
-	actionPrev = KStandardAction::back( this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
-	actionNext = KStandardAction::forward( this, SLOT(slotNext()), actionCollection() , "historyNext" );
+	actionPrev = KStandardAction::back( this, SLOT(slotPrevious()), this );
+        actionCollection()->addAction( "historyPrevious", actionPrev );
+	actionNext = KStandardAction::forward( this, SLOT(slotNext()), this );
+        actionCollection()->addAction( "historyNext", actionNext );
 
 	// we are generally at last when beginning
 	actionPrev->setEnabled(true);

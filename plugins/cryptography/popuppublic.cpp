@@ -103,7 +103,7 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	setCaption( i18n("Select Public Key") );
 	setButtons( KDialog::Details | KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
-	
+
 	QWidget *page = new QWidget(this);
 	QVBoxLayout *vbox=new QVBoxLayout(page);
 	vbox->setSpacing(spacingHint());
@@ -122,12 +122,12 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	keyGroup=loader->loadIcon("kgpg_key3",K3Icon::Small,20);
 
         if (filemode) setCaption(i18n("Select Public Key for %1", sfile));
-        fmode=filemode;	
-	
+        fmode=filemode;
+
 	Q3HButtonGroup *hBar=new Q3HButtonGroup(page);
 	//hBar->setFrameStyle(QFrame::NoFrame);
 	//hBar->setMargin(0);
-	
+
 	QToolButton *clearSearch = new QToolButton(hBar);
 	clearSearch->setTextLabel(i18n("Clear Search"), true);
 	clearSearch->setIcon(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
@@ -135,12 +135,12 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	(void) new QLabel(i18n("Search: "),hBar);
 	K3ListViewSearchLine* listViewSearch = new K3ListViewSearchLine(hBar);
 	connect(clearSearch, SIGNAL(pressed()), listViewSearch, SLOT(clear()));
-	
+
         keysList = new K3ListView( page );
 	 keysList->addColumn(i18n("Name"));
 	 keysList->addColumn(i18n("Email"));
 	 keysList->addColumn(i18n("ID"));
-	 
+
 	 listViewSearch->setListView(keysList);
 
         keysList->setRootIsDecorated(false);
@@ -155,13 +155,14 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	keysList->setColumnWidth(1,210);
 
         boutonboxoptions=new Q3ButtonGroup(5,Qt::Vertical ,page,0);
-	
+
 	KActionCollection *actcol=new KActionCollection(this);
-	KAction *defaultKeyAction = new KAction(i18n("&Go to Default Key"),actcol,"go_default_key");
+	KAction *defaultKeyAction = new KAction(i18n("&Go to Default Key"), this );
+        actcol->addAction( "go_default_key", defaultKeyAction );
 	defaultKeyAction->setShortcut(goDefaultKey);
 	connect( defaultKeyAction, SIGNAL(triggered(bool)), this, SLOT(slotGotoDefaultKey()) );
-	
-	
+
+
         CBarmor=new QCheckBox(i18n("ASCII armored encryption"),boutonboxoptions);
         CBuntrusted=new QCheckBox(i18n("Allow encryption with untrusted keys"),boutonboxoptions);
         CBhideid=new QCheckBox(i18n("Hide user id"),boutonboxoptions);
@@ -188,7 +189,7 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	       CBshred=new QCheckBox(i18n("Shred source file"),parentBox);
                 Q3WhatsThis::add
                         (CBshred,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
-			
+
 		QString shredWhatsThis = i18n( "<qt><b>Shred source file:</b><br /><p>Checking this option will shred (overwrite several times before erasing) the files you have encrypted. This way, it is almost impossible that the source file is recovered.</p><p><b>But you must be aware that this is not secure</b> on all file systems, and that parts of the file may have been saved in a temporary file or in the spooler of your printer if you previously opened it in an editor or tried to print it. Only works on files (not on folders).</p></qt>");
 		  QLabel *warn= new QLabel( i18n("<a href=\"whatsthis:%1\">Read this before using shredding</a>", shredWhatsThis),parentBox );
 		  shredBox->addWidget(CBshred);
@@ -205,7 +206,7 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 
 	setWindowFlags( windowFlags() | Qt::WDestructiveClose );
 
-				
+
 	/*CBarmor->setChecked( KGpgSettings::asciiArmor() );
 	CBuntrusted->setChecked( KGpgSettings::allowUntrustedKeys() );
 	CBhideid->setChecked( KGpgSettings::hideUserID() );
@@ -218,7 +219,7 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	CBhideid->hide();
 	if (filemode) CBshred->hide();
 	CBsymmetric->hide();
-	
+
 //END modified for Kopete
 
         /*if (KGpgSettings::allowCustomEncryptionOptions()) {
@@ -488,7 +489,7 @@ void popupPublic::slotOk()
 
 	config->writeEntry("UntrustedKeys", CBuntrusted->isChecked());
 	config->writeEntry("HideID", CBhideid->isChecked());
-	
+
 //END modified for Kopete
 
 
@@ -518,7 +519,7 @@ kDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
         /*if ((KGpgSettings::allowCustomEncryptionOptions()) && (!customOptions.trimmed().isEmpty()))
                 returnOptions.operator+ (QStringList::split(QString(" "),customOptions.simplified()));*/
 	//hide();
-	
+
 //MODIFIED for kopete
         if (fmode)
                 emit selectedKey(selectedKeys.first(),QString(),CBshred->isChecked(),CBsymmetric->isChecked());

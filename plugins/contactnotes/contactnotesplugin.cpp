@@ -26,6 +26,7 @@
 #include "contactnotesedit.h"
 
 #include "contactnotesplugin.h"
+#include <kactioncollection.h>
 
 typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory( "kopete_contactnotes" )  )
@@ -38,7 +39,8 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QStringList & /* 
 	else
 		pluginStatic_ = this;
 
-	KAction *m_actionEdit=new KAction( KIcon("identity"), i18n("&Notes"), actionCollection(), "editContactNotes");
+	KAction *m_actionEdit=new KAction( KIcon("identity"), i18n("&Notes"), this );
+        actionCollection()->addAction( "editContactNotes", m_actionEdit );
 	connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 
 	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));

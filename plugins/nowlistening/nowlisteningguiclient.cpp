@@ -28,6 +28,7 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kactioncollection.h>
 
 NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent, NowListeningPlugin *plugin )
 		: QObject(parent) , KXMLGUIClient(parent)
@@ -35,7 +36,8 @@ NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent, NowLi
 	connect(plugin, SIGNAL(readyForUnload()), SLOT(slotPluginUnloaded()));
 	m_msgManager = parent;
 
-	m_action = new KAction( i18n( "Send Media Info" ), actionCollection(), "actionSendAdvert" );
+	m_action = new KAction( i18n( "Send Media Info" ), this );
+        actionCollection()->addAction( "actionSendAdvert", m_action );
 	connect(m_action, SIGNAL(triggered(bool)), this, SLOT(slotAdvertToCurrentChat()));
 
 	setXMLFile("nowlisteningchatui.rc");
