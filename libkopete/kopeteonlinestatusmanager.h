@@ -19,6 +19,7 @@
 #define kopeteonlinestatusmanager_h__
 
 #include <qobject.h>
+
 #include "kopeteonlinestatus.h"
 #include "kaction.h"
 
@@ -38,7 +39,7 @@ namespace Kopete
  *
  * @author Olivier Goffart 
  */
-class OnlineStatusManager : public QObject
+class KOPETE_EXPORT OnlineStatusManager : public QObject
 {
 	Q_OBJECT
 public:
