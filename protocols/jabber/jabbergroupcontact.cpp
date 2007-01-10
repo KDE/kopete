@@ -114,7 +114,9 @@ QList<KAction*> *JabberGroupContact::customContextMenuActions ()
 {
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KAction *actionSetNick = new KAction (i18n ("Change nick name"), 0, "jabber_changenick");
+	KAction *actionSetNick = new KAction(this);
+	actionSetNick->setText( i18n ("Change nick name") );
+	actionSetNick->setIcon( KIcon("jabber_changenick") );
 	connect(actionSetNick, SIGNAL(triggered(bool)), this, SLOT(slotChangeNick()));
 
 	actionCollection->append( actionSetNick );

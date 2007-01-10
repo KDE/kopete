@@ -182,8 +182,9 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	KAction *action;
 	
-	action = new KAction ( KIcon("jabber_group"), i18n ("Join Groupchat..."),
-	                      0, "actionJoinChat" );
+	action = new KAction( this );
+	action->setIcon( KIcon("jabber_group") );
+	action->setText( i18n("Join Groupchat...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotJoinNewChat()) );
 	m_actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
@@ -195,20 +196,23 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	m_actionMenu->addSeparator();
 	
-	action = new KAction( KIcon("jabber_serv_on"), i18n ("Services..."), 
-	                      0, 	"actionJabberServices" );
+	action = new KAction( this );
+	action->setIcon( KIcon("jabber_serv_on") );
+	action->setText( i18n ("Services...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGetServices()) );
 	action->setEnabled( isConnected() );
 	m_actionMenu->addAction( action );
 
-	action = new KAction ( KIcon("mail_new"), i18n ("Send Raw Packet to Server..."),
-	                       0, "actionJabberSendRaw" );
+	action = new KAction( this );
+	action->setIcon( ( KIcon("mail_new") ) );
+	action->setText( i18n ("Send Raw Packet to Server...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSendRaw()) );
 	action->setEnabled( isConnected() );
 	m_actionMenu->addAction( action );
 
-	action = new KAction ( KIcon("identity"), i18n ("Edit User Info..."),
-	                       0, "actionEditVCard" );
+	action = new KAction( this );
+	action->setIcon( ( KIcon("identity") ) );
+	action->setText( i18n ("Edit User Info...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
 	action->setEnabled( isConnected() );
 	m_actionMenu->addAction( action );

@@ -130,7 +130,9 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 
 KAction * JabberBookmarks::bookmarksAction(QObject * /*parent*/)
 {
-	KSelectAction *groupchatBM = new KSelectAction( KIcon("jabber_group"), i18n("Groupchat bookmark"), 0, "actionBookMark" );
+	KSelectAction *groupchatBM = new KSelectAction( this );
+	groupchatBM->setIcon( KIcon("jabber_group") );
+	groupchatBM->setText( i18n("Groupchat bookmark") );
 	groupchatBM->setItems(m_conferencesJID);
 	QObject::connect(groupchatBM, SIGNAL(triggered(const QString&)) , this , SLOT(slotJoinChatBookmark(const QString&)));
 	return groupchatBM;

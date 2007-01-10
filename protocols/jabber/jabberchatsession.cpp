@@ -28,6 +28,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kicon.h>
+#include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"
 #include "kopeteviewplugin.h"
@@ -87,9 +88,11 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #endif
 
-	KAction* sendFile = new KAction( KIcon( "attach" ), i18n( "Send File" ), actionCollection(), "jabberSendFile" );
+	KAction* sendFile = new KAction( this );
+	sendFile->setIcon( KIcon( "attach" ) );
+	sendFile->setText( i18n( "Send File" ) );
 	QObject::connect(sendFile, SIGNAL( triggered( bool ) ), SLOT( slotSendFile() ));
-
+	actionCollection()->addAction( "jabberSendFile", sendFile );
 	setXMLFile("jabberchatui.rc");
 
 }
