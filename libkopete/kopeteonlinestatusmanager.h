@@ -18,6 +18,8 @@
 #ifndef kopeteonlinestatusmanager_h__
 #define kopeteonlinestatusmanager_h__
 
+#include "kopete_export.h"
+
 #include <QObject>
 #include <QFlags>
 
@@ -41,7 +43,7 @@ namespace Kopete
  *
  * @author Olivier Goffart
  */
-class OnlineStatusManager : public QObject
+class KOPETE_EXPORT OnlineStatusManager : public QObject
 {
 	Q_OBJECT
 public:
