@@ -478,7 +478,9 @@ void Engine::numericReply_369(Message &msg)
  */
 void Engine::numericReply_372(Message &msg)
 {
+#ifdef __GNUC__
 	#warning FIXME remove the "- " in front.
+#endif
 	receivedServerMessage(msg);
 }
 
@@ -516,7 +518,9 @@ void Engine::numericReply_404(Message &msg)
  */
 void Engine::numericReply_406(Message &msg)
 {
+#ifdef __GNUC__
 	#warning FIXME 406 MEANS *NEVER*, unlike 401
+#endif
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
 }

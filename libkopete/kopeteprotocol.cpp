@@ -268,7 +268,9 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 	for( int i = 0; i < count ; i++ )
 	{
 		QMap<QString, QString> sd;
+#ifdef __GNUC__
 #warning  write this properly
+#endif
 #if 0	
 		QMap<QString, QStringList::Iterator>::Iterator serializedDataIt;
 		for( serializedDataIt = serializedDataIterators.begin(); serializedDataIt != serializedDataIterators.end(); ++serializedDataIt )

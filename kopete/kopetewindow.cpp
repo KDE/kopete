@@ -442,7 +442,9 @@ void KopeteWindow::slotToggleAway()
 void KopeteWindow::initSystray()
 {
 	d->tray = KopeteSystemTray::systemTray( this );
+#ifdef __GNUC__
 #warning PORT ME
+#endif
 //	Kopete::UI::Global::setSysTrayWId( d->tray->winId() );
 
 	QObject::connect( d->tray, SIGNAL( aboutToShowMenu( KMenu * ) ),

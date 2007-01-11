@@ -169,7 +169,9 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
 
+#ifdef __GNUC__
 	#warning spurus slot calls for now
+#endif
 	d->joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, KShortcut(),
 		this, SLOT(slotJoinChannel()), 0/*actiongroup*/, 0);
 	d->searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, KShortcut(),
@@ -641,11 +643,15 @@ IRCContact *IRCAccount::getContact(const KIrc::Entity::Ptr &entity, MetaContact 
 {
 	IRCContact *contact = 0;
 
+#ifdef __GNUC__
 	#warning Do the search code here.
+#endif
 
 	if (!contact)
 	{
+#ifdef __GNUC__
 		#warning Make a temporary meta contact if metac is null
+#endif
 		contact = new IRCContact(this, entity, metac);
 		d->contacts.append(contact);
 	}

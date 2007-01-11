@@ -55,7 +55,9 @@ Entity::Ptr EntityManager::entityFromName(const QByteArray &name) const
 	if (name.isEmpty())
 		return entity;
 
+#ifdef __GNUC__
 	#warning Do the searching code here.
+#endif
 
 	return entity;
 }

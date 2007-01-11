@@ -105,7 +105,9 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const QStringList &/*args*/
 	connect( Kopete::AccountManager::self(), SIGNAL( accountRegistered( Kopete::Account * ) ),
 		this, SLOT( slotAccountCreated( Kopete::Account * ) ) );
 
+#ifdef __GNUC__
 #warning REANABLE POLICIES ?
+#endif
 //	KJSEmbed::JSSecurityPolicy::setDefaultPolicy( KJSEmbed::JSSecurityPolicy::CapabilityAll );
 
 	d = new JavaScriptPluginPrivate();
@@ -158,7 +160,9 @@ void JavaScriptPlugin::execScripts( Kopete::Account *account )
 	}
 }
 
+#ifdef __GNUC__
 #warning Temporary disable account creation code
+#endif
 /*
 void JavaScriptPlugin::slotAccountCreated( Kopete::Account *a )
 {
@@ -254,7 +258,9 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 			cmd = args.section( QRegExp(QString::fromLatin1("\\s+") ), 1);
 		}
 
+#ifdef __GNUC__
 #warning disable some execution code for now
+#endif
 /*
 		KJS::Value val = ep->jsEngine->evaluate( cmd );
 		Kopete::Message msg( manager->myself(), manager->members(),
@@ -269,7 +275,9 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 	}
 }
 
+#ifdef __GNUC__
 #warning Disable message management
+#endif
 /*
 void JavaScriptPlugin::publishMessage( JSMessage *msg, KJSEmbed::Engine *jsEngine )
 {

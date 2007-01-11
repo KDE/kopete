@@ -315,7 +315,9 @@ void Kopete::Away::slotTimerTimeout()
 	if(rentrency_protection)
 		return;
 	rentrency_protection=true;
+#ifdef __GNUC__
 #warning verify dcop call
+#endif
 	QDBusInterface caller("org.kde.kdesktop", "/ScreenSaver", "org.kde.kdesktop.ScreenSaver");
 	QDBusReply<bool> reply = caller.call("isBlanked");
 	if ( !reply.isValid() || !reply.value())

@@ -142,7 +142,9 @@ void Message::setLine(const QByteArray &line)
 	// Match a regexp instead of the replace ...
 //	d->line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
  
+#ifdef __GNUC__
 	#warning implement me: parsing
+#endif
 
 	int token_start = 0;
 	int token_end;
@@ -219,7 +221,9 @@ void Message::appendArgs(const QList<QByteArray> &args)
 	if (!args.isEmpty())
 	{
 		d->dirty = true;
+#ifdef __GNUC__
 #warning use operator << until the append methods for QList are defined.
+#endif
 		d->args << args;
 	}
 }
@@ -231,7 +235,9 @@ QByteArray Message::rawArg(size_t i) const
 
 void Message::setArg(size_t i, const QByteArray &arg)
 {
+#ifdef __GNUC__
 #warning allow so kind of append mode ?
+#endif
 	if (d->args[i] != arg)
 	{
 		d->dirty = true;
@@ -361,14 +367,18 @@ Entity::List Message::entitiesFromNames(const QByteArray &names, char separator)
 
 bool Message::isNumericReply() const
 {
+#ifdef __GNUC__
 #warning FIXME
+#endif
 //      return sm_IRCNumericCommand.exactMatch(d->command);
         return false;
 }
 
 Message::Type Message::type() const
 {
+#ifdef __GNUC__
 #warning FIXME
+#endif
 	return Unknown;
 }
 

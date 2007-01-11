@@ -25,7 +25,9 @@
 
 #include <qdir.h>
 
+#ifdef __GNUC__
 #warning CLEAN ME
+#endif
 #include <krun.h>
 #include <kurl.h>
 #include <kurlrequester.h>

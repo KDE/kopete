@@ -93,7 +93,9 @@ public:
 
 // 		if ( ! metaContact->picture().isNull() )
         {
+#ifdef __GNUC__
 #warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
+#endif
 #if 0
 			QString photoName = QLatin1String("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );

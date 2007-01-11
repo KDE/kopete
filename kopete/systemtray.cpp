@@ -122,7 +122,9 @@ void KopeteSystemTray::onActivation(QSystemTrayIcon::ActivationReason reason)
 /*
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
+#ifdef __GNUC__
 #warning PORT ME
+#endif
 #if 0
 	if (
 		(me->button() == Qt::MidButton ||
@@ -139,7 +141,9 @@ void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 
 void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 {
+#ifdef __GNUC__
 #warning PORT ME
+#endif
 #if 0
 	if ( !mIsBlinking )
 	{
@@ -186,7 +190,9 @@ void KopeteSystemTray::startBlink( const QIcon &icon )
 
 void KopeteSystemTray::startBlink( QMovie *movie )
 {
+#ifdef __GNUC__
 #warning PORT ME
+#endif
 #if 0
 	//kDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
 	kDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;

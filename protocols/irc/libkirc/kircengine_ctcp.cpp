@@ -69,7 +69,9 @@ void Engine::bindCtcp()
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec)
 {
+#ifdef __GNUC__
 	#warning FIXME CTCP MESSAGE NOT SENT
+#endif
 //	writeRawMessage(command, to, ctcpMessage, codec);
 }
 
@@ -85,7 +87,9 @@ void Engine::writeCtcpReplyMessage(const QString &to, const QString &ctcpReplyMe
 
 void Engine::writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec)
 {
+#ifdef __GNUC__
 	#warning FIXME CTCP ERROR MESSAGE NOT SENT
+#endif
 //	writeCtcpReplyMessage(to, "ERRMSG", ctcpLine, errorMsg);
 }
 

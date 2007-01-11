@@ -848,7 +848,9 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
+#ifdef __GNUC__
 #warning commented to make it compile
+#endif
 #if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
 		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
@@ -909,7 +911,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
 
+#ifdef __GNUC__
 #warning commented to make it compile
+#endif
 #if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
 		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);

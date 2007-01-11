@@ -51,7 +51,9 @@ void DetectorSMPPPD::checkStatus() const {
         }
     }
 #else
+#ifdef __GNUC__
 #warning DCOP inquiry disabled
+#endif
 	kDebug(14312) << k_funcinfo << "DCOP inquiry disabled" << endl;
 #endif
 

@@ -772,7 +772,9 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		if(unread && mailCount > 0)
 		{
 			// If there are new email message available, raise the unread email event.
+#ifdef __GNUC__
 #warning Fix KNotification here
+#endif
 #if 0
 			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18np( "You have one unread message in your MSN inbox.",
 							 "You have %n unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 ),
@@ -795,7 +797,9 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		QString m=rx.cap(1);
 
 		mailCount++;
+#ifdef __GNUC__
 #warning Fix KNotification here
+#endif
 #if 0
 		//TODO:  it is also possible to get the subject  (but warning about the encoding)
 		QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"),i18n( "You have one new email from %1 in your MSN inbox." , m),

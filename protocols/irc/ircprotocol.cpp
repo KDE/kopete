@@ -510,7 +510,9 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 
 void IRCProtocol::slotAllCommand(const QString &args, ChatSession *manager)
 {
+#ifdef __GNUC__
 #warning IMPLEMENT ME
+#endif
 }
 
 void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)

@@ -193,7 +193,9 @@ void Socket::connectToServer(const KUrl &url)
 	connect(d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
 	                   SLOT(socketGotError(QAbstractSocket::SocketError)));
 
+#ifdef __GNUC__
 	#warning FIXME: send an event here to reflect connection state
+#endif
 
 	kDebug(14121) << k_funcinfo << "connecting: (" << host << ", " << port << ')' << endl;
 	d->socket->connectToHost(host, port);
@@ -209,7 +211,9 @@ void Socket::close()
 
 void Socket::writeMessage(const Message &msg)
 {
+#ifdef __GNUC__
 	#warning Check message validity before sending it
+#endif
 
 	kDebug(14121) << k_funcinfo << "msg=" << msg.rawLine() << endl;
 	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
@@ -239,7 +243,9 @@ void Socket::showInfoDialog()
 #if 0
 void Socket::postEvent(Event::MessageType messageType, const QString &message)
 {
+#ifdef __GNUC__
 #warning implement me
+#endif
 }
 #endif
 void Socket::setConnectionState(ConnectionState newstate)

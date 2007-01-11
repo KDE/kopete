@@ -231,7 +231,9 @@ void HighlightPreferences::slotSomethingHasChanged()
 
 void HighlightPreferences::slotEditRegExp()
 {
+#ifdef __GNUC__
 #warning TODO
+#endif
 	// FIXME: Port editorDialog->qt_cast
 // 	QDialog *editorDialog = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
 // 	if ( editorDialog )

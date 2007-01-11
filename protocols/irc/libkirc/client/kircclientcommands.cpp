@@ -768,7 +768,9 @@ void ClientCommands::numericReply_369(Message msg)
  */
 void ClientCommands::numericReply_372(Message msg)
 {
+#ifdef __GNUC__
 	#warning FIXME remove the "- " in front.
+#endif
 	postMOTDEvent(msg);
 }
 
@@ -810,7 +812,9 @@ void ClientCommands::numericReply_404(Message msg)
  */
 void ClientCommands::numericReply_406(Message msg)
 {
+#ifdef __GNUC__
 	#warning FIXME 406 MEANS *NEVER*, unlike 401
+#endif
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
 }

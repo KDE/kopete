@@ -278,7 +278,9 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 
 			if( manifestFile.readType() == QLatin1String("KopeteScript") )
 			{
+#ifdef __GNUC__
 #warning find a better uinique id
+#endif
 				QString id = QString::number( time( NULL ) );
 				QString dir = localScriptsDir + QChar('/') + id;
 				rootDir->copyTo( dir );

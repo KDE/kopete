@@ -103,7 +103,9 @@ void ClientSocket::onConnectionStateChanged(Socket::ConnectionState newState)
 		if (url.hasPass())
 			StdMessage::pass(this, url.pass());
 
+#ifdef __GNUC__
 		#warning make the following string arguments static const
+#endif
 		StdMessage::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
 		StdMessage::nick(this, url.queryItem(URL_NICKNAME));
 */

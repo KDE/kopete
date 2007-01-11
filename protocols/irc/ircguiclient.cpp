@@ -35,7 +35,9 @@ IRCGUIClient::IRCGUIClient(Kopete::ChatSession *parent)
 {
 	Q_ASSERT(m_contact);
 
+#ifdef __GNUC__
 	#warning FIXME: Why does not this work???? Have to use DOM hack below now...
+#endif
 /*
 	setXMLFile("ircchatui.rc");
 

@@ -77,7 +77,9 @@ void Client::error(Message &)
 
 void Engine::ison(const QStringList &nickList)
 {
+#ifdef __GNUC__
 	#warning FIXME bogus length check
+#endif
 /*
 	if (!nickList.isEmpty())
 	{

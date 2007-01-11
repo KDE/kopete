@@ -149,7 +149,9 @@ void YahooChatSession::slotDisplayPictureChanged()
 	{
 		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		{
+#ifdef __GNUC__
 #warning Port or remove this KToolBar hack
+#endif
 #if 0
 			int sz=22;
 			// get the size of the toolbar were the aciton is plugged.

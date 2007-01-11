@@ -44,7 +44,9 @@ QByteArray MessageUtil::format(
 		const QList<ByteArray> &args,
 		const QByteArray &suffix)
 {
+#ifdef __GNUC__
 	#warning implement me
+#endif
 	QByteArray msg = command;
 
 	// FIXME: use a while loop instead and quote the arguments
@@ -60,7 +62,9 @@ QByteArray MessageUtil::format(
 
 QByteArray MessageUtil::formatCtcp(const QByteArray &str)
 {
+#ifdef __GNUC__
 	#warning implement me
+#endif
 //	return QChar(0x01) + ctcpQuote(str) + QChar(0x01);
 	return str;
 }
@@ -73,7 +77,9 @@ struct quote_data
 
 static QByteArray quote(const QByteArray &in, const struct quote_data *d)
 {
+#ifdef __GNUC__
 	#warning implement me
+#endif
 	char esc = d->in;
 	QByteArray out(in);
 
@@ -82,7 +88,9 @@ static QByteArray quote(const QByteArray &in, const struct quote_data *d)
 
 static QByteArray unquote(const QByteArray &in, const struct quote_data *d)
 {
+#ifdef __GNUC__
 	#warning implement me
+#endif
 	char esc = d->in;
 	QByteArray out(in);
 

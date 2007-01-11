@@ -41,7 +41,9 @@
 #include <arpa/inet.h>
 */
 using namespace KIrc;
+#ifdef __GNUC__
 #warning make usage of KUser (done!) and make more useful using some default strings (todo!)
+#endif
 
 Message StdMessages::away(const QByteArray &awayMessage)
 {
@@ -55,7 +57,9 @@ Message StdMessages::away(const QByteArray &awayMessage)
 Message StdMessages::ison(const QList<QByteArray> &nickList)
 {
 	Message msg;
+#ifdef __GNUC__
 	#warning FIXME bogus length check
+#endif
 /*
 	if (!nickList.isEmpty())
 	{

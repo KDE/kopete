@@ -126,7 +126,9 @@ void KopeteEmoticonAction::setStickyMenu(bool sticky)
 
 int KopeteEmoticonAction::plug( QWidget* widget, int index )
 {
+#ifdef __GNUC__
 #warning Port to new KAction
+#endif
 #if 0
 	if (kapp && !KAuthorized::authorizeKAction(name()))
 		return -1;

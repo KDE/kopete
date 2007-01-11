@@ -157,7 +157,9 @@ QByteArray Entity::modes() const
 
 QByteArray Entity::setModes(const QByteArray &modes)
 {
+#ifdef __GNUC__
 	#warning this needs more logic to handle the +/- modes.
+#endif
 	if ( d->modes != modes )
 	{
 		d->modes = modes;

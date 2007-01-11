@@ -97,7 +97,9 @@ void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 
 bool Kopete::UI::PasswordWidget::validate()
 {
+#ifdef __GNUC__
 #warning  TODO do something interesting or remove the function
+#endif
 	return true;
 }
 

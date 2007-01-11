@@ -315,7 +315,9 @@ QString Message::parsedBody() const
 	}
 	else
 	{
+#ifdef __GNUC__
 #warning Disable Emoticon parsing for now, it make QString cause a ASSERT error. (DarkShock)
+#endif
 #if 0
 		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), RichText));
 #endif
@@ -529,7 +531,9 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 	int charsToCheck = message.length();
 	charsToCheck = 128 > charsToCheck ? charsToCheck : 128;
 
+#ifdef __GNUC__
 	#warning Rewrite the following code: heuristicContentMatch() do not existe anymore.
+#endif
 	//They are providing a possible codec. Check if it is valid
 //	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{

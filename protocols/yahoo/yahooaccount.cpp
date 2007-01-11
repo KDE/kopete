@@ -1505,7 +1505,9 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
+#ifdef __GNUC__
 #warning Fix KNotification here
+#endif
 #if 0
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
 			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
@@ -1515,7 +1517,9 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
+#ifdef __GNUC__
 #warning Fix KNotification here
+#endif
 #if 0
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from)
 		                                       , QPixmap() , 0 ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );

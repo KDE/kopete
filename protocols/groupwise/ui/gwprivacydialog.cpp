@@ -313,7 +313,9 @@ void GroupWisePrivacyDialog::slotApply()
 		m_dirty = false;
 		updateButtonState();
 	}
+#ifdef __GNUC__
 #warning "kde4: port it"
+#endif
 	//KDialogBase::slotApply();
 }
 

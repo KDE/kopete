@@ -79,7 +79,9 @@ void notifyConnectionLost( const Account *account, const QString caption, const 
 
 bool isHostReachable(const QString &host)
 {
+#ifdef __GNUC__
 #warning TODO
+#endif
 #if 0
 
 	const int NetWorkStatusUnknown = 1;

@@ -41,12 +41,16 @@
 #include <arpa/inet.h>
 
 using namespace KIrc;
+#ifdef __GNUC__
 #warning make usage of KUser (done!) and make more useful using some default strings (todo!)
+#endif
 
 /*
 void StdCommands::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec)
 {
+#ifdef __GNUC__
 	#warning FIXME CTCP MESSAGE NOT SENT
+#endif
 //	writeRawMessage(command, to, ctcpMessage, codec);
 }
 

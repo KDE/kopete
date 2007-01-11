@@ -193,7 +193,9 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 
 	d->sendInProgress = false;
 
+#ifdef __GNUC__
 #warning Port to new KToolBar
+#endif
 #if 0
 	toolBar()->alignItemRight( 99 );
 #endif

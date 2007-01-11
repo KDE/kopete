@@ -31,7 +31,9 @@ using namespace KIrc;
 
 QString Command::expand(QString command, QString args)
 {
+#ifdef __GNUC__
         #warning IMPLEMENT ME
+#endif
         return command;
 }
 

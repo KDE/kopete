@@ -88,7 +88,9 @@ void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
 		enabled = false;
 
 	m_autoSpellCheckEnabled = enabled;
+#ifdef __GNUC__
 #warning Port to new SpellHightlighter interface, disabled to make compile (-DarkShock)
+#endif
 #if 0
 	if ( spellHighlighter() )
 	{
@@ -106,7 +108,9 @@ bool ChatTextEditPart::autoSpellCheckEnabled() const
 
 KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
 {
+#ifdef __GNUC__
 #warning disabled to make it compile
+#endif
 #if 0
 	Q3SyntaxHighlighter *qsh = textEdit()->syntaxHighlighter();
 	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
@@ -133,7 +137,9 @@ public:
 */
 void ChatTextEditPart::complete()
 {
+#ifdef __GNUC__
 #warning disabled to make it compile
+#endif
 #if 0
 	int para = 1, parIdx = 1;
 	textEdit()->getCursorPosition( &para, &parIdx);
