@@ -18,11 +18,12 @@
 
 #include <dcopobject.h>
 
+#include "kopete_export.h"
 #include "networkstatuscommon.h"
 
 class ConnectionManagerPrivate;
 
-class ConnectionManager : public QObject, virtual public DCOPObject
+class KOPETE_EXPORT ConnectionManager : public QObject, virtual public DCOPObject
 {
 	Q_OBJECT
 	K_DCOP
