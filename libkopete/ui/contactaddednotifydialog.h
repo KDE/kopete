@@ -65,7 +65,6 @@ namespace UI {
  * Note that you can also use exec() but this is not recommended
  *
  * @author Olivier Goffart
- * @since 0.11
  */
 class KOPETE_EXPORT ContactAddedNotifyDialog : public KDialog
 {

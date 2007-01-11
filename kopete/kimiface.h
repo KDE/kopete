@@ -32,7 +32,6 @@
 /**
  * Generic DCOP interface for KDE instant messenger applications
  * Note one omission of this interface is the lack of control over the range of values used for protocols' names.
- * @since 3.3
  * @author Will Stephenson <lists@stevello.free-online.co.uk>
  */
 class KIMIface : virtual public DCOPObject

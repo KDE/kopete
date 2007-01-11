@@ -158,7 +158,7 @@ public:
 	QRect startRect, targetRect;
 	int minWidth, minHeight;
 	bool growHoriz, growVert;
-	bool show; /** @since 23-03-2005 */
+	bool show;
 	ToolTipSource *tipSource;
 };
 

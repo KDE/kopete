@@ -128,7 +128,6 @@ public:
 	 * @param mode is a bitmask of ParseMode enum
 	 * @return a QValueList which consiste of ordered tokens of the text.
 	 * @author Engin AYDOGAN < engin@bzzzt.biz >
-	 * @since 23-03-05
 	 */
 	QList<Token> tokenize( const QString &message, ParseMode mode = DefaultParseMode );
 	
