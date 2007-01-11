@@ -2,8 +2,9 @@
     channellist.h - IRC Channel Search Widget
 
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com> 
 
-    Kopete    (c) 2004      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,10 +22,6 @@
 #include <qwidget.h>
 #include <qmap.h>
 #include <qpair.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <Q3GridLayout>
-#include <Q3HBoxLayout>
 #include <QLabel>
 
 namespace KIRC { class Client; }

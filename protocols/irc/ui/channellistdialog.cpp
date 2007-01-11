@@ -2,9 +2,9 @@
     channellistdialog.cpp - IRC Channel Search Dialog
 
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,7 +23,7 @@
 #include "kopeteuiglobal.h"
 
 #include "qlayout.h"
-//Added by qt3to4:
+
 #include <Q3HBoxLayout>
 
 ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)

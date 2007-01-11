@@ -1,11 +1,11 @@
 /*
     ircaddcontactpage.h - IRC Add Contact Widget
 
-    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright     2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
-    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

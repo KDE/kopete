@@ -22,7 +22,6 @@
 #include "kopetechatsessionmanager.h"
 #include "irccontact.h"
 #include "kopeteonlinestatus.h"
-//Added by qt3to4:
 #include <Q3PtrList>
 
 class QTimer;

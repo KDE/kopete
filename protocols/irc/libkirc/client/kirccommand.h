@@ -1,9 +1,9 @@
 /*
     kircmessageredirector.h - IRC Client
 
-    Copyright (c) 2004-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2004-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

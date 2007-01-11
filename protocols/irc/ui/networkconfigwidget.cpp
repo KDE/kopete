@@ -2,9 +2,9 @@
     networkconfigwidget.cpp - IRC Network configurator widget.
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -54,8 +54,7 @@
 #include <qregexp.h>
 #include <qspinbox.h>
 #include <qvalidator.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 #include <dom/html_element.h>
 #include <unistd.h>
@@ -65,7 +64,7 @@ using namespace Kopete;
 class IRCNetworkConfigWidget::Private
 {
 public:
-	Q3ValueList<IRCNetwork> m_networks;
+	QList<IRCNetwork> m_networks;
 
 	QString m_uiCurrentNetworkSelection;
 	QString m_uiCurrentHostSelection;

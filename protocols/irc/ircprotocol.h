@@ -2,8 +2,9 @@
     ircprotocol.h - IRC Protocol
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

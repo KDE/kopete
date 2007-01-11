@@ -1,9 +1,9 @@
 /*
     ircservercontact.h - IRC User Contact
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2003      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -36,7 +36,7 @@ class IRCContactManager;
 class IRCChannelContact;
 
 /**
- * @author Michel Hermier <michel.hermier@wanadoo.fr>
+ * @author Michel Hermier <michel.hermier@gmail.com>
  *
  * This class is the @ref Kopete::Contact object representing IRC Servers.
  * It is derrived from @ref IRCContact where much of its functionality is shared with @ref IRCChannelContact and @ref IRCUserContact.

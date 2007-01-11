@@ -20,7 +20,6 @@
 #define IRCCHANNELCONTACT_H
 
 #include "irccontact.h"
-//Added by qt3to4:
 #include <Q3PtrList>
 
 class KActionCollection;

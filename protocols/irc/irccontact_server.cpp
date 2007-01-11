@@ -1,8 +1,8 @@
 /*
     ircservercontact.cpp - IRC Server Contact
 
-    Copyright (c) 2003      by Michel Hermier <mhermier@kde.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003-2007 by Michel Hermier <mhermier@gmail.com>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 

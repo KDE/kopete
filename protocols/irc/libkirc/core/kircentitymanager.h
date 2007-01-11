@@ -1,9 +1,9 @@
 /*
     kircentitymanager.h - IRC Entity Manager
 
-    Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2005      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2005-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,7 +28,7 @@ namespace KIrc
 class Entity;
 
 /**
- * @author Michel Hermier <michel.hermier@wanadoo.fr>
+ * @author Michel Hermier <michel.hermier@gmail.com>
  */
 class EntityManager
 	: public QObject

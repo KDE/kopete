@@ -1,9 +1,9 @@
 /*
     kircmessageutil.cpp - Some utilities to build some message.
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2003      by the Kopete engineelopers <kopete-engineel@kde.org>
+    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

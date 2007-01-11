@@ -2,8 +2,9 @@
    ircguiclient.h
 
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
-    Kopete    (c) 2003-2005 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+
+    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

@@ -1,8 +1,9 @@
 /*
     irceditaccountwidget.cpp - IRC Account Widget
 
-    Copyright (c) 2003 by Olivier Goffart  <ogoffart @ kde.org>
-    Copyright (c) 2003 by Jason Keirstead  <jason@keirstead.org>
+    Copyright (c) 2003      by Olivier Goffart  <ogoffart@kde.org>
+    Copyright (c) 2003      by Jason Keirstead  <jason@keirstead.org>
+    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
