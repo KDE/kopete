@@ -145,10 +145,10 @@ bool ConnectionManager::askToConnect( QWidget * mainWidget )
 	i18n( "A network connection was disconnected.  The application is now in offline mode.  Do you want the application to resume network operations when the network is available again?" );
 	i18n( "This application is currently in offline mode.  Do you want to connect?" );
 	return ( KMessageBox::questionYesNo( mainWidget,
-			 i18n("This application is currently in offline mode.  Do you want to connect in order to carry out this operation?"),
-																		i18n("Leave Offline Mode?"),
-																		i18n("Connect"), i18n("Stay Offline"),
-																		QString::fromLatin1("OfflineModeAlwaysGoOnline") ) == KMessageBox::Yes );
+			i18n("This application is currently in offline mode.  Do you want to connect in order to carry out this operation?"),
+			i18n("Leave Offline Mode?"),
+			i18n("Connect"), i18n("Stay Offline"),
+			QLatin1String("OfflineModeAlwaysGoOnline") ) == KMessageBox::Yes );
 }
 
 #include "connectionmanager.moc"
