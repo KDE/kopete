@@ -84,6 +84,8 @@ GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWid
 	connect( m_privacy->m_allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
 	connect( m_privacy->m_denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
 	connect( mgr, SIGNAL( privacyChanged( const QString &, bool ) ), SLOT( slotPrivacyChanged() ) );
+	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
+	connect(this,SIGNAL(applyClicked()),this,SLOT(slotApply()));
 	m_privacy->m_btnAdd->setEnabled( true );
 	m_privacy->m_btnAllow->setEnabled( false );
 	m_privacy->m_btnBlock->setEnabled( false );

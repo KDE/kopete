@@ -62,7 +62,7 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
 	connect ( mMainWidget->listServers, SIGNAL (cellDoubleClicked(int,int)), this, SLOT (slotOk()) );
 
 	connect ( this, SIGNAL (okClicked()), this, SLOT(slotOk()) );
-
+        connect ( this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 	enableButtonOk ( false );
 
 }

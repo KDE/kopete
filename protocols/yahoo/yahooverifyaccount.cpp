@@ -51,6 +51,7 @@ YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent
 	mTheDialog->mPicture->hide();
 	setMainWidget( w );
 	setEscapeButton( Cancel );
+	connect(this,SIGNAL(applyClicked()),this,SLOT(slotApply()));
 }
 
 // Destructor

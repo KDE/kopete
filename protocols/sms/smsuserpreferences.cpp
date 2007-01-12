@@ -38,6 +38,8 @@ SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 
 	userPrefs->telNumber->setText(m_contact->phoneNumber());
 	userPrefs->title->setText(m_contact->nickName());
+	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
+	connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 }
 
 SMSUserPreferences::~SMSUserPreferences()

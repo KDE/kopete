@@ -47,6 +47,8 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
     m_mainWidget->peNewPassword1->setPasswordMode( true );
     m_mainWidget->peNewPassword2->setPasswordMode( true );
     m_mainWidget->peCurrentPassword->setPasswordMode( true );
+    connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
+    connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 }
 
 DlgJabberChangePassword::~DlgJabberChangePassword()

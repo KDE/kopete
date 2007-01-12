@@ -170,6 +170,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
   QObject::connect(keysListpr,SIGNAL(clicked(Q3ListViewItem *)),this,SLOT(slotSelect(Q3ListViewItem *)));
 
 
+  connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
   keysListpr->setSelected(keysListpr->firstChild(),true);
 
   page->show();

@@ -99,6 +99,8 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
     }
     m_encodingUI->encodingCombo->setCurrentIndex( initialEncodingIndex );
     setMainWidget( w );
+    connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
+    connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 }
 
 

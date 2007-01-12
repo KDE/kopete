@@ -37,7 +37,7 @@ YahooInviteListImpl::YahooInviteListImpl(QWidget *parent) : KDialog(parent)
 	QObject::connect( m_inviteWidget->btn_Add, SIGNAL(clicked()), this, SLOT(slotAdd()) );
 	QObject::connect( m_inviteWidget->btn_Remove, SIGNAL(clicked()), this, SLOT(slotRemove()) );
 	QObject::connect( m_inviteWidget->btnCustomAdd, SIGNAL(clicked()), this, SLOT(slotAddCustom()) );
-
+        connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 	m_inviteWidget->listFriends->setSelectionMode( QAbstractItemView::ExtendedSelection );
 	m_inviteWidget->listInvited->setSelectionMode( QAbstractItemView::ExtendedSelection );
 

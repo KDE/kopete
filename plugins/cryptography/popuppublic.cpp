@@ -233,6 +233,7 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
                 QObject::connect(optiontxt,SIGNAL(textChanged ( const QString & )),this,SLOT(customOpts(const QString & )));
         }*/
         QObject::connect(keysList,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotOk()));
+	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
 //	QObject::connect(this,SIGNAL(okClicked()),this,SLOT(crypte()));
         QObject::connect(CBuntrusted,SIGNAL(toggled(bool)),this,SLOT(refresh(bool)));
 
