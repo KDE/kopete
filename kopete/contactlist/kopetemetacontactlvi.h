@@ -2,7 +2,7 @@
     kopetemetacontactlvi.h - Kopete Meta Contact K3ListViewItem
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
 

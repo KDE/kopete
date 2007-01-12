@@ -1,7 +1,7 @@
 /*
     msninvitation.cpp
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2003 by Olivier Goffart        <ogoffart@kde.org>
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 

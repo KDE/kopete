@@ -1,7 +1,7 @@
 /*
     kopetegroup_p.h - Kopete (Meta)Contact Group Private
 
-    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart @ kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>

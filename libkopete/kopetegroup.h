@@ -1,7 +1,7 @@
 /*
     kopetegroup.h - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart @ kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -39,7 +39,7 @@ class Message;
  *
  * some static group are availavle from this class:  topLevel and temporary
  *
- * @author Olivier Goffart
+ * @author Olivier Goffart <ogoffart@kde.org>
  */
 class KOPETE_EXPORT Group : public ContactListElement
 {

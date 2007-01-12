@@ -1,8 +1,9 @@
  /*
     icqaddcontactpage.h  -  ICQ Protocol Plugin
 
-    Copyright (c) 2002 by Stefan Gehn <metz AT gehn.net>
+    Copyright (c) 2002 by Stefan Gehn <metz@gehn.net>
     Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
+
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************

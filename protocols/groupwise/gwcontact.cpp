@@ -1,20 +1,20 @@
 /*
     gwcontact.cpp - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Copyright (c) 2006      Novell, Inc	http://www.opensuse.org
+    Copyright (c) 2004      SUSE Linux AG http://www.suse.com
     
     Based on Testbed   
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003      by Will Stephenson <will@stevello.free-online.co.uk>
     
 	Blocking status taken from MSN
-    Copyright (c) 2003      by Will Stephenson		  <will@stevello.free-online.co.uk>
+    Copyright (c) 2003      by Will Stephenson <will@stevello.free-online.co.uk>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
-    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002      by Ryan Cumming <bodnar42@phalynx.dhs.org>
+    Copyright (c) 2002-2003 by Martijn Klingens <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart <ogoffart@kde.org>
     
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

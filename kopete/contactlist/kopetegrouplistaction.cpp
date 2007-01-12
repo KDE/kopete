@@ -1,7 +1,7 @@
 /*
     kopetegrouplistcation.cpp   -  the action used for Move To and copy To
 
-    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart @ kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
 
     Kopete    (c) 2001-2005 by the Kopete developers <kopete-devel@kde.org>

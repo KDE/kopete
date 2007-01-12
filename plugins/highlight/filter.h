@@ -3,7 +3,7 @@
                              -------------------
     begin                : mar 14 2003
     copyright            : (C) 2003 by Olivier Goffart
-    email                : ogoffart @ kde.org
+    email                : ogoffart@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,7 +24,7 @@
 #include <QVariant>
 
 /**
- * @author Olivier Goffart <ogoffart @ kde.org>
+ * @author Olivier Goffart <ogoffart@kde.org>
  **/
 class Filter
 {

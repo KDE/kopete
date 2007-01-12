@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
@@ -43,7 +43,7 @@ class Picture;
  * @author Will Stephenson <will@stevello.free-online.co.uk>
  * @author Martijn Klingens <klingens@kde.org>
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
- * @author Olivier Goffart 
+ * @author Olivier Goffart <ogoffart@kde.org>
  *
  * A metacontact represent a person. This is a kind of entry to
  * the contactlist. All information of a contact is contained in

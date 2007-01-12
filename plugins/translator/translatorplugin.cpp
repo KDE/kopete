@@ -3,8 +3,8 @@
 
     Kopete Translator plugin
 
-    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart      <ogoffart @ kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart <ogoffart@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 

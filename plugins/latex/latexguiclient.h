@@ -1,9 +1,7 @@
 /*
-    latexguiclient.h
+    latexguiclient.h - Kopete Latex Plugin
 
-    Kopete Latex Plugin
-
-    Copyright (c) 2005 by Olivier Goffart <ogoffart @ kde.org>
+    Copyright (c) 2005 by Olivier Goffart <ogoffart@kde.org>
 
     Kopete    (c) 2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -31,7 +29,7 @@
 namespace Kopete { class ChatSession; }
 
 /**
-  * @author Olivier Goffart <ogoffart @ kde.org>
+  * @author Olivier Goffart <ogoffart@kde.org>
   */
 
 class LatexGUIClient : public QObject , public KXMLGUIClient

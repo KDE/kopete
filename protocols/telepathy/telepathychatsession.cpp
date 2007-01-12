@@ -133,7 +133,7 @@ void TelepathyChatSession::telepathyMessageDeliveryError(const QtTapioca::TextCh
 			internalErrorMessage = i18n("Contact is invalid.");
 			break;
 		case TextChannel::Message::PermissionDenied:
-			internalErrorMessage = i18n("You don't have enough permission to send a message to this contact.");
+			internalErrorMessage = i18n("You do not have enough permission to send a message to this contact.");
 			break;
 		case TextChannel::Message::MessageTooLong:
 			internalErrorMessage = i18n("Message is too long.");

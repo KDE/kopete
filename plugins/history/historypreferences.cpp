@@ -1,8 +1,9 @@
 /*
     historypreferences.cpp
 
-    Copyright (c) 2003 by Olivier Goffart             <ogoffart @ kde.org>
-              (c) 2003 by Stefan Gehn                 <metz AT gehn.net>
+    Copyright (c) 2003      by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2003      by Stefan Gehn            <metz@gehn.net>
+
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************

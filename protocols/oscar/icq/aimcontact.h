@@ -4,6 +4,7 @@
  Copyright (c) 2003 by Will Stephenson
  Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
  Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
+
  Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************

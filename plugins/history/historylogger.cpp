@@ -1,7 +1,7 @@
 /*
     historylogger.cpp
 
-    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@kde.org>
 
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 

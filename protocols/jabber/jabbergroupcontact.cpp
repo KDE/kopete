@@ -2,9 +2,9 @@
   * jabbercontact.cpp  -  Regular Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
-  * Copyright (c) 2006      by Olivier Goffart <ogoffart @ kde.org>
+  * Copyright (c) 2006      by Olivier Goffart <ogoffart@kde.org>
   *
-  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
   * *                                                                       *

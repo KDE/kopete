@@ -1,7 +1,7 @@
 /*
     addaccountwizard.h - Kopete Add Account Wizard
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart @ kde.org>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -42,7 +42,7 @@ class Protocol;
 class KopeteEditAccountWidget;
 
 /**
- * @author  Olivier Goffart <ogoffart @ kde.org>
+ * @author Olivier Goffart <ogoffart@kde.org>
  */
 class KOPETE_EXPORT AddAccountWizard : public KAssistantDialog
 {

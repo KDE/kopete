@@ -3,10 +3,10 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart @ kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -51,7 +51,7 @@ namespace Kopete { class Group; }
 /**
  * @author duncan
  * @author Martijn Klingens <klingens@kde.org>
- * @author Olivier Goffart  <ogoffart @ kde.org>
+ * @author Olivier Goffart  <ogoffart@kde.org>
  */
 class KOPETE_EXPORT MSNProtocol : public Kopete::Protocol
 {

@@ -1,7 +1,8 @@
 /*
     historylogger.cpp
 
-    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@kde.org>
+
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -32,7 +33,7 @@ class QTimer;
  * One hinstance of this class is opened for every Kopete::ChatSession,
  * or for the history dialog
  *
- * @author Olivier Goffart
+ * @author Olivier Goffart <ogoffart@kde.org>
  */
 class HistoryLogger : public QObject
 {

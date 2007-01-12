@@ -4,9 +4,9 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
-    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+    Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -57,7 +57,7 @@ typedef QList<Message> MessageList;
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Daniel Stone           <dstone@kde.org>
  * @author Martijn Klingens       <klingens@kde.org>
- * @author Olivier Goffart        <ogoffart @ kde.org>
+ * @author Olivier Goffart        <ogoffart@kde.org>
  * @author Jason Keirstead        <jason@keirstead.org>
  *
  * The Kopete::ChatSession manages a single chat.

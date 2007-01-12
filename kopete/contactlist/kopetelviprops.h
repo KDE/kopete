@@ -3,7 +3,8 @@
 
     Kopete Contactlist Properties GUI for Groups and MetaContacts
 
-    Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
+    Copyright (c) 2002-2003 by Stefan Gehn            <metz@gehn.net>
+
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************

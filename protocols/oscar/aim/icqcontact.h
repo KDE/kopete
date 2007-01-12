@@ -1,10 +1,11 @@
 /*
   icqcontact.h  -  ICQ Contact
 
-  Copyright (c) 2003 by Stefan Gehn  <metz AT gehn.net>
-  Copyright (c) 2003 by Olivier Goffart
-  Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
+  Copyright (c) 2003 by Stefan Gehn  <metz@gehn.net>
+  Copyright (c) 2003 by Olivier Goffart <ogoffart@kde.org>
+  Copyright (c) 2004 by Richard Smith <kde@metafoo.co.uk>
   Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
+
   Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************

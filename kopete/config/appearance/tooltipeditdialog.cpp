@@ -1,7 +1,8 @@
 /*
     tooltipeditdialog.cpp  -  Kopete Tooltip Editor
 
-    Copyright (c) 2004 by Stefan Gehn <metz AT gehn.net>
+    Copyright (c) 2004 by Stefan Gehn <metz@gehn.net>
+
     Kopete    (c) 2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
