@@ -23,6 +23,7 @@
 #include <qvalidator.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <kactioncollection.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
@@ -72,14 +73,15 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 						SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
 
 	// Set up the Invite menu
-	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "gwInvite" );
+	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
+	actionCollection()->addAction( "gwInvite", m_actionInvite );
 	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
-	m_secure = new KAction( KIcon( "encrypted" ), i18n( "Security Status" ), 0, "gwSecureChat" );
+	m_secure = new KAction( KIcon( "encrypted" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
-	m_logging = new KAction( KIcon( "logchat" ), i18n( "Archiving Status" ), 0, "gwLoggingChat" );
+	m_logging = new KAction( KIcon( "logchat" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ),  SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
@@ -311,13 +313,14 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 		if( !members().contains( contact ) && contact->isOnline() && contact != myself() )
 		{
 			KAction *a = new Kopete::UI::ContactAction( contact,
-			                                            m_actionInvite->parentCollection() );
+			                                            actionCollection() );
 			m_actionInvite->addAction( a );
 			m_inviteActions.append( a ) ;
 		}
 	}
 	// Invite someone off-list
-	KAction *b = new KAction( i18n("&Other..."), m_actionInvite->parentCollection(), "actionOther" );
+	KAction *b = new KAction( i18n("&Other..."), this );
+	actionCollection()->addAction( "actionOther", b );
 	QObject::connect( b, SIGNAL( triggered( bool ) ),
 	                  this, SLOT( slotInviteOtherContact() ) );
 	m_actionInvite->addAction( b );

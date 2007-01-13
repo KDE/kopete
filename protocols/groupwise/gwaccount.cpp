@@ -80,13 +80,13 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 
 //		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
 //		QObject::connect( m_actionBlock, SIGNAL( triggered( bool ) ), SLOT( slotBlock() ) );
-	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), 0, "actionSetAutoReply" );
+	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), 0 );
 	QObject::connect( m_actionAutoReply, SIGNAL( triggered( bool ) ),
 			SLOT( slotSetAutoReply() ) );
-	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), 0, "actionJoinChatRoom");
+	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), 0 );
 	QObject::connect( m_actionJoinChatRoom, SIGNAL( triggered( bool ) ),
 										 SLOT( slotJoinChatRoom() ) );
-	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), 0, "actionPrivacy" );
+	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), 0 );
 	QObject::connect( m_actionManagePrivacy, SIGNAL( triggered( bool ) ),
 										 SLOT( slotPrivacy() ) );
 			

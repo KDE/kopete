@@ -165,7 +165,7 @@ QList<KAction*> *GroupWiseContact::customContextMenuActions()
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !m_actionBlock )
 	{
-		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
+		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0 );
 		QObject::connect( m_actionBlock, SIGNAL( triggered( bool ) ), SLOT( slotBlock() ) );
 	}
 	else
