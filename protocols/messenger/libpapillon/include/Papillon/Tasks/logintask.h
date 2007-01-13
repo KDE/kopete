@@ -24,7 +24,8 @@ namespace Papillon
 class Transfer;
 class TweenerHandler;
 /**
- * Login on Windows Live Messenger.
+ * @class LoginTask logintask.h <Papillon/Tasks/LoginTask>
+ * @brief Login on Windows Live Messenger.
  *
  * First you create the Login Task after you set login information in the Client.
  * @code

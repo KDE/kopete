@@ -34,6 +34,7 @@ class UserContact;
 
 // TODO APIDOX, add a reference about connector model.
 /**
+ * @class Client client.h <Papillon/Client>
  * @brief Client to Windows Live Messenger service.
  *
  * This is the main interface between the client application (ex: Kopete, telepathy-papillon, etc.) and
@@ -165,7 +166,7 @@ signals:
 	/**
 	 * Emitted when a contact has updated his status message.
 	 * @param contactId Contact ID
-	 * @param statusMessage Updated status message.
+	 * @param newStatusMessage Updated status message.
 	 */
 	void contactStatusMessageChanged(const QString &contactId, const Papillon::StatusMessage &newStatusMessage);
 

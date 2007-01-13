@@ -1,0 +1,99 @@
+/**
+\page libpapillon_todo TODO List
+
+Last Update: 13 January 2007 by Michaël Larouche <larouche@kde.org>
+
+\section todo_chart Chart for items
+<ul>
+<li>\b - : Item need to be started</li>
+<li>\b # : Item is in progress</li>
+<li>\b + : Item is done</li>
+<li>\b ! : Item was postoned to another milestone</li>
+</ul>
+
+\section todo_milestone0 Milestone 0: Login and basic architecture
+Done.
+
+\section todo_milestone1 Milestone 1: Contact list and presence
+<ul>
+<li>\b - Create MimeHeader class</li>
+<li>\b # Parse initial Hotmail message</li>
+<li>\b + Do Papillon::ChallengeTask</li>
+<li>\b # Contact list
+<ul>
+	<li>\b # Retrieve contact list and address book using SOAP bindings</li>
+	<li>\b - Manage contact list local cache (loading, saving, syncing)</li>
+	<li>\b # Frontend/client API for Contact list</li>
+	<li>\b - Add, remove, block contacts</li>
+	<li>\b - Manage address book changes and update it on server</li>
+	<li>\b - Add, remove groups</li>
+	<li>\b - Move contacts between groups</li>
+</ul>
+</li>
+<li>\b # Presence
+<ul>
+	<li>\b # Set our own presence</li>
+	<li>\b # Set our own information (nickname, personal message, etc.)</li>
+	<li>\b # Get the initial presence of contacts</li>
+	<li>\b # Get modification of presence from others</li>
+	<li>\b # Get information change from contacts (nickname, personal message, etc..)</li>
+</ul>
+</li>
+<li>\b + Papillon/Class include style</li>
+<li>\b - Error framework that manage error code received from server</li>
+</ul>
+
+After this milestone, all(or mostly all) contactlist and presence manipulation will be in and we should be able to start the Kopete plugin.
+
+\section todo_milestone2 Milestone 2: Switchboard
+<ul>
+<li>\b - Create the Switchboard connection manager for Papillon::Client</li>
+<li>\b - Look for incoming switchboard session</li>
+<li>\b - Create new Switchboard sessions</li>
+<li>\b - Parse and create new messages</li>
+<li>\b - Send typing information (Special type of message)</li>
+<li>\b - Invite contacts</li>
+<li>\b - Offline messages retrival using SOAP (yet another "fun" Web service)</li>
+<li>\b - Sending of Offline messages</li>
+<li>\b - Sending and received Nudges (Special type of message)</li>
+</ul>
+
+After this milestone, basic switchboard operations will be in (expect P2P part in fact), and Kopete plugin will be usuable. (Maybe a first standalone release of libpapillon)
+
+\section todo_milestone3 Milestone 3: Peer to Peer
+<ul>
+<li>\b - Design P2P framework</li>
+<li>\b - Design MSN object (and push it with presence)</li>
+<li>\b - Download and upload Display picture</li>
+<li>\b - Download and upload Custom emoticons</li>
+<li>\b - File transfer using Switchboard</li>
+<li>\b - Ability to register external P2P context using context GUID (suggestion by Diederick from KMess)</li>
+</ul>
+
+After this milestone, basic P2P framework will be complete. Futher P2P features will come after.
+
+\section todo_milestone4 Milestone4: Webcam, Direct Transfers, HTTP and Proxy
+<ul>
+<li>\b - Implement Webcam P2P context</li>
+<li>\b - Use reflection server for NAT</li>
+<li>\b - Implement direct transfers for all P2P context</li>
+<li>\b - Implement proxy support</li>
+<li>\b - Implement MSNP over HTTP</li>
+</ul>
+
+After this milestone, libpapillon will be equal to old Kopete MSN implementation(and more of course).
+
+\section todo_maybefeatures Features that maybe would be implemented
+<ul>
+<li>Shared folders</li>
+<li>Voice clips (need documentation)</li>
+<li>Voice conversation (need documentation)</li>
+</ul>
+
+\section todo_neverfeatures Features that would be never implemented
+<ul>
+<li>Winks (annoying, use CAB and Flash)</li>
+<li>Dynamic display pictures (use flash)</li>
+<li>Background sharing</li>
+</ul>
+*/

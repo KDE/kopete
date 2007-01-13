@@ -23,6 +23,7 @@ namespace Papillon
 
 class StatusMessage;
 /**
+ * @class NotifyStatusMessageTask notifystatusmessagetask.h <Papillon/Tasks/NotifyStatusMessageTask>
  * @brief Notify when a contact changes his status message.
  * This task watches for contact status message changes and 
  * emit ontactStatusMessageChanged() signal when it receive 

@@ -26,6 +26,7 @@ class Transfer;
 class Task;
 class Client;
 /**
+ * @class Connection connection.h <Papillon/Connection>
  * @brief Connection encapsulate a connection to a Windows Live Messenger service.
  *
  * Contains the transaction ID reference count, the root Task. Dispatch also the transfers through the task.
@@ -39,6 +40,7 @@ public:
 	/**
 	 * Create a new connection
 	 * @param stream the ClientStream (socket and core protocol encapsulation)
+	 * @param parent QObject parent
 	 */
 	Connection(ClientStream *stream, QObject *parent = 0);
 	/**
@@ -88,7 +90,7 @@ signals:
 public slots:
 	/**
 	 * Connect to the given service.
-	 * @param serer Hostname or IP address of the service
+	 * @param server Hostname or IP address of the service
 	 * @param port TCP port of the service.
 	 */
 	void connectToServer(const QString &server, quint16 port);

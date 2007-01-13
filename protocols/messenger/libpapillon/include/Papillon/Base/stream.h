@@ -28,6 +28,9 @@ namespace Papillon
 
 class Transfer;
 
+/**
+ * @class Stream stream.h <Papillon/Base/Stream>
+ */
 class PAPILLON_EXPORT Stream : public QObject
 {
 	Q_OBJECT

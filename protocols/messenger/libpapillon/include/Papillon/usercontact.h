@@ -23,6 +23,7 @@ namespace Papillon
 class Client;
 class StatusMessage;
 /**
+ * @class UserContact usercontact.h <Papillon/UserContact>
  * @brief Manage the user contact information.
  *
  * UserContact represent the self contact. It is used to set the
@@ -85,9 +86,9 @@ public slots:
 
 	/**
 	 * @brief Set a new personal status message.
-	 * @param statusmessage New personal status message
+	 * @param statusMessage New personal status message
 	 */
-	void setPersonalStatusMessage(const Papillon::StatusMessage &statusMesage);
+	void setPersonalStatusMessage(const Papillon::StatusMessage &statusMessage);
 	
 	/**
 	 * @brief Set the personal information to be updated on server.

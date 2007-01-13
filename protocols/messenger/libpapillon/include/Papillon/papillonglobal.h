@@ -26,6 +26,11 @@ namespace Papillon
 namespace Global
 {
 /**
+ * @file
+ * @brief Global methods used inside libpapillon
+ */
+
+/**
  * @brief Convert a numeric presence to string.
  * Handy function to get the string represention of Papillon::OnlineStatus.
  * @param presence Presence enum value to convert to string

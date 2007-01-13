@@ -24,9 +24,10 @@ namespace Papillon
 {
 
 /**
+ * @class MimeHeader mimeheader.h <Papillon/MimeHeader>
  * @brief Create/Manage a MIME header.
  * This class build a key-value associate from a MIME header.
- * Use MimeHeader::parseMimeHeader static method to get a MimeHeader instance from raw data.
+ * Use MimeHeader::parseMimeHeader() static method to get a MimeHeader instance from raw data.
  * You must set MIME-Version yourself.
  * It doesn't support the full MIME header, only the things required for Windows Live Messenger.
  *

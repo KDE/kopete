@@ -25,6 +25,7 @@ class Connector;
 class Transfer;
 
 /**
+ * @class ClientStream papillonclientstream.h <Papillon/ClientStream>
  * @brief A client stream to a Messenger service.
  *
  * @author Michaël Larouche <larouche@kde.org>

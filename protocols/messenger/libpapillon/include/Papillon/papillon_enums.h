@@ -20,6 +20,7 @@
 namespace Papillon
 {
 	/**
+	 * @struct ContactListEnums papillon_enums.h <Papillon/Enums>
 	 * @brief Enums related to Contact list
 	 */
 	struct ContactListEnums
@@ -40,6 +41,7 @@ namespace Papillon
 	Q_DECLARE_OPERATORS_FOR_FLAGS( ContactListEnums::ListFlags )
 
 	/**
+	 * @struct ClientInfo papillon_enums.h <Papillon/Enums>
 	 * @brief Enums related to ClientInfo
 	 */
 	struct ClientInfo
@@ -88,6 +90,7 @@ namespace Papillon
 	Q_DECLARE_OPERATORS_FOR_FLAGS( Papillon::ClientInfo::Features )
 
 	/**
+	 * @struct Presence papillon_enums.h <Papillon/Enums>
 	 * @brief Enums related to online presence.
 	 */
 	struct Presence
@@ -108,6 +111,9 @@ namespace Papillon
 			OutToLunch ///<Correspond to LUN
 		};
 
+		/**
+		 * Types of media application
+		 */
 		enum MediaType
 		{
 			MediaNone = 0, ///<Internal default

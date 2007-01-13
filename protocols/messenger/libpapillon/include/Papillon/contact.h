@@ -27,6 +27,7 @@ namespace Papillon
 {
 
 /**
+ * @class Contact contact.h <Papillon/Contact>
  * @brief A Contact and all its information
  * Hold client feature, presence for a single contact.
  * This is managed by ContactList.

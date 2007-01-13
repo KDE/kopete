@@ -28,11 +28,12 @@ namespace Papillon
 {
 
 /**
+ * @class Transfer transfer.h <Papillon/Transfer>
  * @brief A transfer represent a information from/to the protocol. This can be a command or a message.
  *
  * A transfer have always a command and arguments. It can have a transaction ID, a payload length, and the payload data.
  *
- * @author Michaël Larouche
+ * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT Transfer
 {

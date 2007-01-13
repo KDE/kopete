@@ -22,7 +22,7 @@
 
 // CS_NAMESPACE_BEGIN
 
-//! \class ByteStream bytestream.h
+//! \class ByteStream bytestream.h <Papillon/Base/ByteStream>
 //! \brief Base class for "bytestreams"
 //! \author Justin Karneges
 //!

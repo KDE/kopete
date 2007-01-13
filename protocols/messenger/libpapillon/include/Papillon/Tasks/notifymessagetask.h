@@ -23,6 +23,7 @@ namespace Papillon
 
 class MimeHeader;
 /**
+ * @class NotifyMessageTask notifymessagetask.h <Papillon/Tasks/NotifyMessageTask>
  * @brief Notify about new messages on Notification server.
  *
  * NotifyMessageTask read the MSG command on the notification server connection.
@@ -45,8 +46,7 @@ public:
 signals:
 	/**
 	 * Emitted when it receive initial profile message.
-	 * @param authTicket Auth ticket.
-	 * TODO: Use MimeHeader class for the signal
+	 * @param profileMessage Initial profile message as MimeHeader
 	 */
 	void profileMessage(const Papillon::MimeHeader &profileMessage);
 

@@ -23,6 +23,7 @@ namespace Papillon
 
 class StatusMessage;
 /**
+ * @class SetStatusMessageTask setstatusmessagetask.h <Papillon/Tasks/SetStatusMessageTask>
  * @brief Set personal status message on server.
  *
  * You should listen to finished() signal to confirm that the status message was set on server.

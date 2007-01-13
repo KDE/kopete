@@ -24,6 +24,7 @@ namespace Papillon
 class SecureStream;
 class HttpTransfer;
 /**
+ * @class HttpConnection httpconnection.h <Papillon/Http/Connection>
  * @brief HTTP connection over SSL
  * @author Michaël Larouche <larouche@kde.org>
  */

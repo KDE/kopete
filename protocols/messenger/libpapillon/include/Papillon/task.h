@@ -32,6 +32,7 @@ namespace Papillon
 class Transfer;
 class Connection;
 /**
+ * @class Task task.h <Papillon/Task>
  * @brief Task is the base class for all Task accros Papillon.
  *
  * Derived class must implement these following methods: <br>

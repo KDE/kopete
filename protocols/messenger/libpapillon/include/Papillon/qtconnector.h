@@ -23,6 +23,7 @@ namespace Papillon
 {
 
 /**
+ * @class QtConnector qtconnector.h <Papillon/QtConnector>
  * Connector using QtNetwork sockets classes.
  *
  * @author Michaël Larouche <larouche@kde.org>

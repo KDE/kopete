@@ -32,6 +32,7 @@ namespace Papillon
 class HttpTransfer;
 
 /**
+ * @class HttpCoreProtocol httpcoreprotocol.h <Papillon/Http/CoreProtocol>
  * @brief Translate raw data into HttpTransfer
  * The sole purpose of this class is to parse in a low-level way the HTTP protocol.
  * it create a HttpTransfer that will be useable afterwards.

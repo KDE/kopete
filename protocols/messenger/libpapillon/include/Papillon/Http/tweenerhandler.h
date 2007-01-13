@@ -24,6 +24,7 @@ namespace Papillon
 
 class SecureStream;
 /**
+ * @class TweenerHandler tweenerhandler.h <Papillon/Http/TweenerHandler>
  * @brief Negociation of the Tweener ticket with Passport login server.
  *
  * Using TweenerHandler:
@@ -62,7 +63,7 @@ public:
 
 	/**
 	 * Build a new TweenerHandler
-	 * @param steam SecureStream instance.
+	 * @param stream SecureStream instance.
 	 */
 	TweenerHandler(SecureStream *stream);
 	/**

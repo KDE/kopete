@@ -24,6 +24,7 @@ namespace Papillon
 {
 
 /**
+ * @class NotifyPresenceTask notifypresencetask.h <Papillon/Tasks/NotifyPresenceTask>
  * @brief Notify presence changes of contacts.
  * This task watches for presence change on Notification server and emit
  * contactStatusChanged() signal when it receive a presence change.

@@ -21,6 +21,7 @@
 namespace Papillon {
 
 /**
+ * @class QtByteStream qtbytestream.h <Papillon/QtByteStream>
  * ByteStream for QTcpSocket.
  * 
  * @author Michaël Larouche

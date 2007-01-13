@@ -28,6 +28,7 @@ namespace Papillon
 {
 
 /**
+ * @class HttpTransfer httptransfer.h <Papillon/Http/Transfer>
  * @brief HttpTransfer represent a transfer between a HTTP server.
  * This is wrapper around QHttpHeader and a body.
  * Based on QHttpHeader classes.

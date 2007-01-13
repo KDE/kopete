@@ -26,6 +26,7 @@ namespace Papillon
 {
 
 /**
+ * @class StatusMessage papillonstatusmessage.h <Papillon/StatusMessage>
  * @brief Dynamic Personal Status Message for Windows Live Messenger.
  * A status message can contain a plain status message and can also
  * contain metadata about the current song played and more.

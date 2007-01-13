@@ -30,6 +30,9 @@ namespace Papillon
 
 class ByteStream;
 
+/**
+ * @class Connector connector.h <Papillon/Base/Connector>
+ */
 class PAPILLON_EXPORT Connector : public QObject
 {
 	Q_OBJECT

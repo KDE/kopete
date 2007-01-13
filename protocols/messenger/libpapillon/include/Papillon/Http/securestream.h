@@ -24,6 +24,7 @@ namespace Papillon
 class Connector;
 
 /**
+ * @class SecureStream securestream.h <Papillon/Http/SecureStream>
  * @brief Secure stream using TLS/SSL (Transport Layer Security/Secure Socket Layer)
  * This is used in Messenger context to retrieve MS Passport ticket for login, and retrieve Contact List from a Web Service.
  *

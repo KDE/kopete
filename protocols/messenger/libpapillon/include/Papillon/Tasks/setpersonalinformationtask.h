@@ -23,6 +23,7 @@ namespace Papillon
 {
 
 /**
+ * @class SetPersonalInformationTask setpersonalinformationtask.h <Papillon/Tasks/SetPersonalInformationTask>
  * @brief Set personal information for myself contact on server.
  * Personal information such as nickname(my friendly name), home phone number,
  * work phone number, mobile phone number, authorization to contact on MSN Mobile,

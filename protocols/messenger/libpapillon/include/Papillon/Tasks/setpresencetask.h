@@ -23,8 +23,9 @@ namespace Papillon
 {
 
 /**
+ * @class SetPresenceTask setpresencetask.h <Papillon/Tasks/SetPresenceTask>
  * @brief Change our own presence on Windows Live Messenger.
- * 
+ *
  * @code
  * Papillon::SetPresenceTask *presenceTask = new Papillon::SetPresenceTask(connection->rootTask());
  * presenceTask->setPresence( Papillon::Presence::Online );
@@ -67,7 +68,7 @@ public:
 	/**
 	 * @brief Check if the transfer is for us.
 	 * In this case, emit finished() signal when we receive a acknowledge of the command.
-	 * @param transger Transfer to check.
+	 * @param transfer Transfer to check.
 	 */
 	virtual bool take(Transfer *transfer);
 

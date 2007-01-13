@@ -18,7 +18,14 @@
 #include <QtGlobal>
 
 /**
+ * @file
+ * @brief Macros used by libpapillon
+ */
+
+/**
+ * @def PAPILLON_EXPORT
  * @brief PAPILLON_EXPORT macro
+ *
  * PAPILLON_EXPORT is to set the visibility of the library.
  * Use the EXPORT macro from Qt because I didn't want to test for GCC's visibility support myself or
  * test for WINDOWS too.
@@ -35,13 +42,16 @@
 
 /**
  * @brief PAPILLON_VERSION macro
+ *
  * Return a special integer which represent the current version of libpapillon.
  */
 #define PAPILLON_VERSION \
   PAPILLON_MAKE_VERSION(PAPILLON_VERSION_MAJOR,PAPILLON_VERSION_MINOR,PAPILLON_VERSION_RELEASE)
 
 /**
+ * @def PAPILLON_FUNCINFO
  * @brief PAPILLON_FUNCINFO macro
+ *
  * An indicator of where you are in a source file, to be used in
  * warnings (perhaps debug messages too).
  *
@@ -55,6 +65,7 @@
 
 /**
  * @brief PAPILLON_IS_VERSION(major,minor,revision) macro
+ *
  * Simple test for current version of libpapillon.
  */
 #define PAPILLON_IS_VERSION(a,b,c) ( PAPILLON_VERSION >= PAPILLON_MAKE_VERSION(a,b,c) )

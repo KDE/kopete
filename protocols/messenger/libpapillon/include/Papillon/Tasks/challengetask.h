@@ -24,6 +24,7 @@
 namespace Papillon
 {
 /**
+ * @class ChallengeTask challengetask.h <Papillon/Tasks/ChallengeTask>
  * @author Michaël Larouche <larouche@kde.org>
  */
 class PAPILLON_EXPORT ChallengeTask : public Papillon::Task

@@ -30,6 +30,7 @@ class Contact;
 class FetchContactListJob;
 
 /**
+ * @class ContactList contactlist.h <Papillon/ContactList>
  * @brief Manage contact list.
  *
  * @author Michaël Larouche <larouche@kde.org>

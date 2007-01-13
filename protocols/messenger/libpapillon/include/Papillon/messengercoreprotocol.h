@@ -32,6 +32,7 @@ namespace Papillon
 class Transfer;
 
 /**
+ * @class MessengerCoreProtocol messengercoreprotocol.h <Papillon/MessengerCoreProtocol>
  * @brief Translate raw data into Transfer
  * The sole purpose of this class is to parse in a low-level way the Messenger protocol.
  * it create Transfer that Task will be able to use.
