@@ -23,6 +23,8 @@
 #include <qstringlist.h>
 
 #include "gwerror.h"
+#include "libgroupwise_export.h"
+
 class Client;
 
 /**
@@ -31,7 +33,7 @@ Several client event handling processes require that a contact's details are ava
 @author SUSE AG
 */
 
-class UserDetailsManager : public QObject
+class LIBGROUPWISE_EXPORT UserDetailsManager : public QObject
 {
 Q_OBJECT
 public:

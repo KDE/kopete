@@ -22,6 +22,7 @@
 #define SEARCHCHATTASK_H
 
 #include "gwerror.h"
+#include "libgroupwise_export.h"
 
 #include "requesttask.h"
 
@@ -32,7 +33,7 @@ This Task searches for chatrooms on the server
 
 @author SUSE Linux Products GmbH
  */
-class SearchChatTask : public RequestTask
+class LIBGROUPWISE_EXPORT SearchChatTask : public RequestTask
 {
 	Q_OBJECT
 	public:

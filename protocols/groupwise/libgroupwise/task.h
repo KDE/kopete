@@ -24,12 +24,13 @@
 
 #include "gwerror.h"
 #include "gwfield.h"
+#include "libgroupwise_export.h"
 #include "transfer.h"
 
 class Client;
 class Request; 
 
-class Task : public QObject
+class LIBGROUPWISE_EXPORT Task : public QObject
 {
 	Q_OBJECT
 public:

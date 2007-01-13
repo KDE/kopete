@@ -24,6 +24,7 @@
 #include <q3valuelist.h>
 
 #include "gwerror.h"
+#include "libgroupwise_export.h"
 
 #include "task.h"
 
@@ -39,7 +40,7 @@ using namespace GroupWise;
 	The finished() signal indicates the whole procedure has completed and the sender can be queried for success as usual
 @author SUSE AG
 */
-class CreateContactTask : public Task
+class LIBGROUPWISE_EXPORT CreateContactTask : public Task
 {
 Q_OBJECT
 public:

@@ -25,6 +25,7 @@
 #include <QtCrypto>
 
 #include "gwfield.h"
+#include "libgroupwise_export.h"
 #include "stream.h"
 
 // forward defines
@@ -39,7 +40,7 @@ typedef struct NovellDN
 	QString server;
 };
 
-class ClientStream : public Stream
+class LIBGROUPWISE_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:

@@ -22,12 +22,13 @@
 #define CS_BYTESTREAM_H
 
 #include <QObject>
+#include "libgroupwise_export.h"
 class QByteArray;
 
 // CS_NAMESPACE_BEGIN
 
 // CS_EXPORT_BEGIN
-class ByteStream : public QObject
+class LIBGROUPWISE_EXPORT ByteStream : public QObject
 {
 	Q_OBJECT
 public:

@@ -21,12 +21,13 @@
 #ifndef DELETEITEMTASK_H
 #define DELETEITEMTASK_H
 
+#include "libgroupwise_export.h"
 #include "modifycontactlisttask.h"
 
 /**
 @author SUSE AG
 */
-class DeleteItemTask : public ModifyContactListTask
+class LIBGROUPWISE_EXPORT DeleteItemTask : public ModifyContactListTask
 {
 Q_OBJECT
 public:

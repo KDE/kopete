@@ -23,10 +23,11 @@
 
 #include <qhostaddress.h>
 #include <qobject.h>
+#include "libgroupwise_export.h"
 
 class ByteStream;
 
-class Connector : public QObject
+class LIBGROUPWISE_EXPORT Connector : public QObject
 {
 	Q_OBJECT
 public:

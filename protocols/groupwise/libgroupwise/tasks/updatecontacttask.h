@@ -23,6 +23,7 @@
 
 #include "gwerror.h"
 
+#include "libgroupwise_export.h"
 #include "updateitemtask.h"
 //Added by qt3to4:
 #include <Q3ValueList>
@@ -31,7 +32,7 @@
  * Renames a contact on the server
  * @author Kopete Developers
  */
-class UpdateContactTask : public UpdateItemTask
+class LIBGROUPWISE_EXPORT UpdateContactTask : public UpdateItemTask
 {
 Q_OBJECT
 public:

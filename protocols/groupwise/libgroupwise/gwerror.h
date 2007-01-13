@@ -23,7 +23,7 @@
 #include <qglobal.h>
 #include <QHash>
 #include <qstring.h>
-
+#include "libgroupwise_export.h"
 typedef quint16 NMERR_T;
 #define GROUPWISE_DEBUG_GLOBAL 14190
 #define GROUPWISE_DEBUG_LIBGW 14191
@@ -96,7 +96,7 @@ namespace GroupWise
 						 };
 	
 	// helpful structs used to pass data between the client library and the application using it
-	class ConferenceGuid : public QString 
+	class LIBGROUPWISE_EXPORT ConferenceGuid : public QString 
 	{
 	public:
 		ConferenceGuid();
@@ -104,9 +104,9 @@ namespace GroupWise
 		~ConferenceGuid();
 	};
 	
-	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 );
-	bool operator==( const QString & s, const ConferenceGuid & g );
-	bool operator==( const ConferenceGuid & g, const QString & s );
+	bool LIBGROUPWISE_EXPORT operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 );
+	bool LIBGROUPWISE_EXPORT operator==( const QString & s, const ConferenceGuid & g );
+	bool LIBGROUPWISE_EXPORT operator==( const ConferenceGuid & g, const QString & s );
 	
 	struct ConferenceEvent 
 	{

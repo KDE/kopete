@@ -27,6 +27,7 @@
 #include <Q3ValueList>
 #include "gwclientstream.h"
 #include "gwerror.h"
+#include "libgroupwise_export.h"
 #include "rtf2html.h"
 #include "transfer.h"
 
@@ -38,7 +39,7 @@ class Task;
 
 using namespace GroupWise;
 
-class Client : public QObject
+class LIBGROUPWISE_EXPORT Client : public QObject
 {
 Q_OBJECT
 

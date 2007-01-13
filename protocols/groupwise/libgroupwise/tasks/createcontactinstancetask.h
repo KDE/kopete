@@ -21,6 +21,7 @@
 #ifndef CreateContactInstanceTask_H
 #define CreateContactInstanceTask_H
 
+#include "libgroupwise_export.h"
 #include "needfoldertask.h"
 
 /**
@@ -28,7 +29,7 @@ Creates a contact on the server.  The response to this action is handled by its 
 
 @author SUSE AG
 */
-class CreateContactInstanceTask : public NeedFolderTask
+class LIBGROUPWISE_EXPORT CreateContactInstanceTask : public NeedFolderTask
 {
 Q_OBJECT
 public:

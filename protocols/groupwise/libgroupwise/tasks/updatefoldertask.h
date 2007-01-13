@@ -22,13 +22,14 @@
 #define UPDATEFOLDERTASK_H
 
 #include <updateitemtask.h>
+#include "libgroupwise_export.h"
 
 /**
 Renames a folder on the server
 
 @author Kopete Developers
 */
-class UpdateFolderTask : public UpdateItemTask
+class LIBGROUPWISE_EXPORT UpdateFolderTask : public UpdateItemTask
 {
 Q_OBJECT
 public:

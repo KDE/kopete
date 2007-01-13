@@ -21,6 +21,7 @@
 #ifndef SEARCHUSERTASK_H
 #define SEARCHUSERTASK_H
 
+#include "libgroupwise_export.h"
 #include "requesttask.h"
 
 class QTimer;
@@ -30,7 +31,7 @@ This Task performs user searching on the server
 
 @author SUSE AG
 */
-class SearchUserTask : public RequestTask
+class LIBGROUPWISE_EXPORT SearchUserTask : public RequestTask
 {
 Q_OBJECT
 public:

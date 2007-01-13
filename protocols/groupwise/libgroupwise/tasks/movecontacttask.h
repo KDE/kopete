@@ -21,6 +21,7 @@
 #ifndef MOVECONTACTTASK_H
 #define MOVECONTACTTASK_H
 
+#include "libgroupwise_export.h"
 #include "needfoldertask.h"
 
 /**
@@ -28,7 +29,7 @@ Moves a contact between folders on the server
 
 @author SUSE AG
 */
-class MoveContactTask : public NeedFolderTask
+class LIBGROUPWISE_EXPORT MoveContactTask : public NeedFolderTask
 {
 Q_OBJECT
 public:

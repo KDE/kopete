@@ -21,11 +21,12 @@
 #define GWQCATLSHANDLER_H
 
 //#include <qtimer.h>
+#include "libgroupwise_export.h"
 #include "tlshandler.h"
 
 class QCA::TLS;
 
-class QCATLSHandler : public TLSHandler
+class LIBGROUPWISE_EXPORT QCATLSHandler : public TLSHandler
 {
 	Q_OBJECT
 public:

@@ -21,6 +21,7 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
+#include "libgroupwise_export.h"
 
 class Client;
 
@@ -29,7 +30,7 @@ Keeps a record of the server side privacy allow and deny lists, default policy a
 
 @author SUSE AG
 */
-class PrivacyManager : public QObject
+class LIBGROUPWISE_EXPORT PrivacyManager : public QObject
 {
 Q_OBJECT
 public:

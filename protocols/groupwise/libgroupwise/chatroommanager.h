@@ -22,6 +22,7 @@
 #include <qobject.h>
 
 #include "gwchatrooms.h"
+#include "libgroupwise_export.h"
 
 class Client;
 
@@ -29,7 +30,7 @@ class Client;
  * Keeps a record of the server side chatrooms
  * @author SUSE Linux Products GmbH
  */
-class ChatroomManager : public QObject
+class LIBGROUPWISE_EXPORT ChatroomManager : public QObject
 {
 	Q_OBJECT
 	public:
