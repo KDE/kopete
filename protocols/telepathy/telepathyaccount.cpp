@@ -90,7 +90,7 @@ KActionMenu *TelepathyAccount::actionMenu()
 	KActionMenu *actionMenu = Kopete::Account::actionMenu();
 
 	// FIXME: Maybe we should cache the action.
-	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0, "changeAliasAction");
+	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0 );
 	changeAliasAction->setEnabled( isConnected() );
 	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
 
