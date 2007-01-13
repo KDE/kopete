@@ -1,10 +1,10 @@
 /*
     kopeteonlinestatusmanager.cpp
 
-    Copyright (c) 2004 by Olivier Goffart  <ogoffart @ tiscalinet . be>
+    Copyright (c) 2004 by Olivier Goffart  <ogoffart@kde.fr>
     Copyright (c) 2003 by Will Stephenson <lists@stevello.free-online.co.uk>
 
-    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

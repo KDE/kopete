@@ -1,9 +1,11 @@
 /*
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
-    Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
+    Copyright (c) 2002-2003 by Stefan Gehn            <metz@gehn.net>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
-    Copyright (c) 2005      by Engin AYDOGAN	      <engin @ bzzzt.biz>
+    Copyright (c) 2005      by Engin AYDOGAN	      <engin@bzzzt.biz>
+
+	Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

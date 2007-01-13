@@ -1,7 +1,7 @@
 /*
     kopeteaccount.cpp - Kopete Account
 
-    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>

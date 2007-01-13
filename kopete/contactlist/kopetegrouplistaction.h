@@ -1,8 +1,7 @@
 /*
     kopetegrouplistaction.h
 
-    Copyright (c) 2005   Olivier Goffart <ogoffart@ kde.org>
-
+    Copyright (c) 2005   Olivier Goffart <ogoffart@kde.org>
 
     Kopete    (c) 2005 by the Kopete developers  <kopete-devel@kde.org>
 

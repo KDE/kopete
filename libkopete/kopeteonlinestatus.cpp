@@ -1,12 +1,12 @@
 /*
     kopeteonlinestatus.cpp - Kopete Online Status
 
-    Copyright (c) 2003 by Martijn Klingens <klingens@kde.org>
-    Copyright (c) 2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2003 by Will Stephenson <lists@stevello.free-online.co.uk>
-    Copyright (c) 2004 by Olivier Goffart <ogoffart @ tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens <klingens@kde.org>
+    Copyright (c) 2003      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2003      by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004      by Olivier Goffart <ogoffart@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

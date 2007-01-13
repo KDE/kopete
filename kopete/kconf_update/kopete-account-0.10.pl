@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# Olivier Goffart  <ogoffart @ tiscalinet.be>
+# Olivier Goffart <ogoffart@tiscalinet.be>
 # License: GPL
 
 use strict;

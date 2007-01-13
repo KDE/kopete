@@ -3,7 +3,7 @@
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2004 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>

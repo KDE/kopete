@@ -1,6 +1,7 @@
 /*
-    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@ kde.org>
-    Kopete    (c) 2002-2005 by The Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@kde.org>
+
+	Kopete    (c) 2002-2007 by The Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

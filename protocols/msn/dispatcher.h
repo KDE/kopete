@@ -1,8 +1,10 @@
 /*
     dispatcher.h - msn p2p protocol
 
-    Copyright (c) 2003-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Copyright (c) 2003-2005 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
+
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

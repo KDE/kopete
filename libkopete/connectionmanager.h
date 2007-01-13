@@ -3,6 +3,8 @@
 
     Copyright (c) 2004      by Will Stephenson <lists@stevello.free-online.co.uk>
 
+    Kopete    (c) 2004-2007 by the Kopete developers  <kopete-devel@kde.org>
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *

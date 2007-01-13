@@ -2,9 +2,9 @@
     kopeteaccountmanager.h - Kopete Account Manager
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
