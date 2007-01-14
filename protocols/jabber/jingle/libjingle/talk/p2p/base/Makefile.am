@@ -1,3 +1,6 @@
+## Does not compile with final
+KDE_OPTIONS = nofinal
+
 libcricketp2pbase_la_SOURCES = stun.cc \
 			       port.cc \
 			       udpport.cc \

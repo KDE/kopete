@@ -1,3 +1,6 @@
+## Does not compile with final
+KDE_OPTIONS = nofinal
+
 libcricketxmpp_la_SOURCES = constants.cc \
 			    jid.cc \
 			    saslmechanism.cc \

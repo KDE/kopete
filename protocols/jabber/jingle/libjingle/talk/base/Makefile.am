@@ -1,3 +1,6 @@
+## Does not compile with final
+KDE_OPTIONS = nofinal
+
 libcricketbase_la_SOURCES = socketaddress.cc \
                             jtime.cc \
                             asyncudpsocket.cc \
