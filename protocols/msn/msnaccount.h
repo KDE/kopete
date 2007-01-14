@@ -93,8 +93,9 @@ public:
 	 * reset the <msnobj>.  This method should be called if the displayimage has changed
 	 * If we are actualy connected, it will imediatly update the <msgobj> on the server, exepted
 	 * if @param silent is set to true
+	 * @param force Force the application of MSN picture
 	 */
-	void resetPictureObject(bool silent=false);
+	void resetPictureObject(bool silent=false, bool force=false);
 
 	//BEGIN Http
 

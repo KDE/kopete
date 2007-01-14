@@ -1275,7 +1275,7 @@ void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &
 		{
 			m_pictureFilename = value.toString();
 			kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
-			resetPictureObject(false);
+			resetPictureObject(false, true);
 		}
 	}
 }
@@ -1429,11 +1429,11 @@ QString MSNAccount::pictureObject()
 	return m_pictureObj;
 }
 
-void MSNAccount::resetPictureObject(bool silent)
+void MSNAccount::resetPictureObject(bool silent, bool force)
 {
 	QString old=m_pictureObj;
 
-	if(!configGroup()->readBoolEntry("exportCustomPicture"))
+	if(!configGroup()->readBoolEntry("exportCustomPicture") && !force)
 	{
 		m_pictureObj="";
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
