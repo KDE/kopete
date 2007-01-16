@@ -10,9 +10,11 @@ X-KDE-ParentApp=kopete_cryptography
 X-KDE-ParentComponents=kopete_cryptography
 
 Name=Cryptography
+Name[el]=Κρυπτογραφία
 Name[fr]=Cryptographie
 Name[x-test]=xxCryptographyxx
 Comment=Encrypts messages using PGP
+Comment[el]=Κρυπτογραφεί τα μηνύματα χρησιμοποιώντας το PGP
 Comment[fr]=Crypter les messages avec PGP
 Comment[x-test]=xxEncrypts messages using PGPxx
 

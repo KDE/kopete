@@ -2,9 +2,11 @@
 Encoding=UTF-8
 Type=Service
 Name=Bookmarks
+Name[el]=Σελιδοδείκτες
 Name[fr]=Signets
 Name[x-test]=xxBookmarksxx
 Comment=Automatically bookmark links in incoming messages
+Comment[el]=Αυτόματη τοποθέτηση σελιδοδεικτών στα εισερχόμενα μηνύματα
 Comment[fr]=Ajouter automatiquement un signet pour les liens présents dans les messages rentrants
 Comment[x-test]=xxAutomatically bookmark links in incoming messagesxx
 Icon=konqueror

@@ -10,5 +10,6 @@ X-KDE-ParentApp=kopete_latex
 X-KDE-ParentComponents=kopete_latex
 
 Name=Highlight
+Name[el]=Τονισμός
 Name[fr]=Surlignement
 Name[x-test]=xxHighlightxx

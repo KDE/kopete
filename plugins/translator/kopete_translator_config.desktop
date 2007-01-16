@@ -10,9 +10,11 @@ X-KDE-ParentApp=kopete_translator
 X-KDE-ParentComponents=kopete_translator
 
 Name=Translator
+Name[el]=Μεταφραστής
 Name[fr]=Traducteur
 Name[x-test]=xxTranslatorxx
 Comment=Translates messages from your native language to another language
+Comment[el]=Μεταφράζει μηνύματα από τη μητρική σας γλώσσα σε μια άλλη
 Comment[fr]=Traduit les messages de votre langue natale en une autre langue
 Comment[x-test]=xxTranslates messages from your native language to another languagexx
 

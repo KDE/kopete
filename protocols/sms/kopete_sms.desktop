@@ -18,5 +18,6 @@ X-KDE-PluginInfo-EnabledByDefault=false
 Name=SMS
 Name[x-test]=xxSMSxx
 Comment=Protocol to send SMS messages
+Comment[el]=Πρωτόκολλο για αποστολή μηνυμάτων SMS
 Comment[fr]=Protocole pour envoyer des SMS
 Comment[x-test]=xxProtocol to send SMS messagesxx

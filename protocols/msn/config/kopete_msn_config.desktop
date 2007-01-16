@@ -11,9 +11,11 @@ X-KDE-ParentApp=kopete_msn
 X-KDE-ParentComponents=kopete_msn
 
 Name=MSN Plugin
+Name[el]=Πρόσθετο MSN
 Name[fr]=Module MSN
 Name[x-test]=xxMSN Pluginxx
 Comment=Microsoft Network Protocol
+Comment[el]=Πρωτόκολλο Microsoft Network
 Comment[fr]=Protocole réseau Microsoft
 Comment[x-test]=xxMicrosoft Network Protocolxx
 

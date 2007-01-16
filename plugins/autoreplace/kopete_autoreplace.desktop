@@ -15,9 +15,11 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Auto Replace
+Name[el]=Αυτόματη αντικατάσταση
 Name[fr]=Remplacement automatique
 Name[x-test]=xxAuto Replacexx
 Comment=Auto replaces some text you can choose
+Comment[el]=Αντικαθιστά αυτόματα κάποιο κείμενο που επιλέγετε
 Comment[fr]=Remplace automatiquement du texte que vous pouvez choisir
 Comment[x-test]=xxAuto replaces some text you can choosexx
 
