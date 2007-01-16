@@ -57,7 +57,7 @@ void ReceiveFileTask::onGo()
 			return;
 		}
 		m_transferJob = KIO::get( m_remoteUrl, false, false );
-		QObject::connect( m_transferJob, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );
+		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		delete t;
 		break;

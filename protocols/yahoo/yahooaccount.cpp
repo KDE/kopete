@@ -673,7 +673,7 @@ void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
 		url.fileName(), file.size(), to->userId(), Kopete::FileTransferInfo::Outgoing );
 	m_session->sendFile( transfer->info().transferId(), to->userId(), QString(), url );
 
-	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
+	QObject::connect( transfer, SIGNAL(result( KJob * )), this, SLOT(slotFileTransferResult( KJob * )) );
 
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
 }
@@ -1405,7 +1405,7 @@ void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QSt
 
 	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
-	QObject::connect( transfer, SIGNAL(result( KIO::Job * )), this, SLOT(slotFileTransferResult( KIO::Job * )) );
+	QObject::connect( transfer, SIGNAL(result( KJob * )), this, SLOT(slotFileTransferResult( KJob * )) );
 
 	if( m_pendingFileTransfers.empty() )
 	{
@@ -1465,7 +1465,7 @@ void YahooAccount::slotFileTransferError( unsigned int transferId, int error, co
 	m_fileTransfers.remove( transferId );
 }
 
-void YahooAccount::slotFileTransferResult( KIO::Job *job )
+void YahooAccount::slotFileTransferResult( KJob *job )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	const Kopete::Transfer *t = dynamic_cast< const Kopete::Transfer * >( job );

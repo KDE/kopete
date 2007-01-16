@@ -56,6 +56,7 @@ class FileTransferInfo;
 }
 class Client;
 class YABEntry;
+class KJob;
 namespace KIO{
 	class Job;
 }
@@ -238,7 +239,7 @@ protected slots:
 	void slotFileTransferComplete( unsigned int id );
 	void slotFileTransferError( unsigned int id, int error, const QString &desc );
 	void slotFileTransferBytesProcessed( unsigned int id, unsigned int bytes );
-	void slotFileTransferResult( KIO::Job * );
+	void slotFileTransferResult( KJob * );
 	void slotError( int level );
 
 private slots:

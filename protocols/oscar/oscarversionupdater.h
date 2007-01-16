@@ -21,6 +21,8 @@
 
 #include <oscartypes.h>
 
+class KJob;
+
 namespace KIO
 {
 class Job;
@@ -85,7 +87,7 @@ public:
 
 private slots:
 	void slotTransferData( KIO::Job *job, const QByteArray &data );
-	void slotTransferResult( KIO::Job *job );
+	void slotTransferResult( KJob *job );
 	
 private:
 	void parseDocument( QDomDocument& doc );

@@ -71,8 +71,8 @@ bool OscarVersionUpdater::update( unsigned int stamp )
 		mTransferJob = KIO::get ( url );
 		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download version info from server."<< endl;
 		
-		connect ( mTransferJob, SIGNAL ( result ( KIO::Job* ) ),
-		          this, SLOT ( slotTransferResult ( KIO::Job* ) ) );
+		connect ( mTransferJob, SIGNAL ( result ( KJob* ) ),
+		          this, SLOT ( slotTransferResult ( KJob* ) ) );
 		connect ( mTransferJob, SIGNAL ( data ( KIO::Job*, const QByteArray& ) ),
 		          this, SLOT ( slotTransferData ( KIO::Job*, const QByteArray& ) ) );
 	}
@@ -153,7 +153,7 @@ void OscarVersionUpdater::slotTransferData ( KIO::Job */*job*/, const QByteArray
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Data size " << mVersionData.size() << endl;
 }
 
-void OscarVersionUpdater::slotTransferResult ( KIO::Job *job )
+void OscarVersionUpdater::slotTransferResult ( KJob *job )
 {
 	bool bUpdate = false;
 	if ( job->error() || mTransferJob->isErrorPage() )

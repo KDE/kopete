@@ -44,7 +44,7 @@ private slots:
 	void transferAccepted(Kopete::Transfer *kt, const QString&file);
 	void transferRefused(const Kopete::FileTransferInfo &info);
 
-	void kioresult(KIO::Job *job);
+	void kioresult(KJob *job);
 
 private:
 	IRCTransferHandler();
