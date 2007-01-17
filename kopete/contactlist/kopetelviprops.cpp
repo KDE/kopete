@@ -204,7 +204,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( ui_mainWidget->radioPhotoKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( ui_mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const KUrl&)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated ( int )), SLOT(slotEnableAndDisableWidgets()));
 	
 

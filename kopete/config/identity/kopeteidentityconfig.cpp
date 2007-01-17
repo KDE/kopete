@@ -135,7 +135,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	connect(buttonCopyIdentity, SIGNAL(clicked()), this, SLOT(slotCopyIdentity()));
 	connect(buttonRenameIdentity, SIGNAL(clicked()), this, SLOT(slotRenameIdentity()));
 	connect(buttonRemoveIdentity, SIGNAL(clicked()), this, SLOT(slotRemoveIdentity()));
-	connect(comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotChangePhoto(const QString& )));
+	connect(comboPhotoURL, SIGNAL(urlSelected(const KUrl& )), this, SLOT(slotChangePhoto(const KUrl&)));
 	connect(buttonClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhoto()));
 
 	// Settings signal/slots
@@ -516,11 +516,11 @@ void KopeteIdentityConfig::slotChangeAddressee()
 	emit changed(true);
 }
 
-void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
+void KopeteIdentityConfig::slotChangePhoto(const KUrl &photoUrl)
 {
 	QString saveLocation;
 	
-	QImage photo(photoUrl);
+	QImage photo(photoUrl.path());
 	// use KABC photo size 100x140
 	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
 
