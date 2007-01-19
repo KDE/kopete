@@ -11,6 +11,7 @@ kde4_add_kcfg_files(kopete_privacy_LIB_SRCS privacyconfig.kcfgc )
 kde4_automoc(${kopete_privacy_LIB_SRCS})
 kde4_add_library( kopeteprivacy SHARED ${kopete_privacy_LIB_SRCS})
 target_link_libraries( kopeteprivacy ${KDE4_KDECORE_LIBS} kopete )
+set_target_properties( kopeteprivacy PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install( TARGETS kopeteprivacy DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############

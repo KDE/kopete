@@ -58,6 +58,8 @@ kde4_automoc(${libkyahoo_SRCS} )
 kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 
 target_link_libraries( kyahoo ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} )
+set_target_properties( kyahoo PROPERTIES VERSION 1.0.0 SOVERSION 1 )
+
 
 install(TARGETS kyahoo  DESTINATION ${LIB_INSTALL_DIR})
 

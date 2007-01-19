@@ -23,6 +23,7 @@ kde4_automoc(${kopetechatwindow_shared_SRCS})
 kde4_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )
 kde4_add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
 target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KDEUI_LIBS} ${KDE4_KHTML_LIBS} )
+set_target_properties(kopetechatwindow_shared PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetechatwindow_shared  DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
