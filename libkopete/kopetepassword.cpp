@@ -335,7 +335,7 @@ Kopete::Password::Password( const QString &configGroup, bool allowBlankPassword 
 	readConfig();
 }
 
-Kopete::Password::Password( Password &other )
+Kopete::Password::Password( const Password &other )
  : QObject( 0 ), d( other.d->incRef() )
 {
 }

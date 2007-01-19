@@ -22,12 +22,15 @@
 
 #include <qcheckbox.h>
 
+Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent )
+	    : QWidget( parent )//, d( new Private )
+{
+	    setupUi( this );
+}
 
-Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, const char *name, Kopete::Password *from )
+Kopete::UI::PasswordWidget::PasswordWidget( Kopete::Password *from, QWidget *parent )
 	: QWidget( parent )//, d( new Private )
 {
-	setObjectName( name );
-
 	setupUi( this );
 
 	load( from );

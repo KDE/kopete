@@ -18,7 +18,7 @@
 #define DETECTORDCOP_H
 
 #include "detector.h"
-//Added by qt3to4:
+
 #include <Q3CString>
 
 class IConnector;
@@ -28,11 +28,8 @@ class IConnector;
 */
 class DetectorDCOP : public Detector {
 
-    DetectorDCOP(const DetectorDCOP&);
-    DetectorDCOP& operator=(const DetectorDCOP&);
-
 public:
-    DetectorDCOP(IConnector * connector);
+    explicit DetectorDCOP(IConnector * connector);
     virtual ~DetectorDCOP();
 
 protected:
@@ -48,6 +45,9 @@ protected:
 
 protected:
     static Q3CString  m_kinternetApp;
+
+private:
+    Q_DISABLE_COPY(DetectorDCOP)
 };
 
 #endif

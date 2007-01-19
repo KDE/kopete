@@ -38,12 +38,7 @@ public:
 	 * If \a listView is null then the widget will be disabled until a listview
 	 * is set with setListView().
 	 */
-	SearchLine( QWidget *parent, ListView *listView = 0, const char *name = 0 );
-	/**
-	 * Constructs a SearchLine without any ListView to filter. The
-	 * K3ListView object has to be set later with setListView().
-	 */
-	SearchLine(QWidget *parent, const char *name);
+	SearchLine( QWidget *parent = 0, ListView *listView = 0 );
 	/**
 	 * Destroys the SearchLine.
 	 */

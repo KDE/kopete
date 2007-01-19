@@ -94,13 +94,13 @@ public:
 	 * @param hide a bitmask of HideWidget used to hide some widget. By default, everything is shown.
 	 *
 	 */
-	ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,
-				Kopete::Account *account=0L, const HideWidgetOptions &hide=DefaultHide);
+	explicit ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,
+					Kopete::Account *account=0L, const HideWidgetOptions &hide=DefaultHide);
 
 	/**
 	 * @brief Destructor
 	 */
-    ~ContactAddedNotifyDialog();
+	~ContactAddedNotifyDialog();
 
 	/**
 	 * @brief return if the user has checked the "authorize" checkbox

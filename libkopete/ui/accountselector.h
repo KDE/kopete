@@ -48,7 +48,7 @@ Q_OBJECT
 		 * K3ListView. @p proto defines the protocol whose accounts are
 		 * shown in the list
 		 */
-		AccountSelector(Kopete::Protocol *proto, QWidget *parent=0);
+		explicit AccountSelector(Kopete::Protocol *proto, QWidget *parent=0);
 
 		/**
 		 * Destructor.

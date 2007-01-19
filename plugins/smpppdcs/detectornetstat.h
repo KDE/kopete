@@ -30,11 +30,8 @@ class IConnector;
 class DetectorNetstat : protected QObject, public Detector {
     Q_OBJECT
 
-    DetectorNetstat(const DetectorNetstat&);
-    DetectorNetstat& operator=(const DetectorNetstat&);
-
 public:
-    DetectorNetstat(IConnector* connector);
+    explicit DetectorNetstat(IConnector* connector);
     virtual ~DetectorNetstat();
 
     virtual void checkStatus() const;
@@ -49,8 +46,10 @@ private slots:
     void slotProcessExited(KProcess *process);
 
 private:
-	mutable QString    m_buffer;
-    mutable KProcess * m_process;
+    Q_DISABLE_COPY(DetectorNetstat);
+
+    mutable QString   m_buffer;
+    mutable KProcess *m_process;
 };
 
 #endif

@@ -47,7 +47,7 @@ class QVideoStream : public QObject, public QVideo
 	Q_OBJECT
 
 public:
-	QVideoStream(QWidget *widget);
+	QVideoStream(QWidget *widget = 0);
 	~QVideoStream();
 
 	/* output method */

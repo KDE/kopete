@@ -39,13 +39,15 @@ class KOPETE_EXPORT PasswordWidget : public QWidget, public Ui::KopetePasswordWi
 	Q_OBJECT
 
 public:
+    PasswordWidget( QWidget *parent = 0 );
+
 	/**
 	 * Creates a Kopete::PasswordWidget.
-	 * @param parent The widget to nest this one inside
-	 * @param name The name of this QObject
 	 * @param from The password to load the data for this widget from, or 0 if none
+	 * @param parent The widget to nest this one inside
 	 */
-	PasswordWidget( QWidget *parent, const char *name = 0, Kopete::Password *from = 0 );
+	PasswordWidget( Kopete::Password *from, QWidget *parent = 0 );
+    
 	~PasswordWidget();
 
 	/**

@@ -29,7 +29,7 @@ class IRCNetworkConfigWidget
 	Q_OBJECT
 
 public:
-	IRCNetworkConfigWidget(QWidget *parent, Qt::WFlags flags = 0);
+	IRCNetworkConfigWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~IRCNetworkConfigWidget();
 
 	void editNetworks( const QString &networkName = QString::null );

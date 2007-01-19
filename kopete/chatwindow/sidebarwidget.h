@@ -37,7 +37,7 @@ class SidebarWidget : public QDockWidget
 {
 	Q_OBJECT
 public:
-	SidebarWidget( KopeteChatWindow *parent );
+	SidebarWidget( KopeteChatWindow *parent = 0 );
 	virtual ~SidebarWidget();
 
 	/**

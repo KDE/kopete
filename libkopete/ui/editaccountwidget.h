@@ -61,7 +61,7 @@ public:
 	 * If 'account' is 0L we are in the 'add account wizard', otherwise
 	 * we are editing an existing account.
 	 */
-	KopeteEditAccountWidget( Kopete::Account *account );
+	explicit KopeteEditAccountWidget( Kopete::Account *account );
 
 	/**
 	 * Destructor

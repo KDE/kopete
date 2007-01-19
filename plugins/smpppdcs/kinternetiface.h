@@ -29,7 +29,7 @@ class KInternetIface : public DCOPObject
 
 public:
 
-    KInternetIface (const QCString& name) : DCOPObject (name) { }
+    explicit KInternetIface (const QCString& name) : DCOPObject (name) { }
 
 k_dcop:
 
@@ -41,6 +41,8 @@ k_dcop:
 	return kinternet && kinternet->get_status () == KInternet::CONNECTED;
     }
 
+private:
+    Q_DISABLE_COPY(KInternetIface)
 };
 
 

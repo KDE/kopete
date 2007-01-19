@@ -32,15 +32,14 @@ class IConnector;
 */
 class DetectorSMPPPD : public DetectorDCOP {
 
-    DetectorSMPPPD(const DetectorSMPPPD&);
-    DetectorSMPPPD& operator=(const DetectorSMPPPD&);
-
 public:
-    DetectorSMPPPD(IConnector* connector);
+    explicit DetectorSMPPPD(IConnector* connector);
     virtual ~DetectorSMPPPD();
 
     virtual void checkStatus() const;
 
+private:
+    Q_DISABLE_COPY(DetectorSMPPPD);
 };
 
 #endif

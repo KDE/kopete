@@ -1,11 +1,16 @@
-/***************************************************************************
+/*
+ 
+ Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- ***************************************************************************/
+ ***************************************************************************
+*/
 
 #include <kpushbutton.h>
 #include <k3listview.h>
@@ -383,11 +388,10 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 
 void AliasPreferences::loadProtocols( EditAliasDialog *dialog )
 {
-	Q3ValueList<KPluginInfo*> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for( Q3ValueList<KPluginInfo*>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
+	foreach(KPluginInfo *pluginInfo, Kopete::PluginManager::self()->availablePlugins("Protocols"))
 	{
-		ProtocolItem *item = new ProtocolItem( dialog->protocolList, *it );
-		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( (*it)->pluginName() ) ] = item;
+		ProtocolItem *item = new ProtocolItem( dialog->protocolList, pluginInfo );
+		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( (pluginInfo)->pluginName() ) ] = item;
 	}
 }
 

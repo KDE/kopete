@@ -59,7 +59,7 @@ public:
 	 * conversation to this class.
 	 * @param statusMessage the status message.
 	 */
-	StatusMessage(const QString &statusMessage);
+	StatusMessage(const QString &statusMessage); /* implicit */
 	/**
 	 * StatusMessage copy constructor. 
 	 * Very cheap because the class is implicit shared.

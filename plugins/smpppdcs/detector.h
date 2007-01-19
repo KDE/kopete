@@ -17,6 +17,8 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
+#include <qglobal.h>
+
 class IConnector;
 
 /**
@@ -31,29 +33,30 @@ class IConnector;
 
 class Detector {
 
-    Detector(const Detector&);
-    Detector& operator=(const Detector&);
-
 public:
     /**
      * @brief Creates an <code>Detector</code> instance.
      *
      * @param connector A connector to send feedback to the calling object
      */
-	Detector(IConnector * connector) : m_connector(connector) {}
+    explicit Detector(IConnector * connector) : m_connector(connector) {}
 
     /**
      * @brief Destroys an <code>Detector</code> instance.
      *
      */
-	virtual ~Detector() {}
+    virtual ~Detector() {}
 
     virtual void checkStatus() const = 0;
 	
-	virtual void smpppdServerChange() {}
+    virtual void smpppdServerChange() {}
 
 protected:
     IConnector * m_connector;
+
+private:
+    Q_DISABLE_COPY(Detector)
+
 };
 
 #endif

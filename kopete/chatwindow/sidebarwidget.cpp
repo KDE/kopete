@@ -35,7 +35,8 @@
 
 
 SidebarWidget::SidebarWidget( KopeteChatWindow *parent )
-	 : m_chatWindow(parent), QDockWidget( parent )
+    : QDockWidget( parent )
+    , m_chatWindow(parent)
 {
 	// The sidebar contains a QTabWidget (main widget).
 	m_tabWidget = new QTabWidget(this);

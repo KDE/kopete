@@ -37,13 +37,15 @@ class LatexGUIClient : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	LatexGUIClient( Kopete::ChatSession *parent );
+	explicit LatexGUIClient( Kopete::ChatSession *parent );
 	~LatexGUIClient();
 
 private slots:
 	 void slotPreview();
 
 private:
+	Q_DISABLE_COPY(LatexGUIClient)
+
 	Kopete::ChatSession *m_manager;
 };
 

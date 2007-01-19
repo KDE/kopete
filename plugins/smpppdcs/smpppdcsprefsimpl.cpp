@@ -35,8 +35,8 @@
 #include "smpppdcsprefsimpl.h"
 #include "smpppdsearcher.h"
 
-SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
-	: SMPPPDCSPrefsBase(parent, name, fl), m_plugin(NULL), m_scanProgressDlg(NULL), m_curSearcher(NULL) {
+SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, Qt::WindowFlags f)
+	: SMPPPDCSPrefsBase(parent, f), m_plugin(NULL), m_scanProgressDlg(NULL), m_curSearcher(NULL) {
 
 	// search for our main-plugin instance
 	Kopete::Plugin * p = Kopete::PluginManager::self()->plugin("kopete_smpppdcs");

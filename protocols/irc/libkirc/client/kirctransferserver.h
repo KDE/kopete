@@ -36,12 +36,12 @@ class TransferServer
 	Q_OBJECT
 
 public:
-//	TransferServer(QObject *parent = 0, const char *name = 0);
-	TransferServer(quint16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
+//	TransferServer(QObject *parent = 0);
+	TransferServer(quint16 port, int backlog = 1, QObject *parent = 0);
 	TransferServer(KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize,
-			QObject *parent = 0, const char *name = 0);
+			QObject *parent = 0);
 
 	~TransferServer();
 
@@ -60,9 +60,9 @@ protected slots:
 	void connectionFailed(int error);
 
 private:
-	KExtendedSocket *	m_socket;
-	quint16		m_port;
-	int			m_backlog;
+	KExtendedSocket *m_socket;
+	quint16 m_port;
+	int m_backlog;
 
 	// The following will be deprecated ...
 	KIrc::Engine *		m_engine;

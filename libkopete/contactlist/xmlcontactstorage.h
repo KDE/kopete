@@ -46,7 +46,7 @@ public:
      * This contructor mostly used for unittests.
      * @param fileName XML filename to load.
      */
-    XmlContactStorage(const QString &fileName);
+    explicit XmlContactStorage(const QString &fileName);
     ~XmlContactStorage();
 
     virtual bool isValid() const;

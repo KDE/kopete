@@ -237,7 +237,7 @@ class KOPETE_EXPORT BoxComponent : public Component
 {
 public:
 	enum Direction { Horizontal, Vertical };
-	BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
+	explicit BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
 	~BoxComponent();
 
 	void layout( const QRect &rect );
@@ -263,7 +263,7 @@ private:
 class KOPETE_EXPORT TextComponent : public Component
 {
 public:
-	TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );
+	explicit TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );
 	~TextComponent();
 
 	QString text();
@@ -293,7 +293,7 @@ private:
 class KOPETE_EXPORT ImageComponent : public Component
 {
 public:
-	ImageComponent( ComponentBase *parent );
+	explicit ImageComponent( ComponentBase *parent );
 	ImageComponent( ComponentBase *parent, int minW, int minH );
 	~ImageComponent();
 
@@ -345,7 +345,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	DisplayNameComponent( ComponentBase *parent );
+	explicit DisplayNameComponent( ComponentBase *parent );
 
 	/**
 	 * Dtor
@@ -373,7 +373,7 @@ private:
 class KOPETE_EXPORT HSpacerComponent : public Component
 {
 public:
-	HSpacerComponent( ComponentBase *parent );
+	explicit HSpacerComponent( ComponentBase *parent );
 	int widthForHeight( int );
 
 	static int RTTI;
@@ -383,7 +383,7 @@ public:
 class KOPETE_EXPORT VSpacerComponent : public Component
 {
 public:
-	VSpacerComponent( ComponentBase *parent );
+	explicit VSpacerComponent( ComponentBase *parent );
 	int heightForWidth( int );
 
 	static int RTTI;
@@ -400,8 +400,8 @@ class KOPETE_EXPORT Item : public QObject, public K3ListViewItem, public Compone
 {
 	Q_OBJECT
 public:
-	Item( Q3ListView *parent, QObject *owner = 0 );
-	Item( Q3ListViewItem *parent, QObject *owner = 0 );
+	explicit Item( Q3ListView *parent, QObject *owner = 0 );
+	explicit Item( Q3ListViewItem *parent, QObject *owner = 0 );
 	~Item();
 
 	void repaint();

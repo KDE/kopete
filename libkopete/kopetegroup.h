@@ -68,7 +68,7 @@ public:
 	 *
 	 * Overloaded constructor to create a group with a display name of the specified type.
 	 */
-	Group( const QString &displayName, GroupType type = Normal );
+	explicit Group( const QString &displayName, GroupType type = Normal );
 	
 	~Group();
 

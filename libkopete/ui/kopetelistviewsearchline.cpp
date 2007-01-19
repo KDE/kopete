@@ -24,16 +24,9 @@ namespace Kopete {
 namespace UI {
 namespace ListView {
 
-SearchLine::SearchLine( QWidget *parent, ListView *listView, const char *name )
+SearchLine::SearchLine( QWidget *parent, ListView *listView )
 	: K3ListViewSearchLine( parent, listView )
 {
-	setObjectName( name );
-}
-
-SearchLine::SearchLine(QWidget *parent, const char *name)
-	: K3ListViewSearchLine( parent, 0)
-{
-	setObjectName( name );
 }
 
 SearchLine::~SearchLine()

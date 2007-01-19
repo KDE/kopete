@@ -224,7 +224,7 @@ public:
 	 * status are set to zero, the strings and icons are set to the meta contact
 	 * strings.
 	 */
-	OnlineStatus( StatusType status );
+	OnlineStatus( StatusType status ); /* implicit */
 
 	/**
 	 * Copy constructor.

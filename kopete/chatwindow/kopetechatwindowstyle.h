@@ -49,7 +49,7 @@ public:
 	 * @brief Build a single chat window style.
 	 * 
 	 */
-	ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode = StyleBuildNormal);
+	explicit ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode = StyleBuildNormal);
 	ChatWindowStyle(const QString &stylePath, const QString &variantPath, StyleBuildMode styleBuildMode = StyleBuildFast);
 	~ChatWindowStyle();
 

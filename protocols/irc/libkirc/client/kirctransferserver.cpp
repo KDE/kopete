@@ -33,8 +33,8 @@ TransferServer::TransferServer( QObject *parent, const char *name )
 {
 }
 */
-TransferServer::TransferServer(quint16 port, int backlog, QObject *parent, const char *name)
-	: QObject( parent, name ),
+TransferServer::TransferServer(quint16 port, int backlog, QObject *parent)
+	: QObject( parent ),
 	  m_socket( 0 ),
 	  m_port( port ),
 	  m_backlog( backlog )
@@ -44,8 +44,8 @@ TransferServer::TransferServer(quint16 port, int backlog, QObject *parent, const
 TransferServer::TransferServer(Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize,
-			QObject *parent, const char *name)
-	: QObject( parent, name ),
+			QObject *parent)
+	: QObject( parent ),
 	  m_socket(0),
 	  m_port(0),
 	  m_backlog(1),

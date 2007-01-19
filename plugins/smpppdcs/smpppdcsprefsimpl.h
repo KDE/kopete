@@ -31,14 +31,12 @@ class SMPPPDSearcher;
 */
 class SMPPPDCSPrefs : public SMPPPDCSPrefsBase 
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	SMPPPDCSPrefs(const SMPPPDCSPrefs&);
-	SMPPPDCSPrefs& operator=(const SMPPPDCSPrefs&);
 	
 public:
 
-    SMPPPDCSPrefs(QWidget* parent, const char* name = 0, WFlags fl = 0);
+    SMPPPDCSPrefs(QWidget* parent = 0, Qt::WindowFlags f = 0);
     ~SMPPPDCSPrefs();
 
 signals:
@@ -50,15 +48,17 @@ protected slots:
     void determineCSType();
     void smpppdFound(const QString & host);
     void smpppdNotFound();
-	void scanStarted(uint total);
-	void scanProgress(uint cur);
-	void scanFinished();
-	void cancelScanning();
+    void scanStarted(uint total);
+    void scanProgress(uint cur);
+    void scanFinished();
+    void cancelScanning();
 
 private:
-	SMPPPDCSPlugin  * m_plugin;
-	KProgressDialog * m_scanProgressDlg;
-	SMPPPDSearcher  * m_curSearcher;
+    Q_DISABLE_COPY(SMPPPDCSPrefs)
+
+    SMPPPDCSPlugin  * m_plugin;
+    KProgressDialog * m_scanProgressDlg;
+    SMPPPDSearcher  * m_curSearcher;
 };
 
 inline void SMPPPDCSPrefs::enableSMPPPDSettings() {

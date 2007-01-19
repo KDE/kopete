@@ -62,7 +62,7 @@ public:
 	/**
 	 * Create a shallow copy of this object
 	 */
-	Password( Password &other );
+	Password( const Password &other );
 	~Password();
 
 	/**
