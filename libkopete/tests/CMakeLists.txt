@@ -25,7 +25,7 @@ set(kopeteemoticontest_SRCS kopeteemoticontest.cpp )
 
 kde4_automoc(${kopeteemoticontest_SRCS})
 
-kde4_add_executable(kopeteemoticontest ${kopeteemoticontest_SRCS})
+kde4_add_executable(kopeteemoticontest NOGUI RUN_UNINSTALLED ${kopeteemoticontest_SRCS})
 
 target_link_libraries(kopeteemoticontest  ${KOPETE_TEST_LIBRARIES} )
 
@@ -37,7 +37,7 @@ set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})
 
 kde4_automoc(${kopetemessage_test_SRCS})
 
-kde4_add_executable(kopetemessage_test ${kopetemessage_test_SRCS})
+kde4_add_executable(kopetemessage_test NOGUI RUN_UNINSTALLED ${kopetemessage_test_SRCS})
 
 target_link_libraries(kopetemessage_test  ${KOPETE_TEST_LIBRARIES} )
 
@@ -49,7 +49,7 @@ set(kopetetask_test_SRCS kopetetask_test.cpp )
 
 kde4_automoc(${kopetetask_test_SRCS})
 
-kde4_add_executable(kopetetask_test ${kopetetask_test_SRCS})
+kde4_add_executable(kopetetask_test NOGUI RUN_UNINSTALLED ${kopetetask_test_SRCS})
 
 target_link_libraries(kopetetask_test  ${KOPETE_TEST_LIBRARIES} )
 
@@ -61,7 +61,7 @@ set(statusmessage_test_SRCS statusmessage_test.cpp )
 
 kde4_automoc(${statusmessage_test_SRCS})
 
-kde4_add_executable(statusmessage_test ${statusmessage_test_SRCS})
+kde4_add_executable(statusmessage_test NOGUI RUN_UNINSTALLED ${statusmessage_test_SRCS})
 
 target_link_libraries(statusmessage_test  ${KOPETE_TEST_LIBRARIES} )
 
@@ -73,7 +73,7 @@ set(xmlcontactstorage_test_SRCS xmlcontactstorage_test.cpp)
 
 kde4_automoc(${xmlcontactstorage_test_SRCS})
 
-kde4_add_executable(xmlcontactstorage_test ${xmlcontactstorage_test_SRCS})
+kde4_add_executable(xmlcontactstorage_test NOGUI RUN_UNINSTALLED ${xmlcontactstorage_test_SRCS})
 
 target_link_libraries(xmlcontactstorage_test ${KOPETE_TEST_LIBRARIES})
 
