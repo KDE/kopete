@@ -17,7 +17,7 @@ set(connection_test_SRCS connection_test.cpp )
 
 kde4_automoc(${connection_test_SRCS})
 
-kde4_add_executable(connection_test RUN_UNINSTALLED ${connection_test_SRCS})
+kde4_add_executable(connection_test NOGUI RUN_UNINSTALLED ${connection_test_SRCS})
 
 target_link_libraries(connection_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -26,7 +26,7 @@ set(connector_test_SRCS connector_test.cpp)
 
 kde4_automoc(${connector_test_SRCS})
 
-kde4_add_executable(connector_test RUN_UNINSTALLED ${connector_test_SRCS})
+kde4_add_executable(connector_test NOGUI RUN_UNINSTALLED ${connector_test_SRCS})
 
 target_link_libraries(connector_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -35,7 +35,7 @@ set(papillon_console_SRCS papillon_console.cpp)
 
 kde4_automoc(${papillon_console_SRCS})
 
-kde4_add_executable(papillon_console RUN_UNINSTALLED ${papillon_console_SRCS})
+kde4_add_executable(papillon_console NOGUI RUN_UNINSTALLED ${papillon_console_SRCS})
 
 target_link_libraries(papillon_console ${QT_QTGUI_LIBRARY} ${PAPILLON_TEST_LIBRARIES})
 
@@ -45,7 +45,7 @@ set(transfer_test_SRCS transfer_test.cpp )
 
 kde4_automoc(${transfer_test_SRCS})
 
-kde4_add_executable(transfer_test RUN_UNINSTALLED ${transfer_test_SRCS})
+kde4_add_executable(transfer_test NOGUI RUN_UNINSTALLED ${transfer_test_SRCS})
 
 target_link_libraries(transfer_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -57,7 +57,7 @@ set( coreprotocol_test_SRCS coreprotocol_test.cpp )
 
 kde4_automoc(${coreprotocol_test_SRCS} )
 
-kde4_add_executable(coreprotocol_test RUN_UNINSTALLED ${coreprotocol_test_SRCS})
+kde4_add_executable(coreprotocol_test NOGUI RUN_UNINSTALLED ${coreprotocol_test_SRCS})
 
 target_link_libraries(coreprotocol_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -69,7 +69,7 @@ set( mimeheader_test_SRCS mimeheader_test.cpp )
 
 kde4_automoc(${mimeheader_test_SRCS} )
 
-kde4_add_executable(mimeheader_test RUN_UNINSTALLED ${mimeheader_test_SRCS})
+kde4_add_executable(mimeheader_test NOGUI RUN_UNINSTALLED ${mimeheader_test_SRCS})
 
 target_link_libraries(mimeheader_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -82,7 +82,7 @@ set( httptransfer_test_SRCS httptransfer_test.cpp )
 
 kde4_automoc(${httptransfer_test_SRCS})
 
-kde4_add_executable(httptransfer_test RUN_UNINSTALLED ${httptransfer_test_SRCS})
+kde4_add_executable(httptransfer_test NOGUI RUN_UNINSTALLED ${httptransfer_test_SRCS})
 
 target_link_libraries(httptransfer_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -94,7 +94,7 @@ set( httpcoreprotocol_test_SRCS httpcoreprotocol_test.cpp )
 
 kde4_automoc(${httpcoreprotocol_test_SRCS})
 
-kde4_add_executable(httpcoreprotocol_test RUN_UNINSTALLED ${httpcoreprotocol_test_SRCS})
+kde4_add_executable(httpcoreprotocol_test NOGUI RUN_UNINSTALLED ${httpcoreprotocol_test_SRCS})
 
 target_link_libraries(httpcoreprotocol_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -106,7 +106,7 @@ set( statusmessage_test_SRCS statusmessage_test.cpp )
 
 kde4_automoc(${statusmessage_test_SRCS})
 
-kde4_add_executable(statusmessage_test RUN_UNINSTALLED ${statusmessage_test_SRCS})
+kde4_add_executable(statusmessage_test NOGUI RUN_UNINSTALLED ${statusmessage_test_SRCS})
 
 target_link_libraries(statusmessage_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -118,7 +118,7 @@ set( challenge_test_SRCS challengetest.cpp )
 
 kde4_automoc(${challenge_test_SRCS})
 
-kde4_add_executable(challenge_test RUN_UNINSTALLED ${challenge_test_SRCS})
+kde4_add_executable(challenge_test NOGUI RUN_UNINSTALLED ${challenge_test_SRCS})
 
 target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES} ${QCA2_LIBRARIES})
 
