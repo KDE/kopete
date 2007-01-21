@@ -1,15 +1,12 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>AppearanceConfig_ContactList</class>
  <widget class="QWidget" name="AppearanceConfig_ContactList" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>607</width>
-    <height>367</height>
+    <width>395</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -22,54 +19,252 @@
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item row="4" column="0" colspan="2" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Contact Layout and Display</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="4" column="0" colspan="2" >
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="kcfg_contactListIndentContact" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>1</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>In&amp;dent contacts</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_contactListTreeView" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>Show tree &amp;branch lines</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_contactListIconMode" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>Use contact photos &amp;when available</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_groupContactByGroup" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>Arrange metacontacts by &amp;group</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_contactListHideVerticalScrollBar" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="whatsThis" >
+         <string>&lt;b>Always&lt;/b> disables the vertical scrollbar</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Hide vertical scrollbar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QComboBox" name="kcfg_contactListDisplayMode" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Classic, left-aligned status icon</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Right-aligned status icons</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Detailed view</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Contact list style:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QPushButton" name="mEditTooltips" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>4</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Change &amp;Tooltip Contents...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
     <spacer>
      <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
+      <enum>QSizePolicy::Preferred</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>589</width>
+       <width>16</width>
        <height>16</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="3" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string>Contact List Animations</string>
      </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="mEditTooltips" >
-       <property name="text" >
-        <string>Change &amp;Tooltip Contents...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="2" column="0" >
+       <widget class="QCheckBox" name="kcfg_contactListFolding" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="kcfg_contactListFading" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>Fade in / out contacts as the&amp;y appear / disappear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QCheckBox" name="kcfg_contactListAnimateChange" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>A&amp;nimate changes to contact list items</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item row="2" column="0" colspan="2" >
     <widget class="QGroupBox" name="groupBox_4" >
@@ -85,6 +280,14 @@
       </property>
       <item>
        <widget class="QCheckBox" name="kcfg_contactListAutoHide" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text" >
          <string>A&amp;uto-hide contact list</string>
         </property>
@@ -92,6 +295,14 @@
       </item>
       <item>
        <widget class="QCheckBox" name="kcfg_contactListAutoHideVScroll" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="whatsThis" >
          <string>Since vertical scrollbars occupy space, we introduced this auto-hide feature. The vertical scrollbar will not be available until you move your mouse over the contact list.&lt;br>
 (&lt;b>Disabled&lt;/b> if "&lt;b>Hide vertical scrollbar&lt;/b>" option is selected above.)</string>
@@ -130,6 +341,14 @@
           <property name="enabled" >
            <bool>false</bool>
           </property>
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>4</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="whatsThis" >
            <string>The timeout value for both contact list and scrollbar auto-hiding.</string>
           </property>
@@ -157,198 +376,29 @@
           </property>
          </widget>
         </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>81</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
-      <string>Contact List Animations</string>
+   <item row="4" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListAnimateChange" >
-        <property name="text" >
-         <string>A&amp;nimate changes to contact list items</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListFading" >
-        <property name="text" >
-         <string>Fade in / out contacts as the&amp;y appear / disappear</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListFolding" >
-        <property name="text" >
-         <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-      <string>Contact Display Mode</string>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Preferred</enum>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item>
-       <widget class="QComboBox" name="kcfg_contactListDisplayMode" >
-        <item>
-         <property name="text" >
-          <string>Classic, left-aligned status icon</string>
-         </property>
-        </item>
-        <item>
-         <property name="text" >
-          <string>Right-aligned status icons</string>
-         </property>
-        </item>
-        <item>
-         <property name="text" >
-          <string>Detailed view</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListIconMode" >
-        <property name="text" >
-         <string>Use contact photos &amp;when available</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>247</width>
-          <height>24</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
-      <string>Layout</string>
+     <property name="sizeHint" >
+      <size>
+       <width>16</width>
+       <height>20</height>
+      </size>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item>
-       <widget class="QCheckBox" name="kcfg_groupContactByGroup" >
-        <property name="text" >
-         <string>Arrange metacontacts by &amp;group</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListTreeView" >
-        <property name="text" >
-         <string>Show tree &amp;branch lines</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="kcfg_contactListIndentContact" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="text" >
-           <string>In&amp;dent contacts</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListHideVerticalScrollBar" >
-        <property name="whatsThis" >
-         <string>&lt;b>Always&lt;/b> disables the vertical scrollbar</string>
-        </property>
-        <property name="text" >
-         <string>&amp;Hide vertical scrollbar</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    </spacer>
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <resources/>
  <connections>
   <connection>
