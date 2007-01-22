@@ -100,26 +100,24 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	connect(lstUsedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
 		this, SLOT(slotUsedSelected(Q3ListViewItem *)));
 
-	QIcon iconSet;
-	iconSet = SmallIconSet("up");
-	tbUp->setIcon(iconSet);
+	tbUp->setIcon(KIcon("up"));
 	tbUp->setEnabled(false);
 	tbUp->setAutoRepeat(true);
 	connect(tbUp, SIGNAL(clicked()), SLOT(slotUpButton()));
 
-	iconSet = SmallIconSet("down");
-	tbDown->setIcon(iconSet);
+	tbDown->setIcon(KIcon("down"));
 	tbDown->setEnabled(false);
 	tbDown->setAutoRepeat(true);
 	connect(tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
 
-	iconSet = QApplication::isRightToLeft() ? SmallIconSet("back") : SmallIconSet("forward");
-	tbAdd->setIcon(iconSet);
+	KIcon left = KIcon("back");
+	KIcon right = KIcon("forward");
+
+	tbAdd->setIcon(QApplication::isRightToLeft() ? left : right);
 	tbAdd->setEnabled(false);
 	connect(tbAdd, SIGNAL(clicked()), SLOT(slotAddButton()));
 
-	iconSet = QApplication::isRightToLeft() ? SmallIconSet("forward") : SmallIconSet("back");
-	tbRemove->setIcon(iconSet);
+	tbRemove->setIcon(QApplication::isRightToLeft() ? right : left);
 	tbRemove->setEnabled(false);
 	connect(tbRemove, SIGNAL(clicked()), SLOT(slotRemoveButton()));
 
