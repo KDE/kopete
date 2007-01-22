@@ -46,7 +46,7 @@ public:
 	 * @brief Create a task to set the presence on server.
 	 * @param parent Root task.
 	 */
-	SetPresenceTask(Papillon::Task *parent);
+	explicit SetPresenceTask(Papillon::Task *parent);
 	/**
 	 * d-tor
 	 */
@@ -70,7 +70,7 @@ public:
 	 * In this case, emit finished() signal when we receive a acknowledge of the command.
 	 * @param transfer Transfer to check.
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 
 protected:
 	/**

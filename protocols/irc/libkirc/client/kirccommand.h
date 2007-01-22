@@ -82,7 +82,7 @@ protected:
 	bool checkValidity(const Message &msg);
 
 private:
-	Q_DISABLE_COPY(Command);
+	Q_DISABLE_COPY(Command)
 
 	class Private;
 	Private * const d;

@@ -37,7 +37,7 @@ class GaduDCC;
 class GaduDCCTransaction: QObject {
 	Q_OBJECT
 public:
-	GaduDCCTransaction( GaduDCC* );
+	explicit GaduDCCTransaction( GaduDCC* );
 	~GaduDCCTransaction();
 
 	bool setupIncoming( const unsigned int, GaduContact* );

@@ -38,10 +38,10 @@ class PAPILLON_EXPORT NotifyMessageTask : public Papillon::Task
 {
 	Q_OBJECT
 public:
-	NotifyMessageTask(Task *parent);
+	explicit NotifyMessageTask(Papillion::Task *parent);
 	virtual ~NotifyMessageTask();
 
-	virtual bool take(Transfer* transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 	
 signals:
 	/**
@@ -51,7 +51,7 @@ signals:
 	void profileMessage(const Papillon::MimeHeader &profileMessage);
 
 private:
-	virtual bool forMe(Transfer *transfer) const;
+	virtual bool forMe(Papillion::Transfer *transfer) const;
 
 	class Private;
 	Private *d;

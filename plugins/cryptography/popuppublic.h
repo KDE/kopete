@@ -38,7 +38,7 @@ class popupPublic : public KDialog
         Q_OBJECT
 public:
 
-        popupPublic(QWidget *parent, const QString& sfile=QString(), bool filemode=false,
+        popupPublic(QWidget *parent = 0, const QString& sfile=QString(), bool filemode=false,
                     const KShortcut& goDefaultKey=KShortcut(QKeySequence(Qt::CTRL+Qt::Key_Home)));
 	~popupPublic();
         K3ListView *keysList;

@@ -35,7 +35,7 @@ class YahooWebcam : public QObject
 {	
 	Q_OBJECT
 public:
-	YahooWebcam( YahooAccount *account );
+	explicit YahooWebcam( YahooAccount *account );
 	~YahooWebcam();
 public slots:
 	void startTransmission();

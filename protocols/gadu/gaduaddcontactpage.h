@@ -42,7 +42,7 @@ class GaduAddContactPage : public AddContactPage
 	Q_OBJECT
 
 public:
-	GaduAddContactPage( GaduAccount*, QWidget* parent = 0 );
+	explicit GaduAddContactPage( GaduAccount*, QWidget* parent = 0 );
 	~GaduAddContactPage();
 	virtual bool validateData();
 	virtual bool apply( Kopete::Account* , Kopete::MetaContact * );

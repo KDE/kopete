@@ -55,7 +55,7 @@ class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
 {
 	HistoryPlugin *history;
 public:
-	HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {}
+	explicit HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {}
 	Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
 	{
 		if( direction != Kopete::Message::Inbound )

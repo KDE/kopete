@@ -31,10 +31,10 @@ class PAPILLON_EXPORT ChallengeTask : public Papillon::Task
 {
 	Q_OBJECT
 public:
-	ChallengeTask(Papillon::Task *parent);
+	explicit ChallengeTask(Papillon::Task *parent);
 	~ChallengeTask();
 
-	virtual bool take(Transfer *transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 
 private:
 	/**

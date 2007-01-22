@@ -39,7 +39,7 @@ public:
     virtual void checkStatus() const;
 
 private:
-    Q_DISABLE_COPY(DetectorSMPPPD);
+    Q_DISABLE_COPY(DetectorSMPPPD)
 };
 
 #endif

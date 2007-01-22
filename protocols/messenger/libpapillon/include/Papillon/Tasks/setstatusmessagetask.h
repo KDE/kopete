@@ -44,7 +44,7 @@ public:
 	 * @brief Create a new SetStatusMessageTask
 	 * @param parent Root Task.
 	 */
-	SetStatusMessageTask(Papillon::Task *parent);
+	explicit SetStatusMessageTask(Papillon::Task *parent);
 	/**
 	 * d-tor
 	 */
@@ -61,7 +61,7 @@ public:
 	 * @param transfer Transfer to check.
 	 * @return true if we accept this transfer.
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 
 protected:
 	/**

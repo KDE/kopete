@@ -33,7 +33,7 @@ class TranslatorDialog : public KDialog
 	Q_OBJECT
 
 public:
-	TranslatorDialog(const QString &translated, QWidget *parent=0);
+	explicit TranslatorDialog(const QString &translated, QWidget *parent=0);
 	~TranslatorDialog();
 
 	QString translatedText();

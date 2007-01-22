@@ -39,7 +39,7 @@ class TranslatorGUIClient : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	TranslatorGUIClient( Kopete::ChatSession *parent );
+	explicit TranslatorGUIClient( Kopete::ChatSession *parent );
 	~TranslatorGUIClient();
 
 private slots:

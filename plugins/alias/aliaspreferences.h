@@ -1,6 +1,6 @@
 /*
 
- Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+ Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
  ***************************************************************************
  *                                                                         *

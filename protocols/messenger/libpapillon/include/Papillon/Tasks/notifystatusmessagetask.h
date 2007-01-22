@@ -39,7 +39,7 @@ public:
 	 * @brief Create a new NotifyStatusMessageTask.
 	 * @param parent Root Task.
 	 */
-	NotifyStatusMessageTask(Papillon::Task *parent);
+	explicit NotifyStatusMessageTask(Papillon::Task *parent);
 	/**
 	 * d-tor
 	 */
@@ -50,7 +50,7 @@ public:
 	 * @param transfer Transfer to look for incoming status message change.
 	 * @return true if we accept the Transfer.
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 
 signals:
 	/**

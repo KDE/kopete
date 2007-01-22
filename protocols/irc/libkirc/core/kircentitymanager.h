@@ -62,7 +62,7 @@ protected:
 //	void remove(const QList<Entity *> &entities);
 
 private:
-	Q_DISABLE_COPY(EntityManager);
+	Q_DISABLE_COPY(EntityManager)
 
 	class Private;
 	Private * const d;

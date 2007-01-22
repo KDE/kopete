@@ -110,7 +110,7 @@ class RemindPasswordCommand : public GaduCommand
 	Q_OBJECT
 
 public:
-	RemindPasswordCommand( uin_t uin, QObject* parent = 0 );
+	explicit RemindPasswordCommand( uin_t uin, QObject* parent = 0 );
 	RemindPasswordCommand( QObject* parent = 0 );
 	~RemindPasswordCommand();
 

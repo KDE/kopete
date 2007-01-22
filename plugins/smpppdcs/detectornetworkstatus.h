@@ -30,13 +30,10 @@ class ConnectionManager;
 class DetectorNetworkStatus : protected QObject, public Detector
 {
 	Q_OBJECT
-	
-	DetectorNetworkStatus(const DetectorNetworkStatus&);
-	DetectorNetworkStatus& operator=(const DetectorNetworkStatus&);
 
 public:
-    DetectorNetworkStatus(IConnector* connector);
-    virtual ~DetectorNetworkStatus();
+	explicit DetectorNetworkStatus(IConnector* connector);
+	virtual ~DetectorNetworkStatus();
 	
 	virtual void checkStatus() const;
 
@@ -44,6 +41,8 @@ protected slots:
 	void statusChanged(const QString& host, NetworkStatus::EnumStatus status);
 	
 private:
+	Q_DISABLE_COPY(DetectorNetworkStatus)
+
 	ConnectionManager * m_connManager;
 };
 

@@ -46,7 +46,7 @@ private slots:
     void slotProcessExited(KProcess *process);
 
 private:
-    Q_DISABLE_COPY(DetectorNetstat);
+    Q_DISABLE_COPY(DetectorNetstat)
 
     mutable QString   m_buffer;
     mutable KProcess *m_process;

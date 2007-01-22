@@ -36,7 +36,7 @@ class BindingObject : public QObject
     Q_OBJECT
 
 public:
-    BindingObject( QObject *parent, const char *name=0 );
+    BindingObject( QObject *parent = 0, const char *name=0 );
     virtual ~BindingObject();
 
     const char *jsClassName() const { return jsClazz; }

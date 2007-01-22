@@ -48,7 +48,7 @@ public:
 	 * @brief Create a new SetPersonalInformationTask task.
 	 * @param parent Root Task
 	 */
-	SetPersonalInformationTask(Papillon::Task *parent);
+	explicit SetPersonalInformationTask(Papillon::Task *parent);
 	/**
 	 * d-tor
 	 */
@@ -66,7 +66,7 @@ public:
 	 * @param transfer the Transfer
 	 * @return true if this is the task acknowledge
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 
 protected:
 	/**

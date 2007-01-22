@@ -40,7 +40,7 @@ class TweenerHandler;
  * Use loginState() to check for the error if the login wasn't successful.
  * @author Michaël Larouche <larouche@kde.org>
 */
-class PAPILLON_EXPORT LoginTask : public Task
+class PAPILLON_EXPORT LoginTask : public Papillon::Task
 {
 	Q_OBJECT
 public:
@@ -87,7 +87,7 @@ public:
 	 * Create a new Login Task.
 	 * @param parent parent Task
 	 */
-	LoginTask(Task *parent);
+	explicit LoginTask(Papillion::Task *parent);
 	/**
 	 * d-tor (duh)
 	 */
@@ -100,7 +100,7 @@ public:
 	 * @param transfer given Transfer.
 	 * @return true if we proceed this transfer.
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(Papillion::Transfer *transfer);
 
 	/**
 	 * Get the current state of the Login Task.
@@ -115,7 +115,7 @@ protected:
 	 * @param transfer give Transfer.
 	 * @return true if the Transfer is for us.
 	 */
-	virtual bool forMe(Transfer *transfer);
+	virtual bool forMe(Papillion::Transfer *transfer);
 	/**
 	 * Inherited from Task.
 	 * Start the login process.
