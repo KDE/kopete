@@ -50,7 +50,7 @@ public:
 	 * @param transfer Transfer to look for incoming status message change.
 	 * @return true if we accept the Transfer.
 	 */
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 signals:
 	/**

@@ -66,7 +66,7 @@ public:
 	 * @param transfer the Transfer
 	 * @return true if this is the task acknowledge
 	 */
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 protected:
 	/**

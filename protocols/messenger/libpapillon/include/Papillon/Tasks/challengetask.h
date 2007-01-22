@@ -34,7 +34,7 @@ public:
 	explicit ChallengeTask(Papillon::Task *parent);
 	~ChallengeTask();
 
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 private:
 	/**

@@ -87,7 +87,7 @@ public:
 	 * Create a new Login Task.
 	 * @param parent parent Task
 	 */
-	explicit LoginTask(Papillion::Task *parent);
+	explicit LoginTask(Papillon::Task *parent);
 	/**
 	 * d-tor (duh)
 	 */
@@ -100,7 +100,7 @@ public:
 	 * @param transfer given Transfer.
 	 * @return true if we proceed this transfer.
 	 */
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 	/**
 	 * Get the current state of the Login Task.
@@ -115,7 +115,7 @@ protected:
 	 * @param transfer give Transfer.
 	 * @return true if the Transfer is for us.
 	 */
-	virtual bool forMe(Papillion::Transfer *transfer);
+	virtual bool forMe(Papillon::Transfer *transfer);
 	/**
 	 * Inherited from Task.
 	 * Start the login process.

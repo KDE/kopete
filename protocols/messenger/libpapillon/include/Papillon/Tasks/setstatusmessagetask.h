@@ -61,7 +61,7 @@ public:
 	 * @param transfer Transfer to check.
 	 * @return true if we accept this transfer.
 	 */
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 protected:
 	/**

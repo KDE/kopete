@@ -70,7 +70,7 @@ public:
 	 * In this case, emit finished() signal when we receive a acknowledge of the command.
 	 * @param transfer Transfer to check.
 	 */
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 protected:
 	/**

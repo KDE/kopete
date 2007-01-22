@@ -50,7 +50,7 @@ public:
 	 * @param transfer Given Transfer
 	 * @return true if this task need to proceed this transfer.
 	 */
-	virtual bool take(Papillion::Transfer *transfer);
+	virtual bool take(Papillon::Transfer *transfer);
 
 signals:
 	// TODO: Maybe add nickname, features and MsnObject to this signal
@@ -67,7 +67,7 @@ protected:
 	 * @param transfer Transfer to evaluate
 	 * @return true if it's a presence change command.
 	 */
-	virtual bool forMe(Papillion::Transfer *transfer) const;
+	virtual bool forMe(Papillon::Transfer *transfer) const;
 	
 private:
 	class Private;
