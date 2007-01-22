@@ -35,7 +35,7 @@
 namespace QCA
 {
 	class TLS;
-};
+}
 
 #ifndef CS_XMPP
 class ByteStream;
@@ -563,6 +563,6 @@ namespace XMPP
 		void handleError();
 		void srvProcessNext();
 	};
-};
+}
 
 #endif
