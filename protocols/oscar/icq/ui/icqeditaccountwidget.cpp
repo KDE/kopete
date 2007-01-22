@@ -22,6 +22,7 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
+#include <qvalidator.h>
 #include <QLatin1String>
 
 #include <kconfig.h>
@@ -33,6 +34,7 @@
 #include <kdatewidget.h>
 #include <ktoolinvocation.h>
 #include <kpassworddialog.h>
+#include <kmessagebox.h>
 
 #include "kopetepassword.h"
 #include "kopetepasswordwidget.h"
@@ -62,6 +64,11 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 	mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );
 
+	//Setup the edtAccountId 
+	QRegExp rx("[0-9]{9}");
+	QValidator* validator = new QRegExpValidator( rx, this );
+	mAccountSettings->edtAccountId->setValidator(validator);
+	
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
@@ -258,16 +265,12 @@ Kopete::Account *ICQEditAccountWidget::apply()
 bool ICQEditAccountWidget::validateData()
 {
 	kDebug(14153) << k_funcinfo << "Called." << endl;
-
-	QString userName = mAccountSettings->edtAccountId->text();
-
-	if (userName.contains(" "))
+	QString userId = mAccountSettings->edtAccountId->text();
+	
+	if( (userId.length()< 9) || userId.isEmpty() )
+	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
+	 	                              i18n("<qt>You must enter a valid ICQ Nr.</qt>"), i18n("ICQ"));
 		return false;
-
-	for (unsigned int i=0; i<userName.length(); i++)
-	{
-		if(!(userName[i]).isNumber())
-			return false;
 	}
 
 	// No need to check port, min and max values are properly defined in .ui
