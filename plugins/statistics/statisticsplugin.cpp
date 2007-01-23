@@ -149,7 +149,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 		statisticsContactMap[mc->metaContactId()] = new StatisticsContact(mc, db());
 }
 
-void StatisticsPlugin::dcopStatisticsDialog(QString id)
+void StatisticsPlugin::dbusStatisticsDialog(QString id)
 {
 	kDebug() << k_funcinfo << "statistics - DCOP dialog :" << id << endl;
 	
@@ -161,43 +161,43 @@ void StatisticsPlugin::dcopStatisticsDialog(QString id)
 	}	
 }
 
-bool StatisticsPlugin::dcopWasOnline(QString id, int timeStamp)
+bool StatisticsPlugin::dbusWasOnline(QString id, int timeStamp)
 {
 	QDateTime dt;
 	dt.setTime_t(timeStamp);	
-	return dcopWasStatus(id, dt, Kopete::OnlineStatus::Online); 
+	return dbusWasStatus(id, dt, Kopete::OnlineStatus::Online); 
 }
 
-bool StatisticsPlugin::dcopWasOnline(QString id, QString dateTime)
+bool StatisticsPlugin::dbusWasOnline(QString id, QString dateTime)
 {
-	return dcopWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Online);
+	return dbusWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Online);
 }
 
-bool StatisticsPlugin::dcopWasAway(QString id, int timeStamp)
-{
-	QDateTime dt;
-	dt.setTime_t(timeStamp);	
-	return dcopWasStatus(id, dt, Kopete::OnlineStatus::Away); 
-}
-
-bool StatisticsPlugin::dcopWasAway(QString id, QString dateTime)
-{
-	return dcopWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Away);
-}
-
-bool StatisticsPlugin::dcopWasOffline(QString id, int timeStamp)
+bool StatisticsPlugin::dbusWasAway(QString id, int timeStamp)
 {
 	QDateTime dt;
 	dt.setTime_t(timeStamp);	
-	return dcopWasStatus(id, dt, Kopete::OnlineStatus::Offline); 
+	return dbusWasStatus(id, dt, Kopete::OnlineStatus::Away); 
 }
 
-bool StatisticsPlugin::dcopWasOffline(QString id, QString dateTime)
+bool StatisticsPlugin::dbusWasAway(QString id, QString dateTime)
 {
-	return dcopWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Offline);
+	return dbusWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Away);
 }
 
-bool StatisticsPlugin::dcopWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
+bool StatisticsPlugin::dbusWasOffline(QString id, int timeStamp)
+{
+	QDateTime dt;
+	dt.setTime_t(timeStamp);	
+	return dbusWasStatus(id, dt, Kopete::OnlineStatus::Offline); 
+}
+
+bool StatisticsPlugin::dbusWasOffline(QString id, QString dateTime)
+{
+	return dbusWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Offline);
+}
+
+bool StatisticsPlugin::dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
 {
 	kDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id << endl;
 	
@@ -209,15 +209,15 @@ bool StatisticsPlugin::dcopWasStatus(QString id, QDateTime dateTime, Kopete::Onl
 	return false;	
 }
 
-QString StatisticsPlugin::dcopStatus(QString id, int timeStamp)
+QString StatisticsPlugin::dbusStatus(QString id, int timeStamp)
 {
 	QDateTime dt;
 	dt.setTime_t(timeStamp);
-	return dcopStatus(id, dt.toString());
+	return dbusStatus(id, dt.toString());
 
 }
 
-QString StatisticsPlugin::dcopStatus(QString id, QString dateTime)
+QString StatisticsPlugin::dbusStatus(QString id, QString dateTime)
 {
 	QDateTime dt = QDateTime::fromString(dateTime);
 	
@@ -229,7 +229,7 @@ QString StatisticsPlugin::dcopStatus(QString id, QString dateTime)
 	return "";
 }
 
-QString StatisticsPlugin::dcopMainStatus(QString id, int timeStamp)
+QString StatisticsPlugin::dbusMainStatus(QString id, int timeStamp)
 {
 	QDateTime dt;
 	dt.setTime_t(timeStamp);

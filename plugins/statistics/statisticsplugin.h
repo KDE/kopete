@@ -25,7 +25,7 @@ using namespace std;
 #include <qstring.h>
 #include <qstringlist.h>
 
-#include <dcopobject.h>
+#include <dbusobject.h>
 
 #include "kopeteplugin.h"
 
@@ -33,7 +33,7 @@ using namespace std;
 #include "kopetemessagehandler.h"
 #include "kopeteonlinestatus.h"
 
-#include "statisticsdcopiface.h"
+#include "statisticsdbusiface.h"
 
 class QString;
 
@@ -165,25 +165,25 @@ public slots:
 
 	/*
 	 * DCOP functions 
-	 * See statisticsdcopiface.h for the documentation
+	 * See statisticsdbusiface.h for the documentation
 	 */
-	void dcopStatisticsDialog(QString id);
+	void dbusStatisticsDialog(QString id);
 	
-	bool dcopWasOnline(QString id, int timeStamp);
-	bool dcopWasOnline(QString id, QString dt);
+	bool dbusWasOnline(QString id, int timeStamp);
+	bool dbusWasOnline(QString id, QString dt);
 	
-	bool dcopWasAway(QString id, int timeStamp);
-	bool dcopWasAway(QString id, QString dt);
+	bool dbusWasAway(QString id, int timeStamp);
+	bool dbusWasAway(QString id, QString dt);
 	
-	bool dcopWasOffline(QString id, int timeStamp);
-	bool dcopWasOffline(QString id, QString dt);
+	bool dbusWasOffline(QString id, int timeStamp);
+	bool dbusWasOffline(QString id, QString dt);
 	
-	bool dcopWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
+	bool dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
 	
-	QString dcopStatus(QString id, QString dateTime);
-	QString dcopStatus(QString id, int timeStamp);
+	QString dbusStatus(QString id, QString dateTime);
+	QString dbusStatus(QString id, int timeStamp);
 	
-	QString dcopMainStatus(QString id, int timeStamp);
+	QString dbusMainStatus(QString id, int timeStamp);
 
 private:	
 	StatisticsDB *m_db;
