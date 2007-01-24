@@ -172,10 +172,10 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 #ifdef __GNUC__
 	#warning spurus slot calls for now
 #endif
-	d->joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, KShortcut(),
-		this, SLOT(slotJoinChannel()), 0/*actiongroup*/, 0);
-	d->searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, KShortcut(),
-		this, SLOT(slotSearchChannels()), 0/*actionGroup*/, 0);
+	d->joinChannelAction = new KAction(i18n("Join Channel..."), this);
+	QObject::connect(d->joinChannelAction, SIGNAL(triggered()), this, SLOT(slotJoinChannel()));
+	d->searchChannelAction = new KAction(i18n("Search Channels..."), this);
+	QObject::connect(d->searchChannelAction, SIGNAL(triggered()), this, SLOT(slotSearchChannels()));
 }
 
 IRCAccount::~IRCAccount()

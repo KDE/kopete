@@ -33,7 +33,7 @@ class Message;
  * @author Michel Hermier <michel.hermier@gmail.com>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class ClientSocket
+class KIRCCLIENT_EXPORT ClientSocket
 	: public KIrc::Socket
 {
 	Q_OBJECT

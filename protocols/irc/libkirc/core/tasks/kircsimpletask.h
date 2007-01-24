@@ -1,9 +1,9 @@
 /*
-    kirctask.h - IRC Task
+    kircsimpletask.h - IRC Simple Task
 
-    Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2004-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,49 +15,27 @@
     *************************************************************************
 */
 
-#ifndef KIRCTASK_H
-#define KIRCTASK_H
+#ifndef KIRCSIMPLETASK_H
+#define KIRCSIMPLETASK_H
 
-#include "kircevent.h"
-#include "kircmessage.h"
-
-#include <QtCore/QObject>
+#include "kirctask.h"
 
 namespace KIrc
 {
 
-class KIRC_EXPORT Task
-	: public QObject
+/**
+ * This task allow an implementor to add task in a simple way.
+ * Following the patterns for the method names, will automagically call the correct methods (Thanks to the moc tool).
+ */
+class KIRC_EXPORT SimpleTask
+	: public KIrc::Task
 {
 	Q_OBJECT
 	Q_ENUMS(Status)
 
 public:
-	enum Status
-	{
-		/**
-		 * The command was unhandled by this task, and will try to be handled by next task.
-		 */
-		NotHandled = 0,
-
-		/**
-		 * The message doesn't require more plugin processing. 
-		 */
-		PluginHandled = 1 << 0,
-
-		/**
-		 * The message doesn't require more system precessing.
-		 */
-		SystemHandled = 1 << 1,
-
-		/**
-		 * The command was fully handled, and don't require more processing.
-		 */
-		FullyHandled = PluginHandled | SystemHandled 
-	};
-
-	Task(QObject *parent = 0);
-	~Task();
+	SimpleTask(QObject *parent = 0);
+	~SimpleTask();
 
 public:
 	/**
@@ -72,7 +50,7 @@ public:
 	 *
 	 * @return the status of the event handling.
 	 */
-	virtual Status doEvent(KIrc::Event event);
+//	virtual Status doEvent(KIrc::Event event);
 
 	/**
 	 * Tries to handle a server message.
@@ -94,8 +72,11 @@ signals:
 
 	void postMessage(KIrc::Message message);
 
+protected:
+	Status doMessage(const char *commandPrefix, KIrc::Message message);
+
 private:
-	Q_DISABLE_COPY(Task)
+	Q_DISABLE_COPY(SimpleTask)
 
 	class Private;
 	Private * const d;

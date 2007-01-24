@@ -26,7 +26,7 @@
 
 #include <QTcpSocket>
 
-class KUrl;
+class QUrl;
 
 class QTextCodec;
 
@@ -40,7 +40,7 @@ class Event;
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
-class Socket
+class KIRC_EXPORT Socket
 	: public QObject
 {
 	Q_OBJECT
@@ -80,7 +80,7 @@ public:
 	/**
 	 * The connection url.
 	 */
-	const KUrl &url() const;
+	const QUrl &url() const;
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
@@ -89,7 +89,7 @@ public slots:
 	void setEntityManager(EntityManager *newEntityManager);
 	void setOwner(const Entity::Ptr &newOwner);
 
-	void connectToServer(const KUrl &url);
+	void connectToServer(const QUrl &url);
 	void close();
 
 	void writeMessage(const Message &message);

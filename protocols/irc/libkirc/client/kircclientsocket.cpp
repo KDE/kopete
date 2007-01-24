@@ -26,12 +26,6 @@
 #include "kircentity.h"
 #include "kircstdmessages.h"
 
-#include <kconfig.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
-#include <kurl.h>
-
 class KIrc::ClientSocket::Private
 {
 public:
@@ -51,8 +45,6 @@ ClientSocket::ClientSocket(QObject *parent)
 	: Socket(parent),
 	  d( new Private )
 {
-	kDebug(14120) << k_funcinfo << endl;
-
 //	setUserName(QString::null);
 
 //	d->entities << d->server << d->self;
@@ -74,7 +66,6 @@ ClientSocket::ClientSocket(QObject *parent)
 
 ClientSocket::~ClientSocket()
 {
-	kDebug(14120) << k_funcinfo << endl;
 //	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
 
 	delete d;

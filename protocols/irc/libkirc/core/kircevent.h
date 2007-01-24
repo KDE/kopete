@@ -31,7 +31,7 @@ namespace KIrc
 
 class Socket;
 
-class Event
+class KIRC_EXPORT Event
 //	: QEvent // Use QEvent interface here ???
 {
 public:
@@ -44,21 +44,15 @@ public:
 public:
 	Message message() const;
 	Event &setMessage(const KIrc::Message &message);
-/*
-	Socket *socket() const;
-	Event &setSocket(Socket *socket);
-*/
-	const QByteArray &from() const;
-	Event &setFrom(const QByteArray &from);
 
-	const QList<QByteArray> &to() const;
-	Event &setTo(const QList<QByteArray> &to);
-/*
-	const QList<QByteArray> &cc() const;
-	Event &setCc(const QList<QByteArray> &cc);
-*/
-	const QList<QByteArray> &victims() const;
-	Event &setVictims(const QList<QByteArray> &cc);
+	const KIrc::Entity::Ptr &from() const;
+	Event &setFrom(const KIrc::Entity::Ptr &from);
+
+	const KIrc::Entity::List &to() const;
+	Event &setTo(const KIrc::Entity::List &to);
+
+	const KIrc::Entity::List &cc() const;
+	Event &setCc(const KIrc::Entity::List &cc);
 
 	QString text() const;
 	Event &setText(const QString &text);

@@ -15,7 +15,6 @@ set(kopeteirc_ui_SRCS
   ui/ircaddcontactpage.cpp 
 #  ui/ircdialogs.cpp 
   ui/irceditaccountwidget.cpp 
-  ui/kcodecaction.cpp 
 #  ui/networkconfigwidget.cpp 
 )
 
@@ -44,30 +43,12 @@ kde4_automoc(${kopete_irc_SRCS})
 
 kde4_add_plugin(kopete_irc ${kopete_irc_SRCS})
 
-
-target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} kopete kirc_client )
+target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} kopete kirc_client kirc )
+set_target_properties(kopete_irc PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
 
-############# Test Files #######################
-
-#if(KDE4_BUILD_TESTS)
-
-#temporary fix
-set(CMAKE_BACKWARDS_COMPATIBILITY "2.0")
-
-set(kcodecactiontest_SRCS
-  ui/kcodecaction.cpp
-  ui/kcodecactiontest.cpp
-)
-
-kde4_automoc(${kcodecactiontest_SRCS})
-
-kde4_add_executable(kcodecactiontest RUN_UNINSTALLED ${kcodecactiontest_SRCS})
-
-target_link_libraries(kcodecactiontest ${KDE4_KDEUI_LIBS})
-
-#endif(KDE4_BUILD_TESTS)
+############ Test Files #################
 
 ########### install files ###############
 

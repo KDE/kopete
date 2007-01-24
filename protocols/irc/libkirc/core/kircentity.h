@@ -18,7 +18,7 @@
 #ifndef KIRCENTITY_H
 #define KIRCENTITY_H
 
-#include "kircconst.h"
+#include "kircglobal.h"
 
 #include <ksharedptr.h>
 
@@ -32,7 +32,7 @@ namespace KIrc
 
 class Engine;
 
-class Entity
+class KIRC_EXPORT Entity
 	: public QObject
 	, public KShared
 {

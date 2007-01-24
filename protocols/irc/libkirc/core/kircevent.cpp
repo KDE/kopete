@@ -34,10 +34,9 @@ public:
 
 	MessageType messageType;
 
-	QByteArray from;
-	QList<QByteArray> to;
-//	QList<QByteArray> cc;
-	QList<QByteArray> victims;
+	KIrc::Entity::Ptr from;
+	KIrc::Entity::List to;
+	KIrc::Entity::List cc;
 
 	QString text;
 };
@@ -74,18 +73,6 @@ Event &Event::setMessage(const Message &msg)
 	d->msg = msg;
 	return *this;
 }
-/*
-Socket *Event::socket() const
-{
-	return d->socket;
-}
-
-Event &Event::setSocket(Socket *socket)
-{
-	d->socket = socket;
-	return *this;
-}
-*/
 #if 0
 Event::MessageType Event::messageType() const
 {
@@ -98,49 +85,39 @@ Event &Event::setMessageType(MessageType messageType)
 	return *this;
 }
 #endif
-const QByteArray &Event::from() const
+const KIrc::Entity::Ptr &Event::from() const
 {
 	return d->from;
 }
 
-Event &Event::setFrom(const QByteArray &from)
+Event &Event::setFrom(const KIrc::Entity::Ptr &from)
 {
 	d->from = from;
 	return *this;
 }
 
-const QList<QByteArray> &Event::to() const
+const KIrc::Entity::List &Event::to() const
 {
 	return d->to;
 }
 
-Event &Event::setTo(const QList<QByteArray> &to)
+Event &Event::setTo(const KIrc::Entity::List &to)
 {
 	d->to = to;
 	return *this;
 }
-/*
-const QList<QByteArray> &Event::cc() const
+
+const KIrc::Entity::List &Event::cc() const
 {
 	return d->cc;
 }
 
-Event &Event::setCc(const QList<QByteArray> &cc)
+Event &Event::setCc(const KIrc::Entity::List &cc)
 {
 	d->cc = cc;
 	return *this;
 }
-*/
-const QList<QByteArray> &Event::victims() const
-{
-	return d->victims;
-}
 
-Event &Event::setVictims(const QList<QByteArray> &victims)
-{
-	d->victims = victims;
-	return *this;
-}
 QString Event::text() const
 {
 	return d->text;

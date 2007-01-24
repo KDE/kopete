@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,11 +17,10 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTCOMMANDS_H
-#define KIRCCLIENTCOMMANDS_H
+#ifndef KIRCI18NTASK_H
+#define KIRCI18NTASK_H
 
-#include "kircmessage.h"
-#include "kircevent.h"
+#include "kirctask.h"
 
 namespace KIrc
 {
@@ -30,26 +29,21 @@ class Event;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
- * @author Michel Hermier <michel.hermier@gmail.com>
  * @author Jason Keirstead <jason@keirstead.org>
+ * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
-class ClientCommands
-	: public QObject
+class KIRCCLIENT_EXPORT I18nTask
+	: public KIrc::Task
 {
 	Q_OBJECT
 
 public:
-	ClientCommands(QObject *parent = 0);
-	~ClientCommands();
+#warning Make singleton
+	I18nTask(QObject *parent = 0);
+	~I18nTask();
 
 private slots:
-	void postEvent(const KIrc::Message &msg, KIrc::Message::Type messageType, const QString &message);
-	void postErrorEvent(const KIrc::Message &msg, const QString &message = QString());
-	void postInfoEvent(const KIrc::Message &msg, const QString &message = QString());
-	void postMOTDEvent(const KIrc::Message &msg, const QString &message = QString());
-
-	void receivedServerMessage(KIrc::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
-	void receivedServerMessage(KIrc::Message msg, const QString &message) KDE_DEPRECATED;
+	void postServerEvent(const KIrc::Message &msg, const QString &message = QString());
 
 private slots:
 	void error(KIrc::Message msg);
@@ -140,7 +134,7 @@ private slots:
 #endif // KIRC_STRICT
 
 private:
-	Q_DISABLE_COPY(ClientCommands)
+	Q_DISABLE_COPY(I18nTask)
 
 	class Private;
 	Private * const d;

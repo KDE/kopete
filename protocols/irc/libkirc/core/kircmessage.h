@@ -20,7 +20,7 @@
 
 #include "kircentity.h"
 
-#include "kdemacros.h"
+#include "kircglobal.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -32,7 +32,7 @@ namespace KIrc
 
 class Socket;
 
-class Message
+class KIRC_EXPORT Message
 {
 public:
 	enum Direction

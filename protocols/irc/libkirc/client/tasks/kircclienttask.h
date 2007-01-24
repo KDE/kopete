@@ -1,11 +1,11 @@
 /*
-    kircclientcommands.h - IRC Client Commands
+    kircclienttask.h - IRC Client Task
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2003-2006 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,33 +17,29 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTCOMMANDS_H
-#define KIRCCLIENTCOMMANDS_H
+#ifndef KIRCCLIENTTASK_H
+#define KIRCCLIENTTASK_H
 
-#include "kircmessage.h"
-#include "kircevent.h"
+#include "tasks/kircsimpletask.h"
 
 namespace KIrc
 {
 
-class Event;
-
 /**
  * @author Nick Betcher <nbetcher@kde.org>
- * @author Michel Hermier <michel.hermier@gmail.com>
+ * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class ClientCommands
-	: public QObject
+class KIRCCLIENT_EXPORT ClientTask
+	: public KIrc::SimpleTask
 {
 	Q_OBJECT
 
 public:
-	ClientCommands(QObject *parent = 0);
-	~ClientCommands();
+	ClientTask(QObject *parent = 0);
+	~ClientTask();
 
-private slots:
-	void postEvent(const KIrc::Message &msg, KIrc::Message::Type messageType, const QString &message);
+private:
 	void postErrorEvent(const KIrc::Message &msg, const QString &message = QString());
 	void postInfoEvent(const KIrc::Message &msg, const QString &message = QString());
 	void postMOTDEvent(const KIrc::Message &msg, const QString &message = QString());
@@ -51,7 +47,7 @@ private slots:
 	void receivedServerMessage(KIrc::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
 	void receivedServerMessage(KIrc::Message msg, const QString &message) KDE_DEPRECATED;
 
-private slots:
+private:
 	void error(KIrc::Message msg);
 	void join(KIrc::Message msg);
 	void kick(KIrc::Message msg);
@@ -122,7 +118,6 @@ private slots:
 	void numericReply_474(KIrc::Message msg);
 	void numericReply_475(KIrc::Message msg);
 
-//#ifndef KIRC_STRICT
 #if 0
 	void CtcpQuery_action(KIrc::Message msg);
 	void CtcpQuery_clientinfo(KIrc::Message msg);
@@ -137,10 +132,10 @@ private slots:
 	void CtcpReply_errmsg(KIrc::Message msg);
 	void CtcpReply_ping(KIrc::Message msg);
 	void CtcpReply_version(KIrc::Message msg);
-#endif // KIRC_STRICT
+#endif
 
 private:
-	Q_DISABLE_COPY(ClientCommands)
+	Q_DISABLE_COPY(ClientTask)
 
 	class Private;
 	Private * const d;
