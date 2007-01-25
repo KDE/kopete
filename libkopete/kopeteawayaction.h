@@ -45,23 +45,12 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 	public:
 		/**
 		 * Constructor
-		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
-		 * @p name are all handled by KSelectAction.
-		 **/
-		AwayAction(const QString &text, const QIcon &pix,
-				   const KShortcut &cut, const QObject *receiver, const char *slot,
-				   KActionCollection *parent, const char *name = 0);
-
-		/**
-		 * Constructor
 		 * @param status the OnlineStatus that appears in the signal
 		 * @param slot must have the following signature:  ( const OnlineStatus &, const QString & )
-		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
-		 * @p name are all handled by KSelectAction.
+		 * @p text, @p pix, @p cut, @p receiver and @p slot are all handled by KSelectAction
 		 **/
 		AwayAction(const OnlineStatus &status, const QString &text, const QIcon &pix,
-				   const KShortcut &cut, const QObject *receiver, const char *slot,
-				   KActionCollection *parent, const char *name = 0);
+				   const KShortcut &cut, const QObject *receiver, const char *slot);
 
 		/**
 	 	 * Destructor.

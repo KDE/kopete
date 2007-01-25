@@ -40,31 +40,12 @@ public:
 };
 
 
-AwayAction::AwayAction(const QString &text, const QIcon &pix, const KShortcut &cut,
-	const QObject *receiver, const char *slot, KActionCollection *parent, const char *name )
-	: KSelectAction( KIcon(pix), text, parent ) , d(new Private( OnlineStatus() ) )
-{
-	setShortcut( cut );
-	parent->addAction( name, this );
-
-	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
-		this, SLOT( slotAwayChanged() ) );
-
-	QObject::connect( this, SIGNAL( awayMessageSelected( const QString & ) ),
-		receiver, slot );
-
-	QObject::connect( this, SIGNAL( triggered( int ) ),
-		this, SLOT( slotSelectAway( int ) ) );
-
-	slotAwayChanged();
-}
-
 AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const QIcon &pix, const KShortcut &cut,
-					   const QObject *receiver, const char *slot, KActionCollection *parent, const char *name )
-	: KSelectAction( KIcon(pix), text, parent ) , d(new Private( status ) )
+					   const QObject *receiver, const char *slot )
+	: KSelectAction( KIcon(pix), text, 0 ) , d(new Private( status ) )
 {
 	setShortcut( cut );
-	parent->addAction( name, this );
+
 	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 					  this, SLOT( slotAwayChanged() ) );
 
