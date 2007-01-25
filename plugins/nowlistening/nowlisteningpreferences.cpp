@@ -53,6 +53,11 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
 #endif
+#if COMPILE_LISTENSUPPORT
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Listen"));
+#endif
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Quod Libet"));
+
 	load();
 }
 

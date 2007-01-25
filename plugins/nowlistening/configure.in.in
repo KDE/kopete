@@ -1,3 +1,4 @@
+###### Check for xmms control files
 dnl AM_PATH_XMMS([1.0.0])
 dnl AM_INIT_AUTOMAKE(mediacontrol, 0.1)
 dnl AC_PATH_PROG(XMMS_CONFIG, xmms-config, no)
@@ -57,3 +58,65 @@ fi
 AC_SUBST(XMMS_LIBS)
 AC_SUBST(XMMS_LDFLAGS)
 AC_SUBST(XMMS_INCLUDES)
+
+########### Check for DBus
+
+  AC_MSG_CHECKING(for DBus)
+
+  dbus_inc=NOTFOUND
+  dbus_lib=NOTFOUND
+  dbus=NOTFOUND
+
+  search_incs="$kde_includes $kde_extra_includes /usr/include /usr/include/dbus-1.0 /usr/local/include /usr/local/include/dbus-1.0"
+  AC_FIND_FILE(dbus/dbus.h, $search_incs, dbus_incdir)
+
+  search_incs_arch_deps="$kde_includes $kde_extra_includes /usr/lib$kdelibsuff/dbus-1.0/include /usr/local/lib$kdelibsuff/dbus-1.0/include"
+  AC_FIND_FILE(dbus/dbus-arch-deps.h, $search_incs_arch_deps, dbus_incdir_arch_deps)
+
+  if test -r $dbus_incdir/dbus/dbus.h && test -r $dbus_incdir_arch_deps/dbus/dbus-arch-deps.h ; then
+    DBUS_INCS="-I$dbus_incdir -I$dbus_incdir_arch_deps"
+    dbus_inc=FOUND
+  fi
+
+  search_libs="$kde_libraries $kde_extra_libs /usr/lib$kdelibsuff /usr/local/lib$kdelibsuff"
+  AC_FIND_FILE(libdbus-1.so, $search_libs, dbus_libdir)
+
+  if test -r $dbus_libdir/libdbus-1.so ; then
+    DBUS_LIBS="-L$dbus_libdir -ldbus-1"
+    dbus_lib=FOUND
+  fi
+
+  if test $dbus_inc != FOUND || test $dbus_lib != FOUND ; then 
+    KDE_PKG_CHECK_MODULES( DBUS, "dbus-1", [ DBUS_INCS=$DBUS_CFLAGS; dbus_inc=FOUND; dbus_lib=FOUND; ] , AC_MSG_RESULT( Nothing found on PKG_CONFIG_PATH ) )
+  fi
+
+  dbus_bus_var=`pkg-config --variable=system_bus_default_address dbus-1 2>/dev/null`
+  if test -z "$dbus_bus_var"; then
+        dbus_bus_var="unix:path=/var/run/dbus/system_bus_socket"
+  fi
+  AC_DEFINE_UNQUOTED(DBUS_SYSTEM_BUS, "$dbus_bus_var", [Define the unix domain path for dbus system bus])
+
+  if test $dbus_inc = FOUND && test $dbus_lib = FOUND ; then
+    AC_MSG_RESULT(headers $DBUS_INCS libraries $DBUS_LIBS)
+    dbus=FOUND
+  else
+    AC_MSG_RESULT(searched but not found)
+  fi
+
+  AC_SUBST(DBUS_INCS)
+  AC_SUBST(DBUS_LIBS)
+
+########### Check if Listen NL backend sould be compiled
+
+AC_MSG_CHECKING(if the Listen backend for the Now Listening plugin should be compiled)
+
+LISTENBACKEND=no
+if test "x$dbus" = "xFOUND" ; then
+  AC_DEFINE_UNQUOTED([COMPILE_LISTENSUPPORT],1, [Listen support for Now Listening])
+  LISTENBACKEND=yes
+  AC_SUBST(LISTENBACKEND)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
