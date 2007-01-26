@@ -2,10 +2,10 @@
 
 # Copyright (c) 2006, Will Stephenson <wstephenson@kde.org>
 #
-#  IDN_FOUND - Test has found Decibel dependencies
-#  IDN_INCLUDES - Include needed for Decibel
-#  IDN_LIBRARIES - Libraries needed for Decibel
-#  IDN_DEFINITIONS - Compiler swithces required for using Decibel
+#  IDN_FOUND - Test has found IDN dependencies
+#  IDN_INCLUDES - Include needed for IDN
+#  IDN_LIBRARIES - Libraries needed for IDN
+#  IDN_DEFINITIONS - Compiler swithces required for using IDN
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
