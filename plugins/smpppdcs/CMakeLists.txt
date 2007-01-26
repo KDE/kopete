@@ -18,9 +18,11 @@ set(kopete_smpppdcs_PART_SRCS
 
 kde4_automoc(${kopete_smpppdcs_PART_SRCS})
 
-kde4_add_dcop_skels(kopete_smpppdcs_PART_SRCS smpppdcsiface.h )
+message(FATAL_ERROR "DCOP stuff was removed in kde4, convert it to dbus please")
 
-kde4_add_dcop_stubs(kopete_smpppdcs_PART_SRCS kinternetiface.h )
+#kde4_add_dcop_skels(kopete_smpppdcs_PART_SRCS smpppdcsiface.h )
+
+#kde4_add_dcop_stubs(kopete_smpppdcs_PART_SRCS kinternetiface.h )
 
 kde4_add_kcfg_files(kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
 
