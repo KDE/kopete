@@ -27,6 +27,7 @@
 
 // KDE Includes
 #include <kdebug.h>
+#include <kdefakes.h> // gethostname
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <knuminput.h>

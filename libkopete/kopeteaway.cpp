@@ -16,9 +16,7 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-kopete.h>
 
 #include "kopeteaway.h"
 
@@ -96,7 +94,7 @@ Kopete::Away *Kopete::Away::instance = 0L;
 
 Kopete::Away::Away() : QObject( kapp )
 {
-	setObjectName( "Kopete::Away" );	
+	setObjectName( "Kopete::Away" );
 
 	int dummy = 0;
 	dummy = dummy; // shut up
@@ -172,7 +170,7 @@ Kopete::Away::Away() : QObject( kapp )
 	}
 
 	d->autoAwayMessage = Kopete::BehaviorSettings::self()->autoAwayCustomMessage();
-	
+
 	// init the timer
 	d->timer = new QTimer(this);
 	d->timer->setObjectName("AwayTimer");
@@ -187,7 +185,7 @@ Kopete::Away::Away() : QObject( kapp )
 Kopete::Away::~Away()
 {
 	if(this == instance)
-		instance = 0L;	
+		instance = 0L;
 	delete d;
 }
 
@@ -218,7 +216,7 @@ void Kopete::Away::setAutoAwayMessage(const QString &message)
 		kDebug(14010) << k_funcinfo <<
 			"Setting auto away message: " << message << endl;
 		d->autoAwayMessage = message;
-		
+
 		// Save the new auto away message to disk
 		save();
 	}
@@ -308,8 +306,8 @@ void Kopete::Away::slotTimerTimeout()
 	// isn't blanked/locked, because activity while blanked is impossible and
 	// activity while locked never matters (if there is any, it's probably just
 	// the cleaner wiping the keyboard :).
-	
-	
+
+
 	/* we should be able to respond to KDesktop queries to avoid a deadlock, so we allow the event loop to be called */
 	static bool rentrency_protection=false;
 	if(rentrency_protection)
@@ -485,7 +483,7 @@ void Kopete::Away::setAutoAway()
 		if(i->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		{
 			d->autoAwayAccounts.append(i);
-			
+
 			if(d->useAutoAwayMessage)
 			{
 			// Display a specific away message

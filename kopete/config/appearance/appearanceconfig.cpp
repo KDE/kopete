@@ -16,9 +16,7 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "config-kopete.h" // HAVE_XRENDER
 
 #include "appearanceconfig.h"
 #include "appearanceconfig_emoticons.h"
@@ -85,15 +83,15 @@ class AppearanceConfig::Private
 public:
 	Private()
 	 : mAppearanceTabCtl(0L), mPrfsEmoticons(0L),
-	   mPrfsColors(0L), mPrfsContactList(0L) 
+	   mPrfsColors(0L), mPrfsContactList(0L)
 	{}
 
 	QTabWidget *mAppearanceTabCtl;
-	
+
 	AppearanceConfig_Emoticons *mPrfsEmoticons;
 	AppearanceConfig_Colors *mPrfsColors;
 	AppearanceConfig_ContactList *mPrfsContactList;
-	
+
 };
 
 
@@ -300,7 +298,7 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 	QString question=i18n("<qt>Are you sure you want to remove the "
 			"<strong>%1</strong> emoticon theme?<br>"
 			"<br>"
-			"This will delete the files installed by this theme.</qt>", 
+			"This will delete the files installed by this theme.</qt>",
 		themeName);
 
         int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStandardGuiItem::del());
@@ -324,7 +322,7 @@ void AppearanceConfig::slotGetEmoticonThemes()
 	config->sync();
 
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
-	
+
 	updateEmoticonlist();
 }
 

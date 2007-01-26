@@ -27,7 +27,6 @@
 #include <kgenericfactory.h>
 #include <kaction.h>
 
-#include "config.h"
 #include "config-kopete.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -55,7 +54,7 @@
 class NowListeningPlugin::Private
 {
 public:
-	Private() : m_currentMediaPlayer(0L), m_currentChatSession(0L), m_currentMetaContact(0L), 
+	Private() : m_currentMediaPlayer(0L), m_currentChatSession(0L), m_currentMetaContact(0L),
 				advertTimer(0L)
 	{}
 	~Private()
@@ -171,14 +170,14 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 		// prevent us sending an empty message
 		advert = i18nc("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
 	}
-	
+
 	Kopete::Message msg( theChat->myself(),
 			theChat->members(),
 			advert + ' ' + args,
 			Kopete::Message::Outbound,
 			Kopete::Message::RichText
 	);
-	
+
 	theChat->sendMessage( msg );
 }
 
@@ -201,7 +200,7 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 	// one of them has never gotten the current music information.
 	Kopete::ContactPtrList dest = msg.to();
 	bool mustSendAnyway = false;
-	
+
 	foreach( Kopete::Contact *c, dest )
 	{
 		const QString& cId = c->contactId();
@@ -247,7 +246,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 {
 	// Do anything when statusAdvertising is off.
 	if( !NowListeningConfig::self()->statusAdvertising() && !NowListeningConfig::self()->appendStatusAdvertising() )
-		return; 
+		return;
 
 	// This slot is called every 5 seconds, so we check if we have a new track playing.
 	if( newTrackPlaying() )
@@ -285,20 +284,20 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 		foreach( Kopete::Account* a, accountsList )
 		{
 			Kopete::StatusMessage currentStatusMessage = a->myself()->statusMessage();
-			
+
 			if(isPlaying)
 			{
 				currentStatusMessage.addMetaData("title", track);
 				currentStatusMessage.addMetaData("artist", artist);
 				currentStatusMessage.addMetaData("album", album);
 			}
-				
+
 			if( NowListeningConfig::self()->appendStatusAdvertising() )
 			{
-				// Check for the now listening message in parenthesis, 
+				// Check for the now listening message in parenthesis,
 				// include the header to not override other messages in parenthesis.
 				QRegExp statusSong( QString("\\((%1[^.]*)\\)").arg( NowListeningConfig::header()) );
-					
+
 				// HACK: Don't keep appending the now listened song. Replace it in the status message.
 				advert = currentStatusMessage.message();
 				// Remove the braces when they are no listened song.
@@ -334,7 +333,7 @@ QString NowListeningPlugin::mediaPlayerAdvert(bool update)
 {
 	// generate message for all players
 	QString message;
-	
+
 	if( NowListeningConfig::self()->useSpecifiedMediaPlayer() && d->m_currentMediaPlayer != 0L )
 	{
 		buildTrackMessage(message, d->m_currentMediaPlayer, update);
@@ -348,7 +347,7 @@ QString NowListeningPlugin::mediaPlayerAdvert(bool update)
 	}
 
 	kDebug( 14307 ) << k_funcinfo << message << endl;
-			
+
 	return message;
 }
 
@@ -363,7 +362,7 @@ void NowListeningPlugin::buildTrackMessage(QString &message, NLMediaPlayer *play
 		kDebug( 14307 ) << k_funcinfo << player->name() << " is playing" << endl;
 		if ( message.isEmpty() )
 			message = NowListeningConfig::self()->header();
-	
+
 		if ( message != NowListeningConfig::self()->header() ) // > 1 track playing!
 			message = message + NowListeningConfig::self()->conjunction();
 		message = message + substDepthFirst( player, perTrack, false );
@@ -518,7 +517,7 @@ void NowListeningPlugin::slotSettingsChanged()
 	d->advertTimer->stop();
 	disconnect(d->advertTimer, SIGNAL(timeout()), this, SLOT(slotAdvertCurrentMusic()));
 
-	if( NowListeningConfig::self()->chatAdvertising() ) 
+	if( NowListeningConfig::self()->chatAdvertising() )
 	{
 		kDebug(14307) << k_funcinfo << "Now using chat window advertising." << endl;
 

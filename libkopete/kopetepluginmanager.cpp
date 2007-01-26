@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "config.h"
 #include "config-kopete.h"
 
 #include "kopetepluginmanager.h"
@@ -139,14 +138,14 @@ QList<KPluginInfo *> PluginManager::availablePlugins( const QString &category ) 
 PluginList PluginManager::loadedPlugins( const QString &category ) const
 {
 	PluginList result;
-	
+
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
 	{
 		if ( category.isEmpty() || it.key()->category() == category )
 			result.append( it.value() );
 	}
-	
+
 	return result;
 }
 
@@ -171,7 +170,7 @@ void PluginManager::shutdown()
 	}
 
 	d->shutdownMode = Private::ShuttingDown;
-	
+
 
 	/* save the contact list now, just in case a change was made very recently
 	   and it hasn't autosaved yet
@@ -180,10 +179,10 @@ void PluginManager::shutdown()
 	*/
 	Kopete::ContactList::self()->save();
 	Kopete::AccountManager::self()->save();
-	
+
 	// Remove any pending plugins to load, we're shutting down now :)
 	d->pluginsToLoad.clear();
-	
+
 	// Ask all plugins to unload
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); /* EMPTY */ )
@@ -198,7 +197,7 @@ void PluginManager::shutdown()
 		//  another object to do it.
 		current.value()->aboutToUnload();
 	}
-	
+
 	// When running under valgrind, don't enable the timer because it will almost
 	// certainly fire due to valgrind's much slower processing
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
@@ -223,7 +222,7 @@ void PluginManager::slotPluginReadyForUnload()
 		return;
 	}
 	kDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload" << endl;
-	
+
 	plugin->deleteLater();
 }
 
@@ -271,7 +270,7 @@ void PluginManager::loadAllPlugins()
 			{
 				key.resize( key.length() - 7 );
 				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value() << endl;
-	
+
 				if ( it.value() == QLatin1String( "true" ) )
 				{
 					if ( !plugin( key ) )
@@ -280,7 +279,7 @@ void PluginManager::loadAllPlugins()
 				else
 				{
 					//This happens if the user unloaded plugins with the config plugin page.
-					// No real need to be assync because the user usualy unload few plugins 
+					// No real need to be assync because the user usualy unload few plugins
 					// compared tto the number of plugin to load in a cold start. - Olivier
 					if ( plugin( key ) )
 						unloadPlugin( key );

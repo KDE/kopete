@@ -37,9 +37,7 @@
  *   34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#include <config-kopete.h>
 
 #ifdef HAVE_INTTYPES_H
 # include <inttypes.h>

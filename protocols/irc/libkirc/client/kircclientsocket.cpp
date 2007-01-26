@@ -16,10 +16,6 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "kircclientsocket.moc"
 
 #include "kircclientcommandhandler.h"

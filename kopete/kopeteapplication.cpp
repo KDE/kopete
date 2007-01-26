@@ -47,10 +47,6 @@
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
 {
@@ -196,7 +192,7 @@ void KopeteApplication::slotLoadPlugins()
 		//        as it also allows for other features. - Martijn
 		// FIXME: Possibly we need to influence the showConfigDialog bool based on the
 		//        command line arguments processed below. But how exactly? - Martijn
-		// NB: the command line args are completely broken atm.  
+		// NB: the command line args are completely broken atm.
 		// I don't want to fix them for 3.5 as plugin loading will change for KDE4.	- Will
 		AddAccountWizard *m_addwizard = new AddAccountWizard( Kopete::UI::Global::mainWidget(), true );
 		m_addwizard->exec();
@@ -218,7 +214,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 		foreach ( const QString connectArg, QString::fromLocal8Bit(*i).split(','))
 			connectArgs.append( connectArg.toLocal8Bit() );
 	}
-	
+
 	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
 		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );

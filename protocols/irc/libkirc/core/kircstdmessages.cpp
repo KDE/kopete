@@ -17,10 +17,6 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG
-#include "config.h"
-#endif
-
 #include "kircstdmessages.h"
 
 #include "kircmessage.h"
@@ -34,9 +30,7 @@
 #include <qfileinfo.h>
 #include <qregexp.h>
 /*
-#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
-#endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
 */

@@ -18,13 +18,9 @@
 #ifndef JABBERTRANSPORT_H
 #define JABBERTRANSPORT_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <kopeteaccount.h>
 
-namespace XMPP { 
+namespace XMPP {
 	class Jid;
 	class RosterItem;
 }
@@ -48,7 +44,7 @@ public:
 	 * @param gateway_type eg: "msn" or "icq"  only used when the account is not loaded from config file for determining the icon
 	 */
 	JabberTransport (JabberAccount * parentAccount, const XMPP::RosterItem &item, const QString& gateway_type=QString());
-	
+
 	/**
 	 * constructor called when the transport is loaded from config
 	 * @param parentAccount is the parent jabber account.
@@ -60,9 +56,9 @@ public:
 
 	/** Returns the action menu for this account. */
 	virtual KActionMenu *actionMenu ();
-	
+
 	/** the parent account */
-	JabberAccount *account() const 
+	JabberAccount *account() const
 	{ return m_account; }
 
 	/* to get the protocol from the account */
@@ -70,23 +66,23 @@ public:
 
 	void connect( const Kopete::OnlineStatus& ) {}
 	virtual void disconnect( ) {}
-	
-	/** 
+
+	/**
 	 * called when the account is removed in the config ui
 	 * will remove the subscription
 	 */
 	virtual bool removeAccount();
-	
+
 
 	enum TransportStatus { Normal , Creating, Removing , AccountRemoved };
 	TransportStatus transportStatus() { return m_status; };
-	
+
 	/**
 	 * return the legacyId conrresponding to the jid
 	 *  example:  jhon%msn.com@msn.foojabber.org  ->  jhon@msn.com
 	 */
 	QString legacyId( const XMPP::Jid &jid );
-	
+
 public slots:
 
 	/* Reimplemented from Kopete::Account */
@@ -97,7 +93,7 @@ public slots:
 	 * loop over all contact and remove them
 	 */
 	void removeAllContacts();
-	
+
 	/**
 	 * the JabberAccount has been removed from Kopete,  remove this account also
 	 */

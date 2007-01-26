@@ -22,7 +22,7 @@
     *************************************************************************
 */
 
-#include "config.h"
+#include "config-kopete.h"
 
 #include "motionawayplugin.h"
 

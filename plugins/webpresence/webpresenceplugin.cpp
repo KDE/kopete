@@ -18,7 +18,6 @@
  *************************************************************************
  */
 
-#include "config.h"
 #include "config-kopete.h"
 
 #include <qdom.h>
@@ -229,7 +228,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 
 	// insert the current date/time
 	QDomElement date = doc.createElement( "listdate" );
-	QDomText t = doc.createTextNode( 
+	QDomText t = doc.createTextNode(
 			KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
 	date.appendChild( t );
 	root.appendChild( date );

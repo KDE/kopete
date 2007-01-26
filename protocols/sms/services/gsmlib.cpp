@@ -12,7 +12,7 @@
     *                                                                       *
     *************************************************************************
 */
-#include "config.h"
+#include "config-kopete.h"
 #ifdef INCLUDE_SMSGSM
 
 #include <qcombobox.h>
@@ -97,7 +97,7 @@ void GSMLibThread::run()
 		while( m_run )
 		{
 			pollForMessages();
-			sendMessageQueue();	
+			sendMessageQueue();
 		}
 	}
 
@@ -131,11 +131,11 @@ bool GSMLibThread::doConnect()
 	try
 	{
 		kDebug( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
-		
+
 		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
-		
+
 		kDebug( 14160 ) << "Port created"<<endl;
-				
+
 		m_MeTa = new gsmlib::MeTa(port);
 		std::string dummy1, dummy2, receiveStoreName;
 		m_MeTa->getSMSStore(dummy1, dummy2, receiveStoreName );
@@ -165,7 +165,7 @@ void GSMLibThread::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType
 		IncomingMessage m;
 		m.Type = messageType;
 		m.Message = newMessage;
-		
+
 		m_newMessages.push_back(m);
 	}
 	catch(gsmlib::GsmException &e)
@@ -183,7 +183,7 @@ void GSMLibThread::SMSReceptionIndication(std::string storeName, unsigned int in
 	{
 		if( messageType != gsmlib::GsmEvent::NormalSMS )
 			return;
-		
+
 		IncomingMessage m;
 		m.Index = index;
 		m.StoreName = storeName.c_str();
@@ -201,19 +201,19 @@ void GSMLibThread::pollForMessages( )
 {
 	if( m_MeTa == NULL )
 		return;
-	
+
 	try
 	{
 		struct timeval timeoutVal;
 		timeoutVal.tv_sec = 1;
 		timeoutVal.tv_usec = 0;
 		m_MeTa->waitEvent(&timeoutVal);
-		
+
 		MessageList::iterator it;
 		for( it=m_newMessages.begin(); it!=m_newMessages.end(); it++)
 		{
 			IncomingMessage m = *it;
-			
+
 			// Do we need to fetch it from the ME?
 			if( m.Message.isnull() )
 			{
@@ -243,7 +243,7 @@ void GSMLibThread::pollForMessages( )
 void GSMLibThread::sendMessageQueue()
 {
 	QMutexLocker _(&m_outMessagesMutex);
-	
+
 	if(m_outMessages.size() == 0 )
 		return;
 
@@ -275,7 +275,7 @@ void GSMLibThread::sendMessage(const Kopete::Message& msg)
 		gsmlib::Address destAddr( nr.latin1() );
 		submitSMS->setDestinationAddress(destAddr);
 		m_MeTa->sendSMSs(submitSMS, message.latin1(), true);
-		
+
 		GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::MSG_SENT );
 		e->Message = msg;
 		QApplication::postEvent(m_parent, e);
@@ -296,7 +296,7 @@ GSMLib::GSMLib(Kopete::Account* account)
 {
 	prefWidget = 0L;
 	m_thread = NULL;
-	
+
 	loadConfig();
 }
 
@@ -322,7 +322,7 @@ void GSMLib::loadConfig()
 	{
 		QString temp;
 		KConfigGroup* c = m_account->configGroup();
-		
+
 		temp = c->readEntry(QString("%1:%2").arg("GSMLib").arg("Device"), QString());
 		if( temp != QString::null )
 			m_device = temp;
@@ -331,10 +331,10 @@ void GSMLib::loadConfig()
 
 void GSMLib::connect()
 {
-	
+
 	m_thread = new GSMLibThread(m_device, this);
 	m_thread->start();
-	
+
 }
 
 void GSMLib::disconnect()
@@ -399,7 +399,7 @@ void GSMLib::customEvent(QCustomEvent* e)
 		return;
 
 	GSMLibEvent* ge = (GSMLibEvent*)e;
-	
+
 	kDebug( 14160 ) << "Got event "<<ge->subType()<<endl;
 	switch( ge->subType() )
 	{
@@ -419,7 +419,7 @@ void GSMLib::customEvent(QCustomEvent* e)
 		{
 			QString nr = ge->Number;
 			QString text = ge->Text;
-			
+
 			// Locate a contact
 			SMSContact* contact = static_cast<SMSContact*>( m_account->contacts().find( nr ));
 			if ( contact==NULL )
@@ -431,7 +431,7 @@ void GSMLib::customEvent(QCustomEvent* e)
 				Kopete::ContactList::self ()->addMetaContact( metaContact );
 				contact->setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
 			}
-			
+
 			// Deliver the msg
 			Kopete::Message msg( contact, m_account->myself(), text, Kopete::Message::Inbound, Kopete::Message::RichText );
 			contact->manager(Kopete::Contact::CanCreate)->appendMessage( msg );

@@ -28,8 +28,7 @@
 #include <klocale.h>
 #include <kgenericfactory.h>
 
-#include "config.h" // for HAVE_XMMS
-#include "config-kopete.h"
+#include "config-kopete.h" // for HAVE_XMMS
 #include "ui_nowlisteningprefs.h"
 #include "nowlisteningconfig.h"
 #include "nowlisteningpreferences.h"

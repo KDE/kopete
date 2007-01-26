@@ -25,10 +25,6 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <config-kopete.h>
 
 // we need these for type reasons
@@ -50,15 +46,15 @@ class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
 
-namespace Kopete 
-{ 
+namespace Kopete
+{
 	class MetaContact;
 	class StatusMessage;
 }
 
 #ifdef SUPPORT_JINGLE
-//class JingleSessionManager; 
-//class JingleSession; 
+//class JingleSessionManager;
+//class JingleSession;
 class VoiceCaller;
 #endif
 
@@ -94,7 +90,7 @@ public:
 	{
 		return m_jabberClient;
 	}
-	
+
 #ifdef SUPPORT_JINGLE
 	VoiceCaller *voiceCaller() const
 	{
@@ -128,17 +124,17 @@ public:
 	 * @return True if stream can be resumed.
 	 */
 	static bool handleTLSWarning ( JabberClient *client, QCA::TLS::IdentityResult identityResult, QCA::Validity validityResult );
-	
+
 	/*
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass, QString additionalErrMsg);
-	
+
 	const QMap<QString, JabberTransport *> &transports()
 	{ return m_transports; }
-	
-	
-	/** 
+
+
+	/**
 	 * called when the account is removed in the config ui
 	*/
 	virtual bool removeAccount();
@@ -182,8 +178,8 @@ protected:
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
-	
-	
+
+
 
 private:
 	JabberProtocol *m_protocol;
@@ -221,7 +217,7 @@ private:
 	bool isConnecting ();
 
 	QMap<QString, JabberTransport*> m_transports;
-	
+
 	/* used in removeAccount() */
 	bool m_removing;
 	/* keep track if we told the user we were not able to bind the
@@ -270,7 +266,7 @@ private slots:
 
 	/* Incoming subscription request. */
 	void slotSubscription ( const XMPP::Jid &jid, const QString &type );
-	
+
 	/* the dialog that asked to add the contact was closed   (that dialog is shown in slotSubscription) */
 	void slotContactAddedNotifyDialogClosed(const QString& contactid);
 
@@ -305,10 +301,10 @@ private slots:
 
 	/* Update the myself information if the global identity changes. */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
-	
-	/* we received a voice invitation */	
+
+	/* we received a voice invitation */
 	void slotIncomingVoiceCall(const Jid&);
-	
+
 	/* the unregister task finished */
 	void slotUnregisterFinished();
 

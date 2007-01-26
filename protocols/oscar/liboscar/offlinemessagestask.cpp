@@ -15,7 +15,6 @@
    *                                                                       *
    *************************************************************************
 */
-#include "config.h"
 #include "offlinemessagestask.h"
 
 #include <time.h>
@@ -40,10 +39,10 @@ OfflineMessagesTask::~OfflineMessagesTask()
 void OfflineMessagesTask::onGo()
 {
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Requesting offline messages" << endl;
-	
+
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
-	
+
 	setRequestType( 0x003c ); //offline message request
 	setSequence( f.sequence );
 	Buffer* buf = addInitialData();
@@ -54,19 +53,19 @@ void OfflineMessagesTask::onGo()
 bool OfflineMessagesTask::forMe( const Transfer* t ) const
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( t );
-	
+
 	if ( !st )
 		return false;
-	
+
 	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
 		return false;
-		
+
 	Buffer buf( st->buffer()->buffer() );
 	const_cast<OfflineMessagesTask*>(this)->parseInitialData( buf );
-	
+
 	if ( requestType() == 0x0041 || requestType() == 0x0042 )
 		return true;
-		
+
 	return false;
 }
 
@@ -75,12 +74,12 @@ bool OfflineMessagesTask::take( Transfer* t )
 	if ( forMe( t ) )
 	{
 		setTransfer( t );
-		
+
 		if ( requestType() == 0x0041 ) // Offline message
 			handleOfflineMessage();
 		else if ( requestType() == 0x0042 ) // end-of-offline messages
 			endOfMessages();
-			
+
 		setTransfer( 0 );
 		return true;
 	}
@@ -92,22 +91,22 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 
 	TLV tlv1 = b->getTLV();
 	Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
-	
+
 	buffer->getLEWord(); // data chunk size
 	DWORD receiverUin = buffer->getLEDWord(); // target uin
 	buffer->getLEWord(); // request type
 	buffer->getLEWord(); // request sequence number: 0x0002
-	
+
 	DWORD senderUin = buffer->getLEDWord();
 	WORD year = buffer->getLEWord();
 	BYTE month = buffer->getByte();
 	BYTE day = buffer->getByte();
 	BYTE hour = buffer->getByte();
 	BYTE minute = buffer->getByte();
-	
+
 	BYTE type = buffer->getByte(); // msg type
 	BYTE flags = buffer->getByte(); // msg flags
-	
+
 	QByteArray msg = buffer->getLELNTS();
 
 	QDateTime utcTime( QDate(year, month, day), QTime(hour, minute), Qt::UTC );
@@ -115,9 +114,9 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 	Oscar::Message message( Oscar::Message::UserDefined, msg, type, flags, utcTime.toLocalTime() );
 	message.setSender( QString::number( senderUin ) );
 	message.setReceiver( QString::number( receiverUin ) );
-	
+
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received offline message '" << msg.data() << "' from " << senderUin << endl;
-	
+
 	return message;
 }
 
@@ -130,15 +129,15 @@ void OfflineMessagesTask::handleOfflineMessage()
 void OfflineMessagesTask::endOfMessages()
 {
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "End of Offline Messages" << endl;
-	
+
 	TLV tlv1 = transfer()->buffer()->getTLV();
 	Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
-	
+
 	buffer->skipBytes( 8 );
 	m_sequence = buffer->getLEWord();
-	
+
 	deleteOfflineMessages();
-	
+
 	setSuccess( true );
 }
 
@@ -146,8 +145,8 @@ void OfflineMessagesTask::deleteOfflineMessages()
 {
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
-	
-	
+
+
 	setRequestType( 0x003E ); //delete offline messages
 	setSequence( m_sequence );
 	Buffer* buf = addInitialData();

@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include "config.h"
+#include "config-kopete.h"
 
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -58,7 +58,7 @@ QStringList ServiceLoader::services()
 	toReturn.append("SMSClient");
 #ifdef INCLUDE_SMSGSM
 	toReturn.append("GSMLib");
-#endif	
+#endif
 	return toReturn;
 }
 

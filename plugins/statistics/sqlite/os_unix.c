@@ -17,6 +17,7 @@
 #if OS_UNIX              /* This file is used on unix only */
 
 
+#include <kdefakes.h>
 #include <time.h>
 #include <errno.h>
 #include <unistd.h>
@@ -1170,13 +1171,8 @@ int sqlite3OsRandomSeed(char *zBuf){
 ** Sleep for a little while.  Return the amount of time slept.
 */
 int sqlite3OsSleep(int ms){
-#if defined(HAVE_USLEEP) && HAVE_USLEEP
   usleep(ms*1000);
   return ms;
-#else
-  sleep((ms+999)/1000);
-  return 1000*((ms+999)/1000);
-#endif
 }
 
 /*

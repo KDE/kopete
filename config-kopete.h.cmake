@@ -18,19 +18,10 @@
 #define MSN_WEBCAM 1
 
 /* Define to compile with GSM SMS support */
-#define INCLUDE_SMSGSM 1
+/* #undef INCLUDE_SMSGSM */
 
 /* Define to 1 if you want IDN support. */
 #define LIBIDN 1
-
-/* Speex codec is enabled */
-#define HAVE_SPEEX 1
-
-/* Define to 1 if you have the <speex.h> header file. */
-#cmakedefine HAVE_SPEEX_H 1
-
-/* Define to 1 if you have the <speex/speex.h> header file. */
-#cmakedefine HAVE_SPEEX_SPEEX_H 1
 
 /* Defines the executable of xmllint */
 #define XMLLINT "/usr/bin/xmllint"
@@ -47,14 +38,14 @@
 /* Defined when we have ilbc codec lib */
 #define HAVE_ILBC 1
 
-/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
-#cmakedefine HAVE_ALSA_ASOUNDLIB_H 1
-
 /* Defines if you have GL (Mesa, OpenGL, ...) */
 #define HAVE_GL 1
 
 /* Glib is required for oRTP code and libmimic code */
 #define HAVE_GLIB 1
+
+/* TODO */
+/* #undef HAVE_XSHM */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
@@ -62,6 +53,15 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H 1
 
-/* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H 1
+/* Define to 1 if you have the ANSI C header files. */
+#define STDC_HEADERS 1
 
+/* Define to 1 if your processor stores words with the most significant byte
+   first (like Motorola and SPARC, unlike Intel and VAX). */
+#cmakedefine WORDS_BIGENDIAN ${CMAKE_WORDS_BIGENDIAN}
+
+/* The size of a `long', as computed by sizeof. */
+#define SIZEOF_LONG ${SIZEOF_LONG}
+
+/* The size of a `unsigned long', as computed by sizeof. */
+#define SIZEOF_UNSIGNED_LONG ${SIZEOF_UNSIGNED_LONG}

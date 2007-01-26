@@ -10,7 +10,7 @@
 // *
 // * Created: 10.5.1999
 // *************************************************************************
-#include "config.h"
+#include "config-kopete.h"
 #ifdef INCLUDE_SMSGSM
 
 #include <gsmlib/gsm_util.h>
@@ -36,14 +36,14 @@ using namespace gsmlib;
 
 static const int holdoff[] = {2000000, 1000000, 400000};
 static const int holdoffArraySize = sizeof(holdoff)/sizeof(int);
-  
+
 // alarm handling for socket read/write
 // the timerMtx is necessary since several threads cannot use the
 // timer indepently of each other
 
 static pthread_mutex_t timerMtx = PTHREAD_MUTEX_INITIALIZER;
-#define pthread_mutex_lock(x) 
-#define pthread_mutex_unlock(x) 
+#define pthread_mutex_lock(x)
+#define pthread_mutex_unlock(x)
 
 // for non-GNU systems, define alarm()
 #ifndef HAVE_ALARM
@@ -171,7 +171,7 @@ KopeteUnixSerialPort::KopeteUnixSerialPort(string device, speed_t lineSpeed,
   _oldChar(-1), _timeoutVal(TIMEOUT_SECS)
 {
 	_readNotifier = NULL;
-	
+
   struct termios t;
 
   // open device
@@ -359,7 +359,7 @@ void KopeteUnixSerialPort::putLine(string line,
 
   if (carriageReturn) line += CR;
   const char *l = line.c_str();
-  
+
   int timeElapsed = 0;
   struct timeval oneSecond;
 
@@ -395,7 +395,7 @@ void KopeteUnixSerialPort::putLine(string line,
 	  break;
 	}
   }
-  
+
   while (timeElapsed < _timeoutVal)
   {
 	if (interrupted())

@@ -16,9 +16,7 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <config-kopete.h>
 
 #include "kopetecontact.h"
 #include "kopetelistviewitem.h"
@@ -73,7 +71,7 @@ ComponentBase::~ComponentBase()
 
 uint ComponentBase::components() { return d->components.count(); }
 
-Component *ComponentBase::component( uint n ) 
+Component *ComponentBase::component( uint n )
 {
 	if( n < components() )
 		return d->components.at( n );
@@ -706,7 +704,7 @@ void DisplayNameComponent::setText( const QString& text )
 	if ( d->text == text )
 		return;
 	d->text = text;
-	
+
 	redraw();
 }
 
@@ -718,10 +716,10 @@ void DisplayNameComponent::redraw()
 	{
 		((TextComponent*)component(n))->color();
 	}
-	
+
 	QList<Kopete::Emoticons::Token> tokens;
 	QList<Kopete::Emoticons::Token>::const_iterator token;
-	
+
 	clear(); // clear childs
 
 	tokens = Kopete::Emoticons::tokenizeEmoticons( d->text );
@@ -746,7 +744,7 @@ void DisplayNameComponent::redraw()
 			kDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
 		}
 	}
-	
+
 	if(color.isValid())
 		setColor( color );
 }
@@ -947,7 +945,7 @@ public:
 	}
 
 	int visibilityLevel;
-	
+
 	bool visibilityTarget;
 
 	static const int visibilityFoldSteps = 7;
@@ -1291,7 +1289,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		int vis = d->visibilityLevel - Private::visibilityFoldSteps;
 		if ( vis < 0 )
 		    vis = 0;
-		
+
 		opac = float(vis) / Private::visibilityFadeSteps;
 	}
 	opac *= opacity();

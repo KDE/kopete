@@ -19,17 +19,12 @@
 #ifndef SMPPPDCSPLUGIN_H
 #define SMPPPDCSPLUGIN_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "detector.h"
 #include "iconnector.h"
 #include "smpppdcsiface.h"
 
 #include "kopeteplugin.h"
 #include "kopeteaccount.h"
-//Added by qt3to4:
 #include <QByteArray>
 
 class QTimer;

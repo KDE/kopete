@@ -16,10 +16,6 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "chatwindowconfig.h"
 
 #include <QCheckBox>
@@ -125,7 +121,7 @@ public:
 				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
 				break;
 			}
-				
+
 			case ChatWindowStyleManager::StyleUnknow:
 			default:
 			{
@@ -138,10 +134,10 @@ public:
 };
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
-	: KCModule( KopeteChatWindowConfigFactory::instance(), parent, args ) 
-		, m_currentStyle (0L), m_loading(false), m_styleChanged(false)  
+	: KCModule( KopeteChatWindowConfigFactory::instance(), parent, args )
+		, m_currentStyle (0L), m_loading(false), m_styleChanged(false)
 {
-	
+
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	QTabWidget *chatWindowTabCtl = new QTabWidget(this);
@@ -155,7 +151,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	// "Style" TAB ========================================================
 	QWidget *styleWidget=new QWidget(chatWindowTabCtl);
 	m_styleUi.setupUi(styleWidget);
-	
+
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
 	connect(m_styleUi.styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
@@ -209,7 +205,7 @@ void ChatWindowConfig::save()
 //	kDebug(14000) << k_funcinfo << "called." << endl;
 
 	KopeteChatWindowSettings *settings = KopeteChatWindowSettings::self();
-	
+
 	// Get the stylePath
 	if(m_currentStyle)
 	{
@@ -279,15 +275,15 @@ void ChatWindowConfig::slotChatStyleSelected()
 	// Retrieve variant list.
 	QString stylePath = m_styleItemMap[m_styleUi.styleList->selectedItem()];
 	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
-	
+
 	if(m_currentStyle)
 	{
 		m_currentVariantMap = m_currentStyle->getVariants();
 		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStylePath() << endl;
-	
+
 		// Update the variant list based on current style.
 		m_styleUi.variantList->clear();
-	
+
 		// Add the no variant item to the list
 		// TODO: Use default name variant from Info.plist
 		// TODO: Select default variant from Info.plist
@@ -299,20 +295,20 @@ void ChatWindowConfig::slotChatStyleSelected()
 		{
 			// Insert variant name into the combobox.
 			m_styleUi.variantList->addItem( it.key() );
-	
+
 			if( it.value() == KopeteChatWindowSettings::self()->styleVariant() )
 				m_styleUi.variantList->setCurrentIndex(currentIndex+1);
-	
+
 			currentIndex++;
 		}
-		
+
 		// Update the preview
 		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
 		if( !m_currentVariantMap.empty() )
 			m_preview->setStyleVariant(m_currentVariantMap[0]);
-	
+
 		emitChanged();
 	}
 }
@@ -365,7 +361,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 					break;
 				}
 			}
-			
+
 			// removeTempFile check if the file is a temp file, so it's ok for local files.
 			KIO::NetAccess::removeTempFile( stylePath );
 		}
@@ -379,7 +375,7 @@ void ChatWindowConfig::slotDeleteChatStyle()
 //	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
 //	{
 //		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was successfully deleted.").arg(styleName));
-//		
+//
 		// Get the first item in the stye List.
 //		QString stylePath = (*m_styleItemMap.begin());
 //		m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
@@ -464,7 +460,7 @@ void ChatWindowConfig::createPreviewChatSession()
 	contactList.append(m_jack);
 	// Create fakeChatSession
 	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, 0);
-	m_previewChatSession->setDisplayName("Preview Session");	
+	m_previewChatSession->setDisplayName("Preview Session");
 }
 
 void ChatWindowConfig::createPreviewMessages()
@@ -474,7 +470,7 @@ void ChatWindowConfig::createPreviewMessages()
 
 	Kopete::Message msgOut( m_myself, m_jack, i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
 	Kopete::Message msgOut2( m_myself, m_jack, i18n( "Ok, a outgoing consecutive message." ), Kopete::Message::Outbound );
- 
+
 	Kopete::Message msgCol( m_jack, m_myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
 	msgCol.setFg( QColor( "DodgerBlue" ) );
 	msgCol.setBg( QColor( "LightSteelBlue" ) );

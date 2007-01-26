@@ -17,22 +17,16 @@
     *************************************************************************
 */
 
-#ifdef HAVE_CONFIG
-#include "config.h"
-#endif
-
 #include "kircengine.h"
 
 #include "kirctransferhandler.h"
 
-#include "kdebug.h"
+#include <kdebug.h>
 
 #include <qfileinfo.h>
 #include <qregexp.h>
 
-#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
-#endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
 

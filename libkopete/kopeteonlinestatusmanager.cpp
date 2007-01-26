@@ -29,7 +29,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstaticdeleter.h>
-#include <kcpuinfo.h> // for WORDS_BIGENDIAN
 #include <kicon.h>
 
 #include <algorithm> // for min

@@ -20,10 +20,6 @@
 #ifndef KOPETEAPPLICATION_H
 #define KOPETEAPPLICATION_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qpointer.h>
 
 #include <kuniqueapplication.h>

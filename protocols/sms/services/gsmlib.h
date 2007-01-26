@@ -16,7 +16,7 @@
 #ifndef GSMLIB_H_039562406
 #define GSMLIB_H_039562406
 
-#include "config.h"
+#include <config-kopete.h>
 //Added by qt3to4:
 #include <Q3GridLayout>
 #include <QCustomEvent>
@@ -68,20 +68,20 @@ public slots:
 //	void messageSent(const Kopete::Message &);
 protected:
 	virtual void customEvent(QCustomEvent* e);
-	
+
     QWidget* configureWidget(QWidget* parent);
-	void saveConfig(); 
-	void loadConfig(); 
+	void saveConfig();
+	void loadConfig();
 
     GSMLibPrefsUI* prefWidget;
     QStringList output;
 
 	QString m_device;
-	
+
     QString m_description;
 
 	GSMLibThread* m_thread;
-	
+
 } ;
 
 
@@ -90,7 +90,7 @@ class GSMLibEvent : public QCustomEvent
 {
 public:
 	enum SubType { CONNECTED, DISCONNECTED, NEW_MESSAGE, MSG_SENT, MSG_NOT_SENT };
-	
+
 	GSMLibEvent(SubType t);
 
 	SubType subType();
@@ -98,21 +98,21 @@ public:
 
 	QString Text;
 	QString Number;
-	
+
 	QString Reason;
-	
+
 	Kopete::Message Message;
 protected:
 	SubType m_subType;
 };
 
-/// Thread to deal with GsmLib's blocking 
+/// Thread to deal with GsmLib's blocking
 class GSMLibThread : public QThread, gsmlib::GsmEvent
 {
 public:
 	GSMLibThread(QString dev, GSMLib* parent);
 	virtual ~GSMLibThread();
-	
+
 	virtual void run();
 	void stop();
 	void send(const Kopete::Message& msg);
@@ -123,20 +123,20 @@ protected:
 	void sendMessage(const Kopete::Message& msg);
     void SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messageType);
     void SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType);
-	
+
 	GSMLib* m_parent;
 	QString m_device;
-	
+
     gsmlib::MeTa* m_MeTa;
-	
+
 	bool m_run;
-	
+
     struct IncomingMessage
     {
         int Index;
         QString StoreName;
         gsmlib::SMSMessageRef Message;
-        GsmEvent::SMSMessageType Type; 
+        GsmEvent::SMSMessageType Type;
 
         IncomingMessage() :   Index(-1)
         {}

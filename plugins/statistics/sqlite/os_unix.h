@@ -76,14 +76,7 @@ struct OsFile {
 */
 #define SQLITE_TEMPNAME_SIZE 200
 
-/*
-** Minimum interval supported by sqlite3OsSleep().
-*/
-#if defined(HAVE_USLEEP) && HAVE_USLEEP
-# define SQLITE_MIN_SLEEP_MS 1
-#else
-# define SQLITE_MIN_SLEEP_MS 1000
-#endif
-
+/* usleep is always available (thanks to libkdefakes) */
+#define SQLITE_MIN_SLEEP_MS 1
 
 #endif /* _SQLITE_OS_UNIX_H_ */

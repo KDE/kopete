@@ -25,7 +25,7 @@
 
 #include "kopete_export.h"
 
-#include <config.h>
+#include <config-kopete.h> // probably not needed?
 
 namespace Kopete { class Transfer; }
 namespace Kopete { struct FileTransferInfo; }
