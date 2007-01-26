@@ -27,6 +27,7 @@ Name[pt_BR]=Janela de Contexto
 Name[zh_CN]=WinPoup
 Comment=Protocol to send Windows WinPopup messages
 Comment[ar]=البرتوكول سيصدر رسائل Windows المنبثقة
+Comment[be]=Пратакол Windows WinPopup
 Comment[bg]=Протокол за изпращане на съобщения Windows WinPopup
 Comment[bn]=উইন্ডোজ উইন পপ-আপ বার্তা পাঠাতে প্রোটোকল
 Comment[br]=Komenad evit kas kemennadoù Windows WinPopup

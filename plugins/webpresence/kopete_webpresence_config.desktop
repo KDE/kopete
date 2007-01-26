@@ -12,6 +12,7 @@ X-KDE-ParentComponents=kopete_webpresence
 
 Comment=Show the status of (parts of) your contact list on a web page
 Comment[ar]=يظهر حالة أجزاء من قائمة أتصالاتك على الشبكة
+Comment[be]=Паказвае стан спіса кантактаў ці яго часткі на старонцы Сеціва
 Comment[bg]=Приставка за показвана на състоянието на (част от) списъка с контакти като уеб страница
 Comment[bn]=একটি ওয়েবপেজে আপনার যোগাযোগ তালিকার (এর অংশের) অবস্থা প্রদর্শন করে
 Comment[bs]=Pokazuje status (dijelova) vaše kontakt liste na web stranici
@@ -60,6 +61,7 @@ Comment[zh_HK]=在網頁上顯示您（一部份）聯絡人清單的狀態
 Comment[zh_TW]=在網頁上顯示（部份）您的聯絡人的狀態
 Name=Web Presence
 Name[ar]=موقع على الشبكة
+Name[be]=Сеціўная прысутнасць
 Name[bg]=Уеб присъствие
 Name[bn]=ওয়েব উপস্থিতি
 Name[bs]=Web prisustvo

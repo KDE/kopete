@@ -70,6 +70,7 @@ Name[zh_HK]=密碼學
 Name[zh_TW]=加密
 Comment=Encrypt and decrypt messages with GPG
 Comment[ar]=يقوم بتشفير وفل التشفير الرسائل عن طريق GPG
+Comment[be]=Шыфраваць і расшыфроўваць паведамленні ў GPG
 Comment[bg]=Шифроване на съобщения с GPG
 Comment[bn]=জিপিজি ব্যবহার করে বার্তা এনক্রিপ্ট এবং ডিক্রিপ্ট করুন
 Comment[bs]=Šifrujte poruke koristeći GPG

@@ -12,6 +12,7 @@ X-KDE-ParentComponents=kopete_texteffect
 
 Name=Text Effect
 Name[ar]=التأثير النصي
+Name[be]=Тэкставы эфект
 Name[bg]=Текстови ефекти
 Name[bn]=টেক্সট প্রভাব
 Name[bs]=Tekst efekti
@@ -65,6 +66,7 @@ Name[zh_HK]=文字效果
 Name[zh_TW]=文字效果
 Comment=Adds special effects to your text
 Comment[ar]=يضيف مؤثرات خاصة لنصوصك
+Comment[be]=Дадае адмысловыя эфекты да вашага тэксту
 Comment[bg]=Добавяне на текстови ефекти към съобщенията
 Comment[bn]=আপনার টেক্সটে বিশেষ প্রভাব যোগ করে
 Comment[bs]=Dodaje specijalne efekte vašim porukama

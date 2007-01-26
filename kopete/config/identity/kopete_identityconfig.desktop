@@ -11,6 +11,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Identity
+Name[be]=Прыватныя звесткі
 Name[bg]=Идентификация
 Name[bn]=পরিচয়
 Name[br]=Anvelezh
@@ -55,6 +56,7 @@ Name[zh_CN]=身份
 Name[zh_HK]=識別名稱
 Name[zh_TW]=身份
 Comment=Here You Can Manage Your Global Identity
+Comment[be]=Глабальныя прыватныя звесткі
 Comment[bg]=Настройки на идентификацията
 Comment[bn]=আপনি এখানে আপনার বিশ্ব পরিচয় পরিচালনা করতে পারেন
 Comment[bs]=Ovdje možete upravljati svojim globalnim identiteom

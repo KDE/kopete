@@ -12,7 +12,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Appearance
 Name[ar]=المظهر
-Name[be]=Зьнешні выгляд
+Name[be]=Вонкавы выгляд
 Name[bg]=Външен вид
 Name[bn]=চেহারা
 Name[br]=Neuziadur
@@ -68,6 +68,7 @@ Name[zh_HK]=外觀
 Name[zh_TW]=外觀
 Comment=Here You Can Alter Kopete's Look And Feel
 Comment[ar]=يمكنك تغيير مظهر Kopete
+Comment[be]=Вонкавы выгляд Kopete
 Comment[bg]=Настройки на външния вид на програмата
 Comment[bn]=আপনি এখানে কপেটের চেহারা ও কার্যকারিতা পরিবর্তন করতে পারেন
 Comment[bs]=Ovdje možete izmijeniti izgled Kopete-a
