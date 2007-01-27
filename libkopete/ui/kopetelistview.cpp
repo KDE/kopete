@@ -172,6 +172,7 @@ struct ListView::Private
 	  mousePressed(false),
 	  smoothScrollDragAutoScroll(false),
 	  smoothAutoScrollOffset(60),
+	  pressedControl( QStyle::SC_None ),
 	  smoothScrollContinuousCounter(0),
 	  continuousLinePressTimer(0),
 	  continuousLinePressTimerWait(10),
@@ -185,8 +186,7 @@ struct ListView::Private
 	  scrollAutoHide(false),
 	  scrollHide(false),
 	  mouseNavigationOffset(20),
-	  mouseNavigation(false),
-	  pressedControl( QStyle::SC_None ) {}
+	  mouseNavigation(false) {}
 };
 
 ListView::ListView( QWidget *parent, const char *name )
