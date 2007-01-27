@@ -375,13 +375,13 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		uname (&utsBuf);
 
 		m_jabberClient->setClientName ("Kopete");
-		m_jabberClient->setClientVersion (kapp->aboutData ()->version ());
+		m_jabberClient->setClientVersion (KGlobal::mainComponent().aboutData()->version ());
 		m_jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 	}
 
 	// Set caps node information
 	m_jabberClient->setCapsNode(KOPETE_CAPS_NODE);
-	m_jabberClient->setCapsVersion(kapp->aboutData()->version());
+	m_jabberClient->setCapsVersion(KGlobal::mainComponent().aboutData()->version());
 	
 	// Set Disco Identity information
 	DiscoItem::Identity identity;

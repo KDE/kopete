@@ -41,7 +41,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_privacy, PrivacyPluginFactory( "kopete_privac
 PrivacyPlugin * PrivacyPlugin::pluginStatic_ = 0L;
 
 PrivacyPlugin::PrivacyPlugin( QObject *parent, const QStringList & )
-: Kopete::Plugin( PrivacyPluginFactory::instance(), parent )
+: Kopete::Plugin( PrivacyPluginFactory::componentData(), parent )
 {
 	kDebug(14313) << k_funcinfo << endl;
 	if( !pluginStatic_ )

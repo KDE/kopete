@@ -42,7 +42,7 @@ typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) )
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args )
-: KCModule(KopetePluginConfigFactory::instance(), parent, args), d(new KopetePluginConfigPrivate)
+: KCModule(KopetePluginConfigFactory::componentData(), parent, args), d(new KopetePluginConfigPrivate)
 {
 	d->pluginSelector = new KPluginSelector( this );
 	

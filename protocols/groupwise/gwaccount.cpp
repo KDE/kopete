@@ -350,7 +350,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	struct utsname utsBuf;
 	uname (&utsBuf);
 	m_client->setClientName ("Kopete");
-	m_client->setClientVersion ( kapp->aboutData ()->version () );
+	m_client->setClientVersion ( KGlobal::mainComponent().aboutData()->version () );
 	m_client->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to GroupWise server " << server() << ':' << port() << endl;

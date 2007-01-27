@@ -33,7 +33,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_translator, TranslatorConfigFactory( "kcm
 class TranslatorPreferences : public KCModule
 {
 public:
-	TranslatorPreferences( QWidget *parent = 0, const QStringList &args = QStringList() ) : KCModule( TranslatorConfigFactory::instance(), parent, args )
+	TranslatorPreferences( QWidget *parent = 0, const QStringList &args = QStringList() ) : KCModule( TranslatorConfigFactory::componentData(), parent, args )
 	{
 		QVBoxLayout* l = new QVBoxLayout( this );
 		QWidget* w = new QWidget;

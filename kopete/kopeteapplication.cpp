@@ -114,7 +114,7 @@ void KopeteApplication::slotLoadPlugins()
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 	// Parse command-line arguments
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

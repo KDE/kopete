@@ -134,7 +134,7 @@ public:
 };
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
-	: KCModule( KopeteChatWindowConfigFactory::instance(), parent, args )
+	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args )
 		, m_currentStyle (0L), m_loading(false), m_styleChanged(false)
 {
 
@@ -144,7 +144,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	layout->addWidget( chatWindowTabCtl );
 	setLayout(layout);
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "ChatWindowSettings" );
 
 
@@ -419,7 +419,7 @@ public:
 class FakeProtocol : public Kopete::Protocol
 {
 public:
-FakeProtocol( KInstance *instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
+FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
 Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
 AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
 KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
@@ -441,7 +441,7 @@ void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
 
 void ChatWindowConfig::createPreviewChatSession()
 {
-	m_previewProtocol = new FakeProtocol( new KInstance(QByteArray("kopete-preview-chatwindowstyle")), 0 ); m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
+	m_previewProtocol = new FakeProtocol( KComponentData(QByteArray("kopete-preview-chatwindowstyle")), 0 ); m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
 	m_previewAccount = new FakeAccount(m_previewProtocol, QString("previewaccount"));
 
 	// Create fake meta/contacts

@@ -29,7 +29,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_autoreplace, AutoReplacePluginFactory( "kopet
 AutoReplacePlugin * AutoReplacePlugin::pluginStatic_ = 0L;
 
 AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const QStringList & )
-: Kopete::Plugin( AutoReplacePluginFactory::instance(), parent )
+: Kopete::Plugin( AutoReplacePluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_ = this;

@@ -28,7 +28,7 @@ BookmarksPrefsSettings::~BookmarksPrefsSettings()
 
 void BookmarksPrefsSettings::load()
 {
-	KConfig * configfile = KGlobal::config();
+	KSharedConfig::Ptr configfile = KGlobal::config();
 	m_isfolderforeachcontact = Always;
 	m_contactslist.clear();
 	if( configfile->getConfigState() == KConfigBase::NoAccess ){
@@ -46,7 +46,7 @@ void BookmarksPrefsSettings::load()
 
 void BookmarksPrefsSettings::save()
 {
-	KConfig * configfile = KGlobal::config();
+	KSharedConfig::Ptr configfile = KGlobal::config();
 
 	if( configfile->getConfigState() != KConfigBase::ReadWrite ){
 		kDebug( 14501 ) << "save: failed to open config file for writing" << endl;

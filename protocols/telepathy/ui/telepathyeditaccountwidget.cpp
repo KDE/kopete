@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kglobal.h>
 
@@ -203,7 +204,7 @@ void TelepathyEditAccountWidget::writeConfig()
 	accountConfig->writeEntry( QLatin1String("SelectedProtocol"), selectedProtocol );
 	
 	// Write config related to ConnectionManager Parameter
-	KConfig *telepathyConfig = KGlobal::config();
+	KSharedConfig::Ptr telepathyConfig = KGlobal::config();
 	telepathyConfig->setGroup( TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId) );
 	
 	foreach(ConnectionManager::Parameter parameter, d->savedParameterList)

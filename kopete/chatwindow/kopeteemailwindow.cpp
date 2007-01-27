@@ -74,7 +74,7 @@ typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
 
 EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QStringList &) :
-	Kopete::ViewPlugin( EmailWindowPluginFactory::instance(), parent )
+	Kopete::ViewPlugin( EmailWindowPluginFactory::componentData(), parent )
 {}
 
 KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
@@ -188,7 +188,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	else
 		toggleMode( Send );
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	applyMainWindowSettings( config, QLatin1String( "KopeteEmailWindow" )  );
 
 	d->sendInProgress = false;
@@ -213,7 +213,7 @@ KopeteEmailWindow::~KopeteEmailWindow()
 	emit( closing( this ) );
 
 	// saves menubar, toolbar and statusbar setting
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	saveMainWindowSettings( config, QLatin1String( "KopeteEmailWindow" ) );
 	config->sync();
 

@@ -52,7 +52,7 @@ static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") ,
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args */ )
-: Kopete::Plugin( TranslatorPluginFactory::instance(), parent )
+: Kopete::Plugin( TranslatorPluginFactory::componentData(), parent )
 {
 	kDebug( 14308 ) << k_funcinfo << endl;
 
@@ -108,7 +108,7 @@ TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
 void TranslatorPlugin::loadSettings()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	int mode = 0;
 
 	config->setGroup( "Translator Plugin" );

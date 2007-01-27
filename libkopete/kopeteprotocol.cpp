@@ -48,7 +48,7 @@ public:
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };
 
-Protocol::Protocol( KInstance *instance, QObject *parent )
+Protocol::Protocol( const KComponentData &instance, QObject *parent )
 : Plugin( instance, parent )
 {
 	d = new Private;

@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kplugininfo.h>
+#include <kconfiggroup.h>
 
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
@@ -337,7 +338,7 @@ void AccountManager::load()
 	// and load the required protocols if the account is enabled.
 	// Don't try to optimize duplicate calls out, the plugin queue is smart enough
 	// (and fast enough) to handle that without adding complexity here
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
@@ -360,7 +361,7 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and parse them if they are from this protocol
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{

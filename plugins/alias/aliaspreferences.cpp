@@ -129,7 +129,7 @@ class ProtocolItem : public Q3ListViewItem
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_alias, AliasPreferencesFactory( "kcm_kopete_alias" ) )
 
 AliasPreferences::AliasPreferences( QWidget *parent, const QStringList &args )
-	: KCModule( AliasPreferencesFactory::instance(), parent, args )
+	: KCModule( AliasPreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;
@@ -171,7 +171,7 @@ AliasPreferences::~AliasPreferences()
 // reload configuration reading it from kopeterc
 void AliasPreferences::load()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	if( config->hasGroup( "AliasPlugin" ) )
 	{
 		config->setGroup("AliasPlugin");
@@ -202,7 +202,7 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 	Kopete::Protocol *protocol = static_cast<Kopete::Protocol*>( plugin );
 	if( protocol )
 	{
-		KConfig *config = KGlobal::config();
+		KSharedConfig::Ptr config = KGlobal::config();
 		if( config->hasGroup( "AliasPlugin" ) )
 		{
 			config->setGroup("AliasPlugin");
@@ -253,7 +253,7 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 // save list to kopeterc and creates map out of it
 void AliasPreferences::save()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->deleteGroup( QString::fromLatin1("AliasPlugin") );
 	config->setGroup( QString::fromLatin1("AliasPlugin") );
 

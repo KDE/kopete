@@ -355,7 +355,7 @@ Kopete::Password &Kopete::Password::operator=( Password &other )
 
 void Kopete::Password::readConfig()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( d->configGroup );
 
 	QString passwordCrypted = config->readEntry( "Password", QString() );
@@ -370,7 +370,7 @@ void Kopete::Password::readConfig()
 
 void Kopete::Password::writeConfig()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	if(!config->hasGroup(d->configGroup))
 	{
 		//### (KOPETE)

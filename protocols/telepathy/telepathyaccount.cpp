@@ -43,6 +43,7 @@
 #include <QtTapioca/Contact>
 #include <QtTapioca/UserContact>
 #include <QtTapioca/TextChannel>
+#include <kconfiggroup.h>
 
 // Local includes
 #include "telepathyprotocol.h"
@@ -254,7 +255,7 @@ bool TelepathyAccount::readConfig()
 	QList<ConnectionManager::Parameter> tempParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
 
 	// Now update the preferences
-	KConfig *telepathyConfig = KGlobal::config();
+	KSharedConfig::Ptr telepathyConfig = KGlobal::config();
 	QMap<QString,QString> allEntries = telepathyConfig->entryMap( TelepathyProtocol::protocol()->formatTelepathyConfigGroup(d->connectionManager, d->connectionProtocol, accountId()) );
 	QMap<QString,QString>::ConstIterator it, itEnd = allEntries.constEnd();
 	for(it = allEntries.constBegin(); it != itEnd; ++it)

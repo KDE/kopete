@@ -39,7 +39,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFact
 
 
 NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QStringList &args)
-	: KCModule( NowListeningPreferencesFactory::instance(), parent, args )
+	: KCModule( NowListeningPreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;

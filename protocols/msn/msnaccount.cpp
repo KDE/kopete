@@ -35,6 +35,7 @@
 #include <klocale.h>
 #include <kactionmenu.h>
 #include <kicon.h>
+#include <kconfiggroup.h>
 
 #include <QFile>
 #include <QRegExp>

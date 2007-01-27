@@ -81,7 +81,7 @@ typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory( "kopete_nowlistening" )  )
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*args*/ )
-: Kopete::Plugin( NowListeningPluginFactory::instance(), parent )
+: Kopete::Plugin( NowListeningPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )
 		kDebug( 14307 )<<"####"<<"Now Listening already initialized"<<endl;

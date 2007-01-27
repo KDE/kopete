@@ -19,13 +19,13 @@
 #include <qdom.h>
 
 #include <kstandarddirs.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 
 static QTextStream qcerr( stderr, QIODevice::WriteOnly );
 
 int main()
 {
-	KInstance* inst = new KInstance( "Update script" );
+	KComponentData inst( "Update script" );
 	QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/contactlist.xml" ) );
 	
 	// Load contact list & save backup.

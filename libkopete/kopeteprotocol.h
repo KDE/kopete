@@ -160,11 +160,11 @@ protected:
 	/**
 	 * @brief Constructor for Protocol
 	 *
-	 * @param instance The protocol's instance, every plugin needs to have a KInstance of its own
+	 * @param instance The protocol's instance, every plugin needs to have a KComponentData of its own
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
-	Protocol( KInstance *instance, QObject *parent );
+	Protocol( const KComponentData &instance, QObject *parent );
 
 	/**
 	 * @brief Sets the capabilities of this protcol.

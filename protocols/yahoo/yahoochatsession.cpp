@@ -55,7 +55,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
-	setInstance(protocol->instance());
+	setComponentData(protocol->componentData());
 
 	// Add Actions
 	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), this );

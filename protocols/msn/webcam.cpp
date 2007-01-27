@@ -60,7 +60,7 @@ Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, quint32 sessionId
 	m_mimic=0L;
 	m_widget=0L;
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "MSN" );
 
 	// Read the configuration to get the number of frame per second to send
@@ -524,7 +524,7 @@ QString Webcam::xml(uint session , uint rid)
 
 int Webcam::getAvailablePort()
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup( "MSN" );
     QString basePort=config->readEntry("WebcamPort");
     if(basePort.isEmpty() || basePort == "0" )

@@ -26,6 +26,7 @@
 #include <kactionmenu.h>
 #include <kmenu.h>
 #include <kicon.h>
+#include <kconfiggroup.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

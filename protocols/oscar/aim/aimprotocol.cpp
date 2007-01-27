@@ -216,7 +216,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
-: OscarProtocol( AIMProtocolFactory::instance(), parent ),
+: OscarProtocol( AIMProtocolFactory::componentData(), parent ),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)

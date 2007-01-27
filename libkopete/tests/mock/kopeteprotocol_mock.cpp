@@ -24,7 +24,7 @@ namespace Test
 namespace Mock
 {
 
-Protocol::Protocol( KInstance *instance, QObject *parent )
+Protocol::Protocol( const KComponentData &instance, QObject *parent )
   : Kopete::Protocol(instance, parent)
 {
 	

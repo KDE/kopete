@@ -478,7 +478,7 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
 
 void KopeteWindow::loadOptions()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
 	toolBar("quickSearchBar")->applySettings( config, "QuickSearchBar Settings" );
@@ -521,7 +521,7 @@ void KopeteWindow::loadOptions()
 
 void KopeteWindow::saveOptions()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 	toolBar("mainToolBar")->saveSettings ( config, "ToolBar Settings" );
 	toolBar("quickSearchBar")->saveSettings( config, "QuickSearchBar Settings" );
@@ -838,7 +838,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 #if 0
-	KIconLoader *loader = KGlobal::instance()->iconLoader();
+	KIconLoader *loader = KGlobal::mainComponent().iconLoader();
 
 	QMovie *mv = new QMovie(loader->loadMovie( status.overlayIcons().first(), K3Icon::Small ));
 
@@ -901,7 +901,7 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 	KActionCollection *actionCollection = d->tray->actionCollection();
 
 	popup->clear();
-	popup->addTitle( qApp->windowIcon(), KInstance::caption() );
+	popup->addTitle( qApp->windowIcon(), KGlobal::caption() );
 
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 	foreach(Kopete::Account *a, accountList)

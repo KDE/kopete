@@ -96,7 +96,7 @@ public:
 
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
-: KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
+: KCModule( KopeteAppearanceConfigFactory::componentData(), parent, args )
 {
 	d = new Private;
 
@@ -106,7 +106,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
 	layout->addWidget( d->mAppearanceTabCtl );
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "ChatWindowSettings" );
 
 	// "Emoticons" TAB ==========================================================
@@ -313,7 +313,7 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 
 void AppearanceConfig::slotGetEmoticonThemes()
 {
-	KConfig* config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "KNewStuff" );
 	config->writeEntry( "ProvidersUrl",
 						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );

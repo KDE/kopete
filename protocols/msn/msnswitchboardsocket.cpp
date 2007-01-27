@@ -409,7 +409,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
 		// TODO remove Displatcher.
-		KConfig *config = KGlobal::config();
+		KSharedConfig::Ptr config = KGlobal::config();
 		config->setGroup( "MSN" );
 		if ( config->readEntry( "useCustomEmoticons", true ) )
 		{
@@ -482,7 +482,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 				QCString message = QString( "MIME-Version: 1.0\r\n"
 						"Content-Type: text/x-clientcaps\r\n"
-						"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
+						"Client-Name: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n"
 						+JabberID+
 						"\r\n" ).utf8();
 
@@ -494,7 +494,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			QByteArray message = QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-clientcaps\r\n"
 					"\r\n"
-					"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
+					"Client-Name: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n"
 					+JabberID+
 					"\r\n\r\n" ).toUtf8();
 
@@ -682,7 +682,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "MSN" );
 	if ( config->readEntry( "exportEmoticons", false ) )
 	{
@@ -713,13 +713,13 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	QString UA;
 	if( config->readEntry("SendClientInfo", true) )
 	{
-		UA="User-Agent: Kopete/"+escape(kapp->aboutData()->version())+"\r\n";
+		UA="User-Agent: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n";
 	}
 
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"User-Agent: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
+		"User-Agent: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n"
 		"X-MMS-IM-Format: ";
 
 	if(msg.font() != QFont() )

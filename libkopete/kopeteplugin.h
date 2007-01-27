@@ -67,7 +67,7 @@ Comment=Plugin that do some nice stuff
 	K_EXPORT_COMPONENT_FACTORY( kopete_myplugin, MyPluginFactory( &aboutdata )  )
 
 	MyPlugin::MyPlugin( QObject *parent, const char *name, const QStringList &  args  )
-		: Kopete::Plugin( MyPluginFactory::instance(), parent, name )
+		: Kopete::Plugin( MyPluginFactory::componentData(), parent, name )
 	{
 		//...
 	}
@@ -87,7 +87,7 @@ class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	Plugin( KInstance *instance, QObject *parent );
+	Plugin( const KComponentData &instance, QObject *parent );
 	virtual ~Plugin();
 
 	/**

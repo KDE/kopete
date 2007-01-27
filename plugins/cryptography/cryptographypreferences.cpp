@@ -30,7 +30,7 @@ typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"))
 
 CryptographyPreferences::CryptographyPreferences(QWidget *parent, const QStringList &args)
-							: KCModule(CryptographyPreferencesFactory::instance(), parent, args)
+							: KCModule(CryptographyPreferencesFactory::componentData(), parent, args)
 {
 	// Add actuall widget generated from ui file.
 	QWidget* w = new QWidget(this);

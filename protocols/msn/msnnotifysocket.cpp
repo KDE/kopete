@@ -285,7 +285,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 		sendCommand( "CVR", i18n( "MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx", "0x0409" ) +
 			' ' + escape( utsBuf.sysname ) + ' ' + escape( utsBuf.release ) + ' ' + escape( utsBuf.machine ) + " Kopete " +
-			escape( kapp->aboutData()->version() ) + " Kopete " + m_msnId );
+			escape( KGlobal::mainComponent().aboutData()->version() ) + " Kopete " + m_msnId );
 */
 	}
 	else if ( cmd == "CVR" ) //else if ( cmd == "INF" )

@@ -29,7 +29,7 @@ typedef KGenericFactory<ConnectionStatusPlugin> ConnectionStatusPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_connectionstatus, ConnectionStatusPluginFactory( "kopete_connectionstatus" )  )
 
 ConnectionStatusPlugin::ConnectionStatusPlugin( QObject *parent, const QStringList& /* args */ )
-: Kopete::Plugin( ConnectionStatusPluginFactory::instance(), parent )
+: Kopete::Plugin( ConnectionStatusPluginFactory::componentData(), parent )
 {
 	kDebug( 14301 ) << k_funcinfo << endl;
 

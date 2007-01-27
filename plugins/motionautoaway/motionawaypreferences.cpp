@@ -33,7 +33,7 @@ typedef KGenericFactory<MotionAwayPreferences> MotionAwayPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_motionaway, MotionAwayPreferencesFactory("kcm_kopete_motionaway"))
 
 MotionAwayPreferences::MotionAwayPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
-							: KCModule(MotionAwayPreferencesFactory::instance(), parent, args)
+							: KCModule(MotionAwayPreferencesFactory::componentData(), parent, args)
 {
 	// Add actuall widget generated from ui file.
 	( new QVBoxLayout( this ) )->setAutoAdd( true );

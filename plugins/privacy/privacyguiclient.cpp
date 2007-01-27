@@ -34,7 +34,7 @@ class PrivacyPlugin;
 PrivacyGUIClient::PrivacyGUIClient(Kopete::ChatSession *parent)
  : QObject(parent), KXMLGUIClient(parent)
 {
-	setInstance(KGenericFactory<PrivacyPlugin>::instance());
+	setComponentData(KGenericFactory<PrivacyPlugin>::componentData());
 
 	m_manager = parent;
 

@@ -30,7 +30,7 @@ K_EXPORT_COMPONENT_FACTORY(kopete_meanwhile,
     MeanwhileProtocolFactory("kopete_meanwhile"))
 
 MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QStringList &/*args*/)
-: Kopete::Protocol(MeanwhileProtocolFactory::instance(), parent),
+: Kopete::Protocol(MeanwhileProtocolFactory::componentData(), parent),
 
     statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QString::null,
             i18n("Offline"), i18n("Offline"),

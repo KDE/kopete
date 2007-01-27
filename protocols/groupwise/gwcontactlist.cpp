@@ -159,7 +159,7 @@ void GWFolder::dump( unsigned int depth )
 	{
 		GWContactInstance * instance = qobject_cast< GWContactInstance * >( obj );
 		if (instance)
-			instance->dump( depth );
+			componentData.dump( depth );
 		else
 		{
 			GWFolder * folder = qobject_cast< GWFolder * >( obj );

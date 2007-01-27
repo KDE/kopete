@@ -40,7 +40,7 @@
 TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 : QObject( parent ), KXMLGUIClient( parent )
 {
-	setInstance( TranslatorPlugin::plugin()->instance() );
+	setComponentData( TranslatorPlugin::plugin()->componentData() );
 	connect( TranslatorPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );
 
 	m_manager = parent;

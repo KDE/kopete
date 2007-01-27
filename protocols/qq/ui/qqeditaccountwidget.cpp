@@ -42,6 +42,7 @@
 #include <ktoolinvocation.h>
 #include <kconfig.h>
 #include <kpixmapregionselectordialog.h>
+#include <kconfiggroup.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"

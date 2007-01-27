@@ -35,7 +35,7 @@
 LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
 : QObject( parent), KXMLGUIClient( parent )
 {
-	setInstance( LatexPlugin::plugin()->instance() );
+	setComponentData( LatexPlugin::plugin()->componentData() );
 	connect( LatexPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );
 
 	m_manager = parent;

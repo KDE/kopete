@@ -26,7 +26,7 @@ typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory("kcm_kopete_addbookmarks") )
 
 BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QStringList &args)
- : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
+ : KCModule(BookmarksPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();

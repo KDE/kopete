@@ -60,7 +60,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 	else
 	{
 		// look for a default server and port setting
-		KConfig *config = KGlobal::config();
+		KSharedConfig::Ptr config = KGlobal::config();
 		config->setGroup("GroupWise Messenger");
 		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
 		m_preferencesDialog->m_port->setValue( config->readEntry( "DefaultPort", 8300 ) );

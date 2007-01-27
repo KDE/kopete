@@ -1063,7 +1063,7 @@ void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
 //	kDebug(14010) << k_funcinfo << endl;
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	applyMainWindowSettings( config, QLatin1String( "KopeteChatWindow" ) );
 	config->setGroup( QLatin1String("ChatWindowSettings") );
 }
@@ -1072,7 +1072,7 @@ void KopeteChatWindow::saveOptions()
 {
 //	kDebug(14010) << k_funcinfo << endl;
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 	// saves menubar,toolbar and statusbar setting
 	saveMainWindowSettings( config, QLatin1String( "KopeteChatWindow" ) );

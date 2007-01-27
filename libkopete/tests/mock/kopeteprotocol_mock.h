@@ -20,7 +20,7 @@
 
 #include "kopeteprotocol.h"
 
-class KInstance;
+class KComponentData;
 class QObject;
 
 class KopeteEditAccountWidget;
@@ -37,7 +37,7 @@ namespace Mock
 class Protocol : public Kopete::Protocol
 {
 public:
-	Protocol( KInstance *instance, QObject *parent);
+	Protocol( const KComponentData &instance, QObject *parent);
 	// pure virtual functions implemented
 	virtual Account *createNewAccount( const QString &accountId );
 	virtual AddContactPage *createAddContactWidget( QWidget *parent, Kopete::Account *account );

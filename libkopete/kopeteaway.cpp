@@ -149,9 +149,9 @@ Kopete::Away::Away() : QObject( kapp )
 	}
 
 	load();
-	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( load() ) );
+	KSettings::Dispatcher::self()->registerInstance( KGlobal::mainComponent(), this, SLOT( load() ) );
 	// Set up the config object
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 
@@ -241,7 +241,7 @@ void Kopete::Away::setGlobalAway(bool status)
 
 void Kopete::Away::save()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	/* Set the away message settings in the Away Messages config group */
 	config->setGroup("Away Messages");
 	config->writeEntry("Messages", d->awayMessageList);
