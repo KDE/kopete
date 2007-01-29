@@ -28,7 +28,7 @@ class QTabWidget;
 class BehaviorConfig_General;
 class BehaviorConfig_Events;
 class BehaviorConfig_Chat;
-class KopeteAwayConfigBaseUI;
+class BehaviorConfig_Away;
 class KPluginInfo;
 
 class BehaviorConfig : public KCModule
@@ -48,10 +48,12 @@ class BehaviorConfig : public KCModule
 
 	private:
 		QTabWidget* mBehaviorTabCtl;
+
 		BehaviorConfig_General *mPrfsGeneral;
 		BehaviorConfig_Events *mPrfsEvents;
 		BehaviorConfig_Chat *mPrfsChat;
-		KopeteAwayConfigBaseUI *mAwayConfigUI;
+		BehaviorConfig_Away *mPrfsAway;
+
 		QList<KPluginInfo*> viewPlugins;
 		Kopete::Away* awayInstance;
 };
