@@ -47,7 +47,7 @@ static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0"
 K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
-: Kopete::Plugin( HistoryPluginFactory::instance(), parent ), m_loggerFactory( this )
+: Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
 	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );

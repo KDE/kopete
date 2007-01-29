@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFacto
 
 
 BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
-		KCModule( KopeteBehaviorConfigFactory::instance(), parent, args )
+		KCModule( KopeteBehaviorConfigFactory::componentData(), parent, args )
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	

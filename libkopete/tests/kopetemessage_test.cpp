@@ -28,7 +28,7 @@
 
 #include <kapplication.h>
 #include <kstandarddirs.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kprocess.h>
 #include <kdebug.h>
 
@@ -55,7 +55,7 @@ KopeteMessage_Test::KopeteMessage_Test()
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 	// create fake objects needed to build a reasonable testeable message
-	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QByteArray("test-kopete-message")), 0L);
+	m_protocol = new Kopete::Test::Mock::Protocol( KComponentData(QByteArray("test-kopete-message")), 0L);
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
 	m_metaContactMyself = new Kopete::Test::Mock::MetaContact();
 	m_metaContactOther = new Kopete::Test::Mock::MetaContact();

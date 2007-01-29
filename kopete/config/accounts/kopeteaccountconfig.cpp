@@ -57,7 +57,7 @@ typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) )
 
 KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &args )
-: KCModule( KopeteAccountConfigFactory::instance(), parent, args )
+: KCModule( KopeteAccountConfigFactory::componentData(), parent, args )
 {
 	setupUi( this );
 

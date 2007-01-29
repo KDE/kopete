@@ -45,7 +45,7 @@ K_EXPORT_COMPONENT_FACTORY( libkopete_msn_shared, MSNProtocolFactory( &aboutdata
 MSNProtocol *MSNProtocol::s_protocol = 0L;
 
 MSNProtocol::MSNProtocol( QObject *parent, const QStringList & /* args */ )
-: Kopete::Protocol( MSNProtocolFactory::instance(), parent ),
+: Kopete::Protocol( MSNProtocolFactory::componentData(), parent ),
 
 	NLN( Kopete::OnlineStatus::Online, 25, this, 1, QStringList(QString::null),
 			i18n( "Online" ), i18n( "O&nline" ), Kopete::OnlineStatusManager::Online, 

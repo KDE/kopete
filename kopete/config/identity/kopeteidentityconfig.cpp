@@ -86,7 +86,7 @@ typedef KGenericFactory<KopeteIdentityConfig, QWidget> KopeteIdentityConfigFacto
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_identityconfig, KopeteIdentityConfigFactory( "kcm_kopete_identityconfig" ) )
 
 KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &args)
-: KCModule( KopeteIdentityConfigFactory::instance(), parent, args)
+: KCModule( KopeteIdentityConfigFactory::componentData(), parent, args)
 {
 	d = new Private;
 	setupUi( this );

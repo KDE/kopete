@@ -59,7 +59,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
-	setInstance( protocol->instance() );
+	setComponentData( protocol->componentData() );
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );

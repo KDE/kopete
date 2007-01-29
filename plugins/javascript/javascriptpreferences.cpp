@@ -116,7 +116,7 @@ public:
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_javascript, JavaScriptPreferencesFactory( "kcm_kopete_javascript" ) )
 
 JavaScriptPreferences::JavaScriptPreferences( QWidget *parent, const QStringList &args )
-	: KCModule( JavaScriptPreferencesFactory::instance(), parent, args )
+	: KCModule( JavaScriptPreferencesFactory::componentData(), parent, args )
 	, KNewStuff( "kopete/javascript", "http://kopete.kde.org/knewstuff/javascript/providers.xml", parent )
 	, d(new JavaScriptPreferences::Private)
 {

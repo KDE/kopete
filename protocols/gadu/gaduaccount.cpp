@@ -63,6 +63,7 @@
 #include <QList>
 
 #include <netinet/in.h>
+#include <kconfiggroup.h>
 
 class GaduAccountPrivate {
 

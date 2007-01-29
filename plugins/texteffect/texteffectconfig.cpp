@@ -30,7 +30,7 @@ TextEffectConfig::TextEffectConfig()
 
 void TextEffectConfig::load()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup("TextEffect Plugin");
 
 	mColors = config->readEntry("Colors", QStringList() );
@@ -54,7 +54,7 @@ QStringList TextEffectConfig::defaultColorList()
 
 void TextEffectConfig::save()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup("TextEffect Plugin");
 
 	config->writeEntry("Colors", mColors );

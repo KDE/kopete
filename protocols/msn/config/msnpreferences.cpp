@@ -25,7 +25,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_msn, MSNProtocolConfigFactory( "kcm_kopet
 class MSNPreferences : public KCAutoConfigModule
 {
 public:
-	MSNPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCAutoConfigModule( MSNProtocolConfigFactory::instance(), parent, args )
+	MSNPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCAutoConfigModule( MSNProtocolConfigFactory::componentData(), parent, args )
 	{
 		setMainWidget( new msnPrefsUI( this ) , "MSN");
 	}

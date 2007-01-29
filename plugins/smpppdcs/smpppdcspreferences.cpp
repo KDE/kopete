@@ -36,7 +36,7 @@ typedef KGenericFactory<SMPPPDCSPreferences> SMPPPDCSPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_kopete_smpppdcs, SMPPPDCSPreferencesFactory("kcm_kopete_smpppdcs"))
 
 SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name */, const QStringList& args)
- : KCModule(SMPPPDCSPreferencesFactory::instance(), parent, args), m_ui(NULL) {
+ : KCModule(SMPPPDCSPreferencesFactory::componentData(), parent, args), m_ui(NULL) {
 
  	Kopete::AccountManager * manager = Kopete::AccountManager::self(); 
 

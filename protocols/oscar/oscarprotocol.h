@@ -30,7 +30,7 @@ class KOPETE_EXPORT OscarProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	OscarProtocol( KInstance *instance, QObject *parent );
+	OscarProtocol( const KComponentData &instance, QObject *parent );
 	virtual ~OscarProtocol();
 
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,

@@ -67,7 +67,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	m_newSession = true;
 	m_connectionTry=0;
 
-	setInstance(protocol->instance());
+	setComponentData(protocol->componentData());
 
 	connect( this, SIGNAL( messageSent( Kopete::Message&,
 		Kopete::ChatSession* ) ),
@@ -229,7 +229,7 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
 		sendMessageQueue();
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "MSN" );
 	if ( members().count()==1 && config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		slotRequestPicture();
@@ -604,7 +604,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 		}
 		else
 		{
-			KConfig *config = KGlobal::config();
+			KSharedConfig::Ptr config = KGlobal::config();
 			config->setGroup( "MSN" );
 			if ( config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
 				slotRequestPicture();

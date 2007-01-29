@@ -39,7 +39,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_telepathy, TelepathyProtocolFactory("kopete_t
 TelepathyProtocol *TelepathyProtocol::s_self = 0;
 
 TelepathyProtocol::TelepathyProtocol(QObject *parent, const QStringList &/*args*/)
- : Kopete::Protocol(TelepathyProtocolFactory::instance(), parent),
+ : Kopete::Protocol(TelepathyProtocolFactory::componentData(), parent),
 	// Create Kopete::OnlineStatus
 	Available(Kopete::OnlineStatus::Online, 25, this, 1, QStringList(),
 			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage),

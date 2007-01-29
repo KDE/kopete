@@ -68,7 +68,7 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 	}
 
 
-	setInstance( KGenericFactory<CryptographyPlugin>::instance() );
+	setComponentData( KGenericFactory<CryptographyPlugin>::componentData() );
 
 	m_action=new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), this );
         actionCollection()->addAction( "cryptographyToggle", m_action );

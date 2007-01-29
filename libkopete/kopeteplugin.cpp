@@ -32,11 +32,11 @@ public:
 	QString indexField;
 };
 
-Plugin::Plugin( KInstance *instance, QObject *parent )
+Plugin::Plugin( const KComponentData &instance, QObject *parent )
 : QObject( parent ), KXMLGUIClient(), d(new Private)
 {
-	setInstance( instance );
-	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
+	setComponentData( instance );
+	KSettings::Dispatcher::self()->registerComponent( instance, this, SIGNAL( settingsChanged() ) );
 }
 
 Plugin::~Plugin()

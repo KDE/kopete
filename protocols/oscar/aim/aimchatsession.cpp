@@ -17,6 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include <kcomponentdata.h>
 
 #include "aimchatsession.h"
 #include "kopetecontact.h"
@@ -32,7 +33,7 @@ AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtr
 {
     setObjectName( QLatin1String("AIMChatSession") );
     Kopete::ChatSessionManager::self()->registerChatSession( this );
-    setInstance( protocol->instance() );
+    setComponentData( protocol->componentData() );
     setMayInvite( false );
     m_exchange = exchange;
     m_roomName = room;

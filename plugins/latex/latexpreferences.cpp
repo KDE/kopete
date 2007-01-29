@@ -32,7 +32,7 @@ typedef KGenericFactory<LatexPreferences> LatexPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_latex, LatexPreferencesFactory( "kcm_kopete_latex" )  )
 
 LatexPreferences::LatexPreferences(QWidget *parent, const QStringList &args)
-							: KCModule(LatexPreferencesFactory::instance(), parent, args)
+							: KCModule(LatexPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;

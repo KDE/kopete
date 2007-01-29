@@ -7,7 +7,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <addressbooklinkwidget.h>
 #include <kopetelistview.h>
 #include <kopetelistviewsearchline.h>
@@ -109,7 +109,8 @@ KopeteWidgets::KopeteWidgets()
 	widget.isContainer = false;
 	m_widgets.insert(QLatin1String("Kopete::UI::ListView::SearchLine"), widget);
 
-	new KInstance("kopetewidgets");
+	KComponentData("kopetewidgets"); // if it's the only KComponentData object then it stays as
+        // KGlobal::mainComponent()
 }
 KopeteWidgets::~KopeteWidgets()
 {

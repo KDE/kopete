@@ -41,7 +41,7 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		/**
 		 * @brief Create and initialize the plugin
 		 */
-		explicit ViewPlugin( KInstance *instance, QObject *parent = 0L );
+		explicit ViewPlugin( const KComponentData &instance, QObject *parent = 0L );
 
 		/**
 		 * @brief Creates a view to be associated with the passed in session

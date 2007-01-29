@@ -56,7 +56,7 @@ static const KAboutData aboutdata("kopete_cryptography", I18N_NOOP("Cryptography
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( &aboutdata )  )
 
 CryptographyPlugin::CryptographyPlugin( QObject *parent, const QStringList & /* args */ )
-: Kopete::Plugin( CryptographyPluginFactory::instance(), parent ),
+: Kopete::Plugin( CryptographyPluginFactory::componentData(), parent ),
 		m_cachedPass()
 {
 	if( !pluginStatic_ )
@@ -100,7 +100,7 @@ CryptographyPlugin::~CryptographyPlugin()
 
 void CryptographyPlugin::loadSettings()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup("Cryptography Plugin");
 
 	mPrivateKeyID = config->readEntry("PGP_private_key", QString() );

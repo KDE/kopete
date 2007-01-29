@@ -37,7 +37,7 @@ public:
 BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent)
  : QObject(parent), d( new Private )
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	
 	d->owner = accountId;
 	d->protocol = protocolId;
@@ -87,7 +87,7 @@ void BlackLister::removeContact(Contact *contact)
 
 void BlackLister::saveToDisk()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	
 	config->setGroup("BlackLister");
 	config->writeEntry( d->protocol + QString::fromLatin1("_") + d->owner, d->blacklist );

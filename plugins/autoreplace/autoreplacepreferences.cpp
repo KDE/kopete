@@ -38,7 +38,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactor
 
 // TODO: Use KConfigXT
 AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QStringList &args )
-: KCModule( AutoReplacePreferencesFactory::instance(), parent, args )
+: KCModule( AutoReplacePreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;

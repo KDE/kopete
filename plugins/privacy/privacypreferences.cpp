@@ -37,7 +37,7 @@ typedef KGenericFactory<PrivacyPreferences> PrivacyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_privacy, PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )
 
 PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
-	: KCModule(PrivacyPreferencesFactory::instance(), parent, args)
+	: KCModule(PrivacyPreferencesFactory::componentData(), parent, args)
 {
 	kDebug(14313) << k_funcinfo << "called." << endl;
 	

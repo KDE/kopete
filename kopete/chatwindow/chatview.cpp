@@ -61,7 +61,7 @@ typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
 
 ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QStringList &) :
-	Kopete::ViewPlugin( ChatWindowPluginFactory::instance(), parent )
+	Kopete::ViewPlugin( ChatWindowPluginFactory::componentData(), parent )
 {}
 
 KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
@@ -724,7 +724,7 @@ void ChatView::messageSentSuccessfully()
 
 void ChatView::saveOptions()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 //	writeDockConfig ( config, QLatin1String( "ChatViewDock" ) );
 	saveChatSettings();
@@ -746,7 +746,7 @@ void ChatView::saveChatSettings()
 	if ( !mc )
 		return;
 
-	KConfig* config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           mc->metaContactId();
@@ -766,7 +766,7 @@ void ChatView::loadChatSettings()
 	//read settings for metacontact
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           contacts.first()->metaContact()->metaContactId();
-	KConfig* config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( contactListGroup );
 	bool enableRichText = config->readEntry( "EnableRichText", true );
 	editPart()->setRichTextEnabled( enableRichText );
@@ -777,7 +777,7 @@ void ChatView::loadChatSettings()
 
 void ChatView::readOptions()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
 	/** THIS IS BROKEN !!! */
 	//dockManager->readConfig ( config, QLatin1String("ChatViewDock") );

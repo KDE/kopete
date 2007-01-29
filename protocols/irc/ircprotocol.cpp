@@ -107,7 +107,7 @@ void IRCProtocolHandler::handleURL(const KUrl &url) const
 }
 
 IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
-	: Protocol(IRCProtocolFactory::instance(), parent)
+	: Protocol(IRCProtocolFactory::componentData(), parent)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
 	kDebug(14120) << k_funcinfo << endl;

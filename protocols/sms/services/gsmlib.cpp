@@ -38,6 +38,7 @@
 #include <gsmlib/gsm_sms.h>
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_error.h>
+#include <kconfiggroup.h>
 
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"

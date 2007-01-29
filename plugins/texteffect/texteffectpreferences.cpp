@@ -38,7 +38,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_texteffect, TextEffectPreferencesFactory(
 
 TextEffectPreferences::TextEffectPreferences(QWidget *parent,
                                              const QStringList &args)
-	: KCModule(TextEffectPreferencesFactory::instance(), parent, args)
+	: KCModule(TextEffectPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget *w = new QWidget;

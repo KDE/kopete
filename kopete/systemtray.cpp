@@ -59,7 +59,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	, mMovie(0)
 {
 	kDebug(14010) <<  k_funcinfo << endl;
-	setToolTip(kapp->aboutData()->shortDescription());
+	setToolTip(KGlobal::mainComponent().aboutData()->shortDescription());
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;

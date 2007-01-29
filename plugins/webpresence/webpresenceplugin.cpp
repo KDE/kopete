@@ -55,7 +55,7 @@ typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  )
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const QStringList& /*args*/ )
-	: Kopete::Plugin( WebPresencePluginFactory::instance(), parent ),
+	: Kopete::Plugin( WebPresencePluginFactory::componentData(), parent ),
 	shuttingDown( false ), resultFormatting( WEB_HTML )
 {
 	m_writeScheduler = new QTimer( this );
@@ -76,7 +76,7 @@ WebPresencePlugin::~WebPresencePlugin()
 
 void WebPresencePlugin::loadSettings()
 {
-	KConfig *kconfig = KGlobal::config();
+	KSharedConfig::Ptr kconfig = KGlobal::config();
 	kconfig->setGroup( "Web Presence Plugin" );
 
 	frequency = kconfig->readEntry("UploadFrequency", 15);

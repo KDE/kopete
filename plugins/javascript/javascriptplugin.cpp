@@ -87,7 +87,7 @@ public:
 };
 
 JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const QStringList &/*args*/ )
-: Kopete::Plugin( JavaScriptPluginFactory::instance(), parent )
+: Kopete::Plugin( JavaScriptPluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_ = this;

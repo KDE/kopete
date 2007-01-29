@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QHash>
+#include <kconfiggroup.h>
 
 class QDomNode;
 class KActionMenu;

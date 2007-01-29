@@ -46,7 +46,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args*/ )
-	: Kopete::Protocol( GroupWiseProtocolFactory::instance(), parent ),
+	: Kopete::Protocol( GroupWiseProtocolFactory::componentData(), parent ),
 /* initialise Kopete::OnlineStatus that should be user selectable in the user interface */
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),

@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutda
 
 StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)
       : DCOPObject("StatisticsDCOPIface"), 
-        Kopete::Plugin( StatisticsPluginFactory::instance(), parent, name )
+        Kopete::Plugin( StatisticsPluginFactory::componentData(), parent, name )
       
 
 {

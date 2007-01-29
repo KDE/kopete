@@ -40,7 +40,7 @@ typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
 
 SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QStringList& /* args */)
-        : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name),
+        : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::componentData(), parent, name),
         m_detectorSMPPPD(NULL), m_detectorNetstat(NULL), m_detectorNetworkStatus(NULL), m_timer(NULL),
 m_onlineInquiry(NULL) {
 

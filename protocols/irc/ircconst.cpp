@@ -30,7 +30,7 @@ using namespace Kopete;
 namespace IRC {
 
 const QString Version = i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]",
-			     kapp->aboutData()->version());
+			     KGlobal::mainComponent().aboutData()->version());
 
 namespace Config {
 

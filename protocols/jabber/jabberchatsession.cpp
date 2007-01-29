@@ -70,7 +70,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 #ifdef SUPPORT_JINGLE
 	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().getFirst(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
 
-	setInstance(protocol->instance());
+	setComponentData(protocol->componentData());
 	jabber_voicecall->setEnabled( false );
 
 	

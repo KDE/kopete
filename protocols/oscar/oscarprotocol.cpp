@@ -24,7 +24,7 @@
 
 #include "oscaraccount.h"
 
-OscarProtocol::OscarProtocol( KInstance *instance, QObject *parent )
+OscarProtocol::OscarProtocol( const KComponentData &instance, QObject *parent )
 	: Kopete::Protocol( instance, parent ),
 	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),

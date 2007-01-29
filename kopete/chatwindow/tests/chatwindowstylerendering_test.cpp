@@ -29,7 +29,7 @@
 // KDE includes
 #include <kapplication.h>
 #include <kunittest/module.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -61,7 +61,7 @@ public:
 class FakeProtocol : public Kopete::Protocol
 {
 public:
-FakeProtocol( KInstance *instance, QObject *parent, const char *name ) : Kopete::Protocol(instance, parent, name)
+FakeProtocol( const KComponentData &instance, QObject *parent, const char *name ) : Kopete::Protocol(instance, parent, name)
 {
 	
 }
@@ -122,7 +122,7 @@ class ChatWindowStyleRendering_Test::Private
 public:
 	Private()
 	{
-		protocol = new FakeProtocol( new KInstance(QCString("test-kopete-message")), 0L, "test-kopete-message");
+		protocol = new FakeProtocol( KComponentData(QCString("test-kopete-message")), 0L, "test-kopete-message");
 		account = new FakeAccount(protocol, QString("testaccount"), 0);
 
 		// Create fake meta/contacts

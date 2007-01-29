@@ -20,6 +20,7 @@
 #include <QtCore/QObject>
 
 #include <oscartypes.h>
+#include <kconfiggroup.h>
 
 class KJob;
 

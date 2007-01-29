@@ -97,7 +97,7 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
  : KParts::ReadOnlyPart( wparent ), d(new Private)
 {
     // we need an instance
-    setInstance( KRichTextEditPartFactory::instance() );
+    setComponentData( KRichTextEditPartFactory::componentData() );
 
     d->editor = new KopeteTextEdit( wparent );
 
@@ -349,7 +349,7 @@ void KRichTextEditPart::readConfig()
 {
     // Don't update config untill we read whole config first
     d->configWriteLock = true;
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("RichTextEditor");
 
     QColor standardColor = KGlobalSettings::textColor();
@@ -392,7 +392,7 @@ void KRichTextEditPart::writeConfig()
     // If true we're still reading the conf write now, so don't write.
     if( d->configWriteLock ) return;
 
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
 
     QFont currentFont = d->editor->currentFont();
 

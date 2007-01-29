@@ -478,17 +478,17 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
 
 void KopeteWindow::loadOptions()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
-	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
-	toolBar("quickSearchBar")->applySettings( config, "QuickSearchBar Settings" );
-	toolBar("editGlobalIdentityBar")->applySettings( config, "EditGlobalIdentityBar Settings" );
+	toolBar("mainToolBar")->applySettings( config.data(), "ToolBar Settings" );
+	toolBar("quickSearchBar")->applySettings( config.data(), "QuickSearchBar Settings" );
+	toolBar("editGlobalIdentityBar")->applySettings( config.data(), "EditGlobalIdentityBar Settings" );
 
 	// FIXME: HACK: Is there a way to do that automatic ?
 	d->editGlobalIdentityWidget->setIconSize( toolBar("editGlobalIdentityBar")->iconSize() );
 	connect(toolBar("editGlobalIdentityBar"), SIGNAL(iconSizeChanged(const QSize &)), d->editGlobalIdentityWidget, SLOT(setIconSize(const QSize &)));
 
-	applyMainWindowSettings( config, "General Options" );
+	applyMainWindowSettings( config.data(), "General Options" );
 	config->setGroup("General Options");
 	QPoint pos = config->readEntry("Position", QPoint());
 	move(pos);
@@ -521,13 +521,13 @@ void KopeteWindow::loadOptions()
 
 void KopeteWindow::saveOptions()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 
-	toolBar("mainToolBar")->saveSettings ( config, "ToolBar Settings" );
-	toolBar("quickSearchBar")->saveSettings( config, "QuickSearchBar Settings" );
-	toolBar("editGlobalIdentityBar")->saveSettings( config, "EditGlobalIdentityBar Settings" );
+	toolBar("mainToolBar")->saveSettings ( config.data(), "ToolBar Settings" );
+	toolBar("quickSearchBar")->saveSettings( config.data(), "QuickSearchBar Settings" );
+	toolBar("editGlobalIdentityBar")->saveSettings( config.data(), "EditGlobalIdentityBar Settings" );
 
-	saveMainWindowSettings( config, "General Options" );
+	saveMainWindowSettings( config.data(), "General Options" );
 
 	config->setGroup("General Options");
 	config->writeEntry("Position", pos());
@@ -606,7 +606,7 @@ void KopeteWindow::slotConfGlobalKeys()
 
 void KopeteWindow::slotConfToolbar()
 {
-	saveMainWindowSettings(KGlobal::config(), "General Options");
+	saveMainWindowSettings(KGlobal::config().data(), "General Options");
 	KEditToolbar *dlg = new KEditToolbar(factory());
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
 	connect( dlg, SIGNAL(finished()) , dlg, SLOT(deleteLater()));
@@ -615,7 +615,7 @@ void KopeteWindow::slotConfToolbar()
 
 void KopeteWindow::slotUpdateToolbar()
 {
-	applyMainWindowSettings(KGlobal::config(), "General Options");
+	applyMainWindowSettings(KGlobal::config().data(), "General Options");
 }
 
 void KopeteWindow::slotGlobalAway()
@@ -838,7 +838,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 #if 0
-	KIconLoader *loader = KGlobal::instance()->iconLoader();
+	KIconLoader *loader = KGlobal::mainComponent().iconLoader();
 
 	QMovie *mv = new QMovie(loader->loadMovie( status.overlayIcons().first(), K3Icon::Small ));
 
@@ -901,7 +901,7 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 	KActionCollection *actionCollection = d->tray->actionCollection();
 
 	popup->clear();
-	popup->addTitle( qApp->windowIcon(), KInstance::caption() );
+	popup->addTitle( qApp->windowIcon(), KGlobal::caption() );
 
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 	foreach(Kopete::Account *a, accountList)

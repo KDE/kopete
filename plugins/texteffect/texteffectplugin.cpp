@@ -29,7 +29,7 @@ typedef KGenericFactory<TextEffectPlugin> TextEffectPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory( "kopete_texteffect" )  )
 
 TextEffectPlugin::TextEffectPlugin( QObject *parent, const QStringList &/*args*/ )
-: Kopete::Plugin( TextEffectPluginFactory::instance(), parent )
+: Kopete::Plugin( TextEffectPluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;

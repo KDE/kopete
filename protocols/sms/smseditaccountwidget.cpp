@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <krestrictedline.h>
+#include <kconfiggroup.h>
 
 #include "kopeteuiglobal.h"
 

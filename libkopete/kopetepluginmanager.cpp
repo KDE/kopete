@@ -258,7 +258,7 @@ void PluginManager::loadAllPlugins()
 {
 	// FIXME: We need session management here - Martijn
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	if ( config->hasGroup( QLatin1String( "Plugins" ) ) )
 	{
 		QMap<QString, QString> entries = config->entryMap( QLatin1String( "Plugins" ) );
@@ -491,7 +491,7 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 {
 	QString pluginId = _pluginId;
 
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "Plugins" );
 
 	// FIXME: What is this for? This sort of thing is kconf_update's job - Richard

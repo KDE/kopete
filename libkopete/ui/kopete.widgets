@@ -1,7 +1,7 @@
 [Global]
 PluginName=KopeteWidgets
-Includes=kinstance.h
-Init=new KInstance("kopetewidgets");
+Includes=kcomponentdata.h
+Init=new KComponentData("kopetewidgets");
 
 [Kopete::UI::ListView::ListView]
 ToolTip=List View (Kopete)

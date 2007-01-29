@@ -93,7 +93,7 @@ typedef KGenericFactory<MotionAwayPlugin> MotionAwayPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory( "kopete_motionaway" )  )
 
 MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( MotionAwayPluginFactory::instance(), parent, name )
+: Kopete::Plugin( MotionAwayPluginFactory::componentData(), parent, name )
 {
 	kDebug(14305) << k_funcinfo << "Called." << endl;
 	/* This should be read from config someday may be */
@@ -154,7 +154,7 @@ MotionAwayPlugin::~MotionAwayPlugin()
 }
 
 void MotionAwayPlugin::loadSettings(){
-	KConfig *kconfig = KGlobal::config();
+	KSharedConfig::Ptr kconfig = KGlobal::config();
 	kconfig->setGroup("MotionAway Plugin");
 
 	awayTimeout = kconfig->readEntry("AwayTimeout", 1);

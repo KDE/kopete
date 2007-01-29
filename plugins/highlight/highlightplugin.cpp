@@ -28,7 +28,7 @@ typedef KGenericFactory<HighlightPlugin> HighlightPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_highlight, HighlightPluginFactory( "kopete_highlight" )  )
 
 HighlightPlugin::HighlightPlugin( QObject *parent, const QStringList &/*args*/ )
-: Kopete::Plugin( HighlightPluginFactory::instance(), parent )
+: Kopete::Plugin( HighlightPluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
