@@ -149,7 +149,7 @@ Kopete::Away::Away() : QObject( kapp )
 	}
 
 	load();
-	KSettings::Dispatcher::self()->registerInstance( KGlobal::mainComponent(), this, SLOT( load() ) );
+	KSettings::Dispatcher::self()->registerComponent( KGlobal::mainComponent(), this, SLOT( load() ) );
 	// Set up the config object
 	KSharedConfig::Ptr config = KGlobal::config();
 	/* Load the saved away messages */

@@ -18,6 +18,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kcomponentdata.h>
 
 #include <kopetecontactlist.h>
 #include <kopetecontact.h>
