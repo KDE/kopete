@@ -17,6 +17,7 @@
 #include "behaviorconfig_general.h"
 #include "behaviorconfig_events.h"
 #include "behaviorconfig_chat.h"
+#include "behaviorconfig_away.h"
 
 #include <qcheckbox.h>
 #include <qradiobutton.h>
@@ -36,7 +37,6 @@
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaway.h"
-#include "kopeteawayconfigbase.h"
 #include "kopetepluginmanager.h"
 #include "kopeteaway.h"
 
@@ -66,9 +66,9 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 	mBehaviorTabCtl->addTab(mPrfsEvents, i18n("&Events"));
 
 	// "Away" TAB ===============================================================
-	mAwayConfigUI = new KopeteAwayConfigBaseUI(mBehaviorTabCtl);
-	addConfig( Kopete::BehaviorSettings::self(), mAwayConfigUI );
-	mBehaviorTabCtl->addTab(mAwayConfigUI, i18n("A&way Settings"));
+	mPrfsAway = new BehaviorConfig_Away(mBehaviorTabCtl);
+	addConfig( Kopete::BehaviorSettings::self(), mPrfsAway );
+	mBehaviorTabCtl->addTab(mPrfsAway, i18n("A&way Settings"));
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
@@ -87,7 +87,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================
-	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
+	connect( mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));;
 }
 
@@ -98,7 +98,7 @@ void BehaviorConfig::save()
 	KCModule::save();
 
 	// "Away" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mAwayConfigUI->mAutoAwayTimeout->value() * 60 );
+	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mPrfsAway->mAutoAwayTimeout->value() * 60 );
 
 	// "Chat" TAB ===============================================================
 	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()]->pluginName() );
@@ -115,7 +115,7 @@ void BehaviorConfig::load()
 
 	KCModule::load();
 	// "Away" TAB ===============================================================
-	mAwayConfigUI->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
+	mPrfsAway->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat->viewPlugin->clear();

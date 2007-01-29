@@ -9,14 +9,15 @@ set(kcm_kopete_behaviorconfig_PART_SRCS
    behaviorconfig_chat.cpp 
    behaviorconfig_events.cpp 
    behaviorconfig_general.cpp 
-   kopeteawayconfigbase.cpp 
+   behaviorconfig_away.cpp 
    )
 
 kde4_add_ui_files(kcm_kopete_behaviorconfig_PART_SRCS 
    behaviorconfig_chat.ui 
    behaviorconfig_events.ui 
    behaviorconfig_general.ui 
-   kopeteawayconfigbase.ui )
+   behaviorconfig_away.ui
+   )
 
 kde4_automoc(${kcm_kopete_behaviorconfig_PART_SRCS})
 
