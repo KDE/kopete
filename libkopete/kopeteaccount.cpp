@@ -371,7 +371,7 @@ KActionMenu * Account::actionMenu()
 #ifdef __GNUC__
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 #endif
-	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString nick = myself()->nickName();
 
 	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
