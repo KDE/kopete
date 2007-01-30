@@ -74,7 +74,9 @@ KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, 
 	{
 		QObject::connect(newAction, SIGNAL(triggered(bool)), receiver, slot);
 	}
-        parent->addAction(name, newAction);
+
+	if( parent )
+		parent->addAction(name, newAction);
 
 	return newAction;
 }
