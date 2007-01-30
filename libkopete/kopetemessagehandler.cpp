@@ -96,7 +96,10 @@ MessageHandlerFactory::MessageHandlerFactory()
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
-	Private::factories().erase( d->iterator );
+#ifdef __GNUC__
+#warning Commented out FactoryList::erase( iterator ) to remove crash at Kopete exit. -DarkShock 2007-01-30
+#endif
+// 	Private::factories().erase( d->iterator );
 	delete d;
 }
 
