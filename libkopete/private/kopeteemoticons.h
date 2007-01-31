@@ -130,7 +130,7 @@ public:
 	 * Return all emoticons and the corresponding icon.
 	 * (only one emoticon per image)
 	 */
-	QMap<QString, QString> emoticonAndPicList();
+	QMap<QString, QStringList> emoticonAndPicList();
 
 
 private:

@@ -671,14 +671,15 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	config->setGroup( "MSN" );
 	if ( config->readBoolEntry( "exportEmoticons", false ) )
 	{
-		QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
 
 		// Check the list for any custom emoticons
-		for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
-			if ( msg.plainBody().contains(itr.key()) )
+			for ( QStringList::const_iterator itr2 = itr.data().constBegin(); itr2 != itr.data().constEnd(); ++itr2 )
 			{
-				sendCustomEmoticon(itr.key(), itr.data());
+				if ( msg.plainBody().contains( *itr2 ) )
+					sendCustomEmoticon( *itr2, itr.key() );
 			}
 		}
 	}

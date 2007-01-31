@@ -68,7 +68,7 @@ class Emoticons::Private
 {
 public:
 	QMap<QChar, QValueList<Emoticon> > emoticonMap;
-	QMap<QString, QString> emoticonAndPicList;
+	QMap<QString, QStringList> emoticonAndPicList;
 		
 	/**
 	 * The current icon theme from KopetePrefs
@@ -311,10 +311,10 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 
 	if( !pic.isNull() ) // only add if we found one file
 	{
-		d->emoticonAndPicList.insert( emoticons.first() , pic);
-
 		QPixmap p;
 		QString result;
+
+		d->emoticonAndPicList.insert( pic, emoticons );
 
 		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
 		      it != end; ++it )
@@ -516,7 +516,7 @@ void Emoticons::sortEmoticons()
 
 
 
-QMap<QString, QString> Emoticons::emoticonAndPicList()
+QMap<QString, QStringList> Emoticons::emoticonAndPicList()
 {
 	return d->emoticonAndPicList;
 }

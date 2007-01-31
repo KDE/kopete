@@ -69,25 +69,25 @@ void EmoticonSelector::prepareList(void)
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 	int row = 0;
 	int col = 0;
-	QMap<QString, QString> list = Kopete::Emoticons::self()->emoticonAndPicList();
+	QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
 	int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
-//	kdDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
+	//kdDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
 
 	if ( lay )
 	{
-		QObjectList *list = queryList( "EmoticonLabel" );
-//		kdDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
-		list->setAutoDelete(true);
-		list->clear();
-		delete list;
+		QObjectList *objList = queryList( "EmoticonLabel" );
+		//kdDebug(14000) << k_funcinfo << "There are " << objList->count() << " EmoticonLabels to delete." << endl;
+		objList->setAutoDelete(true);
+		objList->clear();
+		delete objList;
 		delete lay;
 	}
 
 	lay = new QGridLayout(this, 0, 0, 4, 4, "emoticonLayout");
 	movieList.clear();
-	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
+	for (QMap<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
 	{
-		QWidget *w = new EmoticonLabel(it.key(), it.data(), this);
+		QWidget *w = new EmoticonLabel(it.data().first(), it.key(), this);
 		movieList.push_back( ((QLabel*)w)->movie() );
 		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
 //		kdDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
