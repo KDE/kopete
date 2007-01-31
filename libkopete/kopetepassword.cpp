@@ -109,7 +109,7 @@ public:
 	 */
 	virtual void processRequest() = 0;
 
-    void gotPassword(const QString&, bool) {}
+	void gotPassword(const QString&, bool) {}
 	void slotCancelPressed() {}
 
 protected:
@@ -185,7 +185,7 @@ public:
 		passwdDialog->setPrompt( mPrompt );
 		passwdDialog->setPixmap( mImage );
 
-		connect( passwdDialog, SIGNAL( gotPassword(const QString&, bool) ), SLOT( slotGotPassword( const QString&, bool) )) ;
+		connect( passwdDialog, SIGNAL( gotPassword(const QString&, bool) ), SLOT( gotPassword( const QString&, bool) )) ;
 		connect( passwdDialog, SIGNAL( rejected() ), SLOT( slotCancelPressed() ) );
 		connect( this, SIGNAL( destroyed() ), passwdDialog, SLOT( deleteLater() ) );
 		passwdDialog->show();
