@@ -96,8 +96,6 @@ public:
 
 	QStringList args(QTextCodec *codec = 0) const;
 	void setArgs(const QStringList &, QTextCodec *codec = 0);
-	inline void setArgs(const QString &arg, QTextCodec *codec = 0)
-	{ setArgs(QStringList(arg), codec);}
 
 	QString suffix(QTextCodec *codec = 0) const;
 	void setSuffix(const QString &, QTextCodec *codec = 0);

@@ -30,14 +30,15 @@ class KIrc::Event::Private
 {
 public:
 	Message msg;
-//	QPointer<KIrc::Socket> socket;
 
-	MessageType messageType;
+//	MessageType messageType;
 
 	KIrc::Entity::Ptr from;
 	KIrc::Entity::List to;
+	KIrc::Entity::List victims;
 	KIrc::Entity::List cc;
 
+	bool visible;
 	QString text;
 };
 
@@ -104,6 +105,17 @@ const KIrc::Entity::List &Event::to() const
 Event &Event::setTo(const KIrc::Entity::List &to)
 {
 	d->to = to;
+	return *this;
+}
+
+const KIrc::Entity::List &Event::victims() const
+{
+	return d->victims;
+}
+
+Event &Event::setVictims(const KIrc::Entity::List &victims)
+{
+	d->victims = victims;
 	return *this;
 }
 

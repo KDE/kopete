@@ -96,27 +96,6 @@ public slots:
 
 	void showInfoDialog();
 
-#if 0
-public: //moc error
-	/**
-	 * Post an event for the given socket.
-	 *
-	 * @param messageType the type of event message.
-	 * @param message the event message content.
-	 */
-	void postEvent(Event::MessageType messageType, const QString &message);
-
-	/**
-	 * Post an error event for the given socket.
-	 *
-	 * @param errStr the string describing the error.
-	 *
-	 * @note The error event is only informational and won't change the status.
-	 */
-	inline void postErrorEvent(const QString &errStr)
-	{ postEvent(Event::ErrorMessage, errStr); }
-#endif
-
 signals:
 //	void eventOccured(const Event *);
 

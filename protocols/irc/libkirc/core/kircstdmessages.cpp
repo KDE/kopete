@@ -22,13 +22,10 @@
 #include "kircmessage.h"
 #include "kircsocket.h"
 
-#include <kdebug.h>
 #include <klocale.h>
 #include <kuser.h>
 
-#include <QDateTime>
-#include <qfileinfo.h>
-#include <qregexp.h>
+#include <QList>
 /*
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -58,7 +55,7 @@ Message StdMessages::ison(const QList<QByteArray> &nickList)
 	if (!nickList.isEmpty())
 	{
 		QByteArray statement = ISON;
-		for (QByteArrayList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
+		for (QList<ByteArray>::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
 		{
 			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
 			{
@@ -133,7 +130,7 @@ KIrc::Message StdMessages::notice(const QByteArray &target, const QByteArray &co
 {
 	Message msg;
 	msg.setCommand(NOTICE);
-	msg.setArgs(target);
+	msg.appendArg(target);
 	msg.setSuffix(content/*, target->codec()*/);
 	return msg;
 }
@@ -144,7 +141,7 @@ KIrc::Message StdMessages::part(const QByteArray &channel, const QByteArray &rea
 {
 	Message msg;
 	msg.setCommand(PART);
-	msg.setArgs(channel);
+	msg.appendArg(channel);
 	msg.setSuffix(reason/*, channel->codec()*/);
 	return msg;
 }
@@ -153,7 +150,7 @@ KIrc::Message StdMessages::pass(const QByteArray &password)
 {
 	Message msg;
 	msg.setCommand(PASS);
-	msg.setArgs(password);
+	msg.appendArg(password);
 	return msg;
 }
 
@@ -161,7 +158,7 @@ KIrc::Message StdMessages::privmsg(const QByteArray &contact, const QByteArray &
 {
 	Message msg;
 	msg.setCommand(PRIVMSG);
-	msg.setArgs(contact);
+	msg.appendArg(contact);
 	msg.setSuffix(content/*, contact->codec*/);
 	return msg;
 }
@@ -178,7 +175,7 @@ Message StdMessages::topic(const QByteArray &channel, const QByteArray &topic)
 {
 	Message msg;
 	msg.setCommand(TOPIC);
-	msg.setArgs(channel);
+	msg.appendArg(channel);
 	msg.setSuffix(topic/*, channel->codec*/);
 	return msg;
 }
@@ -220,7 +217,7 @@ Message StdMessages::whois(const QByteArray &user)
 {
 	Message msg;
 	msg.setCommand(WHOIS);
-	msg.setArgs(user);
+	msg.appendArg(user);
 	return msg;
 }
 

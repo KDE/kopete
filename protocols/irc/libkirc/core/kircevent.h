@@ -29,8 +29,6 @@
 namespace KIrc
 {
 
-class Socket;
-
 class KIRC_EXPORT Event
 //	: QEvent // Use QEvent interface here ???
 {
@@ -50,6 +48,9 @@ public:
 
 	const KIrc::Entity::List &to() const;
 	Event &setTo(const KIrc::Entity::List &to);
+
+	const KIrc::Entity::List &victims() const;
+	Event &setVictims(const KIrc::Entity::List &cc);
 
 	const KIrc::Entity::List &cc() const;
 	Event &setCc(const KIrc::Entity::List &cc);

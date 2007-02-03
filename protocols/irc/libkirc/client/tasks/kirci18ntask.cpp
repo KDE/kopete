@@ -51,17 +51,16 @@ I18nTask::~I18nTask()
 //	delete d;
 }
 
-void I18nTask::postServerEvent(const Message &msg, const QString &message)
+void I18nTask::postServerEvent(const Event *e, const QString &message)
 {
-	Event event;
-//	event.setFrom(msg.prefix());
-//	event.setTo(msg.socket().server());
-//	event.setCc(msg.socket().owner()); // ??
+//	event.setFrom(e->message().prefix());
+//	event.setTo(e->message().socket().server());
+//	event.setCc(e->message().socket().owner()); // ??
 
-	if (message.isEmpty())
-		event.setText(msg.suffix());
-	else
-		event.setText(message);
+//	if (message->message().isEmpty())
+//		e->setText(e->message().suffix());
+//	else
+//		e->setText(message);
 
 //	post the message here ... still dunno where, socket ?
 }
@@ -69,7 +68,7 @@ void I18nTask::postServerEvent(const Message &msg, const QString &message)
 /*
 void I18nTask::registerStandardCommands(CommandManager *cm)
 {
-	cm->registerCommand(ERROR,	this, SLOT(error(Message &));
+	cm->registerCommand(ERROR,	this, SLOT(error(Event *&));
 //		setMinMax(0, 0);
 
 	bind(JOIN,	this, SLOT(join(Message)),	0, 1);
@@ -99,9 +98,9 @@ void I18nTask::registerStandardCommands(CommandManager *cm)
 */
 
 // FIXME: Really handle this message
-void I18nTask::error(Message /*msg*/)
+void I18nTask::error(Event * /*e*/)
 {
-//	msg->client->close();
+//	e->client->close();
 }
 
 /* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
@@ -110,7 +109,7 @@ void I18nTask::error(Message /*msg*/)
  * This is the response of someone joining a channel.
  * Remember that this will be emitted when *you* /join a room for the first time
  */
-void I18nTask::join(Message msg)
+void I18nTask::join(Event *e)
 {
 /*
 	emit receivedMessage(
@@ -124,7 +123,7 @@ void I18nTask::join(Message msg)
 /* The given user is kicked.
  * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
  */
-void I18nTask::kick(Message msg)
+void I18nTask::kick(Event *e)
 {
 /*
 	emit receivedMessage(
@@ -138,14 +137,14 @@ void I18nTask::kick(Message msg)
 /* Change the mode of a user.
  * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
  */
-void I18nTask::mode(Message msg)
+void I18nTask::mode(Event *e)
 {
 /*
-	QStringList args = msg.argList();
+	QStringList args = e->message().argList();
 	args.pop_front();
 
-	Entity::Ptr fromEntity = msg.entityFromPrefix();
-	Entity::Ptr toEntity = msg.entityFromArg(0)
+	Entity::Ptr fromEntity = e->message().entityFromPrefix();
+	Entity::Ptr toEntity = e->message().entityFromArg(0)
 
 	emit receivedMessage(
 		Info,
@@ -158,16 +157,16 @@ void I18nTask::mode(Message msg)
 /* Nick name of a user changed
  * "<nickname>"
  */
-void I18nTask::nick(Message msg)
+void I18nTask::nick(Event *e)
 {
 /*
 	// FIXME: Find better i18n strings
 
 	QString message;
 
-	if (oldNick.lower() == m_Nickname.lower())
+	if (oldNick.lower() == m_Nickname->message().lower())
 	{
-		m_Nickname = msg.suffix();
+		m_Nickname = e->message().suffix();
 		message = i18n("Your nick has changed from %1 to %2");
 	}
 	else
@@ -175,7 +174,7 @@ void I18nTask::nick(Message msg)
 
 	emit receivedMessage(
 		InfoMessage,
-		msg.entityFromPrefix(),
+		e->message().entityFromPrefix(),
 		Entity::List::null,
 		message);
 
@@ -183,97 +182,83 @@ void I18nTask::nick(Message msg)
 */
 }
 
-void I18nTask::notice(Message msg)
+void I18nTask::notice(Event *e)
 {
-	if (!msg.suffix().isEmpty())
+//	if (!e->suffix().isEmpty())
 	{
 /*
 		emit receivedMessage(
 			NoticeMessage,
-			msg.entityFromPrefix(),
-			msg.entityFromArg(0), // should always return myself
-			msg.suffix()
+			e->message().entityFromPrefix(),
+			e->message().entityFromArg(0), // should always return myself
+			e->message().suffix()
 		);
 */
 	}
 
-//	if(msg.hasCtcpMessage())
-//		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
+//	if(e->message().hasCtcpMessage())
+//		invokeCtcpCommandOfMessage(m_ctcpReplies, e);
 }
 
 /* This signal emits when a user parts a channel
  * "<channel> *( "," <channel> ) [ <Part Message> ]"
  */
-void I18nTask::part(Message msg)
+void I18nTask::part(Event *e)
 {
 /*
 	emit receivedMessage(
 		PartMessage,
-		msg.entityFromPrefix(),
-		msg.entityFromArg(0),
-		msg.suffix());
+		e->message().entityFromPrefix(),
+		e->message().entityFromArg(0),
+		e->message().suffix());
 */
 }
 
-void I18nTask::ping(Message msg)
+void I18nTask::ping(Event *e)
 {
-	Message reply;
-//	reply.setCommand(PONG);
-//	reply.setArgs(msg.rawArg(0));
-	reply.setSuffix(msg.rawSuffix());
+//	e->setCommand(PONG);
+//	e->setArgs(e->message().rawArg(0));
+//	e->setSuffix(e->message().rawSuffix());
 
-//	msg->client->writeMessage(reply);
+//	e->client->writeMessage(reply);
 }
 
-void I18nTask::pong(Message /*msg*/)
+void I18nTask::pong(Event * /*e*/)
 {
 }
 
-void I18nTask::privmsg(Message msg)
+void I18nTask::privmsg(Event *e)
 {
-	if (!msg.suffix().isEmpty())
+	if (!e->message().suffix().isEmpty())
 	{
 /*
 		emit receivedMessage(
 			PrivateMessage,
-			msg.entityFromPrefix(),
-			msg.entityFromArg(0),
-			msg.suffix());
+			e->message().entityFromPrefix(),
+			e->message().entityFromArg(0),
+			e->message().suffix());
 */
 	}
 //#ifndef KIRC_STRICT
 #if 0
-	if (msg.hasCtcpMessage())
+	if (e->message().hasCtcpMessage())
 	{
-//		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
+//		invokeCtcpCommandOfMessage(m_ctcpQueries, e);
 	}
 #endif
 }
 
-void I18nTask::quit(Message msg)
+void I18nTask::quit(Event *e)
 {
-/*
-	emit receivedMessage(
-		QuitMessage,
-		msg.prefixEntity(),
-		m_server,
-		msg.suffix());
-*/
+//	e->setText(i18n("%1 has quit: %2").arg(e->message().prefixEntity(), e->message().suffix()));
 }
 
 /* "<channel> [ <topic> ]"
  * The topic of a channel changed. emit the channel, new topic, and the person who changed it.
  */
-void I18nTask::topic(Message msg)
+void I18nTask::topic(Event *e)
 {
-/*
-	emit incomingTopicChange(msg.arg(0), msg.prefix(), msg.suffix());
-	emit receivedMessage(
-		QuitMessage,
-		msg.prefixEntity(),
-		m_server,
-		msg.suffix());
-*/
+//	e->setText(i18n("%1 changed %2 topic to: %3").arg(e->message().prefixEntity(), e->message().arg(0), e->message().suffix()));
 }
 
 
@@ -284,115 +269,115 @@ void I18nTask::topic(Message msg)
 /*
 void I18nTask::bindNumericReplies()
 {
-	bind(1, this, SLOT(numericReply_001(Message &)), 1, 1);
-	bind(2, this, SLOT(numericReply_002(Message &)), 1, 1);
-	bind(3, this, SLOT(numericReply_003(Message &)), 1, 1);
-	bind(4, this, SLOT(numericReply_004(Message &)), 5, 5);
-	bind(5, this, SLOT(numericReply_004(Message &)), 1, 1);
+	bind(1, this, SLOT(numericReply_001(Event *)), 1, 1);
+	bind(2, this, SLOT(numericReply_002(Event *)), 1, 1);
+	bind(3, this, SLOT(numericReply_003(Event *)), 1, 1);
+	bind(4, this, SLOT(numericReply_004(Event *)), 5, 5);
+	bind(5, this, SLOT(numericReply_004(Event *)), 1, 1);
 
-	bind(250, this, SLOT(numericReply_250(Message &)));
-	bind(251, this, SLOT(numericReply_251(Message &)));
-	bind(252, this, SLOT(numericReply_252(Message &)), 2, 2);
-	bind(253, this, SLOT(numericReply_253(Message &)), 2, 2);
-	bind(254, this, SLOT(numericReply_254(Message &)), 2, 2);
-	bind(255, this, SLOT(numericReply_255(Message &)), 1, 1);
+	bind(250, this, SLOT(numericReply_250(Event *)));
+	bind(251, this, SLOT(numericReply_251(Event *)));
+	bind(252, this, SLOT(numericReply_252(Event *)), 2, 2);
+	bind(253, this, SLOT(numericReply_253(Event *)), 2, 2);
+	bind(254, this, SLOT(numericReply_254(Event *)), 2, 2);
+	bind(255, this, SLOT(numericReply_255(Event *)), 1, 1);
 
-	bind(263, this, SLOT(numericReply_263(Message &)));
-	bind(265, this, SLOT(numericReply_265(Message &)));
-	bind(266, this, SLOT(numericReply_266(Message &)));
+	bind(263, this, SLOT(numericReply_263(Event *)));
+	bind(265, this, SLOT(numericReply_265(Event *)));
+	bind(266, this, SLOT(numericReply_266(Event *)));
 
-	bind(301, this, SLOT(numericReply_301(Message &)), 2, 2);
-	bind(303, this, SLOT(numericReply_303(Message &)), 1, 1);
-//	bind(305, this, SLOT(ignoreMessage(Message &)), 0, 0 );
-//	bind(306, this, SLOT(ignoreMessage(Message &)), 0, 0 );
-	bind(307, this, SLOT(numericReply_307(Message &)), 1, 1);
-	bind(311, this, SLOT(numericReply_311(Message &)), 5, 5);
-	bind(312, this, SLOT(numericReply_312(Message &)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(Message &)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(Message &)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(Message &)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(Message &)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(Message &)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(Message &)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(Message &)), 2, 2);
-//	bind(321, this, SLOT(ignoreMessage(Message &)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(Message &)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(Message &)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(Message &)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(Message &)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(Message &)), 3, 3);
-//	bind(330, this, SLOT(ignoreMessage(Message &)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(Message &)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(Message &)), 2, 2);
-	bind(333, this, SLOT(numericReply_333(Message &)), 4, 4);
-	bind(352, this, SLOT(numericReply_352(Message &)), 5, 10);
-	bind(353, this, SLOT(numericReply_353(Message &)), 3, 3);
-	bind(366, this, SLOT(numericReply_366(Message &)), 2, 2);
-	bind(369, this, SLOT(numericReply_369(Message &)), 2, 2);
-	bind(372, this, SLOT(numericReply_372(Message &)), 1, 1);
+	bind(301, this, SLOT(numericReply_301(Event *)), 2, 2);
+	bind(303, this, SLOT(numericReply_303(Event *)), 1, 1);
+//	bind(305, this, SLOT(ignoreMessage(Event *)), 0, 0 );
+//	bind(306, this, SLOT(ignoreMessage(Event *)), 0, 0 );
+	bind(307, this, SLOT(numericReply_307(Event *)), 1, 1);
+	bind(311, this, SLOT(numericReply_311(Event *)), 5, 5);
+	bind(312, this, SLOT(numericReply_312(Event *)), 3, 3);
+	bind(313, this, SLOT(numericReply_313(Event *)), 2, 2);
+	bind(314, this, SLOT(numericReply_314(Event *)), 5, 5);
+	bind(315, this, SLOT(numericReply_315(Event *)), 2, 2);
+	bind(317, this, SLOT(numericReply_317(Event *)), 3, 4);
+	bind(318, this, SLOT(numericReply_318(Event *)), 2, 2);
+	bind(319, this, SLOT(numericReply_319(Event *)), 2, 2);
+	bind(320, this, SLOT(numericReply_320(Event *)), 2, 2);
+//	bind(321, this, SLOT(ignoreMessage(Event *)), 0, 0 );
+	bind(322, this, SLOT(numericReply_322(Event *)), 3, 3);
+	bind(323, this, SLOT(numericReply_323(Event *)), 1, 1);
+	bind(324, this, SLOT(numericReply_324(Event *)), 2, 4);
+	bind(328, this, SLOT(numericReply_328(Event *)), 2, 2);
+	bind(329, this, SLOT(numericReply_329(Event *)), 3, 3);
+//	bind(330, this, SLOT(ignoreMessage(Event *)), 3, 3); // ???
+	bind(331, this, SLOT(numericReply_331(Event *)), 2, 2);
+	bind(332, this, SLOT(numericReply_332(Event *)), 2, 2);
+	bind(333, this, SLOT(numericReply_333(Event *)), 4, 4);
+	bind(352, this, SLOT(numericReply_352(Event *)), 5, 10);
+	bind(353, this, SLOT(numericReply_353(Event *)), 3, 3);
+	bind(366, this, SLOT(numericReply_366(Event *)), 2, 2);
+	bind(369, this, SLOT(numericReply_369(Event *)), 2, 2);
+	bind(372, this, SLOT(numericReply_372(Event *)), 1, 1);
 	bind(375, this, SLOT(ignoreMessage(Message&)), 0, 0 );
 	bind(376, this, SLOT(ignoreMessage(Message&)), 0, 0 );
 
-	bind(401, this, SLOT(numericReply_401(Message &)), 2, 2);
-	bind(404, this, SLOT(numericReply_404(Message &)), 2, 2);
-	bind(406, this, SLOT(numericReply_406(Message &)), 2, 2);
-	bind(422, this, SLOT(numericReply_422(Message &)), 1, 1);
-	bind(433, this, SLOT(numericReply_433(Message &)), 2, 2);
-	bind(442, this, SLOT(numericReply_442(Message &)), 2, 2);
-	bind(464, this, SLOT(numericReply_464(Message &)), 1, 1);
-	bind(471, this, SLOT(numericReply_471(Message &)), 2, 2);
-	bind(473, this, SLOT(numericReply_473(Message &)), 2, 2);
-	bind(474, this, SLOT(numericReply_474(Message &)), 2, 2);
-	bind(475, this, SLOT(numericReply_475(Message &)), 2, 2);
+	bind(401, this, SLOT(numericReply_401(Event *)), 2, 2);
+	bind(404, this, SLOT(numericReply_404(Event *)), 2, 2);
+	bind(406, this, SLOT(numericReply_406(Event *)), 2, 2);
+	bind(422, this, SLOT(numericReply_422(Event *)), 1, 1);
+	bind(433, this, SLOT(numericReply_433(Event *)), 2, 2);
+	bind(442, this, SLOT(numericReply_442(Event *)), 2, 2);
+	bind(464, this, SLOT(numericReply_464(Event *)), 1, 1);
+	bind(471, this, SLOT(numericReply_471(Event *)), 2, 2);
+	bind(473, this, SLOT(numericReply_473(Event *)), 2, 2);
+	bind(474, this, SLOT(numericReply_474(Event *)), 2, 2);
+	bind(475, this, SLOT(numericReply_475(Event *)), 2, 2);
 
 	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(postServerEvent(Message&)),0,0);
+	bind(477, this, SLOT(postServerEvent(Event *)),0,0);
 }
 */
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
  * Gives a welcome message in the form of:
  */
-void I18nTask::numericReply_001(Message msg)
+void I18nTask::numericReply_001(Event *e)
 {
 	kDebug(14121) << k_funcinfo << endl;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
  * Gives information about the host. The given information are close to 004.
  */
-void I18nTask::numericReply_002(Message msg)
+void I18nTask::numericReply_002(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 003: "This server was created <date>"
  * Gives the date that this server was created.
  * NOTE: This is useful for determining the uptime of the server).
  */
-void I18nTask::numericReply_003(Message msg)
+void I18nTask::numericReply_003(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
  * Gives information about the servername, version, available modes, etc.
  */
-void I18nTask::numericReply_004(Message msg)
+void I18nTask::numericReply_004(Event *e)
 {
-//	emit postServerEvent(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
+//	emit postServerEvent(e->message().arg(1),e->message().arg(2),e->message().arg(3),e->message().arg(4));
 }
 
 /* 005:
  * Gives capability information. TODO: This is important!
  */
-void I18nTask::numericReply_005(Message msg)
+void I18nTask::numericReply_005(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 250: ":Highest connection count: <integer> (<integer> clients)
@@ -400,95 +385,95 @@ void I18nTask::numericReply_005(Message msg)
  * Tells connections statistics about the server for the uptime activity.
  * NOT IN RFC1459 NOR RFC2812
  */
-void I18nTask::numericReply_250(Message msg)
+void I18nTask::numericReply_250(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
  * Tells how many user there are on all the different servers in the form of:
  */
-void I18nTask::numericReply_251(Message msg)
+void I18nTask::numericReply_251(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 252: "<integer> :operator(s) online"
  * Issues a number of operators on the server in the form of:
  */
-void I18nTask::numericReply_252(Message msg)
+void I18nTask::numericReply_252(Event *e)
 {
-	postServerEvent(msg, i18np("There is 1 operator online.", "There are %s operators online.", msg.arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 operator online.", "There are %s operators online.", e->message().arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
  * Tells how many unknown connections the server has in the form of:
  */
-void I18nTask::numericReply_253(Message msg)
+void I18nTask::numericReply_253(Event *e)
 {
-	postServerEvent(msg, i18np("There is 1 unknown connection.", "There are %s unknown connections.", msg.arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %s unknown connections.", e->message().arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
  * Tells how many total channels there are on this network.
  *  */
-void I18nTask::numericReply_254(Message msg)
+void I18nTask::numericReply_254(Event *e)
 {
-	postServerEvent(msg, i18np("There is 1 channel formed.", "There are %s channel formed.", msg.arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 channel formed.", "There are %s channels formed.", e->message().arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
  * Tells how many clients and servers *this* server handles.
  */
-void I18nTask::numericReply_255(Message msg)
+void I18nTask::numericReply_255(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 263: "<command> :Please wait a while and try again."
  * Server is too busy.
  */
-void I18nTask::numericReply_263(Message msg)
+void I18nTask::numericReply_263(Event *e)
 {
-	postServerEvent(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
+	postServerEvent(e, i18n("Server was too busy to execute %1.", e->message().arg(1)));
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
  * Tells statistics about the current local server state.
  * NOT IN RFC2812
  */
-void I18nTask::numericReply_265(Message msg)
+void I18nTask::numericReply_265(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 266: ":Current global users: <integer>  Max: <integer>"
  * Tells statistics about the current global(the whole irc server chain) server state:
  */
-void I18nTask::numericReply_266(Message msg)
+void I18nTask::numericReply_266(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 301: "<nick> :<away message>"
  */
-void I18nTask::numericReply_301(Message msg)
+void I18nTask::numericReply_301(Event *e)
 {
 /*
-	Entity entity = msg.entityFromArg(1);
-	entity->setAwayMessage(msg.suffix);
+	Entity entity = e->message().entityFromArg(1);
+	entity->setAwayMessage(e->message().suffix);
 	entity->setMode("+a");
 
-	postServerEvent(msg);
+	postServerEvent(e);
 */
 }
 
 /* 303: ":*1<nick> *(" " <nick> )"
  */
-void I18nTask::numericReply_303(Message msg)
+void I18nTask::numericReply_303(Event *e)
 {
 /*
-	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
+	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), e->message().suffix());
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
 		if (!(*it).trimmed().isEmpty())
@@ -499,109 +484,109 @@ void I18nTask::numericReply_303(Message msg)
 
 /* 305: ":You are no longer marked as being away"
  */
-void I18nTask::numericReply_305(Message msg)
+void I18nTask::numericReply_305(Event *e)
 {
 /*
 	Entity::Ptr self = this->self();
 	self->setAwayMessage(QString::null);
 //	self->setModes("-a");
-	postServerEvent(msg, i18n("You are no longer marked as being away."));
+	postServerEvent(e, i18n("You are no longer marked as being away."));
 */
 }
 
 
 /* 306: ":You have been marked as being away"
  */
-void I18nTask::numericReply_306(Message msg)
+void I18nTask::numericReply_306(Event *e)
 {
 //	Entity::Ptr self = d->client->owner();
 //	self->setModes("+a");
-	postServerEvent(msg, i18n("You have been marked as being away."));
+	postServerEvent(e, i18n("You have been marked as being away."));
 }
 
 /* 307: ":is a registered nick"
  * DALNET: Indicates that this user is identified with NICSERV.
  */
-void I18nTask::numericReply_307(Message msg)
+void I18nTask::numericReply_307(Event *e)
 {
-	postServerEvent(msg, i18n("%1 is a registered nick.", msg.arg(1)));
+	postServerEvent(e, i18n("%1 is a registered nick.", e->message().arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
  * Show info about a user (part of a /whois) in the form of:
  */
-void I18nTask::numericReply_311(Message msg)
+void I18nTask::numericReply_311(Event *e)
 {
-//	emit incomingWhoIsUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
+//	emit incomingWhoIsUser(e->message().arg(1), e->message().arg(2), e->message().arg(3), e->message().suffix());
 }
 
 /* 312: "<nick> <server> :<server info>"
  * Show info about a server (part of a /whois).
  */
-void I18nTask::numericReply_312(Message msg)
+void I18nTask::numericReply_312(Event *e)
 {
-//	emit incomingWhoIsServer(msg.arg(1), msg.arg(2), msg.suffix());
+//	emit incomingWhoIsServer(e->message().arg(1), e->message().arg(2), e->message().suffix());
 }
 
 /* 313: "<nick> :is an IRC operator"
  * Show info about an operator (part of a /whois).
  */
-void I18nTask::numericReply_313(Message msg)
+void I18nTask::numericReply_313(Event *e)
 {
-	postServerEvent(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
+	postServerEvent(e, i18n("%1 is an IRC operator.", e->message().arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
  * Show WHOWAS Info
  */
-void I18nTask::numericReply_314(Message msg)
+void I18nTask::numericReply_314(Event *e)
 {
-//	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
+//	emit incomingWhoWasUser(e->message().arg(1), e->message().arg(2), e->message().arg(3), e->message().suffix());
 }
 
 /* 315: "<name> :End of WHO list"
  * End of WHO list.
  */
-void I18nTask::numericReply_315(Message msg)
+void I18nTask::numericReply_315(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* RFC say: "<nick> <integer> :seconds idle"
  * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
  * Show info about someone who is idle (part of a /whois) in the form of:
  */
-void I18nTask::numericReply_317(Message msg)
+void I18nTask::numericReply_317(Event *e)
 {
 /*
-	emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
-	if (msg.argsSize()==4)
-		emit incomingSignOnTime(msg.arg(1),msg.arg(3).toULong());
+	emit incomingWhoIsIdle(e->message().arg(1), e->message().arg(2).toULong());
+	if (e->message().argsSize()==4)
+		emit incomingSignOnTime(e->message().arg(1),e->message().arg(3).toULong());
 */
 }
 
 /* 318: "<nick>{<space><realname>} :End of /WHOIS list"
  * End of WHOIS for a given nick.
  */
-void I18nTask::numericReply_318(Message msg)
+void I18nTask::numericReply_318(Event *e)
 {
-	emit postServerEvent(msg);
+	emit postServerEvent(e);
 }
 
 /* 319: "<nick> :{[@|+]<channel><space>}"
  * Show info a channel a user is logged in (part of a /whois) in the form of:
  */
-void I18nTask::numericReply_319(Message msg)
+void I18nTask::numericReply_319(Event *e)
 {
-//	emit incomingWhoIsChannels(msg.arg(1), msg.suffix());
+//	emit incomingWhoIsChannels(e->message().arg(1), e->message().suffix());
 }
 
 /* 320:
  * Indicates that this user is identified with NICSERV on FREENODE.
  */
-void I18nTask::numericReply_320(Message msg)
+void I18nTask::numericReply_320(Event *e)
 {
-//	emit incomingWhoIsIdentified(msg.arg(1));
+//	emit incomingWhoIsIdentified(e->message().arg(1));
 }
 
 /* 321: "<channel> :Users  Name" ("Channel :Users  Name")
@@ -612,87 +597,87 @@ void I18nTask::numericReply_320(Message msg)
 /* 322: "<channel> <# visible> :<topic>"
  * Received one channel from the LIST command.
  */
-void I18nTask::numericReply_322(Message msg)
+void I18nTask::numericReply_322(Event *e)
 {
-//	emit incomingListedChan(msg.arg(1), msg.arg(2).toUInt(), msg.suffix());
+//	emit incomingListedChan(e->message().arg(1), e->message().arg(2).toUInt(), e->message().suffix());
 }
 
 /* 323: ":End of LIST"
  * End of the LIST command.
  */
-void I18nTask::numericReply_323(Message msg)
+void I18nTask::numericReply_323(Event *e)
 {
-	emit postServerEvent(msg);
+	emit postServerEvent(e);
 }
 
 /* 324: "<channel> <mode> <mode params>"
  */
-void I18nTask::numericReply_324(Message msg)
+void I18nTask::numericReply_324(Event *e)
 {
-//	emit incomingChannelMode(msg.arg(1), msg.arg(2), msg.arg(3));
+//	emit incomingChannelMode(e->message().arg(1), e->message().arg(2), e->message().arg(3));
 }
 
 /* 328:
  */
-void I18nTask::numericReply_328(Message msg)
+void I18nTask::numericReply_328(Event *e)
 {
-//	emit incomingChannelHomePage(msg.arg(1), msg.suffix());
+//	emit incomingChannelHomePage(e->message().arg(1), e->message().suffix());
 }
 
 /* 329: "%s %lu"
  * NOTE: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
  * NOT IN RFC1459 NOR RFC2812
  */
-void I18nTask::numericReply_329(Message /*msg*/)
+void I18nTask::numericReply_329(Event * /*e*/)
 {
 }
 
 /* 331: "<channel> :No topic is set"
  * Gives the existing topic for a channel after a join.
  */
-void I18nTask::numericReply_331(Message /*msg*/)
+void I18nTask::numericReply_331(Event * /*e*/)
 {
-//	emit incomingExistingTopic(msg.arg(1), suffix);
+//	emit incomingExistingTopic(e->message().arg(1), suffix);
 }
 
 /* 332: "<channel> :<topic>"
  * Gives the existing topic for a channel after a join.
  */
-void I18nTask::numericReply_332(Message msg)
+void I18nTask::numericReply_332(Event *e)
 {
-//	emit incomingExistingTopic(msg.arg(1), msg.suffix());
+//	emit incomingExistingTopic(e->message().arg(1), e->message().suffix());
 }
 
 /* 333:
  * Gives the nickname and time who changed the topic
  */
-void I18nTask::numericReply_333(Message msg)
+void I18nTask::numericReply_333(Event *e)
 {
 /*
 	QDateTime d;
-	d.setTime_t( msg.arg(3).toLong() );
-	emit incomingTopicUser(msg.arg(1), msg.arg(2), d );
+	d.setTime_t( e->message().arg(3).toLong() );
+	emit incomingTopicUser(e->message().arg(1), e->message().arg(2), d );
 */
 }
 
 /* 352:
  * WHO Reply
  */
-void I18nTask::numericReply_352(Message msg)
+void I18nTask::numericReply_352(Event *e)
 {
 /*
-	QStringList suffix = QStringList::split( ' ', msg.suffix() );
+	QStringList suffix = QStringList::split( ' ', e->message().suffix() );
 
 	emit incomingWhoReply(
-		msg.arg(5),
-		msg.arg(1),
-		msg.arg(2),
-		msg.arg(3),
-		msg.arg(4),
-		msg.arg(6)[0] != 'H',
-		msg.arg(7),
-		msg.suffix().section(' ', 0, 1 ).toUInt(),
-		msg.suffix().section(' ', 1 )
+		e->message().arg(5),
+		e->message().arg(1),
+		e->message().arg(2),
+		e->message().arg(3),
+		e->message().arg(4),
+		e->message().arg(6)[0] != 'H',
+		e->message().arg(7),
+		e->message().suffix().section(' ', 0, 1 ).toUInt(),
+		e->message().suffix().section(' ', 1 )
 	);
 */
 }
@@ -701,57 +686,57 @@ void I18nTask::numericReply_352(Message msg)
 /* 353:
  * NAMES list
  */
-void I18nTask::numericReply_353(Message msg)
+void I18nTask::numericReply_353(Event *e)
 {
-//	emit incomingNamesList(msg.arg(2), QStringList::split(' ', msg.suffix()));
+//	emit incomingNamesList(e->message().arg(2), QStringList::split(' ', e->message().suffix()));
 }
 
 /* 366: "<channel> :End of NAMES list"
  * Gives a signal to indicate that the NAMES list has ended for channel.
  */
-void I18nTask::numericReply_366(Message msg)
+void I18nTask::numericReply_366(Event *e)
 {
-	emit postServerEvent(msg);
+	emit postServerEvent(e);
 }
 
 /* 369: "<nick> :End of WHOWAS"
  * End of WHOWAS Request
  */
-void I18nTask::numericReply_369(Message msg)
+void I18nTask::numericReply_369(Event *e)
 {
-	emit postServerEvent(msg);
+	emit postServerEvent(e);
 }
 
 /* 372: ":- <text>"
  * Part of the MOTD.
  */
-void I18nTask::numericReply_372(Message msg)
+void I18nTask::numericReply_372(Event *e)
 {
 	#warning FIXME remove the "- " in front.
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
-/* 375: ":- <server> Message of the day - "
+/* 375: ":- <server> Event *of the day - "
  * Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
  */
-void I18nTask::numericReply_375(Message msg)
+void I18nTask::numericReply_375(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 376: ":End of MOTD command"
  * End of the motd.
  */
-void I18nTask::numericReply_376(Message msg)
+void I18nTask::numericReply_376(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 401: "<nickname> :No such nick/channel"
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
  *  - Used to indicate the nickname parameter supplied to a command is currently unused.
  */
-void I18nTask::numericReply_401(Message msg)
+void I18nTask::numericReply_401(Event *e)
 {
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
@@ -759,15 +744,15 @@ void I18nTask::numericReply_401(Message msg)
 
 /* 404: "<channel name> :Cannot send to channel"
  */
-void I18nTask::numericReply_404(Message msg)
+void I18nTask::numericReply_404(Event *e)
 {
-	postServerEvent(msg, i18n("You cannot send message to channel %1.", msg.arg(1)));
+	postServerEvent(e, i18n("You cannot send message to channel %1.", e->message().arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"
  * Like case 401, but when there *was* no such nickname.
  */
-void I18nTask::numericReply_406(Message msg)
+void I18nTask::numericReply_406(Event *e)
 {
 	#warning FIXME 406 MEANS *NEVER*, unlike 401
 //	i18n("The channel \"%1\" does not exist").arg(nick)
@@ -778,15 +763,15 @@ void I18nTask::numericReply_406(Message msg)
  *
  * Server's MOTD file could not be opened by the server.
  */
-void I18nTask::numericReply_422(Message msg)
+void I18nTask::numericReply_422(Event *e)
 {
-	postServerEvent(msg);
+	postServerEvent(e);
 }
 
 /* 433: "<nick> :Nickname is already in use"
  * Tells us that our nickname is already in use.
  */
-void I18nTask::numericReply_433(Message msg)
+void I18nTask::numericReply_433(Event *e)
 {
 //	if(m_status == Authentifying)
 	{
@@ -794,32 +779,32 @@ void I18nTask::numericReply_433(Message msg)
 		// This differs because the server won't send us a response back telling us our nick changed
 		// (since we aren't logged in).
 //		m_FailedNickOnLogin = true;
-//		emit incomingFailedNickOnLogin(msg.arg(1));
+//		emit incomingFailedNickOnLogin(e->message().arg(1));
 	}
 //	else
 //	{
 		// And this is the signal for if someone is trying to use the /nick command or such when already logged in,
 		// but it's already in use
-//		emit incomingNickInUse(msg.arg(1));
+//		emit incomingNickInUse(e->message().arg(1));
 //	}
-	postServerEvent(msg, i18n("Nickname %1 is already in use.", msg.arg(1)));
+	postServerEvent(e, i18n("Nickname %1 is already in use.", e->message().arg(1)));
 }
 
 /* 442: "<channel> :You're not on that channel"
  */
-void I18nTask::numericReply_442(Message msg)
+void I18nTask::numericReply_442(Event *e)
 {
-	postServerEvent(msg, i18n("You are not on channel %1.", msg.arg(1)));
+	postServerEvent(e, i18n("You are not on channel %1.", e->message().arg(1)));
 }
 
 /* 464: ":Password Incorrect"
  * Bad server password
  */
-void I18nTask::numericReply_464(Message msg)
+void I18nTask::numericReply_464(Event *e)
 {
 	/* Server need pass.. Call disconnect*/
 //	emit incomingFailedServerPassword();
-	postServerEvent(msg, i18n("Incorrect password."));
+	postServerEvent(e, i18n("Incorrect password."));
 }
 
 /* 465: ":You are banned from this server"
@@ -828,9 +813,9 @@ void I18nTask::numericReply_464(Message msg)
 /* 471: "<channel> :Cannot join channel (+l)"
  * Channel is Full
  */
-void I18nTask::numericReply_471(Message msg)
+void I18nTask::numericReply_471(Event *e)
 {
-	postServerEvent(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)) );
+	postServerEvent(e, i18n("Cannot join %1, channel is full.", e->message().arg(1)) );
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -839,25 +824,25 @@ void I18nTask::numericReply_471(Message msg)
 /* 473: "<channel> :Cannot join channel (+i)"
  * Invite Only.
  */
-void I18nTask::numericReply_473(Message msg)
+void I18nTask::numericReply_473(Event *e)
 {
-	postServerEvent(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)) );
+	postServerEvent(e, i18n("Cannot join %1, channel is invite only.", e->message().arg(1)) );
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
  * Banned.
  */
-void I18nTask::numericReply_474(Message msg)
+void I18nTask::numericReply_474(Event *e)
 {
-	postServerEvent(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)) );
+	postServerEvent(e, i18n("Cannot join %1, you are banned from that channel.", e->message().arg(1)) );
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
  * Wrong Chan-key.
  */
-void I18nTask::numericReply_475(Message msg)
+void I18nTask::numericReply_475(Event *e)
 {
-	postServerEvent(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)) );
+	postServerEvent(e, i18n("Cannot join %1, wrong channel key was given.", e->message().arg(1)) );
 }
 
 /* 476: "<channel> :Bad Channel Mask"
@@ -866,9 +851,9 @@ void I18nTask::numericReply_475(Message msg)
 /* 477: "<channel> :Channel doesn't support modes" RFC-2812
  * 477: "<channel> :You need a registered nick to join that channel." DALNET
  */
-// void I18nTask::numericReply_477(Message msg)
+// void I18nTask::numericReply_477(Event *e)
 // {
-// 	emit incomingChannelNeedRegistration(msg.arg(2), msg.suffix());
+// 	emit incomingChannelNeedRegistration(e->message().arg(2), e->message().suffix());
 // }
 
 /* 478: "<channel> <char> :Channel list is full"
@@ -904,65 +889,65 @@ void I18nTask::numericReply_475(Message msg)
 /*
 void I18nTask::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message &)),
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Event *&)),
 		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message &)),
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Event *&)),
 		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message &)),
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Event *&)),
 		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message &)),
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Event *&)),
 		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message &)),
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Event *&)),
 		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message &)),
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Event *&)),
 		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message &)),
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Event *&)),
 		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message &)),
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Event *&)),
 		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message &)),
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Event *&)),
 		-1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message &)),
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_erre(Event *&)),
 		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message &)),
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Event *&)),
 		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message &)),
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Event *&)),
 		-1,	-1,	"");
 }
 */
 
-void I18nTask::CtcpQuery_action(Message msg)
+void I18nTask::CtcpQuery_action(Event *e)
 {
-/*	QString target = msg.arg(0);
+/*	QString target = e->message().arg(0);
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
+		emit incomingAction(target, e, e->message().ctcpMessage().ctcpRaw());
 	else
-		emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
+		emit incomingPrivAction(e, target, e->message().ctcpMessage().ctcpRaw());*/
 }
 
 /*
 NO REPLY EXIST FOR THE CTCP ACTION COMMAND !
-bool I18nTask::CtcpReply_action(Message msg)
+bool I18nTask::CtcpReply_action(Event *e)
 {
 }
 */
 
 //	FIXME: the API can now answer to help commands.
-void I18nTask::CtcpQuery_clientinfo(Message msg)
+void I18nTask::CtcpQuery_clientinfo(Event *e)
 {
 	QString clientinfo = QString::fromLatin1("The following commands are supported, but "
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-//				msg.ctcpMessage().command(), QString::null, clientinfo);
+//	writeCtcpReplyMessage(	e->message().prefix(), QString::null,
+//				e->message().ctcpMessage().command(), QString::null, clientinfo);
 }
 
-void I18nTask::CtcpQuery_dcc(Message msg)
+void I18nTask::CtcpQuery_dcc(Event *e)
 {
-//	Message &ctcpMsg = msg.ctcpMessage();
-	Message ctcpMsg;
+//	Event *&ctcpMsg = e->message().ctcpMessage();
+	Event *ctcpMsg;
 
 	QString dccCommand = ctcpMsg.arg(0).upper();
 
@@ -984,7 +969,7 @@ void I18nTask::CtcpQuery_dcc(Message msg)
 		{
 			kDebug(14120) << "Starting DCC chat window." << endl;
 //			TransferHandler::self()->createClient(
-//				this, msg.prefix(),
+//				this, e->message().prefix(),
 //				address, port,
 //				Transfer::Chat );
 		}
@@ -1001,7 +986,7 @@ void I18nTask::CtcpQuery_dcc(Message msg)
 		 *  filesize = Size of file being sent
 		 */
 		bool okayHost, okayPort, okaySize;
-//		QFileInfo realfile(msg.arg(1));
+//		QFileInfo realfile(e->message().arg(1));
 		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
@@ -1009,7 +994,7 @@ void I18nTask::CtcpQuery_dcc(Message msg)
 		{
 			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
 //			TransferHandler::self()->createClient(
-//				this, msg.prefix(),
+//				this, e->message().prefix(),
 //				address, port,
 //				Transfer::FileIncoming,
 //				ctcpMsg.arg(1), size );
@@ -1021,36 +1006,36 @@ void I18nTask::CtcpQuery_dcc(Message msg)
 
 /*
 NO REPLY EXIST FOR THE CTCP DCC COMMAND !
-bool I18nTask::CtcpReply_dcc(Message msg)
+bool I18nTask::CtcpReply_dcc(Event *e)
 {
 }
 */
 
-void I18nTask::CtcpReply_errmsg(Message /*msg*/)
+void I18nTask::CtcpReply_erre(Event * /*e*/)
 {
 	// should emit one signal
 }
 
-void I18nTask::CtcpQuery_finger( Message /*msg*/)
+void I18nTask::CtcpQuery_finger(Event * /*e*/)
 {
 	// To be implemented
 }
 
-void I18nTask::CtcpQuery_ping(Message msg)
+void I18nTask::CtcpQuery_ping(Event *e)
 {
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-//				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
+//	writeCtcpReplyMessage(	e->message().prefix(), QString::null,
+//				e->message().ctcpMessage().command(), e->message().ctcpMessage().arg(0));
 }
 
-void I18nTask::CtcpReply_ping(Message msg)
+void I18nTask::CtcpReply_ping(Event *e)
 {
 /*	timeval time;
 	if (gettimeofday(&time, 0) == 0)
 	{
 		// FIXME: the time code is wrong for usec
-		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+		QString timeReply = QString::fromLatin1("%1.%2").arg(time->message().tv_sec).arg(time->message().tv_usec);
 		double newTime = timeReply.toDouble();
-		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
+		double oldTime = e->message().suffix().section(' ',0, 0).toDouble();
 		double difference = newTime - oldTime;
 		QString diffString;
 
@@ -1071,44 +1056,44 @@ void I18nTask::CtcpReply_ping(Message msg)
 			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
 		}
 
-		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
+		emit incomingCtcpReply(QString::fromLatin1("PING"), e->message().prefix(), diffString);
 	}
 //	else
 //		((MessageRedirector *)sender())->error("failed to get current time");*/
 }
 
-void I18nTask::CtcpQuery_source(Message msg)
+void I18nTask::CtcpQuery_source(Event *e)
 {
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), m_SourceString);
+//	writeCtcpReplyMessage(e->message().prefix(), QString::null,
+//			      e->message().ctcpMessage().command(), m_SourceString);
 }
 
-void I18nTask::CtcpQuery_time(Message msg)
+void I18nTask::CtcpQuery_time(Event *e)
 {
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
+//	writeCtcpReplyMessage(e->message().prefix(), QString::null,
+//			      e->message().ctcpMessage().command(), QDateTime::currentDateTime().toString(),
 //			      QString::null, false);
 }
 
-void I18nTask::CtcpQuery_userinfo(Message msg)
+void I18nTask::CtcpQuery_userinfo(Event *e)
 {
 //	QString userinfo = m_UserString;
 
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), QString::null, userinfo);
+//	writeCtcpReplyMessage(e->message().prefix(), QString::null,
+//			      e->message().ctcpMessage().command(), QString::null, userinfo);
 }
 
-void I18nTask::CtcpQuery_version(Message msg)
+void I18nTask::CtcpQuery_version(Event *e)
 {
 //	QString response = m_VersionString;
 
-//	writeCtcpReplyMessage(msg.prefix(),
-//		msg.ctcpMessage().command() + " " + response);
+//	writeCtcpReplyMessage(e->message().prefix(),
+//		e->message().ctcpMessage().command() + " " + response);
 }
 
-void I18nTask::CtcpReply_version(Message msg)
+void I18nTask::CtcpReply_version(Event *e)
 {
-//	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.prefix(), msg.ctcpMessage().ctcpRaw());
+//	emit incomingCtcpReply(e->message().ctcpMessage().command(), e->message().prefix(), e->message().ctcpMessage().ctcpRaw());
 }
 
 #endif
