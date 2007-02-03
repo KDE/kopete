@@ -4,24 +4,26 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/protocols/msn/ $(all_inc
 
 noinst_LTLIBRARIES =  libkopete_msnslp.la
 
-libkopete_msnslp_la_SOURCES = application.cpp \
+libkopete_msnslp_la_SOURCES = \
 	binarypacketformatter.cpp dialog.cpp \
-	filetransfersession.cpp sessionclient.cpp \
+	sessionclient.cpp \
 	sessionnotifier.cpp switchboardbridge.cpp \
 	tcptransportbridge.cpp transport.cpp \
-	transportbridge.cpp mediasession.cpp message.cpp \
+	transportbridge.cpp message.cpp \
 	packet.cpp packetqueue.cpp packetscheduler.cpp session.cpp \
 	transaction.cpp slpmessage.cpp \
 	slprequest.cpp slpresponse.cpp \
-	udisession.cpp
+	msnobjectsession.cpp filetransfersession.cpp \
+	msnobjectstore.cpp
 
-noinst_HEADERS = application.h \
+noinst_HEADERS = \
 	binarypacketformatter.h dialog.h \
-	filetransfersession.h sessionclient.h \
+	sessionclient.h \
 	sessionnotifier.h switchboardbridge.h \
 	tcptransportbridge.h transport.h \
-	transportbridge.h mediasession.h message.h \
+	transportbridge.h message.h \
 	packet.h packetqueue.h packetscheduler.h session.h \
 	transaction.h slpmessage.h \
 	slprequest.h slpresponse.h \
-	udisession.h
+	msnobjectsession.h filetransfersession.h \
+	msnobjectstore.h

@@ -31,7 +31,7 @@ class Message
 {
 	public :
 		/** @brief Creates a new instance of the Message class. */
-		Message(const QString& version);
+		Message(const QString& version="1.0");
 		Message(const Message& other);
 		Message & operator=(const Message& other);
 		virtual ~Message();

@@ -24,21 +24,22 @@ namespace PeerToPeer
 class Dialog::DialogPrivate
 {
 	public:
-		DialogPrivate() : state(Dialog::Pending)
+		DialogPrivate() : state(Dialog::Pending), transactionId(0)
 		{
-			transactionId = 10 * (rand() % 0xC38C + 10);
+			// Auto delete the dialog's transactions.
+			transactions.setAutoDelete(true);
 		}
 
-		QUuid identifier;
+		QUuid callId;
 		Dialog::DialogState state;
 		Q_UINT32 transactionId;
-		QValueList<Transaction*> transactions;
+		QPtrList<Transaction> transactions;
 
 }; // DialogPrivate
 
-Dialog::Dialog(const QUuid& identifier, QObject* parent) : QObject(parent), d(new DialogPrivate())
+Dialog::Dialog(const QUuid& callId, QObject* parent) : QObject(parent), d(new DialogPrivate())
 {
-	d->identifier = identifier;
+	d->callId = callId;
 }
 
 Dialog::Dialog(Transaction *transaction, QObject* parent) : QObject(parent), d(new DialogPrivate())
@@ -47,29 +48,19 @@ Dialog::Dialog(Transaction *transaction, QObject* parent) : QObject(parent), d(n
 	const QString headerValue = transaction->request().headers()["Call-ID"].toString();
 	if (regex.search(headerValue, false) != -1)
 	{
-		d->identifier = QUuid(regex.cap(1));
+		d->callId = QUuid(regex.cap(1));
 	}
 	d->transactions.prepend(transaction);
 }
 
 Dialog::~Dialog()
 {
-	QValueList<Transaction*>::Iterator i = d->transactions.begin();
-	while(i != d->transactions.end())
-	{
-		// Get the current transaction.
-		Transaction *transaction = *i;
-		// Remove the transaction from the list.
-		d->transactions.remove(i);
-		// Delete the transaction.
-		delete transaction;
-		transaction = 0l;
-
-		++i;
-	}
-
 	delete d;
-	d = 0l;
+}
+
+const QUuid Dialog::callId()
+{
+	return d->callId;
 }
 
 void Dialog::establish()
@@ -82,18 +73,13 @@ void Dialog::establish()
 
 const QString Dialog::from()
 {
-	Transaction *transaction = *d->transactions.at(0);
+	Transaction *transaction = d->transactions.at(0);
 	return transaction->isLocal() ? transaction->request().from() : transaction->request().to();
-}
-
-const QUuid Dialog::identifier()
-{
-	return d->identifier;
 }
 
 Transaction* Dialog::initialTransaction() const
 {
-	return *d->transactions.at(0);
+	return d->transactions.at(0);
 }
 
 void Dialog::setState(const DialogState& state)
@@ -127,16 +113,16 @@ void Dialog::terminate(const Q_UINT32 timeSpan)
 
 const QString Dialog::to()
 {
-	Transaction *transaction = *d->transactions.at(0);
+	Transaction *transaction = d->transactions.at(0);
 	return transaction->isLocal() ? transaction->request().to() : transaction->request().from();
 }
 
-const QValueList<Transaction*> & Dialog::transactions() const
+const QPtrList<Transaction> & Dialog::transactions() const
 {
 	return d->transactions;
 }
 
-QValueList<Transaction*> & Dialog::transactions()
+QPtrList<Transaction> & Dialog::transactions()
 {
 	return d->transactions;
 }
@@ -148,7 +134,15 @@ void Dialog::setInitialTransaction(Transaction* transaction)
 
 const Q_UINT32 Dialog::transactionId(bool nextTransactionId)
 {
-	return (nextTransactionId ? ++d->transactionId : d->transactionId);
+	Q_UNUSED(nextTransactionId);
+
+// 	return (nextTransactionId ? ++d->transactionId : d->transactionId);
+	return d->transactionId;
+}
+
+void Dialog::setTransactionId(const Q_UINT32 transactionid)
+{
+	d->transactionId = transactionid;
 }
 
 void Dialog::onTimeout()

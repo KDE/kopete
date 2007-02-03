@@ -25,20 +25,17 @@ namespace PeerToPeer
 class PacketQueue::PacketQueuePrivate
 {
 	public:
-		Q_UINT32 chunkSize;
 		QMutex queueLock;
 		QMap<Q_UINT32, QValueList<Packet>* > queues;
 };
 
-PacketQueue::PacketQueue(const Q_UINT32 chunkSize, QObject *parent) : QObject(parent), d(new PacketQueuePrivate())
+PacketQueue::PacketQueue(QObject *parent) : QObject(parent), d(new PacketQueuePrivate())
 {
-	d->chunkSize = chunkSize;
 }
 
 PacketQueue::~PacketQueue()
 {
 	delete d;
-	d = 0l;
 }
 
 const Packet PacketQueue::dequeue(const Q_UINT32 chunkSize) const
@@ -70,7 +67,8 @@ const Packet PacketQueue::dequeue(const Q_UINT32 chunkSize) const
 			i = iterators[j];
 		}
 		else
-		if ((*i).header().identifier > (*iterators[j]).header().identifier)
+		if ((*i).header().identifier > (*iterators[j]).header().identifier &&
+			!((*i).header().type < (*iterators[j]).header().type))
 		{
 			selected = j;
 			i = iterators[j];
@@ -149,7 +147,7 @@ const bool PacketQueue::dequeue(Packet & outPacket)
 	return false;
 }
 
-void PacketQueue::enqueue(const Packet & packet) const
+void PacketQueue::enqueue(const Packet & packet, bool prepend) const
 {
 	QMutexLocker locker(&d->queueLock);
 	if (!d->queues.contains(packet.header().destination))
@@ -157,7 +155,16 @@ void PacketQueue::enqueue(const Packet & packet) const
 		d->queues.insert(packet.header().destination, new QValueList<Packet>());
 	}
 
-	d->queues[packet.header().destination]->append(packet);
+	if (prepend)
+	{
+		d->queues[packet.header().destination]->prepend(packet);
+	}
+	else
+	{
+		d->queues[packet.header().destination]->append(packet);
+	}
+
+// 	prioritize(d->queues[packet.header().destination]);
 }
 
 const bool PacketQueue::isEmpty() const

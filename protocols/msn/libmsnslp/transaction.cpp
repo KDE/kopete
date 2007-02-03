@@ -50,10 +50,7 @@ Transaction::Transaction(const SlpRequest& request, bool isLocal, QObject* paren
 
 Transaction::~Transaction()
 {
-	delete d->timer;
-	d->timer = 0l;
 	delete d;
-	d = 0l;
 }
 
 void Transaction::begin() const
@@ -67,12 +64,12 @@ void Transaction::confirm() const
 {
 	d->transactionState = Transaction::Confirmed;
 	// Disconnect the signal/slot
-	QObject::connect(d->timer, 0, this, 0);
+	QObject::disconnect(d->timer, 0, this, 0);
 	// Stop the transaction timeout timer.
 	d->timer->stop();
 }
 
-const QUuid Transaction::identifier() const
+const QUuid Transaction::branch() const
 {
 	QUuid branch;
 	QRegExp regex("branch=\\{([0-9A-Fa-f\\-]*)\\}");
@@ -88,7 +85,7 @@ void Transaction::end() const
 {
 	d->transactionState = Transaction::Terminated;
 	// Disconnect the signal/slot
-	QObject::connect(d->timer, 0, this, 0);
+	QObject::disconnect(d->timer, 0, this, 0);
 	// Stop the transaction timeout timer.
 	d->timer->stop();
 }
@@ -99,6 +96,11 @@ const bool Transaction::isLocal() const
 }
 
 const SlpRequest & Transaction::request() const
+{
+	return d->request;
+}
+
+SlpRequest & Transaction::request()
 {
 	return d->request;
 }
@@ -120,7 +122,7 @@ void Transaction::onCheckTransactionTimeout()
 	// the transaction is acknowledge by the callee.
 
 	// Disconnect the signal/slot
-	QObject::connect(d->timer, 0, this, 0);
+	QObject::disconnect(d->timer, 0, this, 0);
 	// Stop the transaction timeout timer.
 	d->timer->stop();
 

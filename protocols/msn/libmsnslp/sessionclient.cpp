@@ -13,17 +13,19 @@
 */
 
 #include "sessionclient.h"
-#include "application.h"
 #include "dialog.h"
 #include "filetransfersession.h"
-#include "session.h"
+#include "msnobjectsession.h"
 #include "sessionnotifier.h"
+#include "transaction.h"
 #include "transport.h"
-#include "udisession.h"
+#include "msncontact.h"
 
 #include <qdom.h>
 #include <qfile.h>
+#include <qfileinfo.h>
 #include <qhostaddress.h>
+#include <qptrlist.h>
 #include <qregexp.h>
 #include <qtextstream.h>
 
@@ -36,34 +38,57 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 
-
 namespace PeerToPeer
 {
 
 class SessionClient::SessionClientPrivate
 {
 	public:
-		QMap<QUuid, Application*> applications;
+		bool behindFirewall;
+		QString connectionType;
 		QMap<QUuid, Dialog*> dialogs;
 		QString externalIpAddress;
 		QString internalIpAddress;
 		QString myUri;
+		Q_INT32 netId;
 		QString peerUri;
 		QMap<Q_INT32, Session*> sessions;
+		QString supportedBridgeTypes;
 		QMap<QUuid, Transaction*> transactions;
 		Transport* transport;
+		bool uPnpNAT;
 		QString version;
 };
 
 SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Transport* transport, QObject *parent) : QObject(parent), d(new SessionClientPrivate())
 {
 	// Configure the client using the supplied properties
+	d->behindFirewall = false;
 	d->externalIpAddress = properties["externalIpAddress"].toString();
 	d->internalIpAddress = properties["internalIpAddress"].toString();
 	d->myUri = properties["myUri"].toString();
+
 	d->peerUri = properties["peerUri"].toString();
-	// Set the supported protocol version.
+	// Set the transport bridge types supported by the client.
+	d->supportedBridgeTypes = QString::fromLatin1("TCPv1");
+	d->uPnpNAT = true;//properties["uPnpNAT"].toBool();
+	if (d->uPnpNAT)
+	{
+		d->connectionType = QString::fromLatin1("Unknown-NAT");
+		QHostAddress address;
+		address.setAddress(d->externalIpAddress);
+		const Q_INT32 netId = address.toIPv4Address();
+		d->netId = (Q_INT32)htonl(netId);
+	}
+	else
+	{
+		d->connectionType = QString::fromLatin1("Unknown-Connect");
+		d->netId = 0;
+	}
+
+	// Set the client/protocol version.
 	d->version = QString::fromLatin1("1.0");
+
 	// Set the transport for the client.
 	d->transport = transport;
 	// Initialize the client.
@@ -73,38 +98,36 @@ SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Transpo
 SessionClient::~SessionClient()
 {
 	delete d;
-	d = 0l;
 }
 
 void SessionClient::initialize()
 {
-	SessionNotifier *handler  = new SessionNotifier(this);
+	SessionNotifier *handler = new SessionNotifier(0, SessionNotifier::Normal, this);
 	// Connect the signal/slot
 	QObject::connect(handler, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), this,
 	SLOT(onReceived(const QByteArray&, const Q_INT32, const Q_INT32)));
 	QObject::connect(handler, SIGNAL(messageAcknowledged(const Q_INT32)), this,
 	SLOT(onSend(const Q_INT32)));
-	QObject::connect(handler, SIGNAL(transactionTimedout(const Q_INT32, const Q_INT32)), this,
-	SLOT(onTransactionTimedout(const Q_INT32, const Q_INT32)));
 	// Register the handler for the session client , session 0
-	d->transport->registerReceiver(0, handler);
+	d->transport->registerReceiver(handler->session(), handler);
 
-	handler = new SessionNotifier(this);
+	handler = new SessionNotifier(64, SessionNotifier::Normal, this);
 	// Connect the signal/slot
 	QObject::connect(handler, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), this,
 	SLOT(onImageReceived(const QByteArray&, const Q_INT32, const Q_INT32)));
 	// Register the handler for the session client , session 64
-	d->transport->registerReceiver(64, handler);
+	d->transport->registerReceiver(handler->session(), handler);
 
 	handler = 0l;
 }
 
-const Q_INT32 SessionClient::activeDialogs() const
+bool SessionClient::isActive() const
 {
-	return d->dialogs.size();
+	kdDebug() << k_funcinfo << "Active dialogs, " << d->dialogs.size() << endl;
+	return (d->dialogs.size() != 0);
 }
 
-void SessionClient::createSession(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context)
+void SessionClient::createSessionInternal(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context)
 {
 	// Create a new pending dialog.
 	Dialog *dialog = new Dialog(QUuid::createUuid(), this);
@@ -117,7 +140,7 @@ void SessionClient::createSession(const QUuid& uuid, const Q_UINT32 sessionId, c
 	// Set the request body;
 	request.setBody(sessionDescriptionBody);
 	//Set the request context information.
-	request.setIdentifier(dialog->transactionId());
+	request.setIdentifier(0);
 	request.setRelatesTo(0);
 
 	// Add the pending dialog to the call map.
@@ -129,28 +152,93 @@ void SessionClient::createSession(const QUuid& uuid, const Q_UINT32 sessionId, c
 
 	// Begin the transaction.
 	beginTransaction(transaction);
+
+	// Send the transaction request.
+	send(transaction->request(), 0, 0);
 }
 
-void SessionClient::requestAvatar(const QString& object)
+//BEGIN Application Functions
+
+void SessionClient::requestObject(const QString& object)
 {
-	UdiSession *session = new UdiSession((10 * (rand() % 0xC25C + 10)), Session::Incoming, this);
-	QString user = d->peerUri;
-	session->setDataStore(new QFile(::locateLocal("tmp", QString("msnpicture-%1.png").arg(user.replace('.', '-')))));
+	MsnObjectSession *session = new MsnObjectSession(object, (rand() % 0xEC25C), Session::Incoming, this);
 	// Connect the signal/slot
-	QObject::connect(session, SIGNAL(transferComplete(const QString&)), this,
-	SLOT(onUdiTransferComplete(const QString&)));
+	QObject::connect(session, SIGNAL(objectReceived(const QString&, KTempFile*)), this,
+	SIGNAL(objectReceived(const QString&, KTempFile*)));
+
+	SessionNotifier *handler = new SessionNotifier(session->id(), SessionNotifier::Object, this);
+
+	// Connect the signal/slot
+	QObject::connect(handler, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), session,
+	SLOT(onReceive(const QByteArray&, const Q_INT32, const Q_INT32)));
+	QObject::connect(handler, SIGNAL(messageAcknowledged(const Q_INT32)), session,
+	SLOT(onSend(const Q_INT32)));
+	QObject::connect(handler, SIGNAL(dataReceived(const QByteArray&, const Q_INT32, bool)), session,
+ 	SLOT(onDataReceived(const QByteArray&, const Q_INT32, bool)));
+	// Register the handler for the session client , session 0
+	d->transport->registerReceiver(handler->session(), handler);
 
 	// Add the session to the list of session.
 	d->sessions.insert(session->id(), session);
 
 	// Create the context field of the session description.
 	const QString context = QString::fromUtf8(KCodecs::base64Encode(object.utf8()));
-	// Create the uuid that indicates the type of session to create.
-	const QUuid uuid = QUuid("A4268EEC-FEC5-49E5-95C3-F126696BDBF6");
 
 	// Create the session to request the avatar object.
-	createSession(uuid, session->id(), 12, context);
+	createSessionInternal(MsnObjectSession::uuid(), session->id(), 12, context);
 }
+
+void SessionClient::sendFile(const QString& path)
+{
+	kdDebug() << k_funcinfo << path << endl;
+	FileTransferSession *session = new FileTransferSession((rand() % 0xEC473), Session::Outgoing, this);
+	QFile *file = new QFile(path);
+	session->setDataStore(file);
+
+	SessionNotifier *handler = new SessionNotifier(session->id(), SessionNotifier::FileTransfer, this);
+
+	// Connect the signal/slot
+	QObject::connect(handler, SIGNAL(messageAcknowledged(const Q_INT32)), session,
+	SLOT(onSend(const Q_INT32)));
+
+	// Register the handler for the session client , session 0
+	d->transport->registerReceiver(handler->session(), handler);
+
+	// Add the session to the list of session.
+	d->sessions.insert(session->id(), session);
+
+	QByteArray info(638);
+	info.fill('\0');
+
+	QDataStream stream(info, IO_WriteOnly);
+	stream.setByteOrder(QDataStream::LittleEndian);
+	// Write the header length to the stream.
+	stream << (Q_UINT32)info.size();
+	// Write client version to the stream.
+	stream << (Q_UINT32)3;
+	// Write the file size to the stream.
+	stream << (Q_UINT64)QFileInfo(*file).size();
+	// TODO support file preview. For now disable file preview.
+	// Write the file type to the stream.
+	stream << (Q_UINT32)1;
+	// Write the file name in utf-16 to the stream.
+	const QString name = path.section('/', -1);
+	stream.writeRawBytes((char*)((void*)name.ucs2()), (name.length()*2) + 2);
+	// NOTE Background Sharing base64 [540..569]
+	// TODO add support for background sharing.
+	// NOTE File - 0xFFFFFFFF
+	// NOTE Background Sharing - 0xFFFFFFFE
+	stream.device()->at(570);
+	// Write file exchange type to the stream.
+	stream << (Q_UINT32)0xFFFFFFFF;
+
+	// Create the context field of the session description.
+	const QString context = QString::fromUtf8(KCodecs::base64Encode(info));
+	// Create the session to request the file transfer.
+	createSessionInternal(FileTransferSession::uuid(), session->id(), 2, context);
+}
+
+//END
 
 const QString SessionClient::buildSessionDescriptionBody(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context)
 {
@@ -184,7 +272,7 @@ QUuid SessionClient::getTransactionBranchFrom(const SlpMessage& message)
 
 void SessionClient::parseHeaders(const QString& input, QMap<QString, QVariant> & headers)
 {
-	int i = 0;
+	Q_INT32 i = 0;
 	QRegExp regex("([^\r\n:]*):\\s([^\r\n]*)");
 	while((i = regex.search(input, i)) != -1)
 	{
@@ -197,15 +285,15 @@ void SessionClient::parseHeaders(const QString& input, QMap<QString, QVariant> &
 
 void SessionClient::onReceived(const QByteArray& content, const Q_INT32 identifier, const Q_INT32 relatesTo)
 {
-	const QString message(content);
-	kdDebug() << "============= RECEIVED message=" << identifier << ", " << message << endl;
+	const QString message = QString::fromUtf8(content);
+	kdDebug() << "============= RECEIVED message, " << message << endl;
 
 	// Try to parse the session layer protocol (slp)
 	// message from the raw data received.
-	QString startLine = message.section("\r\n", 0, 0);
+	const QString startLine = message.section("\r\n", 0, 0);
 	if (startLine.startsWith("INVITE") || startLine.startsWith("BYE"))
 	{
-		// If the start line contains one of the supported request methods,
+		// If the start line pattern matchs that of a request,
 		// try to parse the request from the raw data.
 		QRegExp regex("^(\\w+) MSNMSGR:([\\w@.]*) MSNSLP/(\\d\\.\\d)");
 		if (regex.search(startLine) != -1)
@@ -243,7 +331,7 @@ void SessionClient::onReceived(const QByteArray& content, const Q_INT32 identifi
 	else
 	if (startLine.startsWith("MSNSLP"))
 	{
-		// If the start line starts with the protocol string,
+		// If the start line pattern matchs that of a response,
 		// try to parse the response from the raw data.
 		QRegExp regex("^MSNSLP/(\\d\\.\\d) ([0-9]{3}) ([A-Za-z ]*)");
 		if (regex.search(startLine) != -1)
@@ -285,9 +373,12 @@ void SessionClient::onReceived(const QByteArray& content, const Q_INT32 identifi
 	}
 }
 
+// FIXME transaction id
 void SessionClient::onSend(const Q_INT32 identifier)
 {
-	// ACK to sent request
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	// Check whether we received an ACK to a sent request.
 	QMap<QUuid, Transaction*>::Iterator it = d->transactions.begin();
 	while (it != d->transactions.end())
 	{
@@ -296,7 +387,7 @@ void SessionClient::onSend(const Q_INT32 identifier)
 			Transaction *transaction = it.data();
 			// Mark the transaction as confirmed by the peer endpoint.
 			transaction->confirm();
-			kdDebug() << "Dialog COMFIRMED transaction, " << transaction->identifier().toString().upper() << endl;
+			kdDebug() << "Transaction COMFIRMED, branch=" << transaction->branch().toString().upper() << endl;
 
 			if (transaction->request().method() == QString::fromLatin1("BYE"))
 			{
@@ -310,29 +401,33 @@ void SessionClient::onSend(const Q_INT32 identifier)
 				// Finish the transaction.
 				endTransaction(transaction);
 			}
+			kdDebug() << k_funcinfo << "leave" << endl;
 			return;
 		}
 		it++;
 	}
 
-	// ACK to sent response
+	// Otherwise, check whether we received an ACK to a sent response.
 	Dialog *dialog = getDialogByTransactionId(identifier);
-
 	if (dialog != 0l && dialog->state() == Dialog::Pending)
 	{
 		// This ACK response, established the pending dialog.
-		// so, set the dialog state to established.
+		// so, set the dialog to established.
 		dialog->establish();
 	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 //BEGIN Dialog Functions
 
 void SessionClient::addDialogToCallMap(Dialog *dialog)
 {
-	if (dialog != 0l && !d->dialogs.contains(dialog->identifier()))
+	if (dialog != 0l && !d->dialogs.contains(dialog->callId()))
 	{
-		kdDebug() << k_funcinfo << "Adding dialog=" << dialog->identifier().toString().upper() << " to call map" << endl;
+		kdDebug() << k_funcinfo << "Adding dialog to call map. call id = "
+		<< dialog->callId().toString().upper() << endl;
+
 		// Connect the signal/slot.
 		QObject::connect(dialog, SIGNAL(established()), this,
 		SLOT(onDialogEstablish()));
@@ -340,7 +435,7 @@ void SessionClient::addDialogToCallMap(Dialog *dialog)
 		SLOT(onDialogTerminate()));
 
 		// Add the new dialog to the call map.
-		d->dialogs.insert(dialog->identifier(), dialog);
+		d->dialogs.insert(dialog->callId(), dialog);
 	}
 }
 
@@ -385,34 +480,73 @@ Dialog* SessionClient::getDialogByTransactionId(const Q_UINT32 transactionId)
 	return dialog;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// Handles the establishment of a dialog after the acceptance of a locally
+// or remotely initiated session request.
+///////////////////////////////////////////////////////////////////////////
 void SessionClient::onDialogEstablish()
 {
 	Dialog *dialog = static_cast<Dialog*>(const_cast<QObject*>(sender()));
 	if (dialog != 0l)
 	{
-		kdDebug() << "Dialog ESTABLISHED, " << dialog->identifier().toString().upper() << endl;
+		kdDebug() << "Dialog ESTABLISHED, call id = " << dialog->callId().toString().upper() << endl;
+
+		// Request a direct connection because we want to
+		// transfer the session data efficiently.
+// 		requestDirectConnection(dialog, dialog->session);
 
 		// TODO Update the session state information.
 
-		// TODO Start the session.
+		// Try to retrieve the session associated with the dialog.
+		Session *session = d->sessions[dialog->session];
+		if (session != 0l)
+		{
+			// Connect the signal/slot.
+			QObject::connect(session, SIGNAL(cancelled()), this,
+			SLOT(onSessionCancel()));
+			QObject::connect(session, SIGNAL(ended()), this,
+			SLOT(onSessionEnd()));
+			QObject::connect(session, SIGNAL(sendMessage(const QByteArray&)), this,
+			SLOT(onSessionSendMessage(const QByteArray&)));
+			QObject::connect(session, SIGNAL(sendData(const QByteArray&)), this,
+			SLOT(onSessionSendData(const QByteArray&)));
+
+			// Start the session.
+			session->start();
+		}
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////
+// Handles the termination of a dialog after receiving a BYE request or
+// an error has occurred.
+///////////////////////////////////////////////////////////////////////////
 void SessionClient::onDialogTerminate()
 {
 	Dialog *dialog = static_cast<Dialog*>(const_cast<QObject*>(sender()));
 	if (dialog != 0l)
 	{
-		kdDebug() << "Dialog TERMINATED, " << dialog->identifier().toString().upper() << endl;
+		kdDebug() << "Dialog TERMINATED, call id = " << dialog->callId().toString().upper() << endl;
 
 		// Disconnect from the signal/slot
 		QObject::disconnect(dialog, 0, this, 0);
 
-		// TODO Stop the session if active.
+		Session *session = d->sessions[dialog->session];
+		// Stop the session if active.
+		if (session != 0l && session->state() != Session::Terminated)
+		{
+			// End the session.
+			session->end();
+			// Delete the session as its lifetime has ended.
+			session->deleteLater();
+			session = 0l;
+		}
+
+		d->transport->unregisterReceiver(dialog->session);
 
 		// Remove the dialog from the call map.
-		removeDialogFromCallMap(dialog->identifier());
-		// Delete the terminated dialog as its lifetime has expired.
+		removeDialogFromCallMap(dialog->callId());
+		// Delete the dialog as its lifetime has ended.
 		dialog->deleteLater();
 		dialog = 0l;
 	}
@@ -422,7 +556,7 @@ void SessionClient::removeDialogFromCallMap(const QUuid& identifier)
 {
 	if (d->dialogs.contains(identifier))
 	{
-		kdDebug() << k_funcinfo << "Removing dialog=" << identifier.toString().upper() << " from call map" << endl;
+		kdDebug() << k_funcinfo << "Removing dialog from call map. call id = " << identifier.toString().upper() << endl;
 		// Remove the dialog from the call map.
 		d->dialogs.remove(identifier);
 	}
@@ -434,30 +568,21 @@ void SessionClient::removeDialogFromCallMap(const QUuid& identifier)
 
 void SessionClient::beginTransaction(Transaction *transaction)
 {
-	kdDebug() << "Dialog BEGIN transaction, " << transaction->identifier().toString().upper() << endl;
+	kdDebug() << "Transaction BEGIN, branch = " << transaction->branch().toString().upper() << endl;
 
-	d->transactions.insert(transaction->identifier(), transaction);
+	d->transactions.insert(transaction->branch(), transaction);
 	QObject::connect(transaction, SIGNAL(timeout()), this, SLOT(onTransactionTimeout()));
 	transaction->begin();
-
-	// Send the transaction request.
-	send(transaction->request(), 0);
 }
 
 void SessionClient::endTransaction(Transaction *transaction)
 {
-	kdDebug() << "Dialog END transaction, " << transaction->identifier().toString().upper() << endl;
+	kdDebug() << "Transaction END, branch = " << transaction->branch().toString().upper() << endl;
 
 	// Remove the transaction from the list of active transactions.
-	d->transactions.remove(transaction->identifier());
+	d->transactions.remove(transaction->branch());
 	QObject::disconnect(transaction, SIGNAL(timeout()), this, SLOT(onTransactionTimeout()));
 	transaction->end();
-}
-
-// TODO
-void SessionClient::onTransactionTimedout(const Q_INT32 identifier, const Q_INT32 relatesTo)
-{
-	kdDebug() << k_funcinfo << "Got a transaction timeout -- " << identifier << endl;
 }
 
 void SessionClient::onTransactionTimeout()
@@ -465,11 +590,11 @@ void SessionClient::onTransactionTimeout()
 	Transaction *transaction = dynamic_cast<Transaction*>(const_cast<QObject*>(sender()));
 	if (transaction != 0l)
 	{
-		kdDebug() << k_funcinfo << "Dialog transaction TIMED OUT " << transaction->identifier().toString().upper() << endl;
+		kdDebug() << k_funcinfo << "Transaction TIMED OUT, branch = " << transaction->branch().toString().upper() << endl;
 		Dialog *dialog = getDialogByTransactionId(transaction->request().identifier());
 		if (dialog != 0l && (dialog->state() == Dialog::Pending || dialog->state() == Dialog::Terminating))
 		{
-			// TODO Send a transaction timed out response to the remote endpoint
+			// TODO Send a transaction timed out notification to the peer endpoint
 
 			// Terminate the dialog.
 			dialog->terminate();
@@ -492,7 +617,7 @@ SlpRequest SessionClient::buildRequest(const QString& method, const QString& con
 	headers["From"] = QString("<msnmsgr:%1>").arg(d->myUri);
 	headers["Via"] = QString("MSNSLP/1.0/TLP ;branch=%1").arg(QUuid::createUuid().toString().upper());
 	headers["CSeq"] = 0;
-	headers["Call-ID"] = dialog->identifier().toString().upper();
+	headers["Call-ID"] = dialog->callId().toString().upper();
 	headers["Max-Forwards"] = 0;
 	headers["Content-Type"] = contentType;
 
@@ -520,12 +645,12 @@ void SessionClient::acceptSession(Dialog *dialog, const Q_INT32 sessionId)
 {
 	// Generate a 200 OK response
 	const SlpRequest & request = dialog->initialTransaction()->request();
-	SlpResponse response = buildResponse(200, "OK", "application/x-msnmsgr-sessionreqbody", request);
+	SlpResponse response = buildResponse(SlpResponse::OK, "OK", "application/x-msnmsgr-sessionreqbody", request);
 	// Set the response body.
 	const QString responseBody = QString("SessionID: %1\r\n\r\n").arg(sessionId);
 	response.setBody(responseBody);
 	// Set the response context information.
-	response.setIdentifier(dialog->transactionId(true));
+	response.setIdentifier(0);
 	response.setRelatesTo(request.identifier());
 
 	// Send the 200 OK status response message.
@@ -534,21 +659,24 @@ void SessionClient::acceptSession(Dialog *dialog, const Q_INT32 sessionId)
 
 void SessionClient::declineSession(Dialog *dialog, const int sessionId)
 {
-	// Generate a 603 DECLINE response
 	const SlpRequest & request = dialog->initialTransaction()->request();
-	SlpResponse response = buildResponse(603, "DECLINE", "application/x-msnmsgr-sessionreqbody", request);
+
+	// Generate a 603 DECLINE response
+	SlpResponse response = buildResponse(SlpResponse::Decline, "DECLINE", "application/x-msnmsgr-sessionreqbody", request);
 	// Set the response body.
 	const QString responseBody = QString("SessionID: %1\r\n\r\n").arg(sessionId);
 	response.setBody(responseBody);
 	// Set the response context information.
-	response.setIdentifier(dialog->transactionId(true));
+	response.setIdentifier(0);
 	response.setRelatesTo(request.identifier());
 
 	// Send the 603 DECLINE status response message.
 	send(response, 0);
+
+	dialog->terminate(30000);
 }
 
-void SessionClient::endSession(Dialog *dialog, const int sessionId)
+void SessionClient::closeSessionInternal(Dialog *dialog, const int sessionId)
 {
 	// Build the INVITE request.
 	SlpRequest request = buildRequest("BYE", "application/x-msnmsgr-sessionclosebody", dialog);
@@ -556,7 +684,7 @@ void SessionClient::endSession(Dialog *dialog, const int sessionId)
 	const QString requestBody = QString("SessionID: %1\r\n\r\n").arg(sessionId);
 	request.setBody(requestBody);
 	//Set the request context information.
-	request.setIdentifier(dialog->transactionId(true));
+	request.setIdentifier(0);
 	request.setRelatesTo(0);
 
 	// Create a new transaction for the request.
@@ -564,6 +692,33 @@ void SessionClient::endSession(Dialog *dialog, const int sessionId)
 	dialog->transactions().append(transaction);
 	// Begin the transaction.
 	beginTransaction(transaction);
+
+	// Send the transaction request.
+	send(transaction->request(), 0);
+}
+
+void SessionClient::requestDirectConnection(Dialog *dialog, const Q_UINT32 sessionId)
+{
+	kdDebug() << k_funcinfo << "Requesting Direct Connection for session = " << sessionId << endl;
+
+	// Build the INVITE request.
+	SlpRequest request = buildRequest("INVITE", "application/x-msnmsgr-transreqbody", dialog);
+	// Build the Direct Connection setup body.
+	const QString requestBody = buildDirectConnectionSetupRequestBody(sessionId);
+	// Set the request body.
+	request.setBody(requestBody);
+	//Set the request context information.
+	request.setIdentifier(0);
+	request.setRelatesTo(0);
+
+	// Create a new transaction for the request.
+	Transaction *transaction = new Transaction(request, true);
+	dialog->transactions().append(transaction);
+	// Begin the transaction.
+	beginTransaction(transaction);
+
+	// Send the transaction request.
+	send(transaction->request(), 0, 0);
 }
 
 //BEGIN UA Server Functions
@@ -578,11 +733,8 @@ void SessionClient::onRequestMessage(const SlpRequest& request)
 	{
 		kdDebug() << k_funcinfo << "Got request which is not for me -- responding with 404" << endl;
 
-		// Send an acknowledge message to the peer.
-		sendAcknowledge(0, request.relatesTo() + 1, request.identifier());
-
 		// Generate a Not Found response
-		SlpResponse response = buildResponse(404, "Not Found", "null", request);
+		SlpResponse response = buildResponse(SlpResponse::NotFound, "Not Found", "null", request);
 		// Set the response context information.
 		response.setIdentifier(request.relatesTo() + 2);
 		response.setRelatesTo(request.identifier());
@@ -618,11 +770,8 @@ void SessionClient::onRequestMessage(const SlpRequest& request)
 		{
 			kdDebug() << k_funcinfo << "Got unknown content-type on INVITE request -- responding with 500" << endl;
 
-			// Send an acknowledge message to the peer.
-			sendAcknowledge(0, request.relatesTo() + 1, request.identifier());
-
-			// Generate a No Such Call response
-			SlpResponse response = buildResponse(500, "Internal Error", "null", request);
+			// Generate an Internal Error response
+			SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 			// Set the response context information.
 			response.setIdentifier(request.relatesTo() + 2);
 			response.setRelatesTo(request.identifier());
@@ -641,7 +790,6 @@ void SessionClient::onRequestMessage(const SlpRequest& request)
 	}
 }
 
-// TODO
 bool SessionClient::parseSessionCloseBody(const QString& requestBody, QMap<QString, QVariant> & collection)
 {
 	QRegExp regex("Context: ([0-9a-zA-Z+/=]*)");
@@ -649,7 +797,7 @@ bool SessionClient::parseSessionCloseBody(const QString& requestBody, QMap<QStri
 	if (regex.search(requestBody) != -1)
 	{
 		// TODO If we cannot convert the context from
-		// a bse64 string to bytes, return true.
+		// a base64 string to bytes, return true.
 		collection.insert("Context", regex.cap(1));
 	}
 
@@ -664,12 +812,12 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 		kdDebug() << k_funcinfo << "Got unknown call id on BYE request -- responding with 481" << endl;
 
 		// Generate a No Such Call response
-		SlpResponse response = buildResponse(481, "No Such Call", "application/x-msnmsgr-session-failure-respbody", request);
+		SlpResponse response = buildResponse(SlpResponse::NoSuchCall, "No Such Call", "application/x-msnmsgr-session-failure-respbody", request);
 		// Set the response body.
 		const QString responseBody = QString::fromLatin1("SessionID: 0\r\n\r\n");
 		response.setBody(responseBody);
 		// Set the response context information.
-		response.setIdentifier(request.relatesTo() + 1);
+		response.setIdentifier(request.relatesTo() + 2);
 		response.setRelatesTo(request.identifier());
 
 		// Send the 481 No Such Call status response message.
@@ -684,9 +832,9 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 			kdDebug() << k_funcinfo << "Got unknown content type on BYE request -- responding with 500" << endl;
 
 			// Generate an Internal Error response
-			SlpResponse response = buildResponse(500, "Internal Error", "null", request);
+			SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 			// Set the response context information.
-			response.setIdentifier(dialog->transactionId(true));
+			response.setIdentifier(0);
 			response.setRelatesTo(request.identifier());
 
 			// Send the 500 Internal Error status response message.
@@ -695,14 +843,12 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 		else
 		{
 			// Otherwise, we have received a valid BYE request.
-			kdDebug() << k_funcinfo << "Got BYE request for dialog=" << dialog->identifier().toString().upper() << endl;
-
-			// Send an acknowledge to the remote endpoint.
-			sendAcknowledge(0, dialog->transactionId(true), request.identifier());
+			kdDebug() << k_funcinfo << "Got BYE request for dialog, call id = " << dialog->callId().toString().upper() << endl;
 
 			QMap<QString, QVariant> sessionCloseBody;
 			if (parseSessionCloseBody(request.body(), sessionCloseBody))
 			{
+				// TODO Handle parse error in BYE request body.
 				return;
 			}
 
@@ -712,13 +858,72 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 	}
 }
 
-// TODO
 bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & collection)
 {
-	Q_UNUSED(requestBody);
-	Q_UNUSED(collection);
+	bool parseError = false;
+	QRegExp regex("Bridges: ([a-zA-Z0-9 ]*)");
+	// Check if the 'Bridges' field is valid.
+	if (regex.search(requestBody) == -1)
+	{
+		parseError = true;
+	}
+	else
+	{
+		collection.insert("Bridges", regex.cap(1));
+	}
 
-	return false;
+	regex = QRegExp("NetID: (\\-?\\d+)");
+	// Check if the 'NetID' field is valid.
+	if (regex.search(requestBody) == -1)
+	{
+		parseError = true;
+	}
+	else
+	{
+		collection.insert("NetID", regex.cap(1));
+	}
+
+	regex = QRegExp("UPnPNat: ([a-z]*)");
+	// Check if the 'UPnPNat' field is valid.
+	if (regex.search(requestBody) == -1)
+	{
+		parseError = true;
+	}
+	else
+	{
+		collection.insert("UPnPNat", (QString::fromLatin1("true") == regex.cap(1)));
+	}
+
+	regex = QRegExp("Conn-Type: ([a-zA-Z\\-]*)");
+	// Check if the 'Conn-Type' field is valid.
+	if (regex.search(requestBody) == -1)
+	{
+		parseError = true;
+	}
+	else
+	{
+		collection.insert("Conn-Type", regex.cap(1));
+	}
+
+	regex = QRegExp("SessionID: (\\d+)");
+	// Check if the 'SessionID' field is valid.
+	if (regex.search(requestBody) != -1)
+	{
+		collection.insert("SessionID", regex.cap(1));
+	}
+
+	regex = QRegExp("ICF: ([a-z]*)");
+	// Check if the 'ICF' field is valid.
+	if (regex.search(requestBody) == -1)
+	{
+		parseError = true;
+	}
+	else
+	{
+		collection.insert("ICF", (QString::fromLatin1("true") == regex.cap(1)));
+	}
+
+	return parseError;
 }
 
 void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
@@ -728,9 +933,12 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 	if (dialog != 0l && dialog->state() == Dialog::Established)
 	{
 		// Check if this transaction for a Direct Connection
-		// setup overlaps with one that I recently sent.
+		// setup overlaps with one that we recently sent.
 		if (isMyDirectConnectionSetupRequestLoser(dialog, request) == false)
 		{
+			// NOTE If we dropped the peer's direct connection setup request,
+			// no response for the request is sent to the peer as this will
+			// indicate that we are not honoring their request.
 			return;
 		}
 
@@ -739,93 +947,111 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		// Get the request body.
 		const QString & requestBody = request.body();
 
-		// Parse the direct connection description from the request body
-		QRegExp regex("Bridges: ([a-zA-Z0-9 ]*)\r\n");
-		regex.search(requestBody);
+		QMap<QString, QVariant> parameters;
+		// Parse the direct connection setup description from the request body
+		bool parseError = parseDirectConnectionRequestBody(requestBody, parameters);
+		if (parseError)
+		{
+			// If a parse error is encountered, inform the peer
+			// by responding with an internal error.
+			kdDebug() << k_funcinfo << "Got invalid direct connection setup description on INVITE request -- responding with 500" << endl;
+
+			// Generate am Internal Error response
+			SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
+			// Set the response context information.
+			response.setIdentifier(0);
+			response.setRelatesTo(request.identifier());
+
+			// Send the 500 Internal Error response message.
+			send(response, 0);
+
+			// Wait 15 seconds for an acknowledge before termining the dialog.
+			// If a timeout occurs, terminate the dialog anyway.
+			dialog->terminate(15000);
+			return;
+		}
+
 		////////////////////////////////////////////
 		// Supported bridge types: TRUDPv1 or TCPv1
 		////////////////////////////////////////////
-		QValueList<QString> supportedBridgeTypes = QStringList::split(" ", regex.cap(1));
+		const QValueList<QString> supportedBridgeTypes = QStringList::split(' ', parameters["Bridges"].toString());
 
-		regex = QRegExp("NetID: (\\-?\\d+)\r\n");
-		regex.search(requestBody);
 		//////////////////////////////////////////////////////////////////////////////////
 		// NetID is the big endian version of the sender's internet visible (external)
 		// ip address.  For connection types Direct-Connect, Unknown-Connect and Firewall
 		// however, NetID is always 0.
 		//////////////////////////////////////////////////////////////////////////////////
-		const Q_UINT32 netId = regex.cap(1).toInt();
+		const Q_UINT32 netId = parameters["NetID"].toInt();
 		const QHostAddress peerIpAddress(ntohl(netId));
 
-		regex = QRegExp("UPnPNat: ([a-z]*)\r\n");
-		regex.search(requestBody);
 		//////////////////////////////////////////////////////////////////
 		// Indicates whether the peer is connected to the internet
 		// through a router that supports the Universal Plug and Play
 		// (UPnp) specification.
 		//////////////////////////////////////////////////////////////////
-		const bool uPnpSupported = (QString::fromLatin1("true") == regex.cap(1));
-
-		regex = QRegExp("Conn-Type: ([a-zA-Z\\-]*)\r\n");
-		regex.search(requestBody);
+		const bool uPnpNAT = parameters["UPnPNat"].toBool();
 
 		///////////////////////////////////////////////////////////////////////////////////////////
-		// Connection Types
+		// Unknown-Connect  (0)	The peer's connection scheme to the internet unknown.
 		// Direct-Connect		The peer is directly connected to the internet
+		// Unknown-NAT		(3)	The peer is connected to the internet through an NAT is unknown.
 		// IP-Restrict-NAT		The peer is connected to the internet through an IP restricted NAT
-		// Port-Restrict-NAT	The peer is connected to the internet through a port restricted NAT
-		// Symmetric-NAT		The peer is connected to the internet through a symmetric NAT
-		// Unknown-NAT			The peer is connected to the internet through an NAT is unknown.
+		// Port-Restrict-NAT(5)	The peer is connected to the internet through a port restricted NAT
+		// Symmetric-NAT    (6)	The peer is connected to the internet through a symmetric NAT
 		// Firewall				The peer is behind a firewall.
-		// Unknown-Connect		The peer's connection scheme to the internet unknown.
 		///////////////////////////////////////////////////////////////////////////////////////////
-		const QString connectionType = regex.cap(1);
+		const QString connectionType = parameters["Conn-Type"].toString();
 
-		regex = QRegExp("SessionID: (\\d+)");
-		regex.search(requestBody);
-		const QString identifier = regex.cap(1);
-
-		regex = QRegExp("ICF: ([a-z]*)\r\n");
-		regex.search(requestBody);
+		QString identifier = parameters["SessionID"].toString();
+		if (identifier.isEmpty())
+		{
+			// The SessionID field was not sent in the response body.
+			identifier = QString::number(dialog->session);
+		}
 
 		/////////////////////////////////////////////////////
 		// Indicates whether the peer is behind an internet
 		// connection firewall.
 		/////////////////////////////////////////////////////
-		const bool behindFirewall = (QString::fromLatin1("true") == regex.cap(1));
+		const bool behindFirewall = parameters["ICF"].toBool();
 
 		// TODO Handle Hashed-Nonce field
 		QUuid nonce;
 
-		// Send an acknowledge to the remote endpoint.
-		sendAcknowledge(0, dialog->transactionId(true), request.identifier(), 0);
-
-		// Indicate whether the peer endpoint is on the same network as us.
+		// Check whether the peer endpoint is on the same network as us.
 		const bool sameNetwork = (peerIpAddress.toString() == d->externalIpAddress);
 
 		SlpResponse response;
-		// Check the peer's direct connectivity support.
-		bool allowDirect = supportsDirectConnectivity(connectionType, behindFirewall, uPnpSupported, sameNetwork);
-		if (allowDirect && supportedBridgeTypes.contains("TCPv1") && false)
+		// Check the peer's direct connectivity parameters and ours to determine
+		// whether we can establish a direct connection.
+		bool allowDirect = supportsDirectConnectivity(connectionType, behindFirewall, uPnpNAT, sameNetwork);
+		if (false && allowDirect && supportedBridgeTypes.contains("TCPv1"))
 		{
 			// If the peer's connectivity scheme is good enough to establish
 			// a direct connection, accept the DCC setup request.
-			response = buildResponse(200, "OK", "application/x-msnmsgr-transrespbody", request);
+			response = buildResponse(SlpResponse::OK, "OK", "application/x-msnmsgr-transrespbody", request);
 			// Build the direct connection response description.
 			const QString dccResponseBody = buildDirectConnectionSetupResponseBody(nonce);
 			response.setBody(dccResponseBody);
 		}
 		else
 		{
-			// Otherwise, decline the DCC request.
-			response = buildResponse(603, "DECLINE", "application/x-msnmsgr-transrespbody", request);
+			// Otherwise, decline the direct connection request.
+			response = buildResponse(SlpResponse::Decline, "DECLINE", "application/x-msnmsgr-transrespbody", request);
 			// Set the response body.
 			const QString responseBody = QString("SessionID: %1\r\n\r\n").arg(identifier);
 			response.setBody(responseBody);
+
+			// Start the session since we dropped our direct connection setup
+			// request to honor the peer's request and we just declined the
+			// peer's direct connection setup request.
+
+			// TODO Update the session state information.
+			// TODO Start the session.
 		}
 
 		// Set the response context information.
-		response.setIdentifier(dialog->transactionId(true));
+		response.setIdentifier(0);
 		response.setRelatesTo(request.identifier());
 
 		// Send the status response message.
@@ -833,37 +1059,32 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Once a dialog has been established, any participant (peer) can initiate a Direct Connection setup request.
+// For this reason, it is required to check if an overlapping Direct Connection setup request occurs. This
+// is done my comparing the NetID fields in both request bodies.  The NetID which is greater determines who
+// wins and therefore who must discard their request.
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool SessionClient::isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const SlpRequest& request)
 {
-	///////////////////////////////////////////////////////////////
-	// NOTE Once a dialog has been established, any participant
-	// can initiate a Direct Connection setup request.  For this
-	// reason, it is required to check if an overlapping Direct
-	// Connection setup request occurs.  This is done my conparing
-	// the NetID fields in both request bodys.  The NetID which is
-	// greater determines who wins and therefore who must discard
-	// their request.
-	///////////////////////////////////////////////////////////////
-
 	bool isMyRequestLoser = true;
 	Transaction *transaction = dialog->transactions().last();
 	if (transaction->request().method() == QString::fromLatin1("INVITE") &&
 		transaction->request().contentType() == QString::fromLatin1("application/x-msnmsgr-transreqbody"))
 	{
 		kdDebug() << k_funcinfo << "Got overlapping Direct Connection setup request" << endl;
-		// Retrieve the peers Net ID.
-		QRegExp regex("NetID: (\\-?\\d+)\r\n");
+
+		// Retrieve the peer's Net ID from the request body.
+		QRegExp regex("NetID: (\\-?\\d+)");
 		regex.search(request.body());
 		const Q_INT32 peerNetId = regex.cap(1).toInt();
-		// Retrieve our Net ID.
-		regex = QRegExp("NetID: (\\-?\\d+)\r\n");
-		regex.search(transaction->request().body());
-		const Q_INT32 myNetId = regex.cap(1).toInt();
-		// Compare the Net IDs.
-		isMyRequestLoser = (myNetId < peerNetId);
+
+		// Compare the peer's Net ID to ours.
+		isMyRequestLoser = (d->netId < peerNetId);
 		if (isMyRequestLoser)
 		{
 			kdDebug() << k_funcinfo << "Responding to peer's request and dropping mine since peer's id is greater." << endl;
+			// Discard our direct connection setup transaction.
 			endTransaction(transaction);
 		}
 		else
@@ -877,7 +1098,7 @@ bool SessionClient::isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const 
 
 const QString SessionClient::buildDirectConnectionSetupResponseBody(const QUuid& nonce)
 {
-	// TODO handle the hashed nonce field.
+	// TODO Handle the hashed nonce field.
 	Q_UNUSED(nonce);
 
 	const QString CrLf = QString::fromLatin1("\r\n");
@@ -891,6 +1112,9 @@ const QString SessionClient::buildDirectConnectionSetupResponseBody(const QUuid&
 	stream << QString::fromLatin1("Listening: ") << (isListening ? "true" : "false") << CrLf;
 	if (isListening)
 	{
+		// If the listening endpoint has been established, write the listening
+		// endpoint information to the stream including a nonce to uniquely
+		// authenticate incoming direct connections for this endpoint.
 		stream << QString::fromLatin1("Nonce: ") << QUuid::createUuid().toString().upper() << CrLf;
 		stream << QString::fromLatin1("IPv4External-Addrs: ") << d->externalIpAddress << CrLf;
 		stream << QString::fromLatin1("IPv4External-Port: ") << QString::number(port) << CrLf;
@@ -910,25 +1134,19 @@ const QString SessionClient::buildDirectConnectionSetupResponseBody(const QUuid&
 	return responseBody;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// A Direct Connection offer request is sent if we responded to a Direct Connection setup request
+// and specified that we were not listening on any port because we could not establish a listening
+// endpoint.  For this reason, the peer offers to be the listening endpoint and the received request
+// contains the peer's listening endpoint information.
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 {
-	///////////////////////////////////////////////////////////
-	// NOTE A Direct Connection offer request is sent if
-	// we responded to a Direct Connection setup request
-	// and specified that we were not listening on any port.
-	// For this reason, the peer offers to be the listening
-	// endpoint and the received request contains the peer's
-	// listening endpoint information.
-	///////////////////////////////////////////////////////////
-
 	// Determine if an existing dialog exists.
 	Dialog *dialog = getDialogByCallId(QUuid(request.headers()["Call-ID"].toString()));
 	if (dialog != 0l && dialog->state() == Dialog::Established)
 	{
 		kdDebug() << k_funcinfo << "Got Direct Connection offer INVITE request" << endl;
-
-		// Send an acknowledge to the remote endpoint.
-		sendAcknowledge(0, dialog->transactionId(true), request.identifier(), 0);
 
 		kdDebug() << "************* BEGIN Direct Connection offer information *************" << endl;
 
@@ -939,13 +1157,13 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 
 		// NOTE The bridge type will be the one that we selected
 		// associated with the received DCC setup request.
-		QRegExp regex("Bridge: ([a-zA-Z0-9 ]*)\r\n");
+		QRegExp regex("Bridge: ([a-zA-Z0-9 ]*)");
 		regex.search(requestBody);
 		const QString bridge = regex.cap(1);
 		kdDebug() << k_funcinfo << "Got bridge, " << bridge << endl;
 
 		const QString sessionId = regex.cap(1);
-		regex = QRegExp("Listening: ([a-z]*)\r\n");
+		regex = QRegExp("Listening: ([a-z]*)");
 		regex.search(requestBody);
 		// NOTE Indicates whether the peer is transport bridge
 		// is listening.
@@ -957,22 +1175,22 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 		QUuid nonce = QUuid(regex.cap(1));
 		kdDebug() << k_funcinfo << "Got nonce, " << nonce.toString().upper() << endl;
 
-		regex = QRegExp("IPv4External-Addrs: ([^\r\n]*)\r\n");
+		regex = QRegExp("IPv4External-Addrs: ([^\r\n]*)");
 		regex.search(requestBody);
-		const QString externalIpAddress = regex.cap(1);
-		kdDebug() << k_funcinfo << "Got external ip address, " << externalIpAddress << endl;
+		const QValueList<QString> externalIpAddresses = QStringList::split(' ', regex.cap(1));
+		kdDebug() << k_funcinfo << "Got external ip addresses, " << externalIpAddresses << endl;
 
-		regex = QRegExp("IPv4External-Port: (\\d+)\r\n");
+		regex = QRegExp("IPv4External-Port: (\\d+)");
 		regex.search(requestBody);
 		const QString externalPort = regex.cap(1);
 		kdDebug() << k_funcinfo << "Got external port, " << externalPort << endl;
 
-		regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]*)\r\n");
+		regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]*)");
 		regex.search(requestBody);
-		const QString internalIpAddress = regex.cap(1);
-		kdDebug() << k_funcinfo << "Got internal ip address, " << internalIpAddress << endl;
+		const QValueList<QString> internalIpAddresses = QStringList::split(' ', regex.cap(1));
+		kdDebug() << k_funcinfo << "Got internal ip addresses, " << internalIpAddresses << endl;
 
-		regex = QRegExp("IPv4Internal-Port: (\\d+)\r\n");
+		regex = QRegExp("IPv4Internal-Port: (\\d+)");
 		regex.search(requestBody);
 		const QString internalPort = regex.cap(1);
 		kdDebug() << k_funcinfo << "Got internal port, " << internalPort << endl;
@@ -988,26 +1206,37 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 
 		kdDebug() << "************* END Direct Connection offer information   *************" << endl;
 
-		// Create the 200 OK response message
-		SlpResponse response = buildResponse(200, "OK", "application/x-msnmsgr-transrespbody", request);
-		// Set the response body.
-		const QString responseBody = QString("SessionID: %1\r\n\r\n").arg(identifier);
-		response.setBody(responseBody);
-		// Set the response context information.
-		response.setIdentifier(dialog->transactionId(true));
-		response.setRelatesTo(request.identifier());
+		if (isListening)
+		{
+			// Create the 200 OK response message
+			SlpResponse response = buildResponse(SlpResponse::OK, "OK", "application/x-msnmsgr-transrespbody", request);
+			// Set the response body.
+			const QString responseBody = QString("SessionID: %1\r\n\r\n").arg(identifier);
+			response.setBody(responseBody);
+			// Set the response context information.
+			response.setIdentifier(0);
+			response.setRelatesTo(request.identifier());
 
-		// Send the 200 OK status response message.
-		send(response, 0, 0);
+			// Send the 200 OK status response message.
+			send(response, 0, 0);
 
-		// TODO Connect to the address range and port specified.
-
-		// TODO Update the session state information.
+			// TODO Connect to the address range and port specified.
+// 			createTransportFor(QStringList:split(" ", externalIpAddresses), externalPort, nonce, identifier);
+			Q_INT32 id = d->transport->createBridge(nonce, externalIpAddresses, externalPort.toInt());
+			// TODO Update the session state information.
+		}
+		else
+		{
+			kdDebug() << k_funcinfo << "Got Direct Connection offer INVITE request,"
+			<< " but peer is not listening -- dropping request." << endl;
+		}
 	}
 }
 
-bool SessionClient::supportsDirectConnectivity(const QString& connectionType, bool behindFirewall, bool uPnpSupported, bool sameNetwork)
+bool SessionClient::supportsDirectConnectivity(const QString& connectionType, bool behindFirewall, bool uPnpNAT, bool sameNetwork)
 {
+	Q_UNUSED(sameNetwork);
+
 	bool bSupportsDirectConnectivity = false;
 	if (connectionType == QString::fromLatin1("Direct-Connect"))
 	{
@@ -1017,35 +1246,38 @@ bool SessionClient::supportsDirectConnectivity(const QString& connectionType, bo
 	if (connectionType == QString::fromLatin1("IP-Restrict-NAT"))
 	{
 		// IP addresses are different, but external and internal ports are the same.
-		bSupportsDirectConnectivity = (!behindFirewall && uPnpSupported);
+		bSupportsDirectConnectivity = (!behindFirewall && uPnpNAT);
 	}
 	else
 	if (connectionType == QString::fromLatin1("Symmetric-NAT"))
 	{
 		// IP addresses are different, and the external and internal ports are different.
-		bSupportsDirectConnectivity = (!behindFirewall && uPnpSupported);// && !sameNetwork);
+		bSupportsDirectConnectivity = (!behindFirewall && uPnpNAT);// && !sameNetwork);
 	}
 	else
 	if (connectionType == QString::fromLatin1("Unknown-NAT"))
 	{
-		bSupportsDirectConnectivity = (!behindFirewall && uPnpSupported);// && !sameNetwork);
+		bSupportsDirectConnectivity = (!behindFirewall && uPnpNAT);// && !sameNetwork);
 	}
 
 
 	return bSupportsDirectConnectivity;
 }
 
-const QString SessionClient::buildDirectConnectionSetupRequestBody()
+const QString SessionClient::buildDirectConnectionSetupRequestBody(const Q_UINT32 sessionId)
 {
 	const QString CrLf = QString::fromLatin1("\r\n");
+
 	QString requestBody;
 	QTextStream stream(requestBody, IO_WriteOnly);
 
-	stream << QString::fromLatin1("Bridges: ") << "TCPv1" << CrLf;
-	stream << QString::fromLatin1("NetID: ") << htonl(QHostAddress(d->externalIpAddress).toIPv4Address()) << CrLf;
-	stream << QString::fromLatin1("UPnPNat: ") << "false" << CrLf;
-	stream << QString::fromLatin1("Conn-Type: ") << "Unknown-Connect" << CrLf;
-	stream << QString::fromLatin1("ICF:  ") << "false" << CrLf;
+	// Write the body content to the stream
+	stream << QString::fromLatin1("Bridges: ") << d->supportedBridgeTypes << CrLf;
+	stream << QString::fromLatin1("NetID: ") << d->netId << CrLf;
+	stream << QString::fromLatin1("Conn-Type: ") << d->connectionType << CrLf;
+	stream << QString::fromLatin1("UPnPNat: ") << (d->uPnpNAT ? "true" : "false") << CrLf;
+	stream << QString::fromLatin1("ICF: ") << "false" << CrLf;
+	stream << QString::fromLatin1("SessionID: ") << sessionId << CrLf;
 
 	return requestBody;
 }
@@ -1055,31 +1287,47 @@ bool SessionClient::parseSessionRequestBody(const QString& requestBody, QMap<QSt
 	bool parseError = false;
 	QRegExp regex("EUF-GUID: \\{([0-9A-F\\-]*)\\}");
 	// Check if the euf guid field is valid.
-	if (regex.search(requestBody) == -1) {
+	if (regex.search(requestBody) == -1)
+	{
 		parseError = true;
 	}
-	collection.insert("EUF-GUID", regex.cap(1));
+	else
+	{
+		collection.insert("EUF-GUID", regex.cap(1));
+	}
 
 	regex = QRegExp("SessionID: (\\d+)");
 	// Check if the session id field is valid.
-	if (regex.search(requestBody) == -1) {
+	if (regex.search(requestBody) == -1)
+	{
 		parseError = true;
 	}
-	collection.insert("SessionID", regex.cap(1));
+	else
+	{
+		collection.insert("SessionID", regex.cap(1));
+	}
 
 	regex = QRegExp("AppID: (\\d+)");
 	// Check if the app id field is valid.
-	if (regex.search(requestBody) == -1) {
+	if (regex.search(requestBody) == -1)
+	{
 		parseError = true;
 	}
-	collection.insert("AppID", regex.cap(1));
+	else
+	{
+		collection.insert("AppID", regex.cap(1));
+	}
 
 	regex = QRegExp("Context: ([0-9a-zA-Z+/=]*)");
 	// Check if the context field is valid.
-	if (regex.search(requestBody) == -1) {
+	if (regex.search(requestBody) == -1)
+	{
 		parseError = true;
 	}
-	collection.insert("Context", regex.cap(1));
+	else
+	{
+		collection.insert("Context", regex.cap(1));
+	}
 
 	return parseError;
 }
@@ -1089,8 +1337,8 @@ void SessionClient::onInitialInviteRequest(const SlpRequest& request)
 	Dialog *dialog = getDialogByCallId(QUuid(request.headers()["Call-ID"].toString()));
 	if (dialog != 0l)
 	{
-		kdDebug() << "Got duplicate initial INVITE request, dialog="
-		<< dialog->identifier().toString().upper() << " -- ignoring it" << endl;
+		kdDebug() << "Got duplicate initial INVITE request for dialog, call id = "
+		<< dialog->callId().toString().upper() << " -- ignoring it" << endl;
 		return;
 	}
 
@@ -1098,9 +1346,6 @@ void SessionClient::onInitialInviteRequest(const SlpRequest& request)
 	dialog = new Dialog(new Transaction(request, false), this);
 	// Add the pending dialog to the call map.
 	addDialogToCallMap(dialog);
-
-	// Send an acknowledge to the remote endpoint.
-	sendAcknowledge(0, dialog->transactionId(true), request.identifier());
 
 	// Get the request body.
 	const QString & requestBody = request.body();
@@ -1114,22 +1359,22 @@ void SessionClient::onInitialInviteRequest(const SlpRequest& request)
 		// by responding with an internal error.
 		kdDebug() << k_funcinfo << "Got invalid session description on initial INVITE request -- responding with 500" << endl;
 
-		// Generate a No Such Call response
-		SlpResponse response = buildResponse(500, "Internal Error", "null", request);
+		// Generate am Internal Error response
+		SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 		// Set the response context information.
-		response.setIdentifier(dialog->transactionId(true));
+		response.setIdentifier(0);
 		response.setRelatesTo(request.identifier());
 
 		// Send the 500 Internal Error response message.
 		send(response, 0);
 
-		// Wait 30 seconds for an acknowledge before termining the dialog.
+		// Wait 15 seconds for an acknowledge before termining the dialog.
 		// If a timeout occurs, terminate the dialog anyway.
-		dialog->terminate(30000);
+		dialog->terminate(15000);
 		return;
 	}
 
-	// Retrieve the session decription fields.
+	// Retrieve the session decription parameters.
 	const QUuid uuid = QUuid(sessionDescription["EUF-GUID"].toString());
 	const Q_UINT32 sessionId = sessionDescription["SessionID"].toInt();
 	const Q_UINT32 appId = sessionDescription["AppID"].toInt();
@@ -1137,22 +1382,27 @@ void SessionClient::onInitialInviteRequest(const SlpRequest& request)
 
 	// Try to select the appropriate handler for the session
 	// invitation based on uuid.
-	if (d->applications.contains(uuid))
+	Session *session = createSession(sessionId, uuid);
+	if (session)
 	{
 		// If there is a registered application that can handle
 		// the received session description (offer), pass the offer
 		// to the application.
-		Application *application = d->applications[uuid];
-		// Connect the signal/slot.
-		QObject::connect(application , SIGNAL(accept(const QString&)), this,
-		SLOT(acceptSession(const QString&)));
-		QObject::connect(application , SIGNAL(decline(const QString&)), this,
-		SLOT(declineSession(const QString&)));
-
 		dialog->session = sessionId;
+		d->sessions.insert(sessionId, session);
 
-		// Handle the session desciption (offer).
-		application->handleRequest(sessionId, appId, context);
+		// Connect the signal/slot.
+		QObject::connect(session , SIGNAL(accepted()), this,
+		SLOT(onSessionAccept()));
+		QObject::connect(session , SIGNAL(declined()), this,
+		SLOT(onSessionDecline()));
+
+		QByteArray bytes;
+		// Convert from base64 string to bytes.
+		KCodecs::base64Decode(context.utf8(), bytes);
+
+		// Handle the incoming invitation notification.
+		session->handleInvite(appId, bytes);
 	}
 	else
 	{
@@ -1161,6 +1411,40 @@ void SessionClient::onInitialInviteRequest(const SlpRequest& request)
 
 		declineSession(dialog, sessionId);
 	}
+}
+
+Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uuid)
+{
+	Session *session = 0l;
+	SessionNotifier *handler = 0l;
+
+	if (uuid == MsnObjectSession::uuid())
+	{
+		session = new MsnObjectSession(sessionId, Session::Outgoing, this);
+		handler = new SessionNotifier(session->id(), SessionNotifier::Object, this);
+		// Connect the signal/slot
+		QObject::connect(handler, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), session,
+		SLOT(onReceive(const QByteArray&, const Q_INT32, const Q_INT32)));
+		QObject::connect(handler, SIGNAL(messageAcknowledged(const Q_INT32)), session,
+		SLOT(onSend(const Q_INT32)));
+	}
+	else
+	if (uuid == FileTransferSession::uuid())
+	{
+		session = new FileTransferSession(sessionId, Session::Incoming, this);
+		handler = new SessionNotifier(session->id(), SessionNotifier::FileTransfer, this);
+		// Connect the signal/slot
+		QObject::connect(handler, SIGNAL(dataReceived(const QByteArray&, const Q_INT32, bool)), session,
+ 		SLOT(onDataReceived(const QByteArray&, const Q_INT32, bool)));
+	}
+
+	if (session != 0 && handler != 0l)
+	{
+		// Register the handler for the session client , session 0
+		d->transport->registerReceiver(handler->session(), handler);
+	}
+
+	return session;
 }
 
 //END
@@ -1185,8 +1469,8 @@ void SessionClient::onResponseMessage(const SlpResponse& response)
 	}
 
 	// Get the status code of the response.
-	const Q_INT32 statusCode = response.statusCode();
-	if (statusCode == 200)
+	const SlpResponse::StatusCode statusCode = (SlpResponse::StatusCode)response.statusCode();
+	if (statusCode == SlpResponse::OK)
 	{
 		// NOTE MSNSLP/1.0 200 OK
 
@@ -1203,25 +1487,25 @@ void SessionClient::onResponseMessage(const SlpResponse& response)
 		}
 	}
 	else
-	if (statusCode == 404)
+	if (statusCode == SlpResponse::NotFound)
 	{
 		// NOTE MSNSLP/1.0 404 Not Found
 		onRecipientUriNotFound(response);
 	}
 	else
-	if (statusCode == 481)
+	if (statusCode == SlpResponse::NoSuchCall)
 	{
 		// NOTE MSNSLP/1.0 481 No Such Call
 		onNoSuchCall(response);
 	}
 	else
-	if (statusCode == 500)
+	if (statusCode == SlpResponse::InternalError)
 	{
 		// NOTE MSNSLP/1.0 500 Internal Error
 		onInternalError(response);
 	}
 	else
-	if (statusCode == 603)
+	if (statusCode == SlpResponse::Decline)
 	{
 		// NOTE MSNSLP/1.0 603 Decline
 
@@ -1259,9 +1543,6 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 	Dialog *dialog = getDialogByCallId(QUuid(response.headers()["Call-ID"].toString()));
 	if (dialog != 0l && dialog->state() == Dialog::Established)
 	{
-		// Send an acknowledge to the remote endpoint.
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier(), 0);
-
 		// Get the response body.
 		const QString responseBody = response.body();
 
@@ -1273,10 +1554,16 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
+		// Get the transaction associated with this response.
 		Transaction *transaction = d->transactions[branch];
+		// Get the request associated with this response from the transaction.
 		const SlpRequest & request = transaction->request();
+
 		if (request.contentType() == QString::fromLatin1("application/x-msnmsgr-transreqbody"))
 		{
+			// If the response is to a Direct Connection setup request,
+			// retrieve the data from the response body to setup the
+			// direct connection.
 			kdDebug() << k_funcinfo << "Got Direct Connection setup request accepted" << endl;
 
 			kdDebug() << "************* BEGIN Direct Connection setup information *************" << endl;
@@ -1284,13 +1571,13 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 			// Parse the direct connection description from the response body.
 			// NOTE The bridge type will be the one that we offered
 			// associated with the received Direct Connection setup request.
-			QRegExp regex("Bridge: ([a-zA-Z0-9 ]*)\r\n");
+			QRegExp regex("Bridge: ([a-zA-Z0-9 ]*)");
 			regex.search(responseBody);
 			const QString bridge = regex.cap(1);
 			kdDebug() << k_funcinfo << "Got bridge, " << bridge << endl;
 
 			const QString sessionId = regex.cap(1);
-			regex = QRegExp("Listening: ([a-z]*)\r\n");
+			regex = QRegExp("Listening: ([a-z]*)");
 			regex.search(responseBody);
 			// NOTE Indicates whether the peer's transport bridge is listening.
 			const bool isListening = (QString::fromLatin1("true") == regex.cap(1));
@@ -1301,35 +1588,78 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 			const QUuid nonce = QUuid(regex.cap(1));
 			kdDebug() << k_funcinfo << "Got nonce, " << nonce.toString().upper() << endl;
 
-			regex = QRegExp("IPv4External-Addrs: ([^\r\n]*)\r\n");
+			regex = QRegExp("IPv4External-Addrs: ([^\r\n]*)");
 			regex.search(responseBody);
-			const QString externalIpAddress = regex.cap(1);
-			kdDebug() << k_funcinfo << "Got external ip address, " << externalIpAddress << endl;
+			const QValueList<QString> externalIpAddresses = QStringList::split(' ', regex.cap(1));
+			kdDebug() << k_funcinfo << "Got external ip address range, " << externalIpAddresses[0] << endl;
 
-			regex = QRegExp("IPv4External-Port: (\\d+)\r\n");
+			if (d->externalIpAddress == externalIpAddresses[0])
+			{
+				kdDebug() << k_funcinfo << "Detected peer is on same network" << endl;
+			}
+
+			regex = QRegExp("IPv4External-Port: (\\d+)");
 			regex.search(responseBody);
 			const QString externalPort = regex.cap(1);
 			kdDebug() << k_funcinfo << "Got external port, " << externalPort << endl;
 
-			regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]*)\r\n");
+			regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]*)");
 			regex.search(responseBody);
-			const QString internalIpAddress = regex.cap(1);
-			kdDebug() << k_funcinfo << "Got internal ip address, " << internalIpAddress << endl;
+			const QValueList<QString> internalIpAddresses = QStringList::split(' ', regex.cap(1));
+			kdDebug() << k_funcinfo << "Got internal ip address range, " << internalIpAddresses[0] << endl;
 
-			regex = QRegExp("IPv4Internal-Port: (\\d+)\r\n");
+			regex = QRegExp("IPV4Internal-Port: (\\d+)");
 			regex.search(responseBody);
 			const QString internalPort = regex.cap(1);
 			kdDebug() << k_funcinfo << "Got internal port, " << internalPort << endl;
 
+			regex = QRegExp("SessionID: (\\d+)");
+			regex.search(responseBody);
+			const QString identifier = regex.cap(1);
+			kdDebug() << k_funcinfo << "Got session id, " << identifier << endl;
+
 			kdDebug() << "************* END Direct Connection setup information   *************" << endl;
 
-			// TODO Connect to the address range and port specified.
+			if (isListening)
+			{
+				// TODO Connect to the address range and port specified.
+// 				createTransportBridge(QStringList:split(externalIpAddresses), externalPort, nonce, identifier);
+				Q_INT32 id = d->transport->createBridge(nonce, externalIpAddresses, externalPort.toInt());
 
-			// TODO Update the session state information.
+				// TODO Update the session state information.
+			}
+			else
+			{
+				// The peer has indicated that they are unable to create
+				// a listening endpoint, so we will try to be the listening
+				// endpoint.
+				kdDebug() << k_funcinfo << "Offering Direct Connection" << endl;
+
+				// Build a direct connection offer request with our listening
+				// endpoint information.
+				SlpRequest request = buildRequest("INVITE", QString::fromLatin1("application/x-msnmsgr-transrespbody"), dialog);
+				const QUuid cnonce = QUuid::createUuid();
+				const QString responseBody = buildDirectConnectionSetupResponseBody(cnonce);
+				// Set the request body.
+				request.setBody(responseBody);
+
+				// Create a new transaction for the request.
+				Transaction *t = new Transaction(request, true);
+				dialog->transactions().append(t);
+
+				// Begin the transaction.
+				beginTransaction(t);
+
+				// Send the transaction request.
+				send(t->request(), 0, 0);
+			}
 		}
 		else
 		if (request.contentType() == QString::fromLatin1("application/x-msnmsgr-transrespbody"))
 		{
+			// If the response is to a Direct Connection offer request,
+			// update the session state information.
+
 			kdDebug() << k_funcinfo << "Got Direct Connection offer request accepted" << endl;
 
 			QRegExp regex("SessionID: (\\d+)");
@@ -1352,9 +1682,6 @@ void SessionClient::onDirectConnectionRequestDeclined(const SlpResponse& respons
 	{
 		kdDebug() << k_funcinfo << "Got Direct Connection request declined" << endl;
 
-		// Send an acknowledge to the remote endpoint.
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier(), 0);
-
 		// Get the response body.
 		const QString responseBody = response.body();
 
@@ -1363,6 +1690,7 @@ void SessionClient::onDirectConnectionRequestDeclined(const SlpResponse& respons
 		const QString identifier = regex.cap(1);
 
 		// TODO Update the session state information.
+// 		fireDirectConnectionSetupRequestFailed(identifier);
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
@@ -1376,15 +1704,12 @@ void SessionClient::onInternalError(const SlpResponse& response)
 {
 	// Try to retrieve the dialog associated with this response.
 	Dialog *dialog = getDialogByCallId(QUuid(response.headers()["Call-ID"].toString()));
-	if (dialog != 0l && dialog->state() == Dialog::Established)
+	if (dialog != 0l && dialog->state() != Dialog::Terminated)
 	{
 		// If the dialog exists, terminate the dialog and the transaction
 		// associated with the received response.
-		kdDebug() << k_funcinfo << "Got Internal Error, dialog="
-		<< dialog->identifier().toString().upper() << " -- terminating" << endl;
-
-		// Send an acknowledge to the remote endpoint
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier());
+		kdDebug() << k_funcinfo << "Got Internal Error for dialog call id = "
+		<< dialog->callId().toString().upper() << " -- terminating" << endl;
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
@@ -1392,7 +1717,7 @@ void SessionClient::onInternalError(const SlpResponse& response)
 		Transaction *transaction = d->transactions[branch];
 		endTransaction(transaction);
 
-		// Terminate the dialog and its associated session(s)
+		// Terminate the dialog and its associated session.
 		dialog->terminate();
 	}
 }
@@ -1404,11 +1729,8 @@ void SessionClient::onNoSuchCall(const SlpResponse& response)
 	Dialog *dialog = getDialogByCallId(QUuid(response.headers()["Call-ID"].toString()));
 	if (dialog != 0l && dialog->state() == Dialog::Established)
 	{
-		kdDebug() << k_funcinfo << "Got No Such Call, dialog="
-		<< dialog->identifier().toString().upper() << " -- terminating" << endl;
-
-		// Send an acknowledge to the remote endpoint
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier());
+		kdDebug() << k_funcinfo << "Got No Such Call for dialog call id = "
+		<< dialog->callId().toString().upper() << " -- terminating" << endl;
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
@@ -1416,7 +1738,7 @@ void SessionClient::onNoSuchCall(const SlpResponse& response)
 		Transaction *transaction = d->transactions[branch];
 		endTransaction(transaction);
 
-		// Terminate the dialog and its associated session(s)
+		// Terminate the dialog and its associated session
 		dialog->terminate();
 	}
 }
@@ -1425,15 +1747,12 @@ void SessionClient::onRecipientUriNotFound(const SlpResponse& response)
 {
 	// Try to retrieve the dialog associated with this response.
 	Dialog *dialog = getDialogByCallId(QUuid(response.headers()["Call-ID"].toString()));
-	if (dialog != 0l && dialog->state() == Dialog::Established)
+	if (dialog != 0l && dialog->state() != Dialog::Terminated)
 	{
 		// If the dialog exists, terminate the dialog and the transaction
 		// associated with the received response.
-		kdDebug() << k_funcinfo << "Got recipient Uri Not Found, dialog="
-		<< dialog->identifier().toString().upper() << " -- terminating" << endl;
-
-		// Send an acknowledge to the remote endpoint
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier());
+		kdDebug() << k_funcinfo << "Got recipient Uri Not Found for dialog call id = "
+		<< dialog->callId().toString().upper() << " -- terminating" << endl;
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
@@ -1441,7 +1760,7 @@ void SessionClient::onRecipientUriNotFound(const SlpResponse& response)
 		Transaction *transaction = d->transactions[branch];
 		endTransaction(transaction);
 
-		// Terminate the dialog and its associated session(s)
+		// Terminate the dialog and its associated session
 		dialog->terminate();
 	};
 }
@@ -1452,16 +1771,14 @@ void SessionClient::onSessionRequestAccepted(const SlpResponse& response)
 	Dialog *dialog = getDialogByCallId(QUuid(response.headers()["Call-ID"].toString()));
 	if (dialog != 0l && dialog->state() == Dialog::Pending)
 	{
-		// If so, set the dialog state to established.
+		kdDebug() << k_funcinfo << "Session ACCEPTED, id =" << dialog->session << ", call id = " << dialog->callId().toString().upper() << endl;
+		// Set the dialog state to established.
 		dialog->establish();
-
-		// Send an acknowledge to the other side.
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier());
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
-		// End the transaction.
 		Transaction *transaction = d->transactions[branch];
+		// End the transaction.
 		endTransaction(transaction);
 	}
 }
@@ -1474,15 +1791,12 @@ void SessionClient::onSessionRequestDeclined(const SlpResponse& response)
 	{
 		// If so, terminate the dialog since the INVITE request
 		// to establish the dialog was declined.
-		kdDebug() << k_funcinfo << "Dialog DECLINED, " << dialog->identifier().toString().upper() << endl;
-
-		// Send an acknowledge to the other side.
-		sendAcknowledge(0, dialog->transactionId(true), response.identifier());
+		kdDebug() << k_funcinfo << "Session DECLINED, id = " << dialog->session << ", call id = " << dialog->callId().toString().upper() << endl;
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
 		Transaction *transaction = d->transactions[branch];
-		// Check if the transaction associated with the response
+		// Check whether the transaction associated with the response
 		// was a dialog creating INVITE request.
 		if (d->transactions[branch]->request().method() == QString::fromLatin1("INVITE"))
 		{
@@ -1499,15 +1813,93 @@ void SessionClient::onSessionRequestDeclined(const SlpResponse& response)
 
 //BEGIN Session Functions
 
-//END
-
-void SessionClient::sendAcknowledge(const Q_INT32 destination, const Q_INT32 identifier, const Q_INT32 relatesTo, const Q_UINT32 priority)
+void SessionClient::onSessionAccept()
 {
-	kdDebug() << k_funcinfo << "SENDING ACK message" << endl;
-	d->transport->sendAcknowledge(destination, identifier, relatesTo, priority);
+	Session* session = dynamic_cast<Session*>(const_cast<QObject*>(sender()));
+	if (session != 0l)
+	{
+		Dialog *dialog = getDialogBySessionId(session->id());
+		if (dialog != 0l)
+		{
+			// Send a session accept notification to the peer endpoint.
+			acceptSession(dialog, session->id());
+		}
+	}
 }
 
-void SessionClient::send(const SlpMessage& message, const Q_UINT32 destination, const Q_UINT32 priority)
+void SessionClient::onSessionEnd()
+{
+	const Session *session = dynamic_cast<const Session*>(sender());
+	if (session != 0l)
+	{
+		Dialog *dialog = getDialogBySessionId(session->id());
+		if (dialog != 0l)
+		{
+			dialog->setState(Dialog::Terminating);
+			closeSessionInternal(dialog, session->id());
+		}
+	}
+}
+
+void SessionClient::onSessionSendData(const QByteArray& bytes)
+{
+	const Session *session = dynamic_cast<const Session*>(sender());
+	if (session != 0l)
+	{
+		Dialog *dialog = getDialogBySessionId(session->id());
+		if (dialog != 0l)
+		{
+			d->transport->sendBytes(bytes, session->id(), (rand() % 0xCF6C));
+		}
+	}
+}
+
+void SessionClient::onSessionCancel()
+{
+	Session* session = dynamic_cast<Session*>(const_cast<QObject*>(sender()));
+	if (session != 0l)
+	{
+		Dialog *dialog = getDialogBySessionId(session->id());
+		if (dialog != 0l)
+		{
+			dialog->setState(Dialog::Terminating);
+			// Send a session cancelled notification to the peer endpoint.
+			closeSessionInternal(dialog, session->id());
+		}
+	}
+}
+
+void SessionClient::onSessionDecline()
+{
+	Session* session = dynamic_cast<Session*>(const_cast<QObject*>(sender()));
+	if (session != 0l)
+	{
+		Dialog *dialog = getDialogBySessionId(session->id());
+		if (dialog != 0l)
+		{
+			// Send a session decline notification to the peer endpoint.
+			declineSession(dialog, session->id());
+		}
+	}
+}
+
+void SessionClient::onSessionSendMessage(const QByteArray& bytes)
+{
+	const Session *session = dynamic_cast<const Session*>(sender());
+	if (session != 0l)
+	{
+		Dialog *dialog = getDialogBySessionId(session->id());
+		if (dialog != 0l)
+		{
+			Q_UINT32 id = d->transport->send(bytes, session->id(), (rand() % 0xCF6C), 0);
+			dialog->setTransactionId(id);
+		}
+	}
+}
+
+//END
+
+void SessionClient::send(SlpMessage& message, const Q_UINT32 destination, const Q_UINT32 priority)
 {
 	QByteArray bytes;
 	QTextStream stream(bytes, IO_WriteOnly);
@@ -1515,7 +1907,7 @@ void SessionClient::send(const SlpMessage& message, const Q_UINT32 destination, 
 	const QString CrLf = QString::fromLatin1("\r\n");
 	// Write the start line to the stream
 	stream << message.startLine() << CrLf;
-	// Write the headers to the stream.
+	// Write the message headers to the stream.
 	stream << "To: " << message.headers()["To"].toString() << CrLf;
 	stream << "From: " << message.headers()["From"].toString() << CrLf;
 	stream << "Via: " << message.headers()["Via"].toString() << CrLf;
@@ -1526,8 +1918,8 @@ void SessionClient::send(const SlpMessage& message, const Q_UINT32 destination, 
 
 	// Get the message content length.
 	Q_INT32 contentLength = message.body().length();
-	contentLength = contentLength ? contentLength + 1 : 0;
-	// Write the message content length to the message buffer.
+	contentLength = (contentLength != 0) ? contentLength + 1 : contentLength;
+	// Write the message content length to the stream.
 	stream << QString::fromLatin1("Content-Length: ") << contentLength << CrLf
 	<< CrLf;
 
@@ -1537,79 +1929,84 @@ void SessionClient::send(const SlpMessage& message, const Q_UINT32 destination, 
 		stream << message.body() << '\0';
 	}
 
-	kdDebug() << "============= SENDING message=" << message.identifier() << ", " << QString(bytes) << endl;
+	kdDebug() << "============= SENDING message, " << QString(bytes) << endl;
 
 	// Send the message data bytes via the transport layer.
-	d->transport->sendDatagram(bytes, destination, message.identifier(), message.relatesTo(), priority);
+	Q_UINT32 id = d->transport->send(bytes, destination, message.relatesTo(), priority);
+	message.setIdentifier(id);
+
+	Dialog *dialog = getDialogByCallId(QUuid(message.headers()["Call-ID"].toString()));
+	if (dialog != 0l)
+	{
+		dialog->setTransactionId(id);
+	}
 }
 
-//BEGIN GIF Message Functions
+//BEGIN Image Message Handling Functions
 
-//////////////////////////////////////////////////////////////////////
-// Handles session layer protocol image data messages received
-// Supported types: image/gif.
-//////////////////////////////////////////////////////////////////////
-
-void SessionClient::onImageReceived(const QByteArray& content, const Q_INT32 identifier, const Q_INT32 relatesTo)
+void SessionClient::onGifImageReceived(const Message& message)
 {
-	Q_UNUSED(relatesTo);
-
-	// NOTE The entire content is in UTF16 (unicode) encoding.
-	QTextStream sr(content, IO_ReadOnly);
-	sr.setEncoding(QTextStream::RawUnicode);
-	QString message = sr.read();
-
-	// Try to retrieve the image/gif data.
+	// Get the message body.
+	const QString & messageBody = message.body();
+	// Try to retrieve the base64 body parameter.
 	QRegExp regex("base64:([0-9a-zA-Z+/=]*)");
-	if (regex.search(message) != -1)
+	if (regex.search(messageBody) != -1)
 	{
 		QByteArray bytes;
-		// Convert from base64 encoded binary to a byte array
+		// Convert from base64 string to a byte array
 		KCodecs::base64Decode(regex.cap(1).utf8(), bytes);
 
-		//
-		// Write the image to a temporary file and fire
-		// the imageReceived event.
-		//
+		// Create a temporary file to store the data in.
 		KTempFile *temporaryFile = new KTempFile(locateLocal("tmp", "image-gif-"), ".gif");
 		QDataStream *stream = temporaryFile->dataStream();
 		if (stream)
 		{
-			// Write the image/gif data to the temporary file.
+			// Write the data to the temporary file.
 			stream->writeRawBytes(bytes.data(), bytes.size());
 		}
+		// Close the file.
 		temporaryFile->close();
 
 		emit imageReceived(temporaryFile);
 		temporaryFile = 0l;
 	}
+}
 
-	// Send an acknowledge to the other side.
-	sendAcknowledge(64, identifier, 0x00048391);
+//////////////////////////////////////////////////////////////////////
+// Handles session layer protocol image data messages received
+// Supported types: image/gif.
+//////////////////////////////////////////////////////////////////////
+void SessionClient::onImageReceived(const QByteArray& data, const Q_INT32 identifier, const Q_INT32 relatesTo)
+{
+	Q_UNUSED(relatesTo);
+
+	// Get the UTF16 (unicode) encoding string.
+	const QString msg = QString::fromUcs2((unsigned short*)((void*)data.data()));
+
+	Message message;
+	QMap<QString, QVariant> headers;
+	// Parse the message headers from the raw data.
+	parseHeaders(msg.section("\r\n\r\n", 0, 0), headers);
+	// Copy the parsed headers to the message's header collection.
+	message.copyHeadersFrom(headers);
+	// Set the message body content.
+	const QString messageBody = msg.section("\r\n\r\n", 1, 1, QString::SectionIncludeTrailingSep);
+	message.setBody(messageBody);
+
+	if (message.contentType() == QString::fromLatin1("image/gif"))
+	{
+		// Handle the gif image.
+		onGifImageReceived(message);
+	}
 }
 
 void SessionClient::sendImage(const QString& path)
 {
-	QFile file(path);
-	if (!file.open(IO_ReadOnly))
-	{
-		kdDebug() << k_funcinfo << "Could not open image file to send, " << path << endl;
-		return;
-	}
+	Q_UNUSED(path);
 
-	// Convert the image data to base64 binary data.
-	QByteArray base64Binary = KCodecs::base64Encode(file.readAll());
-
-	QByteArray bytes;
-	QTextStream stream(bytes, IO_WriteOnly);
-	stream.setEncoding(QTextStream::RawUnicode);
-	stream << "MIME-Version: 1.0" << "\r\n"
-	<< "Content-Type: image/gif" << "\r\n"
-	<< "\r\n"
-	<< "base64:" << base64Binary.data()
-	<< '\0';
-
-	d->transport->sendDatagram(bytes, 64, 0x00048390, 0);
+	// TODO Support the sending of gif images.  Currently,
+	// Kopete has not means of capturing handwriting/ink
+	// messages.
 }
 
 //END

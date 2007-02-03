@@ -20,33 +20,40 @@
 namespace PeerToPeer
 {
 
+/**
+ * @brief Provides support for monitoring activity on a session.
+ *
+ * @author Gregg Edghill <gregg.edghill@gmail.com>
+ */
 class SessionNotifier : public QObject
 {
 	Q_OBJECT
 
-		Q_INT32 _type;
+	public :
+		enum Type { Normal=0, Object=1, FileTransfer=2, Webcam=4 };
 
 	public :
 		/** @brief Creates a new instance of the SessionNotifier class. */
-		SessionNotifier(QObject *parent);
+		SessionNotifier(const Q_UINT32 session, const Type type, QObject *parent=0l);
 		~SessionNotifier();
 
-		void setType(const Q_INT32 type);
-		const Q_INT32 type();
+		const Q_UINT32 session() const;
+		void setType(const Type type);
+		const Type type() const;
 
 	signals:
-		void dataReceived(const QByteArray& data);
-		void endOfData(const Q_INT32 identifier);
+		void dataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
 		void messageAcknowledged(const Q_INT32 identifier);
 		void messageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo);
-		void transactionTimedout(const Q_INT32 identifier, const Q_INT32 relatesTo);
 
 	private:
-		void fireDataReceived(const QByteArray& data);
-		void fireEndOfData(const Q_INT32 identifier);
+		void fireDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
 		void fireMessageAcknowledged(const Q_INT32 identifier);
 		void fireMessageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo);
-		void fireTransactionTimedout(const Q_INT32 identifier, const Q_INT32 relatesTo);
+
+	private:
+		class SessionNotifierPrivate;
+		SessionNotifierPrivate *d;
 
 	friend class Transport;
 

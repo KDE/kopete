@@ -14,7 +14,6 @@
 
 #include "session.h"
 #include <kdebug.h>
-#include <qfile.h>
 
 namespace PeerToPeer
 {
@@ -22,12 +21,10 @@ namespace PeerToPeer
 class Session::SessionPrivate
 {
 	public:
-		SessionPrivate() : file(0l), transportId(0), state(Session::Created) {}
+		SessionPrivate() : state(Session::Created) {}
 
 		Direction direction;
-		QFile *file;
 		Q_UINT32 identifier;
-		Q_UINT32 transportId;
 		SessionState state;
 };
 
@@ -39,52 +36,17 @@ Session::Session(const Q_UINT32 identifier, Direction direction, QObject *parent
 
 Session::~Session()
 {
-	if (d->file != 0l)
-	{
-		d->file->close();
-		delete d->file;
-		d->file = 0l;
-	}
-
 	delete d;
-	d = 0l;
 }
 
-void Session::start()
-{
-	d->state = Session::Established;
-	onStart();
-}
-
-Session::Direction Session::direction() const
+const Session::Direction Session::direction() const
 {
 	return d->direction;
 }
 
-void Session::end()
-{
-	d->state = Session::Terminated;
-	onEnd();
-}
-
-const Q_UINT32 Session::id()
+const Q_UINT32 Session::id() const
 {
 	return d->identifier;
-}
-
-void Session::setDataStore(QFile *store)
-{
-	d->file = store;
-}
-
-void Session::setState(const SessionState state) const
-{
-	d->state = state;
-}
-
-void Session::setTransport(const Q_UINT32 transportId)
-{
-	d->transportId = transportId;
 }
 
 const Session::SessionState Session::state() const
@@ -92,34 +54,47 @@ const Session::SessionState Session::state() const
 	return d->state;
 }
 
-QFile* Session::dataStore()
+void Session::accept()
 {
-	return d->file;
+	// Signal that the session was accepted, locally.
+	emit accepted();
 }
 
-const Q_UINT32 Session::transport()
+void Session::cancel()
 {
-	return d->transportId;
+	// Set the session state to cancelled.
+	d->state = Session::Canceled;
+	// Signal that the session was cancelled, locally.
+	emit cancelled();
 }
 
-void Session::onDataReceived(const QByteArray& data)
+void Session::decline()
 {
-	kdDebug() << k_funcinfo << endl;
+	// Signal that the session was declined, locally.
+	emit declined();
 }
 
-void Session::onEndOfData(const Q_INT32 identifier)
+void Session::end()
 {
-	kdDebug() << k_funcinfo << endl;
+	// Set the session state to terminated.
+	d->state = Session::Terminated;
+	onEnd();
 }
 
-void  Session::onMessageSent(const Q_INT32 identifier)
+void Session::fault()
 {
-	kdDebug() << k_funcinfo << endl;
+	// Set the session state to faulted.
+	d->state = Session::Faulted;
+	onFaulted();
+	// Signal that the session has faulted.
+	emit faulted();
 }
 
-void Session::onMessageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo)
+void Session::start()
 {
-	kdDebug() << k_funcinfo << endl;
+	// Set the session state to established.
+	d->state = Session::Established;
+	onStart();
 }
 
 }

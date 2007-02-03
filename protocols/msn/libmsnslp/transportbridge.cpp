@@ -31,7 +31,6 @@ TransportBridge::TransportBridge(QObject *parent) : QObject(parent), d(new Trans
 TransportBridge::~TransportBridge()
 {
 	delete d;
-	d = 0l;
 }
 
 void TransportBridge::connect()

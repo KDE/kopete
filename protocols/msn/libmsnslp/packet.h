@@ -46,8 +46,8 @@ class Packet
 			// to the application upon arrival and not buffered until
 			// all data is received.
 			ObjectDataType = 0x20,
-			// Indicates that the sender has no more data to send.
-			EndOfDataType = 0x40,
+			// Indicates that the sender cancelled the data exchange.
+			CancelType = 0x40,
 			// Used to ungracefully close communication.
 			ResetType = 0x80,
 			// Indicates a direct connection nonce handshake.

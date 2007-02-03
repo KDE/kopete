@@ -116,12 +116,13 @@ const QString Packet::toString() const
 {
 	QString string;
 	QTextStream(string, IO_WriteOnly)
+	<< "\n"
 	<< "[destination]   " << QString::number(d->header.destination) << endl
 	<< "[identifier]    " << QString::number(d->header.identifier) << endl
 	<< "[offset]        " << QString::number(d->header.offset) << endl
 	<< "[window]        " << QString::number(d->header.window) << endl
 	<< "[payload size]  " << QString::number(d->header.payloadSize) << endl
-	<< "[flag]          " << QString::number(d->header.type) << endl
+	<< "[flag]          " << QString("0x%1 (%2)").arg(QString::number(d->header.type, 16).rightJustify(8, '0')).arg(d->header.type) << endl
 	<< "[lprcvd]        " << QString::number(d->header.lprcvd) << endl
 	<< "[lpsent]        " << QString::number(d->header.lpsent) << endl
 	<< "[lpsize]        " << QString::number(d->header.lpsize) << endl;

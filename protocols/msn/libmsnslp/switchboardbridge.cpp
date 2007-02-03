@@ -138,7 +138,7 @@ void SwitchboardBridge::send(const Packet& packet, const Q_UINT32 appId)
 	stream << appId;
 
 	kdDebug() << k_funcinfo << "About to send datachunk of size "
-		<< sizeof(Packet::Header) + packet.header().payloadSize + 4 << " bytes" << endl;
+		<< packet.size() << " bytes" << endl;
 
 	QByteArray datachunk;
 	datachunk.duplicate(bytes.data(), bytes.size());

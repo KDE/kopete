@@ -16,7 +16,7 @@
 #define CLASS_P2P__DIALOG_H
 
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <qptrlist.h>
 #include <quuid.h>
 
 namespace PeerToPeer
@@ -43,7 +43,7 @@ class Dialog : public QObject
 	Q_OBJECT
 
 	public :
-		/** @brief Represents the possible states of a dialog. */
+		/** @brief Defines the states of a dialog during its lifecycle. */
 		enum DialogState {Pending=0, Established=2, Terminating=4, Terminated=8};
 
 	public :
@@ -51,20 +51,20 @@ class Dialog : public QObject
 		Dialog(Transaction *transaction, QObject* parent);
 		~Dialog();
 
+		const QUuid callId();
 		void establish();
 		const QString from();
-		const QUuid identifier();
 		Transaction* initialTransaction() const;
 		void setState(const DialogState& state);
 		const DialogState state();
 		void terminate(const Q_UINT32 timeSpan=0);
 		const QString to();
-		const QValueList<Transaction*> & transactions() const;
-		QValueList<Transaction*> & transactions();
+		const QPtrList<Transaction> & transactions() const;
+		QPtrList<Transaction> & transactions();
 		void setInitialTransaction(Transaction* transaction);
 		const Q_UINT32 transactionId(bool nextTransactionId=false);
-
-		int session;
+		void setTransactionId(const Q_UINT32 transactionid);
+		Q_UINT32 session;
 
 	signals:
 		void established();

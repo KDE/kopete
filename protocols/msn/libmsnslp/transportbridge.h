@@ -31,7 +31,10 @@ class TransportBridge : public QObject
 	Q_OBJECT
 
 	public:
-		enum TransportBridgeState { Created, Connected, Disconnecting, Disconnected, Faulted };
+		/** @brief Represents the possible states during a transport bridge's life cycle. */
+		enum TransportBridgeState { Created, Connecting, Connected, Disconnecting, Disconnected, Faulted };
+		/** @brief Defines the types of transport bridges. */
+		enum TransportBridgeType { Direct, Indirect };
 
 	public:
 		/** @brief Creates a new instance of the class Transport Bridge. */
@@ -62,7 +65,7 @@ class TransportBridge : public QObject
 		class TransportBridgePrivate;
 		TransportBridgePrivate *d;
 
-}; // Transport
+}; // TransportBridge
 }
 
 #endif

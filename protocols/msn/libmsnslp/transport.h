@@ -17,8 +17,13 @@
 
 #include <qobject.h>
 #include <qcstring.h>
+#include <qpair.h>
 #include <qthread.h>
+#include <quuid.h>
+#include <qvaluelist.h>
 #include "packet.h"
+
+class QBuffer;
 
 namespace PeerToPeer
 {
@@ -42,33 +47,36 @@ class Transport : public QObject, public QThread
 
 		bool listen(const QString& address, const Q_UINT16 port);
 		void registerReceiver(Q_UINT32 port, SessionNotifier* receiver);
-		const Q_UINT32 createBridge(const QString& address, const Q_UINT16 port);
+		const Q_UINT32 createBridge(const QUuid& nonce, const QValueList<QString>& addresses, const Q_UINT16 port);
 		void setSwitchboardBridge(SwitchboardBridge* bridge);
 		void unregisterReceiver(Q_UINT32 port);
-		void queuePacket(const Packet& packet, const Q_UINT32 bridgeId);
-		void sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 identifier, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
-		void sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 identifier, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
-		void sendDatagram(const QByteArray& datagram, const Q_UINT32 destination, const Q_UINT32 identifier, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
+		void queuePacket(const Packet& packet, const Q_UINT32 bridgeId, bool prepend=false);
+		Q_UINT32 send(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
+		void sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
 
 	protected:
 		virtual void run();
 
-	signals:
-		void bridgeConnected(const Q_UINT32 identifier);
-
-	public slots:
-		void onPacketSent(const Q_UINT32 identifier, const bool acknowledged);
-
 	private slots:
 		void onBridgeConnected();
 		void onBridgeDisconnected();
+		void onBridgeError();
+		void onNonAcknowledgeControlPacketReceived(const Packet& packet);
+		void onNonceReceived(const QUuid& cnonce, const Q_UINT32 bridgeId);
+		void onReceive(const Packet& packet);
+		void onSend(const Packet& packet, const Q_UINT32 bridgeId);
+		void onSendFailed(const Packet& packet);
+		void onSent(const Q_UINT32 identifier, const bool packetSent);
+		void onSent(const Packet& packet);
 		void onSwitchboardReadyToSend();
-		void onPacketReceived(const Packet& packet);
 
 	private:
-		bool findOrCreateDatagram(const Packet& packet, QByteArray& datagram);
-		void reassembleDatagram(const Packet& packet, QByteArray& datagram);
-		bool tryDispatchDatagram(const QByteArray& datagram, const Q_UINT32 identifier, const Q_UINT32 relatesTo, const Q_UINT32 destination);
+		void dispatch(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 identifier, const Q_UINT32 relatesTo);
+		Q_UINT32 nextPacketSequenceNumber() const;
+		void reassembleData(const Packet& packet, QByteArray& data);
+		void sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd);
+		void sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
+		void sendNonce(const QUuid& nonce, const Q_UINT32 bridgeId);
 
 	private:
 		class TransportPrivate;

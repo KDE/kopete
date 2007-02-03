@@ -33,12 +33,12 @@ class PacketQueue : public QObject
 	Q_OBJECT
 
 	public:
-		PacketQueue(const Q_UINT32 chunkSize, QObject *parent);
+		PacketQueue(QObject *parent);
 		~PacketQueue();
 
 		const Packet dequeue(const Q_UINT32 chunkSize) const;
 		const bool dequeue(Packet & outPacket);
-		void enqueue(const Packet & packet) const;
+		void enqueue(const Packet & packet, bool prepend=false) const;
 		const bool isEmpty() const;
 
 	signals:

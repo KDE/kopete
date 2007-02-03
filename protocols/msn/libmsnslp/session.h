@@ -18,8 +18,6 @@
 #include <qobject.h>
 #include <qstring.h>
 
-class QFile;
-
 namespace PeerToPeer
 {
 
@@ -35,43 +33,58 @@ class Session : public QObject
 
 	public :
 		/** @brief Indicates which side of the communication the session is implemented on. */
-		enum Direction { None, Incoming, Outgoing };
-		/** @brief Represents the possible states of a session. */
+		enum Direction { Incoming, Outgoing };
+		/** @brief Defines the states of a session during its lifecycle. */
 		enum SessionState { Created, Established, Terminated, Canceled, Faulted };
 
 	public :
-		/** @brief Creates a new instance of the Session class. */
-		Session(const Q_UINT32 identifier, Direction direction, QObject *parent);
 		virtual ~Session();
-
-		Direction direction() const;
-		/** @brief Gets the identifier of a session. */
-		const Q_UINT32 id();
-		void setDataStore(QFile *file);
-		void setTransport(const Q_UINT32 transportId);
+		/** @brief Gets the direction of data flow for the communication. */
+		const Direction direction() const;
+		/** @brief Gets the unique identifier for the session. */
+		const Q_UINT32 id() const;
+		/** @brief Gets the current state of the session. */
 		const SessionState state() const;
-		const Q_UINT32 transport();
-		QFile* dataStore();
 
+		/** @brief Accepts a session. */
+		void accept();
+		/** @brief Cancels a session. */
+		void cancel();
+		/** @brief Declines a session. */
+		void decline();
+		/** @brief Ends a session. */
 		void end();
+		/** @brief Handles a session invitation. */
+		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context) = 0;
+		/** @brief Starts a session. */
 		void start();
 
-	public slots:
-		virtual void onDataReceived(const QByteArray& data);
-		virtual void onEndOfData(const Q_INT32 identifier);
-		virtual void onMessageSent(const Q_INT32 identifier);
-		virtual void onMessageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo);
+	protected:
+		/** @brief Creates a new instance of the Session class. */
+		Session(const Q_UINT32 identifier, Direction direction, QObject *parent);
+
+		void fault();
+		/** @brief When overriden by a derived class, starts a session. */
+		virtual void onStart() = 0;
+		/** @brief When overriden by a derived class, ends a session. */
+		virtual void onEnd() = 0;
+		/** @brief When overriden by a derived class, faults a session. */
+		virtual void onFaulted() = 0;
 
 	signals:
-		void sendAcknowledge(const Q_INT32 identifier);
-		void sendMessage(const QByteArray& message);
-		void readyWrite(const QByteArray& dataBuffer);
-		void terminate();
+		/** @brief Indicates that a session has been accepted by the user. */
+		void accepted();
+		/** @brief Indicates that a session has been cancelled by the user. */
+		void cancelled();
+		/** @brief Indicates that a session has been declined by the user. */
+		void declined();
+		/** @brief Indicates that a session has encountered a fault. */
+		void faulted();
+		/** @brief Indicates that a session has ended. */
+		void ended();
 
-	protected:
-		void setState(const SessionState state) const;
-		virtual void onStart() = 0;
-		virtual void onEnd() = 0;
+		void sendData(const QByteArray& bytes);
+		void sendMessage(const QByteArray& bytes);
 
 	private:
 		class SessionPrivate;

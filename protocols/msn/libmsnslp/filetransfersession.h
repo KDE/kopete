@@ -16,6 +16,7 @@
 #define CLASS_P2P__FILETRANSFERSESSION_H
 
 #include "session.h"
+#include <quuid.h>
 
 class QFile;
 
@@ -23,7 +24,7 @@ namespace PeerToPeer
 {
 
 /**
- * @brief Represents a session used to transfer a file.
+ * @brief Represents a session used to send or receive files.
  *
  * @author Gregg Edghill <gregg.edghill@gmail.com>
  */
@@ -32,16 +33,36 @@ class FileTransferSession : public Session
 	Q_OBJECT
 
 	public :
-		/** @brief Creates a new instance of the  File Session class. */
-		FileTransferSession(const Q_UINT32 identifier, Session::Direction direction, QObject *parent);
-		virtual ~FileTransferSession();
+		static QUuid uuid();
 
-	signals:
-		void transferComplete(const QString& path);
+	public :
+		/** @brief Creates a new instance of the FileTransferSession class. */
+		FileTransferSession(const Q_UINT32 identifier, Direction direction, QObject *parent);
+		virtual ~FileTransferSession();
+		/** @brief Handles a file transfer session invitation. */
+		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context);
+
+		QFile* dataStore() const;
+		void setDataStore(QFile *file) const;
 
 	protected:
-		virtual void onBegin();
+		virtual void onStart();
 		virtual void onEnd();
+		virtual void onFaulted();
+
+	signals:
+		/** @brief Indicates the current progress of a file download. */
+		void dataReadProgress(const Q_UINT32 done, const Q_INT64 total);
+		/** @brief Indicates the current progress of a file upload. */
+		void dataSendProgress(const Q_UINT32 done, const Q_INT64 total);
+
+	public slots:
+		void onDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
+		void onSend(const Q_INT32 identifier);
+
+	private:
+		class FileTransferSessionPrivate;
+		FileTransferSessionPrivate *d;
 
 }; // FileTransferSession
 }

@@ -1,5 +1,5 @@
 /*
-    datareceiver.cpp - Peer To Peer Session Notifier
+    sessionnotifier.cpp - Peer To Peer Session Notifier
 
     Copyright (c) 2006 by Gregg Edghill     <gregg.edghill@gmail.com>
 
@@ -17,32 +17,42 @@
 namespace PeerToPeer
 {
 
-SessionNotifier::SessionNotifier(QObject *parent) : QObject(parent), _type(0)
+class SessionNotifier::SessionNotifierPrivate
 {
+	public:
+		Q_UINT32 session;
+		Type type;
+};
+
+SessionNotifier::SessionNotifier(const Q_UINT32 session, const Type type, QObject *parent) : QObject(parent), d(new SessionNotifierPrivate())
+{
+	d->session = session;
+	d->type = type;
 }
 
 SessionNotifier::~SessionNotifier()
 {
+	delete d;
 }
 
-void SessionNotifier::setType(const Q_INT32 type)
+const Q_UINT32 SessionNotifier::session() const
 {
-	_type = type;
+	return d->session;
 }
 
-const Q_INT32 SessionNotifier::type()
+void SessionNotifier::setType(const Type type)
 {
-	return _type;
+	d->type = type;
 }
 
-void SessionNotifier::fireDataReceived(const QByteArray& data)
+const SessionNotifier::Type SessionNotifier::type() const
 {
-	emit dataReceived(data);
+	return d->type;
 }
 
-void SessionNotifier::fireEndOfData(const Q_INT32 identifier)
+void SessionNotifier::fireDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk)
 {
-	emit endOfData(identifier);
+	emit dataReceived(data, identifier, lastChunk);
 }
 
 void SessionNotifier::fireMessageAcknowledged(const Q_INT32 identifier)
@@ -53,11 +63,6 @@ void SessionNotifier::fireMessageAcknowledged(const Q_INT32 identifier)
 void SessionNotifier::fireMessageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo)
 {
 	emit messageReceived(message, identifier, relatesTo);
-}
-
-void SessionNotifier::fireTransactionTimedout(const Q_INT32 identifier, const Q_INT32 relatesTo)
-{
-	emit transactionTimedout(identifier, relatesTo);
 }
 
 }

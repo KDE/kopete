@@ -16,6 +16,7 @@
 #define CLASS_P2P__TCPTRANSPORTBRIDGE_H
 
 #include "transportbridge.h"
+#include <qvaluelist.h>
 
 namespace PeerToPeer
 {
@@ -32,7 +33,7 @@ class TcpTransportBridge : public TransportBridge
 
 	public:
 		/** @brief Creates a new instance of the TcpBridge class. */
-		TcpTransportBridge(const QString& address, const Q_UINT16 port, QObject *parent);
+		TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, QObject *parent);
 		virtual ~TcpTransportBridge();
 
 		virtual const Q_UINT32 identifier() const;
@@ -40,13 +41,15 @@ class TcpTransportBridge : public TransportBridge
 		virtual const Q_UINT32 maxSendBufferSize();
 		void doUpnpPortMappingIfNecessary();
 		bool listen();
+		/** @brief Sends a packet to the remote peer. */
+		void send(const Packet& packet);
 
 	protected:
 		virtual void onConnect();
 		virtual void onDisconnect();
 
 	private slots:
-		void onListenEndpointAccept();
+		void onSocketAccept();
 		void onListenEndpointError(int errorCode);
 		void onSocketClosed();
 		void onSocketConnected();

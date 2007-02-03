@@ -34,7 +34,7 @@ class Transaction : public QObject
 {
 	Q_OBJECT
 
-		/** @brief Represents the states of a transaction. */
+		/** @brief Defines the states of a transaction during its lifecycle. */
 		enum TransactionState {Calling=0, Confirmed=2, Terminated=4};
 
 	public :
@@ -45,9 +45,10 @@ class Transaction : public QObject
 		void begin() const;
 		void confirm() const;
 		void end() const;
-		const QUuid identifier() const;
+		const QUuid branch() const;
 		const bool isLocal() const;
 		const SlpRequest & request() const;
+		SlpRequest & request();
 		void setRequest(const SlpRequest& request);
 		const TransactionState & state() const;
 

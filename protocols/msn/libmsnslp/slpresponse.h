@@ -28,6 +28,10 @@ namespace PeerToPeer
 class SlpResponse : public SlpMessage
 {
 	public :
+		/** @brief Represents the possible status codes for a given request. */
+		enum StatusCode {OK=200, NotFound=404, NoSuchCall=481, InternalError=500, Decline=603};
+
+	public :
 		/** @brief Creates a new instance of the SlpResponse class. */
 		SlpResponse(const QString& version="1.0");
 		SlpResponse(Q_INT32 statusCode, const QString& statusDescription, const QString& version="1.0");
