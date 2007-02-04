@@ -79,6 +79,14 @@ target_link_libraries(xmlcontactstorage_test ${KOPETE_TEST_LIBRARIES})
 
 add_test(xmlcontactstorage_test ${EXECUTABLE_OUTPUT_PATH}/xmlcontactstorage_test)
 
+########### Tests Program ###############
+
+set(avatarselector_test_SRCS avatarselectortest_program.cpp)
+
+kde4_add_executable(avatarselectortest_program RUN_UNINSTALLED ${avatarselector_test_SRCS})
+
+target_link_libraries(avatarselectortest_program ${KOPETE_TEST_LIBRARIES})
+
 endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
