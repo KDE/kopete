@@ -132,11 +132,8 @@ void Dialog::setInitialTransaction(Transaction* transaction)
 	d->transactions.prepend(transaction);
 }
 
-const Q_UINT32 Dialog::transactionId(bool nextTransactionId)
+const Q_UINT32 Dialog::transactionId()
 {
-	Q_UNUSED(nextTransactionId);
-
-// 	return (nextTransactionId ? ++d->transactionId : d->transactionId);
 	return d->transactionId;
 }
 

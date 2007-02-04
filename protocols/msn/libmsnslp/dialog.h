@@ -62,7 +62,7 @@ class Dialog : public QObject
 		const QPtrList<Transaction> & transactions() const;
 		QPtrList<Transaction> & transactions();
 		void setInitialTransaction(Transaction* transaction);
-		const Q_UINT32 transactionId(bool nextTransactionId=false);
+		const Q_UINT32 transactionId();
 		void setTransactionId(const Q_UINT32 transactionid);
 		Q_UINT32 session;
 
