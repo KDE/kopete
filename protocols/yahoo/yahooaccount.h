@@ -119,12 +119,6 @@ public:
 	 */
 	void setBuddyIcon( KURL url );
 
-	/**
-	 * Return flag describing wether or not we send a buddy icon
-	 * 0 = no image, 2 = buddy icon, 1 = avatar?
-	 */
-	int pictureFlag();
-
 	void verifyAccount( const QString &word );
 
 	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
@@ -270,8 +264,6 @@ private:
 
 	QMap<unsigned int, Kopete::Transfer *> m_fileTransfers;
 
-	void setPictureFlag( int flag );
-
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
 
@@ -283,7 +275,6 @@ private:
 	int m_sessionId;		// The Yahoo session descriptor
 	int m_lastDisconnectCode;	// The last disconnect code.
 	int m_currentMailCount;
-	int m_pictureFlag;			// Describes if we send a buddy icon or not
 	long m_YABLastMerge;		// The YAB Revision on which the last merge was done
 	long m_YABLastRemoteRevision;	// The last remote YAB Revision on which a sync was done
 	YahooProtocol *m_protocol;	// The Protocol Object

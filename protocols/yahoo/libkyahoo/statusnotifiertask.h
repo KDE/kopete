@@ -47,6 +47,7 @@ signals:
 	void authorizationAccepted( const QString & );
 	void authorizationRejected( const QString &, const QString & );
 	void gotAuthorizationRequest( const QString &, const QString &, const QString & );
+	void gotPictureChecksum( const QString &, int );
 };
 
 #endif

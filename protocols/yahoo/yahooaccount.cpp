@@ -91,7 +91,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_session = new Client( this );
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
-	m_pictureFlag = 0;
 	m_webcam = 0L;
 	
 	m_session->setUserId( accountId.lower() );
@@ -635,17 +634,6 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	}
 }
 
-void YahooAccount::setPictureFlag( int flag )
-{
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << " PictureFlag: " << flag << endl;
-	m_pictureFlag = flag;
-}
-
-int YahooAccount::pictureFlag()
-{
-	return m_pictureFlag;
-}
-
 void YahooAccount::sendFile( YahooContact *to, const KURL &url )
 {	
 	QFile file( url.path() );
@@ -888,7 +876,7 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 					myself()->onlineStatus() != m_protocol->Invisible && 
 					!kc->stealthed() )
 			{
-				kc->sendBuddyIconUpdate( pictureFlag() );
+				kc->sendBuddyIconUpdate( m_session->pictureFlag() );
 				kc->sendBuddyIconChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 			}
 		}
@@ -1630,7 +1618,8 @@ void YahooAccount::setBuddyIcon( KURL url )
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		myself()->removeProperty( YahooProtocol::protocol()->iconRemoteUrl );
 		myself()->removeProperty( YahooProtocol::protocol()->iconExpire );
-		setPictureFlag( 0 );
+		myself()->removeProperty( YahooProtocol::protocol()->iconCheckSum );
+		m_session->setPictureFlag( 0 );
 		
 		slotBuddyIconChanged( QString::null );
 	}
@@ -1681,8 +1670,6 @@ void YahooAccount::setBuddyIcon( KURL url )
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 		configGroup()->writeEntry( "iconLocalUrl", newlocation );
 		
-		setPictureFlag( 2 );
-		
 		if ( checksum != static_cast<uint>(myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
 		     QDateTime::currentDateTime().toTime_t() > expire )
 		{
@@ -1705,23 +1692,15 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 	if ( url.isEmpty() )	// remove pictures from buddie's clients
 	{
 		checksum = 0;	
-		setPictureFlag( 0 );
+		m_session->setPictureFlag( 0 );
 	}
 	else
 	{
 		myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, url );
 		configGroup()->writeEntry( "iconRemoteUrl", url );
-		setPictureFlag( 2 );
+		m_session->setPictureFlag( 2 );
 		m_session->sendPictureChecksum( checksum, QString::null );
 	}
-	
-// 	for ( ; it.current(); ++it )
-// 	{
-// 		if ( it.current() == myself() || !it.current()->isReachable() )
-// 			continue;
-// 		static_cast< YahooContact* >( it.current() )->sendBuddyIconChecksum( checksum );
-// 		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( pictureFlag() );
-// 	}
 }
 
 void YahooAccount::slotWebcamReadyForTransmission()

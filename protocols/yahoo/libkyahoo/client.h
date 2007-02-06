@@ -111,6 +111,17 @@ Q_OBJECT
 		 */
 		QString host();
 		int port();
+		
+		/**
+		 * return the pictureFlag describing the status of our buddy icon
+		 * 0 = no icon, 2 = icon, 1 = avatar (?)
+		 */
+		int pictureFlag();
+		
+		/**
+		 * set the pictureFlag describing the status of our buddy icon
+		 */
+		void setPictureFlag( int flag );
 
 		/**
 		 * Send a Typing notification
@@ -344,12 +355,6 @@ Q_OBJECT
 		 * current Session ID
 		 */
 		uint sessionID();
-		
-		/**
-		 * return the pictureFlag describing the status of our buddy icon
-		 * 0 = no icon, 2 = icon, 1 = avatar (?)
-		 */
-		int pictureFlag();
 
 		/**
 		 * Get our status

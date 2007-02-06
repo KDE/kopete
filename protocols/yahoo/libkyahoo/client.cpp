@@ -699,6 +699,11 @@ int Client::pictureFlag()
 	return d->pictureFlag;
 }
 
+void Client::setPictureFlag( int flag )
+{
+	d->pictureFlag = flag;
+}
+
 QString Client::yCookie()
 {
 	return d->yCookie;
@@ -762,6 +767,8 @@ void Client::initTasks()
 				SIGNAL( authorizationAccepted( const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( gotAuthorizationRequest( const QString &, const QString &, const QString & ) ), 
 				SIGNAL( gotAuthorizationRequest( const QString &, const QString &, const QString & ) ) );
+	QObject::connect( d->statusTask, SIGNAL( gotPictureChecksum( const QString &, int ) ),
+				SIGNAL( pictureChecksumNotify( const QString &, int ) ) );
 
 	d->mailTask = new MailNotifierTask( d->root );
 	QObject::connect( d->mailTask, SIGNAL( mailNotify(const QString&, const QString&, int) ), 

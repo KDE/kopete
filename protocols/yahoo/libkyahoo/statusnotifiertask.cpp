@@ -98,6 +98,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 	int away;		/* key = 47  */
 	int idle;		/* key = 137 */
 	bool utf;		/* key = 97 */
+	int checksum;		/* key = 192 */
 
 	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
@@ -113,6 +114,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 		away = t->nthParamSeparated( 47, i, 7 ).toInt();
 		idle = t->nthParamSeparated( 137, i, 7 ).toInt();
 		utf = t->nthParamSeparated( 97, i, 7 ).toInt() == 1;
+		checksum = t->nthParamSeparated( 192, i, 7 ).toInt();
 		if( utf )
 			message = QString::fromUtf8( t->nthParamSeparated( 19, i, 7 ) );
 		else
@@ -122,6 +124,9 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0, 0 );
 		else
 			emit statusChanged( nick, state, message, away, idle );
+		
+		if( checksum )
+			emit gotPictureChecksum( nick, checksum );
 	}
 }
 
