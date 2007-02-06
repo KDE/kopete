@@ -99,7 +99,9 @@ bool LoginTask::take( Transfer * transfer )
 		container = static_cast<Field::MultiField *>( *it );
 		extractContact( container );
 	}
-	
+
+	extractKeepalivePeriod( loginResponseFields );
+
 	setSuccess();
 	
 	return true;
@@ -335,6 +337,23 @@ void LoginTask::extractCustomStatuses( Field::FieldList & fields )
 					}
 					emit gotCustomStatus( custom );
 				}
+			}
+		}
+	}
+}
+
+void LoginTask::extractKeepalivePeriod( Field::FieldList & fields )
+{
+	Field::FieldListIterator it = fields.find( NM_A_UD_KEEPALIVE );
+	if ( it != fields.end() )
+	{
+		if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
+		{
+			bool ok;
+			int period = sf->value().toInt( &ok );
+			if ( ok )
+			{
+				emit gotKeepalivePeriod( period );
 			}
 		}
 	}

@@ -20,6 +20,7 @@
 */
 
 #include <qapplication.h>
+#include <qtimer.h>
 
 #include "chatroommanager.h"
 #include "gwclientstream.h"
@@ -63,6 +64,7 @@ public:
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
 	QValueList<GroupWise::CustomStatus> customStatuses;
+	QTimer * keepAliveTimer;
 };
 
 Client::Client(QObject *par, uint protocolVersion )
@@ -82,6 +84,9 @@ Client::Client(QObject *par, uint protocolVersion )
 	d->privacyMgr = new PrivacyManager( this, "privacymgr" );
 	d->stream = 0;
 	d->protocolVersion = protocolVersion;
+	// Sends regular keepalives so the server knows we are still running
+	d->keepAliveTimer = new QTimer( this );
+	connect( d->keepAliveTimer, SIGNAL( timeout() ), SLOT( sendKeepAlive() ) );
 }
 
 Client::~Client()
@@ -148,6 +153,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 	connect( login, SIGNAL( gotCustomStatus( const GroupWise::CustomStatus & ) ), 
 			SLOT( lt_gotCustomStatus( const GroupWise::CustomStatus & ) ) );
+
+	connect( login, SIGNAL( gotKeepalivePeriod( int ) ), SLOT( lt_gotKeepalivePeriod( int ) ) );
 
 	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
@@ -319,9 +326,6 @@ void Client::lt_loginFinished()
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString::null, QString::null );
 		sst->go( true );
-		// Sends keepalives every minute so the server knows we are still alive
-		KeepAliveTask * kat = new KeepAliveTask( d->root );
-		kat->go( true );
 		emit loggedIn();
 		// fetch details for any privacy list items that aren't in our contact list.
 		// There is a chicken-and-egg case regarding this: We need the privacy before reading the contact list so
@@ -506,4 +510,15 @@ ChatroomManager * Client::chatroomManager()
 	return d->chatroomMgr;
 }
 
+void Client::lt_gotKeepalivePeriod( int period )
+{
+	d->keepAliveTimer->start( period * 60 * 1000 );
+}
+
+void Client::sendKeepAlive()
+{
+	KeepAliveTask * kat = new KeepAliveTask( d->root );
+	kat->setup();
+	kat->go( true );
+}
 #include "client.moc"

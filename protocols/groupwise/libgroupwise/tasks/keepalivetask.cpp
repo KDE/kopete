@@ -19,29 +19,21 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-
 #include "client.h"
 #include "request.h"
 #include "requestfactory.h"
 #include "keepalivetask.h"
 
-#define GW_KEEPALIVE_INTERVAL 60000
-
 KeepAliveTask::KeepAliveTask(Task* parent): RequestTask(parent)
 {
-	m_keepAliveTimer = new QTimer( this );
-	connect( m_keepAliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
-	m_keepAliveTimer->start( GW_KEEPALIVE_INTERVAL );
 }
 
 
 KeepAliveTask::~KeepAliveTask()
 {
-	delete m_keepAliveTimer;
 }
 
-void KeepAliveTask::slotSendKeepAlive()
+void KeepAliveTask::setup()
 {
 	Field::FieldList lst;
 	createTransfer( "ping", lst );

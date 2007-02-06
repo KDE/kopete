@@ -23,8 +23,6 @@
 
 #include "requesttask.h"
 
-class QTimer;
-
 /**
 @author Kopete Developers
 */
@@ -34,10 +32,7 @@ Q_OBJECT
 public:
 	KeepAliveTask(Task* parent);
 	~KeepAliveTask();
-protected slots:
-	void slotSendKeepAlive();
-private:
-	QTimer * m_keepAliveTimer;
+	void setup();
 };
 
 #endif
