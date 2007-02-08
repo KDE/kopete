@@ -330,7 +330,7 @@ struct ClientVersion
     const WORD STATUS_INVISIBLE     = 0x0100; // Invisible
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Oscar::Capabilities);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Oscar::Capabilities)
 
 #endif
 
