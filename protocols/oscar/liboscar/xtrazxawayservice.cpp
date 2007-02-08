@@ -39,12 +39,12 @@ QString XAwayService::senderId() const
 
 void XAwayService::setIconIndex( int index )
 {
-	m_iconIndex = index;
+	m_iconIndex = index + 1;
 }
 
 int XAwayService::iconIndex() const
 {
-	return m_iconIndex;
+	return m_iconIndex - 1;
 }
 
 void XAwayService::setTitle( const QString& title )

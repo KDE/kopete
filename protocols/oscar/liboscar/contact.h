@@ -43,7 +43,7 @@ public:
 	quint16 bid() const;
 
 	//! Check to see if the contact supports a certain capability 
-	bool supportsFeature( Oscar::Capability );
+	bool supportsFeature( Oscar::Capability ) const;
 
 	/**
 	 * \brief The type of the OContact Item.

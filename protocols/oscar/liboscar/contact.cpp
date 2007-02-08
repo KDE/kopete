@@ -85,7 +85,7 @@ quint16 OContact::bid() const
 	return m_bid;
 }
 
-bool OContact::supportsFeature( Oscar::Capability c )
+bool OContact::supportsFeature( Oscar::Capability c ) const
 {
 	return ( m_caps & c );
 }

@@ -160,7 +160,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString, int &xSta
 		} // END for...
 		if ( !found && xStatus == -1 )
 		{
-			for ( int i = 0; i < XSTATUSCAPS; i++ )
+			for ( int i = 0; i < XSTAT_LAST; i++ )
 			{
 				if ( oscar_xStatus[i] == cap )
 				{
