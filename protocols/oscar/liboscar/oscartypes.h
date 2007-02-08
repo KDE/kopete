@@ -45,7 +45,7 @@ enum Capability
 	CAP_DEVILS, CAP_NEWCAPS, CAP_UNKNOWN1, CAP_UNKNOWN2, CAP_UNKNOWN3, CAP_LAST
 };
 
-Q_DECLARE_FLAGS( Capabilities, Capability );
+Q_DECLARE_FLAGS( Capabilities, Capability )
 
 const Guid oscar_caps[] =
 {
