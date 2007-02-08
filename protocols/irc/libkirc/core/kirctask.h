@@ -56,30 +56,16 @@ public:
 		FullyHandled = PluginHandled | SystemHandled 
 	};
 
-	Task(QObject *parent = 0);
+	explicit Task(QObject *parent = 0);
 	~Task();
 
 public:
-	/**
-	 * Tries to handle a user command.
-	 *
-	 * @return the status of the command handling.
-	 */
-	virtual Status doCommand(KIrc::Message command);
-
 	/**
 	 * Tries to handle an event.
 	 *
 	 * @return the status of the event handling.
 	 */
-	virtual Status doEvent(KIrc::Event event);
-
-	/**
-	 * Tries to handle a server message.
-	 *
-	 * @return the status of the message handling.
-	 */
-	virtual Status doMessage(KIrc::Message message);
+	virtual Status doEvent(KIrc::Event *event);
 
 /*
 	virtual QStringList listCommands();
@@ -88,11 +74,11 @@ public:
 */
 
 signals:
-	void postEvent(KIrc::Event event);
+	void postEvent(KIrc::Event *event);
 
-	void postCommand(KIrc::Message command);
+//	void postCommand(KIrc::Message command);
 
-	void postMessage(KIrc::Message message);
+//	void postMessage(KIrc::Message message);
 
 private:
 	Q_DISABLE_COPY(Task)

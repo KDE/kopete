@@ -36,8 +36,8 @@ class TransferServer
 	Q_OBJECT
 
 public:
-//	TransferServer(QObject *parent = 0);
-	TransferServer(quint16 port, int backlog = 1, QObject *parent = 0);
+//	explicit TransferServer(QObject *parent = 0);
+	explicit TransferServer(quint16 port, int backlog = 1, QObject *parent = 0);
 	TransferServer(KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
 			QString fileName, quint32 fileSize,

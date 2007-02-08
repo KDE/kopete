@@ -62,7 +62,7 @@ public:
 		Closing
 	};
 
-	Socket(QObject *parent = 0);
+	explicit Socket(QObject *parent = 0);
 	~Socket();
 
 public: // READ properties accessors.

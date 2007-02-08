@@ -38,7 +38,7 @@ class EntityManager
 	friend class Entity;
 
 public:
-	EntityManager(QObject *parent = 0);
+	explicit EntityManager(QObject *parent = 0);
 	~EntityManager();
 
 public:

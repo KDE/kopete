@@ -39,7 +39,7 @@ class ClientCommands
 	Q_OBJECT
 
 public:
-	ClientCommands(QObject *parent = 0);
+	explicit ClientCommands(QObject *parent = 0);
 	~ClientCommands();
 
 private slots:

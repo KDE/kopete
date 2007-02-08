@@ -35,7 +35,7 @@ class IRCAddContactPage
 {
 	Q_OBJECT
 public:
-	IRCAddContactPage(QWidget *parent=0, IRCAccount* account = 0);
+	explicit IRCAddContactPage(QWidget *parent=0, IRCAccount* account = 0);
 	~IRCAddContactPage();
 
 public slots:

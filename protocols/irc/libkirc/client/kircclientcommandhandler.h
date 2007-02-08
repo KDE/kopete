@@ -38,7 +38,7 @@ class ClientCommandHandler
 	Q_OBJECT
 
 public:
-	ClientCommandHandler(QObject *parent = 0);
+	explicit ClientCommandHandler(QObject *parent = 0);
 	~ClientCommandHandler();
 
 public slots:

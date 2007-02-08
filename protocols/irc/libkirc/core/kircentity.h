@@ -60,7 +60,7 @@ public:
 	static bool isChannel( const QByteArray &name );
 	static bool isUser( const QByteArray &name );
 */
-	Entity(QObject *parent = 0);
+	explicit Entity(QObject *parent = 0);
 	virtual ~Entity();
 
 public: // Read attributes accessors

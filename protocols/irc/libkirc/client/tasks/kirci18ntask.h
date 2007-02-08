@@ -39,7 +39,7 @@ class KIRCCLIENT_EXPORT I18nTask
 
 public:
 #warning Make singleton
-	I18nTask(QObject *parent = 0);
+	explicit I18nTask(QObject *parent = 0);
 	~I18nTask();
 
 private slots:

@@ -36,7 +36,7 @@ class KIRCCLIENT_EXPORT ClientTask
 	Q_OBJECT
 
 public:
-	ClientTask(QObject *parent = 0);
+	explicit ClientTask(QObject *parent = 0);
 	~ClientTask();
 
 private:

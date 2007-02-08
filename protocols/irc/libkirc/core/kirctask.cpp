@@ -32,17 +32,7 @@ Task::~Task()
 //	delete d;
 }
 
-Task::Status Task::doCommand(KIrc::Message)
-{
-	return NotHandled;
-}
-
-Task::Status Task::doEvent(KIrc::Event)
-{
-	return NotHandled;
-}
-
-Task::Status Task::doMessage(KIrc::Message)
+Task::Status Task::doEvent(KIrc::Event *)
 {
 	return NotHandled;
 }

@@ -33,18 +33,9 @@ SimpleTask::~SimpleTask()
 //	delete d;
 }
 
-Task::Status SimpleTask::doCommand(Message msg)
+Task::Status SimpleTask::doEvent(Event *event)
 {
-        return doMessage("doCommand_", msg);
-}
-
-Task::Status SimpleTask::doMessage(Message msg)
-{
-        return doMessage("doMessage_", msg);
-}
-
-Task::Status SimpleTask::doMessage(const char *commandPrefix, Message msg)
-{
+/*
         if (!msg.isValid())
         {
                 return NotHandled;
@@ -56,7 +47,7 @@ Task::Status SimpleTask::doMessage(const char *commandPrefix, Message msg)
         {
                 return handled;
         }
-
+*/
         return NotHandled;
 }
 

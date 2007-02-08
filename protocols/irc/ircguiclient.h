@@ -38,7 +38,7 @@ class IRCGUIClient
 	Q_OBJECT
 
 public:
-	IRCGUIClient(Kopete::ChatSession *parent = 0);
+	explicit IRCGUIClient(Kopete::ChatSession *parent = 0);
 	~IRCGUIClient();
 
 private slots:

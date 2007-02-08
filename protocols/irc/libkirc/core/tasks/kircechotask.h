@@ -40,7 +40,7 @@ class KIRC_EXPORT EchoTask
 
 public:
 #warning Make singleton
-	EchoTask(QObject *parent = 0);
+	explicit EchoTask(QObject *parent = 0);
 	~EchoTask();
 
 public:

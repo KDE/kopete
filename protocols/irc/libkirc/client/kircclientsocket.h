@@ -39,7 +39,7 @@ class KIRCCLIENT_EXPORT ClientSocket
 	Q_OBJECT
 
 public:
-	ClientSocket(QObject *parent = 0);
+	explicit ClientSocket(QObject *parent = 0);
 	~ClientSocket();
 
 public: // READ properties accessors.

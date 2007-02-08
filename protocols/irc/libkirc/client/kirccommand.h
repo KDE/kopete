@@ -49,7 +49,7 @@ public:
 
 	typdef QFlags<CheckFlag> CheckFlags;
 */
-	Command(QObject *parent = 0);
+	explicit Command(QObject *parent = 0);
 	~Command();
 
 public: // READ properties accessors.
