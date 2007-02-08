@@ -36,7 +36,7 @@ const int OSCAR_ICQ_DEBUG = 14153;
 namespace Oscar
 {
 //! Capabilities
-enum Capabilities
+enum Capability
 {
 	CAP_CHAT = 0, CAP_VOICE, CAP_SENDFILE, CAP_DIRECT_ICQ_COMMUNICATION, CAP_IMIMAGE, CAP_BUDDYICON, CAP_SAVESTOCKS,
 	CAP_GETFILE, CAP_ICQSERVERRELAY, CAP_GAMES, CAP_GAMES2, CAP_SENDBUDDYLIST, CAP_RTFMSGS, CAP_IS_2001,
@@ -44,6 +44,8 @@ enum Capabilities
 	CAP_MACICQ, CAP_SIMOLD, CAP_SIMNEW, CAP_XTRAZ, CAP_STR_2001, CAP_STR_2002, CAP_XTRAZ_MULTIUSER_CHAT,
 	CAP_DEVILS, CAP_NEWCAPS, CAP_UNKNOWN1, CAP_UNKNOWN2, CAP_UNKNOWN3, CAP_LAST
 };
+
+Q_DECLARE_FLAGS( Capabilities, Capability );
 
 const Guid oscar_caps[] =
 {
@@ -327,6 +329,8 @@ struct ClientVersion
     const WORD STATUS_FREE4CHAT     = 0x0020; // Free for chat
     const WORD STATUS_INVISIBLE     = 0x0100; // Invisible
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Oscar::Capabilities);
 
 #endif
 

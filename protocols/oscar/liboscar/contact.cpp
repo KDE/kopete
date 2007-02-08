@@ -29,6 +29,7 @@ OContact::OContact()
 	m_type = 0xFFFF;
 	m_tlvLength = 0;
 	m_waitingAuth = false;
+	m_caps = 0;
 }
 
 OContact::OContact( const QString &name, int gid, int bid, int type, const QList<TLV> &tlvlist, int tlvLength )
@@ -56,6 +57,7 @@ OContact::OContact( const OContact& other )
 	m_tlvLength = other.m_tlvLength;
 	m_alias = other.m_alias;
 	m_waitingAuth = other.m_waitingAuth;
+	m_caps = other.m_caps;
 
 	//deepcopy the tlvs
 	m_tlvList = other.m_tlvList;
@@ -81,6 +83,11 @@ quint16 OContact::gid() const
 quint16 OContact::bid() const
 {
 	return m_bid;
+}
+
+bool OContact::supportsFeature( Oscar::Capability c )
+{
+	return ( m_caps | c );
 }
 
 quint16 OContact::type() const

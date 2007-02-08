@@ -42,6 +42,9 @@ public:
 	/** \brief The buddy id of the OContact item */
 	quint16 bid() const;
 
+	//! Check to see if the contact supports a certain capability 
+	bool supportsFeature( Oscar::Capability );
+
 	/**
 	 * \brief The type of the OContact Item.
 	 * see ROSTER_* defines on oscartypes.h
@@ -85,8 +88,10 @@ public:
 	/** Set whether we are waiting authorization or not from this item */
 	void setWaitingAuth( bool waiting );
 
+	//! Set the icon hash for this contact.
 	void setIconHash( QByteArray hash );
 
+	//! Get the icon hash for this contact.
 	QByteArray iconHash() const;
 
 	/** \brief String representation of our OContact object */
@@ -112,6 +117,7 @@ private:
 	bool m_waitingAuth;
 	QString m_alias;
 	QByteArray m_hash;
+	Oscar::Capabilities m_caps;
 };
 
 #endif
