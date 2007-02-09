@@ -1,21 +1,23 @@
-// filetransfertask.cpp
+/*
+    Kopete Oscar Protocol
+    File Transfer Task
 
-// Copyright (C)  2006
+    Copyright 2006 Chani Armitage <chanika@gmail.com>
+    Copyright 2007 Matt Rogers <mattr@kde.org>
 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+    Kopete ( c ) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+    based on ssidata.h and ssidata.cpp ( c ) 2002 Tom Linsky <twl6@po.cwru.edu>
 
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301  USA
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or ( at your option ) any later version.    *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include "oscarsettings.h"
 #include "filetransfertask.h"
@@ -719,4 +721,5 @@ Oscar::Message FileTransferTask::makeFTMsg()
 }
 
 #include "filetransfertask.moc"
+//kate: space-indent off; tab-width 4; indent-mode csands;
 
