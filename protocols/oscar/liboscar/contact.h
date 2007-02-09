@@ -29,25 +29,40 @@ public:
 	OContact( const QString &name, int gid, int bid, int type, const QList<Oscar::TLV>& tlvlist, int tlvLength = 0 );
 	OContact( const OContact& other );
 
-	/** Get the validity of this item */
+	/** 
+	 * Get the validity of this item
+	 * Invalid items have a type of 0xFFFF
+	 */
 	bool isValid() const;
 
-	/** \brief The name of this OContact item.
-	 * This is usually the screenname, ICQ number, or group name. */
+	/**
+	 * \brief The name of this OContact item.
+	 * This is usually the screenname, ICQ number, or group name.
+	 */
 	QString name() const;
 
-	/** \brief The group id of the OContact item */
+	/**
+	 * \brief The group id of the OContact item
+	 * The group id is given to us by the server
+	 */
 	quint16 gid() const;
 
-	/** \brief The buddy id of the OContact item */
+	/**
+	 * \brief The buddy id of the OContact item
+	 * The buddy id is given to us by the server
+	 */
 	quint16 bid() const;
 
-	//! Check to see if the contact supports a certain capability 
+	/**
+	 * Check to see if the contact supports a certain capability 
+	 * 
+	 * Capabilities are defined in oscartypes.h
+	 */
 	bool supportsFeature( Oscar::Capability ) const;
 
 	/**
 	 * \brief The type of the OContact Item.
-	 * see ROSTER_* defines on oscartypes.h
+	 * The ROSTER defines in oscartypes.h detail what types we know about
 	 * Use a value of 0xFFFF for an OContact item not on the server list
 	 */
 	quint16 type() const;
@@ -121,3 +136,4 @@ private:
 };
 
 #endif
+//kate: space-indent off; tab-width 4; auto-insert-doxygen on; indent-mode csands;
