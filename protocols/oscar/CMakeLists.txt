@@ -1,24 +1,26 @@
 
-add_subdirectory( liboscar ) 
-add_subdirectory( aim ) 
-add_subdirectory( icq ) 
-add_subdirectory( icons ) 
+add_subdirectory( liboscar )
+add_subdirectory( aim )
+add_subdirectory( icq )
+add_subdirectory( icons )
 
 include_directories(
-${KOPETE_INCLUDES} 
-${CMAKE_CURRENT_SOURCE_DIR}/liboscar/ 
+${KOPETE_INCLUDES}
+${CMAKE_CURRENT_SOURCE_DIR}/liboscar/
+${CMAKE_CURRENT_SOURCE_DIR}/liboscar/utils
+${CMAKE_CURRENT_SOURCE_DIR}/liboscar/tasks
 )
 
 
 ########### next target ###############
 
-set(kopete_oscar_LIB_SRCS 
-   oscarprotocol.cpp 
-   oscaraccount.cpp 
-   oscarcontact.cpp 
-   oscarmyselfcontact.cpp 
-   oscarencodingselectiondialog.cpp 
-   oscarlistnonservercontacts.cpp 
+set(kopete_oscar_LIB_SRCS
+   oscarprotocol.cpp
+   oscaraccount.cpp
+   oscarcontact.cpp
+   oscarmyselfcontact.cpp
+   oscarencodingselectiondialog.cpp
+   oscarlistnonservercontacts.cpp
    oscarversionupdater.cpp
    oscarprivacyengine.cpp
    aimcontactbase.cpp

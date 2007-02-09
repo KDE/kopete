@@ -2,7 +2,7 @@
 add_subdirectory( tests ) 
 
 include_directories(
-${KOPETE_INCLUDES} ${CMAKE_CURRENT_SRC_DIR}/utils
+${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/utils ${CMAKE_CURRENT_SOURCE_DIR}/tasks
 )
 
 
@@ -11,84 +11,84 @@ ${KOPETE_INCLUDES} ${CMAKE_CURRENT_SRC_DIR}/utils
 set(liboscar_SRCS 
     oscarutils.cpp
     client.cpp 
-    task.cpp 
     connector.cpp
-    inputprotocolbase.cpp 
-    coreprotocol.cpp 
+    inputprotocolbase.cpp
+    coreprotocol.cpp
     flapprotocol.cpp 
-    snacprotocol.cpp 
-    oftprotocol.cpp 
-    ofttransfer.cpp 
+    snacprotocol.cpp
+    oftprotocol.cpp
+    ofttransfer.cpp
     transfer.cpp 
     bytestream.cpp
-    oscarclientstream.cpp 
-    safedelete.cpp 
-    stream.cpp 
-    oscarconnector.cpp 
-    oscarbytestream.cpp 
-    buffer.cpp 
-    logintask.cpp 
-    aimlogintask.cpp 
-    icqlogintask.cpp 
-    closeconnectiontask.cpp 
-    rateclassmanager.cpp 
-    serverversionstask.cpp 
-    rateinfotask.cpp 
-    errortask.cpp 
-    locationrightstask.cpp 
-    profiletask.cpp 
-    blmlimitstask.cpp 
-    servicesetuptask.cpp 
-    icbmparamstask.cpp 
-    contactmanager.cpp 
-    contact.cpp 
-    rateclass.cpp 
-    rateclass.h 
-    prmparamstask.cpp 
-    ssiparamstask.cpp 
-    ssilisttask.cpp 
-    ssiactivatetask.cpp 
-    clientreadytask.cpp 
-    senddcinfotask.cpp 
-    sendidletimetask.cpp 
-    ownuserinfotask.cpp 
-    connection.cpp 
-    onlinenotifiertask.cpp 
-    userdetails.cpp 
-    ssimodifytask.cpp 
-    oscartypeclasses.cpp 
-    oscarmessage.cpp 
-    messagereceivertask.cpp 
-    sendmessagetask.cpp 
-    icqtask.cpp 
-    offlinemessagestask.cpp 
-    ssiauthtask.cpp 
-    userinfotask.cpp 
-    icquserinfo.cpp 
-    icquserinfotask.cpp 
-    usersearchtask.cpp 
-    warningtask.cpp 
-    changevisibilitytask.cpp 
-    typingnotifytask.cpp 
-    buddyicontask.cpp 
-    serverredirecttask.cpp 
-    oscarsettings.cpp 
-    filetransfertask.cpp
-    localcontactlisttask.cpp 
-    chatnavservicetask.cpp 
-    connectionhandler.cpp 
-    chatservicetask.cpp 
-    oscarguid.cpp 
-    icquserinfoupdatetask.cpp 
-    icqchangepasswordtask.cpp 
-    oscarmessageplugin.cpp 
+    oscarclientstream.cpp
+    safedelete.cpp
+    stream.cpp
+    oscarconnector.cpp
+    oscarbytestream.cpp
+    buffer.cpp
+    rateclassmanager.cpp
+    contactmanager.cpp
+    contact.cpp
+    rateclass.cpp
+    rateclass.h
+    connection.cpp
+    userdetails.cpp
+    oscartypeclasses.cpp
+    oscarmessage.cpp
+    icquserinfo.cpp
+    oscarsettings.cpp
+    connectionhandler.cpp
+    oscarguid.cpp
+    oscarmessageplugin.cpp
     oftmetatransfer.cpp
-    xtrazxawayservice.cpp 
-    xtrazxservice.cpp 
-    xtrazxtraznotify.cpp 
+    xtrazxawayservice.cpp
+    xtrazxservice.cpp
+    xtrazxtraznotify.cpp
     xtrazxrandomizerservice.cpp
-    rtf.cc 
-    md5.c
+    tasks/task.cpp
+    tasks/logintask.cpp
+    tasks/aimlogintask.cpp
+    tasks/icqlogintask.cpp
+    tasks/closeconnectiontask.cpp
+    tasks/serverversionstask.cpp
+    tasks/rateinfotask.cpp 
+    tasks/errortask.cpp
+    tasks/locationrightstask.cpp
+    tasks/profiletask.cpp
+    tasks/blmlimitstask.cpp
+    tasks/servicesetuptask.cpp
+    tasks/icbmparamstask.cpp
+    tasks/prmparamstask.cpp
+    tasks/ssiparamstask.cpp
+    tasks/ssilisttask.cpp
+    tasks/ssiactivatetask.cpp
+    tasks/clientreadytask.cpp
+    tasks/senddcinfotask.cpp
+    tasks/sendidletimetask.cpp
+    tasks/ownuserinfotask.cpp
+    tasks/onlinenotifiertask.cpp
+    tasks/ssimodifytask.cpp
+    tasks/messagereceivertask.cpp
+    tasks/sendmessagetask.cpp
+    tasks/icqtask.cpp
+    tasks/offlinemessagestask.cpp
+    tasks/ssiauthtask.cpp
+    tasks/userinfotask.cpp
+    tasks/icquserinfotask.cpp
+    tasks/usersearchtask.cpp
+    tasks/warningtask.cpp
+    tasks/changevisibilitytask.cpp
+    tasks/typingnotifytask.cpp
+    tasks/buddyicontask.cpp
+    tasks/serverredirecttask.cpp
+    tasks/filetransfertask.cpp
+    tasks/localcontactlisttask.cpp
+    tasks/chatnavservicetask.cpp
+    tasks/chatservicetask.cpp
+    tasks/icquserinfoupdatetask.cpp
+    tasks/icqchangepasswordtask.cpp
+    utils/rtf.cc
+    utils/md5.c
 )
 
 kde4_automoc(${liboscar_SRCS} )

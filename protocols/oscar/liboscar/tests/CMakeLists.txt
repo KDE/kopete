@@ -1,7 +1,12 @@
 
 if(KDE4_BUILD_TESTS)
 
-include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar ${KOPETE_INCLUDES} )
+include_directories(
+    ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar
+    ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar/utils
+    ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar/tasks
+   ${KOPETE_INCLUDES}
+)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
