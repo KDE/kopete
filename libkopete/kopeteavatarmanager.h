@@ -103,12 +103,13 @@ public:
 	/**
 	 * Available avatar category.
 	 */
-	enum AvatarCategory
+	enum AvatarCategoryType
 	{
-		User, ///< User defined avatar
+		User=1, ///< User defined avatar
 		Contact, ///< Avatar from a contact.
-		All ///< Only used to list all category.
+		All = User | Contact ///< Only used to list all category.
 	};
+	Q_DECLARE_FLAGS(AvatarCategory, AvatarCategoryType)
 
 	/**
 	 * @brief A single entry in AvatarManager.
@@ -138,6 +139,29 @@ public:
 	 */
 	static AvatarManager *self();
 
+Q_SIGNALS:
+	/**
+	 * @brief An avatar was added into the storage
+	 *
+	 * Listen to this signal if you want to get notified of
+	 * new avatar added to the storage. It is used to update
+	 * the AvatarSelectorWidget lists.
+	 *
+	 * @param newEntry new avatar added into the storage.
+	 */
+	void avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry);
+
+	/**
+	 * @brief An avatar was removed from storage
+	 *
+	 * Listen to this signal if you want to get notified of
+	 * avatar being removed from storage. It is used to update
+	 * the AvatarSelectorWidget lists.
+	 *
+	 * @param entryRemoved avatar being remove from storage.
+	 */
+	void avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved);
+
 public Q_SLOTS:
 	/**
 	 * @brief Add an new avatar to the storage
@@ -165,8 +189,10 @@ private:
 	static AvatarManager *s_self;
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Kopete::AvatarManager::AvatarCategory)
 
 /**
  * @brief Job to query avatar on disk.

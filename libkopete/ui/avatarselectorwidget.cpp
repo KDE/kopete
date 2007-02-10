@@ -17,6 +17,9 @@
 #include "avatarselectorwidget.h"
 
 // Qt includes
+#include <QtGui/QListWidget>
+#include <QtGui/QListWidgetItem>
+#include <QtGui/QIcon>
 
 // KDE includes
 #include <kdebug.h>
@@ -24,9 +27,6 @@
 #include <kurl.h>
 #include <kfiledialog.h>
 #include <kpixmapregionselectordialog.h>
-
-// Kopete includes
-#include <kopeteavatarmanager.h>
 
 #include "ui_avatarselectorwidget.h"
 
@@ -39,6 +39,8 @@ class AvatarSelectorWidget::Private
 {
 public:
 	Ui::AvatarSelectorWidget mainWidget;
+
+	void addItem(Kopete::AvatarManager::AvatarEntry entry);
 };
 
 AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
@@ -48,6 +50,14 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 
 	// Connect signals/slots
 	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
+	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)), this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
+
+	// List avatars in lists
+	Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
+	connect(queryJob, SIGNAL(result(KJob*)), this, SLOT(queryJobFinished(KJob*)));
+	queryJob->setQueryFilter( Kopete::AvatarManager::All );
+
+	queryJob->start();
 }
 
 AvatarSelectorWidget::~AvatarSelectorWidget()
@@ -88,6 +98,52 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 	{
 		// TODO
 	}
+}
+
+void AvatarSelectorWidget::queryJobFinished(KJob *job)
+{
+	Kopete::AvatarQueryJob *queryJob = static_cast<Kopete::AvatarQueryJob*>(job);
+	if( !queryJob->error() )
+	{
+		QList<Kopete::AvatarManager::AvatarEntry> avatarList = queryJob->avatarList();
+		Kopete::AvatarManager::AvatarEntry entry;
+		foreach(entry, avatarList)
+		{
+			d->addItem(entry);
+		}
+	}
+	else
+	{
+		d->mainWidget.labelErrorMessage->setText( queryJob->errorText() );
+	}
+}
+
+void AvatarSelectorWidget::avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry)
+{
+	d->addItem(newEntry);
+}
+
+void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
+{
+	kDebug(14010) << k_funcinfo << "Entry(" << entry.name << "): " << entry.category << endl;
+
+	QListWidget *listWidget  = 0;
+	if( entry.category & Kopete::AvatarManager::User )
+	{
+		listWidget = mainWidget.listUserAvatar;
+	}
+	else if( entry.category & Kopete::AvatarManager::Contact )
+	{
+		listWidget = mainWidget.listUserContact;
+	}
+	else
+	{
+		return;
+	}
+
+	QListWidgetItem *item = new QListWidgetItem(listWidget);
+	item->setText( entry.name );
+	item->setIcon( QIcon(entry.path) );
 }
 
 } // Namespace Kopete::UI

@@ -21,6 +21,9 @@
 #include <QtCore/QBuffer>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
+#include <QtCore/QPointer>
+#include <QtCore/QStringList>
+#include <QtCore/QDir>
 
 // KDE includes
 #include <kdebug.h>
@@ -29,6 +32,7 @@
 #include <kcodecs.h>
 #include <kurl.h>
 #include <kio/job.h>
+#include <klocale.h>
 
 // Kopete includes
 #include <kopetecontact.h>
@@ -166,12 +170,18 @@ void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 		avatarConfig->sync();
 	
 		delete avatarConfig;
+
+		// Add final path to the new entry for avatarAdded signal
+		newEntry.path = avatarUrl.path();
+
+		emit avatarAdded(newEntry);
 	}
 }
 
 void AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 {
 	Q_UNUSED(entryToRemove);
+	emit avatarRemoved(entryToRemove);
 }
 
 void AvatarManager::Private::createDirectory(const KUrl &directory)
@@ -229,17 +239,22 @@ QImage AvatarManager::Private::scaleImage(const QImage &source)
 class AvatarQueryJob::Private
 {
 public:
-	Private()
-	 : category(AvatarManager::All)
+	Private(AvatarQueryJob *parent)
+	 : queryJob(parent), category(AvatarManager::All)
 	{}
 
+	QPointer<AvatarQueryJob> queryJob;
 	AvatarManager::AvatarCategory category;
 	QList<AvatarManager::AvatarEntry> avatarList;
+	KUrl baseDir;
+
+	void listAvatarDirectory(const QString &path);
 };
 
 AvatarQueryJob::AvatarQueryJob(QObject *parent)
- : KJob(parent), d(new Private)
+ : KJob(parent), d(new Private(this))
 {
+
 }
 
 AvatarQueryJob::~AvatarQueryJob()
@@ -254,11 +269,72 @@ void AvatarQueryJob::setQueryFilter(Kopete::AvatarManager::AvatarCategory catego
 
 void AvatarQueryJob::start()
 {
+	d->baseDir = KUrl( KStandardDirs::locateLocal("appdata", QLatin1String("avatars") ) );
+
+	if( d->category & Kopete::AvatarManager::User )
+	{
+		d->listAvatarDirectory( UserDir );
+	}
+	if( d->category & Kopete::AvatarManager::Contact )
+	{
+		KUrl contactUrl(d->baseDir);
+		contactUrl.addPath( ContactDir );
+
+		QDir contactDir(contactUrl.path());
+		QStringList subdirsList = contactDir.entryList( QDir::AllDirs | QDir::NoDotAndDotDot );
+		QString subdir;
+		foreach(subdir, subdirsList)
+		{
+			d->listAvatarDirectory( ContactDir + QDir::separator() + subdir );
+		}
+	}
+
+	// Finish the job
+	emitResult();
 }
 
 QList<Kopete::AvatarManager::AvatarEntry> AvatarQueryJob::avatarList() const
 {
 	return d->avatarList;
+}
+
+void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirectory)
+{
+	KUrl avatarDirectory = baseDir;
+	avatarDirectory.addPath(relativeDirectory);
+
+	kDebug(14010) << k_funcinfo << "Listing avatars in " << avatarDirectory.path() << endl;
+
+	// Look for Avatar configuration
+	KUrl avatarConfigUrl = avatarDirectory;
+	avatarConfigUrl.addPath( AvatarConfig );
+	if( QFile::exists(avatarConfigUrl.path()) )
+	{
+		KSimpleConfig *avatarConfig = new KSimpleConfig( avatarConfigUrl.path() );
+		// Each avatar entry in configuration is a group
+		QStringList groupEntryList = avatarConfig->groupList();
+		QString groupEntry;
+		foreach(groupEntry, groupEntryList)
+		{
+			avatarConfig->setGroup(groupEntry);
+
+			Kopete::AvatarManager::AvatarEntry listedEntry;
+			listedEntry.name = groupEntry;
+			listedEntry.category = static_cast<Kopete::AvatarManager::AvatarCategory>( avatarConfig->readEntry("Category", 0) );
+
+			QString filename = avatarConfig->readEntry( "Filename", QString() );
+			KUrl avatarPath(avatarDirectory);
+			avatarPath.addPath( filename );
+			listedEntry.path = avatarPath.path();
+
+			avatarList << listedEntry;
+		}
+	}
+	else
+	{
+		queryJob->setError( UserDefinedError );
+		queryJob->setErrorText( i18n("Avatar configuration hasn't been found on disk for category %1.", relativeDirectory) );
+	}
 }
 
 //END AvatarQueryJob

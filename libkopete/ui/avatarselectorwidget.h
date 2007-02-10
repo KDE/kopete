@@ -19,7 +19,11 @@
 
 #include <QtGui/QWidget>
 
-#include "kopete_export.h"
+// Kopete includes
+#include <kopete_export.h>
+#include <kopeteavatarmanager.h>
+
+class KJob;
 
 namespace Kopete
 {
@@ -66,6 +70,19 @@ private Q_SLOTS:
 	 */
 	void buttonAddAvatarClicked();
 	
+	/**
+	 * @internal
+	 * Avatar query job was finished
+	 */
+	void queryJobFinished(KJob *job);
+
+	/**
+	 * @internal
+	 * A new avatar was added into storage
+	 * @param newEntry new avatar Entry
+	 */
+	void avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry);
+
 private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)
 
