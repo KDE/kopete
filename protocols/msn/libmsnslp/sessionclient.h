@@ -18,6 +18,7 @@
 #include <qobject.h>
 #include <qmap.h>
 #include <quuid.h>
+#include <qvaluelist.h>
 #include "slprequest.h"
 #include "slpresponse.h"
 
@@ -68,11 +69,11 @@ class SessionClient : public QObject
 		/** @brief Called when a gif image is received. */
 		void onGifImageReceived(const Message& message);
 		/** @brief Called when an image is received. */
-		void onImageReceived(const QByteArray& content, const Q_INT32 identifier, const Q_INT32 relatesTo);
+		void onImageReceived(const QByteArray& content, const Q_INT32 id, const Q_INT32 correlationId);
 		/** @brief Called when a message acknowledge is received for a sent message. */
-		void onSend(const Q_INT32 identifier);
+		void onSend(const Q_INT32 id);
 		/** @brief Called when a message is received. */
-		void onReceived(const QByteArray& content, const Q_INT32 identifier, const Q_INT32 relatesTo);
+		void onReceived(const QByteArray& content, const Q_INT32 id, const Q_INT32 correlationId);
 		/** @brief Called when a local dialog transaction times out.*/
 		void onTransactionTimeout();
 
@@ -85,12 +86,13 @@ class SessionClient : public QObject
 		void onSessionDecline();
 		/** @brief Called when a session has ended. */
 		void onSessionEnd();
+
 		void onSessionSendMessage(const QByteArray& bytes);
 		void onSessionSendData(const QByteArray& bytes);
 
 	private:
 		/** @brief Accepts a session invitation. */
-		void acceptSession(Dialog *dialog, const Q_INT32 sessionId);
+		void acceptSession(const Q_UINT32 sessionId);
 		/** @brief Adds the specified dialog to the call map. */
 		void addDialogToCallMap(Dialog *dialog);
 		/** @brief Begins a dialog transaction. */
@@ -109,27 +111,30 @@ class SessionClient : public QObject
 		Session* createSession(const Q_UINT32 sessionId, const QUuid& uuid);
 		/** @brief Creates a locally initiated session. */
 		void createSessionInternal(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context);
+		/** @brief Tries to create a direct transport for the supplied session using the specified information. */
+		void createTransportFor(const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId);
 		/** @brief Declines a session invitation. */
-		void declineSession(Dialog *dialog, const Q_INT32 sessionId);
+		void declineSession(const Q_UINT32 sessionId);
 		/** @brief Terminates a session. */
-		void closeSessionInternal(Dialog *dialog, const Q_INT32 sessionId);
+		void closeSessionInternal(const Q_UINT32 sessionId);
 		/** @brief Ends a dialog transaction. */
 		void endTransaction(Transaction *transaction);
 		/** @brief Gets a dialog based on the call id.*/
-		Dialog* getDialogByCallId(const QUuid& identifier);
+		Dialog* getDialogByCallId(const QUuid& callId);
 		/** @brief Gets a dialog based on the session id.*/
 		Dialog* getDialogBySessionId(const Q_UINT32 sessionId);
 		/** @brief Gets a dialog based on the transaction sequence number.*/
 		Dialog* getDialogByTransactionId(const Q_UINT32 transactionId);
 		/** @brief Indicates whether an overlapping direct connection setup request received or a
-				   direct connection setup request recently sent will be dropped. */
+		 *		   direct connection setup request recently sent will be dropped.
+		 */
 		bool isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const SlpRequest& request);
 		/** @brief Initializes the session client. */
 		void initialize();
-		bool parseSessionCloseBody(const QString& requestBody, QMap<QString, QVariant> & collection);
-		bool parseSessionRequestBody(const QString& requestBody, QMap<QString, QVariant> & collection);
-		bool parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & collection);
-		bool parseDirectConnectionResponseBody(const QString& responseBody, QMap<QString, QVariant> & collection);
+		bool parseSessionCloseBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
+		bool parseSessionRequestBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
+		bool parseDirectConnectionDescription(const QString& responseBody, QMap<QString, QVariant> & parameters);
+		bool parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
 
 		/** @brief Called when the remote endpoint wants to terminates the dialog. */
 		void onByeRequest(const SlpRequest& request);
@@ -138,7 +143,8 @@ class SessionClient : public QObject
 		/** @brief Called when the peer endpoint wants to setup a direct connection. */
 		void onDirectConnectionSetupRequest(const SlpRequest& request);
 		/** @brief Called when the peer endpoint offers to be the listening endpoint
-				   of a direct connection as we have indicated that we cannot. */
+		 *		   of a direct connection as we have indicated that we cannot.
+		 */
 		void onDirectConnectionOfferRequest(const SlpRequest& request);
 		/** @brief Called when a request message is received. */
 		void onRequestMessage(const SlpRequest& request);
@@ -160,18 +166,18 @@ class SessionClient : public QObject
 		void onRecipientUriNotFound(const SlpResponse& response);
 		/** @brief Gets the transaction branch identifier from the specified message. */
 		QUuid getTransactionBranchFrom(const SlpMessage& message);
-		/** @brief Parses header fields from the supplied input string. */
-		void parseHeaders(const QString& input, QMap<QString, QVariant> & headers);
 		/** @brief Removes a dialog with the specified identifier from the call map. */
-		void removeDialogFromCallMap(const QUuid& identifier);
+		void removeDialogFromCallMap(const QUuid& callId);
 		/** @brief Sends a direct connection setup request to the peer endpoint. */
-		void requestDirectConnection(Dialog *dialog, const Q_UINT32 sessionId);
+		void requestDirectConnection(const Q_UINT32 sessionId);
+		/** @brief Sends a gif image message to the peer endpoint. */
 		void sendImage(const QString& path);
 		/** @brief Sends the supplied message to the specified destination. */
 		void send(SlpMessage& message, const Q_UINT32 destination, const Q_UINT32 priority=1);
 		/** @brief Indicates whether the parameters sent by the peer in a direct connection
-				   setup request would support the possible scenarios to establish a direct
-                   connection. */
+		 *		   setup request would support the possible scenarios to establish a direct
+         *         connection.
+		 */
 		bool supportsDirectConnectivity(const QString& connectionType, bool behindFirewall, bool uPnpNAT, bool sameNetwork);
 
 	private:

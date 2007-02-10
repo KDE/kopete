@@ -25,6 +25,12 @@ BinaryPacketFormatter::BinaryPacketFormatter()
 
 Packet BinaryPacketFormatter::deserialize(QDataStream* stream)
 {
+	if (stream == 0l)
+	{
+		kdDebug() << "Parameter \'stream\' cannot be null." << endl;
+		return Packet();
+	}
+
 	// Ensure that the byte order of the stream is little endian.
 	stream->setByteOrder(QDataStream::LittleEndian);
 
@@ -57,6 +63,12 @@ Packet BinaryPacketFormatter::deserialize(QDataStream* stream)
 
 void BinaryPacketFormatter::serialize(const Packet& packet, QDataStream* stream)
 {
+	if (stream == 0l)
+	{
+		kdDebug() << "Parameter \'stream\' cannot be null." << endl;
+		return;
+	}
+
 	// Ensure that the byte order of the stream is little endian.
 	stream->setByteOrder(QDataStream::LittleEndian);
 

@@ -70,6 +70,8 @@ class Session : public QObject
 		virtual void onEnd() = 0;
 		/** @brief When overriden by a derived class, faults a session. */
 		virtual void onFaulted() = 0;
+		/** @brief Sets the state of the session. */
+		void setState(const SessionState& state);
 
 	signals:
 		/** @brief Indicates that a session has been accepted by the user. */

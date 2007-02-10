@@ -41,18 +41,22 @@ class Message
 		const QString contentType() const;
 		QMap<QString, QVariant> & context();
 		const QMap<QString, QVariant> & context() const;
+		const Q_INT32 correlationId() const;
 		// Copies the content from the specified header collection to this instance.
 		void copyHeadersFrom(const QMap<QString, QVariant> & collection);
 		virtual const QString from() const;
 		QMap<QString, QVariant> & headers();
 		const QMap<QString, QVariant> & headers() const;
-		const Q_INT32 identifier() const;
-		const Q_INT32 relatesTo() const;
+		const Q_INT32 id() const;
 		void setBody(const QString& body);
-		void setIdentifier(const Q_INT32 identifier);
-		void setRelatesTo(const Q_INT32 relatesTo);
+		void setId(const Q_INT32 id);
+		void setCorrelationId(const Q_INT32 correlationId);
 		virtual const QString to() const;
 		const QString version() const;
+
+	public :
+		/** @brief Parses header fields from the supplied input string. */
+		static void parseHeaders(const QString& input, QMap<QString, QVariant> & headers);
 
 	private:
 		class MessagePrivate;

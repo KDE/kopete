@@ -17,7 +17,6 @@
 
 #include <qobject.h>
 #include <qcstring.h>
-#include <qpair.h>
 #include <qthread.h>
 #include <quuid.h>
 #include <qvaluelist.h>
@@ -46,10 +45,10 @@ class Transport : public QObject, public QThread
 		virtual ~Transport();
 
 		bool listen(const QString& address, const Q_UINT16 port);
-		void registerReceiver(Q_UINT32 port, SessionNotifier* receiver);
-		const Q_UINT32 createBridge(const QUuid& nonce, const QValueList<QString>& addresses, const Q_UINT16 port);
+		void registerPort(Q_UINT32 port, SessionNotifier* notifier);
+		const Q_UINT32 createBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const QUuid& nonce);
 		void setSwitchboardBridge(SwitchboardBridge* bridge);
-		void unregisterReceiver(Q_UINT32 port);
+		void unregisterPort(Q_UINT32 port);
 		void queuePacket(const Packet& packet, const Q_UINT32 bridgeId, bool prepend=false);
 		Q_UINT32 send(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
 		void sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 relatesTo, const Q_UINT32 priority=1);
@@ -69,6 +68,7 @@ class Transport : public QObject, public QThread
 		void onSent(const Q_UINT32 identifier, const bool packetSent);
 		void onSent(const Packet& packet);
 		void onSwitchboardReadyToSend();
+		void onUnacknowledgedPacketTimer();
 
 	private:
 		void dispatch(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 identifier, const Q_UINT32 relatesTo);
@@ -77,6 +77,7 @@ class Transport : public QObject, public QThread
 		void sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd);
 		void sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendNonce(const QUuid& nonce, const Q_UINT32 bridgeId);
+		void removeUnacknowledgedPacket(const Q_UINT32 identifier);
 
 	private:
 		class TransportPrivate;

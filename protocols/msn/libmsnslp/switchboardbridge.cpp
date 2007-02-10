@@ -15,6 +15,9 @@
 #include "switchboardbridge.h"
 #include "msnchatsession.h"
 #include "binarypacketformatter.h"
+#include <qmap.h>
+#include <qpair.h>
+#include <qtimer.h>
 #include <qvaluelist.h>
 #include <kdebug.h>
 
@@ -24,12 +27,16 @@ namespace PeerToPeer
 class SwitchboardBridge::SwitchboardBridgePrivate
 {
 	public:
-		SwitchboardBridgePrivate() : sbnetwork(0l), maxPendingPackets(5), maxSendBufferSize(1202), switchboardRequestNecessary(false) {}
+		SwitchboardBridgePrivate() : identifier(0), sbnetwork(0l), maxPendingPackets(5), maxSendBufferSize(1202), sending(false),sent(0), switchboardRequestNecessary(false) {}
 
+		Q_UINT32 identifier;
 		MSNChatSession*	sbnetwork;
 		Q_UINT32 maxPendingPackets;
 		Q_UINT32 maxSendBufferSize;
-		QValueList<QByteArray> pendingPackets;
+		QValueList< QPair<Packet, Q_UINT32> > pendingPackets;
+		bool sending;
+		Q_UINT32 sent;
+		QMap<Q_INT32, Packet> sentPackets;
 		bool switchboardRequestNecessary;
 };
 
@@ -40,8 +47,8 @@ SwitchboardBridge::SwitchboardBridge(MSNChatSession* sbnetwork, QObject *parent)
 	QObject::connect(d->sbnetwork, SIGNAL(dataReceived(const QByteArray&)), this,
 	SLOT(onDataReceived(const QByteArray&)));
 	// Connect the signal/slot
-	QObject::connect(d->sbnetwork, SIGNAL(onSend()), this,
-	SLOT(onSend()));
+	QObject::connect(d->sbnetwork, SIGNAL(onSend(const Q_INT32)), this,
+	SLOT(onSend(const Q_INT32)));
 }
 
 SwitchboardBridge::~SwitchboardBridge()
@@ -50,14 +57,14 @@ SwitchboardBridge::~SwitchboardBridge()
 	d = 0l;
 }
 
-const Q_UINT32 SwitchboardBridge::identifier() const
+const Q_UINT32 SwitchboardBridge::id() const
 {
-	return 0;
+	return d->identifier;
 }
 
 bool SwitchboardBridge::isReadyToSend() const
 {
-	return ((state() == TransportBridge::Connected)&&(d->pendingPackets.size() < d->maxPendingPackets));
+	return ((state() == TransportBridge::Connected) && (d->sent < d->maxPendingPackets));
 }
 
 const Q_UINT32 SwitchboardBridge::maxSendBufferSize()
@@ -71,15 +78,14 @@ void SwitchboardBridge::onConnect()
 	kdDebug() << k_funcinfo << endl;
 	emit connected();
 
-	QValueList<QByteArray>::Iterator i = d->pendingPackets.begin();
-	while (i != d->pendingPackets.end())
+	if (d->pendingPackets.size() > 0 && !d->sending)
 	{
-		QByteArray bytes = *i;
-		sendViaNetwork(bytes);
-		i++;
+		QTimer::singleShot(0, this, SLOT(sendPendingPackets()));
 	}
-
-	emit readyToSend();
+	else
+	{
+		emit readyToSend();
+	}
 
 	d->switchboardRequestNecessary = false;
 }
@@ -118,33 +124,54 @@ void SwitchboardBridge::onDataReceived(const QByteArray& data)
 	}
 }
 
-void SwitchboardBridge::onSend()
+void SwitchboardBridge::onSend(const Q_INT32 id)
 {
-	QValueList<QByteArray>::Iterator i = d->pendingPackets.begin();
-	d->pendingPackets.remove(i);
-	if (d->pendingPackets.size() == 0)
+	if (d->sentPackets.contains(id))
 	{
-		emit readyToSend();
+		Packet packet = d->sentPackets[id];
+		emit sentPacket(packet);
+
+		d->sentPackets.remove(id);
+		d->sent -= 1;
+
+		if (d->pendingPackets.size() == 0)
+		{
+			emit readyToSend();
+		}
 	}
 }
 
 void SwitchboardBridge::send(const Packet& packet, const Q_UINT32 appId)
 {
-	QByteArray bytes(sizeof(Packet::Header) + packet.header().payloadSize + 4);
-	QDataStream stream(bytes, IO_WriteOnly);
-	// Serialize the packet into the memory stream.
-	BinaryPacketFormatter::serialize(packet, &stream);
-	stream.setByteOrder(QDataStream::BigEndian);
-	stream << appId;
+	kdDebug() << k_funcinfo << "About to send datachunk of size " << packet.size() << " bytes" << endl;
 
-	kdDebug() << k_funcinfo << "About to send datachunk of size "
-		<< packet.size() << " bytes" << endl;
+	if (d->pendingPackets.size() > 0 || state() != TransportBridge::Connected)
+	{
+		d->pendingPackets.append(qMakePair(packet, appId));
+	}
+	else
+	{
+		QByteArray bytes(packet.size() + 4);
+		QDataStream stream(bytes, IO_WriteOnly);
+		// Serialize the packet into the memory stream.
+		BinaryPacketFormatter::serialize(packet, &stream);
+		stream.setByteOrder(QDataStream::BigEndian);
+		stream << appId;
 
-	QByteArray datachunk;
-	datachunk.duplicate(bytes.data(), bytes.size());
-	d->pendingPackets.append(datachunk);
-	// Send the serialized bytes via the switchboard network.
-	sendViaNetwork(datachunk);
+		QByteArray datachunk;
+		datachunk.duplicate(bytes.data(), bytes.size());
+		// Send the serialized bytes via the switchboard network.
+		const Q_INT32 id = sendViaNetwork(datachunk);
+		if (id == -1)
+		{
+			d->pendingPackets.append(qMakePair(packet, appId));
+		}
+		else
+		{
+			d->sentPackets.insert(id, packet);
+			d->sent += 1;
+		}
+	}
 }
 
 bool SwitchboardBridge::requestSwitchboardIfNecessary()
@@ -152,20 +179,70 @@ bool SwitchboardBridge::requestSwitchboardIfNecessary()
 	return false;
 }
 
-void SwitchboardBridge::sendViaNetwork(const QByteArray& bytes)
+const Q_INT32 SwitchboardBridge::sendViaNetwork(const QByteArray& bytes)
 {
+	Q_INT32 tId = -1;
 	if (state() == TransportBridge::Connected)
 	{
-		d->sbnetwork->send(bytes);
+		tId = d->sbnetwork->send(bytes);
 	}
 	else
 	{
-		if (d->switchboardRequestNecessary && state() == TransportBridge::Disconnected)
+		if (d->switchboardRequestNecessary || state() == TransportBridge::Disconnected)
 		{
 			kdDebug() << k_funcinfo << "Requesting switchboard -- bridge is disconnected" << endl;
 			emit requestSwitchboard();
 			d->switchboardRequestNecessary = false;
 		}
+	}
+
+	return tId;
+}
+
+void SwitchboardBridge::sendPendingPackets()
+{
+	if (d->pendingPackets.size() == 0)
+	{
+		return;
+	}
+
+	d->sending = true;
+
+	QValueList< QPair<Packet, Q_UINT32> >::Iterator i = d->pendingPackets.begin();
+	while (i != d->pendingPackets.end())
+	{
+		Packet packet = (*i).first;
+		Q_INT32 appId = (*i).second;
+
+		QByteArray bytes(packet.size() + 4);
+		QDataStream stream(bytes, IO_WriteOnly);
+		// Serialize the packet into the memory stream.
+		BinaryPacketFormatter::serialize(packet, &stream);
+		stream.setByteOrder(QDataStream::BigEndian);
+		stream << appId;
+
+		QByteArray datachunk;
+		datachunk.duplicate(bytes.data(), bytes.size());
+		// Send the serialized bytes via the switchboard network.
+		const Q_INT32 id = sendViaNetwork(datachunk);
+		if (id == -1)
+		{
+			break;
+		}
+		else
+		{
+			d->sentPackets.insert(id, packet);
+			d->pendingPackets.remove(i);
+			d->sent += 1;
+		}
+
+		i++;
+	}
+
+	if (d->pendingPackets.size() == 0)
+	{
+		d->sending = false;
+		emit readyToSend();
 	}
 }
 

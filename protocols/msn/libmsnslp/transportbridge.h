@@ -40,25 +40,33 @@ class TransportBridge : public QObject
 		/** @brief Creates a new instance of the class Transport Bridge. */
 		TransportBridge(QObject *parent);
 		virtual ~TransportBridge();
-
-		virtual const Q_UINT32 identifier() const = 0;
+		/** @brief When overriden in a derived class, returns a value that uniquely identifies the transport bridge. */
+		virtual const Q_UINT32 id() const = 0;
 		/** @brief When overriden in a derived class, returns the MTU for the transport bridge. */
 		virtual const Q_UINT32 maxSendBufferSize() = 0;
+		/** @brief Gets the state of the transport bridge. */
 		const TransportBridgeState & state() const;
-
+		/** @brief Connects a transport bridge. */
 		void connect();
+		/** @brief Disconnects a transport bridge. */
 		void disconnect();
 
 	protected:
 		virtual void onConnect();
 		virtual void onDisconnect();
+		/** @brief Sets the state of the transport bridge. */
 		void setState(const TransportBridgeState& state);
 
 	signals:
+		/** @brief Indicates that the transport bridge is connected. */
 		void connected();
+		/** @brief Indicates that the transport bridge is disconnected. */
 		void disconnected();
+		/** @brief Indicates that an error has occurred on the transport bridge. */
 		void error();
+		/** @brief Indicates that a packet has been received on the transport bridge. */
 		void packetReceived(const Packet& packet);
+		/** @brief Indicates that a data exchange time out has occurred on the transport bridge. */
 		void timeout();
 
 	private:

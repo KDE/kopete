@@ -43,13 +43,14 @@ class TcpTransportBridge::TcpTransportBridgePrivate
 		Q_UINT32 maxSendBufferSize;
 		Q_INT16 port;
 		KStreamSocket *socket;
+		Q_INT32 socketId;
 };
 
 TcpTransportBridge::TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, QObject *parent) : TransportBridge(parent), d(new TcpTransportBridgePrivate())
 {
 	d->addresses = addresses;
 	d->port = port;
-	d->identifier = (rand() & 0xF1FC) + 5;
+	d->identifier = ((Q_INT32)(((double)(rand() * 1.0/0x7FFFFFFF))*(500 - 15)) + 15);
 }
 
 TcpTransportBridge::~TcpTransportBridge()
@@ -57,7 +58,7 @@ TcpTransportBridge::~TcpTransportBridge()
 	delete d;
 }
 
-const Q_UINT32 TcpTransportBridge::identifier() const
+const Q_UINT32 TcpTransportBridge::id() const
 {
 	return d->identifier;
 }
@@ -81,7 +82,7 @@ void TcpTransportBridge::send(const Packet& packet)
 		<< packet.size() << " bytes" << endl;
 
 	Q_UINT32 bytesWritten = d->socket->writeBlock(bytes.data(), bytes.size());
-	kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socket->socketDevice()->socket() << endl;
+	kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socketId << endl;
 }
 
 void TcpTransportBridge::onConnect()
@@ -89,7 +90,7 @@ void TcpTransportBridge::onConnect()
 	if (state() == TransportBridge::Connected)
 	{
 		kdDebug() << k_funcinfo << "Already connected on socket "
-		<< d->socket->socketDevice()->socket() << endl;
+		<< d->socketId << endl;
 		return;
 	}
 
@@ -184,7 +185,9 @@ void TcpTransportBridge::onSocketAccept()
 {
 	d->socket = static_cast<KStreamSocket*>(d->endpoint->accept());
 
-	kdDebug() << k_funcinfo << "Accepted socket " << d->socket->socketDevice()->socket()
+	d->socketId = d->socket->socketDevice()->socket();
+
+	kdDebug() << k_funcinfo << "Accepted socket " << d->socketId
 	<< " (listening socket " << d->endpoint->socketDevice()->socket() << ")" << endl;
 
 	setState(TransportBridge::Connected);
@@ -219,7 +222,7 @@ void TcpTransportBridge::onListenEndpointError(int errorCode)
 void TcpTransportBridge::onSocketClosed()
 {
 	setState(TransportBridge::Disconnected);
-	kdDebug() << k_funcinfo << "Socket " << d->socket->socketDevice()->socket() << " closed" << endl;
+	kdDebug() << k_funcinfo << "Socket " << d->socketId << " closed" << endl;
 	QObject::disconnect(d->socket, 0, this, 0);
 
 	emit disconnected();
@@ -228,7 +231,9 @@ void TcpTransportBridge::onSocketClosed()
 void TcpTransportBridge::onSocketConnected()
 {
 	setState(TransportBridge::Connected);
-	kdDebug() << k_funcinfo << "Connected on socket " << d->socket->socketDevice()->socket()
+	d->socketId = d->socket->socketDevice()->socket();
+
+	kdDebug() << k_funcinfo << "Connected on socket " << d->socketId
 	<< " (addr=" << d->addresses[0] << " port=" << d->port << ")" << endl;
 
 	if (d->endpoint == 0l)
@@ -237,25 +242,25 @@ void TcpTransportBridge::onSocketConnected()
 		QDataStream stream(bytes, IO_WriteOnly);
 		stream.setByteOrder(QDataStream::LittleEndian);
 
-		QByteArray ccheck(4);
-		ccheck[0] = 0x66;
-		ccheck[1] = 0x6f;
-		ccheck[2] = 0x6f;
-		ccheck[3] = 0x00;
+		QByteArray preamble(4);
+		preamble[0] = 0x66;
+		preamble[1] = 0x6f;
+		preamble[2] = 0x6f;
+		preamble[3] = 0x00;
 
-		kdDebug() << k_funcinfo << "Sending CONNECTION CHECK packet " << ccheck
-		<< " on socket " << d->socket->socketDevice()->socket() << endl;
+		kdDebug() << k_funcinfo << "Sending preamble " << preamble
+		<< " on socket " << d->socketId << endl;
 
 		// Write the length preamble to the network stream
-		stream << ccheck.size();
+		stream << preamble.size();
 		// Write the connection check data to the stream.
-		stream.writeRawBytes(ccheck.data(), ccheck.size());
+		stream.writeRawBytes(preamble.data(), preamble.size());
 
 		// Write the data bytes to the network stream.
 		Q_UINT32 bytesWritten = d->socket->writeBlock(bytes.data(), bytes.size());
 
 		kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket "
-		<< d->socket->socketDevice()->socket() << endl;
+		<< d->socketId << endl;
 	}
 
 	emit connected();
@@ -263,7 +268,7 @@ void TcpTransportBridge::onSocketConnected()
 
 void TcpTransportBridge::onSocketConnectTimeout()
 {
-	kdDebug() << k_funcinfo << "Connect timeout on socket " << d->socket->socketDevice()->socket() << endl;
+	kdDebug() << k_funcinfo << "Connect timeout on socket " << d->socketId << endl;
 	d->socket->disconnect();
 
 	emit timeout();
@@ -272,7 +277,7 @@ void TcpTransportBridge::onSocketConnectTimeout()
 void TcpTransportBridge::onSocketError(int errorCode)
 {
 	kdDebug() << k_funcinfo << "Got error, " << d->socket->errorString() << ", on socket "
-	<< d->socket->socketDevice()->socket() << endl;
+	<< d->socketId << endl;
 
 	d->socket->disconnect();
 
@@ -284,6 +289,8 @@ void TcpTransportBridge::onSocketError(int errorCode)
 
 void TcpTransportBridge::onSocketRead()
 {
+	kdDebug() << k_funcinfo << "enter" << endl;
+
 	const Q_UINT32 bytesAvailable = d->socket->bytesAvailable();
 	if (bytesAvailable > 0)
 	{
@@ -292,39 +299,42 @@ void TcpTransportBridge::onSocketRead()
 		QDataStream binaryReader(d->socket);
 		binaryReader.setByteOrder(QDataStream::LittleEndian);
 
-		while(d->bytesToRead > d->length)
+		while(d->bytesToRead > 0)
 		{
 			if (d->bytesToRead >= 4 && d->length == 0)
 			{
 				// Read the byte array length prefix from the stream.
 				binaryReader >> d->length;
+				kdDebug() << k_funcinfo << "About to receive datachunk of size " << d->length << " bytes" << endl;
+
 				d->bytesToRead -= 4;
 			}
 
 			if (d->length > 0 && d->bytesToRead >= d->length)
 			{
-				kdDebug() << k_funcinfo << "Reading " << d->length << " bytes on socket "
-				<< d->socket->socketDevice()->socket() << endl;
-
-
 				QByteArray bytes(d->length);
-				// Read the 'length' bytes of data from the stream.
+				// Read the bytes of data from the stream.
 				d->socket->readBlock(bytes.data(), bytes.size());
+				kdDebug() << k_funcinfo << "Received " << d->length << " bytes on socket "
+				<< d->socketId << endl;
 
 				QDataStream stream(bytes, IO_ReadOnly);
 				Packet packet = BinaryPacketFormatter::deserialize(&stream);
-				emit packetReceived(packet);
 
-				d->bytesToRead -= packet.size();
+				d->bytesToRead -= d->length;
 				d->length = 0;
+
+				emit packetReceived(packet);
 			}
 			else
 			{
 				kdDebug() << k_funcinfo << "Waiting for " << (d->length - d->bytesToRead)
-				<< " bytes on socket " << d->socket->socketDevice()->socket() << endl;
+				<< " bytes on socket " << d->socketId << endl;
 			}
 		}
 	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 //END

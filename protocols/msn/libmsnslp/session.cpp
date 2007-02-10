@@ -90,6 +90,11 @@ void Session::fault()
 	emit faulted();
 }
 
+void Session::setState(const SessionState& state)
+{
+	d->state = state;
+}
+
 void Session::start()
 {
 	// Set the session state to established.

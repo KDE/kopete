@@ -36,7 +36,7 @@ class TcpTransportBridge : public TransportBridge
 		TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, QObject *parent);
 		virtual ~TcpTransportBridge();
 
-		virtual const Q_UINT32 identifier() const;
+		virtual const Q_UINT32 id() const;
 		/** @brief Gets the maximum size of a message that can be sent or received by the bridge. */
 		virtual const Q_UINT32 maxSendBufferSize();
 		void doUpnpPortMappingIfNecessary();

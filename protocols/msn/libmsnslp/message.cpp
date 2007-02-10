@@ -13,6 +13,7 @@
 */
 
 #include "message.h"
+#include <qregexp.h>
 
 namespace PeerToPeer
 {
@@ -76,6 +77,11 @@ const QMap<QString, QVariant> & Message::context() const
 	return d->context;
 }
 
+const Q_INT32 Message::correlationId() const
+{
+	return d->context["correlationId"].toInt();
+}
+
 void Message::copyHeadersFrom(const QMap<QString, QVariant> & collection)
 {
 	QMap<QString, QVariant>::ConstIterator i;
@@ -100,14 +106,9 @@ const QMap<QString, QVariant> & Message::headers() const
 	return d->headers;
 }
 
-const Q_INT32 Message::identifier() const
+const Q_INT32 Message::id() const
 {
-	return d->context["identifier"].toInt();
-}
-
-const Q_INT32 Message::relatesTo() const
-{
-	return d->context["relatesTo"].toInt();
+	return d->context["id"].toInt();
 }
 
 void Message::setBody(const QString& body)
@@ -115,14 +116,14 @@ void Message::setBody(const QString& body)
 	d->body = body;
 }
 
-void Message::setIdentifier(const Q_INT32 identifier)
+void Message::setId(const Q_INT32 id)
 {
-	d->context["identifier"] = QVariant(identifier);
+	d->context["id"] = id;
 }
 
-void Message::setRelatesTo(const Q_INT32 relatesTo)
+void Message::setCorrelationId(const Q_INT32 correlationId)
 {
-	d->context["relatesTo"] = QVariant(relatesTo);
+	d->context["correlationId"] = correlationId;
 }
 
 const QString Message::to() const
@@ -133,6 +134,17 @@ const QString Message::to() const
 const QString Message::version() const
 {
 	return d->version;
+}
+
+void Message::parseHeaders(const QString& input, QMap<QString, QVariant> & headers)
+{
+	Q_INT32 i = 0;
+	QRegExp regex("([^\r\n:]*):\\s([^\r\n]*)");
+	while((i = regex.search(input, i)) != -1)
+	{
+		headers.insert(regex.cap(1), regex.cap(2));
+		i += regex.matchedLength();
+	}
 }
 
 }

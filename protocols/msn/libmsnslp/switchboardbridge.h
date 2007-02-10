@@ -39,11 +39,12 @@ class SwitchboardBridge : public TransportBridge
 		/** @brief Sends a packet to the remote peer. */
 		void send(const Packet& packet, const Q_UINT32 appId);
 		bool isReadyToSend() const;
-		virtual const Q_UINT32 identifier() const;
+		virtual const Q_UINT32 id() const;
 		/** @brief Gets the maximum send buffer size. */
 		virtual const Q_UINT32 maxSendBufferSize();
 
 	signals:
+		void sentPacket(const Packet& packet);
 		void readyToSend();
 		void requestSwitchboard();
 
@@ -53,11 +54,12 @@ class SwitchboardBridge : public TransportBridge
 
 	private slots:
 		void onDataReceived(const QByteArray& data);
-		void onSend();
+		void onSend(const Q_INT32 id);
+		void sendPendingPackets();
 
 	private:
 		bool requestSwitchboardIfNecessary();
-		void sendViaNetwork(const QByteArray& bytes);
+		const Q_INT32 sendViaNetwork(const QByteArray& bytes);
 
 	private:
 		class SwitchboardBridgePrivate;
