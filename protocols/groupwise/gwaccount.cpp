@@ -1270,7 +1270,7 @@ void GroupWiseAccount::receiveContactDeleted( const ContactItem & instance )
 
 void GroupWiseAccount::slotConnectedElsewhere()
 {
-	KPassivePopup::message( i18n ( "Signed in as %1 Elsewhere" ).arg(  accountId() ), i18nc(  "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere" ).arg(  accountId() ) , Kopete::UI::Global::mainWidget() );
+	KPassivePopup::message( i18n ( "Signed in as %1 Elsewhere", accountId() ), i18nc(  "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere", accountId() ) , Kopete::UI::Global::mainWidget() );
 	disconnect();
 }
 
