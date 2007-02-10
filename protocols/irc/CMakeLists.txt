@@ -4,7 +4,7 @@ add_subdirectory( libkirc )
 include_directories(
 	${KOPETE_INCLUDES}
 	${CMAKE_CURRENT_SOURCE_DIR}/libkirc/client
-	${CMAKE_CURRENT_SOURCE_DIR}/libkirc/core
+	${CMAKE_CURRENT_SOURCE_DIR}/libkirc/kernel
 	${CMAKE_CURRENT_SOURCE_DIR}/ui/
 	${CMAKE_CURRENT_BINARY_DIR}/ui/
 )

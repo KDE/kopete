@@ -1,5 +1,5 @@
 include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/../core
+	${CMAKE_CURRENT_SOURCE_DIR}/../kernel
 	${KOPETE_INCLUDES}
 )
 
