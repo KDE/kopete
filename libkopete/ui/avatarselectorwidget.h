@@ -55,10 +55,17 @@ Q_SIGNALS:
 	
 public Q_SLOTS:
 	/**
-	 * Set the current selectr avatar in the list.
+	 * Set the current selected avatar in the list.
 	 */
 	void applyAvatar();
 
+private Q_SLOTS:
+	/**
+	 * @internal
+	 * Add Avatar button was clicked
+	 */
+	void buttonAddAvatarClicked();
+	
 private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)
 

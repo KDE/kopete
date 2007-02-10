@@ -21,8 +21,12 @@
 // KDE includes
 #include <kdebug.h>
 #include <klocale.h>
+#include <kurl.h>
+#include <kfiledialog.h>
+#include <kpixmapregionselectordialog.h>
 
 // Kopete includes
+#include <kopeteavatarmanager.h>
 
 #include "ui_avatarselectorwidget.h"
 
@@ -41,6 +45,9 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
  : QWidget(parent), d(new Private)
 {
 	d->mainWidget.setupUi(this);
+
+	// Connect signals/slots
+	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
 }
 
 AvatarSelectorWidget::~AvatarSelectorWidget()
@@ -51,6 +58,36 @@ AvatarSelectorWidget::~AvatarSelectorWidget()
 void AvatarSelectorWidget::applyAvatar()
 {
 	//TODO
+}
+
+void AvatarSelectorWidget::buttonAddAvatarClicked()
+{
+	KUrl imageUrl = KFileDialog::getImageOpenUrl( KUrl(), this );
+	if( !imageUrl.isEmpty() )
+	{
+		// TODO: Download image
+		if( !imageUrl.isLocalFile() )
+		{
+			return;
+		}
+
+		// Crop the image
+		QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(imageUrl.path()), 96, 96, this );
+
+		QString imageName = imageUrl.fileName();
+
+		Kopete::AvatarManager::AvatarEntry newEntry;
+		// Remove extension from filename
+		newEntry.name = imageName.left( imageName.lastIndexOf('.') );
+		newEntry.image = avatar;
+		newEntry.category = Kopete::AvatarManager::User;
+
+		Kopete::AvatarManager::self()->add( newEntry );
+	}
+	else
+	{
+		// TODO
+	}
 }
 
 } // Namespace Kopete::UI

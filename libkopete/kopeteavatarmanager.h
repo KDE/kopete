@@ -28,6 +28,7 @@ class QImage;
 namespace Kopete
 {
 
+class Contact;
 /**
  * @brief Manage the avatar storage
  *
@@ -48,7 +49,7 @@ namespace Kopete
  * It keep track of each avatar change so you can go back to a
  * previous avatar you had.
  *
- * Sub-directory Contact store avatar received from contacts.
+ * Sub-directory Contacts store avatar received from contacts.
  * Avatar are managed by protocol to avoid conflit of avatar between
  * multiple contact with the same ID.
  * For example, an user can have the same ID for MSN and Jabber but
@@ -120,6 +121,7 @@ public:
 		QString name; ///< name is a friendly name to identity the avatar
 		QString path; ///< path is the full path to the image on disk
 		QImage image; ///< image is used when adding a new avatar, AvatarManager will write the image on disk.
+		Kopete::Contact *contact; ///< contact is used when adding a new contact avatar. AvatarManager use it to create the final url.
 		AvatarManager::AvatarCategory category; ///< category in which the avatar belong
 	} AvatarEntry;
 
@@ -136,16 +138,12 @@ public:
 	 */
 	static AvatarManager *self();
 
-	/**
-	 * @brief Query the avatar storage
-	 * @param category Pass a AvatarCategory value if you want to filter. List all category by default.
-	 * @return List of AvatarEntry
-	 */
-	QList<Kopete::AvatarManager::AvatarEntry> query(Kopete::AvatarManager::AvatarCategory category = All);
-
 public Q_SLOTS:
 	/**
 	 * @brief Add an new avatar to the storage
+	 *
+	 * No need to scale the image, add() will do it for you.
+	 *
 	 * @param newEntry New avatar entry
 	 */
 	void add(Kopete::AvatarManager::AvatarEntry newEntry);
@@ -225,7 +223,7 @@ public:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

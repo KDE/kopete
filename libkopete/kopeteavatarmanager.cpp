@@ -17,9 +17,22 @@
 #include "kopeteavatarmanager.h"
 
 // Qt includes
+#include <QtCore/QLatin1String>
+#include <QtCore/QBuffer>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
 
 // KDE includes
 #include <kdebug.h>
+#include <kstandarddirs.h>
+#include <ksimpleconfig.h>
+#include <kcodecs.h>
+#include <kurl.h>
+#include <kio/job.h>
+
+// Kopete includes
+#include <kopetecontact.h>
+#include <kopeteprotocol.h>
 
 namespace Kopete
 {
@@ -39,11 +52,34 @@ AvatarManager *AvatarManager::self()
 class AvatarManager::Private
 {
 public:
+	KUrl baseDir;
+
+	/**
+	 * Create directory if needed
+	 * @param directory URL of the directory to create
+	 */
+	void createDirectory(const KUrl &directory);
+
+	/**
+	 * Scale the given image to 96x96.
+	 * @param source Original image
+	 */
+	QImage scaleImage(const QImage &source);
 };
+
+static const QString UserDir("User");
+static const QString ContactDir("Contacts");
+static const QString AvatarConfig("avatarconfig.rc");
+
 
 AvatarManager::AvatarManager(QObject *parent)
  : QObject(parent), d(new Private)
 {
+	// Locate avatar data dir on disk
+	d->baseDir = KUrl( KStandardDirs::locateLocal("appdata", QLatin1String("avatars") ) );
+
+	// Create directory on disk, if necessary
+	d->createDirectory( d->baseDir );
 }
 
 AvatarManager::~AvatarManager()
@@ -51,22 +87,142 @@ AvatarManager::~AvatarManager()
 	delete d;
 }
 
-QList<Kopete::AvatarManager::AvatarEntry> AvatarManager::query(Kopete::AvatarManager::AvatarCategory category)
-{
-	QList<Kopete::AvatarManager::AvatarEntry> result;
-
-	return result;
-}
-
 void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 {
-	Q_UNUSED(newEntry);
+	Q_ASSERT(!newEntry.name.isEmpty());
+	
+	KUrl avatarUrl(d->baseDir);
+
+	// First find where to save the file
+	switch(newEntry.category)
+	{
+		case AvatarManager::User:
+			avatarUrl.addPath( UserDir );
+			d->createDirectory( avatarUrl );
+			break;
+		case AvatarManager::Contact:
+			avatarUrl.addPath( ContactDir );
+			d->createDirectory( avatarUrl );
+			// Use the plugin name for protocol sub directory
+			if( newEntry.contact && newEntry.contact->protocol() )
+			{
+				QString protocolName = newEntry.contact->protocol()->pluginId();
+				avatarUrl.addPath( protocolName );
+				d->createDirectory( avatarUrl );
+			}
+			break;
+		default:
+			break;
+	}
+
+	kDebug(14010) << k_funcinfo << "Base directory: " << avatarUrl.path() << endl;
+
+	// Second, open the avatar configuration in current directory.
+	KUrl configUrl = avatarUrl;
+	configUrl.addPath( AvatarConfig );
+	
+	QImage avatar;
+	if( !newEntry.path.isEmpty() && newEntry.image.isNull() )
+	{
+		avatar = QImage(newEntry.path);
+	}
+	else
+	{
+		avatar = newEntry.image;
+	}
+
+	// Scale avatar
+	avatar = d->scaleImage(avatar);
+
+	QString avatarFilename;
+	// Find MD5 hash for filename
+	// MD5 always contain ASCII caracteres so it is more save for a filename.
+	// Name can use UTF-8 caracters.
+	QByteArray tempArray;
+	QBuffer tempBuffer(&tempArray);
+	tempBuffer.open( QIODevice::WriteOnly );
+	avatar.save(&tempBuffer, "PNG");
+	KMD5 context(tempArray);
+	avatarFilename = context.hexDigest() + QLatin1String(".png");
+
+	// Save image on disk	
+	kDebug(14010) << k_funcinfo << "Saving " << avatarFilename << " on disk." << endl;
+	avatarUrl.addPath( avatarFilename );
+
+	if( !avatar.save( avatarUrl.path(), "PNG") )
+	{
+		kDebug(14010) << k_funcinfo << "Saving of " << avatarUrl.path() << " failed !" << endl;
+		return;
+	}
+	else
+	{
+		// Save metadata of image
+		KSimpleConfig *avatarConfig = new KSimpleConfig( configUrl.path() );
+		avatarConfig->setGroup( newEntry.name );
+	
+		avatarConfig->writeEntry( "Filename", avatarFilename );
+		avatarConfig->writeEntry( "Category", int(newEntry.category) );
+
+		avatarConfig->sync();
+	
+		delete avatarConfig;
+	}
 }
 
 void AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 {
 	Q_UNUSED(entryToRemove);
 }
+
+void AvatarManager::Private::createDirectory(const KUrl &directory)
+{
+	if( !QFile::exists(directory.path()) )
+	{
+		kDebug(14010) << k_funcinfo << "Creating directory: " << directory.path() << endl;
+		KIO::Job *job = KIO::mkdir(directory);
+		job->exec();
+		if( job->error() )
+		{
+			kDebug(14010) << "Directory creating failed: " << job->errorText() << endl;
+		}
+	}
+}
+
+QImage AvatarManager::Private::scaleImage(const QImage &source)
+{
+	QImage result;
+
+	if( source.width() > 96 || source.height() > 96 )
+	{
+		// Scale and crop the picture.
+		result = source.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		// crop image if not square
+		if( result.width() < result.height() )
+			result = result.copy( (result.width()-result.height())/2, 0, 96, 96 );
+		else if( result.width() > result.height() )
+			result = result.copy( 0, (result.height()-result.width())/2, 96, 96 );
+	}
+	else if( source.width() < 32 || source.height() < 32 )
+	{
+		// Scale and crop the picture.
+		result = source.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		// crop image if not square
+		if( result.width() < result.height() )
+			result = result.copy( (result.width()-result.height())/2, 0, 32, 32 );
+		else if( result.width() > result.height() )
+			result = result.copy( 0, (result.height()-result.width())/2, 32, 32 );
+	}
+	else if( source.width() != source.height() )
+	{
+		if(source.width() < source.height())
+			result = source.copy((source.width()-source.height())/2, 0, source.height(), source.height());
+		else if (source.width() > source.height())
+			result = source.copy(0, (source.height()-source.width())/2, source.height(), source.height());
+	}
+
+	return result;
+}
+
 //END AvatarManager
 
 //BEGIN AvatarQueryJob
