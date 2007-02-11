@@ -339,13 +339,13 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 					}
 				break;
 				case 0x05:
-					kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Ready for Transmission" << endl;
+					kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Ready for Transmission." << info->timestamp << " watchers. << endl;
 					if( info->timestamp == 1 )
 					{
 						info->status = Sending;
 						emit readyForTransmission();
 					}
-					else
+					else if( info->timestamp == 0 )
 					{
 						info->status = SendingEmpty;
 						emit stopTransmission();
