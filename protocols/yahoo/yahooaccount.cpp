@@ -120,6 +120,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 
 YahooAccount::~YahooAccount()
 {
+	if( m_webcam )
+		m_webcam->stopTransmission();
 	delete theAwayDialog;
 }
 
