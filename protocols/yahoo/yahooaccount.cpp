@@ -125,6 +125,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 
 YahooAccount::~YahooAccount()
 {
+	if( m_webcam )
+		m_webcam->stopTransmission();
 }
 
 void YahooAccount::setServer( const QString &server )
