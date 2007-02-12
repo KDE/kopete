@@ -105,7 +105,8 @@ typedef enum
 	PIXELFORMAT_YUYV	= (1 << 10),
 	PIXELFORMAT_UYVY	= (1 << 11),
 	PIXELFORMAT_YUV420P	= (1 << 12),
-	PIXELFORMAT_YUV422P	= (1 << 13)
+	PIXELFORMAT_YUV422P	= (1 << 13),
+	PIXELFORMAT_MJPEG       = (1 << 14)
 //	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
 
@@ -211,8 +212,8 @@ public:
 	int setInputParameters();
 	int startCapturing();
 	int getFrame();
-	int getFrame(imagebuffer *imgbuffer);
 	int getImage(QImage *qimage);
+	int getPreviewImage(QImage *qimage);
 	int stopCapturing();
 	int close();
 

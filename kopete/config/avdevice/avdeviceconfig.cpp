@@ -80,7 +80,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 
 	mVideoDevicePool->startCapturing();
 	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&qimage);
+	mVideoDevicePool->getPreviewImage(&qimage);
 	if (qpixmap.convertFromImage(qimage,0) == true)
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
@@ -239,7 +239,7 @@ void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
 void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&qimage);
+	mVideoDevicePool->getPreviewImage(&qimage);
 	bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
 //	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 }

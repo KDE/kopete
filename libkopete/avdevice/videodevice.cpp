@@ -16,6 +16,7 @@
 */
 
 #define ENABLE_AV
+#define HAVE_V4L2
 
 #include <cstdlib>
 #include <cerrno>
@@ -25,6 +26,8 @@
 
 #include "videoinput.h"
 #include "videodevice.h"
+
+#include "videocodec.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 
@@ -38,6 +41,8 @@ VideoDevice::VideoDevice()
 	descriptor = -1;
 	m_streambuffers  = 0;
 	m_current_input = 0;
+	m_workaroundbrokendriver = false;
+	m_disablemmap = false;
 //	kdDebug() << "libkopete (avdevice): VideoDevice() exited successfuly" << endl;
 }
 
@@ -92,19 +97,16 @@ int VideoDevice::open()
 		return EXIT_SUCCESS;
 	}
 	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR, 0);
-	if(isOpen())
-	{
-		kdDebug() <<  k_funcinfo << "File " << full_filename << " was opened successfuly" << endl;
-		if(EXIT_FAILURE==checkDevice())
-		{
-			kdDebug() <<  k_funcinfo << "File " << full_filename << " could not be opened" << endl;
-			close();
-			return EXIT_FAILURE;
-		}
-	}
-	else
+	if(!isOpen())
 	{
 		kdDebug() << k_funcinfo << "Unable to open file " << full_filename << "Err: "<< errno << endl;
+		return EXIT_FAILURE;
+	}
+	kdDebug() <<  k_funcinfo << "File " << full_filename << " was opened successfuly" << endl;
+	if(EXIT_FAILURE==checkDevice())
+	{
+		kdDebug() <<  k_funcinfo << "File " << full_filename << " could not be opened" << endl;
+		close();
 		return EXIT_FAILURE;
 	}
 
@@ -141,9 +143,8 @@ int VideoDevice::checkDevice()
 		m_driver=VIDEODEV_DRIVER_NONE;
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
-
-if(!getWorkaroundBrokenDriver())
-{
+		if(!getWorkaroundBrokenDriver())
+		{
 		CLEAR(V4L2_capabilities);
 
 		if (-1 != xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
@@ -158,7 +159,7 @@ if(!getWorkaroundBrokenDriver())
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
-
+			fprintf(stderr, "checkDevice: detected V4L2 driver.\n");
 
 // Detect maximum and minimum resolution supported by the V4L2 device
 			CLEAR (fmt);
@@ -178,6 +179,7 @@ if(!getWorkaroundBrokenDriver())
 			{
 				maxwidth  = fmt.fmt.pix.width;
 				maxheight = fmt.fmt.pix.height;
+				fprintf(stderr, "checkDevice: V4L2 max %d x %d\n", maxwidth, maxheight); /* AD: */
 			}
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
 				kdDebug() << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ")." << endl;
@@ -232,8 +234,6 @@ if(!getWorkaroundBrokenDriver())
 					}
 				}
 			}
-
-
 		}
 		else
 		{
@@ -242,7 +242,7 @@ if(!getWorkaroundBrokenDriver())
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is not a V4L2 device." << endl;
 		}
 
-}
+		}
 #endif
 
 		CLEAR(V4L_capabilities);
@@ -275,6 +275,8 @@ if(!getWorkaroundBrokenDriver())
 				maxwidth  = V4L_capabilities.maxwidth;
 				minheight = V4L_capabilities.minheight;
 				maxheight = V4L_capabilities.maxheight;
+
+				fprintf(stderr, "checkDevice: V4L1 max %d x %d\n", maxwidth, maxheight); /* AD: */
 
 
 				int inputisok=EXIT_SUCCESS;
@@ -341,6 +343,8 @@ if(!getWorkaroundBrokenDriver())
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV422P) << endl;
 		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV420P) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_MJPEG) << endl;
 
 // TODO: Now we must execute the proper initialization according to the type of the driver.
 		kdDebug() <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
@@ -539,9 +543,15 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
 		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 		{
-			kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying RGB24." << endl;
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+		  kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying MJPEG." << endl;
+		  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_MJPEG))
+		    {
+		      kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUYV format. Trying YUYV." << endl;
+		      if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
 			{
+			  kdDebug() <<  k_funcinfo << "Card doesn't seem to support MJPEG format. Trying RGB24." << endl;
+			  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+			    {
 				kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
 				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
 				{
@@ -553,7 +563,9 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 							kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
 					}
 				}
+			    }
 			}
+		    }
 		}
 
 		if(newwidth  > maxwidth ) newwidth  = maxwidth;
@@ -1049,6 +1061,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_UYVY	: break;
 				case PIXELFORMAT_YUV420P: break;
 				case PIXELFORMAT_YUV422P: break;
+				case PIXELFORMAT_MJPEG:   break;
 			}
 		}
 //kdDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
@@ -1056,23 +1069,6 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 
 // put frame copy operation here
 //		kdDebug() <<  k_funcinfo << "exited successfuly." << endl;
-		return EXIT_SUCCESS;
-	}
-	return EXIT_FAILURE;
-}
-
-/*!
-    \fn VideoDevice::getFrame(imagebuffer *imgbuffer)
- */
-int VideoDevice::getFrame(imagebuffer *imgbuffer)
-{
-	if(imgbuffer)
-	{
-		getFrame();
-		imgbuffer->height      = m_currentbuffer.height;
-		imgbuffer->width       = m_currentbuffer.width;
-		imgbuffer->pixelformat = m_currentbuffer.pixelformat;
-		imgbuffer->data        = m_currentbuffer.data;
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -1139,7 +1135,30 @@ int VideoDevice::getImage(QImage *qimage)
 			break;
 		case PIXELFORMAT_BGR32	: break;
 	
+        	case PIXELFORMAT_MJPEG:
+		  {
+		    unsigned char*pic = NULL;
+		    int w = 0, h = 0;
+		    VideoCodec::jpeg_decode(&pic, &m_currentbuffer.data[0], &w, &h);
+		    if(pic != NULL && w == currentwidth && h == currentheight)
+		      {
+			VideoCodec::yuyv2qimage(qimage, pic, w, h);
+			free(pic);
+		      }
+		    else
+		      {
+			fprintf(stderr, "error in MJPEG decoding- expected: %d x %d; actual: %d x %d\n",
+				currentwidth, currentheight, w, h);
+		      }
+		  }
+		  break;
+
 		case PIXELFORMAT_YUYV:
+		  {
+		    VideoCodec::yuyv2qimage(qimage, &m_currentbuffer.data[0], currentwidth, currentheight);
+		  }
+		  break;
+
 		case PIXELFORMAT_UYVY:
 		case PIXELFORMAT_YUV422P:
 		case PIXELFORMAT_YUV420P:
@@ -1147,6 +1166,7 @@ int VideoDevice::getImage(QImage *qimage)
 		uchar *yptr, *cbptr, *crptr;
 		bool halfheight=false;
 		bool packed=false;
+
 		if (m_currentbuffer.pixelformat == PIXELFORMAT_YUV420P)
 			halfheight=true;
 	
@@ -1223,6 +1243,21 @@ int VideoDevice::getImage(QImage *qimage)
 		break;
 	}
 
+	return EXIT_SUCCESS;
+}
+
+int VideoDevice::getPreviewImage(QImage *qimage)
+{
+	if(getImageAsMirror())
+	{
+		QImage img;
+		getImage(&img);
+		VideoCodec::computeMirrorImage(qimage, &img);
+	}
+	else
+	{
+		getImage(qimage);
+	}
 	return EXIT_SUCCESS;
 }
 
@@ -1307,6 +1342,24 @@ float VideoDevice::setBrightness(float brightness)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_control control;
+				struct v4l2_queryctrl queryctrl;
+				float value = getBrightness();
+				CLEAR(queryctrl);
+				queryctrl.id =  V4L2_CID_BRIGHTNESS;
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl)) {
+					fprintf(stderr, "Brightness control not supported.\n");
+				} else {
+					CLEAR(control);
+					control.id    = V4L2_CID_BRIGHTNESS;
+					control.value = queryctrl.minimum + (queryctrl.maximum - queryctrl.minimum) * value;
+					fprintf(stderr, "V4L2: setBrightness- value=%d\n", control.value);
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control)) {
+						fprintf(stderr, "Brightness control not supported.\n");
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1345,6 +1398,24 @@ float VideoDevice::setContrast(float contrast)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_control control;
+				struct v4l2_queryctrl queryctrl;
+				float value = getContrast();
+				CLEAR(queryctrl);
+				queryctrl.id =  V4L2_CID_CONTRAST;
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl)) {
+					fprintf(stderr, "Contrast control not supported.\n");
+				} else {
+					CLEAR(control);
+					control.id    = V4L2_CID_CONTRAST;
+					control.value = queryctrl.minimum + (queryctrl.maximum - queryctrl.minimum) * value;
+					fprintf(stderr, "V4L2: setContrast- value=%d (%f) [%d:%d]\n", control.value, value, queryctrl.minimum, queryctrl.maximum);
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control)) {
+						fprintf(stderr, "Contrast control not supported.\n");
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1383,6 +1454,24 @@ float VideoDevice::setSaturation(float saturation)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_control control;
+				struct v4l2_queryctrl queryctrl;
+				float value = getSaturation();
+				CLEAR(queryctrl);
+				queryctrl.id =  V4L2_CID_SATURATION;
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl)) {
+					fprintf(stderr, "Saturation control not supported.\n");
+				} else {
+					CLEAR(control);
+					control.id    = V4L2_CID_SATURATION;
+					control.value = queryctrl.minimum + (queryctrl.maximum - queryctrl.minimum) * value;
+					fprintf(stderr, "V4L2: setSaturation- value=%d\n", control.value);
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control)) {
+						fprintf(stderr, "Saturation control not supported.\n");
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1421,6 +1510,24 @@ float VideoDevice::setWhiteness(float whiteness)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_control control;
+				struct v4l2_queryctrl queryctrl;
+				float value = getWhiteness();
+				CLEAR(queryctrl);
+				queryctrl.id =  V4L2_CID_GAMMA;
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl)) {
+					fprintf(stderr, "Whiteness control not supported.\n");
+				} else {
+					CLEAR(control);
+					control.id    = V4L2_CID_GAMMA;
+					control.value = queryctrl.minimum + (queryctrl.maximum - queryctrl.minimum) * value;
+					fprintf(stderr, "V4L2: setWhiteness- value=%d\n", control.value);
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control)) {
+						fprintf(stderr, "Whiteness control not supported.\n");
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1459,6 +1566,24 @@ float VideoDevice::setHue(float hue)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_control control;
+				struct v4l2_queryctrl queryctrl;
+				float value = getHue();
+				CLEAR(queryctrl);
+				queryctrl.id =  V4L2_CID_HUE;
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl)) {
+					fprintf(stderr, "Hue control not supported.\n");
+				} else {
+					CLEAR(control);
+					control.id    = V4L2_CID_HUE;
+					control.value = queryctrl.minimum + (queryctrl.maximum - queryctrl.minimum) * value;
+					fprintf(stderr, "V4L2: setHue- value=%d\n", control.value);
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control)) {
+						fprintf(stderr, "Hue control not supported.\n");
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1589,6 +1714,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case V4L2_PIX_FMT_UYVY		: return PIXELFORMAT_UYVY;	break;
 				case V4L2_PIX_FMT_YUV420	: return PIXELFORMAT_YUV420P;	break;
 				case V4L2_PIX_FMT_YUV422P	: return PIXELFORMAT_YUV422P;	break;
+         			case V4L2_PIX_FMT_MJPEG         : return PIXELFORMAT_MJPEG;     break;
 			}
 			break;
 #endif
@@ -1640,6 +1766,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_UYVY	: return V4L2_PIX_FMT_UYVY;	break;
 				case PIXELFORMAT_YUV420P: return V4L2_PIX_FMT_YUV420;	break;
 				case PIXELFORMAT_YUV422P: return V4L2_PIX_FMT_YUV422P;	break;
+         			case PIXELFORMAT_MJPEG  : return V4L2_PIX_FMT_MJPEG;    break;
 			}
 			break;
 #endif
@@ -1661,6 +1788,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_UYVY	: return VIDEO_PALETTE_UYVY;	break;
 				case PIXELFORMAT_YUV420P: return VIDEO_PALETTE_YUV420;	break;
 				case PIXELFORMAT_YUV422P: return VIDEO_PALETTE_YUV422P;	break;
+         			case PIXELFORMAT_MJPEG  : return PIXELFORMAT_NONE;      break;
 			}
 			break;
 #endif
@@ -1690,6 +1818,7 @@ int VideoDevice::pixelFormatDepth(pixel_format pixelformat)
 		case PIXELFORMAT_UYVY	: return 16;	break;
 		case PIXELFORMAT_YUV420P: return 16;	break;
 		case PIXELFORMAT_YUV422P: return 16;	break;
+		case PIXELFORMAT_MJPEG  : return 16;	break;
 	}
 	return 0;
 }
@@ -1715,6 +1844,7 @@ QString VideoDevice::pixelFormatName(pixel_format pixelformat)
 		case PIXELFORMAT_UYVY	: returnvalue = "Packed YVU 4:2:2";	break;
 		case PIXELFORMAT_YUV420P: returnvalue = "Planar YUV 4:2:0";	break;
 		case PIXELFORMAT_YUV422P: returnvalue = "Planar YUV 4:2:2";	break;
+		case PIXELFORMAT_MJPEG:   returnvalue = "M-JPEG";	        break;
 	}
 	return returnvalue;
 }
@@ -1744,6 +1874,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case V4L2_PIX_FMT_UYVY		: returnvalue = pixelFormatName(PIXELFORMAT_UYVY);	break;
 				case V4L2_PIX_FMT_YUV420	: returnvalue = pixelFormatName(PIXELFORMAT_YUV420P);	break;
 				case V4L2_PIX_FMT_YUV422P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV422P);	break;
+				case V4L2_PIX_FMT_MJPEG	        : returnvalue = pixelFormatName(PIXELFORMAT_MJPEG);	break;
 			}
 			break;
 #endif
@@ -2200,8 +2331,6 @@ bool VideoDevice::canStream()
 	return m_videostream;
 }
 
+} // namespace AV
 
-
-}
-
-}
+} // namespace Kopete

@@ -69,6 +69,7 @@ public:
 	int stopCapturing();
 	int readFrame();
 	int getImage(QImage *qimage);
+	int getPreviewImage(QImage *qimage);
 	int selectInput(int newinput);
 	int setInputParameters();
 	int scanDevices();

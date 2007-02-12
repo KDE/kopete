@@ -81,8 +81,9 @@ void YahooWebcam::webcamDialogClosing()
 void YahooWebcam::updateImage()
 {
 	m_devicePool->getFrame();
-	m_devicePool->getImage(m_img);
-	theDialog->newImage( *m_img );
+	QImage local_img;
+	m_devicePool->getPreviewImage(&local_img);
+	theDialog->newImage(local_img);
 }
 
 void YahooWebcam::sendImage()

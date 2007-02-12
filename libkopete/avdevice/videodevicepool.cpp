@@ -514,6 +514,17 @@ int VideoDevicePool::getImage(QImage *qimage)
 }
 
 /*!
+    \fn VideoDevicePool::getQImage(QImage *qimage)
+ */
+int VideoDevicePool::getPreviewImage(QImage *qimage)
+{
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].getPreviewImage(qimage);
+	else
+		return getImage(qimage);
+}
+
+/*!
     \fn Kopete::AV::VideoDevicePool::selectInput(int input)
  */
 int VideoDevicePool::selectInput(int newinput)
@@ -817,8 +828,11 @@ void VideoDevicePool::loadConfig()
 			const bool workaroundbrokendriver = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			kdDebug() << k_funcinfo << "Device name: " << name << endl;
 			kdDebug() << k_funcinfo << "Device current input: " << currentinput << endl;
-			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
+			kdDebug() << k_funcinfo << "Disable mmap: " << disablemmap << endl;
+			kdDebug() << k_funcinfo << "Workaround broken driver: " << workaroundbrokendriver << endl;
 			(*vditerator).selectInput(currentinput);
+			(*vditerator).setDisableMMap(disablemmap);
+			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
 
 			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{
@@ -829,7 +843,7 @@ void VideoDevicePool::loadConfig()
 				const float hue        = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")       .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
 				const bool  autobrightnesscontrast = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				const bool  autocolorcorrection    = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
-				const bool  imageasmirror          = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 mageAsMirror")           .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
+				const bool  imageasmirror          = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				(*vditerator).setBrightness(brightness);
 				(*vditerator).setContrast(contrast);
 				(*vditerator).setSaturation(saturation);
@@ -914,7 +928,7 @@ void VideoDevicePool::saveConfig()
 				config->writeEntry( brightness,             (*vditerator).m_input[input].getBrightness());
 				config->writeEntry( contrast,               (*vditerator).m_input[input].getContrast());
 				config->writeEntry( saturation,             (*vditerator).m_input[input].getSaturation());
-				config->writeEntry( saturation,             (*vditerator).m_input[input].getWhiteness());
+				config->writeEntry( whiteness,              (*vditerator).m_input[input].getWhiteness());
 				config->writeEntry( hue,                    (*vditerator).m_input[input].getHue());
 				config->writeEntry( autobrightnesscontrast, (*vditerator).m_input[input].getAutoBrightnessContrast());
 				config->writeEntry( autocolorcorrection,    (*vditerator).m_input[input].getAutoColorCorrection());

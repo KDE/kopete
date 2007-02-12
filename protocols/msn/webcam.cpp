@@ -839,7 +839,11 @@ void Webcam::timerEvent( QTimerEvent *e )
 	videoDevice->getImage(&img);
 	
 	if(m_widget)
-		m_widget->newImage(img);
+	{
+	  QImage local_img;
+	  videoDevice->getPreviewImage(&local_img);
+	  m_widget->newImage(local_img);
+	}
 	
 	if(img.width()!=320 || img.height()!=240)
 	{

@@ -1231,6 +1231,7 @@ void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 				break;
 			case ChatView::Normal:
 			default:
+				KWin::demandAttention( cv->topLevelWidget()->winId(), false );
 				m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
 				break;
 		}

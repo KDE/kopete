@@ -30,6 +30,7 @@ VideoInput::VideoInput()
 	m_hue = 0.5;
 	m_autobrightnesscontrast = false;
 	m_autocolorcorrection = false;
+	m_imageasmirror = true;
 }
 
 
@@ -167,6 +168,6 @@ bool VideoInput::setImageAsMirror(bool imageasmirror)
 	return getImageAsMirror();
 }
 
-}
+} // namespace AV
 
-}
+} // namespace kopete

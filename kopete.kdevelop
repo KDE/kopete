@@ -17,11 +17,12 @@
       <part>kdevabbrev</part>
       <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
-      <part>kdevdebugger</part>
       <part>kdevdistpart</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
+    <projectname>kopete</projectname>
+    <defaultencoding></defaultencoding>
   </general>
   <kdevfileview>
     <groups>
@@ -96,16 +97,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell>../libtool</dbgshell>
+      <dbgshell></dbgshell>
       <programargs>--nofork</programargs>
-      <gdbpath>/usr/bin/</gdbpath>
+      <gdbpath>/usr/bin/gdb</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>true</staticmembers>
@@ -124,24 +125,35 @@
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
       </envvars>
       <abortonerror>true</abortonerror>
-      <numberofjobs>1</numberofjobs>
+      <numberofjobs>2</numberofjobs>
       <dontact>false</dontact>
-      <makebin>unsermake --compile-jobs=20</makebin>
+      <makebin>unsermake --compile-jobs=20 -p</makebin>
       <prio>0</prio>
-      <runmultiplejobs>false</runmultiplejobs>
+      <runmultiplejobs>true</runmultiplejobs>
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
       <activetarget>protocols/groupwise/kopete_groupwise.la</activetarget>
     </general>
     <run>
-      <mainprogram>kopete/kopete</mainprogram>
-      <programargs></programargs>
+      <mainprogram>/space/kde/installs/3_5/bin/kopete</mainprogram>
+      <programargs>--nofork</programargs>
       <terminal>false</terminal>
-      <envvars/>
+      <envvars>
+        <envvar value="/space/kde/installs/3_5" name="KDEDIRS" />
+        <envvar value="/suse/wstephenson/.kde-dev-35" name="KDEHOME" />
+        <envvar value="/tmp/wstephenson-kde-dev-35" name="KDETMP" />
+        <envvar value="/var/tmp/wstephenson-kde-dev-35" name="KDEVARTMP" />
+        <envvar value="/space/kde/installs/3_5/lib" name="LD_LIBRARY_PATH" />
+      </envvars>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <autocompile>true</autocompile>
+      <globaldebugarguments>--nofork</globaldebugarguments>
+      <globalcwd>/space/kde/builds/3_5/kdenetwork/kopete</globalcwd>
+      <useglobalprogram>true</useglobalprogram>
+      <autoinstall>true</autoinstall>
+      <autokdesu>false</autokdesu>
     </run>
     <configurations>
       <default>
@@ -213,12 +225,15 @@
       <namespaceAliases>std=_GLIBCXX_STD</namespaceAliases>
       <processPrimaryTypes>true</processPrimaryTypes>
       <processFunctionArguments>false</processFunctionArguments>
+      <preProcessAllHeaders>false</preProcessAllHeaders>
+      <parseMissingHeaders>false</parseMissingHeaders>
+      <resolveIncludePaths>true</resolveIncludePaths>
+      <alwaysParseInBackground>true</alwaysParseInBackground>
+      <usePermanentCaching>true</usePermanentCaching>
+      <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
+      <includePaths>.;</includePaths>
     </codecompletion>
-    <references>
-      <pcs>Qt</pcs>
-      <pcs>libkopete</pcs>
-      <pcs>KDElibs</pcs>
-    </references>
+    <references/>
     <creategettersetter>
       <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
@@ -237,7 +252,17 @@
       <used>false</used>
       <version>3</version>
       <root>/usr/lib/qt3</root>
+      <includestyle>3</includestyle>
+      <designerintegration>EmbeddedKDevDesigner</designerintegration>
+      <qmake>/usr/lib/qt3/bin/qmake</qmake>
+      <designer>/usr/lib/qt3/bin/designer</designer>
+      <designerpluginpaths/>
     </qt>
+    <splitheadersource>
+      <enabled>false</enabled>
+      <synchronize>true</synchronize>
+      <orientation>Vertical</orientation>
+    </splitheadersource>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>

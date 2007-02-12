@@ -54,6 +54,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	mVideoDevicePool->startCapturing();
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&mImage);
+
 kdDebug() << "Just captured 1st frame" << endl;
 
 	mPixmap=QPixmap(320,240,-1, QPixmap::DefaultOptim);
@@ -72,7 +73,7 @@ TestbedWebcamDialog::~ TestbedWebcamDialog( )
 void TestbedWebcamDialog::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&mImage);
+	mVideoDevicePool->getPreviewImage(&mImage);
 	mImageContainer->updatePixmap( QPixmap( mImage ) );
 }
 

@@ -45,6 +45,11 @@
 #include "nljuk.h"
 #include "nlamarok.h"
 #include "nlkaffeine.h"
+#include "nlquodlibet.h"
+#if COMPILE_LISTENSUPPORT
+#include "nllisten.h"
+#endif
+
 #include "nowlisteningguiclient.h"
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
@@ -115,6 +120,10 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	d->m_mediaPlayerList.append( new NLJuk( d->m_client ) );
 	d->m_mediaPlayerList.append( new NLamaroK( d->m_client ) );
 	d->m_mediaPlayerList.append( new NLKaffeine( d->m_client ) );
+	d->m_mediaPlayerList.append( new NLQuodLibet() );
+#if COMPILE_LISTENSUPPORT
+	d->m_mediaPlayerList.append( new NLlisten() );
+#endif
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	d->m_mediaPlayerList.append( new NLXmms() );
