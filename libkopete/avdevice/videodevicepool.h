@@ -45,7 +45,7 @@ This class allows kopete to check for the existence, open, configure, test, set 
 @author Cláudio da Silveira Pinheiro
 */
 
-typedef QValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
+typedef QValueList<Kopete::AV::VideoDevice *> VideoDeviceList;
 
 class VideoDevicePoolPrivate;
 
@@ -53,20 +53,22 @@ class KOPETE_EXPORT VideoDevicePool
 {
 public:
 	static VideoDevicePool* self();
+	/**
+	 * @return the current VideoDevice or 0 if there is none
+	 */
+	VideoDevice * current();
 	int open();
 	int open(unsigned int device);
-	bool isOpen();
-	int getFrame();
-	int width();
-	int minWidth();
-	int maxWidth();
-	int height();
-	int minHeight();
-	int maxHeight();
 	int setSize( int newwidth, int newheight);
 	int close();
 	int startCapturing();
 	int stopCapturing();
+	/**
+	 * Gets a single frame from the current device, or a dummy frame if there is 
+	 * no device. TODO what happens to the got frame?
+	 * @return EXIT_SUCCESS or EXIT_FAILURE
+	 */
+	int getFrame();
 	int readFrame();
 	int getImage(QImage *qimage);
 	int getPreviewImage(QImage *qimage);
@@ -76,12 +78,12 @@ public:
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
-	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
+	VideoDeviceList m_videodevices; // Vector to be filled with found devices
 	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	int fillStandardKComboBox(KComboBox *combobox);
-	unsigned int currentDevice();
+	unsigned int currentDeviceIndex();
 	int currentInput();
 	unsigned int inputs();
 
@@ -112,6 +114,13 @@ public:
 	void saveConfig(); // Save configuretion parameters;
 
 protected:
+	/**
+	 * Get a list of video devices in the given dir
+	 * @param dirPath the directory to look in
+	 * @param filter the directory filter, eg 'video*'
+	 * @return list of absolute paths
+	 */
+	QStringList videoDevicePaths( const QString & dirPath, const QString & filter );
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
 	int showDeviceCapabilities(unsigned int device);
