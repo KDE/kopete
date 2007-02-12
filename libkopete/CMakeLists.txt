@@ -152,16 +152,46 @@ install( FILES kopetegeneralsettings.kcfg kopeteappearancesettings.kcfg kopetebe
 install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
 install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
 install( FILES
-  kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.h kopeteaway.h kopeteblacklister.h
-  kopetecommand.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h
-  kopetecontactlist.h kopetecontactproperty.h kopete_export.h kopeteglobal.h kopetegroup.h
-  kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h
-  kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h
-  kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h kopetepassword.h
-  kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h kopetetransfermanager.h
-  kopeteuiglobal.h kabcpersistence.h kopeteversion.h kopetepicture.h ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
-  ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h kopetestatusmessage.h
-  DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
+  kopeteaccount.h
+  kopeteaccountmanager.h
+  kopeteavatarmanager.h
+  kopeteawayaction.h
+  kopeteaway.h
+  kopeteblacklister.h
+  kopetecommand.h
+  kopetecommandhandler.h
+  kopetecontact.h
+  kopetecontactlistelement.h
+  kopetecontactlist.h
+  kopetecontactproperty.h
+  kopete_export.h
+  kopeteglobal.h
+  kopetegroup.h
+  kopetemessageevent.h
+  kopetemessage.h
+  kopetemessagehandlerchain.h
+  kopetemessagehandler.h
+  kopetechatsession.h
+  kopetechatsessionmanager.h
+  kopetemetacontact.h
+  kopetemimetypehandler.h
+  kopeteonlinestatus.h
+  kopeteonlinestatusmanager.h
+  kopetepasswordedaccount.h
+  kopetepassword.h
+  kopeteplugin.h
+  kopeteprotocol.h
+  kopetesimplemessagehandler.h
+  kopetetask.h
+  kopetetransfermanager.h
+  kopeteuiglobal.h
+  kabcpersistence.h
+  kopeteversion.h
+  kopetepicture.h
+  ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
+  ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h 
+  ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h kopetestatusmessage.h
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
 
 

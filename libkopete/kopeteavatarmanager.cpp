@@ -32,6 +32,7 @@
 #include <kcodecs.h>
 #include <kurl.h>
 #include <kio/job.h>
+#include <kio/netaccess.h>
 #include <klocale.h>
 
 // Kopete includes
@@ -91,7 +92,7 @@ AvatarManager::~AvatarManager()
 	delete d;
 }
 
-void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
+Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 {
 	Q_ASSERT(!newEntry.name.isEmpty());
 	
@@ -156,7 +157,7 @@ void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 	if( !avatar.save( avatarUrl.path(), "PNG") )
 	{
 		kDebug(14010) << k_funcinfo << "Saving of " << avatarUrl.path() << " failed !" << endl;
-		return;
+		return AvatarEntry();
 	}
 	else
 	{
@@ -176,6 +177,8 @@ void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 
 		emit avatarAdded(newEntry);
 	}
+
+	return newEntry;
 }
 
 void AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
@@ -189,18 +192,17 @@ void AvatarManager::Private::createDirectory(const KUrl &directory)
 	if( !QFile::exists(directory.path()) )
 	{
 		kDebug(14010) << k_funcinfo << "Creating directory: " << directory.path() << endl;
-		KIO::Job *job = KIO::mkdir(directory);
-		job->exec();
-		if( job->error() )
+		if( !KIO::NetAccess::mkdir(directory,0) )
 		{
-			kDebug(14010) << "Directory creating failed: " << job->errorText() << endl;
+			kDebug(14010) << "Directory " << directory.path() <<" creating failed." << endl;
 		}
 	}
 }
 
 QImage AvatarManager::Private::scaleImage(const QImage &source)
 {
-	QImage result;
+	// Maybe the image doesn't need to be scaled
+	QImage result = source;
 
 	if( source.width() > 96 || source.height() > 96 )
 	{
@@ -329,11 +331,6 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 
 			avatarList << listedEntry;
 		}
-	}
-	else
-	{
-		queryJob->setError( UserDefinedError );
-		queryJob->setErrorText( i18n("Avatar configuration hasn't been found on disk for category %1.", relativeDirectory) );
 	}
 }
 

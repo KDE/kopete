@@ -23,6 +23,7 @@
 #include <kopete_export.h>
 #include <kopeteavatarmanager.h>
 
+class QListWidgetItem;
 class KJob;
 
 namespace Kopete
@@ -57,12 +58,6 @@ Q_SIGNALS:
 	 */
 	void avatarChanged();
 	
-public Q_SLOTS:
-	/**
-	 * Set the current selected avatar in the list.
-	 */
-	void applyAvatar();
-
 private Q_SLOTS:
 	/**
 	 * @internal
@@ -82,6 +77,13 @@ private Q_SLOTS:
 	 * @param newEntry new avatar Entry
 	 */
 	void avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry);
+
+	/**
+	 * @internal
+	 * A new item was selected in lists
+	 * @param item new selected QListWidgetItem
+	 */
+	void listSelectionChanged(QListWidgetItem *item);
 
 private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)

@@ -45,6 +45,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
+#include "avatarselectorwidget.h"
 
 
 ClickableLabel::ClickableLabel(QWidget *parent)
@@ -153,6 +154,11 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 
 void KopeteEditGlobalIdentityWidget::photoClicked()
 {
+	Kopete::UI::AvatarSelectorWidget *avatarSelector = new Kopete::UI::AvatarSelectorWidget(0);
+	avatarSelector->show();
+
+// Will be recoded soon
+#if 0
 	KUrl photoURL = KFileDialog::getImageOpenUrl( KUrl(), this, i18n("Global Photo"));
 	if(photoURL.isEmpty())
 		return;
@@ -210,6 +216,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 
 	d->myself->setPhotoSource(Kopete::MetaContact::SourceCustom);
 	d->myself->setPhoto(KUrl(saveLocation));
+#endif
 }
 
 void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text)

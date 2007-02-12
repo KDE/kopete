@@ -59,15 +59,7 @@ class Contact;
  *
  * @subsection avatar_management_list Listing avatar
  * If you want to list only an avatar category,
- * pass a category to query() method.
- * @code
-QList<Kopete::AvatarManager::AvatarEntry> avatarList = Kopete::AvatarManager::self()->query();
-foreach(Kopete::AvatarManager::AvatarEntry entry, avatarList)
-{
-  QString example = QString("Name: %1, Path: %2, Category: %3").arg(entry.name).arg(entry.path).arg(entry.category);
-  qDebug() << "Listing avatar" << example;
-}
- * @endcode
+ * use Kopete::AvatarQueryJob
  *
  * @subsection avatar_management_add Adding an avatar
  * Use the add() method to add an new avatar. For an avatar received from a contact, you
@@ -169,8 +161,10 @@ public Q_SLOTS:
 	 * No need to scale the image, add() will do it for you.
 	 *
 	 * @param newEntry New avatar entry
+	 * @return a new AvatarEntry struct. If the adding failed, the path is null.
 	 */
-	void add(Kopete::AvatarManager::AvatarEntry newEntry);
+	Kopete::AvatarManager::AvatarEntry add(Kopete::AvatarManager::AvatarEntry newEntry);
+
 	/**
 	 * @brief Remove an avatar from the storage
 	 * @param entryToRemove Avatar entry to remove

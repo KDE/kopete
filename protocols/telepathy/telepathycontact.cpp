@@ -31,6 +31,7 @@
 #include <kopetechatsessionmanager.h>
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>
+#include <kopeteavatarmanager.h>
 
 // QtTapioca includes
 #include <QtTapioca/Contact>
@@ -213,21 +214,35 @@ void TelepathyContact::telepathyAvatarReceived(QtTapioca::ContactBase *contactBa
 {
 	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Received avatar for " << contactId() << endl;
 
-	// TODO: Use a common avatar storage for all protocols
-	QString pictureLocation = KStandardDirs::locateLocal( "appdata", "telepathypictures/" + contactId().replace(QRegExp("[./~]"),"-")  + ".png" );
-
+	// Remove the avatar if the data is empty and exit the method
 	if( avatar->data().isEmpty() )
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty." << endl;
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty. Removing the avatar" << endl;
+
+		removeProperty( Kopete::Global::Properties::self()->photo() );
+		removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
+
+		return;
+	}
 
 	// Guess file format from header for now
 	QImage avatarImage = QImage::fromData( avatar->data() );
 
-	if( avatarImage.save(pictureLocation, "PNG") )
+	// Create/Update avatar entry for this contact
+	Kopete::AvatarManager::AvatarEntry newAvatar;
+	newAvatar.name = contactId();
+	newAvatar.contact = this;
+	newAvatar.image = avatarImage;
+	newAvatar.category = Kopete::AvatarManager::Contact;
+
+	Kopete::AvatarManager::AvatarEntry result = Kopete::AvatarManager::self()->add( newAvatar );
+	
+	if( !result.path.isEmpty() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting avatar information for " << contactId() << endl;
 
 		// Set avatar in Kopete
-		setProperty( Kopete::Global::Properties::self()->photo(), pictureLocation );
+		setProperty( Kopete::Global::Properties::self()->photo(), result.path );
 		setProperty( TelepathyProtocol::protocol()->propAvatarToken, avatar->token() );
 	}
 	else

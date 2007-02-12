@@ -17,6 +17,7 @@
 #include "avatarselectorwidget.h"
 
 // Qt includes
+#include <QtCore/QPointer>
 #include <QtGui/QListWidget>
 #include <QtGui/QListWidgetItem>
 #include <QtGui/QIcon>
@@ -50,6 +51,9 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 
 	// Connect signals/slots
 	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
+	connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listSelectionChanged(QListWidgetItem*)));
+	connect(d->mainWidget.listUserContact, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listSelectionChanged(QListWidgetItem*)));
+
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)), this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
 
 	// List avatars in lists
@@ -63,11 +67,6 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 AvatarSelectorWidget::~AvatarSelectorWidget()
 {
 	delete d;
-}
-
-void AvatarSelectorWidget::applyAvatar()
-{
-	//TODO
 }
 
 void AvatarSelectorWidget::buttonAddAvatarClicked()
@@ -144,6 +143,11 @@ void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry e
 	QListWidgetItem *item = new QListWidgetItem(listWidget);
 	item->setText( entry.name );
 	item->setIcon( QIcon(entry.path) );
+}
+
+void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
+{
+	d->mainWidget.labelAvatarImage->setPixmap( item->icon().pixmap(96, 96) );
 }
 
 } // Namespace Kopete::UI
