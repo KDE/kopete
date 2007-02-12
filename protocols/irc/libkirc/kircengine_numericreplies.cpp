@@ -510,7 +510,7 @@ void Engine::numericReply_401(Message &msg)
  */
 void Engine::numericReply_404(Message &msg)
 {
-	receivedServerMessage(msg, i18n("You cannot send message to channel %2.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("You cannot send message to channel %1.", msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"

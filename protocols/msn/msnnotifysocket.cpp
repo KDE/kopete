@@ -777,7 +777,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 #endif
 #if 0
 			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18np( "You have one unread message in your MSN inbox.",
-							 "You have %n unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 ),
+							 "You have %1 unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 #endif
 		}

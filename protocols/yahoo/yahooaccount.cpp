@@ -1513,7 +1513,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 #endif
 #if 0
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
-			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
+			"You have %1 unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 #endif
 		m_currentMailCount = cnt;

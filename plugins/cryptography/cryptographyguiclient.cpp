@@ -108,7 +108,7 @@ void CryptographyGUIClient::slotToggled()
 			w = csn->view()->mainWidget();
 
 		KMessageBox::sorry( w,
-							i18np("To send encrypted messages to %1, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%1", keyless.count() , keyless.join( "\n" ) ),
+							i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count() , keyless.join( "\n" ) ),
 							i18np( "Missing public key", "Missing public keys", keyless.count() ) );
 
 		m_action->setChecked( false );

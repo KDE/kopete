@@ -168,7 +168,7 @@ void GroupWiseContactSearch::slotGotSearchResults()
 	SearchUserTask * st = ( SearchUserTask * ) sender();
 	m_searchResults = st->results();
 	
-	m_matchCount->setText( i18np( "1 matching user found", "%n matching users found", m_searchResults.count() ) );
+	m_matchCount->setText( i18np( "1 matching user found", "%1 matching users found", m_searchResults.count() ) );
 
 	m_results->clear();
 	Q3ValueList< GroupWise::ContactDetails >::Iterator it = m_searchResults.begin();

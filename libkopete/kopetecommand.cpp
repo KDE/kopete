@@ -104,14 +104,14 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 	}
 	else if( mArgs.count() < m_minArgs )
 	{
-		printError( i18np("\"%1\" requires at least %n argument.",
-			"\"%1\" requires at least %n arguments.", m_minArgs,
+		printError( i18np("\"%2\" requires at least %1 argument.",
+			"\"%2\" requires at least %1 arguments.", m_minArgs,
 			  text() ), manager, gui );
 	}
 	else if( m_maxArgs > -1 && (int)mArgs.count() > m_maxArgs )
 	{
-		printError( i18np("\"%1\" has a maximum of %n argument.",
-			"\"%1\" has a maximum of %n arguments.", m_minArgs,
+		printError( i18np("\"%2\" has a maximum of %1 argument.",
+			"\"%2\" has a maximum of %1 arguments.", m_minArgs,
 			  text() ), manager, gui );
 	}
 	else if( !KAuthorized::authorizeKAction( objectName() ) )
