@@ -167,6 +167,7 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 void Client::close()
 {
 	debug( "Client::close()" );
+	d->keepAliveTimer->stop();
 	if(d->stream) {
 		d->stream->disconnect(this);
 		d->stream->close();

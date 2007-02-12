@@ -650,6 +650,7 @@ void GroupWiseAccount::slotCSDisconnected()
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Disconnected from Groupwise server." << endl;
 	myself()->setOnlineStatus( protocol()->groupwiseOffline );
 	setAllContactsStatus( protocol()->groupwiseOffline );
+	client()->close();
 }
 
 void GroupWiseAccount::slotCSConnected()
