@@ -180,13 +180,15 @@ class VideoDevice{
 public:
 	VideoDevice();
 	~VideoDevice();
-	int setFileName(QString filename);
+	/**
+	 * Open the device, initialize it and set the current input
+	 */
 	int open();
 	bool isOpen() const;
 	int checkDevice();
 	int showDeviceCapabilities();
 	int initDevice();
-	unsigned int inputs() const;
+	unsigned int inputCount() const;
 	int width() const;
 	int minWidth() const;
 	int maxWidth() const;
@@ -248,14 +250,21 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QString m_model;
-	QString m_name;
-	size_t m_modelindex; // Defines what's the number of a device when more than 1 device of a given model is present;
-	QString full_filename;
+	QString model() const;
+	void setModel( const QString & );
+	QString name() const;
+	void setName( const QString & );
+	QString devicePath() const;
+	void setDevicePath( const QString & );
+	QValueVector<Kopete::AV::VideoInput> inputs() const;
+	void setInputs( QValueVector<Kopete::AV::VideoInput> ) const;
+
+protected:
+	// Defines  the number of a device when more than 1 device of a given model is present
+	size_t m_modelindex;
 	videodev_driver m_driver;
 	int descriptor;
 
-//protected:
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 	struct v4l2_capability V4L2_capabilities;
@@ -267,10 +276,7 @@ public:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	QValueVector<Kopete::AV::VideoInput> m_input;
-//	QFile file;
-protected:
-	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
+	int m_currentheight, m_currentwidth, m_minwidth, m_maxwidth, m_minheight, m_maxheight;
 
 	bool m_disablemmap;
 	bool m_workaroundbrokendriver;
@@ -280,10 +286,11 @@ protected:
 	imagebuffer m_currentbuffer;
 	int m_buffer_size;
 
-	int m_current_input;
+	unsigned int m_current_input;
 	pixel_format m_pixelformat;
 
 	io_method m_io_method;
+	//flags defining the device's capabilites
 	bool m_videocapture;
 	bool m_videochromakey;
 	bool m_videoscale;
@@ -291,6 +298,12 @@ protected:
 	bool m_videoread;
 	bool m_videoasyncio;
 	bool m_videostream;
+	// 
+	QString m_name;
+	// path to the device node
+	QString m_devicePath;
+	QString m_model;
+	QValueVector<Kopete::AV::VideoInput> m_inputs;
 
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
