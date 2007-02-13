@@ -140,7 +140,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="4" >
-    <widget class="KListBox" name="icon_theme_list" >
+    <widget class="K3ListBox" name="icon_theme_list" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>5</hsizetype>
@@ -183,9 +183,9 @@
    <header>ktextedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KListBox</class>
+   <class>K3ListBox</class>
    <extends>Q3ListBox</extends>
-   <header>klistbox.h</header>
+   <header>k3listbox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

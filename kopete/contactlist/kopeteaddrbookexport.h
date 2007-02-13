@@ -30,7 +30,7 @@
 #include <QPixmap>
 
 class KDialog;
-class KListBox;
+class K3ListBox;
 class KComboBox;
 
 namespace Kopete
@@ -67,7 +67,7 @@ protected:
 	/**
 	 * Populate a listbox with a given type of phone number
 	 */
-	void fetchPhoneNumbers( KListBox * listBox, int type, uint& counter );
+	void fetchPhoneNumbers( K3ListBox * listBox, int type, uint& counter );
 	/**
 	 * Populate the GUI with data from IM systems
 	 */
@@ -81,11 +81,11 @@ protected:
 	 * Populate a listbox with a contact's IM data
 	 */
 	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
-			KListBox *combo, const Kopete::ContactPropertyTmpl &property );
+			K3ListBox *combo, const Kopete::ContactPropertyTmpl &property );
 	
 	/** Check the selected item is not the first (existing KABC) item, or the same as it */
 	bool newValue( QComboBox *combo );
-	QStringList newValues( KListBox *listBox, uint counter );
+	QStringList newValues( K3ListBox *listBox, uint counter );
 	
 	// the GUI
 	QWidget *mParent;

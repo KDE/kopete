@@ -26,7 +26,7 @@
 
 #include <kdialog.h>
 #include <kiconloader.h>
-#include <klistbox.h>
+#include <k3listbox.h>
 #include <klocale.h>
 
 #include "kopeteaccount.h"
@@ -108,7 +108,7 @@ void KopeteAddressBookExport::fetchKABCData()
 	}
 }
 
-void KopeteAddressBookExport::fetchPhoneNumbers( KListBox * listBox, int type, uint& counter )
+void KopeteAddressBookExport::fetchPhoneNumbers( K3ListBox * listBox, int type, uint& counter )
 {
 	KABC::PhoneNumber::List phones = mAddressee.phoneNumbers( type );
 	counter = phones.count();
@@ -157,7 +157,7 @@ void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const 
 	}	
 }
 
-void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, KListBox *listBox, const Kopete::ContactPropertyTmpl &property )
+void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, K3ListBox *listBox, const Kopete::ContactPropertyTmpl &property )
 {
 	Kopete::ContactProperty prop = contact->property( property );
 	if ( !prop.isNull() )
@@ -279,7 +279,7 @@ bool KopeteAddressBookExport::newValue( QComboBox *combo )
 			( combo->itemText( combo->currentIndex() ) == combo->itemText( 0 ) ) );
 }
 
-QStringList KopeteAddressBookExport::newValues( KListBox *listBox, uint counter )
+QStringList KopeteAddressBookExport::newValues( K3ListBox *listBox, uint counter )
 {
 	QStringList newValues;
 	// need to iterate all items except those from KABC and check if selected and not same as the first
