@@ -180,14 +180,38 @@ class VideoDevice{
 public:
 	VideoDevice();
 	~VideoDevice();
+	bool isOpen() const;
 	/**
-	 * Open the device, initialize it and set the current input
+	 * Device identifiers
+	 */
+	QString model() const;
+	void setModel( const QString & );
+	QString name() const;
+	void setName( const QString & );
+	/**
+	 * The path to the device node
+	 */
+	QString devicePath() const;
+	void setDevicePath( const QString & );
+	/**
+	 * Open the device, initialize it, get its capabilities, and set the current input
 	 */
 	int open();
-	bool isOpen() const;
-	int checkDevice();
-	int showDeviceCapabilities();
+	/**
+	 * Discover the device's IO capabilities and initialise its cropping
+	 */
 	int initDevice();
+	/**
+	 * Get the device's capabilities using the V4L or V4L2 APIs
+	 */
+	int checkDevice();
+	/**
+	 * Dump the device's capabilities (debug)
+	 */
+	int showDeviceCapabilities();
+	/**
+	 * Number of inputs the device has
+	 */
 	unsigned int inputCount() const;
 	int width() const;
 	int minWidth() const;
@@ -198,6 +222,9 @@ public:
 	int setSize( int newwidth, int newheight);
 
 	pixel_format setPixelFormat(pixel_format newformat);
+	/**
+	 * Utility conversion routines
+	 */
 	int pixelFormatCode(pixel_format pixelformat) const;
 	pixel_format pixelFormatForPalette( int palette ) const;
 	int pixelFormatDepth(pixel_format pixelformat) const;
@@ -211,6 +238,10 @@ public:
 
 	int currentInput() const;
 	int selectInput(int input);
+	/**
+	 * Apply the current input's image settings (brightness, contrast,
+	 * saturation, whiteness, hue) to the hardware
+	 */
 	int setInputParameters();
 	int startCapturing();
 	int getFrame();
@@ -219,6 +250,9 @@ public:
 	int stopCapturing();
 	int close();
 
+	/**
+	 * Store image settings for the current input
+	 */
 	float brightness() const;
 	void setBrightness(float brightness);
 	float contrast() const;
@@ -230,18 +264,26 @@ public:
 	float hue() const;
 	void setHue(float Hue);
 
+	/**
+	 * Image controls for the device
+	 */
 	bool autoBrightnessContrast() const;
 	void setAutoBrightnessContrast(bool brightnesscontrast);
 	bool autoColorCorrection() const;
 	void setAutoColorCorrection(bool colorcorrection);
 	bool imageAsMirror() const;
 	void setImageAsMirror(bool imageasmirror);
-
+	/**
+	 * User preferences for the device
+	 */
 	bool mmapDisabled() const;
 	void setDisableMMap(bool disablemmap);
 	bool workaroundBrokenDriver() const;
 	void setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
+	/**
+	 * Device capabilities
+	 */
 	bool canCapture();
 	bool canChromakey();
 	bool canScale();
@@ -250,21 +292,30 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QString model() const;
-	void setModel( const QString & );
-	QString name() const;
-	void setName( const QString & );
-	QString devicePath() const;
-	void setDevicePath( const QString & );
 	QValueVector<Kopete::AV::VideoInput> inputs() const;
 	void setInputs( QValueVector<Kopete::AV::VideoInput> ) const;
 
 protected:
+	int xioctl(int request, void *arg);
+	int errnoReturn(const char* s);
+	int initRead();
+	int initMmap();
+	int initUserptr();
+private:
 	// Defines  the number of a device when more than 1 device of a given model is present
 	size_t m_modelindex;
+	// Which AV API is in use: Video4Linux, Video4Linux2, or None.
 	videodev_driver m_driver;
+	// file descriptor in use
 	int descriptor;
 
+	// image settings
+	int m_currentheight, m_currentwidth, m_minwidth, m_maxwidth, m_minheight, m_maxheight;
+	// device settings
+	unsigned int m_current_input;
+	pixel_format m_pixelformat;
+
+	// structs defining video api settings
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 	struct v4l2_capability V4L2_capabilities;
@@ -276,20 +327,15 @@ protected:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	int m_currentheight, m_currentwidth, m_minwidth, m_maxwidth, m_minheight, m_maxheight;
 
-	bool m_disablemmap;
-	bool m_workaroundbrokendriver;
-
+	// I/O plumbing
+	io_method m_io_method;
 	QValueVector<rawbuffer> m_rawbuffers;
+	// seems to be the number of buffers used for reads
 	unsigned int m_streambuffers;
 	imagebuffer m_currentbuffer;
 	int m_buffer_size;
 
-	unsigned int m_current_input;
-	pixel_format m_pixelformat;
-
-	io_method m_io_method;
 	//flags defining the device's capabilites
 	bool m_videocapture;
 	bool m_videochromakey;
@@ -298,19 +344,16 @@ protected:
 	bool m_videoread;
 	bool m_videoasyncio;
 	bool m_videostream;
-	// 
+	// name of the device returned by the driver
 	QString m_name;
 	// path to the device node
 	QString m_devicePath;
 	QString m_model;
+	// array holding settings for each input
 	QValueVector<Kopete::AV::VideoInput> m_inputs;
-
-	int xioctl(int request, void *arg);
-	int errnoReturn(const char* s);
-	int initRead();
-	int initMmap();
-	int initUserptr();
-
+	// user preferences
+	bool m_disablemmap;
+	bool m_workaroundbrokendriver;
 };
 
 }
