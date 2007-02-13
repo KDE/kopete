@@ -42,26 +42,31 @@ namespace AV {
 class KOPETE_EXPORT VideoInput{
 public:
 	VideoInput();
+	VideoInput( const QString & name, const int hasTuner, const __u64 standards );
 	~VideoInput();
-	QString name;
-	int  hastuner;
-	__u64 m_standards;
-	float getBrightness();
-	float setBrightness(float brightness);
-	float getContrast();
-	float setContrast(float contrast);
-	float getSaturation();
-	float setSaturation(float saturation);
-	float getWhiteness();
-	float setWhiteness(float whiteness);
-	float getHue();
-	float setHue(float Hue);
-	bool getAutoBrightnessContrast();
-	bool setAutoBrightnessContrast(bool brightnesscontrast);
-	bool getAutoColorCorrection();
-	bool setAutoColorCorrection(bool colorcorrection);
-	bool getImageAsMirror();
-	bool setImageAsMirror(bool imageasmirror);
+
+	QString name() const;
+	void setName( const QString & );
+	int hasTuner() const;
+	void setHasTuner( const int hasTuner );
+	__u64 standards() const;
+	void setStandards( __u64 standards );
+	float brightness() const;
+	void setBrightness(float brightness);
+	float contrast() const;
+	void setContrast(float contrast);
+	float saturation() const;
+	void setSaturation(float saturation);
+	float whiteness() const;
+	void setWhiteness(float whiteness);
+	float hue() const;
+	void setHue(float Hue);
+	bool autoBrightnessContrast() const;
+	void setAutoBrightnessContrast(bool brightnesscontrast);
+	bool autoColorCorrection() const;
+	void setAutoColorCorrection(bool colorcorrection);
+	bool imageAsMirror() const;
+	void setImageAsMirror(bool imageasmirror);
 
 protected:
 	float m_brightness;
@@ -72,12 +77,13 @@ protected:
 	bool m_autobrightnesscontrast;
 	bool m_autocolorcorrection;
 	bool m_imageasmirror;
-
-
+	QString m_name;
+	int m_hasTuner;
+	__u64 m_standards;
 };
 
-}
+} // namespace AV
 
-}
+} // namespace Kopete
 
 #endif

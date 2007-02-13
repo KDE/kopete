@@ -23,7 +23,22 @@ namespace AV {
 
 VideoInput::VideoInput()
 {
-	kdDebug() << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
+	kdDebug( 14010 ) << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
+	m_brightness = 0.5;
+	m_contrast = 0.5;
+	m_saturation = 0.5;
+	m_hue = 0.5;
+	m_autobrightnesscontrast = false;
+	m_autocolorcorrection = false;
+	m_imageasmirror = true;
+}
+
+VideoInput::VideoInput( const QString & name, const int hasTuner, const __u64 standards )
+{
+	kdDebug( 14010 ) << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
+	m_name = name;
+	m_hasTuner = hasTuner;
+	m_standards = standards;
 	m_brightness = 0.5;
 	m_contrast = 0.5;
 	m_saturation = 0.5;
@@ -38,134 +53,125 @@ VideoInput::~VideoInput()
 {
 }
 
-float VideoInput::getBrightness()
+QString VideoInput::name() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
+	return m_name;
+}
+
+void VideoInput::setName( const QString & name )
+{
+	m_name = name;
+}
+
+int VideoInput::hasTuner() const
+{
+	return m_hasTuner;
+}
+
+void VideoInput::setHasTuner( const int hasTuner )
+{
+	m_hasTuner = hasTuner;
+}
+
+__u64 VideoInput::standards() const
+{
+	return m_standards;
+}
+
+void VideoInput::setStandards( __u64 standards )
+{
+	m_standards = standards;
+}
+
+float VideoInput::brightness() const
+{
 	return m_brightness;
 }
 
-float VideoInput::setBrightness(float brightness)
+void VideoInput::setBrightness(float brightness)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
-	if ( brightness > 1 )
-		brightness = 1;
-	else
-	if ( brightness < 0 )
-		brightness = 0;
+	brightness = QMIN( brightness, 1.0 );
+	brightness = QMAX( brightness, 0.0 );
 	m_brightness = brightness;
-	return getBrightness();
 }
 
-float VideoInput::getContrast()
+float VideoInput::contrast() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_contrast;
 }
 
-float VideoInput::setContrast(float contrast)
+void VideoInput::setContrast(float contrast)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
-	if ( contrast > 1 )
-		contrast = 1;
-	else
-	if ( contrast < 0 )
-		contrast = 0;
+	contrast = QMIN( contrast, 1.0 );
+	contrast = QMAX( contrast, 0.0 );
 	m_contrast = contrast;
-	return getContrast();
 }
 
-float VideoInput::getSaturation()
+float VideoInput::saturation() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_saturation;
 }
 
-float VideoInput::setSaturation(float saturation)
+void VideoInput::setSaturation(float saturation)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
-	if ( saturation > 1 )
-		saturation = 1;
-	else
-	if ( saturation < 0 )
-		saturation = 0;
+	saturation = QMIN( saturation, 1.0 );
+	saturation = QMAX( saturation, 0.0 );
 	m_saturation = saturation;
-	return getSaturation();
 }
 
-float VideoInput::getWhiteness()
+float VideoInput::whiteness() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_whiteness;
 }
 
-float VideoInput::setWhiteness(float whiteness)
+void VideoInput::setWhiteness(float whiteness)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
-	if ( whiteness > 1 )
-		whiteness = 1;
-	else
-	if ( whiteness < 0 )
-		whiteness = 0;
+	whiteness = QMIN( whiteness, 1.0 );
+	whiteness = QMAX( whiteness, 0.0 );
 	m_whiteness = whiteness;
-	return getWhiteness();
 }
 
-float VideoInput::getHue()
+float VideoInput::hue() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_hue;
 }
 
-float VideoInput::setHue(float hue)
+void VideoInput::setHue(float hue)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
-	if ( hue > 1 )
-		hue = 1;
-	else
-	if ( hue < 0 )
-		hue = 0;
+	hue = QMIN( hue, 1.0 );
+	hue = QMAX( hue, 0.0 );
 	m_hue = hue;
-	return getHue();
 }
 
 
-bool VideoInput::getAutoBrightnessContrast()
+bool VideoInput::autoBrightnessContrast() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_autobrightnesscontrast;
 }
 
-bool VideoInput::setAutoBrightnessContrast(bool brightnesscontrast)
+void VideoInput::setAutoBrightnessContrast(bool brightnesscontrast)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autobrightnesscontrast = brightnesscontrast;
-	return getAutoBrightnessContrast();
 }
 
-bool VideoInput::getAutoColorCorrection()
+bool VideoInput::autoColorCorrection() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_autocolorcorrection;
 }
 
-bool VideoInput::setAutoColorCorrection(bool colorcorrection)
+void VideoInput::setAutoColorCorrection(bool colorcorrection)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autocolorcorrection = colorcorrection;
-	return getAutoColorCorrection();
 }
 
-bool VideoInput::getImageAsMirror()
+bool VideoInput::imageAsMirror() const
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_imageasmirror;
 }
 
-bool VideoInput::setImageAsMirror(bool imageasmirror)
+void VideoInput::setImageAsMirror(bool imageasmirror)
 {
-//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_imageasmirror = imageasmirror;
-	return getImageAsMirror();
 }
 
 } // namespace AV
