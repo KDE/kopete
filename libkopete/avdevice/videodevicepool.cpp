@@ -245,8 +245,8 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 	{
 		for (unsigned int loop=0; loop < m_videodevices.size(); loop++)
 		{
-			combobox->insertItem( m_videodevices[loop]->m_name );
-			kdDebug( 14010 ) <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevices[loop]->m_name << endl;
+			combobox->insertItem( m_videodevices[loop]->name() );
+			kdDebug( 14010 ) <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevices[loop]->name() << endl;
 		}
 		combobox->setCurrentItem(currentDeviceIndex());
 		return EXIT_SUCCESS;
@@ -260,10 +260,10 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 	combobox->clear();
 	if(m_videodevices.size())
 	{
-		for (unsigned int loop=0; loop < current()->inputs(); loop++)
+		for (unsigned int loop=0; loop < current()->inputCount(); loop++)
 		{
-			combobox->insertItem( current()->m_input[loop].name);
-			kdDebug( 14010 ) <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " <<  current()->m_input[loop].name << " (tuner: " <<  current()->m_input[loop].hastuner << ")" << endl;
+			combobox->insertItem( current()->inputs()[loop].name() );
+			kdDebug( 14010 ) <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " <<  current()->inputs()[loop].name() << " (tuner: " <<  current()->inputs()[loop].hasTuner() << ")" << endl;
 		}
 		combobox->setCurrentItem( current()->currentInput() );
 		return EXIT_SUCCESS;
@@ -281,11 +281,11 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 	combobox->clear();
 	if(m_videodevices.size())
 	{
-		if( current()->inputs()>0)
+		if( current()->inputCount()>0)
 		{
 			for (unsigned int loop=0; loop < 25; loop++)
 			{
-				if ( (current()->m_input[currentInput()].m_standards) & (1 << loop) )
+				if ( (current()->inputs()[currentInput()].standards()) & (1 << loop) )
 					combobox->insertItem(current()->signalStandardName( 1 << loop));
 /*
 				case STANDARD_PAL_B1	: return V4L2_STD_PAL_B1;	break;
@@ -346,11 +346,16 @@ QStringList VideoDevicePool::videoDevicePaths( const QString & dirPath, const QS
 	kdDebug( 14010 ) <<  k_funcinfo << "Looking for devices in " << dirPath << endl;
 	const QFileInfoList *list = videodevice_dir.entryInfoList();
 	QStringList absolutePaths;
-	QFileInfoListIterator fileiterator ( *list );
-	QFileInfo *fileinfo;
-	while ( (fileinfo = fileiterator.current()) != 0 )
-		absolutePaths.append( fileinfo->absFilePath() );
-
+	if ( list )
+	{
+		QFileInfoListIterator fileiterator ( *list );
+		QFileInfo *fileinfo;
+		while ( (fileinfo = fileiterator.current()) != 0 )
+		{
+			++fileiterator;
+			absolutePaths.append( fileinfo->absFilePath() );
+		}
+	}
 	return absolutePaths;
 }
 
@@ -384,16 +389,17 @@ int VideoDevicePool::scanDevices()
 	for ( QStringList::Iterator it = videoDevices.begin(); it != videoDevices.end(); ++it )
 	{
 		VideoDevice * videodevice = new VideoDevice;
-		kdDebug( 14010 ) <<  k_funcinfo << "Found device " << videodevice->full_filename << endl;
+		videodevice->setDevicePath( *it );
+		kdDebug( 14010 ) <<  k_funcinfo << "Found device " << videodevice->devicePath() << endl;
 		videodevice->open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		// QFile::IO_Raw is probably what you need here - Bille
 		if(videodevice->isOpen())
 		{
-			kdDebug( 14010 ) <<  k_funcinfo << "File " << videodevice->full_filename << " was opened successfully" << endl;
+			kdDebug( 14010 ) <<  k_funcinfo << "File " << videodevice->devicePath() << " was opened successfully" << endl;
 
 	// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
 			videodevice->close();
-			videodevice->m_modelindex = m_modelvector.addModel( videodevice->m_model ); // Adds device to the device list and sets model number
+			videodevice->m_modelindex = m_modelvector.addModel( videodevice->model() ); // Adds device to the device list and sets model number
 			m_videodevices.push_back(videodevice);
 		}
 	}
@@ -433,16 +439,16 @@ void VideoDevicePool::loadConfig()
 		uint i = 0;
 		for( vditerator = m_videodevices.begin(); vditerator != m_videodevices.end(); ++vditerator, ++i )
 		{
-			const QString modelindex = QString::fromLocal8Bit ( "Model %1 Device %2")  .arg ((*vditerator)->m_name ) .arg ((*vditerator)->m_modelindex);
+			const QString modelindex = QString::fromLocal8Bit ( "Model %1 Device %2")  .arg ((*vditerator)->name() ) .arg ((*vditerator)->m_modelindex);
 			if(modelindex == currentdevice)
 			{
 				m_current_device = i;
 //				kdDebug( 14010 ) << k_funcinfo << "This place will be used to set " << modelindex << " as the current device ( " << (vditerator - m_videodevices.begin()) << " )." << endl;
 			}
-			const QString name                = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator)->m_name ) .arg ((*vditerator)->m_modelindex)), (*vditerator)->m_model);
-			const int currentinput            = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator)->m_name ) .arg ((*vditerator)->m_modelindex)), 0);
-			const bool disablemmap            = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex)), false );
-			const bool workaroundbrokendriver = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex)), false );
+			const QString name                = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator)->name() ) .arg ((*vditerator)->m_modelindex)), (*vditerator)->model());
+			const int currentinput            = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator)->name() ) .arg ((*vditerator)->m_modelindex)), 0);
+			const bool disablemmap            = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex)), false );
+			const bool workaroundbrokendriver = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex)), false );
 			kdDebug( 14010 ) << k_funcinfo << "Device name: " << name << endl;
 			kdDebug( 14010 ) << k_funcinfo << "Device current input: " << currentinput << endl;
 			kdDebug( 14010 ) << k_funcinfo << "Disable mmap: " << disablemmap << endl;
@@ -451,16 +457,16 @@ void VideoDevicePool::loadConfig()
 			(*vditerator)->setDisableMMap(disablemmap);
 			(*vditerator)->setWorkaroundBrokenDriver(workaroundbrokendriver);
 
-			for (size_t input = 0 ; input < (*vditerator)->m_input.size(); input++)
+			for (size_t input = 0 ; input < (*vditerator)->inputCount(); input++)
 			{
-				const float brightness = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness").arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
-				const float contrast   = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")  .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
-				const float saturation = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation").arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
-				const float whiteness  = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness") .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
-				const float hue        = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")       .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
-				const bool  autobrightnesscontrast = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , false );
-				const bool  autocolorcorrection    = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , false );
-				const bool  imageasmirror          = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input)) , false );
+				const float brightness = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness").arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
+				const float contrast   = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")  .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
+				const float saturation = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation").arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
+				const float whiteness  = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness") .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
+				const float hue        = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")       .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , 0.5 );
+				const bool  autobrightnesscontrast = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , false );
+				const bool  autocolorcorrection    = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , false );
+				const bool  imageasmirror          = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg ((*vditerator)->model() ) .arg ((*vditerator)->m_modelindex) .arg (input)) , false );
 				(*vditerator)->setBrightness(brightness);
 				(*vditerator)->setContrast(contrast);
 				(*vditerator)->setSaturation(saturation);
@@ -500,52 +506,56 @@ void VideoDevicePool::saveConfig()
 		}
 */
 // Stores what is the current video device in use
-		const QString currentdevice = QString::fromLocal8Bit ( "Model %1 Device %2" ) .arg(current()->m_model) .arg(current()->m_modelindex);
+		const QString currentdevice = QString::fromLocal8Bit ( "Model %1 Device %2" ) .arg(current()->model()) .arg(current()->m_modelindex);
 		config->writeEntry( "Current Device", currentdevice);
 
 		VideoDeviceList::iterator vditerator;
 		for( vditerator = m_videodevices.begin(); vditerator != m_videodevices.end(); ++vditerator )
 		{
-			kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Name:" << (*vditerator)->m_name << endl;
-			kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Current input:" << (*vditerator)->currentInput() << endl;
+			QString model = (*vditerator)->model();
+			QString name = (*vditerator)->name();
+			int modelIndex = (*vditerator)->m_modelindex;
+			
+			kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Name:" << (*vditerator)->name() << endl;
+			kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Current input:" << (*vditerator)->currentInput() << endl;
 
 // Stores current input for the given video device
-			const QString name                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex);
-			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex);
-			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex);
-			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex);
-			config->writeEntry( name,                   (*vditerator)->m_name);
+			const QString modelName                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg (model ) .arg (modelIndex);
+			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg (model ) .arg (modelIndex);
+			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg (model ) .arg (modelIndex);
+			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg (model ) .arg (modelIndex);
+			config->writeEntry( modelName,                   (*vditerator)->name());
 			config->writeEntry( currentinput,           (*vditerator)->currentInput());
-			config->writeEntry( disablemmap,            (*vditerator)->getDisableMMap());
-			config->writeEntry( workaroundbrokendriver, (*vditerator)->getWorkaroundBrokenDriver());
+			config->writeEntry( disablemmap,            (*vditerator)->mmapDisabled());
+			config->writeEntry( workaroundbrokendriver, (*vditerator)->workaroundBrokenDriver());
 
-			for (size_t input = 0 ; input < (*vditerator)->m_input.size(); input++)
+			for (size_t input = 0 ; input < (*vditerator)->inputCount(); input++)
 			{
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator)->m_input[input].getBrightness() << endl;
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Contrast  : " << (*vditerator)->m_input[input].getContrast()   << endl;
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Saturation: " << (*vditerator)->m_input[input].getSaturation() << endl;
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Whiteness : " << (*vditerator)->m_input[input].getWhiteness()  << endl;
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Hue       : " << (*vditerator)->m_input[input].getHue()        << endl;
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Automatic brightness / contrast: " << (*vditerator)->m_input[input].getAutoBrightnessContrast() << endl;
-				kdDebug( 14010 ) << "Model:" << (*vditerator)->m_model << ":Index:" << (*vditerator)->m_modelindex << ":Input:" << input << ":Automatic color correction     : " << (*vditerator)->m_input[input].getAutoColorCorrection() << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Brightness: " << (*vditerator)->inputs()[input].brightness() << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Contrast  : " << (*vditerator)->inputs()[input].contrast()   << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Saturation: " << (*vditerator)->inputs()[input].saturation() << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Whiteness : " << (*vditerator)->inputs()[input].whiteness()  << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Hue       : " << (*vditerator)->inputs()[input].hue()        << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Automatic brightness / contrast: " << (*vditerator)->inputs()[input].autoBrightnessContrast() << endl;
+				kdDebug( 14010 ) << "Model:" << model << ":Index:" << modelIndex << ":Input:" << input << ":Automatic color correction     : " << (*vditerator)->inputs()[input].autoColorCorrection() << endl;
 
 // Stores configuration about each channel
-				const QString brightness             = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness")             .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString contrast               = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")               .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString saturation             = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation")             .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString whiteness              = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness")              .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString hue                    = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")                    .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString autobrightnesscontrast = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString autocolorcorrection    = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				const QString imageasmirror          = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg ((*vditerator)->m_model ) .arg ((*vditerator)->m_modelindex) .arg (input);
-				config->writeEntry( brightness,             (*vditerator)->m_input[input].getBrightness());
-				config->writeEntry( contrast,               (*vditerator)->m_input[input].getContrast());
-				config->writeEntry( saturation,             (*vditerator)->m_input[input].getSaturation());
-				config->writeEntry( whiteness,              (*vditerator)->m_input[input].getWhiteness());
-				config->writeEntry( hue,                    (*vditerator)->m_input[input].getHue());
-				config->writeEntry( autobrightnesscontrast, (*vditerator)->m_input[input].getAutoBrightnessContrast());
-				config->writeEntry( autocolorcorrection,    (*vditerator)->m_input[input].getAutoColorCorrection());
-				config->writeEntry( imageasmirror,          (*vditerator)->m_input[input].getImageAsMirror());
+				const QString brightness             = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness")             .arg (model ) .arg (modelIndex) .arg (input);
+				const QString contrast               = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")               .arg (model ) .arg (modelIndex) .arg (input);
+				const QString saturation             = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation")             .arg (model ) .arg (modelIndex) .arg (input);
+				const QString whiteness              = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness")              .arg (model ) .arg (modelIndex) .arg (input);
+				const QString hue                    = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")                    .arg (model ) .arg (modelIndex) .arg (input);
+				const QString autobrightnesscontrast = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg (model ) .arg (modelIndex) .arg (input);
+				const QString autocolorcorrection    = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg (model ) .arg (modelIndex) .arg (input);
+				const QString imageasmirror          = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg (model ) .arg (modelIndex) .arg (input);
+				config->writeEntry( brightness,             (*vditerator)->inputs()[input].brightness());
+				config->writeEntry( contrast,               (*vditerator)->inputs()[input].contrast());
+				config->writeEntry( saturation,             (*vditerator)->inputs()[input].saturation());
+				config->writeEntry( whiteness,              (*vditerator)->inputs()[input].whiteness());
+				config->writeEntry( hue,                    (*vditerator)->inputs()[input].hue());
+				config->writeEntry( autobrightnesscontrast, (*vditerator)->inputs()[input].autoBrightnessContrast());
+				config->writeEntry( autocolorcorrection,    (*vditerator)->inputs()[input].autoColorCorrection());
+				config->writeEntry( imageasmirror,          (*vditerator)->inputs()[input].imageAsMirror());
 			}
 		}
 		config->sync();
