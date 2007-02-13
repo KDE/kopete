@@ -86,6 +86,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 
 	// first things first - initialise internals
 	stateOnConnection = 0;
+	theHaveContactList = false;
 	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
 	m_session = new Client( this );
