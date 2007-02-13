@@ -79,6 +79,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 
 	// first things first - initialise internals
 	stateOnConnection = 0;
+	theHaveContactList = false;
 	m_protocol = parent;
 	m_session = new Client( this );
 	m_lastDisconnectCode = 0;
