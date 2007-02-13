@@ -182,32 +182,32 @@ public:
 	~VideoDevice();
 	int setFileName(QString filename);
 	int open();
-	bool isOpen();
+	bool isOpen() const;
 	int checkDevice();
 	int showDeviceCapabilities();
 	int initDevice();
-	unsigned int inputs();
-	int width();
-	int minWidth();
-	int maxWidth();
-	int height();
-	int minHeight();
-	int maxHeight();
+	unsigned int inputs() const;
+	int width() const;
+	int minWidth() const;
+	int maxWidth() const;
+	int height() const;
+	int minHeight() const;
+	int maxHeight() const;
 	int setSize( int newwidth, int newheight);
 
 	pixel_format setPixelFormat(pixel_format newformat);
-	int pixelFormatCode(pixel_format pixelformat);
-	pixel_format pixelFormatForPalette( int palette );
-	int pixelFormatDepth(pixel_format pixelformat);
-	QString pixelFormatName(pixel_format pixelformat);
-	QString pixelFormatName(int pixelformat);
+	int pixelFormatCode(pixel_format pixelformat) const;
+	pixel_format pixelFormatForPalette( int palette ) const;
+	int pixelFormatDepth(pixel_format pixelformat) const;
+	QString pixelFormatName(pixel_format pixelformat) const;
+	QString pixelFormatName(int pixelformat) const;
 
 	__u64 signalStandardCode(signal_standard standard);
 	QString signalStandardName(signal_standard standard);
 	QString signalStandardName(int standard);
 	int detectSignalStandards();
 
-	int currentInput();
+	int currentInput() const;
 	int selectInput(int input);
 	int setInputParameters();
 	int startCapturing();
@@ -217,28 +217,28 @@ public:
 	int stopCapturing();
 	int close();
 
-	float getBrightness();
-	float setBrightness(float brightness);
-	float getContrast();
-	float setContrast(float contrast);
-	float getSaturation();
-	float setSaturation(float saturation);
-	float getWhiteness();
-	float setWhiteness(float whiteness);
-	float getHue();
-	float setHue(float Hue);
+	float brightness() const;
+	void setBrightness(float brightness);
+	float contrast() const;
+	void setContrast(float contrast);
+	float saturation() const;
+	void setSaturation(float saturation);
+	float whiteness() const;
+	void setWhiteness(float whiteness);
+	float hue() const;
+	void setHue(float Hue);
 
-	bool getAutoBrightnessContrast();
-	bool setAutoBrightnessContrast(bool brightnesscontrast);
-	bool getAutoColorCorrection();
-	bool setAutoColorCorrection(bool colorcorrection);
-	bool getImageAsMirror();
-	bool setImageAsMirror(bool imageasmirror);
+	bool autoBrightnessContrast() const;
+	void setAutoBrightnessContrast(bool brightnesscontrast);
+	bool autoColorCorrection() const;
+	void setAutoColorCorrection(bool colorcorrection);
+	bool imageAsMirror() const;
+	void setImageAsMirror(bool imageasmirror);
 
-	bool getDisableMMap();
-	bool setDisableMMap(bool disablemmap);
-	bool getWorkaroundBrokenDriver();
-	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
+	bool mmapDisabled() const;
+	void setDisableMMap(bool disablemmap);
+	bool workaroundBrokenDriver() const;
+	void setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
 	bool canCapture();
 	bool canChromakey();
