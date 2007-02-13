@@ -258,7 +258,7 @@ in place of your status message.</string>
           </widget>
          </item>
          <item>
-          <widget class="KListBox" name="kcfg_SelectedMediaPlayer" >
+          <widget class="K3ListBox" name="kcfg_SelectedMediaPlayer" >
            <property name="enabled" >
             <bool>false</bool>
            </property>
@@ -332,9 +332,9 @@ in place of your status message.</string>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>KListBox</class>
+   <class>K3ListBox</class>
    <extends></extends>
-   <header>klistbox.h</header>
+   <header>k3listbox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

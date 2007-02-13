@@ -24,7 +24,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
-#include <klistbox.h>
+#include <k3listbox.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 

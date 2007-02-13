@@ -21,7 +21,7 @@ kde4_automoc(${kopete_nowlistening_PART_SRCS})
 kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete)
+target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KDE3SUPPORT_LIBS})
 
 if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LIBRAIRIES} )
@@ -43,7 +43,7 @@ kde4_automoc(${kcm_kopete_nowlistening_PART_SRCS})
 kde4_add_plugin(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
 
 install(TARGETS kcm_kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 
