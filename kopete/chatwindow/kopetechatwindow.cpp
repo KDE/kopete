@@ -241,8 +241,8 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	windows.append( this );
 	windowListChanged();
 
-	KGlobal::config()->setGroup( QLatin1String("ChatWindowSettings") );
-	m_alwaysShowTabs = KGlobal::config()->readEntry( QLatin1String("AlwaysShowTabs"), false );
+	m_alwaysShowTabs = KGlobal::config()->group( "ChatWindowSettings" ).
+                           readEntry( QLatin1String("AlwaysShowTabs"), false );
 //	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 
 	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
@@ -611,11 +611,11 @@ void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
 	{
-		KGlobal::config()->setGroup( QLatin1String("ChatWindowSettings") );
+		KConfigGroup cg( KGlobal::config(), QLatin1String("ChatWindowSettings") );
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-		m_tabBar->setHoverCloseButton(KGlobal::config()->readEntry( QLatin1String("HoverClose"), false ));
+		m_tabBar->setHoverCloseButton(cg.readEntry( QLatin1String("HoverClose"), false ));
 		m_tabBar->setTabReorderingEnabled(true);
 		m_tabBar->setAutomaticResizeTabs(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
@@ -640,7 +640,7 @@ void KopeteChatWindow::createTabBar()
 		else
 			setActiveView( chatViewList.first() );
 
-		int tabPosition = KGlobal::config()->readEntry( QLatin1String("Tab Placement") , 0 );
+		int tabPosition = cg.readEntry( QLatin1String("Tab Placement") , 0 );
 		slotPlaceTabs( tabPosition );
 	}
 }
@@ -1063,24 +1063,23 @@ void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
 //	kDebug(14010) << k_funcinfo << endl;
-	KSharedConfig::Ptr config = KGlobal::config();
-	applyMainWindowSettings( config.data(), QLatin1String( "KopeteChatWindow" ) );
-	config->setGroup( QLatin1String("ChatWindowSettings") );
+	applyMainWindowSettings( KGlobal::config()->group( QLatin1String( "KopeteChatWindow" ) ) );
+	//config->setGroup( QLatin1String("ChatWindowSettings") );
 }
 
 void KopeteChatWindow::saveOptions()
 {
 //	kDebug(14010) << k_funcinfo << endl;
 
-	KSharedConfig::Ptr config = KGlobal::config();
+        KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteChatWindow" ) );
 
 	// saves menubar,toolbar and statusbar setting
-	saveMainWindowSettings( config.data(), QLatin1String( "KopeteChatWindow" ) );
-	config->setGroup( QLatin1String("ChatWindowSettings") );
+	saveMainWindowSettings( cg  );
+        cg.changeGroup( QLatin1String("ChatWindowSettings") );
 	if( m_tabBar )
-		config->writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
+		cg.writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
 
-	config->sync();
+	cg.sync();
 }
 
 void KopeteChatWindow::slotChatSave()
