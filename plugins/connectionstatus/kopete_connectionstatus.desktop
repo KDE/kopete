@@ -40,6 +40,7 @@ Name[hu]=A kapcsolat állapota
 Name[is]=Staða tengingar
 Name[it]=Stato della connessione
 Name[ja]=接続状況
+Name[kk]=Қосылымның күй-жайы
 Name[km]=ស្ថានភាព​តការ​​ភ្ជាប់
 Name[lt]=Ryšio būsena
 Name[mk]=Статус на поврзувањето
@@ -93,6 +94,7 @@ Comment[hu]=A Kopete automatikus csatlakoztatása és bontása az internetkapcso
 Comment[is]=(Af)tengir Kopete sjálfkrafa miðað við stöðu Internettengingar
 Comment[it]=Connetti/disconnetti automaticamente Kopete a seconda della disponibilità della connessione ad internet
 Comment[ja]=インターネット接続の有無により自動的にKopeteを接続/切断する
+Comment[kk]=Интернетке қосылымның бар=жоғына қарай Kopete-ті автоматты түрде қосады және ажыратады
 Comment[km]=ភ្ជាប់ ​ ​ផ្ដាច​ Kopeteដោយ​ស្វ័យប្រវត្តិ​ដោយ​ផ្អែក​លើ​ភាព​មាន​នៃការណត​ភ្ជាប់​អ៊ីនធឺណិត
 Comment[lt]=Automatiškai prijungia/atjungia Kopete, priklausomai nuo interneto ryšio buvimo
 Comment[mk]=Автоматски го поврзува/исклучува Kopete во зависност на достапноста на поврзувањето на Интернет
