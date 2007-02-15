@@ -320,10 +320,10 @@ void AccountManager::save()
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
 		Account *a = it.next();
-		KConfigGroup config = a->configGroup();
+		KConfigGroup *config = a->configGroup();
 
-		config.writeEntry( "Protocol", a->protocol()->pluginId() );
-		config.writeEntry( "AccountId", a->accountId() );
+		config->writeEntry( "Protocol", a->protocol()->pluginId() );
+		config->writeEntry( "AccountId", a->accountId() );
 	}
 
 	KGlobal::config()->sync();
