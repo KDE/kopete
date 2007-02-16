@@ -166,7 +166,7 @@ void WebPresencePlugin::slotWriteFile()
 
 	KTemporaryFile* xml = generateFile();
 	xml->setAutoRemove( true );
-	kDebug(14309) << k_funcinfo << " " << xml->name() << endl;
+	kDebug(14309) << k_funcinfo << " " << xml->fileName() << endl;
 
 	switch( resultFormatting ) {
 	case WEB_XML:
