@@ -2131,7 +2131,7 @@ void Level::setText(const char *str)
 
         FontDef& def = p->fonts[m_nFont-1];
 
-        char *pp = strchr(str, ';');
+        const char *pp = strchr(str, ';');
         unsigned size;
         if (pp != NULL)
            size = (pp - str);
