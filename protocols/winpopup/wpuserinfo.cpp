@@ -79,7 +79,7 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	connect(details, SIGNAL(readReady(KProcIO *)), this, SLOT(slotDetailsProcessReady(KProcIO *)));
 	connect(details, SIGNAL(processExited(KProcess *)), this, SLOT(slotDetailsProcessExited(KProcess *)));
 
-	if (!details->start(KProcess::NotifyOnExit, KProcess::Stderr)) {
+	if (!details->start(KProcess::NotifyOnExit, true)) {
 		slotDetailsProcessExited(details);
 		kDebug(14170) << "DetailsProcess not started!" << endl;
 	}
