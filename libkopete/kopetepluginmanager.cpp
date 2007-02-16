@@ -33,6 +33,7 @@
 #include <QTimer>
 #include <QStack>
 
+#include <ksharedconfig.h>
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
 #include <kplugininfo.h>
