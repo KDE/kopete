@@ -78,7 +78,7 @@ void EmoticonSelector::prepareList(void)
 	int row = 0;
 	int col = 0;
 	QMap<QString, QString> list = Kopete::Emoticons::self()->emoticonAndPicList();
-	int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
+	int emoticonsPerRow = static_cast<int>(sqrt((double)list.count()));
 //	kDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
 
 	if ( lay )

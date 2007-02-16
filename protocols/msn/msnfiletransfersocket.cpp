@@ -304,8 +304,8 @@ void MSNFileTransferSocket::slotSendFile()
 //		char i2= (char)floor( bytesRead / 256 ) ;
 //		kDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << (int)i1 <<" + 256* "<< (int)i2 <<" = " << bytesRead <<endl;
 		block[0]='\0';
-		block[1]= (char)fmod( bytesRead, 256 );
-		block[2]= (char)floor( bytesRead / 256 );
+		block[1]= (char)fmod( bytesRead, 256. );
+		block[2]= (char)floor( bytesRead / 256. );
 
 		for (  int f = 0; f < bytesRead; f++ )
 		{

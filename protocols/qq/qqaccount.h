@@ -34,7 +34,7 @@ namespace Eva {
 	struct ContactInfo;
 	struct ContactStatus;
 	struct MessageHeader;
-	struct ByteArray;
+	class ByteArray;
 }
 
 class QQContact;
