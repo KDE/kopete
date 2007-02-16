@@ -161,7 +161,7 @@ void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 	else
 	{
 		// Save metadata of image
-		KSimpleConfig *avatarConfig = new KSimpleConfig( configUrl.path() );
+		KSimpleConfig *avatarConfig = new KConfig( configUrl.path(), KConfig::OnlyLocal);
 		avatarConfig->setGroup( newEntry.name );
 	
 		avatarConfig->writeEntry( "Filename", avatarFilename );
@@ -310,7 +310,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	avatarConfigUrl.addPath( AvatarConfig );
 	if( QFile::exists(avatarConfigUrl.path()) )
 	{
-		KSimpleConfig *avatarConfig = new KSimpleConfig( avatarConfigUrl.path() );
+		KSimpleConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::OnlyLocal);
 		// Each avatar entry in configuration is a group
 		QStringList groupEntryList = avatarConfig->groupList();
 		QString groupEntry;
