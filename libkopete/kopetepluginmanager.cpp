@@ -37,7 +37,7 @@
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
 #include <kplugininfo.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kstaticdeleter.h>
 #include <kurl.h>

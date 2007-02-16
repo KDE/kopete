@@ -28,7 +28,7 @@
 // KDE includes
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kcodecs.h>
 #include <kurl.h>
 #include <kio/job.h>

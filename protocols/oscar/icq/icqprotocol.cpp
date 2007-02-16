@@ -25,7 +25,7 @@
 
 #include <kgenericfactory.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kmessagebox.h>
 
 #include "kopeteglobal.h"
