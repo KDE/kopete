@@ -109,7 +109,7 @@ protected slots:
 
 
 private:
-	class Private;
+	struct Private;
 	Private *d;
 };
 

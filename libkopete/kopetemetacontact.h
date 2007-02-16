@@ -187,7 +187,7 @@ public:
 	 * This photo is obtained from the source set with @ref setPhotoSource
 	 * @deprecated Use picture().image() instead.
 	 */
-	QImage photo() const KDE_DEPRECATED;
+	KDE_DEPRECATED QImage photo() const;
 
 	/**
 	 * Return the correct Kopete::Picture object depending of the metacontact photo source.
