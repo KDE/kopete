@@ -171,7 +171,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 	// the sorting itself is rather slow. Therefore we call delayedSort, which tries
 	// to group multiple sort requests into one.
 	using namespace Kopete::UI::ListView;
-	if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
+	if ( ListView *lv = dynamic_cast<ListView *>( listView() ) )
 		lv->delayedSort();
 	else
 		listView()->sort();
