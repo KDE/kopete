@@ -32,7 +32,7 @@
 #include <kmimetype.h>
 #include <kio/netaccess.h>
 #include <kstaticdeleter.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kglobal.h>
 
 

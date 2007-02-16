@@ -19,7 +19,7 @@
 #include <qstring.h>
 
 #include <kglobal.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 
 #include "texteffectconfig.h"
 

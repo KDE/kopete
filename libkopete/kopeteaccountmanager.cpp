@@ -23,7 +23,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QHash>
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kplugininfo.h>
