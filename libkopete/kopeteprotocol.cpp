@@ -126,7 +126,7 @@ void Protocol::aboutToUnload()
 
 	d->unloading = true;
 
-	bool accountcountcount=0;
+	int accountcountcount=0;
 	// Disconnect all accounts
 	foreach( Account *a , AccountManager::self()->accounts() )
 	{
