@@ -17,6 +17,7 @@
 #include "historyguiclient.h"
 #include "historylogger.h"
 #include "historyconfig.h"
+#include "historyplugin.h"
 
 #include "kopetechatsession.h"
 #include "kopetecontact.h"
@@ -31,8 +32,6 @@
 
 #include <QList>
 #include <kactioncollection.h>
-
-class HistoryPlugin;
 
 HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent)
  : QObject(parent), KXMLGUIClient(parent)
