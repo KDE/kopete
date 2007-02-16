@@ -7,8 +7,8 @@
 #if defined Q_OS_WIN
 
 #ifndef LIBKYAHOO_EXPORT
-# ifdef MAKE_LIBKYAHOO_LIB
-#  define LIBKYAHOO_EXPORT  KDE_EXPORT
+# ifdef MAKE_KYAHOO_LIB
+#  define LIBKYAHOO_EXPORT KDE_EXPORT
 # else
 #  define LIBKYAHOO_EXPORT KDE_IMPORT
 # endif
