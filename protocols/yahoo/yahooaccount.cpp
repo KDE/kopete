@@ -336,7 +336,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::connect(m_session, SIGNAL(webcamViewerRequest(const QString&)), this, SLOT(slotWebcamViewerRequest( const QString&)));
 
-		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotiy( const QString&, int)));
+		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotify( const QString&, int)));
 
 		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTemporaryFile*, int)) );
 
@@ -481,7 +481,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::disconnect(m_session, SIGNAL(pictureUploaded( const QString & )), this, SLOT(slotBuddyIconChanged(const QString&)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotiy( const QString&, int)));
+		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotify( const QString&, int)));
 
 		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 
@@ -1577,7 +1577,7 @@ void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image 
 	kc->receivedWebcamImage( image );
 }
 
-void YahooAccount::slotPictureStatusNotiy( const QString &who, int status)
+void YahooAccount::slotPictureStatusNotify( const QString &who, int status)
 {
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
