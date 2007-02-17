@@ -46,7 +46,7 @@ signals:
 	void pictureChecksumNotify( const QString &, int );
 	void pictureInfoNotify( const QString &, KUrl, int ); 
 	void pictureRequest( const QString & );
-	void pictureUploaded( const QString & );
+	void pictureUploaded( const QString &, int );
 };
 
 #endif

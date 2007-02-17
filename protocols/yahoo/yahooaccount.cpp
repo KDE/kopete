@@ -346,7 +346,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::connect(m_session, SIGNAL(pictureRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 
-		QObject::connect(m_session, SIGNAL(pictureUploaded( const QString &)), this, SLOT(slotBuddyIconChanged(const QString&)));
+		QObject::connect(m_session, SIGNAL(pictureUploaded( const QString &, int)), this, SLOT(slotBuddyIconChanged(const QString&, int)));
 
 		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 
@@ -479,7 +479,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::disconnect(m_session, SIGNAL(gotBuddyIconRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 
-		QObject::disconnect(m_session, SIGNAL(pictureUploaded( const QString & )), this, SLOT(slotBuddyIconChanged(const QString&)));
+		QObject::disconnect(m_session, SIGNAL(pictureUploaded( const QString &, int )), this, SLOT(slotBuddyIconChanged(const QString&, int)));
 
 		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotify( const QString&, int)));
 
@@ -1704,28 +1704,24 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		     QDateTime::currentDateTime().toTime_t() > expire )
 		{
 			myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
-			myself()->setProperty( YahooProtocol::protocol()->iconExpire , QDateTime::currentDateTime().toTime_t() + 604800 );
 			configGroup()->writeEntry( "iconCheckSum", checksum );
-			configGroup()->writeEntry( "iconExpire", myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt() );
 			if ( m_session != 0 )
 				m_session->uploadPicture( newlocation );
 		}
 	}
 }
 
-void YahooAccount::slotBuddyIconChanged( const QString &url )
+void YahooAccount::slotBuddyIconChanged( const QString &url, int expires )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
-	if ( url.isEmpty() )	// remove pictures from buddie's clients
-	{
-		myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, 0 );
-	}
-	else
+	if( !url.isEmpty() )
 	{
 		myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, url );
+		myself()->setProperty( YahooProtocol::protocol()->iconExpire , expires );
 		configGroup()->writeEntry( "iconRemoteUrl", url );
+		configGroup()->writeEntry( "iconExpire", expires );
 		m_session->setPictureStatus( Yahoo::Picture );
 		m_session->sendPictureChecksum( QString::null, checksum );
 	}

@@ -19,8 +19,8 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
-#include <qstringlist.h>
+#include <QString>
+#include <QStringList>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -137,17 +137,19 @@ void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )
 
 	QString url;
 	QString error;
+	int expires;
 
 	url = t->firstParam( 20 );
 	error = t->firstParam( 16 );
+	expires = t->firstParam( 38 ).toInt();
 	
 	if( !error.isEmpty() )
 		client()->notifyError(i18n("The picture was not successfully uploaded"), error, Client::Error );
 
 	if( !url.isEmpty() )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting url: " << url << endl;
-		emit pictureUploaded( url );
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting url: " << url << " Picture expires: " << expires << endl;
+		emit pictureUploaded( url, expires );
 	}
 }
 

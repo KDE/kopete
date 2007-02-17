@@ -541,7 +541,7 @@ Q_OBJECT
 		/**
 		 * Information about the picture upload
 		 */
-		void pictureUploaded( const QString & );
+		void pictureUploaded( const QString &, int );
 		/**
 		 * We've received a webcam image from a buddy
 		 */

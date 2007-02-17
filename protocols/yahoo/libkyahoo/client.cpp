@@ -824,8 +824,8 @@ void Client::initTasks()
 				SIGNAL( pictureInfoNotify( const QString &, KUrl, int ) ) );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureRequest( const QString & ) ),
 				SIGNAL( pictureRequest( const QString & ) ) );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureUploaded( const QString & ) ),
-				SIGNAL( pictureUploaded( const QString & ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureUploaded( const QString &, int ) ),
+				SIGNAL( pictureUploaded( const QString &, int ) ) );
 
 	d->webcamTask = new WebcamTask( d->root );
 	QObject::connect( d->webcamTask, SIGNAL( webcamImageReceived( const QString &, const QPixmap &) ),

@@ -223,7 +223,7 @@ protected slots:
 	void slotGotBuddyIconInfo(const QString&, KUrl, int);
 	void slotGotBuddyIconChecksum(const QString&, int);
 	void slotGotBuddyIconRequest(const QString &);
-	void slotBuddyIconChanged(const QString&);
+	void slotBuddyIconChanged(const QString&, int);
 	void slotGotYABEntry( YABEntry *entry );
 	void slotGotYABRevision( long revision, bool merged );
 	void slotSaveYABEntry( YABEntry &entry );
