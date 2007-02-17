@@ -30,7 +30,7 @@
 #include "transfer.h"
 #include "yahootypes.h"
 
-#define YMSG_PROGRAM_VERSION_STRING "8.0.0.633"
+#define YMSG_PROGRAM_VERSION_STRING "8.1.0.209"
 
 class QString;
 class QTimer;
