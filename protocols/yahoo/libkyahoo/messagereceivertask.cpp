@@ -35,8 +35,6 @@ MessageReceiverTask::~MessageReceiverTask()
 
 bool MessageReceiverTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	if ( !forMe( transfer ) )
 		return false;
 
@@ -55,8 +53,6 @@ bool MessageReceiverTask::take( Transfer* transfer )
 
 bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)

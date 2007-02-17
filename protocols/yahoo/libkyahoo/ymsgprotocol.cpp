@@ -419,7 +419,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
  	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
  		pos++;
 
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Returning transfer" << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Returning transfer" << endl;
 	// tell them we have parsed offset bytes
 	
 	bytes = pos;

@@ -36,8 +36,6 @@ StatusNotifierTask::~StatusNotifierTask()
 
 bool StatusNotifierTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	if ( !forMe( transfer ) )
 		return false;
 	
@@ -55,7 +53,6 @@ bool StatusNotifierTask::take( Transfer* transfer )
 
 bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)

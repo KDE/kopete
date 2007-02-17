@@ -98,7 +98,7 @@ Transfer* CoreProtocol::incomingTransfer()
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;	
 	if ( m_state == Available )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a transfer" << endl;
+// 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a transfer" << endl;
 		m_state = NoData;
 		return m_inTransfer;
 		m_inTransfer = 0;
@@ -169,9 +169,9 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	{
 		if ( (wire[0] == 'Y') && (wire[1] == 'M') && (wire[2] == 'S') && (wire[3] == 'G'))
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
+// 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
 			YMSGTransfer *t = static_cast<YMSGTransfer *>(m_YMSGProtocol->parse( wire, bytesParsed ));
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
+// 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
 			if ( t )
 			{
 				if( wire.size() < t->packetLength() )
@@ -181,7 +181,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 					return 0;
 				}
 				m_inTransfer = t;
-				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a valid packet " << endl;
+// 				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a valid packet " << endl;
 				
 				m_state = Available;
 				emit incomingData();

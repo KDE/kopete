@@ -34,8 +34,6 @@ ConferenceTask::~ConferenceTask()
 
 bool ConferenceTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	if ( !forMe( transfer ) )
 		return false;
 
@@ -59,8 +57,6 @@ bool ConferenceTask::take( Transfer* transfer )
 
 bool ConferenceTask::forMe( const Transfer* transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)

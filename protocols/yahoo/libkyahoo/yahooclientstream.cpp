@@ -106,7 +106,6 @@ ClientStream::ClientStream(Connector *conn, QObject *parent)
 :Stream(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	d = new Private;
 	d->mode = Client;
@@ -306,11 +305,11 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 
 void ClientStream::cp_incomingData()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	Transfer * incoming = d->client.incomingTransfer();
 	if ( incoming )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a new transfer" << endl;
+// 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a new transfer" << endl;
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
 		emit doReadyRead();
@@ -365,7 +364,7 @@ void ClientStream::bs_error(int)
 
 void ClientStream::bs_readyRead()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	QByteArray a;
 	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->bs->read();
@@ -389,7 +388,7 @@ void ClientStream::srvProcessNext()
 
 void ClientStream::doReadyRead()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	emit readyRead();
 }
 

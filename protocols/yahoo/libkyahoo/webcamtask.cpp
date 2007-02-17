@@ -47,8 +47,6 @@ WebcamTask::~WebcamTask()
 
 bool WebcamTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	if ( !forMe( transfer ) )
 		return false;
 
@@ -64,8 +62,6 @@ bool WebcamTask::take( Transfer* transfer )
 
 bool WebcamTask::forMe( const Transfer* transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)

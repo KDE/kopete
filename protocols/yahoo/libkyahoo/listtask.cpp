@@ -36,8 +36,6 @@ ListTask::~ListTask()
 
 bool ListTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
-	
 	if ( !forMe( transfer ) )
 		return false;
 	
@@ -51,7 +49,6 @@ bool ListTask::take( Transfer* transfer )
 
 bool ListTask::forMe( const Transfer* transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
