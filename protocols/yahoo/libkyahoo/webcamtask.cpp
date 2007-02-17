@@ -348,7 +348,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 						info->status = Sending;
 						emit readyForTransmission();
 					}
-					else
+					else if( info->timestamp == 0 )
 					{
 						info->status = SendingEmpty;
 						emit stopTransmission();
