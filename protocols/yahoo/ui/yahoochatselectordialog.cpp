@@ -149,7 +149,13 @@ void YahooChatSelectorDialog::parseChatRoom( const QDomNode &node )
 			if( child.nodeName().startsWith( "lobby" ) )
 			{
 				QTreeWidgetItem *lobby = new QTreeWidgetItem( item );
-				lobby->setText( 0, name + ':' + child.toElement().attribute( "count" ) );
+				QDomElement e = child.toElement();
+				QString voices = e.attribute( "voices" );
+				QString users = e.attribute( "users" );
+				QString webcams = e.attribute( "webcams" );
+				QString count = e.attribute( "count" );
+				lobby->setText( 0, name + QString( ": %1 (u:%2, v:%3, w:%4)" )
+						.arg( count, users, voices, webcams ) );
 				lobby->setData( 0, Qt::UserRole, id );
 				item->addChild( lobby );
 			}
