@@ -837,7 +837,7 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString message;
-	message = i18n( "User %1 has granted your authorization request.\n%2" ,
+	message = i18n( "User %1 has rejected your authorization request.\n%2" ,
 		  who, msg );
 	KNotification::event( QLatin1String("kopete_authorization"), message );
 }
