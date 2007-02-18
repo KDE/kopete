@@ -1036,7 +1036,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 #endif
 		if( !message.from()->metaContact()->picture().isNull() )
 		{
-			photoPath = QString("data:image/png;base64,%1").arg( message.from()->metaContact()->picture().base64() );
+			photoPath = QString( "data:image/png;base64," ) + message.from()->metaContact()->picture().base64();
 		}
 		else
 		{
@@ -1060,6 +1060,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	}
 
 	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))
+	// FIXME: The conversion to plainBody() is extremely expensive and should not be used
+	//        here. Use a cached value for isRightToLeft instead. -- Martijn, 20070218
 	resultHTML = resultHTML.replace( QString::fromUtf8("%messageDirection%"), message.plainBody().isRightToLeft() ? "rtl" : "ltr" );
 
 	// These colors are used for coloring nicknames. I tried to use
@@ -1078,8 +1080,9 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	int hash = 0;
 	for( uint f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].unicode() * f;
-	QColor color = QColor( nameColors[ hash % nameColorsLen ] ).name();
-	kdDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
+	const QString colorName = nameColors[ hash % nameColorsLen ];
+	QString lightColorName;	// Do not initialize, QColor::name() is expensive!
+	kdDebug(14000) << k_funcinfo << "Hash " << hash << " has color " << colorName << endl;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
 	while( (textPos=senderColorRegExp.search(resultHTML, textPos) ) != -1 )
@@ -1090,7 +1093,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		{
 			light=senderColorRegExp.cap(1).toUInt(&doLight);
 		}
-		resultHTML = resultHTML.replace( textPos , senderColorRegExp.cap(0).length() , doLight ? color.light(light).name() : color.name() );
+
+		// Lazily init light color
+		if ( doLight && lightColorName.isNull() )
+			lightColorName = QColor( colorName ).light( light ).name();
+
+		resultHTML = resultHTML.replace( textPos , senderColorRegExp.cap(0).length(),
+			doLight ? lightColorName : colorName );
 	}
 
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
