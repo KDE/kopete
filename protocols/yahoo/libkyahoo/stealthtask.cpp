@@ -57,7 +57,7 @@ void StealthTask::onGo()
 		t->setParam( 7, m_target.toLocal8Bit() );
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void StealthTask::setTarget( const QString &to )

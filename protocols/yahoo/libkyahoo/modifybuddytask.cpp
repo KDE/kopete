@@ -50,7 +50,7 @@ void ModifyBuddyTask::onGo()
 
 
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void ModifyBuddyTask::addBuddy()

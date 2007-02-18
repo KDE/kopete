@@ -58,7 +58,7 @@ void ChangeStatusTask::onGo()
 		if( client()->status() == Yahoo::StatusInvisible )	// Invisible --> Status
 			sendVisibility( Visible );
 	}
-	setSuccess( true );
+	setSuccess();
 }
 
 void ChangeStatusTask::sendVisibility( Visibility visible )

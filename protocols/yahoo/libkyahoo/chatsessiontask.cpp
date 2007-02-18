@@ -52,7 +52,7 @@ void ChatSessionTask::onGo()
 	}
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void ChatSessionTask::setTarget( const QString &to )

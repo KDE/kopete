@@ -53,7 +53,7 @@ void ReceiveFileTask::onGo()
 		if( !m_file->open( QIODevice::WriteOnly ) )
 		{
 			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
-			setSuccess( false );
+			setError();
 			return;
 		}
 		m_transferJob = KIO::get( m_remoteUrl, false, false );
@@ -141,12 +141,12 @@ void ReceiveFileTask::slotComplete( KJob *job )
 	if ( job->error () || transfer->isErrorPage () )
 	{
 		emit error( m_transferId, KIO::ERR_ABORTED, i18n("An error occurred while downloading the file.") );
-		setSuccess( false );
+		setError();
 	}
 	else
 	{
 		emit complete( m_transferId );
-		setSuccess( true );
+		setSuccess();
 	}
 }
 
@@ -172,7 +172,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 		if( !m_file->open( QIODevice::WriteOnly ) )
 		{
 			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
-			setSuccess( false );
+			setError();
 			return;
 		}
 
@@ -237,7 +237,7 @@ void ReceiveFileTask::canceled( unsigned int id )
 	if( m_transferJob )
 		m_transferJob->kill();
 	
-	setSuccess( false );
+	setError();
 }
 
 #include "receivefiletask.moc"

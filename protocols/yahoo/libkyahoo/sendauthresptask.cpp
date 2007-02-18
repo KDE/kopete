@@ -51,7 +51,7 @@ void SendAuthRespTask::onGo()
 	}
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void SendAuthRespTask::setGranted( bool granted )

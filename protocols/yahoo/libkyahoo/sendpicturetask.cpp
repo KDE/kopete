@@ -77,7 +77,7 @@ void SendPictureTask::connectFailed( int i)
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
 
 	client()->notifyError(i18n("The picture was not successfully uploaded"), QString("%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
-	setSuccess( false );
+	setError();
 }
 
 void SendPictureTask::connectSucceeded()
@@ -127,12 +127,12 @@ void SendPictureTask::connectSucceeded()
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
 		m_socket->enableRead( true );
-// 		setSuccess( true );
+// 		setSuccess();
 	}
 	else
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
-		setSuccess( false );
+		setError();
 	}
 }
 
@@ -147,12 +147,12 @@ void SendPictureTask::readResult()
 	if( buf.indexOf( "error", 0 ) >= 0 )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed" << endl;
-		setSuccess( false );
+		setError();
 	}
 	else
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload acknowledged." << endl;
-		setSuccess( true );
+		setSuccess();
 	}
 
 }
@@ -170,7 +170,7 @@ void SendPictureTask::sendChecksum()
 	t->setParam(212, 1);
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void SendPictureTask::sendInformation()
@@ -187,7 +187,7 @@ void SendPictureTask::sendInformation()
 
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void SendPictureTask::sendStatus()
@@ -201,7 +201,7 @@ void SendPictureTask::sendStatus()
 
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void SendPictureTask::setType( Type type )

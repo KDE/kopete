@@ -51,14 +51,14 @@ void SendNotifyTask::onGo()
 	break;
 	case NotifyGame:
 	default:
-		setSuccess( false );
+		setError();
 		delete t;
 		return;
 	break;
 	}
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void SendNotifyTask::setType( Type type )

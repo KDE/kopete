@@ -40,7 +40,7 @@ void RequestPictureTask::onGo()
 	t->setParam( 13, "1" );
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void RequestPictureTask::setTarget( const QString &target )

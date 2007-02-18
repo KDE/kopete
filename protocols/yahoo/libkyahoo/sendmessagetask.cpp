@@ -61,7 +61,7 @@ void SendMessageTask::onGo()
 		pos += 700;
 	}
 	
-	setSuccess( true );
+	setSuccess();
 }
 
 void SendMessageTask::setTarget( const QString &to )

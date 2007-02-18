@@ -119,7 +119,7 @@ void ModifyYABTask::connectSucceeded()
 	else
 	{
 		client()->notifyError( i18n( "An error occurred saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
-		setSuccess( false );
+		setError();
 		return;
 	}
 	
@@ -200,6 +200,6 @@ void ModifyYABTask::slotRead()
 	}
 
 	
-	setSuccess( true );
+	setSuccess();
 }
 #include "modifyyabtask.moc"

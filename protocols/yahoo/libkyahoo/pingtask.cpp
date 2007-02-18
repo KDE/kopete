@@ -42,5 +42,5 @@ void PingTask::onGo()
 	t->setId( client()->sessionID() );
 	send( t );
 	
-	setSuccess( true );
+	setSuccess();
 }
