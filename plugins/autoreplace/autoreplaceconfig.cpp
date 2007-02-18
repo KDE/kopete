@@ -113,8 +113,7 @@ AutoReplaceConfig::WordsToReplace AutoReplaceConfig::map() const
 
 void AutoReplaceConfig::save()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "AutoReplace Plugin" );
+	KConfigGroup config(KGlobal::config(), "AutoReplace Plugin" );
 
 	QStringList newWords;
 	WordsToReplace::Iterator it;

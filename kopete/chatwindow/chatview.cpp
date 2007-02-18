@@ -766,8 +766,7 @@ void ChatView::loadChatSettings()
 	//read settings for metacontact
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           contacts.first()->metaContact()->metaContactId();
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( contactListGroup );
+	KConfigGroup config(KGlobal::config(), contactListGroup );
 	bool enableRichText = config->readEntry( "EnableRichText", true );
 	editPart()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
