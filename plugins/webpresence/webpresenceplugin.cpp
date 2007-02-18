@@ -76,33 +76,32 @@ WebPresencePlugin::~WebPresencePlugin()
 
 void WebPresencePlugin::loadSettings()
 {
-	KSharedConfig::Ptr kconfig = KGlobal::config();
-	kconfig->setGroup( "Web Presence Plugin" );
+	KConfigGroup kconfig(KGlobal::config(), "Web Presence Plugin");
 
-	frequency = kconfig->readEntry("UploadFrequency", 15);
-	resultURL = kconfig->readEntry("uploadURL");
+	frequency = kconfig.readEntry("UploadFrequency", 15);
+	resultURL = kconfig.readEntry("uploadURL");
 
 	resultFormatting = WEB_UNDEFINED;
 
-	if ( kconfig->readEntry( "formatHTML", false ) ) {
+	if ( kconfig.readEntry( "formatHTML", false ) ) {
 		resultFormatting = WEB_HTML;
-	} else if ( kconfig->readEntry( "formatXHTML", false ) ) {
+	} else if ( kconfig.readEntry( "formatXHTML", false ) ) {
 		resultFormatting = WEB_XHTML;
-	} else if ( kconfig->readEntry( "formatXML", false ) ) {
+	} else if ( kconfig.readEntry( "formatXML", false ) ) {
 		resultFormatting = WEB_XML;
-	} else if ( kconfig->readEntry( "formatStylesheet", false ) ) {
+	} else if ( kconfig.readEntry( "formatStylesheet", false ) ) {
 		resultFormatting = WEB_CUSTOM;
-		userStyleSheet = kconfig->readEntry("formatStylesheetURL", QString() );
+		userStyleSheet = kconfig.readEntry("formatStylesheetURL", QString() );
 	}
 
 	// Default to HTML, if we don't get anything useful from config file.
 	if ( resultFormatting == WEB_UNDEFINED )
 		resultFormatting = WEB_HTML;
 
-	useImagesInHTML = kconfig->readEntry( "useImagesHTML", false );
-	useImName = kconfig->readEntry("showName", true);
-	userName = kconfig->readEntry("showThisName", QString());
-	showAddresses = kconfig->readEntry("includeIMAddress", false);
+	useImagesInHTML = kconfig.readEntry( "useImagesHTML", false );
+	useImName = kconfig.readEntry("showName", true);
+	userName = kconfig.readEntry("showThisName", QString());
+	showAddresses = kconfig.readEntry("includeIMAddress", false);
 
 	// Update file when settings are changed.
 	slotWriteFile();

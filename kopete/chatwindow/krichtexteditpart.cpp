@@ -349,27 +349,26 @@ void KRichTextEditPart::readConfig()
 {
     // Don't update config untill we read whole config first
     d->configWriteLock = true;
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("RichTextEditor");
+    KConfigGroup config(KGlobal::config(), "RichTextEditor");
 
     QColor standardColor = KGlobalSettings::textColor();
     QColor tmpColor;
-    tmpColor = config->readEntry("TextColor", standardColor );
+    tmpColor = config.readEntry("TextColor", standardColor );
     kDebug() << k_funcinfo << "Text color: " << tmpColor.name() << endl;
 
     setTextColor( tmpColor );
 
     QFont tmpFont = KGlobalSettings::generalFont();
-    setFont( config->readEntry("Font", tmpFont ) );
+    setFont( config.readEntry("Font", tmpFont ) );
 
     int tmp = KGlobalSettings::generalFont().pixelSize();
-    setFontSize( config->readEntry( "FontSize", tmp ) );
+    setFontSize( config.readEntry( "FontSize", tmp ) );
 
-    d->action_bold->setChecked( config->readEntry( "FontBold", false ) );
-    d->action_italic->setChecked( config->readEntry( "FontItalic", false ) );
-    d->action_underline->setChecked( config->readEntry( "FontUnderline", false ) );
+    d->action_bold->setChecked( config.readEntry( "FontBold", false ) );
+    d->action_italic->setChecked( config.readEntry( "FontItalic", false ) );
+    d->action_underline->setChecked( config.readEntry( "FontUnderline", false ) );
 
-    switch( config->readEntry( "EditAlignment", int(Qt::AlignLeft) ) )
+    switch( config.readEntry( "EditAlignment", int(Qt::AlignLeft) ) )
     {
         case Qt::AlignLeft:
             d->action_align_left->trigger();

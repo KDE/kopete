@@ -211,11 +211,10 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	CBuntrusted->setChecked( KGpgSettings::allowUntrustedKeys() );
 	CBhideid->setChecked( KGpgSettings::hideUserID() );
 	if (filemode) CBshred->setChecked( KGpgSettings::shredSource() );*/
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("Cryptography Plugin");
+	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
 	CBarmor->hide();
-	CBuntrusted->setChecked(config->readEntry("UntrustedKeys", true));
+	CBuntrusted->setChecked(config.readEntry("UntrustedKeys", true));
 	CBhideid->hide();
 	if (filemode) CBshred->hide();
 	CBsymmetric->hide();
@@ -485,11 +484,10 @@ void popupPublic::slotprocread(KProcIO *p)
 void popupPublic::slotOk()
 {
 //BEGIN modified for Kopete
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("Cryptography Plugin");
+	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
-	config->writeEntry("UntrustedKeys", CBuntrusted->isChecked());
-	config->writeEntry("HideID", CBhideid->isChecked());
+	config.writeEntry("UntrustedKeys", CBuntrusted->isChecked());
+	config.writeEntry("HideID", CBhideid->isChecked());
 
 //END modified for Kopete
 

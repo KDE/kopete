@@ -31,10 +31,9 @@ AutoReplaceConfig::AutoReplaceConfig()
 // reload configuration reading it from kopeterc
 void AutoReplaceConfig::load()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "AutoReplace Plugin" );
+	KConfigGroup config(KGlobal::config(), "AutoReplace Plugin");
 
-	QStringList wordsList = config->readEntry( "WordsToReplace", QStringList() );
+	QStringList wordsList = config.readEntry( "WordsToReplace", QStringList() );
 	if( wordsList.isEmpty() )
 	{
 		// basic list, key/value
@@ -56,10 +55,10 @@ void AutoReplaceConfig::load()
 		m_map.insert( k, v );
 	}
 
-	m_autoreplaceIncoming = config->readEntry( "AutoReplaceIncoming" , false );
-	m_autoreplaceOutgoing = config->readEntry( "AutoReplaceOutgoing" , true );
-	m_addDot              = config->readEntry( "DotEndSentence" , false );
-	m_upper               = config->readEntry( "CapitalizeBeginningSentence" , false );
+	m_autoreplaceIncoming = config.readEntry( "AutoReplaceIncoming" , false );
+	m_autoreplaceOutgoing = config.readEntry( "AutoReplaceOutgoing" , true );
+	m_addDot              = config.readEntry( "DotEndSentence" , false );
+	m_upper               = config.readEntry( "CapitalizeBeginningSentence" , false );
 }
 
 QStringList AutoReplaceConfig::defaultAutoReplaceList()

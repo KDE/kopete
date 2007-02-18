@@ -144,8 +144,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	layout->addWidget( chatWindowTabCtl );
 	setLayout(layout);
 
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "ChatWindowSettings" );
+	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
 
 	// "Style" TAB ========================================================
