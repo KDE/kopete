@@ -249,11 +249,29 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 	QString handle;
 	QString comment;
 	bool suppressJoinNotification = false;
+	QString error;
 
 	room = t->firstParam( 129 ).toInt();
 	category = t->firstParam( 128 ).toInt();
 	handle = t->firstParam( 104 );
 	comment = t->firstParam( 105 );
+	error = t->firstParam( 114 );
+
+	kDebug(YAHOO_RAW_DEBUG) << error << endl;
+
+	if( error.startsWith( "-35" ) ) {
+		client()->notifyError( i18n("Chat could not be joined"), 
+				i18n("The room is full. Please choose another one."), Client::Error );
+		return;
+	} else if( error.startsWith( "-15" ) ) {
+		client()->notifyError( i18n("Chat could not be joined"), 
+				i18n("Invalid user."), Client::Error );
+		return;
+	} else if( !error.isEmpty() ) {
+		client()->notifyError( i18n("Chat could not be joined"), 
+				i18n("An unknown error occured joining the chat room."), Client::Error );
+		return;
+	}
 
 	if( room > 0 && category > 0 )
 	{
