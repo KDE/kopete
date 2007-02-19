@@ -18,8 +18,6 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
 
 #include <kconfigbase.h>
 #include <klineedit.h>
@@ -46,6 +44,8 @@ SMSSend::SMSSend(Kopete::Account* account)
 
 SMSSend::~SMSSend()
 {
+	qDeleteAll(labels);
+	qDeleteAll(args);
 }
 
 void SMSSend::send(const Kopete::Message& msg)
@@ -74,7 +74,7 @@ void SMSSend::send(const Kopete::Message& msg)
 	m_provider->send(msg);
 }
 
-void SMSSend::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
+void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
 	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;
@@ -83,7 +83,7 @@ void SMSSend::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
 	// could end up being deleted twice??
 	delete prefWidget;
 	prefWidget = new SMSSendPrefsUI(parent);
-	layout->addMultiCellWidget(prefWidget, 0, 1, 0, 1);
+	layout->addWidget(prefWidget, 0, 0, 1, 1);
 
 	prefWidget->program->setMode(KFile::Directory);
 
@@ -145,11 +145,11 @@ void SMSSend::loadProviders(const QString &prefix)
 		return;
 	}
 
-	p = d.entryList("*.sms");
+	p = d.entryList(QStringList(QLatin1String("*.sms")));
 
 	d = QDir::homePath()+"/.smssend/";
 
-	QStringList tmp(d.entryList("*.sms"));
+	QStringList tmp(d.entryList(QStringList(QLatin1String("*.sms"))));
 
 	for (QStringList::Iterator it = tmp.begin(); it != tmp.end(); ++it)
 		p.prepend(*it);
@@ -157,17 +157,17 @@ void SMSSend::loadProviders(const QString &prefix)
 	for (QStringList::iterator it = p.begin(); it != p.end(); ++it)
 		(*it).truncate((*it).length()-4);
 
-	prefWidget->provider->insertStringList(p);
+	prefWidget->provider->addItems(p);
 
 	bool found = false;
 	if (m_account)
 	{	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString());
 		for (int i=0; i < prefWidget->provider->count(); i++)
 		{
-			if (prefWidget->provider->text(i) == pName)
+			if (prefWidget->provider->itemText(i) == pName)
 			{
 				found=true;
-				prefWidget->provider->setCurrentItem(i);
+				prefWidget->provider->setCurrentIndex(i);
 				setOptions(pName);
 				break;
 			}
@@ -184,9 +184,10 @@ void SMSSend::setOptions(const QString& name)
 
 	prefWidget->providerLabel->setText(i18n("%1 Settings", name));
 
-	labels.setAutoDelete(true);
+	qDeleteAll(labels);
 	labels.clear();
-	args.setAutoDelete(true);
+
+	qDeleteAll(args);
 	args.clear();
 
 	if (m_provider) delete m_provider;

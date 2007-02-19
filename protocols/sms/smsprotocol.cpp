@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-/*#include <Q3Dict>*/
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kconfig.h>
@@ -52,8 +51,9 @@ SMSProtocol::~SMSProtocol()
 	s_protocol = 0L;
 }
 
-AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent, Kopete::Account */*i*/)
+AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *i)
 {
+	Q_UNUSED( i );
 	return new SMSAddContactPage(parent);
 }
 

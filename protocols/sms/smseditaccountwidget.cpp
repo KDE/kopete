@@ -22,7 +22,7 @@
 #include <qradiobutton.h>
 //Added by qt3to4:
 #include <Q3VBoxLayout>
-#include <Q3GridLayout>
+#include <QGridLayout>
 #include <Q3BoxLayout>
 
 #include <kconfigbase.h>
@@ -39,7 +39,7 @@
 #include "smsprotocol.h"
 #include "smsaccount.h"
 
-SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent, const char */*name*/)
+SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
 	Q3VBoxLayout *l = new Q3VBoxLayout(this);
@@ -63,10 +63,10 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 		sName = account->configGroup()->readEntry("ServiceName", QString());
 		preferencesDialog->subEnable->setChecked(account->configGroup()->readEntry("SubEnable", false));
 		preferencesDialog->subCode->setText(account->configGroup()->readEntry("SubCode", QString()));
-		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->configGroup()->readEntry("MsgAction", 0)));
+		preferencesDialog->ifMessageTooLong->setCurrentIndex(SMSMsgAction(account->configGroup()->readEntry("MsgAction", 0)));
 	}
 
-	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());
+	preferencesDialog->serviceName->addItems(ServiceLoader::services());
 
 	connect (preferencesDialog->serviceName, SIGNAL(activated(const QString &)),
 		this, SLOT(setServicePreferences(const QString &)));
@@ -76,9 +76,9 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 
 	for (int i=0; i < preferencesDialog->serviceName->count(); i++)
 	{
-		if (preferencesDialog->serviceName->text(i) == sName)
+		if (preferencesDialog->serviceName->itemText(i) == sName)
 		{
-			preferencesDialog->serviceName->setCurrentItem(i);
+			preferencesDialog->serviceName->setCurrentIndex(i);
 			break;
 		}
 	}
@@ -107,7 +107,7 @@ Kopete::Account* SMSEditAccountWidget::apply()
 	c->writeEntry("ServiceName", preferencesDialog->serviceName->currentText());
 	c->writeEntry("SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
 	c->writeEntry("SubCode", preferencesDialog->subCode->text());
-	c->writeEntry("MsgAction", preferencesDialog->ifMessageTooLong->currentItem());
+	c->writeEntry("MsgAction", preferencesDialog->ifMessageTooLong->currentIndex());
 
 	emit saved();
 	return account();
@@ -126,7 +126,7 @@ void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 	connect (this, SIGNAL(saved()), service, SLOT(savePreferences()));
 
 	delete middleFrameLayout;
-	middleFrameLayout = new Q3GridLayout(preferencesDialog->middleFrame);
+	middleFrameLayout = new QGridLayout(preferencesDialog->middleFrame);
 	middleFrameLayout->setObjectName("middleFrameLayout");
 	middleFrameLayout->setSpacing(6);
 	middleFrameLayout->setMargin(0);

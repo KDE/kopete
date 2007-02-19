@@ -20,14 +20,12 @@
 #include "smsservice.h"
 #include "kopetemessage.h"
 
-#include <qobject.h>
-#include <qstringlist.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+#include <QStringList>
+#include <QString>
 
 class SMSClientPrefsUI;
 class SMSContact;
-class Q3ListViewItem;
+class QGridLayout;
 class KProcess;
 
 class SMSClient : public SMSService
@@ -38,7 +36,7 @@ public:
 	~SMSClient();
 
 	void send(const Kopete::Message& msg);
-	void setWidgetContainer(QWidget* parent, Q3GridLayout* container);
+	void setWidgetContainer(QWidget* parent, QGridLayout* container);
 
 	int maxSize();
 	const QString& description();

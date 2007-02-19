@@ -14,10 +14,9 @@
     *************************************************************************
 */
 
-#include <qcombobox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+#include <QCombobox>
+#include <QGridLayout>
+#include <QLayout>
 
 #include <klocale.h>
 #include <kurlrequester.h>
@@ -44,13 +43,13 @@ SMSClient::~SMSClient()
 {
 }
 
-void SMSClient::setWidgetContainer(QWidget* parent, Q3GridLayout* layout)
+void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
 	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;
 	m_layout = layout;
 	QWidget *configWidget = configureWidget(parent);
-	layout->addMultiCellWidget(configWidget, 0, 1, 0, 1);
+	layout->addWidget(configWidget, 0, 0, 1, 1);
 	configWidget->show();
 }
 
@@ -113,16 +112,16 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 		programName = "/usr/bin/sms_client";
 	prefWidget->program->setUrl(programName);
 
-	prefWidget->provider->insertStringList(providers());
+	prefWidget->provider->addItems(providers());
 
 	if (m_account)
 	{
 		QString pName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), QString());
 		for (int i=0; i < prefWidget->provider->count(); i++)
 		{
-			if (prefWidget->provider->text(i) == pName)
+			if (prefWidget->provider->itemText(i) == pName)
 			{
-				prefWidget->provider->setCurrentItem(i);
+				prefWidget->provider->setCurrentIndex(i);
 				break;
 			}
 		}
@@ -151,14 +150,14 @@ QStringList SMSClient::providers()
 
 	QDir d;
 	d.setPath(QString("%1/services/").arg(prefWidget->configDir->url().url()));
-	p += d.entryList("*", QDir::Files);
+	p += d.entryList(QStringList(QLatin1String("*")), QDir::Files);
 
 	return p;
 }
 
 void SMSClient::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
 {
-	QStringList lines = QStringList::split('\n', QString::fromLocal8Bit(buffer, buflen));
+	QStringList lines = QString::fromLocal8Bit(buffer, buflen).split('\n');
 	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
 		output.append(*it);
 }

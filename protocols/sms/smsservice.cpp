@@ -21,7 +21,7 @@
 #include "smsservice.h"
 
 SMSService::SMSService(Kopete::Account* account)
-	: QObject(), m_account(account)
+	: QObject(), m_account(account), m_layout(NULL), m_parent(NULL)
 {
 }
 

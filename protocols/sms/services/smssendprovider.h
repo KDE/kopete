@@ -17,12 +17,9 @@
 #ifndef SMSSENDPROVIDER_H
 #define SMSSENDPROVIDER_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <q3ptrlist.h>
-#include <qlabel.h>
-#include <q3valuelist.h>
-//Added by qt3to4:
+#include <QString>
+#include <QStringList>
+#include <QList>
 #include <QByteArray>
 
 #include <klineedit.h>
@@ -39,18 +36,18 @@ class SMSSendProvider : public QObject
 {
 	Q_OBJECT
 public:
-	SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent = 0, const char* name = 0);
+	SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent = 0);
 	~SMSSendProvider();
 
 	void setAccount(Kopete::Account *account);
 
 	int count();
-	const QString& name(int i);
+	QString name(int i);
 	const QString& value(int i);
 	const QString& description(int i);
 	const bool isHidden(int i);
 
-	void save(Q3PtrList<KLineEdit>& args);
+	void save(const QList<KLineEdit*>& args);
 	void send(const Kopete::Message& msg);
 
 	int maxSize();
@@ -61,7 +58,7 @@ private:
 	QStringList names;
 	QStringList descriptions;
 	QStringList values;
-	Q3ValueList<bool> isHiddens;
+	QList<bool> isHiddens;
 
 	int messagePos;
 	int telPos;

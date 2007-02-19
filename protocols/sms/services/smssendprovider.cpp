@@ -14,12 +14,9 @@
     *************************************************************************
 */
 
-#include <q3valuelist.h>
-#include <qlabel.h>
-#include <qfile.h>
-//Added by qt3to4:
-#include <Q3TextStream>
-#include <Q3PtrList>
+#include <QFile>
+#include <QTextStream>
+#include <QList>
 
 #include <kconfigbase.h>
 #include <kprocess.h>
@@ -35,8 +32,8 @@
 #include "smsprotocol.h"
 #include "smscontact.h"
 
-SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent, const char *name)
-	: QObject( parent, name ), m_account(account)
+SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent)
+	: QObject( parent ), m_account(account)
 {
 	kWarning( 14160 ) << k_funcinfo << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)" << endl;
 
@@ -51,7 +48,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 	QFile f(file);
 	if (f.open(QIODevice::ReadOnly))
 	{
-		Q3TextStream t(&f);
+		QTextStream t(&f);
 		QString group = QString("SMSSend-%1").arg(provider);
 		bool exactNumberMatch = false;
 		QStringList numberWords;
@@ -71,13 +68,13 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 			QString s = t.readLine();
 			if( s[0] == '%')
 			{
-				QStringList args = QStringList::split(':',s);
-				QStringList options = QStringList::split(' ', args[0]);
+				QStringList args = s.split(':');
+				QStringList options = args[0].split(' ');
 
 				names.append(options[0].replace(0,1,""));
 
 				bool hidden = false;
-				for(unsigned i = 1; i < options.count(); i++)
+				for(int i = 1; i < options.count(); i++)
 					if(options[i] == "Hidden")
 					{	hidden = true;
 						break;
@@ -99,7 +96,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 					|| args[0].contains("message") || args[0].contains("nachricht")
 					|| args[0].contains("Msg") || args[0].contains("Mensagem") )
 				{
-					for( unsigned i = 0; i < options.count(); i++)
+					for( int i = 0; i < options.count(); i++)
 					{
 						if (options[i].contains("Size="))
 						{
@@ -150,7 +147,7 @@ void SMSSendProvider::setAccount(Kopete::Account *account)
 	m_account = account;
 }
 
-const QString& SMSSendProvider::name(int i)
+QString SMSSendProvider::name(int i)
 {
 	if ( telPos == i || messagePos == i)
 		return QString();
@@ -173,7 +170,7 @@ const bool SMSSendProvider::isHidden(int i)
 	return isHiddens[i];
 }
 
-void SMSSendProvider::save(Q3PtrList<KLineEdit>& args)
+void SMSSendProvider::save(const QList<KLineEdit*>& args)
 {
 	kDebug( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	if (!m_account) return;		// prevent crash in worst case
@@ -181,7 +178,7 @@ void SMSSendProvider::save(Q3PtrList<KLineEdit>& args)
 	QString group = QString("SMSSend-%1").arg(provider);
 	int namesI=0;
 
-	for (unsigned i=0; i < args.count(); i++)
+	for (int i=0; i < args.count(); i++)
 	{
 		if (telPos == namesI || messagePos == namesI)
 		{
@@ -260,7 +257,7 @@ void SMSSendProvider::slotSendFinished(KProcess *p)
 	if (p->exitStatus() == 0)
 		emit messageSent(m_msg);
 	else
-		emit messageNotSent(m_msg, QString().setLatin1(output));
+		emit messageNotSent(m_msg, QString::fromLatin1(output));
 
 	p->deleteLater();
 }

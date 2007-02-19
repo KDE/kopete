@@ -17,22 +17,20 @@
 #ifndef SMSEDITACCOUNTWIDGET_H
 #define SMSEDITACCOUNTWIDGET_H
 
-#include <qwidget.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+#include <QWidget>
 #include "editaccountwidget.h"
 
 class SMSProtocol;
 class SMSService;
 class smsActPrefsUI;
 namespace Kopete { class Account; }
-class Q3GridLayout;
+class QGridLayout;
 
 class SMSEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 public:
-	SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
+	SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
 	~SMSEditAccountWidget();
 
 	bool validateData();
@@ -45,7 +43,7 @@ protected:
 	QWidget *configWidget;
 	SMSService *service;
 	SMSProtocol *m_protocol;
-	Q3GridLayout *middleFrameLayout;
+	QGridLayout *middleFrameLayout;
 
 signals:
 	void saved();

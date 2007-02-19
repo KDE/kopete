@@ -17,12 +17,8 @@
 #ifndef SMSSEND_H
 #define SMSSEND_H
 
-#include <qobject.h>
-#include <qmap.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3PtrList>
+#include <QList>
+#include <QString>
 
 #include <klineedit.h>
 
@@ -30,8 +26,7 @@
 
 class SMSSendProvider;
 class SMSSendPrefsUI;
-class Q3ListViewItem;
-class Q3GridLayout;
+class QLabel;
 
 class SMSSend : public SMSService
 {
@@ -43,7 +38,7 @@ public:
 	virtual void setAccount(Kopete::Account* account);
 
 	void send(const Kopete::Message& msg);
-	void setWidgetContainer(QWidget* parent, Q3GridLayout* container);
+	void setWidgetContainer(QWidget* parent, QGridLayout* container);
 
 	int maxSize();
 	const QString& description();
@@ -58,11 +53,10 @@ private slots:
 //	void messageSent(const Kopete::Message&);
 
 private:
-	Q3GridLayout *settingsBoxLayout;
 	SMSSendProvider* m_provider;
 	SMSSendPrefsUI* prefWidget;
-	Q3PtrList<KLineEdit> args;
-	Q3PtrList<QLabel> labels;
+	QList<KLineEdit*> args;
+	QList<QLabel*> labels;
 	QString m_description;
 } ;
 
