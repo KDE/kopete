@@ -28,7 +28,7 @@
 #include <config-kopete.h> // probably not needed?
 
 namespace Kopete { class Transfer; }
-namespace Kopete { struct FileTransferInfo; }
+namespace Kopete { class FileTransferInfo; }
 namespace P2P { class Dispatcher; }
 namespace KNetwork { class KBufferedSocket; }
 class QFile;
@@ -95,7 +95,7 @@ namespace P2P{
 		public: static QString createUid();
 	};
 
-	class KOPETE_EXPORT TransferContext : public QObject
+	class KOPETE_MSN_SHARED_EXPORT TransferContext : public QObject
 	{	Q_OBJECT
 		public:
 			virtual ~TransferContext();

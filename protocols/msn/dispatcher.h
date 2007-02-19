@@ -41,7 +41,7 @@ namespace P2P{
 	class IncomingTransfer;
 	class OutgoingTransfer;
 
-	class KOPETE_EXPORT Dispatcher : public QObject
+	class KOPETE_MSN_SHARED_EXPORT Dispatcher : public QObject
 	{	Q_OBJECT
 		public:
 			Dispatcher(QObject *parent, const QString& contact, const QStringList &ip);

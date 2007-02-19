@@ -45,7 +45,7 @@ class MimeMessage;
  * Server, the Notification Server and the Switchboard Server. It is
  * inherited by the various specialized classes.
  */
-class KOPETE_EXPORT MSNSocket : public QObject
+class KOPETE_MSN_SHARED_EXPORT MSNSocket : public QObject
 {
 	Q_OBJECT
 

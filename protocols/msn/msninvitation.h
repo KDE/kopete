@@ -33,7 +33,7 @@ class QObject;
  * or create one and insert it to a kmm with @ref MSNChatSession::initInvitation()
  * you can add action with @ref Kopete::Plugin::customChatActions()
  */
-class KOPETE_EXPORT MSNInvitation
+class KOPETE_MSN_SHARED_EXPORT MSNInvitation
 {
 public:
 	/**

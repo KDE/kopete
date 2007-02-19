@@ -19,7 +19,7 @@
 #include <qobject.h>
 
 namespace P2P{
-	class Message;
+	struct Message;
 }
 
 /**

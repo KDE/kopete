@@ -43,7 +43,7 @@ namespace P2P { class Dispatcher; }
 
 #include "dispatcher.h"
 
-class KOPETE_EXPORT MSNSwitchBoardSocket : public MSNSocket
+class KOPETE_MSN_SHARED_EXPORT MSNSwitchBoardSocket : public MSNSocket
 {
 	Q_OBJECT
 
