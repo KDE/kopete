@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include <QCombobox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QLayout>
 
