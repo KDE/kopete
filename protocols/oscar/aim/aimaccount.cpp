@@ -50,8 +50,8 @@
 #include "oscarsettings.h"
 
 
-const DWORD AIM_ONLINE = 0x0;
-const DWORD AIM_AWAY = 0x1;
+const Oscar::DWORD AIM_ONLINE = 0x0;
+const Oscar::DWORD AIM_AWAY = 0x1;
 
 namespace Kopete { class MetaContact; }
 
@@ -63,7 +63,7 @@ AIMMyselfContact::AIMMyselfContact( AIMAccount *acct )
 
 void AIMMyselfContact::userInfoUpdated()
 {
-	DWORD extendedStatus = details().extendedStatus();
+	Oscar::DWORD extendedStatus = details().extendedStatus();
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
 	AIM::Presence presence = AIM::Presence::fromOscarStatus( extendedStatus, details().userClass() );
 	setOnlineStatus( presence.toOnlineStatus() );
@@ -525,7 +525,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 	}
 }
 
-void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
+void AIMAccount::connectedToChatRoom( Oscar::WORD exchange, const QString& room )
 {
 	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
 	Kopete::ContactPtrList emptyList;
@@ -537,7 +537,7 @@ void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
 		session->raiseView();
 }
 
-void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QString& contact )
+void AIMAccount::userJoinedChat( Oscar::WORD exchange, const QString& room, const QString& contact )
 {
 	if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
 		return;
@@ -577,7 +577,7 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
 	}
 }
 
-void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString& contact )
+void AIMAccount::userLeftChat( Oscar::WORD exchange, const QString& room, const QString& contact )
 {
 	if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
 		return;
@@ -647,7 +647,7 @@ void AIMAccount::connectWithPassword( const QString &password )
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
-		DWORD status = pres.toOscarStatus();
+		Oscar::DWORD status = pres.toOscarStatus();
 		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), password.left(16) );
@@ -661,8 +661,8 @@ void AIMAccount::setPrivacySettings( int privacy )
 {
 	using namespace AIM::PrivacySettings;
 
-	BYTE privacyByte = 0x01;
-	DWORD userClasses = 0xFFFFFFFF;
+	Oscar::BYTE privacyByte = 0x01;
+	Oscar::DWORD userClasses = 0xFFFFFFFF;
 
 	switch ( privacy )
 	{
@@ -690,7 +690,7 @@ void AIMAccount::setPrivacySettings( int privacy )
 	this->setPrivacyTLVs( privacyByte, userClasses );
 }
 
-void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
+void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 {
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItem( QString::null, ROSTER_VISIBILITY );

@@ -32,11 +32,11 @@ Q_OBJECT
 public:
 	ServerRedirectTask( Task* parent );
 
-	void setService( WORD family );
-    void setChatParams( WORD exchange, QByteArray cookie, WORD instance );
+	void setService( Oscar::WORD family );
+    void setChatParams( Oscar::WORD exchange, QByteArray cookie, Oscar::WORD instance );
     void setChatRoom( const QString& roomName );
 
-    WORD chatExchange() const;
+    Oscar::WORD chatExchange() const;
     QString chatRoomName() const;
 
 	//Task implementation
@@ -49,19 +49,19 @@ public:
 
 	QByteArray cookie() const;
 	QString newHost() const;
-	WORD service() const;
+	Oscar::WORD service() const;
 
 signals:
-	void haveServer( const QString&, const QByteArray&, WORD );
+	void haveServer( const QString&, const QByteArray&, Oscar::WORD );
 
 private:
-	WORD m_service;
+	Oscar::WORD m_service;
 	QString m_newHost;
 	QByteArray m_cookie;
 
-    WORD m_chatExchange;
+    Oscar::WORD m_chatExchange;
     QByteArray m_chatCookie;
-    WORD m_chatInstance;
+    Oscar::WORD m_chatInstance;
     QString m_chatRoom;
 };
 

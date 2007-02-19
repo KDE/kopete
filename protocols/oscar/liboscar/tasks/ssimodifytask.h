@@ -136,7 +136,7 @@ private:
 	OContact m_groupItem;
 	OperationType m_opType;
 	OperationSubject m_opSubject;
-	WORD m_id;
+	Oscar::WORD m_id;
 	ContactManager* m_ssiManager;
 	
 };

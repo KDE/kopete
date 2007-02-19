@@ -112,7 +112,7 @@ void ChatNavServiceTask::onGo()
     send( t );
 }
 
-void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
+void ChatNavServiceTask::createRoom( Oscar::WORD exchange, const QString& name )
 {
 	//most of this comes from gaim. thanks to them for figuring it out
 	QString cookie = "create"; //hardcoded, seems to be ignored by AOL
@@ -226,11 +226,11 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 {
 	kDebug(OSCAR_RAW_DEBUG) << "Parsing room info TLV" << t.length << endl;
 	Buffer b(t.data);
-    WORD exchange = b.getWord();
+    Oscar::WORD exchange = b.getWord();
     QByteArray cookie( b.getBlock( b.getByte() ) );
-    WORD instance = b.getWord();
+    Oscar::WORD instance = b.getWord();
     b.getByte(); //detail level, which I'm not sure we need
-    WORD tlvCount = b.getWord();
+    Oscar::WORD tlvCount = b.getWord();
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
                              << " c: " << cookie << " i: " << instance << endl;
 
@@ -303,11 +303,11 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 {
 	Buffer b( t.data );
-	WORD exchange = b.getWord();
-	WORD cookieLength = b.getByte();
+	Oscar::WORD exchange = b.getWord();
+	Oscar::WORD cookieLength = b.getByte();
 	QByteArray cookie( b.getBlock( cookieLength ) );
-	WORD instance = b.getWord();
-	BYTE detailLevel = b.getByte();
+	Oscar::WORD instance = b.getWord();
+	Oscar::BYTE detailLevel = b.getByte();
 
 	if ( detailLevel != 0x02 )
 	{
@@ -315,7 +315,7 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 		return;
 	}
 
-	WORD numberTlvs = b.getWord();
+	Oscar::WORD numberTlvs = b.getWord();
 	QList<Oscar::TLV> roomTLVList = b.getTLVList();
 	QList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
 	for ( QList<Oscar::TLV>::iterator it = roomTLVList.begin();

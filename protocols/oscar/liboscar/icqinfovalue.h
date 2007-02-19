@@ -19,9 +19,7 @@ Kopete (c) 2006 by the Kopete developers <kopete-devel@kde.org>
 #ifndef ICQINFOVALUE_H
 #define ICQINFOVALUE_H
 
-#include "kopete_export.h"
-
-template <class T> class KOPETE_EXPORT ICQInfoValue
+template <class T> class ICQInfoValue
 {
 public:
 	ICQInfoValue();

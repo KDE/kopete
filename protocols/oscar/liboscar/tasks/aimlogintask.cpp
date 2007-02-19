@@ -55,7 +55,7 @@ bool AimLoginTask::forMe( Transfer* transfer ) const
 
 	if ( st && st->snacService() == 0x17 )
 	{
-		WORD subtype = st->snacSubtype();
+		Oscar::WORD subtype = st->snacSubtype();
 		switch ( subtype )
 		{
 		case 0x0002:
@@ -95,7 +95,7 @@ bool AimLoginTask::take( Transfer* transfer )
 		if (!st)
 			return false;
 
-		WORD subtype = st->snacSubtype();
+		Oscar::WORD subtype = st->snacSubtype();
 		switch ( subtype )
 		{
 		case 0x0003:
@@ -139,7 +139,7 @@ void AimLoginTask::sendAuthStringRequest()
 
 QByteArray AimLoginTask::parseAuthString( Buffer* b )
 {
-	WORD keylength = b->getWord();
+	Oscar::WORD keylength = b->getWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Key length is " << keylength << endl;
 	QByteArray authString = b->getBlock( keylength );
 	return authString;
@@ -209,7 +209,7 @@ void AimLoginTask::handleLoginResponse()
 
 	if ( err )
 	{
-		WORD errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
+		Oscar::WORD errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
 
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
 			errorNum << endl;

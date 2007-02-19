@@ -82,7 +82,7 @@ bool UserSearchTask::take( Transfer* t )
 		buffer->getLEWord(); // request sequence number: 0x0002
 		buffer->getLEWord(); // request subtype
 		
-		BYTE success = buffer->getByte(); // Success byte: always 0x0a
+		Oscar::BYTE success = buffer->getByte(); // Success byte: always 0x0a
 		
 		if ( ( success == 0x32 ) || ( success == 0x14 ) || ( success == 0x1E ) )
 			result.uin = 1;

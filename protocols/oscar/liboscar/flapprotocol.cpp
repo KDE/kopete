@@ -40,8 +40,8 @@ Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 {
 	QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
 
-	BYTE b;
-	WORD w;
+	Oscar::BYTE b;
+	Oscar::WORD w;
 
 	FLAP f;
 	*m_din >> b; //this should be the start byte

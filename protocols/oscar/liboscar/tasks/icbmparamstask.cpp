@@ -72,7 +72,7 @@ void ICBMParamsTask::handleICBMParameters()
 {
 	Buffer* buffer = transfer()->buffer();
 	
-	WORD channel = buffer->getWord();
+	Oscar::WORD channel = buffer->getWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel=" << channel << endl;
 	
 	/**
@@ -80,11 +80,11 @@ void ICBMParamsTask::handleICBMParameters()
 	 * bit2: missed calls notifications enabled for specified channel
 	 * bit4: client supports typing notifications
 	 */
-	DWORD messageFlags = buffer->getDWord();
-	WORD maxMessageSnacSize = buffer->getWord();
-	WORD maxSendWarnLvl = buffer->getWord(); // max sender Warning Level
-	WORD maxRecvWarnLvl = buffer->getWord(); // max Receiver Warning Level
-	WORD minMsgInterval = buffer->getWord(); // minimum message interval (msec)
+	Oscar::DWORD messageFlags = buffer->getDWord();
+	Oscar::WORD maxMessageSnacSize = buffer->getWord();
+	Oscar::WORD maxSendWarnLvl = buffer->getWord(); // max sender Warning Level
+	Oscar::WORD maxRecvWarnLvl = buffer->getWord(); // max Receiver Warning Level
+	Oscar::WORD minMsgInterval = buffer->getWord(); // minimum message interval (msec)
 	
 	
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "messageFlags       = " << messageFlags << endl;

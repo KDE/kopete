@@ -169,9 +169,9 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
 
-	BYTE flapStart, flapChannel = 0;
-	WORD flapLength = 0;
-	WORD s1, s2 = 0;
+	Oscar::BYTE flapStart, flapChannel = 0;
+	Oscar::WORD flapLength = 0;
+	Oscar::WORD s1, s2 = 0;
 	uint bytesParsed = 0;
 
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire) << endl;

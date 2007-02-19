@@ -51,7 +51,7 @@ bool IcqLoginTask::forMe( Transfer* transfer ) const
 void IcqLoginTask::onGo()
 {
 	FLAP f = { 0x01, 0, 0 };
-	DWORD flapVersion = 0x00000001;
+	Oscar::DWORD flapVersion = 0x00000001;
 	Buffer *outbuf = new Buffer();
 
 	QString encodedPassword = encodePassword( client()->password() );

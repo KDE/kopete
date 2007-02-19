@@ -70,7 +70,7 @@ private:
 	void rAck(); //resume ack
 	void saveData(); //save incoming data to disk
 	void readOft(); //handle incoming oft packet
-	DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
+	Oscar::DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
 					//XXX this does put an arbitrary limit on file size
 
 	OFT m_oft;

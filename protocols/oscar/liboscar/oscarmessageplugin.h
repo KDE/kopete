@@ -27,7 +27,7 @@
 namespace Oscar
 {
 
-class KOPETE_EXPORT MessagePlugin
+class LIBOSCAR_EXPORT MessagePlugin
 {
 public:
 

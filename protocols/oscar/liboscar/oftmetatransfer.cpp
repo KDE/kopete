@@ -379,16 +379,16 @@ void OftMetaTransfer::timeout()
 }
 
 //FIXME: this is called more often than necessary. for large files that might be annoying.
-DWORD OftMetaTransfer::checksum( int max )
+Oscar::DWORD OftMetaTransfer::checksum( int max )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//code adapted from joscar's FileTransferChecksum
-	DWORD check = 0x0000ffff;
+	Oscar::DWORD check = 0x0000ffff;
 	m_file.open( QIODevice::ReadOnly );
 
 	char b;
 	while( max != 0 && m_file.getChar( &b ) ) {
-		DWORD oldcheck = check;
+		Oscar::DWORD oldcheck = check;
 
 		int val = ( b & 0xff ) << 8;
 		if ( --max && m_file.getChar( &b ) )

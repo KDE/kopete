@@ -78,9 +78,9 @@ bool Oscar::updateTLVs( OContact& item, const QList<TLV>& list )
 	return changed;
 }
 
-DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus )
+Oscar::DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus )
 {
-	DWORD capflags = 0;
+	Oscar::DWORD capflags = 0;
 	xStatus = -1;
 	QString dbgCaps = "CAPS: ";
 
@@ -288,7 +288,7 @@ const QString Oscar::capName( int capNumber )
 	return capString;
 }
 
-DWORD Oscar::getNumericalIP(const QString &address)
+Oscar::DWORD Oscar::getNumericalIP(const QString &address)
 {
 	QHostAddress addr;
 	if ( addr.setAddress( address ) == false )
@@ -297,7 +297,7 @@ DWORD Oscar::getNumericalIP(const QString &address)
 	return (DWORD)addr.toIPv4Address();
 }
 
-QString Oscar::getDottedDecimal( DWORD address )
+QString Oscar::getDottedDecimal( Oscar::DWORD address )
 {
 	QHostAddress addr;
 	addr.setAddress((quint32)address);

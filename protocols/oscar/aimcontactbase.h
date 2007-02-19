@@ -27,7 +27,7 @@ namespace Kopete
 class ChatSession;
 }
 
-class KOPETE_EXPORT AIMContactBase : public OscarContact
+class OSCAR_EXPORT AIMContactBase : public OscarContact
 {
 Q_OBJECT
 

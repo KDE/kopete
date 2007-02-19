@@ -32,16 +32,16 @@ class ContactManagerPrivate
 {
 public:
 	QList<OContact> contactList;
-	QSet<WORD> itemIdSet;
-	QSet<WORD> groupIdSet;
-	WORD lastModTime;
-	WORD maxContacts;
-	WORD maxGroups;
-	WORD maxVisible;
-	WORD maxInvisible;
-	WORD maxIgnore;
-	WORD nextContactId;
-	WORD nextGroupId;
+	QSet<Oscar::WORD> itemIdSet;
+	QSet<Oscar::WORD> groupIdSet;
+	Oscar::WORD lastModTime;
+	Oscar::WORD maxContacts;
+	Oscar::WORD maxGroups;
+	Oscar::WORD maxVisible;
+	Oscar::WORD maxInvisible;
+	Oscar::WORD maxIgnore;
+	Oscar::WORD nextContactId;
+	Oscar::WORD nextGroupId;
 };
 
 ContactManager::ContactManager( QObject *parent )
@@ -83,7 +83,7 @@ void ContactManager::clear()
 	d->nextGroupId = 0;
 }
 
-WORD ContactManager::nextContactId()
+Oscar::WORD ContactManager::nextContactId()
 {
 	if ( d->nextContactId == 0 )
 		d->nextContactId++;
@@ -99,7 +99,7 @@ WORD ContactManager::nextContactId()
 	return d->nextContactId++;
 }
 
-WORD ContactManager::nextGroupId()
+Oscar::WORD ContactManager::nextGroupId()
 {
 	if ( d->nextGroupId == 0 )
 		d->nextGroupId++;
@@ -115,22 +115,22 @@ WORD ContactManager::nextGroupId()
 	return d->nextGroupId++;
 }
 
-WORD ContactManager::numberOfItems() const
+Oscar::WORD ContactManager::numberOfItems() const
 {
 	return d->contactList.count();
 }
 
-DWORD ContactManager::lastModificationTime() const
+Oscar::DWORD ContactManager::lastModificationTime() const
 {
 	return d->lastModTime;
 }
 
-void ContactManager::setLastModificationTime( DWORD lastTime )
+void ContactManager::setLastModificationTime( Oscar::DWORD lastTime )
 {
 	d->lastModTime = lastTime;
 }
 
-void ContactManager::setParameters( WORD maxContacts, WORD maxGroups, WORD maxVisible, WORD maxInvisible, WORD maxIgnore )
+void ContactManager::setParameters( Oscar::WORD maxContacts, Oscar::WORD maxGroups, Oscar::WORD maxVisible, Oscar::WORD maxInvisible, Oscar::WORD maxIgnore )
 {
 	//I'm not using k_funcinfo for these debug statements because of
 	//the function's long signature
@@ -270,7 +270,7 @@ OContact ContactManager::findItemForIcon( QByteArray iconHash ) const
 			TLV t = Oscar::findTLV( ( *it ).tlvList(), 0x00D5 );
 			Buffer b(t.data);
 			b.skipBytes(1); //don't care about flags
-			BYTE iconSize = b.getByte();
+			Oscar::BYTE iconSize = b.getByte();
 			QByteArray hash( b.getBlock( iconSize ) );
 			if ( hash == iconHash )
 			{
@@ -602,9 +602,9 @@ void ContactManager::removeID( const OContact& item )
 	}
 }
 
-WORD ContactManager::findFreeId( const QSet<WORD>& idSet, WORD fromId ) const
+Oscar::WORD ContactManager::findFreeId( const QSet<Oscar::WORD>& idSet, Oscar::WORD fromId ) const
 {
-	for ( WORD id = fromId; id < 0x8000; id++ )
+	for ( Oscar::WORD id = fromId; id < 0x8000; id++ )
 	{
 		if ( !idSet.contains( id ) )
 			return id;

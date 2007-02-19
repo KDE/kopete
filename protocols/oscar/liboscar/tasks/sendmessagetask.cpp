@@ -47,7 +47,7 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 	m_autoResponse = autoResponse;
 }
 
-void SendMessageTask::setIp( const DWORD ip )
+void SendMessageTask::setIp( const Oscar::DWORD ip )
 {
 	m_ip = ip;
 }
@@ -73,8 +73,8 @@ void SendMessageTask::onGo()
 
 	if ( snacSubfamily == 0x0006 && m_message.messageType() != Oscar::MessageType::File )
 	{
-		DWORD cookie1 = KRandom::random();
-		DWORD cookie2 = KRandom::random();
+		Oscar::DWORD cookie1 = KRandom::random();
+		Oscar::DWORD cookie2 = KRandom::random();
 		
 		b->addDWord( cookie1 );
 		b->addDWord( cookie2 );

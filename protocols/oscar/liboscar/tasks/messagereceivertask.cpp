@@ -47,7 +47,7 @@ bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 
 	if ( st->snacService() == 0x0004 )
 	{
-		WORD subtype = st->snacSubtype();
+		Oscar::WORD subtype = st->snacSubtype();
 		switch ( subtype )
 		{
 		case 0x0007:
@@ -283,12 +283,12 @@ void MessageReceiverTask::handleType4Message()
 
 	Buffer tlv5buffer(tlv5.data, tlv5.length);
 
-	DWORD uin = tlv5buffer.getLEDWord(); // little endian for no sane reason!
+	Oscar::DWORD uin = tlv5buffer.getLEDWord(); // little endian for no sane reason!
 	if ( QString::number(uin) != m_fromUser )
 		kWarning(14151) << k_funcinfo << "message uin does not match uin found in packet header!" << endl;
 
-	BYTE msgType = tlv5buffer.getByte();
-	BYTE msgFlags = tlv5buffer.getByte();
+	Oscar::BYTE msgType = tlv5buffer.getByte();
+	Oscar::BYTE msgFlags = tlv5buffer.getByte();
 
 	kDebug(14151) << k_funcinfo << "Received server message. type = " << msgType
 		<< ", flags = " << msgFlags << endl;
@@ -406,7 +406,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 
 		if ( messageType == Oscar::MessageType::Plugin )
 		{
-			WORD pluginHeaderLength = b->getLEWord();
+			Oscar::WORD pluginHeaderLength = b->getLEWord();
 			Oscar::MessagePlugin *plugin = new MessagePlugin();
 
 			Oscar::Guid pluginGuid = b->getGuid();

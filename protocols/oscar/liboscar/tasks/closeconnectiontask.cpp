@@ -56,7 +56,7 @@ const QString& CloseConnectionTask::bosPort() const
 bool CloseConnectionTask::take( Transfer* transfer )
 {
 	QString errorReason;
-	WORD errorNum = 0;
+	Oscar::WORD errorNum = 0;
 	if ( forMe( transfer ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV (DISCONNECT)" << endl;

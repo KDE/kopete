@@ -31,12 +31,12 @@ ServerRedirectTask::ServerRedirectTask( Task* parent )
 
 }
 
-void ServerRedirectTask::setService( WORD family )
+void ServerRedirectTask::setService( Oscar::WORD family )
 {
 	m_service = family;
 }
 
-void ServerRedirectTask::setChatParams( WORD exchange, QByteArray cookie, WORD instance )
+void ServerRedirectTask::setChatParams( Oscar::WORD exchange, QByteArray cookie, Oscar::WORD instance )
 {
     m_chatExchange = exchange;
     m_chatCookie = cookie;
@@ -109,11 +109,11 @@ bool ServerRedirectTask::handleRedirect()
 	//server
 	//auth cookie
 	Buffer* b = transfer()->buffer();
-	WORD typeD = b->getWord();
-	WORD typeDLen = b->getWord();
+	Oscar::WORD typeD = b->getWord();
+	Oscar::WORD typeDLen = b->getWord();
 	if ( typeD == 0x000D && typeDLen == 0x0002)
 	{
-        WORD realService = b->getWord();
+        Oscar::WORD realService = b->getWord();
 		if ( realService != m_service )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "wrong service for this task" << endl;
@@ -153,12 +153,12 @@ QString ServerRedirectTask::newHost() const
 	return m_newHost;
 }
 
-WORD ServerRedirectTask::service() const
+Oscar::WORD ServerRedirectTask::service() const
 {
 	return m_service;
 }
 
-WORD ServerRedirectTask::chatExchange() const
+Oscar::WORD ServerRedirectTask::chatExchange() const
 {
     return m_chatExchange;
 }

@@ -66,7 +66,7 @@ public slots:
 
 signals:
 	void sendMessage( const Oscar::Message &msg );
-	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
+	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
 	void gotCancel();
 	void error( int, const QString & );
@@ -106,7 +106,7 @@ private:
 	KServerSocket *m_ss; //listens for direct connections
 	KBufferedSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
-	WORD m_port; //to connect to
+	Oscar::WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
 	QByteArray m_altIp; //to connect to if m_ip fails
 	bool m_proxy; //are we using a proxy?

@@ -214,7 +214,7 @@ void SSIModifyTask::handleContactAck()
 	int numItems = b->bytesAvailable() / 2;
 	for( int i = 0; i < numItems; ++i )
 	{
-		WORD ackCode = b->getWord();
+		Oscar::WORD ackCode = b->getWord();
 		kDebug(OSCAR_RAW_DEBUG) << "Acknowledgement code is " << ackCode << endl;
 		
 		if ( ackCode != 0x0000 )
@@ -373,7 +373,7 @@ void SSIModifyTask::changeGroupOnServer()
 		Buffer tlvBuffer( oldIds.data, oldIds.length );
 		while ( tlvBuffer.bytesAvailable() != 0 )
 		{
-			WORD id = tlvBuffer.getWord();
+			Oscar::WORD id = tlvBuffer.getWord();
 			if ( id != m_oldItem.bid() )
 				newTLVData.addWord( id );
 		}

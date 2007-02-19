@@ -23,7 +23,7 @@
 #include <QByteArray>
 #include <QList>
 
-#include "kopete_export.h"
+#include "liboscar_export.h"
 #include "icqinfovalue.h"
 
 class Buffer;
@@ -33,7 +33,7 @@ class Buffer;
  * Classes encapsulating user data retrieved from the server
  */
 
-class KOPETE_EXPORT ICQInfoBase
+class LIBOSCAR_EXPORT ICQInfoBase
 {
 public:
 	
@@ -50,7 +50,7 @@ private:
 };
 
 
-class KOPETE_EXPORT ICQShortInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQShortInfo : public ICQInfoBase
 {
 public:
 	ICQShortInfo();
@@ -69,7 +69,7 @@ public:
 // 	unsigned int gender;
 };
 
-class KOPETE_EXPORT ICQGeneralUserInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQGeneralUserInfo : public ICQInfoBase
 {
 public:
 	ICQGeneralUserInfo();
@@ -98,7 +98,7 @@ public:
 	ICQInfoValue<bool> needsAuth;
 };
 
-class KOPETE_EXPORT ICQWorkUserInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQWorkUserInfo : public ICQInfoBase
 {
 public:
 	ICQWorkUserInfo();
@@ -121,7 +121,7 @@ public:
 	ICQInfoValue<QByteArray> homepage;
 };
 
-class KOPETE_EXPORT ICQMoreUserInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQMoreUserInfo : public ICQInfoBase
 {
 public:
 	ICQMoreUserInfo();
@@ -146,7 +146,7 @@ public:
 	ICQInfoValue<bool> sendInfo;
 };
 
-class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQEmailInfo : public ICQInfoBase
 {
 public:
 	ICQEmailInfo();
@@ -169,7 +169,7 @@ public:
 	ICQInfoValue< QList<EmailItem> > emailList;
 };
 
-class KOPETE_EXPORT ICQNotesInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQNotesInfo : public ICQInfoBase
 {
 public:
 	ICQNotesInfo();
@@ -181,7 +181,7 @@ public:
 	ICQInfoValue<QByteArray> notes;
 };
 
-class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQInterestInfo : public ICQInfoBase
 {
 public:
 	ICQInterestInfo();
@@ -194,7 +194,7 @@ public:
 	ICQInfoValue<QByteArray> descriptions[4];
 };
 
-class KOPETE_EXPORT ICQOrgAffInfo : public ICQInfoBase
+class LIBOSCAR_EXPORT ICQOrgAffInfo : public ICQInfoBase
 {
 public:
 	ICQOrgAffInfo();
@@ -217,7 +217,7 @@ public:
 	ICQInfoValue<QByteArray> pastAff3Keyword;
 };
 
-class KOPETE_EXPORT ICQSearchResult
+class LIBOSCAR_EXPORT ICQSearchResult
 {
 public:
 	ICQSearchResult();
@@ -233,7 +233,7 @@ public:
 	quint16 age;
 };
 
-class KOPETE_EXPORT ICQWPSearchInfo
+class LIBOSCAR_EXPORT ICQWPSearchInfo
 {
 public:
 	ICQWPSearchInfo();

@@ -132,8 +132,8 @@ QList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 		numGroupPairs = buffer->getWord();
 		for ( int j = 0; j < numGroupPairs; j++ )
 		{
-			WORD family = buffer->getWord();
-			WORD subtype = buffer->getWord();
+			Oscar::WORD family = buffer->getWord();
+			Oscar::WORD subtype = buffer->getWord();
 			rc->addMember( family, subtype );
 		}
 	}

@@ -106,42 +106,42 @@ Buffer* ICQTask::addInitialData( Buffer* buf ) const
 	return newBuffer;
 }
 
-DWORD ICQTask::uin() const
+Oscar::DWORD ICQTask::uin() const
 {
 	return m_icquin;
 }
 
-void ICQTask::setUin( DWORD uin )
+void ICQTask::setUin( Oscar::DWORD uin )
 {
 	m_icquin = uin;
 }
 
-WORD ICQTask::sequence() const
+Oscar::WORD ICQTask::sequence() const
 {
 	return m_sequence;
 }
 
-void ICQTask::setSequence( WORD sequence )
+void ICQTask::setSequence( Oscar::WORD sequence )
 {
 	m_sequence = sequence;
 }
 
-DWORD ICQTask::requestType() const
+Oscar::DWORD ICQTask::requestType() const
 {
 	return m_requestType;
 }
 
-void ICQTask::setRequestType( WORD type )
+void ICQTask::setRequestType( Oscar::WORD type )
 {
 	m_requestType = type;
 }
 
-DWORD ICQTask::requestSubType() const
+Oscar::DWORD ICQTask::requestSubType() const
 {
 	return m_requestSubType;
 }
 
-void ICQTask::setRequestSubType( WORD subType )
+void ICQTask::setRequestSubType( Oscar::WORD subType )
 {
 	m_requestSubType = subType;
 }

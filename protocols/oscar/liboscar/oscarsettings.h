@@ -18,7 +18,7 @@
 #ifndef OSCARSETTINGS_H
 #define OSCARSETTINGS_H
 
-#include "kopete_export.h"
+#include "liboscar_export.h"
 
 namespace Oscar
 {
@@ -29,7 +29,7 @@ namespace Oscar
 * settings.
 * @author Matt Rogers
 */
-class KOPETE_EXPORT Settings
+class LIBOSCAR_EXPORT Settings
 {
 public:
 	Settings();

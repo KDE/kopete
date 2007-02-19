@@ -22,7 +22,7 @@
 #include "oscartypeclasses.h"
 #include "oscartypes.h"
 
-class KOPETE_EXPORT OContact
+class LIBOSCAR_EXPORT OContact
 {
 public:
 	OContact();

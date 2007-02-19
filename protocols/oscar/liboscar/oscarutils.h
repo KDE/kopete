@@ -30,21 +30,21 @@ namespace Oscar
 {
 
 ///Normalize the contact name to all lowercase and no spaces
-KOPETE_EXPORT QString normalize( const QString& );
+LIBOSCAR_EXPORT QString normalize( const QString& );
 
 ///compare TLVs for equality
-KOPETE_EXPORT bool operator==( TLV, TLV );
+LIBOSCAR_EXPORT bool operator==( TLV, TLV );
 
 /**
  * Find the TLV corresponding to the type in the list
  */
-KOPETE_EXPORT TLV findTLV( const QList<TLV>&, int type );
+LIBOSCAR_EXPORT TLV findTLV( const QList<TLV>&, int type );
 
 /**
  * Update TLVs of SSI item from TLV list if necessary
  * \return true if something was updated
  */
-KOPETE_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
+LIBOSCAR_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
 
 /**
  * Parse the character array for validness and a version string
@@ -54,7 +54,7 @@ KOPETE_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
  * no client is found
  * \return a DWORD containing a bit array of the capabilities we found
  */
-DWORD parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus );
+Oscar::DWORD parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus );
 
 /**
  * Get the name of the capability from its number
@@ -65,13 +65,13 @@ const QString capName( int capNumber );
  * Convert an IP address in dotted decimal notation to a 
  * numerical constant
  */
-DWORD getNumericalIP( const QString& address );
+Oscar::DWORD getNumericalIP( const QString& address );
 
 /**
  * Convert a numerical constant that is an IP address to
  * dotted decimal format
  */
-QString getDottedDecimal( DWORD address );
+QString getDottedDecimal( Oscar::DWORD address );
 
 }
 

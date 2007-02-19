@@ -62,7 +62,7 @@ public:
 	QString userProfile();
 
     virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate,
-                                          WORD exchange = 0, const QString& room = QString::null);
+                                          Oscar::WORD exchange = 0, const QString& room = QString::null);
 
 public slots:
     void sendMessage( Kopete::Message&, Kopete::ChatSession* session );
@@ -115,7 +115,7 @@ protected slots:
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 	virtual void messageReceived( const Oscar::Message& message );
 
-    void connectedToChatRoom( WORD exchange, const QString& roomName );
+    void connectedToChatRoom( Oscar::WORD exchange, const QString& roomName );
     void userJoinedChat( Oscar::WORD exchange, const QString& room, const QString& contact );
     void userLeftChat( Oscar::WORD exchange, const QString& room, const QString& contact );
 
@@ -135,7 +135,7 @@ private:
 	void setPresenceTarget( const AIM::Presence &presence, const QString &message = QString::null );
 
 	// Set privacy tlv item
-	void setPrivacyTLVs( BYTE privacy, DWORD userClasses );
+	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses );
 
     AIMJoinChatUI* m_joinChatDialog;
 	QString mInitialStatusMessage;

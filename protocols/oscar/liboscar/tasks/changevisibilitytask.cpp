@@ -87,7 +87,7 @@ void ChangeVisibilityTask::onGo()
 	}
 	
 	Buffer c8tlv;
-	BYTE visibleByte = m_visible ? 0x04 : 0x03;
+	Oscar::BYTE visibleByte = m_visible ? 0x04 : 0x03;
 	c8tlv.addByte( visibleByte );
 	
 	QList<Oscar::TLV> tList;

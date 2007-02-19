@@ -24,7 +24,10 @@
 #include <qglobal.h>
 #include <qdatetime.h>
 #include <qstring.h>
-
+#ifdef Q_OS_WIN
+  // BYTE, WORD, DWORD
+  #include <windows.h>
+#endif
 
 //! Debug Areas
 const int OSCAR_RAW_DEBUG = 14151;
@@ -280,7 +283,6 @@ const Guid oscar_xStatus[] =
 typedef quint8 BYTE;
 typedef quint16 WORD;
 typedef quint32 DWORD;
-
 
 struct FLAP
 {

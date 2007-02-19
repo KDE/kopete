@@ -103,10 +103,10 @@ public:
 	//Protocol specific data
 	bool isIcq;
 	bool redirectRequested;
-	QList<WORD> redirectionServices;
-    WORD currentRedirect;
+	QList<Oscar::WORD> redirectionServices;
+    Oscar::WORD currentRedirect;
 	QByteArray cookie;
-	DWORD connectAsStatus;
+	Oscar::DWORD connectAsStatus;
 	QString connectWithMessage;
 	Oscar::Settings* settings;
 
@@ -172,8 +172,8 @@ Client::Client( QObject* parent )
 	d->awayMsgRequestTimer = new QTimer();
 	d->codecProvider = &defaultCodecProvider;
 
-	connect( this, SIGNAL( redirectionFinished( WORD ) ),
-	         this, SLOT( checkRedirectionQueue( WORD ) ) );
+	connect( this, SIGNAL( redirectionFinished( Oscar::WORD ) ),
+	         this, SLOT( checkRedirectionQueue( Oscar::WORD ) ) );
 	connect( d->awayMsgRequestTimer, SIGNAL( timeout() ),
 	         this, SLOT( nextICQAwayMessageRequest() ) );
 }
@@ -240,7 +240,7 @@ void Client::close()
     d->ssiManager->clear();
 }
 
-void Client::setStatus( DWORD status, const QString &message )
+void Client::setStatus( Oscar::DWORD status, const QString &message )
 {
 	// remember the message to reply with, when requested
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
@@ -1174,7 +1174,7 @@ void Client::setInvisibleTo( const QString& user, bool invisible )
 	}
 }
 
-void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType )
+void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	if ( !c )
@@ -1189,8 +1189,8 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE
 	bit->go( true );
 }
 
-void Client::requestServerRedirect( WORD family, WORD exchange,
-                                    QByteArray cookie, WORD instance,
+void Client::requestServerRedirect( Oscar::WORD family, Oscar::WORD exchange,
+                                    QByteArray cookie, Oscar::WORD instance,
                                     const QString& room )
 {
 	//making the assumption that family 2 will always be the BOS connection
@@ -1220,13 +1220,13 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
         srt->setChatRoom( room );
     }
 
-	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
-	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
+	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, Oscar::WORD ) ),
+	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, Oscar::WORD ) ) );
 	srt->setService( family );
 	srt->go( true );
 }
 
-void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
+void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, Oscar::WORD )
 {
     //nasty sender() usage to get the task with chat room info
 	QObject* o = const_cast<QObject*>( sender() );
@@ -1297,15 +1297,15 @@ void Client::serverRedirectFinished()
 
         Connection* c = m_loginTaskTwo->client();
         QString roomName = d->connections.chatRoomForConnection( c );
-        WORD exchange = d->connections.exchangeForConnection( c );
+        Oscar::WORD exchange = d->connections.exchangeForConnection( c );
         if ( c )
         {
             kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection" << endl;
             ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
-            connect( cst, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
-                     this, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
-            connect( cst, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
-                     this, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
             connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
                      this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
         }
@@ -1316,7 +1316,7 @@ void Client::serverRedirectFinished()
 
 }
 
-void Client::checkRedirectionQueue( WORD family )
+void Client::checkRedirectionQueue( Oscar::WORD family )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checking redirection queue" << endl;
 	d->redirectionServices.removeAll( family );
@@ -1387,13 +1387,13 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
                              << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
-    connect( cnst, SIGNAL( connectChat( WORD, QByteArray, WORD, const QString& ) ),
-             this, SLOT( setupChatConnection( WORD, QByteArray, WORD, const QString& ) ) );
+    connect( cnst, SIGNAL( connectChat( Oscar::WORD, QByteArray, Oscar::WORD, const QString& ) ),
+             this, SLOT( setupChatConnection( Oscar::WORD, QByteArray, Oscar::WORD, const QString& ) ) );
     cnst->createRoom( exchange, roomName );
 
 }
 
-void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance, const QString& room )
+void Client::setupChatConnection( Oscar::WORD exchange, QByteArray cookie, Oscar::WORD instance, const QString& room )
 {
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is:" << cookie << endl;
     QByteArray realCookie( cookie );
@@ -1401,7 +1401,7 @@ void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instanc
     requestServerRedirect( 0x000E, exchange, realCookie, instance, room );
 }
 
-void Client::disconnectChatRoom( WORD exchange, const QString& room )
+void Client::disconnectChatRoom( Oscar::WORD exchange, const QString& room )
 {
     Connection* c = d->connections.connectionForChatRoom( exchange, room );
     if ( !c )
@@ -1482,8 +1482,8 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
 		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
 				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
-		connect( ft, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),
-				SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ) );
+		connect( ft, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
+				SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 				this, SLOT( fileMessage( const Oscar::Message& ) ) );
 		ft->go( true );

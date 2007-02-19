@@ -30,12 +30,12 @@ Q_OBJECT
 public:
 	BuddyIconTask( Task* parent );
 
-	void uploadIcon( WORD length, const QByteArray& data );
-	void setReferenceNum( WORD num );
+	void uploadIcon( Oscar::WORD length, const QByteArray& data );
+	void setReferenceNum( Oscar::WORD num );
 
 	void requestIconFor( const QString& user );
 	void setHash( const QByteArray& md5Hash );
-	void setHashType( BYTE type );
+	void setHashType( Oscar::BYTE type );
 
 	//! Task implementation
 	void onGo();
@@ -56,13 +56,13 @@ private:
 private:
 	enum Action { Send, Receive };
 	Action m_action;
-	WORD m_iconLength;
+	Oscar::WORD m_iconLength;
 	int m_refNum;
 	QByteArray m_icon;
 	QString m_user;
 	QByteArray m_hash;
-	BYTE m_hashType;
-	DWORD m_seq;
+	Oscar::BYTE m_hashType;
+	Oscar::DWORD m_seq;
 };
 
 #endif

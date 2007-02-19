@@ -92,17 +92,17 @@ void SSIListTask::handleContactListReply()
 
 	Buffer* buffer = transfer()->buffer();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SSI Protocol version: " << buffer->getByte() << endl;
-	WORD ssiItems = buffer->getWord();
+	Oscar::WORD ssiItems = buffer->getWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Number of items in this SSI packet: " << ssiItems << endl;
-	WORD parsedItems;
+	Oscar::WORD parsedItems;
 	for ( parsedItems = 1; parsedItems <= ssiItems; ++parsedItems )
 	{
 		tlvList.clear();
 		QString itemName = QString::fromUtf8( buffer->getBSTR() );
-		WORD groupId = buffer->getWord();
-		WORD itemId = buffer->getWord();
-		WORD itemType = buffer->getWord();
-		WORD tlvLength = buffer->getWord();
+		Oscar::WORD groupId = buffer->getWord();
+		Oscar::WORD itemId = buffer->getWord();
+		Oscar::WORD itemType = buffer->getWord();
+		Oscar::WORD tlvLength = buffer->getWord();
 		for ( int i = 0; i < tlvLength; )
 		{
 			TLV t = buffer->getTLV();

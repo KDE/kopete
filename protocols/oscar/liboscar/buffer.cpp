@@ -53,7 +53,7 @@ Buffer::~Buffer()
 }
 
 
-int Buffer::addByte(const BYTE b)
+int Buffer::addByte(const Oscar::BYTE b)
 {
 	expandBuffer(1);
 	mBuffer[mBuffer.size()-1] = b;
@@ -61,7 +61,7 @@ int Buffer::addByte(const BYTE b)
 	return mBuffer.size();
 }
 
-int Buffer::addLEByte(const BYTE b)
+int Buffer::addLEByte(const Oscar::BYTE b)
 {
 	expandBuffer(1);
 	mBuffer[mBuffer.size()-1] = ((b) & 0xff);
@@ -70,7 +70,7 @@ int Buffer::addLEByte(const BYTE b)
 }
 
 
-int Buffer::addWord(const WORD w)
+int Buffer::addWord(const Oscar::WORD w)
 {
 	expandBuffer(2);
 	mBuffer[mBuffer.size()-2] = ((w & 0xff00) >> 8);
@@ -79,7 +79,7 @@ int Buffer::addWord(const WORD w)
 	return mBuffer.size();
 }
 
-int Buffer::addLEWord(const WORD w)
+int Buffer::addLEWord(const Oscar::WORD w)
 {
 	expandBuffer(2);
 	mBuffer[mBuffer.size()-2] = (unsigned char) ((w >> 0) & 0xff);
@@ -89,7 +89,7 @@ int Buffer::addLEWord(const WORD w)
 }
 
 
-int Buffer::addDWord(const DWORD dw)
+int Buffer::addDWord(const Oscar::DWORD dw)
 {
 	expandBuffer(4);
 	mBuffer[mBuffer.size()-4] = (dw & 0xff000000) >> 24;
@@ -100,7 +100,7 @@ int Buffer::addDWord(const DWORD dw)
 	return mBuffer.size();
 }
 
-int Buffer::addLEDWord(const DWORD dw)
+int Buffer::addLEDWord(const Oscar::DWORD dw)
 {
 	expandBuffer(4);
 	mBuffer[mBuffer.size()-4] = (unsigned char) ((dw >> 0) & 0xff);
@@ -117,25 +117,25 @@ int Buffer::addString( const QByteArray& s )
 	return mBuffer.size();
 }
 
-int Buffer::addString(QByteArray s, DWORD len)
+int Buffer::addString(QByteArray s, Oscar::DWORD len)
 {
 	Q_UNUSED( len );
 	return addString( s );
 }
 
-int Buffer::addString( const char* s, DWORD len )
+int Buffer::addString( const char* s, Oscar::DWORD len )
 {
 	QByteArray qba( s, len );
 	return addString( qba );
 }
 
-int Buffer::addString(const unsigned char* s, DWORD len)
+int Buffer::addString(const unsigned char* s, Oscar::DWORD len)
 {
 	QByteArray qba( (const char*) s, len );
 	return addString( qba );
 }
 
-int Buffer::addLEString(const char *s, const DWORD len)
+int Buffer::addLEString(const char *s, const Oscar::DWORD len)
 {
 	unsigned int pos = mBuffer.size();
 	expandBuffer(len);
@@ -159,23 +159,23 @@ int Buffer::addTLV( const TLV& t )
 	return addTLV( t.type, t.data );
 }
 
-int Buffer::addTLV( WORD type, const QByteArray& data )
+int Buffer::addTLV( Oscar::WORD type, const QByteArray& data )
 {
 	addWord( type );
 	addWord( data.length() );
 	return addString( data );
 }
 
-int Buffer::addLETLV( WORD type, const QByteArray& data )
+int Buffer::addLETLV( Oscar::WORD type, const QByteArray& data )
 {
 	addLEWord( type );
 	addLEWord( data.length() );
 	return addString( data );
 }
 
-BYTE Buffer::getByte()
+Oscar::BYTE Buffer::getByte()
 {
-	BYTE thebyte = 0x00;
+	Oscar::BYTE thebyte = 0x00;
 
 	if(mReadPos < mBuffer.size())
 	{
@@ -194,58 +194,58 @@ void Buffer::skipBytes( int bytesToSkip )
 		mReadPos += bytesToSkip;
 }
 
-BYTE Buffer::getLEByte()
+Oscar::BYTE Buffer::getLEByte()
 {
-	BYTE b = getByte();
+	Oscar::BYTE b = getByte();
 	return (b & 0xff);
 }
 
-WORD Buffer::getWord()
+Oscar::WORD Buffer::getWord()
 {
-	WORD theword, theword2, retword;
+	Oscar::WORD theword, theword2, retword;
 	theword = getByte();
 	theword2 = getByte();
 	retword = (theword << 8) | theword2;
 	return retword;
 }
 
-WORD Buffer::getLEWord()
+Oscar::WORD Buffer::getLEWord()
 {
-	WORD theword1, theword2, retword;
+	Oscar::WORD theword1, theword2, retword;
 	theword1 = getLEByte();
 	theword2 = getLEByte();
 	retword = (theword2 << 8) | theword1;
 	return retword;
 }
 
-DWORD Buffer::getDWord()
+Oscar::DWORD Buffer::getDWord()
 {
-	DWORD word1, word2;
-	DWORD retdword;
+	Oscar::DWORD word1, word2;
+	Oscar::DWORD retdword;
 	word1 = getWord();
 	word2 = getWord();
 	retdword = (word1 << 16) | word2;
 	return retdword;
 }
 
-DWORD Buffer::getLEDWord()
+Oscar::DWORD Buffer::getLEDWord()
 {
-	DWORD word1, word2, retdword;
+	Oscar::DWORD word1, word2, retdword;
 	word1 = getLEWord();
 	word2 = getLEWord();
 	retdword = (word2 << 16) | word1;
 	return retdword;
 }
 
-void Buffer::setBuf(char *b, const WORD len)
+void Buffer::setBuf(char *b, const Oscar::WORD len)
 {
 	mBuffer = QByteArray::fromRawData(b, len);
 	mReadPos = 0;
 }
 
-QByteArray Buffer::getBlock(DWORD len)
+QByteArray Buffer::getBlock(Oscar::DWORD len)
 {
-	if ( len > (DWORD)(mBuffer.size() - mReadPos) )
+	if ( len > (Oscar::DWORD)(mBuffer.size() - mReadPos) )
 	{
 		kDebug(14150) << "Buffer::getBlock(DWORD): mBuffer underflow!!!" << endl;
 		len = mBuffer.size() - mReadPos;
@@ -254,7 +254,7 @@ QByteArray Buffer::getBlock(DWORD len)
 	QByteArray ch;
 	ch.resize( len );
 
-	for ( DWORD i = 0; i < len; i++ )
+	for ( Oscar::DWORD i = 0; i < len; i++ )
 	{
 		ch[i] = getByte();
 	}
@@ -262,7 +262,7 @@ QByteArray Buffer::getBlock(DWORD len)
 	return ch;
 }
 
-QByteArray Buffer::getBBlock(WORD len)
+QByteArray Buffer::getBBlock(Oscar::WORD len)
 {
 	QByteArray data = QByteArray::fromRawData( mBuffer.data() + mReadPos, len);
 	mReadPos += len;
@@ -270,10 +270,10 @@ QByteArray Buffer::getBBlock(WORD len)
 }
 
 
-WORD *Buffer::getWordBlock(WORD len)
+Oscar::WORD *Buffer::getWordBlock(Oscar::WORD len)
 {
 	kDebug(14150) << k_funcinfo << "of length " << len << endl;
-	WORD *ch=new WORD[len+1];
+	Oscar::WORD *ch=new Oscar::WORD[len+1];
 	for (unsigned int i=0; i<len; i++)
 	{
 		ch[i]=getWord();
@@ -283,7 +283,7 @@ WORD *Buffer::getWordBlock(WORD len)
 }
 
 
-QByteArray Buffer::getLEBlock(WORD len)
+QByteArray Buffer::getLEBlock(Oscar::WORD len)
 {
 	QByteArray ch;
 	for (unsigned int i=0;i<len;i++)
@@ -292,45 +292,45 @@ QByteArray Buffer::getLEBlock(WORD len)
 	return ch;
 }
 
-int Buffer::addTLV32(const WORD type, const DWORD data)
+int Buffer::addTLV32(const Oscar::WORD type, const Oscar::DWORD data)
 {
 	addWord(type);
-	addWord(0x0004); //4 bytes long
+	addWord(0x0004); //4 Oscar::BYTEs long
 	return addDWord(data);
 }
 
-int Buffer::addLETLV32(const WORD type, const DWORD data)
+int Buffer::addLETLV32(const Oscar::WORD type, const Oscar::DWORD data)
 {
 	addLEWord(type);
-	addLEWord(0x0004); //4 bytes long
+	addLEWord(0x0004); //4 Oscar::BYTEs long
 	return addLEDWord(data);
 }
 
-int Buffer::addTLV16(const WORD type, const WORD data)
+int Buffer::addTLV16(const Oscar::WORD type, const Oscar::WORD data)
 {
 	addWord(type);
-	addWord(0x0002); //2 bytes long
+	addWord(0x0002); //2 Oscar::BYTEs long
 	return addWord(data);
 }
 
-int Buffer::addLETLV16(const WORD type, const WORD data)
+int Buffer::addLETLV16(const Oscar::WORD type, const Oscar::WORD data)
 {
 	addLEWord(type);
-	addLEWord(0x0002); //2 bytes long
+	addLEWord(0x0002); //2 Oscar::BYTEs long
 	return addLEWord(data);
 }
 
-int Buffer::addTLV8(const WORD type, const BYTE data)
+int Buffer::addTLV8(const Oscar::WORD type, const Oscar::BYTE data)
 {
 	addWord(type);
-	addWord(0x0001); //1 byte long
+	addWord(0x0001); //1 Oscar::BYTE long
 	return addByte(data);
 }
 
-int Buffer::addLETLV8(const WORD type, const BYTE data)
+int Buffer::addLETLV8(const Oscar::WORD type, const Oscar::BYTE data)
 {
 	addLEWord(type);
-	addLEWord(0x0001); //1 byte long
+	addLEWord(0x0001); //1 Oscar::BYTE long
 	return addLEByte(data);
 }
 
@@ -373,8 +373,8 @@ QList<TLV> Buffer::getTLVList()
 	return ql;
 }
 
-int Buffer::addChatTLV(const WORD type, const WORD exchange,
-	const QString &roomname, const WORD instance)
+int Buffer::addChatTLV(const Oscar::WORD type, const Oscar::WORD exchange,
+	const QString &roomname, const Oscar::WORD instance)
 {
 	addWord(type);
 	addWord(0x0005 + roomname.length());
@@ -392,7 +392,7 @@ void Buffer::expandBuffer(unsigned int inc)
 
 QByteArray Buffer::getLNTS()
 {
-	WORD len = getWord() - 1;
+	Oscar::WORD len = getWord() - 1;
 	QByteArray qcs( getBlock(len) );
 	skipBytes( 1 );
 	return qcs;
@@ -400,7 +400,7 @@ QByteArray Buffer::getLNTS()
 
 QByteArray Buffer::getLELNTS()
 {
-	WORD len = getLEWord() - 1;
+	Oscar::WORD len = getLEWord() - 1;
 	QByteArray qcs( getBlock(len) );
 	skipBytes( 1 );
 	return qcs;
@@ -438,7 +438,7 @@ int Buffer::addBSTR(const char * s)
 
 QByteArray Buffer::getBSTR()
 {
-	WORD len = getWord();
+	Oscar::WORD len = getWord();
 	QByteArray qba( getBlock(len) );
 	return qba;
 }
@@ -453,7 +453,7 @@ int Buffer::addBUIN(const char * s)
 
 QByteArray Buffer::getBUIN()
 {
-	BYTE len = getByte();
+	Oscar::BYTE len = getByte();
 	QByteArray qba( getBlock(len) );
 	return qba;
 }
@@ -553,7 +553,7 @@ int Buffer::addLEBlock( const QByteArray& block )
 
 QByteArray Buffer::addLEBlock()
 {
-	DWORD len = getLEWord();
+	Oscar::DWORD len = getLEWord();
 	return getBlock( len );
 }
 
@@ -568,7 +568,7 @@ int Buffer::addLEDBlock( const QByteArray& block )
 
 QByteArray Buffer::getLEDBlock()
 {
-	DWORD len = getLEDWord();
+	Oscar::DWORD len = getLEDWord();
 	return getBlock( len );
 }
 

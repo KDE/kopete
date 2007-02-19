@@ -55,7 +55,7 @@ namespace Oscar
 class Settings;
 }
 
-class KOPETE_EXPORT Client : public QObject
+class LIBOSCAR_EXPORT Client : public QObject
 {
 Q_OBJECT
 
@@ -109,7 +109,7 @@ public:
 	/** Logout and disconnect */
 	void close();
 	/** Set our status */
- 	void setStatus( DWORD status, const QString &message = QString::null );
+ 	void setStatus( Oscar::DWORD status, const QString &message = QString::null );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -302,11 +302,11 @@ public:
 	bool updateProfile( const QList<ICQInfoBase*>& infoList );
 
 	//! Get buddy icon information for a person
-	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
+	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType );
 
 	//! Start a server redirect for a different service
-	void requestServerRedirect( WORD family, WORD e = 0, QByteArray c = QByteArray(),
-                                WORD instance = 0, const QString& room = QString::null );
+	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),
+                                Oscar::WORD instance = 0, const QString& room = QString::null );
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
@@ -332,7 +332,7 @@ public:
 	bool hasIconConnection() const;
 
     /** We've finished chatting in a chat room, disconnect from it */
-    void disconnectChatRoom( WORD exchange, const QString& room );
+    void disconnectChatRoom( Oscar::WORD exchange, const QString& room );
 
 	/** Set codec provider */
 	void setCodecProvider( CodecProvider* codecProvider );
@@ -461,15 +461,15 @@ signals:
 
 	/* Chat rooms */
 	void chatNavigationConnected();
-    void chatRoomConnected( WORD, const QString& );
+    void chatRoomConnected( Oscar::WORD, const QString& );
     void userJoinedChat( Oscar::WORD, const QString& room, const QString& contact );
     void userLeftChat( Oscar::WORD, const QString& room, const QString& contact );
 
 	/* service redirection */
-	void redirectionFinished( WORD );
+	void redirectionFinished( Oscar::WORD );
 
 	/** incoming filetransfer */
-	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
+	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
 
 	void getTransferManager( Kopete::TransferManager ** );
 
@@ -512,9 +512,9 @@ protected slots:
 
 	void offlineUser( const QString&, const UserDetails& );
 
-	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );
+	void haveServerForRedirect( const QString& host, const QByteArray& cookie, Oscar::WORD family );
 	void serverRedirectFinished();
-	void checkRedirectionQueue( WORD );
+	void checkRedirectionQueue( Oscar::WORD );
 
 	void requestChatNavLimits();
     /**
@@ -525,7 +525,7 @@ protected slots:
     /**
      * set up the connection to a chat room
      */
-    void setupChatConnection( WORD, QByteArray, WORD, const QString& );
+    void setupChatConnection( Oscar::WORD, QByteArray, Oscar::WORD, const QString& );
     
     void determineDisconnection( int, const QString& );
 

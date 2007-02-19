@@ -50,7 +50,7 @@ ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acc
 
 void ICQMyselfContact::userInfoUpdated()
 {
-	DWORD extendedStatus = details().extendedStatus();
+	Oscar::DWORD extendedStatus = details().extendedStatus();
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
@@ -193,7 +193,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
-		DWORD status = pres.toOscarStatus();
+		Oscar::DWORD status = pres.toOscarStatus();
 
 		if ( !mHideIP )
 			status |= ICQ::StatusCode::SHOWIP;

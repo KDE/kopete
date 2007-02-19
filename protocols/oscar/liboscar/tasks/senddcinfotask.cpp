@@ -25,7 +25,7 @@
 #include "oscarutils.h"
 #include "transfer.h"
 
-SendDCInfoTask::SendDCInfoTask(Task* parent, DWORD status): Task(parent), mStatus(status)
+SendDCInfoTask::SendDCInfoTask(Task* parent, Oscar::DWORD status): Task(parent), mStatus(status)
 {
 }
 
@@ -56,7 +56,7 @@ void SendDCInfoTask::onGo()
 	/* This is TLV 0x06 */
 	//### Don't hardcode this value
 	//Right now, it's always coded to not support DC
-	DWORD statusFlag = 0x01000000;
+	Oscar::DWORD statusFlag = 0x01000000;
 	if ( client()->settings()->webAware() )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting web aware on" << endl;

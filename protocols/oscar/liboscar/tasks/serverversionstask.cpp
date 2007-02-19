@@ -126,7 +126,7 @@ void ServerVersionsTask::requestFamilyVersions()
 
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0017, 0x0000, client()->snacSequence() };
-	WORD val;
+	Oscar::WORD val;
 	Buffer* outbuf = new Buffer();
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND SNAC 0x01, 0x17 - Snac family versions we want" << endl;

@@ -90,7 +90,7 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		//FIXME this is silly. parseInitialData should take care of this for me.
 		buffer->skipBytes( 12 );
 		
-		WORD seq = sequence();
+		Oscar::WORD seq = sequence();
 		QString contactId = m_contactSequenceMap[seq];
 		
 		switch ( requestSubType() )

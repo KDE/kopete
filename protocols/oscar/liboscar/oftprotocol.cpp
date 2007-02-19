@@ -41,9 +41,9 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 {
 	QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
 
-	BYTE b;
-	WORD w;
-	DWORD d;
+	Oscar::BYTE b;
+	Oscar::WORD w;
+	Oscar::DWORD d;
 
 	OFT data;
 	//first 4 bytes should be "OFT2"

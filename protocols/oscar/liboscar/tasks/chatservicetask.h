@@ -56,7 +56,7 @@ protected:
     bool forMe( const Transfer* t ) const;
 
 private:
-    WORD m_exchange;
+    Oscar::WORD m_exchange;
     QString m_room;
     QString m_internalRoom;
     Oscar::Message m_message;

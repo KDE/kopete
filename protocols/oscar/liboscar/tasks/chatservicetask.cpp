@@ -167,8 +167,8 @@ bool ChatServiceTask::take( Transfer* t )
 
 void ChatServiceTask::parseRoomInfo()
 {
-    WORD instance;
-    BYTE detailLevel;
+    Oscar::WORD instance;
+    Oscar::BYTE detailLevel;
     Buffer* b = transfer()->buffer();
 
     m_exchange = b->getWord();
@@ -225,8 +225,8 @@ void ChatServiceTask::parseJoinNotification()
     {
         QString sender( b->getBUIN() );
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
-        WORD warningLevel = b->getWord();
-        WORD numTLVs = b->getWord();
+        Oscar::WORD warningLevel = b->getWord();
+        Oscar::WORD numTLVs = b->getWord();
         for ( int i = 0; i < numTLVs; i++ )
         {
             TLV t = b->getTLV();
@@ -256,8 +256,8 @@ void ChatServiceTask::parseLeftNotification()
     {
         QString sender( b->getBUIN() );
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
-        WORD warningLevel = b->getWord();
-        WORD numTLVs = b->getWord();
+        Oscar::WORD warningLevel = b->getWord();
+        Oscar::WORD numTLVs = b->getWord();
         for ( int i = 0; i < numTLVs; i++ )
         {
             TLV t = b->getTLV();

@@ -50,7 +50,7 @@ private:
 	
 private:
 	bool m_visible;
-	DWORD m_sequence;
+	Oscar::DWORD m_sequence;
 };
 
 #endif

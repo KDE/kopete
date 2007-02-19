@@ -51,7 +51,7 @@ private:
 	void requestFamilyVersions();
 	
 private:
-	WORD m_family;
+	Oscar::WORD m_family;
 };
 
 #endif

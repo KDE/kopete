@@ -38,7 +38,7 @@ Contact management
 @author Gustavo Pichorim Boiko
 @author Matt Rogers
 */
-class KOPETE_EXPORT ContactManager : public QObject
+class LIBOSCAR_EXPORT ContactManager : public QObject
 {
         Q_OBJECT
 public:
@@ -50,23 +50,23 @@ public:
 	void clear();
 	
 	/** Get the next buddy id for an Contact item */
-	WORD nextContactId();
+	Oscar::WORD nextContactId();
 	
 	/** Get the next group id for an Contact item */
-	WORD nextGroupId();
+	Oscar::WORD nextGroupId();
 
 	/** Get the number of items in the Contact list. */
-	WORD numberOfItems() const;
+	Oscar::WORD numberOfItems() const;
 
 	/** Get the timestamp the list was last modified */
-	DWORD lastModificationTime() const;
+	Oscar::DWORD lastModificationTime() const;
 
 	/** Set the timestamp of the last modification time */
-	void setLastModificationTime( DWORD lastTime );
+	void setLastModificationTime( Oscar::DWORD lastTime );
 
 	/** Set the parameters we should use for Contact */
-	void setParameters( WORD maxContacts, WORD maxGroups, WORD maxVisible,
-	                    WORD maxInvisible, WORD maxIgnore );
+	void setParameters( Oscar::WORD maxContacts, Oscar::WORD maxGroups, Oscar::WORD maxVisible,
+	                    Oscar::WORD maxInvisible, Oscar::WORD maxIgnore );
 
 	/**
 	 * Load an existing list from Contact objects.
@@ -142,7 +142,7 @@ signals:
 	void modifyError( const QString& error );
 	
 private:
-	WORD findFreeId( const QSet<WORD>& idSet, WORD fromId ) const;
+	Oscar::WORD findFreeId( const QSet<Oscar::WORD>& idSet, Oscar::WORD fromId ) const;
 	
 	ContactManagerPrivate* d;
 	OContact m_dummyItem;

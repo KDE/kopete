@@ -37,8 +37,8 @@
 class ConnectionPrivate
 {
 public:
-	DWORD snacSequence;
-	WORD flapSequence;
+	Oscar::DWORD snacSequence;
+	Oscar::WORD flapSequence;
 
 	QList<int> familyList;
 	RateClassManager* rateClassManager;

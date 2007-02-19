@@ -36,7 +36,7 @@ BuddyIconTask::BuddyIconTask( Task* parent )
 	m_hashType = 0;
 }
 
-void BuddyIconTask::uploadIcon( WORD length, const QByteArray& data )
+void BuddyIconTask::uploadIcon( Oscar::WORD length, const QByteArray& data )
 {
 	m_iconLength = length;
 	m_icon = data;
@@ -54,7 +54,7 @@ void BuddyIconTask::setHash( const QByteArray& md5Hash )
 	m_hash = md5Hash;
 }
 
-void BuddyIconTask::setHashType( BYTE type )
+void BuddyIconTask::setHashType( Oscar::BYTE type )
 {
 	m_hashType = type;
 }
@@ -149,7 +149,7 @@ void BuddyIconTask::handleUploadResponse()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload" << endl;
 	Buffer* b = transfer()->buffer();
 	b->skipBytes( 4 );
-	BYTE iconHashSize = b->getByte();
+	Oscar::BYTE iconHashSize = b->getByte();
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash << endl;
@@ -181,11 +181,11 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	QString user = b->getBUIN();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
 	b->skipBytes(2); //unknown field. not used
-	BYTE iconType = b->getByte();
+	Oscar::BYTE iconType = b->getByte();
 	Q_UNUSED( iconType );
-	BYTE hashSize = b->getByte();
+	Oscar::BYTE hashSize = b->getByte();
 	QByteArray iconHash( b->getBlock(hashSize) );
-	WORD iconSize = b->getWord();
+	Oscar::WORD iconSize = b->getWord();
 	QByteArray icon( b->getBlock(iconSize) );
 	emit haveIcon( user, icon );
 }
@@ -215,21 +215,21 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
 	
 	b->skipBytes(2); //not used
-	BYTE iconType = b->getByte();
+	Oscar::BYTE iconType = b->getByte();
 	Q_UNUSED( iconType );
 	
-	BYTE hashSize = b->getByte();
+	Oscar::BYTE hashSize = b->getByte();
 	QByteArray iconHash( b->getBlock(hashSize) );
 	
 	b->skipBytes(1); //not used
 	b->skipBytes(2); //not used
-	BYTE iconType2 = b->getByte();
+	Oscar::BYTE iconType2 = b->getByte();
 	Q_UNUSED( iconType2 );
 	
-	BYTE hashSize2 = b->getByte();
+	Oscar::BYTE hashSize2 = b->getByte();
 	QByteArray iconHash2( b->getBlock(hashSize2) );
 	
-	WORD iconSize = b->getWord();
+	Oscar::WORD iconSize = b->getWord();
 	QByteArray icon( b->getBlock(iconSize) );
 	
 	emit haveIcon( user, icon );

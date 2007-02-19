@@ -26,7 +26,7 @@
 #include <QDateTime>
 #include <QSharedDataPointer>
 
-#include "kopete_export.h"
+#include "liboscar_export.h"
 #include "oscartypes.h"
 
 class QTextCodec;
@@ -68,7 +68,7 @@ namespace MessageType
 	};
 }
 
-class KOPETE_EXPORT Message
+class LIBOSCAR_EXPORT Message
 {
 public:
 

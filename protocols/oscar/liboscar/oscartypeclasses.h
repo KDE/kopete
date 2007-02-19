@@ -23,11 +23,11 @@
 #include <qglobal.h>
 #include <qstring.h>
 #include <QList>
-#include "kopete_export.h"
+#include "liboscar_export.h"
 
 namespace Oscar
 {
-class KOPETE_EXPORT TLV
+class LIBOSCAR_EXPORT TLV
 {
 public:
 

@@ -29,7 +29,7 @@ using namespace Oscar;
  * Holds information from the extended user info packet
  * @author Matt Rogers
  */
-class KOPETE_EXPORT UserDetails
+class LIBOSCAR_EXPORT UserDetails
 {
 public:
 	UserDetails();
@@ -37,16 +37,16 @@ public:
 	
 	QString userId() const; //! User ID accessor
 	int warningLevel() const; //! Warning level accessor
-	WORD idleTime() const; //! Idle time accessor
+	Oscar::WORD idleTime() const; //! Idle time accessor
 	KNetwork::KIpAddress dcInternalIp() const; //! DC local IP accessor
 	KNetwork::KIpAddress dcExternalIp() const; //! DC outside IP accessor
-	DWORD dcPort() const; //! DC port number
+	Oscar::DWORD dcPort() const; //! DC port number
 	QDateTime onlineSinceTime() const; //! Online since accessor
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
-	DWORD extendedStatus() const; //!User status accessor
+	Oscar::DWORD extendedStatus() const; //!User status accessor
 	int xtrazStatus() const;
-	BYTE iconCheckSumType() const; //!Buddy icon hash type
+	Oscar::BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
 	bool hasCap( int capNumber ) const; //! Tell if we have this capability
@@ -85,25 +85,25 @@ private:
 	int m_userClass; /// the class of the user - TLV 0x01
 	QDateTime m_memberSince; /// how long the user's been a member - TLV 0x05
 	QDateTime m_onlineSince; /// how long the contact's been online - TLV 0x03
-	DWORD m_numSecondsOnline; /// how long the contact's been online in seconds
-	WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
-	DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
+	Oscar::DWORD m_numSecondsOnline; /// how long the contact's been online in seconds
+	Oscar::WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
+	Oscar::DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
 	int m_xtrazStatus;
-	DWORD m_capabilities; //TLV 0x05
+	Oscar::DWORD m_capabilities; //TLV 0x05
 	QString m_clientVersion; /// the version of client they're using
 	QString m_clientName; /// the name of the client they're using
 	KNetwork::KIpAddress m_dcOutsideIp; /// DC Real IP Address - TLV 0x0A
 	KNetwork::KIpAddress m_dcInsideIp; /// DC Internal IP Address - TLV 0x0C
-	DWORD m_dcPort; /// DC Port - TLV 0x0C
-	BYTE m_dcType; /// DC Type - TLV 0x0C
-	WORD m_dcProtoVersion; /// DC Protocol Version - TLV 0x0C
-	DWORD m_dcAuthCookie; /// DC Authorization Cookie - TLV 0x0C
-	DWORD m_dcWebFrontPort; /// DC Web Front Port - TLV 0x0C
-	DWORD m_dcClientFeatures; /// DC client features( whatever they are ) - TLV 0x0C
-	DWORD m_dcLastInfoUpdateTime; /// DC last info update time - TLV 0x0C
-	DWORD m_dcLastExtInfoUpdateTime; /// DC last exteneded info update time - TLV 0x0C
-	DWORD m_dcLastExtStatusUpdateTime; /// DC last extended status update time - TLV 0x0C
-	BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
+	Oscar::DWORD m_dcPort; /// DC Port - TLV 0x0C
+	Oscar::BYTE m_dcType; /// DC Type - TLV 0x0C
+	Oscar::WORD m_dcProtoVersion; /// DC Protocol Version - TLV 0x0C
+	Oscar::DWORD m_dcAuthCookie; /// DC Authorization Cookie - TLV 0x0C
+	Oscar::DWORD m_dcWebFrontPort; /// DC Web Front Port - TLV 0x0C
+	Oscar::DWORD m_dcClientFeatures; /// DC client features( whatever they are ) - TLV 0x0C
+	Oscar::DWORD m_dcLastInfoUpdateTime; /// DC last info update time - TLV 0x0C
+	Oscar::DWORD m_dcLastExtInfoUpdateTime; /// DC last exteneded info update time - TLV 0x0C
+	Oscar::DWORD m_dcLastExtStatusUpdateTime; /// DC last extended status update time - TLV 0x0C
+	Oscar::BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
 	

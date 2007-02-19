@@ -68,7 +68,7 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
 	m_oft.fileSize = m_file.size();
 	//we get to make up an icbm cookie!
 	Buffer b;
-	DWORD cookie = KRandom::random();
+	Oscar::DWORD cookie = KRandom::random();
 	b.addDWord( cookie );
 	cookie = KRandom::random();
 	b.addDWord( cookie );
@@ -388,18 +388,18 @@ void FileTransferTask::proxyRead()
 	QByteArray raw = m_connection->readAll(); //is this safe?
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	Buffer b( raw );
-	WORD length = b.getWord();
+	Oscar::WORD length = b.getWord();
 	if ( b.bytesAvailable() != length )
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "length is " << length << " but we have " << b.bytesAvailable() << "bytes!" << endl;
 	b.skipBytes( 2 ); //protocol version
-	WORD command = b.getWord();
+	Oscar::WORD command = b.getWord();
 	b.skipBytes( 6 ); //4 unknown, 2 flags
 
 	switch( command )
 	{
 		case 1: //error
 		{
-			WORD err = b.getWord();
+			Oscar::WORD err = b.getWord();
 			QString errMsg;
 			switch( err )
 			{

@@ -39,9 +39,9 @@ SnacProtocol::~SnacProtocol()
 
 Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 {
-	BYTE b;
-	WORD w;
-	DWORD dw;
+	Oscar::BYTE b;
+	Oscar::WORD w;
+	Oscar::DWORD dw;
 
 	FLAP f;
 	SNAC s;

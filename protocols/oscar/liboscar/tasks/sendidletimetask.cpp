@@ -49,7 +49,7 @@ void SendIdleTimeTask::onGo()
 	
 }
 
-void SendIdleTimeTask::setIdleTime( DWORD newTime )
+void SendIdleTimeTask::setIdleTime( Oscar::DWORD newTime )
 {
 	m_idleTime = newTime;
 }

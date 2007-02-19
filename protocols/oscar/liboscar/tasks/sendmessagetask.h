@@ -36,7 +36,7 @@ public:
 	void setAutoResponse( bool autoResponse );
 
 	//! our ip address
-	void setIp( const DWORD ip );
+	void setIp( const Oscar::DWORD ip );
 
 	virtual void onGo();
 
@@ -52,7 +52,7 @@ private:
 	Oscar::Message m_message;
 	bool m_autoResponse;
 	uint m_cookieCount;
-	DWORD m_ip;
+	Oscar::DWORD m_ip;
 };
 
 #endif

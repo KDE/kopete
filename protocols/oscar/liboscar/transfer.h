@@ -69,7 +69,7 @@ class FlapTransfer : public Transfer
 {
 public:
 
-	FlapTransfer( Buffer* buffer, BYTE chan = 0, WORD seq = 0, WORD len = 0 );
+	FlapTransfer( Buffer* buffer, Oscar::BYTE chan = 0, Oscar::WORD seq = 0, Oscar::WORD len = 0 );
 	FlapTransfer( FLAP f, Buffer* buffer );
 	FlapTransfer();
 	virtual ~FlapTransfer();
@@ -79,30 +79,30 @@ public:
 
 
 	//! Set the FLAP channel
-	void setFlapChannel( BYTE channel );
+	void setFlapChannel( Oscar::BYTE channel );
 
 	//! Get the FLAP channel
-	BYTE flapChannel() const;
+	Oscar::BYTE flapChannel() const;
 
 	//! Set the FLAP sequence
-	void setFlapSequence( WORD seq );
+	void setFlapSequence( Oscar::WORD seq );
 
 	//! Get the FLAP sequence
-	WORD flapSequence() const;
+	Oscar::WORD flapSequence() const;
 
 	//! Set the length of the data after the FLAP
-	void setFlapLength( WORD len );
+	void setFlapLength( Oscar::WORD len );
 
 	//! Get the length of the data after the FLAP
-	WORD flapLength() const;
+	Oscar::WORD flapLength() const;
 
 	//! Get the validity of the FLAP header
 	bool flapValid() const;
 	
 private:
-	BYTE m_flapChannel;
-	WORD m_flapSequence;
-	WORD m_flapLength;
+	Oscar::BYTE m_flapChannel;
+	Oscar::WORD m_flapSequence;
+	Oscar::WORD m_flapLength;
 
 	bool m_isFlapValid;
 	
@@ -116,8 +116,8 @@ class SnacTransfer : public FlapTransfer
 public:
 
 	/*SnacTransfer();*/
-	SnacTransfer( Buffer*, BYTE chan = 0, WORD seq = 0, WORD len = 0, WORD service = 0,
-		 WORD subtype = 0, WORD flags = 0, DWORD reqId = 0 );
+	SnacTransfer( Buffer*, Oscar::BYTE chan = 0, Oscar::WORD seq = 0, Oscar::WORD len = 0, Oscar::WORD service = 0,
+		 Oscar::WORD subtype = 0, Oscar::WORD flags = 0, Oscar::DWORD reqId = 0 );
 	SnacTransfer( struct FLAP f, struct SNAC s, Buffer* buffer );
 	SnacTransfer();
 	virtual ~SnacTransfer();
@@ -127,28 +127,28 @@ public:
 
 
 	//! Set the SNAC service
-	void setSnacService( WORD service );
+	void setSnacService( Oscar::WORD service );
 
 	//! Get the SNAC service
-	WORD snacService() const;
+	Oscar::WORD snacService() const;
 
 	//! Set the SNAC subtype
-	void setSnacSubtype( WORD subtype );
+	void setSnacSubtype( Oscar::WORD subtype );
 
 	//! Get the SNAC subtype
-	WORD snacSubtype() const;
+	Oscar::WORD snacSubtype() const;
 
 	//! Set the SNAC flags
-	void setSnacFlags( WORD flags );
+	void setSnacFlags( Oscar::WORD flags );
 
 	//! Get the SNAC flags
-	WORD snacFlags() const;
+	Oscar::WORD snacFlags() const;
 
 	//! Set the SNAC request id
-	void setSnacRequest( DWORD id );
+	void setSnacRequest( Oscar::DWORD id );
 
 	//! Get the SNAC request id
-	DWORD snacRequest() const;
+	Oscar::DWORD snacRequest() const;
 
 	//! Get the validity of the SNAC header
 	bool snacValid() const;
@@ -158,10 +158,10 @@ public:
 
 private:
 
-	WORD m_snacService;
-	WORD m_snacSubtype;
-	WORD m_snacFlags;
-	WORD m_snacReqId;
+	Oscar::WORD m_snacService;
+	Oscar::WORD m_snacSubtype;
+	Oscar::WORD m_snacFlags;
+	Oscar::WORD m_snacReqId;
 	
 	bool m_isSnacValid;
 };

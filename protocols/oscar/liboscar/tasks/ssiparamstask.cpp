@@ -85,12 +85,12 @@ void SSIParamsTask::handleParamReply()
 	else
 	{
 		buf->skipBytes( 2 ); //the tlv length
-		WORD maxContacts = buf->getWord();
-		WORD maxGroups = buf->getWord();
-		WORD maxVisible = buf->getWord();
-		WORD maxInvisible = buf->getWord();
+		Oscar::WORD maxContacts = buf->getWord();
+		Oscar::WORD maxGroups = buf->getWord();
+		Oscar::WORD maxVisible = buf->getWord();
+		Oscar::WORD maxInvisible = buf->getWord();
 		buf->skipBytes( 20 );
-		WORD maxIgnore = buf->getWord();
+		Oscar::WORD maxIgnore = buf->getWord();
 		client()->ssiManager()->setParameters( maxContacts, maxGroups, maxVisible, maxInvisible, maxIgnore );
 	}
 	setSuccess( 0, QString::null );

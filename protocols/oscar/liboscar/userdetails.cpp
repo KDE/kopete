@@ -15,14 +15,13 @@
 	*                                                                       *
 	*************************************************************************
 */
-#include "userdetails.h"
-
-#include "buffer.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include "userdetails.h"
+#include "buffer.h"
 #include "oscarutils.h"
 #include "oscardebug.h"
 
@@ -75,7 +74,7 @@ QString UserDetails::userId() const
 	return m_userId;
 }
 
-WORD UserDetails::idleTime() const
+Oscar::WORD UserDetails::idleTime() const
 {
 	return m_idleTime;
 }
@@ -90,7 +89,7 @@ KNetwork::KIpAddress UserDetails::dcExternalIp() const
 	return m_dcOutsideIp;
 }
 
-DWORD UserDetails::dcPort() const
+Oscar::DWORD UserDetails::dcPort() const
 {
 	return m_dcPort;
 }
@@ -110,7 +109,7 @@ int UserDetails::userClass() const
 	return m_userClass;
 }
 
-DWORD UserDetails::extendedStatus() const
+Oscar::DWORD UserDetails::extendedStatus() const
 {
 	return m_extendedStatus;
 }
@@ -120,7 +119,7 @@ int UserDetails::xtrazStatus() const
 	return m_xtrazStatus;
 }
 
-BYTE UserDetails::iconCheckSumType() const
+Oscar::BYTE UserDetails::iconCheckSumType() const
 {
 	return m_iconChecksumType;
 }
@@ -141,7 +140,7 @@ void UserDetails::fill( Buffer * buffer )
 	if ( !user.isEmpty() )
 		m_userId = user;
 	m_warningLevel = buffer->getWord();
-	WORD numTLVs = buffer->getWord();
+	Oscar::WORD numTLVs = buffer->getWord();
 
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user << endl;
 #ifdef OSCAR_USERINFO_DEBUG
@@ -243,9 +242,9 @@ void UserDetails::fill( Buffer * buffer )
 #ifdef OSCAR_USERINFO_DEBUG
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
 #endif
-					WORD type2 = b.getWord();
-					BYTE number = b.getByte();
-					BYTE length = b.getByte();
+					Oscar::WORD type2 = b.getWord();
+					Oscar::BYTE number = b.getByte();
+					Oscar::BYTE length = b.getByte();
 					switch( type2 )
 					{
 					case 0x0000:

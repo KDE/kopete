@@ -78,14 +78,14 @@ class LIBOSCAR_EXPORT Buffer
 		 * adds the given string to the buffer (make sure it's NULL-terminated)
 		 */
 		int addString( const QByteArray& s );
-		int addString(QByteArray, DWORD);
-		int addString(const char*, DWORD);
-		int addString(const unsigned char*, DWORD);
+		int addString(QByteArray, Oscar::DWORD);
+		int addString(const char*, Oscar::DWORD);
+		int addString(const unsigned char*, Oscar::DWORD);
 
 		/**
 		 * Little-endian version of addString
 		 */
-		int addLEString(const char *, const DWORD);
+		int addLEString(const char *, const Oscar::DWORD);
 
 		/**
 		 * adds the given string to the buffer with the length in front of it
@@ -100,30 +100,30 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * adds the given DWord to the buffer
 		 */
-		int addDWord(const DWORD);
+		int addDWord(const Oscar::DWORD);
 
 		/**
 		 * adds the given word to the buffer
 		 */
-		int addWord(const WORD);
+		int addWord(const Oscar::WORD);
 
 		/**
 		 * adds the given word to the buffer in
 		 * little-endian format as needed by old icq server
 		 */
-		int addLEWord(const WORD w);
+		int addLEWord(const Oscar::WORD w);
 
 		/**
 		 * adds the given DWord to the buffer in
 		 * little-endian format as needed by old icq server
 		 */
-		int addLEDWord(const DWORD dw);
+		int addLEDWord(const Oscar::DWORD dw);
 
 		/**
 		 * adds the given byte to the buffer
 		 */
-		int addByte(const BYTE);
-		int addLEByte(const BYTE);
+		int addByte(const Oscar::BYTE);
+		int addLEByte(const Oscar::BYTE);
 
 		/**
 		 * empties the current buffer.
@@ -138,12 +138,12 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * Adds a TLV with the given type and data
 		 */
-		int addTLV( WORD type, const QByteArray& data );
+		int addTLV( Oscar::WORD type, const QByteArray& data );
 
 		/**
 		 * Adds a little-endian TLV with the given type and data
 		 */
-		int addLETLV( WORD type, const QByteArray& data );
+		int addLETLV( Oscar::WORD type, const QByteArray& data );
 
 		/**
 		 * Returns a QString representation of the buffer
@@ -153,19 +153,19 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * gets a DWord out of the buffer
 		 */
-		DWORD getDWord();
+		Oscar::DWORD getDWord();
 
 		/**
 		 * Gets a word out of the buffer
 		 */
-		WORD getWord();
+		Oscar::WORD getWord();
 
 		/**
 		 * Gets a byte out of the buffer
 		 * It's not a constant method. It advances the buffer
 		 * to the next BYTE after returning one.
 		 */
-		BYTE getByte();
+		Oscar::BYTE getByte();
 
 		/**
 		 * Skip \p bytesToSkip number of bytes in the buffer
@@ -176,30 +176,30 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * Same as above but returns little-endian
 		 */
-		WORD getLEWord();
-		DWORD getLEDWord();
-		BYTE getLEByte();
+		Oscar::WORD getLEWord();
+		Oscar::DWORD getLEDWord();
+		Oscar::BYTE getLEByte();
 
 		/**
 		 * Set the buffer to the given values.
 		 */
-		void setBuf(char *, const WORD);
+		void setBuf(char *, const Oscar::WORD);
 
 		/**
 		 * Allocates memory for and gets a block of buffer bytes
 		 */
-		QByteArray getBlock(DWORD len);
-		QByteArray getBBlock(WORD len);
+		QByteArray getBlock(Oscar::DWORD len);
+		QByteArray getBBlock(Oscar::WORD len);
 
 		/**
 		 * Allocates memory for and gets a block of buffer words
 		 */
-		WORD *getWordBlock(WORD len);
+		Oscar::WORD *getWordBlock(Oscar::WORD len);
 
 		/**
 		 * Same as above but returning little-endian
 		 */
-		QByteArray getLEBlock(WORD len);
+		QByteArray getLEBlock(Oscar::WORD len);
 
 		/**
 		 * Convenience function that gets a LNTS (long null terminated string)
@@ -211,32 +211,32 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * adds a 32-bit long TLV
 		 */
-		int addTLV32(const WORD type, const DWORD data);
+		int addTLV32(const Oscar::WORD type, const Oscar::DWORD data);
 
 		/**
 		 * adds a 32-bit long little-endian TLV
 		 */
-		int addLETLV32(const WORD type, const DWORD data);
+		int addLETLV32(const Oscar::WORD type, const Oscar::DWORD data);
 
 		/**
 		 * adds a 16-bit long TLV
 		 */
-		int addTLV16(const WORD type, const WORD data);
+		int addTLV16(const Oscar::WORD type, const Oscar::WORD data);
 
 		/**
 		 * adds a 16-bit long little-endian TLV
 		 */
-		int addLETLV16(const WORD type, const WORD data);
+		int addLETLV16(const Oscar::WORD type, const Oscar::WORD data);
 
 		/**
 		 * adds the given byte to a TLV
 		 */
-		int addTLV8(const WORD type, const BYTE data);
+		int addTLV8(const Oscar::WORD type, const Oscar::BYTE data);
 
 		/**
 		 * adds the given byte to a little-endian TLV
 		 */
-		int addLETLV8(const WORD type, const BYTE data);
+		int addLETLV8(const Oscar::WORD type, const Oscar::BYTE data);
 
 		/**
 		 * Gets a TLV, storing it in a struct and returning it
@@ -251,7 +251,7 @@ class LIBOSCAR_EXPORT Buffer
 		/**
 		 * Creates a chat data segment for a tlv and calls addTLV with that data
 		 */
-		int addChatTLV(const WORD, const WORD, const QString &, const WORD);
+		int addChatTLV(const Oscar::WORD, const Oscar::WORD, const QString &, const Oscar::WORD);
 
 		/**
 		 * Similar to the LNTS functions but string is NOT null-terminated

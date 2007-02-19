@@ -139,7 +139,7 @@ FlapTransfer::FlapTransfer( struct FLAP f, Buffer* buffer )
 
 }
 
-FlapTransfer::FlapTransfer( Buffer* buffer, BYTE chan, WORD seq, WORD len )
+FlapTransfer::FlapTransfer( Buffer* buffer, Oscar::BYTE chan, Oscar::WORD seq, Oscar::WORD len )
 	: Transfer( buffer )
 {
 	m_flapChannel = chan;
@@ -179,7 +179,7 @@ QByteArray FlapTransfer::toWire()
 	return wire;
 }
 
-void FlapTransfer::setFlapChannel( BYTE channel )
+void FlapTransfer::setFlapChannel( Oscar::BYTE channel )
 {
 	if ( channel != 0 )
 	{
@@ -189,29 +189,29 @@ void FlapTransfer::setFlapChannel( BYTE channel )
 }
 
 
-BYTE FlapTransfer::flapChannel() const
+Oscar::BYTE FlapTransfer::flapChannel() const
 {
 	return m_flapChannel;
 }
 
 
-void FlapTransfer::setFlapSequence( WORD seq )
+void FlapTransfer::setFlapSequence( Oscar::WORD seq )
 {
 	m_flapSequence = seq;
 }
 
 
-WORD FlapTransfer::flapSequence() const
+Oscar::WORD FlapTransfer::flapSequence() const
 {
 	return m_flapSequence;
 }
 
-void FlapTransfer::setFlapLength( WORD len )
+void FlapTransfer::setFlapLength( Oscar::WORD len )
 {
 	m_flapLength = len;
 }
 
-WORD FlapTransfer::flapLength() const
+Oscar::WORD FlapTransfer::flapLength() const
 {
 	return m_flapLength;
 }
@@ -235,8 +235,8 @@ SnacTransfer::SnacTransfer()
 }
 
 
-SnacTransfer::SnacTransfer( Buffer* buffer, BYTE chan, WORD seq, WORD len, WORD service,
-				 WORD subtype, WORD flags, DWORD reqId )
+SnacTransfer::SnacTransfer( Buffer* buffer, Oscar::BYTE chan, Oscar::WORD seq, Oscar::WORD len, Oscar::WORD service,
+				 Oscar::WORD subtype, Oscar::WORD flags, Oscar::DWORD reqId )
 	: FlapTransfer( buffer, chan, seq, len )
 {
 	m_snacService = service;
@@ -314,42 +314,42 @@ bool SnacTransfer::snacValid() const
 	return m_isSnacValid;
 }
 
-void SnacTransfer::setSnacService( WORD service )
+void SnacTransfer::setSnacService( Oscar::WORD service )
 {
 	m_snacService = service;
 }
 
-WORD SnacTransfer::snacService() const
+Oscar::WORD SnacTransfer::snacService() const
 {
 	return m_snacService;
 }
 
-void SnacTransfer::setSnacSubtype( WORD subtype )
+void SnacTransfer::setSnacSubtype( Oscar::WORD subtype )
 {
 	m_snacSubtype = subtype;
 }
 
-WORD SnacTransfer::snacSubtype() const
+Oscar::WORD SnacTransfer::snacSubtype() const
 {
 	return m_snacSubtype;
 }
 
-void SnacTransfer::setSnacFlags( WORD flags )
+void SnacTransfer::setSnacFlags( Oscar::WORD flags )
 {
 	m_snacFlags = flags;
 }
 
-WORD SnacTransfer::snacFlags() const
+Oscar::WORD SnacTransfer::snacFlags() const
 {
 	return m_snacFlags;
 }
 
-void SnacTransfer::setSnacRequest( DWORD id )
+void SnacTransfer::setSnacRequest( Oscar::DWORD id )
 {
 	m_snacReqId = id;
 }
 
-DWORD SnacTransfer::snacRequest() const
+Oscar::DWORD SnacTransfer::snacRequest() const
 {
 	return m_snacReqId;
 }

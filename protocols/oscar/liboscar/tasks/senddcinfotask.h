@@ -28,12 +28,12 @@ Fire and forget task that sends our direct connection info
 class SendDCInfoTask : public Task
 {
 public:
-	SendDCInfoTask( Task* parent, DWORD status );
+	SendDCInfoTask( Task* parent, Oscar::DWORD status );
 	~SendDCInfoTask();
 	virtual void onGo();
 	
 private:
-	DWORD mStatus;
+	Oscar::DWORD mStatus;
 };
 
 #endif

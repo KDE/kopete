@@ -53,7 +53,7 @@ private:
 	void handleNotification();
 	
 private:
-	WORD m_notificationType;
+	Oscar::WORD m_notificationType;
 	QString m_contact;
 };
 

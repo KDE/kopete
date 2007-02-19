@@ -36,8 +36,8 @@ public:
 	void setContact( const QString& contact );
 	void setAnonymous( bool anon );
 	
-	WORD levelIncrease();
-	WORD newLevel();
+	Oscar::WORD levelIncrease();
+	Oscar::WORD newLevel();
 	
 	virtual bool forMe( const Transfer* transfer ) const;
 	virtual bool take( Transfer* transfer );
@@ -49,9 +49,9 @@ signals:
 private:
 	QString m_contact;
 	bool m_sendAnon;
-	WORD m_sequence;
-	WORD m_increase;
-	WORD m_newLevel;
+	Oscar::WORD m_sequence;
+	Oscar::WORD m_increase;
+	Oscar::WORD m_newLevel;
 };
 
 #endif

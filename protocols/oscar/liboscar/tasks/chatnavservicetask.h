@@ -43,13 +43,13 @@ public:
 	virtual bool forMe( const Transfer* transfer ) const;
 	virtual bool take( Transfer* transfer );
 	virtual void onGo();
-    void createRoom( WORD exchange, const QString& name ); //create a room. sends the packet as well
+    void createRoom( Oscar::WORD exchange, const QString& name ); //create a room. sends the packet as well
 
     QList<int> exchangeList() const;
 
 signals:
     void haveChatExchanges( const QList<int>& );
-    void connectChat( WORD, QByteArray, WORD, const QString& );
+    void connectChat( Oscar::WORD, QByteArray, Oscar::WORD, const QString& );
 
 private:
 	void handleExchangeInfo( const TLV& t );

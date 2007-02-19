@@ -30,7 +30,7 @@
  * @author Matt Rogers
  */
 
-class KOPETE_EXPORT ICQContactBase : public OscarContact
+class OSCAR_EXPORT ICQContactBase : public OscarContact
 {
 Q_OBJECT
 

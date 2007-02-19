@@ -36,7 +36,7 @@ RateClass::~ RateClass()
 	m_members.clear();
 }
 
-WORD RateClass::id() const
+Oscar::WORD RateClass::id() const
 {
 	return m_rateInfo.classId;
 }
@@ -56,7 +56,7 @@ void RateClass::addMember( const SNAC& s )
 	addMember( s.family, s.subtype );
 }
 
-void RateClass::addMember( WORD family, WORD subtype )
+void RateClass::addMember( Oscar::WORD family, Oscar::WORD subtype )
 {
 	SnacPair snacPair;
 	snacPair.family = family;
@@ -76,7 +76,7 @@ bool RateClass::isMember(const SNAC &s) const
 	return false;
 }
 
-bool RateClass::isMember( WORD family, WORD subtype ) const
+bool RateClass::isMember( Oscar::WORD family, Oscar::WORD subtype ) const
 {
 
 	QList<SnacPair>::const_iterator it;
@@ -111,7 +111,7 @@ bool RateClass::queueIsEmpty() const
 
 int RateClass::timeToInitialLevel()
 {
-	DWORD newLevel = 0;
+	Oscar::DWORD newLevel = 0;
 
 	//get time elapsed since the last packet was sent
 	int timeDiff = m_packetTimer.elapsed();
@@ -130,16 +130,16 @@ int RateClass::timeToInitialLevel()
 int RateClass::timeToNextSend()
 {
 	
-	DWORD newLevel = 0;
+	Oscar::DWORD newLevel = 0;
 	
 	//get time elapsed since the last packet was sent
 	int timeDiff = m_packetTimer.elapsed();
 	
-	DWORD windowSize = m_rateInfo.windowSize;
+	Oscar::DWORD windowSize = m_rateInfo.windowSize;
 	newLevel = calcNewLevel( timeDiff );
 		
 	//The maximum level at which we can safely send a packet
-	DWORD maxPacket = m_rateInfo.alertLevel + RATE_SAFETY_TIME;
+	Oscar::DWORD maxPacket = m_rateInfo.alertLevel + RATE_SAFETY_TIME;
 		
 /*kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Rate Information:"
 		<< "\nWindow Size: " << windowSize
@@ -163,7 +163,7 @@ int RateClass::timeToNextSend()
 	return 0;
 }
 
-DWORD RateClass::calcNewLevel( int timeDifference ) const
+Oscar::DWORD RateClass::calcNewLevel( int timeDifference ) const
 {
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Time since last packet: "
 	//		<< timeDifference << endl;
@@ -218,7 +218,7 @@ void RateClass::slotSend()
 void RateClass::updateRateInfo()
 {
 	//Update rate info
-	DWORD newLevel = calcNewLevel( m_packetTimer.elapsed() );
+	Oscar::DWORD newLevel = calcNewLevel( m_packetTimer.elapsed() );
 	m_rateInfo.currentLevel = newLevel;
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current Level = " <<  newLevel << endl;
 	

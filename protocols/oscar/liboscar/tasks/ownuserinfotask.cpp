@@ -75,17 +75,17 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 		else
 		{
 			bool needUpload = false;
-			WORD infoType = b->getWord();
+			Oscar::WORD infoType = b->getWord();
 			if ( infoType == 0x0000 || infoType == 0x0001 )
 			{
-				BYTE flags = b->getByte();
+				Oscar::BYTE flags = b->getByte();
 				if ( flags == 0x41 )  //we need to do a buddy upload when bit 8 = 1
 					needUpload = true;
 				
 				QByteArray qba;
 				if ( b->bytesAvailable() != 0 )
 				{ //buffer might be empty if flags bit 8 = 1
-					BYTE checksumLength = b->getByte();
+					Oscar::BYTE checksumLength = b->getByte();
 					qba = b->getBlock( checksumLength );
 					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Self icon checksum: " << qba << endl;
 				}

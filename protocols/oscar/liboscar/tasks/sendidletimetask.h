@@ -34,11 +34,11 @@ public:
 	virtual void onGo();
 
 	//! Set the idle time to send
-	void setIdleTime( DWORD );
+	void setIdleTime( Oscar::DWORD );
 
 private:
 	
-	DWORD m_idleTime;
+	Oscar::DWORD m_idleTime;
 };
 
 #endif

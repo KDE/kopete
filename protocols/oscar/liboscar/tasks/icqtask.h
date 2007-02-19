@@ -39,23 +39,23 @@ public:
 	void parseInitialData( Buffer buf );
 	Buffer* addInitialData( Buffer* buf = 0 ) const;
 
-	DWORD uin() const;
-	void setUin( DWORD uin );
+	Oscar::DWORD uin() const;
+	void setUin( Oscar::DWORD uin );
 
-	WORD sequence() const;
-	void setSequence( WORD seqeunce );
+	Oscar::WORD sequence() const;
+	void setSequence( Oscar::WORD seqeunce );
 	
-	DWORD requestType() const;
-	void setRequestType( WORD type );
+	Oscar::DWORD requestType() const;
+	void setRequestType( Oscar::WORD type );
 	
-	DWORD requestSubType() const;
-	void setRequestSubType( WORD subType );
+	Oscar::DWORD requestSubType() const;
+	void setRequestSubType( Oscar::WORD subType );
 
 private:
-	DWORD m_icquin; //little endian
-	WORD m_sequence;
-	WORD m_requestType; //little endian
-	WORD m_requestSubType; //little endian
+	Oscar::DWORD m_icquin; //little endian
+	Oscar::WORD m_sequence;
+	Oscar::WORD m_requestType; //little endian
+	Oscar::WORD m_requestSubType; //little endian
 };
 
 //kate: tab-width 4; indent-mode csands;
