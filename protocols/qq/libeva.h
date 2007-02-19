@@ -177,9 +177,10 @@ namespace Eva {
 
 
 	// Customized max to get rid of stl dependence
+#ifndef _MSC_VER
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
 	template<class T> T min( T a, T b) { return (a<b) ? a : b; }
-
+#endif
 
     class ByteArray
     {

@@ -109,7 +109,7 @@ public:
 	/**
 	 * Rename contact on server
 	 */
-	virtual void rename( const QString &newName ) KDE_DEPRECATED;
+	virtual KDE_DEPRECATED void rename( const QString &newName );
 
 	/**
 	 * Returns the QQ Message Manager associated with this contact

@@ -1,3 +1,4 @@
+#include <qglobal.h>      // for win32
 #include "libeva.h"
 #include "md5.h"
 #include "crypt.h"

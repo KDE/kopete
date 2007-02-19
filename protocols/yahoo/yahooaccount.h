@@ -55,7 +55,7 @@ class StatusMessage;
 class FileTransferInfo;
 }
 class Client;
-class YABEntry;
+struct YABEntry;
 class KJob;
 namespace KIO{
 	class Job;

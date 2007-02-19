@@ -41,7 +41,7 @@ struct ConferenceEvent
 	};
 
 
-class KOPETE_EXPORT QQChatSession : public Kopete::ChatSession
+class QQ_EXPORT QQChatSession : public Kopete::ChatSession
 {
 Q_OBJECT
 

@@ -55,7 +55,8 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	topLayout->add( mImageContainer );
 	
 	show();
-	
+
+#ifndef Q_OS_WIN
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -67,23 +68,28 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	mPixmap=QPixmap(320,240);
 	if (mPixmap.convertFromImage(mImage,0) == true)
 		mImageContainer->updatePixmap(mPixmap);
+#endif
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.start(0,false);
 }
 
 QQWebcamDialog::~ QQWebcamDialog( )
 {
+#ifndef Q_OS_WIN
 	mVideoDevicePool->stopCapturing();
 	mVideoDevicePool->close();
+#endif
 }
 
 void QQWebcamDialog::slotUpdateImage()
 {
+#ifndef Q_OS_WIN
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image" << endl;
 	mVideoDevicePool->getImage(&mImage);
 	kDebug() << "BitBlitting image" << endl;
 	mImageContainer->updatePixmap( QPixmap( mImage ) );
+#endif
 }
 
 

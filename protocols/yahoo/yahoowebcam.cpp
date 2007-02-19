@@ -47,11 +47,12 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 
 	theDialog = new YahooWebcamDialog( "YahooWebcam" );
 	connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
-
+#ifndef Q_OS_WIN
 	m_devicePool = Kopete::AV::VideoDevicePool::self();
 	m_devicePool->open();
 	m_devicePool->setSize(320, 240);
 	m_devicePool->startCapturing();
+#endif
 	m_updateTimer->start( 250 );
 }
 
@@ -79,14 +80,18 @@ void YahooWebcam::webcamDialogClosing()
 	m_sendTimer->stop();
 	theDialog->delayedDestruct();
 	emit webcamClosing();
+#ifndef Q_OS_WIN
 	m_devicePool->stopCapturing(); 
 	m_devicePool->close();
+#endif
 }
 
 void YahooWebcam::updateImage()
 {
+#ifndef Q_OS_WIN
 	m_devicePool->getFrame();
 	m_devicePool->getImage(m_img);
+#endif
 	theDialog->newImage( QPixmap::fromImage(*m_img) );
 }
 
@@ -94,8 +99,10 @@ void YahooWebcam::sendImage()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
+#ifndef Q_OS_WIN
 	m_devicePool->getFrame();
 	m_devicePool->getImage(m_img);
+#endif
 	
 	origImg->close();
 	convertedImg->close();

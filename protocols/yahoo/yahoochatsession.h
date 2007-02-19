@@ -17,7 +17,7 @@
 #define YAHOOCHATSESSION_H
 
 #include "kopetechatsession.h"
-#include <QLabel>
+#include "kopete_export.h"
 
 class KActionCollection;
 class YahooContact;
@@ -28,7 +28,7 @@ class QLabel;
 /**
  * @author Andre Duffeck
  */
-class KOPETE_EXPORT YahooChatSession : public Kopete::ChatSession
+class YAHOO_EXPORT YahooChatSession : public Kopete::ChatSession
 {
 	Q_OBJECT
 

@@ -53,9 +53,10 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	mImageContainer->setText( i18n( "No webcam image received" ) );
 	mImageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	topLayout->add( mImageContainer );
-	
+
 	show();
 	
+#ifndef Q_OS_WIN
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -63,6 +64,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&mImage);
 	kDebug() << "Just captured 1st frame" << endl;
+#endif
 
 	mPixmap=QPixmap(320,240);
 	if (mPixmap.convertFromImage(mImage,0) == true)
@@ -73,16 +75,20 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
 {
+#ifndef Q_OS_WIN
 	mVideoDevicePool->stopCapturing();
 	mVideoDevicePool->close();
+#endif
 }
 
 void TestbedWebcamDialog::slotUpdateImage()
 {
+#ifndef Q_OS_WIN
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image" << endl;
 	mVideoDevicePool->getImage(&mImage);
 	mImageContainer->updatePixmap( QPixmap( mImage ) );
+#endif
 }
 
 

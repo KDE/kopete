@@ -39,7 +39,7 @@ class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
 class YahooChatSession;
-class YABEntry;
+struct YABEntry;
 
 class YahooContact : public Kopete::Contact
 {

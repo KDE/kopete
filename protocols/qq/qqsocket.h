@@ -34,7 +34,7 @@ namespace KNetwork {
  * implementation, only targets to UDP communication only.
  * The notification sever is inherited from this class.
  */
-class KOPETE_EXPORT QQSocket : public QObject
+class QQ_EXPORT QQSocket : public QObject
 {
 	Q_OBJECT
 
