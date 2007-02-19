@@ -68,14 +68,14 @@ void SidebarWidget::generateContactDetails()
 	Kopete::Contact *contact = members.first();
 	Kopete::MetaContact* metaContact = contact->metaContact();
 
-	QString content = QString::fromLatin1("<html><head></head><body><div style=\"margin-left:10px;margin-right:10px;\"><br>");
+	QString content = QLatin1String("<html><head></head><body><div style=\"margin-left:10px;margin-right:10px;\"><br>");
 
 	int w = 120;
 
 	if ( ! metaContact->picture().image().isNull() )
         {
-		QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
-		content += QString::fromLatin1("<img src=\"%1\" style=\"margin-bottom:10px;\"><br>").arg( photoName );
+		QString photoName = QString(QLatin1String("kopete-metacontact-photo:%1")).arg( QLatin1String(QUrl::toPercentEncoding( metaContact->metaContactId()) ));
+		content += QString(QLatin1String("<img src=\"%1\" style=\"margin-bottom:10px;\"><br>")).arg( photoName );
 		 w = ( metaContact->picture().image().width() > 100 ) ? metaContact->picture().image().width() + 20 : 120;
         }
 
@@ -94,8 +94,8 @@ void SidebarWidget::generateContactDetails()
 		}
 	}
 
-	content += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br>").arg( displayName );
-	content += contact->toolTip() + QString::fromLatin1("</div></body><html>");
+	content += QString(QLatin1String("<b><font size=\"+1\">%1</font></b><br>")).arg( displayName );
+	content += contact->toolTip() + QLatin1String("</div></body><html>");
 
 	// adjust formatting for the rather narrow sidebar
 	content = content.replace( "</b>", "</b><br>&nbsp;" );

@@ -357,10 +357,13 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 }
 
 Contact *Protocol::deserializeContact(
-	MetaContact */*metaContact */,
-	const QMap<QString, QString> & /* serializedData */,
-	const QMap<QString, QString> & /* addressBookData */ )
+	MetaContact * metaContact,
+	const QMap<QString, QString> & serializedData,
+	const QMap<QString, QString> & addressBookData )
 {
+	Q_UNUSED( metaContact )
+	Q_UNUSED( serializedData )
+	Q_UNUSED( addressBookData )
 	/* Default implementation does nothing */
 	return 0;
 }

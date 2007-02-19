@@ -35,7 +35,6 @@
 #include <q3header.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
-//Added by qt3to4:
 #include <QList>
 
 #ifdef HAVE_XRENDER
@@ -252,14 +251,14 @@ void Component::setRect( const QRect &rect )
 	d->rect = rect;
 }
 
-void Component::paint( QPainter *painter, const QColorGroup &cg )
+void Component::paint( QPainter *painter, const QPalette &pal )
 {
 	/*painter->setPen( Qt::red );
 	painter->drawRect( rect() );*/
 	for ( uint n = 0; n < components(); ++n )
 	{
 		if( component( n )->isShown() )
-			component( n )->paint( painter, cg );
+			component( n )->paint( painter, pal );
 	}
 }
 
@@ -515,8 +514,9 @@ static QPoint operator+( const QPoint &pt, const QSize &sz )
 	return pt + sz;
 }*/
 
-void ImageComponent::paint( QPainter *painter, const QColorGroup & )
+void ImageComponent::paint( QPainter *painter, const QPalette &pal )
 {
+	Q_UNUSED( pal )
 	QRect ourRc = rect();
 	QRect rc = d->image.rect();
 	// center rc within our rect
@@ -620,12 +620,12 @@ void TextComponent::setDefaultColor()
 	repaint();
 }
 
-void TextComponent::paint( QPainter *painter, const QColorGroup &cg )
+void TextComponent::paint( QPainter *painter, const QPalette &pal )
 {
 	if ( d->customColor )
 		painter->setPen( d->color );
 	else
-		painter->setPen( cg.text() );
+		painter->setPen( pal.text().color() );
 
 	QFontMetrics metrics( font() );
 	QString dispStr = metrics.elidedText( d->text, Qt::ElideRight, rect().width() );

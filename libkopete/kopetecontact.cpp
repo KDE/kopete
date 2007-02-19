@@ -61,7 +61,7 @@
 
 namespace Kopete {
 
-struct Contact::Private
+class Contact::Private
 {
 public:
 	bool fileCapable;

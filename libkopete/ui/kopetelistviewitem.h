@@ -24,11 +24,7 @@
 #include <kopete_export.h>
 
 #include <utility>
-#include <qimage.h>
-//Added by qt3to4:
 #include <QPixmap>
-
-class QPixmap;
 
 namespace Kopete {
 namespace UI {
@@ -122,7 +118,7 @@ public:
 	 * Paint this item, inside the rectangle returned by rect().
 	 * The default implementation calls paint on all children.
 	 */
-	virtual void paint( QPainter *painter, const QColorGroup &cg );
+	virtual void paint( QPainter *painter, const QPalette &pal );
 
 	void repaint();
 	void relayout();
@@ -278,7 +274,7 @@ public:
 
 	int widthForHeight( int );
 
-	void paint( QPainter *painter, const QColorGroup &cg );
+	void paint( QPainter *painter, const QPalette &pal );
 
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
@@ -300,7 +296,7 @@ public:
 	void setPixmap( const QPixmap &img, bool adjustSize = true);
 	QPixmap pixmap( void );
 
-	void paint( QPainter *painter, const QColorGroup &cg );
+	void paint( QPainter *painter, const QPalette &pal );
 
 	void scale( int w, int h, Qt::AspectRatioMode );
 	static int RTTI;
