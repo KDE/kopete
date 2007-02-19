@@ -53,7 +53,7 @@ Buffer::~Buffer()
 }
 
 
-int Buffer::addByte(const Oscar::BYTE b)
+int Buffer::addByte(Oscar::BYTE b)
 {
 	expandBuffer(1);
 	mBuffer[mBuffer.size()-1] = b;
@@ -61,7 +61,7 @@ int Buffer::addByte(const Oscar::BYTE b)
 	return mBuffer.size();
 }
 
-int Buffer::addLEByte(const Oscar::BYTE b)
+int Buffer::addLEByte(Oscar::BYTE b)
 {
 	expandBuffer(1);
 	mBuffer[mBuffer.size()-1] = ((b) & 0xff);
@@ -70,7 +70,7 @@ int Buffer::addLEByte(const Oscar::BYTE b)
 }
 
 
-int Buffer::addWord(const Oscar::WORD w)
+int Buffer::addWord(Oscar::WORD w)
 {
 	expandBuffer(2);
 	mBuffer[mBuffer.size()-2] = ((w & 0xff00) >> 8);
@@ -79,7 +79,7 @@ int Buffer::addWord(const Oscar::WORD w)
 	return mBuffer.size();
 }
 
-int Buffer::addLEWord(const Oscar::WORD w)
+int Buffer::addLEWord(Oscar::WORD w)
 {
 	expandBuffer(2);
 	mBuffer[mBuffer.size()-2] = (unsigned char) ((w >> 0) & 0xff);
@@ -89,7 +89,7 @@ int Buffer::addLEWord(const Oscar::WORD w)
 }
 
 
-int Buffer::addDWord(const Oscar::DWORD dw)
+int Buffer::addDWord(Oscar::DWORD dw)
 {
 	expandBuffer(4);
 	mBuffer[mBuffer.size()-4] = (dw & 0xff000000) >> 24;
@@ -100,7 +100,7 @@ int Buffer::addDWord(const Oscar::DWORD dw)
 	return mBuffer.size();
 }
 
-int Buffer::addLEDWord(const Oscar::DWORD dw)
+int Buffer::addLEDWord(Oscar::DWORD dw)
 {
 	expandBuffer(4);
 	mBuffer[mBuffer.size()-4] = (unsigned char) ((dw >> 0) & 0xff);
@@ -135,7 +135,7 @@ int Buffer::addString(const unsigned char* s, Oscar::DWORD len)
 	return addString( qba );
 }
 
-int Buffer::addLEString(const char *s, const Oscar::DWORD len)
+int Buffer::addLEString(const char *s, Oscar::DWORD len)
 {
 	unsigned int pos = mBuffer.size();
 	expandBuffer(len);
@@ -237,7 +237,7 @@ Oscar::DWORD Buffer::getLEDWord()
 	return retdword;
 }
 
-void Buffer::setBuf(char *b, const Oscar::WORD len)
+void Buffer::setBuf(char *b, Oscar::WORD len)
 {
 	mBuffer = QByteArray::fromRawData(b, len);
 	mReadPos = 0;
@@ -292,42 +292,42 @@ QByteArray Buffer::getLEBlock(Oscar::WORD len)
 	return ch;
 }
 
-int Buffer::addTLV32(const Oscar::WORD type, const Oscar::DWORD data)
+int Buffer::addTLV32(Oscar::WORD type, Oscar::DWORD data)
 {
 	addWord(type);
 	addWord(0x0004); //4 Oscar::BYTEs long
 	return addDWord(data);
 }
 
-int Buffer::addLETLV32(const Oscar::WORD type, const Oscar::DWORD data)
+int Buffer::addLETLV32(Oscar::WORD type, Oscar::DWORD data)
 {
 	addLEWord(type);
 	addLEWord(0x0004); //4 Oscar::BYTEs long
 	return addLEDWord(data);
 }
 
-int Buffer::addTLV16(const Oscar::WORD type, const Oscar::WORD data)
+int Buffer::addTLV16(Oscar::WORD type, Oscar::WORD data)
 {
 	addWord(type);
 	addWord(0x0002); //2 Oscar::BYTEs long
 	return addWord(data);
 }
 
-int Buffer::addLETLV16(const Oscar::WORD type, const Oscar::WORD data)
+int Buffer::addLETLV16(Oscar::WORD type, Oscar::WORD data)
 {
 	addLEWord(type);
 	addLEWord(0x0002); //2 Oscar::BYTEs long
 	return addLEWord(data);
 }
 
-int Buffer::addTLV8(const Oscar::WORD type, const Oscar::BYTE data)
+int Buffer::addTLV8(Oscar::WORD type, Oscar::BYTE data)
 {
 	addWord(type);
 	addWord(0x0001); //1 Oscar::BYTE long
 	return addByte(data);
 }
 
-int Buffer::addLETLV8(const Oscar::WORD type, const Oscar::BYTE data)
+int Buffer::addLETLV8(Oscar::WORD type, Oscar::BYTE data)
 {
 	addLEWord(type);
 	addLEWord(0x0001); //1 Oscar::BYTE long
@@ -373,8 +373,8 @@ QList<TLV> Buffer::getTLVList()
 	return ql;
 }
 
-int Buffer::addChatTLV(const Oscar::WORD type, const Oscar::WORD exchange,
-	const QString &roomname, const Oscar::WORD instance)
+int Buffer::addChatTLV(Oscar::WORD type, Oscar::WORD exchange,
+	const QString &roomname, Oscar::WORD instance)
 {
 	addWord(type);
 	addWord(0x0005 + roomname.length());

@@ -36,7 +36,7 @@ public:
 	void setAutoResponse( bool autoResponse );
 
 	//! our ip address
-	void setIp( const Oscar::DWORD ip );
+	void setIp( Oscar::DWORD ip );
 
 	virtual void onGo();
 

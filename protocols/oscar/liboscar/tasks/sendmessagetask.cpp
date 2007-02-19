@@ -47,7 +47,7 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 	m_autoResponse = autoResponse;
 }
 
-void SendMessageTask::setIp( const Oscar::DWORD ip )
+void SendMessageTask::setIp( Oscar::DWORD ip )
 {
 	m_ip = ip;
 }
