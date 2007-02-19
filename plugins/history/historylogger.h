@@ -127,7 +127,7 @@ public:
 
 private:
 	bool m_hideOutgoing;
-	bool m_filterCaseSensitive;
+	Qt::CaseSensitivity m_filterCaseSensitive;
 	bool m_filterRegExp;
 	QString m_filter;
 

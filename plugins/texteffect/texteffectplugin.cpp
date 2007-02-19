@@ -71,10 +71,10 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		QString original=msg.plainBody();
 		QString resultat;
 
-		unsigned int c=0;
+		int c=0;
 		bool wavein=false;
 
-		for(unsigned int f=0;f<original.length();f++)
+		for(int f=0;f<original.length();f++)
 		{
 			QChar x=original[f];
 			if(f==0 || m_config->colorChar() || (m_config->colorWords() && x==' ' ))

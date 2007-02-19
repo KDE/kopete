@@ -477,10 +477,10 @@ void AliasPreferences::slotDeleteAliases()
 					i->text(0)
 				);
 
-				protocolMap.erase( QPair<Kopete::Protocol*,QString>( *it, i->text(0) ) );
+				protocolMap.remove( QPair<Kopete::Protocol*,QString>( *it, i->text(0) ) );
 			}
 
-			aliasMap.erase( i->text(0) );
+			aliasMap.remove( i->text(0) );
 			delete i;
 			emit KCModule::changed(true);
 		}

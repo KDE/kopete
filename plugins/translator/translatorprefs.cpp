@@ -23,8 +23,6 @@
 #include "ui_translatorprefsbase.h"
 #include "translatorlanguages.h"
 
-#include <q3combobox.h>
-
 // TODO: Port to KConfigXT
 class TranslatorPreferences;
 typedef KGenericFactory<TranslatorPreferences> TranslatorConfigFactory;
@@ -47,11 +45,11 @@ public:
 
 		m = languages.languagesMap();
 		for ( i = m.begin(); i != m.end() ; ++i )
-			preferencesDialog->myLang->insertItem( i.value(), languages.languageIndex(i.key()) );
+			preferencesDialog->myLang->insertItem( languages.languageIndex(i.key()), i.value() );
 
 		m = languages.servicesMap();
 		for ( i = m.begin(); i != m.end() ; ++i )
-			preferencesDialog->Service->insertItem( i.value(), languages.serviceIndex(i.key()) );
+			preferencesDialog->Service->insertItem( languages.serviceIndex(i.key()), i.value() );
 
 		//setMainWidget( w );
 	}

@@ -88,7 +88,7 @@ private:
 	unsigned int mCacheTime;
 	bool mAlsoMyKey;
 	bool mAskPassPhrase;
-	bool mCachePassPhrase;
+	CacheMode mCachePassPhrase;
 };
 
 #endif

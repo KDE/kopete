@@ -49,6 +49,8 @@ HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
 	m_cachedMonth=-1;
 	m_realMonth=QDate::currentDate().month();
 	m_oldSens=Default;
+	m_filterCaseSensitive=Qt::CaseSensitive;
+	m_filterRegExp=false;
 
 	//the contact may be destroyed, for example, if the contact changes its metacontact
 	connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
@@ -67,6 +69,8 @@ HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent )
 	m_hideOutgoing=false;
 	m_realMonth=QDate::currentDate().month();
 	m_oldSens=Default;
+	m_filterCaseSensitive=Qt::CaseSensitive;
+	m_filterRegExp=false;
 
 	//the contact may be destroyed, for example, if the contact changes its metacontact
 	connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
@@ -795,7 +799,7 @@ void HistoryLogger::slotMCDeleted()
 void HistoryLogger::setFilter(const QString& filter, bool caseSensitive , bool isRegExp)
 {
 	m_filter=filter;
-	m_filterCaseSensitive=caseSensitive;
+	m_filterCaseSensitive=caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive;
 	m_filterRegExp=isRegExp;
 }
 
@@ -806,7 +810,7 @@ QString HistoryLogger::filter() const
 
 bool HistoryLogger::filterCaseSensitive() const
 {
-	return m_filterCaseSensitive;
+	return (m_filterCaseSensitive == Qt::CaseSensitive);
 }
 
 bool HistoryLogger::filterRegExp() const
@@ -841,7 +845,7 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 			pos += rxTime.matchedLength();
 			int day=rxTime.capturedTexts()[1].toInt();
 			
-			if ( day !=lastDay && dayList.find(day) == dayList.end()) // avoid duplicates
+			if ( day !=lastDay && dayList.indexOf(day) == -1) // avoid duplicates
 			{
 				dayList.append(rxTime.capturedTexts()[1].toInt());
 				lastDay=day;

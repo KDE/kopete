@@ -49,7 +49,7 @@
 //In Jabber, the JEP says it's not. so we don't use richtext in our message, but some client did.
 //We limit the html to some basis tag to limit security problem (bad links)
 //    - Olivier
-const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , false );
+const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , Qt::CaseInsensitive );
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
 static const KAboutData aboutdata("kopete_cryptography", I18N_NOOP("Cryptography") , "1.0" );
@@ -68,7 +68,8 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const QStringList & /* 
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
-	m_cachedPass_timer = new QTimer(this, "m_cachedPass_timer" );
+	m_cachedPass_timer = new QTimer(this);
+	m_cachedPass_timer->setObjectName("m_cachedPass_timer");
 	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
 
 

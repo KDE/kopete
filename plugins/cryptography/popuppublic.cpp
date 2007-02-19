@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////   code  for choosing a public key from a list for encryption
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3ptrlist.h>
 
 #include <qpainter.h>
 #include <qicon.h>
@@ -30,7 +29,6 @@
 #include <qtoolbutton.h>
 #include <qapplication.h>
 #include <qlabel.h>
-//Added by qt3to4:
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <Q3WhatsThis>
@@ -129,7 +127,8 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	//hBar->setMargin(0);
 
 	QToolButton *clearSearch = new QToolButton(hBar);
-	clearSearch->setTextLabel(i18n("Clear Search"), true);
+	clearSearch->setText(i18n("Clear Search"));
+	clearSearch->setToolTip(i18n("Clear Search"));
 	clearSearch->setIcon(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
                                             : "locationbar_erase"));
 	(void) new QLabel(i18n("Search: "),hBar);
@@ -287,7 +286,7 @@ void popupPublic::sort()
         if (current==NULL)
                 return;
 
-	if ((untrustedList.find(current->text(2))!=untrustedList.end()) && (!current->text(2).isEmpty())){
+	if ((untrustedList.indexOf(current->text(2))!=-1) && (!current->text(2).isEmpty())){
                 if (current->isSelected()) {
                         current->setSelected(false);
                         reselect=true;
@@ -297,7 +296,7 @@ void popupPublic::sort()
 
         while ( current->nextSibling() ) {
                 current = current->nextSibling();
-                if ((untrustedList.find(current->text(2))!=untrustedList.end()) && (!current->text(2).isEmpty())) {
+                if ((untrustedList.indexOf(current->text(2))!=-1) && (!current->text(2).isEmpty())) {
                 if (current->isSelected()) {
                         current->setSelected(false);
                         reselect=true;
@@ -472,7 +471,7 @@ void popupPublic::slotprocread(KProcIO *p)
                                         UpdateViewItem2 *item=new UpdateViewItem2(keysList,keyname,keymail,id,isDefaultKey);
 					//K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
                                         //sub->setSelectable(false);
-                                        if (seclist.find(tst,0,false)!=-1)
+                                        if (seclist.indexOf(tst,0,Qt::CaseInsensitive)!=-1)
                                                 item->setPixmap(0,keyPair);
                                         else
                                                 item->setPixmap(0,keySingle);
@@ -502,7 +501,7 @@ kDebug(2100)<<"Ok pressed"<<endl;
 	QString userid;
         QList<Q3ListViewItem*> list=keysList->selectedItems();
 
-        for ( uint i = 0; i < list.count(); ++i )
+        for ( int i = 0; i < list.count(); ++i )
                 if ( list.at(i) ) {
 			if (!list.at(i)->text(2).isEmpty()) selectedKeys<<list.at(i)->text(2);
 			else selectedKeys<<list.at(i)->text(0);

@@ -45,8 +45,9 @@ PrivacyMessageHandlerFactory::~PrivacyMessageHandlerFactory()
 	delete d;
 }
 
-MessageHandler *PrivacyMessageHandlerFactory::create( ChatSession */*manager*/, Message::MessageDirection direction )
+MessageHandler *PrivacyMessageHandlerFactory::create( ChatSession *manager, Message::MessageDirection direction )
 {
+	Q_UNUSED( manager )
 	if ( direction != d->direction )
 		return 0;
 	MessageHandler *handler = new PrivacyMessageHandler;
@@ -54,8 +55,9 @@ MessageHandler *PrivacyMessageHandlerFactory::create( ChatSession */*manager*/, 
 	return handler;
 }
 
-int PrivacyMessageHandlerFactory::filterPosition( ChatSession */*manager*/, Message::MessageDirection direction )
+int PrivacyMessageHandlerFactory::filterPosition( ChatSession *manager, Message::MessageDirection direction )
 {
+	Q_UNUSED( manager )
 	if ( direction != d->direction )
 		return StageDoNotCreate;
 	return d->position;
