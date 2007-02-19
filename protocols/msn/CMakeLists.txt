@@ -64,7 +64,11 @@ kde4_automoc(${kopete_msn_shared_LIB_SRCS})
 
 kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
 
-target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice)
+if(WIN32)
+  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete)
+else(WIN32)
+  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice)
+endif(WIN32)
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION 0.0.0 SOVERSION 0 )
 install(TARGETS kopete_msn_shared  DESTINATION ${LIB_INSTALL_DIR})

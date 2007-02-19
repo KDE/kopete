@@ -1,6 +1,8 @@
 
 add_subdirectory( private ) 
-add_subdirectory( avdevice ) 
+if(NOT WIN32)
+  add_subdirectory( avdevice ) 
+endif(NOT WIN32)
 add_subdirectory( tests )
 
 include_directories( ${KOPETE_INCLUDES} )
