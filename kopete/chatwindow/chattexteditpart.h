@@ -46,7 +46,7 @@ class Protocol;
  * 
  * @author Richard Smith
  */
-class KOPETE_EXPORT ChatTextEditPart : public KRichTextEditPart
+class KOPETECHATWINDOW_SHARED_EXPORT ChatTextEditPart : public KRichTextEditPart
 {
 	Q_OBJECT
 public:

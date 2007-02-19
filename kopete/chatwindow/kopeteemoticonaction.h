@@ -27,7 +27,7 @@
 
 class KMenu;
 
-class KOPETE_EXPORT KopeteEmoticonAction : public KAction
+class KOPETECHATWINDOW_SHARED_EXPORT KopeteEmoticonAction : public KAction
 {
 	Q_OBJECT
 

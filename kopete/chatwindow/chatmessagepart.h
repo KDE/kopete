@@ -38,7 +38,7 @@ class ChatWindowStyle;
 /**
  * @author Richard Smith
  */
-class KOPETE_EXPORT ChatMessagePart : public KHTMLPart
+class KOPETECHATWINDOW_SHARED_EXPORT ChatMessagePart : public KHTMLPart
 {
 	Q_OBJECT
 public:

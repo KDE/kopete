@@ -27,7 +27,7 @@
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT ChatWindowStyle
+class KOPETECHATWINDOW_SHARED_EXPORT ChatWindowStyle
 {
 public:
 	/**

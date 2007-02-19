@@ -42,7 +42,7 @@ class KTextEdit;
  * @author Michaël Larouche <larouche@kde.org>
  * @author Richard Moore <rich@kde.org>
  */
-class KOPETE_EXPORT KRichTextEditPart : public KParts::ReadOnlyPart
+class KRICHTEXTEDITPART_EXPORT KRichTextEditPart : public KParts::ReadOnlyPart
 {
     Q_OBJECT
 public:

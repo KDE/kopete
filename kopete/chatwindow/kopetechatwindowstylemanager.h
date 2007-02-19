@@ -43,7 +43,7 @@ class ChatWindowStyle;
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT ChatWindowStyleManager : public QObject
+class KOPETECHATWINDOW_SHARED_EXPORT ChatWindowStyleManager : public QObject
 {
 	Q_OBJECT
 public:

@@ -44,7 +44,7 @@ class KopeteEditAccountWidget;
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
  */
-class KOPETE_EXPORT AddAccountWizard : public KAssistantDialog
+class KOPETEADDACCOUNTWIZARD_EXPORT AddAccountWizard : public KAssistantDialog
 {
 	Q_OBJECT
 

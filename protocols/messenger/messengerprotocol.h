@@ -19,6 +19,8 @@
 
 #include <kopeteprotocol.h>
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 	class Account;
@@ -31,7 +33,7 @@ class KopeteEditAccountWidget;
  * 
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT MessengerProtocol : public Kopete::Protocol
+class MESSENGER_EXPORT MessengerProtocol : public Kopete::Protocol
 {
 public:
 	MessengerProtocol(QObject *parent, const QStringList &args);
