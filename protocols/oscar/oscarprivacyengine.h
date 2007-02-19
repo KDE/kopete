@@ -36,7 +36,7 @@ class QAbstractItemView;
 class OscarAccount;
 class Client;
 
-class KOPETE_EXPORT OscarPrivacyEngine : public QObject
+class OSCAR_EXPORT OscarPrivacyEngine : public QObject
 {
 	Q_OBJECT
 public:

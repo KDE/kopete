@@ -19,6 +19,7 @@
 
 #include "kopetecontact.h"
 #include "userdetails.h"
+#include "kopete_export.h"
 
 namespace Kopete
 {
@@ -34,7 +35,7 @@ class KToggleAction;
  * myself() contact for oscar protocol
  * @author Richard Smith
  */
-class KDE_EXPORT OscarMyselfContact : public Kopete::Contact
+class OSCAR_EXPORT OscarMyselfContact : public Kopete::Contact
 {
 Q_OBJECT
 

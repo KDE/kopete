@@ -25,7 +25,7 @@
 #include "kopetecontactproperty.h"
 
 
-class KOPETE_EXPORT OscarProtocol : public Kopete::Protocol
+class OSCAR_EXPORT OscarProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 

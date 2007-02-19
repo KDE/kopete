@@ -24,7 +24,7 @@
 
 namespace Ui { class OscarEncodingBaseUI; }
 
-class KOPETE_EXPORT OscarEncodingSelectionDialog : public KDialog
+class OSCAR_EXPORT OscarEncodingSelectionDialog : public KDialog
 {
 Q_OBJECT
 public:

@@ -25,7 +25,7 @@
 namespace Ui { class OscarListContactsBase; }
 class QStringList;
 
-class KOPETE_EXPORT OscarListNonServerContacts : public KDialog
+class OSCAR_EXPORT OscarListNonServerContacts : public KDialog
 {
 Q_OBJECT
 public:

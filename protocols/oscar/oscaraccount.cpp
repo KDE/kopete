@@ -352,7 +352,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
     d->olnscDialog = 0L;
 }
 
-void OscarAccount::askIncoming( QString c, QString f, DWORD s, QString d, QString i )
+void OscarAccount::askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i )
 {
 	QString sender = Oscar::normalize( c );
 	if ( !contacts()[sender] )

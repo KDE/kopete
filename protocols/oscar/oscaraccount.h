@@ -25,6 +25,7 @@
 #include "oscartypeclasses.h"
 #include "oscarcontact.h"
 #include "contact.h"
+#include "kopete_export.h"
 
 namespace Kopete
 {
@@ -39,7 +40,7 @@ class OscarAccountPrivate;
 class QTextCodec;
 class OContact;
 
-class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
+class OSCAR_EXPORT OscarAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 
@@ -169,7 +170,7 @@ protected slots:
     void nonServerAddContactDialogClosed();
 
 	/** incoming filetransfer */
-	void askIncoming( QString c, QString f, DWORD s, QString d, QString i );
+	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
 
 signals:

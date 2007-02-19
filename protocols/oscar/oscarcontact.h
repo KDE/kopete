@@ -27,6 +27,7 @@
 #include "client.h"
 #include "oscartypeclasses.h"
 #include "contact.h"
+#include "kopete_export.h"
 
 namespace Kopete
 {
@@ -60,7 +61,7 @@ class OscarEncodingSelectionDialog;
  * \li get/set the ignore setting for the contact
  * \li get/set the visibility setting for the contact ( i.e. are we visible to the contact )
  */
-class KDE_EXPORT OscarContact : public Kopete::Contact
+class OSCAR_EXPORT OscarContact : public Kopete::Contact
 {
 Q_OBJECT
 
