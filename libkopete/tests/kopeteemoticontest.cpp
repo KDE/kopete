@@ -55,7 +55,7 @@ void KopeteEmoticonTest::testEmoticonParser()
 	QString basePath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/emoticon-parser-testcases");
 	QDir testCasesDir(basePath);
 	
-	QStringList inputFileNames = testCasesDir.entryList("*.input");
+	QStringList inputFileNames = testCasesDir.entryList(QStringList(QLatin1String("*.input")));
 	for ( QStringList::ConstIterator it = inputFileNames.begin(); it != inputFileNames.end(); ++it)
 	{
 		QString fileName = *it;

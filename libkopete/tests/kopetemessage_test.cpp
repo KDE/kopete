@@ -162,8 +162,8 @@ void KopeteMessage_Test::testPrimitives()
 		//CHECK(msg.plainBody(),   QString("HELLO WORLD"));
 		//CHECK(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
 
-		QCOMPARE(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
-		QCOMPARE(msg.escapedBody().stripWhiteSpace(), QString("<b>HELLO WORLD</b>"));
+		QCOMPARE(msg.plainBody().trimmed(),   QString("HELLO WORLD"));
+		QCOMPARE(msg.escapedBody().trimmed(), QString("<b>HELLO WORLD</b>"));
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);
@@ -226,7 +226,7 @@ void KopeteMessage_Test::testLinkParser()
 	QString basePath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/link-parser-testcases");
 	QDir testCasesDir(basePath);
 	
-	QStringList inputFileNames = testCasesDir.entryList("*.input");
+	QStringList inputFileNames = testCasesDir.entryList(QStringList(QLatin1String("*.input")));
 	for ( QStringList::ConstIterator it = inputFileNames.begin(); it != inputFileNames.end(); ++it)
 	{
 		QString fileName = *it;
@@ -248,8 +248,8 @@ void KopeteMessage_Test::testLinkParser()
 			QTextStream expectedStream(&expectedFile);
 			QString inputData;
 			QString expectedData;
-			inputData = inputStream.read();
-			expectedData = expectedStream.read();
+			inputData = inputStream.readAll();
+			expectedData = expectedStream.readAll();
 
 			inputFile.close();
 			expectedFile.close();

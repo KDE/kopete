@@ -30,8 +30,17 @@
  * Use the EXPORT macro from Qt because I didn't want to test for GCC's visibility support myself or
  * test for WINDOWS too.
  */
+
 #ifndef PAPILLON_EXPORT
-# define PAPILLON_EXPORT Q_DECL_EXPORT
+# if defined(Q_OS_WIN)
+#  if defined(MAKE_PAPILLON_KOPETE_LIB)
+#   define PAPILLON_EXPORT Q_DECL_EXPORT
+#  else
+#   define PAPILLON_EXPORT Q_DECL_IMPORT
+#  endif
+# else
+#  define PAPILLON_EXPORT Q_DECL_EXPORT
+# endif
 #endif
 
 #define PAPILLON_VERSION_STRING "0.0.1"

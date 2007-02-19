@@ -32,17 +32,18 @@ target_link_libraries(kopeteemoticontest  ${KOPETE_TEST_LIBRARIES} )
 add_test(kopeteemoticontest ${EXECUTABLE_OUTPUT_PATH}/kopeteemoticontest)
 
 ####
-
-set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})
-
-kde4_automoc(${kopetemessage_test_SRCS})
-
-kde4_add_executable(kopetemessage_test NOGUI RUN_UNINSTALLED ${kopetemessage_test_SRCS})
-
-target_link_libraries(kopetemessage_test  ${KOPETE_TEST_LIBRARIES} )
-
-add_test(kopetemessage_test ${EXECUTABLE_OUTPUT_PATH}/kopetemessage_test)
-
+# this test uses an ugly hack which does not work on win32 
+if(NOT WIN32)
+        set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})
+        
+        kde4_automoc(${kopetemessage_test_SRCS})
+        
+        kde4_add_executable(kopetemessage_test NOGUI RUN_UNINSTALLED ${kopetemessage_test_SRCS})
+        
+        target_link_libraries(kopetemessage_test  ${KOPETE_TEST_LIBRARIES} )
+        
+        add_test(kopetemessage_test ${EXECUTABLE_OUTPUT_PATH}/kopetemessage_test)
+endif(NOT WIN32)
 ####
 
 set(kopetetask_test_SRCS kopetetask_test.cpp )
