@@ -123,9 +123,8 @@ void AutoReplaceConfig::save()
 		newWords.append( it.value() );
 	}
 
-	config->writeEntry( "WordsToReplace", newWords );
-
-	config->sync();
+	config.writeEntry( "WordsToReplace", newWords );
+	config.sync();
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

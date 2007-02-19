@@ -161,15 +161,13 @@ void AvatarManager::add(Kopete::AvatarManager::AvatarEntry newEntry)
 	else
 	{
 		// Save metadata of image
-		KConfigGroup avatarConfig(new KConfig( configUrl.path(), KConfig::OnlyLocal), newEntry.name );
+		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal), newEntry.name );
 	
 		avatarConfig.writeEntry( "Filename", avatarFilename );
 		avatarConfig.writeEntry( "Category", int(newEntry.category) );
 
 		avatarConfig.sync();
 	
-		delete avatarConfig;
-
 		// Add final path to the new entry for avatarAdded signal
 		newEntry.path = avatarUrl.path();
 

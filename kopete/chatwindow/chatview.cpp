@@ -767,10 +767,10 @@ void ChatView::loadChatSettings()
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           contacts.first()->metaContact()->metaContactId();
 	KConfigGroup config(KGlobal::config(), contactListGroup );
-	bool enableRichText = config->readEntry( "EnableRichText", true );
+	bool enableRichText = config.readEntry( "EnableRichText", true );
 	editPart()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
-	bool enableAutoSpell = config->readEntry( "EnableAutoSpellCheck", false );
+	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", false );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 
