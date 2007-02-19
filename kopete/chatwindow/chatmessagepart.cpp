@@ -945,7 +945,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	kDebug(14000) << k_funcinfo << hash << " has color " << nameColors[ hash % nameColorsLen ] << endl;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
-	while( (textPos=senderColorRegExp.search(resultHTML, textPos) ) != -1 )
+	while( (textPos=senderColorRegExp.indexIn(resultHTML, textPos) ) != -1 )
 	{
 		int light=100;
 		bool doLight=false;

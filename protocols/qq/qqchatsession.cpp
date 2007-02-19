@@ -400,7 +400,7 @@ void QQChatSession::joined( QQContact * c )
 			break;
 		}
 	}
-	m_invitees.remove( *pending );
+	m_invitees.erase( pending );
 
 	updateArchiving();
 
@@ -441,7 +441,7 @@ void QQChatSession::inviteDeclined( QQContact * c )
 			break;
 		}
 	}
-	m_invitees.remove( pending );
+	m_invitees.erase( pending );
 
 	QString from = c->metaContact()->displayName();
 

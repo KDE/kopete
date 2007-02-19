@@ -280,7 +280,10 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 
 					// start the heartbeat
 					if( !m_heartbeat->isActive() )
-						m_heartbeat->start(60000, false);
+					{
+						m_heartbeat->setSingleShot(false);
+						m_heartbeat->start(60000);
+					}
 
 					// FIXME: refactor me!
 					emit newContactList();
