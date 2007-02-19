@@ -122,7 +122,7 @@ if(X11_Xrender_FOUND)
   target_link_libraries(kopete ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)
 
-set_target_properties(kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
+set_target_properties(kopete PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kopete  DESTINATION ${LIB_INSTALL_DIR})
 
 
