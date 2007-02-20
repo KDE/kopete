@@ -106,8 +106,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
 	layout->addWidget( d->mAppearanceTabCtl );
 
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "ChatWindowSettings" );
+	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
 	// "Emoticons" TAB ==========================================================
 	d->mPrfsEmoticons = new AppearanceConfig_Emoticons(d->mAppearanceTabCtl);
@@ -313,13 +312,12 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 
 void AppearanceConfig::slotGetEmoticonThemes()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "KNewStuff" );
-	config->writeEntry( "ProvidersUrl",
+	KConfigGroup config(KGlobal::config(), "KNewStuff");
+	config.writeEntry( "ProvidersUrl",
 						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );
-	config->writeEntry( "StandardResource", "emoticons" );
-	config->writeEntry( "Uncompress", "application/x-gzip" );
-	config->sync();
+	config.writeEntry( "StandardResource", "emoticons" );
+	config.writeEntry( "Uncompress", "application/x-gzip" );
+	config.sync();
 
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
 

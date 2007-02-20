@@ -26,7 +26,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 // Local Includes
 #include "wpuserinfo.h"

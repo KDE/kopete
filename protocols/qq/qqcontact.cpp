@@ -472,9 +472,8 @@ void QQContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "QQ" );
-	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
+	KConfigGroup config(KGlobal::config(), "QQ");
+	if ( config.readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

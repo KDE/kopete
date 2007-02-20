@@ -101,20 +101,19 @@ CryptographyPlugin::~CryptographyPlugin()
 
 void CryptographyPlugin::loadSettings()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("Cryptography Plugin");
+	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
-	mPrivateKeyID = config->readEntry("PGP_private_key", QString() );
-	mAlsoMyKey = config->readEntry("Also_my_key", false);
+	mPrivateKeyID = config.readEntry("PGP_private_key", QString() );
+	mAlsoMyKey = config.readEntry("Also_my_key", false);
 
-	if(config->readEntry("Cache_Till_App_Close", false))
+	if(config.readEntry("Cache_Till_App_Close", false))
 	  mCachePassPhrase = Keep;
-	if(config->readEntry("Cache_Till_Time", false))
+	if(config.readEntry("Cache_Till_Time", false))
 	  mCachePassPhrase = Time;
-	if(config->readEntry("Cache_Never", false))
+	if(config.readEntry("Cache_Never", false))
 	  mCachePassPhrase = Never;
-	mCacheTime = config->readEntry("Cache_Time", 15);
-	mAskPassPhrase = config->readEntry("No_Passphrase_Handling", false);
+	mCacheTime = config.readEntry("Cache_Time", 15);
+	mAskPassPhrase = config.readEntry("No_Passphrase_Handling", false);
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()

@@ -21,7 +21,7 @@
 /* KDE Includes */
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 /* Local Includes */
 #include "yahooprotocol.h"

@@ -25,7 +25,7 @@
 
 #include <kgenericfactory.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kmessagebox.h>
 
 #include "kopeteglobal.h"
@@ -65,7 +65,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	 * LastName=
 	 */
 
-	KSimpleConfig file(url.path(), true);
+	KConfig file(url.path(), KConfig::OnlyLocal);
 
 	if (file.hasGroup("ICQ User"))
 		file.setGroup("ICQ User");
@@ -300,7 +300,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(972, kl->twoAlphaToCountryName("il"));
 	mCountries.insert(39, kl->twoAlphaToCountryName("it"));
 	mCountries.insert(225, kl->twoAlphaToCountryName("ci"));
-	mCountries.insert(112, kl->twoAlphaToCountryName("jm")); 
+	mCountries.insert(112, kl->twoAlphaToCountryName("jm"));
 	mCountries.insert(81, kl->twoAlphaToCountryName("jp"));
 	mCountries.insert(962, kl->twoAlphaToCountryName("jo"));
 	mCountries.insert(705, kl->twoAlphaToCountryName("kz"));
@@ -437,7 +437,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(260, kl->twoAlphaToCountryName("zm"));
 	mCountries.insert(263, kl->twoAlphaToCountryName("zw"));
 	mCountries.insert(9999, i18n("Unknown"));
-	
+
 }
 
 void ICQProtocol::initLang()
@@ -519,7 +519,7 @@ void ICQProtocol::initLang()
 	mLanguages.insert(71, kl->twoAlphaToLanguageName("ta") /*i18n("Tamil")*/);
 	mLanguages.insert(72, i18n("Belorussian"));
 	mLanguages.insert(255, i18n("Unknown"));
-	
+
 }
 
 void ICQProtocol::initEncodings()

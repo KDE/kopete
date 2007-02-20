@@ -19,7 +19,7 @@
 #include <qstring.h>
 
 #include <kglobal.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 
 #include "texteffectconfig.h"
 
@@ -30,21 +30,20 @@ TextEffectConfig::TextEffectConfig()
 
 void TextEffectConfig::load()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("TextEffect Plugin");
+	KConfigGroup config(KGlobal::config(), "TextEffect Plugin");
 
-	mColors = config->readEntry("Colors", QStringList() );
+	mColors = config.readEntry("Colors", QStringList() );
 	if(mColors.isEmpty())
 	{
             mColors= defaultColorList();
 	}
-	mColorRandom = config->readEntry("Color Random Order", false);
-	mColorLines = config->readEntry("Color change every lines", true);
-	mColorWords = config->readEntry("Color change every words", false);
-	mColorChar = config->readEntry("Color change every char", false);
+	mColorRandom = config.readEntry("Color Random Order", false);
+	mColorLines = config.readEntry("Color change every lines", true);
+	mColorWords = config.readEntry("Color change every words", false);
+	mColorChar = config.readEntry("Color change every char", false);
 
-	mLamer = config->readEntry("L4m3r", false);
-	mWaves = config->readEntry("WaVeS", false);
+	mLamer = config.readEntry("L4m3r", false);
+	mWaves = config.readEntry("WaVeS", false);
 }
 
 QStringList TextEffectConfig::defaultColorList()
@@ -55,19 +54,18 @@ QStringList TextEffectConfig::defaultColorList()
 
 void TextEffectConfig::save()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("TextEffect Plugin");
+	KConfigGroup config(KGlobal::config(), "TextEffect Plugin");
 
-	config->writeEntry("Colors", mColors );
-	config->writeEntry("Color Random Order", mColorRandom);
-	config->writeEntry("Color change every lines", mColorLines);
-	config->writeEntry("Color change every words", mColorWords);
-	config->writeEntry("Color change every char", mColorChar);
+	config.writeEntry("Colors", mColors );
+	config.writeEntry("Color Random Order", mColorRandom);
+	config.writeEntry("Color change every lines", mColorLines);
+	config.writeEntry("Color change every words", mColorWords);
+	config.writeEntry("Color change every char", mColorChar);
 
-	config->writeEntry("L4m3r", mLamer);
-	config->writeEntry("WaVeS", mWaves);
+	config.writeEntry("L4m3r", mLamer);
+	config.writeEntry("WaVeS", mWaves);
 
-	config->sync();
+	config.sync();
 }
 
 QStringList TextEffectConfig::colors() const

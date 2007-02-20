@@ -355,17 +355,16 @@ Kopete::Password &Kopete::Password::operator=( Password &other )
 
 void Kopete::Password::readConfig()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( d->configGroup );
+	KConfigGroup config(KGlobal::config(), d->configGroup );
 
-	QString passwordCrypted = config->readEntry( "Password", QString() );
+	QString passwordCrypted = config.readEntry( "Password", QString() );
 	if ( passwordCrypted.isNull() )
 		d->passwordFromKConfig.clear();
 	else
 		d->passwordFromKConfig = KStringHandler::obscure( passwordCrypted );
 
-	d->remembered = config->readEntry( "RememberPassword", false );
-	d->isWrong = config->readEntry( "PasswordIsWrong", false );
+	d->remembered = config.readEntry( "RememberPassword", false );
+	d->isWrong = config.readEntry( "PasswordIsWrong", false );
 }
 
 void Kopete::Password::writeConfig()

@@ -33,10 +33,11 @@
 #include <QTimer>
 #include <QStack>
 
+#include <ksharedconfig.h>
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
 #include <kplugininfo.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kstaticdeleter.h>
 #include <kurl.h>
@@ -491,8 +492,7 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 {
 	QString pluginId = _pluginId;
 
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "Plugins" );
+	KConfigGroup config(KGlobal::config(), "Plugins");
 
 	// FIXME: What is this for? This sort of thing is kconf_update's job - Richard
 	if ( !pluginId.startsWith( QLatin1String( "kopete_" ) ) )
@@ -501,8 +501,8 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 	if ( !infoForPluginId( pluginId ) )
 		return false;
 
-	config->writeEntry( pluginId + QLatin1String( "Enabled" ), enabled );
-	config->sync();
+	config.writeEntry( pluginId + QLatin1String( "Enabled" ), enabled );
+	config.sync();
 
 	return true;
 }

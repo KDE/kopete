@@ -10,7 +10,7 @@
 //
 //
 #include <kdebug.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kglobal.h>
 
 #include "addbookmarksprefssettings.h"

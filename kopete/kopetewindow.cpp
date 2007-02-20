@@ -480,20 +480,20 @@ void KopeteWindow::loadOptions()
 {
 	KSharedConfig::Ptr config = KGlobal::config();
 
-	toolBar("mainToolBar")->applySettings( config.data(), "ToolBar Settings" );
-	toolBar("quickSearchBar")->applySettings( config.data(), "QuickSearchBar Settings" );
-	toolBar("editGlobalIdentityBar")->applySettings( config.data(), "EditGlobalIdentityBar Settings" );
+	toolBar("mainToolBar")->applySettings( config->group( "ToolBar Settings" ) );
+	toolBar("quickSearchBar")->applySettings( config->group( "QuickSearchBar Settings" ) );
+	toolBar("editGlobalIdentityBar")->applySettings( config->group( "EditGlobalIdentityBar Settings" ) );
 
 	// FIXME: HACK: Is there a way to do that automatic ?
 	d->editGlobalIdentityWidget->setIconSize( toolBar("editGlobalIdentityBar")->iconSize() );
 	connect(toolBar("editGlobalIdentityBar"), SIGNAL(iconSizeChanged(const QSize &)), d->editGlobalIdentityWidget, SLOT(setIconSize(const QSize &)));
 
-	applyMainWindowSettings( config.data(), "General Options" );
-	config->setGroup("General Options");
-	QPoint pos = config->readEntry("Position", QPoint());
+	applyMainWindowSettings( config->group( "General Options" ) );
+        KConfigGroup cg( config, "General Options");
+	QPoint pos = cg.readEntry("Position", QPoint());
 	move(pos);
 
-	QSize size = config->readEntry("Geometry", QSize() );
+	QSize size = cg.readEntry("Geometry", QSize() );
 	if(size.isEmpty()) // Default size
 		resize( QSize(220, 350) );
 	else
@@ -503,7 +503,7 @@ void KopeteWindow::loadOptions()
 	d->autoHideTimeout = Kopete::AppearanceSettings::self()->contactListAutoHideTimeout();
 
 
-	QString tmp = config->readEntry("State", "Shown");
+	QString tmp = cg.readEntry("State", "Shown");
 	if ( tmp == "Minimized" && Kopete::BehaviorSettings::self()->showSystemTray())
 	{
 		showMinimized();
@@ -521,32 +521,34 @@ void KopeteWindow::loadOptions()
 
 void KopeteWindow::saveOptions()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
+        KConfigGroup cg( KGlobal::config(), "ToolBar Settings" );
 
-	toolBar("mainToolBar")->saveSettings ( config.data(), "ToolBar Settings" );
-	toolBar("quickSearchBar")->saveSettings( config.data(), "QuickSearchBar Settings" );
-	toolBar("editGlobalIdentityBar")->saveSettings( config.data(), "EditGlobalIdentityBar Settings" );
+	toolBar("mainToolBar")->saveSettings ( cg );
+        cg.changeGroup( "QuickSearchBar Settings" );
+	toolBar("quickSearchBar")->saveSettings( cg );
+        cg.changeGroup( "EditGlobalIdentityBar Settings" );
+	toolBar("editGlobalIdentityBar")->saveSettings( cg );
 
-	saveMainWindowSettings( config.data(), "General Options" );
+        cg.changeGroup( "General Options" );
+	saveMainWindowSettings( cg );
 
-	config->setGroup("General Options");
-	config->writeEntry("Position", pos());
-	config->writeEntry("Geometry", size());
+	cg.writeEntry("Position", pos());
+	cg.writeEntry("Geometry", size());
 
 	if(isMinimized())
 	{
-		config->writeEntry("State", "Minimized");
+		cg.writeEntry("State", "Minimized");
 	}
 	else if(isHidden())
 	{
-		config->writeEntry("State", "Hidden");
+		cg.writeEntry("State", "Hidden");
 	}
 	else
 	{
-		config->writeEntry("State", "Shown");
+		cg.writeEntry("State", "Shown");
 	}
 
-	config->sync();
+	cg.sync();
 }
 
 void KopeteWindow::showMenubar()
@@ -606,7 +608,8 @@ void KopeteWindow::slotConfGlobalKeys()
 
 void KopeteWindow::slotConfToolbar()
 {
-	saveMainWindowSettings(KGlobal::config().data(), "General Options");
+        KConfigGroup cg( KGlobal::config(), "General Options");
+	saveMainWindowSettings( cg );
 	KEditToolbar *dlg = new KEditToolbar(factory());
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
 	connect( dlg, SIGNAL(finished()) , dlg, SLOT(deleteLater()));
@@ -615,7 +618,7 @@ void KopeteWindow::slotConfToolbar()
 
 void KopeteWindow::slotUpdateToolbar()
 {
-	applyMainWindowSettings(KGlobal::config().data(), "General Options");
+	applyMainWindowSettings(KGlobal::config()->group( "General Options") );
 }
 
 void KopeteWindow::slotGlobalAway()

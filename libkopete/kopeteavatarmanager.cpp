@@ -28,7 +28,7 @@
 // KDE includes
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kcodecs.h>
 #include <kurl.h>
 #include <kio/job.h>
@@ -162,16 +162,13 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	else
 	{
 		// Save metadata of image
-		KSimpleConfig *avatarConfig = new KSimpleConfig( configUrl.path() );
-		avatarConfig->setGroup( newEntry.name );
+		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal), newEntry.name );
 	
-		avatarConfig->writeEntry( "Filename", avatarFilename );
-		avatarConfig->writeEntry( "Category", int(newEntry.category) );
+		avatarConfig.writeEntry( "Filename", avatarFilename );
+		avatarConfig.writeEntry( "Category", int(newEntry.category) );
 
-		avatarConfig->sync();
+		avatarConfig.sync();
 	
-		delete avatarConfig;
-
 		// Add final path to the new entry for avatarAdded signal
 		newEntry.path = avatarUrl.path();
 
@@ -312,7 +309,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	avatarConfigUrl.addPath( AvatarConfig );
 	if( QFile::exists(avatarConfigUrl.path()) )
 	{
-		KSimpleConfig *avatarConfig = new KSimpleConfig( avatarConfigUrl.path() );
+		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::OnlyLocal);
 		// Each avatar entry in configuration is a group
 		QStringList groupEntryList = avatarConfig->groupList();
 		QString groupEntry;

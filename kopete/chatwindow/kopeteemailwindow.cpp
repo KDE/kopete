@@ -189,7 +189,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 		toggleMode( Send );
 
 	KSharedConfig::Ptr config = KGlobal::config();
-	applyMainWindowSettings( config.data(), QLatin1String( "KopeteEmailWindow" )  );
+	applyMainWindowSettings( config->group( QLatin1String( "KopeteEmailWindow" )  ) );
 
 	d->sendInProgress = false;
 
@@ -213,9 +213,9 @@ KopeteEmailWindow::~KopeteEmailWindow()
 	emit( closing( this ) );
 
 	// saves menubar, toolbar and statusbar setting
-	KSharedConfig::Ptr config = KGlobal::config();
-	saveMainWindowSettings( config.data(), QLatin1String( "KopeteEmailWindow" ) );
-	config->sync();
+	KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
+        saveMainWindowSettings( cg );
+	cg.sync();
 
 	delete d;
 }
@@ -310,12 +310,13 @@ void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 
 void KopeteEmailWindow::slotConfToolbar()
 {
-	saveMainWindowSettings(KGlobal::config().data(), QLatin1String( "KopeteEmailWindow" ));
+        KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
+	saveMainWindowSettings( cg );
 	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QLatin1String("kopeteemailwindow.rc") );
 	if (dlg->exec())
 	{
 		createGUI( d->editPart );
-		applyMainWindowSettings(KGlobal::config().data(), QLatin1String( "KopeteEmailWindow" ));
+		applyMainWindowSettings( cg );
 	}
 	delete dlg;
 }

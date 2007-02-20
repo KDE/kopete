@@ -28,7 +28,7 @@
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 

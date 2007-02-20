@@ -17,7 +17,7 @@
 
 #include "kopetecontact.h"
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kglobal.h>
 
 #include <qstringlist.h>

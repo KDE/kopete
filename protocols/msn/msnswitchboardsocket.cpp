@@ -409,9 +409,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
 		// TODO remove Displatcher.
-		KSharedConfig::Ptr config = KGlobal::config();
-		config->setGroup( "MSN" );
-		if ( config->readEntry( "useCustomEmoticons", true ) )
+		KConfigGroup config(KGlobal::config(), "MSN");
+		if ( config.readEntry( "useCustomEmoticons", true ) )
 		{
 			QRegExp rx("([^\\s]*)[\\s]*(<msnobj [^>]*>)");
 			rx.setMinimal(true);
@@ -682,9 +681,8 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup( "MSN" );
-	if ( config->readEntry( "exportEmoticons", false ) )
+	KConfigGroup config(KGlobal::config(), "MSN");
+	if ( config.readEntry( "exportEmoticons", false ) )
 	{
 		QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
 
@@ -711,7 +709,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 	// User-Agent is not a official flag, but GAIM has it
 	QString UA;
-	if( config->readEntry("SendClientInfo", true) )
+	if( config.readEntry("SendClientInfo", true) )
 	{
 		UA="User-Agent: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n";
 	}

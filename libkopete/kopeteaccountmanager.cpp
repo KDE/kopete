@@ -23,7 +23,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QHash>
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kplugininfo.h>
@@ -303,7 +303,7 @@ void AccountManager::removeAccount( Account *account )
 			return;
 	}
 	//there is nomore account from the protocol,  we can unload it
-	
+
 	// FIXME: pluginId() should return the internal name and not the class name, so
 	//        we can get rid of this hack - Olivier/Martijn
 	QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
@@ -320,7 +320,7 @@ void AccountManager::save()
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
 		Account *a = it.next();
-		KConfigBase *config = a->configGroup();
+		KConfigGroup *config = a->configGroup();
 
 		config->writeEntry( "Protocol", a->protocol()->pluginId() );
 		config->writeEntry( "AccountId", a->accountId() );
