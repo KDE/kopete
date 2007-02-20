@@ -16,7 +16,7 @@
     *************************************************************************
 */
 
-#include <qbuffer.h>
+#include <QBuffer>
 #include <QByteArray>
 #include <QStringList>
 
@@ -24,7 +24,8 @@
 
 #include "responseprotocol.h"
 
-ResponseProtocol::ResponseProtocol(QObject* parent, const char* name): InputProtocolBase(parent, name)
+ResponseProtocol::ResponseProtocol(QObject* parent)
+: InputProtocolBase(parent)
 {
 }
 
@@ -55,8 +56,8 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	if ( !readGroupWiseLine( headerFirst ) )
 		return 0;
 	// pull out the HTTP return code
-	int firstSpace = headerFirst.find( ' ' );
-	QString rtnField = headerFirst.mid( firstSpace, headerFirst.find( ' ', firstSpace + 1 ) );
+	int firstSpace = headerFirst.indexOf( ' ' );
+	QString rtnField = headerFirst.mid( firstSpace, headerFirst.indexOf( ' ', firstSpace + 1 ) );
 	bool ok = true;
 	int rtnCode;
 	int packetState = -1;
@@ -126,7 +127,7 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 		{
 			tId = sf->value().toInt();
 			debug( QString( "ResponseProtocol::readResponse() - transaction ID is %1" ).arg( tId ) );
-			m_collatingFields.remove( it );
+			m_collatingFields.erase( it );
 			delete sf;
 		}
 	}
@@ -138,7 +139,7 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 		{
 			resultCode = sf->value().toInt();
 			debug( QString( "ResponseProtocol::readResponse() - result code is %1" ).arg( resultCode ) );
-			m_collatingFields.remove( it );
+			m_collatingFields.erase( it );
 			delete sf;
 		}
 	}

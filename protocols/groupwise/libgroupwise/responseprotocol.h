@@ -19,12 +19,12 @@
 #ifndef RESPONSEPROTOCOL_H
 #define RESPONSEPROTOCOL_H
 
+#include <QByteArray>
+
 #include "gwerror.h"
 #include "gwfield.h"
 
 #include "inputprotocolbase.h"
-//Added by qt3to4:
-#include <QByteArray>
 
 /**
 Handles the parsing of incoming Response messages
@@ -45,7 +45,7 @@ public:
 	 */
 	enum PacketState { FieldsRead, ProtocolError };
 	
-	ResponseProtocol(QObject* parent, const char* name);
+	ResponseProtocol(QObject* parent);
 	~ResponseProtocol();
 	/** 
 	 * Attempt to parse the supplied data into an @ref Response object.  

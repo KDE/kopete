@@ -22,8 +22,8 @@
 
 #include "privacymanager.h"
 
-PrivacyManager::PrivacyManager( Client * client, const char *name)
- : QObject(client, name), m_client( client )
+PrivacyManager::PrivacyManager( Client * client)
+ : QObject(client), m_client( client )
 {
 }
 
@@ -221,7 +221,7 @@ void PrivacyManager::slotAllowRemoved()
 	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
 	{
-		m_allowList.remove( pit->dn() );
+		m_allowList.removeAll( pit->dn() );
 		emit privacyChanged( pit->dn(), isBlocked( pit->dn() ) );
 	}
 }
@@ -231,7 +231,7 @@ void PrivacyManager::slotDenyRemoved()
 	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
 	{
-		m_denyList.remove( pit->dn() );
+		m_denyList.removeAll( pit->dn() );
 		emit privacyChanged( pit->dn(), isBlocked( pit->dn() ) );
 	}
 }
@@ -243,7 +243,7 @@ QStringList PrivacyManager::difference( const QStringList & lhs, const QStringLi
 	const QStringList::ConstIterator rhsEnd = rhs.end();
 	for ( QStringList::ConstIterator lhsIt = lhs.begin(); lhsIt != lhsEnd; ++lhsIt )
 	{
-		if ( rhs.find( *lhsIt ) == rhsEnd )
+		if ( !rhs.contains( *lhsIt ) )
 			diff.append( *lhsIt );
 	}
 	return diff;

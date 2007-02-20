@@ -55,7 +55,7 @@ bool CreateContactTask::take( Transfer * transfer )
 	return false;
 }
 
-void CreateContactTask::contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const Q3ValueList< FolderItem > folders, bool topLevel )
+void CreateContactTask::contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QList< FolderItem > folders, bool topLevel )
 {
 	m_userId = userId;
 	m_displayName = displayName;
@@ -67,8 +67,8 @@ void CreateContactTask::contactFromUserId( const QString & userId, const QString
 void CreateContactTask::onGo()
 {
 	client()->debug( "CreateContactTask::onGo() - Welcome to the Create Contact Task Show!");
-	Q3ValueList<FolderItem>::ConstIterator it = m_folders.begin();
-	const Q3ValueList<FolderItem>::ConstIterator end = m_folders.end();
+	QList<FolderItem>::ConstIterator it = m_folders.constBegin();
+	QList<FolderItem>::ConstIterator end = m_folders.constEnd();
 	
 	// create contacts on the server
 	for ( ; it != end; ++it )

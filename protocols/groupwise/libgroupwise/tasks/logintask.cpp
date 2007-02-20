@@ -222,7 +222,7 @@ void LoginTask::extractPrivacy( Field::FieldList & fields )
 	{
 		if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
 		{
-			if ( sf->value().toString().find( NM_A_BLOCKING ) )
+			if ( sf->value().toString().indexOf( NM_A_BLOCKING ) != -1 )
 				privacyLocked = true;
 		}
 		else if ( Field::MultiField * mf = dynamic_cast<Field::MultiField *>( *it ) )

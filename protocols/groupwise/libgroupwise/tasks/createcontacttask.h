@@ -21,7 +21,7 @@
 #ifndef CREATECONTACTTASK_H
 #define CREATECONTACTTASK_H
 
-#include <q3valuelist.h>
+#include <QList>
 
 #include "gwerror.h"
 #include "libgroupwise_export.h"
@@ -64,7 +64,7 @@ public:
 	 * @param folders A list of folders that the contact should belong to - any folders that do not exist on the server should have a objectId of 0, and will be created
 	 * @param topLevel is the folder also in the top level folder?
 	 */
-	void contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const Q3ValueList< FolderItem > folders, bool topLevel );
+	void contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QList< FolderItem > folders, bool topLevel );
 	//void contactFromDN( const QString & dn, const QString & displayName, const int parentFolder );
 	/** 
 	 * This task doesn't do any I/O itself, so this take prints an error and returns false;
@@ -82,7 +82,7 @@ private:
 	QString m_userId;
 	QString m_dn;
 	QString m_displayName;
-	Q3ValueList< FolderItem > m_folders;
+	QList< FolderItem > m_folders;
 	bool m_topLevel;
 };
 

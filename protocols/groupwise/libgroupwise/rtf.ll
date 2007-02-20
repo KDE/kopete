@@ -86,7 +86,7 @@ QString RTF2HTML::quoteString(const QString &_str, quoteMode mode)
     int len;
     int pos = 0;
 
-    while ((pos = re.search(str, pos)) != -1) {
+    while ((pos = re.indexIn(str, pos)) != -1) {
         len = re.matchedLength();
 
         if (len == 1)
@@ -570,7 +570,7 @@ void Level::setText(const char *str)
 
         FontDef& def = p->fonts[m_nFont-1];
 
-        char *pp = strchr(str, ';');
+        const char *pp = strchr(str, ';');
         unsigned size;
         if (pp != NULL)
            size = (pp - str);

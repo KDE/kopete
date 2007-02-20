@@ -25,8 +25,8 @@
 
 using namespace GroupWise;
 
-EventProtocol::EventProtocol(QObject *parent, const char *name)
- : InputProtocolBase(parent, name)
+EventProtocol::EventProtocol(QObject *parent)
+ : InputProtocolBase(parent)
 {
 }
 

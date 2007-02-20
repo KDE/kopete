@@ -137,7 +137,7 @@ bool Task::take( Transfer * transfer)
 		
 		if(t->take( transfer ))
 		{
-			client()->debug( QString( "Transfer ACCEPTED by: %1" ).arg( t->className() ) );
+			client()->debug( QString( "Transfer ACCEPTED by: %1" ).arg( t->metaObject()->className() ) );
 			return true;
 		}
 	}
@@ -248,7 +248,7 @@ void Task::clientDisconnected()
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QString("%1: ").arg(className()) + str);
+	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
 }
 
 bool Task::forMe( const Transfer * transfer ) const

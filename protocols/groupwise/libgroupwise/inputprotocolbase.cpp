@@ -16,17 +16,17 @@
     *************************************************************************
 */
 
+#include <QByteArray>
+
 #include <kdebug.h>
 
 #include "gwerror.h"
 
 #include "gwfield.h"
 #include "inputprotocolbase.h"
-//Added by qt3to4:
-#include <QByteArray>
 
-InputProtocolBase::InputProtocolBase(QObject *parent, const char *name)
- : QObject(parent, name)
+InputProtocolBase::InputProtocolBase(QObject *parent)
+ : QObject(parent)
 {
 }
 
@@ -40,7 +40,7 @@ void InputProtocolBase::debug( const QString &str )
 #ifdef LIBGW_USE_KDEBUG
 	kDebug( 14191 ) << "debug: " << str << endl;
 #else
-	qDebug( "GW RAW PROTO: %s\n", str.ascii() );
+	qDebug( "GW RAW PROTO: %s\n", qPrintable(str) );
 #endif
 }
 
@@ -86,14 +86,14 @@ bool InputProtocolBase::safeReadBytes( QByteArray & data, uint & len )
 	if ( val > NMFIELD_MAX_STR_LENGTH )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
-	QByteArray temp( val );
+	QByteArray temp( val, 0 );
 	if ( val != 0 )
 	{
 		if ( !okToProceed() )
 			return false;
 		// if the server splits packets here we are in trouble,
 		// as there is no way to see how much data was actually read
-		m_din.readRawBytes( temp.data(), val );
+		m_din.readRawData( temp.data(), val );
 		// the rest of the string will be filled with FF,
 		// so look for that in the last position instead of \0
 		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...

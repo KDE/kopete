@@ -75,7 +75,7 @@ url_escape_string( const char *src)
 		}
 	}
 
-	QByteArray encoded((p - src) + (escape * 2) + 1);
+	QByteArray encoded((p - src) + (escape * 2) + 1, 0);
 
 	/* Escape the string */
 	for (p = src, q = 0; *p != '\0'; p++) {
@@ -106,8 +106,10 @@ url_escape_string( const char *src)
 
 CoreProtocol::CoreProtocol() : QObject()
 {
-	m_eventProtocol = new EventProtocol( this, "eventprotocol" );
-	m_responseProtocol = new ResponseProtocol( this, "responseprotocol" );
+	m_eventProtocol = new EventProtocol( this );
+	m_eventProtocol->setObjectName( "eventprotocol" );
+	m_responseProtocol = new ResponseProtocol( this );
+	m_responseProtocol->setObjectName( "responseprotocol" );
 }
 
 CoreProtocol::~CoreProtocol() 
@@ -150,7 +152,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		{
 			debug( " - more data in chunk!" );
 			// copy the unparsed bytes into a new qbytearray and replace m_in with that
-			QByteArray remainder( size - parsedBytes );
+			QByteArray remainder( size - parsedBytes, 0 );
 			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
 			m_in = remainder;
 		}
@@ -341,7 +343,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 								+ GW_URLVAR_TYPE + typeString;
 								
 		debug( QString( "CoreProtocol::fieldsToWire - outgoing data: %1" ).arg( outgoing.data() ) );
-		dout.writeRawBytes( outgoing.data(), outgoing.length() );
+		dout.writeRawData( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
 		//kDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
 		//debug( " - signalling data" );
@@ -363,7 +365,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		QDataStream dout( &bytesOut,QIODevice::WriteOnly );
 		dout.setVersion(QDataStream::Qt_3_1);
 		dout.setByteOrder( QDataStream::LittleEndian );
-		dout.writeRawBytes( "\r\n", 2 );
+		dout.writeRawData( "\r\n", 2 );
 		emit outgoingData( bytesOut );
 		debug( "CoreProtocol::fieldsToWire - request completed" );
 	}

@@ -110,7 +110,7 @@ class EventProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
-    EventProtocol(QObject *parent = 0, const char *name = 0);
+    EventProtocol(QObject *parent = 0);
     ~EventProtocol();
 	/** 
 	 * Attempt to parse the supplied data into an @ref EventTransfer object.  

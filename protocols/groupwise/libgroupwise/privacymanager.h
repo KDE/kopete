@@ -19,8 +19,8 @@
 #ifndef PRIVACYMANAGER_H
 #define PRIVACYMANAGER_H
 
-#include <qobject.h>
-#include <qstringlist.h>
+#include <QObject>
+#include <QStringList>
 #include "libgroupwise_export.h"
 
 class Client;
@@ -34,7 +34,7 @@ class LIBGROUPWISE_EXPORT PrivacyManager : public QObject
 {
 Q_OBJECT
 public:
-	PrivacyManager( Client * client, const char *name = 0);
+	PrivacyManager( Client * client);
 	~PrivacyManager();
 	// accessors
 	bool isBlocked( const QString & dn );

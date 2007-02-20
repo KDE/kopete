@@ -131,15 +131,14 @@ void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details 
 	client()->debug( QString( "JoinConferenceTask::slotReceiveUserDetails() - got %1" ).arg( details.dn ) );
 	QStringList::Iterator it = m_unknowns.begin();
 	QStringList::Iterator end = m_unknowns.end();
-	while( it != end )
+	for( ; it != end; ++it )
 	{
 		QString current = *it;
-		++it;
 		client()->debug( QString( " - can we remove %1?" ).arg(current ) );
 		if ( current == details.dn )
 		{
 			client()->debug( " - it's gone!" );
-			m_unknowns.remove( current );
+			m_unknowns.erase( it );
 			break;
 		}
 	}

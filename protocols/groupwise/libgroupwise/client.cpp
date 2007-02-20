@@ -18,11 +18,9 @@
     *************************************************************************
 */
 
-#include <qapplication.h>
-//Added by qt3to4:
+#include <QApplication>
 #include <QByteArray>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 #include "chatroommanager.h"
 #include "gwclientstream.h"
@@ -64,12 +62,13 @@ public:
 	UserDetailsManager * userDetailsMgr;
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
-	Q3ValueList<GroupWise::CustomStatus> customStatuses;
+	QList<GroupWise::CustomStatus> customStatuses;
 };
 
 Client::Client(QObject *par, uint protocolVersion )
-:QObject(par, "groupwiseclient")
+:QObject(par)
 {
+        setObjectName("groupwiseclient");
 	d = new ClientPrivate;
 /*	d->tzoffset = 0;*/
 	d->active = false;
@@ -80,8 +79,10 @@ Client::Client(QObject *par, uint protocolVersion )
 	d->root = new Task(this, true);
 	d->chatroomMgr = 0;
 	d->requestFactory = new RequestFactory;
-	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
-	d->privacyMgr = new PrivacyManager( this, "privacymgr" );
+	d->userDetailsMgr = new UserDetailsManager( this );
+	d->userDetailsMgr->setObjectName( "userdetailsmgr" );
+	d->privacyMgr = new PrivacyManager( this );
+	d->privacyMgr->setObjectName( "privacymgr" );
 	d->stream = 0;
 	d->protocolVersion = protocolVersion;
 }
@@ -179,7 +180,7 @@ int Client::port()
 	return d->port;
 }
 
-Q3ValueList<GroupWise::CustomStatus> Client::customStatuses()
+QList<GroupWise::CustomStatus> Client::customStatuses()
 {
 	return d->customStatuses;
 }
@@ -501,7 +502,10 @@ uint Client::protocolVersion() const
 ChatroomManager * Client::chatroomManager()
 {
 	if ( !d->chatroomMgr )
-		d->chatroomMgr = new ChatroomManager( this, "chatroommgr" );
+	{
+		d->chatroomMgr = new ChatroomManager( this );
+		d->chatroomMgr->setObjectName( "chatroommgr" );
+	}
 	return d->chatroomMgr;
 }
 

@@ -21,6 +21,8 @@
 #ifndef MODIFYCONTACTLISTTASK_H
 #define MODIFYCONTACTLISTTASK_H
 
+#include "libgroupwise_export.h"
+
 #include "requesttask.h"
 
 /**
@@ -31,7 +33,7 @@ This is the parent of all tasks that manipulate the contact list.  The server re
 
 using namespace GroupWise;
 
-class ModifyContactListTask : public RequestTask
+class LIBGROUPWISE_EXPORT ModifyContactListTask : public RequestTask
 {
 Q_OBJECT
 public:

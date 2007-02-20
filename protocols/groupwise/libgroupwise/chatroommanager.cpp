@@ -28,8 +28,8 @@
 
 #include "chatroommanager.h"
 
-ChatroomManager::ChatroomManager( Client * parent, const char *name)
-	: QObject(parent, name), m_client( parent ), m_replace( false )
+ChatroomManager::ChatroomManager( Client * parent)
+	: QObject(parent), m_client( parent ), m_replace( false )
 {
 }
 
@@ -98,7 +98,7 @@ void ChatroomManager::slotGotChatCounts()
 
 		for ( ; it != end; ++it )
 			if ( m_rooms.contains( it.key() ) )
-				m_rooms[ it.key() ].participantsCount = it.data();
+				m_rooms[ it.key() ].participantsCount = it.value();
 	}
 	emit updated();
 }

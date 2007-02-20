@@ -34,7 +34,7 @@ class LIBGROUPWISE_EXPORT ChatroomManager : public QObject
 {
 	Q_OBJECT
 	public:
-		ChatroomManager( Client * client, const char *name = 0);
+		ChatroomManager( Client * client);
 		~ChatroomManager();
 		GroupWise::ChatroomMap rooms();
 		void requestProperties( const QString & displayName );

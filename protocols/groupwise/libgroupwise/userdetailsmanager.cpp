@@ -20,8 +20,8 @@
 
 #include "userdetailsmanager.h"
 
-UserDetailsManager::UserDetailsManager( Client * parent, const char *name)
- : QObject(parent, name), m_client( parent )
+UserDetailsManager::UserDetailsManager( Client * parent)
+ : QObject(parent), m_client( parent )
 {
 }
 
@@ -41,10 +41,8 @@ bool UserDetailsManager::known( const QString & dn )
 {
 	if ( dn == m_client->userDN() )
 		return true;
-	// TODO: replace with m_detailsMap.contains( dn );
-	QStringList::Iterator found = m_detailsMap.keys().find( dn );
 	// we always know the local user's details, so don't look them up
-	return ( found !=m_detailsMap.keys().end() );
+	return ( m_detailsMap.keys().contains( dn ) );
 }
 
 ContactDetails UserDetailsManager::details( const QString & dn )
@@ -86,8 +84,7 @@ void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUn
 		// don't request details we already have unless the caller specified this
 		if ( onlyUnknown && known( dn ) )
 			break;
-		QStringList::Iterator found = m_pendingDNs.find( dn );
-		if ( found == m_pendingDNs.end() )
+		if ( !m_pendingDNs.contains( dn ) )
 		{
 			m_client->debug( QString( "UserDetailsManager::requestDetails - including %1" ).arg( dn ) );
 			requestList.append( dn);
@@ -120,7 +117,7 @@ void UserDetailsManager::requestDetails( const QString & dn, bool onlyUnknown )
 void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDetails & details )
 {
 	m_client->debug( "UserDetailsManager::slotReceiveContactDetails()" );
-	m_pendingDNs.remove( details.dn );
+	m_pendingDNs.removeAll( details.dn );
 	/*client()->userDetailsManager()->*/
 	addDetails( details );
 	//emit temporaryContact( details );

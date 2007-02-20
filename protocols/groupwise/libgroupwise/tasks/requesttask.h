@@ -21,11 +21,13 @@
 #ifndef GW_REQUESTTASK_H
 #define GW_REQUESTTASK_H
 
+#include "libgroupwise_export.h"
+
 #include "task.h"
 
 class Transfer;
 
-class RequestTask : public Task
+class LIBGROUPWISE_EXPORT RequestTask : public Task
 {
 Q_OBJECT
 	public:

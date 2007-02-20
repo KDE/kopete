@@ -19,7 +19,7 @@
 #ifndef INPUTPROTOCOLBASE_H
 #define INPUTPROTOCOLBASE_H
 
-#include <qobject.h>
+#include <QObject>
 #include <QByteArray>
 #include <QDataStream>
 
@@ -34,7 +34,7 @@ class InputProtocolBase : public QObject
 Q_OBJECT
 public:
 	enum EventProtocolState { Success, NeedMore, OutOfSync, ProtocolError };
-	InputProtocolBase(QObject *parent = 0, const char *name = 0);
+	InputProtocolBase(QObject *parent = 0);
 	~InputProtocolBase();
 
 	/**

@@ -18,9 +18,9 @@
 #ifndef USERDETAILSMANAGER_H
 #define USERDETAILSMANAGER_H
 
-#include <qmap.h>
-#include <qobject.h>
-#include <qstringlist.h>
+#include <QMap>
+#include <QObject>
+#include <QStringList>
 
 #include "gwerror.h"
 #include "libgroupwise_export.h"
@@ -37,7 +37,7 @@ class LIBGROUPWISE_EXPORT UserDetailsManager : public QObject
 {
 Q_OBJECT
 public:
-	UserDetailsManager( Client * parent, const char *name = 0);
+	UserDetailsManager( Client * parent);
 	~UserDetailsManager();
 	/**
 	 * List of DNs that we have already received details for
