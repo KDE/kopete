@@ -83,7 +83,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
 		 this, SLOT(slotValueChanged(int)));
-	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
+#ifdef __GNUC__
+#warning "Where is slot BehaviorConfig::slotUpdatePluginLabel?"
+#endif
+    connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
 		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================

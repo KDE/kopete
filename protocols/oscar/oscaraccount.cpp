@@ -128,8 +128,8 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
 	                  this, SLOT( slotSendBuddyIcon() ) );
-	QObject::connect( d->engine, SIGNAL( askIncoming( QString, QString, DWORD, QString, QString ) ),
-	                  this, SLOT( askIncoming( QString, QString, DWORD, QString, QString ) ) );
+	QObject::connect( d->engine, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
+	                  this, SLOT( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
 	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
