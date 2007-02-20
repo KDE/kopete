@@ -28,21 +28,6 @@ class QTextCodec;
 namespace KIrc
 {
 
-enum MessageType
-{
-	ErrorMessage = -1,
-
-	JoinMessage,
-	PartMessage,
-
-	PrivateMessage,
-	InfoMessage,
-	NoticeMessage,
-
-	MessageOfTheDayMessage,
-	MessageOfTheDayCondensedMessage
-};
-
 // Static regular expressions
 extern const QRegExp sm_RemoveLinefeeds;
 

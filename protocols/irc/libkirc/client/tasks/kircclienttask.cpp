@@ -20,7 +20,6 @@
 #include "kircclienttask.moc"
 
 #include "kircclientsocket.h"
-#include "kirctransferhandler.h"
 
 #include "kircevent.h"
 

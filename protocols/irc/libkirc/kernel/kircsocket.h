@@ -97,11 +97,11 @@ public slots:
 	void showInfoDialog();
 
 signals:
-//	void eventOccured(const Event *);
+//	void eventOccured(const KIrc::Event *);
 
 	void connectionStateChanged(Socket::ConnectionState newState);
 
-	void receivedMessage(const Message &message);
+	void receivedMessage(const KIrc::Message &message);
 
 protected:
 	void setConnectionState(Socket::ConnectionState newstate);

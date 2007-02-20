@@ -53,6 +53,7 @@ public:
 
 public:
 	Message();
+//	Message(KIrc::Socket *socket, Direction direction, const QByteArray &text);
 	Message(const KIrc::Message &o);
 	~Message();
 

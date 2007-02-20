@@ -14,7 +14,7 @@ set(libkirc_client_SRCS
 #	kirctransferserver.cpp 
 
 	tasks/kircclienttask.cpp
-	tasks/kirci18ntask.cpp
+#	tasks/kirci18ntask.cpp
 )
 
 kde4_automoc(${libkirc_client_SRCS})

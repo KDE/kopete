@@ -54,26 +54,6 @@ public:
 
 	ClientCommandHandler *clientCommandHandler();
 
-signals:
-	/**
-	 * Emit a received message.
-	 * The received message could have been translated to your locale.
-	 *
-	 * @param type the message type.
-	 * @param from the originator of the message.
-	 * @param to is the list of entities that are related to this message.
-	 * @param msg the message (usually translated).
-	 *
-	 * @note Most of the following numeric messages should be deprecated, and call this method instead.
-	 *	 Most of the methods, using it, update KIrc::Entities.
-	 *	 Lists based messages are sent via dedicated API, therefore they don't use this.
-	 */
-	// @param args the args to apply to this message.
-	void receivedMessage(	MessageType type,
-				const Entity::Ptr &from,
-				const Entity::List &to,
-				const QString &msg);
-
 private slots:
 	void onConnectionStateChanged(Socket::ConnectionState newState);
 

@@ -22,45 +22,52 @@
 
 #include "kdemacros.h"
 
-//#include <QList> // From QStringList
-#include <QSharedDataPointer>
-#include <QStringList>
+#include <QtCore/QVariant>
 
 namespace KIrc
 {
 
 class KIRC_EXPORT Event
-//	: QEvent // Use QEvent interface here ???
+//	: QEvent // TODO: Use QEvent interface
 {
 public:
-	Event();
-	Event(const Event &o);
-	virtual ~Event();
+	Event(const QString &name,
+		const QString &text, const QList<QVariant> &args,
+		const KIrc::Entity::Ptr &from,
+		const KIrc::Entity::List &to,
+		const KIrc::Entity::List &cc = KIrc::Entity::List());
 
-	Event &operator = (const Event &o);
+	/**
+	 * The name of the event.
+	 */
+	const QString &name() const;
 
-public:
-	Message message() const;
-	Event &setMessage(const KIrc::Message &message);
+	/**
+	 * The text associed with this event.
+	 *
+	 * This text is used to build the displayed text using the arguments.
+	 */
+	const QString &text() const;
+
+	/**
+	 * The arguments of the event.
+	 */
+	const QList<QVariant> &args() const;
 
 	const KIrc::Entity::Ptr &from() const;
-	Event &setFrom(const KIrc::Entity::Ptr &from);
 
 	const KIrc::Entity::List &to() const;
-	Event &setTo(const KIrc::Entity::List &to);
-
-	const KIrc::Entity::List &victims() const;
-	Event &setVictims(const KIrc::Entity::List &cc);
 
 	const KIrc::Entity::List &cc() const;
-	Event &setCc(const KIrc::Entity::List &cc);
-
-	QString text() const;
-	Event &setText(const QString &text);
 
 private:
-	class Private;
-	QSharedDataPointer<Private> d;
+	QString m_name;
+	QString m_text;
+	QList<QVariant> m_args;
+	KIrc::Entity::Ptr m_from;
+	KIrc::Entity::List m_to;
+	KIrc::Entity::List m_cc;
+
 };
 
 }

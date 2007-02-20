@@ -72,7 +72,6 @@ public:
 
 	virtual QString getCommandHelp(const QString &command);
 */
-
 signals:
 	void postEvent(KIrc::Event *event);
 

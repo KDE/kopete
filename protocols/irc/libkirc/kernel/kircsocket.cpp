@@ -216,14 +216,7 @@ void Socket::showInfoDialog()
 	}
 */
 }
-#if 0
-void Socket::postEvent(Event::MessageType messageType, const QString &message)
-{
-#ifdef __GNUC__
-#warning implement me
-#endif
-}
-#endif
+
 void Socket::setConnectionState(ConnectionState newstate)
 {
 	if (d->state != newstate)

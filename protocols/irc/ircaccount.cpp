@@ -286,7 +286,7 @@ void IRCAccount::clientConnect()
 int IRCAccount::codecMib() const
 {
 	kDebug(14120) << k_funcinfo << endl;
-	return configGroup()->readNumEntry(Config::CODECMIB);
+	return configGroup()->readEntry(Config::CODECMIB, 0);
 }
 
 void IRCAccount::setCodecFromMib(int mib)
@@ -425,12 +425,12 @@ const QMap<QString, QString> IRCAccount::customCtcpReplies() const
 
 void IRCAccount::setConnectCommands( const QStringList &commands ) const
 {
-	configGroup()->writeEntry( "ConnectCommands", commands );
+	configGroup()->writeEntry("ConnectCommands", commands);
 }
 
 const QStringList IRCAccount::connectCommands() const
 {
-	return configGroup()->readListEntry( "ConnectCommands" );
+	return configGroup()->readEntry("ConnectCommands", QStringList());
 }
 
 KActionMenu *IRCAccount::actionMenu()
