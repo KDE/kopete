@@ -38,7 +38,7 @@ GWFolder * GWContactList::addFolder( unsigned int id, unsigned int sequence, con
 GWContactInstance * GWContactList::addContactInstance( unsigned int id, unsigned int parent, unsigned int sequence, const QString & displayName, const QString & dn )
 {
 	GWContactInstance * contact = 0;
-    foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
+	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
 	{
 		GWFolder * folder = qobject_cast< GWFolder * >( obj );
 		if ( folder && folder->id == parent )
@@ -159,7 +159,7 @@ void GWFolder::dump( unsigned int depth )
 	{
 		GWContactInstance * instance = qobject_cast< GWContactInstance * >( obj );
 		if (instance)
-			componentData.dump( depth );
+			instance->dump( depth );
 		else
 		{
 			GWFolder * folder = qobject_cast< GWFolder * >( obj );

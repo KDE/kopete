@@ -179,7 +179,8 @@ QList<KAction*> *GroupWiseContact::customContextMenuActions()
 
 void GroupWiseContact::slotUserInfo()
 {
-	new GroupWiseContactProperties( this, Kopete::UI::Global::mainWidget(), "gwcontactproperties" );
+	GroupWiseContactProperties *p = new GroupWiseContactProperties( this, Kopete::UI::Global::mainWidget() );
+	p->setObjectName( "gwcontactproperties" );
 }
 
 QHash< QString, QString > GroupWiseContact::serverProperties()

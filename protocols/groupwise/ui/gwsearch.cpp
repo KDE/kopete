@@ -94,7 +94,7 @@ void GroupWiseContactSearch::slotDoSearch()
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_firstName->text();
 		arg.field = "Given Name";
-		arg.operation = searchOperation( m_firstNameOperation->currentItem() );
+		arg.operation = searchOperation( m_firstNameOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
 	if ( !m_lastName->text().isEmpty() )
@@ -102,7 +102,7 @@ void GroupWiseContactSearch::slotDoSearch()
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_lastName->text();
 		arg.field = "Surname";
-		arg.operation = searchOperation( m_lastNameOperation->currentItem() );
+		arg.operation = searchOperation( m_lastNameOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
 	if ( !m_userId->text().isEmpty() )
@@ -110,7 +110,7 @@ void GroupWiseContactSearch::slotDoSearch()
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_userId->text();
 		arg.field = NM_A_SZ_USERID;
-		arg.operation = searchOperation( m_userIdOperation->currentItem() );
+		arg.operation = searchOperation( m_userIdOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
 	if ( !m_title->text().isEmpty() )
@@ -118,7 +118,7 @@ void GroupWiseContactSearch::slotDoSearch()
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_title->text();
 		arg.field = NM_A_SZ_TITLE;
-		arg.operation = searchOperation( m_titleOperation->currentItem() );
+		arg.operation = searchOperation( m_titleOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
 	if ( !m_dept->text().isEmpty() )
@@ -126,7 +126,7 @@ void GroupWiseContactSearch::slotDoSearch()
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_dept->text();
 		arg.field = NM_A_SZ_DEPARTMENT;
-		arg.operation = searchOperation( m_deptOperation->currentItem() );
+		arg.operation = searchOperation( m_deptOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
 	if ( !searchTerms.isEmpty() )
@@ -155,10 +155,12 @@ void GroupWiseContactSearch::slotShowDetails()
 		// if they are already in our contact list, show that version
 		ContactDetails dt = selected.first();
 		GroupWiseContact * c = m_account->contactForDN( dt.dn );
+		GroupWiseContactProperties * p;
 		if ( c )
-			new GroupWiseContactProperties( c, this, "gwcontactproperties" );
+			p = new GroupWiseContactProperties( c, this );
 		else
-			new GroupWiseContactProperties( dt, this, "gwcontactproperties" );
+			p = new GroupWiseContactProperties( dt, this );
+		p->setObjectName( "gwcontactproperties" );
 	}
 }
 

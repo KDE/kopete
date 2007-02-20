@@ -21,8 +21,8 @@
 
 #include <qlabel.h>
 #include <qvalidator.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
+
 #include <kactioncollection.h>
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -91,6 +91,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 
 GroupWiseChatSession::~GroupWiseChatSession()
 {
+	qDeleteAll(m_inviteActions);
 	emit leavingConference( this );
 	foreach (Kopete::Contact * contact, m_invitees )
 		delete contact;
@@ -284,7 +285,7 @@ void GroupWiseChatSession::slotGotNotTypingNotification( const ConferenceEvent& 
 void GroupWiseChatSession::dequeueMessagesAndInvites()
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	for ( Q3ValueListIterator< Kopete::Message > it = m_pendingOutgoingMessages.begin();
+	for ( QList< Kopete::Message >::Iterator it = m_pendingOutgoingMessages.begin();
 		  it != m_pendingOutgoingMessages.end();
 		  ++it )
 	{
@@ -302,7 +303,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
 
-	m_inviteActions.setAutoDelete(true);
+	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
 	m_actionInvite->popupMenu()->clear();
@@ -429,7 +430,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 		}
 	}
 
-	m_invitees.remove( pending );
+	m_invitees.removeAll( pending );
 	delete pending;
 
 	updateArchiving();
@@ -471,7 +472,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 			break;
 		}
 	}
-	m_invitees.remove( pending );
+	m_invitees.removeAll( pending );
 	delete pending;
 
 	QString from = c->metaContact()->displayName();

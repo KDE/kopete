@@ -268,16 +268,16 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 
 QString GroupWiseProtocol::dnToDotted( const QString & dn )
 {
-	QRegExp rx("[a-zA-Z]*=(.*)$", false );
-	if( !dn.find( '=' ) ) // if it's not a DN, return it unprocessed
+	QRegExp rx("[a-zA-Z]*=(.*)$", Qt::CaseInsensitive );
+	if( dn.indexOf( '=' ) == -1 ) // if it's not a DN, return it unprocessed
 		return dn;
 
 	// split the dn into elements
-	QStringList elements = QStringList::split( ',', dn );
+	QStringList elements = dn.split( ',' );
 	// remove the key, keep the value
 	for ( QStringList::Iterator it = elements.begin(); it != elements.end(); ++it )
 	{
-		if ( rx.search( *it ) != -1 )
+		if ( rx.indexIn( *it ) != -1 )
 			*it = rx.cap( 1 );
 	}
 	QString dotted = elements.join( "." );

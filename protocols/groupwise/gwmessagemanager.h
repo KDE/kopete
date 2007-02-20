@@ -22,11 +22,8 @@
 #ifndef GWMESSAGEMANAGER_H
 #define GWMESSAGEMANAGER_H
 
-#include <q3ptrqueue.h>
-//Added by qt3to4:
 #include <QLabel>
-#include <Q3ValueList>
-#include <Q3PtrList>
+#include <QList>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 
@@ -164,10 +161,10 @@ private:
 	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 	
-	Q3ValueList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
+	QList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
-	Q3PtrList<KAction> m_inviteActions;
+	QList<KAction*> m_inviteActions;
 	// labels showing secure and logging status
 	KAction *m_secure;
 	KAction *m_logging;

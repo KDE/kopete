@@ -41,8 +41,8 @@
 
 #include "gwcontactproperties.h"
 
-GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent, const char *name)
- : QObject(parent, name)
+GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent )
+ : QObject(parent)
 {
 	init();
 	// set up the contents of the props widget
@@ -56,8 +56,8 @@ GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * conta
 	m_dialog->show();
 }
 
-GroupWiseContactProperties::GroupWiseContactProperties( GroupWise::ContactDetails cd, QWidget *parent, const char *name )
- : QObject(parent, name)
+GroupWiseContactProperties::GroupWiseContactProperties( GroupWise::ContactDetails cd, QWidget *parent )
+ : QObject(parent)
 {
 	init();
 	// set up the contents of the props widget

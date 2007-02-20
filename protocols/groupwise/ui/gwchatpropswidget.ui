@@ -339,12 +339,12 @@
       <bool>false</bool>
      </property>
      <property name="buddy" >
-      <cstring>kListBox1</cstring>
+      <cstring>k3ListBox1</cstring>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="KListBox" name="m_acl" >
+    <widget class="K3ListBox" name="m_acl" >
      <property name="toolTip" >
       <string>Access permissions for specific users</string>
      </property>
@@ -387,9 +387,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>KListBox</class>
+   <class>K3ListBox</class>
    <extends>Q3ListBox</extends>
-   <header>klistbox.h</header>
+   <header>k3listbox.h</header>
   </customwidget>
   <customwidget>
    <class>Q3ListBox</class>
@@ -410,7 +410,7 @@
   </customwidget>
  </customwidgets>
  <includes>
-  <include location="local" >klistbox.h</include>
+  <include location="local" >k3listbox.h</include>
   <include location="local" >kpushbutton.h</include>
   <include location="local" >kpushbutton.h</include>
   <include location="local" >kpushbutton.h</include>

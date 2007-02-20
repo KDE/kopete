@@ -1280,7 +1280,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	GroupWiseContact * contactFrom = contactForDN( event.user );
 	if ( !contactFrom )
 		contactFrom = createTemporaryContact( event.user );
-	if ( configGroup()->readBoolEntry( "AlwaysAcceptInvitations",false ) == true )
+	if ( configGroup()->readEntry( "AlwaysAcceptInvitations",false ) == true )
 	{
 		client()->joinConference( event.guid );
 	}

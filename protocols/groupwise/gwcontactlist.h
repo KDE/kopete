@@ -19,8 +19,6 @@
 // GROUPWISE SERVER SIDE CONTACT LIST MODEL
 
 #include <qobject.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #ifndef GW_CONTACTLIST_H
 #define GW_CONTACTLIST_H

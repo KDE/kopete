@@ -25,7 +25,7 @@
 #include "gwerror.h"
 #include "gwbytestream.h"
 
-KNetworkConnector::KNetworkConnector ( QObject *parent, const char */*name*/ )
+KNetworkConnector::KNetworkConnector ( QObject *parent )
  : Connector ( parent )
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New KNetwork connector." << endl;

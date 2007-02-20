@@ -28,8 +28,8 @@
 #ifndef GW_CONTACT_H
 #define GW_CONTACT_H
 
-#include <q3dict.h>
-#include <qmap.h>
+#include <QMap>
+#include <QString>
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"

@@ -92,9 +92,9 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_password->load( &account()->password() );
 	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );
 	
-	m_preferencesDialog->m_port->setValue( account()->configGroup()->readUnsignedNumEntry( "Port" ) );
+	m_preferencesDialog->m_port->setValue( account()->configGroup()->readEntry( "Port", 0 ) );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->excludeConnect() );
-	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readBoolEntry( "AlwaysAcceptInvitations" ) );
+	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readEntry( "AlwaysAcceptInvitations", false ) );
 }
 
 Kopete::Account* GroupWiseEditAccountWidget::apply()

@@ -40,11 +40,11 @@ public:
 	/**
 	 * Display properties given a GroupWiseContact
 	 */ 
-	GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent, const char *name );
+	GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent );
 	/**
 	 * Display properties given a GroupWise::ContactDetails
 	 */
-	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0, const char *name = 0 );
+	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0 );
 	~GroupWiseContactProperties();
 protected:
 	void setupProperties( QHash< QString, QString > serverProps );

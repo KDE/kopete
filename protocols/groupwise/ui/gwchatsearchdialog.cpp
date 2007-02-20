@@ -86,9 +86,9 @@ void GroupWiseChatSearchDialog::slotManagerUpdated()
 	while ( it != end )
 	{
 		new Q3ListViewItem( m_widget->m_chatrooms,
-						   it.data().displayName,
-						   m_account->protocol()->dnToDotted( it.data().ownerDN ),
-						   QString::number( it.data().participantsCount ) );
+						   it.value().displayName,
+						   m_account->protocol()->dnToDotted( it.value().ownerDN ),
+						   QString::number( it.value().participantsCount ) );
 		++it;
 	}
 }

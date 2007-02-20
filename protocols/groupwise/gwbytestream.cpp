@@ -26,7 +26,7 @@
 #include "gwbytestream.h"
 #include "gwerror.h"
 
-KNetworkByteStream::KNetworkByteStream ( QObject *parent, const char */*name*/ )
+KNetworkByteStream::KNetworkByteStream ( QObject *parent )
  : ByteStream ( parent )
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new KNetwork byte stream." << endl;
@@ -129,7 +129,7 @@ void KNetworkByteStream::slotReadyRead ()
 {
 
 	// stuff all available data into our buffers
-	QByteArray readBuffer ( socket()->bytesAvailable () );
+	QByteArray readBuffer ( socket()->bytesAvailable (), 0 );
 
 	socket()->read ( readBuffer.data (), readBuffer.size () );
 
