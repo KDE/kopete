@@ -22,14 +22,14 @@
 
 TestbedFakeServer::TestbedFakeServer()
 {
-	m_incomingMessages.setAutoDelete( true );
 }
 
 TestbedFakeServer::~TestbedFakeServer()
 {
+        qDeleteAll( m_incomingMessages );
 }
 
-void TestbedFakeServer::sendMessage( QString contactId, QString message )
+void TestbedFakeServer::sendMessage( const QString &contactId, const QString &message )
 {
 	// see what contact the message is for
 	// if it's for Echo, respond immediately
@@ -53,11 +53,10 @@ void TestbedFakeServer::incomingMessage( QString message )
 
 void TestbedFakeServer::purgeMessages()
 {
-	TestbedIncomingMessage* msg;
-	for ( msg = m_incomingMessages.first(); msg; msg = m_incomingMessages.next() )
+	for ( int i = m_incomingMessages.count() - 1; i >= 0; --i )
 	{
-		if ( msg->delivered() )
-			m_incomingMessages.remove();
+		if ( m_incomingMessages[i]->delivered() )
+			m_incomingMessages.removeAt(i);
 	}
 }
 

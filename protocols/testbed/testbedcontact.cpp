@@ -16,6 +16,8 @@
 
 #include "testbedcontact.h"
 
+#include <QList>
+
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -27,8 +29,6 @@
 #include "testbedaccount.h"
 #include "testbedfakeserver.h"
 #include "testbedprotocol.h"
-//Added by qt3to4:
-#include <QList>
 
 TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
 		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )

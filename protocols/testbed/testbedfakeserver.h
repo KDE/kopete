@@ -17,8 +17,9 @@
 #ifndef TESTBEDFAKESERVER_H
 #define TESTBEDFAKESERVER_H
 
-#include "qobject.h"
-#include <q3ptrlist.h>
+#include <QList>
+#include <QObject>
+#include <QString>
 
 class TestbedIncomingMessage;
 
@@ -31,11 +32,11 @@ class TestbedFakeServer : public QObject
 	Q_OBJECT
 public:
 	TestbedFakeServer();
-    ~TestbedFakeServer();
+	~TestbedFakeServer();
 	/**
 	 * Called to simulate sending a message to a remote contact
 	 */
-	void sendMessage( QString contactId, QString message );
+	void sendMessage( const QString &contactId, const QString &message );
 	
 public slots:
 	/**
@@ -60,7 +61,7 @@ protected:
 	/**
 	 * List of incoming messages
 	 */
-	Q3PtrList<TestbedIncomingMessage> m_incomingMessages;
+	QList<TestbedIncomingMessage*> m_incomingMessages;
 };
 
 #endif

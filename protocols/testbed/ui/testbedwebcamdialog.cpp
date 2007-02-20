@@ -18,15 +18,13 @@
 #include <webcamwidget.h>
 #include "avdevice/videodevicepool.h"
 
-#include <q3frame.h>
-#include <qobject.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <q3vbox.h>
-//Added by qt3to4:
+#include <QObject>
+#include <QWidget>
 #include <QPixmap>
+
 #include <Q3VBoxLayout>
+#include <q3vbox.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -52,7 +50,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	mImageContainer->setMinimumSize(320,240);
 	mImageContainer->setText( i18n( "No webcam image received" ) );
 	mImageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	topLayout->add( mImageContainer );
+	topLayout->addWidget( mImageContainer );
 
 	show();
 	
@@ -66,11 +64,12 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	kDebug() << "Just captured 1st frame" << endl;
 #endif
 
-	mPixmap=QPixmap(320,240);
-	if (mPixmap.convertFromImage(mImage,0) == true)
+	mPixmap=QPixmap::fromImage(mImage);
+	if (!mPixmap.isNull())
 		mImageContainer->updatePixmap(mPixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(0,false);
+	qtimer.setSingleShot(false);
+	qtimer.start(0);
 }
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
