@@ -21,7 +21,6 @@
 #include <kfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
-#include <kio/observer.h>
 #include <kio/jobuidelegate.h>
 
 #include "kopetemetacontact.h"
@@ -74,7 +73,7 @@ void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 	mTarget = target;
 
 	if( showProgressInfo )
-		Observer::self()->slotCopying( this, sourceURL(), destinationURL() );
+		ui()->copying( sourceURL(), destinationURL() );
 
 	connect( this, SIGNAL( result( KJob* ) ), SLOT( slotResultEmitted() ) );
 
