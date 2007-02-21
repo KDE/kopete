@@ -801,7 +801,7 @@ void JabberContact::slotChatSessionDeleted ( QObject *sender )
 
 	JabberChatSession *manager = static_cast<JabberChatSession *>(sender);
 
-	mManagers.remove ( mManagers.find ( manager ) );
+	mManagers.removeAll ( manager );
 
 }
 
@@ -862,8 +862,11 @@ JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Con
 	 */
 	if ( !resource.isEmpty () )
 	{
-		for ( JabberChatSession *mManager = mManagers.first (); mManager; mManager = mManagers.next () )
+		QList<JabberChatSession*>::iterator it = mManagers.begin();
+		QList<JabberChatSession*>::iterator end = mManagers.end();
+		for ( ; it != end ; ++it )
 		{
+			JabberChatSession *mManager = *it;
 			if ( mManager->resource().isEmpty () || ( mManager->resource () == resource ) )
 			{
 				// we found a matching manager, return this one

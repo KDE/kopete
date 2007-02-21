@@ -18,9 +18,7 @@
 
 #include "dlgjabbersendraw.h"
 
-#include <q3combobox.h>
 #include <qpushbutton.h>
-#include <q3textedit.h>
 #include <kdebug.h>
 #include "jabberclient.h"
 

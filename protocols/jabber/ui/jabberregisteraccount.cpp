@@ -128,8 +128,8 @@ void JabberRegisterAccount::slotDeleteDialog ()
 void JabberRegisterAccount::validateData ()
 {
 
-	int valid = true;
-	int passwordHighlight = false;
+	bool valid = true;
+	bool passwordHighlight = false;
 
 	if ( mMainWidget->leServer->text().isEmpty () )
 	{

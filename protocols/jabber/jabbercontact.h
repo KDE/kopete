@@ -238,7 +238,7 @@ private:
 	 * The casts in manager() and slotChatSessionDeleted()
 	 * are thus legal.
 	 */
-	Q3PtrList<JabberChatSession> mManagers;
+	QList<JabberChatSession*> mManagers;
 
 	/**
 	 * Indicates whether the vCard is currently
