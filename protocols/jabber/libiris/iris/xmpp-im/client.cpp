@@ -21,7 +21,7 @@
 #include "im.h"
 #include "safedelete.h"
 
-//! \class Client client.h
+//! \class XMPP::Client client.h
 //! \brief Communicates with the Jabber network.  Start here.
 //!
 //!  Client controls an active Jabber connection.  It allows you to connect,
@@ -557,11 +557,7 @@ void Client::distribute(const QDomElement &x)
 		debug("Client: Unrecognized IQ.\n");
 
 		// Create reply element
-		QDomElement reply = doc()->createElement("iq");
-		reply.setAttribute("to",x.attribute("from"));
-		reply.setAttribute("type","error");
-		if (!x.attribute("id").isEmpty())
-			reply.setAttribute("id",x.attribute("id"));
+		QDomElement reply = createIQ(doc(), "error", x.attribute("from"), x.attribute("id"));
 
 		// Copy children
 		for (QDomNode n = x.firstChild(); !n.isNull(); n = n.nextSibling()) {
@@ -579,51 +575,6 @@ void Client::distribute(const QDomElement &x)
 
 		send(reply);
 	}
-}
-
-static QDomElement addCorrectNS(const QDomElement &e)
-{
-	int x;
-
-	// grab child nodes
-	/*QDomDocumentFragment frag = e.ownerDocument().createDocumentFragment();
-	QDomNodeList nl = e.childNodes();
-	for(x = 0; x < nl.count(); ++x)
-		frag.appendChild(nl.item(x).cloneNode());*/
-
-	// find closest xmlns
-	QDomNode n = e;
-	while(!n.isNull() && !n.toElement().hasAttribute("xmlns"))
-		n = n.parentNode();
-	QString ns;
-	if(n.isNull() || !n.toElement().hasAttribute("xmlns"))
-		ns = "jabber:client";
-	else
-		ns = n.toElement().attribute("xmlns");
-
-	// make a new node
-	QDomElement i = e.ownerDocument().createElementNS(ns, e.tagName());
-
-	// copy attributes
-	QDomNamedNodeMap al = e.attributes();
-	for(x = 0; x < al.count(); ++x) {
-		QDomAttr a = al.item(x).toAttr();
-		if(a.name() != "xmlns")
-			i.setAttributeNodeNS(a.cloneNode().toAttr());
-	}
-
-	// copy children
-	QDomNodeList nl = e.childNodes();
-	for(x = 0; x < nl.count(); ++x) {
-		QDomNode n = nl.item(x);
-		if(n.isElement())
-			i.appendChild(addCorrectNS(n.toElement()));
-		else
-			i.appendChild(n.cloneNode());
-	}
-
-	//i.appendChild(frag);
-	return i;
 }
 
 void Client::send(const QDomElement &x)

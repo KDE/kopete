@@ -82,6 +82,8 @@ public:
 		PropList list;
 		int at = 0;
 		while(1) {
+			while (at < str.length() && (str[at] == ',' || str[at] == ' ' || str[at] == '\t'))
+				  ++at;
 			int n = str.find('=', at);
 			if(n == -1)
 				break;
@@ -97,24 +99,36 @@ public:
 				at = n + 1;
 			}
 			else {
-				n = str.find(',', at);
-				if(n != -1) {
-					val = str.mid(at, n-at);
-					at = n;
-				}
-				else {
-					val = str.mid(at);
-					at = str.length()-1;
-				}
+				n = at;
+				while (n < str.length() && str[n] != ',' && str[n] != ' ' && str[n] != '\t')
+					++n;
+				val = str.mid(at, n-at);
+				at = n;
 			}
 			Prop prop;
 			prop.var = var;
-			prop.val = val;
-			list.append(prop);
+			if (var == "qop" || var == "cipher") {
+				int a = 0;
+				while (a < val.length()) {
+					while (a < val.length() && (val[a] == ',' || val[a] == ' ' || val[a] == '\t'))
+						++a;
+					if (a == val.length())
+						break;
+					n = a+1;
+					while (n < val.length() && val[n] != ',' && val[n] != ' ' && val[n] != '\t')
+						++n;
+					prop.val = val.mid(a, n-a);
+					list.append(prop);
+					a = n+1;
+				}
+			}
+			else {
+				prop.val = val;
+				list.append(prop);
+			}
 
-			if(at >= str.size() - 1 || str[at] != ',')
+			if(at >= str.size() - 1 || (str[at] != ',' && str[at] != ' ' && str[at] != '\t'))
 				break;
-			++at;
 		}
 
 		// integrity check
@@ -317,6 +331,7 @@ public:
 				result_ = Error;
 				return;
 			}
+			//qDebug(QString("simplesasl.cpp: IN: %1").arg(QString(in.toString())));
 
 			// make a cnonce
 			QByteArray a(32);
@@ -325,7 +340,8 @@ public:
 			Q3CString cnonce = QCA::Base64().arrayToString(a).latin1();
 
 			// make other variables
-			realm = host;
+			if (realm.isEmpty())
+				realm = QString::fromUtf8(in.get("realm"));
 			Q3CString nonce = in.get("nonce");
 			Q3CString nc = "00000001";
 			Q3CString uri = service.utf8() + '/' + host.utf8();
@@ -337,6 +353,7 @@ public:
 			QByteArray tmp = ':' + nonce + ':' + cnonce;
 			if (!authz.isEmpty())
 				tmp += ':' + authz.utf8();
+			//qDebug(QString(tmp));
 
 			QByteArray A1(Y + tmp);
 			QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
@@ -344,11 +361,16 @@ public:
 			Q3CString HA2 = QCA::Hash("md5").hashToString(A2).latin1();
 			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
 			Q3CString Z = QCA::Hash("md5").hashToString(KD).latin1();
+			
+			//qDebug(QString("simplesasl.cpp: A1 = %1").arg(QString(A1)).toAscii());
+			//qDebug(QString("simplesasl.cpp: A2 = %1").arg(QString(A2)).toAscii());
+			//qDebug(QString("simplesasl.cpp: KD = %1").arg(QString(KD)).toAscii());
 
 			// build output
 			PropList out;
 			out.set("username", user.utf8());
-			out.set("realm", host.utf8());
+			if (!realm.isEmpty())
+				out.set("realm", realm.utf8());
 			out.set("nonce", nonce);
 			out.set("cnonce", cnonce);
 			out.set("nc", nc);
@@ -361,6 +383,7 @@ public:
 			if (!authz.isEmpty())
 				out.set("authzid", authz.utf8());
 			QByteArray s(out.toString());
+			//qDebug(QString("OUT: %1").arg(QString(out.toString())));
 
 			// done
 			out_buf.resize(s.length());

@@ -24,9 +24,33 @@
 #include <qdatetime.h>
 //Added by qt3to4:
 #include <QList>
+
 #include "xmpp.h"
+#include "xmpp_jid.h"
+#include "xmpp_muc.h"
+#include "xmpp_status.h"
+#include "xmpp_features.h"
+#include "xmpp_task.h"
+#include "xmpp_rosterx.h"
+#include "xmpp_xdata.h"
 
 #include <iris_export.h>
+
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+# define IRIS_DUMMY_COMPARISON_OPERATOR(C) \
+    bool operator==(const C&) const { \
+        qWarning(#C"::operator==(const "#C"&) was called"); \
+        return false; \
+    }
+# define IRIS_DUMMY_QHASH_FUNCTION(C) \
+    inline uint qHash(const C) { \
+        qWarning("inline uint qHash(const "#C") was called"); \
+        return 0; \
+    }
+#else
+# define IRIS_DUMMY_COMPARISON_OPERATOR(C)
+# define IRIS_DUMMY_QHASH_FUNCTION(C)
+#endif
 
 namespace XMPP
 {
@@ -102,141 +126,6 @@ namespace XMPP
 		QDomElement payload_;
 	};
 
-	class MUCItem
-	{
-	public:
-		enum Affiliation { UnknownAffiliation, Outcast, NoAffiliation, Member, Admin, Owner };
-		enum Role { UnknownRole, NoRole, Visitor, Participant, Moderator };
-
-		MUCItem(Role = UnknownRole, Affiliation = UnknownAffiliation);
-		MUCItem(const QDomElement&);
-
-		void setNick(const QString&);
-		void setJid(const Jid&);
-		void setAffiliation(Affiliation);
-		void setRole(Role);
-		void setActor(const Jid&);
-		void setReason(const QString&);
-
-		const QString& nick() const;
-		const Jid& jid() const;
-		Affiliation affiliation() const;
-		Role role() const;
-		const Jid& actor() const;
-		const QString& reason() const;
-
-		void fromXml(const QDomElement&);
-		QDomElement toXml(QDomDocument&);
-
-		bool operator==(const MUCItem& o);
-
-	private:
-		QString nick_;
-		Jid jid_, actor_;
-		Affiliation affiliation_;
-		Role role_;	
-		QString reason_;
-	};
-	
-	class MUCInvite
-	{
-	public:
-		MUCInvite();
-		MUCInvite(const QDomElement&);
-		MUCInvite(const Jid& to, const QString& reason = QString());
-
-		const Jid& to() const;
-		void setTo(const Jid&);
-		const Jid& from() const;
-		void setFrom(const Jid&);
-		const QString& reason() const;
-		void setReason(const QString&);
-		bool cont() const;
-		void setCont(bool);
-
-
-		void fromXml(const QDomElement&);
-		QDomElement toXml(QDomDocument&) const;
-		bool isNull() const;
-		
-	private:
-		Jid to_, from_;
-		QString reason_, password_;
-		bool cont_;
-	};
-	
-	class MUCDecline
-	{
-	public:
-		MUCDecline();
-		MUCDecline(const Jid& to, const QString& reason);
-		MUCDecline(const QDomElement&);
-
-		const Jid& to() const;
-		void setTo(const Jid&);
-		const Jid& from() const;
-		void setFrom(const Jid&);
-		const QString& reason() const;
-		void setReason(const QString&);
-
-		void fromXml(const QDomElement&);
-		QDomElement toXml(QDomDocument&) const;
-		bool isNull() const;
-		
-	private:
-		Jid to_, from_;
-		QString reason_;
-	};
-	
-	class MUCDestroy
-	{
-	public:
-		MUCDestroy();
-		MUCDestroy(const QDomElement&);
-
-		const Jid& jid() const;
-		void setJid(const Jid&);
-		const QString& reason() const;
-		void setReason(const QString&);
-
-		void fromXml(const QDomElement&);
-		QDomElement toXml(QDomDocument&) const;
-		
-	private:
-		Jid jid_;
-		QString reason_;
-	};
-
-	class RosterExchangeItem
-	{
-	public:
-		enum Action { Add, Delete, Modify };
-
-		RosterExchangeItem(const Jid& jid, const QString& name = "", const QStringList& groups = QStringList(), Action = Add);
-		RosterExchangeItem(const QDomElement&);
-		
-		const Jid& jid() const;
-		Action action() const;
-		const QString& name() const;
-		const QStringList& groups() const;
-		bool isNull() const;
-
-		void setJid(const Jid&);
-		void setAction(Action);
-		void setName(const QString&);
-		void setGroups(const QStringList&);
-
-		QDomElement toXml(Stanza&) const;
-		void fromXml(const QDomElement&);
-		
-	private:
-		Jid jid_;
-		QString name_;
-		QStringList groups_;
-		Action action_;
-	};
-	typedef QList<RosterExchangeItem> RosterExchangeItems;
-
 	class IRIS_EXPORT HTMLElement
 	{
 	public:
@@ -250,6 +139,32 @@ namespace XMPP
 
 	private:
 		QDomElement body_;
+	};
+
+	class HttpAuthRequest
+	{
+	public:
+		HttpAuthRequest(const QString &m, const QString &u, const QString &i);
+		HttpAuthRequest(const QString &m = "", const QString &u = "");
+		HttpAuthRequest(const QDomElement &);
+
+		bool isEmpty() const;
+
+		void setMethod(const QString&);
+		void setUrl(const QString&);
+		void setId(const QString&);
+		QString method() const;
+		QString url() const;
+		QString id() const;
+		bool hasId() const;
+
+		QDomElement toXml(QDomDocument &) const;
+		bool fromXml(const QDomElement &);
+
+		static Stanza::Error denyError;
+	private:
+		QString method_, url_, id_;
+		bool hasId_;
 	};
 
 	class IRIS_EXPORT Message
@@ -277,7 +192,7 @@ namespace XMPP
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
-		void setThread(const QString &s);
+		void setThread(const QString &s, bool send = false);
 		void setError(const Stanza::Error &err);
 
 		// JEP-0060
@@ -329,6 +244,18 @@ namespace XMPP
 		void setNick(const QString&);
 		const QString& nick() const;
 
+		// JEP-0070
+		void setHttpAuthRequest(const HttpAuthRequest&);
+		HttpAuthRequest httpAuthRequest() const;
+
+		// JEP-0004
+		void setForm(const XData&);
+		const XData& getForm() const;
+
+		// JEP-xxxx Whiteboarding
+		void setWhiteboard(const QDomElement&);
+		const QDomElement& whiteboard() const;
+
 		// MUC
 		void setMUCStatus(int);
 		bool hasMUCStatus() const;
@@ -374,96 +301,6 @@ namespace XMPP
 		SubType value;
 	};
 
-	class IRIS_EXPORT Status
-	{
-	public:
-		Status(const QString &show="", const QString &status="", int priority=0, bool available=true);
-		~Status();
-
-		int priority() const;
-		const QString & show() const;
-		const QString & status() const;
-		QDateTime timeStamp() const;
-		const QString & keyID() const;
-		bool isAvailable() const;
-		bool isAway() const;
-		bool isInvisible() const;
-		bool hasError() const;
-		int errorCode() const;
-		const QString & errorString() const;
-
-		const QString & xsigned() const;
-		const QString & songTitle() const;
-		const QString & capsNode() const;
-		const QString & capsVersion() const;
-		const QString & capsExt() const;
-		
-		bool isMUC() const;
-		bool hasMUCItem() const;
-		const MUCItem & mucItem() const;
-		bool hasMUCDestroy() const;
-		const MUCDestroy & mucDestroy() const;
-		bool hasMUCStatus() const;
-		int mucStatus() const;
-		const QString& mucPassword() const;
-		bool hasMUCHistory() const;
-		int mucHistoryMaxChars() const;
-		int mucHistoryMaxStanzas() const;
-		int mucHistorySeconds() const;
-
-		void setPriority(int);
-		void setShow(const QString &);
-		void setStatus(const QString &);
-		void setTimeStamp(const QDateTime &);
-		void setKeyID(const QString &);
-		void setIsAvailable(bool);
-		void setIsInvisible(bool);
-		void setError(int, const QString &);
-		void setCapsNode(const QString&);
-		void setCapsVersion(const QString&);
-		void setCapsExt(const QString&);
-		
-		void setMUC();
-		void setMUCItem(const MUCItem&);
-		void setMUCDestroy(const MUCDestroy&);
-		void setMUCStatus(int);
-		void setMUCPassword(const QString&);
-		void setMUCHistory(int maxchars, int maxstanzas, int seconds);
-
-		void setXSigned(const QString &);
-		void setSongTitle(const QString &);
-
-		// JEP-153: VCard-based Avatars
-		const QString& photoHash() const;
-		void setPhotoHash(const QString&);
-		bool hasPhotoHash() const;
-
-	private:
-		int v_priority;
-		QString v_show, v_status, v_key;
-		QDateTime v_timeStamp;
-		bool v_isAvailable;
-		bool v_isInvisible;
-		QString v_photoHash;
-		bool v_hasPhotoHash;
-
-		QString v_xsigned;
-		// gabber song extension
-		QString v_songTitle;
-		QString v_capsNode, v_capsVersion, v_capsExt;
-
-		// MUC
-		bool v_isMUC, v_hasMUCItem, v_hasMUCDestroy;
-		MUCItem v_mucItem;
-		MUCDestroy v_mucDestroy;
-		int v_mucStatus;
-		QString v_mucPassword;
-		int v_mucHistoryMaxChars, v_mucHistoryMaxStanzas, v_mucHistorySeconds;
-
-		int ecode;
-		QString estr;
-	};
-
 	class IRIS_EXPORT Resource
 	{
 	public:
@@ -477,10 +314,12 @@ namespace XMPP
 		void setName(const QString &);
 		void setStatus(const Status &);
 
+		IRIS_DUMMY_COMPARISON_OPERATOR(Resource)
 	private:
 		QString v_name;
 		Status v_status;
 	};
+	IRIS_DUMMY_QHASH_FUNCTION(Resource)
 
 	class IRIS_EXPORT ResourceList : public QList<Resource>
 	{
@@ -521,6 +360,7 @@ namespace XMPP
 		QDomElement toXml(QDomDocument *) const;
 		bool fromXml(const QDomElement &);
 
+		IRIS_DUMMY_COMPARISON_OPERATOR(RosterItem)
 	private:
 		Jid v_jid;
 		QString v_name;
@@ -529,6 +369,7 @@ namespace XMPP
 		QString v_ask;
 		bool v_push;
 	};
+	IRIS_DUMMY_QHASH_FUNCTION(RosterItem)
 
 	class IRIS_EXPORT Roster : public QList<RosterItem>
 	{
@@ -541,63 +382,6 @@ namespace XMPP
 
 	private:
 		class RosterPrivate *d;
-	};
-
-        class IRIS_EXPORT Features
-	{
-	public:
-		Features();
-		Features(const QStringList &);
-		Features(const QString &);
-		~Features();
-
-		QStringList list() const; // actual featurelist
-		void setList(const QStringList &);
-		void addFeature(const QString&);
-
-		// features
-		bool canRegister() const;
-		bool canSearch() const;
-		bool canMulticast() const;
-		bool canGroupchat() const;
-		bool canVoice() const;
-		bool canDisco() const;
-		bool canChatState() const;
-		bool canCommand() const;
-		bool canXHTML() const;
-		bool isGateway() const;
-		bool haveVCard() const;
-
-		enum FeatureID {
-			FID_Invalid = -1,
-			FID_None,
-			FID_Register,
-			FID_Search,
-			FID_Groupchat,
-			FID_Disco,
-			FID_Gateway,
-			FID_VCard,
-			FID_AHCommand,
-			FID_Xhtml,
-
-			// private Psi actions
-			FID_Add
-		};
-
-		// useful functions
-		bool test(const QStringList &) const;
-
-		QString name() const;
-		static QString name(long id);
-		static QString name(const QString &feature);
-
-		long id() const;
-		static long id(const QString &feature);
-		static QString feature(long id);
-
-		class FeatureName;
-	private:
-		QStringList _list;
 	};
 
 	class IRIS_EXPORT AgentItem
@@ -697,6 +481,8 @@ namespace XMPP
 		bool setType(const QString &);
 		void setValue(const QString &);
 
+		IRIS_DUMMY_COMPARISON_OPERATOR(FormField)
+
 	private:
 		int tagNameToType(const QString &) const;
 		QString typeToTagName(int) const;
@@ -707,6 +493,7 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
+	IRIS_DUMMY_QHASH_FUNCTION(FormField)
 
 	class IRIS_EXPORT Form : public QList<FormField>
 	{
@@ -759,53 +546,6 @@ namespace XMPP
 	class IBBManager;
 	class JidLinkManager;
 	class FileTransferManager;
-
-	class IRIS_EXPORT Task : public QObject
-	{
-		Q_OBJECT
-	public:
-		enum { ErrDisc };
-		Task(Task *parent);
-		Task(Client *, bool isRoot);
-		virtual ~Task();
-
-		Task *parent() const;
-		Client *client() const;
-		QDomDocument *doc() const;
-		QString id() const;
-
-		bool success() const;
-		int statusCode() const;
-		const QString & statusString() const;
-
-		void go(bool autoDelete=false);
-		virtual bool take(const QDomElement &);
-		void safeDelete();
-
-	signals:
-		void finished();
-
-	protected:
-		virtual void onGo();
-		virtual void onDisconnect();
-		void send(const QDomElement &);
-		void setSuccess(int code=0, const QString &str="");
-		void setError(const QDomElement &);
-		void setError(int code=0, const QString &str="");
-		void debug(const char *, ...);
-		void debug(const QString &);
-		bool iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns="");
-
-	private slots:
-		void clientDisconnected();
-		void done();
-
-	private:
-		void init();
-
-		class TaskPrivate;
-		TaskPrivate *d;
-	};
 
 	class IRIS_EXPORT Client : public QObject
 	{

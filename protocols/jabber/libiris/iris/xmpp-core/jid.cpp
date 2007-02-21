@@ -18,14 +18,13 @@
  *
  */
 
-#include "xmpp.h"
-
-#include <q3dict.h>
-//Added by qt3to4:
-#include <Q3CString>
-#include <stringprep.h>
+#include "xmpp_jid.h"
 
 #include <QApplication>
+#include <QByteArray>
+#include <q3dict.h>
+#include <stringprep.h>
+
 
 using namespace XMPP;
 
@@ -56,7 +55,7 @@ public:
 			return true;
 		}
 
-		Q3CString cs = in.utf8();
+		QByteArray cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_nameprep) != 0)
 		{
@@ -92,7 +91,7 @@ public:
 			return true;
 		}
 
-		Q3CString cs = in.utf8();
+		QByteArray cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) != 0)
 		{
@@ -128,7 +127,7 @@ public:
 			return true;
 		}
 
-		Q3CString cs = in.utf8();
+		QByteArray cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_resourceprep) != 0)
 		{
@@ -193,6 +192,7 @@ StringPrepCache *StringPrepCache::instance = 0;
 Jid::Jid()
 {
 	valid = false;
+	null = true;
 }
 
 Jid::~Jid()
@@ -229,6 +229,7 @@ void Jid::reset()
 	n = QString();
 	r = QString();
 	valid = false;
+	null = true;
 }
 
 void Jid::update()
@@ -247,6 +248,7 @@ void Jid::update()
 		f = b + '/' + r;
 	if(f.isEmpty())
 		valid = false;
+	null = f.isEmpty() && r.isEmpty();
 }
 
 void Jid::set(const QString &s)
@@ -282,6 +284,7 @@ void Jid::set(const QString &s)
 	}
 
 	valid = true;
+	null = false;
 	d = norm_domain;
 	n = norm_node;
 	r = norm_resource;
@@ -296,6 +299,7 @@ void Jid::set(const QString &domain, const QString &node, const QString &resourc
 		return;
 	}
 	valid = true;
+	null = false;
 	d = norm_domain;
 	n = norm_node;
 	r = norm_resource;
@@ -367,6 +371,9 @@ bool Jid::isEmpty() const
 
 bool Jid::compare(const Jid &a, bool compareRes) const
 {
+	if(null && a.null)
+		return true;
+
 	// only compare valid jids
 	if(!valid || !a.valid)
 		return false;
@@ -412,5 +419,3 @@ bool Jid::validResource(const QString &s, QString *norm)
 	return true;*/
 	return StringPrepCache::resourceprep(s, 1024, norm);
 }
-
-#include "jid.moc"

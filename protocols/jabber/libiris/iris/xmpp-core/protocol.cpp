@@ -88,6 +88,7 @@ StreamFeatures::StreamFeatures()
 	sasl_supported = false;
 	bind_supported = false;
 	tls_required = false;
+	compress_supported = false;
 }
 
 //----------------------------------------------------------------------------
@@ -619,6 +620,7 @@ void CoreProtocol::init()
 	allowPlain = false;
 	doTLS = true;
 	doAuth = true;
+	doCompress = true;
 	doBinding = true;
 
 	// input
@@ -630,6 +632,7 @@ void CoreProtocol::init()
 	digest = false;
 	tls_started = false;
 	sasl_started = false;
+	compress_started = false;
 }
 
 void CoreProtocol::reset()
@@ -638,12 +641,13 @@ void CoreProtocol::reset()
 	init();
 }
 
-void CoreProtocol::startClientOut(const Jid &_jid, bool _oldOnly, bool tlsActive, bool _doAuth)
+void CoreProtocol::startClientOut(const Jid &_jid, bool _oldOnly, bool tlsActive, bool _doAuth, bool _doCompress)
 {
 	jid_ = _jid;
 	to = _jid.domain();
 	oldOnly = _oldOnly;
 	doAuth = _doAuth;
+	doCompress = _doCompress;
 	tls_started = tlsActive;
 
 	if(oldOnly)
@@ -777,6 +781,7 @@ bool CoreProtocol::stepRequiresElement() const
 	switch(step) {
 		case GetFeatures:
 		case GetTLSProceed:
+		case GetCompressProceed:
 		case GetSASLChallenge:
 		case GetBindResponse:
 		case GetAuthGetResponse:
@@ -1058,6 +1063,22 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			return true;
 		}
 
+		// Should we go further ?
+		if (!doAuth)
+			return loginComplete();
+		
+		// Deal with compression
+		if (doCompress && !compress_started && features.compress_supported && features.compression_mechs.contains("zlib")) {
+			QDomElement e = doc.createElementNS(NS_COMPRESS_PROTOCOL, "compress");
+			QDomElement m = doc.createElementNS(NS_COMPRESS_PROTOCOL, "method");
+			m.appendChild(doc.createTextNode("zlib"));
+			e.appendChild(m);
+			send(e,true);
+			event = ESend;
+			step = GetCompressProceed;
+			return true;
+		}
+
 		// deal with SASL?
 		if(!sasl_authed) {
 			if(!features.sasl_supported) {
@@ -1285,6 +1306,13 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				for(int n = 0; n < l.count(); ++n)
 					f.sasl_mechs += l.item(n).toElement().text();
 			}
+			QDomElement c = e.elementsByTagNameNS(NS_COMPRESS_FEATURE, "compression").item(0).toElement();
+			if(!c.isNull()) {
+				f.compress_supported = true;
+				QDomNodeList l = c.elementsByTagNameNS(NS_COMPRESS_FEATURE, "method");
+				for(int n = 0; n < l.count(); ++n)
+					f.compression_mechs += l.item(n).toElement().text();
+			}
 			QDomElement b = e.elementsByTagNameNS(NS_BIND, "bind").item(0).toElement();
 			if(!b.isNull())
 				f.bind_supported = true;
@@ -1305,15 +1333,19 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				TD::msg(s);
 #endif
 			}
-
-			if(doAuth) {
-				event = EFeatures;
-				features = f;
-				step = HandleFeatures;
-				return true;
+			if(f.compress_supported) {
+#ifdef XMPP_TEST
+				QString s = "Compression mechs:";
+				for(QStringList::ConstIterator it = f.compression_mechs.begin(); it != f.compression_mechs.end(); ++it)
+					s += QString(" [%1]").arg((*it));
+				TD::msg(s);
+#endif
 			}
-			else
-				return loginComplete();
+
+			event = EFeatures;
+			features = f;
+			step = HandleFeatures;
+			return true;
 		}
 		else {
 			// ignore
@@ -1335,6 +1367,34 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			else if(e.tagName() == "failure") {
 				event = EError;
 				errorCode = ErrStartTLS;
+				return true;
+			}
+			else {
+				event = EError;
+				errorCode = ErrProtocol;
+				return true;
+			}
+		}
+		else {
+			// ignore
+		}
+	}
+	else if(step == GetCompressProceed) {
+		// waiting for proceed to compression
+		if(e.namespaceURI() == NS_COMPRESS_PROTOCOL) {
+			if(e.tagName() == "compressed") {
+#ifdef XMPP_TEST
+				TD::msg("Server wants us to proceed with compression");
+#endif
+				compress_started = true;
+				need = NCompress;
+				spare = resetStream();
+				step = Start;
+				return false;
+			}
+			else if(e.tagName() == "failure") {
+				event = EError;
+				errorCode = ErrCompress;
 				return true;
 			}
 			else {

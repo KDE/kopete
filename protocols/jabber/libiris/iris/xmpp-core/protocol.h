@@ -38,6 +38,8 @@
 #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
 #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
 #define NS_CHATSTATES "http://jabber.org/protocol/chatstates"
+#define NS_COMPRESS_FEATURE "http://jabber.org/features/compress"
+#define NS_COMPRESS_PROTOCOL "http://jabber.org/protocol/compress"
 
 namespace XMPP
 {
@@ -54,9 +56,10 @@ namespace XMPP
 	public:
 		StreamFeatures();
 
-		bool tls_supported, sasl_supported, bind_supported;
+		bool tls_supported, sasl_supported, bind_supported, compress_supported;
 		bool tls_required;
 		QStringList sasl_mechs;
+		QStringList compression_mechs;
 	};
 
 	class BasicProtocol : public XmlProtocol
@@ -108,6 +111,7 @@ namespace XMPP
 		enum Need {
 			NSASLMechs = XmlProtocol::NCustom, // need SASL mechlist
 			NStartTLS,  // need to switch on TLS layer
+			NCompress,  // need to switch on compression layer
 			NSASLFirst, // need SASL first step
 			NSASLNext,  // need SASL next step
 			NSASLLayer, // need to switch on SASL layer
@@ -125,6 +129,7 @@ namespace XMPP
 			ErrProtocol = XmlProtocol::ErrCustom, // there was an error in the xmpp-core protocol exchange
 			ErrStream,   // <stream:error>, see errCond, errText, and errAppSpec for details
 			ErrStartTLS, // server refused starttls
+			ErrCompress, // server refused compression
 			ErrAuth,     // authorization error.  errCond holds sasl condition (or numeric code for old-protocol)
 			ErrBind,     // server refused resource bind
 			ErrCustom = XmlProtocol::ErrCustom+10
@@ -253,7 +258,7 @@ namespace XMPP
 
 		void reset();
 
-		void startClientOut(const Jid &jid, bool oldOnly, bool tlsActive, bool doAuth);
+		void startClientOut(const Jid &jid, bool oldOnly, bool tlsActive, bool doAuth, bool doCompression);
 		void startServerOut(const QString &to);
 		void startDialbackOut(const QString &to, const QString &from);
 		void startDialbackVerifyOut(const QString &to, const QString &from, const QString &id, const QString &key);
@@ -302,6 +307,7 @@ namespace XMPP
 			GetFeatures,        // read features packet
 			HandleFeatures,     // act on features, by initiating tls, sasl, or bind
 			GetTLSProceed,      // read <proceed/> tls response
+			GetCompressProceed, // read <compressed/> compression response
 			GetSASLFirst,       // perform sasl first step using provided data
 			GetSASLChallenge,   // read server sasl challenge
 			GetSASLNext,        // perform sasl next step using provided data
@@ -319,12 +325,12 @@ namespace XMPP
 		int step;
 
 		bool digest;
-		bool tls_started, sasl_started;
+		bool tls_started, sasl_started, compress_started;
 
 		Jid jid_;
 		bool oldOnly;
 		bool allowPlain;
-		bool doTLS, doAuth, doBinding;
+		bool doTLS, doAuth, doBinding, doCompress;
 		QString password;
 
 		QString dialback_id, dialback_key;

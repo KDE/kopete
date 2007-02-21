@@ -30,6 +30,11 @@
 
 #include <iris_export.h>
 
+// timezone() conflicts with a define/whatever deep inside win-sdk headers
+#ifdef Q_OS_WIN
+# undef timezone
+#endif
+
 class QDate;
 
 namespace XMPP

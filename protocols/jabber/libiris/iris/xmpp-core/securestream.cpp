@@ -37,6 +37,7 @@
 #ifdef USE_TLSHANDLER
 #include "xmpp.h"
 #endif
+#include "compressionhandler.h"
 
 //----------------------------------------------------------------------------
 // LayerTracker
@@ -115,7 +116,7 @@ class SecureLayer : public QObject
 {
 	Q_OBJECT
 public:
-	enum { TLS, SASL, TLSH };
+	enum { TLS, SASL, TLSH, Compression };
 	int type;
 	union {
 		QCA::TLS *tls;
@@ -123,6 +124,7 @@ public:
 #ifdef USE_TLSHANDLER
 		XMPP::TLSHandler *tlsHandler;
 #endif
+		CompressionHandler *compressionHandler;
 	} p;
 	LayerTracker layer;
 	bool tls_done;
@@ -148,6 +150,16 @@ public:
 		connect(p.sasl, SIGNAL(readyRead()), SLOT(sasl_readyRead()));
 		connect(p.sasl, SIGNAL(readyReadOutgoing()), SLOT(sasl_readyReadOutgoing()));
 		connect(p.sasl, SIGNAL(error()), SLOT(sasl_error()));
+	}
+	
+	SecureLayer(CompressionHandler *t)
+	{
+		type = Compression;
+		p.compressionHandler = t;
+		init();
+		connect(p.compressionHandler, SIGNAL(readyRead()), SLOT(compressionHandler_readyRead()));
+		connect(p.compressionHandler, SIGNAL(readyReadOutgoing()), SLOT(compressionHandler_readyReadOutgoing()));
+		connect(p.compressionHandler, SIGNAL(error()), SLOT(compressionHandler_error()));
 	}
 
 #ifdef USE_TLSHANDLER
@@ -179,6 +191,7 @@ public:
 #ifdef USE_TLSHANDLER
 			case TLSH: { p.tlsHandler->write(a); break; }
 #endif
+			case Compression: { p.compressionHandler->write(a); break; }
 		}
 	}
 
@@ -190,6 +203,7 @@ public:
 #ifdef USE_TLSHANDLER
 			case TLSH: { p.tlsHandler->writeIncoming(a); break; }
 #endif
+			case Compression: { p.compressionHandler->writeIncoming(a); break; }
 		}
 	}
 
@@ -275,6 +289,25 @@ private slots:
 	{
 		error(p.sasl->errorCode());
 	}
+	
+	void compressionHandler_readyRead()
+	{
+		QByteArray a = p.compressionHandler->read();
+		readyRead(a);
+	}
+
+	void compressionHandler_readyReadOutgoing()
+	{
+		int plainBytes;
+		QByteArray a = p.compressionHandler->readOutgoing(&plainBytes);
+		layer.specifyEncoded(a.size(), plainBytes);
+		needWrite(a);
+	}
+
+	void compressionHandler_error()
+	{
+		error(p.compressionHandler->errorCode());
+	}
 
 #ifdef USE_TLSHANDLER
 	void tlsHandler_success()
@@ -337,6 +370,16 @@ public:
 		Q3PtrListIterator<SecureLayer> it(layers);
 		for(SecureLayer *s; (s = it.current()); ++it) {
 			if(s->type == SecureLayer::SASL)
+				return true;
+		}
+		return false;
+	}
+	
+	bool haveCompress() const
+	{
+		Q3PtrListIterator<SecureLayer> it(layers);
+		for(SecureLayer *s; (s = it.current()); ++it) {
+			if(s->type == SecureLayer::Compression)
 				return true;
 		}
 		return false;
@@ -405,6 +448,19 @@ void SecureStream::startTLSServer(QCA::TLS *t, const QByteArray &spare)
 	linkLayer(s);
 	d->layers.append(s);
 	d->topInProgress = true;
+
+	insertData(spare);
+}
+
+void SecureStream::setLayerCompress(const QByteArray& spare)
+{
+	if(!d->active || d->topInProgress || d->haveCompress())
+		return;
+
+	SecureLayer *s = new SecureLayer(new CompressionHandler());
+	s->prebytes = calcPrebytes();
+	linkLayer(s);
+	d->layers.append(s);
 
 	insertData(spare);
 }
@@ -486,10 +542,12 @@ void SecureStream::bs_readyRead()
 
 	// send to the first layer
 	SecureLayer *s = d->layers.getFirst();
-	if(s)
+	if(s) {
 		s->writeIncoming(a);
-	else
+	}
+	else {
 		incomingData(a);
+	}
 }
 
 void SecureStream::bs_bytesWritten(int bytes)
@@ -590,3 +648,4 @@ void SecureStream::incomingData(const QByteArray &a)
 }
 
 #include "securestream.moc"
+#include "moc_securestream.cxx"

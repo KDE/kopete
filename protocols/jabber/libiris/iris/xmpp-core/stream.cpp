@@ -256,13 +256,16 @@ Stanza::Error::Private::ErrorCondEntry Stanza::Error::Private::errorCondTable[] 
 	{ "conflict",                Conflict },
 	{ "feature-not-implemented", FeatureNotImplemented },
 	{ "forbidden",               Forbidden },
+	{ "gone",                    Gone },
 	{ "internal-server-error",   InternalServerError },
 	{ "item-not-found",          ItemNotFound },
 	{ "jid-malformed",           JidMalformed },
+	{ "not-acceptable",          NotAcceptable },
 	{ "not-allowed",             NotAllowed },
 	{ "not-authorized",          NotAuthorized },
 	{ "payment-required",        PaymentRequired },
 	{ "recipient-unavailable",   RecipientUnavailable },
+	{ "redirect",                Redirect },
 	{ "registration-required",   RegistrationRequired },
 	{ "remote-server-not-found", RemoteServerNotFound },
 	{ "remote-server-timeout",   RemoteServerTimeout },
@@ -384,8 +387,7 @@ bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 		QDomNode i = nl.item(n);
 		t = i.toElement();
 		if(!t.isNull()) {
-			QString d= t.namespaceURI();
-			                                     // FIX-ME: this shouldn't be needed
+			// FIX-ME: this shouldn't be needed
 			if(t.namespaceURI() == NS_STANZAS || t.attribute("xmlns") == NS_STANZAS) {
 				condition = Private::stringToErrorCond(t.tagName());
 				if (condition != -1)
@@ -398,21 +400,23 @@ bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 	originalCode = e.attribute("code").toInt();
 
 	// try to guess type/condition
-	if(type == -1 && condition == -1) {
-		QPair<int, int> guess;
+	if(type == -1 || condition == -1) {
+		QPair<int, int> guess(-1, -1);
 		if (originalCode)
 			guess = Private::errorCodeToTypeCond(originalCode);
 
-		type = guess.first != -1 ? guess.first: Cancel;
-		condition = guess.second != -1 ? guess.second: UndefinedCondition;
+		if (type == -1)
+			type = guess.first != -1 ? guess.first : Cancel;
+		if (condition == -1)
+			condition = guess.second != -1 ? guess.second : UndefinedCondition;
 	}
 
 	// text
 	t = e.elementsByTagNameNS(NS_STANZAS, "text").item(0).toElement();
 	if(!t.isNull())
-		text = t.text();
+		text = t.text().trimmed();
 	else
-		text = e.text();
+		text = e.text().trimmed();
 
 	// appspec: find first non-standard namespaced element
 	appSpec = QDomElement();
@@ -475,8 +479,7 @@ QDomElement Stanza::Error::toXml(QDomDocument &doc, const QString &baseNS) const
 /**
 	\brief Returns the error name and description
 
-	Returns the error name (e.g. "Not Allowed")	and error text.
-	Text comes either from XML, or - if not present - from RFC.
+	Returns the error name (e.g. "Not Allowed") and generic description.
 */
 QPair<QString,QString> Stanza::Error::description() const
 {
@@ -774,6 +777,7 @@ public:
 		minimumSSF = 0;
 		maximumSSF = 0;
 		doBinding = true;
+		lang = "";
 
 		in_rrsig = false;
 
@@ -811,6 +815,7 @@ public:
 	SecureStream *ss;
 	CoreProtocol client;
 	CoreProtocol srv;
+	QString lang;
 
 	QString defRealm;
 
@@ -821,6 +826,7 @@ public:
 	int sasl_ssf;
 	bool tls_warned, using_tls;
 	bool doAuth;
+	bool doCompress;
 
 	QStringList sasl_mechlist;
 
@@ -1007,6 +1013,12 @@ void ClientStream::setRealm(const QString &s)
 		d->sasl->setRealm(s);
 }
 
+void ClientStream::setAuthzid(const QString &s)
+{
+	if(d->sasl)
+		d->sasl->setAuthzid(s);
+}
+
 void ClientStream::continueAfterParams()
 {
 	if(d->state == NeedParams) {
@@ -1024,6 +1036,11 @@ void ClientStream::continueAfterParams()
 void ClientStream::setResourceBinding(bool b)
 {
 	d->doBinding = b;
+}
+
+void ClientStream::setLang(const QString& lang)
+{
+	d->lang = lang;
 }
 
 void ClientStream::setNoopTime(int mills)
@@ -1060,6 +1077,11 @@ void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
 	d->haveLocalAddr = true;
 	d->localAddr = addr;
 	d->localPort = port;
+}
+
+void ClientStream::setCompress(bool compress) 
+{
+	d->doCompress = compress;
 }
 
 int ClientStream::errorCondition() const
@@ -1168,10 +1190,11 @@ void ClientStream::cr_connected()
 	//d->client.startDialbackOut("andbit.net", "im.pyxa.org");
 	//d->client.startServerOut(d->server);
 
-	d->client.startClientOut(d->jid, d->oldOnly, d->conn->useSSL(), d->doAuth);
+	d->client.startClientOut(d->jid, d->oldOnly, d->conn->useSSL(), d->doAuth, d->doCompress);
 	d->client.setAllowTLS(d->tlsHandler ? true: false);
 	d->client.setAllowBind(d->doBinding);
 	d->client.setAllowPlain(d->allowPlain);
+	d->client.setLang(d->lang);
 
 	/*d->client.jid = d->jid;
 	d->client.server = d->server;
@@ -1310,10 +1333,10 @@ void ClientStream::sasl_needParams(const QCA::SASL::Params& p)
 #ifdef XMPP_DEBUG
 	printf("need params: %d,%d,%d,%d\n", p.user, p.authzid, p.pass, p.realm);
 #endif
-	if(p.authzid && !p.user) {
+	/*if(p.authzid && !p.user) {
 		d->sasl->setAuthzid(d->jid.bare());
 		//d->sasl->setAuthzid("infiniti.homelesshackers.org");
-	}
+	}*/
 	if(p.user || p.pass || p.realm) {
 		d->state = NeedParams;
 		needAuthParams(p.user, p.pass, p.realm);
@@ -1384,7 +1407,7 @@ void ClientStream::srvProcessNext()
 					//d->sasl->setAllowAnonymous(false);
 					//d->sasl->setRequirePassCredentials(true);
 					//d->sasl->setExternalAuthID("localhost");
-					QCA::SASL::AuthFlags auth_flags;
+					QCA::SASL::AuthFlags auth_flags = (QCA::SASL::AuthFlags) 0;
 					d->sasl->setConstraints(auth_flags,0,256);
 
 					QStringList list;
@@ -1673,6 +1696,13 @@ bool ClientStream::handleNeed()
 			d->ss->startTLSClient(d->tlsHandler, d->server, d->client.spare);
 			return false;
 		}
+		case CoreProtocol::NCompress: {
+#ifdef XMPP_DEBUG
+			printf("Need compress\n");
+#endif
+			d->ss->setLayerCompress(d->client.spare);
+			return true;
+		}
 		case CoreProtocol::NSASLFirst: {
 #ifdef XMPP_DEBUG
 			printf("Need SASL First Step\n");
@@ -1713,7 +1743,7 @@ bool ClientStream::handleNeed()
 			else
 				ml = d->client.features.sasl_mechs;
 
-			d->sasl->startClient("xmpp", d->server, ml, QCA::SASL::AllowClientSendFirst);
+			d->sasl->startClient("xmpp", QUrl::toAce(d->server), ml, QCA::SASL::AllowClientSendFirst);
 			return false;
 		}
 		case CoreProtocol::NSASLNext: {
@@ -1956,5 +1986,3 @@ void TD::incomingXml(const QDomElement &e)
 		debug_ptr->incomingXml(e);
 }
 #endif
-
-#include "stream.moc"

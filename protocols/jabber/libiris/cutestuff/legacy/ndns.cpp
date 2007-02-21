@@ -68,6 +68,7 @@
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
+#include <winsock2.h>
 #endif
 
 // CS_NAMESPACE_BEGIN
@@ -296,7 +297,7 @@ void NDns::stop()
 //! \sa resultsReady()
 uint NDns::result() const
 {
-	return addr.toIPv4Address();
+	return addr.ip4Addr();
 }
 
 //!
@@ -376,6 +377,6 @@ void NDnsWorker::run()
 	QApplication::postEvent(par, new NDnsWorkerEvent(this));
 }
 
-// CS_NAMESPACE_END
-
 #include "ndns.moc"
+
+// CS_NAMESPACE_END

@@ -131,6 +131,8 @@ public:
 	Private() {}
 
 	Form form;
+	XData xdata;
+	bool hasXData;
 	Jid jid;
 	int type;
 };
@@ -140,6 +142,7 @@ JT_Register::JT_Register(Task *parent)
 {
 	d = new Private;
 	d->type = -1;
+	d->hasXData = false;
 }
 
 JT_Register::~JT_Register()
@@ -217,9 +220,29 @@ void JT_Register::setForm(const Form &form)
 	}
 }
 
+void JT_Register::setForm(const Jid& to, const XData& xdata)
+{
+	d->type = 4;
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
+	iq.appendChild(query);
+	query.appendChild(xdata.toXml(doc(), true));
+}
+
 const Form & JT_Register::form() const
 {
 	return d->form;
+}
+
+bool JT_Register::hasXData() const
+{
+	return d->hasXData;
+}
+
+const XData& JT_Register::xdata() const
+{
+	return d->xdata;
 }
 
 void JT_Register::onGo()
@@ -248,6 +271,10 @@ bool JT_Register::take(const QDomElement &x)
 					d->form.setInstructions(tagContent(i));
 				else if(i.tagName() == "key")
 					d->form.setKey(tagContent(i));
+				else if(i.tagName() == "x" && i.attribute("xmlns") == "jabber:x:data") {
+					d->xdata.fromXml(i);
+					d->hasXData = true;
+				}
 				else {
 					FormField f;
 					if(f.setType(i.tagName())) {
@@ -499,6 +526,7 @@ bool JT_PushRoster::take(const QDomElement &e)
 		return false;
 
 	roster(xmlReadRoster(queryTag(e), true));
+	send(createIQ(doc(), "result", e.attribute("from"), e.attribute("id")));
 
 	return true;
 }
@@ -777,7 +805,8 @@ JT_Message::JT_Message(Task *parent, const Message &msg)
 :Task(parent)
 {
 	m = msg;
-	m.setId(id());
+	if (m.id().isEmpty())
+		m.setId(id());
 }
 
 JT_Message::~JT_Message()
@@ -796,51 +825,6 @@ void JT_Message::onGo()
 //----------------------------------------------------------------------------
 // JT_PushMessage
 //----------------------------------------------------------------------------
-static QDomElement addCorrectNS(const QDomElement &e)
-{
-	int x;
-
-	// grab child nodes
-	/*QDomDocumentFragment frag = e.ownerDocument().createDocumentFragment();
-	QDomNodeList nl = e.childNodes();
-	for(x = 0; x < nl.count(); ++x)
-		frag.appendChild(nl.item(x).cloneNode());*/
-
-	// find closest xmlns
-	QDomNode n = e;
-	while(!n.isNull() && !n.toElement().hasAttribute("xmlns"))
-		n = n.parentNode();
-	QString ns;
-	if(n.isNull() || !n.toElement().hasAttribute("xmlns"))
-		ns = "jabber:client";
-	else
-		ns = n.toElement().attribute("xmlns");
-
-	// make a new node
-	QDomElement i = e.ownerDocument().createElementNS(ns, e.tagName());
-
-	// copy attributes
-	QDomNamedNodeMap al = e.attributes();
-	for(x = 0; x < al.count(); ++x) {
-		QDomAttr a = al.item(x).toAttr();
-		if(a.name() != "xmlns")
-			i.setAttributeNodeNS(al.item(x).cloneNode().toAttr());
-	}
-
-	// copy children
-	QDomNodeList nl = e.childNodes();
-	for(x = 0; x < nl.count(); ++x) {
-		QDomNode n = nl.item(x);
-		if(n.isElement())
-			i.appendChild(addCorrectNS(n.toElement()));
-		else
-			i.appendChild(n.cloneNode());
-	}
-
-	//i.appendChild(frag);
-	return i;
-}
-
 JT_PushMessage::JT_PushMessage(Task *parent)
 :Task(parent)
 {
@@ -1434,6 +1418,7 @@ bool JT_ServInfo::take(const QDomElement &e)
 	//}
 	else if(ns == "http://jabber.org/protocol/disco#info") {
 		// Find out the node
+		bool invalid_node = false;
 		QString node;
 		bool found;
 		QDomElement q = findSubTag(e, "query", &found);
@@ -1519,14 +1504,34 @@ bool JT_ServInfo::take(const QDomElement &e)
 				}
 			}
 			else {
-				// TODO: ERROR
+				invalid_node = true;
 			}
 		}
 		else {
-			return false;
+			invalid_node = true;
 		}
-
-		send(iq);
+		
+		if (!invalid_node) {
+			send(iq);
+		}
+		else {
+			// Create error reply
+			QDomElement error_reply = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
+			
+			// Copy children
+			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
+				error_reply.appendChild(n.cloneNode());
+			}
+			
+			// Add error
+			QDomElement error = doc()->createElement("error");
+			error.setAttribute("type","cancel");
+			error_reply.appendChild(error);
+			QDomElement error_type = doc()->createElement("item-not-found");
+			error_type.setAttribute("xmlns","urn:ietf:params:xml:ns:xmpp-stanzas");
+			error.appendChild(error_type);
+			send(error_reply);
+		}
 		return true;
 	}
 

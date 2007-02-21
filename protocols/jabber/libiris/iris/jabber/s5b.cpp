@@ -27,11 +27,13 @@
 #include <stdlib.h>
 #include <qca.h>
 #include "xmpp_xmlcommon.h"
+#include "im.h"
 #include "socks.h"
 #include "safedelete.h"
 
 #ifdef Q_OS_WIN
 # include <windows.h>
+# include <winsock2.h>
 #else
 # include <netinet/in.h>
 #endif
@@ -2530,3 +2532,4 @@ void StreamHost::setIsProxy(bool b)
 }
 
 #include "s5b.moc"
+#include "moc_s5b.cxx"

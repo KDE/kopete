@@ -96,6 +96,14 @@ QString tagContent(const QDomElement &e)
 	return "";
 }
 
+
+/**
+ * \brief find an direct child element by name
+ * \param e parent element
+ * \param name name of element to find
+ * \param found (optional/out) found?
+ * \return the element (or a null QDomElemnt if not found)
+ */
 QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 {
 	if(found)
@@ -129,6 +137,9 @@ QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, 
 	return iq;
 }
 
+/** \brief returns direct child element named "query"
+ * \return the element (or a null QDomElemnt if not found)
+*/
 QDomElement queryTag(const QDomElement &e)
 {
 	bool found;
@@ -180,18 +191,58 @@ void getErrorFromElement(const QDomElement &e, const QString &baseNS, int *code,
 	if(code)
 		*code = err.code();
 	if(str) {
-		if(!err.text.isEmpty()) {
-			*str = err.text;
-		}
-		else {
-			QPair<QString, QString> desc = err.description();
-			if(!desc.first.isEmpty())
-				*str = desc.first + ".\n" + desc.second;
-			else
-				*str = "";
-		}
+		QPair<QString, QString> desc = err.description();
+		if (err.text.isEmpty())
+			*str = desc.first + ".\n" + desc.second;
+		else
+			*str = desc.first + ".\n" + desc.second + "\n" + err.text;
 	}
 
+}
+
+QDomElement addCorrectNS(const QDomElement &e)
+{
+	int x;
+
+	// grab child nodes
+	/*QDomDocumentFragment frag = e.ownerDocument().createDocumentFragment();
+	QDomNodeList nl = e.childNodes();
+	for(x = 0; x < nl.count(); ++x)
+		frag.appendChild(nl.item(x).cloneNode());*/
+
+	// find closest xmlns
+	QDomNode n = e;
+	while(!n.isNull() && !n.toElement().hasAttribute("xmlns"))
+		n = n.parentNode();
+	QString ns;
+	if(n.isNull() || !n.toElement().hasAttribute("xmlns"))
+		ns = "jabber:client";
+	else
+		ns = n.toElement().attribute("xmlns");
+
+	// make a new node
+	QDomElement i = e.ownerDocument().createElementNS(ns, e.tagName());
+
+	// copy attributes
+	QDomNamedNodeMap al = e.attributes();
+	for(x = 0; x < al.count(); ++x) {
+		QDomAttr a = al.item(x).toAttr();
+		if(a.name() != "xmlns")
+			i.setAttributeNodeNS(a.cloneNode().toAttr());
+	}
+
+	// copy children
+	QDomNodeList nl = e.childNodes();
+	for(x = 0; x < nl.count(); ++x) {
+		QDomNode n = nl.item(x);
+		if(n.isElement())
+			i.appendChild(addCorrectNS(n.toElement()));
+		else
+			i.appendChild(n.cloneNode());
+	}
+
+	//i.appendChild(frag);
+	return i;
 }
 
 //----------------------------------------------------------------------------
@@ -417,5 +468,5 @@ void readBoolAttribute(QDomElement e, const QString &name, bool *v)
 	}
 }
 
-}
+};
 

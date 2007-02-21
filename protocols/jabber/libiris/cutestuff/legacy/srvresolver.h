@@ -1,5 +1,5 @@
 /*
- * servsock.h - simple wrapper to QServerSocket
+ * srvresolver.h - class to simplify SRV lookups
  * Copyright (C) 2003  Justin Karneges
  *
  * This library is free software; you can redistribute it and/or
@@ -18,50 +18,46 @@
  *
  */
 
-#ifndef CS_SERVSOCK_H
-#define CS_SERVSOCK_H
+#ifndef CS_SRVRESOLVER_H
+#define CS_SRVRESOLVER_H
 
-#include <q3serversocket.h>
+#include <QList>
+#include <q3dns.h>
 
 // CS_NAMESPACE_BEGIN
-#include <cutestuff_export.h>
 
-class CUTESTUFF_EXPORT ServSock : public QObject
+class SrvResolver : public QObject
 {
 	Q_OBJECT
 public:
-	ServSock(QObject *parent=0);
-	~ServSock();
+	SrvResolver(QObject *parent=0);
+	~SrvResolver();
 
-	bool isActive() const;
-	bool listen(Q_UINT16 port);
+	void resolve(const QString &server, const QString &type, const QString &proto);
+	void resolveSrvOnly(const QString &server, const QString &type, const QString &proto);
+	void next();
 	void stop();
-	int port() const;
-	QHostAddress address() const;
+	bool isBusy() const;
+
+	QList<Q3Dns::Server> servers() const;
+
+	bool failed() const;
+	QHostAddress resultAddress() const;
+	Q_UINT16 resultPort() const;
 
 signals:
-	void connectionReady(int);
+	void resultsReady();
 
 private slots:
-	void sss_connectionReady(int);
+	void qdns_done();
+	void ndns_done();
+	void t_timeout();
 
 private:
 	class Private;
 	Private *d;
-};
 
-class CUTESTUFF_EXPORT ServSockSignal : public Q3ServerSocket
-{
-	Q_OBJECT
-public:
-	ServSockSignal(int port);
-
-signals:
-	void connectionReady(int);
-
-protected:
-	// reimplemented
-	void newConnection(int);
+	void tryNext();
 };
 
 // CS_NAMESPACE_END

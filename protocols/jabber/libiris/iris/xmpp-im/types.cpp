@@ -954,6 +954,7 @@ public:
 
 	StringMap subject, body;
 	QString thread;
+	bool threadSend;
 	Stanza::Error error;
 
 	// extensions
@@ -969,7 +970,10 @@ public:
 	QString xencrypted, invite;
 	ChatState chatState;
 	QString nick;
+	HttpAuthRequest httpAuthRequest;
+	XData xdata;
 	QMap<QString,HTMLElement> htmlElements;
+ 	QDomElement wb;
 	
 	int mucStatus;
 	QList<MUCInvite> mucInvites;
@@ -989,6 +993,7 @@ Message::Message(const Jid &to)
 	d = new Private;
 	d->to = to;
 	d->spooled = false;
+	d->threadSend = false;
 	d->timeStampSend = false;
 	d->wasEncrypted = false;
 	/*d->flag = false;
@@ -1174,8 +1179,9 @@ void Message::setHTML(const HTMLElement &e, const QString &lang)
 	d->htmlElements[lang] = e;
 }
 
-void Message::setThread(const QString &s)
+void Message::setThread(const QString &s, bool send)
 {
+	d->threadSend = send;
 	d->thread = s;
 }
 
@@ -1395,6 +1401,36 @@ void Message::setNick(const QString& n)
 	d->nick = n;
 }
 
+void Message::setHttpAuthRequest(const HttpAuthRequest &req)
+{
+	d->httpAuthRequest = req;
+}
+
+HttpAuthRequest Message::httpAuthRequest() const
+{
+	return d->httpAuthRequest;
+}
+
+void Message::setForm(const XData &form)
+{
+	d->xdata = form;
+}
+
+const XData& Message::getForm() const
+{
+	return d->xdata;
+}
+
+const QDomElement& Message::whiteboard() const
+{
+	return d->wb;
+}
+
+void Message::setWhiteboard(const QDomElement& e)
+{
+	d->wb = e;
+}
+
 bool Message::spooled() const
 {
 	return d->spooled;
@@ -1447,6 +1483,12 @@ Stanza Message::toStanza(Stream *stream) const
 
 	if(d->type == "error")
 		s.setError(d->error);
+
+	// thread
+	if(d->threadSend && !d->thread.isEmpty()) {
+		QDomElement e = s.createTextElement(s.baseNS(), "thread", d->thread);
+		s.appendChild(e);
+	}
 
 	// timestamp
 	if(d->timeStampSend && !d->timeStamp.isNull()) {
@@ -1574,7 +1616,12 @@ Stanza Message::toStanza(Stream *stream) const
 	if(!d->nick.isEmpty()) {
 		s.appendChild(s.createTextElement("http://jabber.org/protocol/nick", "nick", d->nick));
 	}
-	
+
+	// wb
+	if(!d->wb.isNull()) {
+		s.appendChild(d->wb);
+	}
+
 	// muc
 	if(!d->mucInvites.isEmpty()) {
 		QDomElement e = s.createElement("http://jabber.org/protocol/muc#user","x");
@@ -1590,6 +1637,17 @@ Stanza Message::toStanza(Stream *stream) const
 		QDomElement e = s.createElement("http://jabber.org/protocol/muc#user","x");
 		e.appendChild(d->mucDecline.toXml(s.doc()));
 		s.appendChild(e);
+	}
+
+	// http auth
+	if(!d->httpAuthRequest.isEmpty()) {
+		s.appendChild(d->httpAuthRequest.toXml(s.doc()));
+	}
+
+	// data form
+	if(!d->xdata.fields().empty() || (d->xdata.type() == XData::Data_Cancel)) {
+		bool submit = (d->xdata.type() == XData::Data_Submit) || (d->xdata.type() == XData::Data_Cancel);
+		s.appendChild(d->xdata.toXml(&s.doc(), submit));
 	}
 
 	return s;
@@ -1808,7 +1866,14 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 		d->nick = t.text();
 	else
 		d->nick = QString();
-	
+
+	// wb
+	t = root.elementsByTagNameNS("http://jabber.org/protocol/svgwb", "wb").item(0).toElement();
+	if(!t.isNull())
+		d->wb = t;
+	else
+		d->wb = QDomElement();
+
 	t = root.elementsByTagNameNS("http://jabber.org/protocol/muc#user", "x").item(0).toElement();
 	if(!t.isNull()) {
 		for(QDomNode muc_n = t.firstChild(); !muc_n.isNull(); muc_n = muc_n.nextSibling()) {
@@ -1831,6 +1896,153 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 			}
 		}
 	}
+
+	// http auth
+	t = root.elementsByTagNameNS("http://jabber.org/protocol/http-auth", "confirm").item(0).toElement();
+	if(!t.isNull()){
+		d->httpAuthRequest = HttpAuthRequest(t);
+	}
+	else {
+		d->httpAuthRequest = HttpAuthRequest();
+	}
+
+	// data form
+	t = root.elementsByTagNameNS("jabber:x:data", "x").item(0).toElement();
+	if(!t.isNull()){
+		d->xdata.fromXml(t);
+	}
+
+	return true;
+}
+
+/*!
+	Error object used to deny a request.
+*/
+Stanza::Error HttpAuthRequest::denyError(Stanza::Error::Auth, Stanza::Error::NotAuthorized);
+
+/*!
+	Constructs request of resource URL \a u, made by method \a m, with transaction id \a i.
+*/
+HttpAuthRequest::HttpAuthRequest(const QString &m, const QString &u, const QString &i) : method_(m), url_(u), id_(i), hasId_(true)
+{
+}
+
+/*!
+        Constructs request of resource URL \a u, made by method \a m, without transaction id.
+*/
+HttpAuthRequest::HttpAuthRequest(const QString &m, const QString &u) : method_(m), url_(u), hasId_(false)
+{
+}
+
+/*!
+	Constructs request object by reading XML <confirm/> element \a e.
+*/
+HttpAuthRequest::HttpAuthRequest(const QDomElement &e)
+{
+	fromXml(e);
+}
+
+/*!
+	Returns true is object is empty (not valid).
+*/
+bool HttpAuthRequest::isEmpty() const
+{
+	return method_.isEmpty() && url_.isEmpty();
+}
+
+/*!
+	Sets request method.
+*/
+void HttpAuthRequest::setMethod(const QString& m)
+{
+	method_ = m;
+}
+
+/*!
+	Sets requested URL.
+*/
+void HttpAuthRequest::setUrl(const QString& u)
+{
+	url_ = u;
+}
+
+/*!
+	Sets transaction identifier.
+*/
+void HttpAuthRequest::setId(const QString& i)
+{
+	id_ = i;
+	hasId_ = true;
+}
+
+/*!
+	Returns request method.
+*/
+QString HttpAuthRequest::method() const
+{
+	return method_;
+}
+
+/*!
+	Returns requested URL.
+*/
+QString HttpAuthRequest::url() const
+{
+	return url_;
+}
+
+/*!
+	Returns transaction identifier.
+	Empty QString may mean both empty id or no id. Use hasId() to tell the difference.
+*/
+QString HttpAuthRequest::id() const
+{
+	return id_;
+}
+
+/*!
+	Returns true if the request contains transaction id.
+*/
+bool HttpAuthRequest::hasId() const
+{
+	return hasId_;
+}
+
+/*!
+	Returns XML element representing the request.
+	If object is empty, this function returns empty element.
+*/
+QDomElement HttpAuthRequest::toXml(QDomDocument &doc) const
+{
+	QDomElement e;
+	if(isEmpty())
+		return e;
+
+	e = doc.createElementNS("http://jabber.org/protocol/http-auth", "confirm");
+	e.setAttribute("xmlns", "http://jabber.org/protocol/http-auth");
+
+	if(hasId_) 
+		e.setAttribute("id", id_);
+	e.setAttribute("method", method_);
+	e.setAttribute("url", url_);
+
+	return e;
+}
+
+/*!
+	Reads request data from XML element \a e.
+*/
+bool HttpAuthRequest::fromXml(const QDomElement &e)
+{
+	if(e.tagName() != "confirm")
+		return false;
+
+	hasId_ = e.hasAttribute("id");
+	if(hasId_)
+		id_ = e.attribute("id");
+
+	method_ = e.attribute("method");
+	url_ = e.attribute("url");
 
 	return true;
 }
@@ -1887,6 +2099,7 @@ bool Subscription::fromString(const QString &s)
 //---------------------------------------------------------------------------
 // Status
 //---------------------------------------------------------------------------
+
 Status::Status(const QString &show, const QString &status, int priority, bool available)
 {
 	v_isAvailable = available;
@@ -1904,6 +2117,23 @@ Status::Status(const QString &show, const QString &status, int priority, bool av
 	v_mucHistoryMaxStanzas = -1;
 	v_mucHistorySeconds = -1;
 	ecode = -1;
+}
+
+Status::Status(Type type, const QString& status, int priority)
+{
+	v_status = status;
+	v_priority = priority;
+	v_timeStamp = QDateTime::currentDateTime();
+	v_hasPhotoHash = false;
+	v_isMUC = false;
+	v_hasMUCItem = false;
+	v_hasMUCDestroy = false;
+	v_mucStatus = -1;
+	v_mucHistoryMaxChars = -1;
+	v_mucHistoryMaxStanzas = -1;
+	v_mucHistorySeconds = -1;
+	ecode = -1;
+	setType(type);
 }
 
 Status::~Status()
@@ -1934,6 +2164,45 @@ void Status::setIsInvisible(bool invisible)
 void Status::setPriority(int x)
 {
 	v_priority = x;
+}
+
+void Status::setType(Status::Type _type)
+{
+	bool available = true;
+	bool invisible = false;
+	QString show;
+	switch(_type) {
+		case Away:    show = "away"; break;
+		case FFC:     show = "chat"; break;
+		case XA:      show = "xa"; break;
+		case DND:     show = "dnd"; break;
+		case Offline: available = false; break;
+		case Invisible: invisible = true; break;
+		default: break;
+	}
+	setShow(show);
+	setIsAvailable(available);
+	setIsInvisible(invisible);
+}
+
+void Status::setType(QString stat)
+{
+	if (stat == "offline")
+		setType(XMPP::Status::Offline);
+	else if (stat == "online")
+		setType(XMPP::Status::Online);
+	else if (stat == "away")
+		setType(XMPP::Status::Away);
+	else if (stat == "xa")
+		setType(XMPP::Status::XA);
+	else if (stat == "dnd")
+		setType(XMPP::Status::DND);
+	else if (stat == "invisible")
+		setType(XMPP::Status::Invisible);
+	else if (stat == "chat")
+		setType(XMPP::Status::FFC);
+	else
+		setType(XMPP::Status::Away);
 }
 
 void Status::setShow(const QString & _show)
@@ -2043,6 +2312,45 @@ bool Status::isInvisible() const
 int Status::priority() const
 {
 	return v_priority;
+}
+
+Status::Type Status::type() const
+{
+	Status::Type type = Status::Online;
+	if (!isAvailable()) {
+		type = Status::Offline;
+	}
+	else if (isInvisible()) {
+		type = Status::Invisible;
+	}
+	else {
+		QString s = show();
+		if (s == "away")
+			type = Status::Away;
+		else if (s == "xa")
+		  	type = Status::XA;
+		else if (s == "dnd")
+		 	type = Status::DND;
+		else if (s == "chat")
+			type = Status::FFC;
+	}
+	return type;
+}
+
+QString Status::typeString() const
+{
+	QString stat;
+	switch(type()) {
+		case XMPP::Status::Offline: stat = "offline"; break;
+		case XMPP::Status::Online: stat = "online"; break;
+		case XMPP::Status::Away: stat = "away"; break;
+		case XMPP::Status::XA: stat = "xa"; break;
+		case XMPP::Status::DND: stat = "dnd"; break;
+		case XMPP::Status::Invisible: stat = "invisible"; break;
+		case XMPP::Status::FFC: stat = "chat"; break;
+		default: stat = "away";
+	}
+	return stat;
 }
 
 const QString & Status::show() const
@@ -3131,4 +3439,4 @@ const QDomElement& PubSubItem::payload() const
 
 }
 
-#include "types.moc"
+#include "moc_types.cxx"

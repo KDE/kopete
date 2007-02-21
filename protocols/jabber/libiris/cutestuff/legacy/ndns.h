@@ -1,6 +1,6 @@
 /*
- * srvresolver.h - class to simplify SRV lookups
- * Copyright (C) 2003  Justin Karneges
+ * ndns.h - native DNS resolution
+ * Copyright (C) 2001, 2002  Justin Karneges
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,47 +18,71 @@
  *
  */
 
-#ifndef CS_SRVRESOLVER_H
-#define CS_SRVRESOLVER_H
+#ifndef CS_NDNS_H
+#define CS_NDNS_H
 
-#include <QList>
-#include <q3dns.h>
+#include <qobject.h>
+#include <q3cstring.h>
+#include <qthread.h>
+#include <qmutex.h>
+#include <qhostaddress.h>
+//Added by qt3to4:
+#include <QEvent>
 
 // CS_NAMESPACE_BEGIN
-#include <cutestuff_export.h>
 
-class CUTESTUFF_EXPORT SrvResolver : public QObject
+class NDnsWorker;
+class NDnsManager;
+
+class NDns : public QObject
 {
 	Q_OBJECT
 public:
-	SrvResolver(QObject *parent=0);
-	~SrvResolver();
+	NDns(QObject *parent=0);
+	~NDns();
 
-	void resolve(const QString &server, const QString &type, const QString &proto);
-	void resolveSrvOnly(const QString &server, const QString &type, const QString &proto);
-	void next();
+	void resolve(const QString &);
 	void stop();
 	bool isBusy() const;
 
-	QList<Q3Dns::Server> servers() const;
-
-	bool failed() const;
-	QHostAddress resultAddress() const;
-	Q_UINT16 resultPort() const;
+	uint result() const;
+	QString resultString() const;
 
 signals:
 	void resultsReady();
 
+private:
+	QHostAddress addr;
+
+	friend class NDnsManager;
+	void finished(const QHostAddress &);
+};
+
+class NDnsManager : public QObject
+{
+	Q_OBJECT
+public:
+	~NDnsManager();
+	class Item;
+
+//! \if _hide_doc_
+protected:
+	bool event(QEvent *);
+//! \endif
+
 private slots:
-	void qdns_done();
-	void ndns_done();
-	void t_timeout();
+	void app_aboutToQuit();
 
 private:
 	class Private;
 	Private *d;
 
-	void tryNext();
+	friend class NDns;
+	NDnsManager();
+	void resolve(NDns *self, const QString &name);
+	void stop(NDns *self);
+	bool isBusy(const NDns *self) const;
+	void tryDestroy();
 };
 
 // CS_NAMESPACE_END

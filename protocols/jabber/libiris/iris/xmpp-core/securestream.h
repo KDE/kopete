@@ -33,6 +33,8 @@ namespace XMPP
 }
 #endif
 
+class CompressionHandler;
+
 class SecureStream : public ByteStream
 {
 	Q_OBJECT
@@ -43,6 +45,7 @@ public:
 
 	void startTLSClient(QCA::TLS *t, const QByteArray &spare=QByteArray());
 	void startTLSServer(QCA::TLS *t, const QByteArray &spare=QByteArray());
+	void setLayerCompress(const QByteArray &spare=QByteArray());
 	void setLayerSASL(QCA::SASL *s, const QByteArray &spare=QByteArray());
 #ifdef USE_TLSHANDLER
 	void startTLSClient(XMPP::TLSHandler *t, const QString &server, const QByteArray &spare=QByteArray());

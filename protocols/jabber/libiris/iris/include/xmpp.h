@@ -30,12 +30,14 @@
 #include <qxml.h>
 #include <qdom.h>
 
+#include "xmpp_jid.h"
+
 #include <iris_export.h>
 
 namespace QCA
 {
 	class TLS;
-}
+};
 
 #ifndef CS_XMPP
 class ByteStream;
@@ -222,54 +224,6 @@ namespace XMPP
 	private:
 		class Private;
 		Private *d;
-	};
-
-	class IRIS_EXPORT Jid
-	{
-	public:
-		Jid();
-		~Jid();
-
-		Jid(const QString &s);
-		Jid(const char *s);
-		Jid & operator=(const QString &s);
-		Jid & operator=(const char *s);
-
-		void set(const QString &s);
-		void set(const QString &domain, const QString &node, const QString &resource="");
-
-		void setDomain(const QString &s);
-		void setNode(const QString &s);
-		void setResource(const QString &s);
-
-		const QString & domain() const { return d; }
-		const QString & node() const { return n; }
-		const QString & resource() const { return r; }
-		const QString & bare() const { return b; }
-		const QString & full() const { return f; }
-
-		Jid withNode(const QString &s) const;
-		Jid withResource(const QString &s) const;
-
-		bool isValid() const;
-		bool isEmpty() const;
-		bool compare(const Jid &a, bool compareRes=true) const;
-
-		static bool validDomain(const QString &s, QString *norm=0);
-		static bool validNode(const QString &s, QString *norm=0);
-		static bool validResource(const QString &s, QString *norm=0);
-
-		// TODO: kill these later
-		const QString & host() const { return d; }
-		const QString & user() const { return n; }
-		const QString & userHost() const { return b; }
-
-	private:
-		void reset();
-		void update();
-
-		QString f, b, d, n, r;
-		bool valid;
 	};
 
 	class Stream;
@@ -481,6 +435,7 @@ namespace XMPP
 		void setUsername(const QString &s);
 		void setPassword(const QString &s);
 		void setRealm(const QString &s);
+		void setAuthzid(const QString &s);
 		void continueAfterParams();
 
 		// SASL information
@@ -490,6 +445,9 @@ namespace XMPP
 		// binding
 		void setResourceBinding(bool);
 
+		// Language
+		void setLang(const QString&);
+
 		// security options (old protocol only uses the first !)
 		void setAllowPlain(bool);
 		void setRequireMutualAuth(bool);
@@ -497,6 +455,9 @@ namespace XMPP
 		void setOldOnly(bool);
 		void setSASLMechanism(const QString &s);
 		void setLocalAddr(const QHostAddress &addr, Q_UINT16 port);
+
+		// Compression
+		void setCompress(bool);
 
 		// reimplemented
 		QDomDocument & doc() const;
@@ -563,6 +524,6 @@ namespace XMPP
 		void handleError();
 		void srvProcessNext();
 	};
-}
+};
 
 #endif
