@@ -3,14 +3,16 @@
 
 #include <QtGlobal>
 
-#define IRIS_EXPORT Q_DECL_EXPORT
-
+#ifndef IRIS_EXPORT
+# ifdef Q_OS_WIN
+#  ifdef MAKE_IRIS_KOPETE_LIB
+#   define IRIS_EXPORT Q_DECL_EXPORT
+#  else
+#   define IRIS_EXPORT Q_DECL_IMPORT
+#  endif
+# else
+#  define IRIS_EXPORT Q_DECL_EXPORT
+# endif
 #endif
-#ifndef IRIS_EXPORT_H
-#define IRIS_EXPORT_H
-
-#include <QtGlobal>
-
-#define IRIS_EXPORT Q_DECL_EXPORT
 
 #endif

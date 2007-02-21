@@ -268,6 +268,24 @@ Index: iris/include/im.h
  	typedef enum { StateNone, StateActive, StateComposing, StatePaused, 
  			StateInactive, StateGone } ChatState;
  	
+@@ -108,7 +126,7 @@
+ 		QDomElement payload_;
+ 	};
+ 
+-	class HTMLElement
++	class IRIS_EXPORT HTMLElement
+ 	{
+ 	public:
+ 		HTMLElement();
+@@ -149,7 +167,7 @@
+ 		bool hasId_;
+ 	};
+ 
+-	class Message
++	class IRIS_EXPORT Message
+ 	{
+ 	public:
+ 		Message(const Jid &to="");
 @@ -267,7 +285,7 @@
  		Private *d;
  	};
@@ -582,10 +600,106 @@ Index: iris/jabber/filetransfer.cpp
 ===================================================================
 --- iris/jabber/filetransfer.cpp	(revision 330)
 +++ iris/jabber/filetransfer.cpp	(working copy)
-@@ -756,3 +756,5 @@
+@@ -56,6 +56,7 @@
+ 	qlonglong size;
+ 	qlonglong sent;
+ 	QString desc;
++	QString preview;
+ 	bool rangeSupported;
+ 	qlonglong rangeOffset, rangeLength, length;
+ 	QString streamType;
+@@ -104,13 +105,14 @@
+ 	d->proxy = proxy;
+ }
+ 
+-void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc)
++void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc, const QString& preview)
+ {
+ 	d->state = Requesting;
+ 	d->peer = to;
+ 	d->fname = fname;
+ 	d->size = size;
+ 	d->desc = desc;
++	d->preview = preview;
+ 	d->sender = true;
+ 	d->id = d->m->link(this);
+ 
+@@ -118,7 +120,7 @@
+ 	connect(d->ft, SIGNAL(finished()), SLOT(ft_finished()));
+ 	QStringList list;
+ 	list += "http://jabber.org/protocol/bytestreams";
+-	d->ft->request(to, d->id, fname, size, desc, list);
++	d->ft->request(to, d->id, fname, size, desc, list,preview);
+ 	d->ft->go(true);
+ }
+ 
+@@ -171,6 +173,12 @@
+ 	return d->desc;
+ }
+ 
++
++QString XMPP::FileTransfer::preview() const
++{
++	return d->preview;
++}
++
+ bool FileTransfer::rangeSupported() const
+ {
+ 	return d->rangeSupported;
+@@ -312,6 +320,7 @@
+ 	d->fname = req.fname;
+ 	d->size = req.size;
+ 	d->desc = req.desc;
++	d->preview = req.preview;
+ 	d->rangeSupported = req.rangeSupported;
+ }
+ 
+@@ -461,7 +470,7 @@
+ 	delete d;
+ }
+ 
+-void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes)
++void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes, const QString& preview)
+ {
+ 	QDomElement iq;
+ 	d->to = to;
+@@ -480,6 +489,12 @@
+ 		de.appendChild(doc()->createTextNode(desc));
+ 		file.appendChild(de);
+ 	}
++	if(!preview.isEmpty()) {
++		QDomElement pr = doc()->createElement("preview");
++		pr.setAttribute("xmlns", "http://kopete.kde.org/protocol/file-preview");
++		pr.appendChild(doc()->createTextNode(preview));
++		file.appendChild(pr);
++	}
+ 	QDomElement range = doc()->createElement("range");
+ 	file.appendChild(range);
+ 	si.appendChild(file);
+@@ -719,6 +734,11 @@
+ 	QDomElement de = file.elementsByTagName("desc").item(0).toElement();
+ 	if(!de.isNull())
+ 		desc = de.text();
++	
++	QString preview;
++	QDomElement pr = file.elementsByTagName("preview").item(0).toElement();
++	if(!pr.isNull())
++		preview= pr.text();
+ 
+ 	bool rangeSupported = false;
+ 	QDomElement range = file.elementsByTagName("range").item(0).toElement();
+@@ -750,9 +770,13 @@
+ 	r.fname = fname;
+ 	r.size = size;
+ 	r.desc = desc;
++	r.preview = preview;
+ 	r.rangeSupported = rangeSupported;
+ 	r.streamTypes = streamTypes;
+ 
  	incoming(r);
  	return true;
  }
++
 +
 +#include "filetransfer.moc"
 Index: iris/jabber/filetransfer.h
@@ -601,7 +715,24 @@ Index: iris/jabber/filetransfer.h
  	{
  		Q_OBJECT
  	public:
-@@ -97,7 +97,7 @@
+@@ -51,7 +51,7 @@
+ 		void setProxy(const Jid &proxy);
+ 
+ 		// send
+-		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc);
++		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc, const QString& preview=QString());
+ 		qlonglong offset() const;
+ 		qlonglong length() const;
+ 		int dataSizeNeeded() const;
+@@ -62,6 +62,7 @@
+ 		QString fileName() const;
+ 		qlonglong fileSize() const;
+ 		QString description() const;
++		QString preview() const;
+ 		bool rangeSupported() const;
+ 		void accept(qlonglong offset=0, qlonglong length=0);
+ 
+@@ -97,7 +98,7 @@
  		void takeConnection(S5BConnection *c);
  	};
  
@@ -610,7 +741,7 @@ Index: iris/jabber/filetransfer.h
  	{
  		Q_OBJECT
  	public:
-@@ -128,7 +128,7 @@
+@@ -128,14 +129,14 @@
  		void unlink(FileTransfer *);
  	};
  
@@ -619,6 +750,22 @@ Index: iris/jabber/filetransfer.h
  	{
  		Q_OBJECT
  	public:
+ 		JT_FT(Task *parent);
+ 		~JT_FT();
+ 
+-		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes);
++		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes, const QString &preview=QString());
+ 		qlonglong rangeOffset() const;
+ 		qlonglong rangeLength() const;
+ 		QString streamType() const;
+@@ -155,6 +156,7 @@
+ 		QString fname;
+ 		qlonglong size;
+ 		QString desc;
++		QString preview;
+ 		bool rangeSupported;
+ 		QStringList streamTypes;
+ 	};
 Index: iris/jabber/s5b.cpp
 ===================================================================
 --- iris/jabber/s5b.cpp	(revision 330)
@@ -1442,7 +1589,7 @@ Index: iris/xmpp-im/xmpp_tasks.h
  		Private *d;
  	};
 +    
-+	class JT_PrivateStorage : public Task
++	class IRIS_EXPORT JT_PrivateStorage : public Task
 +	{
 +		Q_OBJECT
 +	public:
@@ -1469,11 +1616,16 @@ Index: iris/xmpp-im/xmpp_vcard.h
 ===================================================================
 --- iris/xmpp-im/xmpp_vcard.h	(revision 330)
 +++ iris/xmpp-im/xmpp_vcard.h	(working copy)
-@@ -28,11 +28,13 @@
+@@ -28,11 +28,18 @@
  #include <QList>
  #include <qdom.h>
  
 +#include <iris_export.h>
++
++// timezone() conflicts with a define/whatever deep inside win-sdk headers
++#ifdef Q_OS_WIN
++# undef timezone
++#endif
 +
  class QDate;
  
@@ -1484,7 +1636,7 @@ Index: iris/xmpp-im/xmpp_vcard.h
  	{
  	public:
  		VCard();
-@@ -85,7 +87,7 @@
+@@ -85,7 +92,7 @@
  		void setBdayStr(const QString &);
  
  
@@ -1493,7 +1645,7 @@ Index: iris/xmpp-im/xmpp_vcard.h
  		public:
  			Address();
  
-@@ -111,7 +113,7 @@
+@@ -111,7 +118,7 @@
  		const AddressList &addressList() const;
  		void setAddressList(const AddressList &);
  
@@ -1502,7 +1654,7 @@ Index: iris/xmpp-im/xmpp_vcard.h
  		public:
  			Label();
  
-@@ -132,7 +134,7 @@
+@@ -132,7 +139,7 @@
  		void setLabelList(const LabelList &);
  
  
@@ -1511,7 +1663,7 @@ Index: iris/xmpp-im/xmpp_vcard.h
  		public:
  			Phone();
  
-@@ -157,7 +159,7 @@
+@@ -157,7 +164,7 @@
  		void setPhoneList(const PhoneList &);
  
  
@@ -1520,7 +1672,7 @@ Index: iris/xmpp-im/xmpp_vcard.h
  		public:
  			Email();
  
-@@ -183,7 +185,7 @@
+@@ -183,7 +190,7 @@
  		void setTimezone(const QString &);
  
  
@@ -1529,7 +1681,7 @@ Index: iris/xmpp-im/xmpp_vcard.h
  		public:
  			Geo();
  
-@@ -215,7 +217,7 @@
+@@ -215,7 +222,7 @@
  		void setAgentURI(const QString &);
  
  

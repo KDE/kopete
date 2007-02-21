@@ -1,0 +1,103 @@
+Index: cutestuff/network/httppoll.cpp
+===================================================================
+--- cutestuff/network/httppoll.cpp	(revision 330)
++++ cutestuff/network/httppoll.cpp	(working copy)
+@@ -54,7 +54,7 @@
+ 	if(n == 0)
+ 		return s;
+ 	else
+-		return QCA::Base64().arrayToString( QCA::SHA1().hash( Q3CString(hpk(n - 1, s).latin1()) ).toByteArray() );
++		return QCA::Base64().arrayToString( QCA::Hash("sha1").hash( Q3CString(hpk(n - 1, s).latin1()) ).toByteArray() );
+ }
+ 
+ class HttpPoll::Private
+Index: iris/jabber/s5b.cpp
+===================================================================
+--- iris/jabber/s5b.cpp	(revision 330)
++++ iris/jabber/s5b.cpp	(working copy)
+@@ -46,7 +47,7 @@
+ static QString makeKey(const QString &sid, const Jid &initiator, const Jid &target)
+ {
+ 	QString str = sid + initiator.full() + target.full();
+-	return QCA::SHA1().hashToString(str.utf8());
++	return QCA::Hash("sha1").hashToString(str.utf8());
+ }
+ 
+ static bool haveHost(const StreamHostList &list, const Jid &j)
+Index: iris/xmpp-core/protocol.cpp
+===================================================================
+--- iris/xmpp-core/protocol.cpp	(revision 330)
++++ iris/xmpp-core/protocol.cpp	(working copy)
+@@ -1227,7 +1227,7 @@
+ 
+ 			p = doc.createElement("digest");
+ 			Q3CString cs = id.utf8() + password.utf8();
+-			p.appendChild(doc.createTextNode(QCA::SHA1().hashToString(cs)));
++			p.appendChild(doc.createTextNode(QCA::Hash("sha1").hashToString(cs)));
+ 		}
+ 		else {
+ 			p = doc.createElement("password");
+Index: iris/xmpp-core/simplesasl.cpp
+===================================================================
+--- iris/xmpp-core/simplesasl.cpp	(revision 330)
++++ iris/xmpp-core/simplesasl.cpp	(working copy)
+@@ -349,7 +349,7 @@
+ 
+ 			// build 'response'
+ 			Q3CString X = user.utf8() + ':' + realm.utf8() + ':' + Q3CString(pass.toByteArray());
+-			QByteArray Y = QCA::MD5().hash(X).toByteArray();
++			QByteArray Y = QCA::Hash("md5").hash(X).toByteArray();
+ 			QByteArray tmp = ':' + nonce + ':' + cnonce;
+ 			if (!authz.isEmpty())
+ 				tmp += ':' + authz.utf8();
+@@ -357,10 +357,10 @@
+ 
+ 			QByteArray A1(Y + tmp);
+ 			QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
+-			Q3CString HA1 = QCA::MD5().hashToString(A1).latin1();
+-			Q3CString HA2 = QCA::MD5().hashToString(A2).latin1();
++			Q3CString HA1 = QCA::Hash("md5").hashToString(A1).latin1();
++			Q3CString HA2 = QCA::Hash("md5").hashToString(A2).latin1();
+ 			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
+-			Q3CString Z = QCA::MD5().hashToString(KD).latin1();
++			Q3CString Z = QCA::Hash("md5").hashToString(KD).latin1();
+ 			
+ 			//qDebug(QString("simplesasl.cpp: A1 = %1").arg(QString(A1)).toAscii());
+ 			//qDebug(QString("simplesasl.cpp: A2 = %1").arg(QString(A2)).toAscii());
+@@ -512,6 +512,10 @@
+ 	{
+ 	}
+ 
++    int version() const {
++		return QCA_VERSION;
++    }
++
+ 	QString name() const {
+ 		return "simplesasl";
+ 	}
+Index: iris/xmpp-core/stream.cpp
+===================================================================
+--- iris/xmpp-core/stream.cpp	(revision 330)
++++ iris/xmpp-core/stream.cpp	(working copy)
+@@ -87,7 +87,7 @@
+ 	//if(!QCA::isSupported(QCA::CAP_SHA1))
+ 	//	QCA::insertProvider(createProviderHash());
+ 
+-	return QCA::SHA1().hashToString(randomArray(128));
++	return QCA::Hash("sha1").hashToString(randomArray(128));
+ }
+ 
+ //----------------------------------------------------------------------------
+@@ -1470,9 +1470,9 @@
+ 				printf("Break (RecvOpen)\n");
+ 
+ 				// calculate key
+-				Q3CString str = QCA::SHA1().hashToString("secret").utf8();
+-				str = QCA::SHA1().hashToString(str + "im.pyxa.org").utf8();
+-				str = QCA::SHA1().hashToString(str + d->srv.id.utf8()).utf8();
++				Q3CString str = QCA::Hash("sha1").hashToString("secret").utf8();
++				str = QCA::Hash("sha1").hashToString(str + "im.pyxa.org").utf8();
++				str = QCA::Hash("sha1").hashToString(str + d->srv.id.utf8()).utf8();
+ 				d->srv.setDialbackKey(str);
+ 
+ 				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
