@@ -265,9 +265,11 @@ Kopete::Account *ICQEditAccountWidget::apply()
 bool ICQEditAccountWidget::validateData()
 {
 	kDebug(14153) << k_funcinfo << "Called." << endl;
+	bool bOk;
 	QString userId = mAccountSettings->edtAccountId->text();
+	qulonglong uid = userId.toULongLong( &bOk );
 	
-	if( (userId.length()< 8) || userId.isEmpty() )
+	if( !bOk || uid == 0 || userId.isEmpty() )
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
 	 	                              i18n("<qt>You must enter a valid ICQ Nr.</qt>"), i18n("ICQ"));
 		return false;
