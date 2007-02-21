@@ -1,0 +1,1540 @@
+Index: cutestuff/legacy/ndns.cpp
+===================================================================
+--- cutestuff/legacy/ndns.cpp	(revision 330)
++++ cutestuff/legacy/ndns.cpp	(working copy)
+@@ -68,6 +68,7 @@
+ 
+ #ifdef Q_OS_WIN32
+ #include <windows.h>
++#include <winsock2.h>
+ #endif
+ 
+ // CS_NAMESPACE_BEGIN
+@@ -376,4 +377,6 @@
+ 	QApplication::postEvent(par, new NDnsWorkerEvent(this));
+ }
+ 
++#include "ndns.moc"
++
+ // CS_NAMESPACE_END
+Index: cutestuff/legacy/safedelete.cpp
+===================================================================
+--- cutestuff/legacy/safedelete.cpp	(revision 330)
++++ cutestuff/legacy/safedelete.cpp	(working copy)
+@@ -109,3 +109,5 @@
+ {
+ 	delete this;
+ }
++
++#include "safedelete.moc"
+Index: cutestuff/legacy/servsock.cpp
+===================================================================
+--- cutestuff/legacy/servsock.cpp	(revision 330)
++++ cutestuff/legacy/servsock.cpp	(working copy)
+@@ -108,3 +108,5 @@
+ }
+ 
+ // CS_NAMESPACE_END
++
++#include "servsock.moc"
+Index: cutestuff/legacy/srvresolver.cpp
+===================================================================
+--- cutestuff/legacy/srvresolver.cpp	(revision 330)
++++ cutestuff/legacy/srvresolver.cpp	(working copy)
+@@ -318,3 +318,5 @@
+ }
+ 
+ // CS_NAMESPACE_END
++
++#include "srvresolver.moc"
+Index: cutestuff/network/bsocket.cpp
+===================================================================
+--- cutestuff/network/bsocket.cpp	(revision 330)
++++ cutestuff/network/bsocket.cpp	(working copy)
+@@ -388,3 +388,5 @@
+ }
+ 
+ // CS_NAMESPACE_END
++
++#include "bsocket.moc"
+Index: cutestuff/network/bsocket.h
+===================================================================
+--- cutestuff/network/bsocket.h	(revision 330)
++++ cutestuff/network/bsocket.h	(working copy)
+@@ -29,9 +29,10 @@
+ class QObject;
+ class QByteArray;
+ 
++#include <cutestuff_export.h>
+ // CS_NAMESPACE_BEGIN
+ 
+-class BSocket : public ByteStream
++class CUTESTUFF_EXPORT BSocket : public ByteStream
+ {
+ 	Q_OBJECT
+ public:
+Index: cutestuff/network/httpconnect.cpp
+===================================================================
+--- cutestuff/network/httpconnect.cpp	(revision 330)
++++ cutestuff/network/httpconnect.cpp	(working copy)
+@@ -361,3 +361,5 @@
+ }
+ 
+ // CS_NAMESPACE_END
++
++#include "httpconnect.moc"
+Index: cutestuff/network/httpconnect.h
+===================================================================
+--- cutestuff/network/httpconnect.h	(revision 330)
++++ cutestuff/network/httpconnect.h	(working copy)
+@@ -23,9 +23,10 @@
+ 
+ #include "bytestream.h"
+ 
++#include <cutestuff_export.h>
+ // CS_NAMESPACE_BEGIN
+ 
+-class HttpConnect : public ByteStream
++class CUTESTUFF_EXPORT HttpConnect : public ByteStream
+ {
+ 	Q_OBJECT
+ public:
+Index: cutestuff/network/httppoll.cpp
+===================================================================
+--- cutestuff/network/httppoll.cpp	(revision 330)
++++ cutestuff/network/httppoll.cpp	(working copy)
+@@ -54,7 +54,7 @@
+ 	if(n == 0)
+ 		return s;
+ 	else
+-		return QCA::Base64().arrayToString( QCA::SHA1().hash( Q3CString(hpk(n - 1, s).latin1()) ).toByteArray() );
++		return QCA::Base64().arrayToString( QCA::Hash("sha1").hash( Q3CString(hpk(n - 1, s).latin1()) ).toByteArray() );
+ }
+ 
+ class HttpPoll::Private
+@@ -662,3 +662,5 @@
+ }
+ 
+ // CS_NAMESPACE_END
++
++#include "httppoll.moc"
+Index: cutestuff/network/httppoll.h
+===================================================================
+--- cutestuff/network/httppoll.h	(revision 330)
++++ cutestuff/network/httppoll.h	(working copy)
+@@ -23,9 +23,10 @@
+ 
+ #include "bytestream.h"
+ 
++#include <cutestuff_export.h>
+ // CS_NAMESPACE_BEGIN
+ 
+-class HttpPoll : public ByteStream
++class CUTESTUFF_EXPORT HttpPoll : public ByteStream
+ {
+ 	Q_OBJECT
+ public:
+@@ -67,7 +68,7 @@
+ 	const QString & getKey(bool *);
+ };
+ 
+-class HttpProxyPost : public QObject
++class CUTESTUFF_EXPORT HttpProxyPost : public QObject
+ {
+ 	Q_OBJECT
+ public:
+Index: cutestuff/network/socks.cpp
+===================================================================
+--- cutestuff/network/socks.cpp	(revision 330)
++++ cutestuff/network/socks.cpp	(working copy)
+@@ -37,6 +37,7 @@
+ 
+ #ifdef Q_OS_WIN32
+ #include <windows.h>
++#include <winsock2.h>
+ #endif
+ 
+ #include "servsock.h"
+@@ -1221,3 +1222,5 @@
+ }
+ 
+ // CS_NAMESPACE_END
++
++#include "socks.moc"
+Index: cutestuff/network/socks.h
+===================================================================
+--- cutestuff/network/socks.h	(revision 330)
++++ cutestuff/network/socks.h	(working copy)
+@@ -23,13 +23,14 @@
+ 
+ #include "bytestream.h"
+ 
++#include <cutestuff_export.h>
+ // CS_NAMESPACE_BEGIN
+ 
+ class QHostAddress;
+ class SocksClient;
+ class SocksServer;
+ 
+-class SocksUDP : public QObject
++class CUTESTUFF_EXPORT SocksUDP : public QObject
+ {
+ 	Q_OBJECT
+ public:
+@@ -52,7 +53,7 @@
+ 	SocksUDP(SocksClient *sc, const QString &host, int port, const QHostAddress &routeAddr, int routePort);
+ };
+ 
+-class SocksClient : public ByteStream
++class CUTESTUFF_EXPORT SocksClient : public ByteStream
+ {
+ 	Q_OBJECT
+ public:
+@@ -125,7 +126,7 @@
+ 	void writeData(const QByteArray &a);
+ };
+ 
+-class SocksServer : public QObject
++class CUTESTUFF_EXPORT SocksServer : public QObject
+ {
+ 	Q_OBJECT
+ public:
+Index: cutestuff/util/bytestream.cpp
+===================================================================
+--- cutestuff/util/bytestream.cpp	(revision 330)
++++ cutestuff/util/bytestream.cpp	(working copy)
+@@ -267,3 +267,5 @@
+ //! error is indicated by \a code.
+ 
+ // CS_NAMESPACE_END
++
++#include "bytestream.moc"
+Index: cutestuff/util/bytestream.h
+===================================================================
+--- cutestuff/util/bytestream.h	(revision 330)
++++ cutestuff/util/bytestream.h	(working copy)
+@@ -24,10 +24,11 @@
+ #include <qobject.h>
+ #include <q3cstring.h>
+ 
++#include <cutestuff_export.h>
+ // CS_NAMESPACE_BEGIN
+ 
+ // CS_EXPORT_BEGIN
+-class ByteStream : public QObject
++class CUTESTUFF_EXPORT ByteStream : public QObject
+ {
+ 	Q_OBJECT
+ public:
+Index: iris/include/im.h
+===================================================================
+--- iris/include/im.h	(revision 330)
++++ iris/include/im.h	(working copy)
+@@ -34,9 +34,27 @@
+ #include "xmpp_rosterx.h"
+ #include "xmpp_xdata.h"
+ 
++#include <iris_export.h>
++
++#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
++# define IRIS_DUMMY_COMPARISON_OPERATOR(C) \
++    bool operator==(const C&) const { \
++        qWarning(#C"::operator==(const "#C"&) was called"); \
++        return false; \
++    }
++# define IRIS_DUMMY_QHASH_FUNCTION(C) \
++    inline uint qHash(const C) { \
++        qWarning("inline uint qHash(const "#C") was called"); \
++        return 0; \
++    }
++#else
++# define IRIS_DUMMY_COMPARISON_OPERATOR(C)
++# define IRIS_DUMMY_QHASH_FUNCTION(C)
++#endif
++
+ namespace XMPP
+ {
+-	class Url
++	class IRIS_EXPORT Url
+ 	{
+ 	public:
+ 		Url(const QString &url="", const QString &desc="");
+@@ -91,7 +109,7 @@
+ 	typedef QList<Address> AddressList;
+ 	typedef QMap<QString, QString> StringMap;
+ 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
+-			ComposingEvent, CancelEvent } MsgEvent;
++			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
+ 	typedef enum { StateNone, StateActive, StateComposing, StatePaused, 
+ 			StateInactive, StateGone } ChatState;
+ 	
+@@ -267,7 +285,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class Subscription
++	class IRIS_EXPORT Subscription
+ 	{
+ 	public:
+ 		enum SubType { None, To, From, Both, Remove };
+@@ -283,7 +301,7 @@
+ 		SubType value;
+ 	};
+ 
+-	class Resource
++	class IRIS_EXPORT Resource
+ 	{
+ 	public:
+ 		Resource(const QString &name="", const Status &s=Status());
+@@ -296,12 +314,14 @@
+ 		void setName(const QString &);
+ 		void setStatus(const Status &);
+ 
++		IRIS_DUMMY_COMPARISON_OPERATOR(Resource)
+ 	private:
+ 		QString v_name;
+ 		Status v_status;
+ 	};
++	IRIS_DUMMY_QHASH_FUNCTION(Resource)
+ 
+-	class ResourceList : public QList<Resource>
++	class IRIS_EXPORT ResourceList : public QList<Resource>
+ 	{
+ 	public:
+ 		ResourceList();
+@@ -314,7 +334,7 @@
+ 		ResourceList::ConstIterator priority() const;
+ 	};
+ 
+-	class RosterItem
++	class IRIS_EXPORT RosterItem
+ 	{
+ 	public:
+ 		RosterItem(const Jid &jid="");
+@@ -340,6 +360,7 @@
+ 		QDomElement toXml(QDomDocument *) const;
+ 		bool fromXml(const QDomElement &);
+ 
++		IRIS_DUMMY_COMPARISON_OPERATOR(RosterItem)
+ 	private:
+ 		Jid v_jid;
+ 		QString v_name;
+@@ -348,8 +369,9 @@
+ 		QString v_ask;
+ 		bool v_push;
+ 	};
++	IRIS_DUMMY_QHASH_FUNCTION(RosterItem)
+ 
+-	class Roster : public QList<RosterItem>
++	class IRIS_EXPORT Roster : public QList<RosterItem>
+ 	{
+ 	public:
+ 		Roster();
+@@ -362,7 +384,7 @@
+ 		class RosterPrivate *d;
+ 	};
+ 
+-	class AgentItem
++	class IRIS_EXPORT AgentItem
+ 	{
+ 	public:
+ 		AgentItem() { }
+@@ -387,7 +409,7 @@
+ 
+ 	typedef QList<AgentItem> AgentList;
+ 
+-	class DiscoItem
++	class IRIS_EXPORT DiscoItem
+ 	{
+ 	public:
+ 		DiscoItem();
+@@ -443,7 +465,7 @@
+ 
+ 	typedef QList<DiscoItem> DiscoList;
+ 
+-	class FormField
++	class IRIS_EXPORT FormField
+ 	{
+ 	public:
+ 		enum { username, nick, password, name, first, last, email, address, city, state, zip, phone, url, date, misc };
+@@ -459,6 +481,8 @@
+ 		bool setType(const QString &);
+ 		void setValue(const QString &);
+ 
++		IRIS_DUMMY_COMPARISON_OPERATOR(FormField)
++
+ 	private:
+ 		int tagNameToType(const QString &) const;
+ 		QString typeToTagName(int) const;
+@@ -469,8 +493,9 @@
+ 		class Private;
+ 		Private *d;
+ 	};
++	IRIS_DUMMY_QHASH_FUNCTION(FormField)
+ 
+-	class Form : public QList<FormField>
++	class IRIS_EXPORT Form : public QList<FormField>
+ 	{
+ 	public:
+ 		Form(const Jid &j="");
+@@ -491,7 +516,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class SearchResult
++	class IRIS_EXPORT SearchResult
+ 	{
+ 	public:
+ 		SearchResult(const Jid &jid="");
+@@ -522,7 +547,7 @@
+ 	class JidLinkManager;
+ 	class FileTransferManager;
+ 
+-	class Client : public QObject
++	class IRIS_EXPORT Client : public QObject
+ 	{
+ 		Q_OBJECT
+ 
+@@ -657,7 +682,7 @@
+ 		ClientPrivate *d;
+ 	};
+ 
+-	class LiveRosterItem : public RosterItem
++	class IRIS_EXPORT LiveRosterItem : public RosterItem
+ 	{
+ 	public:
+ 		LiveRosterItem(const Jid &j="");
+@@ -685,7 +710,7 @@
+ 		bool v_flagForDelete;
+ 	};
+ 
+-	class LiveRoster : public QList<LiveRosterItem>
++	class IRIS_EXPORT LiveRoster : public QList<LiveRosterItem>
+ 	{
+ 	public:
+ 		LiveRoster();
+Index: iris/include/xmpp.h
+===================================================================
+--- iris/include/xmpp.h	(revision 330)
++++ iris/include/xmpp.h	(working copy)
+@@ -32,6 +32,8 @@
+ 
+ #include "xmpp_jid.h"
+ 
++#include <iris_export.h>
++
+ namespace QCA
+ {
+ 	class TLS;
+@@ -65,7 +67,7 @@
+ 
+ 	void setDebug(Debug *);
+ 
+-	class Connector : public QObject
++	class IRIS_EXPORT Connector : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -97,7 +99,7 @@
+ 		Q_UINT16 port;
+ 	};
+ 
+-	class AdvancedConnector : public Connector
++	class IRIS_EXPORT AdvancedConnector : public Connector
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -171,7 +173,7 @@
+ 		void tryNextSrv();
+ 	};
+ 
+-	class TLSHandler : public QObject
++	class IRIS_EXPORT TLSHandler : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -191,7 +193,7 @@
+ 		void readyReadOutgoing(const QByteArray &a, int plainBytes);
+ 	};
+ 
+-	class QCATLSHandler : public TLSHandler
++	class IRIS_EXPORT QCATLSHandler : public TLSHandler
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -225,7 +227,7 @@
+ 	};
+ 
+ 	class Stream;
+-	class Stanza
++	class IRIS_EXPORT Stanza
+ 	{
+ 	public:
+ 		enum Kind { Message, Presence, IQ };
+@@ -324,7 +326,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class Stream : public QObject
++	class IRIS_EXPORT Stream : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -370,7 +372,7 @@
+ 		void error(int);
+ 	};
+ 
+-	class ClientStream : public Stream
++	class IRIS_EXPORT ClientStream : public Stream
+ 	{
+ 		Q_OBJECT
+ 	public:
+Index: iris/include/xmpp_features.h
+===================================================================
+--- iris/include/xmpp_features.h	(revision 330)
++++ iris/include/xmpp_features.h	(working copy)
+@@ -24,9 +24,11 @@
+ #include <QStringList>
+ #include <QString>
+ 
++#include <iris_export.h>
++
+ namespace XMPP
+ {
+-	class Features
++	class IRIS_EXPORT Features
+ 	{
+ 	public:
+ 		Features();
+@@ -47,6 +49,7 @@
+ 		bool canDisco() const;
+ 		bool canChatState() const;
+ 		bool canCommand() const;
++		bool canXHTML() const;
+ 		bool isGateway() const;
+ 		bool haveVCard() const;
+ 
+@@ -60,6 +63,7 @@
+ 			FID_Gateway,
+ 			FID_VCard,
+ 			FID_AHCommand,
++ 			FID_Xhtml,
+ 
+ 			// private Psi actions
+ 			FID_Add
+Index: iris/include/xmpp_jid.h
+===================================================================
+--- iris/include/xmpp_jid.h	(revision 330)
++++ iris/include/xmpp_jid.h	(working copy)
+@@ -23,9 +23,11 @@
+ 
+ #include <QString>
+ 
++#include <iris_export.h>
++
+ namespace XMPP 
+ {
+-	class Jid
++	class IRIS_EXPORT Jid
+ 	{
+ 	public:
+ 		Jid();
+Index: iris/include/xmpp_status.h
+===================================================================
+--- iris/include/xmpp_status.h	(revision 330)
++++ iris/include/xmpp_status.h	(working copy)
+@@ -26,9 +26,11 @@
+ 
+ #include "xmpp_muc.h"
+ 
++#include <iris_export.h>
++
+ namespace XMPP 
+ {
+-	class Status
++	class IRIS_EXPORT Status
+ 	{
+ 	public:
+ 		enum Type { Offline, Online, Away, XA, DND, Invisible, FFC };
+Index: iris/include/xmpp_task.h
+===================================================================
+--- iris/include/xmpp_task.h	(revision 330)
++++ iris/include/xmpp_task.h	(working copy)
+@@ -24,6 +24,8 @@
+ #include <QObject>
+ #include <QString>
+ 
++#include <iris_export.h>
++
+ class QDomDocument;
+ class QDomElement;
+ 
+@@ -31,7 +33,7 @@
+ 	class Client;
+ 	class Jid;
+ 
+-	class Task : public QObject
++	class IRIS_EXPORT Task : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+Index: iris/jabber/filetransfer.cpp
+===================================================================
+--- iris/jabber/filetransfer.cpp	(revision 330)
++++ iris/jabber/filetransfer.cpp	(working copy)
+@@ -756,3 +756,5 @@
+ 	incoming(r);
+ 	return true;
+ }
++
++#include "filetransfer.moc"
+Index: iris/jabber/filetransfer.h
+===================================================================
+--- iris/jabber/filetransfer.h	(revision 330)
++++ iris/jabber/filetransfer.h	(working copy)
+@@ -40,7 +40,7 @@
+ 			virtual void accept(qlonglong offset=0, qlonglong length=0) = 0;
+ 	};*/
+ 
+-	class FileTransfer : public QObject /*, public AbstractFileTransfer */
++	class IRIS_EXPORT FileTransfer : public QObject /*, public AbstractFileTransfer */
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -97,7 +97,7 @@
+ 		void takeConnection(S5BConnection *c);
+ 	};
+ 
+-	class FileTransferManager : public QObject
++	class IRIS_EXPORT FileTransferManager : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -128,7 +128,7 @@
+ 		void unlink(FileTransfer *);
+ 	};
+ 
+-	class JT_FT : public Task
++	class IRIS_EXPORT JT_FT : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+Index: iris/jabber/s5b.cpp
+===================================================================
+--- iris/jabber/s5b.cpp	(revision 330)
++++ iris/jabber/s5b.cpp	(working copy)
+@@ -33,6 +33,7 @@
+ 
+ #ifdef Q_OS_WIN
+ # include <windows.h>
++# include <winsock2.h>
+ #else
+ # include <netinet/in.h>
+ #endif
+@@ -46,7 +47,7 @@
+ static QString makeKey(const QString &sid, const Jid &initiator, const Jid &target)
+ {
+ 	QString str = sid + initiator.full() + target.full();
+-	return QCA::SHA1().hashToString(str.utf8());
++	return QCA::Hash("sha1").hashToString(str.utf8());
+ }
+ 
+ static bool haveHost(const StreamHostList &list, const Jid &j)
+@@ -2531,3 +2532,4 @@
+ }
+ 
+ #include "s5b.moc"
++#include "moc_s5b.cxx"
+Index: iris/jabber/s5b.h
+===================================================================
+--- iris/jabber/s5b.h	(revision 330)
++++ iris/jabber/s5b.h	(working copy)
+@@ -46,7 +46,7 @@
+ 	typedef Q3PtrList<S5BConnection> S5BConnectionList;
+ 	typedef Q3PtrListIterator<S5BConnection> S5BConnectionListIt;
+ 
+-	class S5BDatagram
++	class IRIS_EXPORT S5BDatagram
+ 	{
+ 	public:
+ 		S5BDatagram();
+@@ -61,7 +61,7 @@
+ 		QByteArray _buf;
+ 	};
+ 
+-	class S5BConnection : public ByteStream
++	class IRIS_EXPORT S5BConnection : public ByteStream
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -131,7 +131,7 @@
+ 		S5BConnection(S5BManager *, QObject *parent=0);
+ 	};
+ 
+-	class S5BManager : public QObject
++	class IRIS_EXPORT S5BManager : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -200,7 +200,7 @@
+ 		void doActivate(const Jid &peer, const QString &sid, const Jid &streamHost);
+ 	};
+ 
+-	class S5BConnector : public QObject
++	class IRIS_EXPORT S5BConnector : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -231,7 +231,7 @@
+ 	};
+ 
+ 	// listens on a port for serving
+-	class S5BServer : public QObject
++	class IRIS_EXPORT S5BServer : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -264,7 +264,7 @@
+ 		void writeUDP(const QHostAddress &addr, int port, const QByteArray &data);
+ 	};
+ 
+-	class JT_S5B : public Task
++	class IRIS_EXPORT JT_S5B : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -290,7 +290,7 @@
+ 		Private *d;
+ 	};
+ 
+-	struct S5BRequest
++	struct IRIS_EXPORT S5BRequest
+ 	{
+ 		Jid from;
+ 		QString id, sid;
+@@ -298,7 +298,7 @@
+ 		bool fast;
+ 		bool udp;
+ 	};
+-	class JT_PushS5B : public Task
++	class IRIS_EXPORT JT_PushS5B : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -320,7 +320,7 @@
+ 		void incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);
+ 	};
+ 
+-	class StreamHost
++	class IRIS_EXPORT StreamHost
+ 	{
+ 	public:
+ 		StreamHost();
+Index: iris/jabber/xmpp_ibb.cpp
+===================================================================
+--- iris/jabber/xmpp_ibb.cpp	(revision 330)
++++ iris/jabber/xmpp_ibb.cpp	(working copy)
+@@ -636,3 +636,4 @@
+ 	return d->mode;
+ }
+ 
++#include "xmpp_ibb.moc"
+Index: iris/jabber/xmpp_ibb.h
+===================================================================
+--- iris/jabber/xmpp_ibb.h	(revision 330)
++++ iris/jabber/xmpp_ibb.h	(working copy)
+@@ -34,7 +34,7 @@
+ 	class IBBManager;
+ 
+ 	// this is an IBB connection.  use it much like a qsocket
+-	class IBBConnection : public ByteStream
++	class IRIS_EXPORT IBBConnection : public ByteStream
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -78,7 +78,7 @@
+ 
+ 	typedef Q3PtrList<IBBConnection> IBBConnectionList;
+ 	typedef Q3PtrListIterator<IBBConnection> IBBConnectionListIt;
+-	class IBBManager : public QObject
++	class IRIS_EXPORT IBBManager : public QObject
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -111,7 +111,7 @@
+ 		void doReject(IBBConnection *c, const QString &id, int, const QString &);
+ 	};
+ 
+-	class JT_IBB : public Task
++	class IRIS_EXPORT JT_IBB : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+Index: iris/xmpp-core/compress.cpp
+===================================================================
+--- iris/xmpp-core/compress.cpp	(revision 330)
++++ iris/xmpp-core/compress.cpp	(working copy)
+@@ -177,3 +177,5 @@
+ 	device_->write(output);
+ 	return 0;
+ }
++
++#include "compress.moc"
+Index: iris/xmpp-core/compressionhandler.cpp
+===================================================================
+--- iris/xmpp-core/compressionhandler.cpp	(revision 330)
++++ iris/xmpp-core/compressionhandler.cpp	(working copy)
+@@ -57,3 +57,5 @@
+ {
+ 	return errorCode_;
+ }
++
++#include "compressionhandler.moc"
+Index: iris/xmpp-core/jid.cpp
+===================================================================
+--- iris/xmpp-core/jid.cpp	(revision 330)
++++ iris/xmpp-core/jid.cpp	(working copy)
+@@ -239,6 +239,9 @@
+ 		b = d;
+ 	else
+ 		b = n + '@' + d;
++	
++	b=b.toLower(); // JID are not case sensitive
++	
+ 	if(r.isEmpty())
+ 		f = b;
+ 	else
+Index: iris/xmpp-core/protocol.cpp
+===================================================================
+--- iris/xmpp-core/protocol.cpp	(revision 330)
++++ iris/xmpp-core/protocol.cpp	(working copy)
+@@ -1227,7 +1227,7 @@
+ 
+ 			p = doc.createElement("digest");
+ 			Q3CString cs = id.utf8() + password.utf8();
+-			p.appendChild(doc.createTextNode(QCA::SHA1().hashToString(cs)));
++			p.appendChild(doc.createTextNode(QCA::Hash("sha1").hashToString(cs)));
+ 		}
+ 		else {
+ 			p = doc.createElement("password");
+Index: iris/xmpp-core/protocol.h
+===================================================================
+--- iris/xmpp-core/protocol.h	(revision 330)
++++ iris/xmpp-core/protocol.h	(working copy)
+@@ -37,6 +37,7 @@
+ #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
+ #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
+ #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
++#define NS_CHATSTATES "http://jabber.org/protocol/chatstates"
+ #define NS_COMPRESS_FEATURE "http://jabber.org/features/compress"
+ #define NS_COMPRESS_PROTOCOL "http://jabber.org/protocol/compress"
+ 
+Index: iris/xmpp-core/securestream.cpp
+===================================================================
+--- iris/xmpp-core/securestream.cpp	(revision 330)
++++ iris/xmpp-core/securestream.cpp	(working copy)
+@@ -340,8 +340,6 @@
+ #endif
+ };
+ 
+-#include "securestream.moc"
+-
+ class SecureStream::Private
+ {
+ public:
+@@ -648,3 +646,6 @@
+ 	if(bytesAvailable())
+ 		readyRead();
+ }
++
++#include "securestream.moc"
++#include "moc_securestream.cxx"
+Index: iris/xmpp-core/simplesasl.cpp
+===================================================================
+--- iris/xmpp-core/simplesasl.cpp	(revision 330)
++++ iris/xmpp-core/simplesasl.cpp	(working copy)
+@@ -349,7 +349,7 @@
+ 
+ 			// build 'response'
+ 			Q3CString X = user.utf8() + ':' + realm.utf8() + ':' + Q3CString(pass.toByteArray());
+-			QByteArray Y = QCA::MD5().hash(X).toByteArray();
++			QByteArray Y = QCA::Hash("md5").hash(X).toByteArray();
+ 			QByteArray tmp = ':' + nonce + ':' + cnonce;
+ 			if (!authz.isEmpty())
+ 				tmp += ':' + authz.utf8();
+@@ -357,10 +357,10 @@
+ 
+ 			QByteArray A1(Y + tmp);
+ 			QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
+-			Q3CString HA1 = QCA::MD5().hashToString(A1).latin1();
+-			Q3CString HA2 = QCA::MD5().hashToString(A2).latin1();
++			Q3CString HA1 = QCA::Hash("md5").hashToString(A1).latin1();
++			Q3CString HA2 = QCA::Hash("md5").hashToString(A2).latin1();
+ 			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
+-			Q3CString Z = QCA::MD5().hashToString(KD).latin1();
++			Q3CString Z = QCA::Hash("md5").hashToString(KD).latin1();
+ 			
+ 			//qDebug(QString("simplesasl.cpp: A1 = %1").arg(QString(A1)).toAscii());
+ 			//qDebug(QString("simplesasl.cpp: A2 = %1").arg(QString(A2)).toAscii());
+@@ -512,6 +512,10 @@
+ 	{
+ 	}
+ 
++    int version() const {
++		return QCA_VERSION;
++    }
++
+ 	QString name() const {
+ 		return "simplesasl";
+ 	}
+Index: iris/xmpp-core/stream.cpp
+===================================================================
+--- iris/xmpp-core/stream.cpp	(revision 330)
++++ iris/xmpp-core/stream.cpp	(working copy)
+@@ -87,7 +87,7 @@
+ 	//if(!QCA::isSupported(QCA::CAP_SHA1))
+ 	//	QCA::insertProvider(createProviderHash());
+ 
+-	return QCA::SHA1().hashToString(randomArray(128));
++	return QCA::Hash("sha1").hashToString(randomArray(128));
+ }
+ 
+ //----------------------------------------------------------------------------
+@@ -1470,9 +1470,9 @@
+ 				printf("Break (RecvOpen)\n");
+ 
+ 				// calculate key
+-				Q3CString str = QCA::SHA1().hashToString("secret").utf8();
+-				str = QCA::SHA1().hashToString(str + "im.pyxa.org").utf8();
+-				str = QCA::SHA1().hashToString(str + d->srv.id.utf8()).utf8();
++				Q3CString str = QCA::Hash("sha1").hashToString("secret").utf8();
++				str = QCA::Hash("sha1").hashToString(str + "im.pyxa.org").utf8();
++				str = QCA::Hash("sha1").hashToString(str + d->srv.id.utf8()).utf8();
+ 				d->srv.setDialbackKey(str);
+ 
+ 				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
+Index: iris/xmpp-im/types.cpp
+===================================================================
+--- iris/xmpp-im/types.cpp	(revision 330)
++++ iris/xmpp-im/types.cpp	(working copy)
+@@ -24,6 +24,7 @@
+ #include <qapplication.h>
+ //Added by qt3to4:
+ #include <QList>
++#include "protocol.h"
+ 
+ #define NS_XML     "http://www.w3.org/XML/1998/namespace"
+ 
+@@ -1515,28 +1516,48 @@
+ 			else
+ 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
+ 		}
++		else if (d->type=="chat" || d->type=="groupchat")
++			s.appendChild(  s.createElement(NS_CHATSTATES , "active" ) );
+ 
++		bool need_x_event=false;
+ 		for(QList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+ 			switch (*ev) {
+ 				case OfflineEvent:
+ 					x.appendChild(s.createElement("jabber:x:event", "offline"));
++					need_x_event=true;
+ 					break;
+ 				case DeliveredEvent:
+ 					x.appendChild(s.createElement("jabber:x:event", "delivered"));
++					need_x_event=true;
+ 					break;
+ 				case DisplayedEvent:
+ 					x.appendChild(s.createElement("jabber:x:event", "displayed"));
++					need_x_event=true;
+ 					break;
+ 				case ComposingEvent: 
+ 					x.appendChild(s.createElement("jabber:x:event", "composing"));
++					need_x_event=true;
++					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
++						s.appendChild(  s.createElement(NS_CHATSTATES , "composing" ) ); 
+ 					break;
+ 				case CancelEvent:
+-					// Add nothing
++					need_x_event=true;
++					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
++						s.appendChild(  s.createElement(NS_CHATSTATES , "paused" ) ); 
+ 					break;
+-			}
+-		}
+-		s.appendChild(x);
+-	} 
++				case InactiveEvent:
++					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
++						s.appendChild(  s.createElement(NS_CHATSTATES , "inactive" ) ); 
++					break;
++				case GoneEvent:
++					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
++						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
++					break;
++  			}
++  		}
++		if(need_x_event)  //we don't need to have the (empty) x:event element if this is only <gone> or <inactive>
++			s.appendChild(x);
++	}
+ 
+ 	// chat state
+ 	QString chatStateNS = "http://jabber.org/protocol/chatstates";
+@@ -1647,6 +1668,7 @@
+ 	d->body.clear();
+ 	d->htmlElements.clear();
+ 	d->thread = QString();
++	d->eventList.clear();
+ 
+ 	QDomElement root = s.element();
+ 
+@@ -1687,6 +1709,33 @@
+ 					}
+ 				}
+ 			}
++			else if (e.namespaceURI() == NS_CHATSTATES)
++			{
++				if(e.tagName() == "active")
++				{
++					//like in JEP-0022  we let the client know that we can receive ComposingEvent
++					// (we can do that according to  §4.6  of the JEP-0085)
++					d->eventList += ComposingEvent;
++					d->eventList += InactiveEvent;
++					d->eventList += GoneEvent;
++				}
++				else if (e.tagName() == "composing")
++				{
++					d->eventList += ComposingEvent;
++				}
++				else if (e.tagName() == "paused")
++				{
++					d->eventList += CancelEvent;
++				}
++				else if (e.tagName() == "inactive")
++				{
++					d->eventList += InactiveEvent;
++				}
++				else if (e.tagName() == "gone")
++				{
++					d->eventList += GoneEvent;
++				}
++			}
+ 			else {
+ 				//printf("extension element: [%s]\n", e.tagName().latin1());
+ 			}
+@@ -1733,7 +1782,6 @@
+ 	}
+ 	
+     // events
+-	d->eventList.clear();
+ 	nl = root.elementsByTagNameNS("jabber:x:event", "x");
+ 	if (nl.count()) {
+ 		nl = nl.item(0).childNodes();
+@@ -1748,6 +1796,8 @@
+ 				d->eventList += ComposingEvent;
+ 			else if (evtag == "delivered")
+ 				d->eventList += DeliveredEvent;
++			else if (evtag == "offline")
++				d->eventList += OfflineEvent;
+ 		}
+ 		if (d->eventList.isEmpty())
+ 			d->eventList += CancelEvent;
+@@ -3040,6 +3090,14 @@
+ 	return test(ns);
+ }
+ 
++#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
++bool Features::canXHTML() const
++{
++	QStringList ns;
++	ns << FID_XHTML;
++	return test(ns);
++}
++
+ #define FID_GATEWAY "jabber:iq:gateway"
+ bool Features::isGateway() const
+ {
+@@ -3381,4 +3439,4 @@
+ 
+ }
+ 
+-#include "types.moc"
++#include "moc_types.cxx"
+Index: iris/xmpp-im/xmpp_tasks.cpp
+===================================================================
+--- iris/xmpp-im/xmpp_tasks.cpp	(revision 330)
++++ iris/xmpp-im/xmpp_tasks.cpp	(working copy)
+@@ -857,6 +857,74 @@
+ 
+ 
+ //----------------------------------------------------------------------------
++// JT_GetLastActivity
++//----------------------------------------------------------------------------
++class JT_GetLastActivity::Private
++{
++public:
++	Private() {}
++
++	int seconds;
++	QString message;
++};
++
++JT_GetLastActivity::JT_GetLastActivity(Task *parent)
++:Task(parent)
++{
++	d = new Private;
++}
++
++JT_GetLastActivity::~JT_GetLastActivity()
++{
++	delete d;
++}
++
++void JT_GetLastActivity::get(const Jid &j)
++{
++	jid = j;
++	iq = createIQ(doc(), "get", jid.full(), id());
++	QDomElement query = doc()->createElement("query");
++	query.setAttribute("xmlns", "jabber:iq:last");
++	iq.appendChild(query);
++}
++
++int JT_GetLastActivity::seconds() const
++{
++	return d->seconds;
++}
++
++const QString &JT_GetLastActivity::message() const
++{
++	return d->message;
++}
++
++void JT_GetLastActivity::onGo()
++{
++	send(iq);
++}
++
++bool JT_GetLastActivity::take(const QDomElement &x)
++{
++	if(!iqVerify(x, jid, id()))
++		return false;
++
++	if(x.attribute("type") == "result") {
++		QDomElement q = queryTag(x);
++
++		d->message = q.text();
++		bool ok;
++		d->seconds = q.attribute("seconds").toInt(&ok);
++
++		setSuccess(ok);
++	}
++	else {
++		setError(x);
++	}
++
++	return true;
++}
++
++//----------------------------------------------------------------------------
+ // JT_GetServices
+ //----------------------------------------------------------------------------
+ JT_GetServices::JT_GetServices(Task *parent)
+@@ -1408,6 +1476,10 @@
+ 				query.appendChild(feature);
+ 			}
+ 
++			feature = doc()->createElement("feature");
++			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
++			query.appendChild(feature);
++
+ 			if (node.isEmpty()) {
+ 				// Extended features
+ 				QStringList exts = client()->extensions();
+@@ -1982,3 +2054,95 @@
+ 	return true;
+ }
+ 
++
++
++
++//----------------------------------------------------------------------------
++// JT_PrivateStorage
++//----------------------------------------------------------------------------
++class JT_PrivateStorage::Private
++{
++	public:
++		Private() : type(-1) {}
++
++		QDomElement iq;
++		QDomElement elem;
++		int type;
++};
++
++JT_PrivateStorage::JT_PrivateStorage(Task *parent)
++	:Task(parent)
++{
++	d = new Private;
++}
++
++JT_PrivateStorage::~JT_PrivateStorage()
++{
++	delete d;
++}
++
++void JT_PrivateStorage::get(const QString& tag, const QString& xmlns)
++{
++	d->type = 0;
++	d->iq = createIQ(doc(), "get" , QString() , id() );
++	QDomElement query = doc()->createElement("query");
++	query.setAttribute("xmlns", "jabber:iq:private");
++	d->iq.appendChild(query);
++	QDomElement s = doc()->createElement(tag);
++	if(!xmlns.isEmpty())
++		s.setAttribute("xmlns", xmlns);
++	query.appendChild(s);
++}
++
++void JT_PrivateStorage::set(const QDomElement& element)
++{
++	d->type = 1;
++	d->elem=element;
++	QDomNode n=doc()->importNode(element,true);
++
++	d->iq = createIQ(doc(), "set" , QString() , id() );
++	QDomElement query = doc()->createElement("query");
++	query.setAttribute("xmlns", "jabber:iq:private");
++	d->iq.appendChild(query);
++	query.appendChild(n);
++}
++
++void JT_PrivateStorage::onGo()
++{
++	send(d->iq);
++}
++
++bool JT_PrivateStorage::take(const QDomElement &x)
++{
++	QString to = client()->host();
++	if(!iqVerify(x, to, id()))
++		return false;
++
++	if(x.attribute("type") == "result") {
++		if(d->type == 0) {
++			QDomElement q = queryTag(x);
++			for(QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling()) {
++				QDomElement i = n.toElement();
++				if(i.isNull())
++					continue;
++				d->elem=i;
++				break;
++			}
++		}
++		setSuccess();
++		return true;
++	}
++	else {
++		setError(x);
++	}
++
++	return true;
++}
++
++
++QDomElement JT_PrivateStorage::element( )
++{
++	return d->elem;
++}
++
++#include "xmpp_tasks.moc"
+Index: iris/xmpp-im/xmpp_tasks.h
+===================================================================
+--- iris/xmpp-im/xmpp_tasks.h	(revision 330)
++++ iris/xmpp-im/xmpp_tasks.h	(working copy)
+@@ -34,7 +34,7 @@
+ 	class Roster;
+ 	class Status;
+ 
+-	class JT_Register : public Task
++	class IRIS_EXPORT JT_Register : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -65,7 +65,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_UnRegister : public Task
++	class IRIS_EXPORT JT_UnRegister : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -85,7 +85,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_Roster : public Task
++	class IRIS_EXPORT JT_Roster : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -113,7 +113,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_PushRoster : public Task
++	class IRIS_EXPORT JT_PushRoster : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -130,7 +130,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_Presence : public Task
++	class IRIS_EXPORT JT_Presence : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -151,7 +151,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_PushPresence : public Task
++	class IRIS_EXPORT JT_PushPresence : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -177,7 +177,7 @@
+ 		bool take(const QDomElement&);
+ 	};
+ 
+-	class JT_Message : public Task
++	class IRIS_EXPORT JT_Message : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -193,7 +193,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_PushMessage : public Task
++	class IRIS_EXPORT JT_PushMessage : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -210,10 +210,33 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_GetServices : public Task
++	class IRIS_EXPORT JT_GetLastActivity : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
++		JT_GetLastActivity(Task *);
++		~JT_GetLastActivity();
++
++		void get(const Jid &);
++
++		int seconds() const;
++		const QString &message() const;
++
++		void onGo();
++		bool take(const QDomElement &x);
++
++	private:
++		class Private;
++		Private *d;
++
++		QDomElement iq;
++		Jid jid;
++	};
++
++	class IRIS_EXPORT JT_GetServices : public Task
++	{
++		Q_OBJECT
++	public:
+ 		JT_GetServices(Task *);
+ 
+ 		void get(const Jid &);
+@@ -232,7 +255,7 @@
+ 		AgentList agentList;
+ 	};
+ 
+-	class JT_VCard : public Task
++	class IRIS_EXPORT JT_VCard : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -255,7 +278,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_Search : public Task
++	class IRIS_EXPORT JT_Search : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -279,7 +302,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_ClientVersion : public Task
++	class IRIS_EXPORT JT_ClientVersion : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -318,7 +341,7 @@
+ 		QDomElement iq;
+ 	};
+ */
+-	class JT_ServInfo : public Task
++	class IRIS_EXPORT JT_ServInfo : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -328,7 +351,7 @@
+ 		bool take(const QDomElement &);
+ 	};
+ 
+-	class JT_Gateway : public Task
++	class IRIS_EXPORT JT_Gateway : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -351,7 +374,7 @@
+ 		QString v_prompt, v_desc;
+ 	};
+ 
+-	class JT_Browse : public Task
++	class IRIS_EXPORT JT_Browse : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -373,7 +396,7 @@
+ 		AgentItem browseHelper (const QDomElement &i);
+ 	};
+ 
+-	class JT_DiscoItems : public Task
++	class IRIS_EXPORT JT_DiscoItems : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -393,7 +416,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_DiscoInfo : public Task
++	class IRIS_EXPORT JT_DiscoInfo : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -415,7 +438,7 @@
+ 		Private *d;
+ 	};
+ 
+-	class JT_DiscoPublish : public Task
++	class IRIS_EXPORT JT_DiscoPublish : public Task
+ 	{
+ 		Q_OBJECT
+ 	public:
+@@ -431,6 +454,27 @@
+ 		class Private;
+ 		Private *d;
+ 	};
++    
++	class JT_PrivateStorage : public Task
++	{
++		Q_OBJECT
++	public:
++		JT_PrivateStorage(Task *parent);
++		~JT_PrivateStorage();
++
++		void set(const QDomElement &);
++		void get(const QString &tag, const QString& xmlns);
++		
++		QDomElement element();
++
++		void onGo();
++		bool take(const QDomElement &);
++		
++	private:
++		class Private;
++		Private *d;
++	};
++	
+ }
+ 
+ #endif
+Index: iris/xmpp-im/xmpp_vcard.h
+===================================================================
+--- iris/xmpp-im/xmpp_vcard.h	(revision 330)
++++ iris/xmpp-im/xmpp_vcard.h	(working copy)
+@@ -28,11 +28,13 @@
+ #include <QList>
+ #include <qdom.h>
+ 
++#include <iris_export.h>
++
+ class QDate;
+ 
+ namespace XMPP
+ {
+-	class VCard
++	class IRIS_EXPORT VCard
+ 	{
+ 	public:
+ 		VCard();
+@@ -85,7 +87,7 @@
+ 		void setBdayStr(const QString &);
+ 
+ 
+-		class Address {
++		class IRIS_EXPORT Address {
+ 		public:
+ 			Address();
+ 
+@@ -111,7 +113,7 @@
+ 		const AddressList &addressList() const;
+ 		void setAddressList(const AddressList &);
+ 
+-		class Label {
++		class IRIS_EXPORT Label {
+ 		public:
+ 			Label();
+ 
+@@ -132,7 +134,7 @@
+ 		void setLabelList(const LabelList &);
+ 
+ 
+-		class Phone {
++		class IRIS_EXPORT Phone {
+ 		public:
+ 			Phone();
+ 
+@@ -157,7 +159,7 @@
+ 		void setPhoneList(const PhoneList &);
+ 
+ 
+-		class Email {
++		class IRIS_EXPORT Email {
+ 		public:
+ 			Email();
+ 
+@@ -183,7 +185,7 @@
+ 		void setTimezone(const QString &);
+ 
+ 
+-		class Geo {
++		class IRIS_EXPORT Geo {
+ 		public:
+ 			Geo();
+ 
+@@ -215,7 +217,7 @@
+ 		void setAgentURI(const QString &);
+ 
+ 
+-		class Org {
++		class IRIS_EXPORT Org {
+ 		public:
+ 			Org();
+ 
