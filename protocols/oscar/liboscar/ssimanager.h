@@ -99,6 +99,7 @@ public:
 	
 	Oscar::SSI visibilityItem() const;
 
+	void setListComplete( bool complete );
 	bool listComplete() const;
 
 public slots:

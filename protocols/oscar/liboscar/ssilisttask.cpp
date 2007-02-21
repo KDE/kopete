@@ -68,11 +68,11 @@ bool SSIListTask::take( Transfer* transfer )
 			setTransfer( 0 );
 			return true;
 		}
-		else
+		else if ( st->snacSubtype() == 0x000F )
 		{
-			//this should be subtype F for which we do nothing
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring SNAC 0x13, 0x0F - Our SSI List is up to date" << endl;
-			setSuccess( 0, QString::null );
+			setTransfer( transfer );
+			handleSSIUpToDate();
+			setTransfer( 0 );
 			return true;
 		}
 	}
@@ -135,12 +135,26 @@ void SSIListTask::handleSSIListReply()
 		if ( st && st->snacFlags() == 0  )
 		{
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SSI List complete" << endl;
+			client()->ssiManager()->setListComplete( true );
 			setSuccess( 0, QString::null );
 		}
 		else
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Awaiting another SSI packet" << endl;
 	}
 
+}
+
+void SSIListTask::handleSSIUpToDate()
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Our SSI List is up to date" << endl;
+	Buffer* buffer = transfer()->buffer();
+
+	client()->ssiManager()->setLastModificationTime( buffer->getDWord() );
+	WORD ssiItems = buffer->getWord();
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Number of items in SSI list: " << ssiItems << endl;
+
+	client()->ssiManager()->setListComplete( true );
+	setSuccess( 0, QString::null );
 }
 
 void SSIListTask::checkSSITimestamp()

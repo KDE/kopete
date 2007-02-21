@@ -45,12 +45,19 @@ void LocalContactListTask::onGo()
 {
 	if( !client()->settings()->respectRequireAuth() )
 	{
+		QValueList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
+		
+		if ( contactList.isEmpty() )
+		{
+			setSuccess( 0, QString::null );
+			return;
+		}
+		
 		FLAP f = { 0x02, 0, 0 };
 		SNAC s = { 0x0003, 0x0004, 0x0000, client()->snacSequence() };
 		Buffer* buffer = new Buffer();
 		
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
-		QValueList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
 		QValueList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
 		for ( QValueList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{

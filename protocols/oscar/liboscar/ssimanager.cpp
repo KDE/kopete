@@ -31,7 +31,8 @@ public:
 	QValueList<Oscar::SSI> SSIList;
 	QValueList<WORD> groupIdList;
 	QValueList<WORD> itemIdList;
-	WORD lastModTime;
+	bool complete;
+	DWORD lastModTime;
 	WORD maxContacts;
 	WORD maxGroups;
 	WORD maxVisible;
@@ -45,6 +46,7 @@ SSIManager::SSIManager( QObject *parent, const char *name )
  : QObject( parent, name )
 {
 	d = new SSIManagerPrivate;
+	d->complete = false;
 	d->lastModTime = 0;
 	d->nextContactId = 0;
 	d->nextGroupId = 0;
@@ -76,6 +78,8 @@ void SSIManager::clear()
 	
 	d->itemIdList.clear();
 	d->groupIdList.clear();
+	d->complete = false;
+	d->lastModTime = 0;
 	d->nextContactId = 0;
 	d->nextGroupId = 0;
 }
@@ -406,11 +410,14 @@ Oscar::SSI SSIManager::visibilityItem() const
 	return item;
 }
 
+void SSIManager::setListComplete( bool complete )
+{
+	d->complete = complete;
+}
+
 bool SSIManager::listComplete() const
 {
-	//if last modification time is zero, we're not done
-	//getting the list
-	return d->lastModTime != 0; 
+	return d->complete;
 }
 
 bool SSIManager::newGroup( const Oscar::SSI& group )
