@@ -145,8 +145,9 @@ void OscarVersionUpdater::printDebug()
 	kDebug(OSCAR_RAW_DEBUG) << "************************************************" << endl;
 }
 
-void OscarVersionUpdater::slotTransferData ( KIO::Job */*job*/, const QByteArray &data )
+void OscarVersionUpdater::slotTransferData ( KIO::Job *job, const QByteArray &data )
 {
+	Q_UNUSED( job )
 	unsigned oldSize = mVersionData.size();
 	mVersionData.resize ( oldSize + data.size() );
 	memcpy ( &mVersionData.data()[oldSize], data.data(), data.size() );

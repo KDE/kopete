@@ -37,6 +37,7 @@
 #include <qtextcodec.h>
 #include <qimage.h>
 #include <qfile.h>
+#include <QHash>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -271,13 +272,12 @@ void OscarAccount::processSSIList()
 	QObject::connect( listManager, SIGNAL( contactUpdated( const OContact& ) ),
 	                  this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
-	/** Commented for compilation purposes. 
-    Q3Dict<Kopete::Contact> nonServerContacts = contacts();
-    Q3DictIterator<Kopete::Contact> it( nonServerContacts );
+    const QHash<QString, Kopete::Contact*> &nonServerContacts = contacts();
+    QHash<QString, Kopete::Contact*>::ConstIterator it = nonServerContacts.constBegin();
     QStringList nonServerContactList;
-    for ( ; it.current(); ++it )
+    for ( ; it != nonServerContacts.constEnd(); ++it )
     {
-        OscarContact* oc = dynamic_cast<OscarContact*>( ( *it ) );
+        const OscarContact* oc = dynamic_cast<const OscarContact*>( ( *it ) );
         if ( !oc )
             continue;
         kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << oc->contactId() << " contact ssi type: " << oc->ssiItem().type() << endl;
@@ -295,7 +295,6 @@ void OscarAccount::processSSIList()
         d->olnscDialog->addContacts( nonServerContactList );
         d->olnscDialog->show();
     }
-	*/
 }
 
 void OscarAccount::nonServerAddContactDialogClosed()
