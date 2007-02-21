@@ -60,7 +60,7 @@ class JabberConnector;
  * @brief Provides a Jabber client
  * @author Till Gerken
  */
-class KOPETE_EXPORT JabberClient : public QObject
+class JABBER_EXPORT JabberClient : public QObject
 {
 
 Q_OBJECT

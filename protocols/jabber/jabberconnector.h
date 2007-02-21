@@ -31,7 +31,7 @@ class KResolverEntry;
 /**
 @author Till Gerken
 */
-class KOPETE_EXPORT JabberConnector : public XMPP::Connector
+class JABBER_EXPORT JabberConnector : public XMPP::Connector
 {
 
 Q_OBJECT

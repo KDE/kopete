@@ -28,7 +28,7 @@
 /**
 @author Kopete Developers
 */
-class KOPETE_EXPORT JabberByteStream : public ByteStream
+class JABBER_EXPORT JabberByteStream : public ByteStream
 {
 
 Q_OBJECT

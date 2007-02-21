@@ -111,6 +111,14 @@
 # endif
 #endif
 
+#ifndef JABBER_EXPORT
+# if defined(MAKE_KOPETE_JABBER_LIB)
+#  define JABBER_EXPORT KDE_EXPORT
+# else
+#  define JABBER_EXPORT KDE_IMPORT
+# endif
+#endif
+
 #else
 
 #define KOPETE_EXPORT KDE_EXPORT
@@ -124,6 +132,7 @@
 #define YAHOO_EXPORT KDE_EXPORT
 #define QQ_EXPORT KDE_EXPORT
 #define MESSENGER_EXPORT KDE_EXPORT
+#define JABBER_EXPORT KDE_EXPORT
 
 #endif
 
