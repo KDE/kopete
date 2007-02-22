@@ -100,6 +100,7 @@ public:
 	
 	OContact visibilityItem() const;
 
+	void setListComplete( bool complete );
 	bool listComplete() const;
 
 public slots:

@@ -46,9 +46,6 @@ protected:
 	virtual void onGo();
 
 signals:
-	/** We've got the timestamp, the Contact list is done */
-	void listComplete();
-
 	/** We have a new group */
 	void newGroup( const OContact& );
 
@@ -91,7 +88,7 @@ private:
 	 * The timestamp of the Contact is up to date
 	 * This is SNAC( 0x13, 0x0F )
 	 */
-	void ssiUpToDate();
+	void handleSSIUpToDate();
 
 	
 private:

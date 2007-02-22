@@ -34,7 +34,8 @@ public:
 	QList<OContact> contactList;
 	QSet<Oscar::WORD> itemIdSet;
 	QSet<Oscar::WORD> groupIdSet;
-	Oscar::WORD lastModTime;
+	bool complete;
+	Oscar::DWORD lastModTime;
 	Oscar::WORD maxContacts;
 	Oscar::WORD maxGroups;
 	Oscar::WORD maxVisible;
@@ -48,6 +49,7 @@ ContactManager::ContactManager( QObject *parent )
  : QObject(parent)
 {
 	d = new ContactManagerPrivate;
+	d->complete = false;
 	d->lastModTime = 0;
 	d->nextContactId = 0;
 	d->nextGroupId = 0;
@@ -79,6 +81,8 @@ void ContactManager::clear()
 
 	d->itemIdSet.clear();
 	d->groupIdSet.clear();
+	d->complete = false;
+	d->lastModTime = 0;
 	d->nextContactId = 0;
 	d->nextGroupId = 0;
 }
@@ -415,11 +419,14 @@ OContact ContactManager::visibilityItem() const
 	return item;
 }
 
+void ContactManager::setListComplete( bool complete )
+{
+	d->complete = complete;
+}
+
 bool ContactManager::listComplete() const
 {
-	//if last modification time is zero, we're not done
-	//getting the list
-	return d->lastModTime != 0;
+	return d->complete;
 }
 
 bool ContactManager::newGroup( const OContact& group )
