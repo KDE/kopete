@@ -5,6 +5,8 @@
   <!ENTITY Will.Stephenson.mail "<email>lists@stevello.free-online.co.uk</email>">
   <!ENTITY Matt.Rogers "<personname><firstname>Matt</firstname><surname>Rogers</surname></personname>">
   <!ENTITY Matt.Rogers.mail "<email>mattr@kde.org</email>">
+  <!ENTITY Michael.Larouche "<personname><firstname>Michaël</firstname><surname>Larouche</surname></personname>">
+  <!ENTITY Michael.Larouche.mail "<email>michael.larouche@kdemail.net</email>">
   <!ENTITY package "kdenetwork">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
@@ -12,6 +14,7 @@
   <!ENTITY % English "INCLUDE">
   <!ENTITY kopetewww "<ulink url='http://kopete.kde.org'>http://kopete.kde.org</ulink>">
   <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
 ]>
 <!--
 Intro (1st draft, Will)
@@ -62,6 +65,7 @@ Specialised Tasks
 	Command line flags
 Credits (1st draft, Will)
 Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
 -->
 
 <book lang="&language;">
@@ -72,17 +76,18 @@ Appendix: Obtaining and installation (1st draft, Will)
 
 <author>&Will.Stephenson; &Will.Stephenson.mail;</author>
 <author>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author>&Michael.Larouche; &Michael.Larouche.mail;</author>
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2004-02-24</date>
-<releaseinfo>0.10</releaseinfo>
+<date>2006-12-15</date>
+<releaseinfo>0.12</releaseinfo>
 
 <copyright>
-<year>2003, 2004, 2005</year>
+<year>2003, 2004, 2005, 2006</year>
 </copyright>
 
 <!-- Abstract about this handbook -->
@@ -194,14 +199,17 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>The <interface>Contact List</interface> appears when you start &kopete;.  It's the main window where you can set your presence, start a chat, organize your contacts, configure &kopete; and quit.</para>
 <sect2 id="contact-list-layout">
 <title>Layout of the Contact List window</title>
-<sect3 id="contact-list-layout-menu"><title>Menu</title><para>You will usually find the menubar at the top of the contact list.  If it's not there, you might have turned it off; you can re-enable it with <keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>.  Details on each menu item can be found in the <link linkend="menus">chapter on menu structure</link>.</para>
+<sect3 id="contact-list-layout-menu"><title>Menu</title><para>You will usually find the menu bar at the top of the contact list.  If it's not there, you might have turned it off; you can re-enable it with <keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>.  Details on each menu item can be found in the <link linkend="menus">chapter on menu structure</link>.</para>
 </sect3>
 <sect3 id="contact-list-layout-toolbar"><title>Tool bar</title><para>The toolbar holds the most frequently used &kopete; actions.  You can customize it with <menuchoice><guimenu>Settings</guimenu> <guimenuitem>Configure Toolbars...</guimenuitem></menuchoice>.  Notice the <guibutton>Show Offline Users</guibutton> and <guibutton>Show Empty Groups</guibutton> buttons.  With these you can hide contacts and groups that are offline.</para>
+	<para>&kopete; makes it even easier to set a status message to let your contacts know about your mood or why you're busy at the moment.  Click on the <guibutton>Set Status Message</guibutton> button and start typing to enter a new message, or choose from one of the previous messages you have used.</para>
+	<para>The <guilabel>Quick Search Toolbar</guilabel> quickly filters the contact list, by typing a few letters from a contact's name.</para>
 </sect3>
 <sect3 id="contact-list-layout-contactlist"><title>Contact List</title><para>The <interface>Contact List</interface> takes up the main part of the window.  All your contacts are listed here, in the groups you have chosen for them.  You can open or close groups by clicking the plus symbol adjacent to the group.  You can reverse the order the groups are sorted in by clicking the <guilabel>Contacts</guilabel> label above the list.</para>
 <para>The context menu in the <interface>Contact List</interface> changes depending on the item under the mouse.  <link linkend="organise-contacts-grouping">Groups</link>, <link linkend="organise-contacts-metacontacts">Metacontacts</link> and &im; system specific contacts have their own options.  In empty areas of the <interface>Contact List</interface>, the context menu allows you to add contacts or groups, or change the viewing options for the list.</para>
 </sect3>
 <sect3 id="contact-list-layout-statusbar"><title>Status bar</title><para>The status bar shows an icon for each &im; account you have created.  The icons represent the current presence of each account, which can be changed by <mousebutton>right</mousebutton>-clicking the account icon.  </para>
+	<para>Kopete also shows your current status message in the <guilabel>Status Bar></guilabel>.  By clicking on the note icon in the corner, you can change or clear the status message as well.</para>
 </sect3>
 </sect2>
 <sect2 id="contact-list-setting-presence">
@@ -217,7 +225,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="contact-list-send-file">
 	<title>Send A File</title>
-	<para>You can send files from the <interface>Contact List</interface>, using the context menu on the person you want to send to.  If &kopete; supports file transfer on their &im; system, there will be a <menuchoice><guimenuitem>Send File...</guimenuitem></menuchoice> item.  Alternatively, you can drag a file from anywhere else in &kde; onto their name to start a file transfer.</para>
+	<para>You can send files from the <interface>Contact List</interface>, using the context menu on the person you want to send to.  If &kopete; supports file transfer on their &im; system, there will be a <menuchoice><guimenuitem>Send File...</guimenuitem></menuchoice> item.  Alternatively, you can drag a file from anywhere else in KDE onto their name to start a file transfer.</para>
 </sect2>
 <sect2 id="organise-contacts">
 <title>Organising Contacts</title>
@@ -236,11 +244,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>The Add Contact Wizard creates a new Metacontact using one or more &im; systems, by leading you through the following pages.</para>
 
 <orderedlist>
-<listitem><para>Welcome Page.  Here you can choose whether you want to use the &kde; Address Book for this contact.  Storing &im; information in the &kde; Address Book will enable other &kde; &im; programs to share contact information with &kopete; and in future &kde; applications may use &kopete; to send information via &im;.  If you prefer to keep your &im; contacts separated, clear the check box here.</para></listitem>
+<listitem><para>Welcome Page.  Here you can choose whether you want to use the &kde; Address Book for this contact.  Storing &im; information in the &kde; Address Book will enable other &kde; &im; programs to share contact information with &kopete; and in future &kde; applications may use &kopete; to send information via &im;.  If you prefer to keep your &im; contacts separated, clear the checkbox here.</para></listitem>
 <listitem><para>Choose &kde; Address Book entry.  By choosing an entry from your &kde; Address Book, you can use its name as a Display Name in &kopete;.  You can also create a new entry here.  This page doesn't show if you chose not to use the &kde; Address Book.</para></listitem>
 <listitem><para>Select Display Name and Group.  Here you can enter a Display Name (the name used for this person inside &kopete;), and choose the <link linkend="organise-contacts-grouping">groups</link> they are a member of.</para></listitem>
 <listitem><para>Select &im; Accounts.  Here you can choose which accounts you want to use to chat to the new contact.  If you only have one &im; account, you won't see this screen.</para></listitem>
-<listitem><para>Account-specific Add Contact Pages.  For each account, you'll get one page where you can enter the <acronym>UIN</acronym>, buddy name or Email address, depending on the &im; system in use.</para></listitem>
+<listitem><para>Account-specific Add Contact Pages.  For each account, you'll get one page where you can enter the <acronym>UIN</acronym>, buddy name or E-mail address, depending on the &im; system in use.</para></listitem>
 <listitem><para>Finish Screen.  All done.  Except if the &im; system requires authorisation (such as <trademark>ICQ</trademark>) to add a contact to your list - in which case, you'll be prompted after the wizard exits.</para></listitem>
 </orderedlist>
 
@@ -342,6 +350,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect3 id="chat-window-layout-tabbing"><title>Tabbing</title><para>&kopete; lets you carry on multiple conversations in one window, by putting each one in its own tab within the window.  The tab titles change color to show when a new message has been received:</para>
 <variablelist>
 <varlistentry><term>Red</term><listitem><para>Someone typed a message.</para></listitem></varlistentry>
+<varlistentry><term>Green</term><listitem><para>Someone is typing a message.</para></listitem></varlistentry>
 <varlistentry><term>Blue</term><listitem><para>Someone typed a message containing your nickname.</para></listitem></varlistentry>
 </variablelist>
 <para>There are several different ways to control grouping.  To configure this behavior, go to the Chat tab of the Behavior page of the Configure &kopete; dialog.  You can also move chats between windows using the <menuchoice><guimenu>Tabs</guimenu></menuchoice> menu, and control the placement of the tabs in the window.</para></sect3>
@@ -349,11 +358,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect2 id="chat-window-group">
 <title>Group Chats in &kopete;</title>
 <para>You can use &kopete; to chat one to one, or in a group, where the &im; system supports this.</para>
-<para>MSN lets you invite others into a chat using <menuchoice><guimenu>Chat</guimenu><guisubmenu>Invite</guisubmenu><guimenuitem>&lt;contact name&gt;</guimenuitem></menuchoice>.</para>
+<para>To invite others into a chat, drag them from the Contact List into the chat window, or use <menuchoice><guimenu>Chat</guimenu><guisubmenu>Invite</guisubmenu><guimenuitem>&lt;contact name&gt;</guimenuitem></menuchoice>.</para>
 </sect2>
 <sect2 id="chat-window-file-xfer">
 <title>File Transfers</title>
-<para>Some &im; systems allow you to send and receive files.  You can access this function from the contact's context menu.  If you're already chatting, and want to send a file, select the recipient from the <menuchoice><guimenu>Chat</guimenu><guisubmenu>Contacts</guisubmenu></menuchoice> menu.</para>
+<para>Some &im; systems allow you to send and receive files.  You can access this function from the contact's context menu.  If you're already chatting, and want to send a file, simply drag the file from any other part of &kde; into the Chat Window, or select the <menuchoice><guimenu>Chat</guimenu><guimenuitem>Send File</guimenuitem></menuchoice> menu.</para>
 </sect2>
 <sect2 id="chat-window-shortcuts">
 <title>Keyboard Shortcuts</title>
@@ -384,11 +393,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <entry>Close the current Chat View.  The Chat window will close unless there is more than one tab in the window.</entry>
 </row>
 <row>
-<entry><keycombo action="simul">&Alt;<keycap>Left Arrow</keycap></keycombo></entry>
+<entry><keycombo action="simul">&Ctrl;<keycap>,</keycap></keycombo></entry>
 <entry>Change to the previous tab.</entry>
 </row>
 <row>
-<entry><keycombo action="simul">&Alt;<keycap>Right Arrow</keycap></keycombo></entry>
+<entry><keycombo action="simul">&Ctrl;<keycap>.</keycap></keycombo></entry>
 <entry>Change to the next tab.</entry>
 </row>
 <row>
@@ -440,9 +449,13 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect2 id="configuring-accounts">
 <title>Adding and Editing Accounts</title>
 <para>We briefly showed you how to add an account in <link linkend="getting-started">Getting Started</link>.  To change an account's settings later, open up the <guilabel>Configure &kopete;</guilabel> dialog, with <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure &kopete;</guimenuitem></menuchoice>.  Much like the &kde; Control Center, the configuration is separated into sections.  The icons on the left side of the dialog switch between sections.</para>
-<para>On the Accounts page, you can <link linkend="creating-accounts"><guibutton>Add</guibutton></link>, <guibutton>Remove</guibutton>, or <guibutton>Modify</guibutton> accounts.  Editing accounts is much the same as adding them, but note that you cannot change the UIN, buddy name, or whatever account identifier your &im; system uses.  This is intrinsic to the account.  If you want to change this, you will have to add another account with the new account identifier and (optionally) remove the old account.</para>
+<para>On the Accounts page, you can <link linkend="creating-accounts"><guibutton>Add</guibutton></link>, <guibutton>Remove</guibutton>, or <guibutton>Modify</guibutton> accounts.  Editing accounts is much the same as adding them, but note that you can't change the UIN, buddy name, or whatever account identifier your &im; system uses.  This is intrinsic to the account.  If you want to change this, you will have to add another account with the new account identifier and (optionally) remove the old account.</para>
 <para>You can quickly distinguish between multiple accounts using the same &im; system by giving a custom color to each account's status bar entry and contact icons.  To do so, select the account and click the color selector on the right side of the page. </para>
 <para>You can control the priority of accounts using the <guiicon>Up</guiicon> and <guiicon>Down</guiicon> icons on this page.  If you have more than one way to message a contact, this determines the &im; system &kopete; will use to communicate them.</para>
+</sect2>
+<sect2 id="global-identity">
+<title>Global Identity</title>
+<para>&kopete;'s Global Identity lets you set your own nickname and photo once for all your &im; accounts.  You can read these details from the KDE address book entry for yourself, from a single one of your contacts, or add a completely new nickname or photo.  If you have an exciting dual life, you can create multiple identites and switch between them in the<guilabel>Identity</guilabel> section.</para>
 </sect2>
 <sect2 id="configuring-behavior">
 <title>Behavior</title>
@@ -452,21 +465,33 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>Here you can customize &kopete;'s desktop integration, and control the way the contact list is laid out.</para>
 <variablelist>
 <varlistentry>
-<term><guilabel>Show the system tray icon</guilabel></term>
+<term><guilabel>Show system tray icon</guilabel></term>
 <listitem>
 <para>By default, &kopete; places an icon in the &kde; System Tray.  If you prefer, you can turn this off here.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Start hidden</guilabel></term>
+<term><guilabel>Start with hidden main window</guilabel></term>
 <listitem>
 <para>This causes &kopete; to start with the <interface>Contact List</interface> window hidden (docked).  You can make it visible by clicking the system tray icon or with the <link linkend="configuring-global-shortcuts">Show Contact List global shortcut</link>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Open messages instantly</guilabel></term>
+<listitem>
+<para>New messages open chat windows as soon as they arrive.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Use message queue</guilabel></term>
 <listitem>
 <para>The message queue is where &kopete; puts messages when there is no chat window open.  This allows you to be notified of new messages with popup <quote>speech bubbles</quote>; or by animating the System Tray icon.  If you choose to disable the message queue, chat windows will open as soon as you receive a new message.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Use message stack</guilabel></term>
+<listitem>
+<para>If you use a message stack, &kopete; shows recently received messages starting with the last message received.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -476,7 +501,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Show a bubble on new message</guilabel></term>
 <listitem>
-<para>This option shows a <quote>speech bubble</quote>; coming from the System Tray icon when you receive a new message.  You can start a chat or ignore the message.  &URL;s are extracted from the message; if you click a link, your preferred browser will open the link and the message will be dismissed.</para>
+<para>This option shows a <quote>speech bubble</quote>; coming from the System Tray icon when you receive a new message.  You can start a chat or ignore the message.  <acronym>URL</acronym>s are extracted from the message; if you click a link, your preferred browser will open the link and the message will be dismissed.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -494,10 +519,10 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Configure Sounds &amp; Events</guilabel></term>
 <listitem>
-<para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrolcenter; for more information.</para>
+<para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrol; for more information.</para>
 <para>To add custom notifications for a contact, right click that contact in the Contact List and select Properties. This lets you start chats, play a custom sound effect, or display a message for that contact or group. Otherwise you can use the <quote>Execute a program</quote> notification to perform custom notifications.  As an example, if you have <application>XOSD</application> (X On-Screen Display) installed, you can get OSD online notifications by executing the following command when the <quote>User goes online</quote> event takes place:</para>
 <para><userinput>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput></para>
-<para>OhReally at the &kde; Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
+<para>OhReally at the KDE Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
 <para><userinput>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput></para>
 <para>The 'sed' in the middle phoneticises &kopete;'s output to so the synthesizer has a better Dutch pronunciation.</para>
 </listitem>
@@ -577,13 +602,10 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Chat Window</title>
 <sect4 id="configuring-appearance-chat-styles">
 <title>Styles</title>
-<para>The style of the chat view can be altered to look like other clients, or you can invent your own style here.  Installed styles are shown in the list on the left and are previewed in the main panel.</para>
-<para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>.</para>
-<para>To modify a style, click <guibutton>Edit...</guibutton>.  &kopete; represents chats internally as &XML; and uses the Extensible Stylesheet Language (&XSL;) to specify how this should be transformed into &HTML; for display.  You need to be familiar with &HTML; and &XSL; to edit styles.</para>
-</sect4>
-<sect4 id="configuring-appearance-chat-translucency">
-<title>Chat Window</title>
-<para>&kopete; supports translucent chat views.  You can control the degree of translucency and add a color tint here.  Changes to the translucency settings only become visible when a new chat view opens.</para>
+<para>The style of the chat view can be altered to look like other clients. Installed styles are shown in the list on the left and are previewed in the main panel. See <link linkend="chatwindowstyleguide">Chat Window Style guide</link> for a document how to make your own style.</para>
+<para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>. &kopete; 0.12 now supports styles from Adium(an &im; program on Mac OS X). So you can download styles from Adium here: <ulink url="http://www.adiumxtras.com/">Adium Xtras</ulink> and select Message View Styles.</para>
+<para>To install a style, click<guibutton>Instal...</guibutton>. Select a archive file containing the style. To delete a style, select a style in the list and click <guibutton>Delete</guibutton>.</para>
+<para><guilabel>Group consecutive messages</guilabel> is a useful option to make your chats more readable.  If you receive several messages in a row from teh same contact, they are grouped without repeating the sender name.</para>
 </sect4>
 </sect3>
 <sect3 id="configuring-behavior-general-contactlist">
@@ -604,7 +626,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Contact Display Mode</guilabel></term>
 <listitem>
-	<para>There are several ways you can present the contact list here.  Of particular interest may be the <guilabel>Detailed with contact photos</guilabel> style, that shows the contact list including photos from the &im; system or the &kde; Address Book</para>
+	<para>There are several ways you can present the contact list here.  Of particular interest may be the <guilabel>Use contact photos when available</guilabel> option, that shows the contact list using photos chosen by your contacts or the KDE Address Book</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -620,7 +642,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Change Tootip Contents...</guilabel></term>
+<term><guilabel>Change Tooltip Contents...</guilabel></term>
 <listitem>
 	<para>You have a lot of control over how much or how little detail appears inthe tooltips shown on the contact list using this dialog.</para>
 </listitem>
@@ -633,29 +655,103 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Chat Window Colors</title>
 <para>Here you can alter the base font and text colors used for chatting.</para>
 </sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title>Formatting Overrides</title>
+<para>If your contacts tend to choose fonts and colors that you dislike, you can tell &kopete; to ignore these and use your regular font.</para>
+</sect4>
 <sect4 id="configuring-appearance-colors-fonts-contactlist">
 <title>Contact List</title>
 <para>Some &im; systems let you see whether contacts are idle at their computers.  This option enables you to change the color used for idle contacts.</para>
 </sect4>
 </sect3>
 </sect2> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title>Devices</title>
+<para>The Devices section allows you to choose and configure which multimedia devices are used for A/V chatting.  Whether this works for you is highly dependent on the hardware you have and how well it is supported by your operating system.</para>
+<sect3 id="configuring-devices-video">
+<title>Video</title>
+<para>&kopete; uses the Video4Linux 2 system for video.  This shows a blue square if no video device is found, or a preview if the camera is working.  For up-to-date information on &kopete; webcam support, see the <ulink url="http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support">Kopete Webcam Support wiki page</ulink>.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title>Audio</title>
+	<para>Audio support in &kopete; is at an experimental stage.  If you have an Audio tab, you are probably using a preview build of &kopete;.</para>
+</sect3>
+</sect2>
 </sect1>
 
 <sect1 id="configuring-load-plugins-dialog">
 <title>Loading Plugins</title>
 <para>You can customize &kopete; with special functions that may be useful or just a bit of fun.  Bring up the <guilabel>Configure Plugins</guilabel> dialog with  <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Plugins...</guimenuitem></menuchoice>.</para>
-<para>Plugins can be turned on or off in the list on the left side of the page.  Each plugin may be configured on the right side.  See the <link linkend="plugins">next chapter</link> for details on each plugin.</para>
+<para>Plugins can be turned on or off in the list on the left side of the page.  Each plugin may be configured on the right side.  See the <link linkend="plugins">chapter on plugins</link> for details on each plugin.</para>
 </sect1>
 </chapter> <!-- configuring -->
 
+<chapter id="protocols">
+	<title>&kopete;'s Protocols</title>
+	<para>&kopete; calls different &im; systems 'Protocols'.  When you add an account, it is specific to a single protocol.  Although &kopete; tries to make instant messaging appear the same, no matter what protocol you use, there are some differences in the level of support for advanced features such as file transfer and multimedia.</para>
+	<sect1 id="protocols-list">
+		<title>Protocols</title>
+		<sect2 id="protocols-aim">
+			<title>AIM</title>
+			<para>AIM supports chatrooms.  Use the <guilabel>Join Chat...</guilabel> command on the AIM account menu to join a chatroom. Contact pictures and custom emoticons are also supported.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title>ICQ</title>
+			<para>ICQ has an Invisibility feature which allows you to hide from selected contacts.  You may also search the ICQ user directory when adding a contact.  A wide range of contact details can be set using the <guilabel>Properties</guilabel> option.</para>
+		</sect2>
+		<sect2 id="protocols-msn">
+			<title>MSN</title> 
+			<para>MSN supports the sending and receiving of webcams, if your camera is supported by the Video4Linux 2 (v4l2) standard.  To view someone's webcam, right click on their MSN buttefly icon and select <menuchoice><guimenuitem>View Contact's Webcam</guimenuitem></menuchoice>.  File transfer and multi user chats work.  To transfer a file,  drag the file from Konqueror or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, MSN supports custom emoticons.</para>
+			<para>To use file transfer or a webcam, make sure port 6891 is forwarded to your computer.</para>
+		</sect2>
+		<sect2 id="protocols-yahoo">
+			<title>Yahoo</title>
+			<para>Yahoo can send and receive webcam video.  It also supports Yahoo mail and the Yahoo addressbook from the account menu.  Conferencing is also possible.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title>Jabber</title>
+			<para>Jabber, also known as XMPP, supports file transfer, conferencing and any other services supplied by the Jabber server.  For example, many Jabber servers have a user directory, and some provide transports to other messaging systems.  To access services, use <menuchoice><guimenu>Services...</guimenu></menuchoice> on the account menu.  Jabber file transfer can work without port forwarding, but enjoys better performance where a direct connection is possible.  By default, port 8010 is used for port forwarding, but this is configurable in each account's settings.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title>Google Talk</title>
+			<para>Since Google Talk is based upon Jabber, it is well supported in &kopete; with the exception of voice chat, which is worked upon.</para>
+			<para>To configure &kopete; for Google Talk: Use your complete Google Mail address as the user name.  Check <guilabel>Use protocol encryption (SSL)</guilabel>, <guilabel>Allow plain-text password authentication</guilabel> and <guilabel>Override default server information</guilabel>.  The server is <quote>talk.google.com</quote> or <quote>gmail.com</quote> and ports 443 or 5223 should be used.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title>Novell GroupWise</title>
+			<para>GroupWise Messenger is an enterprise messenging system from Novell Inc.  The full range of features are supported, including privacy, group chat, rich text and user search.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title>Gadu-Gadu</title>
+			<para>Gadu-Gadu is a chat system originating from Poland.  At present, &kopete; supports basic chat functions.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title>WinPopup</title>
+			<para>WinPopup is a way to use &kopete; to send and receive messages with Windows computers on the local network.  The WinPopup protocol only supports single, plain-text messages.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title>Other protocols</title>
+			<para>As well as the protocols named above, &kopete; has support for several other protocols.  In most cases, this is not enabled by default or an additional plugin must be installed.  Meanwhile, SMS, Skype and SILC are provided in this way.  See &kopetewww; for details, however, the &kopete; team are not responsible for these protocols.</para>
+		</sect2>
+	</sect1>
+</chapter>
+	
 <chapter id="plugins">
 <title>&kopete;'s Plugins</title>
 <para>&kopete; offers plugins that provide functions that aren't essential for messaging, but are useful for some people.</para>
 <sect1 id="plugins-list">
 <title>Plugins</title>
+<sect2 id="plugins-alias">
+<title>Alias</title>
+<para><guilabel>Alias</guilabel> lets you define your own commands, eg /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2>
 <sect2 id="plugins-auto-replace">
 <title>Auto Replace</title>
 <para><guilabel>Auto Replace</guilabel> allows you to correct frequently misspelled words or save typing certain words using abbreviations.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title>Bookmarks</title>
+<para>The <guilabel>Bookmarks</guilabel> plugin creates bookmarks in your KDE bookmarks list from URLs that are received in &im; messages.</para>
 </sect2>
 <sect2 id="plugins-connection-status">
 <title>Connection Status</title>
@@ -672,7 +768,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-highlight">
 <title>Highlight</title>
-<para><guilabel>Highlight</guilabel> works a little like email filters, in that it allows you to make things happen in response to particular messages.  As well as highlighting the text, you can play sounds.</para>
+<para><guilabel>Highlight</guilabel> works a little like e-mail filters, in that it allows you to make things happen in response to particular messages.  As well as highlighting the text, you can play sounds.</para>
 </sect2>
 <sect2 id="plugins-history">
 <title>History</title>
@@ -735,7 +831,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 
 <sect2 id="plugins-kopetex">
 <title>KopeteTeX</title>
-<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original LaTeX.  To use this plugin you must have LaTeX and ImageMagick installed. Also, make sure that the configuration option <guilabel>Do not show user specified rich text</guilabel> in <menuchoice><guimenu>Appearance</guimenu><guisubmenu>Colors and Fonts</guisubmenu></menuchoice> is <emphasis>not</emphasis> enabled, otherwise KopeTeX will not work.</para>
+<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original Latex.  To use this plugin you must have LaTeX installed</para>
 </sect2>
 <sect2 id="plugins-motion-auto-away">
 <title>Motion Auto-Away</title>
@@ -775,7 +871,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-web-presence">
 <title>Web Presence</title>
-<para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an &FTP; server (for example), and it will upload a short piece of &HTML; to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
+<para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an FTP server (for example), and it will upload a short piece of HTML to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
 <para>Example: <userinput>sftp://username@somehost.org/path/to/homes/user/im.html</userinput> uses the <acronym>SFTP</acronym> protocol to upload your presence directly onto the webserver.</para>
 <para>See <ulink url="help:/kioslave/index.html">the KIO manuals</ulink> for tips on specific network protocols.</para>
 </sect2>
@@ -802,7 +898,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </answer>
 </qandaentry>
 <qandaentry>
-<question><para>I need to connect via a SOCKS proxy, but I cannot find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
+<question><para>I need to connect via a SOCKS proxy, but I can't find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
 <listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in <application>Control Center</application>, <menuchoice><guimenu>Internet &amp; Network</guimenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
@@ -812,14 +908,14 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <qandaentry>
 <question><para>Is it possible to customize the icons I see in &kopete;?</para></question>
 <answer><para>You can switch between different emoticons using the Emoticons tab of the Appearance page of the Configure &kopete; dialog.</para>
-<para>To install new emoticons, first look at <ulink url="http://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download:</para>
+<para>To install new emoticons, first look at <ulink url="http://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download.</para>
 
-<para>The emoticons are easy to install - you just place a folder containing
-the icon files along with an &XML; file describing the mapping from text to picture in
+<para>The emoticons are easy to install - you just place a directory containing
+the icon files along with an XML file describing the mapping from text to picture in
 $KDEDIR/share/apps/kopete/pics/emoticons (or $KDEHOME, for example, in /home/joeuser/.kde/).</para>
 
 <orderedlist>
-<listitem><para>Copy the extracted folder to $KDEDIR/share/apps/kopete/pics/emoticons or
+<listitem><para>Copy the extracted directory to $KDEDIR/share/apps/kopete/pics/emoticons or
  $HOME/.kde/share/apps/kopete/pics/emoticons (or wherever $KDEHOME is)</para></listitem>
 <listitem><para>Select Configure &kopete; from the Settings menu and click on Appearance in the left panel of the Preferences window and click on the Emoticons tab</para></listitem>
 <listitem><para>Select the emoticons set you just installed from the list</para></listitem>
@@ -850,18 +946,20 @@ sets that you can simply extract there.</para>
 &underGPL;
 <sect1 id="team">
 <title>Current Development Team</title>
-<!-- please keep in sync with the authors list on the web-page -->
+<!-- please keep in sync with the authors list on the webpage -->
 <itemizedlist>
 <listitem><para>Duncan Mac-Vicar Prett (duncan at kde org): Original author, developer, and project leader</para></listitem>
 <listitem><para>Till Gerken (till at tantalo net): Developer, Jabber maintainer</para></listitem>
-<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Developer, MSN Plugin Maintainer</para></listitem>
-<listitem><para>Andy Goossens (andygoossens at telenet be): Current version maintainer</para></listitem>
+<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Lead Developer, MSN Plugin Maintainer</para></listitem>
+<listitem><para>Andy Goossens (andygoossens at telenet be): Developer</para></listitem>
 <listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
-<listitem><para>Jason Keirstead (jason at keirstead org): Developer, IRC Plugin Maintainer, Website</para></listitem>
-<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
-<listitem><para>&Matt.Rogers; (mattr at kde org): Developer, Yahoo Plugin Maintainer, Oscar Plugin Maintainer</para></listitem>
+<listitem><para>Jason Keirstead (jason at keirstead org): Developer</para></listitem>
+<listitem><para>Matt Rogers (mattr at kde org): Lead Developer, AIM and ICQ plugin maintainer</para></listitem>
 <listitem><para>Richard Smith (lilachaze at hotmail com): Developer, UI maintainer</para></listitem>
-<listitem><para>&Will.Stephenson; (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
+<listitem><para>Will Stephenson (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
+<listitem><para>Michel Hermier (michel.hermier at wanadoo fr): IRC Plugin Maintainer</para></listitem>
+<listitem><para>Andre Duffeck (andre at duffeck de): Developer: Developer, Yahoo plugin maintainer</para></listitem>
+<listitem><para>Michaël Larouche (michael.larouche at kdemail net): Developer, MSN, Chat Window.</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="ex-team">
@@ -873,18 +971,19 @@ sets that you can simply extract there.</para>
 <listitem><para>Richard Stellingwerff (remenic at linuxfromscratch org): Developer</para></listitem>
 <listitem><para>Hendrik vom Lehn (hennevl at hennevl de): Developer</para></listitem>
 <listitem><para>Stefan Gehn (sgehn at gmx net): Developer</para></listitem>
-<listitem><para>&Robert.Gogolok; (robertgogolock at gmx de): Developer</para></listitem>
-<listitem><para>&Nick.Betcher; (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
+<listitem><para>Robert Gogolok (robertgogolock at gmx de): Developer</para></listitem>
+<listitem><para>Nick Betcher (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
 <listitem><para>Daniel Stone (dstone at kde org): Original Jabber plugin author</para></listitem>
 <listitem><para>James Grant (topace at lightbox org): Developer, importer Plugin author</para></listitem>
 <listitem><para>Zack Rusin (zack at kde org): Developer, old Gadu-gadu Plugin author</para></listitem>
 <listitem><para>Gav Wood (gav at kde org): WinPopup Plugin author</para></listitem>
+<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="documentation">
 <title>Documentation</title>
 <para>
-Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org).
+Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-online co uk), copyright 2005 Matt Rogers (mattr at kde org), copyright 2005,2006 Michaël Larouche (michael.larouche at kdemail net).
 </para>
 </sect1>
 </chapter><!-- credits-and-licenses -->
@@ -907,6 +1006,9 @@ Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free
 &install.compile.documentation;
 </sect1>
 </appendix>
+
+&kopete-chatstyle;
+
 &documentation.index;
 </book>
 

@@ -1,0 +1,363 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title>&kopete; Chat Window Style Guide</title>
+<sect1 id="chatstyle-reference">
+<title>&kopete; Chat Window Style reference.</title>
+<para>
+Beginning with &kopete; 0.12, we are now using <ulink
+url="http://www.adiumx.com/">Adium</ulink> format for our
+Chat Window style. The theme format is based on <acronym>HTML</acronym> templates and <acronym>CSS</acronym>. They
+are easier to make and develop, only a knowledge of <acronym>HTML</acronym> and <acronym>CSS</acronym> is needed. Also, styles can have variants (defined as <acronym>CSS</acronym> file) which add more customisation value :).
+</para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title>Reference guide.</title>
+<para>
+Adium format consist of a directory structure, <acronym>HTML</acronym> templates, <acronym>CSS</acronym> files and keywords that are replaced each time the template is processed. The final conversation is a <acronym>XHTML</acronym> page where messages are added with <acronym>DOM</acronym> operations. The central element is a div element named <filename>Chat</filename>. Before and after this div element goes the Header and Footer template. Messages are childs of the <filename>Chat</filename> div element.
+</para>
+
+<sect3 id="chatstyle-refrerence-directory">
+	<title>Directory Structure</title>
+<para>A style must respect this directory structure. Code in &kopete; are thinking around this directory structure. When archiving the style, archive the <filename>styleName</filename> directory. The directory structure is a structure of a <application>Mac OS X</application> bundle for those familiar with that operating system. Also you must respect the case displayed here, because a <acronym>UNIX</acronym> system is case-sensitive.</para>
+<programlisting>
+styleName\ (can have .adiumMessageStyle as suffix, because in Mac OS X it is a bundle)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (and Outgoing\)
+                                Content.html
+                                NextContent.html (for consecutive messages)
+                                Context.html (for message history)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title>About &lt;div id="insert"&gt;&lt;/div&gt;</title>
+	<para>This is a special div element used internally. It is a placeholder to indicate where to insert the next message. If it's a new message, it is removed and the new message take place. But if it's a consecutive message, the div element is replaced with the content of new message. This special div element is <emphasis>required</emphasis> in Content,Context,NextContent,NextContext templates. Though it not harm to put it also in Action and Status template.
+	</para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title>HTML templates.</title>
+
+<variablelist><title>Template description.</title>
+
+<varlistentry><term><filename>Header.html</filename> (Required)</term>
+<listitem>
+<para>
+Use the Header template to display a nice header to the conversation. This template is insered before <filename>Chat</filename> div element. If you don't use it, just put an empty file.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>Footer.html</filename> (Required)</term>
+<listitem>
+<para>
+This is mostly the same as Header but it is for the fotter of a conversation. This template is insered after <filename>Chat</filename> div element.  If you don't use it, just put an empty file.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>Status.html</filename> (Required)</term>
+<listitem>
+<para>
+This template is used to display a internal message. Internal messages such as status change, message from Kopete(ex: Incoming File Transfert). When the style do not supply a Action template, it is used to display Action message.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>Incoming/Content.html</filename></term>
+              <term><filename>Outgoing/Content.html</filename> (Required)</term>
+<listitem>
+<para>
+The content template is the message core. Think it as a block that will hold messages.. Make sure it is ready to receive consecutive messages, don't design it to only display one message. Consecutive messages will be inserted at the div insert element.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>Incoming/NextContent.html</filename></term>
+              <term><filename>Outgoing/NextContent.html</filename> (Required)</term>
+<listitem>
+<para>
+The NextContent template is a message fragment for consecutive messages. It will be inserted into the main message block. The HTML template should contain the bare minimum to display a message.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry><term><filename>Incoming/Action.html</filename></term>
+              <term><filename>Outgoing/Action.html</filename> (Optional) (&kopete; Extension)</term>
+<listitem>
+<para>
+This template is a &kopete; extension to the Adium format. It is available for Incoming and Outgoing direction. Action messages are special message to tell we are doing a action. Example: "/me is installing &kopete;" would be displayed as "DarkShock is installing &kopete;".
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>Incoming/Context.html</filename></term>
+              <term><filename>Incoming/NextContext.html</filename></term>
+              <term><filename>Outgoing/Context.html</filename></term>
+              <term><filename>Outgoing/NextContext.html</filename> (Optional)</term>
+<listitem>
+<para>
+These templates are not used in Kopete. In Adium, they are used to display history. It is mostly the same thing as Content and NextContent but with some differences to distinguist from normal messages.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title>About CSS styles and Variants</title>
+	<para>HTML template are used to describe how the structure is made. But all the style is described in <acronym>CSS</acronym> files. <filename>main.css</filename> is the main style, where variants are just alterations of the main style. Examples of variants are differents colors, no display of user photo. Both <filename>main.css</filename> and variants and imported in final <acronym>XHTML</acronym> page.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title>-<filename>main.css</filename></title>
+		<para>This is the main <acronym>CSS</acronym> file which is common for all variants. This file should contain all the main description of the style.</para>
+	</sect4>
+	<sect4 id="chatstyle-refrence-css-variants">
+		<title>-Variants</title>
+		<para>Variants are <acronym>CSS</acronym> files located in <filename>Variants/</filename> directory. Each variant is a single <acronym>CSS</acronym> file that include the <filename>main.css</filename> and do alteration to the main style.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title>Debugging styles</title>
+	<para>Here is two tips for testing a style while creating it.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title>-Save a sample conversation.</title>
+		<para>In Chat Window, you can <action>save</action> a conversation. This is a copy of the internal XHTML page displayed. Use it in <application>Konqueror</application> to test your <acronym>CSS</acronym> files.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title>-Disable style cache.</title>
+		<para>A little configuration switch exist to disable the style cache. When enabled, it reload the HTML templates each time the style is asked. Add the following lines to your <filename>kopeterc</filename>. Very useful when testing a style in &kopete;</para>
+		<programlisting>
+[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title>Keywords reference</title>
+	<para>Keywords are likes holes to fill with details. On each new message, they are replaced with the correct value corresponding to their context. To fully support all features of Kopete, we added some keywords extentions to the Adium. Also some keywords are only available in certain context.</para>
+
+<variablelist><title>Keywords list for Header and Footer templates. </title>
+<para>There keywords are processed at the beginning of the chat.</para>
+<varlistentry><term><filename>%chatName%</filename></term>
+<listitem>
+<para>
+This is the name of the current chat session. For a typical session, it display the name of the contact and his status. For <acronym>IRC</acronym>, it display the topic of a channel.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%sourceName%</filename></term>
+              <term><filename>%destinationName%</filename></term>
+<listitem>
+<para>
+These are the name of the contacts for a chatsession. <filename>%sourceName%</filename> is your name. <filename>%destinationName%</filename> is the name of the contact you are chatting with. Prefer <filename>%chatName%</filename> over those, because they could be confusing for groupchat and IRC.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%incomingIconPath%</filename></term>
+              <term><filename>%outgoingIconPath%</filename></term>
+<listitem>
+<para>
+These are the image/photo/avatar of the contacts for a chatsession. Incoming represent the contact photo and Outgoing represent your own photo. If they are no photo available, it use <filename>buddy_icon.png</filename> image which is located in <filename>Incoming</filename> or <filename>Outgoing</filename> directory.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%timeOpened%</filename></term>
+              <term><filename>%timeOpened{X}%</filename></term>
+<listitem>
+<para>
+It is the time when the chat session begin. <filename>%timeOpened%</filename> use the default time format for the current locale. If you want to use a specific time format, use <filename>%timeOpened{X}%</filename> where X is a string containing the time format. The time parameters are the same as the glibc function <function>strftime</function>. Do <command>man strftime</command> to get the list of available parameters.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist><title>Keywords list for Content, NextContent, Context, NextContext, Action template</title>
+<para>There keywords are processed for each message.</para>
+
+<varlistentry><term><filename>%userIconPath%</filename></term>
+<listitem>
+<para>
+This is the image/photo/avatar of the contact associated with the message. If they are no photo available, it use <filename>buddy_icon.png</filename> image which is located in <filename>Incoming</filename> and <filename>Outgoing</filename> directory depending of the message direction.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%senderScreenName%</filename></term>
+<listitem>
+<para>
+This is the contact ID of the contact associated with the message. Examples: me@hotmail.com, 45566576, JohnSmith.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%sender%</filename></term>
+<listitem>
+<para>
+This is the name of the contact associated with the message. It use MetaContact display name as a source.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%service%</filename></term>
+<listitem>
+<para>
+Display the name of the service associated with the message. Examples: Jabber, Yahoo, MSN.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%textbackgroundcolor{X}%</filename></term>
+<listitem>
+<para>
+In &kopete;, this keyword is used to represent the highlight background color. Ignore parameter in the braces and only use it as <filename>%textbackgroundcolor{}</filename>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%senderStatusIcon%</filename> (&kopete; extension)</term>
+<listitem>
+<para>
+Display the status icon of the contact associated with the message. It's a file path.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%senderColor%</filename></term>  <term><filename>%senderColor{N}%</filename>  (&kopete; extension)</term>
+<listitem>
+<para>
+Generate a color from the sender contact id. Can be used to display a different color for contact nickname.
+</para>
+<para>
+<filename>%senderColor{N}%</filename> where N is a positive number. If N is greater than 100, it represent a lighter color than the contact's color.
+If N equal 150 it is a color which is 50% brighter. If N is less than 100 then it is a darker color.  Usefull for having a background coloured differently for each contact.
+</para>
+<para>
+If you want to use theses colors in a variant, but not in the main style, you have to workaround.
+<programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"><p class="message">...</p></div>
+]]>
+</programlisting>
+you can apply color ro the p.message element in your <filename>main.css</filename> file, and in your varient put something like
+<programlisting>
+	p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist><title>Keyword list common for messages and Status.html</title>
+
+<varlistentry><term><filename>%message%</filename></term>
+<listitem>
+<para>
+The message itself. This is a HTML fragment.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%time%</filename></term>
+              <term><filename>%time{X}%</filename></term>
+<listitem>
+<para>
+The time when the message was received. <filename>%time%</filename> use the default time format for the current locale. If you want to use a specific time format, use <filename>%time{X}%</filename> where X is a string containing the time format. The time parameters are the same as the glibc function <function>strftime</function>. Do <command>man strftime</command> to get the list of available parameters.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><filename>%messageDirection%</filename> (&kopete; Extension)</term>
+<listitem>
+<para>
+Represent the message direction, if the message must be displayed right-to-left or left-to-right. The values are either "rtl" or "ltr". Read <link linkend="chatstyle-guideline-direction">Message Direction guideline</link> to see how to use this keyword properly.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title>&kopete; Chat Window Style Guideline</title>
+<para>The &kopete; Chat Window Style Guideline is a set of things that your Chat Window style must support to be compilant with Kopete.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title>Support highlight</title>
+	<para>Your style must show hightlight. In Kopete and Adium, the <filename>%textbackgroundcolor{}%</filename> is replaced with the hightlight color. Add this style attribute: <userinput>background-color: %textbackgroundcolor{}%</userinput> to the HTML element that display the message.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title>Consecutive message templates are required.</title>
+	<para>This guideline is for people rewriting old XSL styles to the new format. All styles must supply a template for consecutive messages. It is now a default feature.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title>Use <acronym>UTF-8</acronym> encoding.</title>
+	<para>The title said it all. You must save your files to <acronym>UTF-8</acronym>.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title>Supply <filename>Contents/Info.plist</filename> for interopability with Adium</title>
+	<para>The <filename>Contents/Info.plist</filename> file is not used in Kopete yet. But if you want your style to be compatible with <application>Adium</application>, you must supply that file. Here a basic example file. Strings to replace are enclosed with "$".</para>
+<programlisting>
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleGetInfoString</key>
+	<string>$Your style full name$</string>
+	<key>CFBundleIdentifier</key>
+	<string>$Your style ID in the form: com.adiumx.smooth.operator.style$</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>CFBundleName</key>
+	<string>$Your style name here$</string>
+	<key>CFBundlePackageType</key>
+	<string>AdIM</string>
+	<key>MessageViewVersion</key>
+	<integer>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title>Supply <filename>buddy_icon.png</filename></title>
+	<para>You must place a file named <filename>buddy_icon.png</filename> in the <filename>Incoming</filename> and <filename>Outgoing</filename>. These images will be used when the contact have no photo.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title>Support right-to-left languages with <filename>%messageDirection%</filename> keyword.</title>
+	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it's "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <userinput>direction: %messageDirection%</userinput>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
+</sect2>
+</sect1>
+</appendix>
