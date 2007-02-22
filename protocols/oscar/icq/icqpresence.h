@@ -2,7 +2,8 @@
     icqpresence.h  -  ICQ online status and presence management
     
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2007      by Roman Jarosz           <kedgedev@centrum.cz>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,8 +16,8 @@
 */
 
 
-#ifndef ICQCOMMON_H
-#define ICQCOMMON_H
+#ifndef ICQPRESENCE_H
+#define ICQPRESENCE_H
 
 #include <kdebug.h>
 
@@ -65,6 +66,16 @@ namespace StatusCode
 	};
 } // end namespace StatusCode
 
+namespace ClassCode
+{
+	enum
+	{
+			AWAY       = 0x0020,
+			ICQ        = 0x0040,
+			WIRELESS   = 0x0080
+	};
+} // end namespace ClassCode
+
 /**
  * @brief A manager for ICQ's online statuses
  * 
@@ -76,12 +87,12 @@ class OnlineStatusManager
 public:
 	OnlineStatusManager();
 	~OnlineStatusManager();
-	ICQ::Presence presenceOf( uint internalStatus );
+
 	Kopete::OnlineStatus onlineStatusOf( const ICQ::Presence &presence );
 	Kopete::OnlineStatus connectingStatus();
 	Kopete::OnlineStatus unknownStatus();
 	Kopete::OnlineStatus waitingForAuth();
-	
+
 private:
 	class Private;
 	Private *d;
@@ -96,81 +107,55 @@ public:
 	/**
 	 * Friendly types this status can be
 	 */
-	enum Type { Offline, DoNotDisturb, Occupied, NotAvailable, Away, FreeForChat, Online };
+	enum Type { Offline = 0x000, DoNotDisturb = 0x001, Occupied = 0x002,
+	            NotAvailable = 0x003, Away = 0x004, FreeForChat = 0x005, Online = 0x006 };
 	enum { TypeCount = Online + 1 };
-	
-	enum Visibility { Invisible, Visible };
-	
-	Presence( Type type, Visibility vis ) : _type(type), _visibility(vis) {}
-	
-	Type type() const { return _type; }
-	Visibility visibility() const { return _visibility; }
-	
+
+	enum Flag { None = 0x000, AIM = 0x010, ICQ = 0x020, Wireless = 0x100, Invisible = 0x200 };
+	Q_DECLARE_FLAGS(Flags, Flag)
+
+	Presence( Type type, Flags flags = None );
+
+	Type type() const { return (Type)(_internalStatus & 0x0000000F); }
+	Flags flags() const { return (Flags)(_internalStatus & 0xFFFFFFF0); }
+	uint internalStatus() const { return _internalStatus; }
+
 	/**
 	 * Generate a Presence object from an online status
 	 */
 	static Presence fromOnlineStatus( const Kopete::OnlineStatus &status );
-	
+
 	/**
 	 * Convert this Presence object to an online status
 	 */
 	Kopete::OnlineStatus toOnlineStatus() const;
-	
+
 	/**
 	 * Get the status code to pass to liboscar to set us to this Status.
 	 * @note This is not the opposite of fromOnlineStatus(). The set and get codes don't match.
 	 */
 	unsigned long toOscarStatus() const;
-	
+
 	/**
 	 * Get the status a contact is at based on liboscar's view of its status.
 	 * @note This is not the opposite of toOnlineStatus().
 	 */
-	static Presence fromOscarStatus( unsigned long code );
-	
-	bool operator==( const Presence &other ) const { return other._type == _type && other._visibility == _visibility; }
+	static Presence fromOscarStatus( unsigned long oStatus, int oClass );
+
+	bool operator==( const Presence &other ) const { return other._internalStatus == _internalStatus; }
 	bool operator!=( const Presence &other ) const { return !(*this == other); }
-	
+
 private:
+	Presence( uint internalStatus );
+
 	unsigned long basicOscarStatus() const;
 	static Type typeFromOscarStatus( unsigned long status );
 private:
-	Type _type;
-	Visibility _visibility;
+	uint _internalStatus;
+	
 };
-
+Q_DECLARE_OPERATORS_FOR_FLAGS(Presence::Flags)
 }
-
-#if 0
-const unsigned int ICQ_PORT  = 5190;
-
-
-const unsigned short ICQ_SEARCHSTATE_OFFLINE   = 0;
-const unsigned short ICQ_SEARCHSTATE_ONLINE    = 1;
-const unsigned short ICQ_SEARCHSTATE_DISABLED  = 2;
-
-
-// Taken from libicq, not sure if we ever support these requests
-const unsigned char PHONEBOOK_SIGN[16] =
-{
-	0x90, 0x7C, 0x21, 0x2C, 0x91, 0x4D, 0xD3, 0x11,
-	0xAD, 0xEB, 0x00, 0x04, 0xAC, 0x96, 0xAA, 0xB2
-};
-
-const unsigned char PLUGINS_SIGN[16] =
-{
-	0xF0, 0x02, 0xBF, 0x71, 0x43, 0x71, 0xD3, 0x11,
-	0x8D, 0xD2, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
-};
-
-/*
-const unsigned char SHARED_FILES_SIGN[16] =
-{
-	0xF0, 0x2D, 0x12, 0xD9, 0x30, 0x91, 0xD3, 0x11,
-	0x8D, 0xD7, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
-};
-*/
-#endif
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

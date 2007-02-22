@@ -48,7 +48,7 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 	else
-		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
 
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
@@ -78,7 +78,7 @@ void ICQContact::updateSSIItem()
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
-		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
 	}
 }
 
@@ -94,10 +94,11 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		removeProperty( mProtocol->awayMessage );
 
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
-	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
+	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
 	setOnlineStatus( presence.toOnlineStatus() );
 
-	bool selfVisible = ( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ).visibility() == ICQ::Presence::Visible );
+	ICQ::Presence selfPres( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ) );
+	bool selfVisible = !(selfPres.flags() & ICQ::Presence::Invisible);
 	if ( presence.type() == ICQ::Presence::Online )
 	{
 		if ( details.xtrazStatusSpecified() )
@@ -170,8 +171,7 @@ void ICQContact::userOnline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
-	ICQ::Presence online = mProtocol->statusManager()->presenceOf( ICQ::Presence::Online );
-	//mAccount->engine()->requestStatusInfo( contactId() );
+	setOnlineStatus( ICQ::Presence( ICQ::Presence::Online ).toOnlineStatus() );
 }
 
 void ICQContact::userOffline( const QString& userId )
@@ -180,8 +180,12 @@ void ICQContact::userOffline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
-	ICQ::Presence offline = mProtocol->statusManager()->presenceOf( ICQ::Presence::Offline );
-	setOnlineStatus( mProtocol->statusManager()->onlineStatusOf( offline ) );
+	if ( m_ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	else
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
+	
+	removeProperty( mProtocol->awayMessage );
 }
 
 void ICQContact::loggedIn()
@@ -237,7 +241,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 			  reason );
 
 		// remove the unknown status
-		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
 	}
 	else
 	{

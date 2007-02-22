@@ -2,7 +2,8 @@
     icqpresence.cpp  -  ICQ online status and presence management
     
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2007      by Roman Jarosz           <kedgedev@centrum.cz>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,8 +15,8 @@
     *************************************************************************
 */
 
-#include <utility>
-#include <vector>
+#include <QHash>
+#include <QFlags>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -31,8 +32,76 @@
 namespace ICQ
 {
 
+//BEGIN class PresenceOverlay
+
+class PresenceOverlay
+{
+public:
+	PresenceOverlay() : mFlags( Presence::None ) {}
+	PresenceOverlay( Presence::Flags flags, QString name, QStringList icons )
+		: mFlags(flags), mName(name), mIcons(icons) {}
+
+	static PresenceOverlay createForFlags( Presence::Flags flags );
+
+	Presence::Flags overlayFlag() const { return mFlags; }
+	QString overlayName() const { return mName; }
+	QStringList overlayIcons() const { return mIcons; }
+
+	PresenceOverlay &operator+= ( const PresenceOverlay &other );
+
+private:
+	Presence::Flags mFlags;
+	QString mName;
+	QStringList mIcons;
+};
+
+PresenceOverlay PresenceOverlay::createForFlags( Presence::Flags flags )
+{
+	/**
+	 * Here are defined all available overlays. We can define overlay for one Presence::Flags
+	 * or for combination of Presence::Flags. If a flags argument in this function is combination
+	 * of flags than a PresenceOverlay object is created from combination of defined overlays or
+	 * if the combination is defined separately than we return that PresenceOverlay object.
+	 */
+
+	const int dataSize = 3;
+	static const PresenceOverlay data[dataSize] =
+	{
+		PresenceOverlay( Presence::Invisible, i18n("Invisible"), QStringList(QString("contact_invisible_overlay")) ),
+		PresenceOverlay( Presence::Wireless, i18n("Mobile"), QStringList(QString("contact_phone_overlay")) ),
+		PresenceOverlay( Presence::AIM, i18n("AIM"), QStringList(QString("aim_overlay")) )
+	};
+
+	PresenceOverlay overlay;
+	for ( int n = 0; n < dataSize; ++n )
+	{
+		if ( data[n].overlayFlag() == flags )
+			return data[n];
+		else if ( data[n].overlayFlag() & flags )
+			overlay += data[n];
+	}
+
+	return overlay;
+}
+
+PresenceOverlay &PresenceOverlay::operator+=( const PresenceOverlay &other )
+{
+	mFlags |= other.mFlags;
+	if ( mName.isEmpty() )
+		mName = other.mName;
+	else if ( !other.mName.isEmpty() )
+		mName += QString( ", " ) + other.mName;
+
+	mIcons << other.mIcons;
+	return *this;
+}
+
+//END class PresenceOverlay
+
+
 //BEGIN struct PresenceTypeData
 
+typedef QList<Presence::Flags> FlagsList;
 struct PresenceTypeData
 {
 	Presence::Type type;
@@ -40,12 +109,11 @@ struct PresenceTypeData
 	unsigned long setFlag;
 	unsigned long getFlag;
 	QString caption;
-	QString visibleName;
-	QString invisibleName;
-	QStringList visibleIcon;
-	QStringList invisibleIcon;
+	QString name;
+	QStringList overlayIcons;
 	Kopete::OnlineStatusManager::Categories categories;
 	Kopete::OnlineStatusManager::Options options;
+	FlagsList overlayFlagsList;
 
 	static const PresenceTypeData *all();
 	static const PresenceTypeData &forType( Presence::Type type );
@@ -65,16 +133,25 @@ const PresenceTypeData *PresenceTypeData::all()
 	 * 
 	 * Free For Chat is currently listed after Away, since if someone is Away + Free For Chat we
 	 * want to show them as Away more than we want to show them FFC.
+	 *
+	 * OverlayFlagsList should contain all possible flags combinations that can occur in ICQ protocol.
+	 * If overlayFlagsList contains flag None than this KOS will be in account's context menu.
 	 */
 	static const PresenceTypeData data[] =
 	{
-		{ Presence::Offline,      OnlineStatus::Offline, OFFLINE,  OFFLINE, i18n( "O&ffline" ),        i18n("Offline"),        i18n("Offline"),                    QStringList(),                      QStringList(QString("contact_invisible_overlay")), Kopete::OnlineStatusManager::Offline,      0 },
-		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), QStringList(QString("contact_busy_overlay")), QStringList(QString("contact_invisible_overlay")), Kopete::OnlineStatusManager::Busy,                                         Kopete::OnlineStatusManager::HasStatusMessage },
-		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n( "O&ccupied" ),       i18n("Occupied"),       i18n("Occupied (Invisible)"),       QStringList(QString("contact_busy_overlay")), QStringList(QString("contact_invisible_overlay")), 0,         Kopete::OnlineStatusManager::HasStatusMessage },
-		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n( "Not A&vailable" ),  i18n("Not Available"),  i18n("Not Available (Invisible)"),  QStringList(QString("contact_xa_overlay")),   QStringList(QString("contact_invisible_overlay")), Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasStatusMessage },
-		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n( "&Away" ),           i18n("Away"),           i18n("Away (Invisible)"),           QStringList(QString("contact_away_overlay")), QStringList(QString("contact_invisible_overlay")), Kopete::OnlineStatusManager::Away,         Kopete::OnlineStatusManager::HasStatusMessage },
-		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"),  i18n("Free For Chat (Invisible)"),  QStringList(QString("icq_ffc")),              QStringList(QString("contact_invisible_overlay")), Kopete::OnlineStatusManager::FreeForChat,  0 },
-		{ Presence::Online,       OnlineStatus::Online,  ONLINE,   ONLINE,  i18n( "O&nline" ),         i18n("Online"),         i18n("Online (Invisible)"),         QStringList(),                      QStringList(QString("contact_invisible_overlay")), Kopete::OnlineStatusManager::Online,       0 }
+		{ Presence::Offline, OnlineStatus::Offline, OFFLINE, OFFLINE, i18n( "O&ffline" ), i18n("Offline"), QStringList(), Kopete::OnlineStatusManager::Offline, 0, FlagsList() << Presence::None << Presence::AIM << Presence::Invisible },
+
+		{ Presence::DoNotDisturb, OnlineStatus::Away, SET_DND, IS_DND, i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), QStringList(QString("contact_busy_overlay")), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::None << Presence::Invisible << Presence::Wireless << (Presence::Wireless | Presence::Invisible) },
+
+		{ Presence::Occupied, OnlineStatus::Away, SET_OCC, IS_OCC, i18n( "O&ccupied" ), i18n("Occupied"), QStringList(QString("contact_busy_overlay")), 0, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::None << Presence::Invisible },
+
+		{ Presence::NotAvailable, OnlineStatus::Away, SET_NA, IS_NA, i18n( "Not A&vailable" ), i18n("Not Available"), QStringList(QString("contact_xa_overlay")), Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::None << Presence::Invisible },
+
+		{ Presence::Away, OnlineStatus::Away, SET_AWAY, IS_AWAY, i18n( "&Away" ), i18n("Away"), QStringList(QString("contact_away_overlay")), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) },
+
+		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"), QStringList(QString("icq_ffc")), Kopete::OnlineStatusManager::FreeForChat,  0, FlagsList() << Presence::None << (Presence::None | Presence::Invisible) },
+			
+		{ Presence::Online, OnlineStatus::Online, ONLINE, ONLINE, i18n( "O&nline" ), i18n("Online"), QStringList(), Kopete::OnlineStatusManager::Online, 0, FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) }
 	};
 	return data;
 }
@@ -94,7 +171,6 @@ const PresenceTypeData &PresenceTypeData::forStatus( unsigned long status )
 	const PresenceTypeData *array = all();
 	for ( uint n = 0; n < Presence::TypeCount; ++n )
 	{
-		//kDebug(14153) << k_funcinfo << "array[n].getFlag is " << array[n].getFlag << ", status is " << status << ", & is " << (array[n].getFlag & status) << endl;
 		if ( (array[n].getFlag & status) == array[n].getFlag )
 			return array[n];
 	}
@@ -121,7 +197,7 @@ const PresenceTypeData &PresenceTypeData::forOnlineStatusType( const Kopete::Onl
 class OnlineStatusManager::Private
 {
 public:
-	typedef std::vector<Kopete::OnlineStatus> StatusList;
+	typedef QHash<int, Kopete::OnlineStatus> StatusHash;
 	
 	// connecting and unknown should have the same internal status as offline, so converting to a Presence gives an Offline one
 	Private()
@@ -137,44 +213,40 @@ public:
 						  Kopete::OnlineStatusManager::HideFromMenu )
 
 	{
-		createStatusList( false, 0, visibleStatusList );
-		createStatusList( true, Presence::TypeCount, invisibleStatusList );
-	}
-	void createStatusList( bool invisible, const uint invisibleOffset, StatusList &statusList )
-	{
 		//weight 0, 1 and 2 are used by KOS unknown, waitingForAuth and invisible
 		const uint firstUsableWeight = 3;
-		statusList.reserve( Presence::TypeCount );
-		for ( uint n = 0; n < Presence::TypeCount; ++n )
+		for ( uint i = 0; i < Presence::TypeCount; ++i )
 		{
-			const PresenceTypeData &data = PresenceTypeData::forType( static_cast<Presence::Type>(n) );
-			const uint weight = n + firstUsableWeight;
-			const uint internalStatus = n + invisibleOffset;
-			QStringList overlayIcons( data.visibleIcon );
-			QString description( data.visibleName );
-			Kopete::OnlineStatus status;
-			if ( invisible )
+			const PresenceTypeData &data = PresenceTypeData::forType( static_cast<Presence::Type>(i) );
+			const uint weight = i + firstUsableWeight;
+			for ( int j = 0; j < data.overlayFlagsList.count(); ++j )
 			{
-				overlayIcons << data.invisibleIcon;
-				description = data.invisibleName;
-				//don't add invisible KOS to account's context menu
-				status = Kopete::OnlineStatus( data.onlineStatusType, weight,
-											   ICQProtocol::protocol(), internalStatus,
-											   overlayIcons, description );
+				const uint internalStatus = data.overlayFlagsList.at(j) | data.type;
+				
+				Kopete::OnlineStatus status;
+				if ( data.overlayFlagsList.at(j) != Presence::None )
+				{
+					PresenceOverlay overlay = PresenceOverlay::createForFlags( data.overlayFlagsList.at(j) );
+					//don't add KOS to account's context menu
+					status = Kopete::OnlineStatus( data.onlineStatusType, weight,
+					                               ICQProtocol::protocol(), internalStatus,
+					                               data.overlayIcons + overlay.overlayIcons(),
+					                               data.name + QString(" (%1)").arg( overlay.overlayName() ) );
+				}
+				else
+				{
+					//add KOS
+					status = Kopete::OnlineStatus( data.onlineStatusType, weight,
+					                               ICQProtocol::protocol(), internalStatus,
+					                               data.overlayIcons, data.name,
+					                               data.caption, data.categories, data.options );
+				}
+				statusHash[internalStatus] = status;
 			}
-			else
-			{
-				//add visible KOS
-				status = Kopete::OnlineStatus( data.onlineStatusType, weight,
-											   ICQProtocol::protocol(), internalStatus,
-											   overlayIcons, description,
-											   data.caption, data.categories, data.options );
-			}
-			statusList.push_back( status );
 		}
 	}
 	
-	StatusList visibleStatusList, invisibleStatusList;
+	StatusHash statusHash;
 	Kopete::OnlineStatus connecting;
 	Kopete::OnlineStatus unknown;
 	Kopete::OnlineStatus waitingForAuth;
@@ -191,29 +263,23 @@ OnlineStatusManager::~OnlineStatusManager()
 	delete d;
 }
 
-Presence OnlineStatusManager::presenceOf( uint internalStatus )
-{
-	if ( internalStatus < Presence::TypeCount )
-	{
-		return Presence( static_cast<Presence::Type>( internalStatus ), Presence::Visible );
-	}
-	else if ( internalStatus < 2 * Presence::TypeCount )
-	{
-		return Presence( static_cast<Presence::Type>( internalStatus - Presence::TypeCount ), Presence::Invisible );
-	}
-	else
-	{
-		kWarning(14153) << k_funcinfo << "No presence exists for internal status " << internalStatus << "! Returning Offline" << endl;
-		return Presence( Presence::Offline, Presence::Visible );
-	}	
-}
-
 Kopete::OnlineStatus OnlineStatusManager::onlineStatusOf( const Presence &presence )
 {
-	if ( presence.visibility() == Presence::Visible )
-		return d->visibleStatusList[ presence.type() ];
+	if ( d->statusHash.contains( presence.internalStatus() ) )
+	{
+		return d->statusHash.value( presence.internalStatus() );
+	}
+	else if ( d->statusHash.contains( presence.type() ) )
+	{
+		kWarning() << k_funcinfo << "Kopete::OnlineStatus doesn't exists for internal status" << presence.internalStatus()
+		           << "Using basic status for type" << presence.type() << endl;
+		return d->statusHash.value( presence.type() );
+	}
 	else
-		return d->invisibleStatusList[ presence.type() ];
+	{
+		kWarning() << k_funcinfo << "Kopete::OnlineStatus doesn't exists for internal status" << presence.internalStatus() << endl;
+		return d->unknown;
+	}
 }
 
 Kopete::OnlineStatus OnlineStatusManager::connectingStatus()
@@ -235,19 +301,28 @@ Kopete::OnlineStatus OnlineStatusManager::waitingForAuth()
 
 //BEGIN class Presence
 
+Presence::Presence( Type type, Flags flags )
+{
+	_internalStatus = type | flags;
+}
+
+Presence::Presence( uint internalStatus )
+{
+	_internalStatus = internalStatus;
+}
+
 Presence Presence::fromOnlineStatus( const Kopete::OnlineStatus &status )
 {
 	if ( status.protocol() == ICQProtocol::protocol() )
 	{
-		OnlineStatusManager *store = ICQProtocol::protocol()->statusManager();
-		return store->presenceOf( status.internalStatus() );
+		return Presence( status.internalStatus() );
 	}
 	else
 	{
 		//status is a libkopete builtin status object
 		//don't even think about converting it to ICQ::Presence using presenceOf!
 		return Presence( PresenceTypeData::forOnlineStatusType( status.status() ).type,
-						 Presence::Visible );
+						 Presence::None );
 	}
 }
 
@@ -261,28 +336,43 @@ Kopete::OnlineStatus Presence::toOnlineStatus() const
 unsigned long Presence::toOscarStatus() const
 {
 	unsigned long basicStatus = basicOscarStatus();
-	if ( _visibility == Invisible )
+	if ( (_internalStatus & Invisible) == Invisible )
 		basicStatus |= StatusCode::INVISIBLE;
 	return basicStatus;
 }
 
-Presence Presence::fromOscarStatus( unsigned long code )
+Presence Presence::fromOscarStatus( unsigned long oStatus, int oClass )
 {
-	Type type = typeFromOscarStatus( code & ~StatusCode::INVISIBLE );
-	bool invisible = (code & StatusCode::INVISIBLE) == StatusCode::INVISIBLE;
-	return Presence( type, invisible ? Invisible : Visible );
-}
+	Type type = typeFromOscarStatus( oStatus );
 
+	//Hack for aim away contacts
+	if ( type == Online && (oClass & ClassCode::AWAY) == ClassCode::AWAY )
+		type = Away;
+
+	Flags flags = None;
+	if ( (oClass & ClassCode::ICQ) == ClassCode::ICQ )
+		flags |= None;
+	else
+		flags |= AIM;
+
+	if ( (oClass & ClassCode::WIRELESS) == ClassCode::WIRELESS )
+		flags |= Wireless;
+
+	if ( (oStatus & StatusCode::INVISIBLE) == StatusCode::INVISIBLE )
+		flags |= Invisible;
+
+	return Presence( type, flags );
+}
 
 unsigned long Presence::basicOscarStatus() const
 {
-	const PresenceTypeData &data = PresenceTypeData::forType( _type );
+	const PresenceTypeData &data = PresenceTypeData::forType( type() );
 	return data.setFlag;
 }
 
 Presence::Type Presence::typeFromOscarStatus( unsigned long status )
 {
-	const PresenceTypeData &data = PresenceTypeData::forStatus( status );
+	const PresenceTypeData &data = PresenceTypeData::forStatus( status & 0xff );
 	return data.type;
 }
 

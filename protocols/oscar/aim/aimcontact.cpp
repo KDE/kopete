@@ -148,6 +148,8 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	AIM::Presence presence = AIM::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
 	setOnlineStatus( presence.toOnlineStatus() );
 
+	m_mobile = ( presence.flags() & AIM::Presence::Wireless );
+
 	if ( presence.type() == AIM::Presence::Online )
 	{
 		removeProperty( mProtocol->awayMessage );

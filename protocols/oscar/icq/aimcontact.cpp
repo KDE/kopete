@@ -33,7 +33,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 : AIMContactBase(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<ICQProtocol *>(protocol());
-	setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+	setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::AIM ).toOnlineStatus() );
 
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
@@ -96,7 +96,7 @@ void AIMContact::updateSSIItem()
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
-		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::AIM ).toOnlineStatus() );
 	}
 }
 
@@ -113,49 +113,19 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
-	( details.userClass() & CLASS_WIRELESS ) ? m_mobile = true : m_mobile = false;
+	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
+	setOnlineStatus( presence.toOnlineStatus() );
 
-	if ( ( details.userClass() & CLASS_AWAY ) == STATUS_ONLINE )
+	m_mobile = ( presence.flags() & ICQ::Presence::Wireless );
+
+	if ( presence.type() == ICQ::Presence::Online )
 	{
-		if ( m_mobile )
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
-//TODO:		setOnlineStatus( mProtocol->statusWirelessOnline );
-			setOnlineStatus( ICQ::Presence( ICQ::Presence::Online, ICQ::Presence::Visible ).toOnlineStatus() );
-    	}
-		else
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
-			setOnlineStatus( ICQ::Presence( ICQ::Presence::Online, ICQ::Presence::Visible ).toOnlineStatus() );
-		}
-
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
 	}
-	else if ( ( details.userClass() & CLASS_AWAY ) ) // STATUS_AWAY
-	{
-		if ( m_mobile )
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
-//TODO:		setOnlineStatus( mProtocol->statusWirelessOnline );
-			setOnlineStatus( ICQ::Presence( ICQ::Presence::Away, ICQ::Presence::Visible ).toOnlineStatus() );
-		}
-		else
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
-			setOnlineStatus( ICQ::Presence( ICQ::Presence::Away, ICQ::Presence::Visible ).toOnlineStatus() );
-		}
-
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
-		{
-			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
-		}
-	}
 	else
 	{
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
-		setOnlineStatus( ICQ::Presence( ICQ::Presence::Away, ICQ::Presence::Visible ).toOnlineStatus() );
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
@@ -172,8 +142,7 @@ void AIMContact::userOnline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
-	ICQ::Presence online = mProtocol->statusManager()->presenceOf( ICQ::Presence::Online );
-	//mAccount->engine()->requestStatusInfo( contactId() );
+	setOnlineStatus( ICQ::Presence( ICQ::Presence::Online, ICQ::Presence::AIM ).toOnlineStatus() );
 }
 
 void AIMContact::userOffline( const QString& userId )
@@ -182,8 +151,7 @@ void AIMContact::userOffline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
-	ICQ::Presence offline = mProtocol->statusManager()->presenceOf( ICQ::Presence::Offline );
-	setOnlineStatus( mProtocol->statusManager()->onlineStatusOf( offline ) );
+	setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::AIM ).toOnlineStatus() );
 }
 
 void AIMContact::slotVisibleTo()

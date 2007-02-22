@@ -76,7 +76,7 @@ protected slots:
 private:
 	ICQ::Presence presence();
 
-	void setInvisible( ICQ::Presence::Visibility );
+	void setPresenceFlags( ICQ::Presence::Flags flags, const QString &message = QString::null );
 	void setPresenceType( ICQ::Presence::Type, const QString &awayMessage = QString::null );
 	void setPresenceTarget( const ICQ::Presence &presence, const QString &message = QString::null );
 

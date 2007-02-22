@@ -52,7 +52,7 @@ void ICQMyselfContact::userInfoUpdated()
 {
 	Oscar::DWORD extendedStatus = details().extendedStatus();
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
-	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus & 0xffff );
+	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus, details().userClass() );
 	setOnlineStatus( presence.toOnlineStatus() );
 	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<ICQAccount*>( account() )->engine()->statusMessage() );
 }
@@ -93,7 +93,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 {
 	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	setMyself( new ICQMyselfContact( this ) );
-	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
 
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
@@ -145,8 +145,9 @@ KActionMenu* ICQAccount::actionMenu()
 
 	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
         //, "actionInvisible" );
-	actionInvisible->setIcon( KIcon( ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ) ) );
-	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
+	ICQ::Presence pres( presence().type(), presence().flags() | ICQ::Presence::Invisible );
+	actionInvisible->setIcon( KIcon( pres.toOnlineStatus().iconFor( this ) ) );
+	actionInvisible->setChecked( (presence().flags() & ICQ::Presence::Invisible) == ICQ::Presence::Invisible );
 	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 	actionMenu->addAction( actionInvisible );
 	/*
@@ -165,10 +166,10 @@ void ICQAccount::connectWithPassword( const QString &password )
 	kDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 
 	Kopete::OnlineStatus status = initialStatus();
-	if ( status == Kopete::OnlineStatus() &&
-	     status.status() == Kopete::OnlineStatus::Unknown )
+	if ( status == Kopete::OnlineStatus() && status.status() == Kopete::OnlineStatus::Unknown )
 		//use default online in case of invalid online status for connecting
 		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
+
 	ICQ::Presence pres = ICQ::Presence::fromOnlineStatus( status );
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
@@ -212,8 +213,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 void ICQAccount::disconnected( DisconnectReason reason )
 {
 	kDebug(14153) << k_funcinfo << "Attempting to set status offline" << endl;
-	ICQ::Presence presOffline = ICQ::Presence( ICQ::Presence::Offline, presence().visibility() );
-	myself()->setOnlineStatus( presOffline.toOnlineStatus() );
+	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, presence().flags() ).toOnlineStatus() );
 
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	foreach( Kopete::Contact* c, contactList )
@@ -224,7 +224,7 @@ void ICQAccount::disconnected( DisconnectReason reason )
 			if ( oc->ssiItem().waitingAuth() )
 				oc->setOnlineStatus( protocol()->statusManager()->waitingForAuth() );
 			else
-				oc->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+				oc->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
 		}
 	}
 
@@ -235,7 +235,10 @@ void ICQAccount::disconnected( DisconnectReason reason )
 void ICQAccount::slotToggleInvisible()
 {
 	using namespace ICQ;
-	setInvisible( (presence().visibility() == Presence::Visible) ? Presence::Invisible : Presence::Visible );
+	if ( (presence().flags() & Presence::Invisible) == Presence::Invisible )
+		setPresenceFlags( presence().flags() & ~Presence::Invisible );
+	else
+		setPresenceFlags( presence().flags() | Presence::Invisible );
 }
 
 void ICQAccount::slotUserInfo()
@@ -291,22 +294,20 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 	notification->sendEvent();
 }
 
-void ICQAccount::setInvisible( ICQ::Presence::Visibility vis )
+void ICQAccount::setPresenceFlags( ICQ::Presence::Flags flags, const QString &message )
 {
 	ICQ::Presence pres = presence();
-	if ( vis == pres.visibility() )
-		return;
-
-	kDebug(14153) << k_funcinfo << "changing invisible setting to " << (int)vis << endl;
-	setPresenceTarget( ICQ::Presence( pres.type(), vis ) );
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new flags=" << (int)flags << ", old type="
+		<< (int)pres.flags() << ", new message=" << message << endl;
+	setPresenceTarget( ICQ::Presence( pres.type(), flags ), message );
 }
 
 void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &message )
 {
 	ICQ::Presence pres = presence();
-	kDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << ", new message=" << message << endl;
-	//setAwayMessage(awayMessage);
-	setPresenceTarget( ICQ::Presence( type, pres.visibility() ), message );
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new type=" << (int)type << ", old type="
+	                        << (int)pres.type() << ", new message=" << message << endl;
+	setPresenceTarget( ICQ::Presence( type, pres.flags() ), message );
 }
 
 void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString &message )
@@ -347,7 +348,7 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 		else
 		{
 			// ...when we are not offline set invisible.
-			setInvisible( ICQ::Presence::Invisible );
+			setPresenceFlags( ICQ::Presence::Invisible );
 		}
 	}
 	else

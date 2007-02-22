@@ -140,11 +140,17 @@ const PresenceTypeData *PresenceTypeData::all()
 	static const PresenceTypeData data[] =
 	{
 		{ Presence::Offline, OnlineStatus::Offline, OFFLINE, OFFLINE, i18n( "O&ffline" ), i18n("Offline"), QStringList(), Kopete::OnlineStatusManager::Offline, 0, FlagsList() << Presence::None << Presence::ICQ << Presence::Invisible },
-		{ Presence::DoNotDisturb, OnlineStatus::Away, SET_DND, IS_DND, i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), QStringList(QString("contact_busy_overlay")), Kopete::OnlineStatusManager::Busy,                                         Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::ICQ << (Presence::ICQ | Presence::Invisible) },
+
+		{ Presence::DoNotDisturb, OnlineStatus::Away, SET_DND, IS_DND, i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), QStringList(QString("contact_busy_overlay")), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::ICQ << (Presence::ICQ | Presence::Invisible) },
+
 		{ Presence::Occupied, OnlineStatus::Away, SET_OCC, IS_OCC, i18n( "O&ccupied" ), i18n("Occupied"), QStringList(QString("contact_busy_overlay")), 0, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::ICQ << (Presence::ICQ | Presence::Invisible) },
+
 		{ Presence::NotAvailable, OnlineStatus::Away, SET_NA, IS_NA, i18n( "Not A&vailable" ), i18n("Not Available"), QStringList(QString("contact_xa_overlay")), Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::ICQ << (Presence::ICQ | Presence::Invisible) },
+
 		{ Presence::Away, OnlineStatus::Away, SET_AWAY, IS_AWAY, i18n( "&Away" ), i18n("Away"), QStringList(QString("contact_away_overlay")), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage, FlagsList() << Presence::None << Presence::Invisible << Presence::ICQ << (Presence::ICQ | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) },
+
 		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"), QStringList(QString("icq_ffc")), Kopete::OnlineStatusManager::FreeForChat,  0, FlagsList() << Presence::ICQ << (Presence::ICQ | Presence::Invisible) },
+
 		{ Presence::Online, OnlineStatus::Online, ONLINE, ONLINE, i18n( "O&nline" ), i18n("Online"), QStringList(), Kopete::OnlineStatusManager::Online, 0, FlagsList() << Presence::None << Presence::Invisible << Presence::ICQ << (Presence::ICQ | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) }
 	};
 	return data;
