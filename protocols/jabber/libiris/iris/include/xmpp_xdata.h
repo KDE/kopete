@@ -147,6 +147,6 @@ namespace XMPP {
 		QSharedDataPointer<Private> d;
 	};
 
-};
+}
 
 #endif
