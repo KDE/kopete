@@ -85,30 +85,28 @@ public:
 	int fillStandardKComboBox(KComboBox *combobox);
 	unsigned int currentDeviceIndex();
 	int currentInput();
-	unsigned int inputs();
+	size_t inputs();
 
-	float getBrightness();
-	float setBrightness(float brightness);
-	float getContrast();
-	float setContrast(float contrast);
-	float getSaturation();
-	float setSaturation(float saturation);
-	float getWhiteness();
-	float setWhiteness(float whiteness);
-	float getHue();
-	float setHue(float hue);
+	float brightness();
+	void  setBrightness(float brightness);
+	float contrast();
+	void  setContrast(float contrast);
+	float saturation();
+	void  setSaturation(float saturation);
+	float whiteness();
+	void  setWhiteness(float whiteness);
+	float hue();
+	void  setHue(float hue);
 
-	bool getAutoBrightnessContrast();
-	bool setAutoBrightnessContrast(bool brightnesscontrast);
-	bool getAutoColorCorrection();
-	bool setAutoColorCorrection(bool colorcorrection);
-	bool getImageAsMirror();
-	bool setImageAsMirror(bool imageasmirror);
+	bool autoBrightnessContrast();
+	void setAutoBrightnessContrast(bool brightnesscontrast);
+	bool autoColorCorrection();
+	void setAutoColorCorrection(bool colorcorrection);
+	bool imageAsMirror();
+	void setImageAsMirror(bool imageasmirror);
 
-	bool getDisableMMap();
-	bool setDisableMMap(bool disablemmap);
-	bool getWorkaroundBrokenDriver();
-	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
+	bool mmapDisabled();
+	void setDisableMMap(bool disablemmap);
 
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>358</width>
-            <height>510</height>
+            <height>501</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -486,7 +486,7 @@
                                             </sizepolicy>
                                         </property>
                                         <property name="text">
-                                            <string>Au&amp;tomatic brightness/contrast adjustment</string>
+                                            <string>Automatic brightness/contrast ad&amp;justment</string>
                                         </property>
                                     </widget>
                                     <widget class="QCheckBox">
@@ -548,22 +548,6 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QCheckBox" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>mDeviceWorkaroundBrokenDriver</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>3</hsizetype>
-                                                <vsizetype>1</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Workaround broken driver</string>
-                                        </property>
-                                    </widget>
                                     <widget class="QCheckBox" row="0" column="0">
                                         <property name="name">
                                             <cstring>mDeviceDisableMMap</cstring>

@@ -152,6 +152,209 @@ int VideoDevicePool::close()
 	return EXIT_FAILURE;
 }
 
+/*!
+    \fn VideoDevicePool::startCapturing()
+ */
+int VideoDevicePool::startCapturing()
+{
+	kdDebug() <<  k_funcinfo << "startCapturing() called." << endl;
+	if(m_videodevices.size())
+		return current()->startCapturing();
+	return EXIT_FAILURE;
+}
+
+
+/*!
+    \fn VideoDevicePool::stopCapturing()
+ */
+int VideoDevicePool::stopCapturing()
+{
+	if(m_videodevices.size())
+		return current()->stopCapturing();
+	return EXIT_FAILURE;
+}
+
+// Implementation of the methods that get / set input's adjustment parameters
+/*!
+    \fn VideoDevicePool::brightness()
+ */
+float VideoDevicePool::brightness()
+{
+  if (currentDeviceIndex() < m_videodevices.size() )
+	return current()->brightness();
+  else
+	return 0;
+}
+
+/*!
+    \fn VideoDevicePool::setBrightness(float brightness)
+ */
+void VideoDevicePool::setBrightness(float brightness)
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setBrightness(brightness);
+}
+
+/*!
+    \fn VideoDevicePool::contrast()
+ */
+float VideoDevicePool::contrast()
+{
+    if (currentDeviceIndex() < m_videodevices.size() )
+	  return current()->contrast();
+	else
+	  return 0;
+}
+
+/*!
+    \fn VideoDevicePool::setContrast(float contrast)
+ */
+void VideoDevicePool::setContrast(float contrast)
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setContrast(contrast);
+}
+
+/*!
+    \fn VideoDevicePool::saturation()
+ */
+float VideoDevicePool::saturation()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->saturation();
+	else
+		return 0;
+}
+
+/*!
+    \fn VideoDevicePool::setSaturation(float saturation)
+ */
+void VideoDevicePool::setSaturation(float saturation)
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setSaturation(saturation);
+}
+
+/*!
+    \fn VideoDevicePool::whiteness()
+ */
+float VideoDevicePool::whiteness()
+{
+    if (currentDeviceIndex() < m_videodevices.size() )
+	  return current()->whiteness();
+	else
+	  return 0;
+}
+
+/*!
+    \fn VideoDevicePool::setWhiteness(float whiteness)
+ */
+void VideoDevicePool::setWhiteness(float whiteness)
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->setWhiteness(whiteness);
+}
+
+/*!
+    \fn VideoDevicePool::hue()
+ */
+float VideoDevicePool::hue()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->hue();
+	else
+		return 0;
+}
+
+/*!
+    \fn VideoDevicePool::setHue(float hue)
+ */
+void VideoDevicePool::setHue(float hue)
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setHue(hue);
+}
+
+/*!
+    \fn VideoDevicePool::getAutoBrightnessContrast()
+ */
+bool VideoDevicePool::autoBrightnessContrast()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->autoBrightnessContrast();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
+ */
+void VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setAutoBrightnessContrast(" << brightnesscontrast << ") called." << endl;
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setAutoBrightnessContrast(brightnesscontrast);
+}
+
+/*!
+    \fn VideoDevicePool::getAutoColorCorrection()
+ */
+bool VideoDevicePool::autoColorCorrection()
+{
+    if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->autoColorCorrection();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
+ */
+void VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setAutoColorCorrection(colorcorrection);
+}
+
+/*!
+    \fn VideoDevicePool::getIMageAsMirror()
+ */
+bool VideoDevicePool::imageAsMirror()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->imageAsMirror();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setImageAsMirror(bool imageasmirror)
+ */
+void VideoDevicePool::setImageAsMirror(bool imageasmirror)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setImageAsMirror(" << imageasmirror << ") called." << endl;
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setImageAsMirror(imageasmirror);
+}
+
+/*!
+    \fn VideoDevicePool::mmapDisabled()
+ */
+bool VideoDevicePool::mmapDisabled()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->mmapDisabled();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setDisableMMap(bool disablemmap)
+ */
+void VideoDevicePool::setDisableMMap(bool disablemmap)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called." << endl;
+	if (currentDeviceIndex() < m_videodevices.size() )
+		current()->setDisableMMap(disablemmap);
+}
+
 int VideoDevicePool::getFrame()
 {
 //	kdDebug( 14010 ) <<  k_funcinfo << "VideoDevicePool::getFrame() called." << endl;
@@ -359,6 +562,26 @@ QStringList VideoDevicePool::videoDevicePaths( const QString & dirPath, const QS
 	return absolutePaths;
 }
 
+int VideoDevicePool::selectInput(int newinput)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::selectInput(" << newinput << ") called." << endl;
+	if(m_videodevices.size())
+		return current()->selectInput(newinput);
+	else
+		return 0;
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::setInputParameters()
+ */
+int VideoDevicePool::setInputParameters()
+{
+	if(m_videodevices.size())
+		return current()->setInputParameters();
+	else
+		return EXIT_FAILURE;
+}
+
 /*!
     \fn Kopete::AV::VideoDevicePool::scanDevices()
  */
@@ -423,6 +646,24 @@ unsigned int VideoDevicePool::currentDeviceIndex()
 	return m_current_device;
 }
 
+int VideoDevicePool::currentInput()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->currentInput();
+	else
+		return 0;
+}
+
+size_t VideoDevicePool::inputs()
+{
+	if (currentDeviceIndex() < m_videodevices.size() )
+		return current()->inputs().size();
+	else
+		return 0;
+}
+
+
+
 void VideoDevicePool::loadConfig()
 {
 	kdDebug( 14010 ) <<  k_funcinfo << "called" << endl;
@@ -448,14 +689,11 @@ void VideoDevicePool::loadConfig()
 			const QString name                = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator)->name() ) .arg ((*vditerator)->getModelIndex())), (*vditerator)->model());
 			const int currentinput            = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator)->name() ) .arg ((*vditerator)->getModelIndex())), 0);
 			const bool disablemmap            = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator)->model() ) .arg ((*vditerator)->getModelIndex())), false );
-			const bool workaroundbrokendriver = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator)->model() ) .arg ((*vditerator)->getModelIndex())), false );
 			kdDebug( 14010 ) << k_funcinfo << "Device name: " << name << endl;
 			kdDebug( 14010 ) << k_funcinfo << "Device current input: " << currentinput << endl;
 			kdDebug( 14010 ) << k_funcinfo << "Disable mmap: " << disablemmap << endl;
-			kdDebug( 14010 ) << k_funcinfo << "Workaround broken driver: " << workaroundbrokendriver << endl;
 			(*vditerator)->selectInput(currentinput);
 			(*vditerator)->setDisableMMap(disablemmap);
-			(*vditerator)->setWorkaroundBrokenDriver(workaroundbrokendriver);
 
 			for (size_t input = 0 ; input < (*vditerator)->inputCount(); input++)
 			{
@@ -523,11 +761,9 @@ void VideoDevicePool::saveConfig()
 			const QString modelName                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg (model ) .arg (modelIndex);
 			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg (model ) .arg (modelIndex);
 			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg (model ) .arg (modelIndex);
-			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg (model ) .arg (modelIndex);
 			config->writeEntry( modelName,                   (*vditerator)->name());
 			config->writeEntry( currentinput,           (*vditerator)->currentInput());
 			config->writeEntry( disablemmap,            (*vditerator)->mmapDisabled());
-			config->writeEntry( workaroundbrokendriver, (*vditerator)->workaroundBrokenDriver());
 
 			for (size_t input = 0 ; input < (*vditerator)->inputCount(); input++)
 			{

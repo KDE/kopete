@@ -64,7 +64,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
 	connect(mPrfsVideoDevice->mDeviceDisableMMap,            SIGNAL(toggled(bool)),     this, SLOT(slotDeviceDisableMMapChanged(bool)));
-	connect(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver, SIGNAL(toggled(bool)),     this, SLOT(slotDeviceWorkaroundBrokenDriverChanged(bool)));
 
 	// why is this here?
 	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
@@ -127,24 +126,23 @@ void AVDeviceConfig::setVideoInputParameters()
 {
 	if(mVideoDevicePool->size())
 	{
-		mPrfsVideoDevice->mBrightnessSlider->setValue((int)(mVideoDevicePool->getBrightness()*65535));
-		mPrfsVideoDevice->mContrastSlider->setValue((int)(mVideoDevicePool->getContrast()*65535));
-		mPrfsVideoDevice->mSaturationSlider->setValue((int)(mVideoDevicePool->getSaturation()*65535));
-		mPrfsVideoDevice->mWhitenessSlider->setValue((int)(mVideoDevicePool->getWhiteness()*65535));
-		mPrfsVideoDevice->mHueSlider->setValue((int)(mVideoDevicePool->getHue()*65535));
-		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
-		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
-		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->getImageAsMirror());
-		mPrfsVideoDevice->mDeviceDisableMMap->setChecked(mVideoDevicePool->getDisableMMap());
-		mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->setChecked(mVideoDevicePool->getWorkaroundBrokenDriver());
+		mPrfsVideoDevice->mBrightnessSlider->setValue((int)(mVideoDevicePool->brightness()*65535));
+		mPrfsVideoDevice->mContrastSlider->setValue((int)(mVideoDevicePool->contrast()*65535));
+		mPrfsVideoDevice->mSaturationSlider->setValue((int)(mVideoDevicePool->saturation()*65535));
+		mPrfsVideoDevice->mWhitenessSlider->setValue((int)(mVideoDevicePool->whiteness()*65535));
+		mPrfsVideoDevice->mHueSlider->setValue((int)(mVideoDevicePool->hue()*65535));
+		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->autoBrightnessContrast());
+		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->autoColorCorrection());
+		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->imageAsMirror());
+		mPrfsVideoDevice->mDeviceDisableMMap->setChecked(mVideoDevicePool->mmapDisabled());
 	}
 }
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
 	unsigned int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentItem();
-	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice << endl;
-	if ((newdevice < mVideoDevicePool->m_videodevice.size())&&(newdevice!=mVideoDevicePool->currentDevice()))
+	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDeviceIndex() << "New device: " << newdevice << endl;
+	if ((newdevice < mVideoDevicePool->m_videodevices.size())&&(newdevice!=mVideoDevicePool->currentDeviceIndex()))
 	{
 	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. " << endl;
 		mVideoDevicePool->open(newdevice);
@@ -221,12 +219,6 @@ void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
 void AVDeviceConfig::slotImageAsMirrorChanged(bool){
 	kdDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotDeviceWorkaroundBrokenDriverChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotDeviceWorkaroundBrokenDriverChanged(" << mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked() << ") called. " << endl;
-	mVideoDevicePool->setWorkaroundBrokenDriver(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked());
 	emit changed( true );
 }
 

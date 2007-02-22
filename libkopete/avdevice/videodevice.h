@@ -278,8 +278,6 @@ public:
 	 */
 	bool mmapDisabled() const;
 	void setDisableMMap(bool disablemmap);
-	bool workaroundBrokenDriver() const;
-	void setWorkaroundBrokenDriver(bool workaroundbrokendriver);
 
 	/**
 	 * Device capabilities
@@ -292,8 +290,7 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QValueVector<Kopete::AV::VideoInput> inputs() const;
-//	void setInputs( QValueVector<Kopete::AV::VideoInput> ) const;
+	QValueVector<Kopete::AV::VideoInput> inputs() const; // Candidate to be private
 	size_t getModelIndex();
 	void setModelIndex(size_t modelindex);
 
@@ -355,7 +352,6 @@ private:
 	QValueVector<Kopete::AV::VideoInput> m_inputs;
 	// user preferences
 	bool m_disablemmap;
-	bool m_workaroundbrokendriver;
 };
 
 }

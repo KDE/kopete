@@ -41,7 +41,6 @@ VideoDevice::VideoDevice() : m_currentheight( 0 ), m_currentwidth( 0 ), m_maxwid
 	descriptor = -1;
 	m_streambuffers  = 0;
 	m_current_input = 0;
-	m_workaroundbrokendriver = false;
 	m_disablemmap = false;
 //	kdDebug( 14010 ) << "libkopete (avdevice): VideoDevice() exited successfuly" << endl;
 }
@@ -125,7 +124,6 @@ int VideoDevice::checkDevice()
 		m_driver=VIDEODEV_DRIVER_NONE;
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
-		if(!workaroundBrokenDriver())
 		{
 		CLEAR(V4L2_capabilities);
 
@@ -1591,17 +1589,6 @@ void VideoDevice::setDisableMMap(bool disablemmap)
 {
 	kdDebug( 14010 ) <<  k_funcinfo << "VideoDevice::setDisableMMap(" << disablemmap << ") called." << endl;
 	m_disablemmap = disablemmap;
-}
-
-bool VideoDevice::workaroundBrokenDriver() const
-{
-	return m_workaroundbrokendriver;
-}
-
-void VideoDevice::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
-{
-	kdDebug( 14010 ) <<  k_funcinfo << "VideoDevice::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
-	m_workaroundbrokendriver = workaroundbrokendriver;
 }
 
 pixel_format VideoDevice::pixelFormatForPalette( int palette ) const
