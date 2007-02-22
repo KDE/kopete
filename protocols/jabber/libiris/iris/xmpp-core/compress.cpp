@@ -1,6 +1,7 @@
 #include <QObject>
 #include <QIODevice>
 #include <zlib.h>
+#include <stdlib.h>
 
 #include "compress.h"
 
