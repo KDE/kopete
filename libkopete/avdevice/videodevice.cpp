@@ -2251,6 +2251,15 @@ bool VideoDevice::canStream()
 	return m_videostream;
 }
 
+size_t VideoDevice::getModelIndex()
+{
+	return m_modelindex;
+}
+void VideoDevice::setModelIndex(size_t modelindex)
+{
+	m_modelindex = modelindex;
+}
+
 } // namespace AV
 
 } // namespace Kopete

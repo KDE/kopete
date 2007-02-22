@@ -293,7 +293,9 @@ public:
 	bool canStream();
 
 	QValueVector<Kopete::AV::VideoInput> inputs() const;
-	void setInputs( QValueVector<Kopete::AV::VideoInput> ) const;
+//	void setInputs( QValueVector<Kopete::AV::VideoInput> ) const;
+	size_t getModelIndex();
+	void setModelIndex(size_t modelindex);
 
 protected:
 	int xioctl(int request, void *arg);
