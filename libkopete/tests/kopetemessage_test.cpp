@@ -167,8 +167,14 @@ void KopeteMessage_Test::testPrimitives()
 		CHECK(m, msg.plainBody());
 
 		msg.setBody("<simple> SIMPLE", Kopete::Message::PlainText);
-		CHECK(QString("<simple> SIMPLE"), msg.plainBody());
-		CHECK(QString("&lt;simple&gt; SIMPLE"), msg.escapedBody());
+		CHECK(msg.plainBody(),   QString("<simple> SIMPLE") );
+		CHECK(msg.escapedBody(), QString("&lt;simple&gt; SIMPLE") );
+
+		msg.setBody("<simple>SIMPLE</simple>", Kopete::Message::RichText);
+		CHECK(msg.plainBody(),   QString("SIMPLE") );
+		CHECK(msg.escapedBody(), QString("<simple>SIMPLE</simple>") );
+
+		CHECK(Kopete::Message::unescape( QString( "<simple>SIMPLE</simple>" ) ), QString("SIMPLE") );
 
 		msg.setBody(m, Kopete::Message::RichText);
 
@@ -176,8 +182,10 @@ void KopeteMessage_Test::testPrimitives()
 		//CHECK(msg.plainBody(),   QString("HELLO WORLD"));
 		//CHECK(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
 
+		CHECK(msg.escapedBody(),                   QString(" &nbsp; <b>HELLO WORLD</b> &nbsp; "));
+		CHECK(msg.plainBody(),                     QString("   HELLO WORLD   "));
 		CHECK(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
-		CHECK(msg.escapedBody().stripWhiteSpace(), QString("<b>HELLO WORLD</b>"));
+		CHECK(msg.escapedBody().stripWhiteSpace(), QString("&nbsp; <b>HELLO WORLD</b> &nbsp;"));
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);
