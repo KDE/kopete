@@ -17,7 +17,6 @@
 #include "avatarselectorwidget.h"
 
 // Qt includes
-#include <QtCore/QPointer>
 #include <QtGui/QListWidget>
 #include <QtGui/QListWidgetItem>
 #include <QtGui/QIcon>
@@ -62,7 +61,12 @@ private:
 class AvatarSelectorWidget::Private
 {
 public:
+	Private()
+	 : selectedItem(0)
+	{}
+
 	Ui::AvatarSelectorWidget mainWidget;
+	QListWidgetItem *selectedItem;
 
 	void addItem(Kopete::AvatarManager::AvatarEntry entry);
 };
@@ -92,6 +96,18 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 AvatarSelectorWidget::~AvatarSelectorWidget()
 {
 	delete d;
+}
+
+Kopete::AvatarManager::AvatarEntry AvatarSelectorWidget::selectedEntry() const
+{
+	Kopete::AvatarManager::AvatarEntry result;
+
+	if( d->selectedItem )
+	{
+		result = static_cast<AvatarSelectorWidgetItem*>(d->selectedItem)->avatarEntry();
+	}
+
+	return result;
 }
 
 void AvatarSelectorWidget::buttonAddAvatarClicked()
@@ -184,7 +200,10 @@ void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entr
 void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
 {
 	if( item )
+	{
 		d->mainWidget.labelAvatarImage->setPixmap( item->icon().pixmap(96, 96) );
+		d->selectedItem = item;
+	}
 
 	// I know sender() is evil
 	// Disable Remove Avatar button when selecting an item in listUserContact.

@@ -1,9 +1,9 @@
 /*
     kopeteeditglobalidentitywidget.cpp  -  Kopete Edit Global Identity widget
 
-    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+    Copyright (c) 2005-2007 by Michaël Larouche       <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,34 +18,27 @@
 #include "kopeteeditglobalidentitywidget.h"
 
 // Qt include
-#include <qlayout.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qtooltip.h>
-#include <qcursor.h>
-//Added by qt3to4:
-#include <QMouseEvent>
-#include <QLabel>
-#include <QHBoxLayout>
+#include <QtCore/QPointer>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QImage>
+#include <QtGui/QPixmap>
+#include <QtGui/QCursor>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QLabel>
 
 // KDE include
 #include <klineedit.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <ktoolbar.h>
-#include <kstandarddirs.h>
 #include <kurl.h>
-#include <kfiledialog.h>
-#include <kmessagebox.h>
-#include <kio/netaccess.h>
-#include <kpixmapregionselectordialog.h>
 
 // Kopete include
 #include "kopeteglobal.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
-#include "avatarselectorwidget.h"
+#include "avatarselectordialog.h"
 
 
 ClickableLabel::ClickableLabel(QWidget *parent)
@@ -66,10 +59,11 @@ void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
 class KopeteEditGlobalIdentityWidget::Private
 {
 public:
-	Private() : myself(0L), labelPicture(0L), lineNickname(0L), lineStatusMessage(0L), mainLayout(0L), iconSize(22, 22)
+	Private()
+	 : labelPicture(0L), lineNickname(0L), lineStatusMessage(0L), mainLayout(0L), iconSize(22, 22)
 	{}
 		
-	Kopete::MetaContact *myself;
+	QPointer<Kopete::MetaContact> myself;
 	ClickableLabel *labelPicture;
 	KLineEdit *lineNickname;
 	KLineEdit *lineStatusMessage;
@@ -143,6 +137,11 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 			
 			d->labelPicture->setToolTip( QString::fromUtf8("<qt><img src=\"%1\" width=\"%2\" height=\"%3\"></qt>").arg(value.toString()).arg(myselfImage.width()).arg(myselfImage.height()) );
 		}
+		else
+		{
+			d->labelPicture->setPixmap( QPixmap() );
+			d->labelPicture->setToolTip( QString() );
+		}
 	}
 	else if(key == Kopete::Global::Properties::self()->nickName().key())
 	{
@@ -154,69 +153,17 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 
 void KopeteEditGlobalIdentityWidget::photoClicked()
 {
-	Kopete::UI::AvatarSelectorWidget *avatarSelector = new Kopete::UI::AvatarSelectorWidget(0);
+	Kopete::UI::AvatarSelectorDialog *avatarSelector = new Kopete::UI::AvatarSelectorDialog(this);
+	connect(avatarSelector, SIGNAL(result(Kopete::UI::AvatarSelectorDialog*)), this, SLOT(avatarDialogResult(Kopete::UI::AvatarSelectorDialog*)));
 	avatarSelector->show();
+}
 
-// Will be recoded soon
-#if 0
-	KUrl photoURL = KFileDialog::getImageOpenUrl( KUrl(), this, i18n("Global Photo"));
-	if(photoURL.isEmpty())
-		return;
+void KopeteEditGlobalIdentityWidget::avatarDialogResult(Kopete::UI::AvatarSelectorDialog *dialog)
+{
+	kDebug(1400) << k_funcinfo << "Setting myself metacontact photo with " << dialog->selectedAvatarPath() << endl;
 
-	// Only accept local file.
-	if(!photoURL.isLocalFile())
-	{
-		KMessageBox::sorry(this, i18n("Remote photos are not allowed."), i18n("Global Photo"));
-		return;
-	}
-
-	QString saveLocation(KStandardDirs::locateLocal("appdata", "global-photo.png"));
-	QImage photo(photoURL.path());
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
-
-	if(!photo.isNull())
-	{
-		if(photo.width() > 96 || photo.height() > 96)
-		{
-			// Scale and crop the picture.
-			photo = photo.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-			// crop image if not square
-			if(photo.width() < photo.height()) 
-				photo = photo.copy((photo.width()-photo.height())/2, 0, 96, 96);
-			else if (photo.width() > photo.height())
-				photo = photo.copy(0, (photo.height()-photo.width())/2, 96, 96);
-
-		}
-		else if (photo.width() < 32 || photo.height() < 32)
-		{
-			// Scale and crop the picture.
-			photo = photo.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-			// crop image if not square
-			if(photo.width() < photo.height())
-				photo = photo.copy((photo.width()-photo.height())/2, 0, 32, 32);
-			else if (photo.width() > photo.height())
-				photo = photo.copy(0, (photo.height()-photo.width())/2, 32, 32);
-	
-		}
-		else if (photo.width() != photo.height())
-		{
-			if(photo.width() < photo.height())
-				photo = photo.copy((photo.width()-photo.height())/2, 0, photo.height(), photo.height());
-			else if (photo.width() > photo.height())
-				photo = photo.copy(0, (photo.height()-photo.width())/2, photo.height(), photo.height());
-		}
-
-		if(!photo.save(saveLocation, "PNG"))
-		{
-			KMessageBox::sorry(this, 
-					i18n("An error occurred when trying to save the global photo."),
-					i18n("Global Photo"));
-		}
-	}
-
-	d->myself->setPhotoSource(Kopete::MetaContact::SourceCustom);
-	d->myself->setPhoto(KUrl(saveLocation));
-#endif
+	d->myself->setPhotoSource( Kopete::MetaContact::SourceCustom );
+	d->myself->setPhoto( KUrl(dialog->selectedAvatarPath()) );
 }
 
 void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text)

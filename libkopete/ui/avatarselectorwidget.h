@@ -35,6 +35,8 @@ namespace UI
 /**
  * @brief Widget to select and manager user avatar.
  *
+ * Do not use this widget alone, use AvatarSelectorDialog instead.
+ * 
  * @sa AvatarSelectorDialog
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -50,7 +52,17 @@ public:
 	/**
 	 * @brief Destructor
 	 */
-	~AvatarSelectorWidget();
+	virtual ~AvatarSelectorWidget();
+
+	/**
+	 * @brief Get the selected AvatarEntry
+	 *
+	 * This is a convience method to retrieve the AvatarEntry
+	 * from current selected avatar.
+	 *
+	 * @return AvatarEntry of current selected avatar in list.
+	 */
+	Kopete::AvatarManager::AvatarEntry selectedEntry() const;
 
 Q_SIGNALS:
 	/**

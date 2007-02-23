@@ -1,9 +1,9 @@
 /*
     kopeteeditglobalidentitywidget.h  -  Kopete Edit Global Identity widget
 
-    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+    Copyright (c) 2005-2007 by Michaël Larouche       <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,6 +22,14 @@
 #include <QtGui/QLabel>
 
 class QSize;
+namespace Kopete
+{
+namespace UI
+{
+class AvatarSelectorDialog;
+}
+}
+
 /**
  * @brief This is a simple widget added to a toolbar in KopeteWindow.
  *
@@ -69,6 +77,13 @@ private slots:
 	 * User press Return/Enter in the KLineEdit, commit the new nickname.
 	 */
 	void changeNickname();
+
+	/**
+	 * @internal
+	 * Avatar dialog result.
+	 * @param dialog refering dialog
+	 */
+	void avatarDialogResult(Kopete::UI::AvatarSelectorDialog *dialog);
 
 private:
 	class Private;
