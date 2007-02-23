@@ -201,16 +201,15 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 	Kopete::Protocol *protocol = static_cast<Kopete::Protocol*>( plugin );
 	if( protocol )
 	{
-		KSharedConfig::Ptr config = KGlobal::config();
-		if( config->hasGroup( "AliasPlugin" ) )
+		KConfigGroup config(KGlobal::config(), "AliasPlugin");
+		if( config.exists() )
 		{
-			config->setGroup("AliasPlugin");
-			QStringList aliases = config->readEntry("AliasNames", QStringList());
+			QStringList aliases = config.readEntry("AliasNames", QStringList());
 			for( QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it )
 			{
-				uint aliasNumber = config->readEntry( QString((*it) + "_id").toUtf8(), 0 );
-				QString aliasCommand = config->readEntry( QString((*it) + "_command").toUtf8(), QString() );
-				QStringList protocols = config->readEntry( (*it) + "_protocols", QStringList() );
+				uint aliasNumber = config.readEntry( (*it) + "_id", 0 );
+				QString aliasCommand = config.readEntry( (*it) + "_command", QString() );
+				QStringList protocols = config.readEntry( (*it) + "_protocols", QStringList() );
 
 				for( QStringList::iterator it2 = protocols.begin(); it2 != protocols.end(); ++it2 )
 				{
