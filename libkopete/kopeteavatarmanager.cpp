@@ -178,10 +178,35 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	return newEntry;
 }
 
-void AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
+bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 {
-	Q_UNUSED(entryToRemove);
-	emit avatarRemoved(entryToRemove);
+	// We need name and path to remove an avatar from the storage.
+	if( entryToRemove.name.isEmpty() && entryToRemove.path.isEmpty() )
+		return false;
+	
+	// We don't allow removing avatars from Contact category
+	if( entryToRemove.category & Kopete::AvatarManager::Contact )
+		return false;
+
+	// Delete the image file first, file delete is more likely to fail than config group remove.
+	if( KIO::NetAccess::del(KUrl(entryToRemove.path),0) )
+	{
+		kDebug(14010) << k_funcinfo << "Removing avatar from config." << endl;
+
+		KUrl configUrl(d->baseDir);
+		configUrl.addPath( UserDir );
+		configUrl.addPath( AvatarConfig );
+
+		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal ), entryToRemove.name );
+		avatarConfig.deleteGroup();
+		avatarConfig.sync();
+
+		emit avatarRemoved(entryToRemove);
+
+		return true;
+	}
+	
+	return false;
 }
 
 void AvatarManager::Private::createDirectory(const KUrl &directory)
@@ -201,32 +226,32 @@ QImage AvatarManager::Private::scaleImage(const QImage &source)
 	// Maybe the image doesn't need to be scaled
 	QImage result = source;
 
-	if( source.width() > 96 || source.height() > 96 )
+	if( result.width() > 96 || result.height() > 96 )
 	{
 		// Scale and crop the picture.
-		result = source.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		result = result.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 		// crop image if not square
 		if( result.width() < result.height() )
 			result = result.copy( (result.width()-result.height())/2, 0, 96, 96 );
 		else if( result.width() > result.height() )
 			result = result.copy( 0, (result.height()-result.width())/2, 96, 96 );
 	}
-	else if( source.width() < 32 || source.height() < 32 )
+	else if( result.width() < 32 || result.height() < 32 )
 	{
 		// Scale and crop the picture.
-		result = source.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		result = result.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 		// crop image if not square
 		if( result.width() < result.height() )
 			result = result.copy( (result.width()-result.height())/2, 0, 32, 32 );
 		else if( result.width() > result.height() )
 			result = result.copy( 0, (result.height()-result.width())/2, 32, 32 );
 	}
-	else if( source.width() != source.height() )
+	else if( result.width() != result.height() )
 	{
-		if(source.width() < source.height())
-			result = source.copy((source.width()-source.height())/2, 0, source.height(), source.height());
-		else if (source.width() > source.height())
-			result = source.copy(0, (source.height()-source.width())/2, source.height(), source.height());
+		if(result.width() < result.height())
+			result = result.copy((result.width()-result.height())/2, 0, result.height(), result.height());
+		else if (result.width() > result.height())
+			result = result.copy(0, (result.height()-result.width())/2, result.height(), result.height());
 	}
 
 	return result;

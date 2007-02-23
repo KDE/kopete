@@ -64,14 +64,26 @@ class Contact;
  * @subsection avatar_management_add Adding an avatar
  * Use the add() method to add an new avatar. For an avatar received from a contact, you
  * should use the contactId for the name. You can either specify a image path or a QImage.
- * AvatarManager will save the QImage on disk.
+ * AvatarManager will save the QImage on disk. When adding an avatar for Contact category,
+ * the "contact" entry need to be filled with a pointer to a Kopete::Contact instance.
+ *
  * @code
 Kopete::AvatarManager::AvatarEntry newEntry;
 newEntry.name = "A new avatar"
-newEntry.path = avatarPath;
-newEntry.category = Kopete::AvatarManager::User;
+newEntry.image = avatarImage;
+newEntry.contact = this;
+newEntry.category = Kopete::AvatarManager::Contact;
 
 Kopete::AvatarManager::self()->add(newEntry);
+ * @endcode
+ *
+ * If the operation has failed, the resulting AvatarEntry path will be empty.
+ * The following code is a good way to test the success of add() method:
+ * @code
+if( !resultEntry.path.isEmpty() )
+{
+	// Set avatar on server
+}
  * @endcode
  *
  * @subsection avatar_management_delete Removing an avatar
@@ -85,6 +97,9 @@ entryToRemove.path = imagePath;
 
 Kopete::AvatarManager::self()->remove(entryToRemove);
  * @endcode
+ *
+ * @subsection avatar_management_update Updating an avatar
+ * Adding an avatar with the same name will update the previous avatar.
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -169,7 +184,7 @@ public Q_SLOTS:
 	 * @brief Remove an avatar from the storage
 	 * @param entryToRemove Avatar entry to remove
 	 */
-	void remove(Kopete::AvatarManager::AvatarEntry entryToRemove);
+	bool remove(Kopete::AvatarManager::AvatarEntry entryToRemove);
 
 private:
 	/**

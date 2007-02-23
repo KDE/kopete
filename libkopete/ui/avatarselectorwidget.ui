@@ -138,7 +138,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="buttonAddAvatar" >
+        <widget class="QPushButton" name="buttonRemoveAvatar" >
          <property name="text" >
           <string>Remove Avatar</string>
          </property>

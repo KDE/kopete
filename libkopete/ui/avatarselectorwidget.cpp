@@ -36,6 +36,29 @@ namespace Kopete
 namespace UI
 {
 
+class AvatarSelectorWidgetItem : public QListWidgetItem
+{
+public:
+	AvatarSelectorWidgetItem(QListWidget *parent)
+	 : QListWidgetItem(parent, QListWidgetItem::UserType)
+	{}
+
+	void setAvatarEntry(Kopete::AvatarManager::AvatarEntry entry)
+	{
+		m_entry = entry;
+		setText( entry.name );
+		setIcon( QIcon(entry.path) );
+	}
+
+	Kopete::AvatarManager::AvatarEntry avatarEntry() const
+	{
+		return m_entry;
+	}
+
+private:
+	Kopete::AvatarManager::AvatarEntry m_entry;
+};
+
 class AvatarSelectorWidget::Private
 {
 public:
@@ -51,10 +74,12 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 
 	// Connect signals/slots
 	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
+	connect(d->mainWidget.buttonRemoveAvatar, SIGNAL(clicked()), this, SLOT(buttonRemoveAvatarClicked()));
 	connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listSelectionChanged(QListWidgetItem*)));
 	connect(d->mainWidget.listUserContact, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listSelectionChanged(QListWidgetItem*)));
 
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)), this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
+	connect(Kopete::AvatarManager::self(), SIGNAL(avatarRemoved(Kopete::AvatarManager::AvatarEntry)), this, SLOT(avatarRemoved(Kopete::AvatarManager::AvatarEntry)));
 
 	// List avatars in lists
 	Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
@@ -93,9 +118,19 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 
 		Kopete::AvatarManager::self()->add( newEntry );
 	}
-	else
+}
+
+void AvatarSelectorWidget::buttonRemoveAvatarClicked()
+{
+	// You can't remove from listUserContact, so we can always use listUserAvatar
+	AvatarSelectorWidgetItem *selectedItem = static_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
+	if( selectedItem )
 	{
-		// TODO
+		if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
+		{
+			// TODO: Show error message
+			kDebug(14010) << k_funcinfo << "Removing of avatar failed for unknown reason." << endl;
+		}
 	}
 }
 
@@ -122,6 +157,49 @@ void AvatarSelectorWidget::avatarAdded(Kopete::AvatarManager::AvatarEntry newEnt
 	d->addItem(newEntry);
 }
 
+void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved)
+{
+	// Same here, avatar can be only removed from listUserAvatar
+	QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( entryRemoved.name, Qt::MatchContains );
+	if( !foundItems.isEmpty() )
+	{
+		kDebug(14010) << k_funcinfo << "Removing " << entryRemoved.name << " from list." << endl;
+
+		int deletedRow = d->mainWidget.listUserAvatar->row( foundItems.first() );
+		QListWidgetItem *removedItem = d->mainWidget.listUserAvatar->takeItem( deletedRow );
+		delete removedItem;
+
+		int newRow = --deletedRow;
+		if( newRow < 0 )
+			newRow = 0;
+
+		// Select the previous avatar in the list, thus selecting a new avatar
+		// and deselecting the avatar being removed.
+		d->mainWidget.listUserAvatar->setCurrentRow( newRow );
+		// Force update
+		listSelectionChanged( d->mainWidget.listUserAvatar->item(newRow) );
+	}
+}
+
+void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
+{
+	if( item )
+		d->mainWidget.labelAvatarImage->setPixmap( item->icon().pixmap(96, 96) );
+
+	// I know sender() is evil
+	// Disable Remove Avatar button when selecting an item in listUserContact.
+	// I don't know anyone who will want to remove avatar received from contacts.
+	if( sender() == d->mainWidget.listUserContact )
+	{
+		d->mainWidget.buttonRemoveAvatar->setEnabled(false);
+	}
+	else
+	{
+		d->mainWidget.buttonRemoveAvatar->setEnabled(true);
+	}
+}
+
+
 void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
 {
 	kDebug(14010) << k_funcinfo << "Entry(" << entry.name << "): " << entry.category << endl;
@@ -140,14 +218,8 @@ void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry e
 		return;
 	}
 
-	QListWidgetItem *item = new QListWidgetItem(listWidget);
-	item->setText( entry.name );
-	item->setIcon( QIcon(entry.path) );
-}
-
-void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
-{
-	d->mainWidget.labelAvatarImage->setPixmap( item->icon().pixmap(96, 96) );
+	AvatarSelectorWidgetItem *item = new AvatarSelectorWidgetItem(listWidget);
+	item->setAvatarEntry(entry);
 }
 
 } // Namespace Kopete::UI

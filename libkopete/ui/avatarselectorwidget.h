@@ -67,6 +67,12 @@ private Q_SLOTS:
 	
 	/**
 	 * @internal
+	 * Remove Avatar button was clicked
+	 */
+	void buttonRemoveAvatarClicked();
+	
+	/**
+	 * @internal
 	 * Avatar query job was finished
 	 */
 	void queryJobFinished(KJob *job);
@@ -77,6 +83,13 @@ private Q_SLOTS:
 	 * @param newEntry new avatar Entry
 	 */
 	void avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry);
+
+	/**
+	 * @internal
+	 * An avatar has been removed from storage
+	 * @param entryRemoved Avatar entry removed
+	 */
+	void avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved);
 
 	/**
 	 * @internal
