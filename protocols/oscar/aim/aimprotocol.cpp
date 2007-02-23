@@ -19,7 +19,7 @@
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
-#include "aimpresence.h"
+#include "aimstatusmanager.h"
 #include "aimaddcontactpage.h"
 #include "aimeditaccountwidget.h"
 
@@ -225,7 +225,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 		protocolStatic_ = this;
 
 	// must be done after protocolStatic_ is set...
-	statusManager_ = new AIM::OnlineStatusManager;
+	statusManager_ = new AIMStatusManager;
 
 	setCapabilities( Kopete::Protocol::FullRTF ); // setting capabilities
 	kDebug(14152) << k_funcinfo << "capabilities set to FullRTF" << endl;
@@ -259,7 +259,7 @@ Kopete::Account *AIMProtocol::createNewAccount(const QString &accountId)
 	return ( new AIMAccount( this, accountId ) );
 }
 
-AIM::OnlineStatusManager *AIMProtocol::statusManager()
+OscarStatusManager *AIMProtocol::statusManager() const
 {
 	return statusManager_;
 }

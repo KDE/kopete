@@ -40,7 +40,7 @@ ui/icqchangepassword.ui
 
 set(kopete_icq_PART_SRCS
    ${kopete_icq_ui_SRCS}
-   icqpresence.cpp
+   icqstatusmanager.cpp
    icqaccount.cpp
    icqcontact.cpp
    aimcontact.cpp

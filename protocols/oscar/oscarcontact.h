@@ -35,6 +35,11 @@ class ChatSession;
 class OnlineStatus;
 }
 
+namespace Oscar
+{
+class Presence;
+}
+
 class OscarAccount;
 class QTimer;
 class QTextCodec;
@@ -97,6 +102,12 @@ public:
 	 * Returns true if contact has this capability
 	 */
 	bool hasCap( int capNumber ) const;
+
+	/**
+	 * Set presence target
+	 * Helper function that converts Oscar::Presence to Kopete::OnlineStatus and sets OnlineStatus.
+	 */
+	void setPresenceTarget( const Oscar::Presence &presence );
 
 	virtual QString sanitizedMessage( const QString& message ) = 0;
 

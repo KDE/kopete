@@ -3,8 +3,8 @@
 
   Copyright (c) 2003      by Stefan Gehn  <metz@gehn.net>
   Copyright (c) 2003      by Olivier Goffart <oggoffart@kde.org>
-  Copyright (c) 2006      by Roman Jarosz <kedgedev@centrum.cz>
-  Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2006,2007 by Roman Jarosz <kedgedev@centrum.cz>
+  Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -22,6 +22,9 @@
 
 #include "oscaraccount.h"
 #include "oscarutils.h"
+#include "oscarpresence.h"
+#include "oscarprotocol.h"
+#include "oscarstatusmanager.h"
 
 
 ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
@@ -84,9 +87,14 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	// TODOL create OnlineStatus with icon and title
+	OscarProtocol* p = static_cast<OscarProtocol *>(protocol());
+	Oscar::Presence presence = p->statusManager()->presenceOf( this->onlineStatus() );
+	presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
+	presence.setDescription( title );
+	presence.setIcon( QString( "icq_xstatus%1" ).arg( icon ) );
+	setPresenceTarget( presence );
+
 	setAwayMessage( desc );
-	
 	m_haveAwayMessage = true;
 }
 

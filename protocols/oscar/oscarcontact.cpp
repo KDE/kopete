@@ -48,6 +48,7 @@
 #include "oscarutils.h"
 #include "oscarprotocol.h"
 #include "oscarencodingselectiondialog.h"
+#include "oscarstatusmanager.h"
 
 #include <assert.h>
 
@@ -279,6 +280,12 @@ QTextCodec* OscarContact::contactCodec() const
 bool OscarContact::hasCap( int capNumber ) const
 {
 	return m_details.hasCap( capNumber );
+}
+
+void OscarContact::setPresenceTarget( const Oscar::Presence &presence )
+{
+	OscarProtocol* p = static_cast<OscarProtocol *>(protocol());
+	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 }
 
 //here's where a filetransfer usually begins

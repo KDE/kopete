@@ -24,6 +24,7 @@
 #include "kopete_export.h"
 #include "kopetecontactproperty.h"
 
+class OscarStatusManager;
 
 class OSCAR_EXPORT OscarProtocol : public Kopete::Protocol
 {
@@ -42,6 +43,7 @@ public:
 	const Kopete::ContactPropertyTmpl buddyIconHash;
 	const Kopete::ContactPropertyTmpl contactEncoding;
 
+	virtual OscarStatusManager *statusManager() const = 0;
 };
 
 #endif 

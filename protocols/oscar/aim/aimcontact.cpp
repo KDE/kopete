@@ -2,8 +2,8 @@
   aimcontact.cpp  -  Oscar Protocol Plugin
 
   Copyright (c) 2003 by Will Stephenson
-  Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
-  Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2006,2007 by Roman Jarosz <kedgedev@centrum.cz>
+  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -30,13 +30,14 @@
 #include "aimprotocol.h"
 #include "aimuserinfo.h"
 #include "aimaccount.h"
+#include "oscarstatusmanager.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
                         const QString& icon, const OContact& ssiItem )
 : AIMContactBase(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
-	setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 
 	m_infoDialog = 0L;
 	m_warnUserAction = 0L;
@@ -108,7 +109,7 @@ void AIMContact::updateSSIItem()
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
-		setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
+		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 	}
 }
 
@@ -145,12 +146,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		setNickName( contact );
 
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
-	AIM::Presence presence = AIM::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
-	setOnlineStatus( presence.toOnlineStatus() );
+	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
+	setPresenceTarget( presence );
 
-	m_mobile = ( presence.flags() & AIM::Presence::Wireless );
+	m_mobile = ( presence.flags() & Oscar::Presence::Wireless );
 
-	if ( presence.type() == AIM::Presence::Online )
+	if ( presence.type() == Oscar::Presence::Online )
 	{
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
@@ -172,7 +173,7 @@ void AIMContact::userOnline( const QString& userId )
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Getting more contact info" << endl;
-		setOnlineStatus( AIM::Presence( AIM::Presence::Online ).toOnlineStatus() );
+		setPresenceTarget( Oscar::Presence( Oscar::Presence::Online ) );
 	}
 }
 
@@ -181,7 +182,7 @@ void AIMContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
 		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline" << endl;
-		setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
+		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 		removeProperty( mProtocol->awayMessage );
 	}
 }

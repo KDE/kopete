@@ -2,8 +2,8 @@
   aimcontact.cpp  -  Oscar Protocol Plugin
 
   Copyright (c) 2003 by Will Stephenson
-  Copyright (c) 2006 by Roman Jarosz <kedgedev@centrum.cz>
-  Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2006,2007 by Roman Jarosz <kedgedev@centrum.cz>
+  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -27,13 +27,14 @@
 
 #include "icqprotocol.h"
 #include "icqaccount.h"
+#include "oscarstatusmanager.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
                         const QString& icon, const OContact& ssiItem )
 : AIMContactBase(account, name, parent, icon, ssiItem )
 {
 	mProtocol=static_cast<ICQProtocol *>(protocol());
-	setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::AIM ).toOnlineStatus() );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
@@ -96,7 +97,7 @@ void AIMContact::updateSSIItem()
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
-		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::AIM ).toOnlineStatus() );
+		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 	}
 }
 
@@ -114,12 +115,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		setNickName( contact );
 
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
-	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus(), details.userClass() );
-	setOnlineStatus( presence.toOnlineStatus() );
+	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
+	setPresenceTarget( presence );
 
-	m_mobile = ( presence.flags() & ICQ::Presence::Wireless );
+	m_mobile = ( presence.flags() & Oscar::Presence::Wireless );
 
-	if ( presence.type() == ICQ::Presence::Online )
+	if ( presence.type() == Oscar::Presence::Online )
 	{
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
@@ -142,7 +143,7 @@ void AIMContact::userOnline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
-	setOnlineStatus( ICQ::Presence( ICQ::Presence::Online, ICQ::Presence::AIM ).toOnlineStatus() );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Online, Oscar::Presence::AIM ) );
 }
 
 void AIMContact::userOffline( const QString& userId )
@@ -151,7 +152,7 @@ void AIMContact::userOffline( const QString& userId )
 		return;
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
-	setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::AIM ).toOnlineStatus() );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 }
 
 void AIMContact::slotVisibleTo()

@@ -1,7 +1,7 @@
 /*
    aimaccount.cpp  -  Oscar Protocol Plugin, AIM part
 
-   Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+   Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                       *
@@ -48,6 +48,7 @@
 #include "client.h"
 #include "contactmanager.h"
 #include "oscarsettings.h"
+#include "oscarstatusmanager.h"
 
 
 const Oscar::DWORD AIM_ONLINE = 0x0;
@@ -65,8 +66,11 @@ void AIMMyselfContact::userInfoUpdated()
 {
 	Oscar::DWORD extendedStatus = details().extendedStatus();
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
-	AIM::Presence presence = AIM::Presence::fromOscarStatus( extendedStatus, details().userClass() );
-	setOnlineStatus( presence.toOnlineStatus() );
+
+	AIMProtocol* p = static_cast<AIMProtocol *>(protocol());
+	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
+	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+
 	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 }
 
@@ -208,7 +212,8 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	AIMMyselfContact* mc = new AIMMyselfContact( this );
 	setMyself( mc );
-	mc->setOnlineStatus( AIM::Presence( AIM::Presence::Offline ).toOnlineStatus() );
+	mc->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
+
 	QString profile = configGroup()->readEntry( "Profile",
 			i18n( "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>") );
 	mc->setOwnProfile( profile );
@@ -235,9 +240,9 @@ AIMProtocol* AIMAccount::protocol() const
 	return static_cast<AIMProtocol*>(OscarAccount::protocol());
 }
 
-AIM::Presence AIMAccount::presence()
+Oscar::Presence AIMAccount::presence()
 {
-	return AIM::Presence::fromOnlineStatus( myself()->onlineStatus() );
+	return protocol()->statusManager()->presenceOf( myself()->onlineStatus() );
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
@@ -283,51 +288,51 @@ KActionMenu* AIMAccount::actionMenu()
 
 	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
         //, "actionInvisible" );
-	AIM::Presence pres( presence().type(), presence().flags() | AIM::Presence::Invisible );
-	actionInvisible->setIcon( KIcon( pres.toOnlineStatus().iconFor( this ) ) );
-	actionInvisible->setChecked( (presence().flags() & AIM::Presence::Invisible) == AIM::Presence::Invisible );
+	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
+	actionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
+	actionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
 	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 	mActionMenu->addAction( actionInvisible );
 
 	return mActionMenu;
 }
 
-void AIMAccount::setPresenceFlags( AIM::Presence::Flags flags, const QString &message )
+void AIMAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )
 {
-	AIM::Presence pres = presence();
+	Oscar::Presence pres = presence();
 	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "new flags=" << (int)flags << ", old type="
 	                        << (int)pres.flags() << ", new message=" << message << endl;
-	setPresenceTarget( AIM::Presence( pres.type(), flags ), message );
+	setPresenceTarget( Oscar::Presence( pres.type(), flags ), message );
 }
 
-void AIMAccount::setPresenceType( AIM::Presence::Type type, const QString &message )
+void AIMAccount::setPresenceType( Oscar::Presence::Type type, const QString &message )
 {
-	AIM::Presence pres = presence();
+	Oscar::Presence pres = presence();
 	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "new type=" << (int)type << ", old type="
 	                        << (int)pres.type() << ", new message=" << message << endl;
-	setPresenceTarget( AIM::Presence( type, pres.flags() ), message );
+	setPresenceTarget( Oscar::Presence( type, pres.flags() ), message );
 }
 
-void AIMAccount::setPresenceTarget( const AIM::Presence &newPres, const QString &message )
+void AIMAccount::setPresenceTarget( const Oscar::Presence &newPres, const QString &message )
 {
-	bool targetIsOffline = (newPres.type() == AIM::Presence::Offline);
-	bool accountIsOffline = ( presence().type() == AIM::Presence::Offline ||
+	bool targetIsOffline = (newPres.type() == Oscar::Presence::Offline);
+	bool accountIsOffline = ( presence().type() == Oscar::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
 
 	if ( targetIsOffline )
 	{
 		OscarAccount::disconnect();
 		// allow toggling invisibility when offline
-		myself()->setOnlineStatus( newPres.toOnlineStatus() );
+		myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( newPres ) );
 	}
 	else if ( accountIsOffline )
 	{
 		mInitialStatusMessage = message;
-		OscarAccount::connect( newPres.toOnlineStatus() );
+		OscarAccount::connect( protocol()->statusManager()->onlineStatusOf( newPres ) );
 	}
 	else
 	{
-		engine()->setStatus( newPres.toOscarStatus(), message );
+		engine()->setStatus( protocol()->statusManager()->oscarStatusOf( newPres ), message );
 	}
 }
 
@@ -337,20 +342,20 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 	{
 		// called from outside, i.e. not by our custom action menu entry...
 
-		if ( presence().type() == AIM::Presence::Offline )
+		if ( presence().type() == Oscar::Presence::Offline )
 		{
 			// ...when we are offline go online invisible.
-			setPresenceTarget( AIM::Presence( AIM::Presence::Online, AIM::Presence::Invisible ) );
+			setPresenceTarget( Oscar::Presence( Oscar::Presence::Online, Oscar::Presence::Invisible ) );
 		}
 		else
 		{
 			// ...when we are not offline set invisible.
-			setPresenceFlags( AIM::Presence::Invisible );
+			setPresenceFlags( Oscar::Presence::Invisible );
 		}
 	}
 	else
 	{
-		setPresenceType( AIM::Presence::fromOnlineStatus( status ).type(), reason.message() );
+		setPresenceType( protocol()->statusManager()->presenceOf( status ).type(), reason.message() );
 	}
 }
 
@@ -443,7 +448,8 @@ void AIMAccount::loginActions()
 void AIMAccount::disconnected( DisconnectReason reason )
 {
 	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
-	myself()->setOnlineStatus( AIM::Presence( AIM::Presence::Offline, presence().flags() ).toOnlineStatus() );
+	Oscar::Presence pres( Oscar::Presence::Offline, presence().flags() );
+	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( pres ) );
 
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	foreach( Kopete::Contact* c, contactList.values() )
@@ -572,7 +578,8 @@ void AIMAccount::userJoinedChat( Oscar::WORD exchange, const QString& room, cons
 			}
 
 			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "adding contact" << endl;
-			session->addContact( c, AIM::Presence( AIM::Presence::Online ).toOnlineStatus(), true /* suppress */ );
+			Kopete::OnlineStatus status = protocol()->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Online ) );
+			session->addContact( c, status, true /* suppress */ );
 		}
 	}
 }
@@ -625,8 +632,8 @@ void AIMAccount::connectWithPassword( const QString &password )
 		//use default online in case of invalid online status for connecting
 		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
 
-	AIM::Presence pres = AIM::Presence::fromOnlineStatus( status );
-	bool accountIsOffline = ( presence().type() == AIM::Presence::Offline ||
+	Oscar::Presence pres = protocol()->statusManager()->presenceOf( status );
+	bool accountIsOffline = ( presence().type() == Oscar::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
 
 	if ( accountIsOffline )
@@ -647,7 +654,7 @@ void AIMAccount::connectWithPassword( const QString &password )
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
-		Oscar::DWORD status = pres.toOscarStatus();
+		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
 		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), password.left(16) );

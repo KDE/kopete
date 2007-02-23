@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -40,6 +40,8 @@
 #include "icqprotocol.h"
 #include "icqaccount.h"
 #include "icquserinfowidget.h"
+#include "oscarstatusmanager.h"
+#include "oscarpresencesdataclasses.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -52,8 +54,11 @@ void ICQMyselfContact::userInfoUpdated()
 {
 	Oscar::DWORD extendedStatus = details().extendedStatus();
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
-	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus, details().userClass() );
-	setOnlineStatus( presence.toOnlineStatus() );
+
+	ICQProtocol* p = static_cast<ICQProtocol *>(protocol());
+	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
+	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+
 	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<ICQAccount*>( account() )->engine()->statusMessage() );
 }
 
@@ -93,7 +98,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 {
 	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	setMyself( new ICQMyselfContact( this ) );
-	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
+	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
 
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
@@ -126,9 +131,9 @@ ICQProtocol* ICQAccount::protocol()
 }
 
 
-ICQ::Presence ICQAccount::presence()
+Oscar::Presence ICQAccount::presence()
 {
-	return ICQ::Presence::fromOnlineStatus( myself()->onlineStatus() );
+	return protocol()->statusManager()->presenceOf( myself()->onlineStatus() );
 }
 
 
@@ -145,9 +150,9 @@ KActionMenu* ICQAccount::actionMenu()
 
 	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
         //, "actionInvisible" );
-	ICQ::Presence pres( presence().type(), presence().flags() | ICQ::Presence::Invisible );
-	actionInvisible->setIcon( KIcon( pres.toOnlineStatus().iconFor( this ) ) );
-	actionInvisible->setChecked( (presence().flags() & ICQ::Presence::Invisible) == ICQ::Presence::Invisible );
+	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
+	actionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
+	actionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
 	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 	actionMenu->addAction( actionInvisible );
 	/*
@@ -170,8 +175,8 @@ void ICQAccount::connectWithPassword( const QString &password )
 		//use default online in case of invalid online status for connecting
 		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
 
-	ICQ::Presence pres = ICQ::Presence::fromOnlineStatus( status );
-	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
+	Oscar::Presence pres = protocol()->statusManager()->presenceOf( status );
+	bool accountIsOffline = ( presence().type() == Oscar::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
 
 	if ( accountIsOffline )
@@ -194,12 +199,12 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
-		Oscar::DWORD status = pres.toOscarStatus();
+		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
 
 		if ( !mHideIP )
-			status |= ICQ::StatusCode::SHOWIP;
+			status |= Oscar::StatusCode::SHOWIP;
 		if ( mWebAware )
-			status |= ICQ::StatusCode::WEBAWARE;
+			status |= Oscar::StatusCode::WEBAWARE;
 
 		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
@@ -213,7 +218,8 @@ void ICQAccount::connectWithPassword( const QString &password )
 void ICQAccount::disconnected( DisconnectReason reason )
 {
 	kDebug(14153) << k_funcinfo << "Attempting to set status offline" << endl;
-	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, presence().flags() ).toOnlineStatus() );
+	Oscar::Presence pres( Oscar::Presence::Offline, presence().flags() );
+	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( pres ) );
 
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	foreach( Kopete::Contact* c, contactList )
@@ -224,7 +230,7 @@ void ICQAccount::disconnected( DisconnectReason reason )
 			if ( oc->ssiItem().waitingAuth() )
 				oc->setOnlineStatus( protocol()->statusManager()->waitingForAuth() );
 			else
-				oc->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline ).toOnlineStatus() );
+				oc->setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 		}
 	}
 
@@ -234,7 +240,7 @@ void ICQAccount::disconnected( DisconnectReason reason )
 
 void ICQAccount::slotToggleInvisible()
 {
-	using namespace ICQ;
+	using namespace Oscar;
 	if ( (presence().flags() & Presence::Invisible) == Presence::Invisible )
 		setPresenceFlags( presence().flags() & ~Presence::Invisible );
 	else
@@ -294,42 +300,42 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 	notification->sendEvent();
 }
 
-void ICQAccount::setPresenceFlags( ICQ::Presence::Flags flags, const QString &message )
+void ICQAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )
 {
-	ICQ::Presence pres = presence();
+	Oscar::Presence pres = presence();
 	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new flags=" << (int)flags << ", old type="
 		<< (int)pres.flags() << ", new message=" << message << endl;
-	setPresenceTarget( ICQ::Presence( pres.type(), flags ), message );
+	setPresenceTarget( Oscar::Presence( pres.type(), flags ), message );
 }
 
-void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &message )
+void ICQAccount::setPresenceType( Oscar::Presence::Type type, const QString &message )
 {
-	ICQ::Presence pres = presence();
+	Oscar::Presence pres = presence();
 	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new type=" << (int)type << ", old type="
 	                        << (int)pres.type() << ", new message=" << message << endl;
-	setPresenceTarget( ICQ::Presence( type, pres.flags() ), message );
+	setPresenceTarget( Oscar::Presence( type, pres.flags() ), message );
 }
 
-void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString &message )
+void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const QString &message )
 {
-	bool targetIsOffline = (newPres.type() == ICQ::Presence::Offline);
-	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
+	bool targetIsOffline = (newPres.type() == Oscar::Presence::Offline);
+	bool accountIsOffline = ( presence().type() == Oscar::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
 
 	if ( targetIsOffline )
 	{
 		OscarAccount::disconnect();
 		// allow toggling invisibility when offline
-		myself()->setOnlineStatus( newPres.toOnlineStatus() );
+		myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( newPres ) );
 	}
 	else if ( accountIsOffline )
 	{
 		mInitialStatusMessage = message;
-		OscarAccount::connect( newPres.toOnlineStatus() );
+		OscarAccount::connect( protocol()->statusManager()->onlineStatusOf( newPres ) );
 	}
 	else
 	{
-		engine()->setStatus( newPres.toOscarStatus(), message );
+		engine()->setStatus( protocol()->statusManager()->oscarStatusOf( newPres ), message );
 	}
 }
 
@@ -340,20 +346,20 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 	{
 		// called from outside, i.e. not by our custom action menu entry...
 
-		if ( presence().type() == ICQ::Presence::Offline )
+		if ( presence().type() == Oscar::Presence::Offline )
 		{
 			// ...when we are offline go online invisible.
-			setPresenceTarget( ICQ::Presence( ICQ::Presence::Online, ICQ::Presence::Invisible ) );
+			setPresenceTarget( Oscar::Presence( Oscar::Presence::Online, Oscar::Presence::Invisible ) );
 		}
 		else
 		{
 			// ...when we are not offline set invisible.
-			setPresenceFlags( ICQ::Presence::Invisible );
+			setPresenceFlags( Oscar::Presence::Invisible );
 		}
 	}
 	else
 	{
-		setPresenceType( ICQ::Presence::fromOnlineStatus( status ).type(), reason.message() );
+		setPresenceType( protocol()->statusManager()->presenceOf( status ).type(), reason.message() );
 	}
 }
 

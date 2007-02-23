@@ -38,6 +38,7 @@
 #include "icqeditaccountwidget.h"
 
 #include "icqprotocol.h"
+#include "icqstatusmanager.h"
 
 typedef KGenericFactory<ICQProtocol> ICQProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory( "kopete_icq" ) )
@@ -160,7 +161,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const QStringList&)
 		protocolStatic_ = this;
 
 	// must be done after protocolStatic_ is set...
-	statusManager_ = new ICQ::OnlineStatusManager;
+	statusManager_ = new ICQStatusManager;
 
 	addAddressBookField("messaging/icq", Kopete::Plugin::MakeIndexField);
 
@@ -828,7 +829,7 @@ Kopete::Account *ICQProtocol::createNewAccount(const QString &accountId)
 	return new ICQAccount(this, accountId);
 }
 
-ICQ::OnlineStatusManager *ICQProtocol::statusManager()
+OscarStatusManager *ICQProtocol::statusManager() const
 {
 	return statusManager_;
 }

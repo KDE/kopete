@@ -20,14 +20,9 @@
 
 #include "oscarprotocol.h"
 #include "kopetemimetypehandler.h"
-// #include "kopeteonlinestatus.h"
-// #include "kopetecontactproperty.h"
 
 class QComboBox;
-/*class ICQUserInfoWidget;
-class ICQContact;*/
-
-namespace ICQ { class OnlineStatusManager; }
+class ICQStatusManager;
 
 class ICQProtocolHandler : public Kopete::MimeTypeHandler
 {
@@ -56,7 +51,7 @@ public:
 	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 	Kopete::Account *createNewAccount(const QString &accountId);
 
-	ICQ::OnlineStatusManager *statusManager();
+	OscarStatusManager *statusManager() const;
 
 
 	const Kopete::ContactPropertyTmpl firstName;
@@ -94,7 +89,7 @@ private:
 
 private:
 	static ICQProtocol* protocolStatic_;
-	ICQ::OnlineStatusManager* statusManager_;
+	ICQStatusManager* statusManager_;
 	QMap<int, QString> mGenders;
 	QMap<int, QString> mCountries;
 	QMap<int, QString> mLanguages;

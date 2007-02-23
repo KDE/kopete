@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
 
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -25,8 +25,7 @@
 
 #include "oscaraccount.h"
 #include "oscarmyselfcontact.h"
-
-#include "aimpresence.h"
+#include "oscarpresence.h"
 
 namespace AIM
 {
@@ -128,11 +127,11 @@ protected:
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
 private:
-	AIM::Presence presence();
+	Oscar::Presence presence();
 
-	void setPresenceFlags( AIM::Presence::Flags flags, const QString &message = QString::null );
-	void setPresenceType( AIM::Presence::Type, const QString &awayMessage = QString::null );
-	void setPresenceTarget( const AIM::Presence &presence, const QString &message = QString::null );
+	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString::null );
+	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString::null );
+	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
 
 	// Set privacy tlv item
 	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses );

@@ -29,7 +29,7 @@ set(kopete_aim_PART_SRCS
    aimaccount.cpp
    aimcontact.cpp
    icqcontact.cpp
-   aimpresence.cpp
+   aimstatusmanager.cpp
    aimuserinfo.cpp
    aimjoinchat.cpp
    aimchatsession.cpp )

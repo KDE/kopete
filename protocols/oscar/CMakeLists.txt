@@ -24,7 +24,10 @@ set(kopete_oscar_LIB_SRCS
    oscarversionupdater.cpp
    oscarprivacyengine.cpp
    aimcontactbase.cpp
-   icqcontactbase.cpp )
+   icqcontactbase.cpp
+   oscarpresence.cpp
+   oscarpresencesdataclasses.cpp
+   oscarstatusmanager.cpp)
 
 kde4_add_ui_files(kopete_oscar_LIB_SRCS
    oscarencodingselectionbase.ui

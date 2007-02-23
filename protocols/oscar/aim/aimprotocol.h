@@ -27,7 +27,7 @@ namespace Kopete
 class OnlineStatus;
 }
 
-namespace AIM { class OnlineStatusManager; }
+class AIMStatusManager;
 
 class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
@@ -55,14 +55,14 @@ public:
 	KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account *account, QWidget *parent );
 	Kopete::Account* createNewAccount( const QString &accountId );
 
-	AIM::OnlineStatusManager *statusManager();
+	OscarStatusManager *statusManager() const;
 
 	const Kopete::ContactPropertyTmpl clientProfile;
 
 private:
 	/** The active instance of oscarprotocol */
 	static AIMProtocol *protocolStatic_;
-	AIM::OnlineStatusManager* statusManager_;
+	AIMStatusManager* statusManager_;
 	AIMProtocolHandler protohandler;
 };
 

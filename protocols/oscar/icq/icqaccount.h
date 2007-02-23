@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -22,8 +22,8 @@
 #include "oscaraccount.h"
 #include "oscarmyselfcontact.h"
 
-#include "icqpresence.h"
 #include "oscartypeclasses.h"
+#include "oscarpresence.h"
 
 class KAction;
 namespace Kopete { class AwayAction; class StatusMessage; }
@@ -74,11 +74,11 @@ protected slots:
 
 
 private:
-	ICQ::Presence presence();
+	Oscar::Presence presence();
 
-	void setPresenceFlags( ICQ::Presence::Flags flags, const QString &message = QString::null );
-	void setPresenceType( ICQ::Presence::Type, const QString &awayMessage = QString::null );
-	void setPresenceTarget( const ICQ::Presence &presence, const QString &message = QString::null );
+	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString::null );
+	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString::null );
+	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 
