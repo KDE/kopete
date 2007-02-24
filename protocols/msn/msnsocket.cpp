@@ -714,7 +714,13 @@ void MSNSocket::slotReadyWrite()
 		else
 		{
 			// Otherwise, send the command normally.
-			kDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).trimmed() << endl;
+
+			// Simple check to avoid dumping the binary data from the icons and emoticons to kdDebug:
+			// When sending an MSN-P2P packet, strip off anything after the P2P header.
+			QString debugData = QString( *it ).stripWhiteSpace().replace(
+				QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
+			kDebug( 14141 ) << k_funcinfo << "Sending command: " << debugData << endl;
+
 			m_socket->write( *it, ( *it ).size() );
 			m_sendQueue.erase( it );
 
