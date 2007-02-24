@@ -77,10 +77,9 @@ void EmoticonSelector::prepareList(void)
 //	kDebug(14000) << k_funcinfo << "called." << endl;
 	int row = 0;
 	int col = 0;
-	QMap<QString, QString> list = Kopete::Emoticons::self()->emoticonAndPicList();
+	QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
 	int emoticonsPerRow = static_cast<int>(sqrt((double)list.count()));
 //	kDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
-
 	if ( lay )
 	{
 // FIXME kde4, no clue what to do with that
@@ -97,9 +96,9 @@ void EmoticonSelector::prepareList(void)
 	lay->setSpacing(4);
 	lay->setMargin(4);
 	movieList.clear();
-	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
+	for (QMap<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
 	{
-		QWidget *w = new EmoticonLabel(it.key(), it.value(), this);
+		QWidget *w = new EmoticonLabel(it.key(), it.value().first(), this);
 		movieList.push_back( ((QLabel*)w)->movie() );
 		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
 //		kDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;

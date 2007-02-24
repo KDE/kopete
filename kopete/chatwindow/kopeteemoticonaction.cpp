@@ -69,12 +69,18 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 
 	// Try to load the icon for our current emoticon theme, when it fails
 	// fall back to our own default
-	QMap<QString, QString> emoticonsMap = Kopete::Emoticons::self()->emoticonAndPicList();
 	QString icon;
-	if(emoticonsMap.contains(":)") )
-		icon=emoticonsMap[":)"];
-	else
-		icon=emoticonsMap[":-)"];
+	QMap<QString, QStringList> emoticonsMap = Kopete::Emoticons::self()->emoticonAndPicList();
+	for( QMap<QString, QStringList>::const_iterator it = emoticonsMap.constBegin();
+		it != emoticonsMap.constEnd(); ++it )
+	{
+		if( ( *it ).contains( ":)" ) || ( *it ).contains( ":-)" ) )
+		{
+			icon = it.key();
+			break;
+		}
+	}
+
 
 
 	if ( icon.isNull() )
