@@ -57,9 +57,17 @@ void ICQMyselfContact::userInfoUpdated()
 
 	ICQProtocol* p = static_cast<ICQProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
+
+	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
+	if ( details().xtrazStatusSpecified() )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
+		presence.setDescription( icqAccount->engine()->statusTitle() );
+		presence.setXtrazStatus( details().xtrazStatus() );
+	}
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 
-	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<ICQAccount*>( account() )->engine()->statusMessage() );
+	setProperty( Kopete::Global::Properties::self()->statusMessage(), icqAccount->engine()->statusMessage() );
 }
 
 void ICQMyselfContact::receivedShortInfo( const QString& contact )
@@ -206,7 +214,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= Oscar::StatusCode::WEBAWARE;
 
-		engine()->setStatus( status, mInitialStatusMessage );
+		engine()->setStatus( status, mInitialStatusMessage, pres.xtrazStatus(), pres.description() );
 		updateVersionUpdaterStamp();
 		engine()->start( server, port, accountId(), password.left(8) );
 		engine()->connectToServer( c, server, true /* doAuth */ );
@@ -303,17 +311,10 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 void ICQAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )
 {
 	Oscar::Presence pres = presence();
+	pres.setFlags( flags );
 	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new flags=" << (int)flags << ", old type="
 		<< (int)pres.flags() << ", new message=" << message << endl;
-	setPresenceTarget( Oscar::Presence( pres.type(), flags ), message );
-}
-
-void ICQAccount::setPresenceType( Oscar::Presence::Type type, const QString &message )
-{
-	Oscar::Presence pres = presence();
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new type=" << (int)type << ", old type="
-	                        << (int)pres.type() << ", new message=" << message << endl;
-	setPresenceTarget( Oscar::Presence( type, pres.flags() ), message );
+	setPresenceTarget( pres, message );
 }
 
 void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const QString &message )
@@ -335,7 +336,8 @@ void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const QStrin
 	}
 	else
 	{
-		engine()->setStatus( protocol()->statusManager()->oscarStatusOf( newPres ), message );
+		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( newPres );
+		engine()->setStatus( status, message, newPres.xtrazStatus(), newPres.description() );
 	}
 }
 
@@ -354,12 +356,12 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 		else
 		{
 			// ...when we are not offline set invisible.
-			setPresenceFlags( Oscar::Presence::Invisible );
+			setPresenceFlags( presence().flags() | Oscar::Presence::Invisible );
 		}
 	}
 	else
 	{
-		setPresenceType( protocol()->statusManager()->presenceOf( status ).type(), reason.message() );
+		setPresenceTarget( protocol()->statusManager()->presenceOf( status ), reason.message() );
 	}
 }
 

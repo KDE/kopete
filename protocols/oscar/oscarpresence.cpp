@@ -32,12 +32,28 @@ Presence::Presence( uint internalStatus )
 
 void Presence::setType( Type type )
 {
-	mInternalStatus = type | flags();
+	mInternalStatus &= ~TypeMask;
+	mInternalStatus |= type;
 }
 
 void Presence::setFlags( Flags flags )
 {
-	mInternalStatus = type() | flags;
+	mInternalStatus &= ~FlagsMask;
+	mInternalStatus |= flags;
+}
+
+void Presence::setXtrazStatus( int xtraz )
+{
+	mInternalStatus &= ~XtrazMask; 
+	mInternalStatus |= (xtraz << 24);
+}
+
+int Presence::xtrazStatus() const
+{
+	if ( mInternalStatus & Oscar::Presence::XStatus )
+		return ((mInternalStatus & XtrazMask) >> 24);
+	else
+		return -1;
 }
 
 }

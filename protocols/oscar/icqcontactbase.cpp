@@ -91,7 +91,7 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	Oscar::Presence presence = p->statusManager()->presenceOf( this->onlineStatus() );
 	presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 	presence.setDescription( title );
-	presence.setIcon( QString( "icq_xstatus%1" ).arg( icon ) );
+	presence.setXtrazStatus( icon );
 	setPresenceTarget( presence );
 
 	setAwayMessage( desc );

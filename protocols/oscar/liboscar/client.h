@@ -108,8 +108,14 @@ public:
 
 	/** Logout and disconnect */
 	void close();
-	/** Set our status */
- 	void setStatus( Oscar::DWORD status, const QString &message = QString::null );
+
+	/** Set our status
+	 * \param status the oscar status
+	 * \param message the status message or Xtraz status message
+	 * \param xtraz the Xtraz status
+	 * \param title the Xtraz status title
+	 */
+	void setStatus( Oscar::DWORD status, const QString &message = QString::null, int xtraz = -1, const QString &title = QString::null );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -366,7 +372,13 @@ public:
 	/** The current user's password */
 	QString password() const;
 
-	/** The current status message (a.k.a. away message) */
+	/** The current Xtraz status */
+	int statusXtraz() const;
+	
+	/** The current Xtraz status title */
+	QString statusTitle() const;
+	
+	/** The current status message (a.k.a. away message or Xtraz message) */
 	QString statusMessage() const;
 
 	/** Change the current status message w/o changing status */

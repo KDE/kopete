@@ -32,6 +32,7 @@ ProfileTask::ProfileTask( Task* parent )
 		: Task( parent )
 {
 	m_sendCaps = false;
+	m_xtrazStatus = -1;
 }
 
 
@@ -65,6 +66,15 @@ void ProfileTask::setProfileText( const QString& text )
 void ProfileTask::setAwayMessage( const QString& text )
 {
 	m_awayMessage = text;
+}
+
+void ProfileTask::setXtrazStatus( int xtrazStatus )
+{
+	if ( xtrazStatus < Oscar::XSTAT_LAST )
+	{
+		m_xtrazStatus = xtrazStatus;
+		m_sendCaps = true;
+	}
 }
 
 void ProfileTask::setCapabilities( bool value )
@@ -105,6 +115,9 @@ void ProfileTask::sendProfileUpdate()
 			//capBuf.addGuid( oscar_caps[CAP_RTFMSGS] ); // we do incoming RTF messages
 			capBuf.addGuid( oscar_caps[CAP_NEWCAPS] ); // we understand the new format of caps (xtra status)
 			capBuf.addGuid( oscar_caps[CAP_XTRAZ] ); // we support xtraz
+
+			if ( m_xtrazStatus > -1 )
+				capBuf.addGuid( oscar_xStatus[m_xtrazStatus] ); // set xtraz status
 		}
 		else
 		{

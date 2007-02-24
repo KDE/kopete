@@ -77,7 +77,6 @@ private:
 	Oscar::Presence presence();
 
 	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString::null );
-	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString::null );
 	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );

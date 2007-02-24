@@ -38,21 +38,49 @@ public:
 	/**
 	 * Friendly types this status can be
 	 */
-	enum Type { Offline = 0x000, DoNotDisturb = 0x001, Occupied = 0x002,
-	            NotAvailable = 0x003, Away = 0x004, FreeForChat = 0x005, Online = 0x006 };
+	enum Type {
+		Offline       = 0x00000000,
+		DoNotDisturb  = 0x00000001,
+		Occupied      = 0x00000002,
+		NotAvailable  = 0x00000003,
+		Away          = 0x00000004,
+		FreeForChat   = 0x00000005,
+		Online        = 0x00000006,
+
+		TypeMask      = 0x0000000F
+	};
 	enum { TypeCount = Online + 1 };
 
-	enum Flag { None = 0x000, AIM = 0x010, ICQ = 0x020, Wireless = 0x100, Invisible = 0x200, XStatus = 0x400 };
+	enum Flag {
+		None          = 0x00000000,
+		AIM           = 0x00000010,
+		ICQ           = 0x00000020,
+		Wireless      = 0x00000100,
+		Invisible     = 0x00000200,
+		XStatus       = 0x00000400,
+
+		FlagsMask     = 0x00000FF0
+	};
 	Q_DECLARE_FLAGS(Flags, Flag)
+
+	enum {
+		XtrazMask     = 0xFF000000
+	};
 
 	Presence( Type type, Flags flags = None );
 
 	void setType( Type type );
-	Type type() const { return (Type)(mInternalStatus & 0x0000000F); }
+	Type type() const { return (Type)(mInternalStatus & TypeMask); }
 
 	void setFlags( Flags flags );
-	Flags flags() const { return (Flags)(mInternalStatus & 0xFFFFFFF0); }
+	Flags flags() const { return (Flags)(mInternalStatus & FlagsMask); }
 
+	/**
+	 * Returns internal status
+	 * @note Internal status is 32-bit int with a folowing structure XX000FFT where
+	 * T is status type, FF are Presence::Flags, XX is Xtraz status,
+	 * 0 are always null
+	 */
 	uint internalStatus() const { return mInternalStatus; }
 
 	bool operator==( const Presence &other ) const { return other.mInternalStatus == mInternalStatus; }
@@ -64,8 +92,13 @@ public:
 	void setDescription( const QString& desc ) { mDescription = desc; }
 	QString description() const { return mDescription; }
 
-	void setIcon( const QString& icon ) { mIcon = icon; }
-	QString icon() const { return mIcon; }
+	void setXtrazStatus( int xtraz );
+
+	/**
+	 * Returns Xtraz status
+	 * @note If Presence::XStatus flag is not set function returns -1.
+	 */
+	int xtrazStatus() const;
 
 private:
 	friend class ::OscarStatusManager;
@@ -75,7 +108,6 @@ private:
 
 	// For XStatus
 	QString mDescription;
-	QString mIcon;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Presence::Flags)
 

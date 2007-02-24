@@ -106,8 +106,6 @@ public:
 	QList<Oscar::WORD> redirectionServices;
     Oscar::WORD currentRedirect;
 	QByteArray cookie;
-	Oscar::DWORD connectAsStatus;
-	QString connectWithMessage;
 	Oscar::Settings* settings;
 
 	//Tasks
@@ -129,7 +127,13 @@ public:
     //Infos
     QList<int> exchanges;
 
-	QString statusMessage; // for away-,DND-message etc...
+	struct Status
+	{
+		Oscar::DWORD status;
+		QString message;     // for away-,DND-message etc., and for Xtraz status
+		int xtraz;           // Xtraz status
+		QString title;       // Xtraz title
+	} status;
 
 	//away messages
 	struct AwayMsgRequest
@@ -157,7 +161,8 @@ Client::Client( QObject* parent )
 	d->isIcq = false; //default to AIM
 	d->redirectRequested = false;
     d->currentRedirect = 0;
-	d->connectAsStatus = 0x0; // default to online
+	d->status.status = 0x0; // default to online
+	d->status.xtraz = -1; // default to no Xtraz
 	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
 	d->errorTask = 0L;
@@ -229,8 +234,10 @@ void Client::close()
 	//don't clear the stored status between stage one and two
 	if ( d->stage == ClientPrivate::StageTwo )
 	{
-		d->connectAsStatus = 0x0;
-		d->connectWithMessage.clear();
+		d->status.status = 0x0;
+		d->status.xtraz = -1;
+		d->status.message.clear();
+		d->status.title.clear();
 	}
 
     d->exchanges.clear();
@@ -240,12 +247,17 @@ void Client::close()
     d->ssiManager->clear();
 }
 
-void Client::setStatus( Oscar::DWORD status, const QString &message )
+void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &title )
 {
-	// remember the message to reply with, when requested
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
-	d->statusMessage = message;
-	// if we're active, set status. otherwise, just store the status for later.
+
+	// remember the values to reply with, when requested
+	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
+	d->status.status = status;
+	d->status.message = message;
+	d->status.xtraz = xtraz;
+	d->status.title = title;
+
 	if ( d->active )
 	{
 		if ( d->isIcq )
@@ -294,12 +306,11 @@ void Client::setStatus( Oscar::DWORD status, const QString &message )
 
 		ProfileTask* pt = new ProfileTask( c->rootTask() );
 		pt->setAwayMessage( msg );
+
+		if ( d->isIcq && xtrazChanged )
+			pt->setXtrazStatus( xtraz );
+
 		pt->go( true );
-	}
-	else
-	{
-		d->connectAsStatus = status;
-		d->connectWithMessage = message;
 	}
 }
 
@@ -404,7 +415,7 @@ void Client::serviceSetupFinished()
 {
 	d->active = true;
 
-	setStatus( d->connectAsStatus, d->connectWithMessage );
+	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.title );
 	d->ownStatusTask->go();
 
 	if ( isIcq() )
@@ -476,14 +487,24 @@ QString Client::password() const
 	return d->pass;
 }
 
+int Client::statusXtraz() const
+{
+	return d->status.xtraz;
+}
+
+QString Client::statusTitle() const
+{
+	return d->status.title;
+}
+
 QString Client::statusMessage() const
 {
-	return d->statusMessage;
+	return d->status.message;
 }
 
 void Client::setStatusMessage( const QString &message )
 {
-	d->statusMessage = message;
+	d->status.message = message;
 }
 
 QByteArray Client::ipAddress() const
@@ -562,11 +583,10 @@ void Client::receivedMessage( const Oscar::Message& msg )
 					{
 						if ( xNotify.findService( "cAwaySrv" ) )
 						{
-							//TODO: Send own Xtraz status
-							/* XtrazNotify xNotifyResponse;
+							XtrazNotify xNotifyResponse;
 							xNotifyResponse.setSenderUni( userId() );
-							response.setPlugin( xNotifyResponse.statusResponse( 1, "title", "desc" ) );
-							emit userReadsStatusMessage( msg.sender() );*/
+							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusTitle(), statusMessage() ) );
+							emit userReadsStatusMessage( msg.sender() );
 						}
 					}
 				}

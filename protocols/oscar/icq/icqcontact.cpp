@@ -102,7 +102,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setDescription( i18n("Online") );
-		presence.setIcon( QString( "icq_xstatus%1" ).arg( details.xtrazStatus() ) );
+		presence.setXtrazStatus( details.xtrazStatus() );
 	}
 	setPresenceTarget( presence );
 

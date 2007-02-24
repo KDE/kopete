@@ -41,6 +41,7 @@ public:
 
 	void setProfileText( const QString& text );
 	void setAwayMessage( const QString& text );
+	void setXtrazStatus( int xtrazStatus );
 	void setCapabilities( bool value );
 
 private:
@@ -50,6 +51,7 @@ private:
 private:
 	QString m_profileText;
 	QString m_awayMessage;
+	int m_xtrazStatus;
 	bool m_sendCaps;
 };
 
