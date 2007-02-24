@@ -156,14 +156,22 @@ void KopeteMessage_Test::testPrimitives()
 		QCOMPARE(QString("<simple> SIMPLE"), msg.plainBody());
 		QCOMPARE(QString("&lt;simple&gt; SIMPLE"), msg.escapedBody());
 
+		msg.setBody("<simple>SIMPLE</simple>", Kopete::Message::RichText);
+		QCOMPARE(msg.plainBody(),   QString("SIMPLE") );
+		QCOMPARE(msg.escapedBody(), QString("<simple>SIMPLE</simple>") );
+
+		QCOMPARE(Kopete::Message::unescape( QString( "<simple>SIMPLE</simple>" ) ), QString("SIMPLE") );
+
 		msg.setBody(m, Kopete::Message::RichText);
 
 		// FIXME: Should setBody() also strip extra white space?
-		//CHECK(msg.plainBody(),   QString("HELLO WORLD"));
-		//CHECK(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
+		//QCOMPARE(msg.plainBody(),   QString("HELLO WORLD"));
+		//QCOMPARE(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
 
-		QCOMPARE(msg.plainBody().trimmed(),   QString("HELLO WORLD"));
-		QCOMPARE(msg.escapedBody().trimmed(), QString("<b>HELLO WORLD</b>"));
+		QCOMPARE(msg.escapedBody(),                   QString(" &nbsp; <b>HELLO WORLD</b> &nbsp; "));
+		QCOMPARE(msg.plainBody(),                     QString("   HELLO WORLD   "));
+		QCOMPARE(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
+		QCOMPARE(msg.escapedBody().stripWhiteSpace(), QString("&nbsp; <b>HELLO WORLD</b> &nbsp;"));
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);
