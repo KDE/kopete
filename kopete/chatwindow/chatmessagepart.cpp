@@ -923,9 +923,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	}
 
 	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))
-	// FIXME: The conversion to plainBody() is extremely expensive and should not be used
-	//        here. Use a cached value for isRightToLeft instead. -- Martijn, 20070218
-	resultHTML = resultHTML.replace( QString::fromUtf8("%messageDirection%"), message.plainBody().isRightToLeft() ? "rtl" : "ltr" );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%messageDirection%"), message.isRightToLeft() ? "rtl" : "ltr" );
 
 	// These colors are used for coloring nicknames. I tried to use
 	// colors both visible on light and dark background.

@@ -27,6 +27,7 @@
 #include <QByteArray>
 #include <QSharedData>
 #include <QPointer>
+#include <QtCore/QLatin1String>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -50,7 +51,7 @@ class Message::Private
 {
 public:
 	Private( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
-	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
+	         const QString &subject, MessageDirection direction,
 	         const QString &requestedPlugin, MessageType type );
 
 	QPointer<Contact> from;
@@ -65,6 +66,7 @@ public:
 	bool bgOverride;
 	bool fgOverride;
 	bool rtfOverride;
+	bool isRightToLeft;
 	QDateTime timeStamp;
 	QFont font;
 	QStringList classes;
@@ -76,50 +78,26 @@ public:
 };
 
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
-		const ContactPtrList &to, const QString &body, const QString &subject,
-		MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(f), type(type)
-	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
-	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
+		const ContactPtrList &to, const QString &subject,
+		MessageDirection direction, const QString &requestedPlugin, MessageType type )
+: from( const_cast<Contact*>(from) ), to( to ), manager( 0 ), direction( direction ), format( PlainText ), type( type ),
+	requestedPlugin( requestedPlugin ), importance( (to.count() <= 1) ? Normal : Low ),
+	bgOverride( false ), fgOverride( false ), rtfOverride( false ), isRightToLeft( false ),
+	timeStamp( timeStamp ), body( QString::null ), subject( subject )
 {
-	
-	//TODO: move that in ChatTextEditPart::contents
-	if( format == RichText )
-	{
-		//This is coming from the RichTextEditor component.
-		//Strip off the containing HTML document
-		if (this->body.contains(QLatin1String("<body"))) {
-			QRegExp rx( QLatin1String("<body[^>]*>(.*)</body>") );
-			if (rx.indexIn(this->body) != -1)
-				this->body = rx.cap(1);
-		}
-
-		//Strip <p> tags
-		this->body.replace( QLatin1String("<p>"), QString::null );
-
-		//Replace </p> with a <br/>
-		this->body.replace( QLatin1String("</p>") , QLatin1String("<br/>") );
-
-		//Remove trailing <br/>
-		if ( this->body.endsWith( QLatin1String("<br/>") ) )
-			this->body.truncate( this->body.length() - 5 );
-		this->body.remove(  QLatin1String("\n") );
-		this->body.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
-
-	}
 }
 
-
 Message::Message()
-    : d( new Private( QDateTime::currentDateTime(), 0L, ContactPtrList(), QString::null, QString::null, Internal,
-	PlainText, QString::null, TypeNormal ) )
+: d( new Private( QDateTime::currentDateTime(), 0L, ContactPtrList(), QString(), Internal,
+	QString(), TypeNormal ) )
 {
 }
 
 Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
 		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
+: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, QString::null, direction, requestedPlugin, type ) )
 {
+	doSetBody( body, f );
 }
 
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
@@ -127,26 +105,30 @@ Message::Message( const Contact *fromKC, const Contact *toKC, const QString &bod
 {
 	QList<Contact*> to;
 	to.append((Kopete::Contact*)toKC);
-	d = new Private( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, requestedPlugin, type );
+	d = new Private( QDateTime::currentDateTime(), fromKC, to, QString::null, direction, requestedPlugin, type );
+	doSetBody( body, f );
 }
 
 Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
 		  const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
+    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, subject, direction, requestedPlugin, type ) )
 {
+	doSetBody( body, f );
 }
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		  const QString &body, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
+    : d( new Private( timeStamp, fromKC, toKC, QString::null, direction, requestedPlugin, type ) )
 {
+	doSetBody( body, f );
 }
 
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
+    : d( new Private( timeStamp, fromKC, toKC, subject, direction, requestedPlugin, type ) )
 {
+	doSetBody( body, f );
 }
 
 Message::Message( const Message &other )
@@ -196,40 +178,50 @@ void Message::setFont( const QFont &font )
 	d->font = font;
 }
 
-void Message::setBody( const QString &body, MessageFormat f )
+void Message::doSetBody( const QString &_body, Message::MessageFormat f )
 {
-	QString theBody = body;
+	QString body = _body;
 	//TODO: move that in ChatTextEditPart::contents
 	if( f == RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		if (theBody.contains(QLatin1String("<body"))) {
-			QRegExp rx( QLatin1String("<body[^>]*>(.*)</body>") );
-			if (rx.indexIn(theBody) != -1)
-				theBody = rx.cap(1);
-		}
+		body.replace( QRegExp( QLatin1String(".*<body[^>]*>(.*)</body>.*") ), QLatin1String("\\1") );
 
 		//Strip <p> tags
-		theBody.replace( QLatin1String("<p>"), QString::null );
+		body.replace( QLatin1String("<p>"), QString() );
 
 		//Replace </p> with a <br/>
-		theBody.replace( QLatin1String("</p>"), QLatin1String("<br/>") );
+		body.replace( QLatin1String("</p>"), QLatin1String("<br/>") );
 
 		//Remove trailing </br>
-		if ( theBody.endsWith( QLatin1String("<br/>") ) )
-			theBody.truncate( theBody.length() - 5 );
+		if ( body.endsWith( QLatin1String("<br/>") ) )
+			body.truncate( body.length() - 5 );
 	
-		theBody.remove( QLatin1String("\n") );
-		theBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+		body.remove( QLatin1String("\n") );
+		body.replace( QRegExp( QLatin1String( "\\s\\s" ) ), QLatin1String( " &nbsp;" ) );
 	}
-	/*	else if( f == ParsedHTML )
+	/*
+	else if( f == ParsedHTML )
 	{
 		kWarning( 14000 ) << k_funcinfo << "using ParsedHTML which is internal !   message: " << body << kdBacktrace() << endl;
 	}*/
 
-	d->body=theBody;
+	d->body = body;
 	d->format = f;
+
+	// unescaping is very expensive, do it only once and cache the result
+	d->isRightToLeft = ( f & RichText ? unescape( d->body ).isRightToLeft() : d->body.isRightToLeft() );
+}
+
+void Message::setBody( const QString &body, MessageFormat f )
+{
+	doSetBody( body, f );
+}
+
+bool Message::isRightToLeft() const
+{
+	return d->isRightToLeft;
 }
 
 void Message::setImportance(Message::MessageImportance i)
@@ -241,21 +233,52 @@ QString Message::unescape( const QString &xml )
 {
 	QString data = xml;
 
-	//remove linebreak and multiple spaces
+	// Remove linebreak and multiple spaces. First return nbsp's to normal spaces :)
 	data.replace( QRegExp( QLatin1String( "\\s*[\n\r\t]+\\s*" ), Qt::CaseInsensitive ), QLatin1String(" " )) ;
 
-	data.replace( QRegExp( QLatin1String( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ), Qt::CaseInsensitive ), QLatin1String( "\\1" ) );  //escape smeleys, return to the original code
-	data.replace( QRegExp( QLatin1String( "< */ *p[^>]*>" ), Qt::CaseInsensitive ), QLatin1String( "\n" ) );
-	data.replace( QRegExp( QLatin1String( "< */ *div[^>]*>" ), Qt::CaseInsensitive ), QLatin1String( "\n" ) );
-	data.replace( QRegExp( QLatin1String( "< *br */? *>" ), Qt::CaseInsensitive ), QLatin1String( "\n" ) );
-	data.replace( QRegExp( QLatin1String( "<[^>]*>" ) ), QString::null );
+	// Loop over data, replacing all XML elements
+	int pos = 0;
+	QRegExp elementRX( QLatin1String(
+		"< *"                                   // Elem start, whitespace
+		"/? *([^ >]*)"                          // Elem name with optional leading /, but no trailing /
+		"(?: (?:[^>]* )?title=\"([^>\"]*)\")?"  // Optionally, a title attrib, used for <img>
+		"[^>]*>" ), false );                    // Everything else up to the closing '>'
 
+	while ( ( pos = elementRX.search( data, pos ) ) != -1 )
+	{
+		QString elem = elementRX.cap( 1 ).lower().stripWhiteSpace();
+		if ( elem == QLatin1String( "img" ) )
+		{
+			// Replace smileys with their original text
+			// If this is an image that is not a smiley it will make the
+			// code effectively behave like the wildcard filter in the
+			// else {} below, which is intended
+			QString orig = elementRX.cap( 2 );
+			data.replace( pos, elementRX.matchedLength(), orig );
+			pos += orig.length();
+		}
+		else if ( elem == QLatin1String( "/p" ) || elem == QLatin1String( "/div" ) ||
+			elem == QLatin1String( "br" ) )
+		{
+			// Replace paragraph, div and line breaks with a newline
+			data.replace( pos, elementRX.matchedLength(), '\n' );
+			pos++;
+		}
+		else
+		{
+			// Remove all other elements entirely
+			// Don't update pos, we restart at this position :)
+			data.remove( pos, elementRX.matchedLength() );
+		}
+	}
+
+	// Replace stuff starting with '&'
 	data.replace( QLatin1String( "&gt;" ), QLatin1String( ">" ) );
 	data.replace( QLatin1String( "&lt;" ), QLatin1String( "<" ) );
 	data.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
 	data.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
 	data.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
-	data.replace( QString::fromLatin1( "&#160;" ), QString::fromLatin1( " " ) );  //this one is used in jabber:  note, we should escape all &#xx;
+	data.replace( QLatin1String( "&#160;" ), QLatin1String( " " ) );  //this one is used in jabber:  note, we should escape all &#xx;
 
 	return data;
 }
@@ -328,8 +351,8 @@ QString Message::parsedBody() const
 static QString makeRegExp( const char *pattern )
 {
 	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
-	const QString boundaryStart = QString::fromLatin1( "(^|[^%1])(" ).arg( urlChar );
-	const QString boundaryEnd = QString::fromLatin1( ")([^%1]|$)" ).arg( urlChar );
+	const QString boundaryStart = QString( "(^|[^%1])(" ).arg( urlChar );
+	const QString boundaryEnd = QString( ")([^%1]|$)" ).arg( urlChar );
 
 	return boundaryStart + QLatin1String(pattern) + boundaryEnd;
 }
@@ -372,9 +395,9 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 
 	// common subpatterns - may not contain matching parens!
 	const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
-	const QString userAndPassword = QString::fromLatin1( "(?:%1(?::%1)?\\@)" ).arg( name );
+	const QString userAndPassword = QString( "(?:%1(?::%1)?\\@)" ).arg( name );
 	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
-	const QString urlSection = QString::fromLatin1( "[%1]+" ).arg( urlChar );
+	const QString urlSection = QString( "[%1]+" ).arg( urlChar );
 	const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
 
 	//Replace http/https/ftp links:

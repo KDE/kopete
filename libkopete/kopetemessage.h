@@ -380,11 +380,21 @@ public:
 public:  /* static helpers */
 
 	/**
-	* Unescapes a string, removing XML entity references and return a plein text.
+	* Unescapes a string, removing XML entity references and returns a plain text.
+	*
+	* Note that this method is *VERY* expensive when called on rich text bodies,
+	* use with care!
 	*
 	* @param xml The string you want to unescape
 	*/
 	static QString unescape( const QString &xml );
+
+	/**
+	 * Indicate whether the string is right-to-left (Arabic or Hebrew are bidi locales)
+	 * or "normal" left-to-right. Calculating RTL on rich text is expensive, and
+	 * isRightToLeft() therefore uses a cached value.
+	 */
+	bool isRightToLeft() const;
 
 	/**
 	 * @brief Transform a pleintext message to an html.
@@ -407,6 +417,12 @@ public:  /* static helpers */
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
 
 private:
+	/**
+	 * Called internally by @ref setBody() and the constructor
+	 * Basically @ref setBody() without detach
+	 */
+	void doSetBody( const QString &body, MessageFormat format = PlainText );
+
 	class Private;
 	QSharedDataPointer<Private> d;
 
