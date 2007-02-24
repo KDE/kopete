@@ -3,9 +3,9 @@
 	Reverse engineered MSN AddressBook webservice XML Schema
 	Part: Service types. (Convience types to use with the web service binding)
 
-	by Michaël Larouche <larouche@kde.org>
+	by Michaël Larouche <michael.larouche@kdemail.net>
 	and Javier Kohen <javier.kohen@buddystream.com>
-	Latest update: 29 November 2006
+	Latest update: 27 July 2006
 -->
 <xsd:schema
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"

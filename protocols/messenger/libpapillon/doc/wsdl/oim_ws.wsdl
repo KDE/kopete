@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Reverse engineered Offline Instant Messaging webservice WSDL definition
+
+	by Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 3 December 2006
+-->
+<definitions targetNamespace="http://messenger.msn.com/ws/2004/09/oim/"
+			xmlns:oim="http://messenger.msn.com/ws/2004/09/oim/"
+			xmlns:wsrm="http://schemas.xmlsoap.org/ws/2003/03/rm"
+			xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+			xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+		    <import namespace="http://schemas.xmlsoap.org/ws/2003/03/rm" schemaLocation="http://schemas.xmlsoap.org/ws/2003/03/rm/" />
+			<import namespace="http://messenger.msn.com/ws/2004/09/oim/" schemaLocation="oim_servicetypes.xsd" />
+		</schema>
+    </types>
+
+	<message name="StoreHeader">
+		<part name="From" element="oim:From" />
+		<part name="To" element="oim:To" />
+		<part name="Ticket" element="oim:Ticket" />
+		<part name="Sequence" element="wsrm:Sequence" />
+	</message>
+
+	<message name="StoreMessage">
+		<part name="Store" element="oim:Store" />
+	</message>
+
+	<message name="StoreResponseHeader">
+		<part name="SequenceAcknowledgment" element="wsrm:SequenceAcknowledgment" />
+	</message>
+
+	<message name="StoreResponseMessage">
+		<part name="StoreResponse" element="oim:StoreResponse" />
+	</message>
+
+	<message name="AuthenticationFailedMessage">
+		<part name="fault" element="oim:AuthenticationFailed" />
+	</message>
+
+	<portType name="OIMPortType">
+		<operation name="Store">
+			<input message="oim:StoreMessage" />
+			<output message="oim:StoreResponseMessage" />
+			<fault message="oim:AuthenticationFailedMessage" name="AuthenticationFailed" />
+		</operation>
+	</portType>
+
+	<binding name="OIMBinding" type="oim:OIMPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="Store">
+			<soap:operation soapAction="http://messenger.msn.com/ws/2004/09/oim/Store" style="document" />
+			<input>
+				<soap:header message="oim:StoreHeader" part="From" use="literal"/>
+				<soap:header message="oim:StoreHeader" part="To" use="literal"/>
+				<soap:header message="oim:StoreHeader" part="Ticket" use="literal"/>
+				<soap:header message="oim:StoreHeader" part="Sequence" use="literal"/>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:header message="oim:StoreResponseHeader" part="SequenceAcknowledgment" use="literal"/>
+				<soap:body use="literal" />
+			</output>
+			<fault name="AuthenticationFailed">
+				<soap:fault use="literal" />
+			</fault>
+		</operation>
+	</binding>
+
+	<service name="OIMService">
+		<port name="StorePort" binding="oim:OIMBinding">
+			<soap:address location="https://ows.messenger.msn.com/OimWS/oim.asmx" />
+		</port>
+	</service>
+</definitions>

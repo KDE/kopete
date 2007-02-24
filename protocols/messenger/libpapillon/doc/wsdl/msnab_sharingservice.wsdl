@@ -2,9 +2,9 @@
 <!--
 	Reverse engineered MSN AddressBook webservice WSDL definition
 
-	by Michaël Larouche <larouche@kde.org>
+	by Michaël Larouche <michael.larouche@kdemail.net>
 	and Javier Kohen <javier.kohen@buddystream.com>
-	Latest update: 29 November 2006
+	Latest update: 27 July 2006
 -->
 <definitions targetNamespace="http://www.msn.com/webservices/AddressBook"
 			xmlns:msnab="http://www.msn.com/webservices/AddressBook"
@@ -114,6 +114,10 @@
 		<part name="DeleteMemberResponse" element="msnab:DeleteMemberResponse" />
 	</message>
 
+	<message name="InvalidPassportUserMessage">
+		<part name="fault" element="msnab:InvalidPassportUser"/>
+	</message>
+
 	<portType name="SharingServicePortType">
 		<operation name="FindMembership">
 			<input message="msnab:FindMembershipMessage" />
@@ -137,10 +141,12 @@
 		<operation name="ABContactAdd">
 			<input message="msnab:ABContactAddMessage" />
 			<output message="msnab:ABContactAddResponseMessage" />
+			<fault message="msnab:InvalidPassportUserMessage" name="InvalidPassportUserException" />
 		</operation>
 		<operation name="ABGroupContactAdd">
 			<input message="msnab:ABGroupContactAddMessage" />
 			<output message="msnab:ABGroupContactAddResponseMessage" />
+			<fault message="msnab:InvalidPassportUserMessage" name="InvalidPassportUserException" />
 		</operation>
 		<operation name="ABGroupAdd">
 			<input message="msnab:ABGroupAddMessage" />
@@ -229,6 +235,9 @@
 				<soap:header message="msnab:ServiceHeader" part="ServiceHeader" use="literal" />
 				<soap:body use="literal" />
 			</output>
+			<fault name="InvalidPassportUserException">
+				<soap:fault name="InvalidPassportUserException" use="literal" />
+			</fault>
 		</operation>
 		<operation name="ABGroupContactAdd">
 			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/ABGroupContactAdd" style="document" />
@@ -241,6 +250,9 @@
 				<soap:header message="msnab:ServiceHeader" part="ServiceHeader" use="literal" />
 				<soap:body use="literal" />
 			</output>
+			<fault name="InvalidPassportUserException">
+				<soap:fault name="InvalidPassportUserException" use="literal" />
+			</fault>
 		</operation>
 		<operation name="ABGroupAdd">
 			<soap:operation soapAction="http://www.msn.com/webservices/AddressBook/ABGroupAdd" style="document" />

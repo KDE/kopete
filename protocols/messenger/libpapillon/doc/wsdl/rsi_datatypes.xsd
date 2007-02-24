@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Reverse engineered Offline Instant Messaging webservice XML Schema
+	Part: Data types (Pure data types)
+
+	by Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 3 December 2006
+-->
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.hotmail.msn.com/ws/2004/09/oim/rsi"
+	xmlns:rsi="http://www.hotmail.msn.com/ws/2004/09/oim/rsi"
+	targetNamespace="http://www.hotmail.msn.com/ws/2004/09/oim/rsi"
+	version="1.0"
+	elementFormDefault="qualified">
+	<xsd:annotation>
+		<xsd:documentation>
+			Copyright 2006 Javier Kohen &lt;javier.kohen@buddystream.com&gt;
+
+			Permission to use, copy, modify and distribute this XML Schema
+			and its accompanying documentation for any purpose and without fee
+			is hereby granted in perpetuity, provided that the above copyright
+			notice and this paragraph appear in all copies.  The copyright
+			holders make no representation about the suitability of the XML Schema for
+			any purpose. It is provided "as is" without expressed or implied
+			warranty.
+
+			This a reverse engineered XML Schema done for interopability purpose.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+			This XML Schema expose the data types of the MSN Offline Instant Messaging Web service
+			used by Windows Live Messenger. Microsoft did not disclose the description of
+			the web service so we are stuck reverse engineering it. This XML Schema along with the WSDL
+			description will automate the generation of a WDSL binding to MSN OIM Web service.
+		</xsd:documentation>
+    </xsd:annotation>
+
+	<xsd:complexType name="MetadataMessage">
+		<xsd:sequence>
+			<xsd:element name="T" type="xsd:integer"/>
+			<xsd:element name="S" type="xsd:integer"/>
+			<xsd:element name="RT" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>
+						The time the message was received.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="RS" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>
+						Whether the message has been read.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SZ" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						The size of the message.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="E" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						The passport name of the sender.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="I" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						The unique ID for this message. Seems to be a GUID.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="F" type="xsd:string"/>
+			<xsd:element name="N" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						RFC 2047-encoded friendly name of the sender.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SU" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="MetaData">
+		<xsd:sequence>
+			<xsd:element name="M" type="rsi:MetadataMessage" minOccurs="1" maxOccurs="unbounded"/>
+			<xsd:element name="Q">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="QTM" type="xsd:integer"/>
+						<xsd:element name="QNM" type="xsd:integer"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Reverse engineered Offline Instant Messaging webservice WSDL definition
+	Part: Service types. (Convience types to use with the web service binding)
+
+	by Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 3 December 2006
+-->
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:rsi="http://www.hotmail.msn.com/ws/2004/09/oim/rsi"
+	targetNamespace=""
+	version="1.0"
+	elementFormDefault="qualified">
+	<xsd:annotation>
+		<xsd:documentation>
+			Copyright 2006 Javier Kohen &lt;javier.kohen@buddystream.com&gt;
+
+			Permission to use, copy, modify and distribute this XML Schema
+			and its accompanying documentation for any purpose and without fee
+			is hereby granted in perpetuity, provided that the above copyright
+			notice and this paragraph appear in all copies.  The copyright
+			holders make no representation about the suitability of the XML Schema for
+			any purpose. It is provided "as is" without expressed or implied
+			warranty.
+
+			This a reverse engineered XML Schema done for interopability purpose.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+			This XML Schema expose the service types(Convience types to use with the web service binding) of the MSN Offline Instant Messaging Web service
+			used by Windows Live Messenger. Microsoft did not disclose the description of
+			the web service so we are stuck reverse engineering it. This XML Schema along with the WSDL
+			description will automate the generation of a WDSL binding to MSN OIM Web service.
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="AuthenticationFailed">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="TweenerChallenge" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

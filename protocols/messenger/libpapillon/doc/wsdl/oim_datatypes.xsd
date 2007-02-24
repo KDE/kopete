@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Reverse engineered MSN AddressBook webservice XML Schema
+	Part: Data types (Pure data types)
+
+	by Michaël Larouche <michael.larouche@kdemail.net>
+	and Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 3 December 2006
+-->
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://messenger.msn.com/ws/2004/09/oim/"
+	xmlns:oim="http://messenger.msn.com/ws/2004/09/oim/"
+	targetNamespace="http://messenger.msn.com/ws/2004/09/oim/"
+	version="1.0"
+	elementFormDefault="qualified">
+	<xsd:annotation>
+		<xsd:documentation>
+			Copyright 2006 Javier Kohen &lt;javier.kohen@buddystream.com&gt;
+
+			Permission to use, copy, modify and distribute this XML Schema
+			and its accompanying documentation for any purpose and without fee
+			is hereby granted in perpetuity, provided that the above copyright
+			notice and this paragraph appear in all copies.  The copyright
+			holders make no representation about the suitability of the XML Schema for
+			any purpose. It is provided "as is" without expressed or implied
+			warranty.
+
+			This a reverse engineered XML Schema done for interopability purpose.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+			This XML Schema expose the data types of the MSN Offline Instant Messaging Web service
+			used by Windows Live Messenger. Microsoft did not disclose the description of
+			the web service so we are stuck reverse engineering it. This XML Schema along with the WSDL
+			description will automate the generation of a WDSL binding to MSN OIM Web service.
+		</xsd:documentation>
+    </xsd:annotation>
+
+	<xsd:simpleType name="MessageType">
+		<xsd:annotation>
+			<xsd:documentation>
+				MessageType determines the type of a message's content.
+
+				text: a regular text message
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="text" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

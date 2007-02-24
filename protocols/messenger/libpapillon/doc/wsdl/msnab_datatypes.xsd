@@ -3,9 +3,9 @@
 	Reverse engineered MSN AddressBook webservice XML Schema
 	Part: Data types (Pure data types)
 
-	by Michaël Larouche <larouche@kde.org>
+	by Michaël Larouche <michael.larouche@kdemail.net>
 	and Javier Kohen <javier.kohen@buddystream.com>
-	Latest update: 29 November 2006
+	Latest update: 27 July 2006
 -->
 <xsd:schema
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -54,7 +54,7 @@
 		</xsd:annotation>
 
 		<xsd:sequence>
-			<xsd:element name="Memberships">
+			<xsd:element name="Memberships" minOccurs="0" maxOccurs="1">
 				<xsd:complexType>
 					<xsd:sequence>
 						<xsd:element name="Membership" type="msnab:Membership" minOccurs="0" maxOccurs="unbounded" />
@@ -118,6 +118,15 @@
 			<xsd:element name="Type" type="msnab:MemberType" />
 			<xsd:element name="DisplayName" type="xsd:string" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="State" type="msnab:MemberState" />
+    		<xsd:element name="Annotations" maxOccurs="1" minOccurs="0">
+    			<xsd:complexType>
+    				<xsd:sequence>
+    					<xsd:element name="Annotation" type="Annotation"
+    						maxOccurs="unbounded" minOccurs="0">
+    					</xsd:element>
+    				</xsd:sequence>
+    			</xsd:complexType>
+    		</xsd:element>
 			<xsd:element name="Deleted" type="xsd:boolean" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="LastChanged" type="xsd:dateTime" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="Changes" minOccurs="0" type="xsd:string" /> <!-- Temp -->
@@ -195,6 +204,23 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
+	<!-- EmailMember : BaseMember, Related to FindMembemship SOAP method -->
+	<xsd:complexType name="EmailMember">
+		<xsd:annotation>
+			<xsd:documentation>
+				EmailMember is the main Member type you encounter in FindMembershipResult message.
+			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:complexContent>
+			<xsd:extension base="msnab:BaseMember">
+				<xsd:sequence>
+					<xsd:element name="Email" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
 	<xsd:simpleType name="Guid">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -249,6 +275,7 @@
 			<xsd:enumeration value="Passport" />
 			<xsd:enumeration value="Role" />
 			<xsd:enumeration value="Everyone" />
+			<xsd:enumeration value="Email" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -269,8 +296,8 @@
 
     <xsd:complexType name="Annotation">
     	<xsd:sequence>
-    		<xsd:element name="Name" type="xsd:string"></xsd:element>
-    		<xsd:element name="Value" type="xsd:string"></xsd:element>
+    		<xsd:element name="Name" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+    		<xsd:element name="Value" type="xsd:string" maxOccurs="1" minOccurs="0"/>
     	</xsd:sequence></xsd:complexType>
 
     <xsd:complexType name="ContactType">
@@ -293,12 +320,43 @@
 
     <xsd:complexType name="contactInfoType">
     	<xsd:sequence>
+    		<xsd:element name="emails" maxOccurs="1" minOccurs="0">
+    			<xsd:complexType>
+    				<xsd:sequence>
+    					<xsd:element name="ContactEmail" type="contactEmailType"
+    						maxOccurs="unbounded" minOccurs="1"/>
+    				</xsd:sequence>
+    			</xsd:complexType>
+    		</xsd:element>
+    		<xsd:element name="phones" maxOccurs="1" minOccurs="0">
+    			<xsd:complexType>
+    				<xsd:sequence>
+    					<xsd:element name="ContactPhone" type="contactPhoneType"
+    						maxOccurs="unbounded" minOccurs="1"/>
+    				</xsd:sequence>
+    			</xsd:complexType>
+    		</xsd:element>
+    		<xsd:element name="locations" maxOccurs="1" minOccurs="0">
+    			<xsd:complexType>
+    				<xsd:sequence>
+    					<xsd:element name="ContactLocation" type="contactLocationType"
+    						maxOccurs="unbounded" minOccurs="1"/>
+    				</xsd:sequence>
+    			</xsd:complexType>
+    		</xsd:element>
+    		<xsd:element name="webSites" maxOccurs="1" minOccurs="0">
+    			<xsd:complexType>
+    				<xsd:sequence>
+    					<xsd:element name="ContactWebSite" type="contactWebSiteType"
+    						maxOccurs="unbounded" minOccurs="1"/>
+    				</xsd:sequence>
+    			</xsd:complexType>
+    		</xsd:element>
     		<xsd:element name="annotations" maxOccurs="1" minOccurs="0">
     			<xsd:complexType>
     				<xsd:sequence>
     					<xsd:element name="Annotation" type="Annotation"
-    						maxOccurs="unbounded" minOccurs="0">
-    					</xsd:element>
+    						maxOccurs="unbounded" minOccurs="1"/>
     				</xsd:sequence>
     			</xsd:complexType>
     		</xsd:element>
@@ -306,8 +364,7 @@
     			<xsd:complexType>
     				<xsd:sequence>
     					<xsd:element name="guid" type="Guid"
-    						maxOccurs="unbounded" minOccurs="0">
-    					</xsd:element>
+    						maxOccurs="unbounded" minOccurs="1"/>
     				</xsd:sequence>
     			</xsd:complexType>
     		</xsd:element>
@@ -315,8 +372,7 @@
     			<xsd:complexType>
     				<xsd:sequence>
     					<xsd:element name="guid" type="Guid"
-    						maxOccurs="unbounded" minOccurs="0">
-    					</xsd:element>
+    						maxOccurs="unbounded" minOccurs="1"/>
     				</xsd:sequence>
     			</xsd:complexType>
     		</xsd:element>
@@ -330,6 +386,9 @@
     			</xsd:simpleType>
     		</xsd:element>
     		<xsd:element name="quickName" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="firstName" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="MiddleName" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="lastName" type="xsd:string" maxOccurs="1" minOccurs="0"/>
     		<xsd:element name="passportName" type="xsd:string" maxOccurs="1" minOccurs="0" />
     		<xsd:element name="IsPassportNameHidden"
     			type="xsd:boolean" maxOccurs="1" minOccurs="0">
@@ -337,11 +396,12 @@
     		<xsd:element name="displayName" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
     		<xsd:element name="puid" type="xsd:integer" maxOccurs="1" minOccurs="0"></xsd:element>
     		<xsd:element name="CID" type="xsd:integer" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="comment" type="xsd:string" maxOccurs="1" minOccurs="0"/>
     		<xsd:element name="IsNotMobileVisible" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
-    		<xsd:element name="IsMobileIMEnabled" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
-    		<xsd:element name="IsMessengerUser" type="xsd:boolean"></xsd:element>
-    		<xsd:element name="IsFavorite" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
-    		<xsd:element name="IsSmtp" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="isMobileIMEnabled" type="xsd:boolean" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="isMessengerUser" type="xsd:boolean" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="isFavorite" type="xsd:boolean" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="isSmtp" type="xsd:boolean" maxOccurs="1" minOccurs="0"/>
     		<xsd:element name="hasSpace" type="xsd:boolean" maxOccurs="1" minOccurs="0">
     			<xsd:annotation>
     				<xsd:documentation>
@@ -352,14 +412,95 @@
     		</xsd:element>
     		<xsd:element name="spotWatchState" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
     		<xsd:element name="birthdate" type="xsd:dateTime" maxOccurs="1" minOccurs="0"></xsd:element>
-    		<xsd:element name="primaryEmailType" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
-    		<xsd:element name="PrimaryLocation" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
-    		<xsd:element name="PrimaryPhone" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="primaryEmailType" type="ContactEmailTypeType" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="PrimaryLocation" type="ContactLocationTypeType" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="PrimaryPhone" type="ContactPhoneTypeType" maxOccurs="1" minOccurs="0"/>
     		<xsd:element name="IsPrivate" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="Anniversary" type="xsd:string" maxOccurs="1" minOccurs="0">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					Seen is YYYY/MM/DD format.
+    				</xsd:documentation>
+    			</xsd:annotation>
+    		</xsd:element>
     		<xsd:element name="Gender" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
     		<xsd:element name="TimeZone" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
     	</xsd:sequence>
     </xsd:complexType>
+
+    <xsd:complexType name="contactEmailType">
+    	<xsd:sequence>
+    		<xsd:element name="contactEmailType" type="ContactEmailTypeType"/>
+    		<xsd:element name="email" type="xsd:string"/>
+    		<xsd:element name="IsMessengerEnabled" type="xsd:boolean"/>
+    		<xsd:element name="Capability" type="xsd:integer"/>
+    		<xsd:element name="MessengerEnabledExternally" type="xsd:boolean"/>
+    		<xsd:element name="propertiesChanged" type="xsd:string"/>
+   		</xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:simpleType name="ContactEmailTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ContactEmailPersonal" />
+			<xsd:enumeration value="ContactEmailBusiness" />
+			<xsd:enumeration value="ContactEmailOther" />
+			<xsd:enumeration value="ContactEmailMessenger" />
+			<xsd:enumeration value="Messenger2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+    <xsd:complexType name="contactPhoneType">
+    	<xsd:sequence>
+    		<xsd:element name="contactPhoneType" type="ContactPhoneTypeType"/>
+    		<xsd:element name="number" type="xsd:string"/>
+    		<xsd:element name="IsMessengerEnabled" type="xsd:boolean"/>
+    		<xsd:element name="propertiesChanged" type="xsd:string"/>
+   		</xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:simpleType name="ContactPhoneTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ContactPhonePersonal" />
+			<xsd:enumeration value="ContactPhoneBusiness" />
+			<xsd:enumeration value="ContactPhonePager" />
+			<xsd:enumeration value="ContactPhoneOther" />
+			<xsd:enumeration value="BusinessFax" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+    <xsd:complexType name="contactLocationType">
+    	<xsd:sequence>
+    		<xsd:element name="contactLocationType" type="ContactLocationTypeType"/>
+    		<xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+    		<xsd:element name="street" type="xsd:string"/>
+    		<xsd:element name="city" type="xsd:string"/>
+    		<xsd:element name="state" type="xsd:string"/>
+    		<xsd:element name="country" type="xsd:string"/>
+    		<xsd:element name="postalCode" type="xsd:string"/>
+    		<xsd:element name="Changes" type="xsd:string"/>
+   		</xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:simpleType name="ContactLocationTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ContactLocationPersonal" />
+			<xsd:enumeration value="ContactLocationBusiness" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+    <xsd:complexType name="contactWebSiteType">
+    	<xsd:sequence>
+    		<xsd:element name="contactWebSiteType" type="ContactWebSiteTypeType"/>
+    		<xsd:element name="webURL" type="xsd:string"/>
+   		</xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:simpleType name="ContactWebSiteTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ContactWebSitePersonal" />
+			<xsd:enumeration value="ContactWebSiteBusiness" />
+		</xsd:restriction>
+	</xsd:simpleType>
 
     <xsd:complexType name="GroupType">
        	<xsd:sequence>
@@ -409,4 +550,20 @@
     		</xsd:element>
     	</xsd:sequence>
     </xsd:complexType>
+
+	<xsd:element name="InvalidPassportUser">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="errorcode" type="xsd:string"/>
+				<xsd:element name="errorstring" type="xsd:string"/>
+				<xsd:element name="additionalDetails">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="originalExceptionErrorMessage" type="xsd:string"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 </xsd:schema>

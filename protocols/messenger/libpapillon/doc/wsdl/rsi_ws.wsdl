@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Reverse engineered Offline Instant Messaging webservice WSDL definition
+
+	by Javier Kohen <javier.kohen@buddystream.com>
+	Latest update: 3 December 2006
+-->
+<definitions targetNamespace="http://www.hotmail.msn.com/ws/2004/09/oim/rsi"
+			xmlns:rsi="http://www.hotmail.msn.com/ws/2004/09/oim/rsi"
+			xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+			xmlns:wsrm="http://schemas.xmlsoap.org/ws/2003/03/rm"
+			xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+			xmlns:soapenv="http://schemas.xmlsoap.org/wsdl/envelope/"
+			xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.hotmail.msn.com/ws/2004/09/oim/rsi" schemaLocation="rsi_servicetypes.xsd" />
+		</schema>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="" schemaLocation="rsi_faulttypes.xsd" />
+		</schema>
+    </types>
+
+	<message name="GetMetadataMessage">
+		<part name="GetMetadata" element="rsi:GetMetadata" />
+	</message>
+
+	<message name="GetMetadataResponseMessage">
+		<part name="GetMetadataResponse" element="rsi:GetMetadataResponse" />
+	</message>
+
+	<message name="GetMessageMessage">
+		<part name="GetMessage" element="rsi:GetMessage" />
+	</message>
+
+	<message name="GetMessageResponseMessage">
+		<part name="GetMessageResponse" element="rsi:GetMessageResponse" />
+	</message>
+
+	<message name="DeleteMessagesMessage">
+		<part name="DeleteMessages" element="rsi:DeleteMessages" />
+	</message>
+
+	<message name="DeleteMessagesResponseMessage">
+		<part name="DeleteMessagesResponse" element="rsi:DeleteMessagesResponse" />
+	</message>
+
+	<message name="ServiceHeader">
+		<part name="PassportCookie" element="rsi:PassportCookie" />
+	</message>
+
+	<message name="AuthenticationFailedMessage">
+		<wsdl:part name="fault" element="AuthenticationFailed" xmlns="" />
+	</message>
+
+	<portType name="RSIPortType">
+		<operation name="GetMetadata">
+			<input message="rsi:GetMetadataMessage" />
+			<output message="rsi:GetMetadataResponseMessage" />
+			<fault message="rsi:AuthenticationFailedMessage" name="AuthenticationFailedException" />
+		</operation>
+		<operation name="GetMessage">
+			<input message="rsi:GetMessageMessage" />
+			<output message="rsi:GetMessageResponseMessage" />
+			<fault message="rsi:AuthenticationFailedMessage" name="AuthenticationFailedException" />
+		</operation>
+		<operation name="DeleteMessages">
+			<input message="rsi:DeleteMessagesMessage" />
+			<output message="rsi:DeleteMessagesResponseMessage" />
+			<fault message="rsi:AuthenticationFailedMessage" name="AuthenticationFailedException" />
+		</operation>
+	</portType>
+
+	<binding name="RSIBinding" type="rsi:RSIPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="GetMetadata">
+			<soap:operation soapAction="http://www.hotmail.msn.com/ws/2004/09/oim/rsi/GetMetadata" style="document" />
+			<input>
+				<soap:header message="rsi:ServiceHeader" part="PassportCookie" use="literal"/>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+			<fault name="AuthenticationFailedException">
+				<soap:fault name="AuthenticationFailedException" use="literal" />
+			</fault>
+		</operation>
+		<operation name="GetMessage">
+			<soap:operation soapAction="http://www.hotmail.msn.com/ws/2004/09/oim/rsi/GetMessage" style="document" />
+			<input>
+				<soap:header message="rsi:ServiceHeader" part="PassportCookie" use="literal"/>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+			<fault name="AuthenticationFailedException">
+				<soap:fault name="AuthenticationFailedException" use="literal" />
+			</fault>
+		</operation>
+		<operation name="DeleteMessages">
+			<soap:operation soapAction="http://www.hotmail.msn.com/ws/2004/09/oim/rsi/DeleteMessages" style="document" />
+			<input>
+				<soap:header message="rsi:ServiceHeader" part="PassportCookie" use="literal"/>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+			<fault name="AuthenticationFailedException">
+				<soap:fault name="AuthenticationFailedException" use="literal" />
+			</fault>
+		</operation>
+	</binding>
+
+	<service name="RSIService">
+		<port name="GetMetadataPort" binding="rsi:RSIBinding">
+			<soap:address location="https://rsi.hotmail.com/rsi/rsi.asmx" />
+		</port>
+		<port name="GetMessagePort" binding="rsi:RSIBinding">
+			<soap:address location="https://rsi.hotmail.com/rsi/rsi.asmx" />
+		</port>
+		<port name="DeleteMessagesPort" binding="rsi:RSIBinding">
+			<soap:address location="https://rsi.hotmail.com/rsi/rsi.asmx" />
+		</port>
+	</service>
+</definitions>
