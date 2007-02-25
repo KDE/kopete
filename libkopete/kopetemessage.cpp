@@ -234,41 +234,52 @@ QString Message::unescape( const QString &xml )
 	QString data = xml;
 
 	// Remove linebreak and multiple spaces. First return nbsp's to normal spaces :)
-	data.replace( QRegExp( QLatin1String( "\\s*[\n\r\t]+\\s*" ), Qt::CaseInsensitive ), QLatin1String(" " )) ;
+	data = data.simplifyWhiteSpace();
 
-	// Loop over data, replacing all XML elements
-	int pos = 0;
-	QRegExp elementRX( QLatin1String(
-		"< *"                                   // Elem start, whitespace
-		"/? *([^ >]*)"                          // Elem name with optional leading /, but no trailing /
-		"(?: (?:[^>]* )?title=\"([^>\"]*)\")?"  // Optionally, a title attrib, used for <img>
-		"[^>]*>" ), false );                    // Everything else up to the closing '>'
-
-	while ( ( pos = elementRX.search( data, pos ) ) != -1 )
+	int pos;
+	while ( ( pos = data.indexOf( '<' ) ) != -1 )
 	{
-		QString elem = elementRX.cap( 1 ).lower().stripWhiteSpace();
+		int endPos = data.find( '>', pos + 1 );
+		if( endPos == -1 )
+			break;    // No more complete elements left
+
+		// Take the part between < and >, and extract the element name from that
+		int matchWidth = endPos - pos + 1;
+		QString match = data.mid( pos + 1, matchWidth - 2 ).simplifyWhiteSpace();
+		int elemEndPos = match.indexOf( ' ' );
+		QString elem = ( elemEndPos == -1 ? match.lower() : match.left( elemEndPos ).lower() );
 		if ( elem == QLatin1String( "img" ) )
 		{
-			// Replace smileys with their original text
-			// If this is an image that is not a smiley it will make the
-			// code effectively behave like the wildcard filter in the
-			// else {} below, which is intended
-			QString orig = elementRX.cap( 2 );
-			data.replace( pos, elementRX.matchedLength(), orig );
-			pos += orig.length();
+			// Replace smileys with their original text'
+			const QString attrTitle  = QLatin1String( "title=\"" );
+			int titlePos    = match.find( attrTitle, elemEndPos );
+			int titleEndPos = match.find( '"',       titlePos + attrTitle.length() );
+			if( titlePos == -1 || titleEndPos == -1 )
+			{
+				// Not a smiley but a normal <img>
+				// Don't update pos, we restart at this position :)
+				data.remove( pos, matchWidth );
+			}
+			else
+			{
+				QString orig = match.mid( titlePos + attrTitle.length(),
+					titleEndPos - titlePos - attrTitle.length() );
+				data.replace( pos, matchWidth, orig );
+				pos += orig.length();
+			}
 		}
 		else if ( elem == QLatin1String( "/p" ) || elem == QLatin1String( "/div" ) ||
 			elem == QLatin1String( "br" ) )
 		{
 			// Replace paragraph, div and line breaks with a newline
-			data.replace( pos, elementRX.matchedLength(), '\n' );
+			data.replace( pos, matchWidth, '\n' );
 			pos++;
 		}
 		else
 		{
 			// Remove all other elements entirely
 			// Don't update pos, we restart at this position :)
-			data.remove( pos, elementRX.matchedLength() );
+			data.remove( pos, matchWidth );
 		}
 	}
 
