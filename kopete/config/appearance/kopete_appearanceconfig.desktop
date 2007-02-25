@@ -14,9 +14,6 @@ Name[el]=Εμφάνιση
 Name[fr]=Apparence
 Name[x-test]=xxAppearancexx
 Comment=Change Kopete Look And Feel
-Comment[el]=Εδώ μπορείτε να τροποποιήσετε την όψη και αίσθηση του Kopete
-Comment[fr]=Vous pouvez modifier l'apparence et l'ergonomie de Kopete ici
-Comment[x-test]=xxHere You Can Alter Kopete's Look And Feelxx
 DocPath=kopete/configure-dialog.html#configuring-appearance
 
 

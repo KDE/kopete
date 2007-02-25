@@ -14,9 +14,6 @@ Name[el]=Συμπεριφορά
 Name[fr]=Comportement
 Name[x-test]=xxBehaviorxx
 Comment=Personalize Kopete's Behavior
-Comment[el]=Εδώ μπορείτε να προσαρμόσετε το Kopete
-Comment[fr]=Vous pouvez personnaliser Kopete ici
-Comment[x-test]=xxHere You Can Personalize Kopetexx
 DocPath=kopete/configure-dialog.html#configuring-behavior
 
 

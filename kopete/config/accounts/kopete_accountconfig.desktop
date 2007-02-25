@@ -14,9 +14,6 @@ Name[el]=Λογαριασμοί
 Name[fr]=Comptes
 Name[x-test]=xxAccountsxx
 Comment=Manage Your Accounts
-Comment[el]=Εδώ μπορείτε να ρυθμίσετε όλους τους λογαριασμούς σας
-Comment[fr]=Vous pouvez gérer vos comptes ici
-Comment[x-test]=xxHere You Can Manage All Your Accountsxx
 DocPath=kopete/configure-dialog.html#configuring-accounts
 
 

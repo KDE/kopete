@@ -14,8 +14,5 @@ Name[el]=Ταυτότητα
 Name[fr]=Identité
 Name[x-test]=xxIdentityxx
 Comment=Manage Your Global Identity
-Comment[el]=Εδώ μπορείτε να χειριστείτε την καθολική σας ταυτότητα
-Comment[fr]=Vous pouvez gérer ici votre identité principale
-Comment[x-test]=xxHere You Can Manage Your Global Identityxx
 
 DocPath=kopete/configure-dialog.html#configuring-identity
