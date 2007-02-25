@@ -279,12 +279,10 @@ const Guid oscar_xStatus[] =
 	Guid( QLatin1String( "00000000000000000000000000000000" ) )
 };
 
-#ifndef Q_OS_WIN
 //! Oscar Data Types
 typedef quint8 BYTE;
 typedef quint16 WORD;
 typedef quint32 DWORD;
-#endif
 
 struct FLAP
 {
