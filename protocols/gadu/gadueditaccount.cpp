@@ -44,7 +44,7 @@
 #include "kopetepasswordwidget.h"
 
 GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, QWidget* parent )
-: KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 ), QWidget( parent )
+: QWidget( parent ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
 {
 	setupUi(this);
 
@@ -57,7 +57,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 	useTls_->setDisabled( !isSsl );
 
 	if ( account() == NULL ) {
-		useTls_->setCurrentItem( GaduAccount::TLS_no );
+		useTls_->setCurrentIndex( GaduAccount::TLS_no );
 		registerNew->setEnabled( true );
 		account_ = NULL;
 	}
@@ -80,7 +80,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 
 		autoLoginCheck_->setChecked( account_->excludeConnect() );
 		dccCheck_->setChecked( account_->dccEnabled() );
-		useTls_->setCurrentItem( isSsl ? ( account_->useTls() ) : 2 );
+		useTls_->setCurrentIndex( isSsl ? ( account_->useTls() ) : 2 );
 		ignoreCheck_->setChecked( account_->ignoreAnons() );
 
 		connect( account(), SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
@@ -112,12 +112,12 @@ GaduEditAccount::publishUserInfo()
 	sr.meiden	= uiMeiden->text();
 	sr.orgin	= uiOrgin->text();
 
-	kDebug(14100) << uiGender->currentItem() << " gender " << endl;
-	if ( uiGender->currentItem() == 1 ) {
+	kDebug(14100) << uiGender->currentIndex() << " gender " << endl;
+	if ( uiGender->currentIndex() == 1 ) {
 		kDebug(14100) << "so you become female now" << endl;
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_FEMALE );
 	}
-	if ( uiGender->currentItem() == 2 ) {
+	if ( uiGender->currentIndex() == 2 ) {
 		kDebug(14100) << "so you become male now" << endl;
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_MALE );
 	}
@@ -133,7 +133,7 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 	if ( !( seq != 0 && seqNr != 0 && seq == seqNr ) ) {
 		return;
 	}
-        
+
 	connectLabel->setText( " " );
 		
 	uiName->setText( result[0].firstname );
@@ -144,12 +144,12 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 
 	kDebug( 14100 ) << "gender found: " << result[0].gender << endl;
 	if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_FEMALE ) ) {
-		uiGender->setCurrentItem( 1 );
+		uiGender->setCurrentIndex( 1 );
 		kDebug(14100) << "looks like female" << endl;
 	}
 	else {
 		if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_MALE ) ) {
-			uiGender->setCurrentItem( 2 );
+			uiGender->setCurrentIndex( 2 );
 			kDebug( 14100 ) <<" looks like male" << endl;
 		}
 	}
@@ -251,7 +251,7 @@ GaduEditAccount::apply()
         account_->configGroup()->writeEntry( QString::fromAscii( "nickName" ), nickName->text() );
 
 	account_->setExcludeConnect( autoLoginCheck_->isChecked() );
-	account_->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
+	account_->setUseTls( (GaduAccount::tlsConnection) useTls_->currentIndex() );
 	account_->setIgnoreAnons( ignoreCheck_->isChecked() );
 	
 	if ( account_->setDcc( dccCheck_->isChecked() ) == false ) {

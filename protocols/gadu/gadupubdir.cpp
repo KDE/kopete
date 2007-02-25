@@ -206,7 +206,7 @@ GaduPublicDir::getData()
 	fSurname	= mMainWidget->surname->text();
 	fNick		= mMainWidget->nick->text();
 	fUin		= mMainWidget->UIN->text().toInt();
-	fGender		= mMainWidget->gender->currentItem();
+	fGender		= mMainWidget->gender->currentIndex();
 	fOnlyOnline	= mMainWidget->onlyOnline->isChecked();
 	fAgeFrom	= mMainWidget->ageFrom->value();
 	fAgeTo		= mMainWidget->ageTo->value();

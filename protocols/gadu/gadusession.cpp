@@ -717,7 +717,7 @@ GaduSession::checkDescriptor()
 				gaduMessage.message =
 					textcodec->toUnicode((const char*)event->event.msg.message);
 				gaduMessage.sender_id = event->event.msg.sender;
-				gaduMessage.sendTime.setTime_t( event->event.msg.time, Qt::LocalTime );
+				gaduMessage.sendTime.setTime_t( event->event.msg.time );
 				gaduMessage.message = rtf->convertToHtml( gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats );
 				emit messageReceived( &gaduMessage );
 			}

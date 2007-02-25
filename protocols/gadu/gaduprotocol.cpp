@@ -53,31 +53,31 @@ GaduProtocol::GaduProtocol( QObject* parent, const QStringList& )
 			propPhoneNr(Kopete::Global::Properties::self()->privatePhone()),
 			defaultAccount_( 0 ),
 			gaduStatusBlocked_( Kopete::OnlineStatus::Away, GG_STATUS_BLOCKED, this,
-					GG_STATUS_BLOCKED, QStringList(QString::fromLatin1("gg_ignored")), i18n( "Blocked" ) ),
+					GG_STATUS_BLOCKED, QStringList(QLatin1String("gg_ignored")), i18n( "Blocked" ) ),
 			
 			gaduStatusOffline_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL, this, 
-					GG_STATUS_NOT_AVAIL, QStringList(QString::fromLatin1("gg_offline")), i18n( "Offline" ), 
+					GG_STATUS_NOT_AVAIL, QStringList(QLatin1String("gg_offline")), i18n( "Offline" ), 
 					i18n( "O&ffline" ) , Kopete::OnlineStatusManager::Offline ),
 			
 			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL_DESCR, this, 
 					GG_STATUS_NOT_AVAIL_DESCR, 
-					QStringList::split( '|', "contact_away_overlay|gg_description_overlay" ), 
+					QString( QLatin1String("contact_away_overlay|gg_description_overlay") ).split('|'), 
 					i18n( "Offline" ), i18n( "A&way" ) , Kopete::OnlineStatusManager::Offline ),
 			
 			gaduStatusBusy_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY, this, 
-					GG_STATUS_BUSY, QStringList( QString::fromLatin1("contact_away_overlay") ), 
+					GG_STATUS_BUSY, QStringList( QLatin1String("contact_away_overlay") ), 
 					i18n( "Busy" ) , i18n( "B&usy" ) , Kopete::OnlineStatusManager::Busy ),
 			gaduStatusBusyDescr_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
-				QStringList::split( '|', "contact_away_overlay|gg_description_overlay" ), i18n( "Busy" ) , 
-				i18n( "B&usy" ) , Kopete::OnlineStatusManager::Idle ),
+					QString( QLatin1String("contact_away_overlay|gg_description_overlay") ).split('|'), i18n( "Busy" ) , 
+					i18n( "B&usy" ) , Kopete::OnlineStatusManager::Idle ),
 			
 			gaduStatusInvisible_( Kopete::OnlineStatus::Invisible, GG_STATUS_INVISIBLE, this, 
-					GG_STATUS_INVISIBLE, QStringList(QString::fromLatin1("contact_invisible_overlay")), 
+					GG_STATUS_INVISIBLE, QStringList(QLatin1String("contact_invisible_overlay")), 
 					i18n( "Invisible" ) , i18n( "I&nvisible" ) , Kopete::OnlineStatusManager::Invisible),
 			
 			gaduStatusInvisibleDescr_(Kopete::OnlineStatus::Invisible, GG_STATUS_INVISIBLE_DESCR, this, 
 					GG_STATUS_INVISIBLE_DESCR, 
-					QStringList::split( '|', "contact_invisible_overlay|gg_description_overlay" ), 
+					QString( QLatin1String("contact_invisible_overlay|gg_description_overlay") ).split( '|'), 
 					i18n( "Invisible" ) , i18n( "I&nvisible" )),
 			
 			gaduStatusAvail_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL, this, GG_STATUS_AVAIL,
@@ -85,10 +85,10 @@ GaduProtocol::GaduProtocol( QObject* parent, const QStringList& )
 				Kopete::OnlineStatusManager::Online ),
 			
 			gaduStatusAvailDescr_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL_DESCR, this, GG_STATUS_AVAIL_DESCR,
-				QStringList(QString::fromLatin1("gg_description_overlay")), i18n( "Online" ) , i18n( "&Online" )),
+				QStringList(QLatin1String("gg_description_overlay")), i18n( "Online" ) , i18n( "&Online" )),
 			
 			gaduConnecting_(Kopete::OnlineStatus::Offline, GG_STATUS_CONNECTING, this, GG_STATUS_CONNECTING,
-				QStringList(QString::fromLatin1("gg_con")), i18n( "Connecting" ) )
+				QStringList(QLatin1String("gg_con")), i18n( "Connecting" ) )
 {
 	if ( protocolStatic_ ) {
 		kDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;
