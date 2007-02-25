@@ -20,7 +20,6 @@
 #include "msnchallengehandler.h"
 
 #include <qdatastream.h>
-//Added by qt3to4:
 #include <QByteArray>
 
 #include <kdebug.h>
@@ -49,7 +48,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
  	kDebug(14140) << k_funcinfo << "md5: " << digest << endl;
 
  	QVector<qint32> md5Integers(4);
- 	for(quint32 i=0; i < md5Integers.count(); i++)
+ 	for(int i=0; i < md5Integers.count(); i++)
  	{
  		md5Integers[i] = hexSwap(digest.mid(i*8, 8)).toUInt(0, 16) & 0x7FFFFFFF;
  		kDebug(14140) << k_funcinfo << ("0x" + hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i] << endl;
@@ -64,13 +63,13 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 	kDebug(14140) << k_funcinfo << "challenge key: " << challengeKey << endl;
 
 	QVector<qint32> challengeIntegers(challengeKey.length() / 4);
-	for(quint32 i=0; i < challengeIntegers.count(); i++)
+	for(int i=0; i < challengeIntegers.count(); i++)
 	{
 		QString sNum = challengeKey.mid(i*4, 4), sNumHex;
 
 		// Go through the number string, determining the hex equivalent of each value
 		// and add that to our new hex string for this number.
-		for(uint j=0; j < sNum.length(); j++) {
+		for(int j=0; j < sNum.length(); j++) {
 			sNumHex += QString::number((int)sNum[j].toLatin1(), 16);
 		}
 
@@ -107,7 +106,7 @@ qint64 MSNChallengeHandler::createHashKey(const QVector<qint32>& md5Integers,
 
 	qint64 magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
 		
-	for(uint i=0; i < challengeIntegers.count(); i += 2)
+	for(int i=0; i < challengeIntegers.count(); i += 2)
 	{
 		qint64 temp = ((challengeIntegers[i] * magicNumber) % 0x7FFFFFFF) + high;
 		temp = ((temp * md5Integers[0]) + md5Integers[1]) % 0x7FFFFFFF;

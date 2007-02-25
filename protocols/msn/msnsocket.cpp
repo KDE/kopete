@@ -440,7 +440,7 @@ void MSNSocket::slotReadLine()
 		}
 
 		int index = -1;
-		for ( uint x = 0; m_buffer.size() > x + 1; ++x )
+		for ( int x = 0; m_buffer.size() > x + 1; ++x )
 		{
 			if ( ( m_buffer[ x ] == '\r' ) && ( m_buffer[ x + 1 ] == '\n' ) )
 			{
@@ -691,7 +691,7 @@ void MSNSocket::slotReadyWrite()
 				for(uint i=0; i < length; i++)
 					bytes[i] = s.toAscii()[i];
 				// Copy the request body into the request bytes.
-				for(uint i=0; i < (*it).size(); i++)
+				for(int i=0; i < (*it).size(); i++)
 					bytes[length + i] = (*it)[i];
 
 				kDebug( 14141 ) << k_funcinfo << "Sending http command: " << QString(*it).trimmed() << endl;
@@ -717,7 +717,7 @@ void MSNSocket::slotReadyWrite()
 
 			// Simple check to avoid dumping the binary data from the icons and emoticons to kdDebug:
 			// When sending an MSN-P2P packet, strip off anything after the P2P header.
-			QString debugData = QString( *it ).stripWhiteSpace().replace(
+			QString debugData = QString( *it ).trimmed().replace(
 				QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
 			kDebug( 14141 ) << k_funcinfo << "Sending command: " << debugData << endl;
 
@@ -967,12 +967,13 @@ MSNSocket::Buffer::~Buffer()
 void MSNSocket::Buffer::add( char *str, unsigned int sz )
 {
 	char *b = new char[ size() + sz ];
-	for ( uint f = 0; f < size(); f++ )
+	for ( int f = 0; f < size(); f++ )
 		b[ f ] = data()[ f ];
 	for ( uint f = 0; f < sz; f++ )
 		b[ size() + f ] = str[ f ];
 
-	duplicate( b, size() + sz );
+	QByteArray *that = this;
+	*that = QByteArray( b, size() + sz );
 	delete[] b;
 }
 
@@ -992,7 +993,8 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 	char *str = new char[ size() - blockSize ];
 	for ( uint i = 0; i < size() - blockSize; i++ )
 		str[ i ] = data()[ blockSize + i ];
-	duplicate( str, size() - blockSize );
+	QByteArray *that = this;
+	*that = QByteArray( str, size() - blockSize );
 	delete[] str;
 
 	return rep;

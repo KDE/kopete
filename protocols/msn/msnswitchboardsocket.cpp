@@ -689,7 +689,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		// Check the list for any custom emoticons
 		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
-			for ( QStringList::const_iterator itr2 = itr.data().constBegin(); itr2 != itr.data().constEnd(); ++itr2 )
+			for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
 			{
 				if ( msg.plainBody().contains( *itr2 ) )
 					sendCustomEmoticon( *itr2, itr.key() );

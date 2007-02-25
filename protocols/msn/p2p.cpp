@@ -18,8 +18,7 @@
 
 #include "p2p.h"
 #include "dispatcher.h"
-//Added by qt3to4:
-#include <QByteArray>
+
 using P2P::TransferContext;
 using P2P::Message;
 using P2P::MessageType;
@@ -31,7 +30,8 @@ using P2P::TransferType;
 #include <kbufferedsocket.h>
 #include <kdebug.h>
 // Qt includes
-#include <qfile.h>
+#include <QFile>
+#include <QByteArray>
 
 // Kopete includes
 #include <kopetetransfermanager.h>
@@ -332,7 +332,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		if(bytesLeft < chunkLength)
 		{
 			// Copy the last chunk of the multipart message.
-			outbound.body.duplicate(body.data() + offset, bytesLeft);
+			outbound.body = QByteArray(body.data() + offset, bytesLeft);
 			outbound.header.dataSize = bytesLeft;
 			outbound.header.dataOffset = offset;
 			bytesLeft = 0L;
@@ -340,7 +340,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		else
 		{
 			// Copy the next chunk of the multipart message in the sequence.
-			outbound.body.duplicate(body.data() + offset, chunkLength);
+			outbound.body = QByteArray(body.data() + offset, chunkLength);
 			outbound.header.dataSize = chunkLength;
 			outbound.header.dataOffset = offset;
 			offset += chunkLength;

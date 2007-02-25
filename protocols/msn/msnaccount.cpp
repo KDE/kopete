@@ -63,7 +63,7 @@
 #include <kglobal.h>
 #endif
 
-#if MSN_WEBCAM
+#ifdef MSN_WEBCAM
 #include "avdevice/videodevicepool.h"
 #endif
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )

@@ -41,7 +41,8 @@ SHA1::SHA1()
 {
 	int wordSize;
 
-	qSysInfo(&wordSize, &bigEndian);
+	wordSize = QSysInfo::WordSize;
+	bigEndian = (QSysInfo::ByteOrder == QSysInfo::BigEndian);
 }
 
 unsigned long SHA1::blk0(quint32 i)

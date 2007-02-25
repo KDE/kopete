@@ -19,7 +19,6 @@
 // Qt includes
 #include <qdatastream.h>
 #include <qregexp.h>
-//Added by qt3to4:
 #include <QByteArray>
 
 // Kde includes
@@ -38,7 +37,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 {
 	Message inbound;
 	
-	quint32 index = 0;
+	qint32 index = 0;
 	if(compact == false)
 	{
 		// Determine the end position of the message header.
