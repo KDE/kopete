@@ -21,8 +21,6 @@
 #ifndef KABC_ADDRESSEEDIALOG_H
 #define KABC_ADDRESSEEDIALOG_H
 
-#include <q3dict.h>
-
 #include <klineedit.h>
 #include <k3listview.h>
 

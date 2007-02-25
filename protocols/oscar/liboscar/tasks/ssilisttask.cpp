@@ -150,7 +150,7 @@ void SSIListTask::handleSSIUpToDate()
 	Buffer* buffer = transfer()->buffer();
 
 	client()->ssiManager()->setLastModificationTime( buffer->getDWord() );
-	WORD ssiItems = buffer->getWord();
+	Oscar::WORD ssiItems = buffer->getWord();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Number of items in SSI list: " << ssiItems << endl;
 
 	client()->ssiManager()->setListComplete( true );
