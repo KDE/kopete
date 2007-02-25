@@ -175,6 +175,8 @@ void KopeteMessage_Test::testPrimitives()
 		CHECK(msg.escapedBody(), QString("<simple>SIMPLE</simple>") );
 
 		CHECK(Kopete::Message::unescape( QString( "<simple>SIMPLE</simple>" ) ), QString("SIMPLE") );
+		CHECK(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" />" ) ), QString("Foo ") );
+		CHECK(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" title=\"Bar\" />" ) ), QString("Foo Bar") );
 
 		msg.setBody(m, Kopete::Message::RichText);
 
