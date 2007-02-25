@@ -161,6 +161,8 @@ void KopeteMessage_Test::testPrimitives()
 		QCOMPARE(msg.escapedBody(), QString("<simple>SIMPLE</simple>") );
 
 		QCOMPARE(Kopete::Message::unescape( QString( "<simple>SIMPLE</simple>" ) ), QString("SIMPLE") );
+		QCOMPARE(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" />" ) ), QString("Foo ") );
+		QCOMPARE(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" title=\"Bar\" />" ) ), QString("Foo Bar") );
 
 		msg.setBody(m, Kopete::Message::RichText);
 
@@ -211,7 +213,7 @@ void KopeteMessage_Test::testPrimitives()
 		{
 			Kopete::Message msg2;
 
-//			CHECK(msg2.plainBody(), QString::null);
+//			QCOMPARE(msg2.plainBody(), QString::null);
 
 			msg2 = msg1;
 
@@ -277,11 +279,11 @@ void KopeteMessage_Test::testLinkParser()
 
 			// HACK to know the test case we applied, concatenate testcase name to both
 			// input and expected string. WIll remove when I can add some sort of metadata
-			// to a CHECK so debug its origin testcase
+			// to a QCOMPARE so debug its origin testcase
 			result = fileName + QString::fromLatin1(": ") + result;
 			expectedData = fileName + QString::fromLatin1(": ") + expectedData;
 			// if the test case begins with broken, we expect it to fail, then use XFAIL
-			// otherwise use CHECK
+			// otherwise use QCOMPARE
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
 				//kDebug() << "checking known-broken testcase: " << fileName << endl;
