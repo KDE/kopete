@@ -40,7 +40,7 @@ public:
 		messageType = 0;
 		requestType = 0;
 		port = 0;
-		reqNum = 1;
+		requestNumber = 1;
 		protocolVersion = 0;
 		channel2Counter = 0;
 		encoding = UserDefined;
@@ -57,7 +57,7 @@ public:
 		messageType = other.messageType;
 		requestType = other.requestType;
 		port = other.port;
-		reqNum = other.reqNum;
+		requestNumber = other.requestNumber;
 		protocolVersion = other.protocolVersion;
 		channel2Counter = other.channel2Counter;
 		icbmCookie = other.icbmCookie;
@@ -75,12 +75,12 @@ public:
 		else
 			plugin = 0;
 	}
-		
+
 	~MessagePrivate()
 	{
 		delete plugin;
 	}
-	
+
 	QString sender;
 	QString receiver;
 	int channel;
@@ -88,7 +88,7 @@ public:
 	int messageType;
 	int requestType;
 	int port;
-	int reqNum;
+	int requestNumber;
 	int protocolVersion;
 	int channel2Counter;
 	QByteArray icbmCookie;
@@ -322,12 +322,12 @@ void Message::setMessageType( int type )
 	d->messageType = type;
 }
 
-int Message::reqType() const
+int Message::requestType() const
 {
 	return d->requestType;
 }
 
-void Message::setReqType( int type )
+void Message::setRequestType( int type )
 {
 	d->requestType = type;
 }
@@ -352,14 +352,14 @@ void Message::setProxy( QByteArray proxy )
 	d->proxy = proxy;
 }
 
-int Message::reqNum() const
+int Message::requestNumber() const
 {
-	return d->reqNum;
+	return d->requestNumber;
 }
 
-void Message::setReqNum( int n )
+void Message::setRequestNumber( int n )
 {
-	d->reqNum = n;
+	d->requestNumber = n;
 }
 
 QString Message::fileName() const
@@ -417,7 +417,7 @@ void Message::setPlugin( MessagePlugin* plugin )
 {
 	if ( d->plugin )
 		delete d->plugin;
-	
+
 	d->plugin = plugin;
 }
 

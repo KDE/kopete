@@ -44,7 +44,7 @@
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
                                     const QString& self, QByteArray cookie,
                                     Buffer b  )
-: Task( parent ), m_contactName( contact ), m_selfName( self ), 
+: Task( parent ), m_contactName( contact ), m_selfName( self ),
   m_timer( this ), m_file( this )
 {
 	init( Receive );
@@ -116,7 +116,7 @@ void FileTransferTask::onGo()
 
 		emit askIncoming( m_contactName, m_oft.fileName, m_oft.fileSize, m_desc, m_oft.cookie );
 		return;
-	} 
+	}
 	//else, send
 	if ( m_contactName.isEmpty() || (! validFile() ) )
 	{
@@ -452,7 +452,7 @@ void FileTransferTask::doCancel()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//tell the other side
 	Oscar::Message msg = makeFTMsg();
-	msg.setReqType( 1 );
+	msg.setRequestType( 1 );
 	emit sendMessage( msg );
 	//stop our timer in case we were doing stuff
 	m_timer.stop();
@@ -513,7 +513,7 @@ void FileTransferTask::doConnect()
 	{
 		if ( m_ip.length() != 4 || ! m_port )
 		{
-			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("missing ip or port") ); 
+			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("missing ip or port") );
 			doCancel();
 			return;
 		}
@@ -555,7 +555,7 @@ void FileTransferTask::doneConnect()
 	if ( ! m_proxyRequester )
 	{ //yay! send an accept message
 		Oscar::Message msg = makeFTMsg();
-		msg.setReqType( 2 );
+		msg.setRequestType( 2 );
 		emit sendMessage( msg );
 	}
 	//next the receiver should get a prompt from the sender.
@@ -568,7 +568,7 @@ void FileTransferTask::proxyInit()
 	//init "send" is sent by whoever requested the proxy.
 	//init "recv" is sent by the other side
 	//because the second person has to include the port check
-	
+
 	Buffer data;
 	data.addByte( m_selfName.length() );
 	data.addString( m_selfName.toLatin1() );
@@ -592,7 +592,7 @@ void FileTransferTask::proxyInit()
 
 	if( written == -1 ) //FIXME: handle this properly
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
-	
+
 }
 
 void FileTransferTask::timeout()
@@ -695,16 +695,16 @@ void FileTransferTask::sendReq()
 	Oscar::Message msg = makeFTMsg();
 
 	//now set the rendezvous info
-	msg.setReqType( 0 );
+	msg.setRequestType( 0 );
 	msg.setPort( m_port );
 	msg.setFile( m_oft.fileSize, m_oft.fileName );
 	if ( m_proxy )
 		msg.setProxy( m_ip );
 
 	if ( m_action == Receive )
-		msg.setReqNum( 2 );
+		msg.setRequestNumber( 2 );
 	else if ( m_proxy && (! client()->settings()->fileProxy() ) )
-		msg.setReqNum( 3 );
+		msg.setRequestNumber( 3 );
 
 	//we're done, send it off!
 	emit sendMessage( msg );

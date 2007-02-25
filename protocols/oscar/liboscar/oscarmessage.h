@@ -167,10 +167,10 @@ public:
 	void setMessageType( int type );
 
 	/** get the request type (req/cancel/accept) */
-	int reqType() const;
+	int requestType() const;
 
 	/** set the request type (req/cancel/accept) */
-	void setReqType( int type );
+	void setRequestType( int type );
 
 	/** get the port */
 	int port() const;
@@ -185,10 +185,10 @@ public:
 	void setProxy( QByteArray proxy );
 
 	/** get the request # */
-	int reqNum() const;
+	int requestNumber() const;
 
 	/** set the request # (for transfer requests) */
-	void setReqNum( int n );
+	void setRequestNumber( int n );
 
 	/** get the file name */
 	QString fileName() const;

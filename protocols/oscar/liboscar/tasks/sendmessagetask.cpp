@@ -75,7 +75,7 @@ void SendMessageTask::onGo()
 	{
 		Oscar::DWORD cookie1 = KRandom::random();
 		Oscar::DWORD cookie2 = KRandom::random();
-		
+
 		b->addDWord( cookie1 );
 		b->addDWord( cookie2 );
 
@@ -188,21 +188,21 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send channel 2 message!" << endl;
 
 	Buffer tlv5buffer;
-	
-	tlv5buffer.addWord( m_message.reqType() ); // 0 = request; 1 = cancel; 2 = accept
+
+	tlv5buffer.addWord( m_message.requestType() ); // 0 = request; 1 = cancel; 2 = accept
 
 	// message id cookie. needs to be the same one as above
 	tlv5buffer.addString( m_message.icbmCookie() );
-	
+
 	//cap used to identify the message type
 	int capNumber = (m_message.messageType() == Oscar::MessageType::File) ? CAP_SENDFILE : CAP_ICQSERVERRELAY;
 	tlv5buffer.addGuid( oscar_caps[capNumber] );
 
-	if( m_message.reqType() == 0 )
+	if( m_message.requestType() == 0 )
 	{ //requests need more data
 
 		// add TLV 0A: request # (usually 1)
-		tlv5buffer.addTLV16( 0x000A, m_message.reqNum() );
+		tlv5buffer.addTLV16( 0x000A, m_message.requestNumber() );
 
 		// add TLV 0F: unknown but always there
 		tlv5buffer.addWord( 0x000F );
@@ -270,12 +270,12 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	// miranda,licq use 8, gaim,icq5 use 9, icq2003b uses 10.
 	// 9 seems to make things a little difficult, 10 seems a little more like 8, but still more difficult
 	b->addLEWord( 0x0008 ); // so stick with 8 for now :)
-	
+
 	for ( int i = 0; i < 16; i++)
 	{
 		b->addByte( 0x00 ); // pluginID or all zeros (see oscar docs)
 	}
-	
+
 	b->addWord( 0x0000 ); // unknown
 	b->addLEDWord( 0x00000003 ); // FIXME client capabilities: not sure, but should be ICQ Server Relay
 	b->addByte( 0x00 ); // unknown
@@ -286,9 +286,9 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 		channel2Counter = m_message.channel2Counter();
 	else
 		channel2Counter = (m_cookieCount--) & 0x7FFF;
-	
+
 	b->addLEWord( channel2Counter ); // channel 2 counter
-	
+
 	// second data segment
 	b->addLEWord( 0x000E ); // length of this data segment, always 14
 	b->addLEWord( channel2Counter ); // channel 2 counter
@@ -297,7 +297,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	{
 		b->addByte( 0x00 ); // unknown, usually all zeros
 	}
-	
+
 	// actual message data segment
 
 	// Message type
@@ -305,14 +305,14 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 		b->addByte( Oscar::MessageType::Plain );
 	else
 		b->addByte( m_message.messageType() );
-	
+
 	int messageFlags = 0x00; // Normal
 	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		messageFlags = 0x03; // Auto message. required for both requesting and sending status messages
 	else if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		messageFlags = 0x00; // A regular type 2 msg ack requires 0x00 here...
 	b->addByte( messageFlags );
-	
+
 	// status code, priority:
 	// common (ICQ) practice seems to be: both 1 when requesting away message, both 0 otherwise
 	// miranda sends 256/0 in away message request. it works, but i don't see the point...
@@ -327,7 +327,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 		b->addLEWord( 0x0000 ); // status (?)
 		b->addLEWord( 0x0000 ); // priority (?)
 	}
-	
+
 
 	b->addLEWord( m_message.textArray().size() + 1 ); // length of string + zero termination
 	b->addString( m_message.textArray() ); // string itself
