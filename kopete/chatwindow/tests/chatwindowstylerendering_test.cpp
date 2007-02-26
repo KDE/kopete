@@ -198,14 +198,14 @@ void ChatWindowStyleRendering_Test::allTests()
 void ChatWindowStyleRendering_Test::testHeaderRendering()
 {
 	QString expectedHtml = QString(
-"<div>Test Session</div>\n"
+"<div><span id=\"KopeteHeaderChatNameInternal\">Test Session</span></div>\n"
 "<div>Bob</div>\n"
 "<div>Audrey</div>\n"
 "<div>Incoming/buddy_icon.png</div>\n"
 "<div>Outgoing/buddy_icon.png</div>\n"
 "<div>%1</div>\n"
 "<div>%2</div>"
-	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
+	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), true, true ) )
 	.arg(QDateTime::currentDateTime().toString("hh:mm"));
 
 	QString headerHtml = d->testStyle->getHeaderHtml();
@@ -223,28 +223,26 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
 	QString expectedIncomingHtml = QString(
 "Incoming:\n"
 "<div>Incoming/buddy_icon.png</div>\n"
-"<div>audrey@localhost</div>\n"
-"<div>Audrey</div>\n"
+"<div><a href=\"kopetemessage://audrey@localhost/?protocolId=Kopete::Protocol&amp;accountId=testaccount\" class=\"KopeteDisplayName\">audrey@localhost</a></div>\n"
+"<div><a href=\"kopetemessage://audrey@localhost/?protocolId=Kopete::Protocol&amp;accountId=testaccount\" class=\"KopeteDisplayName\">Audrey</a></div>\n"
 "<div>Kopete</div>\n"
-"<div>Test</div>\n"
+"<div><span style=\"\"class=\"KopeteMessageBody\">Test</span></div>\n"
 "<div>%1</div>\n"
 "<div>%2</div>\n"
 "<div id=\"insert\">"
-	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
-	.arg(QDateTime::currentDateTime().toString("hh:mm"));
+	).arg( QDateTime::currentDateTime().toString( "hh:mm:ss" ), QDateTime::currentDateTime().toString( "hh:mm" ) );
 
 	QString expectedOutgoingHtml = QString(
 "Outgoing:\n"
 "<div>Outgoing/buddy_icon.png</div>\n"
-"<div>bob@localhost</div>\n"
-"<div>Bob</div>\n"
+"<div><a href=\"kopetemessage://bob@localhost/?protocolId=Kopete::Protocol&amp;accountId=testaccount\" class=\"KopeteDisplayName\">bob@localhost</a></div>\n"
+"<div><a href=\"kopetemessage://bob@localhost/?protocolId=Kopete::Protocol&amp;accountId=testaccount\" class=\"KopeteDisplayName\">Bob</a></div>\n"
 "<div>Kopete</div>\n"
-"<div>Hello there</div>\n"
+"<div><span style=\"\"class=\"KopeteMessageBody\">Hello there</span></div>\n"
 "<div>%1</div>\n"
 "<div>%2</div>\n"
 "<div id=\"insert\">"
-	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
-	.arg(QDateTime::currentDateTime().toString("hh:mm"));
+	).arg( QDateTime::currentDateTime().toString( "hh:mm:ss" ), QDateTime::currentDateTime().toString( "hh:mm" ) );
 
 
 	QString tempHtml;
@@ -271,11 +269,10 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
 void ChatWindowStyleRendering_Test::testStatusRendering()
 {
 	QString expectedStatusHtml = QString(
-"<div>A contact went offline.</div>\n"
+"<div><span style=\"\"class=\"KopeteMessageBody\">A contact went offline.</span></div>\n"
 "<div>%1</div>\n"
 "<div>%2</div>"
-	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
-	.arg(QDateTime::currentDateTime().toString("hh:mm"));
+	).arg( QDateTime::currentDateTime().toString( "hh:mm:ss" ), QDateTime::currentDateTime().toString( "hh:mm" ) );
 
 	QString statusHtml = d->testStyle->getStatusHtml();
 	QString resultHtml;
