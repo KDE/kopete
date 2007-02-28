@@ -135,7 +135,10 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 		}
 		msgPosition += msgChunk.length();
 
-		Oscar::Message message( messageEncoding, msgChunk, messageChannel, 0, msg.timestamp(), codec );
+		Oscar::Message message;
+		message.setText( messageEncoding, msgChunk, codec );
+		message.setChannel( messageChannel );
+		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );
 		message.setReceiver( mName );
 		mAccount->engine()->sendMessage( message );

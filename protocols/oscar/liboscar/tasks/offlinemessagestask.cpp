@@ -111,7 +111,12 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 
 	QDateTime utcTime( QDate(year, month, day), QTime(hour, minute), Qt::UTC );
 
-	Oscar::Message message( Oscar::Message::UserDefined, msg, type, flags, utcTime.toLocalTime() );
+	Oscar::Message message;
+	message.setTextArray( msg );
+	message.setEncoding( Oscar::Message::UserDefined );
+	message.setChannel( type );
+	message.setTimestamp( utcTime.toLocalTime() );
+	message.addProperty( flags );
 	message.setSender( QString::number( senderUin ) );
 	message.setReceiver( QString::number( receiverUin ) );
 

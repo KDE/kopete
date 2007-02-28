@@ -30,6 +30,7 @@ SendMessageTask::SendMessageTask(Task* parent): Task(parent)
 {
 	m_autoResponse = false;
 	m_cookieCount = 0x7FFF;
+	m_ip = 0;
 }
 
 

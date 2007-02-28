@@ -90,8 +90,8 @@ public:
 
 	Message();
 
-	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
-	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
+// 	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
+// 	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
 
 	Message( const Message& m );
 	Message& operator=( const Message& m );

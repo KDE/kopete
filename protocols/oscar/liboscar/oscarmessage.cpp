@@ -107,7 +107,7 @@ Message::Message()
 	: d( new MessagePrivate )
 {
 }
-
+/*
 Message::Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp )
 	: d( new MessagePrivate )
 {
@@ -127,7 +127,7 @@ Message::Message( Encoding messageEncoding, const QString& messageText, int chan
 
 	setText( messageEncoding, messageText, codec );
 }
-
+*/
 Message::Message( const Message& m )
 	: d( m.d )
 {
