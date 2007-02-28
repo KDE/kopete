@@ -12,7 +12,7 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <ignoreparts>
       <part>kdevabbrev</part>
       <part>kdevbookmarks</part>
@@ -22,7 +22,7 @@
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
     <projectname>kopete</projectname>
-    <defaultencoding></defaultencoding>
+    <defaultencoding/>
   </general>
   <kdevfileview>
     <groups>
@@ -36,7 +36,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns/>
+      <hidepatterns></hidepatterns>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -97,16 +97,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
+      <dbgshell/>
       <programargs>--nofork</programargs>
       <gdbpath>/usr/bin/gdb</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
     </general>
     <display>
       <staticmembers>true</staticmembers>
@@ -235,7 +235,7 @@
     </codecompletion>
     <references/>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -251,11 +251,11 @@
     <qt>
       <used>false</used>
       <version>3</version>
-      <root>/usr/lib/qt3</root>
+      <root>/usr/share/qt3</root>
       <includestyle>3</includestyle>
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
-      <qmake>/usr/lib/qt3/bin/qmake</qmake>
-      <designer>/usr/lib/qt3/bin/designer</designer>
+      <qmake>/usr/bin/qmake-qt3</qmake>
+      <designer>/usr/bin/designer-qt3</designer>
       <designerpluginpaths/>
     </qt>
     <splitheadersource>

@@ -300,6 +300,11 @@ protected:
 	int initRead();
 	int initMmap();
 	int initUserptr();
+	// path to the device node
+	QString m_devicePath;
+	// name of the device returned by the driver
+	QString m_name;
+	QString m_model;
 private:
 	// Defines  the number of a device when more than 1 device of a given model is present
 	size_t m_modelindex;
@@ -343,11 +348,6 @@ private:
 	bool m_videoread;
 	bool m_videoasyncio;
 	bool m_videostream;
-	// name of the device returned by the driver
-	QString m_name;
-	// path to the device node
-	QString m_devicePath;
-	QString m_model;
 	// array holding settings for each input
 	QValueVector<Kopete::AV::VideoInput> m_inputs;
 	// user preferences

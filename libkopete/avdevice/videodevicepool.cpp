@@ -557,6 +557,7 @@ QStringList VideoDevicePool::videoDevicePaths( const QString & dirPath, const QS
 		{
 			++fileiterator;
 			absolutePaths.append( fileinfo->absFilePath() );
+kdDebug ( 14010 ) << k_funcinfo << "Found: " << fileinfo->absFilePath() << endl;
 		}
 	}
 	return absolutePaths;
@@ -609,11 +610,12 @@ int VideoDevicePool::scanDevices()
 			return EXIT_FAILURE;
 		}
 	}
+
 	for ( QStringList::Iterator it = videoDevices.begin(); it != videoDevices.end(); ++it )
 	{
 		VideoDevice * videodevice = new VideoDevice;
 		videodevice->setDevicePath( *it );
-		kdDebug( 14010 ) <<  k_funcinfo << "Found device " << videodevice->devicePath() << endl;
+kdDebug( 14010 ) <<  k_funcinfo << "Found device " << videodevice->devicePath() << endl;
 		videodevice->open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		// QFile::IO_Raw is probably what you need here - Bille
 		if(videodevice->isOpen())

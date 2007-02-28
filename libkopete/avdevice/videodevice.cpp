@@ -76,12 +76,15 @@ QString VideoDevice::devicePath() const
 
 int VideoDevice::open()
 {
-	kdDebug( 14010 ) <<  k_funcinfo << "called" << endl;
+	kdDebug( 14010 ) <<  k_funcinfo << "called ---" << endl;
 	if(-1 != descriptor)
 	{
 		kdDebug( 14010 ) <<  k_funcinfo << "Device is already open" << endl;
 		return EXIT_SUCCESS;
 	}
+	kdDebug( 14010 ) <<  k_funcinfo << "Opening file descriptor ----" << endl;
+	kdDebug( 14010 ) <<  k_funcinfo << "Opening file descriptor ----" << devicePath() << endl;
+
 	descriptor = ::open (QFile::encodeName(m_devicePath), O_RDWR, 0);
 	if(!isOpen())
 	{
