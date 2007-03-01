@@ -662,5 +662,3 @@ void HttpProxyPost::sock_error(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "httppoll.moc"

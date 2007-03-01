@@ -57,5 +57,3 @@ int CompressionHandler::errorCode()
 {
 	return errorCode_;
 }
-
-#include "compressionhandler.moc"

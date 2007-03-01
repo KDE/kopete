@@ -178,5 +178,3 @@ int Decompressor::write(const QByteArray& input, bool flush)
 	device_->write(output);
 	return 0;
 }
-
-#include "compress.moc"

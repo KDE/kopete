@@ -13,7 +13,7 @@ the form of 001_your_fix_name.patch. Always pick the next free number
 for your patch, the version found in this directory is meant to have
 all patches applied in order. When committing, CCMAIL kopete-devel@kde.org.
 
-Changes to the Makefile.am files are fine and require no diffs, since Psi
+Changes to CMakeLists.txt are fine and require no diffs, since Psi
 uses qmake.
 
 This library depends on: libidn (compile time), qca-tls (runtime)
@@ -21,7 +21,5 @@ This library depends on: libidn (compile time), qca-tls (runtime)
 27.02.2004, Till Gerken (till@tantalo.net)
 
 
-
-As of 31-07-2006, all change from 001 to 010 are combined into the iris_patch_060731.diff
-As of 21-02-2007, all changes from 001 to 013 are combined into iris_patch_070221.diff,
-   updated libiris to psi svn rev.330
+As of 01-03-2007, all changes from 001 to 014 are combined into iris_patch_070301.diff,
+   updated libiris to psi svn rev.356

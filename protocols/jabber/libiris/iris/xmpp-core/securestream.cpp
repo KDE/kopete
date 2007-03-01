@@ -340,6 +340,8 @@ private slots:
 #endif
 };
 
+#include "securestream.moc"
+
 class SecureStream::Private
 {
 public:
@@ -646,6 +648,3 @@ void SecureStream::incomingData(const QByteArray &a)
 	if(bytesAvailable())
 		readyRead();
 }
-
-#include "securestream.moc"
-#include "moc_securestream.cxx"

@@ -2532,4 +2532,3 @@ void StreamHost::setIsProxy(bool b)
 }
 
 #include "s5b.moc"
-#include "moc_s5b.cxx"

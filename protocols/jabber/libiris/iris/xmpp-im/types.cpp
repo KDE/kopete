@@ -3439,4 +3439,4 @@ const QDomElement& PubSubItem::payload() const
 
 }
 
-#include "moc_types.cxx"
+#include "types.moc"

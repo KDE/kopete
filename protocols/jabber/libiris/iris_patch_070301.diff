@@ -1,6 +1,6 @@
 Index: cutestuff/legacy/ndns.cpp
 ===================================================================
---- cutestuff/legacy/ndns.cpp	(revision 330)
+--- cutestuff/legacy/ndns.cpp	(revision 355)
 +++ cutestuff/legacy/ndns.cpp	(working copy)
 @@ -68,6 +68,7 @@
  
@@ -10,56 +10,9 @@ Index: cutestuff/legacy/ndns.cpp
  #endif
  
  // CS_NAMESPACE_BEGIN
-@@ -376,4 +377,6 @@
- 	QApplication::postEvent(par, new NDnsWorkerEvent(this));
- }
- 
-+#include "ndns.moc"
-+
- // CS_NAMESPACE_END
-Index: cutestuff/legacy/safedelete.cpp
-===================================================================
---- cutestuff/legacy/safedelete.cpp	(revision 330)
-+++ cutestuff/legacy/safedelete.cpp	(working copy)
-@@ -109,3 +109,5 @@
- {
- 	delete this;
- }
-+
-+#include "safedelete.moc"
-Index: cutestuff/legacy/servsock.cpp
-===================================================================
---- cutestuff/legacy/servsock.cpp	(revision 330)
-+++ cutestuff/legacy/servsock.cpp	(working copy)
-@@ -108,3 +108,5 @@
- }
- 
- // CS_NAMESPACE_END
-+
-+#include "servsock.moc"
-Index: cutestuff/legacy/srvresolver.cpp
-===================================================================
---- cutestuff/legacy/srvresolver.cpp	(revision 330)
-+++ cutestuff/legacy/srvresolver.cpp	(working copy)
-@@ -318,3 +318,5 @@
- }
- 
- // CS_NAMESPACE_END
-+
-+#include "srvresolver.moc"
-Index: cutestuff/network/bsocket.cpp
-===================================================================
---- cutestuff/network/bsocket.cpp	(revision 330)
-+++ cutestuff/network/bsocket.cpp	(working copy)
-@@ -388,3 +388,5 @@
- }
- 
- // CS_NAMESPACE_END
-+
-+#include "bsocket.moc"
 Index: cutestuff/network/bsocket.h
 ===================================================================
---- cutestuff/network/bsocket.h	(revision 330)
+--- cutestuff/network/bsocket.h	(revision 355)
 +++ cutestuff/network/bsocket.h	(working copy)
 @@ -29,9 +29,10 @@
  class QObject;
@@ -73,19 +26,9 @@ Index: cutestuff/network/bsocket.h
  {
  	Q_OBJECT
  public:
-Index: cutestuff/network/httpconnect.cpp
-===================================================================
---- cutestuff/network/httpconnect.cpp	(revision 330)
-+++ cutestuff/network/httpconnect.cpp	(working copy)
-@@ -361,3 +361,5 @@
- }
- 
- // CS_NAMESPACE_END
-+
-+#include "httpconnect.moc"
 Index: cutestuff/network/httpconnect.h
 ===================================================================
---- cutestuff/network/httpconnect.h	(revision 330)
+--- cutestuff/network/httpconnect.h	(revision 355)
 +++ cutestuff/network/httpconnect.h	(working copy)
 @@ -23,9 +23,10 @@
  
@@ -101,7 +44,7 @@ Index: cutestuff/network/httpconnect.h
  public:
 Index: cutestuff/network/httppoll.cpp
 ===================================================================
---- cutestuff/network/httppoll.cpp	(revision 330)
+--- cutestuff/network/httppoll.cpp	(revision 355)
 +++ cutestuff/network/httppoll.cpp	(working copy)
 @@ -54,7 +54,7 @@
  	if(n == 0)
@@ -112,15 +55,9 @@ Index: cutestuff/network/httppoll.cpp
  }
  
  class HttpPoll::Private
-@@ -662,3 +662,5 @@
- }
- 
- // CS_NAMESPACE_END
-+
-+#include "httppoll.moc"
 Index: cutestuff/network/httppoll.h
 ===================================================================
---- cutestuff/network/httppoll.h	(revision 330)
+--- cutestuff/network/httppoll.h	(revision 355)
 +++ cutestuff/network/httppoll.h	(working copy)
 @@ -23,9 +23,10 @@
  
@@ -145,7 +82,7 @@ Index: cutestuff/network/httppoll.h
  public:
 Index: cutestuff/network/socks.cpp
 ===================================================================
---- cutestuff/network/socks.cpp	(revision 330)
+--- cutestuff/network/socks.cpp	(revision 355)
 +++ cutestuff/network/socks.cpp	(working copy)
 @@ -37,6 +37,7 @@
  
@@ -155,15 +92,9 @@ Index: cutestuff/network/socks.cpp
  #endif
  
  #include "servsock.h"
-@@ -1221,3 +1222,5 @@
- }
- 
- // CS_NAMESPACE_END
-+
-+#include "socks.moc"
 Index: cutestuff/network/socks.h
 ===================================================================
---- cutestuff/network/socks.h	(revision 330)
+--- cutestuff/network/socks.h	(revision 355)
 +++ cutestuff/network/socks.h	(working copy)
 @@ -23,13 +23,14 @@
  
@@ -199,19 +130,9 @@ Index: cutestuff/network/socks.h
  {
  	Q_OBJECT
  public:
-Index: cutestuff/util/bytestream.cpp
-===================================================================
---- cutestuff/util/bytestream.cpp	(revision 330)
-+++ cutestuff/util/bytestream.cpp	(working copy)
-@@ -267,3 +267,5 @@
- //! error is indicated by \a code.
- 
- // CS_NAMESPACE_END
-+
-+#include "bytestream.moc"
 Index: cutestuff/util/bytestream.h
 ===================================================================
---- cutestuff/util/bytestream.h	(revision 330)
+--- cutestuff/util/bytestream.h	(revision 355)
 +++ cutestuff/util/bytestream.h	(working copy)
 @@ -24,10 +24,11 @@
  #include <qobject.h>
@@ -228,7 +149,7 @@ Index: cutestuff/util/bytestream.h
  public:
 Index: iris/include/im.h
 ===================================================================
---- iris/include/im.h	(revision 330)
+--- iris/include/im.h	(revision 355)
 +++ iris/include/im.h	(working copy)
 @@ -34,9 +34,27 @@
  #include "xmpp_rosterx.h"
@@ -433,9 +354,9 @@ Index: iris/include/im.h
  		LiveRoster();
 Index: iris/include/xmpp.h
 ===================================================================
---- iris/include/xmpp.h	(revision 330)
+--- iris/include/xmpp.h	(revision 355)
 +++ iris/include/xmpp.h	(working copy)
-@@ -32,6 +32,8 @@
+@@ -32,10 +32,12 @@
  
  #include "xmpp_jid.h"
  
@@ -444,6 +365,11 @@ Index: iris/include/xmpp.h
  namespace QCA
  {
  	class TLS;
+-};
++}
+ 
+ #ifndef CS_XMPP
+ class ByteStream;
 @@ -65,7 +67,7 @@
  
  	void setDebug(Debug *);
@@ -507,9 +433,17 @@ Index: iris/include/xmpp.h
  	{
  		Q_OBJECT
  	public:
+@@ -522,6 +524,6 @@
+ 		void handleError();
+ 		void srvProcessNext();
+ 	};
+-};
++}
+ 
+ #endif
 Index: iris/include/xmpp_features.h
 ===================================================================
---- iris/include/xmpp_features.h	(revision 330)
+--- iris/include/xmpp_features.h	(revision 355)
 +++ iris/include/xmpp_features.h	(working copy)
 @@ -24,9 +24,11 @@
  #include <QStringList>
@@ -542,7 +476,7 @@ Index: iris/include/xmpp_features.h
  			FID_Add
 Index: iris/include/xmpp_jid.h
 ===================================================================
---- iris/include/xmpp_jid.h	(revision 330)
+--- iris/include/xmpp_jid.h	(revision 355)
 +++ iris/include/xmpp_jid.h	(working copy)
 @@ -23,9 +23,11 @@
  
@@ -559,7 +493,7 @@ Index: iris/include/xmpp_jid.h
  		Jid();
 Index: iris/include/xmpp_status.h
 ===================================================================
---- iris/include/xmpp_status.h	(revision 330)
+--- iris/include/xmpp_status.h	(revision 355)
 +++ iris/include/xmpp_status.h	(working copy)
 @@ -26,9 +26,11 @@
  
@@ -576,7 +510,7 @@ Index: iris/include/xmpp_status.h
  		enum Type { Offline, Online, Away, XA, DND, Invisible, FFC };
 Index: iris/include/xmpp_task.h
 ===================================================================
---- iris/include/xmpp_task.h	(revision 330)
+--- iris/include/xmpp_task.h	(revision 355)
 +++ iris/include/xmpp_task.h	(working copy)
 @@ -24,6 +24,8 @@
  #include <QObject>
@@ -596,9 +530,21 @@ Index: iris/include/xmpp_task.h
  	{
  		Q_OBJECT
  	public:
+Index: iris/include/xmpp_xdata.h
+===================================================================
+--- iris/include/xmpp_xdata.h	(revision 355)
++++ iris/include/xmpp_xdata.h	(working copy)
+@@ -147,6 +147,6 @@
+ 		QSharedDataPointer<Private> d;
+ 	};
+ 
+-};
++}
+ 
+ #endif
 Index: iris/jabber/filetransfer.cpp
 ===================================================================
---- iris/jabber/filetransfer.cpp	(revision 330)
+--- iris/jabber/filetransfer.cpp	(revision 355)
 +++ iris/jabber/filetransfer.cpp	(working copy)
 @@ -56,6 +56,7 @@
  	qlonglong size;
@@ -688,7 +634,7 @@ Index: iris/jabber/filetransfer.cpp
  
  	bool rangeSupported = false;
  	QDomElement range = file.elementsByTagName("range").item(0).toElement();
-@@ -750,9 +770,13 @@
+@@ -750,6 +770,7 @@
  	r.fname = fname;
  	r.size = size;
  	r.desc = desc;
@@ -696,15 +642,9 @@ Index: iris/jabber/filetransfer.cpp
  	r.rangeSupported = rangeSupported;
  	r.streamTypes = streamTypes;
  
- 	incoming(r);
- 	return true;
- }
-+
-+
-+#include "filetransfer.moc"
 Index: iris/jabber/filetransfer.h
 ===================================================================
---- iris/jabber/filetransfer.h	(revision 330)
+--- iris/jabber/filetransfer.h	(revision 355)
 +++ iris/jabber/filetransfer.h	(working copy)
 @@ -40,7 +40,7 @@
  			virtual void accept(qlonglong offset=0, qlonglong length=0) = 0;
@@ -768,7 +708,7 @@ Index: iris/jabber/filetransfer.h
  	};
 Index: iris/jabber/s5b.cpp
 ===================================================================
---- iris/jabber/s5b.cpp	(revision 330)
+--- iris/jabber/s5b.cpp	(revision 355)
 +++ iris/jabber/s5b.cpp	(working copy)
 @@ -33,6 +33,7 @@
  
@@ -787,14 +727,9 @@ Index: iris/jabber/s5b.cpp
  }
  
  static bool haveHost(const StreamHostList &list, const Jid &j)
-@@ -2531,3 +2532,4 @@
- }
- 
- #include "s5b.moc"
-+#include "moc_s5b.cxx"
 Index: iris/jabber/s5b.h
 ===================================================================
---- iris/jabber/s5b.h	(revision 330)
+--- iris/jabber/s5b.h	(revision 355)
 +++ iris/jabber/s5b.h	(working copy)
 @@ -46,7 +46,7 @@
  	typedef Q3PtrList<S5BConnection> S5BConnectionList;
@@ -877,18 +812,9 @@ Index: iris/jabber/s5b.h
  	{
  	public:
  		StreamHost();
-Index: iris/jabber/xmpp_ibb.cpp
-===================================================================
---- iris/jabber/xmpp_ibb.cpp	(revision 330)
-+++ iris/jabber/xmpp_ibb.cpp	(working copy)
-@@ -636,3 +636,4 @@
- 	return d->mode;
- }
- 
-+#include "xmpp_ibb.moc"
 Index: iris/jabber/xmpp_ibb.h
 ===================================================================
---- iris/jabber/xmpp_ibb.h	(revision 330)
+--- iris/jabber/xmpp_ibb.h	(revision 355)
 +++ iris/jabber/xmpp_ibb.h	(working copy)
 @@ -34,7 +34,7 @@
  	class IBBManager;
@@ -919,27 +845,19 @@ Index: iris/jabber/xmpp_ibb.h
  	public:
 Index: iris/xmpp-core/compress.cpp
 ===================================================================
---- iris/xmpp-core/compress.cpp	(revision 330)
+--- iris/xmpp-core/compress.cpp	(revision 355)
 +++ iris/xmpp-core/compress.cpp	(working copy)
-@@ -177,3 +177,5 @@
- 	device_->write(output);
- 	return 0;
- }
-+
-+#include "compress.moc"
-Index: iris/xmpp-core/compressionhandler.cpp
-===================================================================
---- iris/xmpp-core/compressionhandler.cpp	(revision 330)
-+++ iris/xmpp-core/compressionhandler.cpp	(working copy)
-@@ -57,3 +57,5 @@
- {
- 	return errorCode_;
- }
-+
-+#include "compressionhandler.moc"
+@@ -1,6 +1,7 @@
+ #include <QObject>
+ #include <QIODevice>
+ #include <zlib.h>
++#include <stdlib.h>
+ 
+ #include "compress.h"
+ 
 Index: iris/xmpp-core/jid.cpp
 ===================================================================
---- iris/xmpp-core/jid.cpp	(revision 330)
+--- iris/xmpp-core/jid.cpp	(revision 355)
 +++ iris/xmpp-core/jid.cpp	(working copy)
 @@ -239,6 +239,9 @@
  		b = d;
@@ -951,9 +869,22 @@ Index: iris/xmpp-core/jid.cpp
  	if(r.isEmpty())
  		f = b;
  	else
+Index: iris/xmpp-core/parser.cpp
+===================================================================
+--- iris/xmpp-core/parser.cpp	(revision 355)
++++ iris/xmpp-core/parser.cpp	(working copy)
+@@ -547,7 +547,7 @@
+ 		Q3PtrList<Parser::Event> eventList;
+ 		bool needMore;
+ 	};
+-};
++}
+ 
+ 
+ //----------------------------------------------------------------------------
 Index: iris/xmpp-core/protocol.cpp
 ===================================================================
---- iris/xmpp-core/protocol.cpp	(revision 330)
+--- iris/xmpp-core/protocol.cpp	(revision 355)
 +++ iris/xmpp-core/protocol.cpp	(working copy)
 @@ -1227,7 +1227,7 @@
  
@@ -966,7 +897,7 @@ Index: iris/xmpp-core/protocol.cpp
  			p = doc.createElement("password");
 Index: iris/xmpp-core/protocol.h
 ===================================================================
---- iris/xmpp-core/protocol.h	(revision 330)
+--- iris/xmpp-core/protocol.h	(revision 355)
 +++ iris/xmpp-core/protocol.h	(working copy)
 @@ -37,6 +37,7 @@
  #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
@@ -976,29 +907,9 @@ Index: iris/xmpp-core/protocol.h
  #define NS_COMPRESS_FEATURE "http://jabber.org/features/compress"
  #define NS_COMPRESS_PROTOCOL "http://jabber.org/protocol/compress"
  
-Index: iris/xmpp-core/securestream.cpp
-===================================================================
---- iris/xmpp-core/securestream.cpp	(revision 330)
-+++ iris/xmpp-core/securestream.cpp	(working copy)
-@@ -340,8 +340,6 @@
- #endif
- };
- 
--#include "securestream.moc"
--
- class SecureStream::Private
- {
- public:
-@@ -648,3 +646,6 @@
- 	if(bytesAvailable())
- 		readyRead();
- }
-+
-+#include "securestream.moc"
-+#include "moc_securestream.cxx"
 Index: iris/xmpp-core/simplesasl.cpp
 ===================================================================
---- iris/xmpp-core/simplesasl.cpp	(revision 330)
+--- iris/xmpp-core/simplesasl.cpp	(revision 355)
 +++ iris/xmpp-core/simplesasl.cpp	(working copy)
 @@ -349,7 +349,7 @@
  
@@ -1036,7 +947,7 @@ Index: iris/xmpp-core/simplesasl.cpp
  	}
 Index: iris/xmpp-core/stream.cpp
 ===================================================================
---- iris/xmpp-core/stream.cpp	(revision 330)
+--- iris/xmpp-core/stream.cpp	(revision 355)
 +++ iris/xmpp-core/stream.cpp	(working copy)
 @@ -87,7 +87,7 @@
  	//if(!QCA::isSupported(QCA::CAP_SHA1))
@@ -1062,7 +973,7 @@ Index: iris/xmpp-core/stream.cpp
  				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
 Index: iris/xmpp-im/types.cpp
 ===================================================================
---- iris/xmpp-im/types.cpp	(revision 330)
+--- iris/xmpp-im/types.cpp	(revision 355)
 +++ iris/xmpp-im/types.cpp	(working copy)
 @@ -24,6 +24,7 @@
  #include <qapplication.h>
@@ -1143,7 +1054,7 @@ Index: iris/xmpp-im/types.cpp
 +				if(e.tagName() == "active")
 +				{
 +					//like in JEP-0022  we let the client know that we can receive ComposingEvent
-+					// (we can do that according to  §4.6  of the JEP-0085)
++					// (we can do that according to   4.6  of the JEP-0085)
 +					d->eventList += ComposingEvent;
 +					d->eventList += InactiveEvent;
 +					d->eventList += GoneEvent;
@@ -1200,15 +1111,9 @@ Index: iris/xmpp-im/types.cpp
  #define FID_GATEWAY "jabber:iq:gateway"
  bool Features::isGateway() const
  {
-@@ -3381,4 +3439,4 @@
- 
- }
- 
--#include "types.moc"
-+#include "moc_types.cxx"
 Index: iris/xmpp-im/xmpp_tasks.cpp
 ===================================================================
---- iris/xmpp-im/xmpp_tasks.cpp	(revision 330)
+--- iris/xmpp-im/xmpp_tasks.cpp	(revision 355)
 +++ iris/xmpp-im/xmpp_tasks.cpp	(working copy)
 @@ -857,6 +857,74 @@
  
@@ -1296,7 +1201,7 @@ Index: iris/xmpp-im/xmpp_tasks.cpp
  			if (node.isEmpty()) {
  				// Extended features
  				QStringList exts = client()->extensions();
-@@ -1982,3 +2054,95 @@
+@@ -1982,3 +2054,93 @@
  	return true;
  }
  
@@ -1390,11 +1295,9 @@ Index: iris/xmpp-im/xmpp_tasks.cpp
 +{
 +	return d->elem;
 +}
-+
-+#include "xmpp_tasks.moc"
 Index: iris/xmpp-im/xmpp_tasks.h
 ===================================================================
---- iris/xmpp-im/xmpp_tasks.h	(revision 330)
+--- iris/xmpp-im/xmpp_tasks.h	(revision 355)
 +++ iris/xmpp-im/xmpp_tasks.h	(working copy)
 @@ -34,7 +34,7 @@
  	class Roster;
@@ -1614,7 +1517,7 @@ Index: iris/xmpp-im/xmpp_tasks.h
  #endif
 Index: iris/xmpp-im/xmpp_vcard.h
 ===================================================================
---- iris/xmpp-im/xmpp_vcard.h	(revision 330)
+--- iris/xmpp-im/xmpp_vcard.h	(revision 355)
 +++ iris/xmpp-im/xmpp_vcard.h	(working copy)
 @@ -28,11 +28,18 @@
  #include <QList>
@@ -1690,3 +1593,26 @@ Index: iris/xmpp-im/xmpp_vcard.h
  		public:
  			Org();
  
+Index: iris/xmpp-im/xmpp_xmlcommon.cpp
+===================================================================
+--- iris/xmpp-im/xmpp_xmlcommon.cpp	(revision 355)
++++ iris/xmpp-im/xmpp_xmlcommon.cpp	(working copy)
+@@ -468,5 +468,5 @@
+ 	}
+ }
+ 
+-};
++}
+ 
+Index: iris/xmpp-im/xmpp_xmlcommon.h
+===================================================================
+--- iris/xmpp-im/xmpp_xmlcommon.h	(revision 355)
++++ iris/xmpp-im/xmpp_xmlcommon.h	(working copy)
+@@ -67,6 +67,6 @@
+ 	void readBoolAttribute(QDomElement e, const QString &name, bool *v);
+ 
+ 	//QString tagContent(const QDomElement &e); // obsolete;
+-};
++}
+ 
+ #endif

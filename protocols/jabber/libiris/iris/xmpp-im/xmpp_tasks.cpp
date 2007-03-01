@@ -2144,5 +2144,3 @@ QDomElement JT_PrivateStorage::element( )
 {
 	return d->elem;
 }
-
-#include "xmpp_tasks.moc"

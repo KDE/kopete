@@ -4,6 +4,31 @@
 
 FIND_PACKAGE(ZLIB REQUIRED)
 
+MACRO (QMAKE_WRAP filename outfiles )
+  # get include dirs
+  QT4_GET_MOC_INC_DIRS(moc_includes)
+
+  FOREACH (it ${ARGN})
+    GET_FILENAME_COMPONENT(it ${it} ABSOLUTE)
+    GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
+
+    SET(outfile ${CMAKE_CURRENT_BINARY_DIR}/${filename})
+    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
+      COMMAND ${QT_MOC_EXECUTABLE}
+      ARGS ${moc_includes} -o ${outfile} ${it}
+      DEPENDS ${it})
+	SET(${outfiles} ${${outfiles}} ${outfile})
+  ENDFOREACH(it)
+ENDMACRO (QMAKE_WRAP)
+
+MACRO (QMAKE_WRAP_CPP outfiles )
+   QMAKE_WRAP("\${outfile}.moc" ${outfiles} ${ARGN})
+ENDMACRO (QMAKE_WRAP_CPP)
+
+MACRO (QMAKE_WRAP_H outfiles )
+   QMAKE_WRAP("moc_\${outfile}.cpp" ${outfiles} ${ARGN})
+ENDMACRO (QMAKE_WRAP_H)
+
 if(MSVC)
   add_definitions(-DIRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION)
 endif(MSVC)
@@ -65,41 +90,42 @@ set(libiris_SRCS
     ${iris_SRCS} 
 )
 
-set(libiris_needmoc_SRCS 
-cutestuff/legacy/ndns.cpp
-cutestuff/legacy/safedelete.cpp
-cutestuff/legacy/servsock.cpp
-cutestuff/legacy/srvresolver.cpp 
-
-cutestuff/network/bsocket.cpp 
-cutestuff/network/httpconnect.cpp 
-cutestuff/network/socks.cpp 
-cutestuff/network/httppoll.cpp 
-
-cutestuff/util/bytestream.cpp 
-cutestuff/util/safedelete.cpp 
-
-iris/jabber/filetransfer.cpp 
-iris/jabber/s5b.cpp 
-iris/jabber/xmpp_ibb.cpp 
-iris/jabber/xmpp_jidlink.cpp 
-
-iris/xmpp-core/compress.cpp
-iris/xmpp-core/compressionhandler.cpp
-iris/xmpp-core/securestream.cpp
-
-iris/xmpp-im/xmpp_tasks.cpp 
+set(libiris_needmoc_SRCS
+	iris/jabber/s5b.cpp
+	iris/xmpp-core/securestream.cpp
+	iris/xmpp-im/types.cpp
 )
 
-qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/im.h)
-qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/xmpp.h)
-qt4_wrap_cpp(libiris_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/xmpp_task.h)
+set(libiris_needmoc_HDRS
+	cutestuff/legacy/ndns.h
+	cutestuff/legacy/safedelete.h
+	cutestuff/legacy/servsock.h
+	cutestuff/legacy/srvresolver.h
 
-qt4_generate_moc(${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/s5b.cpp ${CMAKE_CURRENT_BINARY_DIR}/moc_s5b.cxx)
-qt4_generate_moc(${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-im/types.cpp ${CMAKE_CURRENT_BINARY_DIR}/moc_types.cxx)
-qt4_generate_moc(${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/securestream.cpp ${CMAKE_CURRENT_BINARY_DIR}/moc_securestream.cxx)
+	cutestuff/network/bsocket.h
+	cutestuff/network/httpconnect.h
+	cutestuff/network/socks.h
+	cutestuff/network/httppoll.h
 
-kde4_automoc(${libiris_needmoc_SRCS})
+	cutestuff/util/bytestream.h
+
+	iris/include/im.h
+	iris/include/xmpp.h
+	iris/include/xmpp_task.h
+
+	iris/jabber/filetransfer.h
+	iris/jabber/s5b.h
+	iris/jabber/xmpp_ibb.h
+
+	iris/xmpp-core/compress.h
+	iris/xmpp-core/compressionhandler.h
+	iris/xmpp-core/securestream.h
+
+	iris/xmpp-im/xmpp_tasks.h
+)
+
+QMAKE_WRAP_CPP(libiris_SRCS ${libiris_needmoc_SRCS})
+QMAKE_WRAP_H(libiris_SRCS ${libiris_needmoc_HDRS})
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 

@@ -318,5 +318,3 @@ void SrvResolver::t_timeout()
 }
 
 // CS_NAMESPACE_END
-
-#include "srvresolver.moc"

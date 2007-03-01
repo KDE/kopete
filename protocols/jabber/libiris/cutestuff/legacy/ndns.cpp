@@ -377,6 +377,4 @@ void NDnsWorker::run()
 	QApplication::postEvent(par, new NDnsWorkerEvent(this));
 }
 
-#include "ndns.moc"
-
 // CS_NAMESPACE_END

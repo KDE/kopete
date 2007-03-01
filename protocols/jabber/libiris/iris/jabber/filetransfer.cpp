@@ -777,6 +777,3 @@ bool JT_PushFT::take(const QDomElement &e)
 	incoming(r);
 	return true;
 }
-
-
-#include "filetransfer.moc"

@@ -388,5 +388,3 @@ void BSocket::qs_error(QAbstractSocket::SocketError x)
 }
 
 // CS_NAMESPACE_END
-
-#include "bsocket.moc"
