@@ -746,15 +746,12 @@ void ChatView::saveChatSettings()
 	if ( !mc )
 		return;
 
-	KSharedConfig::Ptr config = KGlobal::config();
-
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           mc->metaContactId();
-
-	config->setGroup( contactListGroup );
-	config->writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
-	config->writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
-	config->sync();
+    KConfigGroup config = KGlobal::config()->group(contactListGroup);
+	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
+	config.writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
+	config.sync();
 }
 
 void ChatView::loadChatSettings()

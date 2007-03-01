@@ -114,9 +114,9 @@ bool WPEditAccount::validateData()
 
 void WPEditAccount::writeConfig()
 {
-	KGlobal::config()->setGroup("WinPopup");
-	KGlobal::config()->writeEntry("SmbcPath", mSmbcPath->url().url());
-	KGlobal::config()->writeEntry("HostCheckFreq", mHostCheckFreq->text());
+	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	group.writeEntry("SmbcPath", mSmbcPath->url().url());
+	group.writeEntry("HostCheckFreq", mHostCheckFreq->text());
 }
 
 Kopete::Account *WPEditAccount::apply()

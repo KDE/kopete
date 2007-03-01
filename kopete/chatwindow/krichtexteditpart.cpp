@@ -391,19 +391,18 @@ void KRichTextEditPart::writeConfig()
     // If true we're still reading the conf write now, so don't write.
     if( d->configWriteLock ) return;
 
-    KSharedConfig::Ptr config = KGlobal::config();
+    KConfigGroup config = KGlobal::config()->group("RichTextEditor");
 
     QFont currentFont = d->editor->currentFont();
 
-    config->setGroup("RichTextEditor");
-    config->writeEntry("Font", currentFont );
-    config->writeEntry("FontSize", currentFont.pointSize() );
-    config->writeEntry("FontBold", currentFont.bold() );
-    config->writeEntry("FontItalic", currentFont.italic() );
-    config->writeEntry("FontUnderline", currentFont.underline() );
-    config->writeEntry("TextColor", d->editor->textColor() );
-    config->writeEntry("EditAlignment", int(d->editor->alignment()) );
-    config->sync();
+    config.writeEntry("Font", currentFont );
+    config.writeEntry("FontSize", currentFont.pointSize() );
+    config.writeEntry("FontBold", currentFont.bold() );
+    config.writeEntry("FontItalic", currentFont.italic() );
+    config.writeEntry("FontUnderline", currentFont.underline() );
+    config.writeEntry("TextColor", d->editor->textColor() );
+    config.writeEntry("EditAlignment", int(d->editor->alignment()) );
+    config.sync();
 }
 
 void KRichTextEditPart::setTextColor()

@@ -130,9 +130,9 @@ void WPProtocol::settingsChanged()
 
 void WPProtocol::readConfig()
 {
-	KGlobal::config()->setGroup("WinPopup");
-	smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
+	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	smbClientBin = group.readEntry("SmbcPath", "/usr/bin/smbclient");
+	groupCheckFreq = group.readEntry("HostCheckFreq", 60);
 }
 
 void WPProtocol::installSamba()

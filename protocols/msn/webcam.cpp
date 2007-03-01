@@ -524,14 +524,13 @@ QString Webcam::xml(uint session , uint rid)
 
 int Webcam::getAvailablePort()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup( "MSN" );
-    QString basePort=config->readEntry("WebcamPort");
+    KConfigGroup config = KGlobal::config()->group("MSN");
+    QString basePort=config.readEntry("WebcamPort");
     if(basePort.isEmpty() || basePort == "0" )
 		basePort="6891";
 	
     uint firstport = basePort.toInt();
-    uint maxOffset=config->readEntry("WebcamMaxPortOffset", 10);
+    uint maxOffset=config.readEntry("WebcamMaxPortOffset", 10);
     uint lastport = firstport + maxOffset;
 
 	// try to find an available port

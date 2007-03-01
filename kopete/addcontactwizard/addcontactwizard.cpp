@@ -137,9 +137,8 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	connect( protocolListView, SIGNAL(spacePressed(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
 
 	// read sticky settings
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("Add Contact Wizard");
-	bool useKABC = config->readEntry( "UseAddressBook", false );
+	KConfigGroup config = KGlobal::config()->group("Add Contact Wizard");
+	bool useKABC = config.readEntry( "UseAddressBook", false );
 	chkAddressee->setChecked( useKABC );
 	setAppropriate( selectAddressee, useKABC );
 	// load address book, if using KABC
@@ -246,10 +245,9 @@ void AddContactWizard::accept()
 		delete metaContact;
 
 	// write sticky settings
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("Add Contact Wizard");
-	config->writeEntry( "UseAddressBook", chkAddressee->isChecked() );
-	config->sync();
+	KConfigGroup config = KGlobal::config()->group("Add Contact Wizard");
+	config.writeEntry( "UseAddressBook", chkAddressee->isChecked() );
+	config.sync();
 	deleteLater();
 }
 

@@ -74,32 +74,27 @@ void HistoryPlugin::convertOldHistory()
 			if(fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs" )
 			{
 				protocolId="MSNProtocol";
-				KGlobal::config()->setGroup("MSN");
-				accountId=KGlobal::config()->readEntry( "UserID" );
+				accountId=KGlobal::config()->group("MSN").readEntry( "UserID" );
 			}
 			else if(fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs" )
 			{
 				protocolId="ICQProtocol";
-				KGlobal::config()->setGroup("ICQ");
-				accountId=KGlobal::config()->readEntry( "UIN" );
+				accountId=KGlobal::config()->group("ICQ").readEntry( "UIN" );
 			}
 			else if(fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs" )
 			{
 				protocolId="AIMProtocol";
-				KGlobal::config()->setGroup("AIM");
-				accountId=KGlobal::config()->readEntry( "UserID" );
+				accountId=KGlobal::config()->group("AIM").readEntry( "UserID" );
 			}
 			else if(fi.fileName() == "OscarProtocol" )
 			{
 				protocolId="AIMProtocol";
-				KGlobal::config()->setGroup("OSCAR");
-				accountId=KGlobal::config()->readEntry( "UserID" );
+				accountId=KGlobal::config()->group("OSCAR").readEntry( "UserID" );
 			}
 			else if(fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs")
 			{
 				protocolId="JabberProtocol";
-				KGlobal::config()->setGroup("Jabber");
-				accountId=KGlobal::config()->readEntry( "UserID" );
+				accountId=KGlobal::config()->group("Jabber").readEntry( "UserID" );
 			}
 			//TODO: gadu, wp
 		}
@@ -305,8 +300,7 @@ void HistoryPlugin::convertOldHistory()
 
 bool HistoryPlugin::detectOldHistory()
 {
-	KGlobal::config()->setGroup("History Plugin");
-	QString version=KGlobal::config()->readEntry( "Version" ,"0.6" );
+	QString version=KGlobal::config()->group("History Plugin").readEntry( "Version" ,"0.6" );
 
 	if(version != "0.6")
 		return false;
