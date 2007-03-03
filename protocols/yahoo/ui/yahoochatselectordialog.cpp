@@ -156,8 +156,7 @@ void YahooChatSelectorDialog::parseChatRoom( const QDomNode &node )
 				QString count = e.attribute( "count" );
 				lobby->setText( 0, name + QString( ":%1" )
 						.arg( count ) );
-				lobby->setData( 0, Qt::ToolTipRole, i18n( "Users: %1 Webcams: %2 Voices: %3" )
-						.arg( users, webcams, voices ) );
+				lobby->setData( 0, Qt::ToolTipRole, i18n( "Users: %1 Webcams: %2 Voices: %3", users, webcams, voices ) );
 				lobby->setData( 0, Qt::UserRole, id );
 				item->addChild( lobby );
 			}
