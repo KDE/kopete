@@ -63,7 +63,7 @@ This is not the same as webcam chat you can find in the newer Windows MessengerÂ
                 <widget class="KComboBox">
                     <item>
                         <property name="text">
-                            <string>gnomemeeting -c callto://%1</string>
+                            <string>ekiga -c callto://%1</string>
                         </property>
                     </item>
                     <item>

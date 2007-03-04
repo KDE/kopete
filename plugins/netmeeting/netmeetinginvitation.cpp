@@ -162,7 +162,7 @@ void NetMeetingInvitation::startMeeting(const QString & ip_address)
 	
 	KConfig *config=KGlobal::config();
 	config->setGroup("Netmeeting Plugin");
-	QString app=config->readEntry("NetmeetingApplication","gnomemeeting -c callto://%1").arg(ip_address);
+	QString app=config->readEntry("NetmeetingApplication","ekiga -c callto://%1").arg(ip_address);
 	
 	kdDebug() << k_funcinfo << app <<  endl ;
 	

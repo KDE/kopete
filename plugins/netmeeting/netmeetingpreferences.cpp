@@ -58,7 +58,7 @@ void NetmeetingPreferences::load()
 {
 	KConfig *config=KGlobal::config();
 	config->setGroup("Netmeeting Plugin");
-	preferencesDialog->m_app->setCurrentText(config->readEntry("NetmeetingApplication","gnomemeeting -c callto://%1"));
+	preferencesDialog->m_app->setCurrentText(config->readEntry("NetmeetingApplication","ekiga -c callto://%1"));
 	emit KCModule::changed(false);
 }
 
