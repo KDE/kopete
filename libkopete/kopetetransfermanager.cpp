@@ -73,7 +73,7 @@ void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 	mTarget = target;
 
 	if( showProgressInfo )
-		ui()->copying( sourceURL(), destinationURL() );
+		emitCopying( sourceURL(), destinationURL() );
 
 	connect( this, SIGNAL( result( KJob* ) ), SLOT( slotResultEmitted() ) );
 
