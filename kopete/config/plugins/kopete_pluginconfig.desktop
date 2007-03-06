@@ -10,4 +10,6 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Plugins
+Name[x-test]=xxPluginsxx
 Comment=Configure Plugins
+Comment[x-test]=xxConfigure Pluginsxx

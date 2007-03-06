@@ -9,4 +9,6 @@ X-KDE-ParentApp=kopete_privacy
 X-KDE-ParentComponents=kopete_privacy
 
 Name=Privacy
+Name[x-test]=xxPrivacyxx
 Comment=Privacy Plugin
+Comment[x-test]=xxPrivacy Pluginxx
