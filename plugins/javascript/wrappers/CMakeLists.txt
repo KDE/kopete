@@ -27,7 +27,7 @@ set(wrappers_STAT_SRCS
 
 kde4_automoc(${wrappers_STAT_SRCS})
 
-ADD_LIBRARY(wrappers STATIC ${wrappers_STAT_SRCS})
+KDE4_ADD_LIBRARY(wrappers STATIC ${wrappers_STAT_SRCS})
 
 
 ########### install files ###############
