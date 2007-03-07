@@ -20,9 +20,10 @@
 
 #include <kdebug.h>
 #include <kdialog.h>
-#include <q3listview.h>
 
 #include "ui_tooltipeditwidget.h"
+
+class QStandardItemModel;
 
 class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 {
@@ -32,8 +33,8 @@ class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 		TooltipEditDialog(QWidget *parent=0);
 
 	private slots:
-		void slotUnusedSelected(Q3ListViewItem *);
-		void slotUsedSelected(Q3ListViewItem *);
+		void slotUnusedSelected(const QItemSelection&);
+		void slotUsedSelected(const QItemSelection&);
 		void slotUpButton();
 		void slotDownButton();
 		void slotAddButton();
@@ -45,6 +46,9 @@ class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 
 	private:
 		QWidget *mMainWidget;
+
+		QStandardItemModel *mUnusedEntries;
+		QStandardItemModel *mUsedEntries;
 };
 
 #endif

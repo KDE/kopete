@@ -21,36 +21,14 @@
 #include "kopeteglobal.h"
 #include "kopeteappearancesettings.h"
 
-#include <qapplication.h>
-#include <qtoolbutton.h>
-#include <qstringlist.h>
-#include <q3header.h>
+#include <QStringList>
+#include <QApplication>
+#include <QToolButton>
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 
 #include <kiconloader.h>
-#include <k3listview.h>
 #include <klocale.h>
-
-class TooltipItem : public K3ListViewItem
-{
-	public:
-		TooltipItem(K3ListView *parent, const QString& label, const QString& propertyName)
-			: K3ListViewItem(parent, label),
-				mPropName(propertyName)
-		{
-		}
-
-		TooltipItem(K3ListView *parent, Q3ListViewItem *item, const QString& label, const QString& propertyName)
-			: K3ListViewItem(parent, item, label),
-				mPropName(propertyName)
-		{
-		}
-
-		QString propertyName() const { return mPropName; }
-	private:
-		QString mPropName;
-};
-
-
 
 TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	: KDialog(parent)
@@ -65,24 +43,25 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	setupUi(mMainWidget);
 
 	setMainWidget(mMainWidget);
-	lstUsedItems->header()->hide();
-	lstUnusedItems->header()->hide();
-	lstUsedItems->setSorting( -1 );
-	lstUnusedItems->setSorting( 0 );
+
+	/*
+	 * Fill the model with the appropriates entries (pairs label/internal string)
+	 */
+	mUnusedEntries = new QStandardItemModel(this);
+	mUsedEntries = new QStandardItemModel(this);
 
 	const Kopete::ContactPropertyTmpl::Map propmap(
 		Kopete::Global::Properties::self()->templateMap());
 	QStringList usedKeys = Kopete::AppearanceSettings::self()->toolTipContents();
-
-	connect(lstUnusedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotAddButton()));
-	connect(lstUsedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotRemoveButton()));
 
 	// first fill the "used" list
 	foreach(QString usedProp, usedKeys)
 	{
 		if(propmap.contains(usedProp) && !propmap[usedProp].isPrivate())
 		{
-			new TooltipItem(lstUsedItems, propmap[usedProp].label(), usedProp);
+			QStandardItem *item = new QStandardItem( propmap[usedProp].label() );
+			item->setData( usedProp );
+			mUsedEntries->appendRow( item );
 		}
 	}
 
@@ -92,13 +71,29 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	for(it = propmap.begin(); it != propmap.end(); ++it)
 	{
 		if((usedKeys.contains(it.key())==0) && (!it.value().isPrivate()))
-			new TooltipItem(lstUnusedItems, it.value().label(), it.key());
+		{
+			QStandardItem *item = new QStandardItem( it.value().label() );
+			item->setData( it.key() );
+			mUnusedEntries->appendRow( item );
+		}
 	}
 
-	connect(lstUnusedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
-		this, SLOT(slotUnusedSelected(Q3ListViewItem *)));
-	connect(lstUsedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
-		this, SLOT(slotUsedSelected(Q3ListViewItem *)));
+	// We use a proxy for mUnusedEntries because it needs to be alphabetically sorted
+	QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel( this );
+	proxyModel->setSourceModel( mUnusedEntries );
+	proxyModel->sort( 0, Qt::AscendingOrder );
+	unusedItemsListView->setModel( proxyModel );
+	usedItemsListView->setModel( mUsedEntries );
+
+	/*
+	 * Ui setup
+	 */
+	connect(unusedItemsListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,  const QItemSelection&)),
+				this, SLOT(slotUnusedSelected(const QItemSelection&)));
+	connect(usedItemsListView->selectionModel(), SIGNAL(selectionChanged( const QItemSelection&,  const QItemSelection& )),
+		this, SLOT(slotUsedSelected(const QItemSelection&)));
+	connect(unusedItemsListView, SIGNAL(doubleClicked ( const QModelIndex& )), this, SLOT(slotAddButton()));
+	connect(usedItemsListView, SIGNAL(doubleClicked ( const QModelIndex& )), this, SLOT(slotRemoveButton()));
 
 	tbUp->setIcon(KIcon("up"));
 	tbUp->setEnabled(false);
@@ -130,16 +125,17 @@ void TooltipEditDialog::slotOkClicked()
 {
 	QStringList oldList = Kopete::AppearanceSettings::self()->toolTipContents();
 	QStringList newList;
-	Q3ListViewItemIterator it(lstUsedItems);
+
 	QString keyname;
 
-	while(it.current())
+	int max = mUsedEntries->rowCount( );
+	for ( int i=0; i < max; i++ )
 	{
-		keyname = static_cast<TooltipItem *>(it.current())->propertyName();
+		QStandardItem *item = mUsedEntries->item( i, 0 );
+		keyname = item->data().value<QString>();
 		newList += keyname;
-		kDebug(14000) << k_funcinfo <<
-			"Adding key '" << keyname << "' to tooltip list" << endl;
-		++it;
+		// kDebug(14000) << k_funcinfo <<
+		//	"Adding key '" << keyname << "' to tooltip list" << endl;
 	}
 
 	if(oldList != newList)
@@ -151,78 +147,127 @@ void TooltipEditDialog::slotOkClicked()
 }
 
 
-void TooltipEditDialog::slotUnusedSelected(Q3ListViewItem *item)
+void TooltipEditDialog::slotUnusedSelected(const QItemSelection& selected)
 {
-	//tbRemove->setEnabled(false);
-	tbAdd->setEnabled(item!=0);
+	tbAdd->setEnabled(selected.indexes().count());
 }
 
-void TooltipEditDialog::slotUsedSelected(Q3ListViewItem *item)
+void TooltipEditDialog::slotUsedSelected(const QItemSelection& selected)
 {
-	tbRemove->setEnabled(item!=0);
-	//tbAdd->setEnabled(false);
-	if (item)
-	{
-		tbUp->setEnabled(item->itemAbove() != 0);
-		tbDown->setEnabled(item->itemBelow() != 0);
-	}
+	tbRemove->setEnabled( selected.indexes().count() );
+	tbUp->setEnabled( selected.indexes().count() );
+	tbDown->setEnabled( selected.indexes().count() );
+
+	if ( !selected.indexes().count() )
+		return;
+
+	// Disable Up button if we are at the top, disable Down one if we are at bottom
+	if ( selected.indexes().first().row() == 0 )
+		tbUp->setEnabled( false );
 	else
-	{
-		tbUp->setEnabled(false);
-		tbDown->setEnabled(false);
-	}
+		tbUp->setEnabled( true );
+
+	if ( selected.indexes().last().row() == mUsedEntries->rowCount() - 1 )
+		tbDown->setEnabled( false );
+	else
+		tbDown->setEnabled( true );
 }
 
 void TooltipEditDialog::slotUpButton()
 {
-	Q3ListViewItem *item = lstUsedItems->currentItem();
-	Q3ListViewItem *prev = item->itemAbove();
-	if(prev == 0) // we are first item already
-		return;
+	QModelIndexList indexList = usedItemsListView->selectionModel()->selectedIndexes();
+	usedItemsListView->selectionModel()->clear();
 
-	prev->moveItem(item);
-	slotUsedSelected(item);
+	foreach( QModelIndex index,	 indexList )
+	{
+		int row = index.row();
+
+		if ( row - 1 < 0 )
+			return;
+
+		// Move it up
+		mUsedEntries->insertRow( row - 1, mUsedEntries->takeRow( row ) );
+
+		// Keep the element selected
+		usedItemsListView->selectionModel()->select( mUsedEntries->index( row - 1, 0 ) , QItemSelectionModel::Select );
+		usedItemsListView->scrollTo( mUsedEntries->index( row - 1, 0 ) );
+
+		// Check for the up and down buttons
+		if ( row - 1 == 0 )
+			tbUp->setEnabled( false );
+		tbDown->setEnabled( true );
+	}
 }
 
 void TooltipEditDialog::slotDownButton()
 {
-	Q3ListViewItem *item = lstUsedItems->currentItem();
-	Q3ListViewItem *next = item->itemBelow();
-	if(next == 0) // we are last item already
-		return;
+	QModelIndexList indexList = usedItemsListView->selectionModel()->selectedIndexes();
+	usedItemsListView->selectionModel()->clear();
 
-	item->moveItem(next);
-	slotUsedSelected(item);
+	foreach( QModelIndex index,	 indexList )	{
+		int row = index.row();
+
+		if ( row + 1 > mUsedEntries->rowCount() )
+			return;
+
+		// Move it down
+		mUsedEntries->insertRow( row + 1, mUsedEntries->takeRow( row ) );
+
+		// Keep it selected
+		usedItemsListView->selectionModel()->select( mUsedEntries->index( row + 1, 0 ) , QItemSelectionModel::Select );
+		usedItemsListView->scrollTo( mUsedEntries->index( row + 1, 0 ) );
+
+
+		// Check for the up and down buttons
+		if ( row + 1 == mUsedEntries->rowCount() - 1 )
+			tbDown->setEnabled( false );
+		tbUp->setEnabled( true );
+	}
 }
 
 void TooltipEditDialog::slotAddButton()
 {
-	TooltipItem *item = static_cast<TooltipItem *>(lstUnusedItems->currentItem());
-	if(!item)
-		return;
-	//kDebug(14000) << k_funcinfo << endl;
+	QModelIndexList indexList = unusedItemsListView->selectionModel()->selectedIndexes();
 
-	// build a new one in the "used" list
-	new TooltipItem(lstUsedItems, item->text(0), item->propertyName());
+	foreach( QModelIndex index_,  indexList )
+	{
+		QModelIndex index = static_cast<QSortFilterProxyModel*>( unusedItemsListView->model() )->mapToSource( index_ );
 
-	// remove the old one from "unused" list
-	lstUnusedItems->takeItem(item);
-	delete item;
+		// We insert it after the last selected one if there is a selection,
+		// at the end else.
+		QModelIndex insertAfter;
+		if ( !usedItemsListView->selectionModel()->selectedIndexes().isEmpty() )
+			insertAfter = usedItemsListView->selectionModel()->selectedIndexes().last();
+		else
+			insertAfter = mUsedEntries->index( mUsedEntries->rowCount() - 1, 0 );
+
+		// Move the row from the unused items list to the used items one.
+		mUsedEntries->insertRow( insertAfter.row() + 1, mUnusedEntries->takeRow( index.row() ) );
+
+		// Make the newly inserted item current
+		QModelIndex newIndex = mUsedEntries->index( insertAfter.row() + 1, 0 );
+		usedItemsListView->setCurrentIndex( newIndex );
+	}
 }
 
 void TooltipEditDialog::slotRemoveButton()
 {
-	TooltipItem *item = static_cast<TooltipItem *>(lstUsedItems->currentItem());
-	if(!item)
-		return;
-	//kDebug(14000) << k_funcinfo << endl;
+	QModelIndexList indexList = usedItemsListView->selectionModel()->selectedIndexes();
 
-	// build a new one in the "unused" list
-	new TooltipItem(lstUnusedItems, item->text(0), item->propertyName());
+	foreach( QModelIndex index,	 indexList )
+	{
+		int row = index.row();
 
-	// remove the old one from "used" list
-	lstUsedItems->takeItem(item);
-	delete item;
+
+		mUnusedEntries->insertRow( 0, mUsedEntries->takeRow( index.row() ) );
+
+		// Move selection
+		if ( row > 0 )
+			usedItemsListView->selectionModel()->select( mUsedEntries->index( row - 1, 0 ), QItemSelectionModel::Select );
+		else
+			usedItemsListView->selectionModel()->select( mUsedEntries->index( row, 0 ), QItemSelectionModel::Select );
+
+	}
 }
 
 #include "tooltipeditdialog.moc"
