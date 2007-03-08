@@ -205,6 +205,8 @@ public:
 	 * Get the device's capabilities using the V4L or V4L2 APIs
 	 */
 	int checkDevice();
+	int checkResolution();
+	int checkInputs();
 	/**
 	 * Dump the device's capabilities (debug)
 	 */

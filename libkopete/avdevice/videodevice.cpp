@@ -76,14 +76,13 @@ QString VideoDevice::devicePath() const
 
 int VideoDevice::open()
 {
-	kdDebug( 14010 ) <<  k_funcinfo << "called ---" << endl;
+	kdDebug( 14010 ) <<  k_funcinfo << "called" << endl;
 	if(-1 != descriptor)
 	{
 		kdDebug( 14010 ) <<  k_funcinfo << "Device is already open" << endl;
 		return EXIT_SUCCESS;
 	}
-	kdDebug( 14010 ) <<  k_funcinfo << "Opening file descriptor ----" << endl;
-	kdDebug( 14010 ) <<  k_funcinfo << "Opening file descriptor ----" << devicePath() << endl;
+	kdDebug( 14010 ) <<  k_funcinfo << "Opening file descriptor " << devicePath() << endl;
 
 	descriptor = ::open (QFile::encodeName(m_devicePath), O_RDWR, 0);
 	if(!isOpen())
@@ -111,7 +110,14 @@ bool VideoDevice::isOpen() const
 	return (-1 != descriptor);
 }
 
+
 int VideoDevice::checkDevice()
+{
+	checkResolution();
+	checkInputs();
+}
+
+int VideoDevice::checkResolution()
 {
 	kdDebug( 14010 ) <<  k_funcinfo << "checkDevice() called." << endl;
 	if(isOpen())
@@ -127,7 +133,6 @@ int VideoDevice::checkDevice()
 		m_driver=VIDEODEV_DRIVER_NONE;
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
-		{
 		CLEAR(V4L2_capabilities);
 
 		if (-1 != xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
@@ -142,159 +147,52 @@ int VideoDevice::checkDevice()
 			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
-			fprintf(stderr, "checkDevice: detected V4L2 driver.\n");
+
+// It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
+		{
+		  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying MJPEG." << endl;
+		  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_MJPEG))
+		    {
+		      kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUYV format. Trying YUYV." << endl;
+		      if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
+			{
+			  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support MJPEG format. Trying RGB24." << endl;
+			  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+			    {
+				kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
+				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+				{
+					kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
+					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+					{
+						kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
+						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
+							kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+					}
+				}
+			    }
+			}
+		    }
+		}
 
 // Detect maximum and minimum resolution supported by the V4L2 device
-			CLEAR (fmt);
-			fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
-				kdDebug( 14010 ) <<  k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ")." << endl;
-			fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			fmt.fmt.pix.width       = 32767;
-			fmt.fmt.pix.height      = 32767;
-			fmt.fmt.pix.field       = V4L2_FIELD_ANY;
-			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
-			{
-				kdDebug( 14010 ) << k_funcinfo << "Detecting maximum size with VIDIOC_S_FMT failed (" << errno << ").Returned maxwidth: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
-				// Note VIDIOC_S_FMT may change width and height.
-			}
-			else
-			{
-				m_maxwidth  = fmt.fmt.pix.width;
-				m_maxheight = fmt.fmt.pix.height;
-				fprintf(stderr, "checkDevice: V4L2 max %d x %d\n", m_maxwidth, m_maxheight); /* AD: */
-			}
-			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
-				kdDebug( 14010 ) << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ")." << endl;
-			fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			fmt.fmt.pix.width       = 1;
-			fmt.fmt.pix.height      = 1;
-			fmt.fmt.pix.field       = V4L2_FIELD_ANY;
-			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
-			{
-				kdDebug( 14010 ) << k_funcinfo << "Detecting minimum size with VIDIOC_S_FMT failed (" << errno << ").Returned maxwidth: " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
-				// Note VIDIOC_S_FMT may change width and height.
-			}
-			else
-			{
-				m_minwidth  = fmt.fmt.pix.width;
-				m_minheight = fmt.fmt.pix.height;
-			}
-
-// Buggy driver paranoia
-/*				min = fmt.fmt.pix.width * 2;
-				if (fmt.fmt.pix.bytesperline < min)
-					fmt.fmt.pix.bytesperline = min;
-				min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
-				if (fmt.fmt.pix.sizeimage < min)
-					fmt.fmt.pix.sizeimage = min;
-				m_buffer_size=fmt.fmt.pix.sizeimage ;*/
-
-			int inputisok=EXIT_SUCCESS;
-			m_inputs.clear();
-			for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
-			{
-				struct v4l2_input videoinput;
-				CLEAR(videoinput);
-				videoinput.index = loop;
-				inputisok=xioctl(VIDIOC_ENUMINPUT, &videoinput);
-				if(inputisok==EXIT_SUCCESS)
-				{
-					VideoInput tempinput(
-							QString::fromLocal8Bit((const char*)videoinput.name),
-							videoinput.type & V4L2_INPUT_TYPE_TUNER,
-							videoinput.std );
-					m_inputs.push_back(tempinput);
-					kdDebug( 14010 ) <<  k_funcinfo << "Input " << loop << ": " << tempinput.name() << " (tuner: " << ((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
-#if 0
-					if((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0)
-					{
-//						_tunerForInput[name] = desc.tuner;
-//						_isTuner = true;
-					}
-					else
-					{
-//						_tunerForInput[name] = -1;
-					}
-#endif
-				}
-			}
+			m_minwidth = 1;
+			m_minheight = 1;
+			m_maxheight = 32767;
+			m_maxwidth = 32767;
+			setSize(maxWidth(), maxHeight());
+			m_maxwidth = width();
+			m_maxheight = height();
+			setSize(minWidth(), minHeight());
+			m_minwidth = width();
+			m_minheight = height();
 		}
 		else
 		{
 // V4L-only drivers should return an EINVAL in errno to indicate they cannot handle V4L2 calls. Not every driver is compliant, so
 // it will try the V4L api even if the error code is different than expected.
 			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " is not a V4L2 device." << endl;
-		}
-
-		}
-#endif
-
-		CLEAR(V4L_capabilities);
-
-		if(m_driver==VIDEODEV_DRIVER_NONE)
-		{
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " Trying V4L API." << endl;
-			if (-1 == xioctl (VIDIOCGCAP, &V4L_capabilities))
-			{
-				perror ("ioctl (VIDIOCGCAP)");
-				m_driver = VIDEODEV_DRIVER_NONE;
-				return EXIT_FAILURE;
-			}
-			else
-			{
-				kdDebug( 14010 ) <<  k_funcinfo << m_devicePath << " is a V4L device." << endl;
-				m_driver = VIDEODEV_DRIVER_V4L;
-				m_model=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
-				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
-					m_videocapture=true;
-				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
-					m_videochromakey=true;
-				if(V4L_capabilities.type & VID_TYPE_SCALES)
-					m_videoscale=true;	
-				if(V4L_capabilities.type & VID_TYPE_OVERLAY)
-					m_videooverlay=true;
-//				kdDebug( 14010 ) << "libkopete (avdevice):     Inputs : " << V4L_capabilities.channels << endl;
-//				kdDebug( 14010 ) << "libkopete (avdevice):     Audios : " << V4L_capabilities.audios << endl;
-				m_minwidth  = V4L_capabilities.minwidth;
-				m_maxwidth  = V4L_capabilities.maxwidth;
-				m_minheight = V4L_capabilities.minheight;
-				m_maxheight = V4L_capabilities.maxheight;
-
-				fprintf(stderr, "checkDevice: V4L1 max %d x %d\n", m_maxwidth, m_maxheight); /* AD: */
-
-
-				int inputisok=EXIT_SUCCESS;
-				m_inputs.clear();
-				for(int loop=0; loop < V4L_capabilities.channels; loop++)
-				{
-					struct video_channel videoinput;
-					CLEAR(videoinput);
-					videoinput.channel = loop;
-					videoinput.norm    = 1;
-					inputisok=xioctl(VIDIOCGCHAN, &videoinput);
-					if(inputisok==EXIT_SUCCESS)
-					{
-						VideoInput tempinput(
-								QString::fromLocal8Bit((const char*)videoinput.name),
-								videoinput.flags & VIDEO_VC_TUNER,
-								0 /* TODO: FIXME check this is correct*/);
-// TODO: The routine to detect the appropriate video standards for V4L must be placed here
-						m_inputs.push_back(tempinput);
-//						kdDebug( 14010 ) << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.flags & VIDEO_VC_TUNER) != 0) << ")" << endl;
-/*						if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
-						{
-//							_tunerForInput[name] = desc.tuner;
-//							_isTuner = true;
-						}
-						else
-						{
-//							_tunerForInput[name] = -1;
-						}
-*/					}
-				}
-
-			}
 		}
 #endif
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
@@ -335,10 +233,121 @@ int VideoDevice::checkDevice()
 // TODO: Now we must execute the proper initialization according to the type of the driver.
 		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
 		return EXIT_SUCCESS;
-	}
 	return EXIT_FAILURE;
+#endif
+	}
 }
 
+int VideoDevice::checkInputs()
+{
+	kdDebug( 14010 ) <<  k_funcinfo << "checkInputs() called." << endl;
+	if(isOpen())
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		int inputisok=EXIT_SUCCESS;
+		m_inputs.clear();
+		for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
+		{
+			struct v4l2_input videoinput;
+			CLEAR(videoinput);
+			videoinput.index = loop;
+			inputisok=xioctl(VIDIOC_ENUMINPUT, &videoinput);
+			if(inputisok==EXIT_SUCCESS)
+			{
+				VideoInput tempinput(
+						QString::fromLocal8Bit((const char*)videoinput.name),
+						videoinput.type & V4L2_INPUT_TYPE_TUNER,
+						videoinput.std );
+				m_inputs.push_back(tempinput);
+				kdDebug( 14010 ) <<  k_funcinfo << "Input " << loop << ": " << tempinput.name() << " (tuner: " << ((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
+#if 0
+				if((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0)
+				{
+//					_tunerForInput[name] = desc.tuner;
+//					_isTuner = true;
+				}
+				else
+				{
+//					_tunerForInput[name] = -1;
+				}
+#endif
+			}
+		}
+#endif
+#endif
+	}
+}
+/*
+		CLEAR(V4L_capabilities);
+
+		if(m_driver==VIDEODEV_DRIVER_NONE)
+		{
+			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " Trying V4L API." << endl;
+			if (-1 == xioctl (VIDIOCGCAP, &V4L_capabilities))
+			{
+				perror ("ioctl (VIDIOCGCAP)");
+				m_driver = VIDEODEV_DRIVER_NONE;
+				return EXIT_FAILURE;
+			}
+			else
+			{
+				kdDebug( 14010 ) <<  k_funcinfo << m_devicePath << " is a V4L device." << endl;
+				m_driver = VIDEODEV_DRIVER_V4L;
+				m_model=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
+				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
+					m_videocapture=true;
+				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
+					m_videochromakey=true;
+				if(V4L_capabilities.type & VID_TYPE_SCALES)
+					m_videoscale=true;	
+				if(V4L_capabilities.type & VID_TYPE_OVERLAY)
+					m_videooverlay=true;
+//				kdDebug( 14010 ) << "libkopete (avdevice):     Inputs : " << V4L_capabilities.channels << endl;
+//				kdDebug( 14010 ) << "libkopete (avdevice):     Audios : " << V4L_capabilities.audios << endl;
+				m_minwidth  = V4L_capabilities.minwidth;
+				m_maxwidth  = V4L_capabilities.maxwidth;
+				m_minheight = V4L_capabilities.minheight;
+				m_maxheight = V4L_capabilities.maxheight;
+
+				fprintf(stderr, "checkDevice: V4L1 max %d x %d\n", m_maxwidth, m_maxheight); // AD: 
+
+
+				int inputisok=EXIT_SUCCESS;
+				m_inputs.clear();
+				for(int loop=0; loop < V4L_capabilities.channels; loop++)
+				{
+					struct video_channel videoinput;
+					CLEAR(videoinput);
+					videoinput.channel = loop;
+					videoinput.norm    = 1;
+					inputisok=xioctl(VIDIOCGCHAN, &videoinput);
+					if(inputisok==EXIT_SUCCESS)
+					{
+						VideoInput tempinput(
+								QString::fromLocal8Bit((const char*)videoinput.name),
+								videoinput.flags & VIDEO_VC_TUNER,
+								0 );// TODO: FIXME check this is correct
+// TODO: The routine to detect the appropriate video standards for V4L must be placed here
+						m_inputs.push_back(tempinput);
+//						kdDebug( 14010 ) << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.flags & VIDEO_VC_TUNER) != 0) << ")" << endl;
+						if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
+						{
+//							_tunerForInput[name] = desc.tuner;
+//							_isTuner = true;
+						}
+						else
+						{
+//							_tunerForInput[name] = -1;
+						}
+					}
+				}
+
+			}
+		}
+#endif
+}
+*/
 
 int VideoDevice::showDeviceCapabilities()
 {
@@ -515,13 +524,9 @@ int VideoDevice::maxHeight() const
 	return m_maxheight;
 }
 
-int VideoDevice::setSize( int newwidth, int newheight)
-{
-kdDebug( 14010 ) <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") called." << endl;
-	if(isOpen())
-	{
+//This code was contained in setSize() just after thre isOpen() before. I'm removind it 
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
+/*		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 		{
 		  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying MJPEG." << endl;
 		  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_MJPEG))
@@ -547,7 +552,12 @@ kdDebug( 14010 ) <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight <
 			}
 		    }
 		}
-
+*/
+int VideoDevice::setSize( int newwidth, int newheight)
+{
+kdDebug( 14010 ) <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") called." << endl;
+	if(isOpen())
+	{
 		newwidth = QMIN( newwidth, m_maxwidth );
 		newheight = QMIN( newheight, m_maxheight );
 		newwidth = QMAX( newwidth, m_minwidth );
