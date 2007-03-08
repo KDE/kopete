@@ -83,17 +83,17 @@ KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, 
 
 KAction * KopeteStdAction::chat( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Start &Chat..." ), KIcon("mail_generic"), recvr, slot, parent, name );
+	return createAction( i18n( "Start &Chat..." ), KIcon("mail"), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::sendMessage( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail_generic" ), recvr, slot, parent, name );
+	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "User &Info" ), KIcon( "messagebox_info" ), recvr, slot, parent, name );
+	return createAction( i18n( "User &Info" ), KIcon( "dialog-information" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
@@ -131,12 +131,12 @@ KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, 
 
 KAction * KopeteStdAction::blockContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "&Block Contact" ), KIcon( "player_pause" ), recvr, slot, parent, name );
+	return createAction( i18n( "&Block Contact" ), KIcon( "media-playback-pause" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::unblockContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Un&block Contact" ), KIcon( "player_play" ), recvr, slot, parent, name );
+	return createAction( i18n( "Un&block Contact" ), KIcon( "media-playback-start" ), recvr, slot, parent, name );
 }
 
 #include "kopetestdaction.moc"

@@ -78,8 +78,8 @@ IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WFlags flags
 	m_networks = IRCNetworkList::self()->networks();
 
 	m_host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), this ) );
-	upButton->setIconSet( SmallIconSet( "up" )  );
-	downButton->setIconSet( SmallIconSet( "down" ) );
+	upButton->setIconSet( SmallIconSet( "go-up" )  );
+	downButton->setIconSet( SmallIconSet( "go-down" ) );
 
 	connect(networkList, SIGNAL(selectionChanged()),
 		this, SLOT(slotUpdateNetworkConfig()));
@@ -277,7 +277,7 @@ void IRCNetworkConfigWidget::slotDeleteNetwork()
 		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
 		"Any accounts which use this network will have to be modified.</qt>")
 		.arg(network), i18n("Deleting Network"),
-		KGuiItem(i18n("&Delete Network"),"editdelete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
+		KGuiItem(i18n("&Delete Network"),"edit-delete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		IRCNetwork *net = m_networks[ network ];
 //		m_networks.remove( network );
@@ -296,7 +296,7 @@ void IRCNetworkConfigWidget::slotDeleteHost()
 	if ( KMessageBox::warningContinueCancel(
 		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
 		.arg(hostName), i18n("Deleting Host"),
-		KGuiItem(i18n("&Delete Host"),"editdelete"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
+		KGuiItem(i18n("&Delete Host"),"edit-delete"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
 	{
 		IRCHost *host = m_hosts[ hostName ];
 		if ( host )

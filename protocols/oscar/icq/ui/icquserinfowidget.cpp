@@ -63,7 +63,7 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	m_homeInfoWidget->setupUi( homeInfo );
 	KPageWidgetItem *homeInfoItem = addPage( homeInfo, i18n("Home Info") );
 	homeInfoItem->setHeader( i18n("Home Information") );
-	homeInfoItem->setIcon( KIcon("gohome") );
+	homeInfoItem->setIcon( KIcon("go-home") );
 	
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::ICQWorkInfoWidget;

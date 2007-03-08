@@ -338,7 +338,7 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), coll );
+	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
         coll->addAction( "chat_send", chatSend );
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
 	//Default to 'Return' for sending messages
@@ -394,7 +394,7 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("charset"), i18n( "Set Default &Font..." ), coll );
+	action = new KAction( KIcon("character-set"), i18n( "Set Default &Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
@@ -622,7 +622,7 @@ void KopeteChatWindow::createTabBar()
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
-		m_rightWidget->setIcon( SmallIcon( "tab_remove" ) );
+		m_rightWidget->setIcon( SmallIcon( "tab-remove" ) );
 		m_rightWidget->adjustSize();
 		m_rightWidget->setToolTip( i18n("Close the current tab") );
 		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRightCorner );
@@ -1026,7 +1026,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
 		{
-			KActionMenu *moreMenu = new KActionMenu( KIcon("folder_open"), i18n("More..."), this);
+			KActionMenu *moreMenu = new KActionMenu( KIcon("folder-open"), i18n("More..."), this);
 			connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
 			contactsMenu->addAction( moreMenu );

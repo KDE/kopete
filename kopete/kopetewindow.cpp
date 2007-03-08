@@ -330,7 +330,7 @@ void KopeteWindow::initActions()
 	KAction* act = KStandardAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection() );
         actionCollection()->addAction( "settings_keys", act );
 
-	KAction *configureGlobalShortcutsAction = new KAction( KIcon("configure_shortcuts"), i18n( "Configure &Global Shortcuts..." ), this );
+	KAction *configureGlobalShortcutsAction = new KAction( KIcon("configure-shortcuts"), i18n( "Configure &Global Shortcuts..." ), this );
         actionCollection()->addAction( "settings_global", configureGlobalShortcutsAction );
 	connect( configureGlobalShortcutsAction, SIGNAL( triggered(bool) ), this, SLOT( slotConfGlobalKeys() ) );
 
@@ -1018,7 +1018,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 
 	// NOTE: The following code still use insertItem because it require the behavior of those (-DarkShock)
 	int i = 0;
-	d->globalStatusMessageMenu->insertItem( SmallIcon( "remove" ), i18n( "No Message" ), i++ );
+	d->globalStatusMessageMenu->insertItem( SmallIcon( "list-remove" ), i18n( "No Message" ), i++ );
 	d->globalStatusMessageMenu->addSeparator();
 
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();

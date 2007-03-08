@@ -184,7 +184,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	//initActions
 	KActionCollection* ac = new KActionCollection(this);
 	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), ac );
-	mCopyURLAct = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), this );
+	mCopyURLAct = new KAction( KIcon("edit-copy"), i18n( "Copy Link Address" ), this );
         ac->addAction( "mCopyURLAct", mCopyURLAct );
 	connect(mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT( slotCopyURL() ) );
 

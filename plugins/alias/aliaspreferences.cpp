@@ -462,7 +462,7 @@ void AliasPreferences::slotEditAlias()
 
 void AliasPreferences::slotDeleteAliases()
 {
-	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "editdelete") ) == KMessageBox::Continue )
+	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "edit-delete") ) == KMessageBox::Continue )
 	{
 		QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
 		foreach( Q3ListViewItem *i, items)

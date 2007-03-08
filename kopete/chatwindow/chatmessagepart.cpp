@@ -240,7 +240,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->saveAction = KStandardAction::saveAs( this, SLOT(save()), actionCollection() );
 	d->printAction = KStandardAction::print( this, SLOT(print()),actionCollection() );
 	d->closeAction = KStandardAction::close( this, SLOT(slotCloseView()),actionCollection() );
-	d->copyURLAction = new KAction( KIcon("editcopy"), i18n( "Copy Link Address" ), actionCollection() );
+	d->copyURLAction = new KAction( KIcon("edit-copy"), i18n( "Copy Link Address" ), actionCollection() );
         actionCollection()->addAction( "editcopy", d->copyURLAction );
 	connect( d->copyURLAction, SIGNAL( triggered(bool) ), this, SLOT( slotCopyURL() ) );
 

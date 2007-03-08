@@ -121,7 +121,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	
 	// Set icon for KPushButton
 	buttonNewIdentity->setIcon(KIcon("new"));
-	buttonCopyIdentity->setIcon(KIcon("editcopy"));
+	buttonCopyIdentity->setIcon(KIcon("edit-copy"));
 	buttonRenameIdentity->setIcon(KIcon("edit"));
 	buttonRemoveIdentity->setIcon(KIcon("delete_user"));
 	buttonClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );

@@ -69,7 +69,7 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 
 	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
-	m_selectEncoding->setIcon( KIcon( "charset" ) );
+	m_selectEncoding->setIcon( KIcon( "character-set" ) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
 
 	bool on = account()->isConnected();

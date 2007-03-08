@@ -85,7 +85,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 
-	m_openInboxAction = new KAction( KIcon("mail_generic"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 
@@ -93,7 +93,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
         //, "renameAction" );
 	QObject::connect( m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()) );
 
-	m_startChatAction = new KAction( KIcon("mail_generic"), i18n( "&Start Chat..." ), this );
+	m_startChatAction = new KAction( KIcon("mail"), i18n( "&Start Chat..." ), this );
         //, "startChatAction" );
 	QObject::connect( m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()) );
 

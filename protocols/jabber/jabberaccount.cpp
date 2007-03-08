@@ -1750,8 +1750,8 @@ bool JabberAccount::removeAccount( )
 				   			    "If you unregister, all your contact list may be removed on the server,"
 							    "And you will never be able to connect to this account with any client", accountLabel() ),
 					i18n("Unregister"),
-					KGuiItem(i18n( "Remove and Unregister" ), "editdelete"),
-					KGuiItem(i18n( "Remove from kopete only"), "edittrash"),
+					KGuiItem(i18n( "Remove and Unregister" ), "edit-delete"),
+					KGuiItem(i18n( "Remove from kopete only"), "edit-trash"),
 					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
 		if(result == KMessageBox::Cancel)
 		{

@@ -331,7 +331,7 @@ GaduAccount::actionMenu()
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
 	p->actionMenu_->addAction( action );
 
-	action = new KAction( KIcon("info"), i18n( "Set &Description..." ), this );
+	action = new KAction( KIcon("document-properties"), i18n( "Set &Description..." ), this );
         //, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
 	p->actionMenu_->addAction( action );

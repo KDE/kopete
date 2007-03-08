@@ -66,8 +66,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 	header << i18n("Protocol") << i18n("Account");
 	mAccountList->setHeaderLabels( header );
 
-	mButtonUp->setIcon( KIcon( "up" ) );
-	mButtonDown->setIcon( KIcon( "down" ) );
+	mButtonUp->setIcon( KIcon( "go-up" ) );
+	mButtonDown->setIcon( KIcon( "go-down" ) );
 
 	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
@@ -263,7 +263,7 @@ void KopeteAccountConfig::slotRemoveAccount()
 
 	Kopete::Account *i = lvi->account();
 	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?", i->accountLabel() ),
-		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ), "editdelete"),
+		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ), "edit-delete"),
 		 "askRemoveAccount", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::Continue )
 	{
 		Kopete::AccountManager::self()->removeAccount( i );

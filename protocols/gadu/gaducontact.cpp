@@ -197,7 +197,7 @@ GaduContact::customContextMenuActions()
 {
 	QList<KAction*> *fakeCollection = new QList<KAction*>();
 	//show profile
-	KAction* actionShowProfile = new KAction( KIcon("info"), i18n("Show Profile"), this );
+	KAction* actionShowProfile = new KAction( KIcon("document-properties"), i18n("Show Profile"), this );
 	//, "actionShowPublicProfile" );
 	connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()) );
 

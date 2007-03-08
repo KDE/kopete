@@ -224,7 +224,7 @@ void KopeteEmailWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-	d->chatSend = new KAction( KIcon("mail_send"), i18n( "&Send Message" ), this );
+	d->chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), this );
         coll->addAction( "chat_send", d->chatSend );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
@@ -237,7 +237,7 @@ void KopeteEmailWindow::initActions(void)
 	KStandardAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
 
 	KAction* action;
-	action = new KAction( KIcon("charset"), i18n( "&Set Font..." ), coll );
+	action = new KAction( KIcon("character-set"), i18n( "&Set Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 

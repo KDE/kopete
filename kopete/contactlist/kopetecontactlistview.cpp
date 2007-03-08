@@ -490,10 +490,10 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ),
 		ac, "contactStartChat" );
 
-	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "editcut" ),
+	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
                                                 KShortcut(), this, SLOT( slotMoveToGroup() ), ac );
         ac->addAction( "contactMove", actionMove );
-	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "editcopy" ),
+	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
         ac->addAction( "contactCopy", actionCopy );
 
@@ -503,11 +503,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
         ac->addAction( "contactRemove", actionRemove );
-	actionSendEmail = new KAction( KIcon("mail_generic"), i18n( "Send Email..." ), ac );
+	actionSendEmail = new KAction( KIcon("mail"), i18n( "Send Email..." ), ac );
         ac->addAction( "contactSendEmail", actionSendEmail );
 	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
 	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
-	actionRename = new KAction( KIcon("filesaveas"), i18n( "Rename" ), ac );
+	actionRename = new KAction( KIcon("document-save-as"), i18n( "Rename" ), ac );
         ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
@@ -1640,7 +1640,7 @@ void KopeteContactListView::slotRemove()
 		else
 			return; // this should never happen
 
-		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem(i18n("Remove"),"editdelete") ,
+		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem(i18n("Remove"),"edit-delete") ,
 		 "askRemovingContactOrGroup" , KMessageBox::Notify | KMessageBox::Dangerous ) !=
 			KMessageBox::Continue )
 		{
@@ -1656,7 +1656,7 @@ void KopeteContactListView::slotRemove()
 		         "contacts from your contact list?" );
 
 		if( KMessageBox::warningContinueCancelList( this, msg, items, i18n("Remove"),
-			KGuiItem(i18n("Remove"),"editdelete"), "askRemovingContactOrGroup",
+			KGuiItem(i18n("Remove"),"edit-delete"), "askRemovingContactOrGroup",
 			KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
 		{
 			return;

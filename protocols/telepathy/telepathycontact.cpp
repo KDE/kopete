@@ -120,13 +120,13 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
 	// TODO: Optimize
 	QList<KAction*> *actionList = new QList<KAction*>;
 
-	KAction *actionAuthorize = new KAction( KIcon("mail_forward"), i18n("Authorize Contact"), 0 );
+	KAction *actionAuthorize = new KAction( KIcon("mail-forward"), i18n("Authorize Contact"), 0 );
 	connect( actionAuthorize, SIGNAL(triggered(bool)), this, SLOT(actionAuthorize()) );
 	actionAuthorize->setEnabled(false);
 	if( internalContact() && internalContact()->authorizationStatus() != QtTapioca::Contact::Authorized )
 		actionAuthorize->setEnabled(true);
 
-	KAction *actionSubscribe = new KAction( KIcon("mail_reply"), i18n("Subscribe to Contact"), 0 );
+	KAction *actionSubscribe = new KAction( KIcon("mail-reply-sender"), i18n("Subscribe to Contact"), 0 );
 	connect( actionSubscribe, SIGNAL(triggered(bool)), this, SLOT(actionSubscribe()) );
 	actionSubscribe->setEnabled(false);
 	if( internalContact() && internalContact()->subscriptionStatus() != QtTapioca::Contact::Subscribed )

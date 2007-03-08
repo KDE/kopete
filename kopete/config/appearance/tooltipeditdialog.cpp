@@ -95,18 +95,18 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	connect(unusedItemsListView, SIGNAL(doubleClicked ( const QModelIndex& )), this, SLOT(slotAddButton()));
 	connect(usedItemsListView, SIGNAL(doubleClicked ( const QModelIndex& )), this, SLOT(slotRemoveButton()));
 
-	tbUp->setIcon(KIcon("up"));
+	tbUp->setIcon(KIcon("go-up"));
 	tbUp->setEnabled(false);
 	tbUp->setAutoRepeat(true);
 	connect(tbUp, SIGNAL(clicked()), SLOT(slotUpButton()));
 
-	tbDown->setIcon(KIcon("down"));
+	tbDown->setIcon(KIcon("go-down"));
 	tbDown->setEnabled(false);
 	tbDown->setAutoRepeat(true);
 	connect(tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
 
-	KIcon left = KIcon("back");
-	KIcon right = KIcon("forward");
+	KIcon left = KIcon("go-previous");
+	KIcon right = KIcon("go-next");
 
 	tbAdd->setIcon(QApplication::isRightToLeft() ? left : right);
 	tbAdd->setEnabled(false);

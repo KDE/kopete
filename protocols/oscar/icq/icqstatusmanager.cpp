@@ -32,7 +32,7 @@ public:
 		, unknown(        Kopete::OnlineStatus::Unknown,     0, ICQProtocol::protocol(),
 		                  Oscar::Presence::Offline, QStringList(QString("status_unknown")), i18n("Unknown") )
 		, waitingForAuth( Kopete::OnlineStatus::Unknown,     1, ICQProtocol::protocol(),
-		                  Oscar::Presence::Offline, QStringList(QString("button_cancel")),  i18n("Waiting for Authorization") )
+		                  Oscar::Presence::Offline, QStringList(QString("dialog-cancel")),  i18n("Waiting for Authorization") )
 		, invisible(      Kopete::OnlineStatus::Invisible,   2, ICQProtocol::protocol(),
 		                  Oscar::Presence::Offline, QStringList(),    QString(),
 						  QString(), Kopete::OnlineStatusManager::Invisible,

@@ -178,7 +178,7 @@ const ContactPropertyTmpl &Properties::workMobilePhone() const
 const ContactPropertyTmpl &Properties::emailAddress() const
 {
 	return createProp(QLatin1String("emailAddress"),
-		i18n("Email Address"), QLatin1String("mail_generic"), true);
+		i18n("Email Address"), QLatin1String("mail"), true);
 }
 
 const ContactPropertyTmpl &Properties::nickName() const

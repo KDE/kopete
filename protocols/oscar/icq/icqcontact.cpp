@@ -455,12 +455,12 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 
 	actionRequestAuth = new KAction( i18n("&Request Authorization"), this );
         //, "actionRequestAuth");
-	actionRequestAuth->setIcon( KIcon( "mail_reply" ) );
+	actionRequestAuth->setIcon( KIcon( "mail-reply-sender" ) );
 	QObject::connect( actionRequestAuth, SIGNAL(triggered(bool)), this, SLOT(slotRequestAuth()) );
 
 	actionSendAuth = new KAction( i18n("&Grant Authorization"), this );
         //, "actionSendAuth");
-	actionSendAuth->setIcon( KIcon( "mail_forward" ) );
+	actionSendAuth->setIcon( KIcon( "mail-forward" ) );
 	QObject::connect( actionSendAuth, SIGNAL(triggered(bool)), this, SLOT(slotSendAuth()) );
 
 	m_actionIgnore = new KToggleAction(i18n("&Ignore"), this );
@@ -477,7 +477,7 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 
 	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
-	m_selectEncoding->setIcon( KIcon( "charset" ) );
+	m_selectEncoding->setIcon( KIcon( "character-set" ) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
 
 	bool on = account()->isConnected();

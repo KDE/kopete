@@ -208,7 +208,7 @@ void KRichTextEditPart::createActions()
     connect( d->enableRichText, SIGNAL(toggled(bool)),
             this, SLOT(setRichTextEnabled(bool)) );
 
-    d->checkSpelling = new KAction( KIcon("spellcheck"), i18n("Check &Spelling"), actionCollection() );
+    d->checkSpelling = new KAction( KIcon("tools-check-spelling"), i18n("Check &Spelling"), actionCollection() );
     actionCollection()->addAction( "check_spelling", d->checkSpelling );
     connect( d->checkSpelling, SIGNAL(triggered(bool)), d->editor, SLOT(checkSpelling()) );
 
@@ -228,18 +228,18 @@ void KRichTextEditPart::createActions()
     connect( d->action_font_size, SIGNAL(fontSizeChanged(int)), this, SLOT( setFontSize(int) ) );
 
     //Formatting
-    d->action_bold = new KToggleAction( KIcon("text_bold"), i18n("&Bold"), actionCollection() );
+    d->action_bold = new KToggleAction( KIcon("format-text-bold"), i18n("&Bold"), actionCollection() );
     actionCollection()->addAction( "format_bold", d->action_bold );
     d->action_bold->setShortcut( KShortcut(Qt::CTRL + Qt::Key_B) );
     connect( d->action_bold, SIGNAL(toggled(bool)), this, SLOT(setFontBold(bool)) );
 
-    d->action_italic = new KToggleAction( KIcon("text_italic"), i18n("&Italic"), actionCollection() );
+    d->action_italic = new KToggleAction( KIcon("format-text-italic"), i18n("&Italic"), actionCollection() );
     actionCollection()->addAction( "format_italic", d->action_italic );
     d->action_italic->setShortcut( KShortcut(Qt::CTRL + Qt::Key_I) );
     connect(d->action_italic, SIGNAL(toggled(bool)),
         this, SLOT(setFontItalic(bool)) );
 
-    d->action_underline = new KToggleAction( KIcon("text_under"), i18n("&Underline"), actionCollection() );
+    d->action_underline = new KToggleAction( KIcon("format-text-underline"), i18n("&Underline"), actionCollection() );
     actionCollection()->addAction( "format_underline", d->action_underline );
     d->action_underline->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
     connect( d->action_underline, SIGNAL(toggled(bool)),
@@ -269,7 +269,7 @@ void KRichTextEditPart::createActions()
     connect( d->action_align_right, SIGNAL(toggled(bool)),
         this, SLOT(setAlignRight(bool)) );
 
-    d->action_align_justify = new KToggleAction( KIcon("text_block"), i18n("&Justify"), actionCollection() );
+    d->action_align_justify = new KToggleAction( KIcon("format-justify-fill"), i18n("&Justify"), actionCollection() );
     actionCollection()->addAction( "format_align_justify", d->action_align_justify );
     connect( d->action_align_justify, SIGNAL(toggled(bool)),
         this, SLOT(setAlignJustify(bool)) );

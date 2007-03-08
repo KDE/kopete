@@ -135,19 +135,19 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connect_established"), i18n ("Authorization"), this);
+	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connection-established"), i18n ("Authorization"), this);
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
 	resendAuthAction = new KAction( this );
-	resendAuthAction->setIcon( (KIcon("mail_forward") ) );
+	resendAuthAction->setIcon( (KIcon("mail-forward") ) );
 	resendAuthAction->setText( i18n ("(Re)send Authorization To") );
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(resendAuthAction, SIGNAL(triggered(bool)), SLOT(slotSendAuth()));
 	actionAuthorization->addAction(resendAuthAction);
 
 	requestAuthAction = new KAction( this );
-	requestAuthAction->setIcon( (KIcon("mail_reply") ) );
+	requestAuthAction->setIcon( (KIcon("mail-reply-sender") ) );
 	requestAuthAction->setText( i18n ("(Re)request Authorization From") );
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(requestAuthAction, SIGNAL(triggered(bool)), SLOT(slotRequestAuth()));
@@ -216,7 +216,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 			if( i == activeItem )
 			{
 				KAction *tmp = new KAction( this );
-				tmp->setIcon( KIcon("button_ok") );
+				tmp->setIcon( KIcon("dialog-ok") );
 				tmp->setText( str);
 				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
 				actionSelectResource->addAction(tmp);

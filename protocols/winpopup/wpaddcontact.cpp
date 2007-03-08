@@ -69,7 +69,7 @@ void WPAddContact::slotUpdateGroups()
 	QStringList Groups = theAccount->getGroups();
 	QStringList::ConstIterator end = Groups.end();
 	for (QStringList::ConstIterator i = Groups.begin(); i != end; i++)
-		theDialog->mHostGroup->addItem( QIcon(SmallIcon("network")), *i);
+		theDialog->mHostGroup->addItem( QIcon(SmallIcon("network-wired")), *i);
 	slotSelected(theDialog->mHostGroup->currentText());
 }
 

@@ -87,13 +87,13 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 
-	m_openInboxAction = new KAction( KIcon("mail_generic"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
-	m_openYABAction = new KAction( KIcon("contents"), i18n( "Open &Addressbook..." ), this );
+	m_openYABAction = new KAction( KIcon("help-contents"), i18n( "Open &Addressbook..." ), this );
         //, "m_openYABAction" );
 	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
-	m_editOwnYABEntry = new KAction( KIcon("contents"), i18n( "&Edit my contact details..."), this );
+	m_editOwnYABEntry = new KAction( KIcon("help-contents"), i18n( "&Edit my contact details..."), this );
         //, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
 	m_joinChatAction = new KAction( KIcon("chat"), i18n( "&Join chat room..."), this );
