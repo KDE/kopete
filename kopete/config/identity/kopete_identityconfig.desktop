@@ -53,6 +53,7 @@ Name[x-test]=xxIdentityxx
 Name[zh_HK]=識別名稱
 Name[zh_TW]=身份
 Comment=Manage Your Global Identity
+Comment[uk]=Керування вашим глобальним профілем
 Comment[x-test]=xxManage Your Global Identityxx
 
 DocPath=kopete/configure-dialog.html#configuring-identity

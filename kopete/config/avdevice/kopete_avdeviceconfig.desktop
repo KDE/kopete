@@ -58,5 +58,6 @@ Name[xh]=Amacebo
 Name[zh_HK]=裝置
 Name[zh_TW]=裝置
 Comment=Kopete Video and Audio Device Settings
+Comment[uk]=Параметри відео і аудіо пристроїв у Kopete
 Comment[x-test]=xxKopete Video and Audio Device Settingsxx
 DocPath=kopete/configure-dialog.html#configuring-avdevice

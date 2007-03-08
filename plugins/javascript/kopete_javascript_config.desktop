@@ -12,5 +12,6 @@ X-KDE-ParentComponents=kopete_javascript
 Name=JavaScript
 Name[x-test]=xxJavaScriptxx
 Comment=Add JavaScript bindings
+Comment[uk]=Додати прив'язування JavaScript
 Comment[x-test]=xxAdd JavaScript bindingsxx
 

@@ -10,8 +10,10 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Chatwindow
+Name[uk]=Вікно балачки
 Name[x-test]=xxChatwindowxx
 Comment=Configure Chat Window Look And Feel
+Comment[uk]=Налаштувати вигляд і поведінку вікна балачки
 Comment[x-test]=xxConfigure Chat Window Look And Feelxx
 
 
