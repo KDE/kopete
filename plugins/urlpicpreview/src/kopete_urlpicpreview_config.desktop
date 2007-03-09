@@ -13,4 +13,6 @@ X-KDE-ParentComponents=kopete_urlpicpreview
 X-Kopete-Version=1000900
 
 Name=URLPicPreview Plugin Configuration
+Name[el]=Ρυθμίσεις πρόσθετου URLPicPreview
 Comment=URLPicPreview Plugin
+Comment[el]=Πρόσθετο URLPicPreview
