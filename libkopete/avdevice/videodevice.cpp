@@ -147,46 +147,20 @@ int VideoDevice::checkResolution()
 			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
-
-// It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
-		{
-		  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying MJPEG." << endl;
-		  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_MJPEG))
-		    {
-		      kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUYV format. Trying YUYV." << endl;
-		      if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
-			{
-			  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support MJPEG format. Trying RGB24." << endl;
-			  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
-			    {
-				kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
-				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
-				{
-					kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
-					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
-					{
-						kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
-						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-							kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
-					}
-				}
-			    }
-			}
-		    }
 		}
 
+			negotiatePixelFormat();
 // Detect maximum and minimum resolution supported by the V4L2 device
 			m_minwidth = 1;
 			m_minheight = 1;
 			m_maxheight = 32767;
 			m_maxwidth = 32767;
-			setSize(maxWidth(), maxHeight());
-			m_maxwidth = width();
-			m_maxheight = height();
 			setSize(minWidth(), minHeight());
 			m_minwidth = width();
 			m_minheight = height();
+			setSize(maxWidth(), maxHeight());
+			m_maxwidth = width();
+			m_maxheight = height();
 		}
 		else
 		{
@@ -231,11 +205,10 @@ int VideoDevice::checkResolution()
 			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_MJPEG) << endl;
 
 // TODO: Now we must execute the proper initialization according to the type of the driver.
-		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
+		kdDebug( 14010 ) <<  k_funcinfo << "checkResolution() exited successfuly." << endl;
 		return EXIT_SUCCESS;
-	return EXIT_FAILURE;
 #endif
-	}
+	return EXIT_FAILURE;
 }
 
 int VideoDevice::checkInputs()
@@ -278,76 +251,6 @@ int VideoDevice::checkInputs()
 #endif
 	}
 }
-/*
-		CLEAR(V4L_capabilities);
-
-		if(m_driver==VIDEODEV_DRIVER_NONE)
-		{
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " Trying V4L API." << endl;
-			if (-1 == xioctl (VIDIOCGCAP, &V4L_capabilities))
-			{
-				perror ("ioctl (VIDIOCGCAP)");
-				m_driver = VIDEODEV_DRIVER_NONE;
-				return EXIT_FAILURE;
-			}
-			else
-			{
-				kdDebug( 14010 ) <<  k_funcinfo << m_devicePath << " is a V4L device." << endl;
-				m_driver = VIDEODEV_DRIVER_V4L;
-				m_model=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
-				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
-					m_videocapture=true;
-				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
-					m_videochromakey=true;
-				if(V4L_capabilities.type & VID_TYPE_SCALES)
-					m_videoscale=true;	
-				if(V4L_capabilities.type & VID_TYPE_OVERLAY)
-					m_videooverlay=true;
-//				kdDebug( 14010 ) << "libkopete (avdevice):     Inputs : " << V4L_capabilities.channels << endl;
-//				kdDebug( 14010 ) << "libkopete (avdevice):     Audios : " << V4L_capabilities.audios << endl;
-				m_minwidth  = V4L_capabilities.minwidth;
-				m_maxwidth  = V4L_capabilities.maxwidth;
-				m_minheight = V4L_capabilities.minheight;
-				m_maxheight = V4L_capabilities.maxheight;
-
-				fprintf(stderr, "checkDevice: V4L1 max %d x %d\n", m_maxwidth, m_maxheight); // AD: 
-
-
-				int inputisok=EXIT_SUCCESS;
-				m_inputs.clear();
-				for(int loop=0; loop < V4L_capabilities.channels; loop++)
-				{
-					struct video_channel videoinput;
-					CLEAR(videoinput);
-					videoinput.channel = loop;
-					videoinput.norm    = 1;
-					inputisok=xioctl(VIDIOCGCHAN, &videoinput);
-					if(inputisok==EXIT_SUCCESS)
-					{
-						VideoInput tempinput(
-								QString::fromLocal8Bit((const char*)videoinput.name),
-								videoinput.flags & VIDEO_VC_TUNER,
-								0 );// TODO: FIXME check this is correct
-// TODO: The routine to detect the appropriate video standards for V4L must be placed here
-						m_inputs.push_back(tempinput);
-//						kdDebug( 14010 ) << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.flags & VIDEO_VC_TUNER) != 0) << ")" << endl;
-						if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
-						{
-//							_tunerForInput[name] = desc.tuner;
-//							_isTuner = true;
-						}
-						else
-						{
-//							_tunerForInput[name] = -1;
-						}
-					}
-				}
-
-			}
-		}
-#endif
-}
-*/
 
 int VideoDevice::showDeviceCapabilities()
 {
@@ -446,16 +349,6 @@ int VideoDevice::initDevice()
 			}
 			break;
 #endif
-		case VIDEODEV_DRIVER_V4L:
-			m_videoread=true;
-			m_io_method=IO_METHOD_READ;
-			if(-1 != xioctl(VIDIOCGFBUF,&V4L_videobuffer))
-			{
-//				m_videostream=true;
-//				m_io_method = IO_METHOD_MMAP;
-				kdDebug( 14010 ) <<  k_funcinfo << "    Streaming interface" << endl;
-			}
-			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -524,35 +417,6 @@ int VideoDevice::maxHeight() const
 	return m_maxheight;
 }
 
-//This code was contained in setSize() just after thre isOpen() before. I'm removind it 
-// It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-/*		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
-		{
-		  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying MJPEG." << endl;
-		  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_MJPEG))
-		    {
-		      kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support YUYV format. Trying YUYV." << endl;
-		      if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
-			{
-			  kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support MJPEG format. Trying RGB24." << endl;
-			  if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
-			    {
-				kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
-				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
-				{
-					kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
-					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
-					{
-						kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
-						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-							kdDebug( 14010 ) <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
-					}
-				}
-			    }
-			}
-		    }
-		}
-*/
 int VideoDevice::setSize( int newwidth, int newheight)
 {
 kdDebug( 14010 ) <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") called." << endl;
@@ -599,34 +463,6 @@ kdDebug( 14010 ) << k_funcinfo << "VIDIOC_S_FMT worked (" << errno << ").Returne
 				}
 				break;
 #endif
-			case VIDEODEV_DRIVER_V4L:
-				{
-					struct video_window V4L_videowindow;
-
-kdDebug( 14010 ) << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------" << endl;
-
-				if (xioctl (VIDIOCGWIN, &V4L_videowindow)== -1)
-				{
-					perror ("ioctl VIDIOCGWIN");
-//					return (NULL);
-				}
-				V4L_videowindow.width  = width();
-				V4L_videowindow.height = height();
-				V4L_videowindow.clipcount=0;
-				if (xioctl (VIDIOCSWIN, &V4L_videowindow)== -1)
-				{
-					perror ("ioctl VIDIOCSWIN");
-//					return (NULL);
-				}
-kdDebug( 14010 ) << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------" << endl;
-
-//				kdDebug( 14010 ) << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
-
-/*				if(-1 == xioctl(VIDIOCGFBUF,&V4L_videobuffer))
-					kdDebug( 14010 ) << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Card cannot stream" << endl;*/
-
-				}
-				break;
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -636,7 +472,8 @@ kdDebug( 14010 ) << "------------- width: " << V4L_videowindow.width << " Height
 kdDebug( 14010 ) << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------" << endl;
 
 		m_currentbuffer.pixelformat=m_pixelformat;
-		m_currentbuffer.data.resize(m_buffer_size);
+// TEMPORARY FIX TO AVOID RUNNING the initRead() and family... it must set a flag in the future to init those methods when getFrame()...
+/*		m_currentbuffer.data.resize(m_buffer_size);
 
 		switch (m_io_method)
 		{
@@ -645,7 +482,7 @@ kdDebug( 14010 ) << "------------------------- ------- -- m_buffer_size: " << m_
 			case IO_METHOD_MMAP:    initMmap ();    break;
 			case IO_METHOD_USERPTR: initUserptr (); break;
 		}
-
+*/
 kdDebug( 14010 ) <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") exited successfuly." << endl;
 		return EXIT_SUCCESS;
 	}
@@ -653,10 +490,26 @@ kdDebug( 14010 ) <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight <
 	return EXIT_FAILURE;
 }
 
+int VideoDevice::negotiatePixelFormat()
+{
+	kdDebug( 14010 ) <<  k_funcinfo << "Looking for suitable pixel format..." << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))   return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))   return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))   return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))   return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))    return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))    return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P)) return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P)) return EXIT_SUCCESS;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))   return EXIT_SUCCESS;
+	kdDebug( 14010 ) <<  k_funcinfo << "No suitable pixel format found." << endl;
+	return EXIT_FAILURE;
+}
+
 pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 {
 	pixel_format ret = PIXELFORMAT_NONE;
-//kdDebug( 14010 ) <<  k_funcinfo << "called." << endl;
+kdDebug( 14010 ) <<  k_funcinfo << "Trying pixel format " << pixelFormatName(newformat) << endl;
 // Change the pixel format for the video device
 	switch(m_driver)
 	{
@@ -667,7 +520,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
                         {
 //				return errnoReturn ("VIDIOC_S_FMT");
-//				kdDebug( 14010 ) << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+				kdDebug( 14010 ) << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 			}
 			else
 				m_pixelformat = pixelFormatForPalette(fmt.fmt.pix.pixelformat);
@@ -675,7 +528,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
 			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
 			{
-//				kdDebug( 14010 ) << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+				kdDebug( 14010 ) << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 			}
 			else
 			{
@@ -684,34 +537,12 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			break;
 #endif
-		case VIDEODEV_DRIVER_V4L:
-			{
-			struct video_picture V4L_picture;
-			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				kdDebug( 14010 ) <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-//			kdDebug( 14010 ) <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
-			V4L_picture.palette = pixelFormatCode(newformat);
-			V4L_picture.depth   = pixelFormatDepth(newformat);
-			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-			{
-//				kdDebug( 14010 ) <<  k_funcinfo << "Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
-			}
-
-			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				kdDebug( 14010 ) <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-
-//			kdDebug( 14010 ) <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
-			m_pixelformat=pixelFormatForPalette(V4L_picture.palette);
-			if (m_pixelformat == newformat)
-				ret = newformat;
-
-			}
-			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
 			break;
 	}
+kdDebug( 14010 ) <<  k_funcinfo << "Result: " << pixelFormatName(ret) << endl;
 	return ret;
 }
 
@@ -743,16 +574,6 @@ int VideoDevice::selectInput(int newinput)
 				}
 				break;
 #endif
-			case VIDEODEV_DRIVER_V4L:
-				struct video_channel V4L_input;
-				V4L_input.channel=newinput;
-				V4L_input.norm=4; // Hey, it's plain wrong! It should be input's signal standard!
-				if (-1 == ioctl (descriptor, VIDIOCSCHAN, &V4L_input))
-				{
-					perror ("ioctl (VIDIOCSCHAN)");
-					return EXIT_FAILURE;
-				}
-				break;
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -907,35 +728,6 @@ int VideoDevice::getFrame()
 /*				if (v4l2buffer.index < m_streambuffers)
 					return EXIT_FAILURE;*/ //it was an assert()
 //kdDebug( 14010 ) << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size() << endl;
-
-
-
-/*{
-	unsigned long long result=0;
-	unsigned long long R=0, G=0, B=0, A=0;
-	int Rmax=0, Gmax=0, Bmax=0, Amax=0;
-	int Rmin=255, Gmin=255, Bmin=255, Amin=0;
-
-	for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
-	{
-		R+=m_rawbuffers[v4l2buffer.index].start[loop];
-		G+=m_rawbuffers[v4l2buffer.index].start[loop+1];
-		B+=m_rawbuffers[v4l2buffer.index].start[loop+2];
-//		A+=currentbuffer.data[loop+3];
-		if (m_currentbuffer.data[loop]   < Rmin) Rmin = m_currentbuffer.data[loop];
-		if (m_currentbuffer.data[loop+1] < Gmin) Gmin = m_currentbuffer.data[loop+1];
-		if (m_currentbuffer.data[loop+2] < Bmin) Bmin = m_currentbuffer.data[loop+2];
-//		if (m_currentbuffer.data[loop+3] < Amin) Amin = m_currentbuffer.data[loop+3];
-		if (m_currentbuffer.data[loop]   > Rmax) Rmax = m_currentbuffer.data[loop];
-		if (m_currentbuffer.data[loop+1] > Gmax) Gmax = m_currentbuffer.data[loop+1];
-		if (m_currentbuffer.data[loop+2] > Bmax) Bmax = m_currentbuffer.data[loop+2];
-//		if (m_currentbuffer.data[loop+3] > Amax) Amax = m_currentbuffer.data[loop+3];
-	}
-	kdDebug( 14010 ) << " R: " << R << " G: " << G << " B: " << B << " A: " << A <<
-		" Rmin: " << Rmin << " Gmin: " << Gmin << " Bmin: " << Bmin << " Amin: " << Amin <<
-		" Rmax: " << Rmax << " Gmax: " << Gmax << " Bmax: " << Bmax << " Amax: " << Amax << endl;
-}*/
-
 
 memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
 				if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))

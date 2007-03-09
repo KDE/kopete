@@ -223,6 +223,7 @@ public:
 	int maxHeight() const;
 	int setSize( int newwidth, int newheight);
 
+	int negotiatePixelFormat();
 	pixel_format setPixelFormat(pixel_format newformat);
 	/**
 	 * Utility conversion routines
