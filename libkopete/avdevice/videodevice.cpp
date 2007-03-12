@@ -149,64 +149,90 @@ int VideoDevice::checkResolution()
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
 		}
 
-			negotiatePixelFormat();
-// Detect maximum and minimum resolution supported by the V4L2 device
-			m_minwidth = 1;
-			m_minheight = 1;
-			m_maxheight = 32767;
-			m_maxwidth = 32767;
-			setSize(minWidth(), minHeight());
-			m_minwidth = width();
-			m_minheight = height();
-			setSize(maxWidth(), maxHeight());
-			m_maxwidth = width();
-			m_maxheight = height();
+		cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
+		{ // Errors ignored.
 		}
-		else
+		crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		crop.c = cropcap.defrect; // reset to default
+		if (-1 == xioctl (VIDIOC_S_CROP, &crop))
 		{
+			switch (errno)
+			{
+				case EINVAL: break;  // Cropping not supported.
+				default:     break;  // Errors ignored.
+			}
+		}
+		kdDebug( 14010 ) <<  k_funcinfo << "Getting a valid pixel format." << endl;
+		CLEAR(fmtdesc);
+		fmtdesc.index = 0;
+		fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		if (-1 != xioctl (VIDIOC_ENUM_FMT, &fmtdesc))
+		{
+				kdDebug( 14010 ) <<  k_funcinfo << "Unable to get a valid pixel format." << endl;
+				return EXIT_FAILURE;
+		}
+
+
+// Detect maximum and minimum resolution supported by the V4L2 device
+		kdDebug( 14010 ) <<  k_funcinfo << "trying to find a suitable image size." << endl;
+		m_minwidth = 1;
+		m_minheight = 1;
+		m_maxheight = 32767;
+		m_maxwidth = 32767;
+		setSize(minWidth(), minHeight());
+		m_minwidth = width();
+		m_minheight = height();
+		setSize(maxWidth(), maxHeight());
+		m_maxwidth = width();
+		m_maxheight = height();
+		negotiatePixelFormat();
+	}
+	else
+	{
 // V4L-only drivers should return an EINVAL in errno to indicate they cannot handle V4L2 calls. Not every driver is compliant, so
 // it will try the V4L api even if the error code is different than expected.
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " is not a V4L2 device." << endl;
-		}
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << m_devicePath << " is not a V4L2 device." << endl;
+	}
 #endif
-		m_name=m_model; // Take care about changing the name to be different from the model itself...
+	m_name=m_model; // Take care about changing the name to be different from the model itself...
 // TODO: THis thing can be used to detec what pixel formats are supported in a API-independent way, but V4L2 has VIDIOC_ENUM_PIXFMT.
 // The correct thing to do is to isolate these calls and do a proper implementation for V4L and another for V4L2 when this thing will be migrated to a plugin architecture.
-		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB332) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555X) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565X) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB24) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR24) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB32) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR32) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUYV) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_UYVY) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV422P) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV420P) << endl;
-		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))
-			kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_MJPEG) << endl;
+	kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB332) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555X) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565X) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB24) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR24) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB32) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR32) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUYV) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_UYVY) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV422P) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV420P) << endl;
+	if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))
+		kdDebug( 14010 ) <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_MJPEG) << endl;
 
 // TODO: Now we must execute the proper initialization according to the type of the driver.
-		kdDebug( 14010 ) <<  k_funcinfo << "checkResolution() exited successfuly." << endl;
-		return EXIT_SUCCESS;
+	kdDebug( 14010 ) <<  k_funcinfo << "checkResolution() exited successfuly." << endl;
+	return EXIT_SUCCESS;
 #endif
 	return EXIT_FAILURE;
 }
@@ -356,26 +382,6 @@ int VideoDevice::initDevice()
 			break;
 	}
 
-// Select video input, video standard and tune here.
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
-	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
-	{ // Errors ignored.
-	}
-	crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	crop.c = cropcap.defrect; // reset to default
-	if (-1 == xioctl (VIDIOC_S_CROP, &crop))
-	{
-		switch (errno)
-		{
-			case EINVAL: break;  // Cropping not supported.
-			default:     break;  // Errors ignored.
-		}
-	}
-#endif
-#endif
-
 	showDeviceCapabilities();
 	kdDebug( 14010 ) <<  k_funcinfo << "initDevice() exited successfuly" << endl;
 	return EXIT_SUCCESS;
@@ -516,7 +522,7 @@ kdDebug( 14010 ) <<  k_funcinfo << "Trying pixel format " << pixelFormatName(new
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
-//			CLEAR (fmt);
+			CLEAR (fmt);
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
                         {
 //				return errnoReturn ("VIDIOC_S_FMT");

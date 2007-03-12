@@ -32,18 +32,19 @@ namespace AV {
 */
 class VideoDeviceModelPool{
 
-	struct VideoDeviceModel
-	{
-		QString model;
-		size_t count;
-	};
-	QValueVector<VideoDeviceModel> m_devicemodel;
 public:
 	VideoDeviceModelPool();
 	~VideoDeviceModelPool();
 	void clear();
 	size_t size();
 	size_t addModel(QString newmodel);
+protected:
+	struct VideoDeviceModel
+	{
+		QString model;
+		size_t count;
+	};
+	QValueVector<VideoDeviceModel> m_devicemodel;
 };
 
 }

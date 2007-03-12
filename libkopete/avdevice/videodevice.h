@@ -308,6 +308,20 @@ protected:
 	// name of the device returned by the driver
 	QString m_name;
 	QString m_model;
+
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+	struct v4l2_capability V4L2_capabilities;
+	struct v4l2_cropcap cropcap;
+	struct v4l2_crop crop;
+	struct v4l2_format fmt;
+	struct v4l2_fmtdesc fmtdesc;
+	// structs defining video api settings
+//	struct v4l2_input m_input;
+#endif
+	struct video_capability V4L_capabilities;
+	struct video_buffer V4L_videobuffer;
+#endif	
 private:
 	// Defines  the number of a device when more than 1 device of a given model is present
 	size_t m_modelindex;
@@ -322,18 +336,6 @@ private:
 	unsigned int m_current_input;
 	pixel_format m_pixelformat;
 
-	// structs defining video api settings
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
-	struct v4l2_capability V4L2_capabilities;
-	struct v4l2_cropcap cropcap;
-	struct v4l2_crop crop;
-	struct v4l2_format fmt;
-//	struct v4l2_input m_input;
-#endif
-	struct video_capability V4L_capabilities;
-	struct video_buffer V4L_videobuffer;
-#endif	
 
 	// I/O plumbing
 	io_method m_io_method;
