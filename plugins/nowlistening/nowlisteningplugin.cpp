@@ -406,7 +406,7 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 			// find matching bracket
 			int depth = 0;
 			//kDebug(14307) << "Looking for ')'" << endl;
-			for ( unsigned int j = i + 1; j < in.length(); j++ )
+			for ( unsigned int j = i + 1; j < (uint)in.length(); j++ )
 			{
 				QChar d = in.at( j );
 				//kDebug(14307) << "Got " << d << endl;

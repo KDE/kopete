@@ -251,9 +251,8 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 // save list to kopeterc and creates map out of it
 void AliasPreferences::save()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->deleteGroup( QString::fromLatin1("AliasPlugin") );
-	config->setGroup( QString::fromLatin1("AliasPlugin") );
+	KConfigGroup config = KGlobal::config()->group("AliasPlugin");
+	config.deleteGroup();
 
 	QStringList aliases;
 	AliasItem *item = (AliasItem*)preferencesDialog->aliasList->firstChild();
@@ -268,15 +267,15 @@ void AliasPreferences::save()
 
 		aliases += item->text(0);
 
-		config->writeEntry( item->text(0) + "_id", item->id );
-		config->writeEntry( item->text(0) + "_command", item->text(1) );
-		config->writeEntry( item->text(0) + "_protocols", protocols );
+		config.writeEntry( item->text(0) + "_id", item->id );
+		config.writeEntry( item->text(0) + "_command", item->text(1) );
+		config.writeEntry( item->text(0) + "_protocols", protocols );
 
 		item = (AliasItem*)item->nextSibling();
         }
 
-	config->writeEntry( "AliasNames", aliases );
-	config->sync();
+	config.writeEntry( "AliasNames", aliases );
+	config.sync();
 	emit KCModule::changed(false);
 }
 

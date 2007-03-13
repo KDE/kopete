@@ -39,9 +39,9 @@ void BookmarksPrefsSettings::load()
 		kDebug( 14501 ) << "load: no config found in file" << endl;
 		return;
 	}
-	configfile->setGroup("Bookmarks Plugin");
-	m_isfolderforeachcontact = (UseSubfolders)configfile->readEntry( "UseSubfolderForEachContact", 0 );
-	m_contactslist = configfile->readEntry( "ContactsList", QStringList() );
+	KConfigGroup group = configfile->group("Bookmarks Plugin");
+	m_isfolderforeachcontact = (UseSubfolders)group.readEntry( "UseSubfolderForEachContact", 0 );
+	m_contactslist = group.readEntry( "ContactsList", QStringList() );
 }
 
 void BookmarksPrefsSettings::save()
@@ -52,9 +52,9 @@ void BookmarksPrefsSettings::save()
 		kDebug( 14501 ) << "save: failed to open config file for writing" << endl;
 		return;
 	}
-	configfile->setGroup( "Bookmarks Plugin" );
-	configfile->writeEntry( "UseSubfolderForEachContact", (int)m_isfolderforeachcontact );
-	configfile->writeEntry( "ContactsList", m_contactslist );
+	KConfigGroup group = configfile->group("Bookmarks Plugin");
+	group.writeEntry( "UseSubfolderForEachContact", (int)m_isfolderforeachcontact );
+	group.writeEntry( "ContactsList", m_contactslist );
 	configfile->sync();
 }
 

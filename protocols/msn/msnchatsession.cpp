@@ -634,8 +634,8 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 	if(c && m_newSession &&  !view(false))
 	{
 		//this was originaly in MSNAccount::slotCreateChat
-		KGlobal::config()->setGroup( "MSN" );
-		bool notifyNewChat = KGlobal::config()->readEntry( "NotifyNewChat", false );
+		KConfigGroup group = KGlobal::config()->group( "MSN" );
+		bool notifyNewChat = group.readEntry( "NotifyNewChat", false );
 		if (  notifyNewChat  )
 		{
 			// this internal message should open the window if they not exist
