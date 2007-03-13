@@ -273,7 +273,7 @@ void KopeteWindow::initView()
 void KopeteWindow::initActions()
 {
 	// this action menu contains one action per account and is updated when accounts are registered/unregistered
-	d->actionAddContact = new KActionMenu( KIcon("add_user"), i18n( "&Add Contact" ), this );
+	d->actionAddContact = new KActionMenu( KIcon("add-user"), i18n( "&Add Contact" ), this );
 	actionCollection()->addAction( "AddContact", d->actionAddContact );
 	d->actionAddContact->setDelayed( false );
 	// this signal mapper is needed to call slotAddContact with the correct arguments
@@ -281,7 +281,7 @@ void KopeteWindow::initActions()
 	connect( d->addContactMapper, SIGNAL( mapped( const QString & ) ),
 		 this, SLOT( slotAddContactDialogInternal( const QString & ) ) );
 
-	d->actionDisconnect = new KAction( KIcon("connect_no"), i18n( "O&ffline" ), this );
+	d->actionDisconnect = new KAction( KIcon("connect-no"), i18n( "O&ffline" ), this );
         actionCollection()->addAction( "DisconnectAll", d->actionDisconnect );
 	connect( d->actionDisconnect, SIGNAL( triggered(bool) ), this, SLOT( slotDisconnectAll() ) );
 	d->actionDisconnect->setEnabled(false);
@@ -338,12 +338,12 @@ void KopeteWindow::initActions()
 	act = KStandardAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection() );
         actionCollection()->addAction( "settings_notifications", act );
 
-	d->actionShowOffliners = new KToggleAction( KIcon("show_offliners"), i18n( "Show Offline &Users" ), this );
+	d->actionShowOffliners = new KToggleAction( KIcon("show-offliners"), i18n( "Show Offline &Users" ), this );
         actionCollection()->addAction( "settings_show_offliners", d->actionShowOffliners );
 	d->actionShowOffliners->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
 	connect( d->actionShowOffliners, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowOffliners() ) );
 
-	d->actionShowEmptyGroups = new KToggleAction( KIcon("folder_green"), i18n( "Show Empty &Groups" ), this );
+	d->actionShowEmptyGroups = new KToggleAction( KIcon("folder-grey"), i18n( "Show Empty &Groups" ), this );
         actionCollection()->addAction( "settings_show_empty_groups", d->actionShowEmptyGroups );
 	d->actionShowEmptyGroups->setShortcut( KShortcut(Qt::CTRL + Qt::Key_G) );
 	connect( d->actionShowEmptyGroups, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowEmptyGroups() ) );

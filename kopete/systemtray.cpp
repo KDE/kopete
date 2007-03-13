@@ -93,7 +93,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
 	connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
 
-	//setPixmap(mKopeteIcon);
+	setIcon(mKopeteIcon);
 	slotReevaluateAccountStates();
 	slotConfigChanged();
 }
