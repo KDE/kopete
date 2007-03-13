@@ -118,6 +118,7 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		// TODO: Download image
 		if( !imageUrl.isLocalFile() )
 		{
+			d->mainWidget.labelErrorMessage->setText( i18n("You can only add avatar from local file.") );
 			return;
 		}
 
@@ -132,7 +133,11 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		newEntry.image = avatar;
 		newEntry.category = Kopete::AvatarManager::User;
 
-		Kopete::AvatarManager::self()->add( newEntry );
+		Kopete::AvatarManager::AvatarEntry addedEntry = Kopete::AvatarManager::self()->add( newEntry );
+		if( addedEntry.path.isEmpty() )
+		{
+			d->mainWidget.labelErrorMessage->setText( i18n("Kopete can not add this new avatar because it could not save the avatar image in user directory.") );
+		}
 	}
 }
 
@@ -144,7 +149,7 @@ void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 	{
 		if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
 		{
-			// TODO: Show error message
+			d->mainWidget.labelErrorMessage->setText( i18n("Kopete can not remove selected avatar.") );
 			kDebug(14010) << k_funcinfo << "Removing of avatar failed for unknown reason." << endl;
 		}
 	}
