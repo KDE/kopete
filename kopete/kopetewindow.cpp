@@ -33,6 +33,7 @@
 #include <QShowEvent>
 #include <QLineEdit>
 #include <QSignalMapper>
+#include <QTreeView>
 
 #include <khbox.h>
 #include <kaction.h>
@@ -122,7 +123,8 @@ public:
 	~Private()
 	{}
 
-	KopeteContactListView *contactlist;
+	//KopeteContactListView *contactlist;
+	QTreeView* contactlist;
 
 	// Some Actions
 	KActionMenu *actionAddContact;
@@ -223,7 +225,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// --------------------------------------------------------------------------------
 	initView();
 	initActions();
-	d->contactlist->initActions(actionCollection());
+	//d->contactlist->initActions(actionCollection());
 	initSystray();
 	// --------------------------------------------------------------------------------
 
@@ -266,7 +268,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 
 void KopeteWindow::initView()
 {
-	d->contactlist = new KopeteContactListView(this);
+	//d->contactlist = new KopeteContactListView(this);
+	d->contactlist = new QTreeView(this);
+	d->contactlist->setModel( Kopete::ContactList::self() );
 	setCentralWidget(d->contactlist);
 }
 
@@ -352,6 +356,7 @@ void KopeteWindow::initActions()
 	d->actionShowEmptyGroups->setCheckedState( KGuiItem( i18n("Hide Empty &Groups") ) );
 
 	// quick search bar
+	/* disabled for now. it'll be hooked up to a sort filter proxy model later
 	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), 0 );
 	searchLabel->setObjectName( QLatin1String("kde toolbar widget") );
 	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( 0, d->contactlist );
@@ -362,6 +367,7 @@ void KopeteWindow::initActions()
 	KAction *searchLabelAction = new KAction( i18n("Search:"), this );
         actionCollection()->addAction( "quicksearch_label", searchLabelAction );
 	searchLabelAction->setDefaultWidget( searchLabel );
+	*/
 
 	// Edit global identity widget/bar
 	d->editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
