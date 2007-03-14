@@ -77,7 +77,7 @@ ContactList *ContactList::self()
 }
 
 ContactList::ContactList()
-	: QObject( kapp )
+	: QStandardItemModel( kapp )
 {
 	setObjectName( "KopeteContactList" );
 	d=new Private;
@@ -138,7 +138,7 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 Group * ContactList::group(unsigned int groupId) const
 {
 	QListIterator<Group *> it(d->groups);
-	
+
 	while ( it.hasNext() )
 	{
 		Group *curr = it.next();
@@ -233,6 +233,7 @@ void ContactList::addMetaContact( MetaContact *mc )
 		return;
 
 	d->contacts.append( mc );
+	appendRow( mc );
 
 	emit metaContactAdded( mc );
 	connect( mc, SIGNAL( persistentDataChanged( ) ), SLOT( slotSaveLater() ) );
@@ -264,6 +265,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 	}
 
 	d->contacts.removeAll( m );
+	removeRow( m->row() );
 	emit metaContactRemoved( m );
 	m->deleteLater();
 }
@@ -375,10 +377,10 @@ void ContactList::slotPhotoChanged()
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
 	mutex=false;
-	/* The mutex is useful to don't have such as stack overflow 
-	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
-	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
-	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 
+	/* The mutex is useful to don't have such as stack overflow
+	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged
+	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged
+	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged
 	*/
 }
 
@@ -387,7 +389,7 @@ void ContactList::load()
 {
 	// don't save when we're in the middle of this...
 	d->loaded = false;
-	
+
 	Kopete::ContactListStorage *storage = new Kopete::XmlContactStorage();
 	storage->load();
 	if( !storage->isValid() )
@@ -403,7 +405,7 @@ void ContactList::load()
 
 	// Apply the global identity when all the protocols plugins are loaded.
 	connect(PluginManager::self(), SIGNAL(allPluginsLoaded()), this, SLOT(loadGlobalIdentity()));
-	
+
 	d->loaded = true;
 	delete storage;
 }

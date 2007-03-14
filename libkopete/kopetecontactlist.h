@@ -19,14 +19,15 @@
 #ifndef KOPETECONTACTLIST_H__
 #define KOPETECONTACTLIST_H__
 
-#include <qobject.h>
-#include <QList>
+#include <QtCore/QList>
+#include <QtCore/QObject>
+#include <QtGui/QStandardItemModel>
 
-#include <kurl.h>
+#include <KUrl>
 
 #include "kopete_export.h"
 
-namespace Kopete 
+namespace Kopete
 {
 
 class MetaContact;
@@ -45,7 +46,7 @@ class Contact;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
-class KOPETE_EXPORT ContactList : public QObject
+class KOPETE_EXPORT ContactList : public QStandardItemModel
 {
 	Q_OBJECT
 
@@ -69,7 +70,7 @@ public:
 	 * changing those *will* have the expected result :-)
 	 */
 	QList<MetaContact *> metaContacts() const;
-	
+
 	/**
 	 * @return all groups
 	 */
@@ -85,8 +86,8 @@ public:
 	 * return the group with the given unique id. if none is found return 0L
 	 */
 	Group * group(unsigned int groupId) const;
-	
-	
+
+
 	/**
 	 * @brief find a contact in the contactlist.
 	 * Browse in each metacontact of the list to find the contact with the given ID.
@@ -135,7 +136,7 @@ public:
 	  */
 	MetaContact* myself();
 
-	
+
 public slots:
 
 	/**
@@ -197,7 +198,7 @@ signals:
 	 * the newly added contacts.
 	 */
 	void metaContactAdded( Kopete::MetaContact *mc );
-	
+
 	/**
 	 * A metacontact has just been removed.  and will be soon deleted
 	 */
@@ -207,12 +208,12 @@ signals:
 	 * A group has just been added
 	 */
 	void groupAdded( Kopete::Group * );
-	
+
 	/**
 	 * A group has just been removed
 	 */
 	void groupRemoved( Kopete::Group * );
-	
+
 	/**
 	 * A group has just been renamed
 	 */
@@ -243,13 +244,13 @@ signals:
 	 * This signal is emitted each time a global identity field change.
 	 * HOWTO use:
 	 *
-	 * - Connect signal globalIdentityChanged(const QString &key, const QVariant 
-	 *    &value) to a slot in your derivate Account class (the best 
+	 * - Connect signal globalIdentityChanged(const QString &key, const QVariant
+	 *    &value) to a slot in your derivate Account class (the best
 	 *    place to put it).
 	 * - In the slot:
 	 *    - Check the key you want to be sync with global identity.
 	 *    - Update the myself contact and/or update on server.
-	 * 
+	 *
 	 * For now, when photo is changed, it always send the photo file path.
 	 *
 	 * Connect signal in your Account constructor:
@@ -285,7 +286,7 @@ private slots:
 	 * Called on contactlist load or when KABC has changed, to check if we need to update our contactlist from there.
 	 */
 	void slotKABCChanged();
-	
+
 	/**
 	 * Called when the myself displayName changed.
 	 */
@@ -297,16 +298,16 @@ private slots:
 	void slotPhotoChanged();
 
 private:
-	
+
 	/**
 	 * Private constructor: we are a singleton
 	 */
 	ContactList();
-	
+
 	static ContactList *s_self;
 	class Private;
 	Private *d;
-	
+
 public: //TODO I think all theses method should be moved to the decop interface.
 	/**
 	 * Return all meta contacts
@@ -354,8 +355,8 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	 * nicknames can contain parentheses too. - Martijn
 	 */
 	QStringList contactStatuses() const;
-	
-	
+
+
 	/**
 	 * Exposed via DCOP in kopeteiface
 	 * Used to send a file to a MetaContact using the highest ranked protocol

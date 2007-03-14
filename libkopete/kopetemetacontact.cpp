@@ -82,6 +82,8 @@ void MetaContact::addContact( Contact *c )
 	else
 	{
 		d->contacts.append( c );
+		appendRow( c );
+		d->contactRowMap.insert( c, c->row() );
 
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
@@ -156,7 +158,9 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		QString currDisplayName = displayName();
 
 		d->contacts.removeAll( c );
-		
+		removeRow( d->contactRowMap[c] );
+		d->contactRowMap.remove( c );
+
 		// if the contact was a source of property data, clean
 		if (displayNameSourceContact() == c)
 			setDisplayNameSourceContact(0L);
@@ -694,9 +698,9 @@ QImage MetaContact::photoFromCustom() const
 QImage photoFromContact( Kopete::Contact *contact) /*const*/
 {
 
-	// screw it, crashes now. 
+	// screw it, crashes now.
 	// FIXME investigate later
-	
+
 	return QImage();
 
 	if ( contact == 0L )
@@ -779,7 +783,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
 			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
-		
+
 			if(photoProp.canConvert( QVariant::Image ))
 			{
 				d->contactPicture.setPicture( photoProp.value<QImage>() );
@@ -832,13 +836,13 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				// as the current one is null, lets use this new one
 				if (picture().isNull())
 					setPhotoSourceContact(subcontact);
-					
+
 			}
 			else if(photoSourceContact() == subcontact)
 			{
 				if(d->photoSyncedWithKABC)
 					setPhotoSyncedWithKABC(true);
-					
+
 				setPhotoSourceContact(subcontact);
 			}
 		}
