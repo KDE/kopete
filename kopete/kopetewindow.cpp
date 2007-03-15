@@ -34,6 +34,7 @@
 #include <QLineEdit>
 #include <QSignalMapper>
 #include <QTreeView>
+#include <QHeaderView>
 
 #include <khbox.h>
 #include <kaction.h>
@@ -270,7 +271,9 @@ void KopeteWindow::initView()
 {
 	//d->contactlist = new KopeteContactListView(this);
 	d->contactlist = new QTreeView(this);
+	d->contactlist->header()->hide();
 	d->contactlist->setModel( Kopete::ContactList::self() );
+	d->contactlist->setAlternatingRowColors( true );
 	setCentralWidget(d->contactlist);
 }
 
