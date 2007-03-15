@@ -773,6 +773,7 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 	d->displayNameSourceContact = contact;
 	if ( displayNameSource() == SourceContact )
 	{
+		setText( nameFromContact( contact ) );
 		emit displayNameChanged( nameFromContact(old), nameFromContact(contact));
 	}
 }
