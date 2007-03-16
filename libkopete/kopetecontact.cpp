@@ -96,7 +96,7 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 	setText( d->contactId );
-	setIcon( d->icon );
+	QStandardItem::setIcon( QIcon( d->onlineStatus.iconFor( this ) ) );
 
 	// If can happend that a MetaContact may be used without a account
 	// (ex: for unit tests or chat window style preview)
@@ -166,6 +166,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
 
+	QStandardItem::setIcon( QIcon( d->onlineStatus.iconFor( this ) ) );
 	if ( this == account()->myself() || account()->isConnected() )
 		emit onlineStatusChanged( this, status, oldStatus );
 }
