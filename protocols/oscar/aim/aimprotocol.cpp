@@ -17,6 +17,7 @@
 
 #include <qstringlist.h>
 #include <kgenericfactory.h>
+#include <kmessagebox.h>
 #include <kdebug.h>
 
 #include "aimprotocol.h"
@@ -166,7 +167,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 		chooser->setMainWidget(accSelector);
 		
 		int ret = chooser->exec();
-		Kopete::Account *account = accSelector->selectedItem();
+		account = accSelector->selectedItem();
 		
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
@@ -179,6 +180,14 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 	Kopete::MetaContact* mc = 0;
 	if ( needContactAddition || realCommand == "addbuddy" )
 	{
+		if ( !account->isConnected() )
+		{
+			kdDebug(14152) << k_funcinfo << "Can't add contact, we are offline!" << endl;
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("You need to be connected to be able to add contacts."),
+			                    i18n("AIM") );
+			return;
+		}
+
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 		                               i18n("Do you want to add '%1' to your contact list?").arg(command),
 		                               QString::null, i18n("Add"), i18n("Do Not Add"))
@@ -208,7 +217,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 		
 	}
 
-	if ( realCommand == "goim" )
+	if ( mc && realCommand == "goim" )
 	{
 		mc->execute();
 	}
