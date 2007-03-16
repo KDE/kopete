@@ -92,18 +92,6 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	if (accounts.count() == 1)
 	{
 		account = accounts.first();
-		QString nickuin = nick.isEmpty() ?
-			i18n("'%1'", uin) :
-			i18n("'%1' (%2)", nick, uin);
-
-		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-		                               i18n("Do you want to add %1 to your contact list?", nickuin), QString::null,
-		                               KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
-			!= KMessageBox::Yes)
-		{
-			kDebug(14153) << k_funcinfo << "Cancelled" << endl;
-			return;
-		}
 	}
 	else
 	{
@@ -116,7 +104,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 		chooser->setMainWidget(accSelector);
 
 		int ret = chooser->exec();
-		Kopete::Account *account = accSelector->selectedItem();
+		account = accSelector->selectedItem();
 
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
@@ -126,6 +114,25 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 		}
 	}
 
+	if (!account->isConnected())
+	{
+		kDebug(14153) << k_funcinfo << "Can't add contact, we are offline!" << endl;
+		KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("You must be online to add a contact."), i18n("ICQ") );
+		return;
+	}
+
+	QString nickuin = nick.isEmpty() ?
+		i18n("'%1'", uin) :
+		i18n("'%1' (%2)", nick, uin);
+
+	if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+	                               i18n("Do you want to add %1 to your contact list?", nickuin), QString::null,
+	                               KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
+	    != KMessageBox::Yes)
+	{
+		kDebug(14153) << k_funcinfo << "Cancelled" << endl;
+		return;
+	}
 
 	kDebug(14153) << k_funcinfo <<
 		"Adding Contact; uin = " << uin << ", nick = '" << nick <<
