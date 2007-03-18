@@ -253,7 +253,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 	}
 
 	KZip archive( archiveName );
-	if ( !archive.open(IO_ReadOnly) )
+	if ( !archive.open(QIODevice::ReadOnly) )
 	{
 		KMessageBox::queuedMessageBox(
 			Kopete::UI::Global::mainWidget(),

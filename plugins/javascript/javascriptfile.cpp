@@ -28,7 +28,7 @@ QString JavaScriptFile::script( bool reload )
 		QString localScriptsDir( KStandardDirs::locateLocal("data", QString::fromLatin1("kopete/scripts")) );
 		QFile f( localScriptsDir + '/' +  id + '/' + fileName );
 
-		if ( f.open( IO_ReadOnly ) )
+		if ( f.open( QIODevice::ReadOnly ) )
 		{
 			QTextStream stream( &f );
 			m_script = stream.read();
