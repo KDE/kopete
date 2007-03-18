@@ -108,29 +108,28 @@ TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
 void TranslatorPlugin::loadSettings()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
 	int mode = 0;
 
-	config->setGroup( "Translator Plugin" );
-	m_myLang = m_languages->languageKey( config->readEntry( "myLang" , 0 ) );
-	m_service = m_languages->serviceKey( config->readEntry( "Service", 0 ) );
+	KConfigGroup config = KGlobal::config()->group("Translator Plugin");
+	m_myLang = m_languages->languageKey( config.readEntry( "myLang" , 0 ) );
+	m_service = m_languages->serviceKey( config.readEntry( "Service", 0 ) );
 
-	if ( config->readEntry( "IncomingDontTranslate", true ) )
+	if ( config.readEntry( "IncomingDontTranslate", true ) )
 		mode = 0;
-	else if ( config->readEntry( "IncomingShowOriginal", false ) )
+	else if ( config.readEntry( "IncomingShowOriginal", false ) )
 		mode = 1;
-	else if ( config->readEntry( "IncomingTranslate", false ) )
+	else if ( config.readEntry( "IncomingTranslate", false ) )
 		mode = 2;
 
 	m_incomingMode = mode;
 
-	if ( config->readEntry( "OutgoingDontTranslate", true ) )
+	if ( config.readEntry( "OutgoingDontTranslate", true ) )
 		mode = 0;
-	else if ( config->readEntry( "OutgoingShowOriginal", false ) )
+	else if ( config.readEntry( "OutgoingShowOriginal", false ) )
 		mode = 1;
-	else if ( config->readEntry( "OutgoingTranslate", false ) )
+	else if ( config.readEntry( "OutgoingTranslate", false ) )
 		mode = 2;
-	else if ( config->readEntry( "OutgoingAsk", false ) )
+	else if ( config.readEntry( "OutgoingAsk", false ) )
 		mode = 3;
 
 	m_outgoingMode = mode;
