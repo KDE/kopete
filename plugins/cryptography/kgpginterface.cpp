@@ -20,7 +20,7 @@
 
 
 #include <klocale.h>
-#include <k3passworddialog.h>
+#include <KDE/KPasswordDialog>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -103,10 +103,11 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 				passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>", 4-counter));
 	
 			/// pipe for passphrase
-			int code=K3PasswordDialog::getPassword(0,password,passdlg);
-			if (code!=QDialog::Accepted)
-				return QString();
-			CryptographyPlugin::setCachedPass(password);
+			KPasswordDialog dlg( 0L, KPasswordDialog::NoFlags );
+			dlg.setPrompt( passdlg );
+			if( !dlg.exec() )
+				return QString(); //the user canceled
+			CryptographyPlugin::setCachedPass(dlg.password().toLocal8Bit());
 		}
 	
 		if(passphraseHandling)
