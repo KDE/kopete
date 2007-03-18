@@ -146,7 +146,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 		return StyleCannotOpen;
 	}
 
-	if ( !archive->open(IO_ReadOnly) )
+	if ( !archive->open(QIODevice::ReadOnly) )
 	{
 		delete archive;
 

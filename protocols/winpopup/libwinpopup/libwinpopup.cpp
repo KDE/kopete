@@ -272,7 +272,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 		if (tmpItem->isFile()) {
 			QFile messageFile(tmpItem->url().path());
 
-			if (messageFile.open(IO_ReadOnly)) {
+			if (messageFile.open(QIODevice::ReadOnly)) {
 				QTextStream stream(&messageFile);
 				QString sender;
 				QDateTime time;

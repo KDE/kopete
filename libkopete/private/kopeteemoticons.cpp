@@ -432,7 +432,7 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 	QDomDocument emoticonMap( QLatin1String( "icondef" ) );	
 	
 	QFile mapFile( filename );
-	mapFile.open( IO_ReadOnly );
+	mapFile.open( QIODevice::ReadOnly );
 	emoticonMap.setContent( &mapFile );
 
 	QDomElement list = emoticonMap.documentElement();

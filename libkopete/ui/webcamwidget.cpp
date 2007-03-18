@@ -82,17 +82,17 @@ void WebcamWidget::paintEvent( QPaintEvent* event )
 	}
 
 	// TODO: draw the text
-	QRect r = p.boundingRect(rect(), Qt::AlignCenter | Qt::WordBreak, mText );
+	QRect r = p.boundingRect(rect(), Qt::AlignCenter | Qt::TextWordWrap, mText );
 	if ( !mText.isEmpty() && event->rect().intersects(r))
 	{
 		p.setPen(Qt::black);
 		QRect rec = rect();
 		rec.moveTopLeft(QPoint(1,1));
-		p.drawText(rec, Qt::AlignCenter | Qt::WordBreak, mText); 
+		p.drawText(rec, Qt::AlignCenter | Qt::TextWordWrap, mText); 
 
 		rec.moveTopLeft(QPoint(-1,-1));
 		p.setPen(Qt::white);
-		p.drawText(rec, Qt::AlignCenter | Qt::WordBreak, mText); 
+		p.drawText(rec, Qt::AlignCenter | Qt::TextWordWrap, mText); 
 	}
 	p.end();
 }

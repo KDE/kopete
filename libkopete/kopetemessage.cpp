@@ -234,26 +234,26 @@ QString Message::unescape( const QString &xml )
 	QString data = xml;
 
 	// Remove linebreak and multiple spaces. First return nbsp's to normal spaces :)
-	data = data.simplifyWhiteSpace();
+	data = data.simplified();
 
 	int pos;
 	while ( ( pos = data.indexOf( '<' ) ) != -1 )
 	{
-		int endPos = data.find( '>', pos + 1 );
+		int endPos = data.indexOf( '>', pos + 1 );
 		if( endPos == -1 )
 			break;    // No more complete elements left
 
 		// Take the part between < and >, and extract the element name from that
 		int matchWidth = endPos - pos + 1;
-		QString match = data.mid( pos + 1, matchWidth - 2 ).simplifyWhiteSpace();
+		QString match = data.mid( pos + 1, matchWidth - 2 ).simplified();
 		int elemEndPos = match.indexOf( ' ' );
-		QString elem = ( elemEndPos == -1 ? match.lower() : match.left( elemEndPos ).lower() );
+		QString elem = ( elemEndPos == -1 ? match.toLower() : match.left( elemEndPos ).toLower() );
 		if ( elem == QLatin1String( "img" ) )
 		{
 			// Replace smileys with their original text'
 			const QString attrTitle  = QLatin1String( "title=\"" );
-			int titlePos    = match.find( attrTitle, elemEndPos );
-			int titleEndPos = match.find( '"',       titlePos + attrTitle.length() );
+			int titlePos    = match.indexOf( attrTitle, elemEndPos );
+			int titleEndPos = match.indexOf( '"',       titlePos + attrTitle.length() );
 			if( titlePos == -1 || titleEndPos == -1 )
 			{
 				// Not a smiley but a normal <img>

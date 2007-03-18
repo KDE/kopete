@@ -32,7 +32,7 @@ namespace Kopete
 	class ChatSession; 
 	class Contact; 
 }
-class KPopupMenu;
+class KMenu;
 class ChatWindowStyle;
 
 /**

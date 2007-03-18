@@ -560,7 +560,7 @@ void KopeteIdentityConfig::slotChangePhoto(const KUrl &photoUrl)
 		// Bug 124175: My personnal picture doesn't appear cause of l10n
 		QByteArray tempArray;
 		QBuffer tempBuffer(&tempArray);
-		tempBuffer.open( IO_WriteOnly );
+		tempBuffer.open( QIODevice::WriteOnly );
 		photo.save(&tempBuffer, "PNG");
 		KMD5 context(tempArray);
 		// Save the image to a file.

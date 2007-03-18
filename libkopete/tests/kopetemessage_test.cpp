@@ -172,8 +172,8 @@ void KopeteMessage_Test::testPrimitives()
 
 		QCOMPARE(msg.escapedBody(),                   QString(" &nbsp; <b>HELLO WORLD</b> &nbsp; "));
 		QCOMPARE(msg.plainBody(),                     QString("   HELLO WORLD   "));
-		QCOMPARE(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
-		QCOMPARE(msg.escapedBody().stripWhiteSpace(), QString("&nbsp; <b>HELLO WORLD</b> &nbsp;"));
+		QCOMPARE(msg.plainBody().trimmed(),   QString("HELLO WORLD"));
+		QCOMPARE(msg.escapedBody().trimmed(), QString("&nbsp; <b>HELLO WORLD</b> &nbsp;"));
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);

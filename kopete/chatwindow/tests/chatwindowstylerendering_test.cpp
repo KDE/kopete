@@ -181,7 +181,7 @@ ChatWindowStyleRendering_Test::~ChatWindowStyleRendering_Test()
 void ChatWindowStyleRendering_Test::allTests()
 {
 	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 	//KApplication::disableAutoDcopRegistration();
 	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
@@ -317,7 +317,7 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 
 	// Read the expected(sample) HTML from file.
 	QFile sampleHtml(QString(SRCDIR)+"sample.html");
-	if(sampleHtml.open(IO_ReadOnly))
+	if(sampleHtml.open(QIODevice::ReadOnly))
 	{
 		QTextStream stream(&sampleHtml);
 		stream.setEncoding(QTextStream::UnicodeUTF8);

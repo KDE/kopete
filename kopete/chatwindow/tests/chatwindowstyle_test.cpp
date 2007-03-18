@@ -33,7 +33,7 @@ void ChatWindowStyle_Test::allTests()
 	testStyle = new ChatWindowStyle(QString(SRCDIR)+QString("/TestStyle"));
 
 	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 	testPaths();
 	testHtml();
