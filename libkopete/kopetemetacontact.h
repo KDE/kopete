@@ -67,13 +67,14 @@ class KOPETE_EXPORT MetaContact : public ContactListElement
 
 public:
 	typedef QList<MetaContact *> List;
-	/** 
+	/**
 	 * Enumeration of possible sources for a property (which may be
 	 * photos, see setPhotoSource() for instance).
 	 */
-	enum PropertySource { 
-		SourceContact /**< Data comes from the contact itself. */, 
-		SourceKABC /**< Data comes from KABC (addressbook). */, 
+	enum PropertySource {
+		SourceContact /**< Data comes from the contact itself. */,
+		SourceKABC /**< Data comes from KABC (addressbook). */,
+		SourceUrl /**< Data comes from a Url (for photos) */,
 		SourceCustom /**< Data comes from somewhere else. */
 	};
 
@@ -89,14 +90,16 @@ public:
 	/**
 	 * @brief Returns this metacontact's ID.
 	 *
-	 * Every metacontact has a unique id, set by  when creating the contact, or reading the contactlist
+	 * Every metacontact has a unique id, set when creating the contact or
+	 * reading the contact list file from disk
 	 * TODO: make it real
 	 */
 	QString metaContactId() const;
 
 	/**
 	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
-	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
+	 * FIXME: Use with care.  You could create 1 to many relationships with
+	 * the current implementation
 	 */
 	void setMetaContactId( const QString& newMetaContactId );
 
@@ -113,9 +116,12 @@ public:
 	/**
 	 * Find the Contact to a given contact. If contact
 	 * is not found, a null pointer is returned.
-	 * if @p protocolId or @p accountId are null, it is searched over all protocols/accounts
+	 * if @p protocolId or @p accountId are null, it is searched over all
+	 * protocols/accounts
 	 */
-	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
+	Contact *findContact( const QString &protocolId,
+	                      const QString &accountId,
+	                      const QString &contactId );
 
 	/**
 	 * @brief Set the source of metacontact displayName
@@ -127,7 +133,9 @@ public:
 	 */
 	void setDisplayNameSource(PropertySource source);
 
-	void setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID );
+	void setDisplayNameSource( const QString &nameSourcePID,
+	                           const QString &nameSourceAID,
+	                           const QString &nameSourceCID );
 
 	/**
 	 * @brief get the source of metacontact display name
@@ -149,7 +157,9 @@ public:
 	 */
 	void setPhotoSource(PropertySource source);
 
-	void setPhotoSource( const QString &photoSourcePID, const QString &photoSourceAID, const QString &photoSourceCID );
+	void setPhotoSource( const QString &photoSourcePID,
+	                     const QString &photoSourceAID,
+	                     const QString &photoSourceCID );
 
 	/**
 	 * @brief get the source of metacontact photo
@@ -173,7 +183,8 @@ public:
 	 * If the protocol support alias serverside, the metacontact displayname
 	 * should probably be synchronized with the alias on the server.
 	 *
-	 * This displayName is obtained from the source set with @ref setDisplayNameSource
+	 * This displayName is obtained from the source set with
+	 * @ref setDisplayNameSource
 	 */
 	QString displayName() const;
 
@@ -190,7 +201,8 @@ public:
 	KDE_DEPRECATED QImage photo() const;
 
 	/**
-	 * Return the correct Kopete::Picture object depending of the metacontact photo source.
+	 * Return the correct Kopete::Picture object depending of the metacontact
+	 * photo source.
 	 *
 	 * This photo is obtained from the source set with @ref setPhotoSource
 	 *
@@ -239,7 +251,8 @@ public:
 	void setPhoto( const KUrl &url );
 
 	/**
-	 * @brief get the subcontact being tracked for its displayname (null if not set)
+	 * @brief get the subcontact being tracked for its displayname (null if
+	 * not set)
 	 *
 	 * The MetaContact will adjust its displayName() every time the
 	 * "nameSource" changes its nickname property.
@@ -247,7 +260,8 @@ public:
 	Contact *displayNameSourceContact() const;
 
 	/**
-	 * @brief set the subcontact whose name is to be tracked (set to null to disable tracking)
+	 * @brief set the subcontact whose name is to be tracked (set to null to
+	 * disable tracking)
 	 * @see nameSource
 	 */
 	void setDisplayNameSourceContact( Contact* contact );
@@ -263,12 +277,14 @@ public:
 	void setPhotoSourceContact( Contact* contact );
 
 	/**
-	 * @return true if when a subcontact change his photo, the photo will be set to the kabc contact.
+	 * @return true if when a subcontact change his photo, the photo will be
+	 * set to the kabc contact.
 	 */
 	bool isPhotoSyncedWithKABC() const;
 
 	/**
-	 * Set if the photo should be synced with the adressbook when the photosource change his photo
+	 * Set if the photo should be synced with the adressbook when the
+	 * photosource change his photo
 	 *
 	 * If  \p b is true, the photo will be synced immediately if possible
 	 */
@@ -277,7 +293,8 @@ public:
 
 	/**
 	 * Temporary contacts will not be serialized.
-	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
+	 * If they are added to the contactlist, they appears in a special "Not in
+	 * your contactlist" group.
 	 * (the @ref Group::temporary  group)
 	 */
 	bool isTemporary() const;
@@ -294,12 +311,14 @@ public:
 	 * set 'deleted' to true if the Contact is already deleted
 	 *
 	 * @param c is the contact to remove
-	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
+	 * @param deleted : if it is false, it will disconnect the old contact
+	 * and call some method.
 	 */
 	void removeContact( Contact *c , bool deleted = false );
 
 	/**
-	 * @return the preferred child Contact for communication, or 0 if none is suitable (all unreachable).
+	 * @return the preferred child Contact for communication, or 0 if none is
+	 * suitable (all unreachable).
 	 */
 	Contact *preferredContact();
 
@@ -326,7 +345,8 @@ public:
 
 	/**
 	 * Returns whether this contact can accept files
-	 * @return True if the user is online with a file capable protocol, false otherwise
+	 * @return True if the user is online with a file capable protocol, false
+	 * otherwise
 	 */
 	bool canAcceptFiles() const;
 
@@ -370,7 +390,8 @@ public:
 	 *        Probably it requires once more some rewrites to get it working
 	 *        properly :( - Martijn
 	 */
-	QString addressBookField( Plugin *p, const QString &app, const QString &key ) const;
+	QString addressBookField( Plugin *p, const QString &app,
+	                          const QString &key ) const;
 
 	/**
 	 * @brief set an address book field
@@ -381,42 +402,47 @@ public:
 	 * @param key The name of the address book field to set
 	 * @param value The value of the address book field to set
 	 */
-	void setAddressBookField( Plugin *p, const QString &app, const QString &key, const QString &value );
+	void setAddressBookField( Plugin *p, const QString &app,
+	                          const QString &key, const QString &value );
 
 public slots:
 
 	/**
 	 * @brief Send a file to this metacontact
 	 *
-	 * This is the MetaContact level slot for sending files. It may be called through the
-	 * "Send File" entry in the GUI, or over DCOP. If the function is called through the GUI,
-	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
-	 * with identical params of the highest ranked contact capable of sending files (if any)
+	 * This is the MetaContact level slot for sending files. It may be called
+	 * through the "Send File" entry in the GUI, or over DCOP. If the function
+	 * is called through the GUI, no parameters are sent and they assume
+	 * default values. This slot calls the slotSendFile with identical params
+	 * of the highest ranked contact capable of sending files (if any)
 	 *
 	 * @param sourceURL The actual KUrl of the file you are sending
-	 * @param altFileName (Optional) An alternate name for the file - what the receiver will see
-	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
-	 *                file size (such as over a socket)
+	 * @param altFileName (Optional) An alternate name for the file - what the
+	 * receiver will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when
+	 * sending a nondeterminate file size (such as over a socket)
 	 *
 	 */
-	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString::null,
-		unsigned long fileSize = 0L );
+	void sendFile( const KUrl &sourceURL,
+	               const QString &altFileName = QString::null,
+	               unsigned long fileSize = 0L );
 
 	/**
-	 * Emit aboutToSave signal to notify plugins that this metaContact is going to be saved
+	 * Emit aboutToSave signal to notify plugins that this metaContact is
+	 * going to be saved
 	 */
 	void emitAboutToSave();
 
 signals:
 	/**
-	 * This metaContact is going to be saved to the contactlist. Plugins should
-	 * connect to this signal to update data with setPluginData()
+	 * This metaContact is going to be saved to the contactlist. Plugins
+	 * should connect to this signal to update data with setPluginData()
 	 */
 	void aboutToSave( Kopete::MetaContact *metaContact );
 
 	/**
-	 * One of the subcontacts' idle status has changed.  As with online status,
-	 * this can occur without the metacontact changing idle state
+	 * One of the subcontacts' idle status has changed.  As with online
+	 * status, this can occur without the metacontact changing idle state
 	 */
 	void contactIdleStateChanged( Kopete::Contact *contact );
 
@@ -442,8 +468,9 @@ public slots:
 	 * @brief Set if this is a temporary contact. (see @ref isTemporary)
 	 *
 	 * @param b if the contact is or not temporary
-	 * @param group if the contact was temporary and b is false, then the contact will be moved to this group.
-	 *  if group is null, it will be moved to top-level
+	 * @param group if the contact was temporary and b is false, then the
+	 * contact will be moved to this group. If @p group is null, the
+	 * metacontact will be moved to the top-level
 	 */
 	void setTemporary( bool b = true, Kopete::Group *group = 0L );
 
@@ -486,7 +513,8 @@ public slots:
 	void slotAllPluginsLoaded();
 
 	/**
-	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
+	 * If a plugin is loaded, maybe data about this plugin are already
+	 * cached in the metacontact
 	 */
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 
@@ -494,16 +522,18 @@ signals:
 	/**
 	 *  @brief The MetaContact online status changed
 	 */
-	void onlineStatusChanged( Kopete::MetaContact *contact, Kopete::OnlineStatus::StatusType status );
+	void onlineStatusChanged( Kopete::MetaContact *contact,
+	                          Kopete::OnlineStatus::StatusType status );
 
 	/**
 	 * @brief A contact's online status changed
 	 *
-	 * this signal differs from @ref onlineStatusChanged because a contact can
-	 * change his status without changing MetaContact status. It is mainly used to update the small icons
-	 * in the contactlist
+	 * This signal differs from @ref onlineStatusChanged because a contact
+	 * can change their status without changing MetaContact status. It is
+	 * mainly used to update the small icons in the contactlist
 	 */
-	void contactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
+	void contactStatusChanged( Kopete::Contact *contact,
+	                           const Kopete::OnlineStatus &status );
 
 	/**
 	 * @brief The meta contact's display name changed
@@ -518,12 +548,14 @@ signals:
 	/**
 	 * @brief  The contact was moved
 	 */
-	void movedToGroup( Kopete::MetaContact *contact, Kopete::Group *from, Kopete::Group *to );
+	void movedToGroup( Kopete::MetaContact *contact, Kopete::Group *from,
+	                   Kopete::Group *to );
 
 	/**
 	 * @brief The contact was removed from group
 	 */
-	void removedFromGroup( Kopete::MetaContact *contact, Kopete::Group *group );
+	void removedFromGroup( Kopete::MetaContact *contact,
+	                       Kopete::Group *group );
 
 	/**
 	 * @brief The contact was added to another group
@@ -540,12 +572,13 @@ signals:
 	/**
 	 * @brief a contact has been removed from this metacontact
 	 *
-	 * This signal is emitted when a contact is removed from this metacontact
+	 * This signal is emitted when a contact is removed from this
+	 * metacontact
 	 */
 	void contactRemoved( Kopete::Contact *c );
 
 	/**
-	 * Some part of this object's persistent data (as returned by toXML) has changed.
+	 * Some part of this object's persistent data has changed.
 	 */
 	void persistentDataChanged(  );
 
@@ -559,12 +592,16 @@ private slots:
 	/**
 	 * One of the child contact's online status changed
 	 */
-	void slotContactStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
+	void slotContactStatusChanged( Kopete::Contact *c,
+	                               const Kopete::OnlineStatus &status,
+	                               const Kopete::OnlineStatus &oldStatus );
 
 	/**
 	 * One of the child contact's property changed
 	 */
-	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::Contact *contact, const QString &key,
+	                          const QVariant &oldValue,
+	                          const QVariant &newValue );
 
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still
