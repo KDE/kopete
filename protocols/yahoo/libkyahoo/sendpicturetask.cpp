@@ -119,7 +119,7 @@ void SendPictureTask::connectSucceeded()
 			"Cache-Control: no-cache\r\n\r\n").arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()).arg(file.size()+4+paket.size());
 	stream.writeRawData( header.toLocal8Bit(), header.length() );
 	stream.writeRawData( paket.data(), paket.size() );
-	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
+	stream << (qint8)0x32 << (qint8)0x39 << (qint8)0xc0 << (qint8)0x80;
 	stream.writeRawData( file.readAll(), file.size() );
 
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;

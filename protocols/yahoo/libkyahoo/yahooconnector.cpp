@@ -97,7 +97,7 @@ void KNetworkConnector::done()
 	mByteStream->close ();
 }
 
-void KNetworkConnector::setOptHostPort( const QString &host, Q_UINT16 port )
+void KNetworkConnector::setOptHostPort( const QString &host, quint16 port )
 {
 	kDebug ( YAHOO_RAW_DEBUG ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 

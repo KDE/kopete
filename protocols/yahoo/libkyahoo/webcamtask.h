@@ -43,8 +43,8 @@ struct YahooWebcamInformation
 	PacketType	type;
 	Direction	direction;
 	uchar		reason;
-	Q_INT32		dataLength;
-	Q_INT32		timestamp;
+	qint32		dataLength;
+	qint32		timestamp;
 	bool		headerRead;
 	QBuffer 	*buffer;
 };

@@ -110,7 +110,7 @@ void ModifyYABTask::connectSucceeded()
 
 	QByteArray buffer;
 	QByteArray paket;
-	QDataStream stream( &buffer, IO_WriteOnly );
+	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	stream.writeRawData( header.toLocal8Bit(), header.length() );
 	stream.writeRawData( m_postData.toUtf8(), m_postData.toUtf8().size() );
 	

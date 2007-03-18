@@ -222,27 +222,27 @@ QByteArray YMSGTransfer::serialize() const
 	QByteArray buffer;
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	
-	stream << (Q_INT8)'Y' << (Q_INT8)'M' << (Q_INT8)'S' << (Q_INT8)'G';
+	stream << (qint8)'Y' << (qint8)'M' << (qint8)'S' << (qint8)'G';
 	if( d->service == Yahoo::ServicePictureUpload )
-		stream << (Q_INT16)0x0f00;
+		stream << (qint16)0x0f00;
 	else
-		stream << (Q_INT16)0x000f;
-	stream << (Q_INT16)0x0000;
+		stream << (qint16)0x000f;
+	stream << (qint16)0x0000;
 	if( d->service == Yahoo::ServicePictureUpload ||
 		d->service == Yahoo::ServiceFileTransfer )
-		stream << (Q_INT16)(length()+4);
+		stream << (qint16)(length()+4);
 	else
-		stream << (Q_INT16)length();
-	stream << (Q_INT16)d->service;
-	stream << (Q_INT32)d->status;
-	stream << (Q_INT32)d->id;
+		stream << (qint16)length();
+	stream << (qint16)d->service;
+	stream << (qint32)d->status;
+	stream << (qint32)d->id;
  	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
  		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
 		stream.writeRawData ( QString::number( (*it).first ).toLocal8Bit(), QString::number( (*it).first ).length() );
-		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
+		stream << (qint8)0xc0 << (qint8)0x80;
 		stream.writeRawData( (*it).second, (*it).second.length() );
-		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
+		stream << (qint8)0xc0 << (qint8)0x80;
 	}
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " pos=" << pos << " (packet size)" << buffer << endl;
 	return buffer;

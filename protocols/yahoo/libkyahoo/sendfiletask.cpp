@@ -82,9 +82,9 @@ void SendFileTask::connectSucceeded()
 	t.setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
-	QDataStream stream( &buffer, IO_WriteOnly );
+	QDataStream stream( &buffer, QIODevice::WriteOnly );
 
-	if ( m_file.open(IO_ReadOnly ) )
+	if ( m_file.open(QIODevice::ReadOnly ) )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading..." << endl;
 	}
@@ -106,7 +106,7 @@ void SendFileTask::connectSucceeded()
 			"Cache-Control: no-cache\r\n\r\n").arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()).arg(m_file.size()+4+paket.size());
 	stream.writeRawData( header.toLocal8Bit(), header.length() );
 	stream.writeRawData( paket.data(), paket.size() );
-	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
+	stream << (qint8)0x32 << (qint8)0x39 << (qint8)0xc0 << (qint8)0x80;
 
 	if( !m_socket->write( buffer ) )
 	{

@@ -144,7 +144,7 @@ void WebcamTask::slotConnectionStage1Established()
 	}
 
 	// Header: 08 00 01 00 00 00 00	
-	stream << (Q_INT8)0x08 << (Q_INT8)0x00 << (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT32)s.length();
+	stream << (qint8)0x08 << (qint8)0x00 << (qint8)0x01 << (qint8)0x00 << (qint32)s.length();
 	stream.writeRawData( s.toLocal8Bit(), s.length() );
 	
 	socket->write( buffer.data(), buffer.size() );
@@ -174,7 +174,7 @@ void WebcamTask::slotConnectionStage2Established()
 		s = QString("a=2\r\nc=us\r\ne=21\r\nu=%1\r\nt=%2\r\ni=\r\ng=%3\r\no=w-2-5-1\r\np=1")
 			.arg(client()->userId()).arg(socketMap[socket].key).arg(socketMap[socket].sender);
 		// Header: 08 00 01 00 00 00 00	
-		stream << (Q_INT8)0x08 << (Q_INT8)0x00 << (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT32)s.length();
+		stream << (qint8)0x08 << (qint8)0x00 << (qint8)0x01 << (qint8)0x00 << (qint32)s.length();
 	}
 	else
 	{
@@ -184,8 +184,8 @@ void WebcamTask::slotConnectionStage2Established()
 		s = QString("a=2\r\nc=us\r\nu=%1\r\nt=%2\r\ni=%3\r\no=w-2-5-1\r\np=2\r\nb=KopeteWebcam\r\nd=\r\n")
 		.arg(client()->userId()).arg(socketMap[socket].key).arg(socket->localAddress().nodeName());
 		// Header: 08 00 05 00 00 00 00	01 00 00 00 01
-		stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)s.length()
-			<< (Q_INT8)0x01 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
+		stream << (qint8)0x0d << (qint8)0x00 << (qint8)0x05 << (qint8)0x00 << (qint32)s.length()
+			<< (qint8)0x01 << (qint8)0x00 << (qint8)0x00 << (qint8)0x00 << (qint8)0x01;
 	}
 	socket->write( buffer.data(), buffer.size() );
 	socket->write( s.toLocal8Bit(), s.length() );
@@ -236,12 +236,12 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 	KStreamSocket *newSocket;
 	switch( (const char)data[2] )
 	{
-	case (Q_INT8)0x06:
+	case (qint8)0x06:
 		emit webcamNotAvailable(socketMap[socket].sender);
 		break;
-	case (Q_INT8)0x04:
-	case (Q_INT8)0x07:
-		while( (const char)data[i] != (Q_INT8)0x00 )
+	case (qint8)0x04:
+	case (qint8)0x07:
+		while( (const char)data[i] != (qint8)0x00 )
 			server += data[i++];
 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Server:" << server << endl;
 		if( server.isEmpty() )
@@ -575,8 +575,8 @@ void WebcamTask::grantAccess( const QString &userId )
 	QDataStream stream( &ar, QIODevice::WriteOnly );
 	QString user = QString("u=%1").arg(userId);
 
-	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)user.length()
-	<< (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
+	stream << (qint8)0x0d << (qint8)0x00 << (qint8)0x05 << (qint8)0x00 << (qint32)user.length()
+	<< (qint8)0x00 << (qint8)0x00 << (qint8)0x00 << (qint8)0x00 << (qint8)0x01;
 	socket->write( ar.data(), ar.size() );
 	socket->write( user.toLocal8Bit(), user.length() );
 }
@@ -683,8 +683,8 @@ void WebcamTask::transmitWebcamImage()
 	socket->enableWrite( false );
 	QByteArray buffer;
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
-	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)pictureBuffer.size()
-			<< (Q_INT8)0x02 << (Q_INT32)timestamp++;
+	stream << (qint8)0x0d << (qint8)0x00 << (qint8)0x05 << (qint8)0x00 << (qint32)pictureBuffer.size()
+			<< (qint8)0x02 << (qint32)timestamp++;
 	socket->write( buffer.data(), buffer.size() );
 	if( pictureBuffer.size() )
 		socket->write( pictureBuffer.data(), pictureBuffer.size() );
