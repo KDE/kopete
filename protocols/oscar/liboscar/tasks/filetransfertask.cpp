@@ -44,8 +44,8 @@
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
                                     const QString& self, QByteArray cookie,
                                     Buffer b  )
-: Task( parent ), m_contactName( contact ), m_selfName( self ),
-  m_timer( this ), m_file( this )
+: Task( parent ), m_file( this ), m_contactName( contact ), m_selfName( self ),
+  m_timer( this )
 {
 	init( Receive );
 	initOft();
