@@ -361,9 +361,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readEntry ( "AllowPlainTextPassword", false ) );
 
 	// enable file transfer (if empty, IP will be set after connection has been established)
-	KGlobal::config()->setGroup ( "Jabber" );
-	m_jabberClient->setFileTransfersEnabled ( true, KGlobal::config()->readEntry ( "LocalIP" ) );
-	setS5BServerPort ( KGlobal::config()->readEntry ( "LocalPort", 8010 ) );
+	KConfigGroup config = KGlobal::config()->group ( "Jabber" );
+	m_jabberClient->setFileTransfersEnabled ( true, config.readEntry ( "LocalIP" ) );
+	setS5BServerPort ( config.readEntry ( "LocalPort", 8010 ) );
 
 	//
 	// Determine system name
@@ -399,7 +399,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	time(&x);
 	char str[256];
 	char fmt[32];
-	int timezoneOffset;
+	int timezoneOffset(0);
 	QString timezoneString;
 	
 	strcpy ( fmt, "%z" );

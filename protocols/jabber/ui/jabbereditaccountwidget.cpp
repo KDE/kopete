@@ -117,9 +117,9 @@ void JabberEditAccountWidget::reopen ()
 
 	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readEntry("AllowPlainTextPassword", true));
 
-	KGlobal::config()->setGroup("Jabber");
-	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", QString()));
-	sbLocalPort->setValue (KGlobal::config()->readEntry("LocalPort", 8010));
+	KConfigGroup config = KGlobal::config()->group("Jabber");
+	leLocalIP->setText (config.readEntry("LocalIP", QString()));
+	sbLocalPort->setValue (config.readEntry("LocalPort", 8010));
 
 	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString()));
 
@@ -180,9 +180,10 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setExcludeConnect(cbAutoConnect->isChecked());
 
-	KGlobal::config()->setGroup("Jabber");
-	KGlobal::config()->writeEntry("LocalIP", leLocalIP->text());
-	KGlobal::config()->writeEntry("LocalPort", sbLocalPort->value());
+	KConfigGroup config = KGlobal::config()->group("Jabber");
+	
+	config.writeEntry("LocalIP", leLocalIP->text());
+	config.writeEntry("LocalPort", sbLocalPort->value());
 
 	account()->configGroup()->writeEntry("ProxyJID", leProxyJID->text());
 
