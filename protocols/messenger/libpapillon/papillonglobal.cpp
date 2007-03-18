@@ -58,7 +58,7 @@ QString presenceToString(Papillon::Presence::Status status)
 
 Papillon::Presence::Status stringToPresence(const QString &status)
 {
-	Papillon::Presence::Status presence;
+	Papillon::Presence::Status presence = Presence::Offline;
 
 	if( status == QLatin1String("AWY") )
 		presence = Presence::Away;

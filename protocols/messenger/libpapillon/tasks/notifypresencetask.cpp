@@ -48,7 +48,7 @@ bool NotifyPresenceTask::take(Transfer *transfer)
 	if( forMe(transfer) )
 	{
 		QString contactId;
-		Papillon::Presence::Status newPresence;
+		Papillon::Presence::Status newPresence = Presence::Offline;
 
 		// ILN is initial presence and NLN normal presence change.
 		if( transfer->command() == QLatin1String("NLN") || transfer->command() == QLatin1String("ILN") )
