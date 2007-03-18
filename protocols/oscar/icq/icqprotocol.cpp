@@ -67,24 +67,27 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	 */
 
 	KConfig file(url.path(), KConfig::OnlyLocal);
-
+	QString group_name;
+	
+	
 	if (file.hasGroup("ICQ User"))
-		file.setGroup("ICQ User");
+		group_name= "ICQ User";
 	else if (file.hasGroup("ICQ Message User"))
-		file.setGroup("ICQ Message User");
+		group_name = "ICQ Message User";
 	else
 		return;
 
+	KConfigGroup group = file.group(group_name);
 	ICQProtocol *proto = ICQProtocol::protocol();
 
-	QString uin = file.readEntry("UIN");
+	QString uin = group.readEntry("UIN");
 	if (uin.isEmpty())
 		return;
 
-	QString nick = file.readEntry("NickName");
-	QString first = file.readEntry("FirstName");
-	QString last = file.readEntry("LastName");
-	QString email = file.readEntry("Email");
+	QString nick = group.readEntry("NickName");
+	QString first = group.readEntry("FirstName");
+	QString last = group.readEntry("LastName");
+	QString email = group.readEntry("Email");
 
 	Kopete::Account *account = 0;
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts(proto);
