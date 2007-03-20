@@ -75,7 +75,7 @@ JavaScriptConfig::JavaScriptConfig(QObject *parent)
 
 	//Handler for script packages
 	registerAsMimeHandler( QLatin1String("application/x-kopete-javascript") );
-	registerAsMimeHandler( QLatin1String("application/x-zip") );
+	registerAsMimeHandler( QLatin1String("application/zip") );
 }
 
 JavaScriptConfig::~JavaScriptConfig()

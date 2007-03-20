@@ -200,8 +200,8 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
  : MimeTypeHandler( false )
 {
 	registerAsMimeHandler( QString::fromLatin1("application/x-kopete-emoticons") );
-	registerAsMimeHandler( QString::fromLatin1("application/x-tgz") );
-	registerAsMimeHandler( QString::fromLatin1("application/x-tbz") );
+	registerAsMimeHandler( QString::fromLatin1("application/x-compressed-tar") );
+	registerAsMimeHandler( QString::fromLatin1("application/x-bzip-compressed-tar") );
 }
 
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const

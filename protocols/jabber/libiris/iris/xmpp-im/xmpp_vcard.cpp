@@ -107,7 +107,7 @@ QString image2type(const QByteArray &ba)
 	if ( format.toUpper() == "BMP" )
 		return "image/bmp";
 	if ( format.toUpper() == "XPM" )
-		return "image/x-xpm";
+		return "image/x-xpixmap";
 	if ( format.toUpper() == "SVG" )
 		return "image/svg+xml";
 	if ( format.toUpper() == "JPEG" )

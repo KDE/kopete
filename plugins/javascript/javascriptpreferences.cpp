@@ -326,7 +326,7 @@ void JavaScriptPreferences::slotEditScript()
 		preferencesDialog->scriptList->setEnabled(false);
 		preferencesDialog->editScript->setEnabled(false);
 		editProcess = KRun::runURL( localScriptsDir + '/' + selItem->script->id + '/' + selItem->script->fileName,
-			"text/javascript", false, false );
+			"application/javascript", false, false );
 		slotWaitForEdit();
 	}
 */

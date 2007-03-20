@@ -133,11 +133,11 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 
 	// Find mimetype for current bundle. ZIP and KTar need separate constructor
 	QString currentBundleMimeType = KMimeType::findByPath(styleBundlePath, 0, false)->name();
-	if(currentBundleMimeType == "application/x-zip")
+	if(currentBundleMimeType == "application/zip")
 	{
 		archive = new KZip(styleBundlePath);
 	}
-	else if( currentBundleMimeType == "application/x-tgz" || currentBundleMimeType == "application/x-tbz" || currentBundleMimeType == "application/x-gzip" || currentBundleMimeType == "application/x-bzip2" )
+	else if( currentBundleMimeType == "application/x-compressed-tar" || currentBundleMimeType == "application/x-bzip-compressed-tar" || currentBundleMimeType == "application/x-gzip" || currentBundleMimeType == "application/x-bzip" )
 	{
 		archive = new KTar(styleBundlePath);
 	}

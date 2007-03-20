@@ -1363,7 +1363,7 @@ Q3DragObject *KopeteContactListView::dragObject()
 		QString vcard = converter.createVCard( address );
 		if( !vcard.isNull() )
 		{
-			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/x-vcard", 0L );
+			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/directory", 0L );
 			vcardDrag->setEncodedData( vcard.toUtf8() );
 			drag->addDragObject( vcardDrag );
 		}

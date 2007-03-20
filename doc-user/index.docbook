@@ -889,7 +889,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <qandaset>
 <qandaentry>
 <question><para>What does &kopete; mean? How do I pronounce it?</para></question>
-<answer><para>&kopete;'s name comes from the chilean word Copete, meaning <quote>a drink with your friends</quote>. Duncan, the original author, recorded an <ulink type="audio/vorbis" url="http://kopete.kde.org/files/kopete_en.ogg">audio sample</ulink>.</para></answer>
+<answer><para>&kopete;'s name comes from the chilean word Copete, meaning <quote>a drink with your friends</quote>. Duncan, the original author, recorded an <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg">audio sample</ulink>.</para></answer>
 </qandaentry>
 <qandaentry>
 <question><para>When I have more than one messaging service under a user's name in my contact list and I click on that user's name, it will message them on the wrong messaging service.</para>

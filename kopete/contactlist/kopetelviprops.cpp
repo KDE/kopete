@@ -555,7 +555,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 	KFileDialog *fileDialog = requester->fileDialog();
 	//fileDialog->setCaption( i18n("Select Sound File") );
 	QStringList filters;
-	filters << "audio/x-wav" << "audio/x-mp3" << "application/ogg"
+	filters << "audio/x-wav" << "audio/mpeg" << "application/ogg"
 			<< "audio/x-adpcm";
 	fileDialog->setMimeFilter( filters );
 

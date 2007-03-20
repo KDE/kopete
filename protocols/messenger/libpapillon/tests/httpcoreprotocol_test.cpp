@@ -54,7 +54,7 @@ void HttpCoreProtocol_Test::testNormalTransfer()
 	QVERIFY( transfer->hasContentLength() );
 	QVERIFY( transfer->hasContentType() );
 	QCOMPARE( transfer->statusCode(), 200 );
-	QCOMPARE( transfer->contentType(), QString("text/xml") );
+	QCOMPARE( transfer->contentType(), QString("application/xml") );
 	QCOMPARE( transfer->contentLength(), (uint)4171 );
 	QCOMPARE( (uint)transfer->body().size(), transfer->contentLength() );
 	int indexOf = transfer->body().lastIndexOf("</soap:Envelope>");
