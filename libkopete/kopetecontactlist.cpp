@@ -77,7 +77,7 @@ ContactList *ContactList::self()
 }
 
 ContactList::ContactList()
-	: QStandardItemModel( kapp )
+	: QObject( qApp )
 {
 	setObjectName( "KopeteContactList" );
 	d=new Private;
@@ -233,7 +233,6 @@ void ContactList::addMetaContact( MetaContact *mc )
 		return;
 
 	d->contacts.append( mc );
-	mc->groups().first()->appendRow( mc );
 
 	emit metaContactAdded( mc );
 	connect( mc, SIGNAL( persistentDataChanged( ) ), SLOT( slotSaveLater() ) );
@@ -265,7 +264,6 @@ void ContactList::removeMetaContact(MetaContact *m)
 	}
 
 	d->contacts.removeAll( m );
-	removeRow( m->row() );
 	emit metaContactRemoved( m );
 	m->deleteLater();
 }
@@ -281,7 +279,6 @@ void ContactList::addGroup( Group * g )
 	if(!d->groups.contains(g) )
 	{
 		d->groups.append( g );
-		appendRow( g );
 		emit groupAdded( g );
 		connect( g , SIGNAL ( displayNameChanged(Kopete::Group* , const QString & )) , this , SIGNAL ( groupRenamed(Kopete::Group* , const QString & )) ) ;
 	}
