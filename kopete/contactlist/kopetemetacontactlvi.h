@@ -5,8 +5,9 @@
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
+    Copyright (c) 2007      by Matt Rogers            <mattr@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,16 +19,13 @@
     *************************************************************************
 */
 
-#ifndef __kopetemetacontactlvi_h__
-#define __kopetemetacontactlvi_h__
+#ifndef KOPETEMETACONTACTLVI_H
+#define KOPETEMETACONTACTLVI_H
 
-#include "kopetelistviewitem.h"
-
+#include <QtGui/QStandardItem>
 #include <qobject.h>
 #include <qpixmap.h>
 #include <q3ptrdict.h>
-
-#include <k3listview.h>
 
 class QVariant;
 
@@ -49,140 +47,23 @@ class KopeteGroupViewItem;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Matt Rogers <mattr@kde.org>
  */
-class KopeteMetaContactLVI : public Kopete::UI::ListView::Item
+class KopeteMetaContactViewItem : public QStandardItem
 {
 	Q_OBJECT
 
 public:
-	KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent );
-	KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListViewItem *parent );
-	KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListView *parent );
-	~KopeteMetaContactLVI();
+	explicit KopeteMetaContactViewItem( Kopete::MetaContact *contact );
+	~KopeteMetaContactViewItem();
 
 	/**
 	 * metacontact this visual item represents
 	 */
-	Kopete::MetaContact *metaContact() const
-	{ return m_metaContact; };
-
-	/**
-	 * true if the item is at top level and not under a group
-	 */
-	bool isTopLevel() const;
-
-	/**
-	 * parent when top-level
-	 */
-	Q3ListView *parentView() const { return m_parentView; };
-
-	/**
-	 * parent when not top-level
-	 */
-	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
-
-	/**
-	 * call this when the item has been moved to a different group
-	 */
-	void movedToDifferentGroup();
-	void rename( const QString& name );
-	void startRename( int );
-
-	Kopete::Group *group();
-
-	/**
-	 * Returns the Kopete::Contact of the small little icon at the point p
-	 * @param p must be in the list view item's coordinate system.
-	 * Returns a null pointer if p is not on a small icon.
-	 * (This is used for e.g. the context-menu of a contact when
-	 * right-clicking an icon, or the tooltips)
-	 */
-	Kopete::Contact *contactForPoint( const QPoint &p ) const;
-
-	/**
-	 * Returns the QRect small little icon used for the Kopete::Contact.
-	 * The behavior is undefined if @param c doesn't point to a valid
-	 * Kopete::Contact for this list view item.
-	 * The returned QRect is using the list view item's coordinate
-	 * system and should probably be transformed into the list view's
-	 * coordinates before being of any practical use.
-	 * Note that the returned Rect is always vertically stretched to fill
-	 * the full list view item's height, only the width is relative to
-	 * the actual icon width.
-	 */
-	QRect contactRect( const Kopete::Contact *c ) const;
-
-	bool isGrouped() const;
-
-	/**
-	 * reimplemented from K3ListViewItem to take into account our alternate text storage
-	 */
-	virtual QString text( int column ) const;
-	virtual void setText( int column, const QString &text );
-
-public slots:
-	/**
-	 * Call the meta contact's execute as I don't want to expose m_contact
-	 * directly.
-	 */
-	void execute() const;
-
-	void catchEvent( Kopete::MessageEvent * );
-
-	void updateVisibility();
-
-private slots:
-	void slotUpdateMetaContact();
-	void slotContactStatusChanged( Kopete::Contact * );
-	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
-	void slotContactAdded( Kopete::Contact * );
-	void slotContactRemoved( Kopete::Contact * );
-
-	void slotDisplayNameChanged();
-	void slotPhotoChanged();
-
-	void slotAddToNewGroup();
-	void slotIdleStateChanged( Kopete::Contact * =0L);
-
-	void slotConfigChanged();
-
-	void slotEventDone( Kopete::MessageEvent* );
-	void slotBlink();
-
-	void updateContactIcons();
-
-protected:
-	void okRename(int col);
-	void cancelRename(int col);
+	Kopete::MetaContact *metaContact() const;
 
 private:
-	void initLVI();
-	void setDisplayMode( int mode, int iconMode );
-	void setMetaContactToolTipSourceForComponent( Kopete::UI::ListView::Component *comp );
-	QString key( int column, bool ascending ) const;
-	void updateContactIcon( Kopete::Contact * );
-	Kopete::UI::ListView::ContactComponent *contactComponent( const Kopete::Contact *c ) const;
-
 	Kopete::MetaContact *m_metaContact;
-	KopeteGroupViewItem *m_parentGroup;
-	Q3ListView *m_parentView;
-	bool m_isTopLevel;
-
-	int m_pixelWide;
-
-	Kopete::OnlineStatus m_oldStatus;
-	QPixmap m_oldStatusIcon;
-	QPixmap m_originalBlinkIcon;
-
-	QTimer *mBlinkTimer;
-
-	Q3PtrDict<Kopete::Account> m_addContactActions;
-
-	bool mIsBlinkIcon;
-	int m_blinkLeft;
-
-	class Private;
-	Private *d;
 };
 
 #endif
