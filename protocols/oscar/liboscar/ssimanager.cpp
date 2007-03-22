@@ -439,26 +439,27 @@ bool SSIManager::newGroup( const Oscar::SSI& group )
 	return false;
 }
 
-bool SSIManager::updateGroup( const Oscar::SSI& oldGroup, const Oscar::SSI& newGroup )
+bool SSIManager::updateGroup( const Oscar::SSI& group )
 {
-	removeID( oldGroup );
-	if ( d->SSIList.remove( oldGroup ) == 0 )
+	Oscar::SSI oldGroup = findGroup( group.name() );
+
+	if ( oldGroup.isValid() )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No group were removed." << endl;
-		return false;
+		removeID( oldGroup );
+		d->SSIList.remove( oldGroup );
 	}
-	
-	if ( d->SSIList.findIndex( newGroup ) != -1 )
+
+	if ( d->SSIList.findIndex( group ) != -1 )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New group is already in list." << endl;
 		return false;
 	}
-	
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating group '" << newGroup.name() << "' in SSI list" << endl;
-	d->SSIList.append( newGroup );
-	addID( newGroup );
-	emit groupUpdated( newGroup );
-	
+
+	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating group '" << group.name() << "' in SSI list" << endl;
+	d->SSIList.append( group );
+	addID( group );
+	emit groupUpdated( group );
+
 	return true;
 }
 
@@ -507,25 +508,26 @@ bool SSIManager::newContact( const Oscar::SSI& contact )
 	return true;
 }
 
-bool SSIManager::updateContact( const Oscar::SSI& oldContact, const Oscar::SSI& newContact )
+bool SSIManager::updateContact( const Oscar::SSI& contact )
 {
-	removeID( oldContact );
-	if ( d->SSIList.remove( oldContact ) == 0 )
+	Oscar::SSI oldContact = findContact( contact.name() );
+
+	if ( oldContact.isValid() )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed." << endl;
-		return false;
+		removeID( oldContact );
+		d->SSIList.remove( oldContact );
 	}
-	
-	if ( d->SSIList.findIndex( newContact ) != -1 )
+
+	if ( d->SSIList.findIndex( contact ) != -1 )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New contact is already in list." << endl;
 		return false;
 	}
-	
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating contact '" << newContact.name() << "' in SSI list" << endl;
-	addID( newContact );
-	d->SSIList.append( newContact );
-	emit contactUpdated( newContact );
+
+	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating contact '" << contact.name() << "' in SSI list" << endl;
+	addID( contact );
+	d->SSIList.append( contact );
+	emit contactUpdated( contact );
 	
 	return true;
 }
@@ -560,17 +562,50 @@ bool SSIManager::removeContact( const QString &contact )
 
 bool SSIManager::newItem( const Oscar::SSI& item )
 {
-	//no error checking for now
+	if ( d->SSIList.findIndex( item ) != -1 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Item is already in list." << endl;
+		return false;
+	}
+
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
 	d->SSIList.append( item );
 	addID( item );
 	return true;
 }
 
+bool SSIManager::updateItem( const Oscar::SSI& item )
+{
+	Oscar::SSI oldItem = findItem( item.name(), item.type() );
+
+	if ( oldItem.isValid() )
+	{
+		removeID( oldItem );
+		d->SSIList.remove( oldItem );
+	}
+
+	if ( d->SSIList.findIndex( item ) != -1 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New item is already in list." << endl;
+		return false;
+	}
+
+	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating item in SSI list" << endl;
+	addID( item );
+	d->SSIList.append( item );
+	return true;
+}
+
 bool SSIManager::removeItem( const Oscar::SSI& item )
 {
-	d->SSIList.remove( item );
+	int remcount = d->SSIList.remove( item );
 	removeID( item );
+
+	if ( remcount == 0 )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No items were removed." << endl;
+		return false;
+	}
 	
 	return true;
 }

@@ -142,7 +142,7 @@ void OscarContact::sync(unsigned int flags)
 	if( !metaContact() || metaContact()->isTemporary() )
 		return;
 	
-	if ( flags & Kopete::Contact::MovedBetweenGroup == Kopete::Contact::MovedBetweenGroup )
+	if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
 	{
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
 		SSIManager* ssiManager = mAccount->engine()->ssiManager();

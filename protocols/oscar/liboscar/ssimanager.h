@@ -104,16 +104,17 @@ public:
 
 public slots:
 	bool newGroup( const Oscar::SSI& group );
-	bool updateGroup( const Oscar::SSI& oldGroup, const Oscar::SSI& newGroup );
+	bool updateGroup( const Oscar::SSI& group );
 	bool removeGroup( const Oscar::SSI& group );
 	bool removeGroup( const QString& group );
 
 	bool newContact( const Oscar::SSI& contact );
-	bool updateContact( const Oscar::SSI& oldContact, const Oscar::SSI& newContact );
+	bool updateContact( const Oscar::SSI& contact );
 	bool removeContact( const Oscar::SSI& contact );
 	bool removeContact( const QString& contact );
 	
 	bool newItem( const Oscar::SSI& item );
+	bool updateItem( const Oscar::SSI& item );
 	bool removeItem( const Oscar::SSI& item );
 
 	void addID( const Oscar::SSI& item );

@@ -28,9 +28,10 @@
 #include "transfer.h"
 
 
-SSIModifyTask::SSIModifyTask( Task* parent ) : Task( parent )
+SSIModifyTask::SSIModifyTask( Task* parent, bool staticTask ) : Task( parent )
 {
 	m_ssiManager = parent->client()->ssiManager();
+	m_static = staticTask;
 	m_opType = NoType;
 	m_opSubject = NoSubject;
 	m_id = 0;
@@ -50,9 +51,22 @@ bool SSIModifyTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		setTransfer( transfer );
-		handleSSIAck();
-		setTransfer( 0 );
+		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
+		if ( st )
+		{
+			setTransfer( transfer );
+			
+			if ( st->snacSubtype() == 0x0008 )
+				handleSSIAdd();
+			else if ( st->snacSubtype() == 0x0009 )
+				handleSSIUpdate();
+			else if ( st->snacSubtype() == 0x000A )
+				handleSSIRemove();
+			else if ( st->snacSubtype() == 0x000E )
+				handleSSIAck();
+			
+			setTransfer( 0 );
+		}
 		return true;
 	}
 	else
@@ -201,11 +215,23 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )
 		return false;
+
+	if ( st->snacService() == 0x0013 )
+	{
+		WORD subtype = st->snacSubtype();
+		if ( m_static )
+		{
+			if ( subtype == 0x0008 || subtype == 0x0009 || subtype == 0x000A )
+				return true;
+		}
+		else
+		{
+			if ( subtype == 0x000E && m_id == st->snac().id )
+				return true;
+		}
+	}
 	
-	if ( st->snacService() == 0x0013 && st->snacSubtype() == 0x000E && m_id == st->snac().id )
-		return true;
-	else
-		return false;
+	return false;
 }
 
 void SSIModifyTask::handleSSIAck()
@@ -429,9 +455,9 @@ void SSIModifyTask::updateSSIManager()
 		else if ( m_opSubject == Group )
 		{
 			if ( m_opType == Rename )
-				m_ssiManager->updateGroup( m_oldItem, m_newItem );
+				m_ssiManager->updateGroup( m_newItem );
 			else if ( m_opType == Change )
-				m_ssiManager->updateContact( m_oldItem, m_newItem );
+				m_ssiManager->updateContact( m_newItem );
 		}
 		else if ( m_opSubject == NoSubject )
 		{
@@ -443,7 +469,7 @@ void SSIModifyTask::updateSSIManager()
 		setSuccess( 0, QString::null );
 		return;
 	}
-	
+
 	if ( m_oldItem.isValid() && !m_newItem )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from SSI manager" << endl;
@@ -469,7 +495,7 @@ void SSIModifyTask::updateSSIManager()
 		setSuccess( 0, QString::null );
 		return;
 	}
-	
+
 	setSuccess( 0, QString::null );
 }
 
@@ -528,6 +554,84 @@ void SSIModifyTask::addItemToBuffer( Oscar::SSI item, Buffer* buffer )
 	QValueList<TLV>::const_iterator listEnd = item.tlvList().end();
 	for( ; it != listEnd; ++it )
 		buffer->addTLV( ( *it ) );
+}
+
+Oscar::SSI SSIModifyTask::getItemFromBuffer( Buffer* buffer ) const
+{
+	QValueList<TLV> tlvList;
+	
+	WORD strlength = buffer->getWord();
+	QString itemName = QString::fromUtf8( buffer->getBlock( strlength ), strlength );
+	WORD groupId = buffer->getWord();
+	WORD itemId = buffer->getWord();
+	WORD itemType = buffer->getWord();
+	WORD tlvLength = buffer->getWord();
+	for ( int i = 0; i < tlvLength; )
+	{
+		TLV t = buffer->getTLV();
+		i += 4;
+		i += t.length;
+		tlvList.append( t );
+	}
+		
+	if ( itemType == ROSTER_CONTACT )
+		itemName = Oscar::normalize( itemName );
+		
+	return Oscar::SSI( itemName, groupId, itemId, itemType, tlvList );
+}
+
+void SSIModifyTask::handleSSIAdd()
+{
+	Buffer* b = transfer()->buffer();
+
+	while ( b->length() > 0 )
+	{
+		Oscar::SSI item = getItemFromBuffer( b );
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << item.name() << " to SSI manager" << endl;
+
+		if ( item.type() == ROSTER_GROUP )
+			m_ssiManager->newGroup( item );
+		else if ( item.type() == ROSTER_CONTACT )
+			m_ssiManager->newContact( item );
+		else
+			m_ssiManager->newItem( item );
+	}
+}
+
+void SSIModifyTask::handleSSIUpdate()
+{
+	Buffer* b = transfer()->buffer();
+
+	while ( b->length() > 0 )
+	{
+		Oscar::SSI item = getItemFromBuffer( b );
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating " << item.name() << " in SSI manager" << endl;
+
+		if ( item.type() == ROSTER_GROUP )
+			m_ssiManager->updateGroup( item );
+		else if ( item.type() == ROSTER_CONTACT )
+			m_ssiManager->updateContact( item );
+		else
+			m_ssiManager->updateItem( item );
+	}
+}
+
+void SSIModifyTask::handleSSIRemove()
+{
+	Buffer* b = transfer()->buffer();
+
+	while ( b->length() > 0 )
+	{
+		Oscar::SSI item = getItemFromBuffer( b );
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << item.name() << " from SSI manager" << endl;
+
+		if ( item.type() == ROSTER_GROUP )
+			m_ssiManager->removeGroup( item );
+		else if ( item.type() == ROSTER_CONTACT )
+			m_ssiManager->removeContact( item );
+		else
+			m_ssiManager->removeItem( item );
+	}
 }
 
 //kate: tab-width 4; indent-mode csands;
