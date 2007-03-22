@@ -117,6 +117,7 @@ public:
 	ICQUserInfoRequestTask* icqInfoTask;
 	UserInfoTask* userInfoTask;
 	TypingNotifyTask * typingNotifyTask;
+	SSIModifyTask* ssiModifyTask;
 	//Managers
 	ContactManager* ssiManager;
 	ConnectionHandler connections;
@@ -174,6 +175,7 @@ Client::Client( QObject* parent )
 	d->userInfoTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
+	d->ssiModifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
 	d->codecProvider = &defaultCodecProvider;
 
@@ -711,6 +713,7 @@ void Client::initializeStaticTasks()
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
 	d->userInfoTask = new UserInfoTask( c->rootTask() );
 	d->typingNotifyTask = new TypingNotifyTask( c->rootTask() );
+	d->ssiModifyTask = new SSIModifyTask( c->rootTask(), true );
 
 	connect( d->onlineNotifier, SIGNAL( userIsOnline( const QString&, const UserDetails& ) ),
 	         this, SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ) );
@@ -754,6 +757,8 @@ void Client::removeGroup( const QString& groupName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::addGroup( const QString& groupName )
@@ -766,6 +771,8 @@ void Client::addGroup( const QString& groupName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::addContact( const QString& contactName, const QString& groupName )
@@ -778,7 +785,8 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
 		ssimt->go( true );
-
+	else
+		delete ssimt;
 }
 
 void Client::removeContact( const QString& contactName )
@@ -791,6 +799,8 @@ void Client::removeContact( const QString& contactName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::renameGroup( const QString & oldGroupName, const QString & newGroupName )
@@ -803,6 +813,8 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem )
@@ -824,14 +836,20 @@ void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem
 	case 0:
 		if ( ssimt->modifyItem( oldItem, newItem ) )
 			ssimt->go( true );
+		else
+			delete ssimt;
 		break;
 	case 1:
 		if ( ssimt->addItem( newItem ) )
 			ssimt->go( true );
+		else
+			delete ssimt;
 		break;
 	case 2:
 		if ( ssimt->removeItem( oldItem ) )
 			ssimt->go( true );
+		else
+			delete ssimt;
 		break;
 	}
 }
@@ -847,6 +865,8 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->changeGroup( contact, newGroupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::requestFullInfo( const QString& contactId )
@@ -1453,6 +1473,7 @@ void Client::deleteStaticTasks()
 	delete d->icqInfoTask;
 	delete d->userInfoTask;
 	delete d->typingNotifyTask;
+	delete d->ssiModifyTask;
 
 	d->errorTask = 0;
 	d->onlineNotifier = 0;
@@ -1462,6 +1483,7 @@ void Client::deleteStaticTasks()
 	d->icqInfoTask = 0;
 	d->userInfoTask = 0;
 	d->typingNotifyTask = 0;
+	d->ssiModifyTask = 0;
 }
 
 bool Client::hasIconConnection( ) const

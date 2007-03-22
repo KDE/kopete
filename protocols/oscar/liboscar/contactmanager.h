@@ -105,16 +105,17 @@ public:
 
 public slots:
 	bool newGroup( const OContact& group );
-	bool updateGroup( const OContact& oldGroup, const OContact& newGroup );
+	bool updateGroup( const OContact& group );
 	bool removeGroup( const OContact& group );
 	bool removeGroup( const QString& group );
 
 	bool newContact( const OContact& contact );
-	bool updateContact( const OContact& oldContact, const OContact& newContact );
+	bool updateContact( const OContact& contact );
 	bool removeContact( const OContact& contact );
 	bool removeContact( const QString& contact );
 	
 	bool newItem( const OContact& item );
+	bool updateItem( const OContact& item );
 	bool removeItem( const OContact& item );
 
 	void addID( const OContact& item );
