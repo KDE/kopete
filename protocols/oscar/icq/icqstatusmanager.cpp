@@ -18,6 +18,9 @@
 #include "icqstatusmanager.h"
 
 #include <klocale.h>
+#include <ksharedconfig.h>
+#include <kglobal.h>
+#include <kconfig.h>
 
 #include "icqprotocol.h"
 #include "oscarpresencesdataclasses.h"
@@ -45,6 +48,8 @@ public:
 	Kopete::OnlineStatus unknown;
 	Kopete::OnlineStatus waitingForAuth;
 	Kopete::OnlineStatus invisible;
+
+	QList<Xtraz::Status> xtrazStatusList;
 };
 
 ICQStatusManager::ICQStatusManager()
@@ -91,6 +96,8 @@ ICQStatusManager::ICQStatusManager()
 	setPresenceFlagsMask( ~(Presence::Flags)Presence::ICQ );
 	//weight 0, 1 and 2 are used by KOS unknown, waitingForAuth and invisible
 	initialize( 3 );
+
+	loadXtrazStatuses();
 }
 
 ICQStatusManager::~ICQStatusManager()
@@ -111,4 +118,64 @@ Kopete::OnlineStatus ICQStatusManager::unknownStatus() const
 Kopete::OnlineStatus ICQStatusManager::waitingForAuth() const
 {
 	return d->waitingForAuth;
+}
+
+void ICQStatusManager::loadXtrazStatuses()
+{
+	KConfigGroup config = KGlobal::config()->group( "Xtraz Statuses" );
+
+	QList<int> statusList = config.readEntry( "Statuses", QList<int>() );
+	QList<QString> descriptionList = config.readEntry( "Descriptions", QList<QString>() );
+	QList<QString> messageList = config.readEntry( "Messages", QList<QString>() );
+
+	const int count = qMin( qMin( statusList.count(), descriptionList.count() ), messageList.count() );
+	for ( int i = 0; i < count; i++ )
+	{
+		Xtraz::Status status;
+		status.setStatus( statusList.at( i ) );
+		status.setDescription( descriptionList.at( i ) );
+		status.setMessage( messageList.at( i ) );
+
+		d->xtrazStatusList.append( status );
+	}
+}
+
+void ICQStatusManager::saveXtrazStatuses()
+{
+	KConfigGroup config = KGlobal::config()->group( "Xtraz Statuses" );
+
+	QList<int> statusList;
+	QList<QString> descriptionList;
+	QList<QString> messageList;
+
+	for ( int i = 0; i < d->xtrazStatusList.count(); i++ )
+	{
+		Xtraz::Status status = d->xtrazStatusList.at(i);
+		statusList.append( status.status() );
+		descriptionList.append( status.description() );
+		messageList.append( status.message() );
+	}
+
+	config.writeEntry( "Statuses", statusList );
+	config.writeEntry( "Descriptions", descriptionList );
+	config.writeEntry( "Messages", messageList );
+
+	config.sync();
+}
+
+QList<Xtraz::Status> ICQStatusManager::xtrazStatuses() const
+{
+	return d->xtrazStatusList;
+}
+
+void ICQStatusManager::setXtrazStatuses( const QList<Xtraz::Status> &statusList )
+{
+	d->xtrazStatusList = statusList;
+	saveXtrazStatuses();
+}
+
+void ICQStatusManager::appendXtrazStatus( const Xtraz::Status &status )
+{
+	d->xtrazStatusList.append( status );
+	saveXtrazStatuses();
 }

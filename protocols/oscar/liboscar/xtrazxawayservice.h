@@ -34,14 +34,13 @@ public:
 
 	void setIconIndex( int index );
 	int iconIndex() const;
-	
-	void setTitle( const QString& title );
-	QString title() const;
 
-	void setDescription( const QString& desc );
+	void setDescription( const QString& description );
 	QString description() const;
 
-	
+	void setMessage( const QString& message );
+	QString message() const;
+
 	virtual QString serviceId() const;
 
 protected:
@@ -52,8 +51,8 @@ protected:
 
 private:
 	int m_iconIndex;
-	QString m_title;
-	QString m_desc;
+	QString m_description;
+	QString m_message;
 	QString m_senderId;
 };
 

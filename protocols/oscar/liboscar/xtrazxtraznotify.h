@@ -56,7 +56,7 @@ public:
 	 * Creates message plugin with status response.
 	 * Sender UNI must be set before calling this function.
 	 */
-	Oscar::MessagePlugin* statusResponse( int iconIndex, const QString& title, const QString& desc ) const;
+	Oscar::MessagePlugin* statusResponse( int iconIndex, const QString& description, const QString& message ) const;
 
 	/**
 	 * Creates message plugin with status request.

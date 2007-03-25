@@ -22,6 +22,11 @@ ui/icqauthreplydialog.cpp
 ui/icqaddcontactpage.cpp
 ui/icqsearchdialog.cpp
 ui/icqchangepassworddialog.cpp
+ui/xtrazicqstatusdialog.cpp
+ui/xtrazicqstatuseditor.cpp
+ui/xtrazstatusdelegate.cpp
+ui/editorwithicon.cpp
+ui/iconcells.cpp
 )
 
 kde4_add_ui_files(kopete_icq_ui_SRCS
@@ -36,6 +41,8 @@ ui/icqauthreplyui.ui
 ui/icqsearchbase.ui
 ui/icqeditaccountui.ui
 ui/icqchangepassword.ui
+ui/xtrazicqstatusui.ui
+ui/xtrazicqstatuseditorui.ui
 )
 
 set(kopete_icq_PART_SRCS
@@ -44,7 +51,10 @@ set(kopete_icq_PART_SRCS
    icqaccount.cpp
    icqcontact.cpp
    aimcontact.cpp
-   icqprotocol.cpp )
+   icqprotocol.cpp
+   xtrazstatus.cpp
+   xtrazstatusmodel.cpp
+   xtrazstatusaction.cpp )
 
 kde4_automoc(${kopete_icq_PART_SRCS})
 

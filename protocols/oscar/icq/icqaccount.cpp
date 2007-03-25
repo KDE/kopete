@@ -42,6 +42,10 @@
 #include "icquserinfowidget.h"
 #include "oscarstatusmanager.h"
 #include "oscarpresencesdataclasses.h"
+#include "xtrazicqstatusdialog.h"
+#include "xtrazicqstatuseditor.h"
+#include "xtrazstatusaction.h"
+#include "icqstatusmanager.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -62,7 +66,7 @@ void ICQMyselfContact::userInfoUpdated()
 	if ( details().xtrazStatusSpecified() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-		presence.setDescription( icqAccount->engine()->statusTitle() );
+		presence.setDescription( icqAccount->engine()->statusDescription() );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
@@ -158,7 +162,9 @@ KActionMenu* ICQAccount::actionMenu()
 
 	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
         //, "actionInvisible" );
-	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
+
+	Oscar::Presence pres( presence() );
+	pres.setFlags( pres.flags() | Oscar::Presence::Invisible );
 	actionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
 	actionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
 	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
@@ -167,6 +173,33 @@ KActionMenu* ICQAccount::actionMenu()
 	actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
 	*/
+
+	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), this );
+	
+	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), this );
+	QObject::connect( xtrazStatusSetAction, SIGNAL(triggered(bool)), this, SLOT(setXtrazStatus()) );
+	xtrazStatusMenu->addAction( xtrazStatusSetAction );
+
+	KAction* xtrazStatusEditAction = new KAction( i18n( "Edit Statuses..." ), this );
+	QObject::connect( xtrazStatusEditAction, SIGNAL(triggered(bool)), this, SLOT(editXtrazStatuses()) );
+	xtrazStatusMenu->addAction( xtrazStatusEditAction );
+
+	ICQStatusManager* mgr = static_cast<ICQStatusManager *>(protocol()->statusManager());
+	QList<Xtraz::Status> xtrazStatusList = mgr->xtrazStatuses();
+
+	if ( !xtrazStatusList.isEmpty() )
+		xtrazStatusMenu->addSeparator();
+
+	for ( int i = 0; i < xtrazStatusList.count(); i++ )
+	{
+		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), this );
+		QObject::connect( xtrazAction, SIGNAL(triggered(const Oscar::Presence&, const QString&)),
+		                  this, SLOT(setPresenceTarget(const Oscar::Presence&, const QString&)) );
+		xtrazStatusMenu->addAction( xtrazAction );
+	}
+
+	actionMenu->addAction( xtrazStatusMenu );
+
 	return actionMenu;
 }
 
@@ -306,6 +339,29 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 	KNotification* notification = new KNotification( "icq_user_reads_status_message" );
 	notification->setText( i18n( "User %1 is reading your status message", name ) );
 	notification->sendEvent();
+}
+
+void ICQAccount::setXtrazStatus()
+{
+	Xtraz::ICQStatusDialog dialog;
+	if ( dialog.exec() == QDialog::Accepted )
+	{
+		Xtraz::Status status = dialog.xtrazStatus();
+		setPresenceTarget( status.presence(), status.message() );
+
+		if ( dialog.append() )
+		{
+			ICQStatusManager* mgr = static_cast<ICQStatusManager*>( protocol()->statusManager() );
+			mgr->appendXtrazStatus( status );
+		}
+	}
+}
+
+void ICQAccount::editXtrazStatuses()
+{
+	ICQStatusManager* icqStatusManager = static_cast<ICQStatusManager*>( protocol()->statusManager() );
+	Xtraz::ICQStatusEditor dialog( icqStatusManager );
+	dialog.exec();
 }
 
 void ICQAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )

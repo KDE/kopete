@@ -47,24 +47,24 @@ int XAwayService::iconIndex() const
 	return m_iconIndex - 1;
 }
 
-void XAwayService::setTitle( const QString& title )
+void XAwayService::setDescription( const QString& description )
 {
-	m_title = title;
-}
-
-QString XAwayService::title() const
-{
-	return m_title;
-}
-
-void XAwayService::setDescription( const QString& desc )
-{
-	m_desc = desc;
+	m_description = description;
 }
 
 QString XAwayService::description() const
 {
-	return m_desc;
+	return m_description;
+}
+
+void XAwayService::setMessage( const QString& message )
+{
+	m_message = message;
+}
+
+QString XAwayService::message() const
+{
+	return m_message;
 }
 
 QString XAwayService::serviceId() const
@@ -103,11 +103,11 @@ void XAwayService::createResponse( QDomDocument& doc, QDomElement &e ) const
 	eRoot.appendChild( eIndex );
 
 	QDomElement eTitle = doc.createElement( "title" );
-	eTitle.appendChild( doc.createTextNode( m_title ) );
+	eTitle.appendChild( doc.createTextNode( m_description ) );
 	eRoot.appendChild( eTitle );
 
 	QDomElement eDesc = doc.createElement( "desc" );
-	eDesc.appendChild( doc.createTextNode( m_desc ) );
+	eDesc.appendChild( doc.createTextNode( m_message ) );
 	eRoot.appendChild( eDesc );
 
 	e.appendChild( eRoot );
@@ -142,9 +142,9 @@ void XAwayService::handleResponse( QDomElement& eRoot )
 			if( !e.isNull() )
 			{
 				if ( e.tagName() == "title" )
-					m_title = e.text();
+					m_description = e.text();
 				else if ( e.tagName() == "desc" )
-					m_desc = e.text();
+					m_message = e.text();
 				else if ( e.tagName() == "index" )
 					m_iconIndex = e.text().toInt();
 				else if ( e.tagName() == "uin" )

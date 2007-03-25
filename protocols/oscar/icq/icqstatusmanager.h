@@ -20,6 +20,7 @@
 #define ICQSTATUSMANAGER_H
 
 #include "oscarstatusmanager.h"
+#include "xtrazstatus.h"
 
 namespace Kopete { class OnlineStatus; }
 
@@ -38,6 +39,13 @@ public:
 	virtual Kopete::OnlineStatus connectingStatus() const;
 	virtual Kopete::OnlineStatus unknownStatus() const;
 	virtual Kopete::OnlineStatus waitingForAuth() const;
+
+	void loadXtrazStatuses();
+	void saveXtrazStatuses();
+
+	QList<Xtraz::Status> xtrazStatuses() const;
+	void setXtrazStatuses( const QList<Xtraz::Status> &statusList );
+	void appendXtrazStatus( const Xtraz::Status &status );
 
 private:
 	class Private;

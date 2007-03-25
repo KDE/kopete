@@ -133,7 +133,7 @@ public:
 		Oscar::DWORD status;
 		QString message;     // for away-,DND-message etc., and for Xtraz status
 		int xtraz;           // Xtraz status
-		QString title;       // Xtraz title
+		QString description; // Xtraz description
 	} status;
 
 	//away messages
@@ -239,7 +239,7 @@ void Client::close()
 		d->status.status = 0x0;
 		d->status.xtraz = -1;
 		d->status.message.clear();
-		d->status.title.clear();
+		d->status.description.clear();
 	}
 
     d->exchanges.clear();
@@ -249,7 +249,7 @@ void Client::close()
     d->ssiManager->clear();
 }
 
-void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &title )
+void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &description )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
 
@@ -258,7 +258,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 	d->status.status = status;
 	d->status.message = message;
 	d->status.xtraz = xtraz;
-	d->status.title = title;
+	d->status.description = description;
 
 	if ( d->active )
 	{
@@ -417,7 +417,7 @@ void Client::serviceSetupFinished()
 {
 	d->active = true;
 
-	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.title );
+	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.description );
 	d->ownStatusTask->go();
 
 	if ( isIcq() )
@@ -494,9 +494,9 @@ int Client::statusXtraz() const
 	return d->status.xtraz;
 }
 
-QString Client::statusTitle() const
+QString Client::statusDescription() const
 {
-	return d->status.title;
+	return d->status.description;
 }
 
 QString Client::statusMessage() const
@@ -587,7 +587,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 						{
 							XtrazNotify xNotifyResponse;
 							xNotifyResponse.setSenderUni( userId() );
-							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusTitle(), statusMessage() ) );
+							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusDescription(), statusMessage() ) );
 							emit userReadsStatusMessage( msg.sender() );
 						}
 					}
@@ -633,7 +633,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 						const Xtraz::XAwayService* service = dynamic_cast<const XAwayService*>(xNotify.findService( "cAwaySrv" ));
 						if ( service )
 							emit receivedXStatusMessage( service->senderId(), service->iconIndex(),
-							                             service->title(), service->description() );
+							                             service->description(), service->message() );
 					}
 				}
 			}

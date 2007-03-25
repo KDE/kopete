@@ -82,7 +82,7 @@ void ICQContactBase::receivedShortInfo( const QString& contact )
 	}
 }
 
-void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& desc )
+void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
@@ -90,11 +90,11 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	OscarProtocol* p = static_cast<OscarProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( this->onlineStatus() );
 	presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-	presence.setDescription( title );
+	presence.setDescription( description );
 	presence.setXtrazStatus( icon );
 	setPresenceTarget( presence );
 
-	setAwayMessage( desc );
+	setAwayMessage( message );
 	m_haveAwayMessage = true;
 }
 
