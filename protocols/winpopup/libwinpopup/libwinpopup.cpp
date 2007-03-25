@@ -163,7 +163,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 
 	// for Samba 3
 	KProcIO *reader = new KProcIO;
-	*reader << smbClientBin << "-N" << "-E" << "-g" << "-L" << Host << "-";
+	*reader << smbClientBin << "-N" << "-g" << "-L" << Host << "-";
 
 	connect(reader, SIGNAL(readReady(KProcIO *)), this, SLOT(slotReadProcessReady(KProcIO *)));
 	connect(reader, SIGNAL(processExited(KProcess *)), this, SLOT(slotReadProcessExited(KProcess *)));

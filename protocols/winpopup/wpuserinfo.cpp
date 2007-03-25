@@ -70,8 +70,8 @@ WPUserInfo::~WPUserInfo()
 // if we would do this in libwinpopup. GF
 void WPUserInfo::startDetailsProcess(const QString &host)
 {
-	KGlobal::config()->setGroup("WinPopup");
-	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
+	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
 	KProcIO *details = new KProcIO;
 	*details << theSMBClientPath << "-N" << "-E" << "-g" << "-L" << host << "-";
