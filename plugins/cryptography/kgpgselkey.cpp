@@ -32,7 +32,7 @@
 #include <k3listview.h>
 #include <klocale.h>
 #include <qcheckbox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kiconloader.h>
 #include <kicon.h>
 
@@ -79,7 +79,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
   QString tst,tst2;
   char line[130];
 
-  // FIXME: Why use popen instead of KProcess, QProcess or KProcIO?!?
+  // FIXME: Why use popen instead of K3Process, QProcess or K3ProcIO?!?
   //        Are we interested in having buffer overflows now? - Martijn
   fp = popen( "gpg --no-tty --with-colon --list-secret-keys", "r" );
   while ( fgets( line, sizeof(line), fp))
@@ -132,7 +132,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
       tst=tst.section(":",9,9);
 
       // FIXME: Same here: don't use popen! - Martijn
-      fp2 = popen( QString( "gpg --no-tty --with-colon --list-key %1" ).arg( KShellProcess::quote( id ) ).toLatin1(), "r" );
+      fp2 = popen( QString( "gpg --no-tty --with-colon --list-key %1" ).arg( K3ShellProcess::quote( id ) ).toLatin1(), "r" );
       bool dead=true;
       while ( fgets( line, sizeof(line), fp2))
       {

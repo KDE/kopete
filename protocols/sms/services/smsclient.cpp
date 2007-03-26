@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdebug.h>
 #include <kconfigbase.h>
 #include <kconfiggroup.h>
@@ -73,7 +73,7 @@ void SMSClient::send(const Kopete::Message& msg)
 	if (programName.isNull())
 		programName = "/usr/bin/sms_client";
 
-	KProcess* p = new KProcess;
+	K3Process* p = new K3Process;
 
 	QString message = msg.plainBody();
 	QString nr = msg.to().first()->contactId();
@@ -82,11 +82,11 @@ void SMSClient::send(const Kopete::Message& msg)
 	*p << provider + ':' + nr;
 	*p << message;
 
-	QObject::connect(p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
-	QObject::connect(p, SIGNAL(receivedStdout(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
-	QObject::connect(p, SIGNAL(receivedStderr(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
+	QObject::connect(p, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendFinished(K3Process*)));
+	QObject::connect(p, SIGNAL(receivedStdout(K3Process*, char*, int)), this, SLOT(slotReceivedOutput(K3Process*, char*, int)));
+	QObject::connect(p, SIGNAL(receivedStderr(K3Process*, char*, int)), this, SLOT(slotReceivedOutput(K3Process*, char*, int)));
 
-	p->start(KProcess::Block, KProcess::AllOutput);
+	p->start(K3Process::Block, K3Process::AllOutput);
 }
 
 QWidget* SMSClient::configureWidget(QWidget* parent)
@@ -155,14 +155,14 @@ QStringList SMSClient::providers()
 	return p;
 }
 
-void SMSClient::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
+void SMSClient::slotReceivedOutput(K3Process*, char  *buffer, int  buflen)
 {
 	QStringList lines = QString::fromLocal8Bit(buffer, buflen).split('\n');
 	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
 		output.append(*it);
 }
 
-void SMSClient::slotSendFinished(KProcess* p)
+void SMSClient::slotSendFinished(K3Process* p)
 {
 	if (p->exitStatus() == 0)
 		emit messageSent(m_msg);

@@ -17,7 +17,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdebug.h>
 
 #include "smpppdclient.h"
@@ -42,12 +42,12 @@ void SMPPPDSearcher::searchNetwork() {
     // the first point to search is localhost
     if(!scan("127.0.0.1", "255.0.0.0")) {
 
-        m_procNetstat  = new KProcess;
+        m_procNetstat  = new K3Process;
         m_procNetstat->setEnvironment("LANG", "C"); // we want to force english output
 
         *m_procNetstat << "/bin/netstat" << "-rn";
-        connect(m_procNetstat, SIGNAL(receivedStdout(KProcess *,char *,int)), this, SLOT(slotStdoutReceivedNetstat(KProcess *,char *,int)));
-        if(!m_procNetstat->start(KProcess::Block, KProcess::Stdout)) {
+        connect(m_procNetstat, SIGNAL(receivedStdout(K3Process *,char *,int)), this, SLOT(slotStdoutReceivedNetstat(K3Process *,char *,int)));
+        if(!m_procNetstat->start(K3Process::Block, K3Process::Stdout)) {
             kDebug(14312) << k_funcinfo << "Couldn't execute /sbin/netstat -rn" << endl << "Perhaps the package net-tools isn't installed." << endl;
 
             emit smpppdNotFound();
@@ -59,9 +59,9 @@ void SMPPPDSearcher::searchNetwork() {
 }
 
 /*!
-    \fn SMPPPDSearcher::slotStdoutReceived(KProcess * proc, char * buf, int len)
+    \fn SMPPPDSearcher::slotStdoutReceived(K3Process * proc, char * buf, int len)
  */
-void SMPPPDSearcher::slotStdoutReceivedIfconfig(KProcess * /* proc */, char * buf, int len) {
+void SMPPPDSearcher::slotStdoutReceivedIfconfig(K3Process * /* proc */, char * buf, int len) {
     kDebug(14312) << k_funcinfo << endl;
 
     QString myBuf = QString::fromLatin1(buf,len);
@@ -78,7 +78,7 @@ void SMPPPDSearcher::slotStdoutReceivedIfconfig(KProcess * /* proc */, char * bu
 
     emit smpppdNotFound();
 }
-void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf, int len) {
+void SMPPPDSearcher::slotStdoutReceivedNetstat(K3Process * /* proc */, char * buf, int len) {
     kDebug(14312) << k_funcinfo << endl;
 
     QRegExp rexGW(".*\\n0.0.0.0[ ]*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
@@ -86,12 +86,12 @@ void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf
 
     if(!(rexGW.exactMatch(myBuf) && scan(rexGW.cap(1), "255.255.255.255"))) {
         // if netstat -r found no gateway we search the network
-        m_procIfconfig = new KProcess;
+        m_procIfconfig = new K3Process;
         m_procIfconfig->setEnvironment("LANG", "C"); // we want to force english output
 
         *m_procIfconfig << "/sbin/ifconfig";
-        connect(m_procIfconfig, SIGNAL(receivedStdout(KProcess *,char *,int)), this, SLOT(slotStdoutReceivedIfconfig(KProcess *,char *,int)));
-        if(!m_procIfconfig->start(KProcess::Block, KProcess::Stdout)) {
+        connect(m_procIfconfig, SIGNAL(receivedStdout(K3Process *,char *,int)), this, SLOT(slotStdoutReceivedIfconfig(K3Process *,char *,int)));
+        if(!m_procIfconfig->start(K3Process::Block, K3Process::Stdout)) {
             kDebug(14312) << k_funcinfo << "Couldn't execute /sbin/ifconfig" << endl << "Perhaps the package net-tools isn't installed." << endl;
 
             emit smpppdNotFound();

@@ -19,7 +19,7 @@
 #include <QList>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdeversion.h>
 #include <kxmlguiclient.h>
 #include <kaction.h>
@@ -91,7 +91,7 @@ struct CommandHandlerPrivate
 {
 	PluginCommandMap pluginCommands;
 	Kopete::CommandHandler *s_handler;
-	QMap<KProcess*,ManagerPair> processMap;
+	QMap<K3Process*,ManagerPair> processMap;
 	bool inCommand;
 	QList<KAction *> m_commands;
 };
@@ -286,9 +286,9 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 {
 	if( !args.isEmpty() )
 	{
-		KProcess *proc = 0L;
+		K3Process *proc = 0L;
 		if ( KAuthorized::authorizeKAction( "shell_access" ) )
-				proc = new KProcess(manager);
+				proc = new K3Process(manager);
 		if( proc )
 		{
 			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
@@ -305,9 +305,9 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 				*proc << args;
 			}
 
-			connect(proc, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
-			connect(proc, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
-			proc->start( KProcess::NotifyOnExit, KProcess::AllOutput );
+			connect(proc, SIGNAL(receivedStdout(K3Process *, char *, int)), this, SLOT(slotExecReturnedData(K3Process *, char *, int)));
+			connect(proc, SIGNAL(receivedStderr(K3Process *, char *, int)), this, SLOT(slotExecReturnedData(K3Process *, char *, int)));
+			proc->start( K3Process::NotifyOnExit, K3Process::AllOutput );
 		}
 		else
 		{
@@ -361,7 +361,7 @@ void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSess
 		manager->view()->closeView();
 }
 
-void Kopete::CommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int bufflen )
+void Kopete::CommandHandler::slotExecReturnedData(K3Process *proc, char *buff, int bufflen )
 {
 	kDebug(14010) << k_funcinfo << endl;
 	QString buffer = QString::fromLocal8Bit( buff, bufflen );
@@ -373,7 +373,7 @@ void Kopete::CommandHandler::slotExecReturnedData(KProcess *proc, char *buff, in
 		mgrPair.first->appendMessage( msg );
 }
 
-void Kopete::CommandHandler::slotExecFinished(KProcess *proc)
+void Kopete::CommandHandler::slotExecFinished(K3Process *proc)
 {
 	delete proc;
 	p->processMap.remove( proc );

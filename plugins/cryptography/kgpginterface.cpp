@@ -30,7 +30,7 @@
 //Added by qt3to4:
 #include <QByteArray>
 
-#include <kprocio.h>
+#include <k3procio.h>
 
 //#include "kdetailedconsole.h"
 
@@ -62,7 +62,7 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	dests+=" --recipient "+userIDs;
 	
 	QByteArray gpgcmd = "echo -n ";
-	gpgcmd += KShellProcess::quote( text ).toUtf8();
+	gpgcmd += K3ShellProcess::quote( text ).toUtf8();
 	gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 	gpgcmd += Options.toLocal8Bit();
 	gpgcmd += " -e ";
@@ -120,7 +120,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 		}
 	
 		QByteArray gpgcmd="echo ";
-		gpgcmd += KShellProcess::quote(text).toUtf8();
+		gpgcmd += K3ShellProcess::quote(text).toUtf8();
 		gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 		if(passphraseHandling)
 			gpgcmd += "--passphrase-fd " + QString::number(ppass[0]).toLocal8Bit();

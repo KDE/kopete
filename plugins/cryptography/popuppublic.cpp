@@ -35,8 +35,8 @@
 
 #include <kdeversion.h>
 #include <k3listview.h>
-#include <kprocess.h>
-#include <kprocio.h>
+#include <k3process.h>
+#include <k3procio.h>
 #include <klocale.h>
 #include <kactioncollection.h>
 
@@ -363,12 +363,12 @@ void popupPublic::refreshkeys()
 			}
 		}
 	}*/
-        KProcIO *encid=new KProcIO();
+        K3ProcIO *encid=new K3ProcIO();
         *encid << "gpg"<<"--no-secmem-warning"<<"--no-tty"<<"--with-colon"<<"--list-keys";
         /////////  when process ends, update dialog infos
-        QObject::connect(encid, SIGNAL(processExited(KProcess *)),this, SLOT(slotpreselect()));
-        QObject::connect(encid, SIGNAL(readReady(KProcIO *)),this, SLOT(slotprocread(KProcIO *)));
-        encid->start(KProcess::NotifyOnExit,true);
+        QObject::connect(encid, SIGNAL(processExited(K3Process *)),this, SLOT(slotpreselect()));
+        QObject::connect(encid, SIGNAL(readReady(K3ProcIO *)),this, SLOT(slotprocread(K3ProcIO *)));
+        encid->start(K3Process::NotifyOnExit,true);
 }
 
 void popupPublic::slotpreselect()
@@ -398,7 +398,7 @@ void popupPublic::slotSetVisible()
 	keysList->ensureItemVisible(keysList->currentItem());
 }
 
-void popupPublic::slotprocread(KProcIO *p)
+void popupPublic::slotprocread(K3ProcIO *p)
 {
         ///////////////////////////////////////////////////////////////// extract  encryption keys
         bool dead;

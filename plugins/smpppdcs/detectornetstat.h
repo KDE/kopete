@@ -21,7 +21,7 @@
 
 #include "detector.h"
 
-class KProcess;
+class K3Process;
 class IConnector;
 
 /**
@@ -38,18 +38,18 @@ public:
 
 private slots:
     // Original cs-plugin code
-    void slotProcessStdout(KProcess * process, char * buffer, int len);
+    void slotProcessStdout(K3Process * process, char * buffer, int len);
 
     /**
      * Notify when the netstat process has exited
      */
-    void slotProcessExited(KProcess *process);
+    void slotProcessExited(K3Process *process);
 
 private:
     Q_DISABLE_COPY(DetectorNetstat)
 
     mutable QString   m_buffer;
-    mutable KProcess *m_process;
+    mutable K3Process *m_process;
 };
 
 #endif

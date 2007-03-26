@@ -41,7 +41,7 @@
 class GSMLibPrefsUI;
 class SMSContact;
 class QGridLayout;
-class KProcess;
+class K3Process;
 class GSMLibThread;
 
 class GSMLib : public SMSService

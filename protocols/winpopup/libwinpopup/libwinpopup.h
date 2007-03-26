@@ -26,7 +26,7 @@
 #include <qdatetime.h>
 
 // KDE Includes
-#include <kprocio.h>
+#include <k3procio.h>
 #include <kfileitem.h>
 
 const QString WP_POPUP_DIR = QString::fromLatin1("/var/lib/winpopup");
@@ -75,9 +75,9 @@ private:
 private slots:
 	void slotUpdateGroupData();
 	void startReadProcess(const QString &Host);
-	void slotReadProcessReady(KProcIO *r);
-	void slotReadProcessExited(KProcess *r);
-	void slotSendProcessExited(KProcess *p);
+	void slotReadProcessReady(K3ProcIO *r);
+	void slotReadProcessExited(K3Process *r);
+	void slotSendProcessExited(K3Process *p);
 	void slotStartDirLister();
 	void slotListCompleted();
 	void slotNewMessages(const KFileItemList &items);

@@ -31,7 +31,7 @@ class QPushButton;
 class QCheckBox;
 class K3ListView;
 class Q3ButtonGroup;
-class KProcIO;
+class K3ProcIO;
 
 class popupPublic : public KDialog
 {
@@ -55,7 +55,7 @@ private:
 
 private slots:
         void customOpts(const QString &);
-        void slotprocread(KProcIO *);
+        void slotprocread(K3ProcIO *);
         void slotpreselect();
         void refreshkeys();
         void refresh(bool state);

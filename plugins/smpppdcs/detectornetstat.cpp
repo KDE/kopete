@@ -15,7 +15,7 @@
 */
 
 #include <kdebug.h>
-#include <kprocess.h>
+#include <k3process.h>
 
 #include "iconnector.h"
 #include "detectornetstat.h"
@@ -39,16 +39,16 @@ void DetectorNetstat::checkStatus() const {
 
     m_buffer.clear();
 
-    // Use KProcess to run netstat -r. We'll then parse the output of
+    // Use K3Process to run netstat -r. We'll then parse the output of
     // netstat -r in slotProcessStdout() to see if it mentions the
     // default gateway. If so, we're connected, if not, we're offline
-    m_process = new KProcess;
+    m_process = new K3Process;
     *m_process << "netstat" << "-r";
 
-    connect(m_process, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotProcessStdout( KProcess *, char *, int)));
-    connect(m_process, SIGNAL(processExited(KProcess *)), this, SLOT(slotProcessExited(KProcess *)));
+    connect(m_process, SIGNAL(receivedStdout(K3Process *, char *, int)), this, SLOT(slotProcessStdout( K3Process *, char *, int)));
+    connect(m_process, SIGNAL(processExited(K3Process *)), this, SLOT(slotProcessExited(K3Process *)));
 
-    if(!m_process->start(KProcess::NotifyOnExit, KProcess::Stdout)) {
+    if(!m_process->start(K3Process::NotifyOnExit, K3Process::Stdout)) {
         kWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
 
         delete m_process;
@@ -56,14 +56,14 @@ void DetectorNetstat::checkStatus() const {
     }
 }
 
-void DetectorNetstat::slotProcessStdout(KProcess *, char *buffer, int buflen) {
+void DetectorNetstat::slotProcessStdout(K3Process *, char *buffer, int buflen) {
     // Look for a default gateway
     kDebug(14312) << k_funcinfo << endl;
     m_buffer += QString::fromLatin1(buffer, buflen);
     kDebug(14312) << m_buffer << endl;
 }
 
-void DetectorNetstat::slotProcessExited(KProcess *process) {
+void DetectorNetstat::slotProcessExited(K3Process *process) {
     kDebug(14312) << k_funcinfo << m_buffer << endl;
     if(process == m_process) {
         m_connector->setConnectedStatus(m_buffer.contains("default"));

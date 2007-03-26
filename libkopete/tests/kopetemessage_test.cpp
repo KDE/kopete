@@ -29,7 +29,7 @@
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kcomponentdata.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdebug.h>
 
 #include "kopetemessage_test.h"

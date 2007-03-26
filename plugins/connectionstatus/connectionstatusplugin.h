@@ -21,7 +21,7 @@
 #include "kopeteplugin.h"
 
 class QTimer;
-class KProcess;
+class K3Process;
 
 /**
  * @author Chris Howells <howells@kde.org>
@@ -36,18 +36,18 @@ public:
 
 private slots:
 	void slotCheckStatus();
-	void slotProcessStdout( KProcess *process, char *buffer, int len );
+	void slotProcessStdout( K3Process *process, char *buffer, int len );
 
 	/**
 	 * Notify when the netstat process has exited
 	 */
-	void slotProcessExited( KProcess *process );
+	void slotProcessExited( K3Process *process );
 
 private:
 	void setConnectedStatus( bool newStatus );
 
 	bool m_pluginConnected;
-	KProcess *m_process;
+	K3Process *m_process;
 	QTimer *m_timer;
 	QString m_buffer;
 };
