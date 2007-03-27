@@ -795,6 +795,7 @@ default_presentation=0
 
 [kopete_authorization]
 Name=Authorization
+Name[bg]=Оторизация
 Name[ca]=Autorització
 Name[cs]=Autorizace
 Name[da]=Godkendelse
@@ -828,6 +829,7 @@ Name[uk]=Авторизація
 Name[zh_CN]=身份验证
 Name[zh_TW]=認證
 Comment=An user has accepted/declined your authorization request
+Comment[bg]=Потребител е приел/отхвърлил вашата заявка за оторизация
 Comment[ca]=Un usuari ha autoritzat/declinat la vostra petició d'autorització
 Comment[cs]=Uživatel přijmul/odmítnul váš požadavek na autorizaci
 Comment[da]=En bruger har godkendt/afslået din godkendelsesforespørgsel
@@ -950,6 +952,7 @@ default_presentation=16
 
 [msn_alert]
 Name=MSN Alert
+Name[bg]=MSN съобщение
 Name[ca]=Alerta del MSN
 Name[cs]=MSN upozornění
 Name[da]=MSN-alarm
@@ -982,6 +985,7 @@ Name[uk]=Сигнал MSN
 Name[zh_CN]=MSN 提醒
 Name[zh_TW]=MSN 警告
 Comment=A new alert has been sent to you
+Comment[bg]=Изпратено ви е ново съобщение
 Comment[ca]=Se us ha enviat una nova alerta
 Comment[cs]=Bylo vám doručeno nové upozornění
 Comment[da]=En ny alarm er sendt til dig
