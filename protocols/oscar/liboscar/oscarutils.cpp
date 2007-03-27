@@ -278,8 +278,11 @@ const QString Oscar::capName( int capNumber )
 	case CAP_UNKNOWN2:
 		capString = "CAP_UNKNOWN2 ";
 		break;
-	case CAP_UNKNOWN3:
-		capString = "CAP_UNKNOWN3 ";
+	case CAP_PUSH2TALK:
+		capString = "CAP_PUSH2TALK ";
+		break;
+	case CAP_VIDEO:
+		capString = "CAP_VIDEO ";
 		break;
 	default:
 		capString = "UNKNOWN CAP ";
