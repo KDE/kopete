@@ -324,7 +324,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		}
 	}
 
-	comboPhotoURL->setUrl(d->currentIdentity->customPhoto().url());
+	comboPhotoURL->setUrl(d->currentIdentity->customPhoto().pathOrUrl());
 	Kopete::MetaContact::PropertySource photoSource = d->currentIdentity->photoSource();
 
 	radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
