@@ -218,7 +218,7 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 
 	if ( st->snacService() == 0x0013 )
 	{
-		WORD subtype = st->snacSubtype();
+		Oscar::WORD subtype = st->snacSubtype();
 		if ( m_static )
 		{
 			if ( subtype == 0x0008 || subtype == 0x0009 || subtype == 0x000A )
