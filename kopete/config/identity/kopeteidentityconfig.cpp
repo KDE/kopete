@@ -323,7 +323,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		}
 	}
 
-	d->m_view->comboPhotoURL->setURL(d->currentIdentity->customPhoto().url());
+	d->m_view->comboPhotoURL->setURL(d->currentIdentity->customPhoto().pathOrURL());
 	Kopete::MetaContact::PropertySource photoSource = d->currentIdentity->photoSource();
 
 	d->m_view->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
@@ -378,7 +378,9 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 			photo = Kopete::photoFromContact(selectedNameSourceContact());
 			break;
 		case Kopete::MetaContact::SourceCustom:
+			QString url = d->m_view->comboPhotoURL->url();
 			photo = QImage(d->m_view->comboPhotoURL->url());
+			bool null = photo.isNull();
 			break;
 	}
 
