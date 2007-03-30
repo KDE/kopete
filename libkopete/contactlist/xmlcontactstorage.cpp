@@ -16,7 +16,7 @@
     *                                                                       *
     *************************************************************************
 */
-
+#include <fixx11h.h>
 #include "xmlcontactstorage.h"
 
 // Qt includes
