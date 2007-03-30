@@ -57,6 +57,13 @@ LIBOSCAR_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
 Oscar::DWORD parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus );
 
 /**
+ * Parse the character array for capabilities (TLV 0x19)
+ * \param inbuf the buffer we'll be parsing for capabilities
+ * \return a DWORD containing a bit array of the capabilities we found
+ */
+Oscar::DWORD parseNewCapabilities( Buffer &inbuf );
+
+/**
  * Get the name of the capability from its number
  */
 const QString capName( int capNumber );

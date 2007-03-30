@@ -220,7 +220,7 @@ void UserDetails::fill( Buffer * buffer )
 #endif
 				break;
 			case 0x000D: //capability info
-				m_capabilities = Oscar::parseCapabilities( b, m_clientVersion, m_xtrazStatus );
+				m_capabilities |= Oscar::parseCapabilities( b, m_clientVersion, m_xtrazStatus );
 				m_capabilitiesSpecified = true;
 				m_xtrazStatusSpecified = (m_xtrazStatus > -1) ? true : false;
 				break;
@@ -231,6 +231,10 @@ void UserDetails::fill( Buffer * buffer )
 #ifdef OSCAR_USERINFO_DEBUG
 				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
 #endif
+				break;
+			case 0x0019: //new capability info
+				m_capabilities |= Oscar::parseNewCapabilities( b );
+				m_capabilitiesSpecified = true;
 				break;
 			case 0x001D:
 			{
