@@ -570,14 +570,13 @@ void FileTransferTask::proxyInit()
 	//because the second person has to include the port check
 
 	Buffer data;
-	data.addByte( m_selfName.length() );
-	data.addString( m_selfName.toLatin1() );
-	if (! m_proxyRequester ) //if 'recv'
+	data.addBUIN( m_selfName.toLatin1() );
+
+	if ( !m_proxyRequester ) //if 'recv'
 		data.addWord( m_port );
+
 	data.addString( m_oft.cookie );
-	//cap tlv
-	data.addDWord( 0x00010010 );
-	data.addGuid( oscar_caps[ CAP_SENDFILE ] );
+	data.addTLV( 0x0001, oscar_caps[CAP_SENDFILE] ); //cap tlv
 
 	Buffer header;
 	header.addWord( 10 + data.length() ); //length

@@ -119,10 +119,7 @@ void ProfileTask::sendProfileUpdate()
 			if ( m_xtrazStatus > -1 )
 				capBuf.addGuid( oscar_xStatus[m_xtrazStatus] ); // set xtraz status
 		}
-		else
-		{
-			capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
-		}
+		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
 		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
 		capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
 		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!

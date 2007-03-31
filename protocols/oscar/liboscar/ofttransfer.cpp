@@ -49,12 +49,13 @@ QByteArray OftTransfer::toWire()
 	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer length is " << m_buffer.length() << endl;
 
 	//get filename length - the only variable length in the OFT
-	QTextCodec *c = QTextCodec::codecForName( "UTF-16BE" );
-	QByteArray name = c->fromUnicode( m_data.fileName );
-	int len = name.length();
+	int fileNameEncoding = 0;
+	QByteArray fileName = encodeFileName( m_data.fileName, fileNameEncoding );
+	const int fileNameLen = fileName.length();
+
 	Buffer b;
 	b.addString( "OFT2" ); //protocol version
-	b.addWord( len > 63 ? len - 63 + 256 : 256 );
+	b.addWord( fileNameLen > 63 ? fileNameLen - 63 + 256 : 256 );
 	b.addWord( m_data.type );
 	b.addString( m_data.cookie );
 	b.addDWord( 0 ); //no encryption, no compression
@@ -85,13 +86,12 @@ QByteArray OftTransfer::toWire()
 	b.addString( zeros ); //dummy block
 	zeros.resize( 16 );
 	b.addString( zeros ); //mac file info
-	//let's always send unicode. it makes things easier.
-	b.addWord( 2 ); //encoding 0=ascii, 2=UTF-16BE or UCS-2BE, 3= ISO-8859-1
+	b.addWord( fileNameEncoding ); //encoding 0=ascii, 2=UTF-16BE without BOM, 3= ISO-8859-1
 	b.addWord( 0 ); //encoding subcode
-	b.addString( name );
-	if ( len < 63 )
+	b.addString( fileName );
+	if ( fileNameLen < 63 )
 	{ //minimum length 64
-		zeros.fill( 0, 64 - len );
+		zeros.fill( 0, 64 - fileNameLen );
 		b.addString( zeros );
 	}
 	else
@@ -126,4 +126,26 @@ Transfer::TransferType OftTransfer::type() const
 	return Transfer::FileTransfer;
 }
 
+QByteArray OftTransfer::encodeFileName( const QString &fileName, int &encodingType ) const
+{
+	QTextCodec *codec = QTextCodec::codecForName( "ISO 8859-1" );
+	if ( codec->canEncode( fileName ) )
+	{
+		QByteArray data = codec->fromUnicode( fileName ); // write as ISO 8859-1
+		for ( int i = 0; i < data.size(); ++i )
+		{
+			if ( (unsigned char)data.at(i) >= 128 )
+			{
+				encodingType = 3; // is ISO 8859-1
+				return data;
+			}
+		}
+		encodingType = 0; // is US-ASCII
+		return data;
+	}
 
+	codec = QTextCodec::codecForName( "UTF-16BE" );
+	QTextCodec::ConverterState state( QTextCodec::IgnoreHeader );
+	encodingType = 2; // is UTF-16BE
+	return codec->fromUnicode( fileName.constData(), fileName.size(), &state );
+}

@@ -237,13 +237,13 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
 			tlv2711.addWord( 1 ); //file count
 			tlv2711.addDWord( m_message.fileSize() );
-			//mm, unicode.
-			QTextCodec *c = QTextCodec::codecForName( "UTF8" );
-			tlv2711.addString( c->fromUnicode( m_message.fileName() ) );
+
+			QString fileNameEncoding;
+			tlv2711.addString( encodeFileName( m_message.fileName(), fileNameEncoding ) );
 			tlv2711.addByte( 0 ); //make sure the name's null-terminated
 			tlv5buffer.addTLV( 0x2711, tlv2711.buffer() );
-			//send filename encoding
-			//tlv5buffer.addTLV( 0x2712, 8, "UTF8" );
+			//send filename encoding (us-ascii, iso-8859-1, utf-8)
+			tlv5buffer.addTLV( 0x2712, fileNameEncoding.toLatin1() );
 		}
 		else
 		{//chat
@@ -373,6 +373,30 @@ void SendMessageTask::addPluginData( Buffer* b )
 
 	b->addLEDBlock( plugin->data() );
 }
+
+QByteArray SendMessageTask::encodeFileName( const QString &fileName, QString &encodingType ) const
+{
+	QTextCodec *codec = QTextCodec::codecForName( "ISO 8859-1" );
+	if ( codec->canEncode( fileName ) )
+	{
+		QByteArray data = codec->fromUnicode( fileName ); // write as ISO 8859-1
+		for ( int i = 0; i < data.size(); ++i )
+		{
+			if ( (unsigned char)data.at(i) >= 128 )
+			{
+				encodingType = QLatin1String( "iso-8859-1" );
+				return data;
+			}
+		}
+		encodingType = QLatin1String( "us-ascii" );
+		return data;
+	}
+	
+	codec = QTextCodec::codecForName( "UTF-8" );
+	encodingType = QLatin1String( "utf-8" );
+	return codec->fromUnicode( fileName );
+}
+
 
 /* Old oscarsocket code, which is here for reference in case this doesn't work
 QTextCodec *codec = 0L;
