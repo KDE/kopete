@@ -43,7 +43,6 @@
 #include <kglobalsettings.h>
 #include <khtmlview.h>
 #include <kiconloader.h>
-#include <kkeydialog.h>
 #include <klibloader.h>
 #include <klocale.h>
 #include <kmenubar.h>

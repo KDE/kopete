@@ -47,7 +47,6 @@
 #include <kdebug.h>
 #include <kwin.h>
 #include <ktemporaryfile.h>
-#include <kkeydialog.h>
 #include <kedittoolbar.h>
 #include <kstatusbar.h>
 #include <kpushbutton.h>
