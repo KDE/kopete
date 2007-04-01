@@ -47,7 +47,7 @@
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
 #include <kmenu.h>
-#include <kkeydialog.h>
+#include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
@@ -603,7 +603,7 @@ void KopeteWindow::slotConfNotifications()
 
 void KopeteWindow::slotConfGlobalKeys()
 {
-	KKeyDialog::configure( actionCollection() );
+	KShortcutsDialog::configure( actionCollection() );
 }
 
 void KopeteWindow::slotConfToolbar()
