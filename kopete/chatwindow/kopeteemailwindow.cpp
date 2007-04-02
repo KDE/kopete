@@ -311,7 +311,7 @@ void KopeteEmailWindow::slotConfToolbar()
 {
         KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
 	saveMainWindowSettings( cg );
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QLatin1String("kopeteemailwindow.rc") );
+	KEditToolBar *dlg = new KEditToolBar(actionCollection(), QLatin1String("kopeteemailwindow.rc") );
 	if (dlg->exec())
 	{
 		createGUI( d->editPart );
