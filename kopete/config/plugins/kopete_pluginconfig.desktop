@@ -11,8 +11,10 @@ X-KDE-ParentComponents=kopete
 
 Name=Plugins
 Name[ja]=プラグイン
+Name[sv]=Insticksprogram
 Name[uk]=Втулки
 Name[x-test]=xxPluginsxx
 Comment=Configure Plugins
+Comment[sv]=Anpassa insticksprogram
 Comment[uk]=Налаштувати втулки
 Comment[x-test]=xxConfigure Pluginsxx
