@@ -44,35 +44,45 @@
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
                                     const QString& self, QByteArray cookie,
                                     Buffer b  )
-: Task( parent ), m_file( this ), m_contactName( contact ), m_selfName( self ),
+: Task( parent ), m_contactName( contact ), m_selfName( self ),
   m_timer( this )
 {
 	init( Receive );
 	initOft();
-	m_oft.cookie = cookie;
+	m_oftRendezvous.cookie = cookie;
 	parseReq( b );
 }
 
 //send
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
-                                    const QString& self, const QString &fileName,
+                                    const QString& self, const QStringList& files,
                                     Kopete::Transfer *transfer )
-:Task( parent ), m_file( fileName, this ), m_contactName( contact ),
+:Task( parent ), m_contactName( contact ),
  m_selfName( self ), m_timer( this )
 {
 	init( Send );
 	initOft();
-	//get filename without path
-	m_oft.fileName = QFileInfo( fileName ).fileName();
-	//copy size for convenience
-	m_oft.fileSize = m_file.size();
+
+	m_oftRendezvous.files = files;
+	m_oftRendezvous.fileCount = files.size();
+	for ( int i = 0; i < m_oftRendezvous.fileCount; ++i )
+	{
+		QFileInfo fileInfo( m_oftRendezvous.files.at(i) );
+		m_oftRendezvous.totalSize += fileInfo.size();
+	}
+
+	if ( m_oftRendezvous.fileCount == 1 )
+	{ //get filename without path
+		m_oftRendezvous.fileName = QFileInfo( files.at(0) ).fileName();
+	}
+
 	//we get to make up an icbm cookie!
 	Buffer b;
 	Oscar::DWORD cookie = KRandom::random();
 	b.addDWord( cookie );
 	cookie = KRandom::random();
 	b.addDWord( cookie );
-	m_oft.cookie = b.buffer();
+	m_oftRendezvous.cookie = b.buffer();
 
 	//hook up ui cancel
 	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
@@ -109,19 +119,29 @@ void FileTransferTask::onGo()
 	if ( m_action == Receive )
 	{
 		//we have to send a signal because liboscar isn't supposed to know about OscarContact.
+
 		Kopete::TransferManager *tm = 0;
 		emit getTransferManager( &tm );
 		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
 		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
 
-		emit askIncoming( m_contactName, m_oft.fileName, m_oft.fileSize, m_desc, m_oft.cookie );
+		emit askIncoming( m_contactName, m_oftRendezvous.fileName, m_oftRendezvous.totalSize, m_desc, m_oftRendezvous.cookie );
 		return;
 	}
 	//else, send
-	if ( m_contactName.isEmpty() || (! validFile() ) )
+	if ( m_contactName.isEmpty() )
 	{
 		setSuccess( 0 );
 		return;
+	}
+
+	for ( int i = 0; i < m_oftRendezvous.fileCount; ++i )
+	{
+		if ( !validFile( m_oftRendezvous.files.at(i) ) )
+		{
+			setSuccess( 0 );
+			return;
+		}
 	}
 
 	if ( client()->settings()->fileProxy() )
@@ -150,15 +170,27 @@ void FileTransferTask::parseReq( Buffer b )
 		switch( tlv.type )
 		{
 		 case 0x2711: //file-specific stuff
+			{
 			if ( m_action == Send ) //then we don't care
 				break;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << b2.getWord() << " file count: " << b2.getWord() << endl;
-			m_oft.fileSize = b2.getDWord();
-			fileName = b2.getBlock( b2.bytesAvailable() );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "size: " << m_oft.fileSize << " file: " << fileName << endl;
+
+			bool multipleFiles = (b2.getWord() == 0x02);
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << multipleFiles << endl;
+			m_oftRendezvous.fileCount = b2.getWord();
+			m_oftRendezvous.totalSize = b2.getDWord();
+			fileName = b2.getBlock( b2.bytesAvailable() - 1 ); //null terminated
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file: " << fileName << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "total size: " << m_oftRendezvous.totalSize << " files: " << m_oftRendezvous.fileCount << endl;
 			break;
+			}
 		 case 0x2712:
-			c=QTextCodec::codecForName( tlv.data );
+			if ( tlv.data == "iso-8859-1" || tlv.data == "us-ascii" )
+				c = QTextCodec::codecForName( "ISO 8859-1" );
+			else if ( tlv.data == "utf-8" )
+				c = QTextCodec::codecForName( "UTF-8" );
+			else
+				c = QTextCodec::codecForName( tlv.data );
+
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "filename encoding " << tlv.data << endl;
 			break;
 		 case 2:
@@ -195,17 +227,18 @@ void FileTransferTask::parseReq( Buffer b )
 		}
 	}
 
-	if ( ! c )
+	if ( !c )
 	{
-		c=QTextCodec::codecForName( "UTF8" );
+		c = QTextCodec::codecForName( "UTF-8" );
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no codec, assuming utf8" << endl;
 	}
+
 	if ( c )
-		m_oft.fileName = c->toUnicode( fileName );
+		m_oftRendezvous.fileName = c->toUnicode( fileName );
 	else
 	{
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't get any codec! " << endl;
-		m_oft.fileName = fileName;
+		m_oftRendezvous.fileName = fileName;
 	}
 
 	if( m_proxy )
@@ -231,40 +264,63 @@ void FileTransferTask::parseReq( Buffer b )
 
 }
 
-bool FileTransferTask::validFile()
+bool FileTransferTask::validFile( const QString& file )
 {
+	QFileInfo fileInfo( file );
 	if ( m_action == Send )
 	{
-		if ( ! m_file.exists() )
+		if ( ! fileInfo.exists() )
 		{
-			emit error( KIO::ERR_DOES_NOT_EXIST, m_file.fileName() );
+			emit error( KIO::ERR_DOES_NOT_EXIST, fileInfo.fileName() );
 			return 0;
 		}
-		if ( m_file.size() == 0 )
+		if ( fileInfo.size() == 0 )
 		{
-			emit error( KIO::ERR_COULD_NOT_READ, i18n("file is empty: ") + m_file.fileName() );
+			emit error( KIO::ERR_COULD_NOT_READ, i18n("file is empty: ") + fileInfo.fileName() );
 			return 0;
 		}
-		if ( ! QFileInfo( m_file ).isReadable() )
+		if ( ! fileInfo.isReadable() )
 		{
-			emit error( KIO::ERR_CANNOT_OPEN_FOR_READING, m_file.fileName() );
+			emit error( KIO::ERR_CANNOT_OPEN_FOR_READING, fileInfo.fileName() );
 			return 0;
 		}
 	}
 	else //receive
 	{ //note: opening for writing clobbers the file
-		if ( m_file.exists() )
+		if ( fileInfo.exists() )
 		{
-			if ( ! QFileInfo( m_file ).isWritable() )
+			if ( ! fileInfo.isWritable() )
 			{ //it's there and readonly
-				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
+				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, fileInfo.fileName() );
 				return 0;
 			}
 		}
-		else if ( ! QFileInfo( QFileInfo( m_file ).path() ).isWritable() )
+		else if ( ! QFileInfo( fileInfo.path() ).isWritable() )
 		{ //not allowed to create it
-				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
-				return 0;
+			emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, fileInfo.fileName() );
+			return 0;
+		}
+	}
+	return true;
+}
+
+bool FileTransferTask::validDir( const QString& dir )
+{
+	QFileInfo fileInfo( dir );
+	if ( m_action == Receive )
+	{
+		if ( fileInfo.exists() && fileInfo.isDir() )
+		{
+			if ( !fileInfo.isWritable() )
+			{ //it's there and readonly
+				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, dir );
+				return false;
+			}
+		}
+		else
+		{ //not allowed o create it
+			emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, dir );
+			return false;
 		}
 	}
 	return true;
@@ -278,8 +334,8 @@ bool FileTransferTask::take( Transfer* transfer )
 
 bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 {
-	kDebug(14151) << k_funcinfo << "comparing to " << m_oft.cookie << endl;
-	if ( cookie != m_oft.cookie )
+	kDebug(14151) << k_funcinfo << "comparing to " << m_oftRendezvous.cookie << endl;
+	if ( cookie != m_oftRendezvous.cookie )
 		return false;
 
 	//ooh, ooh, something happened!
@@ -337,12 +393,18 @@ void FileTransferTask::doOft()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
 	QObject::disconnect( m_connection, 0, 0, 0 ); //disconnect signals
-	OftMetaTransfer *oft = new OftMetaTransfer( m_oft, m_file.fileName(), m_connection );
+	OftMetaTransfer *oft;
+
+	if ( m_action == Receive )
+		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.dir, m_connection );
+	else
+		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.files, m_connection );
+
 	m_connection=0; //it's not ours any more
 	//might be a good idea to hook up some signals&slots.
-	connect( oft, SIGNAL( processed( unsigned int ) ), this, SIGNAL( processed( unsigned int ) ) );
-	connect( oft, SIGNAL( fileComplete() ), this, SLOT( doneOft() ) );
-	connect( this, SIGNAL( cancelOft() ), oft, SLOT( doCancel() ) );
+	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)), this, SIGNAL(processed(unsigned int)) );
+	connect( oft, SIGNAL(transferCompleted()), this, SLOT(doneOft()) );
+	connect( this, SIGNAL(cancelOft()), oft, SLOT(doCancel()) );
 	//now we can finally send the first OFT packet.
 	if ( m_action == Send )
 		oft->start();
@@ -436,15 +498,9 @@ void FileTransferTask::proxyRead()
 void FileTransferTask::initOft()
 {
 	//set up the default values for the oft
-	m_oft.type = 0; //invalid
-	m_oft.cookie = 0;
-	m_oft.fileSize = 0;
-	m_oft.modTime = 0;
-	m_oft.checksum = 0xFFFF0000; //file checksum
-	m_oft.bytesSent = 0;
-	m_oft.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
-	m_oft.flags = 0x20; //flags; 0x20=not done, 1=done
-	m_oft.fileName = QString::null;
+	m_oftRendezvous.cookie = 0;
+	m_oftRendezvous.fileCount = 0;
+	m_oftRendezvous.totalSize = 0;
 }
 
 void FileTransferTask::doCancel()
@@ -465,7 +521,7 @@ void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	//check that it's really for us
-	if ( info.internalId() == QString( m_oft.cookie ) )
+	if ( info.internalId() == QString( m_oftRendezvous.cookie ) )
 		doCancel();
 	else
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
@@ -477,7 +533,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 	//check that it's really for us
 	//XXX because qt is retarded, I can't simply compare a qstring and bytearray any more.
 	//if there are 0's in hte cookie then the qstring will only contain part of it - but it should at least be consistent about that. it just slightly increases the tiny chance of a conflict
-	if ( t->info().internalId() != QString( m_oft.cookie ) )
+	if ( t->info().internalId() != QString( m_oftRendezvous.cookie ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
 		return;
@@ -492,19 +548,23 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 	connect( this , SIGNAL( processed( unsigned int ) ), t, SLOT( slotProcessed( unsigned int ) ) );
 	connect( this , SIGNAL( fileComplete() ), t, SLOT( slotComplete() ) );
 	//and save the chosen filename
-	m_file.setFileName( localName );
 
-	doConnect();
+	/*FIXME: Should we prompt for a file name if we receive one file or only for a directory like the official
+	         icq and aim clients (if we have multiple files we don't know their names at this stage) */
+
+#warning Hack, this will be removed as soon as I add a function into Kopete::TransferManager that will prompt for a directory (Kedge)
+	QFileInfo fileInfo( localName );
+	m_oftRendezvous.dir = fileInfo.absolutePath() + "/";
+
+	if( validDir( m_oftRendezvous.dir ) )
+		doConnect();
+	else
+		doCancel();
 }
 
 void FileTransferTask::doConnect()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	if( ! validFile() )
-	{
-		doCancel();
-		return;
-	}
 
 	QString host;
 	if ( m_proxyRequester )
@@ -575,7 +635,7 @@ void FileTransferTask::proxyInit()
 	if ( !m_proxyRequester ) //if 'recv'
 		data.addWord( m_port );
 
-	data.addString( m_oft.cookie );
+	data.addString( m_oftRendezvous.cookie );
 	data.addTLV( 0x0001, oscar_caps[CAP_SENDFILE] ); //cap tlv
 
 	Buffer header;
@@ -688,7 +748,7 @@ void FileTransferTask::sendReq()
 		return;
 
 	Buffer b;
-	b.addString( m_oft.cookie );
+	b.addString( m_oftRendezvous.cookie );
 
 	//set up a message for sendmessagetask
 	Oscar::Message msg = makeFTMsg();
@@ -696,7 +756,10 @@ void FileTransferTask::sendReq()
 	//now set the rendezvous info
 	msg.setRequestType( 0 );
 	msg.setPort( m_port );
-	msg.setFile( m_oft.fileSize, m_oft.fileName );
+	msg.setFileName( m_oftRendezvous.fileName );
+	msg.setFileCount( m_oftRendezvous.fileCount );
+	msg.setFilesSize( m_oftRendezvous.totalSize );
+
 	if ( m_proxy )
 		msg.setProxy( m_ip );
 
@@ -714,7 +777,7 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	Oscar::Message msg;
 	msg.setMessageType( Oscar::MessageType::File );
 	msg.setChannel( 2 ); //rendezvous
-	msg.setIcbmCookie( m_oft.cookie );
+	msg.setIcbmCookie( m_oftRendezvous.cookie );
 	msg.setReceiver( m_contactName );
 	return msg;
 }

@@ -50,7 +50,7 @@ public:
 	/** create an incoming filetransfer */
 	FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b );
 	/** create an outgoing filetransfer */
-	FileTransferTask( Task* parent, const QString& contact, const QString& self, const QString &fileName, Kopete::Transfer *transfer );
+	FileTransferTask( Task* parent, const QString& contact, const QString& self, const QStringList& files, Kopete::Transfer *transfer );
 	~FileTransferTask();
 
 	//! Task implementation
@@ -86,7 +86,8 @@ private:
 	void init( Action act );
 	void sendReq();
 	bool listen();
-	bool validFile();
+	bool validFile( const QString& file );
+	bool validDir( const QString& dir );
 	Oscar::Message makeFTMsg();
 	void initOft();
 	void parseReq( Buffer b );
@@ -96,10 +97,9 @@ private:
 	void connectFailed(); //tries another method of connecting
 	void doOft();
 
-	OFT m_oft;
-	
+	OFTRendezvous m_oftRendezvous;
+
 	Action m_action;
-	QFile m_file;
 	QString m_contactName; //other person's username
 	QString m_selfName; //my username
 	QString m_desc; //file description

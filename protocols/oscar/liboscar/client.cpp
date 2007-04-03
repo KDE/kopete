@@ -1492,12 +1492,13 @@ bool Client::hasIconConnection( ) const
 	return c;
 }
 
-void Client::sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t )
+void Client::sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
 		return;
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), filePath, t );
+
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files, t );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
 	ft->go( true );

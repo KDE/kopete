@@ -294,23 +294,23 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 {
 	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "file: '" << sourceURL 
 		<< "' '" << altFileName << "' size " << fileSize << endl;
-	QString filePath;
+	QStringList files;
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( KUrl() ,"*", 0l  , i18n( "Kopete File Transfer" ));
+		files = KFileDialog::getOpenFileNames( KUrl() ,"*", 0l  , i18n( "Kopete File Transfer" ));
 	else
-		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+		files << sourceURL.path(KUrl::RemoveTrailingSlash);
 
-	if( filePath.isEmpty() )
+	if( files.isEmpty() )
 	{
-		kDebug(OSCAR_GEN_DEBUG) << "filePath empty, assuming cancel" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel" << endl;
 		return;
 	}
-	kDebug(OSCAR_GEN_DEBUG) << "filePath: '" << filePath << "' " << endl;
+	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' " << endl;
 
-	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, filePath, QFile( filePath ).size(), mName, Kopete::FileTransferInfo::Outgoing);
-	mAccount->engine()->sendFile( mName, filePath, t );
+	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, files.at(0), QFile( files.at(0) ).size(), mName, Kopete::FileTransferInfo::Outgoing);
+	mAccount->engine()->sendFiles( mName, files, t );
 }
 
 void OscarContact::setAwayMessage( const QString &message )

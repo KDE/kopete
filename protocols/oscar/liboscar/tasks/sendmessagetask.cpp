@@ -234,9 +234,9 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 		Buffer tlv2711;
 		if ( m_message.messageType() == Oscar::MessageType::File ) //TODO: reduce the amount of magic #s
 		{ //filetransfer
-			tlv2711.addWord( 1 ); //multiple file flag (we only support 1 right now)
-			tlv2711.addWord( 1 ); //file count
-			tlv2711.addDWord( m_message.fileSize() );
+			tlv2711.addWord( (m_message.fileCount() > 1) ? 0x0002 : 0x0001 ); //multiple file flag
+			tlv2711.addWord( m_message.fileCount() );
+			tlv2711.addDWord( m_message.filesSize() );
 
 			QString fileNameEncoding;
 			tlv2711.addString( encodeFileName( m_message.fileName(), fileNameEncoding ) );

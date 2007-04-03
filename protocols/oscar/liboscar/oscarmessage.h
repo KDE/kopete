@@ -193,11 +193,20 @@ public:
 	/** get the file name */
 	QString fileName() const;
 
-	/** get the file size */
-	DWORD fileSize() const;
+	/** get file(s) size */
+	DWORD filesSize() const;
 
-	/** set the file (for transfer requests) */
-	void setFile( DWORD size, QString name );
+	/** get file count */
+	WORD fileCount() const;
+
+	/** set the file name (for transfer requests) */
+	void setFileName( const QString &name );
+
+	/** set file(s) size (for transfer requests)*/
+	void setFilesSize( DWORD size );
+	
+	/** set file count (for transfer requests)*/
+	void setFileCount( WORD count );
 
     /** get the exchange for the chat room this message is for */
     Oscar::WORD exchange() const;

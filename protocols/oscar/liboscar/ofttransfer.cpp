@@ -51,19 +51,20 @@ QByteArray OftTransfer::toWire()
 	//get filename length - the only variable length in the OFT
 	int fileNameEncoding = 0;
 	QByteArray fileName = encodeFileName( m_data.fileName, fileNameEncoding );
-	const int fileNameLen = fileName.length();
+	const int fileNameLen = fileName.length() + ((fileNameEncoding == 2) ? 2 : 1);
 
 	Buffer b;
 	b.addString( "OFT2" ); //protocol version
-	b.addWord( fileNameLen > 63 ? fileNameLen - 63 + 256 : 256 );
+	b.addWord( fileNameLen > 64 ? fileNameLen - 64 + 256 : 256 );
 	b.addWord( m_data.type );
 	b.addString( m_data.cookie );
-	b.addDWord( 0 ); //no encryption, no compression
-	b.addWord( 1 ); //total files
-	b.addWord( 1 ); //files left
-	b.addWord( 1 ); //total parts (macs might have 2)
-	b.addWord( 1 ); //parts left
-	b.addDWord( m_data.fileSize ); //total bytes
+	b.addWord( 0 ); //no encryption
+	b.addWord( 0 ); //no compression
+	b.addWord( m_data.fileCount ); //file count
+	b.addWord( m_data.filesLeft ); //files left
+	b.addWord( m_data.partCount ); //part count (macs might have 2)
+	b.addWord( m_data.partsLeft ); //parts left
+	b.addDWord( m_data.totalSize ); //total bytes
 	b.addDWord( m_data.fileSize ); // size or 'bytes sent' XXX - documentation must be wrong. I'm guessing this is the size of the current file, usually same as total bytes
 	b.addDWord( m_data.modTime );
 	b.addDWord( m_data.checksum );
@@ -89,13 +90,16 @@ QByteArray OftTransfer::toWire()
 	b.addWord( fileNameEncoding ); //encoding 0=ascii, 2=UTF-16BE without BOM, 3= ISO-8859-1
 	b.addWord( 0 ); //encoding subcode
 	b.addString( fileName );
-	if ( fileNameLen < 63 )
+	if ( fileNameEncoding == 2 )
+		b.addWord( 0 ); //add null-termination for UTF-16
+	else
+		b.addByte( 0 ); //add null-termination
+
+	if ( fileNameLen < 64 )
 	{ //minimum length 64
 		zeros.fill( 0, 64 - fileNameLen );
 		b.addString( zeros );
 	}
-	else
-		b.addByte( 0 ); //always null-terminated string
 
 	//yay! the big bloated header is done.
 	m_wireFormat = b.buffer();

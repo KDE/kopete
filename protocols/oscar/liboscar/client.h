@@ -347,7 +347,7 @@ public:
 	void setVersion( const Oscar::ClientVersion* version );
 
 	/** start a filetransfer task */
-	void sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t );
+	void sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS

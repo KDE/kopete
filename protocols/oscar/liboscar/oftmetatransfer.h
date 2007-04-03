@@ -39,8 +39,12 @@ class OftMetaTransfer : public QObject
 {
 Q_OBJECT
 public:
-	/** create filetransfer */
-	OftMetaTransfer( OFT oft, const QString& fileName, KBufferedSocket *connection );
+	/** Receive constructor */
+	OftMetaTransfer( const QByteArray& cookie, const QString& dir, KBufferedSocket *connection );
+
+	/** Send constructor */
+	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, KBufferedSocket *connection );
+
 	~OftMetaTransfer();
 
 	void start(); //start sending file
@@ -49,18 +53,34 @@ public slots:
 	void doCancel(); //one of the users is cancelling us
 
 signals:
+	void fileIncoming( const QString& fileName, unsigned int fileSize );
+	void fileReceived( const QString& fileName, unsigned int bytesSent );
+
+	void fileOutgoing( const QString& fileName, unsigned int fileSize );
+	void fileSent( const QString& fileName, unsigned int fileSize );
+
+	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
+
+	void transferCompleted();
 //	void error( int, const QString & );
-	void processed( unsigned int );
-	void fileComplete();
 
 private slots:
+	//bool validFile();
 	void socketError( int );
 	void socketRead();
 	void write();
 	void timeout();
 
 private:
-	//bool validFile();
+	void initOft();
+	void handelReceiveSetup( const Oscar::OFT &oft );
+	void handelReceiveResumeSetup( const Oscar::OFT &oft );
+
+	void handelSendSetup( const Oscar::OFT &oft );
+	void handelSendResumeSetup( const Oscar::OFT &oft );
+	void handleSendResumeRequest( const Oscar::OFT &oft );
+	void handelSendDone( const Oscar::OFT &oft );
+
 	void sendOft();
 	void prompt();
 	void ack();
@@ -74,8 +94,12 @@ private:
 					//XXX this does put an arbitrary limit on file size
 
 	OFT m_oft;
-	
+
 	QFile m_file;
+
+	QString m_dir; //directory where we save files
+	QStringList m_files; //list of files that we want to send
+
 	KBufferedSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
 	enum State { SetupReceive, SetupSend, Receiving, Sending, Done };

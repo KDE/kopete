@@ -30,20 +30,48 @@
 #include <qfileinfo.h>
 #include <klocale.h>
 
-
-OftMetaTransfer::OftMetaTransfer( OFT oft, const QString& fileName, KBufferedSocket *connection )
-: m_oft(oft), m_file( fileName, this ), m_connection( connection ), 
-	m_timer( this ), m_state( SetupReceive )
+OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QString &dir, KBufferedSocket *connection )
+: m_file( this ), m_connection( connection ), m_timer( this ), m_state( SetupReceive )
 {
 	//filetransfertask is responsible for hooking us up to the ui
 	//we're responsible for hooking up the connection and timer
 	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
 	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
+
+	initOft();
+	m_oft.cookie = cookie;
+	m_dir = dir;
+}
+
+OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QStringList& files, KBufferedSocket *connection )
+: m_file( this ), m_connection( connection ), m_timer( this ), m_state( SetupSend )
+{
+	//filetransfertask is responsible for hooking us up to the ui
+	//we're responsible for hooking up the connection and timer
+	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
+	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
+
+	initOft();
+	m_oft.cookie = cookie;
+	for ( int i = 0; i < files.size(); ++i )
+	{
+		QFileInfo fileInfo( files.at(i) );
+		m_oft.totalSize += fileInfo.size();
+	}
+	m_oft.fileCount = files.size();
+	m_files = files;
 }
 
 void OftMetaTransfer::start()
 {
-	m_state = SetupSend;
+	if ( m_files.count() == 0 )
+	{
+		doCancel();
+		return;
+	}
+
+	//filesLeft is decremented in prompt
+	m_oft.filesLeft = m_oft.fileCount + 1;
 	prompt();
 }
 
@@ -122,118 +150,208 @@ void OftMetaTransfer::readOft()
 	OFT data = t->data();
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum: " << data.checksum << endl;
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sentChecksum: " << data.sentChecksum << endl;
+
 	switch( data.type )
 	{
-	 case 0x101:
-		 if ( m_state != SetupReceive )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl
-			<< "\tmysize " <<  m_file.size() << endl
-			<< "\tsendersize " << m_oft.fileSize << endl;
-		//do we care about anything *in* the prompt?
-		//just the checksum.
-		m_oft.checksum = data.checksum;
-		m_oft.modTime = data.modTime;
-		if ( m_file.size() > 0 && m_file.size() <= m_oft.fileSize )
-		{
-			m_oft.sentChecksum = checksum();
-			if ( m_file.size() < m_oft.fileSize )
-			{ //could be a partial file
-				resume();
-				break;
-			}
-			else if ( m_oft.checksum == m_oft.sentChecksum )
-			{ //apparently we've already got it
-				//TODO: set bytesSent?
-				done(); //don't redo checksum
-				break;
-			}
-
-			//if we didn't break then we need the whole file
-			m_oft.sentChecksum = 0xffff0000;
-		}
-		m_file.open( QIODevice::WriteOnly );
-		//TODO what if open failed?
-		ack();
+	case 0x101:
+		handelReceiveSetup( data );
 		break;
-	 case 0x202:
-		 if ( m_state != SetupSend )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ack" << endl;
-		//time to send real data
-		//TODO: validate file again, just to be sure
-		m_file.open( QIODevice::ReadOnly );
-		m_state = Sending;
-		//use timer to trigger writes
-		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
-		m_timer.start(0);
+	case 0x202:
+		handelSendSetup( data );
 		break;
-	 case 0x204:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
-		m_connection->close();
-		emit fileComplete();
-		m_timer.stop();
-		if ( data.sentChecksum != checksum() )
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
-		deleteLater();
+	case 0x204:
+		handelSendDone( data );
 		break;
-	 case 0x205:
-		 if ( m_state != SetupSend )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl 
-			<< "\tfilesize\t" << data.fileSize << endl
-			<< "\tmodTime\t" << data.modTime << endl
-			<< "\tbytesSent\t" << data.bytesSent << endl
-			<< "\tflags\t" << data.flags << endl;
-		if ( checksum( data.bytesSent ) == data.sentChecksum )
-		//ok, we can resume this
-			m_oft.bytesSent = data.bytesSent;
-		rAgree();
+	case 0x205:
+		handleSendResumeRequest( data );
 		break;
-	 case 0x106:{
-		 if ( m_state != SetupReceive )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sender resume" << endl
-			<< "\tfilesize\t" << data.fileSize << endl
-			<< "\tmodTime\t" << data.modTime << endl
-			<< "\tbytesSent\t" << data.bytesSent << endl
-			<< "\tflags\t" << data.flags << endl;
-		QIODevice::OpenMode flags;
-		if ( data.bytesSent ) //yay, we can resume
-			flags = QIODevice::WriteOnly | QIODevice::Append;
-		else
-		{ //they insist on sending the whole file :(
-			flags = QIODevice::WriteOnly;
-			m_oft.sentChecksum = 0xffff0000;
-			m_oft.bytesSent = 0;
-		}
-		m_file.open( flags ); 
-		//TODO what if open failed?
-		rAck();
-		break;}
-	 case 0x207:
-		 if ( m_state != SetupSend )
-			 break;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "resume ack" << endl;
-		//TODO: validate file again, just to be sure
-		m_file.open( QIODevice::ReadOnly );
-		m_file.seek( m_oft.bytesSent );
-		m_state = Sending;
-		//use timer to trigger writes
-		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
-		m_timer.start(0);
+	case 0x106:
+		handelReceiveResumeSetup( data );
 		break;
-	 default:
+	case 0x207:
+		handelSendResumeSetup( data );
+		break;
+	default:
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown type " << data.type << endl;
 	}
 
 	delete t;
 }
 
+void OftMetaTransfer::initOft()
+{
+	//set up the default values for the oft
+	m_oft.type = 0; //invalid
+	m_oft.cookie = 0;
+	m_oft.fileSize = 0;
+	m_oft.modTime = 0;
+	m_oft.checksum = 0xFFFF0000; //file checksum
+	m_oft.bytesSent = 0;
+	m_oft.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
+	m_oft.flags = 0x20; //flags; 0x20=not done, 1=done
+	m_oft.fileName = QString::null;
+	m_oft.fileCount = 1;
+	m_oft.filesLeft = 1;
+	m_oft.partCount = 1;
+	m_oft.partsLeft = 1;
+	m_oft.totalSize = 0;
+}
+
+void OftMetaTransfer::handelReceiveSetup( const OFT &oft )
+{
+	if ( m_state != SetupReceive )
+		return;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "prompt" << endl
+		<< "\tmysize " <<  m_file.size() << endl
+		<< "\tsendersize " << oft.fileSize << endl;
+	//do we care about anything *in* the prompt?
+	//just the checksum.
+
+	m_oft.checksum = oft.checksum;
+	m_oft.modTime = oft.modTime;
+	m_oft.fileCount = oft.fileCount;
+	m_oft.filesLeft = oft.filesLeft;
+	m_oft.partCount = oft.partCount;
+	m_oft.partsLeft = oft.partsLeft;
+	m_oft.totalSize = oft.totalSize;
+	m_oft.fileName = oft.fileName;
+	m_oft.bytesSent = oft.bytesSent;
+	m_oft.fileSize = oft.fileSize;
+
+	emit fileIncoming( m_oft.fileName, m_oft.fileSize );
+
+	m_file.setFileName( m_dir + oft.fileName );
+	if ( m_file.size() > 0 && m_file.size() <= oft.fileSize )
+	{
+		m_oft.sentChecksum = checksum();
+		if ( m_file.size() < oft.fileSize )
+		{ //could be a partial file
+			resume();
+			return;
+		}
+		else if ( m_oft.checksum == m_oft.sentChecksum )
+		{ //apparently we've already got it
+			//TODO: set bytesSent?
+			done(); //don't redo checksum
+			return;
+		}
+
+		//if we didn't break then we need the whole file
+		m_oft.sentChecksum = 0xffff0000;
+	}
+
+	m_file.open( QIODevice::WriteOnly );
+	//TODO what if open failed?
+	ack();
+}
+
+void OftMetaTransfer::handelReceiveResumeSetup( const OFT &oft )
+{
+	if ( m_state != SetupReceive )
+		return;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sender resume" << endl
+		<< "\tfilesize\t" << oft.fileSize << endl
+		<< "\tmodTime\t" << oft.modTime << endl
+		<< "\tbytesSent\t" << oft.bytesSent << endl
+		<< "\tflags\t" << oft.flags << endl;
+
+	QIODevice::OpenMode flags;
+	if ( oft.bytesSent ) //yay, we can resume
+	{
+		flags = QIODevice::WriteOnly | QIODevice::Append;
+	}
+	else
+	{ //they insist on sending the whole file :(
+		flags = QIODevice::WriteOnly;
+		m_oft.sentChecksum = 0xffff0000;
+		m_oft.bytesSent = 0;
+	}
+
+	m_file.open( flags );
+	//TODO what if open failed?
+	rAck();
+}
+
+void OftMetaTransfer::handelSendSetup( const OFT &oft )
+{
+	if ( m_state != SetupSend )
+		return;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ack" << endl;
+	emit fileOutgoing( oft.fileName, oft.fileSize );
+
+	//time to send real data
+	//TODO: validate file again, just to be sure
+	m_file.open( QIODevice::ReadOnly );
+	m_state = Sending;
+
+	//use timer to trigger writes
+	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
+	m_timer.start(0);
+}
+
+void OftMetaTransfer::handelSendResumeSetup( const OFT &oft )
+{
+	if ( m_state != SetupSend )
+		return;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "resume ack" << endl;
+	//TODO: validate file again, just to be sure
+	m_file.open( QIODevice::ReadOnly );
+	m_file.seek( m_oft.bytesSent );
+	m_state = Sending;
+
+	//use timer to trigger writes
+	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( write() ) );
+	m_timer.start(0);
+}
+
+void OftMetaTransfer::handleSendResumeRequest( const OFT &oft )
+{
+	if ( m_state != SetupSend )
+		return;
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "receiver resume" << endl
+		<< "\tfilesize\t" << oft.fileSize << endl
+		<< "\tmodTime\t" << oft.modTime << endl
+		<< "\tbytesSent\t" << oft.bytesSent << endl
+		<< "\tflags\t" << oft.flags << endl;
+
+	if ( checksum( oft.bytesSent ) == oft.sentChecksum )
+		m_oft.bytesSent = oft.bytesSent; //ok, we can resume this
+
+	rAgree();
+}
+
+void OftMetaTransfer::handelSendDone( const OFT &oft )
+{
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
+	emit fileSent( oft.fileName, oft.bytesSent );
+
+	m_timer.stop();
+	if ( oft.sentChecksum != checksum() )
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
+
+	if ( m_oft.filesLeft > 1 )
+	{ // Ready for next file
+		m_state = SetupSend;
+		prompt();
+	}
+	else
+	{ // Last file, ending connection
+		emit transferCompleted();
+		m_connection->close();
+		deleteLater();
+	}
+}
+
 void OftMetaTransfer::write()
 {
 	if ( m_connection->bytesToWrite() )
 		return; //give hte socket time to catch up
+
 	//an arbitrary amount to send each time.
 	int max = 256;
 	char data[256];
@@ -255,7 +373,7 @@ void OftMetaTransfer::write()
 	if ( written != read ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
-	emit processed( m_oft.bytesSent );
+	emit fileProcessed( m_oft.bytesSent, m_oft.fileSize );
 	if ( m_oft.bytesSent >= m_oft.fileSize )
 	{
 		m_file.close();
@@ -279,7 +397,7 @@ void OftMetaTransfer::saveData()
 	if ( written != raw.size() ) //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "didn't write everything we read" << endl;
 	//tell the ui
-	emit processed( m_oft.bytesSent );
+	emit fileProcessed( m_oft.bytesSent, m_oft.fileSize );
 	if ( m_oft.bytesSent >= m_oft.fileSize )
 	{
 		m_file.close();
@@ -303,8 +421,18 @@ void OftMetaTransfer::prompt()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_oft.type = 0x0101; //type = prompt
-	m_oft.modTime = QFileInfo( m_file ).lastModified().toTime_t();
+
+	m_oft.filesLeft--;
+	const int index = m_oft.fileCount - m_oft.filesLeft;
+
+	m_file.setFileName( m_files.at( index ) );
+	QFileInfo fileInfo( m_file );
+
+	m_oft.modTime = fileInfo.lastModified().toTime_t();
+	m_oft.fileSize = fileInfo.size();
+	m_oft.fileName = fileInfo.fileName();
 	m_oft.checksum = checksum();
+	m_oft.bytesSent = 0;
 	sendOft();
 	//now we wait for the other side to ack
 }
@@ -331,14 +459,27 @@ void OftMetaTransfer::done()
 	m_oft.type = 0x0204; //type = done
 	if ( m_oft.sentChecksum != m_oft.checksum )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksums do not match!" << endl;
-	m_oft.flags = 1;
+
+	emit fileReceived( m_oft.fileName, m_oft.bytesSent );
+	if ( m_oft.filesLeft == 1 )
+		m_oft.flags = 1;
+
 	sendOft();
-	m_connection->close();
-	m_state = Done;
-	emit fileComplete();
-	//wait for the oft done to be really sent
-	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-	m_timer.start( 10 );
+
+	if ( m_oft.filesLeft > 1 )
+	{ //Ready for next file
+		m_state = SetupReceive;
+	}
+	else
+	{ //Last file, ending connection
+		emit transferCompleted();
+		m_connection->close();
+		m_state = Done;
+
+		//wait for the oft done to be really sent
+		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+		m_timer.start( 10 );
+	}
 }
 
 void OftMetaTransfer::resume()

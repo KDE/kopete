@@ -24,6 +24,7 @@
 #include <qglobal.h>
 #include <qdatetime.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #ifdef Q_OS_WIN
   // BYTE, WORD, DWORD
   #include <windows.h>
@@ -353,6 +354,22 @@ struct OFT
 	DWORD sentChecksum;
 	BYTE flags;
 	QString fileName;
+	WORD fileCount;
+	WORD filesLeft;
+	WORD partCount;
+	WORD partsLeft;
+	DWORD totalSize;
+};
+
+struct OFTRendezvous
+{
+	QByteArray cookie;
+	WORD fileCount;
+	DWORD totalSize;
+	QString fileName;
+
+	QStringList files;
+	QString dir;
 };
 
 struct ClientVersion
