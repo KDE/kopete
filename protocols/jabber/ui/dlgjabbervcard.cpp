@@ -496,7 +496,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		path = filePath.path();
 
 	QImage img( path );
-	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );
+	img = KPixmapRegionSelectorDialog::selectedImage( QPixmap::fromImage(img), 96, 96, this );
 
 	if( !img.isNull() ) 
 	{

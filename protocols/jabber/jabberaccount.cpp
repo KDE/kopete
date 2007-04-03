@@ -45,7 +45,7 @@
 #include <klocale.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
-#include <ksocketbase.h>
+#include <k3socketbase.h>
 #include <kpassworddialog.h>
 #include <kinputdialog.h>
 #include <kicon.h>
