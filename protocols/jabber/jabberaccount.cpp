@@ -558,7 +558,7 @@ bool JabberAccount::handleTLSWarning (
 	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
 					  message,
 					  i18n("Jabber Connection Certificate Problem"),
-					  KStandardGuiItem::cont(),
+					  KStandardGuiItem::cont(),KStandardGuiItem::cancel(),
 					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 
 }
@@ -1751,7 +1751,7 @@ bool JabberAccount::removeAccount( )
 							    "And you will never be able to connect to this account with any client", accountLabel() ),
 					i18n("Unregister"),
 					KGuiItem(i18n( "Remove and Unregister" ), "edit-delete"),
-					KGuiItem(i18n( "Remove from kopete only"), "edit-trash"),
+					KGuiItem(i18n( "Remove from kopete only"), "edit-trash"),KStandardGuiItem::cancel(),
 					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
 		if(result == KMessageBox::Cancel)
 		{

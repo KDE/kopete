@@ -927,7 +927,7 @@ void JabberContact::deleteContact ()
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
 		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" , 
 						  mRosterItem.jid().bare () ), i18n ("Notification"),
-						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ), "JabberRemoveAuthorizationOnDelete" );
+						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ),KStandardGuiItem::cancel(), "JabberRemoveAuthorizationOnDelete" );
 		if(result == KMessageBox::Yes )
 			remove_from_roster = true;
 		else if( result == KMessageBox::Cancel)
