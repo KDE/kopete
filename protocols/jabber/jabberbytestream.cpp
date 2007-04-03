@@ -20,8 +20,8 @@
 #include <qobject.h>
 #include <kdebug.h>
 #include "jabberbytestream.h"
-#include <kbufferedsocket.h>
-#include <kresolver.h>
+#include <k3bufferedsocket.h>
+#include <k3resolver.h>
 #include "jabberprotocol.h"
 
 JabberByteStream::JabberByteStream ( QObject *parent )
