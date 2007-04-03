@@ -25,7 +25,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
 

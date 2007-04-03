@@ -28,7 +28,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 
 using namespace KNetwork;
 ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)

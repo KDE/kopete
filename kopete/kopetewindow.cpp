@@ -52,7 +52,7 @@
 #include <kmenubar.h>
 #include <kstatusbar.h>
 #include <kglobalaccel.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
 #include <kplugininfo.h>
@@ -414,11 +414,16 @@ void KopeteWindow::slotShowHide()
 #ifdef Q_OS_UNIX
 		//raise() and show() should normaly deIconify the window. but it doesn't do here due
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
+#ifdef __GNUC__
+#warning "Port KWin changes!"
+#endif
+#if 0
 		if(isMinimized())
-			KWin::deIconifyWindow(winId());
+			Kwin::deIconifyWindow(winId());
+#endif
 
-		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
-			KWin::setOnDesktop(winId(), KWin::currentDesktop());
+		if(!KWM::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
+			KWM::setOnDesktop(winId(), KWM::currentDesktop());
 #endif
 		raise();
 		activateWindow();

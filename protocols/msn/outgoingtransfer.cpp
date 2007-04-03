@@ -27,7 +27,7 @@ using P2P::Message;
 #include <stdlib.h>
 
 // Kde includes
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcodecs.h>

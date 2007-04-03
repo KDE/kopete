@@ -18,7 +18,7 @@
 #ifndef USERDETAILS_H
 #define USERDETAILS_H
 
-#include <ksocketaddress.h>
+#include <k3socketaddress.h>
 #include "oscartypes.h"
 #include "kopete_export.h"
 

@@ -22,9 +22,9 @@
 #include "oscarsettings.h"
 #include "filetransfertask.h"
 
-#include <ksocketaddress.h>
-#include <kserversocket.h>
-#include <kbufferedsocket.h>
+#include <k3socketaddress.h>
+#include <k3serversocket.h>
+#include <k3bufferedsocket.h>
 #include <krandom.h>
 #include <qstring.h>
 #include <qtextcodec.h>

@@ -23,7 +23,7 @@
 #include <qtimer.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kstreamsocket.h>
+#include <k3streamsocket.h>
 #include <kio/global.h>
 
 using namespace KNetwork;

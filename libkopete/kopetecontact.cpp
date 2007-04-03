@@ -339,7 +339,8 @@ void Contact::setMetaContact( MetaContact *m )
 			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
 				"`%3' will be empty afterwards. Do you want to delete this contact?",
 					contactId(), m ? m->displayName() : QString::null, old->displayName())
-				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) ) , QString::fromLatin1("delete_old_contact_when_move") );
+				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) )
+				, KStandardGuiItem::cancel(), QString::fromLatin1("delete_old_contact_when_move") );
 			if(result==KMessageBox::Cancel)
 				return;
 		}
@@ -482,7 +483,7 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
-		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
+		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ), KStandardGuiItem::cancel(),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{

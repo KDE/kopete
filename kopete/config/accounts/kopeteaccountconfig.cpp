@@ -263,7 +263,7 @@ void KopeteAccountConfig::slotRemoveAccount()
 
 	Kopete::Account *i = lvi->account();
 	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?", i->accountLabel() ),
-		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ), "edit-delete"),
+		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ), "edit-delete"), KStandardGuiItem::cancel(),
 		 "askRemoveAccount", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::Continue )
 	{
 		Kopete::AccountManager::self()->removeAccount( i );

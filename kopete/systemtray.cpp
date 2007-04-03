@@ -26,7 +26,6 @@
 #include <QPixmap>
 #include <QEvent>
 
-#include <kwin.h>
 #include <kaboutdata.h>
 #include <kactioncollection.h>
 #include <kaction.h>

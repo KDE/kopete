@@ -27,7 +27,7 @@
 #include <QPixmap>
 #include <ktemporaryfile.h>
 #include <k3process.h>
-#include <kstreamsocket.h>
+#include <k3streamsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
 

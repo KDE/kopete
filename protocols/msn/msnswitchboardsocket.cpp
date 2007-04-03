@@ -781,7 +781,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
 			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,
-			i18n("Message too big - MSN Plugin" ), KStandardGuiItem::cont() , "SendLongMessages" )
+			i18n("Message too big - MSN Plugin" ), KStandardGuiItem::cont(), KStandardGuiItem::cancel(), "SendLongMessages" )
 				== KMessageBox::Continue )
 		{
 			int place=0;

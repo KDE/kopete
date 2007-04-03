@@ -49,11 +49,16 @@
 #include <krun.h>
 #include <kfiledialog.h>
 
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 #include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
 #include <knewstuff/engine.h>         // "
 #include <knewstuff/entry.h>          // "
 #include <knewstuff/knewstuff.h>      // "
 #include <knewstuff/provider.h>       // "
+#endif
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -81,7 +86,10 @@ typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_chatwindowconfig, KopeteChatWindowConfigFactory( "kcm_kopete_chatwindowconfig" ) )
 
 
-
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 class KopeteStyleNewStuff : public KNewStuff
 {
 public:
@@ -132,6 +140,7 @@ public:
 		return false;
 	}
 };
+#endif
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args )
@@ -389,6 +398,10 @@ void ChatWindowConfig::slotDeleteChatStyle()
 
 void ChatWindowConfig::slotGetChatStyles()
 {
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 	// we need this because KNewStuffGeneric's install function isn't clever enough
 	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
 	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
@@ -402,6 +415,7 @@ void ChatWindowConfig::slotGetChatStyles()
 	delete downloadDialog;
 	delete kopeteNewStuff;
 	delete engine;
+#endif
 }
 
 // Reimplement Kopete::Contact and its abstract method

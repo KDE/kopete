@@ -24,10 +24,10 @@ using P2P::IncomingTransfer;
 using P2P::Message;
 
 // Kde includes
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kserversocket.h>
+#include <k3serversocket.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
 using namespace KNetwork;

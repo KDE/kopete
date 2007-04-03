@@ -29,9 +29,9 @@
 
 #include <kdebug.h>
 #include <kconfig.h>
-#include <kbufferedsocket.h>
-#include <kserversocket.h>
-#include <kresolver.h>
+#include <k3bufferedsocket.h>
+#include <k3serversocket.h>
+#include <k3resolver.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kurl.h>

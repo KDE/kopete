@@ -17,9 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
-#include <kresolver.h>
+#include <k3resolver.h>
 
 #include "yahooconnector.h"
 #include "yahoobytestream.h"

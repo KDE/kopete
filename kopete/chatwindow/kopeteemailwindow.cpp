@@ -50,7 +50,7 @@
 #include <kmenu.h>
 #include <kpushbutton.h>
 #include <ktextedit.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kgenericfactory.h>
 #include <kxmlguifactory.h>
 #include <kvbox.h>
@@ -311,7 +311,8 @@ void KopeteEmailWindow::slotConfToolbar()
 {
         KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
 	saveMainWindowSettings( cg );
-	KEditToolBar *dlg = new KEditToolBar(actionCollection(), QLatin1String("kopeteemailwindow.rc") );
+	KEditToolBar *dlg = new KEditToolBar(actionCollection());
+	dlg->setResourceFile("kopeteemailwindow.rc");
 	if (dlg->exec())
 	{
 		createGUI( d->editPart );
@@ -459,21 +460,21 @@ bool KopeteEmailWindow::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
-				KGuiItem( i18n("Cl&ose Chat") ), QLatin1String("AskCloseGroupChat"));
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseGroupChat"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", d->unreadMessageFrom), i18n("Unread Message"),
-				KGuiItem( i18n("Cl&ose Chat") ), QLatin1String("AskCloseChatRecentMessage"));
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatRecentMessage"));
 		}
 
 		if( d->sendInProgress  && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
-				KGuiItem( i18n("Cl&ose Chat") ), QLatin1String("AskCloseChatMessageInProgress") );
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatMessageInProgress") );
 		}
 	}
 
@@ -541,8 +542,8 @@ void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
 #ifdef Q_OS_UNIX
-	if ( !KWin::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
-		KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+	if ( !KWM::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
+		KWM::setOnDesktop( winId(), KWM::currentDesktop() );
 #endif
 	KMainWindow::raise();
 
@@ -557,7 +558,7 @@ void KopeteEmailWindow::raise(bool activate)
 #ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if(activate)
-		KWin::activateWindow( winId() );
+		KWM::activateWindow( winId() );
 #endif
 }
 

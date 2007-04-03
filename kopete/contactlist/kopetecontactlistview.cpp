@@ -1641,7 +1641,7 @@ void KopeteContactListView::slotRemove()
 			return; // this should never happen
 
 		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem(i18n("Remove"),"edit-delete") ,
-		 "askRemovingContactOrGroup" , KMessageBox::Notify | KMessageBox::Dangerous ) !=
+		KStandardGuiItem::cancel(), "askRemovingContactOrGroup" , KMessageBox::Notify | KMessageBox::Dangerous ) !=
 			KMessageBox::Continue )
 		{
 			return;
@@ -1656,7 +1656,7 @@ void KopeteContactListView::slotRemove()
 		         "contacts from your contact list?" );
 
 		if( KMessageBox::warningContinueCancelList( this, msg, items, i18n("Remove"),
-			KGuiItem(i18n("Remove"),"edit-delete"), "askRemovingContactOrGroup",
+			KGuiItem(i18n("Remove"),"edit-delete"), KStandardGuiItem::cancel(), "askRemovingContactOrGroup",
 			KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
 		{
 			return;

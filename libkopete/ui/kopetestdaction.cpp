@@ -27,7 +27,7 @@
 #include <ksettings/dialog.h>
 #include <kstandardaction.h>
 #include <KStandardGuiItem>
-#include <kwin.h>
+#include <kwm.h>
 #include <kcmultidialog.h>
 #include <kicon.h>
 
@@ -58,7 +58,7 @@ void KopetePreferencesAction::slotShowPreferences()
 
 	s_settingsDialog->dialog()->raise();
 #ifdef Q_OS_UNIX
-	KWin::activateWindow( s_settingsDialog->dialog()->winId() );
+	KWM::activateWindow( s_settingsDialog->dialog()->winId() );
 #endif
 }
 

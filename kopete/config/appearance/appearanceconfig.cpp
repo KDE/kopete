@@ -56,12 +56,16 @@
 #include <krun.h>
 #include <kfiledialog.h>
 
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 #include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
 #include <knewstuff/engine.h>         // "
 #include <knewstuff/entry.h>          // "
 #include <knewstuff/knewstuff.h>      // "
 #include <knewstuff/provider.h>       // "
-
+#endif
 
 
 #include "kopeteemoticons.h"
@@ -319,7 +323,12 @@ void AppearanceConfig::slotGetEmoticonThemes()
 	config.writeEntry( "Uncompress", "application/x-gzip" );
 	config.sync();
 
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
+#endif
 
 	updateEmoticonlist();
 }

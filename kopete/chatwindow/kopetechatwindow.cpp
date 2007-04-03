@@ -45,7 +45,7 @@
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <ktemporaryfile.h>
 #include <kedittoolbar.h>
 #include <kstatusbar.h>
@@ -948,7 +948,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 #ifdef Q_OS_UNIX
-		KWin::setIcons( winId(), icon32, icon16 );
+		KWM::setIcons( winId(), icon32, icon16 );
 #endif
 	}
 

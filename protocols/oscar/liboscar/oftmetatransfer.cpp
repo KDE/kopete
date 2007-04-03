@@ -19,7 +19,7 @@
 
 #include "oftmetatransfer.h"
 
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <qstring.h>
 #include <kdebug.h>
 #include "connection.h"
