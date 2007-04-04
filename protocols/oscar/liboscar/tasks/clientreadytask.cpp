@@ -73,23 +73,11 @@ void ClientReadyTask::onGo()
 		
 		if ( client()->isIcq() )
 		{
-			buffer->addDWord( 0x0101008E4 ); // ICQ dll library version
+			buffer->addDWord( 0x011008E4 ); // ICQ dll library version
 		}
-		else //we're AIM so AOL has us do something completely different! *sigh*
+		else
 		{
-			switch( i )
-			{
-			case 0x0008:
-			case 0x000B:
-			case 0x000C:
-				buffer->addWord( 0x0104 );
-				buffer->addWord( 0x0001 );
-				break;
-			default:
-				buffer->addWord( 0x0110 );
-				buffer->addWord( 0x059B );
-				break;
-			};
+			buffer->addDWord( 0x0110145D ); // AIM dll library version
 		}
 	}
 
