@@ -555,11 +555,9 @@ void KopeteEmailWindow::raise(bool activate)
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if(activate)
 		KWM::activateWindow( winId() );
-#endif
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )
