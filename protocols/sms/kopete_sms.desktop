@@ -22,7 +22,6 @@ Name[ne]=एस एम एस
 Name[x-test]=xxSMSxx
 Comment=Protocol to send SMS messages
 Comment[ar]=سيرسل البروتوكول رسالة عن  طريق خدمة الرسائل القصيرة
-Comment[be]=Пратакол адпраўлення паведамленняў SMS
 Comment[bg]=Протокол за изпращане на SMS съобщения
 Comment[br]=Komenad evit kas kemennadoù SMS
 Comment[ca]=Protocol per a enviar missatges SMS

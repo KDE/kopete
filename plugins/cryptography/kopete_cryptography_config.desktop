@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete_cryptography
 
 Name=Cryptography
 Name[ar]=التشفير
-Name[be]=Крыптаграфія
 Name[bg]=Шифроване
 Name[ca]=Xifrat
 Name[cs]=Šifrování
@@ -62,7 +61,6 @@ Name[zh_HK]=密碼學
 Name[zh_TW]=加密
 Comment=Encrypts messages using PGP
 Comment[ar]=يشفر الرسائل باستخدام PGP
-Comment[be]=Шыфруе паведамленні ў PGP
 Comment[bg]=Шифроване на съобщения с GPG
 Comment[ca]=Xifra missatges emprant PGP
 Comment[cs]=Šifrování zpráv pomocí GPG

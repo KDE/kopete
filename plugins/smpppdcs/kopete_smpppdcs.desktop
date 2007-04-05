@@ -54,7 +54,6 @@ Name[zh_HK]=連接 SUSE smpppd 的連線狀態 (SMPPPD)
 Name[zh_TW]=SUSE smpppd 連線狀態
 Comment=Connects/disconnects Kopete automatically depending on availability of Internet connection
 Comment[ar]=يقوم بوصل و فصل Kopete تلقائيا استنادا إلى وضع الاتصال بالشبكة
-Comment[be]=Злучае/адлучае Kopete ад сервісаў у залежнасці ад наяўнасці інтэрфэйсаў з Інтэрнэтам
 Comment[bg]=Автоматично установяване и прекъсване на връзката в зависимост от състоянието на връзката с Интернет
 Comment[ca]=Connecta/desconnecta automàticament depenent de la disponibilitat de la connexió a Internet
 Comment[cs]=Automaticky připojí nebo odpojí vzhledem k dostupnosti připojení na Internet
