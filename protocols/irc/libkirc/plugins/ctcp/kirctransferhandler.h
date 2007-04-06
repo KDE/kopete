@@ -50,7 +50,7 @@ public:
 		KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
 		QHostAddress peer_address, quint16 peer_port,
 		Transfer::Type type,
-		QString file = QString::null, quint32 fileSize = 0 );
+		QString file = QString(), quint32 fileSize = 0 );
 
 //	void registerServer( DCCServer * );
 //	QPtrList<DCCServer> getRegisteredServers();
