@@ -541,7 +541,7 @@ void KopeteEmailWindow::slotReplySend()
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
-#ifdef Q_OS_UNIX
+#ifdef Q_WS_X11
 	if ( !KWM::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
 		KWM::setOnDesktop( winId(), KWM::currentDesktop() );
 #endif
