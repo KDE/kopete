@@ -268,7 +268,7 @@ void ChatView::raise( bool activate )
 
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
-#ifdef Q_OS_UNIX
+#ifdef Q_WS_X11
 	if ( !KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
 			KWM::setCurrentDesktop( KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
