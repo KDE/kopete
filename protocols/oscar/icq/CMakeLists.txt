@@ -69,7 +69,6 @@ install(TARGETS kopete_icq  DESTINATION ${PLUGIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES kopete_icq.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES x-icq.desktop  DESTINATION ${MIME_INSTALL_DIR}/application)
 
 
 
