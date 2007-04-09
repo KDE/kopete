@@ -123,7 +123,7 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		}
 
 		// Crop the image
-		QImage avatar = KPixmapRegionSelectorDialog::selectedImage( QPixmap(imageUrl.path()), 96, 96, this );
+		QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(imageUrl.path()), 96, 96, this );
 
 		QString imageName = imageUrl.fileName();
 
