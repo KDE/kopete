@@ -16,6 +16,8 @@
 */
 #include "aimcontactbase.h"
 
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomNodeList>
 #include "kopetechatsession.h"
 
 #include "oscaraccount.h"
