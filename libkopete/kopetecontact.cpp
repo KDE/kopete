@@ -878,6 +878,11 @@ QString Kopete::Contact::nickName() const
 	return contactId();
 }
 
+void Kopete::Contact::setPhoto(const QString &photoPath)
+{
+	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
+}
+
 } //END namespace Kopete
 
 #include "kopetecontact.moc"

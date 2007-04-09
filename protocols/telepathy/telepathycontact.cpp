@@ -59,6 +59,7 @@ public:
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent)
  : Kopete::Contact(account, contactId, parent), d(new Private)
 {
+	setOnlineStatus( TelepathyProtocol::protocol()->Offline );
 }
 
 TelepathyContact::~TelepathyContact()
