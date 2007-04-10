@@ -23,7 +23,7 @@
 #include <qlineedit.h>
 #include <k3listview.h>
 #include <qmap.h>
-#include <q3popupmenu.h>
+#include <QMenu>
 
 #include <kapplication.h>
 #include <kdebug.h>
