@@ -22,6 +22,7 @@
 #include <kfileitem.h>
 #include <kmessagebox.h>
 #include <kio/jobuidelegate.h>
+#include <kuiserverjobtracker.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -54,15 +55,21 @@ Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QSt
 
 
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
-	: KIO::Job(showProgressInfo), mInfo(kfti)
+	: KIO::Job(), mInfo(kfti)
 {
+	if(showProgressInfo)
+		KIO::getJobTracker()->registerJob(this);
+
 	KUrl targ; targ.setPath( localFile );
 	init( targ, showProgressInfo );
 }
 
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::Contact *contact, bool showProgressInfo)
-	: KIO::Job(showProgressInfo), mInfo(kfti)
+	: KIO::Job(), mInfo(kfti)
 {
+	if(showProgressInfo)
+		KIO::getJobTracker()->registerJob(this);
+
 	// TODO: use mInfo.url().fileName() after move to protocol-aware filetransfers
 	KUrl targ; targ.setPath( mInfo.file() );
 	init( displayURL( contact, targ.fileName() ), showProgressInfo );

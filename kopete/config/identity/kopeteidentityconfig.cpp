@@ -522,7 +522,7 @@ void KopeteIdentityConfig::slotChangePhoto(const KUrl &photoUrl)
 	
 	QImage photo(photoUrl.path());
 	// use KABC photo size 100x140
-	photo = KPixmapRegionSelectorDialog::selectedImage( QPixmap::fromImage(photo), 96, 96, this );
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
 
 	if(!photo.isNull())
 	{
