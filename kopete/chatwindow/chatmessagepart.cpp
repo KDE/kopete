@@ -998,7 +998,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		// Replace %destinationName%
 		resultHTML = resultHTML.replace( QLatin1String("%destinationName%"), formatName(destinationName) );
 		// For %timeOpened%, display the date and time (also the seconds).
-		resultHTML = resultHTML.replace( QLatin1String("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), true, true ) );
+		resultHTML = resultHTML.replace( QLatin1String("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::ShortDate, true ) );
 
 		// Look for %timeOpened{X}%
 		QRegExp timeRegExp("%timeOpened\\{([^}]*)\\}%");
