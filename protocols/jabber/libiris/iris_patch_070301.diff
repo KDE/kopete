@@ -380,7 +380,7 @@ Index: iris/include/xmpp.h
  		Q_OBJECT
  	public:
 @@ -97,7 +99,7 @@
- 		Q_UINT16 port;
+ 		quint16 port;
  	};
  
 -	class AdvancedConnector : public Connector
