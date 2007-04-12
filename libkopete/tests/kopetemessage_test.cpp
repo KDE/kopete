@@ -114,12 +114,6 @@ void KopeteMessage_Test::testPrimitives()
 
 		msg.setBody(m, Kopete::Message::RichText);
 		QCOMPARE(Kopete::Message::RichText, msg.format());
-
-		msg.setBody(m, Kopete::Message::ParsedHTML);
-		QCOMPARE(Kopete::Message::ParsedHTML, msg.format());
-
-		msg.setBody(m, Kopete::Message::Crypted);
-		QCOMPARE(Kopete::Message::Crypted, msg.format());
 	}
 
 
@@ -154,11 +148,9 @@ void KopeteMessage_Test::testPrimitives()
 
 		msg.setBody("<simple> SIMPLE", Kopete::Message::PlainText);
 		QCOMPARE(QString("<simple> SIMPLE"), msg.plainBody());
-		QCOMPARE(QString("&lt;simple&gt; SIMPLE"), msg.escapedBody());
 
 		msg.setBody("<simple>SIMPLE</simple>", Kopete::Message::RichText);
 		QCOMPARE(msg.plainBody(),   QString("SIMPLE") );
-		QCOMPARE(msg.escapedBody(), QString("<simple>SIMPLE</simple>") );
 
 		QCOMPARE(Kopete::Message::unescape( QString( "<simple>SIMPLE</simple>" ) ), QString("SIMPLE") );
 		QCOMPARE(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" />" ) ), QString("Foo ") );
@@ -166,26 +158,10 @@ void KopeteMessage_Test::testPrimitives()
 
 		msg.setBody(m, Kopete::Message::RichText);
 
-		// FIXME: Should setBody() also strip extra white space?
-		//QCOMPARE(msg.plainBody(),   QString("HELLO WORLD"));
-		//QCOMPARE(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
-
-		QCOMPARE(msg.escapedBody(),                   QString(" &nbsp; <b>HELLO WORLD</b> &nbsp; "));
-		QCOMPARE(msg.plainBody(),                     QString("   HELLO WORLD   "));
+//		QCOMPARE(msg.escapedBody(),           QString(" &nbsp; <b>HELLO WORLD</b> &nbsp; "));
+//		QCOMPARE(msg.plainBody(),             QString("   HELLO WORLD   "));
 		QCOMPARE(msg.plainBody().trimmed(),   QString("HELLO WORLD"));
-		QCOMPARE(msg.escapedBody().trimmed(), QString("&nbsp; <b>HELLO WORLD</b> &nbsp;"));
-	}
-	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);
-
-		msg.setBody("<p>foo", Kopete::Message::RichText);
-		QCOMPARE(msg.escapedBody(), QString("foo"));
-
-		msg.setBody("<p>foo</p>", Kopete::Message::RichText);
-		QCOMPARE(msg.escapedBody(), QString("foo"));
-
-		msg.setBody("\n<p>foo</p>\n<br/>", Kopete::Message::RichText);
-		QCOMPARE(msg.escapedBody(), QString("foo<br/>"));
+//		QCOMPARE(msg.escapedBody().trimmed(), QString("&nbsp; <b>HELLO WORLD</b> &nbsp;"));
 	}
 
 	/**********************************************
