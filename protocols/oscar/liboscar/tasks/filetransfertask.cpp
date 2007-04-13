@@ -551,8 +551,9 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 
 	/*FIXME: Should we prompt for a file name if we receive one file or only for a directory like the official
 	         icq and aim clients (if we have multiple files we don't know their names at this stage) */
-
+#ifdef __GNUC__
 #warning Hack, this will be removed as soon as I add a function into Kopete::TransferManager that will prompt for a directory (Kedge)
+#endif
 	QFileInfo fileInfo( localName );
 	m_oftRendezvous.dir = fileInfo.absolutePath() + "/";
 
