@@ -270,7 +270,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 			output = i18n("There is no help available for '%1'.", command );
 	}
 
-	Kopete::Message msg(manager->myself(), manager->members(), output, Kopete::Message::Internal, Kopete::Message::PlainText);
+	Kopete::Message msg(manager->myself(), manager->members(), output, Kopete::Message::Internal, Qt::PlainText);
 	manager->appendMessage(msg);
 }
 
@@ -278,7 +278,7 @@ void Kopete::CommandHandler::slotSayCommand( const QString &args, Kopete::ChatSe
 {
 	//Just say whatever is passed
 	Kopete::Message msg(manager->myself(), manager->members(), args,
-		Kopete::Message::Outbound, Kopete::Message::PlainText);
+		Kopete::Message::Outbound, Qt::PlainText);
 	manager->sendMessage(msg);
 }
 
@@ -313,7 +313,7 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 		{
 			Kopete::Message msg(manager->myself(), manager->members(),
 				i18n( "ERROR: Shell access has been restricted on your system. The /exec command will not function." ),
-				Kopete::Message::Internal, Kopete::Message::PlainText );
+				Kopete::Message::Internal, Qt::PlainText );
 			manager->sendMessage( msg );
 		}
 	}
@@ -366,7 +366,7 @@ void Kopete::CommandHandler::slotExecReturnedData(K3Process *proc, char *buff, i
 	kDebug(14010) << k_funcinfo << endl;
 	QString buffer = QString::fromLocal8Bit( buff, bufflen );
 	ManagerPair mgrPair = p->processMap[ proc ];
-	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members(), buffer, mgrPair.second, Kopete::Message::PlainText );
+	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members(), buffer, mgrPair.second, Qt::PlainText );
 	if( mgrPair.second == Kopete::Message::Outbound )
 		mgrPair.first->sendMessage( msg );
 	else

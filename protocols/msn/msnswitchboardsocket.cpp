@@ -365,7 +365,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
 			message,
-			Kopete::Message::Inbound , Kopete::Message::PlainText );
+			Kopete::Message::Inbound , Qt::PlainText );
 
 		kmsg.setFg( fontColor );
 		kmsg.setFont( font );
@@ -381,7 +381,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		{
 			QString msg=m_msgQueue.last().plainBody();
     		m_msgQueue.pop_back(); //removes the last item
-    		kmsg.setBody( msg+ message, Kopete::Message::PlainText );
+    		kmsg.setBody( msg+ message, Qt::PlainText );
 		}
 
     	if(chunk == 0 )
@@ -697,7 +697,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		}
 	}
 
-	if( msg.format() & Kopete::Message::RichText )
+	if( msg.format() & Qt::RichText )
 	{
 		QRegExp regex("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
 		if(regex.indexIn(msg.escapedBody()) != -1)
@@ -958,7 +958,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 		}
 
 		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
-			msg, Kopete::Message::Inbound , Kopete::Message::RichText );
+			msg, Kopete::Message::Inbound , Qt::RichText );
 
 		emit msgReceived(  kmsg  );
 	}
@@ -993,7 +993,7 @@ void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const Q
 	}
 	QString invite = "Incoming file transfer.";
 	Kopete::Message msg =
-		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Qt::PlainText);
 	emit msgReceived(msg);
 }
 
@@ -1045,7 +1045,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 						QString::fromLatin1("\" title=\"") + es +
 						QString::fromLatin1("\" alt=\"") + es +
 						QString::fromLatin1( "\"/>" ) );
-			kmsg.setBody(message, Kopete::Message::RichText);
+			kmsg.setBody(message, Qt::RichText);
 		}
 	}
 	return kmsg;

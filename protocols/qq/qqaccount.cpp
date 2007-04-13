@@ -452,7 +452,7 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 	Q_ASSERT( sess );
 	Kopete::Message * newMessage =
 			new Kopete::Message( timestamp, sender, contactList, msg,
-								 Kopete::Message::Inbound, Kopete::Message::PlainText );
+								 Kopete::Message::Inbound, Qt::PlainText );
 	sess->appendMessage( *newMessage );
 }
 

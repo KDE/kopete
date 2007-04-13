@@ -387,7 +387,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 					Kopete::Message msg(dt, from, to, msgElem2.text(), dir);
 					msg.setBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
 							.arg( dt.toString(Qt::LocalDate), msg.escapedBody() ),
-							Kopete::Message::RichText);
+							Qt::RichText);
 				
 
 					// We insert it at the good place, given its date
@@ -606,7 +606,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 					{
 						msg.setBody( QString::fromLatin1("<span style=\"color:%1\" title=\"%2\">%3</span>")
 							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), msg.escapedBody() ),
-							Kopete::Message::RichText
+							Qt::RichText
 						);
 						msg.setFg( fgColor );
 						msg.addClass( "history" );
@@ -615,7 +615,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 					{
 						msg.setBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
 							.arg( timestamp.toString(Qt::LocalDate), msg.escapedBody() ),
-							Kopete::Message::RichText
+							Qt::RichText
 						);
 					}
 

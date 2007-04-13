@@ -428,7 +428,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			if(!kcs)
 				return;
 			Kopete::Message msg(account->myself(),kcs->members(), url.queryItemValue("body"),url.queryItemValue("subject"),
-								Kopete::Message::Outbound,Kopete::Message::PlainText);
+								Kopete::Message::Outbound, Qt::PlainText);
 			KopeteView *kv=kcs->view(true);
 			if(kv)
 				kv->setCurrentMessage(msg);

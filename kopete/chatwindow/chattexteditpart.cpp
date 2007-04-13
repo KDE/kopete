@@ -426,7 +426,7 @@ Kopete::Message ChatTextEditPart::contents()
 {
 	Kopete::Message currentMsg( m_session->myself(), m_session->members(), text(),
 	                            Kopete::Message::Outbound, useRichText() ?
-	                            Kopete::Message::RichText : Kopete::Message::PlainText );
+	                            Qt::RichText : Qt::PlainText );
 	
 // 	currentMsg.setBg( bgColor() );
 	currentMsg.setFg( textColor() );

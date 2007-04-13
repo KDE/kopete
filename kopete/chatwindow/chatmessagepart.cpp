@@ -391,7 +391,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	// parse emoticons and URL now.
 	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
 	if( !restoring )
-		message.setBody( message.parsedBody() , Kopete::Message::RichText );
+		message.setBody( message.parsedBody() , Qt::RichText );
 
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
@@ -921,7 +921,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 
 		QString boldNick = QString("%1<b>%2</b></a> ").arg(nickLink,nick);
 		QString newBody = boldNick + message.parsedBody();
-		message.setBody(newBody, Kopete::Message::RichText );
+		message.setBody(newBody, Qt::RichText );
 	}
 
 	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))

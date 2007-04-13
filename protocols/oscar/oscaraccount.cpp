@@ -439,7 +439,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	Kopete::ContactPtrList me;
 	me.append( myself() );
 	Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
-	                             Kopete::Message::Inbound, Kopete::Message::RichText );
+	                             Kopete::Message::Inbound, Qt::RichText );
 
 	chatSession->appendMessage( chatMessage );
 }

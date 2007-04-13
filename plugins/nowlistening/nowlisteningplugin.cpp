@@ -175,7 +175,7 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 			theChat->members(),
 			advert + ' ' + args,
 			Kopete::Message::Outbound,
-			Kopete::Message::RichText
+			Qt::RichText
 	);
 
 	theChat->sendMessage( msg );
@@ -238,7 +238,7 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 	// If the body has been modified, change the message
 	if( !newBody.isEmpty() )
 	{
-		msg.setBody( newBody, Kopete::Message::RichText );
+		msg.setBody( newBody, Qt::RichText );
  	}
 }
 
@@ -489,7 +489,7 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 			pl,
 			message,
 			Kopete::Message::Outbound,
-			Kopete::Message::RichText );
+			Qt::RichText );
 	theChat->sendMessage( msg );
 }
 

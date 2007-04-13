@@ -198,7 +198,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 				+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 				+ plainBody
 				+ QString::fromLatin1(" </td></tr></table>")
-				, Kopete::Message::RichText );
+				, Qt::RichText );
 
 			msg.addClass("cryptography:encrypted");
 		}
@@ -231,7 +231,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 			+ body
 			+ QString::fromLatin1(" </td></tr></table>")
-			, Kopete::Message::RichText );
+			, Qt::RichText );
 
 		msg.addClass("cryptography:encrypted");
 	}
@@ -295,7 +295,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
 	if (!resultat.isEmpty())
 	{
-		msg.setBody(resultat,Kopete::Message::PlainText);
+		msg.setBody(resultat, Qt::PlainText);
 		m_cachedMessages.insert(resultat,original);
 	}
 	else

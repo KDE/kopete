@@ -72,16 +72,6 @@ public:
 	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2 };
 
 	/**
-	 * Format of body
-	 * - PlainText: Just a simple text, without any formatting. If it contains HTML tags then they will be simply shown in the chatview.
-	 * - RichText: Text already HTML escaped and which can contains some tags. the string
-	 *   should be a valid (X)HTML string.
-	 *   Any HTML specific characters (\<, \>, \&, ...) are escaped to the equivalent HTML
-	 *   entity (\&gt;, \&lt;, ...) newlines are \<br /\> and any other HTML tags will be interpreted.
-	 */
-	enum MessageFormat { PlainText = Qt::PlainText, RichText = Qt::RichText};
-
-	/**
 	 * Specifies the type of the message.
 	 * Currently supported types are:
 	 * - Normal: a message
@@ -118,7 +108,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = PlainText,
+		 MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
@@ -132,7 +122,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = PlainText,
+		 MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
@@ -147,7 +137,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
+		 const QString &subject, MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
@@ -162,7 +152,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
+		 const QString &body, MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
@@ -179,7 +169,7 @@ public:
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, const QString &requestedPlugin = QString(),
+		Qt::TextFormat format = Qt::PlainText, const QString &requestedPlugin = QString(),
 		MessageType type = TypeNormal );
 
 	/**
@@ -267,7 +257,7 @@ public:
 	 * @brief Accessor method for the format of the message
 	 * @return The message format
 	 */
-	MessageFormat format() const;
+	Qt::TextFormat format() const;
 
 	/**
 	 * @brief Accessor method for the direction of the message
@@ -314,9 +304,9 @@ public:
 	 * @brief Sets the body of the message
 	 * This function is old and left in for support, please use @ref setPlainBody or @ref setHtmlBody instead.
 	 * @param body The body
-	 * @param format The format of the message, @see MessageFormat
+	 * @param format The format of the message, @see Qt::TextFormat
 	 */
-	void setBody( const QString &body, MessageFormat format = PlainText );
+	void setBody( const QString &body, Qt::TextFormat format = Qt::PlainText );
 
 	/**
 	 * @brief Sets the body of the message
@@ -465,20 +455,20 @@ private:
 	 * Basically @ref setBody() without detach
 	 * @internal
 	 */
-	void doSetBody( const QString &body, MessageFormat format = PlainText );
+	void doSetBody( const QString &body, Qt::TextFormat format = Qt::PlainText );
 
 	/**
 	 * Called internally by @ref setBody() and the constructor
 	 * Basically @ref setBody() without detach
 	 * @internal
 	 */
-	void doSetBody (const QTextDocument *body, MessageFormat format = PlainText);
+	void doSetBody (const QTextDocument *body, Qt::TextFormat format = Qt::PlainText);
 
 	/**
 	 * Called internally in rich text handling
 	 * @internal
 	 */
-	static QString parseLinks( const QString &message, MessageFormat format );
+	static QString parseLinks( const QString &message, Qt::TextFormat format );
 };
 
 }

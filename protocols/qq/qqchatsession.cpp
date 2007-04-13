@@ -171,7 +171,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 	{
 		kDebug ( 14140 ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
 		//emit creationFailed();
-		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1", statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1", statusCode ), Kopete::Message::Internal, Qt::PlainText);
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -196,7 +196,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 		}
 		else*/ if ( account()->myself()->onlineStatus() ==  QQProtocol::protocol()->Offline )
 		{
-			Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Kopete::Message::PlainText);
+			Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Qt::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
@@ -396,7 +396,7 @@ void QQChatSession::joined( QQContact * c )
 	{
 		if ( (*pending)->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( *pending, QString::null, Kopete::Message::PlainText, true );
+			removeContact( *pending, QString::null, Qt::PlainText, true );
 			break;
 		}
 	}
@@ -421,7 +421,7 @@ void QQChatSession::left( QQContact * c )
 		{
 			Kopete::Message failureNotify = Kopete::Message( myself(), members(),
 						i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat."),
-						Kopete::Message::Internal, Kopete::Message::PlainText );
+						Kopete::Message::Internal, Qt::PlainText );
 			appendMessage( failureNotify );
 		}
 		else
@@ -437,7 +437,7 @@ void QQChatSession::inviteDeclined( QQContact * c )
 	{
 		if ( (*pending)->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( *pending, QString::null, Kopete::Message::PlainText, true );
+			removeContact( *pending, QString::null, Qt::PlainText, true );
 			break;
 		}
 	}
@@ -447,7 +447,7 @@ void QQChatSession::inviteDeclined( QQContact * c )
 
 	Kopete::Message declined = Kopete::Message( myself(), members(),
 				i18n("%1 has rejected an invitation to join this conversation.", from ),
-				Kopete::Message::Internal, Kopete::Message::PlainText );
+				Kopete::Message::Internal, Qt::PlainText );
 	appendMessage( declined );
 }
 

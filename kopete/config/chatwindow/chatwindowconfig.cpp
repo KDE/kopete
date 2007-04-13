@@ -489,7 +489,7 @@ void ChatWindowConfig::createPreviewMessages()
 	msgCol.setBg( QColor( "LightSteelBlue" ) );
 	Kopete::Message msgInt( m_jack, m_myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
 	Kopete::Message msgAct( m_jack, m_myself, i18n( "performed an action" ), Kopete::Message::Inbound,
-				  Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction );
+				  Qt::PlainText, QString::null, Kopete::Message::TypeAction );
 	Kopete::Message msgHigh( m_jack, m_myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
 	// This is a UTF-8 string btw.

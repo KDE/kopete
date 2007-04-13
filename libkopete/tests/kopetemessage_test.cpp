@@ -61,7 +61,7 @@ KopeteMessage_Test::KopeteMessage_Test()
 	m_metaContactOther = new Kopete::Test::Mock::MetaContact();
 	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
 	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
-	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
+	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Qt::PlainText);
 }
 
 void KopeteMessage_Test::testPrimitives()
@@ -71,7 +71,7 @@ void KopeteMessage_Test::testPrimitives()
 	 *********************************************/
 
 	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Qt::PlainText);
 		Q_ASSERT(msg.from());
 		Q_ASSERT(!msg.to().isEmpty());
 	}
@@ -81,15 +81,15 @@ void KopeteMessage_Test::testPrimitives()
 	 *********************************************/
 
 	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Qt::PlainText);
 		QCOMPARE(Kopete::Message::Inbound, msg.direction());
 	}
 	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Outbound, Kopete::Message::RichText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Outbound, Qt::RichText);
 		QCOMPARE(Kopete::Message::Outbound, msg.direction());
 	}
 	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Internal, Kopete::Message::RichText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Internal, Qt::RichText);
 		QCOMPARE(Kopete::Message::Internal, msg.direction());
 	}
 
@@ -98,22 +98,22 @@ void KopeteMessage_Test::testPrimitives()
 	 *********************************************/
 
 	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
-		QCOMPARE(Kopete::Message::PlainText, msg.format());
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Qt::PlainText);
+		QCOMPARE(Qt::PlainText, msg.format());
 	}
 	{
-		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::RichText);
-		QCOMPARE(Kopete::Message::RichText, msg.format());
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Qt::RichText);
+		QCOMPARE(Qt::RichText, msg.format());
 	}
 	{
 		QString m = "foobar";
-		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::RichText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Qt::RichText);
 
-		msg.setBody(m, Kopete::Message::PlainText);
-		QCOMPARE(Kopete::Message::PlainText, msg.format());
+		msg.setBody(m, Qt::PlainText);
+		QCOMPARE(Qt::PlainText, msg.format());
 
-		msg.setBody(m, Kopete::Message::RichText);
-		QCOMPARE(Kopete::Message::RichText, msg.format());
+		msg.setBody(m, Qt::RichText);
+		QCOMPARE(Qt::RichText, msg.format());
 	}
 
 
@@ -123,40 +123,40 @@ void KopeteMessage_Test::testPrimitives()
 
 	{
 		QString m = "foobar";
-		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::RichText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Qt::RichText);
 
-		msg.setBody("NEW", Kopete::Message::PlainText);
+		msg.setBody("NEW", Qt::PlainText);
 		QCOMPARE(QString("NEW"), msg.plainBody());
 
-		msg.setBody("NEW_NEW", Kopete::Message::RichText);
+		msg.setBody("NEW_NEW", Qt::RichText);
 		QCOMPARE(QString("NEW_NEW"), msg.plainBody());
 	}
 	{
 		QString m = "foobar";
-		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::PlainText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Qt::PlainText);
 
-		msg.setBody("NEW", Kopete::Message::PlainText);
+		msg.setBody("NEW", Qt::PlainText);
 		QCOMPARE(QString("NEW"), msg.plainBody());
 
-		msg.setBody("NEW_NEW", Kopete::Message::RichText);
+		msg.setBody("NEW_NEW", Qt::RichText);
 		QCOMPARE(QString("NEW_NEW"), msg.plainBody());
 	}
 	{
 		QString m = "<html><head></head><body foo=\"bar\">   <b>HELLO WORLD</b>   </body></html>";
-		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::PlainText);
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Qt::PlainText);
 		QCOMPARE(m, msg.plainBody());
 
-		msg.setBody("<simple> SIMPLE", Kopete::Message::PlainText);
+		msg.setBody("<simple> SIMPLE", Qt::PlainText);
 		QCOMPARE(QString("<simple> SIMPLE"), msg.plainBody());
 
-		msg.setBody("<simple>SIMPLE</simple>", Kopete::Message::RichText);
+		msg.setBody("<simple>SIMPLE</simple>", Qt::RichText);
 		QCOMPARE(msg.plainBody(),   QString("SIMPLE") );
 
 		QCOMPARE(Kopete::Message::unescape( QString( "<simple>SIMPLE</simple>" ) ), QString("SIMPLE") );
 		QCOMPARE(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" />" ) ), QString("Foo ") );
 		QCOMPARE(Kopete::Message::unescape( QString( "Foo <img src=\"foo.png\" title=\"Bar\" />" ) ), QString("Foo Bar") );
 
-		msg.setBody(m, Kopete::Message::RichText);
+		msg.setBody(m, Qt::RichText);
 
 //		QCOMPARE(msg.escapedBody(),           QString(" &nbsp; <b>HELLO WORLD</b> &nbsp; "));
 //		QCOMPARE(msg.plainBody(),             QString("   HELLO WORLD   "));
@@ -169,13 +169,13 @@ void KopeteMessage_Test::testPrimitives()
 	 *********************************************/
 
 	{
-		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::RichText);
+		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Qt::RichText);
 		Kopete::Message msg2(msg1);
 
 		QCOMPARE(msg1.plainBody(), msg2.plainBody());
 		QCOMPARE(msg1.escapedBody(), msg2.escapedBody());
 
-		msg1.setBody("NEW", Kopete::Message::PlainText);
+		msg1.setBody("NEW", Qt::PlainText);
 		QCOMPARE(msg1.plainBody(), QString("NEW"));
 		QCOMPARE(msg2.plainBody(), QString("foo"));
 	}
@@ -185,7 +185,7 @@ void KopeteMessage_Test::testPrimitives()
 	 *********************************************/
 
 	{
-		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::RichText);
+		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Qt::RichText);
 		{
 			Kopete::Message msg2;
 
@@ -196,7 +196,7 @@ void KopeteMessage_Test::testPrimitives()
 			QCOMPARE(msg1.plainBody(), msg2.plainBody());
 			QCOMPARE(msg1.escapedBody(), msg2.escapedBody());
 
-			msg1.setBody("NEW", Kopete::Message::PlainText);
+			msg1.setBody("NEW", Qt::PlainText);
 			QCOMPARE(msg1.plainBody(), QString("NEW"));
 			QCOMPARE(msg2.plainBody(), QString("foo"));
 		}
@@ -245,11 +245,11 @@ void KopeteMessage_Test::testLinkParser()
 			expectedData.replace( "$URL","http://www.kde.org" );
 
 			// set message format for parsing according to textcase filename convention
-			Kopete::Message::MessageFormat format;
+			Qt::TextFormat format;
 			if ( fileName.section("-", 1, 1) == QString::fromLatin1("plaintext") )
-				format = Kopete::Message::PlainText;
+				format = Qt::PlainText;
 			else
-				format = Kopete::Message::RichText;		
+				format = Qt::RichText;		
 	
 			QString result = Kopete::Message::parseLinks( inputData, format );
 

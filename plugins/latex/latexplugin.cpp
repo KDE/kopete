@@ -172,7 +172,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
-	msg.setBody( messageText, Kopete::Message::RichText );
+	msg.setBody( messageText, Qt::RichText );
 }
 
 

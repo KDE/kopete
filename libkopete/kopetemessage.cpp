@@ -62,7 +62,7 @@ public:
 	ChatSession *manager;
 
 	MessageDirection direction;
-	MessageFormat format;
+	Qt::TextFormat format;
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
@@ -86,7 +86,7 @@ public:
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		const ContactPtrList &to, const QString &subject,
 		MessageDirection direction, const QString &requestedPlugin, MessageType type )
-	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(PlainText), type(type)
+	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(Qt::PlainText), type(type)
 	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), isRightToLeft (false), timeStamp(timeStamp), subject(subject), body(new QTextDocument()), escapedBodyDirty(true)
 {
@@ -133,14 +133,14 @@ Message::Message()
 }
 
 Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, QString(), direction, requestedPlugin, type ) )
 {
 	doSetBody(body, f);
 }
 
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
 {
 	QList<Contact*> to;
 	to.append((Kopete::Contact*)toKC);
@@ -149,14 +149,14 @@ Message::Message( const Contact *fromKC, const Contact *toKC, const QString &bod
 }
 
 Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		  const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  const QString &subject, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, subject, direction, requestedPlugin, type ) )
 {
 	doSetBody(body, f);
 }
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		  const QString &body, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  const QString &body, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, QString(), direction, requestedPlugin, type ) )
 {
 	doSetBody(body, f);
@@ -164,7 +164,7 @@ Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList
 
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  const QString &body, const QString &subject, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, subject, direction, requestedPlugin, type ) )
 {
 	doSetBody(body, f);
@@ -215,24 +215,24 @@ void Message::setFont( const QFont &font )
 	d->font = font;
 }
 
-void Message::setBody( const QString &body, MessageFormat f )
+void Message::setBody( const QString &body, Qt::TextFormat f )
 {
 	doSetBody (body, f);
 }
 
 void Message::setPlainBody (const QString &body)
 {
-	doSetBody (body, PlainText);
+	doSetBody (body, Qt::PlainText);
 }
 
 void Message::setHtmlBody (const QString &body)
 {
-	doSetBody (body, RichText);
+	doSetBody (body, Qt::RichText);
 }
 
-void Message::doSetBody (const QString &body, MessageFormat f)
+void Message::doSetBody (const QString &body, Qt::TextFormat f)
 {
-	if (f == PlainText)
+	if (f == Qt::PlainText)
 		d->body->setPlainText(body);
 	else
 		d->body->setHtml(body);
@@ -243,10 +243,10 @@ void Message::doSetBody (const QString &body, MessageFormat f)
 
 void Message::setBody (const QTextDocument *_body)
 {
-	doSetBody (_body, RichText);
+	doSetBody (_body, Qt::RichText);
 }
 
-void Message::doSetBody (const QTextDocument *body, MessageFormat f)
+void Message::doSetBody (const QTextDocument *body, Qt::TextFormat f)
 {
 	delete d->body;
 	d->body = body->clone();          // delete the old body and replace it with a *copy* of the new one
@@ -379,7 +379,7 @@ QString Message::parsedBody() const
 #warning Disable Emoticon parsing for now, it make QString cause a ASSERT error. (DarkShock)
 #endif
 #if 0
-	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), RichText));
+	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
 #endif
 	return escapedBody();
 }
@@ -393,9 +393,9 @@ static QString makeRegExp( const char *pattern )
 	return boundaryStart + QLatin1String(pattern) + boundaryEnd;
 }
 
-QString Message::parseLinks( const QString &message, MessageFormat format )
+QString Message::parseLinks( const QString &message, Qt::TextFormat format )
 {
-	if ( format & RichText )
+	if ( format & Qt::RichText )
 	{
 		// < in HTML *always* means start-of-tag
 		QStringList entries = message.split( QChar('<'), QString::KeepEmptyParts );
@@ -405,7 +405,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 		// first one is different: it doesn't start with an HTML tag.
 		if ( it != entries.end() )
 		{
-			*it = parseLinks( *it, PlainText );
+			*it = parseLinks( *it, Qt::PlainText );
 			++it;
 		}
 
@@ -419,7 +419,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 				continue;
 			QString tag = curr.left( tagclose + 1 );
 			QString body = curr.mid( tagclose + 1 );
-			*it = tag + parseLinks( body, PlainText );
+			*it = tag + parseLinks( body, Qt::PlainText );
 		}
 		return entries.join(QLatin1String("<"));
 	}
@@ -513,7 +513,7 @@ const QTextDocument *Message::body() const
 	return d->body;
 }
 
-Message::MessageFormat Message::format() const
+Qt::TextFormat Message::format() const
 {
 	return d->format;
 }

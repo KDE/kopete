@@ -536,7 +536,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	emit updateStatusIcon( this );
 }
 
-void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format, bool suppressNotification )
+void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
 {
 // 	kDebug(14000) << k_funcinfo << endl;
 	if ( contact != m_manager->myself() )
@@ -697,7 +697,7 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 	emit updateStatusIcon( this );
 }
 
-void ChatView::sendInternalMessage(const QString &msg, Kopete::Message::MessageFormat format )
+void ChatView::sendInternalMessage(const QString &msg, Qt::TextFormat format )
 {
 	// When closing kopete, some internal message may be sent because some contact are deleted
 	// these contacts can already be deleted
