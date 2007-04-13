@@ -238,7 +238,7 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 	// If the body has been modified, change the message
 	if( !newBody.isEmpty() )
 	{
-		msg.setBody( newBody, Qt::RichText );
+		msg.setHtmlBody( newBody );
  	}
 }
 

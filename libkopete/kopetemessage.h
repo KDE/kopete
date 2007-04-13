@@ -302,14 +302,6 @@ public:
 
 	/**
 	 * @brief Sets the body of the message
-	 * This function is old and left in for support, please use @ref setPlainBody or @ref setHtmlBody instead.
-	 * @param body The body
-	 * @param format The format of the message, @see Qt::TextFormat
-	 */
-	void setBody( const QString &body, Qt::TextFormat format = Qt::PlainText );
-
-	/**
-	 * @brief Sets the body of the message
 	 *
 	 * @param body The body, intpreted as plain text
 	 */
@@ -339,6 +331,8 @@ public:
 	 * @brief Get the message body as escaped (X)HTML format.
 	 * That means every HTML special char (\>, \<, \&, ...) is escaped to the HTML entity (\&lt;, \&gt;, ...)
 	 * and newlines (\\n) are converted to \<br /\>
+	 * Just because you set an HTML body doesn't mean you'll get the same string back here, but it will
+	 * be equivalent in meaning
 	 * @return The message body as escaped text
 	 */
 	QString escapedBody() const;

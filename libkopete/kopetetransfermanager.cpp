@@ -172,7 +172,7 @@ bool Kopete::Transfer::showMessage( QString text )
 		return false;
 
 	Kopete::Message msg;
-	msg.setBody( text );
+	msg.setPlainBody( text );
 	cs->appendMessage( msg );
 	return true;
 }

@@ -359,16 +359,25 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 	switch ( mode )
 	{
 	case JustTranslate:
-		msg.setBody( translated, msg.format() );
+		if ( msg.format() & Qt::PlainText )
+			msg.setPlainBody( translated );
+		else
+			msg.setHtmlBody ( translated );
 		break;
 	case ShowOriginal:
-		msg.setBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ), msg.format() );
+		if ( msg.format() & Qt::PlainText )
+			msg.setPlainBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ) );
+		else 
+			msg.setHtmlBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ) );
 		break;
 	case ShowDialog:
 	{
 		TranslatorDialog *d = new TranslatorDialog( translated );
 		d->exec();
-		msg.setBody( d->translatedText(), msg.format() );
+		if ( msg.format() & Qt::PlainText )
+			msg.setPlainBody (d->translatedText() );
+		else	
+			msg.setHtmlBody( d->translatedText() );
 		delete d;
 		break;
 	}

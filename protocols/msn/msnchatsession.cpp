@@ -280,7 +280,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		{
 			m_messagesSent.insert( id, message );
 			message.setBg(QColor()); // clear the bgColor
-			message.setBody(message.plainBody() , Qt::PlainText ); //clear every custom tag which are not sent
+			message.setPlainBody(message.plainBody() ); //clear every custom tag which are not sent
 			appendMessage(message); // send the own msg to chat window
 		}
 	}

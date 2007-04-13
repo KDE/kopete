@@ -215,11 +215,6 @@ void Message::setFont( const QFont &font )
 	d->font = font;
 }
 
-void Message::setBody( const QString &body, Qt::TextFormat f )
-{
-	doSetBody (body, f);
-}
-
 void Message::setPlainBody (const QString &body)
 {
 	doSetBody (body, Qt::PlainText);

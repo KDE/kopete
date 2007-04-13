@@ -381,7 +381,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		{
 			QString msg=m_msgQueue.last().plainBody();
     		m_msgQueue.pop_back(); //removes the last item
-    		kmsg.setBody( msg+ message, Qt::PlainText );
+    		kmsg.setPlainBody( msg+ message );
 		}
 
     	if(chunk == 0 )
@@ -1045,7 +1045,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 						QString::fromLatin1("\" title=\"") + es +
 						QString::fromLatin1("\" alt=\"") + es +
 						QString::fromLatin1( "\"/>" ) );
-			kmsg.setBody(message, Qt::RichText);
+			kmsg.setHtmlBody(message);
 		}
 	}
 	return kmsg;
