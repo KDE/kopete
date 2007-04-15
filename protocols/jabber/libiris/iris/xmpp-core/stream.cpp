@@ -1003,7 +1003,7 @@ void ClientStream::setPassword(const QString &s)
 	}
 	else {
 		if(d->sasl)
-			d->sasl->setPassword(QSecureArray(s.utf8()));
+			d->sasl->setPassword(QCA::SecureArray(s.utf8()));
 	}
 }
 
