@@ -97,7 +97,7 @@ void TelepathyChatSession::telepathyMessageReceived(const QtTapioca::TextChannel
 		messageType = Kopete::Message::TypeAction;
 	}
 
-	Kopete::Message newMessage( members().first(), myself(), message.contents(), Kopete::Message::Inbound, Kopete::Message::PlainText, QString(), messageType );
+	Kopete::Message newMessage( members().first(), myself(), message.contents(), Kopete::Message::Inbound, Qt::PlainText, QString(), messageType );
 
 	appendMessage( newMessage );
 }
@@ -113,7 +113,7 @@ void TelepathyChatSession::telepathyMessageSent(const QtTapioca::TextChannel::Me
 		messageType = Kopete::Message::TypeAction;
 	}
 
-	Kopete::Message newMessage( myself(), members(), message.contents(), Kopete::Message::Outbound, Kopete::Message::PlainText, QString(), messageType );
+	Kopete::Message newMessage( myself(), members(), message.contents(), Kopete::Message::Outbound, Qt::PlainText, QString(), messageType );
 	
 	// Append succesfully sent message to chat window and notify other components of success
 	appendMessage( newMessage );
