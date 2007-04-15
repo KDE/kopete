@@ -33,6 +33,7 @@
 #include <klocale.h>
 #include <qcheckbox.h>
 #include <k3process.h>
+#include <k3procio.h>
 #include <kiconloader.h>
 #include <kicon.h>
 
@@ -75,14 +76,13 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
     vbox->addWidget(local);
   }
 
-  FILE *fp,*fp2;
+  K3ProcIO fp, fp2;
   QString tst,tst2;
-  char line[130];
+  QString line;
 
-  // FIXME: Why use popen instead of K3Process, QProcess or K3ProcIO?!?
-  //        Are we interested in having buffer overflows now? - Martijn
-  fp = popen( "gpg --no-tty --with-colon --list-secret-keys", "r" );
-  while ( fgets( line, sizeof(line), fp))
+  fp << "gpg" << "--no-tty" << "--with-colon" << "--list-secret-keys";
+  fp.start();
+  while ( fp.readln(line) > 0)
   {
     tst=line;
     if (tst.startsWith("sec"))
@@ -93,7 +93,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
       if (val.isEmpty())
         val=i18n("Unlimited");
       QString tr;
-      switch( trust[0].toLatin1() )
+      switch( trust.at(0).toLatin1() )
       {
       case 'o':
         tr= i18n("Unknown");
@@ -131,16 +131,16 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
       }
       tst=tst.section(":",9,9);
 
-      // FIXME: Same here: don't use popen! - Martijn
-      fp2 = popen( QString( "gpg --no-tty --with-colon --list-key %1" ).arg( K3ShellProcess::quote( id ) ).toLatin1(), "r" );
+      fp2 << "gpg" << "--no-tty" << "--with-colon" << "--list-key" << QString("%1").arg( K3ShellProcess::quote( id ) );
+      fp2.start();
       bool dead=true;
-      while ( fgets( line, sizeof(line), fp2))
+      while ( fp2.readln(line) > 0)
       {
         tst2=line;
         if (tst2.startsWith("pub"))
         {
           const QString trust2=tst2.section(':',1,1);
-          switch( trust2[0].toLatin1() )
+          switch( trust2.at(0).toLatin1() )
           {
           case 'f':
             dead=false;
@@ -153,7 +153,6 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
           }
         }
       }
-	  pclose(fp2);
       if (!tst.isEmpty() && (!dead))
       {
         K3ListViewItem *item=new K3ListViewItem(keysListpr,extractKeyName(tst));
@@ -163,8 +162,6 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
       }
     }
   }
-  pclose(fp);
-
 
   QObject::connect(keysListpr,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotpreOk()));
   QObject::connect(keysListpr,SIGNAL(clicked(Q3ListViewItem *)),this,SLOT(slotSelect(Q3ListViewItem *)));
