@@ -368,12 +368,12 @@ void KopeteChatWindow::initActions(void)
 	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( KIcon("tab_breakoff"), i18n( "&Detach Chat" ), coll );
+	tabDetach = new KAction( KIcon("tab-breakoff"), i18n( "&Detach Chat" ), coll );
         coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
-	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll );
+	actionDetachMenu = new KActionMenu( KIcon("tab-breakoff"), i18n( "&Move Tab to Window" ), coll );
         coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 

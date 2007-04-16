@@ -226,7 +226,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( KIcon("add_user"), i18n( "&Add to Your Contact List" ), menu );
+		KAction *actionAddContact = new KAction( KIcon("add-user"), i18n( "&Add to Your Contact List" ), menu );
 		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT( slotAddContact() ) );
 
 		menu->addAction(actionAddContact);
@@ -483,7 +483,7 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
-		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ), KStandardGuiItem::cancel(),
+		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete-user") ), KStandardGuiItem::cancel(),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{

@@ -525,7 +525,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( KIcon("edit_user"), i18n( "&Properties" ), ac );
+	actionProperties = new KAction( KIcon("edit-user"), i18n( "&Properties" ), ac );
         ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
 	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
