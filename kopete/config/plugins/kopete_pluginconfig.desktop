@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Plugins
+Name[ga]=Breiseáin
 Name[ja]=プラグイン
 Name[sv]=Insticksprogram
 Name[uk]=Втулки
