@@ -36,7 +36,6 @@
 #include <kfiledialog.h>
 #include <kaction.h>
 #include <kicon.h>
-#include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kinputdialog.h>

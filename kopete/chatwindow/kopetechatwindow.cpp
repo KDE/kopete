@@ -36,7 +36,6 @@
 #include <QMenu>
 
 #include <kactioncollection.h>
-#include <kapplication.h>
 #include <kcursor.h>
 #include <klocale.h>
 #include <kmenubar.h>

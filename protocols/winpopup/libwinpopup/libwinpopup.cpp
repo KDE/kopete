@@ -22,7 +22,6 @@
 #include <QTextStream>
 
 // KDE Includes
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>

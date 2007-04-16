@@ -39,6 +39,7 @@
 #include <QtGui/QCursor>
 #include <QtGui/QPixmap>
 #include <QtGui/QTextDocument>
+#include <QApplication>
 
 // KHTML::DOM includes
 #include <dom/dom_doc.h>
@@ -51,7 +52,6 @@
 
 // KDE includes
 #include <kactioncollection.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kdeversion.h>
 #include <kfiledialog.h>
@@ -753,7 +753,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 
 	if(text.isEmpty()) return;
 
-	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
+	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
 
 #ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
@@ -775,7 +775,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
     	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
 #endif
-	connect( kapp->clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
+	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
 
 }
 

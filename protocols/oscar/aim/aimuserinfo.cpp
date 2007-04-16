@@ -32,7 +32,6 @@
 #include <kstandarddirs.h>
 #include <ktextbrowser.h>
 #include <kdebug.h>
-#include <kapplication.h>
 
 #include <ktextedit.h>
 #include <krun.h>

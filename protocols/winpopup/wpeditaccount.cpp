@@ -34,7 +34,6 @@
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
-#include <kapplication.h>
 #include <kstandarddirs.h>
 
 

@@ -32,7 +32,6 @@
 
 #include <kaction.h>
 #include <kstandardaction.h>
-#include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
 #include <kcursor.h>

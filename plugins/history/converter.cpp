@@ -26,14 +26,13 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kprogressdialog.h>
-#include <kapplication.h>
 #include <ksavefile.h>
 
 #include <QDir>
 #include <QtXml> // old qdom.h
 #include <QRegExp>
 #include <QTextStream>
-
+#include <QApplication>
 #define CBUFLENGTH 512 // buffer length for fgets()
 
 void HistoryPlugin::convertOldHistory()
@@ -42,7 +41,7 @@ void HistoryPlugin::convertOldHistory()
 		i18n( "Would you like to remove old history files?" ) , i18n( "History Converter" ), KStandardGuiItem::del(), KGuiItem( i18n("Keep") ) ) == KMessageBox::Yes;
 
 	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , i18n( "History converter" ) ,
-		 QString::null , true); //modal  to  make sure the user will not doing stupid things (we have a kapp->processEvents())
+		 QString::null , true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
 	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
 
 
@@ -120,7 +119,7 @@ void HistoryPlugin::convertOldHistory()
 				if(!contactId.isEmpty() )
 				{
 					progressDlg->setLabel(i18n("Parsing old history in %1:\n%2", fi.fileName(), contactId));
-					kapp->processEvents(0); //make sure the text is updated in the progressDlg
+					qApp->processEvents(0); //make sure the text is updated in the progressDlg
 
 					int month=0;
 					int year=0;

@@ -24,7 +24,6 @@
 #include <QHash>
 
 // KDE Includes
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kmessagebox.h>

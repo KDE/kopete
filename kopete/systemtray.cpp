@@ -31,7 +31,6 @@
 #include <kaction.h>
 #include <kmenu.h>
 #include <klocale.h>	
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include "kopeteuiglobal.h"

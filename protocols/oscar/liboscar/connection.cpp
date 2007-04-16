@@ -26,7 +26,6 @@
 #include "rateclassmanager.h"
 #include "task.h"
 #include "transfer.h"
-#include <kapplication.h>
 #include <kdebug.h>
 
 #include "oscartypeclasses.h"

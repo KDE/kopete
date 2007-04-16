@@ -17,7 +17,6 @@
 #include "sendmessagetask.h"
 
 #include <qtextcodec.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <krandom.h>
 #include "connection.h"

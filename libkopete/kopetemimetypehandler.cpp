@@ -21,7 +21,6 @@
 
 #include <qwidget.h>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kio/netaccess.h>

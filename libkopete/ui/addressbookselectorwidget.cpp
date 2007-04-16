@@ -26,7 +26,6 @@
 */
 
 #include <qcheckbox.h>
-#include <kapplication.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kiconloader.h>

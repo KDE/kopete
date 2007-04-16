@@ -14,9 +14,9 @@
     *************************************************************************
 */
 
-#include <kapplication.h>
 #include <qregexp.h>
 #include <QList>
+#include <QApplication>
 #include <kdebug.h>
 #include <klocale.h>
 #include <k3process.h>

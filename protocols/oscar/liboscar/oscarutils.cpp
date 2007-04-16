@@ -18,7 +18,6 @@
 
 #include "oscarutils.h"
 #include <qhostaddress.h>
-#include <kapplication.h>
 #include <kdebug.h>
 
 

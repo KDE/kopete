@@ -37,7 +37,6 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 
-#include <kapplication.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kconfig.h> // for KNewStuff emoticon fetching

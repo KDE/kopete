@@ -39,7 +39,6 @@
 
 #include <kaction.h>
 #include <kactionmenu.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kicondialog.h>

@@ -39,7 +39,6 @@
 #include <kactionmenu.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <kapplication.h>
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <kactionmenu.h>

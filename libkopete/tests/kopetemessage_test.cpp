@@ -26,7 +26,6 @@
 #include <QTextStream>
 #include <QByteArray>
 
-#include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kcomponentdata.h>
 #include <k3process.h>

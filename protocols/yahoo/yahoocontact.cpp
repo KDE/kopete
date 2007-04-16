@@ -46,7 +46,6 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kaction.h>
-#include <kapplication.h>
 #include <kdialog.h>
 #include <klocale.h>
 #include <krun.h>

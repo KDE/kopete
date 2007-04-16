@@ -21,7 +21,6 @@
 #include "kopetemetacontact.h"
 #include "kopetemetacontact_p.h"
 
-#include <kapplication.h>
 
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>

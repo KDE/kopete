@@ -20,7 +20,6 @@
 #include <QPixmap>
 
 #include <dcopclient.h>
-#include <kapplication.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>

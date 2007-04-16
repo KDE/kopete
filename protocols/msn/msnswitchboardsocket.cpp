@@ -38,13 +38,13 @@
 // kde
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
 #include <ktemporaryfile.h>
 #include <kconfig.h>
 #include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <KComponentData>
 
 // for the display picture
 #include <msncontact.h>

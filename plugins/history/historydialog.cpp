@@ -44,7 +44,6 @@
 #include <QFrame>
 #include <QVBoxLayout>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -613,18 +612,18 @@ void HistoryDialog::slotCopy()
 	qsSelection = mHtmlPart->selectedText();
 	if ( qsSelection.isEmpty() ) return;
 
-	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
-	connect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 void HistoryDialog::slotCopyURL()
 {
-	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
 	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
-	connect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 #include "historydialog.moc"

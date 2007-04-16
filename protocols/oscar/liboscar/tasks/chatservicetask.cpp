@@ -21,7 +21,6 @@
 #include "chatservicetask.h"
 
 #include <qstring.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <qtextcodec.h>
 

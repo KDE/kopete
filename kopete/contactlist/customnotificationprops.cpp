@@ -31,7 +31,6 @@
 #include "customnotificationprops.h"
 
 #include <knotification.h>
-#include <kapplication.h>
 
 #include <QMetaEnum>
 

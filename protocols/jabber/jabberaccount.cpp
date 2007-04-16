@@ -43,7 +43,6 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
 #include <k3socketbase.h>
 #include <kpassworddialog.h>

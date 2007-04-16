@@ -45,7 +45,6 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 
-#include <kapplication.h>
 #include <kvbox.h>
 #include <kconfig.h>
 #include <klocale.h>

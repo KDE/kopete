@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-#include <kapplication.h>
 #include <dcopclient.h>
 #include <kdebug.h>
 

@@ -28,7 +28,6 @@
 #include <kdebug.h>
 #include <krun.h>
 #include <kinputdialog.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
 #include <kglobal.h>
 #include <kmessagebox.h>

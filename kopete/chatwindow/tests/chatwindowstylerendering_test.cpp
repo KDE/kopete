@@ -27,7 +27,6 @@
 #include <qtextstream.h>
 
 // KDE includes
-#include <kapplication.h>
 #include <kunittest/module.h>
 #include <kcomponentdata.h>
 #include <kdebug.h>
