@@ -63,7 +63,7 @@ class Protocol;
 typedef QList<Contact*>  ContactPtrList;
 }
 
-class KopeteChatWindow : public KMainWindow
+class KopeteChatWindow : public KXmlGuiWindow
 {
 	Q_OBJECT
 
@@ -106,7 +106,7 @@ public:
 	void setStatus( const QString & );
 
 	/**
-	 * Reimplemented from KMainWindow - asks each ChatView in the window if it is ok to close the window
+	 * Reimplemented from KXmlGuiWindow - asks each ChatView in the window if it is ok to close the window
 	 * @return true if no ChatView objects to closing.
 	 */
 	virtual bool queryClose();

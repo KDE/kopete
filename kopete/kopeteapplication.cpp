@@ -68,7 +68,7 @@ KopeteApplication::KopeteApplication()
 	 * QApplication thinks the application shuts down (this is usually the case
 	 * when the loop_level goes down to zero) . So it emits aboutToQuit(), to
 	 * which KApplication is connected and re-emits shutdown() , to which again
-	 * KMainWindow (a KopeteWindow instance exists already) is connected. KMainWindow's
+	 * KXmlGuiWindow (a KopeteWindow instance exists already) is connected. KXmlGuiWindow's
 	 * shuttingDown() slot calls queryExit() which results in KopeteWindow::queryExit()
 	 * calling unloadPlugins() . This of course is wrong and just shouldn't happen.
 	 * The workaround is to simply delay the initialization of all this to a point

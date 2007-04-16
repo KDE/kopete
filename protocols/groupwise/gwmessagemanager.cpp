@@ -28,7 +28,7 @@
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <klocale.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kshortcut.h>

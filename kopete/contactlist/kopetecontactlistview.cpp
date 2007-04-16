@@ -43,7 +43,7 @@
 #include <kiconloader.h>
 #include <kicondialog.h>
 #include <klocale.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kabc/stdaddressbook.h>
@@ -691,7 +691,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 	int nb = Kopete::ContactList::self()->selectedMetaContacts().count() +
 		Kopete::ContactList::self()->selectedGroups().count();
 
-	KMainWindow *window = dynamic_cast<KMainWindow *>(topLevelWidget());
+	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
 	if ( !window )
 	{
 		kError( 14000 ) << k_funcinfo << "Main window not found, unable to display context-menu; "

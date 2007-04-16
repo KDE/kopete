@@ -544,7 +544,7 @@ void KopeteEmailWindow::raise(bool activate)
 	if ( !KWM::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
 		KWM::setOnDesktop( winId(), KWM::currentDesktop() );
 #endif
-	KMainWindow::raise();
+	KXmlGuiWindow::raise();
 
 	/* Removed Nov 2003
 	According to Zack, the user double-clicking a contact is not valid reason for a non-pager

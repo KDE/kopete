@@ -191,7 +191,7 @@ public:
  */
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
-: KMainWindow( parent, Qt::WType_TopLevel ), d(new Private)
+: KXmlGuiWindow( parent, Qt::WType_TopLevel ), d(new Private)
 {
 	setObjectName( name );
 	// Applications should ensure that their StatusBar exists before calling createGUI()
@@ -470,10 +470,10 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
             resetAction->trigger();
             return true;
         }
-        return KMainWindow::eventFilter( target, event );
+        return KXmlGuiWindow::eventFilter( target, event );
     }
 
-    return KMainWindow::eventFilter( target, event );
+    return KXmlGuiWindow::eventFilter( target, event );
 }
 
 void KopeteWindow::loadOptions()
@@ -703,8 +703,8 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 	}
 	else
 	{
-		kDebug( 14000 ) << k_funcinfo << "delegating to KMainWindow::closeEvent()" << endl;
-		KMainWindow::closeEvent( e );
+		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()" << endl;
+		KXmlGuiWindow::closeEvent( e );
 	}
 }
 

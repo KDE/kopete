@@ -24,7 +24,7 @@
 #include <QtGui/QLabel>
 
 // KDE includes
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 
 class QCloseEvent;
 class QEvent;
@@ -42,7 +42,7 @@ namespace Kopete
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KopeteWindow : public KMainWindow
+class KopeteWindow : public KXmlGuiWindow
 {
 	Q_OBJECT
 
@@ -72,7 +72,7 @@ private slots:
 
 
 	void setStatusMessage( const QString & );
-	
+
 	/**
 	 * Checks if the mousecursor is in the contact list.
 	 * If not, the window will be hidden.
@@ -149,7 +149,7 @@ private slots:
 	 * signals.
 	 */
 	void slotAllPluginsLoaded();
-	
+
 	/**
 	 * Protected slot to setup the Set Global Status Message menu.
 	 */
@@ -169,7 +169,7 @@ private slots:
 	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
-	
+
 private:
 	void initView();
 	void initActions();
