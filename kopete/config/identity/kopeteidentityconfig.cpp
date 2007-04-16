@@ -123,7 +123,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	buttonNewIdentity->setIcon(KIcon("new"));
 	buttonCopyIdentity->setIcon(KIcon("edit-copy"));
 	buttonRenameIdentity->setIcon(KIcon("edit"));
-	buttonRemoveIdentity->setIcon(KIcon("delete_user"));
+	buttonRemoveIdentity->setIcon(KIcon("delete-user"));
 	buttonClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar-erase" : "clear-left" ) );
 
 	load(); // Load Configuration

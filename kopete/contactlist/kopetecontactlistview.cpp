@@ -512,11 +512,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( KIcon( QLatin1String("add_user") ), i18n( "&Add Contact" ), ac );
+	actionAddContact = new KActionMenu( KIcon( QLatin1String("add-user") ), i18n( "&Add Contact" ), ac );
         ac->addAction( "contactAddContact", actionAddContact );
 	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac );
+	actionAddTemporaryContact = new KAction( KIcon("add-user"), i18n( "Add to Your Contact List" ), ac );
         ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
