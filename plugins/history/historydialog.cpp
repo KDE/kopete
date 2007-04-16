@@ -121,7 +121,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
-	mMainWidget->searchErase->setIcon( QIcon(BarIcon("locationbar_erase")) );
+	mMainWidget->searchErase->setIcon( QIcon(BarIcon("locationbar-erase")) );
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();

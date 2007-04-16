@@ -129,8 +129,8 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	QToolButton *clearSearch = new QToolButton(hBar);
 	clearSearch->setText(i18n("Clear Search"));
 	clearSearch->setToolTip(i18n("Clear Search"));
-	clearSearch->setIcon(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
-                                            : "locationbar_erase"));
+	clearSearch->setIcon(SmallIconSet(QApplication::isRightToLeft() ? "clear-left"
+                                            : "locationbar-erase"));
 	(void) new QLabel(i18n("Search: "),hBar);
 	K3ListViewSearchLine* listViewSearch = new K3ListViewSearchLine(hBar);
 	connect(clearSearch, SIGNAL(pressed()), listViewSearch, SLOT(clear()));
