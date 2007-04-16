@@ -188,7 +188,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 }
 
 KopeteChatWindow::KopeteChatWindow( QWidget *parent )
-	: KMainWindow( parent )
+	: KXmlGuiWindow( parent )
 {
 	m_activeView = 0L;
 	m_popupView = 0L;
@@ -1204,7 +1204,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		// END of code borrowed from KMainWindow::closeEvent
 	}
 	else
-		KMainWindow::closeEvent( e );
+		KXmlGuiWindow::closeEvent( e );
 }
 
 
