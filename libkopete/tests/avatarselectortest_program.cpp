@@ -16,7 +16,7 @@
 */
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-
+#include <kapplication.h>
 #include "avatarselectorwidget.h"
 
 int main(int argc, char **argv)
