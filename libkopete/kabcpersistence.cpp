@@ -145,8 +145,6 @@ void KABCPersistence::write( MetaContact * mc )
 			QString check = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 		}
 		ab->insertAddressee( theAddressee );
-		//kDebug( 14010 ) << k_funcinfo << "dumping addressbook before write " << endl;
-		//dumpAB();
 		writeAddressBook( theAddressee.resource() );
 		//theAddressee.dump();
 	}
@@ -447,18 +445,6 @@ void KABCPersistence::splitField( const QString &str, QString &app, QString &nam
 		}
 	}
 }
-
-void KABCPersistence::dumpAB()
-{
-	KABC::AddressBook * ab = addressBook();
-	kDebug( 14010 ) << k_funcinfo << " DUMPING ADDRESSBOOK" << endl;
-	KABC::AddressBook::ConstIterator dumpit = ab->begin();
-	for ( ; dumpit != ab->end(); ++dumpit )
-	{
-		(*dumpit).dump();
-	}
-}
-
 
 } // end namespace Kopete
 

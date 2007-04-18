@@ -87,8 +87,6 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 	protected:
 
 		static void splitField( const QString &str, QString &app, QString &name, QString &value );
-	
-		void dumpAB();
 	protected slots:
 		/**
 		 * Perform a delayed address book write
