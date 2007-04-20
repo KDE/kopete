@@ -48,6 +48,7 @@
 #include <qpointer.h>
 #include <qtimer.h>
 #include <qca.h>
+#include <QUrl>
 //Added by qt3to4:
 #include <QList>
 #include <Q3CString>
