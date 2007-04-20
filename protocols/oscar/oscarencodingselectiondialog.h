@@ -28,7 +28,7 @@ class OSCAR_EXPORT OscarEncodingSelectionDialog : public KDialog
 {
 Q_OBJECT
 public:
-    OscarEncodingSelectionDialog( QWidget* parent = 0, int initialEncoding = 4);
+    explicit OscarEncodingSelectionDialog( QWidget* parent = 0, int initialEncoding = 4);
     ~OscarEncodingSelectionDialog() {}
 
     int selectedEncoding() const;

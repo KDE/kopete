@@ -31,7 +31,7 @@ class ICQChangePasswordDialog : public KDialog
 {
 	Q_OBJECT
 public:
-	ICQChangePasswordDialog( ICQAccount* account, QWidget* parent = 0 );
+	explicit ICQChangePasswordDialog( ICQAccount* account, QWidget* parent = 0 );
 	~ICQChangePasswordDialog();
 
 protected slots:

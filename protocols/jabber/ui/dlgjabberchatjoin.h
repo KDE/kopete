@@ -29,7 +29,7 @@ class dlgJabberChatJoin : public KDialog
   Q_OBJECT
 
 public:
-  dlgJabberChatJoin(JabberAccount *account, QWidget* parent = 0);
+  explicit dlgJabberChatJoin(JabberAccount *account, QWidget* parent = 0);
   ~dlgJabberChatJoin();
   /*$PUBLIC_FUNCTIONS$*/
 

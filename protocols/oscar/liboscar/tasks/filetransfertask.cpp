@@ -555,7 +555,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 #warning Hack, this will be removed as soon as I add a function into Kopete::TransferManager that will prompt for a directory (Kedge)
 #endif
 	QFileInfo fileInfo( localName );
-	m_oftRendezvous.dir = fileInfo.absolutePath() + "/";
+	m_oftRendezvous.dir = fileInfo.absolutePath() + '/';
 
 	if( validDir( m_oftRendezvous.dir ) )
 		doConnect();

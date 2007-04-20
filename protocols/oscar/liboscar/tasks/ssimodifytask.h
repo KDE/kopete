@@ -52,7 +52,7 @@ This task implements the following SNACs from the SSI family (0x0013):
 class SSIModifyTask : public Task
 {
 public:
-    SSIModifyTask( Task* parent, bool staticTask = false );
+    explicit SSIModifyTask( Task* parent, bool staticTask = false );
     ~SSIModifyTask();
 
 	virtual void onGo();

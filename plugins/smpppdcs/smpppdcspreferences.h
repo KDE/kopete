@@ -25,7 +25,7 @@ namespace Ui { class SMPPPDCSPrefs; }
 
 class AccountPrivMap {
 public:
-	AccountPrivMap(bool isOn = false, const QString& id = QString::null)
+	explicit AccountPrivMap(bool isOn = false, const QString& id = QString::null)
 	 : m_on(isOn), m_id(id) {}
 	bool m_on;
 	QString m_id;
@@ -48,7 +48,7 @@ public:
     /**
      * @brief Creates an <code>SMPPPDCSPreferences</code> instance
      */
-    SMPPPDCSPreferences(QWidget * parent = 0, const char * name = 0, const QStringList &args = QStringList());
+    explicit SMPPPDCSPreferences(QWidget * parent = 0, const char * name = 0, const QStringList &args = QStringList());
 	
 	/**
      * @brief Destroys an <code>SMPPPDCSPreferences</code> instance

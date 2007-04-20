@@ -33,7 +33,7 @@ class AliasPreferences : public KCModule
 	Q_OBJECT
 
 	public:
-		AliasPreferences( QWidget *parent = 0,
+		explicit AliasPreferences( QWidget *parent = 0,
 			const QStringList &args = QStringList() );
 		~AliasPreferences();
 

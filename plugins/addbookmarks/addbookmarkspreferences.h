@@ -27,7 +27,7 @@ class BookmarksPreferences : public KCModule
 {
 Q_OBJECT
 public:
-    BookmarksPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+    explicit BookmarksPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
 
     ~BookmarksPreferences();
     

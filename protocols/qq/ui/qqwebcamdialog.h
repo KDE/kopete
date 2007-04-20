@@ -41,7 +41,7 @@ class QQWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	QQWebcamDialog( const QString &, QWidget* parent = 0 );
+	explicit QQWebcamDialog( const QString &, QWidget* parent = 0 );
 	~QQWebcamDialog();
 	
 public slots:

@@ -44,7 +44,7 @@ class KgpgSelKey : public KDialog
     Q_OBJECT
 
 public:
-    KgpgSelKey( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
+    explicit KgpgSelKey( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
     K3ListView *keysListpr;
 QPixmap keyPair;
 QCheckBox *local;

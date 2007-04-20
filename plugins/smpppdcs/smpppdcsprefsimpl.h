@@ -36,7 +36,7 @@ class SMPPPDCSPrefs : public SMPPPDCSPrefsBase
 	
 public:
 
-    SMPPPDCSPrefs(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    explicit SMPPPDCSPrefs(QWidget* parent = 0, Qt::WindowFlags f = 0);
     ~SMPPPDCSPrefs();
 
 signals:

@@ -46,7 +46,7 @@ public:
 	 * @param from The password to load the data for this widget from, or 0 if none
 	 * @param parent The widget to nest this one inside
 	 */
-	PasswordWidget( Kopete::Password *from, QWidget *parent = 0 );
+	explicit PasswordWidget( Kopete::Password *from, QWidget *parent = 0 );
     
 	~PasswordWidget();
 

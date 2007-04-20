@@ -36,7 +36,7 @@ class JabberAddContactPage:public AddContactPage
   Q_OBJECT
 
 public:
-	  JabberAddContactPage (Kopete::Account * owner, QWidget * parent = 0);
+	  explicit JabberAddContactPage (Kopete::Account * owner, QWidget * parent = 0);
 	 ~JabberAddContactPage ();
 	virtual bool validateData ();
 	virtual bool apply (Kopete::Account *, Kopete::MetaContact *);

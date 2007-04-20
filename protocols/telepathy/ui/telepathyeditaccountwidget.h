@@ -40,7 +40,7 @@ class TelepathyEditAccountWidget : public QWidget, public KopeteEditAccountWidge
 {
 	Q_OBJECT
 public:
-	TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent = 0);
+	explicit TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent = 0);
 	~TelepathyEditAccountWidget();
 
 	virtual bool validateData();

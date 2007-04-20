@@ -38,7 +38,7 @@ class ICQStatusEditor : public KDialog
 	Q_OBJECT
 
 public:
-	ICQStatusEditor( ICQStatusManager *statusManager, QWidget *parent = 0 );
+	explicit ICQStatusEditor( ICQStatusManager *statusManager, QWidget *parent = 0 );
 	~ICQStatusEditor();
 
 public slots:

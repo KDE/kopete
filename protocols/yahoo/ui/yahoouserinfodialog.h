@@ -36,7 +36,7 @@ class YahooUserInfoDialog : public KPageDialog
 {
 Q_OBJECT
 public:
-	YahooUserInfoDialog( YahooContact *c, QWidget* parent = 0 );
+	explicit YahooUserInfoDialog( YahooContact *c, QWidget* parent = 0 );
 	~YahooUserInfoDialog();
 	void setAccountConnected( bool isOnline );
 signals:

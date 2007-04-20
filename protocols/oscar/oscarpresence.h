@@ -67,7 +67,7 @@ public:
 		XtrazMask     = 0xFF000000
 	};
 
-	Presence( Type type, Flags flags = None );
+	explicit Presence( Type type, Flags flags = None );
 
 	void setType( Type type );
 	Type type() const { return (Type)(mInternalStatus & TypeMask); }

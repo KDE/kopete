@@ -25,7 +25,7 @@ class OftTransfer : public Transfer
 {
 public:
 
-	OftTransfer( OFT data, Buffer* buffer = 0 );
+	explicit OftTransfer( OFT data, Buffer* buffer = 0 );
 	OftTransfer();
 	virtual ~OftTransfer();
 

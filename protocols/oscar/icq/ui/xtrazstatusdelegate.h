@@ -30,7 +30,7 @@ class StatusDelegate : public QItemDelegate
     Q_OBJECT
 
 public:
-	StatusDelegate( const QList<QIcon> &icons, QObject *parent = 0 );
+	explicit StatusDelegate( const QList<QIcon> &icons, QObject *parent = 0 );
 
 	QWidget *createEditor( QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 

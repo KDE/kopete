@@ -114,7 +114,7 @@ class KOPETE_EXPORT KopetePreferencesAction : public KAction
 	  Q_OBJECT
 
 	  public:
-			 KopetePreferencesAction( KActionCollection *parent, const char *name = 0 );
+			 explicit KopetePreferencesAction( KActionCollection *parent, const char *name = 0 );
 			 ~KopetePreferencesAction();
 
 	  protected slots:

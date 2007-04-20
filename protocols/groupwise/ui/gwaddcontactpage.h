@@ -46,7 +46,7 @@ class GroupWiseAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-    GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent = 0 );
+    explicit GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent = 0 );
     ~GroupWiseAddContactPage();
 	
     /**

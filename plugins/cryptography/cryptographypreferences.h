@@ -30,7 +30,7 @@ namespace Ui { class CryptographyPrefsUI; }
 class CryptographyPreferences : public KCModule  {
    Q_OBJECT
 public:
-	CryptographyPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+	explicit CryptographyPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
 	~CryptographyPreferences();
 private:
 	Ui::CryptographyPrefsUI *preferencesDialog;

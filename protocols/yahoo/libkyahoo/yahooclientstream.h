@@ -74,7 +74,7 @@ public:
 		BindConflict                // resource in-use
 	};
 
-	ClientStream(Connector *conn, QObject *parent=0);
+	explicit ClientStream(Connector *conn, QObject *parent=0);
 	~ClientStream();
 
 	void connectToServer(const QString& server, bool auth=true);

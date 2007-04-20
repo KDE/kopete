@@ -31,7 +31,7 @@ class KopeteFileConfirmDialog : public KDialog, private Ui::FileConfirmBase
 Q_OBJECT
 
 public:
-	KopeteFileConfirmDialog( const Kopete::FileTransferInfo &info,
+	explicit KopeteFileConfirmDialog( const Kopete::FileTransferInfo &info,
 	                         const QString& description = QString::null,
 	                         QWidget *parent = 0 );
 	~KopeteFileConfirmDialog();

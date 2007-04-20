@@ -89,7 +89,7 @@ public:
 		BindConflict                // resource in-use
 	};
 
-	ClientStream(Connector *conn, TLSHandler *tlsHandler=0, QObject *parent=0);
+	explicit ClientStream(Connector *conn, TLSHandler *tlsHandler=0, QObject *parent=0);
 	~ClientStream();
 
 	void connectToServer(const NovellDN &id, bool auth=true);

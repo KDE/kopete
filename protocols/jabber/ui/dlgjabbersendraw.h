@@ -39,7 +39,7 @@ class dlgJabberSendRaw : public QDialog, Ui::DlgSendRaw
 Q_OBJECT
 
 public:
-	dlgJabberSendRaw ( JabberClient *client, QWidget * parent = 0);
+	explicit dlgJabberSendRaw ( JabberClient *client, QWidget * parent = 0);
 	virtual ~ dlgJabberSendRaw ();
 
 public slots:

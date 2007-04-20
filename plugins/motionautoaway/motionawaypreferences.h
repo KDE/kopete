@@ -30,7 +30,7 @@ class MotionAwayPreferences : public KCModule
 {
 	Q_OBJECT
 public:
-	MotionAwayPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+	explicit MotionAwayPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
 	virtual void save();
 	virtual void load();
 
