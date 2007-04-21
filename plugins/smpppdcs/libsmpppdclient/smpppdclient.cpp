@@ -22,7 +22,7 @@
 using namespace SMPPPD;
 
 Client::Client()
-        : m_state(NULL), m_sock(NULL), m_serverID(QString::null), m_serverVer(QString::null), m_password(QString::null) {
+        : m_state(NULL), m_sock(NULL), m_serverID(QString()), m_serverVer(QString()), m_password(QString()) {
     changeState(Unsettled::instance());
 }
 

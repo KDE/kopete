@@ -48,8 +48,8 @@ void Ready::disconnect(Client * client) {
         delete socket(client);
         setSocket(client, NULL);
 
-        setServerID(client, QString::null);
-        setServerVersion(client, QString::null);
+        setServerID(client, QString());
+        setServerVersion(client, QString());
     }
 
     changeState(client, Unsettled::instance());

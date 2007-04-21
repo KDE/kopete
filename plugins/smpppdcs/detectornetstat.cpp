@@ -21,7 +21,7 @@
 #include "detectornetstat.h"
 
 DetectorNetstat::DetectorNetstat(IConnector* connector)
-        : Detector(connector), m_buffer(QString::null), m_process(NULL) {}
+        : Detector(connector), m_buffer(QString()), m_process(NULL) {}
 
 DetectorNetstat::~DetectorNetstat() {
     delete m_process;
