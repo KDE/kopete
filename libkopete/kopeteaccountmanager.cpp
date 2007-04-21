@@ -342,13 +342,13 @@ void AccountManager::load()
 	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
-		config->setGroup( *it );
+		KConfigGroup cg( config, *it );
 
-		QString protocol = config->readEntry( "Protocol", QString() );
+		QString protocol = cg.readEntry( "Protocol", QString() );
 		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
 			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
 
-		if ( config->readEntry( "Enabled", true ) )
+		if ( cg.readEntry( "Enabled", true ) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
 	}
 }
@@ -365,16 +365,16 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
-		config->setGroup( *it );
+		KConfigGroup cg( config, *it );
 
-		if ( config->readEntry( "Protocol" ) != protocol->pluginId() )
+		if ( cg.readEntry( "Protocol" ) != protocol->pluginId() )
 			continue;
 
 		// There's no GUI for this, but developers may want to disable an account.
-		if ( !config->readEntry( "Enabled", true ) )
+		if ( !cg.readEntry( "Enabled", true ) )
 			continue;
 
-		QString accountId = config->readEntry( "AccountId", QString() );
+		QString accountId = cg.readEntry( "AccountId", QString() );
 		if ( accountId.isEmpty() )
 		{
 			kWarning( 14010 ) << k_funcinfo <<

@@ -340,13 +340,13 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 		QString groupEntry;
 		foreach(groupEntry, groupEntryList)
 		{
-			avatarConfig->setGroup(groupEntry);
+			KConfigGroup cg(avatarConfig, groupEntry);
 
 			Kopete::AvatarManager::AvatarEntry listedEntry;
 			listedEntry.name = groupEntry;
-			listedEntry.category = static_cast<Kopete::AvatarManager::AvatarCategory>( avatarConfig->readEntry("Category", 0) );
+			listedEntry.category = static_cast<Kopete::AvatarManager::AvatarCategory>( cg.readEntry("Category", 0) );
 
-			QString filename = avatarConfig->readEntry( "Filename", QString() );
+			QString filename = cg.readEntry( "Filename", QString() );
 			KUrl avatarPath(avatarDirectory);
 			avatarPath.addPath( filename );
 			listedEntry.path = avatarPath.path();
