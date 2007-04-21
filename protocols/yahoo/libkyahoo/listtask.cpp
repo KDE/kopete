@@ -76,7 +76,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 			group = p.second;
 			break;
 		case 7:
-			emit gotBuddy( p.second, QString::null, group );
+			emit gotBuddy( p.second, QString(), group );
 		}
 	}
 }

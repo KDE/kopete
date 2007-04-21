@@ -57,8 +57,8 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	else
 		m_preview->setVisible( false );
 
-	KGlobal::config()->setGroup("File Transfer");
-	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homePath() );
+	KConfigGroup cg(KGlobal::config(), "File Transfer");
+	const QString defaultPath=cg.readEntry("defaultPath" , QDir::homePath() );
 	m_saveto->setText(defaultPath  + QLatin1String( "/" ) + info.file() );
 
 	setMainWidget(m_view);
@@ -93,8 +93,8 @@ void KopeteFileConfirmDialog::accept()
 		const QString directory=url.directory();
 		if(!directory.isEmpty())
 		{
-			KGlobal::config()->setGroup("File Transfer");
-			KGlobal::config()->writeEntry("defaultPath" , directory );
+			KConfigGroup cg(KGlobal::config(), "File Transfer");
+			cg.writeEntry("defaultPath" , directory );
 		}
 
 		if(QFile(m_saveto->text()).exists())

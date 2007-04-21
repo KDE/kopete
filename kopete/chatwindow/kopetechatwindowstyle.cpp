@@ -214,7 +214,7 @@ void ChatWindowStyle::readStyleFiles()
 	if( QFile::exists(nextIncomingFile) )
 	{
 		fileAccess.setFileName(nextIncomingFile);
-		fileAccess.open(IO_ReadOnly);
+		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->nextIncomingHtml = headerStream.readAll();
@@ -236,7 +236,7 @@ void ChatWindowStyle::readStyleFiles()
 	if( QFile::exists(nextOutgoingFile) )
 	{
 		fileAccess.setFileName(nextOutgoingFile);
-		fileAccess.open(IO_ReadOnly);
+		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->nextOutgoingHtml = headerStream.readAll();
@@ -259,7 +259,7 @@ void ChatWindowStyle::readStyleFiles()
 	if( QFile::exists(actionIncomingFile) )
 	{
 		fileAccess.setFileName(actionIncomingFile);
-		fileAccess.open(IO_ReadOnly);
+		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->actionIncomingHtml = headerStream.readAll();
@@ -270,7 +270,7 @@ void ChatWindowStyle::readStyleFiles()
 	if( QFile::exists(actionOutgoingFile) )
 	{
 		fileAccess.setFileName(actionOutgoingFile);
-		fileAccess.open(IO_ReadOnly);
+		fileAccess.open(QIODevice::ReadOnly);
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->actionOutgoingHtml = headerStream.readAll();

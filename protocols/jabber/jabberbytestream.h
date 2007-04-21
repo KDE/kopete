@@ -21,7 +21,7 @@
 #define JABBERBYTESTREAM_H
 
 #include <bytestream.h>
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kopete_export.h>
 
 

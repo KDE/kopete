@@ -28,7 +28,6 @@
 #include <QFile>
 #include <QTextStream>
 
-#include <kapplication.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>

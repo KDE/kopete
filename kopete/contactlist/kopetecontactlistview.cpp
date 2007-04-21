@@ -39,12 +39,11 @@
 
 #include <kaction.h>
 #include <kactionmenu.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kicondialog.h>
 #include <klocale.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kabc/stdaddressbook.h>
@@ -513,11 +512,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( KIcon( QLatin1String("add_user") ), i18n( "&Add Contact" ), ac );
+	actionAddContact = new KActionMenu( KIcon( QLatin1String("add-user") ), i18n( "&Add Contact" ), ac );
         ac->addAction( "contactAddContact", actionAddContact );
 	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( KIcon("add_user"), i18n( "Add to Your Contact List" ), ac );
+	actionAddTemporaryContact = new KAction( KIcon("add-user"), i18n( "Add to Your Contact List" ), ac );
         ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
@@ -526,7 +525,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( KIcon("edit_user"), i18n( "&Properties" ), ac );
+	actionProperties = new KAction( KIcon("edit-user"), i18n( "&Properties" ), ac );
         ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
 	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
@@ -692,7 +691,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 	int nb = Kopete::ContactList::self()->selectedMetaContacts().count() +
 		Kopete::ContactList::self()->selectedGroups().count();
 
-	KMainWindow *window = dynamic_cast<KMainWindow *>(topLevelWidget());
+	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
 	if ( !window )
 	{
 		kError( 14000 ) << k_funcinfo << "Main window not found, unable to display context-menu; "
@@ -1363,7 +1362,7 @@ Q3DragObject *KopeteContactListView::dragObject()
 		QString vcard = converter.createVCard( address );
 		if( !vcard.isNull() )
 		{
-			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/x-vcard", 0L );
+			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/directory", 0L );
 			vcardDrag->setEncodedData( vcard.toUtf8() );
 			drag->addDragObject( vcardDrag );
 		}
@@ -1641,7 +1640,7 @@ void KopeteContactListView::slotRemove()
 			return; // this should never happen
 
 		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem(i18n("Remove"),"edit-delete") ,
-		 "askRemovingContactOrGroup" , KMessageBox::Notify | KMessageBox::Dangerous ) !=
+		KStandardGuiItem::cancel(), "askRemovingContactOrGroup" , KMessageBox::Notify | KMessageBox::Dangerous ) !=
 			KMessageBox::Continue )
 		{
 			return;
@@ -1656,7 +1655,7 @@ void KopeteContactListView::slotRemove()
 		         "contacts from your contact list?" );
 
 		if( KMessageBox::warningContinueCancelList( this, msg, items, i18n("Remove"),
-			KGuiItem(i18n("Remove"),"edit-delete"), "askRemovingContactOrGroup",
+			KGuiItem(i18n("Remove"),"edit-delete"), KStandardGuiItem::cancel(), "askRemovingContactOrGroup",
 			KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
 		{
 			return;

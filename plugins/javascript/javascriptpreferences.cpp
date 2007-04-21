@@ -272,7 +272,7 @@ void JavaScriptPreferences::slotAddComplete()
 	QString scriptName = nameDialog->scriptName->text();
 	if( !scriptName.isEmpty() )
 	{
-		KURL url( nameDialog->scriptPath->url() );
+		KUrl url( nameDialog->scriptPath->url() );
 
 		QString id = QString::number( time( NULL ) );
 		QString localScriptsDir( locateLocal("data", QString::fromLatin1("kopete/scripts")) );
@@ -285,7 +285,7 @@ void JavaScriptPreferences::slotAddComplete()
 			d.mkdir( scriptDir );
 
 		QFile f( scriptDir + '/' + url.fileName() );
-		if( f.open( IO_WriteOnly ) )
+		if( f.open( QIODevice::WriteOnly ) )
 		{
 			QTextStream stream( &f );
 			stream << fileContents( nameDialog->scriptPath->url() );
@@ -326,7 +326,7 @@ void JavaScriptPreferences::slotEditScript()
 		preferencesDialog->scriptList->setEnabled(false);
 		preferencesDialog->editScript->setEnabled(false);
 		editProcess = KRun::runURL( localScriptsDir + '/' + selItem->script->id + '/' + selItem->script->fileName,
-			"text/javascript", false, false );
+			"application/javascript", false, false );
 		slotWaitForEdit();
 	}
 */

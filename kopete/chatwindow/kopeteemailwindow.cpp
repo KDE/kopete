@@ -32,7 +32,6 @@
 
 #include <kaction.h>
 #include <kstandardaction.h>
-#include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
 #include <kcursor.h>
@@ -43,7 +42,6 @@
 #include <kglobalsettings.h>
 #include <khtmlview.h>
 #include <kiconloader.h>
-#include <kkeydialog.h>
 #include <klibloader.h>
 #include <klocale.h>
 #include <kmenubar.h>
@@ -51,7 +49,7 @@
 #include <kmenu.h>
 #include <kpushbutton.h>
 #include <ktextedit.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kgenericfactory.h>
 #include <kxmlguifactory.h>
 #include <kvbox.h>
@@ -312,7 +310,8 @@ void KopeteEmailWindow::slotConfToolbar()
 {
         KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
 	saveMainWindowSettings( cg );
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QLatin1String("kopeteemailwindow.rc") );
+	KEditToolBar *dlg = new KEditToolBar(actionCollection());
+	dlg->setResourceFile("kopeteemailwindow.rc");
 	if (dlg->exec())
 	{
 		createGUI( d->editPart );
@@ -460,21 +459,21 @@ bool KopeteEmailWindow::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
-				KGuiItem( i18n("Cl&ose Chat") ), QLatin1String("AskCloseGroupChat"));
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseGroupChat"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", d->unreadMessageFrom), i18n("Unread Message"),
-				KGuiItem( i18n("Cl&ose Chat") ), QLatin1String("AskCloseChatRecentMessage"));
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatRecentMessage"));
 		}
 
 		if( d->sendInProgress  && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
-				KGuiItem( i18n("Cl&ose Chat") ), QLatin1String("AskCloseChatMessageInProgress") );
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatMessageInProgress") );
 		}
 	}
 
@@ -541,11 +540,11 @@ void KopeteEmailWindow::slotReplySend()
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
-#ifdef Q_OS_UNIX
-	if ( !KWin::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
-		KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+#ifdef Q_WS_X11
+	if ( !KWM::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
+		KWM::setOnDesktop( winId(), KWM::currentDesktop() );
 #endif
-	KMainWindow::raise();
+	KXmlGuiWindow::raise();
 
 	/* Removed Nov 2003
 	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
@@ -555,11 +554,9 @@ void KopeteEmailWindow::raise(bool activate)
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if(activate)
-		KWin::activateWindow( winId() );
-#endif
+		KWM::activateWindow( winId() );
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

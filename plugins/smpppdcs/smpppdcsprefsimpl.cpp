@@ -20,7 +20,6 @@
 #include <qradiobutton.h>
 
 #include <kstandarddirs.h>
-#include <kapplication.h>
 #include <kpushbutton.h>
 #include <kresolver.h>
 #include <knuminput.h>
@@ -71,7 +70,7 @@ void SMPPPDCSPrefs::determineCSType() {
 
     // while we search, we'll disable the button
     autoCSTest->setEnabled(false);
-    //kapp->processEvents();
+    //qApp->processEvents();
 
     /* broadcast network for a smpppd.
        If one is available set to smpppd method */
@@ -108,7 +107,7 @@ void SMPPPDCSPrefs::scanStarted(uint total) {
 
 void SMPPPDCSPrefs::scanProgress(uint cur) {
     m_scanProgressDlg->progressBar()->setProgress(cur);
-    kapp->processEvents();
+    qApp->processEvents();
 }
 
 void SMPPPDCSPrefs::cancelScanning() {

@@ -20,7 +20,7 @@
 
 #include <kresolver.h>
 
-class KProcess;
+class K3Process;
 
 /**
  * @brief Searches a network for a smpppd
@@ -85,13 +85,13 @@ signals:
 	void scanFinished();
 
 protected slots:
-    void slotStdoutReceivedIfconfig(KProcess * proc, char * buf, int len);
-    void slotStdoutReceivedNetstat (KProcess * proc, char * buf, int len);
+    void slotStdoutReceivedIfconfig(K3Process * proc, char * buf, int len);
+    void slotStdoutReceivedNetstat (K3Process * proc, char * buf, int len);
 
 private:
 	bool m_cancelSearchNow;
-    KProcess * m_procIfconfig;
-    KProcess * m_procNetstat;
+    K3Process * m_procIfconfig;
+    K3Process * m_procNetstat;
 };
 
 inline void SMPPPDSearcher::cancelSearch() {

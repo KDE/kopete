@@ -23,9 +23,8 @@
 #include <qlineedit.h>
 #include <k3listview.h>
 #include <qmap.h>
-#include <q3popupmenu.h>
+#include <QMenu>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kopeteglobal.h>
@@ -142,7 +141,7 @@ void GroupWiseContactProperties::slotCopy()
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( m_propsWidget->m_propsView->currentItem() )
 	{
-		QClipboard *cb = kapp->clipboard();
+		QClipboard *cb = QApplication::clipboard();
 		cb->setText( m_propsWidget->m_propsView->currentItem()->text( 1 ) );
 	}
 }

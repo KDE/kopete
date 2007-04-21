@@ -46,7 +46,7 @@ protected:
 
 public:
 	// create Port given the UNIX device name
-	KopeteUnixSerialPort(std::string device, speed_t lineSpeed = DEFAULT_BAUD_RATE,
+	explicit KopeteUnixSerialPort(std::string device, speed_t lineSpeed = DEFAULT_BAUD_RATE,
 				   std::string initString = DEFAULT_INIT_STRING,
 				   bool swHandshake = false)
 	  throw(GsmException);

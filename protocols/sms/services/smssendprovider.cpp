@@ -19,7 +19,7 @@
 #include <QList>
 
 #include <kconfigbase.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
@@ -237,21 +237,21 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 	values[messagePos] = message;
 	values[telPos] = nr;
 
-	KProcess* p = new KProcess;
+	K3Process* p = new K3Process;
 
 	kWarning( 14160 ) << "Executing " << QString("%1/bin/smssend").arg(prefix) << " \"" << provider << "\" " << values.join("\" \"") << "\"" << endl;
 
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
 
 	output = "";
-	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess *)));
-	connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotReceivedOutput(KProcess *, char *, int)));
-//	connect( p, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotReceivedOutput(KProcess *, char *, int)));
+	connect( p, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendFinished(K3Process *)));
+	connect( p, SIGNAL(receivedStdout(K3Process *, char *, int)), this, SLOT(slotReceivedOutput(K3Process *, char *, int)));
+//	connect( p, SIGNAL(receivedStderr(K3Process *, char *, int)), this, SLOT(slotReceivedOutput(K3Process *, char *, int)));
 
-	p->start(KProcess::NotifyOnExit, KProcess::AllOutput);
+	p->start(K3Process::NotifyOnExit, K3Process::AllOutput);
 }
 
-void SMSSendProvider::slotSendFinished(KProcess *p)
+void SMSSendProvider::slotSendFinished(K3Process *p)
 {
 	kWarning( 14160 ) << k_funcinfo << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)" << endl;
 	if (p->exitStatus() == 0)
@@ -262,7 +262,7 @@ void SMSSendProvider::slotSendFinished(KProcess *p)
 	p->deleteLater();
 }
 
-void SMSSendProvider::slotReceivedOutput(KProcess *, char *buffer, int buflen)
+void SMSSendProvider::slotReceivedOutput(K3Process *, char *buffer, int buflen)
 {
 //	QStringList lines = QStringList::split("\n", QString::fromLocal8Bit(buffer, buflen));
 //	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)

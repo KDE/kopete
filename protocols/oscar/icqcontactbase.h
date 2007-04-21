@@ -54,7 +54,7 @@ protected slots:
 
 private slots:
 	void receivedShortInfo( const QString& contact );
-	void receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& desc );
+	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
 
 };
 

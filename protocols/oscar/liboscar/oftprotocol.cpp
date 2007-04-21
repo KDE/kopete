@@ -78,8 +78,17 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	*m_din >> w;
 	if( w > 1 )
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "more than one file to send" << endl;
-	
-	m_din->skipRawData( 10 ); //files left, total parts, parts left, total size
+	data.fileCount = w;
+
+	*m_din >> w;
+	data.filesLeft = w;
+	*m_din >> w;
+	data.partCount = w;
+	*m_din >> w;
+	data.partsLeft = w;
+
+	*m_din >> d;
+	data.totalSize = d;
 	*m_din >> d;
 	data.fileSize = d;
 	*m_din >> d;
@@ -98,7 +107,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	*m_din >> d;
 	int namelen = length - 256 +  64;
 	QByteArray name;
-	name.resize( namelen + 1 );
+	name.resize( namelen );
 	m_din->readRawData( name.data(), namelen );
 
 	QTextCodec *c=0;
@@ -123,6 +132,10 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec!!!!!! " << d << endl;
 		data.fileName = name; //pretend it's just ascii
 	}
+
+	const int firstNull = data.fileName.indexOf( QChar() );
+	if ( firstNull != -1 )
+		data.fileName.truncate( firstNull );
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "got OFT" << endl;
 

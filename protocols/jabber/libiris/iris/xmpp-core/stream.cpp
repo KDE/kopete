@@ -48,6 +48,7 @@
 #include <qpointer.h>
 #include <qtimer.h>
 #include <qca.h>
+#include <QUrl>
 //Added by qt3to4:
 #include <QList>
 #include <Q3CString>
@@ -800,7 +801,7 @@ public:
 	bool allowPlain, mutualAuth;
 	bool haveLocalAddr;
 	QHostAddress localAddr;
-	Q_UINT16 localPort;
+	quint16 localPort;
 	int minimumSSF, maximumSSF;
 	QString sasl_mech;
 	bool doBinding;
@@ -1003,7 +1004,7 @@ void ClientStream::setPassword(const QString &s)
 	}
 	else {
 		if(d->sasl)
-			d->sasl->setPassword(QSecureArray(s.utf8()));
+			d->sasl->setPassword(QCA::SecureArray(s.utf8()));
 	}
 }
 
@@ -1072,7 +1073,7 @@ void ClientStream::setSASLMechanism(const QString &s)
 	d->sasl_mech = s;
 }
 
-void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
+void ClientStream::setLocalAddr(const QHostAddress &addr, quint16 port)
 {
 	d->haveLocalAddr = true;
 	d->localAddr = addr;

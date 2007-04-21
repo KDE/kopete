@@ -26,7 +26,7 @@
 class SMSClientPrefsUI;
 class SMSContact;
 class QGridLayout;
-class KProcess;
+class K3Process;
 
 class SMSClient : public SMSService
 {
@@ -45,8 +45,8 @@ public slots:
 	void savePreferences();
 
 private slots:
-	void slotReceivedOutput(KProcess*, char  *buffer, int  buflen);
-	void slotSendFinished(KProcess* p);
+	void slotReceivedOutput(K3Process*, char  *buffer, int  buflen);
+	void slotSendFinished(K3Process* p);
 signals:
 	void messageSent(const Kopete::Message &);
 

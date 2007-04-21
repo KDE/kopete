@@ -17,9 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
-#include <kresolver.h>
+#include <k3resolver.h>
 
 #include "yahooconnector.h"
 #include "yahoobytestream.h"
@@ -97,7 +97,7 @@ void KNetworkConnector::done()
 	mByteStream->close ();
 }
 
-void KNetworkConnector::setOptHostPort( const QString &host, Q_UINT16 port )
+void KNetworkConnector::setOptHostPort( const QString &host, quint16 port )
 {
 	kDebug ( YAHOO_RAW_DEBUG ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 

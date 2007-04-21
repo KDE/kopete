@@ -36,7 +36,6 @@
 #include <kfiledialog.h>
 #include <kaction.h>
 #include <kicon.h>
-#include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kinputdialog.h>
@@ -356,7 +355,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
 										  message.body (), message.error().text ),
-										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewPlugin );
+										message.subject(), Kopete::Message::Inbound, Qt::PlainText, viewPlugin );
 	}
 	else
 	{
@@ -375,14 +374,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, message.html().toString(),
 											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::RichText, viewPlugin );
+											 Qt::RichText, viewPlugin );
 		}
 		else if ( !body.isEmpty () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
 											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::PlainText, viewPlugin );
+											 Qt::PlainText, viewPlugin );
 		}
 	}
 
@@ -409,7 +408,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		Kopete::Message msg ( message.timeStamp (), this, contactList,
 				QString ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ),
 				message.subject (), Kopete::Message::Inbound,
-				Kopete::Message::RichText, viewPlugin );
+				Qt::RichText, viewPlugin );
 
 		mManager->appendMessage ( msg, message.from().resource () );
 	}
@@ -927,7 +926,7 @@ void JabberContact::deleteContact ()
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
 		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" , 
 						  mRosterItem.jid().bare () ), i18n ("Notification"),
-						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ), "JabberRemoveAuthorizationOnDelete" );
+						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ),KStandardGuiItem::cancel(), "JabberRemoveAuthorizationOnDelete" );
 		if(result == KMessageBox::Yes )
 			remove_from_roster = true;
 		else if( result == KMessageBox::Cancel)

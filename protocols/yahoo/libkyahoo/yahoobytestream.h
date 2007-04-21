@@ -18,7 +18,7 @@
 #ifndef KNETWORKBYTESTREAM_H
 #define KNETWORKBYTESTREAM_H
 
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 
 #include "bytestream.h"
 

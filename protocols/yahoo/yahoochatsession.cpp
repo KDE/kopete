@@ -31,7 +31,7 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <ktemporaryfile.h>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kiconloader.h>
@@ -156,7 +156,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 			int sz=22;
 			// get the size of the toolbar were the aciton is plugged.
 			//  if you know a better way to get the toolbar, let me know
-			KMainWindow *w= view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
+			KXmlGuiWindow *w= view(false) ? dynamic_cast<KXmlGuiWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
 			if(w)
 			{
 				//We connected that in the constructor.  we don't need to keep this slot active.

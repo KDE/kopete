@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete
 
 Name=Accounts
 Name[ar]=حسابات
-Name[be]=Рахункі
 Name[bg]=Сметки
 Name[br]=Kontoù
 Name[ca]=Comptes
@@ -62,6 +61,7 @@ Name[x-test]=xxAccountsxx
 Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts
+Comment[sv]=Hantera dina konton
 Comment[uk]=Керування вашими рахунками
 Comment[x-test]=xxManage Your Accountsxx
 DocPath=kopete/configure-dialog.html#configuring-accounts

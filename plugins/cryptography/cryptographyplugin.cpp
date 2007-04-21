@@ -193,12 +193,12 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 					.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 			}
 
-			msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
+			msg.setHtmlBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
 				+ i18n("Outgoing Encrypted Message: ")
 				+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 				+ plainBody
 				+ QString::fromLatin1(" </td></tr></table>")
-				, Kopete::Message::RichText );
+				);
 
 			msg.addClass("cryptography:encrypted");
 		}
@@ -226,12 +226,12 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 			body = Kopete::Message::escape( body );
 		}
 
-		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
+		msg.setHtmlBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
 			+ i18n("Incoming Encrypted Message: ")
 			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 			+ body
 			+ QString::fromLatin1(" </td></tr></table>")
-			, Kopete::Message::RichText );
+			);
 
 		msg.addClass("cryptography:encrypted");
 	}
@@ -295,7 +295,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
 	if (!resultat.isEmpty())
 	{
-		msg.setBody(resultat,Kopete::Message::PlainText);
+		msg.setPlainBody(resultat);
 		m_cachedMessages.insert(resultat,original);
 	}
 	else

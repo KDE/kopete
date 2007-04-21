@@ -116,7 +116,7 @@ kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kop
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${X11_Xss_LIB} )
+target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${X11_Xss_LIB} )
 
 if(X11_Xrender_FOUND)
   target_link_libraries(kopete ${X11_Xrender_LIB})

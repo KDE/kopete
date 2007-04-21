@@ -28,7 +28,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 
 using namespace KNetwork;
 ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)
@@ -110,7 +110,7 @@ void ModifyYABTask::connectSucceeded()
 
 	QByteArray buffer;
 	QByteArray paket;
-	QDataStream stream( &buffer, IO_WriteOnly );
+	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	stream.writeRawData( header.toLocal8Bit(), header.length() );
 	stream.writeRawData( m_postData.toUtf8(), m_postData.toUtf8().size() );
 	

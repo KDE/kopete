@@ -39,7 +39,7 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kstringhandler.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
@@ -268,12 +268,12 @@ void ChatView::raise( bool activate )
 
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
-#ifdef Q_OS_UNIX
-	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
+#ifdef Q_WS_X11
+	if ( !KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
-			KWin::setCurrentDesktop( KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
+			KWM::setCurrentDesktop( KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
 		else
-			KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
+			KWM::setOnDesktop( m_mainWindow->winId(), KWM::currentDesktop() );
 #endif
 	if(m_mainWindow->isMinimized())
 	{
@@ -291,11 +291,9 @@ void ChatView::raise( bool activate )
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-#ifdef Q_OS_UNIX
 	//Will not activate window if user was typing
 	if ( activate )
-		KWin::activateWindow( m_mainWindow->winId() );
-#endif
+		KWM::activateWindow( m_mainWindow->winId() );
 
 }
 
@@ -345,21 +343,21 @@ bool ChatView::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
-				KGuiItem( i18n( "Cl&ose Chat" ) ), QLatin1String( "AskCloseGroupChat" ) );
+				KGuiItem( i18n( "Cl&ose Chat" ) ), KStandardGuiItem::cancel(), QLatin1String( "AskCloseGroupChat" ) );
 		}
 
 		if ( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
-				KGuiItem( i18n( "Cl&ose Chat" ) ), QLatin1String("AskCloseChatRecentMessage" ) );
+				KGuiItem( i18n( "Cl&ose Chat" ) ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatRecentMessage" ) );
 		}
 
 		if ( d->sendInProgress && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n( "You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?" ), i18n( "Message in Transit" ),
-				KGuiItem( i18n( "Cl&ose Chat" ) ), QLatin1String( "AskCloseChatMessageInProgress" ) );
+				KGuiItem( i18n( "Cl&ose Chat" ) ), KStandardGuiItem::cancel(), QLatin1String( "AskCloseChatMessageInProgress" ) );
 		}
 	}
 
@@ -538,7 +536,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	emit updateStatusIcon( this );
 }
 
-void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format, bool suppressNotification )
+void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
 {
 // 	kDebug(14000) << k_funcinfo << endl;
 	if ( contact != m_manager->myself() )
@@ -699,7 +697,7 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 	emit updateStatusIcon( this );
 }
 
-void ChatView::sendInternalMessage(const QString &msg, Kopete::Message::MessageFormat format )
+void ChatView::sendInternalMessage(const QString &msg, Qt::TextFormat format )
 {
 	// When closing kopete, some internal message may be sent because some contact are deleted
 	// these contacts can already be deleted

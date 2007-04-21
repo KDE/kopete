@@ -74,7 +74,7 @@ public:
 		BindConflict                // resource in-use
 	};
 
-	ClientStream(Connector *conn, QObject *parent=0);
+	explicit ClientStream(Connector *conn, QObject *parent=0);
 	~ClientStream();
 
 	void connectToServer(const QString& server, bool auth=true);
@@ -86,7 +86,7 @@ public:
 	void setUsername(const QString &s);
 	void setPassword(const QString &s);
 
-	void setLocalAddr(const QHostAddress &addr, Q_UINT16 port);
+	void setLocalAddr(const QHostAddress &addr, quint16 port);
 
 	void close();
 	
@@ -155,7 +155,7 @@ private:
 	/** 
 	 * convert internal method representation to wire
 	 */
-	static char* encode_method(Q_UINT8 method);
+	static char* encode_method(quint8 method);
 };
 
 #endif

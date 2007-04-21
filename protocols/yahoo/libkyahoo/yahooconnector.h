@@ -46,7 +46,7 @@ public:
 	virtual ByteStream *stream() const;
 	virtual void done();
 
-	void setOptHostPort( const QString &host, Q_UINT16 port );
+	void setOptHostPort( const QString &host, quint16 port );
 
 	int errorCode();
 
@@ -56,7 +56,7 @@ private slots:
 
 private:
 	QString mHost;
-	Q_UINT16 mPort;
+	quint16 mPort;
 	int mErrorCode;
 
 	KNetworkByteStream *mByteStream;

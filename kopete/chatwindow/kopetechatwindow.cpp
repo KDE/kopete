@@ -36,7 +36,6 @@
 #include <QMenu>
 
 #include <kactioncollection.h>
-#include <kapplication.h>
 #include <kcursor.h>
 #include <klocale.h>
 #include <kmenubar.h>
@@ -45,9 +44,8 @@
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <ktemporaryfile.h>
-#include <kkeydialog.h>
 #include <kedittoolbar.h>
 #include <kstatusbar.h>
 #include <kpushbutton.h>
@@ -189,7 +187,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 }
 
 KopeteChatWindow::KopeteChatWindow( QWidget *parent )
-	: KMainWindow( parent )
+	: KXmlGuiWindow( parent )
 {
 	m_activeView = 0L;
 	m_popupView = 0L;
@@ -370,12 +368,12 @@ void KopeteChatWindow::initActions(void)
 	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( KIcon("tab_breakoff"), i18n( "&Detach Chat" ), coll );
+	tabDetach = new KAction( KIcon("tab-breakoff"), i18n( "&Detach Chat" ), coll );
         coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
-	actionDetachMenu = new KActionMenu( KIcon("tab_breakoff"), i18n( "&Move Tab to Window" ), coll );
+	actionDetachMenu = new KActionMenu( KIcon("tab-breakoff"), i18n( "&Move Tab to Window" ), coll );
         coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 
@@ -948,9 +946,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-#ifdef Q_OS_UNIX
-		KWin::setIcons( winId(), icon32, icon16 );
-#endif
+		KWM::setIcons( winId(), icon32, icon16 );
 	}
 
 	if ( m_tabBar )
@@ -1207,7 +1203,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		// END of code borrowed from KMainWindow::closeEvent
 	}
 	else
-		KMainWindow::closeEvent( e );
+		KXmlGuiWindow::closeEvent( e );
 }
 
 

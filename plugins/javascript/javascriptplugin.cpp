@@ -41,7 +41,6 @@
 */
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kapplication.h>
 
 #include <QtCore/QRegExp>
 

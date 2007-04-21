@@ -23,7 +23,7 @@
 
 // KDE Includes
 #include <kdialog.h>
-#include <kprocio.h>
+#include <k3procio.h>
 
 // Local Includes
 
@@ -36,14 +36,14 @@ class WPUserInfo : public KDialog
 	Q_OBJECT
 
 	public:
-		WPUserInfo( WPContact *, QWidget *parent = 0 );
+		explicit WPUserInfo( WPContact *, QWidget *parent = 0 );
 		~WPUserInfo();
 
 		void startDetailsProcess(const QString &host);
 
 	private slots:
-		void slotDetailsProcessReady(KProcIO *d);
-		void slotDetailsProcessExited(KProcess *d);
+		void slotDetailsProcessReady(K3ProcIO *d);
+		void slotDetailsProcessExited(K3Process *d);
 		void slotCloseClicked();
 
 	signals:

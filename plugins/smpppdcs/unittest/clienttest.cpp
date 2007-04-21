@@ -53,12 +53,12 @@ void ClientTest::testCommunicationBeforeConnect() {
 
 void ClientTest::testServerIDBeforeConnect() {
     SMPPPD::Client c;
-    CHECK(c.serverID(), QString::null);
+    CHECK(c.serverID(), QString());
 }
 
 void ClientTest::testServerVersionBeforeConnect() {
     SMPPPD::Client c;
-    CHECK(c.serverVersion(), QString::null);
+    CHECK(c.serverVersion(), QString());
 }
 
 void ClientTest::testCommunicationAfterConnect() {
@@ -102,7 +102,7 @@ void ClientTest::testServerIDAfterDisconnect() {
     SMPPPD::Client c;
     if(c.connect("warwar", 3185)) {
         c.disconnect();
-        CHECK(c.serverID(), QString::null);
+        CHECK(c.serverID(), QString());
     } else {
         SKIP("Test skipped because no smpppd at warwar:3185");
     }
@@ -112,7 +112,7 @@ void ClientTest::testServerVersionAfterDisconnect() {
     SMPPPD::Client c;
     if(c.connect("warwar", 3185)) {
         c.disconnect();
-        CHECK(c.serverVersion(), QString::null);
+        CHECK(c.serverVersion(), QString());
     } else {
         SKIP("Test skipped because no smpppd at warwar:3185");
     }

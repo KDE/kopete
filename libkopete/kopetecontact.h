@@ -72,7 +72,14 @@ class KOPETE_EXPORT Contact
 	Q_PROPERTY( QString nickName READ nickName WRITE setNickName )
 	//Q_PROPERTY( unsigned long idleTime READ idleTime WRITE setIdleTime )
 
-public:
+public:	
+	/**
+	 * used in @ref sync()
+	 */
+	enum Changed{ MovedBetweenGroup = 0x01, ///< the contact has been moved between groups
+		      DisplayNameChanged = 0x02 ///< the displayname of the contact changed
+	};
+
 	/**
 	 * \brief Create new contact.
 	 *
@@ -415,12 +422,10 @@ public:
 	QString formattedIdleTime() const;
 
 	/**
-	 * used in @ref sync()
+	 * @brief Convience method to set the photo property
+	 * @param photoPath Local path to the photo
 	 */
-	enum Changed{ MovedBetweenGroup = 0x01, ///< the contact has been moved between groups
-		      DisplayNameChanged = 0x02 ///< the displayname of the contact changed
-	};
-
+	void setPhoto(const QString &photoPath);
 
 public slots:
 	/**

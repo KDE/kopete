@@ -492,7 +492,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 			kDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
 			// Create the message
 			Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
-					Kopete::Message::RichText );
+					Qt::RichText );
 			kDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
 			// Send the message
 			aimSender->sendAutoResponse( chatMessage );
@@ -523,7 +523,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 				Kopete::ContactPtrList me;
 				me.append( myself() );
 				Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
-						Kopete::Message::Inbound, Kopete::Message::RichText );
+						Kopete::Message::Inbound, Qt::RichText );
 
 				session->appendMessage( chatMessage );
 			}

@@ -67,7 +67,7 @@ protected:
 	/**
 	 * Populate a listbox with a given type of phone number
 	 */
-	void fetchPhoneNumbers( K3ListBox * listBox, int type, uint& counter );
+	void fetchPhoneNumbers( K3ListBox * listBox, KABC::PhoneNumber::Type type, uint& counter );
 	/**
 	 * Populate the GUI with data from IM systems
 	 */

@@ -31,7 +31,7 @@ class PrivacyPreferences : public KCModule
 public:
 	enum SenderMode { AllowAllMessages, AllowNoMessagesExceptWhiteList, AllowAllMessagesExceptBlackList };
 
-	PrivacyPreferences(QWidget *parent=0, const QStringList &args = QStringList());
+	explicit PrivacyPreferences(QWidget *parent=0, const QStringList &args = QStringList());
 	~PrivacyPreferences();
 
 	virtual void save();

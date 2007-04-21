@@ -18,7 +18,6 @@
 
 #include "oscarutils.h"
 #include <qhostaddress.h>
-#include <kapplication.h>
 #include <kdebug.h>
 
 
@@ -175,6 +174,32 @@ Oscar::DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString, in
 	return capflags;
 }
 
+Oscar::DWORD Oscar::parseNewCapabilities( Buffer &inbuf )
+{
+	Oscar::DWORD capflags = 0;
+	QString dbgCaps = "NEW CAPS: ";
+
+	QByteArray cap = Guid( QLatin1String( "094600004c7f11d18222444553540000" ) );
+	while( inbuf.bytesAvailable() >= 2 )
+	{
+		cap[2] = inbuf.getByte();
+		cap[3] = inbuf.getByte();
+
+		for ( int i = 0; i < CAP_LAST; i++ )
+		{
+			if ( oscar_caps[i].data() == cap )
+			{
+				capflags |= (1 << i);
+				dbgCaps += capName(i);
+				break;
+			}
+		}
+	}
+
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;
+	return capflags;
+}
+
 const QString Oscar::capName( int capNumber )
 {
 	QString capString;
@@ -278,8 +303,11 @@ const QString Oscar::capName( int capNumber )
 	case CAP_UNKNOWN2:
 		capString = "CAP_UNKNOWN2 ";
 		break;
-	case CAP_UNKNOWN3:
-		capString = "CAP_UNKNOWN3 ";
+	case CAP_PUSH2TALK:
+		capString = "CAP_PUSH2TALK ";
+		break;
+	case CAP_VIDEO:
+		capString = "CAP_VIDEO ";
 		break;
 	default:
 		capString = "UNKNOWN CAP ";

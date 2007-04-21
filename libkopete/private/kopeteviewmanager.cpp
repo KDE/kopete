@@ -18,14 +18,13 @@
 #include <QTextDocument>
 #include <QtAlgorithms>
 
-#include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kplugininfo.h>
 #include <knotification.h>
 #include <kglobal.h>
-#include <kwin.h>
+#include <kwm.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
@@ -247,8 +246,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
 			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop 
-#ifdef Q_OS_UNIX					
-					||!KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
+#ifdef Q_WS_X11
+					||!KWM::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
 #else
 					);
 #endif					

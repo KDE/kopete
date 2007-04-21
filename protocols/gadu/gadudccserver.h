@@ -35,7 +35,7 @@ class GaduAccount;
 class GaduDCCServer: public QObject {
 	Q_OBJECT
 public:
-	GaduDCCServer( QHostAddress* dccIp = NULL, unsigned int port = 1550 );
+	explicit GaduDCCServer( QHostAddress* dccIp = NULL, unsigned int port = 1550 );
 	~GaduDCCServer();
 	unsigned int listeingPort();
 

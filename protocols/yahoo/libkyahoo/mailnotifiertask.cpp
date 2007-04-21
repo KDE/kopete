@@ -71,7 +71,7 @@ void MailNotifierTask::parseMail( YMSGTransfer *t )
 	if( !mail.isEmpty() && !from.isEmpty() && !subject.isEmpty() )
 		emit mailNotify( QString::fromLatin1( "%1 <%2>").arg( from, mail ), subject, count.toInt() );
 	else
-		emit mailNotify( QString::null, QString::null, count.toInt());
+		emit mailNotify( QString(), QString(), count.toInt());
 }
 
 #include "mailnotifiertask.moc"

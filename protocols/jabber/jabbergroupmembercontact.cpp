@@ -121,7 +121,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
 										  message.body (), message.error().text ),
-										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewType );
+										message.subject(), Kopete::Message::Inbound, Qt::PlainText, viewType );
 	}
 	else
 	{
@@ -136,7 +136,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		// convert XMPP::Message into Kopete::Message
 		newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
 										 message.subject (), Kopete::Message::Inbound,
-										 Kopete::Message::PlainText, viewType );
+										 Qt::PlainText, viewType );
 	}
 
 	// append message to manager

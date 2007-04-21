@@ -49,12 +49,12 @@
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
 #include <kmenu.h>
-#include <kkeydialog.h>
+#include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
 #include <kglobalaccel.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
 #include <kplugininfo.h>
@@ -194,7 +194,7 @@ public:
  */
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
-: KMainWindow( parent, Qt::WType_TopLevel ), d(new Private)
+: KXmlGuiWindow( parent, Qt::WType_TopLevel ), d(new Private)
 {
 	setObjectName( name );
 	// Applications should ensure that their StatusBar exists before calling createGUI()
@@ -420,14 +420,14 @@ void KopeteWindow::slotShowHide()
 	else
 	{
 		show();
-#ifdef Q_OS_UNIX
+#ifdef Q_WS_X11
 		//raise() and show() should normaly deIconify the window. but it doesn't do here due
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
-			KWin::deIconifyWindow(winId());
+			KWM::unminimizeWindow(winId());
 
-		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
-			KWin::setOnDesktop(winId(), KWin::currentDesktop());
+		if(!KWM::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
+			KWM::setOnDesktop(winId(), KWM::currentDesktop());
 #endif
 		raise();
 		activateWindow();
@@ -479,10 +479,10 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
             resetAction->trigger();
             return true;
         }
-        return KMainWindow::eventFilter( target, event );
+        return KXmlGuiWindow::eventFilter( target, event );
     }
 
-    return KMainWindow::eventFilter( target, event );
+    return KXmlGuiWindow::eventFilter( target, event );
 }
 
 void KopeteWindow::loadOptions()
@@ -612,14 +612,14 @@ void KopeteWindow::slotConfNotifications()
 
 void KopeteWindow::slotConfGlobalKeys()
 {
-	KKeyDialog::configure( actionCollection() );
+	KShortcutsDialog::configure( actionCollection() );
 }
 
 void KopeteWindow::slotConfToolbar()
 {
         KConfigGroup cg( KGlobal::config(), "General Options");
 	saveMainWindowSettings( cg );
-	KEditToolbar *dlg = new KEditToolbar(factory());
+	KEditToolBar *dlg = new KEditToolBar(factory());
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
 	connect( dlg, SIGNAL(finished()) , dlg, SLOT(deleteLater()));
 	dlg->show();
@@ -712,8 +712,8 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 	}
 	else
 	{
-		kDebug( 14000 ) << k_funcinfo << "delegating to KMainWindow::closeEvent()" << endl;
-		KMainWindow::closeEvent( e );
+		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()" << endl;
+		KXmlGuiWindow::closeEvent( e );
 	}
 }
 

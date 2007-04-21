@@ -45,6 +45,7 @@ public:
 		channel2Counter = 0;
 		encoding = UserDefined;
 		fileSize = 0;
+		fileCount = 0;
 		plugin = 0;
 	}
 	MessagePrivate( const MessagePrivate &other )
@@ -69,6 +70,7 @@ public:
 		encoding = other.encoding;
 		fileName = other.fileName;
 		fileSize = other.fileSize;
+		fileCount = other.fileCount;
 
 		if ( other.plugin )
 			plugin = new MessagePlugin(*other.plugin);
@@ -100,6 +102,7 @@ public:
 	Encoding encoding;
 	QString fileName;
 	DWORD fileSize;
+	WORD fileCount;
 	MessagePlugin* plugin;
 };
 
@@ -367,15 +370,29 @@ QString Message::fileName() const
 	return d->fileName;
 }
 
-DWORD Message::fileSize() const
+DWORD Message::filesSize() const
 {
 	return d->fileSize;
 }
 
-void Message::setFile( DWORD size, QString name )
+WORD Message::fileCount() const
+{
+	return d->fileCount;
+}
+
+void Message::setFileName( const QString &name )
+{
+	d->fileName = name;
+}
+
+void Message::setFilesSize( DWORD size )
 {
 	d->fileSize = size;
-	d->fileName = name;
+}
+
+void Message::setFileCount( WORD count )
+{
+	d->fileCount = count;
 }
 
 WORD Message::exchange() const

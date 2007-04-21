@@ -24,7 +24,7 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <ktemporaryfile.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
@@ -172,7 +172,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
-	msg.setBody( messageText, Kopete::Message::RichText );
+	msg.setHtmlBody( messageText );
 }
 
 
@@ -224,7 +224,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	m_tempFiles.append(tempFile);
 	QString fileName = tempFile->fileName();
 
-	KProcess p;
+	K3Process p;
 			
 	QString argumentRes = "-r %1x%2";
 	QString argumentOut = "-o %1";
@@ -237,7 +237,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	kDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
 			
 	// FIXME our sucky sync filter API limitations :-)
-	p.start(KProcess::Block);
+	p.start(K3Process::Block);
 	return fileName;
 }
 

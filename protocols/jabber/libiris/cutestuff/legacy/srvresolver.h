@@ -43,7 +43,7 @@ public:
 
 	bool failed() const;
 	QHostAddress resultAddress() const;
-	Q_UINT16 resultPort() const;
+	quint16 resultPort() const;
 
 signals:
 	void resultsReady();

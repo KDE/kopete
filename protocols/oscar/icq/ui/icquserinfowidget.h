@@ -41,7 +41,7 @@ class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	ICQUserInfoWidget( QWidget* parent = 0, bool editable = false );
+	explicit ICQUserInfoWidget( QWidget* parent = 0, bool editable = false );
 	~ICQUserInfoWidget();
 	void setContact( ICQContact* contact );
 	

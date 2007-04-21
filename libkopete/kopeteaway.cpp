@@ -150,15 +150,13 @@ Kopete::Away::Away() : QObject( kapp )
 
 	load();
 	KSettings::Dispatcher::self()->registerComponent( KGlobal::mainComponent(), this, SLOT( load() ) );
-	// Set up the config object
-	KSharedConfig::Ptr config = KGlobal::config();
-	/* Load the saved away messages */
-	config->setGroup("Away Messages");
+	// Set up the config object, and load the saved away messages
+	KConfigGroup config( KGlobal::config(), "Away Messages" );
 
 	// Away Messages
-	if(config->hasKey("Messages"))
+	if(config.hasKey("Messages"))
 	{
-		d->awayMessageList = config->readEntry("Messages", QStringList());
+		d->awayMessageList = config.readEntry("Messages", QStringList());
 	}
 	else
 	{
@@ -241,12 +239,11 @@ void Kopete::Away::setGlobalAway(bool status)
 
 void Kopete::Away::save()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
+	KConfigGroup config( KGlobal::config(), "Away Messages" );
 	/* Set the away message settings in the Away Messages config group */
-	config->setGroup("Away Messages");
-	config->writeEntry("Messages", d->awayMessageList);
+	config.writeEntry("Messages", d->awayMessageList);
 	Kopete::BehaviorSettings::self()->setAutoAwayCustomMessage( d->autoAwayMessage );
-	config->sync();
+	config.sync();
 
 	emit( messagesChanged() );
 }

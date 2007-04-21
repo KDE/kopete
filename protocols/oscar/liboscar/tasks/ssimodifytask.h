@@ -52,7 +52,7 @@ This task implements the following SNACs from the SSI family (0x0013):
 class SSIModifyTask : public Task
 {
 public:
-    SSIModifyTask(Task* parent);
+    explicit SSIModifyTask( Task* parent, bool staticTask = false );
     ~SSIModifyTask();
 
 	virtual void onGo();
@@ -129,7 +129,17 @@ private:
 	void sendEditEnd();
 	
 	void addItemToBuffer( OContact item, Buffer* buffer );
-	
+	OContact getItemFromBuffer( Buffer* buffer ) const;
+
+	//! Handle server request to add data
+	void handleContactAdd();
+
+	//! Handle server request to update data
+	void handleContactUpdate();
+
+	//! Handle server request to remove data
+	void handleContactRemove();
+
 private:
 	OContact m_oldItem;
 	OContact m_newItem;
@@ -138,7 +148,8 @@ private:
 	OperationSubject m_opSubject;
 	Oscar::WORD m_id;
 	ContactManager* m_ssiManager;
-	
+	bool m_static;
+
 };
 
 #endif

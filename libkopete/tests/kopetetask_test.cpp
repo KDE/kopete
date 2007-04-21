@@ -22,7 +22,6 @@
 #include "kopetetask_test.h"
 #include "kopetetask_test.moc"
 
-#include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 
@@ -62,7 +61,7 @@ void KopeteTaskTest::testEmoticonTask()
 	QSignalSpy spy(task, SIGNAL(result(KJob*)));
 
 	// For the task to execute, we must manually call the event loop.
-	kapp->processEvents();
+	qApp->processEvents();
 	
 	QCOMPARE(spy.count(), 1);
 	QCOMPARE(task->succeeded(), true);

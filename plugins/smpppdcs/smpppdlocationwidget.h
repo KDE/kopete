@@ -30,7 +30,7 @@ class SMPPPDLocationWidget : private Ui::SMPPPDLocationWidgetBase, public QWidge
 	SMPPPDLocationWidget& operator=(const SMPPPDLocationWidget&);
 
 public:
-    SMPPPDLocationWidget(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    explicit SMPPPDLocationWidget(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
     ~SMPPPDLocationWidget();
 
     void setServer(const QString& serv);

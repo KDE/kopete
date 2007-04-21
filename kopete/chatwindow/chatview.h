@@ -314,7 +314,7 @@ private slots:
 	 * @param format The format of the reason message
 	 * @param suppressNotification mean that no notifications are showed
 	 */
-	void slotContactRemoved( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification=false );
+	void slotContactRemoved( const Kopete::Contact *c, const QString& reason, Qt::TextFormat format, bool suppressNotification=false );
 
 	/**
 	 * Called when a contact changes status, updates the display name, status icon and tab bar state.
@@ -367,7 +367,7 @@ private:
 	 */
 	void readOptions();
 
-	void sendInternalMessage( const QString &msg, Kopete::Message::MessageFormat format = Kopete::Message::PlainText );
+	void sendInternalMessage( const QString &msg, Qt::TextFormat format = Qt::PlainText );
 
 	KopeteChatViewPrivate *d;
 };

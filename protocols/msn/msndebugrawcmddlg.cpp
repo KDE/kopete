@@ -45,7 +45,7 @@ MSNDebugRawCmdDlg::MSNDebugRawCmdDlg( QWidget *parent )
 
 MSNDebugRawCmdDlg::~MSNDebugRawCmdDlg()
 {
-	m_main;
+	delete m_main;
 }
 
 QString MSNDebugRawCmdDlg::command()
@@ -70,7 +70,7 @@ bool MSNDebugRawCmdDlg::addId()
 
 QString MSNDebugRawCmdDlg::msg()
 {
-	return m_main->m_msg->text();
+	return m_main->m_msg->toPlainText();
 }
 
 #include "msndebugrawcmddlg.moc"

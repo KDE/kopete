@@ -23,7 +23,7 @@
 
 #include "kopete_export.h"
 
-class KProcess;
+class K3Process;
 
 struct CommandHandlerPrivate;
 
@@ -182,8 +182,8 @@ class KOPETE_EXPORT CommandHandler : public QObject
 	private slots:
 		void slotPluginLoaded( Kopete::Plugin * );
 		void slotPluginDestroyed( QObject * );
-		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
-		void slotExecFinished(KProcess *proc);
+		void slotExecReturnedData(K3Process *proc, char *buff, int bufflen );
+		void slotExecFinished(K3Process *proc);
 		void slotViewCreated( KopeteView *view );
 
 		void slotHelpCommand( const QString & args, Kopete::ChatSession *manager );

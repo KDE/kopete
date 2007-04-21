@@ -3,8 +3,9 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@kde.org>
+	Copyright (c) 2006-2007 by Charles Connell       <charles@connells.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -35,6 +36,7 @@
 
 
 class QDateTime;
+class QTextDocument;
 
 namespace Kopete {
 
@@ -46,6 +48,7 @@ class Contact;
 /**
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@kde.org>
+ * @author Charles Connell <charles@connells.org>
  *
  * Message represents any kind of messages shown on a chat view.
  *
@@ -67,19 +70,6 @@ public:
 	 * - Action: For the /me command , like on irc
 	 */
 	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2 };
-
-	/**
-	 * Format of body
-	 * - PlainText: Just a simple text, without any formatting. If it contains HTML tags then they will be simply shown in the chatview.
-	 * - RichText: Text already HTML escaped and which can contains some tags. the string
-	 *   should be a valid (X)HTML string.
-	 *   Any HTML specific characters (\<, \>, \&, ...) are escaped to the equivalent HTML
-	 *   entity (\&gt;, \&lt;, ...) newlines are \<br /\> and any other HTML tags will be interpreted.
-	 * - ParsedHTML: only used by the chatview, this text is parsed and ready to
-	 *  show into the chatview, with Emoticons, and URLs
-	 * - Crypted is used only by Jabber and the Cryptography plugin
-	 */
-	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
 
 	/**
 	 * Specifies the type of the message.
@@ -118,8 +108,8 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = PlainText,
-		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
+		 MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
+		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -132,8 +122,8 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = PlainText,
-		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
+		 MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
+		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -147,8 +137,8 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
-		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
+		 const QString &subject, MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
+		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -162,8 +152,8 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
-		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
+		 const QString &body, MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
+		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -179,7 +169,7 @@ public:
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, const QString &requestedPlugin = QString::null,
+		Qt::TextFormat format = Qt::PlainText, const QString &requestedPlugin = QString(),
 		MessageType type = TypeNormal );
 
 	/**
@@ -195,97 +185,117 @@ public:
 	Message & operator=( const Message &other );
 
 	/**
-	 * Accessor method for the timestamp of the message
+	 * @brief Accessor method for the timestamp of the message
 	 * @return The message's timestamp
 	 */
 	QDateTime timestamp() const;
 
 	/**
-	 * Accessor method for the Contact that sent this message
+	 * @brief Accessor method for the Contact that sent this message
 	 * @return The Contact who sent this message
 	 */
 	const Contact * from() const;
 
 	/**
-	 * Accessor method for the Contacts that this message was sent to
+	 * @brief Accessor method for the Contacts that this message was sent to
 	 * @return Pointer list of the Contacts this message was sent to
 	 */
 	QList<Contact*> to() const;
 
 	/**
-	 * @return the @ref MessageType of this message
+	 * @brief Accessor method for the message type
+	 * @return The type of the message
+	 * @see MessageType
 	 */
 	MessageType type() const;
 
 	/**
-	 * @return the view plugin you would prefer to use to read this message. If
-	 *	null, Kopete will use the user's preferred plugin.
+	 * @brief Accessor method for the preferred plugin
+	 * If null, Kopete will use the user's preferred plugin.
+	 * @return The preferred plugin
 	 */
 	QString requestedPlugin() const;
 
 	/**
-	 * Accessor method for the foreground color
+	 * @brief Accessor method for the foreground color
 	 * @return The message's foreground color
 	 */
 	QColor fg() const;
 
 	/**
-	 * Accessor method for the background color of the message
+	 * @brief Accessor method for the background color of the message
 	 * @return The message's background color
 	 */
 	QColor bg() const;
 
 	/**
-	 * Accessor method for the font of the message
+	 * @brief Accesssor method for the direction of the text based on what language it is in
+	 * @return The message text's direction
+	 */
+	bool isRightToLeft() const;
+
+	/**
+	 * @brief Accessor method for the font of the message
 	 * @return The message's font
 	 */
 	QFont font() const;
 
 	/**
-	 * Accessor method for the subject of the message
+	 * @brief Accessor method for the subject of the message
 	 * @return The message subject
 	 */
 	QString subject() const;
 
 	/**
-	 * Accessor method for the format of the message
-	 * @return The message format
+	 * @brief Accessor method for the body of the message
+	 * This is used internaly, to modify it make a copy of it with QTextDocument::clone()
+	 * @return The message body
 	 */
-	MessageFormat format() const;
+	const QTextDocument *body() const;
 
 	/**
-	 * Accessor method for the direction of the message
+	 * @brief Accessor method for the format of the message
+	 * @return The message format
+	 */
+	Qt::TextFormat format() const;
+
+	/**
+	 * @brief Accessor method for the direction of the message
 	 * @return The message direction
 	 */
 	MessageDirection direction() const;
 
 	/**
 	 * @brief Accessor method for the importance
+	 * @see setImportance
 	 * @return The message importance (low/normal/highlight)
 	 */
 	MessageImportance importance() const;
 
 	/**
 	 * @brief Set the importance.
-	 * @see importance
+	 * @see importance and @see MessageImportance
 	 * @param importance The message importance to set
 	 */
 	void setImportance(MessageImportance importance);
 
 	/**
-	 * Sets the foreground color for the message
+	 * @brief Sets the foreground color for the message
+	 * @see fg
 	 * @param color The color
 	 */
 	void setFg( const QColor &color );
 
 	/**
-	 * Sets the background color for the message
+	 * @brief Sets the background color for the message
+	 * @see bg
 	 * @param color The color
 	 */
 	void setBg( const QColor &color );
 
 	/**
-	 * Sets the font for the message
+	 * @brief Sets the font for the message
+	 * @see font
 	 * @param font The font
 	 */
 	void setFont( const QFont &font );
@@ -293,34 +303,49 @@ public:
 	/**
 	 * @brief Sets the body of the message
 	 *
-	 * @param body The body
-	 * @param format The format of the message, @see MessageFormat
+	 * @param body The body, intpreted as plain text
 	 */
-	void setBody( const QString &body, MessageFormat format = PlainText );
+	void setPlainBody( const QString &body);
 
 	/**
-	 * Get the message body back as plain text
+	 * @brief Sets the body of the message
+	 *
+	 * @param body The body, interpreted as HTML
+	 */
+	void setHtmlBody( const QString &body);
+
+	/**
+	 * @brief Sets the body of the message
+	 * The format is changed to RichText automatically
+	 * @param body The body
+	 */
+	void setBody( const QTextDocument *body);
+
+	/**
+	 * @brief Get the message body back as plain text
 	 * @return The message body as plain text
 	 */
 	QString plainBody() const;
 
 	/**
-	 * Get the message body as escaped (X)HTML format.
+	 * @brief Get the message body as escaped (X)HTML format.
 	 * That means every HTML special char (\>, \<, \&, ...) is escaped to the HTML entity (\&lt;, \&gt;, ...)
 	 * and newlines (\\n) are converted to \<br /\>
+	 * Just because you set an HTML body doesn't mean you'll get the same string back here, but it will
+	 * be equivalent in meaning
 	 * @return The message body as escaped text
 	 */
 	QString escapedBody() const;
 
 	/**
-	 * Get the message body as parsed HTML with Emoticons, and URL parsed
-	 * this should be ready to be shown in the chatwindow.
+	 * @brief Get the message body as parsed HTML with Emoticons, and URL parsed
+	 * This should be ready to be shown in the chatwindow.
 	 * @return The HTML and Emoticon parsed message body
 	 */
 	QString parsedBody() const;
 
 	/**
-	 * Get the related  message manager.
+	 * Get the related message manager.
 	 * If it is not set, returns 0L.
 	 *
 	 * The @ref ChatSession is only set if the message is already passed by the manager.
@@ -329,51 +354,56 @@ public:
 	 ChatSession *manager() const ;
 
 	 /**
-	  * set the messagemanager for this message.
-	  * should be only used by the manager itself
+	  * @brief Set the messagemanager for this message.
+	  * Should be only used by the manager itself. @see manager
+	  * @param manager The chat session
 	  */
-	 void setManager(ChatSession *);
+	 void setManager(ChatSession * manager);
 
 	/**
-	 * Enables the use of a background for a message
+	 * @brief Enables the use of a background for a message
+	 * @see bgOverride
 	 * @param enable A flag to indicate if the background should be enabled or disabled.
 	 */
 	void setBgOverride( bool enable );
 
 	/**
-	 * Enables the use of a foreground for a message
+	 * @brief Enables the use of a foreground for a message
+	 * @see fgOverride
 	 * @param enable A flag to indicate if the foreground should be enabled or disabled.
 	 */
 	void setFgOverride( bool enable );
 
 	/**
-	 * Enables the use of a RTF formatting for a message
+	 * @brief Enables the use of a RTF formatting for a message
+	 * @see rtfOverride
 	 * @param enable A flag to indicate if the RTF formatting should be enabled or disabled.
 	 */
 	void setRtfOverride( bool enable );
 
 	/**
-	 * Return HTML style attribute for this message.
+	 * @brief Return HTML style attribute for this message.
 	 * @return A string formatted like this: "style=attr"
 	 */
 	QString getHtmlStyleAttribute() const;
 	
 	/**
-	 * @return the list of classes
-	 * 
-	 * class are used to give different notification on a message.  But are also used in the chatwindow as html class 
+	 * @return The list of classes
+	 * Class are used to give different notification on a message. They are also used in the chatwindow as an HTML class 
 	 */
 	QStringList classes() const;
 	
 	/**
-	 * add a class
+	 * @brief Add a class
 	 * @see classes
+	 * @param class class to add
 	 */
 	void addClass(const QString& classe);
 	
 	/**
-	 * set the classes
+	 * @brief Set the classes
 	 * @see classes
+	 * @param classes The new classes
 	 */
 	void setClasses(const QStringList &classes);
 
@@ -385,19 +415,11 @@ public:  /* static helpers */
 	* Note that this method is *VERY* expensive when called on rich text bodies,
 	* use with care!
 	*
-	* @param xml The string you want to unescape
 	*/
 	static QString unescape( const QString &xml );
 
 	/**
-	 * Indicate whether the string is right-to-left (Arabic or Hebrew are bidi locales)
-	 * or "normal" left-to-right. Calculating RTL on rich text is expensive, and
-	 * isRightToLeft() therefore uses a cached value.
-	 */
-	bool isRightToLeft() const;
-
-	/**
-	 * @brief Transform a pleintext message to an html.
+	 * @brief Transform a plaintext message into HTML.
 	 * it escape main entity like &gt; &lt; add some &lt;br /&gt; or &amp;nbsp;
 	 */
 	static QString escape( const QString & );
@@ -412,21 +434,35 @@ public:  /* static helpers */
 	 * @param success Optional pointer to a bool you want updated on success. "Success"
 	 *	is defined as a successful decoding using either UTF8 or the codec you
 	 *	provided. If a guess has to be taken, success will be false.
+	 * @return The decoded string
+
 	 */
 	static QString decodeString( const QByteArray &message,
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
 
 private:
-	/**
-	 * Called internally by @ref setBody() and the constructor
-	 * Basically @ref setBody() without detach
-	 */
-	void doSetBody( const QString &body, MessageFormat format = PlainText );
-
 	class Private;
 	QSharedDataPointer<Private> d;
 
-	static QString parseLinks( const QString &message, MessageFormat format );
+	/**
+	 * Called internally by @ref setBody() and the constructor
+	 * Basically @ref setBody() without detach
+	 * @internal
+	 */
+	void doSetBody( const QString &body, Qt::TextFormat format = Qt::PlainText );
+
+	/**
+	 * Called internally by @ref setBody() and the constructor
+	 * Basically @ref setBody() without detach
+	 * @internal
+	 */
+	void doSetBody (const QTextDocument *body, Qt::TextFormat format = Qt::PlainText);
+
+	/**
+	 * Called internally in rich text handling
+	 * @internal
+	 */
+	static QString parseLinks( const QString &message, Qt::TextFormat format );
 };
 
 }

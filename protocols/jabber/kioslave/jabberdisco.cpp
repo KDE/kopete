@@ -26,7 +26,6 @@
 #include <qthread.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kapplication.h>
 #include <kmessagebox.h>
 
 #include <xmpp_tasks.h>

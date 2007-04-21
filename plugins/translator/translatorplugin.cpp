@@ -108,29 +108,28 @@ TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
 void TranslatorPlugin::loadSettings()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
 	int mode = 0;
 
-	config->setGroup( "Translator Plugin" );
-	m_myLang = m_languages->languageKey( config->readEntry( "myLang" , 0 ) );
-	m_service = m_languages->serviceKey( config->readEntry( "Service", 0 ) );
+	KConfigGroup config = KGlobal::config()->group("Translator Plugin");
+	m_myLang = m_languages->languageKey( config.readEntry( "myLang" , 0 ) );
+	m_service = m_languages->serviceKey( config.readEntry( "Service", 0 ) );
 
-	if ( config->readEntry( "IncomingDontTranslate", true ) )
+	if ( config.readEntry( "IncomingDontTranslate", true ) )
 		mode = 0;
-	else if ( config->readEntry( "IncomingShowOriginal", false ) )
+	else if ( config.readEntry( "IncomingShowOriginal", false ) )
 		mode = 1;
-	else if ( config->readEntry( "IncomingTranslate", false ) )
+	else if ( config.readEntry( "IncomingTranslate", false ) )
 		mode = 2;
 
 	m_incomingMode = mode;
 
-	if ( config->readEntry( "OutgoingDontTranslate", true ) )
+	if ( config.readEntry( "OutgoingDontTranslate", true ) )
 		mode = 0;
-	else if ( config->readEntry( "OutgoingShowOriginal", false ) )
+	else if ( config.readEntry( "OutgoingShowOriginal", false ) )
 		mode = 1;
-	else if ( config->readEntry( "OutgoingTranslate", false ) )
+	else if ( config.readEntry( "OutgoingTranslate", false ) )
 		mode = 2;
-	else if ( config->readEntry( "OutgoingAsk", false ) )
+	else if ( config.readEntry( "OutgoingAsk", false ) )
 		mode = 3;
 
 	m_outgoingMode = mode;
@@ -360,16 +359,25 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 	switch ( mode )
 	{
 	case JustTranslate:
-		msg.setBody( translated, msg.format() );
+		if ( msg.format() & Qt::PlainText )
+			msg.setPlainBody( translated );
+		else
+			msg.setHtmlBody ( translated );
 		break;
 	case ShowOriginal:
-		msg.setBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ), msg.format() );
+		if ( msg.format() & Qt::PlainText )
+			msg.setPlainBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ) );
+		else 
+			msg.setHtmlBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ) );
 		break;
 	case ShowDialog:
 	{
 		TranslatorDialog *d = new TranslatorDialog( translated );
 		d->exec();
-		msg.setBody( d->translatedText(), msg.format() );
+		if ( msg.format() & Qt::PlainText )
+			msg.setPlainBody (d->translatedText() );
+		else	
+			msg.setHtmlBody( d->translatedText() );
 		delete d;
 		break;
 	}

@@ -37,6 +37,6 @@ Kopete plugin
 +Manage text channel i.e ChatSession
 +Manage aliasing
 +Receive avatar
--Send avatar
++Send avatar
 -Show the specific protocol in a overlay (like Jabber transport)
 -Improve account property UI

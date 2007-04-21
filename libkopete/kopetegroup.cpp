@@ -188,7 +188,7 @@ void Group::sendMessage( Message& msg )
 			{
 				//This is hack and stupid.    send message to group should never exist anyway - Olivier 2005-09-11
 				// changing the "to" is require, because jabber use it to send the messgae.  Cf BUG 111514
-				Message msg2(cs->myself() , kcontact , msg.plainBody() , msg.direction() , Message::PlainText , msg.requestedPlugin() );
+				Message msg2(cs->myself() , kcontact , msg.plainBody() , msg.direction() , Qt::PlainText , msg.requestedPlugin() );
 				kcontact->manager( Contact::CanCreate )->sendMessage( msg2 );
 			}
 		}

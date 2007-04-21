@@ -26,7 +26,6 @@
 */
 
 #include <qcheckbox.h>
-#include <kapplication.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -76,7 +75,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 
 	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
 
-	addresseeListView->setColumnText(2, SmallIconSet(QString::fromLatin1("email")), i18n("Email"));
+	addresseeListView->setColumnText(2, KIcon(QLatin1String("email")), i18n("Email"));
 
 	kListViewSearchLine->setListView(addresseeListView);
 	slotLoadAddressees();

@@ -40,7 +40,7 @@ public:
 
 	bool havePeerAddress() const;
 	QHostAddress peerAddress() const;
-	Q_UINT16 peerPort() const;
+	quint16 peerPort() const;
 
 signals:
 	void connected();
@@ -48,12 +48,12 @@ signals:
 
 protected:
 	void setPeerAddressNone();
-	void setPeerAddress(const QHostAddress &addr, Q_UINT16 port);
+	void setPeerAddress(const QHostAddress &addr, quint16 port);
 
 private:
 	bool haveaddr;
 	QHostAddress addr;
-	Q_UINT16 port;
+	quint16 port;
 };
 
 #endif

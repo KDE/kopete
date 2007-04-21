@@ -108,7 +108,7 @@ void KopeteAddressBookExport::fetchKABCData()
 	}
 }
 
-void KopeteAddressBookExport::fetchPhoneNumbers( K3ListBox * listBox, int type, uint& counter )
+void KopeteAddressBookExport::fetchPhoneNumbers( K3ListBox * listBox, KABC::PhoneNumber::Type type, uint& counter )
 {
 	KABC::PhoneNumber::List phones = mAddressee.phoneNumbers( type );
 	counter = phones.count();

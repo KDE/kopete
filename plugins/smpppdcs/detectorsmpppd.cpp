@@ -17,7 +17,6 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <kapplication.h>
 
 #include "iconnector.h"
 #include "detectorsmpppd.h"

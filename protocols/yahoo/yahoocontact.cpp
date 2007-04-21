@@ -46,7 +46,6 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kaction.h>
-#include <kapplication.h>
 #include <kdialog.h>
 #include <klocale.h>
 #include <krun.h>
@@ -543,7 +542,7 @@ void YahooContact::buzzContact()
 	{
 		Kopete::Message msg = Kopete::Message( manager(Kopete::Contact::CannotCreate)->myself() ,
 					manager(Kopete::Contact::CannotCreate)->members(), i18n("Buzz"),
-					Kopete::Message::Outbound, Kopete::Message::PlainText,
+					Kopete::Message::Outbound, Qt::PlainText,
 					QString::null , Kopete::Message::TypeAction);
 		view->appendMessage( msg );
 	}

@@ -32,7 +32,7 @@ class HighlightPreferences : public KCModule  {
    Q_OBJECT
 public:
 
-	HighlightPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+	explicit HighlightPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
 	~HighlightPreferences();
 
 	virtual void save();

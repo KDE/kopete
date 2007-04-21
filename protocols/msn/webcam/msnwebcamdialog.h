@@ -37,7 +37,7 @@ class MSNWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	MSNWebcamDialog( const QString& contact, QWidget* parent = 0, const char* name = 0 );
+	explicit MSNWebcamDialog( const QString& contact, QWidget* parent = 0, const char* name = 0 );
 	~MSNWebcamDialog();
 	
 public slots:

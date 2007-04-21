@@ -289,7 +289,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         {
 			// this message is not encrypted
 			jabberMessage.setBody ( message.plainBody ());
-			if (message.format() ==  Kopete::Message::RichText) 
+			if (message.format() ==  Qt::RichText) 
 			{
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().canXHTML() )

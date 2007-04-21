@@ -24,7 +24,6 @@
 #include <qtextstream.h>
 
 #include <kaboutdata.h>
-#include <kapplication.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 

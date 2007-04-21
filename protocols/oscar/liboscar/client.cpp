@@ -117,6 +117,7 @@ public:
 	ICQUserInfoRequestTask* icqInfoTask;
 	UserInfoTask* userInfoTask;
 	TypingNotifyTask * typingNotifyTask;
+	SSIModifyTask* ssiModifyTask;
 	//Managers
 	ContactManager* ssiManager;
 	ConnectionHandler connections;
@@ -132,7 +133,7 @@ public:
 		Oscar::DWORD status;
 		QString message;     // for away-,DND-message etc., and for Xtraz status
 		int xtraz;           // Xtraz status
-		QString title;       // Xtraz title
+		QString description; // Xtraz description
 	} status;
 
 	//away messages
@@ -174,6 +175,7 @@ Client::Client( QObject* parent )
 	d->userInfoTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
+	d->ssiModifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
 	d->codecProvider = &defaultCodecProvider;
 
@@ -237,7 +239,7 @@ void Client::close()
 		d->status.status = 0x0;
 		d->status.xtraz = -1;
 		d->status.message.clear();
-		d->status.title.clear();
+		d->status.description.clear();
 	}
 
     d->exchanges.clear();
@@ -247,7 +249,7 @@ void Client::close()
     d->ssiManager->clear();
 }
 
-void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &title )
+void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &description )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
 
@@ -256,7 +258,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 	d->status.status = status;
 	d->status.message = message;
 	d->status.xtraz = xtraz;
-	d->status.title = title;
+	d->status.description = description;
 
 	if ( d->active )
 	{
@@ -415,7 +417,7 @@ void Client::serviceSetupFinished()
 {
 	d->active = true;
 
-	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.title );
+	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.description );
 	d->ownStatusTask->go();
 
 	if ( isIcq() )
@@ -492,9 +494,9 @@ int Client::statusXtraz() const
 	return d->status.xtraz;
 }
 
-QString Client::statusTitle() const
+QString Client::statusDescription() const
 {
-	return d->status.title;
+	return d->status.description;
 }
 
 QString Client::statusMessage() const
@@ -585,7 +587,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 						{
 							XtrazNotify xNotifyResponse;
 							xNotifyResponse.setSenderUni( userId() );
-							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusTitle(), statusMessage() ) );
+							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusDescription(), statusMessage() ) );
 							emit userReadsStatusMessage( msg.sender() );
 						}
 					}
@@ -631,7 +633,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 						const Xtraz::XAwayService* service = dynamic_cast<const XAwayService*>(xNotify.findService( "cAwaySrv" ));
 						if ( service )
 							emit receivedXStatusMessage( service->senderId(), service->iconIndex(),
-							                             service->title(), service->description() );
+							                             service->description(), service->message() );
 					}
 				}
 			}
@@ -711,6 +713,7 @@ void Client::initializeStaticTasks()
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
 	d->userInfoTask = new UserInfoTask( c->rootTask() );
 	d->typingNotifyTask = new TypingNotifyTask( c->rootTask() );
+	d->ssiModifyTask = new SSIModifyTask( c->rootTask(), true );
 
 	connect( d->onlineNotifier, SIGNAL( userIsOnline( const QString&, const UserDetails& ) ),
 	         this, SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ) );
@@ -754,6 +757,8 @@ void Client::removeGroup( const QString& groupName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::addGroup( const QString& groupName )
@@ -766,6 +771,8 @@ void Client::addGroup( const QString& groupName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::addContact( const QString& contactName, const QString& groupName )
@@ -778,7 +785,8 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
 		ssimt->go( true );
-
+	else
+		delete ssimt;
 }
 
 void Client::removeContact( const QString& contactName )
@@ -791,6 +799,8 @@ void Client::removeContact( const QString& contactName )
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::renameGroup( const QString & oldGroupName, const QString & newGroupName )
@@ -803,6 +813,8 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem )
@@ -824,14 +836,20 @@ void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem
 	case 0:
 		if ( ssimt->modifyItem( oldItem, newItem ) )
 			ssimt->go( true );
+		else
+			delete ssimt;
 		break;
 	case 1:
 		if ( ssimt->addItem( newItem ) )
 			ssimt->go( true );
+		else
+			delete ssimt;
 		break;
 	case 2:
 		if ( ssimt->removeItem( oldItem ) )
 			ssimt->go( true );
+		else
+			delete ssimt;
 		break;
 	}
 }
@@ -847,6 +865,8 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->changeGroup( contact, newGroupName ) )
 		ssimt->go( true );
+	else
+		delete ssimt;
 }
 
 void Client::requestFullInfo( const QString& contactId )
@@ -1453,6 +1473,7 @@ void Client::deleteStaticTasks()
 	delete d->icqInfoTask;
 	delete d->userInfoTask;
 	delete d->typingNotifyTask;
+	delete d->ssiModifyTask;
 
 	d->errorTask = 0;
 	d->onlineNotifier = 0;
@@ -1462,6 +1483,7 @@ void Client::deleteStaticTasks()
 	d->icqInfoTask = 0;
 	d->userInfoTask = 0;
 	d->typingNotifyTask = 0;
+	d->ssiModifyTask = 0;
 }
 
 bool Client::hasIconConnection( ) const
@@ -1470,12 +1492,13 @@ bool Client::hasIconConnection( ) const
 	return c;
 }
 
-void Client::sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t )
+void Client::sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
 		return;
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), filePath, t );
+
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files, t );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
 	ft->go( true );

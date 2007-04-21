@@ -14,7 +14,7 @@
 */
 
 #include <kdebug.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <ktemporaryfile.h>
 #include <qtimer.h>
 
@@ -109,12 +109,12 @@ void YahooWebcam::sendImage()
 	
 	m_img->save( origImg->fileName(), "JPEG");
 	
-	KProcess p;
+	K3Process p;
 	p << "jasper";
 	p << "--input" << origImg->fileName() << "--output" << convertedImg->fileName() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
 	
 	
-	p.start( KProcess::Block );
+	p.start( K3Process::Block );
 	if( p.exitStatus() != 0 )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << p.exitStatus() << endl;

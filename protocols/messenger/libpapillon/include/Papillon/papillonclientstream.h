@@ -34,7 +34,7 @@ class PAPILLON_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:
-	ClientStream(Connector *connector, QObject *parent = 0);
+	explicit ClientStream(Connector *connector, QObject *parent = 0);
 	~ClientStream();
 
 	void connectToServer(const QString &server, quint16 port);

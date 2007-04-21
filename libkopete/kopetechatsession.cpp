@@ -357,7 +357,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 	d->isEmpty = false;
 }
 
-void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification )
+void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Qt::TextFormat format, bool suppressNotification )
 {
 	kDebug( 14010 ) << k_funcinfo << endl;
 	if ( !c || !d->mContactList.contains( (Kopete::Contact*)c ) )

@@ -27,7 +27,7 @@
 #include <ksettings/dialog.h>
 #include <kstandardaction.h>
 #include <KStandardGuiItem>
-#include <kwin.h>
+#include <kwm.h>
 #include <kcmultidialog.h>
 #include <kicon.h>
 
@@ -57,9 +57,7 @@ void KopetePreferencesAction::slotShowPreferences()
 	s_settingsDialog->show();
 
 	s_settingsDialog->dialog()->raise();
-#ifdef Q_OS_UNIX
-	KWin::activateWindow( s_settingsDialog->dialog()->winId() );
-#endif
+	KWM::activateWindow( s_settingsDialog->dialog()->winId() );
 }
 
 KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )
@@ -118,7 +116,7 @@ KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "delete_user" ), recvr, slot, parent, name );
+	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "delete-user" ), recvr, slot, parent, name );
 	deleteAction->setShortcut( KShortcut(Qt::Key_Delete) );
 
 	return deleteAction;

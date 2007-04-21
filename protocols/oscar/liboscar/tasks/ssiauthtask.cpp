@@ -112,10 +112,6 @@ void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 	
 	Transfer* t = createTransfer( f, s, buf );
 	send( t );
-	
-	OContact contact = m_manager->findContact( uin );
-	if ( contact )
-		contact.setWaitingAuth( true );
 }
 
 void SSIAuthTask::sendAuthReply( const QString& uin, const QString& reason, bool auth )
@@ -175,11 +171,6 @@ void SSIAuthTask::handleAuthReplied()
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request declined by " << uin << endl;
 		
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
-	
-	OContact sender = m_manager->findContact( uin );
-	if ( sender )
-		sender.setWaitingAuth( false );
-		
 	emit authReplied( uin, reason, accepted );
 }
 

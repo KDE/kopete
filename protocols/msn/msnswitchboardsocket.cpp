@@ -38,13 +38,13 @@
 // kde
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
 #include <ktemporaryfile.h>
 #include <kconfig.h>
 #include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <KComponentData>
 
 // for the display picture
 #include <msncontact.h>
@@ -365,7 +365,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
 			message,
-			Kopete::Message::Inbound , Kopete::Message::PlainText );
+			Kopete::Message::Inbound , Qt::PlainText );
 
 		kmsg.setFg( fontColor );
 		kmsg.setFont( font );
@@ -381,7 +381,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		{
 			QString msg=m_msgQueue.last().plainBody();
     		m_msgQueue.pop_back(); //removes the last item
-    		kmsg.setBody( msg+ message, Kopete::Message::PlainText );
+    		kmsg.setPlainBody( msg+ message );
 		}
 
     	if(chunk == 0 )
@@ -697,7 +697,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		}
 	}
 
-	if( msg.format() & Kopete::Message::RichText )
+	if( msg.format() & Qt::RichText )
 	{
 		QRegExp regex("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
 		if(regex.indexIn(msg.escapedBody()) != -1)
@@ -781,7 +781,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
 			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,
-			i18n("Message too big - MSN Plugin" ), KStandardGuiItem::cont() , "SendLongMessages" )
+			i18n("Message too big - MSN Plugin" ), KStandardGuiItem::cont(), KStandardGuiItem::cancel(), "SendLongMessages" )
 				== KMessageBox::Continue )
 		{
 			int place=0;
@@ -958,7 +958,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 		}
 
 		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
-			msg, Kopete::Message::Inbound , Kopete::Message::RichText );
+			msg, Kopete::Message::Inbound , Qt::RichText );
 
 		emit msgReceived(  kmsg  );
 	}
@@ -993,7 +993,7 @@ void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const Q
 	}
 	QString invite = "Incoming file transfer.";
 	Kopete::Message msg =
-		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Qt::PlainText);
 	emit msgReceived(msg);
 }
 
@@ -1045,7 +1045,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 						QString::fromLatin1("\" title=\"") + es +
 						QString::fromLatin1("\" alt=\"") + es +
 						QString::fromLatin1( "\"/>" ) );
-			kmsg.setBody(message, Kopete::Message::RichText);
+			kmsg.setHtmlBody(message);
 		}
 	}
 	return kmsg;

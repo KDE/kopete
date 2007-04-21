@@ -47,7 +47,7 @@ Transport::~Transport()
 
 //BEGIN Public Methods
 
-TransportBridge* Transport::getBridge (const QString& to, Q_UINT16 port, TransportBridgeType type, const QString& identifier)
+TransportBridge* Transport::getBridge (const QString& to, quint16 port, TransportBridgeType type, const QString& identifier)
 {
 	TransportBridge *bridge = 0l;
 	KInetSocketAddress address;
@@ -311,7 +311,7 @@ void TcpTransportBridge::slotOnSocketConnectTimeout()
 
 
 
-TcpTransportBridge::Buffer::Buffer(Q_UINT32 length)
+TcpTransportBridge::Buffer::Buffer(quint32 length)
 : QByteArray(length)
 {
 }
@@ -330,7 +330,7 @@ void TcpTransportBridge::Buffer::write(const QByteArray& bytes)
 	}
 }
 
-QByteArray TcpTransportBridge::Buffer::read(Q_UINT32 length)
+QByteArray TcpTransportBridge::Buffer::read(quint32 length)
 {
 	if (length >= size()) return QByteArray();
 

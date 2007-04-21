@@ -266,7 +266,7 @@ void SharingServiceBinding::findMembership()
 
 	HttpTransfer *transfer = new HttpTransfer;
 	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/SharingService.asmx") );
-	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setContentType( QLatin1String("application/xml") );
 	transfer->setValue( QLatin1String("Host"), server );
 	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/FindMembership") );
 	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );

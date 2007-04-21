@@ -127,7 +127,7 @@ class SharingServiceBinding : public QObject
 {
 	Q_OBJECT
 public:
-	SharingServiceBinding(HttpConnection *connection, QObject *parent = 0);
+	explicit SharingServiceBinding(HttpConnection *connection, QObject *parent = 0);
 	~SharingServiceBinding();
 
 public slots:

@@ -94,7 +94,7 @@ QString Picture::base64()
 		// Generate base64 cache for the picture.
 		QByteArray tempArray;
 		QBuffer tempBuffer( &tempArray );
-		tempBuffer.open( IO_WriteOnly );
+		tempBuffer.open( QIODevice::WriteOnly );
 		// Make sure it create a image cache.
 		if( image().save( &tempBuffer, "PNG" ) )
 		{
@@ -116,7 +116,7 @@ QString Picture::path()
 		// Generate MD5 Hash for the image.
 		QByteArray tempArray;
 		QBuffer tempBuffer(&tempArray);
-		tempBuffer.open( IO_WriteOnly );
+		tempBuffer.open( QIODevice::WriteOnly );
 		image().save(&tempBuffer, "PNG");
 		KMD5 context(tempArray);
 		// Save the image to a file.

@@ -26,7 +26,6 @@
 #include <qspinbox.h>
 #include <QVBoxLayout>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>

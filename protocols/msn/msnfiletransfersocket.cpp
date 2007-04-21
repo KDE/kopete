@@ -27,8 +27,8 @@
 
 // kde
 #include <kdebug.h>
-#include <kserversocket.h>
-#include <kbufferedsocket.h>
+#include <k3serversocket.h>
+#include <k3bufferedsocket.h>
 #include <kfiledialog.h>
 #include <klocale.h>
 

@@ -123,8 +123,8 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	buttonNewIdentity->setIcon(KIcon("new"));
 	buttonCopyIdentity->setIcon(KIcon("edit-copy"));
 	buttonRenameIdentity->setIcon(KIcon("edit"));
-	buttonRemoveIdentity->setIcon(KIcon("delete_user"));
-	buttonClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
+	buttonRemoveIdentity->setIcon(KIcon("delete-user"));
+	buttonClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar-erase" : "clear-left" ) );
 
 	load(); // Load Configuration
 
@@ -324,7 +324,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		}
 	}
 
-	comboPhotoURL->setUrl(d->currentIdentity->customPhoto().url());
+	comboPhotoURL->setUrl(d->currentIdentity->customPhoto().pathOrUrl());
 	Kopete::MetaContact::PropertySource photoSource = d->currentIdentity->photoSource();
 
 	radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
@@ -560,7 +560,7 @@ void KopeteIdentityConfig::slotChangePhoto(const KUrl &photoUrl)
 		// Bug 124175: My personnal picture doesn't appear cause of l10n
 		QByteArray tempArray;
 		QBuffer tempBuffer(&tempArray);
-		tempBuffer.open( IO_WriteOnly );
+		tempBuffer.open( QIODevice::WriteOnly );
 		photo.save(&tempBuffer, "PNG");
 		KMD5 context(tempArray);
 		// Save the image to a file.

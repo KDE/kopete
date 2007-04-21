@@ -52,7 +52,7 @@ XtrazNotify::Type XtrazNotify::type() const
 	return m_type;
 }
 
-Oscar::MessagePlugin* XtrazNotify::statusResponse( int iconIndex, const QString& title, const QString& desc ) const
+Oscar::MessagePlugin* XtrazNotify::statusResponse( int iconIndex, const QString& description, const QString& message ) const
 {
 	Q_ASSERT( !m_senderUni.isEmpty() );
 	QList<Xtraz::XService*> serviceList;
@@ -63,8 +63,8 @@ Oscar::MessagePlugin* XtrazNotify::statusResponse( int iconIndex, const QString&
 	XAwayService* awayService = new XAwayService();
 	awayService->setSenderId( m_senderUni );
 	awayService->setIconIndex( iconIndex );
-	awayService->setTitle( title );
-	awayService->setDescription( desc );
+	awayService->setDescription( description );
+	awayService->setMessage( message );
 	serviceList.append( awayService );
 
 	// Randomizer service it's not necessary but ICQ5 sends it.

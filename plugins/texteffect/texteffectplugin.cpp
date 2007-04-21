@@ -168,7 +168,7 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		}
 		if( m_config->colorChar() || m_config->colorWords() )
 			resultat+="</font>";
-		msg.setBody(resultat,Kopete::Message::RichText);
+		msg.setHtmlBody(resultat);
 	}
 
 	if(m_config->colorLines())

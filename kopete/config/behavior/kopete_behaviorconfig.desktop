@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete
 
 Name=Behavior
 Name[ar]=السلوك
-Name[be]=Паводзіны
 Name[bg]=Поведение
 Name[br]=Emzalc'h
 Name[ca]=Comportament
@@ -62,6 +61,7 @@ Name[x-test]=xxBehaviorxx
 Name[zh_HK]=行為
 Name[zh_TW]=行為
 Comment=Personalize Kopete's Behavior
+Comment[sv]=Personlig anpassning av Kopete
 Comment[uk]=Персоналізувати поведінку Kopete
 Comment[x-test]=xxPersonalize Kopete's Behaviorxx
 DocPath=kopete/configure-dialog.html#configuring-behavior

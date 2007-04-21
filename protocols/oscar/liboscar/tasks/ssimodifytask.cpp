@@ -28,9 +28,10 @@
 #include "transfer.h"
 
 
-SSIModifyTask::SSIModifyTask( Task* parent ) : Task( parent )
+SSIModifyTask::SSIModifyTask( Task* parent, bool staticTask ) : Task( parent )
 {
 	m_ssiManager = parent->client()->ssiManager();
+	m_static = staticTask;
 	m_opType = NoType;
 	m_opSubject = NoSubject;
 	m_id = 0;
@@ -50,9 +51,22 @@ bool SSIModifyTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		setTransfer( transfer );
-		handleContactAck();
-		setTransfer( 0 );
+		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
+		if ( st )
+		{
+			setTransfer( transfer );
+
+			if ( st->snacSubtype() == 0x0008 )
+				handleContactAdd();
+			else if ( st->snacSubtype() == 0x0009 )
+				handleContactUpdate();
+			else if ( st->snacSubtype() == 0x000A )
+				handleContactRemove();
+			else if ( st->snacSubtype() == 0x000E )
+				handleContactAck();
+
+			setTransfer( 0 );
+		}
 		return true;
 	}
 	else
@@ -202,10 +216,22 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 	if ( !st )
 		return false;
 
-	if ( st->snacService() == 0x0013 && st->snacSubtype() == 0x000E && m_id == st->snac().id )
-		return true;
-	else
-		return false;
+	if ( st->snacService() == 0x0013 )
+	{
+		Oscar::WORD subtype = st->snacSubtype();
+		if ( m_static )
+		{
+			if ( subtype == 0x0008 || subtype == 0x0009 || subtype == 0x000A )
+				return true;
+		}
+		else
+		{
+			if ( subtype == 0x000E && m_id == st->snac().id )
+				return true;
+		}
+	}
+
+	return false;
 }
 
 void SSIModifyTask::handleContactAck()
@@ -429,9 +455,9 @@ void SSIModifyTask::updateContactManager()
 		else if ( m_opSubject == Group )
 		{
 			if ( m_opType == Rename )
-				m_ssiManager->updateGroup( m_oldItem, m_newItem );
+				m_ssiManager->updateGroup( m_newItem );
 			else if ( m_opType == Change )
-				m_ssiManager->updateContact( m_oldItem, m_newItem );
+				m_ssiManager->updateContact( m_newItem );
 		}
 		else if ( m_opSubject == NoSubject )
 		{
@@ -528,6 +554,83 @@ void SSIModifyTask::addItemToBuffer( OContact item, Buffer* buffer )
 	QList<TLV>::const_iterator listEnd = item.tlvList().end();
 	for( ; it != listEnd; ++it )
 		buffer->addTLV( ( *it ) );
+}
+
+OContact SSIModifyTask::getItemFromBuffer( Buffer* buffer ) const
+{
+	QList<TLV> tlvList;
+
+	QString itemName = QString::fromUtf8( buffer->getBSTR() );
+	Oscar::WORD groupId = buffer->getWord();
+	Oscar::WORD itemId = buffer->getWord();
+	Oscar::WORD itemType = buffer->getWord();
+	Oscar::WORD tlvLength = buffer->getWord();
+	for ( int i = 0; i < tlvLength; )
+	{
+		TLV t = buffer->getTLV();
+		i += 4;
+		i += t.length;
+		tlvList.append( t );
+	}
+
+	if ( itemType == ROSTER_CONTACT )
+		itemName = Oscar::normalize( itemName );
+
+	return OContact( itemName, groupId, itemId, itemType, tlvList );
+}
+
+void SSIModifyTask::handleContactAdd()
+{
+	Buffer* b = transfer()->buffer();
+
+	while ( b->bytesAvailable() > 0 )
+	{
+		OContact item = getItemFromBuffer( b );
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << item.name() << " to SSI manager" << endl;
+
+		if ( item.type() == ROSTER_GROUP )
+			m_ssiManager->newGroup( item );
+		else if ( item.type() == ROSTER_CONTACT )
+			m_ssiManager->newContact( item );
+		else
+			m_ssiManager->newItem( item );
+	}
+}
+
+void SSIModifyTask::handleContactUpdate()
+{
+	Buffer* b = transfer()->buffer();
+
+	while ( b->bytesAvailable() > 0 )
+	{
+		OContact item = getItemFromBuffer( b );
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating " << item.name() << " in SSI manager" << endl;
+
+		if ( item.type() == ROSTER_GROUP )
+			m_ssiManager->updateGroup( item );
+		else if ( item.type() == ROSTER_CONTACT )
+			m_ssiManager->updateContact( item );
+		else
+			m_ssiManager->updateItem( item );
+	}
+}
+
+void SSIModifyTask::handleContactRemove()
+{
+	Buffer* b = transfer()->buffer();
+
+	while ( b->bytesAvailable() > 0 )
+	{
+		OContact item = getItemFromBuffer( b );
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << item.name() << " from SSI manager" << endl;
+
+		if ( item.type() == ROSTER_GROUP )
+			m_ssiManager->removeGroup( item );
+		else if ( item.type() == ROSTER_CONTACT )
+			m_ssiManager->removeContact( item );
+		else
+			m_ssiManager->removeItem( item );
+	}
 }
 
 //kate: tab-width 4; indent-mode csands;

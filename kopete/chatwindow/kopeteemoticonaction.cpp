@@ -22,7 +22,6 @@
 
 #include <math.h>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenubar.h>

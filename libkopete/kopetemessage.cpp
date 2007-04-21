@@ -3,6 +3,7 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2006-2007 by Charles Connell        <charles@connells.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -53,13 +54,15 @@ public:
 	Private( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
 	         const QString &subject, MessageDirection direction,
 	         const QString &requestedPlugin, MessageType type );
+	Private (const Private &other);
+	~Private ();
 
 	QPointer<Contact> from;
 	ContactPtrList to;
 	ChatSession *manager;
 
 	MessageDirection direction;
-	MessageFormat format;
+	Qt::TextFormat format;
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
@@ -73,70 +76,104 @@ public:
 
 	QColor fgColor;
 	QColor bgColor;
-	QString body;
 	QString subject;
+
+	QTextDocument* body;
+	mutable QString escapedBody;
+	mutable bool escapedBodyDirty;
 };
 
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 		const ContactPtrList &to, const QString &subject,
 		MessageDirection direction, const QString &requestedPlugin, MessageType type )
-: from( const_cast<Contact*>(from) ), to( to ), manager( 0 ), direction( direction ), format( PlainText ), type( type ),
-	requestedPlugin( requestedPlugin ), importance( (to.count() <= 1) ? Normal : Low ),
-	bgOverride( false ), fgOverride( false ), rtfOverride( false ), isRightToLeft( false ),
-	timeStamp( timeStamp ), body( QString::null ), subject( subject )
+	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(Qt::PlainText), type(type)
+	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
+	, rtfOverride(false), isRightToLeft (false), timeStamp(timeStamp), subject(subject), body(new QTextDocument()), escapedBodyDirty(true)
 {
 }
 
+Message::Private::Private (const Message::Private &other)
+	: QSharedData (other)
+{
+	from = other.from;
+	to = other.to;
+	manager = other.manager;
+
+	direction = other.direction;
+	format = other.format;
+	type = other.type;
+	requestedPlugin = other.requestedPlugin;
+	importance = other.importance;
+	bgOverride = other.bgOverride;
+	fgOverride = other.fgOverride;
+	rtfOverride = other.rtfOverride;
+	isRightToLeft = other.isRightToLeft;
+	timeStamp = other.timeStamp;
+	font = other.font;
+	classes = other.classes;
+
+	fgColor = other.fgColor;
+	bgColor = other.bgColor;
+	subject = other.subject;
+
+	body = other.body->clone();
+	escapedBody = other.escapedBody;
+	escapedBodyDirty = other.escapedBodyDirty;
+}
+
+Message::Private::~Private ()
+{
+	delete body;
+}
+
 Message::Message()
-: d( new Private( QDateTime::currentDateTime(), 0L, ContactPtrList(), QString(), Internal,
+    : d( new Private( QDateTime::currentDateTime(), 0L, ContactPtrList(), QString(), Internal,
 	QString(), TypeNormal ) )
 {
 }
 
 Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, QString::null, direction, requestedPlugin, type ) )
+		  MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
+    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, QString(), direction, requestedPlugin, type ) )
 {
-	doSetBody( body, f );
+	doSetBody(body, f);
 }
 
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
 {
 	QList<Contact*> to;
 	to.append((Kopete::Contact*)toKC);
-	d = new Private( QDateTime::currentDateTime(), fromKC, to, QString::null, direction, requestedPlugin, type );
-	doSetBody( body, f );
+	d = new Private( QDateTime::currentDateTime(), fromKC, to, QString(), direction, requestedPlugin, type );
+	doSetBody(body, f);
 }
 
 Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		  const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  const QString &subject, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, subject, direction, requestedPlugin, type ) )
 {
-	doSetBody( body, f );
+	doSetBody(body, f);
 }
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		  const QString &body, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( timeStamp, fromKC, toKC, QString::null, direction, requestedPlugin, type ) )
+		  const QString &body, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
+    : d( new Private( timeStamp, fromKC, toKC, QString(), direction, requestedPlugin, type ) )
 {
-	doSetBody( body, f );
+	doSetBody(body, f);
 }
 
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		  const QString &body, const QString &subject, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, subject, direction, requestedPlugin, type ) )
 {
-	doSetBody( body, f );
+	doSetBody(body, f);
 }
 
 Message::Message( const Message &other )
 	: d(other.d)
 {
 }
-
-
 
 Message& Message::operator=( const Message &other )
 {
@@ -178,50 +215,39 @@ void Message::setFont( const QFont &font )
 	d->font = font;
 }
 
-void Message::doSetBody( const QString &_body, Message::MessageFormat f )
+void Message::setPlainBody (const QString &body)
 {
-	QString body = _body;
-	//TODO: move that in ChatTextEditPart::contents
-	if( f == RichText )
-	{
-		//This is coming from the RichTextEditor component.
-		//Strip off the containing HTML document
-		body.replace( QRegExp( QLatin1String(".*<body[^>]*>(.*)</body>.*") ), QLatin1String("\\1") );
+	doSetBody (body, Qt::PlainText);
+}
 
-		//Strip <p> tags
-		body.replace( QLatin1String("<p>"), QString() );
+void Message::setHtmlBody (const QString &body)
+{
+	doSetBody (body, Qt::RichText);
+}
 
-		//Replace </p> with a <br/>
-		body.replace( QLatin1String("</p>"), QLatin1String("<br/>") );
-
-		//Remove trailing </br>
-		if ( body.endsWith( QLatin1String("<br/>") ) )
-			body.truncate( body.length() - 5 );
-	
-		body.remove( QLatin1String("\n") );
-		body.replace( QRegExp( QLatin1String( "\\s\\s" ) ), QLatin1String( " &nbsp;" ) );
-	}
-	/*
-	else if( f == ParsedHTML )
-	{
-		kWarning( 14000 ) << k_funcinfo << "using ParsedHTML which is internal !   message: " << body << kdBacktrace() << endl;
-	}*/
-
-	d->body = body;
+void Message::doSetBody (const QString &body, Qt::TextFormat f)
+{
+	if (f == Qt::PlainText)
+		d->body->setPlainText(body);
+	else
+		d->body->setHtml(body);
 	d->format = f;
-
-	// unescaping is very expensive, do it only once and cache the result
-	d->isRightToLeft = ( f & RichText ? unescape( d->body ).isRightToLeft() : d->body.isRightToLeft() );
+	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
+	d->escapedBodyDirty = true;
 }
 
-void Message::setBody( const QString &body, MessageFormat f )
+void Message::setBody (const QTextDocument *_body)
 {
-	doSetBody( body, f );
+	doSetBody (_body, Qt::RichText);
 }
 
-bool Message::isRightToLeft() const
+void Message::doSetBody (const QTextDocument *body, Qt::TextFormat f)
 {
-	return d->isRightToLeft;
+	delete d->body;
+	d->body = body->clone();          // delete the old body and replace it with a *copy* of the new one
+	d->format = f;
+	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
+	d->escapedBodyDirty = true;
 }
 
 void Message::setImportance(Message::MessageImportance i)
@@ -234,26 +260,26 @@ QString Message::unescape( const QString &xml )
 	QString data = xml;
 
 	// Remove linebreak and multiple spaces. First return nbsp's to normal spaces :)
-	data = data.simplifyWhiteSpace();
+	data = data.simplified();
 
 	int pos;
 	while ( ( pos = data.indexOf( '<' ) ) != -1 )
 	{
-		int endPos = data.find( '>', pos + 1 );
+		int endPos = data.indexOf( '>', pos + 1 );
 		if( endPos == -1 )
 			break;    // No more complete elements left
 
 		// Take the part between < and >, and extract the element name from that
 		int matchWidth = endPos - pos + 1;
-		QString match = data.mid( pos + 1, matchWidth - 2 ).simplifyWhiteSpace();
+		QString match = data.mid( pos + 1, matchWidth - 2 ).simplified();
 		int elemEndPos = match.indexOf( ' ' );
-		QString elem = ( elemEndPos == -1 ? match.lower() : match.left( elemEndPos ).lower() );
+		QString elem = ( elemEndPos == -1 ? match.toLower() : match.left( elemEndPos ).toLower() );
 		if ( elem == QLatin1String( "img" ) )
 		{
 			// Replace smileys with their original text'
 			const QString attrTitle  = QLatin1String( "title=\"" );
-			int titlePos    = match.find( attrTitle, elemEndPos );
-			int titleEndPos = match.find( '"',       titlePos + attrTitle.length() );
+			int titlePos    = match.indexOf( attrTitle, elemEndPos );
+			int titleEndPos = match.indexOf( '"',       titlePos + attrTitle.length() );
 			if( titlePos == -1 || titleEndPos == -1 )
 			{
 				// Not a smiley but a normal <img>
@@ -309,54 +335,48 @@ QString Message::escape( const QString &text )
 	return html;
 }
 
-
-
 QString Message::plainBody() const
 {
-	QString body=d->body;
-	if( d->format & RichText )
-	{
-		body = unescape( body );
-	}
-	return body;
+	return d->body->toPlainText();
 }
 
 QString Message::escapedBody() const
 {
-	QString escapedBody=d->body;
-//	kDebug(14000) << k_funcinfo << escapedBody << " " << d->rtfOverride << endl;
+//	kDebug(14010) << k_funcinfo << escapedBody() << " " << d->rtfOverride << endl;
 
-	if( d->format & PlainText )
-	{
-		escapedBody=escape( escapedBody );
+//	the escaped body is cached because QRegExp is very expensive, so it shouldn't be used any more than nescessary
+	if (!d->escapedBodyDirty)
+		return d->escapedBody;
+	else {
+		QString html = d->body->toHtml();
+//		all this regex business is to take off the outer HTML document provided by QTextDocument
+//		remove the head
+		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>");
+		html = html.remove (badStuff);
+//		remove the <html> and </html> tags
+		badStuff.setPattern ("</?html[^<>]*>");
+		html = html.remove (badStuff);
+//		remove the <body> and </body> tags
+		badStuff.setPattern ("</?body[^<>]*>");
+		html = html.remove (badStuff);
+//		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless (I hope this is true, could anybody confirm? (C Connell))
+		html.remove ("\n");
+		d->escapedBody = html;
+		d->escapedBodyDirty = false;
+		return html;
 	}
-	else if( d->format & RichText && d->rtfOverride)
-	{
-		//remove the rich text
-		escapedBody = escape (unescape( escapedBody ) );
-	}
-
-	return escapedBody;
 }
 
 QString Message::parsedBody() const
 {
 	//kDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
-
-	if( d->format == ParsedHTML )
-	{
-		return d->body;
-	}
-	else
-	{
 #ifdef __GNUC__
 #warning Disable Emoticon parsing for now, it make QString cause a ASSERT error. (DarkShock)
 #endif
 #if 0
-		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), RichText));
+	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
 #endif
-		return escapedBody();
-	}
+	return escapedBody();
 }
 
 static QString makeRegExp( const char *pattern )
@@ -368,12 +388,9 @@ static QString makeRegExp( const char *pattern )
 	return boundaryStart + QLatin1String(pattern) + boundaryEnd;
 }
 
-QString Message::parseLinks( const QString &message, MessageFormat format )
+QString Message::parseLinks( const QString &message, Qt::TextFormat format )
 {
-	if ( format == ParsedHTML )
-		return message;
-
-	if ( format & RichText )
+	if ( format & Qt::RichText )
 	{
 		// < in HTML *always* means start-of-tag
 		QStringList entries = message.split( QChar('<'), QString::KeepEmptyParts );
@@ -383,7 +400,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 		// first one is different: it doesn't start with an HTML tag.
 		if ( it != entries.end() )
 		{
-			*it = parseLinks( *it, PlainText );
+			*it = parseLinks( *it, Qt::PlainText );
 			++it;
 		}
 
@@ -397,7 +414,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 				continue;
 			QString tag = curr.left( tagclose + 1 );
 			QString body = curr.mid( tagclose + 1 );
-			*it = tag + parseLinks( body, PlainText );
+			*it = tag + parseLinks( body, Qt::PlainText );
 		}
 		return entries.join(QLatin1String("<"));
 	}
@@ -472,6 +489,10 @@ QColor Message::bg() const
 	return d->bgColor;
 }
 
+bool Message::isRightToLeft() const
+{
+	return d->isRightToLeft;
+}
 QFont Message::font() const
 {
 	return d->font;
@@ -482,7 +503,12 @@ QString Message::subject() const
 	return d->subject;
 }
 
-Message::MessageFormat Message::format() const
+const QTextDocument *Message::body() const
+{
+	return d->body;
+}
+
+Qt::TextFormat Message::format() const
 {
 	return d->format;
 }

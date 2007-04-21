@@ -24,6 +24,7 @@
 #include <qglobal.h>
 #include <qdatetime.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #ifdef Q_OS_WIN
   // BYTE, WORD, DWORD
   #include <windows.h>
@@ -44,7 +45,7 @@ enum Capability
 	CAP_GETFILE, CAP_ICQSERVERRELAY, CAP_GAMES, CAP_GAMES2, CAP_SENDBUDDYLIST, CAP_RTFMSGS, CAP_IS_2001,
 	CAP_TRILLIAN, CAP_TRILLIANCRYPT, CAP_APINFO, CAP_UTF8, CAP_TYPING, CAP_INTEROPERATE, CAP_KOPETE, CAP_MICQ,
 	CAP_MACICQ, CAP_SIMOLD, CAP_SIMNEW, CAP_XTRAZ, CAP_STR_2001, CAP_STR_2002, CAP_XTRAZ_MULTIUSER_CHAT,
-	CAP_DEVILS, CAP_NEWCAPS, CAP_UNKNOWN1, CAP_UNKNOWN2, CAP_UNKNOWN3, CAP_LAST
+	CAP_DEVILS, CAP_NEWCAPS, CAP_UNKNOWN1, CAP_UNKNOWN2, CAP_PUSH2TALK, CAP_VIDEO, CAP_LAST
 };
 
 Q_DECLARE_FLAGS( Capabilities, Capability )
@@ -160,8 +161,11 @@ const Guid oscar_caps[] =
 	// CAP_UNKNOWN2
 	Guid( QLatin1String( "B99708B53A924202B069F1E757BB2E17" ) ),
 
-	// CAP_UNKNOWN3
+	// CAP_PUSH2TALK
 	Guid( QLatin1String( "E362C1E9121A4B94A6267A74DE24270D" ) ),
+
+	// CAP_VIDEO
+	Guid( QLatin1String( "B6074378F50C4AC790925938502D0591" ) ),
 
 	// CAP_LAST,
 	Guid( QLatin1String( "00000000000000000000000000000000" ) )
@@ -350,6 +354,22 @@ struct OFT
 	DWORD sentChecksum;
 	BYTE flags;
 	QString fileName;
+	WORD fileCount;
+	WORD filesLeft;
+	WORD partCount;
+	WORD partsLeft;
+	DWORD totalSize;
+};
+
+struct OFTRendezvous
+{
+	QByteArray cookie;
+	WORD fileCount;
+	DWORD totalSize;
+	QString fileName;
+
+	QStringList files;
+	QString dir;
 };
 
 struct ClientVersion

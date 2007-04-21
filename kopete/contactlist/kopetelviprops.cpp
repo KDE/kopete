@@ -208,7 +208,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated ( int )), SLOT(slotEnableAndDisableWidgets()));
 	
 
-	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar_erase" : "clear_left" ) );
+	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar-erase" : "clear-left" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
 	connect( ui_mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
 	ui_mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
@@ -555,7 +555,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 	KFileDialog *fileDialog = requester->fileDialog();
 	//fileDialog->setCaption( i18n("Select Sound File") );
 	QStringList filters;
-	filters << "audio/x-wav" << "audio/x-mp3" << "application/ogg"
+	filters << "audio/x-wav" << "audio/mpeg" << "application/ogg"
 			<< "audio/x-adpcm";
 	fileDialog->setMimeFilter( filters );
 

@@ -48,6 +48,8 @@ private:
 	void addRendezvousMessageData( Buffer* b );
 	void addPluginData( Buffer* b );
 
+	QByteArray encodeFileName( const QString &fileName, QString &encodingType ) const;
+
 private:
 	Oscar::Message m_message;
 	bool m_autoResponse;

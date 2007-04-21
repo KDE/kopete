@@ -97,7 +97,7 @@ void TranslatorGUIClient::messageTranslated( const QVariant &result )
 		return;
 
 	Kopete::Message msg = m_manager->view()->currentMessage();
-	msg.setBody( translated );
+	msg.setPlainBody( translated );
 	m_manager->view()->setCurrentMessage( msg );
 }
 

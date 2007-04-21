@@ -25,7 +25,9 @@
 
 #include <libgadu.h>
 
-class Qstring;
+#include <QtGui/QColor>
+class QString;
+
 namespace Kopete { class Message; }
 class KGaduMessage;
 
@@ -43,7 +45,7 @@ private:
 	QString unescapeGaduMessage( QString& );
 	void parseAttributes( const QString, const QString );
 	QString escapeBody( QString& );
-	QColor 			color;
+	QColor color;
 	gg_msg_richtext_format	rtfs;
 	gg_msg_richtext_color	rtcs;
 	gg_msg_richtext*	header;

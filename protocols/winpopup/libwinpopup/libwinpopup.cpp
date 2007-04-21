@@ -22,7 +22,6 @@
 #include <QTextStream>
 
 // KDE Includes
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -162,19 +161,19 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	currentGroup = QString();
 
 	// for Samba 3
-	KProcIO *reader = new KProcIO;
-	*reader << smbClientBin << "-N" << "-E" << "-g" << "-L" << Host << "-";
+	K3ProcIO *reader = new K3ProcIO;
+	*reader << smbClientBin << "-N" << "-g" << "-L" << Host << "-";
 
-	connect(reader, SIGNAL(readReady(KProcIO *)), this, SLOT(slotReadProcessReady(KProcIO *)));
-	connect(reader, SIGNAL(processExited(KProcess *)), this, SLOT(slotReadProcessExited(KProcess *)));
+	connect(reader, SIGNAL(readReady(K3ProcIO *)), this, SLOT(slotReadProcessReady(K3ProcIO *)));
+	connect(reader, SIGNAL(processExited(K3Process *)), this, SLOT(slotReadProcessExited(K3Process *)));
 
-	if (!reader->start(KProcess::NotifyOnExit, true)) {
+	if (!reader->start(K3Process::NotifyOnExit, true)) {
 		// still to come
 		kDebug(14170) << "ReadProcess not started!" << endl;
 	}
 }
 
-void WinPopupLib::slotReadProcessReady(KProcIO *r)
+void WinPopupLib::slotReadProcessReady(K3ProcIO *r)
 {
 	QString tmpLine = QString();
 	QRegExp group("^Workgroup\\|(.*)\\|(.*)$"), host("^Server\\|(.*)\\|(.*)$"),
@@ -192,7 +191,7 @@ void WinPopupLib::slotReadProcessReady(KProcIO *r)
 	}
 }
 
-void WinPopupLib::slotReadProcessExited(KProcess *r)
+void WinPopupLib::slotReadProcessExited(K3Process *r)
 {
 	delete r;
 
@@ -272,7 +271,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 		if (tmpItem->isFile()) {
 			QFile messageFile(tmpItem->url().path());
 
-			if (messageFile.open(IO_ReadOnly)) {
+			if (messageFile.open(QIODevice::ReadOnly)) {
 				QTextStream stream(&messageFile);
 				QString sender;
 				QDateTime time;
@@ -328,13 +327,13 @@ void WinPopupLib::readMessages(const KFileItemList &items)
  */
 void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 {
-	KProcess *sender = new KProcess(this);
+	K3Process *sender = new K3Process(this);
 	*sender << smbClientBin << "-M" << Destination;
 	*sender << "-N" << "-";
 
-	connect(sender, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendProcessExited(KProcess *)));
+	connect(sender, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendProcessExited(K3Process *)));
 
-	if (sender->start(KProcess::NotifyOnExit, KProcess::Stdin)) {
+	if (sender->start(K3Process::NotifyOnExit, K3Process::Stdin)) {
 		sender->writeStdin(Body.toLocal8Bit(), Body.toLocal8Bit().length());
 		if (!sender->closeStdin()) {
 			delete sender;
@@ -344,7 +343,7 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	}
 }
 
-void WinPopupLib::slotSendProcessExited(KProcess *p)
+void WinPopupLib::slotSendProcessExited(K3Process *p)
 {
 //	emit sendJobDone(p->pid());
 	delete p;

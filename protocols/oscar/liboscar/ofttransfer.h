@@ -25,7 +25,7 @@ class OftTransfer : public Transfer
 {
 public:
 
-	OftTransfer( OFT data, Buffer* buffer = 0 );
+	explicit OftTransfer( OFT data, Buffer* buffer = 0 );
 	OftTransfer();
 	virtual ~OftTransfer();
 
@@ -42,6 +42,9 @@ public:
 	bool oftValid() const;
 	
 private:
+	//! Converts fileName from Unicode to QByteArray;
+	QByteArray encodeFileName( const QString &fileName, int &encodingType ) const;
+
 	OFT m_data; //much easier to keep it all in a struct
 
 	bool m_isOftValid;

@@ -70,22 +70,22 @@ WPUserInfo::~WPUserInfo()
 // if we would do this in libwinpopup. GF
 void WPUserInfo::startDetailsProcess(const QString &host)
 {
-	KGlobal::config()->setGroup("WinPopup");
-	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
+	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
-	KProcIO *details = new KProcIO;
+	K3ProcIO *details = new K3ProcIO;
 	*details << theSMBClientPath << "-N" << "-E" << "-g" << "-L" << host << "-";
 
-	connect(details, SIGNAL(readReady(KProcIO *)), this, SLOT(slotDetailsProcessReady(KProcIO *)));
-	connect(details, SIGNAL(processExited(KProcess *)), this, SLOT(slotDetailsProcessExited(KProcess *)));
+	connect(details, SIGNAL(readReady(K3ProcIO *)), this, SLOT(slotDetailsProcessReady(K3ProcIO *)));
+	connect(details, SIGNAL(processExited(K3Process *)), this, SLOT(slotDetailsProcessExited(K3Process *)));
 
-	if (!details->start(KProcess::NotifyOnExit, true)) {
+	if (!details->start(K3Process::NotifyOnExit, true)) {
 		slotDetailsProcessExited(details);
 		kDebug(14170) << "DetailsProcess not started!" << endl;
 	}
 }
 
-void WPUserInfo::slotDetailsProcessReady(KProcIO *d)
+void WPUserInfo::slotDetailsProcessReady(K3ProcIO *d)
 {
 	QString tmpLine = QString();
 	QRegExp info("^Domain=\\[(.*)\\]\\sOS=\\[(.*)\\]\\sServer=\\[(.*)\\]$"), host("^Server\\|(.*)\\|(.*)$");
@@ -102,7 +102,7 @@ void WPUserInfo::slotDetailsProcessReady(KProcIO *d)
 	}
 }
 
-void WPUserInfo::slotDetailsProcessExited(KProcess *d)
+void WPUserInfo::slotDetailsProcessExited(K3Process *d)
 {
 	delete d;
 

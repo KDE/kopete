@@ -113,9 +113,9 @@ public:
 	 * \param status the oscar status
 	 * \param message the status message or Xtraz status message
 	 * \param xtraz the Xtraz status
-	 * \param title the Xtraz status title
+	 * \param description the Xtraz status description
 	 */
-	void setStatus( Oscar::DWORD status, const QString &message = QString::null, int xtraz = -1, const QString &title = QString::null );
+	void setStatus( Oscar::DWORD status, const QString &message = QString::null, int xtraz = -1, const QString &description = QString::null );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -347,7 +347,7 @@ public:
 	void setVersion( const Oscar::ClientVersion* version );
 
 	/** start a filetransfer task */
-	void sendFile( const QString& contact, const QString& filePath, Kopete::Transfer *t );
+	void sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
@@ -375,8 +375,8 @@ public:
 	/** The current Xtraz status */
 	int statusXtraz() const;
 	
-	/** The current Xtraz status title */
-	QString statusTitle() const;
+	/** The current Xtraz status description */
+	QString statusDescription() const;
 	
 	/** The current status message (a.k.a. away message or Xtraz message) */
 	QString statusMessage() const;
@@ -451,7 +451,7 @@ signals:
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
-	void receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& desc );
+	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
 	void userReadsStatusMessage( const QString& contact );
 

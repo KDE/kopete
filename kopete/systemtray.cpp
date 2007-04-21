@@ -26,13 +26,11 @@
 #include <QPixmap>
 #include <QEvent>
 
-#include <kwin.h>
 #include <kaboutdata.h>
 #include <kactioncollection.h>
 #include <kaction.h>
 #include <kmenu.h>
 #include <klocale.h>	
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include "kopeteuiglobal.h"

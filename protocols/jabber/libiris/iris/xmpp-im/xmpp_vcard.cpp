@@ -107,13 +107,14 @@ QString image2type(const QByteArray &ba)
 	if ( format.toUpper() == "BMP" )
 		return "image/bmp";
 	if ( format.toUpper() == "XPM" )
-		return "image/x-xpm";
+		return "image/x-xpixmap";
 	if ( format.toUpper() == "SVG" )
 		return "image/svg+xml";
 	if ( format.toUpper() == "JPEG" )
 		return "image/jpeg";
 
-	qWarning(QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format.isNull() ? QString("UNKNOWN") : format).toAscii());
+	qWarning("WARNING! VCard::image2type: unknown format = %s", format.isNull() ? "UNKNOWN" :
+                format.toAscii());
 
 	return "image/unknown";
 }

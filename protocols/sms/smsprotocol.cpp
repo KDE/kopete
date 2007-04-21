@@ -35,8 +35,9 @@ SMSProtocol* SMSProtocol::s_protocol = 0L;
 SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
 : Kopete::Protocol( SMSProtocolFactory::componentData(), parent ),
 	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(),   i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
-	SMSConnecting( Kopete::OnlineStatus::Connecting,2, this, 3, QStringList(),    i18n( "Connecting" ) ),
-	SMSOffline( Kopete::OnlineStatus::Offline, 0, this, 2,  QStringList(),   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline )
+	SMSOffline( Kopete::OnlineStatus::Offline, 0, this, 2,  QStringList(),   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline ),
+	SMSConnecting( Kopete::OnlineStatus::Connecting,2, this, 3, QStringList(),    i18n( "Connecting" ) )
+	
 {
 	if (s_protocol)
 		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;

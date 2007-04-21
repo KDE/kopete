@@ -133,7 +133,7 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 		YMSGTransfer *yt = (YMSGTransfer *) outgoing;
 		QByteArray bytesOut = yt->serialize();
 		
-		//QTextStream dout( bytesOut, IO_WriteOnly );
+		//QTextStream dout( bytesOut, QIODevice::WriteOnly );
 		//dout.setEncoding( QTextStream::Latin1 );
 		//dout.setByteOrder( QDataStream::LittleEndian );
 		//dout << bytesOut;

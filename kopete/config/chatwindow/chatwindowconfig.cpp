@@ -30,7 +30,6 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 
-#include <kapplication.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kconfig.h> // for KNewStuff emoticon fetching
@@ -49,11 +48,16 @@
 #include <krun.h>
 #include <kfiledialog.h>
 
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 #include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
 #include <knewstuff/engine.h>         // "
 #include <knewstuff/entry.h>          // "
 #include <knewstuff/knewstuff.h>      // "
 #include <knewstuff/provider.h>       // "
+#endif
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -81,7 +85,10 @@ typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_chatwindowconfig, KopeteChatWindowConfigFactory( "kcm_kopete_chatwindowconfig" ) )
 
 
-
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 class KopeteStyleNewStuff : public KNewStuff
 {
 public:
@@ -132,6 +139,7 @@ public:
 		return false;
 	}
 };
+#endif
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args )
@@ -324,7 +332,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	KUrl styleToInstall = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
+	KUrl styleToInstall = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window style to install.") );
 
 	if( !styleToInstall.isEmpty() )
 	{
@@ -389,6 +397,10 @@ void ChatWindowConfig::slotDeleteChatStyle()
 
 void ChatWindowConfig::slotGetChatStyles()
 {
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 	// we need this because KNewStuffGeneric's install function isn't clever enough
 	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
 	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
@@ -402,6 +414,7 @@ void ChatWindowConfig::slotGetChatStyles()
 	delete downloadDialog;
 	delete kopeteNewStuff;
 	delete engine;
+#endif
 }
 
 // Reimplement Kopete::Contact and its abstract method
@@ -475,7 +488,7 @@ void ChatWindowConfig::createPreviewMessages()
 	msgCol.setBg( QColor( "LightSteelBlue" ) );
 	Kopete::Message msgInt( m_jack, m_myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
 	Kopete::Message msgAct( m_jack, m_myself, i18n( "performed an action" ), Kopete::Message::Inbound,
-				  Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction );
+				  Qt::PlainText, QString::null, Kopete::Message::TypeAction );
 	Kopete::Message msgHigh( m_jack, m_myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
 	// This is a UTF-8 string btw.

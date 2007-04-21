@@ -69,7 +69,7 @@ class FlapTransfer : public Transfer
 {
 public:
 
-	FlapTransfer( Buffer* buffer, Oscar::BYTE chan = 0, Oscar::WORD seq = 0, Oscar::WORD len = 0 );
+	explicit FlapTransfer( Buffer* buffer, Oscar::BYTE chan = 0, Oscar::WORD seq = 0, Oscar::WORD len = 0 );
 	FlapTransfer( FLAP f, Buffer* buffer );
 	FlapTransfer();
 	virtual ~FlapTransfer();
@@ -116,7 +116,7 @@ class SnacTransfer : public FlapTransfer
 public:
 
 	/*SnacTransfer();*/
-	SnacTransfer( Buffer*, Oscar::BYTE chan = 0, Oscar::WORD seq = 0, Oscar::WORD len = 0, Oscar::WORD service = 0,
+	explicit SnacTransfer( Buffer*, Oscar::BYTE chan = 0, Oscar::WORD seq = 0, Oscar::WORD len = 0, Oscar::WORD service = 0,
 		 Oscar::WORD subtype = 0, Oscar::WORD flags = 0, Oscar::DWORD reqId = 0 );
 	SnacTransfer( struct FLAP f, struct SNAC s, Buffer* buffer );
 	SnacTransfer();

@@ -36,6 +36,7 @@
 #include <kopetecontactlist.h>
 #include <kopetechatsessionmanager.h>
 #include <kopeteuiglobal.h>
+#include <avatarselectordialog.h>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
@@ -43,6 +44,7 @@
 #include <QtTapioca/Contact>
 #include <QtTapioca/UserContact>
 #include <QtTapioca/TextChannel>
+#include <QtTapioca/Avatar>
 #include <kconfiggroup.h>
 
 // Local includes
@@ -95,8 +97,13 @@ KActionMenu *TelepathyAccount::actionMenu()
 	changeAliasAction->setEnabled( isConnected() );
 	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
 
+	KAction *changeAvatarAction = new KAction( KIcon("user"), i18n("Change &Avatar..."), 0 );
+	changeAvatarAction->setEnabled( isConnected() );
+	QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
+
 	actionMenu->addSeparator();
 	actionMenu->addAction( changeAliasAction );
+	actionMenu->addAction( changeAvatarAction );
 
 	return actionMenu;
 }
@@ -435,6 +442,30 @@ void TelepathyAccount::fetchContactList()
 {
 	contactManager()->setContactList( d->currentConnection->contactList() );
 	contactManager()->loadContacts();
+}
+
+void TelepathyAccount::slotChangeAvatar()
+{
+	Kopete::UI::AvatarSelectorDialog *avatarDialog = new Kopete::UI::AvatarSelectorDialog( Kopete::UI::Global::mainWidget() );
+	QObject::connect(avatarDialog, SIGNAL(result(Kopete::UI::AvatarSelectorDialog*)), this, SLOT(avatarDialogFinished(Kopete::UI::AvatarSelectorDialog*)));
+	avatarDialog->show();
+}
+
+void TelepathyAccount::avatarDialogFinished(Kopete::UI::AvatarSelectorDialog *dialog)
+{
+	QString avatarPath = dialog->selectedAvatarPath();
+	QtTapioca::Avatar *avatar = new QtTapioca::Avatar( avatarPath );
+	if( d->currentConnection && d->currentConnection->userContact() )
+	{
+		if( d->currentConnection->userContact()->setAvatar( avatar ) )
+		{
+			myself()->setPhoto( avatarPath );
+		}
+		else
+		{
+			// TODO: Show error message
+		}
+	}
 }
 
 ConnectionManager *TelepathyAccount::Private::getConnectionManager()

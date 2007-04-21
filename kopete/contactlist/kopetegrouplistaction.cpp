@@ -24,7 +24,6 @@
 #include <klocale.h>
 #include <kicon.h>
 #include <kaction.h>
-#include <kwin.h>
 #include <kcmultidialog.h>
 
 #include "kopetecontactlist.h"

@@ -22,7 +22,6 @@
 #include <qtimer.h>
 
 #include <kaboutdata.h>
-#include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 #include <kglobal.h>

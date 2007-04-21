@@ -33,7 +33,7 @@ Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
 	  m_engine(engine), m_nick(nick),
 	  m_type(type), m_socket(0),
 	  m_initiated(false),
-	  m_file(0), m_fileName(QString::null), m_fileSize(0), m_fileSizeCur(0), m_fileSizeAck(0),
+	  m_file(0), m_fileName(QString()), m_fileSize(0), m_fileSizeCur(0), m_fileSizeAck(0),
 	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
 {
 }

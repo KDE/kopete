@@ -99,7 +99,7 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
                       clg.exactMatch(response)) {
 				if(!password(client).isNull()) {
                     // we are challenged, ok, respond
-					write(client, QString("response = %1\n").arg(make_response(clg.cap(1).stripWhiteSpace(), password(client))).latin1());
+					write(client, QString("response = %1\n").arg(make_response(clg.cap(1)..trimmed(), password(client))).latin1());
                     response = read(client)[0];
                     if(ver.exactMatch(response)) {
 						setServerID(client, response);

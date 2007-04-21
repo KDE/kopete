@@ -42,7 +42,7 @@ public:
 	 * @param stream the ClientStream (socket and core protocol encapsulation)
 	 * @param parent QObject parent
 	 */
-	Connection(ClientStream *stream, QObject *parent = 0);
+	explicit Connection(ClientStream *stream, QObject *parent = 0);
 	/**
 	 * d-tor
 	 */

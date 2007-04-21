@@ -55,7 +55,7 @@ public:
     Transport(QObject* parent);
     ~Transport();
 	/** @brief Get a transport bridge with the specified address, port, type and identifier. */
-    TransportBridge* getBridge(const QString& address, Q_UINT16 port, TransportBridgeType type, const QString& identifier);
+    TransportBridge* getBridge(const QString& address, quint16 port, TransportBridgeType type, const QString& identifier);
     /** @brief Sets the default transport bridge. */
 	void setDefaultBridge(MSNSwitchBoardSocket* mss);
 	
@@ -114,7 +114,7 @@ protected:
 	KNetwork::KInetSocketAddress mAddress;
 	bool mConnected;
 	MessageFormatter *mFormatter;
-	Q_UINT32 mLength;
+	quint32 mLength;
 	KNetwork::KClientSocketBase *mSocket;
 	bool mVerified;
 };
@@ -149,16 +149,16 @@ private:
 	class Buffer : public QByteArray
 	{
 	public:
-		Buffer(Q_UINT32 length = 0);
+		Buffer(quint32 length = 0);
 		~Buffer();
 		
 	public:
 		void write(const QByteArray& bytes);
-		QByteArray read(Q_UINT32 length);
+		QByteArray read(quint32 length);
 	};
 	
 	Buffer mBuffer;
-	Q_UINT32 mLength;
+	quint32 mLength;
 };
 
 

@@ -77,11 +77,12 @@ private:
 	Oscar::Presence presence();
 
 	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString::null );
-	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 
 private slots:
+	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
+	
 	void slotToggleInvisible();
 
 	void slotUserInfo();
@@ -89,6 +90,9 @@ private slots:
 	void closeUserInfoDialog();
 
 	void userReadsStatusMessage( const QString& contact );
+
+	void setXtrazStatus();
+	void editXtrazStatuses();
 
 private:
 	bool mWebAware;

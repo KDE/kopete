@@ -15,6 +15,7 @@
   * *************************************************************************
   */
 
+#include <QBuffer>
 #include <kdebug.h>
 #include <im.h>
 #include <xmpp.h>

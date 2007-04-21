@@ -17,7 +17,6 @@
 
 #include "ircconst.h"
 
-#include <kapplication.h>
 #include <kaboutdata.h>
 #include <klocale.h>
 

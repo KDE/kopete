@@ -97,7 +97,7 @@ public:
 	 * @param connector Connector to use.
 	 * @param parent QObject parent.
 	 */
-	Client(Connector *connector, QObject *parent = 0);
+	explicit Client(Connector *connector, QObject *parent = 0);
 	/**
 	 * d-tor.
 	 */

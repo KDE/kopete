@@ -31,14 +31,14 @@ class QPushButton;
 class QCheckBox;
 class K3ListView;
 class Q3ButtonGroup;
-class KProcIO;
+class K3ProcIO;
 
 class popupPublic : public KDialog
 {
         Q_OBJECT
 public:
 
-        popupPublic(QWidget *parent = 0, const QString& sfile=QString(), bool filemode=false,
+        explicit popupPublic(QWidget *parent = 0, const QString& sfile=QString(), bool filemode=false,
                     const KShortcut& goDefaultKey=KShortcut(QKeySequence(Qt::CTRL+Qt::Key_Home)));
 	~popupPublic();
         K3ListView *keysList;
@@ -55,7 +55,7 @@ private:
 
 private slots:
         void customOpts(const QString &);
-        void slotprocread(KProcIO *);
+        void slotprocread(K3ProcIO *);
         void slotpreselect();
         void refreshkeys();
         void refresh(bool state);

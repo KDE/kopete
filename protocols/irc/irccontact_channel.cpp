@@ -28,7 +28,6 @@
 #include <kdebug.h>
 #include <krun.h>
 #include <kinputdialog.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
@@ -372,7 +371,7 @@ void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 
 	Kopete::Message msg(account->myServer(), mMyself,
 		i18n("Topic set by %1 at %2").arg(nick).arg(
-			KGlobal::locale()->formatDateTime(time, true)
+			KGlobal::locale()->formatDateTime(time, KLocale::ShortDate)
 	), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);

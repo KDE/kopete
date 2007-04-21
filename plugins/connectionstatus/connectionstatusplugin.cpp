@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kprocess.h>
+#include <k3process.h>
 
 #include "kopeteaccountmanager.h"
 
@@ -63,16 +63,16 @@ void ConnectionStatusPlugin::slotCheckStatus()
 
 	m_buffer.clear();
 	
-	// Use KProcess to run netstat -rn. We'll then parse the output of
+	// Use K3Process to run netstat -rn. We'll then parse the output of
 	// netstat -rn in slotProcessStdout() to see if it mentions the
 	// default gateway. If so, we're connected, if not, we're offline
-	m_process = new KProcess;
+	m_process = new K3Process;
 	*m_process << "netstat" << "-r";
 
-	connect( m_process, SIGNAL( receivedStdout( KProcess *, char *, int ) ), this, SLOT( slotProcessStdout( KProcess *, char *, int ) ) );
-	connect( m_process, SIGNAL( processExited( KProcess * ) ), this, SLOT( slotProcessExited( KProcess * ) ) );
+	connect( m_process, SIGNAL( receivedStdout( K3Process *, char *, int ) ), this, SLOT( slotProcessStdout( K3Process *, char *, int ) ) );
+	connect( m_process, SIGNAL( processExited( K3Process * ) ), this, SLOT( slotProcessExited( K3Process * ) ) );
 
-	if ( !m_process->start( KProcess::NotifyOnExit, KProcess::Stdout ) )
+	if ( !m_process->start( K3Process::NotifyOnExit, K3Process::Stdout ) )
 	{
 		kWarning( 14301 ) << k_funcinfo << "Unable to start netstat process!" << endl;
 
@@ -81,7 +81,7 @@ void ConnectionStatusPlugin::slotCheckStatus()
 	}
 }
 
-void ConnectionStatusPlugin::slotProcessExited( KProcess *process )
+void ConnectionStatusPlugin::slotProcessExited( K3Process *process )
 {
 	kDebug( 14301 ) << m_buffer << endl;
 
@@ -94,7 +94,7 @@ void ConnectionStatusPlugin::slotProcessExited( KProcess *process )
 	}
 }
 
-void ConnectionStatusPlugin::slotProcessStdout( KProcess *, char *buffer, int buflen )
+void ConnectionStatusPlugin::slotProcessStdout( K3Process *, char *buffer, int buflen )
 {
 	// Look for a default gateway
 	//kDebug( 14301 ) << k_funcinfo << endl;

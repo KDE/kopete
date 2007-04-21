@@ -21,7 +21,6 @@
 
 #include <ctype.h>
 #include <kdebug.h>
-#include <kapplication.h>
 
 
 Buffer::Buffer()

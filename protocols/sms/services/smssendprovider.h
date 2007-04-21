@@ -28,7 +28,7 @@
 
 #include "smsaccount.h"
 
-class KProcess;
+class K3Process;
 namespace Kopete { class Account; }
 class SMSContact;
 
@@ -52,8 +52,8 @@ public:
 
 	int maxSize();
 private slots:
-	void slotReceivedOutput(KProcess*, char  *buffer, int  buflen);
-	void slotSendFinished(KProcess*);
+	void slotReceivedOutput(K3Process*, char  *buffer, int  buflen);
+	void slotSendFinished(K3Process*);
 private:
 	QStringList names;
 	QStringList descriptions;

@@ -226,7 +226,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( KIcon("add_user"), i18n( "&Add to Your Contact List" ), menu );
+		KAction *actionAddContact = new KAction( KIcon("add-user"), i18n( "&Add to Your Contact List" ), menu );
 		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT( slotAddContact() ) );
 
 		menu->addAction(actionAddContact);
@@ -339,7 +339,8 @@ void Contact::setMetaContact( MetaContact *m )
 			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
 				"`%3' will be empty afterwards. Do you want to delete this contact?",
 					contactId(), m ? m->displayName() : QString::null, old->displayName())
-				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) ) , QString::fromLatin1("delete_old_contact_when_move") );
+				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) )
+				, KStandardGuiItem::cancel(), QString::fromLatin1("delete_old_contact_when_move") );
 			if(result==KMessageBox::Cancel)
 				return;
 		}
@@ -482,7 +483,7 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
-		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
+		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete-user") ), KStandardGuiItem::cancel(),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{
@@ -875,6 +876,11 @@ QString Kopete::Contact::nickName() const
 		return nick;
 
 	return contactId();
+}
+
+void Kopete::Contact::setPhoto(const QString &photoPath)
+{
+	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
 }
 
 } //END namespace Kopete

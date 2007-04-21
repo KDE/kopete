@@ -48,7 +48,7 @@ class KOPETE_EXPORT AddressBookSelectorWidget : public QWidget, private Ui::Addr
 {
 	Q_OBJECT
 public:
-	AddressBookSelectorWidget( QWidget *parent = 0, const char *name  = 0 );
+	explicit AddressBookSelectorWidget( QWidget *parent = 0, const char *name  = 0 );
 	~AddressBookSelectorWidget();
 	KABC::Addressee addressee();
 	/**

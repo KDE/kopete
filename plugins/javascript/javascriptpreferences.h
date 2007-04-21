@@ -23,7 +23,7 @@ class JavaScriptPreferences
 	Q_OBJECT
 
 public:
-	JavaScriptPreferences( QWidget *parent = 0, const QStringList &args = QStringList());
+	explicit JavaScriptPreferences( QWidget *parent = 0, const QStringList &args = QStringList());
 	~JavaScriptPreferences();
 
 	virtual void save();
