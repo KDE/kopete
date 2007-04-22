@@ -60,9 +60,6 @@
 
 #include "sha1.h"
 
-#include "dispatcher.h"
-using P2P::Dispatcher;
-
 MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *parent )
 : MSNSocket( parent )
 {
@@ -71,9 +68,6 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 	m_emoticonTimer=0L;
 	m_chunks=0;
 	m_clientcapsSent=false;
-	m_dispatcher = 0l;
-	m_keepAlive = 0l;
-	m_keepAliveNb=0;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -223,16 +217,6 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 
 		// we need to know who's sending is the block...
 		m_msgHandle = data.section( ' ', 0, 0 );
-
-		/*//This is WRONG! the displayName is never updated on the switchboeardsocket
-		  //so we can't trust it.
-		  //that's why the official client does not uptade alaws the nickname immediately.
-		if(m_account->contacts()[ m_msgHandle ])
-		{
-			QString displayName=data.section( ' ', 1, 1 );
-			if(m_account->contacts()[ m_msgHandle ]->displayName() != displayName)
-				m_account->contacts()[ m_msgHandle ]->rename(displayName);
-		}*/
 
 		readBlock(len.toUInt());
 	}
@@ -418,7 +402,6 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	}
 	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
-		// TODO remove Displatcher.
 		KConfig *config = KGlobal::config();
 		config->setGroup( "MSN" );
 		if ( config->readBoolEntry( "useCustomEmoticons", true ) )
@@ -441,7 +424,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 					// we are receiving emoticons, so delay message display until received signal
 					m_recvIcons++;
-					PeerDispatcher()->requestDisplayIcon(m_msgHandle, msnobj);
+// 					PeerDispatcher()->requestDisplayIcon(m_msgHandle, msnobj);
+// 					emit
 				}
 				pos=rx.search(msg, pos+rx.matchedLength());
 			}
@@ -449,7 +433,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	}
 	else if( type== "application/x-msnmsgrp2p" )
 	{
-		PeerDispatcher()->slotReadMessage(m_msgHandle, bytes);
+		emit p2pData(m_msgHandle, bytes);
 	}
 	else if( type == "text/x-clientcaps" )
 	{
@@ -604,12 +588,12 @@ void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 //
 // Send a custum emoticon
 //
-int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString &filename)
+int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString &filename) /// @todo move to chatsession
 {
 	QString picObj;
 
 	//try to find it in the cache.
-	const QMap<QString, QString> objectList = PeerDispatcher()->objectList;
+	const QMap<QString, QString> objectList;// = PeerDispatcher()->objectList;
 	for (QMap<QString,QString>::ConstIterator it = objectList.begin(); it != objectList.end(); ++it )
 	{
 		if(it.data() == filename)
@@ -635,7 +619,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
-			PeerDispatcher()->objectList.insert(picObj, filename);
+// 			PeerDispatcher()->objectList.insert(picObj, filename);
 		}
 		else
 			return 0;
@@ -651,7 +635,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 }
 
 // this sends a short message to the server
-int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
+int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg ) /// @todo move to chatsession
 {
 	if ( onlineStatus() != Connected || m_chatMembers.empty())
 	{
@@ -671,14 +655,15 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	config->setGroup( "MSN" );
 	if ( config->readBoolEntry( "exportEmoticons", false ) )
 	{
-		QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
 
 		// Check the list for any custom emoticons
-		for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
-			if ( msg.plainBody().contains(itr.key()) )
+			for ( QStringList::const_iterator itr2 = itr.data().constBegin(); itr2 != itr.data().constEnd(); ++itr2 )
 			{
-				sendCustomEmoticon(itr.key(), itr.data());
+				if ( msg.plainBody().contains( *itr2 ) )
+					sendCustomEmoticon( *itr2, itr.key() );
 			}
 		}
 	}
@@ -689,7 +674,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		if(regex.search(msg.escapedBody()) != -1)
 		{
 			// FIXME why are we sending the images.. the contact should request them.
-			PeerDispatcher()->sendImage(regex.cap(1), m_msgHandle);
+// 			PeerDispatcher()->sendImage(regex.cap(1), m_msgHandle);
 			return -3;
 		}
 	}
@@ -822,16 +807,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		}
 		return -2;  //the message hasn't been sent.
 	}
-	
-	if(!m_keepAlive)
-	{
-		m_keepAliveNb=20;
-		m_keepAlive=new QTimer(this);
-		QObject::connect(m_keepAlive, SIGNAL(timeout()) , this , SLOT(slotKeepAliveTimer()));
-		m_keepAlive->start(50*1000);
-	}
 
-	
 	return sendCommand( "MSG", "A", true, (head+"\r\n"+message).utf8() );
 }
 
@@ -872,14 +848,6 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 			args = m_myHandle + " " + m_auth + " " + m_ID;
 		}
 		sendCommand( command, args );
-		
-		if(!m_keepAlive)
-		{
-			m_keepAliveNb=20;
-			m_keepAlive=new QTimer(this);
-			QObject::connect(m_keepAlive, SIGNAL(timeout()) , this , SLOT(slotKeepAliveTimer()));
-			m_keepAlive->start(50*1000);
-		}
 	}
 }
 
@@ -892,14 +860,6 @@ void MSNSwitchBoardSocket::userLeftChat(const QString& handle , const QString &r
 
 	if(m_chatMembers.isEmpty())
 		disconnect();
-}
-
-void MSNSwitchBoardSocket::requestDisplayPicture()
-{
-	MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
-	if(!contact) return;
-
-	PeerDispatcher()->requestDisplayIcon(m_msgHandle, contact->object());
 }
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
@@ -1072,67 +1032,6 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 		tmp = str.mid(pos1+3, pos2 - pos1 - 3);
 
 	return tmp;
-}
-
-Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
-{
-	if(!m_dispatcher)
-	{
-		// Create a new msnslp dispatcher to handle
-		// all peer to peer requests.
-		QStringList ip;
-		if(m_account->notifySocket())
-		{
-			ip << m_account->notifySocket()->localIP();
-			if(m_account->notifySocket()->localIP() != m_account->notifySocket()->getLocalIP())
-				ip << m_account->notifySocket()->getLocalIP();
-		}
-		m_dispatcher = new Dispatcher(this, m_account->accountId(),ip );
-
-// 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
-// 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
-		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, Q_INT64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, Q_INT64)));
-		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTempFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTempFile *, const QString&)));
-		QObject::connect(this, SIGNAL(msgAcknowledgement(unsigned int, bool)), m_dispatcher, SLOT(messageAcknowledged(unsigned int, bool)));
-		m_dispatcher->m_pictureUrl = m_account->pictureUrl();
-	}
-	return m_dispatcher;
-}
-
-void MSNSwitchBoardSocket::slotKeepAliveTimer( )
-{
-	/*
-	This is a workaround against the bug 113425
-	The problem:  the P2P::Webcam class is parent of us, and when we get deleted, it get deleted.
-			the correct solution would be to change that.
-	The second problem: after one minute of inactivity, the official client close the chat socket.
-	the workaround: we simulate the activity by sending small packet each 50 seconds
-	the nice side effect:  the "xxx has closed the chat" is now meaningfull
-	the bad side effect:  some switchboard connection may be maintained for really long time!
-	 */
-	
-	if ( onlineStatus() != Connected || m_chatMembers.empty())
-	{
-		//we are not yet in a chat.
-		//if we send that command now, we may get disconnected.
-		return;
-	}
-
-
-	QCString message = QString( "MIME-Version: 1.0\r\n"
-			"Content-Type: text/x-keepalive\r\n"
-			"\r\n" ).utf8();
-
-	// Length is appended by sendCommand()
-	QString args = "U";
-	sendCommand( "MSG", args, true, message );
-	
-	m_keepAliveNb--;
-	if(m_keepAliveNb <= 0)
-	{
-		m_keepAlive->deleteLater();
-		m_keepAlive=0L;
-	}
 }
 
 #include "msnswitchboardsocket.moc"

@@ -26,8 +26,10 @@ class MSNInvitation;
 class MSNContact;
 class KActionMenu;
 class QLabel;
+class KTempFile;
 
-
+struct AppDataReceivedEventArgs;
+namespace PeerToPeer { class Transport; class SwitchboardBridge; class SessionClient; }
 /**
  * @author Olivier Goffart
  */
@@ -50,8 +52,11 @@ public:
 	 * append an invitation in the invitation map, and send the first invitation message
 	 */
 	void initInvitation(MSNInvitation* invitation);
-	
+
 	virtual void inviteContact(const QString& );
+
+
+	Q_INT32 send(const QByteArray& bytes);
 
 public slots:
 	void slotCloseSession();
@@ -66,7 +71,7 @@ public slots:
 	 * the original slot is not virtual, but that's not a problem because it's a slot.
 	 */
 	virtual void receivedTypingMsg( const QString &, bool );
-	
+
 	void slotConnectionTimeout();
 
 private slots:
@@ -95,6 +100,11 @@ private slots:
 	void slotSendFile();
 
 	void slotNudgeReceived(const QString& handle);
+
+	void onP2pData(const QString& from, const QByteArray& bytes);
+	void onImageReceived(KTempFile* temporaryFile);
+	void onObjectReceived(const QString& object, KTempFile *temporaryFile);
+	void onRequestSwitchboard();
 
 private:
 
@@ -126,12 +136,18 @@ private:
 	QTimer *m_timeoutTimer;
 	uint m_connectionTry;
 
+	PeerToPeer::Transport *transport;
+	PeerToPeer::SwitchboardBridge *bridge;
+	PeerToPeer::SessionClient* client;
 
+	void traceBufferInfo(const QByteArray& data);
 signals:
 	/*
 	 * This signal is relayed to the protocol and after, to plugins
 	 */
 	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
+	void dataReceived(const QByteArray& data);
+	void onSend(const Q_INT32 id);
 };
 
 #endif

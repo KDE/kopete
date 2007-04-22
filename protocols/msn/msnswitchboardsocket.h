@@ -32,13 +32,7 @@
 namespace Kopete { class Message; }
 class MSNAccount;
 class QTimer;
-
-class MSNP2PDisplatcher;
 class KTempFile;
-
-namespace P2P { class Dispatcher; }
-
-#include "dispatcher.h"
 
 class KOPETE_EXPORT MSNSwitchBoardSocket : public MSNSocket
 {
@@ -52,7 +46,6 @@ public:
 	~MSNSwitchBoardSocket();
 
 private:
-	P2P::Dispatcher *m_dispatcher;
 	MSNAccount *m_account;
 
 	QString m_myHandle; // our handle
@@ -117,8 +110,6 @@ public:
 
 	int sendNudge();
 
-	P2P::Dispatcher* PeerDispatcher();
-
 public slots:
 	void slotCloseSession();
 	void slotInviteContact(const QString &handle);
@@ -128,14 +119,6 @@ public slots:
 	 */
 	void sendTypingMsg( bool isTyping );
 
-	void requestDisplayPicture();
-	
-	/** workaround Bug 113425 . see slotKeepAliveTimer() **/
-	QTimer *m_keepAlive;
-	int m_keepAliveNb;
-	
-
-
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );
@@ -143,9 +126,6 @@ private slots:
 	void slotEmoticonReceived( KTempFile *, const QString& );
 	void slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
 	void cleanQueue();
-	
-	/** workaround Bug 113425 . see comment inside the function **/
-	void slotKeepAliveTimer();
 
 signals:
 	void msgReceived( Kopete::Message &msg );
@@ -158,6 +138,7 @@ signals:
 	void switchBoardClosed(  );
 	void invitation(const QString& handle, const QString& msg);
 
+	void p2pData(const QString& from, const QByteArray& bytes);
 };
 
 #endif

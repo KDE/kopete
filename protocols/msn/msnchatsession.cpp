@@ -22,6 +22,7 @@
 #include <qtooltip.h>
 #include <qfile.h>
 #include <qiconset.h>
+#include <qbuffer.h>
 
 
 #include <kconfig.h>
@@ -30,11 +31,10 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <ktempfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
-
+#include <ktempfile.h>
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -47,6 +47,12 @@
 #include "msnfiletransfersocket.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
+#include "msnnotifysocket.h"
+
+#include "sessionclient.h"
+#include "switchboardbridge.h"
+#include "transport.h"
+#include <ctype.h>
 
 #include "config.h"
 
@@ -87,11 +93,11 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 #if MSN_WEBCAM
 	// Invite to receive webcam action
 	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive()), actionCollection(), "msnWebcamReceive" ) ;
-	
+
 	//Send webcam action
 	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend()), actionCollection(), "msnWebcamSend" ) ;
 #endif
-	
+
 	new KAction( i18n( "Send File" ),"attach", 0, this, SLOT( slotSendFile() ), actionCollection(), "msnSendFile" );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
@@ -99,7 +105,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 	if ( !c->object().isEmpty() )
 	{
-		
+
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L, "kde toolbar widget" );
 		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
@@ -119,8 +125,29 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		m_image = 0L;
 	}
 
+	transport = new PeerToPeer::Transport(this);
+	bridge = transport->createIndirectBridge();
+	// Connect the signal/slot
+// 	QObject::connect(bridge, SIGNAL(requestSwitchboard()), this,
+// 	SLOT(onRequestSwitchboard()));
+	bridge->connectTo(this);
+
+	QMap<QString, QVariant> properties;
+	properties["localIpAddress"] = static_cast<MSNAccount*>( myself()->account() )->notifySocket()->getLocalIP();
+	properties["externalIpAddress"] = static_cast<MSNAccount*>( myself()->account() )->notifySocket()->localIP();
+
+	Kopete::Contact *me = const_cast<Kopete::Contact*>(user);
+	Kopete::Contact *peer = const_cast<Kopete::Contact*>(members().getFirst());
+
+	client = new PeerToPeer::SessionClient(properties, me, peer, transport, this);
+	// Connect the signal/slot
+	QObject::connect(client, SIGNAL(imageReceived(KTempFile*)), this,
+	SLOT(onImageReceived(KTempFile*)));
+	QObject::connect(client, SIGNAL(objectReceived(const QString&, KTempFile*)), this,
+	SLOT(onObjectReceived(const QString&, KTempFile*)));
+
 	setXMLFile("msnchatui.rc");
-	
+
 	setMayInvite( true );
 }
 
@@ -147,7 +174,7 @@ void MSNChatSession::createChat( const QString &handle,
 	 * and the contact take much time to type his message
 	 m_newSession= !(ID.isEmpty());
 	*/
-	
+
 	if( m_chatService )
 	{
 		kdDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
@@ -187,27 +214,29 @@ void MSNChatSession::createChat( const QString &handle,
 	connect( m_chatService, SIGNAL( nudgeReceived(const QString&) ),
 		this, SLOT( slotNudgeReceived(const QString&) ) );
 	connect( m_chatService, SIGNAL( errorMessage(int, const QString& ) ), static_cast<MSNAccount *>(myself()->account()), SLOT( slotErrorMessageReceived(int, const QString& ) ) );
-	
+
 	if(!m_timeoutTimer)
 	{
 		m_timeoutTimer=new QTimer(this);
 		connect( m_timeoutTimer , SIGNAL(timeout()), this , SLOT(slotConnectionTimeout() ) );
 	}
 	m_timeoutTimer->start(20000,true);
+
+	QObject::connect(m_chatService, SIGNAL(p2pData(const QString&, const QByteArray&)), this, SLOT(onP2pData(const QString&, const QByteArray&)));
 }
 
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
 	delete m_timeoutTimer;
 	m_timeoutTimer=0L;
-	
+
 	if( !account()->contacts()[ handle ] )
 		account()->addContact( handle, QString::null, 0L, Kopete::Account::Temporary);
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
 	c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
-	
+
 	if(c->clientFlags() & MSNProtocol::MSNC4 )
 	{
 		m_actionNudge->setEnabled(true);
@@ -218,6 +247,11 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 		m_actionWebcamReceive->setEnabled(true);
 	}
 #endif
+
+	if (members().getFirst()->contactId() == handle)
+	{
+		bridge->connect();
+	}
 
 	addContact(c , IRO); // don't show notificaions when we join wesalef
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
@@ -244,9 +278,11 @@ void MSNChatSession::slotSwitchBoardClosed()
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
+	bridge->disconnect();
+
 	cleanMessageQueue( i18n("Connection closed") );
 
-	if(m_invitations.isEmpty())
+	if(m_invitations.isEmpty() && !client->isActive())
 		setCanBeDeleted( true );
 }
 
@@ -263,12 +299,12 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		}
 		else if( id== -2 ) //the message has not been sent
 		{
-			//FIXME:  tell the what window the message has been processed. but we havent't sent it 
+			//FIXME:  tell the what window the message has been processed. but we havent't sent it
 			messageSucceeded();  //that should stop the blonking icon.
 		}
 		else if( id == -3) //the message has been sent as an immge
 		{
-			appendMessage(message); 
+			appendMessage(message);
 			messageSucceeded();
 		}
 		else
@@ -312,7 +348,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 
 	m_actionInvite->popupMenu()->clear();
 
-	
+
 	QDictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
@@ -402,6 +438,10 @@ void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 	if ( !m_messagesSent.contains( id ) )
 	{
 		// This is maybe a ACK/NAK for a non-messaging message
+		if (ack)
+		{
+			emit onSend(id);
+		}
 		return;
 	}
 
@@ -412,7 +452,7 @@ void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 		Kopete::Message msg = Kopete::Message( m.to().first(), members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 		appendMessage( msg );
 		//stop the stupid animation
-		messageSucceeded();  
+		messageSucceeded();
 	}
 	else
 	{
@@ -490,11 +530,9 @@ void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
-	// TODO create a switchboard to send the file is one is not available.
-	if(m_chatService && members().getFirst())
-	{
-		m_chatService->PeerDispatcher()->sendFile(fileLocation, (Q_INT64)fileSize, members().getFirst()->contactId());
-	}
+	Q_UNUSED(fileSize);
+
+	client->sendFile(fileLocation);
 }
 
 void MSNChatSession::initInvitation(MSNInvitation* invitation)
@@ -519,13 +557,15 @@ void MSNChatSession::slotRequestPicture()
 	MSNContact *c = static_cast<MSNContact*>( mb.first() );
 	if(!c)
 	 return;
-	
+
 	if( !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 	{
 		if(m_chatService)
 		{
 			if( !c->object().isEmpty() )
-				m_chatService->requestDisplayPicture();
+			{
+				client->requestObject(c->object());
+			}
 		}
 		else if(myself()->onlineStatus().isDefinitelyOnline()  && myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 			startChatSession();
@@ -553,7 +593,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 			{
 				//We connected that in the constructor.  we don't need to keep this slot active.
 				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
-			
+
 				QPtrListIterator<KToolBar>  it=w->toolBarIterator() ;
 				KAction *imgAction=actionCollection()->action("msnDisplayPicture");
 				if(imgAction)  while(it)
@@ -580,9 +620,9 @@ void MSNChatSession::slotDisplayPictureChanged()
 				//slotDisplayPictureChanged(); //don't do that or we might end in a infinite loop
 			}
 			QToolTip::add( m_image, "<qt><img src=\"" + imgURL + "\"></qt>" );
-			
+
 		}
-		else 
+		else
 		{
 			KConfig *config = KGlobal::config();
 			config->setGroup( "MSN" );
@@ -636,7 +676,7 @@ void MSNChatSession::slotSendNudge()
 	if(m_chatService)
 	{
 		m_chatService->sendNudge();
-		Kopete::Message msg = Kopete::Message( myself(), members() , i18n ( "has sent a nudge" ),  Kopete::Message::Outbound, 
+		Kopete::Message msg = Kopete::Message( myself(), members() , i18n ( "has sent a nudge" ),  Kopete::Message::Outbound,
 											   Kopete::Message::PlainText, QString(), Kopete::Message::TypeAction );
 		appendMessage( msg );
 
@@ -649,7 +689,7 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 	Kopete::Contact *c = account()->contacts()[ handle ] ;
 	if(!c)
 		c=members().getFirst();
-	Kopete::Message msg = Kopete::Message(c, myself(), i18n ( "has sent you a nudge" ), Kopete::Message::Inbound, 
+	Kopete::Message msg = Kopete::Message(c, myself(), i18n ( "has sent you a nudge" ), Kopete::Message::Inbound,
 										  Kopete::Message::PlainText, QString(), Kopete::Message::TypeAction );
 	appendMessage( msg );
 	// Emit the nudge/buzz notification (configured by user).
@@ -660,10 +700,10 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 void MSNChatSession::slotWebcamReceive()
 {
 #if MSN_WEBCAM
-	if(m_chatService && members().getFirst())
-	{
-		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , true);
-	}
+// 	if(m_chatService && members().getFirst())
+// 	{
+// 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , true);
+// 	}
 #endif
 }
 
@@ -671,25 +711,25 @@ void MSNChatSession::slotWebcamSend()
 {
 #if MSN_WEBCAM
 	kdDebug(14140) << k_funcinfo << endl;
-	if(m_chatService && members().getFirst())
-	{
-		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
-	}
+// 	if(m_chatService && members().getFirst())
+// 	{
+// 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
+// 	}
 #endif
 }
 
 
 void MSNChatSession::slotSendFile()
-      {
-              QPtrList<Kopete::Contact>contacts = members();
-              static_cast<MSNContact *>(contacts.first())->sendFile();
-      }
+{
+		QPtrList<Kopete::Contact>contacts = members();
+		static_cast<MSNContact *>(contacts.first())->sendFile();
+}
 
 void MSNChatSession::startChatSession()
 {
 	QPtrList<Kopete::Contact> mb=members();
 	static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
-	
+
 	if(!m_timeoutTimer)
 	{
 		m_timeoutTimer=new QTimer(this);
@@ -714,7 +754,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 			m=m_messagesQueue.first();
 		else
 			m=m_messagesSent.begin().data();
-		
+
 		QString body=i18n("The following message has not been sent correctly  (%1): \n%2").arg(reason, m.plainBody());
 		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage(msg);
@@ -754,7 +794,7 @@ void MSNChatSession::slotConnectionTimeout()
 		m_chatService->deleteLater();
 		m_chatService=0L;
 	}
-	
+
 	if( m_connectionTry > 3 )
 	{
 		cleanMessageQueue( i18n("Impossible to establish the connection") );
@@ -768,6 +808,120 @@ void MSNChatSession::slotConnectionTimeout()
 
 
 
+
+void MSNChatSession::onP2pData(const QString& from, const QByteArray& bytes)
+{
+	Q_UNUSED(from);
+
+	uint index = 0;
+	// Determine the end position of the message header.
+	while(index < bytes.size())
+	{
+		if(bytes[index++] == '\n'){
+			if(bytes[index - 3] == '\n')
+				break;
+		}
+	}
+
+	// Retrieve the message header.
+	QString messageHeader = QCString(bytes.data(), index);
+	QRegExp regex("P2P-Dest: ([^\r\n]*)");
+	regex.search(messageHeader);
+	QString destination = regex.cap(1);
+
+	if (destination != myself()->contactId())
+	{
+		kdDebug(14140) <<k_funcinfo << "Got message which is not for me -- ignoring" <<endl;
+		return;
+	}
+
+// 	traceBufferInfo(bytes);
+
+	QByteArray buffer;
+	buffer.duplicate(index + bytes.data(), bytes.size() - index);
+	emit dataReceived(buffer);
+}
+
+void MSNChatSession::onImageReceived(KTempFile* temporaryFile)
+{
+	QString body = i18n("<img src=\"%1\" alt=\"Ink image\" />").arg(temporaryFile->name());
+	Kopete::Message message(members().getFirst(), myself(), body, Kopete::Message::Inbound, Kopete::Message::RichText);
+	temporaryFile->setAutoDelete(true);
+	appendMessage(message);
+}
+
+void MSNChatSession::onObjectReceived(const QString& object, KTempFile *temporaryFile)
+{
+	MSNContact *contact =static_cast<MSNContact*>(members().getFirst());
+	if(contact && contact->object() == object)
+	{
+		contact->setDisplayPicture(temporaryFile);
+	}
+}
+
+void MSNChatSession::onRequestSwitchboard()
+{
+	startChatSession();
+}
+
+Q_INT32 MSNChatSession::send(const QByteArray& bytes)
+{
+	QString h= QString("MIME-Version: 1.0\r\n"
+			"Content-Type: application/x-msnmsgrp2p\r\n"
+			"P2P-Dest: " + members().getFirst()->contactId() + "\r\n"
+			"\r\n");
+
+	QByteArray data;
+	QBuffer buffer(data);
+	buffer.open(IO_WriteOnly);
+	buffer.writeBlock(h.ascii(), h.length());
+	buffer.writeBlock(bytes.data(), bytes.size());
+
+// 	traceBufferInfo(data);
+
+	Q_INT32 tId = -1;
+	if (m_chatService)
+	{
+		tId = m_chatService->sendCommand("MSG", "D", true, data, true);
+	}
+
+	return tId;
+}
+
+void MSNChatSession::traceBufferInfo(const QByteArray& data)
+{
+	int i = 0;
+	QString output = "\n";
+	QString hex, ascii;
+
+	QByteArray::ConstIterator it;
+	for ( it = data.begin(); it != data.end(); ++it )
+	{
+		i++;
+
+		unsigned char c = static_cast<unsigned char>(*it);
+
+		if ( c < 0x10 )
+			hex.append("0");
+		hex.append(QString("%1 ").arg(c, 0, 16));
+
+		ascii.append(isprint(c) ? c : '.');
+
+		if (i == 16)
+		{
+			output += hex + "   " + ascii + "\n";
+			i=0;
+			hex=QString::null;
+			ascii=QString::null;
+		}
+	}
+
+	if(!hex.isEmpty())
+		output += hex.leftJustify(48, ' ') + "   " + ascii.leftJustify(16, ' ');
+	output.append('\n');
+
+	kdDebug() << "\n" + output << endl;
+}
 
 #include "msnchatsession.moc"
 

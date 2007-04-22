@@ -27,7 +27,6 @@
 #include "msnaccount.h"
 #include "msnsecureloginhandler.h"
 #include "msnchallengehandler.h"
-
 #include <qdatetime.h>
 #include <qregexp.h>
 #include <qdom.h>
@@ -177,7 +176,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			//TODO: try to don't rename user not in the list
 			//actualy, the bug is in MSNChatSession::slotUserJoined()
 			break;
-		}	
+		}
 		case 219:
 		{
 			msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." ).arg(handle);
@@ -252,7 +251,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			type = MSNSocket::ErrorServerError;
 			break;
 		}
-	
+
 		default:
 			MSNSocket::handleError( code, id );
 			break;
@@ -374,6 +373,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 				changePublicName(publicName,c->contactId());
 			QString obj=unescape(data.section( ' ', 4, 4 ));
+			if (obj == QString::fromLatin1("0"))
+			{
+				obj = QString::null;
+			}
 			c->setObject( obj );
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
 			c->setClientFlags(data.section( ' ', 3, 3 ).toUInt());
@@ -656,8 +659,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if ( cmd == "NOT" )
 	{
 		kdDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
-		readBlock( id );		
-	}	
+		readBlock( id );
+	}
 	else
 	{
 		// Let the base class handle the rest
@@ -697,7 +700,7 @@ void MSNNotifySocket::slotMSNAlertLink(unsigned int action)
 {
 	// index into our action list and pull out the URL that was clicked ..
 	KURL tempURLForLaunch(m_msnAlertURLs[action-1]);
-	
+
 	KRun* urlToRun = new KRun(tempURLForLaunch);
 }
 
@@ -734,7 +737,12 @@ bool MSNNotifySocket::setUseHttpMethod(bool useHttp)
 void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 {
 	QString msg = QString::fromUtf8(bytes, bytes.size());
+/*
+	MimeMessage message = MimeMessage::fromByteArray(bytes);
+	const QString body = QString::fromUtf8(message.body());
 
+	const QString contentType = message.getHeaderValue("Content-Type").section(";", 0, 0);
+*/
 	if(msg.contains("text/x-msmsgsinitialmdatanotification"))
 	{
 		//Mail-Data: <MD><E><I>301</I><IU>1</IU><O>4</O><OU>2</OU></E><Q><QTM>409600</QTM><QNM>204800</QNM></Q></MD>
