@@ -15,7 +15,8 @@
 #ifndef CLASS_P2P__PACKET_H
 #define CLASS_P2P__PACKET_H
 
-#include <qbuffer.h>
+#include <qiodevice.h>
+#include <qstring.h>
 
 namespace PeerToPeer
 {
@@ -31,14 +32,14 @@ class Packet
 		/** @brief Represents the types of packets that can be sent via a transport. */
 		enum Type
 		{
-			// Indicates a message.  Data should be buffered
+			// Indicates message data.  Data should be buffered
 			// until all data is received before delivering to the
-			// application.
-			MessageType = 0x00,
+			// session client.
+			MessageDataType = 0x00,
 			// Indicates that the last message was received.
 			AcknowledgeType = 0x02,
 			// Indicates that a timeout has occurred at the receiver
-			// due to the absence of a response from the sender.
+			// due to the absence of a response ACK from the sender.
 			TimeoutType = 0x04,
 			// Indicates that an error has occurred.
 			FaultType = 0x08,
@@ -48,14 +49,14 @@ class Packet
 			ObjectDataType = 0x20,
 			// Indicates that the sender cancelled the data exchange.
 			CancelType = 0x40,
-			// Used to ungracefully close communication.
+			// Used to ungracefully end a data exchange.
 			ResetType = 0x80,
-			// Indicates a direct connection nonce handshake.
-			HandshakeType = 0x100,
+			// Indicates a direct connection handshake nonce.
+			HandshakeNonceType = 0x100,
 			// Indicates PUSHed file data.  Data should be delivered
 			// to the application upon arrival and not buffered until
 			// all data is received.
-			FileDataType = 0x1000030
+			FileDataType = 0x1000000 | 0x30
 		};
 
 		/** @brief Represents the content of a packet header. */
@@ -85,28 +86,25 @@ class Packet
 		};
 
 	public:
+		/** @brief Creates a new instance of the class Packet. */
 		Packet();
-		Packet(const Packet& other);
-		Packet & operator=(const Packet& other);
+		/** @brief Finalizer. */
 		~Packet();
 
 		/** @brief Gets the packer header. */
 		Header & header() const;
-		/** @brief Gets the packet payload data. */
-		const QBuffer & payload() const;
-		QBuffer & payload();
-		const Q_UINT32 priority() const;
-		void setPriority(const Q_UINT32 priority) const;
+		/** @brief Gets the packet payload. */
+		QIODevice* payload() const;
+		/** @brief Sets the packet payload. */
+		void setPayload(QIODevice* payload);
 		/** @brief Gets a value that indicates the size of the packet. */
 		const Q_UINT32 size() const;
-		bool operator==(const Packet& other);
+		/** @brief Returns a string representation of the packet. */
 		const QString toString() const;
 
 	private:
 		class PacketPrivate;
 		PacketPrivate *d;
-
-		friend class Transport;
 
 }; // Packet
 }

@@ -42,14 +42,14 @@ class SessionNotifier : public QObject
 		const Type type() const;
 
 	signals:
-		void dataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
-		void messageAcknowledged(const Q_INT32 identifier);
-		void messageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo);
+		void dataReceived(const QByteArray& data, bool lastChunk);
+		void messageAcknowledged(const Q_INT32 id);
+		void messageReceived(const QByteArray& message, const Q_INT32 id, const Q_INT32 correlationId);
 
 	private:
-		void fireDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
-		void fireMessageAcknowledged(const Q_INT32 identifier);
-		void fireMessageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo);
+		void fireDataReceived(const QByteArray& data, bool lastChunk);
+		void fireMessageAcknowledged(const Q_INT32 id);
+		void fireMessageReceived(const QByteArray& message, const Q_INT32 id, const Q_INT32 correlationId);
 
 	private:
 		class SessionNotifierPrivate;

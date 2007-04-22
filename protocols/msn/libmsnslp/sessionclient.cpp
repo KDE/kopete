@@ -19,12 +19,13 @@
 #include "sessionnotifier.h"
 #include "transaction.h"
 #include "transport.h"
-#include "msncontact.h"
+#include "kopetecontact.h"
 
 #include <qdom.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qhostaddress.h>
+#include <qmetaobject.h>
 #include <qptrlist.h>
 #include <qregexp.h>
 #include <qtextstream.h>
@@ -49,9 +50,12 @@ class SessionClient::SessionClientPrivate
 		QMap<QUuid, Dialog*> dialogs;
 		QString externalIpAddress;
 		QString internalIpAddress;
+		Kopete::Contact *me;
 		QString myUri;
 		Q_INT32 netId;
+		Kopete::Contact *peer;
 		QString peerUri;
+		Q_UINT32 nextSessionId;
 		QMap<Q_INT32, Session*> sessions;
 		QString supportedBridgeTypes;
 		QMap<QUuid, Transaction*> transactions;
@@ -60,15 +64,17 @@ class SessionClient::SessionClientPrivate
 		QString version;
 };
 
-SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Transport* transport, QObject *parent) : QObject(parent), d(new SessionClientPrivate())
+SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Kopete::Contact *me, Kopete::Contact *peer, Transport* transport, QObject *parent) : QObject(parent), d(new SessionClientPrivate())
 {
 	// Configure the client using the supplied properties
 	d->behindFirewall = false;
 	d->externalIpAddress = properties["externalIpAddress"].toString();
 	d->internalIpAddress = properties["internalIpAddress"].toString();
-	d->myUri = properties["myUri"].toString();
 
-	d->peerUri = properties["peerUri"].toString();
+	d->me = me;
+	d->myUri = me->contactId();
+	d->peer = peer;
+	d->peerUri = peer->contactId();
 	// Set the transport bridge types supported by the client.
 	d->supportedBridgeTypes = QString::fromLatin1("TCPv1");
 	d->uPnpNAT = true;//properties["uPnpNAT"].toBool();
@@ -91,6 +97,7 @@ SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Transpo
 
 	// Set the transport for the client.
 	d->transport = transport;
+	d->nextSessionId = (Q_INT32)(((double)(rand() * 1.0/0x7FFFFFFF))*(0xA235 - 0x2DCC)) + 0x2DCC;
 	// Initialize the client.
 	initialize();
 }
@@ -125,6 +132,11 @@ bool SessionClient::isActive() const
 {
 	kdDebug() << k_funcinfo << "Active dialogs, " << d->dialogs.size() << endl;
 	return (d->dialogs.size() != 0);
+}
+
+Q_UINT32 SessionClient::nextSessionId() const
+{
+	return (++d->nextSessionId);
 }
 
 const QString SessionClient::buildSessionDescriptionBody(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context)
@@ -176,7 +188,7 @@ void SessionClient::createSessionInternal(const QUuid& uuid, const Q_UINT32 sess
 
 void SessionClient::requestObject(const QString& object)
 {
-	MsnObjectSession *session = new MsnObjectSession(object, (rand() % 0xEC25C), Session::Incoming, this);
+	MsnObjectSession *session = new MsnObjectSession(object, nextSessionId(), Session::Incoming, this);
 	// Connect the signal/slot
 	QObject::connect(session, SIGNAL(objectReceived(const QString&, KTempFile*)), this,
 	SIGNAL(objectReceived(const QString&, KTempFile*)));
@@ -187,8 +199,8 @@ void SessionClient::requestObject(const QString& object)
 	SLOT(onReceive(const QByteArray&, const Q_INT32, const Q_INT32)));
 	QObject::connect(notifier, SIGNAL(messageAcknowledged(const Q_INT32)), session,
 	SLOT(onSend(const Q_INT32)));
-	QObject::connect(notifier, SIGNAL(dataReceived(const QByteArray&, const Q_INT32, bool)), session,
- 	SLOT(onDataReceived(const QByteArray&, const Q_INT32, bool)));
+	QObject::connect(notifier, SIGNAL(dataReceived(const QByteArray&, bool)), session,
+ 	SLOT(onDataReceived(const QByteArray&, bool)));
 
 	// Register the notifier for the session
 	d->transport->registerPort(notifier->session(), notifier);
@@ -196,17 +208,23 @@ void SessionClient::requestObject(const QString& object)
 	// Add the session to the list of session.
 	d->sessions.insert(session->id(), session);
 
+	// Get the EUF GUID that uniquely identifies the session type.
+	QUuid eufguid = QUuid(MsnObjectSession::staticMetaObject()->classInfo("EUF-GUID"));
 	// Create the context field of the session description.
 	const QString context = QString::fromUtf8(KCodecs::base64Encode(object.utf8()));
 
 	// Create the session to request the msn object.
-	createSessionInternal(MsnObjectSession::uuid(), session->id(), 12, context);
+	createSessionInternal(eufguid, session->id(), 12, context);
 }
 
 void SessionClient::sendFile(const QString& path)
 {
 	kdDebug() << k_funcinfo << path << endl;
-	FileTransferSession *session = new FileTransferSession((rand() % 0xEC473), Session::Outgoing, this);
+	FileTransferSession *session = new FileTransferSession(nextSessionId(), Session::Outgoing, d->me, this);
+	// Connect the signal/slot
+	QObject::connect(session, SIGNAL(sendFile(QFile*)), this,
+	SLOT(onSessionSendFile(QFile*)));
+
 	QFile *file = new QFile(path);
 	session->setDataStore(file);
 
@@ -232,7 +250,7 @@ void SessionClient::sendFile(const QString& path)
 	// Write client version to the stream.
 	stream << (Q_UINT32)3;
 	// Write the file size to the stream.
-	stream << (Q_UINT64)QFileInfo(*file).size();
+	stream << (Q_UINT64)file->size();
 	// TODO support file preview. For now disable file preview.
 	// Write the file type to the stream.
 	stream << (Q_UINT32)1;
@@ -249,10 +267,13 @@ void SessionClient::sendFile(const QString& path)
 	// Write file exchange type to the stream.
 	stream << (Q_UINT32)0xFFFFFFFF;
 
+	// Get the EUF GUID that uniquely identifies the session type.
+	QUuid eufguid = QUuid(FileTransferSession::staticMetaObject()->classInfo("EUF-GUID"));
 	// Create the context field of the session description.
 	const QString context = QString::fromUtf8(KCodecs::base64Encode(info));
+
 	// Create the session to request the file transfer.
-	createSessionInternal(FileTransferSession::uuid(), session->id(), 2, context);
+	createSessionInternal(eufguid, session->id(), 2, context);
 }
 
 //END
@@ -276,8 +297,10 @@ QUuid SessionClient::getTransactionBranchFrom(const SlpMessage& message)
 
 void SessionClient::onReceived(const QByteArray& content, const Q_INT32 id, const Q_INT32 correlationId)
 {
+	kdDebug() << k_funcinfo << "enter" << endl;
+
 	const QString message = QString::fromUtf8(content);
-	kdDebug() << "============= RECEIVED message, " << message << endl;
+	kdDebug() << k_funcinfo << message << endl;
 
 	// Try to parse the session layer protocol (slp)
 	// message from the raw data received.
@@ -307,7 +330,7 @@ void SessionClient::onReceived(const QByteArray& content, const Q_INT32 id, cons
 			if (request.contentLength() > 0)
 			{
 				const QString requestBody = message.section("\r\n\r\n", 1, 1, QString::SectionIncludeTrailingSep);
-				// Set the request body content.
+				// Set the request body content.kdDebug() << k_funcinfo << "enter" << endl;
 				request.setBody(requestBody);
 			}
 
@@ -362,6 +385,8 @@ void SessionClient::onReceived(const QByteArray& content, const Q_INT32 id, cons
 		kdDebug() << k_funcinfo << "Unrecognized message, id = " << id
 		<< " -- ignoring" << endl;
 	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 void SessionClient::onSend(const Q_INT32 id)
@@ -382,6 +407,9 @@ void SessionClient::onSend(const Q_INT32 id)
 
 			if (transaction->request().method() == QString::fromLatin1("BYE"))
 			{
+				// Finish the transaction.
+				endTransaction(transaction);
+
 				// Try to retrieve a terminating dialog associated with the BYE transaction.
 				Dialog *dialog = getDialogByTransactionId(transaction->request().id());
 				if (dialog != 0l && dialog->state() == Dialog::Terminating)
@@ -389,8 +417,6 @@ void SessionClient::onSend(const Q_INT32 id)
 					// If found, terminate the dialog.
 					dialog->terminate();
 				}
-				// Finish the transaction.
-				endTransaction(transaction);
 			}
 
 			isAcknowledgeForRequest = true;
@@ -418,9 +444,9 @@ void SessionClient::onSend(const Q_INT32 id)
 
 void SessionClient::addDialogToCallMap(Dialog *dialog)
 {
-	const QUuid callId = dialog->callId();
-	if (dialog != 0l && !d->dialogs.contains(callId))
+	if (dialog != 0l && !d->dialogs.contains(dialog->callId()))
 	{
+		const QUuid callId = dialog->callId();
 		kdDebug() << k_funcinfo << "Adding dialog to call map. call id = "
 		<< callId.toString().upper() << endl;
 
@@ -537,19 +563,23 @@ void SessionClient::onDialogTerminate()
 		QObject::disconnect(dialog, 0, this, 0);
 
 		const Q_UINT32 sessionId = dialog->session;
-		// Unregister the notifier for the session.
-		d->transport->unregisterPort(sessionId);
 
 		Session *session = d->sessions[sessionId];
 		// End the session if not already terminated.
-		if (session != 0l && session->state() != Session::Terminated)
+		if (session != 0l)
 		{
-			// End the session.
-			session->end();
+			if (session->state() != Session::Terminated)
+			{
+				// End the session.
+				session->end();
+			}
+
 			// Disconnect from the signal/slot
 			QObject::disconnect(session, 0, this, 0);
 			// Remove the session from the list of sessions.
 			d->sessions.remove(sessionId);
+			// Unregister the notifier for the session.
+			d->transport->unregisterPort(sessionId);
 
 			// Delete the session as its lifetime has ended.
 			session->deleteLater();
@@ -558,6 +588,19 @@ void SessionClient::onDialogTerminate()
 
 		// Remove the dialog from the call map.
 		removeDialogFromCallMap(dialog->callId());
+
+		// Terminate all pending transactions.
+		QPtrListIterator<Transaction> it(dialog->transactions());
+		Transaction *transaction;
+		while ((transaction = it.current()) != 0l)
+		{
+			if (transaction->isLocal() && transaction->state() != Transaction::Terminated)
+			{
+				endTransaction(transaction);
+			}
+			++it;
+		}
+
 		// Delete the dialog as its lifetime has ended.
 		dialog->deleteLater();
 		dialog = 0l;
@@ -580,29 +623,38 @@ void SessionClient::removeDialogFromCallMap(const QUuid& callId)
 
 void SessionClient::beginTransaction(Transaction *transaction)
 {
-	kdDebug() << "Transaction BEGIN, branch = " << transaction->branch().toString().upper() << endl;
+	if (transaction != 0l && !d->transactions.contains(transaction->branch()))
+	{
+		kdDebug() << "Transaction BEGIN, branch = " << transaction->branch().toString().upper() << endl;
 
-	// Add the transaction to the list of active transactions.
-	d->transactions.insert(transaction->branch(), transaction);
-	// Connect the signal/slot
-	QObject::connect(transaction, SIGNAL(timeout()), this,
-	SLOT(onTransactionTimeout()));
-	// Begin the transaction.
-	transaction->begin();
+		// Add the transaction to the list of active transactions.
+		d->transactions.insert(transaction->branch(), transaction);
+		// Connect the signal/slot
+		QObject::connect(transaction, SIGNAL(timeout()), this,
+		SLOT(onTransactionTimeout()));
+		// Begin the transaction.
+		transaction->begin();
+	}
 }
 
 void SessionClient::endTransaction(Transaction *transaction)
 {
-	kdDebug() << "Transaction END, branch = " << transaction->branch().toString().upper() << endl;
+	if (transaction != 0l)
+	{
+		const QUuid& branch = transaction->branch();
+		if (d->transactions.contains(branch))
+		{
+			kdDebug() << "Transaction END, branch = " << branch.toString().upper() << endl;
 
-	// End the transaction.
-	transaction->end();
-	// Disconnect the signal/slot
-	QObject::disconnect(transaction, SIGNAL(timeout()), this,
-	SLOT(onTransactionTimeout()));
-	// Remove the transaction from the list of active transactions.
-	d->transactions.remove(transaction->branch());
-
+			// Disconnect the signal/slot
+			QObject::disconnect(transaction, SIGNAL(timeout()), this,
+			SLOT(onTransactionTimeout()));
+			// End the transaction.
+			transaction->end();
+			// Remove the transaction from the list of active transactions.
+			d->transactions.remove(branch);
+		}
+	}
 }
 
 void SessionClient::onTransactionTimeout()
@@ -611,6 +663,9 @@ void SessionClient::onTransactionTimeout()
 	if (transaction != 0l)
 	{
 		kdDebug() << k_funcinfo << "Transaction TIMED OUT, branch = " << transaction->branch().toString().upper() << endl;
+		// End the transaction.
+		endTransaction(transaction);
+
 		// Try to retrieve the dialog associated with the transaction.
 		Dialog *dialog = getDialogByTransactionId(transaction->request().id());
 		if (dialog != 0l && (dialog->state() == Dialog::Pending || dialog->state() == Dialog::Terminating))
@@ -618,9 +673,6 @@ void SessionClient::onTransactionTimeout()
 			// Terminate the dialog.
 			dialog->terminate();
 		}
-
-		// End the transaction.
-		endTransaction(transaction);
 	}
 }
 
@@ -726,7 +778,7 @@ void SessionClient::closeSessionInternal(const Q_UINT32 sessionId)
 	request.setBody(requestBody);
 	//Set the request context information.
 	request.setId(0);
-	request.setCorrelationId(0);
+	request.setCorrelationId(rand() % 0xCF54);
 
 	// Create a new transaction for the request.
 	Transaction *transaction = new Transaction(request, true);
@@ -754,7 +806,7 @@ void SessionClient::requestDirectConnection(const Q_UINT32 sessionId)
 	request.setBody(requestBody);
 	//Set the request context information.
 	request.setId(0);
-	request.setCorrelationId(0);
+	request.setCorrelationId(rand() % 0xCF60);
 
 	// Create a new transaction for the request.
 	Transaction *transaction = new Transaction(request, true);
@@ -1020,7 +1072,7 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 			// Send the 500 Internal Error response message.
 			send(response, 0);
 
-			// Wait 15 seconds for an acknowledge before termining the dialog.
+			// Wait 5 seconds for an acknowledge before termining the dialog.
 			// If a timeout occurs, terminate the dialog anyway.
 			dialog->terminate(5000);
 			return;
@@ -1296,7 +1348,7 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 			send(response, 0, 0);
 
 			// Try to create a transport for the session to send/receive its data more efficiently.
-			createTransportFor(externalIpAddresses, externalPort, nonce, sessionId);
+			createDirectConnection(bridge, externalIpAddresses, externalPort, nonce, sessionId);
 			// TODO Update the session state information.
 		}
 		else
@@ -1501,7 +1553,7 @@ Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uui
 	Session *session = 0l;
 	SessionNotifier *notifier = 0l;
 
-	if (uuid == MsnObjectSession::uuid())
+	if (uuid == QUuid(MsnObjectSession::staticMetaObject()->classInfo("EUF-GUID")))
 	{
 		session = new MsnObjectSession(sessionId, Session::Outgoing, this);
 		notifier = new SessionNotifier(session->id(), SessionNotifier::Object, this);
@@ -1512,13 +1564,13 @@ Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uui
 		SLOT(onSend(const Q_INT32)));
 	}
 	else
-	if (uuid == FileTransferSession::uuid())
+	if (uuid == QUuid(FileTransferSession::staticMetaObject()->classInfo("EUF-GUID")))
 	{
-		session = new FileTransferSession(sessionId, Session::Incoming, this);
+		session = new FileTransferSession(sessionId, Session::Incoming, d->peer, this);
 		notifier = new SessionNotifier(session->id(), SessionNotifier::FileTransfer, this);
 		// Connect the signal/slot
-		QObject::connect(notifier, SIGNAL(dataReceived(const QByteArray&, const Q_INT32, bool)), session,
- 		SLOT(onDataReceived(const QByteArray&, const Q_INT32, bool)));
+		QObject::connect(notifier, SIGNAL(dataReceived(const QByteArray&, bool)), session,
+ 		SLOT(onDataReceived(const QByteArray&, bool)));
 	}
 
 	if (session != 0 && notifier != 0l)
@@ -1648,7 +1700,7 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 		parameters.insert("Nonce", regex.cap(1));
 	}
 
-	regex = QRegExp("IPv4External-Addrs: ([^\r\n]*)");
+	regex = QRegExp("IP[Vv]4External-Addrs: ([^\r\n]*)");
 	// Check if the external ipv4 addresses field is valid.
 	if (regex.search(messageBody) == -1)
 	{
@@ -1659,7 +1711,7 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 		parameters.insert("IPv4External-Addrs", regex.cap(1));
 	}
 
-	regex = QRegExp("IPv4External-Port: (\\d+)");
+	regex = QRegExp("IP[Vv]4External-Port: (\\d+)");
 	// Check if the external ipv4 port field is valid.
 	if (regex.search(messageBody) == -1)
 	{
@@ -1670,7 +1722,7 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 		parameters.insert("IPv4External-Port", regex.cap(1));
 	}
 
-	regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]*)");
+	regex = QRegExp("IP[Vv]4Internal-Addrs: ([^\r\n]*)");
 	// Check if the internal ipv4 addresses field is valid.
 	if (regex.search(messageBody) == -1)
 	{
@@ -1681,7 +1733,7 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 		parameters.insert("IPv4Internal-Addrs", regex.cap(1));
 	}
 
-	regex = QRegExp("IPv4Internal-Port: (\\d+)");
+	regex = QRegExp("IP[Vv]4Internal-Port: (\\d+)");
 	// Check if the internal ipv4 port field is valid.
 	if (regex.search(messageBody) == -1)
 	{
@@ -1795,7 +1847,7 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 			if (isListening)
 			{
 				// Try to create a transport for the session to send/receive its data more efficiently.
-				createTransportFor(externalIpAddresses, externalPort, nonce, sessionId);
+				createDirectConnection(bridge, externalIpAddresses, externalPort, nonce, sessionId);
 
 				// TODO Update the session state information.
 			}
@@ -2020,6 +2072,15 @@ void SessionClient::onSessionEnd()
 	}
 }
 
+void SessionClient::onSessionSendFile(QFile *file)
+{
+	const Session *session = dynamic_cast<const Session*>(sender());
+	if (session != 0l)
+	{
+		d->transport->sendFile(file, session->id());
+	}
+}
+
 void SessionClient::onSessionSendData(const QByteArray& bytes)
 {
 	const Session *session = dynamic_cast<const Session*>(sender());
@@ -2041,7 +2102,7 @@ void SessionClient::onSessionSendMessage(const QByteArray& bytes)
 		Dialog *dialog = getDialogBySessionId(session->id());
 		if (dialog != 0l)
 		{
-			const Q_UINT32 id = d->transport->send(bytes, session->id(), (rand() % 0xCF6C), 0);
+			const Q_UINT32 id = d->transport->send(bytes, session->id(), (rand() % 0xCF6C));
 			dialog->setTransactionId(id);
 		}
 	}
@@ -2051,6 +2112,10 @@ void SessionClient::onSessionSendMessage(const QByteArray& bytes)
 
 void SessionClient::send(SlpMessage& message, const Q_UINT32 destination, const Q_UINT32 priority)
 {
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	Q_UNUSED(priority);
+
 	QByteArray bytes;
 	QTextStream stream(bytes, IO_WriteOnly);
 
@@ -2079,10 +2144,10 @@ void SessionClient::send(SlpMessage& message, const Q_UINT32 destination, const 
 		stream << message.body() << '\0';
 	}
 
-	kdDebug() << "============= SENDING message, " << QString(bytes) << endl;
+	kdDebug() << k_funcinfo << QString(bytes) << endl;
 
 	// Send the message data bytes via the transport layer.
-	const Q_UINT32 id = d->transport->send(bytes, destination, message.correlationId(), priority);
+	const Q_UINT32 id = d->transport->send(bytes, destination, message.correlationId());
 	message.setId(id);
 
 	Dialog *dialog = getDialogByCallId(QUuid(message.headers()["Call-ID"].toString()));
@@ -2090,16 +2155,18 @@ void SessionClient::send(SlpMessage& message, const Q_UINT32 destination, const 
 	{
 		dialog->setTransactionId(id);
 	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 //BEGIN Transport Handling Functions
 
-void SessionClient::createTransportFor(const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId)
+void SessionClient::createDirectConnection(const QString& type, const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
 	kdDebug() << k_funcinfo << "Session " << sessionId << endl;
 
-	d->transport->createBridge(ipAddresses, port.toInt(), nonce);
+	d->transport->createDirectBridge(type, ipAddresses, port.toInt(), nonce);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
@@ -2159,7 +2226,7 @@ void SessionClient::onImageReceived(const QByteArray& content, const Q_INT32 id,
 
 	if (message.contentType() == QString::fromLatin1("image/gif"))
 	{
-		// Handle the gif image.
+		// Handle the gif image received.
 		onGifImageReceived(message);
 	}
 }
@@ -2169,7 +2236,7 @@ void SessionClient::sendImage(const QString& path)
 	Q_UNUSED(path);
 
 	// TODO Support the sending of gif images.  Currently,
-	// Kopete has not means of capturing handwriting/ink.
+	// Kopete has no means of capturing handwriting/ink.
 }
 
 //END

@@ -31,14 +31,13 @@ namespace PeerToPeer
 class MsnObjectSession : public Session
 {
 	Q_OBJECT
-
-	public :
-		static QUuid uuid();
+	Q_CLASSINFO("EUF-GUID", "A4268EEC-FEC5-49E5-95C3-F126696BDBF6")
+	Q_CLASSINFO("APP-ID",	"12")
 
 	public :
 		/** @brief Creates a new instance of the MsnObjectSession class. */
-		MsnObjectSession(const Q_UINT32 identifier, Direction direction, QObject *parent);
-		MsnObjectSession(const QString& s, const Q_UINT32 identifier, Direction direction, QObject *parent);
+		MsnObjectSession(const Q_UINT32 id, Direction direction, QObject *parent);
+		MsnObjectSession(const QString& s, const Q_UINT32 id, Direction direction, QObject *parent);
 		virtual ~MsnObjectSession();
 
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context);
@@ -52,9 +51,9 @@ class MsnObjectSession : public Session
 		void objectReceived(const QString& object, KTempFile *temporaryFile);
 
 	public slots:
-		void onDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
-		void onReceive(const QByteArray& bytes, const Q_INT32 identifier, const Q_INT32 relatesTo);
-		void onSend(const Q_INT32 identifier);
+		void onDataReceived(const QByteArray& data, bool lastChunk);
+		void onReceive(const QByteArray& bytes, const Q_INT32 id, const Q_INT32 correlationId);
+		void onSend(const Q_INT32 id);
 
 	private:
 		class MsnObjectSessionPrivate;

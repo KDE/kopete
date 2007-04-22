@@ -23,6 +23,8 @@
 #include "slpresponse.h"
 
 class KTempFile;
+namespace Kopete { class Contact; }
+class QFile;
 
 namespace PeerToPeer
 {
@@ -45,12 +47,12 @@ class SessionClient : public QObject
 
 	public :
 		/** @brief Creates a new instance of the SessionClient class. */
-		SessionClient(const QMap<QString, QVariant> & properties, Transport* transport, QObject *parent);
+		SessionClient(const QMap<QString, QVariant> & properties, Kopete::Contact* me, Kopete::Contact *peer, Transport* transport, QObject *parent);
 		~SessionClient();
 
 		/** @brief Returns a value indicating whether the client is active. */
 		bool isActive() const;
-		/** @brief Creates a session to request the specifief msn object. */
+		/** @brief Creates a session to request the specified msn object. */
 		void requestObject(const QString& object);
 		/** @brief Creates a session to send the specified file. */
 		void sendFile(const QString& path);
@@ -89,6 +91,7 @@ class SessionClient : public QObject
 
 		void onSessionSendMessage(const QByteArray& bytes);
 		void onSessionSendData(const QByteArray& bytes);
+		void onSessionSendFile(QFile *file);
 
 	private:
 		/** @brief Accepts a session invitation. */
@@ -112,7 +115,7 @@ class SessionClient : public QObject
 		/** @brief Creates a locally initiated session. */
 		void createSessionInternal(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context);
 		/** @brief Tries to create a direct transport for the supplied session using the specified information. */
-		void createTransportFor(const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId);
+		void createDirectConnection(const QString& type, const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId);
 		/** @brief Declines a session invitation. */
 		void declineSession(const Q_UINT32 sessionId);
 		/** @brief Terminates a session. */
@@ -131,6 +134,7 @@ class SessionClient : public QObject
 		bool isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const SlpRequest& request);
 		/** @brief Initializes the session client. */
 		void initialize();
+
 		bool parseSessionCloseBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
 		bool parseSessionRequestBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
 		bool parseDirectConnectionDescription(const QString& responseBody, QMap<QString, QVariant> & parameters);
@@ -179,6 +183,8 @@ class SessionClient : public QObject
          *         connection.
 		 */
 		bool supportsDirectConnectivity(const QString& connectionType, bool behindFirewall, bool uPnpNAT, bool sameNetwork);
+		/** @brief Gets the next ,unique session id. */
+		Q_UINT32 nextSessionId() const;
 
 	private:
 		class SessionClientPrivate;

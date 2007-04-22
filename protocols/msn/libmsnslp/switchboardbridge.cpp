@@ -13,8 +13,8 @@
 */
 
 #include "switchboardbridge.h"
+#include "packet.h"
 #include "msnchatsession.h"
-#include "binarypacketformatter.h"
 #include <qmap.h>
 #include <qpair.h>
 #include <qtimer.h>
@@ -26,223 +26,187 @@ namespace PeerToPeer
 
 class SwitchboardBridge::SwitchboardBridgePrivate
 {
-	public:
-		SwitchboardBridgePrivate() : identifier(0), sbnetwork(0l), maxPendingPackets(5), maxSendBufferSize(1202), sending(false),sent(0), switchboardRequestNecessary(false) {}
+	public :
+		SwitchboardBridgePrivate() : maxSendBufferSize(1202), switchboard(0l) {}
 
-		Q_UINT32 identifier;
-		MSNChatSession*	sbnetwork;
-		Q_UINT32 maxPendingPackets;
+		Q_UINT32 bridgeId;
+		QMap<Q_INT32, Q_UINT32> cookies;
 		Q_UINT32 maxSendBufferSize;
-		QValueList< QPair<Packet, Q_UINT32> > pendingPackets;
-		bool sending;
-		Q_UINT32 sent;
-		QMap<Q_INT32, Packet> sentPackets;
-		bool switchboardRequestNecessary;
+		QValueList< QPair<Q_UINT32, QByteArray> > pendingChunks;
+		MSNChatSession *switchboard;
 };
 
-SwitchboardBridge::SwitchboardBridge(MSNChatSession* sbnetwork, QObject *parent) : TransportBridge(parent), d(new SwitchboardBridgePrivate())
+SwitchboardBridge::SwitchboardBridge(const Q_UINT32 bridgeId, QObject* parent) : TransportBridge(parent), d(new SwitchboardBridgePrivate())
 {
-	d->sbnetwork = sbnetwork;
-	// Connect the signal/slot
-	QObject::connect(d->sbnetwork, SIGNAL(dataReceived(const QByteArray&)), this,
-	SLOT(onDataReceived(const QByteArray&)));
-	// Connect the signal/slot
-	QObject::connect(d->sbnetwork, SIGNAL(onSend(const Q_INT32)), this,
-	SLOT(onSend(const Q_INT32)));
+	d->bridgeId = bridgeId;
 }
 
 SwitchboardBridge::~SwitchboardBridge()
 {
 	delete d;
-	d = 0l;
 }
 
-const Q_UINT32 SwitchboardBridge::id() const
+Q_UINT32 SwitchboardBridge::id() const
 {
-	return d->identifier;
+	return d->bridgeId;
 }
 
-bool SwitchboardBridge::isReadyToSend() const
-{
-	return ((state() == TransportBridge::Connected) && (d->sent < d->maxPendingPackets));
-}
-
-const Q_UINT32 SwitchboardBridge::maxSendBufferSize()
+Q_UINT32 SwitchboardBridge::maxSendBufferSize() const
 {
 	return d->maxSendBufferSize;
 }
 
-void SwitchboardBridge::onConnect()
+void SwitchboardBridge::connectTo(MSNChatSession *switchboard)
 {
-	setState(TransportBridge::Connected);
-	kdDebug() << k_funcinfo << endl;
-	emit connected();
+	kdDebug() << k_funcinfo << "enter" << endl;
 
-	if (d->pendingPackets.size() > 0 && !d->sending)
+	d->switchboard = switchboard;
+	// Connect the signal/slot
+	QObject::connect(switchboard, SIGNAL(dataReceived(const QByteArray&)), this,
+	SLOT(onDataReceived(const QByteArray&)));
+	QObject::connect(switchboard, SIGNAL(onSend(const Q_INT32)), this,
+	SLOT(onSend(const Q_INT32)));
+
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void SwitchboardBridge::send(const QByteArray& bytes, const Q_UINT32 packetId)
+{
+	kdDebug() << k_funcinfo << "About to send datachunk of size " << bytes.size() << " bytes" << endl;
+
+	if (TransportBridge::state() == TransportBridge::Connected)
 	{
-		QTimer::singleShot(0, this, SLOT(sendPendingPackets()));
+		// If the bridge is connected, try to send the data.
+		Q_UINT32 cookie;
+		if (!trySendViaSwitchboard(bytes, cookie))
+		{
+			// If the network is not available, queue the data.
+			d->pendingChunks.append(qMakePair(packetId, bytes));
+		}
+		else
+		{
+			// Otherwise, add a cookie for the sent data.
+			kdDebug() << k_funcinfo << "datachunk has id of " << cookie
+			<< " (cookie= " << packetId << ")" << endl;
+
+			d->cookies.insert(cookie, packetId);
+		}
 	}
 	else
 	{
-		emit readyToSend();
+		// If the bridge is not connected, queue the data.
+		d->pendingChunks.append(qMakePair(packetId, bytes));
 	}
-
-	d->switchboardRequestNecessary = false;
 }
 
-void SwitchboardBridge::onDisconnect()
+bool SwitchboardBridge::trySendViaSwitchboard(const QByteArray& bytes, Q_UINT32& cookie)
 {
-	setState(TransportBridge::Disconnected);
-	kdDebug() << k_funcinfo << endl;
-	d->switchboardRequestNecessary = true;
-	emit disconnected();
-}
+	cookie = 0;
 
-void SwitchboardBridge::onDataReceived(const QByteArray& data)
-{
-	if (data.size() > 0)
+	if (d->switchboard == 0l)
 	{
-		if (data.size() > (sizeof(Packet::Header) + maxSendBufferSize() + 4))
-		{
-			// If the tunnelled message length exceeds the max send buffer
-			// size, stop any further processing of the received message.
-			kdDebug() << k_funcinfo << "Got data whose size exceeds max send buffer size="
-			<< maxSendBufferSize() << " bytes -- ignoring it" << endl;
-			return;
-		}
-
-		// Retrieve the tunnelled peer to peer transport data
-		// and fire the data received event.
-		//
-		QDataStream stream(data, IO_ReadOnly);
-		Packet packet = BinaryPacketFormatter::deserialize(&stream);
-		Q_INT32 appId = 0;
-		stream.setByteOrder(QDataStream::BigEndian);
-		stream >> appId;
-
-		emit packetReceived(packet);
+		kdDebug() << k_funcinfo << "Switchboard not connected -- returning" << endl;
+		return false;
 	}
+
+	// Send the data via the switchboard.
+	const Q_INT32 tId = d->switchboard->send(bytes);
+	if (tId >= 0)
+	{
+		// If the transaction id is valid, set
+		// set the cookie for the sent data.
+		cookie = tId;
+	}
+
+	return (tId >= 0);
+}
+
+//BEGIN Switchboard Bridge Event Handling Functions
+
+void SwitchboardBridge::onDataReceived(const QByteArray& bytes)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	if (bytes.size() > (sizeof(Packet::Header) + d->maxSendBufferSize + 4))
+	{
+		kdDebug() << k_funcinfo << "Got data whose size exceeds mtu size="
+			<< d->maxSendBufferSize << " bytes -- ignoring it." << endl;
+		return;
+	}
+
+	emit dataReceived(bytes);
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 void SwitchboardBridge::onSend(const Q_INT32 id)
 {
-	if (d->sentPackets.contains(id))
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	if (d->cookies.contains(id))
 	{
-		Packet packet = d->sentPackets[id];
-		emit sentPacket(packet);
+		Q_UINT32 packetId = d->cookies[id];
+		kdDebug() << k_funcinfo << "cookie= " << packetId << endl;
 
-		d->sentPackets.remove(id);
-		d->sent -= 1;
-
-		if (d->pendingPackets.size() == 0)
-		{
-			emit readyToSend();
-		}
+		emit dataSent(packetId);
+		d->cookies.remove(id);
 	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void SwitchboardBridge::send(const Packet& packet, const Q_UINT32 appId)
+//END
+
+void SwitchboardBridge::onSendPendingPackets()
 {
-	kdDebug() << k_funcinfo << "About to send datachunk of size " << packet.size() << " bytes" << endl;
-
-	if (d->pendingPackets.size() > 0 || state() != TransportBridge::Connected)
+	QValueList< QPair<Q_UINT32, QByteArray> >::Iterator i = d->pendingChunks.begin();
+	while (i != d->pendingChunks.end())
 	{
-		d->pendingPackets.append(qMakePair(packet, appId));
-	}
-	else
-	{
-		QByteArray bytes(packet.size() + 4);
-		QDataStream stream(bytes, IO_WriteOnly);
-		// Serialize the packet into the memory stream.
-		BinaryPacketFormatter::serialize(packet, &stream);
-		stream.setByteOrder(QDataStream::BigEndian);
-		stream << appId;
+		Q_UINT32 packetId = (*i).first;
+		QByteArray bytes = (*i).second;
 
-		QByteArray datachunk;
-		datachunk.duplicate(bytes.data(), bytes.size());
-		// Send the serialized bytes via the switchboard network.
-		const Q_INT32 id = sendViaNetwork(datachunk);
-		if (id == -1)
+		Q_UINT32 cookie;
+		if (!trySendViaSwitchboard(bytes, cookie))
 		{
-			d->pendingPackets.append(qMakePair(packet, appId));
-		}
-		else
-		{
-			d->sentPackets.insert(id, packet);
-			d->sent += 1;
-		}
-	}
-}
-
-bool SwitchboardBridge::requestSwitchboardIfNecessary()
-{
-	return false;
-}
-
-const Q_INT32 SwitchboardBridge::sendViaNetwork(const QByteArray& bytes)
-{
-	Q_INT32 tId = -1;
-	if (state() == TransportBridge::Connected)
-	{
-		tId = d->sbnetwork->send(bytes);
-	}
-	else
-	{
-		if (d->switchboardRequestNecessary || state() == TransportBridge::Disconnected)
-		{
-			kdDebug() << k_funcinfo << "Requesting switchboard -- bridge is disconnected" << endl;
-			emit requestSwitchboard();
-			d->switchboardRequestNecessary = false;
-		}
-	}
-
-	return tId;
-}
-
-void SwitchboardBridge::sendPendingPackets()
-{
-	if (d->pendingPackets.size() == 0)
-	{
-		return;
-	}
-
-	d->sending = true;
-
-	QValueList< QPair<Packet, Q_UINT32> >::Iterator i = d->pendingPackets.begin();
-	while (i != d->pendingPackets.end())
-	{
-		Packet packet = (*i).first;
-		Q_INT32 appId = (*i).second;
-
-		QByteArray bytes(packet.size() + 4);
-		QDataStream stream(bytes, IO_WriteOnly);
-		// Serialize the packet into the memory stream.
-		BinaryPacketFormatter::serialize(packet, &stream);
-		stream.setByteOrder(QDataStream::BigEndian);
-		stream << appId;
-
-		QByteArray datachunk;
-		datachunk.duplicate(bytes.data(), bytes.size());
-		// Send the serialized bytes via the switchboard network.
-		const Q_INT32 id = sendViaNetwork(datachunk);
-		if (id == -1)
-		{
+			// If the switchboard is not available, stop.
 			break;
 		}
 		else
 		{
-			d->sentPackets.insert(id, packet);
-			d->pendingPackets.remove(i);
-			d->sent += 1;
+			// Otherwise, add a cookie for the sent data.
+			d->cookies.insert(cookie, packetId);
+			d->pendingChunks.remove(i);
 		}
+	}
+}
 
-		i++;
+void SwitchboardBridge::onConnect()
+{
+	if (state() == TransportBridge::Connected)
+	{
+		kdDebug() << k_funcinfo << "Already connected" << endl;
+		return;
 	}
 
-	if (d->pendingPackets.size() == 0)
+	setState(TransportBridge::Connected);
+	kdDebug() << k_funcinfo << endl;
+	// Raise the connected event signal.
+	emit connected();
+
+	if (d->pendingChunks.size() > 0)
 	{
-		d->sending = false;
-		emit readyToSend();
+		QTimer::singleShot(0, this, SLOT(onSendPendingPackets()));
+	}
+}
+
+void SwitchboardBridge::onDisconnect()
+{
+	if (state() == TransportBridge::Connected)
+	{
+		setState(TransportBridge::Disconnected);
+		kdDebug() << k_funcinfo << endl;
+		// Raise the disconnected event signal.
+		emit disconnected();
 	}
 }
 

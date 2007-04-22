@@ -17,8 +17,10 @@
 
 #include "session.h"
 #include <quuid.h>
+#include <kopetetransfermanager.h>
 
 class QFile;
+namespace Kopete { class Contact; }
 
 namespace PeerToPeer
 {
@@ -31,13 +33,12 @@ namespace PeerToPeer
 class FileTransferSession : public Session
 {
 	Q_OBJECT
-
-	public :
-		static QUuid uuid();
+	Q_CLASSINFO("EUF-GUID", "5D3E02AB-6190-11D3-BBBB-00C04F795683")
+	Q_CLASSINFO("APP-ID",	"2")
 
 	public :
 		/** @brief Creates a new instance of the FileTransferSession class. */
-		FileTransferSession(const Q_UINT32 identifier, Direction direction, QObject *parent);
+		FileTransferSession(const Q_UINT32 id, Direction direction, Kopete::Contact *contact, QObject *parent);
 		virtual ~FileTransferSession();
 		/** @brief Handles a file transfer session invitation. */
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context);
@@ -55,10 +56,15 @@ class FileTransferSession : public Session
 		void dataReadProgress(const Q_UINT32 done, const Q_INT64 total);
 		/** @brief Indicates the current progress of a file upload. */
 		void dataSendProgress(const Q_UINT32 done, const Q_INT64 total);
+		void sendFile(QFile *file);
 
 	public slots:
-		void onDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk);
+		void onDataReceived(const QByteArray& data, bool lastChunk);
 		void onSend(const Q_INT32 identifier);
+
+	private slots:
+		void sessionAccepted(Kopete::Transfer *transfer, const QString& file);
+		void sessionDeclined(const Kopete::FileTransferInfo& info);
 
 	private:
 		class FileTransferSessionPrivate;

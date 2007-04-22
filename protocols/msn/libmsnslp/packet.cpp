@@ -13,7 +13,8 @@
 */
 
 #include "packet.h"
-#include <qtextstream.h>
+#include <qbuffer.h>
+#include <kdebug.h>
 
 namespace PeerToPeer
 {
@@ -33,39 +34,24 @@ class Packet::PacketPrivate
 			header.lpsent = 0;
 			header.lpsize = 0l;
 
-			payload.open(IO_ReadWrite);
-			priority = 1;
+			payload = new QBuffer();
+			payload->open(IO_ReadWrite);
+			ownsPayload = true;
 		}
 
 		Packet::Header header;
-		QBuffer payload;
-		Q_UINT32 priority;
+		bool ownsPayload;
+		QIODevice* payload;
 };
 
 Packet::Packet() : d(new PacketPrivate())
 {
 }
 
-Packet::Packet(const Packet& other) : d(new PacketPrivate())
-{
-	*this = other;
-}
-
-Packet& Packet::operator=(const Packet& other)
-{
-	d->header = other.header();
-	if (other.header().window > 0)
-	{
-		d->payload.writeBlock(other.payload().buffer());
-	}
-	d->priority = other.priority();
-	return *this;
-}
-
 Packet::~Packet()
 {
+	if (d->ownsPayload) delete d->payload;
 	delete d;
-	d = 0l;
 }
 
 Packet::Header & Packet::header() const
@@ -73,61 +59,77 @@ Packet::Header & Packet::header() const
 	return d->header;
 }
 
-const QBuffer & Packet::payload() const
+QIODevice* Packet::payload() const
 {
 	return d->payload;
 }
 
-QBuffer & Packet::payload()
+void Packet::setPayload(QIODevice* payload)
 {
-	return d->payload;
-}
+	if (payload == 0l)
+	{
+		kdDebug() << k_funcinfo << "Parameter \'payload\' cannot be null."  << endl;
+		return;
+	}
 
-const Q_UINT32 Packet::priority() const
-{
-	return d->priority;
-}
+	if (d->ownsPayload)
+	{
+		delete d->payload;
+		d->ownsPayload = false;
+	}
 
-void Packet::setPriority(const Q_UINT32 priority) const
-{
-	d->priority = priority;
+	d->payload = payload;
 }
 
 const Q_UINT32 Packet::size() const
 {
-	return (sizeof(d->header) + d->payload.size());
-}
-
-bool Packet::operator==(const Packet& other)
-{
-	return (d->header.destination == other.header().destination &&
-			d->header.identifier == other.header().identifier &&
-			d->header.offset == other.header().offset &&
-			d->header.window == other.header().window &&
-			d->header.payloadSize == other.header().payloadSize &&
-			d->header.type == other.header().type &&
-			d->header.lprcvd == other.header().lprcvd &&
-			d->header.lpsent == other.header().lpsent &&
-			d->header.lpsize == other.header().lpsize &&
-			d->priority == other.priority());
+	return (sizeof(d->header) + d->payload->size());
 }
 
 const QString Packet::toString() const
 {
-	QString string;
-	QTextStream(string, IO_WriteOnly)
-	<< "\n"
-	<< "[destination]   " << QString::number(d->header.destination) << endl
-	<< "[identifier]    " << QString::number(d->header.identifier) << endl
-	<< "[offset]        " << QString::number(d->header.offset) << endl
-	<< "[window]        " << QString::number(d->header.window) << endl
-	<< "[payload size]  " << QString::number(d->header.payloadSize) << endl
-	<< "[flag]          " << QString("0x%1 (%2)").arg(QString::number(d->header.type, 16).rightJustify(8, '0')).arg(d->header.type) << endl
-	<< "[lprcvd]        " << QString::number(d->header.lprcvd) << endl
-	<< "[lpsent]        " << QString::number(d->header.lpsent) << endl
-	<< "[lpsize]        " << QString::number(d->header.lpsize) << endl;
+	QString s = "\n";
+	Q_UINT32 i = 0;
+	QString hex;
 
-	return string;
+	const Packet::Header & h = d->header;
+	unsigned char *bytes = (unsigned char*)(&h);
+	for (Q_INT32 j=0; j < 48; ++j)
+	{
+		++i;
+		unsigned char c = bytes[j];
+		if (c < 0x10) hex.append("0");
+		hex.append(QString("%1 ").arg(c, 0, 16));
+
+		if (i == 16)
+		{
+			s += hex;
+
+			if (j == 15)
+			{
+				s += QString("    Destination: %1, Seq: %2, Offset: %3\n").arg(h.destination)
+						.arg(h.identifier).arg((Q_UINT32)h.offset);
+			}
+
+			if (j == 31)
+			{
+				s += QString("    Chunk: %1..%2 of %3,").arg((Q_UINT32)h.offset)
+						.arg((Q_UINT32)h.offset+h.payloadSize).arg((Q_UINT32)h.window);
+				s += QString(" Flag: 0x%1 (%2)\n").arg(QString::number(h.type, 16).rightJustify(8, '0')).arg(h.type);
+			}
+
+			if (j == 47)
+			{
+				s += QString("    Last Rcvd: %1, Last Sent: %2, last Len: %3\n").arg(h.lprcvd)
+						.arg(h.lpsent).arg((Q_UINT32)h.lpsize);
+			}
+
+			hex = QString::null;
+			i = 0;
+		}
+	}
+
+	return s;
 }
 
 }

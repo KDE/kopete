@@ -43,16 +43,6 @@ void TransportBridge::disconnect()
 	onDisconnect();
 }
 
-void TransportBridge::onConnect()
-{
-	emit connected();
-}
-
-void TransportBridge::onDisconnect()
-{
-	emit disconnected();
-}
-
 const TransportBridge::TransportBridgeState & TransportBridge::state() const
 {
 	return d->state;

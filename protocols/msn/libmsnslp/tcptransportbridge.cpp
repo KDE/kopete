@@ -39,18 +39,18 @@ class TcpTransportBridge::TcpTransportBridgePrivate
 		Q_UINT32 bytesToRead;
 		Q_UINT32 length;
 		KServerSocket *endpoint;
-		Q_UINT32 identifier;
+		Q_UINT32 bridgeId;
 		Q_UINT32 maxSendBufferSize;
 		Q_INT16 port;
 		KStreamSocket *socket;
 		Q_INT32 socketId;
 };
 
-TcpTransportBridge::TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, QObject *parent) : TransportBridge(parent), d(new TcpTransportBridgePrivate())
+TcpTransportBridge::TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const Q_UINT32 bridgeId, QObject *parent) : DirectTransportBridge(addresses, port, parent), d(new TcpTransportBridgePrivate())
 {
 	d->addresses = addresses;
 	d->port = port;
-	d->identifier = ((Q_INT32)(((double)(rand() * 1.0/0x7FFFFFFF))*(500 - 15)) + 15);
+	d->bridgeId = bridgeId;
 }
 
 TcpTransportBridge::~TcpTransportBridge()
@@ -58,31 +58,33 @@ TcpTransportBridge::~TcpTransportBridge()
 	delete d;
 }
 
-const Q_UINT32 TcpTransportBridge::id() const
+Q_UINT32 TcpTransportBridge::id() const
 {
-	return d->identifier;
+	return d->bridgeId;
 }
 
-const Q_UINT32 TcpTransportBridge::maxSendBufferSize()
+Q_UINT32 TcpTransportBridge::maxSendBufferSize() const
 {
 	return d->maxSendBufferSize;
 }
 
-void TcpTransportBridge::send(const Packet& packet)
+void TcpTransportBridge::send(const QByteArray& datachunk, const Q_UINT32 id)
 {
-	QByteArray bytes(4 + packet.size());
+
+	QByteArray bytes(4 + datachunk.size());
 	QDataStream stream(bytes, IO_WriteOnly);
 	stream.setByteOrder(QDataStream::LittleEndian);
 	// Write the length preamble to the stream.
-	stream << packet.size();
-	// Serialize the packet into the memory stream.
-	BinaryPacketFormatter::serialize(packet, &stream);
+	stream << datachunk.size();
+	stream.writeRawBytes(datachunk.data(), datachunk.size());
 
 	kdDebug() << k_funcinfo << "About to send datachunk of size "
-		<< packet.size() << " bytes" << endl;
+		<< datachunk.size() << " bytes" << endl;
 
 	Q_UINT32 bytesWritten = d->socket->writeBlock(bytes.data(), bytes.size());
 	kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socketId << endl;
+
+	emit dataSent(id);
 }
 
 void TcpTransportBridge::onConnect()
@@ -100,7 +102,7 @@ void TcpTransportBridge::onConnect()
 		d->socket = new KStreamSocket(d->addresses[0], QString::number(d->port), this);
 		// Set the socket to non blocking.
 		d->socket->setBlocking(false);
-		// Enable asynchronous read opeartions.
+		// Enable asynchronous read operations.
 		d->socket->enableRead(true);
 
 		// Connect the signal/slot
@@ -169,9 +171,8 @@ bool TcpTransportBridge::listen()
 	QObject::connect(d->endpoint, SIGNAL(readyAccept()), this, SLOT(onSocketAccept()));
 	QObject::connect(d->endpoint, SIGNAL(gotError(int)), this, SLOT(onListenEndpointError(int)));
 
-	d->endpoint->bind();
 	// Listen for incoming connections.
-	bool listening = d->endpoint->listen(10);
+	bool listening = d->endpoint->listen();
 	if (listening)
 	{
 		kdDebug() << k_funcinfo << "Listening on socket " << d->endpoint->socketDevice()->socket()
@@ -209,6 +210,8 @@ void TcpTransportBridge::onSocketAccept()
 
 void TcpTransportBridge::onListenEndpointError(int errorCode)
 {
+	Q_UNUSED(errorCode);
+
 	kdDebug() << k_funcinfo << d->endpoint->errorString() << endl;
 	QObject::disconnect(d->endpoint, SIGNAL(gotError(int)), this,
 	SLOT(onListenEndpointError(int)));
@@ -276,6 +279,8 @@ void TcpTransportBridge::onSocketConnectTimeout()
 
 void TcpTransportBridge::onSocketError(int errorCode)
 {
+	Q_UNUSED(errorCode);
+
 	kdDebug() << k_funcinfo << "Got error, " << d->socket->errorString() << ", on socket "
 	<< d->socketId << endl;
 
@@ -284,6 +289,7 @@ void TcpTransportBridge::onSocketError(int errorCode)
 	// Disconnect the signal/slot
 	QObject::disconnect(d->socket, SIGNAL(gotError(int)), this,
 	SLOT(onSocketError(int)));
+
 	emit error();
 }
 
@@ -318,13 +324,10 @@ void TcpTransportBridge::onSocketRead()
 				kdDebug() << k_funcinfo << "Received " << d->length << " bytes on socket "
 				<< d->socketId << endl;
 
-				QDataStream stream(bytes, IO_ReadOnly);
-				Packet packet = BinaryPacketFormatter::deserialize(&stream);
+				emit dataReceived(bytes);
 
 				d->bytesToRead -= d->length;
 				d->length = 0;
-
-				emit packetReceived(packet);
 			}
 			else
 			{

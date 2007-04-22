@@ -50,19 +50,19 @@ const SessionNotifier::Type SessionNotifier::type() const
 	return d->type;
 }
 
-void SessionNotifier::fireDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk)
+void SessionNotifier::fireDataReceived(const QByteArray& data, bool lastChunk)
 {
-	emit dataReceived(data, identifier, lastChunk);
+	emit dataReceived(data, lastChunk);
 }
 
-void SessionNotifier::fireMessageAcknowledged(const Q_INT32 identifier)
+void SessionNotifier::fireMessageAcknowledged(const Q_INT32 id)
 {
-	emit messageAcknowledged(identifier);
+	emit messageAcknowledged(id);
 }
 
-void SessionNotifier::fireMessageReceived(const QByteArray& message, const Q_INT32 identifier, const Q_INT32 relatesTo)
+void SessionNotifier::fireMessageReceived(const QByteArray& message, const Q_INT32 id, const Q_INT32 correlationId)
 {
-	emit messageReceived(message, identifier, relatesTo);
+	emit messageReceived(message, id, correlationId);
 }
 
 }

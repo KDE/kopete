@@ -45,7 +45,10 @@ class Session : public QObject
 		const Q_UINT32 id() const;
 		/** @brief Gets the current state of the session. */
 		const SessionState state() const;
+		/** @brief Handles a session invitation. */
+		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context) = 0;
 
+	public slots:
 		/** @brief Accepts a session. */
 		void accept();
 		/** @brief Cancels a session. */
@@ -54,14 +57,12 @@ class Session : public QObject
 		void decline();
 		/** @brief Ends a session. */
 		void end();
-		/** @brief Handles a session invitation. */
-		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context) = 0;
 		/** @brief Starts a session. */
 		void start();
 
 	protected:
 		/** @brief Creates a new instance of the Session class. */
-		Session(const Q_UINT32 identifier, Direction direction, QObject *parent);
+		Session(const Q_UINT32 id, Direction direction, QObject *parent);
 
 		void fault();
 		/** @brief When overriden by a derived class, starts a session. */

@@ -23,15 +23,17 @@ namespace PeerToPeer
 {
 
 /**
- * @brief Represents a transport layer binary packet formatter.
+ * @brief Provides methods to serialize and deserialize a packet in binary format.
  *
  * @author Gregg Edghill <gregg.edghill@gmail.com>
  */
 class BinaryPacketFormatter
 {
 	public:
-		static Packet deserialize(QDataStream* stream);
-		static void serialize(const Packet& packet, QDataStream* stream);
+		/** @brief Deserializes the specified stream into a packet. */
+		static Packet* deserialize(QDataStream* stream);
+		/** @brief Serializes the packet to the given stream. */
+		static void serialize(QDataStream* stream, Packet* packet);
 
 	private:
 		BinaryPacketFormatter();

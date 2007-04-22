@@ -13,20 +13,19 @@
 */
 
 #include "transport.h"
-#include "packetqueue.h"
+#include "packetscheduler.h"
+#include "binarypacketformatter.h"
+#include "sessionnotifier.h"
 #include "switchboardbridge.h"
 #include "tcptransportbridge.h"
-#include "sessionnotifier.h"
-#include <qmap.h>
-#include <qmutex.h>
-#include <qpair.h>
+#include <qbuffer.h>
+#include <qfile.h>
 #include <qregexp.h>
 #include <qtimer.h>
-#include <qwaitcondition.h>
 #include <kdebug.h>
-
 #include <arpa/inet.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 namespace PeerToPeer
 {
@@ -34,173 +33,85 @@ namespace PeerToPeer
 class Transport::TransportPrivate
 {
 	public:
-		TransportPrivate() : defaultBridgeId(0), sequenceNumber((Q_INT32)(((double)(rand() * 1.0/0x7FFFFFFF))*(0x186A0 - 0x3104)) + 0x3104),
-		sbridge(0l), stopScheduling(false), sending(false) {}
+		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), nextBridgeId(64) {}
 
-		QWaitCondition condition;
-		QMap<Q_UINT32, QBuffer*> buffers;
 		QMap<Q_UINT32, TransportBridge*> bridges;
+		QMap<Q_UINT32, QBuffer*> buffers;
+		Q_UINT32 currentBridgeId;
 		Q_UINT32 defaultBridgeId;
+		Q_UINT32 nextBridgeId;
+		Q_UINT32 nextPacketNumber;
+		QMap<Q_UINT32, QUuid> nonces;
 		QMap<Q_UINT32, SessionNotifier*> notifiers;
-		QMutex lock;
-		QMap<Q_UINT32, QByteArray> pendingDatagrams;
-		QMap<Q_UINT32, PacketQueue*> queues;
-		QMap<Q_UINT32, Packet> recentlyReceivedPackets;
-		Q_UINT32 sequenceNumber; // Sequence number for ordering packets.
-		SwitchboardBridge *sbridge;
-		bool stopScheduling;
-		QMutex waitLock;
-		QWaitCondition waitEvent;
-
-		QMap<Q_INT32, QUuid> nonces;
-		QValueList<Packet> packets;
-		QValueList<Packet> queue;
-		bool sending;
-		QMap<Q_UINT32, Packet> unacknowledged; // List of unacknowledged packets.
-		QMap<Q_INT32, QPair<Q_UINT32, QTimer*> > nakTimers; // List of NAK timers for unacknowledged packets.
+		QMap<Q_UINT32, PacketList*> packetLists;
+		QPtrList<Packet> receivedPackets;
+		PacketScheduler *scheduler;
+		QPtrList<Packet> sentPackets;
+		QPtrList<Packet> unacknowledgedPackets;
 };
 
-Transport::Transport(QObject *parent) : QObject(parent), QThread(), d(new TransportPrivate())
+Transport::Transport(QObject *parent) : QObject(parent), d(new TransportPrivate())
 {
-	d->queues.insert(0, new PacketQueue(this));
+	d->nextPacketNumber = (Q_INT32)(((double)(rand() * 1.0/0x7FFFFFFF))*(0x186A0 - 0x3104)) + 0x3104;
+	// Create the transport packet scheduler.
+	d->scheduler = new PacketScheduler(this);
+	// Automatically delete the packets in the received packets list.
+	d->receivedPackets.setAutoDelete(true);
+	// Automatically delete the packets in the sent packets list.
+	d->sentPackets.setAutoDelete(true);
+	// Automatically delete the packets in the unacknowledged packets list.
+	d->unacknowledgedPackets.setAutoDelete(true);
 
-	start();
+	d->currentBridgeId = d->defaultBridgeId;
 }
 
 Transport::~Transport()
 {
-	d->lock.lock();
-	d->stopScheduling = true;
-	d->condition.wakeOne();
-	d->lock.unlock();
+	QMap<Q_UINT32, PacketList*>::ConstIterator it;
+	for (it = d->packetLists.begin(); it != d->packetLists.end(); ++it)
+	{
+		PacketList *list = it.data();
+		list->setAutoDelete(true);
 
-	d->waitLock.lock();
-	d->waitEvent.wakeOne();
-	d->waitLock.unlock();
+		delete list;
+	}
 
-	wait();
+	d->packetLists.clear();
+
 	delete d;
-	d = 0l;
 }
+
+
+//BEGIN Transport Internal Functions
+
+const QMap<Q_UINT32, TransportBridge*> & Transport::getBridges()
+{
+	return d->bridges;
+}
+
+const QMap<Q_UINT32, PacketList*> & Transport::getPacketLists()
+{
+	return d->packetLists;
+}
+
+const QPtrList<Packet> & Transport::getSentPackets()
+{
+	return d->sentPackets;
+}
+
+//END
 
 Q_UINT32 Transport::nextPacketSequenceNumber() const
 {
-	return (++d->sequenceNumber);
+	return (++d->nextPacketNumber);
 }
 
-void Transport::setSwitchboardBridge(SwitchboardBridge* bridge)
+Q_UINT32 Transport::send(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 correlationId)
 {
-	d->sbridge = bridge;
-	// Connect the signal/slot
-	QObject::connect(d->sbridge, SIGNAL(packetReceived(const Packet&)), this,
-	SLOT(onReceive(const Packet&)));
-	QObject::connect(d->sbridge, SIGNAL(readyToSend()), this,
-	SLOT(onSwitchboardReadyToSend()));
-	QObject::connect(d->sbridge, SIGNAL(sentPacket(const Packet&)), this,
-	SLOT(onSent(const Packet&)));
-
-	d->bridges.insert(0, bridge);
-}
-
-void Transport::run()
-{
-	while(!d->stopScheduling)
-	{
-		d->lock.lock();
-		if (d->queues[d->defaultBridgeId]->isEmpty())
-		{
-			// If the packet scheduler has no more
-			// packets to schedule, sleep until a new
-			// packet is queued.
-			d->condition.wait(&d->lock);
-		}
-		d->lock.unlock();
-
-		d->waitLock.lock();
-		if (!d->sbridge->isReadyToSend() && !d->stopScheduling)
-		{
-			kdDebug() << k_funcinfo << "not ready to send ======== " << endl;
-			// If the switchboard bridge is not ready to send more packets
-			// wait for the bridge to be ready.
-			d->waitEvent.wait(&d->waitLock);
-		}
-		d->waitLock.unlock();
-
-		if (d->queues[d->defaultBridgeId]->isEmpty()) continue;
-
-		Q_UINT32 chunkSize = d->sbridge->maxSendBufferSize();
-		const Packet packet = d->queues[0]->dequeue(chunkSize);
-
-		Q_INT32 appId = 0;
-		// Determine app id based on frame flag field.
-		if (packet.header().destination != 0 || packet.header().destination != 64)
-		{
-			appId = d->notifiers[packet.header().destination]->type();
-		}
-
-		d->sbridge->send(packet, appId);
-	}
-}
-
-void Transport::queuePacket(const Packet& packet, const Q_UINT32 bridgeId, bool prepend)
-{
-	Packet::Header & h = packet.header();
-
-	// Determine if there is a registered transport bridge
-	// to send the supplied packet.
-	if (d->bridges.contains(bridgeId))
-	{
-		Q_UINT32 relatesTo = h.lprcvd;
-		// If a previously received packet is associated with
-		// the supplied packet to be sent, copy the correlating
-		// information from the previous packet.
-		if (d->recentlyReceivedPackets.contains(relatesTo))
-		{
-			// Retrieve the previous packet.
-			const Packet & p = d->recentlyReceivedPackets[relatesTo];
-			kdDebug() << k_funcinfo << "Packet=" << relatesTo << " retrieved from recently received list" << endl;
-
-			// NOTE The last packet sent is the last packet
-			// received by the peer and the last packet size
-			// is the size of the last packet sent by the
-			// peer.
-			h.lpsent = p.header().lprcvd;
-			h.lpsize = p.header().window;
-			// Remove the previous packet as its lifetime
-			// is only for the duration of a transaction.
-			d->recentlyReceivedPackets.remove(relatesTo);
-		}
-
-		h.payloadSize = packet.payload().buffer().size();
-
-		// Queue the packet on the scheduler associated
-		// with the specified transport bridge.
-		d->queues[bridgeId]->enqueue(packet, prepend);
-
-		kdDebug() << k_funcinfo << "Queued packet=" << h.identifier << " (priority=" << packet.priority() << ") for session="
-		<< h.destination << " on bridge=" << bridgeId << " (size " << (Q_UINT32)h.window << ")" << endl;
-		// Wait the scheduler if it was waiting.
-		d->condition.wakeOne();
-	}
-	else
-	{
-		kdDebug() << k_funcinfo << "Could not queue packet=" << h.identifier << " for session=" << h.destination
-		<< " on bridge=" << bridgeId << " -- unknown bridge id" << endl;
-	}
-}
-
-void Transport::sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd)
-{
-	sendControlPacket(Packet::AcknowledgeType, destination, lprcvd, 0, 0);
-}
-
-void Transport::sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
-{
-	Packet packet;
-	packet.setPriority(0);
+	Packet *packet = new Packet();
 
 	// Get the header field of the packet.
-	Packet::Header & h = packet.header();
+	Packet::Header & h = packet->header();
 	// Set the destination of the packet.
 	h.destination = destination;
 	// Set the sequence number of the packet.
@@ -208,70 +119,243 @@ void Transport::sendControlPacket(const Packet::Type type, const Q_UINT32 destin
 	// Set the data window size offset of the packet.
 	h.offset = 0;
 	// Set the data window size of the packet.
-	h.window = 0;
-	// Set the payload size of the packet.
-	h.payloadSize = 0;
-	// Set the type of the packet.
-	h.type = (Q_UINT32)type;
-	// Set the sequence number of a received packet
-	// this packet correlates to.
-	h.lprcvd = lprcvd;
-	h.lpsent = lpsent;
-	h.lpsize = lpsize;
-
-	// Queue the control packet on the specified transport bridge.
-	queuePacket(packet, d->defaultBridgeId, true);
-}
-
-void Transport::sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 relatesTo, const Q_UINT32 priority)
-{
-	// Create the raw data packet to send.
-	Packet packet;
-	packet.setPriority(priority);
-
-	Packet::Header & header = packet.header();
-	header.destination = destination;
-	header.identifier = nextPacketSequenceNumber();
-	header.window = bytes.size();
-	header.type = (Q_UINT32)((d->notifiers[destination]->type() == 1) ? Packet::ObjectDataType : Packet::FileDataType);
-	header.lprcvd = relatesTo;
-	// Write the datagram bytes in the packet payload
-	packet.payload().writeBlock(bytes);
-
-	// Queue the packet on the specified transport bridge.
-	queuePacket(packet, 0);
-}
-
-Q_UINT32 Transport::send(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 relatesTo, const Q_UINT32 priority)
-{
-	Packet packet;
-	// Set the priority of the message to the specified priority.
-	packet.setPriority(priority);
-
-	// Get the header field of the packet.
-	Packet::Header & h = packet.header();
-	// Set the destination of the packet.
-	h.destination = destination;
-	// Set the sequence number of the packet.
-	h.identifier = nextPacketSequenceNumber();
-	// Set the data window size of the packet.
 	h.window = message.size();
+	// Write the bytes to the packet payload
+	packet->payload()->writeBlock(message);
+	// Set the payload size of the packet.
+	h.payloadSize = h.window;
 	// Set the type of the packet.
-	h.type = (Q_UINT32)Packet::MessageType;
-	// Set the sequence number of a received packet
-	// this packet correlates to.
-	h.lprcvd = relatesTo;
+	h.type = (Q_UINT32)Packet::MessageDataType;
+	// Set the correlation info of the packet.
+	h.lprcvd = correlationId;
+	h.lpsent = 0;
+	h.lpsize = 0;
 
-	// Write the message bytes to the packet payload
-	packet.payload().writeBlock(message);
-
-	// Queue the packet on the specified transport bridge.
-	queuePacket(packet, 0);
+	// Queue the packet.
+	queuePacket(packet, d->currentBridgeId);
 
 	return h.identifier;
 }
 
-void Transport::sendNonce(const QUuid& nonce, const Q_UINT32 bridgeId)
+void Transport::sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 correlationId)
+{
+	Packet *packet = new Packet();
+
+	// Get the header field of the packet.
+	Packet::Header & h = packet->header();
+	// Set the destination of the packet.
+	h.destination = destination;
+	// Set the sequence number of the packet.
+	h.identifier = nextPacketSequenceNumber();
+	// Set the data window size offset of the packet.
+	h.offset = 0;
+	// Set the data window size of the packet.
+	h.window = bytes.size();
+	// Write the bytes to the packet payload
+	packet->payload()->writeBlock(bytes);
+	// Set the payload size of the packet.
+	h.payloadSize = h.window;
+	// Set the type of the packet.
+	h.type = (Q_UINT32)Packet::ObjectDataType;
+	// Set the correlation info of the packet.
+	h.lprcvd = correlationId;
+	h.lpsent = 0;
+	h.lpsize = 0;
+
+
+	// Queue the packet.
+	queuePacket(packet, d->currentBridgeId);
+}
+
+void Transport::sendFile(QFile *file, const Q_UINT32 destination)
+{
+	Packet *packet = new Packet();
+
+	// Get the header field of the packet.
+	Packet::Header & h = packet->header();
+	// Set the destination of the packet.
+	h.destination = destination;
+	// Set the sequence number of the packet.
+	h.identifier = nextPacketSequenceNumber();
+	// Set the data window size offset of the packet.
+	h.offset = 0;
+	// Set the data window size of the packet.
+	h.window = file->size();
+	// Write the bytes to the packet payload
+	packet->setPayload(file);
+	// Set the payload size of the packet.
+	h.payloadSize = h.window;
+	// Set the type of the packet.
+	h.type = (Q_UINT32)Packet::FileDataType;
+	// Set the correlation info of the packet.
+	h.lprcvd = rand() % 0xCF56;
+	h.lpsent = 0;
+	h.lpsize = 0;
+
+
+	// Queue the packet.
+	queuePacket(packet, d->currentBridgeId);
+}
+
+//BEGIN Transport Bridge Functions
+
+DirectTransportBridge* Transport::createDirectBridge(const QString& type, const QValueList<QString>& addresses, const Q_UINT16 port, const QUuid& nonce)
+{
+	DirectTransportBridge *bridge = 0l;
+	if (type == QString::fromLatin1("TCPv1"))
+	{
+		bridge = new TcpTransportBridge(addresses, port, nextBridgeId(), this);
+	}
+
+	if (bridge != 0l)
+	{
+		d->nonces.insert(bridge->id(), nonce);
+		// Add the direct transport bridge to the list.
+		addBridge(bridge);
+	}
+
+	bridge->connect();
+
+	return bridge;
+}
+
+SwitchboardBridge* Transport::createIndirectBridge()
+{
+	SwitchboardBridge *bridge = new SwitchboardBridge(d->defaultBridgeId, this);
+	// Add the switchboard bridge to the list.
+	addBridge(bridge);
+
+	return bridge;
+}
+
+bool Transport::listen(const QString& address, const Q_UINT16 port)
+{
+	QValueList<QString> addresses;
+	addresses.append(address);
+
+	TcpTransportBridge *bridge = new TcpTransportBridge(addresses, port, nextBridgeId(), this);
+	bool listening = bridge->listen();
+	if (!listening)
+	{
+		bridge->deleteLater();
+		bridge = 0l;
+	}
+
+	return listening;
+}
+
+void Transport::addBridge(TransportBridge *bridge)
+{
+	if (bridge == 0l)
+	{
+		kdDebug() << k_funcinfo << "Parameter \'bridge\' cannot be null."  << endl;
+		return;
+	}
+
+	if (!d->bridges.contains(bridge->id()))
+	{
+		// Add the bridge to the list of transport bridges.
+		d->bridges.insert(bridge->id(), bridge);
+
+		// Connect the signal/slot.
+		QObject::connect(bridge, SIGNAL(connected()), this,
+		SLOT(onBridgeConnect()));
+		QObject::connect(bridge, SIGNAL(dataReceived(const QByteArray&)), this,
+		SLOT(onReceive(const QByteArray&)));
+		QObject::connect(bridge, SIGNAL(dataSent(const Q_UINT32)), this,
+		SLOT(onSent(const Q_UINT32)));
+		QObject::connect(bridge, SIGNAL(disconnected()), this,
+		SLOT(onBridgeDisconnect()));
+		QObject::connect(bridge, SIGNAL(error()), this,
+		SLOT(onBridgeError()));
+
+		// Assign a packet list to the bridge.
+		d->packetLists.insert(bridge->id(), new PacketList());
+	}
+}
+
+Q_UINT32 Transport::findBestBridge() const
+{
+	Q_UINT32 bridgeId = 0;
+	QMap<Q_UINT32, TransportBridge*>::ConstIterator it;
+	for(it = d->bridges.begin(); it != d->bridges.end(); ++it)
+	{
+		if ((*it)->inherits("PeerToPeer::DirectTransportBridge")
+		 && (*it)->state() == TransportBridge::Connected)
+		{
+			bridgeId = it.key();
+			break;
+		}
+	}
+
+	if (bridgeId == 0)
+	{
+		bridgeId = d->defaultBridgeId;
+	}
+
+	return bridgeId;
+}
+
+void Transport::movePacketsBetweenBridges(const Q_UINT32 oldBridgeId, const Q_UINT32 newBridgeId)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	PacketList *fromList = d->packetLists[oldBridgeId];
+	PacketList *toList   = d->packetLists[newBridgeId];
+
+	if (fromList->count() > 0)
+	{
+		kdDebug() << k_funcinfo << "moving " << fromList->count() << " packet(s) from bridge "
+		<< oldBridgeId << "'s list to bridge " << newBridgeId << "'s list" << endl;
+
+		QPtrListIterator<Packet> it(*fromList);
+
+		Packet *packet = 0l;
+		while((packet = it.current()) != 0l)
+		{
+			toList->append(packet);
+			fromList->removeRef(packet);
+			++it;
+		}
+	}
+	else
+	{
+		kdDebug() << k_funcinfo << "bridge " << oldBridgeId << "'s list is empty -- returning" << endl;
+	}
+
+	d->currentBridgeId = newBridgeId;
+
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+Q_UINT32 Transport::nextBridgeId() const
+{
+	return (++d->nextBridgeId);
+}
+
+void Transport::removeBridge(const Q_UINT32 id)
+{
+	// Check whether the bridge associated with the specified
+	// id is registered and it is not the indirect bridge's id.
+	if (id != d->defaultBridgeId && d->bridges.contains(id))
+	{
+		// If the id of the bridge does not match that of
+		// the indirect bridge, remove the bridge.
+		d->bridges.remove(id);
+		// Delete the packet list.
+		delete d->packetLists[id];
+		// Remove the packet list assigned to the bridge.
+		d->packetLists.remove(id);
+		// Remove the handshake nonce assigned
+		// to the bridge.
+		d->nonces.remove(id);
+	}
+}
+
+//END
+
+
+void Transport::sendBridgeHandshake(const QUuid& nonce, const Q_UINT32 bridgeId)
 {
 	// Convert the nonce to byte parameters.
 	const QString cnonce = nonce.toString().remove(QRegExp("[\\-\\{\\}]")).upper();
@@ -286,11 +370,10 @@ void Transport::sendNonce(const QUuid& nonce, const Q_UINT32 bridgeId)
 	const Q_UINT32 lpsent = (Q_UINT32(w1) << 16) + w2;
 	const Q_UINT64 lpsize = (Q_UINT64(htonl(b1_4)) << 32) + htonl(b5_8);
 
-	Packet packet;
-	packet.setPriority(0);
+	Packet *packet = new Packet();
 
 	// Get the header field of the packet.
-	Packet::Header & h = packet.header();
+	Packet::Header & h = packet->header();
 	// Set the destination of the packet.
 	h.destination = 0;
 	// Set the sequence number of the packet.
@@ -300,130 +383,179 @@ void Transport::sendNonce(const QUuid& nonce, const Q_UINT32 bridgeId)
 	// Set the data window size of the packet.
 	h.window = 0;
 	// Set the payload size of the packet.
-	h.payloadSize = 0;
+	h.payloadSize = h.window;
 	// Set the type of the packet.
-	h.type = (Q_UINT32)Packet::HandshakeType;
-
+	h.type = (Q_UINT32)Packet::HandshakeNonceType;
+	// Set the correlation info of the packet.
 	h.lprcvd = lprcvd;
 	h.lpsent = lpsent;
 	h.lpsize = lpsize;
 
-	// Queue the handshake packet on the specified transport bridge.
-// 	queuePacket(packet, bridgeId, true);
-	static_cast<TcpTransportBridge*>(d->bridges[bridgeId])->send(packet);
+	// Queue the handshake nonce packet.
+	queuePacket(packet, bridgeId, true);
 }
 
-//BEGIN Event Handler Functions
+//END
 
-void Transport::onNonAcknowledgeControlPacketReceived(const Packet& packet)
+//BEGIN Transport Bridge Event Handling Functions
+
+void Transport::onBridgeConnect()
 {
-	// Get the header field of received packet.
-	Packet::Header & h = packet.header();
-	// Get the packet type from the packet header.
-	Packet::Type packetType = (Packet::Type)h.type;
-
-	const QString flags =  QString::fromLatin1("0x") + QString::number(h.type, 16).rightJustify(8, '0');
-	kdDebug() << k_funcinfo << "Control packet (flags " << flags << ")" << endl;
-
-	switch(packetType)
+	const TransportBridge *bridge = dynamic_cast<const TransportBridge*>(sender());
+	if (bridge != 0l)
 	{
-		case Packet::CancelType:
-		{
-			kdDebug() << k_funcinfo << "Cancel data exchange for session " << h.identifier << endl;
-			break;
-		}
+		kdDebug() << k_funcinfo << "Bridge " << bridge->id() << " is now connected." << endl;
 
-		case Packet::TimeoutType:
+		// Determine using type reflection whether the bridge is
+		// a switchboard bridge or a direct transport bridge.
+		if (bridge->inherits("PeerToPeer::DirectTransportBridge"))
 		{
-			kdDebug() << k_funcinfo << "Acknowledge expected for packet " << h.lpsent << endl;
-			break;
+			// If the transport bridge is a direct bridge, we need to send
+			// the handshake nonce to authenticate the use of the bridge.
+			const QUuid nonce = d->nonces[bridge->id()];
+			// Send the bridge handshake nonce.
+			sendBridgeHandshake(nonce, bridge->id());
 		}
-
-		case Packet::FaultType:
-		{
-			kdDebug() << k_funcinfo << "Transport fault notification" << endl;
-			break;
-		}
-
-		case Packet::ResetType:
-		{
-			kdDebug() << k_funcinfo << "Reset transport.  Fail all sends and receives" << endl;
-			break;
-		}
-
-		default:
-			break;
 	}
 }
 
-void Transport::onNonceReceived(const QUuid& cnonce, const Q_UINT32 bridgeId)
+void Transport::onBridgeDisconnect()
+{
+	TransportBridge *bridge = dynamic_cast<TransportBridge*>(const_cast<QObject*>(sender()));
+	if (bridge != 0l)
+	{
+		kdDebug() << k_funcinfo << "Bridge " << bridge->id() << " is now disconnected." << endl;
+
+		// Determine using type reflection whether the bridge is
+		// a switchboard bridge or a direct transport bridge.
+		if (bridge->inherits("PeerToPeer::DirectTransportBridge"))
+		{
+			// Disconnect the signal/slot.
+			QObject::disconnect(bridge, 0, this, 0);
+
+			movePacketsBetweenBridges(bridge->id(), findBestBridge());
+			// Remove the direct bridge from the list.
+			removeBridge(bridge->id());
+			// Delete the direct transport bridge.
+			bridge->deleteLater();
+			bridge = 0l;
+		}
+	}
+}
+
+void Transport::onBridgeError()
+{
+	TransportBridge *bridge = dynamic_cast<TransportBridge*>(const_cast<QObject*>(sender()));
+	if (bridge != 0)
+	{
+		kdDebug() << k_funcinfo << "disconnecting bridge " << bridge->id() << endl;
+		bridge->disconnect();
+	}
+}
+
+void Transport::onBridgeHandshake(const QUuid& cnonce, const Q_UINT32 bridgeId)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
 
 	if (bridgeId == d->defaultBridgeId)
 	{
-		kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " via switchboard bridge. "
+		kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " via indirect bridge. "
 			<<  "Must have not been sent via direct bridge -- ignoring." << endl;
 	}
 	else
 	{
-		// Otherwise, get the nonce associated with the direct bridge.
+		// Otherwise, get the handshake nonce associated with the direct bridge.
 		const QUuid nonce = d->nonces[bridgeId];
 
-		if (cnonce != nonce)
+		if (cnonce == nonce)
+		{
+			movePacketsBetweenBridges(d->currentBridgeId, bridgeId);
+		}
+		else
 		{
 			kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " excepted "
 			<< nonce.toString().upper() <<  ".  Disconnecting bridge " << bridgeId << endl;
+
+			// Disconnect the transport bridge.
+			TransportBridge *bridge = d->bridges[bridgeId];
+			bridge->disconnect();
 		}
 	}
 
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::onReceive(const Packet& packet)
+void Transport::onReceive(const QByteArray& datachunk)
 {
-	TransportBridge *bridge = static_cast<TransportBridge*>(const_cast<QObject*>(sender()));
+	const TransportBridge *bridge = dynamic_cast<const TransportBridge*>(sender());
 	if (bridge == 0l)
 	{
+		kdDebug() << k_funcinfo << "Received data from non-transport bridge -- ignoring." << endl;
 		return;
 	}
 
-	// Get the header field of received packet.
-	Packet::Header & h = packet.header();
-	// Get the packet type from the packet header.
-	Packet::Type packetType = (Packet::Type)h.type;
+	Q_UINT32 appId = 0;
 
-	kdDebug() << k_funcinfo << "Received packet " << h.identifier << " for session " << h.destination
-		<< " via bridge " << bridge->id() << endl;
-
-
-	SessionNotifier *notifier = d->notifiers[h.destination];
-
-	if (h.payloadSize + h.offset == h.window && (h.type == Packet::MessageType || h.type == Packet::ObjectDataType || h.type == Packet::FileDataType))
+	QDataStream stream(datachunk, IO_ReadOnly);
+	// Deserialize the packet from the supplied stream.
+	Packet* packet = BinaryPacketFormatter::deserialize(&stream);
+	// Determine using type reflection whether the packet
+	// was received via the switchboard bridge.
+	if (bridge->inherits("PeerToPeer::SwitchboardBridge"))
 	{
-		kdDebug() << k_funcinfo << "Adding packet " << h.identifier << " to recently received list" << endl;
-		// TODO Log the final packet in a series of one or more received packets for future lookup.
-		d->recentlyReceivedPackets.insert(h.identifier, packet);
+		// If the packet was received via the switchboard bridge,
+		// deserialize the application id that is appended after
+		// a serialized packet.
+		stream.setByteOrder(QDataStream::BigEndian);
+		stream >> appId;
 	}
 
+	// Add the packet to the list of received packets.
+	d->receivedPackets.append(packet);
+
+	// Get the header field of the received packet.
+	Packet::Header & h = packet->header();
+
+	kdDebug() << k_funcinfo << "Received packet " << h.identifier << " via bridge " << bridge->id() << endl
+		<< packet->toString() << endl;
+
+	// Get the packet type from the packet header.
+	const Packet::Type packetType = (Packet::Type)h.type;
+
+	if (Packet::TimeoutType == packetType || Packet::FaultType == packetType ||
+		Packet::ResetType == packetType || Packet::CancelType == packetType)
+	{
+		// We received a non ACK control packet.
+		onNonAcknowledgeControlPacketReceive(packet);
+
+		// Remove and delete the received packet from the list.
+		d->receivedPackets.removeRef(packet);
+	}
+	else
 	if (Packet::AcknowledgeType == packetType)
 	{
+		// We received an ACK control packet.
 		kdDebug() << k_funcinfo << "Packet " << h.identifier << " is ACK to sent packet " << h.lprcvd
-		<<  ".  Notifying session." << endl;
+		<<  ".  Notifying session" << endl;
 
-		removeUnacknowledgedPacket(h.lprcvd);
+		// Remove the now acknowledged packet from the
+		// unacknowledged packet list.
+		removePacketFromUnacknowledgedList(h.lprcvd);
 
-		if (notifier != 0l) notifier->fireMessageAcknowledged(h.lprcvd);
+		// Determine if there is a registered notifier.
+		if (d->notifiers.contains(h.destination))
+		{
+			d->notifiers[h.destination]->fireMessageAcknowledged(h.lprcvd);
+		}
+
+		// Remove and delete the received packet from the list.
+		d->receivedPackets.removeRef(packet);
 	}
 	else
-	if (Packet::TimeoutType == packetType || Packet::FaultType == packetType || Packet::ResetType == packetType || Packet::CancelType == packetType)
+	if (Packet::MessageDataType == packetType)
 	{
-		// Handle the transport control packet.
-		onNonAcknowledgeControlPacketReceived(packet);
-	}
-	else
-	if (Packet::MessageType == packetType)
-	{
+		// We received a message data packet.
+
 		// A message can be chunked depending on the MTU of the transport bridge the
 		// message was sent on; therefore, we try to reassemble the message if necessary
 		// using the data from the packet received.
@@ -433,7 +565,7 @@ void Transport::onReceive(const Packet& packet)
 		{
 			// If the data is not chunked, there
 			// is no need to try to reassemble it.
-			data = packet.payload().buffer();
+			data = static_cast<QBuffer*>(packet->payload())->buffer();
 		}
 		else
 		{
@@ -445,21 +577,26 @@ void Transport::onReceive(const Packet& packet)
 
 		if (!data.isNull())
 		{
-			kdDebug() << k_funcinfo << "Received all data from packet " << h.identifier
-			<< ". Sending ACK." << endl;
-
-			// Send an acknowledge to the peer endpoint.
-			sendAcknowledge(h.destination, h.identifier);
-
 			// If the byte array is valid, all data has been received.
-			// Try to dispatch the received data to a comsumer waiting higher in the stack.
-			dispatch(data, h.destination, h.identifier, h.lprcvd);
+			kdDebug() << k_funcinfo << "Received all data from packet " << h.identifier
+				<< ". Sending ACK." << endl;
+			// Send an acknowledge to the other side.
+			sendAcknowledge(h.destination, h.identifier, h.lprcvd, h.lpsize);
+
+			// Determine if there is a registered notifier.
+			if (d->notifiers.contains(h.destination))
+			{
+				d->notifiers[h.destination]->fireMessageReceived(data, h.identifier, h.lprcvd);
+			}
+
+			d->receivedPackets.removeRef(packet);
 		}
 	}
 	else
-	if (Packet::HandshakeType == packetType)
+	if (Packet::HandshakeNonceType == packetType)
 	{
-		const QUuid nonce;
+		// We received a handshake nonce packet.
+
 		// Get the byte parameters from the last three fields of the packet header.
 		const Q_UINT32 l = h.lprcvd;
 		const Q_UINT16 w1 = h.lpsent & 0xFFFF;
@@ -474,205 +611,390 @@ void Transport::onReceive(const Packet& packet)
 		const Q_UINT8 b8 = (h.lpsize >> 56) & 0xFF;
 
 		// Create the comparison nonce from the byte parameters.
-		const QUuid cnonce = QUuid(l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8);
+		const QUuid nonce = QUuid(l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8);
 
-		// Handle received nonce.
-		onNonceReceived(cnonce, bridge->id());
+		onBridgeHandshake(nonce, bridge->id());
+
+		// Remove and delete the received packet from the list.
+		d->receivedPackets.removeRef(packet);
 	}
 	else
 	if (Packet::ObjectDataType == packetType || Packet::FileDataType == packetType)
 	{
-		if (notifier != 0l)
+		bool isLastChunk = (h.payloadSize + h.offset == h.window);
+		// We received a raw data packet.
+		// Determine if there is a registered notifier.
+		if (d->notifiers.contains(h.destination))
 		{
-			if (h.payloadSize + h.offset == h.window)
-			{
-				// Send an acknowledge to the peer endpoint.
-				sendAcknowledge(h.destination, h.identifier);
-			}
-
-			notifier->fireDataReceived(packet.payload().buffer(), h.identifier, (h.payloadSize + h.offset == h.window));
+			d->notifiers[h.destination]->fireDataReceived(packet->payload()->readAll(), isLastChunk);
 		}
+
+		if (isLastChunk)
+		{
+			// Send an acknowledge to the peer endpoint.
+			sendAcknowledge(h.destination, h.identifier, h.lprcvd, h.lpsize);
+		}
+
+		// Remove and delete the received packet from the list.
+		d->receivedPackets.removeRef(packet);
 	}
 	else
 	{
+		// Otherwise, we have received an unknown packet.
+		kdDebug() << k_funcinfo << "Received unknown packet " << h.identifier
+			<< ". Sending fault." << endl;
+		// Send a transport error control packet.
+		sendFault(h.destination, h.identifier, h.lprcvd, h.lpsize);
+
+		// Remove and delete the received packet from the list.
+		d->receivedPackets.removeRef(packet);
 	}
 }
 
-void Transport::onSend(const Packet& packet, const Q_UINT32 bridgeId)
+void Transport::onSendFailed(Packet* packet)
 {
-	// Get the header field of the packet.
-	const Packet::Header & h = packet.header();
-
-	const QString flags =  QString::fromLatin1("0x") + QString::number(h.type, 16).rightJustify(8, '0');
-	kdDebug() << k_funcinfo << "Sending packet " << h.identifier
-	<< " (bytes [" << h.offset << ".." << h.payloadSize << "] of " << h.window << ")"
-	<< " for session " << h.destination << " (flags " << flags << ") via bridge "
-	<< bridgeId << endl;
-}
-
-void Transport::onSendFailed(const Packet& packet)
-{
-	// Get the header field of the packet.
-	const Packet::Header & h = packet.header();
-
-	kdDebug() << k_funcinfo << "Packet " << h.identifier << " failed to be sent." << endl;
-}
-
-///////////////////////////////////////////////////////////////////////
-// Handles ACK/NAK notifications for messages sent via the switchboard
-// network.
-///////////////////////////////////////////////////////////////////////
-void Transport::onSent(const Q_UINT32 identifier, const bool packetSent)
-{
-	// Get the packet associated with the supplied identifier.
-	const Packet packet;
-
-	if (packetSent)
+	if (packet == 0l)
 	{
-		// Indicate that the packet was sent.
-		onSent(packet);
-	}
-	else
-	{
-		// Otherwise, indicate that the packet failed to be sent.
-		onSendFailed(packet);
-	}
-}
-
-void Transport::onSent(const Packet& packet)
-{
-	TransportBridge *bridge = static_cast<TransportBridge*>(const_cast<QObject*>(sender()));
-	if (bridge == 0l)
-	{
+		kdDebug() << k_funcinfo << "Parameter \'packet\' cannot be null."  << endl;
 		return;
 	}
 
 	// Get the header field of the packet.
-	const Packet::Header & h = packet.header();
+	const Packet::Header & h = packet->header();
 
-	// If the packet was sent, determine what to do
-	// with the packet based on its type.
-	kdDebug() << k_funcinfo << "Sent packet " << h.identifier
-	<< " (bytes [" << h.offset << ".." << (h.offset+h.payloadSize) << "] of " << h.window << ")"
-	<< " for session " << h.destination << " (type= " << h.type << ") via bridge "
-	<< bridge->id() << endl;
+	kdDebug() << k_funcinfo << "Packet " << h.identifier << " could not be sent." << endl;
+}
 
-	// Get the packet type.
-	Packet::Type type = (Packet::Type)packet.header().type;
-	if (type == Packet::AcknowledgeType)
+void Transport::onSent(const Q_UINT32 packetId)
+{
+	const TransportBridge *bridge = dynamic_cast<const TransportBridge*>(sender());
+	if (bridge == 0l)
+	{
+		kdDebug() << k_funcinfo << "Received event from non-transport bridge.  This should not happen." << endl;
+		return;
+	}
+
+	Packet *packet = 0l;
+	// Try to retrieve the sent packet from the list.
+	for(Q_UINT32 i=0; i < d->sentPackets.count(); ++i)
+	{
+		if (d->sentPackets.at(i) && d->sentPackets.at(i)->header().identifier == packetId)
+		{
+			packet = d->sentPackets.at(i);
+			break;
+		}
+	}
+
+	if (packet == 0l)
+	{
+		kdDebug() << k_funcinfo << "Could not find packet " << packetId << " -- returning" << endl;
+		return;
+	}
+
+	// Get the header field of the packet.
+	const Packet::Header & h = packet->header();
+	// Get the packet type from the packet header.
+	const Packet::Type packetType = (Packet::Type)h.type;
+
+	if (Packet::AcknowledgeType == packetType)
 	{
 		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier
 		<< " ACK to received packet " << h.lprcvd << endl;
+		// Delete the sent packet.
+		d->sentPackets.removeRef(packet);
 	}
 	else
-	if (type == Packet::MessageType)
+	if (Packet::MessageDataType == packetType)
 	{
 		kdDebug() << k_funcinfo << "Adding sent packet " << h.identifier
 		<< " to the list of unacknowledged packets" << endl;
 
-		// Add the sent packet to the list of unacknowledged packets.
-		d->unacknowledged.insert(h.identifier, packet);
-		QTimer *timer = new QTimer(this);
-		// Connect the signal/slot
-		QObject::connect(timer, SIGNAL(timeout()), this,
-		SLOT(onUnacknowledgedPacketTimer()));
-
-		// Start the timer.
-		const Q_INT32 timerId = timer->start(60 * 600, true);
-		// Add the timer to the list of NAK timers.
-		d->nakTimers.insert(timerId, qMakePair(h.identifier, timer));
+		// Add the packet to the unacknowledged packet list.
+		addPacketToUnacknowledgedList(packet);
+		// Remove the packet from the sent packets list.
+		d->sentPackets.take();
 	}
 	else
-	if (type == Packet::TimeoutType || type == Packet::FaultType || type == Packet::ResetType)
+	if (Packet::TimeoutType == packetType || Packet::FaultType == packetType ||
+		Packet::ResetType == packetType || Packet::CancelType == packetType)
 	{
 		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier
-		<< " Non-ACK control packet" << endl;
+		<< " non ACK control packet" << endl;
+		// Delete the sent packet.
+		d->sentPackets.removeRef(packet);
 	}
 	else
 	{
-		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier << endl;
+		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier
+		<< endl;
+		// Delete the sent packet.
+		d->sentPackets.removeRef(packet);
+	}
+
+
+	bool canStopScheduling = true;
+	QMap<Q_UINT32, PacketList*>::ConstIterator it;
+	// Determine whether there are more packets to schedule.
+	for(it = d->packetLists.begin(); it != d->packetLists.end(); ++it)
+	{
+		canStopScheduling &= it.data()->isEmpty();
+	}
+
+	if (canStopScheduling)
+	{
+		// If there are no more packets to schedule,
+		// stop the packet scheduler.
+		d->scheduler->stop();
 	}
 }
 
-void Transport::onUnacknowledgedPacketTimer()
+//END
+
+//BEGIN Transport Packet Scheduling Functions
+
+void Transport::queuePacket(Packet *packet, const Q_UINT32 bridgeId, bool prepend)
 {
-	kdDebug() << k_funcinfo << "enter" << endl;
-
-	QTimer *timer = static_cast<QTimer*>(const_cast<QObject*>(sender()));
-	if (timer != 0l)
+	if (packet == 0l)
 	{
-		Q_INT32 timerId = timer->timerId();
-		const Q_UINT32 identifier = d->nakTimers[timerId].first;
-		const Packet & packet = d->unacknowledged[identifier];
-		kdDebug() << k_funcinfo << "Packet " << packet.header().identifier
-			<< " is unacknowledged. Calling failed onSend" << endl;
-
-		// Indicate that the packet failed to be sent.
-		onSendFailed(packet);
-
-		// Remove the timer from the list.
-		d->nakTimers.remove(timerId);
-		// Dispose of the timer.
-		timer->deleteLater();
-		timer = 0l;
+		kdDebug() << k_funcinfo << "Parameter \'packet\' cannot be null."  << endl;
+		return;
 	}
 
+	// Get the header field of the packet.
+	const Packet::Header & h = packet->header();
+
+	// Determine if there is a registered transport
+	// bridge to send the supplied packet.
+	if (d->bridges.contains(bridgeId))
+	{
+		// Add the packet to the bridge's assigned send queue.
+		PacketList *list = d->packetLists[bridgeId];
+		prepend ? list->prepend(packet) : list->append(packet);
+
+		kdDebug() << k_funcinfo << "Queued packet " << h.identifier << " for session "
+		<< h.destination << " on bridge " << bridgeId << " (size " << (Q_UINT32)h.window << ")" << endl;
+
+		if (!d->scheduler->isRunning())
+		{
+			// If the packet scheduler is not running,
+			// start the scheduler.
+			d->scheduler->start();
+		}
+	}
+	else
+	{
+		// Otherwise, delete the packet.
+		kdDebug() << k_funcinfo << "Could not queue packet " << h.identifier << " for session " << h.destination
+		<< " on bridge " << bridgeId << " -- bridge could not be found." << endl;
+
+		delete packet;
+		packet = 0l;
+	}
+}
+
+void Transport::sendInternal(Packet* packet, const Q_UINT32 bridgeId)
+{
+	if (packet == 0l)
+	{
+		kdDebug() << k_funcinfo << "Parameter \'packet\' cannot be null."  << endl;
+		return;
+	}
+
+	// Get the header field of the packet.
+	const Packet::Header & h = packet->header();
+
+	kdDebug() << k_funcinfo << "Sending packet " << h.identifier << " via bridge " << bridgeId << endl
+		<< packet->toString() << endl;
+
+	// Get the bridge the packet is going to be sent via.
+	TransportBridge *bridge = d->bridges[bridgeId];
+
+	QByteArray datachunk;
+
+	QDataStream stream(datachunk, IO_WriteOnly);
+	// Serialize the packet to the given stream.
+	BinaryPacketFormatter::serialize(&stream, packet);
+
+	// Determine using type reflection whether the
+	// specified bridge is a switchboard bridge.
+	if (bridge->inherits("PeerToPeer::SwitchboardBridge"))
+	{
+		Q_UINT32 appId = 0;
+		// Determine app id based on the session notifier type.
+		if (h.destination != 0 || h.destination != 64)
+		{
+			if (d->notifiers.contains(h.destination))
+			{
+				appId = d->notifiers[h.destination]->type();
+			}
+		}
+
+		// Serialize and append the application
+		// id to the datachunk.
+		stream.setByteOrder(QDataStream::BigEndian);
+		stream << appId;
+	}
+
+	// Send the datachunk via the selected transport bridge.
+	bridge->send(datachunk, h.identifier);
+
+	// Add the packet to the sent packets list.
+	d->sentPackets.append(packet);
+}
+
+//END
+
+//BEGIN Transport Transmission Control Functions
+
+void Transport::sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+	// Send a message/data acknowledge control packet.
+	sendControlPacket(Packet::AcknowledgeType, destination, lprcvd, lpsent, lpsize);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::removeUnacknowledgedPacket(const Q_UINT32 identifier)
+void Transport::sendCancelData(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+	// Send a cancel data exchange control packet which informs
+	// the other side that we have canceled the sending of data.
+	sendControlPacket(Packet::CancelType, destination, lprcvd, lpsent, lpsize);
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void Transport::sendFault(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+	// Send a transport fault control packet.
+	sendControlPacket(Packet::FaultType, destination, lprcvd, lpsent, lpsize);
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void Transport::sendReset(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+	// Send a session reset control packet.
+	sendControlPacket(Packet::ResetType, destination, lprcvd, lpsent, lpsize);
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void Transport::sendTimeout(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+	// Send a no acknowledge timeout control packet.
+	sendControlPacket(Packet::TimeoutType, destination, lprcvd, lpsent, lpsize);
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void Transport::sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
 
-	QMap<Q_INT32, QPair<Q_UINT32, QTimer*> >::Iterator i = d->nakTimers.begin();
-	while(i != d->nakTimers.end())
-	{
-		if ((*i).first == identifier)
-		{
-			kdDebug() << k_funcinfo << "Removing sent packet " << identifier << " from the list of unacknowledged packets" << endl;
-			// Stop the timer for the unacknowledged packet as it has been acknowledged.
-			QTimer *timer = d->nakTimers[i.key()].second;
-			if (timer != 0l)
-			{
-				timer->stop();
-				timer->deleteLater();
-				timer = 0l;
-			}
+	Packet *packet = new Packet();
 
-			// Remove the timer for the unacknowledged packet as it has been acknowledged.
-			d->nakTimers.remove(i.key());
+	// Get the header field of the packet.
+	Packet::Header & h = packet->header();
+	// Set the destination of the packet.
+	h.destination = destination;
+	// Set the sequence number of the packet.
+	h.identifier = nextPacketSequenceNumber();
+	// Set the data window size offset of the packet.
+	h.offset = 0;
+	// Set the data window size of the packet.
+	h.window = 0;
+	// Set the payload size of the packet.
+	h.payloadSize = h.window;
+	// Set the type of the packet.
+	h.type = (Q_UINT32)type;
+	// Set the correlation info of the packet.
+	h.lprcvd = lprcvd;
+	h.lpsent = lpsent;
+	h.lpsize = lpsize;
 
-			break;
-		}
-		i++;
-	}
-
-	// Remove the sent packet from the list of unacknowledged packets.
-	d->unacknowledged.remove(identifier);
+	// Queue the control packet.
+	queuePacket(packet, d->currentBridgeId/*, true*/);
 
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 //END
 
-void Transport::dispatch(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 identifier, const Q_UINT32 relatesTo)
+//BEGIN Transport Transmission Control Event Handling Functions
+
+void Transport::onNonAcknowledgeControlPacketReceive(Packet *packet)
 {
-	// Determine if there is a registered notifier to dispatch the specified datagram.
-	if (d->notifiers.contains(destination))
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	if (packet == 0l)
 	{
-		// Queue the datagram on the specified port and dispatch
-		// it to a waiting comsumer higher in the stack.
-		d->notifiers[destination]->fireMessageReceived(message, identifier, relatesTo);
+		kdDebug() << k_funcinfo << "Parameter \'packet\' cannot be null."  << endl;
+		return;
+	}
+
+	// Get the header field of the packet.
+	const Packet::Header & h = packet->header();
+
+	switch(h.type)
+	{
+		case Packet::CancelType:
+		{
+			kdDebug() << k_funcinfo << "Cancel data receive for session " << h.identifier << endl;
+			break;
+		}
+
+		case Packet::TimeoutType:
+		{
+			kdDebug() << k_funcinfo << "Received NAK for packet " << h.lpsent << endl;
+			break;
+		}
+
+		case Packet::FaultType:
+		{
+			kdDebug() << k_funcinfo << "Transport layer error" << endl;
+			break;
+		}
+
+		case Packet::ResetType:
+		{
+			kdDebug() << k_funcinfo << "Transport layer error, session = "
+				<< h.destination << endl;
+			break;
+		}
+	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+//END
+
+//BEGIN Session Notifier Functions
+
+void Transport::registerPort(const Q_UINT32 port, SessionNotifier* notifier)
+{
+	if (!d->notifiers.contains(port))
+	{
+		d->notifiers.insert(port, notifier);
 	}
 }
 
-void Transport::reassembleData(const Packet& packet, QByteArray& data)
+void Transport::unregisterPort(const Q_UINT32 port)
+{
+	if (d->notifiers.contains(port))
+	{
+		d->notifiers.remove(port);
+	}
+}
+
+//END
+
+void Transport::reassembleData(Packet *packet, QByteArray& data)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
 
 	QBuffer *buffer = 0l;
 	// Get the header field of the pakcet.
-	const Packet::Header & h = packet.header();
+	const Packet::Header & h = packet->header();
 
 	// Determine if the received packet is the first in a series
 	// of packets that contain fragmented datagram data.
@@ -701,8 +1023,9 @@ void Transport::reassembleData(const Packet& packet, QByteArray& data)
 		// Seek to the offset in the buffer where the
 		// received data chunk will be written.
 		buffer->at(h.offset);
+		QByteArray bytes = static_cast<QBuffer*>(packet->payload())->buffer();
 		// Write the data into the buffer.
-		buffer->writeBlock(packet.payload().buffer().data(), h.payloadSize);
+		buffer->writeBlock(bytes.data(), bytes.size());
 
 		// Determine if the received packet is the last in a series
 		// of packets that contain chunked data.
@@ -723,109 +1046,31 @@ void Transport::reassembleData(const Packet& packet, QByteArray& data)
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::onSwitchboardReadyToSend()
+void Transport::addPacketToUnacknowledgedList(Packet *packet)
 {
-	d->waitEvent.wakeOne();
-}
+	kdDebug() << k_funcinfo << "enter" << endl;
 
-//BEGIN Session Notifier Functions
-
-void Transport::registerPort(Q_UINT32 port, SessionNotifier* notifier)
-{
-	if (!d->notifiers.contains(port))
+	if (packet == 0l)
 	{
-		d->notifiers.insert(port, notifier);
+		kdDebug() << k_funcinfo << "Parameter \'packet\' cannot be null."  << endl;
+		return;
 	}
+
+	kdDebug() << k_funcinfo << "Packet id "
+		<< packet->header().identifier << endl;
+	delete packet;
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::unregisterPort(Q_UINT32 port)
+void Transport::removePacketFromUnacknowledgedList(const Q_UINT32 packetId)
 {
-	if (d->notifiers.contains(port))
-	{
-		d->notifiers.remove(port);
-	}
+	kdDebug() << k_funcinfo << "enter" << endl;
+	kdDebug() << k_funcinfo << "Packet id " << packetId << endl;
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-//END
-
-//BEGIN Endpoint Functions
-
-bool Transport::listen(const QString& address, const Q_UINT16 port)
-{
-	QValueList<QString> addresses;
-	addresses.append(address);
-	TcpTransportBridge *bridge = new TcpTransportBridge(addresses, port, this);
-	bool listening = bridge->listen();
-
-	return listening;
-}
-
-//END
-
-//BEGIN Bridge Functions
-
-const Q_UINT32 Transport::createBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const QUuid& nonce)
-{
-	TcpTransportBridge *bridge = new TcpTransportBridge(addresses, port, this);
-	// Connect the signal/slot
-	QObject::connect(bridge, SIGNAL(connected()), this,
-	SLOT(onBridgeConnected()));
-	QObject::connect(bridge, SIGNAL(disconnected()), this,
-	SLOT(onBridgeDisconnected()));
-	QObject::connect(bridge, SIGNAL(error()), this,
-	SLOT(onBridgeError()));
-	QObject::connect(bridge, SIGNAL(packetReceived(const Packet&)), this,
-	SLOT(onReceive(const Packet&)));
-
-	const Q_INT32 bridgeId = bridge->id();
-	d->bridges.insert(bridgeId, bridge);
-	d->nonces.insert(bridgeId, nonce);
-
-	// Connect the transport bridge.
-	bridge->connect();
-
-	return bridgeId;
-}
-
-void Transport::onBridgeConnected()
-{
-	TcpTransportBridge *bridge = dynamic_cast<TcpTransportBridge*>(const_cast<QObject*>(sender()));
-	if (bridge != 0)
-	{
-		kdDebug() << k_funcinfo << "Bridge " << bridge->id() << " is now connected" << endl;
-
-		const QUuid nonce = d->nonces[bridge->id()];
-		// Send the authentication nonce.
-		sendNonce(nonce, bridge->id());
-	}
-}
-
-void Transport::onBridgeDisconnected()
-{
-	TcpTransportBridge *bridge = dynamic_cast<TcpTransportBridge*>(const_cast<QObject*>(sender()));
-	if (bridge != 0)
-	{
-		const Q_INT32 bridgeId = bridge->id();
-		kdDebug() << k_funcinfo << "Bridge " << bridgeId << " is now disconnected" << endl;
-		QObject::disconnect(bridge, 0, this, 0);
-
-		d->bridges.remove(bridgeId);
-		d->nonces.remove(bridgeId);
-
-		bridge->deleteLater();
-		bridge = 0l;
-	}
-}
-
-void Transport::onBridgeError()
-{
-	TcpTransportBridge *bridge = dynamic_cast<TcpTransportBridge*>(const_cast<QObject*>(sender()));
-	if (bridge != 0)
-	{
-		bridge->disconnect();
-	}
-}
-
+//BEGIN Transport Timer Event Handling Functions
 //END
 
 }

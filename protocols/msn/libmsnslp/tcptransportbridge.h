@@ -15,7 +15,7 @@
 #ifndef CLASS_P2P__TCPTRANSPORTBRIDGE_H
 #define CLASS_P2P__TCPTRANSPORTBRIDGE_H
 
-#include "transportbridge.h"
+#include "directtransportbridge.h"
 #include <qvaluelist.h>
 
 namespace PeerToPeer
@@ -27,22 +27,24 @@ namespace PeerToPeer
  *
  * @author Gregg Edghill <gregg.edghill@gmail.com>
  */
-class TcpTransportBridge : public TransportBridge
+class TcpTransportBridge : public DirectTransportBridge
 {
 	Q_OBJECT
 
 	public:
 		/** @brief Creates a new instance of the TcpBridge class. */
-		TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, QObject *parent);
+		TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const Q_UINT32 bridgeId, QObject *parent);
 		virtual ~TcpTransportBridge();
 
-		virtual const Q_UINT32 id() const;
-		/** @brief Gets the maximum size of a message that can be sent or received by the bridge. */
-		virtual const Q_UINT32 maxSendBufferSize();
+		/** @brief Gets a value that uniquely identifies the transport bridge. */
+		virtual Q_UINT32 id() const;
+		/** @brief Gets the MTU for the transport bridge. */
+		virtual Q_UINT32 maxSendBufferSize() const;
+
 		void doUpnpPortMappingIfNecessary();
 		bool listen();
-		/** @brief Sends a packet to the remote peer. */
-		void send(const Packet& packet);
+		/** @brief Sends the specified byte array. */
+		virtual void send(const QByteArray& bytes, const Q_UINT32 id);
 
 	protected:
 		virtual void onConnect();

@@ -35,16 +35,11 @@ class MsnObjectSession::MsnObjectSessionPrivate
 		QString object;
 };
 
-QUuid MsnObjectSession::uuid()
-{
-	return QUuid("A4268EEC-FEC5-49E5-95C3-F126696BDBF6");
-}
-
-MsnObjectSession::MsnObjectSession(const Q_UINT32 identifier, Direction direction, QObject *parent) : Session(identifier, direction, parent), d(new MsnObjectSessionPrivate())
+MsnObjectSession::MsnObjectSession(const Q_UINT32 id, Direction direction, QObject *parent) : Session(id, direction, parent), d(new MsnObjectSessionPrivate())
 {
 }
 
-MsnObjectSession::MsnObjectSession(const QString& s, const Q_UINT32 identifier, Direction direction, QObject *parent) : Session(identifier, direction, parent), d(new MsnObjectSessionPrivate())
+MsnObjectSession::MsnObjectSession(const QString& s, const Q_UINT32 id, Direction direction, QObject *parent) : Session(id, direction, parent), d(new MsnObjectSessionPrivate())
 {
 	d->object = s;
 
@@ -124,6 +119,7 @@ void MsnObjectSession::handleInvite(const Q_UINT32 appId, const QByteArray& cont
 				// Peer is requesting our display picture.
 				d->location = locate("appdata", QString("msnpicture-%1.png").arg(creator.replace(QRegExp("[./~]"),"-")));
 				kdDebug() << d->location << endl;
+
 				accept();
 				break;
 			}
@@ -157,13 +153,13 @@ void MsnObjectSession::onStart()
 			return;
 		}
 
-		kdDebug() << k_funcinfo << "Session=" << id() << ", Sending DATA PREPARATION message" << endl;
+		kdDebug() << k_funcinfo << "Session=" << id() << ", Sending DATA PREAMBLE message" << endl;
 		// NOTE The data preparation preamble consists of
 		// an empty byte array of size 4.
-		QByteArray bytes(4);
-		bytes.fill('\0');
+		QByteArray preamble(4);
+		preamble.fill('\0');
 
-		emit sendMessage(bytes);
+		emit sendMessage(preamble);
 
 		QByteArray data = d->file->readAll();
 		d->file->close();
@@ -191,33 +187,35 @@ void MsnObjectSession::onFaulted()
 {
 }
 
-void MsnObjectSession::onDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk)
+void MsnObjectSession::onDataReceived(const QByteArray& data, bool lastChunk)
 {
-	kdDebug() << k_funcinfo << "Session=" << id() << ", Receiving DATA size(" << data.size() << ")" << endl;
+	kdDebug() << k_funcinfo << "Session " << id() << ", receiving DATA size(" << data.size() << ")" << endl;
 	d->temporaryFile->file()->writeBlock(data, data.size());
 
 	if (lastChunk)
 	{
-		kdDebug() << k_funcinfo << "Session=" << id() << ", END OF DATA" << endl;
+		kdDebug() << k_funcinfo << "Session " << id() << ", END OF DATA" << endl;
 
 		emit objectReceived(d->object, d->temporaryFile);
 		end();
 	}
 }
 
-void MsnObjectSession::onReceive(const QByteArray& bytes, const Q_INT32 identifier, const Q_INT32 relatesTo)
+void MsnObjectSession::onReceive(const QByteArray& bytes, const Q_INT32 /*id*/, const Q_INT32 correlationId)
 {
+	Q_UNUSED(correlationId);
+
 	QByteArray buffer(4);
 	buffer.fill('\0');
 	if (bytes.size() == 4 && bytes == buffer)
 	{
-		kdDebug() << k_funcinfo << "Session=" << id() << ", Received DATA PREPARATION message" << endl;
+		kdDebug() << k_funcinfo << "Session " << id() << ", received DATA PREPARATION message" << endl;
 	}
 }
 
-void MsnObjectSession::onSend(const Q_INT32 identifier)
+void MsnObjectSession::onSend(const Q_INT32 id)
 {
-	Q_UNUSED(identifier);
+	Q_UNUSED(id);
 
 	kdDebug() << k_funcinfo << endl;
 }

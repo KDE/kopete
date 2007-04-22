@@ -1,55 +1,73 @@
 /*
-    packetscheduler.h - Peer to Peer Transport Packet Scheduler class
+   packetscheduler.h - PeerToPeer Transport Layer Packet Scheduler class.
 
-    Copyright (c) 2006 by Gregg Edghill     <gregg.edghill@gmail.com>
+   Copyright (c) 2006 by Gregg Edghill <gregg.edghill@gmail.com>
 
-    *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; version 2 of the License.               *
-    *                                                                       *
-    *************************************************************************
+   *************************************************************************
+   *                                                                       *
+   * This library is free software; you can redistribute it and/or         *
+   * modify it under the terms of the GNU Lesser General Public            *
+   * License as published by the Free Software Foundation; either          *
+   * version 2 of the License, or (at your option) any later version.      *
+   *                                                                       *
+   *************************************************************************
 */
 
 #ifndef CLASS_P2P__PACKETSCHEDULER_H
 #define CLASS_P2P__PACKETSCHEDULER_H
 
 #include <qobject.h>
-#include <qthread.h>
-#include "packet.h"
-#include "packetqueue.h"
+#include <qptrlist.h>
+#include <qvaluelist.h>
 
 namespace PeerToPeer
 {
 
-/** @brief Manages packet scheduling for the transport layer.
+class Packet;
+typedef QPtrList<Packet> PacketList;
+class Transport;
+
+/**
+ * @brief Represents a transport layer packet scheduler
+ * which manages the scheduling of different packets based
+ * based on packet type and priority.
  *
  * @author Gregg Edghill <gregg.edghill@gmail.com>
  */
-class PacketScheduler : public QObject, public QThread
+class PacketScheduler: public QObject
 {
 	Q_OBJECT
 
 	public:
-		/** @brief Creates a new instance of the PacketScheduler class. */
-		PacketScheduler(const Q_UINT32 identifier, const Q_UINT16 chunkSize, PacketQueue *queue, QObject *parent);
-		virtual ~PacketScheduler();
+		/** @brief Creates a new instance of the class PacketScheduler. */
+		PacketScheduler(Transport *transport);
+		/** @brief Finalizer. */
+		~PacketScheduler();
 
-	protected:
-		virtual void run();
-
-	signals:
-		void schedulePacket(const Packet& packet, const Q_UINT32 bridgeId);
+		/** @brief Indicates whether the scheduler is running. */
+		bool isRunning() const;
+		/** @brief Starts the packet scheduler. */
+		void start();
+		/** @brief Stops the packet scheduler. */
+		void stop();
 
 	private slots:
-		void onPacketQueueAccessible();
+		/** @brief Occurs when the scheduler's timer event is called. */
+		void onSchedulePacketsToSend();
+
+	private:
+		/** @brief Gets the next packet that is ready to be sent. */
+		Packet * getNextPacket(PacketList *list);
+		/** @brief Gets a list of packets from the supplied packet list
+		  * that match the specified packet class.
+		  */
+		QPtrList<Packet> selectPacketsByClass(const QValueList<Q_UINT32> & packetClass, PacketList* list);
 
 	private:
 		class PacketSchedulerPrivate;
 		PacketSchedulerPrivate *d;
 
-}; // PacketScheduler
+}; //PacketScheduler
 }
 
 #endif

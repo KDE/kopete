@@ -6,24 +6,26 @@ noinst_LTLIBRARIES =  libkopete_msnslp.la
 
 libkopete_msnslp_la_SOURCES = \
 	binarypacketformatter.cpp dialog.cpp \
+	directtransportbridge.cpp \
 	sessionclient.cpp \
 	sessionnotifier.cpp switchboardbridge.cpp \
 	tcptransportbridge.cpp transport.cpp \
 	transportbridge.cpp message.cpp \
-	packet.cpp packetqueue.cpp packetscheduler.cpp session.cpp \
+	packet.cpp packetchunker.cpp packetscheduler.cpp session.cpp \
 	transaction.cpp slpmessage.cpp \
 	slprequest.cpp slpresponse.cpp \
 	msnobjectsession.cpp filetransfersession.cpp \
-	msnobjectstore.cpp
+	msnobjectstore.cpp webcamsession.cpp
 
 noinst_HEADERS = \
 	binarypacketformatter.h dialog.h \
+	directtransportbridge.h \
 	sessionclient.h \
 	sessionnotifier.h switchboardbridge.h \
 	tcptransportbridge.h transport.h \
 	transportbridge.h message.h \
-	packet.h packetqueue.h packetscheduler.h session.h \
+	packet.h packetchunker.h packetscheduler.h session.h \
 	transaction.h slpmessage.h \
 	slprequest.h slpresponse.h \
 	msnobjectsession.h filetransfersession.h \
-	msnobjectstore.h
+	msnobjectstore.h webcamsession.h

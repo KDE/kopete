@@ -63,10 +63,11 @@ void Transaction::begin() const
 void Transaction::confirm() const
 {
 	d->transactionState = Transaction::Confirmed;
-	// Disconnect the signal/slot
-	QObject::disconnect(d->timer, 0, this, 0);
 	// Stop the transaction timeout timer.
 	d->timer->stop();
+	const Q_INT32 timeSpan = 82 * 600;
+	// Start the transaction timeout timer 2.
+	d->timer->start(timeSpan);
 }
 
 const QUuid Transaction::branch() const
@@ -83,11 +84,12 @@ const QUuid Transaction::branch() const
 
 void Transaction::end() const
 {
-	d->transactionState = Transaction::Terminated;
+	d->transactionState = Transaction::Completed;
 	// Disconnect the signal/slot
 	QObject::disconnect(d->timer, 0, this, 0);
 	// Stop the transaction timeout timer.
 	d->timer->stop();
+	d->transactionState = Transaction::Terminated;
 }
 
 const bool Transaction::isLocal() const
@@ -127,9 +129,10 @@ void Transaction::onCheckTransactionTimeout()
 	d->timer->stop();
 
 	// If the transaction has not been confirmed, and
-	// it is still in the calling state, raise the transaction
+	// it is still in the calling state, or the transaction
+	// was not completed, raise the transaction
 	// timeout event.
-	if (d->transactionState == Transaction::Calling)
+	if ((d->transactionState == Transaction::Calling) || (d->transactionState < Transaction::Completed))
 	{
 		// Signal that a transaction timeout has occured.
 		emit timeout();

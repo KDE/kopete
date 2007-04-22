@@ -24,13 +24,13 @@ class Session::SessionPrivate
 		SessionPrivate() : state(Session::Created) {}
 
 		Direction direction;
-		Q_UINT32 identifier;
+		Q_UINT32 id;
 		SessionState state;
 };
 
-Session::Session(const Q_UINT32 identifier, Direction direction, QObject *parent) : QObject(parent), d(new SessionPrivate())
+Session::Session(const Q_UINT32 id, Direction direction, QObject *parent) : QObject(parent), d(new SessionPrivate())
 {
-	d->identifier = identifier;
+	d->id = id;
 	d->direction = direction;
 }
 
@@ -46,7 +46,7 @@ const Session::Direction Session::direction() const
 
 const Q_UINT32 Session::id() const
 {
-	return d->identifier;
+	return d->id;
 }
 
 const Session::SessionState Session::state() const

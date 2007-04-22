@@ -17,6 +17,7 @@
 #include <qfile.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kopetecontact.h>
 #include <kstandarddirs.h>
 
 namespace PeerToPeer
@@ -25,20 +26,19 @@ namespace PeerToPeer
 class FileTransferSession::FileTransferSessionPrivate
 {
 	public:
-		FileTransferSessionPrivate() : autoAccept(false), file(0l), size(0) {}
+		FileTransferSessionPrivate() : autoAccept(false), file(0l), offset(0), size(0), transfer(0l) {}
 
 		bool autoAccept;
+		Kopete::Contact* contact;
 		QFile *file;
+		Q_INT64 offset;
 		Q_INT64 size;
+		Kopete::Transfer *transfer;
 };
 
-QUuid FileTransferSession::uuid()
+FileTransferSession::FileTransferSession(const Q_UINT32 id, Direction direction, Kopete::Contact *contact, QObject *parent) : Session(id, direction, parent), d(new FileTransferSessionPrivate())
 {
-	return QUuid("5D3E02AB-6190-11D3-BBBB-00C04F795683");
-}
-
-FileTransferSession::FileTransferSession(const Q_UINT32 identifier, Direction direction, QObject *parent) : Session(identifier, direction, parent), d(new FileTransferSessionPrivate())
-{
+	d->contact = contact;
 }
 
 FileTransferSession::~FileTransferSession()
@@ -74,12 +74,15 @@ void FileTransferSession::handleInvite(const Q_UINT32 appId, const QByteArray& c
 		stream.readRawBytes(bytes.data(), bytes.size());
 		const QString file = QString::fromUcs2((unsigned short*)((void*)bytes.data()));
 
-		setDataStore(new QFile(locateLocal("tmp", file)));
-
 		if (type == 1 || type == 0)
 		{
 			kdDebug() << "Contact sending file, " << file << " (size " << d->size << ")" << endl;
-			accept();
+			Kopete::TransferManager *manager = Kopete::TransferManager::transferManager();
+			manager->askIncomingTransfer(d->contact, file, d->size, QString::null, QString::number(id()));
+			QObject::connect(manager, SIGNAL(accepted(Kopete::Transfer*, const QString&)), this,
+			SLOT(sessionAccepted(Kopete::Transfer*, const QString&)));
+			QObject::connect(manager, SIGNAL(refused(const Kopete::FileTransferInfo&)), this,
+			SLOT(sessionDeclined(const Kopete::FileTransferInfo&)));
 		}
 		else
 		if (type == 2)
@@ -116,23 +119,20 @@ void FileTransferSession::onStart()
 	{
 		if (!d->file->open(IO_ReadOnly))
 		{
-			kdDebug() << k_funcinfo << "Session=" << id() << " cancelling -- unable to open file "
+			kdDebug() << k_funcinfo << "Session " << id() << " cancelling -- unable to open file "
 			<< d->file->name() << endl;
 
 			cancel();
 			return;
 		}
 
-		QByteArray data = d->file->readAll();
-		d->file->close();
-
-		kdDebug() << k_funcinfo << "Session=" << id() << ", Sending DATA size(" << data.size() << ")" << endl;
-		emit sendData(data);
+		kdDebug() << k_funcinfo << "Session " << id() << ", sending DATA size(" << d->file->size() << ")" << endl;
+		emit sendFile(d->file);
 	}
 	else
 	if (direction() == Session::Incoming)
 	{
-		kdDebug() << k_funcinfo << "Session=" << id() << ", ready to receive data" << endl;
+		kdDebug() << k_funcinfo << "Session " << id() << ", ready to receive data" << endl;
 		d->file->open(IO_WriteOnly);
 
 		// TODO Start timer and wait for 30 seconds.
@@ -154,30 +154,60 @@ void FileTransferSession::onFaulted()
 {
 }
 
-void FileTransferSession::onDataReceived(const QByteArray& data, const Q_INT32 identifier, bool lastChunk)
+void FileTransferSession::onDataReceived(const QByteArray& data, bool lastChunk)
 {
-	kdDebug() << k_funcinfo << "Session=" << id() << ", Receiving DATA size(" << data.size() << ")" << endl;
+	kdDebug() << k_funcinfo << "Session " << id() << ", receiving DATA size(" << data.size() << ")" << endl;
 
 	// Write the received bytes to the file.
 	d->file->writeBlock(data, data.size());
 	d->file->flush();
 
+	d->offset += data.size();
+	d->transfer->slotProcessed(d->offset + data.size());
+
 	if (lastChunk)
 	{
-		kdDebug() << k_funcinfo << "Session=" << id() << ", END OF DATA" << endl;
+		kdDebug() << k_funcinfo << "Session " << id() << ", END OF DATA" << endl;
 
 		d->file->close();
+		d->transfer->slotComplete();
+
 		end();
 	}
 }
 
-void FileTransferSession::onSend(const Q_INT32 identifier)
+void FileTransferSession::onSend(const Q_INT32 id)
 {
-	Q_UNUSED(identifier);
+	Q_UNUSED(id);
 	kdDebug() << k_funcinfo << endl;
 
-	// TODO Start a timer. if the BYE request is not received in 15 sec send one.
+	// TODO Start a timer. if the BYE request is not received in 5 sec send one.
 // 	emit ended();
+}
+
+void FileTransferSession::sessionAccepted(Kopete::Transfer *transfer, const QString& file)
+{
+	Q_UNUSED(file);
+
+	if (transfer != 0l && id() == transfer->info().internalId().toUInt())
+	{
+		QObject::disconnect(Kopete::TransferManager::transferManager(), 0l, this, 0l);
+		QObject::connect(transfer , SIGNAL(transferCanceled()), this,
+		SLOT(cancel()));
+
+		d->transfer = transfer;
+		setDataStore(new QFile(d->transfer->destinationURL().path()));
+		accept();
+	}
+}
+
+void FileTransferSession::sessionDeclined(const Kopete::FileTransferInfo& info)
+{
+	if (id() == info.internalId().toUInt())
+	{
+		QObject::disconnect(Kopete::TransferManager::transferManager(), 0l, this, 0l);
+		decline();
+	}
 }
 
 }

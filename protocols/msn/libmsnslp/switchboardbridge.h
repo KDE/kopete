@@ -34,32 +34,31 @@ class SwitchboardBridge : public TransportBridge
 
 	public :
 		/** @brief Creates a new instance of the SwitchboardBridge class. */
-		SwitchboardBridge(MSNChatSession* via, QObject *parent);
+		SwitchboardBridge(const Q_UINT32 bridgeId, QObject *parent);
 		virtual ~SwitchboardBridge();
-		/** @brief Sends a packet to the remote peer. */
-		void send(const Packet& packet, const Q_UINT32 appId);
-		bool isReadyToSend() const;
-		virtual const Q_UINT32 id() const;
-		/** @brief Gets the maximum send buffer size. */
-		virtual const Q_UINT32 maxSendBufferSize();
 
-	signals:
-		void sentPacket(const Packet& packet);
-		void readyToSend();
-		void requestSwitchboard();
+		/** @brief Gets a value that uniquely identifies the transport bridge. */
+		virtual Q_UINT32 id() const;
+		/** @brief Gets the MTU for the transport bridge. */
+		virtual Q_UINT32 maxSendBufferSize() const;
+		/** @brief Attachs the switchboard bridge to the switchboard network. */
+		void connectTo(MSNChatSession *switchboard);
+		/** @brief Sends the specified byte array. */
+		virtual void send(const QByteArray& bytes, const Q_UINT32 id);
+
+	public slots:
+		void onDataReceived(const QByteArray& bytes);
+		void onSend(const Q_INT32 id);
+
+	private slots:
+		void onSendPendingPackets();
 
 	protected:
 		virtual void onConnect();
 		virtual void onDisconnect();
 
-	private slots:
-		void onDataReceived(const QByteArray& data);
-		void onSend(const Q_INT32 id);
-		void sendPendingPackets();
-
 	private:
-		bool requestSwitchboardIfNecessary();
-		const Q_INT32 sendViaNetwork(const QByteArray& bytes);
+		bool trySendViaSwitchboard(const QByteArray& bytes, Q_UINT32& cookie);
 
 	private:
 		class SwitchboardBridgePrivate;

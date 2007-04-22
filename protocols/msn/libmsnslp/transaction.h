@@ -34,8 +34,9 @@ class Transaction : public QObject
 {
 	Q_OBJECT
 
+	public :
 		/** @brief Defines the states of a transaction during its lifecycle. */
-		enum TransactionState {Calling=0, Confirmed=2, Terminated=4};
+		enum TransactionState {Calling=0, Confirmed=2, Completed=4, Terminated=8};
 
 	public :
 		explicit Transaction(QObject *parent=0l);

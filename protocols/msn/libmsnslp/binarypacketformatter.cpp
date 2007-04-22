@@ -20,22 +20,25 @@ namespace PeerToPeer
 {
 
 BinaryPacketFormatter::BinaryPacketFormatter()
-{
-}
+{}
 
-Packet BinaryPacketFormatter::deserialize(QDataStream* stream)
+//BEGIN Static Functions
+
+Packet* BinaryPacketFormatter::deserialize(QDataStream* stream)
 {
+	Packet *packet = 0l;
+
 	if (stream == 0l)
 	{
 		kdDebug() << "Parameter \'stream\' cannot be null." << endl;
-		return Packet();
+		return packet;
 	}
 
+	packet = new Packet();
 	// Ensure that the byte order of the stream is little endian.
 	stream->setByteOrder(QDataStream::LittleEndian);
 
-	Packet packet;
-	Packet::Header & h = packet.header();
+	Packet::Header & h = packet->header();
 	// Read the packet header fields from the stream.
 	*stream >> h.destination;
 	*stream >> h.identifier;
@@ -49,19 +52,21 @@ Packet BinaryPacketFormatter::deserialize(QDataStream* stream)
 
 	if (h.payloadSize > 0)
 	{
-		// Read the packet payload data from the stream.
-		QByteArray bytes(h.payloadSize);
-		stream->device()->readBlock(bytes.data(), h.payloadSize);
-		// Write the data to the packet payload.
-		packet.payload().writeBlock(bytes);
+		QByteArray buffer(h.payloadSize);
+		// Read the packet payload bytes from the stream.
+		stream->readRawBytes(buffer.data(), buffer.size());
+		// Get the packet payload.
+		QIODevice *payload = packet->payload();
+		// Write the bytes to the packet payload.
+		payload->writeBlock(buffer.data(), buffer.size());
+		// Seek to the beginning of the payload.
+		payload->at(0);
 	}
-
-	kdDebug() << packet.toString() << endl;
 
 	return packet;
 }
 
-void BinaryPacketFormatter::serialize(const Packet& packet, QDataStream* stream)
+void BinaryPacketFormatter::serialize(QDataStream* stream, Packet* packet)
 {
 	if (stream == 0l)
 	{
@@ -69,10 +74,16 @@ void BinaryPacketFormatter::serialize(const Packet& packet, QDataStream* stream)
 		return;
 	}
 
+	if (packet == 0l)
+	{
+		kdDebug() << "Parameter \'packet\' cannot be null." << endl;
+		return;
+	}
+
 	// Ensure that the byte order of the stream is little endian.
 	stream->setByteOrder(QDataStream::LittleEndian);
 
-	const Packet::Header & h = packet.header();
+	const Packet::Header & h = packet->header();
 	// Write the packet header fields to the stream.
 	*stream << h.destination;
 	*stream << h.identifier;
@@ -86,11 +97,18 @@ void BinaryPacketFormatter::serialize(const Packet& packet, QDataStream* stream)
 
 	if (h.payloadSize > 0)
 	{
-		// Write the packet payload to the stream.
-		stream->device()->writeBlock(packet.payload().buffer());
+		// Get the packet payload.
+		QIODevice *payload = packet->payload();
+		// Seek to the beginning of the payload bytes.
+		payload->at(0);
+		QByteArray buffer(h.payloadSize);
+		// Read the packet payload bytes into the buffer.
+		payload->readBlock(buffer.data(), buffer.size());
+		// Write the packet payload bytes to the stream.
+		stream->writeRawBytes(buffer.data(), buffer.size());
 	}
-
-	kdDebug() << packet.toString() << endl;
 }
+
+//END
 
 }
