@@ -22,7 +22,7 @@
 #define XMPP_TASK_H
 
 #include <QObject>
-#include <QString>
+
 
 #include <iris_export.h>
 

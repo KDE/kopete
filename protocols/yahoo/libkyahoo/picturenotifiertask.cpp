@@ -19,7 +19,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <QString>
+
 #include <QStringList>
 #include <kdebug.h>
 #include <klocale.h>

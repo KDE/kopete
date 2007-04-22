@@ -19,7 +19,7 @@
 #ifndef JABBERPROTOCOL_H
 #define JABBERPROTOCOL_H
 
-#include <QString>
+
 #include <QMap>
 
 #include "kopeteprotocol.h"

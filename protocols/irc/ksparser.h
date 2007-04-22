@@ -8,7 +8,7 @@
 #define KSPARSER_H
 
 #include <QColor>
-#include <QString>
+
 
 /*
  * Helper class to parse IRC color/style codes and convert them to

@@ -20,7 +20,7 @@
 
 #include <QObject>
 #include <QMap>
-#include <QString>
+
 
 #include "kopeteplugin.h"
 

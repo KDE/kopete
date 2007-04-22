@@ -17,7 +17,7 @@
 #ifndef YAHOOWEBCAMDIALOG_H_
 #define YAHOOWEBCAMDIALOG_H_
 
-#include <QString>
+
 #include <kdialog.h>
 
 

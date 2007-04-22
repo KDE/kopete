@@ -17,7 +17,7 @@
 #ifndef SMSSENDPROVIDER_H
 #define SMSSENDPROVIDER_H
 
-#include <QString>
+
 #include <QStringList>
 #include <QList>
 #include <QByteArray>

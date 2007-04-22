@@ -19,7 +19,7 @@
 
 #include <QtTest/QtTest>
 #include <QObject>
-#include <QString>
+
 
 class Buffer;
 

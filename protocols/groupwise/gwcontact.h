@@ -29,7 +29,7 @@
 #define GW_CONTACT_H
 
 #include <QMap>
-#include <QString>
+
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"

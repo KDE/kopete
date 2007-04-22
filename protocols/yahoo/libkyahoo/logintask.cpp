@@ -18,7 +18,7 @@
     *************************************************************************
 */
 
-#include <QString>
+
 
 #include "logintask.h"
 #include "transfer.h"

@@ -24,7 +24,7 @@
 #include <QPair>
 #include <QList>
 #include <QDate>
-#include <QString>
+
 #include <QStringList>
 #include <QDomElement>
 

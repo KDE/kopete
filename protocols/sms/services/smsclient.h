@@ -21,7 +21,7 @@
 #include "kopetemessage.h"
 
 #include <QStringList>
-#include <QString>
+
 
 class SMSClientPrefsUI;
 class SMSContact;

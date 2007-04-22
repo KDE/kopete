@@ -18,7 +18,7 @@
 #define SMSSEND_H
 
 #include <QList>
-#include <QString>
+
 
 #include <klineedit.h>
 

@@ -23,7 +23,7 @@
 
 #include <stdlib.h>
 
-#include <QString>
+
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
