@@ -21,6 +21,7 @@
 #define LISTKEYS_H
 
 #include <kdialog.h>
+#include <k3procio.h>
 #include <QPixmap>
 
 class K3ListView;
@@ -39,25 +40,31 @@ struct gpgKey{
   QString gpgkeyalgo;
 };
 
-class KgpgSelKey : public KDialog
+class SelectKeyDialog : public KDialog
 {
     Q_OBJECT
 
 public:
-    explicit KgpgSelKey( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
+    explicit SelectKeyDialog( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
+    ~SelectKeyDialog();
     K3ListView *keysListpr;
-QPixmap keyPair;
-QCheckBox *local;
+    QPixmap keyPair;
+    QCheckBox *local;
+
 private slots:
-void slotOk();
-void slotpreOk();
-void slotSelect(Q3ListViewItem *item);
-QString extractKeyName(QString fullName);
+    void slotReadKey(K3ProcIO*);
+    void slotOk();
+    void slotpreOk();
+    void slotSelect(Q3ListViewItem *item);
+    QString extractKeyName(QString fullName);
 
 public:
     QString getkeyID();
     QString getkeyMail();
     bool getlocal();
+
+private:
+    K3ProcIO * fp;
 };
 
 

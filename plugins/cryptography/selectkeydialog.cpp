@@ -37,25 +37,21 @@
 #include <kiconloader.h>
 #include <kicon.h>
 
-#include "kgpgselkey.h"
+#include "selectkeydialog.h"
 
 #include <cstdio>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////   Secret key selection dialog, used when user wants to sign a key
-KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
+SelectKeyDialog::SelectKeyDialog(QWidget *parent, const char *name,bool showlocal)
  : KDialog( parent )
 {
   setCaption( i18n("Private Key List") );
   setButtons( KDialog::Ok | KDialog::Cancel );
 
-  QString keyname;
   QWidget *page = new QWidget(this);
   QLabel *labeltxt;
-  KIconLoader *loader = KIconLoader::global();
-
-  keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
 
   setMinimumSize(300,200);
   keysListpr = new K3ListView( page );
@@ -76,98 +72,14 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
     vbox->addWidget(local);
   }
 
-  K3ProcIO fp, fp2;
-  QString tst,tst2;
-  QString line;
-
-  fp << "gpg" << "--no-tty" << "--with-colon" << "--list-secret-keys";
-  fp.start();
-  while ( fp.readln(line) > 0)
-  {
-    tst=line;
-    if (tst.startsWith("sec"))
-    {
-      const QString trust=tst.section(':',1,1);
-      QString val=tst.section(':',6,6);
-      QString id=QString("0x"+tst.section(':',4,4).right(8));
-      if (val.isEmpty())
-        val=i18n("Unlimited");
-      QString tr;
-      switch( trust.at(0).toLatin1() )
-      {
-      case 'o':
-        tr= i18n("Unknown");
-        break;
-      case 'i':
-        tr= i18n("Invalid");
-        break;
-      case 'd':
-        tr=i18n("Disabled");
-        break;
-      case 'r':
-        tr=i18n("Revoked");
-        break;
-      case 'e':
-        tr=i18n("Expired");
-        break;
-      case 'q':
-        tr=i18n("Undefined");
-        break;
-      case 'n':
-        tr=i18n("None");
-        break;
-      case 'm':
-        tr=i18n("Marginal");
-        break;
-      case 'f':
-        tr=i18n("Full");
-        break;
-      case 'u':
-        tr=i18n("Ultimate");
-        break;
-      default:
-        tr=i18n("?");
-        break;
-      }
-      tst=tst.section(":",9,9);
-
-      fp2 << "gpg" << "--no-tty" << "--with-colon" << "--list-key" << QString("%1").arg( K3ShellProcess::quote( id ) );
-      fp2.start();
-      bool dead=true;
-      while ( fp2.readln(line) > 0)
-      {
-        tst2=line;
-        if (tst2.startsWith("pub"))
-        {
-          const QString trust2=tst2.section(':',1,1);
-          switch( trust2.at(0).toLatin1() )
-          {
-          case 'f':
-            dead=false;
-            break;
-          case 'u':
-            dead=false;
-            break;
-          default:
-            break;
-          }
-        }
-      }
-      if (!tst.isEmpty() && (!dead))
-      {
-        K3ListViewItem *item=new K3ListViewItem(keysListpr,extractKeyName(tst));
-        K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, expiration: %3", id, tr, val));
-        sub->setSelectable(false);
-        item->setPixmap(0,keyPair);
-      }
-    }
-  }
+  fp = new K3ProcIO;
+  *fp << "gpg" << "--no-tty" << "--with-colon" << "--list-secret-keys";
+  connect (fp, SIGNAL(readReady(K3ProcIO*)), this, SLOT(slotReadKey(K3ProcIO*)));
+  fp->start();
 
   QObject::connect(keysListpr,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotpreOk()));
   QObject::connect(keysListpr,SIGNAL(clicked(Q3ListViewItem *)),this,SLOT(slotSelect(Q3ListViewItem *)));
 
-
-  connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
   keysListpr->setSelected(keysListpr->firstChild(),true);
 
   page->show();
@@ -175,20 +87,38 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal)
   setMainWidget(page);
 }
 
-QString KgpgSelKey::extractKeyName(QString fullName)
+SelectKeyDialog::~SelectKeyDialog ()
 {
-  QString kMail;
-  if (fullName.indexOf("<")!=-1)
-  {
-    kMail=fullName.section('<',-1,-1);
-    kMail.truncate(kMail.length()-1);
-  }
-  QString kName=fullName.section('<',0,0);
-  if (kName.indexOf("(")!=-1) kName=kName.section('(',0,0);
-  return QString(kMail+" ("+kName+')').trimmed();
+  delete fp;
 }
 
-void KgpgSelKey::slotpreOk()
+void SelectKeyDialog::slotReadKey (K3ProcIO * pio)
+{
+  QString line, expr, id;
+  pio->readln(line, false);
+  if (line.startsWith("sec"))
+  {
+    QString expr = line.section(':',6,6);
+    if (expr.isEmpty())
+      expr = i18nc ("adj", "Unlimited");
+    QString id = QString("0x"+line.section(':',4,4).right(8));
+    K3ListViewItem *item = new K3ListViewItem (keysListpr,extractKeyName(line));
+    K3ListViewItem *sub = new K3ListViewItem (item,i18n("ID: %1, expiration: %2", id, expr));
+    sub->setSelectable(false);
+    KIconLoader *loader = KIconLoader::global();
+    keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
+    item->setPixmap(0,keyPair);
+  }
+  pio->ackRead();
+}
+
+QString SelectKeyDialog::extractKeyName(QString fullName)
+{
+  QString name = fullName.section (':', 9, 9);
+  return name;
+}
+
+void SelectKeyDialog::slotpreOk()
 {
   if (keysListpr->currentItem()->depth()!=0)
     return;
@@ -196,7 +126,7 @@ void KgpgSelKey::slotpreOk()
     slotOk();
 }
 
-void KgpgSelKey::slotOk()
+void SelectKeyDialog::slotOk()
 {
   if (keysListpr->currentItem()==NULL)
     reject();
@@ -204,7 +134,7 @@ void KgpgSelKey::slotOk()
     accept();
 }
 
-void KgpgSelKey::slotSelect(Q3ListViewItem *item)
+void SelectKeyDialog::slotSelect(Q3ListViewItem *item)
 {
   if (item==NULL) return;
   if (item->depth()!=0)
@@ -215,7 +145,7 @@ void KgpgSelKey::slotSelect(Q3ListViewItem *item)
 }
 
 
-QString KgpgSelKey::getkeyID()
+QString SelectKeyDialog::getkeyID()
 {
   QString userid;
   /////  emit selected key
@@ -230,7 +160,7 @@ QString KgpgSelKey::getkeyID()
   }
 }
 
-QString KgpgSelKey::getkeyMail()
+QString SelectKeyDialog::getkeyMail()
 {
   QString username;
   /////  emit selected key
@@ -244,10 +174,10 @@ QString KgpgSelKey::getkeyMail()
   }
 }
 
-bool KgpgSelKey::getlocal()
+bool SelectKeyDialog::getlocal()
 {
   /////  emit exportation choice
   return(local->isChecked());
 }
 
-#include "kgpgselkey.moc"
+#include "selectkeydialog.moc"
