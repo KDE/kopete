@@ -5,9 +5,10 @@ endif
 
 KDE_OPTIONS = nofinal
 METASOURCES = AUTO
-SUBDIRS = ui $(WEBCAM) . icons config
+SUBDIRS = ui $(WEBCAM) . icons config libmsnslp
 AM_CPPFLAGS = -Iui \
 	-I$(srcdir)/webcam \
+	-I$(srcdir)/libmsnslp\
 	-I$(srcdir)/ui \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
@@ -20,14 +21,13 @@ CLEANFILES = dummy.cpp
 libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
 	msnaddcontactpage.cpp msncontact.cpp msnsocket.cpp msnchatsession.cpp msndebugrawcmddlg.cpp \
 	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp \
-	sha1.cpp msnsecureloginhandler.cpp msnchallengehandler.cpp dispatcher.cpp \
-	p2p.cpp messageformatter.cpp incomingtransfer.cpp outgoingtransfer.cpp \
-	webcam.cpp
+	sha1.cpp msnsecureloginhandler.cpp msnchallengehandler.cpp \
+	mimemessage.cpp
 
-libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(WEBCAM_LIBMINICWRAPPER) ../../libkopete/avdevice/libkopete_videodevice.la   $(LIB_KIO)
+libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(WEBCAM_LIBMINICWRAPPER) ../../libkopete/avdevice/libkopete_videodevice.la   $(LIB_KIO) ./libmsnslp/libkopete_msnslp.la
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
 
-kopete_msn_la_SOURCES = dummy.cpp webcam.cpp
+kopete_msn_la_SOURCES = dummy.cpp
 kopete_msn_la_LIBADD = libkopete_msn_shared.la
 
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
@@ -42,5 +42,3 @@ servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete_msn
 mydata_DATA = msnchatui.rc
-noinst_HEADERS = p2p.h dispatcher.h messageformatter.h incomingtransfer.h \
-	outgoingtransfer.h webcam.h
