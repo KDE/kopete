@@ -17,7 +17,7 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qtooltip.h>
+
 
 #include <kconfigbase.h>
 #include <klineedit.h>

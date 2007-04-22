@@ -19,7 +19,7 @@
 
 #include <qlabel.h>
 #include <qimage.h>
-#include <qtooltip.h>
+
 #include <qfile.h>
 #include <qiconset.h>
 #include <QPixmap>

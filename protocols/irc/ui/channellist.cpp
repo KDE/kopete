@@ -36,7 +36,7 @@
 #include <Q3VBoxLayout>
 #include <k3listview.h>
 #include <qlayout.h>
-#include <qtooltip.h>
+
 #include <qtimer.h>
 #include <qspinbox.h>
 #include <Q3Header>

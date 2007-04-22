@@ -21,7 +21,7 @@
 
 #include <qtimer.h>
 #include <qlayout.h>
-#include <qtooltip.h>
+
 #include <qfileinfo.h>
 #include <QDockWidget>
 

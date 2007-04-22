@@ -39,7 +39,7 @@
 #include <k3listview.h>
 #include <k3listviewsearchline.h>
 #include <qlabel.h>
-#include <qtooltip.h>
+
 
 #include "addressbookselectorwidget.h"
 #include <addresseeitem.h>

@@ -23,7 +23,7 @@
 
 #include <QCursor>
 #include <QLayout>
-#include <QToolTip>
+
 #include <QTimer>
 #include <QPixmap>
 #include <QCloseEvent>

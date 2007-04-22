@@ -20,7 +20,7 @@
 #include "systemtray.h"
 
 #include <qtimer.h>
-#include <qtooltip.h>
+
 #include <qregexp.h>
 #include <QMouseEvent>
 #include <QPixmap>

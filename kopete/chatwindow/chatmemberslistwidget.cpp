@@ -34,7 +34,7 @@
 #include <kmenu.h>
 
 #include <q3header.h>
-#include <qtooltip.h>
+
 
 //BEGIN ChatMembersListWidget::ToolTip
 /*

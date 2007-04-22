@@ -29,7 +29,7 @@
 #include <q3dragobject.h>
 #include <q3header.h>
 #include <qtimer.h>
-#include <qtooltip.h>
+
 #include <QPointer>
 //Added by qt3to4:
 #include <QPixmap>
