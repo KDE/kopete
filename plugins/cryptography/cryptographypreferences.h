@@ -28,13 +28,17 @@ namespace Ui { class CryptographyPrefsUI; }
  * @author Olivier Goffart
  */
 class CryptographyPreferences : public KCModule  {
+
    Q_OBJECT
+
 public:
 	explicit CryptographyPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
 	~CryptographyPreferences();
+
 private:
 	Ui::CryptographyPrefsUI *preferencesDialog;
-private slots: // Public slots
+
+private slots:
 	void slotSelectPressed();
 };
 

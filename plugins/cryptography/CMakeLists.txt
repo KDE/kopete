@@ -14,7 +14,7 @@ set(kopete_cryptography_PART_SRCS
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
    popuppublic.cpp 
-   kgpgselkey.cpp )
+   selectkeydialog.cpp )
 
 kde4_add_ui_files(kopete_cryptography_PART_SRCS cryptographyuserkey_ui.ui )
 
@@ -30,7 +30,7 @@ install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp kgpgselkey.cpp )
+set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp selectkeydialog.cpp )
 
 kde4_add_ui_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
 
@@ -49,7 +49,3 @@ install(TARGETS kcm_kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES kopete_cryptography.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES cryptographyui.rc cryptographychatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_cryptography)
 install( FILES kopete_cryptography_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
-
-
-
-

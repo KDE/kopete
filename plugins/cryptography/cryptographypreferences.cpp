@@ -22,23 +22,23 @@
 
 #include "ui_cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
-#include "kgpgselkey.h"
+#include "selectkeydialog.h"
 
 // TODO: Port to KConfigXT
 
-typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
+typedef KGenericFactory<CryptographyPreferences, QWidget> CryptographyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"))
 
 CryptographyPreferences::CryptographyPreferences(QWidget *parent, const QStringList &args)
 							: KCModule(CryptographyPreferencesFactory::componentData(), parent, args)
 {
-	// Add actuall widget generated from ui file.
-	QWidget* w = new QWidget(this);
+	// Add actual widget generated from ui file.
 	preferencesDialog = new Ui::CryptographyPrefsUI;
 	preferencesDialog->setupUi(this);
+    if ( preferencesDialog->dontAskForPassphrase->checkState() != QCheckBox::On )
+      preferencesDialog->cacheGroupBox->setEnabled( false );
 
-	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
-	//setMainWidget( preferencesDialog ,"Cryptography Plugin");
+	connect (preferencesDialog->selectKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
 }
 
 CryptographyPreferences::~CryptographyPreferences()
@@ -48,10 +48,10 @@ CryptographyPreferences::~CryptographyPreferences()
 
 void CryptographyPreferences::slotSelectPressed()
 {
-	KgpgSelKey opts(this,0,false);
+	SelectKeyDialog opts(this,0,false);
 	opts.exec();
 	if (opts.result()==QDialog::Accepted)
-		preferencesDialog->PGP_private_key->setText(opts.getkeyID());
+		preferencesDialog->privateKey->setText(opts.getkeyID());
 }
 
 #include "cryptographypreferences.moc"

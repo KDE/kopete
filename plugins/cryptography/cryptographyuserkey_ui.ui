@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <author></author>
+ <author>Olivier Goffart</author>
  <comment></comment>
  <exportmacro></exportmacro>
  <class>CryptographyUserKey_ui</class>
