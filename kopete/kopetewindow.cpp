@@ -272,7 +272,7 @@ void KopeteWindow::initView()
 	//d->contactlist = new KopeteContactListView(this);
 	d->contactlist = new QTreeView(this);
 	d->contactlist->header()->hide();
-	d->contactlist->setModel( Kopete::ContactList::self() );
+	//d->contactlist->setModel( Kopete::ContactList::self() );
 	d->contactlist->setAlternatingRowColors( true );
 	setCentralWidget(d->contactlist);
 }

@@ -49,7 +49,7 @@ class KopeteGroupViewItem;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Matt Rogers <mattr@kde.org>
  */
-class KopeteMetaContactViewItem : public QStandardItem
+class KopeteMetaContactViewItem : public QObject, QStandardItem
 {
 	Q_OBJECT
 

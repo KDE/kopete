@@ -26,7 +26,7 @@
 
 
 KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group )
- : QStandardItem()
+ : QObject(0), QStandardItem()
 {
 	m_group = group;
 
@@ -51,7 +51,7 @@ Kopete::Group* KopeteGroupViewItem::group() const
 
 void KopeteGroupViewItem::groupNameChanged( Kopete::Group* group, const QString& )
 {
-	if ( group == this )
+	if ( group == m_group )
 		setText( m_group->displayName() );
 }
 
